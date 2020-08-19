@@ -48,7 +48,7 @@ class UserController extends UserBase
         }
 
         //已经注册过了
-        if ($res) return $this->writeJson(201,[],'手机号已经注册过了');
+        if ($res) return $this->writeJson(201,null,null,'手机号已经注册过了');
 
         try
         {
@@ -70,7 +70,7 @@ class UserController extends UserBase
             return $this->writeErr($e,'orm');
         }
 
-        return $this->writeJson(200,$insert,'注册成功');
+        return $this->writeJson(200,null,$insert,'注册成功');
     }
 
     function login()
@@ -87,7 +87,7 @@ class UserController extends UserBase
             return $this->writeErr($e,'orm');
         }
 
-        if (!$userInfo) return $this->writeJson(201,[],'登录信息错误');
+        if (!$userInfo) return $this->writeJson(201,null,null,'登录信息错误');
 
         $newToken=UserService::getInstance()->createAccessToken($userInfo->phone,$userInfo->password);
 
@@ -104,7 +104,7 @@ class UserController extends UserBase
 
         $userInfo->newToken=$newToken;
 
-        return $this->writeJson(200,$userInfo,'登录成功');
+        return $this->writeJson(200,null,$userInfo,'登录成功');
     }
 
 

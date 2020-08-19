@@ -3,6 +3,7 @@
 namespace App\HttpController\Business;
 
 use App\HttpController\Index;
+use wanghanwanghan\someUtils\control;
 
 class BusinessBase extends Index
 {
@@ -42,6 +43,25 @@ class BusinessBase extends Index
         {
             return false;
         }
+    }
+
+    //链接池系列抛出异常
+    function writeErr(\Throwable $e,$which='comm'): bool
+    {
+        //给用户看的
+        $this->writeJson(9527,null,null,$which.'错误');
+
+        $logFileName=$which.'.log.'.date('Ymd',time());
+
+        //给程序员看的
+        $file=$e->getFile();
+        $line=$e->getLine();
+        $msg=$e->getMessage();
+
+        $content="[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
+
+        //返回log写入成功或者写入失败
+        return control::writeLog($content,LOG_PATH,'info',$logFileName);
     }
 
     //check token

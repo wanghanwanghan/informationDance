@@ -1,10 +1,10 @@
 <?php
 
-namespace App\HttpController;
+namespace App\HttpController\Business\Api\QianQi;
 
-use EasySwoole\Http\AbstractInterface\Controller;
+use App\HttpController\Business\BusinessBase;
 
-class Index extends Controller
+class QianQiBase extends BusinessBase
 {
     function onRequest(?string $action): ?bool
     {
@@ -15,6 +15,4 @@ class Index extends Controller
     {
         parent::afterAction($actionName);
     }
-
-    function index() {}
 }

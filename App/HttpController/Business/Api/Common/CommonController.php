@@ -23,7 +23,7 @@ class CommonController extends CommonBase
         $imageFile=$this->request()->getUploadedFile('image');
 
         //返回文件路径
-        return $this->writeJson(200,CommonService::getInstance()->storeImage($imageFile,$type));
+        return $this->writeJson(200,null,CommonService::getInstance()->storeImage($imageFile,$type));
     }
 
 }
