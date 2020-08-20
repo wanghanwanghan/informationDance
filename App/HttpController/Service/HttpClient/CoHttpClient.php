@@ -34,7 +34,7 @@ class CoHttpClient extends ServiceBase
 
         }catch (\Exception $e)
         {
-            return null;
+            return $this->writeErr($e,__CLASS__);
         }
 
         return $this->needJsonDecode ? json_decode($data,true) : $data;

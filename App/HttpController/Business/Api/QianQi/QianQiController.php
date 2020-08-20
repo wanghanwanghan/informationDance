@@ -37,6 +37,8 @@ class QianQiController extends QianQiBase
 
         $res=(new QianQiService())->getThreeYearsData($postData);
 
+        //改成同比，不能返回原值
+
         return $this->checkResponse($res);
     }
 

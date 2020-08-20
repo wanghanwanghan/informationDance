@@ -7,7 +7,7 @@ use EasySwoole\ORM\Db\Config;
 use EasySwoole\ORM\Db\Connection;
 use EasySwoole\ORM\DbManager;
 
-class CreateMysqlOrm
+class CreateMysqlOrm extends ServiceBase
 {
     use Singleton;
 
