@@ -20,8 +20,8 @@ class CreateRedisPool extends ServiceBase
         $conf->setSerialize(RedisConfig::SERIALIZE_NONE);
 
         $redisPoolConfig=Redis::getInstance()->register('redis',$conf);
-        $redisPoolConfig->setMinObjectNum(5);
-        $redisPoolConfig->setMaxObjectNum(20);
+        $redisPoolConfig->setMinObjectNum(10);
+        $redisPoolConfig->setMaxObjectNum(40);
         $redisPoolConfig->setAutoPing(10);
 
         return true;

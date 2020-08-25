@@ -8,12 +8,12 @@ return [
         'SOCK_TYPE' => SWOOLE_TCP,
         'RUN_MODEL' => SWOOLE_PROCESS,
         'SETTING' => [
-            'worker_num' => 8,
+            'worker_num' => 2,
             'reload_async' => true,
             'max_wait_time'=>3
         ],
         'TASK'=>[
-            'workerNum'=>4,
+            'workerNum'=>2,
             'maxRunningNum'=>128,
             'timeout'=>15
         ]

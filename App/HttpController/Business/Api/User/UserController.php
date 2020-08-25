@@ -32,10 +32,12 @@ class UserController extends UserBase
 
     function reg()
     {
+        $company=$this->request()->getRequestParam('company') ?? '';
         $username=$this->request()->getRequestParam('username') ?? '';
-        $password=$this->request()->getRequestParam('password') ?? 123456;
         $phone=$this->request()->getRequestParam('phone') ?? '';
         $email=$this->request()->getRequestParam('email') ?? '';
+
+        $password=$this->request()->getRequestParam('password') ?? 123456;
         $avatar=$this->request()->getRequestParam('avatar') ?? '';
 
         try
@@ -60,7 +62,8 @@ class UserController extends UserBase
                 'phone'=>$phone,
                 'email'=>$email,
                 'avatar'=>$avatar,
-                'token'=>$token
+                'token'=>$token,
+                'company'=>$company
             ];
 
             User::create()->data($insert,false)->save();
@@ -76,7 +79,7 @@ class UserController extends UserBase
     function login()
     {
         $phone=$this->request()->getRequestParam('phone') ?? '';
-        $password=$this->request()->getRequestParam('password') ?? '';
+        $password=$this->request()->getRequestParam('password') ?? '123456';
 
         try
         {

@@ -409,7 +409,58 @@ class QianQiService extends ServiceBase
         return ['code'=>200,'msg'=>'查询成功','data'=>$return];
     }
 
+    //近三年的财务数据不给原值的，转化成同比
+    function toPercent($data): array
+    {
+        $tmp=[];
 
+        //计算哪些字段的同比
+        $target=[
+            'ASSGRO_REL',//资产总额
+            'LIAGRO_REL',//负债总额
+            'VENDINC_REL',//营业总收入
+            'MAIBUSINC_REL',//主营业务收入
+            'PROGRO_REL',//利润总额
+            'NETINC_REL',//净利润
+            'RATGRO_REL',//纳税总额
+            'TOTEQU_REL',//所有者权益合计
+            'SOCNUM',//社保人数
+        ];
+
+        $yearArr=array_keys($data);
+        krsort($yearArr);
+
+        foreach ($yearArr as $year)
+        {
+            foreach ($target as $field)
+            {
+                //今年和去年都有这个字段
+                if (isset($data[$year][$field]) && isset($data[$year-1][$field]))
+                {
+                    $tmp[$year][$field]=$this->expr($data[$year][$field],$data[$year-1][$field]);
+                }else
+                {
+                    $tmp[$year][$field]=null;
+                }
+            }
+        }
+
+        krsort($tmp);
+        array_pop($tmp);
+
+        return $tmp;
+    }
+
+    //计算 (a - b) / b * 0.01
+    private function expr($now,$last)
+    {
+        if ($now===null || $last===null) return null;
+
+        //0不能是除数
+        if ($last===0) return null;
+
+        return number_format(($now - $last) / $last * 100,2);
+    }
 
 
 

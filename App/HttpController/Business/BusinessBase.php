@@ -12,7 +12,11 @@ class BusinessBase extends Index
     //也是为了onRequest
     function onRequest(?string $action): ?bool
     {
-        return parent::onRequest($action);
+        parent::onRequest($action);
+
+        $check=$this->checkToken();
+
+        return $check;
     }
 
     //还有afterAction

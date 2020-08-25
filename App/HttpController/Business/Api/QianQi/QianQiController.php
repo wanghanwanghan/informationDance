@@ -23,7 +23,7 @@ class QianQiController extends QianQiBase
         $res['Result']=$res['data'];
         $res['Message']=$res['msg'];
 
-        return $this->writeJson($res['code'],$res['Paging'],$res['Result'],$res['Message']);
+        return $this->writeJson((int)$res['code'],$res['Paging'],$res['Result'],$res['Message']);
     }
 
     //近三年的财务数据，不需要授权
@@ -38,6 +38,7 @@ class QianQiController extends QianQiBase
         $res=(new QianQiService())->getThreeYearsData($postData);
 
         //改成同比，不能返回原值
+        $res['data']=(new QianQiService())->toPercent($res['data']);
 
         return $this->checkResponse($res);
     }

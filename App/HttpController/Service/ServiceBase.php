@@ -26,4 +26,10 @@ class ServiceBase
         //返回log写入成功或者写入失败
         return control::writeLog($content,LOG_PATH,$type,$logFileName);
     }
+
+
+
+
+
+
 }
