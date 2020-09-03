@@ -103,6 +103,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/getShixin','/Business/Api/FaHai/FaHaiController/getShixin');//失信公告
             $routeCollector->addRoute(['GET','POST'],'/getSifacdk','/Business/Api/FaHai/FaHaiController/getSifacdk');//司法查封冻结扣押
             $routeCollector->addRoute(['GET','POST'],'/getSatpartyQs','/Business/Api/FaHai/FaHaiController/getSatpartyQs');//欠税公告
+            $routeCollector->addRoute(['GET','POST'],'/getSatpartyChufa','/Business/Api/FaHai/FaHaiController/getSatpartyChufa');//涉税处罚公示
             $routeCollector->addRoute(['GET','POST'],'/getSatpartyFzc','/Business/Api/FaHai/FaHaiController/getSatpartyFzc');//税务非正常户公示
             $routeCollector->addRoute(['GET','POST'],'/getSatpartyXin','/Business/Api/FaHai/FaHaiController/getSatpartyXin');//纳税信用等级
             $routeCollector->addRoute(['GET','POST'],'/getSatpartyReg','/Business/Api/FaHai/FaHaiController/getSatpartyReg');//税务登记

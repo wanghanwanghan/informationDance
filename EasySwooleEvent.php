@@ -6,6 +6,7 @@ use App\HttpController\Service\CreateDefine;
 use App\HttpController\Service\CreateMysqlOrm;
 use App\HttpController\Service\CreateMysqlPoolForProjectDb;
 use App\HttpController\Service\CreateRedisPool;
+use App\HttpController\Service\RequestUtils\LimitService;
 use EasySwoole\EasySwoole\Swoole\EventRegister;
 use EasySwoole\EasySwoole\AbstractInterface\Event;
 use EasySwoole\Http\Request;
@@ -31,6 +32,9 @@ class EasySwooleEvent implements Event
 
         //redis pool
         CreateRedisPool::getInstance()->createRedis();
+
+        //假装令牌桶
+        LimitService::getInstance()->create();
     }
 
     public static function onRequest(Request $request, Response $response): bool

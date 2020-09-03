@@ -18,6 +18,6 @@ return [
             'timeout'=>15
         ]
     ],
-    'TEMP_DIR' => null,
-    'LOG_DIR' => null
+    'TEMP_DIR' => '/tmp',
+    'LOG_DIR' => '/tmp'
 ];

@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Api\QiChaCha;
 
 use App\HttpController\Service\QiChaCha\QiChaChaService;
+use App\HttpController\Service\RequestUtils\LimitService;
 use wanghanwanghan\someUtils\control;
 
 class QiChaChaController extends QiChaChaBase
@@ -415,8 +416,6 @@ class QiChaChaController extends QiChaChaBase
     function getAnnualReport()
     {
         $entName=$this->request()->getRequestParam('entName');
-        $page=$this->request()->getRequestParam('page') ?? 1;
-        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
 
         $postData=[
             'keyNo'=>$entName,
@@ -587,6 +586,25 @@ class QiChaChaController extends QiChaChaBase
         $res=(new QiChaChaService())->get($this->baseUrl.'Microblog/GetList',$postData);
 
         return $this->checkResponse($res);
+    }
+
+    //用来获取上市公司股票代码用，以后重写
+    private function getBasicDetailsByName($entName)
+    {
+        $postData=[
+            'keyword'=>$entName,
+        ];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'ECIV4/GetBasicDetailsByName',$postData);
+
+        $StockNumber='';
+
+        if (isset($res['Result']) && !empty($res['Result']) && isset($res['Result']['StockNumber']))
+        {
+            empty($res['Result']['StockNumber']) ? $StockNumber='' : $StockNumber=$res['Result']['StockNumber'];
+        }
+
+        return $StockNumber;
     }
 
 

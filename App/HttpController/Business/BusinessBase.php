@@ -3,6 +3,7 @@
 namespace App\HttpController\Business;
 
 use App\HttpController\Index;
+use App\HttpController\Service\RequestUtils\LimitService;
 use wanghanwanghan\someUtils\control;
 
 class BusinessBase extends Index
@@ -14,9 +15,11 @@ class BusinessBase extends Index
     {
         parent::onRequest($action);
 
-        $check=$this->checkToken();
+        $checkToken=$this->checkToken();
 
-        return $check;
+        $checkLimit=$this->checkLimit();
+
+        return ($checkToken && $checkLimit);
     }
 
     //还有afterAction
@@ -69,15 +72,14 @@ class BusinessBase extends Index
     }
 
     //check token
-    private function checkToken(): ?bool
+    private function checkToken(): bool
     {
-        //通过返回true，不通过返回false
-
-        //token验证
-        $token=$this->request()->getHeader('authorization');
-
-        $token=(current($token));
-
         return true;
+    }
+
+    //check limit
+    private function checkLimit(): bool
+    {
+        return LimitService::getInstance()->check($this->userToken);
     }
 }

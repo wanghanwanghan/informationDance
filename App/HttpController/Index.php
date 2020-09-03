@@ -6,8 +6,13 @@ use EasySwoole\Http\AbstractInterface\Controller;
 
 class Index extends Controller
 {
+    public $userToken;
+
     function onRequest(?string $action): ?bool
     {
+        $token=$this->request()->getHeader('authorization');
+        $this->userToken=(current($token));
+
         return parent::onRequest($action);
     }
 

@@ -29,6 +29,7 @@ class CoHttpClient extends ServiceBase
 
     function send($url='',$postData=[],$headers=[],$options=[],$method='post')
     {
+        //从缓存中拿
         $take=$this->takeResult($url,$postData);
 
         //不是空，说明缓存里有数据，直接返回
