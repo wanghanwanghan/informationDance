@@ -41,6 +41,8 @@ class FaHaiController extends FaHaiBase
             $res['Paging']=null;
         }
 
+        if (isset($res['coHttpErr'])) return $this->writeJson(500,$res['Paging'],[],'co请求错误');
+
         $res['code'] === 's' ? $res['code'] = 200 : $res['code'] = 600;
 
         //拿返回结果

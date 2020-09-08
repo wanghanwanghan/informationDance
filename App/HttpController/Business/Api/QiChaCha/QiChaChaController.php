@@ -37,6 +37,8 @@ class QiChaChaController extends QiChaChaBase
             $res['Paging']=null;
         }
 
+        if (isset($res['coHttpErr'])) return $this->writeJson(500,$res['Paging'],[],'co请求错误');
+
         return $this->writeJson((int)$res['Status'],$res['Paging'],$res['Result'],$res['Message']);
     }
 

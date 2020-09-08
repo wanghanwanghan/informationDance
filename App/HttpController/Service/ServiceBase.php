@@ -11,7 +11,6 @@ class ServiceBase
         return true;
     }
 
-    //链接池系列抛出异常
     function writeErr(\Exception $e,$which=__CLASS__,$type='info'): bool
     {
         $logFileName=$which.'.log.'.date('Ymd',time());

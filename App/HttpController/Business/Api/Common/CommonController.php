@@ -3,6 +3,8 @@
 namespace App\HttpController\Business\Api\Common;
 
 use App\HttpController\Service\Common\CommonService;
+use EasySwoole\Pay\AliPay\Config as aliConfig;
+use EasySwoole\Pay\WeChat\Config as wxConfig;
 
 class CommonController extends CommonBase
 {
@@ -16,6 +18,7 @@ class CommonController extends CommonBase
         parent::afterAction($actionName);
     }
 
+    //图片上传
     function imageUpload()
     {
         $type=$this->request()->getRequestParam('type') ?? 'Avatar';
@@ -24,6 +27,18 @@ class CommonController extends CommonBase
 
         //返回文件路径
         return $this->writeJson(200,null,CommonService::getInstance()->storeImage($imageFile,$type));
+    }
+
+    //微信支付
+    function wxPay()
+    {
+
+    }
+
+    //支付宝支付
+    function aliPay()
+    {
+
     }
 
 }

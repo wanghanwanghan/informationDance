@@ -12,7 +12,8 @@
         "easyswoole/redis": "^1.3",
         "easyswoole/redis-pool": "^2.1",
         "nesbot/carbon": "^2.38",
-        "easyswoole/atomic-limit": "^1.0"
+        "easyswoole/atomic-limit": "^1.0",
+        "easyswoole/pay": "^1.28"
     },
     "autoload": {
         "psr-4": {

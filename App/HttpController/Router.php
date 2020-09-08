@@ -26,7 +26,9 @@ class Router extends AbstractRouter
     {
         $routeCollector->addGroup('/comm',function (RouteCollector $routeCollector)
         {
-            $routeCollector->addRoute(['GET','POST'],'/image/upload','/Business/Api/Common/CommonController/imageUpload');
+            $routeCollector->addRoute(['GET','POST'],'/image/upload','/Business/Api/Common/CommonController/imageUpload');//图片上传
+            $routeCollector->addRoute(['GET','POST'],'/wx/pay','/Business/Api/Common/CommonController/wxPay');//微信支付
+            $routeCollector->addRoute(['GET','POST'],'/ali/pay','/Business/Api/Common/CommonController/aliPay');//支付宝支付
         });
 
         return true;

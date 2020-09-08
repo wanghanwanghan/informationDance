@@ -53,7 +53,8 @@ class CoHttpClient extends ServiceBase
 
         }catch (\Exception $e)
         {
-            return $this->writeErr($e,__CLASS__);
+            $this->writeErr($e,__CLASS__);
+            return ['coHttpErr'=>'error'];
         }
 
         //缓存起来

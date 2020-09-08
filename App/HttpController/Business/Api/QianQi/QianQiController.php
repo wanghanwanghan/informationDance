@@ -20,6 +20,9 @@ class QianQiController extends QianQiBase
     private function checkResponse($res)
     {
         $res['Paging']=null;
+
+        if (isset($res['coHttpErr'])) return $this->writeJson(500,$res['Paging'],[],'co请求错误');
+
         $res['Result']=$res['data'];
         $res['Message']=$res['msg'];
 
