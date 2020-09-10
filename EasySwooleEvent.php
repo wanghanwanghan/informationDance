@@ -2,13 +2,15 @@
 
 namespace EasySwoole\EasySwoole;
 
-use App\Event\TestEvent;
+use App\Crontab\Service\CrontabService;
+use App\Event\EventList\TestEvent;
 use App\HttpController\Service\CreateDefine;
 use App\HttpController\Service\CreateMysqlOrm;
 use App\HttpController\Service\CreateMysqlPoolForProjectDb;
 use App\HttpController\Service\CreateRedisPool;
 use App\HttpController\Service\RequestUtils\LimitService;
 use App\Process\Service\ProcessService;
+use App\WebSocketController\Service\WsService;
 use EasySwoole\EasySwoole\Swoole\EventRegister;
 use EasySwoole\EasySwoole\AbstractInterface\Event;
 use EasySwoole\Http\Request;
@@ -46,6 +48,12 @@ class EasySwooleEvent implements Event
 
         //注册自定义进程
         ProcessService::getInstance()->create();
+
+        //注册定时任务
+        CrontabService::getInstance()->create();
+
+        //注册websocket
+        WsService::getInstance()->create($register);
     }
 
     public static function onRequest(Request $request, Response $response): bool

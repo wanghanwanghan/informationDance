@@ -29,6 +29,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/image/upload','/Business/Api/Common/CommonController/imageUpload');//图片上传
             $routeCollector->addRoute(['GET','POST'],'/wx/pay','/Business/Api/Common/CommonController/wxPay');//微信支付
             $routeCollector->addRoute(['GET','POST'],'/ali/pay','/Business/Api/Common/CommonController/aliPay');//支付宝支付
+            $routeCollector->addRoute(['GET','POST'],'/create/verifyCode','/Business/Api/Common/CommonController/createVerifyCode');//创建验证码
         });
 
         return true;
@@ -131,17 +132,16 @@ class Router extends AbstractRouter
 
     private function QianQiRouteV1(RouteCollector $routeCollector)
     {
-        $routeCollector->addGroup('/qq',function (RouteCollector $routeCollector)
-        {
-            $prefix='/Business/Api/QianQi/QianQiController/';
+        $prefix='/Business/Api/QianQi/QianQiController/';
 
+        $routeCollector->addGroup('/qq',function (RouteCollector $routeCollector) use ($prefix)
+        {
             $routeCollector->addRoute(['GET','POST'],'/getThreeYearsData',$prefix.'getThreeYearsData');//最近三年财务数据，不需授权
             $routeCollector->addRoute(['GET','POST'],'/getThreeYearsDataNeedAuth',$prefix.'getThreeYearsDataNeedAuth');//最近三年财务数据，需授权
         });
 
         return true;
     }
-
 
 
 

@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\CommandList;
+
+use App\Command\CommandBase;
 
 class TestCommand extends CommandBase
 {

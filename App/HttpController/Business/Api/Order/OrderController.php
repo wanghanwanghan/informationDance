@@ -13,4 +13,9 @@ class OrderController extends OrderBase
     {
         parent::afterAction($actionName);
     }
+
+    function test()
+    {
+
+    }
 }

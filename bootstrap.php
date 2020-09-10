@@ -1,6 +1,6 @@
 <?php
 
-use App\Command\TestCommand;
+use App\Command\CommandList\TestCommand;
 use EasySwoole\EasySwoole\Command\CommandContainer;
 
 //bootstrap 允许在框架未初始化之前，初始化其他业务

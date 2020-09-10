@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Event;
+namespace App\Event\EventList;
 
+use App\Event\EventBase;
 use EasySwoole\Component\Singleton;
 
 class TestEvent extends EventBase

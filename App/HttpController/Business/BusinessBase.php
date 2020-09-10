@@ -74,7 +74,45 @@ class BusinessBase extends Index
     //check token
     private function checkToken(): bool
     {
-        return true;
+        $checkRouter=$this->checkRouter();
+
+        $requestToken=$this->userToken;
+
+        $checkToken=true;
+
+
+
+
+        return ($checkRouter || $checkToken);
+    }
+
+    //检查路由是否直接放行
+    private function checkRouter(): bool
+    {
+        //直接放行的url，只判断url最后两个在不在数组中
+        $pass=[
+            'create/verifyCode',//e.g
+        ];
+
+        // /api/v1/comm/create/verifyCode
+        $path=$this->request()->getSwooleRequest()->server['path_info'];
+
+        $path=rtrim($path,'/');
+        $path=explode('/',$path);
+
+        if (!empty($path))
+        {
+            //检查url在不在直接放行数组
+            $len=count($path);
+            //取最后两个
+
+            $path=implode('/',[$path[$len-2],$path[$len-1]]);
+
+            //在数组里就放行
+            if (in_array($path,$pass)) return true;
+        }
+
+        return false;
     }
 
     //check limit

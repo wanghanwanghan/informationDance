@@ -21,12 +21,21 @@ class CommonController extends CommonBase
     //图片上传
     function imageUpload()
     {
-        $type=$this->request()->getRequestParam('type') ?? 'Avatar';
-        $phone=$this->request()->getRequestParam('phone');
-        $imageFile=$this->request()->getUploadedFile('image');
+        $type = $this->request()->getRequestParam('type') ?? 'Avatar';
+        $phone = $this->request()->getRequestParam('phone');
+        $imageFile = $this->request()->getUploadedFile('image');
 
         //返回文件路径
-        return $this->writeJson(200,null,CommonService::getInstance()->storeImage($imageFile,$type));
+        return $this->writeJson(200, null, CommonService::getInstance()->storeImage($imageFile, $type));
+    }
+
+    //创建验证码
+    function createVerifyCode()
+    {
+        $code = $this->request()->getRequestParam('code') ?? '';
+        $type = $this->request()->getRequestParam('type') ?? 'img';
+
+        return CommonService::getInstance()->createVerifyCode($this->response(), $code, $type);
     }
 
     //微信支付
