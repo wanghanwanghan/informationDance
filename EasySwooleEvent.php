@@ -10,7 +10,6 @@ use App\HttpController\Service\CreateMysqlPoolForProjectDb;
 use App\HttpController\Service\CreateRedisPool;
 use App\HttpController\Service\RequestUtils\LimitService;
 use App\Process\Service\ProcessService;
-use App\WebSocketController\Service\WsService;
 use EasySwoole\EasySwoole\Swoole\EventRegister;
 use EasySwoole\EasySwoole\AbstractInterface\Event;
 use EasySwoole\Http\Request;
@@ -51,9 +50,6 @@ class EasySwooleEvent implements Event
 
         //注册定时任务
         CrontabService::getInstance()->create();
-
-        //注册websocket
-        WsService::getInstance()->create($register);
     }
 
     public static function onRequest(Request $request, Response $response): bool
