@@ -6,8 +6,5 @@ use App\WebSocketController\Index;
 
 class BusinessBase extends Index
 {
-    function index()
-    {
 
-    }
 }
