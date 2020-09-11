@@ -18,9 +18,9 @@ class TaoShuService extends ServiceBase
 
     function __construct()
     {
-        $this->uid=\Yaconf::get('taoshu.uid');
-        $this->url=\Yaconf::get('taoshu.baseUrl');
-        $this->taoshuPEM=implode(PHP_EOL,\Yaconf::get('taoshu.pem'));
+        $this->uid = \Yaconf::get('taoshu.uid');
+        $this->url = \Yaconf::get('taoshu.baseUrl');
+        $this->taoshuPEM = implode(PHP_EOL, \Yaconf::get('taoshu.pem'));
 
         openssl_get_publickey($this->taoshuPEM);
     }
@@ -117,6 +117,8 @@ class TaoShuService extends ServiceBase
 
         $postBodyJson = $this->quantumEncode(json_encode($postBody), $this->taoshuPEM);
 
+        var_export($postBodyJson);
+
         //参数固定格式
         $p_arr['uid'] = $this->uid;
         $p_arr['data'] = json_encode($postBodyJson);
@@ -132,15 +134,6 @@ class TaoShuService extends ServiceBase
 
         return json_decode($rs, true);
     }
-
-
-
-
-
-
-
-
-
 
 
 }
