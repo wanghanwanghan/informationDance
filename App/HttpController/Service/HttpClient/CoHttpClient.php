@@ -21,6 +21,7 @@ class CoHttpClient extends ServiceBase
     public $db=0;
     public $ttlDay=1;
     private $needJsonDecode=true;
+    private $needJsonEncode=false;
 
     function __construct()
     {
@@ -46,7 +47,9 @@ class CoHttpClient extends ServiceBase
         try
         {
             //发送请求
-            $method === 'POST' ? $data=$request->post($postData) : $data=$request->get();
+            $method === 'POST' ?
+                $data=$request->post($this->needJsonEncode ? json_encode($postData) : $postData) :
+                $data=$request->get();
 
             //整理结果
             $data=$data->getBody();
@@ -66,6 +69,13 @@ class CoHttpClient extends ServiceBase
     function needJsonDecode($type)
     {
         $this->needJsonDecode=$type;
+
+        return $this;
+    }
+
+    function needJsonEncode($type)
+    {
+        $this->needJsonEncode=$type;
 
         return $this;
     }
