@@ -100,13 +100,20 @@ class CoHttpClient extends ServiceBase
 
         $data=[];
 
-        foreach ($postData as $key => $val)
+        if (is_array($postData))
         {
-            if (in_array($key,$unsetTarget)) continue;
-            $data[$key]=$val;
-        }
+            foreach ($postData as $key => $val)
+            {
+                if (in_array($key,$unsetTarget)) continue;
+                $data[$key]=$val;
+            }
 
-        krsort($data);
+            krsort($data);
+
+        }else
+        {
+            $data=$postData;
+        }
 
         return md5($url.json_encode($data));
     }
