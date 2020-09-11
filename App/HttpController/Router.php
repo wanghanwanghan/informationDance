@@ -17,7 +17,7 @@ class Router extends AbstractRouter
             $this->CommonRouteV1($routeCollector);//公共功能
             $this->UserRouteV1($routeCollector);//用户相关
             $this->QiChaChaRouteV1($routeCollector);//企查查路由
-            $this->TaoShuRouteV1($routeCollector);//企查查路由
+            $this->TaoShuRouteV1($routeCollector);//淘数路由
             $this->FaHaiRouteV1($routeCollector);//法海路由
             $this->QianQiRouteV1($routeCollector);//乾启路由
         });
