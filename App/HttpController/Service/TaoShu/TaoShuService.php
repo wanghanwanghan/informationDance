@@ -22,7 +22,9 @@ class TaoShuService extends ServiceBase
         $this->url=\Yaconf::get('taoshu.baseUrl');
         $this->taoshuPEM=\Yaconf::get('taoshu.pem');
 
-        openssl_get_publickey(implode(PHP_EOL,$this->taoshuPEM));
+        $key="-----BEGIN PUBLIC KEY-----\n".wordwrap(implode('',$this->taoshuPEM),64,"\n",true)."\n-----END PUBLIC KEY-----";
+
+        openssl_get_publickey($key);
     }
 
     private function authCode($string, $operation = 'DECODE', $key = '', $expiry = 0)
