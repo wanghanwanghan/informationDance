@@ -26,8 +26,6 @@ class TaoShuController extends TaoShuBase
 
         $res=(new TaoShuService())->post($postData,__FUNCTION__);
 
-        var_export($res);
-
         //return $this->checkResponse($res);
 
 
