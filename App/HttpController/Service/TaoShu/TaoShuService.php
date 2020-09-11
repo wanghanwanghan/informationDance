@@ -77,7 +77,7 @@ class TaoShuService extends ServiceBase
 
     private function quantumEncode($source, $key)
     {
-        var_export($this->taoshuPEM);
+        var_export(implode(PHP_EOL,$this->taoshuPEM));
         $result = [];
         $random = md5(time());
         $source = urlencode($source);
