@@ -121,7 +121,7 @@ class TaoShuService extends ServiceBase
         $p_arr['uid'] = $this->uid;
         $p_arr['data'] = json_encode($postBodyJson);
 
-        $data = (new CoHttpClient())->needJsonDecode(false)->send($this->url, $p_arr, $header, [], 'post');
+        $data = (new CoHttpClient())->needJsonDecode(false)->send($this->url, http_build_query($p_arr), $header, [], 'post');
 
         $data = urldecode($data);
 
