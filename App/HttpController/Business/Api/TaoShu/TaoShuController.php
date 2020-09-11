@@ -2,6 +2,8 @@
 
 namespace App\HttpController\Business\Api\TaoShu;
 
+use App\HttpController\Service\TaoShu\TaoShuService;
+
 class TaoShuController extends TaoShuBase
 {
     function onRequest(?string $action): ?bool
@@ -15,8 +17,38 @@ class TaoShuController extends TaoShuBase
         parent::afterAction($actionName);
     }
 
-    function index()
+    //企业基本信息
+    function getRegisterInfo()
     {
-        return true;
+        $entName=$this->request()->getRequestParam('entName') ?? '';
+
+        $postData=['searchKey'=>$entName];
+
+        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+
+        var_export($res);
+
+        //return $this->checkResponse($res);
+
+
+
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

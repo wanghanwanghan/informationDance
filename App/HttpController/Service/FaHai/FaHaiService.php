@@ -48,6 +48,35 @@ class FaHaiService extends ServiceBase
         return (new CoHttpClient())->send($url, $data);
     }
 
+    function getListForPerson($url, $body)
+    {
+        $sign_num = md5($this->authCode . $this->rt);
+        $doc_type = $body['doc_type'];
+        $name = $body['name'];
+        $idcardNo = $body['idcardNo'];
+        $pageno = $body['pageno'];
+        $range = $body['range'];
+
+        $json_data = [
+            'dataType' => $doc_type,
+            'name' => $name,
+            'idcardNo' => $idcardNo,
+            'pageno' => $pageno,
+            'range' => $range
+        ];
+
+        $json_data = json_encode($json_data);
+
+        $data = [
+            'authCode' => $this->authCode,
+            'rt' => $this->rt,
+            'sign' => $sign_num,
+            'args' => $json_data
+        ];
+
+        return (new CoHttpClient())->send($url, $data);
+    }
+
     function getDetail($url, $body)
     {
         $sign_num = md5($this->authCode . $this->rt);

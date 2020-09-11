@@ -6,12 +6,14 @@ use App\HttpController\Service\FaHai\FaHaiService;
 
 class FaHaiController extends FaHaiBase
 {
-    private $listBaseUrl;
+    private $listBaseUrl;//企业的
+    private $listBaseUrlForPerson;//个人的
     private $detailBaseUrl;
 
     function onRequest(?string $action): ?bool
     {
         $this->listBaseUrl=\Yaconf::get('fahai.listBaseUrl');
+        $this->listBaseUrlForPerson=\Yaconf::get('fahai.listBaseUrlForPerson');
         $this->detailBaseUrl=\Yaconf::get('fahai.detailBaseUrl');
 
         return parent::onRequest($action);
@@ -46,7 +48,13 @@ class FaHaiController extends FaHaiBase
         $res['code'] === 's' ? $res['code'] = 200 : $res['code'] = 600;
 
         //拿返回结果
-        isset($res[$docType.$type]) ? $res['Result'] = $res[$docType.$type] : $res['Result'] = [];
+        if ($type==='List')
+        {
+            isset($res[$docType.$type]) ? $res['Result'] = $res[$docType.$type] : $res['Result'] = [];
+        }else
+        {
+            isset($res[$docType]) ? $res['Result'] = $res[$docType] : $res['Result'] = [];
+        }
 
         return $this->writeJson($res['code'],$res['Paging'],$res['Result'],$res['msg']);
     }
@@ -72,6 +80,20 @@ class FaHaiController extends FaHaiBase
         return $this->checkResponse($res,$docType,'list');
     }
 
+    //环保处罚详情
+    function getEpbpartyDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='epbparty';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
+    }
+
     //重点监控企业名单
     function getEpbpartyJkqy()
     {
@@ -91,6 +113,20 @@ class FaHaiController extends FaHaiBase
         $res=(new FaHaiService())->getList($this->listBaseUrl.'epb',$postData);
 
         return $this->checkResponse($res,$docType,'list');
+    }
+
+    //重点监控企业名单详情
+    function getEpbpartyJkqyDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='epbparty_jkqy';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
     }
 
     //环保企业自行监测结果
@@ -114,6 +150,20 @@ class FaHaiController extends FaHaiBase
         return $this->checkResponse($res,$docType,'list');
     }
 
+    //环保企业自行监测结果详情
+    function getEpbpartyZxjcDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='epbparty_zxjc';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
+    }
+
     //环评公示数据
     function getEpbpartyHuanping()
     {
@@ -133,6 +183,20 @@ class FaHaiController extends FaHaiBase
         $res=(new FaHaiService())->getList($this->listBaseUrl.'epb',$postData);
 
         return $this->checkResponse($res,$docType,'list');
+    }
+
+    //环评公示数据详情
+    function getEpbpartyHuanpingDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='epbparty_huanping';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
     }
 
     //海关企业
@@ -156,6 +220,20 @@ class FaHaiController extends FaHaiBase
         return $this->checkResponse($res,$docType,'list');
     }
 
+    //海关企业详情
+    function getCustomQyDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='custom_qy';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
+    }
+
     //海关许可
     function getCustomXuke()
     {
@@ -175,6 +253,20 @@ class FaHaiController extends FaHaiBase
         $res=(new FaHaiService())->getList($this->listBaseUrl.'custom',$postData);
 
         return $this->checkResponse($res,$docType,'list');
+    }
+
+    //海关许可详情
+    function getCustomXukeDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='custom_xuke';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
     }
 
     //海关信用
@@ -198,6 +290,20 @@ class FaHaiController extends FaHaiBase
         return $this->checkResponse($res,$docType,'list');
     }
 
+    //海关信用详情
+    function getCustomCreditDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='custom_credit';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
+    }
+
     //海关处罚
     function getCustomPunish()
     {
@@ -217,6 +323,20 @@ class FaHaiController extends FaHaiBase
         $res=(new FaHaiService())->getList($this->listBaseUrl.'custom',$postData);
 
         return $this->checkResponse($res,$docType,'list');
+    }
+
+    //海关处罚详情
+    function getCustomPunishDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='custom_punish';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
     }
 
     //开庭公告
@@ -240,6 +360,20 @@ class FaHaiController extends FaHaiBase
         return $this->checkResponse($res,$docType,'list');
     }
 
+    //开庭公告详情
+    function getKtggDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='ktgg';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
+    }
+
     //裁判文书
     function getCpws()
     {
@@ -259,6 +393,20 @@ class FaHaiController extends FaHaiBase
         $res=(new FaHaiService())->getList($this->listBaseUrl.'sifa',$postData);
 
         return $this->checkResponse($res,$docType,'list');
+    }
+
+    //裁判文书详情
+    function getCpwsDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='cpws';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
     }
 
     //法院公告
@@ -282,6 +430,20 @@ class FaHaiController extends FaHaiBase
         return $this->checkResponse($res,$docType,'list');
     }
 
+    //法院公告详情
+    function getFyggDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='fygg';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
+    }
+
     //执行公告
     function getZxgg()
     {
@@ -301,6 +463,20 @@ class FaHaiController extends FaHaiBase
         $res=(new FaHaiService())->getList($this->listBaseUrl.'sifa',$postData);
 
         return $this->checkResponse($res,$docType,'list');
+    }
+
+    //执行公告详情
+    function getZxggDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='zxgg';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
     }
 
     //失信公告
@@ -324,6 +500,20 @@ class FaHaiController extends FaHaiBase
         return $this->checkResponse($res,$docType,'list');
     }
 
+    //失信公告详情
+    function getShixinDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='shixin';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
+    }
+
     //司法查封冻结扣押
     function getSifacdk()
     {
@@ -343,6 +533,20 @@ class FaHaiController extends FaHaiBase
         $res=(new FaHaiService())->getList($this->listBaseUrl.'sifa',$postData);
 
         return $this->checkResponse($res,$docType,'list');
+    }
+
+    //司法查封冻结扣押详情
+    function getSifacdkDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='sifacdk';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
     }
 
     //欠税公告
@@ -366,6 +570,20 @@ class FaHaiController extends FaHaiBase
         return $this->checkResponse($res,$docType,'list');
     }
 
+    //欠税公告详情
+    function getSatpartyQsDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='satparty_qs';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
+    }
+
     //涉税处罚公示
     function getSatpartyChufa()
     {
@@ -385,6 +603,20 @@ class FaHaiController extends FaHaiBase
         $res=(new FaHaiService())->getList($this->listBaseUrl.'sat',$postData);
 
         return $this->checkResponse($res,$docType,'list');
+    }
+
+    //涉税处罚公示详情
+    function getSatpartyChufaDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='satparty_chufa';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
     }
 
     //税务非正常户公示
@@ -408,6 +640,20 @@ class FaHaiController extends FaHaiBase
         return $this->checkResponse($res,$docType,'list');
     }
 
+    //税务非正常户公示详情
+    function getSatpartyFzcDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='satparty_fzc';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
+    }
+
     //纳税信用等级
     function getSatpartyXin()
     {
@@ -427,6 +673,20 @@ class FaHaiController extends FaHaiBase
         $res=(new FaHaiService())->getList($this->listBaseUrl.'sat',$postData);
 
         return $this->checkResponse($res,$docType,'list');
+    }
+
+    //纳税信用等级详情
+    function getSatpartyXinDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='satparty_xin';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
     }
 
     //税务登记
@@ -450,6 +710,20 @@ class FaHaiController extends FaHaiBase
         return $this->checkResponse($res,$docType,'list');
     }
 
+    //税务登记详情
+    function getSatpartyRegDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='satparty_reg';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
+    }
+
     //税务许可
     function getSatpartyXuke()
     {
@@ -469,6 +743,20 @@ class FaHaiController extends FaHaiBase
         $res=(new FaHaiService())->getList($this->listBaseUrl.'sat',$postData);
 
         return $this->checkResponse($res,$docType,'list');
+    }
+
+    //税务许可详情
+    function getSatpartyXukeDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='satparty_xuke';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
     }
 
     //央行行政处罚
@@ -492,6 +780,20 @@ class FaHaiController extends FaHaiBase
         return $this->checkResponse($res,$docType,'list');
     }
 
+    //央行行政处罚详情
+    function getPbcpartyDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='pbcparty';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
+    }
+
     //银保监会处罚公示
     function getPbcpartyCbrc()
     {
@@ -511,6 +813,20 @@ class FaHaiController extends FaHaiBase
         $res=(new FaHaiService())->getList($this->listBaseUrl.'pbc',$postData);
 
         return $this->checkResponse($res,$docType,'list');
+    }
+
+    //银保监会处罚公示详情
+    function getPbcpartyCbrcDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='pbcparty_cbrc';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
     }
 
     //证监处罚公示
@@ -534,6 +850,20 @@ class FaHaiController extends FaHaiBase
         return $this->checkResponse($res,$docType,'list');
     }
 
+    //证监处罚公示详情
+    function getPbcpartyCsrcChufaDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='pbcparty_csrc_chufa';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
+    }
+
     //证监会许可批复等级
     function getPbcpartyCsrcXkpf()
     {
@@ -553,6 +883,20 @@ class FaHaiController extends FaHaiBase
         $res=(new FaHaiService())->getList($this->listBaseUrl.'pbc',$postData);
 
         return $this->checkResponse($res,$docType,'list');
+    }
+
+    //证监会许可批复等级详情
+    function getPbcpartyCsrcXkpfDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='pbcparty_csrc_xkpf';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
     }
 
     //外汇局处罚
@@ -576,6 +920,20 @@ class FaHaiController extends FaHaiBase
         return $this->checkResponse($res,$docType,'list');
     }
 
+    //外汇局处罚详情
+    function getSafeChufaDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='safe_chufa';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
+    }
+
     //外汇局许可
     function getSafeXuke()
     {
@@ -595,6 +953,20 @@ class FaHaiController extends FaHaiBase
         $res=(new FaHaiService())->getList($this->listBaseUrl.'pbc',$postData);
 
         return $this->checkResponse($res,$docType,'list');
+    }
+
+    //外汇局许可详情
+    function getSafeXukeDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='safe_xuke';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
     }
 
     //应收帐款
@@ -618,6 +990,20 @@ class FaHaiController extends FaHaiBase
         return $this->checkResponse($res,$docType,'list');
     }
 
+    //应收帐款详情
+    function getCompanyZdwYszkdsrDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='company_zdw_yszkdsr';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
+    }
+
     //租赁登记
     function getCompanyZdwZldjdsr()
     {
@@ -637,6 +1023,20 @@ class FaHaiController extends FaHaiBase
         $res=(new FaHaiService())->getList($this->listBaseUrl.'zdw',$postData);
 
         return $this->checkResponse($res,$docType,'list');
+    }
+
+    //租赁登记详情
+    function getCompanyZdwZldjdsrDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='company_zdw_zldjdsr';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
     }
 
     //保证金质押登记
@@ -660,6 +1060,20 @@ class FaHaiController extends FaHaiBase
         return $this->checkResponse($res,$docType,'list');
     }
 
+    //保证金质押登记详情
+    function getCompanyZdwBzjzydsrDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='company_zdw_bzjzydsr';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
+    }
+
     //仓单质押
     function getCompanyZdwCdzydsr()
     {
@@ -679,6 +1093,20 @@ class FaHaiController extends FaHaiBase
         $res=(new FaHaiService())->getList($this->listBaseUrl.'zdw',$postData);
 
         return $this->checkResponse($res,$docType,'list');
+    }
+
+    //仓单质押详情
+    function getCompanyZdwCdzydsrDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='company_zdw_cdzydsr';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
     }
 
     //所有权保留
@@ -702,6 +1130,20 @@ class FaHaiController extends FaHaiBase
         return $this->checkResponse($res,$docType,'list');
     }
 
+    //所有权保留详情
+    function getCompanyZdwSyqbldsrDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='company_zdw_syqbldsr';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
+    }
+
     //其他动产融资
     function getCompanyZdwQtdcdsr()
     {
@@ -723,6 +1165,41 @@ class FaHaiController extends FaHaiBase
         return $this->checkResponse($res,$docType,'list');
     }
 
+    //其他动产融资详情
+    function getCompanyZdwQtdcdsrDetail()
+    {
+        $id=$this->request()->getRequestParam('id') ?? '';
+
+        $postData=['id'=>$id];
+
+        $docType='company_zdw_qtdcdsr';
+
+        $res=(new FaHaiService())->getDetail($this->detailBaseUrl.$docType,$postData);
+
+        return $this->checkResponse($res,$docType,'detail');
+    }
+
+    //个人涉诉
+    function getPersonSifa()
+    {
+        $name=$this->request()->getRequestParam('name');
+        $idcardNo=$this->request()->getRequestParam('idcardNo');
+        $docType=$this->request()->getRequestParam('docType') ?? 'ktgg';
+        $page=$this->request()->getRequestParam('page') ?? 1;
+        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData=[
+            'doc_type'=>$docType,
+            'name'=>$name,
+            'idcardNo'=>$idcardNo,
+            'pageno'=>$page,
+            'range'=>$pageSize,
+        ];
+
+        $res=(new FaHaiService())->getListForPerson($this->listBaseUrlForPerson.'sifa',$postData);
+
+        return $this->checkResponse($res,$docType,'list');
+    }
 
 
 

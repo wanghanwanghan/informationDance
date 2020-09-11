@@ -33,7 +33,7 @@ class LimitService extends ServiceBase
 
         $redis = Redis::defer('redis');
 
-        $redis->select(14);
+        $redis->select($this->db);
 
         //取得结果
         $data = $redis->get($minute . $token);

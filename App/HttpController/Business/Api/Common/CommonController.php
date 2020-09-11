@@ -32,6 +32,7 @@ class CommonController extends CommonBase
     //创建验证码
     function createVerifyCode()
     {
+        //随机生成code后，存到redis，等着验证，还没做存到redis
         $code = $this->request()->getRequestParam('code') ?? '';
         $type = $this->request()->getRequestParam('type') ?? 'img';
 

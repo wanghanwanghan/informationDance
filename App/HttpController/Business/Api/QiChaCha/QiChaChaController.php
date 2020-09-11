@@ -180,6 +180,18 @@ class QiChaChaController extends QiChaChaBase
         return $this->checkResponse($res);
     }
 
+    //招投标详情
+    function tenderSearchDetail()
+    {
+        $id=$this->request()->getRequestParam('id');
+
+        $postData=['id'=>$id];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'Tender/Detail',$postData);
+
+        return $this->checkResponse($res);
+    }
+
     //购地信息
     function landPurchaseList()
     {
@@ -194,6 +206,18 @@ class QiChaChaController extends QiChaChaBase
         ];
 
         $res=(new QiChaChaService())->get($this->baseUrl.'LandPurchase/LandPurchaseList',$postData);
+
+        return $this->checkResponse($res);
+    }
+
+    //购地信息详情
+    function landPurchaseListDetail()
+    {
+        $id=$this->request()->getRequestParam('id');
+
+        $postData=['id'=>$id];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'LandPurchase/LandPurchaseDetail',$postData);
 
         return $this->checkResponse($res);
     }
@@ -216,6 +240,18 @@ class QiChaChaController extends QiChaChaBase
         return $this->checkResponse($res);
     }
 
+    //土地公示详情
+    function landPublishListDetail()
+    {
+        $id=$this->request()->getRequestParam('id');
+
+        $postData=['id'=>$id];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'LandPublish/LandPublishDetail',$postData);
+
+        return $this->checkResponse($res);
+    }
+
     //土地转让
     function landTransferList()
     {
@@ -230,6 +266,18 @@ class QiChaChaController extends QiChaChaBase
         ];
 
         $res=(new QiChaChaService())->get($this->baseUrl.'LandTransfer/LandTransferList',$postData);
+
+        return $this->checkResponse($res);
+    }
+
+    //土地转让详情
+    function landTransferListDetail()
+    {
+        $id=$this->request()->getRequestParam('id');
+
+        $postData=['id'=>$id];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'LandTransfer/LandTransferDetail',$postData);
 
         return $this->checkResponse($res);
     }
@@ -252,6 +300,18 @@ class QiChaChaController extends QiChaChaBase
         return $this->checkResponse($res);
     }
 
+    //招聘信息详情
+    function getRecruitmentListDetail()
+    {
+        $id=$this->request()->getRequestParam('id');
+
+        $postData=['id'=>$id];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'Recruitment/GetDetail',$postData);
+
+        return $this->checkResponse($res);
+    }
+
     //建筑资质证书
     function getQualificationList()
     {
@@ -266,6 +326,18 @@ class QiChaChaController extends QiChaChaBase
         ];
 
         $res=(new QiChaChaService())->get($this->baseUrl.'Qualification/GetList',$postData);
+
+        return $this->checkResponse($res);
+    }
+
+    //建筑资质证书详情
+    function getQualificationListDetail()
+    {
+        $id=$this->request()->getRequestParam('id');
+
+        $postData=['id'=>$id];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'Qualification/GetDetail',$postData);
 
         return $this->checkResponse($res);
     }
@@ -288,6 +360,18 @@ class QiChaChaController extends QiChaChaBase
         return $this->checkResponse($res);
     }
 
+    //建筑工程项目详情
+    function getBuildingProjectListDetail()
+    {
+        $id=$this->request()->getRequestParam('id');
+
+        $postData=['id'=>$id];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'BuildingProject/GetDetail',$postData);
+
+        return $this->checkResponse($res);
+    }
+
     //债券
     function getBondList()
     {
@@ -302,6 +386,18 @@ class QiChaChaController extends QiChaChaBase
         ];
 
         $res=(new QiChaChaService())->get($this->baseUrl.'Bond/BondList',$postData);
+
+        return $this->checkResponse($res);
+    }
+
+    //债券详情
+    function getBondListDetail()
+    {
+        $id=$this->request()->getRequestParam('id');
+
+        $postData=['id'=>$id];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'Bond/BondDetail',$postData);
 
         return $this->checkResponse($res);
     }
@@ -324,6 +420,18 @@ class QiChaChaController extends QiChaChaBase
         return $this->checkResponse($res);
     }
 
+    //行政许可详情
+    function getAdministrativeLicenseListDetail()
+    {
+        $id=$this->request()->getRequestParam('id');
+
+        $postData=['id'=>$id];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'ADSTLicense/GetAdministrativeLicenseDetail',$postData);
+
+        return $this->checkResponse($res);
+    }
+
     //行政处罚
     function getAdministrativePenaltyList()
     {
@@ -342,6 +450,18 @@ class QiChaChaController extends QiChaChaBase
         return $this->checkResponse($res);
     }
 
+    //行政处罚详情
+    function getAdministrativePenaltyListDetail()
+    {
+        $id=$this->request()->getRequestParam('id');
+
+        $postData=['id'=>$id];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'AdministrativePenalty/GetAdministrativePenaltyDetail',$postData);
+
+        return $this->checkResponse($res);
+    }
+
     //司法拍卖
     function getJudicialSaleList()
     {
@@ -356,6 +476,18 @@ class QiChaChaController extends QiChaChaBase
         ];
 
         $res=(new QiChaChaService())->get($this->baseUrl.'JudicialSale/GetJudicialSaleList',$postData);
+
+        return $this->checkResponse($res);
+    }
+
+    //司法拍卖详情
+    function getJudicialSaleListDetail()
+    {
+        $id=$this->request()->getRequestParam('id');
+
+        $postData=['id'=>$id];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'JudicialSale/GetJudicialSaleDetail',$postData);
 
         return $this->checkResponse($res);
     }
@@ -414,6 +546,18 @@ class QiChaChaController extends QiChaChaBase
         return $this->checkResponse($res);
     }
 
+    //土地抵押详情
+    function getLandMortgageListDetail()
+    {
+        $id=$this->request()->getRequestParam('id');
+
+        $postData=['id'=>$id];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'LandMortgage/GetLandMortgageDetails',$postData);
+
+        return $this->checkResponse($res);
+    }
+
     //对外担保
     function getAnnualReport()
     {
@@ -464,6 +608,18 @@ class QiChaChaController extends QiChaChaBase
         return $this->checkResponse($res);
     }
 
+    //商标详情
+    function getTmSearchDetail()
+    {
+        $id=$this->request()->getRequestParam('id');
+
+        $postData=['id'=>$id];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'tm/GetDetails',$postData);
+
+        return $this->checkResponse($res);
+    }
+
     //专利
     function getPatentV4Search()
     {
@@ -478,6 +634,18 @@ class QiChaChaController extends QiChaChaBase
         ];
 
         $res=(new QiChaChaService())->get($this->baseUrl.'PatentV4/Search',$postData);
+
+        return $this->checkResponse($res);
+    }
+
+    //专利详情
+    function getPatentV4SearchDetail()
+    {
+        $id=$this->request()->getRequestParam('id');
+
+        $postData=['id'=>$id];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'PatentV4/GetDetails',$postData);
 
         return $this->checkResponse($res);
     }
@@ -536,6 +704,18 @@ class QiChaChaController extends QiChaChaBase
         return $this->checkResponse($res);
     }
 
+    //企业证书查询详情
+    function getSearchCertificationDetail()
+    {
+        $id=$this->request()->getRequestParam('id');
+
+        $postData=['id'=>$id];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'ECICertification/GetCertificationDetailById',$postData);
+
+        return $this->checkResponse($res);
+    }
+
     //新闻舆情
     function getSearchNews()
     {
@@ -550,6 +730,18 @@ class QiChaChaController extends QiChaChaBase
         ];
 
         $res=(new QiChaChaService())->get($this->baseUrl.'CompanyNews/SearchNews',$postData);
+
+        return $this->checkResponse($res);
+    }
+
+    //新闻舆情详情
+    function getSearchNewsDetail()
+    {
+        $id=$this->request()->getRequestParam('id');
+
+        $postData=['id'=>$id];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'CompanyNews/GetNewsDetail',$postData);
 
         return $this->checkResponse($res);
     }

@@ -17,6 +17,7 @@ class Router extends AbstractRouter
             $this->CommonRouteV1($routeCollector);//公共功能
             $this->UserRouteV1($routeCollector);//用户相关
             $this->QiChaChaRouteV1($routeCollector);//企查查路由
+            $this->TaoShuRouteV1($routeCollector);//企查查路由
             $this->FaHaiRouteV1($routeCollector);//法海路由
             $this->QianQiRouteV1($routeCollector);//乾启路由
         });
@@ -81,7 +82,37 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/getCompanyWebSite','/Business/Api/QiChaCha/QiChaChaController/getCompanyWebSite');//网站信息
             $routeCollector->addRoute(['GET','POST'],'/getMicroblogGetList','/Business/Api/QiChaCha/QiChaChaController/getMicroblogGetList');//微博
 
+            //详情系列
+            $routeCollector->addRoute(['GET','POST'],'/tenderSearchDetail','/Business/Api/QiChaCha/QiChaChaController/tenderSearchDetail');//招投标
+            $routeCollector->addRoute(['GET','POST'],'/landPurchaseListDetail','/Business/Api/QiChaCha/QiChaChaController/landPurchaseListDetail');//购地信息
+            $routeCollector->addRoute(['GET','POST'],'/landPublishListDetail','/Business/Api/QiChaCha/QiChaChaController/landPublishListDetail');//土地公示
+            $routeCollector->addRoute(['GET','POST'],'/landTransferListDetail','/Business/Api/QiChaCha/QiChaChaController/landTransferListDetail');//土地转让
+            $routeCollector->addRoute(['GET','POST'],'/getRecruitmentListDetail','/Business/Api/QiChaCha/QiChaChaController/getRecruitmentListDetail');//招聘信息
+            $routeCollector->addRoute(['GET','POST'],'/getQualificationListDetail','/Business/Api/QiChaCha/QiChaChaController/getQualificationListDetail');//建筑资质证书
+            $routeCollector->addRoute(['GET','POST'],'/getBuildingProjectListDetail','/Business/Api/QiChaCha/QiChaChaController/getBuildingProjectListDetail');//建筑工程项目
+            $routeCollector->addRoute(['GET','POST'],'/getBondListDetail','/Business/Api/QiChaCha/QiChaChaController/getBondListDetail');//债券
+            $routeCollector->addRoute(['GET','POST'],'/getAdministrativeLicenseListDetail','/Business/Api/QiChaCha/QiChaChaController/getAdministrativeLicenseListDetail');//行政许可
+            $routeCollector->addRoute(['GET','POST'],'/getAdministrativePenaltyListDetail','/Business/Api/QiChaCha/QiChaChaController/getAdministrativePenaltyListDetail');//行政处罚
+            $routeCollector->addRoute(['GET','POST'],'/getJudicialSaleListDetail','/Business/Api/QiChaCha/QiChaChaController/getJudicialSaleListDetail');//司法拍卖
+            $routeCollector->addRoute(['GET','POST'],'/getLandMortgageListDetail','/Business/Api/QiChaCha/QiChaChaController/getLandMortgageListDetail');//土地抵押
+            $routeCollector->addRoute(['GET','POST'],'/getTmSearchDetail','/Business/Api/QiChaCha/QiChaChaController/getTmSearchDetail');//商标
+            $routeCollector->addRoute(['GET','POST'],'/getPatentV4SearchDetail','/Business/Api/QiChaCha/QiChaChaController/getPatentV4SearchDetail');//专利
+            $routeCollector->addRoute(['GET','POST'],'/getSearchCertificationDetail','/Business/Api/QiChaCha/QiChaChaController/getSearchCertificationDetail');//企业证书查询
+            $routeCollector->addRoute(['GET','POST'],'/getSearchNewsDetail','/Business/Api/QiChaCha/QiChaChaController/getSearchNewsDetail');//新闻舆情
 
+
+        });
+
+        return true;
+    }
+
+    private function TaoShuRouteV1(RouteCollector $routeCollector)
+    {
+        $prefix='/Business/Api/TaoShu/TaoShuController/';
+
+        $routeCollector->addGroup('/ts',function (RouteCollector $routeCollector) use ($prefix)
+        {
+            $routeCollector->addRoute(['GET','POST'],'/getRegisterInfo',$prefix.'getRegisterInfo');//企业基本信息
         });
 
         return true;
@@ -123,7 +154,41 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/getCompanyZdwCdzydsr','/Business/Api/FaHai/FaHaiController/getCompanyZdwCdzydsr');//仓单质押
             $routeCollector->addRoute(['GET','POST'],'/getCompanyZdwSyqbldsr','/Business/Api/FaHai/FaHaiController/getCompanyZdwSyqbldsr');//所有权保留
             $routeCollector->addRoute(['GET','POST'],'/getCompanyZdwQtdcdsr','/Business/Api/FaHai/FaHaiController/getCompanyZdwQtdcdsr');//其他动产融资
+            $routeCollector->addRoute(['GET','POST'],'/getPersonSifa','/Business/Api/FaHai/FaHaiController/getPersonSifa');//个人涉诉
 
+            //详情系列
+            $routeCollector->addRoute(['GET','POST'],'/getEpbpartyDetail','/Business/Api/FaHai/FaHaiController/getEpbpartyDetail');//环保处罚
+            $routeCollector->addRoute(['GET','POST'],'/getEpbpartyJkqyDetail','/Business/Api/FaHai/FaHaiController/getEpbpartyJkqyDetail');//重点监控企业名单
+            $routeCollector->addRoute(['GET','POST'],'/getEpbpartyZxjcDetail','/Business/Api/FaHai/FaHaiController/getEpbpartyZxjcDetail');//环保企业自行监测结果
+            $routeCollector->addRoute(['GET','POST'],'/getEpbpartyHuanpingDetail','/Business/Api/FaHai/FaHaiController/getEpbpartyHuanpingDetail');//环评公示数据
+            $routeCollector->addRoute(['GET','POST'],'/getCustomQyDetail','/Business/Api/FaHai/FaHaiController/getCustomQyDetail');//海关企业
+            $routeCollector->addRoute(['GET','POST'],'/getCustomXukeDetail','/Business/Api/FaHai/FaHaiController/getCustomXukeDetail');//海关许可
+            $routeCollector->addRoute(['GET','POST'],'/getCustomCreditDetail','/Business/Api/FaHai/FaHaiController/getCustomCreditDetail');//海关信用
+            $routeCollector->addRoute(['GET','POST'],'/getCustomPunishDetail','/Business/Api/FaHai/FaHaiController/getCustomPunishDetail');//海关处罚
+            $routeCollector->addRoute(['GET','POST'],'/getKtggDetail','/Business/Api/FaHai/FaHaiController/getKtggDetail');//开庭公告
+            $routeCollector->addRoute(['GET','POST'],'/getCpwsDetail','/Business/Api/FaHai/FaHaiController/getCpwsDetail');//裁判文书
+            $routeCollector->addRoute(['GET','POST'],'/getFyggDetail','/Business/Api/FaHai/FaHaiController/getFyggDetail');//法院公告
+            $routeCollector->addRoute(['GET','POST'],'/getZxggDetail','/Business/Api/FaHai/FaHaiController/getZxggDetail');//执行公告
+            $routeCollector->addRoute(['GET','POST'],'/getShixinDetail','/Business/Api/FaHai/FaHaiController/getShixinDetail');//失信公告
+            $routeCollector->addRoute(['GET','POST'],'/getSifacdkDetail','/Business/Api/FaHai/FaHaiController/getSifacdkDetail');//司法查封冻结扣押
+            $routeCollector->addRoute(['GET','POST'],'/getSatpartyQsDetail','/Business/Api/FaHai/FaHaiController/getSatpartyQsDetail');//欠税公告
+            $routeCollector->addRoute(['GET','POST'],'/getSatpartyChufaDetail','/Business/Api/FaHai/FaHaiController/getSatpartyChufaDetail');//涉税处罚公示
+            $routeCollector->addRoute(['GET','POST'],'/getSatpartyFzcDetail','/Business/Api/FaHai/FaHaiController/getSatpartyFzcDetail');//税务非正常户公示
+            $routeCollector->addRoute(['GET','POST'],'/getSatpartyXinDetail','/Business/Api/FaHai/FaHaiController/getSatpartyXinDetail');//纳税信用等级
+            $routeCollector->addRoute(['GET','POST'],'/getSatpartyRegDetail','/Business/Api/FaHai/FaHaiController/getSatpartyRegDetail');//税务登记
+            $routeCollector->addRoute(['GET','POST'],'/getSatpartyXukeDetail','/Business/Api/FaHai/FaHaiController/getSatpartyXukeDetail');//税务许可
+            $routeCollector->addRoute(['GET','POST'],'/getPbcpartyDetail','/Business/Api/FaHai/FaHaiController/getPbcpartyDetail');//央行行政处罚
+            $routeCollector->addRoute(['GET','POST'],'/getPbcpartyCbrcDetail','/Business/Api/FaHai/FaHaiController/getPbcpartyCbrcDetail');//银保监会处罚公示
+            $routeCollector->addRoute(['GET','POST'],'/getPbcpartyCsrcChufaDetail','/Business/Api/FaHai/FaHaiController/getPbcpartyCsrcChufaDetail');//证监处罚公示
+            $routeCollector->addRoute(['GET','POST'],'/getPbcpartyCsrcXkpfDetail','/Business/Api/FaHai/FaHaiController/getPbcpartyCsrcXkpfDetail');//证监会许可批复等级
+            $routeCollector->addRoute(['GET','POST'],'/getSafeChufaDetail','/Business/Api/FaHai/FaHaiController/getSafeChufaDetail');//外汇局处罚
+            $routeCollector->addRoute(['GET','POST'],'/getSafeXukeDetail','/Business/Api/FaHai/FaHaiController/getSafeChufaDetail');//外汇局许可
+            $routeCollector->addRoute(['GET','POST'],'/getCompanyZdwYszkdsrDetail','/Business/Api/FaHai/FaHaiController/getCompanyZdwYszkdsrDetail');//应收帐款
+            $routeCollector->addRoute(['GET','POST'],'/getCompanyZdwZldjdsrDetail','/Business/Api/FaHai/FaHaiController/getCompanyZdwZldjdsrDetail');//租赁登记
+            $routeCollector->addRoute(['GET','POST'],'/getCompanyZdwBzjzydsrDetail','/Business/Api/FaHai/FaHaiController/getCompanyZdwBzjzydsrDetail');//保证金质押登记
+            $routeCollector->addRoute(['GET','POST'],'/getCompanyZdwCdzydsrDetail','/Business/Api/FaHai/FaHaiController/getCompanyZdwCdzydsrDetail');//仓单质押
+            $routeCollector->addRoute(['GET','POST'],'/getCompanyZdwSyqbldsrDetail','/Business/Api/FaHai/FaHaiController/getCompanyZdwSyqbldsrDetail');//所有权保留
+            $routeCollector->addRoute(['GET','POST'],'/getCompanyZdwQtdcdsrDetail','/Business/Api/FaHai/FaHaiController/getCompanyZdwQtdcdsrDetail');//其他动产融资
 
         });
 
