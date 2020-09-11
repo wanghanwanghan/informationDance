@@ -123,14 +123,12 @@ class TaoShuService extends ServiceBase
 
         $data = (new CoHttpClient())->needJsonDecode(false)->send($this->url, http_build_query($p_arr), $header, [], 'post');
 
+        $data = gzdecode($data);
         $data = urldecode($data);
 
-
-        var_export($data);
-
-
-
         $rs = $this->quantumDecode(json_decode($data), $this->taoshuPEM);
+
+        var_export($rs);
 
         return json_decode($rs, true);
     }
