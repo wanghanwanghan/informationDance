@@ -20,11 +20,9 @@ class TaoShuService extends ServiceBase
     {
         $this->uid=\Yaconf::get('taoshu.uid');
         $this->url=\Yaconf::get('taoshu.baseUrl');
-        $this->taoshuPEM=\Yaconf::get('taoshu.pem');
+        $this->taoshuPEM=implode(PHP_EOL,\Yaconf::get('taoshu.pem'));
 
-        $key="-----BEGIN PUBLIC KEY-----\n".wordwrap(implode('',$this->taoshuPEM),64,"\n",true)."\n-----END PUBLIC KEY-----";
-
-        openssl_get_publickey($key);
+        openssl_get_publickey($this->taoshuPEM);
     }
 
     private function authCode($string, $operation = 'DECODE', $key = '', $expiry = 0)
@@ -79,7 +77,6 @@ class TaoShuService extends ServiceBase
 
     private function quantumEncode($source, $key)
     {
-        var_export(implode(PHP_EOL,$this->taoshuPEM));
         $result = [];
         $random = md5(time());
         $source = urlencode($source);
