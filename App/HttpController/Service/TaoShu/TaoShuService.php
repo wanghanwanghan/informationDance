@@ -117,8 +117,6 @@ class TaoShuService extends ServiceBase
 
         $postBodyJson = $this->quantumEncode(json_encode($postBody), $this->taoshuPEM);
 
-        var_export($postBodyJson);
-
         //参数固定格式
         $p_arr['uid'] = $this->uid;
         $p_arr['data'] = json_encode($postBodyJson);
