@@ -25,12 +25,14 @@ class Router extends AbstractRouter
 
     private function CommonRouteV1(RouteCollector $routeCollector)
     {
-        $routeCollector->addGroup('/comm',function (RouteCollector $routeCollector)
+        $prefix='/Business/Api/Common/CommonController/';
+
+        $routeCollector->addGroup('/comm',function (RouteCollector $routeCollector) use ($prefix)
         {
-            $routeCollector->addRoute(['GET','POST'],'/image/upload','/Business/Api/Common/CommonController/imageUpload');//图片上传
-            $routeCollector->addRoute(['GET','POST'],'/wx/pay','/Business/Api/Common/CommonController/wxPay');//微信支付
-            $routeCollector->addRoute(['GET','POST'],'/ali/pay','/Business/Api/Common/CommonController/aliPay');//支付宝支付
-            $routeCollector->addRoute(['GET','POST'],'/create/verifyCode','/Business/Api/Common/CommonController/createVerifyCode');//创建验证码
+            $routeCollector->addRoute(['GET','POST'],'/image/upload',$prefix.'imageUpload');//图片上传
+            $routeCollector->addRoute(['GET','POST'],'/wx/pay',$prefix.'wxPay');//微信支付
+            $routeCollector->addRoute(['GET','POST'],'/ali/pay',$prefix.'aliPay');//支付宝支付
+            $routeCollector->addRoute(['GET','POST'],'/create/verifyCode',$prefix.'createVerifyCode');//创建验证码
         });
 
         return true;
@@ -38,10 +40,12 @@ class Router extends AbstractRouter
 
     private function UserRouteV1(RouteCollector $routeCollector)
     {
-        $routeCollector->addGroup('/user',function (RouteCollector $routeCollector)
+        $prefix='/Business/Api/User/UserController/';
+
+        $routeCollector->addGroup('/user',function (RouteCollector $routeCollector) use ($prefix)
         {
-            $routeCollector->addRoute(['GET','POST'],'/reg','/Business/Api/User/UserController/reg');
-            $routeCollector->addRoute(['GET','POST'],'/login','/Business/Api/User/UserController/login');
+            $routeCollector->addRoute(['GET','POST'],'/reg',$prefix.'reg');//注册
+            $routeCollector->addRoute(['GET','POST'],'/login',$prefix.'login');//登录
         });
 
         return true;
@@ -223,13 +227,6 @@ class Router extends AbstractRouter
 
         return true;
     }
-
-
-
-
-
-
-
 
 
 }
