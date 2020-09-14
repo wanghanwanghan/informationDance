@@ -255,10 +255,10 @@ class TaoShuController extends TaoShuBase
     //企业股权出质详情
     function getEquityPledgedDetailInfo()
     {
-        $rowKey=$this->request()->getRequestParam('rowKey') ?? '';
+        $id=$this->request()->getRequestParam('id') ?? '';
 
         $postData=[
-            'rowKey'=>$rowKey,
+            'rowKey'=>$id,
         ];
 
         $res=(new TaoShuService())->post($postData,__FUNCTION__);
@@ -287,10 +287,10 @@ class TaoShuController extends TaoShuBase
     //企业动产抵押详情
     function getChattelMortgageDetailInfo()
     {
-        $rowKey=$this->request()->getRequestParam('rowKey') ?? '';
+        $id=$this->request()->getRequestParam('id') ?? '';
 
         $postData=[
-            'rowKey'=>$rowKey,
+            'rowKey'=>$id,
         ];
 
         $res=(new TaoShuService())->post($postData,__FUNCTION__);
@@ -321,7 +321,7 @@ class TaoShuController extends TaoShuBase
     function getEntAnnReportForGuaranteeInfo()
     {
         $entName=$this->request()->getRequestParam('entName') ?? '';
-        $reportDate=$this->request()->getRequestParam('reportDate') ?? '';
+        $reportDate=$this->request()->getRequestParam('reportDate') ?? 2015;
 
         $postData=[
             'entName'=>$entName,
