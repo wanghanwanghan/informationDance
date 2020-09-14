@@ -71,17 +71,7 @@ class BusinessBase extends Index
         return control::writeLog($content, LOG_PATH, 'info', $logFileName);
     }
 
-    //check token
-    private function checkToken(): bool
-    {
-        $requestToken = $this->userToken;
-
-        $checkToken = true;
-
-        return $checkToken;
-    }
-
-    //检查路由是否直接放行
+    //check router
     private function checkRouter(): bool
     {
         //直接放行的url，只判断url最后两个在不在数组中
@@ -105,6 +95,16 @@ class BusinessBase extends Index
         }
 
         return false;
+    }
+
+    //check token
+    private function checkToken(): bool
+    {
+        $requestToken = $this->userToken;
+
+        $checkToken = true;
+
+        return $checkToken;
     }
 
     //check limit

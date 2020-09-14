@@ -3,7 +3,7 @@
 namespace App\Process\Service;
 
 use App\HttpController\Service\ServiceBase;
-use App\Process\TestProcess;
+use App\Process\ProcessList\TestProcess;
 use EasySwoole\Component\Di;
 use EasySwoole\Component\Process\Config;
 use EasySwoole\Component\Process\Manager;

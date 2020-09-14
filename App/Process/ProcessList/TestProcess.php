@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Process;
+namespace App\Process\ProcessList;
 
+use App\Process\ProcessBase;
 use Swoole\Process;
 
 class TestProcess extends ProcessBase
