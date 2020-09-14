@@ -3,7 +3,6 @@
 namespace App\HttpController\Business\Api\TaoShu;
 
 use App\HttpController\Service\TaoShu\TaoShuService;
-use wanghanwanghan\someUtils\control;
 
 class TaoShuController extends TaoShuBase
 {
@@ -43,6 +42,22 @@ class TaoShuController extends TaoShuBase
         isset($res['RESULTDATA']) ? $res['Result'] = $res['RESULTDATA'] : $res['Result'] = [];
 
         return $this->writeJson($res['code'],$res['Paging'],$res['Result'],null);
+    }
+
+    //企业名称检索
+    function getEntByKeyword()
+    {
+        $entName=$this->request()->getRequestParam('entName') ?? '';
+        $type=$this->request()->getRequestParam('type') ?? 0;
+
+        $postData=[
+            'keyword'=>$entName,
+            'type'=>$type,
+        ];
+
+        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+
+        return $this->checkResponse($res);
     }
 
     //企业基本信息

@@ -112,6 +112,7 @@ class Router extends AbstractRouter
 
         $routeCollector->addGroup('/ts',function (RouteCollector $routeCollector) use ($prefix)
         {
+            $routeCollector->addRoute(['GET','POST'],'/getEntByKeyword',$prefix.'getEntByKeyword');//企业名称检索
             $routeCollector->addRoute(['GET','POST'],'/getRegisterInfo',$prefix.'getRegisterInfo');//企业基本信息
         });
 
