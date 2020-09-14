@@ -48,8 +48,6 @@ class CoHttpClient extends ServiceBase
             //发送请求
             $method === 'POST' ? $data=$request->post($postData) : $data=$request->get();
 
-            var_export($data);
-
             //整理结果
             $data=$data->getBody();
 
