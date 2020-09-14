@@ -114,6 +114,7 @@ class Router extends AbstractRouter
         {
             $routeCollector->addRoute(['GET','POST'],'/getEntByKeyword',$prefix.'getEntByKeyword');//企业名称检索
             $routeCollector->addRoute(['GET','POST'],'/getRegisterInfo',$prefix.'getRegisterInfo');//企业基本信息
+            $routeCollector->addRoute(['GET','POST'],'/getShareHolderInfo',$prefix.'getShareHolderInfo');//企业股东及出资信息
         });
 
         return true;

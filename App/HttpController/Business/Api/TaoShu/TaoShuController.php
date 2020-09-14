@@ -72,6 +72,157 @@ class TaoShuController extends TaoShuBase
         return $this->checkResponse($res);
     }
 
+    //企业股东及出资信息
+    function getShareHolderInfo()
+    {
+        $entName=$this->request()->getRequestParam('entName') ?? '';
+        $pageNo=$this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData=[
+            'entName'=>$entName,
+            'pageNo'=>$pageNo,
+            'pageSize'=>$pageSize,
+        ];
+
+        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+
+        return $this->checkResponse($res);
+    }
+
+    //企业对外投资
+    function getInvestmentAbroadInfo()
+    {
+        $entName=$this->request()->getRequestParam('entName') ?? '';
+        $pageNo=$this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData=[
+            'entName'=>$entName,
+            'pageNo'=>$pageNo,
+            'pageSize'=>$pageSize,
+        ];
+
+        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+
+        return $this->checkResponse($res);
+    }
+
+    //企业分支机构
+    function getBranchInfo()
+    {
+        $entName=$this->request()->getRequestParam('entName') ?? '';
+        $pageNo=$this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData=[
+            'entName'=>$entName,
+            'pageNo'=>$pageNo,
+            'pageSize'=>$pageSize,
+        ];
+
+        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+
+        return $this->checkResponse($res);
+    }
+
+    //企业变更信息
+    function getRegisterChangeInfo()
+    {
+        $entName=$this->request()->getRequestParam('entName') ?? '';
+        $pageNo=$this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData=[
+            'entName'=>$entName,
+            'pageNo'=>$pageNo,
+            'pageSize'=>$pageSize,
+        ];
+
+        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+
+        return $this->checkResponse($res);
+    }
+
+    //企业主要管理人员
+    function getMainManagerInfo()
+    {
+        $entName=$this->request()->getRequestParam('entName') ?? '';
+        $pageNo=$this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData=[
+            'entName'=>$entName,
+            'pageNo'=>$pageNo,
+            'pageSize'=>$pageSize,
+        ];
+
+        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+
+        return $this->checkResponse($res);
+    }
+
+    //法人代表对外投资
+    function lawPersonInvestmentInfo()
+    {
+        $entName=$this->request()->getRequestParam('entName') ?? '';
+        $pageNo=$this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData=[
+            'entName'=>$entName,
+            'pageNo'=>$pageNo,
+            'pageSize'=>$pageSize,
+        ];
+
+        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+
+        return $this->checkResponse($res);
+    }
+
+    //法人代表其他公司任职
+    function getLawPersontoOtherInfo()
+    {
+        $entName=$this->request()->getRequestParam('entName') ?? '';
+        $pageNo=$this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData=[
+            'entName'=>$entName,
+            'pageNo'=>$pageNo,
+            'pageSize'=>$pageSize,
+        ];
+
+        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+
+        return $this->checkResponse($res);
+    }
+
+    //企业最终控制人
+    function getGraphGFinalData()
+    {
+        $entName=$this->request()->getRequestParam('entName') ?? '';
+        //R102-企业股东，R104-自然人股东，R108-总部
+        $attIds=$this->request()->getRequestParam('attIds') ?? 'R102';
+        $level=$this->request()->getRequestParam('level') ?? 10;
+        //GS-企业节点，GR-人员节点
+        $nodeType=$this->request()->getRequestParam('nodeType') ?? 'GS';
+
+        $postData=[
+            'keyword'=>$entName,
+            'attIds'=>$attIds,
+            'level'=>$level,
+            'nodeType'=>$nodeType,
+        ];
+
+        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+
+        return $this->checkResponse($res);
+    }
+
+
+
+
 
 
 
