@@ -220,11 +220,118 @@ class TaoShuController extends TaoShuBase
         return $this->checkResponse($res);
     }
 
+    //企业经营异常
+    function getOperatingExceptionRota()
+    {
+        $entName=$this->request()->getRequestParam('entName') ?? '';
 
+        $postData=[
+            'entName'=>$entName,
+        ];
 
+        $res=(new TaoShuService())->post($postData,__FUNCTION__);
 
+        return $this->checkResponse($res);
+    }
 
+    //企业股权出质列表
+    function getEquityPledgedInfo()
+    {
+        $entName=$this->request()->getRequestParam('entName') ?? '';
+        $pageNo=$this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
 
+        $postData=[
+            'entName'=>$entName,
+            'pageNo'=>$pageNo,
+            'pageSize'=>$pageSize,
+        ];
+
+        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+
+        return $this->checkResponse($res);
+    }
+
+    //企业股权出质详情
+    function getEquityPledgedDetailInfo()
+    {
+        $rowKey=$this->request()->getRequestParam('rowKey') ?? '';
+
+        $postData=[
+            'rowKey'=>$rowKey,
+        ];
+
+        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+
+        return $this->checkResponse($res);
+    }
+
+    //企业动产抵押列表
+    function getChattelMortgageInfo()
+    {
+        $entName=$this->request()->getRequestParam('entName') ?? '';
+        $pageNo=$this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData=[
+            'entName'=>$entName,
+            'pageNo'=>$pageNo,
+            'pageSize'=>$pageSize,
+        ];
+
+        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+
+        return $this->checkResponse($res);
+    }
+
+    //企业动产抵押详情
+    function getChattelMortgageDetailInfo()
+    {
+        $rowKey=$this->request()->getRequestParam('rowKey') ?? '';
+
+        $postData=[
+            'rowKey'=>$rowKey,
+        ];
+
+        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+
+        return $this->checkResponse($res);
+    }
+
+    //企业实际控制人信息
+    function getEntActualContoller()
+    {
+        $entName=$this->request()->getRequestParam('entName') ?? '';
+        //R102-法人股东，R104-企业自然人股东，R108-总部
+        $attIds=$this->request()->getRequestParam('attIds') ?? 'R102';
+        $level=$this->request()->getRequestParam('level') ?? 10;
+
+        $postData=[
+            'keyword'=>$entName,
+            'attIds'=>$attIds,
+            'level'=>$level,
+        ];
+
+        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+
+        return $this->checkResponse($res);
+    }
+
+    //企业年报对外担保信息
+    function getEntAnnReportForGuaranteeInfo()
+    {
+        $entName=$this->request()->getRequestParam('entName') ?? '';
+        $reportDate=$this->request()->getRequestParam('reportDate') ?? '';
+
+        $postData=[
+            'entName'=>$entName,
+            'reportDate'=>$reportDate,
+        ];
+
+        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+
+        return $this->checkResponse($res);
+    }
 
 
 

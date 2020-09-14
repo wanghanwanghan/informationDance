@@ -115,6 +115,20 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/getEntByKeyword',$prefix.'getEntByKeyword');//企业名称检索
             $routeCollector->addRoute(['GET','POST'],'/getRegisterInfo',$prefix.'getRegisterInfo');//企业基本信息
             $routeCollector->addRoute(['GET','POST'],'/getShareHolderInfo',$prefix.'getShareHolderInfo');//企业股东及出资信息
+            $routeCollector->addRoute(['GET','POST'],'/getInvestmentAbroadInfo',$prefix.'getInvestmentAbroadInfo');//企业对外投资
+            $routeCollector->addRoute(['GET','POST'],'/getBranchInfo',$prefix.'getBranchInfo');//企业分支机构
+            $routeCollector->addRoute(['GET','POST'],'/getRegisterChangeInfo',$prefix.'getRegisterChangeInfo');//企业变更信息
+            $routeCollector->addRoute(['GET','POST'],'/getMainManagerInfo',$prefix.'getMainManagerInfo');//企业主要管理人员
+            $routeCollector->addRoute(['GET','POST'],'/lawPersonInvestmentInfo',$prefix.'lawPersonInvestmentInfo');//法人代表对外投资
+            $routeCollector->addRoute(['GET','POST'],'/getLawPersontoOtherInfo',$prefix.'getLawPersontoOtherInfo');//法人代表其他公司任职
+            $routeCollector->addRoute(['GET','POST'],'/getGraphGFinalData',$prefix.'getGraphGFinalData');//企业最终控制人
+            $routeCollector->addRoute(['GET','POST'],'/getOperatingExceptionRota',$prefix.'getOperatingExceptionRota');//企业经营异常
+            $routeCollector->addRoute(['GET','POST'],'/getEquityPledgedInfo',$prefix.'getEquityPledgedInfo');//企业股权出质列表
+            $routeCollector->addRoute(['GET','POST'],'/getEquityPledgedDetailInfo',$prefix.'getEquityPledgedDetailInfo');//企业股权出质详情
+            $routeCollector->addRoute(['GET','POST'],'/getChattelMortgageInfo',$prefix.'getChattelMortgageInfo');//企业动产抵押列表
+            $routeCollector->addRoute(['GET','POST'],'/getChattelMortgageDetailInfo',$prefix.'getChattelMortgageDetailInfo');//企业动产抵押详情
+            $routeCollector->addRoute(['GET','POST'],'/getEntActualContoller',$prefix.'getEntActualContoller');//企业实际控制人信息
+            $routeCollector->addRoute(['GET','POST'],'/getEntAnnReportForGuaranteeInfo',$prefix.'getEntAnnReportForGuaranteeInfo');//企业年报对外担保信息
         });
 
         return true;
