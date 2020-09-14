@@ -48,6 +48,7 @@ class TaoShuController extends TaoShuBase
     function getEntByKeyword()
     {
         $entName=$this->request()->getRequestParam('entName') ?? '';
+        //0企业名称模糊检索，1注册号,统一社会信用代码精准检索，2注册地址模糊检索，4智能模糊检索
         $type=$this->request()->getRequestParam('type') ?? 0;
 
         $postData=[
