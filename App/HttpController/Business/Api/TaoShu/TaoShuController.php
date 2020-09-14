@@ -22,9 +22,11 @@ class TaoShuController extends TaoShuBase
     {
         $entName=$this->request()->getRequestParam('entName') ?? '';
 
-        $postData=['searchKey'=>$entName];
+        $postData=['entName'=>$entName];
 
         $res=(new TaoShuService())->post($postData,__FUNCTION__);
+
+        var_export($res);
 
         //return $this->checkResponse($res);
 

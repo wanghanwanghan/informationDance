@@ -128,9 +128,6 @@ class TaoShuService extends ServiceBase
 
         $rs = $this->quantumDecode(json_decode($data), $this->taoshuPEM);
 
-        var_export($rs);
-
-
         return json_decode($rs, true);
     }
 
