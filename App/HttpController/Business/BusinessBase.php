@@ -15,11 +15,13 @@ class BusinessBase extends Index
     {
         parent::onRequest($action);
 
-        $checkToken=$this->checkToken();
+        $checkRouter = $this->checkRouter();
 
-        $checkLimit=$this->checkLimit();
+        $checkToken = $this->checkToken();
 
-        return ($checkToken && $checkLimit);
+        $checkLimit = $this->checkLimit();
+
+        return ($checkRouter || ($checkToken && $checkLimit));
     }
 
     //还有afterAction
@@ -29,11 +31,10 @@ class BusinessBase extends Index
     }
 
     //重写writeJson
-    function writeJson($statusCode=200,$paging=null,$result=null,$msg=null)
+    function writeJson($statusCode = 200, $paging = null, $result = null, $msg = null)
     {
-        if (!$this->response()->isEndResponse())
-        {
-            $data=[
+        if (!$this->response()->isEndResponse()) {
+            $data = [
                 'code' => $statusCode,
                 'paging' => $paging,
                 'result' => $result,
@@ -46,70 +47,61 @@ class BusinessBase extends Index
 
             return true;
 
-        }else
-        {
+        } else {
             return false;
         }
     }
 
     //链接池系列抛出异常
-    function writeErr(\Throwable $e,$which='comm'): bool
+    function writeErr(\Throwable $e, $which = 'comm'): bool
     {
         //给用户看的
-        $this->writeJson(9527,null,null,$which.'错误');
+        $this->writeJson(9527, null, null, $which . '错误');
 
-        $logFileName=$which.'.log.'.date('Ymd',time());
+        $logFileName = $which . '.log.' . date('Ymd', time());
 
         //给程序员看的
-        $file=$e->getFile();
-        $line=$e->getLine();
-        $msg=$e->getMessage();
+        $file = $e->getFile();
+        $line = $e->getLine();
+        $msg = $e->getMessage();
 
-        $content="[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
+        $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
 
         //返回log写入成功或者写入失败
-        return control::writeLog($content,LOG_PATH,'info',$logFileName);
+        return control::writeLog($content, LOG_PATH, 'info', $logFileName);
     }
 
     //check token
     private function checkToken(): bool
     {
-        $checkRouter=$this->checkRouter();
+        $requestToken = $this->userToken;
 
-        $requestToken=$this->userToken;
+        $checkToken = true;
 
-        $checkToken=true;
-
-
-
-
-        return ($checkRouter || $checkToken);
+        return $checkToken;
     }
 
     //检查路由是否直接放行
     private function checkRouter(): bool
     {
         //直接放行的url，只判断url最后两个在不在数组中
-        $pass=[
-            'create/verifyCode',//e.g
-        ];
+        $pass = \Yaconf::get('env.passRouter');
 
         // /api/v1/comm/create/verifyCode
-        $path=$this->request()->getSwooleRequest()->server['path_info'];
+        $path = $this->request()->getSwooleRequest()->server['path_info'];
 
-        $path=rtrim($path,'/');
-        $path=explode('/',$path);
+        $path = rtrim($path, '/');
+        $path = explode('/', $path);
 
-        if (!empty($path))
-        {
+        if (!empty($path)) {
             //检查url在不在直接放行数组
-            $len=count($path);
-            //取最后两个
+            $len = count($path);
 
-            $path=implode('/',[$path[$len-2],$path[$len-1]]);
+            //取最后两个
+            $path = implode('/', [$path[$len - 2], $path[$len - 1]]);
 
             //在数组里就放行
-            if (in_array($path,$pass)) return true;
+            if (in_array($path, $pass)) return true;
         }
 
         return false;
