@@ -21,13 +21,47 @@ class FaHaiService extends ServiceBase
         $this->rt = time() * 1000;
     }
 
+    private function checkResp($res,$docType,$type='list')
+    {
+        $type=ucfirst($type);
+
+        if (isset($res['pageNo']) && isset($res['range']) && isset($res['totalCount']) && isset($res['totalPageNum']))
+        {
+            $res['Paging']=[
+                'page'=>$res['pageNo'],
+                'pageSize'=>$res['range'],
+                'total'=>$res['totalCount'],
+                'totalPage'=>$res['totalPageNum'],
+            ];
+
+        }else
+        {
+            $res['Paging']=null;
+        }
+
+        if (isset($res['coHttpErr'])) return $this->createReturn(500,$res['Paging'],[],'co请求错误');
+
+        $res['code'] === 's' ? $res['code'] = 200 : $res['code'] = 600;
+
+        //拿返回结果
+        if ($type==='List')
+        {
+            isset($res[$docType.$type]) ? $res['Result'] = $res[$docType.$type] : $res['Result'] = [];
+        }else
+        {
+            isset($res[$docType]) ? $res['Result'] = $res[$docType] : $res['Result'] = [];
+        }
+
+        return $this->createReturn($res['code'],$res['Paging'],$res['Result'],$res['msg']);
+    }
+
     function getList($url, $body)
     {
         $sign_num = md5($this->authCode . $this->rt);
         $doc_type = $body['doc_type'];
         $keyword = $body['keyword'];
-        $pageno = $body['pageno'];
-        $range = $body['range'];
+        $pageno = $body['pageno'] ?? 1;
+        $range = $body['range'] ?? 10;
 
         $json_data = [
             'dataType' => $doc_type,
@@ -45,7 +79,9 @@ class FaHaiService extends ServiceBase
             'args' => $json_data
         ];
 
-        return (new CoHttpClient())->send($url, $data);
+        $resp = (new CoHttpClient())->send($url, $data);
+
+        return $this->checkRespFlag ? $this->checkResp($resp,$doc_type) : $resp;
     }
 
     function getListForPerson($url, $body)
@@ -54,8 +90,8 @@ class FaHaiService extends ServiceBase
         $doc_type = $body['doc_type'];
         $name = $body['name'];
         $idcardNo = $body['idcardNo'];
-        $pageno = $body['pageno'];
-        $range = $body['range'];
+        $pageno = $body['pageno'] ?? 1;
+        $range = $body['range'] ?? 10;
 
         $json_data = [
             'dataType' => $doc_type,

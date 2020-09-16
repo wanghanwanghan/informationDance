@@ -34,7 +34,7 @@ class CommonController extends CommonBase
     {
         //随机生成code后，存到redis，等着验证，还没做存到redis
         $code = $this->request()->getRequestParam('code') ?? '';
-        $type = $this->request()->getRequestParam('type') ?? 'img';
+        $type = $this->request()->getRequestParam('type') ?? 'image';
 
         return CommonService::getInstance()->createVerifyCode($this->response(), $code, $type);
     }
@@ -42,6 +42,12 @@ class CommonController extends CommonBase
     //微信支付
     function wxPay()
     {
+        $wxConfig = new wxConfig();
+
+
+
+
+
 
     }
 

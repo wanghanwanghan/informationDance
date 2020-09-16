@@ -4,6 +4,7 @@ namespace App\HttpController\Service\QiChaCha;
 
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
+use wanghanwanghan\someUtils\control;
 
 class QiChaChaService extends ServiceBase
 {
@@ -34,7 +35,32 @@ class QiChaChaService extends ServiceBase
 
         $url .= '?' . http_build_query($body);
 
-        return (new CoHttpClient())->send($url, $body, $header, [], 'get');
+        $resp = (new CoHttpClient())->send($url, $body, $header, [], 'get');
+
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
+
+    //处理结果给信息controller
+    private function checkResp($res)
+    {
+        if (isset($res['Paging']) && !empty($res['Paging']))
+        {
+            $res['Paging']=control::changeArrKey($res['Paging'],[
+                'PageSize'=>'pageSize',
+                'PageIndex'=>'page',
+                'TotalRecords'=>'total'
+            ]);
+        }else
+        {
+            $res['Paging']=null;
+        }
+
+        if (isset($res['coHttpErr'])) return $this->createReturn(500,$res['Paging'],[],'co请求错误');
+
+        return $this->createReturn((int)$res['Status'],$res['Paging'],$res['Result'],$res['Message']);
+    }
+
+
+
 
 }

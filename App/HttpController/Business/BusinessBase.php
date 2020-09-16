@@ -8,12 +8,15 @@ use wanghanwanghan\someUtils\control;
 
 class BusinessBase extends Index
 {
-    //继承这个主要是为了可以writeJson
+    public $userToken;
 
-    //也是为了onRequest
     function onRequest(?string $action): ?bool
     {
         parent::onRequest($action);
+
+        $token = $this->request()->getHeader('authorization');
+
+        $this->userToken = (current($token));
 
         $checkRouter = $this->checkRouter();
 
@@ -24,7 +27,6 @@ class BusinessBase extends Index
         return ($checkRouter || ($checkToken && $checkLimit));
     }
 
-    //还有afterAction
     function afterAction(?string $actionName): void
     {
         parent::afterAction($actionName);

@@ -9,7 +9,6 @@ use EasySwoole\DDL\DDLBuilder;
 use EasySwoole\DDL\Enum\Character;
 use EasySwoole\DDL\Enum\Engine;
 use EasySwoole\Pool\Manager;
-use EasySwoole\RedisPool\Redis;
 
 class UserController extends UserBase
 {

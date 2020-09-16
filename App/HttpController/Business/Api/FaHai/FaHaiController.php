@@ -969,7 +969,7 @@ class FaHaiController extends FaHaiBase
         return $this->checkResponse($res,$docType,'detail');
     }
 
-    //应收帐款
+    //应收账款
     function getCompanyZdwYszkdsr()
     {
         $entName=$this->request()->getRequestParam('entName');
@@ -990,7 +990,7 @@ class FaHaiController extends FaHaiBase
         return $this->checkResponse($res,$docType,'list');
     }
 
-    //应收帐款详情
+    //应收账款详情
     function getCompanyZdwYszkdsrDetail()
     {
         $id=$this->request()->getRequestParam('id') ?? '';
@@ -1200,6 +1200,71 @@ class FaHaiController extends FaHaiBase
 
         return $this->checkResponse($res,$docType,'list');
     }
+
+    //上市公司-抵押解除
+    function getCompanyDcrzDiyajc()
+    {
+        $entName=$this->request()->getRequestParam('entName');
+        $page=$this->request()->getRequestParam('page') ?? 1;
+        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+
+        $docType='company_dcrz_diyajc';
+
+        $postData=[
+            'doc_type'=>$docType,
+            'keyword'=>$entName,
+            'pageno'=>$page,
+            'range'=>$pageSize,
+        ];
+
+        $res=(new FaHaiService())->getList($this->listBaseUrl.'zyzb',$postData);
+
+        return $this->checkResponse($res,$docType,'list');
+    }
+
+    //上市公司-解质押数据
+    function getCompanyDcrzZhiyajc()
+    {
+        $entName=$this->request()->getRequestParam('entName');
+        $page=$this->request()->getRequestParam('page') ?? 1;
+        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+
+        $docType='company_dcrz_zhiyajc';
+
+        $postData=[
+            'doc_type'=>$docType,
+            'keyword'=>$entName,
+            'pageno'=>$page,
+            'range'=>$pageSize,
+        ];
+
+        $res=(new FaHaiService())->getList($this->listBaseUrl.'zyzb',$postData);
+
+        return $this->checkResponse($res,$docType,'list');
+    }
+
+    //上市公司-担保数据
+    function getCompanyDcrzDanbao()
+    {
+        $entName=$this->request()->getRequestParam('entName');
+        $page=$this->request()->getRequestParam('page') ?? 1;
+        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+
+        $docType='company_dcrz_danbao';
+
+        $postData=[
+            'doc_type'=>$docType,
+            'keyword'=>$entName,
+            'pageno'=>$page,
+            'range'=>$pageSize,
+        ];
+
+        $res=(new FaHaiService())->getList($this->listBaseUrl.'zyzb',$postData);
+
+        return $this->checkResponse($res,$docType,'list');
+    }
+
+
 
 
 

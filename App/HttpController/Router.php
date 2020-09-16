@@ -14,16 +14,17 @@ class Router extends AbstractRouter
 
         $routeCollector->addGroup('/api/v1',function (RouteCollector $routeCollector)
         {
-            $this->CommonRouteV1($routeCollector);//公共功能
-            $this->UserRouteV1($routeCollector);//用户相关
-            $this->QiChaChaRouteV1($routeCollector);//企查查路由
-            $this->TaoShuRouteV1($routeCollector);//淘数路由
-            $this->FaHaiRouteV1($routeCollector);//法海路由
-            $this->QianQiRouteV1($routeCollector);//乾启路由
+            $this->CommonRouterV1($routeCollector);//公共功能
+            $this->UserRouterV1($routeCollector);//用户相关
+            $this->XinDongRouterV1($routeCollector);//信动路由
+            $this->QiChaChaRouterV1($routeCollector);//企查查路由
+            $this->TaoShuRouterV1($routeCollector);//淘数路由
+            $this->FaHaiRouterV1($routeCollector);//法海路由
+            $this->QianQiRouterV1($routeCollector);//乾启路由
         });
     }
 
-    private function CommonRouteV1(RouteCollector $routeCollector)
+    private function CommonRouterV1(RouteCollector $routeCollector)
     {
         $prefix='/Business/Api/Common/CommonController/';
 
@@ -38,7 +39,7 @@ class Router extends AbstractRouter
         return true;
     }
 
-    private function UserRouteV1(RouteCollector $routeCollector)
+    private function UserRouterV1(RouteCollector $routeCollector)
     {
         $prefix='/Business/Api/User/UserController/';
 
@@ -51,7 +52,19 @@ class Router extends AbstractRouter
         return true;
     }
 
-    private function QiChaChaRouteV1(RouteCollector $routeCollector)
+    private function XinDongRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix='/Business/Api/XinDong/XinDongController/';
+
+        $routeCollector->addGroup('/xd',function (RouteCollector $routeCollector) use ($prefix)
+        {
+            $routeCollector->addRoute(['GET','POST'],'/getCorporateShareholderRisk',$prefix.'getCorporateShareholderRisk');//控股法人股东的司法风险
+        });
+
+        return true;
+    }
+
+    private function QiChaChaRouterV1(RouteCollector $routeCollector)
     {
         $routeCollector->addGroup('/qcc',function (RouteCollector $routeCollector)
         {
@@ -85,6 +98,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/getSearchNews','/Business/Api/QiChaCha/QiChaChaController/getSearchNews');//新闻舆情
             $routeCollector->addRoute(['GET','POST'],'/getCompanyWebSite','/Business/Api/QiChaCha/QiChaChaController/getCompanyWebSite');//网站信息
             $routeCollector->addRoute(['GET','POST'],'/getMicroblogGetList','/Business/Api/QiChaCha/QiChaChaController/getMicroblogGetList');//微博
+            $routeCollector->addRoute(['GET','POST'],'/getECIPartnerGetList','/Business/Api/QiChaCha/QiChaChaController/getECIPartnerGetList');//股东信息
 
             //详情系列
             $routeCollector->addRoute(['GET','POST'],'/tenderSearchDetail','/Business/Api/QiChaCha/QiChaChaController/tenderSearchDetail');//招投标
@@ -110,7 +124,7 @@ class Router extends AbstractRouter
         return true;
     }
 
-    private function TaoShuRouteV1(RouteCollector $routeCollector)
+    private function TaoShuRouterV1(RouteCollector $routeCollector)
     {
         $prefix='/Business/Api/TaoShu/TaoShuController/';
 
@@ -138,7 +152,7 @@ class Router extends AbstractRouter
         return true;
     }
 
-    private function FaHaiRouteV1(RouteCollector $routeCollector)
+    private function FaHaiRouterV1(RouteCollector $routeCollector)
     {
         $routeCollector->addGroup('/fh',function (RouteCollector $routeCollector)
         {
@@ -175,6 +189,9 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/getCompanyZdwSyqbldsr','/Business/Api/FaHai/FaHaiController/getCompanyZdwSyqbldsr');//所有权保留
             $routeCollector->addRoute(['GET','POST'],'/getCompanyZdwQtdcdsr','/Business/Api/FaHai/FaHaiController/getCompanyZdwQtdcdsr');//其他动产融资
             $routeCollector->addRoute(['GET','POST'],'/getPersonSifa','/Business/Api/FaHai/FaHaiController/getPersonSifa');//个人涉诉
+            $routeCollector->addRoute(['GET','POST'],'/getCompanyDcrzDiyajc','/Business/Api/FaHai/FaHaiController/getCompanyDcrzDiyajc');//上市公司-抵押解除
+            $routeCollector->addRoute(['GET','POST'],'/getCompanyDcrzZhiyajc','/Business/Api/FaHai/FaHaiController/getCompanyDcrzZhiyajc');//上市公司-解质押数据
+            $routeCollector->addRoute(['GET','POST'],'/getCompanyDcrzDanbao','/Business/Api/FaHai/FaHaiController/getCompanyDcrzDanbao');//上市公司-担保数据
 
             //详情系列
             $routeCollector->addRoute(['GET','POST'],'/getEpbpartyDetail','/Business/Api/FaHai/FaHaiController/getEpbpartyDetail');//环保处罚
@@ -215,7 +232,7 @@ class Router extends AbstractRouter
         return true;
     }
 
-    private function QianQiRouteV1(RouteCollector $routeCollector)
+    private function QianQiRouterV1(RouteCollector $routeCollector)
     {
         $prefix='/Business/Api/QianQi/QianQiController/';
 

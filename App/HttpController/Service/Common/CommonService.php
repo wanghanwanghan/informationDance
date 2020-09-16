@@ -33,7 +33,7 @@ class CommonService extends ServiceBase
     }
 
     //创建验证码
-    function createVerifyCode(Response $response, $codeContent = '', $type = 'img')
+    function createVerifyCode(Response $response, $codeContent = '', $type = 'image')
     {
         $type = strtolower($type);
         strlen($codeContent) !== 0 ?: $codeContent = control::getUuid(4);
@@ -47,7 +47,7 @@ class CommonService extends ServiceBase
         $code = new VerifyCode($config);
 
         switch ($type) {
-            case 'img':
+            case 'image':
                 $response->withHeader('Content-Type', 'image/png');
                 $response->write($code->DrawCode($codeContent)->getImageByte());
                 break;

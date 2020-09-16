@@ -14,6 +14,7 @@ class TaskService extends ServiceBase
     {
         $task = TaskManager::getInstance();
 
+        //异步返回taskId，同步返回运行结果
         return $task->$async($class);
     }
 }

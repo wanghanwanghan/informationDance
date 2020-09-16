@@ -801,6 +801,23 @@ class QiChaChaController extends QiChaChaBase
         return $StockNumber;
     }
 
+    //股东信息
+    function getECIPartnerGetList()
+    {
+        $entName=$this->request()->getRequestParam('entName');
+        $page=$this->request()->getRequestParam('page') ?? 1;
+        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData=[
+            'searchKey'=>$entName,
+            'pageIndex'=>$page,
+            'pageSize'=>$pageSize,
+        ];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'ECIPartner/GetList',$postData);
+
+        return $this->checkResponse($res);
+    }
 
 
 
