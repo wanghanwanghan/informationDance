@@ -21,6 +21,7 @@ class Router extends AbstractRouter
             $this->TaoShuRouterV1($routeCollector);//淘数路由
             $this->FaHaiRouterV1($routeCollector);//法海路由
             $this->QianQiRouterV1($routeCollector);//乾启路由
+            $this->Notify($routeCollector);//通知
         });
     }
 
@@ -31,8 +32,6 @@ class Router extends AbstractRouter
         $routeCollector->addGroup('/comm',function (RouteCollector $routeCollector) use ($prefix)
         {
             $routeCollector->addRoute(['GET','POST'],'/image/upload',$prefix.'imageUpload');//图片上传
-            $routeCollector->addRoute(['GET','POST'],'/wx/pay',$prefix.'wxPay');//微信支付
-            $routeCollector->addRoute(['GET','POST'],'/ali/pay',$prefix.'aliPay');//支付宝支付
             $routeCollector->addRoute(['GET','POST'],'/create/verifyCode',$prefix.'createVerifyCode');//创建验证码
         });
 
@@ -245,5 +244,17 @@ class Router extends AbstractRouter
         return true;
     }
 
+    private function Notify(RouteCollector $routeCollector)
+    {
+        $prefix='/Business/Api/Notify/NotifyController/';
+
+        $routeCollector->addGroup('/notify',function (RouteCollector $routeCollector) use ($prefix)
+        {
+            $routeCollector->addRoute(['GET','POST'],'/wx',$prefix.'wxNotify');//微信的通知
+            $routeCollector->addRoute(['GET','POST'],'/test',$prefix.'test');
+        });
+
+        return true;
+    }
 
 }

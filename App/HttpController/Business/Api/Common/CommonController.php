@@ -3,8 +3,6 @@
 namespace App\HttpController\Business\Api\Common;
 
 use App\HttpController\Service\Common\CommonService;
-use EasySwoole\Pay\AliPay\Config as aliConfig;
-use EasySwoole\Pay\WeChat\Config as wxConfig;
 
 class CommonController extends CommonBase
 {
@@ -37,24 +35,6 @@ class CommonController extends CommonBase
         $type = $this->request()->getRequestParam('type') ?? 'image';
 
         return CommonService::getInstance()->createVerifyCode($this->response(), $code, $type);
-    }
-
-    //微信支付
-    function wxPay()
-    {
-        $wxConfig = new wxConfig();
-
-
-
-
-
-
-    }
-
-    //支付宝支付
-    function aliPay()
-    {
-
     }
 
 }

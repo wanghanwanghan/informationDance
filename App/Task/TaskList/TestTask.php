@@ -11,6 +11,8 @@ class TestTask extends TaskBase implements TaskInterface
 
     function __construct($data)
     {
+        $this->data = $data;
+
         return parent::__construct();
     }
 

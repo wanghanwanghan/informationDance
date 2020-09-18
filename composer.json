@@ -16,7 +16,8 @@
         "easyswoole/atomic-limit": "^1.0",
         "easyswoole/pay": "^1.28",
         "easyswoole/verifycode": "3.x",
-        "easyswoole/session": "2.x"
+        "easyswoole/session": "2.x",
+        "easyswoole/spider": "^2.0"
     },
     "autoload": {
         "psr-4": {

@@ -2,8 +2,9 @@
 
 namespace App\HttpController\Business\Api\XinDong;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
-use App\HttpController\Service\XinDong\XinDongService;
+use App\HttpController\Service\XinDong\XinDongService;;
 
 class XinDongController extends XinDongBase
 {
@@ -53,7 +54,7 @@ class XinDongController extends XinDongBase
         foreach ($res['result'] as $one)
         {
             //持股比例
-            $stockPercent=str_replace('%','',trim($one['StockPercent']));
+            $stockPercent=str_replace(['%'],'',trim($one['StockPercent']));
 
             if ($stockPercent > 50)
             {

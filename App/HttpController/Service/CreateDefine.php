@@ -12,13 +12,13 @@ class CreateDefine extends ServiceBase
     public function createDefine($root)
     {
         //用来做str_replace的
-        define('ROOT_PATH',$root);
+        define('ROOT_PATH', $root);
 
-        define('STATIC_PATH',$root.DIRECTORY_SEPARATOR.'Static'.DIRECTORY_SEPARATOR);
+        define('STATIC_PATH', $root . DIRECTORY_SEPARATOR . 'Static' . DIRECTORY_SEPARATOR);
 
-        define('LOG_PATH',STATIC_PATH.'Log'.DIRECTORY_SEPARATOR);
+        define('LOG_PATH', STATIC_PATH . 'Log' . DIRECTORY_SEPARATOR);
 
-        define('AVATAR_PATH',STATIC_PATH.'Image'.DIRECTORY_SEPARATOR.'Avatar'.DIRECTORY_SEPARATOR);
+        define('AVATAR_PATH', STATIC_PATH . 'Image' . DIRECTORY_SEPARATOR . 'Avatar' . DIRECTORY_SEPARATOR);
 
         return true;
     }
