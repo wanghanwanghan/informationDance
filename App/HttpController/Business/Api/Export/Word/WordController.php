@@ -5,7 +5,6 @@ namespace App\HttpController\Business\Api\Export\Word;
 use App\HttpController\Business\Api\Export\ExportBase;
 use App\HttpController\Service\Report\ReportService;
 
-
 class WordController extends ExportBase
 {
     function onRequest(?string $action): ?bool
@@ -22,6 +21,9 @@ class WordController extends ExportBase
     function createEasy()
     {
         $reportNum=ReportService::getInstance()->createEasy('乐视电子商务（北京）有限公司');
+
+
+
 
         return $this->writeJson(200,'',$reportNum);
     }

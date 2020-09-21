@@ -127,7 +127,35 @@ class TaoShuService extends ServiceBase
 
         $rs = $this->quantumDecode(json_decode($data), $this->taoshuPEM);
 
-        return json_decode($rs, true);
+        $rs = json_decode($rs, true);
+
+        return $this->checkRespFlag ? $this->checkResp($rs) : $rs;
+    }
+
+    private function checkResp($res)
+    {
+        if (isset($res['PAGEINFO']) && isset($res['PAGEINFO']['TOTAL_COUNT']) && isset($res['PAGEINFO']['TOTAL_PAGE']) && isset($res['PAGEINFO']['CURRENT_PAGE']))
+        {
+            $res['Paging']=[
+                'page'=>$res['PAGEINFO']['CURRENT_PAGE'],
+                'pageSize'=>null,
+                'total'=>$res['PAGEINFO']['TOTAL_COUNT'],
+                'totalPage'=>$res['PAGEINFO']['TOTAL_PAGE'],
+            ];
+
+        }else
+        {
+            $res['Paging']=null;
+        }
+
+        if (isset($res['coHttpErr'])) return $this->createReturn(500,$res['Paging'],[],'co请求错误');
+
+        $res['ISUSUAL'] == '1' ? $res['code'] = 200 : $res['code'] = 600;
+
+        //拿返回结果
+        isset($res['RESULTDATA']) ? $res['Result'] = $res['RESULTDATA'] : $res['Result'] = [];
+
+        return $this->createReturn($res['code'],$res['Paging'],$res['Result'],$res['msg']);
     }
 
 

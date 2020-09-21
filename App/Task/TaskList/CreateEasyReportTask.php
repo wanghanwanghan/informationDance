@@ -2,6 +2,7 @@
 
 namespace App\Task\TaskList;
 
+use App\HttpController\Service\TaoShu\TaoShuService;
 use App\Task\TaskBase;
 use Carbon\Carbon;
 use EasySwoole\Task\AbstractInterface\TaskInterface;
@@ -33,6 +34,11 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $tmp->setValue('time', Carbon::now()->format('Y年m月d日'));
 
         $tmp->saveAs(REPORT_PATH . $this->reportNum . '.docx');
+
+        //企业基本信息
+        $res=(new TaoShuService())->setCheckRespFlag(true)->post(['entName'=>$this->entName],'getRegisterInfo');
+
+        var_export($res);
 
         return true;
     }
