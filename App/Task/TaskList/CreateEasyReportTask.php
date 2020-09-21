@@ -25,16 +25,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     {
         echo 'task执行'.PHP_EOL;
 
-        var_dump(new TemplateProcessor(REPORT_MODEL_PATH . 'EasyReportModel_1.docx'));
-
-        try
-        {
-            $tmp = new TemplateProcessor(REPORT_MODEL_PATH . 'EasyReportModel_1.docx');
-
-        }catch (\Exception $e)
-        {
-            var_dump($e->getMessage());
-        }
+        $tmp = new TemplateProcessor(REPORT_MODEL_PATH . 'EasyReportModel_1.docx');
 
         echo '1'.PHP_EOL;
 
@@ -62,6 +53,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $res=(new TaoShuService())->setCheckRespFlag(true)->post(['entName'=>$this->entName],'getRegisterInfo');
 
         echo '7'.PHP_EOL;
+
+        var_export($res);
 
         return true;
     }
