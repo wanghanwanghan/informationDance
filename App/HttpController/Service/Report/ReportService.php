@@ -16,6 +16,8 @@ class ReportService extends ServiceBase
     {
         $reportNum = time();
 
+        echo '扔到task'.PHP_EOL;
+
         //扔到task里
         TaskService::getInstance()->create(new CreateEasyReportTask($entName, $reportNum));
 

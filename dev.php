@@ -14,7 +14,7 @@ return [
             'dispatch_mode' => 2,
         ],
         'TASK' => [
-            'workerNum' => 8,
+            'workerNum' => 6,
             'maxRunningNum' => 128,
             'timeout' => 15
         ]

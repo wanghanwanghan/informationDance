@@ -20,10 +20,9 @@ class WordController extends ExportBase
     //生成一个简版报告
     function createEasy()
     {
+        echo '进入controller'.PHP_EOL;
+
         $reportNum=ReportService::getInstance()->createEasy('乐视电子商务（北京）有限公司');
-
-
-
 
         return $this->writeJson(200,'',$reportNum);
     }

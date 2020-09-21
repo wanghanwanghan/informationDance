@@ -23,6 +23,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
     function run(int $taskId, int $workerIndex)
     {
+        echo 'task执行'.PHP_EOL;
+
         $tmp = new TemplateProcessor(REPORT_MODEL_PATH . 'EasyReportModel_1.docx');
 
         $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'logo.jpg', 'width' => 200, 'height' => 40]);
