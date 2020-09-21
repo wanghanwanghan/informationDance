@@ -16,12 +16,14 @@ class Router extends AbstractRouter
         {
             $this->CommonRouterV1($routeCollector);//公共功能
             $this->UserRouterV1($routeCollector);//用户相关
-            $this->XinDongRouterV1($routeCollector);//信动路由
-            $this->QiChaChaRouterV1($routeCollector);//企查查路由
-            $this->TaoShuRouterV1($routeCollector);//淘数路由
-            $this->FaHaiRouterV1($routeCollector);//法海路由
-            $this->QianQiRouterV1($routeCollector);//乾启路由
+            $this->XinDongRouterV1($routeCollector);//信动
+            $this->QiChaChaRouterV1($routeCollector);//企查查
+            $this->TaoShuRouterV1($routeCollector);//淘数
+            $this->FaHaiRouterV1($routeCollector);//法海
+            $this->QianQiRouterV1($routeCollector);//乾启
             $this->Notify($routeCollector);//通知
+            $this->ExportExcelRouterV1($routeCollector);//导出excel
+            $this->ExportWordRouterV1($routeCollector);//导出word
         });
     }
 
@@ -256,5 +258,34 @@ class Router extends AbstractRouter
 
         return true;
     }
+
+    private function ExportExcelRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix='/Business/Api/Export/Excel/ExcelController/';
+
+        $routeCollector->addGroup('/export/excel',function (RouteCollector $routeCollector) use ($prefix)
+        {
+            $routeCollector->addRoute(['GET','POST'],'/test',$prefix.'test');
+        });
+
+        return true;
+    }
+
+    private function ExportWordRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix='/Business/Api/Export/Word/WordController/';
+
+        $routeCollector->addGroup('/export/word',function (RouteCollector $routeCollector) use ($prefix)
+        {
+            $routeCollector->addRoute(['GET','POST'],'/createEasy',$prefix.'createEasy');
+        });
+
+        return true;
+    }
+
+
+
+
+
 
 }

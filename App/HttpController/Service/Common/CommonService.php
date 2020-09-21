@@ -64,14 +64,14 @@ class CommonService extends ServiceBase
     {
         //https://login.bce.baidu.com/?account=&redirect=http%3A%2F%2Fconsole.bce.baidu.com%2F%3Ffromai%3D1#/aip/overview
 
-        $label=[
-            0=>'绝对没有',
-            1=>'暴恐违禁',
-            2=>'文本色情',
-            3=>'政治敏感',
-            4=>'恶意推广',
-            5=>'低俗辱骂',
-            6=>'低质灌水'
+        $label = [
+            0 => '绝对没有',
+            1 => '暴恐违禁',
+            2 => '文本色情',
+            3 => '政治敏感',
+            4 => '恶意推广',
+            5 => '低俗辱骂',
+            6 => '低质灌水'
         ];
 
         $grant_type = 'client_credentials';
@@ -93,9 +93,7 @@ class CommonService extends ServiceBase
 
         $content = ['content' => $content];
 
-        $header = ['Content-Type:application/x-www-form-urlencoded'];
-
-        $res = (new CoHttpClient())->needJsonDecode(true)->send($url, $content, $header);
+        $res = (new CoHttpClient())->needJsonDecode(true)->send($url, $content);
 
         return $res;
     }
