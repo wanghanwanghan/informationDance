@@ -27,20 +27,32 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $tmp = new TemplateProcessor(REPORT_MODEL_PATH . 'EasyReportModel_1.docx');
 
+        echo '1'.PHP_EOL;
+
         $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'logo.jpg', 'width' => 200, 'height' => 40]);
+
+        echo '2'.PHP_EOL;
 
         $tmp->setValue('entName', $this->entName);
 
+        echo '3'.PHP_EOL;
+
         $tmp->setValue('reportNum', $this->reportNum);
+
+        echo '4'.PHP_EOL;
 
         $tmp->setValue('time', Carbon::now()->format('Y年m月d日'));
 
+        echo '5'.PHP_EOL;
+
         $tmp->saveAs(REPORT_PATH . $this->reportNum . '.docx');
+
+        echo '6'.PHP_EOL;
 
         //企业基本信息
         $res=(new TaoShuService())->setCheckRespFlag(true)->post(['entName'=>$this->entName],'getRegisterInfo');
 
-        var_dump($res);
+        echo '7'.PHP_EOL;
 
         return true;
     }
