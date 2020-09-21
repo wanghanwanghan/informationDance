@@ -40,7 +40,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //企业基本信息
         $res=(new TaoShuService())->setCheckRespFlag(true)->post(['entName'=>$this->entName],'getRegisterInfo');
 
-        var_export($res);
+        var_dump($res);
 
         return true;
     }
