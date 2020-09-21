@@ -25,7 +25,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     {
         echo 'task执行'.PHP_EOL;
 
-        echo REPORT_MODEL_PATH.PHP_EOL;
+        var_dump(new TemplateProcessor(REPORT_MODEL_PATH . 'EasyReportModel_1.docx'));
 
         try
         {
