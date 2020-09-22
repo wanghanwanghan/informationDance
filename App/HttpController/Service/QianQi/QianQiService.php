@@ -377,6 +377,18 @@ class QianQiService extends ServiceBase
         return $tmp;
     }
 
+    private function checkResp($res)
+    {
+        $res['Paging']=null;
+
+        if (isset($res['coHttpErr'])) return $this->createReturn(500,$res['Paging'],[],'co请求错误');
+
+        $res['Result']=$res['data'];
+        $res['Message']=$res['msg'];
+
+        return $this->createReturn((int)$res['code'],$res['Paging'],$res['Result'],$res['Message']);
+    }
+
     //近三年的财务数据
     function getThreeYearsData($postData)
     {
@@ -387,13 +399,14 @@ class QianQiService extends ServiceBase
             return ['code'=>102,'msg'=>'entId是空','data'=>[]];
         }
 
-        (int)date('m') >= 10 ? $yearStart=date('Y') - 1 : $yearStart=date('Y') - 2;
+        (int)date('m') >= 9 ? $yearStart=date('Y') - 1 : $yearStart=date('Y') - 2;
 
         for ($i=3;$i--;)
         {
             $arr=[
                 'entid'=>$entId,
                 'year'=>$yearStart - $i,
+                'type'=>1,
                 'usercode'=>$this->usercode
             ];
 
@@ -406,7 +419,9 @@ class QianQiService extends ServiceBase
 
         krsort($return);
 
-        return ['code'=>200,'msg'=>'查询成功','data'=>$return];
+        return $this->checkRespFlag ?
+            $this->checkResp(['code'=>200,'msg'=>'查询成功','data'=>$return]) :
+            ['code'=>200,'msg'=>'查询成功','data'=>$return];
     }
 
     //近三年的财务数据不给原值的，转化成同比

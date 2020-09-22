@@ -3,6 +3,7 @@
 namespace App\Task\TaskList;
 
 use App\Csp\Service\CspService;
+use App\HttpController\Service\QianQi\QianQiService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\XinDongService;
@@ -212,6 +213,211 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
+        //企查查 银行信息
+        $csp->add('GetCreditCodeNew', function () {
+
+            $postData = ['keyWord' => $this->entName];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'ECICreditCode/GetCreditCodeNew', $postData);
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+        });
+
+        //企查查 招投标
+        $csp->add('TenderSearch', function () {
+
+            $postData = [
+                'searchKey' => $this->entName,
+                'pageIndex' => 1,
+                'pageSize' => 10,
+            ];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'Tender/Search', $postData);
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+        });
+
+        //企查查 购地信息
+        $csp->add('LandPurchaseList', function () {
+
+            $postData = [
+                'searchKey' => $this->entName,
+                'pageIndex' => 1,
+                'pageSize' => 10,
+            ];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandPurchase/LandPurchaseList', $postData);
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+        });
+
+        //企查查 土地公示
+        $csp->add('LandPublishList', function () {
+
+            $postData = [
+                'searchKey' => $this->entName,
+                'pageIndex' => 1,
+                'pageSize' => 10,
+            ];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandPublish/LandPublishList', $postData);
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+        });
+
+        //企查查 土地转让
+        $csp->add('LandTransferList', function () {
+
+            $postData = [
+                'searchKey' => $this->entName,
+                'pageIndex' => 1,
+                'pageSize' => 10,
+            ];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandTransfer/LandTransferList', $postData);
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+        });
+
+        //企查查 建筑资质证书
+        $csp->add('Qualification', function () {
+
+            $postData = [
+                'searchKey' => $this->entName,
+                'pageIndex' => 1,
+                'pageSize' => 10,
+            ];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'Qualification/GetList', $postData);
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+        });
+
+        //企查查 建筑工程项目
+        $csp->add('BuildingProject', function () {
+
+            $postData = [
+                'searchKey' => $this->entName,
+                'pageIndex' => 1,
+                'pageSize' => 10,
+            ];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'BuildingProject/GetList', $postData);
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+        });
+
+        //企查查 债券信息
+        $csp->add('BondList', function () {
+
+            $postData = [
+                'searchKey' => $this->entName,
+                'pageIndex' => 1,
+                'pageSize' => 10,
+            ];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'Bond/BondList', $postData);
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+        });
+
+        //企查查 网站信息
+        $csp->add('GetCompanyWebSite', function () {
+
+            $postData = [
+                'searchKey' => $this->entName,
+                'pageIndex' => 1,
+                'pageSize' => 10,
+            ];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'WebSiteV4/GetCompanyWebSite', $postData);
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+        });
+
+        //企查查 微博
+        $csp->add('Microblog', function () {
+
+            $postData = [
+                'searchKey' => $this->entName,
+                'pageIndex' => 1,
+                'pageSize' => 10,
+            ];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'Microblog/GetList', $postData);
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+        });
+
+        //企查查 新闻舆情
+        $csp->add('CompanyNews', function () {
+
+            $postData = [
+                'searchKey' => $this->entName,
+                'pageIndex' => 1,
+                'pageSize' => 10,
+            ];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'CompanyNews/SearchNews', $postData);
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+        });
+
+        //乾启 近三年团队人数变化率
+        $csp->add('itemInfo', function () {
+
+            $postData = ['entName' => $this->entName];
+
+            $res = (new QianQiService())->setCheckRespFlag(true)->getThreeYearsData($postData);
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -236,7 +442,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $res = CspService::getInstance()->exec($csp);
 
-        var_export($res['GetCreditCodeNew']);
+        var_export($res['itemInfo']);
     }
 
 
