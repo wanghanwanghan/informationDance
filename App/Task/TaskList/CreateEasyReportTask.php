@@ -3,6 +3,7 @@
 namespace App\Task\TaskList;
 
 use App\Csp\Service\CspService;
+use App\HttpController\Service\QiChaCha\QiChaChaService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\Task\TaskBase;
 use Carbon\Carbon;
@@ -92,7 +93,43 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
-        $csp->add('123', function () {
+        //企查查 实际控制人
+        $csp->add('Beneficiary', function () {
+
+            $postData = [
+                'companyName' => $this->entName,
+                'percent' => 0,
+                'mode' => 0,
+            ];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'Beneficiary/GetBeneficiary', $postData);
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+//            $tmp = [];
+//
+//            if (count($res['Result']['BreakThroughList']) > 0) {
+//                $total = current($res['Result']['BreakThroughList']);
+//                $total = substr($total['TotalStockPercent'], 0, -1);
+//
+//                if ($total >= 50) {
+//                    //如果第一个人就是大股东了，就直接返回
+//                    $tmp = $res['Result']['BreakThroughList'][0];
+//
+//                } else {
+//                    //把返回的所有人加起来和100做减法，求出坑
+//                    $hole = 100;
+//                    foreach ($res['Result']['BreakThroughList'] as $key => $val) {
+//                        $hole -= substr($val['TotalStockPercent'], 0, -1);
+//                    }
+//
+//                    //求出坑的比例，如果比第一个人大，那就是特殊机构，如果没第一个人大，那第一个人就是控制人
+//                    if ($total > $hole) $tmp = $res['Result']['BreakThroughList'][0];
+//                }
+//            }
+//
+//            $res['Result'] = $tmp;
 
         });
 
@@ -102,7 +139,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $res = CspService::getInstance()->exec($csp);
 
-        var_export($res['getRegisterChangeInfo']);
+        var_export($res['Beneficiary']);
     }
 
 
