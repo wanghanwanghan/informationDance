@@ -425,12 +425,48 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
+        //企查查 建筑企业-专业注册人员
+        $csp->add('BuildingRegistrar', function () {
 
+            $postData = [
+                'searchKey' => $this->entName,
+                'pageIndex' => 1,
+                'pageSize' => 10,
+            ];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'BuildingRegistrar/GetList', $postData);
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+        });
+
+        //企查查 招聘信息
+        $csp->add('Recruitment', function () {
+
+            $postData = [
+                'searchKey' => $this->entName,
+                'pageIndex' => 1,
+                'pageSize' => 10,
+            ];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'Recruitment/GetList', $postData);
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+        });
+
+
+        //
+        //
+        //
+        //
         //
 
         $res = CspService::getInstance()->exec($csp);
 
-        var_export($res['itemInfo']);
+        var_export($res['Recruitment']);
     }
 
 
