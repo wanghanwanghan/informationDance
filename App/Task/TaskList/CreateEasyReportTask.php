@@ -457,6 +457,21 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
+        //乾启 财务
+        $csp->add('FinanceData', function () {
+
+            $postData = ['entName' => $this->entName];
+
+            $res = (new QianQiService())->setCheckRespFlag(true)->getThreeYearsData($postData);
+
+            if ($res['code'] === 200 && !empty($res['result'])) {
+                $res = (new QianQiService())->toPercent($res['result']);
+            } else {
+                $res = null;
+            }
+
+            return $res;
+        });
 
         //
         //
@@ -466,7 +481,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $res = CspService::getInstance()->exec($csp);
 
-        var_export($res['Recruitment']);
+        var_export($res['FinanceData']);
     }
 
 
