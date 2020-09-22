@@ -23,36 +23,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
     function run(int $taskId, int $workerIndex)
     {
-        echo 'task执行'.PHP_EOL;
+        $tmp1 = new TemplateProcessor(REPORT_MODEL_PATH . 'EasyReportModel_1.docx');
+        $tmp2 = new TemplateProcessor(REPORT_MODEL_PATH . 'EasyReportModel_1.docx');
 
-        $tmp = new TemplateProcessor(REPORT_MODEL_PATH . 'EasyReportModel_1.docx');
+        $tmp1->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'logo.jpg', 'width' => 200, 'height' => 40]);
+        $tmp2->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'logo.jpg', 'width' => 200, 'height' => 40]);
 
-        echo '1'.PHP_EOL;
+        $tmp1->setValue('entName', $this->entName);
+        $tmp2->setValue('entName', $this->entName);
 
-        $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'logo.jpg', 'width' => 200, 'height' => 40]);
+        $tmp1->setValue('reportNum', $this->reportNum);
+        $tmp2->setValue('reportNum', $this->reportNum);
 
-        echo '2'.PHP_EOL;
+        $tmp1->setValue('time', Carbon::now()->format('Y年m月d日'));
+        $tmp2->setValue('time', Carbon::now()->format('Y年m月d日'));
 
-        $tmp->setValue('entName', $this->entName);
-
-        echo '3'.PHP_EOL;
-
-        $tmp->setValue('reportNum', $this->reportNum);
-
-        echo '4'.PHP_EOL;
-
-        $tmp->setValue('time', Carbon::now()->format('Y年m月d日'));
-
-        echo '5'.PHP_EOL;
-
-        $tmp->saveAs(REPORT_PATH . $this->reportNum . '.docx');
-
-        echo '6'.PHP_EOL;
+        $tmp1->saveAs(REPORT_PATH . $this->reportNum . '_123.docx');
+        $tmp2->saveAs(REPORT_PATH . $this->reportNum . '_321.docx');
 
         //企业基本信息
-        $res=(new TaoShuService())->setCheckRespFlag(true)->post(['entName'=>$this->entName],'getRegisterInfo');
-
-        echo '7'.PHP_EOL;
+        $res = (new TaoShuService())->setCheckRespFlag(true)->post(['entName' => $this->entName], 'getRegisterInfo');
 
         var_export($res);
 
@@ -63,4 +53,22 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     {
 
     }
+
+    private function cspHandleData()
+    {
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

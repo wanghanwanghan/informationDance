@@ -155,7 +155,7 @@ class TaoShuService extends ServiceBase
         //拿返回结果
         isset($res['RESULTDATA']) ? $res['Result'] = $res['RESULTDATA'] : $res['Result'] = [];
 
-        return $this->createReturn($res['code'],$res['Paging'],$res['Result'],$res['msg']);
+        return $this->createReturn($res['code'],$res['Paging'],$res['Result'],null);
     }
 
 
