@@ -167,9 +167,11 @@ class XinDongService extends ServiceBase
 
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
                 'entName' => $entName,
-                'pageNo' => 2,
+                'pageNo' => 3,
                 'pageSize' => 100,
             ], 'getRegisterChangeInfo');
+
+            var_export($res);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
