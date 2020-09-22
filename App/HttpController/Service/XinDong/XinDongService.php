@@ -165,17 +165,75 @@ class XinDongService extends ServiceBase
         //淘数 变更信息
         $csp->add('getRegisterChangeInfo', function () use ($entName) {
 
-            $res = (new TaoShuService())->setCheckRespFlag(true)->post([
-                'entName' => $entName,
-                'pageNo' => 3,
-                'pageSize' => 100,
-            ], 'getRegisterChangeInfo');
+            $data = [];
 
-            var_export($res);
+            $page = 1;
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            do {
 
-            return $res;
+                $res = (new TaoShuService())->setCheckRespFlag(true)->post([
+                    'entName' => $entName,
+                    'pageNo' => $page,
+                    'pageSize' => 100,
+                ], 'getRegisterChangeInfo');
+
+                if ($res['code'] != 200 || empty($res['result'])) break;
+
+                //如果本次取到了，就循环找
+                foreach ($res['result'] as $one)
+                {
+                    if ($one['ALTITEM']=='董事' || $one['ALTITEM']=='监事' || $one['ALTITEM']=='高管')
+                    {
+                        $job=$one['ALTITEM'];
+
+                        $beStr=$afStr=[];
+
+                        //找出变更 前 的董监高
+                        foreach (array_filter(explode(';',$one['ALTBE'])) as $two)
+                        {
+                            if (!preg_match("/职务:{$job}/",$two)) continue;
+
+                            //如果查到了，取出姓名
+                            preg_match_all('/姓名:(.*)\,/U',$two,$nameArray);
+
+                            if (count($nameArray) != 2 || empty($nameArray[1])) continue;
+
+                            //取出姓名
+                            $name=current($nameArray[1]);
+
+                            //拼接字符串
+                            $beStr[]=$name;
+                        }
+
+                        //找出变更 后 的董监高
+                        foreach (array_filter(explode(';',$one['ALTAF'])) as $two)
+                        {
+                            if (!preg_match("/职务:{$job}/",$two)) continue;
+
+                            //如果查到了，取出姓名
+                            preg_match_all('/姓名:(.*)\,/U',$two,$nameArray);
+
+                            if (count($nameArray) != 2 || empty($nameArray[1])) continue;
+
+                            //取出姓名
+                            $name=current($nameArray[1]);
+
+                            //拼接字符串
+                            $afStr[]=$name;
+                        }
+
+                        //历史大变革就这里有用，别的$beStr和$afStr没用
+                        $beStr=implode('，',$beStr);
+                        $afStr=implode('，',$afStr);
+                        $data[] = [$one['ALTDATE'] . "，{$job}变更前：{$beStr}，{$job}变更后：{$afStr}"];
+                    }
+                }
+
+                $page++;
+
+            } while ($page <= 5);
+
+            return empty($data) ? null : $data;
         });
 
 
