@@ -145,13 +145,67 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         });
 
         //淘数 法人对外投资
-        $csp->add('lawPersonInvestmentInfo',function () {
+        $csp->add('lawPersonInvestmentInfo', function () {
 
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
                 'entName' => $this->entName,
                 'pageNo' => 1,
                 'pageSize' => 10,
             ], 'lawPersonInvestmentInfo');
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+        });
+
+        //淘数 法人对外任职
+        $csp->add('getLawPersontoOtherInfo', function () {
+
+            $res = (new TaoShuService())->setCheckRespFlag(true)->post([
+                'entName' => $this->entName,
+                'pageNo' => 1,
+                'pageSize' => 10,
+            ], 'getLawPersontoOtherInfo');
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+        });
+
+        //淘数 企业对外投资
+        $csp->add('getInvestmentAbroadInfo', function () {
+
+            $res = (new TaoShuService())->setCheckRespFlag(true)->post([
+                'entName' => $this->entName,
+                'pageNo' => 1,
+                'pageSize' => 10,
+            ], 'getInvestmentAbroadInfo');
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+        });
+
+        //淘数 分支机构
+        $csp->add('getBranchInfo', function () {
+
+            $res = (new TaoShuService())->setCheckRespFlag(true)->post([
+                'entName' => $this->entName,
+                'pageNo' => 1,
+                'pageSize' => 10,
+            ], 'getBranchInfo');
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+        });
+
+        //企查查 银行信息
+        $csp->add('GetCreditCodeNew', function () {
+
+            $postData = ['keyWord' => $this->entName];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'ECICreditCode/GetCreditCodeNew', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
@@ -182,7 +236,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $res = CspService::getInstance()->exec($csp);
 
-        var_export($res['lawPersonInvestmentInfo']);
+        var_export($res['GetCreditCodeNew']);
     }
 
 
