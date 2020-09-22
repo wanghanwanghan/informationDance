@@ -309,6 +309,8 @@ class XinDongService extends ServiceBase
 
                 $res = (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getBranchInfo');
 
+                var_export($res);
+
                 if ($res['code'] != 200 || empty($res['result'])) break;
 
                 foreach ($res['result'] as $one) {
