@@ -82,9 +82,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         });
 
-        CspService::getInstance()->exec($csp);
+        $res = CspService::getInstance()->exec($csp);
 
-        var_export($csp['getShareHolderInfo']);
+        var_export($res['getShareHolderInfo']);
     }
 
 
