@@ -171,6 +171,8 @@ class XinDongService extends ServiceBase
                 'pageSize' => 100,
             ], 'getRegisterChangeInfo');
 
+            var_export($res);
+
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
             return $res;
