@@ -167,7 +167,7 @@ class XinDongService extends ServiceBase
 
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
                 'entName' => $entName,
-                'pageNo' => 1,
+                'pageNo' => 2,
                 'pageSize' => 100,
             ], 'getRegisterChangeInfo');
 
