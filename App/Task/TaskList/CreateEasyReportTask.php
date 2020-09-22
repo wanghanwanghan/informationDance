@@ -5,6 +5,7 @@ namespace App\Task\TaskList;
 use App\Csp\Service\CspService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
 use App\HttpController\Service\TaoShu\TaoShuService;
+use App\HttpController\Service\XinDong\XinDongService;
 use App\Task\TaskBase;
 use Carbon\Carbon;
 use EasySwoole\Task\AbstractInterface\TaskInterface;
@@ -126,18 +127,23 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                     //求出坑的比例，如果比第一个人大，那就是特殊机构，如果没第一个人大，那第一个人就是控制人
                     if ($total > $hole) $tmp = $res['BreakThroughList'][0];
                 }
+            } else {
+                $tmp = null;
             }
 
             return $tmp;
         });
 
-        $csp->add('123', function () {
+        $csp->add('getHistoricalEvolution', function () {
 
+            $res = XinDongService::getInstance()->getHistoricalEvolution($this->entName);
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
         });
 
         $res = CspService::getInstance()->exec($csp);
 
-        var_export($res['Beneficiary']);
+        var_export($res['getHistoricalEvolution']);
     }
 
 
