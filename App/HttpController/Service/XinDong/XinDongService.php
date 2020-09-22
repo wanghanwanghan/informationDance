@@ -322,9 +322,7 @@ class XinDongService extends ServiceBase
 
             } while ($page <= 5);
 
-            var_export('wanghan');
-
-            return empty($data) ? null : $data;
+            return empty($data) ? 123123123 : $data;
         });
 
         //土地资源
