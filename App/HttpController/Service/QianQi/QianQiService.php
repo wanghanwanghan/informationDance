@@ -420,8 +420,7 @@ class QianQiService extends ServiceBase
         krsort($return);
 
         return $this->checkRespFlag ?
-            $this->checkResp(['code'=>200,'msg'=>'查询成功','data'=>$return]) :
-            ['code'=>200,'msg'=>'查询成功','data'=>$return];
+            $this->checkResp(['code'=>200,'msg'=>'查询成功','data'=>$return]) : ['code'=>200,'msg'=>'查询成功','data'=>$return];
     }
 
     //近三年的财务数据不给原值的，转化成同比
@@ -466,7 +465,7 @@ class QianQiService extends ServiceBase
         return $tmp;
     }
 
-    //计算 (a - b) / b * 0.01
+    //计算 (a - b) / abs(b) * 0.01
     private function expr($now,$last)
     {
         if ($now===null || $last===null) return null;
@@ -474,7 +473,7 @@ class QianQiService extends ServiceBase
         //0不能是除数
         if ($last===0) return null;
 
-        return number_format(($now - $last) / $last * 100,2);
+        return number_format(($now - $last) / abs($last) * 100,2);
     }
 
 

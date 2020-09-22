@@ -392,53 +392,41 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QianQiService())->setCheckRespFlag(true)->getThreeYearsData($postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            if ($res['code'] === 200 && !empty($res['result'])) {
+
+                $yearArr = array_keys($res['result']);
+                $dataArr = array_values($res['result']);
+                $res = [];
+
+                for ($i = 0; $i < 3; $i++) {
+
+                    if (isset($dataArr[$i]['SOCNUM']) && is_numeric($dataArr[$i]['SOCNUM'])) {
+                        $SOCNUM_1 = (int)$dataArr[$i]['SOCNUM'];
+                    } else {
+                        $SOCNUM_1 = null;
+                    }
+
+                    if (isset($dataArr[$i + 1]['SOCNUM']) && is_numeric($dataArr[$i + 1]['SOCNUM'])) {
+                        $SOCNUM_2 = (int)$dataArr[$i + 1]['SOCNUM'];
+                    } else {
+                        $SOCNUM_2 = null;
+                    }
+
+                    if ($SOCNUM_1 !== null && $SOCNUM_2 !== null && $SOCNUM_2 !== 0) {
+                        $res[] = ['year' => $yearArr[$i], 'yoy' => ($SOCNUM_1 - $SOCNUM_2) / $SOCNUM_2];
+                    } else {
+                        $res[] = ['year' => $yearArr[$i], 'yoy' => null];
+                    }
+                }
+            } else {
+                $res = null;
+            }
 
             return $res;
         });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        //
 
         $res = CspService::getInstance()->exec($csp);
 
