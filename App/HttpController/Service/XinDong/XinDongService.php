@@ -184,7 +184,7 @@ class XinDongService extends ServiceBase
 
                     if ($one['ALTITEM'] == '法定代表人') {
 
-                        $data[] = [$one['ALTDATE'] . "，法人变更前：{$one['ALTBE']}，法人变更后：{$one['ALTAF']}"];
+                        $data[] = $one['ALTDATE'] . "，法人变更前：{$one['ALTBE']}，法人变更后：{$one['ALTAF']}";
                     }
 
                     if ($one['ALTITEM'] == '董事' || $one['ALTITEM'] == '监事' || $one['ALTITEM'] == '高管') {
@@ -230,7 +230,7 @@ class XinDongService extends ServiceBase
                         //历史大变革就这里有用，别的$beStr和$afStr没用
                         $beStr = implode('，', $beStr);
                         $afStr = implode('，', $afStr);
-                        $data[] = [$one['ALTDATE'] . "，{$job}变更前：{$beStr}，{$job}变更后：{$afStr}"];
+                        $data[] = $one['ALTDATE'] . "，{$job}变更前：{$beStr}，{$job}变更后：{$afStr}";
                     }
                 }
 
