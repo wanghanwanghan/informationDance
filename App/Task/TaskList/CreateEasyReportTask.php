@@ -139,6 +139,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $res = XinDongService::getInstance()->getHistoricalEvolution($this->entName);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
         });
 
         $res = CspService::getInstance()->exec($csp);
