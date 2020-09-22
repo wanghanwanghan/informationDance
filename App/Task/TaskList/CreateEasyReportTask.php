@@ -54,16 +54,37 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //创建csp对象
         $csp = CspService::getInstance()->create();
 
+        //淘数 基本信息 工商信息
         $csp->add('getRegisterInfo', function () {
-            return (new TaoShuService())->setCheckRespFlag(true)->post(['entName' => $this->entName], 'getRegisterInfo');
+
+            $res = (new TaoShuService())->setCheckRespFlag(true)->post(['entName' => $this->entName], 'getRegisterInfo');
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = current($res['result']) : $res = null;
+
+            return $res;
+        });
+
+        //淘数 基本信息 股东信息
+        $csp->add('getShareHolderInfo', function () {
+
+            $res = (new TaoShuService())->setCheckRespFlag(true)->post([
+                'entName' => $this->entName,
+                'pageNo' => 1,
+                'pageSize' => 10,
+            ], 'getShareHolderInfo');
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
         });
 
         $csp->add('123', function () {
 
         });
 
+        CspService::getInstance()->exec($csp);
 
-        var_dump(CspService::getInstance()->exec($csp));
+        var_export($csp['getShareHolderInfo']);
     }
 
 
