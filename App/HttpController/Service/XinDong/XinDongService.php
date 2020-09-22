@@ -253,7 +253,6 @@ class XinDongService extends ServiceBase
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'BusinessStateV4/SearchCompanyFinancings', $postData);
 
-
             foreach ($res['result'] as $one) {
                 $data[] = $one['Date'] . "，拿到了来自{$one['Investment']}的{$one['Round']}融资，{$one['Amount']}";
             }
@@ -261,19 +260,67 @@ class XinDongService extends ServiceBase
             return empty($data) ? null : $data;
         });
 
-        //行政许可 只要数字
-        $csp->add('xingzhengxuke', function () {
+        //企查查 行政许可 只要数字
+        $csp->add('GetAdministrativeLicenseList', function () use ($entName) {
 
+            $postData = [
+                'searchKey' => $entName,
+                'pageIndex' => 1,
+                'pageSize' => 10,
+            ];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'ADSTLicense/GetAdministrativeLicenseList', $postData);
+
+            ($res['code'] === 200 && !empty($res['paging'])) ? $total = (int)$res['paging']['total'] : $total = 0;
+
+            return $total;
         });
 
-        //专利 只要数字
-        $csp->add('zhuanli', function () {
+        //企查查 专利 只要数字
+        $csp->add('PatentSearch', function () use ($entName) {
 
+            $postData = [
+                'searchKey' => $entName,
+                'pageIndex' => 1,
+                'pageSize' => 10,
+            ];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'PatentV4/Search', $postData);
+
+            ($res['code'] === 200 && !empty($res['paging'])) ? $total = (int)$res['paging']['total'] : $total = 0;
+
+            return $total;
         });
 
-        //分支机构
-        $csp->add('fenzhijigou', function () {
+        //淘数 分支机构
+        $csp->add('getBranchInfo', function () use ($entName) {
 
+            $data = [];
+
+            $page = 1;
+
+            do {
+
+                $postData = [
+                    'entName' => $entName,
+                    'pageNo' => $page,
+                    'pageSize' => 20,
+                ];
+
+                $res = (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getBranchInfo');
+
+                if ($res['code'] != 200 || empty($res['result'])) break;
+
+                foreach ($res['result'] as $one) {
+
+                    $data[] = $one['ESDATE'] . "，{$one['ENTNAME']}成立了，当前状态是{$one['ENTSTATUS']}";
+                }
+
+                $page++;
+
+            } while ($page <= 5);
+
+            return empty($data) ? null : $data;
         });
 
         //土地资源
