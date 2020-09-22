@@ -4,6 +4,7 @@ namespace App\HttpController\Service\XinDong;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Service\FaHai\FaHaiService;
+use App\HttpController\Service\QiChaCha\QiChaChaService;
 use App\HttpController\Service\ServiceBase;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use wanghanwanghan\someUtils\traits\Singleton;
@@ -13,10 +14,12 @@ class XinDongService extends ServiceBase
     use Singleton;
 
     private $fhList;
+    private $qccUrl;
 
     function __construct()
     {
         $this->fhList = \Yaconf::get('fahai.listBaseUrl');
+        $this->qccUrl = \Yaconf::get('qichacha.baseUrl');
 
         return parent::onNewService();
     }
@@ -241,9 +244,21 @@ class XinDongService extends ServiceBase
             return empty($data) ? null : $data;
         });
 
-        //融资
-        $csp->add('rongzi', function () {
+        //企查查 融资
+        $csp->add('SearchCompanyFinancings', function () use ($entName) {
 
+            $data = [];
+
+            $postData = ['searchKey' => $entName];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'BusinessStateV4/SearchCompanyFinancings', $postData);
+
+
+            foreach ($res['result'] as $one) {
+                $data[] = $one['Date'] . "，拿到了来自{$one['Investment']}的{$one['Round']}融资，{$one['Amount']}";
+            }
+
+            return empty($data) ? null : $data;
         });
 
         //行政许可 只要数字
