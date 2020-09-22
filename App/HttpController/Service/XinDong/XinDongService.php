@@ -182,6 +182,11 @@ class XinDongService extends ServiceBase
                 //如果本次取到了，就循环找
                 foreach ($res['result'] as $one) {
 
+                    if ($one['ALTITEM'] == '法定代表人') {
+
+                        $data[] = [$one['ALTDATE'] . "，法人变更前：{$one['ALTBE']}，法人变更后：{$one['ALTAF']}"];
+                    }
+
                     if ($one['ALTITEM'] == '董事' || $one['ALTITEM'] == '监事' || $one['ALTITEM'] == '高管') {
 
                         $job = $one['ALTITEM'];
@@ -235,7 +240,6 @@ class XinDongService extends ServiceBase
 
             return empty($data) ? null : $data;
         });
-
 
         //融资
         $csp->add('rongzi', function () {
