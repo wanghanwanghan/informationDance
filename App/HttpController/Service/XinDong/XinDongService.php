@@ -322,6 +322,8 @@ class XinDongService extends ServiceBase
 
             } while ($page <= 5);
 
+            var_export('wanghan');
+
             return empty($data) ? null : $data;
         });
 
