@@ -78,13 +78,31 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
+        //淘数 基本信息 变更信息
+        $csp->add('getRegisterChangeInfo', function () {
+
+            $res = (new TaoShuService())->setCheckRespFlag(true)->post([
+                'entName' => $this->entName,
+                'pageNo' => 1,
+                'pageSize' => 10,
+            ], 'getRegisterChangeInfo');
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+        });
+
+        $csp->add('123', function () {
+
+        });
+
         $csp->add('123', function () {
 
         });
 
         $res = CspService::getInstance()->exec($csp);
 
-        var_export($res['getShareHolderInfo']);
+        var_export($res['getRegisterChangeInfo']);
     }
 
 
