@@ -322,12 +322,137 @@ class XinDongService extends ServiceBase
 
             } while ($page <= 5);
 
-            return empty($data) ? 123123123 : $data;
+            return empty($data) ? null : $data;
         });
 
-        //土地资源
-        $csp->add('tudiziyuan', function () {
+        //企查查 土地资源
+        $csp->add('landResources', function () use ($entName) {
 
+            $csp = CspService::getInstance()->create();
+
+            //土地抵押
+            $csp->add('GetLandMortgageList', function () use ($entName) {
+
+                $data = [];
+
+                $page = 1;
+
+                do {
+
+                    $postData = [
+                        'keyWord' => $entName,
+                        'pageIndex' => $page,
+                        'pageSize' => 50,
+                    ];
+
+                    $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandMortgage/GetLandMortgageList', $postData);
+
+                    if ($res['code'] != 200 || empty($res['result'])) break;
+
+                    foreach ($res['result'] as $one) {
+                        $data[] = "在{$one['StartDate']}到{$one['EndDate']}期间，抵押了位于{$one['Address']}的{$one['MortgageAcreage']}公顷{$one['MortgagePurpose']}";
+                    }
+
+                    $page++;
+
+                } while ($page <= 5);
+
+                return empty($data) ? null : $data;
+            });
+
+            //土地公示
+            $csp->add('LandPublishList', function () use ($entName) {
+
+                $data = [];
+
+                $page = 1;
+
+                do {
+
+                    $postData = [
+                        'searchKey' => $entName,
+                        'pageIndex' => $page,
+                        'pageSize' => 50,
+                    ];
+
+                    $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandPublish/LandPublishList', $postData);
+
+                    if ($res['code'] != 200 || empty($res['result'])) break;
+
+                    foreach ($res['result'] as $one) {
+                        $data[] = "{$one['PublishDate']}，由{$one['PublishGov']}公示了位于{$one['AdminArea']}{$one['Address']}的土地";
+                    }
+
+                    $page++;
+
+                } while ($page <= 5);
+
+                return empty($data) ? null : $data;
+            });
+
+            //购地信息
+            $csp->add('LandPurchaseList', function () use ($entName) {
+
+                $data = [];
+
+                $page = 1;
+
+                do {
+
+                    $postData = [
+                        'searchKey' => $entName,
+                        'pageIndex' => $page,
+                        'pageSize' => 50,
+                    ];
+
+                    $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandPurchase/LandPurchaseList', $postData);
+
+                    if ($res['code'] != 200 || empty($res['result'])) break;
+
+                    foreach ($res['result'] as $one) {
+                        $data[] = "{$one['SignTime']}，通过{$one['SupplyWay']}购得位于{$one['AdminArea']}{$one['Address']}{$one['Area']}公顷的{$one['LandUse']}";
+                    }
+
+                    $page++;
+
+                } while ($page <= 5);
+
+                return empty($data) ? null : $data;
+            });
+
+            //土地转让
+            $csp->add('LandTransferList', function () use ($entName) {
+
+                $data = [];
+
+                $page = 1;
+
+                do {
+
+                    $postData = [
+                        'searchKey' => $entName,
+                        'pageIndex' => $page,
+                        'pageSize' => 50,
+                    ];
+
+                    $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandTransfer/LandTransferList', $postData);
+
+                    if ($res['code'] != 200 || empty($res['result'])) break;
+
+                    foreach ($res['result'] as $one) {
+                        $data[] = "位于{$one['Address']}的土地转让给{$one['NewOwner']['Name']}";
+                    }
+
+                    $page++;
+
+                } while ($page <= 5);
+
+                return empty($data) ? null : $data;
+            });
+
+            $res = CspService::getInstance()->exec($csp);
+
+            return $res;
         });
 
         return $this->checkResp(200, null, CspService::getInstance()->exec($csp), '查询成功');
