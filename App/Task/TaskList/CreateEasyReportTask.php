@@ -125,7 +125,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                     }
 
                     //求出坑的比例，如果比第一个人大，那就是特殊机构，如果没第一个人大，那第一个人就是控制人
-                    if ($total > $hole) $tmp = $res['BreakThroughList'][0];
+                    if ($total > $hole) $tmp = current($res['BreakThroughList']);
                 }
             } else {
                 $tmp = null;
@@ -134,6 +134,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
+        //淘数 企查查 历史沿革
         $csp->add('getHistoricalEvolution', function () {
 
             $res = XinDongService::getInstance()->getHistoricalEvolution($this->entName);
@@ -143,9 +144,45 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
+        //淘数 法人对外投资
+        $csp->add('lawPersonInvestmentInfo',function () {
+
+            $res = (new TaoShuService())->setCheckRespFlag(true)->post([
+                'entName' => $this->entName,
+                'pageNo' => 1,
+                'pageSize' => 10,
+            ], 'lawPersonInvestmentInfo');
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         $res = CspService::getInstance()->exec($csp);
 
-        var_export($res['getHistoricalEvolution']);
+        var_export($res['lawPersonInvestmentInfo']);
     }
 
 
