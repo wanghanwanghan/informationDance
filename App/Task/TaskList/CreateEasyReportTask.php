@@ -497,7 +497,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $p1   = new PiePlot($data);
         $p1->ShowBorder();
         $p1->SetColor('black');
-        $p1->SetSliceColors(['#1E90FF', '#2E8B57', '#ADFF2F', '#DC143C', '#BA55D3']));
+        $p1->SetSliceColors(['#1E90FF', '#2E8B57', '#ADFF2F', '#DC143C', '#BA55D3']);
 
         $graph->Add($p1);
         $graph->Stroke('wang.jpg');
