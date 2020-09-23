@@ -465,7 +465,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $res = (new QianQiService())->setCheckRespFlag(true)->getThreeYearsData($postData);
 
             if ($res['code'] === 200 && !empty($res['result'])) {
-                $res = (new QianQiService())->toPercent($res['result']);
+                //$res = (new QianQiService())->toPercent($res['result']);
                 $res = $res['result'];
             } else {
                 $res = null;
