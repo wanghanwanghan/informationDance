@@ -2,6 +2,8 @@
 
 namespace App\Task\TaskList;
 
+use Amenadiel\JpGraph\Graph\PieGraph;
+use Amenadiel\JpGraph\Plot\PiePlot;
 use App\Csp\Service\CspService;
 use App\HttpController\Service\QianQi\QianQiService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
@@ -465,8 +467,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $res = (new QianQiService())->setCheckRespFlag(true)->getThreeYearsData($postData);
 
             if ($res['code'] === 200 && !empty($res['result'])) {
-                //$res = (new QianQiService())->toPercent($res['result']);
-                $res = $res['result'];
+                $res = (new QianQiService())->toPercent($res['result']);
             } else {
                 $res = null;
             }
@@ -482,7 +483,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $res = CspService::getInstance()->exec($csp);
 
-        var_export($res['FinanceData']);
+
+
+
+        $FinanceData = $res['FinanceData'];
+
+        $graph = new PieGraph(350, 250);
+
+        $graph->title->Set("A Simple Pie Plot");
+        $graph->SetBox(true);
+
+        $data = [40, 21, 17, 14, 23];
+        $p1   = new PiePlot($data);
+        $p1->ShowBorder();
+        $p1->SetColor('black');
+        $p1->SetSliceColors(['#1E90FF', '#2E8B57', '#ADFF2F', '#DC143C', '#BA55D3']));
+
+        $graph->Add($p1);
+        $graph->Stroke('wang.jpg');
+
+
     }
 
 
