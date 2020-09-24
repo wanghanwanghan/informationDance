@@ -27,6 +27,8 @@ class CreateDefine extends ServiceBase
 
         define('REPORT_PATH', STATIC_PATH . 'Report' . DIRECTORY_SEPARATOR);
 
+        define('SIMSUN_TTC', STATIC_PATH . 'TTF' . DIRECTORY_SEPARATOR . 'simsun.ttc');
+        define('BKAI00MP_TTF', STATIC_PATH . 'TTF' . DIRECTORY_SEPARATOR . 'bkai00mp.ttf');
 
         return true;
     }

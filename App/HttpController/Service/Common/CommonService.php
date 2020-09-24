@@ -2,6 +2,13 @@
 
 namespace App\HttpController\Service\Common;
 
+use Amenadiel\JpGraph\Graph\Graph;
+use Amenadiel\JpGraph\Graph\PieGraph;
+use Amenadiel\JpGraph\Plot\AccBarPlot;
+use Amenadiel\JpGraph\Plot\BarPlot;
+use Amenadiel\JpGraph\Plot\GroupBarPlot;
+use Amenadiel\JpGraph\Plot\LinePlot;
+use Amenadiel\JpGraph\Plot\PiePlot;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use EasySwoole\Component\Singleton;
@@ -59,6 +66,65 @@ class CommonService extends ServiceBase
         return true;
     }
 
+    //生成一个财务Bar图片
+    function createBarPic(array $data = [], $labels = [], $extension = []): string
+    {
+        $graph = new Graph(!isset($extension['width']) ? 1200 : $extension['width'], !isset($extension['height']) ? 600 : $extension['height']);
+        $graph->SetScale('textlin');
+
+        $graph->legend->Pos(0.02, 0.15);
+        $graph->legend->SetShadow('darkgray@0.5');
+        $graph->legend->SetFillColor('lightblue@0.3');
+
+        //设置标题
+        !isset($extension['title']) ?: $graph->title->Set($extension['title']);
+
+        //设置横坐标标题
+        !isset($extension['xTitle']) ?: $graph->xaxis->title->Set($extension['xTitle']);
+        //设置纵坐标标题
+        !isset($extension['yTitle']) ?: $graph->xaxis->title->Set($extension['yTitle']);
+
+        //横坐标显示
+        $graph->xaxis->SetTickLabels($labels);
+
+        $graph->SetUserFont1(SIMSUN_TTC);
+        $graph->title->SetFont(FF_USERFONT1, FS_NORMAL, !isset($extension['titleSize']) ? 14 : $extension['titleSize']);
+        $graph->xaxis->title->SetFont(FF_USERFONT1, FS_NORMAL);
+        $graph->xaxis->SetFont(FF_USERFONT1, FS_NORMAL);
+        $graph->xaxis->SetColor('black');
+        $graph->ygrid->SetColor('black@0.5');
+        $graph->legend->SetFont(FF_USERFONT1, FS_NORMAL);
+
+        $BarPlotObjArr = [];
+
+        $color=['red','orange','yellow','green','blue'];
+
+        foreach ($data as $key => $oneDataArray) {
+
+            $bar = new BarPlot($oneDataArray);
+
+            $bar->value->Show();
+
+            $bar->SetFillColor($color[$key].'@0.4');
+
+            $bar->SetLegend($extension['legend'][$key]);
+
+            $BarPlotObjArr[] = $bar;
+        }
+
+        $gbarplot = new GroupBarPlot($BarPlotObjArr);
+
+        $gbarplot->SetWidth(0.6);
+
+        $graph->Add($gbarplot);
+
+        $fileName=control::getUuid(12).'.jpg';
+
+        $graph->Stroke(REPORT_IMAGE_TEMP_PATH.$fileName);
+
+        return $fileName;
+    }
+
     //百度内容审核 - 纯文本
     function checkContentByAI($content, $type = 'word')
     {
@@ -97,5 +163,4 @@ class CommonService extends ServiceBase
 
         return $res;
     }
-
 }

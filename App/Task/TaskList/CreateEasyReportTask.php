@@ -2,9 +2,8 @@
 
 namespace App\Task\TaskList;
 
-use Amenadiel\JpGraph\Graph\PieGraph;
-use Amenadiel\JpGraph\Plot\PiePlot;
 use App\Csp\Service\CspService;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\QianQi\QianQiService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
 use App\HttpController\Service\TaoShu\TaoShuService;
@@ -472,6 +471,44 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 $res = null;
             }
 
+            if ($res === null) return $res;
+
+            foreach ($res as $year => $dataArr) {
+                $legend[] = $year;
+                array_pop($dataArr);
+                $tmp = array_map(function ($val) {
+                    return (int)$val;
+                }, array_values($dataArr));
+                $data[] = $tmp;
+            }
+
+            $labels = ['资产总额', '负债总额', '营业总收入', '主营业务收入', '利润总额', '净利润', '纳税总额', '所有者权益'];
+            $extension = [
+                'width' => 1200,
+                'height' => 550,
+                'title' => '财务非授权 - 同比',
+                'xTitle' => '此图为概况信息',
+                //'yTitle'=>'不错不错',
+                'titleSize' => 14,
+                'legend' => $legend
+            ];
+
+            return CommonService::getInstance()->createBarPic($data, $labels, $extension);
+        });
+
+        //企查查 业务概况
+        $csp->add('SearchCompanyCompanyProducts', function () {
+
+            $postData = [
+                'searchKey' => $this->entName,
+                'pageIndex' => 1,
+                'pageSize' => 10,
+            ];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'CompanyProductV4/SearchCompanyCompanyProducts', $postData);
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
             return $res;
         });
 
@@ -483,25 +520,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $res = CspService::getInstance()->exec($csp);
 
-
-
-
-        $FinanceData = $res['FinanceData'];
-
-        $graph = new PieGraph(350, 250);
-
-        $graph->title->Set("A Simple Pie Plot");
-        $graph->SetBox(true);
-
-        $data = [40, 21, 17, 14, 23];
-        $p1   = new PiePlot($data);
-        $p1->ShowBorder();
-        $p1->SetColor('black');
-        $p1->SetSliceColors(['#1E90FF', '#2E8B57', '#ADFF2F', '#DC143C', '#BA55D3']);
-
-        $graph->Add($p1);
-        $graph->Stroke('wang.jpg');
-
+        var_export($res['SearchCompanyCompanyProducts']);
 
     }
 
