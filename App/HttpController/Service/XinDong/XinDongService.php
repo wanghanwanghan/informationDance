@@ -7,6 +7,7 @@ use App\HttpController\Service\FaHai\FaHaiService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
 use App\HttpController\Service\ServiceBase;
 use App\HttpController\Service\TaoShu\TaoShuService;
+use wanghanwanghan\someUtils\control;
 use wanghanwanghan\someUtils\traits\Singleton;
 
 class XinDongService extends ServiceBase
@@ -453,7 +454,23 @@ class XinDongService extends ServiceBase
             return $res;
         });
 
-        return $this->checkResp(200, null, CspService::getInstance()->exec($csp), '查询成功');
+        //执行
+        $res = CspService::getInstance()->exec($csp);
+
+        //先整理文字的
+        $tmp=[];
+        $tmp[]=control::array_flatten($res['SearchCompanyFinancings']);
+        $tmp[]=control::array_flatten($res['landResources']);
+        $tmp[]=control::array_flatten($res['getBranchInfo']);
+        $tmp[]=control::array_flatten($res['getRegisterChangeInfo']);
+        $tmp=control::array_flatten($tmp);
+        $tmp=array_filter($tmp);
+        sort($tmp);
+        //再整理数字
+        array_push($tmp,"共有{$res['PatentSearch']}个专利，具体登录每日信动官网查看");
+        array_push($tmp,"共有{$res['GetAdministrativeLicenseList']}个行政许可，具体登录每日信动官网查看");
+
+        return $this->checkResp(200, null, $tmp, '查询成功');
     }
 
 
