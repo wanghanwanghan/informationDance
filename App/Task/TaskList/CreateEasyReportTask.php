@@ -338,26 +338,91 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("tdzr_no#" . ($i + 1), $i+1);
             //土地坐落
-            $docObj->setValue("tdzr_no#" . ($i + 1), $data['LandTransferList'][$i]['Address']);
+            $docObj->setValue("tdzr_Address#" . ($i + 1), $data['LandTransferList'][$i]['Address']);
             //行政区
-            $docObj->setValue("tdzr_no#" . ($i + 1), $data['LandTransferList'][$i]['PublishGov']);
+            $docObj->setValue("tdzr_AdminArea#" . ($i + 1), $data['LandTransferList'][$i]['AdminArea']);
             //原土地使用权人
-            $docObj->setValue("tdzr_no#" . ($i + 1), $data['LandTransferList'][$i]['AdminArea']);
+            $docObj->setValue("tdzr_OldOwner#" . ($i + 1), $data['LandTransferList'][$i]['OldOwner']['Name']);
             //现土地使用权人
-            $docObj->setValue("tdzr_no#" . ($i + 1), $data['LandTransferList'][$i]['PublishDate']);
+            $docObj->setValue("tdzr_NewOwner#" . ($i + 1), $data['LandTransferList'][$i]['NewOwner']['Name']);
             //成交额
-            $docObj->setValue("tdzr_no#" . ($i + 1), $data['LandTransferList'][$i]['PublishDate']);
+            $docObj->setValue("tdzr_TransAmt#" . ($i + 1), $data['LandTransferList'][$i]['detail']['TransAmt']);
             //面积
-            $docObj->setValue("tdzr_no#" . ($i + 1), $data['LandTransferList'][$i]['PublishDate']);
+            $docObj->setValue("tdzr_Acreage#" . ($i + 1), $data['LandTransferList'][$i]['detail']['Acreage']);
             //成交日期
-            $docObj->setValue("tdzr_no#" . ($i + 1), $data['LandTransferList'][$i]['PublishDate']);
+            $docObj->setValue("tdzr_TransTime#" . ($i + 1), $data['LandTransferList'][$i]['detail']['TransTime']);
+        }
+
+        //建筑资质
+        $rows = count($data['Qualification']);
+        $docObj->cloneRow('jzzz_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("jzzz_no#" . ($i + 1), $i+1);
+            //资质类别
+            $docObj->setValue("jzzz_Category#" . ($i + 1), $data['Qualification'][$i]['Category']);
+            //资质证书号
+            $docObj->setValue("jzzz_CertNo#" . ($i + 1), $data['Qualification'][$i]['CertNo']);
+            //资质名称
+            $docObj->setValue("jzzz_CertName#" . ($i + 1), $data['Qualification'][$i]['CertName']);
+            //发证日期
+            $docObj->setValue("jzzz_SignDate#" . ($i + 1), $data['Qualification'][$i]['SignDate']);
+            //证书有效期
+            $docObj->setValue("jzzz_ValidPeriod#" . ($i + 1), $data['Qualification'][$i]['ValidPeriod']);
+            //发证机关
+            $docObj->setValue("jzzz_SignDept#" . ($i + 1), $data['Qualification'][$i]['SignDept']);
+        }
+
+        //建筑工程项目
+        $rows = count($data['BuildingProject']);
+        $docObj->cloneRow('jzgc_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("jzgc_no#" . ($i + 1), $i+1);
+            //项目编码
+            $docObj->setValue("jzgc_No#" . ($i + 1), $data['BuildingProject'][$i]['No']);
+            //项目名称
+            $docObj->setValue("jzgc_ProjectName#" . ($i + 1), $data['BuildingProject'][$i]['ProjectName']);
+            //项目属地
+            $docObj->setValue("jzgc_Name#" . ($i + 1), $data['BuildingProject'][$i]['ConsCoyList'][0]['Name']);
+            //项目类别
+            $docObj->setValue("jzgc_Category#" . ($i + 1), $data['BuildingProject'][$i]['Category']);
+            //建设单位
+            $docObj->setValue("jzgc_Region#" . ($i + 1), $data['BuildingProject'][$i]['Region']);
+        }
+
+        //债券
+        $rows = count($data['BondList']);
+        $docObj->cloneRow('zq_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("zq_no#" . ($i + 1), $i+1);
+            //债券简称
+            $docObj->setValue("zq_ShortName#" . ($i + 1), $data['BondList'][$i]['ShortName']);
+            //债券代码
+            $docObj->setValue("zq_BondCode#" . ($i + 1), $data['BondList'][$i]['BondCode']);
+            //债券类型
+            $docObj->setValue("zq_BondType#" . ($i + 1), $data['BondList'][$i]['BondType']);
+            //发行日期
+            $docObj->setValue("zq_ReleaseDate#" . ($i + 1), $data['BondList'][$i]['ReleaseDate']);
+            //上市日期
+            $docObj->setValue("zq_LaunchDate#" . ($i + 1), $data['BondList'][$i]['LaunchDate']);
         }
 
 
 
 
 
-        var_dump($data['LandTransferList']);
+
+
+
+
+
+
+
+
+
+        var_dump($data['GetCompanyWebSite']);
     }
 
     //并发请求数据
@@ -644,7 +709,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $csp->add('Qualification', function () {
 
             $postData = [
-                'searchKey' => $this->entName,
+                //'searchKey' => $this->entName,
+                'searchKey' => '上海建工集团股份有限公司',
                 'pageIndex' => 1,
                 'pageSize' => 10,
             ];
@@ -660,7 +726,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $csp->add('BuildingProject', function () {
 
             $postData = [
-                'searchKey' => $this->entName,
+                //'searchKey' => $this->entName,
+                'searchKey' => '上海建工集团股份有限公司',
                 'pageIndex' => 1,
                 'pageSize' => 10,
             ];
@@ -676,7 +743,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $csp->add('BondList', function () {
 
             $postData = [
-                'searchKey' => $this->entName,
+                //'searchKey' => $this->entName,
+                'searchKey' => '东旭集团有限公司',
                 'pageIndex' => 1,
                 'pageSize' => 10,
             ];
@@ -692,7 +760,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $csp->add('GetCompanyWebSite', function () {
 
             $postData = [
-                'searchKey' => $this->entName,
+                //'searchKey' => $this->entName,
+                'searchKey' => '苏州朗动网络科技有限公司',
                 'pageIndex' => 1,
                 'pageSize' => 10,
             ];
@@ -1572,7 +1641,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
-        return CspService::getInstance()->exec($csp);
+        return CspService::getInstance()->exec($csp,10);
     }
 
 

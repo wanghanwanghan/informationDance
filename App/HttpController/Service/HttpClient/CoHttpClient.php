@@ -72,22 +72,37 @@ class CoHttpClient extends ServiceBase
     {
         $key = $this->createKey($url, $postData);
 
-        $redis = Redis::defer('redis');
+        //$redis = Redis::defer('redis');
 
-        $redis->select($this->db);
+        //invoke
+        $res = Redis::invoke('redis', function (\EasySwoole\Redis\Redis $redis) use ($key, $result) {
+            $redis->select($this->db);
+            return $redis->setEx($key, $this->ttlDay * 86400, $result);
+        });
 
-        return $redis->setEx($key, $this->ttlDay * 86400, $result);
+        //$redis->select($this->db);
+
+        //return $redis->setEx($key, $this->ttlDay * 86400, $result);
+        return $res;
     }
 
     private function takeResult($url, $postData)
     {
         $key = $this->createKey($url, $postData);
 
-        $redis = Redis::defer('redis');
+        //defer
+        //$redis = Redis::defer('redis');
 
-        $redis->select($this->db);
+        //invoke
+        $res = Redis::invoke('redis', function (\EasySwoole\Redis\Redis $redis) use ($key) {
+            $redis->select($this->db);
+            return $redis->get($key);
+        });
 
-        return $redis->get($key);
+        //$redis->select($this->db);
+
+        //return $redis->get($key);
+        return $res;
     }
 
     private function createKey($url, $postData): string
