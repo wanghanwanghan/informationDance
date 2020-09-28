@@ -76,6 +76,8 @@ class CommonService extends ServiceBase
         $graph->legend->SetShadow('darkgray@0.5');
         $graph->legend->SetFillColor('lightblue@0.3');
 
+        $graph->img->SetAutoMargin();
+
         //设置标题
         !isset($extension['title']) ?: $graph->title->Set($extension['title']);
 

@@ -81,7 +81,6 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //经营范围
         $docObj->setValue('OPSCOPE', $data['getRegisterInfo']['OPSCOPE']);
 
-
         //股东信息
         $rows = count($data['getShareHolderInfo']);
         $docObj->cloneRow('gd_INV', $rows);
@@ -409,6 +408,605 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("zq_LaunchDate#" . ($i + 1), $data['BondList'][$i]['LaunchDate']);
         }
 
+        //网站信息
+        $rows = count($data['GetCompanyWebSite']);
+        $docObj->cloneRow('web_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("web_no#" . ($i + 1), $i+1);
+            //网站名称
+            $docObj->setValue("web_Title#" . ($i + 1), $data['GetCompanyWebSite'][$i]['Title']);
+            //网址
+            $docObj->setValue("web_HomeSite#" . ($i + 1), $data['GetCompanyWebSite'][$i]['HomeSite']);
+            //域名
+            $docObj->setValue("web_YuMing#" . ($i + 1), $data['GetCompanyWebSite'][$i]['YuMing']);
+            //网站备案/许可证号
+            $docObj->setValue("web_BeiAn#" . ($i + 1), $data['GetCompanyWebSite'][$i]['BeiAn']);
+            //审核日期
+            $docObj->setValue("web_SDate#" . ($i + 1), $data['GetCompanyWebSite'][$i]['SDate']);
+        }
+
+        //微博
+        $rows = count($data['Microblog']);
+        $docObj->cloneRow('weibo_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("weibo_no#" . ($i + 1), $i+1);
+            //微博昵称
+            $docObj->setValue("weibo_Name#" . ($i + 1), $data['Microblog'][$i]['Name']);
+            //行业类别
+            $docObj->setValue("weibo_Tags#" . ($i + 1), $data['Microblog'][$i]['Tags']);
+            //简介
+            $docObj->setValue("weibo_Description#" . ($i + 1), $data['Microblog'][$i]['Description']);
+        }
+
+        //新闻舆情
+        $rows = count($data['CompanyNews']);
+        $docObj->cloneRow('xwyq_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("xwyq_no#" . ($i + 1), $i+1);
+            //内容
+            $docObj->setValue("xwyq_Title#" . ($i + 1), $data['CompanyNews'][$i]['Title']);
+            //来源
+            $docObj->setValue("xwyq_Source#" . ($i + 1), $data['CompanyNews'][$i]['Source']);
+            //时间
+            $docObj->setValue("xwyq_PublishTime#" . ($i + 1), $data['CompanyNews'][$i]['PublishTime']);
+        }
+
+        //团队人数变化率
+        $rows = count($data['itemInfo']);
+        $docObj->cloneRow('tdrs_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("tdrs_no#" . ($i + 1), $i+1);
+            //年份
+            $docObj->setValue("tdrs_year#" . ($i + 1), $data['itemInfo'][$i]['year']);
+            //变化率
+            $docObj->setValue("tdrs_yoy#" . ($i + 1), $data['itemInfo'][$i]['yoy']);
+        }
+
+        //建筑企业-专业注册人员
+        $rows = count($data['BuildingRegistrar']);
+        $docObj->cloneRow('zyry_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("zyry_no#" . ($i + 1), $i+1);
+            //姓名
+            $docObj->setValue("zyry_Name#" . ($i + 1), $data['BuildingRegistrar'][$i]['Name']);
+            //注册类别
+            $docObj->setValue("zyry_Category#" . ($i + 1), $data['BuildingRegistrar'][$i]['Category']);
+            //注册号
+            $docObj->setValue("zyry_RegNo#" . ($i + 1), $data['BuildingRegistrar'][$i]['RegNo']);
+            //注册专业
+            $docObj->setValue("zyry_Specialty#" . ($i + 1), $data['BuildingRegistrar'][$i]['Specialty']);
+        }
+
+        //招聘信息
+        $rows = count($data['Recruitment']);
+        $docObj->cloneRow('zp_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("zp_no#" . ($i + 1), $i+1);
+            //职位名称
+            $docObj->setValue("zp_Title#" . ($i + 1), $data['Recruitment'][$i]['Title']);
+            //工作地点
+            $docObj->setValue("zp_ProvinceDesc#" . ($i + 1), $data['Recruitment'][$i]['ProvinceDesc']);
+            //月薪
+            $docObj->setValue("zp_Salary#" . ($i + 1), $data['Recruitment'][$i]['Salary']);
+            //经验
+            $docObj->setValue("zp_Experience#" . ($i + 1), $data['Recruitment'][$i]['Experience']);
+            //学历
+            $docObj->setValue("zp_Education#" . ($i + 1), $data['Recruitment'][$i]['Education']);
+            //发布日期
+            $docObj->setValue("zp_PublishDate#" . ($i + 1), $data['Recruitment'][$i]['PublishDate']);
+        }
+
+        //财务总揽
+        $docObj->setImageValue("caiwu_pic",[
+            'path'=>REPORT_IMAGE_TEMP_PATH.$data['FinanceData'],
+            'width'=>440,
+            'height'=>500
+        ]);
+
+        //业务概况
+        $rows = count($data['SearchCompanyCompanyProducts']);
+        $docObj->cloneRow('ywgk_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("ywgk_no#" . ($i + 1), $i+1);
+            //产品名称
+            $docObj->setValue("ywgk_Name#" . ($i + 1), $data['SearchCompanyCompanyProducts'][$i]['Name']);
+            //产品领域
+            $docObj->setValue("ywgk_Domain#" . ($i + 1), $data['SearchCompanyCompanyProducts'][$i]['Domain']);
+            //产品描述
+            $docObj->setValue("ywgk_Description#" . ($i + 1), $data['SearchCompanyCompanyProducts'][$i]['Description']);
+        }
+
+        //专利
+        $rows = count($data['PatentV4Search']['list']);
+        $docObj->cloneRow('zl_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("zl_no#" . ($i + 1), $i+1);
+            //名称
+            $docObj->setValue("zl_Title#" . ($i + 1), $data['PatentV4Search']['list'][$i]['Title']);
+            //专利类型
+            $docObj->setValue("zl_IPCDesc#" . ($i + 1), implode(',',$data['PatentV4Search']['list'][$i]['IPCDesc']));
+            //公开号
+            $docObj->setValue("zl_PublicationNumber#" . ($i + 1), $data['PatentV4Search']['list'][$i]['PublicationNumber']);
+            //法律状态
+            $docObj->setValue("zl_LegalStatusDesc#" . ($i + 1), $data['PatentV4Search']['list'][$i]['LegalStatusDesc']);
+            //申请日期
+            $docObj->setValue("zl_ApplicationDate#" . ($i + 1), $data['PatentV4Search']['list'][$i]['ApplicationDate']);
+            //发布日期
+            $docObj->setValue("zl_PublicationDate#" . ($i + 1), $data['PatentV4Search']['list'][$i]['PublicationDate']);
+        }
+        $docObj->setValue("zl_total", $data['PatentV4Search']['total']);
+
+        //软件著作权
+        $rows = count($data['SearchSoftwareCr']['list']);
+        $docObj->cloneRow('rjzzq_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("rjzzq_no#" . ($i + 1), $i+1);
+            //软件名称
+            $docObj->setValue("rjzzq_Name#" . ($i + 1), $data['SearchSoftwareCr']['list'][$i]['Name']);
+            //登记号
+            $docObj->setValue("rjzzq_RegisterNo#" . ($i + 1), $data['SearchSoftwareCr']['list'][$i]['RegisterNo']);
+            //登记批准日期
+            $docObj->setValue("rjzzq_RegisterAperDate#" . ($i + 1), $data['SearchSoftwareCr']['list'][$i]['RegisterAperDate']);
+            //版本号
+            $docObj->setValue("rjzzq_VersionNo#" . ($i + 1), $data['SearchSoftwareCr']['list'][$i]['VersionNo']);
+        }
+        $docObj->setValue("rjzzq_total", $data['SearchSoftwareCr']['total']);
+
+        //商标
+        $rows = count($data['tmSearch']['list']);
+        $docObj->cloneRow('sb_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("sb_no#" . ($i + 1), $i+1);
+            //商标
+            $docObj->setValue("sb_Name#" . ($i + 1), $data['tmSearch']['list'][$i]['Name']);
+            //图标
+            $docObj->setImageValue("sb_img#" . ($i + 1), ['path'=>$data['tmSearch']['list'][$i]['ImageUrl'],'width'=>50,'height'=>50]);
+            //商标分类
+            $docObj->setValue("sb_FlowStatus#" . ($i + 1), $data['tmSearch']['list'][$i]['FlowStatus']);
+            //注册号
+            $docObj->setValue("sb_RegNo#" . ($i + 1), $data['tmSearch']['list'][$i]['RegNo']);
+            //流程状态
+            $docObj->setValue("sb_FlowStatusDesc#" . ($i + 1), $data['tmSearch']['list'][$i]['FlowStatusDesc']);
+            //申请日期
+            $docObj->setValue("sb_AppDate#" . ($i + 1), $data['tmSearch']['list'][$i]['AppDate']);
+        }
+        $docObj->setValue("sb_total", $data['tmSearch']['total']);
+
+        //作品著作权
+        $rows = count($data['SearchCopyRight']['list']);
+        $docObj->cloneRow('zpzzq_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("zpzzq_no#" . ($i + 1), $i+1);
+            //登记号
+            $docObj->setValue("zpzzq_RegisterNo#" . ($i + 1), $data['SearchCopyRight']['list'][$i]['RegisterNo']);
+            //作品名称
+            $docObj->setValue("zpzzq_Name#" . ($i + 1), $data['SearchCopyRight']['list'][$i]['Name']);
+            //创作完成日期
+            $docObj->setValue("zpzzq_FinishDate#" . ($i + 1), $data['SearchCopyRight']['list'][$i]['FinishDate']);
+            //登记日期
+            $docObj->setValue("zpzzq_RegisterDate#" . ($i + 1), $data['SearchCopyRight']['list'][$i]['RegisterDate']);
+        }
+        $docObj->setValue("zpzzq_total", $data['SearchCopyRight']['total']);
+
+        //证书资质
+        $rows = count($data['SearchCertification']['list']);
+        $docObj->cloneRow('zzzs_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("zzzs_no#" . ($i + 1), $i+1);
+            //证书名称
+            $docObj->setValue("zzzs_Name#" . ($i + 1), $data['SearchCertification']['list'][$i]['Name']);
+            //证书类型
+            $docObj->setValue("zzzs_Type#" . ($i + 1), $data['SearchCertification']['list'][$i]['Type']);
+            //证书生效时间
+            $docObj->setValue("zzzs_StartDate#" . ($i + 1), $data['SearchCertification']['list'][$i]['StartDate']);
+            //证书截止日期
+            $docObj->setValue("zzzs_EndDate#" . ($i + 1), $data['SearchCertification']['list'][$i]['EndDate']);
+            //证书编号
+            $docObj->setValue("zzzs_No#" . ($i + 1), $data['SearchCertification']['list'][$i]['No']);
+        }
+        $docObj->setValue("zzzs_total", $data['SearchCertification']['total']);
+
+        //纳税信用等级
+        $rows = count($data['satparty_xin']['list']);
+        $docObj->cloneRow('nsxydj_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("nsxydj_no#" . ($i + 1), $i+1);
+            //评定时间
+            $docObj->setValue("nsxydj_sortTimeString#" . ($i + 1), $data['satparty_xin']['list'][$i]['sortTimeString']);
+            //税务登记号
+            $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            //纳税信用等级
+            $docObj->setValue("nsxydj_eventResult#" . ($i + 1), $data['satparty_xin']['list'][$i]['detail']['eventResult']);
+            //评定单位
+            $docObj->setValue("nsxydj_authority#" . ($i + 1), $data['satparty_xin']['list'][$i]['detail']['authority']);
+        }
+        $docObj->setValue("nsxydj_total", $data['satparty_xin']['total']);
+
+        //税务许可信息
+        $rows = count($data['satparty_xuke']['list']);
+        $docObj->cloneRow('swxk_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("swxk_no#" . ($i + 1), $i+1);
+            //税务登记号
+            $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            //评定时间
+            $docObj->setValue("swxk_sortTimeString#" . ($i + 1), $data['satparty_xuke']['list'][$i]['sortTimeString']);
+            //发布时间
+            $docObj->setValue("swxk_postTime#" . ($i + 1), $data['satparty_xuke']['list'][$i]['detail']['postTime']);
+            //事件名称
+            $docObj->setValue("swxk_eventName#" . ($i + 1), $data['satparty_xuke']['list'][$i]['detail']['eventName']);
+            //管理机关
+            $docObj->setValue("swxk_authority#" . ($i + 1), $data['satparty_xuke']['list'][$i]['detail']['authority']);
+        }
+        $docObj->setValue("swxk_total", $data['satparty_xuke']['total']);
+
+        //税务登记信息
+        $rows = count($data['satparty_reg']['list']);
+        $docObj->cloneRow('swdj_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("swdj_no#" . ($i + 1), $i+1);
+            //税务登记号
+            $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            //评定时间
+            $docObj->setValue("swdj_sortTimeString#" . ($i + 1), $data['satparty_reg']['list'][$i]['sortTimeString']);
+            //事件名称
+            $docObj->setValue("swdj_eventName#" . ($i + 1), $data['satparty_reg']['list'][$i]['detail']['eventName']);
+            //事件结果
+            $docObj->setValue("swdj_eventResult#" . ($i + 1), $data['satparty_reg']['list'][$i]['detail']['eventResult']);
+            //管理机关
+            $docObj->setValue("swdj_authority#" . ($i + 1), $data['satparty_reg']['list'][$i]['detail']['authority']);
+        }
+        $docObj->setValue("swdj_total", $data['satparty_reg']['total']);
+
+        //税务非正常户
+        $rows = count($data['satparty_fzc']['list']);
+        $docObj->cloneRow('fzc_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("fzc_no#" . ($i + 1), $i+1);
+            //税务登记号
+            $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            //认定时间
+            $docObj->setValue("fzc_sortTimeString#" . ($i + 1), $data['satparty_fzc']['list'][$i]['sortTimeString']);
+            //事件名称
+            $docObj->setValue("fzc_eventName#" . ($i + 1), $data['satparty_fzc']['list'][$i]['detail']['eventName']);
+            //事件结果
+            $docObj->setValue("fzc_eventResult#" . ($i + 1), $data['satparty_fzc']['list'][$i]['detail']['eventResult']);
+            //管理机关
+            $docObj->setValue("fzc_authority#" . ($i + 1), $data['satparty_fzc']['list'][$i]['detail']['authority']);
+        }
+        $docObj->setValue("fzc_total", $data['satparty_fzc']['total']);
+
+        //欠税信息
+        $rows = count($data['satparty_qs']['list']);
+        $docObj->cloneRow('qs_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("qs_no#" . ($i + 1), $i+1);
+            //税务登记号
+            $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            //认定时间
+            $docObj->setValue("qs_sortTimeString#" . ($i + 1), $data['satparty_qs']['list'][$i]['sortTimeString']);
+            //事件名称
+            $docObj->setValue("qs_eventName#" . ($i + 1), $data['satparty_qs']['list'][$i]['detail']['eventName']);
+            //税种
+            $docObj->setValue("qs_taxCategory#" . ($i + 1), $data['satparty_qs']['list'][$i]['detail']['taxCategory']);
+            //管理机关
+            $docObj->setValue("qs_authority#" . ($i + 1), $data['satparty_qs']['list'][$i]['detail']['authority']);
+        }
+        $docObj->setValue("qs_total", $data['satparty_qs']['total']);
+
+        //涉税处罚公示
+        $rows = count($data['satparty_chufa']['list']);
+        $docObj->cloneRow('sswf_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("sswf_no#" . ($i + 1), $i+1);
+            //税务登记号
+            $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            //处罚时间
+            $docObj->setValue("sswf_sortTimeString#" . ($i + 1), $data['satparty_chufa']['list'][$i]['sortTimeString']);
+            //处罚金额
+            $docObj->setValue("sswf_money#" . ($i + 1), $data['satparty_chufa']['list'][$i]['detail']['money']);
+            //事件名称
+            $docObj->setValue("sswf_eventName#" . ($i + 1), $data['satparty_chufa']['list'][$i]['detail']['eventName']);
+            //事件结果
+            $docObj->setValue("sswf_eventResult#" . ($i + 1), $data['satparty_chufa']['list'][$i]['detail']['eventResult']);
+            //管理机关
+            $docObj->setValue("sswf_authority#" . ($i + 1), $data['satparty_chufa']['list'][$i]['detail']['authority']);
+        }
+        $docObj->setValue("sswf_total", $data['satparty_chufa']['total']);
+
+        //行政许可
+        $rows = count($data['GetAdministrativeLicenseList']['list']);
+        $docObj->cloneRow('xzxk_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("xzxk_no#" . ($i + 1), $i+1);
+            //许可编号
+            $docObj->setValue("xzxk_CaseNo#" . ($i + 1), $data['GetAdministrativeLicenseList']['list'][$i]['CaseNo']);
+            //有效期自
+            $docObj->setValue("xzxk_LianDate#" . ($i + 1), $data['GetAdministrativeLicenseList']['list'][$i]['detail']['LianDate']);
+            //有效期止
+            $docObj->setValue("xzxk_ExpireDate#" . ($i + 1), $data['GetAdministrativeLicenseList']['list'][$i]['detail']['ExpireDate']);
+            //许可内容
+            $docObj->setValue("xzxk_Content#" . ($i + 1), $data['GetAdministrativeLicenseList']['list'][$i]['detail']['Content']);
+            //许可机关
+            $docObj->setValue("xzxk_Province#" . ($i + 1), $data['GetAdministrativeLicenseList']['list'][$i]['detail']['Province']);
+        }
+        $docObj->setValue("xzxk_total", $data['GetAdministrativeLicenseList']['total']);
+
+        //行政处罚
+        $rows = count($data['GetAdministrativePenaltyList']['list']);
+        $docObj->cloneRow('xzcf_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("xzcf_no#" . ($i + 1), $i+1);
+            //文书号
+            $docObj->setValue("xzcf_CaseNo#" . ($i + 1), $data['GetAdministrativePenaltyList']['list'][$i]['CaseNo']);
+            //决定日期
+            $docObj->setValue("xzcf_LianDate#" . ($i + 1), $data['GetAdministrativePenaltyList']['list'][$i]['LianDate']);
+            //内容
+            $docObj->setValue("xzcf_Content#" . ($i + 1), $data['GetAdministrativePenaltyList']['list'][$i]['detail']['Content']);
+            //决定机关
+            $docObj->setValue("xzcf_ExecuteGov#" . ($i + 1), $data['GetAdministrativePenaltyList']['list'][$i]['detail']['ExecuteGov']);
+        }
+        $docObj->setValue("xzcf_total", $data['GetAdministrativePenaltyList']['total']);
+
+        //环保处罚
+        $rows = count($data['epbparty']['list']);
+        $docObj->cloneRow('hbcf_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("hbcf_no#" . ($i + 1), $i+1);
+            //案号
+            $docObj->setValue("hbcf_caseNo#" . ($i + 1), $data['epbparty']['list'][$i]['detail']['caseNo']);
+            //事件名称(类型)
+            $docObj->setValue("hbcf_eventName#" . ($i + 1), $data['epbparty']['list'][$i]['detail']['eventName']);
+            //处罚金额
+            $docObj->setValue("hbcf_money#" . ($i + 1), $data['epbparty']['list'][$i]['detail']['money']);
+            //处罚机关
+            $docObj->setValue("hbcf_authority#" . ($i + 1), $data['epbparty']['list'][$i]['detail']['authority']);
+        }
+        $docObj->setValue("hbcf_total", $data['epbparty']['total']);
+
+        //重点监控企业名单
+        $rows = count($data['epbparty_jkqy']['list']);
+        $docObj->cloneRow('zdjkqy_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("zdjkqy_no#" . ($i + 1), $i+1);
+            //监控名称
+            $docObj->setValue("zdjkqy_eventName#" . ($i + 1), $data['epbparty_jkqy']['list'][$i]['detail']['eventName']);
+            //涉事企业
+            $docObj->setValue("zdjkqy_pname#" . ($i + 1), $data['epbparty_jkqy']['list'][$i]['detail']['pname']);
+        }
+        $docObj->setValue("zdjkqy_total", $data['epbparty_jkqy']['total']);
+
+        //环保企业自行监测结果
+        $rows = count($data['epbparty_zxjc']['list']);
+        $docObj->cloneRow('zxjc_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("zxjc_no#" . ($i + 1), $i+1);
+            //监测指标/污染项目
+            $docObj->setValue("zxjc_pollutant#" . ($i + 1), $data['epbparty_zxjc']['list'][$i]['detail']['pollutant']);
+            //监测结果
+            $docObj->setValue("zxjc_density#" . ($i + 1), $data['epbparty_zxjc']['list'][$i]['detail']['density']);
+            //事件结果
+            $docObj->setValue("zxjc_eventResult#" . ($i + 1), $data['epbparty_zxjc']['list'][$i]['detail']['eventResult']);
+            //监测时间
+            $docObj->setValue("zxjc_sortTimeString#" . ($i + 1), $data['epbparty_zxjc']['list'][$i]['sortTimeString']);
+        }
+        $docObj->setValue("zxjc_total", $data['epbparty_zxjc']['total']);
+
+        //环评公示数据
+        $rows = count($data['epbparty_huanping']['list']);
+        $docObj->cloneRow('hpgs_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("hpgs_no#" . ($i + 1), $i+1);
+            //公告类型
+            $docObj->setValue("hpgs_eventName#" . ($i + 1), $data['epbparty_huanping']['list'][$i]['detail']['eventName']);
+            //建设单位
+            $docObj->setValue("hpgs_pname#" . ($i + 1), $data['epbparty_huanping']['list'][$i]['detail']['pname']);
+            //发生时间
+            $docObj->setValue("hpgs_sortTimeString#" . ($i + 1), $data['epbparty_huanping']['list'][$i]['sortTimeString']);
+        }
+        $docObj->setValue("hpgs_total", $data['epbparty_huanping']['total']);
+
+        //海关许可
+        $rows = count($data['custom_qy']['list']);
+        $docObj->cloneRow('hgxx_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("hgxx_no#" . ($i + 1), $i+1);
+            //海关注册码
+            $docObj->setValue("hgxx_regNo#" . ($i + 1), $data['custom_qy']['list'][$i]['detail']['regNo']);
+            //注册海关
+            $docObj->setValue("hgxx_custom#" . ($i + 1), $data['custom_qy']['list'][$i]['detail']['custom']);
+            //经营类别
+            $docObj->setValue("hgxx_category#" . ($i + 1), $data['custom_qy']['list'][$i]['detail']['category']);
+            //注册时间
+            $docObj->setValue("hgxx_sortTimeString#" . ($i + 1), $data['custom_qy']['list'][$i]['sortTimeString']);
+        }
+        $docObj->setValue("hgxx_total", $data['custom_qy']['total']);
+
+        //海关许可
+        $rows = count($data['custom_xuke']['list']);
+        $docObj->cloneRow('hgxk_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("hgxk_no#" . ($i + 1), $i+1);
+            //许可文书号
+            $docObj->setValue("hgxk_xkNo#" . ($i + 1), $data['custom_xuke']['list'][$i]['detail']['xkNo']);
+            //标题
+            $docObj->setValue("hgxk_title#" . ($i + 1), $data['custom_xuke']['list'][$i]['detail']['title']);
+            //许可机关
+            $docObj->setValue("hgxk_authority#" . ($i + 1), $data['custom_xuke']['list'][$i]['detail']['authority']);
+            //注册时间
+            $docObj->setValue("hgxk_sortTimeString#" . ($i + 1), $data['custom_xuke']['list'][$i]['sortTimeString']);
+        }
+        $docObj->setValue("hgxk_total", $data['custom_xuke']['total']);
+
+        //海关信用
+        $rows = count($data['custom_credit']['list']);
+        $docObj->cloneRow('hgxy_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("hgxy_no#" . ($i + 1), $i+1);
+            //所属海关
+            $docObj->setValue("hgxy_authority#" . ($i + 1), $data['custom_credit']['list'][$i]['detail']['authority']);
+            //信用等级
+            $docObj->setValue("hgxy_creditRank#" . ($i + 1), $data['custom_credit']['list'][$i]['detail']['creditRank']);
+            //认定年份
+            $docObj->setValue("hgxy_sortTimeString#" . ($i + 1), $data['custom_credit']['list'][$i]['sortTimeString']);
+        }
+        $docObj->setValue("hgxy_total", $data['custom_credit']['total']);
+
+        //海关处罚
+        $rows = count($data['custom_punish']['list']);
+        $docObj->cloneRow('hgcf_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("hgcf_no#" . ($i + 1), $i+1);
+            //公告类型
+            $docObj->setValue("hgcf_ggType#" . ($i + 1), $data['custom_punish']['list'][$i]['detail']['ggType']);
+            //处罚类别/案件性质
+            $docObj->setValue("hgcf_eventType#" . ($i + 1), $data['custom_punish']['list'][$i]['detail']['eventType']);
+            //处罚日期
+            $docObj->setValue("hgcf_sortTimeString#" . ($i + 1), $data['custom_punish']['list'][$i]['sortTimeString']);
+        }
+        $docObj->setValue("hgcf_total", $data['custom_punish']['total']);
+
+        //央行行政处罚
+        $rows = count($data['pbcparty']['list']);
+        $docObj->cloneRow('yhxzcf_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("yhxzcf_no#" . ($i + 1), $i+1);
+            //标题
+            $docObj->setValue("yhxzcf_title#" . ($i + 1), $data['pbcparty']['list'][$i]['detail']['title']);
+            //事件名称
+            $docObj->setValue("yhxzcf_eventName#" . ($i + 1), $data['pbcparty']['list'][$i]['detail']['eventName']);
+            //事件结果
+            $docObj->setValue("yhxzcf_eventResult#" . ($i + 1), $data['pbcparty']['list'][$i]['detail']['eventResult']);
+            //管理机关
+            $docObj->setValue("yhxzcf_authority#" . ($i + 1), $data['pbcparty']['list'][$i]['detail']['authority']);
+            //处罚时间
+            $docObj->setValue("yhxzcf_sortTimeString#" . ($i + 1), $data['pbcparty']['list'][$i]['sortTimeString']);
+        }
+        $docObj->setValue("yhxzcf_total", $data['pbcparty']['total']);
+
+        //银保监会处罚公示
+        $rows = count($data['pbcparty_cbrc']['list']);
+        $docObj->cloneRow('ybjcf_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("ybjcf_no#" . ($i + 1), $i+1);
+            //公告编号
+            $docObj->setValue("ybjcf_caseNo#" . ($i + 1), $data['pbcparty_cbrc']['list'][$i]['detail']['caseNo']);
+            //事件名称
+            $docObj->setValue("ybjcf_eventName#" . ($i + 1), $data['pbcparty_cbrc']['list'][$i]['detail']['eventName']);
+            //事件结果
+            $docObj->setValue("ybjcf_eventResult#" . ($i + 1), $data['pbcparty_cbrc']['list'][$i]['detail']['eventResult']);
+            //管理机关
+            $docObj->setValue("ybjcf_authority#" . ($i + 1), $data['pbcparty_cbrc']['list'][$i]['detail']['authority']);
+            //处罚时间
+            $docObj->setValue("ybjcf_sortTimeString#" . ($i + 1), $data['pbcparty_cbrc']['list'][$i]['sortTimeString']);
+        }
+        $docObj->setValue("ybjcf_total", $data['pbcparty_cbrc']['total']);
+
+        //证监处罚公示
+        $rows = count($data['pbcparty_csrc_chufa']['list']);
+        $docObj->cloneRow('zjcf_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("zjcf_no#" . ($i + 1), $i+1);
+            //决定书文号
+            $docObj->setValue("zjcf_caseNo#" . ($i + 1), $data['pbcparty_csrc_chufa']['list'][$i]['detail']['caseNo']);
+            //公告类型
+            $docObj->setValue("zjcf_eventName#" . ($i + 1), $data['pbcparty_csrc_chufa']['list'][$i]['detail']['eventName']);
+            //处罚结果
+            $docObj->setValue("zjcf_eventResult#" . ($i + 1), $data['pbcparty_csrc_chufa']['list'][$i]['detail']['eventResult']);
+            //处罚机关
+            $docObj->setValue("zjcf_authority#" . ($i + 1), $data['pbcparty_csrc_chufa']['list'][$i]['detail']['authority']);
+            //处罚时间
+            $docObj->setValue("zjcf_sortTimeString#" . ($i + 1), $data['pbcparty_csrc_chufa']['list'][$i]['sortTimeString']);
+        }
+        $docObj->setValue("zjcf_total", $data['pbcparty_csrc_chufa']['total']);
+
+        //证监会许可信息
+        $rows = count($data['pbcparty_csrc_xkpf']['list']);
+        $docObj->cloneRow('zjxk_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("zjxk_no#" . ($i + 1), $i+1);
+            //文书号
+            $docObj->setValue("zjxk_caseNo#" . ($i + 1), $data['pbcparty_csrc_xkpf']['list'][$i]['detail']['caseNo']);
+            //许可事项
+            $docObj->setValue("zjxk_title#" . ($i + 1), $data['pbcparty_csrc_xkpf']['list'][$i]['detail']['title']);
+            //管理机关
+            $docObj->setValue("zjxk_authority#" . ($i + 1), $data['pbcparty_csrc_xkpf']['list'][$i]['detail']['authority']);
+            //许可时间
+            $docObj->setValue("zjxk_sortTimeString#" . ($i + 1), $data['pbcparty_csrc_xkpf']['list'][$i]['sortTimeString']);
+        }
+        $docObj->setValue("zjxk_total", $data['pbcparty_csrc_xkpf']['total']);
+
+        //外汇局处罚
+        $rows = count($data['safe_chufa']['list']);
+        $docObj->cloneRow('whjcf_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("whjcf_no#" . ($i + 1), $i+1);
+            //文书号
+            $docObj->setValue("whjcf_caseNo#" . ($i + 1), $data['safe_chufa']['list'][$i]['detail']['caseNo']);
+            //违规行为
+            $docObj->setValue("whjcf_caseCause#" . ($i + 1), $data['safe_chufa']['list'][$i]['detail']['caseCause']);
+            //罚款结果
+            $docObj->setValue("whjcf_eventResult#" . ($i + 1), $data['safe_chufa']['list'][$i]['detail']['eventResult']);
+            //罚款金额
+            $docObj->setValue("whjcf_money#" . ($i + 1), $data['safe_chufa']['list'][$i]['detail']['money']);
+            //执行机关
+            $docObj->setValue("whjcf_authority#" . ($i + 1), $data['safe_chufa']['list'][$i]['detail']['authority']);
+            //处罚时间
+            $docObj->setValue("whjcf_sortTimeString#" . ($i + 1), $data['safe_chufa']['list'][$i]['sortTimeString']);
+        }
+        $docObj->setValue("whjcf_total", $data['safe_chufa']['total']);
+
+        //外汇局许可
+        $rows = count($data['safe_xuke']['list']);
+        $docObj->cloneRow('whjxk_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("whjxk_no#" . ($i + 1), $i+1);
+            //许可文书号
+            $docObj->setValue("whjxk_caseNo#" . ($i + 1), $data['safe_xuke']['list'][$i]['detail']['caseNo']);
+            //项目名称
+            $docObj->setValue("whjxk_eventName#" . ($i + 1), $data['safe_xuke']['list'][$i]['detail']['eventName']);
+            //许可事项
+            $docObj->setValue("whjxk_eventType#" . ($i + 1), $data['safe_xuke']['list'][$i]['detail']['eventType']);
+            //许可机关
+            $docObj->setValue("whjxk_authority#" . ($i + 1), $data['safe_xuke']['list'][$i]['detail']['authority']);
+            //处罚时间
+            $docObj->setValue("whjxk_sortTimeString#" . ($i + 1), $data['safe_xuke']['list'][$i]['sortTimeString']);
+        }
+        $docObj->setValue("whjxk_total", $data['safe_xuke']['total']);
 
 
 
@@ -422,7 +1020,11 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
 
 
-        var_dump($data['GetCompanyWebSite']);
+
+
+
+
+        //var_dump($data['fygg']);
     }
 
     //并发请求数据
@@ -763,7 +1365,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 //'searchKey' => $this->entName,
                 'searchKey' => '苏州朗动网络科技有限公司',
                 'pageIndex' => 1,
-                'pageSize' => 10,
+                'pageSize' => 15,
             ];
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'WebSiteV4/GetCompanyWebSite', $postData);
@@ -849,7 +1451,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $csp->add('BuildingRegistrar', function () {
 
             $postData = [
-                'searchKey' => $this->entName,
+                //'searchKey' => $this->entName,
+                'searchKey' => '上海建工集团股份有限公司',
                 'pageIndex' => 1,
                 'pageSize' => 10,
             ];
@@ -904,7 +1507,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $labels = ['资产总额', '负债总额', '营业总收入', '主营业务收入', '利润总额', '净利润', '纳税总额', '所有者权益'];
             $extension = [
                 'width' => 1200,
-                'height' => 550,
+                'height' => 700,
                 'title' => '财务非授权 - 同比',
                 'xTitle' => '此图为概况信息',
                 //'yTitle'=>'不错不错',
@@ -942,9 +1545,12 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'PatentV4/Search', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //企查查 软件著作权
@@ -958,9 +1564,12 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'CopyRight/SearchSoftwareCr', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //企查查 商标
@@ -974,25 +1583,32 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'tm/Search', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //企查查 作品著作权
         $csp->add('SearchCopyRight', function () {
 
             $postData = [
-                'searchKey' => $this->entName,
+                //'searchKey' => $this->entName,
+                'searchKey' => '华为技术有限公司',
                 'pageIndex' => 1,
                 'pageSize' => 20,
             ];
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'CopyRight/SearchCopyRight', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //企查查 证书资质
@@ -1006,111 +1622,270 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'ECICertification/SearchCertification', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 纳税信用等级
         $csp->add('satparty_xin', function () {
 
+            $doc_type='satparty_xin';
+
             $postData = [
-                'doc_type' => 'satparty_xin',
-                'keyword' => $this->entName,
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '小米',
                 'pageno' => 1,
                 'range' => 20,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sat', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 税务许可信息
         $csp->add('satparty_xuke', function () {
 
+            $doc_type='satparty_xuke';
+
             $postData = [
-                'doc_type' => 'satparty_xuke',
-                'keyword' => $this->entName,
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '北京小桔科技有限公司',
                 'pageno' => 1,
                 'range' => 20,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sat', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 税务登记信息
         $csp->add('satparty_reg', function () {
 
+            $doc_type='satparty_reg';
+
             $postData = [
-                'doc_type' => 'satparty_reg',
-                'keyword' => $this->entName,
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '小米',
                 'pageno' => 1,
                 'range' => 20,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sat', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 税务非正常户
         $csp->add('satparty_fzc', function () {
 
+            $doc_type='satparty_fzc';
+
             $postData = [
-                'doc_type' => 'satparty_fzc',
-                'keyword' => $this->entName,
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '小米',
                 'pageno' => 1,
                 'range' => 20,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sat', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 欠税信息
         $csp->add('satparty_qs', function () {
 
+            $doc_type='satparty_qs';
+
             $postData = [
-                'doc_type' => 'satparty_qs',
-                'keyword' => $this->entName,
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '小米',
                 'pageno' => 1,
                 'range' => 20,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sat', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 涉税处罚公示
         $csp->add('satparty_chufa', function () {
 
+            $doc_type='satparty_chufa';
+
             $postData = [
-                'doc_type' => 'satparty_chufa',
-                'keyword' => $this->entName,
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '小米',
                 'pageno' => 1,
                 'range' => 20,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sat', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //企查查 行政许可
@@ -1124,263 +1899,717 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'ADSTLicense/GetAdministrativeLicenseList', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['Id']];
+
+                    $detail = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl.'ADSTLicense/GetAdministrativeLicenseDetail', $postData);
+
+                    if ($detail['code']==200 && !empty($detail['result']))
+                    {
+                        $one['detail']=$detail['result'];
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //企查查 行政处罚
         $csp->add('GetAdministrativePenaltyList', function () {
 
             $postData = [
-                'searchKey' => $this->entName,
+                //'searchKey' => $this->entName,
+                'searchKey' => '乐视网信息技术（北京）股份有限公司',
                 'pageIndex' => 1,
                 'pageSize' => 20,
             ];
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'AdministrativePenalty/GetAdministrativePenaltyList', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['Id']];
+
+                    $detail = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl.'AdministrativePenalty/GetAdministrativePenaltyDetail', $postData);
+
+                    if ($detail['code']==200 && !empty($detail['result']))
+                    {
+                        $one['detail']=$detail['result'];
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 环保 环保处罚
         $csp->add('epbparty', function () {
 
+            $doc_type='epbparty';
+
             $postData = [
-                'doc_type' => 'epbparty',
-                'keyword' => $this->entName,
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '小米',
                 'pageno' => 1,
                 'range' => 20,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'epb', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 环保 重点监控企业名单
         $csp->add('epbparty_jkqy', function () {
 
+            $doc_type='epbparty_jkqy';
+
             $postData = [
-                'doc_type' => 'epbparty_jkqy',
-                'keyword' => $this->entName,
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '水稻',
                 'pageno' => 1,
                 'range' => 20,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'epb', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 环保 环保企业自行监测结果
         $csp->add('epbparty_zxjc', function () {
 
+            $doc_type='epbparty_zxjc';
+
             $postData = [
-                'doc_type' => 'epbparty_zxjc',
-                'keyword' => $this->entName,
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '水产',
                 'pageno' => 1,
                 'range' => 20,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'epb', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 环保 环评公示数据
         $csp->add('epbparty_huanping', function () {
 
+            $doc_type='epbparty_huanping';
+
             $postData = [
-                'doc_type' => 'epbparty_huanping',
-                'keyword' => $this->entName,
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '水产',
                 'pageno' => 1,
                 'range' => 20,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'epb', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 海关 海关企业
         $csp->add('custom_qy', function () {
 
+            $doc_type='custom_qy';
+
             $postData = [
-                'doc_type' => 'custom_qy',
-                'keyword' => $this->entName,
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '水产',
                 'pageno' => 1,
                 'range' => 20,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'custom', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 海关 海关许可
         $csp->add('custom_xuke', function () {
 
+            $doc_type='custom_xuke';
+
             $postData = [
-                'doc_type' => 'custom_xuke',
-                'keyword' => $this->entName,
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '水产',
                 'pageno' => 1,
                 'range' => 20,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'custom', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 海关 海关信用
         $csp->add('custom_credit', function () {
 
+            $doc_type='custom_credit';
+
             $postData = [
-                'doc_type' => 'custom_credit',
-                'keyword' => $this->entName,
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '水产',
                 'pageno' => 1,
                 'range' => 20,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'custom', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 海关 海关处罚
         $csp->add('custom_punish', function () {
 
+            $doc_type='custom_punish';
+
             $postData = [
-                'doc_type' => 'custom_punish',
-                'keyword' => $this->entName,
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '水产',
                 'pageno' => 1,
                 'range' => 20,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'custom', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 一行两会 央行行政处罚
         $csp->add('pbcparty', function () {
 
+            $doc_type='pbcparty';
+
             $postData = [
-                'doc_type' => 'pbcparty',
-                'keyword' => $this->entName,
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '银行',
                 'pageno' => 1,
                 'range' => 20,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'pbc', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 一行两会 银保监会处罚公示
         $csp->add('pbcparty_cbrc', function () {
 
+            $doc_type='pbcparty_cbrc';
+
             $postData = [
-                'doc_type' => 'pbcparty_cbrc',
-                'keyword' => $this->entName,
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '银行',
                 'pageno' => 1,
                 'range' => 20,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'pbc', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 一行两会 证监处罚公示
         $csp->add('pbcparty_csrc_chufa', function () {
 
+            $doc_type='pbcparty_csrc_chufa';
+
             $postData = [
-                'doc_type' => 'pbcparty_csrc_chufa',
-                'keyword' => $this->entName,
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '证券',
                 'pageno' => 1,
                 'range' => 20,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'pbc', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
+        });
+
+        //法海 一行两会 证监会许可信息
+        $csp->add('pbcparty_csrc_xkpf', function () {
+
+            $doc_type='pbcparty_csrc_xkpf';
+
+            $postData = [
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '证券',
+                'pageno' => 1,
+                'range' => 20,
+            ];
+
+            $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'pbc', $postData);
+
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 一行两会 外汇局处罚
         $csp->add('safe_chufa', function () {
 
+            $doc_type='safe_chufa';
+
             $postData = [
-                'doc_type' => 'safe_chufa',
-                'keyword' => $this->entName,
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '证券',
                 'pageno' => 1,
                 'range' => 20,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'pbc', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 一行两会 外汇局许可
         $csp->add('safe_xuke', function () {
 
+            $doc_type='safe_xuke';
+
             $postData = [
-                'doc_type' => 'safe_xuke',
-                'keyword' => $this->entName,
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '证券',
                 'pageno' => 1,
                 'range' => 20,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'pbc', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 法院公告
         $csp->add('fygg', function () {
 
+            $doc_type='fygg';
+
             $postData = [
-                'doc_type' => 'fygg',
-                'keyword' => $this->entName,
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '乐视网信息技术（北京）股份有限公司',
                 'pageno' => 1,
-                'range' => 20,
+                'range' => 1,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sifa', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 开庭公告
