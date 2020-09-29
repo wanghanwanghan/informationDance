@@ -1261,7 +1261,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("dcdy_total", $data['getChattelMortgageInfo']['total']);
 
-
+        //股权出质
+        $rows = count($data['getEquityPledgedInfo']['list']);
+        $docObj->cloneRow('gqcz_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("gqcz_no#" . ($i + 1), $i+1);
+            //登记编号
+            $docObj->setValue("gqcz_DJBH#" . ($i + 1), $data['getEquityPledgedInfo']['list'][$i]['DJBH']);
+            //股权出质设立登记日期
+            $docObj->setValue("gqcz_GQCZSLDJRQ#" . ($i + 1), $data['getEquityPledgedInfo']['list'][$i]['GQCZSLDJRQ']);
+            //质权人
+            $docObj->setValue("gqcz_ZQR#" . ($i + 1), $data['getEquityPledgedInfo']['list'][$i]['ZQR']);
+            //出质人
+            $docObj->setValue("gqcz_CZR#" . ($i + 1), $data['getEquityPledgedInfo']['list'][$i]['CZR']);
+            //出质股权数额
+            $docObj->setValue("gqcz_CZGQSE#" . ($i + 1), $data['getEquityPledgedInfo']['list'][$i]['CZGQSE']);
+            //状态
+            $docObj->setValue("gqcz_ZT#" . ($i + 1), $data['getEquityPledgedInfo']['list'][$i]['ZT']);
+        }
+        $docObj->setValue("gqcz_total", $data['getEquityPledgedInfo']['total']);
 
 
 
