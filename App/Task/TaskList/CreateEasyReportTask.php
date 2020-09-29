@@ -3042,7 +3042,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
                 //'entName' => $this->entName,
-                'entName' => '乐视网信息技术（北京）股份有限公司',
+                'entName' => '新疆庆华能源集团有限公司',
                 'pageNo' => 1,
                 'pageSize' => 20,
             ], 'getChattelMortgageInfo');
