@@ -1217,6 +1217,28 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("bzxr_total", $data['SearchZhiXing']['total']);
 
+        //查封冻结扣押
+        $rows = count($data['sifacdk']['list']);
+        $docObj->cloneRow('cdk_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("cdk_no#" . ($i + 1), $i+1);
+            //案件编号
+            $docObj->setValue("cdk_caseNo#" . ($i + 1), $data['sifacdk']['list'][$i]['detail']['caseNo']);
+            //标的名称
+            $docObj->setValue("cdk_objectName#" . ($i + 1), $data['sifacdk']['list'][$i]['detail']['objectName']);
+            //标的类型
+            $docObj->setValue("cdk_objectType#" . ($i + 1), $data['sifacdk']['list'][$i]['detail']['objectType']);
+            //审理法院
+            $docObj->setValue("cdk_court#" . ($i + 1), $data['sifacdk']['list'][$i]['detail']['court']);
+            //审结时间
+            $docObj->setValue("cdk_postTime#" . ($i + 1), date('Y年m月d日',$data['sifacdk']['list'][$i]['detail']['postTime']/1000));
+            //事件时间
+            $docObj->setValue("cdk_sortTimeString#" . ($i + 1), $data['sifacdk']['list'][$i]['sortTimeString']);
+            //涉及金额
+            $docObj->setValue("cdk_money#" . ($i + 1), $data['sifacdk']['list'][$i]['detail']['money']);
+        }
+        $docObj->setValue("cdk_total", $data['sifacdk']['total']);
 
 
 
@@ -1230,7 +1252,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
 
 
-        var_dump($data['SearchZhiXing']);
+        var_dump($data['getChattelMortgageInfo']);
     }
 
     //并发请求数据
@@ -2959,8 +2981,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $csp->add('SearchZhiXing', function () {
 
             $postData = [
-                //'searchKey' => $this->entName,
-                'searchKey' => '乐视网信息技术（北京）股份有限公司',
+                'searchKey' => $this->entName,
                 'isExactlySame' => true,
             ];
 
@@ -2977,8 +2998,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 司法查冻扣
         $csp->add('sifacdk', function () {
 
+            $doc_type='sifacdk';
+
             $postData = [
-                'doc_type' => 'sifacdk',
+                'doc_type' => $doc_type,
                 'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
@@ -2986,16 +3009,40 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sifa', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //淘数 动产抵押
         $csp->add('getChattelMortgageInfo', function () {
 
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
-                'entName' => $this->entName,
+                //'entName' => $this->entName,
+                'entName' => '乐视网信息技术（北京）股份有限公司',
                 'pageNo' => 1,
                 'pageSize' => 20,
             ], 'getChattelMortgageInfo');
