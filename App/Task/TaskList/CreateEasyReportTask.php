@@ -1008,6 +1008,94 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("whjxk_total", $data['safe_xuke']['total']);
 
+        //法院公告
+        $rows = count($data['fygg']['list']);
+        $docObj->cloneRow('fygg_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("fygg_no#" . ($i + 1), $i+1);
+            //案号
+            $docObj->setValue("fygg_caseNo#" . ($i + 1), $data['fygg']['list'][$i]['detail']['caseNo']);
+            //公告法院
+            $docObj->setValue("fygg_court#" . ($i + 1), $data['fygg']['list'][$i]['detail']['court']);
+            //立案时间
+            $docObj->setValue("fygg_sortTimeString#" . ($i + 1), $data['fygg']['list'][$i]['sortTimeString']);
+
+            $content = '';
+            foreach ($data['fygg']['list'][$i]['detail']['partys'] as $no => $arr) {
+                $content .= '<w:br/>';
+                $content .= ($no + 1).':';
+                $content .= $arr['caseCauseT'].' - ';
+                $content .= $arr['pname'].' - ';
+                $content .= $arr['partyTitleT'].' - ';
+                switch ($arr['partyPositionT']){
+                    case 'p':
+                        $content .= '原告';
+                        break;
+                    case 'd':
+                        $content .= '被告';
+                        break;
+                    case 't':
+                        $content .= '第三人';
+                        break;
+                    case 'u':
+                        $content .= '当事人';
+                        break;
+                    default:
+                        $content .= '';
+                        break;
+                }
+                $content .= '<w:br/>';
+            }
+            //案由-当事人-称号-诉讼地位(原审)
+            $docObj->setValue("fygg_content#".($i + 1), $content);
+        }
+        $docObj->setValue("fygg_total", $data['fygg']['total']);
+
+        //开庭公告
+        $rows = count($data['ktgg']['list']);
+        $docObj->cloneRow('ktgg_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("ktgg_no#" . ($i + 1), $i+1);
+            //案号
+            $docObj->setValue("ktgg_caseNo#" . ($i + 1), $data['ktgg']['list'][$i]['detail']['caseNo']);
+            //法院名称
+            $docObj->setValue("ktgg_court#" . ($i + 1), $data['ktgg']['list'][$i]['detail']['court']);
+            //立案时间
+            $docObj->setValue("ktgg_sortTimeString#" . ($i + 1), $data['ktgg']['list'][$i]['sortTimeString']);
+
+            $content = '';
+            foreach ($data['ktgg']['list'][$i]['detail']['partys'] as $no => $arr) {
+                $content .= '<w:br/>';
+                $content .= ($no + 1).':';
+                $content .= $arr['courtTypeT'].' - ';
+                $content .= $arr['caseCauseT'].' - ';
+                $content .= $arr['pname'].' - ';
+                $content .= $arr['partyTitleT'].' - ';
+                switch ($arr['partyPositionT']){
+                    case 'p':
+                        $content .= '原告';
+                        break;
+                    case 'd':
+                        $content .= '被告';
+                        break;
+                    case 't':
+                        $content .= '第三人';
+                        break;
+                    case 'u':
+                        $content .= '当事人';
+                        break;
+                    default:
+                        $content .= '';
+                        break;
+                }
+                $content .= '<w:br/>';
+            }
+            //法院类型-案由-当事人-称号-诉讼地位(原审)
+            $docObj->setValue("ktgg_content#".($i + 1), $content);
+        }
+        $docObj->setValue("ktgg_total", $data['ktgg']['total']);
 
 
 
@@ -1024,7 +1112,12 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
 
 
-        //var_dump($data['fygg']);
+
+
+
+
+
+        var_dump($data['cpws']);
     }
 
     //并发请求数据
@@ -1247,8 +1340,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $csp->add('LandPurchaseList', function () {
 
             $postData = [
-                //'searchKey' => $this->entName,
-                'searchKey' => '万科企业股份有限公司',
+                'searchKey' => $this->entName,
                 'pageIndex' => 1,
                 'pageSize' => 10,
             ];
@@ -1264,8 +1356,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $csp->add('LandPublishList', function () {
 
             $postData = [
-                //'searchKey' => $this->entName,
-                'searchKey' => '万科企业股份有限公司',
+                'searchKey' => $this->entName,
                 'pageIndex' => 1,
                 'pageSize' => 10,
             ];
@@ -1281,8 +1372,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $csp->add('LandTransferList', function () {
 
             $postData = [
-                //'searchKey' => $this->entName,
-                'searchKey' => '华夏幸福基业股份有限公司',
+                'searchKey' => $this->entName,
                 'pageIndex' => 1,
                 'pageSize' => 10,
             ];
@@ -1311,8 +1401,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $csp->add('Qualification', function () {
 
             $postData = [
-                //'searchKey' => $this->entName,
-                'searchKey' => '上海建工集团股份有限公司',
+                'searchKey' => $this->entName,
                 'pageIndex' => 1,
                 'pageSize' => 10,
             ];
@@ -1328,8 +1417,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $csp->add('BuildingProject', function () {
 
             $postData = [
-                //'searchKey' => $this->entName,
-                'searchKey' => '上海建工集团股份有限公司',
+                'searchKey' => $this->entName,
                 'pageIndex' => 1,
                 'pageSize' => 10,
             ];
@@ -1345,8 +1433,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $csp->add('BondList', function () {
 
             $postData = [
-                //'searchKey' => $this->entName,
-                'searchKey' => '东旭集团有限公司',
+                'searchKey' => $this->entName,
                 'pageIndex' => 1,
                 'pageSize' => 10,
             ];
@@ -1362,10 +1449,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $csp->add('GetCompanyWebSite', function () {
 
             $postData = [
-                //'searchKey' => $this->entName,
-                'searchKey' => '苏州朗动网络科技有限公司',
+                'searchKey' => $this->entName,
                 'pageIndex' => 1,
-                'pageSize' => 15,
+                'pageSize' => 10,
             ];
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'WebSiteV4/GetCompanyWebSite', $postData);
@@ -1451,8 +1537,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $csp->add('BuildingRegistrar', function () {
 
             $postData = [
-                //'searchKey' => $this->entName,
-                'searchKey' => '上海建工集团股份有限公司',
+                'searchKey' => $this->entName,
                 'pageIndex' => 1,
                 'pageSize' => 10,
             ];
@@ -1595,8 +1680,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $csp->add('SearchCopyRight', function () {
 
             $postData = [
-                //'searchKey' => $this->entName,
-                'searchKey' => '华为技术有限公司',
+                'searchKey' => $this->entName,
                 'pageIndex' => 1,
                 'pageSize' => 20,
             ];
@@ -1637,8 +1721,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '小米',
+                'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
             ];
@@ -1680,8 +1763,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '北京小桔科技有限公司',
+                'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
             ];
@@ -1723,8 +1805,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '小米',
+                'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
             ];
@@ -1766,8 +1847,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '小米',
+                'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
             ];
@@ -1809,8 +1889,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '小米',
+                'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
             ];
@@ -1852,8 +1931,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '小米',
+                'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
             ];
@@ -1931,8 +2009,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $csp->add('GetAdministrativePenaltyList', function () {
 
             $postData = [
-                //'searchKey' => $this->entName,
-                'searchKey' => '乐视网信息技术（北京）股份有限公司',
+                'searchKey' => $this->entName,
                 'pageIndex' => 1,
                 'pageSize' => 20,
             ];
@@ -1974,8 +2051,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '小米',
+                'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
             ];
@@ -2017,8 +2093,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '水稻',
+                'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
             ];
@@ -2060,8 +2135,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '水产',
+                'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
             ];
@@ -2103,8 +2177,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '水产',
+                'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
             ];
@@ -2146,8 +2219,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '水产',
+                'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
             ];
@@ -2189,8 +2261,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '水产',
+                'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
             ];
@@ -2232,8 +2303,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '水产',
+                'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
             ];
@@ -2275,8 +2345,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '水产',
+                'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
             ];
@@ -2318,8 +2387,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '银行',
+                'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
             ];
@@ -2361,8 +2429,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '银行',
+                'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
             ];
@@ -2404,8 +2471,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '证券',
+                'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
             ];
@@ -2447,8 +2513,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '证券',
+                'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
             ];
@@ -2490,8 +2555,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '证券',
+                'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
             ];
@@ -2533,8 +2597,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '证券',
+                'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
             ];
@@ -2576,10 +2639,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '乐视网信息技术（北京）股份有限公司',
+                'keyword' => $this->entName,
                 'pageno' => 1,
-                'range' => 1,
+                'range' => 20,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sifa', $postData);
@@ -2615,8 +2677,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 开庭公告
         $csp->add('ktgg', function () {
 
+            $doc_type='ktgg';
+
             $postData = [
-                'doc_type' => 'ktgg',
+                'doc_type' => $doc_type,
                 'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
@@ -2624,26 +2688,75 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sifa', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 裁判文书
         $csp->add('cpws', function () {
 
+            $doc_type='cpws';
+
             $postData = [
-                'doc_type' => 'cpws',
-                'keyword' => $this->entName,
+                'doc_type' => $doc_type,
+                //'keyword' => $this->entName,
+                'keyword' => '乐视网信息技术（北京）股份有限公司',
                 'pageno' => 1,
                 'range' => 20,
             ];
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sifa', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 执行公告

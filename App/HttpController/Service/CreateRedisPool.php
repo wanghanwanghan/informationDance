@@ -16,6 +16,7 @@ class CreateRedisPool extends ServiceBase
         $conf=new RedisConfig();
         $conf->setHost(\Yaconf::get('env.redisHost'));
         $conf->setPort(\Yaconf::get('env.redisPort'));
+        $conf->setTimeout(5);
         $conf->setAuth(\Yaconf::get('env.redisPassword'));
         $conf->setSerialize(RedisConfig::SERIALIZE_NONE);
 
