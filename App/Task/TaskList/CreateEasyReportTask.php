@@ -1240,6 +1240,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("cdk_total", $data['sifacdk']['total']);
 
+        //动产抵押
+        $rows = count($data['getChattelMortgageInfo']['list']);
+        $docObj->cloneRow('dcdy_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("dcdy_no#" . ($i + 1), $i+1);
+            //登记编号
+            $docObj->setValue("dcdy_DJBH#" . ($i + 1), $data['getChattelMortgageInfo']['list'][$i]['DJBH']);
+            //公示日期
+            $docObj->setValue("dcdy_GSRQ#" . ($i + 1), $data['getChattelMortgageInfo']['list'][$i]['GSRQ']);
+            //登记日期
+            $docObj->setValue("dcdy_DJRQ#" . ($i + 1), $data['getChattelMortgageInfo']['list'][$i]['DJRQ']);
+            //登记机关
+            $docObj->setValue("dcdy_DJJG#" . ($i + 1), $data['getChattelMortgageInfo']['list'][$i]['DJJG']);
+            //被担保债权数额
+            $docObj->setValue("dcdy_BDBZQSE#" . ($i + 1), $data['getChattelMortgageInfo']['list'][$i]['BDBZQSE']);
+            //状态
+            $docObj->setValue("dcdy_ZT#" . ($i + 1), $data['getChattelMortgageInfo']['list'][$i]['ZT']);
+        }
+        $docObj->setValue("dcdy_total", $data['getChattelMortgageInfo']['total']);
 
 
 
@@ -1251,8 +1271,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
 
 
-
-        var_dump($data['getChattelMortgageInfo']);
+        var_dump($data['getEquityPledgedInfo']);
     }
 
     //并发请求数据
@@ -3041,31 +3060,35 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $csp->add('getChattelMortgageInfo', function () {
 
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
-                //'entName' => $this->entName,
-                'entName' => '新疆庆华能源集团有限公司',
+                'entName' => $this->entName,
                 'pageNo' => 1,
                 'pageSize' => 20,
             ], 'getChattelMortgageInfo');
 
-            var_dump($res);
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            $tmp['list']=$res;
+            $tmp['total']=$total;
 
-            return $res;
+            return $tmp;
         });
 
         //淘数 股权出质
         $csp->add('getEquityPledgedInfo', function () {
 
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
-                'entName' => $this->entName,
+                //'entName' => $this->entName,
+                'entName' => '青岛海信信特置业有限公司',
                 'pageNo' => 1,
                 'pageSize' => 20,
             ], 'getEquityPledgedInfo');
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //企查查 企业年报 其中有对外担保 这个字段ProvideAssuranceList
