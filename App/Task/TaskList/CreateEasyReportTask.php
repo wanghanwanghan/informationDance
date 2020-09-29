@@ -3047,6 +3047,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ], 'getChattelMortgageInfo');
 
+            var_dump($res);
+
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
             return $res;
