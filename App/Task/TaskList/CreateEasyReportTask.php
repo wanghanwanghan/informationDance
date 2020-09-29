@@ -1097,6 +1097,125 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("ktgg_total", $data['ktgg']['total']);
 
+        //裁判文书
+        $rows = count($data['cpws']['list']);
+        $docObj->cloneRow('cpws_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("cpws_no#" . ($i + 1), $i+1);
+            //案号
+            $docObj->setValue("cpws_caseNo#" . ($i + 1), $data['cpws']['list'][$i]['detail']['caseNo']);
+            //法院名称
+            $docObj->setValue("cpws_court#" . ($i + 1), $data['cpws']['list'][$i]['detail']['court']);
+            //审结时间
+            $docObj->setValue("cpws_sortTimeString#" . ($i + 1), $data['cpws']['list'][$i]['sortTimeString']);
+            //审理状态
+            $docObj->setValue("cpws_trialProcedure#" . ($i + 1), $data['cpws']['list'][$i]['detail']['trialProcedure']);
+
+            $content = '';
+            foreach ($data['cpws']['list'][$i]['detail']['partys'] as $no => $arr) {
+                $content .= '<w:br/>';
+                $content .= ($no + 1).':';
+                $content .= $arr['caseCauseT'].' - ';
+                $content .= $arr['pname'].' - ';
+                $content .= $arr['partyTitleT'].' - ';
+                switch ($arr['partyPositionT']){
+                    case 'p':
+                        $content .= '原告';
+                        break;
+                    case 'd':
+                        $content .= '被告';
+                        break;
+                    case 't':
+                        $content .= '第三人';
+                        break;
+                    case 'u':
+                        $content .= '当事人';
+                        break;
+                    default:
+                        $content .= '';
+                        break;
+                }
+                $content .= '<w:br/>';
+            }
+            //法院类型-案由-当事人-称号-诉讼地位(原审)
+            $docObj->setValue("cpws_content#".($i + 1), $content);
+        }
+        $docObj->setValue("cpws_total", $data['cpws']['total']);
+
+        //执行公告
+        $rows = count($data['zxgg']['list']);
+        $docObj->cloneRow('zxgg_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("zxgg_no#" . ($i + 1), $i+1);
+            //案号
+            $docObj->setValue("zxgg_caseNo#" . ($i + 1), $data['zxgg']['list'][$i]['detail']['caseNo']);
+            //法院名称
+            $docObj->setValue("zxgg_court#" . ($i + 1), $data['zxgg']['list'][$i]['detail']['court']);
+            //立案日期
+            $docObj->setValue("zxgg_sortTimeString#" . ($i + 1), $data['zxgg']['list'][$i]['sortTimeString']);
+
+            $content = '';
+            foreach ($data['zxgg']['list'][$i]['detail']['partys'] as $no => $arr) {
+                $content .= '<w:br/>';
+                $content .= ($no + 1).':';
+                $content .= $arr['caseStateT'].' - ';
+                $content .= $arr['execMoney'].' - ';
+                $content .= $arr['pname'];
+                $content .= '<w:br/>';
+            }
+            //案件状态-执行金额-当事人
+            $docObj->setValue("zxgg_content#".($i + 1), $content);
+        }
+        $docObj->setValue("zxgg_total", $data['zxgg']['total']);
+
+        //失信公告
+        $rows = count($data['shixin']['list']);
+        $docObj->cloneRow('sx_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("sx_no#" . ($i + 1), $i+1);
+            //案号
+            $docObj->setValue("sx_caseNo#" . ($i + 1), $data['shixin']['list'][$i]['detail']['caseNo']);
+            //法院名称
+            $docObj->setValue("sx_court#" . ($i + 1), $data['shixin']['list'][$i]['detail']['court']);
+            //立案日期
+            $docObj->setValue("sx_sortTimeString#" . ($i + 1), $data['shixin']['list'][$i]['sortTimeString']);
+
+            $content = '';
+            foreach ($data['shixin']['list'][$i]['detail']['partys'] as $no => $arr) {
+                $content .= '<w:br/>';
+                $content .= ($no + 1).':';
+                $content .= $arr['lxqkT'].' - ';
+                $content .= $arr['jtqx'].' - ';
+                $content .= $arr['money'].' - ';
+                $content .= $arr['pname'];
+                $content .= '<w:br/>';
+            }
+            //履行情况-具体情形-涉案金额-当事人
+            $docObj->setValue("sx_content#".($i + 1), $content);
+        }
+        $docObj->setValue("sx_total", $data['shixin']['total']);
+
+        //被执行人
+        $rows = count($data['SearchZhiXing']['list']);
+        $docObj->cloneRow('bzxr_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("bzxr_no#" . ($i + 1), $i+1);
+            //案号
+            $docObj->setValue("bzxr_Anno#" . ($i + 1), $data['SearchZhiXing']['list'][$i]['Anno']);
+            //执行法院
+            $docObj->setValue("bzxr_ExecuteGov#" . ($i + 1), $data['SearchZhiXing']['list'][$i]['ExecuteGov']);
+            //立案时间
+            $docObj->setValue("bzxr_Liandate#" . ($i + 1), $data['SearchZhiXing']['list'][$i]['Liandate']);
+            //执行标的
+            $docObj->setValue("bzxr_Biaodi#" . ($i + 1), $data['SearchZhiXing']['list'][$i]['Biaodi']);
+            //案件状态
+            $docObj->setValue("bzxr_Status#" . ($i + 1), $data['SearchZhiXing']['list'][$i]['Status']);
+        }
+        $docObj->setValue("bzxr_total", $data['SearchZhiXing']['total']);
 
 
 
@@ -1111,13 +1230,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
 
 
-
-
-
-
-
-
-        var_dump($data['cpws']);
+        var_dump($data['SearchZhiXing']);
     }
 
     //并发请求数据
@@ -2723,8 +2836,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = [
                 'doc_type' => $doc_type,
-                //'keyword' => $this->entName,
-                'keyword' => '乐视网信息技术（北京）股份有限公司',
+                'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
             ];
@@ -2762,8 +2874,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 执行公告
         $csp->add('zxgg', function () {
 
+            $doc_type='zxgg';
+
             $postData = [
-                'doc_type' => 'zxgg',
+                'doc_type' => $doc_type,
                 'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
@@ -2771,16 +2885,41 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sifa', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 失信公告
         $csp->add('shixin', function () {
 
+            $doc_type='shixin';
+
             $postData = [
-                'doc_type' => 'shixin',
+                'doc_type' => $doc_type,
                 'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
@@ -2788,24 +2927,51 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sifa', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //企查查 被执行人
         $csp->add('SearchZhiXing', function () {
 
             $postData = [
-                'searchKey' => $this->entName,
+                //'searchKey' => $this->entName,
+                'searchKey' => '乐视网信息技术（北京）股份有限公司',
                 'isExactlySame' => true,
             ];
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'CourtV4/SearchZhiXing', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 司法查冻扣
