@@ -50,7 +50,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
-
+        var_dump($throwable->getMessage());
     }
 
     //数据填进报告
@@ -131,7 +131,6 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         //经营异常
         $rows = count($data['GetOpException']);
-        var_dump($data['GetOpException']);
         $docObj->cloneRow('jjyc_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
@@ -1820,6 +1819,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $postData = ['entName' => $this->entName];
 
             $res = (new QianQiService())->setCheckRespFlag(true)->getThreeYearsData($postData);
+
+            var_dump($res);
 
             if ($res['code'] === 200 && !empty($res['result'])) {
 
