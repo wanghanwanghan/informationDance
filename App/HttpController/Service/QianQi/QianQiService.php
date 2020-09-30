@@ -357,7 +357,7 @@ class QianQiService extends ServiceBase
                 continue;
             }
 
-            if (in_array($key,['ENTNAME','ANCHEYEAR']) || !array_key_exists($key,$this->word))
+            if (!array_key_exists($key,$this->word))
             {
                 $tmp[$key]=$val;
                 continue;
