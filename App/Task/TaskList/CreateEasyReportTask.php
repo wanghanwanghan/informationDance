@@ -147,8 +147,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         //实际控制人
         //姓名
-        if (!empty($data['Beneficiary']))
-        {
+        if (!empty($data['Beneficiary'])) {
             $docObj->setValue("sjkzr_Name", $data['Beneficiary']['Name']);
             //持股比例
             $docObj->setValue("sjkzr_TotalStockPercent", $data['Beneficiary']['TotalStockPercent']);
@@ -278,7 +277,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //融资阶段
             $docObj->setValue("gsgk_rzjd#" . ($i + 1), $data['SearchCompanyFinancings'][$i]['Round']);
             //融资
-            $docObj->setValue("gsgk_rz#" . ($i + 1), $data['SearchCompanyFinancings'][$i]['Investment'].'，'.$data['SearchCompanyFinancings'][$i]['Amount']);
+            $docObj->setValue("gsgk_rz#" . ($i + 1), $data['SearchCompanyFinancings'][$i]['Investment'] . '，' . $data['SearchCompanyFinancings'][$i]['Amount']);
         }
 
         //招投标
@@ -286,7 +285,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('ztb_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("ztb_no#" . ($i + 1), $i+1);
+            $docObj->setValue("ztb_no#" . ($i + 1), $i + 1);
             //描述
             $docObj->setValue("ztb_Title#" . ($i + 1), $data['TenderSearch'][$i]['Title']);
             //发布日期
@@ -302,7 +301,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('gdxx_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("gdxx_no#" . ($i + 1), $i+1);
+            $docObj->setValue("gdxx_no#" . ($i + 1), $i + 1);
             //项目位置
             $docObj->setValue("gdxx_Address#" . ($i + 1), $data['LandPurchaseList'][$i]['Address']);
             //土地用途
@@ -322,7 +321,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('tdgs_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("tdgs_no#" . ($i + 1), $i+1);
+            $docObj->setValue("tdgs_no#" . ($i + 1), $i + 1);
             //地块位置
             $docObj->setValue("tdgs_Address#" . ($i + 1), $data['LandPublishList'][$i]['Address']);
             //发布机关
@@ -338,7 +337,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('tdzr_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("tdzr_no#" . ($i + 1), $i+1);
+            $docObj->setValue("tdzr_no#" . ($i + 1), $i + 1);
             //土地坐落
             $docObj->setValue("tdzr_Address#" . ($i + 1), $data['LandTransferList'][$i]['Address']);
             //行政区
@@ -360,7 +359,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('jzzz_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("jzzz_no#" . ($i + 1), $i+1);
+            $docObj->setValue("jzzz_no#" . ($i + 1), $i + 1);
             //资质类别
             $docObj->setValue("jzzz_Category#" . ($i + 1), $data['Qualification'][$i]['Category']);
             //资质证书号
@@ -380,7 +379,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('jzgc_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("jzgc_no#" . ($i + 1), $i+1);
+            $docObj->setValue("jzgc_no#" . ($i + 1), $i + 1);
             //项目编码
             $docObj->setValue("jzgc_No#" . ($i + 1), $data['BuildingProject'][$i]['No']);
             //项目名称
@@ -398,7 +397,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('zq_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("zq_no#" . ($i + 1), $i+1);
+            $docObj->setValue("zq_no#" . ($i + 1), $i + 1);
             //债券简称
             $docObj->setValue("zq_ShortName#" . ($i + 1), $data['BondList'][$i]['ShortName']);
             //债券代码
@@ -416,7 +415,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('web_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("web_no#" . ($i + 1), $i+1);
+            $docObj->setValue("web_no#" . ($i + 1), $i + 1);
             //网站名称
             $docObj->setValue("web_Title#" . ($i + 1), $data['GetCompanyWebSite'][$i]['Title']);
             //网址
@@ -434,7 +433,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('weibo_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("weibo_no#" . ($i + 1), $i+1);
+            $docObj->setValue("weibo_no#" . ($i + 1), $i + 1);
             //微博昵称
             $docObj->setValue("weibo_Name#" . ($i + 1), $data['Microblog'][$i]['Name']);
             //行业类别
@@ -448,7 +447,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('xwyq_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("xwyq_no#" . ($i + 1), $i+1);
+            $docObj->setValue("xwyq_no#" . ($i + 1), $i + 1);
             //内容
             $docObj->setValue("xwyq_Title#" . ($i + 1), $data['CompanyNews'][$i]['Title']);
             //来源
@@ -462,7 +461,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('tdrs_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("tdrs_no#" . ($i + 1), $i+1);
+            $docObj->setValue("tdrs_no#" . ($i + 1), $i + 1);
             //年份
             $docObj->setValue("tdrs_year#" . ($i + 1), $data['itemInfo'][$i]['year']);
             //变化率
@@ -474,7 +473,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('zyry_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("zyry_no#" . ($i + 1), $i+1);
+            $docObj->setValue("zyry_no#" . ($i + 1), $i + 1);
             //姓名
             $docObj->setValue("zyry_Name#" . ($i + 1), $data['BuildingRegistrar'][$i]['Name']);
             //注册类别
@@ -490,7 +489,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('zp_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("zp_no#" . ($i + 1), $i+1);
+            $docObj->setValue("zp_no#" . ($i + 1), $i + 1);
             //职位名称
             $docObj->setValue("zp_Title#" . ($i + 1), $data['Recruitment'][$i]['Title']);
             //工作地点
@@ -506,10 +505,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
 
         //财务总揽
-        $docObj->setImageValue("caiwu_pic",[
-            'path'=>REPORT_IMAGE_TEMP_PATH.$data['FinanceData'],
-            'width'=>440,
-            'height'=>500
+        $docObj->setImageValue("caiwu_pic", [
+            'path' => REPORT_IMAGE_TEMP_PATH . $data['FinanceData'],
+            'width' => 440,
+            'height' => 500
         ]);
 
         //业务概况
@@ -517,7 +516,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('ywgk_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("ywgk_no#" . ($i + 1), $i+1);
+            $docObj->setValue("ywgk_no#" . ($i + 1), $i + 1);
             //产品名称
             $docObj->setValue("ywgk_Name#" . ($i + 1), $data['SearchCompanyCompanyProducts'][$i]['Name']);
             //产品领域
@@ -531,11 +530,11 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('zl_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("zl_no#" . ($i + 1), $i+1);
+            $docObj->setValue("zl_no#" . ($i + 1), $i + 1);
             //名称
             $docObj->setValue("zl_Title#" . ($i + 1), $data['PatentV4Search']['list'][$i]['Title']);
             //专利类型
-            $docObj->setValue("zl_IPCDesc#" . ($i + 1), implode(',',$data['PatentV4Search']['list'][$i]['IPCDesc']));
+            $docObj->setValue("zl_IPCDesc#" . ($i + 1), implode(',', $data['PatentV4Search']['list'][$i]['IPCDesc']));
             //公开号
             $docObj->setValue("zl_PublicationNumber#" . ($i + 1), $data['PatentV4Search']['list'][$i]['PublicationNumber']);
             //法律状态
@@ -552,7 +551,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('rjzzq_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("rjzzq_no#" . ($i + 1), $i+1);
+            $docObj->setValue("rjzzq_no#" . ($i + 1), $i + 1);
             //软件名称
             $docObj->setValue("rjzzq_Name#" . ($i + 1), $data['SearchSoftwareCr']['list'][$i]['Name']);
             //登记号
@@ -569,11 +568,11 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('sb_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("sb_no#" . ($i + 1), $i+1);
+            $docObj->setValue("sb_no#" . ($i + 1), $i + 1);
             //商标
             $docObj->setValue("sb_Name#" . ($i + 1), $data['tmSearch']['list'][$i]['Name']);
             //图标
-            $docObj->setImageValue("sb_img#" . ($i + 1), ['path'=>$data['tmSearch']['list'][$i]['ImageUrl'],'width'=>50,'height'=>50]);
+            $docObj->setImageValue("sb_img#" . ($i + 1), ['path' => $data['tmSearch']['list'][$i]['ImageUrl'], 'width' => 50, 'height' => 50]);
             //商标分类
             $docObj->setValue("sb_FlowStatus#" . ($i + 1), $data['tmSearch']['list'][$i]['FlowStatus']);
             //注册号
@@ -590,7 +589,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('zpzzq_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("zpzzq_no#" . ($i + 1), $i+1);
+            $docObj->setValue("zpzzq_no#" . ($i + 1), $i + 1);
             //登记号
             $docObj->setValue("zpzzq_RegisterNo#" . ($i + 1), $data['SearchCopyRight']['list'][$i]['RegisterNo']);
             //作品名称
@@ -607,7 +606,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('zzzs_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("zzzs_no#" . ($i + 1), $i+1);
+            $docObj->setValue("zzzs_no#" . ($i + 1), $i + 1);
             //证书名称
             $docObj->setValue("zzzs_Name#" . ($i + 1), $data['SearchCertification']['list'][$i]['Name']);
             //证书类型
@@ -626,7 +625,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('nsxydj_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("nsxydj_no#" . ($i + 1), $i+1);
+            $docObj->setValue("nsxydj_no#" . ($i + 1), $i + 1);
             //评定时间
             $docObj->setValue("nsxydj_sortTimeString#" . ($i + 1), $data['satparty_xin']['list'][$i]['sortTimeString']);
             //税务登记号
@@ -643,7 +642,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('swxk_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("swxk_no#" . ($i + 1), $i+1);
+            $docObj->setValue("swxk_no#" . ($i + 1), $i + 1);
             //税务登记号
             $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
             //评定时间
@@ -662,7 +661,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('swdj_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("swdj_no#" . ($i + 1), $i+1);
+            $docObj->setValue("swdj_no#" . ($i + 1), $i + 1);
             //税务登记号
             $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
             //评定时间
@@ -681,7 +680,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('fzc_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("fzc_no#" . ($i + 1), $i+1);
+            $docObj->setValue("fzc_no#" . ($i + 1), $i + 1);
             //税务登记号
             $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
             //认定时间
@@ -700,7 +699,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('qs_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("qs_no#" . ($i + 1), $i+1);
+            $docObj->setValue("qs_no#" . ($i + 1), $i + 1);
             //税务登记号
             $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
             //认定时间
@@ -719,7 +718,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('sswf_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("sswf_no#" . ($i + 1), $i+1);
+            $docObj->setValue("sswf_no#" . ($i + 1), $i + 1);
             //税务登记号
             $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
             //处罚时间
@@ -740,7 +739,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('xzxk_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("xzxk_no#" . ($i + 1), $i+1);
+            $docObj->setValue("xzxk_no#" . ($i + 1), $i + 1);
             //许可编号
             $docObj->setValue("xzxk_CaseNo#" . ($i + 1), $data['GetAdministrativeLicenseList']['list'][$i]['CaseNo']);
             //有效期自
@@ -759,7 +758,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('xzcf_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("xzcf_no#" . ($i + 1), $i+1);
+            $docObj->setValue("xzcf_no#" . ($i + 1), $i + 1);
             //文书号
             $docObj->setValue("xzcf_CaseNo#" . ($i + 1), $data['GetAdministrativePenaltyList']['list'][$i]['CaseNo']);
             //决定日期
@@ -776,7 +775,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('hbcf_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("hbcf_no#" . ($i + 1), $i+1);
+            $docObj->setValue("hbcf_no#" . ($i + 1), $i + 1);
             //案号
             $docObj->setValue("hbcf_caseNo#" . ($i + 1), $data['epbparty']['list'][$i]['detail']['caseNo']);
             //事件名称(类型)
@@ -793,7 +792,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('zdjkqy_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("zdjkqy_no#" . ($i + 1), $i+1);
+            $docObj->setValue("zdjkqy_no#" . ($i + 1), $i + 1);
             //监控名称
             $docObj->setValue("zdjkqy_eventName#" . ($i + 1), $data['epbparty_jkqy']['list'][$i]['detail']['eventName']);
             //涉事企业
@@ -806,7 +805,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('zxjc_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("zxjc_no#" . ($i + 1), $i+1);
+            $docObj->setValue("zxjc_no#" . ($i + 1), $i + 1);
             //监测指标/污染项目
             $docObj->setValue("zxjc_pollutant#" . ($i + 1), $data['epbparty_zxjc']['list'][$i]['detail']['pollutant']);
             //监测结果
@@ -823,7 +822,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('hpgs_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("hpgs_no#" . ($i + 1), $i+1);
+            $docObj->setValue("hpgs_no#" . ($i + 1), $i + 1);
             //公告类型
             $docObj->setValue("hpgs_eventName#" . ($i + 1), $data['epbparty_huanping']['list'][$i]['detail']['eventName']);
             //建设单位
@@ -838,7 +837,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('hgxx_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("hgxx_no#" . ($i + 1), $i+1);
+            $docObj->setValue("hgxx_no#" . ($i + 1), $i + 1);
             //海关注册码
             $docObj->setValue("hgxx_regNo#" . ($i + 1), $data['custom_qy']['list'][$i]['detail']['regNo']);
             //注册海关
@@ -855,7 +854,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('hgxk_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("hgxk_no#" . ($i + 1), $i+1);
+            $docObj->setValue("hgxk_no#" . ($i + 1), $i + 1);
             //许可文书号
             $docObj->setValue("hgxk_xkNo#" . ($i + 1), $data['custom_xuke']['list'][$i]['detail']['xkNo']);
             //标题
@@ -872,7 +871,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('hgxy_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("hgxy_no#" . ($i + 1), $i+1);
+            $docObj->setValue("hgxy_no#" . ($i + 1), $i + 1);
             //所属海关
             $docObj->setValue("hgxy_authority#" . ($i + 1), $data['custom_credit']['list'][$i]['detail']['authority']);
             //信用等级
@@ -887,7 +886,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('hgcf_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("hgcf_no#" . ($i + 1), $i+1);
+            $docObj->setValue("hgcf_no#" . ($i + 1), $i + 1);
             //公告类型
             $docObj->setValue("hgcf_ggType#" . ($i + 1), $data['custom_punish']['list'][$i]['detail']['ggType']);
             //处罚类别/案件性质
@@ -902,7 +901,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('yhxzcf_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("yhxzcf_no#" . ($i + 1), $i+1);
+            $docObj->setValue("yhxzcf_no#" . ($i + 1), $i + 1);
             //标题
             $docObj->setValue("yhxzcf_title#" . ($i + 1), $data['pbcparty']['list'][$i]['detail']['title']);
             //事件名称
@@ -921,7 +920,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('ybjcf_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("ybjcf_no#" . ($i + 1), $i+1);
+            $docObj->setValue("ybjcf_no#" . ($i + 1), $i + 1);
             //公告编号
             $docObj->setValue("ybjcf_caseNo#" . ($i + 1), $data['pbcparty_cbrc']['list'][$i]['detail']['caseNo']);
             //事件名称
@@ -940,7 +939,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('zjcf_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("zjcf_no#" . ($i + 1), $i+1);
+            $docObj->setValue("zjcf_no#" . ($i + 1), $i + 1);
             //决定书文号
             $docObj->setValue("zjcf_caseNo#" . ($i + 1), $data['pbcparty_csrc_chufa']['list'][$i]['detail']['caseNo']);
             //公告类型
@@ -959,7 +958,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('zjxk_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("zjxk_no#" . ($i + 1), $i+1);
+            $docObj->setValue("zjxk_no#" . ($i + 1), $i + 1);
             //文书号
             $docObj->setValue("zjxk_caseNo#" . ($i + 1), $data['pbcparty_csrc_xkpf']['list'][$i]['detail']['caseNo']);
             //许可事项
@@ -976,7 +975,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('whjcf_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("whjcf_no#" . ($i + 1), $i+1);
+            $docObj->setValue("whjcf_no#" . ($i + 1), $i + 1);
             //文书号
             $docObj->setValue("whjcf_caseNo#" . ($i + 1), $data['safe_chufa']['list'][$i]['detail']['caseNo']);
             //违规行为
@@ -997,7 +996,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('whjxk_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("whjxk_no#" . ($i + 1), $i+1);
+            $docObj->setValue("whjxk_no#" . ($i + 1), $i + 1);
             //许可文书号
             $docObj->setValue("whjxk_caseNo#" . ($i + 1), $data['safe_xuke']['list'][$i]['detail']['caseNo']);
             //项目名称
@@ -1016,7 +1015,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('fygg_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("fygg_no#" . ($i + 1), $i+1);
+            $docObj->setValue("fygg_no#" . ($i + 1), $i + 1);
             //案号
             $docObj->setValue("fygg_caseNo#" . ($i + 1), $data['fygg']['list'][$i]['detail']['caseNo']);
             //公告法院
@@ -1027,11 +1026,11 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $content = '';
             foreach ($data['fygg']['list'][$i]['detail']['partys'] as $no => $arr) {
                 $content .= '<w:br/>';
-                $content .= ($no + 1).':';
-                $content .= $arr['caseCauseT'].' - ';
-                $content .= $arr['pname'].' - ';
-                $content .= $arr['partyTitleT'].' - ';
-                switch ($arr['partyPositionT']){
+                $content .= ($no + 1) . ':';
+                $content .= $arr['caseCauseT'] . ' - ';
+                $content .= $arr['pname'] . ' - ';
+                $content .= $arr['partyTitleT'] . ' - ';
+                switch ($arr['partyPositionT']) {
                     case 'p':
                         $content .= '原告';
                         break;
@@ -1051,7 +1050,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 $content .= '<w:br/>';
             }
             //案由-当事人-称号-诉讼地位(原审)
-            $docObj->setValue("fygg_content#".($i + 1), $content);
+            $docObj->setValue("fygg_content#" . ($i + 1), $content);
         }
         $docObj->setValue("fygg_total", $data['fygg']['total']);
 
@@ -1060,7 +1059,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('ktgg_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("ktgg_no#" . ($i + 1), $i+1);
+            $docObj->setValue("ktgg_no#" . ($i + 1), $i + 1);
             //案号
             $docObj->setValue("ktgg_caseNo#" . ($i + 1), $data['ktgg']['list'][$i]['detail']['caseNo']);
             //法院名称
@@ -1071,12 +1070,12 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $content = '';
             foreach ($data['ktgg']['list'][$i]['detail']['partys'] as $no => $arr) {
                 $content .= '<w:br/>';
-                $content .= ($no + 1).':';
-                $content .= $arr['courtTypeT'].' - ';
-                $content .= $arr['caseCauseT'].' - ';
-                $content .= $arr['pname'].' - ';
-                $content .= $arr['partyTitleT'].' - ';
-                switch ($arr['partyPositionT']){
+                $content .= ($no + 1) . ':';
+                $content .= $arr['courtTypeT'] . ' - ';
+                $content .= $arr['caseCauseT'] . ' - ';
+                $content .= $arr['pname'] . ' - ';
+                $content .= $arr['partyTitleT'] . ' - ';
+                switch ($arr['partyPositionT']) {
                     case 'p':
                         $content .= '原告';
                         break;
@@ -1096,7 +1095,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 $content .= '<w:br/>';
             }
             //法院类型-案由-当事人-称号-诉讼地位(原审)
-            $docObj->setValue("ktgg_content#".($i + 1), $content);
+            $docObj->setValue("ktgg_content#" . ($i + 1), $content);
         }
         $docObj->setValue("ktgg_total", $data['ktgg']['total']);
 
@@ -1105,7 +1104,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('cpws_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("cpws_no#" . ($i + 1), $i+1);
+            $docObj->setValue("cpws_no#" . ($i + 1), $i + 1);
             //案号
             $docObj->setValue("cpws_caseNo#" . ($i + 1), $data['cpws']['list'][$i]['detail']['caseNo']);
             //法院名称
@@ -1118,11 +1117,11 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $content = '';
             foreach ($data['cpws']['list'][$i]['detail']['partys'] as $no => $arr) {
                 $content .= '<w:br/>';
-                $content .= ($no + 1).':';
-                $content .= $arr['caseCauseT'].' - ';
-                $content .= $arr['pname'].' - ';
-                $content .= $arr['partyTitleT'].' - ';
-                switch ($arr['partyPositionT']){
+                $content .= ($no + 1) . ':';
+                $content .= $arr['caseCauseT'] . ' - ';
+                $content .= $arr['pname'] . ' - ';
+                $content .= $arr['partyTitleT'] . ' - ';
+                switch ($arr['partyPositionT']) {
                     case 'p':
                         $content .= '原告';
                         break;
@@ -1142,7 +1141,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 $content .= '<w:br/>';
             }
             //法院类型-案由-当事人-称号-诉讼地位(原审)
-            $docObj->setValue("cpws_content#".($i + 1), $content);
+            $docObj->setValue("cpws_content#" . ($i + 1), $content);
         }
         $docObj->setValue("cpws_total", $data['cpws']['total']);
 
@@ -1151,7 +1150,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('zxgg_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("zxgg_no#" . ($i + 1), $i+1);
+            $docObj->setValue("zxgg_no#" . ($i + 1), $i + 1);
             //案号
             $docObj->setValue("zxgg_caseNo#" . ($i + 1), $data['zxgg']['list'][$i]['detail']['caseNo']);
             //法院名称
@@ -1162,14 +1161,14 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $content = '';
             foreach ($data['zxgg']['list'][$i]['detail']['partys'] as $no => $arr) {
                 $content .= '<w:br/>';
-                $content .= ($no + 1).':';
-                $content .= $arr['caseStateT'].' - ';
-                $content .= $arr['execMoney'].' - ';
+                $content .= ($no + 1) . ':';
+                $content .= $arr['caseStateT'] . ' - ';
+                $content .= $arr['execMoney'] . ' - ';
                 $content .= $arr['pname'];
                 $content .= '<w:br/>';
             }
             //案件状态-执行金额-当事人
-            $docObj->setValue("zxgg_content#".($i + 1), $content);
+            $docObj->setValue("zxgg_content#" . ($i + 1), $content);
         }
         $docObj->setValue("zxgg_total", $data['zxgg']['total']);
 
@@ -1178,7 +1177,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('sx_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("sx_no#" . ($i + 1), $i+1);
+            $docObj->setValue("sx_no#" . ($i + 1), $i + 1);
             //案号
             $docObj->setValue("sx_caseNo#" . ($i + 1), $data['shixin']['list'][$i]['detail']['caseNo']);
             //法院名称
@@ -1189,15 +1188,15 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $content = '';
             foreach ($data['shixin']['list'][$i]['detail']['partys'] as $no => $arr) {
                 $content .= '<w:br/>';
-                $content .= ($no + 1).':';
-                $content .= $arr['lxqkT'].' - ';
-                $content .= $arr['jtqx'].' - ';
-                $content .= $arr['money'].' - ';
+                $content .= ($no + 1) . ':';
+                $content .= $arr['lxqkT'] . ' - ';
+                $content .= $arr['jtqx'] . ' - ';
+                $content .= $arr['money'] . ' - ';
                 $content .= $arr['pname'];
                 $content .= '<w:br/>';
             }
             //履行情况-具体情形-涉案金额-当事人
-            $docObj->setValue("sx_content#".($i + 1), $content);
+            $docObj->setValue("sx_content#" . ($i + 1), $content);
         }
         $docObj->setValue("sx_total", $data['shixin']['total']);
 
@@ -1206,7 +1205,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('bzxr_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("bzxr_no#" . ($i + 1), $i+1);
+            $docObj->setValue("bzxr_no#" . ($i + 1), $i + 1);
             //案号
             $docObj->setValue("bzxr_Anno#" . ($i + 1), $data['SearchZhiXing']['list'][$i]['Anno']);
             //执行法院
@@ -1225,7 +1224,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('cdk_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("cdk_no#" . ($i + 1), $i+1);
+            $docObj->setValue("cdk_no#" . ($i + 1), $i + 1);
             //案件编号
             $docObj->setValue("cdk_caseNo#" . ($i + 1), $data['sifacdk']['list'][$i]['detail']['caseNo']);
             //标的名称
@@ -1235,7 +1234,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //审理法院
             $docObj->setValue("cdk_court#" . ($i + 1), $data['sifacdk']['list'][$i]['detail']['court']);
             //审结时间
-            $docObj->setValue("cdk_postTime#" . ($i + 1), date('Y年m月d日',$data['sifacdk']['list'][$i]['detail']['postTime']/1000));
+            $docObj->setValue("cdk_postTime#" . ($i + 1), date('Y年m月d日', $data['sifacdk']['list'][$i]['detail']['postTime'] / 1000));
             //事件时间
             $docObj->setValue("cdk_sortTimeString#" . ($i + 1), $data['sifacdk']['list'][$i]['sortTimeString']);
             //涉及金额
@@ -1248,7 +1247,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('dcdy_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("dcdy_no#" . ($i + 1), $i+1);
+            $docObj->setValue("dcdy_no#" . ($i + 1), $i + 1);
             //登记编号
             $docObj->setValue("dcdy_DJBH#" . ($i + 1), $data['getChattelMortgageInfo']['list'][$i]['DJBH']);
             //公示日期
@@ -1269,7 +1268,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('gqcz_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("gqcz_no#" . ($i + 1), $i+1);
+            $docObj->setValue("gqcz_no#" . ($i + 1), $i + 1);
             //登记编号
             $docObj->setValue("gqcz_DJBH#" . ($i + 1), $data['getEquityPledgedInfo']['list'][$i]['DJBH']);
             //股权出质设立登记日期
@@ -1290,7 +1289,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('dwdb_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("dwdb_no#" . ($i + 1), $i+1);
+            $docObj->setValue("dwdb_no#" . ($i + 1), $i + 1);
             //担保方
             $docObj->setValue("dwdb_Debtor#" . ($i + 1), $data['GetAnnualReport']['list'][$i]['Debtor']);
             //被担保方
@@ -1309,7 +1308,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('tddy_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("tddy_no#" . ($i + 1), $i+1);
+            $docObj->setValue("tddy_no#" . ($i + 1), $i + 1);
             //开始日期
             $docObj->setValue("tddy_StartDate#" . ($i + 1), $data['GetLandMortgageList']['list'][$i]['StartDate']);
             //结束日期
@@ -1328,13 +1327,13 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('yszk_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("yszk_no#" . ($i + 1), $i+1);
+            $docObj->setValue("yszk_no#" . ($i + 1), $i + 1);
             //质押财产/转让财产描述
             $docObj->setValue("yszk_transPro_desc#" . ($i + 1), $data['company_zdw_yszkdsr']['list'][$i]['detail']['transPro_desc']);
             //登记时间
-            $docObj->setValue("yszk_sortTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_yszkdsr']['list'][$i]['detail']['sortTime']/1000));
+            $docObj->setValue("yszk_sortTime#" . ($i + 1), date('Y年m月d日', $data['company_zdw_yszkdsr']['list'][$i]['detail']['sortTime'] / 1000));
             //登记到期日
-            $docObj->setValue("yszk_endTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_yszkdsr']['list'][$i]['detail']['endTime']/1000));
+            $docObj->setValue("yszk_endTime#" . ($i + 1), date('Y年m月d日', $data['company_zdw_yszkdsr']['list'][$i]['detail']['endTime'] / 1000));
             //转让财产价值
             $docObj->setValue("yszk_transPro_value#" . ($i + 1), $data['company_zdw_yszkdsr']['list'][$i]['detail']['transPro_value']);
         }
@@ -1345,15 +1344,15 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('zldj_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("zldj_no#" . ($i + 1), $i+1);
+            $docObj->setValue("zldj_no#" . ($i + 1), $i + 1);
             //租赁财产描述
             $docObj->setValue("zldj_leaseMes_desc#" . ($i + 1), $data['company_zdw_zldjdsr']['list'][$i]['detail']['leaseMes_desc']);
             //登记期限
             $docObj->setValue("zldj_basic_date#" . ($i + 1), $data['company_zdw_zldjdsr']['list'][$i]['detail']['basic_date']);
             //登记到期日
-            $docObj->setValue("zldj_endTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_zldjdsr']['list'][$i]['detail']['endTime']/1000));
+            $docObj->setValue("zldj_endTime#" . ($i + 1), date('Y年m月d日', $data['company_zdw_zldjdsr']['list'][$i]['detail']['endTime'] / 1000));
             //登记日期
-            $docObj->setValue("zldj_sortTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_zldjdsr']['list'][$i]['detail']['sortTime']/1000));
+            $docObj->setValue("zldj_sortTime#" . ($i + 1), date('Y年m月d日', $data['company_zdw_zldjdsr']['list'][$i]['detail']['sortTime'] / 1000));
         }
         $docObj->setValue("zldj_total", $data['company_zdw_zldjdsr']['total']);
 
@@ -1362,7 +1361,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('bzjzy_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("bzjzy_no#" . ($i + 1), $i+1);
+            $docObj->setValue("bzjzy_no#" . ($i + 1), $i + 1);
             //主合同金额
             $docObj->setValue("bzjzy_pledgePro_proMoney#" . ($i + 1), $data['company_zdw_bzjzydsr']['list'][$i]['detail']['pledgePro_proMoney']);
             //保证金金额
@@ -1372,9 +1371,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //登记期限
             $docObj->setValue("bzjzy_basic_date#" . ($i + 1), $data['company_zdw_bzjzydsr']['list'][$i]['detail']['basic_date']);
             //登记到期日
-            $docObj->setValue("bzjzy_endTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_bzjzydsr']['list'][$i]['detail']['endTime']/1000));
+            $docObj->setValue("bzjzy_endTime#" . ($i + 1), date('Y年m月d日', $data['company_zdw_bzjzydsr']['list'][$i]['detail']['endTime'] / 1000));
             //登记日期
-            $docObj->setValue("bzjzy_sortTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_bzjzydsr']['list'][$i]['detail']['sortTime']/1000));
+            $docObj->setValue("bzjzy_sortTime#" . ($i + 1), date('Y年m月d日', $data['company_zdw_bzjzydsr']['list'][$i]['detail']['sortTime'] / 1000));
         }
         $docObj->setValue("bzjzy_total", $data['company_zdw_bzjzydsr']['total']);
 
@@ -1383,7 +1382,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('cdzy_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("cdzy_no#" . ($i + 1), $i+1);
+            $docObj->setValue("cdzy_no#" . ($i + 1), $i + 1);
             //仓储物名称或品种
             $docObj->setValue("cdzy_pledgorFin_type#" . ($i + 1), $data['company_zdw_cdzydsr']['list'][$i]['detail']['pledgorFin_type']);
             //主合同金额
@@ -1391,9 +1390,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //登记期限
             $docObj->setValue("cdzy_basic_date#" . ($i + 1), $data['company_zdw_cdzydsr']['list'][$i]['detail']['basic_date']);
             //登记到期日
-            $docObj->setValue("cdzy_endTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_cdzydsr']['list'][$i]['detail']['endTime']/1000));
+            $docObj->setValue("cdzy_endTime#" . ($i + 1), date('Y年m月d日', $data['company_zdw_cdzydsr']['list'][$i]['detail']['endTime'] / 1000));
             //登记日期
-            $docObj->setValue("cdzy_sortTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_cdzydsr']['list'][$i]['detail']['sortTime']/1000));
+            $docObj->setValue("cdzy_sortTime#" . ($i + 1), date('Y年m月d日', $data['company_zdw_cdzydsr']['list'][$i]['detail']['sortTime'] / 1000));
         }
         $docObj->setValue("cdzy_total", $data['company_zdw_cdzydsr']['total']);
 
@@ -1402,7 +1401,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('syqbl_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("syqbl_no#" . ($i + 1), $i+1);
+            $docObj->setValue("syqbl_no#" . ($i + 1), $i + 1);
             //登记种类
             $docObj->setValue("syqbl_basic_type#" . ($i + 1), $data['company_zdw_syqbldsr']['list'][$i]['detail']['basic_type']);
             //所有权标的物类型
@@ -1410,9 +1409,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //登记期限
             $docObj->setValue("syqbl_basic_date#" . ($i + 1), $data['company_zdw_syqbldsr']['list'][$i]['detail']['basic_date']);
             //登记到期日
-            $docObj->setValue("syqbl_endTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_syqbldsr']['list'][$i]['detail']['endTime']/1000));
+            $docObj->setValue("syqbl_endTime#" . ($i + 1), date('Y年m月d日', $data['company_zdw_syqbldsr']['list'][$i]['detail']['endTime'] / 1000));
             //登记日期
-            $docObj->setValue("syqbl_sortTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_syqbldsr']['list'][$i]['detail']['sortTime']/1000));
+            $docObj->setValue("syqbl_sortTime#" . ($i + 1), date('Y年m月d日', $data['company_zdw_syqbldsr']['list'][$i]['detail']['sortTime'] / 1000));
         }
         $docObj->setValue("syqbl_total", $data['company_zdw_syqbldsr']['total']);
 
@@ -1421,7 +1420,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('qtdcrz_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
-            $docObj->setValue("qtdcrz_no#" . ($i + 1), $i+1);
+            $docObj->setValue("qtdcrz_no#" . ($i + 1), $i + 1);
             //抵押物类型
             $docObj->setValue("qtdcrz_basic_typeT#" . ($i + 1), $data['company_zdw_qtdcdsr']['list'][$i]['detail']['basic_typeT']);
             //主合同金额
@@ -1429,12 +1428,11 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //登记期限
             $docObj->setValue("qtdcrz_basic_date#" . ($i + 1), $data['company_zdw_qtdcdsr']['list'][$i]['detail']['basic_date']);
             //登记到期日
-            $docObj->setValue("qtdcrz_endTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_qtdcdsr']['list'][$i]['detail']['endTime']/1000));
+            $docObj->setValue("qtdcrz_endTime#" . ($i + 1), date('Y年m月d日', $data['company_zdw_qtdcdsr']['list'][$i]['detail']['endTime'] / 1000));
             //登记日期
-            $docObj->setValue("qtdcrz_sortTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_qtdcdsr']['list'][$i]['detail']['sortTime']/1000));
+            $docObj->setValue("qtdcrz_sortTime#" . ($i + 1), date('Y年m月d日', $data['company_zdw_qtdcdsr']['list'][$i]['detail']['sortTime'] / 1000));
         }
         $docObj->setValue("qtdcrz_total", $data['company_zdw_qtdcdsr']['total']);
-
 
 
         //var_dump($data['company_zdw_qtdcdsr']);
@@ -1701,15 +1699,13 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $post=['id'=>$one['Id']];
-                    $detail = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl.'LandTransfer/LandTransferDetail',$post);
+                    $post = ['id' => $one['Id']];
+                    $detail = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandTransfer/LandTransferDetail', $post);
                     ($detail['code'] == 200 && !empty($detail['result'])) ? $detail = $detail['result'] : $detail = null;
-                    $one['detail']=$detail;
+                    $one['detail'] = $detail;
                 }
                 unset($one);
             }
@@ -1950,10 +1946,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'PatentV4/Search', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -1969,10 +1965,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'CopyRight/SearchSoftwareCr', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -1988,10 +1984,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'tm/Search', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2007,10 +2003,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'CopyRight/SearchCopyRight', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2026,10 +2022,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'ECICertification/SearchCertification', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2037,7 +2033,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 纳税信用等级
         $csp->add('satparty_xin', function () {
 
-            $doc_type='satparty_xin';
+            $doc_type = 'satparty_xin';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -2048,30 +2044,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sat', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2079,7 +2071,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 税务许可信息
         $csp->add('satparty_xuke', function () {
 
-            $doc_type='satparty_xuke';
+            $doc_type = 'satparty_xuke';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -2090,30 +2082,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sat', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2121,7 +2109,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 税务登记信息
         $csp->add('satparty_reg', function () {
 
-            $doc_type='satparty_reg';
+            $doc_type = 'satparty_reg';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -2132,30 +2120,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sat', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2163,7 +2147,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 税务非正常户
         $csp->add('satparty_fzc', function () {
 
-            $doc_type='satparty_fzc';
+            $doc_type = 'satparty_fzc';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -2174,30 +2158,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sat', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2205,7 +2185,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 欠税信息
         $csp->add('satparty_qs', function () {
 
-            $doc_type='satparty_qs';
+            $doc_type = 'satparty_qs';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -2216,30 +2196,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sat', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2247,7 +2223,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 涉税处罚公示
         $csp->add('satparty_chufa', function () {
 
-            $doc_type='satparty_chufa';
+            $doc_type = 'satparty_chufa';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -2258,30 +2234,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sat', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2297,30 +2269,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'ADSTLicense/GetAdministrativeLicenseList', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['Id']];
+                    $postData = ['id' => $one['Id']];
 
-                    $detail = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl.'ADSTLicense/GetAdministrativeLicenseDetail', $postData);
+                    $detail = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'ADSTLicense/GetAdministrativeLicenseDetail', $postData);
 
-                    if ($detail['code']==200 && !empty($detail['result']))
-                    {
-                        $one['detail']=$detail['result'];
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] == 200 && !empty($detail['result'])) {
+                        $one['detail'] = $detail['result'];
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2336,30 +2304,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'AdministrativePenalty/GetAdministrativePenaltyList', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['Id']];
+                    $postData = ['id' => $one['Id']];
 
-                    $detail = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl.'AdministrativePenalty/GetAdministrativePenaltyDetail', $postData);
+                    $detail = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'AdministrativePenalty/GetAdministrativePenaltyDetail', $postData);
 
-                    if ($detail['code']==200 && !empty($detail['result']))
-                    {
-                        $one['detail']=$detail['result'];
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] == 200 && !empty($detail['result'])) {
+                        $one['detail'] = $detail['result'];
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2367,7 +2331,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 环保 环保处罚
         $csp->add('epbparty', function () {
 
-            $doc_type='epbparty';
+            $doc_type = 'epbparty';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -2378,30 +2342,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'epb', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2409,7 +2369,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 环保 重点监控企业名单
         $csp->add('epbparty_jkqy', function () {
 
-            $doc_type='epbparty_jkqy';
+            $doc_type = 'epbparty_jkqy';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -2420,30 +2380,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'epb', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2451,7 +2407,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 环保 环保企业自行监测结果
         $csp->add('epbparty_zxjc', function () {
 
-            $doc_type='epbparty_zxjc';
+            $doc_type = 'epbparty_zxjc';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -2462,30 +2418,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'epb', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2493,7 +2445,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 环保 环评公示数据
         $csp->add('epbparty_huanping', function () {
 
-            $doc_type='epbparty_huanping';
+            $doc_type = 'epbparty_huanping';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -2504,30 +2456,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'epb', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2535,7 +2483,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 海关 海关企业
         $csp->add('custom_qy', function () {
 
-            $doc_type='custom_qy';
+            $doc_type = 'custom_qy';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -2546,30 +2494,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'custom', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2577,7 +2521,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 海关 海关许可
         $csp->add('custom_xuke', function () {
 
-            $doc_type='custom_xuke';
+            $doc_type = 'custom_xuke';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -2588,30 +2532,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'custom', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2619,7 +2559,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 海关 海关信用
         $csp->add('custom_credit', function () {
 
-            $doc_type='custom_credit';
+            $doc_type = 'custom_credit';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -2630,30 +2570,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'custom', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2661,7 +2597,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 海关 海关处罚
         $csp->add('custom_punish', function () {
 
-            $doc_type='custom_punish';
+            $doc_type = 'custom_punish';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -2672,30 +2608,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'custom', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2703,7 +2635,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 一行两会 央行行政处罚
         $csp->add('pbcparty', function () {
 
-            $doc_type='pbcparty';
+            $doc_type = 'pbcparty';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -2714,30 +2646,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'pbc', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2745,7 +2673,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 一行两会 银保监会处罚公示
         $csp->add('pbcparty_cbrc', function () {
 
-            $doc_type='pbcparty_cbrc';
+            $doc_type = 'pbcparty_cbrc';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -2756,30 +2684,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'pbc', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2787,7 +2711,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 一行两会 证监处罚公示
         $csp->add('pbcparty_csrc_chufa', function () {
 
-            $doc_type='pbcparty_csrc_chufa';
+            $doc_type = 'pbcparty_csrc_chufa';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -2798,30 +2722,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'pbc', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2829,7 +2749,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 一行两会 证监会许可信息
         $csp->add('pbcparty_csrc_xkpf', function () {
 
-            $doc_type='pbcparty_csrc_xkpf';
+            $doc_type = 'pbcparty_csrc_xkpf';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -2840,30 +2760,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'pbc', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2871,7 +2787,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 一行两会 外汇局处罚
         $csp->add('safe_chufa', function () {
 
-            $doc_type='safe_chufa';
+            $doc_type = 'safe_chufa';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -2882,30 +2798,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'pbc', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2913,7 +2825,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 一行两会 外汇局许可
         $csp->add('safe_xuke', function () {
 
-            $doc_type='safe_xuke';
+            $doc_type = 'safe_xuke';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -2924,30 +2836,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'pbc', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2955,7 +2863,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 法院公告
         $csp->add('fygg', function () {
 
-            $doc_type='fygg';
+            $doc_type = 'fygg';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -2966,30 +2874,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sifa', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -2997,7 +2901,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 开庭公告
         $csp->add('ktgg', function () {
 
-            $doc_type='ktgg';
+            $doc_type = 'ktgg';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -3008,30 +2912,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sifa', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -3039,7 +2939,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 裁判文书
         $csp->add('cpws', function () {
 
-            $doc_type='cpws';
+            $doc_type = 'cpws';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -3050,30 +2950,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sifa', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -3081,7 +2977,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 执行公告
         $csp->add('zxgg', function () {
 
-            $doc_type='zxgg';
+            $doc_type = 'zxgg';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -3092,30 +2988,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sifa', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -3123,7 +3015,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 失信公告
         $csp->add('shixin', function () {
 
-            $doc_type='shixin';
+            $doc_type = 'shixin';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -3134,30 +3026,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sifa', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -3172,10 +3060,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'CourtV4/SearchZhiXing', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -3183,7 +3071,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 司法查冻扣
         $csp->add('sifacdk', function () {
 
-            $doc_type='sifacdk';
+            $doc_type = 'sifacdk';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -3194,30 +3082,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sifa', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -3231,10 +3115,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ], 'getChattelMortgageInfo');
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -3248,10 +3132,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ], 'getEquityPledgedInfo');
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -3267,23 +3151,19 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
-            $total=null;
+            $total = null;
 
-            if (!empty($res))
-            {
-                $list=[];
+            if (!empty($res)) {
+                $list = [];
 
                 //不是空就找出来有没有对外担保
-                foreach ($res as $arr)
-                {
+                foreach ($res as $arr) {
                     if (!isset($arr['ProvideAssuranceList']) || empty($arr['ProvideAssuranceList'])) continue;
 
                     //如果有对外担保数据
-                    foreach ($arr['ProvideAssuranceList'] as $one)
-                    {
-                        if (count($list) < 20)
-                        {
-                            $list[]=$one;
+                    foreach ($arr['ProvideAssuranceList'] as $one) {
+                        if (count($list) < 20) {
+                            $list[] = $one;
                         }
 
                         $total = (int)$total + 1;
@@ -3291,8 +3171,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 }
             }
 
-            $tmp['list']=empty($list) ? null : $list;
-            $tmp['total']=$total;
+            $tmp['list'] = empty($list) ? null : $list;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -3308,10 +3188,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandMortgage/GetLandMortgageList', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -3319,7 +3199,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 中登动产融资 应收账款
         $csp->add('company_zdw_yszkdsr', function () {
 
-            $doc_type='company_zdw_yszkdsr';
+            $doc_type = 'company_zdw_yszkdsr';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -3330,30 +3210,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'zdw', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -3361,7 +3237,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 中登动产融资 租赁登记
         $csp->add('company_zdw_zldjdsr', function () {
 
-            $doc_type='company_zdw_zldjdsr';
+            $doc_type = 'company_zdw_zldjdsr';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -3372,30 +3248,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'zdw', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -3403,7 +3275,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 中登动产融资 保证金质押登记
         $csp->add('company_zdw_bzjzydsr', function () {
 
-            $doc_type='company_zdw_bzjzydsr';
+            $doc_type = 'company_zdw_bzjzydsr';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -3414,30 +3286,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'zdw', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -3445,7 +3313,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 中登动产融资 仓单质押
         $csp->add('company_zdw_cdzydsr', function () {
 
-            $doc_type='company_zdw_cdzydsr';
+            $doc_type = 'company_zdw_cdzydsr';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -3456,30 +3324,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'zdw', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -3487,7 +3351,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 中登动产融资 所有权保留
         $csp->add('company_zdw_syqbldsr', function () {
 
-            $doc_type='company_zdw_syqbldsr';
+            $doc_type = 'company_zdw_syqbldsr';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -3498,30 +3362,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'zdw', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
@@ -3529,7 +3389,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //法海 中登动产融资 其他动产融资
         $csp->add('company_zdw_qtdcdsr', function () {
 
-            $doc_type='company_zdw_qtdcdsr';
+            $doc_type = 'company_zdw_qtdcdsr';
 
             $postData = [
                 'doc_type' => $doc_type,
@@ -3540,35 +3400,31 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'zdw', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            if (!empty($res))
-            {
-                foreach ($res as &$one)
-                {
+            if (!empty($res)) {
+                foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id'=>$one['entryId']];
+                    $postData = ['id' => $one['entryId']];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
-                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
-                    {
-                        $one['detail']=current($detail[$doc_type]);
-                    }else
-                    {
-                        $one['detail']=null;
+                    if ($detail['code'] === 's' && !empty($detail[$doc_type])) {
+                        $one['detail'] = current($detail[$doc_type]);
+                    } else {
+                        $one['detail'] = null;
                     }
                 }
                 unset($one);
             }
 
-            $tmp['list']=$res;
-            $tmp['total']=$total;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
 
             return $tmp;
         });
 
-        return CspService::getInstance()->exec($csp,10);
+        return CspService::getInstance()->exec($csp, 10);
     }
 
 
