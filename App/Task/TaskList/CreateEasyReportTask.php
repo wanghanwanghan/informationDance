@@ -1235,6 +1235,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //审理法院
             $docObj->setValue("cdk_court#" . ($i + 1), $data['sifacdk']['list'][$i]['detail']['court']);
             //审结时间
+            var_dump($data['sifacdk']['list'][$i]['detail']['postTime']);
             $docObj->setValue("cdk_postTime#" . ($i + 1), date('Y年m月d日',$data['sifacdk']['list'][$i]['detail']['postTime']/1000));
             //事件时间
             $docObj->setValue("cdk_sortTimeString#" . ($i + 1), $data['sifacdk']['list'][$i]['sortTimeString']);
