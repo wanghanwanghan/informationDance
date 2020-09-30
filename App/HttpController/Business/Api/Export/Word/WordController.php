@@ -20,9 +20,11 @@ class WordController extends ExportBase
     //生成一个简版报告
     function createEasy()
     {
-        $reportNum=ReportService::getInstance()->createEasy('北京信任度科技有限公司');
+        $entName = $this->request()->getRequestParam('entName');
 
-        return $this->writeJson(200,'',$reportNum);
+        $reportNum = ReportService::getInstance()->createEasy($entName);
+
+        return $this->writeJson(200, '', $reportNum);
     }
 
 

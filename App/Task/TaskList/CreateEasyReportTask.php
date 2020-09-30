@@ -1282,15 +1282,159 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("gqcz_total", $data['getEquityPledgedInfo']['total']);
 
+        //对外担保
+        $rows = count($data['GetAnnualReport']['list']);
+        $docObj->cloneRow('dwdb_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("dwdb_no#" . ($i + 1), $i+1);
+            //担保方
+            $docObj->setValue("dwdb_Debtor#" . ($i + 1), $data['GetAnnualReport']['list'][$i]['Debtor']);
+            //被担保方
+            $docObj->setValue("dwdb_Creditor#" . ($i + 1), $data['GetAnnualReport']['list'][$i]['Creditor']);
+            //担保金额(万元)
+            $docObj->setValue("dwdb_CreditorAmount#" . ($i + 1), $data['GetAnnualReport']['list'][$i]['CreditorAmount']);
+            //保证方式
+            $docObj->setValue("dwdb_AssuranceType#" . ($i + 1), $data['GetAnnualReport']['list'][$i]['AssuranceType']);
+            //担保期起 担保期止
+            $docObj->setValue("dwdb_FulfillObligation#" . ($i + 1), $data['GetAnnualReport']['list'][$i]['FulfillObligation']);
+        }
+        $docObj->setValue("dwdb_total", $data['GetAnnualReport']['total']);
+
+        //土地抵押
+        $rows = count($data['GetLandMortgageList']['list']);
+        $docObj->cloneRow('tddy_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("tddy_no#" . ($i + 1), $i+1);
+            //开始日期
+            $docObj->setValue("tddy_StartDate#" . ($i + 1), $data['GetLandMortgageList']['list'][$i]['StartDate']);
+            //结束日期
+            $docObj->setValue("tddy_EndDate#" . ($i + 1), $data['GetLandMortgageList']['list'][$i]['EndDate']);
+            //抵押面积(公顷)
+            $docObj->setValue("tddy_MortgageAcreage#" . ($i + 1), $data['GetLandMortgageList']['list'][$i]['MortgageAcreage']);
+            //抵押用途
+            $docObj->setValue("tddy_MortgagePurpose#" . ($i + 1), $data['GetLandMortgageList']['list'][$i]['MortgagePurpose']);
+            //行政区地址
+            $docObj->setValue("tddy_Address#" . ($i + 1), $data['GetLandMortgageList']['list'][$i]['Address']);
+        }
+        $docObj->setValue("tddy_total", $data['GetLandMortgageList']['total']);
+
+        //应收帐款
+        $rows = count($data['company_zdw_yszkdsr']['list']);
+        $docObj->cloneRow('yszk_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("yszk_no#" . ($i + 1), $i+1);
+            //质押财产/转让财产描述
+            $docObj->setValue("yszk_transPro_desc#" . ($i + 1), $data['company_zdw_yszkdsr']['list'][$i]['detail']['transPro_desc']);
+            //登记时间
+            $docObj->setValue("yszk_sortTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_yszkdsr']['list'][$i]['detail']['sortTime']/1000));
+            //登记到期日
+            $docObj->setValue("yszk_endTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_yszkdsr']['list'][$i]['detail']['endTime']/1000));
+            //转让财产价值
+            $docObj->setValue("yszk_transPro_value#" . ($i + 1), $data['company_zdw_yszkdsr']['list'][$i]['detail']['transPro_value']);
+        }
+        $docObj->setValue("yszk_total", $data['company_zdw_yszkdsr']['total']);
+
+        //租赁登记
+        $rows = count($data['company_zdw_zldjdsr']['list']);
+        $docObj->cloneRow('zldj_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("zldj_no#" . ($i + 1), $i+1);
+            //租赁财产描述
+            $docObj->setValue("zldj_leaseMes_desc#" . ($i + 1), $data['company_zdw_zldjdsr']['list'][$i]['detail']['leaseMes_desc']);
+            //登记期限
+            $docObj->setValue("zldj_basic_date#" . ($i + 1), $data['company_zdw_zldjdsr']['list'][$i]['detail']['basic_date']);
+            //登记到期日
+            $docObj->setValue("zldj_endTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_zldjdsr']['list'][$i]['detail']['endTime']/1000));
+            //登记日期
+            $docObj->setValue("zldj_sortTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_zldjdsr']['list'][$i]['detail']['sortTime']/1000));
+        }
+        $docObj->setValue("zldj_total", $data['company_zdw_zldjdsr']['total']);
+
+        //保证金质押
+        $rows = count($data['company_zdw_bzjzydsr']['list']);
+        $docObj->cloneRow('bzjzy_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("bzjzy_no#" . ($i + 1), $i+1);
+            //主合同金额
+            $docObj->setValue("bzjzy_pledgePro_proMoney#" . ($i + 1), $data['company_zdw_bzjzydsr']['list'][$i]['detail']['pledgePro_proMoney']);
+            //保证金金额
+            $docObj->setValue("bzjzy_pledgePro_depMoney#" . ($i + 1), $data['company_zdw_bzjzydsr']['list'][$i]['detail']['pledgePro_depMoney']);
+            //登记种类
+            $docObj->setValue("bzjzy_basic_type#" . ($i + 1), $data['company_zdw_bzjzydsr']['list'][$i]['detail']['basic_type']);
+            //登记期限
+            $docObj->setValue("bzjzy_basic_date#" . ($i + 1), $data['company_zdw_bzjzydsr']['list'][$i]['detail']['basic_date']);
+            //登记到期日
+            $docObj->setValue("bzjzy_endTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_bzjzydsr']['list'][$i]['detail']['endTime']/1000));
+            //登记日期
+            $docObj->setValue("bzjzy_sortTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_bzjzydsr']['list'][$i]['detail']['sortTime']/1000));
+        }
+        $docObj->setValue("bzjzy_total", $data['company_zdw_bzjzydsr']['total']);
+
+        //仓单质押
+        $rows = count($data['company_zdw_cdzydsr']['list']);
+        $docObj->cloneRow('cdzy_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("cdzy_no#" . ($i + 1), $i+1);
+            //仓储物名称或品种
+            $docObj->setValue("cdzy_pledgorFin_type#" . ($i + 1), $data['company_zdw_cdzydsr']['list'][$i]['detail']['pledgorFin_type']);
+            //主合同金额
+            $docObj->setValue("cdzy_pledgorFin_masterConMoney#" . ($i + 1), $data['company_zdw_cdzydsr']['list'][$i]['detail']['pledgorFin_masterConMoney']);
+            //登记期限
+            $docObj->setValue("cdzy_basic_date#" . ($i + 1), $data['company_zdw_cdzydsr']['list'][$i]['detail']['basic_date']);
+            //登记到期日
+            $docObj->setValue("cdzy_endTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_cdzydsr']['list'][$i]['detail']['endTime']/1000));
+            //登记日期
+            $docObj->setValue("cdzy_sortTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_cdzydsr']['list'][$i]['detail']['sortTime']/1000));
+        }
+        $docObj->setValue("cdzy_total", $data['company_zdw_cdzydsr']['total']);
+
+        //所有权保留
+        $rows = count($data['company_zdw_syqbldsr']['list']);
+        $docObj->cloneRow('syqbl_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("syqbl_no#" . ($i + 1), $i+1);
+            //登记种类
+            $docObj->setValue("syqbl_basic_type#" . ($i + 1), $data['company_zdw_syqbldsr']['list'][$i]['detail']['basic_type']);
+            //所有权标的物类型
+            $docObj->setValue("syqbl_syqType#" . ($i + 1), $data['company_zdw_syqbldsr']['list'][$i]['detail']['syqType']);
+            //登记期限
+            $docObj->setValue("syqbl_basic_date#" . ($i + 1), $data['company_zdw_syqbldsr']['list'][$i]['detail']['basic_date']);
+            //登记到期日
+            $docObj->setValue("syqbl_endTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_syqbldsr']['list'][$i]['detail']['endTime']/1000));
+            //登记日期
+            $docObj->setValue("syqbl_sortTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_syqbldsr']['list'][$i]['detail']['sortTime']/1000));
+        }
+        $docObj->setValue("syqbl_total", $data['company_zdw_syqbldsr']['total']);
+
+        //其他动产融资
+        $rows = count($data['company_zdw_qtdcdsr']['list']);
+        $docObj->cloneRow('qtdcrz_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("qtdcrz_no#" . ($i + 1), $i+1);
+            //抵押物类型
+            $docObj->setValue("qtdcrz_basic_typeT#" . ($i + 1), $data['company_zdw_qtdcdsr']['list'][$i]['detail']['basic_typeT']);
+            //主合同金额
+            $docObj->setValue("qtdcrz_bdwMes_conMoney#" . ($i + 1), $data['company_zdw_qtdcdsr']['list'][$i]['detail']['bdwMes_conMoney']);
+            //登记期限
+            $docObj->setValue("qtdcrz_basic_date#" . ($i + 1), $data['company_zdw_qtdcdsr']['list'][$i]['detail']['basic_date']);
+            //登记到期日
+            $docObj->setValue("qtdcrz_endTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_qtdcdsr']['list'][$i]['detail']['endTime']/1000));
+            //登记日期
+            $docObj->setValue("qtdcrz_sortTime#" . ($i + 1), date('Y年m月d日',$data['company_zdw_qtdcdsr']['list'][$i]['detail']['sortTime']/1000));
+        }
+        $docObj->setValue("qtdcrz_total", $data['company_zdw_qtdcdsr']['total']);
 
 
 
-
-
-
-
-
-        var_dump($data['getEquityPledgedInfo']);
+        //var_dump($data['company_zdw_qtdcdsr']);
     }
 
     //并发请求数据
@@ -3096,8 +3240,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $csp->add('getEquityPledgedInfo', function () {
 
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
-                //'entName' => $this->entName,
-                'entName' => '青岛海信信特置业有限公司',
+                'entName' => $this->entName,
                 'pageNo' => 1,
                 'pageSize' => 20,
             ], 'getEquityPledgedInfo');
@@ -3113,13 +3256,42 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //企查查 企业年报 其中有对外担保 这个字段ProvideAssuranceList
         $csp->add('GetAnnualReport', function () {
 
-            $postData = ['keyNo' => $this->entName];
+            $postData = [
+                'keyNo' => $this->entName,
+            ];
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'AR/GetAnnualReport', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
-            return $res;
+            $total=null;
+
+            if (!empty($res))
+            {
+                $list=[];
+
+                //不是空就找出来有没有对外担保
+                foreach ($res as $arr)
+                {
+                    if (!isset($arr['ProvideAssuranceList']) || empty($arr['ProvideAssuranceList'])) continue;
+
+                    //如果有对外担保数据
+                    foreach ($arr['ProvideAssuranceList'] as $one)
+                    {
+                        if (count($list) < 20)
+                        {
+                            $list[]=$one;
+                        }
+
+                        $total = (int)$total + 1;
+                    }
+                }
+            }
+
+            $tmp['list']=empty($list) ? null : $list;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //企查查 土地抵押
@@ -3133,16 +3305,21 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandMortgage/GetLandMortgageList', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 中登动产融资 应收账款
         $csp->add('company_zdw_yszkdsr', function () {
 
+            $doc_type='company_zdw_yszkdsr';
+
             $postData = [
-                'doc_type' => 'company_zdw_yszkdsr',
+                'doc_type' => $doc_type,
                 'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
@@ -3150,16 +3327,41 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'zdw', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 中登动产融资 租赁登记
         $csp->add('company_zdw_zldjdsr', function () {
 
+            $doc_type='company_zdw_zldjdsr';
+
             $postData = [
-                'doc_type' => 'company_zdw_zldjdsr',
+                'doc_type' => $doc_type,
                 'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
@@ -3167,16 +3369,41 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'zdw', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 中登动产融资 保证金质押登记
         $csp->add('company_zdw_bzjzydsr', function () {
 
+            $doc_type='company_zdw_bzjzydsr';
+
             $postData = [
-                'doc_type' => 'company_zdw_bzjzydsr',
+                'doc_type' => $doc_type,
                 'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
@@ -3184,16 +3411,41 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'zdw', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 中登动产融资 仓单质押
         $csp->add('company_zdw_cdzydsr', function () {
 
+            $doc_type='company_zdw_cdzydsr';
+
             $postData = [
-                'doc_type' => 'company_zdw_cdzydsr',
+                'doc_type' => $doc_type,
                 'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
@@ -3201,16 +3453,41 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'zdw', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 中登动产融资 所有权保留
         $csp->add('company_zdw_syqbldsr', function () {
 
+            $doc_type='company_zdw_syqbldsr';
+
             $postData = [
-                'doc_type' => 'company_zdw_syqbldsr',
+                'doc_type' => $doc_type,
                 'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
@@ -3218,16 +3495,41 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'zdw', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         //法海 中登动产融资 其他动产融资
         $csp->add('company_zdw_qtdcdsr', function () {
 
+            $doc_type='company_zdw_qtdcdsr';
+
             $postData = [
-                'doc_type' => 'company_zdw_qtdcdsr',
+                'doc_type' => $doc_type,
                 'keyword' => $this->entName,
                 'pageno' => 1,
                 'range' => 20,
@@ -3235,9 +3537,32 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'zdw', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res,$total) = [$res['result'],$res['paging']['total']] : list($res,$total) = [null,null];
 
-            return $res;
+            if (!empty($res))
+            {
+                foreach ($res as &$one)
+                {
+                    //取详情
+                    $postData = ['id'=>$one['entryId']];
+
+                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.$doc_type, $postData);
+
+                    if ($detail['code']==='s' && !empty($detail[$doc_type]))
+                    {
+                        $one['detail']=current($detail[$doc_type]);
+                    }else
+                    {
+                        $one['detail']=null;
+                    }
+                }
+                unset($one);
+            }
+
+            $tmp['list']=$res;
+            $tmp['total']=$total;
+
+            return $tmp;
         });
 
         return CspService::getInstance()->exec($csp,10);
