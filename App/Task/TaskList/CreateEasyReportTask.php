@@ -13,11 +13,15 @@ use App\Task\TaskBase;
 use Carbon\Carbon;
 use EasySwoole\Task\AbstractInterface\TaskInterface;
 use PhpOffice\PhpWord\TemplateProcessor;
+use wanghanwanghan\someUtils\control;
 
 class CreateEasyReportTask extends TaskBase implements TaskInterface
 {
     private $entName;
     private $reportNum;
+
+    private $fz=[];
+    private $fx=[];
 
     function __construct($entName, $reportNum)
     {
@@ -43,6 +47,12 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $this->fillData($tmp, $reportVal);
 
+        $this->exprXDS($reportVal);
+
+        $tmp->setValue('fz_score', sprintf('%.2f',array_sum($this->fz)));
+
+        $tmp->setValue('fx_score', sprintf('%.2f',array_sum($this->fx)));
+
         $tmp->saveAs(REPORT_PATH . $this->reportNum . '.docx');
 
         return true;
@@ -50,7 +60,613 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
-        var_dump($throwable->getMessage());
+
+    }
+
+    //计算信动分
+    private function exprXDS($data)
+    {
+        //企业性质
+        $a=$this->qyxz($data['getRegisterInfo']);
+        //企业对外投资
+        $b=$this->qydwtz($data['getInvestmentAbroadInfo']['total']);
+        //融资历史
+        $c=$this->rzls($data['SearchCompanyFinancings']);
+        //计算
+        $this->fz['gongshang']=(0.6 * $a + 0.2 * $b + 0.2 * $c) * 0.1;
+        //==============================================================================================================
+        //行政许可
+        $a=$this->xzxk($data['GetAdministrativeLicenseList']['total']);
+        //计算
+        $this->fz['xingzheng']=0.05 * $a;
+        //==============================================================================================================
+        //专利
+        $a=$this->zl($data['PatentV4Search']['total']);
+        //软件著作权
+        $b=$this->rjzzq($data['SearchSoftwareCr']['total']);
+        //计算
+        $this->fz['chuangxinyujishu']=(0.6 * $a + 0.4 * $b) * 0.1;
+        //==============================================================================================================
+        //近三年团队人数
+        $a=$this->tdrs($data['itemInfo'],'fz');
+        //近两年团队人数
+        $b=$this->rybh($data['itemInfo'],'fz');
+        //计算
+        $this->fz['tuandui']=(0.5 * $a + 0.5 * $b) * 0.1;
+        //==============================================================================================================
+        //招投标
+        $a=$this->ztb($data['TenderSearch']['total']);
+        //计算
+        $this->fz['jingyingxinxi']=0.05 * $a;
+        //==============================================================================================================
+        //财务资产
+        $c=$this->cwzc($data['FinanceData']['data'],'fz');
+        //计算
+        $this->fz['caiwu']=$c * 0.6;
+        //==============================================================================================================
+        //行业位置
+        $a=$this->hywz($data['FinanceData']['data'],$data['getRegisterInfo']);
+        //计算
+        $this->fz['hangyeweizhi']=0.02 * $a;
+        //==============================================================================================================
+        //企业变更信息
+        $a=$this->qybgxx($data['getRegisterChangeInfo']['total']);
+        //经营异常
+        $b=$this->jyyc($data['GetOpException']['total']);
+        //计算
+        $this->fx['gongshang']=(0.6 * $a + 0.4 * $b) * 0.05;
+        //==============================================================================================================
+        //财务资产
+        $d=$this->cwzc($data['FinanceData']['data'],'fx');
+        //计算
+        $this->fx['caiwu']=0.4 * $d;
+        //==============================================================================================================
+        //近三年团队人数
+        $a=$this->tdrs($data['itemInfo'],'fx');
+        //近两年团队人数
+        $b=$this->rybh($data['itemInfo'],'fx');
+        //计算
+        $this->fx['tuandui']=(0.3 * $a + 0.7* $b) * 0.18;
+        //==============================================================================================================
+        //裁判文书
+        $a=$this->pjws($data['cpws']['total']);
+        //执行公告
+        $b=$this->zxgg($data['zxgg']['total']);
+        $s=($a + $b) / 2;
+        //计算
+        $this->fx['sifa']=0.25 * $s;
+        //==============================================================================================================
+        //涉税处罚公示
+        $a=$this->sscfgs($data['satparty_chufa']['total']);
+        //税务非正常户公示
+        $b=$this->swfzchgs($data['satparty_fzc']['total']);
+        //欠税公告
+        $c=$this->qsgg($data['satparty_qs']['total']);
+        $s=($a + $b + $c) / 3;
+        //计算
+        $this->fx['shuiwu']=0.1 * $s;
+        //==============================================================================================================
+        //行政处罚
+        $a=$this->xzcf($data['GetAdministrativePenaltyList']['total']);
+        $this->fx['xingzheng']=0.02 * $a;
+        //==============================================================================================================
+        //联合惩戒名单信息（暂无该字段接口，先以司法类中的失信公告代替）失信公告的数量
+        $a=$this->sxgg($data['shixin']);
+        $this->fx['gaofengxian']=0.4 * $a;
+        //==============================================================================================================
+
+        return true;
+    }
+
+
+
+
+    //失信公告
+    private function sxgg($data)
+    {
+        //总数
+        $num=(int)$data;
+
+        if ($num >= 3) return 100;
+        if ($num >= 2 && $num <= 1) return 90;
+        if ($num < 1) return 0;
+
+        return 0;
+    }
+
+    //涉税处罚公示
+    private function sscfgs($data)
+    {
+        //总数
+        $num=(int)$data;
+
+        //总数
+        if ($num > 10) return 100;
+        if ($num >= 6 && $num <= 10) return 90;
+        if ($num >= 3 && $num <= 5) return 80;
+        if ($num >= 1 && $num <= 2) return 60;
+        if ($num < 1) return 0;
+
+        return 0;
+    }
+
+    //税务非正常户公示
+    private function swfzchgs($data)
+    {
+        //总数
+        $num=(int)$data;
+
+        //总数
+        if ($num > 10) return 100;
+        if ($num >= 6 && $num <= 10) return 90;
+        if ($num >= 3 && $num <= 5) return 80;
+        if ($num >= 1 && $num <= 2) return 60;
+        if ($num < 1) return 0;
+
+        return 0;
+    }
+
+    //欠税公告
+    private function qsgg($data)
+    {
+        //总数
+        $num=(int)$data;
+
+        //总数
+        if ($num > 10) return 100;
+        if ($num >= 6 && $num <= 10) return 90;
+        if ($num >= 3 && $num <= 5) return 80;
+        if ($num >= 1 && $num <= 2) return 60;
+        if ($num < 1) return 0;
+
+        return 0;
+    }
+
+    //行政处罚
+    private function xzcf($data)
+    {
+        //总数
+        $num=(int)$data;
+
+        //总数
+        if ($num > 10) return 100;
+        if ($num >= 6 && $num <= 10) return 90;
+        if ($num >= 3 && $num <= 5) return 80;
+        if ($num >= 1 && $num <= 2) return 60;
+        if ($num < 1) return 0;
+
+        return 0;
+    }
+
+    //判决文书
+    private function pjws($data)
+    {
+        $num=(int)$data;
+
+        //总数
+        if ($num > 10) return 100;
+        if ($num >= 6 && $num <= 10) return 90;
+        if ($num >= 3 && $num <= 5) return 80;
+        if ($num >= 1 && $num <= 2) return 60;
+        if ($num < 1) return 0;
+
+        return 0;
+    }
+
+    //执行公告
+    private function zxgg($data)
+    {
+        $num=(int)$data;
+
+        if ($num > 10) return 100;
+        if ($num >= 6 && $num <= 10) return 90;
+        if ($num >= 3 && $num <= 5) return 80;
+        if ($num >= 1 && $num <= 2) return 60;
+        if ($num < 1) return 0;
+
+        return 0;
+    }
+
+    //企业变更信息
+    private function qybgxx($data)
+    {
+        $num=(int)$data;
+
+        //算分
+        if ($num > 10) return 100;
+        if ($num <= 10 && $num >= 6) return 80;
+        if ($num <= 5 && $num >=3) return 70;
+        if ($num <= 2 && $num >=1) return 60;
+        if ($num < 1) return 0;
+
+        return 0;
+    }
+
+    //经营异常
+    private function jyyc($data)
+    {
+        //总数
+        $num=(int)$data;
+
+        //算分
+        if ($num > 5) return 100;
+        if ($num == 4) return 80;
+        if ($num == 3) return 70;
+        if ($num >= 1 && $num <= 2) return 60;
+        if ($num < 1) return 0;
+
+        return 0;
+    }
+
+    //行业位置
+    private function hywz($cw,$jb)
+    {
+        if (!is_array($cw)) return 0;
+
+        if (empty($cw)) return 0;
+
+        if (!isset($cw[0])) return 0;
+
+        //先拿到营业总收入
+        $vendInc=$cw[0][2];;
+
+        $sshy=trim($jb['INDUSTRY']);
+
+        //2017年利润（亿）100000000
+        $target=[
+            '煤炭开采和洗选业'=>24870.64,
+            '石油和天然气开采业'=>7560.07,
+            '黑色金属矿采选业'=>4064.44,
+            '有色金属矿采选业'=>5104.15,
+            '非金属矿采选业'=>4239.89,
+            '开采专业及辅助性活动'=>1566.71,
+            '其他采矿业'=>37.53,
+            '农副食品加工业'=>59894.39,
+            '食品制造业'=>22140.85,
+            '酒、饮料和精制茶制造业'=>17096.2,
+            '烟草制品业'=>8890.91,
+            '纺织业'=>36114.43,
+            '纺织服装、服饰业'=>20892.12,
+            '皮革、毛皮、羽毛及其制品和制鞋业'=>14105.61,
+            '木材加工和木、竹、藤、棕、草制品业'=>12947.89,
+            '家具制造业'=>8787.88,
+            '造纸和纸制品业'=>14840.51,
+            '印刷和记录媒介复制业'=>7857.66,
+            '文教、工美、体育和娱乐用品制造业'=>15931.04,
+            '石油、煤炭及其他燃料加工业'=>40331.5,
+            '化学原料和化学制品制造业'=>81889.06,
+            '医药制造业'=>27116.57,
+            '化学纤维制造业'=>7916.55,
+            '橡胶和塑料制品业'=>30526.72,
+            '非金属矿物制品业'=>59194.51,
+            '黑色金属冶炼和压延加工业'=>64571.78,
+            '有色金属冶炼和压延加工业'=>54091.07,
+            '金属制品业'=>35952.04,
+            '通用设备制造业'=>45611.05,
+            '专用设备制造业'=>35835.21,
+            '汽车制造业'=>84637.11,
+            '铁路、船舶、航空航天和其他运输设备制造业'=>16921.12,
+            '电气机械和器材制造业'=>71683.44,
+            '计算机、通信和其他电子设备制造业'=>106221.7,
+            '仪器仪表制造业'=>9999.5,
+            '其他制造业'=>2623.22,
+            '废弃资源综合利用业'=>3898.18,
+            '金属制品、机械和设备修理业'=>1183.92,
+            '电力、热力生产和供应业'=>55006.77,
+            '燃气生产和供应业'=>6061.34,
+            '水的生产和供应业'=>2141.88
+        ];
+
+        if (array_key_exists($sshy,$target))
+        {
+            $num=$vendInc / ($target[$sshy] * 100000000) * 100;
+
+            if ($num > 10) return 100;
+            if ($num >= 6 && $num <= 10) return 90;
+            if ($num >= 1.1 && $num <= 5) return 80;
+            if ($num > 0.1 && $num <= 1) return 70;
+            if ($num >= 0.01 && $num <= 0.1) return 60;
+            if ($num < 0.01) return 50;
+        }
+
+        return 50;
+    }
+
+    //财务资产
+    private function cwzc($data,$type)
+    {
+        if (!is_array($data)) return 0;
+
+        if (empty($data)) return 0;
+
+        if (!isset($data[0])) return 0;
+
+        switch ($type)
+        {
+            case 'fz':
+
+                //营业收入
+                $vendInc=$data[0][2];
+
+                if ($vendInc > 20) $vendIncNum=110;
+                if ($vendInc > 10 && $vendInc <= 20) $vendIncNum=100;
+                if ($vendInc > 5 && $vendInc <= 10) $vendIncNum=90;
+                if ($vendInc >= 0 && $vendInc <= 5) $vendIncNum=80;
+                if ($vendInc >= -10 && $vendInc <= -1) $vendIncNum=70;
+                if ($vendInc >= -20 && $vendInc <= -11) $vendIncNum=60;
+                if ($vendInc <= -21) $vendIncNum=50;
+
+                //净利润
+                $netInc=$data[0][5];
+
+                if ($netInc > 20) $netIncNum=110;
+                if ($netInc > 10 && $netInc <= 20) $netIncNum=100;
+                if ($netInc > 5 && $netInc <= 10) $netIncNum=90;
+                if ($netInc >= 0 && $netInc <= 5) $netIncNum=80;
+                if ($netInc >= -10 && $netInc <= -1) $netIncNum=70;
+                if ($netInc >= -20 && $netInc <= -11) $netIncNum=60;
+                if ($netInc <= -21) $netIncNum=50;
+
+                //资产总额
+                $assGro=$data[0][0];
+
+                if ($assGro > 20) $assGroNum=110;
+                if ($assGro > 10 && $assGro <= 20) $assGroNum=100;
+                if ($assGro > 5 && $assGro <= 10) $assGroNum=90;
+                if ($assGro >= 0 && $assGro <= 5) $assGroNum=80;
+                if ($assGro >= -10 && $assGro <= -1) $assGroNum=70;
+                if ($assGro >= -20 && $assGro <= -11) $assGroNum=60;
+                if ($assGro <= -21) $assGroNum=50;
+
+                return ($vendIncNum + $netIncNum + $assGroNum) / 3;
+
+                break;
+
+            case 'fx':
+
+                //负债总额/资产总额=资产负债率
+
+                if (count($data) < 2) return 0;
+
+                //今年负债总额
+                $liaGro1=$data[0][1];
+                //今年资产总额
+                $assGro1=$data[0][0];
+
+                //今年资产负债率
+                if ($assGro1==0)
+                {
+                    $fuzhailv1=0;
+                }else
+                {
+                    $fuzhailv1=($liaGro1 / $assGro1) * 100;
+                }
+
+                //去年负债总额
+                $liaGro2=$data[1][1];
+                //去年资产总额
+                $assGro2=$data[1][0];
+
+                //今年资产负债率
+                if ($assGro2==0)
+                {
+                    $fuzhailv2=0;
+                }else
+                {
+                    $fuzhailv2=($liaGro2 / $assGro2) * 100;
+                }
+
+                $num=(abs($fuzhailv1) + abs($fuzhailv2)) / 2;
+
+                if ($num > 80) return 100;
+                if ($num > 50 && $num <= 80) return 90;
+                if ($num > 30 && $num <= 50) return 80;
+                if ($num > 10 && $num <= 30) return 70;
+                if ($num > 0 && $num <= 10) return 60;
+
+                break;
+        }
+
+        return 0;
+    }
+
+    //招投标
+    private function ztb($data)
+    {
+        $num=(int)$data;
+
+        if ($num > 10) return 100;
+        if ($num <= 10 && $num >= 6) return 80;
+        if ($num <= 5 && $num >=3) return 70;
+        if ($num <= 2) return 60;
+
+        return $num;
+    }
+
+    //近三年团队人数
+    private function tdrs($data,$type)
+    {
+        return 50;
+    }
+
+    //近两年团队人数
+    private function rybh($data,$type)
+    {
+        return 40;
+    }
+
+    //专利
+    private function zl($data)
+    {
+        //总数
+        $num=(int)$data;
+
+        if ($num > 10) return 100;
+        if ($num <= 10 && $num >= 6) return 80;
+        if ($num <= 5 && $num >=1) return 70;
+        if ($num <= 0) return 60;
+
+        return $num;
+    }
+
+    //软件著作权
+    private function rjzzq($data)
+    {
+        //总数
+        $num=(int)$data;
+
+        if ($num > 20) return 100;
+        if ($num <= 20 && $num >= 11) return 80;
+        if ($num <= 10 && $num >=3) return 70;
+        if ($num <= 2) return 60;
+
+        return $num;
+    }
+
+    //行政许可
+    private function xzxk($data)
+    {
+        //算分
+        $num=(int)$data;
+
+        if ($num > 10) return 100;
+        if ($num <= 10 && $num >= 6) return 80;
+        if ($num <= 5 && $num >=3) return 70;
+        if ($num <= 2) return 60;
+
+        //总数
+        return $num;
+    }
+
+    //企业对外投资
+    private function qydwtz($data)
+    {
+        $num=(int)$data;
+
+        //算分
+        if ($num > 20) return 100;
+        if ($num <= 20 && $num >= 11) return 80;
+        if ($num <= 10 && $num >=3) return 70;
+        if ($num <= 2) return 60;
+
+        return 0;
+    }
+
+    //融资历史
+    private function rzls($financing)
+    {
+        if (!empty($financing))
+        {
+            $temp = [];
+            foreach($financing as $key=>$val)
+            {
+                $money = $val['Amount'];
+
+                if(strpos($money,'亿'))
+                {
+                    $money_num = preg_replace("/[\\x80-\\xff]/","",$money);
+                    if(!empty($money_num))
+                    {
+                        if(strpos($money,'美元'))
+                        {
+                            $money_num = $money_num*100000000*7.0068;
+                            array_push($temp, $money_num);
+                        }else
+                        {
+                            $money_num = $money_num*100000000;
+                            array_push($temp, $money_num);
+                        }
+                    }
+                }
+
+                if(strpos($money,'千万'))
+                {
+                    $money_num = preg_replace("/[\\x80-\\xff]/","",$money);
+
+                    if(!empty($money_num))
+                    {
+                        if(strpos($money,'美元'))
+                        {
+                            $money_num = $money_num*10000000*7.0068;
+                            array_push($temp, $money_num);
+                        }else
+                        {
+                            $money_num = $money_num*10000000;
+                            array_push($temp, $money_num);
+                        }
+                    }
+                }
+
+                if(strpos($money,'百万'))
+                {
+                    $money_num = preg_replace("/[\\x80-\\xff]/","",$money);
+
+                    if(!empty($money_num))
+                    {
+                        if(strpos($money,'美元'))
+                        {
+                            $money_num = $money_num*1000000*7.0068;
+                            array_push($temp, $money_num);
+                        }else
+                        {
+                            $money_num = $money_num*1000000;
+                            array_push($temp, $money_num);
+                        }
+                    }
+                }
+
+                if(strpos($money,'万'))
+                {
+                    $money_num = preg_replace("/[\\x80-\\xff]/","",$money);
+
+                    if(!empty($money_num))
+                    {
+                        if(strpos($money,'美元'))
+                        {
+                            $money_num = $money_num*10000*7.0068;
+                            array_push($temp, $money_num);
+                        }else
+                        {
+                            $money_num = $money_num*10000;
+                            array_push($temp, $money_num);
+                        }
+                    }
+                }
+            }
+
+            $financing_all_num = array_sum($temp);
+
+            //算数
+            $num=50;
+            if ($financing_all_num > 500000000) $num=100;
+            if ($financing_all_num > 100000000 && $financing_all_num <= 500000000) $num=90;
+            if ($financing_all_num > 50000000 && $financing_all_num <= 100000000) $num=80;
+            if ($financing_all_num > 10000000 && $financing_all_num <= 50000000) $num=70;
+            if ($financing_all_num > 1000000 && $financing_all_num <= 10000000) $num=60;
+
+        }else
+        {
+            $num=50;
+        }
+
+        return $num;
+    }
+
+    //企业性质
+    private function qyxz($data)
+    {
+        $entType=$data['ENTTYPE'];
+
+        $num=50;
+
+        if (control::hasString($entType,'全民所有')) $num=100;
+        if (control::hasString($entType,'国有')) $num=100;
+        if (control::hasString($entType,'港澳台')) $num=100;
+        if (control::hasString($entType,'外商')) $num=100;
+        if (control::hasString($entType,'集体')) $num=100;
+
+        //总数
+        return (int)$num;
     }
 
     //数据填进报告
@@ -114,35 +730,35 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
 
         //变更信息
-        $rows = count($data['getRegisterChangeInfo']);
+        $rows = count($data['getRegisterChangeInfo']['list']);
         $docObj->cloneRow('bg_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
             $docObj->setValue("bg_no#" . ($i + 1), $i + 1);
             //变更日期
-            $docObj->setValue("bg_ALTDATE#" . ($i + 1), $data['getRegisterChangeInfo'][$i]['ALTDATE']);
+            $docObj->setValue("bg_ALTDATE#" . ($i + 1), $data['getRegisterChangeInfo']['list'][$i]['ALTDATE']);
             //变更项目
-            $docObj->setValue("bg_ALTITEM#" . ($i + 1), $data['getRegisterChangeInfo'][$i]['ALTITEM']);
+            $docObj->setValue("bg_ALTITEM#" . ($i + 1), $data['getRegisterChangeInfo']['list'][$i]['ALTITEM']);
             //变更前
-            $docObj->setValue("bg_ALTBE#" . ($i + 1), $data['getRegisterChangeInfo'][$i]['ALTBE']);
+            $docObj->setValue("bg_ALTBE#" . ($i + 1), $data['getRegisterChangeInfo']['list'][$i]['ALTBE']);
             //变更后
-            $docObj->setValue("bg_ALTAF#" . ($i + 1), $data['getRegisterChangeInfo'][$i]['ALTAF']);
+            $docObj->setValue("bg_ALTAF#" . ($i + 1), $data['getRegisterChangeInfo']['list'][$i]['ALTAF']);
         }
 
         //经营异常
-        $rows = count($data['GetOpException']);
+        $rows = count($data['GetOpException']['list']);
         $docObj->cloneRow('jjyc_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
             $docObj->setValue("jjyc_no#" . ($i + 1), $i + 1);
             //列入一日
-            $docObj->setValue("jjyc_AddDate#" . ($i + 1), $data['GetOpException'][$i]['AddDate']);
+            $docObj->setValue("jjyc_AddDate#" . ($i + 1), $data['GetOpException']['list'][$i]['AddDate']);
             //列入原因
-            $docObj->setValue("jjyc_AddReason#" . ($i + 1), $data['GetOpException'][$i]['AddReason']);
+            $docObj->setValue("jjyc_AddReason#" . ($i + 1), $data['GetOpException']['list'][$i]['AddReason']);
             //移除日期
-            $docObj->setValue("jjyc_RemoveDate#" . ($i + 1), $data['GetOpException'][$i]['RemoveDate']);
+            $docObj->setValue("jjyc_RemoveDate#" . ($i + 1), $data['GetOpException']['list'][$i]['RemoveDate']);
             //移除原因
-            $docObj->setValue("jjyc_RomoveReason#" . ($i + 1), $data['GetOpException'][$i]['RomoveReason']);
+            $docObj->setValue("jjyc_RomoveReason#" . ($i + 1), $data['GetOpException']['list'][$i]['RomoveReason']);
         }
 
         //实际控制人
@@ -218,27 +834,27 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
 
         //企业对外投资
-        $rows = count($data['getInvestmentAbroadInfo']);
+        $rows = count($data['getInvestmentAbroadInfo']['list']);
         $docObj->cloneRow('qydwtz_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
             $docObj->setValue("qydwtz_no#" . ($i + 1), $i + 1);
             //被投资企业名称
-            $docObj->setValue("qydwtz_ENTNAME#" . ($i + 1), $data['getInvestmentAbroadInfo'][$i]['ENTNAME']);
+            $docObj->setValue("qydwtz_ENTNAME#" . ($i + 1), $data['getInvestmentAbroadInfo']['list'][$i]['ENTNAME']);
             //成立日期
-            $docObj->setValue("qydwtz_ESDATE#" . ($i + 1), $data['getInvestmentAbroadInfo'][$i]['ESDATE']);
+            $docObj->setValue("qydwtz_ESDATE#" . ($i + 1), $data['getInvestmentAbroadInfo']['list'][$i]['ESDATE']);
             //经营状态
-            $docObj->setValue("qydwtz_ENTSTATUS#" . ($i + 1), $data['getInvestmentAbroadInfo'][$i]['ENTSTATUS']);
+            $docObj->setValue("qydwtz_ENTSTATUS#" . ($i + 1), $data['getInvestmentAbroadInfo']['list'][$i]['ENTSTATUS']);
             //注册资本
-            $docObj->setValue("qydwtz_REGCAP#" . ($i + 1), $data['getInvestmentAbroadInfo'][$i]['REGCAP']);
+            $docObj->setValue("qydwtz_REGCAP#" . ($i + 1), $data['getInvestmentAbroadInfo']['list'][$i]['REGCAP']);
             //认缴出资额
-            $docObj->setValue("qydwtz_SUBCONAM#" . ($i + 1), $data['getInvestmentAbroadInfo'][$i]['SUBCONAM']);
+            $docObj->setValue("qydwtz_SUBCONAM#" . ($i + 1), $data['getInvestmentAbroadInfo']['list'][$i]['SUBCONAM']);
             //出资币种
-            $docObj->setValue("qydwtz_CONCUR#" . ($i + 1), $data['getInvestmentAbroadInfo'][$i]['CONCUR']);
+            $docObj->setValue("qydwtz_CONCUR#" . ($i + 1), $data['getInvestmentAbroadInfo']['list'][$i]['CONCUR']);
             //出资比例
-            $docObj->setValue("qydwtz_CONRATIO#" . ($i + 1), $data['getInvestmentAbroadInfo'][$i]['CONRATIO']);
+            $docObj->setValue("qydwtz_CONRATIO#" . ($i + 1), $data['getInvestmentAbroadInfo']['list'][$i]['CONRATIO']);
             //出资时间
-            $docObj->setValue("qydwtz_CONDATE#" . ($i + 1), $data['getInvestmentAbroadInfo'][$i]['CONDATE']);
+            $docObj->setValue("qydwtz_CONDATE#" . ($i + 1), $data['getInvestmentAbroadInfo']['list'][$i]['CONDATE']);
         }
 
         //主要分支机构
@@ -281,19 +897,19 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
 
         //招投标
-        $rows = count($data['TenderSearch']);
+        $rows = count($data['TenderSearch']['list']);
         $docObj->cloneRow('ztb_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
             $docObj->setValue("ztb_no#" . ($i + 1), $i + 1);
             //描述
-            $docObj->setValue("ztb_Title#" . ($i + 1), $data['TenderSearch'][$i]['Title']);
+            $docObj->setValue("ztb_Title#" . ($i + 1), $data['TenderSearch']['list'][$i]['Title']);
             //发布日期
-            $docObj->setValue("ztb_Pubdate#" . ($i + 1), $data['TenderSearch'][$i]['Pubdate']);
+            $docObj->setValue("ztb_Pubdate#" . ($i + 1), $data['TenderSearch']['list'][$i]['Pubdate']);
             //所属地区
-            $docObj->setValue("ztb_ProvinceName#" . ($i + 1), $data['TenderSearch'][$i]['ProvinceName']);
+            $docObj->setValue("ztb_ProvinceName#" . ($i + 1), $data['TenderSearch']['list'][$i]['ProvinceName']);
             //项目分类
-            $docObj->setValue("ztb_ChannelName#" . ($i + 1), $data['TenderSearch'][$i]['ChannelName']);
+            $docObj->setValue("ztb_ChannelName#" . ($i + 1), $data['TenderSearch']['list'][$i]['ChannelName']);
         }
 
         //购地信息
@@ -506,7 +1122,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         //财务总揽
         $docObj->setImageValue("caiwu_pic", [
-            'path' => REPORT_IMAGE_TEMP_PATH . $data['FinanceData'],
+            'path' => REPORT_IMAGE_TEMP_PATH . $data['FinanceData']['pic'],
             'width' => 440,
             'height' => 500
         ]);
@@ -1495,9 +2111,12 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 10,
             ], 'getRegisterChangeInfo');
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            return $res;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //企查查 经营异常
@@ -1507,9 +2126,12 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'ECIException/GetOpException', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            return $res;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //企查查 实际控制人
@@ -1599,9 +2221,12 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 10,
             ], 'getInvestmentAbroadInfo');
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            return $res;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //淘数 分支机构
@@ -1653,9 +2278,12 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'Tender/Search', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-            return $res;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //企查查 购地信息
@@ -1920,7 +2548,11 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 'legend' => $legend
             ];
 
-            return CommonService::getInstance()->createBarPic($data, $labels, $extension);
+            $tmp=[];
+            $tmp['pic']=CommonService::getInstance()->createBarPic($data, $labels, $extension);
+            $tmp['data']=$data;
+
+            return $tmp;
         });
 
         //企查查 业务概况
@@ -3430,6 +4062,13 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         return CspService::getInstance()->exec($csp, 10);
     }
+
+
+
+
+
+
+
 
 
 }
