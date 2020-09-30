@@ -32,6 +32,8 @@ class CoHttpClient extends ServiceBase
         //从缓存中拿
         $take = $this->takeResult($url, $postData);
 
+        $take=[];
+
         //不是空，说明缓存里有数据，直接返回
         if (!empty($take)) return $this->needJsonDecode ? json_decode($take, true) : $take;
 
