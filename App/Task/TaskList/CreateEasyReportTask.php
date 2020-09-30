@@ -1820,8 +1820,6 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QianQiService())->setCheckRespFlag(true)->getThreeYearsData($postData);
 
-            var_dump($res);
-
             if ($res['code'] === 200 && !empty($res['result'])) {
 
                 $yearArr = array_keys($res['result']);
