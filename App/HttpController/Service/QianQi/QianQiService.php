@@ -414,6 +414,8 @@ class QianQiService extends ServiceBase
 
             $res=(new CoHttpClient())->send($this->baseUrl.'xindong/search/',$arr,$this->sendHeaders);
 
+            var_dump($res);
+
             isset($res['data']) ? $return[$yearStart - $i]=$this->wordToNum($res['data']) : $return[$yearStart - $i]=[];
         }
 
