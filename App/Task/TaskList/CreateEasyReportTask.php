@@ -1913,9 +1913,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $extension = [
                 'width' => 1200,
                 'height' => 700,
-                'title' => '财务非授权 - 同比',
+                'title' => $this->entName.' - 财务非授权 - 同比',
                 'xTitle' => '此图为概况信息',
-                //'yTitle'=>'不错不错',
+                //'yTitle'=>$this->entName,
                 'titleSize' => 14,
                 'legend' => $legend
             ];
