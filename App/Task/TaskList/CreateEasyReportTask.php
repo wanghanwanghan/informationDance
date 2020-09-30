@@ -147,15 +147,18 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         //实际控制人
         //姓名
-        $docObj->setValue("sjkzr_Name", $data['Beneficiary']['Name']);
-        //持股比例
-        $docObj->setValue("sjkzr_TotalStockPercent", $data['Beneficiary']['TotalStockPercent']);
-        //股权链
-        $path = '';
-        foreach ($data['Beneficiary']['DetailInfoList'] as $no => $onePath) {
-            $path .= '<w:br/>' . ($no + 1) . $onePath['Path'] . '<w:br/>';
+        if (!empty($data['Beneficiary']))
+        {
+            $docObj->setValue("sjkzr_Name", $data['Beneficiary']['Name']);
+            //持股比例
+            $docObj->setValue("sjkzr_TotalStockPercent", $data['Beneficiary']['TotalStockPercent']);
+            //股权链
+            $path = '';
+            foreach ($data['Beneficiary']['DetailInfoList'] as $no => $onePath) {
+                $path .= '<w:br/>' . ($no + 1) . $onePath['Path'] . '<w:br/>';
+            }
+            $docObj->setValue("sjkzr_Path", $path);
         }
-        $docObj->setValue("sjkzr_Path", $path);
 
         //历史沿革
         $rows = count($data['getHistoricalEvolution']);
