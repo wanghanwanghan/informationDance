@@ -4,11 +4,7 @@ namespace App\HttpController\Business\Api\User;
 
 use App\HttpController\Models\Api\User;
 use App\HttpController\Service\User\UserService;
-use EasySwoole\DDL\Blueprint\Table;
-use EasySwoole\DDL\DDLBuilder;
-use EasySwoole\DDL\Enum\Character;
-use EasySwoole\DDL\Enum\Engine;
-use EasySwoole\Pool\Manager;
+use EasySwoole\RedisPool\Redis;
 
 class UserController extends UserBase
 {
@@ -38,6 +34,18 @@ class UserController extends UserBase
 
         $password=$this->request()->getRequestParam('password') ?? 123456;
         $avatar=$this->request()->getRequestParam('avatar') ?? '';
+
+        $vCode=$this->request()->getRequestParam('vCode') ?? '';
+
+        if (empty($phone) || empty($vCode)) return $this->writeJson(201,null,null,'手机号或验证码不能是空');
+
+        $redis = Redis::defer('redis');
+
+        $redis->select(14);
+
+        $vCodeInRedis = $redis->get($phone.'reg');
+
+        if ((int)$vCodeInRedis !== (int)$vCode) return $this->writeJson(201,null,null,'验证码错误');
 
         try
         {
@@ -112,30 +120,4 @@ class UserController extends UserBase
 
 
 
-
-
-    function wanghan()
-    {
-        $sql=DDLBuilder::table('information_dance_user',function (Table $table)
-        {
-            $table->setTableComment('')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
-
-            $table->colInt('id',11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
-            $table->colVarChar('username',20)->setDefaultValue('');
-            $table->colVarChar('password',20)->setDefaultValue('');
-            $table->colVarChar('phone',20)->setDefaultValue('');
-            $table->colVarChar('email',100)->setDefaultValue('');
-            $table->colInt('created_at',11)->setIsUnsigned()->setDefaultValue(0);
-            $table->colInt('updated_at',11)->setIsUnsigned()->setDefaultValue(0);
-            $table->indexNormal('phone_index','phone');
-        });
-
-        $obj=Manager::getInstance()->get(\Yaconf::get('env.mysqlDatabase'))->getObj();
-
-        $obj->rawQuery($sql);
-
-        Manager::getInstance()->get(\Yaconf::get('env.mysqlDatabase'))->recycleObj($obj);
-
-        $this->writeJson(200,'ok','success');
-    }
 }

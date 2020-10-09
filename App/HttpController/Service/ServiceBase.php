@@ -9,6 +9,11 @@ class ServiceBase
     //各个service在返回结果之前进行返回值检测
     public $checkRespFlag = false;
 
+    function __construct()
+    {
+        return true;
+    }
+
     function onNewService(): ?bool
     {
         return true;

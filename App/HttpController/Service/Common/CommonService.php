@@ -11,11 +11,15 @@ use Amenadiel\JpGraph\Plot\LinePlot;
 use Amenadiel\JpGraph\Plot\PiePlot;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
+use App\Task\Service\TaskService;
 use EasySwoole\Component\Singleton;
 use EasySwoole\Http\Message\UploadFile;
 use EasySwoole\Http\Response;
+use EasySwoole\RedisPool\Redis;
 use EasySwoole\VerifyCode\Conf;
 use EasySwoole\VerifyCode\VerifyCode;
+use Qiniu\Auth;
+use Qiniu\Sms\Sms;
 use wanghanwanghan\someUtils\control;
 
 class CommonService extends ServiceBase
@@ -99,7 +103,7 @@ class CommonService extends ServiceBase
 
         $BarPlotObjArr = [];
 
-        $color=['red','orange','yellow','green','blue'];
+        $color = ['red', 'orange', 'yellow', 'green', 'blue'];
 
         foreach ($data as $key => $oneDataArray) {
 
@@ -107,7 +111,7 @@ class CommonService extends ServiceBase
 
             $bar->value->Show();
 
-            $bar->SetFillColor($color[$key].'@0.4');
+            $bar->SetFillColor($color[$key] . '@0.4');
 
             $bar->SetLegend($extension['legend'][$key]);
 
@@ -120,11 +124,35 @@ class CommonService extends ServiceBase
 
         $graph->Add($gbarplot);
 
-        $fileName=control::getUuid(12).'.jpg';
+        $fileName = control::getUuid(12) . '.jpg';
 
-        $graph->Stroke(REPORT_IMAGE_TEMP_PATH.$fileName);
+        $graph->Stroke(REPORT_IMAGE_TEMP_PATH . $fileName);
 
         return $fileName;
+    }
+
+    //发送验证码
+    function sendCode($phone, $type)
+    {
+        $ak = \Yaconf::get('env.qiNiuAk');
+        $sk = \Yaconf::get('env.qiNiuSk');
+        $tempId = \Yaconf::get('env.template01');
+        $auth = new Auth($ak, $sk);
+        $client = new Sms($auth);
+
+        $code = control::randNum(6);
+
+        $res = TaskService::getInstance()->create(function () use ($client, $tempId, $phone, $code) {
+            return $client->sendMessage($tempId, [$phone], ['code' => $code]);
+        }, 'sync');
+
+        $redis = Redis::defer('redis');
+
+        $redis->select(14);
+
+        $redis->set($phone . $type, $code, 600);
+
+        return empty(current($res)) ? '验证码发送失败' : '验证码发送成功';
     }
 
     //百度内容审核 - 纯文本
