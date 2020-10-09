@@ -3,8 +3,10 @@
 namespace App\HttpController\Business;
 
 use App\HttpController\Index;
+use App\HttpController\Models\Api\User;
 use App\HttpController\Service\RequestUtils\LimitService;
 use App\HttpController\Service\RequestUtils\StatisticsService;
+use App\HttpController\Service\User\UserService;
 use wanghanwanghan\someUtils\control;
 
 class BusinessBase extends Index
@@ -106,9 +108,27 @@ class BusinessBase extends Index
     {
         $requestToken = $this->userToken;
 
-        $checkToken = true;
+        if (empty($requestToken) || strlen($requestToken) < 50) return false;
 
-        return $checkToken;
+        try {
+            $res = User::create()->where('token', $requestToken)->get();
+        } catch (\Throwable $e) {
+            $this->writeErr($e, 'orm');
+            return false;
+        }
+
+        if (empty($res)) return false;
+
+        $tokenInfo = UserService::getInstance()->decodeAccessToken($requestToken);
+
+        if (!is_array($tokenInfo) || count($tokenInfo) != 3) return false;
+
+        $reqPhone = $this->request()->getRequestParam('phone');
+        $tokenPhone = current($tokenInfo);
+
+        if (strlen($tokenPhone) != 11) return false;
+
+        return $reqPhone == $tokenPhone ? true : false;
     }
 
     //check limit
