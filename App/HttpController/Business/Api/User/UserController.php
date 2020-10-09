@@ -3,6 +3,8 @@
 namespace App\HttpController\Business\Api\User;
 
 use App\HttpController\Models\Api\User;
+use App\HttpController\Models\Api\Wallet;
+use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\User\UserService;
 use EasySwoole\RedisPool\Redis;
 use wanghanwanghan\someUtils\control;
@@ -75,6 +77,8 @@ class UserController extends UserBase
             ];
 
             User::create()->data($insert,false)->save();
+
+            Wallet::create()->data(['phone'=>$phone],false)->save();
 
         }catch (\Throwable $e)
         {
