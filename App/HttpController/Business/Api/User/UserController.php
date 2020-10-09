@@ -87,24 +87,34 @@ class UserController extends UserBase
     function login()
     {
         $phone=$this->request()->getRequestParam('phone') ?? '';
-        $password=$this->request()->getRequestParam('password') ?? '123456';
+        $vCode=$this->request()->getRequestParam('vCode') ?? '';
+
+        if (empty($phone) || empty($vCode)) return $this->writeJson(201,null,null,'手机号或验证码不能是空');
+
+        $redis = Redis::defer('redis');
+
+        $redis->select(14);
+
+        $vCodeInRedis = $redis->get($phone.'login');
+
+        if ((int)$vCodeInRedis !== (int)$vCode) return $this->writeJson(201,null,null,'验证码错误');
 
         try
         {
-            $userInfo=User::create()->where('phone',$phone)->where('password',$password)->get();
+            $userInfo=User::create()->where('phone',$phone)->get();
 
         }catch (\Throwable $e)
         {
             return $this->writeErr($e,'orm');
         }
 
-        if (!$userInfo) return $this->writeJson(201,null,null,'登录信息错误');
+        if (empty($userInfo)) return $this->writeJson(201,null,null,'手机号不存在');
 
         $newToken=UserService::getInstance()->createAccessToken($userInfo->phone,$userInfo->password);
 
         try
         {
-            $user=User::create()->get($userInfo['id']);
+            $user=User::create()->get($userInfo->id);
 
             $user->update(['token'=>$newToken]);
 
