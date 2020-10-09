@@ -4,7 +4,6 @@ namespace App\HttpController\Business\Api\User;
 
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\Api\Wallet;
-use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\User\UserService;
 use EasySwoole\RedisPool\Redis;
 use wanghanwanghan\someUtils\control;
