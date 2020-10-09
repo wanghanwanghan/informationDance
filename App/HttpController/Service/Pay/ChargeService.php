@@ -48,7 +48,7 @@ class ChargeService extends ServiceBase
     }
 
     //乾启计费
-    function QianQi(Request $request, $moduleNum): array
+    function QianQi(Request $request, $moduleNum, $detailKey = ''): array
     {
         $phone = $this->getPhone($request);
 
@@ -61,6 +61,7 @@ class ChargeService extends ServiceBase
             $charge = Charge::create()
                 ->where('phone', $phone)
                 ->where('entName', $entName)
+                ->where('detailKey', $detailKey)
                 ->where('moduleId', $moduleNum)
                 ->order('created_at', 'desc')
                 ->get();
@@ -133,5 +134,9 @@ class ChargeService extends ServiceBase
         return ['code' => 200, 'msg' => '扣费成功'];
     }
 
-
+    //法海计费
+    function FaHai(Request $request, $moduleNum): array
+    {
+        return [];
+    }
 }

@@ -67,12 +67,13 @@ class CreateTableService
             $table->colTinyInt('moduleId', 3)->setIsUnsigned()->setDefaultValue(0);
             $table->colVarChar('moduleName', 50)->setDefaultValue('');
             $table->colVarChar('entName', 50)->setDefaultValue('');
+            $table->colVarChar('detailKey', 100)->setDefaultValue('');
             $table->colVarChar('phone', 11)->setDefaultValue('');
             $table->colDecimal('price', 10, 2)->setIsUnsigned()->setDefaultValue(0.00);
             $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
             $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
             $table->indexNormal('phone_index', 'phone');
-            $table->indexNormal('phone_entName_moduleId_index', ['phone', 'entName', 'moduleId']);
+            $table->indexNormal('phone_entName_detailKey_moduleId_index', ['phone', 'entName', 'detailKey', 'moduleId']);
             $table->indexNormal('created_at_index', 'created_at');
         });
 

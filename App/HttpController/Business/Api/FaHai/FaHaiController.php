@@ -3,12 +3,15 @@
 namespace App\HttpController\Business\Api\FaHai;
 
 use App\HttpController\Service\FaHai\FaHaiService;
+use App\HttpController\Service\Pay\ChargeService;
 
 class FaHaiController extends FaHaiBase
 {
     private $listBaseUrl;//企业的
     private $listBaseUrlForPerson;//个人的
     private $detailBaseUrl;
+
+    private $moduleNum;//扣费的id
 
     function onRequest(?string $action): ?bool
     {
@@ -55,6 +58,8 @@ class FaHaiController extends FaHaiBase
         {
             isset($res[$docType]) ? $res['Result'] = $res[$docType] : $res['Result'] = [];
         }
+
+        $charge = ChargeService::getInstance()->FaHai($this->request(), $this->moduleNum);
 
         return $this->writeJson($res['code'],$res['Paging'],$res['Result'],$res['msg']);
     }
