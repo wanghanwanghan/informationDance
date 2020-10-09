@@ -5,6 +5,7 @@ namespace App\HttpController\Business\Api\User;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Service\User\UserService;
 use EasySwoole\RedisPool\Redis;
+use wanghanwanghan\someUtils\control;
 
 class UserController extends UserBase
 {
@@ -32,7 +33,7 @@ class UserController extends UserBase
         $phone=$this->request()->getRequestParam('phone') ?? '';
         $email=$this->request()->getRequestParam('email') ?? '';
 
-        $password=$this->request()->getRequestParam('password') ?? 123456;
+        $password=$this->request()->getRequestParam('password') ?? control::randNum(6);
         $avatar=$this->request()->getRequestParam('avatar') ?? '';
 
         $vCode=$this->request()->getRequestParam('vCode') ?? '';

@@ -4,6 +4,7 @@ namespace App\HttpController\Business;
 
 use App\HttpController\Index;
 use App\HttpController\Service\RequestUtils\LimitService;
+use App\HttpController\Service\RequestUtils\StatisticsService;
 use wanghanwanghan\someUtils\control;
 
 class BusinessBase extends Index
@@ -14,15 +15,16 @@ class BusinessBase extends Index
     {
         parent::onRequest($action);
 
-        $token = $this->request()->getHeader('authorization');
-
-        $this->userToken = (current($token));
+        $this->userToken = $this->request()->getHeaderLine('authorization');
 
         $checkRouter = $this->checkRouter();
 
         $checkToken = $this->checkToken();
 
         $checkLimit = $this->checkLimit();
+
+        //统计
+        (new StatisticsService($this->request()))->byPath();
 
         return ($checkRouter || ($checkToken && $checkLimit));
     }
