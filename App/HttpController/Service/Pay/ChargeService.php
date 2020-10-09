@@ -59,8 +59,10 @@ class ChargeService extends ServiceBase
         //是否免费
         try {
             $charge = Charge::create()
-                ->where(['phone' => $phone, 'entName' => $entName, 'moduleId' => $moduleNum])
-                ->order(['created_at' => 'desc'])
+                ->where('phone', $phone)
+                ->where('entName', $entName)
+                ->where('moduleId', $moduleNum)
+                ->order('created_at', 'desc')
                 ->get();
         } catch (\Throwable $e) {
             $this->writeErr($e, __CLASS__);
