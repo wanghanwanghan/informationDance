@@ -72,6 +72,7 @@ class CreateTableService
             $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
             $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
             $table->indexNormal('phone_index', 'phone');
+            $table->indexNormal('phone_entName_moduleId_index', ['phone', 'entName', 'moduleId']);
             $table->indexNormal('created_at_index', 'created_at');
         });
 

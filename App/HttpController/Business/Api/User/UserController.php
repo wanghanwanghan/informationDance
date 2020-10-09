@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Api\User;
 
+use App\HttpController\Models\Api\Charge;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\User\UserService;

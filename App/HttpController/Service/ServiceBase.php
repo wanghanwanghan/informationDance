@@ -19,16 +19,19 @@ class ServiceBase
         return true;
     }
 
-    function writeErr(\Exception $e, $which = __CLASS__, $type = 'info'): bool
+    function writeErr($e, $which = __CLASS__, $type = 'info'): bool
     {
         $logFileName = $which . '.log.' . date('Ymd', time());
 
         //给程序员看的
-        $file = $e->getFile();
-        $line = $e->getLine();
-        $msg = $e->getMessage();
-
-        $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
+        if ($e instanceof \Throwable || $e instanceof \Exception) {
+            $file = $e->getFile();
+            $line = $e->getLine();
+            $msg = $e->getMessage();
+            $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
+        } else {
+            $content = '$e类别不明';
+        }
 
         //返回log写入成功或者写入失败
         return control::writeLog($content, LOG_PATH, $type, $logFileName);

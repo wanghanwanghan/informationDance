@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Api\QianQi;
 
+use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\QianQi\QianQiService;
 
 class QianQiController extends QianQiBase
@@ -19,29 +20,35 @@ class QianQiController extends QianQiBase
     //检验乾启返回值，并给客户计费
     private function checkResponse($res)
     {
-        $res['Paging']=null;
+        $res['Paging'] = null;
 
-        if (isset($res['coHttpErr'])) return $this->writeJson(500,$res['Paging'],[],'co请求错误');
+        if (isset($res['coHttpErr'])) return $this->writeJson(500, $res['Paging'], [], 'co请求错误');
 
-        $res['Result']=$res['data'];
-        $res['Message']=$res['msg'];
+        $res['Result'] = $res['data'];
+        $res['Message'] = $res['msg'];
 
-        return $this->writeJson((int)$res['code'],$res['Paging'],$res['Result'],$res['Message']);
+        $charge = ChargeService::getInstance()->QianQi($this->request(), 0);
+
+        if ($charge['code'] != 200) {
+            return $this->writeJson((int)$charge['code'], null, null, $charge['msg']);
+        } else {
+            return $this->writeJson((int)$res['code'], $res['Paging'], $res['Result'], $res['Message']);
+        }
     }
 
     //近三年的财务数据，不需要授权
     function getThreeYearsData()
     {
-        $entName=$this->request()->getRequestParam('entName');
+        $entName = $this->request()->getRequestParam('entName');
 
-        $postData=[
-            'entName'=>$entName
+        $postData = [
+            'entName' => $entName
         ];
 
-        $res=(new QianQiService())->getThreeYearsData($postData);
+        $res = (new QianQiService())->getThreeYearsData($postData);
 
         //改成同比，不能返回原值
-        $res['data']=(new QianQiService())->toPercent($res['data']);
+        $res['data'] = (new QianQiService())->toPercent($res['data']);
 
         return $this->checkResponse($res);
     }
@@ -49,27 +56,16 @@ class QianQiController extends QianQiBase
     //近三年的财务数据，需要授权
     function getThreeYearsDataNeedAuth()
     {
-        $entName=$this->request()->getRequestParam('entName');
+        $entName = $this->request()->getRequestParam('entName');
 
-        $postData=[
-            'entName'=>$entName
+        $postData = [
+            'entName' => $entName
         ];
 
-        $res=(new QianQiService())->getThreeYearsData($postData);
+        $res = (new QianQiService())->getThreeYearsData($postData);
 
         return $this->checkResponse($res);
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
 }
