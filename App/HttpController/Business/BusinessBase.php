@@ -24,7 +24,11 @@ class BusinessBase extends Index
 
         $checkToken = $this->checkToken();
 
+        if (!$checkToken) $this->writeJson(201,null,null,'token错误');
+
         $checkLimit = $this->checkLimit();
+
+        if (!$checkLimit) $this->writeJson(201,null,null,'到达limit上限');
 
         //统计
         (new StatisticsService($this->request()))->byPath();
