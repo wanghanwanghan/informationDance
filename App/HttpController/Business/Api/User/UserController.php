@@ -41,6 +41,10 @@ class UserController extends UserBase
 
         $vCode=$this->request()->getRequestParam('vCode') ?? '';
 
+
+        var_dump($company,$username,$phone,$email,$password,$avatar,$vCode);
+
+
         if (empty($phone) || empty($vCode)) return $this->writeJson(201,null,null,'手机号或验证码不能是空');
 
         $redis = Redis::defer('redis');
