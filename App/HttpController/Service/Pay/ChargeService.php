@@ -48,7 +48,7 @@ class ChargeService extends ServiceBase
     }
 
     //乾启计费
-    function QianQi(Request $request, $moduleNum, $detailKey = ''): array
+    function QianQi(Request $request, $moduleNum): array
     {
         $phone = $this->getPhone($request);
 
@@ -61,7 +61,7 @@ class ChargeService extends ServiceBase
             $charge = Charge::create()
                 ->where('phone', $phone)
                 ->where('entName', $entName)
-                ->where('detailKey', $detailKey)
+                ->where('detailKey', '')
                 ->where('moduleId', $moduleNum)
                 ->order('created_at', 'desc')
                 ->get();
@@ -135,8 +135,91 @@ class ChargeService extends ServiceBase
     }
 
     //法海计费
-    function FaHai(Request $request, $moduleNum): array
+    function FaHai(Request $request, $moduleNum, $entName): array
     {
-        return [];
+        $id = $request->getRequestParam('id');
+
+        $phone = $this->getPhone($request);
+
+        if (empty($phone) || empty($entName) || empty($id)) return ['code' => 201, 'msg' => '手机号或公司名或id不能是空'];
+
+        //是否免费
+        try {
+            $charge = Charge::create()
+                ->where('phone', $phone)
+                ->where('entName', $entName)
+                ->where('detailKey', $id)
+                ->where('moduleId', $moduleNum)
+                ->order('created_at', 'desc')
+                ->get();
+        } catch (\Throwable $e) {
+            $this->writeErr($e, __CLASS__);
+        }
+
+        //获取扣费详情
+        $moduleInfo = $this->getModuleInfo($moduleNum);
+
+        if (!empty($charge)) {
+            //取出上次计费时间
+            $time = $charge->created_at;
+            //缓存过期时间
+            $limitDay = \Yaconf::get('fahai.chargeLimit');
+            //还在免费状态
+            if (time() - $time < $limitDay * 86400) {
+                //写入记录
+                try {
+                    $insert = [
+                        'moduleId' => $moduleNum,
+                        'moduleName' => $moduleInfo['name'] . $moduleInfo['desc'],
+                        'entName' => $entName,
+                        'detailKey' => $id,
+                        'phone' => $phone,
+                        'price' => 0,
+                    ];
+                    Charge::create()->data($insert, false)->save();
+                } catch (\Throwable $e) {
+                    $this->writeErr($e, __CLASS__);
+                }
+                return ['code' => 200];
+            };
+        }
+
+        try {
+            //取得用户钱包余额
+            $info = Wallet::create()->where('phone', $phone)->get();
+            if (empty($info)) return ['code' => 201, 'msg' => '无用户钱包信息'];
+            $userMoney = $info->money;
+        } catch (\Throwable $e) {
+            $this->writeErr($e, __CLASS__);
+            return ['code' => 201, 'msg' => '取得用户钱包信息失败'];
+        }
+
+        if ($userMoney < $moduleInfo['basePrice']) return ['code' => 201, 'msg' => '用户余额不足'];
+
+        try {
+            //扣费
+            $money = $userMoney - $moduleInfo['basePrice'];
+            $info->update(['money' => $money > 0 ? $money : 0]);
+        } catch (\Throwable $e) {
+            $this->writeErr($e, __CLASS__);
+            return ['code' => 201, 'msg' => '扣费失败'];
+        }
+
+        //写入记录
+        try {
+            $insert = [
+                'moduleId' => $moduleNum,
+                'moduleName' => $moduleInfo['name'] . $moduleInfo['desc'],
+                'entName' => $entName,
+                'detailKey' => $id,
+                'phone' => $phone,
+                'price' => $moduleInfo['basePrice'],
+            ];
+            Charge::create()->data($insert, false)->save();
+        } catch (\Throwable $e) {
+            $this->writeErr($e, __CLASS__);
+        }
+
+        return ['code' => 200, 'msg' => '扣费成功'];
     }
 }

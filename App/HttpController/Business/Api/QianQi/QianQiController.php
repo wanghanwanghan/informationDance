@@ -2,7 +2,6 @@
 
 namespace App\HttpController\Business\Api\QianQi;
 
-use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\QianQi\QianQiService;
 
