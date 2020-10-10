@@ -67,7 +67,7 @@ class ChargeService extends ServiceBase
                 ->order('created_at', 'desc')
                 ->get();
         } catch (\Throwable $e) {
-            $this->writeErr($e, __CLASS__);
+            $this->writeErr($e, 'ChargeService');
         }
 
         //获取扣费详情
@@ -91,7 +91,7 @@ class ChargeService extends ServiceBase
                     ];
                     Charge::create()->data($insert, false)->save();
                 } catch (\Throwable $e) {
-                    $this->writeErr($e, __CLASS__);
+                    $this->writeErr($e, 'ChargeService');
                 }
                 return ['code' => 200];
             };
@@ -103,7 +103,7 @@ class ChargeService extends ServiceBase
             if (empty($info)) return ['code' => 201, 'msg' => '无用户钱包信息'];
             $userMoney = $info->money;
         } catch (\Throwable $e) {
-            $this->writeErr($e, __CLASS__);
+            $this->writeErr($e, 'ChargeService');
             return ['code' => 201, 'msg' => '取得用户钱包信息失败'];
         }
 
@@ -114,7 +114,7 @@ class ChargeService extends ServiceBase
             $money = $userMoney - $moduleInfo['basePrice'];
             $info->update(['money' => $money > 0 ? $money : 0]);
         } catch (\Throwable $e) {
-            $this->writeErr($e, __CLASS__);
+            $this->writeErr($e, 'ChargeService');
             return ['code' => 201, 'msg' => '扣费失败'];
         }
 
@@ -129,7 +129,7 @@ class ChargeService extends ServiceBase
             ];
             Charge::create()->data($insert, false)->save();
         } catch (\Throwable $e) {
-            $this->writeErr($e, __CLASS__);
+            $this->writeErr($e, 'ChargeService');
         }
 
         return ['code' => 200, 'msg' => '扣费成功'];
@@ -154,7 +154,7 @@ class ChargeService extends ServiceBase
                 ->order('created_at', 'desc')
                 ->get();
         } catch (\Throwable $e) {
-            $this->writeErr($e, __CLASS__);
+            $this->writeErr($e, 'ChargeService');
         }
 
         //获取扣费详情
@@ -179,7 +179,7 @@ class ChargeService extends ServiceBase
                     ];
                     Charge::create()->data($insert, false)->save();
                 } catch (\Throwable $e) {
-                    $this->writeErr($e, __CLASS__);
+                    $this->writeErr($e, 'ChargeService');
                 }
                 return ['code' => 200];
             };
@@ -191,7 +191,7 @@ class ChargeService extends ServiceBase
             if (empty($info)) return ['code' => 201, 'msg' => '无用户钱包信息'];
             $userMoney = $info->money;
         } catch (\Throwable $e) {
-            $this->writeErr($e, __CLASS__);
+            $this->writeErr($e, 'ChargeService');
             return ['code' => 201, 'msg' => '取得用户钱包信息失败'];
         }
 
@@ -202,7 +202,7 @@ class ChargeService extends ServiceBase
             $money = $userMoney - $moduleInfo['basePrice'];
             $info->update(['money' => $money > 0 ? $money : 0]);
         } catch (\Throwable $e) {
-            $this->writeErr($e, __CLASS__);
+            $this->writeErr($e, 'ChargeService');
             return ['code' => 201, 'msg' => '扣费失败'];
         }
 
@@ -218,7 +218,7 @@ class ChargeService extends ServiceBase
             ];
             Charge::create()->data($insert, false)->save();
         } catch (\Throwable $e) {
-            $this->writeErr($e, __CLASS__);
+            $this->writeErr($e, 'ChargeService');
         }
 
         return ['code' => 200, 'msg' => '扣费成功'];
@@ -243,7 +243,7 @@ class ChargeService extends ServiceBase
                 ->order('created_at', 'desc')
                 ->get();
         } catch (\Throwable $e) {
-            $this->writeErr($e, __CLASS__);
+            $this->writeErr($e, 'ChargeService');
         }
 
         //获取扣费详情
@@ -268,7 +268,7 @@ class ChargeService extends ServiceBase
                     ];
                     Charge::create()->data($insert, false)->save();
                 } catch (\Throwable $e) {
-                    $this->writeErr($e, __CLASS__);
+                    $this->writeErr($e, 'ChargeService');
                 }
                 return ['code' => 200];
             };
@@ -280,7 +280,7 @@ class ChargeService extends ServiceBase
             if (empty($info)) return ['code' => 201, 'msg' => '无用户钱包信息'];
             $userMoney = $info->money;
         } catch (\Throwable $e) {
-            $this->writeErr($e, __CLASS__);
+            $this->writeErr($e, 'ChargeService');
             return ['code' => 201, 'msg' => '取得用户钱包信息失败'];
         }
 
@@ -291,7 +291,7 @@ class ChargeService extends ServiceBase
             $money = $userMoney - $moduleInfo['basePrice'];
             $info->update(['money' => $money > 0 ? $money : 0]);
         } catch (\Throwable $e) {
-            $this->writeErr($e, __CLASS__);
+            $this->writeErr($e, 'ChargeService');
             return ['code' => 201, 'msg' => '扣费失败'];
         }
 
@@ -307,7 +307,7 @@ class ChargeService extends ServiceBase
             ];
             Charge::create()->data($insert, false)->save();
         } catch (\Throwable $e) {
-            $this->writeErr($e, __CLASS__);
+            $this->writeErr($e, 'ChargeService');
         }
 
         return ['code' => 200, 'msg' => '扣费成功'];
@@ -331,7 +331,7 @@ class ChargeService extends ServiceBase
             if (empty($info)) return ['code' => 201, 'msg' => '无用户钱包信息'];
             $userMoney = $info->money;
         } catch (\Throwable $e) {
-            $this->writeErr($e, __CLASS__);
+            $this->writeErr($e, 'ChargeService');
             return ['code' => 201, 'msg' => '取得用户钱包信息失败'];
         }
 
@@ -342,7 +342,7 @@ class ChargeService extends ServiceBase
             $money = $userMoney - $moduleInfo['basePrice'];
             $info->update(['money' => $money > 0 ? $money : 0]);
         } catch (\Throwable $e) {
-            $this->writeErr($e, __CLASS__);
+            $this->writeErr($e, 'ChargeService');
             return ['code' => 201, 'msg' => '扣费失败'];
         }
 
@@ -358,7 +358,7 @@ class ChargeService extends ServiceBase
             ];
             Charge::create()->data($insert, false)->save();
         } catch (\Throwable $e) {
-            $this->writeErr($e, __CLASS__);
+            $this->writeErr($e, 'ChargeService');
         }
 
         return ['code' => 200, 'msg' => '扣费成功'];

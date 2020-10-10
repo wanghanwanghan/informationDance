@@ -3,9 +3,11 @@
 namespace App\HttpController\Business\Api\User;
 
 use App\HttpController\Models\Api\Charge;
+use App\HttpController\Models\Api\PurchaseList;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\User\UserService;
 use EasySwoole\RedisPool\Redis;
 use wanghanwanghan\someUtils\control;
@@ -137,6 +139,21 @@ class UserController extends UserBase
         return $this->writeJson(200,null,$userInfo,'登录成功');
     }
 
+    function purchaseList()
+    {
+        try
+        {
+            $list = PurchaseList::create()->all();
+
+        }catch (\Throwable $e)
+        {
+            return $this->writeErr($e,'orm');
+        }
+
+        empty($list) ? $list=null : $list=json_decode(json_encode($list));
+
+        return $this->writeJson(200,null,$list,'成功');
+    }
 
 
 

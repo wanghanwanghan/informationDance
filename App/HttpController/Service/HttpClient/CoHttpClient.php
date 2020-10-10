@@ -52,7 +52,7 @@ class CoHttpClient extends ServiceBase
             $data = $data->getBody();
 
         } catch (\Exception $e) {
-            $this->writeErr($e, __CLASS__);
+            $this->writeErr($e, 'CoHttpClient');
             return ['coHttpErr' => 'error'];
         }
 
