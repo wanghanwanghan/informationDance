@@ -735,8 +735,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
 
         //实际控制人
-        //姓名
         if (!empty($data['Beneficiary'])) {
+            //姓名
             $docObj->setValue("sjkzr_Name", $data['Beneficiary']['Name']);
             //持股比例
             $docObj->setValue("sjkzr_TotalStockPercent", $data['Beneficiary']['TotalStockPercent']);
@@ -746,6 +746,13 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 $path .= '<w:br/>' . ($no + 1) . $onePath['Path'] . '<w:br/>';
             }
             $docObj->setValue("sjkzr_Path", $path);
+        } else {
+            //姓名
+            $docObj->setValue("sjkzr_Name", '');
+            //持股比例
+            $docObj->setValue("sjkzr_TotalStockPercent", '未找到实际控制人');
+            //股权链
+            $docObj->setValue("sjkzr_Path", '');
         }
 
         //历史沿革
