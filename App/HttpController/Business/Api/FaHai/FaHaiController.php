@@ -376,6 +376,10 @@ class FaHaiController extends FaHaiBase
     {
         $id = $this->request()->getRequestParam('id') ?? '';
 
+        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+
+        $this->moduleNum =1;
+
         $postData = ['id' => $id];
 
         $docType = 'ktgg';
@@ -410,6 +414,10 @@ class FaHaiController extends FaHaiBase
     function getCpwsDetail()
     {
         $id = $this->request()->getRequestParam('id') ?? '';
+
+        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+
+        $this->moduleNum=2;
 
         $postData = ['id' => $id];
 
@@ -446,6 +454,10 @@ class FaHaiController extends FaHaiBase
     {
         $id = $this->request()->getRequestParam('id') ?? '';
 
+        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+
+        $this->moduleNum=3;
+
         $postData = ['id' => $id];
 
         $docType = 'fygg';
@@ -480,6 +492,10 @@ class FaHaiController extends FaHaiBase
     function getZxggDetail()
     {
         $id = $this->request()->getRequestParam('id') ?? '';
+
+        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+
+        $this->moduleNum=4;
 
         $postData = ['id' => $id];
 
@@ -516,6 +532,10 @@ class FaHaiController extends FaHaiBase
     {
         $id = $this->request()->getRequestParam('id') ?? '';
 
+        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+
+        $this->moduleNum=5;
+
         $postData = ['id' => $id];
 
         $docType = 'shixin';
@@ -550,6 +570,10 @@ class FaHaiController extends FaHaiBase
     function getSifacdkDetail()
     {
         $id = $this->request()->getRequestParam('id') ?? '';
+
+        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+
+        $this->moduleNum=6;
 
         $postData = ['id' => $id];
 
@@ -586,6 +610,10 @@ class FaHaiController extends FaHaiBase
     {
         $id = $this->request()->getRequestParam('id') ?? '';
 
+        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+
+        $this->moduleNum=8;
+
         $postData = ['id' => $id];
 
         $docType = 'satparty_qs';
@@ -620,6 +648,10 @@ class FaHaiController extends FaHaiBase
     function getSatpartyChufaDetail()
     {
         $id = $this->request()->getRequestParam('id') ?? '';
+
+        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+
+        $this->moduleNum=9;
 
         $postData = ['id' => $id];
 
@@ -656,6 +688,10 @@ class FaHaiController extends FaHaiBase
     {
         $id = $this->request()->getRequestParam('id') ?? '';
 
+        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+
+        $this->moduleNum=10;
+
         $postData = ['id' => $id];
 
         $docType = 'satparty_fzc';
@@ -690,6 +726,10 @@ class FaHaiController extends FaHaiBase
     function getSatpartyXinDetail()
     {
         $id = $this->request()->getRequestParam('id') ?? '';
+
+        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+
+        $this->moduleNum=11;
 
         $postData = ['id' => $id];
 
@@ -726,6 +766,10 @@ class FaHaiController extends FaHaiBase
     {
         $id = $this->request()->getRequestParam('id') ?? '';
 
+        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+
+        $this->moduleNum=12;
+
         $postData = ['id' => $id];
 
         $docType = 'satparty_reg';
@@ -760,6 +804,10 @@ class FaHaiController extends FaHaiBase
     function getSatpartyXukeDetail()
     {
         $id = $this->request()->getRequestParam('id') ?? '';
+
+        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+
+        $this->moduleNum=13;
 
         $postData = ['id' => $id];
 

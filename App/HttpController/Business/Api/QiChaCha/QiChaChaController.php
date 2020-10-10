@@ -3,12 +3,16 @@
 namespace App\HttpController\Business\Api\QiChaCha;
 
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
 use wanghanwanghan\someUtils\control;
 
 class QiChaChaController extends QiChaChaBase
 {
     private $baseUrl;
+
+    private $moduleNum;//扣费的id
+    private $entName;//扣费用的entName
 
     function onRequest(?string $action): ?bool
     {
@@ -38,6 +42,18 @@ class QiChaChaController extends QiChaChaBase
         }
 
         if (isset($res['coHttpErr'])) return $this->writeJson(500,$res['Paging'],[],'co请求错误');
+
+        if (!empty($this->moduleNum) && !empty($this->entName))
+        {
+            $charge=ChargeService::getInstance()->QiChaCha($this->request(),$this->moduleNum,$this->entName);
+
+            if ($charge['code']!=200)
+            {
+                $res['Status']=$charge['code'];
+                $res['Paging']=$res['Result']=null;
+                $res['Message']=$charge['msg'];
+            }
+        }
 
         return $this->writeJson((int)$res['Status'],$res['Paging'],$res['Result'],$res['Message']);
     }
@@ -484,6 +500,10 @@ class QiChaChaController extends QiChaChaBase
     function getJudicialSaleListDetail()
     {
         $id=$this->request()->getRequestParam('id');
+
+        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+
+        $this->moduleNum=7;
 
         $postData=['id'=>$id];
 
