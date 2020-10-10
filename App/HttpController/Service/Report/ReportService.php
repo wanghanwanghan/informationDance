@@ -6,7 +6,6 @@ use App\HttpController\Service\ServiceBase;
 use App\Task\Service\TaskService;
 use App\Task\TaskList\CreateEasyReportTask;
 use EasySwoole\Component\Singleton;
-use wanghanwanghan\someUtils\control;
 
 class ReportService extends ServiceBase
 {
