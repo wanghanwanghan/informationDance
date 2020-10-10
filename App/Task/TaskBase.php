@@ -2,6 +2,8 @@
 
 namespace App\Task;
 
+use App\HttpController\Service\CreateConf;
+
 class TaskBase
 {
     public $qccUrl;
@@ -10,9 +12,9 @@ class TaskBase
 
     function __construct()
     {
-        $this->qccUrl = \Yaconf::get('qichacha.baseUrl');
-        $this->fahaiList = \Yaconf::get('fahai.listBaseUrl');
-        $this->fahaiDetail = \Yaconf::get('fahai.detailBaseUrl');
+        $this->qccUrl = CreateConf::getInstance()->getConf('qichacha.baseUrl');
+        $this->fahaiList = CreateConf::getInstance()->getConf('fahai.listBaseUrl');
+        $this->fahaiDetail = CreateConf::getInstance()->getConf('fahai.detailBaseUrl');
 
         return true;
     }

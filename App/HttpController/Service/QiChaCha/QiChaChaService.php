@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\QiChaCha;
 
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use wanghanwanghan\someUtils\control;
@@ -18,8 +19,8 @@ class QiChaChaService extends ServiceBase
 
     function __construct()
     {
-        $this->appkey = \Yaconf::get('qichacha.appkey');
-        $this->seckey = \Yaconf::get('qichacha.seckey');
+        $this->appkey = CreateConf::getInstance()->getConf('qichacha.appkey');
+        $this->seckey = CreateConf::getInstance()->getConf('qichacha.seckey');
     }
 
     //企查查全羁绊是get请求

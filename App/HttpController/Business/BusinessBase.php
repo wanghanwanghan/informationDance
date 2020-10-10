@@ -4,6 +4,7 @@ namespace App\HttpController\Business;
 
 use App\HttpController\Index;
 use App\HttpController\Models\Api\User;
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\RequestUtils\LimitService;
 use App\HttpController\Service\RequestUtils\StatisticsService;
 use App\HttpController\Service\User\UserService;
@@ -81,7 +82,7 @@ class BusinessBase extends Index
     private function checkRouter(): bool
     {
         //直接放行的url，只判断url最后两个在不在数组中
-        $pass = \Yaconf::get('env.passRouter');
+        $pass = CreateConf::getInstance()->getConf('env.passRouter');
 
         // /api/v1/comm/create/verifyCode
         $path = $this->request()->getSwooleRequest()->server['path_info'];

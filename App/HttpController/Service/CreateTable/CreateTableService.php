@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\CreateTable;
 
+use App\HttpController\Service\CreateConf;
 use EasySwoole\Component\Singleton;
 use EasySwoole\DDL\Blueprint\Table;
 use EasySwoole\DDL\DDLBuilder;
@@ -28,11 +29,11 @@ class CreateTableService
             $table->indexNormal('phone_index', 'phone');
         });
 
-        $obj = Manager::getInstance()->get(\Yaconf::get('env.mysqlDatabase'))->getObj();
+        $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
 
         $obj->rawQuery($sql);
 
-        Manager::getInstance()->get(\Yaconf::get('env.mysqlDatabase'))->recycleObj($obj);
+        Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->recycleObj($obj);
 
         return 'ok';
     }
@@ -49,11 +50,11 @@ class CreateTableService
             $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
         });
 
-        $obj = Manager::getInstance()->get(\Yaconf::get('env.mysqlDatabase'))->getObj();
+        $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
 
         $obj->rawQuery($sql);
 
-        Manager::getInstance()->get(\Yaconf::get('env.mysqlDatabase'))->recycleObj($obj);
+        Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->recycleObj($obj);
 
         return 'ok';
     }
@@ -77,11 +78,11 @@ class CreateTableService
             $table->indexNormal('created_at_index', 'created_at');
         });
 
-        $obj = Manager::getInstance()->get(\Yaconf::get('env.mysqlDatabase'))->getObj();
+        $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
 
         $obj->rawQuery($sql);
 
-        Manager::getInstance()->get(\Yaconf::get('env.mysqlDatabase'))->recycleObj($obj);
+        Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->recycleObj($obj);
 
         return 'ok';
     }
@@ -99,11 +100,11 @@ class CreateTableService
             $table->indexNormal('phone_index', 'phone');
         });
 
-        $obj = Manager::getInstance()->get(\Yaconf::get('env.mysqlDatabase'))->getObj();
+        $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
 
         $obj->rawQuery($sql);
 
-        Manager::getInstance()->get(\Yaconf::get('env.mysqlDatabase'))->recycleObj($obj);
+        Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->recycleObj($obj);
 
         return 'ok';
     }

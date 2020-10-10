@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\QianQi;
 
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 
@@ -365,9 +366,9 @@ class QianQiService extends ServiceBase
 
     function __construct()
     {
-        $this->usercode=\Yaconf::get('qianqi.usercode');
-        $this->userkey=\Yaconf::get('qianqi.userkey');
-        $this->baseUrl=\Yaconf::get('qianqi.baseUrl');
+        $this->usercode=CreateConf::getInstance()->getConf('qianqi.usercode');
+        $this->userkey=CreateConf::getInstance()->getConf('qianqi.userkey');
+        $this->baseUrl=CreateConf::getInstance()->getConf('qianqi.baseUrl');
 
         $this->sendHeaders=[
             'content-type'=>'application/x-www-form-urlencoded',

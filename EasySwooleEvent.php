@@ -4,6 +4,7 @@ namespace EasySwoole\EasySwoole;
 
 use App\Crontab\Service\CrontabService;
 use App\Event\EventList\TestEvent;
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateDefine;
 use App\HttpController\Service\CreateMysqlOrm;
 use App\HttpController\Service\CreateMysqlPoolForProjectDb;
@@ -32,6 +33,9 @@ class EasySwooleEvent implements Event
     {
         //常量
         CreateDefine::getInstance()->createDefine(__DIR__);
+
+        //加载yaconf
+        CreateConf::getInstance()->create(__DIR__);
 
         //mysql pool
         CreateMysqlPoolForProjectDb::getInstance()->createMysql();

@@ -19,11 +19,11 @@ class CreateMysqlPoolForProjectDb extends AbstractPool
         parent::__construct(new \EasySwoole\Pool\Config());
 
         $mysqlConf = new Config([
-            'host'     => \Yaconf::get('env.mysqlHost'),
-            'port'     => \Yaconf::get('env.mysqlPort'),
-            'user'     => \Yaconf::get('env.mysqlUser'),
-            'password' => \Yaconf::get('env.mysqlPassword'),
-            'database' => \Yaconf::get('env.mysqlDatabase'),
+            'host'     => CreateConf::getInstance()->getConf('env.mysqlHost'),
+            'port'     => CreateConf::getInstance()->getConf('env.mysqlPort'),
+            'user'     => CreateConf::getInstance()->getConf('env.mysqlUser'),
+            'password' => CreateConf::getInstance()->getConf('env.mysqlPassword'),
+            'database' => CreateConf::getInstance()->getConf('env.mysqlDatabase'),
             'timeout'  => 5,
             'charset'  => 'utf8mb4',
         ]);
@@ -39,7 +39,7 @@ class CreateMysqlPoolForProjectDb extends AbstractPool
     //注册连接池，只能在mainServerCreate中用
     public function createMysql()
     {
-        Manager::getInstance()->register(CreateMysqlPoolForProjectDb::getInstance(),\Yaconf::get('env.mysqlDatabase'));
+        Manager::getInstance()->register(CreateMysqlPoolForProjectDb::getInstance(),CreateConf::getInstance()->getConf('env.mysqlDatabase'));
 
         return true;
     }

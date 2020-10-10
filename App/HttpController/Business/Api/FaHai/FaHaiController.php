@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Api\FaHai;
 
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaHai\FaHaiService;
 use App\HttpController\Service\Pay\ChargeService;
 
@@ -16,9 +17,9 @@ class FaHaiController extends FaHaiBase
 
     function onRequest(?string $action): ?bool
     {
-        $this->listBaseUrl = \Yaconf::get('fahai.listBaseUrl');
-        $this->listBaseUrlForPerson = \Yaconf::get('fahai.listBaseUrlForPerson');
-        $this->detailBaseUrl = \Yaconf::get('fahai.detailBaseUrl');
+        $this->listBaseUrl = CreateConf::getInstance()->getConf('fahai.listBaseUrl');
+        $this->listBaseUrlForPerson = CreateConf::getInstance()->getConf('fahai.listBaseUrlForPerson');
+        $this->detailBaseUrl = CreateConf::getInstance()->getConf('fahai.detailBaseUrl');
 
         return parent::onRequest($action);
     }

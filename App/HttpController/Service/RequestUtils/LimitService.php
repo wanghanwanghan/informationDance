@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\RequestUtils;
 
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\ServiceBase;
 use Carbon\Carbon;
 use EasySwoole\Component\Singleton;
@@ -19,8 +20,8 @@ class LimitService extends ServiceBase
     //mainServerCreate中调用
     function create()
     {
-        $this->maxNum = \Yaconf::get('env.limitServiceMaxNum');
-        $this->db = \Yaconf::get('env.limitServiceCacheRedisDB');
+        $this->maxNum = CreateConf::getInstance()->getConf('env.limitServiceMaxNum');
+        $this->db = CreateConf::getInstance()->getConf('env.limitServiceCacheRedisDB');
         return true;
     }
 

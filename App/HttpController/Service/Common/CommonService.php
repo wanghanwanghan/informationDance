@@ -9,6 +9,7 @@ use Amenadiel\JpGraph\Plot\BarPlot;
 use Amenadiel\JpGraph\Plot\GroupBarPlot;
 use Amenadiel\JpGraph\Plot\LinePlot;
 use Amenadiel\JpGraph\Plot\PiePlot;
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use App\Task\Service\TaskService;
@@ -134,9 +135,9 @@ class CommonService extends ServiceBase
     //发送验证码
     function sendCode($phone, $type)
     {
-        $ak = \Yaconf::get('env.qiNiuAk');
-        $sk = \Yaconf::get('env.qiNiuSk');
-        $tempId = \Yaconf::get('env.template01');
+        $ak = CreateConf::getInstance()->getConf('env.qiNiuAk');
+        $sk = CreateConf::getInstance()->getConf('env.qiNiuSk');
+        $tempId = CreateConf::getInstance()->getConf('env.template01');
         $auth = new Auth($ak, $sk);
         $client = new Sms($auth);
 
@@ -171,9 +172,9 @@ class CommonService extends ServiceBase
         ];
 
         $grant_type = 'client_credentials';
-        $client_id = \Yaconf::get('baidu.clientId');
-        $client_secret = \Yaconf::get('baidu.clientSecret');
-        $url = \Yaconf::get('baidu.getTokenUrl');
+        $client_id = CreateConf::getInstance()->getConf('baidu.clientId');
+        $client_secret = CreateConf::getInstance()->getConf('baidu.clientSecret');
+        $url = CreateConf::getInstance()->getConf('baidu.getTokenUrl');
 
         //auth
         $res = (new CoHttpClient())->needJsonDecode(true)->send($url, [
@@ -185,7 +186,7 @@ class CommonService extends ServiceBase
         $token = $res['access_token'];
 
         //准备内容检查
-        $url = \Yaconf::get('baidu.checkWorkUrl') . "?access_token={$token}";
+        $url = CreateConf::getInstance()->getConf('baidu.checkWorkUrl') . "?access_token={$token}";
 
         $content = ['content' => $content];
 

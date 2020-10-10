@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\TaoShu;
 
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 
@@ -18,9 +19,9 @@ class TaoShuService extends ServiceBase
 
     function __construct()
     {
-        $this->uid = \Yaconf::get('taoshu.uid');
-        $this->url = \Yaconf::get('taoshu.baseUrl');
-        $this->taoshuPEM = implode(PHP_EOL, \Yaconf::get('taoshu.pem'));
+        $this->uid = CreateConf::getInstance()->getConf('taoshu.uid');
+        $this->url = CreateConf::getInstance()->getConf('taoshu.baseUrl');
+        $this->taoshuPEM = implode(PHP_EOL, CreateConf::getInstance()->getConf('taoshu.pem'));
 
         openssl_get_publickey($this->taoshuPEM);
     }

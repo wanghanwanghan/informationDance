@@ -17,11 +17,11 @@ class CreateMysqlOrm extends ServiceBase
         $config = new Config();
 
         //数据库配置
-        $config->setHost(\Yaconf::get('env.mysqlHost'));
-        $config->setPort(\Yaconf::get('env.mysqlPort'));
-        $config->setUser(\Yaconf::get('env.mysqlUser'));
-        $config->setPassword(\Yaconf::get('env.mysqlPassword'));
-        $config->setDatabase(\Yaconf::get('env.mysqlDatabase'));
+        $config->setHost(CreateConf::getInstance()->getConf('env.mysqlHost'));
+        $config->setPort(CreateConf::getInstance()->getConf('env.mysqlPort'));
+        $config->setUser(CreateConf::getInstance()->getConf('env.mysqlUser'));
+        $config->setPassword(CreateConf::getInstance()->getConf('env.mysqlPassword'));
+        $config->setDatabase(CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $config->setCharset('utf8mb4');
 
         //链接池配置
@@ -32,7 +32,7 @@ class CreateMysqlOrm extends ServiceBase
         $config->setMinObjectNum(5); //设置最小连接池存在连接对象数量
         $config->setAutoPing(5); //设置自动ping客户端链接的间隔
 
-        DbManager::getInstance()->addConnection(new Connection($config),\Yaconf::get('env.mysqlDatabase'));
+        DbManager::getInstance()->addConnection(new Connection($config),CreateConf::getInstance()->getConf('env.mysqlDatabase'));
 
         return true;
     }

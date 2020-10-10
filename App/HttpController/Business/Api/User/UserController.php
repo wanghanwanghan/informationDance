@@ -5,6 +5,7 @@ namespace App\HttpController\Business\Api\User;
 use App\HttpController\Models\Api\Charge;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\Api\Wallet;
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\User\UserService;
 use EasySwoole\RedisPool\Redis;
 use wanghanwanghan\someUtils\control;
@@ -18,7 +19,7 @@ class UserController extends UserBase
         parent::onRequest($action);
 
         //DB链接名称
-        $this->connDB = \Yaconf::get('env.mysqlDatabase');
+        $this->connDB = CreateConf::getInstance()->getConf('env.mysqlDatabase');
 
         return true;
     }

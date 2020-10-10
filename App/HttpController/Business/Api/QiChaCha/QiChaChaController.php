@@ -2,8 +2,8 @@
 
 namespace App\HttpController\Business\Api\QiChaCha;
 
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
-use App\HttpController\Service\RequestUtils\LimitService;
 use wanghanwanghan\someUtils\control;
 
 class QiChaChaController extends QiChaChaBase
@@ -12,7 +12,7 @@ class QiChaChaController extends QiChaChaBase
 
     function onRequest(?string $action): ?bool
     {
-        $this->baseUrl=\Yaconf::get('qichacha.baseUrl');
+        $this->baseUrl=CreateConf::getInstance()->getConf('qichacha.baseUrl');
 
         return parent::onRequest($action);
     }

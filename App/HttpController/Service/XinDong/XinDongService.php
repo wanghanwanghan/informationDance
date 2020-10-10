@@ -3,6 +3,7 @@
 namespace App\HttpController\Service\XinDong;
 
 use App\Csp\Service\CspService;
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaHai\FaHaiService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
 use App\HttpController\Service\ServiceBase;
@@ -19,8 +20,8 @@ class XinDongService extends ServiceBase
 
     function __construct()
     {
-        $this->fhList = \Yaconf::get('fahai.listBaseUrl');
-        $this->qccUrl = \Yaconf::get('qichacha.baseUrl');
+        $this->fhList = CreateConf::getInstance()->getConf('fahai.listBaseUrl');
+        $this->qccUrl = CreateConf::getInstance()->getConf('qichacha.baseUrl');
 
         return parent::onNewService();
     }

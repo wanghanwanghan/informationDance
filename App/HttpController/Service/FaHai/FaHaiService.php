@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\FaHai;
 
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 
@@ -17,7 +18,7 @@ class FaHaiService extends ServiceBase
 
     function __construct()
     {
-        $this->authCode = \Yaconf::get('fahai.authCode');
+        $this->authCode = CreateConf::getInstance()->getConf('fahai.authCode');
         $this->rt = time() * 1000;
     }
 

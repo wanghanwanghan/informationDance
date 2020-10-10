@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\HttpClient;
 
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\ServiceBase;
 use EasySwoole\HttpClient\HttpClient;
 use EasySwoole\RedisPool\Redis;
@@ -12,8 +13,8 @@ class CoHttpClient extends ServiceBase
     {
         parent::onNewService();
 
-        $this->db = \Yaconf::get('env.coHttpCacheRedisDB');
-        $this->ttlDay = \Yaconf::get('env.coHttpCacheDay');
+        $this->db = CreateConf::getInstance()->getConf('env.coHttpCacheRedisDB');
+        $this->ttlDay = CreateConf::getInstance()->getConf('env.coHttpCacheDay');
 
         return true;
     }

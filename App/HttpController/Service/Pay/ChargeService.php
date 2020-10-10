@@ -4,6 +4,7 @@ namespace App\HttpController\Service\Pay;
 
 use App\HttpController\Models\Api\Charge;
 use App\HttpController\Models\Api\Wallet;
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\ServiceBase;
 use EasySwoole\Component\Singleton;
 use EasySwoole\Http\Request;
@@ -76,7 +77,7 @@ class ChargeService extends ServiceBase
             //取出上次计费时间
             $time = $charge->created_at;
             //缓存过期时间
-            $limitDay = \Yaconf::get('qianqi.chargeLimit');
+            $limitDay = CreateConf::getInstance()->getConf('qianqi.chargeLimit');
             //还在免费状态
             if (time() - $time < $limitDay * 86400) {
                 //写入记录
@@ -163,7 +164,7 @@ class ChargeService extends ServiceBase
             //取出上次计费时间
             $time = $charge->created_at;
             //缓存过期时间
-            $limitDay = \Yaconf::get('fahai.chargeLimit');
+            $limitDay = CreateConf::getInstance()->getConf('fahai.chargeLimit');
             //还在免费状态
             if (time() - $time < $limitDay * 86400) {
                 //写入记录

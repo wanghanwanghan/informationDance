@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Models;
 
+use App\HttpController\Service\CreateConf;
 use EasySwoole\ORM\AbstractModel;
 
 class ModelBase extends AbstractModel
@@ -10,6 +11,6 @@ class ModelBase extends AbstractModel
     {
         parent::__construct($data);
 
-        $this->connectionName = \Yaconf::get('env.mysqlDatabase');
+        $this->connectionName = CreateConf::getInstance()->getConf('env.mysqlDatabase');
     }
 }

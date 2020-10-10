@@ -2,7 +2,7 @@
 
 namespace App\HttpController\Business\Api\XinDong;
 
-use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
 use App\HttpController\Service\XinDong\XinDongService;;
 
@@ -12,7 +12,7 @@ class XinDongController extends XinDongBase
 
     function onRequest(?string $action): ?bool
     {
-        $this->qccUrl=\Yaconf::get('qichacha.baseUrl');
+        $this->qccUrl=CreateConf::getInstance()->getConf('qichacha.baseUrl');
 
         return parent::onRequest($action);
     }

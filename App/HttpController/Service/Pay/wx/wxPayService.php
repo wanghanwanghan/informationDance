@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\Pay\wx;
 
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\Pay\PayBase;
 use EasySwoole\Pay\Pay;
@@ -19,24 +20,24 @@ class wxPayService extends PayBase
     {
         $conf = new wxConf();
 
-        $conf->setAppId(\Yaconf::get('wx.appId'));
-        $conf->setMiniAppId(\Yaconf::get('wx.miniAppId'));
-        $conf->setMchId(\Yaconf::get('wx.mchId'));
-        $conf->setKey(\Yaconf::get('wx.miniPayKey'));
-        $conf->setNotifyUrl(\Yaconf::get('wx.notifyUrl'));
-        $conf->setApiClientCert(implode(PHP_EOL, \Yaconf::get('wx.cert')));
-        $conf->setApiClientKey(implode(PHP_EOL, \Yaconf::get('wx.key')));
+        $conf->setAppId(CreateConf::getInstance()->getConf('wx.appId'));
+        $conf->setMiniAppId(CreateConf::getInstance()->getConf('wx.miniAppId'));
+        $conf->setMchId(CreateConf::getInstance()->getConf('wx.mchId'));
+        $conf->setKey(CreateConf::getInstance()->getConf('wx.miniPayKey'));
+        $conf->setNotifyUrl(CreateConf::getInstance()->getConf('wx.notifyUrl'));
+        $conf->setApiClientCert(implode(PHP_EOL, CreateConf::getInstance()->getConf('wx.cert')));
+        $conf->setApiClientKey(implode(PHP_EOL, CreateConf::getInstance()->getConf('wx.key')));
 
         return $conf;
     }
 
     private function getOpenId($code): array
     {
-        $url = \Yaconf::get('wx.getOpenIdUrl');
+        $url = CreateConf::getInstance()->getConf('wx.getOpenIdUrl');
 
         $data = [
-            'appid' => \Yaconf::get('wx.miniAppId'),
-            'secret' => \Yaconf::get('wx.openIdKey'),
+            'appid' => CreateConf::getInstance()->getConf('wx.miniAppId'),
+            'secret' => CreateConf::getInstance()->getConf('wx.openIdKey'),
             'js_code' => $code,//这是从wx.login中拿的
             'grant_type' => 'authorization_code',
         ];
