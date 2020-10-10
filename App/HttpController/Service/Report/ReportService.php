@@ -13,10 +13,8 @@ class ReportService extends ServiceBase
     use Singleton;
 
     //生成简版报告
-    function createEasy($entName)
+    function createEasy($entName,$reportNum)
     {
-        $reportNum = time().'_'.control::getUuid(3);
-
         //扔到task里
         TaskService::getInstance()->create(new CreateEasyReportTask($entName, $reportNum));
 

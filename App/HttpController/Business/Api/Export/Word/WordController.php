@@ -3,7 +3,9 @@
 namespace App\HttpController\Business\Api\Export\Word;
 
 use App\HttpController\Business\Api\Export\ExportBase;
+use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\Report\ReportService;
+use wanghanwanghan\someUtils\control;
 
 class WordController extends ExportBase
 {
@@ -20,11 +22,27 @@ class WordController extends ExportBase
     //生成一个简版报告
     function createEasy()
     {
-        $entName = $this->request()->getRequestParam('entName');
+        $reportNum = time().'_'.control::getUuid(3);
 
-        $reportNum = ReportService::getInstance()->createEasy($entName);
+        $entName = $this->request()->getRequestParam('entName') ?? '';
 
-        return $this->writeJson(200, '', $reportNum);
+        $charge=ChargeService::getInstance()->EasyReport($this->request(),200,$reportNum);
+
+        if ($charge['code']!=200)
+        {
+            $code=$charge['code'];
+            $paging=$res=null;
+            $msg=$charge['msg'];
+
+        }else
+        {
+            $code=200;
+            $paging=null;
+            $res=ReportService::getInstance()->createEasy($entName,$reportNum);
+            $msg='简版报告报告生成中';
+        }
+
+        return $this->writeJson($code, $paging, $res, $msg);
     }
 
 
