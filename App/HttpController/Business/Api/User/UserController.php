@@ -43,6 +43,10 @@ class UserController extends UserBase
 
         if (empty($phone) || empty($vCode)) return $this->writeJson(201,null,null,'手机号或验证码不能是空');
 
+        if (!is_numeric($phone) || !is_numeric($vCode)) return $this->writeJson(201,null,null,'手机号或验证码必须是数字');
+
+        if (strlen($phone) !== 11) return $this->writeJson(201,null,null,'手机号错误');
+
         $redis = Redis::defer('redis');
 
         $redis->select(14);

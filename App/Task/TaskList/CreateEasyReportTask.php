@@ -20,8 +20,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     private $entName;
     private $reportNum;
 
-    private $fz=[];
-    private $fx=[];
+    private $fz = [];
+    private $fx = [];
 
     function __construct($entName, $reportNum)
     {
@@ -49,9 +49,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $this->exprXDS($reportVal);
 
-        $tmp->setValue('fz_score', sprintf('%.2f',array_sum($this->fz)));
+        $tmp->setValue('fz_score', sprintf('%.2f', array_sum($this->fz)));
 
-        $tmp->setValue('fx_score', sprintf('%.2f',array_sum($this->fx)));
+        $tmp->setValue('fx_score', sprintf('%.2f', array_sum($this->fx)));
 
         $tmp->saveAs(REPORT_PATH . $this->reportNum . '.docx');
 
@@ -67,105 +67,103 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     private function exprXDS($data)
     {
         //企业性质
-        $a=$this->qyxz($data['getRegisterInfo']);
+        $a = $this->qyxz($data['getRegisterInfo']);
         //企业对外投资
-        $b=$this->qydwtz($data['getInvestmentAbroadInfo']['total']);
+        $b = $this->qydwtz($data['getInvestmentAbroadInfo']['total']);
         //融资历史
-        $c=$this->rzls($data['SearchCompanyFinancings']);
+        $c = $this->rzls($data['SearchCompanyFinancings']);
         //计算
-        $this->fz['gongshang']=(0.6 * $a + 0.2 * $b + 0.2 * $c) * 0.1;
+        $this->fz['gongshang'] = (0.6 * $a + 0.2 * $b + 0.2 * $c) * 0.1;
         //==============================================================================================================
         //行政许可
-        $a=$this->xzxk($data['GetAdministrativeLicenseList']['total']);
+        $a = $this->xzxk($data['GetAdministrativeLicenseList']['total']);
         //计算
-        $this->fz['xingzheng']=0.05 * $a;
+        $this->fz['xingzheng'] = 0.05 * $a;
         //==============================================================================================================
         //专利
-        $a=$this->zl($data['PatentV4Search']['total']);
+        $a = $this->zl($data['PatentV4Search']['total']);
         //软件著作权
-        $b=$this->rjzzq($data['SearchSoftwareCr']['total']);
+        $b = $this->rjzzq($data['SearchSoftwareCr']['total']);
         //计算
-        $this->fz['chuangxinyujishu']=(0.6 * $a + 0.4 * $b) * 0.1;
+        $this->fz['chuangxinyujishu'] = (0.6 * $a + 0.4 * $b) * 0.1;
         //==============================================================================================================
         //近三年团队人数
-        $a=$this->tdrs($data['itemInfo'],'fz');
+        $a = $this->tdrs($data['itemInfo'], 'fz');
         //近两年团队人数
-        $b=$this->rybh($data['itemInfo'],'fz');
+        $b = $this->rybh($data['itemInfo'], 'fz');
         //计算
-        $this->fz['tuandui']=(0.5 * $a + 0.5 * $b) * 0.1;
+        $this->fz['tuandui'] = (0.5 * $a + 0.5 * $b) * 0.1;
         //==============================================================================================================
         //招投标
-        $a=$this->ztb($data['TenderSearch']['total']);
+        $a = $this->ztb($data['TenderSearch']['total']);
         //计算
-        $this->fz['jingyingxinxi']=0.05 * $a;
+        $this->fz['jingyingxinxi'] = 0.05 * $a;
         //==============================================================================================================
         //财务资产
-        $c=$this->cwzc($data['FinanceData']['data'],'fz');
+        $c = $this->cwzc($data['FinanceData']['data'], 'fz');
         //计算
-        $this->fz['caiwu']=$c * 0.6;
+        $this->fz['caiwu'] = $c * 0.6;
         //==============================================================================================================
         //行业位置
-        $a=$this->hywz($data['FinanceData']['data'],$data['getRegisterInfo']);
+        $a = $this->hywz($data['FinanceData']['data'], $data['getRegisterInfo']);
         //计算
-        $this->fz['hangyeweizhi']=0.02 * $a;
+        $this->fz['hangyeweizhi'] = 0.02 * $a;
         //==============================================================================================================
         //企业变更信息
-        $a=$this->qybgxx($data['getRegisterChangeInfo']['total']);
+        $a = $this->qybgxx($data['getRegisterChangeInfo']['total']);
         //经营异常
-        $b=$this->jyyc($data['GetOpException']['total']);
+        $b = $this->jyyc($data['GetOpException']['total']);
         //计算
-        $this->fx['gongshang']=(0.6 * $a + 0.4 * $b) * 0.05;
+        $this->fx['gongshang'] = (0.6 * $a + 0.4 * $b) * 0.05;
         //==============================================================================================================
         //财务资产
-        $d=$this->cwzc($data['FinanceData']['data'],'fx');
+        $d = $this->cwzc($data['FinanceData']['data'], 'fx');
         //计算
-        $this->fx['caiwu']=0.4 * $d;
+        $this->fx['caiwu'] = 0.4 * $d;
         //==============================================================================================================
         //近三年团队人数
-        $a=$this->tdrs($data['itemInfo'],'fx');
+        $a = $this->tdrs($data['itemInfo'], 'fx');
         //近两年团队人数
-        $b=$this->rybh($data['itemInfo'],'fx');
+        $b = $this->rybh($data['itemInfo'], 'fx');
         //计算
-        $this->fx['tuandui']=(0.3 * $a + 0.7* $b) * 0.18;
+        $this->fx['tuandui'] = (0.3 * $a + 0.7 * $b) * 0.18;
         //==============================================================================================================
         //裁判文书
-        $a=$this->pjws($data['cpws']['total']);
+        $a = $this->pjws($data['cpws']['total']);
         //执行公告
-        $b=$this->zxgg($data['zxgg']['total']);
-        $s=($a + $b) / 2;
+        $b = $this->zxgg($data['zxgg']['total']);
+        $s = ($a + $b) / 2;
         //计算
-        $this->fx['sifa']=0.25 * $s;
+        $this->fx['sifa'] = 0.25 * $s;
         //==============================================================================================================
         //涉税处罚公示
-        $a=$this->sscfgs($data['satparty_chufa']['total']);
+        $a = $this->sscfgs($data['satparty_chufa']['total']);
         //税务非正常户公示
-        $b=$this->swfzchgs($data['satparty_fzc']['total']);
+        $b = $this->swfzchgs($data['satparty_fzc']['total']);
         //欠税公告
-        $c=$this->qsgg($data['satparty_qs']['total']);
-        $s=($a + $b + $c) / 3;
+        $c = $this->qsgg($data['satparty_qs']['total']);
+        $s = ($a + $b + $c) / 3;
         //计算
-        $this->fx['shuiwu']=0.1 * $s;
+        $this->fx['shuiwu'] = 0.1 * $s;
         //==============================================================================================================
         //行政处罚
-        $a=$this->xzcf($data['GetAdministrativePenaltyList']['total']);
-        $this->fx['xingzheng']=0.02 * $a;
+        $a = $this->xzcf($data['GetAdministrativePenaltyList']['total']);
+        $this->fx['xingzheng'] = 0.02 * $a;
         //==============================================================================================================
         //联合惩戒名单信息（暂无该字段接口，先以司法类中的失信公告代替）失信公告的数量
-        $a=$this->sxgg($data['shixin']);
-        $this->fx['gaofengxian']=0.4 * $a;
+        $a = $this->sxgg($data['shixin']);
+        $this->fx['gaofengxian'] = 0.4 * $a;
         //==============================================================================================================
 
         return true;
     }
 
 
-
-
     //失信公告
     private function sxgg($data)
     {
         //总数
-        $num=(int)$data;
+        $num = (int)$data;
 
         if ($num >= 3) return 100;
         if ($num >= 2 && $num <= 1) return 90;
@@ -178,7 +176,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     private function sscfgs($data)
     {
         //总数
-        $num=(int)$data;
+        $num = (int)$data;
 
         //总数
         if ($num > 10) return 100;
@@ -194,7 +192,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     private function swfzchgs($data)
     {
         //总数
-        $num=(int)$data;
+        $num = (int)$data;
 
         //总数
         if ($num > 10) return 100;
@@ -210,7 +208,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     private function qsgg($data)
     {
         //总数
-        $num=(int)$data;
+        $num = (int)$data;
 
         //总数
         if ($num > 10) return 100;
@@ -226,7 +224,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     private function xzcf($data)
     {
         //总数
-        $num=(int)$data;
+        $num = (int)$data;
 
         //总数
         if ($num > 10) return 100;
@@ -241,7 +239,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     //判决文书
     private function pjws($data)
     {
-        $num=(int)$data;
+        $num = (int)$data;
 
         //总数
         if ($num > 10) return 100;
@@ -256,7 +254,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     //执行公告
     private function zxgg($data)
     {
-        $num=(int)$data;
+        $num = (int)$data;
 
         if ($num > 10) return 100;
         if ($num >= 6 && $num <= 10) return 90;
@@ -270,13 +268,13 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     //企业变更信息
     private function qybgxx($data)
     {
-        $num=(int)$data;
+        $num = (int)$data;
 
         //算分
         if ($num > 10) return 100;
         if ($num <= 10 && $num >= 6) return 80;
-        if ($num <= 5 && $num >=3) return 70;
-        if ($num <= 2 && $num >=1) return 60;
+        if ($num <= 5 && $num >= 3) return 70;
+        if ($num <= 2 && $num >= 1) return 60;
         if ($num < 1) return 0;
 
         return 0;
@@ -286,7 +284,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     private function jyyc($data)
     {
         //总数
-        $num=(int)$data;
+        $num = (int)$data;
 
         //算分
         if ($num > 5) return 100;
@@ -299,7 +297,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     }
 
     //行业位置
-    private function hywz($cw,$jb)
+    private function hywz($cw, $jb)
     {
         if (!is_array($cw)) return 0;
 
@@ -308,58 +306,57 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         if (!isset($cw[0])) return 0;
 
         //先拿到营业总收入
-        $vendInc=$cw[0][2];;
+        $vendInc = $cw[0][2];;
 
-        $sshy=trim($jb['INDUSTRY']);
+        $sshy = trim($jb['INDUSTRY']);
 
         //2017年利润（亿）100000000
-        $target=[
-            '煤炭开采和洗选业'=>24870.64,
-            '石油和天然气开采业'=>7560.07,
-            '黑色金属矿采选业'=>4064.44,
-            '有色金属矿采选业'=>5104.15,
-            '非金属矿采选业'=>4239.89,
-            '开采专业及辅助性活动'=>1566.71,
-            '其他采矿业'=>37.53,
-            '农副食品加工业'=>59894.39,
-            '食品制造业'=>22140.85,
-            '酒、饮料和精制茶制造业'=>17096.2,
-            '烟草制品业'=>8890.91,
-            '纺织业'=>36114.43,
-            '纺织服装、服饰业'=>20892.12,
-            '皮革、毛皮、羽毛及其制品和制鞋业'=>14105.61,
-            '木材加工和木、竹、藤、棕、草制品业'=>12947.89,
-            '家具制造业'=>8787.88,
-            '造纸和纸制品业'=>14840.51,
-            '印刷和记录媒介复制业'=>7857.66,
-            '文教、工美、体育和娱乐用品制造业'=>15931.04,
-            '石油、煤炭及其他燃料加工业'=>40331.5,
-            '化学原料和化学制品制造业'=>81889.06,
-            '医药制造业'=>27116.57,
-            '化学纤维制造业'=>7916.55,
-            '橡胶和塑料制品业'=>30526.72,
-            '非金属矿物制品业'=>59194.51,
-            '黑色金属冶炼和压延加工业'=>64571.78,
-            '有色金属冶炼和压延加工业'=>54091.07,
-            '金属制品业'=>35952.04,
-            '通用设备制造业'=>45611.05,
-            '专用设备制造业'=>35835.21,
-            '汽车制造业'=>84637.11,
-            '铁路、船舶、航空航天和其他运输设备制造业'=>16921.12,
-            '电气机械和器材制造业'=>71683.44,
-            '计算机、通信和其他电子设备制造业'=>106221.7,
-            '仪器仪表制造业'=>9999.5,
-            '其他制造业'=>2623.22,
-            '废弃资源综合利用业'=>3898.18,
-            '金属制品、机械和设备修理业'=>1183.92,
-            '电力、热力生产和供应业'=>55006.77,
-            '燃气生产和供应业'=>6061.34,
-            '水的生产和供应业'=>2141.88
+        $target = [
+            '煤炭开采和洗选业' => 24870.64,
+            '石油和天然气开采业' => 7560.07,
+            '黑色金属矿采选业' => 4064.44,
+            '有色金属矿采选业' => 5104.15,
+            '非金属矿采选业' => 4239.89,
+            '开采专业及辅助性活动' => 1566.71,
+            '其他采矿业' => 37.53,
+            '农副食品加工业' => 59894.39,
+            '食品制造业' => 22140.85,
+            '酒、饮料和精制茶制造业' => 17096.2,
+            '烟草制品业' => 8890.91,
+            '纺织业' => 36114.43,
+            '纺织服装、服饰业' => 20892.12,
+            '皮革、毛皮、羽毛及其制品和制鞋业' => 14105.61,
+            '木材加工和木、竹、藤、棕、草制品业' => 12947.89,
+            '家具制造业' => 8787.88,
+            '造纸和纸制品业' => 14840.51,
+            '印刷和记录媒介复制业' => 7857.66,
+            '文教、工美、体育和娱乐用品制造业' => 15931.04,
+            '石油、煤炭及其他燃料加工业' => 40331.5,
+            '化学原料和化学制品制造业' => 81889.06,
+            '医药制造业' => 27116.57,
+            '化学纤维制造业' => 7916.55,
+            '橡胶和塑料制品业' => 30526.72,
+            '非金属矿物制品业' => 59194.51,
+            '黑色金属冶炼和压延加工业' => 64571.78,
+            '有色金属冶炼和压延加工业' => 54091.07,
+            '金属制品业' => 35952.04,
+            '通用设备制造业' => 45611.05,
+            '专用设备制造业' => 35835.21,
+            '汽车制造业' => 84637.11,
+            '铁路、船舶、航空航天和其他运输设备制造业' => 16921.12,
+            '电气机械和器材制造业' => 71683.44,
+            '计算机、通信和其他电子设备制造业' => 106221.7,
+            '仪器仪表制造业' => 9999.5,
+            '其他制造业' => 2623.22,
+            '废弃资源综合利用业' => 3898.18,
+            '金属制品、机械和设备修理业' => 1183.92,
+            '电力、热力生产和供应业' => 55006.77,
+            '燃气生产和供应业' => 6061.34,
+            '水的生产和供应业' => 2141.88
         ];
 
-        if (array_key_exists($sshy,$target))
-        {
-            $num=$vendInc / ($target[$sshy] * 100000000) * 100;
+        if (array_key_exists($sshy, $target)) {
+            $num = $vendInc / ($target[$sshy] * 100000000) * 100;
 
             if ($num > 10) return 100;
             if ($num >= 6 && $num <= 10) return 90;
@@ -373,7 +370,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     }
 
     //财务资产
-    private function cwzc($data,$type)
+    private function cwzc($data, $type)
     {
         if (!is_array($data)) return 0;
 
@@ -381,42 +378,41 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         if (!isset($data[0])) return 0;
 
-        switch ($type)
-        {
+        switch ($type) {
             case 'fz':
 
                 //营业收入
-                $vendInc=$data[0][2];
+                $vendInc = $data[0][2];
 
-                if ($vendInc > 20) $vendIncNum=110;
-                if ($vendInc > 10 && $vendInc <= 20) $vendIncNum=100;
-                if ($vendInc > 5 && $vendInc <= 10) $vendIncNum=90;
-                if ($vendInc >= 0 && $vendInc <= 5) $vendIncNum=80;
-                if ($vendInc >= -10 && $vendInc <= -1) $vendIncNum=70;
-                if ($vendInc >= -20 && $vendInc <= -11) $vendIncNum=60;
-                if ($vendInc <= -21) $vendIncNum=50;
+                if ($vendInc > 20) $vendIncNum = 110;
+                if ($vendInc > 10 && $vendInc <= 20) $vendIncNum = 100;
+                if ($vendInc > 5 && $vendInc <= 10) $vendIncNum = 90;
+                if ($vendInc >= 0 && $vendInc <= 5) $vendIncNum = 80;
+                if ($vendInc >= -10 && $vendInc <= -1) $vendIncNum = 70;
+                if ($vendInc >= -20 && $vendInc <= -11) $vendIncNum = 60;
+                if ($vendInc <= -21) $vendIncNum = 50;
 
                 //净利润
-                $netInc=$data[0][5];
+                $netInc = $data[0][5];
 
-                if ($netInc > 20) $netIncNum=110;
-                if ($netInc > 10 && $netInc <= 20) $netIncNum=100;
-                if ($netInc > 5 && $netInc <= 10) $netIncNum=90;
-                if ($netInc >= 0 && $netInc <= 5) $netIncNum=80;
-                if ($netInc >= -10 && $netInc <= -1) $netIncNum=70;
-                if ($netInc >= -20 && $netInc <= -11) $netIncNum=60;
-                if ($netInc <= -21) $netIncNum=50;
+                if ($netInc > 20) $netIncNum = 110;
+                if ($netInc > 10 && $netInc <= 20) $netIncNum = 100;
+                if ($netInc > 5 && $netInc <= 10) $netIncNum = 90;
+                if ($netInc >= 0 && $netInc <= 5) $netIncNum = 80;
+                if ($netInc >= -10 && $netInc <= -1) $netIncNum = 70;
+                if ($netInc >= -20 && $netInc <= -11) $netIncNum = 60;
+                if ($netInc <= -21) $netIncNum = 50;
 
                 //资产总额
-                $assGro=$data[0][0];
+                $assGro = $data[0][0];
 
-                if ($assGro > 20) $assGroNum=110;
-                if ($assGro > 10 && $assGro <= 20) $assGroNum=100;
-                if ($assGro > 5 && $assGro <= 10) $assGroNum=90;
-                if ($assGro >= 0 && $assGro <= 5) $assGroNum=80;
-                if ($assGro >= -10 && $assGro <= -1) $assGroNum=70;
-                if ($assGro >= -20 && $assGro <= -11) $assGroNum=60;
-                if ($assGro <= -21) $assGroNum=50;
+                if ($assGro > 20) $assGroNum = 110;
+                if ($assGro > 10 && $assGro <= 20) $assGroNum = 100;
+                if ($assGro > 5 && $assGro <= 10) $assGroNum = 90;
+                if ($assGro >= 0 && $assGro <= 5) $assGroNum = 80;
+                if ($assGro >= -10 && $assGro <= -1) $assGroNum = 70;
+                if ($assGro >= -20 && $assGro <= -11) $assGroNum = 60;
+                if ($assGro <= -21) $assGroNum = 50;
 
                 return ($vendIncNum + $netIncNum + $assGroNum) / 3;
 
@@ -429,34 +425,30 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 if (count($data) < 2) return 0;
 
                 //今年负债总额
-                $liaGro1=$data[0][1];
+                $liaGro1 = $data[0][1];
                 //今年资产总额
-                $assGro1=$data[0][0];
+                $assGro1 = $data[0][0];
 
                 //今年资产负债率
-                if ($assGro1==0)
-                {
-                    $fuzhailv1=0;
-                }else
-                {
-                    $fuzhailv1=($liaGro1 / $assGro1) * 100;
+                if ($assGro1 == 0) {
+                    $fuzhailv1 = 0;
+                } else {
+                    $fuzhailv1 = ($liaGro1 / $assGro1) * 100;
                 }
 
                 //去年负债总额
-                $liaGro2=$data[1][1];
+                $liaGro2 = $data[1][1];
                 //去年资产总额
-                $assGro2=$data[1][0];
+                $assGro2 = $data[1][0];
 
                 //今年资产负债率
-                if ($assGro2==0)
-                {
-                    $fuzhailv2=0;
-                }else
-                {
-                    $fuzhailv2=($liaGro2 / $assGro2) * 100;
+                if ($assGro2 == 0) {
+                    $fuzhailv2 = 0;
+                } else {
+                    $fuzhailv2 = ($liaGro2 / $assGro2) * 100;
                 }
 
-                $num=(abs($fuzhailv1) + abs($fuzhailv2)) / 2;
+                $num = (abs($fuzhailv1) + abs($fuzhailv2)) / 2;
 
                 if ($num > 80) return 100;
                 if ($num > 50 && $num <= 80) return 90;
@@ -473,24 +465,24 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     //招投标
     private function ztb($data)
     {
-        $num=(int)$data;
+        $num = (int)$data;
 
         if ($num > 10) return 100;
         if ($num <= 10 && $num >= 6) return 80;
-        if ($num <= 5 && $num >=3) return 70;
+        if ($num <= 5 && $num >= 3) return 70;
         if ($num <= 2) return 60;
 
         return $num;
     }
 
     //近三年团队人数
-    private function tdrs($data,$type)
+    private function tdrs($data, $type)
     {
         return 50;
     }
 
     //近两年团队人数
-    private function rybh($data,$type)
+    private function rybh($data, $type)
     {
         return 40;
     }
@@ -499,11 +491,11 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     private function zl($data)
     {
         //总数
-        $num=(int)$data;
+        $num = (int)$data;
 
         if ($num > 10) return 100;
         if ($num <= 10 && $num >= 6) return 80;
-        if ($num <= 5 && $num >=1) return 70;
+        if ($num <= 5 && $num >= 1) return 70;
         if ($num <= 0) return 60;
 
         return $num;
@@ -513,11 +505,11 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     private function rjzzq($data)
     {
         //总数
-        $num=(int)$data;
+        $num = (int)$data;
 
         if ($num > 20) return 100;
         if ($num <= 20 && $num >= 11) return 80;
-        if ($num <= 10 && $num >=3) return 70;
+        if ($num <= 10 && $num >= 3) return 70;
         if ($num <= 2) return 60;
 
         return $num;
@@ -527,11 +519,11 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     private function xzxk($data)
     {
         //算分
-        $num=(int)$data;
+        $num = (int)$data;
 
         if ($num > 10) return 100;
         if ($num <= 10 && $num >= 6) return 80;
-        if ($num <= 5 && $num >=3) return 70;
+        if ($num <= 5 && $num >= 3) return 70;
         if ($num <= 2) return 60;
 
         //总数
@@ -541,12 +533,12 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     //企业对外投资
     private function qydwtz($data)
     {
-        $num=(int)$data;
+        $num = (int)$data;
 
         //算分
         if ($num > 20) return 100;
         if ($num <= 20 && $num >= 11) return 80;
-        if ($num <= 10 && $num >=3) return 70;
+        if ($num <= 10 && $num >= 3) return 70;
         if ($num <= 2) return 60;
 
         return 0;
@@ -555,79 +547,61 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     //融资历史
     private function rzls($financing)
     {
-        if (!empty($financing))
-        {
+        if (!empty($financing)) {
             $temp = [];
-            foreach($financing as $key=>$val)
-            {
+            foreach ($financing as $key => $val) {
                 $money = $val['Amount'];
 
-                if(strpos($money,'亿'))
-                {
-                    $money_num = preg_replace("/[\\x80-\\xff]/","",$money);
-                    if(!empty($money_num))
-                    {
-                        if(strpos($money,'美元'))
-                        {
-                            $money_num = $money_num*100000000*7.0068;
+                if (strpos($money, '亿')) {
+                    $money_num = preg_replace("/[\\x80-\\xff]/", "", $money);
+                    if (!empty($money_num)) {
+                        if (strpos($money, '美元')) {
+                            $money_num = $money_num * 100000000 * 7.0068;
                             array_push($temp, $money_num);
-                        }else
-                        {
-                            $money_num = $money_num*100000000;
+                        } else {
+                            $money_num = $money_num * 100000000;
                             array_push($temp, $money_num);
                         }
                     }
                 }
 
-                if(strpos($money,'千万'))
-                {
-                    $money_num = preg_replace("/[\\x80-\\xff]/","",$money);
+                if (strpos($money, '千万')) {
+                    $money_num = preg_replace("/[\\x80-\\xff]/", "", $money);
 
-                    if(!empty($money_num))
-                    {
-                        if(strpos($money,'美元'))
-                        {
-                            $money_num = $money_num*10000000*7.0068;
+                    if (!empty($money_num)) {
+                        if (strpos($money, '美元')) {
+                            $money_num = $money_num * 10000000 * 7.0068;
                             array_push($temp, $money_num);
-                        }else
-                        {
-                            $money_num = $money_num*10000000;
+                        } else {
+                            $money_num = $money_num * 10000000;
                             array_push($temp, $money_num);
                         }
                     }
                 }
 
-                if(strpos($money,'百万'))
-                {
-                    $money_num = preg_replace("/[\\x80-\\xff]/","",$money);
+                if (strpos($money, '百万')) {
+                    $money_num = preg_replace("/[\\x80-\\xff]/", "", $money);
 
-                    if(!empty($money_num))
-                    {
-                        if(strpos($money,'美元'))
-                        {
-                            $money_num = $money_num*1000000*7.0068;
+                    if (!empty($money_num)) {
+                        if (strpos($money, '美元')) {
+                            $money_num = $money_num * 1000000 * 7.0068;
                             array_push($temp, $money_num);
-                        }else
-                        {
-                            $money_num = $money_num*1000000;
+                        } else {
+                            $money_num = $money_num * 1000000;
                             array_push($temp, $money_num);
                         }
                     }
                 }
 
-                if(strpos($money,'万'))
-                {
-                    $money_num = preg_replace("/[\\x80-\\xff]/","",$money);
+                if (strpos($money, '万')) {
+                    $money_num = preg_replace("/[\\x80-\\xff]/", "", $money);
 
-                    if(!empty($money_num))
-                    {
-                        if(strpos($money,'美元'))
-                        {
-                            $money_num = $money_num*10000*7.0068;
+                    if (!empty($money_num)) {
+                        if (strpos($money, '美元')) {
+                            $money_num = $money_num * 10000 * 7.0068;
                             array_push($temp, $money_num);
-                        }else
-                        {
-                            $money_num = $money_num*10000;
+                        } else {
+                            $money_num = $money_num * 10000;
                             array_push($temp, $money_num);
                         }
                     }
@@ -637,16 +611,15 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $financing_all_num = array_sum($temp);
 
             //算数
-            $num=50;
-            if ($financing_all_num > 500000000) $num=100;
-            if ($financing_all_num > 100000000 && $financing_all_num <= 500000000) $num=90;
-            if ($financing_all_num > 50000000 && $financing_all_num <= 100000000) $num=80;
-            if ($financing_all_num > 10000000 && $financing_all_num <= 50000000) $num=70;
-            if ($financing_all_num > 1000000 && $financing_all_num <= 10000000) $num=60;
+            $num = 50;
+            if ($financing_all_num > 500000000) $num = 100;
+            if ($financing_all_num > 100000000 && $financing_all_num <= 500000000) $num = 90;
+            if ($financing_all_num > 50000000 && $financing_all_num <= 100000000) $num = 80;
+            if ($financing_all_num > 10000000 && $financing_all_num <= 50000000) $num = 70;
+            if ($financing_all_num > 1000000 && $financing_all_num <= 10000000) $num = 60;
 
-        }else
-        {
-            $num=50;
+        } else {
+            $num = 50;
         }
 
         return $num;
@@ -655,15 +628,15 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     //企业性质
     private function qyxz($data)
     {
-        $entType=$data['ENTTYPE'];
+        $entType = $data['ENTTYPE'];
 
-        $num=50;
+        $num = 50;
 
-        if (control::hasString($entType,'全民所有')) $num=100;
-        if (control::hasString($entType,'国有')) $num=100;
-        if (control::hasString($entType,'港澳台')) $num=100;
-        if (control::hasString($entType,'外商')) $num=100;
-        if (control::hasString($entType,'集体')) $num=100;
+        if (control::hasString($entType, '全民所有')) $num = 100;
+        if (control::hasString($entType, '国有')) $num = 100;
+        if (control::hasString($entType, '港澳台')) $num = 100;
+        if (control::hasString($entType, '外商')) $num = 100;
+        if (control::hasString($entType, '集体')) $num = 100;
 
         //总数
         return (int)$num;
@@ -2541,16 +2514,16 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $extension = [
                 'width' => 1200,
                 'height' => 700,
-                'title' => $this->entName.' - 财务非授权 - 同比',
+                'title' => $this->entName . ' - 财务非授权 - 同比',
                 'xTitle' => '此图为概况信息',
                 //'yTitle'=>$this->entName,
                 'titleSize' => 14,
                 'legend' => $legend
             ];
 
-            $tmp=[];
-            $tmp['pic']=CommonService::getInstance()->createBarPic($data, $labels, $extension);
-            $tmp['data']=$data;
+            $tmp = [];
+            $tmp['pic'] = CommonService::getInstance()->createBarPic($data, $labels, $extension);
+            $tmp['data'] = $data;
 
             return $tmp;
         });
