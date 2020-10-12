@@ -26,15 +26,15 @@ class NotifyController extends BusinessBase
     {
         $pay = new Pay();
 
-        $content = $this->request()->getBody()->__toString();
+        //$content = $this->request()->getBody()->__toString();
 
-        $data = $pay->weChat((new wxPayService())->getConf())->verify($content);
+        $data = [123123123123123123];
 
         $redis=Redis::defer('redis');
         $redis->select(13);
         $redis->set('wxNotify',jsonEncode($data));
 
-        $this->response()->write(WeChat::success());
+        //$this->response()->write(WeChat::success());
 
         return true;
     }
