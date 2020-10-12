@@ -24,7 +24,7 @@ class BusinessBase extends Index
 
         $checkToken = $this->checkToken();
 
-        if (!$checkToken) $this->writeJson(201,null,null,'token错误');
+        if (!$checkRouter && !$checkToken) $this->writeJson(201,null,null,'token错误');
 
         $checkLimit = $this->checkLimit();
 
