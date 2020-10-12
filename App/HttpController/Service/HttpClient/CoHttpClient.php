@@ -19,19 +19,22 @@ class CoHttpClient extends ServiceBase
         return true;
     }
 
-    public $db = 0;
-    public $ttlDay = 1;
+    private $db = 0;
+    private $ttlDay = 1;
     private $needJsonDecode = true;
+    private $useCache = true;
 
     function __construct()
     {
+        parent::__construct();
+
         $this->onNewService();
     }
 
     function send($url = '', $postData = [], $headers = [], $options = [], $method = 'post')
     {
         //从缓存中拿
-        $take = $this->takeResult($url, $postData);
+        $this->useCache ? $take = $this->takeResult($url, $postData) : $take = [];
 
         //不是空，说明缓存里有数据，直接返回
         if (!empty($take)) return $this->needJsonDecode ? json_decode($take, true) : $take;
@@ -46,7 +49,11 @@ class CoHttpClient extends ServiceBase
 
         try {
             //发送请求
-            $method === 'POST' ? $data = $request->post($postData) : $data = $request->get();
+            $method === 'POST' ?
+                $data = $request->post($postData) :
+                $method === 'POSTJSON' ?
+                    $data = $request->postJson(json_encode($postData)) :
+                    $data = $request->get();
 
             //整理结果
             $data = $data->getBody();
@@ -60,6 +67,12 @@ class CoHttpClient extends ServiceBase
         $this->storeResult($url, $postData, $data);
 
         return $this->needJsonDecode ? json_decode($data, true) : $data;
+    }
+
+    function useCache($type = true)
+    {
+        $this->useCache = $type;
+        return $this;
     }
 
     function needJsonDecode($type)

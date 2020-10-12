@@ -42,16 +42,19 @@ class wxPayService extends PayBase
             'grant_type' => 'authorization_code',
         ];
 
+        $url .= '?' . http_build_query($data);
+
         return (new CoHttpClient())->needJsonDecode(true)->send($url, $data, [], [], 'get');
     }
 
     //返回一个小程序支付resp对象
-    function miniAppPay(string $jsCode, string $orderId, string $money, string $body, string $ipForCli)
+    function miniAppPay(string $jsCode, string $orderId, string $money, string $body, string $ipForCli = '')
     {
         $bean = new MiniProgram();
 
         //用户的openid
-        $bean->setOpenid(end($this->getOpenId($jsCode)));
+        $openId = end($this->getOpenId($jsCode));
+        $bean->setOpenid($openId);
 
         //订单号
         $bean->setOutTradeNo($orderId);
@@ -71,9 +74,6 @@ class wxPayService extends PayBase
 
         return $params;
     }
-
-
-
 
 
 }

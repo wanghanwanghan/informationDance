@@ -21,6 +21,7 @@ class Router extends AbstractRouter
             $this->TaoShuRouterV1($routeCollector);//淘数
             $this->FaHaiRouterV1($routeCollector);//法海
             $this->QianQiRouterV1($routeCollector);//乾启
+            $this->YuanSuRouterV1($routeCollector);//元素
             $this->Notify($routeCollector);//通知
             $this->ExportExcelRouterV1($routeCollector);//导出excel
             $this->ExportWordRouterV1($routeCollector);//导出word
@@ -244,6 +245,18 @@ class Router extends AbstractRouter
         {
             $routeCollector->addRoute(['GET','POST'],'/getThreeYearsData',$prefix.'getThreeYearsData');//最近三年财务数据，不需授权
             $routeCollector->addRoute(['GET','POST'],'/getThreeYearsDataNeedAuth',$prefix.'getThreeYearsDataNeedAuth');//最近三年财务数据，需授权
+        });
+
+        return true;
+    }
+
+    private function YuanSuRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix='/Business/Api/YuanSu/YuanSuController/';
+
+        $routeCollector->addGroup('/ys',function (RouteCollector $routeCollector) use ($prefix)
+        {
+            $routeCollector->addRoute(['GET','POST'],'/three',$prefix.'three');//三要素
         });
 
         return true;
