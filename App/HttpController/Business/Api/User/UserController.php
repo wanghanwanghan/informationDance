@@ -158,8 +158,7 @@ class UserController extends UserBase
             return $this->writeErr($e, __FUNCTION__);
         }
 
-        var_dump($list);
-
+        return $this->writeJson(200,null,$list,'');
     }
 
 

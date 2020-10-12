@@ -20,43 +20,59 @@ class TaoShuController extends TaoShuBase
     //检验企查查返回值，并给客户计费
     private function checkResponse($res)
     {
-        if (isset($res['PAGEINFO']) && isset($res['PAGEINFO']['TOTAL_COUNT']) && isset($res['PAGEINFO']['TOTAL_PAGE']) && isset($res['PAGEINFO']['CURRENT_PAGE']))
-        {
-            $res['Paging']=[
-                'page'=>$res['PAGEINFO']['CURRENT_PAGE'],
-                'pageSize'=>null,
-                'total'=>$res['PAGEINFO']['TOTAL_COUNT'],
-                'totalPage'=>$res['PAGEINFO']['TOTAL_PAGE'],
+        if (isset($res['PAGEINFO']) && isset($res['PAGEINFO']['TOTAL_COUNT']) && isset($res['PAGEINFO']['TOTAL_PAGE']) && isset($res['PAGEINFO']['CURRENT_PAGE'])) {
+            $res['Paging'] = [
+                'page' => $res['PAGEINFO']['CURRENT_PAGE'],
+                'pageSize' => null,
+                'total' => $res['PAGEINFO']['TOTAL_COUNT'],
+                'totalPage' => $res['PAGEINFO']['TOTAL_PAGE'],
             ];
 
-        }else
-        {
-            $res['Paging']=null;
+        } else {
+            $res['Paging'] = null;
         }
 
-        if (isset($res['coHttpErr'])) return $this->writeJson(500,$res['Paging'],[],'co请求错误');
+        if (isset($res['coHttpErr'])) return $this->writeJson(500, $res['Paging'], [], 'co请求错误');
 
         $res['ISUSUAL'] == '1' ? $res['code'] = 200 : $res['code'] = 600;
 
         //拿返回结果
         isset($res['RESULTDATA']) ? $res['Result'] = $res['RESULTDATA'] : $res['Result'] = [];
 
-        return $this->writeJson($res['code'],$res['Paging'],$res['Result'],null);
+        return $this->writeJson($res['code'], $res['Paging'], $res['Result'], null);
+    }
+
+    //法人变更
+    function frbg()
+    {
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 4;
+
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $pageNo,
+            'pageSize' => $pageSize,
+        ];
+
+        $res = (new TaoShuService())->post($postData, 'getRegisterChangeInfo');
+
+        return $this->checkResponse($res);
     }
 
     //企业名称检索
     function getEntByKeyword()
     {
-        $entName=$this->request()->getRequestParam('entName') ?? '';
+        $entName = $this->request()->getRequestParam('entName') ?? '';
         //0企业名称模糊检索，1注册号,统一社会信用代码精准检索，2注册地址模糊检索，4智能模糊检索
-        $type=$this->request()->getRequestParam('type') ?? 0;
+        $type = $this->request()->getRequestParam('type') ?? 0;
 
-        $postData=[
-            'keyword'=>$entName,
-            'type'=>$type,
+        $postData = [
+            'keyword' => $entName,
+            'type' => $type,
         ];
 
-        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+        $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
         return $this->checkResponse($res);
     }
@@ -64,11 +80,11 @@ class TaoShuController extends TaoShuBase
     //企业基本信息
     function getRegisterInfo()
     {
-        $entName=$this->request()->getRequestParam('entName') ?? '';
+        $entName = $this->request()->getRequestParam('entName') ?? '';
 
-        $postData=['entName'=>$entName];
+        $postData = ['entName' => $entName];
 
-        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+        $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
         return $this->checkResponse($res);
     }
@@ -76,17 +92,17 @@ class TaoShuController extends TaoShuBase
     //企业股东及出资信息
     function getShareHolderInfo()
     {
-        $entName=$this->request()->getRequestParam('entName') ?? '';
-        $pageNo=$this->request()->getRequestParam('pageNo') ?? 1;
-        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
-        $postData=[
-            'entName'=>$entName,
-            'pageNo'=>$pageNo,
-            'pageSize'=>$pageSize,
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $pageNo,
+            'pageSize' => $pageSize,
         ];
 
-        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+        $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
         return $this->checkResponse($res);
     }
@@ -94,17 +110,17 @@ class TaoShuController extends TaoShuBase
     //企业对外投资
     function getInvestmentAbroadInfo()
     {
-        $entName=$this->request()->getRequestParam('entName') ?? '';
-        $pageNo=$this->request()->getRequestParam('pageNo') ?? 1;
-        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
-        $postData=[
-            'entName'=>$entName,
-            'pageNo'=>$pageNo,
-            'pageSize'=>$pageSize,
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $pageNo,
+            'pageSize' => $pageSize,
         ];
 
-        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+        $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
         return $this->checkResponse($res);
     }
@@ -112,17 +128,17 @@ class TaoShuController extends TaoShuBase
     //企业分支机构
     function getBranchInfo()
     {
-        $entName=$this->request()->getRequestParam('entName') ?? '';
-        $pageNo=$this->request()->getRequestParam('pageNo') ?? 1;
-        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
-        $postData=[
-            'entName'=>$entName,
-            'pageNo'=>$pageNo,
-            'pageSize'=>$pageSize,
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $pageNo,
+            'pageSize' => $pageSize,
         ];
 
-        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+        $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
         return $this->checkResponse($res);
     }
@@ -130,17 +146,17 @@ class TaoShuController extends TaoShuBase
     //企业变更信息
     function getRegisterChangeInfo()
     {
-        $entName=$this->request()->getRequestParam('entName') ?? '';
-        $pageNo=$this->request()->getRequestParam('pageNo') ?? 1;
-        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
-        $postData=[
-            'entName'=>$entName,
-            'pageNo'=>$pageNo,
-            'pageSize'=>$pageSize,
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $pageNo,
+            'pageSize' => $pageSize,
         ];
 
-        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+        $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
         return $this->checkResponse($res);
     }
@@ -148,17 +164,17 @@ class TaoShuController extends TaoShuBase
     //企业主要管理人员
     function getMainManagerInfo()
     {
-        $entName=$this->request()->getRequestParam('entName') ?? '';
-        $pageNo=$this->request()->getRequestParam('pageNo') ?? 1;
-        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
-        $postData=[
-            'entName'=>$entName,
-            'pageNo'=>$pageNo,
-            'pageSize'=>$pageSize,
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $pageNo,
+            'pageSize' => $pageSize,
         ];
 
-        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+        $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
         return $this->checkResponse($res);
     }
@@ -166,17 +182,17 @@ class TaoShuController extends TaoShuBase
     //法人代表对外投资
     function lawPersonInvestmentInfo()
     {
-        $entName=$this->request()->getRequestParam('entName') ?? '';
-        $pageNo=$this->request()->getRequestParam('pageNo') ?? 1;
-        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
-        $postData=[
-            'entName'=>$entName,
-            'pageNo'=>$pageNo,
-            'pageSize'=>$pageSize,
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $pageNo,
+            'pageSize' => $pageSize,
         ];
 
-        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+        $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
         return $this->checkResponse($res);
     }
@@ -184,17 +200,17 @@ class TaoShuController extends TaoShuBase
     //法人代表其他公司任职
     function getLawPersontoOtherInfo()
     {
-        $entName=$this->request()->getRequestParam('entName') ?? '';
-        $pageNo=$this->request()->getRequestParam('pageNo') ?? 1;
-        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
-        $postData=[
-            'entName'=>$entName,
-            'pageNo'=>$pageNo,
-            'pageSize'=>$pageSize,
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $pageNo,
+            'pageSize' => $pageSize,
         ];
 
-        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+        $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
         return $this->checkResponse($res);
     }
@@ -202,21 +218,21 @@ class TaoShuController extends TaoShuBase
     //企业最终控制人
     function getGraphGFinalData()
     {
-        $entName=$this->request()->getRequestParam('entName') ?? '';
+        $entName = $this->request()->getRequestParam('entName') ?? '';
         //R102-企业股东，R104-自然人股东，R108-总部
-        $attIds=$this->request()->getRequestParam('attIds') ?? 'R102';
-        $level=$this->request()->getRequestParam('level') ?? 10;
+        $attIds = $this->request()->getRequestParam('attIds') ?? 'R102';
+        $level = $this->request()->getRequestParam('level') ?? 10;
         //GS-企业节点，GR-人员节点
-        $nodeType=$this->request()->getRequestParam('nodeType') ?? 'GS';
+        $nodeType = $this->request()->getRequestParam('nodeType') ?? 'GS';
 
-        $postData=[
-            'keyword'=>$entName,
-            'attIds'=>$attIds,
-            'level'=>$level,
-            'nodeType'=>$nodeType,
+        $postData = [
+            'keyword' => $entName,
+            'attIds' => $attIds,
+            'level' => $level,
+            'nodeType' => $nodeType,
         ];
 
-        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+        $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
         return $this->checkResponse($res);
     }
@@ -224,13 +240,13 @@ class TaoShuController extends TaoShuBase
     //企业经营异常
     function getOperatingExceptionRota()
     {
-        $entName=$this->request()->getRequestParam('entName') ?? '';
+        $entName = $this->request()->getRequestParam('entName') ?? '';
 
-        $postData=[
-            'entName'=>$entName,
+        $postData = [
+            'entName' => $entName,
         ];
 
-        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+        $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
         return $this->checkResponse($res);
     }
@@ -238,17 +254,17 @@ class TaoShuController extends TaoShuBase
     //企业股权出质列表
     function getEquityPledgedInfo()
     {
-        $entName=$this->request()->getRequestParam('entName') ?? '';
-        $pageNo=$this->request()->getRequestParam('pageNo') ?? 1;
-        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
-        $postData=[
-            'entName'=>$entName,
-            'pageNo'=>$pageNo,
-            'pageSize'=>$pageSize,
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $pageNo,
+            'pageSize' => $pageSize,
         ];
 
-        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+        $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
         return $this->checkResponse($res);
     }
@@ -256,13 +272,13 @@ class TaoShuController extends TaoShuBase
     //企业股权出质详情
     function getEquityPledgedDetailInfo()
     {
-        $id=$this->request()->getRequestParam('id') ?? '';
+        $id = $this->request()->getRequestParam('id') ?? '';
 
-        $postData=[
-            'rowKey'=>$id,
+        $postData = [
+            'rowKey' => $id,
         ];
 
-        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+        $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
         return $this->checkResponse($res);
     }
@@ -270,17 +286,17 @@ class TaoShuController extends TaoShuBase
     //企业动产抵押列表
     function getChattelMortgageInfo()
     {
-        $entName=$this->request()->getRequestParam('entName') ?? '';
-        $pageNo=$this->request()->getRequestParam('pageNo') ?? 1;
-        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
-        $postData=[
-            'entName'=>$entName,
-            'pageNo'=>$pageNo,
-            'pageSize'=>$pageSize,
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $pageNo,
+            'pageSize' => $pageSize,
         ];
 
-        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+        $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
         return $this->checkResponse($res);
     }
@@ -288,13 +304,13 @@ class TaoShuController extends TaoShuBase
     //企业动产抵押详情
     function getChattelMortgageDetailInfo()
     {
-        $id=$this->request()->getRequestParam('id') ?? '';
+        $id = $this->request()->getRequestParam('id') ?? '';
 
-        $postData=[
-            'rowKey'=>$id,
+        $postData = [
+            'rowKey' => $id,
         ];
 
-        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+        $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
         return $this->checkResponse($res);
     }
@@ -302,18 +318,18 @@ class TaoShuController extends TaoShuBase
     //企业实际控制人信息
     function getEntActualContoller()
     {
-        $entName=$this->request()->getRequestParam('entName') ?? '';
+        $entName = $this->request()->getRequestParam('entName') ?? '';
         //R102-法人股东，R104-企业自然人股东，R108-总部
-        $attIds=$this->request()->getRequestParam('attIds') ?? 'R102';
-        $level=$this->request()->getRequestParam('level') ?? 10;
+        $attIds = $this->request()->getRequestParam('attIds') ?? 'R102';
+        $level = $this->request()->getRequestParam('level') ?? 10;
 
-        $postData=[
-            'keyword'=>$entName,
-            'attIds'=>$attIds,
-            'level'=>$level,
+        $postData = [
+            'keyword' => $entName,
+            'attIds' => $attIds,
+            'level' => $level,
         ];
 
-        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+        $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
         return $this->checkResponse($res);
     }
@@ -321,15 +337,15 @@ class TaoShuController extends TaoShuBase
     //企业年报对外担保信息
     function getEntAnnReportForGuaranteeInfo()
     {
-        $entName=$this->request()->getRequestParam('entName') ?? '';
-        $reportDate=$this->request()->getRequestParam('reportDate') ?? 2015;
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $reportDate = $this->request()->getRequestParam('reportDate') ?? 2015;
 
-        $postData=[
-            'entName'=>$entName,
-            'reportDate'=>$reportDate,
+        $postData = [
+            'entName' => $entName,
+            'reportDate' => $reportDate,
         ];
 
-        $res=(new TaoShuService())->post($postData,__FUNCTION__);
+        $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
         return $this->checkResponse($res);
     }

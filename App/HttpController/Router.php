@@ -152,6 +152,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/getChattelMortgageDetailInfo',$prefix.'getChattelMortgageDetailInfo');//企业动产抵押详情
             $routeCollector->addRoute(['GET','POST'],'/getEntActualContoller',$prefix.'getEntActualContoller');//企业实际控制人信息
             $routeCollector->addRoute(['GET','POST'],'/getEntAnnReportForGuaranteeInfo',$prefix.'getEntAnnReportForGuaranteeInfo');//企业年报对外担保信息
+            $routeCollector->addRoute(['GET','POST'],'/frbg',$prefix.'frbg');//法人变更
         });
 
         return true;
