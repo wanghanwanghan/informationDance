@@ -139,7 +139,7 @@ class UserController extends UserBase
 
     function purchaseDo()
     {
-        $jsCode = $this->request()->getRequestParam('jsCode') ?? '051p3dGa1IFoNz0vnUGa1O243L1p3dGg';
+        $jsCode = $this->request()->getRequestParam('jsCode') ?? '051uri0w3c6u7V2Bn01w3V44M94uri01';
         $phone = $this->request()->getRequestParam('phone') ?? 18618457910;
         $type = $this->request()->getRequestParam('type') ?? 1;
 
