@@ -57,6 +57,8 @@ class TaoShuController extends TaoShuBase
 
         $res = (new TaoShuService())->post($postData, 'getRegisterChangeInfo');
 
+        return $this->writeJson(200,null,$res,'123');
+
         return $this->checkResponse($res);
     }
 

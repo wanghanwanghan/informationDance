@@ -19,6 +19,8 @@ class TaoShuService extends ServiceBase
 
     function __construct()
     {
+        parent::__construct();
+
         $this->uid = CreateConf::getInstance()->getConf('taoshu.uid');
         $this->url = CreateConf::getInstance()->getConf('taoshu.baseUrl');
         $this->taoshuPEM = implode(PHP_EOL, CreateConf::getInstance()->getConf('taoshu.pem'));
