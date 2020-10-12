@@ -169,7 +169,7 @@ class UserController extends UserBase
         }
 
         //创建小程序支付对象
-        $payObj = (new wxPayService())->miniAppPay($jsCode, $orderId, $list->money, Carbon::now()->format('Y-m-d H:i:s') . '测试');
+        $payObj = (new wxPayService())->miniAppPay($jsCode, $orderId, $list->money, $list->name . ' - ' . $list->desc);
 
         return $this->writeJson(200, null, ['orderId' => $orderId, 'payObj' => $payObj], '生成订单成功');
     }
