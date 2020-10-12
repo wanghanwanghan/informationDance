@@ -3,7 +3,6 @@
 namespace App\HttpController\Business\Api\Notify;
 
 use App\HttpController\Business\BusinessBase;
-use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Pay\wx\wxPayService;
 use EasySwoole\Pay\Pay;
 use EasySwoole\Pay\WeChat\WeChat;
@@ -26,15 +25,26 @@ class NotifyController extends BusinessBase
     {
         $pay = new Pay();
 
-        //$content = $this->request()->getBody()->__toString();
-
-        $data = [123123123123123123];
-
         $redis=Redis::defer('redis');
-        $redis->select(13);
-        $redis->set('wxNotify',jsonEncode($data));
 
-        //$this->response()->write(WeChat::success());
+        $redis->select(13);
+
+        $content = $this->request()->getBody()->__toString();
+
+        $redis->set('wxNotifyContent',jsonEncode($content));
+
+        try
+        {
+            $data = $pay->weChat((new wxPayService())->getConf())->verify($content);
+
+        }catch (\Throwable $e)
+        {
+            $redis->set('wxNotifyErr',jsonEncode($e->getMessage()));
+        }
+
+        $redis->set('wxNotifyData',jsonEncode($data));
+
+        $this->response()->write(WeChat::success());
 
         return true;
     }
