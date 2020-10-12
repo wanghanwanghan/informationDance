@@ -4,6 +4,7 @@ namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
 use App\HttpController\Models\Api\PurchaseInfo;
+use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use EasySwoole\Mysqli\QueryBuilder;
 
@@ -19,7 +20,7 @@ class DeleteTimeoutOrder extends AbstractCronTask
 
     static function getRule(): string
     {
-        return '*/5 * * * *';
+        return '30 4 * * *';
     }
 
     static function getTaskName(): string
@@ -33,10 +34,9 @@ class DeleteTimeoutOrder extends AbstractCronTask
         //taskId是进程周期内第几个task任务
         //可以用task，也可以用process
 
-        //超过10分钟未支付的订单都删除
         try {
 
-            $now = time() + 10 * 60;
+            $now = Carbon::now()->subDay()->timestamp;
 
             PurchaseInfo::create()->destroy(function (QueryBuilder $builder) use ($now) {
                 $builder->where('orderStatus', '待支付')->where('created_at', $now, '<');

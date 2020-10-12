@@ -270,7 +270,6 @@ class Router extends AbstractRouter
         $routeCollector->addGroup('/notify',function (RouteCollector $routeCollector) use ($prefix)
         {
             $routeCollector->addRoute(['GET','POST'],'/wx',$prefix.'wxNotify');//微信的通知
-            $routeCollector->addRoute(['GET','POST'],'/test',$prefix.'test');
         });
 
         return true;

@@ -20,7 +20,6 @@ class wxPayService extends PayBase
     {
         $conf = new wxConf();
 
-        $conf->setAppId(CreateConf::getInstance()->getConf('wx.appId'));
         $conf->setMiniAppId(CreateConf::getInstance()->getConf('wx.miniAppId'));
         $conf->setMchId(CreateConf::getInstance()->getConf('wx.mchId'));
         $conf->setKey(CreateConf::getInstance()->getConf('wx.miniPayKey'));
@@ -53,8 +52,8 @@ class wxPayService extends PayBase
         $bean = new MiniProgram();
 
         //用户的openid
-        $openId = end($this->getOpenId($jsCode));
-        $bean->setOpenid($openId);
+        $openId = $this->getOpenId($jsCode);
+        $bean->setOpenid(end($openId));
 
         //订单号
         $bean->setOutTradeNo($orderId);
@@ -65,8 +64,8 @@ class wxPayService extends PayBase
         //金额
         $bean->setTotalFee($money * 100);
 
-        //终端ip
-        $bean->setSpbillCreateIp($ipForCli);
+        //终端ip，据说高版本不用传了
+        if (!empty($ipForCli)) $bean->setSpbillCreateIp($ipForCli);
 
         $pay = new Pay();
 

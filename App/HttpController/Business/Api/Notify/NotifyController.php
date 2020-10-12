@@ -39,21 +39,6 @@ class NotifyController extends BusinessBase
         return true;
     }
 
-    function test()
-    {
-        $res=User::create()->where('phone',123)->get();
-
-        var_export($res);
-
-
-
-
-
-
-
-    }
-
-
 
 
 
