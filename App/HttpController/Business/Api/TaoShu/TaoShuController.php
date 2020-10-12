@@ -63,7 +63,7 @@ class TaoShuController extends TaoShuBase
             if ($res['code'] === 200 && !empty($res['result'])) {
                 //如果本次取到了，就循环找
                 foreach ($res['result'] as $one) {
-                    if ($one['ALTITEM'] == '法定代表人') {
+                    if ($one['ALTITEM'] === '法定代表人') {
                         array_push($tmp, $one);
                     }
                 }
