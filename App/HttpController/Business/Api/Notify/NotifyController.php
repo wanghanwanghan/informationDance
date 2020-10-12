@@ -7,6 +7,7 @@ use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Pay\wx\wxPayService;
 use EasySwoole\Pay\Pay;
 use EasySwoole\Pay\WeChat\WeChat;
+use EasySwoole\RedisPool\Redis;
 
 class NotifyController extends BusinessBase
 {
@@ -29,7 +30,9 @@ class NotifyController extends BusinessBase
 
         $data = $pay->weChat((new wxPayService())->getConf())->verify($content);
 
-        var_export($data);
+        $redis=Redis::defer('redis');
+        $redis->select(13);
+        $redis->set('wxNotify',jsonEncode($data));
 
         $this->response()->write(WeChat::success());
 

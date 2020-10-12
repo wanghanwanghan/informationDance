@@ -109,7 +109,7 @@ class CreateTableService
         return 'ok';
     }
 
-    //用户钱包表
+    //商品列表
     function information_dance_purchase_list()
     {
         $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
@@ -131,7 +131,32 @@ class CreateTableService
         return 'ok';
     }
 
+    //商品购买记录表
+    function information_dance_purchase_info()
+    {
+        $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
+            $table->setTableComment('商品购买记录表')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
+            $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
+            $table->colInt('uid', 11)->setIsUnsigned()->setColumnComment('用户主键');
+            $table->colBigInt('orderId', 20)->setIsUnsigned();
+            $table->colVarChar('orderStatus', 20)->setDefaultValue('待支付')->setColumnComment('异常，待支付，已支付，已关闭');
+            $table->colInt('purchaseType', 11)->setIsUnsigned()->setColumnComment('purchase_list表中的主键');
+            $table->colDecimal('payMoney', 10, 2)->setIsUnsigned()->setColumnComment('花了多少钱');
+            $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->indexNormal('orderId','orderId');
+            $table->indexNormal('updated_at','updated_at');
+            $table->indexNormal('uid_purchaseType',['uid','purchaseType']);
+        });
 
+        $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
+
+        $obj->rawQuery($sql);
+
+        Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->recycleObj($obj);
+
+        return 'ok';
+    }
 
 
 }

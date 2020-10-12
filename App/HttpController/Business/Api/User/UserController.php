@@ -2,10 +2,12 @@
 
 namespace App\HttpController\Business\Api\User;
 
+use App\HttpController\Models\Api\PurchaseInfo;
 use App\HttpController\Models\Api\PurchaseList;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\Pay\wx\wxPayService;
 use App\HttpController\Service\User\UserService;
 use Carbon\Carbon;
 use EasySwoole\RedisPool\Redis;
@@ -58,7 +60,6 @@ class UserController extends UserBase
 
         try {
             $res = User::create()->where('phone', $phone)->get();
-
         } catch (\Throwable $e) {
             return $this->writeErr($e, 'orm');
         }
@@ -68,7 +69,6 @@ class UserController extends UserBase
 
         try {
             $token = UserService::getInstance()->createAccessToken($phone, $password);
-
             $insert = [
                 'username' => $username,
                 'password' => $password,
@@ -78,11 +78,8 @@ class UserController extends UserBase
                 'token' => $token,
                 'company' => $company
             ];
-
             User::create()->data($insert, false)->save();
-
             Wallet::create()->data(['phone' => $phone], false)->save();
-
         } catch (\Throwable $e) {
             return $this->writeErr($e, 'orm');
         }
@@ -107,7 +104,6 @@ class UserController extends UserBase
 
         try {
             $userInfo = User::create()->where('phone', $phone)->get();
-
         } catch (\Throwable $e) {
             return $this->writeErr($e, 'orm');
         }
@@ -118,9 +114,7 @@ class UserController extends UserBase
 
         try {
             $user = User::create()->get($userInfo->id);
-
             $user->update(['token' => $newToken]);
-
         } catch (\Throwable $e) {
             return $this->writeErr($e, 'orm');
         }
@@ -134,7 +128,6 @@ class UserController extends UserBase
     {
         try {
             $list = PurchaseList::create()->all();
-
         } catch (\Throwable $e) {
             return $this->writeErr($e, 'orm');
         }
@@ -147,18 +140,38 @@ class UserController extends UserBase
     function purchaseDo()
     {
         $jsCode = $this->request()->getRequestParam('jsCode');
-        $phone = $this->request()->getRequestParam('phone');
+        $phone = $this->request()->getRequestParam('phone') ?? 18618457910;
         $type = $this->request()->getRequestParam('type') ?? 1;
 
-        $orderId = Carbon::now()->format('YmdHis');
-
         try {
-            $list = PurchaseList::create()->where('id',$type)->get()->toArray();
+            $userInfo = User::create()->where('phone', $phone)->get();
+            $list = PurchaseList::create()->where('id', $type)->get();
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
 
-        return $this->writeJson(200,null,$list,'');
+        //后三位备用
+        $orderId = Carbon::now()->format('YmdHis') . control::randNum(2) . str_pad(0, 3, 0, STR_PAD_LEFT);
+
+        //创建订单
+        $insert = [
+            'uid' => $userInfo->id,
+            'orderId' => $orderId,
+            'orderStatus' => '待支付',
+            'purchaseType' => $type,
+            'payMoney' => $list->money,
+        ];
+
+        try {
+            PurchaseInfo::create()->data($insert, false)->save();
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        //创建小程序支付对象
+        $payObj = (new wxPayService())->miniAppPay($jsCode, $orderId, $list->money, Carbon::now()->format('Y-m-d H:i:s') . '测试');
+
+        return $this->writeJson(200, null, ['orderId' => $orderId, 'payObj' => $payObj], '生成订单成功');
     }
 
 

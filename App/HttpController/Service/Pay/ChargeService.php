@@ -13,6 +13,7 @@ class ChargeService extends ServiceBase
 {
     use Singleton;
 
+    //最高255
     private $moduleInfo = [
         0 => ['name' => '财务资产', 'desc' => '详情', 'basePrice' => 35],
         1 => ['name' => '开庭公告', 'desc' => '详情', 'basePrice' => 1],
