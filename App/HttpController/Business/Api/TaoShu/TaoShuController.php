@@ -47,19 +47,34 @@ class TaoShuController extends TaoShuBase
     {
         $entName = $this->request()->getRequestParam('entName') ?? '';
         $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
-        $pageSize = $this->request()->getRequestParam('pageSize') ?? 4;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 100;
 
-        $postData = [
-            'entName' => $entName,
-            'pageNo' => $pageNo,
-            'pageSize' => $pageSize,
-        ];
+        $tmp = [];
 
-        $res = (new TaoShuService())->post($postData, 'getRegisterChangeInfo');
+        for ($i = 10; $i--;) {
+            $postData = [
+                'entName' => $entName,
+                'pageNo' => $pageNo,
+                'pageSize' => $pageSize,
+            ];
 
-        return $this->writeJson(200,null,$res,'123');
+            $res = (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getRegisterChangeInfo');
 
-        return $this->checkResponse($res);
+            if ($res['code'] === 200 && !empty($res['result'])) {
+                //如果本次取到了，就循环找
+                foreach ($res['result'] as $one) {
+                    if ($one['ALTITEM'] == '法定代表人') {
+                        array_push($tmp, $one);
+                    }
+                }
+            } else {
+                break;
+            }
+
+            $pageNo++;
+        }
+
+        return $this->writeJson(200, null, $tmp, '查询成功');
     }
 
     //企业名称检索
