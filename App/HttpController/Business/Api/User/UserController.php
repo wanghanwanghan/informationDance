@@ -7,7 +7,7 @@ use App\HttpController\Models\Api\PurchaseList;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\CreateConf;
-use App\HttpController\Service\Order\OneSaidService;
+use App\HttpController\Service\OneSaid\OneSaidService;
 use App\HttpController\Service\Pay\wx\wxPayService;
 use App\HttpController\Service\User\UserService;
 use Carbon\Carbon;

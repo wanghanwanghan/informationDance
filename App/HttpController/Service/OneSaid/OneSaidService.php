@@ -1,6 +1,6 @@
 <?php
 
-namespace App\HttpController\Service\Order;
+namespace App\HttpController\Service\OneSaid;
 
 use App\HttpController\Models\Api\OneSaid;
 use App\HttpController\Service\ServiceBase;
