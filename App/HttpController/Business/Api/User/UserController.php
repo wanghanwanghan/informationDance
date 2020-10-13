@@ -139,12 +139,11 @@ class UserController extends UserBase
 
     function purchaseDo()
     {
-        $jsCode = $this->request()->getRequestParam('jsCode') ?? '091h0D000iZMsK1O8n100hkihQ0h0D0K';
-        $phone = $this->request()->getRequestParam('phone') ?? 18618457910;
+        $jsCode = $this->request()->getRequestParam('jsCode') ?? '';
+        $phone = $this->request()->getRequestParam('phone') ?? '';
         $type = $this->request()->getRequestParam('type') ?? 1;
 
         try {
-            $userInfo = User::create()->where('phone', $phone)->get();
             $list = PurchaseList::create()->where('id', $type)->get();
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
@@ -155,7 +154,7 @@ class UserController extends UserBase
 
         //创建订单
         $insert = [
-            'uid' => $userInfo->id,
+            'phone' => $phone,
             'orderId' => $orderId,
             'orderStatus' => '待支付',
             'purchaseType' => $type,
