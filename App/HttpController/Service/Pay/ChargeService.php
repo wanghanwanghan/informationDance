@@ -42,6 +42,11 @@ class ChargeService extends ServiceBase
         return trim($request->getRequestParam('phone'));
     }
 
+    private function getPay(Request $request)
+    {
+        return $request->getRequestParam('pay') ?? false;
+    }
+
     private function getModuleInfo(int $index = 500): array
     {
         if ($index == 500) return $this->moduleInfo;
@@ -97,6 +102,11 @@ class ChargeService extends ServiceBase
                 return ['code' => 200];
             };
         }
+
+        //等于false说明用户还没点确定支付，等于true说明用户点了确认支付
+        $pay = $this->getPay($request);
+
+        if (!$pay) return ['code' => 210, 'msg' => "此信息需付费 {$moduleInfo['basePrice']} 元"];
 
         try {
             //取得用户钱包余额
