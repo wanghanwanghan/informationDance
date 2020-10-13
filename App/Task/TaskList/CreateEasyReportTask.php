@@ -2518,6 +2518,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QianQiService())->setCheckRespFlag(true)->getThreeYearsData($postData);
 
+            CommonService::getInstance()->log4PHP($res);
+
             if ($res['code'] === 200 && !empty($res['result'])) {
                 $res = (new QianQiService())->toPercent($res['result']);
             } else {
@@ -2549,8 +2551,6 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $tmp = [];
             $tmp['pic'] = CommonService::getInstance()->createBarPic($data, $labels, $extension);
             $tmp['data'] = $data;
-
-            CommonService::getInstance()->log4PHP($data);
 
             return $tmp;
         });
