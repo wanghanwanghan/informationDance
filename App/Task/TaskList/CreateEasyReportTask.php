@@ -1698,7 +1698,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->setValue("ktgg_total", $data['ktgg']['total']);
 
         //oneSaid
-        $ktgg_oneSaid='王瀚说';
+        $ktgg_oneSaid='';
         if($ktgg_oneSaid != ''){
             $docObj->setValue('ktgg_oneSaid',$ktgg_oneSaid);
         }else{
@@ -2549,6 +2549,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $tmp = [];
             $tmp['pic'] = CommonService::getInstance()->createBarPic($data, $labels, $extension);
             $tmp['data'] = $data;
+
+            var_dump($data);
 
             return $tmp;
         });
