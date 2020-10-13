@@ -1753,7 +1753,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->setValue("cpws_total", $data['cpws']['total']);
 
         //oneSaid
-        $cpws_oneSaid='王瀚说';
+        $cpws_oneSaid='';
         if($cpws_oneSaid != ''){
             $docObj->cloneBlock('cpws_oneSaid_block',1);
             $docObj->setValue('cpws_oneSaid',$ktgg_oneSaid);
