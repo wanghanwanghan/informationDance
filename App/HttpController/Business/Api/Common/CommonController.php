@@ -3,6 +3,8 @@
 namespace App\HttpController\Business\Api\Common;
 
 use App\HttpController\Service\Common\CommonService;
+use EasySwoole\RedisPool\Redis;
+use wanghanwanghan\someUtils\control;
 
 class CommonController extends CommonBase
 {
@@ -31,8 +33,16 @@ class CommonController extends CommonBase
     function imageVerifyCode()
     {
         //随机生成code后，存到redis，等着验证，还没做存到redis
-        $code = $this->request()->getRequestParam('code') ?? '';
+        $code = $this->request()->getRequestParam('code') ?? control::getUuid(4);
         $type = $this->request()->getRequestParam('type') ?? 'image';
+
+        $redis = Redis::defer('redis');
+
+        $redis->select(14);
+
+        $redis->sAdd('imageVerifyCode', strtolower($code));
+
+        $redis->expire('imageVerifyCode', 30);
 
         return CommonService::getInstance()->createVerifyCode($this->response(), $code, $type);
     }
