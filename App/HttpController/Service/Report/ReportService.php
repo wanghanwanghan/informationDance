@@ -12,10 +12,10 @@ class ReportService extends ServiceBase
     use Singleton;
 
     //生成简版报告
-    function createEasy($entName,$reportNum)
+    function createEasy($entName, $reportNum, $phone)
     {
         //扔到task里
-        TaskService::getInstance()->create(new CreateEasyReportTask($entName, $reportNum));
+        TaskService::getInstance()->create(new CreateEasyReportTask($entName, $reportNum, $phone));
 
         return $reportNum;
     }

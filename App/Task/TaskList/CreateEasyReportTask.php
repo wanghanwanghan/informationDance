@@ -19,14 +19,16 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 {
     private $entName;
     private $reportNum;
+    private $phone;
 
     private $fz = [];
     private $fx = [];
 
-    function __construct($entName, $reportNum)
+    function __construct($entName, $reportNum,$phone)
     {
         $this->entName = $entName;
         $this->reportNum = $reportNum;
+        $this->phone = $phone;
 
         return parent::__construct();
     }
