@@ -144,9 +144,9 @@ class CreateTableService
             $table->colDecimal('payMoney', 10, 2)->setIsUnsigned()->setColumnComment('花了多少钱');
             $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
             $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
-            $table->indexNormal('orderId','orderId');
-            $table->indexNormal('updated_at','updated_at');
-            $table->indexNormal('uid_purchaseType',['uid','purchaseType']);
+            $table->indexNormal('orderId', 'orderId');
+            $table->indexNormal('updated_at', 'updated_at');
+            $table->indexNormal('uid_purchaseType', ['uid', 'purchaseType']);
         });
 
         $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
@@ -166,10 +166,11 @@ class CreateTableService
             $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
             $table->colVarChar('phone', 11)->setDefaultValue('');
             $table->tinyint('moduleId', 3)->setIsUnsigned();
-            $table->colVarChar('oneSaid',255)->setDefaultValue('');
+            $table->colVarChar('oneSaid', 255)->setDefaultValue('');
             $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
             $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
-            $table->indexNormal('phone_index','phone');
+            $table->indexNormal('phone_index', 'phone');
+            $table->indexNormal('phone_moduleId_index', ['phone', 'moduleId']);
         });
 
         $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
