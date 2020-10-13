@@ -1700,10 +1700,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //oneSaid
         $ktgg_oneSaid='王瀚说';
         if($ktgg_oneSaid != ''){
-            $docObj->cloneBlock('ktgg_oneSaid_block',1);
+            $docObj->cloneBlock('ktgg_oneSaid_block',3);
             $docObj->setValue('ktgg_oneSaid',$ktgg_oneSaid);
         }else{
-            $docObj->deleteBlock('ktgg_oneSaid_block');
+            $docObj->cloneBlock('ktgg_oneSaid_block',0);
         }
 
         //裁判文书
