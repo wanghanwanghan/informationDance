@@ -167,10 +167,11 @@ class CreateTableService
             $table->colVarChar('phone', 11)->setDefaultValue('');
             $table->tinyint('moduleId', 3)->setIsUnsigned();
             $table->colVarChar('oneSaid', 255)->setDefaultValue('');
+            $table->colVarChar('entName', 50)->setDefaultValue('');
             $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
             $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
             $table->indexNormal('phone_index', 'phone');
-            $table->indexNormal('phone_moduleId_index', ['phone', 'moduleId']);
+            $table->indexNormal('phone_entName_moduleId_index', ['phone', 'entName', 'moduleId']);
         });
 
         $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();

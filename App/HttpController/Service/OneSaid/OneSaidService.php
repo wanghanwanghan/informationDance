@@ -29,11 +29,11 @@ class OneSaidService extends ServiceBase
     ];
 
     //发表一句话
-    function createOneSaid($phone, $oneSaid, $moduleId)
+    function createOneSaid($phone, $oneSaid, $moduleId,$entName)
     {
         try
         {
-            $info = OneSaid::create()->where('phone',$phone)->where('moduleId',$moduleId)->get();
+            $info = OneSaid::create()->where('phone',$phone)->where('entName',$entName)->where('moduleId',$moduleId)->get();
 
             if (empty($info))
             {
@@ -41,6 +41,7 @@ class OneSaidService extends ServiceBase
                     'phone'=>$phone,
                     'moduleId'=>$moduleId,
                     'oneSaid'=>$oneSaid,
+                    'entName'=>$entName,
                 ])->save();
 
             }else

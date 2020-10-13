@@ -7,6 +7,7 @@ use App\HttpController\Models\Api\PurchaseList;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\OneSaid\OneSaidService;
 use App\HttpController\Service\Pay\wx\wxPayService;
 use App\HttpController\Service\User\UserService;
@@ -181,9 +182,16 @@ class UserController extends UserBase
     //发布一句话
     function createOneSaid()
     {
+        CreateTableService::getInstance()->information_dance_one_said();
+
         $phone = $this->request()->getRequestParam('phone');
         $oneSaid = $this->request()->getRequestParam('oneSaid') ?? '';
         $moduleId = $this->request()->getRequestParam('moduleId') ?? '';
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+
+        $entName = trim($entName);
+
+        if (empty($entName)) return $this->writeJson(201, null, null, 'entName错误');
 
         if (!is_numeric($moduleId)) return $this->writeJson(201, null, null, 'moduleId错误');
 
@@ -191,7 +199,7 @@ class UserController extends UserBase
 
         if (empty($oneSaid) || mb_strlen($oneSaid) > 255) return $this->writeJson(201, null, null, 'oneSaid错误');
 
-        return $this->writeJson(200, null, OneSaidService::getInstance()->createOneSaid($phone, $oneSaid, $moduleId), '发布成功');
+        return $this->writeJson(200, null, OneSaidService::getInstance()->createOneSaid($phone, $oneSaid, $moduleId, $entName), '发布成功');
     }
 
 
