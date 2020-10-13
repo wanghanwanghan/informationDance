@@ -182,8 +182,6 @@ class UserController extends UserBase
     //发布一句话
     function createOneSaid()
     {
-        CreateTableService::getInstance()->information_dance_one_said();
-
         $phone = $this->request()->getRequestParam('phone');
         $oneSaid = $this->request()->getRequestParam('oneSaid') ?? '';
         $moduleId = $this->request()->getRequestParam('moduleId') ?? '';
