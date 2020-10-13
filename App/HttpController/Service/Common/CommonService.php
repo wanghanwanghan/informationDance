@@ -27,6 +27,14 @@ class CommonService extends ServiceBase
 {
     use Singleton;
 
+    //写log
+    function log4PHP($content)
+    {
+        !is_array($content) ?: $content = jsonEncode($content);
+
+        return control::writeLog($content,LOG_PATH);
+    }
+
     //存图片
     function storeImage(UploadFile $uploadFile, $type): string
     {
@@ -194,4 +202,8 @@ class CommonService extends ServiceBase
 
         return $res;
     }
+
+
+
+
 }
