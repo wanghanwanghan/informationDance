@@ -1758,7 +1758,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->cloneBlock('cpws_oneSaid_block',1);
             $docObj->setValue('cpws_oneSaid',$ktgg_oneSaid);
         }else{
-            $docObj->deleteBlock('cpws_oneSaid_block');
+            $docObj->cloneBlock('cpws_oneSaid_block',0);
         }
 
         //执行公告
