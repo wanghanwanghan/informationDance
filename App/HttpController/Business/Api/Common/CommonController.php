@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Api\Common;
 
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateTable\CreateTableService;
 use EasySwoole\RedisPool\Redis;
 use wanghanwanghan\someUtils\control;
 
@@ -33,18 +34,17 @@ class CommonController extends CommonBase
     function imageVerifyCode()
     {
         //随机生成code后，存到redis，等着验证，还没做存到redis
-        $code = $this->request()->getRequestParam('code') ?? control::getUuid(4);
+        $iCode = $this->request()->getRequestParam('iCode') ?? control::getUuid(4);
         $type = $this->request()->getRequestParam('type') ?? 'image';
 
         $redis = Redis::defer('redis');
-
         $redis->select(14);
+        $redis->sAdd('imageVerifyCode', strtolower($iCode));
+        $redis->expire('imageVerifyCode', 60);
 
-        $redis->sAdd('imageVerifyCode', strtolower($code));
+        CreateTableService::getInstance()->information_dance_one_said();
 
-        $redis->expire('imageVerifyCode', 30);
-
-        return CommonService::getInstance()->createVerifyCode($this->response(), $code, $type);
+        return CommonService::getInstance()->createVerifyCode($this->response(), $iCode, $type);
     }
 
     //创建手机短信验证码
@@ -52,8 +52,16 @@ class CommonController extends CommonBase
     {
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $type = $this->request()->getRequestParam('type') ?? '';
+        $iCode = $this->request()->getRequestParam('iCode') ?? '';
 
         if (empty($phone) || empty($type)) return $this->writeJson(201, null, null, '手机号或类别不能是空');
+
+        //验证图片验证码
+        $redis = Redis::defer('redis');
+        $redis->select(14);
+        $check = $redis->sIsMember('imageVerifyCode', strtolower($iCode));
+
+        // if ($check)
 
         return $this->writeJson(200, null, null, CommonService::getInstance()->sendCode((string)$phone, $type));
     }
