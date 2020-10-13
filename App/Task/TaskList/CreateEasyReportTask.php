@@ -2550,7 +2550,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $tmp['pic'] = CommonService::getInstance()->createBarPic($data, $labels, $extension);
             $tmp['data'] = $data;
 
-            var_dump($data);
+            CommonService::getInstance()->log4PHP($data);
 
             return $tmp;
         });
