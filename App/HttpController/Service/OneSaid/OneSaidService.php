@@ -40,6 +40,7 @@ class OneSaidService extends ServiceBase
                 $info = OneSaid::create()->data([
                     'phone'=>$phone,
                     'moduleId'=>$moduleId,
+                    'moduleName'=>$this->moduleInfo[$moduleId]['name'],
                     'oneSaid'=>$oneSaid,
                     'entName'=>$entName,
                 ])->save();

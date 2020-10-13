@@ -1697,6 +1697,15 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("ktgg_total", $data['ktgg']['total']);
 
+        //oneSaid
+        $ktgg_oneSaid='王瀚说';
+        if($ktgg_oneSaid != ''){
+            $docObj->cloneBlock('WIN_BLOCK',1);
+            $docObj->setValue('ktgg_oneSaid',$ktgg_oneSaid);
+        }else{
+            $docObj->cloneBlock('WIN_BLOCK',0);
+        }
+
         //裁判文书
         $rows = count($data['cpws']['list']);
         $docObj->cloneRow('cpws_no', $rows);
@@ -1742,6 +1751,15 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("cpws_content#" . ($i + 1), $content);
         }
         $docObj->setValue("cpws_total", $data['cpws']['total']);
+
+        //oneSaid
+        $cpws_oneSaid='';
+        if($cpws_oneSaid != ''){
+            $docObj->cloneBlock('WIN_BLOCK',1);
+            $docObj->setValue('cpws_oneSaid',$cpws_oneSaid);
+        }else{
+            $docObj->cloneBlock('WIN_BLOCK',0);
+        }
 
         //执行公告
         $rows = count($data['zxgg']['list']);

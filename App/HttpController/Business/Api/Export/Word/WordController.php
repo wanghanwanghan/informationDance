@@ -36,7 +36,7 @@ class WordController extends ExportBase
         } else {
             $code = 200;
             $paging = null;
-            $res = ReportService::getInstance()->createEasy($entName, $reportNum,$phone);
+            $res = ReportService::getInstance()->createEasy($entName, $reportNum, $phone);
             $msg = '简版报告报告生成中';
         }
 
