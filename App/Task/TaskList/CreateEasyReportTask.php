@@ -5,6 +5,7 @@ namespace App\Task\TaskList;
 use App\Csp\Service\CspService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\FaHai\FaHaiService;
+use App\HttpController\Service\OneSaid\OneSaidService;
 use App\HttpController\Service\QianQi\QianQiService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
 use App\HttpController\Service\TaoShu\TaoShuService;
@@ -1109,6 +1110,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             'height' => 500
         ]);
 
+        $caiwu_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,0,$this->entName,true);
+        $docObj->setValue("caiwu_oneSaid", $caiwu_oneSaid);
+
         //业务概况
         $rows = count($data['SearchCompanyCompanyProducts']);
         $docObj->cloneRow('ywgk_no', $rows);
@@ -1235,6 +1239,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("nsxydj_total", $data['satparty_xin']['total']);
 
+        $nsxydj_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,11,$this->entName,true);
+        $docObj->setValue("nsxydj_oneSaid", $nsxydj_oneSaid);
+
         //税务许可信息
         $rows = count($data['satparty_xuke']['list']);
         $docObj->cloneRow('swxk_no', $rows);
@@ -1253,6 +1260,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("swxk_authority#" . ($i + 1), $data['satparty_xuke']['list'][$i]['detail']['authority']);
         }
         $docObj->setValue("swxk_total", $data['satparty_xuke']['total']);
+
+        $swxk_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,13,$this->entName,true);
+        $docObj->setValue("swxk_oneSaid", $swxk_oneSaid);
 
         //税务登记信息
         $rows = count($data['satparty_reg']['list']);
@@ -1273,6 +1283,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("swdj_total", $data['satparty_reg']['total']);
 
+        $swdj_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,12,$this->entName,true);
+        $docObj->setValue("swdj_oneSaid", $swdj_oneSaid);
+
         //税务非正常户
         $rows = count($data['satparty_fzc']['list']);
         $docObj->cloneRow('fzc_no', $rows);
@@ -1292,6 +1305,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("fzc_total", $data['satparty_fzc']['total']);
 
+        $fzc_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,10,$this->entName,true);
+        $docObj->setValue("fzc_oneSaid", $fzc_oneSaid);
+
         //欠税信息
         $rows = count($data['satparty_qs']['list']);
         $docObj->cloneRow('qs_no', $rows);
@@ -1310,6 +1326,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("qs_authority#" . ($i + 1), $data['satparty_qs']['list'][$i]['detail']['authority']);
         }
         $docObj->setValue("qs_total", $data['satparty_qs']['total']);
+
+        $qs_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,8,$this->entName,true);
+        $docObj->setValue("qs_oneSaid", $qs_oneSaid);
 
         //涉税处罚公示
         $rows = count($data['satparty_chufa']['list']);
@@ -1331,6 +1350,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("sswf_authority#" . ($i + 1), $data['satparty_chufa']['list'][$i]['detail']['authority']);
         }
         $docObj->setValue("sswf_total", $data['satparty_chufa']['total']);
+
+        $sswf_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,9,$this->entName,true);
+        $docObj->setValue("sswf_oneSaid", $sswf_oneSaid);
 
         //行政许可
         $rows = count($data['GetAdministrativeLicenseList']['list']);
@@ -1652,6 +1674,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("fygg_total", $data['fygg']['total']);
 
+        //oneSaid
+        $fygg_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,3,$this->entName,true);
+        $docObj->setValue("fygg_oneSaid", $fygg_oneSaid);
+
         //开庭公告
         $rows = count($data['ktgg']['list']);
         $docObj->cloneRow('ktgg_no', $rows);
@@ -1697,13 +1723,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("ktgg_total", $data['ktgg']['total']);
 
-        //oneSaid
-        $ktgg_oneSaid='';
-        if($ktgg_oneSaid != ''){
-            $docObj->setValue('ktgg_oneSaid',$ktgg_oneSaid);
-        }else{
-            $docObj->setValue('ktgg_oneSaid','');
-        }
+        $ktgg_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,1,$this->entName,true);
+        $docObj->setValue("ktgg_oneSaid", $ktgg_oneSaid);
 
         //裁判文书
         $rows = count($data['cpws']['list']);
@@ -1752,12 +1773,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->setValue("cpws_total", $data['cpws']['total']);
 
         //oneSaid
-        $cpws_oneSaid='';
-        if($cpws_oneSaid != ''){
-            $docObj->setValue('cpws_oneSaid',$ktgg_oneSaid);
-        }else{
-            $docObj->setValue('cpws_oneSaid','');
-        }
+        $cpws_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,2,$this->entName,true);
+        $docObj->setValue("cpws_oneSaid", $cpws_oneSaid);
 
         //执行公告
         $rows = count($data['zxgg']['list']);
@@ -1785,6 +1802,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("zxgg_content#" . ($i + 1), $content);
         }
         $docObj->setValue("zxgg_total", $data['zxgg']['total']);
+
+        //oneSaid
+        $zxgg_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,4,$this->entName,true);
+        $docObj->setValue("zxgg_oneSaid", $zxgg_oneSaid);
 
         //失信公告
         $rows = count($data['shixin']['list']);
@@ -1814,6 +1835,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("sx_total", $data['shixin']['total']);
 
+        //oneSaid
+        $sx_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,5,$this->entName,true);
+        $docObj->setValue("sx_oneSaid", $sx_oneSaid);
+
         //被执行人
         $rows = count($data['SearchZhiXing']['list']);
         $docObj->cloneRow('bzxr_no', $rows);
@@ -1832,6 +1857,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("bzxr_Status#" . ($i + 1), $data['SearchZhiXing']['list'][$i]['Status']);
         }
         $docObj->setValue("bzxr_total", $data['SearchZhiXing']['total']);
+
+        //oneSaid
+        $bzxr_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,5,$this->entName,true);
+        $docObj->setValue("bzxr_oneSaid", $bzxr_oneSaid);
 
         //查封冻结扣押
         $rows = count($data['sifacdk']['list']);
@@ -1859,6 +1888,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("cdk_money#" . ($i + 1), $data['sifacdk']['list'][$i]['detail']['money']);
         }
         $docObj->setValue("cdk_total", $data['sifacdk']['total']);
+
+        //oneSaid
+        $cdk_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,6,$this->entName,true);
+        $docObj->setValue("cdk_oneSaid", $cdk_oneSaid);
 
         //动产抵押
         $rows = count($data['getChattelMortgageInfo']['list']);

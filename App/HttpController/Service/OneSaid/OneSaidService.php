@@ -58,5 +58,29 @@ class OneSaidService extends ServiceBase
         return $info;
     }
 
+    //获取一句话
+    function getOneSaid($phone,$moduleId,$entName,$onlyOneSaid=true)
+    {
+        try
+        {
+            $oneSaidInfo = OneSaid::create()
+                ->where('phone',$phone)
+                ->where('entName',$entName)
+                ->where('moduleId',$moduleId)->get();
+
+        }catch (\Throwable $e)
+        {
+            $oneSaidInfo = [];
+        }
+
+        if ($onlyOneSaid)
+        {
+            return empty($oneSaidInfo) ? '' : $oneSaidInfo->oneSaid;
+        }else
+        {
+            return empty($oneSaidInfo) ? [] : $oneSaidInfo->toArray();
+        }
+    }
+
 
 }
