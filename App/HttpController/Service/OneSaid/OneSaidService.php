@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\Order;
 
+use App\HttpController\Models\Api\OneSaid;
 use App\HttpController\Service\ServiceBase;
 use EasySwoole\Component\Singleton;
 
@@ -28,10 +29,31 @@ class OneSaidService extends ServiceBase
     ];
 
     //发表一句话
-    function insertOneSaid($uidOrPhone, $oneSaid, $moduleId)
+    function createOneSaid($phone, $oneSaid, $moduleId)
     {
+        try
+        {
+            $info = OneSaid::create()->where('phone',$phone)->where('moduleId',$moduleId)->get();
 
+            if (empty($info))
+            {
+                OneSaid::create()->data([
+                    'phone'=>$phone,
+                    'moduleId'=>$moduleId,
+                    'oneSaid'=>$oneSaid,
+                ])->save();
 
+            }else
+            {
+                $info->update(['oneSaid'=>$oneSaid]);
+            }
+
+        }catch (\Throwable $e)
+        {
+            $info = [];
+        }
+
+        return $info;
     }
 
 

@@ -42,8 +42,6 @@ class CommonController extends CommonBase
         $redis->sAdd('imageVerifyCode', strtolower($iCode));
         $redis->expire('imageVerifyCode', 60);
 
-        CreateTableService::getInstance()->information_dance_one_said();
-
         return CommonService::getInstance()->createVerifyCode($this->response(), $iCode, $type);
     }
 

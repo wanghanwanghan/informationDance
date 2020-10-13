@@ -7,6 +7,7 @@ use App\HttpController\Models\Api\PurchaseList;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\Order\OneSaidService;
 use App\HttpController\Service\Pay\wx\wxPayService;
 use App\HttpController\Service\User\UserService;
 use Carbon\Carbon;
@@ -32,6 +33,7 @@ class UserController extends UserBase
         parent::afterAction($actionName);
     }
 
+    //注册
     function reg()
     {
         $company = $this->request()->getRequestParam('company') ?? '';
@@ -87,6 +89,7 @@ class UserController extends UserBase
         return $this->writeJson(200, null, $insert, '注册成功');
     }
 
+    //登录
     function login()
     {
         $phone = $this->request()->getRequestParam('phone') ?? '';
@@ -124,6 +127,7 @@ class UserController extends UserBase
         return $this->writeJson(200, null, $userInfo, '登录成功');
     }
 
+    //获取商品列表
     function purchaseList()
     {
         try {
@@ -137,6 +141,7 @@ class UserController extends UserBase
         return $this->writeJson(200, null, $list, '成功');
     }
 
+    //充值
     function purchaseDo()
     {
         $jsCode = $this->request()->getRequestParam('jsCode') ?? '';
@@ -171,6 +176,22 @@ class UserController extends UserBase
         $payObj = (new wxPayService())->miniAppPay($jsCode, $orderId, $list->money, $list->name . ' - ' . $list->desc);
 
         return $this->writeJson(200, null, ['orderId' => $orderId, 'payObj' => $payObj], '生成订单成功');
+    }
+
+    //发布一句话
+    function createOneSaid()
+    {
+        $phone = $this->request()->getRequestParam('phone');
+        $oneSaid = $this->request()->getRequestParam('oneSaid') ?? '';
+        $moduleId = $this->request()->getRequestParam('moduleId') ?? '';
+
+        if (!is_numeric($moduleId)) return $this->writeJson(201, null, null, 'moduleId错误');
+
+        $oneSaid = trim($oneSaid);
+
+        if (empty($oneSaid) || mb_strlen($oneSaid) > 255) return $this->writeJson(201, null, null, 'oneSaid错误');
+
+        return $this->writeJson(200, null, OneSaidService::getInstance()->createOneSaid($phone, $oneSaid, $moduleId), '发布成功');
     }
 
 
