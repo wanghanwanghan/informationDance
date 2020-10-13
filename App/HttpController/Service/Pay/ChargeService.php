@@ -196,6 +196,11 @@ class ChargeService extends ServiceBase
             };
         }
 
+        //等于false说明用户还没点确定支付，等于true说明用户点了确认支付
+        $pay = $this->getPay($request);
+
+        if (!$pay) return ['code' => 210, 'msg' => "此信息需付费 {$moduleInfo['basePrice']} 元"];
+
         try {
             //取得用户钱包余额
             $info = Wallet::create()->where('phone', $phone)->get();
@@ -285,6 +290,11 @@ class ChargeService extends ServiceBase
             };
         }
 
+        //等于false说明用户还没点确定支付，等于true说明用户点了确认支付
+        $pay = $this->getPay($request);
+
+        if (!$pay) return ['code' => 210, 'msg' => "此信息需付费 {$moduleInfo['basePrice']} 元"];
+
         try {
             //取得用户钱包余额
             $info = Wallet::create()->where('phone', $phone)->get();
@@ -325,7 +335,7 @@ class ChargeService extends ServiceBase
     }
 
     //简版报告
-    function EasyReport(Request $request, $moduleNum,$reportNum)
+    function EasyReport(Request $request, $moduleNum, $reportNum)
     {
         $phone = $this->getPhone($request);
 
@@ -347,6 +357,11 @@ class ChargeService extends ServiceBase
         }
 
         if ($userMoney < $moduleInfo['basePrice']) return ['code' => 201, 'msg' => '用户余额不足'];
+
+        //等于false说明用户还没点确定支付，等于true说明用户点了确认支付
+        $pay = $this->getPay($request);
+
+        if (!$pay) return ['code' => 210, 'msg' => "此信息需付费 {$moduleInfo['basePrice']} 元"];
 
         try {
             //扣费
@@ -374,9 +389,6 @@ class ChargeService extends ServiceBase
 
         return ['code' => 200, 'msg' => '扣费成功'];
     }
-
-
-
 
 
 }
