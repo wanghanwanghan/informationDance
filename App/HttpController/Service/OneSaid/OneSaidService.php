@@ -37,7 +37,7 @@ class OneSaidService extends ServiceBase
 
             if (empty($info))
             {
-                OneSaid::create()->data([
+                $info = OneSaid::create()->data([
                     'phone'=>$phone,
                     'moduleId'=>$moduleId,
                     'oneSaid'=>$oneSaid,
