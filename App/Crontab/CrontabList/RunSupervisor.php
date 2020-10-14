@@ -250,48 +250,110 @@ class RunSupervisor extends AbstractCronTask
 
                 $one['detail']=$detail;
 
+                strlen($one['sortTime']) > 9 ? $time=substr($one['sortTime'],0,10) : $time=time();
 
-//                strlen($one['sortTime']) > 9 ? $time=substr($one['sortTime'],0,10) : $time=time();
-//
-//                $pTime=date('Y-m-d',$time);
-//
-//                $content="<p>案号: {$one['caseNo']}</p>";
-//
-//                if (empty($one['partys']))
-//                {
-//                    $content.="<p>案由: -</p>";
-//                    $content.="<p>诉讼身份: -</p>";
-//
-//                }else
-//                {
-//                    foreach ($one['partys'] as $two)
-//                    {
-//                        if ($two['pname']==$entName)
-//                        {
-//                            $content.="<p>案由: {$two['caseCauseT']}</p>";
-//                            $content.="<p>诉讼身份: {$two['partyTitleT']}</p>";
-//                        }
-//                    }
-//                }
-//
-//                $content.="<p>发布日期: {$pTime}</p>";
-//
-//                SupervisorEntNameInfo::create([
-//                    'entName'=>$entName,
-//                    'type'=>1,
-//                    'typeDetail'=>4,
-//                    'timeRange'=>$time,
-//                    'level'=>3,
-//                    'desc'=>'裁判文书',
-//                    'content'=>$content,
-//                    'detailUrl'=>'/detail/cpwsdetail.html?no='.$one['cpwsId'],
-//                    'keyNo'=>$one['cpwsId'],
-//                ]);
-//
-//                //$this->addEntName($entName);
+                $pTime=date('Y-m-d',$time);
+
+                $content="<p>案号: {$one['detail']['caseNo']}</p>";
+
+                if (empty($one['detail']['partys']))
+                {
+                    $content.="<p>案由: -</p>";
+                    $content.="<p>诉讼身份: -</p>";
+
+                }else
+                {
+                    foreach ($one['detail']['partys'] as $two)
+                    {
+                        if ($two['pname']==$entName)
+                        {
+                            $content.="<p>案由: {$two['caseCauseT']}</p>";
+                            $content.="<p>诉讼身份: {$two['partyTitleT']}</p>";
+                        }
+                    }
+                }
+
+                $content.="<p>发布日期: {$pTime}</p>";
+
+                SupervisorEntNameInfo::create()->data([
+                    'entName'=>$entName,
+                    'type'=>1,
+                    'typeDetail'=>4,
+                    'timeRange'=>$time,
+                    'level'=>3,
+                    'desc'=>'裁判文书',
+                    'content'=>$content,
+                    'detailUrl'=>'',
+                    'keyNo'=>$one['entryId'],
+                ])->save();
+
+                $this->addEntName($entName,'sf');
             }
+        }
 
-            CommonService::getInstance()->log4PHP($res['result']);
+        //开庭公告=================================================================
+        $doc_type='ktgg';
+        $postData=[
+            'keyword'=>$entName,
+            'doc_type'=>$doc_type,
+        ];
+
+        $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList.'sifa',$postData);
+
+        if ($res['code']==200 && !empty($res['result']))
+        {
+            foreach ($res['result'] as &$one)
+            {
+                $check=SupervisorEntNameInfo::create()->where('keyNo',$one['entryId'])->get();
+
+                if ($check) continue;
+
+                $detail = (new FaHaiService())->setCheckRespFlag(true)
+                    ->getDetail($this->fahaiDetail.$doc_type,[
+                        'id'=>$one['entryId'],
+                        'doc_type'=>$doc_type
+                    ]);
+
+                ($detail['code'] == 200 && !empty($detail['result'])) ? $detail = current($detail['result']) : $detail=null;
+
+                $one['detail']=$detail;
+
+                strlen($one['sortTime']) > 9 ? $time=substr($one['sortTime'],0,10) : $time=time();
+
+                $pTime=date('Y-m-d',$time);
+
+                $content="<p>案号: {$one['detail']['caseNo']}</p>";
+
+                if (empty($one['detail']['partys']))
+                {
+                    $content.="<p>案由: -</p>";
+
+                }else
+                {
+                    foreach ($one['detail']['partys'] as $two)
+                    {
+                        $tmp=$two['caseCauseT'];
+                    }
+
+                    $content.="<p>案由: {$tmp}</p>";
+                }
+
+                $content.="<p>开庭时间: {$pTime}</p>";
+
+                SupervisorEntNameInfo::create()->data([
+                    'entName'=>$entName,
+                    'type'=>1,
+                    'typeDetail'=>5,
+                    'timeRange'=>$time,
+                    'level'=>3,
+                    'desc'=>'开庭公告',
+                    'content'=>$content,
+                    'detailUrl'=>'',
+                    'keyNo'=>$one['entryId'],
+                ])->save();
+
+                $this->addEntName($entName,'sf');
+            }
         }
 
 
