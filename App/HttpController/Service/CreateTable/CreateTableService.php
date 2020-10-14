@@ -241,6 +241,7 @@ class CreateTableService
             $table->setTableComment('用户阈值表')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
             $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
             $table->colVarChar('phone', 11)->setDefaultValue('');
+            $table->colVarChar('entName', 50)->setDefaultValue('');
             $table->colInt('sf', 11)->setIsUnsigned()->setDefaultValue(0);
             $table->colInt('gs', 11)->setIsUnsigned()->setDefaultValue(0);
             $table->colInt('gl', 11)->setIsUnsigned()->setDefaultValue(0);
