@@ -34,6 +34,8 @@ class RunSupervisor extends AbstractCronTask
         //taskId是进程周期内第几个task任务
         //可以用task，也可以用process
 
+        CommonService::getInstance()->log4PHP('这里运行了1');
+
         if (!$this->crontabBase->withoutOverlapping(self::getTaskName())) return true;
 
         //取出本次要监控的企业列表
@@ -43,16 +45,16 @@ class RunSupervisor extends AbstractCronTask
 
         $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
-        CommonService::getInstance()->log4PHP('这里运行了1');
+        CommonService::getInstance()->log4PHP('这里运行了2');
 
         return true;
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
-        CommonService::getInstance()->log4PHP('这里运行了2');
-        $this->crontabBase->removeOverlappingKey(self::getTaskName());
         CommonService::getInstance()->log4PHP('这里运行了3');
+        $this->crontabBase->removeOverlappingKey(self::getTaskName());
+        CommonService::getInstance()->log4PHP('这里运行了4');
     }
 
 
