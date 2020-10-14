@@ -231,7 +231,7 @@ class RunSupervisor extends AbstractCronTask
 
         $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList.'sifa',$postData);
 
-        if ($res['code']=='s' && !empty($res['result']))
+        if ($res['code']==200 && !empty($res['result']))
         {
             foreach ($res['result'] as &$one)
             {
