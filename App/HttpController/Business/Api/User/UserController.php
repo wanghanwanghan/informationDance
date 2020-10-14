@@ -5,6 +5,7 @@ namespace App\HttpController\Business\Api\User;
 use App\HttpController\Models\Api\PurchaseInfo;
 use App\HttpController\Models\Api\PurchaseList;
 use App\HttpController\Models\Api\SupervisorPhoneEntName;
+use App\HttpController\Models\Api\SupervisorPhoneLimit;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\CreateConf;
@@ -244,6 +245,44 @@ class UserController extends UserBase
         }
 
         return $this->writeJson(200, null, $data, '添加成功');
+    }
+
+    //修改风险阈值
+    function supervisorLimit()
+    {
+        $phone = $this->request()->getRequestParam('phone');
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $sf = $this->request()->getRequestParam('sf') ?? 1;
+        $gs = $this->request()->getRequestParam('gs') ?? 1;
+        $gl = $this->request()->getRequestParam('gl') ?? 1;
+        $jy = $this->request()->getRequestParam('jy') ?? 1;
+        $entName = trim($entName);
+
+        if (empty($phone) || empty($entName)) return $this->writeJson(201, null, null, '手机号和企业名不能是空');
+
+        try {
+            $info = SupervisorPhoneLimit::create()->where('phone', $phone)->where('entName', $entName)->get();
+
+            $data = [
+                'phone' => $phone,
+                'entName' => $entName,
+                'sf' => $sf,
+                'gs' => $gs,
+                'gl' => $gl,
+                'jy' => $jy,
+            ];
+
+            if (empty($info)) {
+                SupervisorPhoneLimit::create()->data($data)->save();
+            } else {
+                $info->update($data);
+            }
+
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        return $this->writeJson(200, null, $data, '成功');
     }
 
 

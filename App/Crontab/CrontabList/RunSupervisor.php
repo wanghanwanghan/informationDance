@@ -1490,6 +1490,8 @@ class RunSupervisor extends AbstractCronTask
     {
         $entNameArr=array_keys($this->entNameArr);
 
+        if (empty($entNameArr)) return true;
+
         $sendPhoneArr=[];
 
         //先找出所有关注这些公司，并且没过期的手机号
