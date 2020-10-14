@@ -7,6 +7,7 @@ use App\HttpController\Models\Api\SupervisorEntNameInfo;
 use App\HttpController\Models\Api\SupervisorPhoneEntName;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\FaHai\FaHaiService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
 use App\HttpController\Service\TaoShu\TaoShuService;
@@ -67,7 +68,7 @@ class RunSupervisor extends AbstractCronTask
 
         $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
-        CommonService::getInstance()->log4PHP($this->entNameArr);
+        $this->sendSMS();
 
         return true;
     }
@@ -1481,6 +1482,12 @@ class RunSupervisor extends AbstractCronTask
                 }
             }
         }
+    }
+
+    //发送短信通知
+    private function sendSMS()
+    {
+        CreateTableService::getInstance()->information_dance_supervisor_uid_limit();
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
