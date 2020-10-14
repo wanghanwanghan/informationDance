@@ -43,9 +43,12 @@ class RunSupervisor extends AbstractCronTask
             ->where('status', 1)->where('expireTime', time(), '>')
             ->get()->toArray();
 
+        CommonService::getInstance()->log4PHP($target);
+
+
         foreach ($target as $one)
         {
-            $this->sf($one['entName']);
+            //$this->sf($one['entName']);
             //$this->gs($one['entName']);
             //$this->gl($one['entName']);
             //$this->jy($one['entName']);
