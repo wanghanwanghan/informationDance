@@ -32,7 +32,7 @@ class CommonService extends ServiceBase
     {
         !is_array($content) ?: $content = jsonEncode($content);
 
-        return control::writeLog($content,LOG_PATH);
+        return control::writeLog($content, LOG_PATH);
     }
 
     //存图片
@@ -164,6 +164,26 @@ class CommonService extends ServiceBase
         return empty(current($res)) ? '验证码发送失败' : '验证码发送成功';
     }
 
+    //发送短信
+    function sendSMS($phoneArr, $templateNum, $code = '')
+    {
+        $ak = CreateConf::getInstance()->getConf('env.qiNiuAk');
+        $sk = CreateConf::getInstance()->getConf('env.qiNiuSk');
+        $tempId = CreateConf::getInstance()->getConf("env.template$templateNum");
+        $auth = new Auth($ak, $sk);
+        $client = new Sms($auth);
+
+        $res = TaskService::getInstance()->create(function () use ($client, $tempId, $phoneArr, $code) {
+            $tmp = [];
+            foreach ($phoneArr as $one) {
+                $tmp[]=(string)$one;
+            }
+            return $client->sendMessage($tempId, $tmp, ['code' => $code]);
+        }, 'sync');
+
+        return empty(current($res)) ? '验证码发送失败' : '验证码发送成功';
+    }
+
     //百度内容审核 - 纯文本
     function checkContentByAI($content, $type = 'word')
     {
@@ -202,8 +222,6 @@ class CommonService extends ServiceBase
 
         return $res;
     }
-
-
 
 
 }

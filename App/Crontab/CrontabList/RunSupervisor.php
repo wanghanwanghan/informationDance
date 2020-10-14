@@ -5,6 +5,7 @@ namespace App\Crontab\CrontabList;
 use App\Crontab\CrontabBase;
 use App\HttpController\Models\Api\SupervisorEntNameInfo;
 use App\HttpController\Models\Api\SupervisorPhoneEntName;
+use App\HttpController\Models\Api\SupervisorPhoneLimit;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateTable\CreateTableService;
@@ -1487,7 +1488,58 @@ class RunSupervisor extends AbstractCronTask
     //发送短信通知
     private function sendSMS()
     {
-        CreateTableService::getInstance()->information_dance_supervisor_uid_limit();
+        $entNameArr=array_keys($this->entNameArr);
+
+        $sendPhoneArr=[];
+
+        //先找出所有关注这些公司，并且没过期的手机号
+        $arr = SupervisorPhoneEntName::create()
+            ->where('entName',$entNameArr,'IN')
+            ->where('status',1)
+            ->where('expireTime',time(),'>')->all();
+
+        if (empty($arr)) return true;
+
+        $arr = obj2Arr($arr);
+
+        foreach ($arr as $one)
+        {
+            //查询每一条记录的阈值超过没超过上限，超过了就加入到发送短信名单
+            $info = SupervisorPhoneLimit::create()->where('phone',$one['phone'])
+                ->where('entName',$one['entName'])->get();
+
+            if (empty($info)) continue;
+
+            if (isset($this->entNameArr[$one['entName']]['sf']))
+            {
+                if ($this->entNameArr[$one['entName']]['sf'] > $info->sf) $sendPhoneArr[]=$info->phone;
+            }
+
+            if (isset($this->entNameArr[$one['entName']]['gs']))
+            {
+                if ($this->entNameArr[$one['entName']]['gs'] > $info->gs) $sendPhoneArr[]=$info->phone;
+            }
+
+            if (isset($this->entNameArr[$one['entName']]['gl']))
+            {
+                if ($this->entNameArr[$one['entName']]['gl'] > $info->gl) $sendPhoneArr[]=$info->phone;
+            }
+
+            if (isset($this->entNameArr[$one['entName']]['jy']))
+            {
+                if ($this->entNameArr[$one['entName']]['jy'] > $info->jy) $sendPhoneArr[]=$info->phone;
+            }
+        }
+
+        $sendPhoneArr = array_unique($sendPhoneArr);
+
+        if (empty($sendPhoneArr)) return true;
+
+        $templateNum='02';
+
+        CommonService::getInstance()->sendSMS($sendPhoneArr,$templateNum);
+
+        return true;
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
