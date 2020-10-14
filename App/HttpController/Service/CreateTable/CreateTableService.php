@@ -183,5 +183,56 @@ class CreateTableService
         return 'ok';
     }
 
+    //风险监控 用户-企业-过期时间 关联表
+    function information_dance_supervisor_uid_entName()
+    {
+        $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
+            $table->setTableComment('风险监控用户企业关联表')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
+            $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
+            $table->colVarChar('phone', 11)->setDefaultValue('');
+            $table->colVarChar('entName', 50)->setDefaultValue('');
+            $table->colTinyInt('status', 3)->setIsUnsigned()->setColumnComment('1正在监控，2未监控，3已过期');
+            $table->colInt('expireTime', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
+        });
+
+        $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
+
+        $obj->rawQuery($sql);
+
+        Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->recycleObj($obj);
+
+        return 'ok';
+    }
+
+    //风险监控 企业风险表
+    function information_dance_supervisor_entName_info()
+    {
+        $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
+            $table->setTableComment('企业风险表')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
+            $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
+            $table->colVarChar('entName', 50)->setDefaultValue('');
+            $table->colTinyInt('type', 3)->setIsUnsigned()->setColumnComment('风险类型大分类');
+            $table->colTinyInt('typeDetail', 3)->setIsUnsigned()->setColumnComment('风险类型小分类');
+            $table->colInt('timeRange', 11)->setIsUnsigned()->setColumnComment('时间');
+            $table->colTinyInt('level', 3)->setIsUnsigned()->setColumnComment('风险等级');
+            $table->colVarChar('desc', 200)->setDefaultValue('风险说明');
+            $table->colText('content')->setDefaultValue('风险内容');
+            $table->colVarChar('detailUrl', 200)->setDefaultValue('详情链接');
+            $table->colVarChar('keyNo', 200)->setDefaultValue('详情唯一主键');
+            $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
+        });
+
+        $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
+
+        $obj->rawQuery($sql);
+
+        Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->recycleObj($obj);
+
+        return 'ok';
+    }
+
 
 }

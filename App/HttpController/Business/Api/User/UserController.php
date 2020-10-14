@@ -9,6 +9,7 @@ use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\OneSaid\OneSaidService;
+use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\Pay\wx\wxPayService;
 use App\HttpController\Service\User\UserService;
 use Carbon\Carbon;
@@ -199,6 +200,25 @@ class UserController extends UserBase
 
         return $this->writeJson(200, null, OneSaidService::getInstance()->createOneSaid($phone, $oneSaid, $moduleId, $entName), '发布成功');
     }
+
+    //创建风险监控
+    function createSupervisor()
+    {
+        $phone = $this->request()->getRequestParam('phone');
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+
+        $charge = ChargeService::getInstance()->Supervisor($this->request(),50);
+
+        CreateTableService::getInstance()->information_dance_supervisor_entName_info();
+        CreateTableService::getInstance()->information_dance_supervisor_uid_entName();
+
+
+
+
+
+    }
+
+
 
 
 }
