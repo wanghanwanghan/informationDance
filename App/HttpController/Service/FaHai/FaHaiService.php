@@ -125,7 +125,9 @@ class FaHaiService extends ServiceBase
             'id' => $body['id']
         ];
 
-        return (new CoHttpClient())->send($url, $data);
+        $resp = (new CoHttpClient())->send($url, $data);
+
+        return $this->checkRespFlag ? $this->checkResp($resp,$body['doc_type'],'detail') : $resp;
     }
 
 }

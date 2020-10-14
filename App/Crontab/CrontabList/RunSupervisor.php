@@ -224,9 +224,10 @@ class RunSupervisor extends AbstractCronTask
         }
 
         //裁判文书=================================================================
+        $doc_type='cpws';
         $postData=[
             'keyword'=>$entName,
-            'doc_type'=>'cpws',
+            'doc_type'=>$doc_type,
         ];
 
         $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList.'sifa',$postData);
@@ -239,8 +240,13 @@ class RunSupervisor extends AbstractCronTask
 
                 if ($check) continue;
 
-                $one['detail'] = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.'cpws',['id'=>$one['entryId']]);
+                $detail = (new FaHaiService())->setCheckRespFlag(true)
+                    ->getDetail($this->fahaiDetail.$doc_type,[
+                        'id'=>$one['entryId'],
+                        'doc_type'=>$doc_type
+                    ]);
 
+                $one['detail']=$detail;
 
 
 
