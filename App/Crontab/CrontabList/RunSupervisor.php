@@ -17,6 +17,7 @@ class RunSupervisor extends AbstractCronTask
     private $crontabBase;
     private $qccUrl;
     private $fahaiList;
+    private $fahaiDetail;
     //发短信用的
     private $entNameArr = [];
 
@@ -26,6 +27,7 @@ class RunSupervisor extends AbstractCronTask
         $this->crontabBase = new CrontabBase();
         $this->qccUrl = CreateConf::getInstance()->getConf('qichacha.baseUrl');
         $this->fahaiList = CreateConf::getInstance()->getConf('fahai.listBaseUrl');
+        $this->fahaiDetail = CreateConf::getInstance()->getConf('fahai.detailBaseUrl');
     }
 
     static function getRule(): string
@@ -229,16 +231,21 @@ class RunSupervisor extends AbstractCronTask
 
         $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList.'sifa',$postData);
 
-        CommonService::getInstance()->log4PHP($res);
+        if ($res['code']=='s' && !empty($res['result']))
+        {
+            foreach ($res['result'] as &$one)
+            {
+                $check=SupervisorEntNameInfo::create()->where('keyNo',$one['entryId'])->get();
 
-//        if ($res['code']=='s' && !empty($res['result']))
-//        {
-//            foreach ($res['result'] as $one)
-//            {
-//                $check=SupervisorEntNameInfo::create()->where('keyNo',$one['cpwsId'])->get();
-//
-//                if ($check) continue;
-//
+                if ($check) continue;
+
+                $one['detail'] = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail,['id'=>$one['entryId']]);
+
+
+
+
+
+
 //                strlen($one['sortTime']) > 9 ? $time=substr($one['sortTime'],0,10) : $time=time();
 //
 //                $pTime=date('Y-m-d',$time);
@@ -277,8 +284,10 @@ class RunSupervisor extends AbstractCronTask
 //                ]);
 //
 //                //$this->addEntName($entName);
-//            }
-//        }
+            }
+
+            CommonService::getInstance()->log4PHP($res['result']);
+        }
 
 
 
