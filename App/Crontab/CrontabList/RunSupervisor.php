@@ -41,9 +41,11 @@ class RunSupervisor extends AbstractCronTask
         //取出本次要监控的企业列表，如果列表是空会跳到onException
         $target = SupervisorPhoneEntName::create()
             ->where('status', 1)->where('expireTime', time(), '>')
-            ->get()->toArray();
+            ->all();
 
-        CommonService::getInstance()->log4PHP($target);
+        $target = obj2Arr($target);
+
+        if (empty($target)) throw new \Exception('target is null');
 
 
         foreach ($target as $one)
@@ -112,6 +114,7 @@ class RunSupervisor extends AbstractCronTask
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
+        CommonService::getInstance()->log4PHP($throwable->getMessage());
         $this->crontabBase->removeOverlappingKey(self::getTaskName());
     }
 
