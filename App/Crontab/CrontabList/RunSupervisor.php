@@ -15,7 +15,7 @@ class RunSupervisor extends AbstractCronTask
     function __construct()
     {
         $this->crontabBase = new CrontabBase();
-        CommonService::getInstance()->log4PHP(Carbon::now()->format('Y-m-d H:i:s'));
+        CommonService::getInstance()->log4PHP(__CLASS__);
     }
 
     static function getRule(): string
