@@ -43,7 +43,7 @@ class RunSupervisor extends AbstractCronTask
             ->where('status', 1)->where('expireTime', time(), '>')
             ->get()->toArray();
 
-        CommonService::getInstance()->log4PHP($this->crontabBase->removeOverlappingKey(self::getTaskName()));
+        $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
         CommonService::getInstance()->log4PHP('这里运行了2');
 
@@ -53,7 +53,7 @@ class RunSupervisor extends AbstractCronTask
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
         CommonService::getInstance()->log4PHP('这里运行了3');
-        CommonService::getInstance()->log4PHP($this->crontabBase->removeOverlappingKey(self::getTaskName()));
+        $this->crontabBase->removeOverlappingKey(self::getTaskName());
         CommonService::getInstance()->log4PHP('这里运行了4');
     }
 

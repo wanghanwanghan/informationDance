@@ -16,7 +16,7 @@ class CrontabBase
 
         $redis->select(14);
 
-        return $redis->setNx($name, 'isRun') ? false : true;
+        return $redis->setNx($name, 'isRun') ? true : false;
     }
 
     function removeOverlappingKey($className)
