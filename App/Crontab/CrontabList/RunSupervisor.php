@@ -47,10 +47,9 @@ class RunSupervisor extends AbstractCronTask
 
         if (empty($target)) throw new \Exception('target is null');
 
-
         foreach ($target as $one)
         {
-            //$this->sf($one['entName']);
+            $this->sf($one['entName']);
             //$this->gs($one['entName']);
             //$this->gl($one['entName']);
             //$this->jy($one['entName']);
@@ -114,7 +113,6 @@ class RunSupervisor extends AbstractCronTask
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
-        CommonService::getInstance()->log4PHP($throwable->getMessage());
         $this->crontabBase->removeOverlappingKey(self::getTaskName());
     }
 
