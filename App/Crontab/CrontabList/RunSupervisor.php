@@ -561,6 +561,7 @@ class RunSupervisor extends AbstractCronTask
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
+        CommonService::getInstance()->log4PHP($throwable->getMessage());
         $this->crontabBase->removeOverlappingKey(self::getTaskName());
     }
 
