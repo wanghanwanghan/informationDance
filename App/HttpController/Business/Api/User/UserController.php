@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Api\User;
 
 use App\HttpController\Models\Api\PurchaseInfo;
 use App\HttpController\Models\Api\PurchaseList;
+use App\HttpController\Models\Api\SupervisorPhoneEntName;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\CreateConf;
@@ -207,19 +208,41 @@ class UserController extends UserBase
         $phone = $this->request()->getRequestParam('phone');
         $entName = $this->request()->getRequestParam('entName') ?? '';
 
-        $charge = ChargeService::getInstance()->Supervisor($this->request(),50);
+        $charge = ChargeService::getInstance()->Supervisor($this->request(), 50);
 
-        $this->writeJson(200,$charge);
+        if ($charge['code'] != 200) return $this->writeJson($charge['code'], null, null, $charge['msg']);
 
+        try
+        {
+            //先看添加没添加过
+            $data = SupervisorPhoneEntName::create()->where('phone',$phone)->where('entName',$entName)->get();
 
+            if (empty($data))
+            {
+                //没添加过
+                $data = [
+                    'phone'=>$phone,
+                    'entName'=>$entName,
+                    'status'=>1,
+                    'expireTime'=>time() + CreateConf::getInstance()->getConf('supervisor.chargeLimit') * 86400,
+                ];
 
+                SupervisorPhoneEntName::create()->data($data,false)->save();
 
+            }else
+            {
+                //添加过了
+                $data->update(['status'=>1,'expireTime'=>time() + CreateConf::getInstance()->getConf('supervisor.chargeLimit') * 86400]);
+                $data=$data->toArray();
+            }
 
+        }catch (\Throwable $e)
+        {
+            return $this->writeErr($e,__FUNCTION__);
+        }
 
-
+        return $this->writeJson(200,null,$data,'添加成功');
     }
-
-
 
 
 }
