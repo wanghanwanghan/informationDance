@@ -9,8 +9,9 @@ class CrontabBase
     function withoutOverlapping($className): bool
     {
         //返回true是可以执行，返回false是不能执行
+        $name = explode("\\", $className);
 
-        $name = end(explode("\\", $className));
+        $name = end($name);
 
         $redis = Redis::defer('redis');
 
@@ -21,7 +22,9 @@ class CrontabBase
 
     function removeOverlappingKey($className)
     {
-        $name = end(explode("\\", $className));
+        $name = explode("\\", $className);
+
+        $name = end($name);
 
         $redis = Redis::defer('redis');
 
