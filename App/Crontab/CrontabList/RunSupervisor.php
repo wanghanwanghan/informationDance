@@ -8,16 +8,21 @@ use App\HttpController\Models\Api\SupervisorPhoneEntName;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaHai\FaHaiService;
+use App\HttpController\Service\QiChaCha\QiChaChaService;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 
 class RunSupervisor extends AbstractCronTask
 {
     private $crontabBase;
+    private $qccUrl;
+    private $fahaiList;
 
     //每次执行任务都会执行构造函数
     function __construct()
     {
         $this->crontabBase = new CrontabBase();
+        $this->qccUrl = CreateConf::getInstance()->getConf('qichacha.baseUrl');
+        $this->fahaiList = CreateConf::getInstance()->getConf('fahai.listBaseUrl');
     }
 
     static function getRule(): string
@@ -47,8 +52,7 @@ class RunSupervisor extends AbstractCronTask
 
         if (empty($target)) throw new \Exception('target is null');
 
-        foreach ($target as $one)
-        {
+        foreach ($target as $one) {
             $this->sf($one['entName']);
             //$this->gs($one['entName']);
             //$this->gl($one['entName']);
@@ -65,14 +69,11 @@ class RunSupervisor extends AbstractCronTask
     {
         //失信信息=================================================================
         $postData = [
-            'doc_type' => 'shixin',
-            'keyword' => $entName,
-            'pageno' => 1,
-            'range' => 10,
+            'searchKey' => $entName,
+            'isExactlySame' => true,
         ];
 
-        $res = (new FaHaiService())->setCheckRespFlag(true)
-            ->getList(CreateConf::getInstance()->getConf('fahai.listBaseUrl') . 'sifa', $postData);
+        $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'CourtV4/SearchShiXin', $postData);
 
         CommonService::getInstance()->log4PHP($res);
 
@@ -105,9 +106,6 @@ class RunSupervisor extends AbstractCronTask
 //                $this->addEntName($entName,'sf');
 //            }
 //        }
-
-
-
 
 
     }
