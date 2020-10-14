@@ -169,7 +169,7 @@ class CommonService extends ServiceBase
     {
         $ak = CreateConf::getInstance()->getConf('env.qiNiuAk');
         $sk = CreateConf::getInstance()->getConf('env.qiNiuSk');
-        $tempId = CreateConf::getInstance()->getConf("env.template$templateNum");
+        $tempId = CreateConf::getInstance()->getConf("env.template{$templateNum}");
         $auth = new Auth($ak, $sk);
         $client = new Sms($auth);
 
