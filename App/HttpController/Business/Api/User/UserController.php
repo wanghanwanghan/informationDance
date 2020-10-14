@@ -209,8 +209,9 @@ class UserController extends UserBase
 
         $charge = ChargeService::getInstance()->Supervisor($this->request(),50);
 
-        CreateTableService::getInstance()->information_dance_supervisor_entName_info();
-        CreateTableService::getInstance()->information_dance_supervisor_uid_entName();
+        $this->writeJson(200,$charge);
+
+
 
 
 
