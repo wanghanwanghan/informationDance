@@ -9,8 +9,10 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaHai\FaHaiService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
+use App\HttpController\Service\TaoShu\TaoShuService;
 use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
+use wanghanwanghan\someUtils\control;
 
 class RunSupervisor extends AbstractCronTask
 {
@@ -18,6 +20,7 @@ class RunSupervisor extends AbstractCronTask
     private $qccUrl;
     private $fahaiList;
     private $fahaiDetail;
+    private $tsUrl;
     //发短信用的
     private $entNameArr = [];
 
@@ -28,6 +31,7 @@ class RunSupervisor extends AbstractCronTask
         $this->qccUrl = CreateConf::getInstance()->getConf('qichacha.baseUrl');
         $this->fahaiList = CreateConf::getInstance()->getConf('fahai.listBaseUrl');
         $this->fahaiDetail = CreateConf::getInstance()->getConf('fahai.detailBaseUrl');
+        $this->tsUrl = CreateConf::getInstance()->getConf('taoshu.baseUrl');
     }
 
     static function getRule(): string
@@ -59,7 +63,7 @@ class RunSupervisor extends AbstractCronTask
 
         foreach ($target as $one) {
             $this->sf($one['entName']);
-            //$this->gs($one['entName']);
+            $this->gs($one['entName']);
             //$this->gl($one['entName']);
             //$this->jy($one['entName']);
         }
@@ -426,7 +430,7 @@ class RunSupervisor extends AbstractCronTask
         //查封冻结扣押=================================================================
         $doc_type='sifacdk';
         $postData=[
-            'keyword'=>'乐视网信息技术（北京）股份有限公司',
+            'keyword'=>$entName,
             'doc_type'=>$doc_type,
         ];
 
@@ -474,14 +478,65 @@ class RunSupervisor extends AbstractCronTask
 
                 $this->addEntName($entName,'sf');
             }
+        }
+    }
+
+    //工商相关
+    private function gs($entName)
+    {
+        //工商变更=================================================================
+        $service = 'getRegisterChangeInfo';
+        $postData=[
+            'entName' => $entName,
+            'pageNo' => 1,
+            'pageSize' => 10,
+        ];
+
+        $res = (new TaoShuService())->setCheckRespFlag(true)->post($postData,$service);
+
+        if ($res['code']==200 && !empty($res['result']))
+        {
+            foreach ($res['result'] as $one)
+            {
+                $id=md5(json_encode($one));
+
+                $check=SupervisorEntNameInfo::create()->where('keyNo',$id)->get();
+
+                if ($check) continue;
+
+                strlen($one['ALTDATE']) > 9 ? $time=$one['ALTDATE'] : $time='';
+
+                //什么变更了
+                $desc=trim($one['ALTITEM']);
+
+                if (control::hasStringFront($desc,'董事','监事')) continue;
+                if (control::hasString($desc,'股东')) continue;
+
+                if (empty($desc)) $desc='-';
+
+                mb_strlen($one['ALTBE']) > 100 ? $one['ALTBE']=mb_substr($one['ALTBE'],0,100).'...' : null;
+                mb_strlen($one['ALTAF']) > 100 ? $one['ALTAF']=mb_substr($one['ALTAF'],0,100).'...' : null;
+
+                $content="<p>变更前: {$one['ALTBE']}</p>";
+                $content.="<p>变更后: {$one['ALTAF']}</p>";
+
+                SupervisorEntNameInfo::create()->data([
+                    'entName'=>$entName,
+                    'type'=>2,
+                    'typeDetail'=>1,
+                    'timeRange'=>Carbon::parse($time)->timestamp,
+                    'level'=>3,
+                    'desc'=>$desc,
+                    'content'=>$content,
+                    'detailUrl'=>'',
+                    'keyNo'=>$id,
+                ])->save();
+
+                $this->addEntName($entName,'gs');
+            }
 
             CommonService::getInstance()->log4PHP($res['result']);
         }
-
-
-
-
-
 
 
 
