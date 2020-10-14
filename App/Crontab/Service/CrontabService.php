@@ -3,6 +3,7 @@
 namespace App\Crontab\Service;
 
 use App\Crontab\CrontabList\DeleteTimeoutOrder;
+use App\Crontab\CrontabList\RunSupervisor;
 use App\Crontab\CrontabList\TestCrontab;
 use EasySwoole\Component\Singleton;
 use EasySwoole\EasySwoole\Crontab\Crontab;
@@ -16,6 +17,7 @@ class CrontabService
     {
         $this->test();
         $this->deleteTimeoutOrder();
+        $this->runSupervisor();
 
         return true;
     }
@@ -30,5 +32,11 @@ class CrontabService
     private function deleteTimeoutOrder()
     {
         return Crontab::getInstance()->addTask(DeleteTimeoutOrder::class);
+    }
+
+    //风险监控
+    private function runSupervisor()
+    {
+        return Crontab::getInstance()->addTask(RunSupervisor::class);
     }
 }

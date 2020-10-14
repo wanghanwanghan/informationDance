@@ -212,36 +212,38 @@ class UserController extends UserBase
 
         if ($charge['code'] != 200) return $this->writeJson($charge['code'], null, null, $charge['msg']);
 
-        try
-        {
-            //先看添加没添加过
-            $data = SupervisorPhoneEntName::create()->where('phone',$phone)->where('entName',$entName)->get();
+        try {
 
-            if (empty($data))
-            {
+            //先看添加没添加过
+            $data = SupervisorPhoneEntName::create()->where('phone', $phone)->where('entName', $entName)->get();
+
+            if (empty($data)) {
+
                 //没添加过
                 $data = [
-                    'phone'=>$phone,
-                    'entName'=>$entName,
-                    'status'=>1,
-                    'expireTime'=>time() + CreateConf::getInstance()->getConf('supervisor.chargeLimit') * 86400,
+                    'phone' => $phone,
+                    'entName' => $entName,
+                    'status' => 1,
+                    'expireTime' => time() + CreateConf::getInstance()->getConf('supervisor.chargeLimit') * 86400,
                 ];
 
-                SupervisorPhoneEntName::create()->data($data,false)->save();
+                SupervisorPhoneEntName::create()->data($data, false)->save();
 
-            }else
-            {
+            } else {
+
                 //添加过了
-                $data->update(['status'=>1,'expireTime'=>time() + CreateConf::getInstance()->getConf('supervisor.chargeLimit') * 86400]);
-                $data=$data->toArray();
+                $data->update([
+                    'status' => 1,
+                    'expireTime' => time() + CreateConf::getInstance()->getConf('supervisor.chargeLimit') * 86400
+                ]);
+                $data = $data->toArray();
             }
 
-        }catch (\Throwable $e)
-        {
-            return $this->writeErr($e,__FUNCTION__);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
         }
 
-        return $this->writeJson(200,null,$data,'添加成功');
+        return $this->writeJson(200, null, $data, '添加成功');
     }
 
 
