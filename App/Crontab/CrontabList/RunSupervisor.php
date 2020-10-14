@@ -71,7 +71,8 @@ class RunSupervisor extends AbstractCronTask
             'range' => 10,
         ];
 
-        $res = (new FaHaiService())->getList(CreateConf::getInstance()->getConf('fahai.listBaseUrl') . 'sifa', $postData);
+        $res = (new FaHaiService())->setCheckRespFlag(true)
+            ->getList(CreateConf::getInstance()->getConf('fahai.listBaseUrl') . 'sifa', $postData);
 
         CommonService::getInstance()->log4PHP($res);
 
