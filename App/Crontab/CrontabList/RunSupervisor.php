@@ -239,7 +239,7 @@ class RunSupervisor extends AbstractCronTask
 
                 if ($check) continue;
 
-                $one['detail'] = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail,['id'=>$one['entryId']]);
+                $one['detail'] = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail.'cpws',['id'=>$one['entryId']]);
 
 
 
