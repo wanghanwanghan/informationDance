@@ -217,10 +217,10 @@ class CreateTableService
             $table->colTinyInt('typeDetail', 3)->setIsUnsigned()->setColumnComment('风险类型小分类');
             $table->colInt('timeRange', 11)->setIsUnsigned()->setColumnComment('时间');
             $table->colTinyInt('level', 3)->setIsUnsigned()->setColumnComment('风险等级');
-            $table->colVarChar('desc', 200)->setDefaultValue('风险说明');
-            $table->colText('content')->setDefaultValue('风险内容');
-            $table->colVarChar('detailUrl', 200)->setDefaultValue('详情链接');
-            $table->colVarChar('keyNo', 200)->setDefaultValue('详情唯一主键');
+            $table->colVarChar('desc', 200)->setColumnComment('风险说明');
+            $table->colText('content')->setColumnComment('风险内容');
+            $table->colVarChar('detailUrl', 200)->setColumnComment('详情链接');
+            $table->colVarChar('keyNo', 200)->setColumnComment('详情唯一主键');
             $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
             $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
         });
