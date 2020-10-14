@@ -356,6 +356,144 @@ class RunSupervisor extends AbstractCronTask
             }
         }
 
+        //法院公告=================================================================
+        $doc_type='fygg';
+        $postData=[
+            'keyword'=>$entName,
+            'doc_type'=>$doc_type,
+        ];
+
+        $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList.'sifa',$postData);
+
+        if ($res['code']==200 && !empty($res['result']))
+        {
+            foreach ($res['result'] as &$one)
+            {
+                $check=SupervisorEntNameInfo::create()->where('keyNo',$one['entryId'])->get();
+
+                if ($check) continue;
+
+                $detail = (new FaHaiService())->setCheckRespFlag(true)
+                    ->getDetail($this->fahaiDetail.$doc_type,[
+                        'id'=>$one['entryId'],
+                        'doc_type'=>$doc_type
+                    ]);
+
+                ($detail['code'] == 200 && !empty($detail['result'])) ? $detail = current($detail['result']) : $detail=null;
+
+                $one['detail']=$detail;
+
+                strlen($one['sortTime']) > 9 ? $time=substr($one['sortTime'],0,10) : $time=time();
+
+                $pTime=date('Y-m-d',$time);
+
+                $content="<p>案号: {$one['detail']['caseNo']}</p>";
+
+                if (empty($one['detail']['partys']))
+                {
+                    $content.="<p>案由: -</p>";
+
+                }else
+                {
+                    foreach ($one['detail']['partys'] as $two)
+                    {
+                        $tmp=$two['caseCauseT'];
+
+                        $content.="<p>{$two['partyTitleT']}: {$two['pname']}</p>";
+                    }
+
+                    $content.="<p>案由: {$tmp}</p>";
+                }
+
+                $content.="<p>刊登日期: {$pTime}</p>";
+
+                SupervisorEntNameInfo::create()->data([
+                    'entName'=>$entName,
+                    'type'=>1,
+                    'typeDetail'=>6,
+                    'timeRange'=>$time,
+                    'level'=>3,
+                    'desc'=>'法院公告',
+                    'content'=>$content,
+                    'detailUrl'=>'',
+                    'keyNo'=>$one['entryId'],
+                ])->save();
+
+                $this->addEntName($entName,'sf');
+            }
+        }
+
+        //查封冻结扣押=================================================================
+        $doc_type='sifacdk';
+        $postData=[
+            'keyword'=>'乐视网信息技术（北京）股份有限公司',
+            'doc_type'=>$doc_type,
+        ];
+
+        $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList.'sifa',$postData);
+
+        if ($res['code']==200 && !empty($res['result']))
+        {
+            foreach ($res['result'] as &$one)
+            {
+                $check=SupervisorEntNameInfo::create()->where('keyNo',$one['entryId'])->get();
+
+                if ($check) continue;
+
+                $detail = (new FaHaiService())->setCheckRespFlag(true)
+                    ->getDetail($this->fahaiDetail.$doc_type,[
+                        'id'=>$one['entryId'],
+                        'doc_type'=>$doc_type
+                    ]);
+
+                ($detail['code'] == 200 && !empty($detail['result'])) ? $detail = current($detail['result']) : $detail=null;
+
+                $one['detail']=$detail;
+
+                strlen($one['sortTime']) > 9 ? $time=substr($one['sortTime'],0,10) : $time=time();
+
+                $pTime=date('Y-m-d',$time);
+
+                $content="<p>案号: {$one['detail']['caseNo']}</p>";
+                $content.="<p>类别: {$one['detail']['action']}</p>";
+                $content.="<p>标的类型: {$one['detail']['objectType']}</p>";
+                $content.="<p>标的名称: {$one['detail']['objectName']}</p>";
+                $content.="<p>审结时间: {$pTime}</p>";
+
+                SupervisorEntNameInfo::create()->data([
+                    'entName'=>$entName,
+                    'type'=>1,
+                    'typeDetail'=>7,
+                    'timeRange'=>$time,
+                    'level'=>2,
+                    'desc'=>'查封冻结扣押',
+                    'content'=>$content,
+                    'detailUrl'=>'',
+                    'keyNo'=>$one['entryId'],
+                ])->save();
+
+                $this->addEntName($entName,'sf');
+            }
+
+            CommonService::getInstance()->log4PHP($res['result']);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
