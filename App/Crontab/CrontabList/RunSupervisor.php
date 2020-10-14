@@ -3,8 +3,9 @@
 namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
+use App\HttpController\Models\Api\SupervisorEntNameInfo;
+use App\HttpController\Models\Api\SupervisorPhoneEntName;
 use App\HttpController\Service\Common\CommonService;
-use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 
 class RunSupervisor extends AbstractCronTask
@@ -15,7 +16,6 @@ class RunSupervisor extends AbstractCronTask
     function __construct()
     {
         $this->crontabBase = new CrontabBase();
-        CommonService::getInstance()->log4PHP(__CLASS__);
     }
 
     static function getRule(): string
@@ -34,12 +34,22 @@ class RunSupervisor extends AbstractCronTask
         //taskId是进程周期内第几个task任务
         //可以用task，也可以用process
 
+        if (!$this->crontabBase->withoutOverlapping(self::getTaskName())) return true;
+
+        //取出本次要监控的企业列表
+        $target = SupervisorPhoneEntName::create()
+            ->where('status', 1)->where('expireTime', time(), '>')
+            ->get()->toArray();
+
+        $this->crontabBase->removeOverlappingKey(self::getTaskName());
+
         return true;
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
-        echo $throwable->getMessage();
+        CommonService::getInstance()->log4PHP('target报错');
+        $this->crontabBase->removeOverlappingKey(self::getTaskName());
     }
 
 
