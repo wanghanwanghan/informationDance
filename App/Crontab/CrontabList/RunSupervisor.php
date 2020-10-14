@@ -34,14 +34,12 @@ class RunSupervisor extends AbstractCronTask
         //taskId是进程周期内第几个task任务
         //可以用task，也可以用process
 
-        if (!$this->crontabBase->withoutOverlapping(self::getTaskName())) return true;
 
         //取出本次要监控的企业列表
         $target = SupervisorPhoneEntName::create()
             ->where('status', 1)->where('expireTime', time(), '>')
             ->get()->toArray();
 
-        $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
         return true;
     }
@@ -49,7 +47,6 @@ class RunSupervisor extends AbstractCronTask
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
         CommonService::getInstance()->log4PHP('target报错');
-        $this->crontabBase->removeOverlappingKey(self::getTaskName());
     }
 
 
