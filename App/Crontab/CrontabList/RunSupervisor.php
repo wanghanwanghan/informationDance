@@ -67,6 +67,8 @@ class RunSupervisor extends AbstractCronTask
 
         $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
+        CommonService::getInstance()->log4PHP($this->entNameArr);
+
         return true;
     }
 
