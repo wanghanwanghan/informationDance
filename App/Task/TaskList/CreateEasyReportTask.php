@@ -63,7 +63,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         {
             $info = ReportInfo::create()->where('phone',$this->phone)->where('filename',$this->reportNum)->get();
 
-            $info->update(['status',2]);
+            $info->update(['status'=>2]);
 
         }catch (\Throwable $e)
         {
