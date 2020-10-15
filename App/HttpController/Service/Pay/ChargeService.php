@@ -29,6 +29,7 @@ class ChargeService extends ServiceBase
         11 => ['name' => '纳税信用等级', 'desc' => '详情', 'basePrice' => 1],
         12 => ['name' => '税务登记', 'desc' => '详情', 'basePrice' => 1],
         13 => ['name' => '税务许可', 'desc' => '详情', 'basePrice' => 1],
+        14 => ['name' => '实际控制人和控制路径', 'desc' => '', 'basePrice' => 16],
         50 => ['name' => '风险监控', 'desc' => '', 'basePrice' => 50],
         200 => ['name' => '简版报告', 'desc' => '', 'basePrice' => 400],
     ];
@@ -244,11 +245,11 @@ class ChargeService extends ServiceBase
     //企查查计费
     function QiChaCha(Request $request, $moduleNum, $entName): array
     {
-        $id = $request->getRequestParam('id');
+        $id = $request->getRequestParam('id') ?? '';
 
         $phone = $this->getPhone($request);
 
-        if (empty($phone) || empty($entName) || empty($id)) return ['code' => 201, 'msg' => '手机号或公司名或id不能是空'];
+        if (empty($phone) || empty($entName)) return ['code' => 201, 'msg' => '手机号或公司名不能是空'];
 
         //是否免费
         try {

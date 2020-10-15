@@ -110,6 +110,10 @@ class QiChaChaController extends QiChaChaBase
         $entName=$this->request()->getRequestParam('entName');
         $percent=$this->request()->getRequestParam('percent') ?? 0;
         $mode=$this->request()->getRequestParam('mode') ?? 0;
+        $pay=$this->request()->getRequestParam('pay') ?? false;
+
+        $this->entName=$entName;
+        $this->moduleNum=14;
 
         $postData=[
             'companyName'=>$entName,
