@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Api\Export\Word;
 
 use App\HttpController\Business\Api\Export\ExportBase;
+use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\Report\ReportService;
 use wanghanwanghan\someUtils\control;

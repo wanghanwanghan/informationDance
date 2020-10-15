@@ -158,6 +158,30 @@ class CreateTableService
         return 'ok';
     }
 
+    //生成报告记录表
+    function information_dance_report_info()
+    {
+        $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
+            $table->setTableComment('生成报告记录表')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
+            $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
+            $table->colVarChar('phone', 11)->setDefaultValue('');
+            $table->colVarChar('entName', 50)->setDefaultValue('');
+            $table->colVarChar('filename', 50)->setDefaultValue('');
+            $table->tinyint('type', 3)->setIsUnsigned()->setColumnComment('10是极简报告，30是简版报告，50是深度报告');
+            $table->tinyint('status', 3)->setIsUnsigned()->setColumnComment('1是异常，2是完成，3是生成中');
+            $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
+        });
+
+        $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
+
+        $obj->rawQuery($sql);
+
+        Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->recycleObj($obj);
+
+        return 'ok';
+    }
+
     //留言一句话
     function information_dance_one_said()
     {

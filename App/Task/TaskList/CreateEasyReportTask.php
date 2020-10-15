@@ -3,6 +3,7 @@
 namespace App\Task\TaskList;
 
 use App\Csp\Service\CspService;
+use App\HttpController\Models\Api\ReportInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\FaHai\FaHaiService;
 use App\HttpController\Service\OneSaid\OneSaidService;
@@ -58,12 +59,32 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $tmp->saveAs(REPORT_PATH . $this->reportNum . '.docx');
 
+        try
+        {
+            $info = ReportInfo::create()->where('phone',$this->phone)->where('filename',$this->reportNum)->get();
+
+            $info->update(['status',2]);
+
+        }catch (\Throwable $e)
+        {
+
+        }
+
         return true;
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
+        try
+        {
+            $info = ReportInfo::create()->where('phone',$this->phone)->where('filename',$this->reportNum)->get();
 
+            $info->update(['status',1]);
+
+        }catch (\Throwable $e)
+        {
+
+        }
     }
 
     //计算信动分
