@@ -203,6 +203,27 @@ class UserController extends UserBase
         return $this->writeJson(200, null, OneSaidService::getInstance()->createOneSaid($phone, $oneSaid, $moduleId, $entName), '发布成功');
     }
 
+    //修改一句话
+    function editOneSaid()
+    {
+        $phone = $this->request()->getRequestParam('phone');
+        $oneSaid = $this->request()->getRequestParam('oneSaid') ?? '';
+        $moduleId = $this->request()->getRequestParam('moduleId') ?? '';
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+
+        $entName = trim($entName);
+
+        if (empty($entName)) return $this->writeJson(201, null, null, 'entName错误');
+
+        if (!is_numeric($moduleId)) return $this->writeJson(201, null, null, 'moduleId错误');
+
+        $oneSaid = trim($oneSaid);
+
+        if (empty($oneSaid) || mb_strlen($oneSaid) > 255) return $this->writeJson(201, null, null, 'oneSaid错误');
+
+        return $this->writeJson(200, null, OneSaidService::getInstance()->createOneSaid($phone, $oneSaid, $moduleId, $entName), '修改成功');
+    }
+
     //获取用户发布一句话
     function getOneSaid()
     {
