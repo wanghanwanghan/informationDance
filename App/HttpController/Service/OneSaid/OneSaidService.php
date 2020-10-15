@@ -3,6 +3,7 @@
 namespace App\HttpController\Service\OneSaid;
 
 use App\HttpController\Models\Api\OneSaid;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\ServiceBase;
 use EasySwoole\Component\Singleton;
 
@@ -32,6 +33,13 @@ class OneSaidService extends ServiceBase
     //发布（修改）一句话
     function createOneSaid($phone, $oneSaid, $moduleId,$entName)
     {
+        $oneSaid = trim($oneSaid);
+
+        !empty($oneSaid) ?: $oneSaid='';
+
+        //敏感内容检测
+        $oneSaid = CommonService::getInstance()->checkContentByAI($oneSaid);
+
         try
         {
             $info = OneSaid::create()->where('phone',$phone)->where('entName',$entName)->where('moduleId',$moduleId)->get();

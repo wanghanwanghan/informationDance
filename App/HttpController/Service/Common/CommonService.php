@@ -216,11 +216,26 @@ class CommonService extends ServiceBase
         //准备内容检查
         $url = CreateConf::getInstance()->getConf('baidu.checkWorkUrl') . "?access_token={$token}";
 
-        $content = ['content' => $content];
+        $postData = ['content' => $content];
 
-        $res = (new CoHttpClient())->needJsonDecode(true)->send($url, $content);
+        $res = (new CoHttpClient())->needJsonDecode(true)->send($url, $postData);
 
-        return $res;
+        $res = jsonDecode(jsonEncode($res));
+
+        //reject里是敏感词信息
+        if (!empty($res) && isset($res['result']) && isset($res['result']['reject']) && !empty($res['result']['reject']))
+        {
+            //如果有敏感词汇就替换
+            foreach ($res['result']['reject'] as $reject)
+            {
+                foreach ($reject['hit'] as $one)
+                {
+                    $content = str_replace([$one],'***',$content);
+                }
+            }
+        }
+
+        return $content;
     }
 
 
