@@ -80,8 +80,7 @@ class YuanSuService extends ServiceBase
 
         $res = (new CoHttpClient())->send($url, json_decode($body, true), $header,[],'postJson');
 
-        var_dump($res);
-
+        return $res;
     }
 
 

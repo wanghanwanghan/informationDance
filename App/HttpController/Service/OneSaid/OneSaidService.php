@@ -29,7 +29,7 @@ class OneSaidService extends ServiceBase
         50 => ['name' => '风险监控', 'desc' => '', 'source' => '信动'],
     ];
 
-    //发表一句话
+    //发布（修改）一句话
     function createOneSaid($phone, $oneSaid, $moduleId,$entName)
     {
         try

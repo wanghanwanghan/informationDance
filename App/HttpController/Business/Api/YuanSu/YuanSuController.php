@@ -24,7 +24,9 @@ class YuanSuController extends YuanSuBase
             'creditCode'=>'',
         ];
 
-        (new YuanSuService())->getList('https://api.elecredit.com/saic/enterprise/deep',$params);
+        $res = (new YuanSuService())->getList('https://api.elecredit.com/saic/enterprise/deep',$params);
+
+        $this->writeJson(200,null,$res,'');
     }
 
 
