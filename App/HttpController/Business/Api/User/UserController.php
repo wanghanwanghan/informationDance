@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Api\User;
 
 use App\HttpController\Models\Api\PurchaseInfo;
 use App\HttpController\Models\Api\PurchaseList;
+use App\HttpController\Models\Api\ReportInfo;
 use App\HttpController\Models\Api\SupervisorPhoneEntName;
 use App\HttpController\Models\Api\SupervisorPhoneLimit;
 use App\HttpController\Models\Api\User;
@@ -134,15 +135,29 @@ class UserController extends UserBase
     //获取商品列表
     function purchaseList()
     {
-        try {
-            $list = PurchaseList::create()->all();
-        } catch (\Throwable $e) {
-            return $this->writeErr($e, 'orm');
+        $phone = $this->request()->getRequestParam('phone');
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        try
+        {
+            $info = PurchaseList::create()->where('phone',$phone)->order('updated_at','desc')
+                ->limit($this->exprOffset($page,$pageSize),(int)$pageSize)->all();
+
+            //拿到数据
+            $info = jsonDecode(jsonEncode($info));
+
+            //数据的总记录条数
+            $total = PurchaseList::create()->where('phone',$phone)->count();
+
+        }catch (\Throwable $e)
+        {
+            return $this->writeErr($e,__FUNCTION__);
         }
 
-        empty($list) ? $list = null : $list = json_decode(json_encode($list));
+        !empty($info) ?: $info = null;
 
-        return $this->writeJson(200, null, $list, '成功');
+        return $this->writeJson(200,['page'=>$page,'pageSize'=>$pageSize,'total'=>$total],$info,'查询成功');
     }
 
     //充值
@@ -320,6 +335,41 @@ class UserController extends UserBase
         }
 
         return $this->writeJson(200, null, $data, '成功');
+    }
+
+    //获取报告列表
+    function getReportList()
+    {
+        $phone = $this->request()->getRequestParam('phone');
+        $type = $this->request()->getRequestParam('type') ?? 255;
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        try
+        {
+            $info = ReportInfo::create()->where('phone',$phone)->order('updated_at','desc')
+                ->limit($this->exprOffset($page,$pageSize),(int)$pageSize);
+
+            if (is_numeric($type) && $type != 255) $info->where('type',$type);
+
+            //拿到数据
+            $info = jsonDecode(jsonEncode($info->all()));
+
+            $total = ReportInfo::create()->where('phone',$phone);
+
+            if (is_numeric($type) && $type != 255) $total->where('type',$type);
+
+            //数据的总记录条数
+            $total = $total->count();
+
+        }catch (\Throwable $e)
+        {
+            return $this->writeErr($e,__FUNCTION__);
+        }
+
+        !empty($info) ?: $info = null;
+
+        return $this->writeJson(200,['page'=>$page,'pageSize'=>$pageSize,'total'=>$total],$info,'查询成功');
     }
 
 

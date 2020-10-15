@@ -58,6 +58,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/create/supervisor',$prefix.'createSupervisor');//创建风险监控
             $routeCollector->addRoute(['GET','POST'],'/get/supervisor',$prefix.'getSupervisor');//获取风险监控
             $routeCollector->addRoute(['GET','POST'],'/edit/supervisorLimit',$prefix.'supervisorLimit');//修改风险阈值
+            $routeCollector->addRoute(['GET','POST'],'/report/list',$prefix.'getReportList');//获取报告列表
         });
 
         return true;
