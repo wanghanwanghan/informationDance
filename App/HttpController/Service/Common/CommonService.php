@@ -243,7 +243,7 @@ class CommonService extends ServiceBase
             {
                 foreach ($reject['hit'] as $one)
                 {
-                    $content = str_replace([$one],'***',$content);
+                    $content = str_replace([$one],'???',$content);
                 }
             }
         }
