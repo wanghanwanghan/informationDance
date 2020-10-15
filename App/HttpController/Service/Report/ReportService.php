@@ -23,6 +23,7 @@ class ReportService extends ServiceBase
                 'filename'=>$reportNum,
                 'type'=>30,
                 'status'=>3,
+                'errInfo'=>'',
             ])->save();
 
         }catch (\Throwable $e)
