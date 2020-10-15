@@ -235,6 +235,19 @@ class CommonService extends ServiceBase
             }
         }
 
+        //review里是 涉嫌 敏感词信息
+        if (!empty($res) && isset($res['result']) && isset($res['result']['review']) && !empty($res['result']['review']))
+        {
+            //如果有敏感词汇就替换
+            foreach ($res['result']['review'] as $reject)
+            {
+                foreach ($reject['hit'] as $one)
+                {
+                    $content = str_replace([$one],'***',$content);
+                }
+            }
+        }
+
         return $content;
     }
 
