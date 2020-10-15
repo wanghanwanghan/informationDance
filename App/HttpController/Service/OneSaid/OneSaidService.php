@@ -25,8 +25,8 @@ class OneSaidService extends ServiceBase
         10 => ['name' => '税务非正常户公示', 'desc' => '详情', 'source' => '法海'],
         11 => ['name' => '纳税信用等级', 'desc' => '详情', 'source' => '法海'],
         12 => ['name' => '税务登记', 'desc' => '详情', 'source' => '法海'],
-        50 => ['name' => '风险监控', 'desc' => '', 'source' => '信动'],
         13 => ['name' => '税务许可', 'desc' => '详情', 'source' => '法海'],
+        50 => ['name' => '风险监控', 'desc' => '', 'source' => '信动'],
     ];
 
     //发表一句话
@@ -76,10 +76,10 @@ class OneSaidService extends ServiceBase
 
         if ($onlyOneSaid)
         {
-            return empty($oneSaidInfo) ? '' : $oneSaidInfo->oneSaid;
+            return empty($oneSaidInfo) ? null : $oneSaidInfo->oneSaid;
         }else
         {
-            return empty($oneSaidInfo) ? [] : $oneSaidInfo->toArray();
+            return empty($oneSaidInfo) ? null : $oneSaidInfo->toArray();
         }
     }
 

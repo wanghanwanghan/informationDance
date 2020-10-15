@@ -53,6 +53,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/purchase/list',$prefix.'purchaseList');//获取充值列表
             $routeCollector->addRoute(['GET','POST'],'/purchase/do',$prefix.'purchaseDo');//充值
             $routeCollector->addRoute(['GET','POST'],'/create/oneSaid',$prefix.'createOneSaid');//发布一句话
+            $routeCollector->addRoute(['GET','POST'],'/get/oneSaid',$prefix.'getOneSaid');//获取用户发布一句话
             $routeCollector->addRoute(['GET','POST'],'/create/supervisor',$prefix.'createSupervisor');//创建风险监控
             $routeCollector->addRoute(['GET','POST'],'/get/supervisor',$prefix.'getSupervisor');//获取风险监控
             $routeCollector->addRoute(['GET','POST'],'/edit/supervisorLimit',$prefix.'supervisorLimit');//修改风险阈值
