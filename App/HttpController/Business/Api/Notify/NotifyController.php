@@ -70,7 +70,7 @@ class NotifyController extends BusinessBase
         if (empty($orderInfo)) return true;
 
         //检查回调中的支付状态
-        if ($data['result_code'] === 'SUCCESS')
+        if (strtoupper($data['result_code']) === 'SUCCESS')
         {
             //支付成功
             $status='已支付';
