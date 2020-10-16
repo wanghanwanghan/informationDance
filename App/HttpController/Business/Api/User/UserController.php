@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Api\User;
 
+use App\HttpController\Models\Api\AuthBook;
 use App\HttpController\Models\Api\PurchaseInfo;
 use App\HttpController\Models\Api\PurchaseList;
 use App\HttpController\Models\Api\ReportInfo;
@@ -372,5 +373,35 @@ class UserController extends UserBase
         return $this->writeJson(200,['page'=>$page,'pageSize'=>$pageSize,'total'=>$total],$info,'查询成功');
     }
 
+    //上传授权书后的确认按钮
+    function createAuthBook()
+    {
+        $phone = $this->request()->getRequestParam('phone');
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $path = $this->request()->getRequestParam('path') ?? '';
+
+        if (empty($entName) || empty($path)) return $this->writeJson(201, null, null, '授权书path和企业名不能是空');
+
+        $filename = explode(DIRECTORY_SEPARATOR,$path);
+
+        $filename = end($filename);
+
+        try
+        {
+            AuthBook::create()->data([
+                'phone'=>$phone,
+                'entName'=>$entName,
+                'name'=>$filename,
+                'status'=>1,
+                'remark'=>'',
+            ])->save();
+
+        }catch (\Throwable $e)
+        {
+            return $this->writeErr($e,__FUNCTION__);
+        }
+
+        return $this->writeJson(200,null,null,'提交成功');
+    }
 
 }

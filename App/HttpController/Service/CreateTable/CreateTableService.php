@@ -282,4 +282,28 @@ class CreateTableService
 
         return 'ok';
     }
+
+    //授权书表
+    function information_dance_auth_book()
+    {
+        $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
+            $table->setTableComment('授权书表')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
+            $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
+            $table->colVarChar('phone',11)->setDefaultValue('');
+            $table->colVarChar('entName',50)->setDefaultValue('')->setColumnComment('公司名');
+            $table->colVarChar('name',50)->setDefaultValue('')->setColumnComment('授权书文件名');
+            $table->colTinyInt('status',3)->setIsUnsigned()->setColumnComment('1审核中，2未通过，3已通过');
+            $table->colVarChar('remark',255)->setDefaultValue('')->setColumnComment('备注');
+            $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
+        });
+
+        $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
+
+        $obj->rawQuery($sql);
+
+        Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->recycleObj($obj);
+
+        return 'ok';
+    }
 }
