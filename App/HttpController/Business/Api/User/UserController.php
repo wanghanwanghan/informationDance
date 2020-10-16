@@ -69,7 +69,7 @@ class UserController extends UserBase
         try {
             $res = User::create()->where('phone', $phone)->get();
         } catch (\Throwable $e) {
-            return $this->writeErr($e, 'orm');
+            return $this->writeErr($e, __FUNCTION__);
         }
 
         //已经注册过了
@@ -89,7 +89,7 @@ class UserController extends UserBase
             User::create()->data($insert, false)->save();
             Wallet::create()->data(['phone' => $phone], false)->save();
         } catch (\Throwable $e) {
-            return $this->writeErr($e, 'orm');
+            return $this->writeErr($e, __FUNCTION__);
         }
 
         return $this->writeJson(200, null, $insert, '注册成功');
@@ -114,7 +114,7 @@ class UserController extends UserBase
         try {
             $userInfo = User::create()->where('phone', $phone)->get();
         } catch (\Throwable $e) {
-            return $this->writeErr($e, 'orm');
+            return $this->writeErr($e, __FUNCTION__);
         }
 
         if (empty($userInfo)) return $this->writeJson(201, null, null, '手机号不存在');
@@ -125,7 +125,7 @@ class UserController extends UserBase
             $user = User::create()->get($userInfo->id);
             $user->update(['token' => $newToken]);
         } catch (\Throwable $e) {
-            return $this->writeErr($e, 'orm');
+            return $this->writeErr($e, __FUNCTION__);
         }
 
         $userInfo->newToken = $newToken;

@@ -118,7 +118,7 @@ class BusinessBase extends Index
         try {
             $res = User::create()->where('token', $requestToken)->get();
         } catch (\Throwable $e) {
-            $this->writeErr($e, 'orm');
+            $this->writeErr($e, __FUNCTION__);
             return false;
         }
 
@@ -128,12 +128,13 @@ class BusinessBase extends Index
 
         if (!is_array($tokenInfo) || count($tokenInfo) != 3) return false;
 
-        $reqPhone = $this->request()->getRequestParam('phone');
+        $reqPhone = $this->request()->getRequestParam('phone') ?? '';
+
         $tokenPhone = current($tokenInfo);
 
-        if (strlen($tokenPhone) != 11) return false;
+        if (strlen($tokenPhone) != 11 || strlen($reqPhone) != 11) return false;
 
-        return $reqPhone == $tokenPhone ? true : false;
+        return (int)$reqPhone === (int)$tokenPhone ? true : false;
     }
 
     //check limit

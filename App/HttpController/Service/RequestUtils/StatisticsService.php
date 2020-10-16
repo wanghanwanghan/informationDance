@@ -49,7 +49,7 @@ class StatisticsService extends ServiceBase
 
             Statistics::create()->data($insert, false)->save();
         } catch (\Throwable $e) {
-            return $this->writeErr($e, 'orm');
+            return $this->writeErr($e, __FUNCTION__);
         }
 
         return true;

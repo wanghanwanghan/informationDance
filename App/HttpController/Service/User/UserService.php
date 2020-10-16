@@ -12,21 +12,19 @@ class UserService extends ServiceBase
     use Singleton;
 
     //创建一个api请求token
-    function createAccessToken($phone,$password): string
+    function createAccessToken($phone, $password): string
     {
-        $str="{$phone}-{$password}-".time();
+        $str = "{$phone}-{$password}-" . time();
 
-        return control::aesEncode($str,CreateConf::getInstance()->getConf('env.salt'));
+        return control::aesEncode($str, CreateConf::getInstance()->getConf('env.salt'));
     }
 
     function decodeAccessToken($token): array
     {
-        $str=control::aesDecode($token,CreateConf::getInstance()->getConf('env.salt'));
+        $str = control::aesDecode($token, CreateConf::getInstance()->getConf('env.salt'));
 
-        return explode('-',$str);
+        return explode('-', $str);
     }
-
-
 
 
 }
