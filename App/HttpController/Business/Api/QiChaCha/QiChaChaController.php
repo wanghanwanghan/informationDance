@@ -71,6 +71,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize'=>$pageSize,
         ];
 
+
         $res=(new QiChaChaService())->get($this->baseUrl.'ECIV4/Search',$postData);
 
         return $this->checkResponse($res);

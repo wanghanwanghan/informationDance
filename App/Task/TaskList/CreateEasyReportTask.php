@@ -59,16 +59,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $tmp->saveAs(REPORT_PATH . $this->reportNum . '.docx');
 
-        try
-        {
-            $info = ReportInfo::create()->where('phone',$this->phone)->where('filename',$this->reportNum)->get();
+        $info = ReportInfo::create()->where('phone',$this->phone)->where('filename',$this->reportNum)->get();
 
-            $info->update(['status'=>2]);
-
-        }catch (\Throwable $e)
-        {
-
-        }
+        $info->update(['status'=>2]);
 
         return true;
     }
@@ -694,6 +687,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //经营范围
         $docObj->setValue('OPSCOPE', $data['getRegisterInfo']['OPSCOPE']);
 
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,14,$this->entName,true);
+        $docObj->setValue('jbxx_oneSaid', $oneSaid);
+
         //股东信息
         $rows = count($data['getShareHolderInfo']);
         $docObj->cloneRow('gd_INV', $rows);
@@ -714,6 +710,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("gd_CONDATE#" . ($i + 1), $data['getShareHolderInfo'][$i]['CONDATE']);
         }
 
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,15,$this->entName,true);
+        $docObj->setValue('gdxx_oneSaid', $oneSaid);
+
         //高管信息
         $rows = count($data['getMainManagerInfo']);
         $docObj->cloneRow('gg_no', $rows);
@@ -725,6 +724,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //职位
             $docObj->setValue("gg_POSITION#" . ($i + 1), $data['getMainManagerInfo'][$i]['POSITION']);
         }
+
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,15,$this->entName,true);
+        $docObj->setValue('ggxx_oneSaid', $oneSaid);
 
         //变更信息
         $rows = count($data['getRegisterChangeInfo']['list']);
@@ -742,6 +744,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("bg_ALTAF#" . ($i + 1), $data['getRegisterChangeInfo']['list'][$i]['ALTAF']);
         }
 
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,19,$this->entName,true);
+        $docObj->setValue('bgxx_oneSaid', $oneSaid);
+
         //经营异常
         $rows = count($data['GetOpException']['list']);
         $docObj->cloneRow('jjyc_no', $rows);
@@ -757,6 +762,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //移除原因
             $docObj->setValue("jjyc_RomoveReason#" . ($i + 1), $data['GetOpException']['list'][$i]['RomoveReason']);
         }
+
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,21,$this->entName,true);
+        $docObj->setValue('jyycxx_oneSaid', $oneSaid);
 
         //实际控制人
         if (!empty($data['Beneficiary'])) {
@@ -778,6 +786,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //股权链
             $docObj->setValue("sjkzr_Path", '');
         }
+
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,16,$this->entName,true);
+        $docObj->setValue('sjkzr_oneSaid', $oneSaid);
 
         //历史沿革
         $rows = count($data['getHistoricalEvolution']);
@@ -861,6 +872,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("qydwtz_CONDATE#" . ($i + 1), $data['getInvestmentAbroadInfo']['list'][$i]['CONDATE']);
         }
 
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,23,$this->entName,true);
+        $docObj->setValue('qydwtz_oneSaid', $oneSaid);
+
         //主要分支机构
         $rows = count($data['getBranchInfo']);
         $docObj->cloneRow('fzjg_no', $rows);
@@ -878,6 +892,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //登记地省份
             $docObj->setValue("fzjg_PROVINCE#" . ($i + 1), $data['getBranchInfo'][$i]['PROVINCE']);
         }
+
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,18,$this->entName,true);
+        $docObj->setValue('zyfzjg_oneSaid', $oneSaid);
 
         //银行信息
         $docObj->cloneRow('yhxx_no', 1);
@@ -900,6 +917,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("gsgk_rz#" . ($i + 1), $data['SearchCompanyFinancings'][$i]['Investment'] . '，' . $data['SearchCompanyFinancings'][$i]['Amount']);
         }
 
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,22,$this->entName,true);
+        $docObj->setValue('gsgk_oneSaid', $oneSaid);
+
         //招投标
         $rows = count($data['TenderSearch']['list']);
         $docObj->cloneRow('ztb_no', $rows);
@@ -915,6 +935,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //项目分类
             $docObj->setValue("ztb_ChannelName#" . ($i + 1), $data['TenderSearch']['list'][$i]['ChannelName']);
         }
+
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,24,$this->entName,true);
+        $docObj->setValue('ztb_oneSaid', $oneSaid);
 
         //购地信息
         $rows = count($data['LandPurchaseList']);
@@ -936,6 +959,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("gdxx_SignTime#" . ($i + 1), $data['LandPurchaseList'][$i]['SignTime']);
         }
 
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,25,$this->entName,true);
+        $docObj->setValue('gdxx_oneSaid', $oneSaid);
+
         //土地公示
         $rows = count($data['LandPublishList']);
         $docObj->cloneRow('tdgs_no', $rows);
@@ -951,6 +977,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //发布日期
             $docObj->setValue("tdgs_PublishDate#" . ($i + 1), $data['LandPublishList'][$i]['PublishDate']);
         }
+
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,26,$this->entName,true);
+        $docObj->setValue('tdgs_oneSaid', $oneSaid);
 
         //土地转让
         $rows = count($data['LandTransferList']);
@@ -974,6 +1003,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("tdzr_TransTime#" . ($i + 1), $data['LandTransferList'][$i]['detail']['TransTime']);
         }
 
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,27,$this->entName,true);
+        $docObj->setValue('tdzr_oneSaid', $oneSaid);
+
         //建筑资质
         $rows = count($data['Qualification']);
         $docObj->cloneRow('jzzz_no', $rows);
@@ -993,6 +1025,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //发证机关
             $docObj->setValue("jzzz_SignDept#" . ($i + 1), $data['Qualification'][$i]['SignDept']);
         }
+
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,29,$this->entName,true);
+        $docObj->setValue('jzzz_oneSaid', $oneSaid);
 
         //建筑工程项目
         $rows = count($data['BuildingProject']);
