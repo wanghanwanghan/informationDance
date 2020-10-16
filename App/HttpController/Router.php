@@ -264,7 +264,7 @@ class Router extends AbstractRouter
 
         $routeCollector->addGroup('/ys',function (RouteCollector $routeCollector) use ($prefix)
         {
-            $routeCollector->addRoute(['GET','POST'],'/three',$prefix.'three');//三要素
+            $routeCollector->addRoute(['GET','POST'],'/personCheck',$prefix.'personCheck');//三要素
         });
 
         return true;

@@ -31,16 +31,16 @@ class YuanSuService extends ServiceBase
         return (float)sprintf('%.0f', (floatval($s1) + floatval($s2)) * 1000);
     }
 
-    private function checkResp($res, $docType, $type = 'list')
+    private function checkResp($res)
     {
-        $type = ucfirst($type);
+        //这里还没改好
+        if (isset($res['PAGEINFO']) && isset($res['PAGEINFO']['TOTAL_COUNT']) && isset($res['PAGEINFO']['TOTAL_PAGE']) && isset($res['PAGEINFO']['CURRENT_PAGE'])) {
 
-        if (isset($res['pageNo']) && isset($res['range']) && isset($res['totalCount']) && isset($res['totalPageNum'])) {
             $res['Paging'] = [
-                'page' => $res['pageNo'],
-                'pageSize' => $res['range'],
-                'total' => $res['totalCount'],
-                'totalPage' => $res['totalPageNum'],
+                'page' => $res['PAGEINFO']['CURRENT_PAGE'],
+                'pageSize' => null,
+                'total' => $res['PAGEINFO']['TOTAL_COUNT'],
+                'totalPage' => $res['PAGEINFO']['TOTAL_PAGE'],
             ];
 
         } else {
@@ -49,14 +49,10 @@ class YuanSuService extends ServiceBase
 
         if (isset($res['coHttpErr'])) return $this->createReturn(500, $res['Paging'], [], 'co请求错误');
 
-        $res['code'] === 's' ? $res['code'] = 200 : $res['code'] = 600;
+        $res['code'] == '000' ? $res['code'] = 200 : $res['code'] = 600;
 
         //拿返回结果
-        if ($type === 'List') {
-            isset($res[$docType . $type]) ? $res['Result'] = $res[$docType . $type] : $res['Result'] = [];
-        } else {
-            isset($res[$docType]) ? $res['Result'] = $res[$docType] : $res['Result'] = [];
-        }
+        isset($res['data']) ? $res['Result'] = $res['data'] : $res['Result'] = [];
 
         return $this->createReturn($res['code'], $res['Paging'], $res['Result'], $res['msg']);
     }
@@ -78,13 +74,10 @@ class YuanSuService extends ServiceBase
             'request-sn' => $requestSn
         ];
 
-        $res = (new CoHttpClient())->send($url, json_decode($body, true), $header,[],'postJson');
+        $res = (new CoHttpClient())->send($url, json_decode($body, true), $header, [], 'postJson');
 
-        return $res;
+        return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
-
-
-
 
 
 }
