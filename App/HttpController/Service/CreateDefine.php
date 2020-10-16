@@ -19,6 +19,7 @@ class CreateDefine extends ServiceBase
         define('LOG_PATH', STATIC_PATH . 'Log' . DIRECTORY_SEPARATOR);
 
         define('AVATAR_PATH', STATIC_PATH . 'Image' . DIRECTORY_SEPARATOR . 'Avatar' . DIRECTORY_SEPARATOR);
+        define('AUTH_BOOK_PATH', STATIC_PATH . 'Image' . DIRECTORY_SEPARATOR . 'AuthBook' . DIRECTORY_SEPARATOR);
 
         define('REPORT_IMAGE_PATH', STATIC_PATH . 'Image' . DIRECTORY_SEPARATOR . 'ReportImage' . DIRECTORY_SEPARATOR);
         define('REPORT_IMAGE_TEMP_PATH', REPORT_IMAGE_PATH . 'Temp' . DIRECTORY_SEPARATOR);

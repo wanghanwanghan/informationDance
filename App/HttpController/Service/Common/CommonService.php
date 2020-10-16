@@ -30,7 +30,7 @@ class CommonService extends ServiceBase
     //写log
     function log4PHP($content)
     {
-        !is_array($content) ?: $content = jsonEncode($content);
+        (!is_array($content) && !is_object($content)) ?: $content = jsonEncode($content);
 
         return control::writeLog($content, LOG_PATH);
     }
@@ -40,14 +40,23 @@ class CommonService extends ServiceBase
     {
         $type = strtolower($type);
 
-        switch ($type) {
-            case 'avatar':
-                $newFilename = control::getUuid() . '.jpg';
-                $uploadFile->moveTo(AVATAR_PATH . $newFilename);
-                $returnPath = str_replace(ROOT_PATH, '', AVATAR_PATH . $newFilename);
-                break;
-            default:
-                $returnPath = '';
+        $returnPath = '';
+
+        try {
+            switch ($type) {
+                case 'avatar':
+                    $newFilename = control::getUuid() . '.jpg';
+                    $uploadFile->moveTo(AVATAR_PATH . $newFilename);
+                    $returnPath = str_replace(ROOT_PATH, '', AVATAR_PATH . $newFilename);
+                    break;
+                case 'auth':
+                    $newFilename = control::getUuid() . '.jpg';
+                    $uploadFile->moveTo(AUTH_BOOK_PATH . $newFilename);
+                    $returnPath = str_replace(ROOT_PATH, '', AUTH_BOOK_PATH . $newFilename);
+                    break;
+            }
+        } catch (\Throwable $e) {
+            $this->writeErr($e, __FUNCTION__);
         }
 
         return $returnPath;
@@ -176,7 +185,7 @@ class CommonService extends ServiceBase
         $res = TaskService::getInstance()->create(function () use ($client, $tempId, $phoneArr, $code) {
             $tmp = [];
             foreach ($phoneArr as $one) {
-                $tmp[]=(string)$one;
+                $tmp[] = (string)$one;
             }
             return $client->sendMessage($tempId, $tmp, ['code' => $code]);
         }, 'sync');
@@ -223,27 +232,21 @@ class CommonService extends ServiceBase
         $res = jsonDecode(jsonEncode($res));
 
         //reject里是敏感词信息
-        if (!empty($res) && isset($res['result']) && isset($res['result']['reject']) && !empty($res['result']['reject']))
-        {
+        if (!empty($res) && isset($res['result']) && isset($res['result']['reject']) && !empty($res['result']['reject'])) {
             //如果有敏感词汇就替换
-            foreach ($res['result']['reject'] as $reject)
-            {
-                foreach ($reject['hit'] as $one)
-                {
-                    $content = str_replace([$one],'***',$content);
+            foreach ($res['result']['reject'] as $reject) {
+                foreach ($reject['hit'] as $one) {
+                    $content = str_replace([$one], '***', $content);
                 }
             }
         }
 
         //review里是 涉嫌 敏感词信息
-        if (!empty($res) && isset($res['result']) && isset($res['result']['review']) && !empty($res['result']['review']))
-        {
+        if (!empty($res) && isset($res['result']) && isset($res['result']['review']) && !empty($res['result']['review'])) {
             //如果有敏感词汇就替换
-            foreach ($res['result']['review'] as $reject)
-            {
-                foreach ($reject['hit'] as $one)
-                {
-                    $content = str_replace([$one],'???',$content);
+            foreach ($res['result']['review'] as $reject) {
+                foreach ($reject['hit'] as $one) {
+                    $content = str_replace([$one], '???', $content);
                 }
             }
         }
