@@ -12,8 +12,8 @@ class QiChaChaController extends QiChaChaBase
 {
     private $baseUrl;
 
-    private $moduleNum;//扣费的id
-    private $entName;//扣费用的entName
+    public $moduleNum;//扣费的id
+    public $entName;//扣费用的entName
 
     function onRequest(?string $action): ?bool
     {
@@ -43,8 +43,6 @@ class QiChaChaController extends QiChaChaBase
         }
 
         if (isset($res['coHttpErr'])) return $this->writeJson(500,$res['Paging'],[],'co请求错误');
-
-        CommonService::getInstance()->log4PHP("$this->moduleNum".$this->moduleNum);
 
         if (!empty($this->moduleNum) && !empty($this->entName))
         {

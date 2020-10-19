@@ -12,8 +12,8 @@ class FaHaiController extends FaHaiBase
     private $listBaseUrlForPerson;//个人的
     private $detailBaseUrl;
 
-    private $moduleNum;//扣费的id
-    private $entName;//扣费用的entName
+    public $moduleNum;//扣费的id
+    public $entName;//扣费用的entName
 
     function onRequest(?string $action): ?bool
     {
