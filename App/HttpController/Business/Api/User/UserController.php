@@ -6,6 +6,7 @@ use App\HttpController\Models\Api\AuthBook;
 use App\HttpController\Models\Api\PurchaseInfo;
 use App\HttpController\Models\Api\PurchaseList;
 use App\HttpController\Models\Api\ReportInfo;
+use App\HttpController\Models\Api\SupervisorEntNameInfo;
 use App\HttpController\Models\Api\SupervisorPhoneEntName;
 use App\HttpController\Models\Api\SupervisorPhoneLimit;
 use App\HttpController\Models\Api\User;
@@ -325,6 +326,114 @@ class UserController extends UserBase
         }
 
         return $this->writeJson(200, null, $data, '添加成功');
+    }
+
+    //获取用户风险监控数据
+    function getSupervisor()
+    {
+        $phone = $this->request()->getRequestParam('phone');
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $level = $this->request()->getRequestParam('level') ?? '';
+        $type = $this->request()->getRequestParam('type') ?? '';
+        $typeDetail = $this->request()->getRequestParam('typeDetail') ?? '';
+        $timeRange = $this->request()->getRequestParam('timeRange') ?? '';
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        //先确定是一个公司，还是全部公司
+        try
+        {
+            $entList = SupervisorPhoneEntName::create()->where('phone',$phone)->all();
+
+            if (empty($entName))
+            {
+                $tmp = [];
+
+                foreach ($entList as $one)
+                {
+                    $tmp[] = $one->entName;
+                }
+
+                $entList = $tmp;
+
+            }else
+            {
+                $entList = [$entName];
+            }
+
+        }catch (\Throwable $e)
+        {
+            return $this->writeErr($e,__FUNCTION__);
+        }
+
+        $detail=SupervisorEntNameInfo::create()->where('entName',$entList,'IN');
+        $resTotle=SupervisorEntNameInfo::create()->where('entName',$entList,'IN');
+
+        if (!empty($level))
+        {
+            if ($level==='高风险') $tmp=1;
+            if ($level==='风险') $tmp=2;
+            if ($level==='警示') $tmp=3;
+            if ($level==='提示') $tmp=4;
+            if ($level==='利好') $tmp=5;
+
+            $detail->where('level',$tmp);
+            $resTotle->where('level',$tmp);
+        }
+
+        if (!empty($type))
+        {
+            if ($type==='司法风险') $tmp=1;
+            if ($type==='工商风险') $tmp=2;
+            if ($type==='管理风险') $tmp=3;
+            if ($type==='经营风险') $tmp=4;
+
+            $detail->where('type',$tmp);
+            $resTotle->where('type',$tmp);
+        }
+
+        if (!empty($typeDetail))
+        {
+            if (in_array($typeDetail,['失信被执行人','工商变更','严重违法','经营异常'])) $tmp=1;
+            if (in_array($typeDetail,['被执行人','实际控制人变更','行政处罚','动产抵押'])) $tmp=2;
+            if (in_array($typeDetail,['股权冻结','最终受益人变更','环保处罚','土地抵押'])) $tmp=3;
+            if (in_array($typeDetail,['裁判文书','股东变更','税收违法','股权出质'])) $tmp=4;
+            if (in_array($typeDetail,['开庭公告','对外投资','欠税公告','股权质押'])) $tmp=5;
+            if (in_array($typeDetail,['法院公告','主要成员','海关','对外担保'])) $tmp=6;
+            if (in_array($typeDetail,['查封冻结扣押','一行两会'])) $tmp=7;
+
+            $detail->where('typeDetail',$tmp);
+            $resTotle->where('typeDetail',$tmp);
+        }
+
+        if (!empty($timeRange))
+        {
+            if ($timeRange==='近7天') $date=Carbon::now()->subDays(7)->format('Y-m-d H:i:s');
+            if ($timeRange==='近30天') $date=Carbon::now()->subDays(30)->format('Y-m-d H:i:s');
+            if ($timeRange==='近365天') $date=Carbon::now()->subDays(365)->format('Y-m-d H:i:s');
+
+            $detail->where('timeRange',$date,'>');
+            $resTotle->where('timeRange',$date,'>');
+        }
+
+        try
+        {
+            $detail = $detail->order('created_at','desc')->limit($this->exprOffset($page,$pageSize),$pageSize)->all();
+
+            $detail = jsonDecode(jsonEncode($detail));
+
+            $resTotle = $resTotle->count();
+
+        }catch (\Throwable $e)
+        {
+            return $this->writeErr($e,__FUNCTION__);
+        }
+
+        return $this->writeJson(200, [
+            'page'=>$page,
+            'pageSize'=>$pageSize,
+            'total'=>$resTotle
+        ], $detail, '查询成功');
     }
 
     //修改风险阈值
