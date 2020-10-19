@@ -148,7 +148,7 @@ class UserController extends UserBase
             $info = jsonDecode(jsonEncode($info));
 
             //数据的总记录条数
-            $total = PurchaseInfo::create()->count();
+            $total = PurchaseList::create()->count();
 
         }catch (\Throwable $e)
         {
