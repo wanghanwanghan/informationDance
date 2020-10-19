@@ -301,7 +301,8 @@ class Router extends AbstractRouter
 
         $routeCollector->addGroup('/export/word',function (RouteCollector $routeCollector) use ($prefix)
         {
-            $routeCollector->addRoute(['GET','POST'],'/createEasy',$prefix.'createEasy');
+            $routeCollector->addRoute(['GET','POST'],'/createVeryEasy',$prefix.'createVeryEasy');//极简报告
+            $routeCollector->addRoute(['GET','POST'],'/createEasy',$prefix.'createEasy');//简版报告
         });
 
         return true;
