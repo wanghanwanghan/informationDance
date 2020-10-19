@@ -734,7 +734,7 @@ class QiChaChaController extends QiChaChaBase
     {
         $id=$this->request()->getRequestParam('id');
 
-        $postData=['id'=>$id];
+        $postData=['certId'=>$id];
 
         $res=(new QiChaChaService())->get($this->baseUrl.'ECICertification/GetCertificationDetailById',$postData);
 
