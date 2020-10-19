@@ -121,7 +121,7 @@ class ChargeService extends ServiceBase
             return ['code' => 201, 'msg' => '取得用户钱包信息失败'];
         }
 
-        if ($userMoney < $moduleInfo['basePrice']) return ['code' => 201, 'msg' => '用户余额不足'];
+        if ($userMoney < $moduleInfo['basePrice']) return ['code' => 220, 'msg' => '用户余额不足'];
 
         try {
             //扣费
@@ -214,7 +214,7 @@ class ChargeService extends ServiceBase
             return ['code' => 201, 'msg' => '取得用户钱包信息失败'];
         }
 
-        if ($userMoney < $moduleInfo['basePrice']) return ['code' => 201, 'msg' => '用户余额不足'];
+        if ($userMoney < $moduleInfo['basePrice']) return ['code' => 220, 'msg' => '用户余额不足'];
 
         try {
             //扣费
@@ -308,7 +308,7 @@ class ChargeService extends ServiceBase
             return ['code' => 201, 'msg' => '取得用户钱包信息失败'];
         }
 
-        if ($userMoney < $moduleInfo['basePrice']) return ['code' => 201, 'msg' => '用户余额不足'];
+        if ($userMoney < $moduleInfo['basePrice']) return ['code' => 220, 'msg' => '用户余额不足'];
 
         try {
             //扣费
@@ -401,7 +401,7 @@ class ChargeService extends ServiceBase
             return ['code' => 201, 'msg' => '取得用户钱包信息失败'];
         }
 
-        if ($userMoney < $moduleInfo['basePrice']) return ['code' => 201, 'msg' => '用户余额不足'];
+        if ($userMoney < $moduleInfo['basePrice']) return ['code' => 220, 'msg' => '用户余额不足'];
 
         try {
             //扣费
@@ -466,7 +466,7 @@ class ChargeService extends ServiceBase
             return ['code' => 201, 'msg' => '取得用户钱包信息失败'];
         }
 
-        if ($userMoney < $moduleInfo['basePrice']) return ['code' => 201, 'msg' => '用户余额不足'];
+        if ($userMoney < $moduleInfo['basePrice']) return ['code' => 220, 'msg' => '用户余额不足'];
 
         //等于false说明用户还没点确定支付，等于true说明用户点了确认支付
         $pay = $this->getPay($request);
@@ -522,7 +522,7 @@ class ChargeService extends ServiceBase
             return ['code' => 201, 'msg' => '取得用户钱包信息失败'];
         }
 
-        if ($userMoney < $moduleInfo['basePrice']) return ['code' => 201, 'msg' => '用户余额不足'];
+        if ($userMoney < $moduleInfo['basePrice']) return ['code' => 220, 'msg' => '用户余额不足'];
 
         //等于false说明用户还没点确定支付，等于true说明用户点了确认支付
         $pay = $this->getPay($request);

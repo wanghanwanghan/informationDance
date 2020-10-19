@@ -28,11 +28,11 @@ class CommonService extends ServiceBase
     use Singleton;
 
     //写log
-    function log4PHP($content)
+    function log4PHP($content, $type = 'info', $filename = '')
     {
         (!is_array($content) && !is_object($content)) ?: $content = jsonEncode($content);
 
-        return control::writeLog($content, LOG_PATH);
+        return control::writeLog($content, LOG_PATH, $type, $filename);
     }
 
     //存图片

@@ -7,6 +7,7 @@ use App\HttpController\Models\Api\PurchaseInfo;
 use App\HttpController\Models\Api\PurchaseList;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\Api\Wallet;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\Pay\wx\wxPayService;
 use EasySwoole\Pay\Pay;
 use EasySwoole\Pay\WeChat\WeChat;
@@ -88,6 +89,7 @@ class NotifyController extends BusinessBase
         {
             //支付失败
             $status='异常';
+            CommonService::getInstance()->log4PHP($data,'Pay',__FUNCTION__.'.log');
         }
 
         //更改订单状态
