@@ -43,6 +43,8 @@ class NotifyController extends BusinessBase
             $data = [];
         }
 
+        CommonService::getInstance()->log4PHP($data,'Pay',__FUNCTION__.'.log');
+
         //出错就不执行了
         if (empty($data)) return true;
 
