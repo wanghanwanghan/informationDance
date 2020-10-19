@@ -3837,6 +3837,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
                     $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
+                    CommonService::getInstance()->log4PHP($detail);
+
                     if ($detail['code'] === 200 && !empty($detail[$doc_type])) {
                         $one['detail'] = current($detail[$doc_type]);
                     } else {
