@@ -133,7 +133,34 @@ class UserController extends UserBase
         return $this->writeJson(200, null, $userInfo, '登录成功');
     }
 
-    //获取商品列表
+    //获取充值商品列表
+    function purchaseGoods()
+    {
+        $phone = $this->request()->getRequestParam('phone');
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        try
+        {
+            $info = PurchaseList::create()->limit($this->exprOffset($page,$pageSize),(int)$pageSize)->all();
+
+            //拿到数据
+            $info = jsonDecode(jsonEncode($info));
+
+            //数据的总记录条数
+            $total = PurchaseInfo::create()->count();
+
+        }catch (\Throwable $e)
+        {
+            return $this->writeErr($e,__FUNCTION__);
+        }
+
+        !empty($info) ?: $info = null;
+
+        return $this->writeJson(200,['page'=>$page,'pageSize'=>$pageSize,'total'=>$total],$info,'查询成功');
+    }
+
+    //获取用户充值详情列表
     function purchaseList()
     {
         $phone = $this->request()->getRequestParam('phone');
@@ -142,14 +169,14 @@ class UserController extends UserBase
 
         try
         {
-            $info = PurchaseList::create()->where('phone',$phone)->order('updated_at','desc')
+            $info = PurchaseInfo::create()->where('phone',$phone)->order('updated_at','desc')
                 ->limit($this->exprOffset($page,$pageSize),(int)$pageSize)->all();
 
             //拿到数据
             $info = jsonDecode(jsonEncode($info));
 
             //数据的总记录条数
-            $total = PurchaseList::create()->where('phone',$phone)->count();
+            $total = PurchaseInfo::create()->where('phone',$phone)->count();
 
         }catch (\Throwable $e)
         {
