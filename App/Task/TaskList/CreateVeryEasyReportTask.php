@@ -569,7 +569,10 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             if (!empty($res)) {
                 foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id' => $one['entryId']];
+                    $postData = [
+                        'id' => $one['entryId'],
+                        'doc_type' => $doc_type
+                    ];
 
                     $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
@@ -607,7 +610,10 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             if (!empty($res)) {
                 foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id' => $one['entryId']];
+                    $postData = [
+                        'id' => $one['entryId'],
+                        'doc_type' => $doc_type
+                    ];
 
                     $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
@@ -645,7 +651,10 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             if (!empty($res)) {
                 foreach ($res as &$one) {
                     //取详情
-                    $postData = ['id' => $one['entryId']];
+                    $postData = [
+                        'id' => $one['entryId'],
+                        'doc_type' => $doc_type
+                    ];
 
                     $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
 
