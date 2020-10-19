@@ -53,30 +53,44 @@ class NotifyController extends BusinessBase
 
         if (empty($orderInfo)) return true;
 
-        //检查回调中的支付状态
-        if (strtoupper($data['result_code']) === 'SUCCESS')
+        CommonService::getInstance()->log4PHP(1,'Pay',__FUNCTION__.'.log');
+
+        try
         {
-            //支付成功
-            $status='已支付';
+            //检查回调中的支付状态
+            if (strtoupper($data['result_code']) === 'SUCCESS')
+            {
+                //支付成功
+                $status='已支付';
 
-            $walletInfo = Wallet::create()->where('phone',$orderInfo->phone)->get();
+                $walletInfo = Wallet::create()->where('phone',$orderInfo->phone)->get();
 
-            $PurchaseList = PurchaseList::create()->get($orderInfo->purchaseType);
+                $PurchaseList = PurchaseList::create()->get($orderInfo->purchaseType);
 
-            $payMoney = $walletInfo->payMoney + $PurchaseList->money;
+                $payMoney = $walletInfo->payMoney + $PurchaseList->money;
 
-            //给用户加余额
-            $walletInfo->update(['payMoney'=>$payMoney]);
+                //给用户加余额
+                $walletInfo->update(['payMoney'=>$payMoney]);
 
-        }else
+                CommonService::getInstance()->log4PHP(2,'Pay',__FUNCTION__.'.log');
+
+            }else
+            {
+                //支付失败
+                $status='异常';
+                CommonService::getInstance()->log4PHP($data,'Pay',__FUNCTION__.'.log');
+                CommonService::getInstance()->log4PHP(3,'Pay',__FUNCTION__.'.log');
+            }
+
+            //更改订单状态
+            $orderInfo->update(['status'=>$status]);
+
+            CommonService::getInstance()->log4PHP(4,'Pay',__FUNCTION__.'.log');
+
+        }catch (\Throwable $e)
         {
-            //支付失败
-            $status='异常';
-            CommonService::getInstance()->log4PHP($data,'Pay',__FUNCTION__.'.log');
+            CommonService::getInstance()->log4PHP($e->getMessage(),'Pay',__FUNCTION__.'.log');
         }
-
-        //更改订单状态
-        $orderInfo->update(['status'=>$status]);
 
         return $this->response()->write(WeChat::success());
     }
