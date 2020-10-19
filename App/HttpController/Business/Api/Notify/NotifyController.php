@@ -28,25 +28,6 @@ class NotifyController extends BusinessBase
     //微信通知
     function wxNotify()
     {
-        //{
-        //    "appid":"wxc35b4c5377218f34",
-        //    "bank_type":"OTHERS",
-        //    "cash_fee":"5",
-        //    "fee_type":"CNY",
-        //    "is_subscribe":"N",
-        //    "mch_id":"1602770951",
-        //    "nonce_str":"edh2xu17wPrS8DpZgB3N4KatLscnAGXv",
-        //    "openid":"ovEPn5cQoswvSkqDuAp8yf2F5uio",
-        //    "out_trade_no":"2020101310291732000",
-        //    "result_code":"SUCCESS",
-        //    "return_code":"SUCCESS",
-        //    "sign":"098E8FE97A8069307ADF4AE5F0EFDF4B",
-        //    "time_end":"20201013103042",
-        //    "total_fee":"5",
-        //    "trade_type":"JSAPI",
-        //    "transaction_id":"4200000731202010136366605001"
-        //}
-
         $pay = new Pay();
 
         $content = $this->request()->getBody()->__toString();

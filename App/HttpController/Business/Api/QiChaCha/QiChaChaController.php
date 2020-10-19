@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Api\QiChaCha;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
@@ -43,6 +44,8 @@ class QiChaChaController extends QiChaChaBase
 
         if (isset($res['coHttpErr'])) return $this->writeJson(500,$res['Paging'],[],'co请求错误');
 
+        CommonService::getInstance()->log4PHP("$this->moduleNum".$this->moduleNum);
+
         if (!empty($this->moduleNum) && !empty($this->entName))
         {
             $charge=ChargeService::getInstance()->QiChaCha($this->request(),$this->moduleNum,$this->entName);
@@ -70,7 +73,6 @@ class QiChaChaController extends QiChaChaBase
             'pageIndex'=>$page,
             'pageSize'=>$pageSize,
         ];
-
 
         $res=(new QiChaChaService())->get($this->baseUrl.'ECIV4/Search',$postData);
 
