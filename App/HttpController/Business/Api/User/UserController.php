@@ -417,7 +417,7 @@ class UserController extends UserBase
 
         try
         {
-            $detail = $detail->order('timeRange','desc')->limit($this->exprOffset($page,$pageSize),$pageSize)->all();
+            $detail = $detail->order('created_at','desc')->limit($this->exprOffset($page,$pageSize),$pageSize)->all();
 
             $detail = jsonDecode(jsonEncode($detail));
 
