@@ -45,6 +45,13 @@ class BusinessBase extends Index
     function writeJson($statusCode = 200, $paging = null, $result = null, $msg = null)
     {
         if (!$this->response()->isEndResponse()) {
+
+            if (!empty($paging)) {
+                foreach ($paging as $key => $val) {
+                    $paging[$key] = (int)$val;
+                }
+            }
+
             $data = [
                 'code' => $statusCode,
                 'paging' => $paging,
