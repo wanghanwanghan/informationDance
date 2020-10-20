@@ -229,7 +229,7 @@ class CommonService extends ServiceBase
 
         $res = (new CoHttpClient())->needJsonDecode(true)->send($url, $postData);
 
-        $res = jsonDecode(jsonEncode($res));
+        $res = obj2Arr($res);
 
         //reject里是敏感词信息
         if (!empty($res) && isset($res['result']) && isset($res['result']['reject']) && !empty($res['result']['reject'])) {

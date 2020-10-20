@@ -146,7 +146,7 @@ class UserController extends UserBase
             $info = PurchaseList::create()->limit($this->exprOffset($page,$pageSize),(int)$pageSize)->all();
 
             //拿到数据
-            $info = jsonDecode(jsonEncode($info));
+            $info = obj2Arr($info);
 
             //数据的总记录条数
             $total = PurchaseList::create()->count();
@@ -174,7 +174,7 @@ class UserController extends UserBase
                 ->limit($this->exprOffset($page,$pageSize),(int)$pageSize)->all();
 
             //拿到数据
-            $info = jsonDecode(jsonEncode($info));
+            $info = obj2Arr($info);
 
             //数据的总记录条数
             $total = PurchaseInfo::create()->where('phone',$phone)->count();
@@ -419,7 +419,7 @@ class UserController extends UserBase
         {
             $detail = $detail->order('created_at','desc')->limit($this->exprOffset($page,$pageSize),$pageSize)->all();
 
-            $detail = jsonDecode(jsonEncode($detail));
+            $detail = obj2Arr($detail);
 
             $resTotle = $resTotle->count();
 
@@ -432,7 +432,7 @@ class UserController extends UserBase
         {
             $entList = SupervisorPhoneEntName::create()->where('phone',$phone)->where('status',1)->all();
 
-            $entList = jsonDecode(jsonEncode($entList));
+            $entList = obj2Arr($entList);
 
         }catch (\Throwable $e)
         {
@@ -500,7 +500,7 @@ class UserController extends UserBase
             if (is_numeric($type) && $type != 255) $info->where('type',$type);
 
             //拿到数据
-            $info = jsonDecode(jsonEncode($info->all()));
+            $info = obj2Arr($info->all());
 
             $total = ReportInfo::create()->where('phone',$phone);
 

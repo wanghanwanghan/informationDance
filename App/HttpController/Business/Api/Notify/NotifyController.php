@@ -36,7 +36,7 @@ class NotifyController extends BusinessBase
 
             $data = $pay->weChat((new wxPayService())->getConf())->verify($content);
 
-            $data = jsonDecode(jsonEncode($data));
+            $data = obj2Arr($data);
 
         } catch (\Throwable $e) {
             $data = [];
