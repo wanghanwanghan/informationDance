@@ -343,7 +343,7 @@ class UserController extends UserBase
         //先确定是一个公司，还是全部公司
         try
         {
-            $entList = SupervisorPhoneEntName::create()->where('phone',$phone)->all();
+            $entList = SupervisorPhoneEntName::create()->where('phone',$phone)->where('status',1)->all();
 
             if (empty($entName))
             {
