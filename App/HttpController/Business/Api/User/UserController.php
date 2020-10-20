@@ -428,11 +428,22 @@ class UserController extends UserBase
             return $this->writeErr($e,__FUNCTION__);
         }
 
+        try
+        {
+            $entList = SupervisorPhoneEntName::create()->where('phone',$phone)->where('status',1)->all();
+
+            $entList = jsonDecode(jsonEncode($entList));
+
+        }catch (\Throwable $e)
+        {
+            return $this->writeErr($e,__FUNCTION__);
+        }
+
         return $this->writeJson(200, [
             'page'=>$page,
             'pageSize'=>$pageSize,
             'total'=>$resTotle
-        ], $detail, '查询成功');
+        ], ['entList'=>$entList,'detail'=>$detail], '查询成功');
     }
 
     //修改风险阈值
