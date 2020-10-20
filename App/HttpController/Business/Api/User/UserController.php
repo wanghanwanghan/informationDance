@@ -138,8 +138,8 @@ class UserController extends UserBase
     function purchaseGoods()
     {
         $phone = $this->request()->getRequestParam('phone');
-        $page = $this->request()->getRequestParam('page') ?? 1;
-        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+        $page = (int)$this->request()->getRequestParam('page') ?? 1;
+        $pageSize = (int)$this->request()->getRequestParam('pageSize') ?? 10;
 
         try
         {
@@ -165,8 +165,8 @@ class UserController extends UserBase
     function purchaseList()
     {
         $phone = $this->request()->getRequestParam('phone');
-        $page = $this->request()->getRequestParam('page') ?? 1;
-        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+        $page = (int)$this->request()->getRequestParam('page') ?? 1;
+        $pageSize = (int)$this->request()->getRequestParam('pageSize') ?? 10;
 
         try
         {
@@ -337,8 +337,8 @@ class UserController extends UserBase
         $type = $this->request()->getRequestParam('type') ?? '';
         $typeDetail = $this->request()->getRequestParam('typeDetail') ?? '';
         $timeRange = $this->request()->getRequestParam('timeRange') ?? '';
-        $page = $this->request()->getRequestParam('page') ?? 1;
-        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+        $page = (int)$this->request()->getRequestParam('page') ?? 1;
+        $pageSize = (int)$this->request()->getRequestParam('pageSize') ?? 10;
 
         //先确定是一个公司，还是全部公司
         try
@@ -408,9 +408,8 @@ class UserController extends UserBase
 
         if (!empty($timeRange))
         {
-            if ($timeRange==='近7天') $date=Carbon::now()->subDays(7)->format('Y-m-d H:i:s');
-            if ($timeRange==='近30天') $date=Carbon::now()->subDays(30)->format('Y-m-d H:i:s');
-            if ($timeRange==='近365天') $date=Carbon::now()->subDays(365)->format('Y-m-d H:i:s');
+            is_numeric($timeRange) ?: $timeRange=3;
+            $date=Carbon::now()->subDays($timeRange)->timestamp;
 
             $detail->where('timeRange',$date,'>');
             $resTotle->where('timeRange',$date,'>');
@@ -418,7 +417,7 @@ class UserController extends UserBase
 
         try
         {
-            $detail = $detail->order('created_at','desc')->limit($this->exprOffset($page,$pageSize),$pageSize)->all();
+            $detail = $detail->order('timeRange','desc')->limit($this->exprOffset($page,$pageSize),$pageSize)->all();
 
             $detail = jsonDecode(jsonEncode($detail));
 
@@ -479,8 +478,8 @@ class UserController extends UserBase
     {
         $phone = $this->request()->getRequestParam('phone');
         $type = $this->request()->getRequestParam('type') ?? 255;
-        $page = $this->request()->getRequestParam('page') ?? 1;
-        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+        $page = (int)$this->request()->getRequestParam('page') ?? 1;
+        $pageSize = (int)$this->request()->getRequestParam('pageSize') ?? 10;
 
         try
         {
