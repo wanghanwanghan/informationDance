@@ -138,8 +138,8 @@ class UserController extends UserBase
     function purchaseGoods()
     {
         $phone = $this->request()->getRequestParam('phone');
-        $page = (int)$this->request()->getRequestParam('page') ?? 1;
-        $pageSize = (int)$this->request()->getRequestParam('pageSize') ?? 10;
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         try
         {
@@ -165,8 +165,8 @@ class UserController extends UserBase
     function purchaseList()
     {
         $phone = $this->request()->getRequestParam('phone');
-        $page = (int)$this->request()->getRequestParam('page') ?? 1;
-        $pageSize = (int)$this->request()->getRequestParam('pageSize') ?? 10;
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         try
         {
@@ -337,8 +337,8 @@ class UserController extends UserBase
         $type = $this->request()->getRequestParam('type') ?? '';
         $typeDetail = $this->request()->getRequestParam('typeDetail') ?? '';
         $timeRange = $this->request()->getRequestParam('timeRange') ?? '';
-        $page = (int)$this->request()->getRequestParam('page') ?? 1;
-        $pageSize = (int)$this->request()->getRequestParam('pageSize') ?? 10;
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         //先确定是一个公司，还是全部公司
         try
@@ -478,8 +478,8 @@ class UserController extends UserBase
     {
         $phone = $this->request()->getRequestParam('phone');
         $type = $this->request()->getRequestParam('type') ?? 255;
-        $page = (int)$this->request()->getRequestParam('page') ?? 1;
-        $pageSize = (int)$this->request()->getRequestParam('pageSize') ?? 10;
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         try
         {
