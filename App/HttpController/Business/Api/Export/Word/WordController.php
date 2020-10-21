@@ -6,6 +6,7 @@ use App\HttpController\Business\Api\Export\ExportBase;
 use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\Report\ReportService;
+use Carbon\Carbon;
 use wanghanwanghan\someUtils\control;
 
 class WordController extends ExportBase
@@ -22,7 +23,7 @@ class WordController extends ExportBase
 
     private function createReportNum()
     {
-        return time() . '_' . control::randNum(8);
+        return Carbon::now()->format('YmdHis') . '_' . control::randNum(8);
     }
 
     //生成一个极简报告

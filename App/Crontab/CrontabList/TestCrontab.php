@@ -17,7 +17,7 @@ class TestCrontab extends AbstractCronTask
 
     static function getRule(): string
     {
-        return '*/1 * * * *';
+        return '* * * * *';
     }
 
     static function getTaskName(): string
