@@ -63,5 +63,29 @@ class ReportService extends ServiceBase
         return $reportNum;
     }
 
+    //生成深度报告
+    function createDeep($entName, $reportNum, $phone)
+    {
+        try
+        {
+            ReportInfo::create()->data([
+                'phone'=>$phone,
+                'entName'=>$entName,
+                'filename'=>$reportNum,
+                'type'=>30,
+                'status'=>4,
+                'errInfo'=>'',
+            ])->save();
+
+        }catch (\Throwable $e)
+        {
+            return $this->writeErr($e,__FUNCTION__);
+        }
+
+        //不扔task了，等后台审核后再扔task
+        //TaskService::getInstance()->create(new CreateEasyReportTask($entName, $reportNum, $phone));
+
+        return $reportNum;
+    }
 
 }

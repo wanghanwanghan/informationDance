@@ -21,7 +21,7 @@ class CreateConf extends ServiceBase
 
         if ($dh = opendir($iniDir))
         {
-            while (false !== ($file = readdir($dh)))
+            while (($file = readdir($dh)) !== false)
             {
                 if (strpos($file, '.ini') !== false)
                 {
