@@ -59,13 +59,15 @@ class RunSupervisor extends AbstractCronTask
             return true;
         }
 
-//        //取出本次要监控的企业列表，如果列表是空会跳到onException
-//        $target = SupervisorPhoneEntName::create()
-//            ->where('status', 1)->where('expireTime', time(), '>')->all();
-//
-//        $target = obj2Arr($target);
-//
-//        if (empty($target)) throw new \Exception('target is null');
+        //取出本次要监控的企业列表，如果列表是空会跳到onException
+        $target = SupervisorPhoneEntName::create()
+            ->where('status', 1)->where('expireTime', time(), '>')->all();
+
+        $target = obj2Arr($target);
+
+        CommonService::getInstance()->log4PHP($target);
+
+        if (empty($target)) throw new \Exception('target is null');
 //
 //        foreach ($target as $one) {
 //            $this->sf($one['entName']);
