@@ -141,9 +141,8 @@ class UserController extends UserBase
         $page = $this->request()->getRequestParam('page') ?? 1;
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
-        try
-        {
-            $info = PurchaseList::create()->limit($this->exprOffset($page,$pageSize),(int)$pageSize)->all();
+        try {
+            $info = PurchaseList::create()->limit($this->exprOffset($page, $pageSize), (int)$pageSize)->all();
 
             //拿到数据
             $info = obj2Arr($info);
@@ -151,14 +150,13 @@ class UserController extends UserBase
             //数据的总记录条数
             $total = PurchaseList::create()->count();
 
-        }catch (\Throwable $e)
-        {
-            return $this->writeErr($e,__FUNCTION__);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
         }
 
         !empty($info) ?: $info = null;
 
-        return $this->writeJson(200,['page'=>$page,'pageSize'=>$pageSize,'total'=>$total],$info,'查询成功');
+        return $this->writeJson(200, ['page' => $page, 'pageSize' => $pageSize, 'total' => $total], $info, '查询成功');
     }
 
     //获取用户充值详情列表
@@ -168,25 +166,23 @@ class UserController extends UserBase
         $page = $this->request()->getRequestParam('page') ?? 1;
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
-        try
-        {
-            $info = PurchaseInfo::create()->where('phone',$phone)->order('updated_at','desc')
-                ->limit($this->exprOffset($page,$pageSize),(int)$pageSize)->all();
+        try {
+            $info = PurchaseInfo::create()->where('phone', $phone)->order('updated_at', 'desc')
+                ->limit($this->exprOffset($page, $pageSize), (int)$pageSize)->all();
 
             //拿到数据
             $info = obj2Arr($info);
 
             //数据的总记录条数
-            $total = PurchaseInfo::create()->where('phone',$phone)->count();
+            $total = PurchaseInfo::create()->where('phone', $phone)->count();
 
-        }catch (\Throwable $e)
-        {
-            return $this->writeErr($e,__FUNCTION__);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
         }
 
         !empty($info) ?: $info = null;
 
-        return $this->writeJson(200,['page'=>$page,'pageSize'=>$pageSize,'total'=>$total],$info,'查询成功');
+        return $this->writeJson(200, ['page' => $page, 'pageSize' => $pageSize, 'total' => $total], $info, '查询成功');
     }
 
     //充值
@@ -341,113 +337,120 @@ class UserController extends UserBase
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         //先确定是一个公司，还是全部公司
-        try
-        {
-            $entList = SupervisorPhoneEntName::create()->where('phone',$phone)->where('status',1)->all();
+        try {
+            $entList = SupervisorPhoneEntName::create()->where('phone', $phone)->where('status', 1)->all();
 
-            if (empty($entName))
-            {
+            if (empty($entName)) {
                 $tmp = [];
 
-                foreach ($entList as $one)
-                {
+                foreach ($entList as $one) {
                     $tmp[] = $one->entName;
                 }
 
                 $entList = $tmp;
 
-            }else
-            {
+            } else {
                 $entList = [$entName];
             }
 
-        }catch (\Throwable $e)
-        {
-            return $this->writeErr($e,__FUNCTION__);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
         }
 
-        $detail=SupervisorEntNameInfo::create()->where('entName',$entList,'IN');
-        $resTotle=SupervisorEntNameInfo::create()->where('entName',$entList,'IN');
+        $detail = SupervisorEntNameInfo::create()->where('entName', $entList, 'IN');
+        $resTotle = SupervisorEntNameInfo::create()->where('entName', $entList, 'IN');
 
-        if (!empty($level))
-        {
-            if ($level==='高风险') $tmp=1;
-            if ($level==='风险') $tmp=2;
-            if ($level==='警示') $tmp=3;
-            if ($level==='提示') $tmp=4;
-            if ($level==='利好') $tmp=5;
+        if (!empty($level)) {
+            if ($level === '高风险') $tmp = 1;
+            if ($level === '风险') $tmp = 2;
+            if ($level === '警示') $tmp = 3;
+            if ($level === '提示') $tmp = 4;
+            if ($level === '利好') $tmp = 5;
 
-            $detail->where('level',$tmp);
-            $resTotle->where('level',$tmp);
+            $detail->where('level', $tmp);
+            $resTotle->where('level', $tmp);
         }
 
-        if (!empty($type))
-        {
-            if ($type==='司法风险') $tmp=1;
-            if ($type==='工商风险') $tmp=2;
-            if ($type==='管理风险') $tmp=3;
-            if ($type==='经营风险') $tmp=4;
+        if (!empty($type)) {
+            if ($type === '司法风险') $tmp = 1;
+            if ($type === '工商风险') $tmp = 2;
+            if ($type === '管理风险') $tmp = 3;
+            if ($type === '经营风险') $tmp = 4;
 
-            $detail->where('type',$tmp);
-            $resTotle->where('type',$tmp);
+            $detail->where('type', $tmp);
+            $resTotle->where('type', $tmp);
         }
 
-        if (!empty($typeDetail))
-        {
-            if (in_array($typeDetail,['失信被执行人','工商变更','严重违法','经营异常'])) $tmp=1;
-            if (in_array($typeDetail,['被执行人','实际控制人变更','行政处罚','动产抵押'])) $tmp=2;
-            if (in_array($typeDetail,['股权冻结','最终受益人变更','环保处罚','土地抵押'])) $tmp=3;
-            if (in_array($typeDetail,['裁判文书','股东变更','税收违法','股权出质'])) $tmp=4;
-            if (in_array($typeDetail,['开庭公告','对外投资','欠税公告','股权质押'])) $tmp=5;
-            if (in_array($typeDetail,['法院公告','主要成员','海关','对外担保'])) $tmp=6;
-            if (in_array($typeDetail,['查封冻结扣押','一行两会'])) $tmp=7;
+        if (!empty($typeDetail)) {
+            if (in_array($typeDetail, ['失信被执行人', '工商变更', '严重违法', '经营异常'])) $tmp = 1;
+            if (in_array($typeDetail, ['被执行人', '实际控制人变更', '行政处罚', '动产抵押'])) $tmp = 2;
+            if (in_array($typeDetail, ['股权冻结', '最终受益人变更', '环保处罚', '土地抵押'])) $tmp = 3;
+            if (in_array($typeDetail, ['裁判文书', '股东变更', '税收违法', '股权出质'])) $tmp = 4;
+            if (in_array($typeDetail, ['开庭公告', '对外投资', '欠税公告', '股权质押'])) $tmp = 5;
+            if (in_array($typeDetail, ['法院公告', '主要成员', '海关', '对外担保'])) $tmp = 6;
+            if (in_array($typeDetail, ['查封冻结扣押', '一行两会'])) $tmp = 7;
 
-            $detail->where('typeDetail',$tmp);
-            $resTotle->where('typeDetail',$tmp);
+            $detail->where('typeDetail', $tmp);
+            $resTotle->where('typeDetail', $tmp);
         }
 
-        if (!empty($timeRange))
-        {
-            is_numeric($timeRange) ?: $timeRange=3;
-            $date=Carbon::now()->subDays($timeRange)->timestamp;
+        if (!empty($timeRange)) {
+            is_numeric($timeRange) ?: $timeRange = 3;
+            $date = Carbon::now()->subDays($timeRange)->timestamp;
 
-            $detail->where('timeRange',$date,'>');
-            $resTotle->where('timeRange',$date,'>');
+            $detail->where('timeRange', $date, '>');
+            $resTotle->where('timeRange', $date, '>');
         }
 
-        try
-        {
-            $detail = $detail->order('created_at','desc')->limit($this->exprOffset($page,$pageSize),$pageSize)->all();
+        try {
+            $detail = $detail->order('created_at', 'desc')->limit($this->exprOffset($page, $pageSize), $pageSize)->all();
 
             $detail = obj2Arr($detail);
 
             $resTotle = $resTotle->count();
 
-        }catch (\Throwable $e)
-        {
-            return $this->writeErr($e,__FUNCTION__);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
         }
 
-        try
-        {
-            $entList = SupervisorPhoneEntName::create()->where('phone',$phone)->where('status',1)->all();
+        try {
+            $entList = SupervisorPhoneEntName::create()->where('phone', $phone)->where('status', 1)->all();
 
             $entList = obj2Arr($entList);
 
-        }catch (\Throwable $e)
-        {
-            return $this->writeErr($e,__FUNCTION__);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
         }
 
         return $this->writeJson(200, [
-            'page'=>$page,
-            'pageSize'=>$pageSize,
-            'total'=>$resTotle
-        ], ['entList'=>$entList,'detail'=>$detail], '查询成功');
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $resTotle
+        ], ['entList' => $entList, 'detail' => $detail], '查询成功');
+    }
+
+    //获取风险阈值
+    function getSupervisorLimit()
+    {
+        $phone = $this->request()->getRequestParam('phone');
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $entName = trim($entName);
+
+        if (empty($phone) || empty($entName)) return $this->writeJson(201, null, null, '手机号和企业名不能是空');
+
+        try {
+            $data = SupervisorPhoneLimit::create()->where('phone', $phone)->where('entName', $entName)->get();
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        empty($data) ? $data = null : $data = $data->toArray();
+
+        return $this->writeJson(200, null, $data, '成功');
     }
 
     //修改风险阈值
-    function supervisorLimit()
+    function editSupervisorLimit()
     {
         $phone = $this->request()->getRequestParam('phone');
         $entName = $this->request()->getRequestParam('entName') ?? '';
@@ -492,31 +495,29 @@ class UserController extends UserBase
         $page = $this->request()->getRequestParam('page') ?? 1;
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
-        try
-        {
-            $info = ReportInfo::create()->where('phone',$phone)->order('updated_at','desc')
-                ->limit($this->exprOffset($page,$pageSize),(int)$pageSize);
+        try {
+            $info = ReportInfo::create()->where('phone', $phone)->order('updated_at', 'desc')
+                ->limit($this->exprOffset($page, $pageSize), (int)$pageSize);
 
-            if (is_numeric($type) && $type != 255) $info->where('type',$type);
+            if (is_numeric($type) && $type != 255) $info->where('type', $type);
 
             //拿到数据
             $info = obj2Arr($info->all());
 
-            $total = ReportInfo::create()->where('phone',$phone);
+            $total = ReportInfo::create()->where('phone', $phone);
 
-            if (is_numeric($type) && $type != 255) $total->where('type',$type);
+            if (is_numeric($type) && $type != 255) $total->where('type', $type);
 
             //数据的总记录条数
             $total = $total->count();
 
-        }catch (\Throwable $e)
-        {
-            return $this->writeErr($e,__FUNCTION__);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
         }
 
         !empty($info) ?: $info = null;
 
-        return $this->writeJson(200,['page'=>$page,'pageSize'=>$pageSize,'total'=>$total],$info,'查询成功');
+        return $this->writeJson(200, ['page' => $page, 'pageSize' => $pageSize, 'total' => $total], $info, '查询成功');
     }
 
     //上传授权书后的确认按钮
@@ -528,26 +529,24 @@ class UserController extends UserBase
 
         if (empty($entName) || empty($path)) return $this->writeJson(201, null, null, '授权书path和企业名不能是空');
 
-        $filename = explode(DIRECTORY_SEPARATOR,$path);
+        $filename = explode(DIRECTORY_SEPARATOR, $path);
 
         $filename = end($filename);
 
-        try
-        {
+        try {
             AuthBook::create()->data([
-                'phone'=>$phone,
-                'entName'=>$entName,
-                'name'=>$filename,
-                'status'=>1,
-                'remark'=>'',
+                'phone' => $phone,
+                'entName' => $entName,
+                'name' => $filename,
+                'status' => 1,
+                'remark' => '',
             ])->save();
 
-        }catch (\Throwable $e)
-        {
-            return $this->writeErr($e,__FUNCTION__);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
         }
 
-        return $this->writeJson(200,null,null,'提交成功');
+        return $this->writeJson(200, null, null, '提交成功');
     }
 
 }

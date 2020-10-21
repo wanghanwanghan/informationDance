@@ -64,5 +64,21 @@ class CommonController extends CommonBase
         return $this->writeJson(200, null, null, CommonService::getInstance()->sendCode((string)$phone, $type));
     }
 
+    //上传用户地理位置
+    function userLngLatUpload()
+    {
+        $phone = $this->request()->getRequestParam('phone') ?? '';
+        $lng = $this->request()->getRequestParam('lng') ?? '';//经度
+        $lat = $this->request()->getRequestParam('lat') ?? '';//纬度
+
+
+
+
+
+
+
+
+
+    }
 
 }

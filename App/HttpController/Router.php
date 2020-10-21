@@ -37,6 +37,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/image/upload',$prefix.'imageUpload');//图片上传
             $routeCollector->addRoute(['GET','POST'],'/create/image/verifyCode',$prefix.'imageVerifyCode');//创建图片验证码
             $routeCollector->addRoute(['GET','POST'],'/create/sms/verifyCode',$prefix.'smsVerifyCode');//发送手机验证码
+            $routeCollector->addRoute(['GET','POST'],'/userLngLatUpload',$prefix.'userLngLatUpload');//上传用户经纬度
         });
 
         return true;
@@ -58,7 +59,8 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/get/oneSaid',$prefix.'getOneSaid');//获取用户发布一句话
             $routeCollector->addRoute(['GET','POST'],'/create/supervisor',$prefix.'createSupervisor');//创建风险监控
             $routeCollector->addRoute(['GET','POST'],'/get/supervisor',$prefix.'getSupervisor');//获取用户风险监控数据
-            $routeCollector->addRoute(['GET','POST'],'/edit/supervisorLimit',$prefix.'supervisorLimit');//修改风险阈值
+            $routeCollector->addRoute(['GET','POST'],'/get/supervisorLimit',$prefix.'getSupervisorLimit');//获取风险阈值
+            $routeCollector->addRoute(['GET','POST'],'/edit/supervisorLimit',$prefix.'editSupervisorLimit');//修改风险阈值
             $routeCollector->addRoute(['GET','POST'],'/report/list',$prefix.'getReportList');//获取报告列表
             $routeCollector->addRoute(['GET','POST'],'/create/authBook',$prefix.'createAuthBook');//上传授权书后的确认按钮
         });
