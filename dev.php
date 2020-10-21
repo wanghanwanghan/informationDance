@@ -12,7 +12,7 @@ return [
             'reload_async' => true,
             'max_wait_time' => 3,
             'dispatch_mode' => 2,
-            'package_max_length' => 50 * 1024 * 1024,
+            'package_max_length' => 30 * 1024 * 1024,
         ],
         'TASK' => [
             'workerNum' => 6,
@@ -20,6 +20,6 @@ return [
             'timeout' => 15
         ]
     ],
-    'TEMP_DIR' => '/tmp',
-    'LOG_DIR' => '/tmp'
+    'TEMP_DIR' => null,
+    'LOG_DIR' => null
 ];
