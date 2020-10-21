@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Api\Common;
 
+use App\HttpController\Models\Api\LngLat;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateTable\CreateTableService;
 use EasySwoole\RedisPool\Redis;
@@ -71,13 +72,35 @@ class CommonController extends CommonBase
         $lng = $this->request()->getRequestParam('lng') ?? '';//经度
         $lat = $this->request()->getRequestParam('lat') ?? '';//纬度
 
+        $lng = sprintf('%.8',trim($lng));
+        $lat = sprintf('%.8',trim($lat));
 
+        try
+        {
+            $info = LngLat::create()->where('target',$phone)->get();
 
+            if (empty($info))
+            {
+                LngLat::create()->data(['target'=>$phone,'lng'=>$lng,'lat'=>$lat])->save();
+            }else
+            {
+                $info->update(['lng'=>$lng,'lat'=>$lat]);
+            }
 
+        }catch (\Throwable $e)
+        {
+            return $this->writeErr($e,__FUNCTION__);
+        }
 
-
-
-        return $this->writeJson(200,123,321);
+        return $this->writeJson(200,null,null,'上传成功');
     }
+
+
+
+
+
+
+
+
 
 }

@@ -306,4 +306,26 @@ class CreateTableService
 
         return 'ok';
     }
+
+    //授权书表
+    function information_dance_lng_lat()
+    {
+        $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
+            $table->setTableComment('经纬度表')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
+            $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
+            $table->colVarChar('target',50)->setDefaultValue('')->setColumnComment('主体，目前是手机号，以后也可以是别的');
+            $table->colVarChar('lng',15)->setDefaultValue('');
+            $table->colVarChar('lat',15)->setDefaultValue('');
+            $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
+        });
+
+        $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
+
+        $obj->rawQuery($sql);
+
+        Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->recycleObj($obj);
+
+        return 'ok';
+    }
 }
