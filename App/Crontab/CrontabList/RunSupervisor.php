@@ -59,25 +59,30 @@ class RunSupervisor extends AbstractCronTask
             return true;
         }
 
+        CommonService::getInstance()->log4PHP('开始');
+
         //取出本次要监控的企业列表，如果列表是空会跳到onException
         $target = SupervisorPhoneEntName::create()
             ->where('status', 1)->where('expireTime', time(), '>')->all();
 
+        CommonService::getInstance()->log4PHP('步骤1');
+
         $target = obj2Arr($target);
+
+        CommonService::getInstance()->log4PHP('步骤2');
 
         CommonService::getInstance()->log4PHP($target);
 
         if (empty($target)) throw new \Exception('target is null');
-//
-//        foreach ($target as $one) {
-//            $this->sf($one['entName']);
-//            $this->gs($one['entName']);
-//            $this->gl($one['entName']);
-//            $this->jy($one['entName']);
-//        }
 
-        CommonService::getInstance()->log4PHP('开始');
+        foreach ($target as $one) {
+            $this->sf($one['entName']);
+            $this->gs($one['entName']);
+            $this->gl($one['entName']);
+            $this->jy($one['entName']);
+        }
 
+        CommonService::getInstance()->log4PHP('步骤3');
 
         $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
