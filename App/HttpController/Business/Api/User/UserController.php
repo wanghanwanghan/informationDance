@@ -444,7 +444,14 @@ class UserController extends UserBase
             return $this->writeErr($e, __FUNCTION__);
         }
 
-        empty($data) ? $data = null : $data = $data->toArray();
+        empty($data) ? $data = [
+            'phone' => $phone,
+            'entName' => $entName,
+            'sf' => 0,
+            'gs' => 0,
+            'gl' => 0,
+            'jy' => 0,
+        ] : $data = $data->toArray();
 
         return $this->writeJson(200, null, $data, '成功');
     }
