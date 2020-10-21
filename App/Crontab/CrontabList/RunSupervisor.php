@@ -37,7 +37,7 @@ class RunSupervisor extends AbstractCronTask
     static function getRule(): string
     {
         //return '5 4 * * *';
-        return '* * * * *';
+        return '*/1 * * * *';
     }
 
     static function getTaskName(): string
@@ -51,28 +51,35 @@ class RunSupervisor extends AbstractCronTask
         //taskId是进程周期内第几个task任务
         //可以用task，也可以用process
 
+        CommonService::getInstance()->log4PHP('准备开始');
+
         if (!$this->crontabBase->withoutOverlapping(self::getTaskName()))
         {
             CommonService::getInstance()->log4PHP('不开始');
             return true;
         }
 
-        //取出本次要监控的企业列表，如果列表是空会跳到onException
-        $target = SupervisorPhoneEntName::create()
-            ->where('status', 1)->where('expireTime', time(), '>')->all();
+//        //取出本次要监控的企业列表，如果列表是空会跳到onException
+//        $target = SupervisorPhoneEntName::create()
+//            ->where('status', 1)->where('expireTime', time(), '>')->all();
+//
+//        $target = obj2Arr($target);
+//
+//        if (empty($target)) throw new \Exception('target is null');
+//
+//        foreach ($target as $one) {
+//            $this->sf($one['entName']);
+//            $this->gs($one['entName']);
+//            $this->gl($one['entName']);
+//            $this->jy($one['entName']);
+//        }
 
-        $target = obj2Arr($target);
+        CommonService::getInstance()->log4PHP('开始');
 
-        if (empty($target)) throw new \Exception('target is null');
-
-        foreach ($target as $one) {
-            $this->sf($one['entName']);
-            $this->gs($one['entName']);
-            $this->gl($one['entName']);
-            $this->jy($one['entName']);
-        }
 
         $this->crontabBase->removeOverlappingKey(self::getTaskName());
+
+        CommonService::getInstance()->log4PHP('结束');
 
         $this->sendSMS();
 

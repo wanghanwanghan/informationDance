@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Api\Common;
 
+use App\Crontab\CrontabBase;
 use App\HttpController\Models\Api\LngLat;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateTable\CreateTableService;
