@@ -711,7 +711,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,15,$this->entName,true);
-        $docObj->setValue('gdxx_oneSaid', $oneSaid);
+        $docObj->setValue('gudongxx_oneSaid', $oneSaid);
 
         //高管信息
         $rows = count($data['getMainManagerInfo']);
