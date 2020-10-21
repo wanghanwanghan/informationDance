@@ -27,12 +27,10 @@ class UserController extends UserBase
 
     function onRequest(?string $action): ?bool
     {
-        parent::onRequest($action);
-
         //DB链接名称
         $this->connDB = CreateConf::getInstance()->getConf('env.mysqlDatabase');
 
-        return true;
+        return parent::onRequest($action);
     }
 
     function afterAction(?string $actionName): void
