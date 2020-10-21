@@ -46,7 +46,7 @@ class BusinessBase extends Index
     {
         if (!$this->response()->isEndResponse()) {
 
-            if (!empty($paging)) {
+            if (!empty($paging) && is_array($paging)) {
                 foreach ($paging as $key => $val) {
                     $paging[$key] = (int)$val;
                 }

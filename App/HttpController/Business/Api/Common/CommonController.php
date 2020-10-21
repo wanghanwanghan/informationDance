@@ -77,8 +77,7 @@ class CommonController extends CommonBase
 
 
 
-
-
+        return $this->writeJson(200,123,321);
     }
 
 }
