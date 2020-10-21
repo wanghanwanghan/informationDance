@@ -6,7 +6,7 @@ use EasySwoole\RedisPool\Redis;
 
 class CrontabBase
 {
-    function withoutOverlapping($className): bool
+    function withoutOverlapping($className, $ttl = 86400): bool
     {
         //返回true是可以执行，返回false是不能执行
         $name = explode("\\", $className);
@@ -17,7 +17,11 @@ class CrontabBase
 
         $redis->select(14);
 
-        return $redis->setNx($name, 'isRun') ? true : false;
+        $status = $redis->setNx($name, 'isRun') ? true : false;
+
+        $status === false ?: $redis->expire($name, $ttl);
+
+        return $status;
     }
 
     function removeOverlappingKey($className)

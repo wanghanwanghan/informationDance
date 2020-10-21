@@ -51,27 +51,17 @@ class RunSupervisor extends AbstractCronTask
         //taskId是进程周期内第几个task任务
         //可以用task，也可以用process
 
-        CommonService::getInstance()->log4PHP('准备开始');
-
         if (!$this->crontabBase->withoutOverlapping(self::getTaskName()))
         {
             CommonService::getInstance()->log4PHP('不开始');
             return true;
         }
 
-        CommonService::getInstance()->log4PHP('开始');
-
         //取出本次要监控的企业列表，如果列表是空会跳到onException
         $target = SupervisorPhoneEntName::create()
             ->where('status', 1)->where('expireTime', time(), '>')->all();
 
-        CommonService::getInstance()->log4PHP('步骤1');
-
         $target = obj2Arr($target);
-
-        CommonService::getInstance()->log4PHP('步骤2');
-
-        CommonService::getInstance()->log4PHP($target);
 
         if (empty($target)) throw new \Exception('target is null');
 
@@ -82,11 +72,7 @@ class RunSupervisor extends AbstractCronTask
             $this->jy($one['entName']);
         }
 
-        CommonService::getInstance()->log4PHP('步骤3');
-
         $this->crontabBase->removeOverlappingKey(self::getTaskName());
-
-        CommonService::getInstance()->log4PHP('结束');
 
         $this->sendSMS();
 
