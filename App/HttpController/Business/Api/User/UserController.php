@@ -47,6 +47,7 @@ class UserController extends UserBase
         $username = $this->request()->getRequestParam('username') ?? '';
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $email = $this->request()->getRequestParam('email') ?? '';
+        $idCard = $this->request()->getRequestParam('idCard') ?? '';
 
         $password = $this->request()->getRequestParam('password') ?? control::randNum(6);
         $avatar = $this->request()->getRequestParam('avatar') ?? '';
@@ -58,6 +59,8 @@ class UserController extends UserBase
         if (!is_numeric($phone) || !is_numeric($vCode)) return $this->writeJson(201, null, null, '手机号或验证码必须是数字');
 
         if (strlen($phone) !== 11) return $this->writeJson(201, null, null, '手机号错误');
+
+        //验证三要素
 
         $redis = Redis::defer('redis');
 

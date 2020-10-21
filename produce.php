@@ -10,14 +10,16 @@ return [
         'SETTING' => [
             'worker_num' => 8,
             'reload_async' => true,
-            'max_wait_time'=>3
+            'max_wait_time' => 3,
+            'dispatch_mode' => 2,
+            'package_max_length' => 50 * 1024 * 1024,
         ],
-        'TASK'=>[
-            'workerNum'=>4,
-            'maxRunningNum'=>128,
-            'timeout'=>15
+        'TASK' => [
+            'workerNum' => 6,
+            'maxRunningNum' => 128,
+            'timeout' => 15
         ]
     ],
-    'TEMP_DIR' => '/tmp',
-    'LOG_DIR' => '/tmp'
+    'TEMP_DIR' => null,
+    'LOG_DIR' => null
 ];
