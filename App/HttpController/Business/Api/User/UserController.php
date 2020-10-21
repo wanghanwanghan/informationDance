@@ -120,6 +120,8 @@ class UserController extends UserBase
 
         if (empty($userInfo)) return $this->writeJson(201, null, null, '手机号不存在');
 
+        if ($userInfo->isDestroy == 1) return $this->writeJson(201, null, null, '手机号已注销');
+
         $newToken = UserService::getInstance()->createAccessToken($userInfo->phone, $userInfo->password);
 
         try {
@@ -132,6 +134,30 @@ class UserController extends UserBase
         $userInfo->newToken = $newToken;
 
         return $this->writeJson(200, null, $userInfo, '登录成功');
+    }
+
+    //注销账户
+    function destroyUser()
+    {
+        $phone = $this->request()->getRequestParam('phone') ?? '';
+        $type = $this->request()->getRequestParam('type') ?? false;
+
+        if (empty($type) || $type == false) return $this->writeJson(201,null,null,'确认要注销账户吗？');
+
+        try
+        {
+            $info = User::create()->where('phone',$phone)->get();
+
+            if (empty($info)) return $this->writeJson(201,null,null,'未找到用户信息');
+
+            $info->update([]);
+
+        }catch (\Throwable $e)
+        {
+            return $this->writeErr($e,__FUNCTION__);
+        }
+
+        return $this->writeJson(200,null,null,'注销成功');
     }
 
     //获取充值商品列表
