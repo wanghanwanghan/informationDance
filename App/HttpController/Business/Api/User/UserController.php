@@ -552,7 +552,7 @@ class UserController extends UserBase
         if (!empty($info))
         {
             //整理一下数据
-            foreach ($info as $one)
+            foreach ($info as &$one)
             {
                 if ($one['status'] == 1) $one['statusWord'] = '异常';
                 if ($one['status'] == 2) $one['statusWord'] = '完成';
@@ -562,6 +562,8 @@ class UserController extends UserBase
                 if ($one['type'] == 10) $one['typeWord'] = '企业速透版';
                 if ($one['type'] == 20) $one['typeWord'] = '律师自用版';
                 if ($one['type'] == 30) $one['typeWord'] = '尽调专用版';
+
+                if (!empty($one['created_at'])) $one['created_atWord'] = date('Y-m-d H:i:s');
             }
             unset($one);
 
