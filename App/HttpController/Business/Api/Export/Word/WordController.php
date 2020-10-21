@@ -20,10 +20,15 @@ class WordController extends ExportBase
         parent::afterAction($actionName);
     }
 
+    private function createReportNum()
+    {
+        return time() . '_' . control::randNum(8);
+    }
+
     //生成一个极简报告
     function createVeryEasy()
     {
-        $reportNum = time() . '_' . control::getUuid(3);
+        $reportNum = $this->createReportNum();
 
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $entName = $this->request()->getRequestParam('entName') ?? '';
@@ -47,7 +52,7 @@ class WordController extends ExportBase
     //生成一个简版报告
     function createEasy()
     {
-        $reportNum = time() . '_' . control::getUuid(3);
+        $reportNum = $this->createReportNum();
 
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $entName = $this->request()->getRequestParam('entName') ?? '';

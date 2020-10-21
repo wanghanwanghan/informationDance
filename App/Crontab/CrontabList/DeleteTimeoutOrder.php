@@ -4,6 +4,7 @@ namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
 use App\HttpController\Models\Api\PurchaseInfo;
+use App\HttpController\Service\Common\CommonService;
 use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use EasySwoole\Mysqli\QueryBuilder;
@@ -43,7 +44,7 @@ class DeleteTimeoutOrder extends AbstractCronTask
             });
 
         } catch (\Throwable $e) {
-
+            CommonService::getInstance()->log4PHP($e->getMessage());
         }
 
         return true;
@@ -51,7 +52,7 @@ class DeleteTimeoutOrder extends AbstractCronTask
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
-        echo $throwable->getMessage();
+        CommonService::getInstance()->log4PHP($throwable->getMessage());
     }
 
 
