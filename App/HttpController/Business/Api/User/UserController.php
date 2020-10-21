@@ -550,7 +550,9 @@ class UserController extends UserBase
 
         !empty($info) ?: $info = null;
 
-        return $this->writeJson(200, ['page' => $page, 'pageSize' => $pageSize, 'total' => $total], $info, '查询成功');
+        return $this->writeJson(200, [
+            'page' => $page, 'pageSize' => $pageSize, 'total' => $total
+        ], $info, '查询成功');
     }
 
     //上传授权书后的确认按钮
