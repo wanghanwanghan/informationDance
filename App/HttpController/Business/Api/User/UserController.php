@@ -150,7 +150,7 @@ class UserController extends UserBase
 
             if (empty($info)) return $this->writeJson(201,null,null,'未找到用户信息');
 
-            $info->update([]);
+            $info->update(['token'=>'isDestroy','isDestroy'=>1]);
 
         }catch (\Throwable $e)
         {
