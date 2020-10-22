@@ -194,7 +194,7 @@ class UserController extends UserBase
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         try {
-            $info = PurchaseInfo::create()->where('phone', $phone)->order('updated_at', 'desc')
+            $info = PurchaseInfo::create()->where('phone', $phone)->where('orderStatus','待支付','<>')->order('updated_at', 'desc')
                 ->limit($this->exprOffset($page, $pageSize), (int)$pageSize)->all();
 
             //拿到数据
