@@ -12,13 +12,9 @@ use wanghanwanghan\someUtils\control;
 
 class BusinessBase extends Index
 {
-    public $userToken;
-
     function onRequest(?string $action): ?bool
     {
         parent::onRequest($action);
-
-        $this->userToken = $this->request()->getHeaderLine('authorization');
 
         $checkRouter = $this->checkRouter();
 
@@ -118,7 +114,7 @@ class BusinessBase extends Index
     //check token
     private function checkToken(): bool
     {
-        $requestToken = $this->userToken;
+        $requestToken = $this->request()->getHeaderLine('authorization');
 
         if (empty($requestToken) || strlen($requestToken) < 50) return false;
 
@@ -147,7 +143,8 @@ class BusinessBase extends Index
     //check limit
     private function checkLimit(): bool
     {
-        return LimitService::getInstance()->check($this->userToken);
+        $token = $this->request()->getHeaderLine('authorization');
+        return LimitService::getInstance()->check($token);
     }
 
     //计算分页

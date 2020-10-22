@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Api\User;
 
 use App\HttpController\Models\Api\AuthBook;
+use App\HttpController\Models\Api\Charge;
 use App\HttpController\Models\Api\PurchaseInfo;
 use App\HttpController\Models\Api\PurchaseList;
 use App\HttpController\Models\Api\ReportInfo;
@@ -143,22 +144,20 @@ class UserController extends UserBase
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $type = $this->request()->getRequestParam('type') ?? false;
 
-        if (empty($type) || $type == false) return $this->writeJson(201,null,null,'确认要注销账户吗？');
+        if (empty($type) || $type == false) return $this->writeJson(201, null, null, '确认要注销账户吗？');
 
-        try
-        {
-            $info = User::create()->where('phone',$phone)->get();
+        try {
+            $info = User::create()->where('phone', $phone)->get();
 
-            if (empty($info)) return $this->writeJson(201,null,null,'未找到用户信息');
+            if (empty($info)) return $this->writeJson(201, null, null, '未找到用户信息');
 
-            $info->update(['token'=>'isDestroy','isDestroy'=>1]);
+            $info->update(['token' => 'isDestroy', 'isDestroy' => 1]);
 
-        }catch (\Throwable $e)
-        {
-            return $this->writeErr($e,__FUNCTION__);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
         }
 
-        return $this->writeJson(200,null,null,'注销成功');
+        return $this->writeJson(200, null, null, '注销成功');
     }
 
     //获取充值商品列表
@@ -195,17 +194,17 @@ class UserController extends UserBase
 
         try {
 
-            $info = PurchaseInfo::create()
+            $list = PurchaseInfo::create()
                 ->alias('info')
-                ->join('information_dance_purchase_list as list','list.id = info.purchaseType')
+                ->join('information_dance_purchase_list as list', 'list.id = info.purchaseType')
                 ->where('phone', $phone)
-                ->where('orderStatus','待支付','<>')
+                ->where('orderStatus', '待支付', '<>')
                 ->order('info.updated_at', 'desc')
                 ->limit($this->exprOffset($page, $pageSize), (int)$pageSize)
                 ->all();
 
             //拿到数据
-            $info = obj2Arr($info);
+            $list = obj2Arr($list);
 
             //数据的总记录条数
             $total = PurchaseInfo::create()->where('phone', $phone)->count();
@@ -214,9 +213,47 @@ class UserController extends UserBase
             return $this->writeErr($e, __FUNCTION__);
         }
 
-        !empty($info) ?: $info = null;
+        !empty($list) ?: $list = null;
 
-        return $this->writeJson(200, ['page' => $page, 'pageSize' => $pageSize, 'total' => $total], $info, '查询成功');
+        $userInfo = UserService::getInstance()->getUserInfo($phone);
+
+        return $this->writeJson(200, [
+            'page' => $page, 'pageSize' => $pageSize, 'total' => $total
+        ], ['userInfo' => $userInfo, 'list' => $list], '查询成功');
+    }
+
+    //获取用户消费详情列表
+    function payList()
+    {
+        $phone = $this->request()->getRequestParam('phone');
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        try {
+
+            $list = Charge::create()
+                ->where('phone', $phone)
+                ->order('created_at', 'desc')
+                ->limit($this->exprOffset($page, $pageSize), (int)$pageSize)
+                ->all();
+
+            //拿到数据
+            $list = obj2Arr($list);
+
+            //数据的总记录条数
+            $total = Charge::create()->where('phone', $phone)->count();
+
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        !empty($list) ?: $list = null;
+
+        $userInfo = UserService::getInstance()->getUserInfo($phone);
+
+        return $this->writeJson(200, [
+            'page' => $page, 'pageSize' => $pageSize, 'total' => $total
+        ], ['userInfo' => $userInfo, 'list' => $list], '查询成功');
     }
 
     //充值
@@ -556,11 +593,9 @@ class UserController extends UserBase
             return $this->writeErr($e, __FUNCTION__);
         }
 
-        if (!empty($info))
-        {
+        if (!empty($info)) {
             //整理一下数据
-            foreach ($info as &$one)
-            {
+            foreach ($info as &$one) {
                 if ($one['status'] == 1) $one['statusWord'] = '异常';
                 if ($one['status'] == 2) $one['statusWord'] = '完成';
                 if ($one['status'] == 3) $one['statusWord'] = '生成中';
@@ -574,8 +609,7 @@ class UserController extends UserBase
             }
             unset($one);
 
-        }else
-        {
+        } else {
             $info = null;
         }
 
@@ -622,14 +656,14 @@ class UserController extends UserBase
 
         try {
 
-            $info = AuthBook::create()->where('phone',$phone)
-                ->order('created_at','desc')
-                ->limit($this->exprOffset($page,$pageSize),$pageSize)
+            $info = AuthBook::create()->where('phone', $phone)
+                ->order('created_at', 'desc')
+                ->limit($this->exprOffset($page, $pageSize), $pageSize)
                 ->all();
 
             $info = obj2Arr($info);
 
-            $total = AuthBook::create()->where('phone',$phone)->count();
+            $total = AuthBook::create()->where('phone', $phone)->count();
 
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
