@@ -608,7 +608,7 @@ class UserController extends UserBase
                 if ($one['type'] == 30) $one['typeWord'] = '律师自用版';
                 if ($one['type'] == 50) $one['typeWord'] = '尽调专用版';
 
-                if (!empty($one['created_at'])) $one['created_atWord'] = date('Y-m-d H:i:s');
+                if (!empty($one['created_at'])) $one['created_atWord'] = date('Y-m-d H:i:s',$one['created_at']);
             }
             unset($one);
 

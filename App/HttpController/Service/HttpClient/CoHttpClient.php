@@ -119,6 +119,8 @@ class CoHttpClient extends ServiceBase
 
     private function createKey($url, $postData): string
     {
+        if (isset($postData['useThisKey'])) return $postData['useThisKey'];
+
         $unsetTarget = [
             'rt', 'sign'
         ];

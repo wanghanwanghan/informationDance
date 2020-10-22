@@ -152,4 +152,14 @@ class BusinessBase extends Index
     {
         return ($page - 1) * $pageSize;
     }
+
+    //useThisKey，目前发现淘数不能在coHttpClient中创造有效的key，因为postData中有随机数
+    function useThisKey($arr, $salt = '')
+    {
+        ksort($arr);
+
+        empty($salt) ?: $arr[] = $salt;
+
+        return md5($arr);
+    }
 }
