@@ -12,6 +12,7 @@ use App\HttpController\Models\Api\SupervisorPhoneEntName;
 use App\HttpController\Models\Api\SupervisorPhoneLimit;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\Api\Wallet;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\OneSaid\OneSaidService;
@@ -58,6 +59,8 @@ class UserController extends UserBase
         if (!is_numeric($phone) || !is_numeric($vCode)) return $this->writeJson(201, null, null, '手机号或验证码必须是数字');
 
         if (strlen($phone) !== 11) return $this->writeJson(201, null, null, '手机号错误');
+
+        if (!CommonService::getInstance()->validateEmail($email)) return $this->writeJson(201, null, null, 'email格式错误');
 
         //验证三要素
 

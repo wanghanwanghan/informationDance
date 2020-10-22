@@ -254,5 +254,15 @@ class CommonService extends ServiceBase
         return $content;
     }
 
+    //验证邮箱
+    function validateEmail($emailStr)
+    {
+        $pattern = '/^([0-9A-Za-z\-_\.]+)@([0-9a-z]+\.[a-z]{2,3}(\.[a-z]{2})?)$/i';
+
+        $username = preg_replace($pattern, "$1", $emailStr);
+        $domain = preg_replace($pattern, "$2", $emailStr);
+
+        return preg_match($pattern, $emailStr);
+    }
 
 }
