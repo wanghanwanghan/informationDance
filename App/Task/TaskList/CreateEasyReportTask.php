@@ -735,7 +735,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("bg_no#" . ($i + 1), $i + 1);
             //变更日期
-            $docObj->setValue("bg_ALTDATE#" . ($i + 1), $this->formatDate($data['getRegisterChangeInfo']['list'][$i]['ALTDATE']));
+            $docObj->setValue("bg_ALTDATE#" . ($i + 1), $data['getRegisterChangeInfo']['list'][$i]['ALTDATE']);
             //变更项目
             $docObj->setValue("bg_ALTITEM#" . ($i + 1), $data['getRegisterChangeInfo']['list'][$i]['ALTITEM']);
             //变更前
