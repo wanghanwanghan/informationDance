@@ -86,14 +86,14 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         //统一代码
         $docObj->setValue('SHXYDM', $data['getRegisterInfo']['SHXYDM']);
         //成立日期
-        $docObj->setValue('ESDATE', $data['getRegisterInfo']['ESDATE']);
+        $docObj->setValue('ESDATE', $this->formatDate($data['getRegisterInfo']['ESDATE']));
         //核准日期
-        $docObj->setValue('APPRDATE', $data['getRegisterInfo']['APPRDATE']);
+        $docObj->setValue('APPRDATE', $this->formatDate($data['getRegisterInfo']['APPRDATE']));
         //经营状态
         $docObj->setValue('ENTSTATUS', $data['getRegisterInfo']['ENTSTATUS']);
         //营业期限
-        $docObj->setValue('OPFROM', $data['getRegisterInfo']['OPFROM']);
-        $docObj->setValue('APPRDATE', $data['getRegisterInfo']['APPRDATE']);
+        $docObj->setValue('OPFROM', $this->formatDate($data['getRegisterInfo']['OPFROM']));
+        $docObj->setValue('APPRDATE', $this->formatDate($data['getRegisterInfo']['APPRDATE']));
         //所属行业
         $docObj->setValue('INDUSTRY', $data['getRegisterInfo']['INDUSTRY']);
         //经营范围
@@ -109,11 +109,11 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("jjyc_no#" . ($i + 1), $i + 1);
             //列入一日
-            $docObj->setValue("jjyc_AddDate#" . ($i + 1), $data['GetOpException']['list'][$i]['AddDate']);
+            $docObj->setValue("jjyc_AddDate#" . ($i + 1), $this->formatDate($data['GetOpException']['list'][$i]['AddDate']));
             //列入原因
             $docObj->setValue("jjyc_AddReason#" . ($i + 1), $data['GetOpException']['list'][$i]['AddReason']);
             //移除日期
-            $docObj->setValue("jjyc_RemoveDate#" . ($i + 1), $data['GetOpException']['list'][$i]['RemoveDate']);
+            $docObj->setValue("jjyc_RemoveDate#" . ($i + 1), $this->formatDate($data['GetOpException']['list'][$i]['RemoveDate']));
             //移除原因
             $docObj->setValue("jjyc_RomoveReason#" . ($i + 1), $data['GetOpException']['list'][$i]['RomoveReason']);
         }
@@ -130,7 +130,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             //被投资企业名称
             $docObj->setValue("qydwtz_ENTNAME#" . ($i + 1), $data['getInvestmentAbroadInfo']['list'][$i]['ENTNAME']);
             //成立日期
-            $docObj->setValue("qydwtz_ESDATE#" . ($i + 1), $data['getInvestmentAbroadInfo']['list'][$i]['ESDATE']);
+            $docObj->setValue("qydwtz_ESDATE#" . ($i + 1), $this->formatDate($data['getInvestmentAbroadInfo']['list'][$i]['ESDATE']));
             //经营状态
             $docObj->setValue("qydwtz_ENTSTATUS#" . ($i + 1), $data['getInvestmentAbroadInfo']['list'][$i]['ENTSTATUS']);
             //注册资本
@@ -142,7 +142,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             //出资比例
             $docObj->setValue("qydwtz_CONRATIO#" . ($i + 1), $data['getInvestmentAbroadInfo']['list'][$i]['CONRATIO']);
             //出资时间
-            $docObj->setValue("qydwtz_CONDATE#" . ($i + 1), $data['getInvestmentAbroadInfo']['list'][$i]['CONDATE']);
+            $docObj->setValue("qydwtz_CONDATE#" . ($i + 1), $this->formatDate($data['getInvestmentAbroadInfo']['list'][$i]['CONDATE']));
         }
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,23,$this->entName,true);
@@ -173,9 +173,9 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             //法律状态
             $docObj->setValue("zl_LegalStatusDesc#" . ($i + 1), $data['PatentV4Search']['list'][$i]['LegalStatusDesc']);
             //申请日期
-            $docObj->setValue("zl_ApplicationDate#" . ($i + 1), $data['PatentV4Search']['list'][$i]['ApplicationDate']);
+            $docObj->setValue("zl_ApplicationDate#" . ($i + 1), $this->formatDate($data['PatentV4Search']['list'][$i]['ApplicationDate']));
             //发布日期
-            $docObj->setValue("zl_PublicationDate#" . ($i + 1), $data['PatentV4Search']['list'][$i]['PublicationDate']);
+            $docObj->setValue("zl_PublicationDate#" . ($i + 1), $this->formatDate($data['PatentV4Search']['list'][$i]['PublicationDate']));
         }
         $docObj->setValue("zl_total", $data['PatentV4Search']['total']);
 
@@ -190,7 +190,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             //登记号
             $docObj->setValue("rjzzq_RegisterNo#" . ($i + 1), $data['SearchSoftwareCr']['list'][$i]['RegisterNo']);
             //登记批准日期
-            $docObj->setValue("rjzzq_RegisterAperDate#" . ($i + 1), $data['SearchSoftwareCr']['list'][$i]['RegisterAperDate']);
+            $docObj->setValue("rjzzq_RegisterAperDate#" . ($i + 1), $this->formatDate($data['SearchSoftwareCr']['list'][$i]['RegisterAperDate']));
             //版本号
             $docObj->setValue("rjzzq_VersionNo#" . ($i + 1), $data['SearchSoftwareCr']['list'][$i]['VersionNo']);
         }
@@ -205,9 +205,9 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             //许可编号
             $docObj->setValue("xzxk_CaseNo#" . ($i + 1), $data['GetAdministrativeLicenseList']['list'][$i]['CaseNo']);
             //有效期自
-            $docObj->setValue("xzxk_LianDate#" . ($i + 1), $data['GetAdministrativeLicenseList']['list'][$i]['detail']['LianDate']);
+            $docObj->setValue("xzxk_LianDate#" . ($i + 1), $this->formatDate($data['GetAdministrativeLicenseList']['list'][$i]['detail']['LianDate']));
             //有效期止
-            $docObj->setValue("xzxk_ExpireDate#" . ($i + 1), $data['GetAdministrativeLicenseList']['list'][$i]['detail']['ExpireDate']);
+            $docObj->setValue("xzxk_ExpireDate#" . ($i + 1), $this->formatDate($data['GetAdministrativeLicenseList']['list'][$i]['detail']['ExpireDate']));
             //许可内容
             $docObj->setValue("xzxk_Content#" . ($i + 1), $data['GetAdministrativeLicenseList']['list'][$i]['detail']['Content']);
             //许可机关
@@ -227,7 +227,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             //文书号
             $docObj->setValue("xzcf_CaseNo#" . ($i + 1), $data['GetAdministrativePenaltyList']['list'][$i]['CaseNo']);
             //决定日期
-            $docObj->setValue("xzcf_LianDate#" . ($i + 1), $data['GetAdministrativePenaltyList']['list'][$i]['LianDate']);
+            $docObj->setValue("xzcf_LianDate#" . ($i + 1), $this->formatDate($data['GetAdministrativePenaltyList']['list'][$i]['LianDate']));
             //内容
             $docObj->setValue("xzcf_Content#" . ($i + 1), $data['GetAdministrativePenaltyList']['list'][$i]['detail']['Content']);
             //决定机关
@@ -249,7 +249,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             //法院名称
             $docObj->setValue("cpws_court#" . ($i + 1), $data['cpws']['list'][$i]['detail']['court']);
             //审结时间
-            $docObj->setValue("cpws_sortTimeString#" . ($i + 1), $data['cpws']['list'][$i]['sortTimeString']);
+            $docObj->setValue("cpws_sortTimeString#" . ($i + 1), $this->formatDate($data['cpws']['list'][$i]['sortTimeString']));
             //审理状态
             $docObj->setValue("cpws_trialProcedure#" . ($i + 1), $data['cpws']['list'][$i]['detail']['trialProcedure']);
 
@@ -299,7 +299,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             //法院名称
             $docObj->setValue("zxgg_court#" . ($i + 1), $data['zxgg']['list'][$i]['detail']['court']);
             //立案日期
-            $docObj->setValue("zxgg_sortTimeString#" . ($i + 1), $data['zxgg']['list'][$i]['sortTimeString']);
+            $docObj->setValue("zxgg_sortTimeString#" . ($i + 1), $this->formatDate($data['zxgg']['list'][$i]['sortTimeString']));
 
             $content = '';
             foreach ($data['zxgg']['list'][$i]['detail']['partys'] as $no => $arr) {
@@ -330,7 +330,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             //法院名称
             $docObj->setValue("sx_court#" . ($i + 1), $data['shixin']['list'][$i]['detail']['court']);
             //立案日期
-            $docObj->setValue("sx_sortTimeString#" . ($i + 1), $data['shixin']['list'][$i]['sortTimeString']);
+            $docObj->setValue("sx_sortTimeString#" . ($i + 1), $this->formatDate($data['shixin']['list'][$i]['sortTimeString']));
 
             $content = '';
             foreach ($data['shixin']['list'][$i]['detail']['partys'] as $no => $arr) {
