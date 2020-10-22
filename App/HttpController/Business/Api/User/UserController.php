@@ -671,6 +671,17 @@ class UserController extends UserBase
 
         !empty($info) ?: $info = null;
 
+        if (!empty($info))
+        {
+            foreach ($info as &$one)
+            {
+                if ($one['status'] == 1) $one['statusWord'] = '审核中';
+                if ($one['status'] == 2) $one['statusWord'] = '未通过';
+                if ($one['status'] == 3) $one['statusWord'] = '已通过';
+            }
+            unset($one);
+        }
+
         $paging = [
             'page' => $page,
             'pageSize' => $pageSize,
