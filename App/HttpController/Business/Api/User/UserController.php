@@ -194,7 +194,8 @@ class UserController extends UserBase
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         try {
-            $info = PurchaseInfo::create()->where('phone', $phone)->where('orderStatus','待支付','<>')->order('updated_at', 'desc')
+            $info = PurchaseInfo::create()->where('phone', $phone)->where('orderStatus','待支付','<>')
+                ->order('updated_at', 'desc')
                 ->limit($this->exprOffset($page, $pageSize), (int)$pageSize)->all();
 
             //拿到数据
@@ -605,5 +606,39 @@ class UserController extends UserBase
 
         return $this->writeJson(200, null, null, '提交成功');
     }
+
+    //获取用户授权书审核列表
+    function getAuthBook()
+    {
+        $phone = $this->request()->getRequestParam('phone');
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        try {
+
+            $info = AuthBook::create()->where('phone',$phone)
+                ->order('created_at','desc')
+                ->limit($this->exprOffset($page,$pageSize),$pageSize)
+                ->all();
+
+            $info = obj2Arr($info);
+
+            $total = AuthBook::create()->where('phone',$phone)->count();
+
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        !empty($info) ?: $info = null;
+
+        $paging = [
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $total,
+        ];
+
+        return $this->writeJson(200, $paging, $info, '查询成功');
+    }
+
 
 }

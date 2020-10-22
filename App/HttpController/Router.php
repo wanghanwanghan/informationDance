@@ -64,6 +64,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/edit/supervisorLimit',$prefix.'editSupervisorLimit');//修改风险阈值
             $routeCollector->addRoute(['GET','POST'],'/report/list',$prefix.'getReportList');//获取报告列表
             $routeCollector->addRoute(['GET','POST'],'/create/authBook',$prefix.'createAuthBook');//上传授权书后的确认按钮
+            $routeCollector->addRoute(['GET','POST'],'/get/authBook',$prefix.'getAuthBook');//获取用户授权书审核列表
         });
 
         return true;
