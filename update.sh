@@ -6,4 +6,4 @@ composer install
 
 rm -f ./Log/* ./Static/Log/*
 
-php easyswoole restart
+php easyswoole restart produce
