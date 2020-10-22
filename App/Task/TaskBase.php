@@ -57,4 +57,20 @@ class TaskBase
 
         return $str;
     }
+
+    //判断比例用的，只显示成 10%
+    function formatPercent($str)
+    {
+        $str = trim($str);
+
+        if (preg_match('%', $str)) {
+            return $str;
+        }
+
+        if (is_numeric($str)) {
+            return sprintf('%.2f', $str * 100) . '%';
+        }
+
+        return $str;
+    }
 }

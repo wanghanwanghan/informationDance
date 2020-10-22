@@ -705,7 +705,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //出资币种
             $docObj->setValue("gd_CONCUR#" . ($i + 1), $data['getShareHolderInfo'][$i]['CONCUR']);
             //出资比例
-            $docObj->setValue("gd_CONRATIO#" . ($i + 1), $data['getShareHolderInfo'][$i]['CONRATIO']);
+            $docObj->setValue("gd_CONRATIO#" . ($i + 1), $this->formatPercent($data['getShareHolderInfo'][$i]['CONRATIO']));
             //出资时间
             $docObj->setValue("gd_CONDATE#" . ($i + 1), $this->formatDate($data['getShareHolderInfo'][$i]['CONDATE']));
         }
@@ -771,7 +771,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //姓名
             $docObj->setValue("sjkzr_Name", $data['Beneficiary']['Name']);
             //持股比例
-            $docObj->setValue("sjkzr_TotalStockPercent", $data['Beneficiary']['TotalStockPercent']);
+            $docObj->setValue("sjkzr_TotalStockPercent", $this->formatPercent($data['Beneficiary']['TotalStockPercent']));
             //股权链
             $path = '';
             foreach ($data['Beneficiary']['DetailInfoList'] as $no => $onePath) {
@@ -811,7 +811,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //企业名称
             $docObj->setValue("frdwtz_ENTNAME#" . ($i + 1), $data['lawPersonInvestmentInfo'][$i]['ENTNAME']);
             //持股比例
-            $docObj->setValue("frdwtz_CONRATIO#" . ($i + 1), $data['lawPersonInvestmentInfo'][$i]['CONRATIO']);
+            $docObj->setValue("frdwtz_CONRATIO#" . ($i + 1), $this->formatPercent($data['lawPersonInvestmentInfo'][$i]['CONRATIO']));
             //注册资本
             $docObj->setValue("frdwtz_REGCAP#" . ($i + 1), $data['lawPersonInvestmentInfo'][$i]['REGCAP']);
             //统一社会信用代码
@@ -867,7 +867,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //出资币种
             $docObj->setValue("qydwtz_CONCUR#" . ($i + 1), $data['getInvestmentAbroadInfo']['list'][$i]['CONCUR']);
             //出资比例
-            $docObj->setValue("qydwtz_CONRATIO#" . ($i + 1), $data['getInvestmentAbroadInfo']['list'][$i]['CONRATIO']);
+            $docObj->setValue("qydwtz_CONRATIO#" . ($i + 1), $this->formatPercent($data['getInvestmentAbroadInfo']['list'][$i]['CONRATIO']));
             //出资时间
             $docObj->setValue("qydwtz_CONDATE#" . ($i + 1), $this->formatDate($data['getInvestmentAbroadInfo']['list'][$i]['CONDATE']));
         }
@@ -1126,7 +1126,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //年份
             $docObj->setValue("tdrs_year#" . ($i + 1), $data['itemInfo'][$i]['year']);
             //变化率
-            $docObj->setValue("tdrs_yoy#" . ($i + 1), $data['itemInfo'][$i]['yoy']);
+            $docObj->setValue("tdrs_yoy#" . ($i + 1), $this->formatPercent($data['itemInfo'][$i]['yoy']));
         }
 
         //建筑企业-专业注册人员
@@ -2223,8 +2223,6 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,57,$this->entName,true);
         $docObj->setValue('qtdcrz_oneSaid', $oneSaid);
-
-        //var_dump($data['company_zdw_qtdcdsr']);
     }
 
     //并发请求数据
