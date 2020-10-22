@@ -194,9 +194,15 @@ class UserController extends UserBase
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         try {
-            $info = PurchaseInfo::create()->where('phone', $phone)->where('orderStatus','待支付','<>')
-                ->order('updated_at', 'desc')
-                ->limit($this->exprOffset($page, $pageSize), (int)$pageSize)->all();
+
+            $info = PurchaseInfo::create()
+                ->alias('info')
+                ->join('information_dance_purchase_list as list','list.id = info.purchaseType')
+                ->where('phone', $phone)
+                ->where('orderStatus','待支付','<>')
+                ->order('info.updated_at', 'desc')
+                ->limit($this->exprOffset($page, $pageSize), (int)$pageSize)
+                ->all();
 
             //拿到数据
             $info = obj2Arr($info);
