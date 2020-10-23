@@ -47,7 +47,15 @@ class ChargeService extends ServiceBase
 
     private function getPay(Request $request)
     {
-        return $request->getRequestParam('pay') ?? false;
+        $pay = $request->getRequestParam('pay') ?? false;
+
+        if ($pay === 'false' || $pay === false || $pay === 0 || $pay === '0' || $pay === '' || $pay === null) {
+            $pay = false;
+        } else {
+            $pay = true;
+        }
+
+        return $pay;
     }
 
     private function getModuleInfo(int $index = 500): array
@@ -429,19 +437,6 @@ class ChargeService extends ServiceBase
         }
 
         return ['code' => 200, 'msg' => '扣费成功'];
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     }
