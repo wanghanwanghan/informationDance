@@ -246,6 +246,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/getCompanyZdwCdzydsrDetail','/Business/Api/FaHai/FaHaiController/getCompanyZdwCdzydsrDetail');//仓单质押
             $routeCollector->addRoute(['GET','POST'],'/getCompanyZdwSyqbldsrDetail','/Business/Api/FaHai/FaHaiController/getCompanyZdwSyqbldsrDetail');//所有权保留
             $routeCollector->addRoute(['GET','POST'],'/getCompanyZdwQtdcdsrDetail','/Business/Api/FaHai/FaHaiController/getCompanyZdwQtdcdsrDetail');//其他动产融资
+            $routeCollector->addRoute(['GET','POST'],'/getPersonSifaDetail','/Business/Api/FaHai/FaHaiController/getPersonSifaDetail');//个人涉诉详情
 
         });
 

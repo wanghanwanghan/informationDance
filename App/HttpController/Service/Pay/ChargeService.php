@@ -156,6 +156,8 @@ class ChargeService extends ServiceBase
 
         $phone = $this->getPhone($request);
 
+        if (empty($moduleNum) || !is_numeric($moduleNum)) return ['code' => 999, 'msg' => '暂时免费'];
+
         if (empty($phone) || empty($entName) || empty($id)) return ['code' => 201, 'msg' => '手机号或公司名或id不能是空'];
 
         //是否免费

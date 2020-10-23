@@ -53,14 +53,17 @@ class FaHaiController extends FaHaiBase
         //拿返回结果
         if ($type === 'List') {
             isset($res[$docType . $type]) ? $res['Result'] = $res[$docType . $type] : $res['Result'] = [];
-        } else {
+        } elseif ($type === 'Detail') {
             isset($res[$docType]) ? $res['Result'] = $res[$docType] : $res['Result'] = [];
+        } elseif ($type === 'Person') {
+            isset($res[$docType . 'List']) ? $res['Result'] = $res[$docType . 'List'] : $res['Result'] = $res['allList'];
+        } else {
         }
 
-        if ($type === 'detail') {
+        if ($type === 'Detail') {
             //详情要扣费
             $charge = ChargeService::getInstance()->FaHai($this->request(), $this->moduleNum, $this->entName);
-            if ($charge['code'] != 200) {
+            if ($charge['code'] != 200 && $charge['code'] != 999) {
                 $res['code'] = $charge['code'];
                 $res['Paging'] = $res['Result'] = null;
                 $res['msg'] = $charge['msg'];
@@ -378,7 +381,7 @@ class FaHaiController extends FaHaiBase
 
         $this->entName = $this->request()->getRequestParam('entName') ?? '';
 
-        $this->moduleNum =1;
+        $this->moduleNum = 1;
 
         $postData = ['id' => $id];
 
@@ -417,7 +420,7 @@ class FaHaiController extends FaHaiBase
 
         $this->entName = $this->request()->getRequestParam('entName') ?? '';
 
-        $this->moduleNum=2;
+        $this->moduleNum = 2;
 
         $postData = ['id' => $id];
 
@@ -456,7 +459,7 @@ class FaHaiController extends FaHaiBase
 
         $this->entName = $this->request()->getRequestParam('entName') ?? '';
 
-        $this->moduleNum=3;
+        $this->moduleNum = 3;
 
         $postData = ['id' => $id];
 
@@ -495,7 +498,7 @@ class FaHaiController extends FaHaiBase
 
         $this->entName = $this->request()->getRequestParam('entName') ?? '';
 
-        $this->moduleNum=4;
+        $this->moduleNum = 4;
 
         $postData = ['id' => $id];
 
@@ -534,7 +537,7 @@ class FaHaiController extends FaHaiBase
 
         $this->entName = $this->request()->getRequestParam('entName') ?? '';
 
-        $this->moduleNum=5;
+        $this->moduleNum = 5;
 
         $postData = ['id' => $id];
 
@@ -573,7 +576,7 @@ class FaHaiController extends FaHaiBase
 
         $this->entName = $this->request()->getRequestParam('entName') ?? '';
 
-        $this->moduleNum=6;
+        $this->moduleNum = 6;
 
         $postData = ['id' => $id];
 
@@ -612,7 +615,7 @@ class FaHaiController extends FaHaiBase
 
         $this->entName = $this->request()->getRequestParam('entName') ?? '';
 
-        $this->moduleNum=8;
+        $this->moduleNum = 8;
 
         $postData = ['id' => $id];
 
@@ -651,7 +654,7 @@ class FaHaiController extends FaHaiBase
 
         $this->entName = $this->request()->getRequestParam('entName') ?? '';
 
-        $this->moduleNum=9;
+        $this->moduleNum = 9;
 
         $postData = ['id' => $id];
 
@@ -690,7 +693,7 @@ class FaHaiController extends FaHaiBase
 
         $this->entName = $this->request()->getRequestParam('entName') ?? '';
 
-        $this->moduleNum=10;
+        $this->moduleNum = 10;
 
         $postData = ['id' => $id];
 
@@ -729,7 +732,7 @@ class FaHaiController extends FaHaiBase
 
         $this->entName = $this->request()->getRequestParam('entName') ?? '';
 
-        $this->moduleNum=11;
+        $this->moduleNum = 11;
 
         $postData = ['id' => $id];
 
@@ -768,7 +771,7 @@ class FaHaiController extends FaHaiBase
 
         $this->entName = $this->request()->getRequestParam('entName') ?? '';
 
-        $this->moduleNum=12;
+        $this->moduleNum = 12;
 
         $postData = ['id' => $id];
 
@@ -807,7 +810,7 @@ class FaHaiController extends FaHaiBase
 
         $this->entName = $this->request()->getRequestParam('entName') ?? '';
 
-        $this->moduleNum=13;
+        $this->moduleNum = 13;
 
         $postData = ['id' => $id];
 
@@ -1257,7 +1260,23 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getListForPerson($this->listBaseUrlForPerson . 'sifa', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        return $this->checkResponse($res, $docType, 'person');
+    }
+
+    //个人涉诉详情
+    function getPersonSifaDetail()
+    {
+        $id = $this->request()->getRequestParam('id') ?? '';
+
+        $postData = ['id' => $id];
+
+        $docType = $this->request()->getRequestParam('docType') ?? '';
+
+        if (empty($docType)) return $this->writeJson(201, null, null, 'docType不能是空');
+
+        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+
+        return $this->checkResponse($res, $docType, 'detail');
     }
 
     //上市公司-抵押解除
