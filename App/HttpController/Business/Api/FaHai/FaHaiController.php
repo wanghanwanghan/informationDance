@@ -58,6 +58,7 @@ class FaHaiController extends FaHaiBase
         } elseif ($type === 'Person') {
             isset($res[$docType . 'List']) ? $res['Result'] = $res[$docType . 'List'] : $res['Result'] = $res['allList'];
         } else {
+            $res['Result'] = null;
         }
 
         if ($type === 'Detail') {
