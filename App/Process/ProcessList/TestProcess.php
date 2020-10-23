@@ -2,8 +2,8 @@
 
 namespace App\Process\ProcessList;
 
+use App\HttpController\Service\Common\CommonService;
 use App\Process\ProcessBase;
-use EasySwoole\RedisPool\Redis;
 use Swoole\Process;
 
 class TestProcess extends ProcessBase
@@ -21,12 +21,8 @@ class TestProcess extends ProcessBase
         //接收数据 string
         $data = jsonDecode($process->read());
 
-        $redis = Redis::defer('redis');
-
-        $redis->select(14);
-
         foreach ($data as $key => $val) {
-            $redis->set($key, $val);
+            CommonService::getInstance()->log4PHP("{$key} => {$val}");
         }
 
         return true;

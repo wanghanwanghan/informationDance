@@ -13,6 +13,9 @@ class ProcessService extends ServiceBase
 {
     use Singleton;
 
+    //总共创建了几个进程 [进程名 => 数量] 数量是从0开始的，代表第一个进程
+    public $processNo = [];
+
     //只能在mainServerCreate中用
     public function create($funcName = '', $arg = ['a' => 5], $processNum = 1): bool
     {
@@ -22,17 +25,14 @@ class ProcessService extends ServiceBase
     //给进程发参数
     function sendToProcess(string $name, string $arg)
     {
-        try
-        {
+        try {
+            mt_srand();
+            $name .= mt_rand(0, $this->processNo[$name]);
             $processService = Di::getInstance()->get($name);
-
             $process = $processService->getProcess($name);
-
             return $process->write($arg);
-
-        }catch (\Throwable $e)
-        {
-            return $this->writeErr($e,__FUNCTION__);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
         }
     }
 
@@ -41,6 +41,8 @@ class ProcessService extends ServiceBase
     {
         //创建进程名
         $processName = __FUNCTION__;
+
+        $this->processNo[$processNum] = -1;
 
         //循环创建
         for ($i = $processNum; $i--;) {
@@ -56,6 +58,8 @@ class ProcessService extends ServiceBase
             Di::getInstance()->set($processName . $i, new TestProcess($processConfig));
             //创建进程
             Manager::getInstance()->addProcess(Di::getInstance()->get($processName . $i));
+            //
+            $this->processNo[$processNum]++;
         }
 
         return true;
