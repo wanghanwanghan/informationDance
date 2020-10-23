@@ -118,7 +118,7 @@ class TaoShuService extends ServiceBase
             'params' => $body
         ];
 
-        $postBodyJson = $this->quantumEncode(json_encode($postBody), $this->taoshuPEM);
+        $postBodyJson = $this->quantumEncode(jsonEncode($postBody), $this->taoshuPEM);
 
         //参数固定格式
         $p_arr['uid'] = $this->uid;
@@ -135,7 +135,7 @@ class TaoShuService extends ServiceBase
 
         $rs = $this->quantumDecode(json_decode($data), $this->taoshuPEM);
 
-        $rs = json_decode($rs, true);
+        $rs = jsonDecode($rs, true);
 
         return $this->checkRespFlag ? $this->checkResp($rs) : $rs;
     }

@@ -182,7 +182,7 @@ class RunSupervisor extends AbstractCronTask
         {
             foreach ($res['result'] as $one)
             {
-                $id=md5(json_encode($one));
+                $id=md5(jsonEncode($one));
 
                 $check=SupervisorEntNameInfo::create()->where('keyNo',$id)->get();
 
@@ -504,7 +504,7 @@ class RunSupervisor extends AbstractCronTask
         {
             foreach ($res['result'] as $one)
             {
-                $id=md5(json_encode($one));
+                $id=md5(jsonEncode($one));
 
                 $check=SupervisorEntNameInfo::create()->where('keyNo',$id)->get();
 
@@ -578,7 +578,7 @@ class RunSupervisor extends AbstractCronTask
         {
             foreach ($res['result'] as $one)
             {
-                $id=md5(json_encode($one));
+                $id=md5(jsonEncode($one));
 
                 $check=SupervisorEntNameInfo::create()->where('keyNo',$id)->get();
 
@@ -630,7 +630,7 @@ class RunSupervisor extends AbstractCronTask
         {
             foreach ($res['result'] as $one)
             {
-                $id=md5(json_encode($one));
+                $id=md5(jsonEncode($one));
 
                 $check=SupervisorEntNameInfo::create()->where('keyNo',$id)->get();
 
@@ -672,7 +672,7 @@ class RunSupervisor extends AbstractCronTask
         {
             foreach ($res['result'] as $one)
             {
-                $id=md5(json_encode($one));
+                $id=md5(jsonEncode($one));
 
                 $check=SupervisorEntNameInfo::create()->where('keyNo',$id)->get();
 
@@ -726,7 +726,7 @@ class RunSupervisor extends AbstractCronTask
         {
             foreach ($res['result'] as $one)
             {
-                $id=md5(json_encode($one));
+                $id=md5(jsonEncode($one));
 
                 $check=SupervisorEntNameInfo::create()->where('keyNo',$id)->get();
 
@@ -1232,7 +1232,7 @@ class RunSupervisor extends AbstractCronTask
         {
             foreach ($res['result'] as $one)
             {
-                $id=md5(json_encode($one));
+                $id=md5(jsonEncode($one));
 
                 $check=SupervisorEntNameInfo::create()->where('keyNo',$id)->get();
 
@@ -1402,7 +1402,7 @@ class RunSupervisor extends AbstractCronTask
 
                 foreach ($one['ProvideAssuranceList'] as $two)
                 {
-                    $id=md5(json_encode($two));
+                    $id=md5(jsonEncode($two));
 
                     $check=SupervisorEntNameInfo::create()->where('keyNo',$id)->get();
 
@@ -1459,7 +1459,7 @@ class RunSupervisor extends AbstractCronTask
                 {
                     foreach ($res['result'] as $one)
                     {
-                        $id=md5(json_encode($one));
+                        $id=md5(jsonEncode($one));
 
                         $check=SupervisorEntNameInfo::create()->where('keyNo',$id)->get();
 
