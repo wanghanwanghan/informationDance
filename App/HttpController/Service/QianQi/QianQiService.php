@@ -374,6 +374,8 @@ class QianQiService extends ServiceBase
             'content-type'=>'application/x-www-form-urlencoded',
             'authorization'=>'',
         ];
+
+        return parent::__construct();
     }
 
     //公司名称换取entid

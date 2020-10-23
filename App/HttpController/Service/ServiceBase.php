@@ -58,5 +58,17 @@ class ServiceBase
         return $data;
     }
 
+    //
+    function useThisKey($arr, $salt = '')
+    {
+        ksort($arr);
+
+        empty($salt) ?: $arr[] = $salt;
+
+        $arr = implode(',', $arr);
+
+        return md5($arr);
+    }
+
 
 }

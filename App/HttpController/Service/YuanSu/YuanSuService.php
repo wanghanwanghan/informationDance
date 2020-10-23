@@ -19,9 +19,10 @@ class YuanSuService extends ServiceBase
 
     function __construct()
     {
-        parent::__construct();
-        $this->appId = CreateConf::getInstance()->getConf('yuansu.appId');
-        $this->appKey = CreateConf::getInstance()->getConf('yuansu.appKey');
+        $this->appId = CreateConf::getInstance()->getConf('yuansu.appIdTest');
+        $this->appKey = CreateConf::getInstance()->getConf('yuansu.appKeyTest');
+
+        return parent::__construct();
     }
 
     private function getTimestamp()
@@ -59,7 +60,7 @@ class YuanSuService extends ServiceBase
 
     function getList($url, $body)
     {
-        $body = json_encode($body);
+        $body = jsonEncode($body);
 
         $requestSn = control::getUuid();
 
@@ -74,7 +75,7 @@ class YuanSuService extends ServiceBase
             'request-sn' => $requestSn
         ];
 
-        $res = (new CoHttpClient())->send($url, json_decode($body, true), $header, [], 'postJson');
+        $res = (new CoHttpClient())->send($url, jsonDecode($body), $header, [], 'postJson');
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }

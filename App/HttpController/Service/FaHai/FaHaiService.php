@@ -20,6 +20,8 @@ class FaHaiService extends ServiceBase
     {
         $this->authCode = CreateConf::getInstance()->getConf('fahai.authCode');
         $this->rt = time() * 1000;
+
+        return parent::__construct();
     }
 
     private function checkResp($res,$docType,$type='list')
@@ -71,7 +73,7 @@ class FaHaiService extends ServiceBase
             'range' => $range
         ];
 
-        $json_data = json_encode($json_data);
+        $json_data = jsonEncode($json_data);
 
         $data = [
             'authCode' => $this->authCode,
@@ -102,7 +104,7 @@ class FaHaiService extends ServiceBase
             'range' => $range
         ];
 
-        $json_data = json_encode($json_data);
+        $json_data = jsonEncode($json_data);
 
         $data = [
             'authCode' => $this->authCode,

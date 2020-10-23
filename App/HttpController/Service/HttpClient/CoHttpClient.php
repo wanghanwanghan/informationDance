@@ -34,10 +34,10 @@ class CoHttpClient extends ServiceBase
     function send($url = '', $postData = [], $headers = [], $options = [], $method = 'post')
     {
         //从缓存中拿
-        $this->useCache ? $take = $this->takeResult($url, $postData) : $take = [];
+        $this->useCache ? $take = $this->takeResult($url, $postData, $options) : $take = [];
 
         //不是空，说明缓存里有数据，直接返回
-        if (!empty($take)) return $this->needJsonDecode ? json_decode($take, true) : $take;
+        if (!empty($take)) return $this->needJsonDecode ? jsonDecode($take) : $take;
 
         $method = strtoupper($method);
 
@@ -50,7 +50,7 @@ class CoHttpClient extends ServiceBase
         try {
             //发送请求
             if ($method === 'POST') $data = $request->post($postData);
-            if ($method === 'POSTJSON') $data = $request->postJson(json_encode($postData));
+            if ($method === 'POSTJSON') $data = $request->postJson(jsonEncode($postData));
             if ($method === 'GET') $data = $request->get();
 
             //整理结果
@@ -62,9 +62,9 @@ class CoHttpClient extends ServiceBase
         }
 
         //缓存起来
-        $this->storeResult($url, $postData, $data);
+        $this->storeResult($url, $postData, $data, $options);
 
-        return $this->needJsonDecode ? json_decode($data, true) : $data;
+        return $this->needJsonDecode ? jsonDecode($data) : $data;
     }
 
     function useCache($type = true)
@@ -80,9 +80,9 @@ class CoHttpClient extends ServiceBase
         return $this;
     }
 
-    private function storeResult($url, $postData, $result)
+    private function storeResult($url, $postData, $result, $options)
     {
-        $key = $this->createKey($url, $postData);
+        $key = $this->createKey($url, $postData, $options);
 
         //$redis = Redis::defer('redis');
 
@@ -98,9 +98,9 @@ class CoHttpClient extends ServiceBase
         return $res;
     }
 
-    private function takeResult($url, $postData)
+    private function takeResult($url, $postData, $options)
     {
-        $key = $this->createKey($url, $postData);
+        $key = $this->createKey($url, $postData, $options);
 
         //defer
         //$redis = Redis::defer('redis');
@@ -117,9 +117,9 @@ class CoHttpClient extends ServiceBase
         return $res;
     }
 
-    private function createKey($url, $postData): string
+    private function createKey($url, $postData, $options): string
     {
-        if (isset($postData['useThisKey'])) return $postData['useThisKey'];
+        if (isset($options['useThisKey'])) return $options['useThisKey'];
 
         $unsetTarget = [
             'rt', 'sign'
@@ -139,7 +139,7 @@ class CoHttpClient extends ServiceBase
             $data = $postData;
         }
 
-        return md5($url . json_encode($data));
+        return md5($url . jsonEncode($data));
     }
 
 }

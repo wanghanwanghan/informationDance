@@ -19,9 +19,10 @@ class QiChaChaService extends ServiceBase
 
     function __construct()
     {
-        parent::__construct();
         $this->appkey = CreateConf::getInstance()->getConf('qichacha.appkey');
         $this->seckey = CreateConf::getInstance()->getConf('qichacha.seckey');
+
+        return parent::__construct();
     }
 
     //企查查全羁绊是get请求

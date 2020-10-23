@@ -362,8 +362,6 @@ class TaoShuController extends TaoShuBase
             'reportDate' => $reportDate,
         ];
 
-        //$postData['useThisKey'] = $this->useThisKey($postData, __FUNCTION__);
-
         $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
         return $this->checkResponse($res);
