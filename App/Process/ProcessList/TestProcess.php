@@ -12,6 +12,8 @@ class TestProcess extends ProcessBase
     {
         //可以用来初始化
         parent::run($arg);
+        var_dump($arg);
+        CommonService::getInstance()->log4PHP(__CLASS__.'启动');
     }
 
     protected function onPipeReadable(Process $process)
