@@ -42,7 +42,7 @@ class ProcessService extends ServiceBase
         //创建进程名
         $processName = __FUNCTION__;
 
-        $this->processNo[$processNum] = -1;
+        $this->processNo[$processName] = -1;
 
         //循环创建
         for ($i = $processNum; $i--;) {
@@ -59,7 +59,7 @@ class ProcessService extends ServiceBase
             //创建进程
             Manager::getInstance()->addProcess(Di::getInstance()->get($processName . $i));
             //
-            $this->processNo[$processNum]++;
+            $this->processNo[$processName]++;
         }
 
         return true;
