@@ -3,6 +3,7 @@
 namespace App\Process\ProcessList;
 
 use App\Process\ProcessBase;
+use EasySwoole\RedisPool\Redis;
 use Swoole\Process;
 
 class TestProcess extends ProcessBase
@@ -18,7 +19,25 @@ class TestProcess extends ProcessBase
         parent::onPipeReadable($process);
 
         //接收数据 string
-        $commend = $process->read();
+        $data = jsonDecode($process->read());
+
+        $redis = Redis::defer('redis');
+
+        $redis->select(14);
+
+        foreach ($data as $key => $val) {
+            $redis->set($key, $val);
+        }
+
+        return true;
+    }
+
+    protected function onShutDown()
+    {
+    }
+
+    protected function onException(\Throwable $throwable, ...$args)
+    {
     }
 
 

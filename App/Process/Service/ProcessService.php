@@ -22,11 +22,18 @@ class ProcessService extends ServiceBase
     //给进程发参数
     function sendToProcess(string $name, string $arg)
     {
-        $processService = Di::getInstance()->get($name);
+        try
+        {
+            $processService = Di::getInstance()->get($name);
 
-        $process = $processService->getProcess($name);
+            $process = $processService->getProcess($name);
 
-        return $process->write($arg);
+            return $process->write($arg);
+
+        }catch (\Throwable $e)
+        {
+            return $this->writeErr($e,__FUNCTION__);
+        }
     }
 
     //创建进程

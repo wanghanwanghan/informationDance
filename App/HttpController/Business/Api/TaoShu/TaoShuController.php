@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Api\TaoShu;
 
 use App\HttpController\Service\TaoShu\TaoShuService;
+use App\Process\Service\ProcessService;
 
 class TaoShuController extends TaoShuBase
 {
@@ -172,6 +173,8 @@ class TaoShuController extends TaoShuBase
             'pageNo' => $pageNo,
             'pageSize' => $pageSize,
         ];
+
+        ProcessService::getInstance()->sendToProcess('test',jsonEncode(['a'=>1,'b'=>2]));
 
         $res = (new TaoShuService())->post($postData, __FUNCTION__);
 

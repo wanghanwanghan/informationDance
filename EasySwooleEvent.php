@@ -50,7 +50,7 @@ class EasySwooleEvent implements Event
         LimitService::getInstance()->create();
 
         //注册自定义进程
-        ProcessService::getInstance()->create();
+        ProcessService::getInstance()->create('test');
 
         //注册定时任务
         CrontabService::getInstance()->create();
