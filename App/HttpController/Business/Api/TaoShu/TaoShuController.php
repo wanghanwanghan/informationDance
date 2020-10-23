@@ -174,8 +174,6 @@ class TaoShuController extends TaoShuBase
             'pageSize' => $pageSize,
         ];
 
-        ProcessService::getInstance()->sendToProcess('test',jsonEncode(['a'=>1,'b'=>2]));
-
         $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
         return $this->checkResponse($res);
