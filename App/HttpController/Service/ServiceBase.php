@@ -19,7 +19,7 @@ class ServiceBase
         return true;
     }
 
-    function writeErr($e, $which = __CLASS__, $type = 'info'): bool
+    function writeErr($e, $which = __FUNCTION__, $type = 'info'): bool
     {
         $logFileName = $which . '.log.' . date('Ymd', time());
 
