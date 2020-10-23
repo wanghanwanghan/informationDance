@@ -73,8 +73,8 @@ class CommonController extends CommonBase
         $lng = $this->request()->getRequestParam('lng') ?? '';//经度
         $lat = $this->request()->getRequestParam('lat') ?? '';//纬度
 
-        $lng = sprintf('%.8',trim($lng));
-        $lat = sprintf('%.8',trim($lat));
+        $lng = sprintf('%.8f',trim($lng));
+        $lat = sprintf('%.8f',trim($lat));
 
         try
         {
