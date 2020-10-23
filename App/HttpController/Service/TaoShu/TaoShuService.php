@@ -135,7 +135,7 @@ class TaoShuService extends ServiceBase
 
         $rs = $this->quantumDecode(json_decode($data), $this->taoshuPEM);
 
-        $rs = jsonDecode($rs, true);
+        $rs = jsonDecode($rs);
 
         return $this->checkRespFlag ? $this->checkResp($rs) : $rs;
     }
