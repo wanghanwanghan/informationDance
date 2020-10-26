@@ -135,6 +135,7 @@ class TaoShuController extends TaoShuBase
                 $vendinc[] = $one;
             }
 
+            !empty($vendinc) ?: $vendinc = '';
             $res['result'][0]['vendinc'] = $vendinc;
         }
 
