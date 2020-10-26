@@ -19,7 +19,7 @@ class TaoShuController extends TaoShuBase
     }
 
     //检验企查查返回值，并给客户计费
-    private function checkResponse($res)
+    private function checkResponse($res, $writeJson = true)
     {
         if (isset($res['PAGEINFO']) && isset($res['PAGEINFO']['TOTAL_COUNT']) && isset($res['PAGEINFO']['TOTAL_PAGE']) && isset($res['PAGEINFO']['CURRENT_PAGE'])) {
             $res['Paging'] = [
@@ -40,7 +40,12 @@ class TaoShuController extends TaoShuBase
         //拿返回结果
         isset($res['RESULTDATA']) ? $res['Result'] = $res['RESULTDATA'] : $res['Result'] = [];
 
-        return $this->writeJson($res['code'], $res['Paging'], $res['Result'], null);
+        return $writeJson !== true ? [
+            'code' => $res['code'],
+            'paging' => $res['Paging'],
+            'result' => $res['Result'],
+            'msg' => null
+        ] : $this->writeJson($res['code'], $res['Paging'], $res['Result'], null);
     }
 
     //法人变更
@@ -104,7 +109,9 @@ class TaoShuController extends TaoShuBase
 
         $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
-        return $this->checkResponse($res);
+        $arr = $this->checkResponse($res, false);
+
+        var_dump($arr);
     }
 
     //企业股东及出资信息

@@ -4,7 +4,6 @@ namespace App\Process\ProcessList;
 
 use App\HttpController\Service\Common\CommonService;
 use App\Process\ProcessBase;
-use EasySwoole\RedisPool\Redis;
 use Swoole\Process;
 
 class TestProcess extends ProcessBase
