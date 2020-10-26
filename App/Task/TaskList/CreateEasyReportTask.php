@@ -57,7 +57,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $tmp->setValue('fx_score', sprintf('%.2f', array_sum($this->fx)));
 
-        $tmp->saveAs(REPORT_PATH . $this->reportNum . '.docx');
+        $tmp->saveAs(REPORT_PATH . $this->reportNum . '.doc');
 
         $info = ReportInfo::create()->where('phone',$this->phone)->where('filename',$this->reportNum)->get();
 
