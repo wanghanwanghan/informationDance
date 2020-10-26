@@ -28,7 +28,7 @@ class QiChaChaController extends QiChaChaBase
     }
 
     //检验企查查返回值，并给客户计费
-    private function checkResponse($res)
+    private function checkResponse($res, $writeJson = true)
     {
         if (isset($res['Paging']) && !empty($res['Paging']))
         {
@@ -56,7 +56,12 @@ class QiChaChaController extends QiChaChaBase
             }
         }
 
-        return $this->writeJson((int)$res['Status'],$res['Paging'],$res['Result'],$res['Message']);
+        return $writeJson !== true ? [
+            'code' => $res['Status'],
+            'paging' => $res['Paging'],
+            'result' => $res['Result'],
+            'msg' => $res['Message']
+        ] : $this->writeJson((int)$res['Status'],$res['Paging'],$res['Result'],$res['Message']);
     }
 
     //模糊搜索企业列表
@@ -74,7 +79,19 @@ class QiChaChaController extends QiChaChaBase
 
         $res=(new QiChaChaService())->get($this->baseUrl.'ECIV4/Search',$postData);
 
-        return $this->checkResponse($res);
+        $res = $this->checkResponse($res);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result']))
+        {
+            foreach ($res['result'] as &$one) {
+                strlen($one['StartDate'] < 10) ?: $one['StartDate']=substr($one['StartDate'],0,10);
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'],$res['paging'],$res['result'],$res['msg']);
     }
 
     //律所及其他特殊基本信息
