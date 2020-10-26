@@ -11,7 +11,6 @@
 描述:公共 发送手机验证码
 地址:api/v1/comm/create/sms/verifyCode
 方法:get/post
-请求头:Authorization = XXX
 参数:
      phone = 13800138000
      type = reg，reg是注册，login是登录
@@ -20,9 +19,9 @@
 描述:公共 生成图片验证码
 地址:api/v1/comm/create/image/verifyCode
 方法:get/post
-请求头:Authorization = XXX
 参数:
-     无参数
+     type = image，
+     iCode = 2hk7，四位数字和字母组合，可以是空
 //======================================================================================================================
 描述:公共 上传经纬度
 地址:api/v1/comm/userLngLatUpload
