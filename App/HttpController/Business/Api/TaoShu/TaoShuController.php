@@ -136,7 +136,7 @@ class TaoShuController extends TaoShuBase
             }
 
             !empty($vendinc) ?: $vendinc = '';
-            $res['result'][0]['vendinc'] = $vendinc;
+            $res['result'][0]['VENDINC'] = $vendinc;
         }
 
         return $this->writeJson($res['code'], $res['paging'], $res['result'], null);
