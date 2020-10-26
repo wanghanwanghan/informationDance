@@ -49,6 +49,7 @@ class UserController extends UserBase
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $email = $this->request()->getRequestParam('email') ?? '';
         $idCard = $this->request()->getRequestParam('idCard') ?? '';
+        $pidPhone = $this->request()->getRequestParam('pidPhone') ?? 0;//注册裂变
 
         $password = $this->request()->getRequestParam('password') ?? control::randNum(6);
         $avatar = $this->request()->getRequestParam('avatar') ?? '';
@@ -99,6 +100,14 @@ class UserController extends UserBase
         //已经注册过了
         if ($res) return $this->writeJson(201, null, null, '手机号已经注册过了');
 
+        //找出pidPhone的id
+        try {
+            $pid = User::create()->where('phone',$pidPhone)->get();
+            empty($pid) ? $pid = 0 : $pid = $pid->id;
+        }catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
         try {
             $token = UserService::getInstance()->createAccessToken($phone, $password);
             $insert = [
@@ -108,7 +117,8 @@ class UserController extends UserBase
                 'email' => $email,
                 'avatar' => $avatar,
                 'token' => $token,
-                'company' => $company
+                'company' => $company,
+                'pid' => $pid
             ];
             User::create()->data($insert, false)->save();
             Wallet::create()->data(['phone' => $phone], false)->save();
