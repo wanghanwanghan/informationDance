@@ -4,6 +4,7 @@ namespace App\Process\ProcessList;
 
 use App\HttpController\Service\Common\CommonService;
 use App\Process\ProcessBase;
+use EasySwoole\RedisPool\Redis;
 use Swoole\Process;
 
 class TestProcess extends ProcessBase
@@ -15,7 +16,7 @@ class TestProcess extends ProcessBase
 
         //接收参数可以是字符串也可以是数组
 
-        CommonService::getInstance()->log4PHP(__CLASS__.' 启动');
+        CommonService::getInstance()->log4PHP(__CLASS__ . ' 启动');
     }
 
     protected function onPipeReadable(Process $process)
@@ -24,10 +25,6 @@ class TestProcess extends ProcessBase
 
         //接收数据 string
         $data = jsonDecode($process->read());
-
-        foreach ($data as $key => $val) {
-            CommonService::getInstance()->log4PHP("{$key} => {$val}");
-        }
 
         return true;
     }
