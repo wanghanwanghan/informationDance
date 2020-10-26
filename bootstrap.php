@@ -69,7 +69,7 @@ function formatPercent($str)
 {
     $str = trim($str);
 
-    if (preg_match('%', $str)) {
+    if (preg_match('/%/', $str)) {
         return $str;
     }
 
