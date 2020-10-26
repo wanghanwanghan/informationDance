@@ -25,6 +25,11 @@ class TestProcess extends ProcessBase
         //接收数据 string
         $data = jsonDecode($process->read());
 
+
+
+
+
+
         return true;
     }
 
