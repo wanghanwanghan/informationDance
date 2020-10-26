@@ -86,7 +86,7 @@ class QiChaChaController extends QiChaChaBase
         if ($res['code'] == 200 && !empty($res['result']))
         {
             foreach ($res['result'] as &$one) {
-                strlen($one['StartDate'] < 10) ?: $one['StartDate']=substr($one['StartDate'],0,10);
+                strlen($one['StartDate'] < 10) ?: $one['StartDate']=substr($one['StartDate'],0,4);
             }
             unset($one);
         }
