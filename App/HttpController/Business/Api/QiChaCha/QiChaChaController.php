@@ -57,7 +57,7 @@ class QiChaChaController extends QiChaChaBase
         }
 
         return $writeJson !== true ? [
-            'code' => $res['Status'],
+            'code' => (int)$res['Status'],
             'paging' => $res['Paging'],
             'result' => $res['Result'],
             'msg' => $res['Message']
