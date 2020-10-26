@@ -17,7 +17,7 @@ class ProcessService extends ServiceBase
     public $processNo = [];
 
     //只能在mainServerCreate中用
-    public function create($funcName = '', $arg = ['a' => 5], $processNum = 1): bool
+    public function create($funcName = '', $arg = ['foo' => 'bar'], $processNum = 1): bool
     {
         return empty($funcName) ?: $this->$funcName($arg, $processNum);
     }
