@@ -79,7 +79,7 @@ class QiChaChaController extends QiChaChaBase
 
         $res=(new QiChaChaService())->get($this->baseUrl.'ECIV4/Search',$postData);
 
-        $res = $this->checkResponse($res);
+        $res = $this->checkResponse($res,false);
 
         if (!is_array($res)) return $res;
 
