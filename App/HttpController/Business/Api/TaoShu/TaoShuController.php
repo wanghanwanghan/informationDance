@@ -188,7 +188,20 @@ class TaoShuController extends TaoShuBase
 
         $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
-        return $this->checkResponse($res);
+        $res = $this->checkResponse($res, false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result']))
+        {
+            foreach ($res['result'] as &$one)
+            {
+                $one['CONRATIO']=formatPercent($one['CONRATIO']);
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], null);
     }
 
     //企业分支机构
