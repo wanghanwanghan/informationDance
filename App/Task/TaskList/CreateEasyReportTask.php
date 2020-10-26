@@ -37,7 +37,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
     function run(int $taskId, int $workerIndex)
     {
-        $tmp = new TemplateProcessor(REPORT_MODEL_PATH . 'EasyReportModel_1.doc');
+        $tmp = new TemplateProcessor(REPORT_MODEL_PATH . 'EasyReportModel_1.docx');
 
         $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'logo.jpg', 'width' => 200, 'height' => 40]);
 
@@ -57,7 +57,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $tmp->setValue('fx_score', sprintf('%.2f', array_sum($this->fx)));
 
-        $tmp->saveAs(REPORT_PATH . $this->reportNum . '.doc');
+        $tmp->saveAs(REPORT_PATH . $this->reportNum . '.docx');
 
         $info = ReportInfo::create()->where('phone',$this->phone)->where('filename',$this->reportNum)->get();
 
