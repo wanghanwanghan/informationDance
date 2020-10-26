@@ -121,7 +121,8 @@ class TaoShuController extends TaoShuBase
             $mysql = CreateConf::getInstance()->getConf('env.mysqlDatabase');
             try {
                 $obj = Manager::getInstance()->get($mysql)->getObj();
-                $wanghan = $obj->queryBuilder()->getOne('qiyeyingshoufanwei')->execBuilder();
+                $obj->queryBuilder()->getOne('qiyeyingshoufanwei');
+                $wanghan = $obj->execBuilder();
                 Manager::getInstance()->get($mysql)->recycleObj($obj);
             } catch (\Throwable $e) {
                 CommonService::getInstance()->log4PHP($e->getMessage());
