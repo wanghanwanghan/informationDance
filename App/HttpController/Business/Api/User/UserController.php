@@ -73,13 +73,13 @@ class UserController extends UserBase
             'idNo' => $idCard,
             'realname' => $username
         ];
-        $res = (new YuanSuService())->setCheckRespFlag(true)->getList($threeUrl,$threeData);
+        $res = (new YuanSuService())->setCheckRespFlag(true)->getList($threeUrl, $threeData);
 
         if (!is_array($res)) return $this->writeJson(201, null, null, '服务器忙，请稍后再试');
 
         if ($res['code'] == 200 && !empty($res['result'])) {
             if ($res['result']['result'] != 1) return $this->writeJson(201, null, null, '用户名、手机、身份证号不匹配');
-        }else{
+        } else {
             return $this->writeJson(201, null, null, '用户名、手机、身份证号不匹配');
         }
 
@@ -102,9 +102,9 @@ class UserController extends UserBase
 
         //找出pidPhone的id
         try {
-            $pid = User::create()->where('phone',$pidPhone)->get();
+            $pid = User::create()->where('phone', $pidPhone)->get();
             empty($pid) ? $pid = 0 : $pid = $pid->id;
-        }catch (\Throwable $e) {
+        } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
 
@@ -121,7 +121,7 @@ class UserController extends UserBase
                 'pid' => $pid
             ];
             User::create()->data($insert, false)->save();
-            Wallet::create()->data(['phone' => $phone], false)->save();
+            Wallet::create()->data(['phone' => $phone, 'money' => 5000], false)->save();
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
@@ -636,7 +636,7 @@ class UserController extends UserBase
                 if ($one['type'] == 30) $one['typeWord'] = '律师自用版';
                 if ($one['type'] == 50) $one['typeWord'] = '尽调专用版';
 
-                if (!empty($one['created_at'])) $one['created_atWord'] = date('Y-m-d H:i:s',$one['created_at']);
+                if (!empty($one['created_at'])) $one['created_atWord'] = date('Y-m-d H:i:s', $one['created_at']);
             }
             unset($one);
 
@@ -702,15 +702,13 @@ class UserController extends UserBase
 
         !empty($info) ?: $info = null;
 
-        if (!empty($info))
-        {
-            foreach ($info as &$one)
-            {
+        if (!empty($info)) {
+            foreach ($info as &$one) {
                 if ($one['status'] == 1) $one['statusWord'] = '审核中';
                 if ($one['status'] == 2) $one['statusWord'] = '未通过';
                 if ($one['status'] == 3) $one['statusWord'] = '已通过';
 
-                $one['created_atWord'] = date('Y-m-d H:i:s',$one['created_at']);
+                $one['created_atWord'] = date('Y-m-d H:i:s', $one['created_at']);
             }
             unset($one);
         }
