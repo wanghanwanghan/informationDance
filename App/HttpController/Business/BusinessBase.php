@@ -143,9 +143,11 @@ class BusinessBase extends Index
     //check limit
     private function checkLimit(): bool
     {
-        var_dump($this->request()->getHeader('x-real-ip')[0]);
         $token = $this->request()->getHeaderLine('authorization');
-        return LimitService::getInstance()->check($token);
+
+        $realIp = $this->request()->getHeader('x-real-ip')[0];
+
+        return LimitService::getInstance()->check($token, $realIp);
     }
 
     //计算分页

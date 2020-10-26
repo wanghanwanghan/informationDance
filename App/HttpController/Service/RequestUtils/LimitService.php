@@ -25,10 +25,10 @@ class LimitService extends ServiceBase
         return true;
     }
 
-    function check($token): bool
+    function check($token, $realIp): bool
     {
         //空就不检查了，只检查带token的请求
-        if (empty($token)) return true;
+        if (empty($token) && empty($realIp)) return true;
 
         $minute = Carbon::now()->format('YmdHi');
 
@@ -36,17 +36,23 @@ class LimitService extends ServiceBase
 
         $redis->select($this->db);
 
+        //key
+        if (!empty($token)) {
+            $key = $token;
+        } else {
+            $key = $realIp;
+        }
+
         //取得结果
-        $data = $redis->get($minute . $token);
+        $data = $redis->get($minute . $key);
 
         if (empty($data)) {
             //说明这分钟还没有请求过
-            $redis->setEx($minute . $token, $this->random(), $this->maxNum);
-
+            $redis->setEx($minute . $key, $this->random(), $this->maxNum);
         } else {
             //判断剩余次数
             if ($data <= 0) return false;
-            $redis->decr($minute . $token);
+            $redis->decr($minute . $key);
         }
 
         return true;
