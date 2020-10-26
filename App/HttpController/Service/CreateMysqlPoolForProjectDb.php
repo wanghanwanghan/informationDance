@@ -14,18 +14,18 @@ class CreateMysqlPoolForProjectDb extends AbstractPool
 
     protected $mysqlConf;
 
-    public function __construct()
+    function __construct()
     {
         parent::__construct(new \EasySwoole\Pool\Config());
 
         $mysqlConf = new Config([
-            'host'     => CreateConf::getInstance()->getConf('env.mysqlHost'),
-            'port'     => CreateConf::getInstance()->getConf('env.mysqlPort'),
-            'user'     => CreateConf::getInstance()->getConf('env.mysqlUser'),
+            'host' => CreateConf::getInstance()->getConf('env.mysqlHost'),
+            'port' => CreateConf::getInstance()->getConf('env.mysqlPort'),
+            'user' => CreateConf::getInstance()->getConf('env.mysqlUser'),
             'password' => CreateConf::getInstance()->getConf('env.mysqlPassword'),
             'database' => CreateConf::getInstance()->getConf('env.mysqlDatabase'),
-            'timeout'  => 5,
-            'charset'  => 'utf8mb4',
+            'timeout' => 5,
+            'charset' => 'utf8mb4',
         ]);
 
         $this->mysqlConf = $mysqlConf;
@@ -37,9 +37,9 @@ class CreateMysqlPoolForProjectDb extends AbstractPool
     }
 
     //注册连接池，只能在mainServerCreate中用
-    public function createMysql()
+    function createMysql()
     {
-        Manager::getInstance()->register(CreateMysqlPoolForProjectDb::getInstance(),CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        Manager::getInstance()->register(CreateMysqlPoolForProjectDb::getInstance(), CreateConf::getInstance()->getConf('env.mysqlDatabase'));
 
         return true;
     }

@@ -3,8 +3,11 @@
 namespace App\HttpController\Business\Api\TaoShu;
 
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\Process\Service\ProcessService;
+use EasySwoole\Mysqli\QueryBuilder;
+use EasySwoole\Pool\Manager;
 
 class TaoShuController extends TaoShuBase
 {
@@ -114,7 +117,16 @@ class TaoShuController extends TaoShuBase
         if (!is_array($res)) return $res;
 
         if ($res['code'] == 200 || !empty($res['result'])) {
-            CommonService::getInstance()->log4PHP($res['result']);
+            //2018年营业收入区间
+            $mysql = CreateConf::getInstance()->getConf('env.mysqlDatabase');
+            try {
+                $obj = Manager::getInstance()->get($mysql)->getObj();
+                $wanghan = $obj->rawQuery('select version();');
+                Manager::getInstance()->get($mysql)->recycleObj($obj);
+            } catch (\Throwable $e) {
+                CommonService::getInstance()->log4PHP($e->getMessage());
+            }
+            CommonService::getInstance()->log4PHP($wanghan);
         }
 
         return $this->writeJson($res['code'], $res['paging'], $res['result'], null);
