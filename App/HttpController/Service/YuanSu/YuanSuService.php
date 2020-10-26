@@ -36,14 +36,12 @@ class YuanSuService extends ServiceBase
     {
         //这里还没改好
         if (isset($res['PAGEINFO']) && isset($res['PAGEINFO']['TOTAL_COUNT']) && isset($res['PAGEINFO']['TOTAL_PAGE']) && isset($res['PAGEINFO']['CURRENT_PAGE'])) {
-
             $res['Paging'] = [
                 'page' => $res['PAGEINFO']['CURRENT_PAGE'],
                 'pageSize' => null,
                 'total' => $res['PAGEINFO']['TOTAL_COUNT'],
                 'totalPage' => $res['PAGEINFO']['TOTAL_PAGE'],
             ];
-
         } else {
             $res['Paging'] = null;
         }

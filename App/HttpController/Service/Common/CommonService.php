@@ -265,4 +265,12 @@ class CommonService extends ServiceBase
         return preg_match($pattern, $emailStr);
     }
 
+    //验证身份证
+    function validateIdCard($idCardStr)
+    {
+        $pattern = '/(^\d{17}([0-9]|X)$)/';
+
+        return preg_match($pattern, strtoupper($idCardStr));
+    }
+
 }

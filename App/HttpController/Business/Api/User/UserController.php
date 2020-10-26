@@ -19,7 +19,7 @@ use App\HttpController\Service\OneSaid\OneSaidService;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\Pay\wx\wxPayService;
 use App\HttpController\Service\User\UserService;
-use App\Process\Service\ProcessService;
+use App\HttpController\Service\YuanSu\YuanSuService;
 use Carbon\Carbon;
 use EasySwoole\RedisPool\Redis;
 use wanghanwanghan\someUtils\control;
@@ -63,7 +63,24 @@ class UserController extends UserBase
 
         if (!CommonService::getInstance()->validateEmail($email)) return $this->writeJson(201, null, null, 'email格式错误');
 
+        if (!CommonService::getInstance()->validateIdCard($idCard)) return $this->writeJson(201, null, null, '身份证号码错误');
+
         //验证三要素
+        $threeUrl = CreateConf::getInstance()->getConf('yuansu.threeUrl');
+        $threeData = [
+            'mobile' => $phone,
+            'idNo' => $idCard,
+            'realname' => $username
+        ];
+        $res = (new YuanSuService())->setCheckRespFlag(true)->getList($threeUrl,$threeData);
+
+        if (!is_array($res)) return $this->writeJson(201, null, null, '服务器忙，请稍后再试');
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            if ($res['result']['result'] != 1) return $this->writeJson(201, null, null, '用户名、手机、身份证号不匹配');
+        }else{
+            return $this->writeJson(201, null, null, '用户名、手机、身份证号不匹配');
+        }
 
         $redis = Redis::defer('redis');
 
