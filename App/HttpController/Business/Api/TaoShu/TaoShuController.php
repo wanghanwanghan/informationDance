@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Api\TaoShu;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\Process\Service\ProcessService;
 
@@ -28,7 +29,6 @@ class TaoShuController extends TaoShuBase
                 'total' => $res['PAGEINFO']['TOTAL_COUNT'],
                 'totalPage' => $res['PAGEINFO']['TOTAL_PAGE'],
             ];
-
         } else {
             $res['Paging'] = null;
         }
@@ -109,9 +109,15 @@ class TaoShuController extends TaoShuBase
 
         $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
-        $arr = $this->checkResponse($res, false);
+        $res = $this->checkResponse($res, false);
 
-        var_dump($arr);
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 || !empty($res['result'])) {
+            CommonService::getInstance()->log4PHP($res['result']);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], null);
     }
 
     //企业股东及出资信息
