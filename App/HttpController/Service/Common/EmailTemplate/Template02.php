@@ -17,15 +17,7 @@ class Template02
 
     function getBody()
     {
-        return <<<Eof
-<h1>这</h1>
-<h2>是</h2>
-<h3>您</h3>
-<h4>生</h4>
-<h5>成</h5>
-<h6>的</h6>
-<h7>!</h7>
-Eof;
+        return '';
     }
 
 }
