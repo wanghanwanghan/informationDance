@@ -17,6 +17,10 @@ use EasySwoole\Component\Singleton;
 use EasySwoole\Http\Message\UploadFile;
 use EasySwoole\Http\Response;
 use EasySwoole\RedisPool\Redis;
+use EasySwoole\Smtp\Mailer;
+use EasySwoole\Smtp\MailerConfig;
+use EasySwoole\Smtp\Message\Attach;
+use EasySwoole\Smtp\Message\Html;
 use EasySwoole\VerifyCode\Conf;
 use EasySwoole\VerifyCode\VerifyCode;
 use Qiniu\Auth;
@@ -191,6 +195,37 @@ class CommonService extends ServiceBase
         }, 'sync');
 
         return empty(current($res)) ? '验证码发送失败' : '验证码发送成功';
+    }
+
+    //发送邮件
+    function sendEmail()
+    {
+        $config = new MailerConfig();
+        $config->setServer('smtp.exmail.qq.com');
+        $config->setSsl(true);
+        $config->setPort(465);
+        $config->setUsername('wanghan@meirixindong.com');
+        $config->setPassword('1q2w3e4r%T');
+        $config->setMailFrom('wanghan@meirixindong.com');
+        $config->setTimeout(10);//设置客户端连接超时时间
+        $config->setMaxPackage(1024 * 1024 * 5);//设置包发送的大小：5M
+
+        //设置文本或者html格式
+        $mimeBean = new Html();
+        $mimeBean->setSubject('这是您生成的报告');
+        $mimeBean->setBody('<h1>这是您生成的报告</h1>');
+
+        try {
+            //添加附件
+            $mimeBean->addAttachment(Attach::create(REPORT_PATH.'20201026201810_52983522.docx'));
+            $mailer = new Mailer($config);
+            //发送邮件
+            $mailer->sendTo('minglongoc@me.com', $mimeBean);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        return true;
     }
 
     //百度内容审核 - 纯文本

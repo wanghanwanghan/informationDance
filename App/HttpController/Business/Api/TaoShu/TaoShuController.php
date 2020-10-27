@@ -176,6 +176,7 @@ class TaoShuController extends TaoShuBase
     //企业对外投资
     function getInvestmentAbroadInfo()
     {
+        CommonService::getInstance()->sendEmail();
         $entName = $this->request()->getRequestParam('entName') ?? '';
         $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;

@@ -20,7 +20,8 @@
         "easyswoole/spider": "^2.0",
         "phpoffice/phpword": "^0.17.0",
         "amenadiel/jpgraph": "^4",
-        "qiniu/php-sdk": "^7.3"
+        "qiniu/php-sdk": "^7.3",
+        "easyswoole/smtp": "^1.0"
     },
     "autoload": {
         "psr-4": {
