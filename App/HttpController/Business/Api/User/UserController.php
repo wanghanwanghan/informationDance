@@ -48,7 +48,6 @@ class UserController extends UserBase
         $username = $this->request()->getRequestParam('username') ?? '';
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $email = $this->request()->getRequestParam('email') ?? '';
-        $idCard = $this->request()->getRequestParam('idCard') ?? '';
         $pidPhone = $this->request()->getRequestParam('pidPhone') ?? 0;//注册裂变
 
         $password = $this->request()->getRequestParam('password') ?? control::randNum(6);
@@ -63,25 +62,6 @@ class UserController extends UserBase
         if (strlen($phone) !== 11) return $this->writeJson(201, null, null, '手机号错误');
 
         if (!CommonService::getInstance()->validateEmail($email)) return $this->writeJson(201, null, null, 'email格式错误');
-
-        if (!CommonService::getInstance()->validateIdCard($idCard)) return $this->writeJson(201, null, null, '身份证号码错误');
-
-        //验证三要素
-        $threeUrl = CreateConf::getInstance()->getConf('yuansu.threeUrl');
-        $threeData = [
-            'mobile' => $phone,
-            'idNo' => $idCard,
-            'realname' => $username
-        ];
-        $res = (new YuanSuService())->setCheckRespFlag(true)->getList($threeUrl, $threeData);
-
-        if (!is_array($res)) return $this->writeJson(201, null, null, '服务器忙，请稍后再试');
-
-        if ($res['code'] == 200 && !empty($res['result'])) {
-            if ($res['result']['result'] != 1) return $this->writeJson(201, null, null, '用户名、手机、身份证号不匹配');
-        } else {
-            return $this->writeJson(201, null, null, '用户名、手机、身份证号不匹配');
-        }
 
         $redis = Redis::defer('redis');
 

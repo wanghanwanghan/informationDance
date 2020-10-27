@@ -117,7 +117,7 @@ class ChargeService extends ServiceBase
         //等于false说明用户还没点确定支付，等于true说明用户点了确认支付
         $pay = $this->getPay($request);
 
-        if (!$pay) return ['code' => 210, 'msg' => "此信息需付费 {$moduleInfo['basePrice']} 元"];
+        if (!$pay) return ['code' => 210, 'msg' => "此信息需消耗 {$moduleInfo['basePrice']} 元"];
 
         try {
             //取得用户钱包余额
@@ -212,7 +212,7 @@ class ChargeService extends ServiceBase
         //等于false说明用户还没点确定支付，等于true说明用户点了确认支付
         $pay = $this->getPay($request);
 
-        if (!$pay) return ['code' => 210, 'msg' => "此信息需付费 {$moduleInfo['basePrice']} 元"];
+        if (!$pay) return ['code' => 210, 'msg' => "此信息需消耗 {$moduleInfo['basePrice']} 元"];
 
         try {
             //取得用户钱包余额
@@ -306,7 +306,7 @@ class ChargeService extends ServiceBase
         //等于false说明用户还没点确定支付，等于true说明用户点了确认支付
         $pay = $this->getPay($request);
 
-        if (!$pay) return ['code' => 210, 'msg' => "此信息需付费 {$moduleInfo['basePrice']} 元"];
+        if (!$pay) return ['code' => 210, 'msg' => "此信息需消耗 {$moduleInfo['basePrice']} 元"];
 
         try {
             //取得用户钱包余额
@@ -399,7 +399,7 @@ class ChargeService extends ServiceBase
         //等于false说明用户还没点确定支付，等于true说明用户点了确认支付
         $pay = $this->getPay($request);
 
-        if (!$pay) return ['code' => 210, 'msg' => "此信息需付费 {$moduleInfo['basePrice']} 元"];
+        if (!$pay) return ['code' => 210, 'msg' => "此信息需消耗 {$moduleInfo['basePrice']} 元"];
 
         try {
             //取得用户钱包余额
@@ -468,7 +468,7 @@ class ChargeService extends ServiceBase
         //等于false说明用户还没点确定支付，等于true说明用户点了确认支付
         $pay = $this->getPay($request);
 
-        if (!$pay) return ['code' => 210, 'msg' => "此信息需付费 {$moduleInfo['basePrice']} 元"];
+        if (!$pay) return ['code' => 210, 'msg' => "此信息需消耗 {$moduleInfo['basePrice']} 元"];
 
         try {
             //扣费
@@ -524,7 +524,7 @@ class ChargeService extends ServiceBase
         //等于false说明用户还没点确定支付，等于true说明用户点了确认支付
         $pay = $this->getPay($request);
 
-        if (!$pay) return ['code' => 210, 'msg' => "此信息需付费 {$moduleInfo['basePrice']} 元"];
+        if (!$pay) return ['code' => 210, 'msg' => "此信息需消耗 {$moduleInfo['basePrice']} 元"];
 
         try {
             //扣费
