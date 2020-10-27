@@ -182,7 +182,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             //发布日期
             $docObj->setValue("zl_PublicationDate#" . ($i + 1), $this->formatDate($data['PatentV4Search']['list'][$i]['PublicationDate']));
         }
-        $docObj->setValue("zl_total", $data['PatentV4Search']['total']);
+        $docObj->setValue("zl_total", (int)$data['PatentV4Search']['total']);
 
         //软件著作权
         $rows = count($data['SearchSoftwareCr']['list']);
@@ -199,7 +199,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             //版本号
             $docObj->setValue("rjzzq_VersionNo#" . ($i + 1), $data['SearchSoftwareCr']['list'][$i]['VersionNo']);
         }
-        $docObj->setValue("rjzzq_total", $data['SearchSoftwareCr']['total']);
+        $docObj->setValue("rjzzq_total", (int)$data['SearchSoftwareCr']['total']);
 
         //行政许可
         $rows = count($data['GetAdministrativeLicenseList']['list']);
@@ -218,7 +218,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             //许可机关
             $docObj->setValue("xzxk_Province#" . ($i + 1), $data['GetAdministrativeLicenseList']['list'][$i]['detail']['Province']);
         }
-        $docObj->setValue("xzxk_total", $data['GetAdministrativeLicenseList']['total']);
+        $docObj->setValue("xzxk_total", (int)$data['GetAdministrativeLicenseList']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,32,$this->entName,true);
         $docObj->setValue('xzxk_oneSaid', $oneSaid);
@@ -238,7 +238,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             //决定机关
             $docObj->setValue("xzcf_ExecuteGov#" . ($i + 1), $data['GetAdministrativePenaltyList']['list'][$i]['detail']['ExecuteGov']);
         }
-        $docObj->setValue("xzcf_total", $data['GetAdministrativePenaltyList']['total']);
+        $docObj->setValue("xzcf_total", (int)$data['GetAdministrativePenaltyList']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,33,$this->entName,true);
         $docObj->setValue('xzcf_oneSaid', $oneSaid);
@@ -287,7 +287,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             //法院类型-案由-当事人-称号-诉讼地位(原审)
             $docObj->setValue("cpws_content#" . ($i + 1), $content);
         }
-        $docObj->setValue("cpws_total", $data['cpws']['total']);
+        $docObj->setValue("cpws_total", (int)$data['cpws']['total']);
 
         //oneSaid
         $cpws_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,2,$this->entName,true);
@@ -318,7 +318,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             //案件状态-执行金额-当事人
             $docObj->setValue("zxgg_content#" . ($i + 1), $content);
         }
-        $docObj->setValue("zxgg_total", $data['zxgg']['total']);
+        $docObj->setValue("zxgg_total", (int)$data['zxgg']['total']);
 
         //oneSaid
         $zxgg_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,4,$this->entName,true);
@@ -350,7 +350,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             //履行情况-具体情形-涉案金额-当事人
             $docObj->setValue("sx_content#" . ($i + 1), $content);
         }
-        $docObj->setValue("sx_total", $data['shixin']['total']);
+        $docObj->setValue("sx_total", (int)$data['shixin']['total']);
 
         //oneSaid
         $sx_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,5,$this->entName,true);

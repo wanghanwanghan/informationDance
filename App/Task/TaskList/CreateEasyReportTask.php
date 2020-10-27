@@ -1216,7 +1216,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //发布日期
             $docObj->setValue("zl_PublicationDate#" . ($i + 1), $this->formatDate($data['PatentV4Search']['list'][$i]['PublicationDate']));
         }
-        $docObj->setValue("zl_total", $data['PatentV4Search']['total']);
+        $docObj->setValue("zl_total", (int)$data['PatentV4Search']['total']);
 
         //软件著作权
         $rows = count($data['SearchSoftwareCr']['list']);
@@ -1233,7 +1233,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //版本号
             $docObj->setValue("rjzzq_VersionNo#" . ($i + 1), $data['SearchSoftwareCr']['list'][$i]['VersionNo']);
         }
-        $docObj->setValue("rjzzq_total", $data['SearchSoftwareCr']['total']);
+        $docObj->setValue("rjzzq_total", (int)$data['SearchSoftwareCr']['total']);
 
         //商标
         $rows = count($data['tmSearch']['list']);
@@ -1254,7 +1254,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //申请日期
             $docObj->setValue("sb_AppDate#" . ($i + 1), $this->formatDate($data['tmSearch']['list'][$i]['AppDate']));
         }
-        $docObj->setValue("sb_total", $data['tmSearch']['total']);
+        $docObj->setValue("sb_total", (int)$data['tmSearch']['total']);
 
         //作品著作权
         $rows = count($data['SearchCopyRight']['list']);
@@ -1271,7 +1271,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //登记日期
             $docObj->setValue("zpzzq_RegisterDate#" . ($i + 1), $this->formatDate($data['SearchCopyRight']['list'][$i]['RegisterDate']));
         }
-        $docObj->setValue("zpzzq_total", $data['SearchCopyRight']['total']);
+        $docObj->setValue("zpzzq_total", (int)$data['SearchCopyRight']['total']);
 
         //证书资质
         $rows = count($data['SearchCertification']['list']);
@@ -1290,7 +1290,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //证书编号
             $docObj->setValue("zzzs_No#" . ($i + 1), $data['SearchCertification']['list'][$i]['No']);
         }
-        $docObj->setValue("zzzs_total", $data['SearchCertification']['total']);
+        $docObj->setValue("zzzs_total", (int)$data['SearchCertification']['total']);
 
         //纳税信用等级
         $rows = count($data['satparty_xin']['list']);
@@ -1307,7 +1307,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //评定单位
             $docObj->setValue("nsxydj_authority#" . ($i + 1), $data['satparty_xin']['list'][$i]['detail']['authority']);
         }
-        $docObj->setValue("nsxydj_total", $data['satparty_xin']['total']);
+        $docObj->setValue("nsxydj_total", (int)$data['satparty_xin']['total']);
 
         $nsxydj_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,11,$this->entName,true);
         $docObj->setValue("nsxydj_oneSaid", $nsxydj_oneSaid);
@@ -1329,7 +1329,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //管理机关
             $docObj->setValue("swxk_authority#" . ($i + 1), $data['satparty_xuke']['list'][$i]['detail']['authority']);
         }
-        $docObj->setValue("swxk_total", $data['satparty_xuke']['total']);
+        $docObj->setValue("swxk_total", (int)$data['satparty_xuke']['total']);
 
         $swxk_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,13,$this->entName,true);
         $docObj->setValue("swxk_oneSaid", $swxk_oneSaid);
@@ -1351,7 +1351,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //管理机关
             $docObj->setValue("swdj_authority#" . ($i + 1), $data['satparty_reg']['list'][$i]['detail']['authority']);
         }
-        $docObj->setValue("swdj_total", $data['satparty_reg']['total']);
+        $docObj->setValue("swdj_total", (int)$data['satparty_reg']['total']);
 
         $swdj_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,12,$this->entName,true);
         $docObj->setValue("swdj_oneSaid", $swdj_oneSaid);
@@ -1373,7 +1373,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //管理机关
             $docObj->setValue("fzc_authority#" . ($i + 1), $data['satparty_fzc']['list'][$i]['detail']['authority']);
         }
-        $docObj->setValue("fzc_total", $data['satparty_fzc']['total']);
+        $docObj->setValue("fzc_total", (int)$data['satparty_fzc']['total']);
 
         $fzc_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,10,$this->entName,true);
         $docObj->setValue("fzc_oneSaid", $fzc_oneSaid);
@@ -1395,7 +1395,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //管理机关
             $docObj->setValue("qs_authority#" . ($i + 1), $data['satparty_qs']['list'][$i]['detail']['authority']);
         }
-        $docObj->setValue("qs_total", $data['satparty_qs']['total']);
+        $docObj->setValue("qs_total", (int)$data['satparty_qs']['total']);
 
         $qs_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,8,$this->entName,true);
         $docObj->setValue("qs_oneSaid", $qs_oneSaid);
@@ -1419,7 +1419,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //管理机关
             $docObj->setValue("sswf_authority#" . ($i + 1), $data['satparty_chufa']['list'][$i]['detail']['authority']);
         }
-        $docObj->setValue("sswf_total", $data['satparty_chufa']['total']);
+        $docObj->setValue("sswf_total", (int)$data['satparty_chufa']['total']);
 
         $sswf_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,9,$this->entName,true);
         $docObj->setValue("sswf_oneSaid", $sswf_oneSaid);
@@ -1441,7 +1441,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //许可机关
             $docObj->setValue("xzxk_Province#" . ($i + 1), $data['GetAdministrativeLicenseList']['list'][$i]['detail']['Province']);
         }
-        $docObj->setValue("xzxk_total", $data['GetAdministrativeLicenseList']['total']);
+        $docObj->setValue("xzxk_total", (int)$data['GetAdministrativeLicenseList']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,32,$this->entName,true);
         $docObj->setValue('xzxk_oneSaid', $oneSaid);
@@ -1461,7 +1461,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //决定机关
             $docObj->setValue("xzcf_ExecuteGov#" . ($i + 1), $data['GetAdministrativePenaltyList']['list'][$i]['detail']['ExecuteGov']);
         }
-        $docObj->setValue("xzcf_total", $data['GetAdministrativePenaltyList']['total']);
+        $docObj->setValue("xzcf_total", (int)$data['GetAdministrativePenaltyList']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,33,$this->entName,true);
         $docObj->setValue('xzcf_oneSaid', $oneSaid);
@@ -1481,7 +1481,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //处罚机关
             $docObj->setValue("hbcf_authority#" . ($i + 1), $data['epbparty']['list'][$i]['detail']['authority']);
         }
-        $docObj->setValue("hbcf_total", $data['epbparty']['total']);
+        $docObj->setValue("hbcf_total", (int)$data['epbparty']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,34,$this->entName,true);
         $docObj->setValue('hbcf_oneSaid', $oneSaid);
@@ -1497,7 +1497,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //涉事企业
             $docObj->setValue("zdjkqy_pname#" . ($i + 1), $data['epbparty_jkqy']['list'][$i]['detail']['pname']);
         }
-        $docObj->setValue("zdjkqy_total", $data['epbparty_jkqy']['total']);
+        $docObj->setValue("zdjkqy_total", (int)$data['epbparty_jkqy']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,35,$this->entName,true);
         $docObj->setValue('zdjkqy_oneSaid', $oneSaid);
@@ -1517,7 +1517,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //监测时间
             $docObj->setValue("zxjc_sortTimeString#" . ($i + 1), $this->formatDate($data['epbparty_zxjc']['list'][$i]['sortTimeString']));
         }
-        $docObj->setValue("zxjc_total", $data['epbparty_zxjc']['total']);
+        $docObj->setValue("zxjc_total", (int)$data['epbparty_zxjc']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,36,$this->entName,true);
         $docObj->setValue('zxjc_oneSaid', $oneSaid);
@@ -1535,7 +1535,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //发生时间
             $docObj->setValue("hpgs_sortTimeString#" . ($i + 1), $this->formatDate($data['epbparty_huanping']['list'][$i]['sortTimeString']));
         }
-        $docObj->setValue("hpgs_total", $data['epbparty_huanping']['total']);
+        $docObj->setValue("hpgs_total", (int)$data['epbparty_huanping']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,37,$this->entName,true);
         $docObj->setValue('hpgs_oneSaid', $oneSaid);
@@ -1555,7 +1555,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //注册时间
             $docObj->setValue("hgxx_sortTimeString#" . ($i + 1), $this->formatDate($data['custom_qy']['list'][$i]['sortTimeString']));
         }
-        $docObj->setValue("hgxx_total", $data['custom_qy']['total']);
+        $docObj->setValue("hgxx_total", (int)$data['custom_qy']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,38,$this->entName,true);
         $docObj->setValue('hgxx_oneSaid', $oneSaid);
@@ -1575,7 +1575,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //注册时间
             $docObj->setValue("hgxk_sortTimeString#" . ($i + 1), $this->formatDate($data['custom_xuke']['list'][$i]['sortTimeString']));
         }
-        $docObj->setValue("hgxk_total", $data['custom_xuke']['total']);
+        $docObj->setValue("hgxk_total", (int)$data['custom_xuke']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,39,$this->entName,true);
         $docObj->setValue('hgxk_oneSaid', $oneSaid);
@@ -1593,7 +1593,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //认定年份
             $docObj->setValue("hgxy_sortTimeString#" . ($i + 1), $this->formatDate($data['custom_credit']['list'][$i]['sortTimeString']));
         }
-        $docObj->setValue("hgxy_total", $data['custom_credit']['total']);
+        $docObj->setValue("hgxy_total", (int)$data['custom_credit']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,40,$this->entName,true);
         $docObj->setValue('hgxy_oneSaid', $oneSaid);
@@ -1611,7 +1611,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //处罚日期
             $docObj->setValue("hgcf_sortTimeString#" . ($i + 1), $this->formatDate($data['custom_punish']['list'][$i]['sortTimeString']));
         }
-        $docObj->setValue("hgcf_total", $data['custom_punish']['total']);
+        $docObj->setValue("hgcf_total", (int)$data['custom_punish']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,41,$this->entName,true);
         $docObj->setValue('hgcf_oneSaid', $oneSaid);
@@ -1633,7 +1633,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //处罚时间
             $docObj->setValue("yhxzcf_sortTimeString#" . ($i + 1), $this->formatDate($data['pbcparty']['list'][$i]['sortTimeString']));
         }
-        $docObj->setValue("yhxzcf_total", $data['pbcparty']['total']);
+        $docObj->setValue("yhxzcf_total", (int)$data['pbcparty']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,46,$this->entName,true);
         $docObj->setValue('yhxzcf_oneSaid', $oneSaid);
@@ -1655,7 +1655,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //处罚时间
             $docObj->setValue("ybjcf_sortTimeString#" . ($i + 1), $this->formatDate($data['pbcparty_cbrc']['list'][$i]['sortTimeString']));
         }
-        $docObj->setValue("ybjcf_total", $data['pbcparty_cbrc']['total']);
+        $docObj->setValue("ybjcf_total", (int)$data['pbcparty_cbrc']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,47,$this->entName,true);
         $docObj->setValue('ybjcf_oneSaid', $oneSaid);
@@ -1677,7 +1677,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //处罚时间
             $docObj->setValue("zjcf_sortTimeString#" . ($i + 1), $this->formatDate($data['pbcparty_csrc_chufa']['list'][$i]['sortTimeString']));
         }
-        $docObj->setValue("zjcf_total", $data['pbcparty_csrc_chufa']['total']);
+        $docObj->setValue("zjcf_total", (int)$data['pbcparty_csrc_chufa']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,48,$this->entName,true);
         $docObj->setValue('zjcf_oneSaid', $oneSaid);
@@ -1697,7 +1697,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //许可时间
             $docObj->setValue("zjxk_sortTimeString#" . ($i + 1), $this->formatDate($data['pbcparty_csrc_xkpf']['list'][$i]['sortTimeString']));
         }
-        $docObj->setValue("zjxk_total", $data['pbcparty_csrc_xkpf']['total']);
+        $docObj->setValue("zjxk_total", (int)$data['pbcparty_csrc_xkpf']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,49,$this->entName,true);
         $docObj->setValue('zjxk_oneSaid', $oneSaid);
@@ -1721,7 +1721,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //处罚时间
             $docObj->setValue("whjcf_sortTimeString#" . ($i + 1), $this->formatDate($data['safe_chufa']['list'][$i]['sortTimeString']));
         }
-        $docObj->setValue("whjcf_total", $data['safe_chufa']['total']);
+        $docObj->setValue("whjcf_total", (int)$data['safe_chufa']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,50,$this->entName,true);
         $docObj->setValue('whjcf_oneSaid', $oneSaid);
@@ -1743,7 +1743,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //处罚时间
             $docObj->setValue("whjxk_sortTimeString#" . ($i + 1), $this->formatDate($data['safe_xuke']['list'][$i]['sortTimeString']));
         }
-        $docObj->setValue("whjxk_total", $data['safe_xuke']['total']);
+        $docObj->setValue("whjxk_total", (int)$data['safe_xuke']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,51,$this->entName,true);
         $docObj->setValue('whjxk_oneSaid', $oneSaid);
@@ -1790,7 +1790,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //案由-当事人-称号-诉讼地位(原审)
             $docObj->setValue("fygg_content#" . ($i + 1), $content);
         }
-        $docObj->setValue("fygg_total", $data['fygg']['total']);
+        $docObj->setValue("fygg_total", (int)$data['fygg']['total']);
 
         //oneSaid
         $fygg_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,3,$this->entName,true);
@@ -1839,7 +1839,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //法院类型-案由-当事人-称号-诉讼地位(原审)
             $docObj->setValue("ktgg_content#" . ($i + 1), $content);
         }
-        $docObj->setValue("ktgg_total", $data['ktgg']['total']);
+        $docObj->setValue("ktgg_total", (int)$data['ktgg']['total']);
 
         $ktgg_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,1,$this->entName,true);
         $docObj->setValue("ktgg_oneSaid", $ktgg_oneSaid);
@@ -1888,7 +1888,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //法院类型-案由-当事人-称号-诉讼地位(原审)
             $docObj->setValue("cpws_content#" . ($i + 1), $content);
         }
-        $docObj->setValue("cpws_total", $data['cpws']['total']);
+        $docObj->setValue("cpws_total", (int)$data['cpws']['total']);
 
         //oneSaid
         $cpws_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,2,$this->entName,true);
@@ -1919,7 +1919,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //案件状态-执行金额-当事人
             $docObj->setValue("zxgg_content#" . ($i + 1), $content);
         }
-        $docObj->setValue("zxgg_total", $data['zxgg']['total']);
+        $docObj->setValue("zxgg_total", (int)$data['zxgg']['total']);
 
         //oneSaid
         $zxgg_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,4,$this->entName,true);
@@ -1951,7 +1951,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //履行情况-具体情形-涉案金额-当事人
             $docObj->setValue("sx_content#" . ($i + 1), $content);
         }
-        $docObj->setValue("sx_total", $data['shixin']['total']);
+        $docObj->setValue("sx_total", (int)$data['shixin']['total']);
 
         //oneSaid
         $sx_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,5,$this->entName,true);
@@ -1974,7 +1974,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //案件状态
             $docObj->setValue("bzxr_Status#" . ($i + 1), $data['SearchZhiXing']['list'][$i]['Status']);
         }
-        $docObj->setValue("bzxr_total", $data['SearchZhiXing']['total']);
+        $docObj->setValue("bzxr_total", (int)$data['SearchZhiXing']['total']);
 
         //oneSaid
         $bzxr_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,5,$this->entName,true);
@@ -2001,7 +2001,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //涉及金额
             $docObj->setValue("cdk_money#" . ($i + 1), $data['sifacdk']['list'][$i]['detail']['money']);
         }
-        $docObj->setValue("cdk_total", $data['sifacdk']['total']);
+        $docObj->setValue("cdk_total", (int)$data['sifacdk']['total']);
 
         //oneSaid
         $cdk_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,6,$this->entName,true);
@@ -2026,7 +2026,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //状态
             $docObj->setValue("dcdy_ZT#" . ($i + 1), $data['getChattelMortgageInfo']['list'][$i]['ZT']);
         }
-        $docObj->setValue("dcdy_total", $data['getChattelMortgageInfo']['total']);
+        $docObj->setValue("dcdy_total", (int)$data['getChattelMortgageInfo']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,43,$this->entName,true);
         $docObj->setValue('dcdy_oneSaid', $oneSaid);
@@ -2050,7 +2050,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //状态
             $docObj->setValue("gqcz_ZT#" . ($i + 1), $data['getEquityPledgedInfo']['list'][$i]['ZT']);
         }
-        $docObj->setValue("gqcz_total", $data['getEquityPledgedInfo']['total']);
+        $docObj->setValue("gqcz_total", (int)$data['getEquityPledgedInfo']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,42,$this->entName,true);
         $docObj->setValue('gqcz_oneSaid', $oneSaid);
@@ -2072,7 +2072,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //担保期起 担保期止
             $docObj->setValue("dwdb_FulfillObligation#" . ($i + 1), $data['GetAnnualReport']['list'][$i]['FulfillObligation']);
         }
-        $docObj->setValue("dwdb_total", $data['GetAnnualReport']['total']);
+        $docObj->setValue("dwdb_total", (int)$data['GetAnnualReport']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,45,$this->entName,true);
         $docObj->setValue('dwdb_oneSaid', $oneSaid);
@@ -2094,7 +2094,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //行政区地址
             $docObj->setValue("tddy_Address#" . ($i + 1), $data['GetLandMortgageList']['list'][$i]['Address']);
         }
-        $docObj->setValue("tddy_total", $data['GetLandMortgageList']['total']);
+        $docObj->setValue("tddy_total", (int)$data['GetLandMortgageList']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,44,$this->entName,true);
         $docObj->setValue('tddy_oneSaid', $oneSaid);
@@ -2114,7 +2114,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //转让财产价值
             $docObj->setValue("yszk_transPro_value#" . ($i + 1), $data['company_zdw_yszkdsr']['list'][$i]['detail']['transPro_value']);
         }
-        $docObj->setValue("yszk_total", $data['company_zdw_yszkdsr']['total']);
+        $docObj->setValue("yszk_total", (int)$data['company_zdw_yszkdsr']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,52,$this->entName,true);
         $docObj->setValue('yszk_oneSaid', $oneSaid);
@@ -2134,7 +2134,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //登记日期
             $docObj->setValue("zldj_sortTime#" . ($i + 1), $this->formatDate($data['company_zdw_zldjdsr']['list'][$i]['detail']['sortTime']));
         }
-        $docObj->setValue("zldj_total", $data['company_zdw_zldjdsr']['total']);
+        $docObj->setValue("zldj_total", (int)$data['company_zdw_zldjdsr']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,56,$this->entName,true);
         $docObj->setValue('zldj_oneSaid', $oneSaid);
@@ -2158,7 +2158,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //登记日期
             $docObj->setValue("bzjzy_sortTime#" . ($i + 1), $this->formatDate($data['company_zdw_bzjzydsr']['list'][$i]['detail']['sortTime']));
         }
-        $docObj->setValue("bzjzy_total", $data['company_zdw_bzjzydsr']['total']);
+        $docObj->setValue("bzjzy_total", (int)$data['company_zdw_bzjzydsr']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,54,$this->entName,true);
         $docObj->setValue('bzjzy_oneSaid', $oneSaid);
@@ -2180,7 +2180,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //登记日期
             $docObj->setValue("cdzy_sortTime#" . ($i + 1), $this->formatDate($data['company_zdw_cdzydsr']['list'][$i]['detail']['sortTime']));
         }
-        $docObj->setValue("cdzy_total", $data['company_zdw_cdzydsr']['total']);
+        $docObj->setValue("cdzy_total", (int)$data['company_zdw_cdzydsr']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,55,$this->entName,true);
         $docObj->setValue('cdzy_oneSaid', $oneSaid);
@@ -2202,7 +2202,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //登记日期
             $docObj->setValue("syqbl_sortTime#" . ($i + 1), $this->formatDate($data['company_zdw_syqbldsr']['list'][$i]['detail']['sortTime']));
         }
-        $docObj->setValue("syqbl_total", $data['company_zdw_syqbldsr']['total']);
+        $docObj->setValue("syqbl_total", (int)$data['company_zdw_syqbldsr']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,53,$this->entName,true);
         $docObj->setValue('syqbl_oneSaid', $oneSaid);
@@ -2224,7 +2224,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //登记日期
             $docObj->setValue("qtdcrz_sortTime#" . ($i + 1), $this->formatDate($data['company_zdw_qtdcdsr']['list'][$i]['detail']['sortTime']));
         }
-        $docObj->setValue("qtdcrz_total", $data['company_zdw_qtdcdsr']['total']);
+        $docObj->setValue("qtdcrz_total", (int)$data['company_zdw_qtdcdsr']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,57,$this->entName,true);
         $docObj->setValue('qtdcrz_oneSaid', $oneSaid);
