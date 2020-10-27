@@ -101,7 +101,7 @@ class UserController extends UserBase
                 'pid' => $pid
             ];
             User::create()->data($insert, false)->save();
-            Wallet::create()->data(['phone' => $phone, 'money' => date('Ymd') > 20201115 ? 0 : 5000], false)->save();
+            Wallet::create()->data(['phone' => $phone], false)->save();
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
