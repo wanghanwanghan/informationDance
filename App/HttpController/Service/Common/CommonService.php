@@ -9,6 +9,8 @@ use Amenadiel\JpGraph\Plot\BarPlot;
 use Amenadiel\JpGraph\Plot\GroupBarPlot;
 use Amenadiel\JpGraph\Plot\LinePlot;
 use Amenadiel\JpGraph\Plot\PiePlot;
+use App\HttpController\Service\Common\EmailTemplate\Template01;
+use App\HttpController\Service\Common\EmailTemplate\Template02;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
@@ -198,29 +200,44 @@ class CommonService extends ServiceBase
     }
 
     //发送邮件
-    function sendEmail()
+    function sendEmail($sendTo, $addAttachment = [], $templateNum = '01', $options = [])
     {
         $config = new MailerConfig();
-        $config->setServer('smtp.exmail.qq.com');
+        $config->setServer(CreateConf::getInstance()->getConf('env.mailServer'));
         $config->setSsl(true);
-        $config->setPort(465);
-        $config->setUsername('wanghan@meirixindong.com');
-        $config->setPassword('1q2w3e4r%T');
-        $config->setMailFrom('wanghan@meirixindong.com');
+        $config->setPort((int)CreateConf::getInstance()->getConf('env.mailPort'));
+        $config->setUsername(CreateConf::getInstance()->getConf('env.mailUsername'));
+        $config->setPassword(CreateConf::getInstance()->getConf('env.mailPassword'));
+        $config->setMailFrom(CreateConf::getInstance()->getConf('env.mailFrom'));
         $config->setTimeout(10);//设置客户端连接超时时间
         $config->setMaxPackage(1024 * 1024 * 5);//设置包发送的大小：5M
 
         //设置文本或者html格式
         $mimeBean = new Html();
-        $mimeBean->setSubject('这是您生成的报告');
-        $mimeBean->setBody('<h1>这是您生成的报告</h1>');
+        $templateNum = (string)str_pad($templateNum, 2, '0', STR_PAD_LEFT);
+        switch ($templateNum) {
+            case '01':
+                //极简
+                $template = Template01::getInstance();
+                break;
+            case '02':
+                //简版
+                $template = Template02::getInstance();
+                break;
+        }
+        $mimeBean->setSubject($template->getSubject($options['entName']));
+        $mimeBean->setBody($template->getBody());
 
         try {
             //添加附件
-            $mimeBean->addAttachment(Attach::create(REPORT_PATH.'20201026201810_52983522.docx'));
+            if (!empty($addAttachment)) {
+                foreach ($addAttachment as $onePathAndFilename) {
+                    $mimeBean->addAttachment(Attach::create($onePathAndFilename));
+                }
+            }
             $mailer = new Mailer($config);
             //发送邮件
-            $mailer->sendTo('minglongoc@me.com', $mimeBean);
+            $mailer->sendTo($sendTo, $mimeBean);
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }

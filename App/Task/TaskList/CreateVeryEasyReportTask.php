@@ -4,6 +4,7 @@ namespace App\Task\TaskList;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Models\Api\ReportInfo;
+use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\FaHai\FaHaiService;
 use App\HttpController\Service\OneSaid\OneSaidService;
@@ -53,6 +54,10 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         $info = ReportInfo::create()->where('phone',$this->phone)->where('filename',$this->reportNum)->get();
 
         $info->update(['status'=>2]);
+
+        $userEmail = User::create()->where('phone',$this->phone)->get();
+
+        CommonService::getInstance()->sendEmail($userEmail->email,[REPORT_PATH . $this->reportNum . '.docx'],'01',['entName'=>$this->entName]);
 
         return true;
     }

@@ -31,6 +31,4 @@ class TaskBase
     {
         return formatPercent($str);
     }
-
-    //报告生成后，发到邮箱
 }
