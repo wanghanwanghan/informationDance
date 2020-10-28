@@ -2699,6 +2699,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             if ($res === null) return $res;
 
+            $count1=0;
+
             foreach ($res as $year => $dataArr) {
                 $legend[] = $year;
                 array_pop($dataArr);
@@ -2706,13 +2708,14 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                     return is_numeric($val) ? (int)$val : null;
                 }, array_values($dataArr));
                 $data[] = $tmp;
+                !empty(array_filter($tmp)) ?: $count1++;
             }
 
             $labels = ['资产总额', '负债总额', '营业总收入', '主营业务收入', '利润总额', '净利润', '纳税总额', '所有者权益'];
             $extension = [
                 'width' => 1200,
                 'height' => 700,
-                'title' => $this->entName . ' - 财务非授权 - 同比',
+                'title' => $count1 == 2 ? '缺少上一年财务数据，财务图表未生成' : $this->entName . ' - 财务非授权 - 同比',
                 'xTitle' => '此图为概况信息',
                 //'yTitle'=>$this->entName,
                 'titleSize' => 14,
