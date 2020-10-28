@@ -9,6 +9,7 @@ use App\HttpController\Service\CreateDefine;
 use App\HttpController\Service\CreateMysqlOrm;
 use App\HttpController\Service\CreateMysqlPoolForProjectDb;
 use App\HttpController\Service\CreateRedisPool;
+use App\HttpController\Service\CreateSessionHandler;
 use App\HttpController\Service\RequestUtils\LimitService;
 use App\Process\Service\ProcessService;
 use EasySwoole\EasySwoole\Swoole\EventRegister;
@@ -54,6 +55,10 @@ class EasySwooleEvent implements Event
 
         //注册定时任务
         CrontabService::getInstance()->create();
+
+        //注册session的处理流程
+        CreateSessionHandler::getInstance()->create(SESSION_PATH);
+
     }
 
     public static function onRequest(Request $request, Response $response): bool

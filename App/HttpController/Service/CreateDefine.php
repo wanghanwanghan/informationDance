@@ -31,6 +31,8 @@ class CreateDefine extends ServiceBase
         define('SIMSUN_TTC', STATIC_PATH . 'TTF' . DIRECTORY_SEPARATOR . 'simsun.ttc');
         define('BKAI00MP_TTF', STATIC_PATH . 'TTF' . DIRECTORY_SEPARATOR . 'bkai00mp.ttf');
 
+        define('SESSION_PATH', STATIC_PATH . 'Session' . DIRECTORY_SEPARATOR);
+
         return true;
     }
 }
