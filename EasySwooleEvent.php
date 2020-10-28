@@ -66,7 +66,7 @@ class EasySwooleEvent implements Event
         $response->withHeader('Access-Control-Allow-Origin', '*');
         $response->withHeader('Access-Control-Allow-Methods', 'GET, POST');
         $response->withHeader('Access-Control-Allow-Credentials', 'true');
-        $response->withHeader('Access-Control-Allow-Headers', 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,X-XSRF-TOKEN');
+        $response->withHeader('Access-Control-Allow-Headers', '*');
         return true;
     }
 
