@@ -180,7 +180,6 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         return true;
     }
 
-
     //失信公告
     private function sxgg($data)
     {
