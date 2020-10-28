@@ -1011,7 +1011,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
                 $legend[] = $year;
                 array_pop($dataArr);
                 $tmp = array_map(function ($val) {
-                    return (int)$val;
+                    return is_numeric($val) ? (int)$val : null;
                 }, array_values($dataArr));
                 $data[] = $tmp;
             }
