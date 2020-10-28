@@ -26,6 +26,11 @@ class Router extends AbstractRouter
             $this->ExportExcelRouterV1($routeCollector);//导出excel
             $this->ExportWordRouterV1($routeCollector);//导出word
         });
+
+        $routeCollector->addGroup('/admin/v1',function (RouteCollector $routeCollector)
+        {
+            AdminRouter::getInstance()->addRouterV1($routeCollector);
+        });
     }
 
     private function CommonRouterV1(RouteCollector $routeCollector)
