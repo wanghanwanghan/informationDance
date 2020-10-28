@@ -20,9 +20,15 @@ class UserController extends UserBase
     //用户列表
     function userList()
     {
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $pageSize = $this->request()->getRequestParam('page') ?? 10;
+
         try
         {
-            $list = User::create()->all();
+            $list = User::create()->alias('t1')
+                ->join('information_dance_wallet as t2','t2.phone = t1.phone')
+                ->limit($this->exprOffset($page,$pageSize),$pageSize)
+                ->all();
 
         }catch (\Throwable $e)
         {
