@@ -83,6 +83,7 @@ class Router extends AbstractRouter
         $routeCollector->addGroup('/xd',function (RouteCollector $routeCollector) use ($prefix)
         {
             $routeCollector->addRoute(['GET','POST'],'/getCorporateShareholderRisk',$prefix.'getCorporateShareholderRisk');//控股法人股东的司法风险
+            $routeCollector->addRoute(['GET','POST'],'/getProductStandard',$prefix.'getProductStandard');//产品标准
         });
 
         return true;

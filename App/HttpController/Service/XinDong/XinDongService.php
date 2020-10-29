@@ -8,6 +8,7 @@ use App\HttpController\Service\FaHai\FaHaiService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
 use App\HttpController\Service\ServiceBase;
 use App\HttpController\Service\TaoShu\TaoShuService;
+use EasySwoole\Pool\Manager;
 use wanghanwanghan\someUtils\control;
 use wanghanwanghan\someUtils\traits\Singleton;
 
@@ -23,7 +24,7 @@ class XinDongService extends ServiceBase
         $this->fhList = CreateConf::getInstance()->getConf('fahai.listBaseUrl');
         $this->qccUrl = CreateConf::getInstance()->getConf('qichacha.baseUrl');
 
-        return parent::onNewService();
+        return parent::__construct();
     }
 
     //处理结果给信息controller
@@ -476,5 +477,36 @@ class XinDongService extends ServiceBase
         return $this->checkResp(200, null, $tmp, '查询成功');
     }
 
+    //产品标准
+    function getProductStandard($entName,$page,$pageSize)
+    {
+        try
+        {
+            $mysqlObj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))->getObj();
 
+            $mysqlObj->queryBuilder()->where('ORG_NAME',$entName)
+                ->limit($this->exprOffset($page,$pageSize),$pageSize)
+                ->get('qyxx');
+
+            $list = $mysqlObj->execBuilder();
+
+            $mysqlObj->queryBuilder()->where('ORG_NAME',$entName)->get('qyxx');
+
+            $total = $mysqlObj->execBuilder();
+
+            empty($total) ? $total = 0 : $total = count($total);
+
+        }catch (\Throwable $e)
+        {
+            $this->writeErr($e,__FUNCTION__);
+
+            return ['code'=>201,'paging'=>null,'result'=>null,'msg'=>'获取mysql错误'];
+
+        }finally
+        {
+            Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))->recycleObj($mysqlObj);
+        }
+
+        return $this->checkResp(200, ['page'=>$page,'pageSize'=>$pageSize,'total'=>$total],$list, '查询成功');
+    }
 }

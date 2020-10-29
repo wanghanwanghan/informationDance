@@ -7,6 +7,7 @@ use App\Event\EventList\TestEvent;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateDefine;
 use App\HttpController\Service\CreateMysqlOrm;
+use App\HttpController\Service\CreateMysqlPoolForMinZuJiDiDb;
 use App\HttpController\Service\CreateMysqlPoolForProjectDb;
 use App\HttpController\Service\CreateRedisPool;
 use App\HttpController\Service\CreateSessionHandler;
@@ -40,6 +41,7 @@ class EasySwooleEvent implements Event
 
         //mysql pool
         CreateMysqlPoolForProjectDb::getInstance()->createMysql();
+        CreateMysqlPoolForMinZuJiDiDb::getInstance()->createMysql();
 
         //mysql orm
         CreateMysqlOrm::getInstance()->createMysqlOrm();

@@ -4,7 +4,10 @@ namespace App\HttpController\Business\Api\XinDong;
 
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
-use App\HttpController\Service\XinDong\XinDongService;;
+use App\HttpController\Service\XinDong\XinDongService;
+use EasySwoole\Pool\Manager;
+
+;
 
 class XinDongController extends XinDongBase
 {
@@ -76,6 +79,17 @@ class XinDongController extends XinDongBase
         return $this->checkResponse($res);
     }
 
+    //产品标准
+    function getProductStandard()
+    {
+        $entName=$this->request()->getRequestParam('entName');
+        $page=$this->request()->getRequestParam('pageIndex') ?? 1;
+        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+
+        $res = XinDongService::getInstance()->getProductStandard($entName,$page,$pageSize);
+
+        return $this->checkResponse($res);
+    }
 
 
 }

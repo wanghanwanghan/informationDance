@@ -7,7 +7,13 @@ use App\HttpController\Models\Api\PurchaseInfo;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateSessionHandler;
+use App\HttpController\Service\CreateTable\CreateTableService;
 use Carbon\Carbon;
+use EasySwoole\DDL\Blueprint\Table;
+use EasySwoole\DDL\DDLBuilder;
+use EasySwoole\DDL\Enum\Character;
+use EasySwoole\DDL\Enum\Engine;
+use EasySwoole\Pool\Manager;
 use EasySwoole\RedisPool\Redis;
 use EasySwoole\Session\Session;
 
