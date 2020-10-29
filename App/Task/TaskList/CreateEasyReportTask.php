@@ -12,6 +12,7 @@ use App\HttpController\Service\QianQi\QianQiService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\XinDongService;
+use App\Process\Service\ProcessService;
 use App\Task\TaskBase;
 use Carbon\Carbon;
 use EasySwoole\Task\AbstractInterface\TaskInterface;
@@ -67,6 +68,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $userEmail = User::create()->where('phone',$this->phone)->get();
 
         CommonService::getInstance()->sendEmail($userEmail->email,[REPORT_PATH . $this->reportNum . '.docx'],'02',['entName'=>$this->entName]);
+
+        ProcessService::getInstance()->sendToProcess('docx2doc',$this->reportNum);
 
         return true;
     }
