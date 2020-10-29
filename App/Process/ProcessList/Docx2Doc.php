@@ -22,10 +22,17 @@ class Docx2Doc extends ProcessBase
     {
         parent::onPipeReadable($process);
 
-        //接收数据 string
-        $filename = $process->read().'.docx';
+        try
+        {
+            //接收数据 string
+            $filename = $process->read().'.docx';
 
-        file_get_contents("http://127.0.0.1:8992/single/{$filename}");
+            file_get_contents("http://127.0.0.1:8992/single/{$filename}");
+
+        }catch (\Throwable $e)
+        {
+            CommonService::getInstance()->log4PHP($e->getMessage());
+        }
 
         return true;
     }
