@@ -97,7 +97,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'epb', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //环保处罚详情
@@ -132,7 +144,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'epb', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //重点监控企业名单详情
@@ -167,7 +191,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'epb', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //环保企业自行监测结果详情
@@ -202,7 +238,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'epb', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //环评公示数据详情
@@ -237,7 +285,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'custom', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //海关企业详情
@@ -272,7 +332,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'custom', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //海关许可详情
@@ -307,7 +379,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'custom', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //海关信用详情
@@ -342,7 +426,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'custom', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //海关处罚详情
@@ -989,7 +1085,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'pbc', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //央行行政处罚详情
@@ -1024,7 +1132,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'pbc', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //银保监会处罚公示详情
@@ -1059,7 +1179,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'pbc', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //证监处罚公示详情
@@ -1094,7 +1226,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'pbc', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //证监会许可批复等级详情
@@ -1129,7 +1273,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'pbc', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //外汇局处罚详情
@@ -1164,7 +1320,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'pbc', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //外汇局许可详情
@@ -1199,7 +1367,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'zdw', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //应收账款详情
@@ -1234,7 +1414,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'zdw', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //租赁登记详情
@@ -1269,7 +1461,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'zdw', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //保证金质押登记详情
@@ -1304,7 +1508,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'zdw', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //仓单质押详情
@@ -1339,7 +1555,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'zdw', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //所有权保留详情
@@ -1374,7 +1602,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'zdw', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //其他动产融资详情
@@ -1447,7 +1687,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'zyzb', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //上市公司-解质押数据
@@ -1468,7 +1720,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'zyzb', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //上市公司-担保数据
@@ -1489,7 +1753,19 @@ class FaHaiController extends FaHaiBase
 
         $res = (new FaHaiService())->getList($this->listBaseUrl . 'zyzb', $postData);
 
-        return $this->checkResponse($res, $docType, 'list');
+        $res = $this->checkResponse($res, $docType, 'list', false);
+
+        if (!is_array($res)) return $res;
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                if (!isset($one['body'])) continue;
+                $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+            }
+            unset($one);
+        }
+
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
 
