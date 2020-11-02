@@ -38,9 +38,7 @@ class wxPayService extends PayBase
                 $conf->setApiClientCert(implode(PHP_EOL, CreateConf::getInstance()->getConf('wx.cert')));
                 $conf->setApiClientKey(implode(PHP_EOL, CreateConf::getInstance()->getConf('wx.key')));
                 break;
-
             case 'wh':
-
                 break;
         }
 
@@ -60,9 +58,7 @@ class wxPayService extends PayBase
                     'grant_type' => 'authorization_code',
                 ];
                 break;
-
             case 'wh':
-
                 break;
         }
 

@@ -77,6 +77,7 @@ class NotifyController extends BusinessBase
         return $this->response()->write(WeChat::success());
     }
 
+    //微信通知 伟衡
     function wxNotify_wh()
     {
         $pay = new Pay();
