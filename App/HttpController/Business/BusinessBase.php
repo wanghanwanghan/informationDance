@@ -171,7 +171,7 @@ class BusinessBase extends Index
             {
                 $limitList = EntLimitEveryday::create()
                     ->where('token',$token)
-                    ->order('created_at',$todayStart,'>')
+                    ->where('created_at',$todayStart,'>')
                     ->all();
 
                 $limitList = obj2Arr($limitList);
