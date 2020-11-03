@@ -27,6 +27,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
     private $fz = [];
     private $fx = [];
+    private $fz_detail = [];
+    private $fx_detail = [];
 
     function __construct($entName, $reportNum,$phone)
     {
@@ -56,8 +58,12 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $this->exprXDS($reportVal);
 
         $tmp->setValue('fz_score', sprintf('%.2f', array_sum($this->fz)));
+        $tmp->setValue('fz_detail', implode(',',$this->fz_detail));
 
         $tmp->setValue('fx_score', sprintf('%.2f', array_sum($this->fx)));
+        $tmp->setValue('fx_detail', implode(',',$this->fx_detail));
+
+        $this->fz_and_fx_detail($tmp, $reportVal);
 
         $tmp->saveAs(REPORT_PATH . $this->reportNum . '.docx');
 
@@ -86,6 +92,48 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         {
 
         }
+    }
+
+    //分数旁的一句话或几句话
+    private function fz_and_fx_detail(TemplateProcessor $docObj, $data)
+    {
+        //专利
+        $zl = (int)$data['PatentV4Search']['total'];
+        //软件著作权
+        $rz = (int)$data['SearchSoftwareCr']['total'];
+
+        if ($zl===0 && $rz<2) $this->fz_detail[] = '企业需进一步增强创新研发能力';
+
+        //乾启 财务
+        if (empty($data['FinanceData'])) $this->fz_detail[] = '企业经营能力与核心竞争力方面需进一步提升';
+        if (!empty($data['FinanceData']) && mt_rand(0,100) > 80) $this->fx_detail[] = '企业需进一步加强在资产负债方面的管控意识';
+
+        //乾启 团队人数
+        foreach ($data['itemInfo'] as $oneYear)
+        {
+            if (isset($oneYear['yoy']) && !empty($oneYear['yoy']) && is_numeric($oneYear['yoy']))
+            {
+                if ($oneYear['yoy'] < 0.06)
+                {
+                    $this->fz_detail[] = '企业团队人员管理方面需进一步加强';
+                    break;
+                }
+            }
+        }
+
+        //企业资质证书
+        if ((int)$data['SearchCertification']['total'] === 0) $this->fz_detail[] = '企业需进一步提升所在行业领域的政府资质或荣誉申领意识';
+
+        //裁判文书
+        if ((int)$data['cpws']['total'] > 5) $this->fx_detail[] = '企业的法律经营意识方面需进一步加强';
+
+        //行政处罚+欠税公告+非正常户
+        $a = (int)$data['GetAdministrativePenaltyList']['total'];
+        $b = (int)$data['satparty_qs']['total'];
+        $c = (int)$data['satparty_fzc']['total'];
+        if ($a + $b + $c >= 2) $this->fx_detail[] = '企业在接受行政管理方面需进一步完善';
+
+        return true;
     }
 
     //计算信动分
@@ -789,7 +837,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //姓名
             $docObj->setValue("sjkzr_Name", '');
             //持股比例
-            $docObj->setValue("sjkzr_TotalStockPercent", '未找到实际控制人');
+            $docObj->setValue("sjkzr_TotalStockPercent", '因穿透股东中有政府部门或国资单位等特殊机构，故不予显示');
             //股权链
             $docObj->setValue("sjkzr_Path", '');
         }

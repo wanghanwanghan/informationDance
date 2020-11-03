@@ -47,7 +47,7 @@ class UserController extends UserBase
         $company = $this->request()->getRequestParam('company') ?? '';
         $username = $this->request()->getRequestParam('username') ?? '';
         $phone = $this->request()->getRequestParam('phone') ?? '';
-        $email = $this->request()->getRequestParam('email') ?? '';
+        $email = $this->request()->getRequestParam('email') ?? 'test@test.com';
         $pidPhone = $this->request()->getRequestParam('pidPhone') ?? 0;//注册裂变
 
         $password = $this->request()->getRequestParam('password') ?? control::randNum(6);
@@ -100,8 +100,8 @@ class UserController extends UserBase
                 'company' => $company,
                 'pid' => $pid
             ];
-            User::create()->data($insert, false)->save();
-            Wallet::create()->data(['phone' => $phone], false)->save();
+            User::create()->data($insert)->save();
+            Wallet::create()->data(['phone' => $phone])->save();
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
@@ -293,7 +293,7 @@ class UserController extends UserBase
         ];
 
         try {
-            PurchaseInfo::create()->data($insert, false)->save();
+            PurchaseInfo::create()->data($insert)->save();
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
@@ -387,7 +387,7 @@ class UserController extends UserBase
                     'expireTime' => time() + CreateConf::getInstance()->getConf('supervisor.chargeLimit') * 86400,
                 ];
 
-                SupervisorPhoneEntName::create()->data($data, false)->save();
+                SupervisorPhoneEntName::create()->data($data)->save();
 
             } else {
 

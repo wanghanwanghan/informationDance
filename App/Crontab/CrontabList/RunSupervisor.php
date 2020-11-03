@@ -36,7 +36,7 @@ class RunSupervisor extends AbstractCronTask
 
     static function getRule(): string
     {
-        return '5 4 * * *';
+        return '1 1 */3 * *';
     }
 
     static function getTaskName(): string

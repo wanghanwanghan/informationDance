@@ -47,7 +47,7 @@ class StatisticsService extends ServiceBase
                 'phone' => $phone,
             ];
 
-            Statistics::create()->data($insert, false)->save();
+            Statistics::create()->data($insert)->save();
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }

@@ -106,7 +106,7 @@ class ChargeService extends ServiceBase
                         'phone' => $phone,
                         'price' => 0,
                     ];
-                    Charge::create()->data($insert, false)->save();
+                    Charge::create()->data($insert)->save();
                 } catch (\Throwable $e) {
                     $this->writeErr($e, 'ChargeService');
                 }
@@ -149,7 +149,7 @@ class ChargeService extends ServiceBase
                 'phone' => $phone,
                 'price' => $moduleInfo['basePrice'],
             ];
-            Charge::create()->data($insert, false)->save();
+            Charge::create()->data($insert)->save();
         } catch (\Throwable $e) {
             $this->writeErr($e, 'ChargeService');
         }
@@ -201,7 +201,7 @@ class ChargeService extends ServiceBase
                         'phone' => $phone,
                         'price' => 0,
                     ];
-                    Charge::create()->data($insert, false)->save();
+                    Charge::create()->data($insert)->save();
                 } catch (\Throwable $e) {
                     $this->writeErr($e, 'ChargeService');
                 }
@@ -245,7 +245,7 @@ class ChargeService extends ServiceBase
                 'phone' => $phone,
                 'price' => $moduleInfo['basePrice'],
             ];
-            Charge::create()->data($insert, false)->save();
+            Charge::create()->data($insert)->save();
         } catch (\Throwable $e) {
             $this->writeErr($e, 'ChargeService');
         }
@@ -295,7 +295,7 @@ class ChargeService extends ServiceBase
                         'phone' => $phone,
                         'price' => 0,
                     ];
-                    Charge::create()->data($insert, false)->save();
+                    Charge::create()->data($insert)->save();
                 } catch (\Throwable $e) {
                     $this->writeErr($e, 'ChargeService');
                 }
@@ -339,7 +339,7 @@ class ChargeService extends ServiceBase
                 'phone' => $phone,
                 'price' => $moduleInfo['basePrice'],
             ];
-            Charge::create()->data($insert, false)->save();
+            Charge::create()->data($insert)->save();
         } catch (\Throwable $e) {
             $this->writeErr($e, 'ChargeService');
         }
@@ -388,7 +388,7 @@ class ChargeService extends ServiceBase
                         'phone' => $phone,
                         'price' => 0,
                     ];
-                    Charge::create()->data($insert, false)->save();
+                    Charge::create()->data($insert)->save();
                 } catch (\Throwable $e) {
                     $this->writeErr($e, 'ChargeService');
                 }
@@ -431,7 +431,7 @@ class ChargeService extends ServiceBase
                 'phone' => $phone,
                 'price' => $moduleInfo['basePrice'],
             ];
-            Charge::create()->data($insert, false)->save();
+            Charge::create()->data($insert)->save();
         } catch (\Throwable $e) {
             $this->writeErr($e, 'ChargeService');
         }
@@ -489,7 +489,7 @@ class ChargeService extends ServiceBase
                 'phone' => $phone,
                 'price' => $moduleInfo['basePrice'],
             ];
-            Charge::create()->data($insert, false)->save();
+            Charge::create()->data($insert)->save();
         } catch (\Throwable $e) {
             $this->writeErr($e, 'ChargeService');
         }
@@ -545,7 +545,7 @@ class ChargeService extends ServiceBase
                 'phone' => $phone,
                 'price' => $moduleInfo['basePrice'],
             ];
-            Charge::create()->data($insert, false)->save();
+            Charge::create()->data($insert)->save();
         } catch (\Throwable $e) {
             $this->writeErr($e, 'ChargeService');
         }
