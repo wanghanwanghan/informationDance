@@ -3,11 +3,14 @@
 namespace App\HttpController\Business;
 
 use App\HttpController\Index;
+use App\HttpController\Models\Api\EntLimitEveryday;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\RequestUtils\LimitService;
 use App\HttpController\Service\RequestUtils\StatisticsService;
 use App\HttpController\Service\User\UserService;
+use Carbon\Carbon;
 use wanghanwanghan\someUtils\control;
 
 class BusinessBase extends Index
@@ -29,7 +32,10 @@ class BusinessBase extends Index
         //统计
         (new StatisticsService($this->request()))->byPath();
 
-        return ($checkRouter || ($checkToken && $checkLimit));
+        //其他的一些验证
+        $otherCheck = $this->otherCheck();
+
+        return ($checkRouter || ($checkToken && $checkLimit && $otherCheck));
     }
 
     function afterAction(?string $actionName): void
@@ -148,6 +154,49 @@ class BusinessBase extends Index
         isset($this->request()->getHeader('x-real-ip')[0]) ? $realIp = $this->request()->getHeader('x-real-ip')[0] : $realIp = null;
 
         return LimitService::getInstance()->check($token, $realIp);
+    }
+
+    //其他的一些验证
+    private function otherCheck(): bool
+    {
+        $entName = $this->request()->getRequestParam('entName');
+        $token = $this->request()->getHeaderLine('authorization');
+        $todayStart = Carbon::now()->startOfDay()->timestamp;
+        $todayEnd   = Carbon::now()->endOfDay()->timestamp;
+
+        //每天只能浏览100个企业
+        if (!empty($entName) && !empty($token))
+        {
+            try
+            {
+                $limitList = EntLimitEveryday::create()
+                    ->where('token',$token)
+                    ->order('created_at',$todayStart,'>')
+                    ->all();
+
+                $limitList = obj2Arr($limitList);
+
+                $limitList = array_unique($limitList);
+
+                EntLimitEveryday::create()->data([
+                    'token' => $token,
+                    'entName' => $entName,
+                ])->save();
+
+            }catch (\Throwable $e)
+            {
+                return $this->writeErr($e,__FUNCTION__);
+            }
+
+            //超过了限定次数
+            if (!empty($limitList) && count($limitList) > 100)
+            {
+                $this->writeJson(230,null,null,'当天访问企业超过限制');
+                return false;
+            }
+        }
+
+        return true;
     }
 
     //计算分页
