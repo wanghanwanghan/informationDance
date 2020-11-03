@@ -273,6 +273,7 @@ class UserController extends UserBase
         $jsCode = $this->request()->getRequestParam('jsCode') ?? '';
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $type = $this->request()->getRequestParam('type') ?? 1;
+        $payConfType = $this->request()->getRequestParam('payConfType') ?? 'xd';
 
         try {
             $list = PurchaseList::create()->where('id', $type)->get();
@@ -299,7 +300,8 @@ class UserController extends UserBase
         }
 
         //创建小程序支付对象
-        $payObj = (new wxPayService())->miniAppPay($jsCode, $orderId, $list->money, $list->name . ' - ' . $list->desc);
+        $payObj = (new wxPayService())->setPayConfType($payConfType)
+            ->miniAppPay($jsCode, $orderId, $list->money, $list->name . ' - ' . $list->desc);
 
         return $this->writeJson(200, null, ['orderId' => $orderId, 'payObj' => $payObj], '生成订单成功');
     }

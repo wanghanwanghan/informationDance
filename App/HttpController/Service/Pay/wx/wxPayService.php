@@ -39,6 +39,12 @@ class wxPayService extends PayBase
                 $conf->setApiClientKey(implode(PHP_EOL, CreateConf::getInstance()->getConf('wx.key')));
                 break;
             case 'wh':
+                $conf->setMiniAppId(CreateConf::getInstance()->getConf('wx.miniAppIdWh'));
+                $conf->setMchId(CreateConf::getInstance()->getConf('wx.mchId'));
+                $conf->setKey(CreateConf::getInstance()->getConf('wx.miniPayKeyWh'));
+                $conf->setNotifyUrl(CreateConf::getInstance()->getConf('wx.notifyUrlWh'));
+                $conf->setApiClientCert(implode(PHP_EOL, CreateConf::getInstance()->getConf('wx.cert')));
+                $conf->setApiClientKey(implode(PHP_EOL, CreateConf::getInstance()->getConf('wx.key')));
                 break;
         }
 
@@ -59,6 +65,12 @@ class wxPayService extends PayBase
                 ];
                 break;
             case 'wh':
+                $data = [
+                    'appid' => CreateConf::getInstance()->getConf('wx.miniAppIdWh'),
+                    'secret' => CreateConf::getInstance()->getConf('wx.openIdKeyWh'),
+                    'js_code' => $code,//这是从wx.login中拿的
+                    'grant_type' => 'authorization_code',
+                ];
                 break;
         }
 
