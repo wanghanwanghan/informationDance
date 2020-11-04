@@ -3,9 +3,12 @@
 namespace App\HttpController\Business\Api\Common;
 
 use App\Crontab\CrontabBase;
+use App\HttpController\Models\Api\Charge;
 use App\HttpController\Models\Api\LngLat;
+use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateTable\CreateTableService;
+use Carbon\Carbon;
 use EasySwoole\RedisPool\Redis;
 use wanghanwanghan\someUtils\control;
 
@@ -94,6 +97,49 @@ class CommonController extends CommonBase
         }
 
         return $this->writeJson(200,null,null,'上传成功');
+    }
+
+    //退钱到钱包
+    function refundToWallet()
+    {
+        $phone = $this->request()->getRequestParam('phone') ?? '';
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $moduleNum = $this->request()->getRequestParam('moduleNum') ?? '';
+
+        if (empty($phone) || !is_numeric($phone)) return $this->writeJson(201,null,null,'手机号错误');
+        if (empty($entName)) return $this->writeJson(201,null,null,'企业名称错误');
+        if (empty($moduleNum) || !is_numeric($moduleNum)) return $this->writeJson(201,null,null,'扣费模块错误');
+
+        try
+        {
+            $info = Charge::create()
+                ->where('phone',$phone)
+                ->where('entName',$entName)
+                ->where('moduleNum',$moduleNum)
+                ->where('created_at',time() - 30,'>')//首先要看这个人在30秒之前有没有真的消费并扣钱
+                ->where('price',0,'>')//是否有被扣费
+                ->get();
+
+            if (empty($info)) return $this->writeJson(201,null,null,'未找到订单');
+
+            $addPrice = $info->price;
+
+            //修改订单金额
+            $info->update(['price'=>0]);
+
+            //把扣的钱返回
+            $userWalletInfo = Wallet::create()->where('phone',$phone)->get();
+
+            $userWalletInfo->money += $addPrice;
+
+            $userWalletInfo->update();
+
+        }catch (\Throwable $e)
+        {
+            return $this->writeErr($e,__FUNCTION__);
+        }
+
+        return $this->writeJson(200,null,null,'成功');
     }
 
 
