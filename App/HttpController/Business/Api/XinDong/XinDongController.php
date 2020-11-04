@@ -5,9 +5,6 @@ namespace App\HttpController\Business\Api\XinDong;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
 use App\HttpController\Service\XinDong\XinDongService;
-use EasySwoole\Pool\Manager;
-
-;
 
 class XinDongController extends XinDongBase
 {
