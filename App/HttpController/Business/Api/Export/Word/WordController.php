@@ -42,7 +42,7 @@ class WordController extends ExportBase
         if ($pay === 'true' || $pay === true) $pay = true;
         if ($pay === 'false' || $pay === false) $pay = false;
 
-        if (!CommonService::getInstance()->validateEmail($entName) && $pay === true)
+        if (!CommonService::getInstance()->validateEmail($email) && $pay === true)
             return $this->writeJson(201, null, null, 'email格式错误');
 
         try {
@@ -82,7 +82,7 @@ class WordController extends ExportBase
         if ($pay === 'true' || $pay === true) $pay = true;
         if ($pay === 'false' || $pay === false) $pay = false;
 
-        if (!CommonService::getInstance()->validateEmail($entName) && $pay === true)
+        if (!CommonService::getInstance()->validateEmail($email) && $pay === true)
             return $this->writeJson(201, null, null, 'email格式错误');
 
         try {
