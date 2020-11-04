@@ -115,7 +115,7 @@ class CommonController extends CommonBase
             $info = Charge::create()
                 ->where('phone',$phone)
                 ->where('entName',$entName)
-                ->where('moduleNum',$moduleNum)
+                ->where('moduleId',$moduleNum)
                 ->where('created_at',time() - 30,'>')//首先要看这个人在30秒之前有没有真的消费并扣钱
                 ->where('price',0,'>')//是否有被扣费
                 ->get();
