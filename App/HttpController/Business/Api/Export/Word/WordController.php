@@ -3,6 +3,8 @@
 namespace App\HttpController\Business\Api\Export\Word;
 
 use App\HttpController\Business\Api\Export\ExportBase;
+use App\HttpController\Models\Api\User;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\Report\ReportService;
@@ -33,6 +35,19 @@ class WordController extends ExportBase
 
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $entName = $this->request()->getRequestParam('entName') ?? '';
+        $email = $this->request()->getRequestParam('email') ?? '';
+
+        if (!CommonService::getInstance()->validateEmail($entName)) return $this->writeJson(201, null, null, 'email格式错误');
+
+        try
+        {
+            $userInfo = User::create()->where('phone',$phone)->get();
+            $userInfo->update(['email'=>$email]);
+
+        }catch (\Throwable $e)
+        {
+            return $this->writeErr($e,__FUNCTION__);
+        }
 
         $charge = ChargeService::getInstance()->VeryEasyReport($this->request(), 210, $reportNum);
 
@@ -57,6 +72,19 @@ class WordController extends ExportBase
 
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $entName = $this->request()->getRequestParam('entName') ?? '';
+        $email = $this->request()->getRequestParam('email') ?? '';
+
+        if (!CommonService::getInstance()->validateEmail($entName)) return $this->writeJson(201, null, null, 'email格式错误');
+
+        try
+        {
+            $userInfo = User::create()->where('phone',$phone)->get();
+            $userInfo->update(['email'=>$email]);
+
+        }catch (\Throwable $e)
+        {
+            return $this->writeErr($e,__FUNCTION__);
+        }
 
         $charge = ChargeService::getInstance()->EasyReport($this->request(), 220, $reportNum);
 
