@@ -71,11 +71,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $tmp->setValue('fz_score', sprintf('%.2f', array_sum($this->fz)));
         $tmp->setValue('fz_detail', implode(',',$this->fz_detail));
-        CommonService::getInstance()->log4PHP($this->fz_detail);
 
         $tmp->setValue('fx_score', sprintf('%.2f', array_sum($this->fx)));
         $tmp->setValue('fx_detail', implode(',',$this->fx_detail));
-        CommonService::getInstance()->log4PHP($this->fz_detail);
 
         $this->fz_and_fx_detail($tmp, $reportVal);
 
@@ -113,14 +111,21 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     {
         //专利
         $zl = (int)$data['PatentV4Search']['total'];
+
+        CommonService::getInstance()->log4PHP(['zl'=>$zl]);
+
         //软件著作权
         $rz = (int)$data['SearchSoftwareCr']['total'];
+
+        CommonService::getInstance()->log4PHP(['rz'=>$rz]);
 
         if ($zl===0 && $rz<2) $this->fz_detail[] = '企业需进一步增强创新研发能力';
 
         //乾启 财务
         if (empty($data['FinanceData'])) $this->fz_detail[] = '企业经营能力与核心竞争力方面需进一步提升';
         if (!empty($data['FinanceData']) && mt_rand(0,100) > 80) $this->fx_detail[] = '企业需进一步加强在资产负债方面的管控意识';
+
+        CommonService::getInstance()->log4PHP(['FinanceData'=>$data['FinanceData']]);
 
         //乾启 团队人数
         foreach ($data['itemInfo'] as $oneYear)
@@ -138,8 +143,12 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //企业资质证书
         if ((int)$data['SearchCertification']['total'] === 0) $this->fz_detail[] = '企业需进一步提升所在行业领域的政府资质或荣誉申领意识';
 
+        CommonService::getInstance()->log4PHP(['SearchCertification'=>$data['SearchCertification']['total']]);
+
         //裁判文书
         if ((int)$data['cpws']['total'] > 5) $this->fx_detail[] = '企业的法律经营意识方面需进一步加强';
+
+        CommonService::getInstance()->log4PHP(['cpws'=>$data['cpws']['total']]);
 
         //行政处罚+欠税公告+非正常户
         $a = (int)$data['GetAdministrativePenaltyList']['total'];
