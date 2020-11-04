@@ -36,20 +36,17 @@ class WordController extends ExportBase
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $entName = $this->request()->getRequestParam('entName') ?? '';
         $email = $this->request()->getRequestParam('email') ?? '';
+        $type = $this->request()->getRequestParam('type') ?? 'xd';
         $pay = $this->request()->getRequestParam('pay') ?? false;
 
         if (!CommonService::getInstance()->validateEmail($entName) && $pay === true)
             return $this->writeJson(201, null, null, 'email格式错误');
 
-        try
-        {
-            $userInfo = User::create()->where('phone',$phone)->get();
-
-            $pay !== true ?: $userInfo->update(['email'=>$email]);
-
-        }catch (\Throwable $e)
-        {
-            return $this->writeErr($e,__FUNCTION__);
+        try {
+            $userInfo = User::create()->where('phone', $phone)->get();
+            $pay !== true ?: $userInfo->update(['email' => $email]);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
         }
 
         $charge = ChargeService::getInstance()->VeryEasyReport($this->request(), 210, $reportNum);
@@ -61,7 +58,7 @@ class WordController extends ExportBase
         } else {
             $code = 200;
             $paging = null;
-            $res = ReportService::getInstance()->createVeryEasy($entName, $reportNum, $phone);
+            $res = ReportService::getInstance()->createVeryEasy($entName, $reportNum, $phone, $type);
             $msg = '极简报告生成中';
         }
 
@@ -76,20 +73,17 @@ class WordController extends ExportBase
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $entName = $this->request()->getRequestParam('entName') ?? '';
         $email = $this->request()->getRequestParam('email') ?? '';
+        $type = $this->request()->getRequestParam('type') ?? 'xd';
         $pay = $this->request()->getRequestParam('pay') ?? false;
 
         if (!CommonService::getInstance()->validateEmail($entName) && $pay === true)
             return $this->writeJson(201, null, null, 'email格式错误');
 
-        try
-        {
-            $userInfo = User::create()->where('phone',$phone)->get();
-
-            $pay !== true ?: $userInfo->update(['email'=>$email]);
-
-        }catch (\Throwable $e)
-        {
-            return $this->writeErr($e,__FUNCTION__);
+        try {
+            $userInfo = User::create()->where('phone', $phone)->get();
+            $pay !== true ?: $userInfo->update(['email' => $email]);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
         }
 
         $charge = ChargeService::getInstance()->EasyReport($this->request(), 220, $reportNum);
@@ -101,7 +95,7 @@ class WordController extends ExportBase
         } else {
             $code = 200;
             $paging = null;
-            $res = ReportService::getInstance()->createEasy($entName, $reportNum, $phone);
+            $res = ReportService::getInstance()->createEasy($entName, $reportNum, $phone, $type);
             $msg = '简版报告生成中';
         }
 

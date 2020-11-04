@@ -14,51 +14,47 @@ class ReportService extends ServiceBase
     use Singleton;
 
     //生成极简报告
-    function createVeryEasy($entName, $reportNum, $phone)
+    function createVeryEasy($entName, $reportNum, $phone, $type)
     {
-        try
-        {
+        try {
             ReportInfo::create()->data([
-                'phone'=>$phone,
-                'entName'=>$entName,
-                'filename'=>$reportNum,
-                'type'=>10,
-                'status'=>3,
-                'errInfo'=>'',
+                'phone' => $phone,
+                'entName' => $entName,
+                'filename' => $reportNum,
+                'type' => 10,
+                'status' => 3,
+                'errInfo' => '',
             ])->save();
 
-        }catch (\Throwable $e)
-        {
-            return $this->writeErr($e,__FUNCTION__);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
         }
 
         //扔到task里
-        TaskService::getInstance()->create(new CreateVeryEasyReportTask($entName, $reportNum, $phone));
+        TaskService::getInstance()->create(new CreateVeryEasyReportTask($entName, $reportNum, $phone, $type));
 
         return $reportNum;
     }
 
     //生成简版报告
-    function createEasy($entName, $reportNum, $phone)
+    function createEasy($entName, $reportNum, $phone, $type)
     {
-        try
-        {
+        try {
             ReportInfo::create()->data([
-                'phone'=>$phone,
-                'entName'=>$entName,
-                'filename'=>$reportNum,
-                'type'=>30,
-                'status'=>3,
-                'errInfo'=>'',
+                'phone' => $phone,
+                'entName' => $entName,
+                'filename' => $reportNum,
+                'type' => 30,
+                'status' => 3,
+                'errInfo' => '',
             ])->save();
 
-        }catch (\Throwable $e)
-        {
-            return $this->writeErr($e,__FUNCTION__);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
         }
 
         //扔到task里
-        TaskService::getInstance()->create(new CreateEasyReportTask($entName, $reportNum, $phone));
+        TaskService::getInstance()->create(new CreateEasyReportTask($entName, $reportNum, $phone, $type));
 
         return $reportNum;
     }
@@ -66,20 +62,18 @@ class ReportService extends ServiceBase
     //生成深度报告
     function createDeep($entName, $reportNum, $phone)
     {
-        try
-        {
+        try {
             ReportInfo::create()->data([
-                'phone'=>$phone,
-                'entName'=>$entName,
-                'filename'=>$reportNum,
-                'type'=>30,
-                'status'=>4,
-                'errInfo'=>'',
+                'phone' => $phone,
+                'entName' => $entName,
+                'filename' => $reportNum,
+                'type' => 30,
+                'status' => 4,
+                'errInfo' => '',
             ])->save();
 
-        }catch (\Throwable $e)
-        {
-            return $this->writeErr($e,__FUNCTION__);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
         }
 
         //不扔task了，等后台审核后再扔task
