@@ -176,6 +176,8 @@ class BusinessBase extends Index
 
                 $limitList = obj2Arr($limitList);
 
+                !empty($limitList) ?: $limitList=[];
+
                 $limitList = array_unique($limitList);
 
                 EntLimitEveryday::create()->data([
