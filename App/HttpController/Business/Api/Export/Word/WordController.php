@@ -36,13 +36,16 @@ class WordController extends ExportBase
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $entName = $this->request()->getRequestParam('entName') ?? '';
         $email = $this->request()->getRequestParam('email') ?? '';
+        $pay = $this->request()->getRequestParam('pay') ?? false;
 
-        if (!CommonService::getInstance()->validateEmail($entName)) return $this->writeJson(201, null, null, 'email格式错误');
+        if (!CommonService::getInstance()->validateEmail($entName) && $pay === true)
+            return $this->writeJson(201, null, null, 'email格式错误');
 
         try
         {
             $userInfo = User::create()->where('phone',$phone)->get();
-            $userInfo->update(['email'=>$email]);
+
+            $pay !== true ?: $userInfo->update(['email'=>$email]);
 
         }catch (\Throwable $e)
         {
@@ -73,13 +76,16 @@ class WordController extends ExportBase
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $entName = $this->request()->getRequestParam('entName') ?? '';
         $email = $this->request()->getRequestParam('email') ?? '';
+        $pay = $this->request()->getRequestParam('pay') ?? false;
 
-        if (!CommonService::getInstance()->validateEmail($entName)) return $this->writeJson(201, null, null, 'email格式错误');
+        if (!CommonService::getInstance()->validateEmail($entName) && $pay === true)
+            return $this->writeJson(201, null, null, 'email格式错误');
 
         try
         {
             $userInfo = User::create()->where('phone',$phone)->get();
-            $userInfo->update(['email'=>$email]);
+
+            $pay !== true ?: $userInfo->update(['email'=>$email]);
 
         }catch (\Throwable $e)
         {
