@@ -5,13 +5,11 @@ namespace App\HttpController\Business\Api\Notify;
 use App\HttpController\Business\BusinessBase;
 use App\HttpController\Models\Api\PurchaseInfo;
 use App\HttpController\Models\Api\PurchaseList;
-use App\HttpController\Models\Api\User;
 use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\Pay\wx\wxPayService;
 use EasySwoole\Pay\Pay;
 use EasySwoole\Pay\WeChat\WeChat;
-use EasySwoole\RedisPool\Redis;
 
 class NotifyController extends BusinessBase
 {
