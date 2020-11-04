@@ -105,6 +105,7 @@ class CommonController extends CommonBase
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $entName = $this->request()->getRequestParam('entName') ?? '';
         $moduleNum = $this->request()->getRequestParam('moduleNum') ?? '';
+        $msg = '退款成功';
 
         if (empty($phone) || !is_numeric($phone)) return $this->writeJson(201,null,null,'手机号错误');
         if (empty($entName)) return $this->writeJson(201,null,null,'企业名称错误');
@@ -139,7 +140,14 @@ class CommonController extends CommonBase
             return $this->writeErr($e,__FUNCTION__);
         }
 
-        return $this->writeJson(200,null,null,'退款成功');
+        switch ($moduleNum)
+        {
+            case 14:
+                $msg = '因穿透股东中有政府部门或国资单位等特殊机构，故不予显示，退款成功';
+                break;
+        }
+
+        return $this->writeJson(200,null,null,$msg);
     }
 
 
