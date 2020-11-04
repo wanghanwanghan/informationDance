@@ -71,9 +71,11 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $tmp->setValue('fz_score', sprintf('%.2f', array_sum($this->fz)));
         $tmp->setValue('fz_detail', implode(',',$this->fz_detail));
+        CommonService::getInstance()->log4PHP($this->fz_detail);
 
         $tmp->setValue('fx_score', sprintf('%.2f', array_sum($this->fx)));
         $tmp->setValue('fx_detail', implode(',',$this->fx_detail));
+        CommonService::getInstance()->log4PHP($this->fz_detail);
 
         $this->fz_and_fx_detail($tmp, $reportVal);
 
