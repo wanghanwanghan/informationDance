@@ -48,14 +48,14 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         if (preg_match('/炜衡/',$userInfo->company))
         {
             $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'wh_logo.png', 'width' => 200, 'height' => 40]);
-            $tmp->setImageValue('selectMore', '如需更多信息登录移动端小程序 炜衡智调 查看');
+            $tmp->setValue('selectMore', '如需更多信息登录移动端小程序 炜衡智调 查看');
         }else
         {
             $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'logo.jpg', 'width' => 200, 'height' => 40]);
-            $tmp->setImageValue('selectMore', '如需更多信息登录移动端小程序 信动智调 查看');
+            $tmp->setValue('selectMore', '如需更多信息登录移动端小程序 信动智调 查看');
         }
 
-        $tmp->setImageValue('createEnt', $userInfo->company);
+        $tmp->setValue('createEnt', $userInfo->company);
 
         $tmp->setValue('entName', $this->entName);
 
