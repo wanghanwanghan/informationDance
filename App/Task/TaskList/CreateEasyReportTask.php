@@ -43,7 +43,19 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     {
         $tmp = new TemplateProcessor(REPORT_MODEL_PATH . 'EasyReportModel_1.docx');
 
-        $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'logo.jpg', 'width' => 200, 'height' => 40]);
+        $userInfo = User::create()->where('phone',$this->phone)->get();
+
+        if (preg_match('/炜衡/',$userInfo->company))
+        {
+            $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'wh_logo.png', 'width' => 200, 'height' => 40]);
+            $tmp->setImageValue('selectMore', '如需更多信息登录移动端小程序 炜衡智调 查看');
+        }else
+        {
+            $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'logo.jpg', 'width' => 200, 'height' => 40]);
+            $tmp->setImageValue('selectMore', '如需更多信息登录移动端小程序 信动智调 查看');
+        }
+
+        $tmp->setImageValue('createEnt', $userInfo->company);
 
         $tmp->setValue('entName', $this->entName);
 
