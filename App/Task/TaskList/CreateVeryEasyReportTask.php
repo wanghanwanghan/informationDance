@@ -24,15 +24,17 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
     private $entName;
     private $reportNum;
     private $phone;
+    private $type;
 
     private $fz = [];
     private $fx = [];
 
-    function __construct($entName, $reportNum,$phone)
+    function __construct($entName, $reportNum,$phone,$type)
     {
         $this->entName = $entName;
         $this->reportNum = $reportNum;
         $this->phone = $phone;
+        $this->type = $type;
 
         return parent::__construct();
     }
@@ -43,14 +45,16 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
 
         $userInfo = User::create()->where('phone',$this->phone)->get();
 
-        if (preg_match('/炜衡/',$userInfo->company))
+        switch ($this->type)
         {
-            $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'wh_logo.png', 'width' => 200, 'height' => 40]);
-            $tmp->setValue('selectMore', '如需更多信息登录移动端小程序 炜衡智调 查看');
-        }else
-        {
-            $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'logo.jpg', 'width' => 200, 'height' => 40]);
-            $tmp->setValue('selectMore', '如需更多信息登录移动端小程序 信动智调 查看');
+            case 'xd':
+                $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'logo.jpg', 'width' => 200, 'height' => 40]);
+                $tmp->setValue('selectMore', '如需更多信息登录移动端小程序 信动智调 查看');
+                break;
+            case 'wh':
+                $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'wh_logo.png', 'width' => 200, 'height' => 40]);
+                $tmp->setValue('selectMore', '如需更多信息登录移动端小程序 炜衡智调 查看');
+                break;
         }
 
         $tmp->setValue('createEnt', $userInfo->company);
