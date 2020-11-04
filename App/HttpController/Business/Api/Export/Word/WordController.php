@@ -39,6 +39,8 @@ class WordController extends ExportBase
         $type = $this->request()->getRequestParam('type') ?? 'xd';
         $pay = $this->request()->getRequestParam('pay') ?? false;
 
+        var_dump($pay);
+
         if (!CommonService::getInstance()->validateEmail($entName) && $pay === true)
             return $this->writeJson(201, null, null, 'email格式错误');
 
