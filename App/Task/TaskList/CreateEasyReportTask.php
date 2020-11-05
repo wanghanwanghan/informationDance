@@ -1191,15 +1191,14 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         //团队人数
         $rows = count($data['itemInfo']);
-        CommonService::getInstance()->log4PHP($data['itemInfo']);
         $docObj->cloneRow('tdrs_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
             $docObj->setValue("tdrs_no#" . ($i + 1), $i + 1);
             //年份
             $docObj->setValue("tdrs_year#" . ($i + 1), $data['itemInfo'][$i]['year']);
-            //变化率
-            $docObj->setValue("tdrs_yoy#" . ($i + 1), $this->formatPercent($data['itemInfo'][$i]['yoy']));
+            //人数
+            $docObj->setValue("tdrs_yoy#" . ($i + 1), (int)$data['itemInfo'][$i]['num']);
         }
 
         //建筑企业-专业注册人员
