@@ -1191,6 +1191,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         //团队人数
         $rows = count($data['itemInfo']);
+        CommonService::getInstance()->log4PHP($data['itemInfo']);
         $docObj->cloneRow('tdrs_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
@@ -2687,8 +2688,6 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QianQiService())->setCheckRespFlag(true)->getThreeYearsData($postData);
 
-            CommonService::getInstance()->log4PHP($res);
-
             if ($res['code'] === 200 && !empty($res['result'])) {
 
                 $yearArr = array_keys($res['result']);
@@ -2710,11 +2709,12 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                     }
 
                     if ($SOCNUM_1 !== null && $SOCNUM_2 !== null && $SOCNUM_2 !== 0) {
-                        $res[] = ['year' => $yearArr[$i], 'yoy' => ($SOCNUM_1 - $SOCNUM_2) / $SOCNUM_2];
+                        $res[] = ['year' => $yearArr[$i], 'yoy' => ($SOCNUM_1 - $SOCNUM_2) / $SOCNUM_2 ,'num'=>$SOCNUM_1];
                     } else {
-                        $res[] = ['year' => $yearArr[$i], 'yoy' => null];
+                        $res[] = ['year' => $yearArr[$i], 'yoy' => null,'num'=>$SOCNUM_1];
                     }
                 }
+
             } else {
                 $res = null;
             }
