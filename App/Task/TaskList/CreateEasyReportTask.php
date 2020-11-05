@@ -827,6 +827,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         //经营异常
         $rows = count($data['GetOpException']['list']);
+        CommonService::getInstance()->log4PHP($data['GetOpException']);
         $docObj->cloneRow('jjyc_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
