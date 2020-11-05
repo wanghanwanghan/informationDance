@@ -50,7 +50,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         switch ($this->type)
         {
             case 'xd':
-                $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'logo.jpg', 'width' => 200, 'height' => 40]);
+                $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'xd_logo.png', 'width' => 200, 'height' => 40]);
                 $tmp->setValue('selectMore', '如需更多信息登录移动端小程序 信动智调 查看');
                 break;
             case 'wh':
@@ -106,7 +106,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $line = $throwable->getLine();
             $msg = $throwable->getMessage();
 
-            $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
+            $content = "[file => {$file}] [line => {$line}] [msg => {$msg}]";
 
             $info->update(['status'=>1,'errInfo' => $content]);
 
@@ -1247,11 +1247,18 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->setValue('zpxx_oneSaid', $oneSaid);
 
         //财务总揽
-        $docObj->setImageValue("caiwu_pic", [
-            'path' => REPORT_IMAGE_TEMP_PATH . $data['FinanceData']['pic'],
-            'width' => 440,
-            'height' => 500
-        ]);
+        if (empty($data['FinanceData']['pic']))
+        {
+            $docObj->setValue("caiwu_pic", '无财务数据或企业类型错误');
+
+        }else
+        {
+            $docObj->setImageValue("caiwu_pic", [
+                'path' => REPORT_IMAGE_TEMP_PATH . $data['FinanceData']['pic'],
+                'width' => 440,
+                'height' => 500
+            ]);
+        }
 
         $caiwu_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,0,$this->entName,true);
         $docObj->setValue("caiwu_oneSaid", $caiwu_oneSaid);

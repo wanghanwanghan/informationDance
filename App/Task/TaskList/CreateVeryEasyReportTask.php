@@ -809,11 +809,18 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         $docObj->setValue('qydwtz_oneSaid', $oneSaid);
 
         //财务总揽
-        $docObj->setImageValue("caiwu_pic", [
-            'path' => REPORT_IMAGE_TEMP_PATH . $data['FinanceData']['pic'],
-            'width' => 440,
-            'height' => 500
-        ]);
+        if (empty($data['FinanceData']['pic']))
+        {
+            $docObj->setValue("caiwu_pic", '无财务数据或企业类型错误');
+
+        }else
+        {
+            $docObj->setImageValue("caiwu_pic", [
+                'path' => REPORT_IMAGE_TEMP_PATH . $data['FinanceData']['pic'],
+                'width' => 440,
+                'height' => 500
+            ]);
+        }
 
         $caiwu_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,0,$this->entName,true);
         $docObj->setValue("caiwu_oneSaid", $caiwu_oneSaid);
