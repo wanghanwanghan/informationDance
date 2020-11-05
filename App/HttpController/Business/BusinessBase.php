@@ -5,6 +5,7 @@ namespace App\HttpController\Business;
 use App\HttpController\Index;
 use App\HttpController\Models\Api\EntLimitEveryday;
 use App\HttpController\Models\Api\User;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\RequestUtils\LimitService;
@@ -177,6 +178,8 @@ class BusinessBase extends Index
                 $limitList = obj2Arr($limitList);
 
                 !empty($limitList) ?: $limitList=[];
+
+                CommonService::getInstance()->log4PHP($limitList);
 
                 $limitList = array_unique($limitList);
 
