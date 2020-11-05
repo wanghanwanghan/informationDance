@@ -37,17 +37,14 @@ class WordController extends ExportBase
         $entName = $this->request()->getRequestParam('entName') ?? '';
         $email = $this->request()->getRequestParam('email') ?? '';
         $type = $this->request()->getRequestParam('type') ?? 'xd';
-        $pay = $this->request()->getRequestParam('pay') ?? false;
+        $pay = $this->request()->getRequestParam('pay') ?? 0;
 
-        if ($pay === 'true' || $pay === true) $pay = true;
-        if ($pay === 'false' || $pay === false) $pay = false;
-
-        if (!CommonService::getInstance()->validateEmail($email) && $pay === true)
+        if (!CommonService::getInstance()->validateEmail($email) && $pay == 1)
             return $this->writeJson(201, null, null, 'email格式错误');
 
         try {
             $userInfo = User::create()->where('phone', $phone)->get();
-            $pay !== true ?: $userInfo->update(['email' => $email]);
+            $pay != 1 ?: $userInfo->update(['email' => $email]);
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
@@ -77,17 +74,14 @@ class WordController extends ExportBase
         $entName = $this->request()->getRequestParam('entName') ?? '';
         $email = $this->request()->getRequestParam('email') ?? '';
         $type = $this->request()->getRequestParam('type') ?? 'xd';
-        $pay = $this->request()->getRequestParam('pay') ?? false;
+        $pay = $this->request()->getRequestParam('pay') ?? 0;
 
-        if ($pay === 'true' || $pay === true) $pay = true;
-        if ($pay === 'false' || $pay === false) $pay = false;
-
-        if (!CommonService::getInstance()->validateEmail($email) && $pay === true)
+        if (!CommonService::getInstance()->validateEmail($email) && $pay == 1)
             return $this->writeJson(201, null, null, 'email格式错误');
 
         try {
             $userInfo = User::create()->where('phone', $phone)->get();
-            $pay !== true ?: $userInfo->update(['email' => $email]);
+            $pay != 1 ?: $userInfo->update(['email' => $email]);
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }

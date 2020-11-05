@@ -47,12 +47,12 @@ class ChargeService extends ServiceBase
 
     private function getPay(Request $request)
     {
-        $pay = $request->getRequestParam('pay') ?? false;
+        $pay = $request->getRequestParam('pay') ?? 0;
 
-        if ($pay === 'false' || $pay === false || $pay === 0 || $pay === '0' || $pay === '' || $pay === null) {
-            $pay = false;
+        if ($pay == 0 || $pay === '' || $pay === null) {
+            $pay = 0;
         } else {
-            $pay = true;
+            $pay = 1;
         }
 
         return $pay;
