@@ -1189,8 +1189,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("xwyq_PublishTime#" . ($i + 1), $this->formatDate($data['CompanyNews'][$i]['PublishTime']));
         }
 
-        //团队人数变化率
+        //团队人数
         $rows = count($data['itemInfo']);
+        CommonService::getInstance()->log4PHP($data['itemInfo']);
         $docObj->cloneRow('tdrs_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
