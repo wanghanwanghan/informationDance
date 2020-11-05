@@ -191,8 +191,6 @@ class BusinessBase extends Index
                     $limitList = array_unique($tmp);
                 }
 
-                CommonService::getInstance()->log4PHP($limitList);
-
                 EntLimitEveryday::create()->data([
                     'token' => $token,
                     'entName' => $entName,
