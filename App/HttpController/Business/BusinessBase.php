@@ -171,6 +171,7 @@ class BusinessBase extends Index
             try
             {
                 $limitList = EntLimitEveryday::create()
+                    ->field('entName')
                     ->where('token',$token)
                     ->where('created_at',$todayStart,'>')
                     ->all();
