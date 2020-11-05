@@ -827,7 +827,6 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         //经营异常
         $rows = count($data['GetOpException']['list']);
-        CommonService::getInstance()->log4PHP($data['GetOpException']);
         $docObj->cloneRow('jjyc_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
@@ -865,6 +864,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //股权链
             $docObj->setValue("sjkzr_Path", '');
         }
+
+        CommonService::getInstance()->log4PHP($data['Beneficiary']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,16,$this->entName,true);
         $docObj->setValue('sjkzr_oneSaid', $oneSaid);
