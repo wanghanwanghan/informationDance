@@ -902,8 +902,6 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("frdwtz_CONDATE#" . ($i + 1), $this->formatDate($data['lawPersonInvestmentInfo'][$i]['CONDATE']));
         }
 
-        CommonService::getInstance()->log4PHP($data['lawPersonInvestmentInfo']);
-
         //法人对外任职
         $rows = count($data['getLawPersontoOtherInfo']);
         $docObj->cloneRow('frdwrz_no', $rows);
