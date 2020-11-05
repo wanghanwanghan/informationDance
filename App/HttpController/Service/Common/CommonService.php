@@ -133,7 +133,7 @@ class CommonService extends ServiceBase
 
             $bar = new BarPlot($oneDataArray);
 
-            $bar->value->Show();
+            //$bar->value->Show();
 
             $bar->SetFillColor($color[$key] . '@0.4');
 
