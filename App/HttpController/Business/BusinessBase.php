@@ -176,13 +176,22 @@ class BusinessBase extends Index
                     ->where('created_at',$todayStart,'>')
                     ->all();
 
-                $limitList = obj2Arr($limitList);
+                if (empty($limitList))
+                {
+                    $limitList = [];
+                }else
+                {
+                    $tmp = [];
 
-                !empty($limitList) ?: $limitList=[];
+                    foreach ($limitList as $one)
+                    {
+                        $tmp[] = $one->entName;
+                    }
+
+                    $limitList = array_unique($tmp);
+                }
 
                 CommonService::getInstance()->log4PHP($limitList);
-
-                $limitList = array_unique($limitList);
 
                 EntLimitEveryday::create()->data([
                     'token' => $token,
