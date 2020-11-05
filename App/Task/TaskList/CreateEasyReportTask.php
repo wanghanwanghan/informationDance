@@ -102,7 +102,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         {
             $info = ReportInfo::create()->where('phone',$this->phone)->where('filename',$this->reportNum)->get();
 
-            $info->update(['status'=>1,'errInfo'=>$throwable->getMessage()]);
+            $info->update(['status'=>1,'errInfo'=>jsonEncode($throwable->getMessage())]);
 
         }catch (\Throwable $e)
         {
