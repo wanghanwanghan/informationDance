@@ -865,8 +865,6 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("sjkzr_Path", '');
         }
 
-        CommonService::getInstance()->log4PHP($data['Beneficiary']);
-
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,16,$this->entName,true);
         $docObj->setValue('sjkzr_oneSaid', $oneSaid);
 
@@ -903,6 +901,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //认缴出资时间
             $docObj->setValue("frdwtz_CONDATE#" . ($i + 1), $this->formatDate($data['lawPersonInvestmentInfo'][$i]['CONDATE']));
         }
+
+        CommonService::getInstance()->log4PHP($data['lawPersonInvestmentInfo']);
 
         //法人对外任职
         $rows = count($data['getLawPersontoOtherInfo']);
