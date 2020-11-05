@@ -133,6 +133,7 @@ class CommonService extends ServiceBase
 
             $bar = new BarPlot($oneDataArray);
 
+            //显示柱状图上的数
             //$bar->value->Show();
 
             $bar->SetFillColor($color[$key] . '@0.4');
