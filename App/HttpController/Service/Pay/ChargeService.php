@@ -31,8 +31,8 @@ class ChargeService extends ServiceBase
         13 => ['name' => '税务许可', 'desc' => '详情', 'basePrice' => 1],
         14 => ['name' => '实际控制人和控制路径', 'desc' => '', 'basePrice' => 16],
         50 => ['name' => '风险监控', 'desc' => '', 'basePrice' => 50],
-        210 => ['name' => '极简报告', 'desc' => '', 'basePrice' => 100],
-        220 => ['name' => '简版报告', 'desc' => '', 'basePrice' => 400],
+        210 => ['name' => '极简报告', 'desc' => '', 'basePrice' => 80],
+        220 => ['name' => '简版报告', 'desc' => '', 'basePrice' => 300],
     ];
 
     private function getEntName(Request $request)
