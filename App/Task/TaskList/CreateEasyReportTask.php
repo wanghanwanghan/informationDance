@@ -2779,9 +2779,6 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 $res = null;
             }
 
-            CommonService::getInstance()->log4PHP('wanghanwanghan');
-            CommonService::getInstance()->log4PHP($res);
-
             if ($res === null) return $res;
 
             $count1=0;
@@ -2797,6 +2794,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             }
 
             $labels = ['资产总额', '负债总额', '营业总收入', '主营业务收入', '利润总额', '净利润', '纳税总额', '所有者权益'];
+
             $extension = [
                 'width' => 1200,
                 'height' => 700,

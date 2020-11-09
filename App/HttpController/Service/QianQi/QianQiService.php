@@ -553,7 +553,7 @@ class QianQiService extends ServiceBase
         //0不能是除数
         if ($last===0) return null;
 
-        return number_format(($now - $last) / abs($last) * 100,2);
+        return (int)sprintf('%.2f',($now - $last) / abs($last) * 100);
     }
 
 
