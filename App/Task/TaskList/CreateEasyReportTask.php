@@ -2779,6 +2779,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 $res = null;
             }
 
+            CommonService::getInstance()->log4PHP($res);
+
             if ($res === null) return $res;
 
             $count1=0;
