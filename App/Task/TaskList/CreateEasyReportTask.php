@@ -2775,8 +2775,6 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new QianQiService())->setCheckRespFlag(true)->getThreeYearsData($postData);
 
-            CommonService::getInstance()->log4PHP($res);
-
             if ($res['code'] === 200 && !empty($res['result'])) {
                 $res = (new QianQiService())->toPercent($res['result']);
             } else {
@@ -2796,6 +2794,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 $data[] = $tmp;
                 !empty(array_filter($tmp)) ?: $count1++;
             }
+
+            CommonService::getInstance()->log4PHP($tmp);
 
             $labels = ['资产总额', '负债总额', '营业总收入', '主营业务收入', '利润总额', '净利润', '纳税总额', '所有者权益'];
             $extension = [

@@ -129,8 +129,6 @@ class CommonService extends ServiceBase
 
         $color = ['red', 'orange', 'yellow', 'green', 'blue'];
 
-        CommonService::getInstance()->log4PHP($data);
-
         foreach ($data as $key => $oneDataArray) {
 
             $bar = new BarPlot($oneDataArray);
