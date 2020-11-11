@@ -11,6 +11,7 @@ class StatisticsService extends ServiceBase
 {
     private $pathInfo;
     private $token;
+    private $resParam = [];
     private $resTime = 0;
 
     function __construct(Request $request)
@@ -19,6 +20,7 @@ class StatisticsService extends ServiceBase
 
         $this->pathInfo = $request->getSwooleRequest()->server['path_info'];
         $this->token = $request->getHeaderLine('authorization');
+        $this->resParam = $request->getRequestParam();
 
         return true;
     }
@@ -53,6 +55,7 @@ class StatisticsService extends ServiceBase
             $insert = [
                 'path' => $path,
                 'phone' => $phone,
+                'resParam' => jsonEncode($this->resParam),
                 'resTime' => $this->resTime
             ];
             Statistics::create()->data($insert)->save();
