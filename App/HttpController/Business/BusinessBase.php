@@ -16,8 +16,8 @@ use wanghanwanghan\someUtils\control;
 
 class BusinessBase extends Index
 {
-    public $startResTime = 0;
-    public $stopResTime = 0;
+    public $startResTime = 0;//请求开始时间，带毫秒
+    public $stopResTime = 0;//请求结束时间，带毫秒
 
     function onRequest(?string $action): ?bool
     {

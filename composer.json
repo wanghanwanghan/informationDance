@@ -21,7 +21,8 @@
         "phpoffice/phpword": "^0.17.0",
         "amenadiel/jpgraph": "^4",
         "qiniu/php-sdk": "^7.3",
-        "easyswoole/smtp": "^1.0"
+        "easyswoole/smtp": "^1.0",
+        "easyswoole/http-annotation": "^1.4"
     },
     "autoload": {
         "psr-4": {

@@ -3,6 +3,7 @@
 namespace App\HttpController;
 
 use EasySwoole\Http\AbstractInterface\Controller;
+use EasySwoole\HttpAnnotation\AnnotationController;
 
 class Index extends Controller
 {
