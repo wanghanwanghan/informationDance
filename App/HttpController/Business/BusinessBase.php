@@ -16,9 +16,14 @@ use wanghanwanghan\someUtils\control;
 
 class BusinessBase extends Index
 {
+    public $startResTime = 0;
+    public $stopResTime = 0;
+
     function onRequest(?string $action): ?bool
     {
         parent::onRequest($action);
+
+        $this->startResTime = microtime(true);
 
         $checkRouter = $this->checkRouter();
 
@@ -30,9 +35,6 @@ class BusinessBase extends Index
 
         if (!$checkLimit) $this->writeJson(201, null, null, '到达limit上限');
 
-        //统计
-        (new StatisticsService($this->request()))->byPath();
-
         //其他的一些验证
         $otherCheck = $this->otherCheck();
 
@@ -42,6 +44,13 @@ class BusinessBase extends Index
     function afterAction(?string $actionName): void
     {
         parent::afterAction($actionName);
+
+        $this->stopResTime = microtime(true);
+
+        $time = $this->startResTime - $this->stopResTime;
+
+        //统计
+        (new StatisticsService($this->request()))->addResTime($time)->byPath();
     }
 
     //重写writeJson

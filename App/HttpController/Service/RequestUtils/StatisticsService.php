@@ -11,6 +11,7 @@ class StatisticsService extends ServiceBase
 {
     private $pathInfo;
     private $token;
+    private $resTime = 0;
 
     function __construct(Request $request)
     {
@@ -20,6 +21,13 @@ class StatisticsService extends ServiceBase
         $this->token = $request->getHeaderLine('authorization');
 
         return true;
+    }
+
+    //添加请求耗时
+    function addResTime(float $time)
+    {
+        $this->resTime = $time;
+        return $this;
     }
 
     //通过请求地址统计
@@ -45,8 +53,8 @@ class StatisticsService extends ServiceBase
             $insert = [
                 'path' => $path,
                 'phone' => $phone,
+                'resTime' => $this->resTime
             ];
-
             Statistics::create()->data($insert)->save();
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
