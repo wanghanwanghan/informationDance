@@ -2,8 +2,6 @@
 
 git pull
 
-composer install
-
 rm -f ./Log/* ./Static/Log/*
 
 php easyswoole restart produce
