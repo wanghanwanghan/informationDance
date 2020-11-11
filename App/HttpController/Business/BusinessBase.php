@@ -47,7 +47,7 @@ class BusinessBase extends Index
 
         $this->stopResTime = microtime(true);
 
-        $time = $this->startResTime - $this->stopResTime;
+        $time = $this->stopResTime - $this->startResTime;
 
         //统计
         (new StatisticsService($this->request()))->addResTime($time)->byPath();
