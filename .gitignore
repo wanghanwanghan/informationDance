@@ -2,7 +2,6 @@
 /.git
 composer.lock
 git.sh
-update.sh
 dev.php
 produce.php
 /vendor
