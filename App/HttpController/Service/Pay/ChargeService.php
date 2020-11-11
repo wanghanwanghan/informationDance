@@ -49,7 +49,7 @@ class ChargeService extends ServiceBase
     {
         $pay = $request->getRequestParam('pay') ?? 0;
 
-        if ($pay === 'false' || $pay === false || $pay === 0 || $pay ==='0' || empty($pay)) {
+        if ($pay === 'false' || $pay === false || $pay === 0 || $pay === '0' || empty($pay)) {
             $pay = 0;
         } else {
             $pay = 1;
