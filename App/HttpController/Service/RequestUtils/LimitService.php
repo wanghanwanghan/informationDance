@@ -7,6 +7,7 @@ use App\HttpController\Service\ServiceBase;
 use Carbon\Carbon;
 use EasySwoole\Component\Singleton;
 use EasySwoole\RedisPool\Redis;
+use wanghanwanghan\someUtils\control;
 
 class LimitService extends ServiceBase
 {
@@ -37,11 +38,7 @@ class LimitService extends ServiceBase
         $redis->select($this->db);
 
         //key
-        if (!empty($token)) {
-            $key = $token;
-        } else {
-            $key = $realIp;
-        }
+        empty($token) ? $key = $realIp : $key = $token;
 
         //取得结果
         $data = $redis->get($minute . $key);
@@ -58,11 +55,9 @@ class LimitService extends ServiceBase
         return true;
     }
 
-    //随机一个 2-5 分钟的过期时间
+    //随机一个过期时间
     private function random()
     {
-        mt_srand();
-        $data = mt_rand(2, 5);
-        return $data * 60;
+        return control::randNum(2) * 6;//两位数 10 - 99，过期时间最多60秒
     }
 }
