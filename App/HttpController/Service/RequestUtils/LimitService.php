@@ -58,6 +58,6 @@ class LimitService extends ServiceBase
     //随机一个过期时间
     private function random()
     {
-        return control::randNum(2) * 6;//两位数 10 - 99，过期时间最多60秒
+        return control::randNum(2) * 6;//两位数 10 - 99，过期时间最少60秒
     }
 }
