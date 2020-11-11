@@ -49,6 +49,8 @@ class BusinessBase extends Index
 
         $time = $this->stopResTime - $this->startResTime;
 
+        CommonService::getInstance()->log4PHP($this->request()->getQueryParams());
+
         //统计
         (new StatisticsService($this->request()))->addResTime($time)->byPath();
     }
