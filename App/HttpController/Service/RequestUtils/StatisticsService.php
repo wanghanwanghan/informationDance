@@ -55,7 +55,7 @@ class StatisticsService extends ServiceBase
             $insert = [
                 'path' => $path,
                 'phone' => $phone,
-                'resParam' => jsonEncode($this->resParam),
+                'resParam' => json_encode($this->resParam, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
                 'resTime' => $this->resTime
             ];
             Statistics::create()->data($insert)->save();
