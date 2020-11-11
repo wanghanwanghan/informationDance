@@ -125,7 +125,7 @@ class TaoShuController extends TaoShuBase
                 $range = $obj->execBuilder();
                 Manager::getInstance()->get($mysql)->recycleObj($obj);
             } catch (\Throwable $e) {
-                $this->writeJson($e, __FUNCTION__);
+                $this->writeErr($e, __FUNCTION__);
                 $range = [];
             }
 
