@@ -123,6 +123,8 @@ class BusinessBase extends Index
     {
         $requestToken = $this->request()->getHeaderLine('authorization');
 
+        CommonService::getInstance()->log4PHP($requestToken);
+
         if (empty($requestToken) || strlen($requestToken) < 50) return false;
 
         try {
@@ -131,6 +133,8 @@ class BusinessBase extends Index
             $this->writeErr($e, __FUNCTION__);
             return false;
         }
+
+        CommonService::getInstance()->log4PHP($res);
 
         if (empty($res)) return false;
 
