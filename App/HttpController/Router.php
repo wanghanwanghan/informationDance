@@ -25,6 +25,7 @@ class Router extends AbstractRouter
             $this->Notify($routeCollector);//通知
             $this->ExportExcelRouterV1($routeCollector);//导出excel
             $this->ExportWordRouterV1($routeCollector);//导出word
+            $this->TestRouterV1($routeCollector);//测试路由
         });
 
         $routeCollector->addGroup('/admin/v1',function (RouteCollector $routeCollector)
@@ -318,6 +319,18 @@ class Router extends AbstractRouter
         {
             $routeCollector->addRoute(['GET','POST'],'/createVeryEasy',$prefix.'createVeryEasy');//极简报告
             $routeCollector->addRoute(['GET','POST'],'/createEasy',$prefix.'createEasy');//简版报告
+        });
+
+        return true;
+    }
+
+    private function TestRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix='/Business/Test/TestController/';
+
+        $routeCollector->addGroup('/test',function (RouteCollector $routeCollector) use ($prefix)
+        {
+            $routeCollector->addRoute(['GET','POST'],'/test',$prefix.'test');
         });
 
         return true;
