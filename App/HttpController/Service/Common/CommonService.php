@@ -246,67 +246,6 @@ class CommonService extends ServiceBase
         return true;
     }
 
-    //百度内容审核 - 纯文本
-    function checkContentByAI($content, $type = 'word')
-    {
-        //https://login.bce.baidu.com/?account=&redirect=http%3A%2F%2Fconsole.bce.baidu.com%2F%3Ffromai%3D1#/aip/overview
-
-        $label = [
-            0 => '绝对没有',
-            1 => '暴恐违禁',
-            2 => '文本色情',
-            3 => '政治敏感',
-            4 => '恶意推广',
-            5 => '低俗辱骂',
-            6 => '低质灌水'
-        ];
-
-        $grant_type = 'client_credentials';
-        $client_id = CreateConf::getInstance()->getConf('baidu.clientId');
-        $client_secret = CreateConf::getInstance()->getConf('baidu.clientSecret');
-        $url = CreateConf::getInstance()->getConf('baidu.getTokenUrl');
-
-        //auth
-        $res = (new CoHttpClient())->needJsonDecode(true)->send($url, [
-            'grant_type' => $grant_type,
-            'client_id' => $client_id,
-            'client_secret' => $client_secret
-        ], [], 'get');
-
-        $token = $res['access_token'];
-
-        //准备内容检查
-        $url = CreateConf::getInstance()->getConf('baidu.checkWorkUrl') . "?access_token={$token}";
-
-        $postData = ['content' => $content];
-
-        $res = (new CoHttpClient())->needJsonDecode(true)->send($url, $postData);
-
-        $res = obj2Arr($res);
-
-        //reject里是敏感词信息
-        if (!empty($res) && isset($res['result']) && isset($res['result']['reject']) && !empty($res['result']['reject'])) {
-            //如果有敏感词汇就替换
-            foreach ($res['result']['reject'] as $reject) {
-                foreach ($reject['hit'] as $one) {
-                    $content = str_replace([$one], '***', $content);
-                }
-            }
-        }
-
-        //review里是 涉嫌 敏感词信息
-        if (!empty($res) && isset($res['result']) && isset($res['result']['review']) && !empty($res['result']['review'])) {
-            //如果有敏感词汇就替换
-            foreach ($res['result']['review'] as $reject) {
-                foreach ($reject['hit'] as $one) {
-                    $content = str_replace([$one], '???', $content);
-                }
-            }
-        }
-
-        return $content;
-    }
-
     //验证邮箱
     function validateEmail($emailStr)
     {

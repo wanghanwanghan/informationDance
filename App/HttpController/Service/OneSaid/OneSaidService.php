@@ -3,6 +3,7 @@
 namespace App\HttpController\Service\OneSaid;
 
 use App\HttpController\Models\Api\OneSaid;
+use App\HttpController\Service\BaiDu\BaiDuService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\ServiceBase;
 use EasySwoole\Component\Singleton;
@@ -82,7 +83,7 @@ class OneSaidService extends ServiceBase
         !empty($oneSaid) ?: $oneSaid='';
 
         //敏感内容检测
-        $oneSaid = CommonService::getInstance()->checkContentByAI($oneSaid);
+        $oneSaid = BaiDuService::getInstance()->checkWord($oneSaid);
 
         try
         {
