@@ -6,8 +6,10 @@ use App\Crontab\CrontabBase;
 use App\HttpController\Models\Api\Charge;
 use App\HttpController\Models\Api\LngLat;
 use App\HttpController\Models\Api\Wallet;
+use App\HttpController\Service\BaiDu\BaiDuService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateTable\CreateTableService;
+use App\HttpController\Service\HeHe\HeHeService;
 use EasySwoole\RedisPool\Redis;
 use wanghanwanghan\someUtils\control;
 
@@ -149,6 +151,21 @@ class CommonController extends CommonBase
         return $this->writeJson(200,null,null,$msg);
     }
 
+    //百度ocr
+    function ocrForBaiDu()
+    {
+        $image = $this->request()->getUploadedFile('image');
+
+        return $this->writeJson(200,null,BaiDuService::getInstance()->ocr($image));
+    }
+
+    //合合ocr
+    function ocrForHeHe()
+    {
+        $image = $this->request()->getUploadedFile('image');
+
+        return $this->writeJson(200,null,HeHeService::getInstance()->ocrImageToWord($image));
+    }
 
 
 

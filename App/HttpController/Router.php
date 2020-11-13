@@ -45,6 +45,8 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/create/sms/verifyCode',$prefix.'smsVerifyCode');//发送手机验证码
             $routeCollector->addRoute(['GET','POST'],'/userLngLatUpload',$prefix.'userLngLatUpload');//上传用户经纬度
             $routeCollector->addRoute(['GET','POST'],'/refundToWallet',$prefix.'refundToWallet');//退钱到钱包
+            $routeCollector->addRoute(['GET','POST'],'/ocrForBaiDu',$prefix.'ocrForBaiDu');//百度ocr
+            $routeCollector->addRoute(['GET','POST'],'/ocrForHeHe',$prefix.'ocrForHeHe');//合合ocr
         });
 
         return true;

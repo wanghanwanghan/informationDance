@@ -7,9 +7,13 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use App\Task\Service\TaskService;
+use EasySwoole\Http\Message\UploadFile;
+use wanghanwanghan\someUtils\traits\Singleton;
 
 class HeHeService extends ServiceBase
 {
+    use Singleton;
+
     function onNewService(): ?bool
     {
         return parent::onNewService();
@@ -34,6 +38,8 @@ class HeHeService extends ServiceBase
             'app-key' => $this->appKey,
             'app-secret' => $this->appSecret,
         ];
+
+        if ($file instanceof UploadFile) $file = $file->getStream()->__toString();
 
         $res = TaskService::getInstance()->create(function () use ($headers, $file) {
             return (new CoHttpClient())->useCache(false)->send($this->ocrUrl, $file, $headers);

@@ -6,6 +6,7 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use EasySwoole\Component\Singleton;
+use EasySwoole\Http\Message\UploadFile;
 
 class BaiDuService extends ServiceBase
 {
@@ -107,9 +108,9 @@ class BaiDuService extends ServiceBase
 
         $headers = ['Content-Type' => 'application/x-www-form-urlencoded'];
 
-        $postData = [
-            'image' => base64_encode($file)
-        ];
+        if ($file instanceof UploadFile) $file = $file->getStream()->__toString();
+
+        $postData = ['image' => base64_encode($file)];
 
         $res = (new CoHttpClient())->send($url, $postData, $headers);
 
