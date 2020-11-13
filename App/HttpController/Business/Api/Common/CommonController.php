@@ -156,7 +156,13 @@ class CommonController extends CommonBase
     {
         $image = $this->request()->getUploadedFile('image');
 
-        return $this->writeJson(200,null,BaiDuService::getInstance()->ocr($image));
+        $res = BaiDuService::getInstance()->ocr($image);
+
+        (isset($res['words_result']) && !empty($res['words_result'])) ?
+            $res = $res['words_result'] :
+            $res = null;
+
+        return $this->writeJson(200,null,$res,'扫描成功');
     }
 
     //合合ocr
@@ -164,7 +170,13 @@ class CommonController extends CommonBase
     {
         $image = $this->request()->getUploadedFile('image');
 
-        return $this->writeJson(200,null,HeHeService::getInstance()->ocrImageToWord($image));
+        $res = HeHeService::getInstance()->ocrImageToWord($image);
+
+        (isset($res['result']['whole_text']) && !empty($res['result']['whole_text'])) ?
+            $res = $res['result']['whole_text'] :
+            $res = null;
+
+        return $this->writeJson(200,null,$res,'扫描成功');
     }
 
 
