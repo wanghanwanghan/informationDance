@@ -112,7 +112,7 @@ class BaiDuService extends ServiceBase
 
         $postData = ['image' => base64_encode($file)];
 
-        $res = (new CoHttpClient())->send($url, $postData, $headers);
+        $res = (new CoHttpClient())->useCache(false)->send($url, $postData, $headers);
 
         return $res;
     }
