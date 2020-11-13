@@ -8,8 +8,8 @@ class Index extends Controller
 {
     function onRequest(?string $action): ?bool
     {
-        mt_srand();
-        \co::sleep(mt_rand(0,3));
+        //mt_srand();
+        //\co::sleep(mt_rand(0,3));
         return parent::onRequest($action);
     }
 
