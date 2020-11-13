@@ -9,6 +9,7 @@ class QianQiController extends QianQiBase
 {
     function onRequest(?string $action): ?bool
     {
+        \co::sleep(3);
         return parent::onRequest($action);
     }
 
