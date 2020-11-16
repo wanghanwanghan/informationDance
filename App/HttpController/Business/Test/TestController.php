@@ -25,6 +25,12 @@ class TestController extends BusinessBase
 
     function test()
     {
+        $conf = new QueueConf();
+
+        $conf->setQueueListKey('ocrQueue');
+        $conf->setJobData(['mysqlId'=>control::getUuid(5)]);
+
+        QueueService::getInstance()->pushJob($conf);
 
     }
 
