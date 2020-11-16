@@ -44,7 +44,8 @@ class ConsumeOcrProcess extends ProcessBase
                         (isset($res['words_result']) && !empty($res['words_result'])) ? $res = $res['words_result'] : $res = '';
                         if (!empty($res)) {
                             $res = control::array_flatten($res);
-                            $res = implode(',', $res);
+                            CommonService::getInstance()->log4PHP($res);
+                            $res = implode('|||', $res);
                         }
                         $content .= $res;
                     }
