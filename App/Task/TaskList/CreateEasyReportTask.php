@@ -3,6 +3,7 @@
 namespace App\Task\TaskList;
 
 use App\Csp\Service\CspService;
+use App\HttpController\Models\Api\OcrQueue;
 use App\HttpController\Models\Api\ReportInfo;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Common\CommonService;
@@ -81,6 +82,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $tmp->setValue('fx_score', sprintf('%.2f', array_sum($this->fx)));
         $tmp->setValue('fx_detail', implode(',',$this->fx_detail));
 
+        $this->addOcrWords();
+
         $tmp->saveAs(REPORT_PATH . $this->reportNum . '.docx');
 
         $info = ReportInfo::create()->where('phone',$this->phone)->where('filename',$this->reportNum)->get();
@@ -157,6 +160,21 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         if ($a + $b + $c >= 2) $this->fx_detail[] = '企业在接受行政管理方面需进一步完善';
 
         return true;
+    }
+
+    //加入Ocr识别后的文字
+    private function addOcrWords()
+    {
+        try
+        {
+            $list = OcrQueue::create()->where('reportNum',$this->reportNum)->where('phone',$this->phone)->all();
+
+            $list = obj2Arr($list);
+
+        }catch (\Throwable $e)
+        {
+
+        }
     }
 
     //计算信动分

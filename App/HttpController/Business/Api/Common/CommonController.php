@@ -235,7 +235,7 @@ class CommonController extends CommonBase
             return $this->writeErr($e,__FUNCTION__);
         }
 
-        return $this->writeJson(200, null, null, '成功');
+        return $this->writeJson(200, null, $insert, '成功');
     }
 
 
