@@ -25,6 +25,7 @@ class ConsumeOcrProcess extends ProcessBase
     {
         //自定义进程不需要传参数，启动后就一直消费一个列队
         $redis = Redis::defer('redis');
+        $redis->select(14);
 
         while (true)
         {
