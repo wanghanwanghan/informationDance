@@ -5,11 +5,14 @@ namespace App\HttpController\Business\Api\Common;
 use App\Crontab\CrontabBase;
 use App\HttpController\Models\Api\Charge;
 use App\HttpController\Models\Api\LngLat;
+use App\HttpController\Models\Api\OcrQueue;
 use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\BaiDu\BaiDuService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\HeHe\HeHeService;
+use EasySwoole\Http\Message\UploadFile;
+use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\RedisPool\Redis;
 use wanghanwanghan\someUtils\control;
 
@@ -177,6 +180,62 @@ class CommonController extends CommonBase
             $res = null;
 
         return $this->writeJson(200,null,$res,'扫描成功');
+    }
+
+    //ocr识别
+    function ocrQueue()
+    {
+        $reportNum = $this->request()->getRequestParam('reportNum') ?? '';
+        $phone = $this->request()->getRequestParam('phone') ?? '';
+        $catalogueNum = $this->request()->getRequestParam('catalogueNum') ?? '';
+        $catalogueName = $this->request()->getRequestParam('catalogueName') ?? '';
+        $images = $this->request()->getUploadedFiles();
+
+        if (empty($images)) return $this->writeJson(201, null, null, '未发现上传文件');
+        if (empty($reportNum)) return $this->writeJson(201, null, null, '报告编号不能是空');
+
+        $tmp = [];
+
+        foreach ($images as $key => $file)
+        {
+            if ($file instanceof UploadFile)
+            {
+                //提取文件后缀
+                $ext = explode('.', $file->getClientFilename());
+                $ext = end($ext);
+
+                //新建文件名
+                $filename = control::getUuid(16) . '.' . $ext;
+
+                //移动到文件夹
+                $file->moveTo(OCR_PATH . $filename);
+
+                $tmp[]=$filename;
+            }
+        }
+
+        try
+        {
+            OcrQueue::create()->destroy(function (QueryBuilder $builder) use ($reportNum,$phone) {
+                $builder->where('reportNum',$reportNum)->where('phone',$phone);
+            });
+
+            $insert = [
+                'reportNum' => $reportNum,
+                'phone' => $phone,
+                'catalogueNum' => $catalogueNum,
+                'catalogueName' => $catalogueName,
+                'filename' => implode(',',$tmp),
+            ];
+
+            OcrQueue::create()->data($insert)->save();
+
+        }catch (\Throwable $e)
+        {
+            return $this->writeErr($e,__FUNCTION__);
+        }
+
+        return $this->writeJson(200, null, null, '成功');
     }
 
 
