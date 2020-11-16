@@ -30,7 +30,11 @@ class ConsumeOcrProcess extends ProcessBase
         {
             $data = $redis->rPop('ocrQueue');
 
-            if (empty($data)) \co::sleep(2);
+            if (empty($data))
+            {
+                \co::sleep(2);
+                continue;
+            }
 
             $data = jsonDecode($data);
 
