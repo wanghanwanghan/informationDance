@@ -33,6 +33,8 @@ class ConsumeOcrProcess extends ProcessBase
             if (empty($data)) \co::sleep(2);
 
             $data = jsonDecode($data);
+
+            CommonService::getInstance()->log4PHP($data);
         }
     }
 
