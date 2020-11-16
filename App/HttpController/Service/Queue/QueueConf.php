@@ -14,7 +14,7 @@ class QueueConf
     {
         !empty($id) ?: $id = control::getUuid(16);
 
-        !empty($this->jobId) ?: $this->jobId = $id;
+        $this->jobId = $id;
 
         return $this;
     }
@@ -33,6 +33,15 @@ class QueueConf
         return $this;
     }
 
+    function getJobId(): string
+    {
+        $id = control::getUuid(16);
+
+        !empty($this->jobId) ?: $this->jobId = $id;
+
+        return $this->jobId;
+    }
+
     function getQueueListKey(): string
     {
         return $this->queueListKey;
@@ -40,7 +49,7 @@ class QueueConf
 
     function getJobData(): array
     {
-        $this->jobData['jobId'] = $this->setJobId()->jobId;
+        $this->jobData['jobId'] = $this->getJobId();
 
         return $this->jobData;
     }

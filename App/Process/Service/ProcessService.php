@@ -3,6 +3,7 @@
 namespace App\Process\Service;
 
 use App\HttpController\Service\ServiceBase;
+use App\Process\ProcessList\ConsumeOcrProcess;
 use App\Process\ProcessList\Docx2Doc;
 use App\Process\ProcessList\TestProcess;
 use EasySwoole\Component\Di;
@@ -95,6 +96,34 @@ class ProcessService extends ServiceBase
         return true;
     }
 
+    //创建进程
+    private function consumeOcr($arg, $processNum): bool
+    {
+        //创建进程名
+        $processName = __FUNCTION__;
+
+        $this->processNo[$processName] = -1;
+
+        //循环创建
+        for ($i = $processNum; $i--;) {
+            $processConfig = new Config();
+            $processConfig->setProcessName($processName . $i);//设置进程名称
+            $processConfig->setProcessGroup($processName . 'Group');//设置进程组
+            $processConfig->setArg($arg);//传参
+            $processConfig->setRedirectStdinStdout(false);//是否重定向标准io
+            $processConfig->setPipeType($processConfig::PIPE_TYPE_SOCK_DGRAM);//设置管道类型
+            $processConfig->setEnableCoroutine(true);//是否自动开启协程
+            $processConfig->setMaxExitWaitTime(3);//最大退出等待时间
+            //进ioc
+            Di::getInstance()->set($processName . $i, new ConsumeOcrProcess($processConfig));
+            //创建进程
+            Manager::getInstance()->addProcess(Di::getInstance()->get($processName . $i));
+            //
+            $this->processNo[$processName]++;
+        }
+
+        return true;
+    }
 
 
 
