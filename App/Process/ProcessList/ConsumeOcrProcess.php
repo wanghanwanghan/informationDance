@@ -6,7 +6,6 @@ use App\HttpController\Models\Api\OcrQueue;
 use App\HttpController\Service\BaiDu\BaiDuService;
 use App\HttpController\Service\Common\CommonService;
 use App\Process\ProcessBase;
-use EasySwoole\RedisPool\Redis;
 use Swoole\Process;
 use wanghanwanghan\someUtils\control;
 
