@@ -37,14 +37,16 @@ class ConsumeOcrProcess extends ProcessBase
                 foreach ($list as $one) {
                     $files = explode(',', $one['filename']);
                     is_array($files) ?: $files = [$files];
+                    $content = '';
                     foreach ($files as $two) {
                         $res = BaiDuService::getInstance()->ocr(file_get_contents(OCR_PATH . $two));
-                        (isset($res['words_result']) && !empty($res['words_result'])) ? $res = $res['words_result'] : $res = '';
-                        $info = OcrQueue::create()->where('reportNum', $one['reportNum'])
-                            ->where('phone', $one['phone'])
-                            ->where('catalogueNum', $one['catalogueNum'])->get();
-                        $info->update(['status' => 1, 'content' => $res]);
+                        (isset($res['words_result']) && !empty($res['words_result'])) ? $res = implode(PHP_EOL,$res['words_result']) : $res = '';
+                        $content .= $res;
                     }
+                    $info = OcrQueue::create()->where('reportNum', $one['reportNum'])
+                        ->where('phone', $one['phone'])
+                        ->where('catalogueNum', $one['catalogueNum'])->get();
+                    $info->update(['status' => 1, 'content' => $content]);
                 }
             } catch (\Throwable $e) {
                 \co::sleep(60);
