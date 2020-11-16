@@ -8,6 +8,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\Process\ProcessBase;
 use EasySwoole\RedisPool\Redis;
 use Swoole\Process;
+use wanghanwanghan\someUtils\control;
 
 class ConsumeOcrProcess extends ProcessBase
 {
@@ -40,7 +41,11 @@ class ConsumeOcrProcess extends ProcessBase
                     $content = '';
                     foreach ($files as $two) {
                         $res = BaiDuService::getInstance()->ocr(file_get_contents(OCR_PATH . $two));
-                        (isset($res['words_result']) && !empty($res['words_result'])) ? $res = implode(PHP_EOL,$res['words_result']) : $res = '';
+                        (isset($res['words_result']) && !empty($res['words_result'])) ? $res = $res['words_result'] : $res = '';
+                        if (!empty($res)) {
+                            $res = control::array_flatten($res);
+                            $res = implode(',', $res);
+                        }
                         $content .= $res;
                     }
                     $info = OcrQueue::create()->where('reportNum', $one['reportNum'])
