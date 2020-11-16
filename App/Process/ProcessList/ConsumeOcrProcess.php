@@ -2,6 +2,8 @@
 
 namespace App\Process\ProcessList;
 
+use App\HttpController\Models\Api\OcrQueue;
+use App\HttpController\Service\BaiDu\BaiDuService;
 use App\HttpController\Service\Common\CommonService;
 use App\Process\ProcessBase;
 use EasySwoole\RedisPool\Redis;
@@ -24,22 +26,30 @@ class ConsumeOcrProcess extends ProcessBase
     protected function consume()
     {
         //自定义进程不需要传参数，启动后就一直消费一个列队
-        $redis = Redis::defer('redis');
-        $redis->select(14);
-
-        while (true)
-        {
-            $data = $redis->rPop('ocrQueue');
-
-            if (empty($data))
-            {
-                \co::sleep(2);
-                continue;
+        while (true) {
+            try {
+                $list = OcrQueue::create()->where('status', 0)->limit(0, 10)->all();
+                $list = obj2Arr($list);
+                if (empty($list)) {
+                    \co::sleep(2);
+                    continue;
+                }
+                foreach ($list as $one) {
+                    $files = explode(',', $one['filename']);
+                    is_array($files) ?: $files = [$files];
+                    foreach ($files as $two) {
+                        $res = BaiDuService::getInstance()->ocr(file_get_contents(OCR_PATH . $two));
+                        (isset($res['words_result']) && !empty($res['words_result'])) ? $res = $res['words_result'] : $res = '';
+                        $info = OcrQueue::create()->where('reportNum', $one['reportNum'])
+                            ->where('phone', $one['phone'])
+                            ->where('catalogueNum', $one['catalogueNum'])->get();
+                        $info->update(['status' => 1, 'content' => $res]);
+                    }
+                }
+            } catch (\Throwable $e) {
+                \co::sleep(60);
+                CommonService::getInstance()->log4PHP(__CLASS__, $e->getMessage());
             }
-
-            $data = jsonDecode($data);
-
-            CommonService::getInstance()->log4PHP($data);
         }
     }
 
