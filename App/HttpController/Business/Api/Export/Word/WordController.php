@@ -31,8 +31,7 @@ class WordController extends ExportBase
     //生成一个极简报告
     function createVeryEasy()
     {
-        $reportNum = $this->createReportNum();
-
+        $reportNum = $this->request()->getRequestParam('reportNum') ?? $this->createReportNum();
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $entName = $this->request()->getRequestParam('entName') ?? '';
         $email = $this->request()->getRequestParam('email') ?? '';
@@ -68,8 +67,7 @@ class WordController extends ExportBase
     //生成一个简版报告
     function createEasy()
     {
-        $reportNum = $this->createReportNum();
-
+        $reportNum = $this->request()->getRequestParam('reportNum') ?? $this->createReportNum();
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $entName = $this->request()->getRequestParam('entName') ?? '';
         $email = $this->request()->getRequestParam('email') ?? '';

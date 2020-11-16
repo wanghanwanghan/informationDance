@@ -5,6 +5,7 @@ namespace App\HttpController\Business\Test;
 use App\HttpController\Business\BusinessBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\HeHe\HeHeService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\Queue\QueueConf;
@@ -25,13 +26,7 @@ class TestController extends BusinessBase
 
     function test()
     {
-        $conf = new QueueConf();
-
-        $conf->setQueueListKey('ocrQueue');
-        $conf->setJobData(['mysqlId'=>control::getUuid(5)]);
-
-        QueueService::getInstance()->pushJob($conf);
-
+        CreateTableService::getInstance()->information_dance_ocr_queue();
     }
 
 }

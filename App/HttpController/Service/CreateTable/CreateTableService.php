@@ -350,4 +350,31 @@ class CreateTableService
 
         return 'ok';
     }
+
+    //ocr识别消费队列
+    function information_dance_ocr_queue()
+    {
+        $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
+            $table->setTableComment('ocr识别消费队列')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
+            $table->colBigInt('id', 20)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
+            $table->colVarChar('phone',11)->setDefaultValue('');
+            $table->colVarChar('reportNum',30)->setDefaultValue('')->setColumnComment('报告编号');
+            $table->colVarChar('catalogueNum',10)->setDefaultValue('')->setColumnComment('目录编号');
+            $table->colVarChar('catalogueName',10)->setDefaultValue('')->setColumnComment('目录名称');
+            $table->colTinyInt('status',3)->setDefaultValue(0)->setColumnComment('状态');
+            $table->colVarChar('filename',255)->setDefaultValue('')->setColumnComment('文件名，逗号分割');
+            $table->colText('content')->setColumnComment('识别出来的内容');
+            $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->indexNormal('phone_reportNum_index',['reportNum','phone']);
+        });
+
+        $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
+
+        $obj->rawQuery($sql);
+
+        Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->recycleObj($obj);
+
+        return 'ok';
+    }
 }
