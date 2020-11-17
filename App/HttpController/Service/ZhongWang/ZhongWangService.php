@@ -69,7 +69,7 @@ class ZhongWangService extends ServiceBase
         $body['param'] = $base64_str;
 
         $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)
-            ->send($this->urlTest . $api_path, http_build_query($body));
+            ->send($this->urlTest . $api_path, $body);
         CommonService::getInstance()->log4PHP($res);
         $res = base64_decode($res);
         CommonService::getInstance()->log4PHP($res);
