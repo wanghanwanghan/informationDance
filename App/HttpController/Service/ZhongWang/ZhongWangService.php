@@ -78,7 +78,6 @@ class ZhongWangService extends ServiceBase
         $res = $this->decrypt($res);
 
         CommonService::getInstance()->log4PHP($res);
-        CommonService::getInstance()->log4PHP($this->keyTest);
 
         return $res;
     }

@@ -25,7 +25,7 @@ class ZhongWangController extends ZhongWangBase
         $page = $this->request()->getRequestParam('page') ?? 1;
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
-        $res = (new ZhongWangService())->getInOrOutDetail($code, 1, $startDate, $endDate, $page, $pageSize);
+        $res = (new ZhongWangService())->getInOrOutDetail($code, 2, $startDate, $endDate, $page, $pageSize);
 
         return $this->writeJson(200,null,$res,'成功');
     }
