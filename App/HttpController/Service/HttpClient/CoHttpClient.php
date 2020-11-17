@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\HttpClient;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\ServiceBase;
 use EasySwoole\HttpClient\HttpClient;
@@ -55,6 +56,8 @@ class CoHttpClient extends ServiceBase
 
             //整理结果
             $data = $data->getBody();
+
+            CommonService::getInstance()->log4PHP($data);
 
         } catch (\Exception $e) {
             $this->writeErr($e, 'CoHttpClient');
