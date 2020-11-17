@@ -22,6 +22,7 @@ class Router extends AbstractRouter
             $this->FaHaiRouterV1($routeCollector);//法海
             $this->QianQiRouterV1($routeCollector);//乾启
             $this->YuanSuRouterV1($routeCollector);//元素
+            $this->ZhongWangRouterV1($routeCollector);//众望
             $this->Notify($routeCollector);//通知
             $this->ExportExcelRouterV1($routeCollector);//导出excel
             $this->ExportWordRouterV1($routeCollector);//导出word
@@ -48,6 +49,18 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/ocrForBaiDu',$prefix.'ocrForBaiDu');//百度ocr
             $routeCollector->addRoute(['GET','POST'],'/ocrForHeHe',$prefix.'ocrForHeHe');//合合ocr
             $routeCollector->addRoute(['GET','POST'],'/ocr/queue',$prefix.'ocrQueue');//ocr识别
+        });
+
+        return true;
+    }
+
+    private function ZhongWangRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix='/Business/Api/ZhongWang/ZhongWangController/';
+
+        $routeCollector->addGroup('/zw',function (RouteCollector $routeCollector) use ($prefix)
+        {
+            $routeCollector->addRoute(['GET','POST'],'/getInReceiptDetail',$prefix.'getInReceiptDetail');//进项发票详情
         });
 
         return true;

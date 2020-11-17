@@ -4,6 +4,7 @@
         "ext-zlib": "*",
         "ext-json": "*",
         "ext-openssl": "*",
+        "ext-curl": "*",
         "easyswoole/easyswoole": "3.3.x",
         "wanghanwanghan/someutils": "^1.0",
         "easyswoole/http-client": "^1.4",
