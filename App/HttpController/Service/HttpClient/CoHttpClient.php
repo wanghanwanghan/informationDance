@@ -57,15 +57,13 @@ class CoHttpClient extends ServiceBase
             //整理结果
             $data = $data->getBody();
 
-            CommonService::getInstance()->log4PHP($data);
-
         } catch (\Exception $e) {
             $this->writeErr($e, 'CoHttpClient');
             return ['coHttpErr' => 'error'];
         }
 
         //缓存起来
-        $this->storeResult($url, $postData, $data, $options);
+        !$this->useCache ?: $this->storeResult($url, $postData, $data, $options);
 
         return $this->needJsonDecode ? jsonDecode($data) : $data;
     }
