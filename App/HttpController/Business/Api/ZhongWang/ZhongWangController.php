@@ -1,8 +1,7 @@
 <?php
 
-namespace App\HttpController\Business\Api\ZhongWangBase;
+namespace App\HttpController\Business\Api\ZhongWang;
 
-use App\HttpController\Business\Api\ZhongWang\ZhongWangBase;
 use App\HttpController\Service\ZhongWang\ZhongWangService;
 
 class ZhongWangController extends ZhongWangBase
@@ -23,8 +22,8 @@ class ZhongWangController extends ZhongWangBase
         $code = $this->request()->getRequestParam('code') ?? '';
         $startDate = $this->request()->getRequestParam('startDate') ?? '';
         $endDate = $this->request()->getRequestParam('endDate') ?? '';
-        $page = $this->request()->getRequestParam('page') ?? '';
-        $pageSize = $this->request()->getRequestParam('pageSize') ?? '';
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         $res = (new ZhongWangService())->getInOrOutDetail($code, 1, $startDate, $endDate, $page, $pageSize);
 
