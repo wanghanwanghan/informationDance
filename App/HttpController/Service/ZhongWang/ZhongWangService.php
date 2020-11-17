@@ -38,6 +38,42 @@ class ZhongWangService extends ServiceBase
         return openssl_decrypt($str, 'aes-128-ecb', $this->keyTest, OPENSSL_RAW_DATA);
     }
 
+    private function checkResp($res,$type)
+    {
+        if (isset($res['data']['total']) &&
+            isset($res['data']['totalPage']) &&
+            isset($res['data']['pageSize']) &&
+            isset($res['data']['currentPage']))
+        {
+            $res['Paging']=[
+                'page'=>$res['data']['currentPage'],
+                'pageSize'=>$res['data']['pageSize'],
+                'total'=>$res['data']['total'],
+                'totalPage'=>$res['data']['totalPage'],
+            ];
+
+        }else
+        {
+            $res['Paging']=null;
+        }
+
+        if (isset($res['coHttpErr'])) return $this->createReturn(500,$res['Paging'],[],'co请求错误');
+
+        $res['code'] === 0 ? $res['code'] = 200 : $res['code'] = 600;
+
+        //拿结果
+        switch ($type)
+        {
+            case 'getInOrOutDetail':
+                $res['Result'] = $res['data']['invoices'];
+                break;
+            default:
+                $res['Result'] = null;
+        }
+
+        return $this->createReturn($res['code'],$res['Paging'],$res['Result'],$res['msg']);
+    }
+
     //进项销项发票详情
     public function getInOrOutDetail($code, $dataType, $startDate, $endDate, $page, $pageSize)
     {
@@ -57,7 +93,7 @@ class ZhongWangService extends ServiceBase
 
         $res = $this->readyToSend($api_path, $body);
 
-        return $res;
+        return $this->checkRespFlag ? $this->checkResp($res,__FUNCTION__) : $res;
     }
 
     private function readyToSend($api_path, $body)
