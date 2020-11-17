@@ -55,9 +55,9 @@ class ZhongWangService extends ServiceBase
 
         CommonService::getInstance()->log4PHP($body);
 
-        $response_body = $this->readyToSend($api_path, $body);
+        $res = $this->readyToSend($api_path, $body);
 
-        return $response_body;
+        return $res;
     }
 
     private function readyToSend($api_path, $body)
