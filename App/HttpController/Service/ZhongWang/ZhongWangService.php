@@ -89,8 +89,6 @@ class ZhongWangService extends ServiceBase
 
         $api_path = 'invoice/getClientInvoices';
 
-        CommonService::getInstance()->log4PHP($body);
-
         $res = $this->readyToSend($api_path, $body);
 
         return $this->checkRespFlag ? $this->checkResp($res,__FUNCTION__) : $res;

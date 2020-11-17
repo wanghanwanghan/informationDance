@@ -10,16 +10,6 @@ use EasySwoole\RedisPool\Redis;
 
 class CoHttpClient extends ServiceBase
 {
-    function onNewService(): ?bool
-    {
-        parent::onNewService();
-
-        $this->db = CreateConf::getInstance()->getConf('env.coHttpCacheRedisDB');
-        $this->ttlDay = CreateConf::getInstance()->getConf('env.coHttpCacheDay');
-
-        return true;
-    }
-
     private $db = 0;
     private $ttlDay = 1;
     private $needJsonDecode = true;
@@ -29,7 +19,8 @@ class CoHttpClient extends ServiceBase
     {
         parent::__construct();
 
-        $this->onNewService();
+        $this->db = CreateConf::getInstance()->getConf('env.coHttpCacheRedisDB');
+        $this->ttlDay = CreateConf::getInstance()->getConf('env.coHttpCacheDay');
     }
 
     function send($url = '', $postData = [], $headers = [], $options = [], $method = 'post')
@@ -77,7 +68,6 @@ class CoHttpClient extends ServiceBase
     function needJsonDecode($type)
     {
         $this->needJsonDecode = $type;
-
         return $this;
     }
 
@@ -120,9 +110,7 @@ class CoHttpClient extends ServiceBase
                 if (in_array($key, $unsetTarget)) continue;
                 $data[$key] = $val;
             }
-
             krsort($data);
-
         } else {
             $data = $postData;
         }
