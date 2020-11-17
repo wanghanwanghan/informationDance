@@ -143,6 +143,8 @@ class BusinessBase extends Index
             return false;
         }
 
+        CommonService::getInstance()->log4PHP($res);
+
         if (empty($res)) return false;
 
         $tokenInfo = UserService::getInstance()->decodeAccessToken($requestToken);
