@@ -16,18 +16,57 @@ class ZhongWangController extends ZhongWangBase
         parent::afterAction($actionName);
     }
 
-    //进项发票详情
-    function getInReceiptDetail()
+    //检验法海返回值，并给客户计费
+    private function checkResponse($res, $type, $writeJson = true)
+    {
+        if (isset($res['data']['total']) &&
+            isset($res['data']['totalPage']) &&
+            isset($res['data']['pageSize']) &&
+            isset($res['data']['currentPage'])) {
+            $res['Paging'] = [
+                'page' => $res['data']['currentPage'],
+                'pageSize' => $res['data']['pageSize'],
+                'total' => $res['data']['total'],
+                'totalPage' => $res['data']['totalPage'],
+            ];
+        } else {
+            $res['Paging'] = null;
+        }
+
+        if (isset($res['coHttpErr'])) return $this->writeJson(500, $res['Paging'], [], 'co请求错误');
+
+        $res['code'] === 0 ? $res['code'] = 200 : $res['code'] = 600;
+
+        //拿结果
+        switch ($type) {
+            case 'getReceiptDetail':
+                $res['Result'] = $res['data']['invoices'];
+                break;
+            default:
+                $res['Result'] = null;
+        }
+
+        return $writeJson !== true ? [
+            'code' => $res['code'],
+            'paging' => $res['Paging'],
+            'result' => $res['Result'],
+            'msg' => $res['msg']
+        ] : $this->writeJson($res['code'], $res['Paging'], $res['Result'], $res['msg']);
+    }
+
+    //发票详情（进项销项）
+    function getReceiptDetail()
     {
         $code = $this->request()->getRequestParam('code') ?? '';
+        $type = $this->request()->getRequestParam('type') ?? '';
         $startDate = $this->request()->getRequestParam('startDate') ?? '';
         $endDate = $this->request()->getRequestParam('endDate') ?? '';
         $page = $this->request()->getRequestParam('page') ?? 1;
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
-        $res = (new ZhongWangService())->setCheckRespFlag(true)->getInOrOutDetail($code, 2, $startDate, $endDate, $page, $pageSize);
+        $res = (new ZhongWangService())->getInOrOutDetail($code, $type, $startDate, $endDate, $page, $pageSize);
 
-        return $this->writeJson(200,null,$res,'成功');
+        return $this->checkResponse($res, __FUNCTION__);
     }
 
 }
