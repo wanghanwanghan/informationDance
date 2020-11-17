@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\ZhongWang;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
@@ -65,9 +66,17 @@ class ZhongWangService extends ServiceBase
         $base64_str = base64_encode($encryptedData);
         $body['param'] = $base64_str;
 
-        $res = (new CoHttpClient())->send($this->urlTest.$api_path, $body);
+        $res = (new CoHttpClient())->send($this->urlTest . $api_path, $body);
+
+        CommonService::getInstance()->log4PHP($res);
+
         $res = base64_decode($res);
+
+        CommonService::getInstance()->log4PHP($res);
+
         $res = $this->decrypt($res);
+
+        CommonService::getInstance()->log4PHP($res);
 
         return $res;
     }

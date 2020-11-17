@@ -132,8 +132,6 @@ class BusinessBase extends Index
     {
         $requestToken = $this->request()->getHeaderLine('authorization');
 
-        CommonService::getInstance()->log4PHP($requestToken);
-
         if (empty($requestToken) || strlen($requestToken) < 50) return false;
 
         try {
@@ -143,13 +141,9 @@ class BusinessBase extends Index
             return false;
         }
 
-        CommonService::getInstance()->log4PHP($res);
-
         if (empty($res)) return false;
 
         $tokenInfo = UserService::getInstance()->decodeAccessToken($requestToken);
-
-        CommonService::getInstance()->log4PHP($tokenInfo);
 
         if (!is_array($tokenInfo) || count($tokenInfo) != 3) return false;
 
