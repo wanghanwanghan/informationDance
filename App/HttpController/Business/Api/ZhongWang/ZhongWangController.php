@@ -8,7 +8,9 @@ class ZhongWangController extends ZhongWangBase
 {
     function onRequest(?string $action): ?bool
     {
-        return parent::onRequest($action);
+        parent::onRequest($action);
+
+        return true;
     }
 
     function afterAction(?string $actionName): void
