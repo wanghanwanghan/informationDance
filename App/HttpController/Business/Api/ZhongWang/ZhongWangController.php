@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Api\ZhongWang;
 
 use App\HttpController\Service\ZhongWang\ZhongWangService;
+use wanghanwanghan\someUtils\moudles\ioc\ioc;
 
 class ZhongWangController extends ZhongWangBase
 {
