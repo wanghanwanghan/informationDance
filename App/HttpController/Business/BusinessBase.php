@@ -149,6 +149,8 @@ class BusinessBase extends Index
 
         $tokenInfo = UserService::getInstance()->decodeAccessToken($requestToken);
 
+        CommonService::getInstance()->log4PHP($tokenInfo);
+
         if (!is_array($tokenInfo) || count($tokenInfo) != 3) return false;
 
         $reqPhone = $this->request()->getRequestParam('phone') ?? '';
