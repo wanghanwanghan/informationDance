@@ -13,14 +13,14 @@ class CreateRedisPool extends ServiceBase
     //注册redis连接池，只能在mainServerCreate中用
     public function createRedis()
     {
-        $conf=new RedisConfig();
+        $conf = new RedisConfig();
         $conf->setHost(CreateConf::getInstance()->getConf('env.redisHost'));
         $conf->setPort(CreateConf::getInstance()->getConf('env.redisPort'));
         $conf->setTimeout(5);
         $conf->setAuth(CreateConf::getInstance()->getConf('env.redisPassword'));
         $conf->setSerialize(RedisConfig::SERIALIZE_NONE);
 
-        $redisPoolConfig=Redis::getInstance()->register('redis',$conf);
+        $redisPoolConfig = Redis::getInstance()->register('redis', $conf);
         $redisPoolConfig->setMinObjectNum(10);
         $redisPoolConfig->setMaxObjectNum(200);
         $redisPoolConfig->setAutoPing(10);
