@@ -36,7 +36,7 @@ function formatDate($str)
         try {
             return date('Y-m-d', $str);
         } catch (\Throwable $e) {
-            CommonService::getInstance()->log4PHP($e, __FUNCTION__);
+            CommonService::getInstance()->log4PHP($e->getMessage());
             return '';
         }
     }
@@ -46,7 +46,7 @@ function formatDate($str)
         try {
             return date('Y-m-d', $str / 1000);
         } catch (\Throwable $e) {
-            CommonService::getInstance()->log4PHP($e, __FUNCTION__);
+            CommonService::getInstance()->log4PHP($e->getMessage());
             return '';
         }
     }
@@ -56,7 +56,7 @@ function formatDate($str)
         try {
             return mb_substr($str, 0, 10);
         } catch (\Throwable $e) {
-            CommonService::getInstance()->log4PHP($e, __FUNCTION__);
+            CommonService::getInstance()->log4PHP($e->getMessage());
             return '';
         }
     }

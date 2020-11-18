@@ -54,7 +54,7 @@ class ConsumeOcrProcess extends ProcessBase
                 }
             } catch (\Throwable $e) {
                 \co::sleep(60);
-                CommonService::getInstance()->log4PHP(__CLASS__, $e->getMessage());
+                CommonService::getInstance()->log4PHP(__CLASS__ . $e->getMessage());
             }
         }
     }
@@ -72,7 +72,7 @@ class ConsumeOcrProcess extends ProcessBase
 
     protected function onException(\Throwable $throwable, ...$args)
     {
-        CommonService::getInstance()->log4PHP(__CLASS__, $throwable->getMessage());
+        CommonService::getInstance()->log4PHP($throwable->getMessage());
     }
 
 
