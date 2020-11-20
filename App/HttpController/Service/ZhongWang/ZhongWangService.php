@@ -98,7 +98,7 @@ class ZhongWangService extends ServiceBase
     }
 
     //进项销项发票详情 证书专用
-    public function getInOrOutDetailByCert($code, $dataType, $startDate, $endDate, $page, $pageSize)
+    public function getInOrOutDetailByCert($code, $dataType, $startDate, $endDate, $page)
     {
         $param['taxNumber'] = $code;
         $param['invoiceType'] = '';//查询全部种类
@@ -106,7 +106,6 @@ class ZhongWangService extends ServiceBase
         $param['startDate'] = $startDate;
         $param['endDate'] = $endDate;
         $param['currentPage'] = $page;
-        $param['pageSize'] = $pageSize;
 
         $body['param'] = $param;
         $body['taxNo'] = $this->taxNo;
