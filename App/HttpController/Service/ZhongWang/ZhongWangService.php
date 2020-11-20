@@ -68,7 +68,6 @@ class ZhongWangService extends ServiceBase
                 $res['Result'] = $res['data']['invoices'];
                 break;
             case 'getInOrOutDetailByCert':
-                CommonService::getInstance()->log4PHP($res);
                 $res['Result'] = 123;
                 break;
             default:
@@ -115,6 +114,8 @@ class ZhongWangService extends ServiceBase
         $api_path = 'invoice/invoiceCollection';
 
         $res = $this->readyToSend($api_path, $body);
+
+        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkRespFlag ? $this->checkResp($res,__FUNCTION__) : $res;
     }
