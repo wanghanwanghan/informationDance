@@ -105,7 +105,7 @@ class ZhongWangService extends ServiceBase
         $param['dataType'] = $dataType;//1是进项，2是销项
         $param['startDate'] = $startDate;
         $param['endDate'] = $endDate;
-        $param['currentPage'] = $page;
+        $param['page'] = $page;
         $param['pageSize'] = $pageSize;
 
         $body['param'] = $param;
