@@ -29,8 +29,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     private $phone;
     private $type;
 
-    private $inDetail;
-    private $outDetail;
+    private $inDetail = [];
+    private $outDetail = [];
 
     private $fz = [];
     private $fx = [];
@@ -72,11 +72,11 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
                 if ($res['code'] !== 200 || empty($res['result'])) break;
 
-                $inDetail = array_merge($inDetail,$res['result']);
+                $this->inDetail = array_merge($this->inDetail,$res['result']);
             }
         }
 
-        $this->inDetail = $inDetail;
+        CommonService::getInstance()->log4PHP(count($this->inDetail));
     }
 
     function run(int $taskId, int $workerIndex)
