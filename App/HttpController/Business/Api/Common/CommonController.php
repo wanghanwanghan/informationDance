@@ -205,7 +205,7 @@ class CommonController extends CommonBase
                 'phone' => $phone,
                 'catalogueNum' => $catalogueNum,
                 'catalogueName' => $catalogueName,
-                'filename' => implode(',',$filename),
+                'filename' => $filename,
             ];
 
             OcrQueue::create()->data($insert)->save();
