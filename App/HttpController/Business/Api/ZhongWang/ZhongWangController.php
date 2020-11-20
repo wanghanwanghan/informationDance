@@ -39,19 +39,16 @@ class ZhongWangController extends ZhongWangBase
 
         //拿结果
         switch ($type) {
-            case 'getInOrOutDetailByClient':
+            case 'getReceiptDetailByClient':
                 $step = 1;
                 $res['Result'] = $res['data']['invoices'];
-                CommonService::getInstance()->log4PHP('step1');
                 break;
-            case 'getInOrOutDetailByCert':
+            case 'getReceiptDetailByCert':
                 $step = 2;
                 $res['Result'] = count($res['data']['invoices']);
-                CommonService::getInstance()->log4PHP('step2');
                 break;
             default:
-                $res['Result'] = 123123;
-                CommonService::getInstance()->log4PHP($type);
+                $res['Result'] = null;
         }
 
         return $writeJson !== true ? [
