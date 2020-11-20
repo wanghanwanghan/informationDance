@@ -2361,6 +2361,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                         ->getInOrOutDetailByCert($code, 1, $startDate, $endDate, $page, 200);
 
                     CommonService::getInstance()->log4PHP($res);
+                    CommonService::getInstance()->log4PHP([$code,$startDate,$endDate,$page]);
 
                     if ($res['code'] !== 200 || empty($res['result'])) break;
 
