@@ -22,7 +22,7 @@ class CreateDeepReport extends AbstractCronTask
 
     static function getRule(): string
     {
-        return '*/2 * * * *';
+        return '* * * * *';
     }
 
     static function getTaskName(): string
@@ -43,7 +43,6 @@ class CreateDeepReport extends AbstractCronTask
 
         $check = $this->crontabBase->withoutOverlapping(self::getTaskName());
 
-        //91110105690802464Y
         if ($check)
         {
             foreach ($info as $one)
