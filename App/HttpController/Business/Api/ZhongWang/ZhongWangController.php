@@ -47,7 +47,7 @@ class ZhongWangController extends ZhongWangBase
                 $res['Result'] = count($res['data']['invoices']);
                 break;
             default:
-                $res['Result'] = null;
+                $res['Result'] = 123123;
         }
 
         return $writeJson !== true ? [
