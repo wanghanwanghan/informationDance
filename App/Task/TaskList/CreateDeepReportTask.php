@@ -2347,9 +2347,9 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $inDetail = [];
 
             //取1年半
-            for ($i=6;$i<=18;$i+=6)
+            for ($i=5;$i<=20;$i+=5)
             {
-                $startDate = Carbon::now()->subMonths($i-6)->format('Y-m-d');
+                $startDate = Carbon::now()->subMonths($i-5)->format('Y-m-d');
                 $endDate = Carbon::now()->subMonths($i)->format('Y-m-d');
 
                 for ($j=1;$j<=10000;$j++)
@@ -2359,6 +2359,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                     $res = (new ZhongWangService())
                         ->setCheckRespFlag(true)
                         ->getInOrOutDetailByCert($code, 1, $startDate, $endDate, $page, 200);
+
+                    CommonService::getInstance()->log4PHP($res);
 
                     if ($res['code'] !== 200 || empty($res['result'])) break;
 
