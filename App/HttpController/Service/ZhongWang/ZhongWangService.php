@@ -40,8 +40,6 @@ class ZhongWangService extends ServiceBase
 
     private function checkResp($res,$type)
     {
-        CommonService::getInstance()->log4PHP($res);
-
         if (isset($res['data']['total']) &&
             isset($res['data']['totalPage']) &&
             isset($res['data']['pageSize']) &&
@@ -116,6 +114,8 @@ class ZhongWangService extends ServiceBase
         $api_path = 'invoice/invoiceCollection';
 
         $res = $this->readyToSend($api_path, $body);
+
+        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkRespFlag ? $this->checkResp($res,__FUNCTION__) : $res;
     }
