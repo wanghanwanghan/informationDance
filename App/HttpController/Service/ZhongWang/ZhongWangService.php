@@ -74,7 +74,7 @@ class ZhongWangService extends ServiceBase
         return $this->createReturn($res['code'],$res['Paging'],$res['Result'],$res['msg']);
     }
 
-    //进项销项发票详情
+    //进项销项发票详情 客户端（税盘）专用
     public function getInOrOutDetail($code, $dataType, $startDate, $endDate, $page, $pageSize)
     {
         $param['taxNumber'] = $code;
@@ -94,6 +94,13 @@ class ZhongWangService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res,__FUNCTION__) : $res;
     }
 
+    //签名验签服务器托管申请
+    public function certificateAccess()
+    {
+
+    }
+
+    //统一发送
     private function readyToSend($api_path, $body)
     {
         $param = $body['param'];

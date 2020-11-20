@@ -60,6 +60,11 @@ class CommonService extends ServiceBase
                     $uploadFile->moveTo(AUTH_BOOK_PATH . $newFilename);
                     $returnPath = str_replace(ROOT_PATH, '', AUTH_BOOK_PATH . $newFilename);
                     break;
+                case 'ocr':
+                    $newFilename = control::getUuid() . '.jpg';
+                    $uploadFile->moveTo(OCR_PATH . $newFilename);
+                    $returnPath = str_replace(ROOT_PATH, '', OCR_PATH . $newFilename);
+                    break;
             }
         } catch (\Throwable $e) {
             $this->writeErr($e, __FUNCTION__);

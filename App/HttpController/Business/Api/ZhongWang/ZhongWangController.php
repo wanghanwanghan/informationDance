@@ -56,7 +56,22 @@ class ZhongWangController extends ZhongWangBase
     }
 
     //发票详情（进项销项）
-    function getReceiptDetail()
+    function getReceiptDetailByClient()
+    {
+        $code = $this->request()->getRequestParam('code') ?? '';
+        $type = $this->request()->getRequestParam('type') ?? '';
+        $startDate = $this->request()->getRequestParam('startDate') ?? '';
+        $endDate = $this->request()->getRequestParam('endDate') ?? '';
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        $res = (new ZhongWangService())->getInOrOutDetail($code, $type, $startDate, $endDate, $page, $pageSize);
+
+        return $this->checkResponse($res, __FUNCTION__);
+    }
+
+    //发票详情（进项销项）
+    function getReceiptDetailByCert()
     {
         $code = $this->request()->getRequestParam('code') ?? '';
         $type = $this->request()->getRequestParam('type') ?? '';

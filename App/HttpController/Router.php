@@ -60,7 +60,8 @@ class Router extends AbstractRouter
 
         $routeCollector->addGroup('/zw',function (RouteCollector $routeCollector) use ($prefix)
         {
-            $routeCollector->addRoute(['GET','POST'],'/getReceiptDetail',$prefix.'getReceiptDetail');//进销项发票详情
+            $routeCollector->addRoute(['GET','POST'],'/getReceiptDetailByClient',$prefix.'getReceiptDetailByClient');//进销项发票详情（税盘）
+            $routeCollector->addRoute(['GET','POST'],'/getReceiptDetailByCert',$prefix.'getReceiptDetailByCert');//进销项发票详情（证书）
         });
 
         return true;

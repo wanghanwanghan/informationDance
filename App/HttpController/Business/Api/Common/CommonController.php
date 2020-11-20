@@ -189,35 +189,15 @@ class CommonController extends CommonBase
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $catalogueNum = $this->request()->getRequestParam('catalogueNum') ?? '';
         $catalogueName = $this->request()->getRequestParam('catalogueName') ?? '';
-        $images = $this->request()->getUploadedFiles();
+        $filename = $this->request()->getRequestParam('filename');
 
-        if (empty($images)) return $this->writeJson(201, null, null, '未发现上传文件');
+        if (empty($filename)) return $this->writeJson(201, null, null, '未发现上传文件');
         if (empty($reportNum)) return $this->writeJson(201, null, null, '报告编号不能是空');
-
-        $tmp = [];
-
-        foreach ($images as $key => $file)
-        {
-            if ($file instanceof UploadFile)
-            {
-                //提取文件后缀
-                $ext = explode('.', $file->getClientFilename());
-                $ext = end($ext);
-
-                //新建文件名
-                $filename = control::getUuid(16) . '.' . $ext;
-
-                //移动到文件夹
-                $file->moveTo(OCR_PATH . $filename);
-
-                $tmp[]=$filename;
-            }
-        }
 
         try
         {
-            OcrQueue::create()->destroy(function (QueryBuilder $builder) use ($reportNum,$phone) {
-                $builder->where('reportNum',$reportNum)->where('phone',$phone);
+            OcrQueue::create()->destroy(function (QueryBuilder $builder) use ($reportNum,$phone,$catalogueNum) {
+                $builder->where('reportNum',$reportNum)->where('phone',$phone)->where('catalogueNum',$catalogueNum);
             });
 
             $insert = [
@@ -225,7 +205,7 @@ class CommonController extends CommonBase
                 'phone' => $phone,
                 'catalogueNum' => $catalogueNum,
                 'catalogueName' => $catalogueName,
-                'filename' => implode(',',$tmp),
+                'filename' => implode(',',$filename),
             ];
 
             OcrQueue::create()->data($insert)->save();
