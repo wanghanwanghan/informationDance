@@ -4475,7 +4475,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 //            return $tmp;
 //        });
 
-        return CspService::getInstance()->exec($csp, 30);
+        return CspService::getInstance()->exec($csp, 120);
     }
 
 
