@@ -2,9 +2,9 @@
 
 namespace App\Crontab\Service;
 
+use App\Crontab\CrontabList\CreateDeepReport;
 use App\Crontab\CrontabList\DeleteTimeoutOrder;
 use App\Crontab\CrontabList\RunSupervisor;
-use App\Crontab\CrontabList\TestCrontab;
 use EasySwoole\Component\Singleton;
 use EasySwoole\EasySwoole\Crontab\Crontab;
 
@@ -15,17 +15,17 @@ class CrontabService
     //只能在mainServerCreate中调用
     function create()
     {
-        $this->test();
+        $this->createDeepReport();
         $this->deleteTimeoutOrder();
         $this->runSupervisor();
 
         return true;
     }
 
-    //测试定时任务
-    private function test()
+    //生成深度报告
+    private function createDeepReport()
     {
-        return Crontab::getInstance()->addTask(TestCrontab::class);
+        return Crontab::getInstance()->addTask(CreateDeepReport::class);
     }
 
     //删除待支付订单

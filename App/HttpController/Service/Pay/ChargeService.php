@@ -33,6 +33,7 @@ class ChargeService extends ServiceBase
         50 => ['name' => '风险监控', 'desc' => '', 'basePrice' => 50],
         210 => ['name' => '极简报告', 'desc' => '', 'basePrice' => 80],
         220 => ['name' => '简版报告', 'desc' => '', 'basePrice' => 300],
+        230 => ['name' => '深度报告', 'desc' => '', 'basePrice' => 500],
     ];
 
     private function getEntName(Request $request)

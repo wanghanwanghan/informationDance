@@ -120,7 +120,7 @@ class WordController extends ExportBase
             return $this->writeErr($e, __FUNCTION__);
         }
 
-        $charge = ChargeService::getInstance()->DeepReport($this->request(), 220, $reportNum);
+        $charge = ChargeService::getInstance()->DeepReport($this->request(), 230, $reportNum);
 
         if ($charge['code'] != 200) {
             $code = $charge['code'];
@@ -129,8 +129,8 @@ class WordController extends ExportBase
         } else {
             $code = 200;
             $paging = null;
-            $res = ReportService::getInstance()->createEasy($entName, $reportNum, $phone, $type);
-            $msg = '简版报告生成中';
+            $res = ReportService::getInstance()->createDeep($entName, $reportNum, $phone, $type);
+            $msg = '深度报告生成中';
         }
 
         return $this->writeJson($code, $paging, $res, $msg);
