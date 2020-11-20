@@ -60,12 +60,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $startDate = Carbon::now()->subMonths($i)->format('Y-m-d');
             $endDate = Carbon::now()->subMonths($i-5)->format('Y-m-d');
 
-            CommonService::getInstance()->log4PHP(['i='=>$i]);
-
             for ($page=1;$page<=10000;$page++)
             {
-                CommonService::getInstance()->log4PHP(['page='=>$page]);
-
                 $res = (new ZhongWangService())
                     ->setCheckRespFlag(true)
                     ->getInOrOutDetailByCert($code, 1, $startDate, $endDate, $page, 200);
