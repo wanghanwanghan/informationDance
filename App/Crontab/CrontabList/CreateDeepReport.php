@@ -56,7 +56,7 @@ class CreateDeepReport extends AbstractCronTask
                 if (empty($authInfo)) continue;
 
                 TaskService::getInstance()
-                    ->create(new CreateDeepReportTask($entName, $one['reportNum'], $one['phone'], $one['belong']),'sync');
+                    ->create(new CreateDeepReportTask($entName, $one['filename'], $one['phone'], $one['belong']),'sync');
             }
 
             $this->crontabBase->removeOverlappingKey(self::getTaskName());
