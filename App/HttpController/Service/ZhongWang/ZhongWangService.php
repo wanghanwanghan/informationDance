@@ -41,7 +41,6 @@ class ZhongWangService extends ServiceBase
     private function checkResp($res,$type)
     {
         if (isset($res['data']['total']) &&
-            isset($res['data']['totalPage']) &&
             isset($res['data']['pageSize']) &&
             isset($res['data']['currentPage']))
         {
@@ -49,7 +48,6 @@ class ZhongWangService extends ServiceBase
                 'page'=>$res['data']['currentPage'],
                 'pageSize'=>$res['data']['pageSize'],
                 'total'=>$res['data']['total'],
-                'totalPage'=>$res['data']['totalPage'],
             ];
 
         }else
@@ -59,16 +57,18 @@ class ZhongWangService extends ServiceBase
 
         if (isset($res['coHttpErr'])) return $this->createReturn(500,$res['Paging'],[],'co请求错误');
 
-        $res['code'] === 0 ? $res['code'] = 200 : $res['code'] = 600;
+        (int)$res['code'] === 0 ? $res['code'] = 200 : $res['code'] = 600;
 
         //拿结果
         switch ($type)
         {
             case 'getInOrOutDetailByClient':
+                $step = 1;
                 $res['Result'] = $res['data']['invoices'];
                 break;
             case 'getInOrOutDetailByCert':
-                $res['Result'] = 123;
+                $step = 2;
+                $res['Result'] = $res['data']['invoices'];
                 break;
             default:
                 $res['Result'] = null;
@@ -114,8 +114,6 @@ class ZhongWangService extends ServiceBase
         $api_path = 'invoice/invoiceCollection';
 
         $res = $this->readyToSend($api_path, $body);
-
-        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkRespFlag ? $this->checkResp($res,__FUNCTION__) : $res;
     }

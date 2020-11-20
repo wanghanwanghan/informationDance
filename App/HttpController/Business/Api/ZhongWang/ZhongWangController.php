@@ -21,14 +21,12 @@ class ZhongWangController extends ZhongWangBase
     private function checkResponse($res, $type, $writeJson = true)
     {
         if (isset($res['data']['total']) &&
-            isset($res['data']['totalPage']) &&
             isset($res['data']['pageSize']) &&
             isset($res['data']['currentPage'])) {
             $res['Paging'] = [
                 'page' => $res['data']['currentPage'],
                 'pageSize' => $res['data']['pageSize'],
                 'total' => $res['data']['total'],
-                'totalPage' => $res['data']['totalPage'],
             ];
         } else {
             $res['Paging'] = null;
@@ -36,11 +34,16 @@ class ZhongWangController extends ZhongWangBase
 
         if (isset($res['coHttpErr'])) return $this->writeJson(500, $res['Paging'], [], 'co请求错误');
 
-        $res['code'] === 0 ? $res['code'] = 200 : $res['code'] = 600;
+        (int)$res['code'] === 0 ? $res['code'] = 200 : $res['code'] = 600;
 
         //拿结果
         switch ($type) {
-            case 'getReceiptDetailByClient':
+            case 'getInOrOutDetailByClient':
+                $step = 1;
+                $res['Result'] = $res['data']['invoices'];
+                break;
+            case 'getInOrOutDetailByCert':
+                $step = 2;
                 $res['Result'] = $res['data']['invoices'];
                 break;
             default:
