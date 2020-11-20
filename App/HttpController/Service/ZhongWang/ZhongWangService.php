@@ -64,8 +64,12 @@ class ZhongWangService extends ServiceBase
         //拿结果
         switch ($type)
         {
-            case 'getInOrOutDetail':
+            case 'getInOrOutDetailByClient':
                 $res['Result'] = $res['data']['invoices'];
+                break;
+            case 'getInOrOutDetailByCert':
+                CommonService::getInstance()->log4PHP($res);
+                $res['Result'] = 123;
                 break;
             default:
                 $res['Result'] = null;
@@ -75,7 +79,7 @@ class ZhongWangService extends ServiceBase
     }
 
     //进项销项发票详情 客户端（税盘）专用
-    public function getInOrOutDetail($code, $dataType, $startDate, $endDate, $page, $pageSize)
+    public function getInOrOutDetailByClient($code, $dataType, $startDate, $endDate, $page, $pageSize)
     {
         $param['taxNumber'] = $code;
         $param['dataType'] = $dataType;//1是进项，2是销项
@@ -94,10 +98,25 @@ class ZhongWangService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res,__FUNCTION__) : $res;
     }
 
-    //签名验签服务器托管申请
-    public function certificateAccess()
+    //进项销项发票详情 证书专用
+    public function getInOrOutDetailByCert($code, $dataType, $startDate, $endDate, $page, $pageSize)
     {
+        $param['taxNumber'] = $code;
+        $param['invoiceType'] = '';//查询全部种类
+        $param['dataType'] = $dataType;//1是进项，2是销项
+        $param['startDate'] = $startDate;
+        $param['endDate'] = $endDate;
+        $param['currentPage'] = $page;
+        $param['pageSize'] = $pageSize;
 
+        $body['param'] = $param;
+        $body['taxNo'] = $this->taxNo;
+
+        $api_path = 'invoice/invoiceCollection';
+
+        $res = $this->readyToSend($api_path, $body);
+
+        return $this->checkRespFlag ? $this->checkResp($res,__FUNCTION__) : $res;
     }
 
     //统一发送

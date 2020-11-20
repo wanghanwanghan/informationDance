@@ -40,7 +40,7 @@ class ZhongWangController extends ZhongWangBase
 
         //拿结果
         switch ($type) {
-            case 'getReceiptDetail':
+            case 'getReceiptDetailByClient':
                 $res['Result'] = $res['data']['invoices'];
                 break;
             default:
@@ -65,7 +65,7 @@ class ZhongWangController extends ZhongWangBase
         $page = $this->request()->getRequestParam('page') ?? 1;
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
-        $res = (new ZhongWangService())->getInOrOutDetail($code, $type, $startDate, $endDate, $page, $pageSize);
+        $res = (new ZhongWangService())->getInOrOutDetailByClient($code, $type, $startDate, $endDate, $page, $pageSize);
 
         return $this->checkResponse($res, __FUNCTION__);
     }
@@ -80,7 +80,7 @@ class ZhongWangController extends ZhongWangBase
         $page = $this->request()->getRequestParam('page') ?? 1;
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
-        $res = (new ZhongWangService())->getInOrOutDetail($code, $type, $startDate, $endDate, $page, $pageSize);
+        $res = (new ZhongWangService())->getInOrOutDetailByCert($code, $type, $startDate, $endDate, $page, $pageSize);
 
         return $this->checkResponse($res, __FUNCTION__);
     }
