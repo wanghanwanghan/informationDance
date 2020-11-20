@@ -13,6 +13,7 @@ use App\HttpController\Service\QianQi\QianQiService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\XinDongService;
+use App\HttpController\Service\ZhongWang\ZhongWangService;
 use App\Process\Service\ProcessService;
 use App\Task\TaskBase;
 use Carbon\Carbon;
@@ -23,6 +24,7 @@ use wanghanwanghan\someUtils\control;
 class CreateDeepReportTask extends TaskBase implements TaskInterface
 {
     private $entName;
+    private $code;
     private $reportNum;
     private $phone;
     private $type;
@@ -32,9 +34,10 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     private $fz_detail = [];
     private $fx_detail = [];
 
-    function __construct($entName, $reportNum,$phone,$type)
+    function __construct($entName, $code, $reportNum, $phone, $type)
     {
         $this->entName = $entName;
+        $this->code = $code;
         $this->reportNum = $reportNum;
         $this->phone = $phone;
         $this->type = $type;
@@ -69,6 +72,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $tmp->setValue('time', Carbon::now()->format('Y年m月d日'));
 
         $reportVal = $this->cspHandleData();
+
+        CommonService::getInstance()->log4PHP($reportVal);
 
 //        $this->fillData($tmp, $reportVal);
 //
@@ -2333,6 +2338,41 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     {
         //创建csp对象
         $csp = CspService::getInstance()->create();
+
+        //众望 发票进项
+        $csp->add('getInReceiptDetail', function () {
+
+            $code = $this->code;
+
+            $inDetail = [];
+
+            //取1年半
+            for ($i=6;$i<=18;$i+=6)
+            {
+                $startDate = Carbon::now()->subMonths($i-6)->format('Y-m-d');
+                $endDate = Carbon::now()->subMonths($i)->format('Y-m-d');
+
+                for ($j=1;$j<=10000;$j++)
+                {
+                    $page = $j;
+
+                    $res = (new ZhongWangService())
+                        ->setCheckRespFlag(true)
+                        ->getInOrOutDetailByCert($code, 1, $startDate, $endDate, $page, 200);
+
+                    if ($res['code'] !== 200 || empty($res['result'])) break;
+
+                    $inDetail = array_merge($inDetail,$res['result']);
+                }
+            }
+
+            return control::sortArrByKey($inDetail,'billingDate','desc');
+        });
+
+        //众望 发票销项
+        $csp->add('getOutReceiptDetail', function () {
+            return null;
+        });
 
 
 
