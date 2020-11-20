@@ -106,6 +106,7 @@ class ZhongWangService extends ServiceBase
         $param['startDate'] = $startDate;
         $param['endDate'] = $endDate;
         $param['currentPage'] = $page;
+        $param['pageSize'] = 200;
 
         $body['param'] = $param;
         $body['taxNo'] = $this->taxNo;
@@ -128,8 +129,7 @@ class ZhongWangService extends ServiceBase
         $base64_str = base64_encode($encryptedData);
         $body['param'] = $base64_str;
 
-        $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)
-            ->send($this->urlTest . $api_path, $body);
+        $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($this->urlTest . $api_path, $body);
         $res = base64_decode($res);
         $res = $this->decrypt($res);
 
