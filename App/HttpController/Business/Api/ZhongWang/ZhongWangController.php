@@ -44,7 +44,7 @@ class ZhongWangController extends ZhongWangBase
                 break;
             case 'getInOrOutDetailByCert':
                 $step = 2;
-                $res['Result'] = $res['data']['invoices'];
+                $res['Result'] = count($res['data']['invoices']);
                 break;
             default:
                 $res['Result'] = null;
