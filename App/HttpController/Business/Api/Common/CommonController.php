@@ -194,6 +194,15 @@ class CommonController extends CommonBase
         if (empty($filename)) return $this->writeJson(201, null, null, '未发现上传文件');
         if (empty($reportNum)) return $this->writeJson(201, null, null, '报告编号不能是空');
 
+        $filename = explode(',', $filename);
+        $filename = array_filter($filename);
+        $tmp = [];
+        foreach ($filename as $oneName)
+        {
+            $name = explode(DIRECTORY_SEPARATOR,$oneName);
+            $tmp[] = end($name);
+        }
+
         try
         {
             OcrQueue::create()->destroy(function (QueryBuilder $builder) use ($reportNum,$phone,$catalogueNum) {
@@ -205,7 +214,7 @@ class CommonController extends CommonBase
                 'phone' => $phone,
                 'catalogueNum' => $catalogueNum,
                 'catalogueName' => $catalogueName,
-                'filename' => $filename,
+                'filename' => implode(',',$tmp),
             ];
 
             OcrQueue::create()->data($insert)->save();

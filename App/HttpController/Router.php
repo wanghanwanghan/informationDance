@@ -336,6 +336,7 @@ class Router extends AbstractRouter
         {
             $routeCollector->addRoute(['GET','POST'],'/createVeryEasy',$prefix.'createVeryEasy');//极简报告
             $routeCollector->addRoute(['GET','POST'],'/createEasy',$prefix.'createEasy');//简版报告
+            $routeCollector->addRoute(['GET','POST'],'/createDeep',$prefix.'createDeep');//深度报告
         });
 
         return true;
