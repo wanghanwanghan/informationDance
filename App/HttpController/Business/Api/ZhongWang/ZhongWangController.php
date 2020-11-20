@@ -78,8 +78,9 @@ class ZhongWangController extends ZhongWangBase
         $startDate = $this->request()->getRequestParam('startDate') ?? '';
         $endDate = $this->request()->getRequestParam('endDate') ?? '';
         $page = $this->request()->getRequestParam('page') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
-        $res = (new ZhongWangService())->getInOrOutDetailByCert($code, $type, $startDate, $endDate, $page);
+        $res = (new ZhongWangService())->getInOrOutDetailByCert($code, $type, $startDate, $endDate, $page, $pageSize);
 
         return $this->checkResponse($res, __FUNCTION__);
     }
