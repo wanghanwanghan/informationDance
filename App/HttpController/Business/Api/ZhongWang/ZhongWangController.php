@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Api\ZhongWang;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\ZhongWang\ZhongWangService;
 use wanghanwanghan\someUtils\moudles\ioc\ioc;
 
@@ -41,13 +42,16 @@ class ZhongWangController extends ZhongWangBase
             case 'getInOrOutDetailByClient':
                 $step = 1;
                 $res['Result'] = $res['data']['invoices'];
+                CommonService::getInstance()->log4PHP('step1');
                 break;
             case 'getInOrOutDetailByCert':
                 $step = 2;
                 $res['Result'] = count($res['data']['invoices']);
+                CommonService::getInstance()->log4PHP('step2');
                 break;
             default:
                 $res['Result'] = 123123;
+                CommonService::getInstance()->log4PHP($type);
         }
 
         return $writeJson !== true ? [
