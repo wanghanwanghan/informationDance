@@ -58,7 +58,7 @@ class CreateDeepReport extends AbstractCronTask
                 if (empty($authInfo)) continue;
 
                 $task = TaskService::getInstance()
-                    ->create(new CreateDeepReportTask($entName,$one['code'],$one['filename'],$one['phone'],$one['belong']),'sync');
+                    ->create(new CreateDeepReportTask($entName,$one['code'],$one['filename'],$one['phone'],$one['belong']),'sync',0);
 
                 CommonService::getInstance()->log4PHP('task:'.$task);
             }
