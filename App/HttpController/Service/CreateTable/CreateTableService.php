@@ -377,4 +377,35 @@ class CreateTableService
 
         return 'ok';
     }
+
+    //发票进项
+    function information_dance_invoice_in()
+    {
+        $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
+            $table->setTableComment('发票进项')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
+            $table->colBigInt('id', 20)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
+            $table->colVarChar('invoiceCode', 50)->setDefaultValue('');
+            $table->colVarChar('invoiceNumber', 50)->setDefaultValue('');
+            $table->colVarChar('billingDate', 50)->setDefaultValue('');
+            $table->colVarChar('totalAmount', 50)->setDefaultValue('');
+            $table->colVarChar('totalTax', 50)->setDefaultValue('');
+            $table->colVarChar('invoiceType', 50)->setDefaultValue('');
+            $table->colVarChar('state', 50)->setDefaultValue('');
+            $table->colVarChar('salesTaxNo', 50)->setDefaultValue('');
+            $table->colVarChar('salesTaxName', 50)->setDefaultValue('');
+            $table->colVarChar('purchaserTaxNo', 50)->setDefaultValue('');
+            $table->colVarChar('purchaserName', 50)->setDefaultValue('');
+            $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->indexNormal('invoiceCode_invoiceNumber_index',['invoiceCode','invoiceNumber']);
+        });
+
+        $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
+
+        $obj->rawQuery($sql);
+
+        Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->recycleObj($obj);
+
+        return 'ok';
+    }
 }

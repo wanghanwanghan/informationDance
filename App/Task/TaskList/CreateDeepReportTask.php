@@ -7,6 +7,7 @@ use App\HttpController\Models\Api\OcrQueue;
 use App\HttpController\Models\Api\ReportInfo;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\FaHai\FaHaiService;
 use App\HttpController\Service\OneSaid\OneSaidService;
 use App\HttpController\Service\QianQi\QianQiService;
@@ -50,6 +51,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
     private function getReceiptData()
     {
+        CreateTableService::getInstance()->information_dance_invoice_in();
         $code = $this->code;
 
         //取20个月的进项
