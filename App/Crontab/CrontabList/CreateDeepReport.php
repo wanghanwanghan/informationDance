@@ -57,8 +57,10 @@ class CreateDeepReport extends AbstractCronTask
                 //没通过就继续下一条
                 if (empty($authInfo)) continue;
 
-                TaskService::getInstance()
+                $task = TaskService::getInstance()
                     ->create(new CreateDeepReportTask($entName,$one['code'],$one['filename'],$one['phone'],$one['belong']),'sync');
+
+                CommonService::getInstance()->log4PHP('task:'.$task);
             }
 
             //$this->crontabBase->removeOverlappingKey(self::getTaskName());
