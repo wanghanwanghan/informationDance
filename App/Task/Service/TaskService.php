@@ -16,6 +16,6 @@ class TaskService extends ServiceBase
 
         //异步返回taskId，同步返回运行结果，sync是同步
         //class可以是类可以是闭包
-        return $async === 'async' ? $task->$async($class) : $task->$async($class, -1);
+        return $async === 'async' ? $task->$async($class) : $task->$async($class, 0);
     }
 }
