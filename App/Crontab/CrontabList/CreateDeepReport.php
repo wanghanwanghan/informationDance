@@ -63,7 +63,7 @@ class CreateDeepReport extends AbstractCronTask
                 CommonService::getInstance()->log4PHP('task:'.$task);
             }
 
-            //$this->crontabBase->removeOverlappingKey(self::getTaskName());
+            $this->crontabBase->removeOverlappingKey(self::getTaskName());
         }
     }
 
