@@ -43,8 +43,6 @@ class CreateDeepReport extends AbstractCronTask
 
         $check = $this->crontabBase->withoutOverlapping(self::getTaskName());
 
-        CommonService::getInstance()->log4PHP('check:'.$check);
-
         if ($check)
         {
             foreach ($info as $one)
@@ -57,10 +55,8 @@ class CreateDeepReport extends AbstractCronTask
                 //没通过就继续下一条
                 if (empty($authInfo)) continue;
 
-                $task = TaskService::getInstance()
-                    ->create(new CreateDeepReportTask($entName,$one['code'],$one['filename'],$one['phone'],$one['belong']),'sync',-1);
-
-                CommonService::getInstance()->log4PHP('task:'.$task);
+                TaskService::getInstance()
+                    ->create(new CreateDeepReportTask($entName,$one['code'],$one['filename'],$one['phone'],$one['belong']),'sync');
             }
 
             $this->crontabBase->removeOverlappingKey(self::getTaskName());
