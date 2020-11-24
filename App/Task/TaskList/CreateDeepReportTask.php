@@ -87,6 +87,27 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 }
             }
         }
+
+        //取20个月的销项
+        for ($i=5;$i<=20;$i+=5)
+        {
+            $startDate = Carbon::now()->subMonths($i)->format('Y-m-d');
+            $endDate = Carbon::now()->subMonths($i-5)->format('Y-m-d');
+
+            for ($page=1;$page<=10000;$page++)
+            {
+                $res = (new ZhongWangService())
+                    ->setCheckRespFlag(true)
+                    ->getInOrOutDetailByCert($code, 2, $startDate, $endDate, $page, 200);
+
+                if ($res['code'] !== 200 || empty($res['result'])) break;
+
+                if ($page===1) CommonService::getInstance()->log4PHP($res);
+
+
+                //数据入库
+            }
+        }
     }
 
     function run(int $taskId, int $workerIndex)
