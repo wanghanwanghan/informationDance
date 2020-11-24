@@ -61,7 +61,7 @@ class CreateDeepReport extends AbstractCronTask
                     ->create(new CreateDeepReportTask($entName,$one['code'],$one['filename'],$one['phone'],$one['belong']),'sync');
             }
 
-            $this->crontabBase->removeOverlappingKey(self::getTaskName());
+            //$this->crontabBase->removeOverlappingKey(self::getTaskName());
         }
     }
 
