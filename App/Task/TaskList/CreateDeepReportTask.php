@@ -51,7 +51,6 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
     private function getReceiptData()
     {
-        CreateTableService::getInstance()->information_dance_invoice_in();
         $code = $this->code;
 
         //取20个月的进项
