@@ -2,12 +2,14 @@
 
 namespace App\Crontab;
 
+use App\HttpController\Service\Common\CommonService;
 use EasySwoole\RedisPool\Redis;
 
 class CrontabBase
 {
     function withoutOverlapping($className, $ttl = 86400): bool
     {
+        CommonService::getInstance($className);
         //返回true是可以执行，返回false是不能执行
         $name = explode("\\", $className);
 
