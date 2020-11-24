@@ -9,7 +9,6 @@ class CrontabBase
 {
     function withoutOverlapping($className, $ttl = 86400): bool
     {
-        CommonService::getInstance()->log4PHP($className);
         //返回true是可以执行，返回false是不能执行
         $name = explode("\\", $className);
 
@@ -19,7 +18,7 @@ class CrontabBase
 
         $redis->select(14);
 
-        $status = $redis->setNx($name, 'isRun') ? true : false;
+        $status = $redis->setNx($name, 'isRun') == 1 ? true : false;
 
         $status === false ?: $redis->expire($name, $ttl);
 
