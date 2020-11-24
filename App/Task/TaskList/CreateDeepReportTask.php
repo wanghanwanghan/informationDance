@@ -68,8 +68,6 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
                 $this->inDetail = array_merge($this->inDetail,$res['result']);
             }
-
-            CommonService::getInstance()->log4PHP($this->inDetail);
         }
     }
 

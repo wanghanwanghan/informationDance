@@ -57,6 +57,8 @@ class ZhongWangService extends ServiceBase
 
         if (isset($res['coHttpErr'])) return $this->createReturn(500,$res['Paging'],[],'co请求错误');
 
+        isset($res['code']) ?: CommonService::getInstance()->log4PHP($res);
+
         (int)$res['code'] === 0 ? $res['code'] = 200 : $res['code'] = 600;
 
         //拿结果
