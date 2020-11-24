@@ -153,6 +153,10 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 //        $reportVal = $this->cspHandleData();
 
         $this->getReceiptData();
+        \co::sleep(2);
+        $this->getReceiptData();
+        \co::sleep(2);
+        $this->getReceiptData();
 
 
 
