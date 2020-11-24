@@ -52,8 +52,6 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     {
         $code = $this->code;
 
-        $inDetail = [];
-
         //取20个月的进项
         for ($i=5;$i<=20;$i+=5)
         {
@@ -70,9 +68,9 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
                 $this->inDetail = array_merge($this->inDetail,$res['result']);
             }
-        }
 
-        CommonService::getInstance()->log4PHP(count($this->inDetail));
+            CommonService::getInstance()->log4PHP($this->inDetail);
+        }
     }
 
     function run(int $taskId, int $workerIndex)
