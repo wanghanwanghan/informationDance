@@ -154,10 +154,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         $this->getReceiptData();
         CommonService::getInstance()->log4PHP('第一次完成');
-        \co::sleep(2);
         $this->getReceiptData();
         CommonService::getInstance()->log4PHP('第二次完成');
-        \co::sleep(2);
         $this->getReceiptData();
         CommonService::getInstance()->log4PHP('第三次完成');
 

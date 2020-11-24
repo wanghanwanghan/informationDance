@@ -43,6 +43,8 @@ class CreateDeepReport extends AbstractCronTask
 
         $check = $this->crontabBase->withoutOverlapping(self::getTaskName());
 
+        CommonService::getInstance()->log4PHP('check:'.$check);
+
         if ($check)
         {
             foreach ($info as $one)
