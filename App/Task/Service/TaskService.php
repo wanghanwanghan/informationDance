@@ -10,12 +10,12 @@ class TaskService extends ServiceBase
 {
     use Singleton;
 
-    function create($class, $async = 'async', ...$args)
+    function create($class, $async = 'async')
     {
         $task = TaskManager::getInstance();
 
         //异步返回taskId，同步返回运行结果，sync是同步
         //class可以是类可以是闭包
-        return $task->$async($class, ...$args);
+        return $async === 'async' ? $task->$async($class) : $task->$async($class, -1);
     }
 }
