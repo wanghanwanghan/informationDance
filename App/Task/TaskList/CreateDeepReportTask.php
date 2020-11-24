@@ -3,6 +3,7 @@
 namespace App\Task\TaskList;
 
 use App\Csp\Service\CspService;
+use App\HttpController\Models\Api\InvoiceIn;
 use App\HttpController\Models\Api\OcrQueue;
 use App\HttpController\Models\Api\ReportInfo;
 use App\HttpController\Models\Api\User;
@@ -67,7 +68,23 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
                 if ($res['code'] !== 200 || empty($res['result'])) break;
 
-                $this->inDetail = array_merge($this->inDetail,$res['result']);
+                //数据入库
+                foreach ($res['result'] as $oneInvoice)
+                {
+                    try
+                    {
+                        $info = InvoiceIn::create()->where('invoiceCode',$oneInvoice['invoiceCode'])
+                            ->where('invoiceNumber',$oneInvoice['invoiceNumber'])->get();
+
+                        if (!empty($info)) continue;
+
+                        InvoiceIn::create()->data($oneInvoice)->save();
+
+                    }catch (\Throwable $e)
+                    {
+                        CommonService::getInstance()->log4PHP($e->getMessage());
+                    }
+                }
             }
         }
     }
