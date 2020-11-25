@@ -8,6 +8,7 @@ use App\HttpController\Models\Api\ReportInfo;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\FaHai\FaHaiService;
+use App\HttpController\Service\Ocr\OcrService;
 use App\HttpController\Service\OneSaid\OneSaidService;
 use App\HttpController\Service\QianQi\QianQiService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
@@ -886,6 +887,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,16,$this->entName,true);
         $docObj->setValue('sjkzr_oneSaid', $oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'1.1');
+        $docObj->setValue('sjkzr_ocr', $ocr);
+
         //历史沿革
         $rows = count($data['getHistoricalEvolution']);
         $docObj->cloneRow('lsyg_no', $rows);
@@ -895,6 +899,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //内容
             $docObj->setValue("lsyg_content#" . ($i + 1), $data['getHistoricalEvolution'][$i]);
         }
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'1.2');
+        $docObj->setValue('lsyg_ocr', $ocr);
 
         //法人对外投资
         $rows = count($data['lawPersonInvestmentInfo']);
@@ -920,6 +927,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("frdwtz_CONDATE#" . ($i + 1), $this->formatDate($data['lawPersonInvestmentInfo'][$i]['CONDATE']));
         }
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'1.3');
+        $docObj->setValue('frdwtz_ocr', $ocr);
+
         //法人对外任职
         $rows = count($data['getLawPersontoOtherInfo']);
         $docObj->cloneRow('frdwrz_no', $rows);
@@ -943,6 +953,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //是否法人
             $docObj->setValue("frdwrz_ISFRDB#" . ($i + 1), $data['getLawPersontoOtherInfo'][$i]['ISFRDB']);
         }
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'1.4');
+        $docObj->setValue('frdwrz_ocr', $ocr);
 
         //企业对外投资
         $rows = count($data['getInvestmentAbroadInfo']['list']);
@@ -971,6 +984,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,23,$this->entName,true);
         $docObj->setValue('qydwtz_oneSaid', $oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'1.5');
+        $docObj->setValue('qydwtz_ocr', $ocr);
+
         //主要分支机构
         $rows = count($data['getBranchInfo']);
         $docObj->cloneRow('fzjg_no', $rows);
@@ -992,6 +1008,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,18,$this->entName,true);
         $docObj->setValue('zyfzjg_oneSaid', $oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'1.6');
+        $docObj->setValue('zyfzjg_ocr', $ocr);
+
         //银行信息
         $docObj->cloneRow('yhxx_no', 1);
         for ($i = 0; $i < 1; $i++) {
@@ -1002,6 +1021,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //开户行号码
             $docObj->setValue("yhxx_hm#" . ($i + 1), $data['GetCreditCodeNew']['BankAccount']);
         }
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'1.7');
+        $docObj->setValue('yhxx_ocr', $ocr);
 
         //公司概况
         $rows = count($data['SearchCompanyFinancings']);
@@ -1035,6 +1057,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,24,$this->entName,true);
         $docObj->setValue('ztb_oneSaid', $oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'2.1');
+        $docObj->setValue('ztb_ocr', $ocr);
+
         //购地信息
         $rows = count($data['LandPurchaseList']);
         $docObj->cloneRow('gdxx_no', $rows);
@@ -1058,6 +1083,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,25,$this->entName,true);
         $docObj->setValue('gdxx_oneSaid', $oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'2.2');
+        $docObj->setValue('gdxx_ocr', $ocr);
+
         //土地公示
         $rows = count($data['LandPublishList']);
         $docObj->cloneRow('tdgs_no', $rows);
@@ -1076,6 +1104,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,26,$this->entName,true);
         $docObj->setValue('tdgs_oneSaid', $oneSaid);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'2.3');
+        $docObj->setValue('tdgs_ocr', $ocr);
 
         //土地转让
         $rows = count($data['LandTransferList']);
@@ -1102,6 +1133,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,27,$this->entName,true);
         $docObj->setValue('tdzr_oneSaid', $oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'2.4');
+        $docObj->setValue('tdzr_ocr', $ocr);
+
         //建筑资质
         $rows = count($data['Qualification']);
         $docObj->cloneRow('jzzz_no', $rows);
@@ -1125,6 +1159,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,29,$this->entName,true);
         $docObj->setValue('jzzz_oneSaid', $oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'2.5');
+        $docObj->setValue('jzzz_ocr', $ocr);
+
         //建筑工程项目
         $rows = count($data['BuildingProject']);
         $docObj->cloneRow('jzgc_no', $rows);
@@ -1145,6 +1182,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,30,$this->entName,true);
         $docObj->setValue('jzgc_oneSaid', $oneSaid);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'2.6');
+        $docObj->setValue('jzgc_ocr', $ocr);
 
         //债券
         $rows = count($data['BondList']);
@@ -1167,6 +1207,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,31,$this->entName,true);
         $docObj->setValue('zqxx_oneSaid', $oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'2.7');
+        $docObj->setValue('zqxx_ocr', $ocr);
+
         //网站信息
         $rows = count($data['GetCompanyWebSite']);
         $docObj->cloneRow('web_no', $rows);
@@ -1185,6 +1228,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("web_SDate#" . ($i + 1), $this->formatDate($data['GetCompanyWebSite'][$i]['SDate']));
         }
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'2.8');
+        $docObj->setValue('web_ocr', $ocr);
+
         //微博
         $rows = count($data['Microblog']);
         $docObj->cloneRow('weibo_no', $rows);
@@ -1198,6 +1244,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //简介
             $docObj->setValue("weibo_Description#" . ($i + 1), $data['Microblog'][$i]['Description']);
         }
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'2.9');
+        $docObj->setValue('weibo_ocr', $ocr);
 
         //新闻舆情
         $rows = count($data['CompanyNews']);
@@ -1213,6 +1262,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("xwyq_PublishTime#" . ($i + 1), $this->formatDate($data['CompanyNews'][$i]['PublishTime']));
         }
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'2.10');
+        $docObj->setValue('xwyq_ocr', $ocr);
+
         //团队人数
         $rows = count($data['itemInfo']);
         $docObj->cloneRow('tdrs_no', $rows);
@@ -1224,6 +1276,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //人数
             $docObj->setValue("tdrs_yoy#" . ($i + 1), (int)$data['itemInfo'][$i]['num']);
         }
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'3.1');
+        $docObj->setValue('tdrs_ocr', $ocr);
 
         //建筑企业-专业注册人员
         $rows = count($data['BuildingRegistrar']);
@@ -1240,6 +1295,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //注册专业
             $docObj->setValue("zyry_Specialty#" . ($i + 1), $data['BuildingRegistrar'][$i]['Specialty']);
         }
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'3.2');
+        $docObj->setValue('zyry_ocr', $ocr);
 
         //招聘信息
         $rows = count($data['Recruitment']);
@@ -1263,6 +1321,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,28,$this->entName,true);
         $docObj->setValue('zpxx_oneSaid', $oneSaid);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'3.3');
+        $docObj->setValue('zpxx_ocr', $ocr);
 
         //财务总揽
         if (empty($data['FinanceData']['pic']))
@@ -1316,6 +1377,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("zl_total", (int)$data['PatentV4Search']['total']);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'6.1');
+        $docObj->setValue('zl_ocr', $ocr);
+
         //软件著作权
         $rows = count($data['SearchSoftwareCr']['list']);
         $docObj->cloneRow('rjzzq_no', $rows);
@@ -1332,6 +1396,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("rjzzq_VersionNo#" . ($i + 1), $data['SearchSoftwareCr']['list'][$i]['VersionNo']);
         }
         $docObj->setValue("rjzzq_total", (int)$data['SearchSoftwareCr']['total']);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'6.2');
+        $docObj->setValue('rjzzq_ocr', $ocr);
 
         //商标
         $rows = count($data['tmSearch']['list']);
@@ -1354,6 +1421,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("sb_total", (int)$data['tmSearch']['total']);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'6.3');
+        $docObj->setValue('sb_ocr', $ocr);
+
         //作品著作权
         $rows = count($data['SearchCopyRight']['list']);
         $docObj->cloneRow('zpzzq_no', $rows);
@@ -1370,6 +1440,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("zpzzq_RegisterDate#" . ($i + 1), $this->formatDate($data['SearchCopyRight']['list'][$i]['RegisterDate']));
         }
         $docObj->setValue("zpzzq_total", (int)$data['SearchCopyRight']['total']);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'6.4');
+        $docObj->setValue('zpzzq_ocr', $ocr);
 
         //证书资质
         $rows = count($data['SearchCertification']['list']);
@@ -1390,6 +1463,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("zzzs_total", (int)$data['SearchCertification']['total']);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'6.5');
+        $docObj->setValue('zzzs_ocr', $ocr);
+
         //纳税信用等级
         $rows = count($data['satparty_xin']['list']);
         $docObj->cloneRow('nsxydj_no', $rows);
@@ -1409,6 +1485,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $nsxydj_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,11,$this->entName,true);
         $docObj->setValue("nsxydj_oneSaid", $nsxydj_oneSaid);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'7.1');
+        $docObj->setValue('nsxydj_ocr', $ocr);
 
         //税务许可信息
         $rows = count($data['satparty_xuke']['list']);
@@ -1432,6 +1511,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $swxk_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,13,$this->entName,true);
         $docObj->setValue("swxk_oneSaid", $swxk_oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'7.2');
+        $docObj->setValue('swxk_ocr', $ocr);
+
         //税务登记信息
         $rows = count($data['satparty_reg']['list']);
         $docObj->cloneRow('swdj_no', $rows);
@@ -1453,6 +1535,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $swdj_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,12,$this->entName,true);
         $docObj->setValue("swdj_oneSaid", $swdj_oneSaid);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'7.3');
+        $docObj->setValue('swdj_ocr', $ocr);
 
         //税务非正常户
         $rows = count($data['satparty_fzc']['list']);
@@ -1476,6 +1561,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $fzc_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,10,$this->entName,true);
         $docObj->setValue("fzc_oneSaid", $fzc_oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'7.4');
+        $docObj->setValue('fzc_ocr', $ocr);
+
         //欠税信息
         $rows = count($data['satparty_qs']['list']);
         $docObj->cloneRow('qs_no', $rows);
@@ -1497,6 +1585,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $qs_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,8,$this->entName,true);
         $docObj->setValue("qs_oneSaid", $qs_oneSaid);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'7.5');
+        $docObj->setValue('qs_ocr', $ocr);
 
         //涉税处罚公示
         $rows = count($data['satparty_chufa']['list']);
@@ -1522,6 +1613,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $sswf_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,9,$this->entName,true);
         $docObj->setValue("sswf_oneSaid", $sswf_oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'7.6');
+        $docObj->setValue('sswf_ocr', $ocr);
+
         //行政许可
         $rows = count($data['GetAdministrativeLicenseList']['list']);
         $docObj->cloneRow('xzxk_no', $rows);
@@ -1544,6 +1638,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,32,$this->entName,true);
         $docObj->setValue('xzxk_oneSaid', $oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'8.1');
+        $docObj->setValue('xzxk_ocr', $ocr);
+
         //行政处罚
         $rows = count($data['GetAdministrativePenaltyList']['list']);
         $docObj->cloneRow('xzcf_no', $rows);
@@ -1563,6 +1660,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,33,$this->entName,true);
         $docObj->setValue('xzcf_oneSaid', $oneSaid);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'8.2');
+        $docObj->setValue('xzcf_ocr', $ocr);
 
         //环保处罚
         $rows = count($data['epbparty']['list']);
@@ -1584,6 +1684,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,34,$this->entName,true);
         $docObj->setValue('hbcf_oneSaid', $oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'9.1');
+        $docObj->setValue('hbcf_ocr', $ocr);
+
         //重点监控企业名单
         $rows = count($data['epbparty_jkqy']['list']);
         $docObj->cloneRow('zdjkqy_no', $rows);
@@ -1599,6 +1702,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,35,$this->entName,true);
         $docObj->setValue('zdjkqy_oneSaid', $oneSaid);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'9.2');
+        $docObj->setValue('zdjkqy_ocr', $ocr);
 
         //环保企业自行监测结果
         $rows = count($data['epbparty_zxjc']['list']);
@@ -1620,6 +1726,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,36,$this->entName,true);
         $docObj->setValue('zxjc_oneSaid', $oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'9.3');
+        $docObj->setValue('zxjc_ocr', $ocr);
+
         //环评公示数据
         $rows = count($data['epbparty_huanping']['list']);
         $docObj->cloneRow('hpgs_no', $rows);
@@ -1638,7 +1747,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,37,$this->entName,true);
         $docObj->setValue('hpgs_oneSaid', $oneSaid);
 
-        //海关许可
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'9.4');
+        $docObj->setValue('hpgs_ocr', $ocr);
+
+        //海关基本信息
         $rows = count($data['custom_qy']['list']);
         $docObj->cloneRow('hgxx_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
@@ -1657,6 +1769,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,38,$this->entName,true);
         $docObj->setValue('hgxx_oneSaid', $oneSaid);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'10.1');
+        $docObj->setValue('hgxx_ocr', $ocr);
 
         //海关许可
         $rows = count($data['custom_xuke']['list']);
@@ -1678,6 +1793,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,39,$this->entName,true);
         $docObj->setValue('hgxk_oneSaid', $oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'10.2');
+        $docObj->setValue('hgxk_ocr', $ocr);
+
         //海关信用
         $rows = count($data['custom_credit']['list']);
         $docObj->cloneRow('hgxy_no', $rows);
@@ -1696,6 +1814,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,40,$this->entName,true);
         $docObj->setValue('hgxy_oneSaid', $oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'10.3');
+        $docObj->setValue('hgxy_ocr', $ocr);
+
         //海关处罚
         $rows = count($data['custom_punish']['list']);
         $docObj->cloneRow('hgcf_no', $rows);
@@ -1713,6 +1834,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,41,$this->entName,true);
         $docObj->setValue('hgcf_oneSaid', $oneSaid);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'10.4');
+        $docObj->setValue('hgcf_ocr', $ocr);
 
         //央行行政处罚
         $rows = count($data['pbcparty']['list']);
@@ -1736,6 +1860,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,46,$this->entName,true);
         $docObj->setValue('yhxzcf_oneSaid', $oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'11.1');
+        $docObj->setValue('yhxzcf_ocr', $ocr);
+
         //银保监会处罚公示
         $rows = count($data['pbcparty_cbrc']['list']);
         $docObj->cloneRow('ybjcf_no', $rows);
@@ -1757,6 +1884,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,47,$this->entName,true);
         $docObj->setValue('ybjcf_oneSaid', $oneSaid);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'11.2');
+        $docObj->setValue('ybjcf_ocr', $ocr);
 
         //证监处罚公示
         $rows = count($data['pbcparty_csrc_chufa']['list']);
@@ -1780,6 +1910,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,48,$this->entName,true);
         $docObj->setValue('zjcf_oneSaid', $oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'11.3');
+        $docObj->setValue('zjcf_ocr', $ocr);
+
         //证监会许可信息
         $rows = count($data['pbcparty_csrc_xkpf']['list']);
         $docObj->cloneRow('zjxk_no', $rows);
@@ -1799,6 +1932,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,49,$this->entName,true);
         $docObj->setValue('zjxk_oneSaid', $oneSaid);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'11.4');
+        $docObj->setValue('zjxk_ocr', $ocr);
 
         //外汇局处罚
         $rows = count($data['safe_chufa']['list']);
@@ -1824,6 +1960,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,50,$this->entName,true);
         $docObj->setValue('whjcf_oneSaid', $oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'11.5');
+        $docObj->setValue('whjcf_ocr', $ocr);
+
         //外汇局许可
         $rows = count($data['safe_xuke']['list']);
         $docObj->cloneRow('whjxk_no', $rows);
@@ -1845,6 +1984,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,51,$this->entName,true);
         $docObj->setValue('whjxk_oneSaid', $oneSaid);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'11.6');
+        $docObj->setValue('whjxk_ocr', $ocr);
 
         //法院公告
         $rows = count($data['fygg']['list']);
@@ -1894,6 +2036,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $fygg_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,3,$this->entName,true);
         $docObj->setValue("fygg_oneSaid", $fygg_oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'12.1');
+        $docObj->setValue('fygg_ocr', $ocr);
+
         //开庭公告
         $rows = count($data['ktgg']['list']);
         $docObj->cloneRow('ktgg_no', $rows);
@@ -1941,6 +2086,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $ktgg_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,1,$this->entName,true);
         $docObj->setValue("ktgg_oneSaid", $ktgg_oneSaid);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'12.2');
+        $docObj->setValue('ktgg_ocr', $ocr);
 
         //裁判文书
         $rows = count($data['cpws']['list']);
@@ -1992,6 +2140,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $cpws_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,2,$this->entName,true);
         $docObj->setValue("cpws_oneSaid", $cpws_oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'12.3');
+        $docObj->setValue('cpws_ocr', $ocr);
+
         //执行公告
         $rows = count($data['zxgg']['list']);
         $docObj->cloneRow('zxgg_no', $rows);
@@ -2022,6 +2173,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //oneSaid
         $zxgg_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,4,$this->entName,true);
         $docObj->setValue("zxgg_oneSaid", $zxgg_oneSaid);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'12.4');
+        $docObj->setValue('zxgg_ocr', $ocr);
 
         //失信公告
         $rows = count($data['shixin']['list']);
@@ -2055,6 +2209,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $sx_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,5,$this->entName,true);
         $docObj->setValue("sx_oneSaid", $sx_oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'12.5');
+        $docObj->setValue('sx_ocr', $ocr);
+
         //被执行人
         $rows = count($data['SearchZhiXing']['list']);
         $docObj->cloneRow('bzxr_no', $rows);
@@ -2077,6 +2234,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //oneSaid
         $bzxr_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,5,$this->entName,true);
         $docObj->setValue("bzxr_oneSaid", $bzxr_oneSaid);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'12.6');
+        $docObj->setValue('bzxr_ocr', $ocr);
 
         //查封冻结扣押
         $rows = count($data['sifacdk']['list']);
@@ -2105,6 +2265,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $cdk_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,6,$this->entName,true);
         $docObj->setValue("cdk_oneSaid", $cdk_oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'12.7');
+        $docObj->setValue('cdk_ocr', $ocr);
+
         //动产抵押
         $rows = count($data['getChattelMortgageInfo']['list']);
         $docObj->cloneRow('dcdy_no', $rows);
@@ -2128,6 +2291,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,43,$this->entName,true);
         $docObj->setValue('dcdy_oneSaid', $oneSaid);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'12.8.1');
+        $docObj->setValue('dcdy_ocr', $ocr);
 
         //股权出质
         $rows = count($data['getEquityPledgedInfo']['list']);
@@ -2153,6 +2319,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,42,$this->entName,true);
         $docObj->setValue('gqcz_oneSaid', $oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'12.8.2');
+        $docObj->setValue('gqcz_ocr', $ocr);
+
         //对外担保
         $rows = count($data['GetAnnualReport']['list']);
         $docObj->cloneRow('dwdb_no', $rows);
@@ -2174,6 +2343,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,45,$this->entName,true);
         $docObj->setValue('dwdb_oneSaid', $oneSaid);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'12.8.3');
+        $docObj->setValue('dwdb_ocr', $ocr);
 
         //土地抵押
         $rows = count($data['GetLandMortgageList']['list']);
@@ -2197,6 +2369,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,44,$this->entName,true);
         $docObj->setValue('tddy_oneSaid', $oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'12.8.4');
+        $docObj->setValue('tddy_ocr', $ocr);
+
         //应收帐款
         $rows = count($data['company_zdw_yszkdsr']['list']);
         $docObj->cloneRow('yszk_no', $rows);
@@ -2217,6 +2392,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,52,$this->entName,true);
         $docObj->setValue('yszk_oneSaid', $oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'13.1');
+        $docObj->setValue('yszk_ocr', $ocr);
+
         //租赁登记
         $rows = count($data['company_zdw_zldjdsr']['list']);
         $docObj->cloneRow('zldj_no', $rows);
@@ -2236,6 +2414,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,56,$this->entName,true);
         $docObj->setValue('zldj_oneSaid', $oneSaid);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'14.1');
+        $docObj->setValue('zldj_ocr', $ocr);
 
         //保证金质押
         $rows = count($data['company_zdw_bzjzydsr']['list']);
@@ -2261,6 +2442,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,54,$this->entName,true);
         $docObj->setValue('bzjzy_oneSaid', $oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'14.2');
+        $docObj->setValue('bzjzy_ocr', $ocr);
+
         //仓单质押
         $rows = count($data['company_zdw_cdzydsr']['list']);
         $docObj->cloneRow('cdzy_no', $rows);
@@ -2282,6 +2466,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,55,$this->entName,true);
         $docObj->setValue('cdzy_oneSaid', $oneSaid);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'14.3');
+        $docObj->setValue('cdzy_ocr', $ocr);
 
         //所有权保留
         $rows = count($data['company_zdw_syqbldsr']['list']);
@@ -2305,6 +2492,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,53,$this->entName,true);
         $docObj->setValue('syqbl_oneSaid', $oneSaid);
 
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'13.2');
+        $docObj->setValue('syqbl_ocr', $ocr);
+
         //其他动产融资
         $rows = count($data['company_zdw_qtdcdsr']['list']);
         $docObj->cloneRow('qtdcrz_no', $rows);
@@ -2326,6 +2516,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,57,$this->entName,true);
         $docObj->setValue('qtdcrz_oneSaid', $oneSaid);
+
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'14.4');
+        $docObj->setValue('qtdcrz_ocr', $ocr);
     }
 
     //并发请求数据
