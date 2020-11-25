@@ -29,7 +29,7 @@ class ConsumeOcrProcess extends ProcessBase
                 $list = OcrQueue::create()->where('status', 0)->limit(0, 10)->all();
                 $list = obj2Arr($list);
                 if (empty($list)) {
-                    \co::sleep(2);
+                    \co::sleep(1);
                     continue;
                 }
                 foreach ($list as $one) {
@@ -51,7 +51,7 @@ class ConsumeOcrProcess extends ProcessBase
                     $info->update(['status' => 1, 'content' => $content]);
                 }
             } catch (\Throwable $e) {
-                \co::sleep(60);
+                \co::sleep(1);
                 CommonService::getInstance()->log4PHP(__CLASS__ . $e->getMessage());
             }
         }
