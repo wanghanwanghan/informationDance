@@ -122,6 +122,11 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 }
             }
         }
+
+        $in = InvoiceIn::create()->where('purchaserTaxNo',$this->code)->all();
+        $this->inDetail = obj2Arr($in);
+        $out = InvoiceOut::create()->where('salesTaxNo',$this->code)->all();
+        $this->outDetail = obj2Arr($out);
     }
 
     function run(int $taskId, int $workerIndex)
@@ -844,9 +849,132 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         return (int)$num;
     }
 
+    //主营商品分析
+    function zyspfx()
+    {
+        //返回所有销项中，按占比排序，返回最高的前十
+        //商品名称，销售金额，占比
+
+        $return=[];
+
+        if (empty($this->outDetail)) return $return;
+
+        foreach ($this->outDetail as $one)
+        {
+            //先判断是否是正常发票
+            if ($one['state']!=0) continue;
+
+            //看看这个发票是哪年的
+            $timestamp=strtotime(trim($one['billingDate']));
+
+            if (!$timestamp) continue;
+
+            $year=date('Y',$timestamp);
+
+            isset($return[$year]) ?
+                $return[$year]['zongjine']+=abs($one['totalAmount'])+abs($one['totalTax']) :
+                $return[$year]['zongjine']=abs($one['totalAmount'])+abs($one['totalTax']);
+
+            //是否有商品名称
+            if (!isset($one['goodsInfos']) || empty($one['goodsInfos'])) continue;
+
+            //商品名称是否正常
+            $goodsInfos=current($one['goodsInfos']);
+
+            if (!isset($goodsInfos['goodsName']) || empty(trim($goodsInfos['goodsName']))) continue;
+
+            //说明goodsName里有东西
+            //正则匹配一下
+            preg_match_all('/^\*(.*)/',trim($goodsInfos['goodsName']),$match);
+
+            $match=current(current($match));
+
+            //没有匹配上
+            if (empty($match)) continue;
+
+            //以下是匹配上的逻辑
+            $name=explode('*',$match);
+            $name=array_filter($name);
+            $name=trim(current($name));
+
+            isset($return[$year][$name]) ?
+                $return[$year][$name]+=abs($one['totalAmount'])+abs($one['totalTax']) :
+                $return[$year][$name]=abs($one['totalAmount'])+abs($one['totalTax']);
+        }
+
+        //array:3 [
+        //  2020 => array:2 [
+        //    "zongjine" => 2998129.22
+        //    "信息技术服务" => 2998129.22
+        //  ]
+        //  2019 => array:2 [
+        //    "zongjine" => 332901.62
+        //    "信息技术服务" => 332901.62
+        //  ]
+        //  2018 => array:2 [
+        //    "zongjine" => 332901.62
+        //    "信息技术服务" => 332901.62
+        //  ]
+        //]
+
+        if (empty($return)) return $return;
+
+        //降序
+        if (!empty($return)) krsort($return);
+
+        if (count($return) >= 2)
+        {
+            $arr1=array_shift($return);
+            $arr2=array_shift($return);
+
+            $tmp=[];
+
+            foreach($arr1 as $k => $v)
+            {
+                if(isset($arr2[$k]))
+                {
+                    $tmp[$k]=$arr1[$k] + $arr2[$k];
+
+                    unset($arr1[$k],$arr2[$k]);
+                }
+            }
+
+            $return=array_merge($tmp,$arr1,$arr2);
+
+        }else
+        {
+            $return=array_shift($return);
+        }
+
+        //最后形成每条记录
+        $tmp=[];
+
+        foreach ($return as $key => $val)
+        {
+            if ($key=='zongjine') continue;
+
+            $tmp[]=[
+                'name'=>$key,
+                'jine'=>sprintf('%.1f',$val/10000),
+                'zhanbi'=>sprintf('%.1f',$val/$return['zongjine']*100)
+            ];
+        }
+
+        if (!empty($tmp)) $tmp=myHelper::getInstance()->arraySort1($tmp,['desc','zhanbi']);
+
+        return array_slice($tmp,0,10);
+    }
+
     //数据填进报告
     private function fillData(TemplateProcessor $docObj, $data)
     {
+        //处理发票信息
+
+
+
+
+
+
         //基本信息
         //企业类型
         $docObj->setValue('ENTTYPE', $data['getRegisterInfo']['ENTTYPE']);
