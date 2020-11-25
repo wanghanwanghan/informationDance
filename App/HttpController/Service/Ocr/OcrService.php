@@ -21,7 +21,7 @@ class OcrService extends ServiceBase
                 ->where(['phone' => $phone, 'reportNum' => $reportNum, 'catalogueNum' => $catalogueNum])
                 ->get();
 
-            empty($info) ? $info = '' : $info = str_replace('|||', '<w:br/>', $info->content);
+            empty($info) ? $info = '' : $info = str_replace('|||', '<w:br/>', trim($info->content));
 
         }catch (\Throwable $e)
         {
