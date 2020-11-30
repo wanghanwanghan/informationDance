@@ -861,7 +861,7 @@ class QiChaChaController extends QiChaChaBase
         return $this->checkResponse($res);
     }
 
-    //被执行人
+    //失信信息
     function getCourtV4SearchShiXin()
     {
         $entName=$this->request()->getRequestParam('entName');
@@ -880,7 +880,24 @@ class QiChaChaController extends QiChaChaBase
         return $this->checkResponse($res);
     }
 
+    //被执行人
+    function getCourtV4SearchZhiXing()
+    {
+        $entName=$this->request()->getRequestParam('entName');
+        $page=$this->request()->getRequestParam('page') ?? 1;
+        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
 
+        $postData=[
+            'searchKey' => $entName,
+            'isExactlySame' => true,
+            'pageIndex'=>$page,
+            'pageSize'=>$pageSize,
+        ];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'CourtV4/SearchZhiXing',$postData);
+
+        return $this->checkResponse($res);
+    }
 
 
 
