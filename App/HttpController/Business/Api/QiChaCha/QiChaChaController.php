@@ -922,8 +922,6 @@ class QiChaChaController extends QiChaChaBase
 
         $postData=[
             'keyWord' => $entName,
-            'pageIndex'=>$page,
-            'pageSize'=>$pageSize,
         ];
 
         $res=(new QiChaChaService())->get($this->baseUrl.'SeriousViolation/GetSeriousViolationList',$postData);
