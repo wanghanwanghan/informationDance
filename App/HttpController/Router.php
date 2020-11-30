@@ -143,6 +143,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/getCompanyWebSite','/Business/Api/QiChaCha/QiChaChaController/getCompanyWebSite');//网站信息
             $routeCollector->addRoute(['GET','POST'],'/getMicroblogGetList','/Business/Api/QiChaCha/QiChaChaController/getMicroblogGetList');//微博
             $routeCollector->addRoute(['GET','POST'],'/getECIPartnerGetList','/Business/Api/QiChaCha/QiChaChaController/getECIPartnerGetList');//股东信息
+            $routeCollector->addRoute(['GET','POST'],'/getCourtV4SearchShiXin','/Business/Api/QiChaCha/QiChaChaController/getCourtV4SearchShiXin');//被执行人
 
             //详情系列
             $routeCollector->addRoute(['GET','POST'],'/tenderSearchDetail','/Business/Api/QiChaCha/QiChaChaController/tenderSearchDetail');//招投标
