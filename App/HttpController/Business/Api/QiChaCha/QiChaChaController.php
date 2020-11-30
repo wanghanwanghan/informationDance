@@ -614,6 +614,25 @@ class QiChaChaController extends QiChaChaBase
         return $this->checkResponse($res);
     }
 
+    //用来获取上市公司股票代码用，以后重写
+    private function getBasicDetailsByName($entName)
+    {
+        $postData=[
+            'keyword'=>$entName,
+        ];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'ECIV4/GetBasicDetailsByName',$postData);
+
+        $StockNumber='';
+
+        if (isset($res['Result']) && !empty($res['Result']) && isset($res['Result']['StockNumber']))
+        {
+            empty($res['Result']['StockNumber']) ? $StockNumber='' : $StockNumber=$res['Result']['StockNumber'];
+        }
+
+        return $StockNumber;
+    }
+
     //上市公司对外担保
     function getIPOGuarantee()
     {
@@ -621,8 +640,10 @@ class QiChaChaController extends QiChaChaBase
         $page=$this->request()->getRequestParam('page') ?? 1;
         $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
 
+        $stockCode = $this->getBasicDetailsByName($entName);
+
         $postData=[
-            'stockCode'=>$entName,
+            'stockCode'=>$stockCode,
             'pageIndex'=>$page,
             'pageSize'=>$pageSize,
         ];
@@ -824,25 +845,6 @@ class QiChaChaController extends QiChaChaBase
         return $this->checkResponse($res);
     }
 
-    //用来获取上市公司股票代码用，以后重写
-    private function getBasicDetailsByName($entName)
-    {
-        $postData=[
-            'keyword'=>$entName,
-        ];
-
-        $res=(new QiChaChaService())->get($this->baseUrl.'ECIV4/GetBasicDetailsByName',$postData);
-
-        $StockNumber='';
-
-        if (isset($res['Result']) && !empty($res['Result']) && isset($res['Result']['StockNumber']))
-        {
-            empty($res['Result']['StockNumber']) ? $StockNumber='' : $StockNumber=$res['Result']['StockNumber'];
-        }
-
-        return $StockNumber;
-    }
-
     //股东信息
     function getECIPartnerGetList()
     {
@@ -917,8 +919,6 @@ class QiChaChaController extends QiChaChaBase
     function getSeriousViolationList()
     {
         $entName=$this->request()->getRequestParam('entName');
-        $page=$this->request()->getRequestParam('page') ?? 1;
-        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
 
         $postData=[
             'keyWord' => $entName,
