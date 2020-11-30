@@ -899,6 +899,23 @@ class QiChaChaController extends QiChaChaBase
         return $this->checkResponse($res);
     }
 
+    //股权冻结
+    function getJudicialAssistance()
+    {
+        $entName=$this->request()->getRequestParam('entName');
+        $page=$this->request()->getRequestParam('page') ?? 1;
+        $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData=[
+            'keyWord' => $entName,
+            'pageIndex'=>$page,
+            'pageSize'=>$pageSize,
+        ];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'JudicialAssistance/GetJudicialAssistance',$postData);
+
+        return $this->checkResponse($res);
+    }
 
 
 
