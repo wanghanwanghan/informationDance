@@ -15,6 +15,7 @@ use App\HttpController\Service\RequestUtils\LimitService;
 use App\Process\Service\ProcessService;
 use EasySwoole\EasySwoole\Swoole\EventRegister;
 use EasySwoole\EasySwoole\AbstractInterface\Event;
+use EasySwoole\Http\Message\Status;
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
 use wanghanwanghan\someUtils\control;
@@ -67,9 +68,16 @@ class EasySwooleEvent implements Event
     public static function onRequest(Request $request, Response $response): bool
     {
         $response->withHeader('Access-Control-Allow-Origin', '*');
-        $response->withHeader('Access-Control-Allow-Methods', 'GET, POST');
+        $response->withHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
         $response->withHeader('Access-Control-Allow-Credentials', 'true');
         $response->withHeader('Access-Control-Allow-Headers', '*');
+
+        if ($request->getMethod() === 'OPTIONS')
+        {
+            $response->withStatus(Status::CODE_OK);
+            return false;
+        }
+
         return true;
     }
 
