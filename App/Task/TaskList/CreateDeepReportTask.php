@@ -173,11 +173,6 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //发票
         $invoiceObj = (new Invoice($this->inDetail,$this->outDetail));
 
-        CommonService::getInstance()->log4PHP($this->inDetail);
-        CommonService::getInstance()->log4PHP($this->outDetail);
-
-        return true;
-
         //5.2主营商品分析
         $zyspfx=$invoiceObj->zyspfx();
         $data['re_fpxx']['zyspfx']=$zyspfx;
