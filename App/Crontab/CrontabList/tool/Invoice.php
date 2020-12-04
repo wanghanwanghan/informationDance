@@ -908,8 +908,6 @@ class Invoice
             $return[$key]=control::sortArrByKey($one,'totalAmount');
         }
 
-        CommonService::getInstance()->log4PHP($return);
-
         //整理数组
         $target=$name=[];
         foreach ($return as $year => $val)
@@ -918,9 +916,9 @@ class Invoice
 
             foreach ($val as $k => $v)
             {
-                if (in_array($v['salesTaxName'],$name) || count($target[$year]) > 10) continue;
+                if (in_array($v['purchaserName'],$name) || count($target[$year]) > 10) continue;
                 array_push($target[$year],$v);
-                array_push($name,$v['salesTaxName']);
+                array_push($name,$v['purchaserName']);
             }
         }
 
@@ -984,7 +982,7 @@ class Invoice
             if ($one['state']==0)
             {
                 //取得公司名称
-                $name=trim($one['salesTaxName']);
+                $name=trim($one['purchaserName']);
 
                 //判断该公司在当年的开票总数和总额
                 if (!isset($total[$year][$name]))
@@ -1008,7 +1006,7 @@ class Invoice
                 $total[$year][$name]['num']++;
                 $tacoTuesday[$year]['num']++;
                 //加上税号
-                $total[$year][$name]['salesTaxNo']=$one['salesTaxNo'];
+                $total[$year][$name]['purchaserTaxNo']=$one['purchaserTaxNo'];
 
             }else
             {
@@ -1088,7 +1086,7 @@ class Invoice
 
             $year=current($year);
 
-            $name=trim($one['salesTaxName']);
+            $name=trim($one['purchaserName']);
 
             if (empty($name)) continue;
 
@@ -1189,7 +1187,7 @@ class Invoice
 
             $year=current($year);
 
-            $name=trim($one['salesTaxName']);
+            $name=trim($one['purchaserName']);
 
             if (empty($name)) continue;
 
@@ -1264,7 +1262,7 @@ class Invoice
 
             $year=current($year);
 
-            $name=trim($one['salesTaxName']);
+            $name=trim($one['purchaserName']);
 
             if (empty($name)) continue;
 
@@ -1352,7 +1350,7 @@ class Invoice
             $year=current($year);
             isset($tmp[$year]) ?: $tmp[$year]=[];
 
-            $name=trim($one['salesTaxName']);
+            $name=trim($one['purchaserName']);
 
             if (empty($name)) continue;
 
@@ -1530,7 +1528,7 @@ class Invoice
             $mouth=(int)$year[1];
             $year=current($year);
 
-            $name=trim($one['salesTaxName']);
+            $name=trim($one['purchaserName']);
 
             if (empty($name)) continue;
 
