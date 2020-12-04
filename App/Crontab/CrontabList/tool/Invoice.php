@@ -1382,7 +1382,7 @@ class Invoice
 
         krsort($return);
 
-        if (count($return) >= 3) $return=array_slice($return,0,2);
+        if (count($return) >= 3) $return=array_slice($return,0,2,true);
 
         //这个有点费劲，先整理出所有的地域
         $diyu=[];
@@ -1456,13 +1456,11 @@ class Invoice
             isset($tmp[$year]) ? $tmp[$year]+=abs($one['totalAmount']) : $tmp[$year]=abs($one['totalAmount']);
         }
 
-        CommonService::getInstance()->log4PHP($tmp);
-
         if (count($return) >= 3)
         {
             krsort($return);
 
-            $return=array_slice($return,0,2);
+            $return=array_slice($return,0,2,true);
         }
 
         //整理数组
@@ -1492,7 +1490,7 @@ class Invoice
             }
 
             $tmp=control::sortArrByKey($tmp,'zhanbi');
-            $tmp=array_slice($tmp,0,10);
+            $tmp=array_slice($tmp,0,10,true);
 
             $wanghan=[];
             foreach ($tmp as $k => $v)
@@ -2180,7 +2178,7 @@ class Invoice
 
         krsort($return);
 
-        if (count($return) >= 3) $return=array_slice($return,0,2);
+        if (count($return) >= 3) $return=array_slice($return,0,2,true);
 
         //这个有点费劲，先整理出所有的地域
         $diyu=[];
@@ -2257,7 +2255,7 @@ class Invoice
         {
             krsort($return);
 
-            $return=array_slice($return,0,2);
+            $return=array_slice($return,0,2,true);
         }
 
         //整理数组
@@ -2332,7 +2330,7 @@ class Invoice
 
         krsort($return);
 
-        if (count($return) >= 3) $return=array_slice($return,0,2);
+        if (count($return) >= 3) $return=array_slice($return,0,2,true);
 
         //金额变万元
         foreach ($return as &$one)

@@ -4,9 +4,15 @@ use wanghanwanghan\someUtils\control;
 
 include './vendor/autoload.php';
 
+$return=[
+    2019=>[123],
+    2018=>[456],
+    2020=>[789],
+];
 
-$str = "11111111111-666666-" . time();
+krsort($return);
 
+$return=array_slice($return,0,2,true);
 
-var_dump(control::aesEncode($str, 'PHP_is_the_best_language_in_the_world'));
+var_dump($return);
 
