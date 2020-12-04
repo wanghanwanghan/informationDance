@@ -2,6 +2,7 @@
 
 namespace App\Task\TaskList;
 
+use App\Crontab\CrontabList\tool\Invoice;
 use App\Csp\Service\CspService;
 use App\HttpController\Models\Api\InvoiceIn;
 use App\HttpController\Models\Api\InvoiceOut;
@@ -51,6 +52,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         return parent::__construct();
     }
 
+    //接口取发票数据
     private function getReceiptData()
     {
         $code = $this->code;
@@ -129,6 +131,14 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $this->outDetail = obj2Arr($out);
     }
 
+    private function getReceiptDataTest()
+    {
+        $in = InvoiceIn::create()->where('purchaserTaxNo',$this->code)->all();
+        $this->inDetail = obj2Arr($in);
+        $out = InvoiceOut::create()->where('salesTaxNo',$this->code)->all();
+        $this->outDetail = obj2Arr($out);
+    }
+
     function run(int $taskId, int $workerIndex)
     {
         $tmp = new TemplateProcessor(REPORT_MODEL_PATH . 'DeepReportModel_1.docx');
@@ -157,12 +167,111 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
 //        $reportVal = $this->cspHandleData();
 
-        $this->getReceiptData();
-        $this->getReceiptData();
-        $this->getReceiptData();
+        //取发票数据
+        $this->getReceiptDataTest();
 
+        //发票
+        $invoiceObj = (new Invoice($this->inDetail,$this->outDetail));
 
+        //5.2主营商品分析
+        $zyspfx=$invoiceObj->zyspfx();
+        $data['re_fpxx']['zyspfx']=$zyspfx;
 
+        //5.4主要成本分析
+        $zycbfx=$invoiceObj->zycbfx();
+        $data['re_fpjx']['zycbfx']=$zycbfx;
+
+        //6.1企业开票情况汇总
+        $qykpqkhz=$invoiceObj->qykpqkhz();
+        $data['re_fpxx']['qykpqkhz']=$qykpqkhz;
+
+        //6.2.1年度销项发票情况汇总
+        $ndxxfpqkhz=$invoiceObj->ndxxfpqkhz();
+        $data['re_fpxx']['ndxxfpqkhz']=$ndxxfpqkhz;
+
+        //6.2.2月度销项发票分析
+        $ydxxfpfx=$invoiceObj->ydxxfpfx();
+        $data['re_fpxx']['ydxxfpfx']=$ydxxfpfx;
+
+        //6.2.5单张开票金额TOP10记录
+        $dzkpjeTOP10jl_xx=$invoiceObj->dzkpjeTOP10jl_xx();
+        $data['re_fpxx']['dzkpjeTOP10jl_xx']=$dzkpjeTOP10jl_xx;
+
+        //6.2.6累计开票金额TOP10企业汇总
+        $ljkpjeTOP10qyhz_xx=$invoiceObj->ljkpjeTOP10qyhz_xx();
+        $data['re_fpxx']['ljkpjeTOP10qyhz_xx']=$ljkpjeTOP10qyhz_xx;
+
+        //6.3.1下游客户稳定性分析
+        //1，下游企业司龄分布
+        $xyqyslfb=$invoiceObj->xyqyslfb();
+        $data['re_fpxx']['xyqyslfb']=$xyqyslfb;
+        //2，下游企业合作年限分布
+        $xyqyhznxfb=$invoiceObj->xyqyhznxfb();
+        $data['re_fpxx']['xyqyhznxfb']=$xyqyhznxfb;
+        //3，下游企业更换情况
+        $xyqyghqk=$invoiceObj->xyqyghqk();
+        $data['re_fpxx']['xyqyghqk']=$xyqyghqk;
+
+        //6.3.2下游客户集中度
+        //1，下游企业地域分布
+        $xyqydyfb=$invoiceObj->xyqydyfb();
+        $data['re_fpxx']['xyqydyfb']=$xyqydyfb;
+        //2，销售前十企业总占比
+        $xsqsqyzzb=$invoiceObj->xsqsqyzzb();
+        $data['re_fpxx']['xsqsqyzzb']=$xsqsqyzzb;
+
+        //6.3.3企业销售情况预测
+        $qyxsqkyc=$invoiceObj->qyxsqkyc();
+        $data['re_fpxx']['qyxsqkyc']=$qyxsqkyc;
+
+        //6.4.1年度进项发票情况汇总
+        $ndjxfpqkhz=$invoiceObj->ndjxfpqkhz();
+        $data['re_fpjx']['ndjxfpqkhz']=$ndjxfpqkhz;
+
+        //6.4.2月度进项发票分析
+        $ydjxfpfx=$invoiceObj->ydjxfpfx();
+        $data['re_fpjx']['ydjxfpfx']=$ydjxfpfx;
+
+        //6.4.3累计开票金额TOP10企业汇总
+        $ljkpjeTOP10qyhz_jx=$invoiceObj->ljkpjeTOP10qyhz_jx();
+        $data['re_fpjx']['ljkpjeTOP10qyhz_jx']=$ljkpjeTOP10qyhz_jx;
+
+        //6.4.4单张金额TOP10企业汇总
+        $dzkpjeTOP10jl_jx=$invoiceObj->dzkpjeTOP10jl_jx();
+        $data['re_fpjx']['dzkpjeTOP10jl_jx']=$dzkpjeTOP10jl_jx;
+
+        //6.5.1上游共饮上稳定性分析
+        //1，上游供应商司龄分布
+        $sygysslfb=$invoiceObj->sygysslfb();
+        $data['re_fpjx']['sygysslfb']=$sygysslfb;
+        //2，上游供应商合作年限分布
+        $sygyshznxfb=$invoiceObj->sygyshznxfb();
+        $data['re_fpjx']['sygyshznxfb']=$sygyshznxfb;
+        //3，上游供应商更换情况
+        $sygysghqk=$invoiceObj->sygysghqk();
+        $data['re_fpjx']['sygysghqk']=$sygysghqk;
+
+        //6.5.2上游供应商集中度分析
+        //1，上游企业地域分布
+        $syqydyfb=$invoiceObj->syqydyfb();
+        $data['re_fpjx']['syqydyfb']=$syqydyfb;
+        //2，采购前十企业总占比
+        $cgqsqyzzb=$invoiceObj->cgqsqyzzb();
+        $data['re_fpjx']['cgqsqyzzb']=$cgqsqyzzb;
+
+        //6.5.3企业采购情况预测
+        $qycgqkyc=$invoiceObj->qycgqkyc();
+        $data['re_fpjx']['qycgqkyc']=$qycgqkyc;
+
+        //储存信动指数-发票项
+        $xdsForFaPiao=$invoiceObj->xdsForFaPiao();
+        $data['re_fpjx']['xdsForFaPiao']=$xdsForFaPiao;
+
+        //储存信动指数-上下游项
+        $xdsForShangxiayou=$invoiceObj->xdsForShangxiayou();
+        $data['re_fpjx']['xdsForShangxiayou']=$xdsForShangxiayou;
+
+        CommonService::getInstance()->log4PHP($data);
 
 //        $this->fillData($tmp, $reportVal);
 //
