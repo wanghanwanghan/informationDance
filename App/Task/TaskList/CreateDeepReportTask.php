@@ -271,8 +271,6 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $xdsForShangxiayou=$invoiceObj->xdsForShangxiayou();
         $data['re_fpjx']['xdsForShangxiayou']=$xdsForShangxiayou;
 
-        CommonService::getInstance()->log4PHP($data);
-
 //        $this->fillData($tmp, $reportVal);
 //
 //        $this->exprXDS($reportVal);
