@@ -1049,7 +1049,6 @@ class Invoice
 
             $total[$key]=array_slice($tmp,0,10);
         }
-        unset($one);
 
         //金额变万元
         foreach ($total as &$one)
@@ -1728,7 +1727,6 @@ class Invoice
 
             $total[$key]=array_slice($tmp,0,10);
         }
-        unset($one);
 
         //金额变万元
         foreach ($total as &$one)
@@ -1800,11 +1798,10 @@ class Invoice
         krsort($return);
 
         //二维数组排序
-        foreach ($return as $key => &$one)
+        foreach ($return as $key => $one)
         {
-            $one=control::sortArrByKey($one,'totalAmount');
+            $return[$key]=control::sortArrByKey($one,'totalAmount');
         }
-        unset($one);
 
         //整理数组
         $target=$name=[];
