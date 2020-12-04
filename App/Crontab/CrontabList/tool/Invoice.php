@@ -903,11 +903,12 @@ class Invoice
         krsort($return);
 
         //二维数组排序
-        foreach ($return as $key => &$one)
+        foreach ($return as $key => $one)
         {
-            $one=control::sortArrByKey($one,'totalAmount');
+            $return[$key]=control::sortArrByKey($one,'totalAmount');
         }
-        unset($one);
+
+        CommonService::getInstance()->log4PHP($return);
 
         //整理数组
         $target=$name=[];
