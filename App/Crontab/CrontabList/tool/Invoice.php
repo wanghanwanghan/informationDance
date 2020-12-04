@@ -1456,8 +1456,6 @@ class Invoice
             isset($tmp[$year]) ? $tmp[$year]+=abs($one['totalAmount']) : $tmp[$year]=abs($one['totalAmount']);
         }
 
-        CommonService::getInstance()->log4PHP($return);
-
         if (count($return) >= 3)
         {
             krsort($return);
