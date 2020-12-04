@@ -2003,6 +2003,9 @@ class Invoice
             //首先取得全部的公司名称
             $all=array_unique(control::array_flatten($return));
 
+            CommonService::getInstance()->log4PHP($all);
+            CommonService::getInstance()->log4PHP($return);
+
             //看看每个公司在多少个数组里有
             foreach ($return as $one)
             {
