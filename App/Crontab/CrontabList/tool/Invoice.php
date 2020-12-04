@@ -2,6 +2,7 @@
 
 namespace App\Crontab\CrontabList\tool;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use Carbon\Carbon;
 use wanghanwanghan\someUtils\control;
@@ -1461,6 +1462,8 @@ class Invoice
 
             $return=array_slice($return,0,2);
         }
+
+        CommonService::getInstance()->log4PHP($return);
 
         //整理数组
         foreach ($return as $year => &$one)
