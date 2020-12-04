@@ -1440,7 +1440,7 @@ class Invoice
 
             $year=current($year);
 
-            $name=trim($one['salesTaxName']);
+            $name=trim($one['purchaserName']);
 
             if (empty($name)) continue;
 
@@ -1456,14 +1456,14 @@ class Invoice
             isset($tmp[$year]) ? $tmp[$year]+=abs($one['totalAmount']) : $tmp[$year]=abs($one['totalAmount']);
         }
 
+        CommonService::getInstance()->log4PHP($return);
+
         if (count($return) >= 3)
         {
             krsort($return);
 
             $return=array_slice($return,0,2);
         }
-
-        CommonService::getInstance()->log4PHP($return);
 
         //整理数组
         foreach ($return as $year => &$one)
