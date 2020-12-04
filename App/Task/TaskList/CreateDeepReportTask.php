@@ -264,12 +264,15 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $data['re_fpjx']['qycgqkyc']=$qycgqkyc;
 
         //储存信动指数-发票项
-        //$xdsForFaPiao=$invoiceObj->xdsForFaPiao();
-        //$data['re_fpjx']['xdsForFaPiao']=$xdsForFaPiao;
+        $xdsForFaPiao=$invoiceObj->xdsForFaPiao();
+        $data['re_fpjx']['xdsForFaPiao']=$xdsForFaPiao;
 
         //储存信动指数-上下游项
-        //$xdsForShangxiayou=$invoiceObj->xdsForShangxiayou();
-        //$data['re_fpjx']['xdsForShangxiayou']=$xdsForShangxiayou;
+        $xdsForShangxiayou=$invoiceObj->xdsForShangxiayou();
+        $data['re_fpjx']['xdsForShangxiayou']=$xdsForShangxiayou;
+
+        CommonService::getInstance()->log4PHP($data);
+
 
 //        $this->fillData($tmp, $reportVal);
 //
