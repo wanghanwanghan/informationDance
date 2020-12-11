@@ -961,8 +961,20 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     private function fillData(TemplateProcessor $docObj, $data)
     {
         //处理发票信息
-        CommonService::getInstance()->log4PHP($data);
-
+        //CommonService::getInstance()->log4PHP($data);
+        //主营商品分析
+        $rows = count($data['re_fpxx']['zyspfx']);
+        $docObj->cloneRow('fpxx_zyspfx_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue('fpxx_zyspfx_no#' . ($i + 1), $i + 1);
+            //商品类型
+            $docObj->setValue('fpxx_zyspfx_type#' . ($i + 1), $data['re_fpxx']['zyspfx'][$i]['name']);
+            //销售金额
+            $docObj->setValue('fpxx_zyspfx_money#' . ($i + 1), $data['re_fpxx']['zyspfx'][$i]['jine']);
+            //占比
+            $docObj->setValue('fpxx_zyspfx_zhanbi#' . ($i + 1), $data['re_fpxx']['zyspfx'][$i]['zhanbi']);
+        }
 
 
 
