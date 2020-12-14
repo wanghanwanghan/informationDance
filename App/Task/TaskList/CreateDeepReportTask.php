@@ -983,11 +983,11 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue('fpjx_zycbfx_no#' . ($i + 1), $i + 1);
             //成本类型
-            $docObj->setValue('fpjx_zycbfx_type#' . ($i + 1), $data['re_fpjx']['zyspfx'][0][$i]['name']);
+            $docObj->setValue('fpjx_zycbfx_type#' . ($i + 1), $data['re_fpjx']['zycbfx'][0][$i]['name']);
             //金额
-            $docObj->setValue('fpjx_zycbfx_money#' . ($i + 1), $data['re_fpjx']['zyspfx'][0][$i]['jine']);
+            $docObj->setValue('fpjx_zycbfx_money#' . ($i + 1), $data['re_fpjx']['zycbfx'][0][$i]['jine']);
             //占比
-            $docObj->setValue('fpjx_zycbfx_zhanbi#' . ($i + 1), $data['re_fpjx']['zyspfx'][0][$i]['zhanbi']);
+            $docObj->setValue('fpjx_zycbfx_zhanbi#' . ($i + 1), $data['re_fpjx']['zycbfx'][0][$i]['zhanbi']);
         }
 
 
