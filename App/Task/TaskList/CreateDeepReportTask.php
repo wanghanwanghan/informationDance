@@ -992,8 +992,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         //水费
         $rows = count($data['re_fpjx']['zycbfx'][1]['shuifei']);
-        CommonService::getInstance()->log4PHP($rows);
-        $docObj->cloneRow('fpjx_zycbfx_no', $rows);
+        $docObj->cloneRow('fpjx_shuifei_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
             $docObj->setValue('fpjx_shuifei_no#' . ($i + 1), $i + 1);
