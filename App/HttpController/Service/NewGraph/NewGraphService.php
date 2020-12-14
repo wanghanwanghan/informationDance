@@ -96,6 +96,7 @@ class NewGraphService extends ServiceBase
 
         // Set A title for the plot
         $graph->title->Set('Label guide lines');
+        $graph->SetUserFont1(SIMSUN_TTC);
         $graph->title->SetFont(FF_VERDANA, FS_BOLD, 12);
         $graph->title->SetColor('darkblue');
         $graph->legend->Pos(0.1, 0.2);
@@ -105,7 +106,6 @@ class NewGraphService extends ServiceBase
         $p1->SetCenter(0.5, 0.55);
         $p1->SetSize(0.3);
 
-        $graph->SetUserFont1(SIMSUN_TTC);
         $p1->SetLegends(['胖飞','飞飞','坑飞','坑坑飞','胡坑飞','胡胖飞']);
 
         // Enable and set policy for guide-lines. Make labels line up vertically
