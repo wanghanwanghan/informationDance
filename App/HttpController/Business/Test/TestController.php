@@ -28,13 +28,18 @@ class TestController extends BusinessBase
     function testPic()
     {
         $res = (new NewGraphService())
-            ->setTitle('测试title')
+            ->setTitle(control::randomUserName())
             ->setLegends(['哈','哈哈','哈哈哈','哈哈哈哈','呵','呵呵','呵呵呵','呵呵呵呵'])
-            ->setXLabels(['数量1','数量2','数量3'])
+            ->setXLabels(['数量1','数量2','数量3','数量4','数量5','数量6','数量7','数量8'])
             ->line([
-                [10,20,30],
-                [40,50,60],
-                [70,80,90],
+                [control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3)],
+                [control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3)],
+                [control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3)],
+                [control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3)],
+                [control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3)],
+                [control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3)],
+                [control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3)],
+                [control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3)],
             ]);
 
         $this->writeJson(200,null,$res);
