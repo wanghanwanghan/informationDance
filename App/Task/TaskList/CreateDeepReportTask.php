@@ -1461,6 +1461,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         //年度进项发票情况汇总
         $rows = count($data['re_fpjx']['ndjxfpqkhz']);
+        $rows = 1;
         $docObj->cloneRow('fpjx_ndjxfpqkhz_zq', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //统计年份
