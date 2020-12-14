@@ -30,7 +30,12 @@ class TestController extends BusinessBase
         $res = (new NewGraphService())
             ->setTitle('测试title')
             ->setLegends(['哈','哈哈','哈哈哈','哈哈哈哈','呵','呵呵','呵呵呵','呵呵呵呵'])
-            ->line([10,20,30,40,50,60]);
+            ->setXLabels(['数量1','数量2','数量3'])
+            ->line([
+                [10,20,30],
+                [40,50,60],
+                [70,80,90],
+            ]);
 
         $this->writeJson(200,null,$res);
     }
