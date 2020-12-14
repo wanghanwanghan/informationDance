@@ -961,7 +961,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     private function fillData(TemplateProcessor $docObj, $data)
     {
         //处理发票信息
-        CommonService::getInstance()->log4PHP($data);
+        //CommonService::getInstance()->log4PHP($data);
         //主营商品分析
         $rows = count($data['re_fpxx']['zyspfx']);
         $docObj->cloneRow('fpxx_zyspfx_no', $rows);
@@ -976,6 +976,19 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue('fpxx_zyspfx_zhanbi#' . ($i + 1), $data['re_fpxx']['zyspfx'][$i]['zhanbi']);
         }
 
+        //主营成本分析
+        $rows = count($data['re_fpjx']['zycbfx'][0]);
+        $docObj->cloneRow('fpjx_zycbfx_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue('fpjx_zycbfx_no#' . ($i + 1), $i + 1);
+            //成本类型
+            $docObj->setValue('fpjx_zycbfx_type#' . ($i + 1), $data['re_fpjx']['zyspfx'][0][$i]['name']);
+            //金额
+            $docObj->setValue('fpjx_zycbfx_money#' . ($i + 1), $data['re_fpjx']['zyspfx'][0][$i]['jine']);
+            //占比
+            $docObj->setValue('fpjx_zycbfx_zhanbi#' . ($i + 1), $data['re_fpjx']['zyspfx'][0][$i]['zhanbi']);
+        }
 
 
 
