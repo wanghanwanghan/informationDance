@@ -97,7 +97,7 @@ class NewGraphService extends ServiceBase
         // Set A title for the plot
         $graph->title->Set('Label guide lines');
         $graph->SetUserFont1(SIMSUN_TTC);
-        $graph->title->SetFont(FF_USERFONT1, FS_BOLD, 12);
+        $graph->title->SetFont(FF_USERFONT1, FS_NORMAL, 12);
         $graph->title->SetColor('darkblue');
         $graph->legend->Pos(0.1, 0.2);
         $graph->legend->SetFont(FF_USERFONT1, FS_NORMAL);
