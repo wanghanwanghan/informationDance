@@ -89,7 +89,7 @@ class NewGraphService extends ServiceBase
     //生成一个饼图的地址
     function pie($data = []): string
     {
-        $data = [19, 12, 4, 3, 3, 12, 3, 3, 5, 6, 7, 8, 8, 1, 7, 2, 2, 4, 6, 8, 21, 23, 2, 2, 12];
+        $data = [10,20,30,40,50];
 
         // Create the Pie Graph.
         $graph = new PieGraph($this->width, $this->height);
@@ -104,6 +104,8 @@ class NewGraphService extends ServiceBase
         $p1 = new PiePlot($data);
         $p1->SetCenter(0.5, 0.55);
         $p1->SetSize(0.3);
+
+        $p1->SetLegends(['胖飞','飞飞','坑飞','坑坑飞','胡坑飞','胡胖飞']);
 
         // Enable and set policy for guide-lines. Make labels line up vertically
         // and force guide lines to always beeing used
