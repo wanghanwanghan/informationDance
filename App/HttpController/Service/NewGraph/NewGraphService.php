@@ -3,11 +3,13 @@
 namespace App\HttpController\Service\NewGraph;
 
 use Amenadiel\JpGraph\Graph\PieGraph;
+use Amenadiel\JpGraph\Plot\LinePlot;
 use Amenadiel\JpGraph\Plot\PiePlot;
 use App\HttpController\Service\ServiceBase;
 use Amenadiel\JpGraph\Graph\Graph;
 use Amenadiel\JpGraph\Plot\BarPlot;
 use Amenadiel\JpGraph\Plot\GroupBarPlot;
+use PhpOffice\PhpWord\Style\Line;
 use wanghanwanghan\someUtils\control;
 
 class NewGraphService extends ServiceBase
@@ -144,4 +146,51 @@ class NewGraphService extends ServiceBase
         return $fileName;
     }
 
+    //生成一个折线图的地址
+    function line($data = []): string
+    {
+        $datay1 = [20, 15, 23, 15];
+        $datay2 = [12, 9, 42, 8];
+        $datay3 = [5, 17, 32, 24];
+
+        $graph    = new Graph($this->width, $this->height);
+        $graph->SetMarginColor('white');
+        $graph->SetScale('textlin');
+        $graph->SetFrame(false);
+        $graph->SetMargin(30, 50, 30, 30);
+
+        $graph->title->Set('Filled Y-grid');
+
+        $graph->yaxis->HideZeroLabel();
+        $graph->ygrid->SetFill(true, '#EFEFEF@0.5', '#BBCCFF@0.5');
+        $graph->xgrid->Show();
+
+        $graph->xaxis->SetTickLabels($graph->gDateLocale->GetShortMonth());
+
+        // Create the first line
+        $p1 = new LinePlot($datay1);
+        $p1->SetColor('navy');
+        $p1->SetLegend('Line 1');
+        $graph->Add($p1);
+
+        // Create the second line
+        $p2 = new LinePlot($datay2);
+        $p2->SetColor('red');
+        $p2->SetLegend('Line 2');
+        $graph->Add($p2);
+
+        // Create the third line
+        $p3 = new LinePlot($datay3);
+        $p3->SetColor('orange');
+        $p3->SetLegend('Line 3');
+        $graph->Add($p3);
+
+        $graph->legend->SetShadow('gray@0.4', 5);
+        $graph->legend->SetPos(0.1, 0.1, 'right', 'top');
+
+        $fileName = control::getUuid(12) . '.jpg';
+        $graph->Stroke(REPORT_IMAGE_TEMP_PATH . $fileName);
+
+        return $fileName;
+    }
 }
