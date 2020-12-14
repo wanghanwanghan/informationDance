@@ -8,6 +8,7 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\HeHe\HeHeService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
+use App\HttpController\Service\NewGraph\NewGraphService;
 use App\HttpController\Service\Queue\QueueConf;
 use App\HttpController\Service\Queue\QueueService;
 use EasySwoole\Http\Message\UploadFile;
@@ -24,9 +25,9 @@ class TestController extends BusinessBase
     {
     }
 
-    function test()
+    function testPic()
     {
-        CreateTableService::getInstance()->information_dance_ocr_queue();
+        $this->writeJson(200,null,(new NewGraphService())->pie());
     }
 
 }
