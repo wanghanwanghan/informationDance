@@ -1099,8 +1099,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         for ($i = 0; $i < $rows; $i++) {
             $j = $i;
             foreach ($data['re_fpxx']['qykpqkhz']['qita'] as $key => $val) {
-                if ($j !== 0)
-                {
+                if ($j !== 0) {
                     $j--;
                     continue;
                 }
@@ -1113,7 +1112,42 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             }
         }
 
-
+        //年度销项发票情况汇总
+        $rows = count($data['re_fpxx']['ndxxfpqkhz']);
+        $docObj->cloneRow('fpxx_ndxxfpqkhz_nf', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            $j = $i;
+            foreach ($data['re_fpxx']['ndxxfpqkhz'] as $key => $val) {
+                if ($j !== 0) {
+                    $j--;
+                    continue;
+                }
+                //统计年份
+                $docObj->setValue('fpxx_ndxxfpqkhz_nf#' . ($i + 1), $key);
+                //有效数
+                $docObj->setValue('fpxx_ndxxfpqkhz_nn#' . ($i + 1), $data['re_fpxx']['ndxxfpqkhz'][$key]['normal']['normalNum']);
+                //有效金额
+                $docObj->setValue('fpxx_ndxxfpqkhz_nm#' . ($i + 1), $data['re_fpxx']['ndxxfpqkhz'][$key]['normal']['normalAmount']);
+                //有效税额
+                $docObj->setValue('fpxx_ndxxfpqkhz_nt#' . ($i + 1), $data['re_fpxx']['ndxxfpqkhz'][$key]['normal']['normalTax']);
+                //红冲数
+                $docObj->setValue('fpxx_ndxxfpqkhz_rn#' . ($i + 1), $data['re_fpxx']['ndxxfpqkhz'][$key]['red']['redNum']);
+                //红冲金额
+                $docObj->setValue('fpxx_ndxxfpqkhz_rm#' . ($i + 1), $data['re_fpxx']['ndxxfpqkhz'][$key]['red']['redAmount']);
+                //红冲税额
+                $docObj->setValue('fpxx_ndxxfpqkhz_rt#' . ($i + 1), $data['re_fpxx']['ndxxfpqkhz'][$key]['red']['redTax']);
+                //作废数量
+                $docObj->setValue('fpxx_ndxxfpqkhz_cn#' . ($i + 1), $data['re_fpxx']['ndxxfpqkhz'][$key]['cancel']['cancelNum']);
+                //作废金额
+                $docObj->setValue('fpxx_ndxxfpqkhz_cm#' . ($i + 1), $data['re_fpxx']['ndxxfpqkhz'][$key]['cancel']['cancelAmount']);
+                //作废税额
+                $docObj->setValue('fpxx_ndxxfpqkhz_ct#' . ($i + 1), $data['re_fpxx']['ndxxfpqkhz'][$key]['cancel']['cancelTax']);
+                //有效发票数量占比
+                $docObj->setValue('fpxx_ndxxfpqkhz_nnzb#' . ($i + 1), $data['re_fpxx']['ndxxfpqkhz'][$key]['normal']['numZhanbi']);
+                //有效发票金额占比
+                $docObj->setValue('fpxx_ndxxfpqkhz_nmzb#' . ($i + 1), $data['re_fpxx']['ndxxfpqkhz'][$key]['normal']['AmountZhanbi']);
+            }
+        }
 
 
 
