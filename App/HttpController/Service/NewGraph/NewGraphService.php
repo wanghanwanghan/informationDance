@@ -13,7 +13,7 @@ use wanghanwanghan\someUtils\control;
 
 class NewGraphService extends ServiceBase
 {
-    private $color = ['red','orange','yellow','green','blue','purple','navy','grey','pink','golden'];
+    private $color = ['red','orange','green','blue','purple','navy','grey','pink','golden'];
     private $width = 1200;
     private $height = 600;
     private $title = '';
@@ -120,10 +120,10 @@ class NewGraphService extends ServiceBase
         // Set A title for the plot
         empty($this->title) ?: $graph->title->Set($this->title);
         $graph->SetUserFont1(SIMSUN_TTC);
+        $graph->legend->SetFont(FF_USERFONT1, FS_NORMAL);
         $graph->title->SetFont(FF_USERFONT1, FS_NORMAL, $this->titleSize);
         $graph->title->SetColor('darkblue');
         $graph->legend->Pos(0.1, 0.2);
-        $graph->legend->SetFont(FF_USERFONT1, FS_NORMAL);
 
         // Create pie plot
         $p1 = new PiePlot($data);
@@ -159,6 +159,9 @@ class NewGraphService extends ServiceBase
         $graph->SetScale('textlin');
         $graph->SetFrame(false);
         $graph->SetMargin(30, 50, 30, 30);
+        $graph->SetUserFont1(SIMSUN_TTC);
+        $graph->legend->SetFont(FF_USERFONT1, FS_NORMAL);
+        $graph->title->SetFont(FF_USERFONT1, FS_NORMAL, $this->titleSize);
 
         empty($this->title) ?: $graph->title->Set($this->title);
 
