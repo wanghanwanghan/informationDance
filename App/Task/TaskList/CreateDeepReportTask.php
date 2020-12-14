@@ -1227,6 +1227,47 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             }
         }
 
+        //单张开票金额TOP10记录 销项
+        $rows = count($data['re_fpxx']['dzkpjeTOP10jl_xx']);
+        $docObj->cloneRow('fpxx_dzkpjeTOP10jl_xx_nf', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //开票年度
+            $docObj->setValue('fpxx_dzkpjeTOP10jl_xx_nf#' . ($i + 1), substr($data['re_fpxx']['dzkpjeTOP10jl_xx'][$i]['date'],0,4));
+            //交易对手名称
+            $docObj->setValue('fpxx_dzkpjeTOP10jl_xx_mc#' . ($i + 1), $data['re_fpxx']['dzkpjeTOP10jl_xx'][$i]['purchaserName']);
+            //交易对手税号
+            $docObj->setValue('fpxx_dzkpjeTOP10jl_xx_taxNo#' . ($i + 1), $data['re_fpxx']['dzkpjeTOP10jl_xx'][$i]['purchaserTaxNo']);
+            //开票金额
+            $docObj->setValue('fpxx_dzkpjeTOP10jl_xx_money#' . ($i + 1), $data['re_fpxx']['dzkpjeTOP10jl_xx'][$i]['totalAmount']);
+            //开票税额
+            $docObj->setValue('fpxx_dzkpjeTOP10jl_xx_tax#' . ($i + 1), $data['re_fpxx']['dzkpjeTOP10jl_xx'][$i]['totalTax']);
+            //总金额占比
+            $docObj->setValue('fpxx_dzkpjeTOP10jl_xx_zb#' . ($i + 1), $data['re_fpxx']['dzkpjeTOP10jl_xx'][$i]['zhanbi']);
+        }
+
+        //累计开票金额TOP10企业汇总 销项
+        $rows = count($data['re_fpxx']['ljkpjeTOP10qyhz_xx']);
+        $docObj->cloneRow('fpxx_ljkpjeTOP10qyhz_xx_nf', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            $temp = array_values($data['re_fpxx']['ljkpjeTOP10qyhz_xx']);
+            //开票年度
+            $docObj->setValue('fpxx_ljkpjeTOP10qyhz_xx_nf#' . ($i + 1), $temp[$i]['date']);
+            //交易对手名称
+            $docObj->setValue('fpxx_ljkpjeTOP10qyhz_xx_mc#' . ($i + 1), $temp[$i]['name']);
+            //交易对手税号
+            $docObj->setValue('fpxx_ljkpjeTOP10qyhz_xx_taxNo#' . ($i + 1), $temp[$i]['purchaserTaxNo']);
+            //开票金额
+            $docObj->setValue('fpxx_ljkpjeTOP10qyhz_xx_money#' . ($i + 1), $temp[$i]['total']);
+            //开票数
+            $docObj->setValue('fpxx_ljkpjeTOP10qyhz_xx_num#' . ($i + 1), $temp[$i]['num']);
+            //总金额占比
+            $docObj->setValue('fpxx_ljkpjeTOP10qyhz_xx_zb1#' . ($i + 1), $temp[$i]['totalZhanbi']);
+            //总金额占比
+            $docObj->setValue('fpxx_ljkpjeTOP10qyhz_xx_zb2#' . ($i + 1), $temp[$i]['numZhanbi']);
+        }
+
+
+
 
 
 
