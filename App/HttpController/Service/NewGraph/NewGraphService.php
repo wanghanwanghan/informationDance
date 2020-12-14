@@ -13,7 +13,7 @@ use wanghanwanghan\someUtils\control;
 
 class NewGraphService extends ServiceBase
 {
-    private $color = ['red','orange','green','blue','purple','navy','grey','pink','golden'];
+    private $color = ['red','orange','green','blue','purple','navy','pink','golden'];
     private $width = 1200;
     private $height = 600;
     private $title = '';
