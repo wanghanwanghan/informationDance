@@ -158,7 +158,7 @@ class NewGraphService extends ServiceBase
         $graph->SetMarginColor('white');
         $graph->SetScale('textlin');
         $graph->SetFrame(false);
-        $graph->SetMargin(100, 50, 0, 0);
+        $graph->SetMargin(60, 50, 0, 0);
         $graph->SetUserFont1(SIMSUN_TTC);
         $graph->legend->SetFont(FF_USERFONT1, FS_NORMAL);
         $graph->title->SetFont(FF_USERFONT1, FS_NORMAL, $this->titleSize);
