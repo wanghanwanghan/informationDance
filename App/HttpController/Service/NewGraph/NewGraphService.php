@@ -162,6 +162,7 @@ class NewGraphService extends ServiceBase
         $graph->SetUserFont1(SIMSUN_TTC);
         $graph->legend->SetFont(FF_USERFONT1, FS_NORMAL);
         $graph->title->SetFont(FF_USERFONT1, FS_NORMAL, $this->titleSize);
+        $graph->xaxis->SetFont(FF_USERFONT1, FS_NORMAL);
 
         empty($this->title) ?: $graph->title->Set($this->title);
 
