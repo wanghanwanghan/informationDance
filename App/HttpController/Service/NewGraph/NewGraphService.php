@@ -14,7 +14,11 @@ class NewGraphService extends ServiceBase
 {
     private $width = 1200;
     private $height = 600;
+    private $title = '';
     private $titleSize = 14;
+    private $legends = [];
+
+
 
     function setWidth(int $width): NewGraphService
     {
@@ -28,11 +32,25 @@ class NewGraphService extends ServiceBase
         return $this;
     }
 
+    function setTitle(string $title): NewGraphService
+    {
+        $this->title = $title;
+        return $this;
+    }
+
     function setTitleSize(int $size): NewGraphService
     {
         $this->titleSize = $size;
         return $this;
     }
+
+    function setLegends(array $legends = []): NewGraphService
+    {
+        $this->legends = $legends;
+        return $this;
+    }
+
+
 
     //生成一个柱状图的地址
     function bar($data = [], $labels = [], $extension = []): string
@@ -89,15 +107,13 @@ class NewGraphService extends ServiceBase
     //生成一个饼图的地址
     function pie($data = []): string
     {
-        $data = [10,20,30,40,50];
-
         // Create the Pie Graph.
         $graph = new PieGraph($this->width, $this->height);
 
         // Set A title for the plot
-        $graph->title->Set('Label guide lines');
+        empty($this->title) ?: $graph->title->Set($this->title);
         $graph->SetUserFont1(SIMSUN_TTC);
-        $graph->title->SetFont(FF_USERFONT1, FS_NORMAL, 12);
+        $graph->title->SetFont(FF_USERFONT1, FS_NORMAL, $this->titleSize);
         $graph->title->SetColor('darkblue');
         $graph->legend->Pos(0.1, 0.2);
         $graph->legend->SetFont(FF_USERFONT1, FS_NORMAL);
@@ -107,7 +123,7 @@ class NewGraphService extends ServiceBase
         $p1->SetCenter(0.5, 0.55);
         $p1->SetSize(0.3);
 
-        $p1->SetLegends(['胖飞','飞飞','坑飞','坑坑飞','胡坑飞','胡胖飞']);
+        empty($this->legends) ?: $p1->SetLegends($this->legends);
 
         // Enable and set policy for guide-lines. Make labels line up vertically
         // and force guide lines to always beeing used
