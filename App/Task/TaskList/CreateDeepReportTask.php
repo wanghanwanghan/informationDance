@@ -1149,9 +1149,83 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             }
         }
 
+        //月度销项正常发票分析
+        $rows = count($data['re_fpxx']['ydxxfpfx']);
+        $docObj->cloneRow('fpxx_ydxxfpfx_nf', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            $j = $i;
+            foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val) {
+                if ($j !== 0) {
+                    $j--;
+                    continue;
+                }
+                $docObj->setValue('fpxx_ydxxfpfx_nf#' . ($i + 1), $key);
+                $docObj->setValue('fpxx_ydxxfpfx_n1#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['normal']['1']);
+                $docObj->setValue('fpxx_ydxxfpfx_n2#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['normal']['2']);
+                $docObj->setValue('fpxx_ydxxfpfx_n3#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['normal']['3']);
+                $docObj->setValue('fpxx_ydxxfpfx_n4#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['normal']['4']);
+                $docObj->setValue('fpxx_ydxxfpfx_n5#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['normal']['5']);
+                $docObj->setValue('fpxx_ydxxfpfx_n6#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['normal']['6']);
+                $docObj->setValue('fpxx_ydxxfpfx_n7#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['normal']['7']);
+                $docObj->setValue('fpxx_ydxxfpfx_n8#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['normal']['8']);
+                $docObj->setValue('fpxx_ydxxfpfx_n9#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['normal']['9']);
+                $docObj->setValue('fpxx_ydxxfpfx_n10#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['normal']['10']);
+                $docObj->setValue('fpxx_ydxxfpfx_n11#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['normal']['11']);
+                $docObj->setValue('fpxx_ydxxfpfx_n12#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['normal']['12']);
+            }
+        }
 
+        //月度销项红充发票分析
+        $rows = count($data['re_fpxx']['ydxxfpfx']);
+        $docObj->cloneRow('fpxx_ydxxfpfx_rf', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            $j = $i;
+            foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val) {
+                if ($j !== 0) {
+                    $j--;
+                    continue;
+                }
+                $docObj->setValue('fpxx_ydxxfpfx_rf#' . ($i + 1), $key);
+                $docObj->setValue('fpxx_ydxxfpfx_r1#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['red']['1']);
+                $docObj->setValue('fpxx_ydxxfpfx_r2#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['red']['2']);
+                $docObj->setValue('fpxx_ydxxfpfx_r3#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['red']['3']);
+                $docObj->setValue('fpxx_ydxxfpfx_r4#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['red']['4']);
+                $docObj->setValue('fpxx_ydxxfpfx_r5#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['red']['5']);
+                $docObj->setValue('fpxx_ydxxfpfx_r6#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['red']['6']);
+                $docObj->setValue('fpxx_ydxxfpfx_r7#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['red']['7']);
+                $docObj->setValue('fpxx_ydxxfpfx_r8#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['red']['8']);
+                $docObj->setValue('fpxx_ydxxfpfx_r9#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['red']['9']);
+                $docObj->setValue('fpxx_ydxxfpfx_r10#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['red']['10']);
+                $docObj->setValue('fpxx_ydxxfpfx_r11#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['red']['11']);
+                $docObj->setValue('fpxx_ydxxfpfx_r12#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['red']['12']);
+            }
+        }
 
-
+        //月度销项作废发票分析
+        $rows = count($data['re_fpxx']['ydxxfpfx']);
+        $docObj->cloneRow('fpxx_ydxxfpfx_cf', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            $j = $i;
+            foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val) {
+                if ($j !== 0) {
+                    $j--;
+                    continue;
+                }
+                $docObj->setValue('fpxx_ydxxfpfx_cf#' . ($i + 1), $key);
+                $docObj->setValue('fpxx_ydxxfpfx_c1#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['cancel']['1']);
+                $docObj->setValue('fpxx_ydxxfpfx_c2#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['cancel']['2']);
+                $docObj->setValue('fpxx_ydxxfpfx_c3#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['cancel']['3']);
+                $docObj->setValue('fpxx_ydxxfpfx_c4#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['cancel']['4']);
+                $docObj->setValue('fpxx_ydxxfpfx_c5#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['cancel']['5']);
+                $docObj->setValue('fpxx_ydxxfpfx_c6#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['cancel']['6']);
+                $docObj->setValue('fpxx_ydxxfpfx_c7#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['cancel']['7']);
+                $docObj->setValue('fpxx_ydxxfpfx_c8#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['cancel']['8']);
+                $docObj->setValue('fpxx_ydxxfpfx_c9#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['cancel']['9']);
+                $docObj->setValue('fpxx_ydxxfpfx_c10#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['cancel']['10']);
+                $docObj->setValue('fpxx_ydxxfpfx_c11#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['cancel']['11']);
+                $docObj->setValue('fpxx_ydxxfpfx_c12#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['cancel']['12']);
+            }
+        }
 
 
 
