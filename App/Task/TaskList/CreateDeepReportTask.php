@@ -1077,6 +1077,43 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue('fpjx_wuye_ent#' . ($i + 1), $data['re_fpjx']['zycbfx'][1]['wuye'][$i]['gs']);
         }
 
+        //企业开票情况汇总
+        $rows = count($data['re_fpxx']['qykpqkhz']['zhouqi']);
+        $docObj->cloneRow('fpxx_qykpqkhz_zq', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //统计周期
+            $docObj->setValue('fpxx_qykpqkhz_zq#' . ($i + 1), $data['re_fpxx']['qykpqkhz']['zhouqi']['min'].' - '.$data['re_fpxx']['qykpqkhz']['zhouqi']['max']);
+            //销项有效数
+            $docObj->setValue('fpxx_qykpqkhz_xxs#' . ($i + 1), $data['re_fpxx']['qykpqkhz']['zhouqi']['xxNum']);
+            //销项有效金额
+            $docObj->setValue('fpxx_qykpqkhz_xxm#' . ($i + 1), $data['re_fpxx']['qykpqkhz']['zhouqi']['xxJine']);
+            //进项有效数
+            $docObj->setValue('fpxx_qykpqkhz_jxs#' . ($i + 1), $data['re_fpxx']['qykpqkhz']['zhouqi']['jxNum']);
+            //进项有效金额
+            $docObj->setValue('fpxx_qykpqkhz_jxm#' . ($i + 1), $data['re_fpxx']['qykpqkhz']['zhouqi']['jxJine']);
+        }
+
+        //企业开票情况汇总 其他
+        $rows = count($data['re_fpxx']['qykpqkhz']['qita']);
+        $docObj->cloneRow('fpxx_qykpqkhz_qt_nf', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            $j = $i;
+            foreach ($data['re_fpxx']['qykpqkhz']['qita'] as $key => $val) {
+                if ($j !== 0)
+                {
+                    $j--;
+                    continue;
+                }
+                //统计年份
+                $docObj->setValue('fpxx_qykpqkhz_qt_nf#' . ($i + 1), $key);
+                //销项有效数
+                $docObj->setValue('fpxx_qykpqkhz_qt_xxs#' . ($i + 1), $data['re_fpxx']['qykpqkhz']['qita'][$key]['xxNum']);
+                //销项有效金额
+                $docObj->setValue('fpxx_qykpqkhz_qt_xxm#' . ($i + 1), $data['re_fpxx']['qykpqkhz']['qita'][$key]['xxJine']);
+            }
+        }
+
+
 
 
 
