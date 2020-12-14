@@ -324,6 +324,189 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
     }
 
+    //下游稳定性
+    private function xywdx($data)
+    {
+        $siling=$data['下游司龄'];
+        $hezuo=$data['下游合作年限'];
+
+        //计算A
+        $type5=$siling['type5'];
+        $total=array_sum($siling);
+        if ($total == 0)
+        {
+            $A=0;
+        }else
+        {
+            $A=sprintf('%.1f',$type5/$total);
+
+            if ($A >= 0.6)
+            {
+                $A=1;
+            }elseif ($A >= 0.4)
+            {
+                $A=0.9;
+            }else
+            {
+                $A=0.8;
+            }
+        }
+
+        //计算B
+        if (isset($hezuo['type3']))
+        {
+            $type3=$hezuo['type3'];
+            $total=array_sum($hezuo);
+            if ($total == 0)
+            {
+                $B=0;
+            }else
+            {
+                $B=sprintf('%.1f',$type3/$total);
+
+                if ($B >= 0.6)
+                {
+                    $B=1;
+                }elseif ($B >= 0.4)
+                {
+                    $B=0.9;
+                }else
+                {
+                    $B=0.8;
+                }
+            }
+        }else
+        {
+            $B=0;
+        }
+
+        return [$A,$B];
+    }
+
+    //下游集中度
+    private function xyjzd($data)
+    {
+        $dyfb=$data['下游地域分布'];
+        $xsqs=$data['下游销售前十'];
+
+        //计算A
+        if (empty($dyfb))
+        {
+            $A=0;
+        }else
+        {
+            $dyfb=current($dyfb);
+
+            //找出最大的数
+            $max=max($dyfb);
+
+            $total=array_sum($dyfb);
+
+            $A=sprintf('%.1f',$max/$total);
+
+            if ($A >= 0.6)
+            {
+                $A=1;
+            }elseif ($A >= 0.4)
+            {
+                $A=0.9;
+            }else
+            {
+                $A=0.8;
+            }
+        }
+
+        //计算B
+        if (empty($xsqs))
+        {
+            $B=0;
+        }else
+        {
+            $xsqs=current($xsqs);
+
+            $B=0;
+            foreach ($xsqs as $key => $one)
+            {
+                $B+=$one;
+            }
+
+            if ($B >= 60)
+            {
+                $B=1;
+            }elseif ($B >= 40)
+            {
+                $B=0.9;
+            }else
+            {
+                $B=0.8;
+            }
+        }
+
+        return [$A,$B];
+    }
+
+    //上游集中度
+    private function syjzd($data)
+    {
+        $dyfb=$data['上游地域分布'];
+        $xsqs=$data['上游销售前十'];
+
+        //计算A
+        if (empty($dyfb))
+        {
+            $A=0;
+        }else
+        {
+            $dyfb=current($dyfb);
+
+            //找出最大的数
+            $max=max($dyfb);
+
+            $total=array_sum($dyfb);
+
+            $A=sprintf('%.1f',$max/$total);
+
+            if ($A >= 0.6)
+            {
+                $A=1;
+            }elseif ($A >= 0.4)
+            {
+                $A=0.9;
+            }else
+            {
+                $A=0.8;
+            }
+        }
+
+        //计算B
+        if (empty($xsqs))
+        {
+            $B=0;
+        }else
+        {
+            $xsqs=current($xsqs);
+
+            $B=0;
+            foreach ($xsqs as $key => $one)
+            {
+                $B+=$one;
+            }
+
+            if ($B >= 60)
+            {
+                $B=1;
+            }elseif ($B >= 40)
+            {
+                $B=0.9;
+            }else
+            {
+                $B=0.8;
+            }
+        }
+
+        return [$A,$B];
+    }
+
     //分数旁的一句话或几句话
     private function fz_and_fx_detail(TemplateProcessor $docObj, $data)
     {
@@ -1266,13 +1449,97 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue('fpxx_ljkpjeTOP10qyhz_xx_zb2#' . ($i + 1), $temp[$i]['numZhanbi']);
         }
 
+        //下游企业稳定性评估  稳定性指数
+        $xywdx = $this->xywdx($data['re_fpjx']['xdsForShangxiayou']);
+        $xywdx = 0.35 * $xywdx[0] + 0.65 * $xywdx[1] + 0.2 > 1 ? 1 : 0.35 * $xywdx[0] + 0.65 * $xywdx[1] + 0.2;
+        $docObj->setValue('xywdx',sprintf('%.1f',$xywdx));
 
+        //下游集中度情况评估  集中度指数
+        $xyjzd = $this->xyjzd($data['re_fpjx']['xdsForShangxiayou']);
+        $xyjzd = 0.35 * $xyjzd[0] + 0.65 * $xyjzd[1] + 0.2 > 1 ? 1 : 0.35 * $xyjzd[0] + 0.65 * $xyjzd[1] + 0.2;
+        $docObj->setValue('xyjzd',sprintf('%.1f',$xyjzd));
 
+        //年度进项发票情况汇总
+        $rows = count($data['re_fpjx']['ndjxfpqkhz']);
+        $docObj->cloneRow('fpjx_ndjxfpqkhz_zq', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //统计年份
+            $docObj->setValue('fpjx_ndjxfpqkhz_zq#' . ($i + 1), $data['re_fpjx']['ndjxfpqkhz']['min'].' - '.$data['re_fpjx']['ndjxfpqkhz']['max']);
+            //销项有效数
+            $docObj->setValue('fpjx_ndjxfpqkhz_num#' . ($i + 1), $data['re_fpjx']['ndjxfpqkhz']['normalNum']);
+            //销项有效金额
+            $docObj->setValue('fpjx_ndjxfpqkhz_money#' . ($i + 1), $data['re_fpjx']['ndjxfpqkhz']['normal']);
+        }
 
+        //月度进项发票分析
+        $rows = count($data['re_fpjx']['ydjxfpfx']);
+        $docObj->cloneRow('fpjx_ydjxfpfx_zq', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            $j = $i;
+            foreach ($data['re_fpjx']['ydjxfpfx'] as $key => $val) {
+                if ($j !== 0) {
+                    $j--;
+                    continue;
+                }
+                $docObj->setValue('fpjx_ydjxfpfx_zq#' . ($i + 1), $key);
+                $docObj->setValue('fpjx_ydjxfpfx_n1#' . ($i + 1), $data['re_fpjx']['ydjxfpfx'][$key]['1']);
+                $docObj->setValue('fpjx_ydjxfpfx_n2#' . ($i + 1), $data['re_fpjx']['ydjxfpfx'][$key]['2']);
+                $docObj->setValue('fpjx_ydjxfpfx_n3#' . ($i + 1), $data['re_fpjx']['ydjxfpfx'][$key]['3']);
+                $docObj->setValue('fpjx_ydjxfpfx_n4#' . ($i + 1), $data['re_fpjx']['ydjxfpfx'][$key]['4']);
+                $docObj->setValue('fpjx_ydjxfpfx_n5#' . ($i + 1), $data['re_fpjx']['ydjxfpfx'][$key]['5']);
+                $docObj->setValue('fpjx_ydjxfpfx_n6#' . ($i + 1), $data['re_fpjx']['ydjxfpfx'][$key]['6']);
+                $docObj->setValue('fpjx_ydjxfpfx_n7#' . ($i + 1), $data['re_fpjx']['ydjxfpfx'][$key]['7']);
+                $docObj->setValue('fpjx_ydjxfpfx_n8#' . ($i + 1), $data['re_fpjx']['ydjxfpfx'][$key]['8']);
+                $docObj->setValue('fpjx_ydjxfpfx_n9#' . ($i + 1), $data['re_fpjx']['ydjxfpfx'][$key]['9']);
+                $docObj->setValue('fpjx_ydjxfpfx_n10#' . ($i + 1), $data['re_fpjx']['ydjxfpfx'][$key]['10']);
+                $docObj->setValue('fpjx_ydjxfpfx_n11#' . ($i + 1), $data['re_fpjx']['ydjxfpfx'][$key]['11']);
+                $docObj->setValue('fpjx_ydjxfpfx_n12#' . ($i + 1), $data['re_fpjx']['ydjxfpfx'][$key]['12']);
+            }
+        }
 
+        //单张开票金额TOP10企业汇总 进项
+        $rows = count($data['re_fpjx']['dzkpjeTOP10jl_jx']);
+        $docObj->cloneRow('fpjx_dzkpjeTOP10jl_jx_nf', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //开票年度
+            $docObj->setValue('fpjx_dzkpjeTOP10jl_jx_nf#' . ($i + 1), $data['re_fpjx']['dzkpjeTOP10jl_jx'][$i]['date']);
+            //交易对手名称
+            $docObj->setValue('fpjx_dzkpjeTOP10jl_jx_mc#' . ($i + 1), $data['re_fpjx']['dzkpjeTOP10jl_jx'][$i]['salesTaxName']);
+            //交易对手税号
+            $docObj->setValue('fpjx_dzkpjeTOP10jl_jx_taxNo#' . ($i + 1), $data['re_fpjx']['dzkpjeTOP10jl_jx'][$i]['salesTaxNo']);
+            //开票金额
+            $docObj->setValue('fpjx_dzkpjeTOP10jl_jx_money#' . ($i + 1), $data['re_fpjx']['dzkpjeTOP10jl_jx'][$i]['totalAmount']);
+            //开票税额
+            $docObj->setValue('fpjx_dzkpjeTOP10jl_jx_tax#' . ($i + 1), $data['re_fpjx']['dzkpjeTOP10jl_jx'][$i]['totalTax']);
+            //总金额占比
+            $docObj->setValue('fpjx_dzkpjeTOP10jl_jx_zb1#' . ($i + 1), $data['re_fpjx']['dzkpjeTOP10jl_jx'][$i]['zhanbi']);
+        }
 
+        //累计开票金额TOP10企业汇总 进项
+        $rows = count($data['re_fpjx']['ljkpjeTOP10qyhz_jx']);
+        $docObj->cloneRow('fpjx_ljkpjeTOP10qyhz_jx_nf', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            $temp = array_values($data['re_fpjx']['ljkpjeTOP10qyhz_jx']);
+            //开票年度
+            $docObj->setValue('fpjx_ljkpjeTOP10qyhz_jx_nf#' . ($i + 1), $temp[$i]['date']);
+            //交易对手名称
+            $docObj->setValue('fpjx_ljkpjeTOP10qyhz_jx_mc#' . ($i + 1), $temp[$i]['name']);
+            //交易对手税号
+            $docObj->setValue('fpjx_ljkpjeTOP10qyhz_jx_taxNo#' . ($i + 1), $temp[$i]['salesTaxNo']);
+            //开票金额
+            $docObj->setValue('fpjx_ljkpjeTOP10qyhz_jx_money#' . ($i + 1), $temp[$i]['total']);
+            //开票数
+            $docObj->setValue('fpjx_ljkpjeTOP10qyhz_jx_num#' . ($i + 1), $temp[$i]['num']);
+            //总金额占比
+            $docObj->setValue('fpjx_ljkpjeTOP10qyhz_jx_zb1#' . ($i + 1), $temp[$i]['totalZhanbi']);
+            //总金额占比
+            $docObj->setValue('fpjx_ljkpjeTOP10qyhz_jx_zb2#' . ($i + 1), $temp[$i]['numZhanbi']);
+        }
 
-
+        //上游集中度情况评估  集中度指数
+        $syjzd = $this->syjzd($data['re_fpjx']['xdsForShangxiayou']);
+        $syjzd = 0.35 * $syjzd[0] + 0.65 * $syjzd[1] + 0.2 > 1 ? 1 : 0.35 * $syjzd[0] + 0.65 * $syjzd[1] + 0.2;
+        $docObj->setValue('syjzd',sprintf('%.1f',$syjzd));
 
 
 
