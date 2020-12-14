@@ -155,6 +155,9 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'wh_logo.png', 'width' => 200, 'height' => 40]);
                 $tmp->setValue('selectMore', '如需更多信息登录移动端小程序 炜衡智调 查看');
                 break;
+            default:
+                $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'xd_logo.png', 'width' => 200, 'height' => 40]);
+                $tmp->setValue('selectMore', '如需更多信息登录移动端小程序 信动智调 查看');
         }
 
         $tmp->setValue('createEnt', $userInfo->company);
@@ -1019,17 +1022,17 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
 
         //燃气
-        $rows = count($data['re_fpjx']['zycbfx'][1]['ranqi']);
+        $rows = count($data['re_fpjx']['zycbfx'][1]['ranqifei']);
         $docObj->cloneRow('fpjx_ranqi_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
             $docObj->setValue('fpjx_ranqi_no#' . ($i + 1), $i + 1);
             //开票日期
-            $docObj->setValue('fpjx_ranqi_date#' . ($i + 1), $data['re_fpjx']['zycbfx'][1]['ranqi'][$i]['riqi']);
+            $docObj->setValue('fpjx_ranqi_date#' . ($i + 1), $data['re_fpjx']['zycbfx'][1]['ranqifei'][$i]['riqi']);
             //金额
-            $docObj->setValue('fpjx_ranqi_money#' . ($i + 1), $data['re_fpjx']['zycbfx'][1]['ranqi'][$i]['jine']);
+            $docObj->setValue('fpjx_ranqi_money#' . ($i + 1), $data['re_fpjx']['zycbfx'][1]['ranqifei'][$i]['jine']);
             //服务商
-            $docObj->setValue('fpjx_ranqi_ent#' . ($i + 1), $data['re_fpjx']['zycbfx'][1]['ranqi'][$i]['gs']);
+            $docObj->setValue('fpjx_ranqi_ent#' . ($i + 1), $data['re_fpjx']['zycbfx'][1]['ranqifei'][$i]['gs']);
         }
 
         //热力
@@ -1047,17 +1050,17 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
 
         //运输与仓储
-        $rows = count($data['re_fpjx']['zycbfx'][1]['ysycc']);
+        $rows = count($data['re_fpjx']['zycbfx'][1]['yunshu']);
         $docObj->cloneRow('fpjx_ysycc_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
             $docObj->setValue('fpjx_ysycc_no#' . ($i + 1), $i + 1);
             //开票日期
-            $docObj->setValue('fpjx_ysycc_date#' . ($i + 1), $data['re_fpjx']['zycbfx'][1]['ysycc'][$i]['riqi']);
+            $docObj->setValue('fpjx_ysycc_date#' . ($i + 1), $data['re_fpjx']['zycbfx'][1]['yunshu'][$i]['riqi']);
             //金额
-            $docObj->setValue('fpjx_ysycc_money#' . ($i + 1), $data['re_fpjx']['zycbfx'][1]['ysycc'][$i]['jine']);
+            $docObj->setValue('fpjx_ysycc_money#' . ($i + 1), $data['re_fpjx']['zycbfx'][1]['yunshu'][$i]['jine']);
             //服务商
-            $docObj->setValue('fpjx_ysycc_ent#' . ($i + 1), $data['re_fpjx']['zycbfx'][1]['ysycc'][$i]['gs']);
+            $docObj->setValue('fpjx_ysycc_ent#' . ($i + 1), $data['re_fpjx']['zycbfx'][1]['yunshu'][$i]['gs']);
         }
 
         //物业
