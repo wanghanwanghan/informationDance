@@ -990,6 +990,19 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue('fpjx_zycbfx_zhanbi#' . ($i + 1), $data['re_fpjx']['zycbfx'][0][$i]['zhanbi']);
         }
 
+        //水费
+        $rows = count($data['re_fpjx']['zycbfx'][1]['shuifei']);
+        $docObj->cloneRow('fpjx_zycbfx_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue('fpjx_shuifei_no#' . ($i + 1), $i + 1);
+            //开票日期
+            $docObj->setValue('fpjx_shuifei_date#' . ($i + 1), $data['re_fpjx']['zycbfx'][1]['shuifei'][$i]['riqi']);
+            //金额
+            $docObj->setValue('fpjx_shuifei_money#' . ($i + 1), $data['re_fpjx']['zycbfx'][1]['shuifei'][$i]['jine']);
+            //服务商
+            $docObj->setValue('fpjx_shuifei_ent#' . ($i + 1), $data['re_fpjx']['zycbfx'][1]['shuifei'][$i]['gs']);
+        }
 
 
 
