@@ -30,10 +30,8 @@ class TestController extends BusinessBase
         $res = (new NewGraphService())
             ->setTitle(control::randomUserName())
             ->setLegends(['哈','哈哈','哈哈哈','哈哈哈哈','呵','呵呵','呵呵呵','呵呵呵呵'])
-            ->setXLabels(['数量1','数量2','数量3','数量4','数量5','数量6','数量7','数量8'])
+            ->setXLabels(['数量1','数量2','数量3','数量4','数量5','数量6'])
             ->line([
-                [control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3)],
-                [control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3)],
                 [control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3)],
                 [control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3)],
                 [control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3),control::randNum(3)],
