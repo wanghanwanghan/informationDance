@@ -43,6 +43,11 @@ class CreateDeepReport extends AbstractCronTask
 
         $check = $this->crontabBase->withoutOverlapping(self::getTaskName());
 
+        //91110108MA01KPGK0L 北京每日信动科技有限公司
+        //91110105690802464Y 北控水务（中国）投资有限公司
+        //91450800200451746R 广西贵港北控水务有限公司
+        //91510700720874769J 绵阳中科成污水净化有限公司
+
         if ($check)
         {
             foreach ($info as $one)
