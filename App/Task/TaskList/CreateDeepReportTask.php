@@ -1781,7 +1781,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $barData = $labels = $legends = [];
         foreach ($data['re_fpjx']['ydjxfpfx'] as $key => $val)
         {
-            $labels = array_keys($val);
+            $labels = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
             $barData[] = array_values($val);
             $legends[] = $key;
         }
@@ -1790,6 +1790,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             ->setTitle('月度进项发票分析')
             ->setXLabels($labels)
             ->setLegends($legends)
+            ->setMargin([60,0,0,0])
             ->bar($barData);
 
         $docObj->setImageValue('fpjx_ydjxfpfx_img', [
@@ -1797,17 +1798,6 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             'width' => 410,
             'height' => 300
         ]);
-
-
-
-
-
-
-
-
-
-
-
 
         //单张开票金额TOP10企业汇总 进项
         $rows = count($data['re_fpjx']['dzkpjeTOP10jl_jx']);
@@ -1826,6 +1816,28 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             //总金额占比
             $docObj->setValue('fpjx_dzkpjeTOP10jl_jx_zb1#' . ($i + 1), $data['re_fpjx']['dzkpjeTOP10jl_jx'][$i]['zhanbi']);
         }
+
+        $pieData = $labels = [];
+        $other = 100;
+        foreach ($data['re_fpjx']['dzkpjeTOP10jl_jx'] as $one)
+        {
+            $other -= $one['zhanbi'] - 0;
+            $pieData[] = $one['zhanbi'] - 0;
+            $labels[] = "{$one['salesTaxName']} (%.1f%%)";
+        }
+
+        if ($other > 0) {
+            array_push($pieData,$other);
+            array_push($labels,"其他 (%.1f%%)");
+        }
+
+        $imgPath = (new NewGraphService())->setTitle('单张开票金额TOP10企业汇总')->setLabels($labels)->pie($pieData);
+
+        $docObj->setImageValue('fpjx_dzkpjeTOP10jl_jx_img', [
+            'path' => $imgPath,
+            'width' => 410,
+            'height' => 300
+        ]);
 
         //累计开票金额TOP10企业汇总 进项
         $rows = count($data['re_fpjx']['ljkpjeTOP10qyhz_jx']);
@@ -1847,6 +1859,28 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             //总金额占比
             $docObj->setValue('fpjx_ljkpjeTOP10qyhz_jx_zb2#' . ($i + 1), $temp[$i]['numZhanbi']);
         }
+
+        $pieData = $labels = [];
+        $other = 100;
+        foreach ($data['re_fpjx']['ljkpjeTOP10qyhz_jx'] as $one)
+        {
+            $other -= $one['totalZhanbi'] - 0;
+            $pieData[] = $one['totalZhanbi'] - 0;
+            $labels[] = "{$one['name']} (%.1f%%)";
+        }
+
+        if ($other > 0) {
+            array_push($pieData,$other);
+            array_push($labels,"其他 (%.1f%%)");
+        }
+
+        $imgPath = (new NewGraphService())->setTitle('累计开票金额TOP10企业汇总')->setLabels($labels)->pie($pieData);
+
+        $docObj->setImageValue('fpjx_ljkpjeTOP10qyhz_jx_img', [
+            'path' => $imgPath,
+            'width' => 410,
+            'height' => 300
+        ]);
 
         //上游集中度情况评估  集中度指数
         $syjzd = $this->syjzd($data['re_fpjx']['xdsForShangxiayou']);
