@@ -1148,7 +1148,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     private function fillData(TemplateProcessor $docObj, $data)
     {
         //处理发票信息
-        CommonService::getInstance()->log4PHP($data);
+        //CommonService::getInstance()->log4PHP($data);
         //主营商品分析
         $rows = count($data['re_fpxx']['zyspfx']);
         $docObj->cloneRow('fpxx_zyspfx_no', $rows);
@@ -1593,17 +1593,23 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $barData = [array_values($data['re_fpxx']['xyqyslfb'])];
         $labels = ['1年以下','2-3年','4-5年','6-9年','10年以上'];
 
-        $imgPath = (new NewGraphService())
-            ->setTitle('下游企业司龄分布（个）')
-            ->setXLabels($labels)
-            ->setMargin([60,50,0,40])
-            ->bar($barData);
+        if (!empty($barData))
+        {
+            $imgPath = (new NewGraphService())
+                ->setTitle('下游企业司龄分布（个）')
+                ->setXLabels($labels)
+                ->setMargin([60,50,0,40])
+                ->bar($barData);
 
-        $docObj->setImageValue('fpxx_xyqyslfb_img', [
-            'path' => $imgPath,
-            'width' => 410,
-            'height' => 300
-        ]);
+            $docObj->setImageValue('fpxx_xyqyslfb_img', [
+                'path' => $imgPath,
+                'width' => 410,
+                'height' => 300
+            ]);
+        }else
+        {
+            $docObj->setValue('fpxx_xyqyslfb_img','');
+        }
 
         //下游企业合作年限分布（个）
         $barData = $labels = [];
@@ -1660,19 +1666,25 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $legends[] = $key;
         }
 
-        $imgPath = (new NewGraphService())
-            ->setTitle('下游企业地域分布（个）')
-            ->setXLabels($labels)
-            ->setXLabelAngle(15)
-            ->setLegends($legends)
-            ->setMargin([60,50,0,40])
-            ->bar($barData);
+        if (!empty($data['re_fpxx']['xyqydyfb']))
+        {
+            $imgPath = (new NewGraphService())
+                ->setTitle('下游企业地域分布（个）')
+                ->setXLabels($labels)
+                ->setXLabelAngle(15)
+                ->setLegends($legends)
+                ->setMargin([60,50,0,40])
+                ->bar($barData);
 
-        $docObj->setImageValue('fpxx_xyqydyfb_img', [
-            'path' => $imgPath,
-            'width' => 410,
-            'height' => 300
-        ]);
+            $docObj->setImageValue('fpxx_xyqydyfb_img', [
+                'path' => $imgPath,
+                'width' => 410,
+                'height' => 300
+            ]);
+        }else
+        {
+            $docObj->setValue('fpxx_xyqydyfb_img','');
+        }
 
         //销售前十企业总占比（%）
         $temp = [];
