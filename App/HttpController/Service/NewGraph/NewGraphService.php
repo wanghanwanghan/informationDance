@@ -155,7 +155,7 @@ class NewGraphService extends ServiceBase
 
         $p1->SetLabelType(PIE_VALUE_PER);
         $p1->value->Show();
-        $p1->value->SetFont(FF_USERFONT1, FS_NORMAL, 9);
+        $p1->value->SetFont(FF_USERFONT1, FS_NORMAL, 15);
         $p1->value->SetColor('darkgray');
 
         $graph->Add($p1);
