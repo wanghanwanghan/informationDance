@@ -1368,14 +1368,14 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val)
         {
             $barData[] = array_values($val['normal']);
-            $labels[] = $key;
+            $labels = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
             $legends[] = $key;
         }
 
         $imgPath = (new NewGraphService())
             ->setTitle('月度销项正常发票分析')
-            ->setXTitle('年份')
-            ->setYTitle('数量')
+            ->setXTitle('月份')
+            ->setYTitle('金额')
             ->setXLabels($labels)
             ->setLegends($legends)
             ->bar($barData);

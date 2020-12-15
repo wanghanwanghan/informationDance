@@ -101,7 +101,7 @@ class NewGraphService extends ServiceBase
         //设置横坐标标题
         empty($this->xTitle) ?: $graph->xaxis->title->Set($this->xTitle);
         //设置纵坐标标题
-        empty($this->yTitle) ?: $graph->xaxis->title->Set($this->yTitle);
+        empty($this->yTitle) ?: $graph->yaxis->title->Set($this->yTitle);
 
         //横坐标显示
         empty($this->xLabels) ?: $graph->xaxis->SetTickLabels($this->xLabels);
