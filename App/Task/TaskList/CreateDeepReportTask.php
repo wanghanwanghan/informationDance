@@ -1586,14 +1586,13 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         ]);
 
         //下游企业司龄分布（个）
-        $barData = $labels = $legends = [];
+        $barData = $labels = [];
         $barData = [array_values($data['re_fpxx']['xyqyslfb'])];
-        $labels = $legends = ['1年以下','2-3年','4-5年','6-9年','10年以上'];
+        $labels = ['1年以下','2-3年','4-5年','6-9年','10年以上'];
 
         $imgPath = (new NewGraphService())
             ->setTitle('下游企业司龄分布（个）')
             ->setXLabels($labels)
-            ->setLegends($legends)
             ->bar($barData);
 
         $docObj->setImageValue('fpxx_xyqyslfb_img', [
