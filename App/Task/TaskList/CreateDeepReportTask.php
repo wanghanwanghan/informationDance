@@ -1714,6 +1714,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue('fpxx_xsqsqyzzb_img3','');
         }
 
+        (new NewGraphService())->testtest();
+
         //下游集中度情况评估  集中度指数
         $xyjzd = $this->xyjzd($data['re_fpjx']['xdsForShangxiayou']);
         $xyjzd = 0.35 * $xyjzd[0] + 0.65 * $xyjzd[1] + 0.2 > 1 ? 1 : 0.35 * $xyjzd[0] + 0.65 * $xyjzd[1] + 0.2;
