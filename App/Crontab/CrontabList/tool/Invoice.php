@@ -1500,6 +1500,8 @@ class Invoice
             $tmp=[];
         }
 
+        krsort($return);
+
         return $return;
     }
 

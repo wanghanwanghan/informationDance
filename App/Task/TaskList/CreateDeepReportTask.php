@@ -1650,6 +1650,72 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $xywdx = 0.35 * $xywdx[0] + 0.65 * $xywdx[1] + 0.2 > 1 ? 1 : 0.35 * $xywdx[0] + 0.65 * $xywdx[1] + 0.2;
         $docObj->setValue('xywdx',sprintf('%.1f',$xywdx));
 
+        //下游企业地域分布（个）
+        $barData = $labels = $legends = [];
+
+        foreach ($data['re_fpxx']['xyqydyfb'] as $key => $val)
+        {
+            $labels = array_keys($val);
+            $barData[] = array_values($val);
+            $legends[] = $key;
+        }
+
+        $imgPath = (new NewGraphService())
+            ->setTitle('下游企业地域分布（个）')
+            ->setXLabels($labels)
+            ->setLegends($legends)
+            ->setMargin([60,50,0,40])
+            ->bar($barData);
+
+        $docObj->setImageValue('fpxx_xyqydyfb_img', [
+            'path' => $imgPath,
+            'width' => 410,
+            'height' => 300
+        ]);
+
+        //销售前十企业总占比（%）
+        $temp = [];
+        foreach ($data['re_fpxx']['xsqsqyzzb'] as $key => $val)
+        {
+            $barData = $labels = $legends = [];
+            $labels = array_keys($val);
+            $barData[] = array_values($val);
+            $legends[] = $key;
+
+            $temp[] = (new NewGraphService())
+                ->setTitle('销售前十企业总占比（%）')
+                ->setXLabels($labels)
+                ->setLegends($legends)
+                ->setMargin([60,50,0,40])
+                ->bar($barData);
+        }
+
+        $temp = [];
+
+        if (!empty($temp))
+        {
+            for ($i=1;$i<=3;$i++)
+            {
+                if (isset($temp[$i-1]))
+                {
+                    $docObj->setImageValue("fpxx_xsqsqyzzb_img{$i}", [
+                        'path' => $temp[$i-1],
+                        'width' => 410,
+                        'height' => 300
+                    ]);
+                }else
+                {
+                    $j = $i - 1;
+                    $docObj->deleteBlock("fpxx_xsqsqyzzb_img{$j}");
+                }
+            }
+        }else
+        {
+            $docObj->deleteBlock('fpxx_xsqsqyzzb_img1');
+            $docObj->deleteBlock('fpxx_xsqsqyzzb_img2');
+            $docObj->deleteBlock('fpxx_xsqsqyzzb_img3');
+        }
+
         //下游集中度情况评估  集中度指数
         $xyjzd = $this->xyjzd($data['re_fpjx']['xdsForShangxiayou']);
         $xyjzd = 0.35 * $xyjzd[0] + 0.65 * $xyjzd[1] + 0.2 > 1 ? 1 : 0.35 * $xyjzd[0] + 0.65 * $xyjzd[1] + 0.2;
