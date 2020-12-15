@@ -1685,7 +1685,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $temp[] = (new NewGraphService())
                 ->setTitle('销售前十企业总占比（%）')
                 ->setXLabels($labels)
-                ->setXLabelAngle(45)
+                ->setXLabelAngle(20)
                 ->setLegends($legends)
                 ->setMargin([60,50,0,40])
                 ->bar($barData);
