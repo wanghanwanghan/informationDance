@@ -1625,7 +1625,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //下游企业更换情况（个）
         $barData = $labels = $legends = [];
 
-        foreach ($data['re_fpxx']['xyqyhznxfb'] as $key => $val)
+        foreach ($data['re_fpxx']['xyqyghqk'] as $key => $val)
         {
             $labels = ['新增','退出'];
             $barData[] = $val;
