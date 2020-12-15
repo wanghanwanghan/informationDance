@@ -68,7 +68,7 @@ class ReportService extends ServiceBase
                 'entName' => $entName,
                 'filename' => $reportNum,
                 'type' => 50,
-                'status' => 4,
+                'status' => 3,
                 'errInfo' => '',
                 'belong' => $type,
             ])->save();
