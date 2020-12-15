@@ -137,40 +137,28 @@ class NewGraphService extends ServiceBase
     //生成一个饼图的地址
     function pie($data = []): string
     {
-        // Create the Pie Graph.
-        $graph = new PieGraph($this->width, $this->height);
+        $graph    = new PieGraph($this->width, $this->height);
         $graph->SetShadow();
 
-        // Set A title for the plot
         empty($this->title) ?: $graph->title->Set($this->title);
-        $graph->SetUserFont1(SIMSUN_TTC);
-        $graph->legend->SetFont(FF_USERFONT1, FS_NORMAL);
-        $graph->label->SetFont(FF_USERFONT1, FS_NORMAL);
         $graph->title->SetFont(FF_USERFONT1, FS_NORMAL, $this->titleSize);
-        $graph->title->SetColor('darkblue');
-        $graph->legend->Pos(0.1, 0.2);
+        $graph->title->SetColor('black');
 
-        // Create pie plot
         $p1 = new PiePlot($data);
         $p1->SetCenter(0.5, 0.5);
         $p1->SetSize(0.3);
 
         empty($this->labels) ?: $p1->SetLabels($this->labels);
 
-        // Enable and set policy for guide-lines. Make labels line up vertically
-        // and force guide lines to always beeing used
-        $p1->SetGuideLines(true, false, true);
-        $p1->SetGuideLinesAdjust(1.5);
+        $p1->SetLabelPos(1);
 
-        // Setup the labels
         $p1->SetLabelType(PIE_VALUE_PER);
         $p1->value->Show();
-        $p1->value->SetFont(FF_ARIAL, FS_NORMAL, 9);
+        $p1->value->SetFont(FF_USERFONT1, FS_NORMAL, 9);
         $p1->value->SetColor('darkgray');
-        //$p1->value->SetFormat('%2.1f%%');
 
-        // Add and stroke
         $graph->Add($p1);
+
         $fileName = control::getUuid(12) . '.jpg';
         $graph->Stroke(REPORT_IMAGE_TEMP_PATH . $fileName);
 
