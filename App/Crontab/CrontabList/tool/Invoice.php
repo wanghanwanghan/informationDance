@@ -2337,7 +2337,7 @@ class Invoice
         }
         unset($one);
 
-        ksort($return);
+        krsort($return);
 
         $data=[
             'xAxes'=>[],
@@ -2347,7 +2347,20 @@ class Invoice
 
         if (empty($return)) return $return;
 
+        $i=1;
+        foreach ($return as $year => $one)
+        {
+            if ($i > 2) continue;
+            $tmp[$year] = $one;
+            $i++;
+        }
+
+        ksort($tmp);
+
+        $return = $tmp;
+
         //整理数据
+        $labelYear = [];
         if (count($return) >= 2)
         {
             foreach ($return as $year => $val)
@@ -2358,9 +2371,11 @@ class Invoice
                     {
                         if ($data['label'] == '')
                         {
+                            $labelYear[] = $year;
                             $data['label']=$year.".$month";
-                        }elseif (strlen($data['label']) <= 14 && (substr($data['label'],0,4)!=$year || (substr($data['label'],0,4)!=$year && substr($data['label'],-4)!=$year)))
+                        }elseif (!in_array($year,$labelYear))
                         {
+                            $labelYear[] = $year;
                             $data['label'].=" - $year";
                         }else
                         {
