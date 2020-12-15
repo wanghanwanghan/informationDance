@@ -1148,7 +1148,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     private function fillData(TemplateProcessor $docObj, $data)
     {
         //处理发票信息
-        CommonService::getInstance()->log4PHP($data);
+        //CommonService::getInstance()->log4PHP($data);
         //主营商品分析
         $rows = count($data['re_fpxx']['zyspfx']);
         $docObj->cloneRow('fpxx_zyspfx_no', $rows);
@@ -1718,6 +1718,32 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $xyjzd = $this->xyjzd($data['re_fpjx']['xdsForShangxiayou']);
         $xyjzd = 0.35 * $xyjzd[0] + 0.65 * $xyjzd[1] + 0.2 > 1 ? 1 : 0.35 * $xyjzd[0] + 0.65 * $xyjzd[1] + 0.2;
         $docObj->setValue('xyjzd',sprintf('%.1f',$xyjzd));
+
+        //7.3企业销售情况分布（万元）
+        $lineData = $legends = [];
+        foreach ($data['re_fpxx']['qyxsqkyc'] as $key => $val)
+        {
+            $lineData[] = array_values($val);
+            $legends[] = $key;
+        }
+
+        $imgPath = (new NewGraphService())
+            ->setTitle('企业销售情况分布')
+            ->setLegends($legends)
+            ->setXLabels(['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'])
+            ->line($lineData);
+
+        $docObj->setImageValue('fpxx_qyxsqkyc_img', [
+            'path' => $imgPath,
+            'width' => 410,
+            'height' => 300
+        ]);
+
+
+
+
+
+
 
         //年度进项发票情况汇总
         $rows = count($data['re_fpjx']['ndjxfpqkhz']);

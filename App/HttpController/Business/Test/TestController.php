@@ -27,20 +27,7 @@ class TestController extends BusinessBase
 
     function testPic()
     {
-        $res = (new NewGraphService())
-            ->setTitle(control::randomUserName())
-            ->setLegends(['哈','哈哈','哈哈哈','哈哈哈哈','呵','呵呵','呵呵呵','呵呵呵呵'])
-            ->setXLabels(['数量1','数量2','数量3','数量4','数量5','数量6'])
-            ->line([
-                [control::randNum(5),control::randNum(5),control::randNum(5),control::randNum(5),control::randNum(5),control::randNum(5)],
-                [control::randNum(5),control::randNum(5),control::randNum(5),control::randNum(5),control::randNum(5),control::randNum(5)],
-                [control::randNum(5),control::randNum(5),control::randNum(5),control::randNum(5),control::randNum(5),control::randNum(5)],
-                [control::randNum(5),control::randNum(5),control::randNum(5),control::randNum(5),control::randNum(5),control::randNum(5)],
-                [control::randNum(5),control::randNum(5),control::randNum(5),control::randNum(5),control::randNum(5),control::randNum(5)],
-                [control::randNum(5),control::randNum(5),control::randNum(5),control::randNum(5),control::randNum(5),control::randNum(5)],
-            ]);
-
-        $this->writeJson(200,null,$res);
+        $this->writeJson(200,null,123);
     }
 
 }

@@ -1544,8 +1544,6 @@ class Invoice
             $return[$year][$mouth]+=abs($one['totalAmount']);
         }
 
-        krsort($return);
-
         //金额变万元
         foreach ($return as &$one)
         {
@@ -1556,6 +1554,8 @@ class Invoice
             unset($two);
         }
         unset($one);
+
+        krsort($return);
 
         return $return;
     }
