@@ -2326,8 +2326,6 @@ class Invoice
             $return[$year][$mouth]+=abs($one['totalAmount']);
         }
 
-        krsort($return);
-
         //金额变万元
         foreach ($return as &$one)
         {
@@ -2361,7 +2359,7 @@ class Invoice
                         if ($data['label'] == '')
                         {
                             $data['label']=$year.".$month";
-                        }elseif (strlen($data['label']) <= 10 && substr($data['label'],0,4)!=$year)
+                        }elseif (strlen($data['label']) <= 14 && substr($data['label'],0,4)!=$year)
                         {
                             $data['label'].=" - $year";
                         }else
