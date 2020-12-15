@@ -1711,9 +1711,9 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             }
         }else
         {
-            $docObj->deleteBlock('fpxx_xsqsqyzzb_img1');
-            $docObj->deleteBlock('fpxx_xsqsqyzzb_img2');
-            $docObj->deleteBlock('fpxx_xsqsqyzzb_img3');
+            $docObj->cloneRow('fpxx_xsqsqyzzb_img1',0);
+            $docObj->cloneRow('fpxx_xsqsqyzzb_img2',0);
+            $docObj->cloneRow('fpxx_xsqsqyzzb_img3',0);
         }
 
         //下游集中度情况评估  集中度指数
