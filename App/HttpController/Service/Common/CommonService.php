@@ -11,6 +11,7 @@ use Amenadiel\JpGraph\Plot\LinePlot;
 use Amenadiel\JpGraph\Plot\PiePlot;
 use App\HttpController\Service\Common\EmailTemplate\Template01;
 use App\HttpController\Service\Common\EmailTemplate\Template02;
+use App\HttpController\Service\Common\EmailTemplate\Template03;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
@@ -229,6 +230,10 @@ class CommonService extends ServiceBase
             case '02':
                 //简版
                 $template = Template02::getInstance();
+                break;
+            case '03':
+                //深度
+                $template = Template03::getInstance();
                 break;
         }
         $mimeBean->setSubject($template->getSubject($options['entName']));
