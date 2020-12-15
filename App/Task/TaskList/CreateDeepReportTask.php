@@ -1970,8 +1970,22 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $docObj->setValue('syjzd',sprintf('%.1f',$syjzd));
 
         //7.9企业采购情况分布（万元）
+        $lineData = $legends = $xLabels = [];
+        $legends = [$data['re_fpjx']['qycgqkyc']['label']];
+        $xLabels = $data['re_fpjx']['qycgqkyc']['xAxes'];
+        $lineData = $data['re_fpjx']['qycgqkyc']['data'];
 
+        $imgPath = (new NewGraphService())
+            ->setTitle('企业采购情况分布（万元）')
+            ->setLegends($legends)
+            ->setXLabels($xLabels)
+            ->line($lineData);
 
+        $docObj->setImageValue('fpjx_qycgqkyc_img', [
+            'path' => $imgPath,
+            'width' => 410,
+            'height' => 300
+        ]);
 
 
 
