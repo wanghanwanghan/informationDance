@@ -1605,6 +1605,46 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             'height' => 300
         ]);
 
+        //下游企业合作年限分布（个）
+        $barData = $labels = [];
+        $barData = [array_values($data['re_fpxx']['xyqyhznxfb'])];
+        $labels = ['1年以下','2-3年','4-5年'];
+
+        $imgPath = (new NewGraphService())
+            ->setTitle('下游企业合作年限分布（个）')
+            ->setXLabels($labels)
+            ->setMargin([60,50,0,40])
+            ->bar($barData);
+
+        $docObj->setImageValue('fpxx_xyqyhznxfb_img', [
+            'path' => $imgPath,
+            'width' => 410,
+            'height' => 300
+        ]);
+
+        //下游企业更换情况（个）
+        $barData = $labels = $legends = [];
+
+        foreach ($data['re_fpxx']['xyqyhznxfb'] as $key => $val)
+        {
+            $labels = ['新增','退出'];
+            $barData[] = $val;
+            $legends[] = $key;
+        }
+
+        $imgPath = (new NewGraphService())
+            ->setTitle('下游企业更换情况（个）')
+            ->setXLabels($labels)
+            ->setLegends($legends)
+            ->setMargin([60,50,0,40])
+            ->bar($barData);
+
+        $docObj->setImageValue('fpxx_xyqyghqk_img', [
+            'path' => $imgPath,
+            'width' => 410,
+            'height' => 300
+        ]);
+
         //下游企业稳定性评估  稳定性指数
         $xywdx = $this->xywdx($data['re_fpjx']['xdsForShangxiayou']);
         $xywdx = 0.35 * $xywdx[0] + 0.65 * $xywdx[1] + 0.2 > 1 ? 1 : 0.35 * $xywdx[0] + 0.65 * $xywdx[1] + 0.2;
