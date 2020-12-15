@@ -1585,6 +1585,23 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             'height' => 300
         ]);
 
+        //下游企业司龄分布（个）
+        $barData = $labels = $legends = [];
+        $barData = [$data['re_fpxx']['xyqyslfb']];
+        $labels = $legends = ['1年以下','2-3年','4-5年','6-9年','10年以上'];
+
+        $imgPath = (new NewGraphService())
+            ->setTitle('下游企业司龄分布（个）')
+            ->setXLabels($labels)
+            ->setLegends($legends)
+            ->bar($barData);
+
+        $docObj->setImageValue('fpxx_xyqyslfb_img', [
+            'path' => $imgPath,
+            'width' => 410,
+            'height' => 300
+        ]);
+
         //下游企业稳定性评估  稳定性指数
         $xywdx = $this->xywdx($data['re_fpjx']['xdsForShangxiayou']);
         $xywdx = 0.35 * $xywdx[0] + 0.65 * $xywdx[1] + 0.2 > 1 ? 1 : 0.35 * $xywdx[0] + 0.65 * $xywdx[1] + 0.2;
