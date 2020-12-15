@@ -137,8 +137,9 @@ class NewGraphService extends ServiceBase
     //生成一个饼图的地址
     function pie($data = []): string
     {
-        $graph    = new PieGraph($this->width, $this->height);
+        $graph = new PieGraph($this->width, $this->height);
         $graph->SetShadow();
+        $graph->SetUserFont1(SIMSUN_TTC);
 
         empty($this->title) ?: $graph->title->Set($this->title);
         $graph->title->SetFont(FF_USERFONT1, FS_NORMAL, $this->titleSize);
