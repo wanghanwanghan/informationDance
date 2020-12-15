@@ -23,6 +23,7 @@ class NewGraphService extends ServiceBase
     private $xLabels = [];
     private $xTitle = '';
     private $yTitle = '';
+    private $margin = [];
 
     private function getColorNum(): int
     {
@@ -83,6 +84,12 @@ class NewGraphService extends ServiceBase
         return $this;
     }
 
+    function setMargin(array $margin = []): NewGraphService
+    {
+        $this->margin = $margin;
+        return $this;
+    }
+
 
     //生成一个柱状图的地址
     function bar($data = []): string
@@ -94,7 +101,7 @@ class NewGraphService extends ServiceBase
         $graph->legend->SetShadow('darkgray@0.5');
         $graph->legend->SetFillColor('lightblue@0.3');
 
-        $graph->SetMargin(60, 50, 0, 0);
+        empty($this->margin) ? $graph->img->SetAutoMargin() : $graph->SetMargin(...$this->margin);
 
         //设置标题
         empty($this->title) ?: $graph->title->Set($this->title);

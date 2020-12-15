@@ -1402,6 +1402,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             ->setTitle('月度销项正常发票分析')
             ->setXLabels($labels)
             ->setLegends($legends)
+            ->setMargin([60,50,0,0])
             ->bar($barData);
 
         $docObj->setImageValue('fpxx_ydxxfpfx_n_img', [
@@ -1448,6 +1449,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             ->setTitle('月度销项红充发票分析')
             ->setXLabels($labels)
             ->setLegends($legends)
+            ->setMargin([60,50,0,0])
             ->bar($barData);
 
         $docObj->setImageValue('fpxx_ydxxfpfx_r_img', [
@@ -1494,6 +1496,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             ->setTitle('月度销项作废发票分析')
             ->setXLabels($labels)
             ->setLegends($legends)
+            ->setMargin([60,50,0,0])
             ->bar($barData);
 
         $docObj->setImageValue('fpxx_ydxxfpfx_c_img', [
@@ -1593,6 +1596,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $imgPath = (new NewGraphService())
             ->setTitle('下游企业司龄分布（个）')
             ->setXLabels($labels)
+            ->setMargin([60,50,0,20])
             ->bar($barData);
 
         $docObj->setImageValue('fpxx_xyqyslfb_img', [
