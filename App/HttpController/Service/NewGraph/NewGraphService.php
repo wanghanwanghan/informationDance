@@ -246,7 +246,6 @@ class NewGraphService extends ServiceBase
         $__width  = 450;
         $__height = 300;
         $graph    = new Graph($__width, $__height);
-        $graph->SetBackgroundImage(__DIR__ . '/../assets/tiger_bkg.png', BGIMG_FILLFRAME);
         $graph->SetShadow();
 
 // Use text X-scale so we can text labels on the X-axis
