@@ -1795,8 +1795,6 @@ class Invoice
         }
         unset($one);
 
-        krsort($return);
-
         //二维数组排序
         foreach ($return as $key => $one)
         {
@@ -1837,6 +1835,8 @@ class Invoice
         unset($one);
 
         if (empty($return)) return $return;
+
+        krsort($return);
 
         $tmp=[];
         foreach ($return as $year)
