@@ -1520,6 +1520,28 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue('fpxx_dzkpjeTOP10jl_xx_zb#' . ($i + 1), $data['re_fpxx']['dzkpjeTOP10jl_xx'][$i]['zhanbi']);
         }
 
+        $pieData = $labels = [];
+        $other = 100;
+        foreach ($data['re_fpxx']['dzkpjeTOP10jl_xx'] as $one)
+        {
+            $other -= $one['zhanbi'] - 0;
+            $pieData[] = $one['zhanbi'] - 0;
+            $labels[] = "{$one['purchaserName']}\n(%.1f%%)";
+        }
+
+        if ($other > 0) {
+            array_push($pieData,$other);
+            array_push($labels,"其他\n(%.1f%%)");
+        }
+
+        $imgPath = (new NewGraphService())->setTitle('单张开票金额TOP10记录')->setLabels($labels)->pie($pieData);
+
+        $docObj->setImageValue('fpxx_dzkpjeTOP10jl_xx_img', [
+            'path' => $imgPath,
+            'width' => 410,
+            'height' => 300
+        ]);
+
         //累计开票金额TOP10企业汇总 销项
         $rows = count($data['re_fpxx']['ljkpjeTOP10qyhz_xx']);
         $docObj->cloneRow('fpxx_ljkpjeTOP10qyhz_xx_nf', $rows);
