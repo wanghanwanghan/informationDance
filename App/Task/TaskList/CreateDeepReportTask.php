@@ -1174,7 +1174,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         $docObj->setImageValue('fpxx_zyspfx_img', [
             'path' => $imgPath,
-            'width' => 420,
+            'width' => 410,
             'height' => 300
         ]);
 
@@ -1203,7 +1203,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         $docObj->setImageValue('fpjx_zycbfx_img', [
             'path' => $imgPath,
-            'width' => 420,
+            'width' => 410,
             'height' => 300
         ]);
 
@@ -1363,6 +1363,28 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 $docObj->setValue('fpxx_ndxxfpqkhz_nmzb#' . ($i + 1), $data['re_fpxx']['ndxxfpqkhz'][$key]['normal']['AmountZhanbi']);
             }
         }
+
+        $barData = $labels = $legends = [];
+        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val)
+        {
+            $barData[] = array_values($val['normal']);
+            $labels[] = $key;
+            $legends[] = $key;
+        }
+
+        $imgPath = (new NewGraphService())
+            ->setTitle('月度销项正常发票分析')
+            ->setXTitle('年份')
+            ->setYTitle('数量')
+            ->setXLabels($labels)
+            ->setLegends($legends)
+            ->bar($barData);
+
+        $docObj->setImageValue('fpxx_ydxxfpfx_img', [
+            'path' => $imgPath,
+            'width' => 410,
+            'height' => 300
+        ]);
 
         //月度销项正常发票分析
         $rows = count($data['re_fpxx']['ydxxfpfx']);
