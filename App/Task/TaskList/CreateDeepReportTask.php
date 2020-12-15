@@ -1364,28 +1364,6 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             }
         }
 
-        $barData = $labels = $legends = [];
-        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val)
-        {
-            $barData[] = array_values($val['normal']);
-            $labels = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
-            $legends[] = $key;
-        }
-
-        $imgPath = (new NewGraphService())
-            ->setTitle('月度销项正常发票分析')
-            ->setXTitle('月份')
-            ->setYTitle('金额')
-            ->setXLabels($labels)
-            ->setLegends($legends)
-            ->bar($barData);
-
-        $docObj->setImageValue('fpxx_ydxxfpfx_img', [
-            'path' => $imgPath,
-            'width' => 410,
-            'height' => 300
-        ]);
-
         //月度销项正常发票分析
         $rows = count($data['re_fpxx']['ydxxfpfx']);
         $docObj->cloneRow('fpxx_ydxxfpfx_nf', $rows);
@@ -1411,6 +1389,26 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 $docObj->setValue('fpxx_ydxxfpfx_n12#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['normal']['12']);
             }
         }
+
+        $barData = $labels = $legends = [];
+        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val)
+        {
+            $barData[] = array_values($val['normal']);
+            $labels = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+            $legends[] = $key;
+        }
+
+        $imgPath = (new NewGraphService())
+            ->setTitle('月度销项正常发票分析')
+            ->setXLabels($labels)
+            ->setLegends($legends)
+            ->bar($barData);
+
+        $docObj->setImageValue('fpxx_ydxxfpfx_n_img', [
+            'path' => $imgPath,
+            'width' => 410,
+            'height' => 300
+        ]);
 
         //月度销项红充发票分析
         $rows = count($data['re_fpxx']['ydxxfpfx']);
@@ -1438,6 +1436,26 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             }
         }
 
+        $barData = $labels = $legends = [];
+        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val)
+        {
+            $barData[] = array_values($val['red']);
+            $labels = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+            $legends[] = $key;
+        }
+
+        $imgPath = (new NewGraphService())
+            ->setTitle('月度销项红充发票分析')
+            ->setXLabels($labels)
+            ->setLegends($legends)
+            ->bar($barData);
+
+        $docObj->setImageValue('fpxx_ydxxfpfx_r_img', [
+            'path' => $imgPath,
+            'width' => 410,
+            'height' => 300
+        ]);
+
         //月度销项作废发票分析
         $rows = count($data['re_fpxx']['ydxxfpfx']);
         $docObj->cloneRow('fpxx_ydxxfpfx_cf', $rows);
@@ -1463,6 +1481,26 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 $docObj->setValue('fpxx_ydxxfpfx_c12#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['cancel']['12']);
             }
         }
+
+        $barData = $labels = $legends = [];
+        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val)
+        {
+            $barData[] = array_values($val['cancel']);
+            $labels = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+            $legends[] = $key;
+        }
+
+        $imgPath = (new NewGraphService())
+            ->setTitle('月度销项作废发票分析')
+            ->setXLabels($labels)
+            ->setLegends($legends)
+            ->bar($barData);
+
+        $docObj->setImageValue('fpxx_ydxxfpfx_c_img', [
+            'path' => $imgPath,
+            'width' => 410,
+            'height' => 300
+        ]);
 
         //单张开票金额TOP10记录 销项
         $rows = count($data['re_fpxx']['dzkpjeTOP10jl_xx']);
