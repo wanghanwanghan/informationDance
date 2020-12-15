@@ -1882,11 +1882,97 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             'height' => 300
         ]);
 
+        //上游供应商司龄分布（个）
+        $barData = $labels = [];
+        $barData = [array_values($data['re_fpjx']['sygysslfb'])];
+        $labels = ['1年以下','2-3年','4-5年','6-9年','10年以上'];
+
+        $imgPath = (new NewGraphService())
+            ->setTitle('上游供应商司龄分布（个）')
+            ->setXLabels($labels)
+            ->setMargin([60,50,0,40])
+            ->bar($barData);
+
+        $docObj->setImageValue('fpjx_sygysslfb_img', [
+            'path' => $imgPath,
+            'width' => 410,
+            'height' => 300
+        ]);
+
+        //上游供应商地域分布（个）
+        $barData = $labels = $legends = [];
+        foreach ($data['re_fpjx']['syqydyfb'] as $key => $val)
+        {
+            $labels = array_keys($val);
+            $barData[] = array_values($val);
+            $legends[] = $key;
+        }
+
+        $imgPath = (new NewGraphService())
+            ->setTitle('上游供应商地域分布（个）')
+            ->setXLabels($labels)
+            ->setLegends($legends)
+            ->setXLabelAngle(15)
+            ->setMargin([60,50,0,40])
+            ->bar($barData);
+
+        $docObj->setImageValue('fpjx_syqydyfb_img', [
+            'path' => $imgPath,
+            'width' => 410,
+            'height' => 300
+        ]);
+
+        //采购前十供应商总占比（%）
+        $temp = [];
+        foreach ($data['re_fpjx']['cgqsqyzzb'] as $key => $val)
+        {
+            $barData = $labels = $legends = [];
+            $labels = array_keys($val);
+            $barData[] = array_values($val);
+            $legends[] = $key;
+
+            $temp[] = (new NewGraphService())
+                ->setTitle('采购前十供应商总占比（%）')
+                ->setXLabels($labels)
+                ->setXLabelAngle(15)
+                ->setLegends($legends)
+                ->setMargin([130,50,0,40])
+                ->bar($barData);
+        }
+
+        if (!empty($temp))
+        {
+            for ($i=1;$i<=3;$i++)
+            {
+                if (isset($temp[$i-1]))
+                {
+                    $docObj->setImageValue("fpjx_cgqsqyzzb_img{$i}", [
+                        'path' => $temp[$i-1],
+                        'width' => 410,
+                        'height' => 300
+                    ]);
+                }else
+                {
+                    $docObj->setValue("fpjx_cgqsqyzzb_img{$i}",'');
+                }
+            }
+        }else
+        {
+            $docObj->setValue('fpjx_cgqsqyzzb_img1','');
+            $docObj->setValue('fpjx_cgqsqyzzb_img2','');
+            $docObj->setValue('fpjx_cgqsqyzzb_img3','');
+        }
+
+
+
+
+
+
+
         //上游集中度情况评估  集中度指数
         $syjzd = $this->syjzd($data['re_fpjx']['xdsForShangxiayou']);
         $syjzd = 0.35 * $syjzd[0] + 0.65 * $syjzd[1] + 0.2 > 1 ? 1 : 0.35 * $syjzd[0] + 0.65 * $syjzd[1] + 0.2;
         $docObj->setValue('syjzd',sprintf('%.1f',$syjzd));
-
 
 
 

@@ -2283,6 +2283,8 @@ class Invoice
             $return[$key]=array_slice($return[$key],0,10);
         }
 
+        krsort($return);
+
         return $return;
     }
 
