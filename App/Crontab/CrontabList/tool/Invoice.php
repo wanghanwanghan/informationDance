@@ -2379,7 +2379,7 @@ class Invoice
                             $data['label'].=" - $year";
                         }else
                         {
-                            if (count($data['data']) == 12) continue;
+                            if (count($data['data']) == 24) continue;
                         }
 
                         array_push($data['xAxes'],$month.'月');
