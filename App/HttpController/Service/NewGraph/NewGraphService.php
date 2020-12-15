@@ -94,7 +94,7 @@ class NewGraphService extends ServiceBase
         $graph->legend->SetShadow('darkgray@0.5');
         $graph->legend->SetFillColor('lightblue@0.3');
 
-        $graph->img->SetAutoMargin();
+        $graph->SetMargin(60, 50, 0, 0);
 
         //设置标题
         empty($this->title) ?: $graph->title->Set($this->title);
@@ -111,7 +111,9 @@ class NewGraphService extends ServiceBase
         $graph->xaxis->title->SetFont(FF_USERFONT1, FS_NORMAL);
         $graph->xaxis->SetFont(FF_USERFONT1, FS_NORMAL);
         $graph->xaxis->SetColor('black');
-        $graph->ygrid->SetColor('black@0.5');
+        $graph->yaxis->title->SetFont(FF_USERFONT1, FS_NORMAL);
+        $graph->yaxis->SetFont(FF_USERFONT1, FS_NORMAL);
+        $graph->yaxis->SetColor('black');
         $graph->legend->SetFont(FF_USERFONT1, FS_NORMAL);
 
         $BarPlotObjArr = [];
