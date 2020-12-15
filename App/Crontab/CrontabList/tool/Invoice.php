@@ -2412,6 +2412,8 @@ class Invoice
 
         $return=$data;
 
+        CommonService::getInstance()->log4PHP($return);
+
         return $return;
     }
 
