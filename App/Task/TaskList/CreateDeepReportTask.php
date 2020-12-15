@@ -1687,7 +1687,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 ->setXLabels($labels)
                 ->setXLabelAngle(15)
                 ->setLegends($legends)
-                ->setMargin([100,50,0,40])
+                ->setMargin([120,50,0,40])
                 ->bar($barData);
         }
 
