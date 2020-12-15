@@ -151,6 +151,9 @@ class NewGraphService extends ServiceBase
         $p1->SetCenter(0.5, 0.5);
         $p1->SetSize(0.3);
 
+        $p1->SetGuideLines(true, false, true);
+        $p1->SetGuideLinesAdjust(1.5);
+
         empty($this->labels) ?: $p1->SetLabels($this->labels);
 
         $p1->SetLabelPos(1);
