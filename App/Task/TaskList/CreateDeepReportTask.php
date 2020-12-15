@@ -1167,7 +1167,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         foreach ($data['re_fpxx']['zyspfx'] as $one)
         {
             $pieData[] = $one['jine'] - 0;
-            $labels[] = "{$one['name']}\n(%.1f%%)";
+            $labels[] = "{$one['name']} (%.1f%%)";
         }
 
         $imgPath = (new NewGraphService())->setTitle('主营商品分析')->setLabels($labels)->pie($pieData);
@@ -1196,7 +1196,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         foreach ($data['re_fpjx']['zycbfx'][0] as $one)
         {
             $pieData[] = $one['jine'] - 0;
-            $labels[] = "{$one['name']}\n(%.1f%%)";
+            $labels[] = "{$one['name']}(%.1f%%)";
         }
 
         $imgPath = (new NewGraphService())->setTitle('主要成本分析')->setLabels($labels)->pie($pieData);
@@ -1526,12 +1526,12 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         {
             $other -= $one['zhanbi'] - 0;
             $pieData[] = $one['zhanbi'] - 0;
-            $labels[] = "{$one['purchaserName']}\n(%.1f%%)";
+            $labels[] = "{$one['purchaserName']} (%.1f%%)";
         }
 
         if ($other > 0) {
             array_push($pieData,$other);
-            array_push($labels,"其他\n(%.1f%%)");
+            array_push($labels,"其他 (%.1f%%)");
         }
 
         $imgPath = (new NewGraphService())->setTitle('单张开票金额TOP10记录')->setLabels($labels)->pie($pieData);
