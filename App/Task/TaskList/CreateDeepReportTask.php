@@ -1593,7 +1593,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $barData = [array_values($data['re_fpxx']['xyqyslfb'])];
         $labels = ['1年以下','2-3年','4-5年','6-9年','10年以上'];
 
-        if (!empty($barData))
+        if (!empty($data['re_fpxx']['xyqyslfb']))
         {
             $imgPath = (new NewGraphService())
                 ->setTitle('下游企业司龄分布（个）')
