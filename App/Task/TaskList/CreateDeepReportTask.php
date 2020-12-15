@@ -1690,8 +1690,6 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 ->bar($barData);
         }
 
-        $temp = [];
-
         if (!empty($temp))
         {
             for ($i=1;$i<=3;$i++)
