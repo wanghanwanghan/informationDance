@@ -2328,8 +2328,6 @@ class Invoice
 
         krsort($return);
 
-        if (count($return) >= 3) $return=array_slice($return,0,2,true);
-
         //金额变万元
         foreach ($return as &$one)
         {
@@ -2400,6 +2398,8 @@ class Invoice
         }
 
         $return=$data;
+
+        CommonService::getInstance()->log4PHP($return);
 
         return $return;
     }

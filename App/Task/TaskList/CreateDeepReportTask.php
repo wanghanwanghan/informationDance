@@ -1663,6 +1663,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $imgPath = (new NewGraphService())
             ->setTitle('下游企业地域分布（个）')
             ->setXLabels($labels)
+            ->setXLabelAngle(15)
             ->setLegends($legends)
             ->setMargin([60,50,0,40])
             ->bar($barData);
@@ -1963,18 +1964,12 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue('fpjx_cgqsqyzzb_img3','');
         }
 
-
-
-
-
-
-
         //上游集中度情况评估  集中度指数
         $syjzd = $this->syjzd($data['re_fpjx']['xdsForShangxiayou']);
         $syjzd = 0.35 * $syjzd[0] + 0.65 * $syjzd[1] + 0.2 > 1 ? 1 : 0.35 * $syjzd[0] + 0.65 * $syjzd[1] + 0.2;
         $docObj->setValue('syjzd',sprintf('%.1f',$syjzd));
 
-
+        //7.9企业采购情况分布（万元）
 
 
 
