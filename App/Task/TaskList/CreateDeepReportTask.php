@@ -1739,12 +1739,6 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             'height' => 300
         ]);
 
-
-
-
-
-
-
         //年度进项发票情况汇总
         $rows = count($data['re_fpjx']['ndjxfpqkhz']);
         $rows = 1;
@@ -1783,6 +1777,37 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 $docObj->setValue('fpjx_ydjxfpfx_n12#' . ($i + 1), $data['re_fpjx']['ydjxfpfx'][$key]['12']);
             }
         }
+
+        $barData = $labels = $legends = [];
+        foreach ($data['re_fpjx']['ydjxfpfx'] as $key => $val)
+        {
+            $labels = array_keys($val);
+            $barData[] = array_values($val);
+            $legends[] = $key;
+        }
+
+        $imgPath = (new NewGraphService())
+            ->setTitle('月度进项发票分析')
+            ->setXLabels($labels)
+            ->setLegends($legends)
+            ->bar($barData);
+
+        $docObj->setImageValue('fpjx_ydjxfpfx_img', [
+            'path' => $imgPath,
+            'width' => 410,
+            'height' => 300
+        ]);
+
+
+
+
+
+
+
+
+
+
+
 
         //单张开票金额TOP10企业汇总 进项
         $rows = count($data['re_fpjx']['dzkpjeTOP10jl_jx']);

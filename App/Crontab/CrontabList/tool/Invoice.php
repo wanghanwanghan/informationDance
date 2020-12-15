@@ -1629,8 +1629,6 @@ class Invoice
             $return[$year][$mout]+=abs($one['totalAmount']);
         }
 
-        krsort($return);
-
         foreach ($return as &$one)
         {
             foreach ($one as &$two)
@@ -1640,6 +1638,8 @@ class Invoice
             unset($two);
         }
         unset($one);
+
+        krsort($return);
 
         return $return;
     }
