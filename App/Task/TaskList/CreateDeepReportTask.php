@@ -1563,6 +1563,28 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue('fpxx_ljkpjeTOP10qyhz_xx_zb2#' . ($i + 1), $temp[$i]['numZhanbi']);
         }
 
+        $pieData = $labels = [];
+        $other = 100;
+        foreach ($data['re_fpxx']['ljkpjeTOP10qyhz_xx'] as $one)
+        {
+            $other -= $one['totalZhanbi'] - 0;
+            $pieData[] = $one['totalZhanbi'] - 0;
+            $labels[] = "{$one['name']} (%.1f%%)";
+        }
+
+        if ($other > 0) {
+            array_push($pieData,$other);
+            array_push($labels,"其他 (%.1f%%)");
+        }
+
+        $imgPath = (new NewGraphService())->setTitle('累计开票金额TOP10企业汇总')->setLabels($labels)->pie($pieData);
+
+        $docObj->setImageValue('fpxx_ljkpjeTOP10qyhz_xx_img', [
+            'path' => $imgPath,
+            'width' => 410,
+            'height' => 300
+        ]);
+
         //下游企业稳定性评估  稳定性指数
         $xywdx = $this->xywdx($data['re_fpjx']['xdsForShangxiayou']);
         $xywdx = 0.35 * $xywdx[0] + 0.65 * $xywdx[1] + 0.2 > 1 ? 1 : 0.35 * $xywdx[0] + 0.65 * $xywdx[1] + 0.2;
