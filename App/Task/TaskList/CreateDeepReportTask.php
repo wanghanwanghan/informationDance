@@ -1706,7 +1706,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 }else
                 {
                     $j = $i - 1;
-                    $docObj->deleteBlock("fpxx_xsqsqyzzb_img{$j}");
+                    $docObj->setValue("fpxx_xsqsqyzzb_img{$j}",'');
                 }
             }
         }else
