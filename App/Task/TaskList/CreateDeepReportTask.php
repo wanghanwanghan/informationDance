@@ -1596,7 +1596,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $imgPath = (new NewGraphService())
             ->setTitle('下游企业司龄分布（个）')
             ->setXLabels($labels)
-            ->setMargin([60,50,0,20])
+            ->setMargin([60,50,0,40])
             ->bar($barData);
 
         $docObj->setImageValue('fpxx_xyqyslfb_img', [
