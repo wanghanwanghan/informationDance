@@ -24,6 +24,7 @@ class NewGraphService extends ServiceBase
     private $xTitle = '';
     private $yTitle = '';
     private $margin = [];
+    private $xLabelAngle = '';
 
     private function getColorNum(): int
     {
@@ -90,6 +91,11 @@ class NewGraphService extends ServiceBase
         return $this;
     }
 
+    function setXLabelAngle(int $angle): NewGraphService
+    {
+        $this->xLabelAngle = $angle;
+        return $this;
+    }
 
     //生成一个柱状图的地址
     function bar($data = []): string
@@ -112,6 +118,7 @@ class NewGraphService extends ServiceBase
 
         //横坐标显示
         empty($this->xLabels) ?: $graph->xaxis->SetTickLabels($this->xLabels);
+        empty($this->xLabelAngle) ?: $graph->xaxis->SetLabelAngle($this->xLabelAngle);
 
         $graph->SetUserFont1(SIMSUN_TTC);
         $graph->title->SetFont(FF_USERFONT1, FS_NORMAL, $this->titleSize);

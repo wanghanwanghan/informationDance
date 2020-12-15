@@ -1685,6 +1685,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $temp[] = (new NewGraphService())
                 ->setTitle('销售前十企业总占比（%）')
                 ->setXLabels($labels)
+                ->setXLabelAngle(45)
                 ->setLegends($legends)
                 ->setMargin([60,50,0,40])
                 ->bar($barData);
@@ -1703,8 +1704,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                     ]);
                 }else
                 {
-                    $j = $i - 1;
-                    $docObj->setValue("fpxx_xsqsqyzzb_img{$j}",'');
+                    $docObj->setValue("fpxx_xsqsqyzzb_img{$i}",'');
                 }
             }
         }else
