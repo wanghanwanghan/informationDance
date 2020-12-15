@@ -20,7 +20,13 @@ class NewGraphService extends ServiceBase
     private $titleSize = 14;
     private $legends = [];
     private $xLabels = [];
+    private $xTitle = '';
+    private $yTitle = '';
 
+    private function getColorNum(): int
+    {
+        return count($this->color) - 1;
+    }
 
     function setWidth(int $width): NewGraphService
     {
@@ -58,9 +64,21 @@ class NewGraphService extends ServiceBase
         return $this;
     }
 
+    function setXTitle(string $xTitle): NewGraphService
+    {
+        $this->xTitle = $xTitle;
+        return $this;
+    }
+
+    function setYTitle(string $YTitle): NewGraphService
+    {
+        $this->yTitle = $YTitle;
+        return $this;
+    }
+
 
     //生成一个柱状图的地址
-    function bar($data = [], $labels = [], $extension = []): string
+    function bar($data = []): string
     {
         $graph = new Graph($this->width, $this->height);
         $graph->SetScale('textlin');
@@ -72,14 +90,14 @@ class NewGraphService extends ServiceBase
         $graph->img->SetAutoMargin();
 
         //设置标题
-        !isset($extension['title']) ?: $graph->title->Set($extension['title']);
+        empty($this->title) ?: $graph->title->Set($this->title);
         //设置横坐标标题
-        !isset($extension['xTitle']) ?: $graph->xaxis->title->Set($extension['xTitle']);
+        empty($this->xTitle) ?: $graph->xaxis->title->Set($this->xTitle);
         //设置纵坐标标题
-        !isset($extension['yTitle']) ?: $graph->xaxis->title->Set($extension['yTitle']);
+        empty($this->yTitle) ?: $graph->xaxis->title->Set($this->yTitle);
 
         //横坐标显示
-        $graph->xaxis->SetTickLabels($labels);
+        empty($this->xLabels) ?: $graph->xaxis->SetTickLabels($this->xLabels);
 
         $graph->SetUserFont1(SIMSUN_TTC);
         $graph->title->SetFont(FF_USERFONT1, FS_NORMAL, $this->titleSize);
@@ -91,14 +109,12 @@ class NewGraphService extends ServiceBase
 
         $BarPlotObjArr = [];
 
-        $color = ['red', 'orange', 'yellow', 'green', 'blue'];
-
         foreach ($data as $key => $oneDataArray) {
             $bar = new BarPlot($oneDataArray);
             //显示柱状图上的数
             $bar->value->Show();
-            $bar->SetFillColor($color[$key] . '@0.4');
-            $bar->SetLegend($extension['legend'][$key]);
+            $bar->SetFillColor($this->color[$key%$this->getColorNum()] . '@0.4');
+            empty($this->legends) ?: $bar->SetLegend($this->legends[$key]);
             $BarPlotObjArr[] = $bar;
         }
 
@@ -108,7 +124,7 @@ class NewGraphService extends ServiceBase
         $fileName = control::getUuid(12) . '.jpg';
         $graph->Stroke(REPORT_IMAGE_TEMP_PATH . $fileName);
 
-        return $fileName;
+        return REPORT_IMAGE_TEMP_PATH . $fileName;
     }
 
     //生成一个饼图的地址
@@ -148,7 +164,7 @@ class NewGraphService extends ServiceBase
         $fileName = control::getUuid(12) . '.jpg';
         $graph->Stroke(REPORT_IMAGE_TEMP_PATH . $fileName);
 
-        return $fileName;
+        return REPORT_IMAGE_TEMP_PATH . $fileName;
     }
 
     //生成一个折线图的地址
@@ -176,7 +192,7 @@ class NewGraphService extends ServiceBase
         foreach ($data as $key => $one)
         {
             $p = new LinePlot($one);
-            $p->SetColor($this->color[$key]);
+            $p->SetColor($this->color[$key%$this->getColorNum()]);
             empty($this->legends) ?: $p->SetLegend($this->legends[$key]);
             $graph->Add($p);
         }
@@ -187,6 +203,6 @@ class NewGraphService extends ServiceBase
         $fileName = control::getUuid(12) . '.jpg';
         $graph->Stroke(REPORT_IMAGE_TEMP_PATH . $fileName);
 
-        return $fileName;
+        return REPORT_IMAGE_TEMP_PATH . $fileName;
     }
 }

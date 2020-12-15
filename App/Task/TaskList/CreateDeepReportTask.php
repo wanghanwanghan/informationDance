@@ -1163,6 +1163,21 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue('fpxx_zyspfx_zhanbi#' . ($i + 1), $data['re_fpxx']['zyspfx'][$i]['zhanbi']);
         }
 
+        $pieData = $legends = [];
+        foreach ($data['re_fpxx']['zyspfx'] as $one)
+        {
+            $pieData[] = $one['jine'] - 0;
+            $legends[] = $one['name'];
+        }
+
+        $imgPath = (new NewGraphService())->setTitle('主营商品分析')->setLegends($legends)->pie($pieData);
+
+        $docObj->setImageValue('fpxx_zyspfx_img', [
+            'path' => $imgPath,
+            'width' => 1200,
+            'height' => 600
+        ]);
+
         //主营成本分析
         $rows = count($data['re_fpjx']['zycbfx'][0]);
         $docObj->cloneRow('fpjx_zycbfx_no', $rows);
@@ -1263,6 +1278,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         //企业开票情况汇总
         $rows = count($data['re_fpxx']['qykpqkhz']['zhouqi']);
+        $rows = 1;
         $docObj->cloneRow('fpxx_qykpqkhz_zq', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //统计周期
