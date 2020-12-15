@@ -1546,8 +1546,6 @@ class Invoice
 
         krsort($return);
 
-        if (count($return) >= 3) $return=array_slice($return,0,2);
-
         //金额变万元
         foreach ($return as &$one)
         {
