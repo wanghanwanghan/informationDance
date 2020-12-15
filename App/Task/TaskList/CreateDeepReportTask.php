@@ -1973,7 +1973,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $lineData = $legends = $xLabels = [];
         $legends = [$data['re_fpjx']['qycgqkyc']['label']];
         $xLabels = $data['re_fpjx']['qycgqkyc']['xAxes'];
-        $lineData = $data['re_fpjx']['qycgqkyc']['data'];
+        $lineData = [$data['re_fpjx']['qycgqkyc']['data']];
 
         $imgPath = (new NewGraphService())
             ->setTitle('企业采购情况分布（万元）')
