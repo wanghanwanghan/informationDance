@@ -19,6 +19,7 @@ class NewGraphService extends ServiceBase
     private $title = '';
     private $titleSize = 14;
     private $legends = [];
+    private $labels = [];
     private $xLabels = [];
     private $xTitle = '';
     private $yTitle = '';
@@ -73,6 +74,12 @@ class NewGraphService extends ServiceBase
     function setYTitle(string $YTitle): NewGraphService
     {
         $this->yTitle = $YTitle;
+        return $this;
+    }
+
+    function setLabels(array $labels): NewGraphService
+    {
+        $this->labels = $labels;
         return $this;
     }
 
@@ -132,6 +139,7 @@ class NewGraphService extends ServiceBase
     {
         // Create the Pie Graph.
         $graph = new PieGraph($this->width, $this->height);
+        $graph->SetShadow();
 
         // Set A title for the plot
         empty($this->title) ?: $graph->title->Set($this->title);
@@ -143,10 +151,10 @@ class NewGraphService extends ServiceBase
 
         // Create pie plot
         $p1 = new PiePlot($data);
-        $p1->SetCenter(0.5, 0.55);
+        $p1->SetCenter(0.5, 0.5);
         $p1->SetSize(0.3);
 
-        empty($this->legends) ?: $p1->SetLegends($this->legends);
+        empty($this->labels) ?: $p1->SetLabels($this->labels);
 
         // Enable and set policy for guide-lines. Make labels line up vertically
         // and force guide lines to always beeing used
@@ -157,7 +165,8 @@ class NewGraphService extends ServiceBase
         $p1->SetLabelType(PIE_VALUE_PER);
         $p1->value->Show();
         $p1->value->SetFont(FF_ARIAL, FS_NORMAL, 9);
-        $p1->value->SetFormat('%2.1f%%');
+        $p1->value->SetColor('darkgray');
+        //$p1->value->SetFormat('%2.1f%%');
 
         // Add and stroke
         $graph->Add($p1);
