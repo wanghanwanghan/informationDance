@@ -1174,7 +1174,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         $docObj->setImageValue('fpxx_zyspfx_img', [
             'path' => $imgPath,
-            'width' => 410,
+            'width' => 420,
             'height' => 300
         ]);
 
@@ -1191,6 +1191,21 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             //占比
             $docObj->setValue('fpjx_zycbfx_zhanbi#' . ($i + 1), $data['re_fpjx']['zycbfx'][0][$i]['zhanbi']);
         }
+
+        $pieData = $labels = [];
+        foreach ($data['re_fpjx']['zycbfx'][0] as $one)
+        {
+            $pieData[] = $one['jine'] - 0;
+            $labels[] = "{$one['name']}\n(%.1f%%)";
+        }
+
+        $imgPath = (new NewGraphService())->setTitle('主要成本分析')->setLabels($labels)->pie($pieData);
+
+        $docObj->setImageValue('fpjx_zycbfx_img', [
+            'path' => $imgPath,
+            'width' => 420,
+            'height' => 300
+        ]);
 
         //水费
         $rows = count($data['re_fpjx']['zycbfx'][1]['shuifei']);
