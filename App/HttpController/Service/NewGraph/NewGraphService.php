@@ -145,6 +145,7 @@ class NewGraphService extends ServiceBase
         empty($this->title) ?: $graph->title->Set($this->title);
         $graph->SetUserFont1(SIMSUN_TTC);
         $graph->legend->SetFont(FF_USERFONT1, FS_NORMAL);
+        $graph->label->SetFont(FF_USERFONT1, FS_NORMAL);
         $graph->title->SetFont(FF_USERFONT1, FS_NORMAL, $this->titleSize);
         $graph->title->SetColor('darkblue');
         $graph->legend->Pos(0.1, 0.2);
