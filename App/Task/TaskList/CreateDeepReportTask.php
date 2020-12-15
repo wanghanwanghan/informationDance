@@ -1987,27 +1987,6 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             'height' => 300
         ]);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //        //基本信息
 //        //企业类型
 //        $docObj->setValue('ENTTYPE', $data['getRegisterInfo']['ENTTYPE']);
