@@ -1174,7 +1174,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         $docObj->setImageValue('fpxx_zyspfx_img', [
             'path' => $imgPath,
-            'width' => 450,
+            'width' => 440,
             'height' => 300
         ]);
 
