@@ -518,30 +518,52 @@ class XinDongService extends ServiceBase
 
         //企查查 购地信息
         $csp->add('LandPurchaseList', function () use ($entName) {
-
-            $data = [];
-
-            $postData=[
+            $postData = [
                 'searchKey'=>$entName,
                 'pageIndex'=>1,
                 'pageSize'=>5,
             ];
-
             $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandPurchase/LandPurchaseList', $postData);
+            return empty($res['paging']) ? 0 : $res['paging']['total'];
+        });
 
-            CommonService::getInstance()->log4PHP($res);
+        //企查查 土地公示
+        $csp->add('LandPublishList', function () use ($entName) {
+            $postData = [
+                'searchKey'=>$entName,
+                'pageIndex'=>1,
+                'pageSize'=>5,
+            ];
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandPublish/LandPublishList', $postData);
+            return empty($res['paging']) ? 0 : $res['paging']['total'];
+        });
 
+        //企查查 土地转让
+        $csp->add('LandTransferList', function () use ($entName) {
+            $postData = [
+                'searchKey'=>$entName,
+                'pageIndex'=>1,
+                'pageSize'=>5,
+            ];
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandTransfer/LandTransferList', $postData);
+            return empty($res['paging']) ? 0 : $res['paging']['total'];
+        });
 
-            if (empty($res['result'])) return null;
-
-            return empty($data) ? null : $data;
+        //产品标准
+        $csp->add('ProductStandard', function () use ($entName) {
+            $res = $this->getProductStandard($entName,1,10);
+            return empty($res['paging']) ? 0 : $res['paging']['total'];
         });
 
         //执行
         $res = CspService::getInstance()->exec($csp);
+        $tmp = [];
+        $tmp['LandPurchaseList'] = $res['LandPurchaseList'];
+        $tmp['LandPublishList'] = $res['LandPublishList'];
+        $tmp['LandTransferList'] = $res['LandTransferList'];
+        $tmp['ProductStandard'] = $res['ProductStandard'];
 
-
-
+        return $this->checkResp(200, null, $tmp, '查询成功');
     }
 
 
