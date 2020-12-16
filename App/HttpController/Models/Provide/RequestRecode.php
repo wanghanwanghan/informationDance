@@ -1,6 +1,6 @@
 <?php
 
-namespace App\HttpController\Models\Api;
+namespace App\HttpController\Models\Provide;
 
 use App\HttpController\Models\ModelBase;
 

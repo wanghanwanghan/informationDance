@@ -3,10 +3,7 @@
 namespace App\HttpController\Business\Provide\QiChaCha;
 
 use App\HttpController\Business\Provide\ProvideBase;
-use App\HttpController\Models\Api\RequestRecode;
-use App\HttpController\Service\Common\CommonService;
-use App\HttpController\Service\CreateTable\CreateTableService;
-use Carbon\Carbon;
+use App\HttpController\Models\Provide\RequestRecode;
 
 class QiChaChaController extends ProvideBase
 {
