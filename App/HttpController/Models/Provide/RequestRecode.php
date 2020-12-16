@@ -14,7 +14,7 @@ class RequestRecode extends ModelBase
 
     function addSuffix($suffix): RequestRecode
     {
-        $name = $this->getTableName().$suffix;
+        $name = $this->tableName().$suffix;
         $this->tableName($name);
         return $this;
     }
