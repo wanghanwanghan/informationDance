@@ -537,6 +537,8 @@ class XinDongService extends ServiceBase
             return empty($data) ? null : $data;
         });
 
+        //执行
+        $res = CspService::getInstance()->exec($csp);
 
 
 
