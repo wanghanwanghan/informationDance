@@ -88,5 +88,14 @@ class XinDongController extends XinDongBase
         return $this->checkResponse($res);
     }
 
+    //资产线索
+    function getAssetLeads()
+    {
+        $entName=$this->request()->getRequestParam('entName');
+
+        $res = XinDongService::getInstance()->getAssetLeads($entName);
+
+        return $this->checkResponse($res);
+    }
 
 }

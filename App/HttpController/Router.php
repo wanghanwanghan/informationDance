@@ -103,6 +103,7 @@ class Router extends AbstractRouter
         {
             $routeCollector->addRoute(['GET','POST'],'/getCorporateShareholderRisk',$prefix.'getCorporateShareholderRisk');//控股法人股东的司法风险
             $routeCollector->addRoute(['GET','POST'],'/getProductStandard',$prefix.'getProductStandard');//产品标准
+            $routeCollector->addRoute(['GET','POST'],'/getAssetLeads',$prefix.'getAssetLeads');//资产线索
         });
 
         return true;

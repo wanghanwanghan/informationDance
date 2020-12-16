@@ -3,6 +3,7 @@
 namespace App\HttpController\Service\XinDong;
 
 use App\Csp\Service\CspService;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaHai\FaHaiService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
@@ -509,4 +510,38 @@ class XinDongService extends ServiceBase
 
         return $this->checkResp(200, ['page'=>$page,'pageSize'=>$pageSize,'total'=>$total],$list, '查询成功');
     }
+
+    //资产线索
+    function getAssetLeads($entName)
+    {
+        $csp = CspService::getInstance()->create();
+
+        //企查查 购地信息
+        $csp->add('LandPurchaseList', function () use ($entName) {
+
+            $data = [];
+
+            $postData=[
+                'searchKey'=>$entName,
+                'pageIndex'=>1,
+                'pageSize'=>5,
+            ];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandPurchase/LandPurchaseList', $postData);
+
+            CommonService::getInstance()->log4PHP($res);
+
+
+            if (empty($res['result'])) return null;
+
+            return empty($data) ? null : $data;
+        });
+
+
+
+
+    }
+
+
+
 }
