@@ -3,8 +3,10 @@
 namespace App\HttpController\Business\Provide\QiChaCha;
 
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Models\Api\RequestRecode;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateTable\CreateTableService;
+use Carbon\Carbon;
 
 class QiChaChaController extends ProvideBase
 {
@@ -22,7 +24,17 @@ class QiChaChaController extends ProvideBase
 
     function getTest()
     {
-        CreateTableService::getInstance()->information_dance_request_recode();
+        RequestRecode::create()->addSuffix(date('Y'))->data([
+            'userId' => 1,
+            'ProvideApiId' => 1,
+            'requestId' => 1,
+            'requestUrl' => 1,
+            'requestData' => jsonEncode(['page'=>1,'pageSize'=>10]),
+            'responseCode' => 1,
+            'responseData' => jsonEncode(['page'=>1,'pageSize'=>10]),
+            'spendTime' => 1,
+            'spendMoney' => 1,
+        ])->save();
     }
 
 
