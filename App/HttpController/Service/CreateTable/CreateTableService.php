@@ -408,4 +408,32 @@ class CreateTableService
 
         return 'ok';
     }
+
+    //对外接口计费
+    function information_dance_request_recode()
+    {
+        $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
+            $table->setTableComment('对外接口计费')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
+            $table->colBigInt('id', 20)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
+            $table->colInt('userId',11)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('用户主键');
+            $table->colInt('ProvideApiId',11)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('接口主键');
+            $table->colVarChar('requestId',32)->setDefaultValue('')->setColumnComment('请求唯一主键');
+            $table->colVarChar('requestUrl',256)->setDefaultValue('')->setColumnComment('请求url');
+            $table->colText('requestData')->setColumnComment('请求参数');
+            $table->colInt('responseCode',11)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('返回值');
+            $table->colText('responseData')->setColumnComment('返回结果');
+            $table->colDecimal('spendTime',8,4)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('请求消耗时间');
+            $table->colDecimal('spendMoney',8,4)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('消耗金额');
+            $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
+        });
+
+        $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
+
+        $obj->rawQuery($sql);
+
+        Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->recycleObj($obj);
+
+        return 'ok';
+    }
 }
