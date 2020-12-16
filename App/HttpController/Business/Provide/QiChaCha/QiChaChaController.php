@@ -1,10 +1,10 @@
 <?php
 
-namespace App\HttpController;
+namespace App\HttpController\Business\Provide\QiChaCha;
 
-use EasySwoole\Http\AbstractInterface\Controller;
+use App\HttpController\Business\Provide\ProvideBase;
 
-class Index extends Controller
+class QiChaChaController extends ProvideBase
 {
     function onRequest(?string $action): ?bool
     {
@@ -16,5 +16,10 @@ class Index extends Controller
         parent::afterAction($actionName);
     }
 
-    function index() {}
+
+
+
+
+
+
 }

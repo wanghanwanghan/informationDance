@@ -50,6 +50,7 @@ class CreateDeepReport extends AbstractCronTask
                 //看看这公司的授权书有没有通过
                 $entName = $one['entName'];
 
+                //后台审核通过后才能生成
                 $authInfo = AuthBook::create()->where('entName', $entName)->where('status', 3)->get();
 
                 //没通过就继续下一条
