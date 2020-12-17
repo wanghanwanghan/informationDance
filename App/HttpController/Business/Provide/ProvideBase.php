@@ -119,6 +119,7 @@ class ProvideBase extends Index
 
     function requestUserCheck(): bool
     {
+        CommonService::getInstance()->log4PHP($this->requestUrl);
         $appId = $this->requestData['appId'] ?? '';
         if ($appId === 'wh') return true;
         $time = $this->requestData['time'] ?? '';
