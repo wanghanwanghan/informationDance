@@ -184,6 +184,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //5.4主要成本分析
         $zycbfx=$invoiceObj->zycbfx();
         $reportVal['re_fpjx']['zycbfx']=$zycbfx;
+        //各种费用在统计周期内合并
+        $reportVal['re_fpjx']['zycbfx_new']=$invoiceObj->zycbfx_new($zycbfx[1]);
 
         //6.1企业开票情况汇总
         $qykpqkhz=$invoiceObj->qykpqkhz();
@@ -1148,7 +1150,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     private function fillData(TemplateProcessor $docObj, $data)
     {
         //处理发票信息
-        CommonService::getInstance()->log4PHP($data);
+        //CommonService::getInstance()->log4PHP($data);
         //主营商品分析
         $rows = count($data['re_fpxx']['zyspfx']);
         $docObj->cloneRow('fpxx_zyspfx_no', $rows);
@@ -1219,7 +1221,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         ]);
 
         //水费
-        $rows = count($data['re_fpjx']['zycbfx'][1]['shuifei']);
+        $rows = count($data['re_fpjx']['zycbfx_new']['shuifei']);
         $docObj->cloneRow('fpjx_shuifei_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
@@ -1233,7 +1235,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
 
         //电费
-        $rows = count($data['re_fpjx']['zycbfx'][1]['dianfei']);
+        $rows = count($data['re_fpjx']['zycbfx_new']['dianfei']);
         $docObj->cloneRow('fpjx_dianfei_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
@@ -1247,7 +1249,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
 
         //燃气
-        $rows = count($data['re_fpjx']['zycbfx'][1]['ranqifei']);
+        $rows = count($data['re_fpjx']['zycbfx_new']['ranqifei']);
         $docObj->cloneRow('fpjx_ranqi_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
@@ -1261,7 +1263,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
 
         //热力
-        $rows = count($data['re_fpjx']['zycbfx'][1]['reli']);
+        $rows = count($data['re_fpjx']['zycbfx_new']['reli']);
         $docObj->cloneRow('fpjx_reli_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
@@ -1275,7 +1277,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
 
         //运输与仓储
-        $rows = count($data['re_fpjx']['zycbfx'][1]['yunshu']);
+        $rows = count($data['re_fpjx']['zycbfx_new']['yunshu']);
         $docObj->cloneRow('fpjx_ysycc_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
@@ -1289,7 +1291,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
 
         //物业
-        $rows = count($data['re_fpjx']['zycbfx'][1]['wuye']);
+        $rows = count($data['re_fpjx']['zycbfx_new']['wuye']);
         $docObj->cloneRow('fpjx_wuye_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号

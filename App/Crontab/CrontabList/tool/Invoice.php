@@ -548,6 +548,50 @@ class Invoice
         return $return;
     }
 
+    public function zycbfx_new($data)
+    {
+        //需要返回的数组
+        $res = $temp =[];
+
+        foreach ($data as $feeType => $items)
+        {
+            isset($res[$feeType]) ?: $res[$feeType] = [];
+
+            foreach ($items as $oneItem)
+            {
+                $year = substr($oneItem['riqi'],0,4);
+
+                isset($res[$feeType][$year]) ?: $res[$feeType][$year] = [];
+
+                $gs = trim($oneItem['gs']);
+
+                isset($res[$feeType][$year][$gs]) ?: $res[$feeType][$year][$gs] = 0;
+
+                $res[$feeType][$year][$gs] += (int)$oneItem['jine'];
+            }
+        }
+
+        foreach ($res as $feeType => $items)
+        {
+            isset($temp[$feeType]) ?: $temp[$feeType] = [];
+
+            foreach ($items as $year => $oneItem)
+            {
+                foreach ($oneItem as $entName => $jine)
+                {
+                    $temp[$feeType][] = [
+                        'riqi' => $year,
+                        'jine' => $jine,
+                        'gs' => $entName,
+                    ];
+                }
+            }
+        }
+
+        return $temp;
+    }
+
+
     //6.1企业开票情况汇总
     public function qykpqkhz()
     {
