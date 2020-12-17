@@ -568,9 +568,109 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
     }
 
+    //月度销项发票数据
+    private function ydxxfp($res)
+    {
+        $data=$res;
+
+        $xiaoxiang=$data['type1'];
+
+        //没有就给60分
+        if (empty($xiaoxiang) || count($xiaoxiang) < 2) return 60;
+
+        $tmp=[];
+
+        foreach ($xiaoxiang as $year => $val)
+        {
+            array_push($tmp,array_sum($val));
+        }
+
+        $bi=sprintf('%.1f',($tmp[0] - $tmp[1]) / $tmp[1] * 100);
+
+        if ($bi >= 21) return 100;
+        if ($bi < 21 && $bi >= 11) return 90;
+        if ($bi < 11 && $bi >= 6) return 80;
+        if ($bi < 6 && $bi >= 0) return 70;
+        if ($bi < 0 && $bi >= -10) return 60;
+        if ($bi < -10 && $bi >= -20) return 50;
+        if ($bi < -20) return 40;
+
+        return 60;
+    }
+
+    //月度进项发票数据
+    private function ydjxfp($res)
+    {
+        $data=$res;
+
+        $xiaoxiang=$data['type1'];
+        $jinxiang=$data['type2'];
+
+        //没有就给60分
+        if (empty($xiaoxiang) || empty($jinxiang)) return 60;
+
+        //已进项发票为准，去匹配销项发票
+        foreach ($jinxiang as $year => $val)
+        {
+            //先取到最后一个月有数据的年和月
+            foreach ($val as $k => $v)
+            {
+                if (isset($yearMouthDay))
+                {
+                    continue;
+                }
+
+                if ($v > 0) $yearMouthDay=$year.'-'.$k.'-01';
+            }
+        }
+
+        //往前12个月，计算数据
+        $jinxiangTotal=$xiaoxiangTotal=0;
+        for ($i=0;$i<12;$i++)
+        {
+            $format=Carbon::parse($yearMouthDay)->subMonths($i)->format('Y-m');
+
+            $year=explode('-',$format)[0];
+            $mouth=explode('-',$format)[1];
+
+            //找进项
+            if (isset($jinxiang[$year][$mouth]))
+            {
+                $jinxiangTotal+=$jinxiang[$year][$mouth];
+            }
+
+            //找销项
+            if (isset($xiaoxiang[$year][$mouth]))
+            {
+                $xiaoxiangTotal+=$xiaoxiangTotal[$year][$mouth];
+            }
+        }
+
+        if ($xiaoxiangTotal==0) return 60;
+
+        $bi=sprintf('%.1f',($xiaoxiangTotal - $jinxiangTotal) / $xiaoxiangTotal * 100);
+
+        if ($bi >= 21) return 100;
+        if ($bi < 21 && $bi >= 11) return 90;
+        if ($bi < 11 && $bi >= 6) return 80;
+        if ($bi < 6 && $bi >= 0) return 70;
+        if ($bi < 0 && $bi >= -10) return 60;
+        if ($bi < -10 && $bi >= -20) return 50;
+        if ($bi < -20) return 40;
+
+        return 60;
+    }
+
     //计算信动分
     private function exprXDS($data)
     {
+        //发票销项
+        $a=$this->ydxxfp($data['re_fpjx']['xdsForFaPiao']);
+        //发票进项
+        $b=$this->ydjxfp($data['re_fpjx']['xdsForFaPiao']);
+
+        $this->fz['fapiao']=(0.6 * $a + 0.4 * $b) * 0.3;
+
         //企业性质
         $a = $this->qyxz($data['getRegisterInfo']);
         //企业对外投资
@@ -607,7 +707,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //财务资产
         $c = $this->cwzc($data['FinanceData']['data'], 'fz');
         //计算
-        $this->fz['caiwu'] = $c * 0.6;
+        $this->fz['caiwu'] = $c * 0.35;
         //==============================================================================================================
         //行业位置
         $a = $this->hywz($data['FinanceData']['data'], $data['getRegisterInfo']);
