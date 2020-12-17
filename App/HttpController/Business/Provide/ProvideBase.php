@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Provide;
 
 use App\HttpController\Index;
+use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\Provide\RequestRecode;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
@@ -16,15 +17,15 @@ class ProvideBase extends Index
     public $requestTime;
     public $responseTime;
 
-    public $userId;//用户主键
-    public $provideApiId;//对外接口主键
-    public $requestId;//随机生成的请求uuid
-    public $requestUrl;
-    public $requestData;
+    public $userId = 1;//用户主键           本类中添加
+    public $provideApiId;//对外接口主键      本类中添加
+    public $requestId;//随机生成的请求uuid   本类中添加
+    public $requestUrl;//                  本类中添加
+    public $requestData;//                 本类中添加
     public $responseCode;//返回值
     public $responseData;//返回数据
-    public $spendTime;
-    public $spendMoney;
+    public $spendTime;//请求耗时            本类中添加
+    public $spendMoney;//对外接口需付费金额   本类中添加
 
     function onRequest(?string $action): ?bool
     {
@@ -34,6 +35,7 @@ class ProvideBase extends Index
 
         $this->requestTime = microtime(true);
         $this->requestId = control::getUuid();
+        // /provide/v1/qcc/getTest
         $this->requestUrl = $this->request()->getSwooleRequest()->server['path_info'];
         $this->getRequestData();
 
@@ -119,9 +121,8 @@ class ProvideBase extends Index
 
     function requestUserCheck(): bool
     {
-        CommonService::getInstance()->log4PHP($this->requestUrl);
         $appId = $this->requestData['appId'] ?? '';
-        if ($appId === 'wh') return true;
+        if ($appId === 'PHP_is_the_best_language_in_the_world') return true;
         $time = $this->requestData['time'] ?? '';
         $sign = $this->requestData['sign'] ?? '';
 
@@ -159,16 +160,42 @@ class ProvideBase extends Index
             return false;
         }
 
+        $this->userId = $userInfo->id;
+
+        try {
+            $apiInfo = RequestApiInfo::create()->where('path', $this->requestUrl)->get();
+            if (empty($apiInfo)) {
+                $this->writeJson(607, null, null, '请求接口不存在');
+                return false;
+            }
+            $this->provideApiId = $apiInfo->id;
+            $relationshipCheck = RequestApiInfo::create()
+                ->where(['userId' => $this->userId, 'apiId' => $this->provideApiId])->get();
+            if (empty($relationshipCheck)) {
+                $this->writeJson(608, null, null, '没有接口请求权限');
+                return false;
+            }
+            $this->spendMoney = $relationshipCheck->price;
+            if ($userInfo->money < $this->spendMoney) {
+                $this->writeJson(609, null, null, '余额不足');
+                return false;
+            }
+        } catch (\Throwable $e) {
+            $this->writeJson(605, null, null, '服务器繁忙');
+            $this->writeErr($e, __FUNCTION__);
+            return false;
+        }
+
         $appSecret = $userInfo->appSecret;
         $createSign = strtoupper(md5($appId . $appSecret . $time));
 
         if ($sign !== $createSign) {
-            $this->writeJson(607, null, null, '签名验证错误');
+            $this->writeJson(610, null, null, '签名验证错误');
             return false;
         }
 
         if ($userInfo->status !== 1) {
-            $this->writeJson(608, null, null, 'appId不可用');
+            $this->writeJson(611, null, null, 'appId不可用');
             return false;
         }
 
