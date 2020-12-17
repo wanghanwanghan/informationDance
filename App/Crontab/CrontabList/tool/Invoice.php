@@ -39,7 +39,6 @@ class Invoice
     }
     private function is_ranqifei($name,$money)
     {
-        if (control::hasString($name,'天然气')) return $money;
         if (control::hasString($name,'燃气')) return $money;
         if (control::hasString($name,'液化气')) return $money;
 
@@ -303,8 +302,8 @@ class Invoice
 
             $tmp[]=[
                 'name'=>$key,
-                'jine'=>sprintf('%.1f',$val/10000),
-                'zhanbi'=>sprintf('%.1f',$val/$return['zongjine']*100)
+                'jine'=>sprintf('%.3f',$val/10000),
+                'zhanbi'=>sprintf('%.3f',$val/$return['zongjine']*100)
             ];
         }
 
@@ -428,27 +427,27 @@ class Invoice
 
             $tmp=$this->is_shuifei(trim($one['salesTaxName']),abs($one['totalAmount'])+abs($one['totalTax']));
             $shuifei['jine']+=$tmp;
-            if ($tmp!=0) $shuifeiArr[]=['riqi'=>trim($one['billingDate']),'jine'=>sprintf('%.1f',$tmp/10000),'gs'=>trim($one['salesTaxName'])];
+            if ($tmp!=0) $shuifeiArr[]=['riqi'=>trim($one['billingDate']),'jine'=>sprintf('%.3f',$tmp/10000),'gs'=>trim($one['salesTaxName'])];
 
             $tmp=$this->is_dianfei(trim($one['salesTaxName']),abs($one['totalAmount'])+abs($one['totalTax']));
             $dianfei['jine']+=$tmp;
-            if ($tmp!=0) $dianfeiArr[]=['riqi'=>trim($one['billingDate']),'jine'=>sprintf('%.1f',$tmp/10000),'gs'=>trim($one['salesTaxName'])];
+            if ($tmp!=0) $dianfeiArr[]=['riqi'=>trim($one['billingDate']),'jine'=>sprintf('%.3f',$tmp/10000),'gs'=>trim($one['salesTaxName'])];
 
             $tmp=$this->is_ranqifei(trim($one['salesTaxName']),abs($one['totalAmount'])+abs($one['totalTax']));
             $ranqifei['jine']+=$tmp;
-            if ($tmp!=0) $ranqifeiArr[]=['riqi'=>trim($one['billingDate']),'jine'=>sprintf('%.1f',$tmp/10000),'gs'=>trim($one['salesTaxName'])];
+            if ($tmp!=0) $ranqifeiArr[]=['riqi'=>trim($one['billingDate']),'jine'=>sprintf('%.3f',$tmp/10000),'gs'=>trim($one['salesTaxName'])];
 
             $tmp=$this->is_reli(trim($one['salesTaxName']),abs($one['totalAmount'])+abs($one['totalTax']));
             $reli['jine']+=$tmp;
-            if ($tmp!=0) $reliArr[]=['riqi'=>trim($one['billingDate']),'jine'=>sprintf('%.1f',$tmp/10000),'gs'=>trim($one['salesTaxName'])];
+            if ($tmp!=0) $reliArr[]=['riqi'=>trim($one['billingDate']),'jine'=>sprintf('%.3f',$tmp/10000),'gs'=>trim($one['salesTaxName'])];
 
             $tmp=$this->is_yunshu(trim($one['salesTaxName']),abs($one['totalAmount'])+abs($one['totalTax']));
             $yunshu['jine']+=$tmp;
-            if ($tmp!=0) $yunshuArr[]=['riqi'=>trim($one['billingDate']),'jine'=>sprintf('%.1f',$tmp/10000),'gs'=>trim($one['salesTaxName'])];
+            if ($tmp!=0) $yunshuArr[]=['riqi'=>trim($one['billingDate']),'jine'=>sprintf('%.3f',$tmp/10000),'gs'=>trim($one['salesTaxName'])];
 
             $tmp=$this->is_wuye(trim($one['salesTaxName']),abs($one['totalAmount'])+abs($one['totalTax']));
             $wuye['jine']+=$tmp;
-            if ($tmp!=0) $wuyeArr[]=['riqi'=>trim($one['billingDate']),'jine'=>sprintf('%.1f',$tmp/10000),'gs'=>trim($one['salesTaxName'])];
+            if ($tmp!=0) $wuyeArr[]=['riqi'=>trim($one['billingDate']),'jine'=>sprintf('%.3f',$tmp/10000),'gs'=>trim($one['salesTaxName'])];
         }
 
         $yuancailiao['jine']=$tmpTotal - $zhusu['jine']-$canyin['jine']-$jipiao['jine']-$huochepiao['jine']
@@ -458,23 +457,23 @@ class Invoice
             -$reli['jine']-$yunshu['jine']-$wuye['jine'];
 
         //算算占比
-        $zhusu['zhanbi']=sprintf('%.1f',$zhusu['jine']/$tmpTotal*100);
-        $canyin['zhanbi']=sprintf('%.1f',$canyin['jine']/$tmpTotal*100);
-        $jipiao['zhanbi']=sprintf('%.1f',$jipiao['jine']/$tmpTotal*100);
-        $huochepiao['zhanbi']=sprintf('%.1f',$huochepiao['jine']/$tmpTotal*100);
-        $keyun['zhanbi']=sprintf('%.1f',$keyun['jine']/$tmpTotal*100);
-        $youfei['zhanbi']=sprintf('%.1f',$youfei['jine']/$tmpTotal*100);
-        $huiyifei['zhanbi']=sprintf('%.1f',$huiyifei['jine']/$tmpTotal*100);
-        $lipin['zhanbi']=sprintf('%.1f',$lipin['jine']/$tmpTotal*100);
-        $chuxing['zhanbi']=sprintf('%.1f',$chuxing['jine']/$tmpTotal*100);
-        $chashui['zhanbi']=sprintf('%.1f',$chashui['jine']/$tmpTotal*100);
-        $zhuangxiuzhuangshi['zhanbi']=sprintf('%.1f',$zhuangxiuzhuangshi['jine']/$tmpTotal*100);
-        $jiaju['zhanbi']=sprintf('%.1f',$jiaju['jine']/$tmpTotal*100);
-        $haocai['zhanbi']=sprintf('%.1f',$haocai['jine']/$tmpTotal*100);
-        $jidongchefapiao['zhanbi']=sprintf('%.1f',$jidongchefapiao['jine']/$tmpTotal*100);//
-        $shebeilingjianjizu['zhanbi']=sprintf('%.1f',$shebeilingjianjizu['jine']/$tmpTotal*100);//
-        $fangchan['zhanbi']=sprintf('%.1f',$fangchan['jine']/$tmpTotal*100);//
-        $yuancailiao['zhanbi']=sprintf('%.1f',$yuancailiao['jine']/$tmpTotal*100);//
+        $zhusu['zhanbi']=sprintf('%.3f',$zhusu['jine']/$tmpTotal*100);
+        $canyin['zhanbi']=sprintf('%.3f',$canyin['jine']/$tmpTotal*100);
+        $jipiao['zhanbi']=sprintf('%.3f',$jipiao['jine']/$tmpTotal*100);
+        $huochepiao['zhanbi']=sprintf('%.3f',$huochepiao['jine']/$tmpTotal*100);
+        $keyun['zhanbi']=sprintf('%.3f',$keyun['jine']/$tmpTotal*100);
+        $youfei['zhanbi']=sprintf('%.3f',$youfei['jine']/$tmpTotal*100);
+        $huiyifei['zhanbi']=sprintf('%.3f',$huiyifei['jine']/$tmpTotal*100);
+        $lipin['zhanbi']=sprintf('%.3f',$lipin['jine']/$tmpTotal*100);
+        $chuxing['zhanbi']=sprintf('%.3f',$chuxing['jine']/$tmpTotal*100);
+        $chashui['zhanbi']=sprintf('%.3f',$chashui['jine']/$tmpTotal*100);
+        $zhuangxiuzhuangshi['zhanbi']=sprintf('%.3f',$zhuangxiuzhuangshi['jine']/$tmpTotal*100);
+        $jiaju['zhanbi']=sprintf('%.3f',$jiaju['jine']/$tmpTotal*100);
+        $haocai['zhanbi']=sprintf('%.3f',$haocai['jine']/$tmpTotal*100);
+        $jidongchefapiao['zhanbi']=sprintf('%.3f',$jidongchefapiao['jine']/$tmpTotal*100);//
+        $shebeilingjianjizu['zhanbi']=sprintf('%.3f',$shebeilingjianjizu['jine']/$tmpTotal*100);//
+        $fangchan['zhanbi']=sprintf('%.3f',$fangchan['jine']/$tmpTotal*100);//
+        $yuancailiao['zhanbi']=sprintf('%.3f',$yuancailiao['jine']/$tmpTotal*100);//
 
         //除了原材料，房产，机动车，零件机组，其他的都算管理费用
         $guanlifeiyong=['jine'=>0,'name'=>'管理费用','zhanbi'=>0];
@@ -519,7 +518,7 @@ class Invoice
         $guanlifeiyong['zhanbi']+=$haocai['zhanbi'];
 
         //总占比
-        $guanlifeiyong['zhanbi']=sprintf('%.1f',$guanlifeiyong['zhanbi']);
+        $guanlifeiyong['zhanbi']=sprintf('%.3f',$guanlifeiyong['zhanbi']);
 
         $return=[
             [
@@ -542,7 +541,7 @@ class Invoice
         //金额变成万元
         foreach ($return[0] as &$one)
         {
-            $one['jine']=sprintf('%.1f',$one['jine']/10000);
+            $one['jine']=sprintf('%.3f',$one['jine']/10000);
         }
         unset($one);
 
@@ -633,13 +632,13 @@ class Invoice
             {
                 foreach ($one as &$two)
                 {
-                    if (isset($two['xxJine'])) $two['xxJine']=sprintf('%.1f',$two['xxJine']/10000);
+                    if (isset($two['xxJine'])) $two['xxJine']=sprintf('%.3f',$two['xxJine']/10000);
                 }
                 unset($two);
             }else
             {
-                if (isset($one['xxJine'])) $one['xxJine']=sprintf('%.1f',$one['xxJine']/10000);
-                if (isset($one['jxJine'])) $one['jxJine']=sprintf('%.1f',$one['jxJine']/10000);
+                if (isset($one['xxJine'])) $one['xxJine']=sprintf('%.3f',$one['xxJine']/10000);
+                if (isset($one['jxJine'])) $one['jxJine']=sprintf('%.3f',$one['jxJine']/10000);
             }
         }
         unset($one);
@@ -729,7 +728,7 @@ class Invoice
 
             try
             {
-                $one['normal']['numZhanbi']=sprintf('%.1f',$one['normal']['normalNum']/$num*100);
+                $one['normal']['numZhanbi']=sprintf('%.3f',$one['normal']['normalNum']/$num*100);
             }catch (\Throwable $e)
             {
                 $one['normal']['numZhanbi']=0;
@@ -737,7 +736,7 @@ class Invoice
 
             try
             {
-                $one['normal']['AmountZhanbi']=sprintf('%.1f',$one['normal']['normalAmount']/$amount*100);
+                $one['normal']['AmountZhanbi']=sprintf('%.3f',$one['normal']['normalAmount']/$amount*100);
             }catch (\Throwable $e)
             {
                 $one['normal']['AmountZhanbi']=0;
@@ -754,7 +753,7 @@ class Invoice
                 {
                     if (preg_match('/(Amount|Tax)$/',$k))
                     {
-                        $v=sprintf('%.1f',$v/10000);
+                        $v=sprintf('%.3f',$v/10000);
                     }
                 }
                 unset($v);
@@ -841,7 +840,7 @@ class Invoice
                 {
                     foreach ($type as &$one)
                     {
-                        $one=sprintf('%.1f',$one/10000);
+                        $one=sprintf('%.3f',$one/10000);
                     }
                     unset($one);
 
@@ -850,7 +849,7 @@ class Invoice
                     foreach ($type as &$one)
                     {
                         if ($total <= 0) continue;
-                        $one=sprintf('%.2f',$one/$total*100);
+                        $one=sprintf('%.3f',$one/$total*100);
                     }
                     unset($one);
                 }
@@ -934,7 +933,7 @@ class Invoice
                     $two['zhanbi']=0;
                 }else
                 {
-                    $two['zhanbi']=sprintf('%.1f',$two['totalAmount']/$total[substr($two['date'],0,4)]*100);
+                    $two['zhanbi']=sprintf('%.3f',$two['totalAmount']/$total[substr($two['date'],0,4)]*100);
                 }
             }
             unset($two);
@@ -948,12 +947,12 @@ class Invoice
             {
                 if (isset($two['totalAmount']))
                 {
-                    $two['totalAmount']=sprintf('%.1f',$two['totalAmount']/10000);
+                    $two['totalAmount']=sprintf('%.3f',$two['totalAmount']/10000);
                 }
 
                 if (isset($two['totalTax']))
                 {
-                    $two['totalTax']=sprintf('%.1f',$two['totalTax']/10000);
+                    $two['totalTax']=sprintf('%.3f',$two['totalTax']/10000);
                 }
             }
             unset($two);
@@ -1027,7 +1026,7 @@ class Invoice
                     $one['totalZhanbi']=0;
                 }else
                 {
-                    $one['totalZhanbi']=sprintf('%.1f',$one['total']/$tacoTuesday[$key]['total']*100);
+                    $one['totalZhanbi']=sprintf('%.3f',$one['total']/$tacoTuesday[$key]['total']*100);
                 }
 
                 if ($tacoTuesday[$key]['num'] <= 0)
@@ -1035,7 +1034,7 @@ class Invoice
                     $one['numZhanbi']=0;
                 }else
                 {
-                    $one['numZhanbi']=sprintf('%.1f',$one['num']/$tacoTuesday[$key]['num']*100);
+                    $one['numZhanbi']=sprintf('%.3f',$one['num']/$tacoTuesday[$key]['num']*100);
                 }
             }
             unset($one);
@@ -1057,7 +1056,7 @@ class Invoice
             {
                 if (isset($two['total']))
                 {
-                    $two['total']=sprintf('%.1f',$two['total']/10000);
+                    $two['total']=sprintf('%.3f',$two['total']/10000);
                 }
             }
             unset($two);
@@ -1471,7 +1470,7 @@ class Invoice
                     $val=0;
                 }else
                 {
-                    $val=sprintf('%.2f',$val/$tmp[$year]*100);
+                    $val=sprintf('%.3f',$val/$tmp[$year]*100);
                 }
             }
             unset($val);
@@ -1549,7 +1548,7 @@ class Invoice
         {
             foreach ($one as &$two)
             {
-                $two=sprintf('%.1f',$two/10000);
+                $two=sprintf('%.3f',$two/10000);
             }
             unset($two);
         }
@@ -1592,7 +1591,7 @@ class Invoice
             $return['normal']+=abs($one['totalAmount']);
         }
 
-        if (!empty($return)) $return['normal']=sprintf('%.1f',$return['normal']/10000);
+        if (!empty($return)) $return['normal']=sprintf('%.3f',$return['normal']/10000);
 
         return $return;
     }
@@ -1633,7 +1632,7 @@ class Invoice
         {
             foreach ($one as &$two)
             {
-                $two=sprintf('%.1f',$two/10000);
+                $two=sprintf('%.3f',$two/10000);
             }
             unset($two);
         }
@@ -1705,7 +1704,7 @@ class Invoice
                     $one['totalZhanbi']=0;
                 }else
                 {
-                    $one['totalZhanbi']=sprintf('%.1f',$one['total']/$tacoTuesday[$year]['total']*100);
+                    $one['totalZhanbi']=sprintf('%.3f',$one['total']/$tacoTuesday[$year]['total']*100);
                 }
 
                 if ($tacoTuesday[$year]['num'] <= 0)
@@ -1713,7 +1712,7 @@ class Invoice
                     $one['numZhanbi']=0;
                 }else
                 {
-                    $one['numZhanbi']=sprintf('%.1f',$one['num']/$tacoTuesday[$year]['num']*100);
+                    $one['numZhanbi']=sprintf('%.3f',$one['num']/$tacoTuesday[$year]['num']*100);
                 }
             }
             unset($one);
@@ -1733,8 +1732,8 @@ class Invoice
         {
             foreach ($one as &$two)
             {
-                $two['totalTax']=sprintf('%.1f',$two['totalTax']/10000);
-                $two['total']=sprintf('%.1f',$two['total']/10000);
+                $two['totalTax']=sprintf('%.3f',$two['totalTax']/10000);
+                $two['total']=sprintf('%.3f',$two['total']/10000);
             }
             unset($two);
         }
@@ -1827,7 +1826,7 @@ class Invoice
                     $two['zhanbi']=0;
                 }else
                 {
-                    $two['zhanbi']=sprintf('%.1f',$two['totalAmount']/$total[substr($two['date'],0,4)]*100);
+                    $two['zhanbi']=sprintf('%.3f',$two['totalAmount']/$total[substr($two['date'],0,4)]*100);
                 }
             }
             unset($two);
@@ -1853,8 +1852,8 @@ class Invoice
         //金额变万元
         foreach ($tmp as &$one)
         {
-            $one['totalTax']=sprintf('%.1f',$one['totalTax']/10000);
-            $one['totalAmount']=sprintf('%.1f',$one['totalAmount']/10000);
+            $one['totalTax']=sprintf('%.3f',$one['totalTax']/10000);
+            $one['totalAmount']=sprintf('%.3f',$one['totalAmount']/10000);
 
             //修改一下date的值，懒得在别处改了
             $one['date']=substr($one['date'],0,4);
@@ -2264,7 +2263,7 @@ class Invoice
                     $val=0;
                 }else
                 {
-                    $val=sprintf('%.2f',$val/$tmp[$year]*100);
+                    $val=sprintf('%.3f',$val/$tmp[$year]*100);
                 }
             }
             unset($val);
@@ -2331,7 +2330,7 @@ class Invoice
         {
             foreach ($one as &$two)
             {
-                $two=sprintf('%.1f',$two/10000);
+                $two=sprintf('%.3f',$two/10000);
             }
             unset($two);
         }

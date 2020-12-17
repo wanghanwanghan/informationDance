@@ -1192,6 +1192,17 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue('fpjx_zycbfx_zhanbi#' . ($i + 1), $data['re_fpjx']['zycbfx'][0][$i]['zhanbi']);
         }
 
+        //如主营商品达到6种以上则触发该逻辑，则判断前2种占全部的占比，如占比超过90%，图表下方增加一句
+        //“企业两种产品或服务占了总销售额的**%，主营产品或服务对企业的营业收⼊贡献度较⾼，需重点关注该产品或服务的市场竞品、定价策略、市场销售策略等潜在可能影响该产品或服务销售情况的因素”
+
+        if ($i > 5 && ($data['re_fpjx']['zycbfx'][0][0]['zhanbi'] + $data['re_fpjx']['zycbfx'][0][1]['zhanbi']) > 90)
+        {
+            $docObj->setValue('fpjx_zycbfx_sysSaid',"企业两种产品或服务占总销售额大于90%，主营产品或服务对企业的营业收⼊贡献度较⾼，需重点关注该产品或服务的市场竞品、定价策略、市场销售策略等潜在可能影响该产品或服务销售情况的因素");
+        }else
+        {
+            $docObj->setValue('fpjx_zycbfx_sysSaid','');
+        }
+
         $pieData = $labels = [];
         foreach ($data['re_fpjx']['zycbfx'][0] as $one)
         {
@@ -3567,6 +3578,20 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,57,$this->entName,true);
         $docObj->setValue('qtdcrz_oneSaid', $oneSaid);
+
+        //产品标准
+        $rows = count($data['ProductStandardInfo']['list']);
+        $docObj->cloneRow('ps_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("ps_no#" . ($i + 1), $i + 1);
+            //产品名称
+            $docObj->setValue('ps_pname#' . ($i + 1), $data['ProductStandardInfo']['list'][$i]['PRODUCT_NAME']);
+            //标准名称
+            $docObj->setValue('ps_sname#' . ($i + 1), $data['ProductStandardInfo']['list'][$i]['STANDARD_NAME']);
+            //标准编号
+            $docObj->setValue('ps_sno#' . ($i + 1), $data['ProductStandardInfo']['list'][$i]['STANDARD_CODE']);
+        }
     }
 
     //并发请求数据
@@ -4057,7 +4082,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $extension = [
                 'width' => 1200,
                 'height' => 700,
-                'title' => $count1 == 2 ? '缺少上一年财务数据，财务图表未生成' : $this->entName . ' - 财务非授权 - 同比',
+                'title' => $count1 == 2 ? '缺少上一年财务数据，财务图表未生成' : $this->entName,
                 'xTitle' => '此图为概况信息',
                 //'yTitle'=>$this->entName,
                 'titleSize' => 14,
@@ -5668,6 +5693,24 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
             $tmp['list'] = $res;
             $tmp['total'] = $total;
+
+            return $tmp;
+        });
+
+        //产品标准
+        $csp->add('ProductStandardInfo', function () {
+
+            $res = (new XinDongService())->setCheckRespFlag(true)->getProductStandard($this->entName,1,50);
+
+            if ($res['code']===200 && !empty($res['result']))
+            {
+                $tmp['list'] = $res['result'];
+                $tmp['total'] = $res['paging']['total'];
+            }else
+            {
+                $tmp['list'] = null;
+                $tmp['total'] = 0;
+            }
 
             return $tmp;
         });
