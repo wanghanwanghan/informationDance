@@ -36,10 +36,13 @@ class ProvideBase extends Index
         $this->requestUrl = $this->request()->getUri()->__toString();
         $this->getRequestData();
 
-        //user check
-        $userCheck = $this->userCheck();
+        //request user check
+        $userCheck = $this->requestUserCheck();
 
-        return $userCheck;
+        //request data check
+        $dataCheck = $this->requestDataCheck();
+
+        return ($userCheck && $dataCheck);
     }
 
     function afterAction(?string $actionName): void
@@ -83,16 +86,13 @@ class ProvideBase extends Index
         return (isset($requestData[$key]) && !empty($requestData[$key])) ? $requestData[$key] : $default;
     }
 
-    function userCheck(): bool
+    function requestUserCheck(): bool
     {
+        return true;
+    }
 
-
-
-
-
-
-
-
+    function requestDataCheck(): bool
+    {
         return true;
     }
 }
