@@ -5,6 +5,7 @@ namespace App\HttpController\Business\Provide;
 use App\HttpController\Index;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\Provide\RequestRecode;
+use App\HttpController\Models\Provide\RequestUserApiRelationship;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
@@ -168,7 +169,7 @@ class ProvideBase extends Index
                 return false;
             }
             $this->provideApiId = $apiInfo->id;
-            $relationshipCheck = RequestApiInfo::create()
+            $relationshipCheck = RequestUserApiRelationship::create()
                 ->where(['userId' => $this->userId, 'apiId' => $this->provideApiId])->get();
             if (empty($relationshipCheck)) {
                 $this->writeJson(608, null, null, '没有接口请求权限');
