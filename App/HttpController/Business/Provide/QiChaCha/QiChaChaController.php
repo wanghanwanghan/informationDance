@@ -38,7 +38,11 @@ class QiChaChaController extends ProvideBase
 
         $res = CspService::getInstance()->exec($csp,1);
 
-        CommonService::getInstance()->log4PHP($res);
+        if (empty($res))
+        {
+            $this->responseData = [];
+            $this->responseCode = 201;
+        }
     }
 
 
