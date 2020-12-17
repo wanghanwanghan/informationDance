@@ -120,10 +120,9 @@ class ProvideBase extends Index
     function requestUserCheck(): bool
     {
         $appId = $this->responseData['appId'] ?? '';
+        if ($appId === 'wh') return true;
         $time = $this->responseData['time'] ?? '';
         $sign = $this->responseData['sign'] ?? '';
-
-        if ($appId === 'wh') return true;
 
         if (empty($appId) || empty($time) || empty($sign)) {
             $this->writeJson(600, null, null, '鉴权参数不能是空');
