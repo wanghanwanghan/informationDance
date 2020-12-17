@@ -34,7 +34,7 @@ class ProvideBase extends Index
 
         $this->requestTime = microtime(true);
         $this->requestId = control::getUuid();
-        $this->requestUrl = $this->request()->getUri()->getPath();
+        $this->requestUrl = $this->request()->getSwooleRequest()->server['path_info'];
         $this->getRequestData();
 
         //request user check
