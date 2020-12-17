@@ -8,8 +8,7 @@ class QiChaChaController extends ProvideBase
 {
     function onRequest(?string $action): ?bool
     {
-        parent::onRequest($action);
-        return true;
+        return parent::onRequest($action);
     }
 
     function afterAction(?string $actionName): void
