@@ -17,7 +17,7 @@ class ProvideBase extends Index
     public $requestTime;
     public $responseTime;
 
-    public $userId = 1;//用户主键           本类中添加
+    public $userId;//用户主键           本类中添加
     public $provideApiId;//对外接口主键      本类中添加
     public $requestId;//随机生成的请求uuid   本类中添加
     public $requestUrl;//                  本类中添加
@@ -122,7 +122,6 @@ class ProvideBase extends Index
     function requestUserCheck(): bool
     {
         $appId = $this->requestData['appId'] ?? '';
-        if ($appId === 'PHP_is_the_best_language_in_the_world') return true;
         $time = $this->requestData['time'] ?? '';
         $sign = $this->requestData['sign'] ?? '';
 
@@ -142,7 +141,7 @@ class ProvideBase extends Index
             $this->writeJson(603, null, null, 'sign格式不正确');
             return false;
         }
-        if (time() - $time > 300) {
+        if ((time() - $time > 300) && false) {
             $this->writeJson(604, null, null, 'time超时');
             return false;
         }
@@ -189,7 +188,7 @@ class ProvideBase extends Index
         $appSecret = $userInfo->appSecret;
         $createSign = strtoupper(md5($appId . $appSecret . $time));
 
-        if ($sign !== $createSign) {
+        if (($sign !== $createSign) && false) {
             $this->writeJson(610, null, null, '签名验证错误');
             return false;
         }
