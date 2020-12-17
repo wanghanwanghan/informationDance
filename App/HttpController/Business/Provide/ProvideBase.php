@@ -119,11 +119,10 @@ class ProvideBase extends Index
 
     function requestUserCheck(): bool
     {
-        $appId = $this->responseData['appId'] ?? '';
-        CommonService::getInstance()->log4PHP($appId);
+        $appId = $this->requestData['appId'] ?? '';
         if ($appId === 'wh') return true;
-        $time = $this->responseData['time'] ?? '';
-        $sign = $this->responseData['sign'] ?? '';
+        $time = $this->requestData['time'] ?? '';
+        $sign = $this->requestData['sign'] ?? '';
 
         if (empty($appId) || empty($time) || empty($sign)) {
             $this->writeJson(600, null, null, '鉴权参数不能是空');
