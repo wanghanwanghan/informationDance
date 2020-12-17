@@ -1337,6 +1337,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 $docObj->setValue('fpxx_qykpqkhz_qt_xxs#' . ($i + 1), $data['re_fpxx']['qykpqkhz']['qita'][$key]['xxNum']);
                 //销项有效金额
                 $docObj->setValue('fpxx_qykpqkhz_qt_xxm#' . ($i + 1), $data['re_fpxx']['qykpqkhz']['qita'][$key]['xxJine']);
+                break;
             }
         }
 
@@ -1374,6 +1375,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 $docObj->setValue('fpxx_ndxxfpqkhz_nnzb#' . ($i + 1), $data['re_fpxx']['ndxxfpqkhz'][$key]['normal']['numZhanbi']);
                 //有效发票金额占比
                 $docObj->setValue('fpxx_ndxxfpqkhz_nmzb#' . ($i + 1), $data['re_fpxx']['ndxxfpqkhz'][$key]['normal']['AmountZhanbi']);
+                break;
             }
         }
 
@@ -1400,6 +1402,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 $docObj->setValue('fpxx_ydxxfpfx_n10#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['normal']['10']);
                 $docObj->setValue('fpxx_ydxxfpfx_n11#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['normal']['11']);
                 $docObj->setValue('fpxx_ydxxfpfx_n12#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['normal']['12']);
+                break;
             }
         }
 
@@ -1447,6 +1450,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 $docObj->setValue('fpxx_ydxxfpfx_r10#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['red']['10']);
                 $docObj->setValue('fpxx_ydxxfpfx_r11#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['red']['11']);
                 $docObj->setValue('fpxx_ydxxfpfx_r12#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['red']['12']);
+                break;
             }
         }
 
@@ -1494,6 +1498,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 $docObj->setValue('fpxx_ydxxfpfx_c10#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['cancel']['10']);
                 $docObj->setValue('fpxx_ydxxfpfx_c11#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['cancel']['11']);
                 $docObj->setValue('fpxx_ydxxfpfx_c12#' . ($i + 1), $data['re_fpxx']['ydxxfpfx'][$key]['cancel']['12']);
+                break;
             }
         }
 
@@ -1801,6 +1806,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 $docObj->setValue('fpjx_ydjxfpfx_n10#' . ($i + 1), $data['re_fpjx']['ydjxfpfx'][$key]['10']);
                 $docObj->setValue('fpjx_ydjxfpfx_n11#' . ($i + 1), $data['re_fpjx']['ydjxfpfx'][$key]['11']);
                 $docObj->setValue('fpjx_ydjxfpfx_n12#' . ($i + 1), $data['re_fpjx']['ydjxfpfx'][$key]['12']);
+                break;
             }
         }
 
