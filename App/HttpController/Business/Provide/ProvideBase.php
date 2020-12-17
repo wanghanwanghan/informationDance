@@ -108,16 +108,11 @@ class ProvideBase extends Index
         $raw = jsonDecode($string);
         $form = $this->request()->getRequestParam();
 
-        CommonService::getInstance()->log4PHP($raw);
-        CommonService::getInstance()->log4PHP($form);
-
         !empty($raw) ?: $raw = [];
         !empty($form) ?: $form = [];
 
         $requestData = array_merge($raw, $form);
         $this->requestData = $requestData;
-
-        CommonService::getInstance()->log4PHP($requestData);
 
         return (isset($requestData[$key]) && !empty($requestData[$key])) ? $requestData[$key] : $default;
     }
@@ -125,6 +120,7 @@ class ProvideBase extends Index
     function requestUserCheck(): bool
     {
         $appId = $this->responseData['appId'] ?? '';
+        CommonService::getInstance()->log4PHP($appId);
         if ($appId === 'wh') return true;
         $time = $this->responseData['time'] ?? '';
         $sign = $this->responseData['sign'] ?? '';
