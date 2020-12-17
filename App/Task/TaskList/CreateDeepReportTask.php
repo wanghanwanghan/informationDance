@@ -1324,6 +1324,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //企业开票情况汇总 其他
         $rows = count($data['re_fpxx']['qykpqkhz']['qita']);
         $docObj->cloneRow('fpxx_qykpqkhz_qt_nf', $rows);
+        if ($rows > 0) krsort($data['re_fpxx']['qykpqkhz']['qita']);
         for ($i = 0; $i < $rows; $i++) {
             $j = $i;
             foreach ($data['re_fpxx']['qykpqkhz']['qita'] as $key => $val) {
