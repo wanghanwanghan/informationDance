@@ -5,6 +5,7 @@ namespace App\HttpController\Business\Provide\QiChaCha;
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Models\Provide\RequestUserInfo;
+use EasySwoole\Mysqli\QueryBuilder;
 
 class QiChaChaController extends ProvideBase
 {
@@ -18,18 +19,27 @@ class QiChaChaController extends ProvideBase
         parent::afterAction($actionName);
     }
 
-    private function getCsp()
-    {
-        return CspService::getInstance()->create();
-    }
-
     function getTest()
     {
+        $csp = CspService::getInstance()->create();
+
+        $csp->add('wh',function () {
+            return [
+                'wanghan'=>123,
+                'hkf'=>321,
+            ];
+        });
+
+        $res = CspService::getInstance()->exec($csp);
+
         $this->responseCode = 200;
-        $this->responseData = [
-            'wanghan'=>123,
-            'hkf'=>321,
-        ];
+        $this->responseData = $res['wh'];
+
+        $res=RequestUserInfo::create()->get($this->userId);
+
+        $res->update([
+            'money' => QueryBuilder::dec($this->spendMoney)
+        ]);
     }
 
 
