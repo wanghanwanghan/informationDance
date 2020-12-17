@@ -39,6 +39,8 @@ class QiChaChaController extends ProvideBase
 
         $res=RequestUserInfo::create()->get($this->userId);
 
+        CommonService::getInstance()->log4PHP($this->spendMoney);
+
         $res->update([
             'money' => QueryBuilder::dec($this->spendMoney)
         ]);
