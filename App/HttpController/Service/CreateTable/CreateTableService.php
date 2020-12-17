@@ -409,7 +409,7 @@ class CreateTableService
         return 'ok';
     }
 
-    //对外接口计费
+    //对外接口 计费
     function information_dance_request_recode()
     {
         $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
@@ -426,6 +426,83 @@ class CreateTableService
             $table->colDecimal('spendMoney',8,4)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('消耗金额');
             $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
             $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
+        });
+
+        $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
+
+        $obj->rawQuery($sql);
+
+        Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->recycleObj($obj);
+
+        return 'ok';
+    }
+
+    //对外接口 公司信息
+    function information_dance_request_user_info()
+    {
+        $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
+            $table->setTableComment('公司信息')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
+            $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
+            $table->colVarChar('username',32)->setDefaultValue('')->setColumnComment('公司/用户名称');
+            $table->colVarChar('appId',64)->setDefaultValue('');
+            $table->colVarChar('appSecret',64)->setDefaultValue('');
+            $table->colVarChar('allowIp',128)->setDefaultValue('');
+            $table->colDecimal('money',16,4)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('余额');
+            $table->colTinyInt('status',3)->setIsUnsigned()->setDefaultValue(1)->setColumnComment('状态，1可用，2不可用');
+            $table->colInt('created_at',11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at',11)->setIsUnsigned()->setDefaultValue(0);
+            $table->indexNormal('appId_index','appId');
+        });
+
+        $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
+
+        $obj->rawQuery($sql);
+
+        Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->recycleObj($obj);
+
+        return 'ok';
+    }
+
+    //对外接口 接口信息
+    function information_dance_request_api_info()
+    {
+        $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
+            $table->setTableComment('接口信息')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
+            $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
+            $table->colVarChar('path',128)->setDefaultValue('')->setColumnComment('接口地址');
+            $table->colVarChar('name',32)->setDefaultValue('')->setColumnComment('接口名称');
+            $table->colVarChar('desc',128)->setDefaultValue('')->setColumnComment('接口描述');
+            $table->colVarChar('source',32)->setDefaultValue('')->setColumnComment('接口来源');
+            $table->colDecimal('price',8,4)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('成本价格');
+            $table->colTinyInt('status',3)->setIsUnsigned()->setDefaultValue(1)->setColumnComment('状态，1可用，2不可用');
+            $table->colInt('created_at',11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at',11)->setIsUnsigned()->setDefaultValue(0);
+            $table->indexNormal('path_index','path');
+        });
+
+        $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
+
+        $obj->rawQuery($sql);
+
+        Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->recycleObj($obj);
+
+        return 'ok';
+    }
+
+    //对外接口 用户-接口关系表
+    function information_dance_request_user_api_relationship()
+    {
+        $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
+            $table->setTableComment('用户-接口关系表')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
+            $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
+            $table->colInt('userId', 11)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('用户主键');
+            $table->colInt('apiId', 11)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('接口主键');
+            $table->colDecimal('price',8,4)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('用户调用价格');
+            $table->colTinyInt('status',3)->setIsUnsigned()->setDefaultValue(1)->setColumnComment('状态，1可用，2不可用');
+            $table->colInt('created_at',11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at',11)->setIsUnsigned()->setDefaultValue(0);
+            $table->indexNormal('userId_index','userId');
+            $table->indexNormal('apiId_index','apiId');
         });
 
         $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
