@@ -5,7 +5,9 @@ namespace App\HttpController\Business\Provide\QiChaCha;
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Models\Provide\RequestUserInfo;
+use App\HttpController\Service\Common\CommonService;
 use EasySwoole\Mysqli\QueryBuilder;
+use EasySwoole\ORM\DbManager;
 
 class QiChaChaController extends ProvideBase
 {
@@ -40,6 +42,10 @@ class QiChaChaController extends ProvideBase
         $res->update([
             'money' => QueryBuilder::dec($this->spendMoney)
         ]);
+
+        $res = DbManager::getInstance()->getLastQuery()->getLastQuery();
+
+        CommonService::getInstance()->log4PHP($res);
     }
 
 
