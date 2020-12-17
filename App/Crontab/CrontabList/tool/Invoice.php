@@ -567,7 +567,7 @@ class Invoice
 
                 isset($res[$feeType][$year][$gs]) ?: $res[$feeType][$year][$gs] = 0;
 
-                $res[$feeType][$year][$gs] += (int)$oneItem['jine'];
+                $res[$feeType][$year][$gs] += $oneItem['jine'];
             }
         }
 
