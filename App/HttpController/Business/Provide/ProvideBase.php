@@ -28,6 +28,8 @@ class ProvideBase extends Index
     public $spendTime;//请求耗时            本类中添加
     public $spendMoney;//对外接口需付费金额   本类中添加
 
+    public $debugMode = false;
+
     function onRequest(?string $action): ?bool
     {
         parent::onRequest($action);
@@ -142,7 +144,7 @@ class ProvideBase extends Index
             $this->writeJson(603, null, null, 'sign格式不正确');
             return false;
         }
-        if ((time() - $time > 300) && false) {
+        if ((time() - $time > 300) && $this->debugMode) {
             $this->writeJson(604, null, null, 'time超时');
             return false;
         }
@@ -189,7 +191,7 @@ class ProvideBase extends Index
         $appSecret = $userInfo->appSecret;
         $createSign = strtoupper(md5($appId . $appSecret . $time));
 
-        if (($sign !== $createSign) && false) {
+        if (($sign !== $createSign) && $this->debugMode) {
             $this->writeJson(610, null, null, '签名验证错误');
             return false;
         }

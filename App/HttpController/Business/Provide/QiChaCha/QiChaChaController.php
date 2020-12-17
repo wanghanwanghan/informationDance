@@ -8,6 +8,7 @@ use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\ORM\DbManager;
+use wanghanwanghan\someUtils\control;
 
 class QiChaChaController extends ProvideBase
 {
@@ -23,29 +24,19 @@ class QiChaChaController extends ProvideBase
 
     function getTest()
     {
+        $cspKey = control::getUuid();
+
         $csp = CspService::getInstance()->create();
 
-        $csp->add('wh',function () {
+        $csp->add($csp,function () {
+            \co::sleep(3);
             return [
                 'wanghan'=>123,
                 'hkf'=>321,
             ];
         });
 
-        $res = CspService::getInstance()->exec($csp);
-
-        $this->responseCode = 200;
-        $this->responseData = $res['wh'];
-
-        $res=RequestUserInfo::create()->get($this->userId);
-
-        CommonService::getInstance()->log4PHP($this->spendMoney);
-
-        $res->update([
-            'money' => QueryBuilder::dec($this->spendMoney)
-        ]);
-
-        $res = DbManager::getInstance()->getLastQuery()->getLastQuery();
+        $res = CspService::getInstance()->exec($csp,1);
 
         CommonService::getInstance()->log4PHP($res);
     }
