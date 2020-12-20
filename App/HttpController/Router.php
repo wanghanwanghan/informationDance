@@ -119,6 +119,7 @@ class Router extends AbstractRouter
         $routeCollector->addGroup('/qcc',function (RouteCollector $routeCollector)
         {
             $routeCollector->addRoute(['GET','POST'],'/getEntList','/Business/Api/QiChaCha/QiChaChaController/getEntList');//模糊搜索企业
+            $routeCollector->addRoute(['GET','POST'],'/getBasicDetailsByEntName','/Business/Api/QiChaCha/QiChaChaController/getBasicDetailsByEntName');//企业工商信息
             $routeCollector->addRoute(['GET','POST'],'/getSpecialEntDetails','/Business/Api/QiChaCha/QiChaChaController/getSpecialEntDetails');//律所及其他特殊基本信息
             $routeCollector->addRoute(['GET','POST'],'/getEntType','/Business/Api/QiChaCha/QiChaChaController/getEntType');//企业类型查询
             $routeCollector->addRoute(['GET','POST'],'/getBeneficiary','/Business/Api/QiChaCha/QiChaChaController/getBeneficiary');//实际控制人和控制路径
