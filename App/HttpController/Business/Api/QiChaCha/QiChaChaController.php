@@ -633,6 +633,18 @@ class QiChaChaController extends QiChaChaBase
         return $StockNumber;
     }
 
+    //企业工商信息
+    function getBasicDetailsByEntName($entName)
+    {
+        $postData=[
+            'keyword'=>$entName,
+        ];
+
+        $res=(new QiChaChaService())->get($this->baseUrl.'ECIV4/GetBasicDetailsByName',$postData);
+
+        return $this->checkResponse($res);
+    }
+
     //上市公司对外担保
     function getIPOGuarantee()
     {
