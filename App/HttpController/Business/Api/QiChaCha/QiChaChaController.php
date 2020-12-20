@@ -634,8 +634,10 @@ class QiChaChaController extends QiChaChaBase
     }
 
     //企业工商信息
-    function getBasicDetailsByEntName($entName)
+    function getBasicDetailsByEntName()
     {
+        $entName=$this->request()->getRequestParam('entName');
+
         $postData=[
             'keyword'=>$entName,
         ];
