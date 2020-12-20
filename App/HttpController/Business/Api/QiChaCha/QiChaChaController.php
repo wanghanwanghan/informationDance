@@ -6,6 +6,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
+use EasySwoole\Pool\Manager;
 use wanghanwanghan\someUtils\control;
 
 class QiChaChaController extends QiChaChaBase
@@ -643,6 +644,27 @@ class QiChaChaController extends QiChaChaBase
         ];
 
         $res=(new QiChaChaService())->get($this->baseUrl.'ECIV4/GetBasicDetailsByName',$postData);
+
+        //2018年营业收入区间
+        $mysql = CreateConf::getInstance()->getConf('env.mysqlDatabase');
+        try {
+            $obj = Manager::getInstance()->get($mysql)->getObj();
+            $obj->queryBuilder()->where('entName', $entName)->get('qiyeyingshoufanwei');
+            $range = $obj->execBuilder();
+            Manager::getInstance()->get($mysql)->recycleObj($obj);
+        } catch (\Throwable $e) {
+            $this->writeErr($e, __FUNCTION__);
+            $range = [];
+        }
+
+        $vendinc = [];
+
+        foreach ($range as $one) {
+            $vendinc[] = $one;
+        }
+
+        !empty($vendinc) ?: $vendinc = '';
+        $res['result']['VENDINC'] = $vendinc;
 
         return $this->checkResponse($res);
     }
