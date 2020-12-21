@@ -119,7 +119,7 @@ class ProvideBase extends Index
         $requestData = array_merge($raw, $form);
         $this->requestData = $requestData;
 
-        return (isset($requestData[$key]) && !empty($requestData[$key])) ? $requestData[$key] : $default;
+        return (isset($requestData[$key])) ? $requestData[$key] : $default;
     }
 
     function requestUserCheck(): bool
