@@ -666,6 +666,9 @@ class QiChaChaController extends QiChaChaBase
         !empty($vendinc) ?: $vendinc = '';
         $res['Result']['VENDINC'] = $vendinc;
 
+        $temp = $res['Result'];
+        $res['Result'] = [$temp];
+
         return $this->checkResponse($res);
     }
 
