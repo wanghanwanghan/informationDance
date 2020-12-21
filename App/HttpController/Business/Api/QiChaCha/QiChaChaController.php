@@ -664,9 +664,7 @@ class QiChaChaController extends QiChaChaBase
         }
 
         !empty($vendinc) ?: $vendinc = '';
-        $res['result']['VENDINC'] = $vendinc;
-
-        CommonService::getInstance()->log4PHP($res);
+        $res['Result']['VENDINC'] = $vendinc;
 
         return $this->checkResponse($res);
     }
