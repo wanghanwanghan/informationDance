@@ -1501,7 +1501,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //评定时间
             $docObj->setValue("nsxydj_sortTimeString#" . ($i + 1), $this->formatDate($data['satparty_xin']['list'][$i]['sortTimeString']));
             //税务登记号
-            $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            //$docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            $docObj->setValue("SHXYDM#" . ($i + 1), $data['GetBasicDetailsByName']['CreditCode']);
             //纳税信用等级
             $docObj->setValue("nsxydj_eventResult#" . ($i + 1), $data['satparty_xin']['list'][$i]['detail']['eventResult']);
             //评定单位
@@ -1522,7 +1523,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("swxk_no#" . ($i + 1), $i + 1);
             //税务登记号
-            $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            //$docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            $docObj->setValue("SHXYDM#" . ($i + 1), $data['GetBasicDetailsByName']['CreditCode']);
             //评定时间
             $docObj->setValue("swxk_sortTimeString#" . ($i + 1), $this->formatDate($data['satparty_xuke']['list'][$i]['sortTimeString']));
             //发布时间
@@ -1547,7 +1549,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("swdj_no#" . ($i + 1), $i + 1);
             //税务登记号
-            $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            //$docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            $docObj->setValue("SHXYDM#" . ($i + 1), $data['GetBasicDetailsByName']['CreditCode']);
             //评定时间
             $docObj->setValue("swdj_sortTimeString#" . ($i + 1), $this->formatDate($data['satparty_reg']['list'][$i]['sortTimeString']));
             //事件名称
@@ -1572,7 +1575,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("fzc_no#" . ($i + 1), $i + 1);
             //税务登记号
-            $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            //$docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            $docObj->setValue("SHXYDM#" . ($i + 1), $data['GetBasicDetailsByName']['CreditCode']);
             //认定时间
             $docObj->setValue("fzc_sortTimeString#" . ($i + 1), $this->formatDate($data['satparty_fzc']['list'][$i]['sortTimeString']));
             //事件名称
@@ -1597,7 +1601,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("qs_no#" . ($i + 1), $i + 1);
             //税务登记号
-            $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            //$docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            $docObj->setValue("SHXYDM#" . ($i + 1), $data['GetBasicDetailsByName']['CreditCode']);
             //认定时间
             $docObj->setValue("qs_sortTimeString#" . ($i + 1), $this->formatDate($data['satparty_qs']['list'][$i]['sortTimeString']));
             //事件名称
@@ -1622,7 +1627,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("sswf_no#" . ($i + 1), $i + 1);
             //税务登记号
-            $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            //$docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            $docObj->setValue("SHXYDM#" . ($i + 1), $data['GetBasicDetailsByName']['CreditCode']);
             //处罚时间
             $docObj->setValue("sswf_sortTimeString#" . ($i + 1), $this->formatDate($data['satparty_chufa']['list'][$i]['sortTimeString']));
             //处罚金额

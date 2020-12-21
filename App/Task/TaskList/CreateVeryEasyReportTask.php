@@ -737,29 +737,55 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
     {
         //基本信息
         //企业类型
-        $docObj->setValue('ENTTYPE', $data['getRegisterInfo']['ENTTYPE']);
+        //$docObj->setValue('ENTTYPE', $data['getRegisterInfo']['ENTTYPE']);
         //注册资本
-        $docObj->setValue('REGCAP', $data['getRegisterInfo']['REGCAP']);
+        //$docObj->setValue('REGCAP', $data['getRegisterInfo']['REGCAP']);
         //注册地址
-        $docObj->setValue('DOM', $data['getRegisterInfo']['DOM']);
+        //$docObj->setValue('DOM', $data['getRegisterInfo']['DOM']);
         //法人
-        $docObj->setValue('FRDB', $data['getRegisterInfo']['FRDB']);
+        //$docObj->setValue('FRDB', $data['getRegisterInfo']['FRDB']);
         //统一代码
-        $docObj->setValue('SHXYDM', $data['getRegisterInfo']['SHXYDM']);
+        //$docObj->setValue('SHXYDM', $data['getRegisterInfo']['SHXYDM']);
         //成立日期
-        $docObj->setValue('ESDATE', $this->formatDate($data['getRegisterInfo']['ESDATE']));
+        //$docObj->setValue('ESDATE', $this->formatDate($data['getRegisterInfo']['ESDATE']));
         //核准日期
-        $docObj->setValue('APPRDATE', $this->formatDate($data['getRegisterInfo']['APPRDATE']));
+        //$docObj->setValue('APPRDATE', $this->formatDate($data['getRegisterInfo']['APPRDATE']));
         //经营状态
-        $docObj->setValue('ENTSTATUS', $data['getRegisterInfo']['ENTSTATUS']);
+        //$docObj->setValue('ENTSTATUS', $data['getRegisterInfo']['ENTSTATUS']);
         //营业期限
-        $docObj->setValue('OPFROM', $this->formatDate($data['getRegisterInfo']['OPFROM']));
-        $docObj->setValue('APPRDATE', $this->formatDate($data['getRegisterInfo']['APPRDATE']));
+        //$docObj->setValue('OPFROM', $this->formatDate($data['getRegisterInfo']['OPFROM']));
+        //$docObj->setValue('APPRDATE', $this->formatDate($data['getRegisterInfo']['APPRDATE']));
         //所属行业
-        $docObj->setValue('INDUSTRY', $data['getRegisterInfo']['INDUSTRY']);
+        //$docObj->setValue('INDUSTRY', $data['getRegisterInfo']['INDUSTRY']);
         //经营范围
-        $docObj->setValue('OPSCOPE', $data['getRegisterInfo']['OPSCOPE']);
+        //$docObj->setValue('OPSCOPE', $data['getRegisterInfo']['OPSCOPE']);
+        //$oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,14,$this->entName,true);
+        //$docObj->setValue('jbxx_oneSaid', $oneSaid);
 
+        //企查查 基本信息
+        //企业类型
+        $docObj->setValue('ENTTYPE', $data['GetBasicDetailsByName']['EconKind']);
+        //注册资本
+        $docObj->setValue('REGCAP', $data['GetBasicDetailsByName']['RegistCapi']);
+        //注册地址
+        $docObj->setValue('DOM', $data['GetBasicDetailsByName']['Address']);
+        //法人
+        $docObj->setValue('FRDB', $data['GetBasicDetailsByName']['OperName']);
+        //统一代码
+        $docObj->setValue('SHXYDM', $data['GetBasicDetailsByName']['CreditCode']);
+        //成立日期
+        $docObj->setValue('ESDATE', $this->formatDate($data['GetBasicDetailsByName']['StartDate']));
+        //核准日期
+        $docObj->setValue('APPRDATE', $this->formatDate($data['GetBasicDetailsByName']['UpdatedDate']));
+        //经营状态
+        $docObj->setValue('ENTSTATUS', $data['GetBasicDetailsByName']['Status']);
+        //营业期限
+        $docObj->setValue('OPFROM', $this->formatDate($data['GetBasicDetailsByName']['TermStart']));
+        $docObj->setValue('APPRDATE', $this->formatDate($data['GetBasicDetailsByName']['TeamEnd']));
+        //所属行业
+        $docObj->setValue('INDUSTRY', '');
+        //经营范围
+        $docObj->setValue('OPSCOPE', $data['GetBasicDetailsByName']['Scope']);
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,14,$this->entName,true);
         $docObj->setValue('jbxx_oneSaid', $oneSaid);
 
@@ -1056,6 +1082,18 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             $res = (new TaoShuService())->setCheckRespFlag(true)->post(['entName' => $this->entName], 'getRegisterInfo');
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = current($res['result']) : $res = null;
+
+            return $res;
+        });
+
+        //企查查 基本信息 工商信息
+        $csp->add('GetBasicDetailsByName', function () {
+
+            $postData = ['keyWord' => $this->entName];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'ECIV4/GetBasicDetailsByName', $postData);
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
             return $res;
         });
