@@ -23,7 +23,6 @@ class QianQiController extends ProvideBase
 
     function checkResponse($res)
     {
-        CommonService::getInstance()->log4PHP($res);
         if (empty($res)) {
             //超时了
             $this->responseCode = 500;
@@ -31,9 +30,9 @@ class QianQiController extends ProvideBase
             $this->spendMoney = 0;
             $msg = '请求超时';
         } else {
-            $this->responseCode = $res['code'];
-            $this->responseData = $res['result'];
-            $msg = $res['msg'];
+            $this->responseCode = $res[$this->cspKey]['code'];
+            $this->responseData = $res[$this->cspKey]['result'];
+            $msg = $res[$this->cspKey]['msg'];
         }
 
         return $this->writeJson($this->responseCode, null, $this->responseData, $msg);
