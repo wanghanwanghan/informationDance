@@ -17,7 +17,7 @@ class CspService extends ServiceBase
     }
 
     //执行csp里的内容
-    function exec(Csp $csp, $timeout = 5)
+    function exec(Csp $csp, $timeout = 5): array
     {
         return $csp->exec($timeout);
     }

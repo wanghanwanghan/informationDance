@@ -194,7 +194,7 @@ class ProvideBase extends Index
         }
 
         $appSecret = $userInfo->appSecret;
-        $createSign = strtoupper(md5($appId . $appSecret . $time));
+        $createSign = substr(strtoupper(md5($appId . $appSecret . $time)),0,30);
 
         if (($sign !== $createSign)) {
             $this->writeJson(610, null, null, '签名验证错误');

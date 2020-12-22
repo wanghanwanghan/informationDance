@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\QianQi;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Service\QianQi\QianQiService;
 
 class QianQiController extends ProvideBase
 {
@@ -21,16 +22,31 @@ class QianQiController extends ProvideBase
 
     function checkResponse($res)
     {
-        $this->responseCode = 200;
-        $this->responseData = $res;
+        if (empty($res)) {
+            //超时了
+            $this->responseCode = 500;
+            $this->responseData = $res;
+            $this->spendMoney = 0;
+            $msg = '请求超时';
+        } else {
+            $this->responseCode = $res['code'];
+            $this->responseData = $res['result'];
+            $msg = $res['msg'];
+        }
 
-        return $this->writeJson(200, null, $res);
+        return $this->writeJson($this->responseCode, null, $this->responseData, $msg);
     }
 
     function getThreeYearsData()
     {
-        $this->csp->add($this->cspKey, function () {
-            return 'wanghan123';
+        $entName = $this->getRequestData('entName', '');
+
+        $postData = [
+            'entName' => $entName
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new QianQiService())->setCheckRespFlag(true)->getThreeYears($postData);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);

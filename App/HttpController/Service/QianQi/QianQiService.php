@@ -503,6 +503,40 @@ class QianQiService extends ServiceBase
             $this->checkResp(['code'=>200,'msg'=>'查询成功','data'=>$return]) : ['code'=>200,'msg'=>'查询成功','data'=>$return];
     }
 
+    //对外的最近三年财务数据
+    function getThreeYears($postData)
+    {
+        $entId=$this->getEntid($postData['entName']);
+
+        if (empty($entId))
+        {
+            return ['code'=>102,'msg'=>'entId是空','data'=>[]];
+        }
+
+        (int)date('m') >= 9 ? $yearStart=date('Y') - 1 : $yearStart=date('Y') - 2;
+
+        for ($i=3;$i--;)
+        {
+            $arr=[
+                'entid'=>$entId,
+                'year'=>$yearStart - $i,
+                'type'=>2,
+                'usercode'=>$this->usercode
+            ];
+
+            $this->sendHeaders['authorization']=$this->createToken($arr);
+
+            $res=(new CoHttpClient())->send($this->baseUrl.'xindong/search/',$arr,$this->sendHeaders);
+
+            isset($res['data']) ? $return[$yearStart - $i]=$this->wordToNum($res['data']) : $return[$yearStart - $i]=[];
+        }
+
+        krsort($return);
+
+        return $this->checkRespFlag ?
+            $this->checkResp(['code'=>200,'msg'=>'查询成功','data'=>$return]) : ['code'=>200,'msg'=>'查询成功','data'=>$return];
+    }
+
     //近三年的财务数据不给原值的，转化成同比
     function toPercent($data): array
     {
