@@ -8,13 +8,13 @@ $appId = 'PHP_is_the_best_language_in_the_world';
 $appSecret = 'PHP_GO';
 $time = time();
 
-$sign = strtoupper(md5($appId . $appSecret . $time));
+$sign = substr(strtoupper(md5($appId . $appSecret . $time)),0,30);
 
 $data = [
     'appId' => $appId,
     'time' => $time,
     'sign' => $sign,
-    'phone' => 'hkf',
+    'entName' => '山东电力工程咨询院有限公司',
 ];
 
 $curl = curl_init();//初始化
