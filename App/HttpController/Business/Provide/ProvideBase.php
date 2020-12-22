@@ -22,6 +22,7 @@ class ProvideBase extends Index
 
     public $userId;//用户主键               本类中添加
     public $provideApiId;//对外接口主键      本类中添加
+    public $requestRealIp;//真实ip          本类中添加
     public $requestId;//随机生成的请求uuid   本类中添加
     public $requestUrl;//                  本类中添加
     public $requestData;//                 本类中添加
@@ -29,7 +30,7 @@ class ProvideBase extends Index
     public $responsePaging;//返回分页
     public $responseData;//返回数据
     public $responseMsg;//返回消息
-    public $responseInfo;//返回信息
+    public $responseInfo;//返回信息         本类中添加
     public $spendTime;//请求耗时            本类中添加
     public $spendMoney;//对外接口需付费金额   本类中添加
 
@@ -47,6 +48,11 @@ class ProvideBase extends Index
         $this->qqListUrl = CreateConf::getInstance()->getConf('qianqi.baseUrl');
 
         $this->requestTime = microtime(true);
+
+        isset($this->request()->getHeader('x-real-ip')[0]) ?
+            $this->requestRealIp = $this->request()->getHeader('x-real-ip')[0] :
+            $this->requestRealIp = '';
+
         $this->requestId = control::getUuid();
         $this->requestUrl = $this->request()->getSwooleRequest()->server['path_info'];
         $this->getRequestData();
@@ -65,6 +71,7 @@ class ProvideBase extends Index
             RequestRecode::create()->addSuffix(date('Y'))->data([
                 'userId' => $this->userId,
                 'provideApiId' => $this->provideApiId,
+                'requestIp' => $this->requestRealIp,
                 'requestId' => $this->requestId,
                 'requestUrl' => mb_substr($this->requestUrl, 0, 256),
                 'requestData' => json_encode($this->requestData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
