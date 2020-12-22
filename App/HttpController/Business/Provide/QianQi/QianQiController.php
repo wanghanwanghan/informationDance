@@ -18,13 +18,18 @@ class QianQiController extends ProvideBase
         parent::afterAction($actionName);
     }
 
+    function checkResponse($res)
+    {
+        return $this->writeJson(200,null,$res);
+    }
+
     function getThreeYearsData()
     {
         $res = $this->csp->add($this->cspKey, function () {
             return 'wanghan123';
         });
 
-        return $this->writeJson(200,null,$res);
+        return $this->checkResponse($res);
     }
 
 
