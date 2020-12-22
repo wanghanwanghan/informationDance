@@ -244,7 +244,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $ljkpjeTOP10qyhz_jx=$invoiceObj->ljkpjeTOP10qyhz_jx();
         $reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx']=$ljkpjeTOP10qyhz_jx;
 
-        //6.4.4单张金额TOP10企业汇总
+        //6.4.4单张开票金额TOP10企业汇总
         $dzkpjeTOP10jl_jx=$invoiceObj->dzkpjeTOP10jl_jx();
         $reportVal['re_fpjx']['dzkpjeTOP10jl_jx']=$dzkpjeTOP10jl_jx;
 
@@ -1252,7 +1252,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     private function fillData(TemplateProcessor $docObj, $data)
     {
         //处理发票信息
-        //CommonService::getInstance()->log4PHP($data);
+        CommonService::getInstance()->log4PHP($data);
 
         //
         $docObj->setValue('common_data_zhouqi', $data['commonData']['zhouqi']);
