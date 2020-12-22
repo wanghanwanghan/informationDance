@@ -26,7 +26,7 @@ use wanghanwanghan\someUtils\control;
 
 class UserController extends UserBase
 {
-    private $connDB;
+    public $connDB;
 
     function onRequest(?string $action): ?bool
     {

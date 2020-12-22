@@ -472,8 +472,10 @@ class XinDongService extends ServiceBase
         $tmp=array_filter($tmp);
         sort($tmp);
         //再整理数字
-        array_push($tmp,"共有{$res['PatentSearch']}个专利，具体登录每日信动官网查看");
-        array_push($tmp,"共有{$res['GetAdministrativeLicenseList']}个行政许可，具体登录每日信动官网查看");
+        $res['PatentSearch'] > 0 ? $said = "共有{$res['PatentSearch']}个专利，具体登录小程序查看" : $said = "共有{$res['PatentSearch']}个专利";
+        array_push($tmp,$said);
+        $res['GetAdministrativeLicenseList'] > 0 ? $said = "共有{$res['GetAdministrativeLicenseList']}个行政许可，具体登录小程序查看" : $said = "共有{$res['GetAdministrativeLicenseList']}个行政许可";
+        array_push($tmp,$said);
 
         return $this->checkResp(200, null, $tmp, '查询成功');
     }

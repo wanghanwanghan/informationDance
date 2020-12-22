@@ -165,7 +165,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         $tmp->setValue('entName', $this->entName);
 
-        $tmp->setValue('reportNum', $this->reportNum);
+        $tmp->setValue('reportNum', substr($this->reportNum,0,14));
 
         $tmp->setValue('time', Carbon::now()->format('Y年m月d日'));
 
@@ -190,6 +190,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //6.1企业开票情况汇总
         $qykpqkhz=$invoiceObj->qykpqkhz();
         $reportVal['re_fpxx']['qykpqkhz']=$qykpqkhz;
+        //统计周期从这里拿
+        $reportVal['commonData']['zhouqi'] = $qykpqkhz['zhouqi']['min'].' - '.$qykpqkhz['zhouqi']['max'];
 
         //6.2.1年度销项发票情况汇总
         $ndxxfpqkhz=$invoiceObj->ndxxfpqkhz();
@@ -1251,6 +1253,10 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     {
         //处理发票信息
         //CommonService::getInstance()->log4PHP($data);
+
+        //
+        $docObj->setValue('common_data_zhouqi', $data['commonData']['zhouqi']);
+
         //主营商品分析
         $rows = count($data['re_fpxx']['zyspfx']);
         $docObj->cloneRow('fpxx_zyspfx_no', $rows);
@@ -2121,29 +2127,55 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         //基本信息
         //企业类型
-        $docObj->setValue('ENTTYPE', $data['getRegisterInfo']['ENTTYPE']);
+        //$docObj->setValue('ENTTYPE', $data['getRegisterInfo']['ENTTYPE']);
         //注册资本
-        $docObj->setValue('REGCAP', $data['getRegisterInfo']['REGCAP']);
+        //$docObj->setValue('REGCAP', $data['getRegisterInfo']['REGCAP']);
         //注册地址
-        $docObj->setValue('DOM', $data['getRegisterInfo']['DOM']);
+        //$docObj->setValue('DOM', $data['getRegisterInfo']['DOM']);
         //法人
-        $docObj->setValue('FRDB', $data['getRegisterInfo']['FRDB']);
+        //$docObj->setValue('FRDB', $data['getRegisterInfo']['FRDB']);
         //统一代码
-        $docObj->setValue('SHXYDM', $data['getRegisterInfo']['SHXYDM']);
+        //$docObj->setValue('SHXYDM', $data['getRegisterInfo']['SHXYDM']);
         //成立日期
-        $docObj->setValue('ESDATE', $this->formatDate($data['getRegisterInfo']['ESDATE']));
+        //$docObj->setValue('ESDATE', $this->formatDate($data['getRegisterInfo']['ESDATE']));
         //核准日期
-        $docObj->setValue('APPRDATE', $this->formatDate($data['getRegisterInfo']['APPRDATE']));
+        //$docObj->setValue('APPRDATE', $this->formatDate($data['getRegisterInfo']['APPRDATE']));
         //经营状态
-        $docObj->setValue('ENTSTATUS', $data['getRegisterInfo']['ENTSTATUS']);
+        //$docObj->setValue('ENTSTATUS', $data['getRegisterInfo']['ENTSTATUS']);
         //营业期限
-        $docObj->setValue('OPFROM', $this->formatDate($data['getRegisterInfo']['OPFROM']));
-        $docObj->setValue('APPRDATE', $this->formatDate($data['getRegisterInfo']['APPRDATE']));
+        //$docObj->setValue('OPFROM', $this->formatDate($data['getRegisterInfo']['OPFROM']));
+        //$docObj->setValue('APPRDATE', $this->formatDate($data['getRegisterInfo']['APPRDATE']));
         //所属行业
-        $docObj->setValue('INDUSTRY', $data['getRegisterInfo']['INDUSTRY']);
+        //$docObj->setValue('INDUSTRY', $data['getRegisterInfo']['INDUSTRY']);
         //经营范围
-        $docObj->setValue('OPSCOPE', $data['getRegisterInfo']['OPSCOPE']);
+        //$docObj->setValue('OPSCOPE', $data['getRegisterInfo']['OPSCOPE']);
+        //$oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,14,$this->entName,true);
+        //$docObj->setValue('jbxx_oneSaid', $oneSaid);
 
+        //企查查 基本信息
+        //企业类型
+        $docObj->setValue('ENTTYPE', $data['GetBasicDetailsByName']['EconKind']);
+        //注册资本
+        $docObj->setValue('REGCAP', $data['GetBasicDetailsByName']['RegistCapi']);
+        //注册地址
+        $docObj->setValue('DOM', $data['GetBasicDetailsByName']['Address']);
+        //法人
+        $docObj->setValue('FRDB', $data['GetBasicDetailsByName']['OperName']);
+        //统一代码
+        $docObj->setValue('SHXYDM', $data['GetBasicDetailsByName']['CreditCode']);
+        //成立日期
+        $docObj->setValue('ESDATE', $this->formatDate($data['GetBasicDetailsByName']['StartDate']));
+        //核准日期
+        $docObj->setValue('APPRDATE', $this->formatDate($data['GetBasicDetailsByName']['UpdatedDate']));
+        //经营状态
+        $docObj->setValue('ENTSTATUS', $data['GetBasicDetailsByName']['Status']);
+        //营业期限
+        $docObj->setValue('OPFROM', $this->formatDate($data['GetBasicDetailsByName']['TermStart']));
+        $docObj->setValue('APPRDATE', $this->formatDate($data['GetBasicDetailsByName']['TeamEnd']));
+        //所属行业
+        $docObj->setValue('INDUSTRY', '');
+        //经营范围
+        $docObj->setValue('OPSCOPE', $data['GetBasicDetailsByName']['Scope']);
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,14,$this->entName,true);
         $docObj->setValue('jbxx_oneSaid', $oneSaid);
 
@@ -2760,7 +2792,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             //评定时间
             $docObj->setValue("nsxydj_sortTimeString#" . ($i + 1), $this->formatDate($data['satparty_xin']['list'][$i]['sortTimeString']));
             //税务登记号
-            $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            //$docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            $docObj->setValue("SHXYDM#" . ($i + 1), $data['GetBasicDetailsByName']['CreditCode']);
             //纳税信用等级
             $docObj->setValue("nsxydj_eventResult#" . ($i + 1), $data['satparty_xin']['list'][$i]['detail']['eventResult']);
             //评定单位
@@ -2778,7 +2811,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("swxk_no#" . ($i + 1), $i + 1);
             //税务登记号
-            $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            //$docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            $docObj->setValue("SHXYDM#" . ($i + 1), $data['GetBasicDetailsByName']['CreditCode']);
             //评定时间
             $docObj->setValue("swxk_sortTimeString#" . ($i + 1), $this->formatDate($data['satparty_xuke']['list'][$i]['sortTimeString']));
             //发布时间
@@ -2800,7 +2834,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("swdj_no#" . ($i + 1), $i + 1);
             //税务登记号
-            $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            //$docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            $docObj->setValue("SHXYDM#" . ($i + 1), $data['GetBasicDetailsByName']['CreditCode']);
             //评定时间
             $docObj->setValue("swdj_sortTimeString#" . ($i + 1), $this->formatDate($data['satparty_reg']['list'][$i]['sortTimeString']));
             //事件名称
@@ -2822,7 +2857,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("fzc_no#" . ($i + 1), $i + 1);
             //税务登记号
-            $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            //$docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            $docObj->setValue("SHXYDM#" . ($i + 1), $data['GetBasicDetailsByName']['CreditCode']);
             //认定时间
             $docObj->setValue("fzc_sortTimeString#" . ($i + 1), $this->formatDate($data['satparty_fzc']['list'][$i]['sortTimeString']));
             //事件名称
@@ -2844,7 +2880,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("qs_no#" . ($i + 1), $i + 1);
             //税务登记号
-            $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            //$docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            $docObj->setValue("SHXYDM#" . ($i + 1), $data['GetBasicDetailsByName']['CreditCode']);
             //认定时间
             $docObj->setValue("qs_sortTimeString#" . ($i + 1), $this->formatDate($data['satparty_qs']['list'][$i]['sortTimeString']));
             //事件名称
@@ -2866,7 +2903,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("sswf_no#" . ($i + 1), $i + 1);
             //税务登记号
-            $docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            //$docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
+            $docObj->setValue("SHXYDM#" . ($i + 1), $data['GetBasicDetailsByName']['CreditCode']);
             //处罚时间
             $docObj->setValue("sswf_sortTimeString#" . ($i + 1), $this->formatDate($data['satparty_chufa']['list'][$i]['sortTimeString']));
             //处罚金额
@@ -3719,6 +3757,18 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
+        //企查查 基本信息 工商信息
+        $csp->add('GetBasicDetailsByName', function () {
+
+            $postData = ['keyWord' => $this->entName];
+
+            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'ECIV4/GetBasicDetailsByName', $postData);
+
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+
+            return $res;
+        });
+
         //淘数 基本信息 股东信息
         $csp->add('getShareHolderInfo', function () {
 
@@ -4176,11 +4226,13 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
             $count1=0;
 
+            ksort($res);
+
             foreach ($res as $year => $dataArr) {
                 $legend[] = $year;
                 array_pop($dataArr);
                 $tmp = array_map(function ($val) {
-                    return is_numeric($val) ? round((int)$val) : null;//四舍五入
+                    return is_numeric($val) ? (int)round($val) : null;//四舍五入
                 }, array_values($dataArr));
                 $data[] = $tmp;
                 !empty(array_filter($tmp)) ?: $count1++;

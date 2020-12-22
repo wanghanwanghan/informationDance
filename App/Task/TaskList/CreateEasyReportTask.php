@@ -65,7 +65,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $tmp->setValue('entName', $this->entName);
 
-        $tmp->setValue('reportNum', $this->reportNum);
+        $tmp->setValue('reportNum', substr($this->reportNum,0,14));
 
         $tmp->setValue('time', Carbon::now()->format('Y年m月d日'));
 
@@ -3038,11 +3038,13 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $count1=0;
 
+            ksort($res);
+
             foreach ($res as $year => $dataArr) {
                 $legend[] = $year;
                 array_pop($dataArr);
                 $tmp = array_map(function ($val) {
-                    return is_numeric($val) ? round((int)$val) : null;//四舍五入
+                    return is_numeric($val) ? (int)round($val) : null;//四舍五入
                 }, array_values($dataArr));
                 $data[] = $tmp;
                 !empty(array_filter($tmp)) ?: $count1++;
