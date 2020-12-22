@@ -22,7 +22,9 @@ curl_setopt($curl, CURLOPT_URL, $url);//设置请求地址
 curl_setopt($curl, CURLOPT_POST, true);//设置post方式请求
 curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);//几秒后没链接上就自动断开
 curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-$data = json_encode($data);//转换成json
+
+
+
 curl_setopt($curl, CURLOPT_POSTFIELDS, $data);//提交的数据
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);//返回值不直接显示
 $res = curl_exec($curl);//发送请求
