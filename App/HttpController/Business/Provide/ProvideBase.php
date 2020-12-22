@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Provide;
 
+use App\Csp\Service\CspService;
 use App\HttpController\Index;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\Provide\RequestRecode;
@@ -14,11 +15,12 @@ use wanghanwanghan\someUtils\control;
 class ProvideBase extends Index
 {
     public $qccListUrl;
+    public $qqListUrl;
 
     public $requestTime;
     public $responseTime;
 
-    public $userId;//用户主键           本类中添加
+    public $userId;//用户主键               本类中添加
     public $provideApiId;//对外接口主键      本类中添加
     public $requestId;//随机生成的请求uuid   本类中添加
     public $requestUrl;//                  本类中添加
@@ -28,13 +30,18 @@ class ProvideBase extends Index
     public $spendTime;//请求耗时            本类中添加
     public $spendMoney;//对外接口需付费金额   本类中添加
 
-    public $debugMode = false;
+    public $csp;
+    public $cspKey;
 
     function onRequest(?string $action): ?bool
     {
         parent::onRequest($action);
 
+        $this->csp = CspService::getInstance()->create();
+        $this->cspKey = control::getUuid();
+
         $this->qccListUrl = CreateConf::getInstance()->getConf('qichacha.baseUrl');
+        $this->qqListUrl = CreateConf::getInstance()->getConf('qianqi.baseUrl');
 
         $this->requestTime = microtime(true);
         $this->requestId = control::getUuid();
@@ -43,9 +50,7 @@ class ProvideBase extends Index
         $this->getRequestData();
 
         //request user check
-        $userCheck = $this->requestUserCheck();
-
-        return $userCheck;
+        return $this->requestUserCheck();
     }
 
     function afterAction(?string $actionName): void
@@ -144,7 +149,7 @@ class ProvideBase extends Index
             $this->writeJson(603, null, null, 'sign格式不正确');
             return false;
         }
-        if ((time() - $time > 300) && $this->debugMode) {
+        if ((time() - $time > 300)) {
             $this->writeJson(604, null, null, 'time超时');
             return false;
         }
@@ -191,7 +196,7 @@ class ProvideBase extends Index
         $appSecret = $userInfo->appSecret;
         $createSign = strtoupper(md5($appId . $appSecret . $time));
 
-        if (($sign !== $createSign) && $this->debugMode) {
+        if (($sign !== $createSign)) {
             $this->writeJson(610, null, null, '签名验证错误');
             return false;
         }

@@ -13,6 +13,7 @@ class ProvideRouter
     function addRouterV1(RouteCollector $routeCollector)
     {
         $this->QiChaChaRouterV1($routeCollector);
+        $this->QianQiRouterV1($routeCollector);
     }
 
     private function QiChaChaRouterV1(RouteCollector $routeCollector)
@@ -26,6 +27,29 @@ class ProvideRouter
 
         return true;
     }
+
+    private function QianQiRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Provide/QianQi/QianQiController/';
+
+        $routeCollector->addGroup('/qq', function (RouteCollector $routeCollector) use ($prefix)
+        {
+            $routeCollector->addRoute(['GET', 'POST'], '/getThreeYearsData', $prefix . 'getThreeYearsData');
+        });
+
+        return true;
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
 }
