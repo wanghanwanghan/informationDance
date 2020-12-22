@@ -204,10 +204,12 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //6.2.5单张开票金额TOP10记录
         $dzkpjeTOP10jl_xx=$invoiceObj->dzkpjeTOP10jl_xx();
         $reportVal['re_fpxx']['dzkpjeTOP10jl_xx']=$dzkpjeTOP10jl_xx;
+        empty($reportVal['re_fpxx']['dzkpjeTOP10jl_xx']) ?: $reportVal['re_fpxx']['dzkpjeTOP10jl_xx'] = control::sortArrByKey($reportVal['re_fpxx']['dzkpjeTOP10jl_xx'],'totalAmount');
 
         //6.2.6累计开票金额TOP10企业汇总
         $ljkpjeTOP10qyhz_xx=$invoiceObj->ljkpjeTOP10qyhz_xx();
         $reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx']=$ljkpjeTOP10qyhz_xx;
+        empty($reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx']) ?: $reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'] = control::sortArrByKey($reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'],'total');
 
         //6.3.1下游客户稳定性分析
         //1，下游企业司龄分布
@@ -243,10 +245,12 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //6.4.3累计开票金额TOP10企业汇总
         $ljkpjeTOP10qyhz_jx=$invoiceObj->ljkpjeTOP10qyhz_jx();
         $reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx']=$ljkpjeTOP10qyhz_jx;
+        empty($reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx']) ?: $reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx'] = control::sortArrByKey($reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx'],'total');
 
         //6.4.4单张开票金额TOP10企业汇总
         $dzkpjeTOP10jl_jx=$invoiceObj->dzkpjeTOP10jl_jx();
         $reportVal['re_fpjx']['dzkpjeTOP10jl_jx']=$dzkpjeTOP10jl_jx;
+        empty($reportVal['re_fpjx']['dzkpjeTOP10jl_jx']) ?: $reportVal['re_fpjx']['dzkpjeTOP10jl_jx'] = control::sortArrByKey($reportVal['re_fpjx']['dzkpjeTOP10jl_jx'],'totalAmount');
 
         //6.5.1上游共饮上稳定性分析
         //1，上游供应商司龄分布
@@ -1252,7 +1256,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     private function fillData(TemplateProcessor $docObj, $data)
     {
         //处理发票信息
-        CommonService::getInstance()->log4PHP($data);
+        //CommonService::getInstance()->log4PHP($data);
 
         //
         $docObj->setValue('common_data_zhouqi', $data['commonData']['zhouqi']);
@@ -1739,7 +1743,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //下游企业合作年限分布（个）
         $barData = $labels = [];
         $barData = [array_values($data['re_fpxx']['xyqyhznxfb'])];
-        $labels = ['1年以下','2-3年','4-5年'];
+        $labels = ['1年','2年','3年以上'];
 
         $imgPath = (new NewGraphService())
             ->setTitle('下游企业合作年限分布（个）')

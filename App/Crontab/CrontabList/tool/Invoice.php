@@ -1265,6 +1265,7 @@ class Invoice
                 'type2'=>0,
                 'type3'=>0,
             ];
+
             foreach ($tmp as $one)
             {
                 switch ($one)
@@ -1838,6 +1839,8 @@ class Invoice
         }
         unset($one);
 
+        krsort($return);
+
         //二维数组排序
         foreach ($return as $key => $one)
         {
@@ -1877,24 +1880,8 @@ class Invoice
         }
         unset($one);
 
-        if (empty($return)) return $return;
-
-        krsort($return);
-
-        $tmp=[];
-        foreach ($return as $year)
-        {
-            foreach ($year as $one)
-            {
-                $tmp[]=$one;
-            }
-        }
-
-        $tmp=control::sortArrByKey($tmp,'totalAmount');
-        $tmp=array_slice($tmp,0,10);
-
         //金额变万元
-        foreach ($tmp as &$one)
+        foreach ($return as &$one)
         {
             $one['totalTax']=sprintf('%.3f',$one['totalTax']/10000);
             $one['totalAmount']=sprintf('%.3f',$one['totalAmount']/10000);
@@ -1904,7 +1891,7 @@ class Invoice
         }
         unset($one);
 
-        return $tmp;
+        return current($return);
     }
 
     //6.5.1上游共饮上稳定性分析
