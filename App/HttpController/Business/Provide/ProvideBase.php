@@ -26,7 +26,10 @@ class ProvideBase extends Index
     public $requestUrl;//                  本类中添加
     public $requestData;//                 本类中添加
     public $responseCode;//返回值
+    public $responsePaging;//返回分页
     public $responseData;//返回数据
+    public $responseMsg;//返回消息
+    public $responseInfo;//返回信息
     public $spendTime;//请求耗时            本类中添加
     public $spendMoney;//对外接口需付费金额   本类中添加
 
@@ -45,7 +48,6 @@ class ProvideBase extends Index
 
         $this->requestTime = microtime(true);
         $this->requestId = control::getUuid();
-        // /provide/v1/qcc/getTest
         $this->requestUrl = $this->request()->getSwooleRequest()->server['path_info'];
         $this->getRequestData();
 
@@ -74,6 +76,21 @@ class ProvideBase extends Index
         } catch (\Throwable $e) {
 
         }
+
+        $this->responseInfo = [
+            'requestUrl' => $this->requestUrl,
+            'requestId' => $this->requestId,
+            'requestData' => $this->requestData,
+            'spendTime' => $this->spendTime,
+        ];
+
+        $this->writeJson(
+            $this->responseCode,
+            $this->responsePaging,
+            $this->responseData,
+            $this->responseMsg,
+            $this->responseInfo
+        );
     }
 
     //重写writeJson
@@ -121,11 +138,6 @@ class ProvideBase extends Index
 
         !empty($raw) ?: $raw = [];
         !empty($form) ?: $form = [];
-
-        CommonService::getInstance()->log4PHP($raw);
-        CommonService::getInstance()->log4PHP($form);
-
-
 
         $requestData = array_merge($raw, $form);
         $this->requestData = $requestData;
