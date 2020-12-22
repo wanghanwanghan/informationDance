@@ -59,7 +59,7 @@ class ProvideBase extends Index
     {
         parent::afterAction($actionName);
         $this->responseTime = microtime(true);
-        $this->spendTime = $this->requestTime - $this->responseTime;
+        $this->spendTime = $this->responseTime - $this->requestTime;
 
         try {
             RequestRecode::create()->addSuffix(date('Y'))->data([
