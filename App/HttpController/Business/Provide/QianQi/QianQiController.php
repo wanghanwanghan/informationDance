@@ -25,6 +25,7 @@ class QianQiController extends ProvideBase
     {
         if (empty($res)) {
             //超时了
+            $res = [];
             $this->responseCode = 500;
             $this->responseData = $res;
             $this->spendMoney = 0;
@@ -35,7 +36,14 @@ class QianQiController extends ProvideBase
             $msg = $res[$this->cspKey]['msg'];
         }
 
-        return $this->writeJson($this->responseCode, null, $this->responseData, $msg);
+        $info = [
+            'requestUrl' => $this->requestUrl,
+            'requestId' => $this->requestId,
+            'requestData' => $this->requestData,
+            'spendTime' => $this->spendTime,
+        ];
+
+        return $this->writeJson($this->responseCode, null, $this->responseData, $msg, $info);
     }
 
     function getThreeYearsData()

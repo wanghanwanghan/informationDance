@@ -77,7 +77,7 @@ class ProvideBase extends Index
     }
 
     //重写writeJson
-    function writeJson($statusCode = 200, $paging = null, $result = null, $msg = null)
+    function writeJson($statusCode = 200, $paging = null, $result = null, $msg = null, $info = [])
     {
         if (!$this->response()->isEndResponse()) {
             if (!empty($paging) && is_array($paging)) {
@@ -89,7 +89,8 @@ class ProvideBase extends Index
                 'code' => $statusCode,
                 'paging' => $paging,
                 'result' => $result,
-                'msg' => $msg
+                'msg' => $msg,
+                'info' => $info,
             ];
             $this->response()->write(json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
             $this->response()->withHeader('Content-type', 'application/json;charset=utf-8');
