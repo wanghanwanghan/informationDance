@@ -8,8 +8,6 @@ use App\HttpController\Service\QianQi\QianQiService;
 
 class QianQiController extends ProvideBase
 {
-    public $cspTimeout = 5;
-
     function onRequest(?string $action): ?bool
     {
         return parent::onRequest($action);
