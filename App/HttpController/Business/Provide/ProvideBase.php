@@ -122,6 +122,11 @@ class ProvideBase extends Index
         !empty($raw) ?: $raw = [];
         !empty($form) ?: $form = [];
 
+        CommonService::getInstance()->log4PHP($raw);
+        CommonService::getInstance()->log4PHP($form);
+
+
+
         $requestData = array_merge($raw, $form);
         $this->requestData = $requestData;
 
