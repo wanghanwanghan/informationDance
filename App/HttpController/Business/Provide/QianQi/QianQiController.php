@@ -3,7 +3,6 @@
 namespace App\HttpController\Business\Provide\QianQi;
 
 use App\Csp\Service\CspService;
-use App\HttpController\Business\Api\Common\CommonBase;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\QianQi\QianQiService;
