@@ -20,6 +20,9 @@ class QianQiController extends ProvideBase
 
     function checkResponse($res)
     {
+        $this->responseCode = 200;
+        $this->responseData = $res;
+
         return $this->writeJson(200,null,$res);
     }
 
