@@ -2,11 +2,12 @@
 
 namespace App\HttpController\Business\Provide\QianQi;
 
+use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
 
 class QianQiController extends ProvideBase
 {
-    public $cspTimeOut = 5;
+    public $cspTimeout = 5;
 
     function onRequest(?string $action): ?bool
     {
@@ -23,20 +24,22 @@ class QianQiController extends ProvideBase
         $this->responseCode = 200;
         $this->responseData = $res;
 
-        return $this->writeJson(200,null,$res);
+        return $this->writeJson(200, null, $res);
     }
 
     function getThreeYearsData()
     {
-        $res = $this->csp->add($this->cspKey, function () {
+        $this->csp->add($this->cspKey, function () {
             return 'wanghan123';
         });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         return $this->checkResponse($res);
     }
 
 
-
-
-
 }
+
+
+

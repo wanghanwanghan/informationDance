@@ -2,24 +2,46 @@
 
 include './vendor/autoload.php';
 
+$url = 'https://api.meirixindong.com/provide/v1/qq/getThreeYearsData';
+
+$appId = 'PHP_is_the_best_language_in_the_world';
+$appSecret = 'PHP_GO';
+$time = time();
+
+$sign = strtoupper(md5($appId . $appSecret . $time));
+
 $data = [
-    '2018' => ['xx'=>1],
-    '2019' => ['xx'=>2],
-    '2020' => ['xx'=>3],
+    'appId' => $appId,
+    'time' => $time,
+    'sign' => $sign,
+    'phone' => 'hkf',
 ];
 
-for ($i = 0; $i < 3; $i++) {
-    $j = $i;
-    foreach ($data as $key => $val) {
-        if ($j !== 0) {
-            $j--;
-            continue;
-        }
+$curl = curl_init();//初始化
+curl_setopt($curl, CURLOPT_URL, $url);//设置请求地址
+curl_setopt($curl, CURLOPT_POST, true);//设置post方式请求
+curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);//几秒后没链接上就自动断开
+curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+$data = json_encode($data);//转换成json
+curl_setopt($curl, CURLOPT_POSTFIELDS, $data);//提交的数据
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);//返回值不直接显示
+$res = curl_exec($curl);//发送请求
 
-        echo $data[$key]['xx'].PHP_EOL;
-        break;
-    }
+if (curl_errno($curl))//判断是否有错
+{
+    $msg = null;
+    $msg = curl_error($curl);
+    curl_close($curl);//释放
+    dd($msg);
+} else {
+    curl_close($curl);//释放
+    dd($res);
 }
+
+
+
+
+
 
 
 
