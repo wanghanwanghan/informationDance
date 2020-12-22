@@ -40,7 +40,6 @@ class QianQiController extends ProvideBase
             'requestUrl' => $this->requestUrl,
             'requestId' => $this->requestId,
             'requestData' => $this->requestData,
-            'spendTime' => $this->spendTime,
         ];
 
         return $this->writeJson($this->responseCode, null, $this->responseData, $msg, $info);
