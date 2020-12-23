@@ -36,7 +36,7 @@ class ProvideBase extends Index
 
     public $csp;
     public $cspKey;
-    public $cspTimeout = 5;
+    public $cspTimeout = 10;
 
     function onRequest(?string $action): ?bool
     {

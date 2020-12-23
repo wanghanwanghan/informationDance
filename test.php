@@ -13,7 +13,9 @@ $data = [
     'appId' => $appId,
     'time' => $time,
     'sign' => $sign,
-    'entName' => '晶澳太阳能科技股份有限公司',
+    'entName' => '',
+    'page' => 1,
+    'pageSize' => 1,
 ];
 
 $curl=curl_init();//初始化
@@ -27,4 +29,4 @@ $res=curl_exec($curl);//发送请求
 
 
 
-dd($res);
+dd(json_decode($res,1));

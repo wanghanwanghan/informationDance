@@ -21,11 +21,10 @@ class QiChaChaController extends ProvideBase
 
     function checkResponse($res)
     {
-        if (empty($res)) {
-            $res = [];
+        if (empty($res[$this->cspKey])) {
             $this->responseCode = 500;
             $this->responsePaging = null;
-            $this->responseData = $res;
+            $this->responseData = $res[$this->cspKey];
             $this->spendMoney = 0;
             $this->responseMsg = '请求超时或出错';
         } else {
@@ -65,7 +64,8 @@ class QiChaChaController extends ProvideBase
                 'pageIndex' => $postData['page'],
                 'pageSize' => $postData['pageSize'],
             ];
-            return (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccListUrl.'IPO/GetIPOGuarantee',$postData);
+            return (new QiChaChaService())->setCheckRespFlag(true)
+                ->get($this->qccListUrl.'IPO/GetIPOGuarantee',$postData);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
