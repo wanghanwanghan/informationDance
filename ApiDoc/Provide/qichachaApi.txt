@@ -6,7 +6,7 @@
 参数:
      appId = XXX
      time = 1608715890
-     sign = md5( appId + appSecret + time )，全部转大写后只取前30位
+     sign = substr( md5( appId + appSecret + time ), 0, 30 )，全部转大写后只取前30位
      entName = 山东电力工程咨询院有限公司
      page = 1，默认1
      pageSize = 10，默认10，最大10
