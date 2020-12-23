@@ -22,14 +22,15 @@ class QiChaChaController extends ProvideBase
     function checkResponse($res)
     {
         if (empty($res)) {
-            //超时了
             $res = [];
             $this->responseCode = 500;
+            $this->responsePaging = null;
             $this->responseData = $res;
             $this->spendMoney = 0;
-            $this->responseMsg = '请求超时';
+            $this->responseMsg = '请求超时或出错';
         } else {
             $this->responseCode = $res[$this->cspKey]['code'];
+            $this->responsePaging = $res[$this->cspKey]['paging'];
             $this->responseData = $res[$this->cspKey]['result'];
             $this->responseMsg = $res[$this->cspKey]['msg'];
         }
@@ -44,24 +45,26 @@ class QiChaChaController extends ProvideBase
         $pageSize = $this->getRequestData('pageSize', 10);
 
         $postData = [
-            'entName' => $entName
+            'entName' => $entName,
+            'page' => $page,
+            'pageSize' => $pageSize,
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
             //先拿股票代码
             $info = (new QiChaChaService())->setCheckRespFlag(true)
                 ->get($this->qccListUrl.'ECIV4/GetBasicDetailsByName',['keyword'=>$postData['entName']]);
-
-            CommonService::getInstance()->log4PHP($info);
-
             if ($info['code'] === 200 && !empty($info['result'])) {
-                empty($res['Result']['StockNumber']) ? $StockNumber='' : $StockNumber=$info['result']['StockNumber'];
+                empty($res['Result']['StockNumber']) ? $stock='' : $stock=$info['result']['StockNumber'];
+            }else{
+                $stock = '';
             }
-
-
-
-
-
+            if (empty($stock)) return [];
+            $postData = [
+                'stockCode' => $stock,
+                'pageIndex' => $postData['page'],
+                'pageSize' => $postData['pageSize'],
+            ];
             return (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccListUrl.'IPO/GetIPOGuarantee',$postData);
         });
 

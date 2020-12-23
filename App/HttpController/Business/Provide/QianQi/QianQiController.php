@@ -21,12 +21,11 @@ class QianQiController extends ProvideBase
     function checkResponse($res)
     {
         if (empty($res)) {
-            //超时了
             $res = [];
             $this->responseCode = 500;
             $this->responseData = $res;
             $this->spendMoney = 0;
-            $this->responseMsg = '请求超时';
+            $this->responseMsg = '请求超时或出错';
         } else {
             $this->responseCode = $res[$this->cspKey]['code'];
             $this->responseData = $res[$this->cspKey]['result'];
