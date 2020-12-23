@@ -13,7 +13,7 @@ $data = [
     'appId' => $appId,
     'time' => $time,
     'sign' => $sign,
-    'entName' => '',
+    'entName' => '晶澳太阳能科技股份有限公司',
     'page' => 1,
     'pageSize' => 1,
 ];
