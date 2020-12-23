@@ -26,12 +26,14 @@ class QiChaChaController extends ProvideBase
             $this->responsePaging = null;
             $this->responseData = $res[$this->cspKey];
             $this->spendMoney = 0;
-            $this->responseMsg = '请求超时或出错';
+            $this->responseMsg = '请求超时';
         } else {
             $this->responseCode = $res[$this->cspKey]['code'];
             $this->responsePaging = $res[$this->cspKey]['paging'];
             $this->responseData = $res[$this->cspKey]['result'];
             $this->responseMsg = $res[$this->cspKey]['msg'];
+
+            $res[$this->cspKey]['code'] === 200 ?: $this->spendMoney = 0;
         }
 
         return true;
@@ -58,7 +60,7 @@ class QiChaChaController extends ProvideBase
             }else{
                 $stock = '';
             }
-            if (empty($stock)) return [];
+            if (empty($stock)) return ['code'=>201,'paging'=>null,'result'=>'null','msg'=>'股票代码是空'];
             $postData = [
                 'stockCode' => $stock,
                 'pageIndex' => $postData['page'],
