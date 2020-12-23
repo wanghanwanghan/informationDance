@@ -4,11 +4,8 @@ namespace App\HttpController\Business\Provide\QiChaCha;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
-use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
-use EasySwoole\Mysqli\QueryBuilder;
-use EasySwoole\ORM\DbManager;
-use wanghanwanghan\someUtils\control;
+use App\HttpController\Service\QiChaCha\QiChaChaService;
 
 class QiChaChaController extends ProvideBase
 {
@@ -22,27 +19,55 @@ class QiChaChaController extends ProvideBase
         parent::afterAction($actionName);
     }
 
-    function getTest()
+    function checkResponse($res)
     {
-        $cspKey = control::getUuid();
+        if (empty($res)) {
+            //超时了
+            $res = [];
+            $this->responseCode = 500;
+            $this->responseData = $res;
+            $this->spendMoney = 0;
+            $this->responseMsg = '请求超时';
+        } else {
+            $this->responseCode = $res[$this->cspKey]['code'];
+            $this->responseData = $res[$this->cspKey]['result'];
+            $this->responseMsg = $res[$this->cspKey]['msg'];
+        }
 
-        $csp = CspService::getInstance()->create();
+        return true;
+    }
 
-        $csp->add($csp,function () {
-            \co::sleep(3);
-            return [
-                'wanghan'=>123,
-                'hkf'=>321,
-            ];
+    function getThreeYearsData()
+    {
+        $entName = $this->getRequestData('entName', '');
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
+
+        $postData = [
+            'entName' => $entName
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            //先拿股票代码
+            $info = (new QiChaChaService())->setCheckRespFlag(true)
+                ->get($this->qccListUrl.'ECIV4/GetBasicDetailsByName',['keyword'=>$postData['entName']]);
+
+            CommonService::getInstance()->log4PHP($info);
+
+            if ($info['code'] === 200 && !empty($info['result'])) {
+                empty($res['Result']['StockNumber']) ? $StockNumber='' : $StockNumber=$info['result']['StockNumber'];
+            }
+
+
+
+
+
+            return (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccListUrl.'IPO/GetIPOGuarantee',$postData);
         });
 
-        $res = CspService::getInstance()->exec($csp,1);
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
-        if (empty($res))
-        {
-            $this->responseData = [];
-            $this->responseCode = 201;
-        }
+        return $this->checkResponse($res);
     }
 
 

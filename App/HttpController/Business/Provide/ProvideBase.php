@@ -148,6 +148,9 @@ class ProvideBase extends Index
         !empty($form) ?: $form = [];
 
         $requestData = array_merge($raw, $form);
+
+        (isset($requestData['pageSize']) && $requestData['pageSize'] > 10) ? $requestData['pageSize'] = 10 : null;
+
         $this->requestData = $requestData;
 
         return (isset($requestData[$key])) ? $requestData[$key] : $default;

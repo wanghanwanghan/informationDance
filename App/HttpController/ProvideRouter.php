@@ -22,7 +22,7 @@ class ProvideRouter
 
         $routeCollector->addGroup('/qcc', function (RouteCollector $routeCollector) use ($prefix)
         {
-            $routeCollector->addRoute(['GET', 'POST'], '/getTest', $prefix . 'getTest');
+            $routeCollector->addRoute(['GET', 'POST'], '/getIPOGuarantee', $prefix . 'getIPOGuarantee');
         });
 
         return true;
