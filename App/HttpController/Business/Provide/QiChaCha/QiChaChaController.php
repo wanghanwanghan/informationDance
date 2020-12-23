@@ -37,7 +37,7 @@ class QiChaChaController extends ProvideBase
         return true;
     }
 
-    function getThreeYearsData()
+    function getIPOGuarantee()
     {
         $entName = $this->getRequestData('entName', '');
         $page = $this->getRequestData('page', 1);
