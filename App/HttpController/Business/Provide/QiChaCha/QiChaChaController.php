@@ -55,7 +55,7 @@ class QiChaChaController extends ProvideBase
             $info = (new QiChaChaService())->setCheckRespFlag(true)
                 ->get($this->qccListUrl.'ECIV4/GetBasicDetailsByName',['keyword'=>$postData['entName']]);
             if ($info['code'] === 200 && !empty($info['result'])) {
-                empty($res['Result']['StockNumber']) ? $stock='' : $stock=$info['result']['StockNumber'];
+                empty($info['result']['StockNumber']) ? $stock='' : $stock=$info['result']['StockNumber'];
             }else{
                 $stock = '';
             }
