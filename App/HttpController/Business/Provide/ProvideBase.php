@@ -10,6 +10,7 @@ use App\HttpController\Models\Provide\RequestUserApiRelationship;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
+use EasySwoole\Mysqli\QueryBuilder;
 use wanghanwanghan\someUtils\control;
 
 class ProvideBase extends Index
@@ -69,6 +70,7 @@ class ProvideBase extends Index
         $this->spendTime = $this->responseTime - $this->requestTime;
 
         try {
+            //行为记录
             RequestRecode::create()->addSuffix(date('Y'))->data([
                 'userId' => $this->userId,
                 'provideApiId' => $this->provideApiId,
@@ -81,6 +83,10 @@ class ProvideBase extends Index
                 'spendTime' => $this->spendTime,
                 'spendMoney' => $this->spendMoney,
             ])->save();
+            //减金额
+            $this->spendMoney < 0 ?: RequestUserInfo::create()->where('id',$this->userId)->update([
+                'money' => QueryBuilder::dec($this->spendMoney)
+            ]);
         } catch (\Throwable $e) {
 
         }
