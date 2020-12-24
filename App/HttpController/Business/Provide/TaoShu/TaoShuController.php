@@ -5,7 +5,6 @@ namespace App\HttpController\Business\Provide\TaoShu;
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Service\Common\CommonService;
-use App\HttpController\Service\QiChaCha\QiChaChaService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 
 class TaoShuController extends ProvideBase
@@ -53,6 +52,7 @@ class TaoShuController extends ProvideBase
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
+            CommonService::getInstance()->log4PHP(__FUNCTION__);
             return (new TaoShuService())->setCheckRespFlag(true)->post($postData, __FUNCTION__);
         });
 

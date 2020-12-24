@@ -2,7 +2,7 @@
 
 include './vendor/autoload.php';
 
-$url = 'https://api.meirixindong.com/provide/v1/qcc/getIPOGuarantee';
+$url = 'https://api.meirixindong.com/provide/v1/ts/lawPersonInvestmentInfo';
 
 $appId = '2F5AC1D30549E9DDE725E0342DF344F1';
 $appSecret = '0549E9DDE725E034';
