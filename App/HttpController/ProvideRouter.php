@@ -13,6 +13,7 @@ class ProvideRouter
     function addRouterV1(RouteCollector $routeCollector)
     {
         $this->QiChaChaRouterV1($routeCollector);
+        $this->TaoShuRouterV1($routeCollector);
         $this->QianQiRouterV1($routeCollector);
     }
 
@@ -23,6 +24,18 @@ class ProvideRouter
         $routeCollector->addGroup('/qcc', function (RouteCollector $routeCollector) use ($prefix)
         {
             $routeCollector->addRoute(['GET', 'POST'], '/getIPOGuarantee', $prefix . 'getIPOGuarantee');
+        });
+
+        return true;
+    }
+
+    private function TaoShuRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Provide/TaoShu/TaoShuController/';
+
+        $routeCollector->addGroup('/ts', function (RouteCollector $routeCollector) use ($prefix)
+        {
+            $routeCollector->addRoute(['GET', 'POST'], '/lawPersonInvestmentInfo', $prefix . 'lawPersonInvestmentInfo');
         });
 
         return true;
