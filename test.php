@@ -13,7 +13,7 @@ $data = [
     'appId' => $appId,
     'time' => $time,
     'sign' => $sign,
-    'entName' => '北京京东世纪贸易有限公司',
+    'entName' => '北京京东叁佰陆拾度电子商务有限公司',
     'page' => 1,
     'pageSize' => 1,
 ];
