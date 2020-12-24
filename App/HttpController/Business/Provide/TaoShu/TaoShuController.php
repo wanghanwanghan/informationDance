@@ -52,8 +52,7 @@ class TaoShuController extends ProvideBase
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
-            CommonService::getInstance()->log4PHP(__FUNCTION__);
-            return (new TaoShuService())->setCheckRespFlag(true)->post($postData, __FUNCTION__);
+            return (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'lawPersonInvestmentInfo');
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
