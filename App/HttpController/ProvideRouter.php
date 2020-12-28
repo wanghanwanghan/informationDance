@@ -15,6 +15,7 @@ class ProvideRouter
         $this->QiChaChaRouterV1($routeCollector);
         $this->TaoShuRouterV1($routeCollector);
         $this->QianQiRouterV1($routeCollector);
+        $this->ZhongWangRouterV1($routeCollector);
     }
 
     private function QiChaChaRouterV1(RouteCollector $routeCollector)
@@ -53,7 +54,17 @@ class ProvideRouter
         return true;
     }
 
+    private function ZhongWangRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Provide/ZhongWang/ZhongWangController/';
 
+        $routeCollector->addGroup('/zw', function (RouteCollector $routeCollector) use ($prefix)
+        {
+            $routeCollector->addRoute(['GET', 'POST'], '/getInvoiceOcr', $prefix . 'getInvoiceOcr');
+        });
+
+        return true;
+    }
 
 
 

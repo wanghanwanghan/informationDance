@@ -70,6 +70,9 @@ class ZhongWangService extends ServiceBase
                 $step = 2;
                 $res['Result'] = $res['data']['invoices'];
                 break;
+            case 'getInvoiceOcr':
+                $res['Result'] = empty($res['data']) ? null : current($res['data']);
+                break;
             default:
                 $res['Result'] = null;
         }
@@ -78,7 +81,7 @@ class ZhongWangService extends ServiceBase
     }
 
     //进项销项发票详情 客户端（税盘）专用
-    public function getInOrOutDetailByClient($code, $dataType, $startDate, $endDate, $page, $pageSize)
+    function getInOrOutDetailByClient($code, $dataType, $startDate, $endDate, $page, $pageSize)
     {
         $param['taxNumber'] = $code;
         $param['dataType'] = $dataType;//1是进项，2是销项
@@ -98,7 +101,7 @@ class ZhongWangService extends ServiceBase
     }
 
     //进项销项发票详情 证书专用
-    public function getInOrOutDetailByCert($code, $dataType, $startDate, $endDate, $page, $pageSize)
+    function getInOrOutDetailByCert($code, $dataType, $startDate, $endDate, $page, $pageSize)
     {
         $param['taxNumber'] = $code;
         $param['invoiceType'] = '';//查询全部种类
@@ -117,6 +120,26 @@ class ZhongWangService extends ServiceBase
 
         return $this->checkRespFlag ? $this->checkResp($res,__FUNCTION__) : $res;
     }
+
+    //实时ocr
+    function getInvoiceOcr($image)
+    {
+        //图片steam的base64编码
+        $body = $param = [];
+        $param['content'] = $image;
+        $body['param'] = $param;
+        $body['taxNo'] = $this->taxNo;
+
+        $api_path = 'invoice/realTimeRecognize';
+
+        $res = $this->readyToSend($api_path, $body);
+
+        return $this->checkRespFlag ? $this->checkResp($res,__FUNCTION__) : $res;
+    }
+
+
+
+
 
     //统一发送
     private function readyToSend($api_path, $body)

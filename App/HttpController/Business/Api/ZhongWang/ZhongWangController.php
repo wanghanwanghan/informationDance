@@ -89,4 +89,13 @@ class ZhongWangController extends ZhongWangBase
         return $this->checkResponse($res, __FUNCTION__);
     }
 
+    //发票实时ocr
+    function getInvoiceOcr()
+    {
+        $image = $this->request()->getRequestParam('image') ?? '';
+
+        return $this->writeJson(200,null,$image);
+    }
+
+
 }
