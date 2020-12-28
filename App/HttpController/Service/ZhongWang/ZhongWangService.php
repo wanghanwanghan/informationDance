@@ -30,12 +30,12 @@ class ZhongWangService extends ServiceBase
 
     private function encrypt($str)
     {
-        return openssl_encrypt($str, 'aes-128-ecb', $this->keyTest, OPENSSL_RAW_DATA);
+        return openssl_encrypt($str, 'aes-128-ecb', $this->key, OPENSSL_RAW_DATA);
     }
 
     private function decrypt($str)
     {
-        return openssl_decrypt($str, 'aes-128-ecb', $this->keyTest, OPENSSL_RAW_DATA);
+        return openssl_decrypt($str, 'aes-128-ecb', $this->key, OPENSSL_RAW_DATA);
     }
 
     private function checkResp($res,$type)
@@ -152,7 +152,7 @@ class ZhongWangService extends ServiceBase
         $base64_str = base64_encode($encryptedData);
         $body['param'] = $base64_str;
 
-        $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($this->urlTest . $api_path, $body);
+        $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($this->url . $api_path, $body);
         $res = base64_decode($res);
         $res = $this->decrypt($res);
 
