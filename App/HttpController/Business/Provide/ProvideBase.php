@@ -84,7 +84,7 @@ class ProvideBase extends Index
                 'spendMoney' => $this->spendMoney,
             ])->save();
             //减金额
-            $this->spendMoney < 0 ?: RequestUserInfo::create()->where('id',$this->userId)->update([
+            $this->spendMoney < 0 ?: RequestUserInfo::create()->where('id', $this->userId)->update([
                 'money' => QueryBuilder::dec($this->spendMoney)
             ]);
         } catch (\Throwable $e) {
@@ -229,7 +229,7 @@ class ProvideBase extends Index
         }
 
         $appSecret = $userInfo->appSecret;
-        $createSign = substr(strtoupper(md5($appId . $appSecret . $time)),0,30);
+        $createSign = substr(strtoupper(md5($appId . $appSecret . $time)), 0, 30);
 
         if (($sign !== $createSign)) {
             $this->writeJson(610, null, null, '签名验证错误');
@@ -239,6 +239,15 @@ class ProvideBase extends Index
         if ($userInfo->status !== 1) {
             $this->writeJson(611, null, null, 'appId不可用');
             return false;
+        }
+
+        $allowIp = $userInfo->allowIp;
+
+        if (!empty($allowIp)) {
+            if (array_search($this->requestRealIp, explode(',', $allowIp), true)) {
+                $this->writeJson(612, null, null, '请求ip不在白名单');
+                return false;
+            }
         }
 
         return true;
