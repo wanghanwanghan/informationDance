@@ -134,6 +134,8 @@ class ZhongWangService extends ServiceBase
 
         $res = $this->readyToSend($api_path, $body);
 
+        CommonService::getInstance()->log4PHP($res);
+
         return $this->checkRespFlag ? $this->checkResp($res,__FUNCTION__) : $res;
     }
 
