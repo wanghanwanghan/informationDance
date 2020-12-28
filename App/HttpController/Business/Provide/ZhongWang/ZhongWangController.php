@@ -45,9 +45,6 @@ class ZhongWangController extends ProvideBase
         $imageStr = $this->getRequestData('image','');
         $imageJpg = $this->request()->getUploadedFile('image');
 
-        CommonService::getInstance()->log4PHP(['imageStr'=>$imageStr]);
-        CommonService::getInstance()->log4PHP(['imageJpg'=>$imageJpg]);
-
         $image = $imageStr;
 
         if (empty($imageStr))
@@ -55,7 +52,6 @@ class ZhongWangController extends ProvideBase
             if ($imageJpg instanceof UploadFile)
             {
                 $image = base64_encode($imageJpg->getStream()->__toString());
-                CommonService::getInstance()->log4PHP(['imageJpg'=>$image]);
             }
         }
 
