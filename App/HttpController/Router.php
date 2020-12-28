@@ -34,6 +34,11 @@ class Router extends AbstractRouter
             AdminRouter::getInstance()->addRouterV1($routeCollector);
         });
 
+        $routeCollector->addGroup('/admin_provide/v1',function (RouteCollector $routeCollector)
+        {
+            AdminProvideRouter::getInstance()->addRouterV1($routeCollector);
+        });
+
         $routeCollector->addGroup('/provide/v1',function (RouteCollector $routeCollector)
         {
             ProvideRouter::getInstance()->addRouterV1($routeCollector);
