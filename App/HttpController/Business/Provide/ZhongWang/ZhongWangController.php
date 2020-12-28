@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\ZhongWang;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\ZhongWang\ZhongWangService;
 use EasySwoole\Http\Message\UploadFile;
 
@@ -44,6 +45,9 @@ class ZhongWangController extends ProvideBase
         $imageStr = $this->getRequestData('image','');
         $imageJpg = $this->request()->getUploadedFile('image');
 
+        CommonService::getInstance()->log4PHP(['imageStr'=>$imageStr]);
+        CommonService::getInstance()->log4PHP(['imageJpg'=>$imageJpg]);
+
         $image = $imageStr;
 
         if (empty($imageStr))
@@ -51,6 +55,7 @@ class ZhongWangController extends ProvideBase
             if ($imageJpg instanceof UploadFile)
             {
                 $image = base64_encode($imageJpg->getStream()->__toString());
+                CommonService::getInstance()->log4PHP(['imageJpg'=>$image]);
             }
         }
 

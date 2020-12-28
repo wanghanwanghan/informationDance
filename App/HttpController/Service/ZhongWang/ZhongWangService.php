@@ -132,9 +132,9 @@ class ZhongWangService extends ServiceBase
 
         $api_path = 'invoice/realTimeRecognize';
 
-        $res = $this->readyToSend($api_path, $body);
+        CommonService::getInstance()->log4PHP(['server'=>$image]);
 
-        CommonService::getInstance()->log4PHP($res);
+        $res = $this->readyToSend($api_path, $body);
 
         return $this->checkRespFlag ? $this->checkResp($res,__FUNCTION__) : $res;
     }
