@@ -2,10 +2,10 @@
 
 include './vendor/autoload.php';
 
-$url = 'https://api.meirixindong.com/provide/v1/ts/lawPersonInvestmentInfo';
+$url = 'https://api.meirixindong.com/provide/v1/zw/getInvoiceOcr';
 
-$appId = '2F5AC1D30549E9DDE725E0342DF344F1';
-$appSecret = '0549E9DDE725E034';
+$appId = 'PHP_is_the_best_language_in_the_world';
+$appSecret = 'PHP_GO';
 $time = time();
 $sign = substr(strtoupper(md5($appId.$appSecret.$time)),0,30);
 
@@ -13,9 +13,7 @@ $data = [
     'appId' => $appId,
     'time' => $time,
     'sign' => $sign,
-    'entName' => '北京京东叁佰陆拾度电子商务有限公司',
-    'page' => 1,
-    'pageSize' => 1,
+    'image' => 123,
 ];
 
 $curl=curl_init();//初始化
