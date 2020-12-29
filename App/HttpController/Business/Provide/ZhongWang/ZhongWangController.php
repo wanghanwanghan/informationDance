@@ -47,22 +47,19 @@ class ZhongWangController extends ProvideBase
 
         $image = $imageStr;
 
-        if (empty($imageStr))
+        if (empty($imageStr) && $imageJpg instanceof UploadFile)
         {
-            if ($imageJpg instanceof UploadFile)
-            {
-                if ($imageJpg->getSize() / 1024 / 1024 > 2)
-                {
-                    $res = [
-                        $this->csp => '',
-                        'msg' => '图片不能超过2m',
-                    ];
-                    return $this->checkResponse($res);
-                }else
-                {
-                    $image = base64_encode($imageJpg->getStream()->__toString());
-                }
-            }
+            $image = base64_encode($imageJpg->getStream()->__toString());
+        }
+
+        $size = strlen(base64_decode($image));
+
+        if ($size / 1024 / 1024 > 2)
+        {
+            return $this->checkResponse([
+                $this->cspKey => '',
+                'msg' => '图片大小不能超过2m',
+            ]);
         }
 
         $this->csp->add($this->cspKey, function () use ($image) {
