@@ -51,6 +51,7 @@ class ZhongWangController extends ProvideBase
         {
             if ($imageJpg instanceof UploadFile)
             {
+                CommonService::getInstance()->log4PHP($imageJpg->getSize());
                 $image = base64_encode($imageJpg->getStream()->__toString());
             }
         }
