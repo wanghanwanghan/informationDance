@@ -23,11 +23,11 @@ class ZhongWangController extends ProvideBase
     function checkResponse($res)
     {
         if (empty($res[$this->cspKey])) {
-            $this->responseCode = 500;
-            $this->responsePaging = null;
-            $this->responseData = $res[$this->cspKey];
+            $this->responseCode = $res['code'] ?? 500;
+            $this->responsePaging = $res['paging'] ?? null;
+            $this->responseData = $res['result'] ?? null;
             $this->spendMoney = 0;
-            $this->responseMsg = '请求超时';
+            $this->responseMsg = $res['msg'] ?? '请求超时';
         } else {
             $this->responseCode = $res[$this->cspKey]['code'];
             $this->responsePaging = $res[$this->cspKey]['paging'];
@@ -51,8 +51,17 @@ class ZhongWangController extends ProvideBase
         {
             if ($imageJpg instanceof UploadFile)
             {
-                CommonService::getInstance()->log4PHP($imageJpg->getSize());
-                $image = base64_encode($imageJpg->getStream()->__toString());
+                if ($imageJpg->getSize() / 1024 / 1024 > 2)
+                {
+                    $res = [
+                        $this->csp => '',
+                        'msg' => '图片不能超过2m',
+                    ];
+                    return $this->checkResponse($res);
+                }else
+                {
+                    $image = base64_encode($imageJpg->getStream()->__toString());
+                }
             }
         }
 
