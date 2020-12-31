@@ -1880,6 +1880,8 @@ class Invoice
         }
         unset($one);
 
+        CommonService::getInstance()->log4PHP($return);
+
         //金额变万元
         foreach ($return as &$one)
         {

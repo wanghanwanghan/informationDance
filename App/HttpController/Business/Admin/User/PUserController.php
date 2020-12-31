@@ -22,4 +22,15 @@ class PUserController extends UserBase
     {
         parent::afterAction($actionName);
     }
+
+    function getUserList()
+    {
+
+    }
+
+
+
+
+
+
 }

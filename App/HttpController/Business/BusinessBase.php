@@ -226,4 +226,22 @@ class BusinessBase extends Index
     {
         return ($page - 1) * $pageSize;
     }
+
+    //form raw
+    function getRequestData($key = '', $default = '')
+    {
+        $string = $this->request()->getBody()->__toString();
+
+        $raw = jsonDecode($string);
+        $form = $this->request()->getRequestParam();
+
+        !empty($raw) ?: $raw = [];
+        !empty($form) ?: $form = [];
+
+        $requestData = array_merge($raw, $form);
+
+        CommonService::getInstance()->log4PHP($requestData);
+
+        return (isset($requestData[$key])) ? $requestData[$key] : $default;
+    }
 }
