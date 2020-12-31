@@ -1209,9 +1209,12 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }else
         {
             if ($other > 0) {
-                array_push($pieData,$other);
                 array_unshift($labels,"其他 (%.1f%%)");
+                array_unshift($pieData,$other);
             }
+
+            CommonService::getInstance()->log4PHP($pieData);
+            CommonService::getInstance()->log4PHP($labels);
 
             $imgPath = (new NewGraphService())->setTitle('单张开票金额TOP10企业汇总')->setLabels($labels)->pie($pieData);
 
