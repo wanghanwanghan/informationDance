@@ -125,12 +125,12 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //6.2.5单张开票金额TOP10记录
         $dzkpjeTOP10jl_xx=$invoiceObj->dzkpjeTOP10jl_xx();
         $reportVal['re_fpxx']['dzkpjeTOP10jl_xx']=$dzkpjeTOP10jl_xx;
-        empty($reportVal['re_fpxx']['dzkpjeTOP10jl_xx']) ?: $reportVal['re_fpxx']['dzkpjeTOP10jl_xx'] = control::sortArrByKey($reportVal['re_fpxx']['dzkpjeTOP10jl_xx'],'totalAmount');
+        empty($reportVal['re_fpxx']['dzkpjeTOP10jl_xx']) ?: $reportVal['re_fpxx']['dzkpjeTOP10jl_xx'] = control::sortArrByKey($reportVal['re_fpxx']['dzkpjeTOP10jl_xx'],'totalAmount','desc',true);
 
         //6.2.6累计开票金额TOP10企业汇总
         $ljkpjeTOP10qyhz_xx=$invoiceObj->ljkpjeTOP10qyhz_xx();
         $reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx']=$ljkpjeTOP10qyhz_xx;
-        empty($reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx']) ?: $reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'] = control::sortArrByKey($reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'],'total');
+        empty($reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx']) ?: $reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'] = control::sortArrByKey($reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'],'total','desc',true);
 
         //6.3.1下游客户稳定性分析
         //1，下游企业司龄分布
@@ -166,12 +166,12 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //6.4.3累计开票金额TOP10企业汇总
         $ljkpjeTOP10qyhz_jx=$invoiceObj->ljkpjeTOP10qyhz_jx();
         $reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx']=$ljkpjeTOP10qyhz_jx;
-        empty($reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx']) ?: $reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx'] = control::sortArrByKey($reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx'],'total');
+        empty($reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx']) ?: $reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx'] = control::sortArrByKey($reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx'],'total','desc',true);
 
         //6.4.4单张开票金额TOP10企业汇总
         $dzkpjeTOP10jl_jx=$invoiceObj->dzkpjeTOP10jl_jx();
         $reportVal['re_fpjx']['dzkpjeTOP10jl_jx']=$dzkpjeTOP10jl_jx;
-        empty($reportVal['re_fpjx']['dzkpjeTOP10jl_jx']) ?: $reportVal['re_fpjx']['dzkpjeTOP10jl_jx'] = control::sortArrByKey($reportVal['re_fpjx']['dzkpjeTOP10jl_jx'],'totalAmount');
+        empty($reportVal['re_fpjx']['dzkpjeTOP10jl_jx']) ?: $reportVal['re_fpjx']['dzkpjeTOP10jl_jx'] = control::sortArrByKey($reportVal['re_fpjx']['dzkpjeTOP10jl_jx'],'totalAmount','desc',true);
 
         //6.5.1上游共饮上稳定性分析
         //1，上游供应商司龄分布
@@ -1173,7 +1173,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //单张开票金额TOP10记录 销项
         $rows = count($data['re_fpxx']['dzkpjeTOP10jl_xx']);
         $docObj->cloneRow('fpxx_dzkpjeTOP10jl_xx_nf', $rows);
-        $data['re_fpxx']['dzkpjeTOP10jl_xx'] = control::sortArrByKey($data['re_fpxx']['dzkpjeTOP10jl_xx'],'totalAmount');
+        $data['re_fpxx']['dzkpjeTOP10jl_xx'] = control::sortArrByKey($data['re_fpxx']['dzkpjeTOP10jl_xx'],'totalAmount','desc',true);
         for ($i = 0; $i < $rows; $i++) {
             //开票年度
             $docObj->setValue('fpxx_dzkpjeTOP10jl_xx_nf#' . ($i + 1), substr($data['re_fpxx']['dzkpjeTOP10jl_xx'][$i]['date'],0,4));
@@ -1221,7 +1221,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $rows = count($data['re_fpxx']['ljkpjeTOP10qyhz_xx']);
         $docObj->cloneRow('fpxx_ljkpjeTOP10qyhz_xx_nf', $rows);
         $temp = array_values($data['re_fpxx']['ljkpjeTOP10qyhz_xx']);
-        $temp = control::sortArrByKey($temp,'total');
+        $temp = control::sortArrByKey($temp,'total','desc',true);
         for ($i = 0; $i < $rows; $i++) {
             //开票年度
             $docObj->setValue('fpxx_ljkpjeTOP10qyhz_xx_nf#' . ($i + 1), $temp[$i]['date']);
@@ -1270,7 +1270,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //单张开票金额TOP10企业汇总 进项
         $rows = count($data['re_fpjx']['dzkpjeTOP10jl_jx']);
         $docObj->cloneRow('fpjx_dzkpjeTOP10jl_jx_nf', $rows);
-        $data['re_fpjx']['dzkpjeTOP10jl_jx'] = control::sortArrByKey($data['re_fpjx']['dzkpjeTOP10jl_jx'],'totalAmount');
+        $data['re_fpjx']['dzkpjeTOP10jl_jx'] = control::sortArrByKey($data['re_fpjx']['dzkpjeTOP10jl_jx'],'totalAmount','desc',true);
         for ($i = 0; $i < $rows; $i++) {
             //开票年度
             $docObj->setValue('fpjx_dzkpjeTOP10jl_jx_nf#' . ($i + 1), $data['re_fpjx']['dzkpjeTOP10jl_jx'][$i]['date']);
@@ -1318,7 +1318,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $rows = count($data['re_fpjx']['ljkpjeTOP10qyhz_jx']);
         $docObj->cloneRow('fpjx_ljkpjeTOP10qyhz_jx_nf', $rows);
         $data['re_fpjx']['ljkpjeTOP10qyhz_jx'] = array_values($data['re_fpjx']['ljkpjeTOP10qyhz_jx']);
-        $data['re_fpjx']['ljkpjeTOP10qyhz_jx'] = control::sortArrByKey($data['re_fpjx']['ljkpjeTOP10qyhz_jx'],'total');
+        $data['re_fpjx']['ljkpjeTOP10qyhz_jx'] = control::sortArrByKey($data['re_fpjx']['ljkpjeTOP10qyhz_jx'],'total','desc',true);
         for ($i = 0; $i < $rows; $i++) {
             $temp = array_values($data['re_fpjx']['ljkpjeTOP10qyhz_jx']);
             //开票年度
