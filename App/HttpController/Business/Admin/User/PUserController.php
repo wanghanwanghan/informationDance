@@ -25,7 +25,9 @@ class PUserController extends UserBase
 
     function getUserList()
     {
+        $data = $this->getRequestData('wanghan','duanran');
 
+        return $this->writeJson(200,null,$data);
     }
 
 
