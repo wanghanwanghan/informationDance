@@ -1880,18 +1880,20 @@ class Invoice
         }
         unset($one);
 
-        CommonService::getInstance()->log4PHP($return);
-
         //金额变万元
-        foreach ($return as &$one)
+        foreach ($return as &$year)
         {
-            $one['totalTax']=sprintf('%.3f',$one['totalTax']/10000);
-            $one['totalAmount']=sprintf('%.3f',$one['totalAmount']/10000);
+            foreach ($year as &$one)
+            {
+                $one['totalTax']=sprintf('%.3f',$one['totalTax']/10000);
+                $one['totalAmount']=sprintf('%.3f',$one['totalAmount']/10000);
 
-            //修改一下date的值，懒得在别处改了
-            $one['date']=substr($one['date'],0,4);
+                //修改一下date的值，懒得在别处改了
+                $one['date']=substr($one['date'],0,4);
+            }
+            unset($one);
         }
-        unset($one);
+        unset($year);
 
         return current($return);
     }
