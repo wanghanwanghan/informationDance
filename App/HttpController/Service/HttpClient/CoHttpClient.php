@@ -77,8 +77,9 @@ class CoHttpClient extends ServiceBase
     {
         $key = $this->createKey($url, $postData, $options);
 
-        $res = Redis::invoke('redis', function (\EasySwoole\Redis\Redis $redis) use ($key, $result) {
+        $res = Redis::invoke('redis', function (\EasySwoole\Redis\Redis $redis) use ($key, $result, $url) {
             $redis->select($this->db);
+            $redis->setEx($url, 3600, $url);
             return $redis->setEx($key, $this->ttlDay * 86400, $result);
         });
 
