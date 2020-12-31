@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Admin\User;
 
+use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\CreateSessionHandler;
 use EasySwoole\Session\Session;
 
@@ -25,9 +26,9 @@ class PUserController extends UserBase
 
     function getUserList()
     {
-        $data = $this->getRequestData('wanghan','duanran');
+        $userInfo = RequestUserInfo::create()->all();
 
-        return $this->writeJson(200,null,$data);
+        return $this->writeJson(200,null,$userInfo);
     }
 
 

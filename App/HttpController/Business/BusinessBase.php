@@ -240,8 +240,6 @@ class BusinessBase extends Index
 
         $requestData = array_merge($raw, $form);
 
-        CommonService::getInstance()->log4PHP($requestData);
-
         return (isset($requestData[$key])) ? $requestData[$key] : $default;
     }
 }
