@@ -98,30 +98,6 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //发票
         $invoiceObj = (new Invoice($this->inDetail,$this->outDetail));
 
-        //5.2主营商品分析
-        $zyspfx=$invoiceObj->zyspfx();
-        $reportVal['re_fpxx']['zyspfx']=$zyspfx;
-
-        //5.4主要成本分析
-        $zycbfx=$invoiceObj->zycbfx();
-        $reportVal['re_fpjx']['zycbfx']=$zycbfx;
-        //各种费用在统计周期内合并
-        $reportVal['re_fpjx']['zycbfx_new']=$invoiceObj->zycbfx_new($zycbfx[1]);
-
-        //6.1企业开票情况汇总
-        $qykpqkhz=$invoiceObj->qykpqkhz();
-        $reportVal['re_fpxx']['qykpqkhz']=$qykpqkhz;
-        //统计周期从这里拿
-        $reportVal['commonData']['zhouqi'] = $qykpqkhz['zhouqi']['min'].' - '.$qykpqkhz['zhouqi']['max'];
-
-        //6.2.1年度销项发票情况汇总
-        $ndxxfpqkhz=$invoiceObj->ndxxfpqkhz();
-        $reportVal['re_fpxx']['ndxxfpqkhz']=$ndxxfpqkhz;
-
-        //6.2.2月度销项发票分析
-        $ydxxfpfx=$invoiceObj->ydxxfpfx();
-        $reportVal['re_fpxx']['ydxxfpfx']=$ydxxfpfx;
-
         //6.2.5单张开票金额TOP10记录
         $dzkpjeTOP10jl_xx=$invoiceObj->dzkpjeTOP10jl_xx();
         $reportVal['re_fpxx']['dzkpjeTOP10jl_xx']=$dzkpjeTOP10jl_xx;
@@ -132,37 +108,6 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx']=$ljkpjeTOP10qyhz_xx;
         empty($reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx']) ?: $reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'] = control::sortArrByKey($reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'],'total','desc',true);
 
-        //6.3.1下游客户稳定性分析
-        //1，下游企业司龄分布
-        $xyqyslfb=$invoiceObj->xyqyslfb();
-        $reportVal['re_fpxx']['xyqyslfb']=$xyqyslfb;
-        //2，下游企业合作年限分布
-        $xyqyhznxfb=$invoiceObj->xyqyhznxfb();
-        $reportVal['re_fpxx']['xyqyhznxfb']=$xyqyhznxfb;
-        //3，下游企业更换情况
-        $xyqyghqk=$invoiceObj->xyqyghqk();
-        $reportVal['re_fpxx']['xyqyghqk']=$xyqyghqk;
-
-        //6.3.2下游客户集中度
-        //1，下游企业地域分布
-        $xyqydyfb=$invoiceObj->xyqydyfb();
-        $reportVal['re_fpxx']['xyqydyfb']=$xyqydyfb;
-        //2，销售前十企业总占比
-        $xsqsqyzzb=$invoiceObj->xsqsqyzzb();
-        $reportVal['re_fpxx']['xsqsqyzzb']=$xsqsqyzzb;
-
-        //6.3.3企业销售情况预测
-        $qyxsqkyc=$invoiceObj->qyxsqkyc();
-        $reportVal['re_fpxx']['qyxsqkyc']=$qyxsqkyc;
-
-        //6.4.1年度进项发票情况汇总
-        $ndjxfpqkhz=$invoiceObj->ndjxfpqkhz();
-        $reportVal['re_fpjx']['ndjxfpqkhz']=$ndjxfpqkhz;
-
-        //6.4.2月度进项发票分析
-        $ydjxfpfx=$invoiceObj->ydjxfpfx();
-        $reportVal['re_fpjx']['ydjxfpfx']=$ydjxfpfx;
-
         //6.4.3累计开票金额TOP10企业汇总
         $ljkpjeTOP10qyhz_jx=$invoiceObj->ljkpjeTOP10qyhz_jx();
         $reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx']=$ljkpjeTOP10qyhz_jx;
@@ -172,37 +117,6 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $dzkpjeTOP10jl_jx=$invoiceObj->dzkpjeTOP10jl_jx();
         $reportVal['re_fpjx']['dzkpjeTOP10jl_jx']=$dzkpjeTOP10jl_jx;
         empty($reportVal['re_fpjx']['dzkpjeTOP10jl_jx']) ?: $reportVal['re_fpjx']['dzkpjeTOP10jl_jx'] = control::sortArrByKey($reportVal['re_fpjx']['dzkpjeTOP10jl_jx'],'totalAmount','desc',true);
-
-        //6.5.1上游共饮上稳定性分析
-        //1，上游供应商司龄分布
-        $sygysslfb=$invoiceObj->sygysslfb();
-        $reportVal['re_fpjx']['sygysslfb']=$sygysslfb;
-        //2，上游供应商合作年限分布
-        $sygyshznxfb=$invoiceObj->sygyshznxfb();
-        $reportVal['re_fpjx']['sygyshznxfb']=$sygyshznxfb;
-        //3，上游供应商更换情况
-        $sygysghqk=$invoiceObj->sygysghqk();
-        $reportVal['re_fpjx']['sygysghqk']=$sygysghqk;
-
-        //6.5.2上游供应商集中度分析
-        //1，上游企业地域分布
-        $syqydyfb=$invoiceObj->syqydyfb();
-        $reportVal['re_fpjx']['syqydyfb']=$syqydyfb;
-        //2，采购前十企业总占比
-        $cgqsqyzzb=$invoiceObj->cgqsqyzzb();
-        $reportVal['re_fpjx']['cgqsqyzzb']=$cgqsqyzzb;
-
-        //6.5.3企业采购情况预测
-        $qycgqkyc=$invoiceObj->qycgqkyc();
-        $reportVal['re_fpjx']['qycgqkyc']=$qycgqkyc;
-
-        //储存信动指数-发票项
-        $xdsForFaPiao=$invoiceObj->xdsForFaPiao();
-        $reportVal['re_fpjx']['xdsForFaPiao']=$xdsForFaPiao;
-
-        //储存信动指数-上下游项
-        $xdsForShangxiayou=$invoiceObj->xdsForShangxiayou();
-        $reportVal['re_fpjx']['xdsForShangxiayou']=$xdsForShangxiayou;
 
         //数据填充
         $this->fillData($tmp, $reportVal);
@@ -1164,12 +1078,6 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     //数据填进报告
     private function fillData(TemplateProcessor $docObj, $data)
     {
-        //处理发票信息
-        //CommonService::getInstance()->log4PHP($data);
-
-        //
-        $docObj->setValue('common_data_zhouqi', $data['commonData']['zhouqi']);
-
         //单张开票金额TOP10记录 销项
         $rows = count($data['re_fpxx']['dzkpjeTOP10jl_xx']);
         $docObj->cloneRow('fpxx_dzkpjeTOP10jl_xx_nf', $rows);
