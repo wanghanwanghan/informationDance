@@ -38,12 +38,8 @@ class PStatisticsController extends StatisticsBase
                 't3.price AS realPrice',
             ])->all();
 
-        return $this->writeJson(200,null,$data);
+        return $this->writeJson(200, null, $data);
     }
-
-
-
-
 
 
 }
