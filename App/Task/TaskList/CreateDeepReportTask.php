@@ -1184,9 +1184,6 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue('fpxx_zyspfx_zhanbi#' . ($i + 1), $data['re_fpxx']['zyspfx'][$i]['zhanbi']);
         }
 
-        CommonService::getInstance()->log4PHP($data['re_fpxx']['zyspfx']);
-
-
         $pieData = $labels = [];
         foreach ($data['re_fpxx']['zyspfx'] as $one)
         {
@@ -1200,6 +1197,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }else
         {
             $imgPath = (new NewGraphService())->setTitle('主营商品分析')->setLabels($labels)->pie($pieData);
+
+            CommonService::getInstance()->log4PHP($imgPath);
 
             $docObj->setImageValue('fpxx_zyspfx_img', [
                 'path' => $imgPath,
