@@ -30,7 +30,7 @@ class AdminProvideRouter
 
     private function StatisticsRouterV1(RouteCollector $routeCollector)
     {
-        $prefix = '/Business/Admin/User/PStatisticsController/';
+        $prefix = '/Business/Admin/statistics/PStatisticsController/';
 
         $routeCollector->addGroup('/statistics', function (RouteCollector $routeCollector) use ($prefix)
         {

@@ -3,7 +3,6 @@
 namespace App\HttpController\Business\Admin\Statistics;
 
 use App\HttpController\Models\Provide\RequestRecode;
-use App\HttpController\Models\Provide\RequestUserApiRelationship;
 
 class PStatisticsController extends StatisticsBase
 {
