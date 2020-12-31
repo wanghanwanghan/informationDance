@@ -13,6 +13,7 @@ class AdminProvideRouter
     function addRouterV1(RouteCollector $routeCollector)
     {
         $this->UserRouterV1($routeCollector);
+        $this->StatisticsRouterV1($routeCollector);
     }
 
     private function UserRouterV1(RouteCollector $routeCollector)
@@ -22,6 +23,18 @@ class AdminProvideRouter
         $routeCollector->addGroup('/user', function (RouteCollector $routeCollector) use ($prefix)
         {
             $routeCollector->addRoute(['GET', 'POST'], '/getUserList', $prefix . 'getUserList');
+        });
+
+        return true;
+    }
+
+    private function StatisticsRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Admin/User/PStatisticsController/';
+
+        $routeCollector->addGroup('/statistics', function (RouteCollector $routeCollector) use ($prefix)
+        {
+            $routeCollector->addRoute(['GET', 'POST'], '/getStatisticsList', $prefix . 'getStatisticsList');
         });
 
         return true;
