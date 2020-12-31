@@ -38,6 +38,32 @@ $data = [
 //dd(json_decode($result, 1));
 
 
+function sortArrByKey($array, $key = 'id', $rule = 'desc')
+{
+    strtolower($rule) === 'asc' ? $rule = 'SORT_ASC' : $rule = 'SORT_DESC';
+
+    $arrSort = [];
+
+    foreach ($array as $index => $one) {
+        foreach ($one as $key => $val) {
+            $arrSort[$key][$index] = $val;
+        }
+    }
+
+    array_multisort($arrSort[$key], constant($rule), $array);
+
+    return $array;
+}
+
+function sortArrByKeyNew($array, $key = 'id', $rule = 'desc')
+{
+    strtolower($rule) === 'asc' ? $rule = 'SORT_ASC' : $rule = 'SORT_DESC';
+
+    $array_column = array_column($array, $key);
+    array_multisort($array_column, constant($rule), $array);
+
+    return $array;
+}
 
 
 
