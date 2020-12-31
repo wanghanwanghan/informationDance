@@ -1282,13 +1282,19 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $labels[] = "{$one['name']} (%.1f%%)";
         }
 
-        $imgPath = (new NewGraphService())->setTitle('主营商品分析')->setLabels($labels)->pie($pieData);
+        if (empty($pieData) || empty($labels))
+        {
+            $docObj->setValue('fpxx_zyspfx_img','');
+        }else
+        {
+            $imgPath = (new NewGraphService())->setTitle('主营商品分析')->setLabels($labels)->pie($pieData);
 
-        $docObj->setImageValue('fpxx_zyspfx_img', [
-            'path' => $imgPath,
-            'width' => 410,
-            'height' => 300
-        ]);
+            $docObj->setImageValue('fpxx_zyspfx_img', [
+                'path' => $imgPath,
+                'width' => 410,
+                'height' => 300
+            ]);
+        }
 
         //主营成本分析
         $rows = count($data['re_fpjx']['zycbfx'][0]);
@@ -1322,13 +1328,19 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $labels[] = "{$one['name']}(%.1f%%)";
         }
 
-        $imgPath = (new NewGraphService())->setTitle('主要成本分析')->setLabels($labels)->pie($pieData);
+        if (empty($pieData) || empty($labels))
+        {
+            $docObj->setValue('fpjx_zycbfx_img','');
+        }else
+        {
+            $imgPath = (new NewGraphService())->setTitle('主要成本分析')->setLabels($labels)->pie($pieData);
 
-        $docObj->setImageValue('fpjx_zycbfx_img', [
-            'path' => $imgPath,
-            'width' => 410,
-            'height' => 300
-        ]);
+            $docObj->setImageValue('fpjx_zycbfx_img', [
+                'path' => $imgPath,
+                'width' => 410,
+                'height' => 300
+            ]);
+        }
 
         //水费
         $rows = count($data['re_fpjx']['zycbfx_new']['shuifei']);
@@ -1525,18 +1537,24 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $legends[] = $key;
         }
 
-        $imgPath = (new NewGraphService())
-            ->setTitle('月度销项正常发票分析')
-            ->setXLabels($labels)
-            ->setLegends($legends)
-            ->setMargin([60,50,0,0])
-            ->bar($barData);
+        if (empty($barData) || empty($labels) || empty($legends))
+        {
+            $docObj->setValue('fpxx_ydxxfpfx_n_img','');
+        }else
+        {
+            $imgPath = (new NewGraphService())
+                ->setTitle('月度销项正常发票分析')
+                ->setXLabels($labels)
+                ->setLegends($legends)
+                ->setMargin([60,50,0,0])
+                ->bar($barData);
 
-        $docObj->setImageValue('fpxx_ydxxfpfx_n_img', [
-            'path' => $imgPath,
-            'width' => 410,
-            'height' => 300
-        ]);
+            $docObj->setImageValue('fpxx_ydxxfpfx_n_img', [
+                'path' => $imgPath,
+                'width' => 410,
+                'height' => 300
+            ]);
+        }
 
         //月度销项红充发票分析
         $rows = count($data['re_fpxx']['ydxxfpfx']);
@@ -1573,18 +1591,24 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $legends[] = $key;
         }
 
-        $imgPath = (new NewGraphService())
-            ->setTitle('月度销项红充发票分析')
-            ->setXLabels($labels)
-            ->setLegends($legends)
-            ->setMargin([60,50,0,0])
-            ->bar($barData);
+        if (empty($barData) || empty($labels) || empty($legends))
+        {
+            $docObj->setValue('fpxx_ydxxfpfx_r_img','');
+        }else
+        {
+            $imgPath = (new NewGraphService())
+                ->setTitle('月度销项红充发票分析')
+                ->setXLabels($labels)
+                ->setLegends($legends)
+                ->setMargin([60,50,0,0])
+                ->bar($barData);
 
-        $docObj->setImageValue('fpxx_ydxxfpfx_r_img', [
-            'path' => $imgPath,
-            'width' => 410,
-            'height' => 300
-        ]);
+            $docObj->setImageValue('fpxx_ydxxfpfx_r_img', [
+                'path' => $imgPath,
+                'width' => 410,
+                'height' => 300
+            ]);
+        }
 
         //月度销项作废发票分析
         $rows = count($data['re_fpxx']['ydxxfpfx']);
@@ -1621,18 +1645,24 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $legends[] = $key;
         }
 
-        $imgPath = (new NewGraphService())
-            ->setTitle('月度销项作废发票分析')
-            ->setXLabels($labels)
-            ->setLegends($legends)
-            ->setMargin([60,50,0,0])
-            ->bar($barData);
+        if (empty($barData) || empty($labels) || empty($legends))
+        {
+            $docObj->setValue('fpxx_ydxxfpfx_c_img','');
+        }else
+        {
+            $imgPath = (new NewGraphService())
+                ->setTitle('月度销项作废发票分析')
+                ->setXLabels($labels)
+                ->setLegends($legends)
+                ->setMargin([60,50,0,0])
+                ->bar($barData);
 
-        $docObj->setImageValue('fpxx_ydxxfpfx_c_img', [
-            'path' => $imgPath,
-            'width' => 410,
-            'height' => 300
-        ]);
+            $docObj->setImageValue('fpxx_ydxxfpfx_c_img', [
+                'path' => $imgPath,
+                'width' => 410,
+                'height' => 300
+            ]);
+        }
 
         //单张开票金额TOP10记录 销项
         $rows = count($data['re_fpxx']['dzkpjeTOP10jl_xx']);
@@ -1661,18 +1691,24 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $labels[] = "{$one['purchaserName']} (%.1f%%)";
         }
 
-        if ($other > 0) {
-            array_push($pieData,$other);
-            array_push($labels,"其他 (%.1f%%)");
+        if (empty($pieData) || empty($labels))
+        {
+            $docObj->setValue('fpxx_dzkpjeTOP10jl_xx_img','');
+        }else
+        {
+            if ($other > 0) {
+                array_push($pieData,$other);
+                array_push($labels,"其他 (%.1f%%)");
+            }
+
+            $imgPath = (new NewGraphService())->setTitle('单张开票金额TOP10记录')->setLabels($labels)->pie($pieData);
+
+            $docObj->setImageValue('fpxx_dzkpjeTOP10jl_xx_img', [
+                'path' => $imgPath,
+                'width' => 410,
+                'height' => 300
+            ]);
         }
-
-        $imgPath = (new NewGraphService())->setTitle('单张开票金额TOP10记录')->setLabels($labels)->pie($pieData);
-
-        $docObj->setImageValue('fpxx_dzkpjeTOP10jl_xx_img', [
-            'path' => $imgPath,
-            'width' => 410,
-            'height' => 300
-        ]);
 
         //累计开票金额TOP10企业汇总 销项
         $rows = count($data['re_fpxx']['ljkpjeTOP10qyhz_xx']);
@@ -1704,40 +1740,52 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $labels[] = "{$one['name']} (%.1f%%)";
         }
 
-        if ($other > 0) {
-            array_push($pieData,$other);
-            array_push($labels,"其他 (%.1f%%)");
+        if (empty($pieData) || empty($labels))
+        {
+            $docObj->setValue('fpxx_ljkpjeTOP10qyhz_xx_img','');
+        }else
+        {
+            if ($other > 0) {
+                array_push($pieData,$other);
+                array_push($labels,"其他 (%.1f%%)");
+            }
+
+            $imgPath = (new NewGraphService())->setTitle('累计开票金额TOP10企业汇总')->setLabels($labels)->pie($pieData);
+
+            $docObj->setImageValue('fpxx_ljkpjeTOP10qyhz_xx_img', [
+                'path' => $imgPath,
+                'width' => 410,
+                'height' => 300
+            ]);
         }
-
-        $imgPath = (new NewGraphService())->setTitle('累计开票金额TOP10企业汇总')->setLabels($labels)->pie($pieData);
-
-        $docObj->setImageValue('fpxx_ljkpjeTOP10qyhz_xx_img', [
-            'path' => $imgPath,
-            'width' => 410,
-            'height' => 300
-        ]);
 
         //下游企业司龄分布（个）
         $barData = $labels = [];
         $barData = [array_values($data['re_fpxx']['xyqyslfb'])];
         $labels = ['1年以下','2-3年','4-5年','6-9年','10年以上'];
 
-        if (!empty($data['re_fpxx']['xyqyslfb']))
-        {
-            $imgPath = (new NewGraphService())
-                ->setTitle('下游企业司龄分布（个）')
-                ->setXLabels($labels)
-                ->setMargin([60,50,0,40])
-                ->bar($barData);
-
-            $docObj->setImageValue('fpxx_xyqyslfb_img', [
-                'path' => $imgPath,
-                'width' => 410,
-                'height' => 300
-            ]);
-        }else
+        if (empty($barData) || empty($labels))
         {
             $docObj->setValue('fpxx_xyqyslfb_img','');
+        }else
+        {
+            if (!empty($data['re_fpxx']['xyqyslfb']))
+            {
+                $imgPath = (new NewGraphService())
+                    ->setTitle('下游企业司龄分布（个）')
+                    ->setXLabels($labels)
+                    ->setMargin([60,50,0,40])
+                    ->bar($barData);
+
+                $docObj->setImageValue('fpxx_xyqyslfb_img', [
+                    'path' => $imgPath,
+                    'width' => 410,
+                    'height' => 300
+                ]);
+            }else
+            {
+                $docObj->setValue('fpxx_xyqyslfb_img','');
+            }
         }
 
         //下游企业合作年限分布（个）
@@ -1745,17 +1793,23 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $barData = [array_values($data['re_fpxx']['xyqyhznxfb'])];
         $labels = ['1年','2年','3年以上'];
 
-        $imgPath = (new NewGraphService())
-            ->setTitle('下游企业合作年限分布（个）')
-            ->setXLabels($labels)
-            ->setMargin([60,50,0,40])
-            ->bar($barData);
+        if (empty($barData) || empty($labels))
+        {
+            $docObj->setValue('fpxx_xyqyhznxfb_img','');
+        }else
+        {
+            $imgPath = (new NewGraphService())
+                ->setTitle('下游企业合作年限分布（个）')
+                ->setXLabels($labels)
+                ->setMargin([60,50,0,40])
+                ->bar($barData);
 
-        $docObj->setImageValue('fpxx_xyqyhznxfb_img', [
-            'path' => $imgPath,
-            'width' => 410,
-            'height' => 300
-        ]);
+            $docObj->setImageValue('fpxx_xyqyhznxfb_img', [
+                'path' => $imgPath,
+                'width' => 410,
+                'height' => 300
+            ]);
+        }
 
         //下游企业更换情况（个）
         $barData = $labels = $legends = [];
@@ -1767,18 +1821,24 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $legends[] = $key;
         }
 
-        $imgPath = (new NewGraphService())
-            ->setTitle('下游企业更换情况（个）')
-            ->setXLabels($labels)
-            ->setLegends($legends)
-            ->setMargin([60,50,0,40])
-            ->bar($barData);
+        if (empty($barData) || empty($legends))
+        {
+            $docObj->setValue('fpxx_xyqyghqk_img','');
+        }else
+        {
+            $imgPath = (new NewGraphService())
+                ->setTitle('下游企业更换情况（个）')
+                ->setXLabels($labels)
+                ->setLegends($legends)
+                ->setMargin([60,50,0,40])
+                ->bar($barData);
 
-        $docObj->setImageValue('fpxx_xyqyghqk_img', [
-            'path' => $imgPath,
-            'width' => 410,
-            'height' => 300
-        ]);
+            $docObj->setImageValue('fpxx_xyqyghqk_img', [
+                'path' => $imgPath,
+                'width' => 410,
+                'height' => 300
+            ]);
+        }
 
         //下游企业稳定性评估  稳定性指数
         $xywdx = $this->xywdx($data['re_fpjx']['xdsForShangxiayou']);
@@ -1795,28 +1855,35 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $legends[] = $key;
         }
 
-        if (!empty($data['re_fpxx']['xyqydyfb']))
-        {
-            $imgPath = (new NewGraphService())
-                ->setTitle('下游企业地域分布（个）')
-                ->setXLabels($labels)
-                ->setXLabelAngle(15)
-                ->setLegends($legends)
-                ->setMargin([60,50,0,40])
-                ->bar($barData);
-
-            $docObj->setImageValue('fpxx_xyqydyfb_img', [
-                'path' => $imgPath,
-                'width' => 410,
-                'height' => 300
-            ]);
-        }else
+        if (empty($barData) || empty($legends) || empty($labels))
         {
             $docObj->setValue('fpxx_xyqydyfb_img','');
+        }else
+        {
+            if (!empty($data['re_fpxx']['xyqydyfb']))
+            {
+                $imgPath = (new NewGraphService())
+                    ->setTitle('下游企业地域分布（个）')
+                    ->setXLabels($labels)
+                    ->setXLabelAngle(15)
+                    ->setLegends($legends)
+                    ->setMargin([60,50,0,40])
+                    ->bar($barData);
+
+                $docObj->setImageValue('fpxx_xyqydyfb_img', [
+                    'path' => $imgPath,
+                    'width' => 410,
+                    'height' => 300
+                ]);
+            }else
+            {
+                $docObj->setValue('fpxx_xyqydyfb_img','');
+            }
         }
 
         //销售前十企业总占比（%）
         $temp = [];
+
         foreach ($data['re_fpxx']['xsqsqyzzb'] as $key => $val)
         {
             $barData = $labels = $legends = [];
@@ -1869,17 +1936,23 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $legends[] = $key;
         }
 
-        $imgPath = (new NewGraphService())
-            ->setTitle('企业销售情况分布')
-            ->setLegends($legends)
-            ->setXLabels(['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'])
-            ->line($lineData);
+        if (empty($lineData) || empty($legends))
+        {
+            $docObj->setValue('fpxx_qyxsqkyc_img','');
+        }else
+        {
+            $imgPath = (new NewGraphService())
+                ->setTitle('企业销售情况分布')
+                ->setLegends($legends)
+                ->setXLabels(['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'])
+                ->line($lineData);
 
-        $docObj->setImageValue('fpxx_qyxsqkyc_img', [
-            'path' => $imgPath,
-            'width' => 410,
-            'height' => 300
-        ]);
+            $docObj->setImageValue('fpxx_qyxsqkyc_img', [
+                'path' => $imgPath,
+                'width' => 410,
+                'height' => 300
+            ]);
+        }
 
         //年度进项发票情况汇总
         $rows = count($data['re_fpjx']['ndjxfpqkhz']);
@@ -1929,18 +2002,24 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $legends[] = $key;
         }
 
-        $imgPath = (new NewGraphService())
-            ->setTitle('月度进项发票分析')
-            ->setXLabels($labels)
-            ->setLegends($legends)
-            ->setMargin([60,0,0,0])
-            ->bar($barData);
+        if (empty($barData) || empty($legends))
+        {
+            $docObj->setValue('fpjx_ydjxfpfx_img','');
+        }else
+        {
+            $imgPath = (new NewGraphService())
+                ->setTitle('月度进项发票分析')
+                ->setXLabels($labels)
+                ->setLegends($legends)
+                ->setMargin([60,0,0,0])
+                ->bar($barData);
 
-        $docObj->setImageValue('fpjx_ydjxfpfx_img', [
-            'path' => $imgPath,
-            'width' => 410,
-            'height' => 300
-        ]);
+            $docObj->setImageValue('fpjx_ydjxfpfx_img', [
+                'path' => $imgPath,
+                'width' => 410,
+                'height' => 300
+            ]);
+        }
 
         //单张开票金额TOP10企业汇总 进项
         $rows = count($data['re_fpjx']['dzkpjeTOP10jl_jx']);
@@ -1969,18 +2048,24 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $labels[] = "{$one['salesTaxName']} (%.1f%%)";
         }
 
-        if ($other > 0) {
-            array_push($pieData,$other);
-            array_push($labels,"其他 (%.1f%%)");
+        if (empty($pieData) || empty($labels))
+        {
+            $docObj->setValue('fpjx_dzkpjeTOP10jl_jx_img','');
+        }else
+        {
+            if ($other > 0) {
+                array_push($pieData,$other);
+                array_push($labels,"其他 (%.1f%%)");
+            }
+
+            $imgPath = (new NewGraphService())->setTitle('单张开票金额TOP10企业汇总')->setLabels($labels)->pie($pieData);
+
+            $docObj->setImageValue('fpjx_dzkpjeTOP10jl_jx_img', [
+                'path' => $imgPath,
+                'width' => 410,
+                'height' => 300
+            ]);
         }
-
-        $imgPath = (new NewGraphService())->setTitle('单张开票金额TOP10企业汇总')->setLabels($labels)->pie($pieData);
-
-        $docObj->setImageValue('fpjx_dzkpjeTOP10jl_jx_img', [
-            'path' => $imgPath,
-            'width' => 410,
-            'height' => 300
-        ]);
 
         //累计开票金额TOP10企业汇总 进项
         $rows = count($data['re_fpjx']['ljkpjeTOP10qyhz_jx']);
@@ -2012,35 +2097,47 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $labels[] = "{$one['name']} (%.1f%%)";
         }
 
-        if ($other > 0) {
-            array_push($pieData,$other);
-            array_push($labels,"其他 (%.1f%%)");
+        if (empty($pieData) || empty($labels))
+        {
+            $docObj->setValue('fpjx_ljkpjeTOP10qyhz_jx_img','');
+        }else
+        {
+            if ($other > 0) {
+                array_push($pieData,$other);
+                array_push($labels,"其他 (%.1f%%)");
+            }
+
+            $imgPath = (new NewGraphService())->setTitle('累计开票金额TOP10企业汇总')->setLabels($labels)->pie($pieData);
+
+            $docObj->setImageValue('fpjx_ljkpjeTOP10qyhz_jx_img', [
+                'path' => $imgPath,
+                'width' => 410,
+                'height' => 300
+            ]);
         }
-
-        $imgPath = (new NewGraphService())->setTitle('累计开票金额TOP10企业汇总')->setLabels($labels)->pie($pieData);
-
-        $docObj->setImageValue('fpjx_ljkpjeTOP10qyhz_jx_img', [
-            'path' => $imgPath,
-            'width' => 410,
-            'height' => 300
-        ]);
 
         //上游供应商司龄分布（个）
         $barData = $labels = [];
         $barData = [array_values($data['re_fpjx']['sygysslfb'])];
         $labels = ['1年以下','2-3年','4-5年','6-9年','10年以上'];
 
-        $imgPath = (new NewGraphService())
-            ->setTitle('上游供应商司龄分布（个）')
-            ->setXLabels($labels)
-            ->setMargin([60,50,0,40])
-            ->bar($barData);
+        if (empty($barData) || empty($labels))
+        {
+            $docObj->setValue('fpjx_sygysslfb_img','');
+        }else
+        {
+            $imgPath = (new NewGraphService())
+                ->setTitle('上游供应商司龄分布（个）')
+                ->setXLabels($labels)
+                ->setMargin([60,50,0,40])
+                ->bar($barData);
 
-        $docObj->setImageValue('fpjx_sygysslfb_img', [
-            'path' => $imgPath,
-            'width' => 410,
-            'height' => 300
-        ]);
+            $docObj->setImageValue('fpjx_sygysslfb_img', [
+                'path' => $imgPath,
+                'width' => 410,
+                'height' => 300
+            ]);
+        }
 
         //上游供应商地域分布（个）
         $barData = $labels = $legends = [];
@@ -2051,19 +2148,25 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $legends[] = $key;
         }
 
-        $imgPath = (new NewGraphService())
-            ->setTitle('上游供应商地域分布（个）')
-            ->setXLabels($labels)
-            ->setLegends($legends)
-            ->setXLabelAngle(15)
-            ->setMargin([60,50,0,40])
-            ->bar($barData);
+        if (empty($barData) || empty($labels))
+        {
+            $docObj->setValue('fpjx_syqydyfb_img','');
+        }else
+        {
+            $imgPath = (new NewGraphService())
+                ->setTitle('上游供应商地域分布（个）')
+                ->setXLabels($labels)
+                ->setLegends($legends)
+                ->setXLabelAngle(15)
+                ->setMargin([60,50,0,40])
+                ->bar($barData);
 
-        $docObj->setImageValue('fpjx_syqydyfb_img', [
-            'path' => $imgPath,
-            'width' => 410,
-            'height' => 300
-        ]);
+            $docObj->setImageValue('fpjx_syqydyfb_img', [
+                'path' => $imgPath,
+                'width' => 410,
+                'height' => 300
+            ]);
+        }
 
         //采购前十供应商总占比（%）
         $temp = [];
@@ -2117,17 +2220,23 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $xLabels = $data['re_fpjx']['qycgqkyc']['xAxes'];
         $lineData = [$data['re_fpjx']['qycgqkyc']['data']];
 
-        $imgPath = (new NewGraphService())
-            ->setTitle('企业采购情况分布（万元）')
-            ->setLegends($legends)
-            ->setXLabels($xLabels)
-            ->line($lineData);
+        if (empty($legends) || empty($xLabels) || empty($lineData))
+        {
+            $docObj->setValue('fpjx_qycgqkyc_img','');
+        }else
+        {
+            $imgPath = (new NewGraphService())
+                ->setTitle('企业采购情况分布（万元）')
+                ->setLegends($legends)
+                ->setXLabels($xLabels)
+                ->line($lineData);
 
-        $docObj->setImageValue('fpjx_qycgqkyc_img', [
-            'path' => $imgPath,
-            'width' => 410,
-            'height' => 300
-        ]);
+            $docObj->setImageValue('fpjx_qycgqkyc_img', [
+                'path' => $imgPath,
+                'width' => 410,
+                'height' => 300
+            ]);
+        }
 
         //基本信息
         //企业类型
