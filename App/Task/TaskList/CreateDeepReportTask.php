@@ -340,7 +340,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $hezuo=$data['下游合作年限'];
 
         //计算A
-        $type5=$siling['type5'];
+        $type5=$siling['type5'] ?? 0;
         $total=array_sum($siling);
         if ($total == 0)
         {
@@ -1260,9 +1260,6 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         //
         $docObj->setValue('common_data_zhouqi', $data['commonData']['zhouqi']);
-
-        CommonService::getInstance()->log4PHP($data['re_fpxx']);
-        CommonService::getInstance()->log4PHP($data['re_fpjx']);
 
         //主营商品分析
         $rows = count($data['re_fpxx']['zyspfx']);
