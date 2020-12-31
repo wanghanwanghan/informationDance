@@ -13,7 +13,7 @@ $data = [
     'appId' => $appId,
     'time' => $time,
     'sign' => $sign,
-    'image' => new \CURLFile(realpath('./WechatIMG261-tuya.png'))
+//    'image' => new \CURLFile(realpath('./WechatIMG261-tuya.png'))
 ];
 
 //$curl=curl_init();//初始化
@@ -26,13 +26,18 @@ $data = [
 //$res=curl_exec($curl);//发送请求
 
 
-$curl = curl_init();
-curl_setopt($curl, CURLOPT_URL, $url);
-curl_setopt($curl, CURLOPT_POST, true);
-curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 15);
-curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-$result = curl_exec($curl);
+//$curl = curl_init();
+//curl_setopt($curl, CURLOPT_URL, $url);
+//curl_setopt($curl, CURLOPT_POST, true);
+//curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 15);
+//curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+//curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+//curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+//$result = curl_exec($curl);
+//
+//dd(json_decode($result, 1));
 
-dd(json_decode($result, 1));
+
+
+
+

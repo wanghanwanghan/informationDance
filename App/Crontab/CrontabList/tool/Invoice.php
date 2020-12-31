@@ -953,6 +953,7 @@ class Invoice
 
         //整理数组
         $target=$name=[];
+        CommonService::getInstance()->log4PHP($return);
         foreach ($return as $year => $val)
         {
             isset($target[$year]) ?: $target[$year]=[];
