@@ -948,12 +948,15 @@ class Invoice
         //二维数组排序
         foreach ($return as $key => $one)
         {
+            foreach ($one as $one)
+            {
+                is_array($one) ?: CommonService::getInstance()->log4PHP($one);
+            }
             $return[$key]=control::sortArrByKey($one,'totalAmount');
         }
 
         //整理数组
         $target=$name=[];
-        CommonService::getInstance()->log4PHP($return);
         foreach ($return as $year => $val)
         {
             isset($target[$year]) ?: $target[$year]=[];
