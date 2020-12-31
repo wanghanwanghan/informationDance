@@ -948,9 +948,9 @@ class Invoice
         //二维数组排序
         foreach ($return as $key => $one)
         {
-            foreach ($one as $one)
+            foreach ($one as $tow)
             {
-                is_array($one) ?: CommonService::getInstance()->log4PHP($one);
+                is_array($tow) ?: CommonService::getInstance()->log4PHP($tow);
             }
             $return[$key]=control::sortArrByKey($one,'totalAmount');
         }
