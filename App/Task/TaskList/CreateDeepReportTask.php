@@ -1184,6 +1184,9 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue('fpxx_zyspfx_zhanbi#' . ($i + 1), $data['re_fpxx']['zyspfx'][$i]['zhanbi']);
         }
 
+        CommonService::getInstance()->log4PHP($data['re_fpxx']['zyspfx']);
+
+
         $pieData = $labels = [];
         foreach ($data['re_fpxx']['zyspfx'] as $one)
         {
