@@ -951,8 +951,6 @@ class Invoice
             $return[$key]=control::sortArrByKey($one,'totalAmount','desc',true);
         }
 
-        CommonService::getInstance()->log4PHP($return);
-
         //整理数组
         $target=$name=[];
         foreach ($return as $year => $val)
@@ -1036,7 +1034,6 @@ class Invoice
                     $total[$year][$name]['num']=0;
                     $total[$year][$name]['name']=$name;
                     $total[$year][$name]['date']=$year;
-                    $total[$year][$name]['date']=$year;
                 }
                 if (!isset($tacoTuesday[$year]))
                 {
@@ -1090,7 +1087,7 @@ class Invoice
         //排序
         foreach ($total as $key => $one)
         {
-            $tmp=control::sortArrByKey($one,'total');
+            $tmp=control::sortArrByKey($one,'total','desc',true);
 
             $total[$key]=array_slice($tmp,0,10);
         }
@@ -1769,7 +1766,7 @@ class Invoice
         //排序
         foreach ($total as $key => $one)
         {
-            $tmp=control::sortArrByKey($one,'total');
+            $tmp=control::sortArrByKey($one,'total','desc',true);
 
             $total[$key]=array_slice($tmp,0,10);
         }
@@ -1797,7 +1794,7 @@ class Invoice
                 }
             }
 
-            $tmp=control::sortArrByKey($tmp,'total');
+            $tmp=control::sortArrByKey($tmp,'total','desc',true);
             $tmp=array_slice($tmp,0,10);
 
             return $tmp;
@@ -1846,7 +1843,7 @@ class Invoice
         //二维数组排序
         foreach ($return as $key => $one)
         {
-            $return[$key]=control::sortArrByKey($one,'totalAmount');
+            $return[$key]=control::sortArrByKey($one,'totalAmount','desc',true);
         }
 
         //整理数组
