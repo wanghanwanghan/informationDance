@@ -1173,6 +1173,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //单张开票金额TOP10记录 销项
         $rows = count($data['re_fpxx']['dzkpjeTOP10jl_xx']);
         $docObj->cloneRow('fpxx_dzkpjeTOP10jl_xx_nf', $rows);
+        $data['re_fpxx']['dzkpjeTOP10jl_xx'] = control::sortArrByKey($data['re_fpxx']['dzkpjeTOP10jl_xx'],'totalAmount');
         for ($i = 0; $i < $rows; $i++) {
             //开票年度
             $docObj->setValue('fpxx_dzkpjeTOP10jl_xx_nf#' . ($i + 1), substr($data['re_fpxx']['dzkpjeTOP10jl_xx'][$i]['date'],0,4));
@@ -1219,8 +1220,9 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //累计开票金额TOP10企业汇总 销项
         $rows = count($data['re_fpxx']['ljkpjeTOP10qyhz_xx']);
         $docObj->cloneRow('fpxx_ljkpjeTOP10qyhz_xx_nf', $rows);
+        $temp = array_values($data['re_fpxx']['ljkpjeTOP10qyhz_xx']);
+        $temp = control::sortArrByKey($temp,'total');
         for ($i = 0; $i < $rows; $i++) {
-            $temp = array_values($data['re_fpxx']['ljkpjeTOP10qyhz_xx']);
             //开票年度
             $docObj->setValue('fpxx_ljkpjeTOP10qyhz_xx_nf#' . ($i + 1), $temp[$i]['date']);
             //交易对手名称
@@ -1268,6 +1270,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //单张开票金额TOP10企业汇总 进项
         $rows = count($data['re_fpjx']['dzkpjeTOP10jl_jx']);
         $docObj->cloneRow('fpjx_dzkpjeTOP10jl_jx_nf', $rows);
+        $data['re_fpjx']['dzkpjeTOP10jl_jx'] = control::sortArrByKey($data['re_fpjx']['dzkpjeTOP10jl_jx'],'totalAmount');
         for ($i = 0; $i < $rows; $i++) {
             //开票年度
             $docObj->setValue('fpjx_dzkpjeTOP10jl_jx_nf#' . ($i + 1), $data['re_fpjx']['dzkpjeTOP10jl_jx'][$i]['date']);
@@ -1314,6 +1317,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //累计开票金额TOP10企业汇总 进项
         $rows = count($data['re_fpjx']['ljkpjeTOP10qyhz_jx']);
         $docObj->cloneRow('fpjx_ljkpjeTOP10qyhz_jx_nf', $rows);
+        $data['re_fpjx']['ljkpjeTOP10qyhz_jx'] = array_values($data['re_fpjx']['ljkpjeTOP10qyhz_jx']);
+        $data['re_fpjx']['ljkpjeTOP10qyhz_jx'] = control::sortArrByKey($data['re_fpjx']['ljkpjeTOP10qyhz_jx'],'total');
         for ($i = 0; $i < $rows; $i++) {
             $temp = array_values($data['re_fpjx']['ljkpjeTOP10qyhz_jx']);
             //开票年度
