@@ -1210,7 +1210,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         {
             if ($other > 0) {
                 array_push($pieData,$other);
-                array_push($labels,"其他 (%.1f%%)");
+                array_unshift($labels,"其他 (%.1f%%)");
             }
 
             $imgPath = (new NewGraphService())->setTitle('单张开票金额TOP10企业汇总')->setLabels($labels)->pie($pieData);
