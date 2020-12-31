@@ -37,8 +37,7 @@ class PStatisticsController extends StatisticsBase
                 't3.name',
                 't3.source',
                 't3.price AS realPrice',
-            ])
-            ->all();
+            ])->all();
 
         return $this->writeJson(200,null,$data);
     }
