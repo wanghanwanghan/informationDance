@@ -30,7 +30,7 @@ class TestController extends BusinessBase
     {
         $res = User::create()->all();
 
-        $this->writeJson(200,null,$res);
+        $this->writeJson(200,null,(object)$res);
     }
 
 }
