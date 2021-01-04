@@ -365,7 +365,7 @@ class Router extends AbstractRouter
 
         $routeCollector->addGroup('/test',function (RouteCollector $routeCollector) use ($prefix)
         {
-            $routeCollector->addRoute(['GET','POST'],'/test',$prefix.'testPic');
+            $routeCollector->addRoute(['GET','POST'],'/test',$prefix.'test');
         });
 
         return true;

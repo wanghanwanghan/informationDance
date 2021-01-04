@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Test;
 
 use App\HttpController\Business\BusinessBase;
+use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateTable\CreateTableService;
@@ -25,9 +26,11 @@ class TestController extends BusinessBase
     {
     }
 
-    function testPic()
+    function test()
     {
-        $this->writeJson(200,null,123);
+        $res = User::create()->all();
+
+        $this->writeJson(200,null,$res);
     }
 
 }
