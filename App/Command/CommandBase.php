@@ -12,17 +12,17 @@ class CommandBase implements CommandInterface
         return true;
     }
 
-    public function commandName(): string
+    function commandName(): string
     {
         return '';
     }
 
-    public function exec(array $args): ?string
+    function exec(array $args): ?string
     {
         return null;
     }
 
-    public function help(array $args): ?string
+    function help(array $args): ?string
     {
         return null;
     }
