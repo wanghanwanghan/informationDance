@@ -16,9 +16,7 @@ class TestCommand extends CommandBase
     {
         parent::commendInit();
 
-        go(function () {
-            \co::sleep(5);
-        });
+        co::sleep(5);
 
         return 'this is exec' . PHP_EOL;
     }
