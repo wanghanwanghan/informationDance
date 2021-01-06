@@ -13,6 +13,7 @@ use App\HttpController\Service\CreateRedisPool;
 use App\HttpController\Service\CreateSessionHandler;
 use App\HttpController\Service\RequestUtils\LimitService;
 use App\Process\Service\ProcessService;
+use App\SwooleTable\Service\SwooleTableService;
 use EasySwoole\EasySwoole\Swoole\EventRegister;
 use EasySwoole\EasySwoole\AbstractInterface\Event;
 use EasySwoole\Http\Message\Status;
@@ -63,6 +64,8 @@ class EasySwooleEvent implements Event
         //注册session的处理流程
         CreateSessionHandler::getInstance()->create(SESSION_PATH);
 
+        //swoole table
+        SwooleTableService::getInstance()->create();
     }
 
     public static function onRequest(Request $request, Response $response): bool
