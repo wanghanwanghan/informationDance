@@ -37,6 +37,8 @@ class PUserController extends UserBase
         $username = $this->getRequestData('username');
         $money = $this->getRequestData('money');
 
+        if (empty($username) || empty($money)) return $this->writeJson(201);
+
         $check = RequestUserInfo::create()->where('username', $username)->get();
 
         if (empty($check))
