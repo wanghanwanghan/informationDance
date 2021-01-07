@@ -23,6 +23,7 @@ class AdminProvideRouter
         $routeCollector->addGroup('/user', function (RouteCollector $routeCollector) use ($prefix)
         {
             $routeCollector->addRoute(['GET', 'POST'], '/getUserList', $prefix . 'getUserList');
+            $routeCollector->addRoute(['GET', 'POST'], '/addUser', $prefix . 'addUser');
         });
 
         return true;
