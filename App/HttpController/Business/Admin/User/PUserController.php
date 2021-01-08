@@ -85,6 +85,7 @@ class PUserController extends UserBase
         $res = RequestUserApiRelationship::create()->alias('t1')
             ->join('information_dance_request_api_info as t2', 't1.apiId = t2.id', 'left')
             ->field([
+                't1.apiId',
                 't1.price AS custPrice',
                 't2.*',
             ])->where('t1.userId', $id)->all();
