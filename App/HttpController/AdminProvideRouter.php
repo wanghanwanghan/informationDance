@@ -13,6 +13,7 @@ class AdminProvideRouter
     function addRouterV1(RouteCollector $routeCollector)
     {
         $this->UserRouterV1($routeCollector);
+        $this->ApiRouterV1($routeCollector);
         $this->StatisticsRouterV1($routeCollector);
     }
 
@@ -25,6 +26,18 @@ class AdminProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getUserList', $prefix . 'getUserList');
             $routeCollector->addRoute(['GET', 'POST'], '/addUser', $prefix . 'addUser');
             $routeCollector->addRoute(['GET', 'POST'], '/editUser', $prefix . 'editUser');
+        });
+
+        return true;
+    }
+
+    private function ApiRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Admin/Api/PApiController/';
+
+        $routeCollector->addGroup('/api', function (RouteCollector $routeCollector) use ($prefix)
+        {
+            $routeCollector->addRoute(['GET', 'POST'], '/getApiList', $prefix . 'getApiList');
         });
 
         return true;

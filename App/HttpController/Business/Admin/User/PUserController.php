@@ -33,6 +33,7 @@ class PUserController extends UserBase
         return $this->writeJson(200, null, $userInfo);
     }
 
+    //添加用户
     function addUser()
     {
         $username = $this->getRequestData('username');
@@ -58,6 +59,7 @@ class PUserController extends UserBase
         return $this->writeJson(200);
     }
 
+    //编辑用户
     function editUser()
     {
         $id = $this->getRequestData('id');
@@ -75,5 +77,13 @@ class PUserController extends UserBase
 
         return $this->writeJson(200);
     }
+
+
+
+
+
+
+
+
 
 }
