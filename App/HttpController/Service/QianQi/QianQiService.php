@@ -482,8 +482,6 @@ class QianQiService extends ServiceBase
             'usercode' => 'j7uSz7ipmJ'
         ];
 
-        CommonService::getInstance()->log4PHP($this->sendHeaders);
-
         return (new CoHttpClient())->send('http://39.106.95.155/data/daily_ent_mrxd/',$data,$this->sendHeaders);
     }
 
