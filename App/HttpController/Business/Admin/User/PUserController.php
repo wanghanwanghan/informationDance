@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Admin\User;
 
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\CreateSessionHandler;
+use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\Session\Session;
 use wanghanwanghan\someUtils\control;
 
@@ -57,5 +58,22 @@ class PUserController extends UserBase
         return $this->writeJson(200);
     }
 
+    function editUser()
+    {
+        $id = $this->getRequestData('id');
+        $money = $this->getRequestData('money');
+
+        if (empty($id) || empty($money)) return $this->writeJson(201);
+
+        $userInfo = RequestUserInfo::create()->where('id',$id)->get();
+
+        if (empty($userInfo)) return $this->writeJson(201);
+
+        $userInfo->update([
+            'money' => QueryBuilder::inc($money)
+        ]);
+
+        return $this->writeJson(200);
+    }
 
 }
