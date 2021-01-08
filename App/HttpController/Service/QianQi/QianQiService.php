@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\QianQi;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
@@ -399,18 +400,17 @@ class QianQiService extends ServiceBase
     }
 
     //创建请求token
-    private function createToken($params,$str='',$userKey='')
+    private function createToken($params, $str = '', $userKey = '')
     {
         ksort($params);
 
-        foreach ($params as $k => $val)
-        {
-            $str.=$k.$val;
+        foreach ($params as $k => $val) {
+            $str .= $k . $val;
         }
 
         empty($userKey) ?
-            $res=hash_hmac('sha1',$str.$this->usercode,$this->userkey) :
-            $res=hash_hmac('sha1',$str.'j7uSz7ipmJ','EBjGihfGnxF');
+            $res = hash_hmac('sha1', $str . $this->usercode, $this->userkey) :
+            $res = hash_hmac('sha1', $str.'j7uSz7ipmJ', 'EBjGihfGnxF');
 
         return $res;
     }
@@ -481,6 +481,8 @@ class QianQiService extends ServiceBase
         $data = [
             'usercode' => 'j7uSz7ipmJ'
         ];
+
+        CommonService::getInstance()->log4PHP($this->sendHeaders);
 
         return (new CoHttpClient())->send('http://39.106.95.155/data/daily_ent_mrxd/',$data,$this->sendHeaders);
     }
