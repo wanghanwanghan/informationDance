@@ -38,6 +38,8 @@ class AdminProvideRouter
         $routeCollector->addGroup('/api', function (RouteCollector $routeCollector) use ($prefix)
         {
             $routeCollector->addRoute(['GET', 'POST'], '/getApiList', $prefix . 'getApiList');
+            $routeCollector->addRoute(['GET', 'POST'], '/addApi', $prefix . 'addApi');
+            $routeCollector->addRoute(['GET', 'POST'], '/editApi', $prefix . 'editApi');
         });
 
         return true;

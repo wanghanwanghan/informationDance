@@ -31,6 +31,36 @@ class PApiController extends ApiBase
         return $this->writeJson(200,null,$res);
     }
 
+    function addApi()
+    {
+        $path = $this->getRequestData('path');
+        $name = $this->getRequestData('name');
+        $desc = $this->getRequestData('desc');
+        $source = $this->getRequestData('source');
+        $price = $this->getRequestData('price');//成本价
+
+        if (empty($path) || empty($name)) return $this->writeJson(201);
+        if (empty($source) || empty($price)) return $this->writeJson(201);
+
+        $check = RequestApiInfo::create()->where('path',$path)->get();
+
+        if (!empty($check)) return $this->writeJson(201);
+
+        RequestApiInfo::create()->data([
+            'path' => $path,
+            'name' => $name,
+            'desc' => $desc,
+            'source' => $source,
+            'price' => $price,
+        ])->save();
+
+        return $this->writeJson(200);
+    }
+
+    function editApi()
+    {
+
+    }
 
 
 
