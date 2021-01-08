@@ -44,11 +44,9 @@ class PUserController extends UserBase
 
         $check = RequestUserInfo::create()->where('username', $username)->get();
 
-        if (empty($check))
-        {
+        if (empty($check)) {
             $appId = strtoupper(control::getUuid());
             $appSecret = substr(strtoupper(control::getUuid()), 5, 20);
-
             RequestUserInfo::create()->data([
                 'username' => $username,
                 'appId' => $appId,
@@ -68,7 +66,7 @@ class PUserController extends UserBase
 
         if (empty($id) || empty($money)) return $this->writeJson(201);
 
-        $userInfo = RequestUserInfo::create()->where('id',$id)->get();
+        $userInfo = RequestUserInfo::create()->where('id', $id)->get();
 
         if (empty($userInfo)) return $this->writeJson(201);
 
@@ -85,21 +83,16 @@ class PUserController extends UserBase
         $id = $this->getRequestData('id');
 
         $res = RequestUserApiRelationship::create()->alias('t1')
-            ->join('information_dance_request_api_info as t2','t1.apiId = t2.id','left')
+            ->join('information_dance_request_api_info as t2', 't1.apiId = t2.id', 'left')
             ->field([
                 't1.price AS custPrice',
                 't2.*',
-            ])->where('t1.userId',$id)->all();
+            ])->where('t1.userId', $id)->all();
 
-        return $this->writeJson(200,null,$res);
+        return $this->writeJson(200, null, $res);
     }
 
     //editUserApi
-
-
-
-
-
 
 
 }
