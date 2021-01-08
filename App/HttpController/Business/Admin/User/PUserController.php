@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Admin\User;
 
+use App\HttpController\Models\Provide\RequestUserApiRelationship;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\CreateSessionHandler;
 use EasySwoole\Mysqli\QueryBuilder;
@@ -78,7 +79,22 @@ class PUserController extends UserBase
         return $this->writeJson(200);
     }
 
+    //用户都有哪些api
+    function getUserApi()
+    {
+        $id = $this->getRequestData('id');
 
+        $res = RequestUserApiRelationship::create()->alias('t1')
+            ->join('information_dance_request_api_info as t2','t1.apiId = t2.id','left')
+            ->field([
+                't1.price AS custPrice',
+                't2.*',
+            ])->where('t1.userId',$id)->all();
+
+        return $this->writeJson(200,null,$res);
+    }
+
+    //editUserApi
 
 
 
