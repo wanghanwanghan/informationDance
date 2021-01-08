@@ -478,7 +478,11 @@ class QianQiService extends ServiceBase
             'usercode' => 'j7uSz7ipmJ'
         ],'','test');
 
-        return (new CoHttpClient())->send('http://39.106.95.155/data/daily_ent_mrxd/',[],$this->sendHeaders);
+        $data = [
+            'usercode' => 'j7uSz7ipmJ'
+        ];
+
+        return (new CoHttpClient())->send('http://39.106.95.155/data/daily_ent_mrxd/',$data,$this->sendHeaders);
     }
 
     //近三年的财务数据
