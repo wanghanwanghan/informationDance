@@ -67,5 +67,13 @@ class QianQiController extends QianQiBase
         return $this->checkResponse($res);
     }
 
+    //天眼查取数据测试
+    function getDataTest()
+    {
+        $res = (new QianQiService())->getDataTest();
+
+        return $this->writeJson(200,null,$res);
+    }
+
 
 }

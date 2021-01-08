@@ -399,7 +399,7 @@ class QianQiService extends ServiceBase
     }
 
     //创建请求token
-    private function createToken($params,$str='')
+    private function createToken($params,$str='',$userKey='')
     {
         ksort($params);
 
@@ -408,7 +408,9 @@ class QianQiService extends ServiceBase
             $str.=$k.$val;
         }
 
-        $res=hash_hmac('sha1',$str.$this->usercode,$this->userkey);
+        empty($userKey) ?
+            $res=hash_hmac('sha1',$str.$this->usercode,$this->userkey) :
+            $res=hash_hmac('sha1',$str.'j7uSz7ipmJ','EBjGihfGnxF');
 
         return $res;
     }
@@ -467,6 +469,16 @@ class QianQiService extends ServiceBase
         $res['Message']=$res['msg'];
 
         return $this->createReturn((int)$res['code'],$res['Paging'],$res['Result'],$res['Message']);
+    }
+
+    //天眼查取数据测试
+    function getDataTest()
+    {
+        $this->sendHeaders['authorization']=$this->createToken([
+            'usercode' => 'j7uSz7ipmJ'
+        ],'','test');
+
+        return (new CoHttpClient())->send('http://39.106.95.155/data/daily_ent_mrxd/',[],$this->sendHeaders);
     }
 
     //近三年的财务数据
@@ -589,7 +601,6 @@ class QianQiService extends ServiceBase
 
         return (int)sprintf('%.2f',($now - $last) / abs($last) * 100);
     }
-
 
 
 

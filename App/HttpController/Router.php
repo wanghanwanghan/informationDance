@@ -303,6 +303,7 @@ class Router extends AbstractRouter
         {
             $routeCollector->addRoute(['GET','POST'],'/getThreeYearsData',$prefix.'getThreeYearsData');//最近三年财务数据，不需授权
             $routeCollector->addRoute(['GET','POST'],'/getThreeYearsDataNeedAuth',$prefix.'getThreeYearsDataNeedAuth');//最近三年财务数据，需授权
+            $routeCollector->addRoute(['GET','POST'],'/getThreeYearsDataNeedAuth',$prefix.'getDataTest');
         });
 
         return true;
