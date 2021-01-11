@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Admin\Statistics;
 
 use App\HttpController\Models\Provide\RequestRecode;
+use Carbon\Carbon;
 use Ritaswc\ZxIPAddress\IPv4Tool;
 
 class PStatisticsController extends StatisticsBase
@@ -24,7 +25,9 @@ class PStatisticsController extends StatisticsBase
         $page = $this->getRequestData('page', 1);
         $pageSize = $this->getRequestData('pageSize', 20);
 
-        $data = RequestRecode::create()->addSuffix(2020)->alias('t1')
+        $year = Carbon::now()->year;
+
+        $data = RequestRecode::create()->addSuffix($year)->alias('t1')
             ->join('information_dance_request_user_info as t2', 't1.userId = t2.id', 'left')
             ->join('information_dance_request_api_info as t3', 't1.provideApiId = t3.id', 'left')
             ->field([
@@ -46,7 +49,7 @@ class PStatisticsController extends StatisticsBase
             ])->order('t1.created_at', 'desc')
             ->limit($this->exprOffset($page, $pageSize), $pageSize)->all();
 
-        $total = RequestRecode::create()->addSuffix(2020)->alias('t1')
+        $total = RequestRecode::create()->addSuffix($year)->alias('t1')
             ->join('information_dance_request_user_info as t2', 't1.userId = t2.id', 'left')
             ->join('information_dance_request_api_info as t3', 't1.provideApiId = t3.id', 'left')
             ->count('t1.id');
