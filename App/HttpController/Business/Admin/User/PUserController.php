@@ -88,7 +88,7 @@ class PUserController extends UserBase
                 't1.apiId',
                 't1.price AS custPrice',
                 't2.*',
-            ])->where('t1.userId', $id)->all();
+            ])->where('t1.userId', $id)->where('t1.status', 1)->all();
 
         return $this->writeJson(200, null, $res);
     }

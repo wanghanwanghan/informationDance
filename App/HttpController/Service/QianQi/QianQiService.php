@@ -411,7 +411,7 @@ class QianQiService extends ServiceBase
         empty($userKey) ?
             $res = hash_hmac('sha1', $str . $this->usercode, $this->userkey) :
             $res = hash_hmac('sha1', $str.'j7uSz7ipmJ', 'EBjGihfGnxF');
-
+        
         return $res;
     }
 
