@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Admin\Statistics;
 
 use App\HttpController\Models\Provide\RequestRecode;
+use Ritaswc\ZxIPAddress\IPv4Tool;
 
 class PStatisticsController extends StatisticsBase
 {
@@ -45,6 +46,13 @@ class PStatisticsController extends StatisticsBase
             ])->order('t1.created_at', 'desc')
             ->limit($this->exprOffset($page, $pageSize), $pageSize)->all();
 
+        if (!empty($data))
+        {
+            foreach ($data as $key => $val)
+            {
+                $data[$key]['ipDetail'] = IPv4Tool::query($val['requestIp']);
+            }
+        }
 
         return $this->writeJson(200, null, $data);
     }
