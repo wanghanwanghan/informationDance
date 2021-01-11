@@ -59,7 +59,26 @@ class PApiController extends ApiBase
 
     function editApi()
     {
+        $aid = $this->getRequestData('aid');
+        $path = $this->getRequestData('path');
+        $name = $this->getRequestData('name');
+        $desc = $this->getRequestData('desc');
+        $price = $this->getRequestData('price');
+        $status = $this->getRequestData('status');
 
+        $info = RequestApiInfo::create()->where('id',$aid)->get();
+
+        $update = [];
+
+        empty($path) ?: $update['path'] = $path;
+        empty($name) ?: $update['name'] = $name;
+        empty($desc) ?: $update['desc'] = $desc;
+        empty($price) ?: $update['price'] = sprintf('%3.f',$price);
+        $status === '正常' ? $update['status'] = '正常' : $update['status'] = '停用';
+
+        $info->update($update);
+
+        return $this->writeJson();
     }
 
 
