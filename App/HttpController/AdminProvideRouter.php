@@ -28,6 +28,7 @@ class AdminProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/editUser', $prefix . 'editUser');
             $routeCollector->addRoute(['GET', 'POST'], '/getUserApi', $prefix . 'getUserApi');
             $routeCollector->addRoute(['GET', 'POST'], '/editUserApi', $prefix . 'editUserApi');
+            $routeCollector->addRoute(['GET', 'POST'], '/editUserApiPrice', $prefix . 'editUserApiPrice');
         });
 
         return true;
