@@ -117,7 +117,7 @@ class PUserController extends UserBase
             }else
             {
                 $check->update([
-                    'status' => $one['status'] === 1 ? $one['status'] = 0 : $one['status'] = 1
+                    'status' => $check['status'] === 1 ? $check['status'] = 0 : $check['status'] = 1
                 ]);
             }
         }
