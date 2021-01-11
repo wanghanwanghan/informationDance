@@ -65,6 +65,15 @@ class PStatisticsController extends StatisticsBase
             foreach ($data as $key => $val)
             {
                 $data[$key]['ipDetail'] = IPv4Tool::query($val['requestIp']);
+
+                if (jsonDecode($data[$key]['requestData']))
+                {
+                    $temp = jsonDecode($data[$key]['requestData']);
+                    unset($temp['appId']);
+                    unset($temp['time']);
+                    unset($temp['sign']);
+                    $data[$key]['requestData'] = jsonEncode($temp);
+                }
             }
         }
 
