@@ -21,7 +21,7 @@ class PStatisticsController extends StatisticsBase
         $uid = $this->getRequestData('uid');
         $aid = $this->getRequestData('aid');
         $page = $this->getRequestData('page', 1);
-        $pageSize = $this->getRequestData('pageSize', 15);
+        $pageSize = $this->getRequestData('pageSize', 20);
 
         $data = RequestRecode::create()->addSuffix(2020)->alias('t1')
             ->join('information_dance_request_user_info as t2', 't1.userId = t2.id', 'left')
@@ -42,10 +42,8 @@ class PStatisticsController extends StatisticsBase
                 't3.desc',
                 't3.source',
                 't3.price',
-            ])->limit($this->exprOffset($page, $pageSize), $pageSize)->all();
-
-
-
+            ])->order('t1.created_at', 'desc')
+            ->limit($this->exprOffset($page, $pageSize), $pageSize)->all();
 
 
         return $this->writeJson(200, null, $data);
