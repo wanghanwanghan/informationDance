@@ -49,7 +49,7 @@ class PStatisticsController extends StatisticsBase
         $total = RequestRecode::create()->addSuffix(2020)->alias('t1')
             ->join('information_dance_request_user_info as t2', 't1.userId = t2.id', 'left')
             ->join('information_dance_request_api_info as t3', 't1.provideApiId = t3.id', 'left')
-            ->count();
+            ->field('t1.id')->count();
 
         $paging = [
             'page' => $page,
