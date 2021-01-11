@@ -212,7 +212,11 @@ class ProvideBase extends Index
             }
             $this->provideApiId = $apiInfo->id;
             $relationshipCheck = RequestUserApiRelationship::create()
-                ->where(['userId' => $this->userId, 'apiId' => $this->provideApiId])->get();
+                ->where([
+                    'userId' => $this->userId,
+                    'apiId' => $this->provideApiId,
+                    'status' => 1
+                ])->get();
             if (empty($relationshipCheck)) {
                 $this->writeJson(608, null, null, '没有接口请求权限');
                 return false;

@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Admin\User;
 
 use App\HttpController\Models\Provide\RequestUserApiRelationship;
 use App\HttpController\Models\Provide\RequestUserInfo;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateSessionHandler;
 use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\Session\Session;
@@ -93,7 +94,16 @@ class PUserController extends UserBase
         return $this->writeJson(200, null, $res);
     }
 
-    //editUserApi
+    //修改user和api的关系
+    function editUserApi()
+    {
+        $uid = $this->getRequestData('uid');
+        $apiInfo = $this->getRequestData('apiInfo');
+
+        CommonService::getInstance()->log4PHP($apiInfo);
+
+        return $this->writeJson();
+    }
 
 
 }
