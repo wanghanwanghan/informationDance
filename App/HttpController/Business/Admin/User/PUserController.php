@@ -100,7 +100,27 @@ class PUserController extends UserBase
         $uid = $this->getRequestData('uid');
         $apiInfo = $this->getRequestData('apiInfo');
 
-        CommonService::getInstance()->log4PHP($apiInfo);
+        if (empty($apiInfo) || empty($uid)) return $this->writeJson(201);
+
+        foreach ($apiInfo as $one)
+        {
+            $check = RequestUserApiRelationship::create()->where('userId',$uid)->where('apiId',$one['id'])->get();
+
+            if (empty($check))
+            {
+                RequestUserApiRelationship::create()->data([
+                    'userId' => $uid,
+                    'apiId' => $one['id'],
+                    'price' => $one['price'] + 0.2,
+                ])->save();
+
+            }else
+            {
+                $check->update([
+                    'status' => $one['status'] === 1 ? $one['status'] = 0 : $one['status'] = 1
+                ]);
+            }
+        }
 
         return $this->writeJson();
     }
