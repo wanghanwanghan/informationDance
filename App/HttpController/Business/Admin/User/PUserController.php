@@ -139,8 +139,9 @@ class PUserController extends UserBase
         RequestUserApiRelationship::create()->where([
             'userId' => $uid,
             'apiId' => $aid,
-            'price' => sprintf('%3.f',$price),
-        ])->get();
+        ])->update([
+            'price' => sprintf('%3.f',$price)
+        ]);
 
         return $this->writeJson();
     }
