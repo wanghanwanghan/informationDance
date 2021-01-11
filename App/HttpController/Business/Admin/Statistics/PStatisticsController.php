@@ -46,6 +46,17 @@ class PStatisticsController extends StatisticsBase
             ])->order('t1.created_at', 'desc')
             ->limit($this->exprOffset($page, $pageSize), $pageSize)->all();
 
+        $total = RequestRecode::create()->addSuffix(2020)->alias('t1')
+            ->join('information_dance_request_user_info as t2', 't1.userId = t2.id', 'left')
+            ->join('information_dance_request_api_info as t3', 't1.provideApiId = t3.id', 'left')
+            ->count();
+
+        $paging = [
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $total,
+        ];
+
         if (!empty($data))
         {
             foreach ($data as $key => $val)
@@ -54,7 +65,7 @@ class PStatisticsController extends StatisticsBase
             }
         }
 
-        return $this->writeJson(200, null, $data);
+        return $this->writeJson(200, $paging, $data);
     }
 
 
