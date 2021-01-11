@@ -100,7 +100,11 @@ class PUserController extends UserBase
         $uid = $this->getRequestData('uid');
         $apiInfo = $this->getRequestData('apiInfo');
 
-        if (empty($apiInfo) || empty($uid)) return $this->writeJson(201);
+        if (empty($uid)) return $this->writeJson(201);
+
+        RequestUserApiRelationship::create()->where('userId',$uid)->update([
+            'status' => 0
+        ]);
 
         foreach ($apiInfo as $one)
         {
@@ -117,7 +121,7 @@ class PUserController extends UserBase
             }else
             {
                 $check->update([
-                    'status' => $check['status'] === 1 ? $check['status'] = 0 : $check['status'] = 1
+                    'status' => 1
                 ]);
             }
         }
