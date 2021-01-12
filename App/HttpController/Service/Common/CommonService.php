@@ -87,27 +87,34 @@ class CommonService extends ServiceBase
     }
 
     //存文件
-    function storeFile(UploadFile $uploadFile): string
+    function storeFile($files): array
     {
-        $path = '';
+        $path = [];
 
-        try
+        foreach ($files as $key => $oneFile)
         {
-            //提取文件后缀
-            $ext = explode('.', $uploadFile->getClientFilename());
-            $ext = '.' . end($ext);
+            if ($oneFile instanceof UploadFile)
+            {
+                try
+                {
+                    //提取文件后缀
+                    $ext = explode('.', $oneFile->getClientFilename());
+                    $ext = '.' . end($ext);
 
-            $newFilename = control::getUuid() . $ext;
+                    $newFilename = control::getUuid() . $ext;
 
-            $path = $this->getOtherFilePath();
+                    $pathTemp = $this->getOtherFilePath();
 
-            $uploadFile->moveTo($path . $newFilename);
+                    $oneFile->moveTo($pathTemp . $newFilename);
 
-            $path = str_replace(ROOT_PATH, '', $path . $newFilename);
+                    $path[$key] = str_replace(ROOT_PATH, '', $pathTemp . $newFilename);
 
-        }catch (\Throwable $e)
-        {
-            $this->writeErr($e, __FUNCTION__);
+                }catch (\Throwable $e)
+                {
+                    $this->writeErr($e, __FUNCTION__);
+                    $path[$key] = $e->getMessage();
+                }
+            }
         }
 
         return $path;
