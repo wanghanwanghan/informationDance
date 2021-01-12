@@ -2,7 +2,7 @@
 
 include './vendor/autoload.php';
 
-$url = 'https://api.meirixindong.com/provide/v1/qcc/getIPOGuarantee';
+$url = 'https://api.meirixindong.com/provide/v1/qq/getThreeYearsData';
 
 $appId = 'PHP_is_the_best_language_in_the_world';
 $appSecret = 'PHP_GO';
