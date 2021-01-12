@@ -39,6 +39,15 @@ class CommonController extends CommonBase
         return $this->writeJson(200, null, CommonService::getInstance()->storeImage($imageFile, $type));
     }
 
+    //文件上传
+    function fileUpload()
+    {
+        $fileFile = $this->request()->getUploadedFile('image');
+
+        //返回文件路径
+        return $this->writeJson(200, null, CommonService::getInstance()->storeFile($fileFile));
+    }
+
     //创建图片验证码
     function imageVerifyCode()
     {

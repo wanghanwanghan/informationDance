@@ -16,6 +16,7 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use App\Task\Service\TaskService;
+use Carbon\Carbon;
 use EasySwoole\Component\Singleton;
 use EasySwoole\Http\Message\UploadFile;
 use EasySwoole\Http\Response;
@@ -72,6 +73,44 @@ class CommonService extends ServiceBase
         }
 
         return $returnPath;
+    }
+
+    function getOtherFilePath(): string
+    {
+        $suffix = date('Y') . DIRECTORY_SEPARATOR . date('m') . DIRECTORY_SEPARATOR;
+
+        $path = OTHER_FILE_PATH . $suffix;
+
+        is_dir($path) ?: mkdir($path, 0644);
+
+        return $path;
+    }
+
+    //存文件
+    function storeFile(UploadFile $uploadFile): string
+    {
+        $path = '';
+
+        try
+        {
+            //提取文件后缀
+            $ext = explode('.', $uploadFile->getClientFilename());
+            $ext = '.' . end($ext);
+
+            $newFilename = control::getUuid() . $ext;
+
+            $path = $this->getOtherFilePath();
+
+            $uploadFile->moveTo($path . $newFilename);
+
+            $path = str_replace(ROOT_PATH, '', $path . $newFilename);
+
+        }catch (\Throwable $e)
+        {
+            $this->writeErr($e, __FUNCTION__);
+        }
+
+        return $path;
     }
 
     //创建验证码
