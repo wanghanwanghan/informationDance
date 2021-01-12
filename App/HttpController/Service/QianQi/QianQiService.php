@@ -484,7 +484,9 @@ class QianQiService extends ServiceBase
 
         CommonService::getInstance()->log4PHP($this->sendHeaders['authorization']);
 
-        return (new CoHttpClient())->send('http://39.106.95.155/data/daily_ent_mrxd/',$data,$this->sendHeaders);
+        $url = 'http://39.106.95.155/data/daily_ent_mrxd?_t='.time();
+
+        return (new CoHttpClient())->send($url,$data,$this->sendHeaders);
     }
 
     //近三年的财务数据
