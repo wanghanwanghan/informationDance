@@ -75,7 +75,7 @@ class PApiController extends ApiBase
         empty($name) ?: $update['name'] = $name;
         empty($desc) ?: $update['desc'] = $desc;
         empty($price) ?: $update['price'] = sprintf('%3.f',$price);
-        $status === '正常' ? $update['status'] = 1 : $update['status'] = 0;
+        $status === '启用' ? $update['status'] = 1 : $update['status'] = 0;
         empty($apiDoc) ?: $update['apiDoc'] = $apiDoc;
 
         $info->update($update);
