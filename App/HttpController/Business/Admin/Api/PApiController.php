@@ -65,6 +65,7 @@ class PApiController extends ApiBase
         $desc = $this->getRequestData('desc');
         $price = $this->getRequestData('price');
         $status = $this->getRequestData('status');
+        $apiDoc = $this->getRequestData('apiDoc');
 
         $info = RequestApiInfo::create()->where('id',$aid)->get();
 
@@ -75,6 +76,7 @@ class PApiController extends ApiBase
         empty($desc) ?: $update['desc'] = $desc;
         empty($price) ?: $update['price'] = sprintf('%3.f',$price);
         $status === '正常' ? $update['status'] = 1 : $update['status'] = 0;
+        empty($apiDoc) ?: $update['apiDoc'] = $apiDoc;
 
         $info->update($update);
 
