@@ -42,7 +42,7 @@ class CommonController extends CommonBase
     //文件上传
     function fileUpload()
     {
-        $fileFile = $this->request()->getUploadedFile('image');
+        $fileFile = $this->request()->getUploadedFile('file');
 
         //返回文件路径
         return $this->writeJson(200, null, CommonService::getInstance()->storeFile($fileFile));
