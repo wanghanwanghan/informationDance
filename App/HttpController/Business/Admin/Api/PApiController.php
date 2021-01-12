@@ -38,7 +38,7 @@ class PApiController extends ApiBase
         $desc = $this->getRequestData('desc');
         $source = $this->getRequestData('source');
         $price = $this->getRequestData('price');//成本价
-        $apiDoc = $this->getRequestData('apiDoc');//成本价
+        $apiDoc = $this->getRequestData('apiDoc');
 
         if (empty($path) || empty($name)) return $this->writeJson(201);
         if (empty($source) || empty($price)) return $this->writeJson(201);
