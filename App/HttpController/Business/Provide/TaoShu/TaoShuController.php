@@ -60,7 +60,22 @@ class TaoShuController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getRegisterInfo()
+    {
+        $entName = $this->getRequestData('entName', '');
 
+        $postData = [
+            'entName' => $entName,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getRegisterInfo');
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
 
 
 

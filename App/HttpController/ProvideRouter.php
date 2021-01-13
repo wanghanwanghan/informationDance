@@ -37,6 +37,7 @@ class ProvideRouter
         $routeCollector->addGroup('/ts', function (RouteCollector $routeCollector) use ($prefix)
         {
             $routeCollector->addRoute(['GET', 'POST'], '/lawPersonInvestmentInfo', $prefix . 'lawPersonInvestmentInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getRegisterInfo', $prefix . 'getRegisterInfo');
         });
 
         return true;
