@@ -117,7 +117,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
   <td width="80" align="center"><b>XXXX</b></td>
   <td width="45" align="center"><b>XXXX</b></td>
  </tr>
- <tr style="background-color:#FF0000;color:#FFFF00;">
+ <tr style="background-color:#c8c8c8;color:#c8c8c8;">
   <td width="30" align="center"><b>B</b></td>
   <td width="140" align="center"><b>XXXX</b></td>
   <td width="140" align="center"><b>XXXX</b></td>
