@@ -51,6 +51,9 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         $pdf->SetSubject('王瀚');
         $pdf->SetKeywords('TCPDF, PDF, PHP');
 
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+
         // 设置页眉和页脚信息
         // $pdf->SetHeaderData(REPORT_IMAGE_PATH . 'logo.jpg', 30, 'sanh.com.cn', '简版报告定制版', [0, 64, 255], [0, 64, 128]);
         // $pdf->setFooterData([0, 64, 0], [0, 64, 128]);
