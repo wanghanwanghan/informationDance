@@ -8,6 +8,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\FaHai\FaHaiService;
 use App\HttpController\Service\QianQi\QianQiService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
+use App\HttpController\Service\Report\Tcpdf;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\XinDongService;
 use App\Task\TaskBase;
@@ -42,7 +43,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
 
     function run(int $taskId, int $workerIndex)
     {
-        $pdf = new \TCPDF();
+        $pdf = new Tcpdf();
 
         // 设置文档信息
         $pdf->SetCreator('王瀚');
@@ -51,16 +52,13 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         $pdf->SetSubject('王瀚');
         $pdf->SetKeywords('TCPDF, PDF, PHP');
 
-        $pdf->setPrintHeader(false);
-        $pdf->setPrintFooter(false);
-
         // 设置页眉和页脚信息
-        // $pdf->SetHeaderData(REPORT_IMAGE_PATH . 'logo.jpg', 30, 'sanh.com.cn', '简版报告定制版', [0, 64, 255], [0, 64, 128]);
-        // $pdf->setFooterData([0, 64, 0], [0, 64, 128]);
+        $pdf->SetHeaderData(REPORT_IMAGE_PATH . 'logo.jpg', 30, 'sanh.com.cn', '简版报告定制版', [0, 64, 255], [0, 64, 128]);
+        $pdf->setFooterData([0, 64, 0], [0, 64, 128]);
 
         // 设置页眉和页脚字体
-        // $pdf->setHeaderFont(['stsongstdlight', '', '10']);
-        // $pdf->setFooterFont(['helvetica', '', '8']);
+        $pdf->setHeaderFont(['stsongstdlight', '', '10']);
+        $pdf->setFooterFont(['helvetica', '', '8']);
 
         // 设置默认等宽字体
         $pdf->SetDefaultMonospacedFont('courier');
@@ -82,35 +80,19 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         //第一页
         $pdf->AddPage();
         $pdf->writeHTML('<div style="text-align: center"><h1>第一页内容</h1></div>');
-        $pdf->writeHTML('<p>我是第一行内容</p>');
-        $pdf->writeHTML('<p style="color: red">我是第二行内容</p>');
-        $pdf->writeHTML('<p>我是第三行内容</p>');
-        $pdf->Ln(5);//换行符
-        $pdf->writeHTML('<p><a href="http://www.lanrenkaifa.com/" title="">懒人开发网</a></p>');
-        $pdf->writeHTML('<div style="text-align: center"><h1>第一页内容</h1></div>');
-        $pdf->writeHTML('<p>我是第一行内容</p>');
-        $pdf->writeHTML('<p style="color: red">我是第二行内容</p>');
-        $pdf->writeHTML('<p>我是第三行内容</p>');
-        $pdf->Ln(5);//换行符
-        $pdf->writeHTML('<p><a href="http://www.lanrenkaifa.com/" title="">懒人开发网</a></p>');
-        $pdf->writeHTML('<div style="text-align: center"><h1>第一页内容</h1></div>');
-        $pdf->writeHTML('<p>我是第一行内容</p>');
-        $pdf->writeHTML('<p style="color: red">我是第二行内容</p>');
-        $pdf->writeHTML('<p>我是第三行内容</p>');
-        $pdf->Ln(5);//换行符
-        $pdf->writeHTML('<p><a href="http://www.lanrenkaifa.com/" title="">懒人开发网</a></p>');
-        $pdf->writeHTML('<div style="text-align: center"><h1>第一页内容</h1></div>');
-        $pdf->writeHTML('<p>我是第一行内容</p>');
-        $pdf->writeHTML('<p style="color: red">我是第二行内容</p>');
-        $pdf->writeHTML('<p>我是第三行内容</p>');
-        $pdf->Ln(5);//换行符
-        $pdf->writeHTML('<p><a href="http://www.lanrenkaifa.com/" title="">懒人开发网</a></p>');
-        $pdf->writeHTML('<div style="text-align: center"><h1>第一页内容</h1></div>');
-        $pdf->writeHTML('<p>我是第一行内容</p>');
-        $pdf->writeHTML('<p style="color: red">我是第二行内容</p>');
-        $pdf->writeHTML('<p>我是第三行内容</p>');
-        $pdf->Ln(5);//换行符
-        $pdf->writeHTML('<p><a href="http://www.lanrenkaifa.com/" title="">懒人开发网</a></p>');
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
