@@ -24,7 +24,8 @@
         "qiniu/php-sdk": "^7.3",
         "easyswoole/smtp": "^1.0",
         "easyswoole/http-annotation": "^1.4",
-        "ritaswc/zx-ip-address": "^2.0"
+        "ritaswc/zx-ip-address": "^2.0",
+        "tecnickcom/tcpdf": "^6.3"
     },
     "autoload": {
         "psr-4": {
