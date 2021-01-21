@@ -108,6 +108,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         $pdf->AddPage();
 
         for ($i = 1; $i <= 20; $i++) {
+            $pdf->SetFont('stsongstdlight', '', $i);
             $pdf->writeHTML("<div style='text-align: center;font-size: {$i}px'><h1>第 {$i} 页内容</h1></div>");
         }
     }
