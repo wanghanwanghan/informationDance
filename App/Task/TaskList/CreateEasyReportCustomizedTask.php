@@ -109,7 +109,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         $tbl = <<<EOD
 <table border="1" cellpadding="3" style="border-collapse: collapse">
 <thead>
- <tr style="background-color:#FFFF00;color:#0000FF;">
+ <tr style="background-color:#FFFF00;">
   <td width="30" align="center"><b>A</b></td>
   <td width="140" align="center"><b>XXXX</b></td>
   <td width="140" align="center"><b>XXXX</b></td>
@@ -117,7 +117,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
   <td width="80" align="center"><b>XXXX</b></td>
   <td width="45" align="center"><b>XXXX</b></td>
  </tr>
- <tr style="background-color:#c8c8c8;color:#c8c8c8;">
+ <tr style="background-color:#c8c8c8;">
   <td width="30" align="center"><b>B</b></td>
   <td width="140" align="center"><b>XXXX</b></td>
   <td width="140" align="center"><b>XXXX</b></td>
@@ -166,8 +166,6 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
  </tr>
 </table>
 EOD;
-
-        $pdf->writeHTML($tbl, true, false, false, false, '');
 
         $pdf->writeHTML($tbl, true, false, false, false, '');
     }
