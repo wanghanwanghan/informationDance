@@ -26,6 +26,7 @@ class Router extends AbstractRouter
             $this->Notify($routeCollector);//通知
             $this->ExportExcelRouterV1($routeCollector);//导出excel
             $this->ExportWordRouterV1($routeCollector);//导出word
+            $this->ExportPdfRouterV1($routeCollector);//导出pdf
             $this->TestRouterV1($routeCollector);//测试路由
         });
 
@@ -356,6 +357,18 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/createVeryEasy',$prefix.'createVeryEasy');//极简报告
             $routeCollector->addRoute(['GET','POST'],'/createEasy',$prefix.'createEasy');//简版报告
             $routeCollector->addRoute(['GET','POST'],'/createDeep',$prefix.'createDeep');//深度报告
+        });
+
+        return true;
+    }
+
+    private function ExportPdfRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix='/Business/Api/Export/Pdf/PdfController/';
+
+        $routeCollector->addGroup('/export/pdf',function (RouteCollector $routeCollector) use ($prefix)
+        {
+            $routeCollector->addRoute(['GET','POST'],'/createEasy',$prefix.'createEasy');//简版报告
         });
 
         return true;
