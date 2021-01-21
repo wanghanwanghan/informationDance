@@ -63,7 +63,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         $pdf->SetDefaultMonospacedFont('courier');
 
         // 设置间距
-        $pdf->SetMargins(15, 15, 15);//页面间隔
+        $pdf->SetMargins(5, 5, 5);//页面间隔
         $pdf->SetHeaderMargin(5);//页眉top间隔
         $pdf->SetFooterMargin(5);//页脚bottom间隔
 
@@ -74,7 +74,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         $pdf->setFontSubsetting(true);
 
         //设置字体 stsongstdlight支持中文
-        $pdf->SetFont('stsongstdlight', '', 4);
+        $pdf->SetFont('stsongstdlight', '', 5);
 
         $this->fillData($pdf, []);
 
