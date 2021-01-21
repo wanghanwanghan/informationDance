@@ -52,7 +52,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         $pdf->SetKeywords('TCPDF, PDF, PHP');
 
         // 设置页眉和页脚信息
-        $pdf->SetHeaderData(REPORT_IMAGE_PATH . 'xd_logo.png', 30, 'LanRenKaiFA.com', '简版报告定制版', [0, 64, 255], [0, 64, 128]);
+        $pdf->SetHeaderData(REPORT_IMAGE_PATH . 'xd_logo.png', 30, 'sanh.com.cn', '简版报告定制版', [0, 64, 255], [0, 64, 128]);
         $pdf->setFooterData([0, 64, 0], [0, 64, 128]);
 
         // 设置页眉和页脚字体
