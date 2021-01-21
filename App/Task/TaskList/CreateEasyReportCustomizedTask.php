@@ -107,7 +107,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
     {
         $pdf->AddPage();
         $tbl = <<<EOD
-<table border="1" cellpadding="0" cellspacing="0" style="border-collapse: collapse">
+<table border="1" cellspacing="0" style="border-collapse: collapse">
 <thead>
  <tr style="background-color:#FFFF00;color:#0000FF;">
   <td width="30" align="center"><b>A</b></td>
