@@ -45,10 +45,10 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         $pdf = new \TCPDF();
 
         // 设置文档信息
-        $pdf->SetCreator('懒人开发网');
-        $pdf->SetAuthor('懒人开发网');
-        $pdf->SetTitle('TCPDF示例');
-        $pdf->SetSubject('TCPDF示例');
+        $pdf->SetCreator('王瀚');
+        $pdf->SetAuthor('王瀚');
+        $pdf->SetTitle('王瀚');
+        $pdf->SetSubject('王瀚');
         $pdf->SetKeywords('TCPDF, PDF, PHP');
 
         // 设置页眉和页脚信息
