@@ -74,7 +74,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         $pdf->setFontSubsetting(true);
 
         //设置字体 stsongstdlight支持中文
-        $pdf->SetFont('stsongstdlight', '', 8);
+        $pdf->SetFont('stsongstdlight', '', 4);
 
         $this->fillData($pdf, []);
 
