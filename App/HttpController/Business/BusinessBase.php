@@ -176,8 +176,6 @@ class BusinessBase extends Index
         $todayStart = Carbon::now()->startOfDay()->timestamp;
         $todayEnd   = Carbon::now()->endOfDay()->timestamp;
 
-        $entName = [];
-
         //每天只能浏览100个企业
         if (!empty($entName) && !empty($token))
         {
