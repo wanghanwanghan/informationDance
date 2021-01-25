@@ -74,7 +74,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         $pdf->setFontSubsetting(true);
 
         //设置字体 stsongstdlight支持中文
-        $pdf->SetFont('stsongstdlight', '', 5);
+        $pdf->SetFont('stsongstdlight', '', $this->pdf_BigTitle);
 
         $this->fillData($pdf, []);
 
@@ -111,8 +111,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
     <thead>
     <tr style="background-color:#FFFF00;">
         <td width="30" align="center"><b>A</b></td>
-        <td width="140" align="center"><b>XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</b>
-        </td>
+        <td width="140" align="center"><b>XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</b></td>
         <td width="140" align="center"><b>XXXX</b></td>
         <td width="80" align="center"><b>XXXX</b></td>
         <td width="80" align="center"><b>XXXX</b></td>
@@ -169,6 +168,24 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
 EOD;
 
         $pdf->writeHTML($tbl, true, false, false, false, '');
+
+        $pdf->SetFont('stsongstdlight', '', $this->pdf_BigTitle);
+        $pdf->writeHTML('<p>我是第三行内容我是第三行内容</p><br />');
+        $pdf->Ln(1);
+
+        $pdf->SetFont('stsongstdlight', '', $this->pdf_LittleTitle);
+        $pdf->writeHTML('<p>我是第三行内容我是第三行内容</p><br />');
+        $pdf->Ln(1);
+
+        $pdf->SetFont('stsongstdlight', '', $this->pdf_Text);
+        $pdf->writeHTML('<p>我是第三行内容我是第三行内容</p><br />');
+        $pdf->Ln(1);
+
+
+
+
+
+
     }
 
     //并发请求数据

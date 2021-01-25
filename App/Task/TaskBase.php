@@ -11,6 +11,10 @@ class TaskBase
     public $fahaiList;
     public $fahaiDetail;
 
+    public $pdf_BigTitle = 14;
+    public $pdf_LittleTitle = 11;
+    public $pdf_Text = 8;
+
     function __construct()
     {
         $this->qccUrl = CreateConf::getInstance()->getConf('qichacha.baseUrl');
@@ -31,4 +35,13 @@ class TaskBase
     {
         return formatPercent($str);
     }
+
+
+
+
+
+
+
+
+
 }
