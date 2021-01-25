@@ -11,9 +11,9 @@ class TaskBase
     public $fahaiList;
     public $fahaiDetail;
 
-    public $pdf_BigTitle = 14;
-    public $pdf_LittleTitle = 11;
-    public $pdf_Text = 8;
+    public $pdf_BigTitle = 17;
+    public $pdf_LittleTitle = 14;
+    public $pdf_Text = 11;
 
     function __construct()
     {
