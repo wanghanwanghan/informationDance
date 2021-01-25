@@ -116,7 +116,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         <td width="140" align="center"><b>XXXX</b></td>
         <td width="80" align="center"><b>XXXX</b></td>
         <td width="80" align="center"><b>XXXX</b></td>
-        <td width="45" align="center"><b>XXXX</b></td>
+        <td align="center"><b>XXXX</b></td>
     </tr>
     <tr style="background-color:#c8c8c8;">
         <td width="30" align="center"><b>B</b></td>
@@ -124,7 +124,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         <td width="140" align="center"><b>XXXX</b></td>
         <td width="80" align="center"><b>XXXX</b></td>
         <td width="80" align="center"><b>XXXX</b></td>
-        <td width="45" align="center"><b>XXXX</b></td>
+        <td align="center"><b>XXXX</b></td>
     </tr>
     </thead>
     <tr>
@@ -133,37 +133,37 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         <td width="140">XXXX<br/>XXXX</td>
         <td width="80">XXXX<br/>XXXX</td>
         <td width="80">XXXX</td>
-        <td align="center" width="45">XXXX<br/>XXXX</td>
+        <td align="center">XXXX<br/>XXXX</td>
     </tr>
     <tr>
         <td width="30" align="center" rowspan="3">2.</td>
         <td width="140" rowspan="3">XXXX<br/>XXXX</td>
         <td width="80">XXXX<br/>XXXX</td>
         <td width="80">XXXX<br/>XXXX</td>
-        <td align="center" width="45">XXXX<br/>XXXX</td>
+        <td align="center">XXXX<br/>XXXX</td>
     </tr>
     <tr>
         <td width="80">XXXX<br/>XXXX<br/>XXXX<br/>XXXX</td>
         <td width="80">XXXX<br/>XXXX</td>
-        <td align="center" width="45">XXXX<br/>XXXX</td>
+        <td align="center">XXXX<br/>XXXX</td>
     </tr>
     <tr>
         <td width="80" rowspan="2">RRRRRR<br/>XXXX<br/>XXXX<br/>XXXX<br/>XXXX<br/>XXXX<br/>XXXX<br/>XXXX</td>
         <td width="80">XXXX<br/>XXXX</td>
-        <td align="center" width="45">XXXX<br/>XXXX</td>
+        <td align="center">XXXX<br/>XXXX</td>
     </tr>
     <tr>
         <td width="30" align="center">3.</td>
         <td width="140">XXXX1<br/>XXXX</td>
         <td width="80">XXXX<br/>XXXX</td>
-        <td align="center" width="45">XXXX<br/>XXXX</td>
+        <td align="center">XXXX<br/>XXXX</td>
     </tr>
     <tr>
         <td width="30" align="center">4.</td>
         <td width="140">XXXX<br/>XXXX</td>
         <td width="80">XXXX<br/>XXXX</td>
         <td width="80">XXXX<br/>XXXX</td>
-        <td align="center" width="45">XXXX<br/>XXXX</td>
+        <td align="center">XXXX<br/>XXXX</td>
     </tr>
 </table>
 EOD;
