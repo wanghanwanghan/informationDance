@@ -122,18 +122,18 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse">
     <tr>
-        <td width="10%">
+        <td width="15%">
             报告编号
         </td>
-        <td>
+        <td width="85%">
             111111111111111111
         </td>
     </tr>
     <tr>
-        <td width="10%">
+        <td width="15%">
             查询单位
         </td>
-        <td>
+        <td width="85%">
             工商银行
         </td>
     </tr>
