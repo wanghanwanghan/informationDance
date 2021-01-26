@@ -137,7 +137,7 @@ class TaskBase
         ];
 
         $catalogCspKey = [
-            '基本信息' => [
+            [
                 'getRegisterInfo',
                 'Beneficiary',
                 'getHistoricalEvolution',
@@ -147,7 +147,7 @@ class TaskBase
                 'getBranchInfo',
                 'GetCreditCodeNew',
             ],
-            '公司概况' => [
+            [
                 'TenderSearch',
                 'LandPurchaseList',
                 'LandPublishList',
@@ -157,24 +157,24 @@ class TaskBase
                 'BondList',
                 'GetCompanyWebSite',
             ],
-            '团队招聘' => [
+            [
                 'itemInfo',
                 'BuildingRegistrar',
             ],
-            '财务总揽' => [
+            [
                 'FinanceData'
             ],
-            '业务概况' => [
+            [
                 'SearchCompanyCompanyProducts'
             ],
-            '创新能力' => [
+            [
                 'PatentV4Search',
                 'SearchSoftwareCr',
                 'tmSearch',
                 'SearchCopyRight',
                 'SearchCertification',
             ],
-            '税务信息' => [
+            [
                 'satparty_xin',
                 'satparty_xuke',
                 'satparty_reg',
@@ -182,23 +182,23 @@ class TaskBase
                 'satparty_qs',
                 'satparty_chufa',
             ],
-            '行政管理信息' => [
+            [
                 'GetAdministrativeLicenseList',
                 'GetAdministrativePenaltyList',
             ],
-            '环保信息' => [
+            [
                 'epbparty',
                 'epbparty_jkqy',
                 'epbparty_zxjc',
                 'epbparty_huanping',
             ],
-            '海关信息' => [
+            [
                 'custom_qy',
                 'custom_xuke',
                 'custom_credit',
                 'custom_punish',
             ],
-            '一行两会信息' => [
+            [
                 'pbcparty',
                 'pbcparty_cbrc',
                 'pbcparty_csrc_chufa',
@@ -206,7 +206,7 @@ class TaskBase
                 'safe_chufa',
                 'safe_xuke',
             ],
-            '司法涉诉与抵质押信息' => [
+            [
                 'fygg',
                 'ktgg',
                 'cpws',
@@ -219,11 +219,11 @@ class TaskBase
                 'GetLandMortgageList',
                 'GetAnnualReport',
             ],
-            '债权信息' => [
+            [
                 'company_zdw_yszkdsr',
                 'company_zdw_syqbldsr',
             ],
-            '债务信息' => [
+            [
                 'company_zdw_zldjdsr',
                 'company_zdw_bzjzydsr',
                 'company_zdw_cdzydsr',
@@ -235,15 +235,14 @@ class TaskBase
 
         $index = trim($index);
 
-        $index = explode(',',$index);
+        $index = explode(',', $index);
 
         $index = array_filter($index);
 
         if (empty($index)) return $index;
 
-        foreach ($index as $oneCatalog)
-        {
-            $catalog = explode('-',$oneCatalog);
+        foreach ($index as $oneCatalog) {
+            $catalog = explode('-', $oneCatalog);
 
             $catalog = array_filter($catalog);
 
@@ -252,21 +251,13 @@ class TaskBase
             $catalog[0] = (int)$catalog[0];
             $catalog[1] = (int)$catalog[1];
 
-            array_push($temp,[
-                $catalogCspKey[$catalog[0]][$catalog[1]]
-            ]);
+            array_push($temp, $catalogCspKey[$catalog[0]][$catalog[1]]);
         }
 
         if (empty($temp)) return $temp;
 
         return $temp;
     }
-
-
-
-
-
-
 
 
 }
