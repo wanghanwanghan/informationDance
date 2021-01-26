@@ -105,31 +105,10 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
 
         $pdf->AddPage();
 
-        $tbl = <<<EOD
-<table border="1" cellpadding="5" style="border-collapse: collapse">
-    <thead>
-    <tr>
-        <td>
-            xxxxxxxx
-        </td>
-        <td>
-            33333333
-        </td>
-    </tr>
-    </thead>
-    <tr>
-        <td>
-            <img style="width: 100px;height: 80px;"
-                 src="https://api.meirixindong.com/Static/Image/ReportImage/logo.jpg">
-        </td>
-        <td>
-            dddddd
-        </td>
-    </tr>
-</table>
-EOD;
+        //logo
+        $pdf->Image(REPORT_IMAGE_PATH . 'logo.jpg', '', '', 0, 0, '', '', 'T');
 
-        $pdf->writeHTML($tbl);
+
     }
 
     //并发请求数据
