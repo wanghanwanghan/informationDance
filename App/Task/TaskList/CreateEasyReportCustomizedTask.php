@@ -122,49 +122,25 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse">
     <tr>
-        <td>
+        <td width="10%">
             报告编号
         </td>
         <td>
-            报告编号
-        </td>
-        <td>
-            报告编号
-        </td>
-        <td>
-            报告编号
-        </td>
-        <td>
-            报告编号
-        </td>
-        <td>
-            报告编号
+            111111111111111111
         </td>
     </tr>
     <tr>
-        <td>
+        <td width="10%">
             查询单位
         </td>
         <td>
-            查询单位
-        </td>
-        <td>
-            查询单位
-        </td>
-        <td>
-            查询单位
-        </td>
-        <td>
-            查询单位
-        </td>
-        <td>
-            查询单位
+            工商银行
         </td>
     </tr>
 </table>
 TEMP;
 
-        $pdf->writeHTML($html, true, false, true, false, '');
+        $pdf->writeHTML($html, true, false, true, false, 'C');
 
 
         //##########################################################################################//
