@@ -108,6 +108,8 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         $pdf->Image(REPORT_IMAGE_PATH . 'xd.logo.png');
 
         CommonService::getInstance()->log4PHP(\TCPDF_STATIC::file_exists(REPORT_IMAGE_PATH . 'xd.logo.png'));
+        CommonService::getInstance()->log4PHP(REPORT_IMAGE_PATH . 'xd.logo.png');
+        CommonService::getInstance()->log4PHP(file_exists(REPORT_IMAGE_PATH . 'xd.logo.png'));
 
 
         $tbl = <<<EOD
