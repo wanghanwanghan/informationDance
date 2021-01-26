@@ -251,7 +251,7 @@ class TaskBase
             $catalog[0] = (int)$catalog[0];
             $catalog[1] = (int)$catalog[1];
 
-            array_push($temp, $catalogCspKey[$catalog[0]][$catalog[1]]);
+            $temp[] = $catalogCspKey[$catalog[0]][$catalog[1]];
         }
 
         if (empty($temp)) return $temp;
