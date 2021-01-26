@@ -109,7 +109,12 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
 <table border="1" cellpadding="5" style="border-collapse: collapse">
     <thead>
     <tr>
-        xxxxxxxxxxxxxx
+        <td>
+            xxxxxxxx
+        </td>
+        <td>
+            33333333
+        </td>
     </tr>
     </thead>
     <tr>
