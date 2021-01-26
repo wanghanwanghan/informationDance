@@ -106,7 +106,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         $pdf->AddPage();
 
         //logo
-        $pdf->Image(REPORT_IMAGE_PATH . 'logo.jpg', '', '', 55, 25, '', '', 'T');
+        $pdf->Image(REPORT_IMAGE_PATH . 'logo.jpg', '', '', 55, 20, '', '', 'T');
 
         //换行
         $pdf->ln(100);
