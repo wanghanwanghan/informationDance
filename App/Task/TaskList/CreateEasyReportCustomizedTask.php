@@ -102,8 +102,6 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
     //填充数据
     private function fillData(Tcpdf $pdf, $cspReturnData)
     {
-        CommonService::getInstance()->log4PHP($cspReturnData);
-
         $pdf->AddPage();
 
         //logo
@@ -149,7 +147,7 @@ TEMP;
 
         //声明
         $html = <<<TEMP
-<div style="width: 100%;font-size: {$this->pdf_LittleTitle}px">
+<div style="width: 100%;font-size: 15px">
     <div style="text-align: center">声明</div>
     <div style="text-indent: 20px">
         <p>一、报告由北京每日信动科技有限公司出具，且郑重声明本公司与受评主体不存在任何影响评价行为独立、客观、公正的关联关系。</p>
@@ -167,6 +165,15 @@ TEMP;
 
         $pdf->writeHTML($html, true, false, false, false, '');
 
+        $pdf->AddPage();
+
+        if (array_search('getRegisterInfo',$cspReturnData) !== false)
+        {
+            CommonService::getInstance()->log4PHP('duanran');
+            CommonService::getInstance()->log4PHP($cspReturnData);
+        }
+
+
         //##########################################################################################//
     }
 
@@ -174,8 +181,6 @@ TEMP;
     private function cspHandleData($indexStr = '')
     {
         $catalog = $this->pdf_Catalog();
-
-        $catalog = [];
 
         //创建csp对象
         $csp = CspService::getInstance()->create();

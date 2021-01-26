@@ -225,7 +225,7 @@ class TaskBase
         ];
 
         return [
-            'Beneficiary'
+            'getRegisterInfo'
         ];
     }
 
