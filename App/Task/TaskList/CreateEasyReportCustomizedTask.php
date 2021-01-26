@@ -23,6 +23,26 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
     private $type;
     private $dataIndex;
 
+    private $currentHeight = 0;
+
+    //计算翻页不翻页
+    function exprAddPage(Tcpdf $pdf, $height, $pageMaxHeight = 300)
+    {
+        if ($height > $pageMaxHeight) {
+            $this->currentHeight = 0;
+            $pdf->AddPage();
+        }
+
+        if ($height + $this->currentHeight > $pageMaxHeight) {
+            $this->currentHeight = 0;
+            $pdf->AddPage();
+        }
+
+        $this->currentHeight += $height;
+
+        return true;
+    }
+
     function __construct($entName, $reportNum, $phone, $type, $dataIndex)
     {
         $this->entName = $entName;
@@ -167,9 +187,11 @@ TEMP;
 
         if (array_key_exists('getRegisterInfo',$cspData) && !empty($cspData['getRegisterInfo']))
         {
-            $pdf->AddPage();
+            for ($i=1;$i<=10;$i++)
+            {
+                $this->exprAddPage($pdf,100);
 
-            $html = <<<TEMP
+                $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%">
     <tr>
         <td colspan="4" style="text-align: center;background-color: #d3d3d3">
@@ -271,7 +293,9 @@ TEMP;
 </table>
 TEMP;
 
-            $pdf->writeHTML($html, true, false, false, false, '');
+                $pdf->writeHTML($html, true, false, false, false, '');
+            }
+
         }
 
 
