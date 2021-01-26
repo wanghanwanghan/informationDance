@@ -68,6 +68,8 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         //设置字体 stsongstdlight支持中文
         $pdf->SetFont('stsongstdlight', '', $this->pdf_BigTitle);
 
+        $pdf->setJPEGQuality(100);
+
         $res = $this->cspHandleData($this->dataIndex);
 
         $this->fillData($pdf, $res);
@@ -102,6 +104,10 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         CommonService::getInstance()->log4PHP($cspReturnData);
 
         $pdf->AddPage();
+
+        $pdf->Image(REPORT_IMAGE_PATH . 'xd.logo.png');
+
+
         $tbl = <<<EOD
 <table border="1" cellpadding="5" style="border-collapse: collapse">
     <thead>
@@ -175,7 +181,7 @@ EOD;
         $csp = CspService::getInstance()->create();
 
         //淘数 基本信息 工商信息
-        array_search('getRegisterInfo',$catalog) === false ?: $csp->add('getRegisterInfo', function () {
+        array_search('getRegisterInfo', $catalog) === false ?: $csp->add('getRegisterInfo', function () {
 
             $res = (new TaoShuService())->setCheckRespFlag(true)->post(['entName' => $this->entName], 'getRegisterInfo');
 
@@ -185,7 +191,7 @@ EOD;
         });
 
         //企查查 基本信息 工商信息
-        array_search('GetBasicDetailsByName',$catalog) === false ?: $csp->add('GetBasicDetailsByName', function () {
+        array_search('GetBasicDetailsByName', $catalog) === false ?: $csp->add('GetBasicDetailsByName', function () {
 
             $postData = ['keyWord' => $this->entName];
 
@@ -197,7 +203,7 @@ EOD;
         });
 
         //淘数 基本信息 股东信息
-        array_search('getShareHolderInfo',$catalog) === false ?: $csp->add('getShareHolderInfo', function () {
+        array_search('getShareHolderInfo', $catalog) === false ?: $csp->add('getShareHolderInfo', function () {
 
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
                 'entName' => $this->entName,
@@ -211,7 +217,7 @@ EOD;
         });
 
         //淘数 基本信息 高管信息
-        array_search('getMainManagerInfo',$catalog) === false ?: $csp->add('getMainManagerInfo', function () {
+        array_search('getMainManagerInfo', $catalog) === false ?: $csp->add('getMainManagerInfo', function () {
 
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
                 'entName' => $this->entName,
@@ -225,7 +231,7 @@ EOD;
         });
 
         //淘数 基本信息 变更信息
-        array_search('getRegisterChangeInfo',$catalog) === false ?: $csp->add('getRegisterChangeInfo', function () {
+        array_search('getRegisterChangeInfo', $catalog) === false ?: $csp->add('getRegisterChangeInfo', function () {
 
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
                 'entName' => $this->entName,
@@ -242,7 +248,7 @@ EOD;
         });
 
         //企查查 经营异常
-        array_search('GetOpException',$catalog) === false ?: $csp->add('GetOpException', function () {
+        array_search('GetOpException', $catalog) === false ?: $csp->add('GetOpException', function () {
 
             $postData = ['keyNo' => $this->entName];
 
@@ -257,7 +263,7 @@ EOD;
         });
 
         //企查查 实际控制人
-        array_search('Beneficiary',$catalog) === false ?: $csp->add('Beneficiary', function () {
+        array_search('Beneficiary', $catalog) === false ?: $csp->add('Beneficiary', function () {
 
             $postData = [
                 'companyName' => $this->entName,
@@ -297,7 +303,7 @@ EOD;
         });
 
         //淘数 企查查 历史沿革
-        array_search('getHistoricalEvolution',$catalog) === false ?: $csp->add('getHistoricalEvolution', function () {
+        array_search('getHistoricalEvolution', $catalog) === false ?: $csp->add('getHistoricalEvolution', function () {
 
             $res = XinDongService::getInstance()->getHistoricalEvolution($this->entName);
 
@@ -307,7 +313,7 @@ EOD;
         });
 
         //淘数 法人对外投资
-        array_search('lawPersonInvestmentInfo',$catalog) === false ?: $csp->add('lawPersonInvestmentInfo', function () {
+        array_search('lawPersonInvestmentInfo', $catalog) === false ?: $csp->add('lawPersonInvestmentInfo', function () {
 
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
                 'entName' => $this->entName,
@@ -321,7 +327,7 @@ EOD;
         });
 
         //淘数 法人对外任职
-        array_search('getLawPersontoOtherInfo',$catalog) === false ?: $csp->add('getLawPersontoOtherInfo', function () {
+        array_search('getLawPersontoOtherInfo', $catalog) === false ?: $csp->add('getLawPersontoOtherInfo', function () {
 
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
                 'entName' => $this->entName,
@@ -335,7 +341,7 @@ EOD;
         });
 
         //淘数 企业对外投资
-        array_search('getInvestmentAbroadInfo',$catalog) === false ?: $csp->add('getInvestmentAbroadInfo', function () {
+        array_search('getInvestmentAbroadInfo', $catalog) === false ?: $csp->add('getInvestmentAbroadInfo', function () {
 
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
                 'entName' => $this->entName,
@@ -352,7 +358,7 @@ EOD;
         });
 
         //淘数 分支机构
-        array_search('getBranchInfo',$catalog) === false ?: $csp->add('getBranchInfo', function () {
+        array_search('getBranchInfo', $catalog) === false ?: $csp->add('getBranchInfo', function () {
 
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
                 'entName' => $this->entName,
@@ -366,7 +372,7 @@ EOD;
         });
 
         //企查查 银行信息
-        array_search('GetCreditCodeNew',$catalog) === false ?: $csp->add('GetCreditCodeNew', function () {
+        array_search('GetCreditCodeNew', $catalog) === false ?: $csp->add('GetCreditCodeNew', function () {
 
             $postData = ['keyWord' => $this->entName];
 
@@ -378,7 +384,7 @@ EOD;
         });
 
         //企查查 公司概况
-        array_search('SearchCompanyFinancings',$catalog) === false ?: $csp->add('SearchCompanyFinancings', function () {
+        array_search('SearchCompanyFinancings', $catalog) === false ?: $csp->add('SearchCompanyFinancings', function () {
 
             $postData = ['searchKey' => $this->entName];
 
@@ -390,7 +396,7 @@ EOD;
         });
 
         //企查查 招投标
-        array_search('TenderSearch',$catalog) === false ?: $csp->add('TenderSearch', function () {
+        array_search('TenderSearch', $catalog) === false ?: $csp->add('TenderSearch', function () {
 
             $postData = [
                 'searchKey' => $this->entName,
@@ -409,7 +415,7 @@ EOD;
         });
 
         //企查查 购地信息
-        array_search('LandPurchaseList',$catalog) === false ?: $csp->add('LandPurchaseList', function () {
+        array_search('LandPurchaseList', $catalog) === false ?: $csp->add('LandPurchaseList', function () {
 
             $postData = [
                 'searchKey' => $this->entName,
@@ -425,7 +431,7 @@ EOD;
         });
 
         //企查查 土地公示
-        array_search('LandPublishList',$catalog) === false ?: $csp->add('LandPublishList', function () {
+        array_search('LandPublishList', $catalog) === false ?: $csp->add('LandPublishList', function () {
 
             $postData = [
                 'searchKey' => $this->entName,
@@ -441,7 +447,7 @@ EOD;
         });
 
         //企查查 土地转让
-        array_search('LandTransferList',$catalog) === false ?: $csp->add('LandTransferList', function () {
+        array_search('LandTransferList', $catalog) === false ?: $csp->add('LandTransferList', function () {
 
             $postData = [
                 'searchKey' => $this->entName,
@@ -468,7 +474,7 @@ EOD;
         });
 
         //企查查 建筑资质证书
-        array_search('Qualification',$catalog) === false ?: $csp->add('Qualification', function () {
+        array_search('Qualification', $catalog) === false ?: $csp->add('Qualification', function () {
 
             $postData = [
                 'searchKey' => $this->entName,
@@ -484,7 +490,7 @@ EOD;
         });
 
         //企查查 建筑工程项目
-        array_search('BuildingProject',$catalog) === false ?: $csp->add('BuildingProject', function () {
+        array_search('BuildingProject', $catalog) === false ?: $csp->add('BuildingProject', function () {
 
             $postData = [
                 'searchKey' => $this->entName,
@@ -500,7 +506,7 @@ EOD;
         });
 
         //企查查 债券信息
-        array_search('BondList',$catalog) === false ?: $csp->add('BondList', function () {
+        array_search('BondList', $catalog) === false ?: $csp->add('BondList', function () {
 
             $postData = [
                 'searchKey' => $this->entName,
@@ -516,7 +522,7 @@ EOD;
         });
 
         //企查查 网站信息
-        array_search('GetCompanyWebSite',$catalog) === false ?: $csp->add('GetCompanyWebSite', function () {
+        array_search('GetCompanyWebSite', $catalog) === false ?: $csp->add('GetCompanyWebSite', function () {
 
             $postData = [
                 'searchKey' => $this->entName,
@@ -532,7 +538,7 @@ EOD;
         });
 
         //企查查 微博
-        array_search('Microblog',$catalog) === false ?: $csp->add('Microblog', function () {
+        array_search('Microblog', $catalog) === false ?: $csp->add('Microblog', function () {
 
             $postData = [
                 'searchKey' => $this->entName,
@@ -548,7 +554,7 @@ EOD;
         });
 
         //企查查 新闻舆情
-        array_search('CompanyNews',$catalog) === false ?: $csp->add('CompanyNews', function () {
+        array_search('CompanyNews', $catalog) === false ?: $csp->add('CompanyNews', function () {
 
             $postData = [
                 'searchKey' => $this->entName,
@@ -564,7 +570,7 @@ EOD;
         });
 
         //乾启 近三年团队人数变化率
-        array_search('itemInfo',$catalog) === false ?: $csp->add('itemInfo', function () {
+        array_search('itemInfo', $catalog) === false ?: $csp->add('itemInfo', function () {
 
             $postData = ['entName' => $this->entName];
 
@@ -605,7 +611,7 @@ EOD;
         });
 
         //企查查 建筑企业-专业注册人员
-        array_search('BuildingRegistrar',$catalog) === false ?: $csp->add('BuildingRegistrar', function () {
+        array_search('BuildingRegistrar', $catalog) === false ?: $csp->add('BuildingRegistrar', function () {
 
             $postData = [
                 'searchKey' => $this->entName,
@@ -621,7 +627,7 @@ EOD;
         });
 
         //企查查 招聘信息
-        array_search('Recruitment',$catalog) === false ?: $csp->add('Recruitment', function () {
+        array_search('Recruitment', $catalog) === false ?: $csp->add('Recruitment', function () {
 
             $postData = [
                 'searchKey' => $this->entName,
@@ -637,7 +643,7 @@ EOD;
         });
 
         //乾启 财务
-        array_search('FinanceData',$catalog) === false ?: $csp->add('FinanceData', function () {
+        array_search('FinanceData', $catalog) === false ?: $csp->add('FinanceData', function () {
 
             $postData = ['entName' => $this->entName];
 
@@ -685,7 +691,7 @@ EOD;
         });
 
         //企查查 业务概况
-        array_search('SearchCompanyCompanyProducts',$catalog) === false ?: $csp->add('SearchCompanyCompanyProducts', function () {
+        array_search('SearchCompanyCompanyProducts', $catalog) === false ?: $csp->add('SearchCompanyCompanyProducts', function () {
 
             $postData = [
                 'searchKey' => $this->entName,
@@ -701,7 +707,7 @@ EOD;
         });
 
         //企查查 专利
-        array_search('PatentV4Search',$catalog) === false ?: $csp->add('PatentV4Search', function () {
+        array_search('PatentV4Search', $catalog) === false ?: $csp->add('PatentV4Search', function () {
 
             $postData = [
                 'searchKey' => $this->entName,
@@ -720,7 +726,7 @@ EOD;
         });
 
         //企查查 软件著作权
-        array_search('SearchSoftwareCr',$catalog) === false ?: $csp->add('SearchSoftwareCr', function () {
+        array_search('SearchSoftwareCr', $catalog) === false ?: $csp->add('SearchSoftwareCr', function () {
 
             $postData = [
                 'searchKey' => $this->entName,
@@ -739,7 +745,7 @@ EOD;
         });
 
         //企查查 商标
-        array_search('tmSearch',$catalog) === false ?: $csp->add('tmSearch', function () {
+        array_search('tmSearch', $catalog) === false ?: $csp->add('tmSearch', function () {
 
             $postData = [
                 'keyword' => $this->entName,
@@ -758,7 +764,7 @@ EOD;
         });
 
         //企查查 作品著作权
-        array_search('SearchCopyRight',$catalog) === false ?: $csp->add('SearchCopyRight', function () {
+        array_search('SearchCopyRight', $catalog) === false ?: $csp->add('SearchCopyRight', function () {
 
             $postData = [
                 'searchKey' => $this->entName,
@@ -777,7 +783,7 @@ EOD;
         });
 
         //企查查 证书资质
-        array_search('SearchCertification',$catalog) === false ?: $csp->add('SearchCertification', function () {
+        array_search('SearchCertification', $catalog) === false ?: $csp->add('SearchCertification', function () {
 
             $postData = [
                 'searchKey' => $this->entName,
@@ -796,7 +802,7 @@ EOD;
         });
 
         //法海 纳税信用等级
-        array_search('satparty_xin',$catalog) === false ?: $csp->add('satparty_xin', function () {
+        array_search('satparty_xin', $catalog) === false ?: $csp->add('satparty_xin', function () {
 
             $doc_type = 'satparty_xin';
 
@@ -837,7 +843,7 @@ EOD;
         });
 
         //法海 税务许可信息
-        array_search('satparty_xuke',$catalog) === false ?: $csp->add('satparty_xuke', function () {
+        array_search('satparty_xuke', $catalog) === false ?: $csp->add('satparty_xuke', function () {
 
             $doc_type = 'satparty_xuke';
 
@@ -878,7 +884,7 @@ EOD;
         });
 
         //法海 税务登记信息
-        array_search('satparty_reg',$catalog) === false ?: $csp->add('satparty_reg', function () {
+        array_search('satparty_reg', $catalog) === false ?: $csp->add('satparty_reg', function () {
 
             $doc_type = 'satparty_reg';
 
@@ -919,7 +925,7 @@ EOD;
         });
 
         //法海 税务非正常户
-        array_search('satparty_fzc',$catalog) === false ?: $csp->add('satparty_fzc', function () {
+        array_search('satparty_fzc', $catalog) === false ?: $csp->add('satparty_fzc', function () {
 
             $doc_type = 'satparty_fzc';
 
@@ -960,7 +966,7 @@ EOD;
         });
 
         //法海 欠税信息
-        array_search('satparty_qs',$catalog) === false ?: $csp->add('satparty_qs', function () {
+        array_search('satparty_qs', $catalog) === false ?: $csp->add('satparty_qs', function () {
 
             $doc_type = 'satparty_qs';
 
@@ -1001,7 +1007,7 @@ EOD;
         });
 
         //法海 涉税处罚公示
-        array_search('satparty_chufa',$catalog) === false ?: $csp->add('satparty_chufa', function () {
+        array_search('satparty_chufa', $catalog) === false ?: $csp->add('satparty_chufa', function () {
 
             $doc_type = 'satparty_chufa';
 
@@ -1042,7 +1048,7 @@ EOD;
         });
 
         //企查查 行政许可
-        array_search('GetAdministrativeLicenseList',$catalog) === false ?: $csp->add('GetAdministrativeLicenseList', function () {
+        array_search('GetAdministrativeLicenseList', $catalog) === false ?: $csp->add('GetAdministrativeLicenseList', function () {
 
             $postData = [
                 'searchKey' => $this->entName,
@@ -1077,7 +1083,7 @@ EOD;
         });
 
         //企查查 行政处罚
-        array_search('GetAdministrativePenaltyList',$catalog) === false ?: $csp->add('GetAdministrativePenaltyList', function () {
+        array_search('GetAdministrativePenaltyList', $catalog) === false ?: $csp->add('GetAdministrativePenaltyList', function () {
 
             $postData = [
                 'searchKey' => $this->entName,
@@ -1112,7 +1118,7 @@ EOD;
         });
 
         //法海 环保 环保处罚
-        array_search('epbparty',$catalog) === false ?: $csp->add('epbparty', function () {
+        array_search('epbparty', $catalog) === false ?: $csp->add('epbparty', function () {
 
             $doc_type = 'epbparty';
 
@@ -1153,7 +1159,7 @@ EOD;
         });
 
         //法海 环保 重点监控企业名单
-        array_search('epbparty_jkqy',$catalog) === false ?: $csp->add('epbparty_jkqy', function () {
+        array_search('epbparty_jkqy', $catalog) === false ?: $csp->add('epbparty_jkqy', function () {
 
             $doc_type = 'epbparty_jkqy';
 
@@ -1194,7 +1200,7 @@ EOD;
         });
 
         //法海 环保 环保企业自行监测结果
-        array_search('epbparty_zxjc',$catalog) === false ?: $csp->add('epbparty_zxjc', function () {
+        array_search('epbparty_zxjc', $catalog) === false ?: $csp->add('epbparty_zxjc', function () {
 
             $doc_type = 'epbparty_zxjc';
 
@@ -1235,7 +1241,7 @@ EOD;
         });
 
         //法海 环保 环评公示数据
-        array_search('epbparty_huanping',$catalog) === false ?: $csp->add('epbparty_huanping', function () {
+        array_search('epbparty_huanping', $catalog) === false ?: $csp->add('epbparty_huanping', function () {
 
             $doc_type = 'epbparty_huanping';
 
@@ -1276,7 +1282,7 @@ EOD;
         });
 
         //法海 海关 海关企业
-        array_search('custom_qy',$catalog) === false ?: $csp->add('custom_qy', function () {
+        array_search('custom_qy', $catalog) === false ?: $csp->add('custom_qy', function () {
 
             $doc_type = 'custom_qy';
 
@@ -1317,7 +1323,7 @@ EOD;
         });
 
         //法海 海关 海关许可
-        array_search('custom_xuke',$catalog) === false ?: $csp->add('custom_xuke', function () {
+        array_search('custom_xuke', $catalog) === false ?: $csp->add('custom_xuke', function () {
 
             $doc_type = 'custom_xuke';
 
@@ -1358,7 +1364,7 @@ EOD;
         });
 
         //法海 海关 海关信用
-        array_search('custom_credit',$catalog) === false ?: $csp->add('custom_credit', function () {
+        array_search('custom_credit', $catalog) === false ?: $csp->add('custom_credit', function () {
 
             $doc_type = 'custom_credit';
 
@@ -1399,7 +1405,7 @@ EOD;
         });
 
         //法海 海关 海关处罚
-        array_search('custom_punish',$catalog) === false ?: $csp->add('custom_punish', function () {
+        array_search('custom_punish', $catalog) === false ?: $csp->add('custom_punish', function () {
 
             $doc_type = 'custom_punish';
 
@@ -1440,7 +1446,7 @@ EOD;
         });
 
         //法海 一行两会 央行行政处罚
-        array_search('pbcparty',$catalog) === false ?: $csp->add('pbcparty', function () {
+        array_search('pbcparty', $catalog) === false ?: $csp->add('pbcparty', function () {
 
             $doc_type = 'pbcparty';
 
@@ -1481,7 +1487,7 @@ EOD;
         });
 
         //法海 一行两会 银保监会处罚公示
-        array_search('pbcparty_cbrc',$catalog) === false ?: $csp->add('pbcparty_cbrc', function () {
+        array_search('pbcparty_cbrc', $catalog) === false ?: $csp->add('pbcparty_cbrc', function () {
 
             $doc_type = 'pbcparty_cbrc';
 
@@ -1522,7 +1528,7 @@ EOD;
         });
 
         //法海 一行两会 证监处罚公示
-        array_search('pbcparty_csrc_chufa',$catalog) === false ?: $csp->add('pbcparty_csrc_chufa', function () {
+        array_search('pbcparty_csrc_chufa', $catalog) === false ?: $csp->add('pbcparty_csrc_chufa', function () {
 
             $doc_type = 'pbcparty_csrc_chufa';
 
@@ -1563,7 +1569,7 @@ EOD;
         });
 
         //法海 一行两会 证监会许可信息
-        array_search('pbcparty_csrc_xkpf',$catalog) === false ?: $csp->add('pbcparty_csrc_xkpf', function () {
+        array_search('pbcparty_csrc_xkpf', $catalog) === false ?: $csp->add('pbcparty_csrc_xkpf', function () {
 
             $doc_type = 'pbcparty_csrc_xkpf';
 
@@ -1604,7 +1610,7 @@ EOD;
         });
 
         //法海 一行两会 外汇局处罚
-        array_search('safe_chufa',$catalog) === false ?: $csp->add('safe_chufa', function () {
+        array_search('safe_chufa', $catalog) === false ?: $csp->add('safe_chufa', function () {
 
             $doc_type = 'safe_chufa';
 
@@ -1645,7 +1651,7 @@ EOD;
         });
 
         //法海 一行两会 外汇局许可
-        array_search('safe_xuke',$catalog) === false ?: $csp->add('safe_xuke', function () {
+        array_search('safe_xuke', $catalog) === false ?: $csp->add('safe_xuke', function () {
 
             $doc_type = 'safe_xuke';
 
@@ -1686,7 +1692,7 @@ EOD;
         });
 
         //法海 法院公告
-        array_search('fygg',$catalog) === false ?: $csp->add('fygg', function () {
+        array_search('fygg', $catalog) === false ?: $csp->add('fygg', function () {
 
             $doc_type = 'fygg';
 
@@ -1727,7 +1733,7 @@ EOD;
         });
 
         //法海 开庭公告
-        array_search('ktgg',$catalog) === false ?: $csp->add('ktgg', function () {
+        array_search('ktgg', $catalog) === false ?: $csp->add('ktgg', function () {
 
             $doc_type = 'ktgg';
 
@@ -1768,7 +1774,7 @@ EOD;
         });
 
         //法海 裁判文书
-        array_search('cpws',$catalog) === false ?: $csp->add('cpws', function () {
+        array_search('cpws', $catalog) === false ?: $csp->add('cpws', function () {
 
             $doc_type = 'cpws';
 
@@ -1809,7 +1815,7 @@ EOD;
         });
 
         //法海 执行公告
-        array_search('zxgg',$catalog) === false ?: $csp->add('zxgg', function () {
+        array_search('zxgg', $catalog) === false ?: $csp->add('zxgg', function () {
 
             $doc_type = 'zxgg';
 
@@ -1850,7 +1856,7 @@ EOD;
         });
 
         //法海 失信公告
-        array_search('shixin',$catalog) === false ?: $csp->add('shixin', function () {
+        array_search('shixin', $catalog) === false ?: $csp->add('shixin', function () {
 
             $doc_type = 'shixin';
 
@@ -1891,7 +1897,7 @@ EOD;
         });
 
         //企查查 被执行人
-        array_search('SearchZhiXing',$catalog) === false ?: $csp->add('SearchZhiXing', function () {
+        array_search('SearchZhiXing', $catalog) === false ?: $csp->add('SearchZhiXing', function () {
 
             $postData = [
                 'searchKey' => $this->entName,
@@ -1909,7 +1915,7 @@ EOD;
         });
 
         //法海 司法查冻扣
-        array_search('sifacdk',$catalog) === false ?: $csp->add('sifacdk', function () {
+        array_search('sifacdk', $catalog) === false ?: $csp->add('sifacdk', function () {
 
             $doc_type = 'sifacdk';
 
@@ -1950,7 +1956,7 @@ EOD;
         });
 
         //淘数 动产抵押
-        array_search('getChattelMortgageInfo',$catalog) === false ?: $csp->add('getChattelMortgageInfo', function () {
+        array_search('getChattelMortgageInfo', $catalog) === false ?: $csp->add('getChattelMortgageInfo', function () {
 
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
                 'entName' => $this->entName,
@@ -1967,7 +1973,7 @@ EOD;
         });
 
         //淘数 股权出质
-        array_search('getEquityPledgedInfo',$catalog) === false ?: $csp->add('getEquityPledgedInfo', function () {
+        array_search('getEquityPledgedInfo', $catalog) === false ?: $csp->add('getEquityPledgedInfo', function () {
 
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
                 'entName' => $this->entName,
@@ -1984,7 +1990,7 @@ EOD;
         });
 
         //企查查 企业年报 其中有对外担保 这个字段ProvideAssuranceList
-        array_search('GetAnnualReport',$catalog) === false ?: $csp->add('GetAnnualReport', function () {
+        array_search('GetAnnualReport', $catalog) === false ?: $csp->add('GetAnnualReport', function () {
 
             $postData = [
                 'keyNo' => $this->entName,
@@ -2021,7 +2027,7 @@ EOD;
         });
 
         //企查查 土地抵押
-        array_search('GetLandMortgageList',$catalog) === false ?: $csp->add('GetLandMortgageList', function () {
+        array_search('GetLandMortgageList', $catalog) === false ?: $csp->add('GetLandMortgageList', function () {
 
             $postData = [
                 'keyWord' => $this->entName,
@@ -2040,7 +2046,7 @@ EOD;
         });
 
         //法海 中登动产融资 应收账款
-        array_search('company_zdw_yszkdsr',$catalog) === false ?: $csp->add('company_zdw_yszkdsr', function () {
+        array_search('company_zdw_yszkdsr', $catalog) === false ?: $csp->add('company_zdw_yszkdsr', function () {
 
             $doc_type = 'company_zdw_yszkdsr';
 
@@ -2081,7 +2087,7 @@ EOD;
         });
 
         //法海 中登动产融资 租赁登记
-        array_search('company_zdw_zldjdsr',$catalog) === false ?: $csp->add('company_zdw_zldjdsr', function () {
+        array_search('company_zdw_zldjdsr', $catalog) === false ?: $csp->add('company_zdw_zldjdsr', function () {
 
             $doc_type = 'company_zdw_zldjdsr';
 
@@ -2122,7 +2128,7 @@ EOD;
         });
 
         //法海 中登动产融资 保证金质押登记
-        array_search('company_zdw_bzjzydsr',$catalog) === false ?: $csp->add('company_zdw_bzjzydsr', function () {
+        array_search('company_zdw_bzjzydsr', $catalog) === false ?: $csp->add('company_zdw_bzjzydsr', function () {
 
             $doc_type = 'company_zdw_bzjzydsr';
 
@@ -2163,7 +2169,7 @@ EOD;
         });
 
         //法海 中登动产融资 仓单质押
-        array_search('company_zdw_cdzydsr',$catalog) === false ?: $csp->add('company_zdw_cdzydsr', function () {
+        array_search('company_zdw_cdzydsr', $catalog) === false ?: $csp->add('company_zdw_cdzydsr', function () {
 
             $doc_type = 'company_zdw_cdzydsr';
 
@@ -2204,7 +2210,7 @@ EOD;
         });
 
         //法海 中登动产融资 所有权保留
-        array_search('company_zdw_syqbldsr',$catalog) === false ?: $csp->add('company_zdw_syqbldsr', function () {
+        array_search('company_zdw_syqbldsr', $catalog) === false ?: $csp->add('company_zdw_syqbldsr', function () {
 
             $doc_type = 'company_zdw_syqbldsr';
 
@@ -2245,7 +2251,7 @@ EOD;
         });
 
         //法海 中登动产融资 其他动产融资
-        array_search('company_zdw_qtdcdsr',$catalog) === false ?: $csp->add('company_zdw_qtdcdsr', function () {
+        array_search('company_zdw_qtdcdsr', $catalog) === false ?: $csp->add('company_zdw_qtdcdsr', function () {
 
             $doc_type = 'company_zdw_qtdcdsr';
 
