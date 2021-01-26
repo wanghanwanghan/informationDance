@@ -113,9 +113,37 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
 
         //entName
         $pdf->SetFont('stsongstdlight', '', $this->pdf_BigTitle);
-        $pdf->writeHTML("<div><b>{$this->entName}</b></div>", true, false, false, false, 'C');
-        $pdf->SetFont('stsongstdlight', '', $this->pdf_Text);
         $pdf->writeHTML("<div>{$this->entName}</div>", true, false, false, false, 'C');
+
+        //换行
+        $pdf->ln(60);
+
+        $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse">
+    <tr>
+        <td width="200">
+            报告编号
+        </td>
+        <td>
+            20210121202154
+        </td>
+    </tr>
+    <tr>
+        <td width="200">
+            查询单位
+        </td>
+        <td>
+            民族基地风险监控专用
+        </td>
+    </tr>
+</table>
+TEMP;
+
+        $pdf->writeHTML($html, true, false, false, false, 'C');
+
+
+
+
 
         //##########################################################################################//
     }
