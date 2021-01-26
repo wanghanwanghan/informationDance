@@ -102,8 +102,6 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
     //填充数据
     private function fillData(Tcpdf $pdf, $cspData)
     {
-        CommonService::getInstance()->log4PHP($cspData);
-
         $pdf->AddPage();
 
         //logo
@@ -167,11 +165,113 @@ TEMP;
 
         $pdf->writeHTML($html, true, false, false, false, '');
 
-        $pdf->AddPage();
-
         if (array_key_exists('getRegisterInfo',$cspData) && !empty($cspData['getRegisterInfo']))
         {
+            $pdf->AddPage();
 
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%">
+    <tr>
+        <td colspan="4" style="text-align: center;background-color: grey">
+            工商信息
+        </td>
+    </tr>
+    <tr>
+        <td width="25%">
+            企业名称
+        </td>
+        <td width="25%">
+            {$cspData['getRegisterInfo']['ENTNAME']}
+        </td>
+        <td width="25%">
+            企业类型
+        </td>
+        <td width="25%">
+            {$cspData['getRegisterInfo']['ENTTYPE']}
+        </td>
+    </tr>
+    <tr>
+        <td width="25%">
+            注册资本(万元)
+        </td>
+        <td width="25%">
+            {$cspData['getRegisterInfo']['REGCAP']}
+        </td>
+        <td width="25%">
+            注册地址
+        </td>
+        <td width="25%">
+            {$cspData['getRegisterInfo']['DOM']}
+        </td>
+    </tr>
+    <tr>
+        <td width="25%">
+            法定代表人
+        </td>
+        <td width="25%">
+            {$cspData['getRegisterInfo']['FRDB']}
+        </td>
+        <td width="25%">
+            统一社会信用代码
+        </td>
+        <td width="25%">
+            {$cspData['getRegisterInfo']['SHXYDM']}
+        </td>
+    </tr>
+    <tr>
+        <td width="25%">
+            成立日期
+        </td>
+        <td width="25%">
+            {$cspData['getRegisterInfo']['ESDATE']}
+        </td>
+        <td width="25%">
+            核准日期
+        </td>
+        <td width="25%">
+            {$cspData['getRegisterInfo']['APPRDATE']}
+        </td>
+    </tr>
+    <tr>
+        <td width="25%">
+            经营状态
+        </td>
+        <td width="25%">
+            {$cspData['getRegisterInfo']['ENTSTATUS']}
+        </td>
+        <td width="25%">
+            营业期限
+        </td>
+        <td width="25%">
+            {$cspData['getRegisterInfo']['OPTO']}
+        </td>
+    </tr>
+    <tr>
+        <td width="25%">
+            公司类型
+        </td>
+        <td width="25%">
+            {$cspData['getRegisterInfo']['ENTTYPE']}
+        </td>
+        <td width="25%">
+            所属行业
+        </td>
+        <td width="25%">
+            {$cspData['getRegisterInfo']['INDUSTRY']}
+        </td>
+    </tr>
+    <tr>
+        <td width="25%">
+            经营范围
+        </td>
+        <td colspan="3" width="75%">
+            {$cspData['getRegisterInfo']['OPSCOPE']}
+        </td>
+    </tr>
+</table>
+TEMP;
+
+            $pdf->writeHTML($html, true, false, false, false, '');
         }
 
 
