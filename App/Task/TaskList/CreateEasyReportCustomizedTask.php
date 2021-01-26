@@ -128,8 +128,32 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         <td>
             20210121202154
         </td>
+        <td width="100">
+            报告编号
+        </td>
+        <td>
+            20210121202154
+        </td>
+        <td width="100">
+            报告编号
+        </td>
+        <td>
+            20210121202154
+        </td>
     </tr>
     <tr>
+        <td width="100">
+            查询单位
+        </td>
+        <td>
+            民族基地风险监控专用
+        </td>
+        <td width="100">
+            查询单位
+        </td>
+        <td>
+            民族基地风险监控专用
+        </td>
         <td width="100">
             查询单位
         </td>
