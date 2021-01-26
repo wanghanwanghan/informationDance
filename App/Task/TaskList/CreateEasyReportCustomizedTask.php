@@ -185,11 +185,13 @@ TEMP;
 
         $pdf->writeHTML($html, true, false, false, false, '');
 
+        $pdf->AddPage();
+
         if (array_key_exists('getRegisterInfo',$cspData) && !empty($cspData['getRegisterInfo']))
         {
             for ($i=1;$i<=10;$i++)
             {
-                $this->exprAddPage($pdf,90);
+                $this->exprAddPage($pdf,110);
 
                 $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%">
