@@ -189,7 +189,7 @@ TEMP;
         {
             for ($i=1;$i<=10;$i++)
             {
-                $this->exprAddPage($pdf,100);
+                $this->exprAddPage($pdf,90);
 
                 $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%">
