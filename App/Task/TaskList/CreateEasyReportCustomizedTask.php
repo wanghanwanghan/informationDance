@@ -118,10 +118,11 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         //换行
         $pdf->ln(60);
 
+        $pdf->SetFont('stsongstdlight', '', $this->pdf_Text);
         $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse">
     <tr>
-        <td width="200">
+        <td width="100">
             报告编号
         </td>
         <td>
@@ -129,7 +130,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         </td>
     </tr>
     <tr>
-        <td width="200">
+        <td width="100">
             查询单位
         </td>
         <td>
@@ -139,7 +140,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
 </table>
 TEMP;
 
-        $pdf->writeHTML($html, true, false, false, false, 'C');
+        $pdf->writeHTML($html);
 
 
 
