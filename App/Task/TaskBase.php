@@ -244,8 +244,6 @@ class TaskBase
         foreach ($index as $oneCatalog) {
             $catalog = explode('-', $oneCatalog);
 
-            $catalog = array_filter($catalog);
-
             if (empty($catalog)) continue;
 
             $catalog[0] = (int)$catalog[0];
