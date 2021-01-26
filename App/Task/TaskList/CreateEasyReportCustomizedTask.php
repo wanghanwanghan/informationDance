@@ -167,7 +167,7 @@ TEMP;
 
         $pdf->AddPage();
 
-        if (array_search('getRegisterInfo',$cspReturnData) !== false)
+        if (array_key_exists('getRegisterInfo',$cspReturnData))
         {
             CommonService::getInstance()->log4PHP('duanran');
             CommonService::getInstance()->log4PHP($cspReturnData);
