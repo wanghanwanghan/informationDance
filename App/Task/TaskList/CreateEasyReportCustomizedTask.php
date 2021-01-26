@@ -172,7 +172,7 @@ TEMP;
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%">
     <tr>
-        <td colspan="4" style="text-align: center;background-color: grey">
+        <td colspan="4" style="text-align: center;background-color: #d3d3d3">
             工商信息
         </td>
     </tr>
