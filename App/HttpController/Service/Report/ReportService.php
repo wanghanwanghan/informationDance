@@ -66,7 +66,7 @@ class ReportService extends ServiceBase
     }
 
     //生成简版报告 pdf
-    function createEasyPdf($entName, $reportNum, $phone, $type, $dataKey = [])
+    function createEasyPdf($entName, $reportNum, $phone, $type, $dataKey = '')
     {
         try {
             ReportInfo::create()->data([

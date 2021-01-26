@@ -100,7 +100,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
     }
 
     //填充数据
-    private function fillData(Tcpdf $pdf, $cspReturnData)
+    private function fillData(Tcpdf $pdf, $cspData)
     {
         $pdf->AddPage();
 
@@ -167,10 +167,9 @@ TEMP;
 
         $pdf->AddPage();
 
-        if (array_key_exists('getRegisterInfo',$cspReturnData))
+        if (array_key_exists('getRegisterInfo',$cspData) && !empty($cspData['getRegisterInfo']))
         {
-            CommonService::getInstance()->log4PHP('duanran');
-            CommonService::getInstance()->log4PHP($cspReturnData);
+
         }
 
 
@@ -180,7 +179,11 @@ TEMP;
     //并发请求数据
     private function cspHandleData($indexStr = '')
     {
-        $catalog = $this->pdf_Catalog();
+        $indexStr = '0-0,1-0';
+
+        $catalog = $this->pdf_Catalog($indexStr);
+
+        CommonService::getInstance()->log4PHP($catalog);
 
         //创建csp对象
         $csp = CspService::getInstance()->create();

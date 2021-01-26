@@ -4,6 +4,7 @@ namespace App\Task;
 
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
+use function Qiniu\explodeUpToken;
 
 class TaskBase
 {
@@ -42,6 +43,7 @@ class TaskBase
     {
         $catalog = [
             '基本信息' => [
+                '基本信息',
                 '实际控制人',
                 '历史沿革及重大事项',
                 '法人对外投资',
@@ -64,8 +66,12 @@ class TaskBase
                 '近三年团队人数',
                 '专业注册人员',
             ],
-            '财务总揽' => [],
-            '业务概况' => [],
+            '财务总揽' => [
+                '财务总揽'
+            ],
+            '业务概况' => [
+                '业务概况'
+            ],
             '创新能力' => [
                 '专利',
                 '软件著作权',
@@ -132,6 +138,7 @@ class TaskBase
 
         $catalogCspKey = [
             '基本信息' => [
+                'getRegisterInfo',
                 'Beneficiary',
                 'getHistoricalEvolution',
                 'lawPersonInvestmentInfo',
@@ -224,9 +231,35 @@ class TaskBase
             ],
         ];
 
-        return [
-            'getRegisterInfo'
-        ];
+        $temp = [];
+
+        $index = trim($index);
+
+        $index = explode(',',$index);
+
+        $index = array_filter($index);
+
+        if (empty($index)) return $index;
+
+        foreach ($index as $oneCatalog)
+        {
+            $catalog = explode('-',$oneCatalog);
+
+            $catalog = array_filter($catalog);
+
+            if (empty($catalog)) continue;
+
+            $catalog[0] = (int)$catalog[0];
+            $catalog[1] = (int)$catalog[1];
+
+            array_push($temp,[
+                $catalogCspKey[$catalog[0]][$catalog[1]]
+            ]);
+        }
+
+        if (empty($temp)) return $temp;
+
+        return $temp;
     }
 
 
