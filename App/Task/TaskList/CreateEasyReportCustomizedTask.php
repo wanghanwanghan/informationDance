@@ -102,6 +102,8 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
     //填充数据
     private function fillData(Tcpdf $pdf, $cspData)
     {
+        CommonService::getInstance()->log4PHP($cspData);
+
         $pdf->AddPage();
 
         //logo
@@ -179,11 +181,7 @@ TEMP;
     //并发请求数据
     private function cspHandleData($indexStr = '')
     {
-        $indexStr = '0-0,1-0';
-
         $catalog = $this->pdf_Catalog($indexStr);
-
-        CommonService::getInstance()->log4PHP($catalog);
 
         //创建csp对象
         $csp = CspService::getInstance()->create();
