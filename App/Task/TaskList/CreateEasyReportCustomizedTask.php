@@ -131,8 +131,26 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         <td>
             报告编号
         </td>
+        <td>
+            报告编号
+        </td>
+        <td>
+            报告编号
+        </td>
+        <td>
+            报告编号
+        </td>
     </tr>
     <tr>
+        <td>
+            查询单位
+        </td>
+        <td>
+            查询单位
+        </td>
+        <td>
+            查询单位
+        </td>
         <td>
             查询单位
         </td>
