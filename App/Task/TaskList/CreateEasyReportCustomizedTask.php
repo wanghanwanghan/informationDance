@@ -120,7 +120,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
 
         $pdf->SetFont('stsongstdlight', '', $this->pdf_Text);
         $html = <<<TEMP
-<table border="1" cellpadding="5" style="border-collapse: collapse">
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%">
     <tr>
         <td width="100">
             报告编号
@@ -150,6 +150,8 @@ TEMP;
     private function cspHandleData($indexStr = '')
     {
         $catalog = $this->pdf_Catalog();
+
+        $catalog = [];
 
         //创建csp对象
         $csp = CspService::getInstance()->create();
