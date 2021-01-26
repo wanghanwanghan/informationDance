@@ -149,7 +149,7 @@ TEMP;
 
         //声明
         $html = <<<TEMP
-<div style="width: 100%;font-size: {$this->pdf_BigTitle}px">
+<div style="width: 100%;font-size: {$this->pdf_LittleTitle}px">
     <div style="text-align: center">声明</div>
     <div style="text-indent: 20px">
         <p>一、报告由北京每日信动科技有限公司出具，且郑重声明本公司与受评主体不存在任何影响评价行为独立、客观、公正的关联关系。</p>
