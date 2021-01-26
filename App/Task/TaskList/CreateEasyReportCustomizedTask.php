@@ -4,6 +4,7 @@ namespace App\Task\TaskList;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Models\Api\ReportInfo;
+use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\FaHai\FaHaiService;
 use App\HttpController\Service\QianQi\QianQiService;
@@ -118,6 +119,8 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         //换行
         $pdf->ln(60);
 
+        $createUserInfo = User::create()->where('phone',$this->phone)->get();
+
         $pdf->SetFont('stsongstdlight', '', $this->pdf_Text);
         $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse">
@@ -126,7 +129,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
             报告编号
         </td>
         <td width="75%">
-            111111111111111111
+            {$this->reportNum}
         </td>
     </tr>
     <tr>
@@ -134,7 +137,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
             查询单位
         </td>
         <td width="75%">
-            工商银行
+            {$createUserInfo->company}
         </td>
     </tr>
 </table>
@@ -142,6 +145,27 @@ TEMP;
 
         $pdf->writeHTML($html, true, false, true, false, 'C');
 
+        $pdf->AddPage();
+
+        //声明
+        $html = <<<TEMP
+<div style="width: 100%;font-size: {$this->pdf_BigTitle}px">
+    <div style="text-align: center">声明</div>
+    <div style="text-indent: 20px">
+        <p>一、报告由北京每日信动科技有限公司出具，且郑重声明本公司与受评主体不存在任何影响评价行为独立、客观、公正的关联关系。</p>
+        <p>二、本报告根据与该企业有关的国家企业信用信息公示系统、信用中国、裁判文书网、新闻媒体、行业数据等公开互联网网站等相关数据信息生成。以及在报告所涉主体授权同意的基础上，根据企业发票、涉税、年报等相关数据综合生成。</p>
+        <p>三、本报告版权归北京每日信动科技有限公司所有，未经我公司书面授权，任何企业、机构或个人不得发表、修改、转发、传播本报告部分或全部内容，不得利用该报告数据进行二次加工或其他经营活动。</p>
+        <p>四、本公司秉承独立、客观、公正的原则，为报告所涉及主体提供专业评估报告，本公司力争但不保证其真实性、准确性和时效性。在任何情况下，本公司不对因使用本报告而产生的任何后果承担法律责任，不承担由于其非控因素和疏忽而引起的相关损失和损害。</p>
+        <p>五、北京每日信动科技有限公司保留对其信用状态的跟踪观察并根据实际情况及时调整与公布评估报告内容之权力。</p>
+    </div>
+    <div style="text-align: right">
+        <p>北京每日信动科技有限公司</p>
+        <p>2021年01月21日</p>
+    </div>
+</div>
+TEMP;
+
+        $pdf->writeHTML($html, true, false, false, false, '');
 
         //##########################################################################################//
     }
