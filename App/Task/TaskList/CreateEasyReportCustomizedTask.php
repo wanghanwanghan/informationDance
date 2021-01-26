@@ -140,10 +140,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
 </table>
 TEMP;
 
-        $pdf->writeHTML($html);
-
-
-
+        $pdf->writeHTML($html, true, false, false, false, 'C');
 
 
         //##########################################################################################//
