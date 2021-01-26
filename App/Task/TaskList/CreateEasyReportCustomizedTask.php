@@ -120,7 +120,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
 
         $pdf->SetFont('stsongstdlight', '', $this->pdf_Text);
         $html = <<<TEMP
-<table border="1" cellpadding="5" style="border-collapse: collapse" width="200">
+<table border="1" cellpadding="5" style="border-collapse: collapse">
     <tr>
         <td width="100">
             报告编号
@@ -140,7 +140,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
 </table>
 TEMP;
 
-        $pdf->writeHTML($html, true, false, false, false, 'C');
+        $pdf->writeHTML($html, true, false, true, false, 'C');
 
 
         //##########################################################################################//
