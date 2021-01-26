@@ -109,11 +109,11 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         $pdf->Image(REPORT_IMAGE_PATH . 'logo.jpg', '', '', 55, 25, '', '', 'T');
 
         //换行
-        $pdf->ln(20);
+        $pdf->ln(100);
 
         //entName
         $pdf->SetFont('stsongstdlight', '', $this->pdf_BigTitle);
-        $pdf->writeHTML("<div style='font-weight: 500'>{$this->entName}</div>", true, false, false, false, 'C');
+        $pdf->writeHTML("<div><b>{$this->entName}</b></div>", true, false, false, false, 'C');
         $pdf->SetFont('stsongstdlight', '', $this->pdf_Text);
         $pdf->writeHTML("<div>{$this->entName}</div>", true, false, false, false, 'C');
 
