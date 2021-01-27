@@ -501,7 +501,6 @@ TEMP;
     <tr><td colspan="2">备注 : 总股权比例 = 持股人股权比例 + 其关联企业所占股权折算后比例</td></tr>
 </table>
 TEMP;
-            CommonService::getInstance()->log4PHP($html);
             $pdf->writeHTML($html, true, false, false, false, '');
         }
 
@@ -543,7 +542,6 @@ TEMP;
     <tr><td colspan="2">备注 : 总股权比例 = 持股人股权比例 + 其关联企业所占股权折算后比例</td></tr>
 </table>
 TEMP;
-            CommonService::getInstance()->log4PHP($html);
             $pdf->writeHTML($html, true, false, false, false, '');
         }
 
