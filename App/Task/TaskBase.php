@@ -145,7 +145,7 @@ class TaskBase
                 'getLawPersontoOtherInfo',//0-4
                 'getInvestmentAbroadInfo',//0-5
                 'getBranchInfo',//0-6
-                'GetCreditCodeNew',
+                'GetCreditCodeNew',//0-7
             ],
             [
                 'TenderSearch',

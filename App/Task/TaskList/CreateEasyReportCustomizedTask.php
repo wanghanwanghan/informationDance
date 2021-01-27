@@ -773,7 +773,43 @@ TEMP;
         }
     }
 
+    //基本信息 银行信息
+    private function GetCreditCodeNew(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = '';
 
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                foreach ($cspData[__FUNCTION__] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$one['Bank']}</td>";
+                    $temp .= "<td>{$one['BankAccount']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="2" style="text-align: center;background-color: #d3d3d3">银行信息</td>
+    </tr>
+    <tr>
+        <td width="50%">基本账户开户行</td>
+        <td width="50%">基本账户号码</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
