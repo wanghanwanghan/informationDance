@@ -1387,11 +1387,11 @@ TEMP;
         <td colspan="5" style="text-align: center;background-color: #d3d3d3">建筑企业-专业注册人员</td>
     </tr>
     <tr>
-        <td>序号</td>
-        <td>姓名</td>
-        <td>注册类别</td>
-        <td>注册号</td>
-        <td>注册专业</td>
+        <td width="7%">序号</td>
+        <td width="20%">姓名</td>
+        <td width="20%">注册类别</td>
+        <td width="20%">注册号</td>
+        <td width="33%">注册专业</td>
     </tr>
     {$insert}
 </table>
