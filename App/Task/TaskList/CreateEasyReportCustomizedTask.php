@@ -943,7 +943,49 @@ TEMP;
         }
     }
 
+    //公司概况 土地公示
+    private function LandPublishList(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = '';
 
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                foreach ($cspData[__FUNCTION__] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['Address']}</td>";
+                    $temp .= "<td>{$one['PublishGov']}</td>";
+                    $temp .= "<td>{$one['AdminArea']}</td>";
+                    $temp .= "<td>{$one['PublishDate']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="5" style="text-align: center;background-color: #d3d3d3">土地公示</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="28%">地块位置</td>
+        <td width="13%">发布机关</td>
+        <td width="13%">行政区</td>
+        <td width="13%">发布日期</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
