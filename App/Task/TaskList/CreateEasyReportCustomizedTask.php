@@ -197,9 +197,17 @@ TEMP;
 
         $pdf->AddPage();
 
-        CommonService::getInstance()->log4PHP($this->dataIndex);
+        foreach ($this->pdf_Catalog($this->dataIndex) as $catalogKey)
+        {
+            $this->$$catalogKey($pdf, $cspData);
+        }
 
-        //基本信息 工商信息
+        //##########################################################################################//
+    }
+
+    //基本信息 工商信息
+    private function getRegisterInfo(Tcpdf $pdf, $cspData)
+    {
         if (array_key_exists('getRegisterInfo',$cspData) && !empty($cspData['getRegisterInfo']))
         {
             $html = <<<TEMP
@@ -305,8 +313,11 @@ TEMP;
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
         }
+    }
 
-        //基本信息 股东信息
+    //基本信息 股东信息
+    private function getShareHolderInfo(Tcpdf $pdf, $cspData)
+    {
         if (array_key_exists('getShareHolderInfo',$cspData))
         {
             $insert = '';
@@ -347,8 +358,11 @@ TEMP;
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
         }
+    }
 
-        //基本信息 高管信息
+    //基本信息 高管信息
+    private function getMainManagerInfo(Tcpdf $pdf, $cspData)
+    {
         if (array_key_exists('getMainManagerInfo',$cspData))
         {
             $insert = '';
@@ -386,8 +400,11 @@ TEMP;
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
         }
+    }
 
-        //基本信息 变更信息
+    //基本信息 变更信息
+    private function getRegisterChangeInfo(Tcpdf $pdf, $cspData)
+    {
         if (array_key_exists('getRegisterChangeInfo',$cspData))
         {
             $insert = '';
@@ -427,8 +444,11 @@ TEMP;
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
         }
+    }
 
-        //基本信息 经营异常
+    //基本信息 经营异常
+    private function GetOpException(Tcpdf $pdf, $cspData)
+    {
         if (array_key_exists('GetOpException',$cspData))
         {
             $insert = '';
@@ -468,8 +488,11 @@ TEMP;
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
         }
+    }
 
-        //基本信息 实际控制人
+    //基本信息 实际控制人
+    private function Beneficiary(Tcpdf $pdf, $cspData)
+    {
         if (array_key_exists('Beneficiary',$cspData))
         {
             $insert = $name = $stock = '';
@@ -507,8 +530,11 @@ TEMP;
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
         }
+    }
 
-        //基本信息 历史沿革及重大事项
+    //基本信息 历史沿革及重大事项
+    private function getHistoricalEvolution(Tcpdf $pdf, $cspData)
+    {
         if (array_key_exists('getHistoricalEvolution',$cspData))
         {
             $insert = '';
@@ -543,8 +569,11 @@ TEMP;
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
         }
+    }
 
-        //基本信息 法人对外投资
+    //基本信息 法人对外投资
+    private function lawPersonInvestmentInfo(Tcpdf $pdf, $cspData)
+    {
         if (array_key_exists('lawPersonInvestmentInfo',$cspData))
         {
             $insert = '';
@@ -593,14 +622,13 @@ TEMP;
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
         }
-
-
-
-
-
-
-        //##########################################################################################//
     }
+
+
+
+
+
+
 
     //并发请求数据
     private function cspHandleData($indexStr = '')
