@@ -1037,7 +1037,53 @@ TEMP;
         }
     }
 
+    //公司概况 建筑资质证书
+    private function Qualification(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = '';
 
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                foreach ($cspData[__FUNCTION__] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['Category']}</td>";
+                    $temp .= "<td>{$one['CertNo']}</td>";
+                    $temp .= "<td>{$one['CertName']}</td>";
+                    $temp .= "<td>{$one['SignDate']}</td>";
+                    $temp .= "<td>{$one['ValidPeriod']}</td>";
+                    $temp .= "<td>{$one['SignDept']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="7" style="text-align: center;background-color: #d3d3d3">建筑资质证书</td>
+    </tr>
+    <tr>
+        <td>序号</td>
+        <td>资质类别</td>
+        <td>资质证书号</td>
+        <td>资质名称</td>
+        <td>发证日期</td>
+        <td>证书有效期</td>
+        <td>发证机关</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
