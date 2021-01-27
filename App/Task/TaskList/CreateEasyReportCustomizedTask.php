@@ -480,6 +480,7 @@ TEMP;
                 {
                     $temp = '<tr>';
                     $temp .= "<td colspan='2'>{$one['Path']}</td>";
+                    $temp .= "<td colspan='2'>wanghan123</td>";
                     $temp .= '</tr>';
                     $insert .= $temp;
                 }
