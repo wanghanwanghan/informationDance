@@ -423,8 +423,6 @@ TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
         }
 
-        CommonService::getInstance()->log4PHP($cspData);
-
         //基本信息 经营异常
         if (array_key_exists('GetOpException',$cspData))
         {
