@@ -1448,7 +1448,53 @@ TEMP;
         }
     }
 
+    //财务总揽 财务总揽
+    private function FinanceData(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = '';
 
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                foreach ($cspData[__FUNCTION__] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['Title']}</td>";
+                    $temp .= "<td>{$one['ProvinceDesc']}</td>";
+                    $temp .= "<td>{$one['Salary']}</td>";
+                    $temp .= "<td>{$one['Experience']}</td>";
+                    $temp .= "<td>{$one['Education']}</td>";
+                    $temp .= "<td>{$one['PublishDate']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="7" style="text-align: center;background-color: #d3d3d3">财务总揽</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="20%">职位名称</td>
+        <td width="13%">工作地点</td>
+        <td width="20%">月薪</td>
+        <td width="13%">经验</td>
+        <td width="14%">学历</td>
+        <td width="13%">发布日期</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 

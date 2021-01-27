@@ -170,7 +170,7 @@ class TaskBase
                 'Recruitment',//2-2
             ],
             [
-                'FinanceData'
+                'FinanceData'//3-0
             ],
             [
                 'SearchCompanyCompanyProducts'
