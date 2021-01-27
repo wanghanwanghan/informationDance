@@ -1647,7 +1647,13 @@ TEMP;
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Name']}</td>";
                     $temp .= '<td><img src="'.$one['ImageUrl'].'" /></td>';
-                    $temp .= "<td>".isset($this->sblb[$one['IntCls']]) ? $this->sblb[$one['IntCls']] : '-' ."</td>";
+                    if (isset($this->sblb[$one['IntCls']]))
+                    {
+                        $temp .= "<td>{$this->sblb[$one['IntCls']]}</td>";
+                    }else
+                    {
+                        $temp .= "<td> - </td>";
+                    }
                     $temp .= "<td>{$one['RegNo']}</td>";
                     $temp .= "<td>{$one['FlowStatusDesc']}</td>";
                     $temp .= "<td>{$one['AppDate']}</td>";
