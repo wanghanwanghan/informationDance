@@ -68,6 +68,7 @@ class TaskBase
             '团队招聘' => [
                 '近三年团队人数',
                 '专业注册人员',
+                '招聘信息',
             ],
             '财务总揽' => [
                 '财务总揽'
@@ -165,7 +166,8 @@ class TaskBase
             ],
             [
                 'itemInfo',//2-0
-                'BuildingRegistrar',
+                'BuildingRegistrar',//2-1
+                'Recruitment',//2-2
             ],
             [
                 'FinanceData'
