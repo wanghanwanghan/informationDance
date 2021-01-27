@@ -197,6 +197,8 @@ TEMP;
 
         $pdf->AddPage();
 
+        CommonService::getInstance()->log4PHP($this->dataIndex);
+
         //基本信息 工商信息
         if (array_key_exists('getRegisterInfo',$cspData) && !empty($cspData['getRegisterInfo']))
         {
