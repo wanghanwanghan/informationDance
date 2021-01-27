@@ -62,6 +62,8 @@ class TaskBase
                 '建筑工程项目',
                 '债券信息',
                 '网站信息',
+                '微博',
+                '新闻舆情',
             ],
             '团队招聘' => [
                 '近三年团队人数',
@@ -158,6 +160,8 @@ class TaskBase
                 'BuildingProject',//1-6
                 'BondList',//1-7
                 'GetCompanyWebSite',//1-8
+                'Microblog',//1-9
+                'CompanyNews',//1-10
             ],
             [
                 'itemInfo',
