@@ -1433,13 +1433,13 @@ TEMP;
         <td colspan="7" style="text-align: center;background-color: #d3d3d3">招聘信息</td>
     </tr>
     <tr>
-        <td>序号</td>
-        <td>职位名称</td>
-        <td>工作地点</td>
-        <td>月薪</td>
-        <td>经验</td>
-        <td>学历</td>
-        <td>发布日期</td>
+        <td width="7%">序号</td>
+        <td width="20%">职位名称</td>
+        <td width="13%">工作地点</td>
+        <td width="20%">月薪</td>
+        <td width="13%">经验</td>
+        <td width="14%">学历</td>
+        <td width="13%">发布日期</td>
     </tr>
     {$insert}
 </table>
