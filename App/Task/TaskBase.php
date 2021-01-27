@@ -155,7 +155,7 @@ class TaskBase
                 'LandPublishList',//1-3
                 'LandTransferList',//1-4
                 'Qualification',//1-5
-                'BuildingProject',
+                'BuildingProject',//1-6
                 'BondList',
                 'GetCompanyWebSite',
             ],

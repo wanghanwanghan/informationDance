@@ -1085,7 +1085,56 @@ TEMP;
         }
     }
 
+    //公司概况 建筑工程项目
+    private function BuildingProject(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = '';
 
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                foreach ($cspData[__FUNCTION__] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['No']}</td>";
+                    $temp .= "<td>{$one['ProjectName']}</td>";
+                    $temp .= "<td>{$one['Region']}</td>";
+                    $temp .= "<td>{$one['Category']}</td>";
+                    $ent = '';
+                    foreach ($one['ConsCoyList'] as $oneEnt)
+                    {
+                        $ent .= $oneEnt['Name'].'<br />';
+                    }
+                    $temp .= "<td>{$ent}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="6" style="text-align: center;background-color: #d3d3d3">建筑工程项目</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="13%">项目编码</td>
+        <td width="13%">项目名称</td>
+        <td width="13%">项目属地</td>
+        <td width="13%">项目类别</td>
+        <td width="13%">建设单位</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
