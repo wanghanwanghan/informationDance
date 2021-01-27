@@ -486,7 +486,7 @@ TEMP;
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
-        <td colspan="5" style="text-align: center;background-color: #d3d3d3">实际控制人</td>
+        <td colspan="2" style="text-align: center;background-color: #d3d3d3">实际控制人</td>
     </tr>
     <tr>
         <td width="50%">实际控制人名称</td>
