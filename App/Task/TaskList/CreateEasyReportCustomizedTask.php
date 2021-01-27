@@ -474,10 +474,13 @@ TEMP;
                 $name = $cspData['Beneficiary']['Name'];
                 $stock = $cspData['Beneficiary']['TotalStockPercent'];
 
+                $i = 1;
+
                 foreach ($cspData['Beneficiary']['DetailInfoList'] as $one)
                 {
                     $temp = '<tr>';
-                    $temp .= "<td width='100%' colspan='2'>{$one['Path']}</td>";
+                    $temp .= "<td width='10%'>{$i}</td>";
+                    $temp .= "<td width='90%'>{$one['Path']}</td>";
                     $temp .= '</tr>';
                     $insert .= $temp;
                 }
