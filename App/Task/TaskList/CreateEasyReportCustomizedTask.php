@@ -1123,11 +1123,11 @@ TEMP;
     </tr>
     <tr>
         <td width="7%">序号</td>
-        <td width="13%">项目编码</td>
-        <td width="13%">项目名称</td>
+        <td width="20%">项目编码</td>
+        <td width="24%">项目名称</td>
         <td width="13%">项目属地</td>
-        <td width="13%">项目类别</td>
-        <td width="13%">建设单位</td>
+        <td width="10%">项目类别</td>
+        <td width="26%">建设单位</td>
     </tr>
     {$insert}
 </table>
