@@ -1070,13 +1070,13 @@ TEMP;
         <td colspan="7" style="text-align: center;background-color: #d3d3d3">建筑资质证书</td>
     </tr>
     <tr>
-        <td>序号</td>
-        <td>资质类别</td>
-        <td>资质证书号</td>
-        <td>资质名称</td>
-        <td>发证日期</td>
-        <td>证书有效期</td>
-        <td>发证机关</td>
+        <td width="7%">序号</td>
+        <td width="13%">资质类别</td>
+        <td width="13%">资质证书号</td>
+        <td width="28%">资质名称</td>
+        <td width="13%">发证日期</td>
+        <td width="13%">证书有效期</td>
+        <td width="13%">发证机关</td>
     </tr>
     {$insert}
 </table>
