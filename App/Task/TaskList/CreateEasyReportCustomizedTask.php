@@ -342,6 +342,9 @@ TEMP;
 </table>
 TEMP;
 
+            CommonService::getInstance()->log4PHP($this->currentHeight);
+            CommonService::getInstance()->log4PHP($height);
+
             $this->exprAddPage($pdf,$height);
 
             $pdf->writeHTML($html, true, false, false, false, '');
