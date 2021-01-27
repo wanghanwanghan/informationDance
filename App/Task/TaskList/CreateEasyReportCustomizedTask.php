@@ -738,7 +738,7 @@ TEMP;
             {
                 $i = 1;
 
-                foreach ($cspData['getBranchInfo']['list'] as $one)
+                foreach ($cspData['getBranchInfo'] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
