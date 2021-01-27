@@ -834,7 +834,7 @@ TEMP;
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
-        <td colspan="9" style="text-align: center;background-color: #d3d3d3">融资信息</td>
+        <td colspan="6" style="text-align: center;background-color: #d3d3d3">融资信息</td>
     </tr>
     <tr>
         <td width="7%">序号</td>
