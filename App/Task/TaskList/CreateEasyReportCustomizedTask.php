@@ -172,6 +172,7 @@ TEMP;
         $pdf->AddPage();
 
         $date = Carbon::now()->format('Y年m月d日');
+
         //声明
         $html = <<<TEMP
 <div style="width: 100%;font-size: 15px">
@@ -497,13 +498,54 @@ TEMP;
         <td colspan="2" style="text-align: center;background-color: #d3d3d3">股权链</td>
     </tr>
     {$insert}
-    <tr><td colspan="2">备注 : 总股权比例 = 持股人股权比例 + 其关联企业所占股权折算后比例。</td></tr>
+    <tr><td colspan="2">备注 : 总股权比例 = 持股人股权比例 + 其关联企业所占股权折算后比例</td></tr>
 </table>
 TEMP;
             CommonService::getInstance()->log4PHP($html);
             $pdf->writeHTML($html, true, false, false, false, '');
         }
 
+        CommonService::getInstance()->log4PHP($cspData);
+
+        //基本信息 历史沿革及重大事项
+        if (array_key_exists('getHistoricalEvolution',$cspData))
+        {
+            $insert = $name = $stock = '';
+
+            if (!empty($cspData['Beneficiary']))
+            {
+                $name = $cspData['Beneficiary']['Name'];
+                $stock = $cspData['Beneficiary']['TotalStockPercent'];
+
+                foreach ($cspData['Beneficiary']['DetailInfoList'] as $one)
+                {
+                    $insert .= '<tr><td colspan="2">'.$one['Path'].'</td></tr>';
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="2" style="text-align: center;background-color: #d3d3d3">实际控制人</td>
+    </tr>
+    <tr>
+        <td width="50%">实际控制人名称</td>
+        <td width="50%">总持股比例</td>
+    </tr>
+    <tr>
+        <td>{$name}</td>
+        <td>{$stock}</td>
+    </tr>
+    <tr>
+        <td colspan="2" style="text-align: center;background-color: #d3d3d3">股权链</td>
+    </tr>
+    {$insert}
+    <tr><td colspan="2">备注 : 总股权比例 = 持股人股权比例 + 其关联企业所占股权折算后比例</td></tr>
+</table>
+TEMP;
+            CommonService::getInstance()->log4PHP($html);
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
 
 
 

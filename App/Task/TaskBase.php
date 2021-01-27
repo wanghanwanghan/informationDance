@@ -139,8 +139,8 @@ class TaskBase
         $catalogCspKey = [
             [
                 'getRegisterInfo',//
-                'Beneficiary',
-                'getHistoricalEvolution',
+                'Beneficiary',//
+                'getHistoricalEvolution',//
                 'lawPersonInvestmentInfo',
                 'getLawPersontoOtherInfo',
                 'getInvestmentAbroadInfo',
