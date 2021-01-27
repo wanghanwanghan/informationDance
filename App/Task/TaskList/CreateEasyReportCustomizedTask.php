@@ -975,9 +975,9 @@ TEMP;
     </tr>
     <tr>
         <td width="7%">序号</td>
-        <td width="28%">地块位置</td>
-        <td width="13%">发布机关</td>
-        <td width="13%">行政区</td>
+        <td width="40%">地块位置</td>
+        <td width="20%">发布机关</td>
+        <td width="20%">行政区</td>
         <td width="13%">发布日期</td>
     </tr>
     {$insert}
