@@ -173,7 +173,7 @@ class TaskBase
                 'FinanceData'//3-0
             ],
             [
-                'SearchCompanyCompanyProducts'
+                'SearchCompanyCompanyProducts',//4-0
             ],
             [
                 'PatentV4Search',

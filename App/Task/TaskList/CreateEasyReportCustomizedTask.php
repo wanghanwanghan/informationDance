@@ -1478,7 +1478,49 @@ TEMP;
         }
     }
 
+    //业务概况 业务概况
+    private function SearchCompanyCompanyProducts(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = '';
 
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                foreach ($cspData[__FUNCTION__] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['Name']}</td>";
+                    $temp .= "<td>{$one['Domain']}</td>";
+                    $temp .= "<td>{$one['Tags']}</td>";
+                    $temp .= "<td>{$one['Description']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="5" style="text-align: center;background-color: #d3d3d3">业务概况</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="15%">产品名称</td>
+        <td width="15%">产品领域</td>
+        <td width="15%">产品标签</td>
+        <td width="48%">产品描述</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
