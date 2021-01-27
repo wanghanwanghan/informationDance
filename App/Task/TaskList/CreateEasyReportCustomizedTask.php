@@ -13,6 +13,7 @@ use App\HttpController\Service\Report\Tcpdf;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\XinDongService;
 use App\Task\TaskBase;
+use Carbon\Carbon;
 use EasySwoole\Task\AbstractInterface\TaskInterface;
 
 class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
@@ -170,6 +171,7 @@ TEMP;
 
         $pdf->AddPage();
 
+        $date = Carbon::now()->format('Y年m月d日');
         //声明
         $html = <<<TEMP
 <div style="width: 100%;font-size: 15px">
@@ -183,7 +185,7 @@ TEMP;
     </div>
     <div style="text-align: right">
         <p>北京每日信动科技有限公司</p>
-        <p>2021年01月21日</p>
+        <p>{$date}</p>
     </div>
 </div>
 TEMP;
@@ -364,11 +366,11 @@ TEMP;
             }
 
             $html = <<<TEMP
-<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%">
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="4" style="text-align: center;background-color: #d3d3d3">高管信息</td>
     </tr>
-    <tr style="text-align: center">
+    <tr>
         <td>序号</td>
         <td>姓名</td>
         <td>职务</td>
@@ -404,11 +406,11 @@ TEMP;
             }
 
             $html = <<<TEMP
-<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%">
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
-        <td colspan="6" style="text-align: center;background-color: #d3d3d3">高管信息</td>
+        <td colspan="5" style="text-align: center;background-color: #d3d3d3">变更信息</td>
     </tr>
-    <tr style="text-align: center">
+    <tr>
         <td>序号</td>
         <td>变更日期</td>
         <td>变更项目</td>
