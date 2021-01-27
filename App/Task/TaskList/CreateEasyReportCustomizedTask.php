@@ -547,11 +547,11 @@ TEMP;
         {
             $insert = '';
 
-            if (!empty($cspData['getHistoricalEvolution']))
+            if (!empty($cspData['lawPersonInvestmentInfo']))
             {
                 $i = 1;
 
-                foreach ($cspData['getHistoricalEvolution'] as $one)
+                foreach ($cspData['lawPersonInvestmentInfo'] as $one)
                 {
                     $one = str_replace(['，具体登录小程序查看'],'',$one);
                     $temp = '<tr>';
