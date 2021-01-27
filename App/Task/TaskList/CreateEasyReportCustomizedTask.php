@@ -987,6 +987,55 @@ TEMP;
         }
     }
 
+    //公司概况 土地转让
+    private function LandTransferList(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = '';
+
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                foreach ($cspData[__FUNCTION__] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['Address']}</td>";
+                    $temp .= "<td>{$one['AdminArea']}</td>";
+                    $temp .= "<td>{$one['OldOwner']['Name']}</td>";
+                    $temp .= "<td>{$one['NewOwner']['Name']}</td>";
+                    $temp .= "<td>{$one['detail']['TransAmt']}</td>";
+                    $temp .= "<td>{$one['detail']['Acreage']}</td>";
+                    $temp .= "<td>{$one['detail']['TransTime']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="8" style="text-align: center;background-color: #d3d3d3">土地转让</td>
+    </tr>
+    <tr>
+        <td>序号</td>
+        <td>土地坐落</td>
+        <td>行政区</td>
+        <td>原土地使用权人</td>
+        <td>现土地使用权人</td>
+        <td>成交额(万元)</td>
+        <td>面积(公顷)</td>
+        <td>成交日期</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
