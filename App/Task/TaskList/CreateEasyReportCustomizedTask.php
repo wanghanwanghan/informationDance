@@ -1330,7 +1330,6 @@ TEMP;
                 foreach ($cspData[__FUNCTION__] as $one)
                 {
                     $temp = '<tr>';
-                    $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['year']}</td>";
                     $temp .= "<td>{$one['num']}</td>";
                     $temp .= "<td>{$this->formatPercent($one['yoy'])}</td>";
