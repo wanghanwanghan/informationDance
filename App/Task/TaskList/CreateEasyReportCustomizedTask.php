@@ -1356,6 +1356,49 @@ TEMP;
         }
     }
 
+    //团队招聘 建筑企业-专业注册人员
+    private function BuildingRegistrar(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = '';
+
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                foreach ($cspData[__FUNCTION__] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['Name']}</td>";
+                    $temp .= "<td>{$one['Category']}</td>";
+                    $temp .= "<td>{$one['RegNo']}</td>";
+                    $temp .= "<td>{$one['Specialty']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="5" style="text-align: center;background-color: #d3d3d3">建筑企业-专业注册人员</td>
+    </tr>
+    <tr>
+        <td>序号</td>
+        <td>姓名</td>
+        <td>注册类别</td>
+        <td>注册号</td>
+        <td>注册专业</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
