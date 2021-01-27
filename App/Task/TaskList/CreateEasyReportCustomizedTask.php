@@ -1228,6 +1228,49 @@ TEMP;
         }
     }
 
+    //公司概况 微博
+    private function Microblog(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = '';
+
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                foreach ($cspData[__FUNCTION__] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['Name']}</td>";
+                    $temp .= "<td><img src='{$one['ImageUrl']}' style='width: 30px;height: 30px' /></td>";
+                    $temp .= "<td>{$one['Tags']}</td>";
+                    $temp .= "<td>{$one['Description']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="5" style="text-align: center;background-color: #d3d3d3">微博</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="13%">名称</td>
+        <td width="10%">头像</td>
+        <td width="35%">类别</td>
+        <td width="35%">简介</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
