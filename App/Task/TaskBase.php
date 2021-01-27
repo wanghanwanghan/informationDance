@@ -176,7 +176,7 @@ class TaskBase
                 'SearchCompanyCompanyProducts',//4-0
             ],
             [
-                'PatentV4Search',
+                'PatentV4Search',//5-0
                 'SearchSoftwareCr',
                 'tmSearch',
                 'SearchCopyRight',

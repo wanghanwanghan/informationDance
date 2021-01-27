@@ -1522,7 +1522,58 @@ TEMP;
         }
     }
 
+    //创新能力 专利
+    private function PatentV4Search(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = $num = '';
 
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['Title']}</td>";
+                    $temp .= "<td>".implode(';',$one['Title'])."</td>";
+                    $temp .= "<td>{$one['PublicationNumber']}</td>";
+                    $temp .= "<td>{$one['LegalStatusDesc']}</td>";
+                    $temp .= "<td>{$this->formatDate($one['ApplicationDate'])}</td>";
+                    $temp .= "<td>{$this->formatDate($one['PublicationDate'])}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="7" style="text-align: center;background-color: #d3d3d3">专利</td>
+    </tr>
+    <tr>
+        <td colspan="7">专利 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="18%">名称</td>
+        <td width="15%">专利类型</td>
+        <td width="15%">公开号</td>
+        <td width="15%">法律状态</td>
+        <td width="15%">申请日期</td>
+        <td width="15%">发布日期</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
