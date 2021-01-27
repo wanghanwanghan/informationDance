@@ -906,7 +906,7 @@ TEMP;
             {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
+                foreach ($cspData[__FUNCTION__] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
