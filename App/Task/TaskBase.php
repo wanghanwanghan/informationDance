@@ -177,7 +177,7 @@ class TaskBase
             ],
             [
                 'PatentV4Search',//5-0
-                'SearchSoftwareCr',
+                'SearchSoftwareCr',//5-1
                 'tmSearch',
                 'SearchCopyRight',
                 'SearchCertification',

@@ -1561,9 +1561,9 @@ TEMP;
     </tr>
     <tr>
         <td width="7%">序号</td>
-        <td width="24%">名称</td>
+        <td width="23%">名称</td>
         <td width="15%">专利类型</td>
-        <td width="15%">公开号</td>
+        <td width="16%">公开号</td>
         <td width="13%">法律状态</td>
         <td width="13%">申请日期</td>
         <td width="13%">发布日期</td>
@@ -1575,7 +1575,58 @@ TEMP;
         }
     }
 
+    //创新能力 软件著作权
+    private function SearchSoftwareCr(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = $num = '';
 
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['Name']}</td>";
+                    $temp .= "<td>{$one['ShortName']}</td>";
+                    $temp .= "<td>{$one['RegisterNo']}</td>";
+                    $temp .= "<td>{$this->formatDate($one['RegisterAperDate'])}</td>";
+                    $temp .= "<td>{$this->formatDate($one['PublishDate'])}</td>";
+                    $temp .= "<td>{$one['VersionNo']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="7" style="text-align: center;background-color: #d3d3d3">软件著作权</td>
+    </tr>
+    <tr>
+        <td colspan="7">软件著作权 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="27%">软件名称</td>
+        <td width="26%">简称</td>
+        <td width="13%">登记号</td>
+        <td width="13%">登记批准日期</td>
+        <td width="13%">发布日期</td>
+        <td width="7%">版本号</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
