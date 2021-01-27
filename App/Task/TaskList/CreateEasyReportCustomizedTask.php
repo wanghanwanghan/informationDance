@@ -841,7 +841,7 @@ TEMP;
         <td width="13%">阶段</td>
         <td width="15%">产品</td>
         <td width="15%">金额</td>
-        <td width="17%">投资方</td>
+        <td width="37%">投资方</td>
         <td width="13%">日期</td>
     </tr>
     {$insert}
