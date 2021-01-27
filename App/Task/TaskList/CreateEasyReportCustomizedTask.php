@@ -1614,8 +1614,8 @@ TEMP;
     </tr>
     <tr>
         <td width="7%">序号</td>
-        <td width="27%">软件名称</td>
-        <td width="26%">简称</td>
+        <td width="24%">软件名称</td>
+        <td width="23%">简称</td>
         <td width="13%">登记号</td>
         <td width="13%">登记批准日期</td>
         <td width="13%">发布日期</td>
