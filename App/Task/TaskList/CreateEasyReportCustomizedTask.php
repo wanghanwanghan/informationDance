@@ -197,10 +197,11 @@ TEMP;
 
         $pdf->AddPage();
 
-        foreach ($this->pdf_Catalog($this->dataIndex) as $catalogKey)
+        $cata = $this->pdf_Catalog($this->dataIndex);
+
+        foreach ($cata as $catalogKey)
         {
             CommonService::getInstance()->log4PHP($catalogKey);
-            CommonService::getInstance()->log4PHP($this->pdf_Catalog($this->dataIndex));
             $this->$$catalogKey($pdf, $cspData);
         }
 
