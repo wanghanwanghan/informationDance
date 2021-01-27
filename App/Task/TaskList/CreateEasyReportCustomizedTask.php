@@ -883,10 +883,10 @@ TEMP;
     </tr>
     <tr>
         <td width="7%">序号</td>
-        <td width="40%">描述</td>
+        <td width="58%">描述</td>
         <td width="15%">发布日期</td>
         <td width="15%">所属地区</td>
-        <td width="23%">项目分类</td>
+        <td width="15%">项目分类</td>
     </tr>
     {$insert}
 </table>
