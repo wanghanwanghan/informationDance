@@ -505,6 +505,7 @@ TEMP;
     {$insert}
 </table>
 TEMP;
+            CommonService::getInstance()->log4PHP($html);
             $pdf->writeHTML($html, true, false, false, false, '');
         }
 
