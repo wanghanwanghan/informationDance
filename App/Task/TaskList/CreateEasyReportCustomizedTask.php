@@ -128,6 +128,8 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
     //填充数据
     private function fillData(Tcpdf $pdf, $cspData)
     {
+        CommonService::getInstance()->log4PHP($cspData);
+
         $pdf->AddPage();
 
         //logo
@@ -504,42 +506,36 @@ TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
         }
 
-        CommonService::getInstance()->log4PHP($cspData);
-
         //基本信息 历史沿革及重大事项
         if (array_key_exists('getHistoricalEvolution',$cspData))
         {
-            $insert = $name = $stock = '';
+            $insert = '';
 
-            if (!empty($cspData['Beneficiary']))
+            if (!empty($cspData['getHistoricalEvolution']))
             {
-                $name = $cspData['Beneficiary']['Name'];
-                $stock = $cspData['Beneficiary']['TotalStockPercent'];
+                $i = 1;
 
-                foreach ($cspData['Beneficiary']['DetailInfoList'] as $one)
+                foreach ($cspData['getHistoricalEvolution'] as $one)
                 {
-                    $insert .= '<tr><td colspan="2">'.$one['Path'].'</td></tr>';
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
                 }
             }
 
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
-        <td colspan="2" style="text-align: center;background-color: #d3d3d3">实际控制人</td>
+        <td colspan="2" style="text-align: center;background-color: #d3d3d3">历史沿革及重大事项</td>
     </tr>
     <tr>
-        <td width="50%">实际控制人名称</td>
-        <td width="50%">总持股比例</td>
-    </tr>
-    <tr>
-        <td>{$name}</td>
-        <td>{$stock}</td>
-    </tr>
-    <tr>
-        <td colspan="2" style="text-align: center;background-color: #d3d3d3">股权链</td>
+        <td width="7%">序号</td>
+        <td width="93%">内容</td>
     </tr>
     {$insert}
-    <tr><td colspan="2">备注 : 总股权比例 = 持股人股权比例 + 其关联企业所占股权折算后比例</td></tr>
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
