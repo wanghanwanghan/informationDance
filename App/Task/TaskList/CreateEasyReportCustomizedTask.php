@@ -476,10 +476,7 @@ TEMP;
 
                 foreach ($cspData['Beneficiary']['DetailInfoList'] as $one)
                 {
-                    $temp = '<tr>';
-                    $temp .= "<td width='100%' colspan='2' style='background-color: red'>{$one['Path']}</td>";
-                    $temp .= '</tr>';
-                    $insert .= $temp;
+                    $insert .= '<tr><td colspan="2">'.$one['Path'].'</td></tr>';
                 }
             }
 
@@ -499,16 +496,7 @@ TEMP;
     <tr>
         <td colspan="2" style="text-align: center;background-color: #d3d3d3">股权链</td>
     </tr>
-    <tr>
-    <td colspan="2">
-    wanghan123
-</td>
-</tr>
-<tr>
-    <td colspan="2">
-    wanghan321
-</td>
-</tr>
+    {$insert}
 </table>
 TEMP;
             CommonService::getInstance()->log4PHP($html);
