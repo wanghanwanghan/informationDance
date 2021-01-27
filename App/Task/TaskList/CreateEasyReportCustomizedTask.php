@@ -1343,7 +1343,7 @@ TEMP;
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
-        <td colspan="5" style="text-align: center;background-color: #d3d3d3">近三年团队人数</td>
+        <td colspan="3" style="text-align: center;background-color: #d3d3d3">近三年团队人数</td>
     </tr>
     <tr>
         <td width="10%">年份</td>
