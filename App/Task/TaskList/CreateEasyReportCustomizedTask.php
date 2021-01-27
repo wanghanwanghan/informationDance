@@ -1136,6 +1136,51 @@ TEMP;
         }
     }
 
+    //公司概况 债券信息
+    private function BondList(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = '';
+
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                foreach ($cspData[__FUNCTION__] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['ShortName']}</td>";
+                    $temp .= "<td>{$one['BondCode']}</td>";
+                    $temp .= "<td>{$one['BondType']}</td>";
+                    $temp .= "<td>{$one['ReleaseDate']}</td>";
+                    $temp .= "<td>{$one['LaunchDate']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="6" style="text-align: center;background-color: #d3d3d3">债券信息</td>
+    </tr>
+    <tr>
+        <td>序号</td>
+        <td>债券简称</td>
+        <td>债券代码</td>
+        <td>债券类型</td>
+        <td>发行日期</td>
+        <td>上市日期</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
