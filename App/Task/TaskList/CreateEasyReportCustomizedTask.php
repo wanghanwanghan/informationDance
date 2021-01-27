@@ -707,7 +707,7 @@ TEMP;
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
-        <td colspan="9" style="text-align: center;background-color: #d3d3d3">法人对外任职</td>
+        <td colspan="9" style="text-align: center;background-color: #d3d3d3">企业对外投资</td>
     </tr>
     <tr>
         <td>序号</td>
@@ -726,6 +726,61 @@ TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
         }
     }
+
+    //基本信息 分支机构
+    private function getBranchInfo(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists('getBranchInfo',$cspData))
+        {
+            $insert = '';
+
+            if (!empty($cspData['getBranchInfo']))
+            {
+                $i = 1;
+
+                foreach ($cspData['getBranchInfo']['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['ENTNAME']}</td>";
+                    $temp .= "<td>{$one['FRDB']}</td>";
+                    $temp .= "<td>{$one['ESDATE']}</td>";
+                    $temp .= "<td>{$one['ENTSTATUS']}</td>";
+                    $temp .= "<td>{$one['PROVINCE']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="6" style="text-align: center;background-color: #d3d3d3">分支机构</td>
+    </tr>
+    <tr>
+        <td>序号</td>
+        <td>机构名称</td>
+        <td>负责人</td>
+        <td>成立日期</td>
+        <td>经营状态</td>
+        <td>登记地省份</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
+
+
+
+
+
+
+
+
+
 
 
 
