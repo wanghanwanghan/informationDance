@@ -200,6 +200,7 @@ TEMP;
         foreach ($this->pdf_Catalog($this->dataIndex) as $catalogKey)
         {
             CommonService::getInstance()->log4PHP($catalogKey);
+            CommonService::getInstance()->log4PHP($this->pdf_Catalog($this->dataIndex));
             $this->$$catalogKey($pdf, $cspData);
         }
 
