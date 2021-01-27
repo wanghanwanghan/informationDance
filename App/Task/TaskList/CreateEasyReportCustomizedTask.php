@@ -438,10 +438,10 @@ TEMP;
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
-                    $temp .= "<td>{$one['ALTDATE']}</td>";
-                    $temp .= "<td>{$one['ALTITEM']}</td>";
-                    $temp .= "<td>{$one['ALTBE']}</td>";
-                    $temp .= "<td>{$one['ALTAF']}</td>";
+                    $temp .= "<td>{$this->formatDate($one['AddDate'])}</td>";
+                    $temp .= "<td>{$one['AddReason']}</td>";
+                    $temp .= "<td>{$this->formatDate($one['RemoveDate'])}</td>";
+                    $temp .= "<td>{$one['RomoveReason']}</td>";
                     $temp .= '</tr>';
                     $insert .= $temp;
                     $i++;
@@ -451,14 +451,14 @@ TEMP;
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
-        <td colspan="5" style="text-align: center;background-color: #d3d3d3">变更信息</td>
+        <td colspan="5" style="text-align: center;background-color: #d3d3d3">经营异常</td>
     </tr>
     <tr>
         <td width="7%">序号</td>
-        <td width="12%">变更日期</td>
-        <td width="11%">变更项目</td>
-        <td width="35%">变更前</td>
-        <td width="35%">变更后</td>
+        <td width="11%">列入日期</td>
+        <td width="35%">列入原因</td>
+        <td width="12%">移出日期</td>
+        <td width="35%">移出原因</td>
     </tr>
     {$insert}
 </table>
