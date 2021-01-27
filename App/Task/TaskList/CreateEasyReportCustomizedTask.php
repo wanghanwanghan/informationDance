@@ -1415,10 +1415,12 @@ TEMP;
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
-                    $temp .= "<td>{$one['Name']}</td>";
-                    $temp .= "<td>{$one['Category']}</td>";
-                    $temp .= "<td>{$one['RegNo']}</td>";
-                    $temp .= "<td>{$one['Specialty']}</td>";
+                    $temp .= "<td>{$one['Title']}</td>";
+                    $temp .= "<td>{$one['ProvinceDesc']}</td>";
+                    $temp .= "<td>{$one['Salary']}</td>";
+                    $temp .= "<td>{$one['Experience']}</td>";
+                    $temp .= "<td>{$one['Education']}</td>";
+                    $temp .= "<td>{$one['PublishDate']}</td>";
                     $temp .= '</tr>';
                     $insert .= $temp;
                     $i++;
@@ -1428,14 +1430,16 @@ TEMP;
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
-        <td colspan="5" style="text-align: center;background-color: #d3d3d3">建筑企业-专业注册人员</td>
+        <td colspan="7" style="text-align: center;background-color: #d3d3d3">招聘信息</td>
     </tr>
     <tr>
-        <td width="7%">序号</td>
-        <td width="20%">姓名</td>
-        <td width="20%">注册类别</td>
-        <td width="20%">注册号</td>
-        <td width="33%">注册专业</td>
+        <td>序号</td>
+        <td>职位名称</td>
+        <td>工作地点</td>
+        <td>月薪</td>
+        <td>经验</td>
+        <td>学历</td>
+        <td>发布日期</td>
     </tr>
     {$insert}
 </table>
