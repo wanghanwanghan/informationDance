@@ -477,7 +477,7 @@ TEMP;
                 foreach ($cspData['Beneficiary']['DetailInfoList'] as $one)
                 {
                     $temp = '<tr>';
-                    $temp .= "<td colspan='2'>{$one['Path']}</td>";
+                    $temp .= "<td width='100%' colspan='2'>{$one['Path']}</td>";
                     $temp .= '</tr>';
                     $insert .= $temp;
                 }
