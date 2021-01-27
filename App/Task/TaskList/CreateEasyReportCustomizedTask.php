@@ -201,7 +201,7 @@ TEMP;
 
         foreach ($cata as $catalogKey)
         {
-            $this->$$catalogKey($pdf, $cspData);
+            $this->$catalogKey($pdf, $cspData);
         }
 
         //##########################################################################################//
