@@ -497,6 +497,7 @@ TEMP;
         <td colspan="2" style="text-align: center;background-color: #d3d3d3">股权链</td>
     </tr>
     {$insert}
+    <tr><td colspan="2">备注 : 总股权比例 = 持股人股权比例 + 其关联企业所占股权折算后比例。</td></tr>
 </table>
 TEMP;
             CommonService::getInstance()->log4PHP($html);
