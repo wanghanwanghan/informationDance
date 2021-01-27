@@ -150,7 +150,7 @@ class TaskBase
             ],
             [
                 'SearchCompanyFinancings',//1-0
-                'TenderSearch',
+                'TenderSearch',//1-1
                 'LandPurchaseList',
                 'LandPublishList',
                 'LandTransferList',

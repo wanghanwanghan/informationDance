@@ -851,7 +851,49 @@ TEMP;
         }
     }
 
+    //公司概况 招投标
+    private function TenderSearch(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = '';
 
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['Title']}</td>";
+                    $temp .= "<td>{$one['Pubdate']}</td>";
+                    $temp .= "<td>{$one['ProvinceName']}</td>";
+                    $temp .= "<td>{$one['ChannelName']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="5" style="text-align: center;background-color: #d3d3d3">融资信息</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="40%">描述</td>
+        <td width="15%">发布日期</td>
+        <td width="15%">所属地区</td>
+        <td width="23%">项目分类</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
