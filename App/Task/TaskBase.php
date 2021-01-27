@@ -157,7 +157,7 @@ class TaskBase
                 'Qualification',//1-5
                 'BuildingProject',//1-6
                 'BondList',//1-7
-                'GetCompanyWebSite',
+                'GetCompanyWebSite',//1-8
             ],
             [
                 'itemInfo',

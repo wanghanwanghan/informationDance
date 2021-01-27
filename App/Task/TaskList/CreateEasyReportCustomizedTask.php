@@ -1182,6 +1182,51 @@ TEMP;
         }
     }
 
+    //公司概况 网站信息
+    private function GetCompanyWebSite(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = '';
+
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                foreach ($cspData[__FUNCTION__] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['Title']}</td>";
+                    $temp .= "<td>{$one['HomeSite']}</td>";
+                    $temp .= "<td>{$one['YuMing']}</td>";
+                    $temp .= "<td>{$one['BeiAn']}</td>";
+                    $temp .= "<td>{$one['SDate']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="6" style="text-align: center;background-color: #d3d3d3">网站信息</td>
+    </tr>
+    <tr>
+        <td>序号</td>
+        <td>网站名称</td>
+        <td>网址</td>
+        <td>域名</td>
+        <td>网站备案/许可证号</td>
+        <td>审核日期</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
