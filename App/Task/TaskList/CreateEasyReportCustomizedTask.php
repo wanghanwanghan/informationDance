@@ -805,6 +805,51 @@ TEMP;
         }
     }
 
+    //公司概况 融资信息
+    private function SearchCompanyFinancings(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = '';
+
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                foreach ($cspData[__FUNCTION__] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['Round']}</td>";
+                    $temp .= "<td>{$one['ProductName']}</td>";
+                    $temp .= "<td>{$one['Amount']}</td>";
+                    $temp .= "<td>{$one['Investment']}</td>";
+                    $temp .= "<td>{$one['Date']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="9" style="text-align: center;background-color: #d3d3d3">融资信息</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="13%">阶段</td>
+        <td width="15%">产品</td>
+        <td width="15%">金额</td>
+        <td width="17%">投资方</td>
+        <td width="13%">日期</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
