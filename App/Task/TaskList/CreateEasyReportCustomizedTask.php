@@ -1272,6 +1272,65 @@ TEMP;
         }
     }
 
+    //公司概况 新闻舆情
+    private function CompanyNews(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = '';
+
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                foreach ($cspData[__FUNCTION__] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['Title']}</td>";
+                    $temp .= "<td>{$one['Source']}</td>";
+                    $temp .= "<td>{$this->formatDate($one['PublishTime'])}</td>";
+                    $temp .= "<td>{$one['NewsTags']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="5" style="text-align: center;background-color: #d3d3d3">新闻舆情</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="30%">标题</td>
+        <td width="25%">来源</td>
+        <td width="13%">时间</td>
+        <td width="25%">标签</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
