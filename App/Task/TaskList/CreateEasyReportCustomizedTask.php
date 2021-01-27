@@ -675,7 +675,57 @@ TEMP;
         }
     }
 
+    //基本信息 企业对外投资
+    private function getInvestmentAbroadInfo(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists('getInvestmentAbroadInfo',$cspData))
+        {
+            $insert = '';
 
+            if (!empty($cspData['getInvestmentAbroadInfo']))
+            {
+                $i = 1;
+
+                foreach ($cspData['getInvestmentAbroadInfo']['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['ENTNAME']}</td>";
+                    $temp .= "<td>{$one['ESDATE']}</td>";
+                    $temp .= "<td>{$one['ENTSTATUS']}</td>";
+                    $temp .= "<td>{$one['REGCAP']}</td>";
+                    $temp .= "<td>{$one['SUBCONAM']}</td>";
+                    $temp .= "<td>{$one['CONCUR']}</td>";
+                    $temp .= "<td>{$this->formatPercent($one['CONRATIO'])}</td>";
+                    $temp .= "<td>{$one['CONDATE']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="9" style="text-align: center;background-color: #d3d3d3">法人对外任职</td>
+    </tr>
+    <tr>
+        <td>序号</td>
+        <td>被投资企业名称</td>
+        <td>成立日期</td>
+        <td>经营状态</td>
+        <td>注册资本(万元)</td>
+        <td>认缴出资额(万元)</td>
+        <td>出资币种</td>
+        <td>出资比例</td>
+        <td>出资时间</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 

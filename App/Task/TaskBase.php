@@ -143,7 +143,7 @@ class TaskBase
                 'getHistoricalEvolution',//0-2
                 'lawPersonInvestmentInfo',//0-3
                 'getLawPersontoOtherInfo',//0-4
-                'getInvestmentAbroadInfo',
+                'getInvestmentAbroadInfo',//0-5
                 'getBranchInfo',
                 'GetCreditCodeNew',
             ],
