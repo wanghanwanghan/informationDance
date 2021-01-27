@@ -1628,6 +1628,58 @@ TEMP;
         }
     }
 
+    //创新能力 商标
+    private function tmSearch(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = $num = '';
+
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['Name']}</td>";
+                    $temp .= '<td><img src="'.$one['ImageUrl'].'" /></td>';
+                    $temp .= "<td>".isset($this->sblb[$one['IntCls']]) ? $this->sblb[$one['IntCls']] : '-' ."</td>";
+                    $temp .= "<td>{$one['RegNo']}</td>";
+                    $temp .= "<td>{$one['FlowStatusDesc']}</td>";
+                    $temp .= "<td>{$one['AppDate']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="7" style="text-align: center;background-color: #d3d3d3">商标</td>
+    </tr>
+    <tr>
+        <td colspan="7">商标 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
+        <td>序号</td>
+        <td>商标</td>
+        <td>图标</td>
+        <td>商标分类</td>
+        <td>注册号</td>
+        <td>流程状态</td>
+        <td>申请日期</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
