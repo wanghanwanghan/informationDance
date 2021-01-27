@@ -879,8 +879,7 @@ TEMP;
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
-        <td colspan="5" style="text-align: center;background-color: #d3d3d3">融资信息</td>
-    </tr>
+        <td colspan="5" style="text-align: center;background-color: #d3d3d3">招投标信息</tr>
     <tr>
         <td width="7%">序号</td>
         <td width="40%">描述</td>
