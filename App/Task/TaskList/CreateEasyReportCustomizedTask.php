@@ -302,11 +302,28 @@ TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
         }
 
-
-        CommonService::getInstance()->log4PHP($cspData);
         //基本信息 股东信息
         if (array_key_exists('getShareHolderInfo',$cspData) && !empty($cspData['getShareHolderInfo']))
         {
+            $height = 5;
+
+            $insert = '';
+
+            foreach ($cspData['getShareHolderInfo'] as $one)
+            {
+                $height += 5;
+                $temp = '<tr>';
+                $temp .= "<td>{$one['INV']}</td>";
+                $temp .= "<td>{$one['SHXYDM']}</td>";
+                $temp .= "<td>{$one['INVTYPE']}</td>";
+                $temp .= "<td>{$one['SUBCONAM']}</td>";
+                $temp .= "<td>{$one['CONCUR']}</td>";
+                $temp .= "<td>{$this->formatPercent($one['CONRATIO'])}</td>";
+                $temp .= "<td>{$one['CONDATE']}</td>";
+                $temp .= '</tr>';
+                $insert .= $temp;
+            }
+
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%">
     <tr>
@@ -321,19 +338,11 @@ TEMP;
         <td>出资比例</td>
         <td>出资时间</td>
     </tr>
-    <tr>
-        <td>京东香港国际有限公司</td>
-        <td></td>
-        <td>外国(地区)企业</td>
-        <td>139798.5564</td>
-        <td>美元</td>
-        <td>100.00%</td>
-        <td>2015-12-31</td>
-    </tr>
+    {$insert}
 </table>
 TEMP;
 
-            $this->exprAddPage($pdf,85);
+            $this->exprAddPage($pdf,$height);
 
             $pdf->writeHTML($html, true, false, false, false, '');
         }
