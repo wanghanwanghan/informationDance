@@ -1244,7 +1244,7 @@ TEMP;
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Name']}</td>";
-                    $temp .= "<td><img src='{$one['ImageUrl']}' /></td>";
+                    $temp .= '<td><img src="'.$one['ImageUrl'].'" /></td>';
                     $temp .= "<td>{$one['Tags']}</td>";
                     $temp .= "<td>{$one['Description']}</td>";
                     $temp .= '</tr>';
