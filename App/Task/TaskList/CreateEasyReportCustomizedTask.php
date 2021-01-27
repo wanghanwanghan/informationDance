@@ -895,6 +895,61 @@ TEMP;
         }
     }
 
+    //公司概况 购地信息
+    private function LandPurchaseList(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = '';
+
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['Address']}</td>";
+                    $temp .= "<td>{$one['LandUse']}</td>";
+                    $temp .= "<td>{$one['Area']}</td>";
+                    $temp .= "<td>{$one['AdminArea']}</td>";
+                    $temp .= "<td>{$one['SupplyWay']}</td>";
+                    $temp .= "<td>{$one['SignTime']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="7" style="text-align: center;background-color: #d3d3d3">购地信息</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="28%">项目位置</td>
+        <td width="13%">土地用途</td>
+        <td width="13%">面积(公顷)</td>
+        <td width="13%">行政区</td>
+        <td width="13%">供地方式</td>
+        <td width="13%">签订日期</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
+
+
+
+
+
+
+
+
 
 
 
