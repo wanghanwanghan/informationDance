@@ -164,7 +164,7 @@ class TaskBase
                 'CompanyNews',//1-10
             ],
             [
-                'itemInfo',
+                'itemInfo',//2-0
                 'BuildingRegistrar',
             ],
             [

@@ -1304,8 +1304,8 @@ TEMP;
     </tr>
     <tr>
         <td width="7%">序号</td>
-        <td width="30%">标题</td>
-        <td width="25%">来源</td>
+        <td width="35%">标题</td>
+        <td width="20%">来源</td>
         <td width="13%">时间</td>
         <td width="25%">标签</td>
     </tr>
@@ -1316,6 +1316,46 @@ TEMP;
         }
     }
 
+    //团队招聘 近三年团队人数变化率
+    private function itemInfo(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = '';
+
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                foreach ($cspData[__FUNCTION__] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['year']}</td>";
+                    $temp .= "<td>{$one['num']}</td>";
+                    $temp .= "<td>{$this->formatPercent($one['yoy'])}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="5" style="text-align: center;background-color: #d3d3d3">近三年团队人数</td>
+    </tr>
+    <tr>
+        <td width="10%">年份</td>
+        <td width="45%">缴纳社保人数</td>
+        <td width="45%">变化率</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
