@@ -411,9 +411,9 @@ TEMP;
         <td colspan="5" style="text-align: center;background-color: #d3d3d3">变更信息</td>
     </tr>
     <tr>
-        <td width="10%">序号</td>
-        <td width="10%">变更日期</td>
-        <td width="10%">变更项目</td>
+        <td width="6%">序号</td>
+        <td width="12%">变更日期</td>
+        <td width="12%">变更项目</td>
         <td width="35%">变更前</td>
         <td width="35%">变更后</td>
     </tr>
