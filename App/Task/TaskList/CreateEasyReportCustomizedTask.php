@@ -1540,7 +1540,7 @@ TEMP;
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Title']}</td>";
-                    $temp .= "<td>".implode(';',$one['Title'])."</td>";
+                    $temp .= "<td>".implode(';',$one['IPCDesc'])."</td>";
                     $temp .= "<td>{$one['PublicationNumber']}</td>";
                     $temp .= "<td>{$one['LegalStatusDesc']}</td>";
                     $temp .= "<td>{$this->formatDate($one['ApplicationDate'])}</td>";
