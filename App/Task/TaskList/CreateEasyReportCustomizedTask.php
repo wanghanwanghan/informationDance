@@ -782,17 +782,11 @@ TEMP;
 
             if (!empty($cspData[__FUNCTION__]))
             {
-                $i = 1;
-
-                foreach ($cspData[__FUNCTION__] as $one)
-                {
-                    $temp = '<tr>';
-                    $temp .= "<td>{$one['Bank']}</td>";
-                    $temp .= "<td>{$one['BankAccount']}</td>";
-                    $temp .= '</tr>';
-                    $insert .= $temp;
-                    $i++;
-                }
+                $temp = '<tr>';
+                $temp .= "<td>{$cspData[__FUNCTION__]['Bank']}</td>";
+                $temp .= "<td>{$cspData[__FUNCTION__]['BankAccount']}</td>";
+                $temp .= '</tr>';
+                $insert .= $temp;
             }
 
             $html = <<<TEMP
