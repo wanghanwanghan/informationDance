@@ -584,7 +584,6 @@ TEMP;
 
                 foreach ($cspData['lawPersonInvestmentInfo'] as $one)
                 {
-                    $one = str_replace(['，具体登录小程序查看'],'',$one);
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['NAME']}</td>";
@@ -637,17 +636,16 @@ TEMP;
 
                 foreach ($cspData['getLawPersontoOtherInfo'] as $one)
                 {
-                    $one = str_replace(['，具体登录小程序查看'],'',$one);
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['NAME']}</td>";
                     $temp .= "<td>{$one['ENTNAME']}</td>";
-                    $temp .= "<td>{$this->formatPercent($one['CONRATIO'])}</td>";
-                    $temp .= "<td>{$one['REGCAP']}</td>";
                     $temp .= "<td>{$one['SHXYDM']}</td>";
-                    $temp .= "<td>{$one['SUBCONAM']}</td>";
+                    $temp .= "<td>{$one['ESDATE']}</td>";
+                    $temp .= "<td>{$one['REGCAP']}</td>";
                     $temp .= "<td>{$one['ENTSTATUS']}</td>";
-                    $temp .= "<td>{$one['CONDATE']}</td>";
+                    $temp .= "<td>{$one['POSITION']}</td>";
+                    $temp .= "<td>{$one['ISFRDB']}</td>";
                     $temp .= '</tr>';
                     $insert .= $temp;
                     $i++;
@@ -661,14 +659,14 @@ TEMP;
     </tr>
     <tr>
         <td>序号</td>
-        <td>法人</td>
-        <td>企业名称</td>
-        <td>持股比例</td>
-        <td>注册资本(万元)</td>
+        <td>姓名</td>
+        <td>任职企业名称</td>
         <td>统一社会信用代码</td>
-        <td>认缴出资额(万元)</td>
-        <td>状态</td>
-        <td>认缴出资时间</td>
+        <td>成立日期</td>
+        <td>注册资本(万元)</td>
+        <td>经营状态</td>
+        <td>职务</td>
+        <td>是否法人</td>
     </tr>
     {$insert}
 </table>
