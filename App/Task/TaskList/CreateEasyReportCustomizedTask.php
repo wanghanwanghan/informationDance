@@ -464,8 +464,6 @@ TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
         }
 
-        CommonService::getInstance()->log4PHP($cspData);
-
         //基本信息 实际控制人
         if (array_key_exists('Beneficiary',$cspData))
         {
@@ -480,7 +478,6 @@ TEMP;
                 {
                     $temp = '<tr>';
                     $temp .= "<td colspan='2'>{$one['Path']}</td>";
-                    $temp .= "<td colspan='2'>wanghan123</td>";
                     $temp .= '</tr>';
                     $insert .= $temp;
                 }
