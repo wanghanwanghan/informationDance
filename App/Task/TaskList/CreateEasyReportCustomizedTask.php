@@ -474,8 +474,6 @@ TEMP;
                 $name = $cspData['Beneficiary']['Name'];
                 $stock = $cspData['Beneficiary']['TotalStockPercent'];
 
-                $i = 1;
-
                 foreach ($cspData['Beneficiary']['DetailInfoList'] as $one)
                 {
                     $temp = '<tr>';
@@ -501,7 +499,16 @@ TEMP;
     <tr>
         <td colspan="2" style="text-align: center;background-color: #d3d3d3">股权链</td>
     </tr>
-    {$insert}
+    <tr>
+    <td colspan="2">
+    wanghan123
+</td>
+</tr>
+<tr>
+    <td colspan="2">
+    wanghan321
+</td>
+</tr>
 </table>
 TEMP;
             CommonService::getInstance()->log4PHP($html);
