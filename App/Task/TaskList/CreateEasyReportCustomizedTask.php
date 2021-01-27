@@ -199,12 +199,10 @@ TEMP;
 
         $cata = $this->pdf_Catalog($this->dataIndex);
 
-        foreach ($cata as $catalogKey)
-        {
+        //一个一个func执行
+        foreach ($cata as $catalogKey) {
             $this->$catalogKey($pdf, $cspData);
         }
-
-        //##########################################################################################//
     }
 
     //基本信息 工商信息
@@ -626,6 +624,58 @@ TEMP;
         }
     }
 
+    //基本信息 法人对外任职
+    private function getLawPersontoOtherInfo(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists('getLawPersontoOtherInfo',$cspData))
+        {
+            $insert = '';
+
+            if (!empty($cspData['getLawPersontoOtherInfo']))
+            {
+                $i = 1;
+
+                foreach ($cspData['getLawPersontoOtherInfo'] as $one)
+                {
+                    $one = str_replace(['，具体登录小程序查看'],'',$one);
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['NAME']}</td>";
+                    $temp .= "<td>{$one['ENTNAME']}</td>";
+                    $temp .= "<td>{$this->formatPercent($one['CONRATIO'])}</td>";
+                    $temp .= "<td>{$one['REGCAP']}</td>";
+                    $temp .= "<td>{$one['SHXYDM']}</td>";
+                    $temp .= "<td>{$one['SUBCONAM']}</td>";
+                    $temp .= "<td>{$one['ENTSTATUS']}</td>";
+                    $temp .= "<td>{$one['CONDATE']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="9" style="text-align: center;background-color: #d3d3d3">法人对外任职</td>
+    </tr>
+    <tr>
+        <td>序号</td>
+        <td>法人</td>
+        <td>企业名称</td>
+        <td>持股比例</td>
+        <td>注册资本(万元)</td>
+        <td>统一社会信用代码</td>
+        <td>认缴出资额(万元)</td>
+        <td>状态</td>
+        <td>认缴出资时间</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 

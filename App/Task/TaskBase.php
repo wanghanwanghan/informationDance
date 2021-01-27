@@ -142,7 +142,7 @@ class TaskBase
                 'Beneficiary',//0-1
                 'getHistoricalEvolution',//0-2
                 'lawPersonInvestmentInfo',//0-3
-                'getLawPersontoOtherInfo',
+                'getLawPersontoOtherInfo',//0-4
                 'getInvestmentAbroadInfo',
                 'getBranchInfo',
                 'GetCreditCodeNew',
