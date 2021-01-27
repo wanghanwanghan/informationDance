@@ -1561,10 +1561,10 @@ TEMP;
     </tr>
     <tr>
         <td width="7%">序号</td>
-        <td width="22%">名称</td>
+        <td width="24%">名称</td>
         <td width="15%">专利类型</td>
         <td width="15%">公开号</td>
-        <td width="15%">法律状态</td>
+        <td width="13%">法律状态</td>
         <td width="13%">申请日期</td>
         <td width="13%">发布日期</td>
     </tr>
