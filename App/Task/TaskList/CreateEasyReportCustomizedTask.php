@@ -469,37 +469,37 @@ TEMP;
         //基本信息 实际控制人
         if (array_key_exists('Beneficiary',$cspData))
         {
-            $insert = '';
+            $insert = $name = $stock = '';
 
             if (!empty($cspData['Beneficiary']))
             {
-                $i = 1;
+                $name = $cspData['Beneficiary']['Name'];
+                $stock = $cspData['Beneficiary']['TotalStockPercent'];
 
-                foreach ($cspData['Beneficiary'] as $one)
+                foreach ($cspData['Beneficiary']['DetailInfoList'] as $one)
                 {
                     $temp = '<tr>';
-                    $temp .= "<td>{$i}</td>";
-                    $temp .= "<td>{$this->formatDate($one['AddDate'])}</td>";
-                    $temp .= "<td>{$one['AddReason']}</td>";
-                    $temp .= "<td>{$this->formatDate($one['RemoveDate'])}</td>";
-                    $temp .= "<td>{$one['RomoveReason']}</td>";
+                    $temp .= "<td>{$one['Path']}</td>";
                     $temp .= '</tr>';
                     $insert .= $temp;
-                    $i++;
                 }
             }
 
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
-        <td colspan="5" style="text-align: center;background-color: #d3d3d3">经营异常</td>
+        <td colspan="5" style="text-align: center;background-color: #d3d3d3">实际控制人</td>
     </tr>
     <tr>
-        <td width="7%">序号</td>
-        <td width="12%">列入日期</td>
-        <td width="35%">列入原因</td>
-        <td width="12%">移出日期</td>
-        <td width="34%">移出原因</td>
+        <td width="50%">实际控制人名称</td>
+        <td width="50%">总持股比例</td>
+    </tr>
+    <tr>
+        <td>{$name}</td>
+        <td>{$stock}</td>
+    </tr>
+    <tr>
+        <td colspan="2" style="text-align: center;background-color: #d3d3d3">股权链</td>
     </tr>
     {$insert}
 </table>
