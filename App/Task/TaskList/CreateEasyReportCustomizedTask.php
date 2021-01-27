@@ -348,18 +348,18 @@ TEMP;
 
             if (!empty($cspData['getMainManagerInfo']))
             {
-                $index = 1;
+                $i = 1;
 
                 foreach ($cspData['getMainManagerInfo'] as $one)
                 {
                     $temp = '<tr>';
-                    $temp .= "<td>{$index}</td>";
+                    $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['NAME']}</td>";
                     $temp .= "<td>{$one['POSITION']}</td>";
                     $temp .= "<td>{$one['ISFRDB']}</td>";
                     $temp .= '</tr>';
                     $insert .= $temp;
-                    $insert++;
+                    $i++;
                 }
             }
 
@@ -387,19 +387,19 @@ TEMP;
 
             if (!empty($cspData['getRegisterChangeInfo']))
             {
-                $index = 1;
+                $i = 1;
 
                 foreach ($cspData['getRegisterChangeInfo']['list'] as $one)
                 {
                     $temp = '<tr>';
-                    $temp .= "<td>{$index}</td>";
+                    $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['ALTDATE']}</td>";
                     $temp .= "<td>{$one['ALTITEM']}</td>";
                     $temp .= "<td>{$one['ALTBE']}</td>";
                     $temp .= "<td>{$one['ALTAF']}</td>";
                     $temp .= '</tr>';
                     $insert .= $temp;
-                    $insert++;
+                    $i++;
                 }
             }
 
@@ -412,7 +412,6 @@ TEMP;
         <td>序号</td>
         <td>变更日期</td>
         <td>变更项目</td>
-        <td>变更前</td>
         <td>变更前</td>
         <td>变更后</td>
     </tr>
