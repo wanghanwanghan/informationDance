@@ -423,6 +423,55 @@ TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
         }
 
+        CommonService::getInstance()->log4PHP($cspData);
+
+        //基本信息 经营异常
+        if (array_key_exists('GetOpException',$cspData))
+        {
+            $insert = '';
+
+            if (!empty($cspData['GetOpException']))
+            {
+                $i = 1;
+
+                foreach ($cspData['GetOpException']['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['ALTDATE']}</td>";
+                    $temp .= "<td>{$one['ALTITEM']}</td>";
+                    $temp .= "<td>{$one['ALTBE']}</td>";
+                    $temp .= "<td>{$one['ALTAF']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="5" style="text-align: center;background-color: #d3d3d3">变更信息</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="12%">变更日期</td>
+        <td width="11%">变更项目</td>
+        <td width="35%">变更前</td>
+        <td width="35%">变更后</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+
+
+
+
+
+
+
 
 
         //##########################################################################################//
@@ -504,7 +553,7 @@ TEMP;
         });
 
         //企查查 经营异常
-        array_search('GetOpException', $catalog) === false ?: $csp->add('GetOpException', function () {
+        array_search('getRegisterInfo', $catalog) === false ?: $csp->add('GetOpException', function () {
 
             $postData = ['keyNo' => $this->entName];
 
