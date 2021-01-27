@@ -26,14 +26,19 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
     private $currentHeight = 0;
 
     //计算翻页不翻页
-    function exprAddPage(Tcpdf $pdf, $height, $pageMaxHeight = 300)
+    function exprAddPage(Tcpdf $pdf, $height = 0, $immediately = false, $pageMaxHeight = 300)
     {
-        if ($height > $pageMaxHeight) {
+        if ($immediately === true) {
+            $this->currentHeight = $height = 0;
+            $pdf->AddPage();
+        }
+
+        if ($height > $pageMaxHeight && $immediately === false) {
             $this->currentHeight = 0;
             $pdf->AddPage();
         }
 
-        if ($height + $this->currentHeight > $pageMaxHeight) {
+        if ($height + $this->currentHeight > $pageMaxHeight && $immediately === false) {
             $this->currentHeight = 0;
             $pdf->AddPage();
         }
@@ -128,14 +133,14 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         $pdf->Image(REPORT_IMAGE_PATH . 'logo.jpg', '', '', 55, 20, '', '', 'T');
 
         //换行
-        $pdf->ln(100);
+        $pdf->ln(95);
 
         //entName
         $pdf->SetFont('stsongstdlight', '', $this->pdf_BigTitle);
         $pdf->writeHTML("<div>{$this->entName}</div>", true, false, false, false, 'C');
 
         //换行
-        $pdf->ln(60);
+        $pdf->ln(55);
 
         $createUserInfo = User::create()->where('phone',$this->phone)->get();
 
@@ -187,13 +192,10 @@ TEMP;
 
         $pdf->AddPage();
 
+        //基本信息 工商信息
         if (array_key_exists('getRegisterInfo',$cspData) && !empty($cspData['getRegisterInfo']))
         {
-            for ($i=1;$i<=10;$i++)
-            {
-                $this->exprAddPage($pdf,110);
-
-                $html = <<<TEMP
+            $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%">
     <tr>
         <td colspan="4" style="text-align: center;background-color: #d3d3d3">
@@ -295,10 +297,48 @@ TEMP;
 </table>
 TEMP;
 
-                $pdf->writeHTML($html, true, false, false, false, '');
-            }
+            $this->exprAddPage($pdf,85);
 
+            $pdf->writeHTML($html, true, false, false, false, '');
         }
+
+
+        CommonService::getInstance()->log4PHP($cspData);
+        //基本信息 股东信息
+        if (array_key_exists('getShareHolderInfo',$cspData) && !empty($cspData['getShareHolderInfo']))
+        {
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%">
+    <tr>
+        <td colspan="7" style="text-align: center;background-color: #d3d3d3">股东信息</td>
+    </tr>
+    <tr>
+        <td>股东信息</td>
+        <td>统一社会信用代码</td>
+        <td>股东类型</td>
+        <td>认缴出资额(万元)</td>
+        <td>出资币种</td>
+        <td>出资比例</td>
+        <td>出资时间</td>
+    </tr>
+    <tr>
+        <td>京东香港国际有限公司</td>
+        <td></td>
+        <td>外国(地区)企业</td>
+        <td>139798.5564</td>
+        <td>美元</td>
+        <td>100.00%</td>
+        <td>2015-12-31</td>
+    </tr>
+</table>
+TEMP;
+
+            $this->exprAddPage($pdf,85);
+
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+
+
 
 
         //##########################################################################################//
@@ -335,7 +375,7 @@ TEMP;
         });
 
         //淘数 基本信息 股东信息
-        array_search('getShareHolderInfo', $catalog) === false ?: $csp->add('getShareHolderInfo', function () {
+        array_search('getRegisterInfo', $catalog) === false ?: $csp->add('getShareHolderInfo', function () {
 
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
                 'entName' => $this->entName,
@@ -349,7 +389,7 @@ TEMP;
         });
 
         //淘数 基本信息 高管信息
-        array_search('getMainManagerInfo', $catalog) === false ?: $csp->add('getMainManagerInfo', function () {
+        array_search('getRegisterInfo', $catalog) === false ?: $csp->add('getMainManagerInfo', function () {
 
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
                 'entName' => $this->entName,
@@ -363,7 +403,7 @@ TEMP;
         });
 
         //淘数 基本信息 变更信息
-        array_search('getRegisterChangeInfo', $catalog) === false ?: $csp->add('getRegisterChangeInfo', function () {
+        array_search('getRegisterInfo', $catalog) === false ?: $csp->add('getRegisterChangeInfo', function () {
 
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
                 'entName' => $this->entName,
