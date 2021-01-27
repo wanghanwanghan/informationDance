@@ -53,6 +53,7 @@ class TaskBase
                 '银行信息',
             ],
             '公司概况' => [
+                '公司概况',
                 '招投标信息',
                 '购地信息',
                 '土地公示',
@@ -148,6 +149,7 @@ class TaskBase
                 'GetCreditCodeNew',//0-7
             ],
             [
+                'SearchCompanyFinancings',//1-0
                 'TenderSearch',
                 'LandPurchaseList',
                 'LandPublishList',
