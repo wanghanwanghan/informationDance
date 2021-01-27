@@ -296,32 +296,29 @@ TEMP;
     </tr>
 </table>
 TEMP;
-
-            $this->exprAddPage($pdf,85);
-
             $pdf->writeHTML($html, true, false, false, false, '');
         }
 
         //基本信息 股东信息
-        if (array_key_exists('getShareHolderInfo',$cspData) && !empty($cspData['getShareHolderInfo']))
+        if (array_key_exists('getShareHolderInfo',$cspData))
         {
-            $height = 5;
-
             $insert = '';
 
-            foreach ($cspData['getShareHolderInfo'] as $one)
+            if (!empty($cspData['getShareHolderInfo']))
             {
-                $height += 5;
-                $temp = '<tr>';
-                $temp .= "<td>{$one['INV']}</td>";
-                $temp .= "<td>{$one['SHXYDM']}</td>";
-                $temp .= "<td>{$one['INVTYPE']}</td>";
-                $temp .= "<td>{$one['SUBCONAM']}</td>";
-                $temp .= "<td>{$one['CONCUR']}</td>";
-                $temp .= "<td>{$this->formatPercent($one['CONRATIO'])}</td>";
-                $temp .= "<td>{$one['CONDATE']}</td>";
-                $temp .= '</tr>';
-                $insert .= $temp;
+                foreach ($cspData['getShareHolderInfo'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$one['INV']}</td>";
+                    $temp .= "<td>{$one['SHXYDM']}</td>";
+                    $temp .= "<td>{$one['INVTYPE']}</td>";
+                    $temp .= "<td>{$one['SUBCONAM']}</td>";
+                    $temp .= "<td>{$one['CONCUR']}</td>";
+                    $temp .= "<td>{$this->formatPercent($one['CONRATIO'])}</td>";
+                    $temp .= "<td>{$one['CONDATE']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                }
             }
 
             $html = <<<TEMP
@@ -341,15 +338,89 @@ TEMP;
     {$insert}
 </table>
 TEMP;
-
-            CommonService::getInstance()->log4PHP($this->currentHeight);
-            CommonService::getInstance()->log4PHP($height);
-
-            $this->exprAddPage($pdf,$height);
-
             $pdf->writeHTML($html, true, false, false, false, '');
         }
 
+        //基本信息 高管信息
+        if (array_key_exists('getMainManagerInfo',$cspData))
+        {
+            $insert = '';
+
+            if (!empty($cspData['getMainManagerInfo']))
+            {
+                $index = 1;
+
+                foreach ($cspData['getMainManagerInfo'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$index}</td>";
+                    $temp .= "<td>{$one['NAME']}</td>";
+                    $temp .= "<td>{$one['POSITION']}</td>";
+                    $temp .= "<td>{$one['ISFRDB']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $insert++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%">
+    <tr>
+        <td colspan="4" style="text-align: center;background-color: #d3d3d3">高管信息</td>
+    </tr>
+    <tr style="text-align: center">
+        <td>序号</td>
+        <td>姓名</td>
+        <td>职务</td>
+        <td>是否法人</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+
+        //基本信息 变更信息
+        if (array_key_exists('getRegisterChangeInfo',$cspData))
+        {
+            $insert = '';
+
+            if (!empty($cspData['getRegisterChangeInfo']))
+            {
+                $index = 1;
+
+                foreach ($cspData['getRegisterChangeInfo']['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$index}</td>";
+                    $temp .= "<td>{$one['ALTDATE']}</td>";
+                    $temp .= "<td>{$one['ALTITEM']}</td>";
+                    $temp .= "<td>{$one['ALTBE']}</td>";
+                    $temp .= "<td>{$one['ALTAF']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $insert++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%">
+    <tr>
+        <td colspan="6" style="text-align: center;background-color: #d3d3d3">高管信息</td>
+    </tr>
+    <tr style="text-align: center">
+        <td>序号</td>
+        <td>变更日期</td>
+        <td>变更项目</td>
+        <td>变更前</td>
+        <td>变更前</td>
+        <td>变更后</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
 
 
 
