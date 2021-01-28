@@ -389,8 +389,8 @@ class TaskBase
                 '查封冻结扣押',
                 '动产抵押',
                 '股权出质',
-                '土地抵押',
                 '对外担保',
+                '土地抵押',
             ],
             '债权信息' => [
                 '应收账款',
@@ -488,8 +488,8 @@ class TaskBase
                 'sifacdk',//11-6
                 'getChattelMortgageInfo',//11-7
                 'getEquityPledgedInfo',//11-8
-                'GetLandMortgageList',//11-9
-                'GetAnnualReport',//11-10
+                'GetAnnualReport',//11-9
+                'GetLandMortgageList',//11-10
             ],
             [
                 'company_zdw_yszkdsr',
