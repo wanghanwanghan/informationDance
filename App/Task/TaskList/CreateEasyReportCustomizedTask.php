@@ -2439,10 +2439,10 @@ TEMP;
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
-        <td colspan="4" style="text-align: center;background-color: #d3d3d3">海关企业</td>
+        <td colspan="7" style="text-align: center;background-color: #d3d3d3">海关企业</td>
     </tr>
     <tr>
-        <td colspan="4">海关企业 {$num} 项，报告中提供最新的 20 条记录</td>
+        <td colspan="7">海关企业 {$num} 项，报告中提供最新的 20 条记录</td>
     </tr>
     <tr>
         <td>序号</td>
