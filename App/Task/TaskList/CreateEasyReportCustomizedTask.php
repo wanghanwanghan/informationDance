@@ -3716,11 +3716,62 @@ TEMP;
     </tr>
     <tr>
         <td width="7%">序号</td>
-        <td width="13%">债权人</td>
-        <td width="13%">债务人</td>
-        <td width="21%">担保金额(万元)</td>
-        <td width="20%">保证方式</td>
+        <td width="16%">债权人</td>
+        <td width="15%">债务人</td>
+        <td width="18%">担保金额(万元)</td>
+        <td width="18%">保证方式</td>
         <td width="26%">担保期起止</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
+
+    //司法涉诉与抵质押信息 土地抵押
+    private function GetLandMortgageList(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = $num = '';
+
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['StartDate']}</td>";
+                    $temp .= "<td>{$one['EndDate']}</td>";
+                    $temp .= "<td>{$one['MortgageAcreage']}</td>";
+                    $temp .= "<td>{$one['MortgagePurpose']}</td>";
+                    $temp .= "<td>{$one['Address']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="6" style="text-align: center;background-color: #d3d3d3">土地抵押</td>
+    </tr>
+    <tr>
+        <td colspan="6">土地抵押 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="16%">开始日期</td>
+        <td width="15%">结束日期</td>
+        <td width="18%">抵押面积(公顷)</td>
+        <td width="18%">抵押用途</td>
+        <td width="26%">行政区地址</td>
     </tr>
     {$insert}
 </table>
