@@ -2607,6 +2607,58 @@ TEMP;
         }
     }
 
+    //一行两会信息 央行行政处罚
+    private function pbcparty(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = $num = '';
+
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['title']}</td>";
+                    $temp .= "<td>{$one['detail']['caseNo']}</td>";
+                    $temp .= "<td>{$one['detail']['eventName']}</td>";
+                    $temp .= "<td>{$one['detail']['eventResult']}</td>";
+                    $temp .= "<td>{$one['detail']['authority']}</td>";
+                    $temp .= "<td>{$one['sortTimeString']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="7" style="text-align: center;background-color: #d3d3d3">央行行政处罚</td>
+    </tr>
+    <tr>
+        <td colspan="7">央行行政处罚 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
+        <td>序号</td>
+        <td>标题</td>
+        <td>书文号</td>
+        <td>事件名称</td>
+        <td>事件结果</td>
+        <td>管理机关</td>
+        <td>处罚时间</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 

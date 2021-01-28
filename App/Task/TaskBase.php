@@ -471,12 +471,12 @@ class TaskBase
                 'custom_punish',//9-3
             ],
             [
-                'pbcparty',
-                'pbcparty_cbrc',
-                'pbcparty_csrc_chufa',
-                'pbcparty_csrc_xkpf',
-                'safe_chufa',
-                'safe_xuke',
+                'pbcparty',//10-0
+                'pbcparty_cbrc',//10-1
+                'pbcparty_csrc_chufa',//10-2
+                'pbcparty_csrc_xkpf',//10-3
+                'safe_chufa',//10-4
+                'safe_xuke',//10-5
             ],
             [
                 'fygg',
