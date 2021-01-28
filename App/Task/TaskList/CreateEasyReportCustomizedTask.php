@@ -2766,7 +2766,56 @@ TEMP;
         }
     }
 
+    //一行两会信息 证监会许可信息
+    private function pbcparty_csrc_xkpf(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = $num = '';
 
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['title']}</td>";
+                    $temp .= "<td>{$one['detail']['caseNo']}</td>";
+                    $temp .= "<td>{$one['detail']['eventName']}</td>";
+                    $temp .= "<td>{$one['detail']['authority']}</td>";
+                    $temp .= "<td>{$one['sortTimeString']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="6" style="text-align: center;background-color: #d3d3d3">证监会许可信息</td>
+    </tr>
+    <tr>
+        <td colspan="6">证监会许可信息 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
+        <td>序号</td>
+        <td>标题</td>
+        <td>文书号</td>
+        <td>许可事项</td>
+        <td>管理机关</td>
+        <td>许可时间</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
