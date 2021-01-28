@@ -3024,14 +3024,14 @@ TEMP;
         <td colspan="8">法院公告 {$num} 项，报告中提供最新的 20 条记录</td>
     </tr>
     <tr>
-        <td>序号</td>
-        <td>案号</td>
-        <td>公告法院</td>
-        <td>立案时间</td>
-        <td>案由</td>
-        <td>当事人</td>
-        <td>称号</td>
-        <td>诉讼地位(原审)</td>
+        <td width="7%">序号</td>
+        <td width="13%">案号</td>
+        <td width="13%">公告法院</td>
+        <td width="13%">立案时间</td>
+        <td width="13%">案由</td>
+        <td width="21%">当事人</td>
+        <td width="13%">称号</td>
+        <td width="7%">诉讼地位(原审)</td>
     </tr>
     {$insert}
 </table>
