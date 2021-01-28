@@ -448,7 +448,7 @@ class TaskBase
             ],
             [
                 'satparty_xin',//6-0
-                'satparty_xuke',
+                'satparty_xuke',//6-1
                 'satparty_reg',
                 'satparty_fzc',
                 'satparty_qs',
