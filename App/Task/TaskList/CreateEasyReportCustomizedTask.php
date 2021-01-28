@@ -4025,6 +4025,54 @@ TEMP;
         }
     }
 
+    //债权信息 其他动产融资
+    private function company_zdw_qtdcdsr(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = $num = '';
+
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['detail']['basic_typeT']}</td>";
+                    $temp .= "<td>{$one['detail']['bdwMes_conMoney']}</td>";
+                    $temp .= "<td>{$one['detail']['basic_date']}</td>";
+                    $temp .= "<td>{$this->formatDate($one['detail']['endTime'])}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="5" style="text-align: center;background-color: #d3d3d3">其他动产融资</td>
+    </tr>
+    <tr>
+        <td colspan="5">其他动产融资 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="24%">抵押物类型</td>
+        <td width="23%">主合同金额</td>
+        <td width="23%">登记期限</td>
+        <td width="23%">登记到期日</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
