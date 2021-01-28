@@ -3311,17 +3311,11 @@ TEMP;
                                 $temp .= "<td>{$party['execMoney']}</td>";
                                 switch ($party['partyType'])
                                 {
-                                    case 'p':
-                                        $temp .= "<td>原告</td>";
+                                    case 'P':
+                                        $temp .= "<td>自然人</td>";
                                         break;
-                                    case 'd':
-                                        $temp .= "<td>被告</td>";
-                                        break;
-                                    case 't':
-                                        $temp .= "<td>第三人</td>";
-                                        break;
-                                    case 'u':
-                                        $temp .= "<td>当事人</td>";
+                                    case 'C':
+                                        $temp .= "<td>公司</td>";
                                         break;
                                     default:
                                         $temp .= "<td> -- </td>";
@@ -3336,17 +3330,11 @@ TEMP;
                                 $temp .= "<td>{$party['execMoney']}</td>";
                                 switch ($party['partyType'])
                                 {
-                                    case 'p':
-                                        $temp .= "<td>原告</td>";
+                                    case 'P':
+                                        $temp .= "<td>自然人</td>";
                                         break;
-                                    case 'd':
-                                        $temp .= "<td>被告</td>";
-                                        break;
-                                    case 't':
-                                        $temp .= "<td>第三人</td>";
-                                        break;
-                                    case 'u':
-                                        $temp .= "<td>当事人</td>";
+                                    case 'C':
+                                        $temp .= "<td>公司</td>";
                                         break;
                                     default:
                                         $temp .= "<td> -- </td>";
@@ -3384,7 +3372,7 @@ TEMP;
         <td width="13%">案件状态</td>
         <td width="21%">当事人</td>
         <td width="13%">执行金额</td>
-        <td width="7%">诉讼地位</td>
+        <td width="7%">主体</td>
     </tr>
     {$insert}
 </table>
@@ -3393,7 +3381,90 @@ TEMP;
         }
     }
 
+    //司法涉诉与抵质押信息 失信公告
+    private function shixin(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = $num = '';
 
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
+                {
+                    $rowspan = count($one['detail']['partys']) === 0 ? 1 : count($one['detail']['partys']);
+                    $temp = '<tr>';
+                    $temp .= "<td rowspan=\"{$rowspan}\">{$i}</td>";
+                    $temp .= "<td rowspan=\"{$rowspan}\">{$one['detail']['caseNo']}</td>";
+                    $temp .= "<td rowspan=\"{$rowspan}\">{$one['detail']['court']}</td>";
+                    $temp .= "<td rowspan=\"{$rowspan}\">{$one['sortTimeString']}</td>";
+
+                    $first = true;
+
+                    if (!empty($one['detail']['partys']))
+                    {
+                        foreach ($one['detail']['partys'] as $party)
+                        {
+                            if ($first)
+                            {
+                                $temp .= "<td>{$party['lxqkT']}</td>";
+                                $temp .= "<td>{$party['jtqx']}</td>";
+                                $temp .= "<td>{$party['money']}</td>";
+                                $temp .= "<td>{$party['pname']}</td>";
+                                $temp .= '</tr>';
+                                $first = false;
+                            }else
+                            {
+                                $temp .= '<tr>';
+                                $temp .= "<td>{$party['lxqkT']}</td>";
+                                $temp .= "<td>{$party['jtqx']}</td>";
+                                $temp .= "<td>{$party['money']}</td>";
+                                $temp .= "<td>{$party['pname']}</td>";
+                                $temp .= '</tr>';
+                            }
+                        }
+                    }else
+                    {
+                        $temp .= "<td> -- </td>";
+                        $temp .= "<td> -- </td>";
+                        $temp .= "<td> -- </td>";
+                        $temp .= "<td> -- </td>";
+                        $temp .= "</tr>";
+                    }
+
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="8" style="text-align: center;background-color: #d3d3d3">失信公告</td>
+    </tr>
+    <tr>
+        <td colspan="8">失信公告 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="13%">案号</td>
+        <td width="13%">法院名称</td>
+        <td width="13%">立案时间</td>
+        <td width="13%">履行情况</td>
+        <td width="21%">具体情形</td>
+        <td width="13%">涉案金额</td>
+        <td width="7%">当事人</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
