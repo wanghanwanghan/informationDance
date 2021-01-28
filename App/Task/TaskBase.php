@@ -447,7 +447,7 @@ class TaskBase
                 'SearchCertification',//5-4
             ],
             [
-                'satparty_xin',
+                'satparty_xin',//6-0
                 'satparty_xuke',
                 'satparty_reg',
                 'satparty_fzc',
