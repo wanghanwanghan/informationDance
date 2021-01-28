@@ -3817,7 +3817,7 @@ TEMP;
     <tr>
         <td width="7%">序号</td>
         <td width="50%">质押财产/转让财产描述</td>
-        <td width="26%">登记时间</td>
+        <td width="26%">登记到期起止</td>
         <td width="17%">转让财产价值</td>
     </tr>
     {$insert}
@@ -3827,6 +3827,54 @@ TEMP;
         }
     }
 
+    //债权信息 所有权保留
+    private function company_zdw_syqbldsr(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = $num = '';
+
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['detail']['regClass']}</td>";
+                    $temp .= "<td>{$one['detail']['basic_date']}</td>";
+                    $temp .= "<td>{$one['detail']['endTime']}</td>";
+                    $temp .= "<td>{$one['detail']['syqType']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="5" style="text-align: center;background-color: #d3d3d3">所有权保留</td>
+    </tr>
+    <tr>
+        <td colspan="5">所有权保留 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="23%">登记种类</td>
+        <td width="23%">登记期限</td>
+        <td width="23%">登记到期日</td>
+        <td width="24%">所有权标的物类型</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
