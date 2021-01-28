@@ -496,10 +496,10 @@ class TaskBase
                 'company_zdw_syqbldsr',//12-1
             ],
             [
-                'company_zdw_zldjdsr',
-                'company_zdw_bzjzydsr',
-                'company_zdw_cdzydsr',
-                'company_zdw_qtdcdsr',
+                'company_zdw_zldjdsr',//13-0
+                'company_zdw_bzjzydsr',//13-1
+                'company_zdw_cdzydsr',//13-2
+                'company_zdw_qtdcdsr',//13-3
             ],
         ];
 
