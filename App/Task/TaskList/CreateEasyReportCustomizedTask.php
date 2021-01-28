@@ -2975,6 +2975,9 @@ TEMP;
                         }else
                         {
                             $temp .= '<tr>';
+                            $temp .= "<td>{$party['caseCauseT']}</td>";
+                            $temp .= "<td>{$party['pname']}</td>";
+                            $temp .= "<td>{$party['partyTitleT']}</td>";
                             switch ($party['partyPositionT'])
                             {
                                 case 'p':
@@ -3000,6 +3003,8 @@ TEMP;
                     $i++;
                 }
             }
+
+            CommonService::getInstance()->log4PHP($insert);
 
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
