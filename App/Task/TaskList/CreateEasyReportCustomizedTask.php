@@ -3306,10 +3306,10 @@ TEMP;
                         {
                             if ($first)
                             {
-                                $temp .= "<td>{$party['caseCauseT']}</td>";
+                                $temp .= "<td>{$party['caseStateT']}</td>";
                                 $temp .= "<td>{$party['pname']}</td>";
                                 $temp .= "<td>{$party['execMoney']}</td>";
-                                switch ($party['partyPositionT'])
+                                switch ($party['partyType'])
                                 {
                                     case 'p':
                                         $temp .= "<td>原告</td>";
@@ -3331,10 +3331,10 @@ TEMP;
                             }else
                             {
                                 $temp .= '<tr>';
-                                $temp .= "<td>{$party['caseCauseT']}</td>";
+                                $temp .= "<td>{$party['caseStateT']}</td>";
                                 $temp .= "<td>{$party['pname']}</td>";
                                 $temp .= "<td>{$party['execMoney']}</td>";
-                                switch ($party['partyPositionT'])
+                                switch ($party['partyType'])
                                 {
                                     case 'p':
                                         $temp .= "<td>原告</td>";
