@@ -128,7 +128,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
     //填充数据
     private function fillData(Tcpdf $pdf, $cspData)
     {
-        CommonService::getInstance()->log4PHP($cspData);
+        // CommonService::getInstance()->log4PHP($cspData);
 
         $pdf->AddPage();
 
