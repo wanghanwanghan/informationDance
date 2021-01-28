@@ -2940,10 +2940,10 @@ TEMP;
                 {
                     $rowspan = count($one['detail']['partys']);
                     $temp = '<tr>';
-                    $temp .= "<td rowspan={$rowspan}>{$i}</td>";
-                    $temp .= "<td rowspan={$rowspan}>{$one['detail']['caseNo']}</td>";
-                    $temp .= "<td rowspan={$rowspan}>{$one['detail']['court']}</td>";
-                    $temp .= "<td rowspan={$rowspan}>{$one['sortTimeString']}</td>";
+                    $temp .= "<td rowspan=\"{$rowspan}\">{$i}</td>";
+                    $temp .= "<td rowspan=\"{$rowspan}\">{$one['detail']['caseNo']}</td>";
+                    $temp .= "<td rowspan=\"{$rowspan}\">{$one['detail']['court']}</td>";
+                    $temp .= "<td rowspan=\"{$rowspan}\">{$one['sortTimeString']}</td>";
 
                     $first = true;
                     foreach ($one['detail']['partys'] as $party)
