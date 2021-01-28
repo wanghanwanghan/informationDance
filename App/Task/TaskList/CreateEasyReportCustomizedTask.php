@@ -2072,10 +2072,6 @@ TEMP;
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['title']}</td>";
-                    $temp .= "<td>{$one['sortTimeString']}</td>";
-                    $temp .= "<td>{$one['detail']['money']}</td>";
-                    $temp .= "<td>{$one['detail']['eventName']}</td>";
-                    $temp .= "<td>{$one['detail']['eventResult']}</td>";
                     $temp .= "<td>{$one['detail']['authority']}</td>";
                     $temp .= "<td>{$one['detail']['body']}</td>";
                     $temp .= '</tr>';
@@ -2087,20 +2083,16 @@ TEMP;
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
-        <td colspan="8" style="text-align: center;background-color: #d3d3d3">涉税处罚公示</td>
+        <td colspan="4" style="text-align: center;background-color: #d3d3d3">涉税处罚公示</td>
     </tr>
     <tr>
-        <td colspan="8">涉税处罚公示 {$num} 项，报告中提供最新的 20 条记录</td>
+        <td colspan="4">涉税处罚公示 {$num} 项，报告中提供最新的 20 条记录</td>
     </tr>
     <tr>
         <td width="7%">序号</td>
         <td width="13%">标题</td>
-        <td width="13%">处罚时间</td>
-        <td width="13%">处罚金额</td>
-        <td width="13%">事件名称</td>
-        <td width="13%">事件结果</td>
         <td width="13%">管理机关</td>
-        <td width="15%">摘要</td>
+        <td width="67%">摘要</td>
     </tr>
     {$insert}
 </table>
