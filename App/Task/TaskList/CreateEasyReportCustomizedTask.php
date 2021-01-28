@@ -2427,6 +2427,8 @@ TEMP;
                     $temp .= "<td>{$one['detail']['regNo']}</td>";
                     $temp .= "<td>{$one['detail']['custom']}</td>";
                     $temp .= "<td>{$one['detail']['category']}</td>";
+                    $temp .= "<td>{$one['detail']['jjqh']}</td>";
+                    $temp .= "<td>{$one['detail']['industry']}</td>";
                     $temp .= "<td>{$one['sortTimeString']}</td>";
                     $temp .= '</tr>';
                     $insert .= $temp;
@@ -2447,6 +2449,8 @@ TEMP;
         <td>海关注册码</td>
         <td>注册海关</td>
         <td>经营类别</td>
+        <td>经济区划</td>
+        <td>行业种类</td>
         <td>注册时间</td>
     </tr>
     {$insert}
