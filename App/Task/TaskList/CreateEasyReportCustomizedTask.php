@@ -2407,6 +2407,67 @@ TEMP;
         }
     }
 
+    //海关信息 海关企业
+    private function custom_qy(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = $num = '';
+
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['detail']['regNo']}</td>";
+                    $temp .= "<td>{$one['detail']['custom']}</td>";
+                    $temp .= "<td>{$one['detail']['category']}</td>";
+                    $temp .= "<td>{$one['sortTimeString']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="4" style="text-align: center;background-color: #d3d3d3">海关企业</td>
+    </tr>
+    <tr>
+        <td colspan="4">海关企业 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
+        <td>序号</td>
+        <td>海关注册码</td>
+        <td>注册海关</td>
+        <td>经营类别</td>
+        <td>注册时间</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

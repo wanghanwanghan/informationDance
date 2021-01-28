@@ -465,7 +465,7 @@ class TaskBase
                 'epbparty_huanping',//8-3
             ],
             [
-                'custom_qy',
+                'custom_qy',//9-0
                 'custom_xuke',
                 'custom_credit',
                 'custom_punish',
