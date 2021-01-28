@@ -456,13 +456,13 @@ class TaskBase
             ],
             [
                 'GetAdministrativeLicenseList',//7-0
-                'GetAdministrativePenaltyList',
+                'GetAdministrativePenaltyList',//7-1
             ],
             [
-                'epbparty',
-                'epbparty_jkqy',
-                'epbparty_zxjc',
-                'epbparty_huanping',
+                'epbparty',//8-0
+                'epbparty_jkqy',//8-1
+                'epbparty_zxjc',//8-2
+                'epbparty_huanping',//8-3
             ],
             [
                 'custom_qy',

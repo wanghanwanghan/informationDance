@@ -2205,6 +2205,58 @@ TEMP;
         }
     }
 
+    //环保信息 环保处罚
+    private function epbparty(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = $num = '';
+
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['detail']['caseNo']}</td>";
+                    $temp .= "<td>{$one['sortTimeString']}</td>";
+                    $temp .= "<td>{$one['detail']['eventName']}</td>";
+                    $temp .= "<td>{$one['detail']['money']}</td>";
+                    $temp .= "<td>{$one['detail']['eventResult']}</td>";
+                    $temp .= "<td>{$one['detail']['authority']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="7" style="text-align: center;background-color: #d3d3d3">环保处罚</td>
+    </tr>
+    <tr>
+        <td colspan="7">环保处罚 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
+        <td>序号</td>
+        <td>案号</td>
+        <td>处罚时间</td>
+        <td>事件名称(类型)</td>
+        <td>处罚金额</td>
+        <td>处罚结果</td>
+        <td>处罚机关</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
