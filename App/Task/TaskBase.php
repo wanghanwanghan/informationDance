@@ -451,7 +451,7 @@ class TaskBase
                 'satparty_xuke',//6-1
                 'satparty_reg',//6-2
                 'satparty_fzc',//6-3
-                'satparty_qs',
+                'satparty_qs',//6-4
                 'satparty_chufa',
             ],
             [
