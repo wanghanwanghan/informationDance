@@ -492,8 +492,8 @@ class TaskBase
                 'GetLandMortgageList',//11-10
             ],
             [
-                'company_zdw_yszkdsr',
-                'company_zdw_syqbldsr',
+                'company_zdw_yszkdsr',//12-0
+                'company_zdw_syqbldsr',//12-1
             ],
             [
                 'company_zdw_zldjdsr',
