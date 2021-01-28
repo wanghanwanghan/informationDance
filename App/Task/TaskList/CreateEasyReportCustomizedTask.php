@@ -3572,6 +3572,58 @@ TEMP;
         }
     }
 
+    //司法涉诉与抵质押信息 动产抵押
+    private function getChattelMortgageInfo(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = $num = '';
+
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['DJBH']}</td>";
+                    $temp .= "<td>{$one['GSRQ']}</td>";
+                    $temp .= "<td>{$one['DJRQ']}</td>";
+                    $temp .= "<td>{$one['DJJG']}</td>";
+                    $temp .= "<td>{$one['BDBZQSE']}</td>";
+                    $temp .= "<td>{$one['ZT']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="7" style="text-align: center;background-color: #d3d3d3">动产抵押</td>
+    </tr>
+    <tr>
+        <td colspan="7">动产抵押 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="13%">登记编号</td>
+        <td width="13%">公示日期</td>
+        <td width="13%">登记日期</td>
+        <td width="28%">登记机关</td>
+        <td width="13%">被担保债权数额</td>
+        <td width="13%">状态</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
