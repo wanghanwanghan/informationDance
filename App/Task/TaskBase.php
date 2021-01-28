@@ -434,7 +434,7 @@ class TaskBase
                 'SearchSoftwareCr',//5-1
                 'tmSearch',//5-2
                 'SearchCopyRight',//5-3
-                'SearchCertification',
+                'SearchCertification',//5-4
             ],
             [
                 'satparty_xin',
