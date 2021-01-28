@@ -2138,12 +2138,12 @@ TEMP;
         <td colspan="6">行政许可 {$num} 项，报告中提供最新的 20 条记录</td>
     </tr>
     <tr>
-        <td>序号</td>
-        <td>许可编号</td>
-        <td>有效期自</td>
-        <td>有效期止</td>
-        <td>许可内容</td>
-        <td>许可机关</td>
+        <td width="7%">序号</td>
+        <td width="18%">许可编号</td>
+        <td width="13%">有效期自</td>
+        <td width="13%">有效期止</td>
+        <td width="29%">许可内容</td>
+        <td width="20%">许可机关</td>
     </tr>
     {$insert}
 </table>
