@@ -3695,12 +3695,11 @@ TEMP;
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
-                    $temp .= "<td>{$one['DJBH']}</td>";
-                    $temp .= "<td>{$one['GQCZSLDJRQ']}</td>";
-                    $temp .= "<td>{$one['ZQR']}</td>";
-                    $temp .= "<td>{$one['CZR']}</td>";
-                    $temp .= "<td>{$one['CZGQSE']}</td>";
-                    $temp .= "<td>{$one['ZT']}</td>";
+                    $temp .= "<td>{$one['Creditor']}</td>";
+                    $temp .= "<td>{$one['Debtor']}</td>";
+                    $temp .= "<td>{$one['CreditorAmount']}</td>";
+                    $temp .= "<td>{$one['AssuranceType']}</td>";
+                    $temp .= "<td>{$one['FulfillObligation']}</td>";
                     $temp .= '</tr>';
                     $insert .= $temp;
                     $i++;
@@ -3710,19 +3709,18 @@ TEMP;
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
-        <td colspan="7" style="text-align: center;background-color: #d3d3d3">股权出质</td>
+        <td colspan="6" style="text-align: center;background-color: #d3d3d3">对外担保</td>
     </tr>
     <tr>
-        <td colspan="7">股权出质 {$num} 项，报告中提供最新的 20 条记录</td>
+        <td colspan="6">对外担保 {$num} 项，报告中提供最新的 20 条记录</td>
     </tr>
     <tr>
         <td width="7%">序号</td>
-        <td width="13%">登记编号</td>
-        <td width="13%">登记日期</td>
-        <td width="21%">质权人</td>
-        <td width="20%">出质人</td>
-        <td width="13%">出质股权数额</td>
-        <td width="13%">状态</td>
+        <td width="13%">债权人</td>
+        <td width="13%">债务人</td>
+        <td width="21%">担保金额(万元)</td>
+        <td width="20%">保证方式</td>
+        <td width="26%">担保期起止</td>
     </tr>
     {$insert}
 </table>
