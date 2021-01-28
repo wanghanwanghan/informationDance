@@ -2296,11 +2296,11 @@ TEMP;
     </tr>
     <tr>
         <td width="7%">序号</td>
-        <td width="41%">标题</td>
+        <td width="37%">标题</td>
         <td width="13%">时间</td>
         <td width="13%">事件名称</td>
         <td width="13%">事件类型</td>
-        <td width="13%">涉事企业</td>
+        <td width="17%">涉事企业</td>
     </tr>
     {$insert}
 </table>
@@ -2309,7 +2309,52 @@ TEMP;
         }
     }
 
+    //环保信息 环保企业自行监测结果
+    private function epbparty_zxjc(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = $num = '';
 
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['detail']['pollutant']}</td>";
+                    $temp .= "<td>{$one['detail']['eventResult']}</td>";
+                    $temp .= "<td>{$one['sortTimeString']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="4" style="text-align: center;background-color: #d3d3d3">环保企业自行监测结果</td>
+    </tr>
+    <tr>
+        <td colspan="4">环保企业自行监测结果 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
+        <td>序号</td>
+        <td>监测指标/污染项目</td>
+        <td>监测结果</td>
+        <td>监测时间</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
