@@ -3923,7 +3923,56 @@ TEMP;
         }
     }
 
+    //债权信息 保证金质押登记
+    private function company_zdw_bzjzydsr(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = $num = '';
 
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['detail']['pledgePro_proMoney']}</td>";
+                    $temp .= "<td>{$one['detail']['pledgePro_depMoney']}</td>";
+                    $temp .= "<td>{$one['detail']['basic_type']}</td>";
+                    $temp .= "<td>{$one['detail']['basic_date']}</td>";
+                    $temp .= "<td>{$this->formatDate($one['detail']['endTime'])}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="6" style="text-align: center;background-color: #d3d3d3">保证金质押登记</td>
+    </tr>
+    <tr>
+        <td colspan="6">保证金质押登记 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="18%">主合同金额</td>
+        <td width="18%">保证金金额</td>
+        <td width="19%">登记种类</td>
+        <td width="19%">登记期限</td>
+        <td width="19%">登记到期日</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
