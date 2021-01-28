@@ -102,7 +102,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         $this->fillData($pdf, $res);
 
         //输出PDF
-        $pdf->Output(REPORT_PATH . 't.pdf', 'F');//I输出、D下载
+        $pdf->Output(REPORT_PATH . "{$this->reportNum}.pdf", 'F');//I输出、D下载
 
         return true;
     }
