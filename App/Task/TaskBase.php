@@ -479,17 +479,17 @@ class TaskBase
                 'safe_xuke',//10-5
             ],
             [
-                'fygg',
-                'ktgg',
-                'cpws',
-                'zxgg',
-                'shixin',
-                'SearchZhiXing',
-                'sifacdk',
-                'getChattelMortgageInfo',
-                'getEquityPledgedInfo',
-                'GetLandMortgageList',
-                'GetAnnualReport',
+                'fygg',//11-0
+                'ktgg',//11-1
+                'cpws',//11-2
+                'zxgg',//11-3
+                'shixin',//11-4
+                'SearchZhiXing',//11-5
+                'sifacdk',//11-6
+                'getChattelMortgageInfo',//11-7
+                'getEquityPledgedInfo',//11-8
+                'GetLandMortgageList',//11-9
+                'GetAnnualReport',//11-10
             ],
             [
                 'company_zdw_yszkdsr',
