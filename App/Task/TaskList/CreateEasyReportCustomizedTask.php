@@ -3157,6 +3157,124 @@ TEMP;
         }
     }
 
+    //司法涉诉与抵质押信息 裁判文书
+    private function cpws(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = $num = '';
+
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
+                {
+                    $rowspan = count($one['detail']['partys']) === 0 ? 1 : count($one['detail']['partys']);
+                    $temp = '<tr>';
+                    $temp .= "<td rowspan=\"{$rowspan}\">{$i}</td>";
+                    $temp .= "<td rowspan=\"{$rowspan}\">{$one['detail']['caseNo']}</td>";
+                    $temp .= "<td rowspan=\"{$rowspan}\">{$one['detail']['court']}</td>";
+                    $temp .= "<td rowspan=\"{$rowspan}\">{$one['sortTimeString']}</td>";
+                    $temp .= "<td rowspan=\"{$rowspan}\">{$one['trialProcedure']}</td>";
+
+                    $first = true;
+
+                    if (!empty($one['detail']['partys']))
+                    {
+                        foreach ($one['detail']['partys'] as $party)
+                        {
+                            if ($first)
+                            {
+                                $temp .= "<td>{$party['caseCauseT']}</td>";
+                                $temp .= "<td>{$party['pname']}</td>";
+                                $temp .= "<td>{$party['partyTitleT']}</td>";
+                                switch ($party['partyPositionT'])
+                                {
+                                    case 'p':
+                                        $temp .= "<td>原告</td>";
+                                        break;
+                                    case 'd':
+                                        $temp .= "<td>被告</td>";
+                                        break;
+                                    case 't':
+                                        $temp .= "<td>第三人</td>";
+                                        break;
+                                    case 'u':
+                                        $temp .= "<td>当事人</td>";
+                                        break;
+                                    default:
+                                        $temp .= "<td> -- </td>";
+                                }
+                                $temp .= '</tr>';
+                                $first = false;
+                            }else
+                            {
+                                $temp .= '<tr>';
+                                $temp .= "<td>{$party['caseCauseT']}</td>";
+                                $temp .= "<td>{$party['pname']}</td>";
+                                $temp .= "<td>{$party['partyTitleT']}</td>";
+                                switch ($party['partyPositionT'])
+                                {
+                                    case 'p':
+                                        $temp .= "<td>原告</td>";
+                                        break;
+                                    case 'd':
+                                        $temp .= "<td>被告</td>";
+                                        break;
+                                    case 't':
+                                        $temp .= "<td>第三人</td>";
+                                        break;
+                                    case 'u':
+                                        $temp .= "<td>当事人</td>";
+                                        break;
+                                    default:
+                                        $temp .= "<td> -- </td>";
+                                }
+                                $temp .= '</tr>';
+                            }
+                        }
+                    }else
+                    {
+                        $temp .= "<td> -- </td>";
+                        $temp .= "<td> -- </td>";
+                        $temp .= "<td> -- </td>";
+                        $temp .= "<td> -- </td>";
+                        $temp .= "</tr>";
+                    }
+
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="9" style="text-align: center;background-color: #d3d3d3">裁判文书</td>
+    </tr>
+    <tr>
+        <td colspan="9">裁判文书 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="13%">案号</td>
+        <td width="13%">法院名称</td>
+        <td width="13%">立案时间</td>
+        <td width="7%">审理状态</td>
+        <td width="13%">案由</td>
+        <td width="14%">当事人</td>
+        <td width="13%">称号</td>
+        <td width="7%">诉讼地位</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
