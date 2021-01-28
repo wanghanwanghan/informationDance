@@ -466,9 +466,9 @@ class TaskBase
             ],
             [
                 'custom_qy',//9-0
-                'custom_xuke',
-                'custom_credit',
-                'custom_punish',
+                'custom_xuke',//9-1
+                'custom_credit',//9-2
+                'custom_punish',//9-3
             ],
             [
                 'pbcparty',
