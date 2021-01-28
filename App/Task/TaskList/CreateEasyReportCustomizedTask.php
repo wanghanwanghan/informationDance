@@ -3466,7 +3466,56 @@ TEMP;
         }
     }
 
+    //司法涉诉与抵质押信息 被执行人
+    private function SearchZhiXing(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = $num = '';
 
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['Anno']}</td>";
+                    $temp .= "<td>{$one['ExecuteGov']}</td>";
+                    $temp .= "<td>{$this->formatDate($one['Liandate'])}</td>";
+                    $temp .= "<td>({$one['Biaodi']}</td>";
+                    $temp .= "<td>({$one['Status']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="6" style="text-align: center;background-color: #d3d3d3">被执行人</td>
+    </tr>
+    <tr>
+        <td colspan="6">被执行人 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
+        <td>序号</td>
+        <td>案号</td>
+        <td>执行法院</td>
+        <td>立案时间</td>
+        <td>执行标的</td>
+        <td>案件状态</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
