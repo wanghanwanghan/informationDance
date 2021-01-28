@@ -1885,7 +1885,7 @@ TEMP;
     <tr>
         <td width="7%">序号</td>
         <td width="13%">评定时间</td>
-        <td width="13%">发布时间</td>
+        <td width="13%">申请时间</td>
         <td width="13%">事件名称</td>
         <td width="13%">管理机关</td>
         <td width="41%">摘要</td>
@@ -1897,6 +1897,58 @@ TEMP;
         }
     }
 
+    //税务信息 税务登记信息
+    private function satparty_reg(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = $num = '';
+
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$this->formatDate($one['detail']['sortTime'])}</td>";
+                    $temp .= "<td>{$this->formatDate($one['detail']['postTime'])}</td>";
+                    $temp .= "<td>{$one['detail']['eventName']}</td>";
+                    $temp .= "<td>{$one['detail']['eventResult']}</td>";
+                    $temp .= "<td>{$one['detail']['authority']}</td>";
+                    $temp .= "<td>{$one['detail']['body']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="7" style="text-align: center;background-color: #d3d3d3">税务登记信息</td>
+    </tr>
+    <tr>
+        <td colspan="7">税务登记信息 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="13%">评定时间</td>
+        <td width="13%">申请时间</td>
+        <td width="13%">事件名称</td>
+        <td width="13%">事件结果</td>
+        <td width="13%">管理机关</td>
+        <td width="28%">摘要</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
