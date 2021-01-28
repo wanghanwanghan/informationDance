@@ -452,10 +452,10 @@ class TaskBase
                 'satparty_reg',//6-2
                 'satparty_fzc',//6-3
                 'satparty_qs',//6-4
-                'satparty_chufa',
+                'satparty_chufa',//6-5
             ],
             [
-                'GetAdministrativeLicenseList',
+                'GetAdministrativeLicenseList',//7-0
                 'GetAdministrativePenaltyList',
             ],
             [
