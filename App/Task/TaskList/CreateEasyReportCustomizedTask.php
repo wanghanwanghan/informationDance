@@ -2938,7 +2938,7 @@ TEMP;
 
                 foreach ($cspData[__FUNCTION__]['list'] as $one)
                 {
-                    $rowspan = count($one['detail']['partys']);
+                    $rowspan = count($one['detail']['partys']) === 0 ? 1 : count($one['detail']['partys']);
                     $temp = '<tr>';
                     $temp .= "<td rowspan=\"{$rowspan}\">{$i}</td>";
                     $temp .= "<td rowspan=\"{$rowspan}\">{$one['detail']['caseNo']}</td>";
@@ -2946,65 +2946,74 @@ TEMP;
                     $temp .= "<td rowspan=\"{$rowspan}\">{$one['sortTimeString']}</td>";
 
                     $first = true;
-                    foreach ($one['detail']['partys'] as $party)
+
+                    if (!empty($one['detail']['partys']))
                     {
-                        if ($first)
+                        foreach ($one['detail']['partys'] as $party)
                         {
-                            $temp .= "<td>{$party['caseCauseT']}</td>";
-                            $temp .= "<td>{$party['pname']}</td>";
-                            $temp .= "<td>{$party['partyTitleT']}</td>";
-                            switch ($party['partyPositionT'])
+                            if ($first)
                             {
-                                case 'p':
-                                    $temp .= "<td>原告</td>";
-                                    break;
-                                case 'd':
-                                    $temp .= "<td>被告</td>";
-                                    break;
-                                case 't':
-                                    $temp .= "<td>第三人</td>";
-                                    break;
-                                case 'u':
-                                    $temp .= "<td>当事人</td>";
-                                    break;
-                                default:
-                                    $temp .= "<td> -- </td>";
-                            }
-                            $temp .= '</tr>';
-                            $first = false;
-                        }else
-                        {
-                            $temp .= '<tr>';
-                            $temp .= "<td>{$party['caseCauseT']}</td>";
-                            $temp .= "<td>{$party['pname']}</td>";
-                            $temp .= "<td>{$party['partyTitleT']}</td>";
-                            switch ($party['partyPositionT'])
+                                $temp .= "<td>{$party['caseCauseT']}</td>";
+                                $temp .= "<td>{$party['pname']}</td>";
+                                $temp .= "<td>{$party['partyTitleT']}</td>";
+                                switch ($party['partyPositionT'])
+                                {
+                                    case 'p':
+                                        $temp .= "<td>原告</td>";
+                                        break;
+                                    case 'd':
+                                        $temp .= "<td>被告</td>";
+                                        break;
+                                    case 't':
+                                        $temp .= "<td>第三人</td>";
+                                        break;
+                                    case 'u':
+                                        $temp .= "<td>当事人</td>";
+                                        break;
+                                    default:
+                                        $temp .= "<td> -- </td>";
+                                }
+                                $temp .= '</tr>';
+                                $first = false;
+                            }else
                             {
-                                case 'p':
-                                    $temp .= "<td>原告</td>";
-                                    break;
-                                case 'd':
-                                    $temp .= "<td>被告</td>";
-                                    break;
-                                case 't':
-                                    $temp .= "<td>第三人</td>";
-                                    break;
-                                case 'u':
-                                    $temp .= "<td>当事人</td>";
-                                    break;
-                                default:
-                                    $temp .= "<td> -- </td>";
+                                $temp .= '<tr>';
+                                $temp .= "<td>{$party['caseCauseT']}</td>";
+                                $temp .= "<td>{$party['pname']}</td>";
+                                $temp .= "<td>{$party['partyTitleT']}</td>";
+                                switch ($party['partyPositionT'])
+                                {
+                                    case 'p':
+                                        $temp .= "<td>原告</td>";
+                                        break;
+                                    case 'd':
+                                        $temp .= "<td>被告</td>";
+                                        break;
+                                    case 't':
+                                        $temp .= "<td>第三人</td>";
+                                        break;
+                                    case 'u':
+                                        $temp .= "<td>当事人</td>";
+                                        break;
+                                    default:
+                                        $temp .= "<td> -- </td>";
+                                }
+                                $temp .= '</tr>';
                             }
-                            $temp .= '</tr>';
                         }
+                    }else
+                    {
+                        $temp .= "<td> -- </td>";
+                        $temp .= "<td> -- </td>";
+                        $temp .= "<td> -- </td>";
+                        $temp .= "<td> -- </td>";
+                        $temp .= "</tr>";
                     }
 
                     $insert .= $temp;
                     $i++;
                 }
             }
-
-            CommonService::getInstance()->log4PHP($insert);
 
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
