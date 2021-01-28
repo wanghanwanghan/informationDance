@@ -2849,10 +2849,10 @@ TEMP;
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
-        <td colspan="6" style="text-align: center;background-color: #d3d3d3">外汇局处罚</td>
+        <td colspan="7" style="text-align: center;background-color: #d3d3d3">外汇局处罚</td>
     </tr>
     <tr>
-        <td colspan="6">外汇局处罚 {$num} 项，报告中提供最新的 20 条记录</td>
+        <td colspan="7">外汇局处罚 {$num} 项，报告中提供最新的 20 条记录</td>
     </tr>
     <tr>
         <td width="7%">序号</td>
