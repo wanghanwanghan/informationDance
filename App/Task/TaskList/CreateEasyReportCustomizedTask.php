@@ -2327,6 +2327,8 @@ TEMP;
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['detail']['pollutant']}</td>";
+                    $temp .= "<td>{$one['detail']['standard']}</td>";
+                    $temp .= "<td>{$one['detail']['density']}</td>";
                     $temp .= "<td>{$one['detail']['eventResult']}</td>";
                     $temp .= "<td>{$one['sortTimeString']}</td>";
                     $temp .= '</tr>';
@@ -2338,14 +2340,16 @@ TEMP;
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
-        <td colspan="4" style="text-align: center;background-color: #d3d3d3">环保企业自行监测结果</td>
+        <td colspan="6" style="text-align: center;background-color: #d3d3d3">环保企业自行监测结果</td>
     </tr>
     <tr>
-        <td colspan="4">环保企业自行监测结果 {$num} 项，报告中提供最新的 20 条记录</td>
+        <td colspan="6">环保企业自行监测结果 {$num} 项，报告中提供最新的 20 条记录</td>
     </tr>
     <tr>
         <td>序号</td>
         <td>监测指标/污染项目</td>
+        <td>标准值</td>
+        <td>监测值</td>
         <td>监测结果</td>
         <td>监测时间</td>
     </tr>
