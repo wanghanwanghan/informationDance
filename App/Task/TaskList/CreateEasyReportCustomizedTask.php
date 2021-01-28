@@ -3486,8 +3486,8 @@ TEMP;
                     $temp .= "<td>{$one['Anno']}</td>";
                     $temp .= "<td>{$one['ExecuteGov']}</td>";
                     $temp .= "<td>{$this->formatDate($one['Liandate'])}</td>";
-                    $temp .= "<td>({$one['Biaodi']}</td>";
-                    $temp .= "<td>({$one['Status']}</td>";
+                    $temp .= "<td>{$one['Biaodi']}</td>";
+                    $temp .= "<td>{$one['Status']}</td>";
                     $temp .= '</tr>';
                     $insert .= $temp;
                     $i++;
@@ -3517,6 +3517,60 @@ TEMP;
         }
     }
 
+    //司法涉诉与抵质押信息 司法查冻扣
+    private function sifacdk(Tcpdf $pdf, $cspData)
+    {
+        if (array_key_exists(__FUNCTION__,$cspData))
+        {
+            $insert = $num = '';
+
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $i = 1;
+
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
+                {
+                    $temp = '<tr>';
+                    $temp .= "<td>{$i}</td>";
+                    $temp .= "<td>{$one['detail']['caseNo']}</td>";
+                    $temp .= "<td>{$one['detail']['objectName']}</td>";
+                    $temp .= "<td>{$one['detail']['objectType']}</td>";
+                    $temp .= "<td>{$one['detail']['court']}</td>";
+                    $temp .= "<td>{$one['sortTimeString']}</td>";
+                    $temp .= "<td>{$one['detail']['eventDate']}</td>";
+                    $temp .= "<td>{$one['detail']['money']}</td>";
+                    $temp .= '</tr>';
+                    $insert .= $temp;
+                    $i++;
+                }
+            }
+
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="8" style="text-align: center;background-color: #d3d3d3">司法查冻扣</td>
+    </tr>
+    <tr>
+        <td colspan="8">司法查冻扣 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
+        <td>序号</td>
+        <td>案件编号</td>
+        <td>标的名称</td>
+        <td>标的类型</td>
+        <td>审理法院</td>
+        <td>审结时间</td>
+        <td>事件时间</td>
+        <td>涉及金额</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
+    }
 
 
 
