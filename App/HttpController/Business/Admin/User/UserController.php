@@ -122,6 +122,7 @@ class UserController extends UserBase
         try {
             $list = User::create()->alias('t1')
                 ->join('information_dance_wallet as t2', 't2.phone = t1.phone')
+                ->order('t1.created_at','desc')
                 ->limit($this->exprOffset($page, $pageSize), $pageSize)
                 ->all();
 
