@@ -104,6 +104,10 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         //输出PDF
         $pdf->Output(REPORT_PATH . "{$this->reportNum}.pdf", 'F');//I输出、D下载
 
+        $info = ReportInfo::create()->where('phone', $this->phone)->where('filename', $this->reportNum)->get();
+
+        empty($info) ?: $info->update(['status' => 2]);
+
         return true;
     }
 
