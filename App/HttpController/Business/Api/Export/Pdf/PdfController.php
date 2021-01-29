@@ -62,10 +62,6 @@ class PdfController extends ExportBase
             $msg = '简版报告定制版生成中';
         }
 
-        CommonService::getInstance()->log4PHP([
-            $code,$paging,$res,$msg
-        ]);
-
         return $this->writeJson($code, $paging, $res, $msg);
     }
 
