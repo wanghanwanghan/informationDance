@@ -27,6 +27,7 @@ class ReportService extends ServiceBase
                 'phone' => $phone,
                 'entName' => $entName,
                 'filename' => $reportNum,
+                'ext' => 'docx',
                 'type' => ReportService::REPORT_TYPE_10,
                 'status' => 3,//1是异常，2是完成，3是生成中
                 'errInfo' => '',
@@ -50,6 +51,7 @@ class ReportService extends ServiceBase
                 'phone' => $phone,
                 'entName' => $entName,
                 'filename' => $reportNum,
+                'ext' => 'docx',
                 'type' => ReportService::REPORT_TYPE_30,
                 'status' => 3,//1是异常，2是完成，3是生成中
                 'errInfo' => '',
@@ -73,6 +75,7 @@ class ReportService extends ServiceBase
                 'phone' => $phone,
                 'entName' => $entName,
                 'filename' => $reportNum,
+                'ext' => 'pdf',
                 'type' => ReportService::REPORT_TYPE_31,
                 'status' => 3,//1是异常，2是完成，3是生成中
                 'errInfo' => '',
@@ -97,6 +100,7 @@ class ReportService extends ServiceBase
                 'phone' => $phone,
                 'entName' => $entName,
                 'filename' => $reportNum,
+                'ext' => 'docx',
                 'type' => ReportService::REPORT_TYPE_50,
                 'status' => 3,//1是异常，2是完成，3是生成中
                 'errInfo' => '',
