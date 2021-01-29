@@ -24,31 +24,6 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
     private $type;
     private $dataIndex;
 
-    private $currentHeight = 0;
-
-    //计算翻页不翻页
-    function exprAddPage(Tcpdf $pdf, $height = 0, $immediately = false, $pageMaxHeight = 300)
-    {
-        if ($immediately === true) {
-            $this->currentHeight = $height = 0;
-            $pdf->AddPage();
-        }
-
-        if ($height > $pageMaxHeight && $immediately === false) {
-            $this->currentHeight = 0;
-            $pdf->AddPage();
-        }
-
-        if ($height + $this->currentHeight > $pageMaxHeight && $immediately === false) {
-            $this->currentHeight = 0;
-            $pdf->AddPage();
-        }
-
-        $this->currentHeight += $height;
-
-        return true;
-    }
-
     function __construct($entName, $reportNum, $phone, $type, $dataIndex)
     {
         $this->entName = $entName;
