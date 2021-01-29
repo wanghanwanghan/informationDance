@@ -5,6 +5,7 @@ namespace App\HttpController\Business\Admin\User;
 use App\HttpController\Models\Api\LngLat;
 use App\HttpController\Models\Api\PurchaseInfo;
 use App\HttpController\Models\Api\User;
+use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateSessionHandler;
 use App\HttpController\Service\CreateTable\CreateTableService;
@@ -102,6 +103,10 @@ class UserController extends UserBase
             'password' => $password,
             'company' => $company,
             'email' => $email,
+        ])->save();
+
+        Wallet::create()->data([
+            'phone' => $phone,
             'money' => $money,
         ])->save();
 
