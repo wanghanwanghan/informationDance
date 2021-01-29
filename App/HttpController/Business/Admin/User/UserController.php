@@ -81,8 +81,8 @@ class UserController extends UserBase
     //用户列表
     function userList()
     {
-        $page = $this->request()->getRequestParam('page') ?? 1;
-        $pageSize = $this->request()->getRequestParam('page') ?? 10;
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
 
         try {
             $list = User::create()->alias('t1')
