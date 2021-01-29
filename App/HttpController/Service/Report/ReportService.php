@@ -84,7 +84,7 @@ class ReportService extends ServiceBase
 
         //扔到task里
         TaskService::getInstance()
-            ->create(new CreateEasyReportCustomizedTask($entName, $reportNum, $phone, $type, $dataKey),'sync');
+            ->create(new CreateEasyReportCustomizedTask($entName, $reportNum, $phone, $type, $dataKey));
 
         return $reportNum;
     }
