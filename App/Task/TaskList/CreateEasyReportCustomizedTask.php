@@ -6199,7 +6199,7 @@ TEMP;
             return $tmp;
         });
 
-        return CspService::getInstance()->exec($csp, 15);
+        return CspService::getInstance()->exec($csp, 30);
     }
 
 
