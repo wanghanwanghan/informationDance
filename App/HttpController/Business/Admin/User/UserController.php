@@ -78,6 +78,36 @@ class UserController extends UserBase
         return $checkUsernamePassword ? $this->writeJson(200, null, null, '登录成功') : $this->writeJson(201, null, null, '账号密码错误');
     }
 
+    //添加用户
+    function addUser()
+    {
+        $phone = $this->getRequestData('phone');
+        $username = $this->getRequestData('username');
+        $password = $this->getRequestData('password');
+        $company = $this->getRequestData('company');
+        $email = $this->getRequestData('email');
+        $money = $this->getRequestData('money',0);
+
+        if (empty($phone)) return $this->writeJson(201,null,null,'phone 不能是空');
+        if (empty($username)) return $this->writeJson(201,null,null,'username 不能是空');
+        if (empty($password)) return $this->writeJson(201,null,null,'password 不能是空');
+
+        $info = User::create()->where('phone',$phone)->get();
+
+        if (!empty($info)) return $this->writeJson(201,null,null,'手机号已注册');
+
+        User::create()->data([
+            'phone' => $phone,
+            'username' => $username,
+            'password' => $password,
+            'company' => $company,
+            'email' => $email,
+            'money' => $money,
+        ])->save();
+
+        return $this->writeJson(200,null,null,'成功');
+    }
+
     //用户列表
     function userList()
     {
