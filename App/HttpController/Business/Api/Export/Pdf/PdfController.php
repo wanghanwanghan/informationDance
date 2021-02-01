@@ -39,8 +39,9 @@ class PdfController extends ExportBase
         $pay = $this->request()->getRequestParam('pay') ?? 0;
         $dataKey = $this->request()->getRequestParam('dataKey') ?? '';
 
-        if (!CommonService::getInstance()->validateEmail($email) && $pay == 1)
+        if (!CommonService::getInstance()->validateEmail($email) && $pay == 1) {
             return $this->writeJson(201, null, null, 'email格式错误');
+        }
 
         try {
             $userInfo = User::create()->where('phone', $phone)->get();
