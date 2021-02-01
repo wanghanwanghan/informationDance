@@ -47,7 +47,10 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
             'reportNum' => $this->reportNum,
         ])->all();
 
-        empty($ocrDataInMysql) ?: $this->ocrDataInMysql = obj2Arr($ocrDataInMysql);
+        if (!empty($ocrDataInMysql)) {
+            $this->ocrDataInMysql = obj2Arr($ocrDataInMysql);
+            \co::sleep(60);//等待自定义进程中ocr识别完成
+        }
 
         $pdf = new Tcpdf();
 
