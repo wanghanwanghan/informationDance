@@ -126,7 +126,9 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
             ])->get();
         });
 
-        return empty($ocrData) ? '王瀚123123' : $ocrData = $ocrData->content;
+        var_dump($ocrData);
+
+        return empty($ocrData) ? '' : $ocrData = $ocrData->content;
     }
 
     //填充数据
@@ -212,11 +214,9 @@ TEMP;
     //基本信息 工商信息
     private function getRegisterInfo(Tcpdf $pdf, $cspData)
     {
-        CommonService::getInstance()->log4PHP($cspData);
-
         if (array_key_exists(__FUNCTION__,$cspData) && !empty($cspData[__FUNCTION__]))
         {
-            $ocrData = 123123123123123;
+            $ocrData = $this->getOcrData('0-0');
 
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%">
