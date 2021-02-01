@@ -126,8 +126,6 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
             ])->get();
         });
 
-        CommonService::getInstance()->log4PHP($ocrData);
-
         return empty($ocrData) ? '王瀚123123' : $ocrData = $ocrData->content;
     }
 
@@ -218,7 +216,11 @@ TEMP;
 
         if (array_key_exists(__FUNCTION__,$cspData) && !empty($cspData[__FUNCTION__]))
         {
+            CommonService::getInstance()->log4PHP('进来了');
+
             $ocrData = $this->getOcrData('0-0');
+
+            CommonService::getInstance()->log4PHP($ocrData);
 
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%">
