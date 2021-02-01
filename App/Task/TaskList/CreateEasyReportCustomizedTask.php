@@ -7,6 +7,7 @@ use App\HttpController\Models\Api\OcrQueue;
 use App\HttpController\Models\Api\ReportInfo;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaHai\FaHaiService;
 use App\HttpController\Service\QianQi\QianQiService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
@@ -124,9 +125,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
                 'reportNum' => $this->reportNum,
                 'catalogueNum' => $catalogueNum,
             ])->get();
-        });
-
-        var_dump($ocrData);
+        }, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
 
         return empty($ocrData) ? '' : $ocrData = $ocrData->content;
     }
