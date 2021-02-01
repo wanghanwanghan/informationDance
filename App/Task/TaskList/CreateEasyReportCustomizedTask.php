@@ -117,7 +117,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
     }
 
     //取ocr识别出来的数据
-    private function getOcrData($catalogueNum): string
+    private function getOcrData($catalogueNum, $colspan): string
     {
         $ocrData = DbManager::getInstance()->invoke(function ($cli) use ($catalogueNum) {
             return OcrQueue::invoke($cli)->where([
@@ -127,7 +127,13 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
             ])->get();
         }, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
 
-        return empty($ocrData) ? '' : $ocrData->content;
+        return empty($ocrData) ? '' : <<<TEMP
+<tr>
+   <td colspan="{$colspan}" style="text-align: center">
+       {$ocrData->content}
+   </td>
+</tr>
+TEMP;
     }
 
     //填充数据
@@ -215,7 +221,7 @@ TEMP;
     {
         if (array_key_exists(__FUNCTION__,$cspData) && !empty($cspData[__FUNCTION__]))
         {
-            $ocrData = $this->getOcrData('0-0');
+            $ocrData = $this->getOcrData('0-0', 4);
 
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%">
@@ -316,11 +322,7 @@ TEMP;
             {$cspData['getRegisterInfo']['OPSCOPE']}
         </td>
     </tr>
-    <tr>
-        <td colspan="4" style="text-align: center">
-            {$ocrData}
-        </td>
-    </tr>
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -330,13 +332,13 @@ TEMP;
     //基本信息 股东信息
     private function getShareHolderInfo(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists('getShareHolderInfo',$cspData))
+        if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
 
-            if (!empty($cspData['getShareHolderInfo']))
+            if (!empty($cspData[__FUNCTION__]))
             {
-                foreach ($cspData['getShareHolderInfo'] as $one)
+                foreach ($cspData[__FUNCTION__] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$one['INV']}</td>";
@@ -375,15 +377,15 @@ TEMP;
     //基本信息 高管信息
     private function getMainManagerInfo(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists('getMainManagerInfo',$cspData))
+        if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
 
-            if (!empty($cspData['getMainManagerInfo']))
+            if (!empty($cspData[__FUNCTION__]))
             {
                 $i = 1;
 
-                foreach ($cspData['getMainManagerInfo'] as $one)
+                foreach ($cspData[__FUNCTION__] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
@@ -417,15 +419,15 @@ TEMP;
     //基本信息 变更信息
     private function getRegisterChangeInfo(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists('getRegisterChangeInfo',$cspData))
+        if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
 
-            if (!empty($cspData['getRegisterChangeInfo']))
+            if (!empty($cspData[__FUNCTION__]))
             {
                 $i = 1;
 
-                foreach ($cspData['getRegisterChangeInfo']['list'] as $one)
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
@@ -461,15 +463,15 @@ TEMP;
     //基本信息 经营异常
     private function GetOpException(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists('GetOpException',$cspData))
+        if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
 
-            if (!empty($cspData['GetOpException']))
+            if (!empty($cspData[__FUNCTION__]))
             {
                 $i = 1;
 
-                foreach ($cspData['GetOpException']['list'] as $one)
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
@@ -505,16 +507,18 @@ TEMP;
     //基本信息 实际控制人
     private function Beneficiary(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists('Beneficiary',$cspData))
+        if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $name = $stock = '';
 
-            if (!empty($cspData['Beneficiary']))
-            {
-                $name = $cspData['Beneficiary']['Name'];
-                $stock = $cspData['Beneficiary']['TotalStockPercent'];
+            $ocrData = $this->getOcrData('0-1',2);
 
-                foreach ($cspData['Beneficiary']['DetailInfoList'] as $one)
+            if (!empty($cspData[__FUNCTION__]))
+            {
+                $name = $cspData[__FUNCTION__]['Name'];
+                $stock = $cspData[__FUNCTION__]['TotalStockPercent'];
+
+                foreach ($cspData[__FUNCTION__]['DetailInfoList'] as $one)
                 {
                     $insert .= '<tr><td colspan="2">'.$one['Path'].'</td></tr>';
                 }
@@ -537,6 +541,7 @@ TEMP;
         <td colspan="2" style="text-align: center;background-color: #d3d3d3">股权链</td>
     </tr>
     {$insert}
+    {$ocrData}
     <tr><td colspan="2">备注 : 总股权比例 = 持股人股权比例 + 其关联企业所占股权折算后比例</td></tr>
 </table>
 TEMP;
@@ -547,15 +552,17 @@ TEMP;
     //基本信息 历史沿革及重大事项
     private function getHistoricalEvolution(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists('getHistoricalEvolution',$cspData))
+        if (array_key_exists(__FUNCTION__,$cspData))
         {
+            $ocrData = $this->getOcrData('0-2',2);
+
             $insert = '';
 
-            if (!empty($cspData['getHistoricalEvolution']))
+            if (!empty($cspData[__FUNCTION__]))
             {
                 $i = 1;
 
-                foreach ($cspData['getHistoricalEvolution'] as $one)
+                foreach ($cspData[__FUNCTION__] as $one)
                 {
                     $one = str_replace(['，具体登录小程序查看'],'',$one);
                     $temp = '<tr>';
@@ -577,6 +584,7 @@ TEMP;
         <td width="93%">内容</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -586,15 +594,17 @@ TEMP;
     //基本信息 法人对外投资
     private function lawPersonInvestmentInfo(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists('lawPersonInvestmentInfo',$cspData))
+        if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
 
-            if (!empty($cspData['lawPersonInvestmentInfo']))
+            $ocrData = $this->getOcrData('0-3',9);
+
+            if (!empty($cspData[__FUNCTION__]))
             {
                 $i = 1;
 
-                foreach ($cspData['lawPersonInvestmentInfo'] as $one)
+                foreach ($cspData[__FUNCTION__] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
@@ -629,6 +639,7 @@ TEMP;
         <td>认缴出资时间</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -638,15 +649,17 @@ TEMP;
     //基本信息 法人对外任职
     private function getLawPersontoOtherInfo(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists('getLawPersontoOtherInfo',$cspData))
+        if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
 
-            if (!empty($cspData['getLawPersontoOtherInfo']))
+            $ocrData = $this->getOcrData('0-4',9);
+
+            if (!empty($cspData[__FUNCTION__]))
             {
                 $i = 1;
 
-                foreach ($cspData['getLawPersontoOtherInfo'] as $one)
+                foreach ($cspData[__FUNCTION__] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
@@ -681,6 +694,7 @@ TEMP;
         <td>是否法人</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -690,15 +704,17 @@ TEMP;
     //基本信息 企业对外投资
     private function getInvestmentAbroadInfo(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists('getInvestmentAbroadInfo',$cspData))
+        if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
 
-            if (!empty($cspData['getInvestmentAbroadInfo']))
+            $ocrData = $this->getOcrData('0-5',9);
+
+            if (!empty($cspData[__FUNCTION__]))
             {
                 $i = 1;
 
-                foreach ($cspData['getInvestmentAbroadInfo']['list'] as $one)
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
@@ -733,6 +749,7 @@ TEMP;
         <td>出资时间</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -742,15 +759,17 @@ TEMP;
     //基本信息 分支机构
     private function getBranchInfo(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists('getBranchInfo',$cspData))
+        if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
 
-            if (!empty($cspData['getBranchInfo']))
+            $ocrData = $this->getOcrData('0-6',6);
+
+            if (!empty($cspData[__FUNCTION__]))
             {
                 $i = 1;
 
-                foreach ($cspData['getBranchInfo'] as $one)
+                foreach ($cspData[__FUNCTION__] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
@@ -779,6 +798,7 @@ TEMP;
         <td>登记地省份</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -791,6 +811,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
+
+            $ocrData = $this->getOcrData('0-7',2);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -811,6 +833,7 @@ TEMP;
         <td width="50%">基本账户号码</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -823,6 +846,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
+
+            $ocrData = $this->getOcrData('1-0',6);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -857,6 +882,7 @@ TEMP;
         <td width="13%">日期</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -869,6 +895,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
+
+            $ocrData = $this->getOcrData('1-1',5);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -901,6 +929,7 @@ TEMP;
         <td width="15%">项目分类</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -913,6 +942,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
+
+            $ocrData = $this->getOcrData('1-2',7);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -949,6 +980,7 @@ TEMP;
         <td width="13%">签订日期</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -961,6 +993,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
+
+            $ocrData = $this->getOcrData('1-3',5);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -993,6 +1027,7 @@ TEMP;
         <td width="13%">发布日期</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -1005,6 +1040,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
+
+            $ocrData = $this->getOcrData('1-4',8);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -1043,6 +1080,7 @@ TEMP;
         <td>成交日期</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -1055,6 +1093,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
+
+            $ocrData = $this->getOcrData('1-5',7);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -1091,6 +1131,7 @@ TEMP;
         <td width="13%">发证机关</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -1103,6 +1144,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
+
+            $ocrData = $this->getOcrData('1-6',6);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -1142,6 +1185,7 @@ TEMP;
         <td width="26%">建设单位</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -1154,6 +1198,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
+
+            $ocrData = $this->getOcrData('1-7',6);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -1188,6 +1234,7 @@ TEMP;
         <td>上市日期</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -1200,6 +1247,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
+
+            $ocrData = $this->getOcrData('1-8',6);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -1234,6 +1283,7 @@ TEMP;
         <td>审核日期</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -1246,6 +1296,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
+
+            $ocrData = $this->getOcrData('1-9',5);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -1278,6 +1330,7 @@ TEMP;
         <td width="35%">简介</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -1290,6 +1343,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
+
+            $ocrData = $this->getOcrData('1-10',5);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -1322,6 +1377,7 @@ TEMP;
         <td width="25%">标签</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -1334,6 +1390,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
+
+            $ocrData = $this->getOcrData('2-0',3);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -1362,6 +1420,7 @@ TEMP;
         <td width="45%">变化率</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -1374,6 +1433,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
+
+            $ocrData = $this->getOcrData('2-1',5);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -1406,6 +1467,7 @@ TEMP;
         <td width="33%">注册专业</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -1418,6 +1480,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
+
+            $ocrData = $this->getOcrData('2-2',7);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -1454,6 +1518,7 @@ TEMP;
         <td width="13%">发布日期</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -1466,6 +1531,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
+
+            $ocrData = $this->getOcrData('3-0',1);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -1484,6 +1551,7 @@ PIC;
         <td style="text-align: center;background-color: #d3d3d3">财务总揽</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -1496,6 +1564,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = '';
+
+            $ocrData = $this->getOcrData('4-0',5);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -1528,6 +1598,7 @@ TEMP;
         <td width="48%">产品描述</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -1540,6 +1611,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('5-0',7);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -1581,6 +1654,7 @@ TEMP;
         <td width="13%">发布日期</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -1593,6 +1667,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('5-1',7);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -1634,6 +1710,7 @@ TEMP;
         <td width="7%">版本号</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -1646,6 +1723,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('5-2',7);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -1693,6 +1772,7 @@ TEMP;
         <td>申请日期</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -1705,6 +1785,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('5-3',6);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -1744,6 +1826,7 @@ TEMP;
         <td width="13%">登记日期</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -1756,6 +1839,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('5-4',6);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -1801,6 +1886,7 @@ TEMP;
         <td width="17%">证书编号</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -1813,6 +1899,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('6-0',6);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -1852,6 +1940,7 @@ TEMP;
         <td width="30%">摘要</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -1864,6 +1953,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('6-1',6);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -1903,6 +1994,7 @@ TEMP;
         <td width="41%">摘要</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -1915,6 +2007,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('6-2',6);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -1954,6 +2048,7 @@ TEMP;
         <td width="41%">摘要</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -1966,6 +2061,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('6-3',7);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -2007,6 +2104,7 @@ TEMP;
         <td width="26%">摘要</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -2019,6 +2117,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('6-4',7);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -2060,6 +2160,7 @@ TEMP;
         <td width="30%">摘要</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -2072,6 +2173,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('6-5',4);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -2107,6 +2210,7 @@ TEMP;
         <td width="67%">摘要</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -2119,6 +2223,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('7-0',6);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -2158,6 +2264,7 @@ TEMP;
         <td width="20%">许可机关</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -2170,6 +2277,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('7-1',7);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -2211,6 +2320,7 @@ TEMP;
         <td width="13%">决定机关</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -2223,6 +2333,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('8-0',7);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -2264,6 +2376,7 @@ TEMP;
         <td>处罚机关</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -2276,6 +2389,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('8-1',6);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -2315,6 +2430,7 @@ TEMP;
         <td width="17%">涉事企业</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -2327,6 +2443,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('8-2',6);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -2366,6 +2484,7 @@ TEMP;
         <td>监测时间</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -2378,6 +2497,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('8-3',4);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -2413,6 +2534,7 @@ TEMP;
         <td width="67%">摘要</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -2425,6 +2547,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('9-0',7);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -2466,6 +2590,7 @@ TEMP;
         <td>注册时间</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -2478,6 +2603,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('9-1',5);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -2515,6 +2642,7 @@ TEMP;
         <td width="14%">发布日期</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -2527,6 +2655,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('9-2',5);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -2564,6 +2694,7 @@ TEMP;
         <td>认定年份</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -2576,6 +2707,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('9-3',5);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -2613,6 +2746,7 @@ TEMP;
         <td>处罚日期</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -2625,6 +2759,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('10-0',7);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -2666,6 +2802,7 @@ TEMP;
         <td>处罚时间</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -2678,6 +2815,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('10-1',7);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -2719,6 +2858,7 @@ TEMP;
         <td>处罚时间</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -2731,6 +2871,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('10-2',7);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -2772,6 +2914,7 @@ TEMP;
         <td>处罚时间</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -2784,6 +2927,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('10-3',6);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -2823,6 +2968,7 @@ TEMP;
         <td width="13%">许可时间</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -2835,6 +2981,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('10-4',7);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -2876,6 +3024,7 @@ TEMP;
         <td width="13%">处罚时间</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -2888,6 +3037,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('10-5',7);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -2929,6 +3080,7 @@ TEMP;
         <td width="13%">许可时间</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -2941,6 +3093,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('11-0',8);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -3046,6 +3200,7 @@ TEMP;
         <td width="7%">诉讼地位</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -3058,6 +3213,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('11-1',8);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -3163,6 +3320,7 @@ TEMP;
         <td width="7%">诉讼地位</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -3175,6 +3333,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('11-2',9);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -3282,6 +3442,7 @@ TEMP;
         <td width="7%">诉讼地位</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -3294,6 +3455,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('11-3',8);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -3387,6 +3550,7 @@ TEMP;
         <td width="7%">主体</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -3399,6 +3563,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('11-4',8);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -3472,6 +3638,7 @@ TEMP;
         <td width="7%">当事人</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -3484,6 +3651,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('11-5',6);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -3523,6 +3692,7 @@ TEMP;
         <td>案件状态</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -3535,6 +3705,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('11-6',8);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -3578,6 +3750,7 @@ TEMP;
         <td>涉及金额</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -3590,6 +3763,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('11-7',7);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -3631,6 +3806,7 @@ TEMP;
         <td width="13%">状态</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -3643,6 +3819,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('11-8',7);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -3684,6 +3862,7 @@ TEMP;
         <td width="13%">状态</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -3696,6 +3875,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('11-9',6);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -3735,6 +3916,7 @@ TEMP;
         <td width="26%">担保期起止</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -3747,6 +3929,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('11-10',6);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -3786,6 +3970,7 @@ TEMP;
         <td width="26%">行政区地址</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -3798,6 +3983,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('12-0',4);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -3833,6 +4020,7 @@ TEMP;
         <td width="17%">转让财产价值</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -3845,6 +4033,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('12-1',5);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -3882,6 +4072,7 @@ TEMP;
         <td width="24%">所有权标的物类型</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -3894,6 +4085,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('13-0',4);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -3929,6 +4122,7 @@ TEMP;
         <td width="13%">登记到期日</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -3941,6 +4135,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('13-1',6);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -3980,6 +4176,7 @@ TEMP;
         <td width="19%">登记到期日</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -3992,6 +4189,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('13-2',6);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -4031,6 +4230,7 @@ TEMP;
         <td width="13%">登记到期日</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
@@ -4043,6 +4243,8 @@ TEMP;
         if (array_key_exists(__FUNCTION__,$cspData))
         {
             $insert = $num = '';
+
+            $ocrData = $this->getOcrData('13-3',5);
 
             if (!empty($cspData[__FUNCTION__]))
             {
@@ -4080,6 +4282,7 @@ TEMP;
         <td width="23%">登记到期日</td>
     </tr>
     {$insert}
+    {$ocrData}
 </table>
 TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
