@@ -517,7 +517,10 @@ class UserController extends UserBase
         if (empty($phone) || empty($entName)) return $this->writeJson(201, null, null, '手机号和企业名不能是空');
 
         try {
-            $data = SupervisorPhoneLimit::create()->where('phone', $phone)->where('entName', $entName)->get();
+            $data = SupervisorPhoneLimit::create()
+                ->where('phone', $phone)
+                ->where('entName', $entName)
+                ->get();
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
