@@ -198,10 +198,12 @@ class CommonController extends CommonBase
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $catalogueNum = $this->request()->getRequestParam('catalogueNum') ?? '';
         $catalogueName = $this->request()->getRequestParam('catalogueName') ?? '';
+        $type = $this->request()->getRequestParam('type') ?? 'word';//定版的word，还是不确定的pdf
         $filename = $this->request()->getRequestParam('filename');
 
-        if (empty($filename)) return $this->writeJson(201, null, null, '未发现上传文件');
         if (empty($reportNum)) return $this->writeJson(201, null, null, '报告编号不能是空');
+        if (empty($filename)) return $this->writeJson(201, null, null, '未发现上传文件');
+        if (!in_array($type,['word','pdf'])) return $this->writeJson(201, null, null, 'type错误');
 
         $filename = explode(',', $filename);
         $filename = array_filter($filename);
@@ -223,6 +225,7 @@ class CommonController extends CommonBase
                 'phone' => $phone,
                 'catalogueNum' => $catalogueNum,
                 'catalogueName' => $catalogueName,
+                'type' => $type,
                 'filename' => implode(',',$tmp),
             ];
 
