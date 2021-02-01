@@ -214,6 +214,8 @@ TEMP;
     //基本信息 工商信息
     private function getRegisterInfo(Tcpdf $pdf, $cspData)
     {
+        CommonService::getInstance()->log4PHP($cspData);
+
         if (array_key_exists(__FUNCTION__,$cspData) && !empty($cspData[__FUNCTION__]))
         {
             $ocrData = $this->getOcrData('0-0');
