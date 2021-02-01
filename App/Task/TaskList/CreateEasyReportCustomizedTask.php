@@ -117,7 +117,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
     }
 
     //取ocr识别出来的数据
-    private function getOcrData($catalogueNum)
+    private function getOcrData($catalogueNum): string
     {
         $ocrData = DbManager::getInstance()->invoke(function ($cli) use ($catalogueNum) {
             return OcrQueue::invoke($cli)->where([
@@ -127,7 +127,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
             ])->get();
         }, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
 
-        return empty($ocrData) ? '234234234' : $ocrData = $ocrData->content;
+        return empty($ocrData) ? '' : $ocrData->content;
     }
 
     //填充数据
