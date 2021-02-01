@@ -15,6 +15,7 @@ use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\XinDongService;
 use App\Task\TaskBase;
 use Carbon\Carbon;
+use EasySwoole\ORM\DbManager;
 use EasySwoole\Task\AbstractInterface\TaskInterface;
 
 class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
@@ -114,6 +115,20 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         }
     }
 
+    //取ocr识别出来的数据
+    private function getOcrData($catalogueNum)
+    {
+        $ocrData = DbManager::getInstance()->invoke(function ($cli) use ($catalogueNum) {
+            return OcrQueue::invoke($cli)->where([
+                'phone' => $this->phone,
+                'reportNum' => $this->reportNum,
+                'catalogueNum' => $catalogueNum,
+            ])->get();
+        });
+
+        return empty($ocrData) ? '' : $ocrData = $ocrData->content;
+    }
+
     //填充数据
     private function fillData(Tcpdf $pdf, $cspData)
     {
@@ -199,13 +214,7 @@ TEMP;
     {
         if (array_key_exists(__FUNCTION__,$cspData) && !empty($cspData[__FUNCTION__]))
         {
-            $ocrData = OcrQueue::create()->where([
-                'phone' => $this->phone,
-                'reportNum' => $this->reportNum,
-                'catalogueNum' => '0-0',
-            ])->get();
-
-            empty($ocrData) ? $ocrData = '大方阿里的黑发快贷付阿花的风景啊；两地分居；阿里的肌肤；蓝洞发货都放假哈离开的卷发来的卷发稻盛和夫iu阿姨的发动机号发看到回复啦将对方拉进来都是废话阿克换地方啦脚好点了发货了回复啦电话立法会绿哈喽大家发电' : $ocrData = $ocrData->content;
+            $ocrData = $this->getOcrData('0-0');
 
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%">
