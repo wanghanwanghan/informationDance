@@ -423,23 +423,21 @@ class UserController extends UserBase
         //先确定是一个公司，还是全部公司
         try {
             $entList = SupervisorPhoneEntName::create()->where('phone', $phone)->where('status', 1)->all();
-
             if (empty($entName)) {
                 $tmp = [];
-
                 foreach ($entList as $one) {
                     $tmp[] = $one->entName;
                 }
-
                 $entList = $tmp;
-
             } else {
                 $entList = [$entName];
             }
-
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
+
+        $entList = array_filter($entList);
+        if (empty($entList)) return $this->writeJson(201,null,null,'没有监控任何公司');
 
         $detail = SupervisorEntNameInfo::create()->where('entName', $entList, 'IN');
         $resTotle = SupervisorEntNameInfo::create()->where('entName', $entList, 'IN');
