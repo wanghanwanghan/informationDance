@@ -479,27 +479,23 @@ class UserController extends UserBase
         if (!empty($timeRange)) {
             is_numeric($timeRange) ?: $timeRange = 3;
             $date = Carbon::now()->subDays($timeRange)->timestamp;
-
             $detail->where('timeRange', $date, '>');
             $resTotle->where('timeRange', $date, '>');
         }
 
         try {
-            $detail = $detail->order('created_at', 'desc')->limit($this->exprOffset($page, $pageSize), $pageSize)->all();
-
+            $detail = $detail->order('created_at', 'desc')
+                ->limit($this->exprOffset($page, $pageSize), $pageSize)
+                ->all();
             $detail = obj2Arr($detail);
-
             $resTotle = $resTotle->count();
-
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
 
         try {
             $entList = SupervisorPhoneEntName::create()->where('phone', $phone)->where('status', 1)->all();
-
             $entList = obj2Arr($entList);
-
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }

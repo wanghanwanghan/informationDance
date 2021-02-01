@@ -50,8 +50,7 @@ class RunSupervisor extends AbstractCronTask
         //taskId是进程周期内第几个task任务
         //可以用task，也可以用process
 
-        if (!$this->crontabBase->withoutOverlapping(self::getTaskName()))
-        {
+        if (!$this->crontabBase->withoutOverlapping(self::getTaskName())) {
             CommonService::getInstance()->log4PHP('不开始');
             return true;
         }
