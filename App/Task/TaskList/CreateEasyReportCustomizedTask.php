@@ -205,7 +205,7 @@ TEMP;
                 'catalogueNum' => '0-0',
             ])->get();
 
-            empty($ocrData) ? $ocrData = '' : $ocrData = $ocrData->content;
+            empty($ocrData) ? $ocrData = '大方阿里的黑发快贷付阿花的风景啊；两地分居；阿里的肌肤；蓝洞发货都放假哈离开的卷发来的卷发稻盛和夫iu阿姨的发动机号发看到回复啦将对方拉进来都是废话阿克换地方啦脚好点了发货了回复啦电话立法会绿哈喽大家发电' : $ocrData = $ocrData->content;
 
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%">
