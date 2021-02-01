@@ -3,6 +3,7 @@
 namespace App\Task\TaskList;
 
 use App\Csp\Service\CspService;
+use App\HttpController\Models\Api\OcrQueue;
 use App\HttpController\Models\Api\ReportInfo;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Common\CommonService;
@@ -23,6 +24,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
     private $phone;
     private $type;
     private $dataIndex;
+    private $ocrDataInMysql;
 
     function __construct($entName, $reportNum, $phone, $type, $dataIndex)
     {
@@ -31,18 +33,26 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         $this->phone = $phone;
         $this->type = $type;
         $this->dataIndex = $dataIndex;
+        $this->ocrDataInMysql = [];
 
         return parent::__construct();
     }
 
     function run(int $taskId, int $workerIndex)
     {
+        $ocrDataInMysql = OcrQueue::create()->where([
+            'phone' => $this->phone,
+            'reportNum' => $this->reportNum,
+        ])->all();
+
+        empty($ocrDataInMysql) ?: $this->ocrDataInMysql = obj2Arr($ocrDataInMysql);
+
         $pdf = new Tcpdf();
 
         // 设置文档信息
         $pdf->SetCreator('王瀚');
         $pdf->SetAuthor('王瀚');
-        $pdf->SetTitle('王瀚');
+        $pdf->SetTitle($this->reportNum);
         $pdf->SetSubject('王瀚');
         $pdf->SetKeywords('TCPDF, PDF, PHP');
 
@@ -187,8 +197,16 @@ TEMP;
     //基本信息 工商信息
     private function getRegisterInfo(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists('getRegisterInfo',$cspData) && !empty($cspData['getRegisterInfo']))
+        if (array_key_exists(__FUNCTION__,$cspData) && !empty($cspData[__FUNCTION__]))
         {
+            $ocrData = OcrQueue::create()->where([
+                'phone' => $this->phone,
+                'reportNum' => $this->reportNum,
+                'catalogueNum' => '0-0',
+            ])->get();
+
+            empty($ocrData) ? $ocrData = '' : $ocrData = $ocrData->content;
+
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%">
     <tr>
@@ -286,6 +304,11 @@ TEMP;
         </td>
         <td colspan="3" width="75%">
             {$cspData['getRegisterInfo']['OPSCOPE']}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4" style="text-align: center">
+            {$ocrData}
         </td>
     </tr>
 </table>
