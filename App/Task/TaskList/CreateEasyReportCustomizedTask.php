@@ -127,7 +127,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
             ])->get();
         }, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
 
-        return empty($ocrData) ? '' : $ocrData = $ocrData->content;
+        return empty($ocrData) ? '234234234' : $ocrData = $ocrData->content;
     }
 
     //填充数据
