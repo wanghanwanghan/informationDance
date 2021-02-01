@@ -126,7 +126,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
             ])->get();
         });
 
-        return empty($ocrData) ? '' : $ocrData = $ocrData->content;
+        return empty($ocrData) ? '王瀚123123' : $ocrData = $ocrData->content;
     }
 
     //填充数据
