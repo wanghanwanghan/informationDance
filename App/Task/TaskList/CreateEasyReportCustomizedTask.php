@@ -126,6 +126,8 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
             ])->get();
         });
 
+        CommonService::getInstance()->log4PHP($ocrData);
+
         return empty($ocrData) ? '王瀚123123' : $ocrData = $ocrData->content;
     }
 
