@@ -132,9 +132,15 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
 
         if (empty($ocrData)) return '';
 
-        $data = str_replace(['|||'], '<br />', $ocrData->content);
+        $data = explode('|||', $ocrData->content);
 
-        CommonService::getInstance()->log4PHP($data);
+        $tr = '';
+
+        foreach ($data as $one) {
+            $tr .= "<p>".$one."</p>>";
+        }
+
+        $data = $tr;
 
         return <<<TEMP
 <tr>
