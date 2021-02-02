@@ -52,8 +52,6 @@ class PdfController extends ExportBase
 
         $charge = ChargeService::getInstance()->EasyReportCustomized($this->request(), 221, $reportNum);
 
-        CommonService::getInstance()->log4PHP($reportNum);
-
         if ($charge['code'] != 200) {
             $code = $charge['code'];
             $paging = $res = null;
