@@ -44,32 +44,36 @@ class CommonService extends ServiceBase
     }
 
     //存图片
-    function storeImage(UploadFile $uploadFile, $type): string
+    function storeImage(array $image, $type): array
     {
         $type = strtolower($type);
 
-        $returnPath = '';
+        $returnPath = [];
 
-        try {
-            switch ($type) {
-                case 'avatar':
-                    $newFilename = control::getUuid() . '.jpg';
-                    $uploadFile->moveTo(AVATAR_PATH . $newFilename);
-                    $returnPath = str_replace(ROOT_PATH, '', AVATAR_PATH . $newFilename);
-                    break;
-                case 'auth':
-                    $newFilename = control::getUuid() . '.jpg';
-                    $uploadFile->moveTo(AUTH_BOOK_PATH . $newFilename);
-                    $returnPath = str_replace(ROOT_PATH, '', AUTH_BOOK_PATH . $newFilename);
-                    break;
-                case 'ocr':
-                    $newFilename = control::getUuid() . '.jpg';
-                    $uploadFile->moveTo(OCR_PATH . $newFilename);
-                    $returnPath = str_replace(ROOT_PATH, '', OCR_PATH . $newFilename);
-                    break;
+        foreach ($image as $key => $oneImage)
+        {
+            try {
+                switch ($type) {
+                    case 'avatar':
+                        $newFilename = control::getUuid() . '.jpg';
+                        $oneImage->moveTo(AVATAR_PATH . $newFilename);
+                        $returnPath[$key] = str_replace(ROOT_PATH, '', AVATAR_PATH . $newFilename);
+                        break;
+                    case 'auth':
+                        $newFilename = control::getUuid() . '.jpg';
+                        $oneImage->moveTo(AUTH_BOOK_PATH . $newFilename);
+                        $returnPath[$key] = str_replace(ROOT_PATH, '', AUTH_BOOK_PATH . $newFilename);
+                        break;
+                    case 'ocr':
+                        $newFilename = control::getUuid() . '.jpg';
+                        $oneImage->moveTo(OCR_PATH . $newFilename);
+                        $returnPath[$key] = str_replace(ROOT_PATH, '', OCR_PATH . $newFilename);
+                        break;
+                }
+            } catch (\Throwable $e) {
+                $this->writeErr($e, __FUNCTION__);
+                $returnPath[$key] = 'error';
             }
-        } catch (\Throwable $e) {
-            $this->writeErr($e, __FUNCTION__);
         }
 
         return $returnPath;

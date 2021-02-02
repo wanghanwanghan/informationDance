@@ -33,7 +33,7 @@ class CommonController extends CommonBase
     {
         $type = $this->request()->getRequestParam('type') ?? 'Avatar';
         $phone = $this->request()->getRequestParam('phone');
-        $imageFile = $this->request()->getUploadedFile('image');
+        $imageFile = $this->request()->getUploadedFiles();
 
         //返回文件路径
         return $this->writeJson(200, null, CommonService::getInstance()->storeImage($imageFile, $type));
