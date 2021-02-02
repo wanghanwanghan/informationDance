@@ -130,10 +130,14 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
             ])->get();
         }, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
 
-        return empty($ocrData) ? '' : <<<TEMP
+        if (empty($ocrData)) return '';
+
+        $data = str_replace(['|||'], '<br />', $ocrData->content);
+
+        return <<<TEMP
 <tr>
    <td colspan="{$colspan}" style="text-align: center">
-       {$ocrData->content}
+       {$data}
    </td>
 </tr>
 TEMP;
