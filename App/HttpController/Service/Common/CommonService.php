@@ -72,7 +72,7 @@ class CommonService extends ServiceBase
                 }
             } catch (\Throwable $e) {
                 $this->writeErr($e, __FUNCTION__);
-                $returnPath[$key] = 'error';
+                $returnPath[$key] = 'upload error';
             }
         }
 
