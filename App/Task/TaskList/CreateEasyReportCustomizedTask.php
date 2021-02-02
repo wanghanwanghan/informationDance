@@ -137,7 +137,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         $tr = '';
 
         foreach ($data as $one) {
-            $tr .= "<p>".$one."</p>>";
+            $tr .= "<p>".$one."</p>";
         }
 
         $data = $tr;
