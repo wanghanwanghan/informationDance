@@ -27,6 +27,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     private $reportNum;
     private $phone;
     private $type;
+    private $ocrDataInMysql;
 
     private $fz = [];
     private $fx = [];
@@ -39,12 +40,23 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $this->reportNum = $reportNum;
         $this->phone = $phone;
         $this->type = $type;
+        $this->ocrDataInMysql = [];
 
         return parent::__construct();
     }
 
     function run(int $taskId, int $workerIndex)
     {
+        $ocrDataInMysql = OcrQueue::create()->where([
+            'phone' => $this->phone,
+            'reportNum' => $this->reportNum,
+        ])->all();
+
+        if (!empty($ocrDataInMysql)) {
+            $this->ocrDataInMysql = obj2Arr($ocrDataInMysql);
+            \co::sleep(60);//等待自定义进程中ocr识别完成
+        }
+
         $tmp = new TemplateProcessor(REPORT_MODEL_PATH . 'EasyReportModel_1.docx');
 
         $userInfo = User::create()->where('phone',$this->phone)->get();
