@@ -134,6 +134,8 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
 
         $data = str_replace(['|||'], '<br />', $ocrData->content);
 
+        CommonService::getInstance()->log4PHP($data);
+
         return <<<TEMP
 <tr>
    <td colspan="{$colspan}" style="text-align: center">
