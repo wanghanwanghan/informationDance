@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\User;
 
+use App\HttpController\Models\Api\SupervisorPhoneEntName;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\ServiceBase;
@@ -53,5 +54,20 @@ class UserService extends ServiceBase
         return empty($userInfo) ? null : $userInfo;
     }
 
+    //获取用户关注企业列表
+    function getUserSupervisorEnt($phone = ''): ?array
+    {
+        if (!is_numeric($phone) || strlen($phone) != 11) return null;
+        $info = null;
+
+        try {
+            $info = SupervisorPhoneEntName::create()->where('phone', $phone)->all();
+            $info = obj2Arr($info);
+        } catch (\Throwable $e) {
+            $this->writeErr($e, __FUNCTION__);
+        }
+
+        return $info;
+    }
 
 }

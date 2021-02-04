@@ -6,6 +6,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
+use App\HttpController\Service\User\UserService;
 use EasySwoole\Pool\Manager;
 use wanghanwanghan\someUtils\control;
 
@@ -68,6 +69,7 @@ class QiChaChaController extends QiChaChaBase
     //模糊搜索企业列表
     function getEntList()
     {
+        $phone=$this->request()->getRequestParam('phone') ?? '';
         $entName=$this->request()->getRequestParam('entName');
         $page=$this->request()->getRequestParam('page') ?? 1;
         $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
@@ -86,8 +88,26 @@ class QiChaChaController extends QiChaChaBase
 
         if ($res['code'] == 200 && !empty($res['result']))
         {
-            foreach ($res['result'] as &$one) {
+            //用户有没有监控该企业
+            $superEnt = UserService::getInstance()->getUserSupervisorEnt($phone);
+
+            foreach ($res['result'] as &$one)
+            {
                 strlen($one['StartDate'] < 10) ?: $one['StartDate']=substr($one['StartDate'],0,4);
+
+                //用户有没有监控该企业
+                if (!empty($superEnt))
+                {
+                    foreach ($superEnt as $oneEnt)
+                    {
+                        $one['supervisor'] = 0;
+                        if ($one['Name'] == $oneEnt['entName'])
+                        {
+                            $one['supervisor'] = 1;
+                            break;
+                        }
+                    }
+                }
             }
             unset($one);
         }
