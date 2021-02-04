@@ -33,7 +33,7 @@ class XinDongController extends XinDongBase
     function getCorporateShareholderRisk()
     {
         $entName=$this->request()->getRequestParam('entName');
-        $page=$this->request()->getRequestParam('pageIndex') ?? 1;
+        $page=$this->request()->getRequestParam('page') ?? 1;
         $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
 
         //先看看最大的股东是不是企业，持股超过50%的
@@ -80,7 +80,7 @@ class XinDongController extends XinDongBase
     function getProductStandard()
     {
         $entName=$this->request()->getRequestParam('entName');
-        $page=$this->request()->getRequestParam('pageIndex') ?? 1;
+        $page=$this->request()->getRequestParam('page') ?? 1;
         $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
 
         $res = XinDongService::getInstance()->getProductStandard($entName,$page,$pageSize);
