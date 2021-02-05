@@ -88,7 +88,7 @@ class ProvideBase extends Index
                 'money' => QueryBuilder::dec($this->spendMoney)
             ]);
         } catch (\Throwable $e) {
-
+            $this->writeErr($e,__FUNCTION__);
         }
 
         $this->responseInfo = [

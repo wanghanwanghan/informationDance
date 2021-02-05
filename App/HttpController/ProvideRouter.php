@@ -16,6 +16,7 @@ class ProvideRouter
         $this->TaoShuRouterV1($routeCollector);
         $this->QianQiRouterV1($routeCollector);
         $this->ZhongWangRouterV1($routeCollector);
+        $this->XinDongRouterV1($routeCollector);
     }
 
     private function QiChaChaRouterV1(RouteCollector $routeCollector)
@@ -67,6 +68,17 @@ class ProvideRouter
         return true;
     }
 
+    private function XinDongRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Provide/XinDong/XinDongController/';
+
+        $routeCollector->addGroup('/xd', function (RouteCollector $routeCollector) use ($prefix)
+        {
+            $routeCollector->addRoute(['GET', 'POST'], '/getProductStandard', $prefix . 'getProductStandard');
+        });
+
+        return true;
+    }
 
 
 
