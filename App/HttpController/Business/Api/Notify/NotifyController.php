@@ -128,6 +128,7 @@ class NotifyController extends BusinessBase
 
         CommonService::getInstance()->log4PHP($content);
 
+        //try
         try {
             $data = $pay->weChat((new wxPayService())->getConf('scan'))->verify($content);
             CommonService::getInstance()->log4PHP($data);
