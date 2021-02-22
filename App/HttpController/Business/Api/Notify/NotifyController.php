@@ -8,6 +8,7 @@ use App\HttpController\Models\Api\PurchaseList;
 use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\Pay\ali\aliPayService;
 use App\HttpController\Service\Pay\wx\wxPayService;
 use EasySwoole\Pay\AliPay\AliPay;
 use EasySwoole\Pay\Pay;
@@ -192,12 +193,9 @@ class NotifyController extends BusinessBase
     //支付宝扫码通知 信动
     function aliNotifyScan()
     {
-        $aliConfig = new \EasySwoole\Pay\AliPay\Config();
-        $aliConfig->setGateWay(\EasySwoole\Pay\AliPay\GateWay::NORMAL);
-        $aliConfig->setAppId(CreateConf::getInstance()->getConf('ali.appId'));
-        $aliConfig->setPublicKey(CreateConf::getInstance()->getConf('ali.aliPubKey'));
-        $aliConfig->setPrivateKey(CreateConf::getInstance()->getConf('ali.appSecKey'));
-        $pay = new \EasySwoole\Pay\Pay();
+        $aliConfig = (new aliPayService())->getConfig();
+
+        $pay = new Pay();
 
         $param = $this->request()->getRequestParam();
 

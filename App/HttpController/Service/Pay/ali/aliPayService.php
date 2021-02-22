@@ -22,11 +22,6 @@ class aliPayService extends PayBase
 
     function getConfig()
     {
-        $conf = new Config();
-    }
-
-    function scan()
-    {
         $aliConfig = new Config();
         $aliConfig->setGateWay(GateWay::NORMAL);
         $aliConfig->setAppId(CreateConf::getInstance()->getConf('ali.appId'));
@@ -34,6 +29,11 @@ class aliPayService extends PayBase
         $aliConfig->setPrivateKey(CreateConf::getInstance()->getConf('ali.appSecKey'));
         $aliConfig->setNotifyUrl(CreateConf::getInstance()->getConf('ali.notifyUrlAliScan'));
 
+        return $aliConfig;
+    }
+
+    function scan()
+    {
         $pay = new Pay();
 
         $order = new Scan();
@@ -42,7 +42,7 @@ class aliPayService extends PayBase
         $order->setOutTradeNo(time());
 
         try {
-            $aliPay = $pay->aliPay($aliConfig);
+            $aliPay = $pay->aliPay($this->getConfig());
             $data = $aliPay->scan($order)->toArray();
             $response = $aliPay->preQuest($data);
             $response = $response['qr_code'];
