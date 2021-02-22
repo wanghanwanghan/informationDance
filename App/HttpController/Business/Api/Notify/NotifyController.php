@@ -197,9 +197,10 @@ class NotifyController extends BusinessBase
 
         $pay = new Pay();
 
-        $param = $this->request()->getRequestParam();
+        $param = $this->getRequestData();
 
         CommonService::getInstance()->log4PHP($param);
+        CommonService::getInstance()->log4PHP($this->request()->getBody()->__toString());
 
 //        unset($param['sign_type']);//需要忽略sign_type组装
 //        $order = new \EasySwoole\Pay\AliPay\RequestBean\NotifyRequest($param, true);
