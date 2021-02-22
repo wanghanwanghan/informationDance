@@ -82,8 +82,6 @@ class TestController extends BusinessBase
 
             $this->response()->redirect('/Static/OtherFile/tutorial01.xlsx');
 
-
-
 //            $this->response()
 //                ->withHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 //            $this->response()->withHeader('Content-Disposition', 'attachment;filename="' . $fileName . '"');
