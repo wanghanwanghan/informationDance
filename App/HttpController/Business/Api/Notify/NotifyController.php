@@ -7,7 +7,9 @@ use App\HttpController\Models\Api\PurchaseInfo;
 use App\HttpController\Models\Api\PurchaseList;
 use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\Pay\wx\wxPayService;
+use EasySwoole\Pay\AliPay\AliPay;
 use EasySwoole\Pay\Pay;
 use EasySwoole\Pay\WeChat\WeChat;
 
@@ -187,5 +189,26 @@ class NotifyController extends BusinessBase
         return $this->response()->write(WeChat::success());
     }
 
+    //支付宝扫码通知 信动
+    function aliNotifyScan()
+    {
+        $aliConfig = new \EasySwoole\Pay\AliPay\Config();
+        $aliConfig->setGateWay(\EasySwoole\Pay\AliPay\GateWay::NORMAL);
+        $aliConfig->setAppId(CreateConf::getInstance()->getConf('ali.appId'));
+        $aliConfig->setPublicKey(CreateConf::getInstance()->getConf('ali.aliPubKey'));
+        $aliConfig->setPrivateKey(CreateConf::getInstance()->getConf('ali.appSecKey'));
+        $pay = new \EasySwoole\Pay\Pay();
+
+        $param = $this->request()->getBody()->__toString();
+
+        CommonService::getInstance()->log4PHP($param);
+
+//        unset($param['sign_type']);//需要忽略sign_type组装
+//        $order = new \EasySwoole\Pay\AliPay\RequestBean\NotifyRequest($param, true);
+//        $aliPay = $pay->aliPay($aliConfig);
+//        $result = $aliPay->verify($order);
+
+        return $this->response()->write(AliPay::success());
+    }
 
 }

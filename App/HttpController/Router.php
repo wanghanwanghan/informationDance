@@ -332,6 +332,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/wx',$prefix.'wxNotify');//微信小程序通知 信动
             $routeCollector->addRoute(['GET','POST'],'/wx_wh',$prefix.'wxNotify_wh');//微信小程序通知 伟衡
             $routeCollector->addRoute(['GET','POST'],'/wx/scan',$prefix.'wxNotifyScan');//微信扫码通知
+            $routeCollector->addRoute(['GET','POST'],'/ali/scan',$prefix.'aliNotifyScan');//支付宝扫码通知
         });
 
         return true;
