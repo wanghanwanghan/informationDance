@@ -11,6 +11,7 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\Pay\ali\aliPayService;
 use App\HttpController\Service\Pay\wx\wxPayService;
 use EasySwoole\Pay\AliPay\AliPay;
+use EasySwoole\Pay\AliPay\RequestBean\NotifyRequest;
 use EasySwoole\Pay\Pay;
 use EasySwoole\Pay\WeChat\WeChat;
 
@@ -197,15 +198,18 @@ class NotifyController extends BusinessBase
 
         $pay = new Pay();
 
-        $param = $this->getRequestData();
+        $param = $this->request()->getBody()->__toString();
 
-        CommonService::getInstance()->log4PHP($param);
-        CommonService::getInstance()->log4PHP($this->request()->getBody()->__toString());
+        parse_str($param, $data);
 
-//        unset($param['sign_type']);//需要忽略sign_type组装
-//        $order = new \EasySwoole\Pay\AliPay\RequestBean\NotifyRequest($param, true);
-//        $aliPay = $pay->aliPay($aliConfig);
-//        $result = $aliPay->verify($order);
+        //需要忽略sign_type组装
+        unset($data['sign_type']);
+
+        $order = new NotifyRequest($data, true);
+        $aliPay = $pay->aliPay($aliConfig);
+        $result = $aliPay->verify($order);
+
+        CommonService::getInstance()->log4PHP($result);
 
         return $this->response()->write(AliPay::success());
     }
