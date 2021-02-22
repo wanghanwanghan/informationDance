@@ -9,6 +9,7 @@ use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateSessionHandler;
 use App\HttpController\Service\CreateTable\CreateTableService;
+use App\HttpController\Service\Pay\wx\wxPayService;
 use Carbon\Carbon;
 use EasySwoole\DDL\Blueprint\Table;
 use EasySwoole\DDL\DDLBuilder;
@@ -17,6 +18,7 @@ use EasySwoole\DDL\Enum\Engine;
 use EasySwoole\Pool\Manager;
 use EasySwoole\RedisPool\Redis;
 use EasySwoole\Session\Session;
+use wanghanwanghan\someUtils\control;
 
 class UserController extends UserBase
 {
@@ -201,4 +203,65 @@ class UserController extends UserBase
         return $this->writeJson(200, $paging, ['info' => $info, 'list' => $list], null);
     }
 
+    //用户充值
+    function userPurchaseDo()
+    {
+        $jsCode = $this->request()->getRequestParam('jsCode') ?? '';
+        $phone = $this->request()->getRequestParam('phone') ?? '';
+        $type = $this->request()->getRequestParam('type') ?? 1;
+        $payConfType = $this->request()->getRequestParam('payConfType') ?? 'xd';
+        $payWay = $this->request()->getRequestParam('payWay') ?? '';
+
+        switch ($payWay) {
+            case 'wx_scan':
+                $payWayWord = '微信扫码';
+                break;
+            case 'ali_scan':
+                $payWayWord = '支付宝扫码';
+                break;
+            default:
+                $payWayWord = '';
+        }
+
+        if (empty($payWay)) return $this->writeJson(201, null, null, '支付方式错误');
+
+        try {
+            $list = PurchaseInfo::create()->where('id', $type)->get();
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        //后三位备用
+        $orderId = Carbon::now()->format('YmdHis') . control::randNum(2) . str_pad(0, 3, 0, STR_PAD_LEFT);
+
+        //创建订单
+        $insert = [
+            'phone' => $phone,
+            'orderId' => $orderId,
+            'orderStatus' => '待支付',
+            'purchaseType' => $type,
+            'payMoney' => $list->money,
+            'payWay' => $payWayWord,
+        ];
+
+        try {
+            $w = 123;
+            // PurchaseInfo::create()->data($insert)->save();
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        switch ($payWay) {
+            case 'wx_scan':
+                $payObj = (new wxPayService())->setPayConfType($payConfType)->scan();
+                break;
+            case 'ali_scan':
+                $payObj = '支付宝扫码';
+                break;
+            default:
+                $payObj = '';
+        }
+
+        return $this->writeJson(200, null, ['orderId' => $orderId, 'payObj' => $payObj], '生成订单成功');
+    }
 }

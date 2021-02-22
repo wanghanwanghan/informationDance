@@ -291,6 +291,7 @@ class UserController extends UserBase
             'orderStatus' => '待支付',
             'purchaseType' => $type,
             'payMoney' => $list->money,
+            'payWay' => '微信小程序',
         ];
 
         try {

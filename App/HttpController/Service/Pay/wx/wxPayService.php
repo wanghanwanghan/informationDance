@@ -8,6 +8,7 @@ use App\HttpController\Service\Pay\PayBase;
 use EasySwoole\Pay\Pay;
 use EasySwoole\Pay\WeChat\Config as wxConf;
 use EasySwoole\Pay\WeChat\RequestBean\MiniProgram;
+use EasySwoole\Pay\WeChat\RequestBean\Scan;
 
 class wxPayService extends PayBase
 {
@@ -31,6 +32,7 @@ class wxPayService extends PayBase
 
         switch ($this->payConfType) {
             case 'xd':
+                $conf->setAppId(CreateConf::getInstance()->getConf('wx.miniAppId'));
                 $conf->setMiniAppId(CreateConf::getInstance()->getConf('wx.miniAppId'));
                 $conf->setMchId(CreateConf::getInstance()->getConf('wx.mchId'));
                 $conf->setKey(CreateConf::getInstance()->getConf('wx.miniPayKey'));
@@ -39,6 +41,7 @@ class wxPayService extends PayBase
                 $conf->setApiClientKey(implode(PHP_EOL, CreateConf::getInstance()->getConf('wx.key')));
                 break;
             case 'wh':
+                $conf->setAppId(CreateConf::getInstance()->getConf('wx.miniAppId'));
                 $conf->setMiniAppId(CreateConf::getInstance()->getConf('wx.miniAppIdWh'));
                 $conf->setMchId(CreateConf::getInstance()->getConf('wx.mchId'));
                 $conf->setKey(CreateConf::getInstance()->getConf('wx.miniPayKeyWh'));
@@ -107,5 +110,29 @@ class wxPayService extends PayBase
         return $params;
     }
 
+    //返回扫码对象
+    function scan($ipForCli = '')
+    {
+        $outTradeNo = 'wanghan123123';
+
+        $bean = new Scan();
+
+        $bean->setOutTradeNo($outTradeNo);
+
+        $bean->setProductId('123456789');
+
+        $bean->setBody('xxxx-SCAN2测试' . $outTradeNo);
+
+        $bean->setTotalFee(1);
+
+        //终端ip，据说高版本不用传了
+        if (!empty($ipForCli)) $bean->setSpbillCreateIp($ipForCli);
+
+        $pay = new Pay();
+
+        $data = $pay->weChat($this->getConf())->scan($bean);
+
+        return $data->getCodeUrl();
+    }
 
 }

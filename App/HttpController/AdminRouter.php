@@ -26,6 +26,7 @@ class AdminRouter
             $routeCollector->addRoute(['GET', 'POST'], '/list', $prefix . 'userList');
             $routeCollector->addRoute(['GET', 'POST'], '/location', $prefix . 'userLocation');
             $routeCollector->addRoute(['GET', 'POST'], '/purchase/list', $prefix . 'userPurchaseList');
+            $routeCollector->addRoute(['GET', 'POST'], '/purchase/do', $prefix . 'userPurchaseDo');
         });
 
         return true;
