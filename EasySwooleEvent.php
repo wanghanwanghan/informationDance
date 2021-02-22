@@ -64,7 +64,7 @@ class EasySwooleEvent implements Event
         //注册session的处理流程
         CreateSessionHandler::getInstance()->create(SESSION_PATH);
 
-        //swoole table
+        //swoole table service
         SwooleTableService::getInstance()->create();
     }
 
