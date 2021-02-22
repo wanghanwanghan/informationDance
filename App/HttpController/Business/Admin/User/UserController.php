@@ -263,10 +263,12 @@ class UserController extends UserBase
                 $payObj = '';
         }
 
-        //$qrCode = new QrCode($payObj);
-        //$this->response()->withHeader('Content-Type', $qrCode->getContentType());
-        //return $this->response()->write($qrCode->writeString());
+        if (empty($payObj)) return $this->writeJson(201, null, null, '订单生成错误');
 
-        return $this->writeJson(200, null, ['orderId' => $orderId, 'payObj' => $payObj], '生成订单成功');
+        $qrCode = new QrCode($payObj);
+        $this->response()->withHeader('Content-Type', $qrCode->getContentType());
+        return $this->response()->write($qrCode->writeString());
+
+        //return $this->writeJson(200, null, ['orderId' => $orderId, 'payObj' => $payObj], '生成订单成功');
     }
 }

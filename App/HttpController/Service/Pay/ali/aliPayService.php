@@ -41,16 +41,17 @@ class aliPayService extends PayBase
         $order->setTotalAmount('0.01');
         $order->setOutTradeNo(time());
 
-        $aliPay = $pay->aliPay($aliConfig);
-        $data = $aliPay->scan($order)->toArray();
-        $response = $aliPay->preQuest($data);
+        try {
+            $aliPay = $pay->aliPay($aliConfig);
+            $data = $aliPay->scan($order)->toArray();
+            $response = $aliPay->preQuest($data);
+            $response = $response['qr_code'];
+        } catch (\Throwable $e) {
+            $response = '';
+        }
 
         return $response;
     }
-
-
-
-
 
 
 }
