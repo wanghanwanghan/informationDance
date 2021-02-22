@@ -188,6 +188,8 @@ class UserController extends UserBase
         $payConfType = $this->request()->getRequestParam('payConfType') ?? 'xd';
         $payWay = $this->request()->getRequestParam('payWay') ?? '';
 
+        $subject = '每日信动在线评估系统pc版';
+
         switch ($payWay) {
             case 'wx_scan':
                 $payWayWord = '微信扫码';
@@ -210,13 +212,15 @@ class UserController extends UserBase
         //后三位备用
         $orderId = Carbon::now()->format('YmdHis') . control::randNum(2) . str_pad(0, 3, 0, STR_PAD_LEFT);
 
+        $payMoney = $list->money;
+
         //创建订单
         $insert = [
             'phone' => $phone,
             'orderId' => $orderId,
             'orderStatus' => '待支付',
             'purchaseType' => $type,
-            'payMoney' => $list->money,
+            'payMoney' => $payMoney,
             'payWay' => $payWayWord,
         ];
 
@@ -228,10 +232,10 @@ class UserController extends UserBase
 
         switch ($payWay) {
             case 'wx_scan':
-                $payObj = (new wxPayService())->setPayConfType($payConfType)->scan();
+                $payObj = (new wxPayService())->setPayConfType($payConfType)->scan($orderId, $payMoney, $subject);
                 break;
             case 'ali_scan':
-                $payObj = (new aliPayService())->setPayConfType($payConfType)->scan();
+                $payObj = (new aliPayService())->setPayConfType($payConfType)->scan($orderId, $payMoney, $subject);
                 break;
             default:
                 $payObj = '';

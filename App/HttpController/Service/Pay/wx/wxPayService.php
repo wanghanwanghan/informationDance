@@ -119,9 +119,9 @@ class wxPayService extends PayBase
     }
 
     //返回扫码url
-    function scan($ipForCli = '')
+    function scan($orderId, $payMoney, $subject, $ipForCli = '')
     {
-        $outTradeNo = control::getUuid(16);
+        $outTradeNo = $orderId;
 
         $bean = new Scan();
 
@@ -129,9 +129,9 @@ class wxPayService extends PayBase
 
         // $bean->setProductId('123456789');
 
-        $bean->setBody('xxxx-SCAN2测试' . $outTradeNo);
+        $bean->setBody($subject);
 
-        $bean->setTotalFee(1);
+        $bean->setTotalFee((int)$payMoney * 100);
 
         if (!empty($ipForCli)) $bean->setSpbillCreateIp($ipForCli);
 

@@ -32,14 +32,14 @@ class aliPayService extends PayBase
         return $aliConfig;
     }
 
-    function scan()
+    function scan($orderId, $payMoney, $subject)
     {
         $pay = new Pay();
 
         $order = new Scan();
-        $order->setSubject('测试');
-        $order->setTotalAmount('0.01');
-        $order->setOutTradeNo(time());
+        $order->setSubject($subject);
+        $order->setTotalAmount((int)$payMoney);
+        $order->setOutTradeNo($orderId);
 
         try {
             $aliPay = $pay->aliPay($this->getConfig());
