@@ -209,9 +209,26 @@ class NotifyController extends BusinessBase
         $aliPay = $pay->aliPay($aliConfig);
         $result = $aliPay->verify($order);
 
-        CommonService::getInstance()->log4PHP($result);
+        $out_trade_no = $data['out_trade_no'];
 
-        return $this->response()->write(AliPay::success());
+        //拿订单信息
+        $orderInfo = PurchaseInfo::create()->where('orderId', $out_trade_no)->get();
+
+        if (true === $result) {
+            $walletInfo = Wallet::create()->where('phone', $orderInfo->phone)->get();
+            $PurchaseList = PurchaseList::create()->get($orderInfo->purchaseType);
+            $payMoney = $walletInfo->money + $PurchaseList->money;
+            //给用户加余额
+            $walletInfo->update(['money' => $payMoney]);
+            //更改订单状态
+            $orderInfo->update(['orderStatus' => '已支付']);
+            return $this->response()->write(AliPay::success());
+        } else {
+            //更改订单状态
+            $orderInfo->update(['orderStatus' => '异常']);
+            CommonService::getInstance()->log4PHP($data, 'Pay', __FUNCTION__ . '.log');
+            return $this->response()->write(AliPay::fail());
+        }
     }
 
 }

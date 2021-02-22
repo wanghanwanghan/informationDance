@@ -26,26 +26,7 @@ class UserController extends UserBase
 {
     function onRequest(?string $action): ?bool
     {
-        parent::onRequest($action);
-
-        CreateSessionHandler::getInstance()->check($this->request(), $this->response());
-
-        $isLogin = Session::getInstance()->get('isLogin');
-
-        $uri = $this->request()->getUri()->__toString();
-
-        $uri = explode('/', $uri);
-
-        $num = count($uri);
-
-        if ($uri[$num - 1] == 'userLogin' && $uri[$num - 2] == 'UserController') return true;
-
-        if (empty($isLogin)) {
-            //$this->writeJson(210, null, null, '用户未登录');
-            //return false;
-        }
-
-        return true;
+        return parent::onRequest($action);
     }
 
     function afterAction(?string $actionName): void
@@ -246,8 +227,7 @@ class UserController extends UserBase
         ];
 
         try {
-            $w = 123;
-            //PurchaseInfo::create()->data($insert)->save();
+            PurchaseInfo::create()->data($insert)->save();
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
