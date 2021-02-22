@@ -70,7 +70,7 @@ class TestController extends BusinessBase
         if (!empty($temp)) {
 
             $config = [
-                'path' => ROOT_PATH . DIRECTORY_SEPARATOR,
+                'path' => OTHER_FILE_PATH,
             ];
 
             $fileName = 'tutorial01.xlsx';
@@ -80,16 +80,20 @@ class TestController extends BusinessBase
             $filePath = $xlsxObject->fileName('tutorial01.xlsx', 'sheet1')
                 ->header(['企业名称', '年', '字段', '数值'])->data($temp)->output();
 
-            $this->response()
-                ->withHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            $this->response()->withHeader('Content-Disposition', 'attachment;filename="' . $fileName . '"');
-            $this->response()->withHeader('Content-Length', filesize($filePath));
-            //$this->response()->withHeader('Content-Transfer-Encoding', 'binary');
-            //$this->response()->withHeader('Cache-Control', 'must-revalidate');
-            //$this->response()->withHeader('Cache-Control', 'max-age=0');
-            //$this->response()->withHeader('Pragma', 'public');
-            $this->response()->withStatus(200);
-            $this->response()->end();
+            $this->response()->redirect('/Static/OtherFile/tutorial01.xlsx');
+
+
+
+//            $this->response()
+//                ->withHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+//            $this->response()->withHeader('Content-Disposition', 'attachment;filename="' . $fileName . '"');
+//            $this->response()->withHeader('Content-Length', filesize($filePath));
+//            $this->response()->withHeader('Content-Transfer-Encoding', 'binary');
+//            $this->response()->withHeader('Cache-Control', 'must-revalidate');
+//            $this->response()->withHeader('Cache-Control', 'max-age=0');
+//            $this->response()->withHeader('Pragma', 'public');
+//            $this->response()->withStatus(200);
+//            $this->response()->end();
 
         } else {
             return $this->writeJson(200, null, $temp, 'ok');
