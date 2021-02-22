@@ -199,7 +199,7 @@ class NotifyController extends BusinessBase
         $aliConfig->setPrivateKey(CreateConf::getInstance()->getConf('ali.appSecKey'));
         $pay = new \EasySwoole\Pay\Pay();
 
-        $param = $this->request()->getBody()->__toString();
+        $param = $this->request()->getRequestParam();
 
         CommonService::getInstance()->log4PHP($param);
 
