@@ -133,7 +133,6 @@ class wxPayService extends PayBase
 
         $bean->setTotalFee(1);
 
-        //终端ip，据说高版本不用传了
         if (!empty($ipForCli)) $bean->setSpbillCreateIp($ipForCli);
 
         $pay = new Pay();
