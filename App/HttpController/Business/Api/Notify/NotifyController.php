@@ -133,6 +133,9 @@ class NotifyController extends BusinessBase
             $data = [];
         }
 
+        //出错就不执行了
+        if (empty($data)) return true;
+
         //{
         //    "appid":"wxc35b4c5377218f34",
         //    "bank_type":"OTHERS",
@@ -151,9 +154,6 @@ class NotifyController extends BusinessBase
         //    "trade_type":"NATIVE",
         //    "transaction_id":"4200000891202102225144645624"
         //}
-
-        //出错就不执行了
-        if (empty($data)) return true;
 
         //拿订单信息
         $orderInfo = PurchaseInfo::create()->where('orderId', $data['out_trade_no'])->get();

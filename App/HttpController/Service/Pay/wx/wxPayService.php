@@ -118,7 +118,7 @@ class wxPayService extends PayBase
         return $params;
     }
 
-    //返回扫码对象
+    //返回扫码url
     function scan($ipForCli = '')
     {
         $outTradeNo = control::getUuid(16);

@@ -9,6 +9,7 @@ use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateSessionHandler;
 use App\HttpController\Service\CreateTable\CreateTableService;
+use App\HttpController\Service\Pay\ali\aliPayService;
 use App\HttpController\Service\Pay\wx\wxPayService;
 use Carbon\Carbon;
 use EasySwoole\DDL\Blueprint\Table;
@@ -207,7 +208,6 @@ class UserController extends UserBase
     //用户充值
     function userPurchaseDo()
     {
-        $jsCode = $this->request()->getRequestParam('jsCode') ?? '';
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $type = $this->request()->getRequestParam('type') ?? 1;
         $payConfType = $this->request()->getRequestParam('payConfType') ?? 'xd';
@@ -246,8 +246,8 @@ class UserController extends UserBase
         ];
 
         try {
-            $w = 123;
-            // PurchaseInfo::create()->data($insert)->save();
+            $w=123;
+            //PurchaseInfo::create()->data($insert)->save();
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
@@ -257,17 +257,16 @@ class UserController extends UserBase
                 $payObj = (new wxPayService())->setPayConfType($payConfType)->scan();
                 break;
             case 'ali_scan':
-                $payObj = '支付宝扫码';
+                $payObj = (new aliPayService())->setPayConfType($payConfType)->scan();
                 break;
             default:
                 $payObj = '';
         }
 
-        $qrCode = new QrCode($payObj);
+        //$qrCode = new QrCode($payObj);
+        //$this->response()->withHeader('Content-Type', $qrCode->getContentType());
+        //return $this->response()->write($qrCode->writeString());
 
-        $this->response()->withHeader('Content-Type', $qrCode->getContentType());
-
-        //return $this->writeJson(200, null, ['orderId' => $orderId, 'payObj' => $payObj], '生成订单成功');
-        return $this->response()->write($qrCode->writeString());
+        return $this->writeJson(200, null, ['orderId' => $orderId, 'payObj' => $payObj], '生成订单成功');
     }
 }
