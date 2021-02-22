@@ -131,7 +131,9 @@ class wxPayService extends PayBase
 
         $bean->setBody($subject);
 
-        $bean->setTotalFee($payMoney * 100);
+        $fee = $payMoney * 100;
+
+        $bean->setTotalFee((string)$fee);
 
         if (!empty($ipForCli)) $bean->setSpbillCreateIp($ipForCli);
 

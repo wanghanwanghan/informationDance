@@ -232,10 +232,10 @@ class UserController extends UserBase
         try {
             switch ($payWay) {
                 case 'wx_scan':
-                    $payObj = (new wxPayService())->setPayConfType($payConfType)->scan($orderId, (int)$payMoney, $subject);
+                    $payObj = (new wxPayService())->setPayConfType($payConfType)->scan($orderId, $payMoney, $subject);
                     break;
                 case 'ali_scan':
-                    $payObj = (new aliPayService())->setPayConfType($payConfType)->scan($orderId, (int)$payMoney, $subject);
+                    $payObj = (new aliPayService())->setPayConfType($payConfType)->scan($orderId, $payMoney, $subject);
                     break;
                 default:
                     $payObj = '';
