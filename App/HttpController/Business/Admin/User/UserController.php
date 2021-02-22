@@ -18,6 +18,7 @@ use EasySwoole\DDL\Enum\Engine;
 use EasySwoole\Pool\Manager;
 use EasySwoole\RedisPool\Redis;
 use EasySwoole\Session\Session;
+use Endroid\QrCode\QrCode;
 use wanghanwanghan\someUtils\control;
 
 class UserController extends UserBase
@@ -89,15 +90,15 @@ class UserController extends UserBase
         $password = $this->getRequestData('password');
         $company = $this->getRequestData('company');
         $email = $this->getRequestData('email');
-        $money = $this->getRequestData('money',0);
+        $money = $this->getRequestData('money', 0);
 
-        if (empty($phone)) return $this->writeJson(201,null,null,'phone 不能是空');
-        if (empty($username)) return $this->writeJson(201,null,null,'username 不能是空');
-        if (empty($password)) return $this->writeJson(201,null,null,'password 不能是空');
+        if (empty($phone)) return $this->writeJson(201, null, null, 'phone 不能是空');
+        if (empty($username)) return $this->writeJson(201, null, null, 'username 不能是空');
+        if (empty($password)) return $this->writeJson(201, null, null, 'password 不能是空');
 
-        $info = User::create()->where('phone',$phone)->get();
+        $info = User::create()->where('phone', $phone)->get();
 
-        if (!empty($info)) return $this->writeJson(201,null,null,'手机号已注册');
+        if (!empty($info)) return $this->writeJson(201, null, null, '手机号已注册');
 
         User::create()->data([
             'phone' => $phone,
@@ -112,7 +113,7 @@ class UserController extends UserBase
             'money' => $money,
         ])->save();
 
-        return $this->writeJson(200,null,null,'成功');
+        return $this->writeJson(200, null, null, '成功');
     }
 
     //用户列表
@@ -124,7 +125,7 @@ class UserController extends UserBase
         try {
             $list = User::create()->alias('t1')
                 ->join('information_dance_wallet as t2', 't2.phone = t1.phone')
-                ->order('t1.created_at','desc')
+                ->order('t1.created_at', 'desc')
                 ->limit($this->exprOffset($page, $pageSize), $pageSize)
                 ->all();
 
@@ -186,16 +187,16 @@ class UserController extends UserBase
 
         //总充值金额
         try {
-            $totalPurchase = PurchaseInfo::create()->where('orderStatus','已支付')->sum('payMoney');
+            $totalPurchase = PurchaseInfo::create()->where('orderStatus', '已支付')->sum('payMoney');
             $weekTotal = PurchaseInfo::create()
-                ->where('orderStatus','已支付')
-                ->where('created_at',Carbon::now()->startOfWeek()->timestamp,'>')
+                ->where('orderStatus', '已支付')
+                ->where('created_at', Carbon::now()->startOfWeek()->timestamp, '>')
                 ->sum('payMoney');
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
 
-        $info=[
+        $info = [
             'totalPurchase' => $totalPurchase,
             'weekTotal' => $weekTotal,
         ];
@@ -262,6 +263,12 @@ class UserController extends UserBase
                 $payObj = '';
         }
 
-        return $this->writeJson(200, null, ['orderId' => $orderId, 'payObj' => $payObj], '生成订单成功');
+        $qrCode = new QrCode($payObj);
+
+        $this->response()->withHeader('Content-Type', $qrCode->getContentType());
+
+
+        //return $this->writeJson(200, null, ['orderId' => $orderId, 'payObj' => $payObj], '生成订单成功');
+        return $this->response()->write($payObj);
     }
 }

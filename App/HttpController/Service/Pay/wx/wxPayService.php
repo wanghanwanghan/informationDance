@@ -26,7 +26,7 @@ class wxPayService extends PayBase
         return $this;
     }
 
-    function getConf(): wxConf
+    function getConf($type = 'miniapp'): wxConf
     {
         $conf = new wxConf();
 
@@ -36,7 +36,14 @@ class wxPayService extends PayBase
                 $conf->setMiniAppId(CreateConf::getInstance()->getConf('wx.miniAppId'));
                 $conf->setMchId(CreateConf::getInstance()->getConf('wx.mchId'));
                 $conf->setKey(CreateConf::getInstance()->getConf('wx.miniPayKey'));
-                $conf->setNotifyUrl(CreateConf::getInstance()->getConf('wx.notifyUrl'));
+                switch ($type) {
+                    case 'miniapp':
+                        $conf->setNotifyUrl(CreateConf::getInstance()->getConf('wx.notifyUrl'));
+                        break;
+                    case 'scan':
+                        $conf->setNotifyUrl(CreateConf::getInstance()->getConf('wx.notifyUrlWxScan'));
+                        break;
+                }
                 $conf->setApiClientCert(implode(PHP_EOL, CreateConf::getInstance()->getConf('wx.cert')));
                 $conf->setApiClientKey(implode(PHP_EOL, CreateConf::getInstance()->getConf('wx.key')));
                 break;
@@ -105,7 +112,7 @@ class wxPayService extends PayBase
 
         $pay = new Pay();
 
-        $params = $pay->weChat($this->getConf())->miniProgram($bean);
+        $params = $pay->weChat($this->getConf('miniapp'))->miniProgram($bean);
 
         return $params;
     }
@@ -130,7 +137,7 @@ class wxPayService extends PayBase
 
         $pay = new Pay();
 
-        $data = $pay->weChat($this->getConf())->scan($bean);
+        $data = $pay->weChat($this->getConf('scan'))->scan($bean);
 
         return $data->getCodeUrl();
     }
