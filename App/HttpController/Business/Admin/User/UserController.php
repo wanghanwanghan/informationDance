@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Admin\User;
 
 use App\HttpController\Models\Api\LngLat;
 use App\HttpController\Models\Api\PurchaseInfo;
+use App\HttpController\Models\Api\PurchaseList;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\CreateConf;
@@ -201,7 +202,7 @@ class UserController extends UserBase
         if (empty($payWay)) return $this->writeJson(201, null, null, '支付方式错误');
 
         try {
-            $list = PurchaseInfo::create()->where('id', $type)->get();
+            $list = PurchaseList::create()->where('id', $type)->get();
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
