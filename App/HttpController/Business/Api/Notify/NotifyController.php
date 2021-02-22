@@ -126,7 +126,6 @@ class NotifyController extends BusinessBase
 
         $content = $this->request()->getBody()->__toString();
 
-        //try
         try {
             $data = $pay->weChat((new wxPayService())->getConf('scan'))->verify($content);
             $data = obj2Arr($data);
