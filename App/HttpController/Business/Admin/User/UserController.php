@@ -7,16 +7,9 @@ use App\HttpController\Models\Api\PurchaseInfo;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\CreateConf;
-use App\HttpController\Service\CreateSessionHandler;
-use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\Pay\ali\aliPayService;
 use App\HttpController\Service\Pay\wx\wxPayService;
 use Carbon\Carbon;
-use EasySwoole\DDL\Blueprint\Table;
-use EasySwoole\DDL\DDLBuilder;
-use EasySwoole\DDL\Enum\Character;
-use EasySwoole\DDL\Enum\Engine;
-use EasySwoole\Pool\Manager;
 use EasySwoole\RedisPool\Redis;
 use EasySwoole\Session\Session;
 use Endroid\QrCode\QrCode;
@@ -245,10 +238,10 @@ class UserController extends UserBase
 
         if (empty($payObj)) return $this->writeJson(201, null, null, '订单生成错误');
 
-        $qrCode = new QrCode($payObj);
-        $this->response()->withHeader('Content-Type', $qrCode->getContentType());
-        return $this->response()->write($qrCode->writeString());
+        //$qrCode = new QrCode($payObj);
+        //$this->response()->withHeader('Content-Type', $qrCode->getContentType());
+        //return $this->response()->write($qrCode->writeString());
 
-        //return $this->writeJson(200, null, ['orderId' => $orderId, 'payObj' => $payObj], '生成订单成功');
+        return $this->writeJson(200, null, ['orderId' => $orderId, 'payObj' => $payObj], '生成订单成功');
     }
 }
