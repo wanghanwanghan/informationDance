@@ -205,14 +205,13 @@ class UserController extends UserBase
 
         try {
             $list = PurchaseList::create()->where('id', $type)->get();
+            $payMoney = $list->money;
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
 
         //后三位备用
         $orderId = Carbon::now()->format('YmdHis') . control::randNum(2) . str_pad(0, 3, 0, STR_PAD_LEFT);
-
-        $payMoney = $list->money;
 
         //创建订单
         $insert = [
@@ -230,18 +229,20 @@ class UserController extends UserBase
             return $this->writeErr($e, __FUNCTION__);
         }
 
-        switch ($payWay) {
-            case 'wx_scan':
-                $payObj = (new wxPayService())->setPayConfType($payConfType)->scan($orderId, $payMoney, $subject);
-                break;
-            case 'ali_scan':
-                $payObj = (new aliPayService())->setPayConfType($payConfType)->scan($orderId, $payMoney, $subject);
-                break;
-            default:
-                $payObj = '';
+        try {
+            switch ($payWay) {
+                case 'wx_scan':
+                    $payObj = (new wxPayService())->setPayConfType($payConfType)->scan($orderId, $payMoney, $subject);
+                    break;
+                case 'ali_scan':
+                    $payObj = (new aliPayService())->setPayConfType($payConfType)->scan($orderId, $payMoney, $subject);
+                    break;
+                default:
+                    $payObj = '';
+            }
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
         }
-
-        if (empty($payObj)) return $this->writeJson(201, null, null, '订单生成错误');
 
         //$qrCode = new QrCode($payObj);
         //$this->response()->withHeader('Content-Type', $qrCode->getContentType());
