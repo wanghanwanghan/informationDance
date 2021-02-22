@@ -88,8 +88,8 @@ class TestController extends BusinessBase
             $this->response()->withHeader('Cache-Control', 'must-revalidate');
             $this->response()->withHeader('Cache-Control', 'max-age=0');
             $this->response()->withHeader('Pragma', 'public');
-
-            return $this->writeJson(200, null, $temp, 'ok');
+            $this->response()->withStatus(200);
+            $this->response()->end();
 
         } else {
             return $this->writeJson(200, null, $temp, 'ok');
