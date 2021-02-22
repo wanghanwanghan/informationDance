@@ -38,7 +38,7 @@ class aliPayService extends PayBase
 
         $order = new Scan();
         $order->setSubject($subject);
-        $order->setTotalAmount((int)$payMoney);
+        $order->setTotalAmount($payMoney);
         $order->setOutTradeNo($orderId);
 
         try {

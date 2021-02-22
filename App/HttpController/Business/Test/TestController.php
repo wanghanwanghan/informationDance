@@ -11,15 +11,9 @@ class TestController extends BusinessBase
         return true;
     }
 
-    function afterAction(?string $actionName): void
-    {
-    }
-
     function test()
     {
-        $res = null;
 
-        $this->writeJson(200, null, $res);
     }
 
 }
