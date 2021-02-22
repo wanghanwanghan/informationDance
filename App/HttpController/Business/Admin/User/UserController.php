@@ -246,7 +246,7 @@ class UserController extends UserBase
         ];
 
         try {
-            $w=123;
+            $w = 123;
             //PurchaseInfo::create()->data($insert)->save();
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
