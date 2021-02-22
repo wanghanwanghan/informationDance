@@ -127,7 +127,7 @@ class wxPayService extends PayBase
 
         $bean->setOutTradeNo($outTradeNo);
 
-        $bean->setProductId('123456789');
+        //$bean->setProductId('123456789');
 
         $bean->setBody('xxxx-SCAN2测试' . $outTradeNo);
 
