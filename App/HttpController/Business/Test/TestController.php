@@ -84,10 +84,10 @@ class TestController extends BusinessBase
                 ->withHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             $this->response()->withHeader('Content-Disposition', 'attachment;filename="' . $fileName . '"');
             $this->response()->withHeader('Content-Length', filesize($filePath));
-            $this->response()->withHeader('Content-Transfer-Encoding', 'binary');
-            $this->response()->withHeader('Cache-Control', 'must-revalidate');
-            $this->response()->withHeader('Cache-Control', 'max-age=0');
-            $this->response()->withHeader('Pragma', 'public');
+            //$this->response()->withHeader('Content-Transfer-Encoding', 'binary');
+            //$this->response()->withHeader('Cache-Control', 'must-revalidate');
+            //$this->response()->withHeader('Cache-Control', 'max-age=0');
+            //$this->response()->withHeader('Pragma', 'public');
             $this->response()->withStatus(200);
             $this->response()->end();
 
