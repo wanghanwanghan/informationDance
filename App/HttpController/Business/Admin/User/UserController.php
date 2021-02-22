@@ -268,6 +268,6 @@ class UserController extends UserBase
         $this->response()->withHeader('Content-Type', $qrCode->getContentType());
 
         //return $this->writeJson(200, null, ['orderId' => $orderId, 'payObj' => $payObj], '生成订单成功');
-        return $this->response()->write($payObj);
+        return $this->response()->write($qrCode->writeString());
     }
 }
