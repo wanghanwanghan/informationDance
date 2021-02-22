@@ -9,6 +9,7 @@ use EasySwoole\Pay\Pay;
 use EasySwoole\Pay\WeChat\Config as wxConf;
 use EasySwoole\Pay\WeChat\RequestBean\MiniProgram;
 use EasySwoole\Pay\WeChat\RequestBean\Scan;
+use wanghanwanghan\someUtils\control;
 
 class wxPayService extends PayBase
 {
@@ -120,7 +121,7 @@ class wxPayService extends PayBase
     //返回扫码对象
     function scan($ipForCli = '')
     {
-        $outTradeNo = 'wanghan123123';
+        $outTradeNo = control::getUuid(16);
 
         $bean = new Scan();
 
