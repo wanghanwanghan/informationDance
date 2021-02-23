@@ -23,7 +23,7 @@ class QianQiService extends ServiceBase
     private $range=[
         0=>[
             'Z'=>[0,0],
-            'Z1'=>[0.0001,10],
+            'Z1'=>[0,10],
             'Z2'=>[10,20],
             'Z3'=>[20,40],
             'Z4'=>[40,60],
@@ -171,7 +171,7 @@ class QianQiService extends ServiceBase
             'F4'=>[60,40],
             'F3'=>[40,20],
             'F2'=>[20,10],
-            'F1'=>[10,0.0001],
+            'F1'=>[10,0],
         ],
         1=>[
             'Z'=>[0,0],
@@ -454,6 +454,46 @@ class QianQiService extends ServiceBase
             substr($val,0,1) == 'F' ? $change = -1 : $change = 1;
 
             $tmp[$key]=$src * $change;
+        }
+
+        return $tmp;
+    }
+
+    //整理数据，把字母转换成数字
+    function wordToRange($data)
+    {
+        if (empty($data)) return [];
+
+        $tmp=[];
+
+        foreach ($data as $key => $val)
+        {
+            $key=trim($key);
+            $val=trim($val);
+
+            if (empty($val) || $val=='-')
+            {
+                $tmp[$key]=null;
+                continue;
+            }
+
+            if ($key=='SOCNUM')
+            {
+                $tmp[$key]=(int)$val;
+                continue;
+            }
+
+            if (!array_key_exists($key,$this->word))
+            {
+                $tmp[$key]=$val;
+                continue;
+            }
+
+            $index=reset($this->word[$key]);
+
+            $num=$this->range[$index][$val];
+
+            $tmp[$key]=implode(' ~ ',$num);
         }
 
         return $tmp;

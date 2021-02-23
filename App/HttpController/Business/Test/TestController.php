@@ -30,69 +30,39 @@ class TestController extends BusinessBase
         $temp = [];
 
         foreach ($entList as $entName) {
-
             $entName = trim($entName);
-
             $res = (new QianQiService())
                 ->setCheckRespFlag(true)
                 ->getThreeYears(['entName' => $entName]);
-
             if ($res['code'] === 200 && !empty($res['result'])) {
-
-                //ASSGRO_REL 资产总额
-                //LIAGRO_REL 负债总额
-                //VENDINC_REL 营业总收入
-                //MAIBUSINC_REL 主营业务收入
-                //PROGRO_REL 利润总额
-                //NETINC_REL 净利润
-                //RATGRO_REL 纳税总额
-                //TOTEQU_REL 所有者权益
-                //SOCNUM 社保人数
-
                 foreach ($res['result'] as $key => $val) {
                     if (empty($val)) {
-                        $temp[] = [$entName, $key, '无数据', '无数据'];
+                        $temp[] = [$entName, $key, '无数据', '无数据', '无数据'];
                     } else {
-                        $temp[] = [$entName, $key, 'ASSGRO_REL 资产总额', $val['ASSGRO_REL']];
-                        $temp[] = [$entName, $key, 'LIAGRO_REL 负债总额', $val['LIAGRO_REL']];
-                        $temp[] = [$entName, $key, 'VENDINC_REL 营业总收入', $val['VENDINC_REL']];
-                        $temp[] = [$entName, $key, 'MAIBUSINC_REL 主营业务收入', $val['MAIBUSINC_REL']];
-                        $temp[] = [$entName, $key, 'PROGRO_REL 利润总额', $val['PROGRO_REL']];
-                        $temp[] = [$entName, $key, 'NETINC_REL 净利润', $val['NETINC_REL']];
-                        $temp[] = [$entName, $key, 'RATGRO_REL 纳税总额', $val['RATGRO_REL']];
-                        $temp[] = [$entName, $key, 'TOTEQU_REL 所有者权益', $val['TOTEQU_REL']];
-                        $temp[] = [$entName, $key, 'SOCNUM 社保人数', $val['SOCNUM']];
+                        $range = (new QianQiService())->wordToRange($val);
+                        $temp[] = [$entName, $key, 'ASSGRO_REL 资产总额', $val['ASSGRO_REL'], $range['ASSGRO_REL']];
+                        $temp[] = ['', '', 'LIAGRO_REL 负债总额', $val['LIAGRO_REL'], $range['LIAGRO_REL']];
+                        $temp[] = ['', '', 'VENDINC_REL 营业总收入', $val['VENDINC_REL'], $range['VENDINC_REL']];
+                        $temp[] = ['', '', 'MAIBUSINC_REL 主营业务收入', $val['MAIBUSINC_REL'], $range['MAIBUSINC_REL']];
+                        $temp[] = ['', '', 'PROGRO_REL 利润总额', $val['PROGRO_REL'], $range['PROGRO_REL']];
+                        $temp[] = ['', '', 'NETINC_REL 净利润', $val['NETINC_REL'], $range['NETINC_REL']];
+                        $temp[] = ['', '', 'RATGRO_REL 纳税总额', $val['RATGRO_REL'], $range['RATGRO_REL']];
+                        $temp[] = ['', '', 'TOTEQU_REL 所有者权益', $val['TOTEQU_REL'], $range['TOTEQU_REL']];
+                        $temp[] = ['', '', 'SOCNUM 社保人数', $val['SOCNUM'], $range['SOCNUM']];
                     }
                 }
             }
         }
 
         if (!empty($temp)) {
-
             $config = [
                 'path' => OTHER_FILE_PATH,
             ];
-
             $fileName = 'tutorial01.xlsx';
-
             $xlsxObject = new \Vtiful\Kernel\Excel($config);
-
-            $filePath = $xlsxObject->fileName('tutorial01.xlsx', 'sheet1')
-                ->header(['企业名称', '年', '字段', '数值'])->data($temp)->output();
-
-            $this->response()->redirect('/Static/OtherFile/tutorial01.xlsx');
-
-//            $this->response()
-//                ->withHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-//            $this->response()->withHeader('Content-Disposition', 'attachment;filename="' . $fileName . '"');
-//            $this->response()->withHeader('Content-Length', filesize($filePath));
-//            $this->response()->withHeader('Content-Transfer-Encoding', 'binary');
-//            $this->response()->withHeader('Cache-Control', 'must-revalidate');
-//            $this->response()->withHeader('Cache-Control', 'max-age=0');
-//            $this->response()->withHeader('Pragma', 'public');
-//            $this->response()->withStatus(200);
-//            $this->response()->end();
-
+            $filePath = $xlsxObject->fileName($fileName, 'sheet1')
+                ->header(['企业名称', '年', '字段', '数值', '区间'])->data($temp)->output();
+            $this->response()->redirect('/Static/OtherFile/' . $fileName);
         } else {
             return $this->writeJson(200, null, $temp, 'ok');
         }
