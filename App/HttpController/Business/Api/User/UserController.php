@@ -21,6 +21,7 @@ use App\HttpController\Service\Pay\wx\wxPayService;
 use App\HttpController\Service\User\UserService;
 use App\HttpController\Service\YuanSu\YuanSuService;
 use Carbon\Carbon;
+use EasySwoole\ORM\DbManager;
 use EasySwoole\RedisPool\Redis;
 use wanghanwanghan\someUtils\control;
 
@@ -213,6 +214,10 @@ class UserController extends UserBase
                 ->order('info.updated_at', 'desc')
                 ->limit($this->exprOffset($page, $pageSize), (int)$pageSize)
                 ->all();
+
+            $sql = DbManager::getInstance()->getLastQuery()->getLastQuery();
+
+            CommonService::getInstance()->log4PHP($sql);
 
             //拿到数据
             $list = obj2Arr($list);
