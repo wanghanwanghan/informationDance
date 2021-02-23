@@ -208,6 +208,19 @@ class UserController extends UserBase
 
             $list = PurchaseInfo::create()
                 ->alias('info')
+                ->field([
+                    'info.id',
+                    'info.phone',
+                    'info.orderId',
+                    'info.orderStatus',
+                    'info.purchaseType',
+                    'info.payMoney',
+                    'info.payWay',
+                    'info.created_at',
+                    'list.name',
+                    'list.desc',
+                    'list.money',
+                ])
                 ->join('information_dance_purchase_list as list', 'list.id = info.purchaseType')
                 ->where('phone', $phone)
                 ->where('orderStatus', '待支付', '<>')
