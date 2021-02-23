@@ -48,7 +48,7 @@ class TestController extends BusinessBase
                         $temp[] = ['', '', 'NETINC_REL 净利润', $val['NETINC_REL'], $range['NETINC_REL']];
                         $temp[] = ['', '', 'RATGRO_REL 纳税总额', $val['RATGRO_REL'], $range['RATGRO_REL']];
                         $temp[] = ['', '', 'TOTEQU_REL 所有者权益', $val['TOTEQU_REL'], $range['TOTEQU_REL']];
-                        $temp[] = ['', '', 'SOCNUM 社保人数', $val['SOCNUM'], $range['SOCNUM']];
+                        $temp[] = ['', '', 'SOCNUM 社保人数', $val['SOCNUM'], ''];
                     }
                 }
             }
