@@ -232,7 +232,8 @@ class UserController extends UserBase
             $list = obj2Arr($list);
 
             //数据的总记录条数
-            $total = PurchaseInfo::create()->where('phone', $phone)->count();
+            $total = PurchaseInfo::create()->where('phone', $phone)
+                ->where('orderStatus','待支付','<>')->count();
 
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
