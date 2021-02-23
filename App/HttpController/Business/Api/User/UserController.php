@@ -228,10 +228,6 @@ class UserController extends UserBase
                 ->limit($this->exprOffset($page, $pageSize), (int)$pageSize)
                 ->all();
 
-            $sql = DbManager::getInstance()->getLastQuery()->getLastQuery();
-
-            CommonService::getInstance()->log4PHP($sql);
-
             //拿到数据
             $list = obj2Arr($list);
 
