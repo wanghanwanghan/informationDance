@@ -98,6 +98,8 @@ class ProvideBase extends Index
             'spendTime' => $this->spendTime,
         ];
 
+        CommonService::getInstance()->log4PHP($this->responseInfo);
+
         $this->writeJson(
             $this->responseCode,
             $this->responsePaging,
