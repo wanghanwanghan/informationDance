@@ -98,8 +98,6 @@ class ProvideBase extends Index
             'spendTime' => $this->spendTime,
         ];
 
-        CommonService::getInstance()->log4PHP($this->responseInfo);
-
         $this->writeJson(
             $this->responseCode,
             $this->responsePaging,
@@ -208,8 +206,6 @@ class ProvideBase extends Index
 
         try {
             $apiInfo = RequestApiInfo::create()->where('path', $this->requestUrl)->get();
-            CommonService::getInstance()->log4PHP($apiInfo);
-            CommonService::getInstance()->log4PHP($this->requestUrl);
             if (empty($apiInfo)) {
                 $this->writeJson(607, null, null, '请求接口不存在');
                 return false;
@@ -222,7 +218,9 @@ class ProvideBase extends Index
                     'status' => 1
                 ])->get();
             if (empty($relationshipCheck)) {
+                CommonService::getInstance()->log4PHP($this->response()->__toString());
                 $this->writeJson(608, null, null, '没有接口请求权限');
+                CommonService::getInstance()->log4PHP($this->response()->__toString());
                 return false;
             }
             $this->spendMoney = $relationshipCheck->price;
