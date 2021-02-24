@@ -418,8 +418,7 @@ class QianQiService extends ServiceBase
     //startYear
     private function getStartYear()
     {
-        (int)date('m') >= 9 ? $yearStart = date('Y') - 1 : $yearStart = date('Y') - 2;
-        return $yearStart;
+        return date('m') >= 9 ? date('Y') - 1 : date('Y') - 2;
     }
 
     //整理数据，把字母转换成数字
@@ -598,6 +597,8 @@ class QianQiService extends ServiceBase
         if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
 
         $yearStart = $this->getStartYear();
+
+        CommonService::getInstance()->log4PHP($yearStart);
 
         $return = [];
 
