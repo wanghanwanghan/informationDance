@@ -206,6 +206,8 @@ class ProvideBase extends Index
 
         try {
             $apiInfo = RequestApiInfo::create()->where('path', $this->requestUrl)->get();
+            CommonService::getInstance()->log4PHP($apiInfo);
+            CommonService::getInstance()->log4PHP($this->requestUrl);
             if (empty($apiInfo)) {
                 $this->writeJson(607, null, null, '请求接口不存在');
                 return false;
