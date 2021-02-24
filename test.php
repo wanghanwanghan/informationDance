@@ -14,7 +14,7 @@ $data = [
     'time' => $time,
     'sign' => $sign,
     // 'image' => new \CURLFile(realpath('./WechatIMG261-tuya.png'))
-    'entName' => '中国工商银行股份有限公司',
+    'entName' => '山东电力工程咨询院有限公司',
     'page' => 1,
     'pageSize' => 10,
 ];

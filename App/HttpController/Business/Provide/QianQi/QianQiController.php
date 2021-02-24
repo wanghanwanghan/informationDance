@@ -68,22 +68,9 @@ class QianQiController extends ProvideBase
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData, $target) {
-            $res = (new QianQiService())->setCheckRespFlag(true)->getThreeYears($postData);
-            if (isset($res['code']) && $res['code'] === 200 && !empty($res['result'])) {
-                $resultTemp = [];
-                foreach ($res['result'] as $key => $val) {
-                    if (empty($val)) {
-                        $resultTemp[$key] = '';
-                    } else {
-                        isset($val[$target]) ? $temp = trim($val[$target]) : $temp = '';
-                        !empty($temp) ?: $temp = '';
-                        $resultTemp[$key] = $temp;
-                    }
-                }
-                !empty($resultTemp) ?: $resultTemp = '';
-                $res['result'] = $resultTemp;
-            }
-            return $res;
+            return (new QianQiService())
+                ->setCheckRespFlag(true)
+                ->getThreeYearsReturnOneField($postData, $target);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
