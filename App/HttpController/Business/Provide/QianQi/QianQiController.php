@@ -61,21 +61,21 @@ class QianQiController extends ProvideBase
     function getThreeYearsDataForASSGRO_REL()
     {
         $entName = $this->getRequestData('entName', '');
+        $target = 'ASSGRO_REL';
 
         $postData = [
             'entName' => $entName
         ];
 
-        $this->csp->add($this->cspKey, function () use ($postData) {
+        $this->csp->add($this->cspKey, function () use ($postData, $target) {
             $res = (new QianQiService())->setCheckRespFlag(true)->getThreeYears($postData);
-            CommonService::getInstance()->log4PHP($res);
             if (isset($res['code']) && $res['code'] === 200 && !empty($res['result'])) {
                 $resultTemp = [];
                 foreach ($res['result'] as $key => $val) {
                     if (empty($val)) {
                         $resultTemp[$key] = '';
                     } else {
-                        isset($val['ASSGRO_REL']) ? $temp = trim($val['ASSGRO_REL']) : $temp = '';
+                        isset($val[$target]) ? $temp = trim($val[$target]) : $temp = '';
                         !empty($temp) ?: $temp = '';
                         $resultTemp[$key] = $temp;
                     }
@@ -86,6 +86,8 @@ class QianQiController extends ProvideBase
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkResponse($res);
     }
