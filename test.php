@@ -2,7 +2,7 @@
 
 include './vendor/autoload.php';
 
-$url = 'https://api.meirixindong.com/provide/v1/qq/getThreeYearsDataForASSGRO_REL';
+$url = 'https://api.meirixindong.com/provide/v1/qq/getThreeYearsDataForLIAGRO_REL';
 
 $appId = 'PHP_is_the_best_language_in_the_world';
 $appSecret = 'PHP_GO';
@@ -28,4 +28,4 @@ curl_setopt($curl, CURLOPT_POSTFIELDS, $data);//提交的数据
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);//返回值不直接显示
 $res = curl_exec($curl);//发送请求
 
-dd($res);
+dd(json_decode($res, true));
