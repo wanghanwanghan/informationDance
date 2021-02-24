@@ -105,6 +105,8 @@ class ProvideBase extends Index
             $this->responseMsg,
             $this->responseInfo
         );
+
+        CommonService::getInstance()->log4PHP($this->response()->__toString());
     }
 
     //重写writeJson
