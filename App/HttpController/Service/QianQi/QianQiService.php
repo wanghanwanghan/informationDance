@@ -598,7 +598,8 @@ class QianQiService extends ServiceBase
 
         $yearStart = $this->getStartYear();
 
-        CommonService::getInstance()->log4PHP($yearStart);
+        CommonService::getInstance()->log4PHP((int)date('m'));
+        CommonService::getInstance()->log4PHP(date('Y'));
 
         $return = [];
 
@@ -613,9 +614,6 @@ class QianQiService extends ServiceBase
             $this->sendHeaders['authorization'] = $this->createToken($arr);
 
             $res = (new CoHttpClient())->send($this->baseUrl . 'xindong/search/', $arr, $this->sendHeaders);
-
-            CommonService::getInstance()->log4PHP($arr);
-            CommonService::getInstance()->log4PHP($res);
 
             if (isset($res['data']) && !empty($res['data'])) {
                 isset($res['data'][$field]) ? $temp = trim($res['data'][$field]) : $temp = '';
