@@ -80,6 +80,7 @@ class QianQiController extends ProvideBase
                         $resultTemp[$key] = $temp;
                     }
                 }
+                !empty($resultTemp) ?: $resultTemp = '';
                 $res['result'] = $resultTemp;
             }
         });
