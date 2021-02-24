@@ -9,8 +9,95 @@
      sign = substr( md5( appId + appSecret + time ), 0, 30 )，全部转大写后只取前30位
      entName = 山东电力工程咨询院有限公司
 //======================================================================================================================
-
-
-
+描述:乾启 最近三年财务数据 单独字段 ASSGRO_REL 资产总额
+地址:provide/v1/qq/getThreeYearsDataForASSGRO_REL
+方法:get/post
+请求头:Authorization = XXX
+参数:
+     appId = XXX
+     time = 1608715890
+     sign = substr( md5( appId + appSecret + time ), 0, 30 )，全部转大写后只取前30位
+     entName = 山东电力工程咨询院有限公司
+//======================================================================================================================
+描述:乾启 最近三年财务数据 单独字段 LIAGRO_REL 负债总额
+地址:provide/v1/qq/getThreeYearsDataForLIAGRO_REL
+方法:get/post
+请求头:Authorization = XXX
+参数:
+     appId = XXX
+     time = 1608715890
+     sign = substr( md5( appId + appSecret + time ), 0, 30 )，全部转大写后只取前30位
+     entName = 山东电力工程咨询院有限公司
+//======================================================================================================================
+描述:乾启 最近三年财务数据 单独字段 VENDINC_REL 营业总收入
+地址:provide/v1/qq/getThreeYearsDataForVENDINC_REL
+方法:get/post
+请求头:Authorization = XXX
+参数:
+     appId = XXX
+     time = 1608715890
+     sign = substr( md5( appId + appSecret + time ), 0, 30 )，全部转大写后只取前30位
+     entName = 山东电力工程咨询院有限公司
+//======================================================================================================================
+描述:乾启 最近三年财务数据 单独字段 MAIBUSINC_REL 主营业务收入
+地址:provide/v1/qq/getThreeYearsDataForMAIBUSINC_REL
+方法:get/post
+请求头:Authorization = XXX
+参数:
+     appId = XXX
+     time = 1608715890
+     sign = substr( md5( appId + appSecret + time ), 0, 30 )，全部转大写后只取前30位
+     entName = 山东电力工程咨询院有限公司
+//======================================================================================================================
+描述:乾启 最近三年财务数据 单独字段 PROGRO_REL 利润总额
+地址:provide/v1/qq/getThreeYearsDataForPROGRO_REL
+方法:get/post
+请求头:Authorization = XXX
+参数:
+     appId = XXX
+     time = 1608715890
+     sign = substr( md5( appId + appSecret + time ), 0, 30 )，全部转大写后只取前30位
+     entName = 山东电力工程咨询院有限公司
+//======================================================================================================================
+描述:乾启 最近三年财务数据 单独字段 NETINC_REL 净利润
+地址:provide/v1/qq/getThreeYearsDataForNETINC_REL
+方法:get/post
+请求头:Authorization = XXX
+参数:
+     appId = XXX
+     time = 1608715890
+     sign = substr( md5( appId + appSecret + time ), 0, 30 )，全部转大写后只取前30位
+     entName = 山东电力工程咨询院有限公司
+//======================================================================================================================
+描述:乾启 最近三年财务数据 单独字段 RATGRO_REL 纳税总额
+地址:provide/v1/qq/getThreeYearsDataForRATGRO_REL
+方法:get/post
+请求头:Authorization = XXX
+参数:
+     appId = XXX
+     time = 1608715890
+     sign = substr( md5( appId + appSecret + time ), 0, 30 )，全部转大写后只取前30位
+     entName = 山东电力工程咨询院有限公司
+//======================================================================================================================
+描述:乾启 最近三年财务数据 单独字段 TOTEQU_REL 所有者权益
+地址:provide/v1/qq/getThreeYearsDataForTOTEQU_REL
+方法:get/post
+请求头:Authorization = XXX
+参数:
+     appId = XXX
+     time = 1608715890
+     sign = substr( md5( appId + appSecret + time ), 0, 30 )，全部转大写后只取前30位
+     entName = 山东电力工程咨询院有限公司
+//======================================================================================================================
+描述:乾启 最近三年财务数据 单独字段 SOCNUM 社保人数
+地址:provide/v1/qq/getThreeYearsDataForSOCNUM
+方法:get/post
+请求头:Authorization = XXX
+参数:
+     appId = XXX
+     time = 1608715890
+     sign = substr( md5( appId + appSecret + time ), 0, 30 )，全部转大写后只取前30位
+     entName = 山东电力工程咨询院有限公司
+//======================================================================================================================
 
 
