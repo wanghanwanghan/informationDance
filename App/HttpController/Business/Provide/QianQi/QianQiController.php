@@ -60,8 +60,8 @@ class QianQiController extends ProvideBase
     //对外的最近三年财务数据 单独字段 ASSGRO_REL 资产总额
     function getThreeYearsDataForASSGRO_REL()
     {
-        $entName = $this->getRequestData('entName', '');
         $target = 'ASSGRO_REL';
+        $entName = $this->getRequestData('entName', '');
 
         $postData = [
             'entName' => $entName
@@ -81,41 +81,169 @@ class QianQiController extends ProvideBase
     //对外的最近三年财务数据 单独字段 LIAGRO_REL 负债总额
     function getThreeYearsDataForLIAGRO_REL()
     {
+        $target = 'LIAGRO_REL';
+        $entName = $this->getRequestData('entName', '');
+
+        $postData = [
+            'entName' => $entName
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData, $target) {
+            return (new QianQiService())
+                ->setCheckRespFlag(true)
+                ->getThreeYearsReturnOneField($postData, $target);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
     }
 
     //对外的最近三年财务数据 单独字段 VENDINC_REL 营业总收入
     function getThreeYearsDataForVENDINC_REL()
     {
+        $target = 'VENDINC_REL';
+        $entName = $this->getRequestData('entName', '');
+
+        $postData = [
+            'entName' => $entName
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData, $target) {
+            return (new QianQiService())
+                ->setCheckRespFlag(true)
+                ->getThreeYearsReturnOneField($postData, $target);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
     }
 
     //对外的最近三年财务数据 单独字段 MAIBUSINC_REL 主营业务收入
     function getThreeYearsDataForMAIBUSINC_REL()
     {
+        $target = 'MAIBUSINC_REL';
+        $entName = $this->getRequestData('entName', '');
+
+        $postData = [
+            'entName' => $entName
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData, $target) {
+            return (new QianQiService())
+                ->setCheckRespFlag(true)
+                ->getThreeYearsReturnOneField($postData, $target);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
     }
 
     //对外的最近三年财务数据 单独字段 PROGRO_REL 利润总额
     function getThreeYearsDataForPROGRO_REL()
     {
+        $target = 'PROGRO_REL';
+        $entName = $this->getRequestData('entName', '');
+
+        $postData = [
+            'entName' => $entName
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData, $target) {
+            return (new QianQiService())
+                ->setCheckRespFlag(true)
+                ->getThreeYearsReturnOneField($postData, $target);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
     }
 
     //对外的最近三年财务数据 单独字段 NETINC_REL 净利润
     function getThreeYearsDataForNETINC_REL()
     {
+        $target = 'NETINC_REL';
+        $entName = $this->getRequestData('entName', '');
+
+        $postData = [
+            'entName' => $entName
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData, $target) {
+            return (new QianQiService())
+                ->setCheckRespFlag(true)
+                ->getThreeYearsReturnOneField($postData, $target);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
     }
 
     //对外的最近三年财务数据 单独字段 RATGRO_REL 纳税总额
     function getThreeYearsDataForRATGRO_REL()
     {
+        $target = 'RATGRO_REL';
+        $entName = $this->getRequestData('entName', '');
+
+        $postData = [
+            'entName' => $entName
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData, $target) {
+            return (new QianQiService())
+                ->setCheckRespFlag(true)
+                ->getThreeYearsReturnOneField($postData, $target);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
     }
 
     //对外的最近三年财务数据 单独字段 TOTEQU_REL 所有者权益
     function getThreeYearsDataForTOTEQU_REL()
     {
+        $target = 'TOTEQU_REL';
+        $entName = $this->getRequestData('entName', '');
+
+        $postData = [
+            'entName' => $entName
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData, $target) {
+            return (new QianQiService())
+                ->setCheckRespFlag(true)
+                ->getThreeYearsReturnOneField($postData, $target);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
     }
 
     //对外的最近三年财务数据 单独字段 SOCNUM 社保人数
     function getThreeYearsDataForSOCNUM()
     {
+        $target = 'SOCNUM';
+        $entName = $this->getRequestData('entName', '');
+
+        $postData = [
+            'entName' => $entName
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData, $target) {
+            return (new QianQiService())
+                ->setCheckRespFlag(true)
+                ->getThreeYearsReturnOneField($postData, $target);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
     }
 
 

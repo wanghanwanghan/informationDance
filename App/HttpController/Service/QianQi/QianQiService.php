@@ -598,9 +598,6 @@ class QianQiService extends ServiceBase
 
         $yearStart = $this->getStartYear();
 
-        CommonService::getInstance()->log4PHP((int)date('m'));
-        CommonService::getInstance()->log4PHP(date('Y'));
-
         $return = [];
 
         for ($i = 3; $i--;) {
