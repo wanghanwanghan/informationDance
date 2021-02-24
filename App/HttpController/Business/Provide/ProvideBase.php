@@ -39,6 +39,10 @@ class ProvideBase extends Index
     public $cspKey;
     public $cspTimeout = 10;
 
+    //在afterAction里判断的标志，如果之前已经输出过，那么afterAction将不再输出
+    //onRequest返回false后，afterAction还会执行
+    public $alreadyWriteJson = false;
+
     function onRequest(?string $action): ?bool
     {
         parent::onRequest($action);
@@ -88,7 +92,7 @@ class ProvideBase extends Index
                 'money' => QueryBuilder::dec($this->spendMoney)
             ]);
         } catch (\Throwable $e) {
-            $this->writeErr($e,__FUNCTION__);
+            $this->writeErr($e, __FUNCTION__);
         }
 
         $this->responseInfo = [
@@ -98,15 +102,14 @@ class ProvideBase extends Index
             'spendTime' => $this->spendTime,
         ];
 
-        $this->writeJson(
+        //如果之前已经输出过，那么afterAction将不再输出
+        $this->alreadyWriteJson ?: $this->writeJson(
             $this->responseCode,
             $this->responsePaging,
             $this->responseData,
             $this->responseMsg,
             $this->responseInfo
         );
-
-        CommonService::getInstance()->log4PHP($this->response()->__toString());
     }
 
     //重写writeJson
@@ -128,6 +131,7 @@ class ProvideBase extends Index
             $this->response()->write(json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
             $this->response()->withHeader('Content-type', 'application/json;charset=utf-8');
             $this->response()->withStatus($statusCode);
+            $this->alreadyWriteJson = true;
             return true;
         } else {
             return false;
@@ -220,9 +224,7 @@ class ProvideBase extends Index
                     'status' => 1
                 ])->get();
             if (empty($relationshipCheck)) {
-                CommonService::getInstance()->log4PHP($this->response()->__toString());
                 $this->writeJson(608, null, null, '没有接口请求权限');
-                CommonService::getInstance()->log4PHP($this->response()->__toString());
                 return false;
             }
             $this->spendMoney = $relationshipCheck->price;
