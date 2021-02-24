@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\QianQi;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\QianQi\QianQiService;
 
 class QianQiController extends ProvideBase
@@ -67,6 +68,7 @@ class QianQiController extends ProvideBase
 
         $this->csp->add($this->cspKey, function () use ($postData) {
             $res = (new QianQiService())->setCheckRespFlag(true)->getThreeYears($postData);
+            CommonService::getInstance()->log4PHP($res);
             if (isset($res['code']) && $res['code'] === 200 && !empty($res['result'])) {
                 $resultTemp = [];
                 foreach ($res['result'] as $key => $val) {
