@@ -89,7 +89,7 @@ class BusinessBase extends Index
 
         foreach ($result as $key => $value) {
             if (is_array($value)) {
-                $result[$key] = $this->handleResult($value);
+                $result[$key] = $this->handleResult($value, $type);
             } else {
                 if (trim($value) === '' || trim($value) === null)
                     $result[$key] = $type;
