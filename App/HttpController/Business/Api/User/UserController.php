@@ -665,7 +665,6 @@ class UserController extends UserBase
                 'status' => 1,
                 'remark' => '',
             ])->save();
-
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
@@ -681,16 +680,12 @@ class UserController extends UserBase
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         try {
-
             $info = AuthBook::create()->where('phone', $phone)
                 ->order('created_at', 'desc')
                 ->limit($this->exprOffset($page, $pageSize), $pageSize)
                 ->all();
-
             $info = obj2Arr($info);
-
             $total = AuthBook::create()->where('phone', $phone)->count();
-
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }

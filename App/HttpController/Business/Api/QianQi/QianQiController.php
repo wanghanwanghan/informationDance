@@ -62,6 +62,8 @@ class QianQiController extends QianQiBase
             'entName' => $entName
         ];
 
+        //这里验证授权书是否审核通过
+
         $res = (new QianQiService())->getThreeYearsData($postData);
 
         return $this->checkResponse($res);
@@ -72,7 +74,7 @@ class QianQiController extends QianQiBase
     {
         $res = (new QianQiService())->getDataTest();
 
-        return $this->writeJson(200,null,$res);
+        return $this->writeJson(200, null, $res);
     }
 
 
