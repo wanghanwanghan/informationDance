@@ -82,23 +82,6 @@ class BusinessBase extends Index
         }
     }
 
-    //递归处理数组数据，是空的变成-
-    function handleResult($result, $type = '-')
-    {
-        if (!is_array($result)) return $result;
-
-        foreach ($result as $key => $value) {
-            if (is_array($value)) {
-                $result[$key] = $this->handleResult($value, $type);
-            } else {
-                if (trim($value) === '' || trim($value) === null)
-                    $result[$key] = $type;
-            }
-        }
-
-        return $result;
-    }
-
     //链接池系列抛出异常
     function writeErr(\Throwable $e, $which = 'comm'): bool
     {
