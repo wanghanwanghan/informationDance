@@ -67,7 +67,7 @@ class BusinessBase extends Index
             $data = [
                 'code' => $statusCode,
                 'paging' => $paging,
-                'result' => $result,
+                'result' => $this->handleResult($result),
                 'msg' => $msg
             ];
 
@@ -80,6 +80,23 @@ class BusinessBase extends Index
         } else {
             return false;
         }
+    }
+
+    //递归处理数组数据，是空的变成-
+    function handleResult($result, $type = '-')
+    {
+        if (!is_array($result)) return $result;
+
+        foreach ($result as $key => $value) {
+            if (is_array($value)) {
+                $result[$key] = $this->handleResult($value);
+            } else {
+                if (trim($value) === '' || trim($value) === null)
+                    $result[$key] = $type;
+            }
+        }
+
+        return $result;
     }
 
     //链接池系列抛出异常
@@ -172,30 +189,25 @@ class BusinessBase extends Index
         $entName = $this->request()->getRequestParam('entName');
         $token = $this->request()->getHeaderLine('authorization');
         $todayStart = Carbon::now()->startOfDay()->timestamp;
-        $todayEnd   = Carbon::now()->endOfDay()->timestamp;
+        $todayEnd = Carbon::now()->endOfDay()->timestamp;
 
         $entName = [];
 
         //每天只能浏览100个企业
-        if (!empty($entName) && !empty($token))
-        {
-            try
-            {
+        if (!empty($entName) && !empty($token)) {
+            try {
                 $limitList = EntLimitEveryday::create()
                     ->field('entName')
-                    ->where('token',$token)
-                    ->where('created_at',$todayStart,'>')
+                    ->where('token', $token)
+                    ->where('created_at', $todayStart, '>')
                     ->all();
 
-                if (empty($limitList))
-                {
+                if (empty($limitList)) {
                     $limitList = [];
-                }else
-                {
+                } else {
                     $tmp = [];
 
-                    foreach ($limitList as $one)
-                    {
+                    foreach ($limitList as $one) {
                         $tmp[] = $one->entName;
                     }
 
@@ -207,15 +219,13 @@ class BusinessBase extends Index
                     'entName' => $entName,
                 ])->save();
 
-            }catch (\Throwable $e)
-            {
-                return $this->writeErr($e,__FUNCTION__);
+            } catch (\Throwable $e) {
+                return $this->writeErr($e, __FUNCTION__);
             }
 
             //超过了限定次数
-            if (!empty($limitList) && count($limitList) > 100)
-            {
-                $this->writeJson(230,null,null,'当天访问企业超过限制');
+            if (!empty($limitList) && count($limitList) > 100) {
+                $this->writeJson(230, null, null, '当天访问企业超过限制');
                 return false;
             }
         }
