@@ -67,7 +67,7 @@ class BusinessBase extends Index
             $data = [
                 'code' => $statusCode,
                 'paging' => $paging,
-                'result' => $this->handleResult($result),
+                'result' => $this->handleResult($result, '--'),
                 'msg' => $msg
             ];
 
