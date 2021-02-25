@@ -67,7 +67,7 @@ class BusinessBase extends Index
             $data = [
                 'code' => $statusCode,
                 'paging' => $paging,
-                'result' => $this->handleResult($result, '--'),
+                'result' => control::changeArrVal($result, ['', null], '--', true),
                 'msg' => $msg
             ];
 

@@ -16,22 +16,7 @@ class Index extends Controller
         parent::afterAction($actionName);
     }
 
-    //递归处理数组数据，是空的变成-
-    function handleResult($result, $type = '-')
+    function index()
     {
-        if (!is_array($result)) return $result;
-
-        foreach ($result as $key => $value) {
-            if (is_array($value)) {
-                $result[$key] = $this->handleResult($value, $type);
-            } else {
-                if (trim($value) === '' || trim($value) === null)
-                    $result[$key] = $type;
-            }
-        }
-
-        return $result;
     }
-
-    function index() {}
 }
