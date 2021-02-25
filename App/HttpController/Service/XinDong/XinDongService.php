@@ -568,6 +568,11 @@ class XinDongService extends ServiceBase
         return $this->checkResp(200, null, $tmp, '查询成功');
     }
 
+    //非企信息
+    function getNaCaoRegisterInfo($entName)
+    {
+
+    }
 
 
 }
