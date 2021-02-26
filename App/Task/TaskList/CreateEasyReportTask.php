@@ -1430,7 +1430,6 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //商标
             $docObj->setValue("sb_Name#" . ($i + 1), $data['tmSearch']['list'][$i]['Name']);
             //图标
-            CommonService::getInstance()->log4PHP($data['tmSearch']['list'][$i]['ImageUrl']);
             if (empty($data['tmSearch']['list'][$i]['ImageUrl'])) {
                 $docObj->setValue("sb_img#" . ($i + 1), "");
             }else{
