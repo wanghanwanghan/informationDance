@@ -1430,7 +1430,12 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //商标
             $docObj->setValue("sb_Name#" . ($i + 1), $data['tmSearch']['list'][$i]['Name']);
             //图标
-            $docObj->setImageValue("sb_img#" . ($i + 1), ['path' => $data['tmSearch']['list'][$i]['ImageUrl'], 'width' => 50, 'height' => 50]);
+            CommonService::getInstance()->log4PHP($data['tmSearch']['list'][$i]['ImageUrl']);
+            if (empty($data['tmSearch']['list'][$i]['ImageUrl'])) {
+                $docObj->setValue("sb_img#" . ($i + 1), "");
+            }else{
+                $docObj->setImageValue("sb_img#" . ($i + 1), ['path' => $data['tmSearch']['list'][$i]['ImageUrl'], 'width' => 50, 'height' => 50]);
+            }
             //商标分类
             $docObj->setValue("sb_FlowStatus#" . ($i + 1), $data['tmSearch']['list'][$i]['FlowStatus']);
             //注册号
