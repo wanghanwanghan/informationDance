@@ -76,7 +76,7 @@ class OneSaidService extends ServiceBase
     ];
 
     //发布（修改）一句话
-    function createOneSaid($phone, $oneSaid, $moduleId,$entName)
+    function createOneSaid($phone, $oneSaid, $moduleId, $entName)
     {
         $oneSaid = trim($oneSaid);
 
