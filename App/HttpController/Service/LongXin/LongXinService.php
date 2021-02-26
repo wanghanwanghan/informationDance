@@ -32,7 +32,13 @@ class LongXinService extends ServiceBase
     //二分找区间
     function binaryFind(int $find, int $leftIndex = 0, int $rightIndex = 9): ?array
     {
-        if ($leftIndex > $rightIndex) return null;
+        //如果不在所有区间内
+        if ($leftIndex > $rightIndex) {
+            if ($find < $this->rangeArr[0]['range'][0]) return $this->rangeArr[0];
+            if ($find > $this->rangeArr[count($this->rangeArr) - 1]['range'][1])
+                return $this->rangeArr[count($this->rangeArr) - 1];
+            return null;
+        }
 
         $middle = ($leftIndex + $rightIndex) / 2;
 
@@ -40,6 +46,7 @@ class LongXinService extends ServiceBase
         if ($find > $this->rangeArr[$middle]['range'][1]) {
             return $this->binaryFind($find, $middle + 1, $rightIndex);
         }
+
         //如果小于第一个数，肯定在左边
         if ($find < $this->rangeArr[$middle]['range'][0])
             return $this->binaryFind($find, $leftIndex, $middle - 1);
