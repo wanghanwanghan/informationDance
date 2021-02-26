@@ -29,6 +29,12 @@ class LongXinService extends ServiceBase
         return parent::__construct();
     }
 
+    function setRangeArr(array $range): LongXinService
+    {
+        $this->rangeArr = $range;
+        return $this;
+    }
+
     //二分找区间
     function binaryFind(int $find, int $leftIndex = 0, int $rightIndex = 9): ?array
     {
