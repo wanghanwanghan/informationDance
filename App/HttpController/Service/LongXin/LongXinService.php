@@ -32,6 +32,8 @@ class LongXinService extends ServiceBase
     //二分找区间
     function binaryFind(int $find, int $leftIndex = 0, int $rightIndex = 9): ?array
     {
+        if (!is_numeric($find)) return null;
+
         //如果不在所有区间内
         if ($leftIndex > $rightIndex) {
             if ($find < $this->rangeArr[0]['range'][0]) return $this->rangeArr[0];
