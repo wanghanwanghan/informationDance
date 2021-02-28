@@ -106,20 +106,100 @@ class LongXinService extends ServiceBase
 
         $this->sendHeaders['authorization'] = $this->createToken($arr);
 
-        $res = (new CoHttpClient())
-            ->useCache(false)
-            ->send($this->baseUrl . 'getentid/', $arr, $this->sendHeaders);
+        $res = (new CoHttpClient())->useCache(false)->send($this->baseUrl . 'getentid/', $arr, $this->sendHeaders);
 
-        CommonService::getInstance()->log4PHP($res);
-
-        (!empty($res) && !empty($res['data'])) ? $entid = $res['data'] : $entid = null;
+        if (!empty($res) && isset($res['data']) && !empty($res['data'])) {
+            $entid = $res['data'];
+        } else {
+            $entid = null;
+        }
 
         return $entid;
     }
 
+    //startYear
+    private function getStartYear()
+    {
+        return (int)date('m') >= 9 ? date('Y') - 1 : date('Y') - 2;
+    }
+
+    //整理请求结果
+    private function checkResp($res)
+    {
+        $res['Paging'] = null;
+
+        if (isset($res['coHttpErr'])) return $this->createReturn(500, $res['Paging'], [], 'co请求错误');
+
+        $res['Result'] = $res['data'];
+        $res['Message'] = $res['msg'];
+
+        return $this->createReturn((int)$res['code'], $res['Paging'], $res['Result'], $res['Message']);
+    }
+
+    //近三年的财务数据
+    function getThreeYearsData($postData)
+    {
+        $entId = $this->getEntid($postData['entName']);
+
+        if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
+
+        $arr = [
+            'entid' => $entId,
+            'ANCHEYEAR' => '2017,2018,2019',
+            'usercode' => $this->usercode
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
+
+        return $this->checkRespFlag ?
+            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $res]) :
+            ['code' => 200, 'msg' => '查询成功', 'data' => $res];
+    }
+
+    //对外的最近三年财务数据 只返回一个字段
+    function getThreeYearsReturnOneField($postData, $field)
+    {
+        $entId = $this->getEntid($postData['entName']);
+
+        if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
+
+        $yearStart = $this->getStartYear();
+
+        $return = [];
+
+        for ($i = 3; $i--;) {
+            $arr = [
+                'entid' => $entId,
+                'year' => $yearStart - $i,
+                'type' => 2,
+                'usercode' => $this->usercode
+            ];
+
+            $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+            $res = (new CoHttpClient())->send($this->baseUrl . 'xindong/search/', $arr, $this->sendHeaders);
+
+            if (isset($res['data']) && !empty($res['data'])) {
+                isset($res['data'][$field]) ? $temp = trim($res['data'][$field]) : $temp = '';
+                $return[$yearStart - $i] = $temp;
+            } else {
+                $return[$yearStart - $i] = '';
+            }
+        }
+
+        krsort($return);
+
+        return $this->checkRespFlag ?
+            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $return]) :
+            ['code' => 200, 'msg' => '查询成功', 'data' => $return];
+    }
+
+
     public function test()
     {
-        return $this->getEntid('北京京东世纪贸易有限公司');
+        return $this->getThreeYearsData(['entName' => '北京京东世纪贸易有限公司']);
     }
 
 }
