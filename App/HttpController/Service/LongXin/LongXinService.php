@@ -108,7 +108,7 @@ class LongXinService extends ServiceBase
 
         $res = (new CoHttpClient())
             ->useCache(false)
-            ->send($this->baseUrl . 'saas/doc/001/', $arr, $this->sendHeaders);
+            ->send($this->baseUrl . 'getentid/', $arr, $this->sendHeaders);
 
         CommonService::getInstance()->log4PHP($res);
 
