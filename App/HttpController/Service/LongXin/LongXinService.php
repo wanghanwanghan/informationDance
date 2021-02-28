@@ -2,10 +2,18 @@
 
 namespace App\HttpController\Service\LongXin;
 
+use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 
 class LongXinService extends ServiceBase
 {
+    private $usercode;
+    private $userkey;
+    private $baseUrl;
+    private $sendHeaders;
+
     public $rangeArr = [
         ['name' => 'A00', 'range' => [0, 10]],
         ['name' => 'A01', 'range' => [10, 15]],
@@ -26,9 +34,19 @@ class LongXinService extends ServiceBase
 
     function __construct()
     {
+        $this->usercode = CreateConf::getInstance()->getConf('longxin.usercode');
+        $this->userkey = CreateConf::getInstance()->getConf('longxin.userkey');
+        $this->baseUrl = CreateConf::getInstance()->getConf('longxin.baseUrl');
+
+        $this->sendHeaders = [
+            'content-type' => 'application/x-www-form-urlencoded',
+            'authorization' => '',
+        ];
+
         return parent::__construct();
     }
 
+    //更换区间
     function setRangeArr(array $range): LongXinService
     {
         $this->rangeArr = $range;
@@ -62,5 +80,46 @@ class LongXinService extends ServiceBase
         return $this->rangeArr[$middle];
     }
 
+    //创建请求token
+    private function createToken($params)
+    {
+        $str = '';
+        ksort($params);
+
+        foreach ($params as $k => $val) {
+            $str .= $k . $val;
+        }
+
+        return hash_hmac('sha1', $str . $this->usercode, $this->userkey);
+    }
+
+    //公司名称换取entid
+    private function getEntid($entName): ?string
+    {
+        $ctype = preg_match('/\d{5}/', $entName) ? 1 : 3;
+
+        $arr = [
+            'key' => $entName,
+            'ctype' => $ctype,
+            'usercode' => $this->usercode
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($this->baseUrl . 'saas/doc/001/', $arr, $this->sendHeaders);
+
+        CommonService::getInstance()->log4PHP($res);
+
+        (!empty($res) && !empty($res['data'])) ? $entid = $res['data'] : $entid = null;
+
+        return $entid;
+    }
+
+    public function test()
+    {
+        return $this->getEntid('北京京东世纪贸易有限公司');
+    }
 
 }

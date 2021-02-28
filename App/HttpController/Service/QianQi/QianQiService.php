@@ -5,6 +5,7 @@ namespace App\HttpController\Service\QianQi;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
+use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\ServiceBase;
 
 class QianQiService extends ServiceBase
@@ -521,6 +522,10 @@ class QianQiService extends ServiceBase
         ];
 
         $url = 'http://39.106.95.155/data/daily_ent_mrxd?_t=' . time();
+
+
+        (new LongXinService())->test();
+
 
         return (new CoHttpClient())->send($url, $data, $this->sendHeaders);
     }
