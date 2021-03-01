@@ -106,7 +106,7 @@ class LongXinService extends ServiceBase
 
         $this->sendHeaders['authorization'] = $this->createToken($arr);
 
-        $res = (new CoHttpClient())->useCache(false)->send($this->baseUrl . 'getentid/', $arr, $this->sendHeaders);
+        $res = (new CoHttpClient())->send($this->baseUrl . 'getentid/', $arr, $this->sendHeaders);
 
         if (!empty($res) && isset($res['data']) && !empty($res['data'])) {
             $entid = $res['data'];
@@ -134,6 +134,28 @@ class LongXinService extends ServiceBase
         $res['Message'] = $res['msg'];
 
         return $this->createReturn((int)$res['code'], $res['Paging'], $res['Result'], $res['Message']);
+    }
+
+    //取社保人数
+    private function getSocialNum($entId)
+    {
+        $arr = [
+            'entid' => $entId,
+            'version' => 'E3',
+            'usercode' => $this->usercode
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())->send($this->baseUrl . 'company_detail/', $arr, $this->sendHeaders);
+
+        if (!empty($res) && isset($res['data']) && !empty($res['data'])) {
+            $tmp = $res['data'];
+        } else {
+            $tmp = null;
+        }
+
+        return $tmp;
     }
 
     //近n年的财务数据
@@ -170,17 +192,7 @@ class LongXinService extends ServiceBase
             krsort($temp);
         }
 
-
-        $arr = [
-            'entid' => $entId,
-            'version' => 'E3',
-            'usercode' => $this->usercode
-        ];
-
-        $this->sendHeaders['authorization'] = $this->createToken($arr);
-
-        $temp['num'] = (new CoHttpClient())->send($this->baseUrl . 'company_detail/', $arr, $this->sendHeaders);
-
+        $temp['getSocialNum'] = $this->getSocialNum($entId);
 
         return $this->checkRespFlag ?
             $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $temp]) :
