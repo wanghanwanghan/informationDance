@@ -578,7 +578,7 @@ class CreateTableService
                 ->setTableEngine(Engine::INNODB)
                 ->setTableCharset(Character::UTF8MB4_GENERAL_CI);
             $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
-            $table->colVarChar('name',128)->setDefaultValue('')->setColumnComment('接口名称');
+            $table->colVarChar('name',128)->setDefaultValue('')->setColumnComment('公司名称');
             $table->colInt('created_at',11)->setIsUnsigned()->setDefaultValue(0);
             $table->colInt('updated_at',11)->setIsUnsigned()->setDefaultValue(0);
         });
