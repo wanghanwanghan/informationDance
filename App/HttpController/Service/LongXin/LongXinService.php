@@ -228,6 +228,7 @@ class LongXinService extends ServiceBase
 
         //数字落区间
         foreach ($temp as $year => $arr) {
+            if (empty($arr)) continue;
             foreach ($arr as $field => $val) {
                 if ($field === 'SOCNUM' || !is_numeric($val)) continue;
                 $temp[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArr) - 1);
