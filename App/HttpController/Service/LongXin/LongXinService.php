@@ -172,7 +172,7 @@ class LongXinService extends ServiceBase
 
 
         $arr = [
-            'entid' => $entId,
+            'entid' => 'Q1xtSjCiGxXJ',
             'version' => 'E3',
             'usercode' => $this->usercode
         ];
