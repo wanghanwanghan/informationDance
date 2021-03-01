@@ -153,6 +153,8 @@ class LongXinService extends ServiceBase
 
         $res = (new CoHttpClient())->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
 
+        CommonService::getInstance()->log4PHP($res);
+
         return $this->checkRespFlag ?
             $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $res]) :
             ['code' => 200, 'msg' => '查询成功', 'data' => $res];
