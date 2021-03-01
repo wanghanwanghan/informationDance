@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Api\LongXin;
 
+use App\HttpController\Models\EntDb\EntDbFinance;
 use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Pay\ChargeService;
@@ -47,10 +48,13 @@ class LongXinController extends LongXinBase
             'beginYear' => date('Y')
         ];
 
-        CreateTableService::getInstance()->ent();
-        CreateTableService::getInstance()->finance();
 
-        return $this->writeJson();
+        EntDbFinance::create()->data([
+            'cid' => 123,
+            'ANCHEYEAR' => 2029,
+            'NETINC' => 1234575
+        ])->save();
+
 
         $res = (new LongXinService())->getThreeYearsData($postData);
 
