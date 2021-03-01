@@ -18,16 +18,34 @@ class LongXinService extends ServiceBase
     private $sendHeaders;
 
     public $rangeArr = [
-        ['name' => 'A00', 'range' => [0, 10]],
-        ['name' => 'A01', 'range' => [10, 15]],
-        ['name' => 'A02', 'range' => [15, 20]],
-        ['name' => 'A03', 'range' => [20, 25]],
-        ['name' => 'A04', 'range' => [25, 30]],
-        ['name' => 'A05', 'range' => [30, 35]],
-        ['name' => 'A06', 'range' => [35, 40]],
-        ['name' => 'A07', 'range' => [40, 45]],
-        ['name' => 'A08', 'range' => [45, 50]],
-        ['name' => 'A09', 'range' => [50, 55]],
+        ['name' => 'F14', 'range' => [-7000, -6500]],
+        ['name' => 'F13', 'range' => [-6500, -6000]],
+        ['name' => 'F12', 'range' => [-6000, -5500]],
+        ['name' => 'F11', 'range' => [-5500, -5000]],
+        ['name' => 'F10', 'range' => [-5000, -4500]],
+        ['name' => 'F09', 'range' => [-4500, -4000]],
+        ['name' => 'F08', 'range' => [-4000, -3500]],
+        ['name' => 'F07', 'range' => [-3500, -3000]],
+        ['name' => 'F06', 'range' => [-3000, -2500]],
+        ['name' => 'F05', 'range' => [-2500, -2000]],
+        ['name' => 'F04', 'range' => [-2000, -1500]],
+        ['name' => 'F03', 'range' => [-1500, -1000]],
+        ['name' => 'F02', 'range' => [-1000, -500]],
+        ['name' => 'F01', 'range' => [-500, 0]],
+        ['name' => 'Z01', 'range' => [0, 500]],
+        ['name' => 'Z02', 'range' => [500, 1000]],
+        ['name' => 'Z03', 'range' => [1000, 1500]],
+        ['name' => 'Z04', 'range' => [1500, 2000]],
+        ['name' => 'Z05', 'range' => [2000, 2500]],
+        ['name' => 'Z06', 'range' => [2500, 3000]],
+        ['name' => 'Z07', 'range' => [3000, 3500]],
+        ['name' => 'Z08', 'range' => [3500, 4000]],
+        ['name' => 'Z09', 'range' => [4000, 4500]],
+        ['name' => 'Z10', 'range' => [4500, 5000]],
+        ['name' => 'Z11', 'range' => [5000, 5500]],
+        ['name' => 'Z12', 'range' => [5500, 6000]],
+        ['name' => 'Z13', 'range' => [6000, 6500]],
+        ['name' => 'Z14', 'range' => [6500, 7000]],
     ];
 
     function onNewService(): ?bool
@@ -57,7 +75,7 @@ class LongXinService extends ServiceBase
     }
 
     //二分找区间
-    function binaryFind(int $find, int $leftIndex = 0, int $rightIndex = 9): ?array
+    function binaryFind(int $find, int $leftIndex, int $rightIndex): ?array
     {
         if (!is_numeric($find)) return null;
 
@@ -118,12 +136,6 @@ class LongXinService extends ServiceBase
         }
 
         return $entid;
-    }
-
-    //startYear
-    private function getStartYear()
-    {
-        return (int)date('m') >= 9 ? date('Y') - 1 : date('Y') - 2;
     }
 
     //整理请求结果
@@ -213,6 +225,14 @@ class LongXinService extends ServiceBase
         }
 
         TaskService::getInstance()->create(new insertFinance($postData['entName'], $temp, $social['AnnualSocial']));
+
+        //数字落区间
+        foreach ($temp as $year => $arr) {
+            foreach ($arr as $field => $val) {
+                if ($field === 'SOCNUM' || !is_numeric($val)) continue;
+                $temp[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArr) - 1);
+            }
+        }
 
         return $this->checkRespFlag ?
             $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $temp]) :
