@@ -227,17 +227,21 @@ class LongXinService extends ServiceBase
         TaskService::getInstance()->create(new insertFinance($postData['entName'], $temp, $social['AnnualSocial']));
 
         //数字落区间
+        $tmp = [];
         foreach ($temp as $year => $arr) {
             if (empty($arr)) continue;
             foreach ($arr as $field => $val) {
-                if ($field === 'SOCNUM' || !is_numeric($val)) continue;
+                if ($field === 'SOCNUM' || $field === 'ispublic') continue;
+                if (!is_numeric($val)) continue;
                 $temp[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArr) - 1);
             }
+            $tmp[$year] = $temp[$year];
+            if (count($tmp) >= $postData['dataCount']) break;
         }
 
         return $this->checkRespFlag ?
-            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $temp]) :
-            ['code' => 200, 'msg' => '查询成功', 'data' => $temp];
+            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $tmp]) :
+            ['code' => 200, 'msg' => '查询成功', 'data' => $tmp];
     }
 
     //对外的最近三年财务数据 只返回一个字段
