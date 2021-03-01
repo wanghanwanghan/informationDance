@@ -38,7 +38,7 @@ class insertFinance extends TaskBase implements TaskInterface
             foreach ($this->social as $oneSoc) {
                 $year = $oneSoc['ANCHEYEAR'];
                 if (!is_numeric($year) || !isset($this->finance[(string)$year])) continue;
-                $this->finance[(string)$year] = $this->finance[(string)$year] + $oneSoc;
+                $this->finance[(string)$year] = array_merge($this->finance[(string)$year], $oneSoc);
             }
 
             CommonService::getInstance()->log4PHP($this->finance);
