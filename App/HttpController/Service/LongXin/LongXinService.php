@@ -228,8 +228,6 @@ class LongXinService extends ServiceBase
 
         $temp = $this->exprHandle($temp);
 
-        CommonService::getInstance()->log4PHP($temp);
-
         //数字落区间
         $tmp = [];
         foreach ($temp as $year => $arr) {
@@ -391,6 +389,8 @@ class LongXinService extends ServiceBase
         $origin = $this->qycs($origin);
         //22主营业务比率
         $origin = $this->zyywbl($origin);
+
+        krsort($origin);
 
         return $origin;
     }
