@@ -179,7 +179,7 @@ class LongXinService extends ServiceBase
 
         $this->sendHeaders['authorization'] = $this->createToken($arr);
 
-        $temp['num'] = (new CoHttpClient())->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
+        $temp['num'] = (new CoHttpClient())->send($this->baseUrl . 'company_detail/', $arr, $this->sendHeaders);
 
 
         return $this->checkRespFlag ?
