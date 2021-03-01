@@ -226,6 +226,10 @@ class LongXinService extends ServiceBase
 
         TaskService::getInstance()->create(new insertFinance($postData['entName'], $temp, $social['AnnualSocial']));
 
+        $temp = $this->exprHandle($temp);
+
+        CommonService::getInstance()->log4PHP($temp);
+
         //数字落区间
         $tmp = [];
         foreach ($temp as $year => $arr) {
@@ -282,10 +286,357 @@ class LongXinService extends ServiceBase
             ['code' => 200, 'msg' => '查询成功', 'data' => $return];
     }
 
-
-    public function test()
+    //原值计算
+    function exprHandle($origin)
     {
-        return $this->getThreeYearsData(['entName' => '北京每日信动科技有限公司']);
+        //0资产总额 ASSGRO
+        //1负债总额 LIAGRO
+        //2营业总收入 VENDINC
+        //3主营业务收入 MAIBUSINC
+        //4利润总额 PROGRO
+        //5净利润 NETINC
+        //6纳税总额 RATGRO
+        //7所有者权益 TOTEQU
+        //8社保人数 SOCNUM
+
+        $now = [];
+        foreach ($origin as $year => $arr) {
+            $now[$year] = [
+                $arr['ASSGRO'],
+                $arr['LIAGRO'],
+                $arr['VENDINC'],
+                $arr['MAIBUSINC'],
+                $arr['PROGRO'],
+                $arr['NETINC'],
+                $arr['RATGRO'],
+                $arr['TOTEQU'],
+                $arr['SOCNUM'],
+            ];
+        }
+        $origin = $now;
+
+        $keys = array_keys($origin);
+
+        $max = max($keys);
+        $min = min($keys);
+
+        for ($i = $min; $i <= $max; $i++) {
+            if ((isset($origin[$i]) && empty($origin[$i])) || !isset($origin[$i])) {
+                $origin[$i] = [null, null, null, null, null, null, null, null, null];
+            }
+        }
+
+        ksort($origin);
+
+        return $this->expr($origin);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //================================================================================================================//
+    //以下是计算的过程，放到service的最后面
+    private function expr($origin)
+    {
+        //0资产总额
+        //1负债总额
+        //2营业总收入
+        //3主营业务收入
+        //4利润总额
+        //5净利润
+        //6纳税总额
+        //7所有者权益
+        //8社保人数
+        //9净资产
+        $origin = $this->jzc($origin);
+        //10⚠️平均资产总额
+        $origin = $this->pjzcze($origin);
+        //11⚠️平均净资产
+        $origin = $this->pjjzc($origin);
+        //12净利率
+        $origin = $this->jll($origin);
+        //13资产周转率
+        $origin = $this->zczzl($origin);
+        //14总资产净利率
+        $origin = $this->zzcjll($origin);
+        //15企业人均产值
+        $origin = $this->qyrjcz($origin);
+        //16企业人均盈利
+        $origin = $this->qyrjyl($origin);
+        //17总资产回报率
+        $origin = $this->roa($origin);
+        //18净资产回报率
+        $origin = $this->roe_a($origin);
+        //19净资产回报率
+        $origin = $this->roe_b($origin);
+        //20资产负债率
+        $origin = $this->zcfzl($origin);
+        //21权益乘数
+        $origin = $this->qycs($origin);
+        //22主营业务比率
+        $origin = $this->zyywbl($origin);
+
+        return $origin;
+    }
+
+    //9净资产 0资产总额 - 1负债总额
+    private function jzc($origin)
+    {
+        foreach ($origin as $year => $val) {
+            if (is_numeric($val[0]) && is_numeric($val[1])) {
+                $value = $val[0] - $val[1];
+            } else {
+                $value = null;
+            }
+            array_push($origin[$year], $value);
+        }
+
+        return $origin;
+    }
+
+    //10⚠️平均资产总额 (0去年资产总额 + 0当年资产总额) / 2
+    private function pjzcze($origin)
+    {
+        foreach ($origin as $year => $val) {
+            //去年
+            $lastYear = $year - 1;
+
+            //如果去年没数据
+            if (!isset($origin[$lastYear]) || !is_numeric($origin[$lastYear][0])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //如果今年没数据
+            if (!is_numeric($origin[$year][0])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //两年都有数据
+            $last = $origin[$lastYear][0];
+            $now = $origin[$year][0];
+
+            array_push($origin[$year], ($last + $now) / 2);
+        }
+
+        return $origin;
+    }
+
+    //11⚠️平均净资产 (9去年净资产 + 9当年净资产) / 2
+    private function pjjzc($origin)
+    {
+        foreach ($origin as $year => $val) {
+            //去年没数据
+            if (!isset($origin[$year - 1]) || !is_numeric($origin[$year - 1][9])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //今年没数据
+            if (!is_numeric($origin[$year][9])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            $value = ($origin[$year - 1][9] + $origin[$year][9]) / 2;
+
+            array_push($origin[$year], $value);
+        }
+
+        return $origin;
+    }
+
+    //12净利率 5净利润 / 3主营业务收入
+    private function jll($origin)
+    {
+        foreach ($origin as $year => $val) {
+            if (is_numeric($val[5]) && is_numeric($val[3]) && $val[3] !== 0) {
+                $value = $val[5] / $val[3];
+            } else {
+                $value = null;
+            }
+
+            array_push($origin[$year], $value);
+        }
+
+        return $origin;
+    }
+
+    //13资产周转率 2营业总收入 / 10平均资产总额
+    private function zczzl($origin)
+    {
+        foreach ($origin as $year => $val) {
+            if (is_numeric($val[2]) && is_numeric($val[10]) && $val[10] !== 0) {
+                $value = $val[2] / $val[10];
+            } else {
+                $value = null;
+            }
+
+            array_push($origin[$year], $value);
+        }
+
+        return $origin;
+    }
+
+    //14总资产净利率 12净利率 * 13资产周转率
+    private function zzcjll($origin)
+    {
+        foreach ($origin as $year => $val) {
+            if (is_numeric($val[12]) && is_numeric($val[13])) {
+                $value = $val[12] * $val[13];
+            } else {
+                $value = null;
+            }
+
+            array_push($origin[$year], $value);
+        }
+
+        return $origin;
+    }
+
+    //15企业人均产值 3主营业务收入 / 8缴纳社保人数
+    private function qyrjcz($origin)
+    {
+        foreach ($origin as $year => $val) {
+            if (is_numeric($val[3]) && is_numeric($val[8]) && $val[8] !== 0) {
+                $value = $val[3] / $val[8];
+            } else {
+                $value = null;
+            }
+
+            array_push($origin[$year], $value);
+        }
+
+        return $origin;
+    }
+
+    //16企业人均盈利 5净利润 / 8缴纳社保人数
+    private function qyrjyl($origin)
+    {
+        foreach ($origin as $year => $val) {
+            if (is_numeric($val[5]) && is_numeric($val[8]) && $val[8] !== 0) {
+                $value = $val[5] / $val[8];
+            } else {
+                $value = null;
+            }
+
+            array_push($origin[$year], $value);
+        }
+
+        return $origin;
+    }
+
+    //17总资产回报率 ROA 5净利润 / 10平均资产总额
+    private function roa($origin)
+    {
+        foreach ($origin as $year => $val) {
+            if (is_numeric($val[5]) && is_numeric($val[10]) && $val[10] !== 0) {
+                $value = $val[5] / $val[10];
+            } else {
+                $value = null;
+            }
+
+            array_push($origin[$year], $value);
+        }
+
+        return $origin;
+    }
+
+    //18净资产回报率 ROE (A) 5净利润 / 11平均净资产总额
+    private function roe_a($origin)
+    {
+        foreach ($origin as $year => $val) {
+            if (is_numeric($val[5]) && is_numeric($val[11]) && $val[11] !== 0) {
+                $value = $val[5] / $val[11];
+            } else {
+                $value = null;
+            }
+
+            array_push($origin[$year], $value);
+        }
+
+        return $origin;
+    }
+
+    //19净资产回报率 ROE (B) 5净利润 / 7年度所有者权益
+    private function roe_b($origin)
+    {
+        foreach ($origin as $year => $val) {
+            if (is_numeric($val[5]) && is_numeric($val[7]) && $val[7] !== 0) {
+                $value = $val[5] / $val[7];
+            } else {
+                $value = null;
+            }
+
+            array_push($origin[$year], $value);
+        }
+
+        return $origin;
+    }
+
+    //20资产负债率 1负债总额 / 0资产总额
+    private function zcfzl($origin)
+    {
+        foreach ($origin as $year => $val) {
+            if (is_numeric($val[1]) && is_numeric($val[0]) && $val[0] !== 0) {
+                $value = $val[1] / $val[0];
+            } else {
+                $value = null;
+            }
+
+            array_push($origin[$year], $value);
+        }
+
+        return $origin;
+    }
+
+    //21权益乘数 1 / (1 - 资产负债率)
+    private function qycs($origin)
+    {
+        foreach ($origin as $year => $val) {
+            if (is_numeric($val[20]) && $val[20] !== 1) {
+                $value = 1 / (1 - $val[20]);
+            } else {
+                $value = null;
+            }
+
+            array_push($origin[$year], $value);
+        }
+
+        return $origin;
+    }
+
+    //22主营业务比率 3主营业务收入 / 2营业总收入
+    private function zyywbl($origin)
+    {
+        foreach ($origin as $year => $val) {
+            if (is_numeric($val[3]) && is_numeric($val[2]) && $val[2] !== 0) {
+                $value = $val[3] / $val[2];
+            } else {
+                $value = null;
+            }
+
+            array_push($origin[$year], $value);
+        }
+
+        return $origin;
     }
 
 }

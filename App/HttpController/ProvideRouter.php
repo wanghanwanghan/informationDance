@@ -84,6 +84,7 @@ class ProvideRouter
         $routeCollector->addGroup('/xd', function (RouteCollector $routeCollector) use ($prefix)
         {
             $routeCollector->addRoute(['GET', 'POST'], '/getProductStandard', $prefix . 'getProductStandard');
+            $routeCollector->addRoute(['GET', 'POST'], '/getFinanceData', $prefix . 'getFinanceData');
         });
 
         return true;

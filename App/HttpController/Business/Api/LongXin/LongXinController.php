@@ -54,13 +54,15 @@ class LongXinController extends LongXinBase
         return $this->checkResponse($res);
     }
 
-    //近三年的财务数据，需要授权
+    //近n年的财务数据，需要授权
     function getThreeYearsDataNeedAuth()
     {
         $entName = $this->request()->getRequestParam('entName');
 
         $postData = [
-            'entName' => $entName
+            'entName' => $entName,
+            'beginYear' => date('Y'),
+            'dataCount' => 3,//取最近几年的
         ];
 
         //这里验证授权书是否审核通过
@@ -69,6 +71,11 @@ class LongXinController extends LongXinBase
 
         return $this->checkResponse($res);
     }
+
+
+
+
+
 
 
 }

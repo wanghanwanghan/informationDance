@@ -5,6 +5,7 @@ namespace App\HttpController\Business\Provide\XinDong;
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\XinDongService;
 
@@ -73,5 +74,20 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //近n年财务数据
+    function getFinanceData()
+    {
+        $entName = $this->request()->getRequestParam('entName');
+
+        $postData = [
+            'entName' => $entName,
+            'beginYear' => date('Y'),
+            'dataCount' => 3,//取最近几年的
+        ];
+
+        $res = (new LongXinService())->getThreeYearsData($postData);
+
+        return $this->checkResponse($res);
+    }
 
 }
