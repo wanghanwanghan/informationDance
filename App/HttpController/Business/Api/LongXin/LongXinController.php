@@ -46,7 +46,7 @@ class LongXinController extends LongXinBase
         $postData = [
             'entName' => $entName,
             'beginYear' => date('Y'),
-            'dataCount' => 2,//取最近几年的
+            'dataCount' => 3,//取最近几年的
         ];
 
         $res = (new LongXinService())->getThreeYearsData($postData);
