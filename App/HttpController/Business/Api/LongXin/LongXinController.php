@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Api\LongXin;
 
+use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Pay\ChargeService;
 
@@ -45,6 +46,11 @@ class LongXinController extends LongXinBase
             'entName' => $entName,
             'beginYear' => date('Y')
         ];
+
+        CreateTableService::getInstance()->ent();
+        CreateTableService::getInstance()->finance();
+
+        return $this->writeJson();
 
         $res = (new LongXinService())->getThreeYearsData($postData);
 

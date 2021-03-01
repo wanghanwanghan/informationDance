@@ -514,7 +514,83 @@ class CreateTableService
         return 'ok';
     }
 
+    //财务信息表
+    function finance()
+    {
+        $name = CreateConf::getInstance()->getConf('env.mysqlDatabaseEntDb');
 
+        $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
+            $table->setTableComment('财务信息表')
+                ->setTableEngine(Engine::INNODB)
+                ->setTableCharset(Character::UTF8MB4_GENERAL_CI);
+            $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
+            $table->colInt('cid', 11)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('公司id');
+            $table->colInt('ANCHEYEAR', 11)->setIsUnsigned()->setDefaultValue(null)->setColumnComment('年份');
+            $table->colDecimal('VENDINC',20,2)->setDefaultValue(null)->setColumnComment('营业总收入');
+            $table->colDecimal('ASSGRO',20,2)->setDefaultValue(null)->setColumnComment('资产总额');
+            $table->colDecimal('MAIBUSINC',20,2)->setDefaultValue(null)->setColumnComment('主营业务收入');
+            $table->colDecimal('TOTEQU',20,2)->setDefaultValue(null)->setColumnComment('所有者权益');
+            $table->colDecimal('RATGRO',20,2)->setDefaultValue(null)->setColumnComment('纳税总额');
+            $table->colDecimal('PROGRO',20,2)->setDefaultValue(null)->setColumnComment('利润总额');
+            $table->colDecimal('NETINC',20,2)->setDefaultValue(null)->setColumnComment('净利润');
+            $table->colDecimal('LIAGRO',20,2)->setDefaultValue(null)->setColumnComment('负债总额');
+            $table->colDecimal('So1',20,2)->setDefaultValue(null)->setColumnComment('城镇职工养老保险人数');
+            $table->colDecimal('So2',20,2)->setDefaultValue(null)->setColumnComment('失业保险人数');
+            $table->colDecimal('So3',20,2)->setDefaultValue(null)->setColumnComment('职工医疗保险人数');
+            $table->colDecimal('So4',20,2)->setDefaultValue(null)->setColumnComment('工伤保险人数');
+            $table->colDecimal('So5',20,2)->setDefaultValue(null)->setColumnComment('生育保险人数');
+            $table->colDecimal('totalWagesSo1',20,2)->setDefaultValue(null)->setColumnComment('城镇职工养老保险缴费基数');
+            $table->colDecimal('totalWagesSo2',20,2)->setDefaultValue(null)->setColumnComment('失业保险缴费基数');
+            $table->colDecimal('totalWagesSo3',20,2)->setDefaultValue(null)->setColumnComment('职工医疗保险缴费基数');
+            $table->colDecimal('totalWagesSo4',20,2)->setDefaultValue(null)->setColumnComment('工伤保险缴费基数 保留字段');
+            $table->colDecimal('totalWagesSo5',20,2)->setDefaultValue(null)->setColumnComment('生育保险缴费基数');
+            $table->colDecimal('totalPaymentSo1',20,2)->setDefaultValue(null)->setColumnComment('城镇职工养老保险实缴基数');
+            $table->colDecimal('totalPaymentSo2',20,2)->setDefaultValue(null)->setColumnComment('失业保险实缴基数');
+            $table->colDecimal('totalPaymentSo3',20,2)->setDefaultValue(null)->setColumnComment('职工医疗保险实缴基数');
+            $table->colDecimal('totalPaymentSo4',20,2)->setDefaultValue(null)->setColumnComment('工伤保险实缴基数');
+            $table->colDecimal('totalPaymentSo5',20,2)->setDefaultValue(null)->setColumnComment('生育保险实缴基数');
+            $table->colDecimal('unPaidSocialInsSo1',20,2)->setDefaultValue(null)->setColumnComment('城镇职工养老保险累计欠缴');
+            $table->colDecimal('unPaidSocialInsSo2',20,2)->setDefaultValue(null)->setColumnComment('失业保险累计欠缴');
+            $table->colDecimal('unPaidSocialInsSo3',20,2)->setDefaultValue(null)->setColumnComment('职工医疗保险累计欠缴');
+            $table->colDecimal('unPaidSocialInsSo4',20,2)->setDefaultValue(null)->setColumnComment('工伤保险累计欠缴');
+            $table->colDecimal('unPaidSocialInsSo5',20,2)->setDefaultValue(null)->setColumnComment('生育保险累计欠缴');
+            $table->colInt('created_at',11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at',11)->setIsUnsigned()->setDefaultValue(0);
+            $table->indexNormal('cid_year_index',['cid','ANCHEYEAR']);
+        });
+
+        $obj = Manager::getInstance()->get($name)->getObj();
+
+        $obj->rawQuery($sql);
+
+        Manager::getInstance()->get($name)->recycleObj($obj);
+
+        return 'ok';
+    }
+
+    //公司表
+    function ent()
+    {
+        $name = CreateConf::getInstance()->getConf('env.mysqlDatabaseEntDb');
+
+        $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
+            $table->setTableComment('公司表')
+                ->setTableEngine(Engine::INNODB)
+                ->setTableCharset(Character::UTF8MB4_GENERAL_CI);
+            $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
+            $table->colVarChar('name',128)->setDefaultValue('')->setColumnComment('接口名称');
+            $table->colInt('created_at',11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at',11)->setIsUnsigned()->setDefaultValue(0);
+        });
+
+        $obj = Manager::getInstance()->get($name)->getObj();
+
+        $obj->rawQuery($sql);
+
+        Manager::getInstance()->get($name)->recycleObj($obj);
+
+        return 'ok';
+    }
 
 
 
