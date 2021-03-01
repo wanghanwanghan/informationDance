@@ -48,15 +48,6 @@ class LongXinController extends LongXinBase
             'beginYear' => date('Y')
         ];
 
-
-        EntDbFinance::create()->data([
-            'cid' => 123,
-            'ANCHEYEAR' => 2029,
-            'NETINC' => 1234575,
-            'So1' => null
-        ])->save();
-
-
         $res = (new LongXinService())->getThreeYearsData($postData);
 
         return $this->checkResponse($res);

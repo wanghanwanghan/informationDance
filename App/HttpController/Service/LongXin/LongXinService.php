@@ -6,6 +6,9 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
+use App\Task\Service\TaskService;
+use App\Task\TaskList\EntDbTask\insertEnt;
+use App\Task\TaskList\EntDbTask\insertFinance;
 
 class LongXinService extends ServiceBase
 {
@@ -165,12 +168,17 @@ class LongXinService extends ServiceBase
 
         if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
 
+        TaskService::getInstance()->create(new insertEnt($postData['entName']));
+
         $ANCHEYEAR = '';
         $temp = [];
-        for ($i = 9; $i--;) {
-            $ANCHEYEAR .= $postData['beginYear'] - $i . ',';
-            $key = (string)$postData['beginYear'] - $i;
-            $temp[$key] = null;
+
+        if ($postData['beginYear'] <= 2010) $postData['beginYear'] = 2010;
+        if ($postData['beginYear'] >= date('Y')) $postData['beginYear'] = date('Y');
+
+        for ($i = 2010; $i <= $postData['beginYear']; $i++) {
+            $ANCHEYEAR .= $i . ',';
+            $temp[(string)$i] = null;
         }
 
         $arr = [
@@ -187,12 +195,20 @@ class LongXinService extends ServiceBase
             foreach ($res['data'] as $oneYearData) {
                 $year = (string)trim($oneYearData['ANCHEYEAR']);
                 if (!is_numeric($year)) continue;
+                $oneYearData['SOCNUM'] = null;
                 $temp[$year] = $oneYearData;
             }
             krsort($temp);
         }
 
-        $temp['getSocialNum'] = $this->getSocialNum($entId);
+        //社保人数数组
+        $social = $this->getSocialNum($entId);
+
+        !empty($social) ?: $social = [];
+
+        TaskService::getInstance()->create(new insertFinance($postData['entName'], $temp, $social));
+
+        $temp['soc'] = $social;
 
         return $this->checkRespFlag ?
             $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $temp]) :

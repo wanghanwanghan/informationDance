@@ -32,5 +32,11 @@ $data = [
 //dd(json_decode($res, true));
 
 
+$a = ['w' => 1, 'h' => 1];
+$b = ['d' => 1, 'y' => 2, 'n' => 3];
+
+
+dd($a+$b);
+
 
 
