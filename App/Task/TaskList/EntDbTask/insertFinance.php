@@ -4,6 +4,7 @@ namespace App\Task\TaskList\EntDbTask;
 
 use App\HttpController\Models\EntDb\EntDbEnt;
 use App\HttpController\Models\EntDb\EntDbFinance;
+use App\HttpController\Service\Common\CommonService;
 use App\Task\TaskBase;
 use EasySwoole\Task\AbstractInterface\TaskInterface;
 
@@ -40,7 +41,10 @@ class insertFinance extends TaskBase implements TaskInterface
                 $this->finance[(string)$year] = $this->finance[(string)$year] + $oneSoc;
             }
 
+            CommonService::getInstance()->log4PHP($this->finance);
+
             foreach ($this->finance as $rd) {
+                if (empty($rd)) continue;
                 $check = EntDbFinance::create()->where(['cid' => $cid, 'ANCHEYEAR' => $rd['ANCHEYEAR']])->get();
                 if (!empty($check)) continue;
                 EntDbFinance::create()->data([
