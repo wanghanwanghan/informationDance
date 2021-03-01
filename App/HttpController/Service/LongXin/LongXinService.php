@@ -162,7 +162,7 @@ class LongXinService extends ServiceBase
         $res = (new CoHttpClient())->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
 
         if (isset($res['total']) && $res['total'] > 0) {
-            foreach ($res as $oneYearData) {
+            foreach ($res['data'] as $oneYearData) {
                 $year = (string)trim($oneYearData['ANCHEYEAR']);
                 if (!is_numeric($year)) continue;
                 $temp[$year] = $oneYearData;
