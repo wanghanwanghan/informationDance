@@ -145,7 +145,7 @@ class LongXinService extends ServiceBase
 
         $arr = [
             'entid' => $entId,
-            'ANCHEYEAR' => '2017,2018,2019',
+            'ANCHEYEAR' => '2014,2015,2016,2017,2018,2019,2020',
             'usercode' => $this->usercode
         ];
 
@@ -201,7 +201,7 @@ class LongXinService extends ServiceBase
 
     public function test()
     {
-        return $this->getThreeYearsData(['entName' => '北京京东世纪贸易有限公司']);
+        return $this->getThreeYearsData(['entName' => '北京红砖当代美术馆有限公司']);
     }
 
 }
