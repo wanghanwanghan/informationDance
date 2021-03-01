@@ -136,16 +136,24 @@ class LongXinService extends ServiceBase
         return $this->createReturn((int)$res['code'], $res['Paging'], $res['Result'], $res['Message']);
     }
 
-    //近三年的财务数据
+    //近n年的财务数据
     function getThreeYearsData($postData)
     {
         $entId = $this->getEntid($postData['entName']);
 
         if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
 
+        $ANCHEYEAR = '';
+        $temp = [];
+        for ($i = 6; $i--;) {
+            $ANCHEYEAR .= $postData['beginYear'] - $i . ',';
+            $key = (string)$postData['beginYear'] - $i;
+            $temp[$key] = null;
+        }
+
         $arr = [
             'entid' => $entId,
-            'ANCHEYEAR' => '2014,2015,2016,2017,2018',
+            'ANCHEYEAR' => trim($ANCHEYEAR, ','),
             'usercode' => $this->usercode
         ];
 
@@ -153,11 +161,18 @@ class LongXinService extends ServiceBase
 
         $res = (new CoHttpClient())->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
 
-        CommonService::getInstance()->log4PHP($res);
+        if (isset($res['total']) && $res['total'] > 0) {
+            foreach ($res as $oneYearData) {
+                $year = (string)trim($oneYearData['ANCHEYEAR']);
+                if (!is_numeric($year)) continue;
+                $temp[$year] = $oneYearData;
+            }
+            krsort($temp);
+        }
 
         return $this->checkRespFlag ?
-            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $res]) :
-            ['code' => 200, 'msg' => '查询成功', 'data' => $res];
+            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $temp]) :
+            ['code' => 200, 'msg' => '查询成功', 'data' => $temp];
     }
 
     //对外的最近三年财务数据 只返回一个字段

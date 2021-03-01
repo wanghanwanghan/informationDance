@@ -21,6 +21,7 @@ class Router extends AbstractRouter
             $this->TaoShuRouterV1($routeCollector);//淘数
             $this->FaHaiRouterV1($routeCollector);//法海
             $this->QianQiRouterV1($routeCollector);//乾启
+            $this->LongXinRouterV1($routeCollector);//龙信
             $this->YuanSuRouterV1($routeCollector);//元素
             $this->ZhongWangRouterV1($routeCollector);//众望
             $this->Notify($routeCollector);//通知
@@ -307,6 +308,19 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/getThreeYearsData',$prefix.'getThreeYearsData');//最近三年财务数据，不需授权
             $routeCollector->addRoute(['GET','POST'],'/getThreeYearsDataNeedAuth',$prefix.'getThreeYearsDataNeedAuth');//最近三年财务数据，需授权
             $routeCollector->addRoute(['GET','POST'],'/getDataTest',$prefix.'getDataTest');
+        });
+
+        return true;
+    }
+
+    private function LongXinRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix='/Business/Api/LongXin/LongXinController/';
+
+        $routeCollector->addGroup('/lx',function (RouteCollector $routeCollector) use ($prefix)
+        {
+            $routeCollector->addRoute(['GET','POST'],'/getThreeYearsData',$prefix.'getThreeYearsData');//最近三年财务数据，不需授权
+            $routeCollector->addRoute(['GET','POST'],'/getThreeYearsDataNeedAuth',$prefix.'getThreeYearsDataNeedAuth');//最近三年财务数据，需授权
         });
 
         return true;
