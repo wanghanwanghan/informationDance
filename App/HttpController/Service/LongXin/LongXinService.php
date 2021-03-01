@@ -201,7 +201,7 @@ class LongXinService extends ServiceBase
 
     public function test()
     {
-        return $this->getThreeYearsData(['entName' => '北京红砖当代美术馆有限公司']);
+        return $this->getThreeYearsData(['entName' => '北京每日信动科技有限公司']);
     }
 
 }
