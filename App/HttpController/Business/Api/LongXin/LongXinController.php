@@ -30,9 +30,9 @@ class LongXinController extends LongXinBase
         $charge = ChargeService::getInstance()->LongXin($this->request(), 51);
 
         if ($charge['code'] != 200) {
-            return $this->writeJson((int)$charge['code'], null, null, $charge['msg']);
+            return $this->writeJson((int)$charge['code'], null, null, $charge['msg'], false);
         } else {
-            return $this->writeJson((int)$res['code'], $res['Paging'], $res['Result'], $res['Message']);
+            return $this->writeJson((int)$res['code'], $res['Paging'], $res['Result'], $res['Message'], false);
         }
     }
 
