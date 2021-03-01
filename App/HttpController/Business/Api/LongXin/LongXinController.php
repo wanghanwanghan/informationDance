@@ -52,7 +52,8 @@ class LongXinController extends LongXinBase
         EntDbFinance::create()->data([
             'cid' => 123,
             'ANCHEYEAR' => 2029,
-            'NETINC' => 1234575
+            'NETINC' => 1234575,
+            'So1' => null
         ])->save();
 
 
