@@ -206,9 +206,9 @@ class LongXinService extends ServiceBase
 
         !empty($social) ?: $social = [];
 
-        TaskService::getInstance()->create(new insertFinance($postData['entName'], $temp, $social));
+        TaskService::getInstance()->create(new insertFinance($postData['entName'], $temp, $social['AnnualSocial']));
 
-        $temp['soc'] = $social;
+        $temp['soc'] = $social['AnnualSocial'];
 
         return $this->checkRespFlag ?
             $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $temp]) :
