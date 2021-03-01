@@ -204,11 +204,15 @@ class LongXinService extends ServiceBase
         //社保人数数组
         $social = $this->getSocialNum($entId);
 
-        !empty($social) ?: $social = [];
+        !empty($social) ?: $social = ['AnnualSocial' => []];
+
+        foreach ($this->social['AnnualSocial'] as $oneSoc) {
+            $year = $oneSoc['ANCHEYEAR'];
+            if (!is_numeric($year) || !isset($temp[(string)$year])) continue;
+            if (isset($oneSoc['so1']) && is_numeric($oneSoc['so1'])) $temp[(string)$year]['SOCNUM'] = $oneSoc['so1'];
+        }
 
         TaskService::getInstance()->create(new insertFinance($postData['entName'], $temp, $social['AnnualSocial']));
-
-        $temp['soc'] = $social['AnnualSocial'];
 
         return $this->checkRespFlag ?
             $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $temp]) :
