@@ -145,7 +145,7 @@ class LongXinService extends ServiceBase
 
         $ANCHEYEAR = '';
         $temp = [];
-        for ($i = 6; $i--;) {
+        for ($i = 9; $i--;) {
             $ANCHEYEAR .= $postData['beginYear'] - $i . ',';
             $key = (string)$postData['beginYear'] - $i;
             $temp[$key] = null;
@@ -169,6 +169,18 @@ class LongXinService extends ServiceBase
             }
             krsort($temp);
         }
+
+
+        $arr = [
+            'entid' => $entId,
+            'version' => 'E3',
+            'usercode' => $this->usercode
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $temp['num'] = (new CoHttpClient())->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
+
 
         return $this->checkRespFlag ?
             $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $temp]) :
