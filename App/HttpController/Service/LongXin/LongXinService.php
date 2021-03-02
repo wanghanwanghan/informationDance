@@ -136,30 +136,30 @@ class LongXinService extends ServiceBase
     }
 
     //二分找区间
-    function binaryFind(int $find, int $leftIndex, int $rightIndex): ?array
+    function binaryFind(int $find, int $leftIndex, int $rightIndex, array $range): ?array
     {
         if (!is_numeric($find)) return null;
 
         //如果不在所有区间内
         if ($leftIndex > $rightIndex) {
-            if ($find < $this->rangeArr[0]['range'][0]) return $this->rangeArr[0];
-            if ($find > $this->rangeArr[count($this->rangeArr) - 1]['range'][1])
-                return $this->rangeArr[count($this->rangeArr) - 1];
+            if ($find < $range[0]['range'][0]) return $range[0];
+            if ($find > $range[count($range) - 1]['range'][1])
+                return $range[count($range) - 1];
             return null;
         }
 
         $middle = ($leftIndex + $rightIndex) / 2;
 
         //如果大于第二个数，肯定在右边
-        if ($find > $this->rangeArr[$middle]['range'][1]) {
-            return $this->binaryFind($find, $middle + 1, $rightIndex);
+        if ($find > $range[$middle]['range'][1]) {
+            return $this->binaryFind($find, $middle + 1, $rightIndex, $range);
         }
 
         //如果小于第一个数，肯定在左边
-        if ($find < $this->rangeArr[$middle]['range'][0])
-            return $this->binaryFind($find, $leftIndex, $middle - 1);
+        if ($find < $range[$middle]['range'][0])
+            return $this->binaryFind($find, $leftIndex, $middle - 1, $range);
 
-        return $this->rangeArr[$middle];
+        return $range[$middle];
     }
 
     //创建请求token
@@ -316,9 +316,9 @@ class LongXinService extends ServiceBase
             if (empty($arr)) continue;
             foreach ($arr as $field => $val) {
                 if (in_array($field, $this->rangeArr[0]) && is_numeric($val)) {
-                    $readyReturn[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArr[1]) - 1);
+                    $readyReturn[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArr[1]) - 1, $this->rangeArr);
                 } elseif (in_array($field, $this->rangeArrRatio[0]) && is_numeric($val)) {
-                    $readyReturn[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArrRatio[1]) - 1);
+                    $readyReturn[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArrRatio[1]) - 1, $this->rangeArrRatio);
                 } else {
                     $readyReturn[$year][$field] = $val;
                 }
