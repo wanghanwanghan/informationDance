@@ -19,34 +19,92 @@ class LongXinService extends ServiceBase
     private $sendHeaders;
 
     public $rangeArr = [
-        ['name' => 'F14', 'range' => [-7000, -6500]],
-        ['name' => 'F13', 'range' => [-6500, -6000]],
-        ['name' => 'F12', 'range' => [-6000, -5500]],
-        ['name' => 'F11', 'range' => [-5500, -5000]],
-        ['name' => 'F10', 'range' => [-5000, -4500]],
-        ['name' => 'F09', 'range' => [-4500, -4000]],
-        ['name' => 'F08', 'range' => [-4000, -3500]],
-        ['name' => 'F07', 'range' => [-3500, -3000]],
-        ['name' => 'F06', 'range' => [-3000, -2500]],
-        ['name' => 'F05', 'range' => [-2500, -2000]],
-        ['name' => 'F04', 'range' => [-2000, -1500]],
-        ['name' => 'F03', 'range' => [-1500, -1000]],
-        ['name' => 'F02', 'range' => [-1000, -500]],
-        ['name' => 'F01', 'range' => [-500, 0]],
-        ['name' => 'Z01', 'range' => [0, 500]],
-        ['name' => 'Z02', 'range' => [500, 1000]],
-        ['name' => 'Z03', 'range' => [1000, 1500]],
-        ['name' => 'Z04', 'range' => [1500, 2000]],
-        ['name' => 'Z05', 'range' => [2000, 2500]],
-        ['name' => 'Z06', 'range' => [2500, 3000]],
-        ['name' => 'Z07', 'range' => [3000, 3500]],
-        ['name' => 'Z08', 'range' => [3500, 4000]],
-        ['name' => 'Z09', 'range' => [4000, 4500]],
-        ['name' => 'Z10', 'range' => [4500, 5000]],
-        ['name' => 'Z11', 'range' => [5000, 5500]],
-        ['name' => 'Z12', 'range' => [5500, 6000]],
-        ['name' => 'Z13', 'range' => [6000, 6500]],
-        ['name' => 'Z14', 'range' => [6500, 7000]],
+        [
+            'ASSGRO',//0资产总额
+            'LIAGRO',//1负债总额
+            'VENDINC',//2营业总收入
+            'MAIBUSINC',//3主营业务收入
+            'PROGRO',//4利润总额
+            'NETINC',//5净利润
+            'RATGRO',//6纳税总额
+            'TOTEQU',//7所有者权益
+            'C_ASSGROL',//9净资产
+            'A_ASSGROL',//10平均资产总额
+            'CA_ASSGRO',//11平均净资产
+        ],
+        [
+            ['name' => 'F14', 'range' => [-7000, -6500]],
+            ['name' => 'F13', 'range' => [-6500, -6000]],
+            ['name' => 'F12', 'range' => [-6000, -5500]],
+            ['name' => 'F11', 'range' => [-5500, -5000]],
+            ['name' => 'F10', 'range' => [-5000, -4500]],
+            ['name' => 'F09', 'range' => [-4500, -4000]],
+            ['name' => 'F08', 'range' => [-4000, -3500]],
+            ['name' => 'F07', 'range' => [-3500, -3000]],
+            ['name' => 'F06', 'range' => [-3000, -2500]],
+            ['name' => 'F05', 'range' => [-2500, -2000]],
+            ['name' => 'F04', 'range' => [-2000, -1500]],
+            ['name' => 'F03', 'range' => [-1500, -1000]],
+            ['name' => 'F02', 'range' => [-1000, -500]],
+            ['name' => 'F01', 'range' => [-500, 0]],
+            ['name' => 'Z01', 'range' => [0, 500]],
+            ['name' => 'Z02', 'range' => [500, 1000]],
+            ['name' => 'Z03', 'range' => [1000, 1500]],
+            ['name' => 'Z04', 'range' => [1500, 2000]],
+            ['name' => 'Z05', 'range' => [2000, 2500]],
+            ['name' => 'Z06', 'range' => [2500, 3000]],
+            ['name' => 'Z07', 'range' => [3000, 3500]],
+            ['name' => 'Z08', 'range' => [3500, 4000]],
+            ['name' => 'Z09', 'range' => [4000, 4500]],
+            ['name' => 'Z10', 'range' => [4500, 5000]],
+            ['name' => 'Z11', 'range' => [5000, 5500]],
+            ['name' => 'Z12', 'range' => [5500, 6000]],
+            ['name' => 'Z13', 'range' => [6000, 6500]],
+            ['name' => 'Z14', 'range' => [6500, 7000]],
+        ]
+    ];
+
+    public $rangeArrRatio = [
+        [
+            'C_INTRATESL',//12净利率
+            'ATOL',//13资产周转率
+            'ASSGRO_C_INTRATESL',//14总资产净利率
+            'A_VENDINCL',//15企业人均产值
+            'A_PROGROL',//16企业人均盈利
+            'ROAL',//17总资产回报率 ROA
+            'ROE_AL',//18净资产回报率 ROE (A)
+            'ROE_BL',//19净资产回报率 ROE (B)
+            'DEBTL',//20资产负债率
+            'MAIBUSINC_RATIOL',//22主营业务比率
+        ],
+        [
+            ['name' => 'F13', 'range' => [-40.96, -20.48]],
+            ['name' => 'F12', 'range' => [-20.48, -10.24]],
+            ['name' => 'F11', 'range' => [-10.24, -5.12]],
+            ['name' => 'F10', 'range' => [-5.12, -2.56]],
+            ['name' => 'F09', 'range' => [-2.56, -1.28]],
+            ['name' => 'F08', 'range' => [-1.28, -0.64]],
+            ['name' => 'F07', 'range' => [-0.64, -0.32]],
+            ['name' => 'F06', 'range' => [-0.32, -0.16]],
+            ['name' => 'F05', 'range' => [-0.16, -0.08]],
+            ['name' => 'F04', 'range' => [-0.08, -0.04]],
+            ['name' => 'F03', 'range' => [-0.04, -0.02]],
+            ['name' => 'F02', 'range' => [-0.02, -0.01]],
+            ['name' => 'F01', 'range' => [-0.01, 0]],
+            ['name' => 'Z01', 'range' => [0, 0.01]],
+            ['name' => 'Z02', 'range' => [0.01, 0.02]],
+            ['name' => 'Z03', 'range' => [0.02, 0.04]],
+            ['name' => 'Z04', 'range' => [0.04, 0.08]],
+            ['name' => 'Z05', 'range' => [0.08, 0.16]],
+            ['name' => 'Z06', 'range' => [0.16, 0.32]],
+            ['name' => 'Z07', 'range' => [0.32, 0.64]],
+            ['name' => 'Z08', 'range' => [0.64, 1.28]],
+            ['name' => 'Z09', 'range' => [1.28, 2.56]],
+            ['name' => 'Z10', 'range' => [2.56, 5.12]],
+            ['name' => 'Z11', 'range' => [5.12, 10.24]],
+            ['name' => 'Z12', 'range' => [10.24, 20.48]],
+            ['name' => 'Z13', 'range' => [20.48, 40.96]],
+        ]
     ];
 
     function onNewService(): ?bool
@@ -69,9 +127,11 @@ class LongXinService extends ServiceBase
     }
 
     //更换区间
-    function setRangeArr(array $range): LongXinService
+    function setRangeArr(array $range, array $ratio): LongXinService
     {
-        $this->rangeArr = $range;
+        if (!empty($range)) $this->rangeArr = $range;
+        if (!empty($ratio)) $this->rangeArrRatio = $ratio;
+
         return $this;
     }
 
@@ -255,9 +315,13 @@ class LongXinService extends ServiceBase
         foreach ($readyReturn as $year => $arr) {
             if (empty($arr)) continue;
             foreach ($arr as $field => $val) {
-                if ($field === 'SOCNUM' || $field === 'ispublic') continue;
-                if (!is_numeric($val)) continue;
-                $readyReturn[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArr) - 1);
+                if (in_array($field, $this->rangeArr[0]) && is_numeric($val)) {
+                    $readyReturn[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArr[1]) - 1);
+                } elseif (in_array($field, $this->rangeArrRatio[0]) && is_numeric($val)) {
+                    $readyReturn[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArrRatio[1]) - 1);
+                } else {
+                    $readyReturn[$year][$field] = $val;
+                }
             }
         }
 
