@@ -57,6 +57,7 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //企业基本信息
     function getRegisterInfo()
     {
         $entName = $this->getRequestData('entName', '');
@@ -74,20 +75,43 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    //近n年财务数据
-    function getFinanceData()
+    //连续n年基数数+计算结果
+    function getFinanceCalData()
     {
-        $entName = $this->request()->getRequestParam('entName');
-
         $postData = [
-            'entName' => $entName,
-            'beginYear' => date('Y'),
-            'dataCount' => 3,//取最近几年的
+            'entName' => $this->getRequestData('entName', ''),
+            'code' => $this->getRequestData('code', ''),
+            'beginYear' => $this->getRequestData('year', ''),
+            'dataCount' => 5,//取最近几年的
         ];
 
-        $res = (new LongXinService())->getThreeYearsData($postData);
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())->getFinanceData($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         return $this->checkResponse($res);
     }
+
+    //单年基础数区间
+    function getFinanceBaseData()
+    {
+        $postData = [
+            'entName' => $this->getRequestData('entName', ''),
+            'code' => $this->getRequestData('code', ''),
+            'beginYear' => $this->getRequestData('year', ''),
+            'dataCount' => 1,//取最近几年的
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())->getFinanceData($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
 
 }

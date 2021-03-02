@@ -174,21 +174,18 @@ class LongXinService extends ServiceBase
     }
 
     //近n年的财务数据
-    function getThreeYearsData($postData)
+    function getFinanceData($postData)
     {
         $entId = $this->getEntid($postData['entName']);
 
         if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
 
-        TaskService::getInstance()->create(new insertEnt($postData['entName']));
+        TaskService::getInstance()->create(new insertEnt($postData['entName'], $postData['code']));
 
         $ANCHEYEAR = '';
         $temp = [];
 
-        if ($postData['beginYear'] <= 2010) $postData['beginYear'] = 2010;
-        if ($postData['beginYear'] >= date('Y')) $postData['beginYear'] = date('Y');
-
-        for ($i = 2010; $i <= $postData['beginYear']; $i++) {
+        for ($i = 2010; $i <= date('Y'); $i++) {
             $ANCHEYEAR .= $i . ',';
             $temp[(string)$i] = null;
         }
@@ -226,24 +223,34 @@ class LongXinService extends ServiceBase
 
         TaskService::getInstance()->create(new insertFinance($postData['entName'], $temp, $social['AnnualSocial']));
 
-        $temp = $this->exprHandle($temp);
+        //原值计算
+        if ($postData['dataCount'] > 1) {
+            $temp = $this->exprHandle($temp);
+        }
+
+        //取哪年的数据
+        $readyReturn = [];
+        for ($i = $postData['dataCount']; $i--;) {
+            $tmp = $postData['beginYear'] - $i;
+            $tmp = (string)$tmp;
+            isset($temp[$tmp]) ? $readyReturn[$tmp] = $temp[$tmp] : $readyReturn[$tmp] = null;
+        }
 
         //数字落区间
-        $tmp = [];
-        foreach ($temp as $year => $arr) {
+        foreach ($readyReturn as $year => $arr) {
             if (empty($arr)) continue;
             foreach ($arr as $field => $val) {
                 if ($field === 'SOCNUM' || $field === 'ispublic') continue;
                 if (!is_numeric($val)) continue;
-                $temp[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArr) - 1);
+                $readyReturn[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArr) - 1);
             }
-            $tmp[$year] = $temp[$year];
-            if (count($tmp) >= $postData['dataCount']) break;
         }
 
+        krsort($readyReturn);
+
         return $this->checkRespFlag ?
-            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $tmp]) :
-            ['code' => 200, 'msg' => '查询成功', 'data' => $tmp];
+            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn]) :
+            ['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn];
     }
 
     //对外的最近三年财务数据 只返回一个字段
@@ -296,6 +303,21 @@ class LongXinService extends ServiceBase
         //6纳税总额 RATGRO
         //7所有者权益 TOTEQU
         //8社保人数 SOCNUM
+
+        //9净资产 C_ASSGROL
+        //10平均资产总额 A_ASSGROL
+        //11平均净资产 CA_ASSGRO
+        //12净利率 C_INTRATESL
+        //13资产周转率 ATOL
+        //14总资产净利率 ASSGRO_C_INTRATESL
+        //15企业人均产值 A_VENDINCL
+        //16企业人均盈利 A_PROGROL
+        //17总资产回报率 ROA ROAL
+        //18净资产回报率 ROE (A) ROE_AL
+        //19净资产回报率 ROE (B) ROE_BL
+        //20资产负债率 DEBTL
+        //21权益乘数 EQUITYL
+        //22主营业务比率 MAIBUSINC_RATIOL
 
         $now = [];
         foreach ($origin as $year => $arr) {

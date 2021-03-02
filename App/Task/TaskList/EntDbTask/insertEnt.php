@@ -9,12 +9,14 @@ use EasySwoole\Task\AbstractInterface\TaskInterface;
 class insertEnt extends TaskBase implements TaskInterface
 {
     public $entName;
+    public $code;
 
-    function __construct($entName = '')
+    function __construct($entName = '', $code = '')
     {
         parent::__construct();
 
         $this->entName = trim($entName);
+        $this->code = trim($code);
 
         return true;
     }
@@ -29,6 +31,7 @@ class insertEnt extends TaskBase implements TaskInterface
             if (!empty($info)) return true;
             EntDbEnt::create()->data([
                 'name' => $this->entName,
+                'code' => $this->code,
             ])->save();
         } catch (\Throwable $e) {
 

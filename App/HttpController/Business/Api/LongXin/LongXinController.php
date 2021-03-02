@@ -2,8 +2,6 @@
 
 namespace App\HttpController\Business\Api\LongXin;
 
-use App\HttpController\Models\EntDb\EntDbFinance;
-use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Pay\ChargeService;
 

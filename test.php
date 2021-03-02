@@ -32,10 +32,8 @@ $data = [
 //dd(json_decode($res, true));
 
 
-$a = ['2019' => 1, '2018' => 2];
-
-
-dd(isset($a[2018]));
-
+for ($i = 3; $i--;) {
+    dump($i);
+}
 
 

@@ -41,8 +41,6 @@ class insertFinance extends TaskBase implements TaskInterface
                 $this->finance[(string)$year] = array_merge($this->finance[(string)$year], $oneSoc);
             }
 
-            CommonService::getInstance()->log4PHP($this->finance);
-
             foreach ($this->finance as $rd) {
                 if (empty($rd)) continue;
                 $check = EntDbFinance::create()->where(['cid' => $cid, 'ANCHEYEAR' => $rd['ANCHEYEAR']])->get();
