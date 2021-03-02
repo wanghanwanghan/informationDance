@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\LongXin;
 
+use App\HttpController\Models\EntDb\EntDbEnt;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
@@ -173,32 +174,46 @@ class LongXinService extends ServiceBase
         return $tmp;
     }
 
+    //是否已经入库
+    private function alreadyInserted($postData): array
+    {
+        $entName = $postData['entName'];
+        $code = $postData['code'];
+        $beginYear = $postData['beginYear'];
+
+        try {
+            $entInfo = EntDbEnt::create()->where(['name' => $entName])->get();
+        } catch (\Throwable $e) {
+
+        }
+        return [];
+    }
+
     //近n年的财务数据
     function getFinanceData($postData)
     {
-        $entId = $this->getEntid($postData['entName']);
+        $check = $this->alreadyInserted($postData);
 
-        if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
+        if (!empty($check)) {
 
-        TaskService::getInstance()->create(new insertEnt($postData['entName'], $postData['code']));
-
-        $ANCHEYEAR = '';
-        $temp = [];
-
-        for ($i = 2010; $i <= date('Y'); $i++) {
-            $ANCHEYEAR .= $i . ',';
-            $temp[(string)$i] = null;
+        } else {
+            $entId = $this->getEntid($postData['entName']);
+            if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
+            TaskService::getInstance()->create(new insertEnt($postData['entName'], $postData['code']));
+            $ANCHEYEAR = '';
+            $temp = [];
+            for ($i = 2010; $i <= date('Y'); $i++) {
+                $ANCHEYEAR .= $i . ',';
+                $temp[(string)$i] = null;
+            }
+            $arr = [
+                'entid' => $entId,
+                'ANCHEYEAR' => trim($ANCHEYEAR, ','),
+                'usercode' => $this->usercode
+            ];
+            $this->sendHeaders['authorization'] = $this->createToken($arr);
+            $res = (new CoHttpClient())->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
         }
-
-        $arr = [
-            'entid' => $entId,
-            'ANCHEYEAR' => trim($ANCHEYEAR, ','),
-            'usercode' => $this->usercode
-        ];
-
-        $this->sendHeaders['authorization'] = $this->createToken($arr);
-
-        $res = (new CoHttpClient())->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
 
         if (isset($res['total']) && $res['total'] > 0) {
             foreach ($res['data'] as $oneYearData) {

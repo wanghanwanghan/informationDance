@@ -82,11 +82,11 @@ class XinDongController extends ProvideBase
             'entName' => $this->getRequestData('entName', ''),
             'code' => $this->getRequestData('code', ''),
             'beginYear' => $this->getRequestData('year', ''),
-            'dataCount' => 5,//取最近几年的
+            'dataCount' => $this->getRequestData('dataCount', ''),//取最近几年的
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new LongXinService())->getFinanceData($postData);
+            return (new LongXinService())->setCheckRespFlag(true)->getFinanceData($postData);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
