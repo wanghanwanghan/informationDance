@@ -363,7 +363,43 @@ class LongXinService extends ServiceBase
 
         ksort($origin);
 
-        return $this->expr($origin);
+        //恢复数组key
+        $res = $this->expr($origin);
+
+        //返回字段模版
+        $model = [
+            'ASSGRO' => null,
+            'LIAGRO' => null,
+            'VENDINC' => null,
+            'MAIBUSINC' => null,
+            'PROGRO' => null,
+            'NETINC' => null,
+            'RATGRO' => null,
+            'TOTEQU' => null,
+            'SOCNUM' => null,
+            'C_ASSGROL' => null,
+            'A_ASSGROL' => null,
+            'CA_ASSGRO' => null,
+            'C_INTRATESL' => null,
+            'ATOL' => null,
+            'ASSGRO_C_INTRATESL' => null,
+            'A_VENDINCL' => null,
+            'A_PROGROL' => null,
+            'ROAL' => null,
+            'ROE_AL' => null,
+            'ROE_BL' => null,
+            'DEBTL' => null,
+            'EQUITYL' => null,
+            'MAIBUSINC_RATIOL' => null,
+        ];
+
+        $retrun = [];
+
+        foreach ($res as $year => $arr) {
+            $retrun[$year] = array_combine(array_keys($model), array_values($arr));
+        }
+
+        return $retrun;
     }
 
 
