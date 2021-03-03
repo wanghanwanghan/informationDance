@@ -323,6 +323,25 @@ class UserController extends UserBase
         return $this->writeJson(200, null, ['orderId' => $orderId, 'payObj' => $payObj], '生成订单成功');
     }
 
+    //通过orderId查询充值状态
+    function purchaseCheck()
+    {
+        $phone = $this->request()->getRequestParam('phone') ?? '';
+        $orderId = $this->request()->getRequestParam('orderId') ?? '';
+
+        try {
+            $res = PurchaseInfo::create()->where([
+                'phone' => $phone,
+                'orderId' => $orderId,
+                'orderStatus' => '已支付',
+            ])->get();
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        return empty($res) ? $this->writeJson(201) : $this->writeJson(200);
+    }
+
     //发布一句话
     function createOneSaid()
     {

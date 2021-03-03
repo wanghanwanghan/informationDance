@@ -94,6 +94,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/pay/list',$prefix.'payList');//获取用户消费详情列表
             $routeCollector->addRoute(['GET','POST'],'/purchase/goods',$prefix.'purchaseGoods');//获取充值商品列表
             $routeCollector->addRoute(['GET','POST'],'/purchase/do',$prefix.'purchaseDo');//充值
+            $routeCollector->addRoute(['GET','POST'],'/purchase/check',$prefix.'purchaseCheck');//检查状态
             $routeCollector->addRoute(['GET','POST'],'/create/oneSaid',$prefix.'createOneSaid');//发布一句话
             $routeCollector->addRoute(['GET','POST'],'/edit/oneSaid',$prefix.'editOneSaid');//修改一句话
             $routeCollector->addRoute(['GET','POST'],'/get/oneSaid',$prefix.'getOneSaid');//获取用户发布一句话
