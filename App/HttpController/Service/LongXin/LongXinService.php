@@ -266,29 +266,24 @@ class LongXinService extends ServiceBase
     //近n年的财务数据
     function getFinanceData($postData)
     {
-        $check = $this->alreadyInserted($postData);
+        //$check = $this->alreadyInserted($postData);
 
-        if (!empty($check)) {
-            //数据库中有数据
-            $temp = [];
-        } else {
-            $entId = $this->getEntid($postData['entName']);
-            if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
-            TaskService::getInstance()->create(new insertEnt($postData['entName'], $postData['code']));
-            $ANCHEYEAR = '';
-            $temp = [];
-            for ($i = 2010; $i <= date('Y'); $i++) {
-                $ANCHEYEAR .= $i . ',';
-                $temp[(string)$i] = null;
-            }
-            $arr = [
-                'entid' => $entId,
-                'ANCHEYEAR' => trim($ANCHEYEAR, ','),
-                'usercode' => $this->usercode
-            ];
-            $this->sendHeaders['authorization'] = $this->createToken($arr);
-            $res = (new CoHttpClient())->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
+        $entId = $this->getEntid($postData['entName']);
+        if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
+        TaskService::getInstance()->create(new insertEnt($postData['entName'], $postData['code']));
+        $ANCHEYEAR = '';
+        $temp = [];
+        for ($i = 2010; $i <= date('Y'); $i++) {
+            $ANCHEYEAR .= $i . ',';
+            $temp[(string)$i] = null;
         }
+        $arr = [
+            'entid' => $entId,
+            'ANCHEYEAR' => trim($ANCHEYEAR, ','),
+            'usercode' => $this->usercode
+        ];
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+        $res = (new CoHttpClient())->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
 
         if (isset($res['total']) && $res['total'] > 0) {
             foreach ($res['data'] as $oneYearData) {
