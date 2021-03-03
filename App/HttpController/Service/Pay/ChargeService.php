@@ -34,8 +34,9 @@ class ChargeService extends ServiceBase
         51 => ['name' => '财务资产', 'desc' => 'lx', 'basePrice' => 35],
 
         210 => ['name' => '极简报告', 'desc' => '', 'basePrice' => 80],
+        211 => ['name' => '极简报告定制', 'desc' => '', 'basePrice' => 80],
         220 => ['name' => '简版报告', 'desc' => '', 'basePrice' => 300],
-        221 => ['name' => '简版报告定制', 'desc' => '炜衡', 'basePrice' => 10],
+        221 => ['name' => '简版报告定制', 'desc' => '炜衡', 'basePrice' => 300],
         230 => ['name' => '深度报告', 'desc' => '', 'basePrice' => 500],
     ];
 
@@ -593,6 +594,62 @@ class ChargeService extends ServiceBase
         return ['code' => 200, 'msg' => '扣费成功'];
     }
 
+    //极简报告定制
+    function VeryEasyReportCustomized(Request $request, $moduleNum, $reportNum)
+    {
+        $phone = $this->getPhone($request);
+
+        $entName = $this->getEntName($request);
+
+        if (empty($phone) || empty($entName)) return ['code' => 201, 'msg' => '手机号或公司名不能是空'];
+
+        //获取扣费详情
+        $moduleInfo = $this->getModuleInfo($moduleNum);
+
+        try {
+            //取得用户钱包余额
+            $info = Wallet::create()->where('phone', $phone)->get();
+            if (empty($info)) return ['code' => 201, 'msg' => '无用户钱包信息'];
+            $userMoney = $info->money;
+        } catch (\Throwable $e) {
+            $this->writeErr($e, 'ChargeService');
+            return ['code' => 201, 'msg' => '取得用户钱包信息失败'];
+        }
+
+        if ($userMoney < $moduleInfo['basePrice']) return ['code' => 220, 'msg' => '用户余额不足'];
+
+        //等于false说明用户还没点确定支付，等于true说明用户点了确认支付
+        $pay = $this->getPay($request);
+
+        if (!$pay) return ['code' => 210, 'msg' => "此信息需消耗 {$moduleInfo['basePrice']} 元，有效期 7 天"];
+
+        try {
+            //扣费
+            $money = $userMoney - $moduleInfo['basePrice'];
+            $info->update(['money' => $money > 0 ? $money : 0]);
+        } catch (\Throwable $e) {
+            $this->writeErr($e, 'ChargeService');
+            return ['code' => 201, 'msg' => '扣费失败'];
+        }
+
+        //写入记录
+        try {
+            $insert = [
+                'moduleId' => $moduleNum,
+                'moduleName' => $moduleInfo['name'] . $moduleInfo['desc'],
+                'entName' => $entName,
+                'detailKey' => $reportNum,
+                'phone' => $phone,
+                'price' => $moduleInfo['basePrice'],
+            ];
+            Charge::create()->data($insert)->save();
+        } catch (\Throwable $e) {
+            $this->writeErr($e, 'ChargeService');
+        }
+
+        return ['code' => 200, 'msg' => '扣费成功'];
+    }
+
     //简版报告
     function EasyReport(Request $request, $moduleNum, $reportNum)
     {
@@ -649,7 +706,7 @@ class ChargeService extends ServiceBase
         return ['code' => 200, 'msg' => '扣费成功'];
     }
 
-    //简版报告
+    //简版报告定制
     function EasyReportCustomized(Request $request, $moduleNum, $reportNum)
     {
         $phone = $this->getPhone($request);

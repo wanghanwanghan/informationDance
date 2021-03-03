@@ -15,6 +15,7 @@ class ReportService extends ServiceBase
     use Singleton;
 
     const REPORT_TYPE_10 = 10;//10是极简报告
+    const REPORT_TYPE_11 = 11;//11是极简报告定制版pdf版
     const REPORT_TYPE_30 = 30;//30是简版报告
     const REPORT_TYPE_31 = 31;//31是简版报告定制版pdf版
     const REPORT_TYPE_50 = 50;//50是深度报告
@@ -39,6 +40,31 @@ class ReportService extends ServiceBase
 
         //扔到task里
         TaskService::getInstance()->create(new CreateVeryEasyReportTask($entName, $reportNum, $phone, $type));
+
+        return $reportNum;
+    }
+
+    //生成极简报告 pdf
+    function createVeryEasyPdf($entName, $reportNum, $phone, $type, $dataKey = '')
+    {
+        try {
+            ReportInfo::create()->data([
+                'phone' => $phone,
+                'entName' => $entName,
+                'filename' => $reportNum,
+                'ext' => 'pdf',
+                'type' => ReportService::REPORT_TYPE_11,
+                'status' => 3,//1是异常，2是完成，3是生成中
+                'errInfo' => '',
+            ])->save();
+
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        //扔到task里
+        TaskService::getInstance()
+            ->create(new CreateEasyReportCustomizedTask($entName, $reportNum, $phone, $type, $dataKey));
 
         return $reportNum;
     }
