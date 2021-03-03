@@ -4,7 +4,7 @@ include './vendor/autoload.php';
 
 $url = 'https://api.meirixindong.com/provide/v1/qq/getThreeYearsDataForLIAGRO_REL';
 $url = 'https://api.meirixindong.com/provide/v1/ts/getRegisterInfo';
-$url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceCalData';
+$url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceBaseData';
 
 $appId = 'PHP_is_the_best_language_in_the_world';
 $appSecret = 'PHP_GO';
@@ -16,7 +16,7 @@ $data = [
     'time' => $time,
     'sign' => $sign,
     // 'image' => new \CURLFile(realpath('./WechatIMG261-tuya.png'))
-    'entName' => '北京绘客科技有限公司',
+    'entName' => '王瀚最帅北京科技有限公司',
     'code' => '',
     'year' => '2019',
     'dataCount' => '3',
