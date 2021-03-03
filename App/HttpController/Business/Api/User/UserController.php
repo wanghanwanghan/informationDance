@@ -733,9 +733,8 @@ class UserController extends UserBase
                     $res = AuthBook::create()->where([
                         'phone' => $phone,
                         'entName' => $entName,
-                        'status' => 3,
                         'type' => 1,
-                    ])->get();
+                    ])->order('created_at', 'desc')->get();
                     break;
                 case '2':
                     //查深度报告授权时，有效期只有半年
@@ -743,16 +742,23 @@ class UserController extends UserBase
                     $res = AuthBook::create()->where([
                         'phone' => $phone,
                         'entName' => $entName,
-                        'status' => 3,
                         'type' => 2,
-                    ])->where('created_at', $beforeHalfYear, '>')->get();
+                    ])->where('created_at', $beforeHalfYear, '>')->order('created_at', 'desc')->get();
                     break;
+                default:
+                    return $this->writeJson(201, null, null, '需要重新上传');
             }
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
 
-        return empty($res) ? $this->writeJson(201, null, null, '') : $this->writeJson(200, null, null, '');
+        if (empty($res)) {
+            return $this->writeJson(201, null, null, '需要重新上传');
+        } elseif ($res->status !== 3) {
+            return $this->writeJson(202, null, null, '请等待审核');
+        } else {
+            return $this->writeJson(200, null, null, '成功');
+        }
     }
 
 
