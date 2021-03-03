@@ -19,6 +19,7 @@ class ReportService extends ServiceBase
     const REPORT_TYPE_30 = 30;//30是简版报告
     const REPORT_TYPE_31 = 31;//31是简版报告定制版pdf版
     const REPORT_TYPE_50 = 50;//50是深度报告
+    const REPORT_TYPE_51 = 51;//50是深度报告定制版pdf版
 
     //生成极简报告
     function createVeryEasy($entName, $reportNum, $phone, $type)
@@ -143,4 +144,28 @@ class ReportService extends ServiceBase
         return $reportNum;
     }
 
+    //生成深度报告 pdf
+    function createDeepPdf($entName, $reportNum, $phone, $type, $dataKey = '')
+    {
+        try {
+            ReportInfo::create()->data([
+                'phone' => $phone,
+                'entName' => $entName,
+                'filename' => $reportNum,
+                'ext' => 'pdf',
+                'type' => ReportService::REPORT_TYPE_51,
+                'status' => 3,//1是异常，2是完成，3是生成中
+                'errInfo' => '',
+            ])->save();
+
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        //扔到task里
+        TaskService::getInstance()
+            ->create(new CreateEasyReportCustomizedTask($entName, $reportNum, $phone, $type, $dataKey));
+
+        return $reportNum;
+    }
 }

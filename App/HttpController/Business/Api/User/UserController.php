@@ -746,7 +746,7 @@ class UserController extends UserBase
                     ])->where('created_at', $beforeHalfYear, '>')->order('created_at', 'desc')->get();
                     break;
                 default:
-                    return $this->writeJson(201, null, null, '需要重新上传');
+                    $res = [];
             }
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);

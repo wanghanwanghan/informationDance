@@ -104,6 +104,43 @@ class PdfController extends ExportBase
         return $this->writeJson($code, $paging, $res, $msg);
     }
 
+    //生成一个深度报告
+    function createDeep()
+    {
+        $reportNum = $this->request()->getRequestParam('reportNum') ?? $this->createReportNum();
+        $phone = $this->request()->getRequestParam('phone') ?? '';
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $email = $this->request()->getRequestParam('email') ?? '';
+        $type = $this->request()->getRequestParam('type') ?? 'xd';
+        $pay = $this->request()->getRequestParam('pay') ?? 0;
+        $dataKey = $this->request()->getRequestParam('dataKey') ?? '';
+
+        if (!CommonService::getInstance()->validateEmail($email) && $pay == 1) {
+            return $this->writeJson(201, null, null, 'email格式错误');
+        }
+
+        try {
+            $userInfo = User::create()->where('phone', $phone)->get();
+            $pay != 1 ?: $userInfo->update(['email' => $email]);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        $charge = ChargeService::getInstance()->EasyReportCustomized($this->request(), 231, $reportNum);
+
+        if ($charge['code'] != 200) {
+            $code = $charge['code'];
+            $paging = $res = null;
+            $msg = $charge['msg'];
+        } else {
+            $code = 200;
+            $paging = null;
+            $res = ReportService::getInstance()->createDeepPdf($entName, $reportNum, $phone, $type, $dataKey);
+            $msg = '深度报告定制版生成中';
+        }
+
+        return $this->writeJson($code, $paging, $res, $msg);
+    }
 
 
 
