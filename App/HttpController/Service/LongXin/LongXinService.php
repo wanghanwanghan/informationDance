@@ -31,6 +31,8 @@ class LongXinService extends ServiceBase
             'C_ASSGROL',//9净资产
             'A_ASSGROL',//10平均资产总额
             'CA_ASSGRO',//11平均净资产
+            'A_VENDINCL',//15企业人均产值
+            'A_PROGROL',//16企业人均盈利
         ],
         [
             ['name' => 'F14', 'range' => [-7000, -6500]],
@@ -69,13 +71,25 @@ class LongXinService extends ServiceBase
             'C_INTRATESL',//12净利率
             'ATOL',//13资产周转率
             'ASSGRO_C_INTRATESL',//14总资产净利率
-            'A_VENDINCL',//15企业人均产值
-            'A_PROGROL',//16企业人均盈利
             'ROAL',//17总资产回报率 ROA
             'ROE_AL',//18净资产回报率 ROE (A)
             'ROE_BL',//19净资产回报率 ROE (B)
             'DEBTL',//20资产负债率
             'MAIBUSINC_RATIOL',//22主营业务比率
+            'NALR',//23净资产负债率
+            'OPM',//24营业利润率
+            'ROCA',//25资本保值增值率
+            'NOR',//26营业净利率
+            'PMOTA',//27总资产利润率
+            'TBR',//28税收负担率
+            'ASSGRO_yoy',//30资产总额同比
+            'LIAGRO_yoy',//31负债总额同比
+            'VENDINC_yoy',//32营业总收入同比
+            'MAIBUSINC_yoy',//33主营业务收入同比
+            'PROGRO_yoy',//34利润总额同比
+            'NETINC_yoy',//35净利润同比
+            'RATGRO_yoy',//36纳税总额同比
+            'TOTEQU_yoy',//37所有者权益同比
         ],
         [
             ['name' => 'F13', 'range' => [-40.96, -20.48]],
@@ -398,6 +412,23 @@ class LongXinService extends ServiceBase
         //21权益乘数 EQUITYL
         //22主营业务比率 MAIBUSINC_RATIOL
 
+        //23净资产负债率 NALR
+        //24营业利润率 OPM
+        //25资本保值增值率 ROCA
+        //26营业净利率 NOR
+        //27总资产利润率 PMOTA
+        //28税收负担率 TBR
+        //29权益乘数 EQUITYL_new
+
+        //30资产总额同比 ASSGRO_yoy
+        //31负债总额同比 LIAGRO_yoy
+        //32营业总收入同比 VENDINC_yoy
+        //33主营业务收入同比 MAIBUSINC_yoy
+        //34利润总额同比 PROGRO_yoy
+        //35净利润同比 NETINC_yoy
+        //36纳税总额同比 RATGRO_yoy
+        //37所有者权益同比 TOTEQU_yoy
+
         $now = [];
         foreach ($origin as $year => $arr) {
             $now[$year] = [
@@ -455,6 +486,21 @@ class LongXinService extends ServiceBase
             'DEBTL' => null,
             'EQUITYL' => null,
             'MAIBUSINC_RATIOL' => null,
+            'NALR' => null,
+            'OPM' => null,
+            'ROCA' => null,
+            'NOR' => null,
+            'PMOTA' => null,
+            'TBR' => null,
+            'EQUITYL_new' => null,
+            'ASSGRO_yoy' => null,
+            'LIAGRO_yoy' => null,
+            'VENDINC_yoy' => null,
+            'MAIBUSINC_yoy' => null,
+            'PROGRO_yoy' => null,
+            'NETINC_yoy' => null,
+            'RATGRO_yoy' => null,
+            'TOTEQU_yoy' => null,
         ];
 
         $retrun = [];
@@ -526,6 +572,36 @@ class LongXinService extends ServiceBase
         $origin = $this->qycs($origin);
         //22主营业务比率
         $origin = $this->zyywbl($origin);
+        //23净资产负债率
+        $origin = $this->jzcfzl($origin);
+        //24营业利润率
+        $origin = $this->yylrl($origin);
+        //25资本保值增值率
+        $origin = $this->zbbzzzl($origin);
+        //26营业净利率
+        $origin = $this->zyjll($origin);
+        //27总资产利润率
+        $origin = $this->zzclrl($origin);
+        //28税收负担率
+        $origin = $this->ssfdl($origin);
+        //29权益乘数
+        $origin = $this->qycs_new($origin);
+        //30资产总额同比 ASSGRO_yoy
+        $origin = $this->zcze_yoy($origin);
+        //31负债总额同比 LIAGRO_yoy
+        $origin = $this->fzze_yoy($origin);
+        //32营业总收入同比 VENDINC_yoy
+        $origin = $this->yyzsr_yoy($origin);
+        //33主营业务收入同比 MAIBUSINC_yoy
+        $origin = $this->zyywsr_yoy($origin);
+        //34利润总额同比 PROGRO_yoy
+        $origin = $this->lrze_yoy($origin);
+        //35净利润同比 NETINC_yoy
+        $origin = $this->jlr_yoy($origin);
+        //36纳税总额同比 RATGRO_yoy
+        $origin = $this->nsze_yoy($origin);
+        //37所有者权益同比 TOTEQU_yoy
+        $origin = $this->syzqy_yoy($origin);
 
         krsort($origin);
 
@@ -771,6 +847,363 @@ class LongXinService extends ServiceBase
             }
 
             array_push($origin[$year], $value);
+        }
+
+        return $origin;
+    }
+
+    //new 23净资产负债率 1负债总额 / 7所有者权益
+    private function jzcfzl($origin)
+    {
+        foreach ($origin as $year => $val) {
+            if (is_numeric($val[1]) && is_numeric($val[7]) && $val[7] !== 0) {
+                $value = $val[1] / $val[7];
+            } else {
+                $value = null;
+            }
+
+            array_push($origin[$year], $value);
+        }
+
+        return $origin;
+    }
+
+    //new 24营业利润率 4利润总额 / 2营业总收入
+    private function yylrl($origin)
+    {
+        foreach ($origin as $year => $val) {
+            if (is_numeric($val[4]) && is_numeric($val[2]) && $val[2] !== 0) {
+                $value = $val[4] / $val[2];
+            } else {
+                $value = null;
+            }
+
+            array_push($origin[$year], $value);
+        }
+
+        return $origin;
+    }
+
+    //new 25资本保值增值率 7去年所有者权益 / 7当年所有者权益
+    private function zbbzzzl($origin)
+    {
+        foreach ($origin as $year => $val) {
+            //去年
+            $lastYear = $year - 1;
+
+            //如果去年没数据
+            if (!isset($origin[$lastYear]) || !is_numeric($origin[$lastYear][7])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //如果今年没数据
+            if (!is_numeric($origin[$year][7]) || $origin[$year][7] === 0) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //两年都有数据
+            $last = $origin[$lastYear][7];
+            $now = $origin[$year][7];
+
+            array_push($origin[$year], ($last + $now) / 2);
+        }
+
+        return $origin;
+    }
+
+    //new 26营业净利率 5净利润 / 2营业总收入
+    private function zyjll($origin)
+    {
+        foreach ($origin as $year => $val) {
+            if (is_numeric($val[5]) && is_numeric($val[2]) && $val[2] !== 0) {
+                $value = $val[5] / $val[2];
+            } else {
+                $value = null;
+            }
+
+            array_push($origin[$year], $value);
+        }
+
+        return $origin;
+    }
+
+    //new 27总资产利润率 4利润总额 / 10平均资产总额
+    private function zzclrl($origin)
+    {
+        foreach ($origin as $year => $val) {
+            if (is_numeric($val[4]) && is_numeric($val[10]) && $val[10] !== 0) {
+                $value = $val[4] / $val[10];
+            } else {
+                $value = null;
+            }
+
+            array_push($origin[$year], $value);
+        }
+
+        return $origin;
+    }
+
+    //new 28税收负担率 6纳税总额 / 2营业总收入
+    private function ssfdl($origin)
+    {
+        foreach ($origin as $year => $val) {
+            if (is_numeric($val[6]) && is_numeric($val[2]) && $val[2] !== 0) {
+                $value = $val[6] / $val[2];
+            } else {
+                $value = null;
+            }
+
+            array_push($origin[$year], $value);
+        }
+
+        return $origin;
+    }
+
+    //new 29权益乘数 0资产总额 / 7所有者权益
+    private function qycs_new($origin)
+    {
+        foreach ($origin as $year => $val) {
+            if (is_numeric($val[0]) && is_numeric($val[7]) && $val[7] !== 0) {
+                $value = $val[0] / $val[7];
+            } else {
+                $value = null;
+            }
+
+            array_push($origin[$year], $value);
+        }
+
+        return $origin;
+    }
+
+    //30资产总额同比 ASSGRO_yoy
+    private function zcze_yoy($origin)
+    {
+        foreach ($origin as $year => $val) {
+            //去年
+            $lastYear = $year - 1;
+
+            //如果去年没数据
+            if (!isset($origin[$lastYear]) || !is_numeric($origin[$lastYear][0])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //如果今年没数据
+            if (!is_numeric($origin[$year][0])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //两年都有数据
+            $last = $origin[$lastYear][0];
+            $now = $origin[$year][0];
+
+            array_push($origin[$year], ($now - $last) / abs($last));
+        }
+
+        return $origin;
+    }
+
+    //31负债总额同比 LIAGRO_yoy
+    private function fzze_yoy($origin)
+    {
+        foreach ($origin as $year => $val) {
+            //去年
+            $lastYear = $year - 1;
+
+            //如果去年没数据
+            if (!isset($origin[$lastYear]) || !is_numeric($origin[$lastYear][1])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //如果今年没数据
+            if (!is_numeric($origin[$year][1])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //两年都有数据
+            $last = $origin[$lastYear][1];
+            $now = $origin[$year][1];
+
+            array_push($origin[$year], ($now - $last) / abs($last));
+        }
+
+        return $origin;
+    }
+
+    //32营业总收入同比 VENDINC_yoy
+    private function yyzsr_yoy($origin)
+    {
+        foreach ($origin as $year => $val) {
+            //去年
+            $lastYear = $year - 1;
+
+            //如果去年没数据
+            if (!isset($origin[$lastYear]) || !is_numeric($origin[$lastYear][2])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //如果今年没数据
+            if (!is_numeric($origin[$year][2])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //两年都有数据
+            $last = $origin[$lastYear][2];
+            $now = $origin[$year][2];
+
+            array_push($origin[$year], ($now - $last) / abs($last));
+        }
+
+        return $origin;
+    }
+
+    //33主营业务收入同比 MAIBUSINC_yoy
+    private function zyywsr_yoy($origin)
+    {
+        foreach ($origin as $year => $val) {
+            //去年
+            $lastYear = $year - 1;
+
+            //如果去年没数据
+            if (!isset($origin[$lastYear]) || !is_numeric($origin[$lastYear][3])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //如果今年没数据
+            if (!is_numeric($origin[$year][3])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //两年都有数据
+            $last = $origin[$lastYear][3];
+            $now = $origin[$year][3];
+
+            array_push($origin[$year], ($now - $last) / abs($last));
+        }
+
+        return $origin;
+    }
+
+    //34利润总额同比 PROGRO_yoy
+    private function lrze_yoy($origin)
+    {
+        foreach ($origin as $year => $val) {
+            //去年
+            $lastYear = $year - 1;
+
+            //如果去年没数据
+            if (!isset($origin[$lastYear]) || !is_numeric($origin[$lastYear][4])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //如果今年没数据
+            if (!is_numeric($origin[$year][4])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //两年都有数据
+            $last = $origin[$lastYear][4];
+            $now = $origin[$year][4];
+
+            array_push($origin[$year], ($now - $last) / abs($last));
+        }
+
+        return $origin;
+    }
+
+    //35净利润同比 NETINC_yoy
+    private function jlr_yoy($origin)
+    {
+        foreach ($origin as $year => $val) {
+            //去年
+            $lastYear = $year - 1;
+
+            //如果去年没数据
+            if (!isset($origin[$lastYear]) || !is_numeric($origin[$lastYear][5])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //如果今年没数据
+            if (!is_numeric($origin[$year][5])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //两年都有数据
+            $last = $origin[$lastYear][5];
+            $now = $origin[$year][5];
+
+            array_push($origin[$year], ($now - $last) / abs($last));
+        }
+
+        return $origin;
+    }
+
+    //36纳税总额同比 RATGRO_yoy
+    private function nsze_yoy($origin)
+    {
+        foreach ($origin as $year => $val) {
+            //去年
+            $lastYear = $year - 1;
+
+            //如果去年没数据
+            if (!isset($origin[$lastYear]) || !is_numeric($origin[$lastYear][6])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //如果今年没数据
+            if (!is_numeric($origin[$year][6])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //两年都有数据
+            $last = $origin[$lastYear][6];
+            $now = $origin[$year][6];
+
+            array_push($origin[$year], ($now - $last) / abs($last));
+        }
+
+        return $origin;
+    }
+
+    //37所有者权益同比 TOTEQU_yoy
+    private function syzqy_yoy($origin)
+    {
+        foreach ($origin as $year => $val) {
+            //去年
+            $lastYear = $year - 1;
+
+            //如果去年没数据
+            if (!isset($origin[$lastYear]) || !is_numeric($origin[$lastYear][7])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //如果今年没数据
+            if (!is_numeric($origin[$year][7])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //两年都有数据
+            $last = $origin[$lastYear][7];
+            $now = $origin[$year][7];
+
+            array_push($origin[$year], ($now - $last) / abs($last));
         }
 
         return $origin;
