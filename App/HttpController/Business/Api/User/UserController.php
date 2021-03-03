@@ -752,7 +752,7 @@ class UserController extends UserBase
             return $this->writeErr($e, __FUNCTION__);
         }
 
-        return empty($res) ? $this->writeJson(201, null, null, '查询成功') : $this->writeJson(200, null, null, '查询成功');
+        return empty($res) ? $this->writeJson(201, null, null, '') : $this->writeJson(200, null, null, '');
     }
 
 
