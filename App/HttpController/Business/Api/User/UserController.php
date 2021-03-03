@@ -735,7 +735,7 @@ class UserController extends UserBase
                         'entName' => $entName,
                         'status' => 3,
                         'type' => 1,
-                    ])->order('created_at', 'desc')->get();
+                    ])->get();
                     break;
                 case '2':
                     //查深度报告授权时，有效期只有半年
