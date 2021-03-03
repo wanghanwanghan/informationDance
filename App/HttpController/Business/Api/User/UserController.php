@@ -23,6 +23,7 @@ use App\HttpController\Service\YuanSu\YuanSuService;
 use Carbon\Carbon;
 use EasySwoole\ORM\DbManager;
 use EasySwoole\RedisPool\Redis;
+use Qiniu\Auth;
 use wanghanwanghan\someUtils\control;
 
 class UserController extends UserBase
@@ -233,7 +234,7 @@ class UserController extends UserBase
 
             //数据的总记录条数
             $total = PurchaseInfo::create()->where('phone', $phone)
-                ->where('orderStatus','待支付','<>')->count();
+                ->where('orderStatus', '待支付', '<>')->count();
 
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
@@ -453,7 +454,7 @@ class UserController extends UserBase
         }
 
         $entList = array_filter($entList);
-        if (empty($entList)) return $this->writeJson(201,null,null,'没有监控任何公司');
+        if (empty($entList)) return $this->writeJson(201, null, null, '没有监控任何公司');
 
         $detail = SupervisorEntNameInfo::create()->where('entName', $entList, 'IN');
         $resTotle = SupervisorEntNameInfo::create()->where('entName', $entList, 'IN');
@@ -649,9 +650,11 @@ class UserController extends UserBase
     {
         $phone = $this->request()->getRequestParam('phone');
         $entName = $this->request()->getRequestParam('entName') ?? '';
+        $type = $this->request()->getRequestParam('type') ?? '';
         $path = $this->request()->getRequestParam('path') ?? '';
 
-        if (empty($entName) || empty($path)) return $this->writeJson(201, null, null, '授权书path和企业名不能是空');
+        if (empty($entName) || empty($path) || !is_numeric($type))
+            return $this->writeJson(201, null, null, '授权书path或企业名或文件类型不能是空');
 
         $filename = explode(DIRECTORY_SEPARATOR, $path);
 
@@ -663,6 +666,7 @@ class UserController extends UserBase
                 'entName' => $entName,
                 'name' => $filename,
                 'status' => 1,
+                'type' => $type,
                 'remark' => '',
             ])->save();
         } catch (\Throwable $e) {
@@ -710,6 +714,45 @@ class UserController extends UserBase
         ];
 
         return $this->writeJson(200, $paging, $info, '查询成功');
+    }
+
+    //检查用户上没上传过企业授权书
+    function checkAuthBook()
+    {
+        $phone = $this->request()->getRequestParam('phone');
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $type = $this->request()->getRequestParam('type') ?? '';
+
+        if (empty($entName) || !is_numeric($type))
+            return $this->writeJson(201, null, null, '企业名或文件类型不能是空');
+
+        try {
+            switch ($type) {
+                case '1':
+                    //查财务授权时，只要有就行
+                    $res = AuthBook::create()->where([
+                        'phone' => $phone,
+                        'entName' => $entName,
+                        'status' => 3,
+                        'type' => 1,
+                    ])->order('created_at', 'desc')->get();
+                    break;
+                case '2':
+                    //查深度报告授权时，有效期只有半年
+                    $beforeHalfYear = Carbon::now()->subMonths(6)->timestamp;
+                    $res = AuthBook::create()->where([
+                        'phone' => $phone,
+                        'entName' => $entName,
+                        'status' => 3,
+                        'type' => 2,
+                    ])->where('created_at', $beforeHalfYear, '>')->get();
+                    break;
+            }
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        return empty($res) ? $this->writeJson(201, null, null, '查询成功') : $this->writeJson(200, null, null, '查询成功');
     }
 
 
