@@ -37,35 +37,41 @@ class LongXinController extends LongXinBase
     }
 
     //近n年的财务数据，不需要授权
-    function getThreeYearsData()
+    function getFinanceNotAuth()
     {
-        $entName = $this->request()->getRequestParam('entName');
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $beginYear = $this->request()->getRequestParam('year') ?? '';
+        $dataCount = $this->request()->getRequestParam('dataCount') ?? '';
 
         $postData = [
             'entName' => $entName,
-            'beginYear' => date('Y'),
-            'dataCount' => 3,//取最近几年的
+            'code' => '',
+            'beginYear' => $beginYear,
+            'dataCount' => $dataCount,//取最近几年的
         ];
 
-        $res = (new LongXinService())->getThreeYearsData($postData);
+        $res = (new LongXinService())->getFinanceData($postData);
 
         return $this->checkResponse($res);
     }
 
     //近n年的财务数据，需要授权
-    function getThreeYearsDataNeedAuth()
+    function getFinanceNeedAuth()
     {
-        $entName = $this->request()->getRequestParam('entName');
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $beginYear = $this->request()->getRequestParam('year') ?? '';
+        $dataCount = $this->request()->getRequestParam('dataCount') ?? '';
 
         $postData = [
             'entName' => $entName,
-            'beginYear' => date('Y'),
-            'dataCount' => 3,//取最近几年的
+            'code' => '',
+            'beginYear' => $beginYear,
+            'dataCount' => $dataCount,//取最近几年的
         ];
 
         //这里验证授权书是否审核通过
 
-        $res = (new LongXinService())->getThreeYearsData($postData);
+        $res = (new LongXinService())->getFinanceData($postData);
 
         return $this->checkResponse($res);
     }
