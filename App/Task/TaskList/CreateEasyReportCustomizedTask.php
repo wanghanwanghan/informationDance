@@ -115,7 +115,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
             $info->update(['status' => 1, 'errInfo' => $content]);
 
         } catch (\Throwable $e) {
-
+            CommonService::getInstance()->log4PHP($e->getMessage());
         }
     }
 
