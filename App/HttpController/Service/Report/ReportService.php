@@ -162,9 +162,9 @@ class ReportService extends ServiceBase
             return $this->writeErr($e, __FUNCTION__);
         }
 
-        //扔到task里
+        //不扔task了，等后台审核后再扔task
         TaskService::getInstance()
-            ->create(new CreateEasyReportCustomizedTask($entName, $reportNum, $phone, $type, $dataKey));
+            ->create(new CreateEasyReportCustomizedTask($entName, $reportNum, $phone, $type, $dataKey, ReportService::REPORT_TYPE_51));
 
         return $reportNum;
     }

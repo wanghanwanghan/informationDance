@@ -30,11 +30,12 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
     private $type;
     private $dataIndex;
     private $ocrDataInMysql;
+    private $reportType;
 
     private $inDetail = [];
     private $outDetail = [];
 
-    function __construct($entName, $reportNum, $phone, $type, $dataIndex)
+    function __construct($entName, $reportNum, $phone, $type, $dataIndex, $reportType = 99)
     {
         $this->entName = $entName;
         $this->reportNum = $reportNum;
@@ -42,6 +43,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         $this->type = $type;
         $this->dataIndex = $dataIndex;
         $this->ocrDataInMysql = [];
+        $this->reportType = $reportType;
 
         return parent::__construct();
     }
@@ -237,7 +239,7 @@ TEMP;
         }
 
         //如果是深度，填入发票数据
-        if ($this->type === 51 || $this->type === '51') {
+        if ($this->reportType === 51 || $this->reportType === '51') {
             $code = (new ZhongWangService())->getReceiptDataTest($this->entName,'getCode');
             CommonService::getInstance()->log4PHP($code);
             $this->inDetail = (new ZhongWangService())->getReceiptDataTest($code,'in');
