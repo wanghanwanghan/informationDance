@@ -74,9 +74,6 @@ class EasySwooleEvent implements Event
 
     public static function onRequest(Request $request, Response $response): bool
     {
-        $args = $request->getRequestParam();
-        CommonService::getInstance()->log4PHP($args);
-
         $response->withHeader('Access-Control-Allow-Origin', '*');
         $response->withHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
         $response->withHeader('Access-Control-Allow-Credentials', 'true');
