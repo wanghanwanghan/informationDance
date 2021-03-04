@@ -241,11 +241,8 @@ TEMP;
         //如果是深度，填入发票数据
         if ($this->reportType === 51 || $this->reportType === '51') {
             $code = (new ZhongWangService())->getReceiptDataTest($this->entName,'getCode');
-            CommonService::getInstance()->log4PHP($code);
             $this->inDetail = (new ZhongWangService())->getReceiptDataTest($code,'in');
-            CommonService::getInstance()->log4PHP($this->inDetail);
             $this->outDetail = (new ZhongWangService())->getReceiptDataTest($code,'out');
-            CommonService::getInstance()->log4PHP($this->outDetail);
 
             //发票
             $invoiceObj = (new Invoice($this->inDetail,$this->outDetail));
@@ -4536,7 +4533,7 @@ TEMP;
     {
         $insert = '';
         $ocrData = $this->getOcrData('5-3',4);
-        $res = $data['re_fpjx']['zycbfx'];
+        $res = $data['re_fpjx']['zycbfx'][0];
         $zhouqi = "自 {$data['commonData']['zhouqi']} 的进项发票";;
         if (!empty($res)) {
             $i = 1;
