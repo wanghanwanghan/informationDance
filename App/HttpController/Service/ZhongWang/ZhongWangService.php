@@ -146,7 +146,7 @@ class ZhongWangService extends ServiceBase
             $out = InvoiceOut::create()->where('salesTaxNo', $code)->all();
             return obj2Arr($out);
         } elseif ($type === 'getCode') {
-            return InvoiceIn::create()->where('purchaserTaxNo', $code)->get()->purchaserTaxNo;
+            return InvoiceIn::create()->where('purchaserName', $code)->get()->purchaserTaxNo;
         } else {
             return [];
         }
