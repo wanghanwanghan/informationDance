@@ -4798,6 +4798,7 @@ TEMP;
     {
         $ocrData = $this->getOcrData('14-0',5);
         $res = $data['re_fpxx']['qykpqkhz'];
+        CommonService::getInstance()->log4PHP($res);
         $insert = '<tr>';
         $insert .= '<td>'.$res['zhouqi']['min'].' - '.$res['zhouqi']['max'].'</td>';
         $insert .= '<td>'.$res['zhouqi']['xxNum'].'</td>';
