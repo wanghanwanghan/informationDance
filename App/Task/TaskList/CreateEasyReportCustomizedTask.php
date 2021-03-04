@@ -363,6 +363,8 @@ TEMP;
             $this->reli($pdf,$cspData);
             $this->yunshu($pdf,$cspData);
             $this->wuye($pdf,$cspData);
+
+            $this->qykpqkhz($pdf,$cspData);
         }
     }
 
@@ -4791,6 +4793,35 @@ TEMP;
         $pdf->writeHTML($html, true, false, false, false, '');
     }
 
+    //深度报告字段 必执行的 企业开票情况汇总
+    private function qykpqkhz(Tcpdf $pdf, $data)
+    {
+        $ocrData = $this->getOcrData('14-0',5);
+        $res = $data['re_fpxx']['qykpqkhz'];
+        $insert = '<tr>';
+        $insert .= '<td>'.$res['zhouqi']['min'].' - '.$res['zhouqi']['max'].'</td>';
+        $insert .= '<td>'.$res['zhouqi']['xxNum'].'</td>';
+        $insert .= '<td>'.$res['zhouqi']['xxJine'].'</td>';
+        $insert .= '<td>'.$res['zhouqi']['jxNum'].'</td>';
+        $insert .= '<td>'.$res['zhouqi']['jxJine'].'</td>';
+        $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="5" style="text-align: center;background-color: #d3d3d3">企业开票情况汇总</td>
+    </tr>
+    <tr>
+        <td width="7%">统计周期</td>
+        <td width="24%">销项有效数</td>
+        <td width="23%">销项有效金额</td>
+        <td width="26%">进项有效数</td>
+        <td width="20%">进项有效金额</td>
+    </tr>
+    {$insert}
+    {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
 
 
 
