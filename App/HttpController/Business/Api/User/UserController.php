@@ -784,7 +784,7 @@ class UserController extends UserBase
         }
 
         if (empty($res)) {
-            return $this->writeJson(201, null, null, '需要重新上传');
+            return $this->writeJson(201, null, null, '请上传授权书以供我方向有关部门备案');
         } elseif ($res->status !== 3) {
             return $this->writeJson(202, null, null, '请等待审核');
         } else {
