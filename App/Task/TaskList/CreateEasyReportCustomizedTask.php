@@ -246,7 +246,6 @@ TEMP;
             CommonService::getInstance()->log4PHP($this->outDetail);
             //发票
             $invoiceObj = (new Invoice($this->inDetail,$this->outDetail));
-            CommonService::getInstance()->log4PHP($invoiceObj);
 
             //5.2主营商品分析
             $zyspfx=$invoiceObj->zyspfx();
