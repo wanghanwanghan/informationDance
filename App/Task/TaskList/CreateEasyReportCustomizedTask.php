@@ -4796,9 +4796,8 @@ TEMP;
     //深度报告字段 必执行的 企业开票情况汇总
     private function qykpqkhz(Tcpdf $pdf, $data)
     {
-        $ocrData = $this->getOcrData('14-0',5);
+        $ocrData = $this->getOcrData('14-1',5);
         $res = $data['re_fpxx']['qykpqkhz'];
-        CommonService::getInstance()->log4PHP($res);
         $insert = '<tr>';
         $insert .= '<td>'.$res['zhouqi']['min'].' - '.$res['zhouqi']['max'].'</td>';
         $insert .= '<td>'.$res['zhouqi']['xxNum'].'</td>';
@@ -4812,14 +4811,38 @@ TEMP;
         <td colspan="5" style="text-align: center;background-color: #d3d3d3">企业开票情况汇总</td>
     </tr>
     <tr>
-        <td width="7%">统计周期</td>
-        <td width="24%">销项有效数</td>
-        <td width="23%">销项有效金额</td>
-        <td width="26%">进项有效数</td>
-        <td width="20%">进项有效金额</td>
+        <td width="15%">统计周期</td>
+        <td width="22%">销项有效数</td>
+        <td width="21%">销项有效金额</td>
+        <td width="24%">进项有效数</td>
+        <td width="18%">进项有效金额</td>
     </tr>
     {$insert}
     {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+
+        //其他
+        $res = $data['re_fpxx']['qykpqkhz'];
+        $tmp = '';
+        foreach ($res['qita'] as $year => $val) {
+            $insert = '<tr>';
+            $insert .= '<td>'.$year.'</td>';
+            $insert .= '<td>'.$val['xxNum'].'</td>';
+            $insert .= '<td>'.$val['xxJine'].'</td>';
+            $insert .= '</tr>';
+            $tmp .= $insert;
+        }
+
+        $html = <<<TEMP
+<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td width="15%">统计年份</td>
+        <td width="46%">销项有效数</td>
+        <td width="39%">销项有效金额</td>
+    </tr>
+    {$tmp}
 </table>
 TEMP;
         $pdf->writeHTML($html, true, false, false, false, '');
