@@ -19,7 +19,7 @@ class ReportService extends ServiceBase
     const REPORT_TYPE_30 = 30;//30是简版报告
     const REPORT_TYPE_31 = 31;//31是简版报告定制版pdf版
     const REPORT_TYPE_50 = 50;//50是深度报告
-    const REPORT_TYPE_51 = 51;//50是深度报告定制版pdf版
+    const REPORT_TYPE_51 = 51;//51是深度报告定制版pdf版
 
     //生成极简报告
     function createVeryEasy($entName, $reportNum, $phone, $type)

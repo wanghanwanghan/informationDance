@@ -2,6 +2,8 @@
 
 namespace App\HttpController\Service\ZhongWang;
 
+use App\HttpController\Models\Api\InvoiceIn;
+use App\HttpController\Models\Api\InvoiceOut;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
@@ -38,30 +40,27 @@ class ZhongWangService extends ServiceBase
         return openssl_decrypt($str, 'aes-128-ecb', $this->key, OPENSSL_RAW_DATA);
     }
 
-    private function checkResp($res,$type)
+    private function checkResp($res, $type)
     {
         if (isset($res['data']['total']) &&
             isset($res['data']['pageSize']) &&
-            isset($res['data']['currentPage']))
-        {
-            $res['Paging']=[
-                'page'=>$res['data']['currentPage'],
-                'pageSize'=>$res['data']['pageSize'],
-                'total'=>$res['data']['total'],
+            isset($res['data']['currentPage'])) {
+            $res['Paging'] = [
+                'page' => $res['data']['currentPage'],
+                'pageSize' => $res['data']['pageSize'],
+                'total' => $res['data']['total'],
             ];
 
-        }else
-        {
-            $res['Paging']=null;
+        } else {
+            $res['Paging'] = null;
         }
 
-        if (isset($res['coHttpErr'])) return $this->createReturn(500,$res['Paging'],[],'co请求错误');
+        if (isset($res['coHttpErr'])) return $this->createReturn(500, $res['Paging'], [], 'co请求错误');
 
         (int)$res['code'] === 0 ? $res['code'] = 200 : $res['code'] = 600;
 
         //拿结果
-        switch ($type)
-        {
+        switch ($type) {
             case 'getInOrOutDetailByClient':
                 $step = 1;
                 $res['Result'] = $res['data']['invoices'];
@@ -77,7 +76,7 @@ class ZhongWangService extends ServiceBase
                 $res['Result'] = null;
         }
 
-        return $this->createReturn($res['code'],$res['Paging'],$res['Result'],$res['msg']);
+        return $this->createReturn($res['code'], $res['Paging'], $res['Result'], $res['msg']);
     }
 
     //进项销项发票详情 客户端（税盘）专用
@@ -97,7 +96,7 @@ class ZhongWangService extends ServiceBase
 
         $res = $this->readyToSend($api_path, $body);
 
-        return $this->checkRespFlag ? $this->checkResp($res,__FUNCTION__) : $res;
+        return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
     //进项销项发票详情 证书专用
@@ -118,7 +117,7 @@ class ZhongWangService extends ServiceBase
 
         $res = $this->readyToSend($api_path, $body);
 
-        return $this->checkRespFlag ? $this->checkResp($res,__FUNCTION__) : $res;
+        return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
     //实时ocr
@@ -134,12 +133,24 @@ class ZhongWangService extends ServiceBase
 
         $res = $this->readyToSend($api_path, $body);
 
-        return $this->checkRespFlag ? $this->checkResp($res,__FUNCTION__) : $res;
+        return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
-
-
-
+    //深度报告临时用的
+    function getReceiptDataTest($code, $type)
+    {
+        if ($type === 'in') {
+            $in = InvoiceIn::create()->where('purchaserTaxNo', $code)->all();
+            return obj2Arr($in);
+        } elseif ($type === 'out') {
+            $out = InvoiceOut::create()->where('salesTaxNo', $code)->all();
+            return obj2Arr($out);
+        } elseif ($type === 'getCode') {
+            return InvoiceIn::create()->where('purchaserTaxNo', $code)->get()->purchaserTaxNo;
+        } else {
+            return [];
+        }
+    }
 
     //统一发送
     private function readyToSend($api_path, $body)

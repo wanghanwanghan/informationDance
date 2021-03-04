@@ -2,6 +2,7 @@
 
 namespace App\Task\TaskList;
 
+use App\Crontab\CrontabList\tool\Invoice;
 use App\Csp\Service\CspService;
 use App\HttpController\Models\Api\OcrQueue;
 use App\HttpController\Models\Api\ReportInfo;
@@ -14,10 +15,12 @@ use App\HttpController\Service\QiChaCha\QiChaChaService;
 use App\HttpController\Service\Report\Tcpdf;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\XinDongService;
+use App\HttpController\Service\ZhongWang\ZhongWangService;
 use App\Task\TaskBase;
 use Carbon\Carbon;
 use EasySwoole\ORM\DbManager;
 use EasySwoole\Task\AbstractInterface\TaskInterface;
+use wanghanwanghan\someUtils\control;
 
 class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
 {
@@ -27,6 +30,9 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
     private $type;
     private $dataIndex;
     private $ocrDataInMysql;
+
+    private $inDetail = [];
+    private $outDetail = [];
 
     function __construct($entName, $reportNum, $phone, $type, $dataIndex)
     {
@@ -228,6 +234,121 @@ TEMP;
         //一个一个func执行
         foreach ($cata as $catalogKey) {
             $this->$catalogKey($pdf, $cspData);
+        }
+
+        //如果是深度，填入发票数据
+        if ($this->type === 51 || $this->type === '51') {
+            $code = (new ZhongWangService())->getReceiptDataTest($this->entName,'getCode');
+            $this->inDetail = (new ZhongWangService())->getReceiptDataTest($code,'in');
+            $this->outDetail = (new ZhongWangService())->getReceiptDataTest($code,'out');
+            //发票
+            $invoiceObj = (new Invoice($this->inDetail,$this->outDetail));
+
+            //5.2主营商品分析
+            $zyspfx=$invoiceObj->zyspfx();
+            $reportVal['re_fpxx']['zyspfx']=$zyspfx;
+
+            //5.4主要成本分析
+            $zycbfx=$invoiceObj->zycbfx();
+            $reportVal['re_fpjx']['zycbfx']=$zycbfx;
+            //各种费用在统计周期内合并
+            $reportVal['re_fpjx']['zycbfx_new']=$invoiceObj->zycbfx_new($zycbfx[1]);
+
+            //6.1企业开票情况汇总
+            $qykpqkhz=$invoiceObj->qykpqkhz();
+            $reportVal['re_fpxx']['qykpqkhz']=$qykpqkhz;
+            //统计周期从这里拿
+            $reportVal['commonData']['zhouqi'] = $qykpqkhz['zhouqi']['min'].' - '.$qykpqkhz['zhouqi']['max'];
+
+            //6.2.1年度销项发票情况汇总
+            $ndxxfpqkhz=$invoiceObj->ndxxfpqkhz();
+            $reportVal['re_fpxx']['ndxxfpqkhz']=$ndxxfpqkhz;
+
+            //6.2.2月度销项发票分析
+            $ydxxfpfx=$invoiceObj->ydxxfpfx();
+            $reportVal['re_fpxx']['ydxxfpfx']=$ydxxfpfx;
+
+            //6.2.5单张开票金额TOP10记录
+            $dzkpjeTOP10jl_xx=$invoiceObj->dzkpjeTOP10jl_xx();
+            $reportVal['re_fpxx']['dzkpjeTOP10jl_xx']=$dzkpjeTOP10jl_xx;
+            empty($reportVal['re_fpxx']['dzkpjeTOP10jl_xx']) ?: $reportVal['re_fpxx']['dzkpjeTOP10jl_xx'] = control::sortArrByKey($reportVal['re_fpxx']['dzkpjeTOP10jl_xx'],'totalAmount',true);
+
+            //6.2.6累计开票金额TOP10企业汇总
+            $ljkpjeTOP10qyhz_xx=$invoiceObj->ljkpjeTOP10qyhz_xx();
+            $reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx']=$ljkpjeTOP10qyhz_xx;
+            empty($reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx']) ?: $reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'] = control::sortArrByKey($reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'],'total',true);
+
+            //6.3.1下游客户稳定性分析
+            //1，下游企业司龄分布
+            $xyqyslfb=$invoiceObj->xyqyslfb();
+            $reportVal['re_fpxx']['xyqyslfb']=$xyqyslfb;
+            //2，下游企业合作年限分布
+            $xyqyhznxfb=$invoiceObj->xyqyhznxfb();
+            $reportVal['re_fpxx']['xyqyhznxfb']=$xyqyhznxfb;
+            //3，下游企业更换情况
+            $xyqyghqk=$invoiceObj->xyqyghqk();
+            $reportVal['re_fpxx']['xyqyghqk']=$xyqyghqk;
+
+            //6.3.2下游客户集中度
+            //1，下游企业地域分布
+            $xyqydyfb=$invoiceObj->xyqydyfb();
+            $reportVal['re_fpxx']['xyqydyfb']=$xyqydyfb;
+            //2，销售前十企业总占比
+            $xsqsqyzzb=$invoiceObj->xsqsqyzzb();
+            $reportVal['re_fpxx']['xsqsqyzzb']=$xsqsqyzzb;
+
+            //6.3.3企业销售情况预测
+            $qyxsqkyc=$invoiceObj->qyxsqkyc();
+            $reportVal['re_fpxx']['qyxsqkyc']=$qyxsqkyc;
+
+            //6.4.1年度进项发票情况汇总
+            $ndjxfpqkhz=$invoiceObj->ndjxfpqkhz();
+            $reportVal['re_fpjx']['ndjxfpqkhz']=$ndjxfpqkhz;
+
+            //6.4.2月度进项发票分析
+            $ydjxfpfx=$invoiceObj->ydjxfpfx();
+            $reportVal['re_fpjx']['ydjxfpfx']=$ydjxfpfx;
+
+            //6.4.3累计开票金额TOP10企业汇总
+            $ljkpjeTOP10qyhz_jx=$invoiceObj->ljkpjeTOP10qyhz_jx();
+            $reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx']=$ljkpjeTOP10qyhz_jx;
+            empty($reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx']) ?: $reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx'] = control::sortArrByKey($reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx'],'total',true);
+
+            //6.4.4单张开票金额TOP10企业汇总
+            $dzkpjeTOP10jl_jx=$invoiceObj->dzkpjeTOP10jl_jx();
+            $reportVal['re_fpjx']['dzkpjeTOP10jl_jx']=$dzkpjeTOP10jl_jx;
+            empty($reportVal['re_fpjx']['dzkpjeTOP10jl_jx']) ?: $reportVal['re_fpjx']['dzkpjeTOP10jl_jx'] = control::sortArrByKey($reportVal['re_fpjx']['dzkpjeTOP10jl_jx'],'totalAmount',true);
+
+            //6.5.1上游共饮上稳定性分析
+            //1，上游供应商司龄分布
+            $sygysslfb=$invoiceObj->sygysslfb();
+            $reportVal['re_fpjx']['sygysslfb']=$sygysslfb;
+            //2，上游供应商合作年限分布
+            $sygyshznxfb=$invoiceObj->sygyshznxfb();
+            $reportVal['re_fpjx']['sygyshznxfb']=$sygyshznxfb;
+            //3，上游供应商更换情况
+            $sygysghqk=$invoiceObj->sygysghqk();
+            $reportVal['re_fpjx']['sygysghqk']=$sygysghqk;
+
+            //6.5.2上游供应商集中度分析
+            //1，上游企业地域分布
+            $syqydyfb=$invoiceObj->syqydyfb();
+            $reportVal['re_fpjx']['syqydyfb']=$syqydyfb;
+            //2，采购前十企业总占比
+            $cgqsqyzzb=$invoiceObj->cgqsqyzzb();
+            $reportVal['re_fpjx']['cgqsqyzzb']=$cgqsqyzzb;
+
+            //6.5.3企业采购情况预测
+            $qycgqkyc=$invoiceObj->qycgqkyc();
+            $reportVal['re_fpjx']['qycgqkyc']=$qycgqkyc;
+
+            //储存信动指数-发票项
+            $xdsForFaPiao=$invoiceObj->xdsForFaPiao();
+            $reportVal['re_fpjx']['xdsForFaPiao']=$xdsForFaPiao;
+
+            //储存信动指数-上下游项
+            $xdsForShangxiayou=$invoiceObj->xdsForShangxiayou();
+            $reportVal['re_fpjx']['xdsForShangxiayou']=$xdsForShangxiayou;
         }
     }
 
@@ -4303,6 +4424,384 @@ TEMP;
             $pdf->writeHTML($html, true, false, false, false, '');
         }
     }
+
+    //深度报告字段 必执行的 备案主营产品
+    private function ProductStandardInfo(Tcpdf $pdf)
+    {
+        $insert = $num = '';
+        $ocrData = $this->getOcrData('5-1',4);
+        $res = (new XinDongService())->setCheckRespFlag(true)->getProductStandard($this->entName,1,50);
+        if ($res['code'] === 200 && !empty($res['result'])) {
+            $tmp['list'] = $res['result'];
+            $tmp['total'] = $res['paging']['total'];
+        } else {
+            $tmp['list'] = null;
+            $tmp['total'] = 0;
+        }
+        if (!empty($tmp['list'])) {
+            $i = 1;
+            $num = $tmp['total'];
+            foreach ($tmp['list'] as $one) {
+                $temp = '<tr>';
+                $temp .= "<td>{$i}</td>";
+                $temp .= "<td>{$one['PRODUCT_NAME']}</td>";
+                $temp .= "<td>{$one['STANDARD_NAME']}</td>";
+                $temp .= "<td>{$one['STANDARD_CODE']}</td>";
+                $temp .= '</tr>';
+                $insert .= $temp;
+                $i++;
+            }
+        }
+        $html = <<<TEMP
+<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="4" style="text-align: center;background-color: #d3d3d3">备案主营产品</td>
+    </tr>
+    <tr>
+        <td colspan="4">备案主营产品 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="34%">产品名称</td>
+        <td width="33%">标准名称</td>
+        <td width="26%">标准编号</td>
+    </tr>
+    {$insert}
+    {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
+
+    //深度报告字段 必执行的 主营商品分析
+    private function zyspfx(Tcpdf $pdf, $data)
+    {
+        $insert = '';
+        $ocrData = $this->getOcrData('5-2',4);
+        $res = $data['re_fpxx']['zyspfx'];
+        $zhouqi = "自 {$data['commonData']['zhouqi']} 的销项发票";;
+        if (!empty($res)) {
+            $i = 1;
+            foreach ($res as $one) {
+                $temp = '<tr>';
+                $temp .= "<td>{$i}</td>";
+                $temp .= "<td>{$one['name']}</td>";
+                $temp .= "<td>{$one['jine']}</td>";
+                $temp .= "<td>{$one['zhanbi']}</td>";
+                $temp .= '</tr>';
+                $insert .= $temp;
+                $i++;
+            }
+        }
+        $html = <<<TEMP
+<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="4" style="text-align: center;background-color: #d3d3d3">主营商品分析</td>
+    </tr>
+    <tr>
+        <td colspan="4">{$zhouqi}</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="34%">商品类型</td>
+        <td width="33%">销售金额（万元）</td>
+        <td width="26%">占比（%）</td>
+    </tr>
+    {$insert}
+    {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
+
+    //深度报告字段 必执行的 主要成本分析
+    private function zycbfx(Tcpdf $pdf, $data)
+    {
+        $insert = '';
+        $ocrData = $this->getOcrData('5-3',4);
+        $res = $data['re_fpjx']['zycbfx'];
+        $zhouqi = "自 {$data['commonData']['zhouqi']} 的进项发票";;
+        if (!empty($res)) {
+            $i = 1;
+            foreach ($res as $one) {
+                $temp = '<tr>';
+                $temp .= "<td>{$i}</td>";
+                $temp .= "<td>{$one['name']}</td>";
+                $temp .= "<td>{$one['jine']}</td>";
+                $temp .= "<td>{$one['zhanbi']}</td>";
+                $temp .= '</tr>';
+                $insert .= $temp;
+                $i++;
+            }
+        }
+        $html = <<<TEMP
+<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="4" style="text-align: center;background-color: #d3d3d3">主要成本分析</td>
+    </tr>
+    <tr>
+        <td colspan="4">{$zhouqi}</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="34%">成本类型</td>
+        <td width="33%">金额（万元）</td>
+        <td width="26%">占比（%）</td>
+    </tr>
+    {$insert}
+    {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
+
+    //深度报告字段 必执行的 水费支出
+    private function shuifei(Tcpdf $pdf, $data)
+    {
+        $insert = '';
+        $ocrData = $this->getOcrData('5-4',4);
+        $res = $data['re_fpjx']['zycbfx_new']['shuifei'];
+        if (!empty($res)) {
+            $i = 1;
+            foreach ($res as $one) {
+                $temp = '<tr>';
+                $temp .= "<td>{$i}</td>";
+                $temp .= "<td>{$one['riqi']}</td>";
+                $temp .= "<td>{$one['jine']}</td>";
+                $temp .= "<td>{$one['gs']}</td>";
+                $temp .= '</tr>';
+                $insert .= $temp;
+                $i++;
+            }
+        }
+        $html = <<<TEMP
+<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="4" style="text-align: center;background-color: #d3d3d3">水费支出</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="34%">发票统计周期</td>
+        <td width="33%">金额（万元）</td>
+        <td width="26%">服务商</td>
+    </tr>
+    {$insert}
+    {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
+
+    //深度报告字段 必执行的 电费支出
+    private function dianfei(Tcpdf $pdf, $data)
+    {
+        $insert = '';
+        $ocrData = $this->getOcrData('5-5',4);
+        $res = $data['re_fpjx']['zycbfx_new']['dianfei'];
+        if (!empty($res)) {
+            $i = 1;
+            foreach ($res as $one) {
+                $temp = '<tr>';
+                $temp .= "<td>{$i}</td>";
+                $temp .= "<td>{$one['riqi']}</td>";
+                $temp .= "<td>{$one['jine']}</td>";
+                $temp .= "<td>{$one['gs']}</td>";
+                $temp .= '</tr>';
+                $insert .= $temp;
+                $i++;
+            }
+        }
+        $html = <<<TEMP
+<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="4" style="text-align: center;background-color: #d3d3d3">电费支出</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="34%">发票统计周期</td>
+        <td width="33%">金额（万元）</td>
+        <td width="26%">服务商</td>
+    </tr>
+    {$insert}
+    {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
+
+    //深度报告字段 必执行的 燃气支出
+    private function ranqifei(Tcpdf $pdf, $data)
+    {
+        $insert = '';
+        $ocrData = $this->getOcrData('5-6',4);
+        $res = $data['re_fpjx']['zycbfx_new']['ranqifei'];
+        if (!empty($res)) {
+            $i = 1;
+            foreach ($res as $one) {
+                $temp = '<tr>';
+                $temp .= "<td>{$i}</td>";
+                $temp .= "<td>{$one['riqi']}</td>";
+                $temp .= "<td>{$one['jine']}</td>";
+                $temp .= "<td>{$one['gs']}</td>";
+                $temp .= '</tr>';
+                $insert .= $temp;
+                $i++;
+            }
+        }
+        $html = <<<TEMP
+<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="4" style="text-align: center;background-color: #d3d3d3">燃气支出</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="34%">发票统计周期</td>
+        <td width="33%">金额（万元）</td>
+        <td width="26%">服务商</td>
+    </tr>
+    {$insert}
+    {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
+
+    //深度报告字段 必执行的 热力支出
+    private function reli(Tcpdf $pdf, $data)
+    {
+        $insert = '';
+        $ocrData = $this->getOcrData('5-7',4);
+        $res = $data['re_fpjx']['zycbfx_new']['reli'];
+        if (!empty($res)) {
+            $i = 1;
+            foreach ($res as $one) {
+                $temp = '<tr>';
+                $temp .= "<td>{$i}</td>";
+                $temp .= "<td>{$one['riqi']}</td>";
+                $temp .= "<td>{$one['jine']}</td>";
+                $temp .= "<td>{$one['gs']}</td>";
+                $temp .= '</tr>';
+                $insert .= $temp;
+                $i++;
+            }
+        }
+        $html = <<<TEMP
+<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="4" style="text-align: center;background-color: #d3d3d3">热力支出</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="34%">发票统计周期</td>
+        <td width="33%">金额（万元）</td>
+        <td width="26%">服务商</td>
+    </tr>
+    {$insert}
+    {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
+
+    //深度报告字段 必执行的 运输与仓储支出
+    private function yunshu(Tcpdf $pdf, $data)
+    {
+        $insert = '';
+        $ocrData = $this->getOcrData('5-8',4);
+        $res = $data['re_fpjx']['zycbfx_new']['yunshu'];
+        if (!empty($res)) {
+            $i = 1;
+            foreach ($res as $one) {
+                $temp = '<tr>';
+                $temp .= "<td>{$i}</td>";
+                $temp .= "<td>{$one['riqi']}</td>";
+                $temp .= "<td>{$one['jine']}</td>";
+                $temp .= "<td>{$one['gs']}</td>";
+                $temp .= '</tr>';
+                $insert .= $temp;
+                $i++;
+            }
+        }
+        $html = <<<TEMP
+<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="4" style="text-align: center;background-color: #d3d3d3">运输与仓储支出</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="34%">发票统计周期</td>
+        <td width="33%">金额（万元）</td>
+        <td width="26%">服务商</td>
+    </tr>
+    {$insert}
+    {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
+
+    //深度报告字段 必执行的 物业支出
+    private function wuye(Tcpdf $pdf, $data)
+    {
+        $insert = '';
+        $ocrData = $this->getOcrData('5-9',4);
+        $res = $data['re_fpjx']['zycbfx_new']['wuye'];
+        if (!empty($res)) {
+            $i = 1;
+            foreach ($res as $one) {
+                $temp = '<tr>';
+                $temp .= "<td>{$i}</td>";
+                $temp .= "<td>{$one['riqi']}</td>";
+                $temp .= "<td>{$one['jine']}</td>";
+                $temp .= "<td>{$one['gs']}</td>";
+                $temp .= '</tr>';
+                $insert .= $temp;
+                $i++;
+            }
+        }
+        $html = <<<TEMP
+<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="4" style="text-align: center;background-color: #d3d3d3">物业支出</td>
+    </tr>
+    <tr>
+        <td width="7%">序号</td>
+        <td width="34%">发票统计周期</td>
+        <td width="33%">金额（万元）</td>
+        <td width="26%">服务商</td>
+    </tr>
+    {$insert}
+    {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
