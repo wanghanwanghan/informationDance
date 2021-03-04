@@ -4804,8 +4804,9 @@ TEMP;
         $insert .= '<td>'.$res['zhouqi']['xxJine'].'</td>';
         $insert .= '<td>'.$res['zhouqi']['jxNum'].'</td>';
         $insert .= '<td>'.$res['zhouqi']['jxJine'].'</td>';
+        $insert .= '</tr>';
         $html = <<<TEMP
-<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="5" style="text-align: center;background-color: #d3d3d3">企业开票情况汇总</td>
     </tr>
