@@ -4,6 +4,7 @@ namespace EasySwoole\EasySwoole;
 
 use App\Crontab\Service\CrontabService;
 use App\Event\EventList\TestEvent;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateDefine;
 use App\HttpController\Service\CreateMysqlOrm;
@@ -73,6 +74,9 @@ class EasySwooleEvent implements Event
 
     public static function onRequest(Request $request, Response $response): bool
     {
+        $args = $request->getRequestParam();
+        CommonService::getInstance()->log4PHP($args);
+
         $response->withHeader('Access-Control-Allow-Origin', '*');
         $response->withHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
         $response->withHeader('Access-Control-Allow-Credentials', 'true');
