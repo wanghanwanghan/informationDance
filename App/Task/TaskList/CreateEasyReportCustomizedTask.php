@@ -239,10 +239,14 @@ TEMP;
         //如果是深度，填入发票数据
         if ($this->type === 51 || $this->type === '51') {
             $code = (new ZhongWangService())->getReceiptDataTest($this->entName,'getCode');
+            CommonService::getInstance()->log4PHP($code);
             $this->inDetail = (new ZhongWangService())->getReceiptDataTest($code,'in');
+            CommonService::getInstance()->log4PHP($this->inDetail);
             $this->outDetail = (new ZhongWangService())->getReceiptDataTest($code,'out');
+            CommonService::getInstance()->log4PHP($this->outDetail);
             //发票
             $invoiceObj = (new Invoice($this->inDetail,$this->outDetail));
+            CommonService::getInstance()->log4PHP($invoiceObj);
 
             //5.2主营商品分析
             $zyspfx=$invoiceObj->zyspfx();
