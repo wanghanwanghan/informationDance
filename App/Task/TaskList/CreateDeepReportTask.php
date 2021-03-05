@@ -1930,7 +1930,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $xyjzd = 0.35 * $xyjzd[0] + 0.65 * $xyjzd[1] + 0.2 > 1 ? 1 : 0.35 * $xyjzd[0] + 0.65 * $xyjzd[1] + 0.2;
         $docObj->setValue('xyjzd',sprintf('%.1f',$xyjzd));
 
-        //7.3企业销售情况分布（万元）
+        //企业销售情况分布（万元）
         $lineData = $legends = [];
         foreach ($data['re_fpxx']['qyxsqkyc'] as $key => $val)
         {

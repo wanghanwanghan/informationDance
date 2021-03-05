@@ -374,6 +374,9 @@ TEMP;
             $this->ljkpjeTOP10qyhz_xx($pdf,$cspData);
             $this->xykhwdxfx($pdf,$cspData);
             $this->xykfjzdfx($pdf,$cspData);
+            $this->qyxsqkfb($pdf,$cspData);
+            $this->ndjxfpqkhz($pdf,$cspData);
+            $this->ydjxfpfx($pdf,$cspData);
 
         }
     }
@@ -4479,7 +4482,7 @@ TEMP;
             }
         }
         $html = <<<TEMP
-<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="4" style="text-align: center;background-color: #d3d3d3">备案主营产品</td>
     </tr>
@@ -4520,7 +4523,7 @@ TEMP;
             }
         }
         $html = <<<TEMP
-<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="4" style="text-align: center;background-color: #d3d3d3">主营商品分析</td>
     </tr>
@@ -4561,7 +4564,7 @@ TEMP;
             }
         }
         $html = <<<TEMP
-<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="4" style="text-align: center;background-color: #d3d3d3">主要成本分析</td>
     </tr>
@@ -4601,7 +4604,7 @@ TEMP;
             }
         }
         $html = <<<TEMP
-<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="4" style="text-align: center;background-color: #d3d3d3">水费支出</td>
     </tr>
@@ -4638,7 +4641,7 @@ TEMP;
             }
         }
         $html = <<<TEMP
-<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="4" style="text-align: center;background-color: #d3d3d3">电费支出</td>
     </tr>
@@ -4675,7 +4678,7 @@ TEMP;
             }
         }
         $html = <<<TEMP
-<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="4" style="text-align: center;background-color: #d3d3d3">燃气支出</td>
     </tr>
@@ -4712,7 +4715,7 @@ TEMP;
             }
         }
         $html = <<<TEMP
-<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="4" style="text-align: center;background-color: #d3d3d3">热力支出</td>
     </tr>
@@ -4749,7 +4752,7 @@ TEMP;
             }
         }
         $html = <<<TEMP
-<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="4" style="text-align: center;background-color: #d3d3d3">运输与仓储支出</td>
     </tr>
@@ -4786,7 +4789,7 @@ TEMP;
             }
         }
         $html = <<<TEMP
-<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="4" style="text-align: center;background-color: #d3d3d3">物业支出</td>
     </tr>
@@ -4816,7 +4819,7 @@ TEMP;
         $insert .= '<td>'.$res['zhouqi']['jxJine'].'</td>';
         $insert .= '</tr>';
         $html = <<<TEMP
-<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="5" style="text-align: center;background-color: #d3d3d3">企业开票情况汇总</td>
     </tr>
@@ -4846,7 +4849,7 @@ TEMP;
         }
 
         $html = <<<TEMP
-<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td width="15%">统计年份</td>
         <td width="46%">销项有效数</td>
@@ -4883,7 +4886,7 @@ TEMP;
         }
         $insert = $tmp;
         $html = <<<TEMP
-<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="12" style="text-align: center;background-color: #d3d3d3">年度销项发票情况汇总</td>
     </tr>
@@ -4934,7 +4937,7 @@ TEMP;
         }
         $insert = $tmp;
         $html = <<<TEMP
-<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="13" style="text-align: center;background-color: #d3d3d3">月度销项正常发票分析</td>
     </tr>
@@ -5022,7 +5025,7 @@ TEMP;
         }
         $insert = $tmp;
         $html = <<<TEMP
-<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="13" style="text-align: center;background-color: #d3d3d3">月度销项红充发票分析</td>
     </tr>
@@ -5110,7 +5113,7 @@ TEMP;
         }
         $insert = $tmp;
         $html = <<<TEMP
-<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="13" style="text-align: center;background-color: #d3d3d3">月度销项作废发票分析</td>
     </tr>
@@ -5191,7 +5194,7 @@ TEMP;
         }
         $insert = $tmp;
         $html = <<<TEMP
-<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="6" style="text-align: center;background-color: #d3d3d3">单张开票金额TOP10记录</td>
     </tr>
@@ -5251,7 +5254,6 @@ TEMP;
         $ocrData = $this->getOcrData('14-8',7);
         $temp = array_values($data['re_fpxx']['ljkpjeTOP10qyhz_xx']);
         $res = control::sortArrByKey($temp,'total','desc',true);
-        CommonService::getInstance()->log4PHP($res);
         $tmp = '';
         foreach ($res as $key => $val) {
             $insert = '<tr>';
@@ -5267,7 +5269,7 @@ TEMP;
         }
         $insert = $tmp;
         $html = <<<TEMP
-<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="7" style="text-align: center;background-color: #d3d3d3">累计开票金额TOP10企业汇总</td>
     </tr>
@@ -5454,8 +5456,8 @@ TEMP;
         <td colspan="2" style="text-align: center;background-color: #d3d3d3">稳定性指数</td>
     </tr>
     <tr>
-        <td width="30">{$xywdx}</td>
-        <td width="70"></td>
+        <td width="30%">{$xywdx}</td>
+        <td width="70%"></td>
     </tr>
 </table>
 TEMP;
@@ -5668,8 +5670,8 @@ TEMP;
         <td colspan="2" style="text-align: center;background-color: #d3d3d3">集中度指数</td>
     </tr>
     <tr>
-        <td width="30">{$xyjzd}</td>
-        <td width="70"></td>
+        <td width="30%">{$xyjzd}</td>
+        <td width="70%"></td>
     </tr>
 </table>
 TEMP;
@@ -5712,6 +5714,175 @@ TEMP;
 TEMP;
         $pdf->writeHTML($html, true, false, false, false, '');
     }
+
+    //深度报告字段 必执行的 企业销售情况分布
+    private function qyxsqkfb(Tcpdf $pdf, $data)
+    {
+        $ocrData = $this->getOcrData('14-12',7);
+
+        //企业销售情况分布（万元）
+        $lineData = $legends = [];
+        foreach ($data['re_fpxx']['qyxsqkyc'] as $key => $val) {
+            $lineData[] = array_values($val);
+            $legends[] = $key;
+        }
+
+        if (empty($lineData) || empty($legends)) {
+            $insert = '';
+        } else {
+            $imgPath = (new NewGraphService())
+                ->setLegends($legends)
+                ->setXLabels(['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'])
+                ->line($lineData);
+
+            $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+            $insert = <<<PIC
+<tr>
+    <td>
+        <img src="https://api.meirixindong.com/{$imgPath}" />    
+    </td>
+</tr>
+PIC;
+        }
+
+        $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td style="text-align: center;background-color: #d3d3d3">企业销售情况分布</td>
+    </tr>
+   {$insert}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
+
+    //深度报告字段 必执行的 年度进项发票情况汇总
+    private function ndjxfpqkhz(Tcpdf $pdf, $data)
+    {
+        $ocrData = $this->getOcrData('14-14',7);
+
+        $insert = '<tr>';
+        $insert .= '<td>'.$data['re_fpjx']['ndjxfpqkhz']['min'].' - '.$data['re_fpjx']['ndjxfpqkhz']['max'].'</td>';
+        $insert .= '<td>'.$data['re_fpjx']['ndjxfpqkhz']['normalNum'].'</td>';
+        $insert .= '<td>'.$data['re_fpjx']['ndjxfpqkhz']['normal'].'</td>';
+        $insert .= '</tr>';
+
+        $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="13" style="text-align: center;background-color: #d3d3d3">年度进项发票情况汇总</td>
+    </tr>
+    <tr>
+        <td width="34%">统计周期</td>
+        <td width="33%">有效数量</td>
+        <td width="33%">有效金额</td>
+    </tr>
+    {$insert}
+    {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
+
+    //深度报告字段 必执行的 月度进项发票分析
+    private function ydjxfpfx(Tcpdf $pdf, $data)
+    {
+        $ocrData = $this->getOcrData('14-15',7);
+        //月度进项发票分析
+        $res = $data['re_fpxx']['ydjxfpfx'];
+        CommonService::getInstance()->log4PHP($res);
+        $tmp = '';
+        foreach ($res as $year => $val) {
+            $insert = '<tr>';
+            $insert .= '<td>'.$year.'</td>';
+            $insert .= '<td>'.$val['1'].'</td>';
+            $insert .= '<td>'.$val['2'].'</td>';
+            $insert .= '<td>'.$val['3'].'</td>';
+            $insert .= '<td>'.$val['4'].'</td>';
+            $insert .= '<td>'.$val['5'].'</td>';
+            $insert .= '<td>'.$val['6'].'</td>';
+            $insert .= '<td>'.$val['7'].'</td>';
+            $insert .= '<td>'.$val['8'].'</td>';
+            $insert .= '<td>'.$val['9'].'</td>';
+            $insert .= '<td>'.$val['10'].'</td>';
+            $insert .= '<td>'.$val['11'].'</td>';
+            $insert .= '<td>'.$val['12'].'</td>';
+            $insert .= '</tr>';
+            $tmp .= $insert;
+        }
+        $insert = $tmp;
+        $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="13" style="text-align: center;background-color: #d3d3d3">月度进项发票分析</td>
+    </tr>
+    <tr>
+        <td width="10%">年份</td>
+        <td width="7%">1月</td>
+        <td width="7%">2月</td>
+        <td width="7%">3月</td>
+        <td width="7%">4月</td>
+        <td width="7%">5月</td>
+        <td width="7%">6月</td>
+        <td width="7%">7月</td>
+        <td width="7%">8月</td>
+        <td width="7%">9月</td>
+        <td width="9%">10月</td>
+        <td width="9%">11月</td>
+        <td width="9%">12月</td>
+    </tr>
+    {$insert}
+    {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+
+        //图
+        $barData = $labels = $legends = [];
+        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val)
+        {
+            $barData[] = array_values($val['normal']);
+            $labels = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+            $legends[] = $key;
+        }
+
+        if (empty($barData) || empty($labels) || empty($legends)) {
+            $insert = '';
+        } else {
+            $imgPath = (new NewGraphService())
+                ->setTitle('月度销项正常发票分析')
+                ->setXLabels($labels)
+                ->setLegends($legends)
+                ->setMargin([60,50,0,0])
+                ->bar($barData);
+
+            $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+            $insert = <<<PIC
+<tr>
+    <td>
+        <img src="https://api.meirixindong.com/{$imgPath}" />    
+    </td>
+</tr>
+PIC;
+        }
+
+        $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    {$insert}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 
