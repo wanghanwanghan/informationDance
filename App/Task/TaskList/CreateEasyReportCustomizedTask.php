@@ -370,6 +370,8 @@ TEMP;
             $this->ydxxfpfx($pdf,$cspData);
             $this->ydxxfpfx_red($pdf,$cspData);
             $this->ydxxfpfx_cancel($pdf,$cspData);
+            $this->dzkpjeTOP10jl_xx($pdf,$cspData);
+            $this->ljkpjeTOP10qyhz_xx($pdf,$cspData);
         }
     }
 
@@ -5167,7 +5169,154 @@ TEMP;
         $pdf->writeHTML($html, true, false, false, false, '');
     }
 
+    //深度报告字段 必执行的 单张开票金额TOP10记录 xx
+    private function dzkpjeTOP10jl_xx(Tcpdf $pdf, $data)
+    {
+        $ocrData = $this->getOcrData('14-7',6);
+        $res = control::sortArrByKey($data['re_fpxx']['dzkpjeTOP10jl_xx'],'totalAmount','desc',true);
+        $tmp = '';
+        foreach ($res as $key => $val) {
+            $insert = '<tr>';
+            $insert .= '<td>'.substr($val['date'],0,4).'</td>';
+            $insert .= '<td>'.$val['purchaserName'].'</td>';
+            $insert .= '<td>'.$val['purchaserTaxNo'].'</td>';
+            $insert .= '<td>'.$val['totalAmount'].'</td>';
+            $insert .= '<td>'.$val['totalTax'].'</td>';
+            $insert .= '<td>'.$val['zhanbi'].'</td>';
+            $insert .= '</tr>';
+            $tmp .= $insert;
+        }
+        $insert = $tmp;
+        $html = <<<TEMP
+<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="6" style="text-align: center;background-color: #d3d3d3">单张开票金额TOP10记录</td>
+    </tr>
+    <tr>
+        <td width="16%">开票年度</td>
+        <td width="18%">交易对手名称</td>
+        <td width="18%">交易对手税号</td>
+        <td width="16%">开票金额</td>
+        <td width="16%">开票税额</td>
+        <td width="16%">总金额占比(%)</td>
+    </tr>
+    {$insert}
+    {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
 
+        //图
+        $pieData = $labels = [];
+        $other = 100;
+        foreach ($data['re_fpxx']['dzkpjeTOP10jl_xx'] as $one)
+        {
+            $other -= $one['zhanbi'] - 0;
+            $pieData[] = $one['zhanbi'] - 0;
+            $labels[] = "{$one['purchaserName']} (%.1f%%)";
+        }
+
+        if (empty($pieData) || empty($labels)) {
+            $insert = '';
+        } else {
+            if ($other > 0) {
+                array_push($pieData,$other);
+                array_push($labels,"其他 (%.1f%%)");
+            }
+            $imgPath = (new NewGraphService())->setTitle('单张开票金额TOP10记录')->setLabels($labels)->pie($pieData);
+            $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+            $insert = <<<PIC
+<tr>
+    <td>
+        <img src="https://api.meirixindong.com/{$imgPath}" />    
+    </td>
+</tr>
+PIC;
+        }
+
+        $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    {$insert}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
+
+    //深度报告字段 必执行的 累计开票金额TOP10企业汇总 xx
+    private function ljkpjeTOP10qyhz_xx(Tcpdf $pdf, $data)
+    {
+        $ocrData = $this->getOcrData('14-8',7);
+        $temp = array_values($data['re_fpxx']['ljkpjeTOP10qyhz_xx']);
+        $res = control::sortArrByKey($temp,'total','desc',true);
+        $tmp = '';
+        foreach ($res as $key => $val) {
+            $insert = '<tr>';
+            $insert .= '<td>'.$val['date'].'</td>';
+            $insert .= '<td>'.$val['name'].'</td>';
+            $insert .= '<td>'.$val['purchaserTaxNo'].'</td>';
+            $insert .= '<td>'.$val['total'].'</td>';
+            $insert .= '<td>'.$val['num'].'</td>';
+            $insert .= '<td>'.$val['totalZhanbi'].'</td>';
+            $insert .= '<td>'.$val['numZhanbi'].'</td>';
+            $insert .= '</tr>';
+            $tmp .= $insert;
+        }
+        $insert = $tmp;
+        $html = <<<TEMP
+<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="7" style="text-align: center;background-color: #d3d3d3">累计开票金额TOP10企业汇总</td>
+    </tr>
+    <tr>
+        <td width="14%">开票年度</td>
+        <td width="14%">交易对手名称</td>
+        <td width="14%">交易对手税号</td>
+        <td width="14%">开票金额</td>
+        <td width="14%">开票数</td>
+        <td width="15%">总金额占比(%)</td>
+        <td width="15%">总笔数占比(%)</td>
+    </tr>
+    {$insert}
+    {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+
+        //图
+        $pieData = $labels = [];
+        $other = 100;
+        foreach ($data['re_fpxx']['ljkpjeTOP10qyhz_xx'] as $one)
+        {
+            $other -= $one['totalZhanbi'] - 0;
+            $pieData[] = $one['totalZhanbi'] - 0;
+            $labels[] = "{$one['name']} (%.1f%%)";
+        }
+
+        if (empty($pieData) || empty($labels)) {
+            $insert = '';
+        } else {
+            if ($other > 0) {
+                array_push($pieData,$other);
+                array_push($labels,"其他 (%.1f%%)");
+            }
+            $imgPath = (new NewGraphService())->setTitle('累计开票金额TOP10企业汇总')->setLabels($labels)->pie($pieData);
+            $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+            $insert = <<<PIC
+<tr>
+    <td>
+        <img src="https://api.meirixindong.com/{$imgPath}" />    
+    </td>
+</tr>
+PIC;
+        }
+
+        $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    {$insert}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
 
 
 
