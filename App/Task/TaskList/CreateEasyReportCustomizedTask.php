@@ -10,6 +10,7 @@ use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaHai\FaHaiService;
+use App\HttpController\Service\NewGraph\NewGraphService;
 use App\HttpController\Service\QianQi\QianQiService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
 use App\HttpController\Service\Report\Tcpdf;
@@ -4856,7 +4857,7 @@ TEMP;
         $ocrData = $this->getOcrData('14-3',5);
         $res = $data['re_fpxx']['ndxxfpqkhz'];
         $tmp = '';
-        foreach ($res['qita'] as $year => $val) {
+        foreach ($res as $year => $val) {
             $insert = '<tr>';
             $insert .= '<td>'.$year.'</td>';
             $insert .= '<td>'.$val['normal']['normalNum'].'</td>';
@@ -4905,7 +4906,6 @@ TEMP;
     {
         $ocrData = $this->getOcrData('14-4',5);
         $res = $data['re_fpxx']['ydxxfpfx'];
-        CommonService::getInstance()->log4PHP($res);
         $tmp = '';
         foreach ($res as $year => $val) {
             $insert = '<tr>';
@@ -4948,6 +4948,42 @@ TEMP;
     </tr>
     {$insert}
     {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+
+        //图
+        $barData = $labels = $legends = [];
+        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val)
+        {
+            $barData[] = array_values($val['normal']);
+            $labels = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+            $legends[] = $key;
+        }
+
+        if (empty($barData) || empty($labels) || empty($legends)) {
+            $insert = '';
+        } else {
+            $imgPath = (new NewGraphService())
+                ->setTitle('月度销项正常发票分析')
+                ->setXLabels($labels)
+                ->setLegends($legends)
+                ->setMargin([60,50,0,0])
+                ->bar($barData);
+
+            $insert = <<<PIC
+<tr>
+    <td>
+        <img src="https://api.meirixindong.com/{$imgPath}" />    
+    </td>
+</tr>
+PIC;
+            CommonService::getInstance()->log4PHP($imgPath);
+        }
+
+        $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    {$insert}
 </table>
 TEMP;
         $pdf->writeHTML($html, true, false, false, false, '');
