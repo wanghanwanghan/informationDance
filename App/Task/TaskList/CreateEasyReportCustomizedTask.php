@@ -5610,14 +5610,13 @@ TEMP;
                 ->bar($barData);
         }
 
-        CommonService::getInstance()->log4PHP($temp);
-
         if (!empty($temp))
         {
             for ($i=1;$i<=3;$i++)
             {
                 if (isset($temp[$i-1]))
                 {
+                    $temp[$i-1] = str_replace(ROOT_PATH,'',$temp[$i-1]);
                     $insert = <<<PIC
 <tr>
     <td>
@@ -6165,12 +6164,15 @@ TEMP;
                 ->bar($barData);
         }
 
+        CommonService::getInstance()->log4PHP($temp);
+
         if (!empty($temp))
         {
             for ($i=1;$i<=3;$i++)
             {
                 if (isset($temp[$i-1]))
                 {
+                    $temp[$i-1] = str_replace(ROOT_PATH,'',$temp[$i-1]);
                     $insert = <<<PIC
 <tr>
     <td>
