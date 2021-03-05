@@ -4932,19 +4932,19 @@ TEMP;
         <td colspan="13" style="text-align: center;background-color: #d3d3d3">月度销项正常发票分析</td>
     </tr>
     <tr>
-        <td width="9%">年份</td>
+        <td width="10%">年份</td>
         <td width="7%">1月</td>
         <td width="7%">2月</td>
         <td width="7%">3月</td>
         <td width="7%">4月</td>
         <td width="7%">5月</td>
-        <td width="8%">6月</td>
-        <td width="8%">7月</td>
-        <td width="8%">8月</td>
-        <td width="8%">9月</td>
-        <td width="8%">10月</td>
-        <td width="8%">11月</td>
-        <td width="8%">12月</td>
+        <td width="7%">6月</td>
+        <td width="7%">7月</td>
+        <td width="7%">8月</td>
+        <td width="7%">9月</td>
+        <td width="9%">10月</td>
+        <td width="9%">11月</td>
+        <td width="9%">12月</td>
     </tr>
     {$insert}
     {$ocrData}
