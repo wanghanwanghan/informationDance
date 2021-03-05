@@ -5791,6 +5791,7 @@ TEMP;
         //月度进项发票分析
         $res = $data['re_fpjx']['ydjxfpfx'];
         CommonService::getInstance()->log4PHP($res);
+        CommonService::getInstance()->log4PHP($data['re_fpjx']);
         $tmp = '';
         foreach ($res as $year => $val) {
             $insert = '<tr>';
