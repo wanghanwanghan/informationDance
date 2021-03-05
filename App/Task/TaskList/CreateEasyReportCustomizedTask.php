@@ -365,6 +365,7 @@ TEMP;
             $this->wuye($pdf,$cspData);
 
             $this->qykpqkhz($pdf,$cspData);
+            $this->ndxxfpqkhz($pdf,$cspData);
         }
     }
 
@@ -4759,8 +4760,6 @@ TEMP;
     //深度报告字段 必执行的 物业支出
     private function wuye(Tcpdf $pdf, $data)
     {
-        CommonService::getInstance()->log4PHP($this->inDetail);
-        CommonService::getInstance()->log4PHP($this->outDetail);
         $insert = '';
         $ocrData = $this->getOcrData('5-9',4);
         $res = $data['re_fpjx']['zycbfx_new']['wuye'];
@@ -4855,6 +4854,7 @@ TEMP;
     {
         $ocrData = $this->getOcrData('14-3',5);
         $res = $data['re_fpxx']['ndxxfpqkhz'];
+        CommonService::getInstance()->log4PHP($res);
         $insert = '<tr>';
         $insert .= '<td>'.$res['zhouqi']['min'].' - '.$res['zhouqi']['max'].'</td>';
         $insert .= '<td>'.$res['zhouqi']['xxNum'].'</td>';
