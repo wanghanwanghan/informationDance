@@ -4461,7 +4461,7 @@ TEMP;
     private function ProductStandardInfo(Tcpdf $pdf)
     {
         $insert = $num = '';
-        $ocrData = $this->getOcrData('5-1',4);
+        $ocrData = $this->getOcrData('4-1',4);
         $res = (new XinDongService())->setCheckRespFlag(true)->getProductStandard($this->entName,1,50);
         if ($res['code'] === 200 && !empty($res['result'])) {
             $tmp['list'] = $res['result'];
@@ -4509,7 +4509,7 @@ TEMP;
     private function zyspfx(Tcpdf $pdf, $data)
     {
         $insert = '';
-        $ocrData = $this->getOcrData('5-2',4);
+        $ocrData = $this->getOcrData('4-2',4);
         $res = $data['re_fpxx']['zyspfx'];
         $zhouqi = "自 {$data['commonData']['zhouqi']} 的销项发票";;
         if (!empty($res)) {
@@ -4550,7 +4550,7 @@ TEMP;
     private function zycbfx(Tcpdf $pdf, $data)
     {
         $insert = '';
-        $ocrData = $this->getOcrData('5-3',4);
+        $ocrData = $this->getOcrData('4-3',4);
         $res = $data['re_fpjx']['zycbfx'][0];
         $zhouqi = "自 {$data['commonData']['zhouqi']} 的进项发票";;
         if (!empty($res)) {
@@ -4591,7 +4591,7 @@ TEMP;
     private function shuifei(Tcpdf $pdf, $data)
     {
         $insert = '';
-        $ocrData = $this->getOcrData('5-4',4);
+        $ocrData = $this->getOcrData('4-4',4);
         $res = $data['re_fpjx']['zycbfx_new']['shuifei'];
         if (!empty($res)) {
             $i = 1;
@@ -4628,7 +4628,7 @@ TEMP;
     private function dianfei(Tcpdf $pdf, $data)
     {
         $insert = '';
-        $ocrData = $this->getOcrData('5-5',4);
+        $ocrData = $this->getOcrData('4-5',4);
         $res = $data['re_fpjx']['zycbfx_new']['dianfei'];
         if (!empty($res)) {
             $i = 1;
@@ -4665,7 +4665,7 @@ TEMP;
     private function ranqifei(Tcpdf $pdf, $data)
     {
         $insert = '';
-        $ocrData = $this->getOcrData('5-6',4);
+        $ocrData = $this->getOcrData('4-6',4);
         $res = $data['re_fpjx']['zycbfx_new']['ranqifei'];
         if (!empty($res)) {
             $i = 1;
@@ -4702,7 +4702,7 @@ TEMP;
     private function reli(Tcpdf $pdf, $data)
     {
         $insert = '';
-        $ocrData = $this->getOcrData('5-7',4);
+        $ocrData = $this->getOcrData('4-7',4);
         $res = $data['re_fpjx']['zycbfx_new']['reli'];
         if (!empty($res)) {
             $i = 1;
@@ -4739,7 +4739,7 @@ TEMP;
     private function yunshu(Tcpdf $pdf, $data)
     {
         $insert = '';
-        $ocrData = $this->getOcrData('5-8',4);
+        $ocrData = $this->getOcrData('4-8',4);
         $res = $data['re_fpjx']['zycbfx_new']['yunshu'];
         if (!empty($res)) {
             $i = 1;
@@ -4776,7 +4776,7 @@ TEMP;
     private function wuye(Tcpdf $pdf, $data)
     {
         $insert = '';
-        $ocrData = $this->getOcrData('5-9',4);
+        $ocrData = $this->getOcrData('4-9',4);
         $res = $data['re_fpjx']['zycbfx_new']['wuye'];
         if (!empty($res)) {
             $i = 1;
