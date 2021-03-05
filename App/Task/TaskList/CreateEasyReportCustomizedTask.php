@@ -320,7 +320,7 @@ TEMP;
 
             //6.4.4单张开票金额TOP10企业汇总
             $dzkpjeTOP10jl_jx=$invoiceObj->dzkpjeTOP10jl_jx();
-            $reportVal['re_fpjx']['dzkpjeTOP10jl_jx']=$dzkpjeTOP10jl_jx;
+            $cspData['re_fpjx']['dzkpjeTOP10jl_jx']=$dzkpjeTOP10jl_jx;
             empty($cspData['re_fpjx']['dzkpjeTOP10jl_jx']) ?: $cspData['re_fpjx']['dzkpjeTOP10jl_jx'] = control::sortArrByKey($cspData['re_fpjx']['dzkpjeTOP10jl_jx'],'totalAmount',true);
 
             //6.5.1上游共饮上稳定性分析
