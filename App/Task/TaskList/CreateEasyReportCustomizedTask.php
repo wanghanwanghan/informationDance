@@ -366,6 +366,7 @@ TEMP;
 
             $this->qykpqkhz($pdf,$cspData);
             $this->ndxxfpqkhz($pdf,$cspData);
+            $this->ydxxfpfx($pdf,$cspData);
         }
     }
 
@@ -4854,14 +4855,25 @@ TEMP;
     {
         $ocrData = $this->getOcrData('14-3',5);
         $res = $data['re_fpxx']['ndxxfpqkhz'];
-        CommonService::getInstance()->log4PHP($res);
-        $insert = '<tr>';
-        $insert .= '<td>'.$res['zhouqi']['min'].' - '.$res['zhouqi']['max'].'</td>';
-        $insert .= '<td>'.$res['zhouqi']['xxNum'].'</td>';
-        $insert .= '<td>'.$res['zhouqi']['xxJine'].'</td>';
-        $insert .= '<td>'.$res['zhouqi']['jxNum'].'</td>';
-        $insert .= '<td>'.$res['zhouqi']['jxJine'].'</td>';
-        $insert .= '</tr>';
+        $tmp = '';
+        foreach ($res['qita'] as $year => $val) {
+            $insert = '<tr>';
+            $insert .= '<td>'.$year.'</td>';
+            $insert .= '<td>'.$val['normal']['normalNum'].'</td>';
+            $insert .= '<td>'.$val['normal']['normalAmount'].'</td>';
+            $insert .= '<td>'.$val['normal']['normalTax'].'</td>';
+            $insert .= '<td>'.$val['red']['redNum'].'</td>';
+            $insert .= '<td>'.$val['red']['redAmount'].'</td>';
+            $insert .= '<td>'.$val['red']['redTax'].'</td>';
+            $insert .= '<td>'.$val['cancel']['cancelNum'].'</td>';
+            $insert .= '<td>'.$val['cancel']['cancelAmount'].'</td>';
+            $insert .= '<td>'.$val['cancel']['cancelTax'].'</td>';
+            $insert .= '<td>'.$val['normal']['numZhanbi'].'</td>';
+            $insert .= '<td>'.$val['normal']['AmountZhanbi'].'</td>';
+            $insert .= '</tr>';
+            $tmp .= $insert;
+        }
+        $insert = $tmp;
         $html = <<<TEMP
 <table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
@@ -4888,7 +4900,57 @@ TEMP;
         $pdf->writeHTML($html, true, false, false, false, '');
     }
 
-
+    //深度报告字段 必执行的 月度销项正常发票分析
+    private function ydxxfpfx(Tcpdf $pdf, $data)
+    {
+        $ocrData = $this->getOcrData('14-4',5);
+        $res = $data['re_fpxx']['ydxxfpfx'];
+        CommonService::getInstance()->log4PHP($res);
+        $tmp = '';
+        foreach ($res['qita'] as $year => $val) {
+            $insert = '<tr>';
+            $insert .= '<td>'.$year.'</td>';
+            $insert .= '<td>'.$val['normal']['normalNum'].'</td>';
+            $insert .= '<td>'.$val['normal']['normalAmount'].'</td>';
+            $insert .= '<td>'.$val['normal']['normalTax'].'</td>';
+            $insert .= '<td>'.$val['red']['redNum'].'</td>';
+            $insert .= '<td>'.$val['red']['redAmount'].'</td>';
+            $insert .= '<td>'.$val['red']['redTax'].'</td>';
+            $insert .= '<td>'.$val['cancel']['cancelNum'].'</td>';
+            $insert .= '<td>'.$val['cancel']['cancelAmount'].'</td>';
+            $insert .= '<td>'.$val['cancel']['cancelTax'].'</td>';
+            $insert .= '<td>'.$val['normal']['numZhanbi'].'</td>';
+            $insert .= '<td>'.$val['normal']['AmountZhanbi'].'</td>';
+            $insert .= '</tr>';
+            $tmp .= $insert;
+        }
+        $insert = $tmp;
+        $html = <<<TEMP
+<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="13" style="text-align: center;background-color: #d3d3d3">月度销项正常发票分析</td>
+    </tr>
+    <tr>
+        <td width="8%">年份</td>
+        <td width="8%">1月</td>
+        <td width="8%">2月</td>
+        <td width="8%">3月</td>
+        <td width="8%">4月</td>
+        <td width="8%">5月</td>
+        <td width="8%">6月</td>
+        <td width="8%">7月</td>
+        <td width="8%">8月</td>
+        <td width="8%">9月</td>
+        <td width="8%">10月</td>
+        <td width="8%">11月</td>
+        <td width="8%">12月</td>
+    </tr>
+    {$insert}
+    {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
 
 
 
