@@ -33,6 +33,8 @@ class ReportService extends ServiceBase
                 'type' => ReportService::REPORT_TYPE_10,
                 'status' => 3,//1是异常，2是完成，3是生成中
                 'errInfo' => '',
+                'belong' => $type,
+                'dataKey' => '',
             ])->save();
 
         } catch (\Throwable $e) {
@@ -57,6 +59,8 @@ class ReportService extends ServiceBase
                 'type' => ReportService::REPORT_TYPE_11,
                 'status' => 3,//1是异常，2是完成，3是生成中
                 'errInfo' => '',
+                'belong' => $type,
+                'dataKey' => $dataKey,
             ])->save();
 
         } catch (\Throwable $e) {
@@ -82,6 +86,8 @@ class ReportService extends ServiceBase
                 'type' => ReportService::REPORT_TYPE_30,
                 'status' => 3,//1是异常，2是完成，3是生成中
                 'errInfo' => '',
+                'belong' => $type,
+                'dataKey' => '',
             ])->save();
 
         } catch (\Throwable $e) {
@@ -106,6 +112,8 @@ class ReportService extends ServiceBase
                 'type' => ReportService::REPORT_TYPE_31,
                 'status' => 3,//1是异常，2是完成，3是生成中
                 'errInfo' => '',
+                'belong' => $type,
+                'dataKey' => $dataKey,
             ])->save();
 
         } catch (\Throwable $e) {
@@ -132,6 +140,7 @@ class ReportService extends ServiceBase
                 'status' => 3,//1是异常，2是完成，3是生成中
                 'errInfo' => '',
                 'belong' => $type,
+                'dataKey' => '',
             ])->save();
 
         } catch (\Throwable $e) {
@@ -139,7 +148,8 @@ class ReportService extends ServiceBase
         }
 
         //不扔task了，等后台审核后再扔task
-        //TaskService::getInstance()->create(new CreateEasyReportTask($entName, $reportNum, $phone, $type));
+        //TaskService::getInstance()
+        //    ->create(new CreateEasyReportTask($entName, $reportNum, $phone, $type));
 
         return $reportNum;
     }
@@ -156,6 +166,8 @@ class ReportService extends ServiceBase
                 'type' => ReportService::REPORT_TYPE_51,
                 'status' => 3,//1是异常，2是完成，3是生成中
                 'errInfo' => '',
+                'belong' => $type,
+                'dataKey' => $dataKey,
             ])->save();
 
         } catch (\Throwable $e) {
@@ -163,8 +175,8 @@ class ReportService extends ServiceBase
         }
 
         //不扔task了，等后台审核后再扔task
-        TaskService::getInstance()
-            ->create(new CreateEasyReportCustomizedTask($entName, $reportNum, $phone, $type, $dataKey, ReportService::REPORT_TYPE_51));
+        //TaskService::getInstance()
+        //    ->create(new CreateEasyReportCustomizedTask($entName, $reportNum, $phone, $type, $dataKey, ReportService::REPORT_TYPE_51));
 
         return $reportNum;
     }
