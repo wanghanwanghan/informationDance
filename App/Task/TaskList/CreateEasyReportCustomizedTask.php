@@ -5603,7 +5603,6 @@ TEMP;
             $legends[] = $key;
 
             $temp[] = (new NewGraphService())
-                ->setTitle('销售前十企业总占比（%）')
                 ->setXLabels($labels)
                 ->setXLabelAngle(15)
                 ->setLegends($legends)
