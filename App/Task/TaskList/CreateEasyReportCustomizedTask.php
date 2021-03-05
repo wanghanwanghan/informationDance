@@ -239,9 +239,11 @@ TEMP;
             $this->$catalogKey($pdf, $cspData);
         }
 
+        CommonService::getInstance()->log4PHP($this->reportType);
         //如果是深度，填入发票数据
         if ($this->reportType === 51 || $this->reportType === '51') {
             $code = (new ZhongWangService())->getReceiptDataTest($this->entName,'getCode');
+            CommonService::getInstance()->log4PHP($this->entName);
             CommonService::getInstance()->log4PHP($code);
             $this->inDetail = (new ZhongWangService())->getReceiptDataTest($code,'in');
             $this->outDetail = (new ZhongWangService())->getReceiptDataTest($code,'out');
