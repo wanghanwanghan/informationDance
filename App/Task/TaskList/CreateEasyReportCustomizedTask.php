@@ -4759,6 +4759,8 @@ TEMP;
     //深度报告字段 必执行的 物业支出
     private function wuye(Tcpdf $pdf, $data)
     {
+        CommonService::getInstance()->log4PHP($this->inDetail);
+        CommonService::getInstance()->log4PHP($this->outDetail);
         $insert = '';
         $ocrData = $this->getOcrData('5-9',4);
         $res = $data['re_fpjx']['zycbfx_new']['wuye'];
@@ -4848,6 +4850,43 @@ TEMP;
         $pdf->writeHTML($html, true, false, false, false, '');
     }
 
+    //深度报告字段 必执行的 年度销项发票情况汇总
+    private function ndxxfpqkhz(Tcpdf $pdf, $data)
+    {
+        $ocrData = $this->getOcrData('14-3',5);
+        $res = $data['re_fpxx']['ndxxfpqkhz'];
+        $insert = '<tr>';
+        $insert .= '<td>'.$res['zhouqi']['min'].' - '.$res['zhouqi']['max'].'</td>';
+        $insert .= '<td>'.$res['zhouqi']['xxNum'].'</td>';
+        $insert .= '<td>'.$res['zhouqi']['xxJine'].'</td>';
+        $insert .= '<td>'.$res['zhouqi']['jxNum'].'</td>';
+        $insert .= '<td>'.$res['zhouqi']['jxJine'].'</td>';
+        $insert .= '</tr>';
+        $html = <<<TEMP
+<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="12" style="text-align: center;background-color: #d3d3d3">年度销项发票情况汇总</td>
+    </tr>
+    <tr>
+        <td width="8%">统计年份</td>
+        <td width="8%">有效数</td>
+        <td width="8%">有效金额</td>
+        <td width="8%">有效税额</td>
+        <td width="8%">红冲数</td>
+        <td width="8%">红冲金额</td>
+        <td width="8%">红冲税额</td>
+        <td width="8%">作废数量</td>
+        <td width="8%">作废金额</td>
+        <td width="8%">作废税额</td>
+        <td width="10%">有效发票数量占比</td>
+        <td width="10%">有效发票金额占比</td>
+    </tr>
+    {$insert}
+    {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
 
 
 
