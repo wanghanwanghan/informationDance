@@ -368,6 +368,8 @@ TEMP;
             $this->qykpqkhz($pdf,$cspData);
             $this->ndxxfpqkhz($pdf,$cspData);
             $this->ydxxfpfx($pdf,$cspData);
+            $this->ydxxfpfx_red($pdf,$cspData);
+            $this->ydxxfpfx_cancel($pdf,$cspData);
         }
     }
 
@@ -4799,7 +4801,7 @@ TEMP;
     //深度报告字段 必执行的 企业开票情况汇总
     private function qykpqkhz(Tcpdf $pdf, $data)
     {
-        $ocrData = $this->getOcrData('14-1',5);
+        $ocrData = $this->getOcrData('14-1',3);
         $res = $data['re_fpxx']['qykpqkhz'];
         $insert = '<tr>';
         $insert .= '<td>'.$res['zhouqi']['min'].' - '.$res['zhouqi']['max'].'</td>';
@@ -4854,7 +4856,7 @@ TEMP;
     //深度报告字段 必执行的 年度销项发票情况汇总
     private function ndxxfpqkhz(Tcpdf $pdf, $data)
     {
-        $ocrData = $this->getOcrData('14-3',5);
+        $ocrData = $this->getOcrData('14-3',12);
         $res = $data['re_fpxx']['ndxxfpqkhz'];
         $tmp = '';
         foreach ($res as $year => $val) {
@@ -4904,7 +4906,7 @@ TEMP;
     //深度报告字段 必执行的 月度销项正常发票分析
     private function ydxxfpfx(Tcpdf $pdf, $data)
     {
-        $ocrData = $this->getOcrData('14-4',5);
+        $ocrData = $this->getOcrData('14-4',13);
         $res = $data['re_fpxx']['ydxxfpfx'];
         $tmp = '';
         foreach ($res as $year => $val) {
@@ -4979,7 +4981,6 @@ TEMP;
     </td>
 </tr>
 PIC;
-            CommonService::getInstance()->log4PHP($imgPath);
         }
 
         $html = <<<TEMP
@@ -4990,7 +4991,181 @@ TEMP;
         $pdf->writeHTML($html, true, false, false, false, '');
     }
 
+    //深度报告字段 必执行的 月度销项红充发票分析
+    private function ydxxfpfx_red(Tcpdf $pdf, $data)
+    {
+        $ocrData = $this->getOcrData('14-5',13);
+        $res = $data['re_fpxx']['ydxxfpfx'];
+        $tmp = '';
+        foreach ($res as $year => $val) {
+            $insert = '<tr>';
+            $insert .= '<td>'.$year.'</td>';
+            $insert .= '<td>'.$val['red']['1'].'</td>';
+            $insert .= '<td>'.$val['red']['2'].'</td>';
+            $insert .= '<td>'.$val['red']['3'].'</td>';
+            $insert .= '<td>'.$val['red']['4'].'</td>';
+            $insert .= '<td>'.$val['red']['5'].'</td>';
+            $insert .= '<td>'.$val['red']['6'].'</td>';
+            $insert .= '<td>'.$val['red']['7'].'</td>';
+            $insert .= '<td>'.$val['red']['8'].'</td>';
+            $insert .= '<td>'.$val['red']['9'].'</td>';
+            $insert .= '<td>'.$val['red']['10'].'</td>';
+            $insert .= '<td>'.$val['red']['11'].'</td>';
+            $insert .= '<td>'.$val['red']['12'].'</td>';
+            $insert .= '</tr>';
+            $tmp .= $insert;
+        }
+        $insert = $tmp;
+        $html = <<<TEMP
+<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="13" style="text-align: center;background-color: #d3d3d3">月度销项红充发票分析</td>
+    </tr>
+    <tr>
+        <td width="10%">年份</td>
+        <td width="7%">1月</td>
+        <td width="7%">2月</td>
+        <td width="7%">3月</td>
+        <td width="7%">4月</td>
+        <td width="7%">5月</td>
+        <td width="7%">6月</td>
+        <td width="7%">7月</td>
+        <td width="7%">8月</td>
+        <td width="7%">9月</td>
+        <td width="9%">10月</td>
+        <td width="9%">11月</td>
+        <td width="9%">12月</td>
+    </tr>
+    {$insert}
+    {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
 
+        //图
+        $barData = $labels = $legends = [];
+        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val)
+        {
+            $barData[] = array_values($val['red']);
+            $labels = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+            $legends[] = $key;
+        }
+
+        if (empty($barData) || empty($labels) || empty($legends)) {
+            $insert = '';
+        } else {
+            $imgPath = (new NewGraphService())
+                ->setTitle('月度销项红充发票分析')
+                ->setXLabels($labels)
+                ->setLegends($legends)
+                ->setMargin([60,50,0,0])
+                ->bar($barData);
+
+            $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+            $insert = <<<PIC
+<tr>
+    <td>
+        <img src="https://api.meirixindong.com/{$imgPath}" />    
+    </td>
+</tr>
+PIC;
+        }
+
+        $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    {$insert}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
+
+    //深度报告字段 必执行的 月度销项作废发票分析
+    private function ydxxfpfx_cancel(Tcpdf $pdf, $data)
+    {
+        $ocrData = $this->getOcrData('14-6',13);
+        $res = $data['re_fpxx']['ydxxfpfx'];
+        $tmp = '';
+        foreach ($res as $year => $val) {
+            $insert = '<tr>';
+            $insert .= '<td>'.$year.'</td>';
+            $insert .= '<td>'.$val['cancel']['1'].'</td>';
+            $insert .= '<td>'.$val['cancel']['2'].'</td>';
+            $insert .= '<td>'.$val['cancel']['3'].'</td>';
+            $insert .= '<td>'.$val['cancel']['4'].'</td>';
+            $insert .= '<td>'.$val['cancel']['5'].'</td>';
+            $insert .= '<td>'.$val['cancel']['6'].'</td>';
+            $insert .= '<td>'.$val['cancel']['7'].'</td>';
+            $insert .= '<td>'.$val['cancel']['8'].'</td>';
+            $insert .= '<td>'.$val['cancel']['9'].'</td>';
+            $insert .= '<td>'.$val['cancel']['10'].'</td>';
+            $insert .= '<td>'.$val['cancel']['11'].'</td>';
+            $insert .= '<td>'.$val['cancel']['12'].'</td>';
+            $insert .= '</tr>';
+            $tmp .= $insert;
+        }
+        $insert = $tmp;
+        $html = <<<TEMP
+<table border="1" cellpadding="4" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="13" style="text-align: center;background-color: #d3d3d3">月度销项作废发票分析</td>
+    </tr>
+    <tr>
+        <td width="10%">年份</td>
+        <td width="7%">1月</td>
+        <td width="7%">2月</td>
+        <td width="7%">3月</td>
+        <td width="7%">4月</td>
+        <td width="7%">5月</td>
+        <td width="7%">6月</td>
+        <td width="7%">7月</td>
+        <td width="7%">8月</td>
+        <td width="7%">9月</td>
+        <td width="9%">10月</td>
+        <td width="9%">11月</td>
+        <td width="9%">12月</td>
+    </tr>
+    {$insert}
+    {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+
+        //图
+        $barData = $labels = $legends = [];
+        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val)
+        {
+            $barData[] = array_values($val['cancel']);
+            $labels = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+            $legends[] = $key;
+        }
+
+        if (empty($barData) || empty($labels) || empty($legends)) {
+            $insert = '';
+        } else {
+            $imgPath = (new NewGraphService())
+                ->setTitle('月度销项作废发票分析')
+                ->setXLabels($labels)
+                ->setLegends($legends)
+                ->setMargin([60,50,0,0])
+                ->bar($barData);
+
+            $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+            $insert = <<<PIC
+<tr>
+    <td>
+        <img src="https://api.meirixindong.com/{$imgPath}" />    
+    </td>
+</tr>
+PIC;
+        }
+
+        $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    {$insert}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
 
 
 
