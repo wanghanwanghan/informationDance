@@ -4841,6 +4841,7 @@ TEMP;
 
         //其他
         $res = $data['re_fpxx']['qykpqkhz'];
+        krsort($res['qita']);
         $tmp = '';
         foreach ($res['qita'] as $year => $val) {
             $insert = '<tr>';
@@ -5636,16 +5637,7 @@ TEMP;
 
                 }else
                 {
-                    $insert = '';
-                    $html = <<<TEMP
-<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
-    <tr>
-        <td style="text-align: center;background-color: #d3d3d3">销售前十企业总占比（%）</td>
-    </tr>
-    {$insert}
-</table>
-TEMP;
-                    $pdf->writeHTML($html, true, false, false, false, '');
+
                 }
             }
         }else
@@ -6164,8 +6156,6 @@ TEMP;
                 ->bar($barData);
         }
 
-        CommonService::getInstance()->log4PHP($temp);
-
         if (!empty($temp))
         {
             for ($i=1;$i<=3;$i++)
@@ -6191,16 +6181,7 @@ TEMP;
                     $pdf->writeHTML($html, true, false, false, false, '');
                 }else
                 {
-                    $insert = '';
-                    $html = <<<TEMP
-<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
-    <tr>
-        <td style="text-align: center;background-color: #d3d3d3">采购前十供应商总占比（%）</td>
-    </tr>
-    {$insert}
-</table>
-TEMP;
-                    $pdf->writeHTML($html, true, false, false, false, '');
+
                 }
             }
         }else
