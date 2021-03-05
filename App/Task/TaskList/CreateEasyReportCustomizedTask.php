@@ -4971,6 +4971,7 @@ TEMP;
                 ->setMargin([60,50,0,0])
                 ->bar($barData);
 
+            $imgPath = str_replace(ROOT_PATH,'',$imgPath);
             $insert = <<<PIC
 <tr>
     <td>
