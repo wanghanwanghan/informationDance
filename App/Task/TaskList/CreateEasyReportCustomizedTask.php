@@ -5251,6 +5251,7 @@ TEMP;
         $ocrData = $this->getOcrData('14-8',7);
         $temp = array_values($data['re_fpxx']['ljkpjeTOP10qyhz_xx']);
         $res = control::sortArrByKey($temp,'total','desc',true);
+        CommonService::getInstance()->log4PHP($res);
         $tmp = '';
         foreach ($res as $key => $val) {
             $insert = '<tr>';
