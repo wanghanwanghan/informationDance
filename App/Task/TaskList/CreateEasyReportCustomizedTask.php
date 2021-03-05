@@ -5611,6 +5611,8 @@ TEMP;
                 ->bar($barData);
         }
 
+        CommonService::getInstance()->log4PHP($temp);
+
         if (!empty($temp))
         {
             for ($i=1;$i<=3;$i++)
