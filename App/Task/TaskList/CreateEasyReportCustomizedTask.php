@@ -279,8 +279,7 @@ TEMP;
 
             //6.2.6累计开票金额TOP10企业汇总
             $ljkpjeTOP10qyhz_xx=$invoiceObj->ljkpjeTOP10qyhz_xx();
-            CommonService::getInstance()->log4PHP($ljkpjeTOP10qyhz_xx);
-            $reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx']=$ljkpjeTOP10qyhz_xx;
+            $cspData['re_fpxx']['ljkpjeTOP10qyhz_xx']=$ljkpjeTOP10qyhz_xx;
             empty($cspData['re_fpxx']['ljkpjeTOP10qyhz_xx']) ?: $cspData['re_fpxx']['ljkpjeTOP10qyhz_xx'] = control::sortArrByKey($cspData['re_fpxx']['ljkpjeTOP10qyhz_xx'],'total',true);
 
             //6.3.1下游客户稳定性分析
