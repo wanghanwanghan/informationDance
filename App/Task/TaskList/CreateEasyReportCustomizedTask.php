@@ -377,7 +377,10 @@ TEMP;
             $this->qyxsqkfb($pdf,$cspData);
             $this->ndjxfpqkhz($pdf,$cspData);
             $this->ydjxfpfx($pdf,$cspData);
-
+            $this->ljkpjeTOP10qyhz_jx($pdf,$cspData);
+            $this->dzkpjeTOP10jl_jx($pdf,$cspData);
+            $this->sygysslfb($pdf,$cspData);
+            $this->qycgqkfb($pdf,$cspData);
         }
     }
 
@@ -5790,8 +5793,6 @@ TEMP;
         $ocrData = $this->getOcrData('14-15',7);
         //月度进项发票分析
         $res = $data['re_fpjx']['ydjxfpfx'];
-        CommonService::getInstance()->log4PHP($res);
-        CommonService::getInstance()->log4PHP($data['re_fpjx']);
         $tmp = '';
         foreach ($res as $year => $val) {
             $insert = '<tr>';
@@ -5840,21 +5841,21 @@ TEMP;
 
         //图
         $barData = $labels = $legends = [];
-        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val)
+        foreach ($data['re_fpjx']['ydjxfpfx'] as $key => $val)
         {
-            $barData[] = array_values($val['normal']);
             $labels = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+            $barData[] = array_values($val);
             $legends[] = $key;
         }
 
-        if (empty($barData) || empty($labels) || empty($legends)) {
+        if (empty($barData) || empty($legends)) {
             $insert = '';
         } else {
             $imgPath = (new NewGraphService())
-                ->setTitle('月度销项正常发票分析')
+                ->setTitle('月度进项发票分析')
                 ->setXLabels($labels)
                 ->setLegends($legends)
-                ->setMargin([60,50,0,0])
+                ->setMargin([60,0,0,0])
                 ->bar($barData);
 
             $imgPath = str_replace(ROOT_PATH,'',$imgPath);
@@ -5875,32 +5876,438 @@ TEMP;
         $pdf->writeHTML($html, true, false, false, false, '');
     }
 
+    //深度报告字段 必执行的 累计开票金额TOP10企业汇总 jx
+    private function ljkpjeTOP10qyhz_jx(Tcpdf $pdf, $data)
+    {
+        $ocrData = $this->getOcrData('14-16',7);
+        $temp = array_values($data['re_fpjx']['ljkpjeTOP10qyhz_jx']);
+        $res = control::sortArrByKey($temp,'total','desc',true);
+        $tmp = '';
+        foreach ($res as $key => $val) {
+            $insert = '<tr>';
+            $insert .= '<td>'.$val['date'].'</td>';
+            $insert .= '<td>'.$val['name'].'</td>';
+            $insert .= '<td>'.$val['salesTaxNo'].'</td>';
+            $insert .= '<td>'.$val['total'].'</td>';
+            $insert .= '<td>'.$val['num'].'</td>';
+            $insert .= '<td>'.$val['totalZhanbi'].'</td>';
+            $insert .= '<td>'.$val['numZhanbi'].'</td>';
+            $insert .= '</tr>';
+            $tmp .= $insert;
+        }
+        $insert = $tmp;
+        $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="7" style="text-align: center;background-color: #d3d3d3">累计开票金额TOP10企业汇总</td>
+    </tr>
+    <tr>
+        <td width="14%">开票年度</td>
+        <td width="14%">交易对手名称</td>
+        <td width="14%">交易对手税号</td>
+        <td width="14%">开票金额</td>
+        <td width="14%">开票数</td>
+        <td width="15%">总金额占比(%)</td>
+        <td width="15%">总笔数占比(%)</td>
+    </tr>
+    {$insert}
+    {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
 
+        //图
+        $pieData = $labels = [];
+        $other = 100;
+        foreach ($data['re_fpjx']['ljkpjeTOP10qyhz_jx'] as $one)
+        {
+            $other -= $one['totalZhanbi'] - 0;
+            $pieData[] = $one['totalZhanbi'] - 0;
+            $labels[] = "{$one['name']} (%.1f%%)";
+        }
 
+        if (empty($pieData) || empty($labels)) {
+            $insert = '';
+        } else {
+            if ($other > 0) {
+                array_push($pieData,$other);
+                array_push($labels,"其他 (%.1f%%)");
+            }
+            $imgPath = (new NewGraphService())->setTitle('累计开票金额TOP10企业汇总')->setLabels($labels)->pie($pieData);
+            $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+            $insert = <<<PIC
+<tr>
+    <td>
+        <img src="https://api.meirixindong.com/{$imgPath}" />    
+    </td>
+</tr>
+PIC;
+        }
 
+        $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    {$insert}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
 
+    //深度报告字段 必执行的 单张开票金额TOP10企业汇总 jx
+    private function dzkpjeTOP10jl_jx(Tcpdf $pdf, $data)
+    {
+        $ocrData = $this->getOcrData('14-17',6);
+        $res = control::sortArrByKey($data['re_fpjx']['dzkpjeTOP10jl_jx'],'totalAmount','desc',true);
+        $tmp = '';
+        foreach ($res as $key => $val) {
+            $insert = '<tr>';
+            $insert .= '<td>'.substr($val['date'],0,4).'</td>';
+            $insert .= '<td>'.$val['salesTaxName'].'</td>';
+            $insert .= '<td>'.$val['salesTaxNo'].'</td>';
+            $insert .= '<td>'.$val['totalAmount'].'</td>';
+            $insert .= '<td>'.$val['totalTax'].'</td>';
+            $insert .= '<td>'.$val['zhanbi'].'</td>';
+            $insert .= '</tr>';
+            $tmp .= $insert;
+        }
+        $insert = $tmp;
+        $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="6" style="text-align: center;background-color: #d3d3d3">单张开票金额TOP10记录</td>
+    </tr>
+    <tr>
+        <td width="16%">开票年度</td>
+        <td width="18%">交易对手名称</td>
+        <td width="18%">交易对手税号</td>
+        <td width="16%">开票金额</td>
+        <td width="16%">开票税额</td>
+        <td width="16%">总金额占比(%)</td>
+    </tr>
+    {$insert}
+    {$ocrData}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
 
+        //图
+        $pieData = $labels = [];
+        $other = 100;
+        foreach ($data['re_fpjx']['dzkpjeTOP10jl_jx'] as $one)
+        {
+            $other -= $one['zhanbi'] - 0;
+            $pieData[] = $one['zhanbi'] - 0;
+            $labels[] = "{$one['salesTaxName']} (%.1f%%)";
+        }
 
+        if (empty($pieData) || empty($labels)) {
+            $insert = '';
+        } else {
+            if ($other > 0) {
+                array_push($pieData,$other);
+                array_push($labels,"其他 (%.1f%%)");
+            }
+            $imgPath = (new NewGraphService())->setTitle('单张开票金额TOP10企业汇总')->setLabels($labels)->pie($pieData);
+            $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+            $insert = <<<PIC
+<tr>
+    <td>
+        <img src="https://api.meirixindong.com/{$imgPath}" />    
+    </td>
+</tr>
+PIC;
+        }
 
+        $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    {$insert}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
 
+    //深度报告字段 必执行的 上游供应商稳定性分析
+    private function sygysslfb(Tcpdf $pdf, $data)
+    {
+        $ocrData = $this->getOcrData('14-19',7);
 
+        //上游供应商司龄分布（个）
+        $barData = $labels = [];
+        $barData = [array_values($data['re_fpjx']['sygysslfb'])];
+        $labels = ['1年以下','2-3年','4-5年','6-9年','10年以上'];
 
+        if (empty($barData) || empty($labels)) {
+            $insert = '';
+        } else {
+            if (!empty($data['re_fpxx']['xyqyslfb'])) {
+                $imgPath = (new NewGraphService())
+                    ->setXLabels($labels)
+                    ->setMargin([60,50,0,40])
+                    ->bar($barData);
 
+                $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+                $insert = <<<PIC
+<tr>
+    <td>
+        <img src="https://api.meirixindong.com/{$imgPath}" />    
+    </td>
+</tr>
+PIC;
+            } else {
+                $insert = '';
+            }
+        }
 
+        $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td style="text-align: center;background-color: #d3d3d3">上游供应商司龄分布（个）</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
 
+        //下游企业合作年限分布（个）
+        $barData = $labels = [];
+        $barData = [array_values($data['re_fpxx']['xyqyhznxfb'])];
+        $labels = ['1年','2年','3年以上'];
 
+        if (empty($barData) || empty($labels)) {
+            $insert = '';
+        } else {
+            if (!empty($data['re_fpxx']['xyqyhznxfb'])) {
+                $imgPath = (new NewGraphService())
+                    ->setXLabels($labels)
+                    ->setMargin([60,50,0,40])
+                    ->bar($barData);
 
+                $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+                $insert = <<<PIC
+<tr>
+    <td>
+        <img src="https://api.meirixindong.com/{$imgPath}" />    
+    </td>
+</tr>
+PIC;
+            } else {
+                $insert = '';
+            }
+        }
 
+        $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td style="text-align: center;background-color: #d3d3d3">下游企业合作年限分布（个）</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
 
+        //上游供应商地域分布（个）
+        $barData = $labels = $legends = [];
+        foreach ($data['re_fpjx']['syqydyfb'] as $key => $val)
+        {
+            $labels = array_keys($val);
+            $barData[] = array_values($val);
+            $legends[] = $key;
+        }
 
+        if (empty($barData) || empty($labels)) {
+            $insert = '';
+        } else {
+            if (!empty($data['re_fpxx']['xyqyghqk'])) {
+                $imgPath = (new NewGraphService())
+                    ->setXLabels($labels)
+                    ->setLegends($legends)
+                    ->setXLabelAngle(15)
+                    ->setMargin([60,50,0,40])
+                    ->bar($barData);
 
+                $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+                $insert = <<<PIC
+<tr>
+    <td>
+        <img src="https://api.meirixindong.com/{$imgPath}" />    
+    </td>
+</tr>
+PIC;
+            } else {
+                $insert = '';
+            }
+        }
 
+        $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td style="text-align: center;background-color: #d3d3d3">上游供应商地域分布（个）</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
 
+        //采购前十供应商总占比（%）
+        $temp = [];
+        foreach ($data['re_fpjx']['cgqsqyzzb'] as $key => $val)
+        {
+            $barData = $labels = $legends = [];
+            $labels = array_keys($val);
+            $barData[] = array_values($val);
+            $legends[] = $key;
 
+            $temp[] = (new NewGraphService())
+                ->setXLabels($labels)
+                ->setXLabelAngle(15)
+                ->setLegends($legends)
+                ->setMargin([130,50,0,40])
+                ->bar($barData);
+        }
 
+        if (!empty($temp))
+        {
+            for ($i=1;$i<=3;$i++)
+            {
+                if (isset($temp[$i-1]))
+                {
+                    $insert = <<<PIC
+<tr>
+    <td>
+        <img src="https://api.meirixindong.com/{$temp[$i-1]}" />    
+    </td>
+</tr>
+PIC;
+                    $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td style="text-align: center;background-color: #d3d3d3">采购前十供应商总占比（%）</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+                    $pdf->writeHTML($html, true, false, false, false, '');
+                }else
+                {
+                    $insert = '';
+                    $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td style="text-align: center;background-color: #d3d3d3">采购前十供应商总占比（%）</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+                    $pdf->writeHTML($html, true, false, false, false, '');
+                }
+            }
+        }else
+        {
+            $insert = '';
+            $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td style="text-align: center;background-color: #d3d3d3">采购前十供应商总占比（%）</td>
+    </tr>
+    {$insert}
+</table>
+TEMP;
+            $pdf->writeHTML($html, true, false, false, false, '');
+        }
 
+        //上游集中度情况评估  集中度指数
+        $syjzd = $this->syjzd($data['re_fpjx']['xdsForShangxiayou']);
+        $syjzd = 0.35 * $syjzd[0] + 0.65 * $syjzd[1] + 0.2 > 1 ? 1 : 0.35 * $syjzd[0] + 0.65 * $syjzd[1] + 0.2;
+        $syjzd = sprintf('%.1f',$syjzd);
 
+        $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td colspan="2" style="text-align: center;background-color: #d3d3d3">集中度指数</td>
+    </tr>
+    <tr>
+        <td width="30%">{$syjzd}</td>
+        <td width="70%"></td>
+    </tr>
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
 
+        $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td width="30%" style="text-align: center;background-color: #d3d3d3">集中度评分</td>
+        <td width="70%" style="text-align: center;background-color: #d3d3d3">评分维度，评分越高集中度越高，企业蕴藏风险越大，易受区域行业和金融政策、交通运输、资源分布、商业风险等因素影响</td>
+    </tr>
+    <tr>
+        <td width="30%">1.0 - 0.8</td>
+        <td width="70%">
+            <p>上游企业集中度很高</p>
+            <p>1，上游企业区域分布集中</p>
+            <p>2，上游企业业务集中度高，少部分上游企业交易额总量占比高</p>
+            <p>3，上游较少部分企业在企业主要商品的销售中占比高</p>
+        </td>
+    </tr>
+    <tr>
+        <td width="30%">0.8 - 0.6</td>
+        <td width="70%">
+            <p>上游企业集中度较高</p>
+        </td>
+    </tr>
+    <tr>
+        <td width="30%">0.6 - 0.4</td>
+        <td width="70%">
+            <p>上游企业集中度一般，较分散</p>
+        </td>
+    </tr>
+    <tr>
+        <td width="30%">0.4以下</td>
+        <td width="70%">
+            <p>上游企业集中度低，高度分散</p>
+        </td>
+    </tr>
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
+
+    //深度报告字段 必执行的 企业采购情况分布
+    private function qycgqkfb(Tcpdf $pdf, $data)
+    {
+        $ocrData = $this->getOcrData('14-20',7);
+
+        $lineData = $legends = $xLabels = [];
+        $legends = [$data['re_fpjx']['qycgqkyc']['label']];
+        $xLabels = $data['re_fpjx']['qycgqkyc']['xAxes'];
+        $lineData = [$data['re_fpjx']['qycgqkyc']['data']];
+
+        if (empty($legends) || empty($xLabels) || empty($lineData)) {
+            $insert = '';
+        } else {
+            $imgPath = (new NewGraphService())
+                ->setLegends($legends)
+                ->setXLabels($xLabels)
+                ->line($lineData);
+
+            $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+            $insert = <<<PIC
+<tr>
+    <td>
+        <img src="https://api.meirixindong.com/{$imgPath}" />    
+    </td>
+</tr>
+PIC;
+        }
+
+        $html = <<<TEMP
+<table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
+    <tr>
+        <td style="text-align: center;background-color: #d3d3d3">企业采购情况分布</td>
+    </tr>
+   {$insert}
+</table>
+TEMP;
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
 
     //下游稳定性
     private function xywdx($data)
