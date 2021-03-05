@@ -4907,20 +4907,21 @@ TEMP;
         $res = $data['re_fpxx']['ydxxfpfx'];
         CommonService::getInstance()->log4PHP($res);
         $tmp = '';
-        foreach ($res['qita'] as $year => $val) {
+        foreach ($res as $year => $val) {
             $insert = '<tr>';
             $insert .= '<td>'.$year.'</td>';
-            $insert .= '<td>'.$val['normal']['normalNum'].'</td>';
-            $insert .= '<td>'.$val['normal']['normalAmount'].'</td>';
-            $insert .= '<td>'.$val['normal']['normalTax'].'</td>';
-            $insert .= '<td>'.$val['red']['redNum'].'</td>';
-            $insert .= '<td>'.$val['red']['redAmount'].'</td>';
-            $insert .= '<td>'.$val['red']['redTax'].'</td>';
-            $insert .= '<td>'.$val['cancel']['cancelNum'].'</td>';
-            $insert .= '<td>'.$val['cancel']['cancelAmount'].'</td>';
-            $insert .= '<td>'.$val['cancel']['cancelTax'].'</td>';
-            $insert .= '<td>'.$val['normal']['numZhanbi'].'</td>';
-            $insert .= '<td>'.$val['normal']['AmountZhanbi'].'</td>';
+            $insert .= '<td>'.$val['normal']['1'].'</td>';
+            $insert .= '<td>'.$val['normal']['2'].'</td>';
+            $insert .= '<td>'.$val['normal']['3'].'</td>';
+            $insert .= '<td>'.$val['normal']['4'].'</td>';
+            $insert .= '<td>'.$val['normal']['5'].'</td>';
+            $insert .= '<td>'.$val['normal']['6'].'</td>';
+            $insert .= '<td>'.$val['normal']['7'].'</td>';
+            $insert .= '<td>'.$val['normal']['8'].'</td>';
+            $insert .= '<td>'.$val['normal']['9'].'</td>';
+            $insert .= '<td>'.$val['normal']['10'].'</td>';
+            $insert .= '<td>'.$val['normal']['11'].'</td>';
+            $insert .= '<td>'.$val['normal']['12'].'</td>';
             $insert .= '</tr>';
             $tmp .= $insert;
         }
@@ -4931,12 +4932,12 @@ TEMP;
         <td colspan="13" style="text-align: center;background-color: #d3d3d3">月度销项正常发票分析</td>
     </tr>
     <tr>
-        <td width="8%">年份</td>
-        <td width="8%">1月</td>
-        <td width="8%">2月</td>
-        <td width="8%">3月</td>
-        <td width="8%">4月</td>
-        <td width="8%">5月</td>
+        <td width="9%">年份</td>
+        <td width="7%">1月</td>
+        <td width="7%">2月</td>
+        <td width="7%">3月</td>
+        <td width="7%">4月</td>
+        <td width="7%">5月</td>
         <td width="8%">6月</td>
         <td width="8%">7月</td>
         <td width="8%">8月</td>
