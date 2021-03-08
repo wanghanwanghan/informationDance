@@ -154,7 +154,7 @@ class ZhongWangService extends ServiceBase
             'callBackUrl' => $callBack,
         ];
 
-        $api_path = 'data/information/getAuthentication';
+        $api_path = 'http://api.zoomwant.com:50001/data/information/getAuthentication';
 
         $res = $this->readyToSend($api_path, $tmp, false, false);
 
