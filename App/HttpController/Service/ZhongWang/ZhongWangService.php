@@ -151,7 +151,7 @@ class ZhongWangService extends ServiceBase
         $tmp = [
             'taxNo' => $code,
             'entName' => $entName,
-            'callBack' => $callBack,
+            'callBackUrl' => $callBack,
         ];
 
         $api_path = 'data/information/getAuthentication';
