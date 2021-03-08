@@ -139,30 +139,20 @@ class ZhongWangService extends ServiceBase
     }
 
     //企业授权认证
-    function getAuthentication($entName, $code, $callBack)
+    function getAuthentication($entName)
     {
-        $param['companyName'] = $entName;
-        $param['taxNo'] = $code;
-        $param['callBackUrl'] = $callBack;
-
-        $body['param'] = $param;
-        $body['taxNo'] = $this->taxNo;
-
-        $tmp = [
-            'taxNo' => $code,
+        $data = [
+            'taxNo' => $this->taxNo,
             'entName' => $entName,
-            'callBackUrl' => $callBack,
+            'callBackUrl' => 'https://www.baidu.com/',
         ];
 
         $api_path = 'http://api.zoomwant.com:50001/data/information/getAuthentication';
 
-        $res = $this->readyToSend($api_path, $tmp, false, false);
-
-        CommonService::getInstance()->log4PHP($res);
+        $res = $this->readyToSend($api_path, $data, false, false);
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
-
 
     //进销项发票统计查询
     function getTaxInvoice($code, $start, $end)
@@ -180,7 +170,6 @@ class ZhongWangService extends ServiceBase
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
-
 
     //深度报告临时用的
     function getReceiptDataTest($code, $type)
