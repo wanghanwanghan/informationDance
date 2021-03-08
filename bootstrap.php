@@ -11,9 +11,11 @@ CommandContainer::getInstance()->set(new TestCommand());
 
 //******************注册常用全局函数******************
 
-function jsonEncode($target)
+function jsonEncode($target, $notUrlEncode = false)
 {
-    return json_encode($target);
+    return $notUrlEncode === true ?
+        json_encode($target, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) :
+        json_encode($target);
 }
 
 function jsonDecode($target, $type = true)
