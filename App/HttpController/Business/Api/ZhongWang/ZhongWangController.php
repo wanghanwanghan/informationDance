@@ -104,7 +104,11 @@ class ZhongWangController extends ZhongWangBase
 
         $res = (new ZhongWangService())->getAuthentication($entName);
 
-        return $this->checkResponse($res, __FUNCTION__);
+        $res = jsonDecode($res);
+
+        !(isset($res['code']) && $res['code'] == 0) ?: $res['code'] = 200;
+
+        return $this->writeJson($res['code'], null, $res['data'], $res['message']);
     }
 
 
