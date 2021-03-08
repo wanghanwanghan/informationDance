@@ -147,7 +147,7 @@ class ZhongWangService extends ServiceBase
         $body['param'] = $param;
         $body['taxNo'] = $this->taxNo;
 
-        $api_path = 'http://211.157.177.35:50001/data/information/getAuthentication';
+        $api_path = 'data/information/getAuthentication';
 
         $res = $this->readyToSend($api_path, $body, true);
 
