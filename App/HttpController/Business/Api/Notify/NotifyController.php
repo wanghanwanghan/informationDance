@@ -249,7 +249,7 @@ class NotifyController extends BusinessBase
 
         CommonService::getInstance()->log4PHP($data);
 
-        return $this->response()->write(jsonEncode(['code' => 0, 'msg' => '成功', 'data' => null], true));
+        return $this->response()->write(jsonEncode(['code' => 0, 'msg' => '成功', 'data' => null], false));
     }
 
     //获取数据通知
@@ -272,7 +272,7 @@ class NotifyController extends BusinessBase
 
         CommonService::getInstance()->log4PHP($data);
 
-        return $this->response()->write(jsonEncode(['code' => 0, 'msg' => '成功', 'data' => null], true));
+        return $this->response()->write(jsonEncode(['code' => 0, 'msg' => '成功', 'data' => null], false));
     }
 
 
