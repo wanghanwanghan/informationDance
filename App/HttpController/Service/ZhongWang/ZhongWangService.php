@@ -143,7 +143,7 @@ class ZhongWangService extends ServiceBase
     {
         $data = [
             'taxNo' => $this->taxNo,
-            'entName' => $entName,
+            'companyName' => $entName,
             'callBackUrl' => 'https://www.baidu.com/',
         ];
 
