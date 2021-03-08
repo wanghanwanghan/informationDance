@@ -97,6 +97,19 @@ class ZhongWangController extends ZhongWangBase
         return $this->writeJson(200, null, $image);
     }
 
+    //企业授权认证
+    function getAuthentication()
+    {
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $callBack = 'https://www.baidu.com/';
+
+
+        $res = (new ZhongWangService())->getAuthentication($entName, $callBack);
+
+        return $this->checkResponse($res, __FUNCTION__);
+    }
+
+
     //进销项发票统计查询
     function getTaxInvoice()
     {

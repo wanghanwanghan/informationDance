@@ -76,6 +76,8 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/getReceiptDetailByClient',$prefix.'getReceiptDetailByClient');//进销项发票详情（税盘）
             $routeCollector->addRoute(['GET','POST'],'/getReceiptDetailByCert',$prefix.'getReceiptDetailByCert');//进销项发票详情（证书）
             $routeCollector->addRoute(['GET','POST'],'/getInvoiceOcr',$prefix.'getInvoiceOcr');//发票实时ocr
+
+            $routeCollector->addRoute(['GET','POST'],'/getAuthentication',$prefix.'getAuthentication');//企业授权认证
             $routeCollector->addRoute(['GET','POST'],'/getTaxInvoice',$prefix.'getTaxInvoice');//进销项发票统计查询
             $routeCollector->addRoute(['GET','POST'],'/getIncometaxMonthlyDeclaration',$prefix.'getIncometaxMonthlyDeclaration');//企业所得税--月（季）度申报表查询
             $routeCollector->addRoute(['GET','POST'],'/getIncometaxAnnualReport',$prefix.'getIncometaxAnnualReport');//企业所得税--年报查询

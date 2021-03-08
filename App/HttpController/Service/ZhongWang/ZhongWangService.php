@@ -30,13 +30,15 @@ class ZhongWangService extends ServiceBase
         return true;
     }
 
-    private function encrypt($str)
+    private function encrypt($str, $isTest = false)
     {
+        $isTest === true ? $key = $this->keyTest : $key = $this->key;
         return openssl_encrypt($str, 'aes-128-ecb', $this->key, OPENSSL_RAW_DATA);
     }
 
-    private function decrypt($str)
+    private function decrypt($str, $isTest = false)
     {
+        $isTest === true ? $key = $this->keyTest : $key = $this->key;
         return openssl_decrypt($str, 'aes-128-ecb', $this->key, OPENSSL_RAW_DATA);
     }
 
@@ -136,6 +138,25 @@ class ZhongWangService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
+    //企业授权认证
+    function getAuthentication($entName, $callBack)
+    {
+        $param['companyName'] = $entName;
+        $param['callBackUrl'] = $callBack;
+
+        $body['param'] = $param;
+        $body['taxNo'] = $this->taxNo;
+
+        $api_path = 'http://211.157.177.35:50001/data/information/getAuthentication';
+
+        $res = $this->readyToSend($api_path, $body, true);
+
+        CommonService::getInstance()->log4PHP($res);
+
+        return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
+    }
+
+
     //进销项发票统计查询
     function getTaxInvoice($code, $start, $end)
     {
@@ -150,20 +171,8 @@ class ZhongWangService extends ServiceBase
 
         $res = $this->readyToSend($api_path, $body);
 
-        CommonService::getInstance()->log4PHP($res);//
-
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
-
-
-
-
-
-
-
-
-
-
 
 
     //深度报告临时用的
@@ -183,17 +192,25 @@ class ZhongWangService extends ServiceBase
     }
 
     //统一发送
-    private function readyToSend($api_path, $body)
+    private function readyToSend($api_path, $body, $isTest = false)
     {
         $param = $body['param'];
         $json_param = jsonEncode($param);
-        $encryptedData = $this->encrypt($json_param);
+        $encryptedData = $this->encrypt($json_param, $isTest);
         $base64_str = base64_encode($encryptedData);
         $body['param'] = $base64_str;
 
-        $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($this->url . $api_path, $body);
+        if (preg_match('/^http/', $api_path)) {
+            $url = $api_path;
+        } elseif ($isTest) {
+            $url = $this->urlTest . $api_path;
+        } else {
+            $url = $this->url . $api_path;
+        }
+
+        $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
         $res = base64_decode($res);
-        $res = $this->decrypt($res);
+        $res = $this->decrypt($res, $isTest);
 
         return jsonDecode($res);
     }
