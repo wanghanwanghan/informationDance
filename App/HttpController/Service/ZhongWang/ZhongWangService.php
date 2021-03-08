@@ -139,9 +139,10 @@ class ZhongWangService extends ServiceBase
     }
 
     //企业授权认证
-    function getAuthentication($entName, $callBack)
+    function getAuthentication($entName, $code, $callBack)
     {
         $param['companyName'] = $entName;
+        $param['taxNo'] = $code;
         $param['callBackUrl'] = $callBack;
 
         $body['param'] = $param;
