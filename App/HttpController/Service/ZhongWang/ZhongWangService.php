@@ -117,6 +117,8 @@ class ZhongWangService extends ServiceBase
 
         $res = $this->readyToSend($api_path, $body);
 
+        CommonService::getInstance()->log4PHP($res);
+
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
@@ -135,6 +137,34 @@ class ZhongWangService extends ServiceBase
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
+
+    //进销项发票统计查询
+    function getTaxInvoice($code, $start, $end)
+    {
+        $param['taxNumber'] = $code;
+        $param['startDate'] = $start;
+        $param['endDate'] = $end;
+
+        $body['param'] = $param;
+        $body['taxNo'] = $this->taxNo;
+
+        $api_path = 'invoice/getTaxInvoice';
+
+        $res = $this->readyToSend($api_path, $body);
+
+        return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     //深度报告临时用的
     function getReceiptDataTest($code, $type)

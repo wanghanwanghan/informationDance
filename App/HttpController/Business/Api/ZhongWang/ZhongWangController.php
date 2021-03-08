@@ -94,7 +94,19 @@ class ZhongWangController extends ZhongWangBase
     {
         $image = $this->request()->getRequestParam('image') ?? '';
 
-        return $this->writeJson(200,null,$image);
+        return $this->writeJson(200, null, $image);
+    }
+
+    //进销项发票统计查询
+    function getTaxInvoice()
+    {
+        $code = $this->request()->getRequestParam('code') ?? '';
+        $startDate = $this->request()->getRequestParam('startDate') ?? '';//date('Y-m-d')
+        $endDate = $this->request()->getRequestParam('endDate') ?? '';//date('Y-m-d')
+
+        $res = (new ZhongWangService())->getTaxInvoice($code, $startDate, $endDate);
+
+        return $this->checkResponse($res, __FUNCTION__);
     }
 
 
