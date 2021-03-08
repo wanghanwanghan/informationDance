@@ -117,8 +117,6 @@ class ZhongWangService extends ServiceBase
 
         $res = $this->readyToSend($api_path, $body);
 
-        CommonService::getInstance()->log4PHP($res);
-
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
@@ -151,6 +149,8 @@ class ZhongWangService extends ServiceBase
         $api_path = 'invoice/getTaxInvoice';
 
         $res = $this->readyToSend($api_path, $body);
+
+        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
