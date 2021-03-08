@@ -34,15 +34,6 @@ $data = [
 //$res = curl_exec($curl);//发送请求
 //dd(json_decode($res, true));
 
-
-
-
-
-
-
-
-
-
-
+dd(base64_decode('FOJvHxDHcXawIiCt8z9YJ1qtt4TvbTCG/ZVCPvXeD/uy59BJlkANnxgaSTw/PBl8Wi7birciu9Q4qHQwr3ZQPgEc4bSPlOluhAwzP4FAhcVBtAsg5vTQc6CeLAYiVCF5'));
 
 

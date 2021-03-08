@@ -156,7 +156,7 @@ class ZhongWangService extends ServiceBase
 
         $api_path = 'data/information/getAuthentication';
 
-        $res = $this->readyToSend($api_path, $tmp, true, false);
+        $res = $this->readyToSend($api_path, $tmp, false, false);
 
         CommonService::getInstance()->log4PHP($res);
 
