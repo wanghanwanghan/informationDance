@@ -231,4 +231,49 @@ class NotifyController extends BusinessBase
         }
     }
 
+    //授权认证通知
+    function zwAuthNotify()
+    {
+        $entName = $this->getRequestData('name', '');
+        $taxNo = $this->getRequestData('taxNumber', '');
+        $state = $this->getRequestData('state', '');
+        $message = $this->getRequestData('message', '');
+
+        $data = [
+            __FUNCTION__,
+            $entName,
+            $taxNo,
+            $state,
+            $message,
+        ];
+
+        CommonService::getInstance()->log4PHP($data);
+
+        return $this->response()->write(jsonEncode(['code' => 0, 'msg' => '成功', 'data' => null]));
+    }
+
+    //获取数据通知
+    function zwDataNotify()
+    {
+        $entName = $this->getRequestData('name', '');
+        $taxNo = $this->getRequestData('taxNumber', '');
+        $state = $this->getRequestData('state', '');
+        $type = $this->getRequestData('type', '');
+        $message = $this->getRequestData('message', '');
+
+        $data = [
+            __FUNCTION__,
+            $entName,
+            $taxNo,
+            $state,
+            $type,
+            $message,
+        ];
+
+        CommonService::getInstance()->log4PHP($data);
+
+        return $this->response()->write(jsonEncode(['code' => 0, 'msg' => '成功', 'data' => null]));
+    }
+
+
 }
