@@ -36,9 +36,7 @@ $data = [
 
 
 
-$res = 'httpwanghan/hanwang';
 
-dd(preg_match('/^http/',$res));
 
 
 

@@ -148,9 +148,15 @@ class ZhongWangService extends ServiceBase
         $body['param'] = $param;
         $body['taxNo'] = $this->taxNo;
 
+        $tmp = [
+            'taxNo' => $code,
+            'entName' => $entName,
+            'callBack' => $callBack,
+        ];
+
         $api_path = 'data/information/getAuthentication';
 
-        $res = $this->readyToSend($api_path, $body, true);
+        $res = $this->readyToSend($api_path, $tmp, true, false);
 
         CommonService::getInstance()->log4PHP($res);
 
@@ -193,14 +199,8 @@ class ZhongWangService extends ServiceBase
     }
 
     //统一发送
-    private function readyToSend($api_path, $body, $isTest = false)
+    private function readyToSend($api_path, $body, $isTest = false, $encryption = true)
     {
-        $param = $body['param'];
-        $json_param = jsonEncode($param);
-        $encryptedData = $this->encrypt($json_param, $isTest);
-        $base64_str = base64_encode($encryptedData);
-        $body['param'] = $base64_str;
-
         if (preg_match('/^http/', $api_path)) {
             $url = $api_path;
         } elseif ($isTest) {
@@ -209,10 +209,20 @@ class ZhongWangService extends ServiceBase
             $url = $this->url . $api_path;
         }
 
-        $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
-        $res = base64_decode($res);
-        $res = $this->decrypt($res, $isTest);
+        if ($encryption) {
+            $param = $body['param'];
+            $json_param = jsonEncode($param);
+            $encryptedData = $this->encrypt($json_param, $isTest);
+            $base64_str = base64_encode($encryptedData);
+            $body['param'] = $base64_str;
 
-        return jsonDecode($res);
+            $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
+            $res = base64_decode($res);
+            $res = $this->decrypt($res, $isTest);
+            return jsonDecode($res);
+        } else {
+            $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
+            return $res;
+        }
     }
 }
