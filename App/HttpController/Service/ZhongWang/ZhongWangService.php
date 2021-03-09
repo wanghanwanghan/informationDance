@@ -216,7 +216,35 @@ class ZhongWangService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
+    //利润表查询
+    function getFinanceIncomeStatement($code)
+    {
+        $param['taxpayerId'] = $code;
 
+        $body['param'] = $param;
+        $body['taxNo'] = $this->taxNo;
+
+        $api_path = 'invoice/'.__FUNCTION__;
+
+        $res = $this->readyToSend($api_path, $body);
+
+        return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
+    }
+
+    //资产负债表-年度查询
+    function getFinanceBalanceSheetAnnual($code)
+    {
+        $param['taxpayerId'] = $code;
+
+        $body['param'] = $param;
+        $body['taxNo'] = $this->taxNo;
+
+        $api_path = 'invoice/'.__FUNCTION__;
+
+        $res = $this->readyToSend($api_path, $body);
+
+        return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
+    }
 
 
 
