@@ -47,6 +47,9 @@ class ZhongWangController extends ZhongWangBase
                 $step = 2;
                 $res['Result'] = $res['data']['invoices'];
                 break;
+            case 'getIncometaxMonthlyDeclaration':
+                $res['Result'] = is_string($res['data']) ? jsonDecode($res['data']) : $res['data'];
+                break;
             default:
                 $res['Result'] = null;
         }
@@ -131,8 +134,6 @@ class ZhongWangController extends ZhongWangBase
         $code = $this->request()->getRequestParam('code') ?? '';
 
         $res = (new ZhongWangService())->getIncometaxMonthlyDeclaration($code);
-
-        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkResponse($res, __FUNCTION__);
     }
