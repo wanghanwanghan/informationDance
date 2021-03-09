@@ -47,10 +47,8 @@ class CoHttpClient extends ServiceBase
             if ($method === 'POST') $data = $request->post($postData);
             if ($method === 'POSTJSON') $data = $request->postJson(jsonEncode($postData));
             if ($method === 'GET') $data = $request->get();
-
             //整理结果
             $data = $data->getBody();
-
         } catch (\Exception $e) {
             $this->writeErr($e, 'CoHttpClient');
             return ['coHttpErr' => 'error'];
