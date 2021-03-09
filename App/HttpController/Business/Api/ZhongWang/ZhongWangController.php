@@ -138,6 +138,16 @@ class ZhongWangController extends ZhongWangBase
         return $this->checkResponse($res, __FUNCTION__);
     }
 
+    //企业所得税-年报查询
+    function getIncometaxAnnualReport()
+    {
+        $code = $this->request()->getRequestParam('code') ?? '';
+
+        $res = (new ZhongWangService())->getIncometaxAnnualReport($code);
+
+        return $this->checkResponse($res, __FUNCTION__);
+    }
+
 
 
 
