@@ -164,7 +164,7 @@ class ZhongWangService extends ServiceBase
         $body['param'] = $param;
         $body['taxNo'] = $this->taxNo;
 
-        $api_path = 'invoice/'.__FUNCTION__;
+        $api_path = 'invoice/' . __FUNCTION__;
 
         $res = $this->readyToSend($api_path, $body);
 
@@ -179,7 +179,7 @@ class ZhongWangService extends ServiceBase
         $body['param'] = $param;
         $body['taxNo'] = $this->taxNo;
 
-        $api_path = 'invoice/'.__FUNCTION__;
+        $api_path = 'invoice/' . __FUNCTION__;
 
         $res = $this->readyToSend($api_path, $body);
 
@@ -194,7 +194,7 @@ class ZhongWangService extends ServiceBase
         $body['param'] = $param;
         $body['taxNo'] = $this->taxNo;
 
-        $api_path = 'invoice/'.__FUNCTION__;
+        $api_path = 'invoice/' . __FUNCTION__;
 
         $res = $this->readyToSend($api_path, $body);
 
@@ -209,7 +209,7 @@ class ZhongWangService extends ServiceBase
         $body['param'] = $param;
         $body['taxNo'] = $this->taxNo;
 
-        $api_path = 'invoice/'.__FUNCTION__;
+        $api_path = 'invoice/' . __FUNCTION__;
 
         $res = $this->readyToSend($api_path, $body);
 
@@ -224,7 +224,7 @@ class ZhongWangService extends ServiceBase
         $body['param'] = $param;
         $body['taxNo'] = $this->taxNo;
 
-        $api_path = 'invoice/'.__FUNCTION__;
+        $api_path = 'invoice/' . __FUNCTION__;
 
         $res = $this->readyToSend($api_path, $body);
 
@@ -239,17 +239,42 @@ class ZhongWangService extends ServiceBase
         $body['param'] = $param;
         $body['taxNo'] = $this->taxNo;
 
-        $api_path = 'invoice/'.__FUNCTION__;
+        $api_path = 'invoice/' . __FUNCTION__;
 
         $res = $this->readyToSend($api_path, $body);
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
+    //资产负债表查询
+    function getFinanceBalanceSheet($code)
+    {
+        $param['taxpayerId'] = $code;
 
+        $body['param'] = $param;
+        $body['taxNo'] = $this->taxNo;
 
+        $api_path = 'invoice/' . __FUNCTION__;
 
+        $res = $this->readyToSend($api_path, $body);
 
+        return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
+    }
+
+    //增值税申报表查询
+    function getVatReturn($code)
+    {
+        $param['taxpayerId'] = $code;
+
+        $body['param'] = $param;
+        $body['taxNo'] = $this->taxNo;
+
+        $api_path = 'invoice/' . __FUNCTION__;
+
+        $res = $this->readyToSend($api_path, $body);
+
+        return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
+    }
 
 
     //深度报告临时用的

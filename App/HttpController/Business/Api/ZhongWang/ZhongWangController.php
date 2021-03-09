@@ -47,6 +47,9 @@ class ZhongWangController extends ZhongWangBase
             case 'getIncometaxAnnualReport':
             case 'getFinanceIncomeStatementAnnualReport':
             case 'getFinanceIncomeStatement':
+            case 'getFinanceBalanceSheetAnnual':
+            case 'getFinanceBalanceSheet':
+            case 'getVatReturn':
                 $res['Result'] = is_string($res['data']) ? jsonDecode($res['data']) : $res['data'];
                 break;
             default:
@@ -177,13 +180,25 @@ class ZhongWangController extends ZhongWangBase
         return $this->checkResponse($res, __FUNCTION__);
     }
 
+    //资产负债表查询
+    function getFinanceBalanceSheet()
+    {
+        $code = $this->request()->getRequestParam('code') ?? '';
 
+        $res = (new ZhongWangService())->getFinanceBalanceSheetAnnual($code);
 
+        return $this->checkResponse($res, __FUNCTION__);
+    }
 
+    //增值税申报表查询
+    function getVatReturn()
+    {
+        $code = $this->request()->getRequestParam('code') ?? '';
 
+        $res = (new ZhongWangService())->getVatReturn($code);
 
-
-
+        return $this->checkResponse($res, __FUNCTION__);
+    }
 
 
 }
