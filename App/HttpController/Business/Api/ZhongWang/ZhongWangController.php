@@ -111,7 +111,6 @@ class ZhongWangController extends ZhongWangBase
         return $this->writeJson($res['code'], null, $res['data'], $res['message']);
     }
 
-
     //进销项发票统计查询
     function getTaxInvoice()
     {
