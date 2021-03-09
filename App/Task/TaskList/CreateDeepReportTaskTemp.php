@@ -1213,9 +1213,6 @@ class CreateDeepReportTaskTemp extends TaskBase implements TaskInterface
                 array_unshift($pieData,$other);
             }
 
-            CommonService::getInstance()->log4PHP($pieData);
-            CommonService::getInstance()->log4PHP($labels);
-
             $imgPath = (new NewGraphService())->setTitle('单张开票金额TOP10企业汇总')->setLabels($labels)->pie($pieData);
 
             $docObj->setImageValue('fpjx_dzkpjeTOP10jl_jx_img', [

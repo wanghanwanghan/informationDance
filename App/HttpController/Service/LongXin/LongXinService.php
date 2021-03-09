@@ -306,7 +306,6 @@ class LongXinService extends ServiceBase
             if (isset($oneSoc['so1']) && is_numeric($oneSoc['so1'])) $temp[(string)$year]['SOCNUM'] = $oneSoc['so1'];
         }
 
-        CommonService::getInstance()->log4PHP($temp);
         TaskService::getInstance()->create(new insertFinance($postData['entName'], $temp, $social['AnnualSocial']));
 
         //原值计算
