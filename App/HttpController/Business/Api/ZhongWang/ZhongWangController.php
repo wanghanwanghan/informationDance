@@ -116,7 +116,7 @@ class ZhongWangController extends ZhongWangBase
         return $this->writeJson($res['code'], null, $res['data'], $res['message']);
     }
 
-    //进销项发票统计查询
+    //进销项发票统计查询 目前不能用
     function getTaxInvoice()
     {
         $code = $this->request()->getRequestParam('code') ?? '';
@@ -126,6 +126,18 @@ class ZhongWangController extends ZhongWangBase
         $res = (new ZhongWangService())->getTaxInvoice($code, $startDate, $endDate);
 
         CommonService::getInstance()->log4PHP($res);
+
+        return $this->checkResponse($res, __FUNCTION__);
+    }
+
+    //进销项月度发票统计查询
+    function getTaxInvoiceUpgrade()
+    {
+        $code = $this->request()->getRequestParam('code') ?? '';
+        $startDate = $this->request()->getRequestParam('startDate') ?? '';//date('Y-m-d')
+        $endDate = $this->request()->getRequestParam('endDate') ?? '';//date('Y-m-d')
+
+        $res = (new ZhongWangService())->getTaxInvoiceUpgrade($code, $startDate, $endDate);
 
         return $this->checkResponse($res, __FUNCTION__);
     }
