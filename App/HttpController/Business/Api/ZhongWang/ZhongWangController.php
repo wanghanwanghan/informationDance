@@ -120,8 +120,26 @@ class ZhongWangController extends ZhongWangBase
 
         $res = (new ZhongWangService())->getTaxInvoice($code, $startDate, $endDate);
 
+        CommonService::getInstance()->log4PHP($res);
+
         return $this->checkResponse($res, __FUNCTION__);
     }
+
+    //企业所得税-月（季）度申报表查询
+    function getIncometaxMonthlyDeclaration()
+    {
+        $code = $this->request()->getRequestParam('code') ?? '';
+
+        $res = (new ZhongWangService())->getIncometaxMonthlyDeclaration($code);
+
+        CommonService::getInstance()->log4PHP($res);
+
+        return $this->checkResponse($res, __FUNCTION__);
+    }
+
+
+
+
 
 
 }

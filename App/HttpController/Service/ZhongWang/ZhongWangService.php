@@ -164,14 +164,36 @@ class ZhongWangService extends ServiceBase
         $body['param'] = $param;
         $body['taxNo'] = $this->taxNo;
 
-        $api_path = 'invoice/getTaxInvoice';
+        $api_path = 'invoice/'.__FUNCTION__;
 
         $res = $this->readyToSend($api_path, $body);
 
-        CommonService::getInstance()->log4PHP($res);
+        return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
+    }
+
+    //企业所得税-月（季）度申报表查询
+    function getIncometaxMonthlyDeclaration($code)
+    {
+        $param['taxpayerId'] = $code;
+
+        $body['param'] = $param;
+        $body['taxNo'] = $this->taxNo;
+
+        $api_path = 'invoice/'.__FUNCTION__;
+
+        $res = $this->readyToSend($api_path, $body);
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
+
+
+
+
+
+
+
+
+
 
     //深度报告临时用的
     function getReceiptDataTest($code, $type)
