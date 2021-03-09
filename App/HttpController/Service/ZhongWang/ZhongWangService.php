@@ -63,16 +63,21 @@ class ZhongWangService extends ServiceBase
 
         //拿结果
         switch ($type) {
-            case 'getInOrOutDetailByClient':
-                $step = 1;
-                $res['Result'] = $res['data']['invoices'];
-                break;
-            case 'getInOrOutDetailByCert':
-                $step = 2;
+            case 'getReceiptDetailByClient':
+            case 'getReceiptDetailByCert':
                 $res['Result'] = $res['data']['invoices'];
                 break;
             case 'getInvoiceOcr':
                 $res['Result'] = empty($res['data']) ? null : current($res['data']);
+                break;
+            case 'getIncometaxMonthlyDeclaration':
+            case 'getIncometaxAnnualReport':
+            case 'getFinanceIncomeStatementAnnualReport':
+            case 'getFinanceIncomeStatement':
+            case 'getFinanceBalanceSheetAnnual':
+            case 'getFinanceBalanceSheet':
+            case 'getVatReturn':
+                $res['Result'] = is_string($res['data']) ? jsonDecode($res['data']) : $res['data'];
                 break;
             default:
                 $res['Result'] = null;
