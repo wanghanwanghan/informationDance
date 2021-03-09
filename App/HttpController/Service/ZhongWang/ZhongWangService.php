@@ -68,6 +68,7 @@ class ZhongWangService extends ServiceBase
                 $res['Result'] = $res['data']['invoices'];
                 break;
             case 'getInvoiceOcr':
+            case 'getTaxInvoiceUpgrade':
                 $res['Result'] = empty($res['data']) ? null : current($res['data']);
                 break;
             case 'getIncometaxMonthlyDeclaration':
@@ -191,8 +192,6 @@ class ZhongWangService extends ServiceBase
         $api_path = 'invoice/' . __FUNCTION__;
 
         $res = $this->readyToSend($api_path, $body);
-
-        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
