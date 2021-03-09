@@ -35,8 +35,9 @@ class CoHttpClient extends ServiceBase
 
         //新建请求
         $request = new HttpClient($url);
-        $request->setTimeout(15);
-        $request->setConnectTimeout(15);
+        $request->setTimeout(60);
+        //这三个read connect write设置的话会直接覆盖timeout
+        $request->setConnectTimeout(60);
 
         //设置head头
         empty($headers) ?: $request->setHeaders($headers, true, false);
