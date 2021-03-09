@@ -40,14 +40,12 @@ class ZhongWangController extends ZhongWangBase
         //拿结果
         switch ($type) {
             case 'getReceiptDetailByClient':
-                $step = 1;
-                $res['Result'] = $res['data']['invoices'];
-                break;
             case 'getReceiptDetailByCert':
-                $step = 2;
                 $res['Result'] = $res['data']['invoices'];
                 break;
             case 'getIncometaxMonthlyDeclaration':
+            case 'getIncometaxAnnualReport':
+            case 'getFinanceIncomeStatementAnnualReport':
                 $res['Result'] = is_string($res['data']) ? jsonDecode($res['data']) : $res['data'];
                 break;
             default:
@@ -145,11 +143,18 @@ class ZhongWangController extends ZhongWangBase
 
         $res = (new ZhongWangService())->getIncometaxAnnualReport($code);
 
-        CommonService::getInstance()->log4PHP($res);
-
         return $this->checkResponse($res, __FUNCTION__);
     }
 
+    //利润表 --年报查询
+    function getFinanceIncomeStatementAnnualReport()
+    {
+        $code = $this->request()->getRequestParam('code') ?? '';
+
+        $res = (new ZhongWangService())->getFinanceIncomeStatementAnnualReport($code);
+
+        return $this->checkResponse($res, __FUNCTION__);
+    }
 
 
 
