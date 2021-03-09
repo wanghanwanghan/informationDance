@@ -145,6 +145,8 @@ class ZhongWangController extends ZhongWangBase
 
         $res = (new ZhongWangService())->getIncometaxAnnualReport($code);
 
+        CommonService::getInstance()->log4PHP($res);
+
         return $this->checkResponse($res, __FUNCTION__);
     }
 
