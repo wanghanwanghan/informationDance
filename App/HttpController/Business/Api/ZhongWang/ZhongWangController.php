@@ -113,8 +113,10 @@ class ZhongWangController extends ZhongWangBase
     function getAuthentication()
     {
         $entName = $this->request()->getRequestParam('entName') ?? '';
+        $code = $this->request()->getRequestParam('code') ?? '';
+        $callback = $this->request()->getRequestParam('callback') ?? 'https://www.baidu.com/';
 
-        $res = (new ZhongWangService())->getAuthentication($entName);
+        $res = (new ZhongWangService())->getAuthentication($entName, $callback);
 
         $res = jsonDecode($res);
 

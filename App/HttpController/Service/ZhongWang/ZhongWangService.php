@@ -148,12 +148,12 @@ class ZhongWangService extends ServiceBase
     }
 
     //企业授权认证
-    function getAuthentication($entName)
+    function getAuthentication($entName, $callBackUrl)
     {
         $data = [
             'taxNo' => $this->taxNo,
             'companyName' => $entName,
-            'callBackUrl' => 'https://www.baidu.com/',
+            'callBackUrl' => $callBackUrl,
         ];
 
         $api_path = 'http://api.zoomwant.com:50001/data/information/getAuthentication';
