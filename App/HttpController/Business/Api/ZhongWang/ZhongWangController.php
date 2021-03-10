@@ -148,6 +148,16 @@ class ZhongWangController extends ZhongWangBase
         return $this->checkResponse($res, __FUNCTION__);
     }
 
+    //企业税务基本信息查询
+    function getEssential()
+    {
+        $code = $this->request()->getRequestParam('code') ?? '';
+
+        $res = (new ZhongWangService())->getEssential($code);
+
+        return $this->checkResponse($res, __FUNCTION__);
+    }
+
     //企业所得税-月（季）度申报表查询
     function getIncometaxMonthlyDeclaration()
     {

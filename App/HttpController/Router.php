@@ -80,6 +80,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET','POST'],'/getAuthentication',$prefix.'getAuthentication');//企业授权认证
             $routeCollector->addRoute(['GET','POST'],'/getTaxInvoice',$prefix.'getTaxInvoice');//进销项发票统计查询
             $routeCollector->addRoute(['GET','POST'],'/getTaxInvoiceUpgrade',$prefix.'getTaxInvoiceUpgrade');//进销项发票统计查询
+            $routeCollector->addRoute(['GET','POST'],'/getEssential',$prefix.'getEssential');//企业税务基本信息查询
             $routeCollector->addRoute(['GET','POST'],'/getIncometaxMonthlyDeclaration',$prefix.'getIncometaxMonthlyDeclaration');//企业所得税--月（季）度申报表查询
             $routeCollector->addRoute(['GET','POST'],'/getIncometaxAnnualReport',$prefix.'getIncometaxAnnualReport');//企业所得税--年报查询
             $routeCollector->addRoute(['GET','POST'],'/getFinanceIncomeStatementAnnualReport',$prefix.'getFinanceIncomeStatementAnnualReport');//利润表--年报查询
