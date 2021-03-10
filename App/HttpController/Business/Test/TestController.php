@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Test;
 
 use App\HttpController\Business\BusinessBase;
+use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\QianQi\QianQiService;
 
@@ -11,6 +12,17 @@ class TestController extends BusinessBase
     function onRequest(?string $action): ?bool
     {
         return true;
+    }
+
+    function test()
+    {
+
+
+        $code = $this->getRequestData('code', '');
+
+
+
+
     }
 
     function caiwu()
@@ -67,5 +79,6 @@ class TestController extends BusinessBase
             return $this->writeJson(200, null, $temp, 'ok');
         }
     }
+
 
 }
