@@ -87,7 +87,7 @@ class ZhongWangService extends ServiceBase
                 $res['Result'] = null;
         }
 
-        return $this->createReturn($res['code'], $res['Paging'], $res['Result'], $res['msg']);
+        return $this->createReturn($res['code'], $res['Paging'], $res['Result'], isset($res['msg']) ? $res['msg'] : null);
     }
 
     //进项销项发票详情 客户端（税盘）专用

@@ -67,7 +67,7 @@ class ZhongWangController extends ZhongWangBase
             'code' => $res['code'],
             'paging' => $res['Paging'],
             'result' => $res['Result'],
-            'msg' => $res['msg']
+            'msg' => isset($res['msg']) ? $res['msg'] : null,
         ] : $this->writeJson($res['code'], $res['Paging'], $res['Result'], $res['msg']);
     }
 
