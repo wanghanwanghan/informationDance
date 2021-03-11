@@ -30,7 +30,7 @@ class PUserController extends UserBase
 
     function getUserList()
     {
-        $userInfo = RequestUserInfo::create()->order('created_at')->all();
+        $userInfo = RequestUserInfo::create()->order('created_at', 'desc')->all();
 
         return $this->writeJson(200, null, $userInfo);
     }
