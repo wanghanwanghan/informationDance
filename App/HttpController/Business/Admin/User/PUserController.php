@@ -30,7 +30,7 @@ class PUserController extends UserBase
 
     function getUserList()
     {
-        $userInfo = RequestUserInfo::create()->all();
+        $userInfo = RequestUserInfo::create()->order('created_at', 'desc')->all();
 
         return $this->writeJson(200, null, $userInfo);
     }
@@ -102,24 +102,21 @@ class PUserController extends UserBase
 
         if (empty($uid)) return $this->writeJson(201);
 
-        RequestUserApiRelationship::create()->where('userId',$uid)->update([
+        RequestUserApiRelationship::create()->where('userId', $uid)->update([
             'status' => 0
         ]);
 
-        foreach ($apiInfo as $one)
-        {
-            $check = RequestUserApiRelationship::create()->where('userId',$uid)->where('apiId',$one['id'])->get();
+        foreach ($apiInfo as $one) {
+            $check = RequestUserApiRelationship::create()->where('userId', $uid)->where('apiId', $one['id'])->get();
 
-            if (empty($check))
-            {
+            if (empty($check)) {
                 RequestUserApiRelationship::create()->data([
                     'userId' => $uid,
                     'apiId' => $one['id'],
                     'price' => $one['price'] + 0.2,
                 ])->save();
 
-            }else
-            {
+            } else {
                 $check->update([
                     'status' => 1
                 ]);
@@ -140,7 +137,7 @@ class PUserController extends UserBase
             'userId' => $uid,
             'apiId' => $aid,
         ])->update([
-            'price' => sprintf('%3.f',$price)
+            'price' => sprintf('%3.f', $price)
         ]);
 
         return $this->writeJson();

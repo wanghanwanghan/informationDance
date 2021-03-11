@@ -18,7 +18,7 @@ class CrontabBase
 
         $redis->select(14);
 
-        $status = $redis->setNx($name, 'isRun') == 1 ? true : false;
+        $status = $redis->setNx($name, 'isRun') ? true : false;
 
         $status === false ?: $redis->expire($name, $ttl);
 
