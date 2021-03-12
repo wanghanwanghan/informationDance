@@ -250,4 +250,34 @@ class UserController extends UserBase
 
         return $this->writeJson(200, null, ['orderId' => $orderId, 'payObj' => $payObj], '生成订单成功');
     }
+
+    //用户授权书
+    function getUserAuthBook()
+    {
+        $status = $this->getRequestData('status', 1);
+
+        if (!is_numeric($status)) $status = 1;
+
+        try {
+            $list = User::create()->alias('t1')
+                ->field([
+                    't2.*',
+                    't1.username',
+                    't1.email',
+                    't1.avatar',
+                    't1.company',
+                    't1.type',
+                ])
+                ->join('information_dance_auth_book as t2', 't1.phone = t2.phone')
+                ->where('t2.status', $status)
+                ->order('t2.updated_at')
+                ->all();
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        return $this->writeJson(200, null, $list, control::getUuid());
+    }
+
+
 }
