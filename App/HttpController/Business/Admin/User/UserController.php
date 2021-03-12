@@ -270,7 +270,7 @@ class UserController extends UserBase
                 ])
                 ->join('information_dance_auth_book as t2', 't1.phone = t2.phone')
                 ->where('t2.status', $status)
-                ->order('t2.updated_at')
+                ->order('t2.updated_at', 'asc')
                 ->all();
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
