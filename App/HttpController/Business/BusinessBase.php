@@ -156,7 +156,9 @@ class BusinessBase extends Index
     {
         $token = $this->request()->getHeaderLine('authorization');
 
-        isset($this->request()->getHeader('x-real-ip')[0]) ? $realIp = $this->request()->getHeader('x-real-ip')[0] : $realIp = null;
+        isset($this->request()->getHeader('x-real-ip')[0]) ?
+            $realIp = $this->request()->getHeader('x-real-ip')[0] :
+            $realIp = null;
 
         return LimitService::getInstance()->check($token, $realIp);
     }
