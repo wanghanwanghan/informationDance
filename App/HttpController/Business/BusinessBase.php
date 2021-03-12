@@ -148,7 +148,7 @@ class BusinessBase extends Index
 
         if (strlen($tokenPhone) != 11 || strlen($reqPhone) != 11) return false;
 
-        return (int)$reqPhone === (int)$tokenPhone ? true : false;
+        return (int)$reqPhone === (int)$tokenPhone;
     }
 
     //check limit
