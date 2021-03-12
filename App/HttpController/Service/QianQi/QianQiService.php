@@ -395,6 +395,8 @@ class QianQiService extends ServiceBase
 
         $res = (new CoHttpClient())->send($this->baseUrl . 'getentid/', $arr, $this->sendHeaders);
 
+        CommonService::getInstance()->log4PHP($res);
+
         (!empty($res) && !empty($res['data'])) ? $entid = $res['data'] : $entid = null;
 
         return $entid;
