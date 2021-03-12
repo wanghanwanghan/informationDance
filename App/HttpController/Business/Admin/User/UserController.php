@@ -266,7 +266,6 @@ class UserController extends UserBase
                     't1.email',
                     't1.avatar',
                     't1.company',
-                    't1.type',
                 ])
                 ->join('information_dance_auth_book as t2', 't1.phone = t2.phone')
                 ->where('t2.status', $status)
