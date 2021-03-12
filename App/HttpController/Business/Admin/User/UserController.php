@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Admin\User;
 
+use App\HttpController\Models\Api\AuthBook;
 use App\HttpController\Models\Api\LngLat;
 use App\HttpController\Models\Api\PurchaseInfo;
 use App\HttpController\Models\Api\PurchaseList;
@@ -276,6 +277,22 @@ class UserController extends UserBase
         }
 
         return $this->writeJson(200, null, $list, control::getUuid());
+    }
+
+    //审核用户授权书
+    function handleUserAuthBook()
+    {
+        $id = $this->getRequestData('id', '');
+        $status = $this->getRequestData('status', '');
+
+        try {
+            $res = AuthBook::create()->where('id', $id)->get();
+            $res->update(['status', $status]);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        return $this->writeJson(200, null, $res, control::getUuid());
     }
 
 
