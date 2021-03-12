@@ -287,7 +287,7 @@ class UserController extends UserBase
 
         try {
             $res = AuthBook::create()->where('id', $id)->get();
-            $res->update(['status', $status]);
+            $res->update(['status' => $status]);
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
