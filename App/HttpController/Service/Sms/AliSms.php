@@ -6,7 +6,6 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use Overtrue\EasySms\EasySms;
 use Overtrue\EasySms\Strategies\OrderStrategy;
-use wanghanwanghan\someUtils\control;
 
 class AliSms
 {

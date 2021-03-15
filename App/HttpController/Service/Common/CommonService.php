@@ -223,7 +223,7 @@ class CommonService extends ServiceBase
 
         $redis->set($phone . $type, $code, 600);
 
-        return empty(current($res)) ? '验证码发送失败' : '验证码发送成功';
+        return $res ? '验证码发送成功' : '验证码发送失败';
     }
 
     //发送短信
