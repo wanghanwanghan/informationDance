@@ -211,16 +211,11 @@ class CommonService extends ServiceBase
     //发送验证码
     function sendCode($phone, $type)
     {
+        $type = strtolower($type);
         $code = control::randNum(6);
 
         $res = TaskService::getInstance()->create(function () use ($type, $phone, $code) {
-            if (strtolower($type) === 'login') {
-                return SmsService::getInstance()->login($phone, $code);
-            } elseif (strtolower($type) === 'reg') {
-                return SmsService::getInstance()->reg($phone, $code);
-            } else {
-                return false;
-            }
+            return SmsService::getInstance()->$type($phone, $code);
         }, 'sync');
 
         $redis = Redis::defer('redis');
