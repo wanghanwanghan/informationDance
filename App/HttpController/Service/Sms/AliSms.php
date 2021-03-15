@@ -2,8 +2,8 @@
 
 namespace App\HttpController\Service\Sms;
 
-use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
+use App\Task\Service\TaskService;
 use Overtrue\EasySms\EasySms;
 use Overtrue\EasySms\Strategies\OrderStrategy;
 
@@ -49,12 +49,14 @@ class AliSms
     {
         $easySms = $this->createObj();
 
-        $easySms->send($phone, [
-            'template' => 'SMS_212930320',
-            'data' => [
-                'code' => $code
-            ],
-        ]);
+        TaskService::getInstance()->create(function () use ($easySms, $phone, $code) {
+            return $easySms->send($phone, [
+                'template' => 'SMS_212930320',
+                'data' => [
+                    'code' => $code
+                ],
+            ]);
+        });
 
         return true;
     }
@@ -63,12 +65,14 @@ class AliSms
     {
         $easySms = $this->createObj();
 
-        $easySms->send($phone, [
-            'template' => 'SMS_212930322',
-            'data' => [
-                'code' => $code
-            ],
-        ]);
+        TaskService::getInstance()->create(function () use ($easySms, $phone, $code) {
+            return $easySms->send($phone, [
+                'template' => 'SMS_212930322',
+                'data' => [
+                    'code' => $code
+                ],
+            ]);
+        });
 
         return true;
     }
