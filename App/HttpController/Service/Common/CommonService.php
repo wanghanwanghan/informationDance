@@ -15,6 +15,7 @@ use App\HttpController\Service\Common\EmailTemplate\Template03;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
+use App\HttpController\Service\Sms\SmsService;
 use App\Task\Service\TaskService;
 use Carbon\Carbon;
 use EasySwoole\Component\Singleton;
@@ -50,8 +51,7 @@ class CommonService extends ServiceBase
 
         $returnPath = [];
 
-        foreach ($image as $key => $oneImage)
-        {
+        foreach ($image as $key => $oneImage) {
             try {
                 switch ($type) {
                     case 'avatar':
@@ -95,12 +95,9 @@ class CommonService extends ServiceBase
     {
         $path = [];
 
-        foreach ($files as $key => $oneFile)
-        {
-            if ($oneFile instanceof UploadFile)
-            {
-                try
-                {
+        foreach ($files as $key => $oneFile) {
+            if ($oneFile instanceof UploadFile) {
+                try {
                     //提取文件后缀
                     $ext = explode('.', $oneFile->getClientFilename());
                     $ext = '.' . end($ext);
@@ -113,8 +110,7 @@ class CommonService extends ServiceBase
 
                     $path[$key] = str_replace(ROOT_PATH, '', $pathTemp . $newFilename);
 
-                }catch (\Throwable $e)
-                {
+                } catch (\Throwable $e) {
                     $this->writeErr($e, __FUNCTION__);
                     $path[$key] = $e->getMessage();
                 }
@@ -215,16 +211,10 @@ class CommonService extends ServiceBase
     //发送验证码
     function sendCode($phone, $type)
     {
-        $ak = CreateConf::getInstance()->getConf('env.qiNiuAk');
-        $sk = CreateConf::getInstance()->getConf('env.qiNiuSk');
-        $tempId = CreateConf::getInstance()->getConf('env.template01');
-        $auth = new Auth($ak, $sk);
-        $client = new Sms($auth);
-
         $code = control::randNum(6);
 
-        $res = TaskService::getInstance()->create(function () use ($client, $tempId, $phone, $code) {
-            return $client->sendMessage($tempId, [$phone], ['code' => $code]);
+        $res = TaskService::getInstance()->create(function () use ($type, $phone, $code) {
+            return SmsService::getInstance()->$type($phone, $code);
         }, 'sync');
 
         $redis = Redis::defer('redis');

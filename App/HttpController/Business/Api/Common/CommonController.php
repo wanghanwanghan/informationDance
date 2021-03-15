@@ -79,7 +79,7 @@ class CommonController extends CommonBase
 
         // if ($check)
 
-        return $this->writeJson(200, null, null, CommonService::getInstance()->sendCode((string)$phone, $type));
+        return $this->writeJson(200, null, null, CommonService::getInstance()->sendCode($phone, $type));
     }
 
     //上传用户地理位置
