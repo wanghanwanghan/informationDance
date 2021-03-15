@@ -49,17 +49,12 @@ class AliSms
     {
         $easySms = $this->createObj();
 
-        try {
-            $easySms->send($phone, [
-                'template' => 'SMS_212930320',
-                'data' => [
-                    'code' => $code
-                ],
-            ]);
-        } catch (\Throwable $e) {
-            CommonService::getInstance()->log4PHP($e->getMessage());
-            return false;
-        }
+        $easySms->send($phone, [
+            'template' => 'SMS_212930320',
+            'data' => [
+                'code' => $code
+            ],
+        ]);
 
         return true;
     }
@@ -68,17 +63,12 @@ class AliSms
     {
         $easySms = $this->createObj();
 
-        try {
-            $easySms->send($phone, [
-                'template' => 'SMS_212930322',
-                'data' => [
-                    'code' => $code
-                ],
-            ]);
-        } catch (\Throwable $e) {
-            CommonService::getInstance()->log4PHP($e->getMessage());
-            return false;
-        }
+        $easySms->send($phone, [
+            'template' => 'SMS_212930322',
+            'data' => [
+                'code' => $code
+            ],
+        ]);
 
         return true;
     }

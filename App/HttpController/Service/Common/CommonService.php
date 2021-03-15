@@ -214,7 +214,13 @@ class CommonService extends ServiceBase
         $code = control::randNum(6);
 
         $res = TaskService::getInstance()->create(function () use ($type, $phone, $code) {
-            return SmsService::getInstance()->$type($phone, $code);
+            if (strtolower($type) === 'login') {
+                return SmsService::getInstance()->login($phone, $code);
+            } elseif (strtolower($type) === 'reg') {
+                return SmsService::getInstance()->reg($phone, $code);
+            } else {
+                return false;
+            }
         }, 'sync');
 
         $redis = Redis::defer('redis');
