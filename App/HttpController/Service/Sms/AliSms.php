@@ -27,12 +27,12 @@ class AliSms
             ],
             // 可用的网关配置
             'gateways' => [
-                //'errorlog' => [
-                //    'file' => LOG_PATH . 'ali-sms.log',
-                //],
+                'errorlog' => [
+                    'file' => LOG_PATH . 'ali-sms.log',
+                ],
                 'aliyun' => [
-                    'access_key_id' => CreateConf::getInstance()->create('env.aliAk'),
-                    'access_key_secret' => CreateConf::getInstance()->create('env.aliSk'),
+                    'access_key_id' => CreateConf::getInstance()->getConf('env.aliAk'),
+                    'access_key_secret' => CreateConf::getInstance()->getConf('env.aliSk'),
                     'sign_name' => '每日信动',
                 ],
                 //...
