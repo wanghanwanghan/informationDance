@@ -40,9 +40,14 @@ class AliSms
         ];
     }
 
+    private function createObj()
+    {
+        return new EasySms($this->conf);
+    }
+
     function reg($phone, $code): bool
     {
-        $easySms = new EasySms($this->conf);
+        $easySms = $this->createObj();
 
         try {
             $easySms->send($phone, [
@@ -61,7 +66,7 @@ class AliSms
 
     function login($phone, $code): bool
     {
-        $easySms = new EasySms($this->conf);
+        $easySms = $this->createObj();
 
         try {
             $easySms->send($phone, [
