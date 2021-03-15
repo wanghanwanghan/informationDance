@@ -89,27 +89,23 @@ class CommonController extends CommonBase
         $lng = $this->request()->getRequestParam('lng') ?? '';//经度
         $lat = $this->request()->getRequestParam('lat') ?? '';//纬度
 
-        $lng = sprintf('%.8f',trim($lng));
-        $lat = sprintf('%.8f',trim($lat));
+        $lng = sprintf('%.8f', trim($lng));
+        $lat = sprintf('%.8f', trim($lat));
 
-        try
-        {
-            $info = LngLat::create()->where('target',$phone)->get();
+        try {
+            $info = LngLat::create()->where('target', $phone)->get();
 
-            if (empty($info))
-            {
-                LngLat::create()->data(['target'=>$phone,'lng'=>$lng,'lat'=>$lat])->save();
-            }else
-            {
-                $info->update(['lng'=>$lng,'lat'=>$lat]);
+            if (empty($info)) {
+                LngLat::create()->data(['target' => $phone, 'lng' => $lng, 'lat' => $lat])->save();
+            } else {
+                $info->update(['lng' => $lng, 'lat' => $lat]);
             }
 
-        }catch (\Throwable $e)
-        {
-            return $this->writeErr($e,__FUNCTION__);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
         }
 
-        return $this->writeJson(200,null,null,'上传成功');
+        return $this->writeJson(200, null, null, '上传成功');
     }
 
     //退钱到钱包
@@ -120,47 +116,44 @@ class CommonController extends CommonBase
         $moduleNum = $this->request()->getRequestParam('moduleNum') ?? '';
         $msg = '退款成功';
 
-        if (empty($phone) || !is_numeric($phone)) return $this->writeJson(201,null,null,'手机号错误');
-        if (empty($entName)) return $this->writeJson(201,null,null,'企业名称错误');
-        if (empty($moduleNum) || !is_numeric($moduleNum)) return $this->writeJson(201,null,null,'扣费模块错误');
+        if (empty($phone) || !is_numeric($phone)) return $this->writeJson(201, null, null, '手机号错误');
+        if (empty($entName)) return $this->writeJson(201, null, null, '企业名称错误');
+        if (empty($moduleNum) || !is_numeric($moduleNum)) return $this->writeJson(201, null, null, '扣费模块错误');
 
-        try
-        {
+        try {
             $info = Charge::create()
-                ->where('phone',$phone)
-                ->where('entName',$entName)
-                ->where('moduleId',$moduleNum)
-                ->where('created_at',time() - 30,'>')//首先要看这个人在30秒之前有没有真的消费并扣钱
-                ->where('price',0,'>')//是否有被扣费
+                ->where('phone', $phone)
+                ->where('entName', $entName)
+                ->where('moduleId', $moduleNum)
+                ->where('created_at', time() - 30, '>')//首先要看这个人在30秒之前有没有真的消费并扣钱
+                ->where('price', 0, '>')//是否有被扣费
                 ->get();
 
-            if (empty($info)) return $this->writeJson(201,null,null,'未找到订单');
+            if (empty($info)) return $this->writeJson(201, null, null, '未找到订单');
 
             $addPrice = $info->price;
 
             //修改订单金额
-            $info->update(['price'=>0]);
+            $info->update(['price' => 0]);
 
             //把扣的钱返回
-            $userWalletInfo = Wallet::create()->where('phone',$phone)->get();
+            $userWalletInfo = Wallet::create()->where('phone', $phone)->get();
 
             $userWalletInfo->money += $addPrice;
 
             $userWalletInfo->update();
 
-        }catch (\Throwable $e)
-        {
-            return $this->writeErr($e,__FUNCTION__);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
         }
 
-        switch ($moduleNum)
-        {
+        switch ($moduleNum) {
             case 14:
                 $msg = '因穿透股东中有政府部门或国资单位等特殊机构，故不予显示，退款成功';
                 break;
         }
 
-        return $this->writeJson(200,null,null,$msg);
+        return $this->writeJson(200, null, null, $msg);
     }
 
     //百度ocr
@@ -174,7 +167,7 @@ class CommonController extends CommonBase
             $res = $res['words_result'] :
             $res = null;
 
-        return $this->writeJson(200,null,$res,'扫描成功');
+        return $this->writeJson(200, null, $res, '扫描成功');
     }
 
     //合合ocr
@@ -188,7 +181,7 @@ class CommonController extends CommonBase
             $res = $res['result']['whole_text'] :
             $res = null;
 
-        return $this->writeJson(200,null,$res,'扫描成功');
+        return $this->writeJson(200, null, $res, '扫描成功');
     }
 
     //ocr识别
@@ -203,21 +196,19 @@ class CommonController extends CommonBase
 
         if (empty($reportNum)) return $this->writeJson(201, null, null, '报告编号不能是空');
         if (empty($filename)) return $this->writeJson(201, null, null, '未发现上传文件');
-        if (!in_array($type,['word','pdf'])) return $this->writeJson(201, null, null, 'type错误');
+        if (!in_array($type, ['word', 'pdf'])) return $this->writeJson(201, null, null, 'type错误');
 
         $filename = explode(',', $filename);
         $filename = array_filter($filename);
         $tmp = [];
-        foreach ($filename as $oneName)
-        {
-            $name = explode(DIRECTORY_SEPARATOR,$oneName);
+        foreach ($filename as $oneName) {
+            $name = explode(DIRECTORY_SEPARATOR, $oneName);
             $tmp[] = end($name);
         }
 
-        try
-        {
-            OcrQueue::create()->destroy(function (QueryBuilder $builder) use ($reportNum,$phone,$catalogueNum) {
-                $builder->where('reportNum',$reportNum)->where('phone',$phone)->where('catalogueNum',$catalogueNum);
+        try {
+            OcrQueue::create()->destroy(function (QueryBuilder $builder) use ($reportNum, $phone, $catalogueNum) {
+                $builder->where('reportNum', $reportNum)->where('phone', $phone)->where('catalogueNum', $catalogueNum);
             });
 
             $insert = [
@@ -226,24 +217,17 @@ class CommonController extends CommonBase
                 'catalogueNum' => $catalogueNum,
                 'catalogueName' => $catalogueName,
                 'type' => $type,
-                'filename' => implode(',',$tmp),
+                'filename' => implode(',', $tmp),
             ];
 
             OcrQueue::create()->data($insert)->save();
 
-        }catch (\Throwable $e)
-        {
-            return $this->writeErr($e,__FUNCTION__);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
         }
 
         return $this->writeJson(200, null, $insert, '成功');
     }
-
-
-
-
-
-
 
 
 }
