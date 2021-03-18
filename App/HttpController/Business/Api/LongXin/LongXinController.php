@@ -64,14 +64,14 @@ class LongXinController extends LongXinBase
         if (!empty($res['data'])) {
             $tmp = [];
             foreach ($res['data'] as $year => $val) {
-                $tmp[$year]['ASSGRO_yoy'] = $val[30];
-                $tmp[$year]['LIAGRO_yoy'] = $val[31];
-                $tmp[$year]['VENDINC_yoy'] = $val[32];
-                $tmp[$year]['MAIBUSINC_yoy'] = $val[33];
-                $tmp[$year]['PROGRO_yoy'] = $val[34];
-                $tmp[$year]['NETINC_yoy'] = $val[35];
-                $tmp[$year]['RATGRO_yoy'] = $val[36];
-                $tmp[$year]['TOTEQU_yoy'] = $val[37];
+                $tmp[$year]['ASSGRO_yoy'] = $val['ASSGRO_yoy'];
+                $tmp[$year]['LIAGRO_yoy'] = $val['LIAGRO_yoy'];
+                $tmp[$year]['VENDINC_yoy'] = $val['VENDINC_yoy'];
+                $tmp[$year]['MAIBUSINC_yoy'] = $val['MAIBUSINC_yoy'];
+                $tmp[$year]['PROGRO_yoy'] = $val['PROGRO_yoy'];
+                $tmp[$year]['NETINC_yoy'] = $val['NETINC_yoy'];
+                $tmp[$year]['RATGRO_yoy'] = $val['RATGRO_yoy'];
+                $tmp[$year]['TOTEQU_yoy'] = $val['TOTEQU_yoy'];
             }
             krsort($tmp);
             $res['data'] = $tmp;
