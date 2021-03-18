@@ -48,6 +48,8 @@ class ZhongWangController extends ZhongWangBase
                 break;
             case 'getTaxInvoiceUpgrade':
             case 'getEssential':
+            case 'getInvoiceMain':
+            case 'getInvoiceGoods':
                 $res['Result'] = empty($res['data']) ? null : $res['data'];
                 break;
             case 'getIncometaxMonthlyDeclaration':

@@ -71,6 +71,8 @@ class ZhongWangService extends ServiceBase
                 $res['Result'] = empty($res['data']) ? null : current($res['data']);
                 break;
             case 'getTaxInvoiceUpgrade':
+            case 'getInvoiceMain':
+            case 'getInvoiceGoods':
             case 'getEssential':
                 $res['Result'] = empty($res['data']) ? null : $res['data'];
                 break;
@@ -392,14 +394,9 @@ class ZhongWangService extends ServiceBase
             $encryptedData = $this->encrypt($json_param, $isTest);
             $base64_str = base64_encode($encryptedData);
             $body['param'] = $base64_str;
-
-            CommonService::getInstance()->log4PHP([$url, $body]);
             $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
-            CommonService::getInstance()->log4PHP($res);
             $res = base64_decode($res);
-            CommonService::getInstance()->log4PHP($res);
             $res = $this->decrypt($res, $isTest);
-            CommonService::getInstance()->log4PHP($res);
             return jsonDecode($res);
         } else {
             $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
