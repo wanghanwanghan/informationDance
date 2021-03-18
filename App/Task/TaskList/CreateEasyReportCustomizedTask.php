@@ -6961,16 +6961,11 @@ TEMP;
 
             if ($res['code'] !== 200) return '';
 
-            ksort($res['data']);
+            $tmp = $res['data'];
+            ksort($tmp);
+            $res['data'] = $tmp;
 
-            //30资产总额同比 ASSGRO_yoy
-            //31负债总额同比 LIAGRO_yoy
-            //32营业总收入同比 VENDINC_yoy
-            //33主营业务收入同比 MAIBUSINC_yoy
-            //34利润总额同比 PROGRO_yoy
-            //35净利润同比 NETINC_yoy
-            //36纳税总额同比 RATGRO_yoy
-            //37所有者权益同比 TOTEQU_yoy
+            CommonService::getInstance()->log4PHP($res);
 
             if (!empty($res['data'])) {
                 $tmp = $legend = [];
