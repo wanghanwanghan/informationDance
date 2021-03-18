@@ -6961,6 +6961,8 @@ TEMP;
 
             if ($res['code'] !== 200) return '';
 
+            CommonService::getInstance()->log4PHP($res);
+
             $tmp = $res['data'];
             ksort($tmp);
             $res['data'] = $tmp;
