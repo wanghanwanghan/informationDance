@@ -10,6 +10,7 @@ use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaHai\FaHaiService;
+use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\NewGraph\NewGraphService;
 use App\HttpController\Service\QianQi\QianQiService;
 use App\HttpController\Service\QiChaCha\QiChaChaService;
@@ -6946,33 +6947,46 @@ TEMP;
             return $res;
         });
 
-        //乾启 财务
+        //龙信 财务
         array_search('FinanceData', $catalog) === false ?: $csp->add('FinanceData', function () {
 
-            $postData = ['entName' => $this->entName];
+            $postData = [
+                'entName' => $this->entName,
+                'code' => '',
+                'beginYear' => date('Y') - 1,
+                'dataCount' => 5,//取最近几年的
+            ];
 
-            $res = (new QianQiService())->setCheckRespFlag(true)->getThreeYearsData($postData);
+            $res = (new LongXinService())->setCheckRespFlag(true)->getFinanceData($postData,false);
 
-            if ($res['code'] === 200 && !empty($res['result'])) {
-                $res = (new QianQiService())->toPercent($res['result']);
-            } else {
-                $res = null;
-            }
+            if ($res['code'] !== 200) return '';
 
-            if ($res === null) return $res;
+            ksort($res['data']);
 
-            $count1 = 0;
+            //30资产总额同比 ASSGRO_yoy
+            //31负债总额同比 LIAGRO_yoy
+            //32营业总收入同比 VENDINC_yoy
+            //33主营业务收入同比 MAIBUSINC_yoy
+            //34利润总额同比 PROGRO_yoy
+            //35净利润同比 NETINC_yoy
+            //36纳税总额同比 RATGRO_yoy
+            //37所有者权益同比 TOTEQU_yoy
 
-            ksort($res);
-
-            foreach ($res as $year => $dataArr) {
-                $legend[] = $year;
-                array_pop($dataArr);
-                $tmp = array_map(function ($val) {
-                    return is_numeric($val) ? (int)round($val) : null;//四舍五入
-                }, array_values($dataArr));
-                $data[] = $tmp;
-                !empty(array_filter($tmp)) ?: $count1++;
+            if (!empty($res['data'])) {
+                $tmp = [];
+                foreach ($res['data'] as $year => $val) {
+                    $legend[] = $year;
+                    $tmp[$year]['ASSGRO_yoy'] = round($val['ASSGRO_yoy'],3);
+                    $tmp[$year]['LIAGRO_yoy'] = round($val['LIAGRO_yoy'],3);
+                    $tmp[$year]['VENDINC_yoy'] = round($val['VENDINC_yoy'],3);
+                    $tmp[$year]['MAIBUSINC_yoy'] = round($val['MAIBUSINC_yoy'],3);
+                    $tmp[$year]['PROGRO_yoy'] = round($val['PROGRO_yoy'],3);
+                    $tmp[$year]['NETINC_yoy'] = round($val['NETINC_yoy'],3);
+                    $tmp[$year]['RATGRO_yoy'] = round($val['RATGRO_yoy'],3);
+                    $tmp[$year]['TOTEQU_yoy'] = round($val['TOTEQU_yoy'],3);
+                }
+                krsort($tmp);
+                $res['data'] = $tmp;
             }
 
             $labels = ['资产总额', '负债总额', '营业总收入', '主营业务收入', '利润总额', '净利润', '纳税总额', '所有者权益'];
@@ -6980,7 +6994,7 @@ TEMP;
             $extension = [
                 'width' => 1200,
                 'height' => 700,
-                'title' => $count1 == 2 ? '缺少上一年财务数据，财务图表未生成' : $this->entName . ' - 财务非授权 - 同比',
+                'title' => $this->entName . ' - 财务非授权 - 同比',
                 'xTitle' => '此图为概况信息',
                 //'yTitle'=>$this->entName,
                 'titleSize' => 14,
@@ -6988,8 +7002,8 @@ TEMP;
             ];
 
             $tmp = [];
-            $tmp['pic'] = CommonService::getInstance()->createBarPic($data, $labels, $extension);
-            $tmp['data'] = $data;
+            $tmp['pic'] = CommonService::getInstance()->createBarPic($res['data'], $labels, $extension);
+            $tmp['data'] = $res['data'];
 
             return $tmp;
         });
