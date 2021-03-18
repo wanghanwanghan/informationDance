@@ -6973,19 +6973,20 @@ TEMP;
             //37所有者权益同比 TOTEQU_yoy
 
             if (!empty($res['data'])) {
-                $tmp = [];
+                $tmp = $legend = [];
                 foreach ($res['data'] as $year => $val) {
                     $legend[] = $year;
-                    $tmp[$year]['ASSGRO_yoy'] = round($val['ASSGRO_yoy'],3);
-                    $tmp[$year]['LIAGRO_yoy'] = round($val['LIAGRO_yoy'],3);
-                    $tmp[$year]['VENDINC_yoy'] = round($val['VENDINC_yoy'],3);
-                    $tmp[$year]['MAIBUSINC_yoy'] = round($val['MAIBUSINC_yoy'],3);
-                    $tmp[$year]['PROGRO_yoy'] = round($val['PROGRO_yoy'],3);
-                    $tmp[$year]['NETINC_yoy'] = round($val['NETINC_yoy'],3);
-                    $tmp[$year]['RATGRO_yoy'] = round($val['RATGRO_yoy'],3);
-                    $tmp[$year]['TOTEQU_yoy'] = round($val['TOTEQU_yoy'],3);
+                    $tmp[] = [
+                        round($val['ASSGRO_yoy'],3),
+                        round($val['LIAGRO_yoy'],3),
+                        round($val['VENDINC_yoy'],3),
+                        round($val['MAIBUSINC_yoy'],3),
+                        round($val['PROGRO_yoy'],3),
+                        round($val['NETINC_yoy'],3),
+                        round($val['RATGRO_yoy'],3),
+                        round($val['TOTEQU_yoy'],3),
+                    ];
                 }
-                krsort($tmp);
                 $res['data'] = $tmp;
             }
 

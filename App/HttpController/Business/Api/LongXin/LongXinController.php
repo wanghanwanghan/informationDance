@@ -73,7 +73,6 @@ class LongXinController extends LongXinBase
                 $tmp[$year]['RATGRO_yoy'] = $val['RATGRO_yoy'];
                 $tmp[$year]['TOTEQU_yoy'] = $val['TOTEQU_yoy'];
             }
-            krsort($tmp);
             $res['data'] = $tmp;
         }
 
