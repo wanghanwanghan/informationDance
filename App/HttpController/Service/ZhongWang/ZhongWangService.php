@@ -211,7 +211,7 @@ class ZhongWangService extends ServiceBase
         $body['param'] = $param;
         $body['taxNo'] = $this->taxNo;
 
-        $api_path = 'http://211.157.177.35:50001/api/invoice/' . __FUNCTION__;
+        $api_path = 'invoice/' . __FUNCTION__;
 
         $res = $this->readyToSend($api_path, $body, true);
 
@@ -230,7 +230,7 @@ class ZhongWangService extends ServiceBase
         $body['param'] = $param;
         $body['taxNo'] = $this->taxNo;
 
-        $api_path = 'http://211.157.177.35:50001/api/invoice/' . __FUNCTION__;
+        $api_path = 'invoice/' . __FUNCTION__;
 
         $res = $this->readyToSend($api_path, $body, true);
 
