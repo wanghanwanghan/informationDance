@@ -6977,14 +6977,14 @@ TEMP;
                 foreach ($res['data'] as $year => $val) {
                     $legend[] = $year;
                     $tmp[] = [
-                        round($val['ASSGRO_yoy'],3),
-                        round($val['LIAGRO_yoy'],3),
-                        round($val['VENDINC_yoy'],3),
-                        round($val['MAIBUSINC_yoy'],3),
-                        round($val['PROGRO_yoy'],3),
-                        round($val['NETINC_yoy'],3),
-                        round($val['RATGRO_yoy'],3),
-                        round($val['TOTEQU_yoy'],3),
+                        round($val['ASSGRO_yoy'] * 100,3),
+                        round($val['LIAGRO_yoy'] * 100,3),
+                        round($val['VENDINC_yoy'] * 100,3),
+                        round($val['MAIBUSINC_yoy'] * 100,3),
+                        round($val['PROGRO_yoy'] * 100,3),
+                        round($val['NETINC_yoy'] * 100,3),
+                        round($val['RATGRO_yoy'] * 100,3),
+                        round($val['TOTEQU_yoy'] * 100,3),
                     ];
                 }
                 $res['data'] = $tmp;
