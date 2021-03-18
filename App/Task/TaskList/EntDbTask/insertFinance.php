@@ -44,6 +44,7 @@ class insertFinance extends TaskBase implements TaskInterface
             foreach ($this->finance as $rd) {
                 if (empty($rd)) continue;
                 $check = EntDbFinance::create()->where(['cid' => $cid, 'ANCHEYEAR' => $rd['ANCHEYEAR']])->get();
+                //这里要改成更新每个字段
                 if (!empty($check)) continue;
                 EntDbFinance::create()->data([
                     'cid' => $cid,
