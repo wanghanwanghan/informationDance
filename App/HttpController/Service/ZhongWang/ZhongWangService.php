@@ -33,13 +33,13 @@ class ZhongWangService extends ServiceBase
     private function encrypt($str, $isTest = false)
     {
         $isTest === true ? $key = $this->keyTest : $key = $this->key;
-        return openssl_encrypt($str, 'aes-128-ecb', $this->key, OPENSSL_RAW_DATA);
+        return openssl_encrypt($str, 'aes-128-ecb', $key, OPENSSL_RAW_DATA);
     }
 
     private function decrypt($str, $isTest = false)
     {
         $isTest === true ? $key = $this->keyTest : $key = $this->key;
-        return openssl_decrypt($str, 'aes-128-ecb', $this->key, OPENSSL_RAW_DATA);
+        return openssl_decrypt($str, 'aes-128-ecb', $key, OPENSSL_RAW_DATA);
     }
 
     private function checkResp($res, $type)
