@@ -52,6 +52,31 @@ class LongXinController extends LongXinBase
 
         $res = (new LongXinService())->getFinanceData($postData, false);
 
+        //30资产总额同比 ASSGRO_yoy
+        //31负债总额同比 LIAGRO_yoy
+        //32营业总收入同比 VENDINC_yoy
+        //33主营业务收入同比 MAIBUSINC_yoy
+        //34利润总额同比 PROGRO_yoy
+        //35净利润同比 NETINC_yoy
+        //36纳税总额同比 RATGRO_yoy
+        //37所有者权益同比 TOTEQU_yoy
+
+        if (!empty($res['data'])) {
+            $tmp = [];
+            foreach ($res['data'] as $year => $val) {
+                $tmp[$year]['ASSGRO_yoy'] = $val[30];
+                $tmp[$year]['LIAGRO_yoy'] = $val[31];
+                $tmp[$year]['VENDINC_yoy'] = $val[32];
+                $tmp[$year]['MAIBUSINC_yoy'] = $val[33];
+                $tmp[$year]['PROGRO_yoy'] = $val[34];
+                $tmp[$year]['NETINC_yoy'] = $val[35];
+                $tmp[$year]['RATGRO_yoy'] = $val[36];
+                $tmp[$year]['TOTEQU_yoy'] = $val[37];
+            }
+            krsort($tmp);
+            $res['data'] = $tmp;
+        }
+
         return $this->checkResponse($res);
     }
 
