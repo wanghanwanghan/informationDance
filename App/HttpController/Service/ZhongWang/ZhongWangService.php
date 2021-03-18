@@ -206,7 +206,7 @@ class ZhongWangService extends ServiceBase
         $param['dataType'] = $dataType - 0;
         $param['startDate'] = $startDate;
         $param['endDate'] = $endDate;
-        $param['page'] = $page;
+        $param['page'] = $page - 0;
 
         $body['param'] = $param;
         $body['taxNo'] = $this->taxNo;
@@ -225,7 +225,7 @@ class ZhongWangService extends ServiceBase
         $param['dataType'] = $dataType - 0;
         $param['startDate'] = $startDate;
         $param['endDate'] = $endDate;
-        $param['page'] = $page;
+        $param['page'] = $page - 0;
 
         $body['param'] = $param;
         $body['taxNo'] = $this->taxNo;
