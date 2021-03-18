@@ -215,8 +215,6 @@ class ZhongWangService extends ServiceBase
 
         $res = $this->readyToSend($api_path, $body, true);
 
-        CommonService::getInstance()->log4PHP($res);
-
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
@@ -235,8 +233,6 @@ class ZhongWangService extends ServiceBase
         $api_path = 'http://211.157.177.35:50001/api/invoice/' . __FUNCTION__;
 
         $res = $this->readyToSend($api_path, $body, true);
-
-        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
@@ -398,8 +394,11 @@ class ZhongWangService extends ServiceBase
             $body['param'] = $base64_str;
 
             $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
+            CommonService::getInstance()->log4PHP($res);
             $res = base64_decode($res);
+            CommonService::getInstance()->log4PHP($res);
             $res = $this->decrypt($res, $isTest);
+            CommonService::getInstance()->log4PHP($res);
             return jsonDecode($res);
         } else {
             $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
