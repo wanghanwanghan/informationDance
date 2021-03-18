@@ -6961,17 +6961,12 @@ TEMP;
 
             if ($res['code'] !== 200) return '';
 
+            ksort($res['result']);
             CommonService::getInstance()->log4PHP($res);
 
-            $tmp = $res['data'];
-            ksort($tmp);
-            $res['data'] = $tmp;
-
-            CommonService::getInstance()->log4PHP($res);
-
-            if (!empty($res['data'])) {
+            if (!empty($res['result'])) {
                 $tmp = $legend = [];
-                foreach ($res['data'] as $year => $val) {
+                foreach ($res['result'] as $year => $val) {
                     $legend[] = $year;
                     $tmp[] = [
                         round($val['ASSGRO_yoy'] * 100,3),
@@ -6984,7 +6979,7 @@ TEMP;
                         round($val['TOTEQU_yoy'] * 100,3),
                     ];
                 }
-                $res['data'] = $tmp;
+                $res['result'] = $tmp;
             }
 
             $labels = ['资产总额', '负债总额', '营业总收入', '主营业务收入', '利润总额', '净利润', '纳税总额', '所有者权益'];
@@ -7001,7 +6996,7 @@ TEMP;
 
             $tmp = [];
             $tmp['pic'] = CommonService::getInstance()->createBarPic($res['data'], $labels, $extension);
-            $tmp['data'] = $res['data'];
+            $tmp['data'] = $res['result'];
 
             return $tmp;
         });
