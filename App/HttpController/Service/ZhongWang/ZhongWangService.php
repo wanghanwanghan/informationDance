@@ -199,6 +199,45 @@ class ZhongWangService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
+    //进销项发票信息
+    function getInvoiceMain($code, $dataType, $startDate, $endDate, $page)
+    {
+        $param['taxNumber'] = $code;
+        $param['dataType'] = (int)$dataType;
+        $param['startDate'] = $startDate;
+        $param['endDate'] = $endDate;
+        $param['page'] = $page;
+
+        $body['param'] = $param;
+        $body['taxNo'] = $this->taxNo;
+
+        $api_path = 'http://211.157.177.35:50001/api/invoice/' . __FUNCTION__;
+
+        $res = $this->readyToSend($api_path, $body, true);
+
+        return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
+    }
+
+    //进销项发票商品明细
+    function getInvoiceGoods($code, $dataType, $startDate, $endDate, $page)
+    {
+        $param['taxNumber'] = $code;
+        $param['dataType'] = (int)$dataType;
+        $param['startDate'] = $startDate;
+        $param['endDate'] = $endDate;
+        $param['page'] = $page;
+
+        $body['param'] = $param;
+        $body['taxNo'] = $this->taxNo;
+
+        $api_path = 'http://211.157.177.35:50001/api/invoice/' . __FUNCTION__;
+
+        $res = $this->readyToSend($api_path, $body, true);
+
+        return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
+    }
+
+
     //企业税务基本信息查询
     function getEssential($code)
     {

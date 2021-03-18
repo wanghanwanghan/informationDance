@@ -151,6 +151,44 @@ class ZhongWangController extends ZhongWangBase
         return $this->checkResponse($res, __FUNCTION__);
     }
 
+    //进销项发票信息
+    function getInvoiceMain()
+    {
+        $code = $this->request()->getRequestParam('code') ?? '';
+        $dataType = $this->request()->getRequestParam('dataType') ?? '';
+        $startDate = $this->request()->getRequestParam('startDate') ?? '';//date('Y-m-d')
+        $endDate = $this->request()->getRequestParam('endDate') ?? '';//date('Y-m-d')
+        $page = $this->request()->getRequestParam('page') ?? '';
+
+        $res = (new ZhongWangService())->getInvoiceMain($code, $dataType, $startDate, $endDate, $page);
+
+        return $this->checkResponse($res, __FUNCTION__);
+    }
+
+    //进销项发票商品明细
+    function getInvoiceGoods()
+    {
+        $code = $this->request()->getRequestParam('code') ?? '';
+        $dataType = $this->request()->getRequestParam('dataType') ?? '';
+        $startDate = $this->request()->getRequestParam('startDate') ?? '';//date('Y-m-d')
+        $endDate = $this->request()->getRequestParam('endDate') ?? '';//date('Y-m-d')
+        $page = $this->request()->getRequestParam('page') ?? '';
+
+        $res = (new ZhongWangService())->getInvoiceGoods($code, $dataType, $startDate, $endDate, $page);
+
+        return $this->checkResponse($res, __FUNCTION__);
+    }
+
+
+
+
+
+
+
+
+
+
+
     //企业税务基本信息查询
     function getEssential()
     {
