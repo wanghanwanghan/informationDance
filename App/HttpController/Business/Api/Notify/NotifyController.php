@@ -238,6 +238,7 @@ class NotifyController extends BusinessBase
         $taxNo = $this->getRequestData('taxNumber', '');
         $state = $this->getRequestData('state', '');
         $message = $this->getRequestData('massge', '');
+        $orderId = $this->getRequestData('orderId', '');
 
         $data = [
             __FUNCTION__,
@@ -260,6 +261,7 @@ class NotifyController extends BusinessBase
         $state = $this->getRequestData('state', '');
         $type = $this->getRequestData('type', '');
         $message = $this->getRequestData('massge', '');
+        $orderId = $this->getRequestData('orderId', '');
 
         $data = [
             __FUNCTION__,

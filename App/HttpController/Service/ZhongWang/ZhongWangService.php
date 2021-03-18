@@ -239,7 +239,6 @@ class ZhongWangService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
-
     //企业税务基本信息查询
     function getEssential($code)
     {

@@ -117,6 +117,7 @@ class ZhongWangController extends ZhongWangBase
         $entName = $this->request()->getRequestParam('entName') ?? '';
         $code = $this->request()->getRequestParam('code') ?? '';
         $callback = $this->request()->getRequestParam('callback') ?? 'https://www.baidu.com/';
+        $orderId = $this->request()->getRequestParam('orderId') ?? '';
 
         $res = (new ZhongWangService())->getAuthentication($entName, $callback);
 
@@ -192,7 +193,6 @@ class ZhongWangController extends ZhongWangBase
 
         return $this->checkResponse($res, __FUNCTION__);
     }
-
 
     //企业税务基本信息查询
     function getEssential()
