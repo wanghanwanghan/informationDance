@@ -160,6 +160,12 @@ class ZhongWangController extends ZhongWangBase
         $endDate = $this->request()->getRequestParam('endDate') ?? '';//date('Y-m-d')
         $page = $this->request()->getRequestParam('page') ?? '';
 
+        if (empty($code) || empty($startDate) || empty($endDate))
+            return $this->writeJson(201, null, null, '参数不能是空');
+
+        if (!is_numeric($dataType) || !is_numeric($page))
+            return $this->writeJson(201, null, null, '参数必须是数字');
+
         $res = (new ZhongWangService())->getInvoiceMain($code, $dataType, $startDate, $endDate, $page);
 
         return $this->checkResponse($res, __FUNCTION__);
@@ -174,19 +180,16 @@ class ZhongWangController extends ZhongWangBase
         $endDate = $this->request()->getRequestParam('endDate') ?? '';//date('Y-m-d')
         $page = $this->request()->getRequestParam('page') ?? '';
 
+        if (empty($code) || empty($startDate) || empty($endDate))
+            return $this->writeJson(201, null, null, '参数不能是空');
+
+        if (!is_numeric($dataType) || !is_numeric($page))
+            return $this->writeJson(201, null, null, '参数必须是数字');
+
         $res = (new ZhongWangService())->getInvoiceGoods($code, $dataType, $startDate, $endDate, $page);
 
         return $this->checkResponse($res, __FUNCTION__);
     }
-
-
-
-
-
-
-
-
-
 
 
     //企业税务基本信息查询
