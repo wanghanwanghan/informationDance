@@ -6962,7 +6962,6 @@ TEMP;
             if ($res['code'] !== 200) return '';
 
             ksort($res['result']);
-            CommonService::getInstance()->log4PHP($res);
 
             if (!empty($res['result'])) {
                 $tmp = $legend = [];
@@ -6979,6 +6978,7 @@ TEMP;
                         round($val['TOTEQU_yoy'] * 100,3),
                     ];
                 }
+                $res['data'] = $res['result'];
                 $res['result'] = $tmp;
             }
 
@@ -6996,7 +6996,7 @@ TEMP;
 
             $tmp = [];
             $tmp['pic'] = CommonService::getInstance()->createBarPic($res['result'], $labels, $extension);
-            $tmp['data'] = $res['result'];
+            $tmp['data'] = $res['data'];
 
             return $tmp;
         });

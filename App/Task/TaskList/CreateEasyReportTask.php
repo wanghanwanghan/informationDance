@@ -8,6 +8,7 @@ use App\HttpController\Models\Api\ReportInfo;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\FaHai\FaHaiService;
+use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Ocr\OcrService;
 use App\HttpController\Service\OneSaid\OneSaidService;
 use App\HttpController\Service\QianQi\QianQiService;
@@ -141,7 +142,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         if ($zl===0 && $rz<2) $this->fz_detail[] = '企业需进一步增强创新研发能力';
 
-        //乾启 财务
+        //龙信 财务
         if (empty($data['FinanceData'])) $this->fz_detail[] = '企业经营能力与核心竞争力方面需进一步提升';
         if (!empty($data['FinanceData']) && mt_rand(0,100) > 80) $this->fx_detail[] = '企业需进一步加强在资产负债方面的管控意识';
 
@@ -485,13 +486,15 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         if (empty($data)) return 0;
 
+        $data = array_values($data);
+
         if (!isset($data[0])) return 0;
 
         switch ($type) {
             case 'fz':
 
                 //营业收入
-                $vendInc = $data[0][2];
+                $vendInc = $data[0]['VENDINC'];
 
                 if ($vendInc > 20) $vendIncNum = 110;
                 if ($vendInc > 10 && $vendInc <= 20) $vendIncNum = 100;
@@ -502,7 +505,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 if ($vendInc <= -21) $vendIncNum = 50;
 
                 //净利润
-                $netInc = $data[0][5];
+                $netInc = $data[0]['NETINC'];
 
                 if ($netInc > 20) $netIncNum = 110;
                 if ($netInc > 10 && $netInc <= 20) $netIncNum = 100;
@@ -513,7 +516,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 if ($netInc <= -21) $netIncNum = 50;
 
                 //资产总额
-                $assGro = $data[0][0];
+                $assGro = $data[0]['ASSGRO'];
 
                 if ($assGro > 20) $assGroNum = 110;
                 if ($assGro > 10 && $assGro <= 20) $assGroNum = 100;
@@ -525,8 +528,6 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
                 return ($vendIncNum + $netIncNum + $assGroNum) / 3;
 
-                break;
-
             case 'fx':
 
                 //负债总额/资产总额=资产负债率
@@ -534,9 +535,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 if (count($data) < 2) return 0;
 
                 //今年负债总额
-                $liaGro1 = $data[0][1];
+                $liaGro1 = $data[0]['LIAGRO'];
                 //今年资产总额
-                $assGro1 = $data[0][0];
+                $assGro1 = $data[0]['ASSGRO'];
 
                 //今年资产负债率
                 if ($assGro1 == 0) {
@@ -546,9 +547,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 }
 
                 //去年负债总额
-                $liaGro2 = $data[1][1];
+                $liaGro2 = $data[1]['LIAGRO'];
                 //去年资产总额
-                $assGro2 = $data[1][0];
+                $assGro2 = $data[1]['ASSGRO'];
 
                 //今年资产负债率
                 if ($assGro2 == 0) {
@@ -3020,33 +3021,39 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
-        //乾启 财务
+        //龙信 财务
         $csp->add('FinanceData', function () {
 
-            $postData = ['entName' => $this->entName];
+            $postData = [
+                'entName' => $this->entName,
+                'code' => '',
+                'beginYear' => date('Y') - 1,
+                'dataCount' => 5,//取最近几年的
+            ];
 
-            $res = (new QianQiService())->setCheckRespFlag(true)->getThreeYearsData($postData);
+            $res = (new LongXinService())->setCheckRespFlag(true)->getFinanceData($postData,false);
 
-            if ($res['code'] === 200 && !empty($res['result'])) {
-                $res = (new QianQiService())->toPercent($res['result']);
-            } else {
-                $res = null;
-            }
+            if ($res['code'] !== 200) return '';
 
-            if ($res === null) return $res;
+            ksort($res['result']);
 
-            $count1=0;
-
-            ksort($res);
-
-            foreach ($res as $year => $dataArr) {
-                $legend[] = $year;
-                array_pop($dataArr);
-                $tmp = array_map(function ($val) {
-                    return is_numeric($val) ? (int)round($val) : null;//四舍五入
-                }, array_values($dataArr));
-                $data[] = $tmp;
-                !empty(array_filter($tmp)) ?: $count1++;
+            if (!empty($res['result'])) {
+                $tmp = $legend = [];
+                foreach ($res['result'] as $year => $val) {
+                    $legend[] = $year;
+                    $tmp[] = [
+                        round($val['ASSGRO_yoy'] * 100,3),
+                        round($val['LIAGRO_yoy'] * 100,3),
+                        round($val['VENDINC_yoy'] * 100,3),
+                        round($val['MAIBUSINC_yoy'] * 100,3),
+                        round($val['PROGRO_yoy'] * 100,3),
+                        round($val['NETINC_yoy'] * 100,3),
+                        round($val['RATGRO_yoy'] * 100,3),
+                        round($val['TOTEQU_yoy'] * 100,3),
+                    ];
+                }
+                $res['data'] = $res['result'];
+                $res['result'] = $tmp;
             }
 
             $labels = ['资产总额', '负债总额', '营业总收入', '主营业务收入', '利润总额', '净利润', '纳税总额', '所有者权益'];
@@ -3054,7 +3061,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $extension = [
                 'width' => 1200,
                 'height' => 700,
-                'title' => $count1 == 2 ? '缺少上一年财务数据，财务图表未生成' : $this->entName . ' - 财务非授权 - 同比',
+                'title' => $this->entName . ' - 财务非授权 - 同比',
                 'xTitle' => '此图为概况信息',
                 //'yTitle'=>$this->entName,
                 'titleSize' => 14,
@@ -3062,8 +3069,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             ];
 
             $tmp = [];
-            $tmp['pic'] = CommonService::getInstance()->createBarPic($data, $labels, $extension);
-            $tmp['data'] = $data;
+            $tmp['pic'] = CommonService::getInstance()->createBarPic($res['result'], $labels, $extension);
+            $tmp['data'] = $res['data'];
 
             return $tmp;
         });
