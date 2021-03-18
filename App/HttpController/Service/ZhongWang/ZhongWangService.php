@@ -203,7 +203,7 @@ class ZhongWangService extends ServiceBase
     function getInvoiceMain($code, $dataType, $startDate, $endDate, $page)
     {
         $param['taxNumber'] = $code;
-        $param['dataType'] = (int)$dataType;
+        $param['dataType'] = $dataType - 0;
         $param['startDate'] = $startDate;
         $param['endDate'] = $endDate;
         $param['page'] = $page;
@@ -224,7 +224,7 @@ class ZhongWangService extends ServiceBase
     function getInvoiceGoods($code, $dataType, $startDate, $endDate, $page)
     {
         $param['taxNumber'] = $code;
-        $param['dataType'] = (int)$dataType;
+        $param['dataType'] = $dataType - 0;
         $param['startDate'] = $startDate;
         $param['endDate'] = $endDate;
         $param['page'] = $page;
