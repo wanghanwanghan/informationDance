@@ -6995,7 +6995,7 @@ TEMP;
             ];
 
             $tmp = [];
-            $tmp['pic'] = CommonService::getInstance()->createBarPic($res['data'], $labels, $extension);
+            $tmp['pic'] = CommonService::getInstance()->createBarPic($res['result'], $labels, $extension);
             $tmp['data'] = $res['result'];
 
             return $tmp;
