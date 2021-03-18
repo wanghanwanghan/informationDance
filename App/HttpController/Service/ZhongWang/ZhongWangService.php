@@ -215,7 +215,7 @@ class ZhongWangService extends ServiceBase
 
         $api_path = 'invoice/' . __FUNCTION__;
 
-        $res = $this->readyToSend($api_path, $body, true);
+        $res = $this->readyToSend($api_path, $body);
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
@@ -234,7 +234,7 @@ class ZhongWangService extends ServiceBase
 
         $api_path = 'invoice/' . __FUNCTION__;
 
-        $res = $this->readyToSend($api_path, $body, true);
+        $res = $this->readyToSend($api_path, $body);
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
