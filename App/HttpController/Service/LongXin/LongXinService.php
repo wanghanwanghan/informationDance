@@ -264,7 +264,7 @@ class LongXinService extends ServiceBase
     }
 
     //近n年的财务数据
-    function getFinanceData($postData)
+    function getFinanceData($postData, $toRange = true)
     {
         //$check = $this->alreadyInserted($postData);
 
@@ -322,15 +322,17 @@ class LongXinService extends ServiceBase
         }
 
         //数字落区间
-        foreach ($readyReturn as $year => $arr) {
-            if (empty($arr)) continue;
-            foreach ($arr as $field => $val) {
-                if (in_array($field, $this->rangeArr[0]) && is_numeric($val)) {
-                    $readyReturn[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArr[1]) - 1, $this->rangeArr[1]);
-                } elseif (in_array($field, $this->rangeArrRatio[0]) && is_numeric($val)) {
-                    $readyReturn[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArrRatio[1]) - 1, $this->rangeArrRatio[1]);
-                } else {
-                    $readyReturn[$year][$field] = $val;
+        if ($toRange) {
+            foreach ($readyReturn as $year => $arr) {
+                if (empty($arr)) continue;
+                foreach ($arr as $field => $val) {
+                    if (in_array($field, $this->rangeArr[0]) && is_numeric($val)) {
+                        $readyReturn[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArr[1]) - 1, $this->rangeArr[1]);
+                    } elseif (in_array($field, $this->rangeArrRatio[0]) && is_numeric($val)) {
+                        $readyReturn[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArrRatio[1]) - 1, $this->rangeArrRatio[1]);
+                    } else {
+                        $readyReturn[$year][$field] = $val;
+                    }
                 }
             }
         }

@@ -50,7 +50,7 @@ class LongXinController extends LongXinBase
             'dataCount' => $dataCount,//取最近几年的
         ];
 
-        $res = (new LongXinService())->getFinanceData($postData);
+        $res = (new LongXinService())->getFinanceData($postData, false);
 
         return $this->checkResponse($res);
     }
@@ -75,11 +75,6 @@ class LongXinController extends LongXinBase
 
         return $this->checkResponse($res);
     }
-
-
-
-
-
 
 
 }
