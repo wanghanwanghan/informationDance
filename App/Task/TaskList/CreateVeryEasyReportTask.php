@@ -1152,14 +1152,14 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
                 foreach ($res['result'] as $year => $val) {
                     $legend[] = $year;
                     $tmp[] = [
-                        round($val['ASSGRO_yoy'] * 100,3),
-                        round($val['LIAGRO_yoy'] * 100,3),
-                        round($val['VENDINC_yoy'] * 100,3),
-                        round($val['MAIBUSINC_yoy'] * 100,3),
-                        round($val['PROGRO_yoy'] * 100,3),
-                        round($val['NETINC_yoy'] * 100,3),
-                        round($val['RATGRO_yoy'] * 100,3),
-                        round($val['TOTEQU_yoy'] * 100,3),
+                        sRound($val['ASSGRO_yoy'] * 100),
+                        sRound($val['LIAGRO_yoy'] * 100),
+                        sRound($val['VENDINC_yoy'] * 100),
+                        sRound($val['MAIBUSINC_yoy'] * 100),
+                        sRound($val['PROGRO_yoy'] * 100),
+                        sRound($val['NETINC_yoy'] * 100),
+                        sRound($val['RATGRO_yoy'] * 100),
+                        sRound($val['TOTEQU_yoy'] * 100),
                     ];
                 }
                 $res['data'] = $res['result'];

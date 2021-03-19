@@ -11,6 +11,7 @@ CommandContainer::getInstance()->set(new TestCommand());
 
 //******************注册常用全局函数******************
 
+//加
 function jsonEncode($target, $urlEncode = true)
 {
     return $urlEncode === false ?
@@ -18,11 +19,13 @@ function jsonEncode($target, $urlEncode = true)
         json_encode($target);
 }
 
+//解
 function jsonDecode($target, $type = true)
 {
     return json_decode($target, $type);
 }
 
+//对象转数组
 function obj2Arr($obj)
 {
     return json_decode(json_encode($obj), true);
@@ -81,6 +84,27 @@ function formatPercent($str)
 
     return $str;
 }
+
+function sRound($num, $m = 10)
+{
+    $num = round(trim($num));
+    $moto = current(explode('.', $num));
+    $saki = $moto / $m;
+
+    if ($saki <= 0) {
+        $saki = round($saki);
+        $saki = $saki * $m;
+    } else {
+        $saki = $moto;
+    }
+
+    return round($saki);
+}
+
+
+
+
+
 
 
 
