@@ -1486,6 +1486,51 @@ class RunSupervisor extends AbstractCronTask
                 }
             }
         }
+
+        //新闻舆情 消极=================================================================
+        $postData = [
+            'searchKey' => $entName,
+            'emotionType' => 1,//消极
+            'pageIndex' => 1,
+            'pageSize' => 10,
+        ];
+
+        $res = (new QiChaChaService())->setCheckRespFlag(true)
+            ->get($this->qccUrl.'CompanyNews/SearchNews',$postData);
+
+        if ($res['code'] == 200 && !empty($res['result']))
+        {
+            foreach ($res['result'] as $one)
+            {
+                $id=md5(jsonEncode($one));
+
+                $check=SupervisorEntNameInfo::create()->where('keyNo',$id)->get();
+
+                if ($check) continue;
+
+                strlen($one['PublishTime']) > 9 ? $time=$one['PublishTime'] : $time='';
+
+                $content="<p>标题: {$one['Title']}</p>";
+                $content.="<p>新闻地址: {$one['Url']}</p>";
+                $content.="<p>新闻来源: {$one['Source']}</p>";
+                $content.="<p>发布时间: {$one['PublishTime']}</p>";
+                $content.="<p>新闻内容: {$one['Content']}</p>";
+
+                SupervisorEntNameInfo::create()->data([
+                    'entName'=>$entName,
+                    'type'=>4,
+                    'typeDetail'=>7,
+                    'timeRange'=>Carbon::parse($time)->timestamp,
+                    'level'=>3,
+                    'desc'=>'新闻舆情',
+                    'content'=>$content,
+                    'detailUrl'=>'',
+                    'keyNo'=>$one['Id'],
+                ])->save();
+
+                $this->addEntName($entName,'jy');
+            }
+        }
     }
 
     //发送短信通知

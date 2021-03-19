@@ -847,6 +847,7 @@ class QiChaChaController extends QiChaChaBase
     function getSearchNews()
     {
         $entName=$this->request()->getRequestParam('entName');
+        $emotionType=$this->request()->getRequestParam('emotionType') ?? '';
         $page=$this->request()->getRequestParam('page') ?? 1;
         $pageSize=$this->request()->getRequestParam('pageSize') ?? 10;
 
@@ -855,6 +856,8 @@ class QiChaChaController extends QiChaChaBase
             'pageIndex'=>$page,
             'pageSize'=>$pageSize,
         ];
+
+        !is_numeric($emotionType) ?: $postData['emotionType'] = $emotionType;
 
         $res=(new QiChaChaService())->get($this->baseUrl.'CompanyNews/SearchNews',$postData);
 

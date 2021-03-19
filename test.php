@@ -1,5 +1,7 @@
 <?php
 
+use Carbon\Carbon;
+
 include './vendor/autoload.php';
 
 $url = 'https://api.meirixindong.com/provide/v1/qq/getThreeYearsDataForLIAGRO_REL';
@@ -33,10 +35,6 @@ $data = [
 //curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);//返回值不直接显示
 //$res = curl_exec($curl);//发送请求
 //dd(json_decode($res, true));
-
-
-
-
 
 
 
