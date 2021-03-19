@@ -91,11 +91,11 @@ function sRound($num, $m = 10)
     $moto = current(explode('.', $num));
     $saki = $moto / $m;
 
-    if ($saki > 1) {
+    if (abs($saki) > 1) {
         $saki = round($saki);
         $saki = $saki * $m;
     } else {
-        $saki = $m;
+        $saki = $moto;
     }
 
     return round($saki);
