@@ -2,20 +2,22 @@
 
 namespace App\HttpController\Service\XinDong\Score;
 
-use EasySwoole\Component\Singleton;
+use App\HttpController\Service\LongXin\LongXinService;
 
 class xds
 {
-    use Singleton;
-
-    public static $a = 1;
-    public $b = 1;
-
-    function get()
+    function cwScore($entName): ?array
     {
-        self::$a++;
-        $this->b++;
+        $arr = (new LongXinService())->getFinanceData([
+            'entName' => $entName,
+            'code' => '',
+            'beginYear' => date('Y') - 1,
+            'dataCount' => 4,
+        ], false);
 
-        return [self::$a, $this->b];
+
+        return empty($arr) ? null : $arr;
     }
+
+
 }
