@@ -37,5 +37,8 @@ $data = [
 //dd(json_decode($res, true));
 
 
-
+$arr['MAIBUSINC_yoy'] = -7;
+$score = round(abs($arr['MAIBUSINC_yoy']));
+$score = 10 - substr($score, 0, 1);
+dd($score);
 
