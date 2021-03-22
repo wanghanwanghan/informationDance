@@ -58,8 +58,10 @@ class xds
             'dataCount' => 4,
         ], false);
 
-        if (!isset($arr['code']) || !isset($arr['result']) || $arr['code'] !== 200 || empty($res['result']))
+        if (!isset($arr['code']) || !isset($arr['result']) || $arr['code'] !== 200 || empty($res['result'])) {
+            CommonService::getInstance()->log4PHP('123123123');
             return null;
+        }
 
         $score = [];
 
@@ -91,8 +93,6 @@ class xds
             'val' => null,
             'score' => 1
         ];
-
-        CommonService::getInstance()->log4PHP($data);
 
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['NETINC']) && is_numeric($arr['A_ASSGROL'])) {
