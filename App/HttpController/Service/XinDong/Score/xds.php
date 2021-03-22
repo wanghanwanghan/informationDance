@@ -58,7 +58,7 @@ class xds
             'dataCount' => 4,
         ], false);
 
-        if ($arr['code'] !== 200 || empty($res['result'])) {
+        if (!isset($arr['code']) || !isset($arr['result']) || $arr['code'] !== 200 || empty($arr['result'])) {
             return null;
         }
 
