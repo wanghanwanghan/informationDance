@@ -95,10 +95,11 @@ class xds
 
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['NETINC']) && is_numeric($arr['A_ASSGROL'])) {
-                if ($arr['NETINC'] !== 0 && $arr['A_ASSGROL'] !== 0) {
+                if ($arr['NETINC'] > 0 && $arr['A_ASSGROL'] > 0) {
                     $r['year'] = $year;
                     $r['val'] = $arr['NETINC'] / $arr['A_ASSGROL'];
-                    $r['score'] = current(explode('.', round($r['val'] * 100)));
+                    $r['score'] = current(explode('.', round($r['val'] * 100))) - 0;
+                    $r['score'] = $r['score'] > 1 ? $r['score'] : 1;
                     break;
                 }
             }
@@ -120,10 +121,11 @@ class xds
 
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['LIAGRO']) && is_numeric($arr['ASSGRO'])) {
-                if ($arr['LIAGRO'] !== 0 && $arr['ASSGRO'] !== 0) {
+                if ($arr['LIAGRO'] > 0 && $arr['ASSGRO'] > 0) {
                     $r['year'] = $year;
                     $r['val'] = $arr['LIAGRO'] / $arr['ASSGRO'];
-                    $r['score'] = current(explode('.', round($r['val'] * 100)));
+                    $r['score'] = current(explode('.', round($r['val'] * 100))) - 0;
+                    $r['score'] = $r['score'] > 1 ? $r['score'] : 1;
                     break;
                 }
             }
