@@ -58,8 +58,6 @@ class xds
             'dataCount' => 4,
         ], false);
 
-        CommonService::getInstance()->log4PHP($arr);
-
         if (!isset($arr['code']) || !isset($arr['result']) || $arr['code'] !== 200 || empty($res['result']))
             return null;
 
@@ -79,6 +77,8 @@ class xds
 
         //企业利润增长能力评分 34利润总额同比 PROGRO_yoy
         $score['PROGRO_yoy'] = $this->PROGRO_yoy($arr['result']);
+
+        CommonService::getInstance()->log4PHP($score);
 
         return $score;
     }
