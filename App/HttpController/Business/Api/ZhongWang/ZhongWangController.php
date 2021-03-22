@@ -126,6 +126,8 @@ class ZhongWangController extends ZhongWangBase
 
         !(isset($res['code']) && $res['code'] == 0) ?: $res['code'] = 200;
 
+        // $res['message'] = (new xds())->cwScore($entName);
+
         return $this->writeJson($res['code'], null, $res['data'], $res['message']);
     }
 
