@@ -5,6 +5,7 @@
         "ext-json": "*",
         "ext-openssl": "*",
         "ext-curl": "*",
+        "ext-gd": "*",
         "easyswoole/easyswoole": "3.3.x",
         "wanghanwanghan/someutils": "^1.0",
         "easyswoole/http-client": "^1.4",
