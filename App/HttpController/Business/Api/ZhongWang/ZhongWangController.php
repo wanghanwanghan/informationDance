@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Api\ZhongWang;
 
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\ZhongWang\ZhongWangService;
 use wanghanwanghan\someUtils\moudles\ioc\ioc;
 
@@ -124,6 +125,8 @@ class ZhongWangController extends ZhongWangBase
         $res = jsonDecode($res);
 
         !(isset($res['code']) && $res['code'] == 0) ?: $res['code'] = 200;
+
+        $res['message'] = xds::getInstance()->get();
 
         return $this->writeJson($res['code'], null, $res['data'], $res['message']);
     }
