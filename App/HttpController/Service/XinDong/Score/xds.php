@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\XinDong\Score;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
 
 class xds
@@ -56,6 +57,8 @@ class xds
             'beginYear' => date('Y') - 1,
             'dataCount' => 4,
         ], false);
+
+        CommonService::getInstance()->log4PHP($arr);
 
         if (!isset($arr['code']) || !isset($arr['result']) || $arr['code'] !== 200 || empty($res['result']))
             return null;
