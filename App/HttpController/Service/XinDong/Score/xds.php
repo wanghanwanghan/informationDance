@@ -58,8 +58,7 @@ class xds
             'dataCount' => 4,
         ], false);
 
-        if (!isset($arr['code']) || !isset($arr['result']) || $arr['code'] !== 200 || empty($res['result'])) {
-            CommonService::getInstance()->log4PHP('123123123');
+        if ($arr['code'] !== 200 || empty($res['result'])) {
             return null;
         }
 
