@@ -340,7 +340,7 @@ class LongXinService extends ServiceBase
         krsort($readyReturn);
 
         return $this->checkRespFlag ?
-            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn]) :
+            $this->checkResp(['code' => 200, 'msg' => '查询成功1', 'data' => $readyReturn]) :
             ['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn];
     }
 
