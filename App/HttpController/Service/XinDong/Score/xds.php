@@ -78,8 +78,6 @@ class xds
         //企业利润增长能力评分 34利润总额同比 PROGRO_yoy
         $score['PROGRO_yoy'] = $this->PROGRO_yoy($arr['result']);
 
-        CommonService::getInstance()->log4PHP($score);
-
         return $score;
     }
 
@@ -93,6 +91,8 @@ class xds
             'val' => null,
             'score' => 1
         ];
+
+        CommonService::getInstance()->log4PHP($data);
 
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['NETINC']) && is_numeric($arr['A_ASSGROL'])) {
