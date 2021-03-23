@@ -57,7 +57,9 @@ class TestController extends BusinessBase
             }
         }
 
-        return $this->writeJson(200, null, $arr);
+        return $this->writeJson(200, null, [
+            'k' => array_keys($arr), 'v' => array_values($arr)
+        ]);
     }
 
     function caiwu()
