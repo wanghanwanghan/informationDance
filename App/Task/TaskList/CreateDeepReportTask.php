@@ -306,11 +306,11 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         // $tmp->setValue('fx_detail', implode(',',$this->fx_detail));
 
         if (sprintf('%.2f', array_sum($this->fx) >= 80)) {
-            $tmp->setValue('fz_detail', '企业业务、上下游关系集中度、团队稳定性、企业股东层稳定性、履约能力方面分析，抗风险能力较弱');
+            $tmp->setValue('fx_detail', '企业业务、上下游关系集中度、团队稳定性、企业股东层稳定性、履约能力方面分析，抗风险能力较弱');
         } elseif (sprintf('%.2f', array_sum($this->fx) >= 61 && sprintf('%.2f', array_sum($this->fx) <= 79))) {
-            $tmp->setValue('fz_detail', '企业业务、上下游关系集中度、团队稳定性、企业股东层稳定性、履约能力方面分析，抗风险能力一般');
+            $tmp->setValue('fx_detail', '企业业务、上下游关系集中度、团队稳定性、企业股东层稳定性、履约能力方面分析，抗风险能力一般');
         } else {
-            $tmp->setValue('fz_detail', '企业业务、上下游关系集中度、团队稳定性、企业股东层稳定性、履约能力方面分析，抗风险能力较强');
+            $tmp->setValue('fx_detail', '企业业务、上下游关系集中度、团队稳定性、企业股东层稳定性、履约能力方面分析，抗风险能力较强');
         }
 
         $this->addOcrWords();
