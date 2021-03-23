@@ -38,7 +38,9 @@ $data = [
 //dd(json_decode($res, true));
 
 
+$str = '-上海市嘉定区=-';
 
+dd(strpos($str, '-'));
 
 
 

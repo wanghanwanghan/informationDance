@@ -30,6 +30,7 @@ class TestController extends BusinessBase
                 ->getObj();
             $sql = 'SELECT XZQH_NAME,count( 1 ) as num FROM qyxx WHERE XZQH_NAME IS NOT NULL AND XZQH_NAME <> "" GROUP BY XZQH_NAME';
             $list = $mysqlObj->rawQuery($sql);
+            $list = obj2Arr($list);
         } catch (\Throwable $e) {
             $this->writeErr($e, __FUNCTION__);
             $list = [];
@@ -38,7 +39,25 @@ class TestController extends BusinessBase
                 ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
                 ->recycleObj($mysqlObj);
         }
-        return $this->writeJson(200, null, $list);
+
+        $arr = [];
+
+        if (!empty($list)) {
+            foreach ($list as $index => $val) {
+                if (strpos($val['XZQH_NAME'], '-') !== false) {
+                    $placeArr = explode('-', $val['XZQH_NAME']);
+                    $placeArr = array_filter($placeArr);
+                    $place = current($placeArr);
+                    if (isset($arr[$place])) {
+                        $arr[$place]++;
+                    } else {
+                        $arr[$place] = 1;
+                    }
+                }
+            }
+        }
+
+        return $this->writeJson(200, null, $arr);
     }
 
     function caiwu()
