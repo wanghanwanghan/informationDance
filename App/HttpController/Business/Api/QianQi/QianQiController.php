@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Api\QianQi;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\QianQi\QianQiService;
 
@@ -49,6 +50,8 @@ class QianQiController extends QianQiBase
 
         //改成同比，不能返回原值
         $res['data'] = (new QianQiService())->toPercent($res['data']);
+
+        CommonService::getInstance()->log4PHP($res);
 
         foreach ($res['data'] as $year => $arr) {
             foreach ($arr as $key => $value) {
