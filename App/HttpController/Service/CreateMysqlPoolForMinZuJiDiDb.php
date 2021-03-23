@@ -24,7 +24,7 @@ class CreateMysqlPoolForMinZuJiDiDb extends AbstractPool
             'user' => CreateConf::getInstance()->getConf('env.mysqlUserMZJD'),
             'password' => CreateConf::getInstance()->getConf('env.mysqlPasswordMZJD'),
             'database' => CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'),
-            'timeout' => 5,
+            'timeout' => 15,
             'charset' => 'utf8mb4',
         ]);
 
