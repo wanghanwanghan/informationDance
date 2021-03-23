@@ -5,7 +5,9 @@ namespace App\HttpController\Business\Test;
 use App\HttpController\Business\BusinessBase;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\QianQi\QianQiService;
+use EasySwoole\Pool\Manager;
 
 class TestController extends BusinessBase
 {
@@ -16,13 +18,27 @@ class TestController extends BusinessBase
 
     function test()
     {
-
-
         $code = $this->getRequestData('code', '');
+    }
 
-
-
-
+    //产品标准页面用
+    function product()
+    {
+        try {
+            $mysqlObj = Manager::getInstance()
+                ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
+                ->getObj();
+            $sql = 'SELECT XZQH_NAME,count( 1 ) FROM qyxx WHERE XZQH_NAME IS NOT NULL AND XZQH_NAME <> "" GROUP BY XZQH_NAME';
+            $list = $mysqlObj->rawQuery($sql);
+        } catch (\Throwable $e) {
+            $this->writeErr($e, __FUNCTION__);
+            $list = [];
+        } finally {
+            Manager::getInstance()
+                ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
+                ->recycleObj($mysqlObj);
+        }
+        return $this->writeJson(200, null, $list);
     }
 
     function caiwu()
