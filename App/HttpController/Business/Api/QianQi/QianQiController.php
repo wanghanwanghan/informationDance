@@ -51,8 +51,6 @@ class QianQiController extends QianQiBase
         //改成同比，不能返回原值
         $res['data'] = (new QianQiService())->toPercent($res['data']);
 
-        CommonService::getInstance()->log4PHP($res);
-
         foreach ($res['data'] as $year => $arr) {
             foreach ($arr as $key => $value) {
                 $res['data'][$year][$key] = sRound($value);
