@@ -247,7 +247,7 @@ class NotifyController extends BusinessBase
         $phone = control::strToNumForId($arr[0]);
         $time = control::strToNumForId($arr[1]);
 
-        $data = [
+        CommonService::getInstance()->log4PHP([
             __FUNCTION__,
             $entName,
             $taxNo,
@@ -255,9 +255,7 @@ class NotifyController extends BusinessBase
             $message,
             $phone,
             $time,
-        ];
-
-        CommonService::getInstance()->log4PHP($data);
+        ]);
 
         try {
             $check = AuthBook::create()->where(['phone' => $phone, 'remark' => $orderNo])->get();
@@ -286,7 +284,7 @@ class NotifyController extends BusinessBase
         $phone = control::strToNumForId($arr[0]);
         $time = control::strToNumForId($arr[1]);
 
-        $data = [
+        CommonService::getInstance()->log4PHP([
             __FUNCTION__,
             $entName,
             $taxNo,
@@ -295,9 +293,7 @@ class NotifyController extends BusinessBase
             $message,
             $phone,
             $time,
-        ];
-
-        CommonService::getInstance()->log4PHP($data);
+        ]);
 
         try {
             $check = AuthBook::create()->where(['phone' => $phone, 'remark' => $orderNo])->get();
