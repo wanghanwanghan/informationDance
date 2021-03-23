@@ -140,10 +140,12 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //软件著作权
         $rz = (int)$data['SearchSoftwareCr']['total'];
 
-        if ($zl===0 && $rz<2) $this->fz_detail[] = '企业需进一步增强创新研发能力';
+        if ($zl===0 && $rz<2)
+            $this->fz_detail[] = '企业需进一步增强创新研发能力';
 
         //龙信 财务
-        if (empty($data['FinanceData'])) $this->fz_detail[] = '企业经营能力与核心竞争力方面需进一步提升';
+        if (empty($data['FinanceData']))
+            $this->fz_detail[] = '企业经营能力与核心竞争力方面需进一步提升';
         if (!empty($data['FinanceData']) && mt_rand(0,100) > 80)
             $this->fx_detail[] = '企业需进一步加强在资产负债方面的管控意识';
 
@@ -165,13 +167,15 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $this->fz_detail[] = '企业需进一步提升所在行业领域的政府资质或荣誉申领意识';
 
         //裁判文书
-        if ((int)$data['cpws']['total'] > 5) $this->fx_detail[] = '企业的法律经营意识方面需进一步加强';
+        if ((int)$data['cpws']['total'] > 5)
+            $this->fx_detail[] = '企业的法律经营意识方面需进一步加强';
 
         //行政处罚+欠税公告+非正常户
         $a = (int)$data['GetAdministrativePenaltyList']['total'];
         $b = (int)$data['satparty_qs']['total'];
         $c = (int)$data['satparty_fzc']['total'];
-        if ($a + $b + $c >= 2) $this->fx_detail[] = '企业在接受行政管理方面需进一步完善';
+        if ($a + $b + $c >= 2)
+            $this->fx_detail[] = '企业在接受行政管理方面需进一步完善';
 
         return true;
     }
