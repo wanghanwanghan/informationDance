@@ -28,7 +28,7 @@ class TestController extends BusinessBase
             $mysqlObj = Manager::getInstance()
                 ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
                 ->getObj();
-            $sql = 'SELECT XZQH_NAME,count( 1 ) FROM qyxx WHERE XZQH_NAME IS NOT NULL AND XZQH_NAME <> "" GROUP BY XZQH_NAME';
+            $sql = 'SELECT XZQH_NAME,count( 1 ) as num FROM qyxx WHERE XZQH_NAME IS NOT NULL AND XZQH_NAME <> "" GROUP BY XZQH_NAME';
             $list = $mysqlObj->rawQuery($sql);
         } catch (\Throwable $e) {
             $this->writeErr($e, __FUNCTION__);
