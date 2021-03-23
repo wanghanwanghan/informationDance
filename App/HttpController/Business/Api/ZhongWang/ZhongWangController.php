@@ -2,9 +2,11 @@
 
 namespace App\HttpController\Business\Api\ZhongWang;
 
+use App\HttpController\Models\Api\AuthBook;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\ZhongWang\ZhongWangService;
+use wanghanwanghan\someUtils\control;
 use wanghanwanghan\someUtils\moudles\ioc\ioc;
 
 class ZhongWangController extends ZhongWangBase
@@ -115,17 +117,47 @@ class ZhongWangController extends ZhongWangBase
     //企业授权认证
     function getAuthentication()
     {
+        $phone = $this->request()->getRequestParam('phone') ?? '';
         $entName = $this->request()->getRequestParam('entName') ?? '';
         $code = $this->request()->getRequestParam('code') ?? '';
         $callback = $this->request()->getRequestParam('callback') ?? 'https://www.baidu.com/';
-        $orderId = $this->request()->getRequestParam('orderId') ?? '';
 
-        $res = (new ZhongWangService())->getAuthentication($entName, $callback);
+        $phone2str = control::numToStrForId($phone - 0);
+        $time2str = control::numToStrForId(time());
+        $orderNo = control::aesEncode($phone2str . '.' . $time2str, 'wanghan');
+
+        $res = (new ZhongWangService())->getAuthentication($entName, $callback, $orderNo);
 
         $res = jsonDecode($res);
 
         !(isset($res['code']) && $res['code'] == 0) ?: $res['code'] = 200;
 
+        //添加授权信息
+        try {
+            $check = AuthBook::create()->where([
+                'phone' => $phone, 'entName' => $entName, 'code' => $code
+            ])->get();
+            if (empty($check)) {
+                AuthBook::create()->data([
+                    'phone' => $phone,
+                    'entName' => $entName,
+                    'code' => $code,
+                    'status' => 1,
+                    'type' => 1,
+                    'remark' => $orderNo
+                ])->save();
+            } else {
+                $check->update([
+                    'status' => 1,
+                    'type' => 1,
+                    'remark' => $orderNo
+                ]);
+            }
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        //删除
         // $res['message'] = (new xds())->cwScore($entName);
 
         return $this->writeJson($res['code'], null, $res['data'], $res['message']);

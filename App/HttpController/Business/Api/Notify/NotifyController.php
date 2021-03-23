@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Api\Notify;
 
 use App\HttpController\Business\BusinessBase;
+use App\HttpController\Models\Api\AuthBook;
 use App\HttpController\Models\Api\PurchaseInfo;
 use App\HttpController\Models\Api\PurchaseList;
 use App\HttpController\Models\Api\Wallet;
@@ -14,6 +15,7 @@ use EasySwoole\Pay\AliPay\AliPay;
 use EasySwoole\Pay\AliPay\RequestBean\NotifyRequest;
 use EasySwoole\Pay\Pay;
 use EasySwoole\Pay\WeChat\WeChat;
+use wanghanwanghan\someUtils\control;
 
 class NotifyController extends BusinessBase
 {
@@ -238,7 +240,12 @@ class NotifyController extends BusinessBase
         $taxNo = $this->getRequestData('taxNumber', '');
         $state = $this->getRequestData('state', '');
         $message = $this->getRequestData('massge', '');
-        $orderId = $this->getRequestData('orderId', '');
+        $orderNo = $this->getRequestData('orderNo', '');
+
+        $str = control::aesDecode($orderNo, 'wanghan');
+        $arr = explode('.', $str);
+        $phone = control::strToNumForId($arr[0]);
+        $time = control::strToNumForId($arr[1]);
 
         $data = [
             __FUNCTION__,
@@ -246,9 +253,20 @@ class NotifyController extends BusinessBase
             $taxNo,
             $state,
             $message,
+            $phone,
+            $time,
         ];
 
         CommonService::getInstance()->log4PHP($data);
+
+        try {
+            $check = AuthBook::create()->where(['phone' => $phone, 'remark' => $orderNo])->get();
+            if (!empty($check)) {
+                $check->update(['status' => 3, 'remark' => $state . $message . __FUNCTION__]);
+            }
+        } catch (\Throwable $e) {
+            $this->writeErr($e, __FUNCTION__);
+        }
 
         return $this->response()->write(jsonEncode(['code' => 0, 'msg' => '成功', 'data' => null], false));
     }
@@ -261,7 +279,12 @@ class NotifyController extends BusinessBase
         $state = $this->getRequestData('state', '');
         $type = $this->getRequestData('type', '');
         $message = $this->getRequestData('massge', '');
-        $orderId = $this->getRequestData('orderId', '');
+        $orderNo = $this->getRequestData('orderNo', '');
+
+        $str = control::aesDecode($orderNo, 'wanghan');
+        $arr = explode('.', $str);
+        $phone = control::strToNumForId($arr[0]);
+        $time = control::strToNumForId($arr[1]);
 
         $data = [
             __FUNCTION__,
@@ -270,9 +293,20 @@ class NotifyController extends BusinessBase
             $state,
             $type,
             $message,
+            $phone,
+            $time,
         ];
 
         CommonService::getInstance()->log4PHP($data);
+
+        try {
+            $check = AuthBook::create()->where(['phone' => $phone, 'remark' => $orderNo])->get();
+            if (!empty($check)) {
+                $check->update(['status' => 3, 'remark' => $state . $message . __FUNCTION__]);
+            }
+        } catch (\Throwable $e) {
+            $this->writeErr($e, __FUNCTION__);
+        }
 
         return $this->response()->write(jsonEncode(['code' => 0, 'msg' => '成功', 'data' => null], false));
     }
