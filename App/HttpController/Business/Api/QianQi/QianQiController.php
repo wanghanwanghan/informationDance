@@ -55,7 +55,7 @@ class QianQiController extends QianQiBase
 
         foreach ($res['data'] as $year => $arr) {
             foreach ($arr as $key => $value) {
-                $arr[$key] = sRound($value);
+                $res['data'][$year][$key] = sRound($value);
             }
         }
 
