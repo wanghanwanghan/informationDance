@@ -144,7 +144,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         //龙信 财务
         if (empty($data['FinanceData'])) $this->fz_detail[] = '企业经营能力与核心竞争力方面需进一步提升';
-        if (!empty($data['FinanceData']) && mt_rand(0,100) > 80) $this->fx_detail[] = '企业需进一步加强在资产负债方面的管控意识';
+        if (!empty($data['FinanceData']) && mt_rand(0,100) > 80)
+            $this->fx_detail[] = '企业需进一步加强在资产负债方面的管控意识';
 
         //乾启 团队人数
         foreach ($data['itemInfo'] as $oneYear)
@@ -160,7 +161,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
 
         //企业资质证书
-        if ((int)$data['SearchCertification']['total'] === 0) $this->fz_detail[] = '企业需进一步提升所在行业领域的政府资质或荣誉申领意识';
+        if ((int)$data['SearchCertification']['total'] === 0)
+            $this->fz_detail[] = '企业需进一步提升所在行业领域的政府资质或荣誉申领意识';
 
         //裁判文书
         if ((int)$data['cpws']['total'] > 5) $this->fx_detail[] = '企业的法律经营意识方面需进一步加强';
