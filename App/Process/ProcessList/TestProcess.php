@@ -5,17 +5,22 @@ namespace App\Process\ProcessList;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\Process\ProcessBase;
+use Carbon\Carbon;
 use EasySwoole\Pool\Manager;
 use Swoole\Process;
 
 class TestProcess extends ProcessBase
 {
+    public $breakTime;
+
     protected function run($arg)
     {
         //可以用来初始化
         parent::run($arg);
 
         //接收参数可以是字符串也可以是数组
+
+        $this->breakTime = Carbon::now()->addHours(6)->timestamp;
 
         $this->tmp();
     }
@@ -63,6 +68,7 @@ EOF;
                 CommonService::getInstance()->log4PHP($limit);
 
                 if (empty($list)) break;
+                if (time() > $this->breakTime) break;
 
                 foreach ($list as $index => $val) {
                     if (strpos($val['XZQH_NAME'], '-') !== false) {
