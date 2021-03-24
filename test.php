@@ -38,8 +38,3 @@ $data = [
 //dd(json_decode($res, true));
 
 
-$str = '-1238.3';
-
-dd(substr($str, 0, strpos($str, '.')));
-
-

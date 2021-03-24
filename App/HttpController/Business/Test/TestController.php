@@ -24,6 +24,7 @@ class TestController extends BusinessBase
     //产品标准页面用
     function product()
     {
+        //地图
         try {
             $mysqlObj = Manager::getInstance()
                 ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
@@ -40,7 +41,7 @@ class TestController extends BusinessBase
                 ->recycleObj($mysqlObj);
         }
 
-        $arr = [];
+        $map = [];
 
         if (!empty($list)) {
             foreach ($list as $index => $val) {
@@ -49,16 +50,47 @@ class TestController extends BusinessBase
                     $placeArr = array_filter($placeArr);
                     $place = current($placeArr);
                     if (isset($arr[$place])) {
-                        $arr[$place]++;
+                        $map[$place]++;
                     } else {
-                        $arr[$place] = 1;
+                        $map[$place] = 1;
+                    }
+                }
+            }
+        }
+
+        //标准一级分类和个数
+        try {
+            $mysqlObj = Manager::getInstance()
+                ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
+                ->getObj();
+            $sql = 'select JJHYDM,count(1) as num from cpxx where JJHYDM is not null group by JJHYDM';
+            $list = $mysqlObj->rawQuery($sql);
+            $list = obj2Arr($list);
+        } catch (\Throwable $e) {
+            $this->writeErr($e, __FUNCTION__);
+            $list = [];
+        } finally {
+            Manager::getInstance()
+                ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
+                ->recycleObj($mysqlObj);
+        }
+
+        $JJHYDM = [];
+
+        if (!empty($list)) {
+            foreach ($list as $index => $val) {
+                if (preg_match('/[\xe0-\xef][\x80-\xbf]/', $val['JJHYDM'])) {
+                    if (isset($JJHYDM[trim($val['JJHYDM'])])) {
+                        $JJHYDM[trim($val['JJHYDM'])] += $val['num'];
+                    } else {
+                        $JJHYDM[trim($val['JJHYDM'])] = $val['num'];
                     }
                 }
             }
         }
 
         return $this->writeJson(200, null, [
-            'k' => array_keys($arr), 'v' => array_values($arr)
+            'k' => array_keys($map), 'v' => array_values($map), 'JJHYDM' => $JJHYDM
         ]);
     }
 
