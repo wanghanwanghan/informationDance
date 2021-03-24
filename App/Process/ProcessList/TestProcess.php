@@ -30,8 +30,8 @@ class TestProcess extends ProcessBase
                 ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
                 ->getObj();
             $mysqlObj->rawQuery('truncate table qyxx_copy1');
+            $limit = 0;
             while (true) {
-                $limit = 0;
                 $sql = <<<EOF
 SELECT
 	ORG_CODE,
@@ -50,6 +50,7 @@ GROUP BY
 EOF;
                 $list = $mysqlObj->rawQuery($sql);
                 $list = obj2Arr($list);
+                $limit++;
 
                 if (empty($list)) break;
 
