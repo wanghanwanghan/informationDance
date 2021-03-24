@@ -18,11 +18,11 @@ class TestCommand extends CommandBase
     {
         parent::commendInit();
 
-
         try {
             $mysqlObj = Manager::getInstance()
                 ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
                 ->getObj();
+            $mysqlObj->rawQuery('truncate table qyxx_copy1');
             while (true) {
                 $limit = 0;
                 $sql = <<<EOF
