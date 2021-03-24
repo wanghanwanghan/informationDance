@@ -75,6 +75,7 @@ WHERE
 	XZQH_NAME = {$placeArr[0]}
 EOF;
                         $check = $mysqlObj->rawQuery($sql);
+                        CommonService::getInstance()->log4PHP($check);
                         if (empty($check)) {
                             $sql = <<<EOF
 INSERT INTO qyxx_copy1
