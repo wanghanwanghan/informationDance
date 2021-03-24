@@ -49,7 +49,7 @@ class TestController extends BusinessBase
                     $placeArr = explode('-', $val['XZQH_NAME']);
                     $placeArr = array_filter($placeArr);
                     $place = current($placeArr);
-                    if (isset($arr[$place])) {
+                    if (isset($map[$place])) {
                         $map[$place]++;
                     } else {
                         $map[$place] = 1;
@@ -63,7 +63,7 @@ class TestController extends BusinessBase
             $mysqlObj = Manager::getInstance()
                 ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
                 ->getObj();
-            $sql = 'select JJHYDM,count(1) as num from cpxx where JJHYDM is not null group by JJHYDM';
+            $sql = 'select JJHYDM,count(1) as num from cpxx where JJHYDM is not null group by JJHYDM order by num desc';
             $list = $mysqlObj->rawQuery($sql);
             $list = obj2Arr($list);
         } catch (\Throwable $e) {
