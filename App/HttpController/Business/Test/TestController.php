@@ -91,6 +91,8 @@ class TestController extends BusinessBase
 
         arsort($JJHYDM);
 
+        CommonService::getInstance()->log4PHP($JJHYDM);
+
         return $this->writeJson(200, null, [
             'k' => array_keys($map), 'v' => array_values($map), 'JJHYDM' => $JJHYDM
         ]);

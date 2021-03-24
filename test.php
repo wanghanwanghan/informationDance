@@ -38,3 +38,12 @@ $data = [
 //dd(json_decode($res, true));
 
 
+$arr=[
+    '体育'=>31,
+    '美术'=>12,
+    '化学'=>53
+];
+
+arsort($arr);
+
+dd($arr);
