@@ -1505,8 +1505,6 @@ class RunSupervisor extends AbstractCronTask
             {
                 $id=md5(jsonEncode($one));
 
-                CommonService::getInstance()->log4PHP($one);
-
                 $check=SupervisorEntNameInfo::create()->where('keyNo',$id)->get();
 
                 if ($check) continue;
@@ -1528,7 +1526,7 @@ class RunSupervisor extends AbstractCronTask
                     'desc'=>'新闻舆情',
                     'content'=>$content,
                     'detailUrl'=>'',
-                    'keyNo'=>$one['Id'],
+                    'keyNo'=>$id,
                 ])->save();
 
                 $this->addEntName($entName,'jy');
