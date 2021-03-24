@@ -39,6 +39,7 @@ class TestProcess extends ProcessBase
             $mysqlObj->rawQuery('truncate table qyxx_copy1');
             $limit = 0;
             while (true) {
+                $offset = ($limit - 1) * 500;
                 $sql = <<<EOF
 SELECT
 	ORG_CODE,
@@ -52,7 +53,7 @@ WHERE
 GROUP BY
 	ORG_CODE,
 	XZQH_NAME 
-	LIMIT {$limit},
+	LIMIT {$offset},
 	500
 EOF;
                 $list = $mysqlObj->rawQuery($sql);
