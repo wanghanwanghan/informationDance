@@ -43,17 +43,15 @@ class TestController extends BusinessBase
 
         $map = [];
 
-        if (!empty($list)) {
-            foreach ($list as $index => $val) {
-                if (strpos($val['XZQH_NAME'], '-') !== false) {
-                    $placeArr = explode('-', $val['XZQH_NAME']);
-                    $placeArr = array_filter($placeArr);
-                    $place = current($placeArr);
-                    if (isset($map[$place])) {
-                        $map[$place]++;
-                    } else {
-                        $map[$place] = 1;
-                    }
+        foreach ($list as $index => $val) {
+            if (strpos($val['XZQH_NAME'], '-') !== false) {
+                $placeArr = explode('-', $val['XZQH_NAME']);
+                $placeArr = array_filter($placeArr);
+                $place = current($placeArr);
+                if (isset($map[$place])) {
+                    $map[$place]++;
+                } else {
+                    $map[$place] = 1;
                 }
             }
         }
@@ -75,24 +73,26 @@ class TestController extends BusinessBase
                 ->recycleObj($mysqlObj);
         }
 
-        $JJHYDM = [];
+        $JJHYDM = $tmp = [];
 
-        if (!empty($list)) {
-            foreach ($list as $index => $val) {
-                if (preg_match('/[\xe0-\xef][\x80-\xbf]/', $val['JJHYDM'])) {
-                    if (isset($JJHYDM[trim($val['JJHYDM'])])) {
-                        $JJHYDM[trim($val['JJHYDM'])] += $val['num'];
-                    } else {
-                        $JJHYDM[trim($val['JJHYDM'])] = $val['num'];
-                    }
+        foreach ($list as $index => $val) {
+            if (preg_match('/[\xe0-\xef][\x80-\xbf]/', $val['JJHYDM'])) {
+                if (isset($JJHYDM[trim($val['JJHYDM'])])) {
+                    $JJHYDM[trim($val['JJHYDM'])] += $val['num'];
+                } else {
+                    $JJHYDM[trim($val['JJHYDM'])] = $val['num'];
                 }
             }
         }
 
         arsort($JJHYDM);
 
+        foreach ($JJHYDM as $key => $val) {
+            $tmp[] = ['name' => $key, 'num' => $val];
+        }
+
         return $this->writeJson(200, null, [
-            'k' => array_keys($map), 'v' => array_values($map), 'JJHYDM' => jsonEncode($JJHYDM)
+            'k' => array_keys($map), 'v' => array_values($map), 'JJHYDM' => $tmp
         ]);
     }
 
