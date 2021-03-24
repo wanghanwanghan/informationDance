@@ -1505,6 +1505,8 @@ class RunSupervisor extends AbstractCronTask
             {
                 $id=md5(jsonEncode($one));
 
+                CommonService::getInstance()->log4PHP($one);
+
                 $check=SupervisorEntNameInfo::create()->where('keyNo',$id)->get();
 
                 if ($check) continue;
