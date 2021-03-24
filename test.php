@@ -38,12 +38,8 @@ $data = [
 //dd(json_decode($res, true));
 
 
-$str = '-上海市嘉定区=-';
+$str = '-1238.3';
 
-dd(strpos($str, '-'));
-
-
-
-
+dd(substr($str, 0, strpos($str, '.')));
 
 

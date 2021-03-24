@@ -62,6 +62,13 @@ class xds
             return null;
         }
 
+        //年份转string
+        $tmp = [];
+        foreach ($arr['result'] as $year => $val) {
+            $tmp[$year . ''] = $val;
+        }
+        $arr['result'] = $tmp;
+
         $score = [];
 
         //企业资产收益评分 总资产收益率 = 5净利润 / 10平均资产总额
@@ -78,6 +85,33 @@ class xds
 
         //企业利润增长能力评分 34利润总额同比 PROGRO_yoy
         $score['PROGRO_yoy'] = $this->PROGRO_yoy($arr['result']);
+
+        //企业主营业务健康度评分 20资产负债率 = 1负债总额 / 0资产总额
+        $score['DEBTL_H'] = $this->DEBTL($arr['result']);
+
+        //企业资本保值状况评分 7期末所有者权益 / 7期初所有者权益 TOTEQU
+        $score['TOTEQU'] = $this->TOTEQU($arr['result']);
+
+        //企业人均产能评分 3主营业务收入 / 8缴纳社保人数人均
+        $score['PERCAPITA_C'] = $this->PERCAPITA_C($arr['result']);
+
+        //企业人均盈利能力评分 5净利润 / 8缴纳社保人数
+        $score['PERCAPITA_Y'] = $this->PERCAPITA_Y($arr['result']);
+
+        //企业纳税能力综合评分 6纳税总额
+        $score['RATGRO'] = $this->RATGRO($arr['result']);
+
+        //资产回报能力 5净利润 / 11平均净资产
+        $score['ASSETS'] = $this->ASSETS($arr['result']);
+
+        //资产周转能力 2营业收入 / 10平均资产总额
+        $score['ATOL'] = $this->ATOL($arr['result']);
+
+        //总资产增长状况 30资产总额同比 ASSGRO_yoy
+        $score['ASSGRO_yoy'] = $this->ASSGRO_yoy($arr['result']);
+
+        //税负强度 28税收负担率 TBR
+        $score['TBR'] = $this->TBR($arr['result']);
 
         return $score;
     }
@@ -215,14 +249,29 @@ class xds
             if (is_numeric($arr['MAIBUSINC_yoy'])) {
                 $num = floor($arr['MAIBUSINC_yoy'] * 100);
                 if ($num < 0) {
-                    $score = 10 - substr($num, 0, 1);
+                    if ($num < -100) {
+                        $score = 1;
+                    } else {
+                        if ($num >= -100 && $num < -80) {
+                            $score = 1;
+                        } elseif ($num >= -80 && $num < -60) {
+                            $score = 2;
+                        } elseif ($num >= -60 && $num < -40) {
+                            $score = 3;
+                        } elseif ($num >= -40 && $num < -20) {
+                            $score = 4;
+                        } else {
+                            $score = 5;
+                        }
+                    }
                 }
                 if ($num === 0) {
                     $score = 1;
                 }
                 if ($num > 0) {
                     if ($num >= 1 && $num <= 10) {
-                        $score = $num;
+                        $tmp = [6, 7.5, 9, 10.5, 12, 14, 15.5, 17, 18.5, 20];
+                        $score = $tmp[$num - 1];
                     }
                     if ($num >= 11 && $num <= 100) {
                         $score = floor($num / 9) * 10 > 100 ? 100 : floor($num / 9) * 10;
@@ -278,6 +327,310 @@ class xds
                 $r['year'] = $year;
                 $r['val'] = $arr['PROGRO_yoy'];
                 $r['score'] = $score;
+                break;
+            }
+        }
+
+        return $r;
+    }
+
+    //企业资本保值状况评分 7期末所有者权益 / 7期初所有者权益 TOTEQU
+    private function TOTEQU($data): array
+    {
+        $r = [
+            'name' => '企业资本保值状况评分',
+            'field' => __FUNCTION__,
+            'year' => null,
+            'val' => null,
+            'score' => 1
+        ];
+
+        foreach ($data as $year => $arr) {
+            if (is_numeric($arr['TOTEQU']) && is_numeric($data[($year - 1) . '']['TOTEQU'])) {
+                if ($data[($year - 1) . '']['TOTEQU'] !== 0) {
+                    $r['year'] = $year;
+                    $r['val'] = $arr['TOTEQU'] / $data[($year - 1) . '']['TOTEQU'];
+                    $r['score'] = current(explode('.', round($r['val'] * 100))) - 0;
+                    $r['score'] = $r['score'] > 1 ? $r['score'] : 1;
+                    break;
+                }
+            }
+        }
+
+        return $r;
+    }
+
+    //企业人均产能评分 3主营业务收入 / 8缴纳社保人数
+    private function PERCAPITA_C($data): array
+    {
+        $r = [
+            'name' => '企业人均产能评分',
+            'field' => __FUNCTION__,
+            'year' => null,
+            'val' => null,
+            'score' => 1
+        ];
+
+        foreach ($data as $year => $arr) {
+            if (is_numeric($arr['MAIBUSINC']) && is_numeric($arr['SOCNUM'])) {
+                if ($arr['SOCNUM'] > 0) {
+                    $r['year'] = $year;
+                    $r['val'] = $arr['MAIBUSINC'] / $arr['SOCNUM'];
+                    $r['score'] = current(explode('.', round($r['val'] * 100))) - 0;
+                    $r['score'] = $r['score'] > 1 ? $r['score'] : 1;
+                    break;
+                }
+            }
+        }
+
+        return $r;
+    }
+
+    //企业人均盈利能力评分 5净利润 / 8缴纳社保人数
+    private function PERCAPITA_Y($data): array
+    {
+        $r = [
+            'name' => '企业人均盈利能力评分',
+            'field' => __FUNCTION__,
+            'year' => null,
+            'val' => null,
+            'score' => 1
+        ];
+
+        foreach ($data as $year => $arr) {
+            if (is_numeric($arr['NETINC']) && is_numeric($arr['SOCNUM'])) {
+                if ($arr['SOCNUM'] > 0) {
+                    $r['year'] = $year;
+                    $r['val'] = $arr['NETINC'] / $arr['SOCNUM'];
+                    $r['score'] = current(explode('.', round($r['val'] * 100))) - 0;
+                    $r['score'] = $r['score'] > 1 ? $r['score'] : 1;
+                    break;
+                }
+            }
+        }
+
+        return $r;
+    }
+
+    //企业纳税能力综合评分 6纳税总额
+    private function RATGRO($data): array
+    {
+        $r = [
+            'name' => '企业纳税能力综合评分',
+            'field' => __FUNCTION__,
+            'year' => null,
+            'val' => null,
+            'score' => 10
+        ];
+
+        //值为0或无则为10分，3万10分，每多10万加10分，最多60分，
+        //再60分往上的纳税金额余额（指减掉60分对应金额后的金额）则除以每100万加10分，最多80分，
+        //再80分往上的余额则除以每1千万加10分，最多100分
+
+        foreach ($data as $year => $arr) {
+            if (is_numeric($arr['RATGRO'])) {
+                if ($arr['RATGRO'] > 0 && $arr['RATGRO'] <= 3) {
+                    $score = 10;
+                }
+                if ($arr['RATGRO'] > 3) {
+                    //有多少个10万
+                    $shi = current(explode('.', round($arr['RATGRO'] / 10)));
+                    if ($shi >= 1) {
+                        if ($shi * 10 > 60) {
+                            $arr['RATGRO'] -= 60;
+                        }
+                        $score = $shi * 10 > 60 ? 60 : $shi * 10;
+                    }
+
+                    //有多少个100万
+                    $bai = current(explode('.', round($arr['RATGRO'] / 100)));
+                    if ($bai >= 1) {
+                        if ($bai * 10 > 20) {
+                            $arr['RATGRO'] -= 200;
+                        }
+                        $score = $bai * 10 > 20 ? 80 : $bai * 10 + 60;
+                    }
+
+                    //有多少个1000万
+                    $qian = current(explode('.', round($arr['RATGRO'] / 1000)));
+                    if ($qian >= 1) {
+                        $score = $qian * 10 > 20 ? 100 : $qian * 10 + 80;
+                    }
+                }
+
+                $r['year'] = $year;
+                $r['val'] = $arr['RATGRO'];
+                $r['score'] = $score;
+                break;
+            }
+        }
+
+        return $r;
+    }
+
+    //资产回报能力 5净利润 / 11平均净资产
+    private function ASSETS($data): array
+    {
+        $r = [
+            'name' => '资产回报能力',
+            'field' => __FUNCTION__,
+            'year' => null,
+            'val' => null,
+            'score' => 1
+        ];
+
+        //用“负比例~0%-100%”，负增长均为1~5分，1~10%为6~20分，11%~100%为每多9%加20分，最多100分
+
+        foreach ($data as $year => $arr) {
+            if (is_numeric($arr['NETINC']) && is_numeric($arr['CA_ASSGRO'])) {
+                if ($arr['CA_ASSGRO'] !== 0) {
+                    $num = round($arr['NETINC'] / $arr['CA_ASSGRO']) * 100;
+                    $num = substr($num, 0, strpos($num, '.'));
+                    if ($num < 0) {
+                        if ($num < -100) {
+                            $score = 1;
+                        } else {
+                            if ($num >= -100 && $num < -80) {
+                                $score = 1;
+                            } elseif ($num >= -80 && $num < -60) {
+                                $score = 2;
+                            } elseif ($num >= -60 && $num < -40) {
+                                $score = 3;
+                            } elseif ($num >= -40 && $num < -20) {
+                                $score = 4;
+                            } else {
+                                $score = 5;
+                            }
+                        }
+                    }
+                    if ($num === 0) {
+                        $score = 1;
+                    }
+                    if ($num > 0) {
+                        if ($num >= 1 && $num <= 10) {
+                            $tmp = [6, 7.5, 9, 10.5, 12, 14, 15.5, 17, 18.5, 20];
+                            $score = $tmp[$num - 1];
+                        }
+                        if ($num >= 11 && $num <= 100) {
+                            $score = floor($num / 9) * 20 + 20 > 100 ? 100 : floor($num / 9) * 20 + 20;
+                        }
+                        if ($num > 100) {
+                            $score = 100;
+                        }
+                    }
+                    $r['year'] = $year;
+                    $r['val'] = $arr['NETINC'] / $arr['CA_ASSGRO'];
+                    $r['score'] = $score;
+                    break;
+                }
+            }
+        }
+
+        return $r;
+    }
+
+    //资产周转能力 2营业收入 / 10平均资产总额
+    private function ATOL($data): array
+    {
+        $r = [
+            'name' => '资产周转能力',
+            'field' => __FUNCTION__,
+            'year' => null,
+            'val' => null,
+            'score' => 1
+        ];
+
+        foreach ($data as $year => $arr) {
+            if (is_numeric($arr['VENDINC']) && is_numeric($arr['A_ASSGROL'])) {
+                if ($arr['A_ASSGROL'] > 0) {
+                    $r['year'] = $year;
+                    $r['val'] = $arr['VENDINC'] / $arr['A_ASSGROL'];
+                    $r['score'] = current(explode('.', round($r['val'] * 100))) - 0;
+                    $r['score'] = $r['score'] > 1 ? $r['score'] : 1;
+                    break;
+                }
+            }
+        }
+
+        return $r;
+    }
+
+    //总资产增长状况 30资产总额同比 ASSGRO_yoy
+    private function ASSGRO_yoy($data): array
+    {
+        $r = [
+            'name' => '总资产增长状况',
+            'field' => __FUNCTION__,
+            'year' => null,
+            'val' => null,
+            'score' => 1
+        ];
+
+        //用0%-100%，负增长均为1~9分，1~10%为11~20分，11%~100%为每多9%加10分，最多100分
+
+        foreach ($data as $year => $arr) {
+            $score = 1;
+            if (is_numeric($arr['ASSGRO_yoy'])) {
+                $num = floor($arr['ASSGRO_yoy'] * 100);
+                if ($num < 0) {
+                    if ($num < -100) {
+                        $score = 1;
+                    } else {
+                        if ($num >= -100 && $num < -80) {
+                            $score = 1;
+                        } elseif ($num >= -80 && $num < -60) {
+                            $score = 2;
+                        } elseif ($num >= -60 && $num < -40) {
+                            $score = 3;
+                        } elseif ($num >= -40 && $num < -20) {
+                            $score = 4;
+                        } else {
+                            $score = 5;
+                        }
+                    }
+                }
+                if ($num === 0) {
+                    $score = 1;
+                }
+                if ($num > 0) {
+                    if ($num >= 1 && $num <= 10) {
+                        $tmp = [6, 7.5, 9, 10.5, 12, 14, 15.5, 17, 18.5, 20];
+                        $score = $tmp[$num - 1];
+                    }
+                    if ($num >= 11 && $num <= 100) {
+                        $score = floor($num / 9) * 10 + 20 > 100 ? 100 : floor($num / 9) * 10 + 20;
+                    }
+                    if ($num > 100) {
+                        $score = 100;
+                    }
+                }
+                $r['year'] = $year;
+                $r['val'] = $arr['ASSGRO_yoy'];
+                $r['score'] = $score;
+                break;
+            }
+        }
+
+        return $r;
+    }
+
+    //税负强度 28税收负担率 TBR
+    private function TBR($data): array
+    {
+        $r = [
+            'name' => '税负强度',
+            'field' => __FUNCTION__,
+            'year' => null,
+            'val' => null,
+            'score' => 1
+        ];
+
+        foreach ($data as $year => $arr) {
+            if (is_numeric($arr['TBR'])) {
+                $r['year'] = $year;
+                $r['val'] = $arr['TBR'];
+                $r['score'] = current(explode('.', round($r['val'] * 100))) - 0;
+                $r['score'] = $r['score'] > 1 ? $r['score'] : 1;
                 break;
             }
         }
