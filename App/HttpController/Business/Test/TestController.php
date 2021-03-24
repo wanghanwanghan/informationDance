@@ -50,7 +50,7 @@ class TestController extends BusinessBase
                 $placeArr = array_filter($placeArr);
                 $place = $placeArr[0];
                 if (isset($map[$place])) {
-                    $map[$place] += $placeArr[1];
+                    $map[$place] += $val['num'];
                 } else {
                     $map[$place] = 1;
                 }
