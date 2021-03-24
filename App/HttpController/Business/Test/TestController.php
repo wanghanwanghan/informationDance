@@ -45,11 +45,12 @@ class TestController extends BusinessBase
 
         foreach ($list as $index => $val) {
             if (strpos($val['XZQH_NAME'], '-') !== false) {
+                $val['XZQH_NAME'] = str_replace('--', '-', $val['XZQH_NAME']);
                 $placeArr = explode('-', $val['XZQH_NAME']);
                 $placeArr = array_filter($placeArr);
-                $place = current($placeArr);
+                $place = $placeArr[0];
                 if (isset($map[$place])) {
-                    $map[$place]++;
+                    $map[$place] += $placeArr[1];
                 } else {
                     $map[$place] = 1;
                 }
