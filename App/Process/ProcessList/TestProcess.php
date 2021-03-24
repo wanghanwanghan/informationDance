@@ -37,7 +37,7 @@ class TestProcess extends ProcessBase
                 ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
                 ->getObj();
             $mysqlObj->rawQuery('truncate table qyxx_copy1');
-            $limit = 0;
+            $limit = 1;
             while (true) {
                 $offset = ($limit - 1) * 500;
                 $sql = <<<EOF
