@@ -58,6 +58,7 @@ class UserService extends ServiceBase
     function getUserSupervisorEnt($phone = ''): ?array
     {
         if (!is_numeric($phone) || strlen($phone) != 11) return null;
+
         $info = null;
 
         try {

@@ -85,11 +85,10 @@ class QiChaChaController extends QiChaChaBase
         if ($res['code'] == 200 && !empty($res['result'])) {
             //用户有没有监控该企业
             $superEnt = UserService::getInstance()->getUserSupervisorEnt($phone);
-
             foreach ($res['result'] as &$one) {
                 strlen($one['StartDate'] < 10) ?: $one['StartDate'] = substr($one['StartDate'], 0, 4);
-
                 //用户有没有监控该企业
+                !empty($superEnt) ?: $superEnt = [11111];
                 if (!empty($superEnt)) {
                     foreach ($superEnt as $oneEnt) {
                         $one['supervisor'] = 0;
