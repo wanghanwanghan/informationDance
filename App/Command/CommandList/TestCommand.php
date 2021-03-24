@@ -3,6 +3,7 @@
 namespace App\Command\CommandList;
 
 use App\Command\CommandBase;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use EasySwoole\Pool\Manager;
 
@@ -79,7 +80,7 @@ EOF;
                 }
             }
         } catch (\Throwable $e) {
-            $this->writeErr($e, __FUNCTION__);
+            CommonService::getInstance()->log4PHP($e->getMessage());
         } finally {
             Manager::getInstance()
                 ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
