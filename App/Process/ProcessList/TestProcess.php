@@ -16,6 +16,8 @@ class TestProcess extends ProcessBase
         parent::run($arg);
 
         //接收参数可以是字符串也可以是数组
+
+        $this->tmp();
     }
 
     protected function onPipeReadable(Process $process)
@@ -25,6 +27,11 @@ class TestProcess extends ProcessBase
         //接收数据 string
         $data = jsonDecode($process->read());
 
+        return true;
+    }
+
+    function tmp()
+    {
         try {
             $mysqlObj = Manager::getInstance()
                 ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
@@ -93,8 +100,6 @@ EOF;
                 ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
                 ->recycleObj($mysqlObj);
         }
-
-        return true;
     }
 
     protected function onShutDown()
