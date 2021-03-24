@@ -59,6 +59,8 @@ EOF;
                 $list = obj2Arr($list);
                 $limit++;
 
+                CommonService::getInstance()->log4PHP($limit);
+
                 if (empty($list)) break;
 
                 foreach ($list as $index => $val) {

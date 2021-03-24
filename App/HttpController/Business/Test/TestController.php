@@ -29,32 +29,15 @@ class TestController extends BusinessBase
             $mysqlObj = Manager::getInstance()
                 ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
                 ->getObj();
-            $sql = 'SELECT XZQH_NAME,count( 1 ) as num FROM qyxx WHERE XZQH_NAME IS NOT NULL AND XZQH_NAME <> "" GROUP BY XZQH_NAME';
-            $list = $mysqlObj->rawQuery($sql);
-            $list = obj2Arr($list);
+            $sql = 'SELECT * FROM qyxx_copy1';
+            $map = $mysqlObj->rawQuery($sql);
+            $map = obj2Arr($map);
         } catch (\Throwable $e) {
             $this->writeErr($e, __FUNCTION__);
-            $list = [];
         } finally {
             Manager::getInstance()
                 ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
                 ->recycleObj($mysqlObj);
-        }
-
-        $map = [];
-
-        foreach ($list as $index => $val) {
-            if (strpos($val['XZQH_NAME'], '-') !== false) {
-                $val['XZQH_NAME'] = str_replace('--', '-', $val['XZQH_NAME']);
-                $placeArr = explode('-', $val['XZQH_NAME']);
-                $placeArr = array_filter($placeArr);
-                $place = $placeArr[0];
-                if (isset($map[$place])) {
-                    $map[$place] += $val['num'];
-                } else {
-                    $map[$place] = 1;
-                }
-            }
         }
 
         //标准一级分类和个数
