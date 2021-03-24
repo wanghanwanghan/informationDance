@@ -63,7 +63,7 @@ class TestController extends BusinessBase
             $mysqlObj = Manager::getInstance()
                 ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
                 ->getObj();
-            $sql = 'select JJHYDM,count(1) as num from cpxx where JJHYDM is not null group by JJHYDM order by num desc';
+            $sql = 'select JJHYDM,count(1) as num from cpxx where JJHYDM is not null group by JJHYDM';
             $list = $mysqlObj->rawQuery($sql);
             $list = obj2Arr($list);
         } catch (\Throwable $e) {
@@ -90,7 +90,7 @@ class TestController extends BusinessBase
         }
 
         return $this->writeJson(200, null, [
-            'k' => array_keys($map), 'v' => array_values($map), 'JJHYDM' => $JJHYDM
+            'k' => array_keys($map), 'v' => array_values($map), 'JJHYDM' => arsort($JJHYDM)
         ]);
     }
 
