@@ -72,22 +72,21 @@ SELECT
 FROM
 	qyxx_copy1 
 WHERE
-	XZQH_NAME = {$placeArr[0]}
+	XZQH_NAME = '{$placeArr[0]}'
 EOF;
                         $check = $mysqlObj->rawQuery($sql);
-                        CommonService::getInstance()->log4PHP($check);
                         if (empty($check)) {
                             $sql = <<<EOF
 INSERT INTO qyxx_copy1
 VALUES
-	( {$placeArr[0]}, {$val['num']} )
+	( '{$placeArr[0]}', {$val['num']} )
 EOF;
                         } else {
                             $sql = <<<EOF
 UPDATE qyxx_copy1 
 SET num = num + {$val['num']} 
 WHERE
-	XZQH_NAME = {$placeArr[0]}
+	XZQH_NAME = '{$placeArr[0]}'
 EOF;
                         }
                         $mysqlObj->rawQuery($sql);
