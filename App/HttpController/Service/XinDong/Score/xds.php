@@ -791,26 +791,43 @@ class xds
         }
 
         //实际控制人
-        $re = (new QiChaChaService())->setCheckRespFlag(true)
+        $sjkzr = (new QiChaChaService())->setCheckRespFlag(true)
             ->get($this->qcc . 'Beneficiary/GetBeneficiary', [
-            'companyName' => $entName,
-            'percent' => 0,
-            'mode' => 0,
-        ]);
+                'companyName' => $entName,
+                'percent' => 0,
+                'mode' => 0,
+            ]);
 
-        CommonService::getInstance()->log4PHP($re);
+        $temp = [];
+        if ($sjkzr['code'] === 200 && !empty($sjkzr['result'])) {
+            if (count($sjkzr['result']['BreakThroughList']) > 0) {
+                $total = current($sjkzr['result']['BreakThroughList']);
+                $total = substr($total['TotalStockPercent'], 0, -1);
+                if ($total >= 50) {
+                    //如果第一个人就是大股东了，就直接返回
+                    $temp = $sjkzr['result']['BreakThroughList'][0];
+                } else {
+                    //把返回的所有人加起来和100做减法，求出坑
+                    $hole = 100;
+                    foreach ($sjkzr['result']['BreakThroughList'] as $key => $val) {
+                        $hole -= substr($val['TotalStockPercent'], 0, -1);
+                    }
+                    //求出坑的比例，如果比第一个人大，那就是特殊机构，如果没第一个人大，那第一个人就是控制人
+                    if ($total > $hole) $temp = $sjkzr['result']['BreakThroughList'][0];
+                }
+            }
+        }
+
+        !empty($temp) ? $type = true : $type = false;
 
 
+        CommonService::getInstance()->log4PHP([$tmp, $temp]);
 
 
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['ASSGRO']) && is_numeric($arr['LIAGRO']) && $arr['ASSGRO'] !== 0) {
 
                 //$arr['ASSGRO'] - $arr['LIAGRO'] -
-
-
-
-
 
 
                 $r['year'] = $year;
