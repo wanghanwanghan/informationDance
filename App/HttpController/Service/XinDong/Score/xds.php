@@ -278,7 +278,7 @@ class xds
                         }
                     }
                 }
-                if ($num === 0) {
+                if ($num === 0.0) {
                     $score = 1;
                 }
                 if ($num > 0) {
@@ -323,7 +323,7 @@ class xds
                 if ($num < 0) {
                     $score = 10 - substr($num, 0, 1);
                 }
-                if ($num === 0) {
+                if ($num === 0.0) {
                     $score = 1;
                 }
                 if ($num > 0) {
@@ -497,7 +497,7 @@ class xds
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['NETINC']) && is_numeric($arr['CA_ASSGRO'])) {
                 if ($arr['CA_ASSGRO'] !== 0) {
-                    $num = floor($arr['NETINC'] / $arr['CA_ASSGRO'] * 100);
+                    $num = round($arr['NETINC'] / $arr['CA_ASSGRO'] * 100);
                     if ($num < 0) {
                         if ($num < -100) {
                             $score = 1;
@@ -515,7 +515,7 @@ class xds
                             }
                         }
                     }
-                    if ($num === 0) {
+                    if ($num === 0.0) {
                         $score = 1;
                     }
                     if ($num > 0) {
@@ -601,7 +601,7 @@ class xds
                         }
                     }
                 }
-                if ($num === 0) {
+                if ($num === 0.0) {
                     $score = 1;
                 }
                 if ($num > 0) {
