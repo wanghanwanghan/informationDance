@@ -790,10 +790,29 @@ class xds
             }
         }
 
-        CommonService::getInstance()->log4PHP($tmp);
+        //实际控制人
+        $re = (new QiChaChaService())->setCheckRespFlag(true)
+            ->get($this->qcc . 'Beneficiary/GetBeneficiary', [
+            'companyName' => $entName,
+            'percent' => 0,
+            'mode' => 0,
+        ]);
+
+        CommonService::getInstance()->log4PHP($re);
+
+
+
 
         foreach ($data as $year => $arr) {
-            if (is_numeric($arr['DEBTL']) && is_numeric($arr['A_PROGROL'])) {
+            if (is_numeric($arr['ASSGRO']) && is_numeric($arr['LIAGRO']) && $arr['ASSGRO'] !== 0) {
+
+                //$arr['ASSGRO'] - $arr['LIAGRO'] -
+
+
+
+
+
+
                 $r['year'] = $year;
                 $r['val'] = 1;
                 $r['score'] = 1;
