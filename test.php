@@ -38,7 +38,7 @@ $data = [
 //dd(json_decode($res, true));
 
 
-$str = '  123.44444 万元人民币';
+$str = '  万元人民币';
 preg_match_all('/\d+/', $str, $all);
-dd(current($all));
+dd(current(current($all)));
 

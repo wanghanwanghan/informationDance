@@ -753,7 +753,7 @@ class xds
                 if (!isset($row['DebtSecuredAmount']) || empty(trim($row['DebtSecuredAmount']))) continue;
                 if (!isset($row['RegisterDate']) || !is_numeric(substr($row['RegisterDate'], 0, 4))) continue;
                 preg_match_all('/\d+/', $row['DebtSecuredAmount'], $all);
-                $num = current($all);
+                $num = current(current($all));
                 if (!is_numeric($num)) continue;
                 $year = substr($row['RegisterDate'], 0, 4);
                 isset($tmp['dcdy'][$year . 'year']) ?
