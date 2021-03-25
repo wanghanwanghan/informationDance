@@ -3,7 +3,9 @@
 namespace App\HttpController\Service\XinDong\Score;
 
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongXin\LongXinService;
+use App\HttpController\Service\QiChaCha\QiChaChaService;
 
 class xds
 {
@@ -48,6 +50,11 @@ class xds
     //35净利润同比 NETINC_yoy
     //36纳税总额同比 RATGRO_yoy
     //37所有者权益同比 TOTEQU_yoy
+
+    function __construct()
+    {
+        $this->qcc = CreateConf::getInstance()->getConf('qichacha.baseUrl');
+    }
 
     function cwScore($entName): ?array
     {
@@ -112,6 +119,12 @@ class xds
 
         //税负强度 28税收负担率 TBR
         $score['TBR'] = $this->TBR($arr['result']);
+
+        //还款能力 20资产负债率 DEBTL 60% && 16企业人均盈利 A_PROGROL 40%
+        $score['RepaymentAbility'] = $this->RepaymentAbility($arr['result']);
+
+        //担保能力 (0资产总额 - 1负债总额 - 股权质押接口的出质股权数额 - 动产抵押接口的被担保主债权数额 - 对外担保接口的主债权数额) / 0资产总额
+        $score['GuaranteeAbility'] = $this->GuaranteeAbility($arr['result'], $entName);
 
         return $score;
     }
@@ -631,6 +644,92 @@ class xds
                 $r['val'] = $arr['TBR'];
                 $r['score'] = current(explode('.', round($r['val'] * 100))) - 0;
                 $r['score'] = $r['score'] > 1 ? $r['score'] : 1;
+                break;
+            }
+        }
+
+        return $r;
+    }
+
+    //还款能力 20资产负债率 DEBTL 60% && 16企业人均盈利 A_PROGROL 40%
+    private function RepaymentAbility($data): array
+    {
+        $r = [
+            'name' => '还款能力',
+            'field' => __FUNCTION__,
+            'year' => null,
+            'val' => null,
+            'score' => 1
+        ];
+
+        foreach ($data as $year => $arr) {
+            if (is_numeric($arr['DEBTL']) && is_numeric($arr['A_PROGROL'])) {
+                $DEBTL = floor($arr['DEBTL'] * 100);
+                $A_PROGROL = floor($arr['A_PROGROL']);
+
+                if ($DEBTL >= 0 && $A_PROGROL >= 0) {
+                    $DEBTL_score = (100 - $DEBTL) * 0.6;
+
+                    if ($A_PROGROL > 1 && $A_PROGROL <= 5) {
+                        $A_PROGROL_score = 20;
+                    } else if ($A_PROGROL > 5 && $A_PROGROL <= 8) {
+                        $A_PROGROL_score = 30;
+                    } else if ($A_PROGROL > 8 && $A_PROGROL <= 10) {
+                        $A_PROGROL_score = 40;
+                    } else if ($A_PROGROL > 10 && $A_PROGROL <= 15) {
+                        $A_PROGROL_score = 50;
+                    } else if ($A_PROGROL > 15 && $A_PROGROL <= 20) {
+                        $A_PROGROL_score = 60;
+                    } else if ($A_PROGROL > 20 && $A_PROGROL <= 60) {
+                        $A_PROGROL_score = 70;
+                    } else if ($A_PROGROL > 60 && $A_PROGROL <= 100) {
+                        $A_PROGROL_score = 80;
+                    } else if ($A_PROGROL > 100 && $A_PROGROL <= 500) {
+                        $A_PROGROL_score = 90;
+                    } else if ($A_PROGROL > 500) {
+                        $A_PROGROL_score = 100;
+                    } else {
+                        $A_PROGROL_score = 10;
+                    }
+
+                    $A_PROGROL_score = $A_PROGROL_score * 0.4;
+
+                    $r['year'] = $year;
+                    $r['val'] = ['DEBTL' => $DEBTL, 'A_PROGROL' => $A_PROGROL];
+                    $r['score'] = round($DEBTL_score + $A_PROGROL_score);
+                    break;
+                }
+            }
+        }
+
+        return $r;
+    }
+
+    //担保能力 (0资产总额 - 1负债总额 - 股权质押接口的出质股权数额 - 动产抵押接口的被担保主债权数额 - 对外担保接口的主债权数额) / 0资产总额
+    private function GuaranteeAbility($data, $entName): array
+    {
+        $r = [
+            'name' => '担保能力',
+            'field' => __FUNCTION__,
+            'year' => null,
+            'val' => null,
+            'score' => 1
+        ];
+
+        //股权出质
+        $res = (new QiChaChaService())->get($this->qcc . 'StockEquityPledge/GetStockPledgeList', [
+            'searchKey' => $entName,
+            'pageIndex' => 1,
+            'pageSize' => 50,
+        ]);
+
+        CommonService::getInstance()->log4PHP($res);
+
+        foreach ($data as $year => $arr) {
+            if (is_numeric($arr['DEBTL']) && is_numeric($arr['A_PROGROL'])) {
+                $r['year'] = $year;
+                $r['val'] = 1;
+                $r['score'] = 1;
                 break;
             }
         }

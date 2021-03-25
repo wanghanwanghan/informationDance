@@ -158,7 +158,7 @@ class ZhongWangController extends ZhongWangBase
         }
 
         //删除
-        // $res['message'] = (new xds())->cwScore($entName);
+         $res['message'] = (new xds())->cwScore($entName);
 
         return $this->writeJson($res['code'], null, $res['data'], $res['message']);
     }
