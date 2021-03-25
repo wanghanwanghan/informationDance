@@ -731,7 +731,7 @@ class xds
 
         if ($gqcz['code'] === 200 && !empty($gqcz['result'])) {
             foreach ($gqcz['result'] as $row) {
-                if (!isset($row['PledgedAmount']) || !is_numeric($row['PledgedAmount'])) continue;
+                if (!isset($row['PledgedAmount']) || empty(trim($row['PledgedAmount']))) continue;
                 if (!isset($row['RegDate']) || !is_numeric(substr($row['RegDate'], 0, 4))) continue;
                 preg_match_all('/\d+/', $row['PledgedAmount'], $all);
                 $num = current(current($all));
@@ -766,7 +766,7 @@ class xds
         }
 
 
-        CommonService::getInstance()->log4PHP([$tmp, $gqcz, $dcdy]);
+        CommonService::getInstance()->log4PHP($tmp);
 
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['DEBTL']) && is_numeric($arr['A_PROGROL'])) {
