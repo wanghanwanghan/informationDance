@@ -741,7 +741,8 @@ class xds
         }
 
         //动产抵押
-        $dcdy = (new QiChaChaService())->get($this->qcc . 'ChattelMortgage/GetChattelMortgage', [
+        $dcdy = (new QiChaChaService())->setCheckRespFlag(true)
+            ->get($this->qcc . 'ChattelMortgage/GetChattelMortgage', [
             'keyWord' => $entName,
             'pageIndex' => 1,
             'pageSize' => 100,
