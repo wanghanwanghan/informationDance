@@ -2158,7 +2158,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("cpws_sortTimeString#" . ($i + 1), $this->formatDate($data['cpws']['list'][$i]['sortTimeString']));
             //审理状态
             $docObj->setValue("cpws_trialProcedure#" . ($i + 1), $data['cpws']['list'][$i]['detail']['trialProcedure']);
-            //审理结果
+            //审理结果 notready
             //$docObj->setValue("cpws_judgeResult#" . ($i + 1), $data['cpws']['list'][$i]['detail']['judgeResult']);
             $content = '';
             foreach ($data['cpws']['list'][$i]['detail']['partys'] as $no => $arr) {
