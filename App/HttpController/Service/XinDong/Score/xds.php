@@ -733,10 +733,13 @@ class xds
             foreach ($gqcz['result'] as $row) {
                 if (!isset($row['PledgedAmount']) || !is_numeric($row['PledgedAmount'])) continue;
                 if (!isset($row['RegDate']) || !is_numeric(substr($row['RegDate'], 0, 4))) continue;
+                preg_match_all('/\d+/', $row['PledgedAmount'], $all);
+                $num = current(current($all));
+                if (!is_numeric($num)) continue;
                 $year = substr($row['RegDate'], 0, 4);
                 isset($tmp['gqcz'][$year . 'year']) ?
-                    $tmp['gqcz'][$year . 'year'] += $row['PledgedAmount'] :
-                    $tmp['gqcz'][$year . 'year'] = $row['PledgedAmount'];
+                    $tmp['gqcz'][$year . 'year'] += $num :
+                    $tmp['gqcz'][$year . 'year'] = $num;
             }
         }
 
