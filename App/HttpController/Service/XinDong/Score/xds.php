@@ -387,10 +387,27 @@ class xds
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['MAIBUSINC']) && is_numeric($arr['SOCNUM'])) {
                 if ($arr['SOCNUM'] > 0) {
+                    $val = current(explode('.', round($arr['MAIBUSINC'] / $arr['SOCNUM'] * 100))) - 0;
+                    if ($val <= 10) {
+                        $score = 10;
+                    } elseif ($val >= 1000) {
+                        $score = 100;
+                    } else {
+                        if ($val > 10 && $val < 20) {
+                            $score = 20;
+                        } elseif ($val >= 20 && $val < 100) {
+                            $score = 60;
+                        } elseif ($val >= 100 && $val < 150) {
+                            $score = 70;
+                        } elseif ($val >= 150 && $val < 300) {
+                            $score = 80;
+                        } elseif ($val >= 300 && $val < 1000) {
+                            $score = 90;
+                        }
+                    }
                     $r['year'] = $year;
                     $r['val'] = $arr['MAIBUSINC'] / $arr['SOCNUM'];
-                    $r['score'] = current(explode('.', round($r['val'] * 100))) - 0;
-                    $r['score'] = $r['score'] > 1 ? $r['score'] : 1;
+                    $r['score'] = $score;
                     break;
                 }
             }
@@ -413,10 +430,33 @@ class xds
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['NETINC']) && is_numeric($arr['SOCNUM'])) {
                 if ($arr['SOCNUM'] > 0) {
+                    $val = current(explode('.', round($arr['NETINC'] / $arr['SOCNUM'] * 100))) - 0;
+                    if ($val <= 1) {
+                        $score = 10;
+                    } elseif ($val >= 500) {
+                        $score = 100;
+                    } else {
+                        if ($val > 1 && $val < 5) {
+                            $score = 20;
+                        } elseif ($val >= 5 && $val < 8) {
+                            $score = 30;
+                        } elseif ($val >= 8 && $val < 10) {
+                            $score = 40;
+                        } elseif ($val >= 10 && $val < 15) {
+                            $score = 50;
+                        } elseif ($val >= 15 && $val < 20) {
+                            $score = 60;
+                        } elseif ($val >= 20 && $val < 60) {
+                            $score = 70;
+                        } elseif ($val >= 60 && $val < 100) {
+                            $score = 80;
+                        } elseif ($val >= 100 && $val < 500) {
+                            $score = 90;
+                        }
+                    }
                     $r['year'] = $year;
                     $r['val'] = $arr['NETINC'] / $arr['SOCNUM'];
-                    $r['score'] = current(explode('.', round($r['val'] * 100))) - 0;
-                    $r['score'] = $r['score'] > 1 ? $r['score'] : 1;
+                    $r['score'] = $score;
                     break;
                 }
             }
