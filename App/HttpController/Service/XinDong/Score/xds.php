@@ -743,10 +743,10 @@ class xds
         //动产抵押
         $dcdy = (new QiChaChaService())->setCheckRespFlag(true)
             ->get($this->qcc . 'ChattelMortgage/GetChattelMortgage', [
-            'keyWord' => $entName,
-            'pageIndex' => 1,
-            'pageSize' => 100,
-        ]);
+                'keyWord' => $entName,
+                'pageIndex' => 1,
+                'pageSize' => 100,
+            ]);
 
         if ($dcdy['code'] === 200 && !empty($dcdy['result'])) {
             foreach ($dcdy['result'] as $row) {
@@ -763,7 +763,7 @@ class xds
         }
 
 
-        CommonService::getInstance()->log4PHP([$tmp, $dcdy]);
+        CommonService::getInstance()->log4PHP([$tmp, $gqcz, $dcdy]);
 
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['DEBTL']) && is_numeric($arr['A_PROGROL'])) {
