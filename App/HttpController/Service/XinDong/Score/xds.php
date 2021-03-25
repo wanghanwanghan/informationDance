@@ -497,7 +497,7 @@ class xds
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['NETINC']) && is_numeric($arr['CA_ASSGRO'])) {
                 if ($arr['CA_ASSGRO'] !== 0) {
-                    $num = round($arr['NETINC'] / $arr['CA_ASSGRO']) * 100;
+                    $num = round($arr['NETINC'] / $arr['CA_ASSGRO'] * 100);
                     $num = substr($num, 0, strpos($num, '.'));
                     if ($num < 0) {
                         if ($num < -100) {
@@ -818,21 +818,34 @@ class xds
             }
         }
 
+        //实际控制人算不算进权重
         !empty($temp) ? $type = true : $type = false;
-
-
-        CommonService::getInstance()->log4PHP([$tmp, $temp]);
-
 
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['ASSGRO']) && is_numeric($arr['LIAGRO']) && $arr['ASSGRO'] !== 0) {
-
-                //$arr['ASSGRO'] - $arr['LIAGRO'] -
-
-
+                isset($tmp['gqcz'][$year . 'year']) ? $gqcz = $tmp['gqcz'][$year . 'year'] : $gqcz = 0;
+                isset($tmp['dcdy'][$year . 'year']) ? $dcdy = $tmp['dcdy'][$year . 'year'] : $dcdy = 0;
+                isset($tmp['dwdb'][$year . 'year']) ? $dwdb = $tmp['dwdb'][$year . 'year'] : $dwdb = 0;
+                $val = ($arr['ASSGRO'] - $arr['LIAGRO'] - $gqcz - $dcdy - $dwdb) / $arr['ASSGRO'];
+                if ($val > 0) {
+                    $val = round($val * 100);
+                    $val = substr($val, 0, strpos($val, '.'));
+                    if ($val >= 90) {
+                        $score = 95;
+                    } else if ($val < 90 && $val >= 10) {
+                        $score = $val;
+                    } else {
+                        $score = 5;
+                    }
+                } else {
+                    $score = 5;
+                }
+                if ($type) {
+                    $score = $score * 0.7 + 100 * 0.3;
+                }
                 $r['year'] = $year;
-                $r['val'] = 1;
-                $r['score'] = 1;
+                $r['val'] = $val;
+                $r['score'] = $score;
                 break;
             }
         }
