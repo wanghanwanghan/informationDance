@@ -38,12 +38,7 @@ $data = [
 //dd(json_decode($res, true));
 
 
-$arr=[
-    '体育'=>31,
-    '美术'=>12,
-    '化学'=>53
-];
+$str = '  123.44444 万元人民币';
+preg_match_all('/\d+/', $str, $all);
+dd(current($all));
 
-arsort($arr);
-
-dd($arr);

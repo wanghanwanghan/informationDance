@@ -65,8 +65,6 @@ class xds
             'dataCount' => 4,
         ], false);
 
-        CommonService::getInstance()->log4PHP($arr);
-
         if (!isset($arr['code']) || !isset($arr['result']) || $arr['code'] !== 200 || empty($arr['result'])) {
             return null;
         }
@@ -728,7 +726,7 @@ class xds
             ->get($this->qcc . 'StockEquityPledge/GetStockPledgeList', [
                 'searchKey' => $entName,
                 'pageIndex' => 1,
-                'pageSize' => 50,
+                'pageSize' => 100,
             ]);
 
         if ($gqcz['code'] === 200 && !empty($gqcz['result'])) {
@@ -746,8 +744,23 @@ class xds
         $dcdy = (new QiChaChaService())->get($this->qcc . 'ChattelMortgage/GetChattelMortgage', [
             'keyWord' => $entName,
             'pageIndex' => 1,
-            'pageSize' => 50,
+            'pageSize' => 100,
         ]);
+
+        if ($dcdy['code'] === 200 && !empty($dcdy['result'])) {
+            foreach ($dcdy['result'] as $row) {
+                if (!isset($row['DebtSecuredAmount']) || empty(trim($row['DebtSecuredAmount']))) continue;
+                if (!isset($row['RegisterDate']) || !is_numeric(substr($row['RegisterDate'], 0, 4))) continue;
+                preg_match_all('/\d+/', $row['DebtSecuredAmount'], $all);
+                $num = current($all);
+                if (!is_numeric($num)) continue;
+                $year = substr($row['RegisterDate'], 0, 4);
+                isset($tmp['dcdy'][$year . 'year']) ?
+                    $tmp['dcdy'][$year . 'year'] += $num :
+                    $tmp['dcdy'][$year . 'year'] = $num;
+            }
+        }
+
 
         CommonService::getInstance()->log4PHP([$tmp, $dcdy]);
 
