@@ -719,6 +719,7 @@ class xds
         $tmp = [
             'gqcz' => [],
             'dcdy' => [],
+            'dwdb' => [],
         ];
 
         //股权出质
@@ -765,6 +766,29 @@ class xds
             }
         }
 
+        //对外担保
+        $dwdb = (new QiChaChaService())->setCheckRespFlag(true)
+            ->get($this->qcc . 'AR/GetAnnualReport', [
+                'keyNo' => $entName,
+            ]);
+
+        if ($dwdb['code'] === 200 && !empty($dwdb['result'])) {
+            foreach ($dwdb['result'] as $row) {
+                if (!isset($row['ProvideAssuranceList']) || empty($row['ProvideAssuranceList'])) continue;
+                preg_match_all('/\d+/', $row['Year'], $all);
+                $year = current(current($all));
+                if (!is_numeric($year)) continue;
+                foreach ($row['ProvideAssuranceList'] as $one) {
+                    if (!isset($one['CreditorAmount'])) continue;
+                    preg_match_all('/\d+/', $row['CreditorAmount'], $all);
+                    $num = current(current($all));
+                    if (!is_numeric($num)) continue;
+                    isset($tmp['dwdb'][$year . 'year']) ?
+                        $tmp['dwdb'][$year . 'year'] += $num :
+                        $tmp['dwdb'][$year . 'year'] = $num;
+                }
+            }
+        }
 
         CommonService::getInstance()->log4PHP($tmp);
 
