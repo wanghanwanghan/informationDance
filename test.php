@@ -38,7 +38,4 @@ $data = [
 //dd(json_decode($res, true));
 
 
-$str = '  万元人民币';
-preg_match_all('/\d+/', $str, $all);
-dd(current(current($all)));
-
+dd(explode('.','1.0'));

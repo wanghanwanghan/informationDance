@@ -497,8 +497,7 @@ class xds
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['NETINC']) && is_numeric($arr['CA_ASSGRO'])) {
                 if ($arr['CA_ASSGRO'] !== 0) {
-                    $num = round($arr['NETINC'] / $arr['CA_ASSGRO'] * 100);
-                    $num = substr($num, 0, strpos($num, '.'));
+                    $num = floor($arr['NETINC'] / $arr['CA_ASSGRO'] * 100);
                     if ($num < 0) {
                         if ($num < -100) {
                             $score = 1;
@@ -828,8 +827,7 @@ class xds
                 isset($tmp['dwdb'][$year . 'year']) ? $dwdb = $tmp['dwdb'][$year . 'year'] : $dwdb = 0;
                 $val = ($arr['ASSGRO'] - $arr['LIAGRO'] - $gqcz - $dcdy - $dwdb) / $arr['ASSGRO'];
                 if ($val > 0) {
-                    $val = round($val * 100);
-                    $val = substr($val, 0, strpos($val, '.'));
+                    $val = floor($val * 100);
                     if ($val >= 90) {
                         $score = 95;
                     } else if ($val < 90 && $val >= 10) {
