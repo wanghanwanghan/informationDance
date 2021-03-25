@@ -717,10 +717,11 @@ class xds
         ];
 
         //股权出质
-        $res = (new QiChaChaService())->get($this->qcc . 'StockEquityPledge/GetStockPledgeList', [
+        $res = (new QiChaChaService())->setCheckRespFlag(true)
+            ->get($this->qcc . 'StockEquityPledge/GetStockPledgeList', [
             'searchKey' => $entName,
             'pageIndex' => 1,
-            'pageSize' => 50,
+            'pageSize' => 100,
         ]);
 
         CommonService::getInstance()->log4PHP($res);
