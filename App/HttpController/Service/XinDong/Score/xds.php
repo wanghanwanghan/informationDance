@@ -716,15 +716,38 @@ class xds
             'score' => 1
         ];
 
+        $tmp = [
+            'gqcz' => [],
+            'dcdy' => [],
+        ];
+
         //股权出质
-        $res = (new QiChaChaService())->setCheckRespFlag(true)
+        $gqcz = (new QiChaChaService())->setCheckRespFlag(true)
             ->get($this->qcc . 'StockEquityPledge/GetStockPledgeList', [
-            'searchKey' => $entName,
+                'searchKey' => $entName,
+                'pageIndex' => 1,
+                'pageSize' => 50,
+            ]);
+
+        if ($gqcz['code'] === 200 && !empty($gqcz['result'])) {
+            foreach ($gqcz['result'] as $row) {
+                if (!isset($row['PledgedAmount']) || !is_numeric($row['PledgedAmount'])) continue;
+                if (!isset($row['RegDate']) || !is_numeric(substr($row['RegDate'], 0, 4))) continue;
+                $year = substr($row['RegDate'], 0, 4);
+                isset($tmp['gqcz'][$year . 'year']) ?
+                    $tmp['gqcz'][$year . 'year'] += $row['PledgedAmount'] :
+                    $tmp['gqcz'][$year . 'year'] = $row['PledgedAmount'];
+            }
+        }
+
+        //动产抵押
+        $dcdy = (new QiChaChaService())->get($this->qcc . 'ChattelMortgage/GetChattelMortgage', [
+            'keyWord' => $entName,
             'pageIndex' => 1,
-            'pageSize' => 100,
+            'pageSize' => 50,
         ]);
 
-        CommonService::getInstance()->log4PHP($res);
+        CommonService::getInstance()->log4PHP([$tmp, $dcdy]);
 
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['DEBTL']) && is_numeric($arr['A_PROGROL'])) {
