@@ -780,7 +780,7 @@ class xds
                 if (!is_numeric($year)) continue;
                 foreach ($row['ProvideAssuranceList'] as $one) {
                     if (!isset($one['CreditorAmount'])) continue;
-                    preg_match_all('/\d+/', $row['CreditorAmount'], $all);
+                    preg_match_all('/\d+/', $one['CreditorAmount'], $all);
                     $num = current(current($all));
                     if (!is_numeric($num)) continue;
                     isset($tmp['dwdb'][$year . 'year']) ?
