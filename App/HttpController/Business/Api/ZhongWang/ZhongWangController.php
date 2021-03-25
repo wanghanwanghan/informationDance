@@ -157,8 +157,10 @@ class ZhongWangController extends ZhongWangBase
             return $this->writeErr($e, __FUNCTION__);
         }
 
+        CommonService::getInstance()->log4PHP($res);
+
         //删除
-         $res['message'] = (new xds())->cwScore($entName);
+        $res['message'] = (new xds())->cwScore($entName);
 
         return $this->writeJson($res['code'], null, $res['data'], $res['message']);
     }
