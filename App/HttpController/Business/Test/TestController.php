@@ -30,8 +30,11 @@ class TestController extends BusinessBase
                 ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
                 ->getObj();
             $sql = 'SELECT * FROM qyxx_copy1';
-            $map = $mysqlObj->rawQuery($sql);
-            $map = obj2Arr($map);
+            $list = $mysqlObj->rawQuery($sql);
+            $list = obj2Arr($list);
+            foreach ($list as $val) {
+                $map[$val['XZQH_NAME']] = $val['num'];
+            }
         } catch (\Throwable $e) {
             $this->writeErr($e, __FUNCTION__);
         } finally {

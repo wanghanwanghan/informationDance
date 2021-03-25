@@ -20,7 +20,7 @@ class TestProcess extends ProcessBase
 
         //接收参数可以是字符串也可以是数组
 
-        $this->breakTime = Carbon::now()->addHours(6)->timestamp;
+        $this->breakTime = Carbon::now()->addDays(1)->timestamp;
 
         $this->tmp();
     }
