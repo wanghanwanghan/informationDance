@@ -3520,6 +3520,7 @@ TEMP;
                     $temp .= "<td rowspan=\"{$rowspan}\">{$one['detail']['court']}</td>";
                     $temp .= "<td rowspan=\"{$rowspan}\">{$one['sortTimeString']}</td>";
                     $temp .= "<td rowspan=\"{$rowspan}\">{$one['detail']['trialProcedure']}</td>";
+                    //$temp .= "<td rowspan=\"{$rowspan}\">{$one['detail']['judgeResult']}</td>";
 
                     $first = true;
 
