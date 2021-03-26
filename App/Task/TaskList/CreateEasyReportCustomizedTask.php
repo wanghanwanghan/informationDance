@@ -3520,7 +3520,7 @@ TEMP;
                     $temp .= "<td rowspan=\"{$rowspan}\">{$one['detail']['court']}</td>";
                     $temp .= "<td rowspan=\"{$rowspan}\">{$one['sortTimeString']}</td>";
                     $temp .= "<td rowspan=\"{$rowspan}\">{$one['detail']['trialProcedure']}</td>";
-                    //$temp .= "<td rowspan=\"{$rowspan}\">{$one['detail']['judgeResult']}</td>";
+                    $temp .= "<td rowspan=\"{$rowspan}\">{$one['detail']['judgeResult']}</td>";
 
                     $first = true;
 
@@ -3595,20 +3595,21 @@ TEMP;
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
-        <td colspan="9" style="text-align: center;background-color: #d3d3d3">裁判文书</td>
+        <td colspan="10" style="text-align: center;background-color: #d3d3d3">裁判文书</td>
     </tr>
     <tr>
-        <td colspan="9">裁判文书 {$num} 项，报告中提供最新的 20 条记录</td>
+        <td colspan="10">裁判文书 {$num} 项，报告中提供最新的 20 条记录</td>
     </tr>
     <tr>
         <td width="7%">序号</td>
         <td width="13%">案号</td>
-        <td width="13%">法院名称</td>
+        <td width="10%">法院名称</td>
         <td width="13%">立案时间</td>
         <td width="7%">审理状态</td>
-        <td width="13%">案由</td>
-        <td width="14%">当事人</td>
-        <td width="13%">称号</td>
+        <td width="13%">审理结果</td>
+        <td width="10%">案由</td>
+        <td width="10%">当事人</td>
+        <td width="10%">称号</td>
         <td width="7%">诉讼地位</td>
     </tr>
     {$insert}
