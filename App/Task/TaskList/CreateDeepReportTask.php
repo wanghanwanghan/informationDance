@@ -3485,12 +3485,13 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             //案号
             $docObj->setValue("cpws_caseNo#" . ($i + 1), $data['cpws']['list'][$i]['detail']['caseNo']);
             //法院名称
-            $docObj->setValue("cpws_court#" . ($i + 1), $data['cpws']['list'][$i]['detail']['court']);
+            //$docObj->setValue("cpws_court#" . ($i + 1), $data['cpws']['list'][$i]['detail']['court']);
             //审结时间
             $docObj->setValue("cpws_sortTimeString#" . ($i + 1), $this->formatDate($data['cpws']['list'][$i]['sortTimeString']));
             //审理状态
             $docObj->setValue("cpws_trialProcedure#" . ($i + 1), $data['cpws']['list'][$i]['detail']['trialProcedure']);
-
+            //审理结果
+            $docObj->setValue("cpws_judgeResult#" . ($i + 1), $data['cpws']['list'][$i]['detail']['judgeResult']);
             $content = '';
             foreach ($data['cpws']['list'][$i]['detail']['partys'] as $no => $arr) {
                 $content .= '<w:br/>';
