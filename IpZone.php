@@ -106,6 +106,7 @@ class IpZone
         $startBit = str_pad(decbin($start), 32, '0', STR_PAD_LEFT);
         $endBit = substr($startBit, 0, $info[1]);
         $endBit = str_pad($endBit, 32, '1', STR_PAD_RIGHT);
+
         return [$start, bindec($endBit)];
     }
 }
@@ -124,6 +125,3 @@ foreach ($arr as $value) {
 $obj = new IpZone($f);
 
 var_dump($obj->isInZone('192.168.0.1'));
-
-
-
