@@ -270,8 +270,11 @@ class LongXinService extends ServiceBase
         //$check = $this->alreadyInserted($postData);
 
         $entId = $this->getEntid($postData['entName']);
+
         if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
+
         TaskService::getInstance()->create(new insertEnt($postData['entName'], $postData['code']));
+
         $ANCHEYEAR = '';
         $temp = [];
         for ($i = 2010; $i <= date('Y'); $i++) {
@@ -283,7 +286,9 @@ class LongXinService extends ServiceBase
             'ANCHEYEAR' => trim($ANCHEYEAR, ','),
             'usercode' => $this->usercode
         ];
+
         $this->sendHeaders['authorization'] = $this->createToken($arr);
+
         $res = (new CoHttpClient())->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
 
         if (isset($res['total']) && $res['total'] > 0) {
