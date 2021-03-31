@@ -219,8 +219,6 @@ class TaoShuController extends TaoShuBase
 
         $res = (new TaoShuService())->post($postData, __FUNCTION__);
 
-        CommonService::getInstance()->log4PHP($res);
-
         return $this->checkResponse($res);
     }
 
@@ -238,6 +236,8 @@ class TaoShuController extends TaoShuBase
         ];
 
         $res = (new TaoShuService())->post($postData, __FUNCTION__);
+
+        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkResponse($res);
     }
