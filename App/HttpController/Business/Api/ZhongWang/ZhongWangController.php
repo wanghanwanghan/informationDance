@@ -4,10 +4,7 @@ namespace App\HttpController\Business\Api\ZhongWang;
 
 use App\HttpController\Models\Api\AuthBook;
 use App\HttpController\Service\Common\CommonService;
-use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\ZhongWang\ZhongWangService;
-use wanghanwanghan\someUtils\control;
-use wanghanwanghan\someUtils\moudles\ioc\ioc;
 
 class ZhongWangController extends ZhongWangBase
 {
@@ -122,9 +119,7 @@ class ZhongWangController extends ZhongWangBase
         $code = $this->request()->getRequestParam('code') ?? '';
         $callback = $this->request()->getRequestParam('callback') ?? 'https://pc.meirixindong.com/';
 
-        $phone2str = control::numToStrForId($phone - 0);
-        $time2str = control::numToStrForId(time());
-        $orderNo = control::aesEncode($phone2str . '.' . $time2str, 'wanghan');
+        $orderNo = $phone . time();
 
         $res = (new ZhongWangService())->getAuthentication($entName, $callback, $orderNo);
 

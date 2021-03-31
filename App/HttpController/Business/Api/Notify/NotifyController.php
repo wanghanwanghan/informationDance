@@ -8,14 +8,12 @@ use App\HttpController\Models\Api\PurchaseInfo;
 use App\HttpController\Models\Api\PurchaseList;
 use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\Common\CommonService;
-use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\Pay\ali\aliPayService;
 use App\HttpController\Service\Pay\wx\wxPayService;
 use EasySwoole\Pay\AliPay\AliPay;
 use EasySwoole\Pay\AliPay\RequestBean\NotifyRequest;
 use EasySwoole\Pay\Pay;
 use EasySwoole\Pay\WeChat\WeChat;
-use wanghanwanghan\someUtils\control;
 
 class NotifyController extends BusinessBase
 {
@@ -242,10 +240,8 @@ class NotifyController extends BusinessBase
         $message = $this->getRequestData('massge', '');
         $orderNo = $this->getRequestData('orderNo', '');
 
-        $str = control::aesDecode($orderNo, 'wanghan');
-        $arr = explode('.', $str);
-        $phone = control::strToNumForId($arr[0]);
-        $time = control::strToNumForId($arr[1]);
+        $phone = substr($orderNo, 0, 11);
+        $time = substr($orderNo, -10);
 
         CommonService::getInstance()->log4PHP([
             __FUNCTION__,
@@ -279,10 +275,8 @@ class NotifyController extends BusinessBase
         $message = $this->getRequestData('massge', '');
         $orderNo = $this->getRequestData('orderNo', '');
 
-        $str = control::aesDecode($orderNo, 'wanghan');
-        $arr = explode('.', $str);
-        $phone = control::strToNumForId($arr[0]);
-        $time = control::strToNumForId($arr[1]);
+        $phone = substr($orderNo, 0, 11);
+        $time = substr($orderNo, -10);
 
         CommonService::getInstance()->log4PHP([
             __FUNCTION__,
