@@ -23,8 +23,7 @@ class ProvideRouter
     {
         $prefix = '/Business/Provide/QiChaCha/QiChaChaController/';
 
-        $routeCollector->addGroup('/qcc', function (RouteCollector $routeCollector) use ($prefix)
-        {
+        $routeCollector->addGroup('/qcc', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getIPOGuarantee', $prefix . 'getIPOGuarantee');
         });
 
@@ -35,8 +34,7 @@ class ProvideRouter
     {
         $prefix = '/Business/Provide/TaoShu/TaoShuController/';
 
-        $routeCollector->addGroup('/ts', function (RouteCollector $routeCollector) use ($prefix)
-        {
+        $routeCollector->addGroup('/ts', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/lawPersonInvestmentInfo', $prefix . 'lawPersonInvestmentInfo');
             $routeCollector->addRoute(['GET', 'POST'], '/getRegisterInfo', $prefix . 'getRegisterInfo');
         });
@@ -48,8 +46,7 @@ class ProvideRouter
     {
         $prefix = '/Business/Provide/QianQi/QianQiController/';
 
-        $routeCollector->addGroup('/qq', function (RouteCollector $routeCollector) use ($prefix)
-        {
+        $routeCollector->addGroup('/qq', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getThreeYearsData', $prefix . 'getThreeYearsData');
             $routeCollector->addRoute(['GET', 'POST'], '/getThreeYearsDataForASSGRO_REL', $prefix . 'getThreeYearsDataForASSGRO_REL');
             $routeCollector->addRoute(['GET', 'POST'], '/getThreeYearsDataForLIAGRO_REL', $prefix . 'getThreeYearsDataForLIAGRO_REL');
@@ -69,8 +66,7 @@ class ProvideRouter
     {
         $prefix = '/Business/Provide/ZhongWang/ZhongWangController/';
 
-        $routeCollector->addGroup('/zw', function (RouteCollector $routeCollector) use ($prefix)
-        {
+        $routeCollector->addGroup('/zw', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getInvoiceOcr', $prefix . 'getInvoiceOcr');
         });
 
@@ -81,8 +77,7 @@ class ProvideRouter
     {
         $prefix = '/Business/Provide/XinDong/XinDongController/';
 
-        $routeCollector->addGroup('/xd', function (RouteCollector $routeCollector) use ($prefix)
-        {
+        $routeCollector->addGroup('/xd', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getProductStandard', $prefix . 'getProductStandard');
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceBaseData', $prefix . 'getFinanceBaseData');
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceCalData', $prefix . 'getFinanceCalData');
@@ -90,14 +85,6 @@ class ProvideRouter
 
         return true;
     }
-
-
-
-
-
-
-
-
 
 
 }

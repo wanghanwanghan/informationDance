@@ -21,8 +21,7 @@ class AdminProvideRouter
     {
         $prefix = '/Business/Admin/User/PUserController/';
 
-        $routeCollector->addGroup('/user', function (RouteCollector $routeCollector) use ($prefix)
-        {
+        $routeCollector->addGroup('/user', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getUserList', $prefix . 'getUserList');
             $routeCollector->addRoute(['GET', 'POST'], '/addUser', $prefix . 'addUser');
             $routeCollector->addRoute(['GET', 'POST'], '/editUser', $prefix . 'editUser');
@@ -38,8 +37,7 @@ class AdminProvideRouter
     {
         $prefix = '/Business/Admin/Api/PApiController/';
 
-        $routeCollector->addGroup('/api', function (RouteCollector $routeCollector) use ($prefix)
-        {
+        $routeCollector->addGroup('/api', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getApiList', $prefix . 'getApiList');
             $routeCollector->addRoute(['GET', 'POST'], '/addApi', $prefix . 'addApi');
             $routeCollector->addRoute(['GET', 'POST'], '/editApi', $prefix . 'editApi');
@@ -52,8 +50,7 @@ class AdminProvideRouter
     {
         $prefix = '/Business/Admin/statistics/PStatisticsController/';
 
-        $routeCollector->addGroup('/statistics', function (RouteCollector $routeCollector) use ($prefix)
-        {
+        $routeCollector->addGroup('/statistics', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getStatisticsList', $prefix . 'getStatisticsList');
         });
 

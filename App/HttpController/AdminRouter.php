@@ -19,8 +19,7 @@ class AdminRouter
     {
         $prefix = '/Business/Admin/User/UserController/';
 
-        $routeCollector->addGroup('/user', function (RouteCollector $routeCollector) use ($prefix)
-        {
+        $routeCollector->addGroup('/user', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/login', $prefix . 'userLogin');
             $routeCollector->addRoute(['GET', 'POST'], '/addUser', $prefix . 'addUser');
             $routeCollector->addRoute(['GET', 'POST'], '/list', $prefix . 'userList');
