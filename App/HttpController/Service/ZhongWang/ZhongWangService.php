@@ -152,14 +152,14 @@ class ZhongWangService extends ServiceBase
     //企业授权认证
     function getAuthentication($entName, $callBackUrl, $orderNo)
     {
-        CommonService::getInstance()->log4PHP([$entName,$callBackUrl,$orderNo]);
-
         $data = [
             'taxNo' => $this->taxNo,
             'companyName' => $entName,
             'callBackUrl' => $callBackUrl,
             'orderNo' => $orderNo,
         ];
+
+        CommonService::getInstance()->log4PHP($data);
 
         $api_path = 'http://api.zoomwant.com:50001/data/information/getAuthentication';
 
