@@ -669,6 +669,7 @@ class UserController extends UserBase
     {
         $phone = $this->request()->getRequestParam('phone');
         $entName = $this->request()->getRequestParam('entName') ?? '';
+        $code = $this->request()->getRequestParam('code') ?? '';
         $type = $this->request()->getRequestParam('type') ?? '';
         $path = $this->request()->getRequestParam('path') ?? '';
 
@@ -683,6 +684,7 @@ class UserController extends UserBase
             AuthBook::create()->data([
                 'phone' => $phone,
                 'entName' => $entName,
+                'code' => $code,
                 'name' => $filename,
                 'status' => 1,
                 'type' => $type,

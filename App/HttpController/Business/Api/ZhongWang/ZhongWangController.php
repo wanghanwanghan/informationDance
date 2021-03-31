@@ -120,7 +120,7 @@ class ZhongWangController extends ZhongWangBase
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $entName = $this->request()->getRequestParam('entName') ?? '';
         $code = $this->request()->getRequestParam('code') ?? '';
-        $callback = $this->request()->getRequestParam('callback') ?? 'https://www.baidu.com/';
+        $callback = $this->request()->getRequestParam('callback') ?? 'https://pc.meirixindong.com/';
 
         $phone2str = control::numToStrForId($phone - 0);
         $time2str = control::numToStrForId(time());
@@ -135,7 +135,7 @@ class ZhongWangController extends ZhongWangBase
         //添加授权信息
         try {
             $check = AuthBook::create()->where([
-                'phone' => $phone, 'entName' => $entName, 'code' => $code
+                'phone' => $phone, 'entName' => $entName, 'code' => $code, 'type' => 2
             ])->get();
             if (empty($check)) {
                 AuthBook::create()->data([
@@ -143,13 +143,16 @@ class ZhongWangController extends ZhongWangBase
                     'entName' => $entName,
                     'code' => $code,
                     'status' => 1,
-                    'type' => 1,
+                    'type' => 2,//深度报告，发票数据
                     'remark' => $orderNo
                 ])->save();
             } else {
                 $check->update([
+                    'phone' => $phone,
+                    'entName' => $entName,
+                    'code' => $code,
                     'status' => 1,
-                    'type' => 1,
+                    'type' => 2,
                     'remark' => $orderNo
                 ]);
             }
