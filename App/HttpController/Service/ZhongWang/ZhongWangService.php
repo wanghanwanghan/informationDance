@@ -159,13 +159,9 @@ class ZhongWangService extends ServiceBase
             'orderNo' => $orderNo,
         ];
 
-        CommonService::getInstance()->log4PHP($data);
-
         $api_path = 'http://api.zoomwant.com:50001/data/information/getAuthentication';
 
         $res = $this->readyToSend($api_path, $data, false, false);
-
-        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
