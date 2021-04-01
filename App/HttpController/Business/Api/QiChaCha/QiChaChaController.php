@@ -615,6 +615,36 @@ class QiChaChaController extends QiChaChaBase
 
         $res = (new QiChaChaService())->get($this->baseUrl . 'AR/GetAnnualReport', $postData);
 
+        if (!empty($res['Result'])) {
+            foreach ($res['Result'] as $key => $val) {
+                if (isset($val['ProvideAssuranceList'])) {
+                    if (empty($val['ProvideAssuranceList'])) {
+                        $res['Result'][$key]['ProvideAssuranceList'] = [
+                            'Creditor' => null,
+                            'Debtor' => null,
+                            'CreditorCategory' => null,
+                            'CreditorAmount' => null,
+                            'FulfillObligation' => null,
+                            'AssuranceDurn' => null,
+                            'AssuranceType' => null,
+                            'AssuranceScope' => null,
+                        ];
+                    }
+                } else {
+                    $res['Result'][$key]['ProvideAssuranceList'] = [
+                        'Creditor' => null,
+                        'Debtor' => null,
+                        'CreditorCategory' => null,
+                        'CreditorAmount' => null,
+                        'FulfillObligation' => null,
+                        'AssuranceDurn' => null,
+                        'AssuranceType' => null,
+                        'AssuranceScope' => null,
+                    ];
+                }
+            }
+        }
+
         return $this->checkResponse($res);
     }
 
