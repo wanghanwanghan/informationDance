@@ -29,7 +29,7 @@ class LongDunController extends LongDunBase
         parent::afterAction($actionName);
     }
 
-    //检验企查查返回值，并给客户计费
+    //检验龙盾返回值，并给客户计费
     private function checkResponse($res, $writeJson = true)
     {
         if (isset($res['Paging']) && !empty($res['Paging'])) {

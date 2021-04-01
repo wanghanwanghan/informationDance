@@ -248,7 +248,7 @@ class XinDongService extends ServiceBase
             return empty($data) ? null : $data;
         });
 
-        //企查查 融资
+        //龙盾 融资
         $csp->add('SearchCompanyFinancings', function () use ($entName) {
 
             $data = [];
@@ -266,7 +266,7 @@ class XinDongService extends ServiceBase
             return empty($data) ? null : $data;
         });
 
-        //企查查 行政许可 只要数字
+        //龙盾 行政许可 只要数字
         $csp->add('GetAdministrativeLicenseList', function () use ($entName) {
 
             $postData = [
@@ -282,7 +282,7 @@ class XinDongService extends ServiceBase
             return $total;
         });
 
-        //企查查 专利 只要数字
+        //龙盾 专利 只要数字
         $csp->add('PatentSearch', function () use ($entName) {
 
             $postData = [
@@ -329,7 +329,7 @@ class XinDongService extends ServiceBase
             return empty($data) ? null : $data;
         });
 
-        //企查查 土地资源
+        //龙盾 土地资源
         $csp->add('landResources', function () use ($entName) {
 
             $csp = CspService::getInstance()->create();
@@ -518,7 +518,7 @@ class XinDongService extends ServiceBase
     {
         $csp = CspService::getInstance()->create();
 
-        //企查查 购地信息
+        //龙盾 购地信息
         $csp->add('LandPurchaseList', function () use ($entName) {
             $postData = [
                 'searchKey'=>$entName,
@@ -529,7 +529,7 @@ class XinDongService extends ServiceBase
             return empty($res['paging']) ? 0 : $res['paging']['total'];
         });
 
-        //企查查 土地公示
+        //龙盾 土地公示
         $csp->add('LandPublishList', function () use ($entName) {
             $postData = [
                 'searchKey'=>$entName,
@@ -540,7 +540,7 @@ class XinDongService extends ServiceBase
             return empty($res['paging']) ? 0 : $res['paging']['total'];
         });
 
-        //企查查 土地转让
+        //龙盾 土地转让
         $csp->add('LandTransferList', function () use ($entName) {
             $postData = [
                 'searchKey'=>$entName,

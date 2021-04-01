@@ -6497,7 +6497,7 @@ TEMP;
             return $res;
         });
 
-        //企查查 基本信息 工商信息
+        //龙盾 基本信息 工商信息
         array_search('GetBasicDetailsByName', $catalog) === false ?: $csp->add('GetBasicDetailsByName', function () {
 
             $postData = ['keyWord' => $this->entName];
@@ -6554,7 +6554,7 @@ TEMP;
             return $tmp;
         });
 
-        //企查查 经营异常
+        //龙盾 经营异常
         array_search('getRegisterInfo', $catalog) === false ?: $csp->add('GetOpException', function () {
 
             $postData = ['keyNo' => $this->entName];
@@ -6569,7 +6569,7 @@ TEMP;
             return $tmp;
         });
 
-        //企查查 实际控制人
+        //龙盾 实际控制人
         array_search('Beneficiary', $catalog) === false ?: $csp->add('Beneficiary', function () {
 
             $postData = [
@@ -6609,7 +6609,7 @@ TEMP;
             return $tmp;
         });
 
-        //淘数 企查查 历史沿革
+        //淘数 龙盾 历史沿革
         array_search('getHistoricalEvolution', $catalog) === false ?: $csp->add('getHistoricalEvolution', function () {
 
             $res = XinDongService::getInstance()->getHistoricalEvolution($this->entName);
@@ -6678,7 +6678,7 @@ TEMP;
             return $res;
         });
 
-        //企查查 银行信息
+        //龙盾 银行信息
         array_search('GetCreditCodeNew', $catalog) === false ?: $csp->add('GetCreditCodeNew', function () {
 
             $postData = ['keyWord' => $this->entName];
@@ -6690,7 +6690,7 @@ TEMP;
             return $res;
         });
 
-        //企查查 公司概况
+        //龙盾 公司概况
         array_search('SearchCompanyFinancings', $catalog) === false ?: $csp->add('SearchCompanyFinancings', function () {
 
             $postData = ['searchKey' => $this->entName];
@@ -6702,7 +6702,7 @@ TEMP;
             return $res;
         });
 
-        //企查查 招投标
+        //龙盾 招投标
         array_search('TenderSearch', $catalog) === false ?: $csp->add('TenderSearch', function () {
 
             $postData = [
@@ -6721,7 +6721,7 @@ TEMP;
             return $tmp;
         });
 
-        //企查查 购地信息
+        //龙盾 购地信息
         array_search('LandPurchaseList', $catalog) === false ?: $csp->add('LandPurchaseList', function () {
 
             $postData = [
@@ -6737,7 +6737,7 @@ TEMP;
             return $res;
         });
 
-        //企查查 土地公示
+        //龙盾 土地公示
         array_search('LandPublishList', $catalog) === false ?: $csp->add('LandPublishList', function () {
 
             $postData = [
@@ -6753,7 +6753,7 @@ TEMP;
             return $res;
         });
 
-        //企查查 土地转让
+        //龙盾 土地转让
         array_search('LandTransferList', $catalog) === false ?: $csp->add('LandTransferList', function () {
 
             $postData = [
@@ -6780,7 +6780,7 @@ TEMP;
             return $res;
         });
 
-        //企查查 建筑资质证书
+        //龙盾 建筑资质证书
         array_search('Qualification', $catalog) === false ?: $csp->add('Qualification', function () {
 
             $postData = [
@@ -6796,7 +6796,7 @@ TEMP;
             return $res;
         });
 
-        //企查查 建筑工程项目
+        //龙盾 建筑工程项目
         array_search('BuildingProject', $catalog) === false ?: $csp->add('BuildingProject', function () {
 
             $postData = [
@@ -6812,7 +6812,7 @@ TEMP;
             return $res;
         });
 
-        //企查查 债券信息
+        //龙盾 债券信息
         array_search('BondList', $catalog) === false ?: $csp->add('BondList', function () {
 
             $postData = [
@@ -6828,7 +6828,7 @@ TEMP;
             return $res;
         });
 
-        //企查查 网站信息
+        //龙盾 网站信息
         array_search('GetCompanyWebSite', $catalog) === false ?: $csp->add('GetCompanyWebSite', function () {
 
             $postData = [
@@ -6844,7 +6844,7 @@ TEMP;
             return $res;
         });
 
-        //企查查 微博
+        //龙盾 微博
         array_search('Microblog', $catalog) === false ?: $csp->add('Microblog', function () {
 
             $postData = [
@@ -6860,7 +6860,7 @@ TEMP;
             return $res;
         });
 
-        //企查查 新闻舆情
+        //龙盾 新闻舆情
         array_search('CompanyNews', $catalog) === false ?: $csp->add('CompanyNews', function () {
 
             $postData = [
@@ -6917,7 +6917,7 @@ TEMP;
             return $res;
         });
 
-        //企查查 建筑企业-专业注册人员
+        //龙盾 建筑企业-专业注册人员
         array_search('BuildingRegistrar', $catalog) === false ?: $csp->add('BuildingRegistrar', function () {
 
             $postData = [
@@ -6933,7 +6933,7 @@ TEMP;
             return $res;
         });
 
-        //企查查 招聘信息
+        //龙盾 招聘信息
         array_search('Recruitment', $catalog) === false ?: $csp->add('Recruitment', function () {
 
             $postData = [
@@ -7003,7 +7003,7 @@ TEMP;
             return $tmp;
         });
 
-        //企查查 业务概况
+        //龙盾 业务概况
         array_search('SearchCompanyCompanyProducts', $catalog) === false ?: $csp->add('SearchCompanyCompanyProducts', function () {
 
             $postData = [
@@ -7019,7 +7019,7 @@ TEMP;
             return $res;
         });
 
-        //企查查 专利
+        //龙盾 专利
         array_search('PatentV4Search', $catalog) === false ?: $csp->add('PatentV4Search', function () {
 
             $postData = [
@@ -7038,7 +7038,7 @@ TEMP;
             return $tmp;
         });
 
-        //企查查 软件著作权
+        //龙盾 软件著作权
         array_search('SearchSoftwareCr', $catalog) === false ?: $csp->add('SearchSoftwareCr', function () {
 
             $postData = [
@@ -7057,7 +7057,7 @@ TEMP;
             return $tmp;
         });
 
-        //企查查 商标
+        //龙盾 商标
         array_search('tmSearch', $catalog) === false ?: $csp->add('tmSearch', function () {
 
             $postData = [
@@ -7076,7 +7076,7 @@ TEMP;
             return $tmp;
         });
 
-        //企查查 作品著作权
+        //龙盾 作品著作权
         array_search('SearchCopyRight', $catalog) === false ?: $csp->add('SearchCopyRight', function () {
 
             $postData = [
@@ -7095,7 +7095,7 @@ TEMP;
             return $tmp;
         });
 
-        //企查查 证书资质
+        //龙盾 证书资质
         array_search('SearchCertification', $catalog) === false ?: $csp->add('SearchCertification', function () {
 
             $postData = [
@@ -7360,7 +7360,7 @@ TEMP;
             return $tmp;
         });
 
-        //企查查 行政许可
+        //龙盾 行政许可
         array_search('GetAdministrativeLicenseList', $catalog) === false ?: $csp->add('GetAdministrativeLicenseList', function () {
 
             $postData = [
@@ -7395,7 +7395,7 @@ TEMP;
             return $tmp;
         });
 
-        //企查查 行政处罚
+        //龙盾 行政处罚
         array_search('GetAdministrativePenaltyList', $catalog) === false ?: $csp->add('GetAdministrativePenaltyList', function () {
 
             $postData = [
@@ -8209,7 +8209,7 @@ TEMP;
             return $tmp;
         });
 
-        //企查查 被执行人
+        //龙盾 被执行人
         array_search('SearchZhiXing', $catalog) === false ?: $csp->add('SearchZhiXing', function () {
 
             $postData = [
@@ -8302,7 +8302,7 @@ TEMP;
             return $tmp;
         });
 
-        //企查查 企业年报 其中有对外担保 这个字段ProvideAssuranceList
+        //龙盾 企业年报 其中有对外担保 这个字段ProvideAssuranceList
         array_search('GetAnnualReport', $catalog) === false ?: $csp->add('GetAnnualReport', function () {
 
             $postData = [
@@ -8339,7 +8339,7 @@ TEMP;
             return $tmp;
         });
 
-        //企查查 土地抵押
+        //龙盾 土地抵押
         array_search('GetLandMortgageList', $catalog) === false ?: $csp->add('GetLandMortgageList', function () {
 
             $postData = [

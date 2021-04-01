@@ -25,7 +25,7 @@ class LongDunService extends ServiceBase
         return parent::__construct();
     }
 
-    //企查查全羁绊是get请求
+    //龙盾全羁绊是get请求
     function get($url, $body)
     {
         $time = time();

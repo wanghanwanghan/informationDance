@@ -804,7 +804,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //$oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,14,$this->entName,true);
         //$docObj->setValue('jbxx_oneSaid', $oneSaid);
 
-        //企查查 基本信息
+        //龙盾 基本信息
         //企业类型
         $docObj->setValue('ENTTYPE', $data['GetBasicDetailsByName']['EconKind']);
         //注册资本
@@ -2592,7 +2592,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
-        //企查查 基本信息 工商信息
+        //龙盾 基本信息 工商信息
         $csp->add('GetBasicDetailsByName', function () {
 
             $postData = ['keyWord' => $this->entName];
@@ -2649,7 +2649,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //企查查 经营异常
+        //龙盾 经营异常
         $csp->add('GetOpException', function () {
 
             $postData = ['keyNo' => $this->entName];
@@ -2664,7 +2664,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //企查查 实际控制人
+        //龙盾 实际控制人
         $csp->add('Beneficiary', function () {
 
             $postData = [
@@ -2704,7 +2704,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //淘数 企查查 历史沿革
+        //淘数 龙盾 历史沿革
         $csp->add('getHistoricalEvolution', function () {
 
             $res = XinDongService::getInstance()->getHistoricalEvolution($this->entName);
@@ -2773,7 +2773,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
-        //企查查 银行信息
+        //龙盾 银行信息
         $csp->add('GetCreditCodeNew', function () {
 
             $postData = ['keyWord' => $this->entName];
@@ -2785,7 +2785,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
-        //企查查 公司概况
+        //龙盾 公司概况
         $csp->add('SearchCompanyFinancings', function () {
 
             $postData = ['searchKey' => $this->entName];
@@ -2797,7 +2797,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
-        //企查查 招投标
+        //龙盾 招投标
         $csp->add('TenderSearch', function () {
 
             $postData = [
@@ -2816,7 +2816,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //企查查 购地信息
+        //龙盾 购地信息
         $csp->add('LandPurchaseList', function () {
 
             $postData = [
@@ -2832,7 +2832,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
-        //企查查 土地公示
+        //龙盾 土地公示
         $csp->add('LandPublishList', function () {
 
             $postData = [
@@ -2848,7 +2848,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
-        //企查查 土地转让
+        //龙盾 土地转让
         $csp->add('LandTransferList', function () {
 
             $postData = [
@@ -2875,7 +2875,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
-        //企查查 建筑资质证书
+        //龙盾 建筑资质证书
         $csp->add('Qualification', function () {
 
             $postData = [
@@ -2891,7 +2891,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
-        //企查查 建筑工程项目
+        //龙盾 建筑工程项目
         $csp->add('BuildingProject', function () {
 
             $postData = [
@@ -2907,7 +2907,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
-        //企查查 债券信息
+        //龙盾 债券信息
         $csp->add('BondList', function () {
 
             $postData = [
@@ -2923,7 +2923,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
-        //企查查 网站信息
+        //龙盾 网站信息
         $csp->add('GetCompanyWebSite', function () {
 
             $postData = [
@@ -2939,7 +2939,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
-        //企查查 微博
+        //龙盾 微博
         $csp->add('Microblog', function () {
 
             $postData = [
@@ -2955,7 +2955,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
-        //企查查 新闻舆情
+        //龙盾 新闻舆情
         $csp->add('CompanyNews', function () {
 
             $postData = [
@@ -3012,7 +3012,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
-        //企查查 建筑企业-专业注册人员
+        //龙盾 建筑企业-专业注册人员
         $csp->add('BuildingRegistrar', function () {
 
             $postData = [
@@ -3028,7 +3028,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
-        //企查查 招聘信息
+        //龙盾 招聘信息
         $csp->add('Recruitment', function () {
 
             $postData = [
@@ -3098,7 +3098,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //企查查 业务概况
+        //龙盾 业务概况
         $csp->add('SearchCompanyCompanyProducts', function () {
 
             $postData = [
@@ -3114,7 +3114,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
-        //企查查 专利
+        //龙盾 专利
         $csp->add('PatentV4Search', function () {
 
             $postData = [
@@ -3133,7 +3133,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //企查查 软件著作权
+        //龙盾 软件著作权
         $csp->add('SearchSoftwareCr', function () {
 
             $postData = [
@@ -3152,7 +3152,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //企查查 商标
+        //龙盾 商标
         $csp->add('tmSearch', function () {
 
             $postData = [
@@ -3171,7 +3171,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //企查查 作品著作权
+        //龙盾 作品著作权
         $csp->add('SearchCopyRight', function () {
 
             $postData = [
@@ -3190,7 +3190,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //企查查 证书资质
+        //龙盾 证书资质
         $csp->add('SearchCertification', function () {
 
             $postData = [
@@ -3455,7 +3455,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //企查查 行政许可
+        //龙盾 行政许可
         $csp->add('GetAdministrativeLicenseList', function () {
 
             $postData = [
@@ -3490,7 +3490,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //企查查 行政处罚
+        //龙盾 行政处罚
         $csp->add('GetAdministrativePenaltyList', function () {
 
             $postData = [
@@ -4304,7 +4304,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //企查查 被执行人
+        //龙盾 被执行人
         $csp->add('SearchZhiXing', function () {
 
             $postData = [
@@ -4397,7 +4397,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //企查查 企业年报 其中有对外担保 这个字段ProvideAssuranceList
+        //龙盾 企业年报 其中有对外担保 这个字段ProvideAssuranceList
         $csp->add('GetAnnualReport', function () {
 
             $postData = [
@@ -4434,7 +4434,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //企查查 土地抵押
+        //龙盾 土地抵押
         $csp->add('GetLandMortgageList', function () {
 
             $postData = [

@@ -763,7 +763,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         //$oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,14,$this->entName,true);
         //$docObj->setValue('jbxx_oneSaid', $oneSaid);
 
-        //企查查 基本信息
+        //龙盾 基本信息
         //企业类型
         $docObj->setValue('ENTTYPE', $data['GetBasicDetailsByName']['EconKind']);
         //注册资本
@@ -1087,7 +1087,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
-        //企查查 基本信息 工商信息
+        //龙盾 基本信息 工商信息
         $csp->add('GetBasicDetailsByName', function () {
 
             $postData = ['keyWord' => $this->entName];
@@ -1099,7 +1099,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             return $res;
         });
 
-        //企查查 经营异常
+        //龙盾 经营异常
         $csp->add('GetOpException', function () {
 
             $postData = ['keyNo' => $this->entName];
@@ -1185,7 +1185,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //企查查 专利
+        //龙盾 专利
         $csp->add('PatentV4Search', function () {
 
             $postData = [
@@ -1204,7 +1204,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //企查查 软件著作权
+        //龙盾 软件著作权
         $csp->add('SearchSoftwareCr', function () {
 
             $postData = [
@@ -1223,7 +1223,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //企查查 行政许可
+        //龙盾 行政许可
         $csp->add('GetAdministrativeLicenseList', function () {
 
             $postData = [
@@ -1258,7 +1258,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //企查查 行政处罚
+        //龙盾 行政处罚
         $csp->add('GetAdministrativePenaltyList', function () {
 
             $postData = [

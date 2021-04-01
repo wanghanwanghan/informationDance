@@ -16,7 +16,7 @@ class TaskBase
     public $pdf_LittleTitle = 14;
     public $pdf_Text = 11;
 
-    //企查查的 证书资质
+    //龙盾 证书资质
     public $zzzs=[
         'C_9' => '中国食品农产品认证',
         'C_997_25' => '国产药品批准文号',
@@ -231,7 +231,7 @@ class TaskBase
         'sp001' => '软件产品证书',
     ];
 
-    //企查查的 商标类别
+    //龙盾 商标类别
     public $sblb=[
         '1'=>'化学原料',
         '2'=>'颜料油漆',
