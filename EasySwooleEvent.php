@@ -93,16 +93,8 @@ class EasySwooleEvent implements Event
         $time = time();
         $phone = $request->getRequestParam('phone') ?? null;
         $realIp = null;
-
         if (isset($request->getHeader('x-real-ip')[0])) {
             $realIp = $request->getHeader('x-real-ip')[0];
         }
-
-        CommonService::getInstance()->log4PHP([
-            'phone' => $phone,
-            'realIp' => $realIp,
-            'time' => $time,
-            'date' => date('Y-m-d H:i:s', $time)
-        ]);
     }
 }
