@@ -243,16 +243,6 @@ class NotifyController extends BusinessBase
         $phone = substr($orderNo, 0, 11);
         $time = substr($orderNo, -10);
 
-        CommonService::getInstance()->log4PHP([
-            __FUNCTION__,
-            $entName,
-            $taxNo,
-            $state,
-            $message,
-            $phone,
-            $time,
-        ]);
-
         try {
             $check = AuthBook::create()->where(['phone' => $phone, 'remark' => $orderNo])->get();
             if (!empty($check)) {
@@ -277,17 +267,6 @@ class NotifyController extends BusinessBase
 
         $phone = substr($orderNo, 0, 11);
         $time = substr($orderNo, -10);
-
-        CommonService::getInstance()->log4PHP([
-            __FUNCTION__,
-            $entName,
-            $taxNo,
-            $state,
-            $type,
-            $message,
-            $phone,
-            $time,
-        ]);
 
         try {
             $check = AuthBook::create()->where(['phone' => $phone, 'remark' => $orderNo])->get();
