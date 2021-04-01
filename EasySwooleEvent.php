@@ -25,7 +25,7 @@ use wanghanwanghan\someUtils\control;
 
 class EasySwooleEvent implements Event
 {
-    public static function initialize()
+    static function initialize()
     {
         date_default_timezone_set('Asia/Shanghai');
 
@@ -35,7 +35,7 @@ class EasySwooleEvent implements Event
         });
     }
 
-    public static function mainServerCreate(EventRegister $register)
+    static function mainServerCreate(EventRegister $register)
     {
         //常量
         CreateDefine::getInstance()->createDefine(__DIR__);
@@ -73,7 +73,7 @@ class EasySwooleEvent implements Event
         SwooleTableService::getInstance()->create();
     }
 
-    public static function onRequest(Request $request, Response $response): bool
+    static function onRequest(Request $request, Response $response): bool
     {
         $response->withHeader('Access-Control-Allow-Origin', '*');
         $response->withHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -88,7 +88,7 @@ class EasySwooleEvent implements Event
         return true;
     }
 
-    public static function afterRequest(Request $request, Response $response): void
+    static function afterRequest(Request $request, Response $response): void
     {
 
     }
