@@ -12,16 +12,16 @@ class ProvideRouter
     //加载对外全部api
     function addRouterV1(RouteCollector $routeCollector)
     {
-        $this->QiChaChaRouterV1($routeCollector);
+        $this->LongDunRouterV1($routeCollector);
         $this->TaoShuRouterV1($routeCollector);
         $this->QianQiRouterV1($routeCollector);
         $this->ZhongWangRouterV1($routeCollector);
         $this->XinDongRouterV1($routeCollector);
     }
 
-    private function QiChaChaRouterV1(RouteCollector $routeCollector)
+    private function LongDunRouterV1(RouteCollector $routeCollector)
     {
-        $prefix = '/Business/Provide/QiChaCha/QiChaChaController/';
+        $prefix = '/Business/Provide/LongDun/LongDunController/';
 
         $routeCollector->addGroup('/qcc', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getIPOGuarantee', $prefix . 'getIPOGuarantee');

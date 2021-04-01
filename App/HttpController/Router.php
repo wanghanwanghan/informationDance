@@ -7,7 +7,7 @@ use FastRoute\RouteCollector;
 
 class Router extends AbstractRouter
 {
-    public function initialize(RouteCollector $routeCollector)
+    function initialize(RouteCollector $routeCollector)
     {
         //全局模式拦截下,路由将只匹配Router.php中的控制器方法响应,将不会执行框架的默认解析
         $this->setGlobalMode(true);
@@ -16,7 +16,7 @@ class Router extends AbstractRouter
             $this->CommonRouterV1($routeCollector);//公共功能
             $this->UserRouterV1($routeCollector);//用户相关
             $this->XinDongRouterV1($routeCollector);//信动
-            $this->QiChaChaRouterV1($routeCollector);//企查查
+            $this->LongDunRouterV1($routeCollector);//龙盾
             $this->TaoShuRouterV1($routeCollector);//淘数
             $this->FaHaiRouterV1($routeCollector);//法海
             $this->QianQiRouterV1($routeCollector);//乾启
@@ -132,9 +132,9 @@ class Router extends AbstractRouter
         return true;
     }
 
-    private function QiChaChaRouterV1(RouteCollector $routeCollector)
+    private function LongDunRouterV1(RouteCollector $routeCollector)
     {
-        $pre = '/Business/Api/QiChaCha/QiChaChaController/';
+        $pre = '/Business/Api/LongDun/LongDunController/';
 
         $routeCollector->addGroup('/qcc', function (RouteCollector $routeCollector) use ($pre) {
             $routeCollector->addRoute(['GET', 'POST'], '/getEntList', $pre . 'getEntList');//模糊搜索企业

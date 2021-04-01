@@ -12,11 +12,11 @@ use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\FaHai\FaHaiService;
+use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\NewGraph\NewGraphService;
 use App\HttpController\Service\OneSaid\OneSaidService;
 use App\HttpController\Service\QianQi\QianQiService;
-use App\HttpController\Service\QiChaCha\QiChaChaService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\XinDongService;
 use App\HttpController\Service\ZhongWang\ZhongWangService;
@@ -3898,7 +3898,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
             $postData = ['keyWord' => $this->entName];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'ECIV4/GetBasicDetailsByName', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'ECIV4/GetBasicDetailsByName', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
@@ -3955,7 +3955,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
             $postData = ['keyNo' => $this->entName];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'ECIException/GetOpException', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'ECIException/GetOpException', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
@@ -3974,7 +3974,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'mode' => 0,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'Beneficiary/GetBeneficiary', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'Beneficiary/GetBeneficiary', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
@@ -4079,7 +4079,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
             $postData = ['keyWord' => $this->entName];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'ECICreditCode/GetCreditCodeNew', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'ECICreditCode/GetCreditCodeNew', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
@@ -4091,7 +4091,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
             $postData = ['searchKey' => $this->entName];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'BusinessStateV4/SearchCompanyFinancings', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'BusinessStateV4/SearchCompanyFinancings', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
@@ -4107,7 +4107,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 10,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'Tender/Search', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'Tender/Search', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
@@ -4126,7 +4126,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 10,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandPurchase/LandPurchaseList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandPurchase/LandPurchaseList', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
@@ -4142,7 +4142,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 10,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandPublish/LandPublishList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandPublish/LandPublishList', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
@@ -4158,7 +4158,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 10,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandTransfer/LandTransferList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandTransfer/LandTransferList', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
@@ -4166,7 +4166,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 foreach ($res as &$one) {
                     //取详情
                     $post = ['id' => $one['Id']];
-                    $detail = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandTransfer/LandTransferDetail', $post);
+                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandTransfer/LandTransferDetail', $post);
                     ($detail['code'] == 200 && !empty($detail['result'])) ? $detail = $detail['result'] : $detail = null;
                     $one['detail'] = $detail;
                 }
@@ -4185,7 +4185,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 10,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'Qualification/GetList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'Qualification/GetList', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
@@ -4201,7 +4201,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 10,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'BuildingProject/GetList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'BuildingProject/GetList', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
@@ -4217,7 +4217,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 10,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'Bond/BondList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'Bond/BondList', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
@@ -4233,7 +4233,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 10,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'WebSiteV4/GetCompanyWebSite', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'WebSiteV4/GetCompanyWebSite', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
@@ -4249,7 +4249,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 10,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'Microblog/GetList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'Microblog/GetList', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
@@ -4265,7 +4265,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 10,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'CompanyNews/SearchNews', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'CompanyNews/SearchNews', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
@@ -4322,7 +4322,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 10,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'BuildingRegistrar/GetList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'BuildingRegistrar/GetList', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
@@ -4338,7 +4338,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 10,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'Recruitment/GetList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'Recruitment/GetList', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
@@ -4409,7 +4409,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 10,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'CompanyProductV4/SearchCompanyCompanyProducts', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'CompanyProductV4/SearchCompanyCompanyProducts', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
@@ -4425,7 +4425,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'PatentV4/Search', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'PatentV4/Search', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
@@ -4444,7 +4444,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'CopyRight/SearchSoftwareCr', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'CopyRight/SearchSoftwareCr', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
@@ -4463,7 +4463,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'tm/Search', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'tm/Search', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
@@ -4482,7 +4482,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'CopyRight/SearchCopyRight', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'CopyRight/SearchCopyRight', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
@@ -4501,7 +4501,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'ECICertification/SearchCertification', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'ECICertification/SearchCertification', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
@@ -4766,7 +4766,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'ADSTLicense/GetAdministrativeLicenseList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'ADSTLicense/GetAdministrativeLicenseList', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
@@ -4775,7 +4775,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                     //取详情
                     $postData = ['id' => $one['Id']];
 
-                    $detail = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'ADSTLicense/GetAdministrativeLicenseDetail', $postData);
+                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'ADSTLicense/GetAdministrativeLicenseDetail', $postData);
 
                     if ($detail['code'] == 200 && !empty($detail['result'])) {
                         $one['detail'] = $detail['result'];
@@ -4801,7 +4801,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'AdministrativePenalty/GetAdministrativePenaltyList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'AdministrativePenalty/GetAdministrativePenaltyList', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
@@ -4810,7 +4810,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                     //取详情
                     $postData = ['id' => $one['Id']];
 
-                    $detail = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'AdministrativePenalty/GetAdministrativePenaltyDetail', $postData);
+                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'AdministrativePenalty/GetAdministrativePenaltyDetail', $postData);
 
                     if ($detail['code'] == 200 && !empty($detail['result'])) {
                         $one['detail'] = $detail['result'];
@@ -5614,7 +5614,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'isExactlySame' => true,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'CourtV4/SearchZhiXing', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'CourtV4/SearchZhiXing', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
@@ -5706,7 +5706,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'keyNo' => $this->entName,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'AR/GetAnnualReport', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'AR/GetAnnualReport', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
@@ -5745,7 +5745,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandMortgage/GetLandMortgageList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandMortgage/GetLandMortgageList', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\HttpController\Service\QiChaCha;
+namespace App\HttpController\Service\LongDun;
 
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use wanghanwanghan\someUtils\control;
 
-class QiChaChaService extends ServiceBase
+class LongDunService extends ServiceBase
 {
     function onNewService(): ?bool
     {
@@ -19,8 +19,8 @@ class QiChaChaService extends ServiceBase
 
     function __construct()
     {
-        $this->appkey = CreateConf::getInstance()->getConf('qichacha.appkey');
-        $this->seckey = CreateConf::getInstance()->getConf('qichacha.seckey');
+        $this->appkey = CreateConf::getInstance()->getConf('longdun.appkey');
+        $this->seckey = CreateConf::getInstance()->getConf('longdun.seckey');
 
         return parent::__construct();
     }

@@ -1,16 +1,16 @@
 <?php
 
-namespace App\HttpController\Business\Api\QiChaCha;
+namespace App\HttpController\Business\Api\LongDun;
 
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\Pay\ChargeService;
-use App\HttpController\Service\QiChaCha\QiChaChaService;
 use App\HttpController\Service\User\UserService;
 use EasySwoole\Pool\Manager;
 use wanghanwanghan\someUtils\control;
 
-class QiChaChaController extends QiChaChaBase
+class LongDunController extends LongDunBase
 {
     private $baseUrl;
 
@@ -19,7 +19,7 @@ class QiChaChaController extends QiChaChaBase
 
     function onRequest(?string $action): ?bool
     {
-        $this->baseUrl = CreateConf::getInstance()->getConf('qichacha.baseUrl');
+        $this->baseUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
 
         return parent::onRequest($action);
     }
@@ -45,7 +45,7 @@ class QiChaChaController extends QiChaChaBase
         if (isset($res['coHttpErr'])) return $this->writeJson(500, $res['Paging'], [], 'co请求错误');
 
         if (!empty($this->moduleNum) && !empty($this->entName)) {
-            $charge = ChargeService::getInstance()->QiChaCha($this->request(), $this->moduleNum, $this->entName);
+            $charge = ChargeService::getInstance()->LongDun($this->request(), $this->moduleNum, $this->entName);
 
             if ($charge['code'] != 200) {
                 $res['Status'] = $charge['code'];
@@ -76,7 +76,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'ECIV4/Search', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'ECIV4/Search', $postData);
 
         $res = $this->checkResponse($res, false);
 
@@ -114,7 +114,7 @@ class QiChaChaController extends QiChaChaBase
             'searchKey' => $entName,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'ECIOther/GetDetails', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'ECIOther/GetDetails', $postData);
 
         return $this->checkResponse($res);
     }
@@ -128,7 +128,7 @@ class QiChaChaController extends QiChaChaBase
             'searchKey' => $entName,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'ECIEntType/GetEntType', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'ECIEntType/GetEntType', $postData);
 
         return $this->checkResponse($res);
     }
@@ -150,7 +150,7 @@ class QiChaChaController extends QiChaChaBase
             'mode' => $mode,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'Beneficiary/GetBeneficiary', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'Beneficiary/GetBeneficiary', $postData);
 
         $tmp = [];
 
@@ -185,7 +185,7 @@ class QiChaChaController extends QiChaChaBase
             'keyNo' => $entName,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'ECIException/GetOpException', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'ECIException/GetOpException', $postData);
 
         return $this->checkResponse($res);
     }
@@ -199,7 +199,7 @@ class QiChaChaController extends QiChaChaBase
             'searchKey' => $entName,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'BusinessStateV4/SearchCompanyFinancings', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'BusinessStateV4/SearchCompanyFinancings', $postData);
 
         return $this->checkResponse($res);
     }
@@ -217,7 +217,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'Tender/Search', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'Tender/Search', $postData);
 
         return $this->checkResponse($res);
     }
@@ -229,7 +229,7 @@ class QiChaChaController extends QiChaChaBase
 
         $postData = ['id' => $id];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'Tender/Detail', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'Tender/Detail', $postData);
 
         return $this->checkResponse($res);
     }
@@ -247,7 +247,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'LandPurchase/LandPurchaseList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'LandPurchase/LandPurchaseList', $postData);
 
         return $this->checkResponse($res);
     }
@@ -259,7 +259,7 @@ class QiChaChaController extends QiChaChaBase
 
         $postData = ['id' => $id];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'LandPurchase/LandPurchaseDetail', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'LandPurchase/LandPurchaseDetail', $postData);
 
         return $this->checkResponse($res);
     }
@@ -277,7 +277,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'LandPublish/LandPublishList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'LandPublish/LandPublishList', $postData);
 
         return $this->checkResponse($res);
     }
@@ -289,7 +289,7 @@ class QiChaChaController extends QiChaChaBase
 
         $postData = ['id' => $id];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'LandPublish/LandPublishDetail', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'LandPublish/LandPublishDetail', $postData);
 
         return $this->checkResponse($res);
     }
@@ -307,7 +307,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'LandTransfer/LandTransferList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'LandTransfer/LandTransferList', $postData);
 
         return $this->checkResponse($res);
     }
@@ -319,7 +319,7 @@ class QiChaChaController extends QiChaChaBase
 
         $postData = ['id' => $id];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'LandTransfer/LandTransferDetail', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'LandTransfer/LandTransferDetail', $postData);
 
         return $this->checkResponse($res);
     }
@@ -337,7 +337,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'Recruitment/GetList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'Recruitment/GetList', $postData);
 
         return $this->checkResponse($res);
     }
@@ -349,7 +349,7 @@ class QiChaChaController extends QiChaChaBase
 
         $postData = ['id' => $id];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'Recruitment/GetDetail', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'Recruitment/GetDetail', $postData);
 
         return $this->checkResponse($res);
     }
@@ -367,7 +367,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'Qualification/GetList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'Qualification/GetList', $postData);
 
         return $this->checkResponse($res);
     }
@@ -379,7 +379,7 @@ class QiChaChaController extends QiChaChaBase
 
         $postData = ['id' => $id];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'Qualification/GetDetail', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'Qualification/GetDetail', $postData);
 
         return $this->checkResponse($res);
     }
@@ -397,7 +397,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'BuildingProject/GetList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'BuildingProject/GetList', $postData);
 
         return $this->checkResponse($res);
     }
@@ -409,7 +409,7 @@ class QiChaChaController extends QiChaChaBase
 
         $postData = ['id' => $id];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'BuildingProject/GetDetail', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'BuildingProject/GetDetail', $postData);
 
         return $this->checkResponse($res);
     }
@@ -427,7 +427,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'Bond/BondList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'Bond/BondList', $postData);
 
         return $this->checkResponse($res);
     }
@@ -439,7 +439,7 @@ class QiChaChaController extends QiChaChaBase
 
         $postData = ['id' => $id];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'Bond/BondDetail', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'Bond/BondDetail', $postData);
 
         return $this->checkResponse($res);
     }
@@ -457,7 +457,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'ADSTLicense/GetAdministrativeLicenseList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'ADSTLicense/GetAdministrativeLicenseList', $postData);
 
         return $this->checkResponse($res);
     }
@@ -469,7 +469,7 @@ class QiChaChaController extends QiChaChaBase
 
         $postData = ['id' => $id];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'ADSTLicense/GetAdministrativeLicenseDetail', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'ADSTLicense/GetAdministrativeLicenseDetail', $postData);
 
         return $this->checkResponse($res);
     }
@@ -487,7 +487,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'AdministrativePenalty/GetAdministrativePenaltyList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'AdministrativePenalty/GetAdministrativePenaltyList', $postData);
 
         return $this->checkResponse($res);
     }
@@ -499,7 +499,7 @@ class QiChaChaController extends QiChaChaBase
 
         $postData = ['id' => $id];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'AdministrativePenalty/GetAdministrativePenaltyDetail', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'AdministrativePenalty/GetAdministrativePenaltyDetail', $postData);
 
         return $this->checkResponse($res);
     }
@@ -517,7 +517,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'JudicialSale/GetJudicialSaleList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'JudicialSale/GetJudicialSaleList', $postData);
 
         return $this->checkResponse($res);
     }
@@ -533,7 +533,7 @@ class QiChaChaController extends QiChaChaBase
 
         $postData = ['id' => $id];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'JudicialSale/GetJudicialSaleDetail', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'JudicialSale/GetJudicialSaleDetail', $postData);
 
         return $this->checkResponse($res);
     }
@@ -551,7 +551,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'StockEquityPledge/GetStockPledgeList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'StockEquityPledge/GetStockPledgeList', $postData);
 
         return $this->checkResponse($res);
     }
@@ -569,7 +569,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'ChattelMortgage/GetChattelMortgage', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'ChattelMortgage/GetChattelMortgage', $postData);
 
         return $this->checkResponse($res);
     }
@@ -587,7 +587,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'LandMortgage/GetLandMortgageList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'LandMortgage/GetLandMortgageList', $postData);
 
         return $this->checkResponse($res);
     }
@@ -599,7 +599,7 @@ class QiChaChaController extends QiChaChaBase
 
         $postData = ['id' => $id];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'LandMortgage/GetLandMortgageDetails', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'LandMortgage/GetLandMortgageDetails', $postData);
 
         return $this->checkResponse($res);
     }
@@ -613,7 +613,7 @@ class QiChaChaController extends QiChaChaBase
             'keyNo' => $entName,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'AR/GetAnnualReport', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'AR/GetAnnualReport', $postData);
 
         if (!empty($res['Result'])) {
             foreach ($res['Result'] as $key => $val) {
@@ -655,7 +655,7 @@ class QiChaChaController extends QiChaChaBase
             'keyword' => $entName,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'ECIV4/GetBasicDetailsByName', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'ECIV4/GetBasicDetailsByName', $postData);
 
         $StockNumber = '';
 
@@ -675,7 +675,7 @@ class QiChaChaController extends QiChaChaBase
             'keyword' => $entName,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'ECIV4/GetBasicDetailsByName', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'ECIV4/GetBasicDetailsByName', $postData);
 
         //2018年营业收入区间
         $mysql = CreateConf::getInstance()->getConf('env.mysqlDatabase');
@@ -724,7 +724,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'IPO/GetIPOGuarantee', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'IPO/GetIPOGuarantee', $postData);
 
         return $this->checkResponse($res);
     }
@@ -742,7 +742,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'tm/Search', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'tm/Search', $postData);
 
         return $this->checkResponse($res);
     }
@@ -754,7 +754,7 @@ class QiChaChaController extends QiChaChaBase
 
         $postData = ['id' => $id];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'tm/GetDetails', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'tm/GetDetails', $postData);
 
         return $this->checkResponse($res);
     }
@@ -772,7 +772,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'PatentV4/Search', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'PatentV4/Search', $postData);
 
         return $this->checkResponse($res);
     }
@@ -784,7 +784,7 @@ class QiChaChaController extends QiChaChaBase
 
         $postData = ['id' => $id];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'PatentV4/GetDetails', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'PatentV4/GetDetails', $postData);
 
         return $this->checkResponse($res);
     }
@@ -802,7 +802,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'CopyRight/SearchSoftwareCr', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'CopyRight/SearchSoftwareCr', $postData);
 
         return $this->checkResponse($res);
     }
@@ -820,7 +820,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'CopyRight/SearchCopyRight', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'CopyRight/SearchCopyRight', $postData);
 
         return $this->checkResponse($res);
     }
@@ -838,7 +838,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'ECICertification/SearchCertification', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'ECICertification/SearchCertification', $postData);
 
         return $this->checkResponse($res);
     }
@@ -850,7 +850,7 @@ class QiChaChaController extends QiChaChaBase
 
         $postData = ['certId' => $id];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'ECICertification/GetCertificationDetailById', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'ECICertification/GetCertificationDetailById', $postData);
 
         return $this->checkResponse($res);
     }
@@ -871,7 +871,7 @@ class QiChaChaController extends QiChaChaBase
 
         !is_numeric($emotionType) ?: $postData['emotionType'] = $emotionType - 0;
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'CompanyNews/SearchNews', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'CompanyNews/SearchNews', $postData);
 
         return $this->checkResponse($res);
     }
@@ -883,7 +883,7 @@ class QiChaChaController extends QiChaChaBase
 
         $postData = ['id' => $id];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'CompanyNews/GetNewsDetail', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'CompanyNews/GetNewsDetail', $postData);
 
         return $this->checkResponse($res);
     }
@@ -901,7 +901,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'WebSiteV4/GetCompanyWebSite', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'WebSiteV4/GetCompanyWebSite', $postData);
 
         return $this->checkResponse($res);
     }
@@ -919,7 +919,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'Microblog/GetList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'Microblog/GetList', $postData);
 
         return $this->checkResponse($res);
     }
@@ -937,7 +937,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'ECIPartner/GetList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'ECIPartner/GetList', $postData);
 
         return $this->checkResponse($res);
     }
@@ -956,7 +956,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'CourtV4/SearchShiXin', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'CourtV4/SearchShiXin', $postData);
 
         return $this->checkResponse($res);
     }
@@ -975,7 +975,7 @@ class QiChaChaController extends QiChaChaBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'CourtV4/SearchZhiXing', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'CourtV4/SearchZhiXing', $postData);
 
         return $this->checkResponse($res);
     }
@@ -989,7 +989,7 @@ class QiChaChaController extends QiChaChaBase
             'keyWord' => $entName,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'JudicialAssistance/GetJudicialAssistance', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'JudicialAssistance/GetJudicialAssistance', $postData);
 
         return $this->checkResponse($res);
     }
@@ -1003,7 +1003,7 @@ class QiChaChaController extends QiChaChaBase
             'keyWord' => $entName,
         ];
 
-        $res = (new QiChaChaService())->get($this->baseUrl . 'SeriousViolation/GetSeriousViolationList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'SeriousViolation/GetSeriousViolationList', $postData);
 
         return $this->checkResponse($res);
     }

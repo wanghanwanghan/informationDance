@@ -1,13 +1,13 @@
 <?php
 
-namespace App\HttpController\Business\Provide\QiChaCha;
+namespace App\HttpController\Business\Provide\LongDun;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Service\Common\CommonService;
-use App\HttpController\Service\QiChaCha\QiChaChaService;
+use App\HttpController\Service\LongDun\LongDunService;
 
-class QiChaChaController extends ProvideBase
+class LongDunController extends ProvideBase
 {
     function onRequest(?string $action): ?bool
     {
@@ -53,7 +53,7 @@ class QiChaChaController extends ProvideBase
 
         $this->csp->add($this->cspKey, function () use ($postData) {
             //先拿股票代码
-            $info = (new QiChaChaService())->setCheckRespFlag(true)
+            $info = (new LongDunService())->setCheckRespFlag(true)
                 ->get($this->qccListUrl.'ECIV4/GetBasicDetailsByName',['keyword'=>$postData['entName']]);
             if ($info['code'] === 200 && !empty($info['result'])) {
                 empty($info['result']['StockNumber']) ? $stock='' : $stock=$info['result']['StockNumber'];
@@ -66,7 +66,7 @@ class QiChaChaController extends ProvideBase
                 'pageIndex' => $postData['page'],
                 'pageSize' => $postData['pageSize'],
             ];
-            return (new QiChaChaService())->setCheckRespFlag(true)
+            return (new LongDunService())->setCheckRespFlag(true)
                 ->get($this->qccListUrl.'IPO/GetIPOGuarantee',$postData);
         });
 

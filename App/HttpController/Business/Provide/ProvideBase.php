@@ -50,7 +50,7 @@ class ProvideBase extends Index
         $this->csp = CspService::getInstance()->create();
         $this->cspKey = control::getUuid();
 
-        $this->qccListUrl = CreateConf::getInstance()->getConf('qichacha.baseUrl');
+        $this->qccListUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
         $this->qqListUrl = CreateConf::getInstance()->getConf('qianqi.baseUrl');
 
         $this->requestTime = microtime(true);

@@ -10,7 +10,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\FaHai\FaHaiService;
-use App\HttpController\Service\QiChaCha\QiChaChaService;
+use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
@@ -29,7 +29,7 @@ class RunSupervisor extends AbstractCronTask
     function __construct()
     {
         $this->crontabBase = new CrontabBase();
-        $this->qccUrl = CreateConf::getInstance()->getConf('qichacha.baseUrl');
+        $this->qccUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
         $this->fahaiList = CreateConf::getInstance()->getConf('fahai.listBaseUrl');
         $this->fahaiDetail = CreateConf::getInstance()->getConf('fahai.detailBaseUrl');
     }
@@ -101,7 +101,7 @@ class RunSupervisor extends AbstractCronTask
             'isExactlySame' => true,
         ];
 
-        $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'CourtV4/SearchShiXin', $postData);
+        $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'CourtV4/SearchShiXin', $postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -139,7 +139,7 @@ class RunSupervisor extends AbstractCronTask
             'isExactlySame' => true,
         ];
 
-        $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'CourtV4/SearchZhiXing', $postData);
+        $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'CourtV4/SearchZhiXing', $postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -176,7 +176,7 @@ class RunSupervisor extends AbstractCronTask
             'keyWord'=>$entName,
         ];
 
-        $res = (new QiChaChaService())->setCheckRespFlag(true)->get($this->qccUrl . 'JudicialAssistance/GetJudicialAssistance', $postData);
+        $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'JudicialAssistance/GetJudicialAssistance', $postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -719,7 +719,7 @@ class RunSupervisor extends AbstractCronTask
             'keyWord' => $entName,
         ];
 
-        $res = (new QiChaChaService())->setCheckRespFlag(true)
+        $res = (new LongDunService())->setCheckRespFlag(true)
             ->get($this->qccUrl . 'SeriousViolation/GetSeriousViolationList', $postData);
 
         if ($res['code']==200 && !empty($res['result']))
@@ -761,7 +761,7 @@ class RunSupervisor extends AbstractCronTask
             'pageSize' => 10,
         ];
 
-        $res = (new QiChaChaService())->setCheckRespFlag(true)
+        $res = (new LongDunService())->setCheckRespFlag(true)
             ->get($this->qccUrl . 'AdministrativePenalty/GetAdministrativePenaltyList', $postData);
 
         if ($res['code']==200 && !empty($res['result']))
@@ -1225,7 +1225,7 @@ class RunSupervisor extends AbstractCronTask
             'keyNo' => $entName,
         ];
 
-        $res = (new QiChaChaService())->setCheckRespFlag(true)
+        $res = (new LongDunService())->setCheckRespFlag(true)
             ->get($this->qccUrl . 'ECIException/GetOpException', $postData);
 
         if ($res['code']==200 && !empty($res['result']))
@@ -1307,7 +1307,7 @@ class RunSupervisor extends AbstractCronTask
             'keyWord' => $entName,
         ];
 
-        $res = (new QiChaChaService())->setCheckRespFlag(true)
+        $res = (new LongDunService())->setCheckRespFlag(true)
             ->get($this->qccUrl . 'LandMortgage/GetLandMortgageList', $postData);
 
         if ($res['code']==200 && !empty($res['result']))
@@ -1391,7 +1391,7 @@ class RunSupervisor extends AbstractCronTask
             'keyNo' => $entName,
         ];
 
-        $res = (new QiChaChaService())->setCheckRespFlag(true)
+        $res = (new LongDunService())->setCheckRespFlag(true)
             ->get($this->qccUrl . 'AR/GetAnnualReport', $postData);
 
         if ($res['code']==200 && !empty($res['result']))
@@ -1435,7 +1435,7 @@ class RunSupervisor extends AbstractCronTask
             'keyword'=>$entName,
         ];
 
-        $res = (new QiChaChaService())->setCheckRespFlag(true)
+        $res = (new LongDunService())->setCheckRespFlag(true)
             ->get($this->qccUrl . 'ECIV4/GetBasicDetailsByName', $postData);
 
         if ($res['code']==200 && !empty($res['result']))
@@ -1452,7 +1452,7 @@ class RunSupervisor extends AbstractCronTask
                     'pageSize'=>10,
                 ];
 
-                $res = (new QiChaChaService())->setCheckRespFlag(true)
+                $res = (new LongDunService())->setCheckRespFlag(true)
                     ->get($this->qccUrl . 'IPO/GetIPOGuarantee', $postData);
 
                 if ($res['code']==200 && !empty($res['result']))
@@ -1496,7 +1496,7 @@ class RunSupervisor extends AbstractCronTask
             'pageSize' => 10,
         ];
 
-        $res = (new QiChaChaService())->setCheckRespFlag(true)
+        $res = (new LongDunService())->setCheckRespFlag(true)
             ->get($this->qccUrl.'CompanyNews/SearchNews',$postData);
 
         if ($res['code'] == 200 && !empty($res['result']))

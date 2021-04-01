@@ -4,8 +4,8 @@ namespace App\HttpController\Service\XinDong\Score;
 
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
-use App\HttpController\Service\QiChaCha\QiChaChaService;
 
 class xds
 {
@@ -53,7 +53,7 @@ class xds
 
     function __construct()
     {
-        $this->qcc = CreateConf::getInstance()->getConf('qichacha.baseUrl');
+        $this->qcc = CreateConf::getInstance()->getConf('longdun.baseUrl');
     }
 
     function cwScore($entName): ?array
@@ -762,7 +762,7 @@ class xds
         ];
 
         //股权出质
-        $gqcz = (new QiChaChaService())->setCheckRespFlag(true)
+        $gqcz = (new LongDunService())->setCheckRespFlag(true)
             ->get($this->qcc . 'StockEquityPledge/GetStockPledgeList', [
                 'searchKey' => $entName,
                 'pageIndex' => 1,
@@ -784,7 +784,7 @@ class xds
         }
 
         //动产抵押
-        $dcdy = (new QiChaChaService())->setCheckRespFlag(true)
+        $dcdy = (new LongDunService())->setCheckRespFlag(true)
             ->get($this->qcc . 'ChattelMortgage/GetChattelMortgage', [
                 'keyWord' => $entName,
                 'pageIndex' => 1,
@@ -806,7 +806,7 @@ class xds
         }
 
         //对外担保
-        $dwdb = (new QiChaChaService())->setCheckRespFlag(true)
+        $dwdb = (new LongDunService())->setCheckRespFlag(true)
             ->get($this->qcc . 'AR/GetAnnualReport', [
                 'keyNo' => $entName,
             ]);
@@ -830,7 +830,7 @@ class xds
         }
 
         //实际控制人
-        $sjkzr = (new QiChaChaService())->setCheckRespFlag(true)
+        $sjkzr = (new LongDunService())->setCheckRespFlag(true)
             ->get($this->qcc . 'Beneficiary/GetBeneficiary', [
                 'companyName' => $entName,
                 'percent' => 0,

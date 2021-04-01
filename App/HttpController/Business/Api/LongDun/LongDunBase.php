@@ -1,10 +1,10 @@
 <?php
 
-namespace App\HttpController\Business\Api\QiChaCha;
+namespace App\HttpController\Business\Api\LongDun;
 
 use App\HttpController\Business\BusinessBase;
 
-class QiChaChaBase extends BusinessBase
+class LongDunBase extends BusinessBase
 {
     function onRequest(?string $action): ?bool
     {

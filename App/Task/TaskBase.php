@@ -282,7 +282,7 @@ class TaskBase
 
     function __construct()
     {
-        $this->qccUrl = CreateConf::getInstance()->getConf('qichacha.baseUrl');
+        $this->qccUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
         $this->fahaiList = CreateConf::getInstance()->getConf('fahai.listBaseUrl');
         $this->fahaiDetail = CreateConf::getInstance()->getConf('fahai.detailBaseUrl');
 
