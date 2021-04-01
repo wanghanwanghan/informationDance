@@ -619,7 +619,7 @@ class QiChaChaController extends QiChaChaBase
             foreach ($res['Result'] as $key => $val) {
                 if (isset($val['ProvideAssuranceList'])) {
                     if (empty($val['ProvideAssuranceList'])) {
-                        $res['Result'][$key]['ProvideAssuranceList'] = [
+                        $res['Result'][$key]['ProvideAssuranceList'][0] = [
                             'Creditor' => null,
                             'Debtor' => null,
                             'CreditorCategory' => null,
@@ -631,7 +631,7 @@ class QiChaChaController extends QiChaChaBase
                         ];
                     }
                 } else {
-                    $res['Result'][$key]['ProvideAssuranceList'] = [
+                    $res['Result'][$key]['ProvideAssuranceList'][0] = [
                         'Creditor' => null,
                         'Debtor' => null,
                         'CreditorCategory' => null,
