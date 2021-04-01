@@ -4351,8 +4351,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $postData = [
                 'entName' => $this->entName,
                 'code' => '',
-                'beginYear' => date('Y') - 1,
-                'dataCount' => 5,//取最近几年的
+                'beginYear' => date('Y') - 2,
+                'dataCount' => 4,//取最近几年的
             ];
 
             $res = (new LongXinService())->setCheckRespFlag(true)->getFinanceData($postData,false);
@@ -4386,7 +4386,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $extension = [
                 'width' => 1200,
                 'height' => 700,
-                'title' => $this->entName . ' - 财务非授权 - 同比',
+                'title' => $this->entName . ' - 同比',
                 'xTitle' => '此图为概况信息',
                 //'yTitle'=>$this->entName,
                 'titleSize' => 14,

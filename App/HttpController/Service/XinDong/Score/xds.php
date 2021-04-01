@@ -61,7 +61,7 @@ class xds
         $arr = (new LongXinService())->setCheckRespFlag(true)->getFinanceData([
             'entName' => $entName,
             'code' => '',
-            'beginYear' => date('Y') - 1,
+            'beginYear' => date('Y') - 2,
             'dataCount' => 4,
         ], false);
 
