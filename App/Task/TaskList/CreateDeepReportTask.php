@@ -4409,7 +4409,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 10,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'CompanyProductV4/SearchCompanyCompanyProducts', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)
+                ->get($this->qccUrl . 'CompanyProductV4/SearchCompanyCompanyProducts', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
@@ -4427,7 +4428,9 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
             $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'PatentV4/Search', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
+            ($res['code'] === 200 && !empty($res['result'])) ?
+                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [null, null];
 
             $tmp['list'] = $res;
             $tmp['total'] = $total;
@@ -4444,9 +4447,12 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'CopyRight/SearchSoftwareCr', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)
+                ->get($this->qccUrl . 'CopyRight/SearchSoftwareCr', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
+            ($res['code'] === 200 && !empty($res['result'])) ?
+                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [null, null];
 
             $tmp['list'] = $res;
             $tmp['total'] = $total;
