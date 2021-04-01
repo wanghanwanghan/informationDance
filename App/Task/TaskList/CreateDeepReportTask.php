@@ -294,9 +294,9 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $tmp->setValue('fz_score', sprintf('%.2f', array_sum($this->fz)));
         // $tmp->setValue('fz_detail', implode(',',$this->fz_detail));
 
-        if (sprintf('%.2f', array_sum($this->fz) >= 80)) {
+        if (sprintf('%.2f', array_sum($this->fz)) >= 80) {
             $tmp->setValue('fz_detail', '企业经营状况、上下游关系稳定性、业务竞争力、创新性、信用方面较好，发展趋势较好');
-        } elseif (sprintf('%.2f', array_sum($this->fz) >= 61 && sprintf('%.2f', array_sum($this->fz) <= 79))) {
+        } elseif (sprintf('%.2f', array_sum($this->fz)) >= 61 && sprintf('%.2f', array_sum($this->fz)) <= 79) {
             $tmp->setValue('fz_detail', '企业经营状况、上下游关系稳定性、业务竞争力、创新性、信用方面良，发展趋势良');
         } else {
             $tmp->setValue('fz_detail', '企业经营状况、上下游关系稳定性、业务竞争力、创新性、信用方面一般，发展趋势一般');
@@ -305,9 +305,9 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $tmp->setValue('fx_score', sprintf('%.2f', array_sum($this->fx)));
         // $tmp->setValue('fx_detail', implode(',',$this->fx_detail));
 
-        if (sprintf('%.2f', array_sum($this->fx) >= 80)) {
+        if (sprintf('%.2f', array_sum($this->fx)) >= 80) {
             $tmp->setValue('fx_detail', '企业业务、上下游关系集中度、团队稳定性、企业股东层稳定性、履约能力方面分析，抗风险能力较弱');
-        } elseif (sprintf('%.2f', array_sum($this->fx) >= 61 && sprintf('%.2f', array_sum($this->fx) <= 79))) {
+        } elseif (sprintf('%.2f', array_sum($this->fx)) >= 61 && sprintf('%.2f', array_sum($this->fx)) <= 79) {
             $tmp->setValue('fx_detail', '企业业务、上下游关系集中度、团队稳定性、企业股东层稳定性、履约能力方面分析，抗风险能力一般');
         } else {
             $tmp->setValue('fx_detail', '企业业务、上下游关系集中度、团队稳定性、企业股东层稳定性、履约能力方面分析，抗风险能力较强');
