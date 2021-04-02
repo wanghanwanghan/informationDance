@@ -18,7 +18,7 @@ class Router extends AbstractRouter
             $this->XinDongRouterV1($routeCollector);//信动
             $this->LongDunRouterV1($routeCollector);//龙盾
             $this->TaoShuRouterV1($routeCollector);//淘数
-            $this->FaHaiRouterV1($routeCollector);//法海
+            $this->FaYanYuanRouterV1($routeCollector);//法研院
             $this->QianQiRouterV1($routeCollector);//乾启
             $this->LongXinRouterV1($routeCollector);//龙信
             $this->YuanSuRouterV1($routeCollector);//元素
@@ -224,9 +224,9 @@ class Router extends AbstractRouter
         return true;
     }
 
-    private function FaHaiRouterV1(RouteCollector $routeCollector)
+    private function FaYanYuanRouterV1(RouteCollector $routeCollector)
     {
-        $pre = '/Business/Api/FaHai/FaHaiController/';
+        $pre = '/Business/Api/FaYanYuan/FaYanYuanController/';
 
         $routeCollector->addGroup('/fh', function (RouteCollector $routeCollector) use ($pre) {
             $routeCollector->addRoute(['GET', 'POST'], '/getEpbparty', $pre . 'getEpbparty');//环保处罚

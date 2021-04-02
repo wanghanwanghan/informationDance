@@ -8,8 +8,8 @@ use App\HttpController\Service\CreateConf;
 class TaskBase
 {
     public $ldUrl;
-    public $fahaiList;
-    public $fahaiDetail;
+    public $fyyList;
+    public $fyyDetail;
 
     //pdf字体大小
     public $pdf_BigTitle = 17;
@@ -283,8 +283,8 @@ class TaskBase
     function __construct()
     {
         $this->ldUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
-        $this->fahaiList = CreateConf::getInstance()->getConf('fahai.listBaseUrl');
-        $this->fahaiDetail = CreateConf::getInstance()->getConf('fahai.detailBaseUrl');
+        $this->fyyList = CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl');
+        $this->fyyDetail = CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl');
 
         return true;
     }

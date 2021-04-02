@@ -1,10 +1,10 @@
 <?php
 
-namespace App\HttpController\Business\Api\FaHai;
+namespace App\HttpController\Business\Api\FaYanYuan;
 
 use App\HttpController\Business\BusinessBase;
 
-class FaHaiBase extends BusinessBase
+class FaYanYuanBase extends BusinessBase
 {
     function onRequest(?string $action): ?bool
     {

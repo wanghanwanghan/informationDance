@@ -256,7 +256,7 @@ class ChargeService extends ServiceBase
     }
 
     //法海计费
-    function FaHai(Request $request, $moduleNum, $entName): array
+    function FaYanYuan(Request $request, $moduleNum, $entName): array
     {
         $id = $request->getRequestParam('id');
 
@@ -286,7 +286,7 @@ class ChargeService extends ServiceBase
             //取出上次计费时间
             $time = $charge->created_at;
             //缓存过期时间
-            $limitDay = CreateConf::getInstance()->getConf('fahai.chargeLimit');
+            $limitDay = CreateConf::getInstance()->getConf('fayanyuan.chargeLimit');
             //还在免费状态
             if (time() - $time < $limitDay * 86400) {
                 //写入记录

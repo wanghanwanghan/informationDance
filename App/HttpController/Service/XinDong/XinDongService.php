@@ -5,7 +5,7 @@ namespace App\HttpController\Service\XinDong;
 use App\Csp\Service\CspService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
-use App\HttpController\Service\FaHai\FaHaiService;
+use App\HttpController\Service\FaYanYuan\FaYanYuanService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\ServiceBase;
 use App\HttpController\Service\TaoShu\TaoShuService;
@@ -17,12 +17,12 @@ class XinDongService extends ServiceBase
 {
     use Singleton;
 
-    private $fhList;
+    private $fyyList;
     private $ldUrl;
 
     function __construct()
     {
-        $this->fhList = CreateConf::getInstance()->getConf('fahai.listBaseUrl');
+        $this->fyyList = CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl');
         $this->ldUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
 
         return parent::__construct();
@@ -49,7 +49,7 @@ class XinDongService extends ServiceBase
                 'pageno' => 1,
                 'range' => 10,
             ];
-            return (new FaHaiService())->setCheckRespFlag(true)->getList($this->fhList . 'zdw', $postData);
+            return (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList . 'zdw', $postData);
         });
         //其他动产融资
         $docType = 'company_zdw_qtdcdsr';
@@ -60,7 +60,7 @@ class XinDongService extends ServiceBase
                 'pageno' => 1,
                 'range' => 10,
             ];
-            return (new FaHaiService())->setCheckRespFlag(true)->getList($this->fhList . 'zdw', $postData);
+            return (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList . 'zdw', $postData);
         });
         //====================债务-底====================
 
@@ -74,7 +74,7 @@ class XinDongService extends ServiceBase
                 'pageno' => 1,
                 'range' => 10,
             ];
-            return (new FaHaiService())->setCheckRespFlag(true)->getList($this->fhList . 'zdw', $postData);
+            return (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList . 'zdw', $postData);
         });
         //应收账款登记
         $docType = 'company_zdw_yszkdsr';
@@ -85,7 +85,7 @@ class XinDongService extends ServiceBase
                 'pageno' => 1,
                 'range' => 10,
             ];
-            return (new FaHaiService())->setCheckRespFlag(true)->getList($this->fhList . 'zdw', $postData);
+            return (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList . 'zdw', $postData);
         });
         //仓单质押登记
         $docType = 'company_zdw_cdzydsr';
@@ -96,7 +96,7 @@ class XinDongService extends ServiceBase
                 'pageno' => 1,
                 'range' => 10,
             ];
-            return (new FaHaiService())->setCheckRespFlag(true)->getList($this->fhList . 'zdw', $postData);
+            return (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList . 'zdw', $postData);
         });
         //所有权保留
         $docType = 'company_zdw_syqbldsr';
@@ -107,7 +107,7 @@ class XinDongService extends ServiceBase
                 'pageno' => 1,
                 'range' => 10,
             ];
-            return (new FaHaiService())->setCheckRespFlag(true)->getList($this->fhList . 'zdw', $postData);
+            return (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList . 'zdw', $postData);
         });
         //====================债权-底====================
 
@@ -120,7 +120,7 @@ class XinDongService extends ServiceBase
                 'pageno' => 1,
                 'range' => 10,
             ];
-            return (new FaHaiService())->setCheckRespFlag(true)->getList($this->fhList . 'sat', $postData);
+            return (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList . 'sat', $postData);
         });
 
         //涉税处罚公示
@@ -132,7 +132,7 @@ class XinDongService extends ServiceBase
                 'pageno' => 1,
                 'range' => 10,
             ];
-            return (new FaHaiService())->setCheckRespFlag(true)->getList($this->fhList . 'sat', $postData);
+            return (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList . 'sat', $postData);
         });
 
         //税务非正常户
@@ -144,7 +144,7 @@ class XinDongService extends ServiceBase
                 'pageno' => 1,
                 'range' => 10,
             ];
-            return (new FaHaiService())->setCheckRespFlag(true)->getList($this->fhList . 'sat', $postData);
+            return (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList . 'sat', $postData);
         });
 
         //执行

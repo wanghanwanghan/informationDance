@@ -9,7 +9,7 @@ use App\HttpController\Models\Api\SupervisorPhoneLimit;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateTable\CreateTableService;
-use App\HttpController\Service\FaHai\FaHaiService;
+use App\HttpController\Service\FaYanYuan\FaYanYuanService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use Carbon\Carbon;
@@ -20,8 +20,8 @@ class RunSupervisor extends AbstractCronTask
 {
     private $crontabBase;
     private $ldUrl;
-    private $fahaiList;
-    private $fahaiDetail;
+    private $fyyList;
+    private $fyyDetail;
     //发短信用的
     private $entNameArr = [];
 
@@ -30,8 +30,8 @@ class RunSupervisor extends AbstractCronTask
     {
         $this->crontabBase = new CrontabBase();
         $this->ldUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
-        $this->fahaiList = CreateConf::getInstance()->getConf('fahai.listBaseUrl');
-        $this->fahaiDetail = CreateConf::getInstance()->getConf('fahai.detailBaseUrl');
+        $this->fyyList = CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl');
+        $this->fyyDetail = CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl');
     }
 
     static function getRule(): string
@@ -236,7 +236,7 @@ class RunSupervisor extends AbstractCronTask
             'doc_type'=>$doc_type,
         ];
 
-        $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList.'sifa',$postData);
+        $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList.'sifa',$postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -246,8 +246,8 @@ class RunSupervisor extends AbstractCronTask
 
                 if ($check) continue;
 
-                $detail = (new FaHaiService())->setCheckRespFlag(true)
-                    ->getDetail($this->fahaiDetail.$doc_type,[
+                $detail = (new FaYanYuanService())->setCheckRespFlag(true)
+                    ->getDetail($this->fyyDetail.$doc_type,[
                         'id'=>$one['entryId'],
                         'doc_type'=>$doc_type
                     ]);
@@ -305,7 +305,7 @@ class RunSupervisor extends AbstractCronTask
             'doc_type'=>$doc_type,
         ];
 
-        $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList.'sifa',$postData);
+        $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList.'sifa',$postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -315,8 +315,8 @@ class RunSupervisor extends AbstractCronTask
 
                 if ($check) continue;
 
-                $detail = (new FaHaiService())->setCheckRespFlag(true)
-                    ->getDetail($this->fahaiDetail.$doc_type,[
+                $detail = (new FaYanYuanService())->setCheckRespFlag(true)
+                    ->getDetail($this->fyyDetail.$doc_type,[
                         'id'=>$one['entryId'],
                         'doc_type'=>$doc_type
                     ]);
@@ -371,7 +371,7 @@ class RunSupervisor extends AbstractCronTask
             'doc_type'=>$doc_type,
         ];
 
-        $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList.'sifa',$postData);
+        $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList.'sifa',$postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -381,8 +381,8 @@ class RunSupervisor extends AbstractCronTask
 
                 if ($check) continue;
 
-                $detail = (new FaHaiService())->setCheckRespFlag(true)
-                    ->getDetail($this->fahaiDetail.$doc_type,[
+                $detail = (new FaYanYuanService())->setCheckRespFlag(true)
+                    ->getDetail($this->fyyDetail.$doc_type,[
                         'id'=>$one['entryId'],
                         'doc_type'=>$doc_type
                     ]);
@@ -439,7 +439,7 @@ class RunSupervisor extends AbstractCronTask
             'doc_type'=>$doc_type,
         ];
 
-        $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList.'sifa',$postData);
+        $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList.'sifa',$postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -449,8 +449,8 @@ class RunSupervisor extends AbstractCronTask
 
                 if ($check) continue;
 
-                $detail = (new FaHaiService())->setCheckRespFlag(true)
-                    ->getDetail($this->fahaiDetail.$doc_type,[
+                $detail = (new FaYanYuanService())->setCheckRespFlag(true)
+                    ->getDetail($this->fyyDetail.$doc_type,[
                         'id'=>$one['entryId'],
                         'doc_type'=>$doc_type
                     ]);
@@ -801,7 +801,7 @@ class RunSupervisor extends AbstractCronTask
             'doc_type'=>$doc_type,
         ];
 
-        $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList.'epb',$postData);
+        $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList.'epb',$postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -811,8 +811,8 @@ class RunSupervisor extends AbstractCronTask
 
                 if ($check) continue;
 
-                $detail = (new FaHaiService())->setCheckRespFlag(true)
-                    ->getDetail($this->fahaiDetail.$doc_type,[
+                $detail = (new FaYanYuanService())->setCheckRespFlag(true)
+                    ->getDetail($this->fyyDetail.$doc_type,[
                         'id'=>$one['entryId'],
                         'doc_type'=>$doc_type
                     ]);
@@ -854,7 +854,7 @@ class RunSupervisor extends AbstractCronTask
             'doc_type'=>$doc_type,
         ];
 
-        $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList.'sat',$postData);
+        $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList.'sat',$postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -864,8 +864,8 @@ class RunSupervisor extends AbstractCronTask
 
                 if ($check) continue;
 
-                $detail = (new FaHaiService())->setCheckRespFlag(true)
-                    ->getDetail($this->fahaiDetail.$doc_type,[
+                $detail = (new FaYanYuanService())->setCheckRespFlag(true)
+                    ->getDetail($this->fyyDetail.$doc_type,[
                         'id'=>$one['entryId'],
                         'doc_type'=>$doc_type
                     ]);
@@ -906,7 +906,7 @@ class RunSupervisor extends AbstractCronTask
             'doc_type'=>$doc_type,
         ];
 
-        $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList.'sat',$postData);
+        $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList.'sat',$postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -916,8 +916,8 @@ class RunSupervisor extends AbstractCronTask
 
                 if ($check) continue;
 
-                $detail = (new FaHaiService())->setCheckRespFlag(true)
-                    ->getDetail($this->fahaiDetail.$doc_type,[
+                $detail = (new FaYanYuanService())->setCheckRespFlag(true)
+                    ->getDetail($this->fyyDetail.$doc_type,[
                         'id'=>$one['entryId'],
                         'doc_type'=>$doc_type
                     ]);
@@ -958,7 +958,7 @@ class RunSupervisor extends AbstractCronTask
             'doc_type'=>$doc_type,
         ];
 
-        $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList.'custom',$postData);
+        $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList.'custom',$postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -968,8 +968,8 @@ class RunSupervisor extends AbstractCronTask
 
                 if ($check) continue;
 
-                $detail = (new FaHaiService())->setCheckRespFlag(true)
-                    ->getDetail($this->fahaiDetail.$doc_type,[
+                $detail = (new FaYanYuanService())->setCheckRespFlag(true)
+                    ->getDetail($this->fyyDetail.$doc_type,[
                         'id'=>$one['entryId'],
                         'doc_type'=>$doc_type
                     ]);
@@ -1011,7 +1011,7 @@ class RunSupervisor extends AbstractCronTask
             'doc_type'=>$doc_type,
         ];
 
-        $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList.'pbc',$postData);
+        $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList.'pbc',$postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -1021,8 +1021,8 @@ class RunSupervisor extends AbstractCronTask
 
                 if ($check) continue;
 
-                $detail = (new FaHaiService())->setCheckRespFlag(true)
-                    ->getDetail($this->fahaiDetail.$doc_type,[
+                $detail = (new FaYanYuanService())->setCheckRespFlag(true)
+                    ->getDetail($this->fyyDetail.$doc_type,[
                         'id'=>$one['entryId'],
                         'doc_type'=>$doc_type
                     ]);
@@ -1064,7 +1064,7 @@ class RunSupervisor extends AbstractCronTask
             'doc_type'=>$doc_type,
         ];
 
-        $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList.'pbc',$postData);
+        $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList.'pbc',$postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -1074,8 +1074,8 @@ class RunSupervisor extends AbstractCronTask
 
                 if ($check) continue;
 
-                $detail = (new FaHaiService())->setCheckRespFlag(true)
-                    ->getDetail($this->fahaiDetail.$doc_type,[
+                $detail = (new FaYanYuanService())->setCheckRespFlag(true)
+                    ->getDetail($this->fyyDetail.$doc_type,[
                         'id'=>$one['entryId'],
                         'doc_type'=>$doc_type
                     ]);
@@ -1117,7 +1117,7 @@ class RunSupervisor extends AbstractCronTask
             'doc_type'=>$doc_type,
         ];
 
-        $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList.'pbc',$postData);
+        $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList.'pbc',$postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -1127,8 +1127,8 @@ class RunSupervisor extends AbstractCronTask
 
                 if ($check) continue;
 
-                $detail = (new FaHaiService())->setCheckRespFlag(true)
-                    ->getDetail($this->fahaiDetail.$doc_type,[
+                $detail = (new FaYanYuanService())->setCheckRespFlag(true)
+                    ->getDetail($this->fyyDetail.$doc_type,[
                         'id'=>$one['entryId'],
                         'doc_type'=>$doc_type
                     ]);
@@ -1170,7 +1170,7 @@ class RunSupervisor extends AbstractCronTask
             'doc_type'=>$doc_type,
         ];
 
-        $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList.'pbc',$postData);
+        $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList.'pbc',$postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -1180,8 +1180,8 @@ class RunSupervisor extends AbstractCronTask
 
                 if ($check) continue;
 
-                $detail = (new FaHaiService())->setCheckRespFlag(true)
-                    ->getDetail($this->fahaiDetail.$doc_type,[
+                $detail = (new FaYanYuanService())->setCheckRespFlag(true)
+                    ->getDetail($this->fyyDetail.$doc_type,[
                         'id'=>$one['entryId'],
                         'doc_type'=>$doc_type
                     ]);

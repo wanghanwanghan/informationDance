@@ -6,7 +6,7 @@ use App\Csp\Service\CspService;
 use App\HttpController\Models\Api\ReportInfo;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Common\CommonService;
-use App\HttpController\Service\FaHai\FaHaiService;
+use App\HttpController\Service\FaYanYuan\FaYanYuanService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Ocr\OcrService;
@@ -1305,7 +1305,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
                 'range' => 20,
             ];
 
-            $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sifa', $postData);
+            $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList . 'sifa', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
@@ -1317,7 +1317,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
                         'doc_type' => $doc_type
                     ];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
+                    $detail = (new FaYanYuanService())->setCheckRespFlag(true)->getDetail($this->fyyDetail . $doc_type, $postData);
 
                     if ($detail['code'] === 200 && !empty($detail['result'])) {
                         $one['detail'] = current($detail['result']);
@@ -1346,7 +1346,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
                 'range' => 20,
             ];
 
-            $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sifa', $postData);
+            $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList . 'sifa', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
@@ -1358,7 +1358,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
                         'doc_type' => $doc_type
                     ];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
+                    $detail = (new FaYanYuanService())->setCheckRespFlag(true)->getDetail($this->fyyDetail . $doc_type, $postData);
 
                     if ($detail['code'] === 200 && !empty($detail['result'])) {
                         $one['detail'] = current($detail['result']);
@@ -1387,7 +1387,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
                 'range' => 20,
             ];
 
-            $res = (new FaHaiService())->setCheckRespFlag(true)->getList($this->fahaiList . 'sifa', $postData);
+            $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList($this->fyyList . 'sifa', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
@@ -1399,7 +1399,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
                         'doc_type' => $doc_type
                     ];
 
-                    $detail = (new FaHaiService())->setCheckRespFlag(true)->getDetail($this->fahaiDetail . $doc_type, $postData);
+                    $detail = (new FaYanYuanService())->setCheckRespFlag(true)->getDetail($this->fyyDetail . $doc_type, $postData);
 
                     if ($detail['code'] === 200 && !empty($detail['result'])) {
                         $one['detail'] = current($detail['result']);

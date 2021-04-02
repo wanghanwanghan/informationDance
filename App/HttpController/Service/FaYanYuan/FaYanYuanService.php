@@ -1,12 +1,12 @@
 <?php
 
-namespace App\HttpController\Service\FaHai;
+namespace App\HttpController\Service\FaYanYuan;
 
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 
-class FaHaiService extends ServiceBase
+class FaYanYuanService extends ServiceBase
 {
     function onNewService(): ?bool
     {
@@ -18,7 +18,7 @@ class FaHaiService extends ServiceBase
 
     function __construct()
     {
-        $this->authCode = CreateConf::getInstance()->getConf('fahai.authCode');
+        $this->authCode = CreateConf::getInstance()->getConf('fayanyuan.authCode');
         $this->rt = time() * 1000;
 
         return parent::__construct();

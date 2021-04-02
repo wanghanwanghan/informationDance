@@ -1,12 +1,12 @@
 <?php
 
-namespace App\HttpController\Business\Api\FaHai;
+namespace App\HttpController\Business\Api\FaYanYuan;
 
 use App\HttpController\Service\CreateConf;
-use App\HttpController\Service\FaHai\FaHaiService;
+use App\HttpController\Service\FaYanYuan\FaYanYuanService;
 use App\HttpController\Service\Pay\ChargeService;
 
-class FaHaiController extends FaHaiBase
+class FaYanYuanController extends FaYanYuanBase
 {
     private $listBaseUrl;//企业的
     private $listBaseUrlForPerson;//个人的
@@ -17,9 +17,9 @@ class FaHaiController extends FaHaiBase
 
     function onRequest(?string $action): ?bool
     {
-        $this->listBaseUrl = CreateConf::getInstance()->getConf('fahai.listBaseUrl');
-        $this->listBaseUrlForPerson = CreateConf::getInstance()->getConf('fahai.listBaseUrlForPerson');
-        $this->detailBaseUrl = CreateConf::getInstance()->getConf('fahai.detailBaseUrl');
+        $this->listBaseUrl = CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl');
+        $this->listBaseUrlForPerson = CreateConf::getInstance()->getConf('fayanyuan.listBaseUrlForPerson');
+        $this->detailBaseUrl = CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl');
 
         return parent::onRequest($action);
     }
@@ -63,7 +63,7 @@ class FaHaiController extends FaHaiBase
 
         if ($type === 'Detail') {
             //详情要扣费
-            $charge = ChargeService::getInstance()->FaHai($this->request(), $this->moduleNum, $this->entName);
+            $charge = ChargeService::getInstance()->FaYanYuan($this->request(), $this->moduleNum, $this->entName);
             if ($charge['code'] != 200 && $charge['code'] != 999) {
                 $res['code'] = $charge['code'];
                 $res['Paging'] = $res['Result'] = null;
@@ -95,7 +95,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'epb', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'epb', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -121,7 +121,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'epbparty';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -142,7 +142,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'epb', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'epb', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -168,7 +168,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'epbparty_jkqy';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -189,7 +189,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'epb', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'epb', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -215,7 +215,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'epbparty_zxjc';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -236,7 +236,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'epb', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'epb', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -262,7 +262,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'epbparty_huanping';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -283,7 +283,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'custom', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'custom', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -309,7 +309,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'custom_qy';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -330,7 +330,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'custom', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'custom', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -356,7 +356,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'custom_xuke';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -377,7 +377,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'custom', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'custom', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -403,7 +403,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'custom_credit';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -424,7 +424,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'custom', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'custom', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -450,7 +450,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'custom_punish';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -471,7 +471,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'sifa', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'sifa', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -501,7 +501,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'ktgg';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -522,7 +522,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'sifa', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'sifa', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -552,7 +552,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'cpws';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -573,7 +573,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'sifa', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'sifa', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -603,7 +603,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'fygg';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -624,7 +624,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'sifa', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'sifa', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -654,7 +654,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'zxgg';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -675,7 +675,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'sifa', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'sifa', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -705,7 +705,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'shixin';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -726,7 +726,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'sifa', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'sifa', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -756,7 +756,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'sifacdk';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -777,7 +777,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'sat', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'sat', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -807,7 +807,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'satparty_qs';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -828,7 +828,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'sat', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'sat', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -858,7 +858,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'satparty_chufa';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -879,7 +879,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'sat', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'sat', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -909,7 +909,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'satparty_fzc';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -930,7 +930,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'sat', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'sat', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -960,7 +960,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'satparty_xin';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -981,7 +981,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'sat', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'sat', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -1011,7 +1011,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'satparty_reg';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -1032,7 +1032,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'sat', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'sat', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -1062,7 +1062,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'satparty_xuke';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -1083,7 +1083,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'pbc', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'pbc', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -1109,7 +1109,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'pbcparty';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -1130,7 +1130,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'pbc', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'pbc', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -1156,7 +1156,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'pbcparty_cbrc';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -1177,7 +1177,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'pbc', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'pbc', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -1203,7 +1203,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'pbcparty_csrc_chufa';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -1224,7 +1224,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'pbc', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'pbc', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -1250,7 +1250,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'pbcparty_csrc_xkpf';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -1271,7 +1271,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'pbc', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'pbc', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -1297,7 +1297,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'safe_chufa';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -1318,7 +1318,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'pbc', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'pbc', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -1344,7 +1344,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'safe_xuke';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -1365,7 +1365,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'zdw', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'zdw', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -1391,7 +1391,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'company_zdw_yszkdsr';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -1412,7 +1412,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'zdw', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'zdw', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -1438,7 +1438,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'company_zdw_zldjdsr';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -1459,7 +1459,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'zdw', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'zdw', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -1485,7 +1485,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'company_zdw_bzjzydsr';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -1506,7 +1506,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'zdw', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'zdw', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -1532,7 +1532,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'company_zdw_cdzydsr';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -1553,7 +1553,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'zdw', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'zdw', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -1579,7 +1579,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'company_zdw_syqbldsr';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -1600,7 +1600,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'zdw', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'zdw', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -1626,7 +1626,7 @@ class FaHaiController extends FaHaiBase
 
         $docType = 'company_zdw_qtdcdsr';
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -1648,7 +1648,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getListForPerson($this->listBaseUrlForPerson . 'sifa', $postData);
+        $res = (new FaYanYuanService())->getListForPerson($this->listBaseUrlForPerson . 'sifa', $postData);
 
         return $this->checkResponse($res, $docType, 'person');
     }
@@ -1664,7 +1664,7 @@ class FaHaiController extends FaHaiBase
 
         if (empty($docType)) return $this->writeJson(201, null, null, 'docType不能是空');
 
-        $res = (new FaHaiService())->getDetail($this->detailBaseUrl . $docType, $postData);
+        $res = (new FaYanYuanService())->getDetail($this->detailBaseUrl . $docType, $postData);
 
         return $this->checkResponse($res, $docType, 'detail');
     }
@@ -1685,7 +1685,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'zyzb', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'zyzb', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -1718,7 +1718,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'zyzb', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'zyzb', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
@@ -1751,7 +1751,7 @@ class FaHaiController extends FaHaiBase
             'range' => $pageSize,
         ];
 
-        $res = (new FaHaiService())->getList($this->listBaseUrl . 'zyzb', $postData);
+        $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'zyzb', $postData);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
