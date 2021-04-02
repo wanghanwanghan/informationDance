@@ -44,3 +44,6 @@ $data = [
 //$res = curl_exec($curl);//发送请求
 //dd(json_decode($res, true));
 
+preg_match_all('/[a-z]*(\#\,)?/', 'aaa#,b#,c#,d#,e', $all);
+
+var_dump($all);

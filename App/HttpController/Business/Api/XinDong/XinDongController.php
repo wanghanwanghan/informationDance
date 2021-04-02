@@ -8,11 +8,11 @@ use App\HttpController\Service\XinDong\XinDongService;
 
 class XinDongController extends XinDongBase
 {
-    private $qccUrl;
+    private $ldUrl;
 
     function onRequest(?string $action): ?bool
     {
-        $this->qccUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
+        $this->ldUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
 
         return parent::onRequest($action);
     }
@@ -43,7 +43,7 @@ class XinDongController extends XinDongBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'ECIPartner/GetList', $postData);
+        $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'ECIPartner/GetList', $postData);
 
         //有可能是coHttp错误
         if ($res['code'] != 200) return $this->checkResponse($res);
@@ -56,7 +56,7 @@ class XinDongController extends XinDongBase
             $stockPercent = str_replace(['%'], '', trim($one['StockPercent']));
             if ($stockPercent > 50) {
                 //查一下，用有没有股东判断这是自然人还是企业
-                $check = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'ECIPartner/GetList', ['searchKey' => $one['StockName']]);
+                $check = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'ECIPartner/GetList', ['searchKey' => $one['StockName']]);
                 //有股东，说明是企业法人
                 ($check['code'] != 200 || empty($check['result'])) ?: $entName = $one['StockName'];
             }

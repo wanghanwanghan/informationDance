@@ -18,12 +18,12 @@ class XinDongService extends ServiceBase
     use Singleton;
 
     private $fhList;
-    private $qccUrl;
+    private $ldUrl;
 
     function __construct()
     {
         $this->fhList = CreateConf::getInstance()->getConf('fahai.listBaseUrl');
-        $this->qccUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
+        $this->ldUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
 
         return parent::__construct();
     }
@@ -255,7 +255,7 @@ class XinDongService extends ServiceBase
 
             $postData = ['searchKey' => $entName];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'BusinessStateV4/SearchCompanyFinancings', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'BusinessStateV4/SearchCompanyFinancings', $postData);
 
             if (empty($res['result'])) return null;
 
@@ -275,7 +275,7 @@ class XinDongService extends ServiceBase
                 'pageSize' => 10,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'ADSTLicense/GetAdministrativeLicenseList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'ADSTLicense/GetAdministrativeLicenseList', $postData);
 
             ($res['code'] === 200 && !empty($res['paging'])) ? $total = (int)$res['paging']['total'] : $total = 0;
 
@@ -291,7 +291,7 @@ class XinDongService extends ServiceBase
                 'pageSize' => 10,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'PatentV4/Search', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'PatentV4/Search', $postData);
 
             ($res['code'] === 200 && !empty($res['paging'])) ? $total = (int)$res['paging']['total'] : $total = 0;
 
@@ -349,7 +349,7 @@ class XinDongService extends ServiceBase
                         'pageSize' => 50,
                     ];
 
-                    $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandMortgage/GetLandMortgageList', $postData);
+                    $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandMortgage/GetLandMortgageList', $postData);
 
                     if ($res['code'] != 200 || empty($res['result'])) break;
 
@@ -379,7 +379,7 @@ class XinDongService extends ServiceBase
                         'pageSize' => 50,
                     ];
 
-                    $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandPublish/LandPublishList', $postData);
+                    $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandPublish/LandPublishList', $postData);
 
                     if ($res['code'] != 200 || empty($res['result'])) break;
 
@@ -409,7 +409,7 @@ class XinDongService extends ServiceBase
                         'pageSize' => 50,
                     ];
 
-                    $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandPurchase/LandPurchaseList', $postData);
+                    $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandPurchase/LandPurchaseList', $postData);
 
                     if ($res['code'] != 200 || empty($res['result'])) break;
 
@@ -439,7 +439,7 @@ class XinDongService extends ServiceBase
                         'pageSize' => 50,
                     ];
 
-                    $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandTransfer/LandTransferList', $postData);
+                    $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandTransfer/LandTransferList', $postData);
 
                     if ($res['code'] != 200 || empty($res['result'])) break;
 
@@ -525,7 +525,7 @@ class XinDongService extends ServiceBase
                 'pageIndex'=>1,
                 'pageSize'=>5,
             ];
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandPurchase/LandPurchaseList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandPurchase/LandPurchaseList', $postData);
             return empty($res['paging']) ? 0 : $res['paging']['total'];
         });
 
@@ -536,7 +536,7 @@ class XinDongService extends ServiceBase
                 'pageIndex'=>1,
                 'pageSize'=>5,
             ];
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandPublish/LandPublishList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandPublish/LandPublishList', $postData);
             return empty($res['paging']) ? 0 : $res['paging']['total'];
         });
 
@@ -547,7 +547,7 @@ class XinDongService extends ServiceBase
                 'pageIndex'=>1,
                 'pageSize'=>5,
             ];
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'LandTransfer/LandTransferList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandTransfer/LandTransferList', $postData);
             return empty($res['paging']) ? 0 : $res['paging']['total'];
         });
 

@@ -19,7 +19,7 @@ use wanghanwanghan\someUtils\control;
 class RunSupervisor extends AbstractCronTask
 {
     private $crontabBase;
-    private $qccUrl;
+    private $ldUrl;
     private $fahaiList;
     private $fahaiDetail;
     //发短信用的
@@ -29,7 +29,7 @@ class RunSupervisor extends AbstractCronTask
     function __construct()
     {
         $this->crontabBase = new CrontabBase();
-        $this->qccUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
+        $this->ldUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
         $this->fahaiList = CreateConf::getInstance()->getConf('fahai.listBaseUrl');
         $this->fahaiDetail = CreateConf::getInstance()->getConf('fahai.detailBaseUrl');
     }
@@ -101,7 +101,7 @@ class RunSupervisor extends AbstractCronTask
             'isExactlySame' => true,
         ];
 
-        $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'CourtV4/SearchShiXin', $postData);
+        $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'CourtV4/SearchShiXin', $postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -139,7 +139,7 @@ class RunSupervisor extends AbstractCronTask
             'isExactlySame' => true,
         ];
 
-        $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'CourtV4/SearchZhiXing', $postData);
+        $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'CourtV4/SearchZhiXing', $postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -176,7 +176,7 @@ class RunSupervisor extends AbstractCronTask
             'keyWord'=>$entName,
         ];
 
-        $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'JudicialAssistance/GetJudicialAssistance', $postData);
+        $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'JudicialAssistance/GetJudicialAssistance', $postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -720,7 +720,7 @@ class RunSupervisor extends AbstractCronTask
         ];
 
         $res = (new LongDunService())->setCheckRespFlag(true)
-            ->get($this->qccUrl . 'SeriousViolation/GetSeriousViolationList', $postData);
+            ->get($this->ldUrl . 'SeriousViolation/GetSeriousViolationList', $postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -762,7 +762,7 @@ class RunSupervisor extends AbstractCronTask
         ];
 
         $res = (new LongDunService())->setCheckRespFlag(true)
-            ->get($this->qccUrl . 'AdministrativePenalty/GetAdministrativePenaltyList', $postData);
+            ->get($this->ldUrl . 'AdministrativePenalty/GetAdministrativePenaltyList', $postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -1226,7 +1226,7 @@ class RunSupervisor extends AbstractCronTask
         ];
 
         $res = (new LongDunService())->setCheckRespFlag(true)
-            ->get($this->qccUrl . 'ECIException/GetOpException', $postData);
+            ->get($this->ldUrl . 'ECIException/GetOpException', $postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -1308,7 +1308,7 @@ class RunSupervisor extends AbstractCronTask
         ];
 
         $res = (new LongDunService())->setCheckRespFlag(true)
-            ->get($this->qccUrl . 'LandMortgage/GetLandMortgageList', $postData);
+            ->get($this->ldUrl . 'LandMortgage/GetLandMortgageList', $postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -1392,7 +1392,7 @@ class RunSupervisor extends AbstractCronTask
         ];
 
         $res = (new LongDunService())->setCheckRespFlag(true)
-            ->get($this->qccUrl . 'AR/GetAnnualReport', $postData);
+            ->get($this->ldUrl . 'AR/GetAnnualReport', $postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -1436,7 +1436,7 @@ class RunSupervisor extends AbstractCronTask
         ];
 
         $res = (new LongDunService())->setCheckRespFlag(true)
-            ->get($this->qccUrl . 'ECIV4/GetBasicDetailsByName', $postData);
+            ->get($this->ldUrl . 'ECIV4/GetBasicDetailsByName', $postData);
 
         if ($res['code']==200 && !empty($res['result']))
         {
@@ -1453,7 +1453,7 @@ class RunSupervisor extends AbstractCronTask
                 ];
 
                 $res = (new LongDunService())->setCheckRespFlag(true)
-                    ->get($this->qccUrl . 'IPO/GetIPOGuarantee', $postData);
+                    ->get($this->ldUrl . 'IPO/GetIPOGuarantee', $postData);
 
                 if ($res['code']==200 && !empty($res['result']))
                 {
@@ -1497,7 +1497,7 @@ class RunSupervisor extends AbstractCronTask
         ];
 
         $res = (new LongDunService())->setCheckRespFlag(true)
-            ->get($this->qccUrl.'CompanyNews/SearchNews',$postData);
+            ->get($this->ldUrl.'CompanyNews/SearchNews',$postData);
 
         if ($res['code'] == 200 && !empty($res['result']))
         {

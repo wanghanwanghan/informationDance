@@ -1092,7 +1092,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = ['keyWord' => $this->entName];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'ECIV4/GetBasicDetailsByName', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'ECIV4/GetBasicDetailsByName', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
@@ -1104,7 +1104,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = ['keyNo' => $this->entName];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'ECIException/GetOpException', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'ECIException/GetOpException', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
@@ -1194,7 +1194,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'PatentV4/Search', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'PatentV4/Search', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
@@ -1213,7 +1213,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'CopyRight/SearchSoftwareCr', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'CopyRight/SearchSoftwareCr', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
@@ -1232,7 +1232,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'ADSTLicense/GetAdministrativeLicenseList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'ADSTLicense/GetAdministrativeLicenseList', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
@@ -1241,7 +1241,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
                     //取详情
                     $postData = ['id' => $one['Id']];
 
-                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'ADSTLicense/GetAdministrativeLicenseDetail', $postData);
+                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'ADSTLicense/GetAdministrativeLicenseDetail', $postData);
 
                     if ($detail['code'] == 200 && !empty($detail['result'])) {
                         $one['detail'] = $detail['result'];
@@ -1267,7 +1267,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'AdministrativePenalty/GetAdministrativePenaltyList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'AdministrativePenalty/GetAdministrativePenaltyList', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
@@ -1276,7 +1276,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
                     //取详情
                     $postData = ['id' => $one['Id']];
 
-                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->qccUrl . 'AdministrativePenalty/GetAdministrativePenaltyDetail', $postData);
+                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'AdministrativePenalty/GetAdministrativePenaltyDetail', $postData);
 
                     if ($detail['code'] == 200 && !empty($detail['result'])) {
                         $one['detail'] = $detail['result'];

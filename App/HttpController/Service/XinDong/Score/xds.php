@@ -53,7 +53,7 @@ class xds
 
     function __construct()
     {
-        $this->qcc = CreateConf::getInstance()->getConf('longdun.baseUrl');
+        $this->ld = CreateConf::getInstance()->getConf('longdun.baseUrl');
     }
 
     function cwScore($entName): ?array
@@ -763,7 +763,7 @@ class xds
 
         //股权出质
         $gqcz = (new LongDunService())->setCheckRespFlag(true)
-            ->get($this->qcc . 'StockEquityPledge/GetStockPledgeList', [
+            ->get($this->ld . 'StockEquityPledge/GetStockPledgeList', [
                 'searchKey' => $entName,
                 'pageIndex' => 1,
                 'pageSize' => 100,
@@ -785,7 +785,7 @@ class xds
 
         //动产抵押
         $dcdy = (new LongDunService())->setCheckRespFlag(true)
-            ->get($this->qcc . 'ChattelMortgage/GetChattelMortgage', [
+            ->get($this->ld . 'ChattelMortgage/GetChattelMortgage', [
                 'keyWord' => $entName,
                 'pageIndex' => 1,
                 'pageSize' => 100,
@@ -807,7 +807,7 @@ class xds
 
         //对外担保
         $dwdb = (new LongDunService())->setCheckRespFlag(true)
-            ->get($this->qcc . 'AR/GetAnnualReport', [
+            ->get($this->ld . 'AR/GetAnnualReport', [
                 'keyNo' => $entName,
             ]);
 
@@ -831,7 +831,7 @@ class xds
 
         //实际控制人
         $sjkzr = (new LongDunService())->setCheckRespFlag(true)
-            ->get($this->qcc . 'Beneficiary/GetBeneficiary', [
+            ->get($this->ld . 'Beneficiary/GetBeneficiary', [
                 'companyName' => $entName,
                 'percent' => 0,
                 'mode' => 0,

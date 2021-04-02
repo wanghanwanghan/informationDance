@@ -15,7 +15,7 @@ use wanghanwanghan\someUtils\control;
 
 class ProvideBase extends Index
 {
-    public $qccListUrl;
+    public $ldListUrl;
     public $qqListUrl;
 
     public $requestTime;
@@ -50,7 +50,7 @@ class ProvideBase extends Index
         $this->csp = CspService::getInstance()->create();
         $this->cspKey = control::getUuid();
 
-        $this->qccListUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
+        $this->ldListUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
         $this->qqListUrl = CreateConf::getInstance()->getConf('qianqi.baseUrl');
 
         $this->requestTime = microtime(true);

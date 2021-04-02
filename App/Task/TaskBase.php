@@ -7,7 +7,7 @@ use App\HttpController\Service\CreateConf;
 
 class TaskBase
 {
-    public $qccUrl;
+    public $ldUrl;
     public $fahaiList;
     public $fahaiDetail;
 
@@ -282,7 +282,7 @@ class TaskBase
 
     function __construct()
     {
-        $this->qccUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
+        $this->ldUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
         $this->fahaiList = CreateConf::getInstance()->getConf('fahai.listBaseUrl');
         $this->fahaiDetail = CreateConf::getInstance()->getConf('fahai.detailBaseUrl');
 
