@@ -84,19 +84,20 @@ class LongXinController extends LongXinBase
     function getFinanceNeedAuth()
     {
         $entName = $this->request()->getRequestParam('entName') ?? '';
+        $code = $this->request()->getRequestParam('code') ?? '';
         $beginYear = $this->request()->getRequestParam('year') ?? '';
         $dataCount = $this->request()->getRequestParam('dataCount') ?? '';
 
         $postData = [
             'entName' => $entName,
-            'code' => '',
+            'code' => $code,
             'beginYear' => $beginYear,
             'dataCount' => $dataCount,//取最近几年的
         ];
 
         //这里验证授权书是否审核通过
 
-        $res = (new LongXinService())->getFinanceData($postData);
+        $res = (new LongXinService())->getFinanceData($postData, false);
 
         return $this->checkResponse($res);
     }
