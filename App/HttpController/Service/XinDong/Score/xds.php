@@ -181,11 +181,11 @@ class xds
         return $r;
     }
 
-    //企业资产负债状况评分 20资产负债率 = 1负债总额 / 0资产总额
+    //企业主营业务健康度评分 20资产负债率 = 1负债总额 / 0资产总额
     private function DEBTL_H($data): array
     {
         $r = [
-            'name' => '企业资产负债状况评分',
+            'name' => '企业主营业务健康度评分',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
