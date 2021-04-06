@@ -56,6 +56,7 @@ class xds
         $this->ld = CreateConf::getInstance()->getConf('longdun.baseUrl');
     }
 
+    //计算各项分数
     function cwScore($entName): ?array
     {
         $arr = (new LongXinService())->setCheckRespFlag(true)->getFinanceData([
