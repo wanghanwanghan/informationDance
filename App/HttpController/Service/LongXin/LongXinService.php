@@ -261,13 +261,14 @@ class LongXinService extends ServiceBase
         } catch (\Throwable $e) {
 
         }
+
         return [];
     }
 
     //近n年的财务数据
     function getFinanceData($postData, $toRange = true)
     {
-        //$check = $this->alreadyInserted($postData);
+        $check = $this->alreadyInserted($postData);
 
         $entId = $this->getEntid($postData['entName']);
 
