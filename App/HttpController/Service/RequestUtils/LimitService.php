@@ -33,26 +33,22 @@ class LimitService extends ServiceBase
 
         $minute = Carbon::now()->format('YmdHi');
 
-        $redis = Redis::defer('redis');
-
-        $redis->select($this->db);
-
         //key
         empty($token) ? $key = $realIp : $key = $token;
 
-        //取得结果
-        $data = $redis->get($minute . $key);
-
-        if (empty($data)) {
-            //说明这分钟还没有请求过
-            $redis->setEx($minute . $key, $this->random(), $this->maxNum);
-        } else {
-            //判断剩余次数
-            if ($data <= 0) return false;
-            $redis->decr($minute . $key);
-        }
-
-        return true;
+        return Redis::invoke('redis', function (\EasySwoole\Redis\Redis $redis) use ($minute, $key) {
+            $redis->select($this->db);
+            $data = $redis->get($minute . $key);
+            if (empty($data)) {
+                //说明这分钟还没有请求过
+                $redis->setEx($minute . $key, $this->random(), $this->maxNum);
+            } else {
+                //判断剩余次数
+                if ($data <= 0) return false;
+                $redis->decr($minute . $key);
+            }
+            return true;
+        });
     }
 
     //随机一个过期时间
