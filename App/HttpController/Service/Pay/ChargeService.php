@@ -583,9 +583,8 @@ class ChargeService extends ServiceBase
                     ->where("(created_at > {$star} and created_at < {$end})")
                     ->group('entName')
                     ->all();
-                CommonService::getInstance()->log4PHP(
-                    DbManager::getInstance()->getLastQuery()->getLastQuery()
-                );
+                $num = obj2Arr($num);
+                CommonService::getInstance()->log4PHP($num);
                 empty($num) ? $num = 0 : $num = count($num);
                 if ($num <= 3) {
                     //还在免费
