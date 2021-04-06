@@ -582,10 +582,11 @@ class ChargeService extends ServiceBase
                     ->where('moduleId', $moduleNum)
                     ->where("(created_at > {$star} and created_at < {$end})")
                     ->group('entName')
-                    ->count();
+                    ->all();
                 CommonService::getInstance()->log4PHP(
                     DbManager::getInstance()->getLastQuery()->getLastQuery()
                 );
+                empty($num) ? $num = 0 : $num = count($num);
                 if ($num <= 3) {
                     //还在免费
                     Charge::create()->data([
