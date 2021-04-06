@@ -3,11 +3,15 @@
 namespace App\HttpController\Service\Pay;
 
 use App\HttpController\Models\Api\Charge;
+use App\HttpController\Models\Api\User;
 use App\HttpController\Models\Api\Wallet;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\ServiceBase;
+use Carbon\Carbon;
 use EasySwoole\Component\Singleton;
 use EasySwoole\Http\Request;
+use EasySwoole\ORM\DbManager;
 
 class ChargeService extends ServiceBase
 {
@@ -88,6 +92,7 @@ class ChargeService extends ServiceBase
                 ->where('entName', $entName)
                 ->where('detailKey', '')
                 ->where('moduleId', $moduleNum)
+                ->where('price', 0, '<>')
                 ->order('created_at', 'desc')
                 ->get();
         } catch (\Throwable $e) {
@@ -118,7 +123,7 @@ class ChargeService extends ServiceBase
                     $this->writeErr($e, 'ChargeService');
                 }
                 return ['code' => 200];
-            };
+            }
         }
 
         //等于false说明用户还没点确定支付，等于true说明用户点了确认支付
@@ -180,6 +185,7 @@ class ChargeService extends ServiceBase
                 ->where('entName', $entName)
                 ->where('detailKey', '')
                 ->where('moduleId', $moduleNum)
+                ->where('price', 0, '<>')
                 ->order('created_at', 'desc')
                 ->get();
         } catch (\Throwable $e) {
@@ -210,7 +216,7 @@ class ChargeService extends ServiceBase
                     $this->writeErr($e, 'ChargeService');
                 }
                 return ['code' => 200];
-            };
+            }
         }
 
         //等于false说明用户还没点确定支付，等于true说明用户点了确认支付
@@ -274,6 +280,7 @@ class ChargeService extends ServiceBase
                 ->where('entName', $entName)
                 ->where('detailKey', $id)
                 ->where('moduleId', $moduleNum)
+                ->where('price', 0, '<>')
                 ->order('created_at', 'desc')
                 ->get();
         } catch (\Throwable $e) {
@@ -305,7 +312,7 @@ class ChargeService extends ServiceBase
                     $this->writeErr($e, 'ChargeService');
                 }
                 return ['code' => 200];
-            };
+            }
         }
 
         //等于false说明用户还没点确定支付，等于true说明用户点了确认支付
@@ -368,6 +375,7 @@ class ChargeService extends ServiceBase
                 ->where('entName', $entName)
                 ->where('detailKey', $id)
                 ->where('moduleId', $moduleNum)
+                ->where('price', 0, '<>')
                 ->order('created_at', 'desc')
                 ->get();
         } catch (\Throwable $e) {
@@ -399,7 +407,7 @@ class ChargeService extends ServiceBase
                     $this->writeErr($e, 'ChargeService');
                 }
                 return ['code' => 200];
-            };
+            }
         }
 
         //等于false说明用户还没点确定支付，等于true说明用户点了确认支付
@@ -462,6 +470,7 @@ class ChargeService extends ServiceBase
                 ->where('entName', $entName)
                 ->where('detailKey', '')
                 ->where('moduleId', $moduleNum)
+                ->where('price', 0, '<>')
                 ->order('created_at', 'desc')
                 ->get();
         } catch (\Throwable $e) {
@@ -492,7 +501,7 @@ class ChargeService extends ServiceBase
                     $this->writeErr($e, 'ChargeService');
                 }
                 return ['code' => 200];
-            };
+            }
         }
 
         //等于false说明用户还没点确定支付，等于true说明用户点了确认支付
@@ -547,20 +556,71 @@ class ChargeService extends ServiceBase
 
         if (empty($phone) || empty($entName)) return ['code' => 201, 'msg' => '手机号或公司名不能是空'];
 
-        //是否免费
-        try {
-            $charge = Charge::create()
-                ->where('phone', $phone)
-                ->where('entName', $entName)
-                ->where('moduleId', $moduleNum)
-                ->order('created_at', 'desc')
-                ->get();
-        } catch (\Throwable $e) {
-            $this->writeErr($e, 'ChargeService');
-        }
-
         //获取扣费详情
         $moduleInfo = $this->getModuleInfo($moduleNum);
+
+        //新用户前5天，每天前3个企业免费
+        try {
+            $info = User::create()->where('phone', $phone)->get();
+            if (empty($info)) return ['code' => 201, 'msg' => '无用户信息'];
+            //取得注册时间
+            $regTime = $info->created_at;
+        } catch (\Throwable $e) {
+            $this->writeErr($e, 'ChargeService');
+            return ['code' => 201, 'msg' => '取得用户信息失败'];
+        }
+
+        //新用户前5天，每天前3个企业免费
+        if (time() - $regTime < 5 * 86400) {
+            //是否免费
+            try {
+                //当天查询企业个数
+                $star = Carbon::now()->startOfDay()->timestamp;
+                $end = Carbon::now()->endOfDay()->timestamp;
+                $num = Charge::create()
+                    ->where('phone', $phone)
+                    ->where('moduleId', $moduleNum)
+                    ->where("(created_at > {$star} and created_at < {$end})")
+                    ->group('entName')
+                    ->count();
+                CommonService::getInstance()->log4PHP(
+                    DbManager::getInstance()->getLastQuery()->getLastQuery()
+                );
+                if ($num <= 3) {
+                    //还在免费
+                    Charge::create()->data([
+                        'moduleId' => $moduleNum,
+                        'moduleName' => $moduleInfo['name'] . $moduleInfo['desc'],
+                        'entName' => $entName,
+                        'phone' => $phone,
+                        'price' => 0,
+                    ])->save();
+                    return ['code' => 200, 'msg' => '成功'];
+                }
+                //当天不免费了
+                $charge = Charge::create()
+                    ->where('phone', $phone)
+                    ->where('entName', $entName)
+                    ->where('moduleId', $moduleNum)
+                    ->order('created_at', 'desc')
+                    ->get();
+            } catch (\Throwable $e) {
+                $this->writeErr($e, 'ChargeService');
+            }
+        } else {
+            //是否免费
+            try {
+                $charge = Charge::create()
+                    ->where('phone', $phone)
+                    ->where('entName', $entName)
+                    ->where('moduleId', $moduleNum)
+                    ->where('price', 0, '<>')
+                    ->order('created_at', 'desc')
+                    ->get();
+            } catch (\Throwable $e) {
+                $this->writeErr($e, 'ChargeService');
+            }
+        }
 
         if (!empty($charge)) {
             //取出上次计费时间
@@ -583,7 +643,7 @@ class ChargeService extends ServiceBase
                     $this->writeErr($e, 'ChargeService');
                 }
                 return ['code' => 200];
-            };
+            }
         }
 
         //等于false说明用户还没点确定支付，等于true说明用户点了确认支付
