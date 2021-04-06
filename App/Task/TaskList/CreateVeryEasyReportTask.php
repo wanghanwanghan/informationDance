@@ -1293,7 +1293,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 裁判文书
+        //法研院 裁判文书
         $csp->add('cpws', function () {
 
             $doc_type = 'cpws';
@@ -1334,7 +1334,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 执行公告
+        //法研院 执行公告
         $csp->add('zxgg', function () {
 
             $doc_type = 'zxgg';
@@ -1375,7 +1375,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 失信公告
+        //法研院 失信公告
         $csp->add('shixin', function () {
 
             $doc_type = 'shixin';

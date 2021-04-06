@@ -255,7 +255,7 @@ class ChargeService extends ServiceBase
         return ['code' => 200, 'msg' => '扣费成功'];
     }
 
-    //法海计费
+    //法研院计费
     function FaYanYuan(Request $request, $moduleNum, $entName): array
     {
         $id = $request->getRequestParam('id');

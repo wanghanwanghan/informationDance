@@ -16,7 +16,6 @@ use App\HttpController\Service\OneSaid\OneSaidService;
 use App\HttpController\Service\QianQi\QianQiService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\XinDongService;
-use App\HttpController\Service\ZhongWang\ZhongWangService;
 use App\Process\Service\ProcessService;
 use App\Task\TaskBase;
 use Carbon\Carbon;

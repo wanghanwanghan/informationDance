@@ -9,6 +9,7 @@ use App\HttpController\Service\FaYanYuan\FaYanYuanService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\ServiceBase;
 use App\HttpController\Service\TaoShu\TaoShuService;
+use App\HttpController\Service\XinDong\Score\xds;
 use EasySwoole\Pool\Manager;
 use wanghanwanghan\someUtils\control;
 use wanghanwanghan\someUtils\traits\Singleton;
@@ -463,54 +464,51 @@ class XinDongService extends ServiceBase
         $res = CspService::getInstance()->exec($csp);
 
         //先整理文字的
-        $tmp=[];
-        $tmp[]=control::array_flatten($res['SearchCompanyFinancings']);
-        $tmp[]=control::array_flatten($res['landResources']);
-        $tmp[]=control::array_flatten($res['getBranchInfo']);
-        $tmp[]=control::array_flatten($res['getRegisterChangeInfo']);
-        $tmp=control::array_flatten($tmp);
-        $tmp=array_filter($tmp);
+        $tmp = [];
+        $tmp[] = control::array_flatten($res['SearchCompanyFinancings']);
+        $tmp[] = control::array_flatten($res['landResources']);
+        $tmp[] = control::array_flatten($res['getBranchInfo']);
+        $tmp[] = control::array_flatten($res['getRegisterChangeInfo']);
+        $tmp = control::array_flatten($tmp);
+        $tmp = array_filter($tmp);
         sort($tmp);
         //再整理数字
         $res['PatentSearch'] > 0 ? $said = "共有{$res['PatentSearch']}个专利，具体登录小程序查看" : $said = "共有{$res['PatentSearch']}个专利";
-        array_push($tmp,$said);
+        array_push($tmp, $said);
         $res['GetAdministrativeLicenseList'] > 0 ? $said = "共有{$res['GetAdministrativeLicenseList']}个行政许可，具体登录小程序查看" : $said = "共有{$res['GetAdministrativeLicenseList']}个行政许可";
-        array_push($tmp,$said);
+        array_push($tmp, $said);
 
         return $this->checkResp(200, null, $tmp, '查询成功');
     }
 
     //产品标准
-    function getProductStandard($entName,$page,$pageSize)
+    function getProductStandard($entName, $page, $pageSize)
     {
-        try
-        {
+        try {
             $mysqlObj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))->getObj();
 
-            $mysqlObj->queryBuilder()->where('ORG_NAME',$entName)
-                ->limit($this->exprOffset($page,$pageSize),$pageSize)
+            $mysqlObj->queryBuilder()->where('ORG_NAME', $entName)
+                ->limit($this->exprOffset($page, $pageSize), $pageSize)
                 ->get('qyxx');
 
             $list = $mysqlObj->execBuilder();
 
-            $mysqlObj->queryBuilder()->where('ORG_NAME',$entName)->get('qyxx');
+            $mysqlObj->queryBuilder()->where('ORG_NAME', $entName)->get('qyxx');
 
             $total = $mysqlObj->execBuilder();
 
             empty($total) ? $total = 0 : $total = count($total);
 
-        }catch (\Throwable $e)
-        {
-            $this->writeErr($e,__FUNCTION__);
+        } catch (\Throwable $e) {
+            $this->writeErr($e, __FUNCTION__);
 
-            return ['code'=>201,'paging'=>null,'result'=>null,'msg'=>'获取mysql错误'];
+            return ['code' => 201, 'paging' => null, 'result' => null, 'msg' => '获取mysql错误'];
 
-        }finally
-        {
+        } finally {
             Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))->recycleObj($mysqlObj);
         }
 
-        return $this->checkResp(200, ['page'=>$page,'pageSize'=>$pageSize,'total'=>$total],$list, '查询成功');
+        return $this->checkResp(200, ['page' => $page, 'pageSize' => $pageSize, 'total' => $total], $list, '查询成功');
     }
 
     //资产线索
@@ -521,9 +519,9 @@ class XinDongService extends ServiceBase
         //龙盾 购地信息
         $csp->add('LandPurchaseList', function () use ($entName) {
             $postData = [
-                'searchKey'=>$entName,
-                'pageIndex'=>1,
-                'pageSize'=>5,
+                'searchKey' => $entName,
+                'pageIndex' => 1,
+                'pageSize' => 5,
             ];
             $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandPurchase/LandPurchaseList', $postData);
             return empty($res['paging']) ? 0 : $res['paging']['total'];
@@ -532,9 +530,9 @@ class XinDongService extends ServiceBase
         //龙盾 土地公示
         $csp->add('LandPublishList', function () use ($entName) {
             $postData = [
-                'searchKey'=>$entName,
-                'pageIndex'=>1,
-                'pageSize'=>5,
+                'searchKey' => $entName,
+                'pageIndex' => 1,
+                'pageSize' => 5,
             ];
             $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandPublish/LandPublishList', $postData);
             return empty($res['paging']) ? 0 : $res['paging']['total'];
@@ -543,9 +541,9 @@ class XinDongService extends ServiceBase
         //龙盾 土地转让
         $csp->add('LandTransferList', function () use ($entName) {
             $postData = [
-                'searchKey'=>$entName,
-                'pageIndex'=>1,
-                'pageSize'=>5,
+                'searchKey' => $entName,
+                'pageIndex' => 1,
+                'pageSize' => 5,
             ];
             $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandTransfer/LandTransferList', $postData);
             return empty($res['paging']) ? 0 : $res['paging']['total'];
@@ -553,7 +551,7 @@ class XinDongService extends ServiceBase
 
         //产品标准
         $csp->add('ProductStandard', function () use ($entName) {
-            $res = $this->getProductStandard($entName,1,10);
+            $res = $this->getProductStandard($entName, 1, 10);
             return empty($res['paging']) ? 0 : $res['paging']['total'];
         });
 
@@ -574,5 +572,12 @@ class XinDongService extends ServiceBase
 
     }
 
+    //二次特征分数
+    function getFeatures($entName)
+    {
+        $res = (new xds())->cwScore($entName);
+
+        return $this->checkResp(200, null, $res, '查询成功');
+    }
 
 }

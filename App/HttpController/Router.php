@@ -22,7 +22,7 @@ class Router extends AbstractRouter
             $this->QianQiRouterV1($routeCollector);//乾启
             $this->LongXinRouterV1($routeCollector);//龙信
             $this->YuanSuRouterV1($routeCollector);//元素
-            $this->ZhongWangRouterV1($routeCollector);//众望
+            $this->GuoPiaoRouterV1($routeCollector);//国票
             $this->Notify($routeCollector);//通知
             $this->ExportExcelRouterV1($routeCollector);//导出excel
             $this->ExportWordRouterV1($routeCollector);//导出word
@@ -62,9 +62,9 @@ class Router extends AbstractRouter
         return true;
     }
 
-    private function ZhongWangRouterV1(RouteCollector $routeCollector)
+    private function GuoPiaoRouterV1(RouteCollector $routeCollector)
     {
-        $prefix = '/Business/Api/ZhongWang/ZhongWangController/';
+        $prefix = '/Business/Api/GuoPiao/GuoPiaoController/';
 
         $routeCollector->addGroup('/zw', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getReceiptDetailByClient', $prefix . 'getReceiptDetailByClient');//进销项发票详情（税盘）
@@ -127,6 +127,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getProductStandard', $prefix . 'getProductStandard');//产品标准
             $routeCollector->addRoute(['GET', 'POST'], '/getAssetLeads', $prefix . 'getAssetLeads');//资产线索
             $routeCollector->addRoute(['GET', 'POST'], '/getNaCaoRegisterInfo', $prefix . 'getNaCaoRegisterInfo');//非企业信息
+            $routeCollector->addRoute(['GET', 'POST'], '/getFeatures', $prefix . 'getFeatures');//二次特征分数
         });
 
         return true;

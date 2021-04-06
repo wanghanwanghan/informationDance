@@ -1,12 +1,12 @@
 <?php
 
-namespace App\HttpController\Business\Api\ZhongWang;
+namespace App\HttpController\Business\Api\GuoPiao;
 
 use App\HttpController\Models\Api\AuthBook;
 use App\HttpController\Service\Common\CommonService;
-use App\HttpController\Service\ZhongWang\ZhongWangService;
+use App\HttpController\Service\GuoPiao\GuoPiaoService;
 
-class ZhongWangController extends ZhongWangBase
+class GuoPiaoController extends GuoPiaoBase
 {
     function onRequest(?string $action): ?bool
     {
@@ -18,7 +18,7 @@ class ZhongWangController extends ZhongWangBase
         parent::afterAction($actionName);
     }
 
-    //检验法海返回值，并给客户计费
+    //检验法研院返回值，并给客户计费
     private function checkResponse($res, $type, $writeJson = true)
     {
         if (isset($res['data']['total']) &&
@@ -83,7 +83,7 @@ class ZhongWangController extends ZhongWangBase
         $page = $this->request()->getRequestParam('page') ?? 1;
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
-        $res = (new ZhongWangService())->getInOrOutDetailByClient($code, $type, $startDate, $endDate, $page, $pageSize);
+        $res = (new GuoPiaoService())->getInOrOutDetailByClient($code, $type, $startDate, $endDate, $page, $pageSize);
 
         return $this->checkResponse($res, __FUNCTION__);
     }
@@ -98,7 +98,7 @@ class ZhongWangController extends ZhongWangBase
         $page = $this->request()->getRequestParam('page') ?? 1;
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
-        $res = (new ZhongWangService())->getInOrOutDetailByCert($code, $type, $startDate, $endDate, $page, $pageSize);
+        $res = (new GuoPiaoService())->getInOrOutDetailByCert($code, $type, $startDate, $endDate, $page, $pageSize);
 
         return $this->checkResponse($res, __FUNCTION__);
     }
@@ -121,7 +121,7 @@ class ZhongWangController extends ZhongWangBase
 
         $orderNo = $phone . time();
 
-        $res = (new ZhongWangService())->getAuthentication($entName, $callback, $orderNo);
+        $res = (new GuoPiaoService())->getAuthentication($entName, $callback, $orderNo);
 
         $res = jsonDecode($res);
 
@@ -168,7 +168,7 @@ class ZhongWangController extends ZhongWangBase
         $startDate = $this->request()->getRequestParam('startDate') ?? '';//date('Y-m-d')
         $endDate = $this->request()->getRequestParam('endDate') ?? '';//date('Y-m-d')
 
-        $res = (new ZhongWangService())->getTaxInvoice($code, $startDate, $endDate);
+        $res = (new GuoPiaoService())->getTaxInvoice($code, $startDate, $endDate);
 
         CommonService::getInstance()->log4PHP($res);
 
@@ -182,7 +182,7 @@ class ZhongWangController extends ZhongWangBase
         $startDate = $this->request()->getRequestParam('startDate') ?? '';//date('Y-m-d')
         $endDate = $this->request()->getRequestParam('endDate') ?? '';//date('Y-m-d')
 
-        $res = (new ZhongWangService())->getTaxInvoiceUpgrade($code, $startDate, $endDate);
+        $res = (new GuoPiaoService())->getTaxInvoiceUpgrade($code, $startDate, $endDate);
 
         return $this->checkResponse($res, __FUNCTION__);
     }
@@ -202,7 +202,7 @@ class ZhongWangController extends ZhongWangBase
         if (!is_numeric($dataType) || !is_numeric($page))
             return $this->writeJson(201, null, null, '参数必须是数字');
 
-        $res = (new ZhongWangService())->getInvoiceMain($code, $dataType, $startDate, $endDate, $page);
+        $res = (new GuoPiaoService())->getInvoiceMain($code, $dataType, $startDate, $endDate, $page);
 
         return $this->checkResponse($res, __FUNCTION__);
     }
@@ -222,7 +222,7 @@ class ZhongWangController extends ZhongWangBase
         if (!is_numeric($dataType) || !is_numeric($page))
             return $this->writeJson(201, null, null, '参数必须是数字');
 
-        $res = (new ZhongWangService())->getInvoiceGoods($code, $dataType, $startDate, $endDate, $page);
+        $res = (new GuoPiaoService())->getInvoiceGoods($code, $dataType, $startDate, $endDate, $page);
 
         return $this->checkResponse($res, __FUNCTION__);
     }
@@ -232,7 +232,7 @@ class ZhongWangController extends ZhongWangBase
     {
         $code = $this->request()->getRequestParam('code') ?? '';
 
-        $res = (new ZhongWangService())->getEssential($code);
+        $res = (new GuoPiaoService())->getEssential($code);
 
         return $this->checkResponse($res, __FUNCTION__);
     }
@@ -242,7 +242,7 @@ class ZhongWangController extends ZhongWangBase
     {
         $code = $this->request()->getRequestParam('code') ?? '';
 
-        $res = (new ZhongWangService())->getIncometaxMonthlyDeclaration($code);
+        $res = (new GuoPiaoService())->getIncometaxMonthlyDeclaration($code);
 
         return $this->checkResponse($res, __FUNCTION__);
     }
@@ -252,7 +252,7 @@ class ZhongWangController extends ZhongWangBase
     {
         $code = $this->request()->getRequestParam('code') ?? '';
 
-        $res = (new ZhongWangService())->getIncometaxAnnualReport($code);
+        $res = (new GuoPiaoService())->getIncometaxAnnualReport($code);
 
         return $this->checkResponse($res, __FUNCTION__);
     }
@@ -262,7 +262,7 @@ class ZhongWangController extends ZhongWangBase
     {
         $code = $this->request()->getRequestParam('code') ?? '';
 
-        $res = (new ZhongWangService())->getFinanceIncomeStatementAnnualReport($code);
+        $res = (new GuoPiaoService())->getFinanceIncomeStatementAnnualReport($code);
 
         return $this->checkResponse($res, __FUNCTION__);
     }
@@ -272,7 +272,7 @@ class ZhongWangController extends ZhongWangBase
     {
         $code = $this->request()->getRequestParam('code') ?? '';
 
-        $res = (new ZhongWangService())->getFinanceIncomeStatement($code);
+        $res = (new GuoPiaoService())->getFinanceIncomeStatement($code);
 
         return $this->checkResponse($res, __FUNCTION__);
     }
@@ -282,7 +282,7 @@ class ZhongWangController extends ZhongWangBase
     {
         $code = $this->request()->getRequestParam('code') ?? '';
 
-        $res = (new ZhongWangService())->getFinanceBalanceSheetAnnual($code);
+        $res = (new GuoPiaoService())->getFinanceBalanceSheetAnnual($code);
 
         return $this->checkResponse($res, __FUNCTION__);
     }
@@ -292,7 +292,7 @@ class ZhongWangController extends ZhongWangBase
     {
         $code = $this->request()->getRequestParam('code') ?? '';
 
-        $res = (new ZhongWangService())->getFinanceBalanceSheetAnnual($code);
+        $res = (new GuoPiaoService())->getFinanceBalanceSheetAnnual($code);
 
         return $this->checkResponse($res, __FUNCTION__);
     }
@@ -302,7 +302,7 @@ class ZhongWangController extends ZhongWangBase
     {
         $code = $this->request()->getRequestParam('code') ?? '';
 
-        $res = (new ZhongWangService())->getVatReturn($code);
+        $res = (new GuoPiaoService())->getVatReturn($code);
 
         return $this->checkResponse($res, __FUNCTION__);
     }

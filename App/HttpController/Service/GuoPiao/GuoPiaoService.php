@@ -1,6 +1,6 @@
 <?php
 
-namespace App\HttpController\Service\ZhongWang;
+namespace App\HttpController\Service\GuoPiao;
 
 use App\HttpController\Models\Api\InvoiceIn;
 use App\HttpController\Models\Api\InvoiceOut;
@@ -9,7 +9,7 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 
-class ZhongWangService extends ServiceBase
+class GuoPiaoService extends ServiceBase
 {
     public $taxNo;
     public $key;
@@ -22,10 +22,10 @@ class ZhongWangService extends ServiceBase
         parent::__construct();
 
         $this->taxNo = '91110108MA01KPGK0L';
-        $this->key = CreateConf::getInstance()->getConf('zhongwang.key');
-        $this->keyTest = CreateConf::getInstance()->getConf('zhongwang.keyTest');
-        $this->url = CreateConf::getInstance()->getConf('zhongwang.url');
-        $this->urlTest = CreateConf::getInstance()->getConf('zhongwang.urlTest');
+        $this->key = CreateConf::getInstance()->getConf('guopiao.key');
+        $this->keyTest = CreateConf::getInstance()->getConf('guopiao.keyTest');
+        $this->url = CreateConf::getInstance()->getConf('guopiao.url');
+        $this->urlTest = CreateConf::getInstance()->getConf('guopiao.urlTest');
 
         return true;
     }

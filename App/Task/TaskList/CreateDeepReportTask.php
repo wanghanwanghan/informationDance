@@ -12,6 +12,7 @@ use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\FaYanYuan\FaYanYuanService;
+use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\NewGraph\NewGraphService;
@@ -19,7 +20,6 @@ use App\HttpController\Service\OneSaid\OneSaidService;
 use App\HttpController\Service\QianQi\QianQiService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\XinDongService;
-use App\HttpController\Service\ZhongWang\ZhongWangService;
 use App\Process\Service\ProcessService;
 use App\Task\TaskBase;
 use Carbon\Carbon;
@@ -67,7 +67,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
             for ($page=1;$page<=10000;$page++)
             {
-                $res = (new ZhongWangService())
+                $res = (new GuoPiaoService())
                     ->setCheckRespFlag(true)
                     ->getInOrOutDetailByCert($code, 1, $startDate, $endDate, $page, 200);
 
@@ -101,7 +101,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
             for ($page=1;$page<=10000;$page++)
             {
-                $res = (new ZhongWangService())
+                $res = (new GuoPiaoService())
                     ->setCheckRespFlag(true)
                     ->getInOrOutDetailByCert($code, 2, $startDate, $endDate, $page, 200);
 
@@ -4517,7 +4517,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 纳税信用等级
+        //法研院 纳税信用等级
         $csp->add('satparty_xin', function () {
 
             $doc_type = 'satparty_xin';
@@ -4558,7 +4558,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 税务许可信息
+        //法研院 税务许可信息
         $csp->add('satparty_xuke', function () {
 
             $doc_type = 'satparty_xuke';
@@ -4599,7 +4599,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 税务登记信息
+        //法研院 税务登记信息
         $csp->add('satparty_reg', function () {
 
             $doc_type = 'satparty_reg';
@@ -4640,7 +4640,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 税务非正常户
+        //法研院 税务非正常户
         $csp->add('satparty_fzc', function () {
 
             $doc_type = 'satparty_fzc';
@@ -4681,7 +4681,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 欠税信息
+        //法研院 欠税信息
         $csp->add('satparty_qs', function () {
 
             $doc_type = 'satparty_qs';
@@ -4722,7 +4722,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 涉税处罚公示
+        //法研院 涉税处罚公示
         $csp->add('satparty_chufa', function () {
 
             $doc_type = 'satparty_chufa';
@@ -4833,7 +4833,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 环保 环保处罚
+        //法研院 环保 环保处罚
         $csp->add('epbparty', function () {
 
             $doc_type = 'epbparty';
@@ -4874,7 +4874,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 环保 重点监控企业名单
+        //法研院 环保 重点监控企业名单
         $csp->add('epbparty_jkqy', function () {
 
             $doc_type = 'epbparty_jkqy';
@@ -4915,7 +4915,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 环保 环保企业自行监测结果
+        //法研院 环保 环保企业自行监测结果
         $csp->add('epbparty_zxjc', function () {
 
             $doc_type = 'epbparty_zxjc';
@@ -4956,7 +4956,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 环保 环评公示数据
+        //法研院 环保 环评公示数据
         $csp->add('epbparty_huanping', function () {
 
             $doc_type = 'epbparty_huanping';
@@ -4997,7 +4997,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 海关 海关企业
+        //法研院 海关 海关企业
         $csp->add('custom_qy', function () {
 
             $doc_type = 'custom_qy';
@@ -5038,7 +5038,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 海关 海关许可
+        //法研院 海关 海关许可
         $csp->add('custom_xuke', function () {
 
             $doc_type = 'custom_xuke';
@@ -5079,7 +5079,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 海关 海关信用
+        //法研院 海关 海关信用
         $csp->add('custom_credit', function () {
 
             $doc_type = 'custom_credit';
@@ -5120,7 +5120,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 海关 海关处罚
+        //法研院 海关 海关处罚
         $csp->add('custom_punish', function () {
 
             $doc_type = 'custom_punish';
@@ -5161,7 +5161,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 一行两会 央行行政处罚
+        //法研院 一行两会 央行行政处罚
         $csp->add('pbcparty', function () {
 
             $doc_type = 'pbcparty';
@@ -5202,7 +5202,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 一行两会 银保监会处罚公示
+        //法研院 一行两会 银保监会处罚公示
         $csp->add('pbcparty_cbrc', function () {
 
             $doc_type = 'pbcparty_cbrc';
@@ -5243,7 +5243,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 一行两会 证监处罚公示
+        //法研院 一行两会 证监处罚公示
         $csp->add('pbcparty_csrc_chufa', function () {
 
             $doc_type = 'pbcparty_csrc_chufa';
@@ -5284,7 +5284,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 一行两会 证监会许可信息
+        //法研院 一行两会 证监会许可信息
         $csp->add('pbcparty_csrc_xkpf', function () {
 
             $doc_type = 'pbcparty_csrc_xkpf';
@@ -5325,7 +5325,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 一行两会 外汇局处罚
+        //法研院 一行两会 外汇局处罚
         $csp->add('safe_chufa', function () {
 
             $doc_type = 'safe_chufa';
@@ -5366,7 +5366,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 一行两会 外汇局许可
+        //法研院 一行两会 外汇局许可
         $csp->add('safe_xuke', function () {
 
             $doc_type = 'safe_xuke';
@@ -5407,7 +5407,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 法院公告
+        //法研院 法院公告
         $csp->add('fygg', function () {
 
             $doc_type = 'fygg';
@@ -5448,7 +5448,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 开庭公告
+        //法研院 开庭公告
         $csp->add('ktgg', function () {
 
             $doc_type = 'ktgg';
@@ -5489,7 +5489,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 裁判文书
+        //法研院 裁判文书
         $csp->add('cpws', function () {
 
             $doc_type = 'cpws';
@@ -5530,7 +5530,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 执行公告
+        //法研院 执行公告
         $csp->add('zxgg', function () {
 
             $doc_type = 'zxgg';
@@ -5571,7 +5571,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 失信公告
+        //法研院 失信公告
         $csp->add('shixin', function () {
 
             $doc_type = 'shixin';
@@ -5630,7 +5630,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 司法查冻扣
+        //法研院 司法查冻扣
         $csp->add('sifacdk', function () {
 
             $doc_type = 'sifacdk';
@@ -5761,7 +5761,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 中登动产融资 应收账款
+        //法研院 中登动产融资 应收账款
         $csp->add('company_zdw_yszkdsr', function () {
 
             $doc_type = 'company_zdw_yszkdsr';
@@ -5802,7 +5802,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 中登动产融资 租赁登记
+        //法研院 中登动产融资 租赁登记
         $csp->add('company_zdw_zldjdsr', function () {
 
             $doc_type = 'company_zdw_zldjdsr';
@@ -5843,7 +5843,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 中登动产融资 保证金质押登记
+        //法研院 中登动产融资 保证金质押登记
         $csp->add('company_zdw_bzjzydsr', function () {
 
             $doc_type = 'company_zdw_bzjzydsr';
@@ -5884,7 +5884,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 中登动产融资 仓单质押
+        //法研院 中登动产融资 仓单质押
         $csp->add('company_zdw_cdzydsr', function () {
 
             $doc_type = 'company_zdw_cdzydsr';
@@ -5925,7 +5925,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 中登动产融资 所有权保留
+        //法研院 中登动产融资 所有权保留
         $csp->add('company_zdw_syqbldsr', function () {
 
             $doc_type = 'company_zdw_syqbldsr';
@@ -5966,7 +5966,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             return $tmp;
         });
 
-        //法海 中登动产融资 其他动产融资
+        //法研院 中登动产融资 其他动产融资
         $csp->add('company_zdw_qtdcdsr', function () {
 
             $doc_type = 'company_zdw_qtdcdsr';

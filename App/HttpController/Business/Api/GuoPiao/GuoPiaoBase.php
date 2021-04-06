@@ -1,10 +1,10 @@
 <?php
 
-namespace App\HttpController\Business\Api\ZhongWang;
+namespace App\HttpController\Business\Api\GuoPiao;
 
 use App\HttpController\Business\BusinessBase;
 
-class ZhongWangBase extends BusinessBase
+class GuoPiaoBase extends BusinessBase
 {
     function onRequest(?string $action): ?bool
     {

@@ -104,5 +104,14 @@ class XinDongController extends XinDongBase
         return $this->checkResponse($res);
     }
 
+    //二次特征分数
+    function getFeatures()
+    {
+        $entName = $this->request()->getRequestParam('entName');
+
+        $res = XinDongService::getInstance()->getFeatures($entName);
+
+        return $this->checkResponse($res);
+    }
 
 }

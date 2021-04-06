@@ -29,7 +29,7 @@ class FaYanYuanController extends FaYanYuanBase
         parent::afterAction($actionName);
     }
 
-    //检验法海返回值，并给客户计费
+    //检验法研院返回值，并给客户计费
     private function checkResponse($res, $docType, $type, $writeJson = true)
     {
         $type = ucfirst($type);

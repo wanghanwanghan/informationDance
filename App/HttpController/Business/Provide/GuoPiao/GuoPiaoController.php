@@ -1,14 +1,14 @@
 <?php
 
-namespace App\HttpController\Business\Provide\ZhongWang;
+namespace App\HttpController\Business\Provide\GuoPiao;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Service\Common\CommonService;
-use App\HttpController\Service\ZhongWang\ZhongWangService;
+use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use EasySwoole\Http\Message\UploadFile;
 
-class ZhongWangController extends ProvideBase
+class GuoPiaoController extends ProvideBase
 {
     function onRequest(?string $action): ?bool
     {
@@ -63,7 +63,7 @@ class ZhongWangController extends ProvideBase
         }
 
         $this->csp->add($this->cspKey, function () use ($image) {
-            return (new ZhongWangService())->setCheckRespFlag(true)->getInvoiceOcr($image);
+            return (new GuoPiaoService())->setCheckRespFlag(true)->getInvoiceOcr($image);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
