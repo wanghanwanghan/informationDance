@@ -2,8 +2,10 @@
 
 namespace App\HttpController\Business\Api\LongXin;
 
+use App\HttpController\Models\Api\AuthBook;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Pay\ChargeService;
+use Carbon\Carbon;
 
 class LongXinController extends LongXinBase
 {
@@ -65,14 +67,14 @@ class LongXinController extends LongXinBase
         if (!empty($res['data'])) {
             $tmp = [];
             foreach ($res['data'] as $year => $val) {
-                $tmp[$year]['ASSGRO_yoy'] = $val['ASSGRO_yoy'];
-                $tmp[$year]['LIAGRO_yoy'] = $val['LIAGRO_yoy'];
-                $tmp[$year]['VENDINC_yoy'] = $val['VENDINC_yoy'];
-                $tmp[$year]['MAIBUSINC_yoy'] = $val['MAIBUSINC_yoy'];
-                $tmp[$year]['PROGRO_yoy'] = $val['PROGRO_yoy'];
-                $tmp[$year]['NETINC_yoy'] = $val['NETINC_yoy'];
-                $tmp[$year]['RATGRO_yoy'] = $val['RATGRO_yoy'];
-                $tmp[$year]['TOTEQU_yoy'] = $val['TOTEQU_yoy'];
+                $tmp[$year]['ASSGRO_yoy'] = round($val['ASSGRO_yoy'] * 100);
+                $tmp[$year]['LIAGRO_yoy'] = round($val['LIAGRO_yoy'] * 100);
+                $tmp[$year]['VENDINC_yoy'] = round($val['VENDINC_yoy'] * 100);
+                $tmp[$year]['MAIBUSINC_yoy'] = round($val['MAIBUSINC_yoy'] * 100);
+                $tmp[$year]['PROGRO_yoy'] = round($val['PROGRO_yoy'] * 100);
+                $tmp[$year]['NETINC_yoy'] = round($val['NETINC_yoy'] * 100);
+                $tmp[$year]['RATGRO_yoy'] = round($val['RATGRO_yoy'] * 100);
+                $tmp[$year]['TOTEQU_yoy'] = round($val['TOTEQU_yoy'] * 100);
             }
             $res['data'] = $tmp;
         }
@@ -84,6 +86,7 @@ class LongXinController extends LongXinBase
     function getFinanceNeedAuth()
     {
         $entName = $this->request()->getRequestParam('entName') ?? '';
+        $phone = $this->request()->getRequestParam('phone') ?? '';
         $code = $this->request()->getRequestParam('code') ?? '';
         $beginYear = $this->request()->getRequestParam('year') ?? '';
         $dataCount = $this->request()->getRequestParam('dataCount') ?? '';
@@ -96,6 +99,22 @@ class LongXinController extends LongXinBase
         ];
 
         //这里验证授权书是否审核通过
+        try {
+            $check = AuthBook::create()
+                ->where([
+                    'phone' => $phone,
+                    'entName' => $entName,
+                    'status' => 3,
+                    'type' => 1,
+                ])
+                ->where('created_at', Carbon::now()->subYears(1)->timestamp, '>')//1年内有效
+                ->get();
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        if (empty($check))
+            return $this->writeJson(201, null, null, '未授权或授权超过1年有效期');
 
         $res = (new LongXinService())->getFinanceData($postData, false);
 
