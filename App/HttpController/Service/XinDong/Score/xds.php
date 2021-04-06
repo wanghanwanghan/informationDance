@@ -94,7 +94,7 @@ class xds
         $score['PROGRO_yoy'] = $this->PROGRO_yoy($arr['result']);
 
         //企业主营业务健康度评分 20资产负债率 = 1负债总额 / 0资产总额
-        $score['DEBTL_H'] = $this->DEBTL($arr['result']);
+        $score['DEBTL_H'] = $this->DEBTL_H($arr['result']);
 
         //企业资本保值状况评分 7期末所有者权益 / 7期初所有者权益 TOTEQU
         $score['TOTEQU'] = $this->TOTEQU($arr['result']);
@@ -157,6 +157,32 @@ class xds
 
     //企业资产负债状况评分 20资产负债率 = 1负债总额 / 0资产总额
     private function DEBTL($data): array
+    {
+        $r = [
+            'name' => '企业资产负债状况评分',
+            'field' => __FUNCTION__,
+            'year' => null,
+            'val' => null,
+            'score' => 1
+        ];
+
+        foreach ($data as $year => $arr) {
+            if (is_numeric($arr['LIAGRO']) && is_numeric($arr['ASSGRO'])) {
+                if ($arr['LIAGRO'] > 0 && $arr['ASSGRO'] > 0) {
+                    $r['year'] = $year;
+                    $r['val'] = $arr['LIAGRO'] / $arr['ASSGRO'];
+                    $r['score'] = current(explode('.', round($r['val'] * 100))) - 0;
+                    $r['score'] = $r['score'] > 1 ? $r['score'] : 1;
+                    break;
+                }
+            }
+        }
+
+        return $r;
+    }
+
+    //企业资产负债状况评分 20资产负债率 = 1负债总额 / 0资产总额
+    private function DEBTL_H($data): array
     {
         $r = [
             'name' => '企业资产负债状况评分',
