@@ -584,7 +584,6 @@ class ChargeService extends ServiceBase
                     ->group('entName')
                     ->all();
                 $num = obj2Arr($num);
-                CommonService::getInstance()->log4PHP($num);
                 empty($num) ? $num = 0 : $num = count($num);
                 if ($num <= 3) {
                     //还在免费
