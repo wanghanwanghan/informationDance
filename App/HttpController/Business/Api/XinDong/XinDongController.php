@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Api\XinDong;
 
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongDun\LongDunService;
+use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\XinDong\XinDongService;
 
 class XinDongController extends XinDongBase
@@ -109,7 +110,16 @@ class XinDongController extends XinDongBase
     {
         $entName = $this->request()->getRequestParam('entName');
 
-        $res = XinDongService::getInstance()->getFeatures($entName);
+        $charge = ChargeService::getInstance()->Features($this->request(), 52);
+
+        if ($charge['code'] === 200) {
+            $res = XinDongService::getInstance()->getFeatures($entName);
+        } else {
+            $res['code'] = $charge['code'];
+            $res['paging'] = null;
+            $res['result'] = null;
+            $res['msg'] = $charge['msg'];
+        }
 
         return $this->checkResponse($res);
     }
