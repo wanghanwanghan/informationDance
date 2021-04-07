@@ -20,7 +20,7 @@ class LongXinController extends LongXinBase
     }
 
     //检验返回值，并给客户计费
-    private function checkResponse($res)
+    private function checkResponse($res, $ext = [])
     {
         $res['Paging'] = null;
 
@@ -34,6 +34,9 @@ class LongXinController extends LongXinBase
         if ($charge['code'] != 200) {
             return $this->writeJson((int)$charge['code'], null, null, $charge['msg'], false);
         } else {
+            if (isset($ext['refundToWallet']) && $ext['refundToWallet']) {
+                $res['code'] = 250;//本次查询不扣费
+            }
             return $this->writeJson((int)$res['code'], $res['Paging'], $res['Result'], $res['Message'], false);
         }
     }
@@ -75,11 +78,20 @@ class LongXinController extends LongXinBase
                 $tmp[$year]['NETINC_yoy'] = round($val['NETINC_yoy'] * 100);
                 $tmp[$year]['RATGRO_yoy'] = round($val['RATGRO_yoy'] * 100);
                 $tmp[$year]['TOTEQU_yoy'] = round($val['TOTEQU_yoy'] * 100);
+                if (array_sum($tmp[$year]) === 0.0) {
+                    //如果最后是0，说明所有年份数据都是空，本次查询不收费
+                    $dataCount--;
+                }
             }
             $res['data'] = $tmp;
         }
 
-        return $this->checkResponse($res);
+        $ext = [];
+        if ($dataCount === 0) {
+            $ext['refundToWallet'] = true;
+        }
+
+        return $this->checkResponse($res, $ext);
     }
 
     //近n年的财务数据，需要授权
@@ -118,7 +130,32 @@ class LongXinController extends LongXinBase
 
         $res = (new LongXinService())->getFinanceData($postData, false);
 
-        return $this->checkResponse($res);
+        if (!empty($res['data'])) {
+            $tmp = [];
+            foreach ($res['data'] as $year => $val) {
+                $tmp[$year]['ASSGRO'] = round($val['ASSGRO']);
+                $tmp[$year]['LIAGRO'] = round($val['LIAGRO']);
+                $tmp[$year]['VENDINC'] = round($val['VENDINC']);
+                $tmp[$year]['MAIBUSINC'] = round($val['MAIBUSINC']);
+                $tmp[$year]['PROGRO'] = round($val['PROGRO']);
+                $tmp[$year]['NETINC'] = round($val['NETINC']);
+                $tmp[$year]['RATGRO'] = round($val['RATGRO']);
+                $tmp[$year]['TOTEQU'] = round($val['TOTEQU']);
+                $tmp[$year]['SOCNUM'] = round($val['SOCNUM']);
+                if (array_sum($tmp[$year]) === 0.0) {
+                    //如果最后是0，说明所有年份数据都是空，本次查询不收费
+                    $dataCount--;
+                }
+            }
+            $res['data'] = $tmp;
+        }
+
+        $ext = [];
+        if ($dataCount === 0) {
+            $ext['refundToWallet'] = true;
+        }
+
+        return $this->checkResponse($res, $ext);
     }
 
 
