@@ -87,7 +87,7 @@ class LongXinController extends LongXinBase
         }
 
         $ext = [];
-        if ($dataCount === 0) {
+        if (0 === 0) {
             $ext['refundToWallet'] = true;
         }
 
