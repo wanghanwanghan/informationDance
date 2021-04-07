@@ -173,6 +173,11 @@ class LongDunController extends LongDunBase
 
         $res['Result'] = $tmp;
 
+        if (empty($res['Result'])) {
+            //无结果，退款到钱包
+            ChargeService::getInstance()->refundToWallet($this->request(), 14);
+        }
+
         return $this->checkResponse($res);
     }
 
