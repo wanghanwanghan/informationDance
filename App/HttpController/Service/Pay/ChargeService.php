@@ -103,7 +103,7 @@ class ChargeService extends ServiceBase
             //修改订单金额
             $info->update([
                 'price' => 0,
-                'remark' => '已退款',
+                'remark' => '已退款 ' . Carbon::now()->format('Y-m-d H:i:s'),
             ]);
 
             //把扣的钱返回
