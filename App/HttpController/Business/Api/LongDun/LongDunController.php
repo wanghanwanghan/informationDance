@@ -46,7 +46,6 @@ class LongDunController extends LongDunBase
 
         if (!empty($this->moduleNum) && !empty($this->entName)) {
             $charge = ChargeService::getInstance()->LongDun($this->request(), $this->moduleNum, $this->entName);
-
             if ($charge['code'] != 200) {
                 $res['Status'] = $charge['code'];
                 $res['Paging'] = $res['Result'] = null;
@@ -172,11 +171,6 @@ class LongDunController extends LongDunBase
         }
 
         $res['Result'] = $tmp;
-
-        if (empty($res['Result'])) {
-            //无结果，退款到钱包
-            ChargeService::getInstance()->refundToWallet($this->request(), 14);
-        }
 
         return $this->checkResponse($res);
     }
