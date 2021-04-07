@@ -121,6 +121,9 @@ class ChargeService extends ServiceBase
             case 14:
                 $msg = '因穿透股东中有政府部门或国资单位等特殊机构，故不予显示，退款成功';
                 break;
+            case 51:
+                $msg = '财务数据最近3年数据为空，故不予显示，退款成功';
+                break;
             default:
                 $msg = '退款成功';
         }
