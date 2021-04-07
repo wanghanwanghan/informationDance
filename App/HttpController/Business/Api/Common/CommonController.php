@@ -11,6 +11,7 @@ use App\HttpController\Service\BaiDu\BaiDuService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\HeHe\HeHeService;
+use App\HttpController\Service\Pay\ChargeService;
 use EasySwoole\Http\Message\UploadFile;
 use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\RedisPool\Redis;
@@ -111,49 +112,11 @@ class CommonController extends CommonBase
     //退钱到钱包
     function refundToWallet()
     {
-        $phone = $this->request()->getRequestParam('phone') ?? '';
-        $entName = $this->request()->getRequestParam('entName') ?? '';
         $moduleNum = $this->request()->getRequestParam('moduleNum') ?? '';
-        $msg = '退款成功';
 
-        if (empty($phone) || !is_numeric($phone)) return $this->writeJson(201, null, null, '手机号错误');
-        if (empty($entName)) return $this->writeJson(201, null, null, '企业名称错误');
-        if (empty($moduleNum) || !is_numeric($moduleNum)) return $this->writeJson(201, null, null, '扣费模块错误');
+        $res = ChargeService::getInstance()->refundToWallet($this->request(), $moduleNum);
 
-        try {
-            $info = Charge::create()
-                ->where('phone', $phone)
-                ->where('entName', $entName)
-                ->where('moduleId', $moduleNum)
-                ->where('created_at', time() - 30, '>')//首先要看这个人在30秒之前有没有真的消费并扣钱
-                ->where('price', 0, '<')//是否有被扣费
-                ->get();
-
-            if (empty($info)) return $this->writeJson(201, null, null, '未找到订单');
-
-            $addPrice = $info->price;
-
-            //修改订单金额
-            $info->update(['price' => 0]);
-
-            //把扣的钱返回
-            $userWalletInfo = Wallet::create()->where('phone', $phone)->get();
-
-            $userWalletInfo->money += $addPrice;
-
-            $userWalletInfo->update();
-
-        } catch (\Throwable $e) {
-            return $this->writeErr($e, __FUNCTION__);
-        }
-
-        switch ($moduleNum) {
-            case 14:
-                $msg = '因穿透股东中有政府部门或国资单位等特殊机构，故不予显示，退款成功';
-                break;
-        }
-
-        return $this->writeJson(200, null, null, $msg);
+        return $this->writeJson($res['code'], null, null, $res['msg']);
     }
 
     //百度ocr

@@ -76,10 +76,56 @@ class ChargeService extends ServiceBase
         return $this->moduleInfo[$index];
     }
 
-    //费用返还
-    function refundFee(Request $request, $moduleNum)
+    //退钱到钱包
+    function refundToWallet(Request $request, $moduleNum)
     {
+        $phone = $this->getPhone($request);
+        $entName = $this->getEntName($request);
 
+        if (empty($phone) || !is_numeric($phone)) return ['code' => 201, 'msg' => '手机号错误'];
+        if (empty($entName)) return ['code' => 201, 'msg' => '企业名称错误'];
+        if (empty($moduleNum) || !is_numeric($moduleNum)) return ['code' => 201, 'msg' => '扣费模块错误'];
+
+        try {
+            $info = Charge::create()
+                ->where('phone', $phone)
+                ->where('entName', $entName)
+                ->where('moduleId', $moduleNum)
+                ->where('created_at', time() - 30, '>')//首先要看这个人在30秒之前有没有真的消费并扣钱
+                ->where('price', 0, '<')//是否有被扣费
+                ->get();
+
+            if (empty($info)) return ['code' => 201, 'msg' => '未找到订单'];
+
+            //用户消费的金额，需要加回钱包里
+            $addPrice = abs($info->price);
+
+            //修改订单金额
+            $info->update([
+                'price' => 0,
+                'remark' => '已退款',
+            ]);
+
+            //把扣的钱返回
+            $userWalletInfo = Wallet::create()->where('phone', $phone)->get();
+
+            $userWalletInfo->money += $addPrice;
+
+            $userWalletInfo->update();
+
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        switch ($moduleNum) {
+            case 14:
+                $msg = '因穿透股东中有政府部门或国资单位等特殊机构，故不予显示，退款成功';
+                break;
+            default:
+                $msg = '退款成功';
+        }
+
+        return ['code' => 200, 'msg' => $msg];
     }
 
     //乾启计费
