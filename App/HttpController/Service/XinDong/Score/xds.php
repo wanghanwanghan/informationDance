@@ -95,7 +95,7 @@ class xds
         $score['PROGRO_yoy'] = $this->PROGRO_yoy($arr['result']);
 
         //企业主营业务健康度评分 20资产负债率 = 1负债总额 / 0资产总额
-        $score['DEBTL_H'] = $this->DEBTL_H($arr['result']);
+        $score['DEBTL_H'] = $this->DEBTL_H($arr['result'], $entName);
 
         //企业资本保值状况评分 7期末所有者权益 / 7期初所有者权益 TOTEQU
         $score['TOTEQU'] = $this->TOTEQU($arr['result']);
@@ -183,7 +183,7 @@ class xds
     }
 
     //企业主营业务健康度评分 20资产负债率 = 1负债总额 / 0资产总额
-    private function DEBTL_H($data): array
+    private function DEBTL_H($data, $entName): array
     {
         $r = [
             'name' => '企业主营业务健康度评分',
@@ -193,13 +193,46 @@ class xds
             'score' => 1
         ];
 
+        //实际控制人
+        $sjkzr = (new LongDunService())->setCheckRespFlag(true)
+            ->get($this->ld . 'Beneficiary/GetBeneficiary', [
+                'companyName' => $entName,
+                'percent' => 0,
+                'mode' => 0,
+            ]);
+
+        $temp = [];
+        if ($sjkzr['code'] === 200 && !empty($sjkzr['result'])) {
+            if (count($sjkzr['result']['BreakThroughList']) > 0) {
+                $total = current($sjkzr['result']['BreakThroughList']);
+                $total = substr($total['TotalStockPercent'], 0, -1);
+                if ($total >= 50) {
+                    //如果第一个人就是大股东了，就直接返回
+                    $temp = $sjkzr['result']['BreakThroughList'][0];
+                } else {
+                    //把返回的所有人加起来和100做减法，求出坑
+                    $hole = 100;
+                    foreach ($sjkzr['result']['BreakThroughList'] as $key => $val) {
+                        $hole -= substr($val['TotalStockPercent'], 0, -1);
+                    }
+                    //求出坑的比例，如果比第一个人大，那就是特殊机构，如果没第一个人大，那第一个人就是控制人
+                    if ($total > $hole) $temp = $sjkzr['result']['BreakThroughList'][0];
+                }
+            }
+        }
+
+        //实际控制人算不算进权重
+        !empty($temp) ? $type = true : $type = false;
+
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['LIAGRO']) && is_numeric($arr['ASSGRO'])) {
                 if ($arr['LIAGRO'] > 0 && $arr['ASSGRO'] > 0) {
                     $r['year'] = $year;
                     $r['val'] = $arr['LIAGRO'] / $arr['ASSGRO'];
                     $r['score'] = current(explode('.', round($r['val'] * 100))) - 0;
-                    $r['score'] = $r['score'] > 1 ? $r['score'] : 1;
+                    if ($type) {
+                        $r['score'] = $r['score'] * 0.7 + 100 * 0.3;
+                    }
                     break;
                 }
             }
@@ -390,8 +423,12 @@ class xds
                 if ($data[($year - 1) . '']['TOTEQU'] !== 0) {
                     $r['year'] = $year;
                     $r['val'] = $arr['TOTEQU'] / $data[($year - 1) . '']['TOTEQU'];
-                    $r['score'] = current(explode('.', round($r['val'] * 100))) - 0;
-                    $r['score'] = $r['score'] > 1 ? $r['score'] : 1;
+                    $val = $r['val'] * 100;
+                    if ($val <= 100) {
+                        $r['score'] = round($val * 0.4);
+                    } else {
+                        $r['score'] = intval(ceil(($val - 100) / 10)) + 40;
+                    }
                     break;
                 }
             }
