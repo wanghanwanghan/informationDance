@@ -76,6 +76,12 @@ class ChargeService extends ServiceBase
         return $this->moduleInfo[$index];
     }
 
+    //费用返还
+    function refundFee(Request $request, $moduleNum)
+    {
+
+    }
+
     //乾启计费
     function QianQi(Request $request, $moduleNum): array
     {
@@ -92,7 +98,7 @@ class ChargeService extends ServiceBase
                 ->where('entName', $entName)
                 ->where('detailKey', '')
                 ->where('moduleId', $moduleNum)
-                ->where('price', 0, '<>')
+                ->where('price', 0, '<')
                 ->order('created_at', 'desc')
                 ->get();
         } catch (\Throwable $e) {
@@ -159,7 +165,7 @@ class ChargeService extends ServiceBase
                 'moduleName' => $moduleInfo['name'] . $moduleInfo['desc'],
                 'entName' => $entName,
                 'phone' => $phone,
-                'price' => $moduleInfo['basePrice'],
+                'price' => -$moduleInfo['basePrice'],
             ];
             Charge::create()->data($insert)->save();
         } catch (\Throwable $e) {
@@ -185,7 +191,7 @@ class ChargeService extends ServiceBase
                 ->where('entName', $entName)
                 ->where('detailKey', '')
                 ->where('moduleId', $moduleNum)
-                ->where('price', 0, '<>')
+                ->where('price', 0, '<')
                 ->order('created_at', 'desc')
                 ->get();
         } catch (\Throwable $e) {
@@ -252,7 +258,7 @@ class ChargeService extends ServiceBase
                 'moduleName' => $moduleInfo['name'] . $moduleInfo['desc'],
                 'entName' => $entName,
                 'phone' => $phone,
-                'price' => $moduleInfo['basePrice'],
+                'price' => -$moduleInfo['basePrice'],
             ];
             Charge::create()->data($insert)->save();
         } catch (\Throwable $e) {
@@ -280,7 +286,7 @@ class ChargeService extends ServiceBase
                 ->where('entName', $entName)
                 ->where('detailKey', $id)
                 ->where('moduleId', $moduleNum)
-                ->where('price', 0, '<>')
+                ->where('price', 0, '<')
                 ->order('created_at', 'desc')
                 ->get();
         } catch (\Throwable $e) {
@@ -349,7 +355,7 @@ class ChargeService extends ServiceBase
                 'entName' => $entName,
                 'detailKey' => $id,
                 'phone' => $phone,
-                'price' => $moduleInfo['basePrice'],
+                'price' => -$moduleInfo['basePrice'],
             ];
             Charge::create()->data($insert)->save();
         } catch (\Throwable $e) {
@@ -375,7 +381,7 @@ class ChargeService extends ServiceBase
                 ->where('entName', $entName)
                 ->where('detailKey', $id)
                 ->where('moduleId', $moduleNum)
-                ->where('price', 0, '<>')
+                ->where('price', 0, '<')
                 ->order('created_at', 'desc')
                 ->get();
         } catch (\Throwable $e) {
@@ -444,7 +450,7 @@ class ChargeService extends ServiceBase
                 'entName' => $entName,
                 'detailKey' => $id,
                 'phone' => $phone,
-                'price' => $moduleInfo['basePrice'],
+                'price' => -$moduleInfo['basePrice'],
             ];
             Charge::create()->data($insert)->save();
         } catch (\Throwable $e) {
@@ -470,7 +476,7 @@ class ChargeService extends ServiceBase
                 ->where('entName', $entName)
                 ->where('detailKey', '')
                 ->where('moduleId', $moduleNum)
-                ->where('price', 0, '<>')
+                ->where('price', 0, '<')
                 ->order('created_at', 'desc')
                 ->get();
         } catch (\Throwable $e) {
@@ -537,7 +543,7 @@ class ChargeService extends ServiceBase
                 'moduleName' => $moduleInfo['name'] . $moduleInfo['desc'],
                 'entName' => $entName,
                 'phone' => $phone,
-                'price' => $moduleInfo['basePrice'],
+                'price' => -$moduleInfo['basePrice'],
             ];
             Charge::create()->data($insert)->save();
         } catch (\Throwable $e) {
@@ -613,7 +619,7 @@ class ChargeService extends ServiceBase
                     ->where('phone', $phone)
                     ->where('entName', $entName)
                     ->where('moduleId', $moduleNum)
-                    ->where('price', 0, '<>')
+                    ->where('price', 0, '<')
                     ->order('created_at', 'desc')
                     ->get();
             } catch (\Throwable $e) {
@@ -678,7 +684,7 @@ class ChargeService extends ServiceBase
                 'moduleName' => $moduleInfo['name'] . $moduleInfo['desc'],
                 'entName' => $entName,
                 'phone' => $phone,
-                'price' => $moduleInfo['basePrice'],
+                'price' => -$moduleInfo['basePrice'],
             ];
             Charge::create()->data($insert)->save();
         } catch (\Throwable $e) {
@@ -734,7 +740,7 @@ class ChargeService extends ServiceBase
                 'entName' => $entName,
                 'detailKey' => $reportNum,
                 'phone' => $phone,
-                'price' => $moduleInfo['basePrice'],
+                'price' => -$moduleInfo['basePrice'],
             ];
             Charge::create()->data($insert)->save();
         } catch (\Throwable $e) {
@@ -790,7 +796,7 @@ class ChargeService extends ServiceBase
                 'entName' => $entName,
                 'detailKey' => $reportNum,
                 'phone' => $phone,
-                'price' => $moduleInfo['basePrice'],
+                'price' => -$moduleInfo['basePrice'],
             ];
             Charge::create()->data($insert)->save();
         } catch (\Throwable $e) {
@@ -846,7 +852,7 @@ class ChargeService extends ServiceBase
                 'entName' => $entName,
                 'detailKey' => $reportNum,
                 'phone' => $phone,
-                'price' => $moduleInfo['basePrice'],
+                'price' => -$moduleInfo['basePrice'],
             ];
             Charge::create()->data($insert)->save();
         } catch (\Throwable $e) {
@@ -902,7 +908,7 @@ class ChargeService extends ServiceBase
                 'entName' => $entName,
                 'detailKey' => $reportNum,
                 'phone' => $phone,
-                'price' => $moduleInfo['basePrice'],
+                'price' => -$moduleInfo['basePrice'],
             ];
             Charge::create()->data($insert)->save();
         } catch (\Throwable $e) {
@@ -958,7 +964,7 @@ class ChargeService extends ServiceBase
                 'entName' => $entName,
                 'detailKey' => $reportNum,
                 'phone' => $phone,
-                'price' => $moduleInfo['basePrice'],
+                'price' => -$moduleInfo['basePrice'],
             ];
             Charge::create()->data($insert)->save();
         } catch (\Throwable $e) {
