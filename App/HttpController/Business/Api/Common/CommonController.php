@@ -126,7 +126,7 @@ class CommonController extends CommonBase
                 ->where('entName', $entName)
                 ->where('moduleId', $moduleNum)
                 ->where('created_at', time() - 30, '>')//首先要看这个人在30秒之前有没有真的消费并扣钱
-                ->where('price', 0, '>')//是否有被扣费
+                ->where('price', 0, '<')//是否有被扣费
                 ->get();
 
             if (empty($info)) return $this->writeJson(201, null, null, '未找到订单');
