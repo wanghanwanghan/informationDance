@@ -15,7 +15,6 @@ class ProvideRouter
         $this->LongDunRouterV1($routeCollector);
         $this->TaoShuRouterV1($routeCollector);
         $this->QianQiRouterV1($routeCollector);
-        $this->LongXinRouterV1($routeCollector);
         $this->GuoPiaoRouterV1($routeCollector);
         $this->XinDongRouterV1($routeCollector);
     }
@@ -58,17 +57,6 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getThreeYearsDataForRATGRO_REL', $prefix . 'getThreeYearsDataForRATGRO_REL');
             $routeCollector->addRoute(['GET', 'POST'], '/getThreeYearsDataForTOTEQU_REL', $prefix . 'getThreeYearsDataForTOTEQU_REL');
             $routeCollector->addRoute(['GET', 'POST'], '/getThreeYearsDataForSOCNUM', $prefix . 'getThreeYearsDataForSOCNUM');
-        });
-
-        return true;
-    }
-
-    private function LongXinRouterV1(RouteCollector $routeCollector)
-    {
-        $prefix = '/Business/Provide/LongXin/LongXinController/';
-
-        $routeCollector->addGroup('/lx', function (RouteCollector $routeCollector) use ($prefix) {
-            $routeCollector->addRoute(['GET', 'POST'], '/getFinance', $prefix . 'getFinance');
         });
 
         return true;
