@@ -205,8 +205,8 @@ class UserController extends UserBase
         if (empty($payWay)) return $this->writeJson(201, null, null, '支付方式错误');
 
         try {
-            $list = PurchaseList::create()->where('id', $type)->get();
-            $payMoney = $list->money;
+            $one = PurchaseList::create()->where('id', $type)->get();
+            $payMoney = $one->money;
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }

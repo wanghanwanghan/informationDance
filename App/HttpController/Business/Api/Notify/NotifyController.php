@@ -27,6 +27,12 @@ class NotifyController extends BusinessBase
         parent::afterAction($actionName);
     }
 
+    //给用户加余额的时候多加一点
+    private function exprAddMoney($money): float
+    {
+        return $money + round($money * 0.3, 2);
+    }
+
     //微信小程序通知 信动
     function wxNotify()
     {
@@ -58,7 +64,7 @@ class NotifyController extends BusinessBase
 
             $PurchaseList = PurchaseList::create()->get($orderInfo->purchaseType);
 
-            $payMoney = $walletInfo->money + $PurchaseList->money;
+            $payMoney = $walletInfo->money + $this->exprAddMoney($PurchaseList->money);
 
             //给用户加余额
             $walletInfo->update(['money' => $payMoney]);
@@ -106,7 +112,7 @@ class NotifyController extends BusinessBase
 
             $PurchaseList = PurchaseList::create()->get($orderInfo->purchaseType);
 
-            $payMoney = $walletInfo->money + $PurchaseList->money;
+            $payMoney = $walletInfo->money + $this->exprAddMoney($PurchaseList->money);
 
             //给用户加余额
             $walletInfo->update(['money' => $payMoney]);
@@ -174,7 +180,7 @@ class NotifyController extends BusinessBase
 
             $PurchaseList = PurchaseList::create()->get($orderInfo->purchaseType);
 
-            $payMoney = $walletInfo->money + $PurchaseList->money;
+            $payMoney = $walletInfo->money + $this->exprAddMoney($PurchaseList->money);
 
             //给用户加余额
             $walletInfo->update(['money' => $payMoney]);
@@ -217,7 +223,7 @@ class NotifyController extends BusinessBase
         if (true === $result) {
             $walletInfo = Wallet::create()->where('phone', $orderInfo->phone)->get();
             $PurchaseList = PurchaseList::create()->get($orderInfo->purchaseType);
-            $payMoney = $walletInfo->money + $PurchaseList->money;
+            $payMoney = $walletInfo->money + $this->exprAddMoney($PurchaseList->money);
             //给用户加余额
             $walletInfo->update(['money' => $payMoney]);
             //更改订单状态

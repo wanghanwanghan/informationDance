@@ -44,6 +44,8 @@ $data = [
 //$res = curl_exec($curl);//发送请求
 //dd(json_decode($res, true));
 
-$res = intval(ceil((123 - 100) / 10));
 
-dd($res);
+dump(50 + round(50 * 0.3, 2));
+dump(200 + round(200 * 0.3, 2));
+dump(500 + round(500 * 0.3, 2));
+dump(1000 + round(1000 * 0.3, 2));
