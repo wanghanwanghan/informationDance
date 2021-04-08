@@ -8,6 +8,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\XinDongService;
+use Carbon\Carbon;
 
 class XinDongController extends ProvideBase
 {
@@ -110,7 +111,7 @@ class XinDongController extends ProvideBase
             'dataCount' => $this->getRequestData('dataCount', 3),//取最近几年的
         ];
 
-        $toRange = false;
+        Carbon::now()->format('Ymd') > '20210415' ? $toRange = false : $toRange = true;
 
         $beginYear = $this->getRequestData('year', '');
 
