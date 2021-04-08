@@ -43,7 +43,7 @@ class LongXinController extends ProvideBase
     function getFinance()
     {
         $entName = $this->getRequestData('entName');
-        $code = $this->getRequestData('code') ?? '';
+        $code = $this->getRequestData('code');
 
         $postData = [
             'entName' => $entName,
