@@ -19,7 +19,7 @@ $data = [
     'time' => $time,
     'sign' => $sign,
     // 'image' => new \CURLFile(realpath('./WechatIMG261-tuya.png'))
-    'entName' => '中航联创创业投资发展有限公司',
+    'entName' => '北京同创永益科技发展有限公司',
     'code' => '',
     'year' => '2019',
     'dataCount' => '3',
@@ -44,8 +44,3 @@ $data = [
 //$res = curl_exec($curl);//发送请求
 //dd(json_decode($res, true));
 
-
-dump(50 + round(50 * 0.3, 2));
-dump(200 + round(200 * 0.3, 2));
-dump(500 + round(500 * 0.3, 2));
-dump(1000 + round(1000 * 0.3, 2));
