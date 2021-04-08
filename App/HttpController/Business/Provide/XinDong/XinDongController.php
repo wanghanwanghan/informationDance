@@ -101,19 +101,19 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    //连续n年基数数+计算结果
+    //连续n年基数+计算结果
     function getFinanceCalData()
     {
+        $beginYear = $this->getRequestData('year', '');
+
         $postData = [
             'entName' => $this->getRequestData('entName', ''),
             'code' => $this->getRequestData('code', ''),
-            'beginYear' => $this->getRequestData('year', ''),
+            'beginYear' => $beginYear,
             'dataCount' => $this->getRequestData('dataCount', 3),//取最近几年的
         ];
 
         Carbon::now()->format('Ymd') > '20210415' ? $toRange = false : $toRange = true;
-
-        $beginYear = $this->getRequestData('year', '');
 
         if (is_numeric($beginYear) && $beginYear >= 2010 && $beginYear <= date('Y') - 1) {
             $this->csp->add($this->cspKey, function () use ($postData, $toRange) {

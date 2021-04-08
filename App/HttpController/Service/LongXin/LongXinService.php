@@ -914,7 +914,7 @@ class LongXinService extends ServiceBase
             $last = $origin[$lastYear][7];
             $now = $origin[$year][7];
 
-            array_push($origin[$year], ($last + $now) / 2);
+            array_push($origin[$year], $last / $now);
         }
 
         return $origin;
@@ -1255,5 +1255,6 @@ class LongXinService extends ServiceBase
 
         return $origin;
     }
+
 
 }
