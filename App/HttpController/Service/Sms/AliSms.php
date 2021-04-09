@@ -4,6 +4,7 @@ namespace App\HttpController\Service\Sms;
 
 use App\HttpController\Service\CreateConf;
 use App\Task\Service\TaskService;
+use Carbon\Carbon;
 use Overtrue\EasySms\EasySms;
 use Overtrue\EasySms\Strategies\OrderStrategy;
 
@@ -76,5 +77,23 @@ class AliSms
 
         return true;
     }
+
+    function afterUploadAuthBook($phone, $ext): bool
+    {
+        $easySms = $this->createObj();
+
+        TaskService::getInstance()->create(function () use ($easySms, $phone, $ext) {
+            return $easySms->send($phone, [
+                'template' => 'SMS_214830863',
+                'data' => [
+                    'name' => '尊敬的管理员',
+                    'time' => Carbon::now()->format('Y-m-d H:i:s')
+                ],
+            ]);
+        });
+
+        return true;
+    }
+
 
 }

@@ -244,7 +244,7 @@ class CommonService extends ServiceBase
             return $client->sendMessage($tempId, $tmp, ['code' => $code]);
         }, 'sync');
 
-        return empty(current($res)) ? '验证码发送失败' : '验证码发送成功';
+        return empty(current($res)) ? '发送失败' : '发送成功';
     }
 
     //发送邮件

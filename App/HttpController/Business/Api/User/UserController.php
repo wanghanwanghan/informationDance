@@ -18,6 +18,7 @@ use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\OneSaid\OneSaidService;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\Pay\wx\wxPayService;
+use App\HttpController\Service\Sms\SmsService;
 use App\HttpController\Service\User\UserService;
 use App\HttpController\Service\YuanSu\YuanSuService;
 use Carbon\Carbon;
@@ -690,6 +691,11 @@ class UserController extends UserBase
                 'type' => $type,
                 'remark' => '',
             ])->save();
+
+            CommonService::getInstance()->sendSMS([
+                '18618457910',
+            ], '1380331752941174784', '1');
+
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }

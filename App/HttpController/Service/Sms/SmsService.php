@@ -29,5 +29,10 @@ class SmsService extends ServiceBase
         return (new AliSms())->login($phone, $code);
     }
 
+    function afterUploadAuthBook($phone, $ext)
+    {
+        return (new AliSms())->afterUploadAuthBook($phone, $ext);
+    }
+
 
 }
