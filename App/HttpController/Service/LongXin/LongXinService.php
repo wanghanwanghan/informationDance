@@ -205,8 +205,6 @@ class LongXinService extends ServiceBase
         $res = (new CoHttpClient())->useCache(false)
             ->send($this->baseUrl . 'getentid/', $arr, $this->sendHeaders);
 
-        CommonService::getInstance()->log4PHP($res);
-
         if (!empty($res) && isset($res['data']) && !empty($res['data'])) {
             $entid = $res['data'];
         } else {
@@ -891,7 +889,7 @@ class LongXinService extends ServiceBase
         return $origin;
     }
 
-    //new 25资本保值增值率 7去年所有者权益 / 7当年所有者权益
+    //new 25资本保值增值率 (7去年所有者权益 + 5当年净利润)/ 7去年所有者权益
     private function zbbzzzl($origin)
     {
         foreach ($origin as $year => $val) {
@@ -905,16 +903,16 @@ class LongXinService extends ServiceBase
             }
 
             //如果今年没数据
-            if (!is_numeric($origin[$year][7]) || $origin[$year][7] === 0) {
+            if (!is_numeric($origin[$year][5]) || $origin[$lastYear][7] === 0) {
                 array_push($origin[$year], null);
                 continue;
             }
 
             //两年都有数据
-            $last = $origin[$lastYear][7];
-            $now = $origin[$year][7];
+            $last7 = $origin[$lastYear][7];
+            $now5 = $origin[$year][5];
 
-            array_push($origin[$year], $last / $now);
+            array_push($origin[$year], ($last7 + $now5) / $last7);
         }
 
         return $origin;
