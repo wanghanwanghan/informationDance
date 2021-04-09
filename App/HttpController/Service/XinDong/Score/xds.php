@@ -663,6 +663,7 @@ class xds
                     $r['val'] = $arr['VENDINC'] / $arr['A_ASSGROL'];
                     $r['score'] = current(explode('.', round($r['val'] * 100))) - 0;
                     $r['score'] = $r['score'] > 1 ? $r['score'] : 1;
+                    $r['score'] = $r['score'] > 100 ? 100 : $r['score'];
                     break;
                 }
             }
