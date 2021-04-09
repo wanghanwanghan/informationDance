@@ -1064,7 +1064,40 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         $docObj->setValue('sx_ocr', $ocr);
 
         //二次特征
-        CommonService::getInstance()->log4PHP($data);
+        if (!empty($data['features'])) {
+            //担保能力
+            $docObj->setValue('dbnl_s', $data['features']['GuaranteeAbility']);
+            //还款能力
+            $docObj->setValue('hknl_s', $data['features']['RepaymentAbility']);
+            //税负强度
+            $docObj->setValue('sfqd_s', $data['features']['TBR']);
+            //总资产增长状况
+            $docObj->setValue('zzczzzk_s', $data['features']['ASSGRO_yoy']);
+            //资产周转能力
+            $docObj->setValue('zczznl_s', $data['features']['ATOL']);
+            //资产回报能力
+            $docObj->setValue('zchbnl_s', $data['features']['ASSETS']);
+            //企业纳税能力综合评分
+            $docObj->setValue('qynsnlzh_s', $data['features']['RATGRO']);
+            //企业人均盈利能力评分
+            $docObj->setValue('qyrjylnl_s', $data['features']['PERCAPITA_Y']);
+            //企业人均产能评分
+            $docObj->setValue('qyrjcn_s', $data['features']['PERCAPITA_C']);
+            //企业资本保值状况评分
+            $docObj->setValue('qyzbbzzk_s', $data['features']['TOTEQU']);
+            //企业主营业务健康度评分
+            $docObj->setValue('qyzyywjkd_s', $data['features']['DEBTL_H']);
+            //企业利润增长能力评分
+            $docObj->setValue('qylrzznl_s', $data['features']['PROGRO_yoy']);
+            //企业营收增长能力评分
+            $docObj->setValue('qyyszznl_s', $data['features']['MAIBUSINC_yoy']);
+            //企业盈利能力评分
+            $docObj->setValue('qyylnl_s', $data['features']['PROGRO']);
+            //企业资产负债状况评分
+            $docObj->setValue('qyzcfzzk_s', $data['features']['DEBTL']);
+            //企业资产收益评分
+            $docObj->setValue('qyzcsy_s', $data['features']['ASSGROPROFIT_REL']);
+        }
     }
 
     //并发请求数据
@@ -1414,7 +1447,12 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
 
         //二次特征
         $csp->add('features', function () {
-            return (new XinDongService())->getFeatures($this->entName);
+            $res = (new XinDongService())->setCheckRespFlag(true)->getFeatures($this->entName);
+            if ($res['code'] === 200 && !empty($res['result'])) {
+                return $res['result'];
+            } else {
+                return [];
+            }
         });
 
         return CspService::getInstance()->exec($csp, 10);
