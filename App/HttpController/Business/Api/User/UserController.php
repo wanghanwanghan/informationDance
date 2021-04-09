@@ -694,6 +694,8 @@ class UserController extends UserBase
 
             CommonService::getInstance()->sendSMS([
                 '18618457910',
+                '18600047886',
+                '18201611816',
             ], '1380331752941174784', '1');
 
         } catch (\Throwable $e) {
