@@ -3875,6 +3875,42 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             //标准编号
             $docObj->setValue('ps_sno#' . ($i + 1), $data['ProductStandardInfo']['list'][$i]['STANDARD_CODE']);
         }
+
+        //二次特征
+        if (!empty($data['features'])) {
+            //担保能力
+            $docObj->setValue('dbnl_s', $data['features']['GuaranteeAbility']['score']);
+            //还款能力
+            $docObj->setValue('hknl_s', $data['features']['RepaymentAbility']['score']);
+            //税负强度
+            $docObj->setValue('sfqd_s', $data['features']['TBR']['score']);
+            //总资产增长状况
+            $docObj->setValue('zzczzzk_s', $data['features']['ASSGRO_yoy']['score']);
+            //资产周转能力
+            $docObj->setValue('zczznl_s', $data['features']['ATOL']['score']);
+            //资产回报能力
+            $docObj->setValue('zchbnl_s', $data['features']['ASSETS']['score']);
+            //企业纳税能力综合评分
+            $docObj->setValue('qynsnlzh_s', $data['features']['RATGRO']['score']);
+            //企业人均盈利能力评分
+            $docObj->setValue('qyrjylnl_s', $data['features']['PERCAPITA_Y']['score']);
+            //企业人均产能评分
+            $docObj->setValue('qyrjcn_s', $data['features']['PERCAPITA_C']['score']);
+            //企业资本保值状况评分
+            $docObj->setValue('qyzbbzzk_s', $data['features']['TOTEQU']['score']);
+            //企业主营业务健康度评分
+            $docObj->setValue('qyzyywjkd_s', $data['features']['DEBTL_H']['score']);
+            //企业利润增长能力评分
+            $docObj->setValue('qylrzznl_s', $data['features']['PROGRO_yoy']['score']);
+            //企业营收增长能力评分
+            $docObj->setValue('qyyszznl_s', $data['features']['MAIBUSINC_yoy']['score']);
+            //企业盈利能力评分
+            $docObj->setValue('qyylnl_s', $data['features']['PROGRO']['score']);
+            //企业资产负债状况评分
+            $docObj->setValue('qyzcfzzk_s', $data['features']['DEBTL']['score']);
+            //企业资产收益评分
+            $docObj->setValue('qyzcsy_s', $data['features']['ASSGROPROFIT_REL']['score']);
+        }
     }
 
     //并发请求数据
@@ -6023,6 +6059,16 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             }
 
             return $tmp;
+        });
+
+        //二次特征
+        $csp->add('features', function () {
+            $res = (new XinDongService())->setCheckRespFlag(true)->getFeatures($this->entName);
+            if ($res['code'] === 200 && !empty($res['result'])) {
+                return $res['result'];
+            } else {
+                return [];
+            }
         });
 
         return CspService::getInstance()->exec($csp, 120);
