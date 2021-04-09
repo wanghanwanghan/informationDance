@@ -20,6 +20,7 @@ use Carbon\Carbon;
 use EasySwoole\Task\AbstractInterface\TaskInterface;
 use PhpOffice\PhpWord\TemplateProcessor;
 use wanghanwanghan\someUtils\control;
+use function Sodium\add;
 
 class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
 {
@@ -33,7 +34,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
     private $fz_detail = [];
     private $fx_detail = [];
 
-    function __construct($entName, $reportNum,$phone,$type)
+    function __construct($entName, $reportNum, $phone, $type)
     {
         $this->entName = $entName;
         $this->reportNum = $reportNum;
@@ -47,10 +48,9 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
     {
         $tmp = new TemplateProcessor(REPORT_MODEL_PATH . 'VeryEasyReportModel_1.docx');
 
-        $userInfo = User::create()->where('phone',$this->phone)->get();
+        $userInfo = User::create()->where('phone', $this->phone)->get();
 
-        switch ($this->type)
-        {
+        switch ($this->type) {
             case 'xd':
                 $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'logo.jpg', 'width' => 200, 'height' => 40]);
                 $tmp->setValue('selectMore', '如需更多信息登录移动端小程序 信动智调 查看');
@@ -65,7 +65,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
 
         $tmp->setValue('entName', $this->entName);
 
-        $tmp->setValue('reportNum', substr($this->reportNum,0,14));
+        $tmp->setValue('reportNum', substr($this->reportNum, 0, 14));
 
         $tmp->setValue('time', Carbon::now()->format('Y年m月d日'));
 
@@ -78,36 +78,34 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         $this->fz_and_fx_detail($tmp, $reportVal);
 
         $tmp->setValue('fz_score', sprintf('%.2f', array_sum($this->fz)));
-        $tmp->setValue('fz_detail', implode(',',$this->fz_detail));
+        $tmp->setValue('fz_detail', implode(',', $this->fz_detail));
 
         $tmp->setValue('fx_score', sprintf('%.2f', array_sum($this->fx)));
-        $tmp->setValue('fx_detail', implode(',',$this->fx_detail));
+        $tmp->setValue('fx_detail', implode(',', $this->fx_detail));
 
         $tmp->saveAs(REPORT_PATH . $this->reportNum . '.docx');
 
-        $info = ReportInfo::create()->where('phone',$this->phone)->where('filename',$this->reportNum)->get();
+        $info = ReportInfo::create()->where('phone', $this->phone)->where('filename', $this->reportNum)->get();
 
-        $info->update(['status'=>2]);
+        $info->update(['status' => 2]);
 
-        $userEmail = User::create()->where('phone',$this->phone)->get();
+        $userEmail = User::create()->where('phone', $this->phone)->get();
 
-        CommonService::getInstance()->sendEmail($userEmail->email,[REPORT_PATH . $this->reportNum . '.docx'],'01',['entName'=>$this->entName]);
+        CommonService::getInstance()->sendEmail($userEmail->email, [REPORT_PATH . $this->reportNum . '.docx'], '01', ['entName' => $this->entName]);
 
-        ProcessService::getInstance()->sendToProcess('docx2doc',$this->reportNum);
+        ProcessService::getInstance()->sendToProcess('docx2doc', $this->reportNum);
 
         return true;
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
-        try
-        {
-            $info = ReportInfo::create()->where('phone',$this->phone)->where('filename',$this->reportNum)->get();
+        try {
+            $info = ReportInfo::create()->where('phone', $this->phone)->where('filename', $this->reportNum)->get();
 
-            $info->update(['status'=>1,'errInfo'=>$throwable->getMessage()]);
+            $info->update(['status' => 1, 'errInfo' => $throwable->getMessage()]);
 
-        }catch (\Throwable $e)
-        {
+        } catch (\Throwable $e) {
 
         }
     }
@@ -216,19 +214,16 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         //软件著作权
         $rz = (int)$data['SearchSoftwareCr']['total'];
 
-        if ($zl===0 && $rz<2) $this->fz_detail[] = '企业需进一步增强创新研发能力';
+        if ($zl === 0 && $rz < 2) $this->fz_detail[] = '企业需进一步增强创新研发能力';
 
         //龙信 财务
         if (empty($data['FinanceData'])) $this->fz_detail[] = '企业经营能力与核心竞争力方面需进一步提升';
-        if (!empty($data['FinanceData']) && mt_rand(0,100) > 80) $this->fx_detail[] = '企业需进一步加强在资产负债方面的管控意识';
+        if (!empty($data['FinanceData']) && mt_rand(0, 100) > 80) $this->fx_detail[] = '企业需进一步加强在资产负债方面的管控意识';
 
         //乾启 团队人数
-        foreach ($data['itemInfo'] as $oneYear)
-        {
-            if (isset($oneYear['yoy']) && !empty($oneYear['yoy']) && is_numeric($oneYear['yoy']))
-            {
-                if ($oneYear['yoy'] < 0.06)
-                {
+        foreach ($data['itemInfo'] as $oneYear) {
+            if (isset($oneYear['yoy']) && !empty($oneYear['yoy']) && is_numeric($oneYear['yoy'])) {
+                if ($oneYear['yoy'] < 0.06) {
                     $this->fz_detail[] = '企业团队人员管理方面需进一步加强';
                     break;
                 }
@@ -787,7 +782,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         $docObj->setValue('INDUSTRY', '');
         //经营范围
         $docObj->setValue('OPSCOPE', $data['GetBasicDetailsByName']['Scope']);
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,14,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 14, $this->entName, true);
         $docObj->setValue('jbxx_oneSaid', $oneSaid);
 
         //经营异常
@@ -806,7 +801,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("jjyc_RomoveReason#" . ($i + 1), $data['GetOpException']['list'][$i]['RomoveReason']);
         }
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,21,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 21, $this->entName, true);
         $docObj->setValue('jyycxx_oneSaid', $oneSaid);
 
         //企业对外投资
@@ -833,19 +828,17 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("qydwtz_CONDATE#" . ($i + 1), $this->formatDate($data['getInvestmentAbroadInfo']['list'][$i]['CONDATE']));
         }
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,23,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 23, $this->entName, true);
         $docObj->setValue('qydwtz_oneSaid', $oneSaid);
 
-        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'1.1');
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '1.1');
         $docObj->setValue('qydwtz_ocr', $ocr);
 
         //财务总揽
-        if (empty($data['FinanceData']['pic']))
-        {
+        if (empty($data['FinanceData']['pic'])) {
             $docObj->setValue("caiwu_pic", '无财务数据或企业类型错误');
 
-        }else
-        {
+        } else {
             $docObj->setImageValue("caiwu_pic", [
                 'path' => REPORT_IMAGE_TEMP_PATH . $data['FinanceData']['pic'],
                 'width' => 440,
@@ -853,7 +846,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             ]);
         }
 
-        $caiwu_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,0,$this->entName,true);
+        $caiwu_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 0, $this->entName, true);
         $docObj->setValue("caiwu_oneSaid", $caiwu_oneSaid);
 
         //专利
@@ -877,7 +870,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("zl_total", (int)$data['PatentV4Search']['total']);
 
-        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'3.1');
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '3.1');
         $docObj->setValue('zl_ocr', $ocr);
 
         //软件著作权
@@ -897,7 +890,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("rjzzq_total", (int)$data['SearchSoftwareCr']['total']);
 
-        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'3.2');
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '3.2');
         $docObj->setValue('rjzzq_ocr', $ocr);
 
         //行政许可
@@ -919,10 +912,10 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("xzxk_total", (int)$data['GetAdministrativeLicenseList']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,32,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 32, $this->entName, true);
         $docObj->setValue('xzxk_oneSaid', $oneSaid);
 
-        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'4.1');
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '4.1');
         $docObj->setValue('xzxk_ocr', $ocr);
 
         //行政处罚
@@ -942,10 +935,10 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("xzcf_total", (int)$data['GetAdministrativePenaltyList']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,33,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 33, $this->entName, true);
         $docObj->setValue('xzcf_oneSaid', $oneSaid);
 
-        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'4.2');
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '4.2');
         $docObj->setValue('xzcf_ocr', $ocr);
 
         //裁判文书
@@ -995,10 +988,10 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         $docObj->setValue("cpws_total", (int)$data['cpws']['total']);
 
         //oneSaid
-        $cpws_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,2,$this->entName,true);
+        $cpws_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 2, $this->entName, true);
         $docObj->setValue("cpws_oneSaid", $cpws_oneSaid);
 
-        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'5.1');
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '5.1');
         $docObj->setValue('cpws_ocr', $ocr);
 
         //执行公告
@@ -1029,10 +1022,10 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         $docObj->setValue("zxgg_total", (int)$data['zxgg']['total']);
 
         //oneSaid
-        $zxgg_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,4,$this->entName,true);
+        $zxgg_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 4, $this->entName, true);
         $docObj->setValue("zxgg_oneSaid", $zxgg_oneSaid);
 
-        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'5.2');
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '5.2');
         $docObj->setValue('zxgg_ocr', $ocr);
 
         //失信公告
@@ -1064,11 +1057,14 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         $docObj->setValue("sx_total", (int)$data['shixin']['total']);
 
         //oneSaid
-        $sx_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,5,$this->entName,true);
+        $sx_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 5, $this->entName, true);
         $docObj->setValue("sx_oneSaid", $sx_oneSaid);
 
-        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone,$this->reportNum,'5.3');
+        $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '5.3');
         $docObj->setValue('sx_ocr', $ocr);
+
+        //二次特征
+        CommonService::getInstance()->log4PHP($data);
     }
 
     //并发请求数据
@@ -1141,7 +1137,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
                 'dataCount' => 4,//取最近几年的
             ];
 
-            $res = (new LongXinService())->setCheckRespFlag(true)->getFinanceData($postData,false);
+            $res = (new LongXinService())->setCheckRespFlag(true)->getFinanceData($postData, false);
 
             if ($res['code'] !== 200) return '';
 
@@ -1414,6 +1410,11 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             $tmp['total'] = $total;
 
             return $tmp;
+        });
+
+        //二次特征
+        $csp->add('features', function () {
+            return (new XinDongService())->getFeatures($this->entName);
         });
 
         return CspService::getInstance()->exec($csp, 10);
