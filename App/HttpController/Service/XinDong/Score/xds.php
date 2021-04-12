@@ -79,47 +79,47 @@ class xds
 
         $score = [];
 
-        //企业资产收益评分 总资产收益率 = 5净利润 / 10平均资产总额
-        $score['ASSGROPROFIT_REL'] = $this->ASSGROPROFIT_REL($arr['result']);
+        //企业营收增长能力评分 33主营业务收入同比 MAIBUSINC_yoy
+        $score['MAIBUSINC_yoy'] = $this->MAIBUSINC_yoy($arr['result']);
 
-        //企业资产负债状况评分 20资产负债率 = 1负债总额 / 0资产总额
-        $score['DEBTL'] = $this->DEBTL($arr['result']);
+        //总资产增长状况 30资产总额同比 ASSGRO_yoy
+        $score['ASSGRO_yoy'] = $this->ASSGRO_yoy($arr['result']);
 
         //企业盈利能力评分 主营业务净利润率 5净利润 / 3主营业务收入
         $score['PROGRO'] = $this->PROGRO($arr['result']);
 
-        //企业营收增长能力评分 33主营业务收入同比 MAIBUSINC_yoy
-        $score['MAIBUSINC_yoy'] = $this->MAIBUSINC_yoy($arr['result']);
-
         //企业利润增长能力评分 34利润总额同比 PROGRO_yoy
         $score['PROGRO_yoy'] = $this->PROGRO_yoy($arr['result']);
+
+        //企业纳税能力综合评分 6纳税总额
+        $score['RATGRO'] = $this->RATGRO($arr['result']);
+
+        //税负强度 28税收负担率 TBR
+        $score['TBR'] = $this->TBR($arr['result']);
+
+        //企业资产收益评分 总资产收益率 = 5净利润 / 10平均资产总额
+        $score['ASSGROPROFIT_REL'] = $this->ASSGROPROFIT_REL($arr['result']);
+
+        //资产回报能力 5净利润 / 11平均净资产
+        $score['ASSETS'] = $this->ASSETS($arr['result']);
+
+        //企业资本保值状况评分 7期末所有者权益 / 7期初所有者权益 TOTEQU
+        $score['TOTEQU'] = $this->TOTEQU($arr['result']);
 
         //企业主营业务健康度评分 20资产负债率 = 1负债总额 / 0资产总额
         $score['DEBTL_H'] = $this->DEBTL_H($arr['result'], $entName);
 
-        //企业资本保值状况评分 7期末所有者权益 / 7期初所有者权益 TOTEQU
-        $score['TOTEQU'] = $this->TOTEQU($arr['result']);
+        //企业资产负债状况评分 20资产负债率 = 1负债总额 / 0资产总额
+        $score['DEBTL'] = $this->DEBTL($arr['result']);
+
+        //资产周转能力 2营业收入 / 10平均资产总额
+        $score['ATOL'] = $this->ATOL($arr['result']);
 
         //企业人均产能评分 3主营业务收入 / 8缴纳社保人数人均
         $score['PERCAPITA_C'] = $this->PERCAPITA_C($arr['result']);
 
         //企业人均盈利能力评分 5净利润 / 8缴纳社保人数
         $score['PERCAPITA_Y'] = $this->PERCAPITA_Y($arr['result']);
-
-        //企业纳税能力综合评分 6纳税总额
-        $score['RATGRO'] = $this->RATGRO($arr['result']);
-
-        //资产回报能力 5净利润 / 11平均净资产
-        $score['ASSETS'] = $this->ASSETS($arr['result']);
-
-        //资产周转能力 2营业收入 / 10平均资产总额
-        $score['ATOL'] = $this->ATOL($arr['result']);
-
-        //总资产增长状况 30资产总额同比 ASSGRO_yoy
-        $score['ASSGRO_yoy'] = $this->ASSGRO_yoy($arr['result']);
-
-        //税负强度 28税收负担率 TBR
-        $score['TBR'] = $this->TBR($arr['result']);
 
         //还款能力 20资产负债率 DEBTL 60% && 16企业人均盈利 A_PROGROL 40%
         $score['RepaymentAbility'] = $this->RepaymentAbility($arr['result']);
@@ -134,7 +134,7 @@ class xds
     private function ASSGROPROFIT_REL($data): array
     {
         $r = [
-            'name' => '企业资产收益评分',
+            'name' => '企业资产收益能力',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
@@ -195,7 +195,7 @@ class xds
     private function DEBTL($data): array
     {
         $r = [
-            'name' => '企业资产负债状况评分',
+            'name' => '企业资产经营健康度',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
@@ -252,7 +252,7 @@ class xds
     private function DEBTL_H($data, $entName): array
     {
         $r = [
-            'name' => '企业主营业务健康度评分',
+            'name' => '企业主营业务健康度',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
@@ -341,7 +341,7 @@ class xds
     private function PROGRO($data): array
     {
         $r = [
-            'name' => '企业盈利能力评分',
+            'name' => '企业盈利能力',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
@@ -386,7 +386,7 @@ class xds
     private function MAIBUSINC_yoy($data): array
     {
         $r = [
-            'name' => '企业营收增长能力评分',
+            'name' => '企业成长性状况',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
@@ -443,7 +443,7 @@ class xds
     private function PROGRO_yoy($data): array
     {
         $r = [
-            'name' => '企业利润增长能力评分',
+            'name' => '企业盈利可持续能力',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
@@ -500,7 +500,7 @@ class xds
     private function TOTEQU($data): array
     {
         $r = [
-            'name' => '企业资本保值状况评分',
+            'name' => '企业资本保值状况',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
@@ -551,7 +551,7 @@ class xds
     private function PERCAPITA_C($data): array
     {
         $r = [
-            'name' => '企业人均产能评分',
+            'name' => '企业人均产能',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
@@ -608,7 +608,7 @@ class xds
     private function PERCAPITA_Y($data): array
     {
         $r = [
-            'name' => '企业人均盈利能力评分',
+            'name' => '企业人均创收能力',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
@@ -663,7 +663,7 @@ class xds
     private function RATGRO($data): array
     {
         $r = [
-            'name' => '企业纳税能力综合评分',
+            'name' => '企业税收贡献能力',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
@@ -710,7 +710,7 @@ class xds
     private function ASSETS($data): array
     {
         $r = [
-            'name' => '资产回报能力',
+            'name' => '企业资产回报能力',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
@@ -767,7 +767,7 @@ class xds
     private function ATOL($data): array
     {
         $r = [
-            'name' => '资产周转能力',
+            'name' => '企业资产周转能力',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
@@ -824,7 +824,7 @@ class xds
     private function ASSGRO_yoy($data): array
     {
         $r = [
-            'name' => '总资产增长状况',
+            'name' => '企业资产增长状况',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
@@ -879,7 +879,7 @@ class xds
     private function TBR($data): array
     {
         $r = [
-            'name' => '税负强度',
+            'name' => '企业税负强度',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
@@ -924,7 +924,7 @@ class xds
     private function RepaymentAbility($data): array
     {
         $r = [
-            'name' => '还款能力',
+            'name' => '企业还款能力',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
@@ -1012,7 +1012,7 @@ class xds
     private function GuaranteeAbility($data, $entName): array
     {
         $r = [
-            'name' => '担保能力',
+            'name' => '企业担保能力',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
