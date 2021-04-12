@@ -85,7 +85,7 @@ class xds
         //企业资产负债状况评分 20资产负债率 = 1负债总额 / 0资产总额
         $score['DEBTL'] = $this->DEBTL($arr['result']);
 
-        //企业盈利能力评分 4利润总额
+        //企业盈利能力评分 主营业务净利润率 5净利润 / 3主营业务收入
         $score['PROGRO'] = $this->PROGRO($arr['result']);
 
         //企业营收增长能力评分 33主营业务收入同比 MAIBUSINC_yoy
@@ -138,16 +138,51 @@ class xds
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
-            'score' => 1
+            'score' => null
         ];
 
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['NETINC']) && is_numeric($arr['A_ASSGROL'])) {
-                if ($arr['NETINC'] > 0 && $arr['A_ASSGROL'] > 0) {
+                if ($arr['A_ASSGROL'] != 0) {
+                    $val = round($arr['NETINC'] / $arr['A_ASSGROL'] * 100);
+                    if ($val <= -10) {
+                        $score = -4;
+                    } elseif ($val >= -10 && $val <= -6) {
+                        $score = 8;
+                    } elseif ($val >= -5 && $val <= -1) {
+                        $score = 11;
+                    } elseif ($val >= -1 && $val <= 0) {
+                        $score = 16;
+                    } elseif ($val >= 0 && $val <= 1.2) {
+                        $score = 26;
+                    } elseif ($val >= 1.21 && $val <= 2.2) {
+                        $score = 31;
+                    } elseif ($val >= 2.21 && $val <= 3.3) {
+                        $score = 35;
+                    } elseif ($val >= 3.31 && $val <= 5.5) {
+                        $score = 42;
+                    } elseif ($val >= 5.51 && $val <= 8.3) {
+                        $score = 56;
+                    } elseif ($val >= 8.31 && $val <= 10.5) {
+                        $score = 72;
+                    } elseif ($val >= 10.51 && $val <= 20) {
+                        $score = 85;
+                    } elseif ($val >= 20.1 && $val <= 30) {
+                        $score = 92;
+                    } elseif ($val >= 30.1 && $val <= 50) {
+                        $score = 93;
+                    } elseif ($val >= 50.1 && $val <= 100) {
+                        $score = 94.5;
+                    } elseif ($val >= 100.1 && $val <= 300) {
+                        $score = 97.5;
+                    } elseif ($val >= 300) {
+                        $score = 99;
+                    } else {
+                        $score = null;
+                    }
                     $r['year'] = $year;
-                    $r['val'] = $arr['NETINC'] / $arr['A_ASSGROL'];
-                    $r['score'] = current(explode('.', round($r['val'] * 100))) - 0;
-                    $r['score'] = $r['score'] > 1 ? $r['score'] : 1;
+                    $r['val'] = $val;
+                    $r['score'] = $score;
                     break;
                 }
             }
@@ -164,16 +199,47 @@ class xds
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
-            'score' => 1
+            'score' => null
         ];
 
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['LIAGRO']) && is_numeric($arr['ASSGRO'])) {
-                if ($arr['LIAGRO'] > 0 && $arr['ASSGRO'] > 0) {
+                if ($arr['ASSGRO'] != 0) {
+                    $val = round($arr['LIAGRO'] / $arr['ASSGRO'] * 100);
+                    if ($val == 0) {
+                        $score = 99.5;
+                    } elseif ($val >= 0.1 && $val <= 5) {
+                        $score = 98;
+                    } elseif ($val >= 5.1 && $val <= 10) {
+                        $score = 92.5;
+                    } elseif ($val >= 10.1 && $val <= 20) {
+                        $score = 86.5;
+                    } elseif ($val >= 20.1 && $val <= 30) {
+                        $score = 81;
+                    } elseif ($val >= 30.1 && $val <= 40) {
+                        $score = 77.5;
+                    } elseif ($val >= 40.1 && $val <= 50) {
+                        $score = 70;
+                    } elseif ($val >= 50.1 && $val <= 60) {
+                        $score = 64;
+                    } elseif ($val >= 60.1 && $val <= 70) {
+                        $score = 55.5;
+                    } elseif ($val >= 70.1 && $val <= 80) {
+                        $score = 42.5;
+                    } elseif ($val >= 80.1 && $val <= 90) {
+                        $score = 39;
+                    } elseif ($val >= 90.1 && $val <= 100) {
+                        $score = 28.5;
+                    } elseif ($val >= 100.1 && $val <= 150) {
+                        $score = 17;
+                    } elseif ($val >= 150) {
+                        $score = 11;
+                    } else {
+                        $score = null;
+                    }
                     $r['year'] = $year;
-                    $r['val'] = $arr['LIAGRO'] / $arr['ASSGRO'];
-                    $r['score'] = current(explode('.', round($r['val'] * 100))) - 0;
-                    $r['score'] = $r['score'] > 1 ? $r['score'] : 1;
+                    $r['val'] = $val;
+                    $r['score'] = $score;
                     break;
                 }
             }
@@ -190,7 +256,7 @@ class xds
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
-            'score' => 1
+            'score' => null
         ];
 
         //实际控制人
@@ -226,13 +292,43 @@ class xds
 
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['LIAGRO']) && is_numeric($arr['ASSGRO'])) {
-                if ($arr['LIAGRO'] > 0 && $arr['ASSGRO'] > 0) {
-                    $r['year'] = $year;
-                    $r['val'] = $arr['LIAGRO'] / $arr['ASSGRO'];
-                    $r['score'] = current(explode('.', round($r['val'] * 100))) - 0;
-                    if ($type) {
-                        $r['score'] = $r['score'] * 0.7 + 100 * 0.3;
+                if ($arr['ASSGRO'] != 0) {
+                    $val = round($arr['LIAGRO'] / $arr['ASSGRO'] * 100);
+                    if ($val == 0) {
+                        $score = 99.5;
+                    } elseif ($val >= 0.1 && $val <= 5) {
+                        $score = 98;
+                    } elseif ($val >= 5.1 && $val <= 10) {
+                        $score = 92.5;
+                    } elseif ($val >= 10.1 && $val <= 20) {
+                        $score = 86.5;
+                    } elseif ($val >= 20.1 && $val <= 30) {
+                        $score = 81;
+                    } elseif ($val >= 30.1 && $val <= 40) {
+                        $score = 77.5;
+                    } elseif ($val >= 40.1 && $val <= 50) {
+                        $score = 70;
+                    } elseif ($val >= 50.1 && $val <= 60) {
+                        $score = 64;
+                    } elseif ($val >= 60.1 && $val <= 70) {
+                        $score = 55.5;
+                    } elseif ($val >= 70.1 && $val <= 80) {
+                        $score = 42.5;
+                    } elseif ($val >= 80.1 && $val <= 90) {
+                        $score = 39;
+                    } elseif ($val >= 90.1 && $val <= 100) {
+                        $score = 28.5;
+                    } elseif ($val >= 100.1 && $val <= 150) {
+                        $score = 17;
+                    } elseif ($val >= 150) {
+                        $score = 11;
+                    } else {
+                        $score = null;
                     }
+                    $type && $score !== null ? $score = intval($score * 0.7 + 100 * 0.3) : $score = intval($score * 0.9);
+                    $r['year'] = $year;
+                    $r['val'] = $val;
+                    $r['score'] = $score;
                     break;
                 }
             }
@@ -241,7 +337,7 @@ class xds
         return $r;
     }
 
-    //企业盈利能力评分 4利润总额
+    //企业盈利能力评分 主营业务净利润率 5净利润 / 3主营业务收入
     private function PROGRO($data): array
     {
         $r = [
@@ -249,55 +345,37 @@ class xds
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
-            'score' => 1
+            'score' => null
         ];
 
-        //值为负但同比为正的则分数为20分起
-        //值为负则分数为10分
-        //值为正，每多100万加10分，最多50分，
-        //再50分往上的利润金额余额则除以每1000万加10分，最多70分，
-        //再70分往上的余额则除以每1亿加10分，最多100分
-
         foreach ($data as $year => $arr) {
-            if (is_numeric($arr['PROGRO'])) {
-                if ($arr['PROGRO'] < 0 && is_numeric($arr['PROGRO_yoy']) && $arr['PROGRO_yoy'] > 0) {
-                    $score = 20;
-                } else {
-                    $score = 10;
+            if (is_numeric($arr['NETINC']) && is_numeric($arr['MAIBUSINC'])) {
+                if ($arr['MAIBUSINC'] != 0) {
+                    $val = round($arr['NETINC'] / $arr['MAIBUSINC'] * 100);
+                    if ($val < 0) {
+                        $score = 10;
+                    } elseif ($val >= 1 && $val <= 2) {
+                        $score = 15;
+                    } elseif ($val >= 3 && $val <= 5) {
+                        $score = 21;
+                    } elseif ($val >= 6 && $val <= 8) {
+                        $score = 30;
+                    } elseif ($val >= 9 && $val <= 10) {
+                        $score = 41;
+                    } elseif ($val > 10 && $val <= 100) {
+                        //每多5%加8分
+                        $score = intval($val / 5) * 8;
+                        $score <= 97 ?: $score = 97;
+                    } elseif ($val > 100) {
+                        $score = 97;
+                    } else {
+                        $score = null;
+                    }
+                    $r['year'] = $year;
+                    $r['val'] = $val;
+                    $r['score'] = $score;
+                    break;
                 }
-                if ($arr['PROGRO'] > 0) {
-                    //有多少个100万
-                    $bai = current(explode('.', round($arr['PROGRO'] / 100)));
-                    if ($bai >= 1) {
-                        if ($bai * 10 > 50) {
-                            $arr['PROGRO'] -= 500;
-                        }
-                        $score = $bai * 10 > 50 ? 50 : $bai * 10;
-                    }
-
-                    //有多少个1000万
-                    $qian = current(explode('.', round($arr['PROGRO'] / 1000)));
-                    if ($qian >= 1) {
-                        if ($qian * 10 > 20) {
-                            $arr['PROGRO'] -= 2000;
-                        }
-                        $score = $qian * 10 > 20 ? 70 : $qian * 10 + 50;
-                    }
-
-                    //有多少个10000万 1亿
-                    $yi = current(explode('.', round($arr['PROGRO'] / 10000)));
-                    if ($yi >= 1) {
-                        if ($yi * 10 > 30) {
-                            $arr['PROGRO'] -= 30000;
-                        }
-                        $score = $yi * 10 > 30 ? 100 : $yi * 10 + 70;
-                    }
-                }
-
-                $r['year'] = $year;
-                $r['val'] = $arr['PROGRO'];
-                $r['score'] = $score;
-                break;
             }
         }
 
@@ -312,49 +390,20 @@ class xds
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
-            'score' => 1
+            'score' => null
         ];
 
-        //用0%-100%，负增长均为1~9分，1~10%为11~20分，11%~100%为每多9%加10分，最多100分
-
         foreach ($data as $year => $arr) {
-            $score = 1;
             if (is_numeric($arr['MAIBUSINC_yoy'])) {
-                $num = floor($arr['MAIBUSINC_yoy'] * 100);
-                if ($num < 0) {
-                    if ($num < -100) {
-                        $score = 1;
-                    } else {
-                        if ($num >= -100 && $num < -80) {
-                            $score = 1;
-                        } elseif ($num >= -80 && $num < -60) {
-                            $score = 2;
-                        } elseif ($num >= -60 && $num < -40) {
-                            $score = 3;
-                        } elseif ($num >= -40 && $num < -20) {
-                            $score = 4;
-                        } else {
-                            $score = 5;
-                        }
-                    }
+                $val = round($arr['MAIBUSINC_yoy'] * 100);
+                if ($val <= -50) {
+                    $score = 11111111111111;
+                } elseif ($val >= 11111111111111 && $val <= 11111111111111) {
+                    $score = 11111111111111;
                 }
-                if ($num === 0.0) {
-                    $score = 1;
-                }
-                if ($num > 0) {
-                    if ($num >= 1 && $num <= 10) {
-                        $tmp = [6, 7.5, 9, 10.5, 12, 14, 15.5, 17, 18.5, 20];
-                        $score = $tmp[$num - 1];
-                    }
-                    if ($num >= 11 && $num <= 100) {
-                        $score = floor($num / 9) * 10 > 100 ? 100 : floor($num / 9) * 10;
-                    }
-                    if ($num > 100) {
-                        $score = 100;
-                    }
-                }
+
                 $r['year'] = $year;
-                $r['val'] = $arr['MAIBUSINC_yoy'];
+                $r['val'] = $val;
                 $r['score'] = $score;
                 break;
             }

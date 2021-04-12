@@ -521,7 +521,7 @@ class QianQiService extends ServiceBase
             'usercode' => 'j7uSz7ipmJ'
         ];
 
-        $url = 'http://39.106.95.155/data/daily_ent_mrxd?_t=' . time();
+        $url = 'http://39.106.95.155/data/daily_ent_mrxd/?_t=' . time();
 
         $res = (new CoHttpClient())->send($url, $data, $this->sendHeaders);
 
