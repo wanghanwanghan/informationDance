@@ -523,7 +523,11 @@ class QianQiService extends ServiceBase
 
         $url = 'http://39.106.95.155/data/daily_ent_mrxd?_t=' . time();
 
-        return (new CoHttpClient())->send($url, $data, $this->sendHeaders);
+        $res = (new CoHttpClient())->send($url, $data, $this->sendHeaders);
+
+        CommonService::getInstance()->log4PHP($res);
+
+        return $res;
     }
 
     //近三年的财务数据
