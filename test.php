@@ -46,10 +46,3 @@ $data = [
 //dd(json_decode($res, true));
 
 
-$data = ['a', 'b', 'c'];
-
-foreach ($data as $key => $value) {
-    $value = &$data[$key];
-}
-
-print_r($data);

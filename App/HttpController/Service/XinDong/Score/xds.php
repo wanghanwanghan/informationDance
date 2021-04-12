@@ -561,7 +561,7 @@ class xds
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['MAIBUSINC']) && is_numeric($arr['SOCNUM'])) {
                 if ($arr['SOCNUM'] > 0) {
-                    $val = round($arr['MAIBUSINC'] / $arr['SOCNUM'] * 100);
+                    $val = round($arr['MAIBUSINC'] / $arr['SOCNUM']);
                     if ($val <= 10) {
                         $score = 15.5;
                     } elseif ($val >= 10 && $val <= 20) {
@@ -618,7 +618,7 @@ class xds
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['NETINC']) && is_numeric($arr['SOCNUM'])) {
                 if ($arr['SOCNUM'] > 0) {
-                    $val = round($arr['NETINC'] / $arr['SOCNUM'] * 100);
+                    $val = round($arr['NETINC'] / $arr['SOCNUM']);
                     if ($val <= -200) {
                         $score = 12;
                     } elseif ($val >= -200 && $val <= 0) {
