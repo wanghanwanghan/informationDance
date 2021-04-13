@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\HuoYan;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
@@ -55,6 +56,8 @@ class HuoYanService extends ServiceBase
         ];
 
         $res = (new CoHttpClient())->useCache(false)->send($url, $postData, $this->sendHeaders);
+
+        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
