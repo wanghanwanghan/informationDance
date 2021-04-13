@@ -25,13 +25,15 @@ class HuoYanController extends HuoYanBase
     //仿企名片
     function getData()
     {
-        $tag = $this->request()->getRequestParam('tag') ?? '物联网 硬件';
-        $financing = $this->request()->getRequestParam('financing') ?? 'A轮';
-        $time = $this->request()->getRequestParam('time') ?? '3-4';
-        $province = $this->request()->getRequestParam('province') ?? '北京';
-        $page = $this->request()->getRequestParam('page') ?? '1';
+        $tag = $this->request()->getRequestParam('tag') ?? '';
+        $financing = $this->request()->getRequestParam('financing') ?? '';
+        $time = $this->request()->getRequestParam('time') ?? '';
+        $province = $this->request()->getRequestParam('province') ?? '';
+        $page = $this->request()->getRequestParam('page') ?? '';
 
-        CommonService::getInstance()->log4PHP($time);
+        CommonService::getInstance()->log4PHP([
+            $tag, $financing, $time, $province, $page
+        ]);
 
         $tag !== '不限' ?: $tag = '';
         $financing !== '不限' ?: $financing = '';
