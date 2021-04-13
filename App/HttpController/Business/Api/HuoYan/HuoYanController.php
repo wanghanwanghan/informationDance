@@ -19,7 +19,7 @@ class HuoYanController extends HuoYanBase
 
     private function checkResponse($res)
     {
-        return $this->writeJson($res);
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg'], false);
     }
 
     //仿企名片
@@ -30,10 +30,6 @@ class HuoYanController extends HuoYanBase
         $time = $this->request()->getRequestParam('time') ?? '';
         $province = $this->request()->getRequestParam('province') ?? '';
         $page = $this->request()->getRequestParam('page') ?? '';
-
-        CommonService::getInstance()->log4PHP([
-            $tag, $financing, $time, $province, $page
-        ]);
 
         $tag !== '不限' ?: $tag = '';
         $financing !== '不限' ?: $financing = '';
