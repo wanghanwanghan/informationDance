@@ -57,8 +57,6 @@ class HuoYanService extends ServiceBase
 
         $res = (new CoHttpClient())->useCache(false)->send($url, $postData, $this->sendHeaders);
 
-        CommonService::getInstance()->log4PHP($res);
-
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
 
