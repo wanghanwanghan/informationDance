@@ -47,11 +47,11 @@ class HuoYanService extends ServiceBase
         $url = CreateConf::getInstance()->getConf('huoyan.url');
 
         $postData = [
-            'tag' => $data['tag'] ?? '物联网 硬件',
-            'page' => $data['page'] ?? '1',
-            'province' => $data['province'] ?? '北京',
-            'financing' => $data['financing'] ?? 'A轮',
-            'time' => $data['time'] ?? '3-4'
+            'tag' => $data['tag'],
+            'province' => $data['province'],
+            'financing' => $data['financing'],
+            'time' => $data['time'],
+            'page' => $data['page'],
         ];
 
         $res = (new CoHttpClient())->useCache(false)->send($url, $postData, $this->sendHeaders);
