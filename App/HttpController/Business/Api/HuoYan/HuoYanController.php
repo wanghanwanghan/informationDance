@@ -31,6 +31,8 @@ class HuoYanController extends HuoYanBase
         $province = $this->request()->getRequestParam('province') ?? '北京';
         $page = $this->request()->getRequestParam('page') ?? '1';
 
+        CommonService::getInstance()->log4PHP($time);
+
         $tag !== '不限' ?: $tag = '';
         $financing !== '不限' ?: $financing = '';
         $time !== '不限' ?: $time = '';
@@ -47,8 +49,6 @@ class HuoYanController extends HuoYanBase
             'time' => $time . '',
             'page' => $page . '',
         ];
-
-        CommonService::getInstance()->log4PHP($data);
 
         $res = (new HuoYanService())->setCheckRespFlag(true)->getData($data);
 
