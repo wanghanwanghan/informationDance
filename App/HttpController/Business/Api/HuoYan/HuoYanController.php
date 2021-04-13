@@ -24,7 +24,21 @@ class HuoYanController extends HuoYanBase
     //仿企名片
     function getData()
     {
-        $res = (new HuoYanService())->setCheckRespFlag(true)->getData([]);
+        $tag = $this->request()->getRequestParam('tag') ?? '';
+        $province = $this->request()->getRequestParam('province') ?? '';
+        $financing = $this->request()->getRequestParam('financing') ?? '';
+        $time = $this->request()->getRequestParam('time') ?? '';
+        $page = $this->request()->getRequestParam('page') ?? '';
+
+        $data = [
+            'tag' => $tag,
+            'province' => $province,
+            'financing' => $financing,
+            'time' => $time,
+            'page' => $page,
+        ];
+
+        $res = (new HuoYanService())->setCheckRespFlag(true)->getData($data);
 
         return $this->checkResponse($res);
     }

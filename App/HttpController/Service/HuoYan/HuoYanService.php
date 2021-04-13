@@ -42,16 +42,16 @@ class HuoYanService extends ServiceBase
     }
 
     //仿企名片
-    function getData($postData)
+    function getData($data)
     {
         $url = CreateConf::getInstance()->getConf('huoyan.url');
 
         $postData = [
-            'tag' => '物联网 硬件',
-            'page' => '1',
-            'province' => '北京',
-            'financing' => 'A轮',
-            'time' => '3-4'
+            'tag' => $data['tag'] ?? '物联网 硬件',
+            'page' => $data['page'] ?? '1',
+            'province' => $data['province'] ?? '北京',
+            'financing' => $data['financing'] ?? 'A轮',
+            'time' => $data['time'] ?? '3-4'
         ];
 
         $res = (new CoHttpClient())->useCache(false)->send($url, $postData, $this->sendHeaders);
