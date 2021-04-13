@@ -25,17 +25,26 @@ class HuoYanController extends HuoYanBase
     function getData()
     {
         $tag = $this->request()->getRequestParam('tag') ?? '物联网 硬件';
-        $province = $this->request()->getRequestParam('province') ?? '北京';
         $financing = $this->request()->getRequestParam('financing') ?? 'A轮';
         $time = $this->request()->getRequestParam('time') ?? '3-4';
+        $province = $this->request()->getRequestParam('province') ?? '北京';
         $page = $this->request()->getRequestParam('page') ?? '1';
+
+        $tag !== '不限' ?: $tag = '';
+        $financing !== '不限' ?: $financing = '';
+        $time !== '不限' ?: $time = '';
+        $province !== '不限' ?: $province = '';
+
+        if (!empty($time)) {
+            $time = date('Y') - $time;
+        }
 
         $data = [
             'tag' => $tag,
             'province' => $province,
             'financing' => $financing,
-            'time' => $time,
-            'page' => $page,
+            'time' => $time . '',
+            'page' => $page . '',
         ];
 
         $res = (new HuoYanService())->setCheckRespFlag(true)->getData($data);
