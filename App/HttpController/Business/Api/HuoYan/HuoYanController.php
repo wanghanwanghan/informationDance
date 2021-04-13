@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Api\HuoYan;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HuoYan\HuoYanService;
 
 class HuoYanController extends HuoYanBase
@@ -46,6 +47,8 @@ class HuoYanController extends HuoYanBase
             'time' => $time . '',
             'page' => $page . '',
         ];
+
+        CommonService::getInstance()->log4PHP($data);
 
         $res = (new HuoYanService())->setCheckRespFlag(true)->getData($data);
 
