@@ -36,8 +36,18 @@ class HuoYanController extends HuoYanBase
         $time !== '不限' ?: $time = '';
         $province !== '不限' ?: $province = '';
 
-        if (!empty($time)) {
-            $time = date('Y') - $time;
+        switch ($time) {
+            case '1-3年':
+                $time = '1-3';
+                break;
+            case '3-5年':
+                $time = '3-5';
+                break;
+            case '5-100年':
+                $time = '5-100';
+                break;
+            default:
+                $time = '';
         }
 
         $data = [

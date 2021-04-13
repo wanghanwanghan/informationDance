@@ -44,5 +44,3 @@ $data = [
 //curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);//返回值不直接显示
 //$res = curl_exec($curl);//发送请求
 //dd(json_decode($res, true));
-
-
