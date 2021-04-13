@@ -23,6 +23,7 @@ class Router extends AbstractRouter
             $this->LongXinRouterV1($routeCollector);//龙信
             $this->YuanSuRouterV1($routeCollector);//元素
             $this->GuoPiaoRouterV1($routeCollector);//国票
+            $this->HuoYanRouterV1($routeCollector);//火眼
             $this->Notify($routeCollector);//通知
             $this->ExportExcelRouterV1($routeCollector);//导出excel
             $this->ExportWordRouterV1($routeCollector);//导出word
@@ -84,6 +85,17 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceBalanceSheet', $prefix . 'getFinanceBalanceSheet');//资产负债表查询
             $routeCollector->addRoute(['GET', 'POST'], '/getVatReturn', $prefix . 'getVatReturn');//增值税申报表查询
 
+        });
+
+        return true;
+    }
+
+    private function HuoYanRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Api/HuoYan/HuoYanController/';
+
+        $routeCollector->addGroup('/hy', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getData', $prefix . 'getData');
         });
 
         return true;
