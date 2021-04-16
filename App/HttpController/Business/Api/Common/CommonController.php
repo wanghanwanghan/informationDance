@@ -73,6 +73,8 @@ class CommonController extends CommonBase
 
         if (empty($phone) || empty($type)) return $this->writeJson(201, null, null, '手机号或类别不能是空');
 
+        if (strlen($phone) !== 11 || is_numeric($phone)) return $this->writeJson(201, null, null, '手机号错误');
+
         //验证图片验证码
         $redis = Redis::defer('redis');
         $redis->select(14);
