@@ -58,6 +58,7 @@ $data = [
 //        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
 //        xhr.send(JSON.stringify(data))
 //    }
+
 $size = pow(2, 16);
 $startTime = microtime(true);
 $array = array();
@@ -80,3 +81,8 @@ for ($key = 0, $maxKey = $size - 1; $key <= $maxKey; ++$key) {
 $endTime = microtime(true);
 
 echo '插入 ', $size, ' 个普通元素需要 ', $endTime - $startTime, ' 秒', "\n";
+
+
+
+
+
