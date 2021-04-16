@@ -126,6 +126,10 @@ class UserController extends UserBase
 
         $vCodeInRedis = $redis->get($phone . 'login');
 
+        if (!is_numeric($vCodeInRedis) || $vCodeInRedis <= 1000) {
+            $vCodeInRedis = $redis->get($phone . 'reg');
+        }
+
         if ((int)$vCodeInRedis !== (int)$vCode) return $this->writeJson(201, null, null, '验证码错误');
 
         try {
