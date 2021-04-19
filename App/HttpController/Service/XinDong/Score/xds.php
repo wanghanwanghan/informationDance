@@ -348,6 +348,7 @@ class xds
             'score' => null
         ];
 
+        //
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['NETINC']) && is_numeric($arr['MAIBUSINC'])) {
                 if ($arr['MAIBUSINC'] != 0) {
