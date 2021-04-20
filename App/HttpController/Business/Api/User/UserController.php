@@ -112,7 +112,6 @@ class UserController extends UserBase
             } else {
                 Wallet::create()->data(['phone' => $phone])->save();
             }
-
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
