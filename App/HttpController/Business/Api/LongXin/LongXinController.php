@@ -181,8 +181,8 @@ class LongXinController extends LongXinBase
             foreach ($res['data'] as $year => $val) {
                 //$tmp[$year]['ASSGRO'] = round($val['ASSGRO']);
                 //$tmp[$year]['LIAGRO'] = round($val['LIAGRO']);
-                $tmp[$year]['VENDINC'] = round($val['VENDINC'] * 100);//主营业务收入
-                $tmp[$year]['VENDINC_yoy'] = round($val['VENDINC_yoy']);
+                $tmp[$year]['VENDINC'] = round($val['VENDINC']);//主营业务收入
+                $tmp[$year]['VENDINC_yoy'] = round($val['VENDINC_yoy'] * 100);
                 //$tmp[$year]['MAIBUSINC'] = round($val['MAIBUSINC']);
                 $tmp[$year]['PROGRO'] = round($val['PROGRO']);//利润总额
                 $tmp[$year]['PROGRO_yoy'] = round($val['PROGRO_yoy'] * 100);
