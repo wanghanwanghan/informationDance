@@ -162,49 +162,46 @@ class LongXinController extends LongXinBase
     function getFinanceTemp()
     {
         $entName = $this->request()->getRequestParam('entName') ?? '';
+        $entName = explode(',', $entName);
+        if (empty($entName)) {
+            return $this->writeJson(201, null, null, '公司名称不能是空');
+        }
         $phone = $this->request()->getRequestParam('phone') ?? '';
-        $code = $this->request()->getRequestParam('code') ?? '';
+        $code = '';
         $beginYear = 2019;
         $dataCount = 3;
+        $ready = [];
 
-        $postData = [
-            'entName' => $entName,
-            'code' => $code,
-            'beginYear' => $beginYear,
-            'dataCount' => $dataCount,//取最近几年的
-        ];
-
-        $res = (new LongXinService())->getFinanceData($postData, false);
-
-        if (!empty($res['data'])) {
-            $tmp = [];
-            foreach ($res['data'] as $year => $val) {
-                $tmp[$year]['ASSGRO'] = round($val['ASSGRO']);//资产总额
-                $tmp[$year]['ASSGRO_yoy'] = round($val['ASSGRO_yoy'] * 100);
-                //$tmp[$year]['LIAGRO'] = round($val['LIAGRO']);
-                $tmp[$year]['VENDINC'] = round($val['VENDINC']);//主营业务收入
-                $tmp[$year]['VENDINC_yoy'] = round($val['VENDINC_yoy'] * 100);
-                //$tmp[$year]['MAIBUSINC'] = round($val['MAIBUSINC']);
-                $tmp[$year]['PROGRO'] = round($val['PROGRO']);//利润总额
-                $tmp[$year]['PROGRO_yoy'] = round($val['PROGRO_yoy'] * 100);
-                //$tmp[$year]['NETINC'] = round($val['NETINC']);
-                //$tmp[$year]['RATGRO'] = round($val['RATGRO']);
-                //$tmp[$year]['TOTEQU'] = round($val['TOTEQU']);
-                //$tmp[$year]['SOCNUM'] = round($val['SOCNUM']);
-                if (array_sum($tmp[$year]) === 0.0) {
-                    //如果最后是0，说明所有年份数据都是空，本次查询不收费
-                    $dataCount--;
+        for ($i = 0; $i < count($entName); $i++) {
+            $postData = [
+                'entName' => $entName[$i],
+                'code' => $code,
+                'beginYear' => $beginYear,
+                'dataCount' => $dataCount,//取最近几年的
+            ];
+            $res = (new LongXinService())->getFinanceData($postData, false);
+            if (!empty($res['data'])) {
+                $tmp = [];
+                foreach ($res['data'] as $year => $val) {
+                    $tmp[$year]['ASSGRO'] = round($val['ASSGRO']);//资产总额
+                    $tmp[$year]['ASSGRO_yoy'] = round($val['ASSGRO_yoy'] * 100);
+                    //$tmp[$year]['LIAGRO'] = round($val['LIAGRO']);
+                    $tmp[$year]['VENDINC'] = round($val['VENDINC']);//主营业务收入
+                    $tmp[$year]['VENDINC_yoy'] = round($val['VENDINC_yoy'] * 100);
+                    //$tmp[$year]['MAIBUSINC'] = round($val['MAIBUSINC']);
+                    $tmp[$year]['PROGRO'] = round($val['PROGRO']);//利润总额
+                    $tmp[$year]['PROGRO_yoy'] = round($val['PROGRO_yoy'] * 100);
+                    //$tmp[$year]['NETINC'] = round($val['NETINC']);
+                    //$tmp[$year]['RATGRO'] = round($val['RATGRO']);
+                    //$tmp[$year]['TOTEQU'] = round($val['TOTEQU']);
+                    //$tmp[$year]['SOCNUM'] = round($val['SOCNUM']);
                 }
+                $res['data'] = $tmp;
+                $ready[$entName[$i]] = $tmp;
             }
-            $res['data'] = $tmp;
         }
 
-        $ext = [];
-        if ($dataCount === 0) {
-            $ext['refundToWallet'] = true;
-        }
-
-        return $this->checkResponse($res, $ext);
+        return $this->writeJson(200, null, $ready);
     }
 
 
