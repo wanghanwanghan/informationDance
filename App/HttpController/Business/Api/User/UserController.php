@@ -104,7 +104,15 @@ class UserController extends UserBase
                 'pid' => $pid
             ];
             User::create()->data($insert)->save();
-            Wallet::create()->data(['phone' => $phone])->save();
+            if ($company === '火眼推广20210420') {
+                Wallet::create()->data([
+                    'phone' => $phone,
+                    'money' => 5 * 5 * 35
+                ])->save();
+            } else {
+                Wallet::create()->data(['phone' => $phone])->save();
+            }
+
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
