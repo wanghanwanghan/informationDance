@@ -158,5 +158,51 @@ class LongXinController extends LongXinBase
         return $this->checkResponse($res, $ext);
     }
 
+    //仿企名片时的财务数据
+    function getFinanceTemp()
+    {
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $phone = $this->request()->getRequestParam('phone') ?? '';
+        $code = $this->request()->getRequestParam('code') ?? '';
+        $beginYear = $this->request()->getRequestParam('year') ?? '';
+        $dataCount = $this->request()->getRequestParam('dataCount') ?? '';
+
+        $postData = [
+            'entName' => $entName,
+            'code' => $code,
+            'beginYear' => $beginYear,
+            'dataCount' => $dataCount,//取最近几年的
+        ];
+
+        $res = (new LongXinService())->getFinanceData($postData, false);
+
+        if (!empty($res['data'])) {
+            $tmp = [];
+            foreach ($res['data'] as $year => $val) {
+                $tmp[$year]['ASSGRO'] = round($val['ASSGRO']);
+                $tmp[$year]['LIAGRO'] = round($val['LIAGRO']);
+                $tmp[$year]['VENDINC'] = round($val['VENDINC']);
+                $tmp[$year]['MAIBUSINC'] = round($val['MAIBUSINC']);
+                $tmp[$year]['PROGRO'] = round($val['PROGRO']);
+                $tmp[$year]['NETINC'] = round($val['NETINC']);
+                $tmp[$year]['RATGRO'] = round($val['RATGRO']);
+                $tmp[$year]['TOTEQU'] = round($val['TOTEQU']);
+                $tmp[$year]['SOCNUM'] = round($val['SOCNUM']);
+                if (array_sum($tmp[$year]) === 0.0) {
+                    //如果最后是0，说明所有年份数据都是空，本次查询不收费
+                    $dataCount--;
+                }
+            }
+            $res['data'] = $tmp;
+        }
+
+        $ext = [];
+        if ($dataCount === 0) {
+            $ext['refundToWallet'] = true;
+        }
+
+        return $this->checkResponse($res, $ext);
+    }
+
 
 }
