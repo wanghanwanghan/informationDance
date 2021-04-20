@@ -164,8 +164,8 @@ class LongXinController extends LongXinBase
         $entName = $this->request()->getRequestParam('entName') ?? '';
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $code = $this->request()->getRequestParam('code') ?? '';
-        $beginYear = $this->request()->getRequestParam('year') ?? '';
-        $dataCount = $this->request()->getRequestParam('dataCount') ?? '';
+        $beginYear = 2019;
+        $dataCount = 3;
 
         $postData = [
             'entName' => $entName,
