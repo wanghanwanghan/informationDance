@@ -179,15 +179,17 @@ class LongXinController extends LongXinBase
         if (!empty($res['data'])) {
             $tmp = [];
             foreach ($res['data'] as $year => $val) {
-                $tmp[$year]['ASSGRO'] = round($val['ASSGRO']);
-                $tmp[$year]['LIAGRO'] = round($val['LIAGRO']);
-                $tmp[$year]['VENDINC'] = round($val['VENDINC']);
-                $tmp[$year]['MAIBUSINC'] = round($val['MAIBUSINC']);
-                $tmp[$year]['PROGRO'] = round($val['PROGRO']);
-                $tmp[$year]['NETINC'] = round($val['NETINC']);
-                $tmp[$year]['RATGRO'] = round($val['RATGRO']);
-                $tmp[$year]['TOTEQU'] = round($val['TOTEQU']);
-                $tmp[$year]['SOCNUM'] = round($val['SOCNUM']);
+                //$tmp[$year]['ASSGRO'] = round($val['ASSGRO']);
+                //$tmp[$year]['LIAGRO'] = round($val['LIAGRO']);
+                $tmp[$year]['VENDINC'] = round($val['VENDINC'] * 100);//主营业务收入
+                $tmp[$year]['VENDINC_yoy'] = round($val['VENDINC_yoy']);
+                //$tmp[$year]['MAIBUSINC'] = round($val['MAIBUSINC']);
+                $tmp[$year]['PROGRO'] = round($val['PROGRO']);//利润总额
+                $tmp[$year]['PROGRO_yoy'] = round($val['PROGRO_yoy'] * 100);
+                //$tmp[$year]['NETINC'] = round($val['NETINC']);
+                //$tmp[$year]['RATGRO'] = round($val['RATGRO']);
+                //$tmp[$year]['TOTEQU'] = round($val['TOTEQU']);
+                //$tmp[$year]['SOCNUM'] = round($val['SOCNUM']);
                 if (array_sum($tmp[$year]) === 0.0) {
                     //如果最后是0，说明所有年份数据都是空，本次查询不收费
                     $dataCount--;
