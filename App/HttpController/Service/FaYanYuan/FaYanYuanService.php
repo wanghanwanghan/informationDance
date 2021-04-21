@@ -138,6 +138,10 @@ class FaYanYuanService extends ServiceBase
     {
         $postData['inquired_auth'] = 'authed:20210419-20220419';
 
+        $query = [
+            'query' => jsonEncode($postData, false)
+        ];
+
         $headers = [
             'shesu_auth' => jsonEncode([
                 'uid' => CreateConf::getInstance()->getConf('fayanyuan.shesu_auth_uid'),
@@ -151,7 +155,7 @@ class FaYanYuanService extends ServiceBase
             'cliTimeout' => 5
         ];
 
-        $res = (new CoHttpClient())->useCache(false)->send($url, $postData, $headers, $options);
+        $res = (new CoHttpClient())->useCache(false)->send($url, $query, $headers, $options);
 
         return $this->checkRespFlag ? $this->checkResps($res) : $res;
     }
