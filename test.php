@@ -10,6 +10,7 @@ $url = 'https://api.meirixindong.com/provide/v1/ts/getRegisterInfo';
 $url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceBaseData';
 $url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceCalData';
 $url = 'https://api.meirixindong.com/provide/v1/fyy/entout/org';
+$url = 'https://api.meirixindong.com/provide/v1/fyy/entout/people';
 
 $appId = 'PHP_is_the_best_language_in_the_world';
 $appSecret = 'PHP_GO';
@@ -21,7 +22,8 @@ $data = [
     'time' => $time,
     'sign' => $sign,
     // 'image' => new \CURLFile(realpath('./WechatIMG261-tuya.png'))
-    'entName' => '乐视网信息技术（北京）股份有限公司',
+    'entName' => '李庆飞',
+    'id' => '370503198409120910',
     'code' => '',
     'year' => '2019',
     'dataCount' => '3',
