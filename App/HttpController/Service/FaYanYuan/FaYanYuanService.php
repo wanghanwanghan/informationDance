@@ -57,8 +57,6 @@ class FaYanYuanService extends ServiceBase
 
     private function checkResps($res)
     {
-        CommonService::getInstance()->log4PHP($res);
-
         return $this->createReturn($res['code'], $res['Paging'], $res['Result'], $res['msg']);
     }
 
