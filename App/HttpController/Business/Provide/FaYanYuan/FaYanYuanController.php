@@ -48,7 +48,8 @@ class FaYanYuanController extends ProvideBase
         $url = $this->list . 'entout/portrait/org';
 
         $postData = [
-            'name' => $this->getRequestData('entName')
+            'name' => $this->getRequestData('entName'),
+            'id' => ''
         ];
 
         $this->csp->add($this->cspKey, function () use ($url, $postData) {

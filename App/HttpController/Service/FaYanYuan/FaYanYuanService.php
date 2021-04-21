@@ -155,6 +155,10 @@ class FaYanYuanService extends ServiceBase
             'cliTimeout' => 5
         ];
 
+        CommonService::getInstance()->log4PHP($query);
+        CommonService::getInstance()->log4PHP($headers);
+        CommonService::getInstance()->log4PHP($options);
+
         $res = (new CoHttpClient())->useCache(false)->send($url, $query, $headers, $options);
 
         return $this->checkRespFlag ? $this->checkResps($res) : $res;
