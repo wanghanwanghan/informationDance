@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\FaYanYuan;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
@@ -24,38 +25,41 @@ class FaYanYuanService extends ServiceBase
         return parent::__construct();
     }
 
-    private function checkResp($res,$docType,$type='list')
+    private function checkResp($res, $docType, $type = 'list')
     {
-        $type=ucfirst($type);
+        $type = ucfirst($type);
 
-        if (isset($res['pageNo']) && isset($res['range']) && isset($res['totalCount']) && isset($res['totalPageNum']))
-        {
-            $res['Paging']=[
-                'page'=>$res['pageNo'],
-                'pageSize'=>$res['range'],
-                'total'=>$res['totalCount'],
-                'totalPage'=>$res['totalPageNum'],
+        if (isset($res['pageNo']) && isset($res['range']) && isset($res['totalCount']) && isset($res['totalPageNum'])) {
+            $res['Paging'] = [
+                'page' => $res['pageNo'],
+                'pageSize' => $res['range'],
+                'total' => $res['totalCount'],
+                'totalPage' => $res['totalPageNum'],
             ];
 
-        }else
-        {
-            $res['Paging']=null;
+        } else {
+            $res['Paging'] = null;
         }
 
-        if (isset($res['coHttpErr'])) return $this->createReturn(500,$res['Paging'],[],'co请求错误');
+        if (isset($res['coHttpErr'])) return $this->createReturn(500, $res['Paging'], [], 'co请求错误');
 
         $res['code'] === 's' ? $res['code'] = 200 : $res['code'] = 600;
 
         //拿返回结果
-        if ($type==='List')
-        {
-            isset($res[$docType.$type]) ? $res['Result'] = $res[$docType.$type] : $res['Result'] = [];
-        }else
-        {
+        if ($type === 'List') {
+            isset($res[$docType . $type]) ? $res['Result'] = $res[$docType . $type] : $res['Result'] = [];
+        } else {
             isset($res[$docType]) ? $res['Result'] = $res[$docType] : $res['Result'] = [];
         }
 
-        return $this->createReturn($res['code'],$res['Paging'],$res['Result'],$res['msg']);
+        return $this->createReturn($res['code'], $res['Paging'], $res['Result'], $res['msg']);
+    }
+
+    private function checkResps($res)
+    {
+        CommonService::getInstance()->log4PHP($res);
+
+        return $this->createReturn($res['code'], $res['Paging'], $res['Result'], $res['msg']);
     }
 
     function getList($url, $body)
@@ -84,7 +88,7 @@ class FaYanYuanService extends ServiceBase
 
         $resp = (new CoHttpClient())->send($url, $data);
 
-        return $this->checkRespFlag ? $this->checkResp($resp,$doc_type) : $resp;
+        return $this->checkRespFlag ? $this->checkResp($resp, $doc_type) : $resp;
     }
 
     function getListForPerson($url, $body)
@@ -129,7 +133,28 @@ class FaYanYuanService extends ServiceBase
 
         $resp = (new CoHttpClient())->send($url, $data);
 
-        return $this->checkRespFlag ? $this->checkResp($resp,$body['doc_type'],'detail') : $resp;
+        return $this->checkRespFlag ? $this->checkResp($resp, $body['doc_type'], 'detail') : $resp;
     }
 
+    function entoutOrg($url, $postData)
+    {
+        $postData['inquired_auth'] = 'authed:20210419-20220419';
+
+        $headers = [
+            'shesu_auth' => [
+                'uid' => CreateConf::getInstance()->getConf('fayanyuan.shesu_auth_uid'),
+                'pwd' => CreateConf::getInstance()->getConf('fayanyuan.shesu_auth_pwd')
+            ],
+            'Content-Type' => 'application/x-www-form-urlencoded',
+            'Accept-Encoding' => 'gzip',
+        ];
+
+        $options = [
+            'cliTimeout' => 5
+        ];
+
+        $res = (new CoHttpClient())->useCache(false)->send($url, $postData, $headers, $options);
+
+        return $this->checkRespFlag ? $this->checkResps($res) : $res;
+    }
 }

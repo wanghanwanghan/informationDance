@@ -17,6 +17,7 @@ class ProvideRouter
         $this->QianQiRouterV1($routeCollector);
         $this->GuoPiaoRouterV1($routeCollector);
         $this->XinDongRouterV1($routeCollector);
+        $this->FaYanYuanRouterV1($routeCollector);
     }
 
     private function LongDunRouterV1(RouteCollector $routeCollector)
@@ -86,5 +87,20 @@ class ProvideRouter
         return true;
     }
 
+    private function FaYanYuanRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Provide/FaYanYuan/FaYanYuanController/';
+
+        $routeCollector->addGroup('/fyy', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/entout/org', $prefix . 'entoutOrg');
+            $routeCollector->addRoute(['GET', 'POST'], '/entout/people', $prefix . 'entoutPeople');
+            $routeCollector->addRoute(['GET', 'POST'], '/sxbzxr/org', $prefix . 'sxbzxrOrg');
+            $routeCollector->addRoute(['GET', 'POST'], '/sxbzxr/people', $prefix . 'sxbzxrPeople');
+            $routeCollector->addRoute(['GET', 'POST'], '/xgbzxr/org', $prefix . 'xgbzxrOrg');
+            $routeCollector->addRoute(['GET', 'POST'], '/xgbzxr/people', $prefix . 'xgbzxrPeople');
+        });
+
+        return true;
+    }
 
 }
