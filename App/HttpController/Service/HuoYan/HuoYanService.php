@@ -48,6 +48,7 @@ class HuoYanService extends ServiceBase
         $url = CreateConf::getInstance()->getConf('huoyan.url');
 
         $postData = [
+            'com' => $data['com'],
             'keyword' => $data['keyword'],
             'tag' => $data['tag'],
             'province' => $data['province'],

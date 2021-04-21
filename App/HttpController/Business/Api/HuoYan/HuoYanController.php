@@ -25,7 +25,8 @@ class HuoYanController extends HuoYanBase
     //仿企名片
     function getData()
     {
-        $keyword = $this->request()->getRequestParam('keyword') ?? '';
+        $com = $this->request()->getRequestParam('com') ?? '';//企业
+        $keyword = $this->request()->getRequestParam('keyword') ?? '';//全局
         $tag = $this->request()->getRequestParam('tag') ?? '';
         $financing = $this->request()->getRequestParam('financing') ?? '';
         $time = $this->request()->getRequestParam('time') ?? '';
@@ -52,6 +53,7 @@ class HuoYanController extends HuoYanBase
         }
 
         $data = [
+            'com' => $com,
             'keyword' => $keyword,
             'tag' => $tag,
             'province' => $province,
