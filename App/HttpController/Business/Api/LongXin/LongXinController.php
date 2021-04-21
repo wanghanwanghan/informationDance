@@ -183,13 +183,13 @@ class LongXinController extends LongXinBase
             if (!empty($res['data'])) {
                 $tmp = [];
                 foreach ($res['data'] as $year => $val) {
-                    $tmp[$year]['ASSGRO'] = round($val['ASSGRO']);//资产总额
+                    $tmp[$year]['ASSGRO'] = desensitization(intval(round($val['ASSGRO'])));//资产总额
                     $tmp[$year]['ASSGRO_yoy'] = round($val['ASSGRO_yoy'] * 100);
                     //$tmp[$year]['LIAGRO'] = round($val['LIAGRO']);
-                    $tmp[$year]['VENDINC'] = round($val['VENDINC']);//主营业务收入
+                    $tmp[$year]['VENDINC'] = desensitization(intval(round($val['VENDINC'])));//主营业务收入
                     $tmp[$year]['VENDINC_yoy'] = round($val['VENDINC_yoy'] * 100);
                     //$tmp[$year]['MAIBUSINC'] = round($val['MAIBUSINC']);
-                    $tmp[$year]['PROGRO'] = round($val['PROGRO']);//利润总额
+                    $tmp[$year]['PROGRO'] = desensitization(intval(round($val['PROGRO'])));//利润总额
                     $tmp[$year]['PROGRO_yoy'] = round($val['PROGRO_yoy'] * 100);
                     //$tmp[$year]['NETINC'] = round($val['NETINC']);
                     //$tmp[$year]['RATGRO'] = round($val['RATGRO']);

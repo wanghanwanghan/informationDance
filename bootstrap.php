@@ -101,7 +101,28 @@ function sRound($num, $m = 10)
     return round($saki);
 }
 
+function desensitization($num)
+{
+    if ($num > 0) {
+        $len = strlen($num);
+        if ($num > 9) {
+            $num = substr($num, 0, 1);
+            $num = str_pad($num, $len, 0, STR_PAD_RIGHT);
+        }
+    } elseif ($num < 0) {
+        $num = abs($num);
+        $len = strlen($num);
+        if ($num > 9) {
+            $num = substr($num, 0, 1);
+            $num = str_pad($num, $len, 0, STR_PAD_RIGHT);
+        }
+        $num = '-' . $num;
+    } else {
+        $num = 0;
+    }
 
+    return $num - 0;
+}
 
 
 
