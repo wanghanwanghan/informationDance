@@ -4,16 +4,12 @@ namespace App\HttpController\Business\Provide\FaYanYuan;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
-use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaYanYuan\FaYanYuanService;
 
 class FaYanYuanController extends ProvideBase
 {
-    public $list;
-
     function onRequest(?string $action): ?bool
     {
-        $this->list = CreateConf::getInstance()->getConf('fayanyuan.list');
         return parent::onRequest($action);
     }
 
@@ -45,15 +41,13 @@ class FaYanYuanController extends ProvideBase
     //公开模型 企业
     function entoutOrg()
     {
-        $url = $this->list . 'entout/portrait/org';
-
         $postData = [
             'name' => $this->getRequestData('entName'),
             'id' => ''
         ];
 
-        $this->csp->add($this->cspKey, function () use ($url, $postData) {
-            return (new FaYanYuanService())->setCheckRespFlag(true)->entoutOrg($url, $postData);
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())->setCheckRespFlag(true)->entoutOrg($postData);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);

@@ -134,8 +134,12 @@ class FaYanYuanService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($resp, $body['doc_type'], 'detail') : $resp;
     }
 
-    function entoutOrg($url, $postData)
+    function entoutOrg($postData)
     {
+        $list = CreateConf::getInstance()->getConf('fayanyuan.list');
+
+        $url = $list . 'entout/portrait/org';
+
         $postData['inquired_auth'] = 'authed:20210419-20220419';
 
         $query = [
