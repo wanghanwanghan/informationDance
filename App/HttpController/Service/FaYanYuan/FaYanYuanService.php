@@ -151,7 +151,7 @@ class FaYanYuanService extends ServiceBase
                 'uid' => CreateConf::getInstance()->getConf('fayanyuan.shesu_auth_uid'),
                 'pwd' => CreateConf::getInstance()->getConf('fayanyuan.shesu_auth_pwd')
             ], false),
-            'Content-Type' => 'application/x-www-form-urlencoded',
+            //'Content-Type' => 'application/x-www-form-urlencoded',
             'Accept-Encoding' => 'gzip',
         ];
 
