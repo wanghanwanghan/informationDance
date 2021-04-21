@@ -143,15 +143,14 @@ class FaYanYuanService extends ServiceBase
         $postData['inquired_auth'] = 'authed:20210419-20220419';
 
         $query = [
-            'query' => jsonEncode($postData, false)
+            'query' => jsonEncode($postData)
         ];
 
         $headers = [
             'shesu_auth' => jsonEncode([
                 'uid' => CreateConf::getInstance()->getConf('fayanyuan.shesu_auth_uid'),
                 'pwd' => CreateConf::getInstance()->getConf('fayanyuan.shesu_auth_pwd')
-            ], false),
-            //'Content-Type' => 'application/x-www-form-urlencoded',
+            ]),
             'Accept-Encoding' => 'gzip',
         ];
 
