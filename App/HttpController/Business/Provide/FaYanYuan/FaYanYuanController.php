@@ -55,6 +55,24 @@ class FaYanYuanController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //公开模型 企业
+    function entoutPeople()
+    {
+        $postData = [
+            'name' => $this->getRequestData('entName'),
+            'id' => $this->getRequestData('id')
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())->setCheckRespFlag(true)->entoutPeople($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+
 }
 
 

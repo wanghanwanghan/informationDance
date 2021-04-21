@@ -154,16 +154,36 @@ class FaYanYuanService extends ServiceBase
             'Accept-Encoding' => 'gzip',
         ];
 
-        $options = [
-            'cliTimeout' => 5
-        ];
-
-        CommonService::getInstance()->log4PHP($query);
-        CommonService::getInstance()->log4PHP($headers);
-        CommonService::getInstance()->log4PHP($options);
-
-        $res = (new CoHttpClient())->useCache(false)->send($url, $query, $headers, $options);
+        $res = (new CoHttpClient())->useCache(false)->send($url, $query, $headers);
 
         return $this->checkRespFlag ? $this->checkResps($res) : $res;
     }
+
+    function entoutPeople($postData)
+    {
+        $list = CreateConf::getInstance()->getConf('fayanyuan.list');
+
+        $url = $list . 'entout/portrait/people';
+
+        $postData['inquired_auth'] = 'authed:20210419-20220419';
+
+        $query = [
+            'query' => jsonEncode($postData)
+        ];
+
+        $headers = [
+            'shesu-auth' => jsonEncode([
+                'uid' => CreateConf::getInstance()->getConf('fayanyuan.shesu_auth_uid'),
+                'pwd' => CreateConf::getInstance()->getConf('fayanyuan.shesu_auth_pwd')
+            ]),
+            'Accept-Encoding' => 'gzip',
+        ];
+
+        $res = (new CoHttpClient())->useCache(false)->send($url, $query, $headers);
+
+        return $this->checkRespFlag ? $this->checkResps($res) : $res;
+    }
+
+
+
 }
