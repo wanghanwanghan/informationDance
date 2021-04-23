@@ -57,7 +57,21 @@ class FaYanYuanService extends ServiceBase
 
     private function checkResps($res)
     {
-        return $this->createReturn($res['code'], $res['Paging'], $res['Result'], $res['msg']);
+        if (isset($res['coHttpErr'])) return $this->createReturn(500, null, null, 'co请求错误');
+
+        $result = $msg = $code = null;
+
+        if (isset($res['data'])) {
+            $code = 200;
+            $result = $res['data'];
+        }
+
+        if (isset($res['status'])) {
+            $code = 201;
+            $msg = $res['status'];
+        }
+
+        return $this->createReturn($code, null, $result, $msg);
     }
 
     function getList($url, $body)
@@ -183,7 +197,6 @@ class FaYanYuanService extends ServiceBase
 
         return $this->checkRespFlag ? $this->checkResps($res) : $res;
     }
-
 
 
 }
