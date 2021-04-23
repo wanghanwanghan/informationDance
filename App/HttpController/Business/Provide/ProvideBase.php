@@ -10,7 +10,9 @@ use App\HttpController\Models\Provide\RequestUserApiRelationship;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
+use Carbon\Carbon;
 use EasySwoole\Mysqli\QueryBuilder;
+use EasySwoole\RedisPool\Redis;
 use wanghanwanghan\someUtils\control;
 
 class ProvideBase extends Index
@@ -241,13 +243,32 @@ class ProvideBase extends Index
         $appSecret = $userInfo->appSecret;
         $createSign = substr(strtoupper(md5($appId . $appSecret . $time)), 0, 30);
 
-        if (($sign !== $createSign)) {
+        if ($sign !== $createSign) {
             $this->writeJson(610, null, null, '签名验证错误');
             return false;
         }
 
+        //sign重复提交检查
+        $sign_check = Redis::invoke('redis', function (\EasySwoole\Redis\Redis $redis) use ($sign) {
+            $redis->select(14);
+            $check = !!$redis->sAdd('sign_check_' . Carbon::now()->format('Ymd'), $sign);
+            if ($check) {
+                //添加成功，不是重复提交
+                $redis->expire('sign_check_' . Carbon::now()->format('Ymd'), 86400);
+                return true;
+            } else {
+                //已经添加过，是重复提交
+                return false;
+            }
+        });
+
+        if ($sign_check === false) {
+            $this->writeJson(611, null, null, 'sign重复提交');
+            return false;
+        }
+
         if ($userInfo->status !== 1) {
-            $this->writeJson(611, null, null, 'appId不可用');
+            $this->writeJson(612, null, null, 'appId不可用');
             return false;
         }
 
@@ -255,7 +276,7 @@ class ProvideBase extends Index
 
         if (!empty($allowIp)) {
             if (array_search($this->requestRealIp, explode(',', $allowIp), true)) {
-                $this->writeJson(612, null, null, '请求ip不在白名单');
+                $this->writeJson(613, null, null, '请求ip不在白名单');
                 return false;
             }
         }
