@@ -1377,7 +1377,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //发布日期
             $docObj->setValue("zp_PublishDate#" . ($i + 1), $this->formatDate($data['Recruitment']['list'][$i]['PublishDate']));
         }
-        $docObj->setValue("ap_total", (int)$data['Recruitment']['total']);
+        $docObj->setValue("zp_total", (int)$data['Recruitment']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,28,$this->entName,true);
         $docObj->setValue('zpxx_oneSaid', $oneSaid);
