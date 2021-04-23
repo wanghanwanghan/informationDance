@@ -19,7 +19,7 @@ class HuoYanController extends HuoYanBase
 
     private function checkResponse($res)
     {
-        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg'], false);
+        return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //仿企名片

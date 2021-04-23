@@ -251,10 +251,10 @@ class ProvideBase extends Index
         //sign重复提交检查
         $sign_check = Redis::invoke('redis', function (\EasySwoole\Redis\Redis $redis) use ($sign) {
             $redis->select(14);
-            $check = !!$redis->sAdd('sign_check_' . Carbon::now()->format('Ymd'), $sign);
+            $check = !!$redis->sAdd('sign_check_' . Carbon::now()->format('YmdH'), $sign);
             if ($check) {
                 //添加成功，不是重复提交
-                $redis->expire('sign_check_' . Carbon::now()->format('Ymd'), 86400);
+                $redis->expire('sign_check_' . Carbon::now()->format('YmdH'), control::randNum(2) * 6);
                 return true;
             } else {
                 //已经添加过，是重复提交
