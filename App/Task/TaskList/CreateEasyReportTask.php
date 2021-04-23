@@ -1359,24 +1359,25 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->setValue('zyry_ocr', $ocr);
 
         //招聘信息
-        $rows = count($data['Recruitment']);
+        $rows = count($data['Recruitment']['list']);
         $docObj->cloneRow('zp_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
             $docObj->setValue("zp_no#" . ($i + 1), $i + 1);
             //职位名称
-            $docObj->setValue("zp_Title#" . ($i + 1), $data['Recruitment'][$i]['Title']);
+            $docObj->setValue("zp_Title#" . ($i + 1), $data['Recruitment']['list'][$i]['Title']);
             //工作地点
-            $docObj->setValue("zp_ProvinceDesc#" . ($i + 1), $data['Recruitment'][$i]['ProvinceDesc']);
+            $docObj->setValue("zp_ProvinceDesc#" . ($i + 1), $data['Recruitment']['list'][$i]['ProvinceDesc']);
             //月薪
-            $docObj->setValue("zp_Salary#" . ($i + 1), $data['Recruitment'][$i]['Salary']);
+            $docObj->setValue("zp_Salary#" . ($i + 1), $data['Recruitment']['list'][$i]['Salary']);
             //经验
-            $docObj->setValue("zp_Experience#" . ($i + 1), $data['Recruitment'][$i]['Experience']);
+            $docObj->setValue("zp_Experience#" . ($i + 1), $data['Recruitment']['list'][$i]['Experience']);
             //学历
-            $docObj->setValue("zp_Education#" . ($i + 1), $data['Recruitment'][$i]['Education']);
+            $docObj->setValue("zp_Education#" . ($i + 1), $data['Recruitment']['list'][$i]['Education']);
             //发布日期
-            $docObj->setValue("zp_PublishDate#" . ($i + 1), $this->formatDate($data['Recruitment'][$i]['PublishDate']));
+            $docObj->setValue("zp_PublishDate#" . ($i + 1), $this->formatDate($data['Recruitment']['list'][$i]['PublishDate']));
         }
+        $docObj->setValue("ap_total", (int)$data['Recruitment']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,28,$this->entName,true);
         $docObj->setValue('zpxx_oneSaid', $oneSaid);
@@ -2998,6 +2999,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $tmp['list'] = $res;
             $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //龙盾 债券信息
@@ -3017,6 +3020,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $tmp['list'] = $res;
             $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //龙盾 网站信息
@@ -3036,6 +3041,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $tmp['list'] = $res;
             $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //龙盾 微博
@@ -3055,6 +3062,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $tmp['list'] = $res;
             $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //龙盾 新闻舆情
@@ -3074,6 +3083,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $tmp['list'] = $res;
             $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //乾启 近三年团队人数变化率
@@ -3134,6 +3145,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $tmp['list'] = $res;
             $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //龙盾 招聘信息
@@ -3142,14 +3155,19 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $postData = [
                 'searchKey' => $this->entName,
                 'pageIndex' => 1,
-                'pageSize' => 10,
+                'pageSize' => 20,
             ];
 
             $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'Recruitment/GetList', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ?
+                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [null, null];
 
-            return $res;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //龙信 财务
