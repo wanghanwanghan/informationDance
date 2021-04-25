@@ -765,7 +765,7 @@ TEMP;
     {
         if (array_key_exists(__FUNCTION__,$cspData))
         {
-            $insert = '';
+            $insert = $num = '';
 
             $ocrData = $this->getOcrData('0-3',9);
 
@@ -773,7 +773,9 @@ TEMP;
             {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__] as $one)
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
@@ -795,6 +797,9 @@ TEMP;
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="9" style="text-align: center;background-color: #d3d3d3">法人对外投资</td>
+    </tr>
+    <tr>
+        <td colspan="9">法人对外投资 {$num} 项，报告中提供最新的 20 条记录</td>
     </tr>
     <tr>
         <td>序号</td>
@@ -820,7 +825,7 @@ TEMP;
     {
         if (array_key_exists(__FUNCTION__,$cspData))
         {
-            $insert = '';
+            $insert = $num = '';
 
             $ocrData = $this->getOcrData('0-4',9);
 
@@ -828,7 +833,9 @@ TEMP;
             {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__] as $one)
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
@@ -850,6 +857,9 @@ TEMP;
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="9" style="text-align: center;background-color: #d3d3d3">法人对外任职</td>
+    </tr>
+    <tr>
+        <td colspan="9">法人对外任职 {$num} 项，报告中提供最新的 20 条记录</td>
     </tr>
     <tr>
         <td>序号</td>
@@ -875,13 +885,15 @@ TEMP;
     {
         if (array_key_exists(__FUNCTION__,$cspData))
         {
-            $insert = '';
+            $insert = $num = '';
 
             $ocrData = $this->getOcrData('0-5',9);
 
             if (!empty($cspData[__FUNCTION__]))
             {
                 $i = 1;
+
+                $num = $cspData[__FUNCTION__]['total'];
 
                 foreach ($cspData[__FUNCTION__]['list'] as $one)
                 {
@@ -907,6 +919,9 @@ TEMP;
         <td colspan="9" style="text-align: center;background-color: #d3d3d3">企业对外投资</td>
     </tr>
     <tr>
+        <td colspan="9">企业对外投资 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
         <td>序号</td>
         <td>被投资企业名称</td>
         <td>成立日期</td>
@@ -930,7 +945,7 @@ TEMP;
     {
         if (array_key_exists(__FUNCTION__,$cspData))
         {
-            $insert = '';
+            $insert = $num = '';
 
             $ocrData = $this->getOcrData('0-6',6);
 
@@ -938,7 +953,9 @@ TEMP;
             {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__] as $one)
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
@@ -957,6 +974,9 @@ TEMP;
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="6" style="text-align: center;background-color: #d3d3d3">分支机构</td>
+    </tr>
+    <tr>
+        <td colspan="6">分支机构 {$num} 项，报告中提供最新的 20 条记录</td>
     </tr>
     <tr>
         <td>序号</td>
@@ -1063,13 +1083,15 @@ TEMP;
     {
         if (array_key_exists(__FUNCTION__,$cspData))
         {
-            $insert = '';
+            $insert = $num = '';
 
             $ocrData = $this->getOcrData('1-1',5);
 
             if (!empty($cspData[__FUNCTION__]))
             {
                 $i = 1;
+
+                $num = $cspData[__FUNCTION__]['total'];
 
                 foreach ($cspData[__FUNCTION__]['list'] as $one)
                 {
@@ -1091,6 +1113,9 @@ TEMP;
         <td colspan="5" style="text-align: center;background-color: #d3d3d3">招投标信息</td>
     </tr>
     <tr>
+        <td colspan="5">招投标信息 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
         <td width="7%">序号</td>
         <td width="48%">描述</td>
         <td width="15%">发布日期</td>
@@ -1110,7 +1135,7 @@ TEMP;
     {
         if (array_key_exists(__FUNCTION__,$cspData))
         {
-            $insert = '';
+            $insert = $num = '';
 
             $ocrData = $this->getOcrData('1-2',7);
 
@@ -1118,7 +1143,9 @@ TEMP;
             {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__] as $one)
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
@@ -1138,6 +1165,9 @@ TEMP;
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="7" style="text-align: center;background-color: #d3d3d3">购地信息</td>
+    </tr>
+    <tr>
+        <td colspan="7">购地信息 {$num} 项，报告中提供最新的 20 条记录</td>
     </tr>
     <tr>
         <td width="7%">序号</td>
@@ -1161,7 +1191,7 @@ TEMP;
     {
         if (array_key_exists(__FUNCTION__,$cspData))
         {
-            $insert = '';
+            $insert = $num = '';
 
             $ocrData = $this->getOcrData('1-3',5);
 
@@ -1169,7 +1199,9 @@ TEMP;
             {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__] as $one)
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
@@ -1187,6 +1219,9 @@ TEMP;
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="5" style="text-align: center;background-color: #d3d3d3">土地公示</td>
+    </tr>
+    <tr>
+        <td colspan="5">土地公示 {$num} 项，报告中提供最新的 20 条记录</td>
     </tr>
     <tr>
         <td width="7%">序号</td>
@@ -1208,7 +1243,7 @@ TEMP;
     {
         if (array_key_exists(__FUNCTION__,$cspData))
         {
-            $insert = '';
+            $insert = $num = '';
 
             $ocrData = $this->getOcrData('1-4',8);
 
@@ -1216,7 +1251,9 @@ TEMP;
             {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__] as $one)
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
@@ -1237,6 +1274,9 @@ TEMP;
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="8" style="text-align: center;background-color: #d3d3d3">土地转让</td>
+    </tr>
+    <tr>
+        <td colspan="8">土地转让 {$num} 项，报告中提供最新的 20 条记录</td>
     </tr>
     <tr>
         <td>序号</td>
@@ -1261,7 +1301,7 @@ TEMP;
     {
         if (array_key_exists(__FUNCTION__,$cspData))
         {
-            $insert = '';
+            $insert = $num = '';
 
             $ocrData = $this->getOcrData('1-5',7);
 
@@ -1269,7 +1309,9 @@ TEMP;
             {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__] as $one)
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
@@ -1289,6 +1331,9 @@ TEMP;
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="7" style="text-align: center;background-color: #d3d3d3">建筑资质证书</td>
+    </tr>
+    <tr>
+        <td colspan="7">建筑资质证书 {$num} 项，报告中提供最新的 20 条记录</td>
     </tr>
     <tr>
         <td width="7%">序号</td>
@@ -1312,7 +1357,7 @@ TEMP;
     {
         if (array_key_exists(__FUNCTION__,$cspData))
         {
-            $insert = '';
+            $insert = $num = '';
 
             $ocrData = $this->getOcrData('1-6',6);
 
@@ -1320,7 +1365,9 @@ TEMP;
             {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__] as $one)
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
@@ -1346,6 +1393,9 @@ TEMP;
         <td colspan="6" style="text-align: center;background-color: #d3d3d3">建筑工程项目</td>
     </tr>
     <tr>
+        <td colspan="6">建筑工程项目 {$num} 项，报告中提供最新的 20 条记录</td>
+    </tr>
+    <tr>
         <td width="7%">序号</td>
         <td width="20%">项目编码</td>
         <td width="24%">项目名称</td>
@@ -1366,7 +1416,7 @@ TEMP;
     {
         if (array_key_exists(__FUNCTION__,$cspData))
         {
-            $insert = '';
+            $insert = $num = '';
 
             $ocrData = $this->getOcrData('1-7',6);
 
@@ -1374,7 +1424,9 @@ TEMP;
             {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__] as $one)
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
@@ -1393,6 +1445,9 @@ TEMP;
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="6" style="text-align: center;background-color: #d3d3d3">债券信息</td>
+    </tr>
+    <tr>
+        <td colspan="6">债券信息 {$num} 项，报告中提供最新的 20 条记录</td>
     </tr>
     <tr>
         <td>序号</td>
@@ -1415,7 +1470,7 @@ TEMP;
     {
         if (array_key_exists(__FUNCTION__,$cspData))
         {
-            $insert = '';
+            $insert = $num = '';
 
             $ocrData = $this->getOcrData('1-8',6);
 
@@ -1423,7 +1478,9 @@ TEMP;
             {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__] as $one)
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
@@ -1442,6 +1499,9 @@ TEMP;
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="6" style="text-align: center;background-color: #d3d3d3">网站信息</td>
+    </tr>
+    <tr>
+        <td colspan="6">网站信息 {$num} 项，报告中提供最新的 20 条记录</td>
     </tr>
     <tr>
         <td>序号</td>
@@ -1464,7 +1524,7 @@ TEMP;
     {
         if (array_key_exists(__FUNCTION__,$cspData))
         {
-            $insert = '';
+            $insert = $num = '';
 
             $ocrData = $this->getOcrData('1-9',5);
 
@@ -1472,7 +1532,9 @@ TEMP;
             {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__] as $one)
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
@@ -1490,6 +1552,9 @@ TEMP;
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="5" style="text-align: center;background-color: #d3d3d3">微博</td>
+    </tr>
+    <tr>
+        <td colspan="5">微博 {$num} 项，报告中提供最新的 20 条记录</td>
     </tr>
     <tr>
         <td width="7%">序号</td>
@@ -1511,7 +1576,7 @@ TEMP;
     {
         if (array_key_exists(__FUNCTION__,$cspData))
         {
-            $insert = '';
+            $insert = $num = '';
 
             $ocrData = $this->getOcrData('1-10',5);
 
@@ -1519,7 +1584,9 @@ TEMP;
             {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__] as $one)
+                $num = $cspData[__FUNCTION__]['total'];
+
+                foreach ($cspData[__FUNCTION__]['list'] as $one)
                 {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
@@ -1537,6 +1604,9 @@ TEMP;
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
     <tr>
         <td colspan="5" style="text-align: center;background-color: #d3d3d3">新闻舆情</td>
+    </tr>
+    <tr>
+        <td colspan="5">新闻舆情 {$num} 项，报告中提供最新的 20 条记录</td>
     </tr>
     <tr>
         <td width="7%">序号</td>
@@ -6625,12 +6695,17 @@ TEMP;
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
                 'entName' => $this->entName,
                 'pageNo' => 1,
-                'pageSize' => 10,
+                'pageSize' => 20,
             ], 'lawPersonInvestmentInfo');
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ?
+                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [null, null];
 
-            return $res;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //淘数 法人对外任职
@@ -6639,12 +6714,17 @@ TEMP;
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
                 'entName' => $this->entName,
                 'pageNo' => 1,
-                'pageSize' => 10,
+                'pageSize' => 20,
             ], 'getLawPersontoOtherInfo');
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ?
+                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [null, null];
 
-            return $res;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //淘数 企业对外投资
@@ -6653,10 +6733,12 @@ TEMP;
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
                 'entName' => $this->entName,
                 'pageNo' => 1,
-                'pageSize' => 10,
+                'pageSize' => 20,
             ], 'getInvestmentAbroadInfo');
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
+            ($res['code'] === 200 && !empty($res['result'])) ?
+                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [null, null];
 
             $tmp['list'] = $res;
             $tmp['total'] = $total;
@@ -6670,12 +6752,17 @@ TEMP;
             $res = (new TaoShuService())->setCheckRespFlag(true)->post([
                 'entName' => $this->entName,
                 'pageNo' => 1,
-                'pageSize' => 10,
+                'pageSize' => 20,
             ], 'getBranchInfo');
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ?
+                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [null, null];
 
-            return $res;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //龙盾 银行信息
@@ -6708,12 +6795,14 @@ TEMP;
             $postData = [
                 'searchKey' => $this->entName,
                 'pageIndex' => 1,
-                'pageSize' => 10,
+                'pageSize' => 20,
             ];
 
             $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'Tender/Search', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
+            ($res['code'] === 200 && !empty($res['result'])) ?
+                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [null, null];
 
             $tmp['list'] = $res;
             $tmp['total'] = $total;
@@ -6727,14 +6816,20 @@ TEMP;
             $postData = [
                 'searchKey' => $this->entName,
                 'pageIndex' => 1,
-                'pageSize' => 10,
+                'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandPurchase/LandPurchaseList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)
+                ->get($this->ldUrl . 'LandPurchase/LandPurchaseList', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ?
+                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [null, null];
 
-            return $res;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //龙盾 土地公示
@@ -6743,14 +6838,20 @@ TEMP;
             $postData = [
                 'searchKey' => $this->entName,
                 'pageIndex' => 1,
-                'pageSize' => 10,
+                'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandPublish/LandPublishList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)
+                ->get($this->ldUrl . 'LandPublish/LandPublishList', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ?
+                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [null, null];
 
-            return $res;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //龙盾 土地转让
@@ -6759,25 +6860,32 @@ TEMP;
             $postData = [
                 'searchKey' => $this->entName,
                 'pageIndex' => 1,
-                'pageSize' => 10,
+                'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandTransfer/LandTransferList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)
+                ->get($this->ldUrl . 'LandTransfer/LandTransferList', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ?
+                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [null, null];
 
-            if (!empty($res)) {
-                foreach ($res as &$one) {
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
+
+            if (!empty($tmp['list'])) {
+                foreach ($tmp['list'] as &$one) {
                     //取详情
                     $post = ['id' => $one['Id']];
-                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandTransfer/LandTransferDetail', $post);
+                    $detail = (new LongDunService())->setCheckRespFlag(true)
+                        ->get($this->ldUrl . 'LandTransfer/LandTransferDetail', $post);
                     ($detail['code'] == 200 && !empty($detail['result'])) ? $detail = $detail['result'] : $detail = null;
                     $one['detail'] = $detail;
                 }
                 unset($one);
             }
 
-            return $res;
+            return $tmp;
         });
 
         //龙盾 建筑资质证书
@@ -6786,14 +6894,20 @@ TEMP;
             $postData = [
                 'searchKey' => $this->entName,
                 'pageIndex' => 1,
-                'pageSize' => 10,
+                'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'Qualification/GetList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)
+                ->get($this->ldUrl . 'Qualification/GetList', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ?
+                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [null, null];
 
-            return $res;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //龙盾 建筑工程项目
@@ -6802,14 +6916,20 @@ TEMP;
             $postData = [
                 'searchKey' => $this->entName,
                 'pageIndex' => 1,
-                'pageSize' => 10,
+                'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'BuildingProject/GetList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)
+                ->get($this->ldUrl . 'BuildingProject/GetList', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ?
+                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [null, null];
 
-            return $res;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //龙盾 债券信息
@@ -6818,14 +6938,20 @@ TEMP;
             $postData = [
                 'searchKey' => $this->entName,
                 'pageIndex' => 1,
-                'pageSize' => 10,
+                'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'Bond/BondList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)
+                ->get($this->ldUrl . 'Bond/BondList', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ?
+                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [null, null];
 
-            return $res;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //龙盾 网站信息
@@ -6834,14 +6960,20 @@ TEMP;
             $postData = [
                 'searchKey' => $this->entName,
                 'pageIndex' => 1,
-                'pageSize' => 10,
+                'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'WebSiteV4/GetCompanyWebSite', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)
+                ->get($this->ldUrl . 'WebSiteV4/GetCompanyWebSite', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ?
+                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [null, null];
 
-            return $res;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //龙盾 微博
@@ -6850,14 +6982,20 @@ TEMP;
             $postData = [
                 'searchKey' => $this->entName,
                 'pageIndex' => 1,
-                'pageSize' => 10,
+                'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'Microblog/GetList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)
+                ->get($this->ldUrl . 'Microblog/GetList', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ?
+                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [null, null];
 
-            return $res;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //龙盾 新闻舆情
@@ -6866,14 +7004,19 @@ TEMP;
             $postData = [
                 'searchKey' => $this->entName,
                 'pageIndex' => 1,
-                'pageSize' => 10,
+                'pageSize' => 20,
             ];
 
             $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'CompanyNews/SearchNews', $postData);
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ?
+                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [null, null];
 
-            return $res;
+            $tmp['list'] = $res;
+            $tmp['total'] = $total;
+
+            return $tmp;
         });
 
         //乾启 近三年团队人数变化率

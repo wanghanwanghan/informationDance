@@ -53,7 +53,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         switch ($this->type) {
             case 'xd':
                 $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'logo.jpg', 'width' => 200, 'height' => 40]);
-                $tmp->setValue('selectMore', '如需更多信息登录移动端小程序 信动智调 查看');
+                $tmp->setValue('selectMore', '如需更多信息登录 信动智调 查看');
                 break;
             case 'wh':
                 $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'wh_logo.png', 'width' => 200, 'height' => 40]);
