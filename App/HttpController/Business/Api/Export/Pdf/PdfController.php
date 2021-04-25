@@ -39,13 +39,17 @@ class PdfController extends ExportBase
         $pay = $this->request()->getRequestParam('pay') ?? 0;
         $dataKey = $this->request()->getRequestParam('dataKey') ?? '';
 
-        if (!CommonService::getInstance()->validateEmail($email) && $pay == 1) {
-            return $this->writeJson(201, null, null, 'email格式错误');
+        if ($email !== '20210425修改') {
+            if (!CommonService::getInstance()->validateEmail($email) && $pay == 1) {
+                return $this->writeJson(201, null, null, 'email格式错误');
+            }
         }
 
         try {
             $userInfo = User::create()->where('phone', $phone)->get();
-            $pay != 1 ?: $userInfo->update(['email' => $email]);
+            if ($email !== '20210425修改') {
+                $pay != 1 ?: $userInfo->update(['email' => $email]);
+            }
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
@@ -77,13 +81,17 @@ class PdfController extends ExportBase
         $pay = $this->request()->getRequestParam('pay') ?? 0;
         $dataKey = $this->request()->getRequestParam('dataKey') ?? '';
 
-        if (!CommonService::getInstance()->validateEmail($email) && $pay == 1) {
-            return $this->writeJson(201, null, null, 'email格式错误');
+        if ($email !== '20210425修改') {
+            if (!CommonService::getInstance()->validateEmail($email) && $pay == 1) {
+                return $this->writeJson(201, null, null, 'email格式错误');
+            }
         }
 
         try {
             $userInfo = User::create()->where('phone', $phone)->get();
-            $pay != 1 ?: $userInfo->update(['email' => $email]);
+            if ($email !== '20210425修改') {
+                $pay != 1 ?: $userInfo->update(['email' => $email]);
+            }
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
@@ -115,13 +123,17 @@ class PdfController extends ExportBase
         $pay = $this->request()->getRequestParam('pay') ?? 0;
         $dataKey = $this->request()->getRequestParam('dataKey') ?? '';
 
-        if (!CommonService::getInstance()->validateEmail($email) && $pay == 1) {
-            return $this->writeJson(201, null, null, 'email格式错误');
+        if ($email !== '20210425修改') {
+            if (!CommonService::getInstance()->validateEmail($email) && $pay == 1) {
+                return $this->writeJson(201, null, null, 'email格式错误');
+            }
         }
 
         try {
             $userInfo = User::create()->where('phone', $phone)->get();
-            $pay != 1 ?: $userInfo->update(['email' => $email]);
+            if ($email !== '20210425修改') {
+                $pay != 1 ?: $userInfo->update(['email' => $email]);
+            }
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
