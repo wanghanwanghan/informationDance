@@ -214,6 +214,90 @@ class LongXinController extends LongXinBase
         return $this->checkResponse($res, $ext);
     }
 
+    //近n年的财务数据，需要授权
+    function getFinanceNeedAuthNew()
+    {
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $entName = explode(',', $entName);
+        if (empty($entName)) {
+            return $this->writeJson(201, null, null, '公司名称不能是空');
+        }
+        $phone = $this->request()->getRequestParam('phone') ?? '';
+        $code = $this->request()->getRequestParam('code') ?? '';
+        $beginYear = $this->request()->getRequestParam('year') ?? '';
+        $dataCount = $this->request()->getRequestParam('dataCount') ?? '';
+
+        $return = [];
+
+        for ($i = 0; $i < count($entName); $i++) {
+            //这里验证授权书是否审核通过
+            try {
+                $check = AuthBook::create()
+                    ->where([
+                        'phone' => $phone,
+                        'entName' => $entName[$i],
+                        'status' => 3,
+                        'type' => 1,
+                    ])
+                    ->where('created_at', Carbon::now()->subYears(1)->timestamp, '>')//1年内有效
+                    ->get();
+            } catch (\Throwable $e) {
+                return $this->writeErr($e, __FUNCTION__);
+            }
+
+            if (empty($check)) {
+                return $this->writeJson(201, null, null, '未授权或授权超过1年有效期');
+            }
+
+            $postData = [
+                'entName' => $entName[$i],
+                'code' => $code,
+                'beginYear' => $beginYear,
+                'dataCount' => $dataCount,//取最近几年的
+            ];
+            $res = (new LongXinService())->getFinanceData($postData, false);
+            //30资产总额同比 ASSGRO_yoy
+            //31负债总额同比 LIAGRO_yoy
+            //32营业总收入同比 VENDINC_yoy
+            //33主营业务收入同比 MAIBUSINC_yoy
+            //34利润总额同比 PROGRO_yoy
+            //35净利润同比 NETINC_yoy
+            //36纳税总额同比 RATGRO_yoy
+            //37所有者权益同比 TOTEQU_yoy
+            if (!empty($res['data'])) {
+                $tmp = [];
+                foreach ($res['data'] as $year => $val) {
+                    $tmp[$year]['ASSGRO'] = desensitization(intval(round($val['ASSGRO'])));
+                    $tmp[$year]['LIAGRO'] = desensitization(intval(round($val['LIAGRO'])));
+                    $tmp[$year]['VENDINC'] = desensitization(intval(round($val['VENDINC'])));
+                    $tmp[$year]['MAIBUSINC'] = desensitization(intval(round($val['MAIBUSINC'])));
+                    $tmp[$year]['PROGRO'] = desensitization(intval(round($val['PROGRO'])));
+                    $tmp[$year]['NETINC'] = desensitization(intval(round($val['NETINC'])));
+                    $tmp[$year]['RATGRO'] = desensitization(intval(round($val['RATGRO'])));
+                    $tmp[$year]['TOTEQU'] = desensitization(intval(round($val['TOTEQU'])));
+                    $tmp[$year]['ASSGRO_yoy'] = round($val['ASSGRO_yoy'] * 100);
+                    $tmp[$year]['LIAGRO_yoy'] = round($val['LIAGRO_yoy'] * 100);
+                    $tmp[$year]['VENDINC_yoy'] = round($val['VENDINC_yoy'] * 100);
+                    $tmp[$year]['MAIBUSINC_yoy'] = round($val['MAIBUSINC_yoy'] * 100);
+                    $tmp[$year]['PROGRO_yoy'] = round($val['PROGRO_yoy'] * 100);
+                    $tmp[$year]['NETINC_yoy'] = round($val['NETINC_yoy'] * 100);
+                    $tmp[$year]['RATGRO_yoy'] = round($val['RATGRO_yoy'] * 100);
+                    $tmp[$year]['TOTEQU_yoy'] = round($val['TOTEQU_yoy'] * 100);
+                }
+                $return[$entName[$i]] = $tmp;
+            }
+        }
+
+        $ext = [];
+        if ($dataCount === 0) {
+            $ext['refundToWallet'] = true;
+        }
+
+        $res['data'] = $return;
+
+        return $this->checkResponse($res, $ext);
+    }
+
     //仿企名片时的财务数据
     function getFinanceTemp()
     {
