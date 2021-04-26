@@ -336,8 +336,9 @@ class Router extends AbstractRouter
         $prefix = '/Business/Api/LongXin/LongXinController/';
 
         $routeCollector->addGroup('/lx', function (RouteCollector $routeCollector) use ($prefix) {
-            $routeCollector->addRoute(['GET', 'POST'], '/getFinanceNotAuth', $prefix . 'getFinanceNotAuth');//近n年财务数据，不需授权
-            $routeCollector->addRoute(['GET', 'POST'], '/getFinanceNeedAuth', $prefix . 'getFinanceNeedAuth');//近n年财务数据，需授权
+            $routeCollector->addRoute(['GET', 'POST'], '/getFinanceNotAuth', $prefix . 'getFinanceNotAuth');
+            $routeCollector->addRoute(['GET', 'POST'], '/getFinanceNotAuthNew', $prefix . 'getFinanceNotAuthNew');
+            $routeCollector->addRoute(['GET', 'POST'], '/getFinanceNeedAuth', $prefix . 'getFinanceNeedAuth');
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceTemp', $prefix . 'getFinanceTemp');//仿企名片时的财务数据
         });
 

@@ -47,15 +47,13 @@ class ServiceBase
     //返回结果给信动controller
     function createReturn($code = 500, $paging = null, $result = [], $msg = null): array
     {
-        $data = [
+        return [
             'code' => $code,
             'paging' => $paging,
             'result' => $result,
             'msg' => $msg,
             'checkRespFlag' => $this->checkRespFlag,
         ];
-
-        return $data;
     }
 
     //
