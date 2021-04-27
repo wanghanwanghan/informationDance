@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Api\LongXin;
 
 use App\HttpController\Models\Api\AuthBook;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Pay\ChargeService;
 use Carbon\Carbon;
@@ -320,6 +321,7 @@ class LongXinController extends LongXinBase
                 'dataCount' => $dataCount,//取最近几年的
             ];
             $res = (new LongXinService())->getFinanceData($postData, false);
+            CommonService::getInstance()->log4PHP($res);
             //30资产总额同比 ASSGRO_yoy
             //31负债总额同比 LIAGRO_yoy
             //32营业总收入同比 VENDINC_yoy
