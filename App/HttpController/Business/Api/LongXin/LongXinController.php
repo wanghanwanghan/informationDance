@@ -321,7 +321,6 @@ class LongXinController extends LongXinBase
                 'dataCount' => $dataCount,//取最近几年的
             ];
             $res = (new LongXinService())->getFinanceData($postData, false);
-            CommonService::getInstance()->log4PHP($res);
             //30资产总额同比 ASSGRO_yoy
             //31负债总额同比 LIAGRO_yoy
             //32营业总收入同比 VENDINC_yoy
@@ -355,7 +354,7 @@ class LongXinController extends LongXinBase
                 $res['data'] = $tmp;
                 $ready[$entName[$i]] = $tmp;
 
-                foreach ($ready as $entName => $arr) {
+                foreach ($ready as $entNameKey => $arr) {
                     //算分
                     $VENDINC = 0;
                     $VENDINC_yoy = 0;
@@ -363,7 +362,7 @@ class LongXinController extends LongXinBase
                     $PROGRO_yoy = 0;
                     $ASSGRO = 0;
                     $ASSGRO_yoy = 0;
-                    foreach ($arr as $year => $fieldArr) {
+                    foreach ($arr as $yearKey => $fieldArr) {
                         //==========================企业规模状况==========================
                         if ($fieldArr['VENDINC'] <= 0) {
                             $VENDINC_s = 9;
@@ -398,9 +397,9 @@ class LongXinController extends LongXinBase
                         } else {
                             $VENDINC_s = 98;
                         }
-                        if ($year == 2017) $VENDINC += $VENDINC_s * 0.1;
-                        if ($year == 2018) $VENDINC += $VENDINC_s * 0.3;
-                        if ($year == 2019) $VENDINC += $VENDINC_s * 0.6;
+                        if ($yearKey == 2017) $VENDINC += $VENDINC_s * 0.1;
+                        if ($yearKey == 2018) $VENDINC += $VENDINC_s * 0.3;
+                        if ($yearKey == 2019) $VENDINC += $VENDINC_s * 0.6;
                         //==========================企业成长性状况==========================
                         if ($fieldArr['VENDINC_yoy'] <= -50) {
                             $VENDINC_yoy_s = 4;
@@ -433,9 +432,9 @@ class LongXinController extends LongXinBase
                         } else {
                             $VENDINC_yoy_s = 97.5;
                         }
-                        if ($year == 2017) $VENDINC_yoy += $VENDINC_yoy_s * 0.1;
-                        if ($year == 2018) $VENDINC_yoy += $VENDINC_yoy_s * 0.3;
-                        if ($year == 2019) $VENDINC_yoy += $VENDINC_yoy_s * 0.6;
+                        if ($yearKey == 2017) $VENDINC_yoy += $VENDINC_yoy_s * 0.1;
+                        if ($yearKey == 2018) $VENDINC_yoy += $VENDINC_yoy_s * 0.3;
+                        if ($yearKey == 2019) $VENDINC_yoy += $VENDINC_yoy_s * 0.6;
                         //==========================企业盈利能力==========================
                         $num = round($fieldArr['NETINC'] / $fieldArr['MAIBUSINC'] * 100);
                         if ($num < 0) {
@@ -453,9 +452,9 @@ class LongXinController extends LongXinBase
                         } else {
                             $NETINCMAIBUSINC_s = 97;
                         }
-                        if ($year == 2017) $NETINCMAIBUSINC += $NETINCMAIBUSINC_s * 0.1;
-                        if ($year == 2018) $NETINCMAIBUSINC += $NETINCMAIBUSINC_s * 0.3;
-                        if ($year == 2019) $NETINCMAIBUSINC += $NETINCMAIBUSINC_s * 0.6;
+                        if ($yearKey == 2017) $NETINCMAIBUSINC += $NETINCMAIBUSINC_s * 0.1;
+                        if ($yearKey == 2018) $NETINCMAIBUSINC += $NETINCMAIBUSINC_s * 0.3;
+                        if ($yearKey == 2019) $NETINCMAIBUSINC += $NETINCMAIBUSINC_s * 0.6;
                         //==========================企业盈利可持续能力==========================
                         if ($fieldArr['PROGRO_yoy'] <= -50) {
                             $PROGRO_yoy_s = 4;
@@ -488,9 +487,9 @@ class LongXinController extends LongXinBase
                         } else {
                             $PROGRO_yoy_s = 97;
                         }
-                        if ($year == 2017) $PROGRO_yoy += $PROGRO_yoy_s * 0.1;
-                        if ($year == 2018) $PROGRO_yoy += $PROGRO_yoy_s * 0.3;
-                        if ($year == 2019) $PROGRO_yoy += $PROGRO_yoy_s * 0.6;
+                        if ($yearKey == 2017) $PROGRO_yoy += $PROGRO_yoy_s * 0.1;
+                        if ($yearKey == 2018) $PROGRO_yoy += $PROGRO_yoy_s * 0.3;
+                        if ($yearKey == 2019) $PROGRO_yoy += $PROGRO_yoy_s * 0.6;
                         //==========================企业资产规模状况==========================
                         if ($fieldArr['ASSGRO'] < 0) {
                             $ASSGRO_s = 9;
@@ -527,9 +526,9 @@ class LongXinController extends LongXinBase
                         } else {
                             $ASSGRO_s = 98;
                         }
-                        if ($year == 2017) $ASSGRO += $ASSGRO_s * 0.1;
-                        if ($year == 2018) $ASSGRO += $ASSGRO_s * 0.3;
-                        if ($year == 2019) $ASSGRO += $ASSGRO_s * 0.6;
+                        if ($yearKey == 2017) $ASSGRO += $ASSGRO_s * 0.1;
+                        if ($yearKey == 2018) $ASSGRO += $ASSGRO_s * 0.3;
+                        if ($yearKey == 2019) $ASSGRO += $ASSGRO_s * 0.6;
                         //==========================企业资产增长状况==========================
                         if ($fieldArr['ASSGRO_yoy'] <= -50) {
                             $ASSGRO_yoy_s = 4;
@@ -562,12 +561,12 @@ class LongXinController extends LongXinBase
                         } else {
                             $ASSGRO_yoy_s = 98;
                         }
-                        if ($year == 2017) $ASSGRO_yoy += $ASSGRO_yoy_s * 0.1;
-                        if ($year == 2018) $ASSGRO_yoy += $ASSGRO_yoy_s * 0.3;
-                        if ($year == 2019) $ASSGRO_yoy += $ASSGRO_yoy_s * 0.6;
+                        if ($yearKey == 2017) $ASSGRO_yoy += $ASSGRO_yoy_s * 0.1;
+                        if ($yearKey == 2018) $ASSGRO_yoy += $ASSGRO_yoy_s * 0.3;
+                        if ($yearKey == 2019) $ASSGRO_yoy += $ASSGRO_yoy_s * 0.6;
                     }
 
-                    $ext[$entName] = [
+                    $ext[$entNameKey] = [
                         'VENDINC' => round($VENDINC),
                         'VENDINC_yoy' => round($VENDINC_yoy),
                         'NETINCMAIBUSINC' => round($NETINCMAIBUSINC),
