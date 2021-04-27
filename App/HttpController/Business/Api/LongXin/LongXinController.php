@@ -353,14 +353,14 @@ class LongXinController extends LongXinBase
                 $res['data'] = $tmp;
                 $ready[$entName[$i]] = $tmp;
 
-                //算分
-                $VENDINC = 0;
-                $VENDINC_yoy = 0;
-                $NETINCMAIBUSINC = 0;
-                $PROGRO_yoy = 0;
-                $ASSGRO = 0;
-                $ASSGRO_yoy = 0;
                 foreach ($ready as $entName => $arr) {
+                    //算分
+                    $VENDINC = 0;
+                    $VENDINC_yoy = 0;
+                    $NETINCMAIBUSINC = 0;
+                    $PROGRO_yoy = 0;
+                    $ASSGRO = 0;
+                    $ASSGRO_yoy = 0;
                     foreach ($arr as $year => $fieldArr) {
                         //==========================企业规模状况==========================
                         if ($fieldArr['VENDINC'] <= 0) {
@@ -564,18 +564,20 @@ class LongXinController extends LongXinBase
                         if ($year == 2018) $ASSGRO_yoy += $ASSGRO_yoy_s * 0.3;
                         if ($year == 2019) $ASSGRO_yoy += $ASSGRO_yoy_s * 0.6;
                     }
+
+                    $paging[$entName] = [
+                        'VENDINC' => $VENDINC,
+                        'VENDINC_yoy' => $VENDINC_yoy,
+                        'NETINCMAIBUSINC' => $NETINCMAIBUSINC,
+                        'PROGRO_yoy' => $PROGRO_yoy,
+                        'ASSGRO' => $ASSGRO,
+                        'ASSGRO_yoy' => $ASSGRO_yoy,
+                    ];
                 }
             }
         }
 
-        return $this->writeJson(200, [
-            'VENDINC' => $VENDINC,
-            'VENDINC_yoy' => $VENDINC_yoy,
-            'NETINCMAIBUSINC' => $NETINCMAIBUSINC,
-            'PROGRO_yoy' => $PROGRO_yoy,
-            'ASSGRO' => $ASSGRO,
-            'ASSGRO_yoy' => $ASSGRO_yoy,
-        ], $ready);
+        return $this->writeJson(200, $paging, $ready);
     }
 
 }
