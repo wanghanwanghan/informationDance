@@ -565,7 +565,7 @@ class LongXinController extends LongXinBase
                         if ($year == 2019) $ASSGRO_yoy += $ASSGRO_yoy_s * 0.6;
                     }
 
-                    $paging[$entName] = [
+                    $ext[$entName] = [
                         'VENDINC' => $VENDINC,
                         'VENDINC_yoy' => $VENDINC_yoy,
                         'NETINCMAIBUSINC' => $NETINCMAIBUSINC,
@@ -577,7 +577,7 @@ class LongXinController extends LongXinBase
             }
         }
 
-        return $this->writeJson(200, $paging, $ready);
+        return $this->writeJson(200, null, $ready, '成功', true, $ext);
     }
 
 }

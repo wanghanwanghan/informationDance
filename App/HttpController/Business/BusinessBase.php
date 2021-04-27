@@ -54,7 +54,7 @@ class BusinessBase extends Index
     }
 
     //重写writeJson
-    function writeJson($statusCode = 200, $paging = null, $result = null, $msg = null, $format = true)
+    function writeJson($statusCode = 200, $paging = null, $result = null, $msg = null, $format = true, $ext = [])
     {
         if (!$this->response()->isEndResponse()) {
             if (!empty($paging) && is_array($paging)) {
@@ -66,7 +66,8 @@ class BusinessBase extends Index
                 'code' => $statusCode,
                 'paging' => $paging,
                 'result' => $format === true ? control::changeArrVal($result, ['', null], '--', true) : $result,
-                'msg' => $msg
+                'msg' => $msg,
+                'ext' => $ext
             ];
             $this->response()->write(json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
             $this->response()->withHeader('Content-type', 'application/json;charset=utf-8');
