@@ -566,12 +566,12 @@ class LongXinController extends LongXinBase
                     }
 
                     $ext[$entName] = [
-                        'VENDINC' => $VENDINC,
-                        'VENDINC_yoy' => $VENDINC_yoy,
-                        'NETINCMAIBUSINC' => $NETINCMAIBUSINC,
-                        'PROGRO_yoy' => $PROGRO_yoy,
-                        'ASSGRO' => $ASSGRO,
-                        'ASSGRO_yoy' => $ASSGRO_yoy,
+                        'VENDINC' => round($VENDINC),
+                        'VENDINC_yoy' => round($VENDINC_yoy),
+                        'NETINCMAIBUSINC' => round($NETINCMAIBUSINC),
+                        'PROGRO_yoy' => round($PROGRO_yoy),
+                        'ASSGRO' => round($ASSGRO),
+                        'ASSGRO_yoy' => round($ASSGRO_yoy),
                     ];
                 }
             }
