@@ -609,9 +609,9 @@ class LongXinController extends LongXinBase
                         ];
                     }
 
-                    $temp['VENDINC'] = control::sortArrByKey($temp['VENDINC'], $key = 'score', $rule = 'desc', true);
-                    $temp['PROGRO'] = control::sortArrByKey($temp['PROGRO'], $key = 'score', $rule = 'desc', true);
-                    $temp['ASSGRO'] = control::sortArrByKey($temp['ASSGRO'], $key = 'score', $rule = 'desc', true);
+                    $temp['VENDINC'] = control::sortArrByKey($temp['VENDINC'], 'score', 'desc', true);
+                    $temp['PROGRO'] = control::sortArrByKey($temp['PROGRO'], 'score', 'desc', true);
+                    $temp['ASSGRO'] = control::sortArrByKey($temp['ASSGRO'], 'score', 'desc', true);
 
                     //添加index
                     foreach ($temp as $mymyKey => $mymyVal) {
