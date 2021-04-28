@@ -42,20 +42,18 @@ class GuoPiaoController extends ProvideBase
 
     function getInvoiceOcr()
     {
-        $imageStr = $this->getRequestData('image','');
+        $imageStr = $this->getRequestData('image', '');
         $imageJpg = $this->request()->getUploadedFile('image');
 
         $image = $imageStr;
 
-        if (empty($imageStr) && $imageJpg instanceof UploadFile)
-        {
+        if (empty($imageStr) && $imageJpg instanceof UploadFile) {
             $image = base64_encode($imageJpg->getStream()->__toString());
         }
 
         $size = strlen(base64_decode($image));
 
-        if ($size / 1024 / 1024 > 2)
-        {
+        if ($size / 1024 / 1024 > 2) {
             return $this->checkResponse([
                 $this->cspKey => '',
                 'msg' => '图片大小不能超过2m',
