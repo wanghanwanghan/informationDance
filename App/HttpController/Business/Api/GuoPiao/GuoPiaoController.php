@@ -155,8 +155,10 @@ class GuoPiaoController extends GuoPiaoBase
             return $this->writeErr($e, __FUNCTION__);
         }
 
-        //删除
-        //$res['message'] = (new xds())->cwScore($entName);
+        if (strpos($res['data'], '?url=')) {
+            $arr = explode('?url=', $res['data']);
+            $res['data'] = 'https://ps.meirixindong.com/Static/vertify.html?url=' . $arr[1];
+        }
 
         return $this->writeJson($res['code'], null, $res['data'], $res['message']);
     }
