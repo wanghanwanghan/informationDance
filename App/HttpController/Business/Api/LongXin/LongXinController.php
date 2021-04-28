@@ -615,8 +615,10 @@ class LongXinController extends LongXinBase
 
                     //添加index
                     foreach ($temp as $mymyKey => $mymyVal) {
+                        $index = 1;
                         foreach ($mymyVal as $w => $h) {
-
+                            $temp[$mymyKey][$w]['index'] = $index;
+                            $index++;
                         }
                     }
 
