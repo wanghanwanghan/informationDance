@@ -7,6 +7,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Pay\ChargeService;
 use Carbon\Carbon;
+use wanghanwanghan\someUtils\control;
 
 class LongXinController extends LongXinBase
 {
@@ -574,11 +575,49 @@ class LongXinController extends LongXinBase
                         'ASSGRO' => round($ASSGRO),
                         'ASSGRO_yoy' => round($ASSGRO_yoy),
                     ];
+
+                    $temp['VENDINC'] = [];
+                    $temp['PROGRO'] = [];
+                    $temp['ASSGRO'] = [];
+
+                    foreach ($ext as $myKey => $myVal) {
+                        $temp['VENDINC'] = [
+                            'entName' => $myKey,
+                            'score' => round($myVal['VENDINC'] * 0.7 + $myVal['VENDINC_yoy'] * 0.3),
+                            'detail' => [
+                                'VENDINC' => $myVal['VENDINC'],
+                                'VENDINC_yoy' => $myVal['VENDINC_yoy'],
+                            ]
+                        ];
+
+                        $temp['PROGRO'] = [
+                            'entName' => $myKey,
+                            'score' => round($myVal['NETINCMAIBUSINC'] * 0.7 + $myVal['PROGRO_yoy'] * 0.3),
+                            'detail' => [
+                                'NETINCMAIBUSINC' => $myVal['NETINCMAIBUSINC'],
+                                'PROGRO_yoy' => $myVal['PROGRO_yoy'],
+                            ]
+                        ];
+
+                        $temp['ASSGRO'] = [
+                            'entName' => $myKey,
+                            'score' => round($myVal['ASSGRO'] * 0.7 + $myVal['ASSGRO_yoy'] * 0.3),
+                            'detail' => [
+                                'ASSGRO' => $myVal['ASSGRO'],
+                                'ASSGRO_yoy' => $myVal['ASSGRO_yoy'],
+                            ]
+                        ];
+                    }
+
+                    $temp['VENDINC'] = control::sortArrByKey($temp['VENDINC'], $key = 'score', $rule = 'desc', true);
+                    $temp['PROGRO'] = control::sortArrByKey($temp['PROGRO'], $key = 'score', $rule = 'desc', true);
+                    $temp['ASSGRO'] = control::sortArrByKey($temp['ASSGRO'], $key = 'score', $rule = 'desc', true);
+
                 }
             }
         }
 
-        return $this->writeJson(200, null, $ready, '成功', true, $ext);
+        return $this->writeJson(200, null, $ready, '成功', true, $temp);
     }
 
 }
