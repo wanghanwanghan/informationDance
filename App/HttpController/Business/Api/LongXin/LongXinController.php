@@ -585,8 +585,16 @@ class LongXinController extends LongXinBase
                             'entName' => $myKey,
                             'score' => round($myVal['VENDINC'] * 0.7 + $myVal['VENDINC_yoy'] * 0.3),
                             'detail' => [
-                                'VENDINC' => $myVal['VENDINC'],
-                                'VENDINC_yoy' => $myVal['VENDINC_yoy'],
+                                [
+                                    'score' => $myVal['VENDINC'],
+                                    'desc' => '1.按0分到100分划分，评分越高，企业规模越大,2.通过分析与企业营收能力有关行为后的评估结果。主要供判断企业的规模状况',
+                                    'features' => '企业规模状况',
+                                ],
+                                [
+                                    'score' => $myVal['VENDINC_yoy'],
+                                    'desc' => '1.按0分到100分划分，评分越高，企业发展与经营的增速越高,2.通过分析与企业营收增长能力有关行为后的评估结果。主要反映企业的成长速度，供判断企业的高成长性价值',
+                                    'features' => '企业成长性状况',
+                                ],
                             ]
                         ];
 
@@ -594,8 +602,16 @@ class LongXinController extends LongXinBase
                             'entName' => $myKey,
                             'score' => round($myVal['NETINCMAIBUSINC'] * 0.7 + $myVal['PROGRO_yoy'] * 0.3),
                             'detail' => [
-                                'NETINCMAIBUSINC' => $myVal['NETINCMAIBUSINC'],
-                                'PROGRO_yoy' => $myVal['PROGRO_yoy'],
+                                [
+                                    'score' => $myVal['NETINCMAIBUSINC'],
+                                    'desc' => '1.按0分到100分划分，评分越高，企业盈利实力越强,2.通过分析可为企业贡献利润有关行为后的评估结果。主要反映企业当前的盈利水平',
+                                    'features' => '企业盈利能力',
+                                ],
+                                [
+                                    'score' => $myVal['PROGRO_yoy'],
+                                    'desc' => '1.按0分到100分划分，评分越高，企业持续盈利能力越强,2.通过分析可为企业贡献净利润有关行为，以及对应行为同比增速后的评估结果。主要反映企业的盈利趋势，供判断企业今后一段时期的盈利能力',
+                                    'features' => '企业盈利可持续能力',
+                                ],
                             ]
                         ];
 
@@ -603,8 +619,16 @@ class LongXinController extends LongXinBase
                             'entName' => $myKey,
                             'score' => round($myVal['ASSGRO'] * 0.7 + $myVal['ASSGRO_yoy'] * 0.3),
                             'detail' => [
-                                'ASSGRO' => $myVal['ASSGRO'],
-                                'ASSGRO_yoy' => $myVal['ASSGRO_yoy'],
+                                [
+                                    'score' => $myVal['ASSGRO'],
+                                    'desc' => '1.按0分到100分划分，评分越高，企业资产规模越大,2.通过分析与企业资产有关行为后的评估结果。主要供判断企业的资产规模状况',
+                                    'features' => '企业资产规模状况',
+                                ],
+                                [
+                                    'score' => $myVal['ASSGRO_yoy'],
+                                    'desc' => '1.按0分到100分划分，评分越高，企业规模增长的能力越强,2.通过分析与企业资产维度有关行为后的评估结果。主要反映企业的资产变化情况，供判断企业的整体规模与合作能力',
+                                    'features' => '企业资产增长状况',
+                                ],
                             ]
                         ];
                     }
