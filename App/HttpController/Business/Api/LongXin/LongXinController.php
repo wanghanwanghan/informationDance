@@ -581,7 +581,7 @@ class LongXinController extends LongXinBase
                     $temp['ASSGRO'] = [];
 
                     foreach ($ext as $myKey => $myVal) {
-                        $temp['VENDINC'] = [
+                        $temp['VENDINC'][] = [
                             'entName' => $myKey,
                             'score' => round($myVal['VENDINC'] * 0.7 + $myVal['VENDINC_yoy'] * 0.3),
                             'detail' => [
@@ -590,7 +590,7 @@ class LongXinController extends LongXinBase
                             ]
                         ];
 
-                        $temp['PROGRO'] = [
+                        $temp['PROGRO'][] = [
                             'entName' => $myKey,
                             'score' => round($myVal['NETINCMAIBUSINC'] * 0.7 + $myVal['PROGRO_yoy'] * 0.3),
                             'detail' => [
@@ -599,7 +599,7 @@ class LongXinController extends LongXinBase
                             ]
                         ];
 
-                        $temp['ASSGRO'] = [
+                        $temp['ASSGRO'][] = [
                             'entName' => $myKey,
                             'score' => round($myVal['ASSGRO'] * 0.7 + $myVal['ASSGRO_yoy'] * 0.3),
                             'detail' => [
@@ -612,6 +612,13 @@ class LongXinController extends LongXinBase
                     $temp['VENDINC'] = control::sortArrByKey($temp['VENDINC'], $key = 'score', $rule = 'desc', true);
                     $temp['PROGRO'] = control::sortArrByKey($temp['PROGRO'], $key = 'score', $rule = 'desc', true);
                     $temp['ASSGRO'] = control::sortArrByKey($temp['ASSGRO'], $key = 'score', $rule = 'desc', true);
+
+                    //添加index
+                    foreach ($temp as $mymyKey => $mymyVal) {
+                        foreach ($mymyVal as $w => $h) {
+
+                        }
+                    }
 
                 }
             }
