@@ -157,7 +157,7 @@ class GuoPiaoController extends GuoPiaoBase
 
         if (strpos($res['data'], '?url=')) {
             $arr = explode('?url=', $res['data']);
-            $res['data'] = 'https://pc.meirixindong.com/Static/vertify.html?url=' . $arr[1];
+            $res['data'] = 'https://api.meirixindong.com/Static/vertify.html?url=' . $arr[1];
         }
 
         return $this->writeJson($res['code'], null, $res['data'], $res['message']);
