@@ -68,6 +68,7 @@ class ProvideRouter
         $prefix = '/Business/Provide/GuoPiao/GuoPiaoController/';
 
         $routeCollector->addGroup('/zw', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getAuthentication', $prefix . 'getAuthentication');
             $routeCollector->addRoute(['GET', 'POST'], '/getInvoiceOcr', $prefix . 'getInvoiceOcr');
         });
 
