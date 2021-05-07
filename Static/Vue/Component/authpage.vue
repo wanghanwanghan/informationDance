@@ -12,6 +12,9 @@
           :auto-upload="false">
         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
         <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+        <el-button style="margin-left: 10px;" size="small" type="warning" @click="download()">
+          下载授权书
+        </el-button>
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过1500kb</div>
       </el-upload>
     </div>
@@ -35,6 +38,9 @@ module.exports = {
     },
     handlePreview(file) {
       console.log(file);
+    },
+    download() {
+      window.open(`http://mrxd-file.oss-cn-beijing.aliyuncs.com/download/example.docx`, '_blank')
     }
   },
   mounted() {
@@ -67,8 +73,8 @@ module.exports = {
 
 .content {
   text-align: center;
-  margin: 30px auto;
-  width: 300px;
+  margin: 15px auto;
+  width: 100%;
 }
 
 .footer {
