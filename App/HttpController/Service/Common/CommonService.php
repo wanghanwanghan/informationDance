@@ -216,11 +216,6 @@ class CommonService extends ServiceBase
 
         $graph->SetUserFont1(SIMSUN_TTC);
         $graph->title->SetFont(FF_USERFONT1, FS_NORMAL, 14);
-        $graph->xaxis->title->SetFont(FF_USERFONT1, FS_NORMAL);
-        $graph->xaxis->SetFont(FF_USERFONT1, FS_NORMAL);
-        $graph->xaxis->SetColor('black');
-        $graph->ygrid->SetColor('black@0.5');
-        $graph->legend->SetFont(FF_USERFONT1, FS_NORMAL);
 
         $graph->img->SetAutoMargin();
         $graph->img->SetAntiAliasing();
