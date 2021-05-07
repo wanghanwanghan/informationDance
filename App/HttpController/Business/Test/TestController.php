@@ -18,7 +18,7 @@ class TestController extends BusinessBase
 
     function test()
     {
-        $code = $this->getRequestData('code', '');
+        $this->writeJson(200, null, CommonService::getInstance()->createLinePic());
     }
 
     //产品标准页面用
