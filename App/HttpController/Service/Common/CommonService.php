@@ -211,7 +211,6 @@ class CommonService extends ServiceBase
     //生成一个财务Line图片
     function createLinePic(array $data = [], $labels = [], $extension = []): string
     {
-        $datay = [5, 3, 7, 1, 9];
         $graph = new Graph(1200, 700);
 
         $graph->SetUserFont1(SIMSUN_TTC);
@@ -222,13 +221,13 @@ class CommonService extends ServiceBase
         $graph->img->SetAntiAliasing();
         $graph->SetScale('textlin');
         $graph->SetShadow();
-        $graph->title->Set('折线图');
-        $graph->subtitle->Set('一句话');
+        $graph->title->Set($extension['title']);
+        $graph->subtitle->Set($extension['subTitle']);
 
         $graph->yscale->SetGrace(20);
-        $graph->xaxis->SetTickLabels([2011, 2012, 2013, 2014, 2015]);
+        $graph->xaxis->SetTickLabels($labels);
 
-        $p1 = new LinePlot($datay);
+        $p1 = new LinePlot($data);
         $p1->mark->SetType(MARK_FILLEDCIRCLE);
         $p1->mark->SetFillColor('red');
         $p1->mark->SetWidth(4);
@@ -238,7 +237,7 @@ class CommonService extends ServiceBase
 
         $fileName = control::getUuid(12) . '.jpg';
 
-        $graph->Stroke('/home/wwwroot/informationDance/' . $fileName);
+        $graph->Stroke(REPORT_IMAGE_TEMP_PATH . $fileName);
 
         return $fileName;
     }
