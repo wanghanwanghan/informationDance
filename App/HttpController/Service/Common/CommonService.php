@@ -213,12 +213,20 @@ class CommonService extends ServiceBase
     {
         $datay = [1.23, 1.9, 1.6, 3.1, 3.4, 2.8, 2.1, 1.9];
         $graph = new Graph(1200, 700);
-        $graph->img->SetMargin(40, 40, 40, 40);
+
+        $graph->SetUserFont1(SIMSUN_TTC);
+        $graph->title->SetFont(FF_USERFONT1, FS_NORMAL, 14);
+        $graph->xaxis->title->SetFont(FF_USERFONT1, FS_NORMAL);
+        $graph->xaxis->SetFont(FF_USERFONT1, FS_NORMAL);
+        $graph->xaxis->SetColor('black');
+        $graph->ygrid->SetColor('black@0.5');
+        $graph->legend->SetFont(FF_USERFONT1, FS_NORMAL);
+
+        $graph->img->SetAutoMargin();
         $graph->img->SetAntiAliasing();
         $graph->SetScale('textlin');
         $graph->SetShadow();
-        $graph->title->Set('Example of line centered plot');
-        $graph->title->SetFont(FF_FONT1, FS_BOLD);
+        $graph->title->Set('折线图');
 
         $graph->yscale->SetGrace(20);
 
