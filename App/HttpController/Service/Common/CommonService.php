@@ -222,18 +222,6 @@ class CommonService extends ServiceBase
         //设置统计图标题
         $graph->title->Set(iconv('utf-8', 'GB2312//IGNORE', '折线图'));
 
-        //隐藏x轴上的刻度线
-        $graph->xaxis->HideTicks(true, true);
-
-        //隐藏x轴线
-        $graph->xaxis->HideLine(true);
-
-        //隐藏x轴线的刻度标注数字
-        $graph->xaxis->HideLabels(true);
-
-        //隐藏x轴上的刻度线
-        $graph->yaxis->HideTicks(true, true);
-
         //折线图数据
         $data1 = array(89, 78, 99, 65, 92, 85, 85, 55, 64, 79, 85);
 
