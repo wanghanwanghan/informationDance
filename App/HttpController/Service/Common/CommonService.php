@@ -211,12 +211,12 @@ class CommonService extends ServiceBase
     //生成一个财务Line图片
     function createLinePic(array $data = [], $labels = [], $extension = []): string
     {
-        $datay = [1.23, 1.9, 1.6, 3.1, 3.4, 2.8, 2.1, 1.9];
+        $datay = [5, 3, 7, 1, 9];
         $graph = new Graph(1200, 700);
 
         $graph->SetUserFont1(SIMSUN_TTC);
         $graph->title->SetFont(FF_USERFONT1, FS_NORMAL, 14);
-        $graph->subtitle->SetFont(FF_USERFONT1, FS_NORMAL, 8);
+        $graph->subtitle->SetFont(FF_USERFONT1);
 
         $graph->img->SetAutoMargin();
         $graph->img->SetAntiAliasing();
@@ -226,6 +226,7 @@ class CommonService extends ServiceBase
         $graph->subtitle->Set('一句话');
 
         $graph->yscale->SetGrace(20);
+        $graph->xaxis->SetTickLabels([2011, 2012, 2013, 2014, 2015]);
 
         $p1 = new LinePlot($datay);
         $p1->mark->SetType(MARK_FILLEDCIRCLE);
