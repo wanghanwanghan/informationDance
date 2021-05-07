@@ -1,40 +1,40 @@
 {
-    "require": {
-        "php": ">=7.2.0",
-        "ext-zlib": "*",
-        "ext-json": "*",
-        "ext-openssl": "*",
-        "ext-curl": "*",
-        "ext-gd": "*",
-        "easyswoole/easyswoole": "3.3.x",
-        "wanghanwanghan/someutils": "^1.0",
-        "easyswoole/http-client": "^1.4",
-        "easyswoole/pool": "^1.0",
-        "easyswoole/mysqli": "^2.2",
-        "easyswoole/orm": "^1.4",
-        "easyswoole/redis": "^1.3",
-        "easyswoole/redis-pool": "^2.1",
-        "nesbot/carbon": "^2.38",
-        "easyswoole/atomic-limit": "^1.0",
-        "easyswoole/pay": "~1.2",
-        "easyswoole/verifycode": "3.x",
-        "easyswoole/session": "2.x",
-        "easyswoole/spider": "^2.0",
-        "phpoffice/phpword": "^0.17.0",
-        "amenadiel/jpgraph": "^4",
-        "qiniu/php-sdk": "^7.3",
-        "easyswoole/smtp": "^1.0",
-        "easyswoole/http-annotation": "^1.4",
-        "ritaswc/zx-ip-address": "^2.0",
-        "tecnickcom/tcpdf": "^6.3",
-        "jxlwqq/id-validator": "^1.4",
-        "endroid/qr-code": "^3.9",
-        "overtrue/easy-sms": "^1.3",
-        "hashids/hashids": "^4.1"
-    },
-    "autoload": {
-        "psr-4": {
-            "App\\": "App/"
-        }
+  "require": {
+    "php": ">=7.2.0",
+    "ext-zlib": "*",
+    "ext-json": "*",
+    "ext-openssl": "*",
+    "ext-curl": "*",
+    "ext-gd": "*",
+    "easyswoole/easyswoole": "3.3.x",
+    "wanghanwanghan/someutils": "^1.0",
+    "easyswoole/http-client": "^1.4",
+    "easyswoole/pool": "^1.0",
+    "easyswoole/mysqli": "^2.2",
+    "easyswoole/orm": "^1.4",
+    "easyswoole/redis": "^1.3",
+    "easyswoole/redis-pool": "^2.1",
+    "nesbot/carbon": "^2.38",
+    "easyswoole/atomic-limit": "^1.0",
+    "easyswoole/pay": "~1.2",
+    "easyswoole/verifycode": "3.x",
+    "easyswoole/session": "2.x",
+    "easyswoole/spider": "^2.0",
+    "phpoffice/phpword": "^0.17.0",
+    "amenadiel/jpgraph": "^4",
+    "qiniu/php-sdk": "^7.3",
+    "easyswoole/smtp": "^1.0",
+    "easyswoole/http-annotation": "^1.4",
+    "ritaswc/zx-ip-address": "^2.0",
+    "tecnickcom/tcpdf": "^6.3",
+    "jxlwqq/id-validator": "^1.4",
+    "endroid/qr-code": "^3.9",
+    "overtrue/easy-sms": "^1.3",
+    "hashids/hashids": "^4.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "App/"
     }
+  }
 }
