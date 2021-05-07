@@ -272,7 +272,7 @@ class CommonService extends ServiceBase
 
         $fileName = control::getUuid(12) . '.jpg';
 
-        $graph->Stroke(REPORT_IMAGE_TEMP_PATH . $fileName);
+        $graph->Stroke('/home/wwwroot/informationDance/' . $fileName);
 
         return $fileName;
     }
