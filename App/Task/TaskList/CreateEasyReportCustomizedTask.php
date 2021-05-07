@@ -1778,7 +1778,19 @@ TEMP;
                 $insert = <<<PIC
 <tr>
     <td>
-        <img src="https://api.meirixindong.com/Static/Image/ReportImage/Temp/{$cspData[__FUNCTION__]['pic']}" />    
+        <img src="https://api.meirixindong.com/Static/Image/ReportImage/Temp/{$cspData[__FUNCTION__]['pic'][0]}" />      
+    </td>
+    <td>
+        <img src="https://api.meirixindong.com/Static/Image/ReportImage/Temp/{$cspData[__FUNCTION__]['pic'][1]}" />      
+    </td>
+    <td>
+        <img src="https://api.meirixindong.com/Static/Image/ReportImage/Temp/{$cspData[__FUNCTION__]['pic'][2]}" />      
+    </td>
+    <td>
+        <img src="https://api.meirixindong.com/Static/Image/ReportImage/Temp/{$cspData[__FUNCTION__]['pic'][3]}" />      
+    </td>
+    <td>
+        <img src="https://api.meirixindong.com/Static/Image/ReportImage/Temp/{$cspData[__FUNCTION__]['pic'][4]}" />      
     </td>
 </tr>
 PIC;
@@ -7109,7 +7121,7 @@ TEMP;
             ksort($res['result']);
 
             if (!empty($res['result'])) {
-                $tmp = $legend = [];
+                $tmp = $lineTemp = $legend = [];
                 foreach ($res['result'] as $year => $val) {
                     $legend[] = $year;
                     $tmp[] = [
@@ -7122,6 +7134,11 @@ TEMP;
                         sRound($val['RATGRO_yoy'] * 100),
                         sRound($val['TOTEQU_yoy'] * 100),
                     ];
+                    $lineTemp['MAIBUSINC_yoy'][] = sRound($val['MAIBUSINC_yoy'] * 100);//主营业务收入
+                    $lineTemp['PROGRO_yoy'][] = sRound($val['PROGRO_yoy'] * 100);//利润总额
+                    $lineTemp['ASSGRO_yoy'][] = sRound($val['ASSGRO_yoy'] * 100);//资产总额
+                    $lineTemp['RATGRO_yoy'][] = sRound($val['RATGRO_yoy'] * 100);//纳税总额
+                    $lineTemp['LIAGRO_yoy'][] = sRound($val['LIAGRO_yoy'] * 100);//负债总额
                 }
                 $res['data'] = $res['result'];
                 $res['result'] = $tmp;
@@ -7140,7 +7157,27 @@ TEMP;
             ];
 
             $tmp = [];
-            $tmp['pic'] = CommonService::getInstance()->createBarPic($res['result'], $labels, $extension);
+            //$tmp['pic'] = CommonService::getInstance()->createBarPic($res['result'], $labels, $extension);
+            $tmp['pic'][] = CommonService::getInstance()->createLinePic($lineTemp['MAIBUSINC_yoy'],$legend,[
+                'title' => $this->entName,
+                'subTitle' => '营收规模同比 此图为概况信息',
+            ]);
+            $tmp['pic'][] = CommonService::getInstance()->createLinePic($lineTemp['PROGRO_yoy'],$legend,[
+                'title' => $this->entName,
+                'subTitle' => '盈利能力同比 此图为概况信息',
+            ]);
+            $tmp['pic'][] = CommonService::getInstance()->createLinePic($lineTemp['ASSGRO_yoy'],$legend,[
+                'title' => $this->entName,
+                'subTitle' => '资产规模同比 此图为概况信息',
+            ]);
+            $tmp['pic'][] = CommonService::getInstance()->createLinePic($lineTemp['RATGRO_yoy'],$legend,[
+                'title' => $this->entName,
+                'subTitle' => '纳税能力同比 此图为概况信息',
+            ]);
+            $tmp['pic'][] = CommonService::getInstance()->createLinePic($lineTemp['LIAGRO_yoy'],$legend,[
+                'title' => $this->entName,
+                'subTitle' => '负债规模同比 此图为概况信息',
+            ]);
             $tmp['data'] = $res['data'];
 
             return $tmp;
