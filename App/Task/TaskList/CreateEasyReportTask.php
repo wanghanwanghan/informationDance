@@ -1392,11 +1392,15 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         }else
         {
-            $docObj->setImageValue("caiwu_pic", [
-                'path' => REPORT_IMAGE_TEMP_PATH . $data['FinanceData']['pic'],
-                'width' => 440,
-                'height' => 500
-            ]);
+            $i = 0;
+            foreach ($data['FinanceData']['pic'] as $path) {
+                $docObj->setImageValue("caiwu_pic{$i}", [
+                    'path' => REPORT_IMAGE_TEMP_PATH . $path,
+                    'width' => 440,
+                    'height' => 500
+                ]);
+                $i++;
+            }
         }
 
         $caiwu_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,0,$this->entName,true);

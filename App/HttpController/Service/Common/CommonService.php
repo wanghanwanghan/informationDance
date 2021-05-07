@@ -208,6 +208,75 @@ class CommonService extends ServiceBase
         return $fileName;
     }
 
+    //生成一个财务Line图片
+    function createLinePic(array $data = [], $labels = [], $extension = []): string
+    {
+        $graph = new Graph(1200, 700);
+        //设置边距，空余四角边距（左右上下）
+        $graph->img->SetMargin(0, 0, 0, 0);
+
+        //设置x和y的刻度类型,设置比例 (X 文本比例、Y 线比例)
+        //lin直线、text文本、int整数、log对数
+        $graph->SetScale('linlin', 50, 100);//Y轴的最小值、最大值
+
+        //设置统计图标题
+        $graph->title->Set(control::str2Utf8('折线图'));
+
+        //隐藏x轴上的刻度线
+        $graph->xaxis->HideTicks(true, true);
+
+        //隐藏x轴线
+        $graph->xaxis->HideLine(true);
+
+        //隐藏x轴线的刻度标注数字
+        $graph->xaxis->HideLabels(true);
+
+        //隐藏x轴上的刻度线
+        $graph->yaxis->HideTicks(true, true);
+
+        //折线图数据
+        $data1 = array(89, 78, 99, 65, 92, 85, 85, 55, 64, 79, 85);
+
+        //建立LinePlot对象
+        $lineplot = new LinePlot($data1);
+
+        // //将统计图添加到画布上
+        $graph->Add($lineplot);
+
+        //设置折线的线条颜色
+        $lineplot->SetColor('red');
+
+        //两个点之间的连线样式，true表示台阶折线型，false表示直线连接型
+        $lineplot->SetStepStyle(false);
+
+        // 设置【折线与x轴之间的区域】是否填充颜色
+        $lineplot->SetFilled(false);
+
+
+        //设置【折线与x轴之间的区域】的【颜色渐变样式】
+        //SetFillGradient($aFromColor,$aToColor,$aNumColors=100,$aFilled=true)
+        // $lineplot->SetFillGradient('red','silver',100,false);
+
+        //设置【折线与x轴之间的区域】的【颜色】
+        //SetFillColor($aColor,$aFilled=true)
+        // $lineplot->SetFillColor('red',true);
+
+        // AddArea($aMin=0,$aMax=0,$aFilled=LP_AREA_NOT_FILLED,$aColor="gray9",$aBorder=LP_AREA_BORDER)
+        // $lineplot->AddArea(0,$aMax=500,false,"gray9",true);
+
+        //如果要绘制第二条线
+        //$data2 = array(68, 70, 69, 80, 50, 60, 75, 65, 75, 65, 80, 89);
+        //$lineplot2=new LinePlot($data2);
+        //$graph->Add($lineplot2);
+        //... 第二条线的其他设置
+
+        $fileName = control::getUuid(12) . '.jpg';
+
+        $graph->Stroke(REPORT_IMAGE_TEMP_PATH . $fileName);
+
+        return $fileName;
+    }
+
     //发送验证码
     function sendCode($phone, $type)
     {
