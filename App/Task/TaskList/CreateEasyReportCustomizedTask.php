@@ -1780,15 +1780,23 @@ TEMP;
     <td>
         <img src="https://api.meirixindong.com/Static/Image/ReportImage/Temp/{$cspData[__FUNCTION__]['pic'][0]}" />      
     </td>
+</tr>
+<tr>
     <td>
         <img src="https://api.meirixindong.com/Static/Image/ReportImage/Temp/{$cspData[__FUNCTION__]['pic'][1]}" />      
     </td>
+</tr>
+<tr>
     <td>
         <img src="https://api.meirixindong.com/Static/Image/ReportImage/Temp/{$cspData[__FUNCTION__]['pic'][2]}" />      
     </td>
+</tr>
+<tr>
     <td>
         <img src="https://api.meirixindong.com/Static/Image/ReportImage/Temp/{$cspData[__FUNCTION__]['pic'][3]}" />      
     </td>
+</tr>
+<tr>
     <td>
         <img src="https://api.meirixindong.com/Static/Image/ReportImage/Temp/{$cspData[__FUNCTION__]['pic'][4]}" />      
     </td>
