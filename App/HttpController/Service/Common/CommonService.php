@@ -220,7 +220,7 @@ class CommonService extends ServiceBase
         $graph->SetScale('linlin', 50, 100);//Y轴的最小值、最大值
 
         //设置统计图标题
-        $graph->title->Set(control::str2Utf8('折线图'));
+        $graph->title->Set(iconv('utf-8', 'GB2312//IGNORE', '折线图'));
 
         //隐藏x轴上的刻度线
         $graph->xaxis->HideTicks(true, true);
