@@ -216,12 +216,14 @@ class CommonService extends ServiceBase
 
         $graph->SetUserFont1(SIMSUN_TTC);
         $graph->title->SetFont(FF_USERFONT1, FS_NORMAL, 14);
+        $graph->subtitle->SetFont(FF_USERFONT1, FS_NORMAL, 12);
 
         $graph->img->SetAutoMargin();
         $graph->img->SetAntiAliasing();
         $graph->SetScale('textlin');
         $graph->SetShadow();
         $graph->title->Set('折线图');
+        $graph->subtitle->Set('一句话');
 
         $graph->yscale->SetGrace(20);
 
