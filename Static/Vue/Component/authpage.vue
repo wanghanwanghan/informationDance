@@ -15,6 +15,7 @@
         <el-button style="margin-left: 10px;" size="small" type="warning" @click="download()">
           下载授权书
         </el-button>
+        <div slot="tip" class="el-upload__tip">请先行下载授权书模板，加盖企业公章后上传扫描件即可</div>
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过1500kb</div>
       </el-upload>
     </div>
