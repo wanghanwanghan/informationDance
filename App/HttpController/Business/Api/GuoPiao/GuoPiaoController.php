@@ -202,8 +202,6 @@ class GuoPiaoController extends GuoPiaoBase
 
         $res = (new GuoPiaoService())->getTaxInvoice($code, $startDate, $endDate);
 
-        CommonService::getInstance()->log4PHP($res);
-
         return $this->checkResponse($res, __FUNCTION__);
     }
 

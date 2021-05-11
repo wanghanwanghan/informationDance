@@ -52,7 +52,6 @@ class GuoPiaoService extends ServiceBase
                 'pageSize' => $res['data']['pageSize'],
                 'total' => $res['data']['total'],
             ];
-
         } else {
             $res['Paging'] = null;
         }
@@ -148,6 +147,8 @@ class GuoPiaoService extends ServiceBase
 
         $api_path = 'invoice/certificateAccess';
 
+        CommonService::getInstance()->log4PHP($body);
+
         $res = $this->readyToSend($api_path, $body);
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
@@ -199,8 +200,6 @@ class GuoPiaoService extends ServiceBase
         $api_path = 'invoice/' . __FUNCTION__;
 
         $res = $this->readyToSend($api_path, $body);
-
-        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }

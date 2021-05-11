@@ -525,8 +525,6 @@ class QianQiService extends ServiceBase
 
         $res = (new CoHttpClient())->send($url, $data, $this->sendHeaders);
 
-        CommonService::getInstance()->log4PHP($res);
-
         return $res;
     }
 
