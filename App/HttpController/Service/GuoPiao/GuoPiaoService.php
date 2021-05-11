@@ -147,8 +147,6 @@ class GuoPiaoService extends ServiceBase
 
         $api_path = 'invoice/certificateAccess';
 
-        CommonService::getInstance()->log4PHP($body);
-
         $res = $this->readyToSend($api_path, $body);
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;

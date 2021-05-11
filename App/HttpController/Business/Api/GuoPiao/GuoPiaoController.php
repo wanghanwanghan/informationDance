@@ -44,6 +44,7 @@ class GuoPiaoController extends GuoPiaoBase
                 $res['Result'] = $res['data']['invoices'];
                 break;
             case 'getInvoiceOcr':
+            case 'sendCertificateAccess':
                 $res['Result'] = empty($res['data']) ? null : current($res['data']);
                 break;
             case 'getTaxInvoiceUpgrade':
@@ -106,6 +107,7 @@ class GuoPiaoController extends GuoPiaoBase
     //上传授权书 3.4
     function sendCertificateAccess()
     {
+        $phone = $this->request()->getRequestParam('phone') ?? '';
         $delegateCert = $this->request()->getRequestParam('delegateCert') ?? '';//目前传授权书url
         $fileType = 1;//1:pdf 2:zip
         $taxNature = $this->request()->getRequestParam('taxNature') ?? 0;//0:小规模纳税人,1:一般纳税人,2:转登记
@@ -116,19 +118,49 @@ class GuoPiaoController extends GuoPiaoBase
         $taxName = $this->request()->getRequestParam('taxName') ?? '';//企业名称
         $areaName = $this->request()->getRequestParam('areaName') ?? '';//填税号所属省份（宁波，青岛，厦门除外）
 
-        $certificate = [
-            [
-                'taxNo' => $taxNo,
-                'taxName' => $taxName,
-                'areaName' => $areaName,
-            ]
-        ];
+        $certificate = [[
+            'taxNo' => $taxNo,
+            'taxName' => $taxName,
+            'areaName' => $areaName,
+        ]];
 
         $res = (new GuoPiaoService())->sendCertificateAccess(
             $delegateCert, $fileType, $taxNature, $taxAuthorityCode, $taxAuthorityName, $certificate
         );
 
-        CommonService::getInstance()->log4PHP($res);
+        $callResult = empty($res['data']) ? null : $res['data']['callResult'];
+
+        //授权书记录
+        try {
+            $authBookInfo = AuthBook::create()->where([
+                'phone' => $phone,
+                'entName' => $taxName,
+                'code' => $taxNo,
+                'name' => $delegateCert,
+                'type' => 3,
+            ])->get();
+            if (!empty($authBookInfo)) {
+                if ($authBookInfo->status === 2) {
+                    $authBookInfo->update([
+                        'name' => $delegateCert,
+                        'status' => 1,
+                        'remark' => $callResult,
+                    ]);
+                }
+            } else {
+                AuthBook::create()->data([
+                    'phone' => $phone,
+                    'entName' => $taxName,
+                    'code' => $taxNo,
+                    'name' => $delegateCert,
+                    'status' => 1,
+                    'type' => 3,
+                    'remark' => $callResult,
+                ])->save();
+            }
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
 
         return $this->checkResponse($res, __FUNCTION__);
     }
