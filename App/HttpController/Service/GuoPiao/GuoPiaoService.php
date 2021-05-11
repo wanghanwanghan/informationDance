@@ -136,8 +136,8 @@ class GuoPiaoService extends ServiceBase
     function sendCertificateAccess($delegateCert, $fileType, $taxNature, $taxAuthorityCode, $taxAuthorityName, $certificate)
     {
         $param['delegateCert'] = $delegateCert;
-        $param['fileType'] = $fileType;
-        $param['taxNature'] = $taxNature;
+        $param['fileType'] = $fileType - 0;
+        $param['taxNature'] = $taxNature - 0;
         $param['taxAuthorityCode'] = $taxAuthorityCode;
         $param['taxAuthorityName'] = $taxAuthorityName;
         $param['certificate'] = $certificate;

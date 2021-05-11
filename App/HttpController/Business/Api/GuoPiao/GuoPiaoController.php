@@ -109,8 +109,8 @@ class GuoPiaoController extends GuoPiaoBase
         $delegateCert = $this->request()->getRequestParam('delegateCert') ?? '';//目前传授权书url
         $fileType = 1;//1:pdf 2:zip
         $taxNature = $this->request()->getRequestParam('taxNature') ?? 0;//0:小规模纳税人,1:一般纳税人,2:转登记
-        $taxAuthorityCode = '';//主管税务机关代码
-        $taxAuthorityName = '';//主管税务机关名称
+        $taxAuthorityCode = '1';//主管税务机关代码
+        $taxAuthorityName = '1';//主管税务机关名称
 
         $taxNo = $this->request()->getRequestParam('taxNo') ?? '';//企业税号
         $taxName = $this->request()->getRequestParam('taxName') ?? '';//企业名称
