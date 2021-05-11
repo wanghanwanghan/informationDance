@@ -68,6 +68,7 @@ class Router extends AbstractRouter
         $prefix = '/Business/Api/GuoPiao/GuoPiaoController/';
 
         $routeCollector->addGroup('/zw', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/sendCertificateAccess', $prefix . 'sendCertificateAccess');//证书授权
             $routeCollector->addRoute(['GET', 'POST'], '/getReceiptDetailByClient', $prefix . 'getReceiptDetailByClient');//进销项发票详情（税盘）
             $routeCollector->addRoute(['GET', 'POST'], '/getReceiptDetailByCert', $prefix . 'getReceiptDetailByCert');//进销项发票详情（证书）
             $routeCollector->addRoute(['GET', 'POST'], '/getInvoiceOcr', $prefix . 'getInvoiceOcr');//发票实时ocr

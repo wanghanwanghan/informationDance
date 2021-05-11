@@ -133,6 +133,26 @@ class GuoPiaoService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
+    //进项销项发票详情授权 证书专用
+    function sendCertificateAccess($delegateCert, $fileType, $taxNature, $taxAuthorityCode, $taxAuthorityName, $certificate)
+    {
+        $param['delegateCert'] = $delegateCert;
+        $param['fileType'] = $fileType;
+        $param['taxNature'] = $taxNature;
+        $param['taxAuthorityCode'] = $taxAuthorityCode;
+        $param['taxAuthorityName'] = $taxAuthorityName;
+        $param['certificate'] = $certificate;
+
+        $body['param'] = $param;
+        $body['taxNo'] = $this->taxNo;
+
+        $api_path = 'invoice/certificateAccess';
+
+        $res = $this->readyToSend($api_path, $body);
+
+        return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
+    }
+
     //实时ocr
     function getInvoiceOcr($image)
     {

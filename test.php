@@ -1,4 +1,4 @@
-<?
+<?php
 
 use Carbon\Carbon;
 use wanghanwanghan\someUtils\control;

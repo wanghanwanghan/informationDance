@@ -73,7 +73,7 @@ class GuoPiaoController extends GuoPiaoBase
         ] : $this->writeJson($res['code'], $res['Paging'], $res['Result'], $res['msg']);
     }
 
-    //发票详情（进项销项）
+    //发票详情（进项销项）3.4
     function getReceiptDetailByClient()
     {
         $code = $this->request()->getRequestParam('code') ?? '';
@@ -88,7 +88,7 @@ class GuoPiaoController extends GuoPiaoBase
         return $this->checkResponse($res, __FUNCTION__);
     }
 
-    //发票详情（进项销项）
+    //发票详情（进项销项）3.4
     function getReceiptDetailByCert()
     {
         $code = $this->request()->getRequestParam('code') ?? '';
@@ -99,6 +99,34 @@ class GuoPiaoController extends GuoPiaoBase
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         $res = (new GuoPiaoService())->getInOrOutDetailByCert($code, $type, $startDate, $endDate, $page, $pageSize);
+
+        return $this->checkResponse($res, __FUNCTION__);
+    }
+
+    //上传授权书 3.4
+    function sendCertificateAccess()
+    {
+        $delegateCert = $this->request()->getRequestParam('delegateCert') ?? '';//目前传授权书url
+        $fileType = 1;//1:pdf 2:zip
+        $taxNature = $this->request()->getRequestParam('taxNature') ?? 0;//0:小规模纳税人,1:一般纳税人,2:转登记
+        $taxAuthorityCode = '';//主管税务机关代码
+        $taxAuthorityName = '';//主管税务机关名称
+
+        $taxNo = $this->request()->getRequestParam('taxNo') ?? '';//企业税号
+        $taxName = $this->request()->getRequestParam('taxName') ?? '';//企业名称
+        $areaName = $this->request()->getRequestParam('areaName') ?? '';//填税号所属省份（宁波，青岛，厦门除外）
+
+        $certificate = [
+            'taxNo' => $taxNo,
+            'taxName' => $taxName,
+            'areaName' => $areaName,
+        ];
+
+        $res = (new GuoPiaoService())->sendCertificateAccess(
+            $delegateCert, $fileType, $taxNature, $taxAuthorityCode, $taxAuthorityName, $certificate
+        );
+
+        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkResponse($res, __FUNCTION__);
     }
