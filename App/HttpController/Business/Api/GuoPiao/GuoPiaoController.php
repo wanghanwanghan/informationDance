@@ -117,9 +117,11 @@ class GuoPiaoController extends GuoPiaoBase
         $areaName = $this->request()->getRequestParam('areaName') ?? '';//填税号所属省份（宁波，青岛，厦门除外）
 
         $certificate = [
-            'taxNo' => $taxNo,
-            'taxName' => $taxName,
-            'areaName' => $areaName,
+            [
+                'taxNo' => $taxNo,
+                'taxName' => $taxName,
+                'areaName' => $areaName,
+            ]
         ];
 
         $res = (new GuoPiaoService())->sendCertificateAccess(
