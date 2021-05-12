@@ -1474,7 +1474,7 @@ class RunSupervisor extends AbstractCronTask
                     'entName' => $entName,
                     'title' => 2,
                     'type' => 4,
-                    'typeDetail' => 7,
+                    'typeDetail' => 8,
                     'timeRange' => Carbon::parse($time)->timestamp,
                     'level' => 3,
                     'desc' => '新闻舆情',

@@ -461,6 +461,7 @@ class UserController extends UserBase
     {
         $phone = $this->request()->getRequestParam('phone');
         $entName = $this->request()->getRequestParam('entName') ?? '';
+        $title = $this->request()->getRequestParam('title') ?? '';
         $level = $this->request()->getRequestParam('level') ?? '';
         $type = $this->request()->getRequestParam('type') ?? '';
         $typeDetail = $this->request()->getRequestParam('typeDetail') ?? '';
@@ -490,6 +491,14 @@ class UserController extends UserBase
         $detail = SupervisorEntNameInfo::create()->where('entName', $entList, 'IN');
         $resTotle = SupervisorEntNameInfo::create()->where('entName', $entList, 'IN');
 
+        if (!empty($title)) {
+            if ($level === '争议方动态') $tmp = 1;
+            if ($level === '合作方动态') $tmp = 2;
+
+            $detail->where('title', $tmp);
+            $resTotle->where('title', $tmp);
+        }
+
         if (!empty($level)) {
             if ($level === '高风险') $tmp = 1;
             if ($level === '风险') $tmp = 2;
@@ -502,6 +511,7 @@ class UserController extends UserBase
         }
 
         if (!empty($type)) {
+            if ($type === '争议方动态') $tmp = 0;
             if ($type === '司法风险') $tmp = 1;
             if ($type === '工商风险') $tmp = 2;
             if ($type === '管理风险') $tmp = 3;
@@ -512,13 +522,14 @@ class UserController extends UserBase
         }
 
         if (!empty($typeDetail)) {
-            if (in_array($typeDetail, ['失信被执行人', '工商变更', '严重违法', '经营异常'])) $tmp = 1;
-            if (in_array($typeDetail, ['被执行人', '实际控制人变更', '行政处罚', '动产抵押'])) $tmp = 2;
-            if (in_array($typeDetail, ['股权冻结', '最终受益人变更', '环保处罚', '土地抵押'])) $tmp = 3;
-            if (in_array($typeDetail, ['裁判文书', '股东变更', '税收违法', '股权出质'])) $tmp = 4;
-            if (in_array($typeDetail, ['开庭公告', '对外投资', '欠税公告', '股权质押'])) $tmp = 5;
-            if (in_array($typeDetail, ['法院公告', '主要成员', '海关', '对外担保'])) $tmp = 6;
-            if (in_array($typeDetail, ['查封冻结扣押', '一行两会', '新闻舆情'])) $tmp = 7;
+            if (in_array($typeDetail, ['股东变更', '股权冻结', '工商变更', '严重违法', '经营异常'])) $tmp = 1;
+            if (in_array($typeDetail, ['注销/吊销', '法院公告', '实际控制人', '环保处罚', '动产抵押'])) $tmp = 2;
+            if (in_array($typeDetail, ['行政处罚', '查封冻结扣押', '最终受益人', '税收违法', '土地抵押'])) $tmp = 3;
+            if (in_array($typeDetail, ['开庭公告', '对外投资', '欠税公告', '股权出质'])) $tmp = 4;
+            if (in_array($typeDetail, ['失信被执行人', '主要成员', '海关处罚', '股权质押'])) $tmp = 5;
+            if (in_array($typeDetail, ['被执行信息', '一行两会', '对外担保'])) $tmp = 6;
+            if (in_array($typeDetail, ['裁判文书'])) $tmp = 7;
+            if (in_array($typeDetail, ['新闻舆情'])) $tmp = 8;
 
             $detail->where('typeDetail', $tmp);
             $resTotle->where('typeDetail', $tmp);
