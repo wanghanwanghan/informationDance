@@ -546,8 +546,8 @@ class UserController extends UserBase
             $detail = $detail->order('created_at', 'desc')
                 ->limit($this->exprOffset($page, $pageSize), $pageSize)
                 ->all();
-            $detail = obj2Arr($detail);
             CommonService::getInstance()->log4PHP(DbManager::getInstance()->getLastQuery()->getLastQuery());
+            $detail = obj2Arr($detail);
             $resTotle = $resTotle->count();
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
