@@ -547,6 +547,7 @@ class UserController extends UserBase
                 ->limit($this->exprOffset($page, $pageSize), $pageSize)
                 ->all();
             $detail = obj2Arr($detail);
+            CommonService::getInstance()->log4PHP(DbManager::getInstance()->getLastQuery()->getLastQuery());
             $resTotle = $resTotle->count();
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
