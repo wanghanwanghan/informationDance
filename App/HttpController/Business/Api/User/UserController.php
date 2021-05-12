@@ -491,7 +491,7 @@ class UserController extends UserBase
         $detail = SupervisorEntNameInfo::create()->where('entName', $entList, 'IN');
         $resTotle = SupervisorEntNameInfo::create()->where('entName', $entList, 'IN');
 
-        if (!empty($title)) {
+        if (!empty($title) && $title !== '全部') {
             if ($title === '争议方动态') $tmp = 1;
             if ($title === '合作方动态') $tmp = 2;
 
@@ -499,7 +499,7 @@ class UserController extends UserBase
             $resTotle->where('title', $tmp);
         }
 
-        if (!empty($level)) {
+        if (!empty($level) && $level !== '全部') {
             if ($level === '高风险') $tmp = 1;
             if ($level === '风险') $tmp = 2;
             if ($level === '警示') $tmp = 3;
@@ -510,7 +510,7 @@ class UserController extends UserBase
             $resTotle->where('level', $tmp);
         }
 
-        if (!empty($type)) {
+        if (!empty($type) && $type !== '全部') {
             if ($type === '争议方动态') $tmp = 0;
             if ($type === '司法风险') $tmp = 1;
             if ($type === '工商风险') $tmp = 2;
@@ -521,7 +521,7 @@ class UserController extends UserBase
             $resTotle->where('type', $tmp);
         }
 
-        if (!empty($typeDetail)) {
+        if (!empty($typeDetail) && $typeDetail !== '全部') {
             if (in_array($typeDetail, ['股东变更', '股权冻结', '工商变更', '严重违法', '经营异常'])) $tmp = 1;
             if (in_array($typeDetail, ['注销/吊销', '法院公告', '实际控制人', '环保处罚', '动产抵押'])) $tmp = 2;
             if (in_array($typeDetail, ['行政处罚', '查封冻结扣押', '最终受益人', '税收违法', '土地抵押'])) $tmp = 3;
@@ -535,7 +535,7 @@ class UserController extends UserBase
             $resTotle->where('typeDetail', $tmp);
         }
 
-        if (!empty($timeRange)) {
+        if (!empty($timeRange) && $timeRange !== '全部') {
             is_numeric($timeRange) ?: $timeRange = 3;
             $date = Carbon::now()->subDays($timeRange)->timestamp;
             $detail->where('timeRange', $date, '>');
