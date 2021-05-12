@@ -550,8 +550,8 @@ class UserController extends UserBase
         try {
             $entList = SupervisorPhoneEntName::create()->where('phone', $phone)->where('status', 1)->all();
             foreach ($entList as $one) {
-                $one->totalNum = jsonDecode($one->totalNum);
-                $one->currentNum = jsonDecode($one->currentNum);
+                $one->totalNum = jsonDecode($one->totalNum, false);
+                $one->currentNum = jsonDecode($one->currentNum, false);
             }
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
