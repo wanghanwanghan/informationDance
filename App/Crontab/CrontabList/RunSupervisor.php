@@ -1472,8 +1472,8 @@ class RunSupervisor extends AbstractCronTask
 
                 SupervisorEntNameInfo::create()->data([
                     'entName' => $entName,
-                    'title' => 2,
-                    'type' => 4,
+                    'title' => 1,
+                    'type' => 0,
                     'typeDetail' => 8,
                     'timeRange' => Carbon::parse($time)->timestamp,
                     'level' => 3,
