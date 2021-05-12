@@ -36,11 +36,7 @@ class RunSupervisor extends AbstractCronTask
     static function getRule(): string
     {
         //每7天的凌晨2点
-        if (Carbon::now()->format('Ymd') > '20210513') {
-            return '0 2 */7 * *';
-        } else {
-            return '*/30 * * * *';
-        }
+        return '0 2 */7 * *';
     }
 
     static function getTaskName(): string
