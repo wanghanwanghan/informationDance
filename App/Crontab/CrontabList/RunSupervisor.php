@@ -21,6 +21,7 @@ class RunSupervisor extends AbstractCronTask
     private $ldUrl;
     private $fyyList;
     private $fyyDetail;
+
     //发短信用的
     private $entNameArr = [];
 
@@ -36,7 +37,8 @@ class RunSupervisor extends AbstractCronTask
     static function getRule(): string
     {
         //每7天的凌晨2点
-        return '0 2 */7 * *';
+        //return '0 2 */7 * *';
+        return '*/15 * * * *';
     }
 
     static function getTaskName(): string
@@ -55,9 +57,11 @@ class RunSupervisor extends AbstractCronTask
             return true;
         }
 
+        $time = time();
+
         //取出本次要监控的企业列表，如果列表是空会跳到onException
         $target = SupervisorPhoneEntName::create()
-            ->where('status', 1)->where('expireTime', time(), '>')->all();
+            ->where('status', 1)->where('expireTime', $time, '>')->all();
 
         $target = obj2Arr($target);
 
@@ -68,6 +72,84 @@ class RunSupervisor extends AbstractCronTask
             $this->gs($one['entName']);
             $this->gl($one['entName']);
             $this->jy($one['entName']);
+
+            $num = [
+                'zyf' => 0,
+                'hzf' => [
+                    'sf' => 0,
+                    'gs' => 0,
+                    'gl' => 0,
+                    'jy' => 0,
+                ],
+            ];
+
+            //更新总数
+            $num['zyf'] = SupervisorEntNameInfo::create()->where([
+                'entName' => $one['entName'],
+                'title' => 1,
+            ])->where('created_at', $time, '<')->count();
+
+            $num['hzf']['sf'] = SupervisorEntNameInfo::create()->where([
+                'entName' => $one['entName'],
+                'title' => 2,
+                'type' => 1,
+            ])->where('created_at', $time, '<')->count();
+
+            $num['hzf']['gs'] = SupervisorEntNameInfo::create()->where([
+                'entName' => $one['entName'],
+                'title' => 2,
+                'type' => 2,
+            ])->where('created_at', $time, '<')->count();
+
+            $num['hzf']['gl'] = SupervisorEntNameInfo::create()->where([
+                'entName' => $one['entName'],
+                'title' => 2,
+                'type' => 3,
+            ])->where('created_at', $time, '<')->count();
+
+            $num['hzf']['jy'] = SupervisorEntNameInfo::create()->where([
+                'entName' => $one['entName'],
+                'title' => 2,
+                'type' => 4,
+            ])->where('created_at', $time, '<')->count();
+
+            SupervisorPhoneEntName::create()->where('entName', $one['entName'])->update([
+                'totalNum' => jsonEncode($num),
+            ]);
+
+            //本次个数
+            $num['zyf'] = SupervisorEntNameInfo::create()->where([
+                'entName' => $one['entName'],
+                'title' => 1,
+            ])->where('created_at', $time, '>=')->count();
+
+            $num['hzf']['sf'] = SupervisorEntNameInfo::create()->where([
+                'entName' => $one['entName'],
+                'title' => 2,
+                'type' => 1,
+            ])->where('created_at', $time, '>=')->count();
+
+            $num['hzf']['gs'] = SupervisorEntNameInfo::create()->where([
+                'entName' => $one['entName'],
+                'title' => 2,
+                'type' => 2,
+            ])->where('created_at', $time, '>=')->count();
+
+            $num['hzf']['gl'] = SupervisorEntNameInfo::create()->where([
+                'entName' => $one['entName'],
+                'title' => 2,
+                'type' => 3,
+            ])->where('created_at', $time, '>=')->count();
+
+            $num['hzf']['jy'] = SupervisorEntNameInfo::create()->where([
+                'entName' => $one['entName'],
+                'title' => 2,
+                'type' => 4,
+            ])->where('created_at', $time, '>=')->count();
+
+            SupervisorPhoneEntName::create()->where('entName', $one['entName'])->update([
+                'currentNum' => jsonEncode($num),
+            ]);
         }
 
         $this->crontabBase->removeOverlappingKey(self::getTaskName());
