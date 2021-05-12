@@ -492,8 +492,8 @@ class UserController extends UserBase
         $resTotle = SupervisorEntNameInfo::create()->where('entName', $entList, 'IN');
 
         if (!empty($title)) {
-            if ($level === '争议方动态') $tmp = 1;
-            if ($level === '合作方动态') $tmp = 2;
+            if ($title === '争议方动态') $tmp = 1;
+            if ($title === '合作方动态') $tmp = 2;
 
             $detail->where('title', $tmp);
             $resTotle->where('title', $tmp);
