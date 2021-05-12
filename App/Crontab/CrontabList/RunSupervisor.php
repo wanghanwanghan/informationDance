@@ -38,7 +38,7 @@ class RunSupervisor extends AbstractCronTask
     {
         //每7天的凌晨2点
         //return '0 2 */7 * *';
-        return '*/15 * * * *';
+        return '*/10 * * * *';
     }
 
     static function getTaskName(): string
