@@ -431,6 +431,24 @@ class UserController extends UserBase
                     'entName' => $entName,
                     'type' => $type,
                     'status' => 1,
+                    'totalNum' => [
+                        'zyf' => 0,
+                        'hzf' => [
+                            'sf' => 0,
+                            'gs' => 0,
+                            'gl' => 0,
+                            'jy' => 0,
+                        ]
+                    ],
+                    'currentNum' => [
+                        'zyf' => 0,
+                        'hzf' => [
+                            'sf' => 0,
+                            'gs' => 0,
+                            'gl' => 0,
+                            'jy' => 0,
+                        ]
+                    ],
                     'expireTime' => time() + CreateConf::getInstance()->getConf('supervisor.chargeLimit') * 86400,
                 ];
 
