@@ -412,6 +412,7 @@ class UserController extends UserBase
     {
         $phone = $this->request()->getRequestParam('phone');
         $entName = $this->request()->getRequestParam('entName') ?? '';
+        $type = $this->request()->getRequestParam('type') ?? 3;//1争议2合作3全部
 
         $charge = ChargeService::getInstance()->Supervisor($this->request(), 50);
 
@@ -428,6 +429,7 @@ class UserController extends UserBase
                 $data = [
                     'phone' => $phone,
                     'entName' => $entName,
+                    'type' => $type,
                     'status' => 1,
                     'expireTime' => time() + CreateConf::getInstance()->getConf('supervisor.chargeLimit') * 86400,
                 ];
@@ -438,6 +440,7 @@ class UserController extends UserBase
 
                 //添加过了
                 $data->update([
+                    'type' => $type,
                     'status' => 1,
                     'expireTime' => time() + CreateConf::getInstance()->getConf('supervisor.chargeLimit') * 86400
                 ]);
