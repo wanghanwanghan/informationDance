@@ -508,8 +508,8 @@ class UserController extends UserBase
         $resTotle = SupervisorEntNameInfo::create()->where('entName', $entList, 'IN');
 
         if (!empty($title) && $title !== '全部') {
-            if ($title === '争议方动态') $tmp = 1;
-            if ($title === '合作方动态') $tmp = 2;
+            if ($title === '争议方') $tmp = 1;
+            if ($title === '合作/投资对象') $tmp = 2;
 
             $detail->where('title', $tmp);
             $resTotle->where('title', $tmp);
@@ -527,7 +527,7 @@ class UserController extends UserBase
         }
 
         if (!empty($type) && $type !== '全部') {
-            if ($type === '争议方动态') $tmp = 0;
+            if ($type === '争议方') $tmp = 0;
             if ($type === '司法风险') $tmp = 1;
             if ($type === '工商风险') $tmp = 2;
             if ($type === '管理风险') $tmp = 3;

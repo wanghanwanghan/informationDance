@@ -31,7 +31,6 @@ $data = [
     'pageSize' => 10,
 ];
 
-var_dump(\App\HttpController\Service\Common\CommonService::getInstance()->createLinePic());
 
 
 //江苏彩虹永能新能源有限公司
