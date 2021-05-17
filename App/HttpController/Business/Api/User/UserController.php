@@ -477,6 +477,7 @@ class UserController extends UserBase
     {
         $phone = $this->request()->getRequestParam('phone');
         $entName = $this->request()->getRequestParam('entName') ?? '';
+        $supervisorType = $this->request()->getRequestParam('supervisorType') ?? 3;
         $title = $this->request()->getRequestParam('title') ?? '';
         $level = $this->request()->getRequestParam('level') ?? '';
         $type = $this->request()->getRequestParam('type') ?? '';
@@ -487,7 +488,10 @@ class UserController extends UserBase
 
         //先确定是一个公司，还是全部公司
         try {
-            $entList = SupervisorPhoneEntName::create()->where('phone', $phone)->where('status', 1)->all();
+            $entList = SupervisorPhoneEntName::create()->where([
+                'phone' => $phone,
+                'type' => $supervisorType,
+            ])->all();
             if (empty($entName)) {
                 $tmp = [];
                 foreach ($entList as $one) {
