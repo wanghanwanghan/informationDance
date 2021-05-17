@@ -490,7 +490,7 @@ class UserController extends UserBase
         try {
             $entList = SupervisorPhoneEntName::create()->where([
                 'phone' => $phone,
-                'type' => $supervisorType,
+                'type' => $supervisorType - 0,
             ])->all();
             if (empty($entName)) {
                 $tmp = [];
