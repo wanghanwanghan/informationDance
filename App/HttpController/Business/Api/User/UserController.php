@@ -581,8 +581,10 @@ class UserController extends UserBase
             ])->all();
             $entList = obj2Arr($entList);
             foreach ($entList as $key => $one) {
-                $entList[$key]['totalNum'][] = jsonDecode($one['totalNum']);
-                $entList[$key]['currentNum'][] = jsonDecode($one['currentNum']);
+                $entList[$key]['totalNum'] = jsonDecode($one['totalNum']);
+                $entList[$key]['totalNum']['detail'] = [$entList[$key]['totalNum']['hzf']];
+                $entList[$key]['currentNum'] = jsonDecode($one['currentNum']);
+                $entList[$key]['currentNum']['detail'] = [$entList[$key]['currentNum']['hzf']];
             }
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
