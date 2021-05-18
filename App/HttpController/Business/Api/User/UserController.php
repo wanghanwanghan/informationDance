@@ -683,7 +683,11 @@ class UserController extends UserBase
         $fileHandle = $fileObject->getHandle();
         $format = new \Vtiful\Kernel\Format($fileHandle);
         $boldStyle = $format->bold()->toResource();
-        $fileObject->header($header)->data($data)->setRow('A1', 20, $boldStyle)->output();
+        $fileObject->header($header)
+            ->data($data)
+            ->setRow('A1', 20, $boldStyle)
+            ->setColumn('A:A', 200, $boldStyle)
+            ->output();
 
         return $this->writeJson(200, null, 'Static/Temp/' . $filename);
     }
