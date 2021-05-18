@@ -679,9 +679,11 @@ class UserController extends UserBase
             return $this->writeErr($e, __FUNCTION__);
         }
 
-        $filePath = $excel->fileName($filename, 'sheet1')
-            ->header($header)
-            ->data($data)->output();
+        $fileObject = $excel->fileName($filename, 'sheet1');
+        $fileHandle = $fileObject->getHandle();
+        $format = new \Vtiful\Kernel\Format($fileHandle);
+        $boldStyle = $format->bold()->toResource();
+        $fileObject->header($header)->data($data)->setRow('A1', 20, $boldStyle)->output();
 
         return $this->writeJson(200, null, 'Static/Temp/' . $filename);
     }
