@@ -688,6 +688,7 @@ class UserController extends UserBase
         $colorStyle = $format
             ->fontColor(\Vtiful\Kernel\Format::COLOR_ORANGE)
             ->border(\Vtiful\Kernel\Format::BORDER_DASH_DOT)
+            ->align(\Vtiful\Kernel\Format::FORMAT_ALIGN_CENTER, \Vtiful\Kernel\Format::FORMAT_ALIGN_VERTICAL_CENTER)
             ->toResource();
 
         $format = new \Vtiful\Kernel\Format($fileHandle);
