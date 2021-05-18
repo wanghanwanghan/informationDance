@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Api\HuoYan;
 
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HuoYan\HuoYanService;
+use wanghanwanghan\someUtils\control;
 
 class HuoYanController extends HuoYanBase
 {
@@ -19,6 +20,7 @@ class HuoYanController extends HuoYanBase
 
     private function checkResponse($res)
     {
+        $res['result'] = control::changeArrVal($res['result'], ['', null], '--', true);
         return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
