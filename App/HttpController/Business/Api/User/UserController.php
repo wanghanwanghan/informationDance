@@ -630,7 +630,26 @@ class UserController extends UserBase
     {
         $phone = $this->request()->getRequestParam('phone');
         $entNameList = $this->request()->getRequestParam('entNameList') ?? '';
-        CommonService::getInstance()->log4PHP($entNameList);
+        $entNameList = array_filter(explode(',', $entNameList));
+
+        $config = [
+            'path' => TEMP_FILE_PATH // xlsx文件保存路径
+        ];
+
+        $excel = new \Vtiful\Kernel\Excel($config);
+
+        $filename = control::getUuid() . '.xlsx';
+
+        $filePath = $excel->fileName($filename, 'sheet1')
+            ->header(['Item', 'Cost'])
+            ->data([
+                ['Rent', 1000],
+                ['Gas', 100],
+                ['Food', 300],
+                ['Gym', 50],
+            ])->output();
+
+        return $this->writeJson(200, null, 'Static/Temp/' . $filename);
     }
 
     //修改风险阈值
