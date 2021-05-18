@@ -640,14 +640,48 @@ class UserController extends UserBase
 
         $filename = control::getUuid() . '.xlsx';
 
+        $header = [
+            '序号',
+            '企业名称',
+            '监控类别',
+            '争议方',
+            '合作方-司法',
+            '合作方-工商',
+            '合作方-管理',
+            '合作方-经营',
+            '最后监控时间',
+        ];
+
+        try {
+            $list = SupervisorPhoneEntName::create()
+                ->where('phone', $phone)
+                ->where('entName', $entNameList, 'IN')
+                ->all();
+            $data = [];
+            $i = 1;
+            foreach ($list as $one) {
+                $num = jsonDecode($one->currentNum);
+                $tmp = [
+                    $i,
+                    $one->entName,
+                    $one->type === 1 ? '争议方' : $one->type === 2 ? '合作方' : '全部',
+                    ($one->type === 1 || $one->type === 3) ? $num['zyf'] : 0,
+                    ($one->type === 2 || $one->type === 3) ? $num['hzf']['sf'] : 0,
+                    ($one->type === 2 || $one->type === 3) ? $num['hzf']['gs'] : 0,
+                    ($one->type === 2 || $one->type === 3) ? $num['hzf']['gl'] : 0,
+                    ($one->type === 2 || $one->type === 3) ? $num['hzf']['jy'] : 0,
+                    date('Y-m-d', $one->updated_at),
+                ];
+                array_push($data, $tmp);
+                $i++;
+            }
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
         $filePath = $excel->fileName($filename, 'sheet1')
-            ->header(['Item', 'Cost'])
-            ->data([
-                ['Rent', 1000],
-                ['Gas', 100],
-                ['Food', 300],
-                ['Gym', 50],
-            ])->output();
+            ->header($header)
+            ->data($data)->output();
 
         return $this->writeJson(200, null, 'Static/Temp/' . $filename);
     }
