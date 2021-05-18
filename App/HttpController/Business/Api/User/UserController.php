@@ -638,7 +638,7 @@ class UserController extends UserBase
 
         $excel = new \Vtiful\Kernel\Excel($config);
 
-        $filename = control::getUuid() . '.xlsx';
+        $filename = control::getUuid(8) . '.xlsx';
 
         $header = [
             '序号',
