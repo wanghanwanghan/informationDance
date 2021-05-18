@@ -685,22 +685,22 @@ class UserController extends UserBase
         //==========================================================================================================
         $format = new \Vtiful\Kernel\Format($fileHandle);
 
-        $colorOneStyle = $format
+        $colorStyle = $format
             ->fontColor(\Vtiful\Kernel\Format::COLOR_ORANGE)
             ->border(\Vtiful\Kernel\Format::BORDER_DASH_DOT)
             ->toResource();
 
         $format = new \Vtiful\Kernel\Format($fileHandle);
 
-        $colorTwoStyle = $format
-            ->fontColor(\Vtiful\Kernel\Format::COLOR_GREEN)
+        $alignStyle = $format
+            ->align(\Vtiful\Kernel\Format::FORMAT_ALIGN_CENTER, \Vtiful\Kernel\Format::FORMAT_ALIGN_VERTICAL_CENTER)
             ->toResource();
         //==========================================================================================================
 
         $fileObject
-            ->defaultFormat($colorOneStyle)
+            ->defaultFormat($colorStyle)
             ->header($header)
-            ->defaultFormat($colorTwoStyle)
+            ->defaultFormat($alignStyle)
             ->data($data)
             ->output();
 
