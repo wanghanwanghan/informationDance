@@ -625,6 +625,14 @@ class UserController extends UserBase
         return $this->writeJson(200, null, $data, '成功');
     }
 
+    //导出列表
+    function getSupervisorListByExcel()
+    {
+        $phone = $this->request()->getRequestParam('phone');
+        $entNameList = $this->request()->getRequestParam('entNameList') ?? '';
+        CommonService::getInstance()->log4PHP($entNameList);
+    }
+
     //修改风险阈值
     function editSupervisorLimit()
     {
