@@ -85,7 +85,6 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceBalanceSheetAnnual', $prefix . 'getFinanceBalanceSheetAnnual');//资产负债表--年度查询
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceBalanceSheet', $prefix . 'getFinanceBalanceSheet');//资产负债表查询
             $routeCollector->addRoute(['GET', 'POST'], '/getVatReturn', $prefix . 'getVatReturn');//增值税申报表查询
-
         });
 
         return true;
