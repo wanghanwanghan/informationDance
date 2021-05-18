@@ -562,7 +562,10 @@ class ChargeService extends ServiceBase
         //等于false说明用户还没点确定支付，等于true说明用户点了确认支付
         $pay = $this->getPay($request);
 
-        if (!$pay) return ['code' => 210, 'msg' => "此信息需消耗 {$moduleInfo['basePrice']} 元，有效期 7 天"];
+        if (!$pay) {
+            $date = CreateConf::getInstance()->getConf('supervisor.chargeLimit');
+            return ['code' => 210, 'msg' => "此信息需消耗 {$moduleInfo['basePrice']} 元，有效期 {$date} 天"];
+        }
 
         try {
             //取得用户钱包余额
