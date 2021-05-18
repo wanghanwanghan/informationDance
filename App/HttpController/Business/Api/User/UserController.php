@@ -681,6 +681,8 @@ class UserController extends UserBase
 
         $fileObject = $excel->fileName($filename, 'sheet1');
         $fileHandle = $fileObject->getHandle();
+
+        //==========================================================================================================
         $format = new \Vtiful\Kernel\Format($fileHandle);
 
         $colorOneStyle = $format
@@ -693,6 +695,7 @@ class UserController extends UserBase
         $colorTwoStyle = $format
             ->fontColor(\Vtiful\Kernel\Format::COLOR_GREEN)
             ->toResource();
+        //==========================================================================================================
 
         $fileObject
             ->defaultFormat($colorOneStyle)
