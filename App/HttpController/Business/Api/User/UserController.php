@@ -588,9 +588,9 @@ class UserController extends UserBase
                 'type' => $supervisorType - 0,
             ])->all();
             $entList = obj2Arr($entList);
-            $i = 0;
+            $i = 1;
             foreach ($entList as $key => $one) {
-                $entList[$key]['indexId'] = $i++;
+                $entList[$key]['indexId'] = $i++;//序号
                 $entList[$key]['totalNum'] = jsonDecode($one['totalNum']);
                 $entList[$key]['currentNum'] = jsonDecode($one['currentNum']);
             }
