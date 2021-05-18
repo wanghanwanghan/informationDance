@@ -682,12 +682,23 @@ class UserController extends UserBase
         $fileObject = $excel->fileName($filename, 'sheet1');
         $fileHandle = $fileObject->getHandle();
         $format = new \Vtiful\Kernel\Format($fileHandle);
-        $all = $format
-            ->align(\Vtiful\Kernel\Format::FORMAT_ALIGN_CENTER, \Vtiful\Kernel\Format::FORMAT_ALIGN_VERTICAL_CENTER)
+
+        $colorOneStyle = $format
+            ->fontColor(\Vtiful\Kernel\Format::COLOR_ORANGE)
+            ->border(\Vtiful\Kernel\Format::BORDER_DASH_DOT)
             ->toResource();
-        $fileObject->header($header)
+
+        $format = new \Vtiful\Kernel\Format($fileHandle);
+
+        $colorTwoStyle = $format
+            ->fontColor(\Vtiful\Kernel\Format::COLOR_GREEN)
+            ->toResource();
+
+        $fileObject
+            ->defaultFormat($colorOneStyle)
+            ->header($header)
+            ->defaultFormat($colorTwoStyle)
             ->data($data)
-            ->defaultFormat($all)
             ->output();
 
         return $this->writeJson(200, null, 'Static/Temp/' . $filename);
