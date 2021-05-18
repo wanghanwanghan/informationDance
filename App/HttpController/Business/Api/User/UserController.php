@@ -493,14 +493,17 @@ class UserController extends UserBase
                 'status' => 1,
                 'type' => $supervisorType - 0,
             ])->all();
-            if (empty($entName)) {
+
+            if (empty($entList)) {
+                //没有监控任何类型的公司
+                $entList = [];
+            } else {
+                //监控了一堆公司
                 $tmp = [];
                 foreach ($entList as $one) {
                     $tmp[] = $one->entName;
                 }
                 $entList = $tmp;
-            } else {
-                $entList = [$entName];
             }
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
@@ -508,6 +511,11 @@ class UserController extends UserBase
 
         $entList = array_filter($entList);
         if (empty($entList)) return $this->writeJson(201, null, null, '没有监控任何公司');
+
+        //查一个公司，还是全部公司
+        if (!empty($entName) && in_array($entName, $entList)) {
+            $entList = [$entName];
+        }
 
         $detail = SupervisorEntNameInfo::create()->where('entName', $entList, 'IN');
         $resTotle = SupervisorEntNameInfo::create()->where('entName', $entList, 'IN');
