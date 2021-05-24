@@ -48,7 +48,8 @@ class UserController extends UserBase
         $email = $this->request()->getRequestParam('email') ?? 'test@test.com';
         $pidPhone = $this->request()->getRequestParam('pidPhone') ?? 0;//注册裂变
 
-        $password = $this->request()->getRequestParam('password') ?? control::randNum(6);
+        $password = $this->request()->getRequestParam('password') ?? '';
+        empty(trim($password)) ? $password = control::randNum(6) : $password = trim($password);
         $avatar = $this->request()->getRequestParam('avatar') ?? '';
 
         $vCode = $this->request()->getRequestParam('vCode') ?? '';
@@ -119,20 +120,10 @@ class UserController extends UserBase
     {
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $vCode = $this->request()->getRequestParam('vCode') ?? '';
+        $password = $this->request()->getRequestParam('password') ?? '';
 
-        if (empty($phone) || empty($vCode)) return $this->writeJson(201, null, null, '手机号或验证码不能是空');
-
-        $redis = Redis::defer('redis');
-
-        $redis->select(14);
-
-        $vCodeInRedis = $redis->get($phone . 'login');
-
-        if (!is_numeric($vCodeInRedis) || $vCodeInRedis <= 1000) {
-            $vCodeInRedis = $redis->get($phone . 'reg');
-        }
-
-        if ((int)$vCodeInRedis !== (int)$vCode) return $this->writeJson(201, null, null, '验证码错误');
+        if (empty($phone) || (empty($vCode) && empty($password)))
+            return $this->writeJson(201, null, null, '手机号或密码或验证码不能是空');
 
         try {
             $userInfo = User::create()->where('phone', $phone)->get();
@@ -142,13 +133,31 @@ class UserController extends UserBase
 
         if (empty($userInfo)) return $this->writeJson(201, null, null, '手机号不存在');
 
-        if ($userInfo->isDestroy == 1) return $this->writeJson(201, null, null, '手机号已注销');
+        if ($userInfo->getAttr('isDestroy') == 1) return $this->writeJson(201, null, null, '手机号已注销');
+
+        //密码或者验证码登陆
+        if (!empty($vCode)) {
+            $redis = Redis::defer('redis');
+            $redis->select(14);
+            $vCodeInRedis = $redis->get($phone . 'login');
+            if (!is_numeric($vCodeInRedis) || $vCodeInRedis <= 1000) {
+                $vCodeInRedis = $redis->get($phone . 'reg');
+            }
+            if ((int)$vCodeInRedis !== (int)$vCode) return $this->writeJson(201, null, null, '验证码错误');
+        } elseif (!empty($password)) {
+            !is_numeric($password) ?: $password -= 0;
+            !is_numeric($userInfo->getAttr('password')) ?
+                $mysql_pwd = $userInfo->getAttr('password') :
+                $mysql_pwd = $userInfo->getAttr('password') - 0;
+            if ($password !== $mysql_pwd) return $this->writeJson(201, null, null, '密码错误');
+        } else {
+            return $this->writeJson(201, null, null, '干啥呢');
+        }
 
         $newToken = UserService::getInstance()->createAccessToken($userInfo->phone, $userInfo->password);
 
         try {
-            $user = User::create()->get($userInfo->id);
-            $user->update(['token' => $newToken]);
+            User::create()->get($userInfo->getAttr('id'))->update(['token' => $newToken]);
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
