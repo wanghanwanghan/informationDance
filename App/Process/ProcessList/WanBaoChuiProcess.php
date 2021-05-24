@@ -11,8 +11,8 @@ use Swoole\Coroutine;
 
 class WanBaoChuiProcess extends ProcessBase
 {
-    public $token1 = 'df0b8ce22bb092a98a533f66705f50b7';
-    public $token2 = '552e9f6b0746026136cd7bca034812ce';
+    public $token1 = null;
+    public $token2 = null;
     public $is_login = false;
     public $target = [];
 
@@ -50,6 +50,10 @@ class WanBaoChuiProcess extends ProcessBase
             }
         }
 
+        CommonService::getInstance()->log4PHP([
+            'targetList' => $target
+        ]);
+
         $this->target = $target;
     }
 
@@ -57,11 +61,14 @@ class WanBaoChuiProcess extends ProcessBase
     {
         foreach ($target as $one_id) {
             Coroutine::create(function () use ($one_id) {
-                (new CoHttpClient())
+                $res = (new CoHttpClient())
                     ->useCache(false)
                     ->send("http://wbcapi.shuhuiguoyou.com/auctions/{$one_id}/", [], [
                         'token' => $this->token1,
                     ]);
+                CommonService::getInstance()->log4PHP([
+                    'doAuctions' => $res
+                ]);
             });
             Coroutine::create(function () use ($one_id) {
                 (new CoHttpClient())
@@ -82,6 +89,10 @@ class WanBaoChuiProcess extends ProcessBase
             ]);
 
         $this->token1 = $res['data']['token'];
+
+        CommonService::getInstance()->log4PHP([
+            'token1登陆' => $res
+        ]);
 
         $res = (new CoHttpClient())->useCache(false)
             ->send('http://wbcapi.shuhuiguoyou.com/login/', [
