@@ -689,7 +689,7 @@ class UserController extends UserBase
             return $this->writeErr($e, __FUNCTION__);
         }
 
-        $fileObject = $excel->fileName($filename, 'sheet1');
+        $fileObject = $excel->fileName($filename, '汇总');
         $fileHandle = $fileObject->getHandle();
 
         //==========================================================================================================
@@ -714,11 +714,16 @@ class UserController extends UserBase
             ->defaultFormat($alignStyle)
             ->data($data);
 
+        $format = new \Vtiful\Kernel\Format($fileHandle);
+        $wrapStyle = $format->wrap()->toResource();
+
         // 向文件中追加一个工作表
-        $fileObject->addSheet('sheet2')
+        $fileObject
+            ->defaultFormat($wrapStyle)
+            ->addSheet('sheet2')
             ->header(['name', 'age'])
             ->data([
-                ['wjx', 22]
+                ['wanghan\n123', 22]
             ])
             ->output();
 
