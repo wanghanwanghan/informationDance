@@ -19,7 +19,7 @@ class WanBaoChuiProcess extends ProcessBase
         $res = (new CoHttpClient())->useCache(false)
             ->send('http://wbcapi.shuhuiguoyou.com/auction/0/?page=10', [], [
                 'token' => 'df0b8ce22bb092a98a533f66705f50b7',
-            ], [], 'post');
+            ], [], 'get');
 
         CommonService::getInstance()->log4PHP($res);
 
