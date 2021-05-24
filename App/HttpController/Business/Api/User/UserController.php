@@ -717,15 +717,20 @@ class UserController extends UserBase
         $format = new \Vtiful\Kernel\Format($fileHandle);
         $wrapStyle = $format->wrap()->toResource();
 
-        // 向文件中追加一个工作表
-        $fileObject
-            ->addSheet('sheet2')
-            ->header(['name', 'age'])
-            ->defaultFormat($wrapStyle)
-            ->data([
-                ["wanghan\n123", 22]
-            ])
-            ->output();
+        //导出每个公司的监控详情
+        foreach ($entNameList as $one_ent_name) {
+            if (false) {
+                $fileObject
+                    ->addSheet('sheet2')
+                    ->header(['name', 'age'])
+                    ->defaultFormat($wrapStyle)
+                    ->data([
+                        ["wanghan\n123", 22]
+                    ]);
+            }
+        }
+
+        $fileObject->output();
 
         return $this->writeJson(200, null, 'Static/Temp/' . $filename);
     }
