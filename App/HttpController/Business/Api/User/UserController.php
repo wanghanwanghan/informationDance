@@ -708,6 +708,11 @@ class UserController extends UserBase
             ->toResource();
         //==========================================================================================================
 
+        // 向文件中追加一个工作表
+        $fileObject->addSheet('sheet2')
+            ->header(['name', 'age'])
+            ->data([['wjx', 22]]);
+
         $fileObject
             ->defaultFormat($colorStyle)
             ->header($header)
