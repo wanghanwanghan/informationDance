@@ -721,7 +721,7 @@ class UserController extends UserBase
         foreach ($entNameList as $one_ent_name) {
             if (false) {
                 $fileObject
-                    ->addSheet('sheet2')
+                    ->addSheet($one_ent_name)
                     ->header(['name', 'age'])
                     ->defaultFormat($wrapStyle)
                     ->data([
