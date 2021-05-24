@@ -717,7 +717,9 @@ class UserController extends UserBase
         // 向文件中追加一个工作表
         $fileObject->addSheet('sheet2')
             ->header(['name', 'age'])
-            ->data([['wjx', 22]])
+            ->data([
+                ['wjx', 22]
+            ])
             ->output();
 
         return $this->writeJson(200, null, 'Static/Temp/' . $filename);
