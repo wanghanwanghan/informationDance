@@ -723,7 +723,7 @@ class UserController extends UserBase
             ->header(['name', 'age'])
             ->defaultFormat($wrapStyle)
             ->data([
-                ['wanghan\n123', 22]
+                ["wanghan\n123", 22]
             ])
             ->output();
 
