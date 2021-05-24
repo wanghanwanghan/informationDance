@@ -719,9 +719,9 @@ class UserController extends UserBase
 
         // 向文件中追加一个工作表
         $fileObject
-            ->defaultFormat($wrapStyle)
             ->addSheet('sheet2')
             ->header(['name', 'age'])
+            ->defaultFormat($wrapStyle)
             ->data([
                 ['wanghan\n123', 22]
             ])
