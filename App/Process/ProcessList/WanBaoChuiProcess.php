@@ -21,8 +21,13 @@ class WanBaoChuiProcess extends ProcessBase
                 'token' => 'df0b8ce22bb092a98a533f66705f50b7',
             ], [], 'get');
 
-        CommonService::getInstance()->log4PHP($res);
+        $target = [];
 
+        foreach ($res['data']['results'] as $one) {
+            $target[] = $one['id'];
+        }
+
+        CommonService::getInstance()->log4PHP($target);
 
     }
 
