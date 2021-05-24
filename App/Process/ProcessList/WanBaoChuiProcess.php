@@ -21,7 +21,7 @@ class WanBaoChuiProcess extends ProcessBase
 
         while (true) {
             $now = Carbon::now()->format('Hi') - 0;
-            if (in_array($now, [930, 931, 1330, 1331, 1930, 1931], true)) {
+            if (in_array($now, [929, 930, 1329, 1330, 1929, 1930], true)) {
                 $res = (new CoHttpClient())->useCache(false)
                     ->send('http://wbcapi.shuhuiguoyou.com/auction/0/?page=10', [], [
                         'token' => $this->token1,
