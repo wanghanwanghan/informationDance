@@ -78,9 +78,11 @@ class WanBaoChuiProcess extends ProcessBase
                     '取得列表' => $res
                 ]);
 
-                foreach ($res['data']['results'] as $two) {
-                    if (!is_numeric($two['id'])) continue;
-                    $target[] = $two['id'] - 0;
+                if (is_array($res) && !empty($res['data']['results'])) {
+                    foreach ($res['data']['results'] as $two) {
+                        if (!is_numeric($two['id'])) continue;
+                        $target[] = $two['id'] - 0;
+                    }
                 }
             }
         } catch (\Throwable $e) {
