@@ -21,7 +21,7 @@ class WanBaoChuiProcess extends ProcessBase
         //可以用来初始化
         parent::run($arg);
 
-        while (true) {
+        while (false) {
             $now = Carbon::now()->format('Hi') - 0;
             if (in_array($now, [930, 1000, 1330, 1930], true)) {
                 if (!$this->is_login) {
