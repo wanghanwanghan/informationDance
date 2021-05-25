@@ -44,6 +44,7 @@ class WanBaoChuiProcess extends ProcessBase
                 ->send("http://wbcapi.shuhuiguoyou.com/auction/0/?page={$one}", [], [
                     'token' => $this->token1,
                 ], [], 'get');
+            if (is_string($res)) $res = jsonDecode($res);
             foreach ($res['data']['results'] as $two) {
                 if (!is_numeric($two['id'])) continue;
                 $target[] = $two['id'] - 0;
@@ -66,6 +67,7 @@ class WanBaoChuiProcess extends ProcessBase
                     ->send("http://wbcapi.shuhuiguoyou.com/auctions/{$one_id}/", [], [
                         'token' => $this->token1,
                     ]);
+                if (is_string($res)) $res=jsonDecode($res);
                 CommonService::getInstance()->log4PHP([
                     'doAuctions' => $res
                 ]);
@@ -88,6 +90,8 @@ class WanBaoChuiProcess extends ProcessBase
                 'password' => 'cll912922',
             ]);
 
+        $res = jsonDecode($res);
+
         $this->token1 = $res['data']['token'];
 
         CommonService::getInstance()->log4PHP([
@@ -99,6 +103,8 @@ class WanBaoChuiProcess extends ProcessBase
                 'mobile' => '13376863377',
                 'password' => 'cll912922',
             ]);
+
+        $res = jsonDecode($res);
 
         $this->token2 = $res['data']['token'];
 
