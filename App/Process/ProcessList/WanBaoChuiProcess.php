@@ -31,6 +31,7 @@ class WanBaoChuiProcess extends ProcessBase
                 $this->doAuctions($this->target);
             } else {
                 $this->is_login = false;
+                $this->target = [];
             }
         }
     }
