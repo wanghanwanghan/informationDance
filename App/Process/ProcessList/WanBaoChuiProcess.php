@@ -41,12 +41,16 @@ class WanBaoChuiProcess extends ProcessBase
     {
         foreach ($target as $one_id) {
             Coroutine::create(function () use ($one_id) {
-                (new CoHttpClient())
+                $res = (new CoHttpClient())
                     ->useCache(false)
                     ->needJsonDecode(true)
                     ->send("http://wbcapi.shuhuiguoyou.com/auctions/{$one_id}/", [], [
                         'token' => $this->token1,
                     ]);
+
+                CommonService::getInstance()->log4PHP([
+                    '开始拍' => ['id' => $one_id, 'res' => $res]
+                ]);
             });
             Coroutine::create(function () use ($one_id) {
                 (new CoHttpClient())
@@ -84,6 +88,10 @@ class WanBaoChuiProcess extends ProcessBase
         }
 
         $this->target = $target;
+
+        CommonService::getInstance()->log4PHP([
+            '列表是' => $this->target
+        ]);
     }
 
     protected function getLogin()
