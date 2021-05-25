@@ -69,6 +69,11 @@ class WanBaoChuiProcess extends ProcessBase
                     ->send("http://wbcapi.shuhuiguoyou.com/auction/0/?page={$one}", [], [
                         'token' => $this->token1,
                     ], [], 'get');
+
+                CommonService::getInstance()->log4PHP([
+                    '取得列表' => $res
+                ]);
+
                 foreach ($res['data']['results'] as $two) {
                     if (!is_numeric($two['id'])) continue;
                     $target[] = $two['id'] - 0;
@@ -89,6 +94,11 @@ class WanBaoChuiProcess extends ProcessBase
                     'mobile' => '13968525505',
                     'password' => 'cll912922',
                 ]);
+
+            CommonService::getInstance()->log4PHP([
+                '取得token1' => $res
+            ]);
+
             $this->token1 = $res['data']['token'];
         } catch (\Throwable $e) {
             $this->recodeErr($e, __FUNCTION__);
@@ -100,6 +110,11 @@ class WanBaoChuiProcess extends ProcessBase
                     'mobile' => '13376863377',
                     'password' => 'cll912922',
                 ]);
+
+            CommonService::getInstance()->log4PHP([
+                '取得token2' => $res
+            ]);
+
             $this->token2 = $res['data']['token'];
         } catch (\Throwable $e) {
             $this->recodeErr($e, __FUNCTION__);
