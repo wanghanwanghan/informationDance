@@ -88,38 +88,3 @@ $data = [
 //$endTime = microtime(true);
 //
 //echo '插入 ', $size, ' 个普通元素需要 ', $endTime - $startTime, ' 秒', "\n";
-
-
-$curl = curl_init();//初始化
-curl_setopt($curl, CURLOPT_URL, 'http://wbcapi.shuhuiguoyou.com/login/');//设置请求地址
-curl_setopt($curl, CURLOPT_POST, true);//设置post方式请求
-curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 15);//几秒后没链接上就自动断开
-curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-curl_setopt($curl, CURLOPT_POSTFIELDS, ['mobile' => '13968525505', 'password' => 'cll912922']);//提交的数据
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);//返回值不直接显示
-$res = curl_exec($curl);//发送请求
-$res = json_decode($res, 1);
-$token = $res['data']['token'];
-
-$curl = curl_init();//初始化
-curl_setopt($curl, CURLOPT_URL, 'http://wbcapi.shuhuiguoyou.com/auction/0/?page=2');//设置请求地址
-curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 15);//几秒后没链接上就自动断开
-curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-curl_setopt($curl, CURLOPT_HTTPHEADER, ["token:$token"]);
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);//返回值不直接显示
-$res = curl_exec($curl);//发送请求
-$res = json_decode($res, 1);
-foreach ($res['data']['results'] as $one) {
-    $tmp = $one['id'] - 0;
-}
-
-$curl = curl_init();//初始化
-curl_setopt($curl, CURLOPT_URL, "http://wbcapi.shuhuiguoyou.com/auctions/$tmp/");//设置请求地址
-curl_setopt($curl, CURLOPT_POST, true);//设置post方式请求
-curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 15);//几秒后没链接上就自动断开
-curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-curl_setopt($curl, CURLOPT_HTTPHEADER, ["token:$token"]);
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);//返回值不直接显示
-$res = curl_exec($curl);//发送请求
-
-dd(json_decode($res, 1));

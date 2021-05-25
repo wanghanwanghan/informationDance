@@ -48,7 +48,7 @@ class WanBaoChuiProcess extends ProcessBase
 
                 CommonService::getInstance()->log4PHP([
                     '开始拍' => ['id' => $one_id, 'res' => $res]
-                ]);
+                ], 'info', 'wanbaochui_run.log');
             });
             Coroutine::create(function () use ($one_id) {
                 (new CoHttpClient())
@@ -74,7 +74,7 @@ class WanBaoChuiProcess extends ProcessBase
 
                 CommonService::getInstance()->log4PHP([
                     '取得列表' => $res
-                ]);
+                ], 'info', 'wanbaochui_run.log');
 
                 if (is_array($res) && !empty($res['data']['results'])) {
                     foreach ($res['data']['results'] as $two) {
@@ -91,7 +91,7 @@ class WanBaoChuiProcess extends ProcessBase
 
         CommonService::getInstance()->log4PHP([
             '列表是' => $this->target
-        ]);
+        ], 'info', 'wanbaochui_run.log');
     }
 
     protected function getLogin()
@@ -105,7 +105,7 @@ class WanBaoChuiProcess extends ProcessBase
 
             CommonService::getInstance()->log4PHP([
                 '取得token1' => $res
-            ]);
+            ], 'info', 'wanbaochui_run.log');
 
             $this->token1 = $res['data']['token'];
         } catch (\Throwable $e) {
@@ -121,7 +121,7 @@ class WanBaoChuiProcess extends ProcessBase
 
             CommonService::getInstance()->log4PHP([
                 '取得token2' => $res
-            ]);
+            ], 'info', 'wanbaochui_run.log');
 
             $this->token2 = $res['data']['token'];
         } catch (\Throwable $e) {
@@ -139,7 +139,7 @@ class WanBaoChuiProcess extends ProcessBase
 
         $content = "[file => {$file}] [func => {$func_name}] [line => {$line}] [msg => {$msg}]";
 
-        CommonService::getInstance()->log4PHP($content, 'info', 'wanbaocui.log');
+        CommonService::getInstance()->log4PHP($content, 'info', 'wanbaocui_err.log');
     }
 
     protected function onPipeReadable(Process $process)
@@ -161,7 +161,7 @@ class WanBaoChuiProcess extends ProcessBase
 
         $content = "[file => {$file}] [line => {$line}] [msg => {$msg}]";
 
-        CommonService::getInstance()->log4PHP($content, 'info', 'wanbaocui.log');
+        CommonService::getInstance()->log4PHP($content, 'info', 'wanbaocui_err.log');
     }
 
 
