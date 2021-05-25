@@ -24,7 +24,7 @@ class WanBaoChuiProcess extends ProcessBase
         while (true) {
             $now = Carbon::now()->format('Hi') - 0;
             if (in_array($now, [930, 1000, 1330, 1930], true)) {
-                if (!$this->is_login) {
+                if (!$this->is_login || empty($this->target)) {
                     $this->getLogin();
                     $this->getAuctionsList();
                 }
@@ -45,7 +45,6 @@ class WanBaoChuiProcess extends ProcessBase
                     ->send("http://wbcapi.shuhuiguoyou.com/auctions/{$one_id}/", [], [
                         'token' => $this->token1,
                     ]);
-
                 CommonService::getInstance()->log4PHP([
                     '开始拍' => ['id' => $one_id, 'res' => $res]
                 ], 'info', 'wanbaochui_run.log');
@@ -71,11 +70,9 @@ class WanBaoChuiProcess extends ProcessBase
                     ->send("http://wbcapi.shuhuiguoyou.com/auction/0/?page={$one}", [], [
                         'token' => $this->token1,
                     ], [], 'get');
-
                 CommonService::getInstance()->log4PHP([
                     '取得列表' => $res
                 ], 'info', 'wanbaochui_run.log');
-
                 if (is_array($res) && !empty($res['data']['results'])) {
                     foreach ($res['data']['results'] as $two) {
                         if (!is_numeric($two['id'])) continue;
@@ -83,15 +80,13 @@ class WanBaoChuiProcess extends ProcessBase
                     }
                 }
             }
+            $this->target = $target;
+            CommonService::getInstance()->log4PHP([
+                '列表是' => $this->target
+            ], 'info', 'wanbaochui_run.log');
         } catch (\Throwable $e) {
             $this->recodeErr($e, __FUNCTION__);
         }
-
-        $this->target = $target;
-
-        CommonService::getInstance()->log4PHP([
-            '列表是' => $this->target
-        ], 'info', 'wanbaochui_run.log');
     }
 
     protected function getLogin()
@@ -102,33 +97,23 @@ class WanBaoChuiProcess extends ProcessBase
                     'mobile' => '13968525505',
                     'password' => 'cll912922',
                 ]);
-
             CommonService::getInstance()->log4PHP([
                 '取得token1' => $res
             ], 'info', 'wanbaochui_run.log');
-
             $this->token1 = $res['data']['token'];
-        } catch (\Throwable $e) {
-            $this->recodeErr($e, __FUNCTION__);
-        }
-
-        try {
             $res = (new CoHttpClient())->useCache(false)->needJsonDecode(true)
                 ->send('http://wbcapi.shuhuiguoyou.com/login/', [
                     'mobile' => '13376863377',
                     'password' => 'cll912922',
                 ]);
-
             CommonService::getInstance()->log4PHP([
                 '取得token2' => $res
             ], 'info', 'wanbaochui_run.log');
-
             $this->token2 = $res['data']['token'];
+            $this->is_login = true;
         } catch (\Throwable $e) {
             $this->recodeErr($e, __FUNCTION__);
         }
-
-        $this->is_login = true;
     }
 
     protected function recodeErr(\Throwable $throwable, $func_name): void
