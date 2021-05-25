@@ -23,7 +23,7 @@ class WanBaoChuiProcess extends ProcessBase
 
         while (true) {
             $now = Carbon::now()->format('Hi') - 0;
-            if (in_array($now, [930, 1000, 1330, 1930], true)) {
+            if (in_array($now, [930, 1000, 1330, 1400, 1930], true)) {
                 if (!$this->is_login || empty($this->target)) {
                     $this->getLogin();
                     $this->getAuctionsList();
