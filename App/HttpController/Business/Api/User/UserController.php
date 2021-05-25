@@ -184,7 +184,9 @@ class UserController extends UserBase
             if (mb_strlen($pwd_saki) > 10) return $this->writeJson(201, null, null, '新密码最多10位');
             if (mb_strlen($pwd_saki) < 6) return $this->writeJson(201, null, null, '新密码最少6位');
             if ($pwd_saki !== $pwd_saki_confirm) return $this->writeJson(201, null, null, '新密码输入不一致');
-            $user_info->update(['password' => $pwd_saki]);
+            $user_info->update([
+                'password' => $pwd_saki,
+            ]);
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
