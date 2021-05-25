@@ -23,7 +23,7 @@ class WanBaoChuiProcess extends ProcessBase
 
         while (true) {
             $now = Carbon::now()->format('Hi') - 0;
-            if (in_array($now, [930, 1330, 1930], true)) {
+            if (in_array($now, [930, 1000, 1330, 1930], true)) {
                 if (!$this->is_login) {
                     $this->getLogin();
                     $this->getAuctionsList();
@@ -67,7 +67,7 @@ class WanBaoChuiProcess extends ProcessBase
                     ->send("http://wbcapi.shuhuiguoyou.com/auctions/{$one_id}/", [], [
                         'token' => $this->token1,
                     ]);
-                if (is_string($res)) $res=jsonDecode($res);
+                if (is_string($res)) $res = jsonDecode($res);
                 CommonService::getInstance()->log4PHP([
                     'doAuctions' => $res
                 ]);
