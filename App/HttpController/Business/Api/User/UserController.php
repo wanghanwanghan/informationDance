@@ -171,14 +171,12 @@ class UserController extends UserBase
     function setLoginPassword()
     {
         $phone = $this->request()->getRequestParam('phone') ?? '';
-        $pwd_moto = $this->request()->getRequestParam('pwd_moto') ?? '';
         $pwd_saki = $this->request()->getRequestParam('pwd_saki') ?? '';
         $pwd_saki_confirm = $this->request()->getRequestParam('pwd_saki_confirm') ?? '';
 
         try {
             $user_info = User::create()->where([
                 'phone' => $phone,
-                'password' => $pwd_moto,
             ])->get();
             if (empty($user_info)) return $this->writeJson(201, null, null, '旧密码错误');
             if (mb_strlen($pwd_saki) > 10) return $this->writeJson(201, null, null, '新密码最多10位');
