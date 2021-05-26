@@ -650,7 +650,8 @@ class LongXinController extends LongXinBase
             }
         }
 
-        return $this->writeJson(200, null, $ready, '成功', true, $temp);
+        return $this->checkResponse($ready, $temp);
+        //return $this->writeJson(200, null, $ready, '成功', true, $temp);
     }
 
 }
