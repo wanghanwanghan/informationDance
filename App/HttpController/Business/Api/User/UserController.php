@@ -623,6 +623,7 @@ class UserController extends UserBase
                 $entList[$key]['indexId'] = $i++;//序号
                 $entList[$key]['totalNum'] = jsonDecode($one['totalNum']);
                 $entList[$key]['currentNum'] = jsonDecode($one['currentNum']);
+                $entList[$key]['isExpire'] = $one['expireTime'] > time() ? 0 : 1;
             }
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
