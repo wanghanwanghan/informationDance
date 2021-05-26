@@ -178,7 +178,7 @@ class UserController extends UserBase
             $user_info = User::create()->where([
                 'phone' => $phone,
             ])->get();
-            if (empty($user_info)) return $this->writeJson(201, null, null, '旧密码错误');
+            if (empty($user_info)) return $this->writeJson(201, null, null, '用户不存在');
             if (mb_strlen($pwd_saki) > 10) return $this->writeJson(201, null, null, '新密码最多10位');
             if (mb_strlen($pwd_saki) < 6) return $this->writeJson(201, null, null, '新密码最少6位');
             if ($pwd_saki !== $pwd_saki_confirm) return $this->writeJson(201, null, null, '新密码输入不一致');
