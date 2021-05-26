@@ -39,7 +39,7 @@ class LongXinController extends LongXinBase
             if (isset($ext['refundToWallet']) && $ext['refundToWallet']) {
                 $res['code'] = 250;//本次查询不扣费
             }
-            return $this->writeJson((int)$res['code'], $res['Paging'], $res['Result'], $res['Message'], false);
+            return $this->writeJson((int)$res['code'], $res['Paging'], $res['Result'], $res['Message'], false, $ext);
         }
     }
 
@@ -650,7 +650,13 @@ class LongXinController extends LongXinBase
             }
         }
 
-        return $this->checkResponse($ready, $temp);
+        $res = [
+            'code' => 200,
+            'data' => $ready,
+            'msg' => '成功',
+        ];
+
+        return $this->checkResponse($res, $temp);
         //return $this->writeJson(200, null, $ready, '成功', true, $temp);
     }
 
