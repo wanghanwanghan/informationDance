@@ -315,13 +315,22 @@ class LongXinController extends LongXinBase
         $ready = [];
 
         for ($i = 0; $i < count($entName); $i++) {
+
             $postData = [
                 'entName' => $entName[$i],
                 'code' => $code,
                 'beginYear' => $beginYear,
                 'dataCount' => $dataCount,//取最近几年的
             ];
+
             $res = (new LongXinService())->getFinanceData($postData, false);
+
+            $charge = ChargeService::getInstance()->LongXin($this->request(), 51, $entName[$i]);
+
+            if ($charge['code'] !== 200) {
+                return $this->writeJson((int)$charge['code'], null, null, $charge['msg'], false);
+            }
+
             //30资产总额同比 ASSGRO_yoy
             //31负债总额同比 LIAGRO_yoy
             //32营业总收入同比 VENDINC_yoy
@@ -330,6 +339,7 @@ class LongXinController extends LongXinBase
             //35净利润同比 NETINC_yoy
             //36纳税总额同比 RATGRO_yoy
             //37所有者权益同比 TOTEQU_yoy
+
             if (!empty($res['data'])) {
                 $tmp = [];
                 foreach ($res['data'] as $year => $val) {
@@ -650,14 +660,7 @@ class LongXinController extends LongXinBase
             }
         }
 
-        $res = [
-            'code' => 200,
-            'data' => $ready,
-            'msg' => '成功',
-        ];
-
-        return $this->checkResponse($res, $temp);
-        //return $this->writeJson(200, null, $ready, '成功', true, $temp);
+        return $this->writeJson(200, null, $ready, '成功', true, $temp);
     }
 
 }

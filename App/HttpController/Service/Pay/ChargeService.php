@@ -225,11 +225,13 @@ class ChargeService extends ServiceBase
     }
 
     //龙信计费
-    function LongXin(Request $request, $moduleNum): array
+    function LongXin(Request $request, $moduleNum, $entName = null): array
     {
         $phone = $this->getPhone($request);
 
-        $entName = $this->getEntName($request);
+        if (empty($entName)) {
+            $entName = $this->getEntName($request);
+        }
 
         if (empty($phone) || empty($entName)) return ['code' => 201, 'msg' => '手机号或公司名不能是空'];
 
