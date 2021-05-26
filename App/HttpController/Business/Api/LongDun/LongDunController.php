@@ -87,14 +87,14 @@ class LongDunController extends LongDunBase
             foreach ($res['result'] as &$one) {
                 strlen($one['StartDate'] < 10) ?: $one['StartDate'] = substr($one['StartDate'], 0, 4);
                 //用户有没有监控该企业
-                !empty($superEnt) ?: $superEnt = [11111];
-                if (!empty($superEnt)) {
-                    foreach ($superEnt as $oneEnt) {
-                        $one['supervisor'] = 0;
-                        if ($one['Name'] == $oneEnt['entName']) {
-                            $one['supervisor'] = 1;
-                            break;
-                        }
+                !empty($superEnt) ?: $superEnt = [['entName' => 'test']];
+                foreach ($superEnt as $oneEnt) {
+                    $one['supervisor'] = 0;
+                    if ($one['Name'] === $oneEnt['entName']) {
+                        $one['supervisor'] = 1;
+                        //是否已经过期
+                        $oneEnt['expireTime'] > time() ?: $one['supervisor'] = 2;
+                        break;
                     }
                 }
             }
