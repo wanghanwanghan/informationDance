@@ -328,7 +328,7 @@ class LongXinController extends LongXinBase
             $charge = ChargeService::getInstance()->LongXin($this->request(), 51, $entName[$i]);
 
             if ($charge['code'] !== 200) {
-                return $this->writeJson((int)$charge['code'], null, null, $charge['msg'], false);
+                return $this->writeJson((int)$charge['code'], null, null, '每家公司收取35元，相同公司7天之内不再收取', false);
             }
 
             //30资产总额同比 ASSGRO_yoy
