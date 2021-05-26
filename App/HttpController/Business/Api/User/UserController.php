@@ -461,30 +461,24 @@ class UserController extends UserBase
 
             if (empty($data)) {
 
+                $tmp = jsonEncode([
+                    'zyf' => 0,
+                    'hzf' => [
+                        'sf' => 0,
+                        'gs' => 0,
+                        'gl' => 0,
+                        'jy' => 0,
+                    ]
+                ]);
+
                 //没添加过
                 $data = [
                     'phone' => $phone,
                     'entName' => $entName,
                     'type' => $type,
                     'status' => 1,
-                    'totalNum' => [
-                        'zyf' => 0,
-                        'hzf' => [
-                            'sf' => 0,
-                            'gs' => 0,
-                            'gl' => 0,
-                            'jy' => 0,
-                        ]
-                    ],
-                    'currentNum' => [
-                        'zyf' => 0,
-                        'hzf' => [
-                            'sf' => 0,
-                            'gs' => 0,
-                            'gl' => 0,
-                            'jy' => 0,
-                        ]
-                    ],
+                    'totalNum' => $tmp,
+                    'currentNum' => $tmp,
                     'expireTime' => time() + CreateConf::getInstance()->getConf('supervisor.chargeLimit') * 86400,
                 ];
 
