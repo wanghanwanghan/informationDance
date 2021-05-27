@@ -19,6 +19,7 @@ use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\Pay\wx\wxPayService;
 use App\HttpController\Service\User\UserService;
 use Carbon\Carbon;
+use EasySwoole\ORM\DbManager;
 use EasySwoole\RedisPool\Redis;
 use wanghanwanghan\someUtils\control;
 
@@ -599,6 +600,7 @@ class UserController extends UserBase
             $detail = $detail->order('created_at', 'desc')
                 ->limit($this->exprOffset($page, $pageSize), $pageSize)
                 ->all();
+            CommonService::getInstance()->log4PHP(DbManager::getInstance()->getLastQuery()->getLastQuery());
             $detail = obj2Arr($detail);
             $resTotle = $resTotle->count();
         } catch (\Throwable $e) {
