@@ -442,7 +442,7 @@ class UserController extends UserBase
     {
         $phone = $this->request()->getRequestParam('phone');
         $entName = $this->request()->getRequestParam('entName') ?? '';
-        $type = $this->request()->getRequestParam('type') ?? 3;//1争议2合作3全部
+        $type = $this->request()->getRequestParam('type') ?? 3;//1重点对象2合作3全部
 
         $charge = ChargeService::getInstance()->Supervisor($this->request(), 50);
 
@@ -545,7 +545,7 @@ class UserController extends UserBase
         $resTotle = SupervisorEntNameInfo::create()->where('entName', $entList, 'IN');
 
         if (!empty($title) && $title !== '全部') {
-            if ($title === '争议方') $tmp = 1;
+            if ($title === '重点对象') $tmp = 1;
             if ($title === '合作/投资对象') $tmp = 2;
 
             $detail->where('title', $tmp);
@@ -564,7 +564,7 @@ class UserController extends UserBase
         }
 
         if (!empty($type) && $type !== '全部') {
-            if ($type === '争议方') $tmp = 0;
+            if ($type === '重点对象') $tmp = 0;
             if ($type === '司法风险') $tmp = 1;
             if ($type === '工商风险') $tmp = 2;
             if ($type === '管理风险') $tmp = 3;
@@ -679,7 +679,7 @@ class UserController extends UserBase
             '序号',
             '企业名称',
             '监控类别',
-            '争议方',
+            '重点对象',
             '合作方-司法',
             '合作方-工商',
             '合作方-管理',
@@ -699,7 +699,7 @@ class UserController extends UserBase
                 $tmp = [
                     $i,
                     $one->entName,
-                    $one->type === 1 ? '争议方' : $one->type === 2 ? '合作方' : '全部',
+                    $one->type === 1 ? '重点对象' : $one->type === 2 ? '合作方' : '全部',
                     ($one->type === 1 || $one->type === 3) ? $num['zyf'] : 0,
                     ($one->type === 2 || $one->type === 3) ? $num['hzf']['sf'] : 0,
                     ($one->type === 2 || $one->type === 3) ? $num['hzf']['gs'] : 0,
