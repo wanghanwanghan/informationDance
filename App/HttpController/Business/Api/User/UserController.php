@@ -538,7 +538,7 @@ class UserController extends UserBase
         if (empty($entList)) return $this->writeJson(201, null, null, '没有监控任何公司');
 
         //查一个公司，还是全部公司
-        if (!empty($entName) && in_array($entName, $entList)) {
+        if (!empty($entName)) {
             $entList = [$entName];
         }
 
