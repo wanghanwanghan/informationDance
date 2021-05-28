@@ -382,6 +382,8 @@ TEMP;
             $this->dzkpjeTOP10jl_jx($pdf,$cspData);
             $this->sygysslfb($pdf,$cspData);
             $this->qycgqkfb($pdf,$cspData);
+        }else{
+            $this->ProductStandardInfo($pdf);
         }
     }
 
