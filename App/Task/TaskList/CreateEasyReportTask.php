@@ -1420,6 +1420,20 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("ywgk_Description#" . ($i + 1), $data['SearchCompanyCompanyProducts'][$i]['Description']);
         }
 
+        //产品标准
+        $rows = count($data['ProductStandardInfo']['list']);
+        $docObj->cloneRow('ps_no', $rows);
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("ps_no#" . ($i + 1), $i + 1);
+            //产品名称
+            $docObj->setValue('ps_pname#' . ($i + 1), $data['ProductStandardInfo']['list'][$i]['PRODUCT_NAME']);
+            //标准名称
+            $docObj->setValue('ps_sname#' . ($i + 1), $data['ProductStandardInfo']['list'][$i]['STANDARD_NAME']);
+            //标准编号
+            $docObj->setValue('ps_sno#' . ($i + 1), $data['ProductStandardInfo']['list'][$i]['STANDARD_CODE']);
+        }
+
         //专利
         $rows = count($data['PatentV4Search']['list']);
         $docObj->cloneRow('zl_no', $rows);
@@ -2868,6 +2882,24 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
             return $res;
+        });
+
+        //信动 产品标准
+        $csp->add('ProductStandardInfo', function () {
+
+            $res = (new XinDongService())->setCheckRespFlag(true)->getProductStandard($this->entName,1,50);
+
+            if ($res['code']===200 && !empty($res['result']))
+            {
+                $tmp['list'] = $res['result'];
+                $tmp['total'] = $res['paging']['total'];
+            }else
+            {
+                $tmp['list'] = null;
+                $tmp['total'] = 0;
+            }
+
+            return $tmp;
         });
 
         //龙盾 招投标
