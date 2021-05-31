@@ -10,8 +10,8 @@ use EasySwoole\RedisPool\Redis;
 
 class CoHttpClient extends ServiceBase
 {
-    private $db = 0;
-    private $ttlDay = 1;
+    private $db;
+    private $ttlDay;
     private $needJsonDecode = true;
     private $useCache = true;
 
