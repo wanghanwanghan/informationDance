@@ -35,7 +35,7 @@ class UserService extends ServiceBase
         try {
             $userInfo = User::create()->alias('user')
                 ->join('information_dance_wallet as wallet', 'wallet.phone = user.phone');
-            (!empty($phone) && is_numeric($phone)) ? $userInfo->where('user.phone', $phone) : null;
+            !(!empty($phone) && is_numeric($phone)) ?: $userInfo->where('user.phone', $phone);
             $userInfo = obj2Arr($userInfo->all());
             empty($userInfo) ?: $userInfo = current($userInfo);
             unset($userInfo['token']);
