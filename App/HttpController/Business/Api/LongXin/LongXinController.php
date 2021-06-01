@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Api\LongXin;
 
 use App\HttpController\Models\Api\AuthBook;
+use App\HttpController\Models\Api\Charge;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Pay\ChargeService;
@@ -309,6 +310,18 @@ class LongXinController extends LongXinBase
             return $this->writeJson(201, null, null, '公司名称不能是空');
         }
         $phone = $this->request()->getRequestParam('phone') ?? '';
+        $getLookCount = $this->request()->getRequestParam('getLookCount') ?? '';
+
+        if (!empty($getLookCount)) {
+            //只返回一个免费次数
+            $num = Charge::create()
+                ->where('phone', $phone)
+                ->where('moduleId', 51)
+                ->group('entName')
+                ->count();
+            return $this->writeJson(200, $num);
+        }
+
         $code = '';
         $beginYear = 2019;
         $dataCount = 3;

@@ -235,6 +235,32 @@ class ChargeService extends ServiceBase
 
         if (empty($phone) || empty($entName)) return ['code' => 201, 'msg' => '手机号或公司名不能是空'];
 
+        //获取扣费详情
+        $moduleInfo = $this->getModuleInfo($moduleNum);
+
+        //51号前5次是免费直接免费的
+        if ($moduleNum === 51) {
+            try {
+                $num = Charge::create()
+                    ->where('phone', $phone)
+                    ->where('moduleId', $moduleNum)
+                    ->group('entName')
+                    ->count();
+                if ($num <= 5) {
+                    $insert = [
+                        'moduleId' => $moduleNum,
+                        'moduleName' => $moduleInfo['name'] . $moduleInfo['desc'],
+                        'entName' => $entName,
+                        'phone' => $phone,
+                        'price' => 0,
+                    ];
+                    Charge::create()->data($insert)->save();
+                }
+            } catch (\Throwable $e) {
+                $this->writeErr($e, 'ChargeService');
+            }
+        }
+
         //是否免费
         try {
             $charge = Charge::create()
@@ -248,9 +274,6 @@ class ChargeService extends ServiceBase
         } catch (\Throwable $e) {
             $this->writeErr($e, 'ChargeService');
         }
-
-        //获取扣费详情
-        $moduleInfo = $this->getModuleInfo($moduleNum);
 
         if (!empty($charge)) {
             //取出上次计费时间
