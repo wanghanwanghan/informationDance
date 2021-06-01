@@ -320,9 +320,7 @@ class LongXinController extends LongXinBase
                 ->where('moduleId', 51)
                 ->group('entName')
                 ->all();
-            $num = obj2Arr($num);
-            CommonService::getInstance()->log4PHP(count($num));
-            CommonService::getInstance()->log4PHP($num);
+            empty($num) ? $num = 0 : $num = count(obj2Arr($num));
             return $this->writeJson(200, $num);
         }
 

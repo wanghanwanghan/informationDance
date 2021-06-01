@@ -243,9 +243,10 @@ class ChargeService extends ServiceBase
             try {
                 $num = Charge::create()
                     ->where('phone', $phone)
-                    ->where('moduleId', $moduleNum)
+                    ->where('moduleId', 51)
                     ->group('entName')
-                    ->count();
+                    ->all();
+                empty($num) ? $num = 0 : $num = count(obj2Arr($num));
                 if ($num <= 5) {
                     $insert = [
                         'moduleId' => $moduleNum,
