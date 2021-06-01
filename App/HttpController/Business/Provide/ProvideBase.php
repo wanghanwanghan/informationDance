@@ -163,7 +163,9 @@ class ProvideBase extends Index
 
         $requestData = array_merge($raw, $form);
 
-        (isset($requestData['pageSize']) && $requestData['pageSize'] > 10) ? $requestData['pageSize'] = 10 : null;
+        (isset($requestData['pageSize']) && $requestData['pageSize'] > 10) ?
+            $requestData['pageSize'] = 10 :
+            $requestData['pageSize'] = $requestData['pageSize'] - 0;
 
         $this->requestData = $requestData;
 
