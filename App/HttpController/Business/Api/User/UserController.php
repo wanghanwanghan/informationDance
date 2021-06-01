@@ -104,7 +104,7 @@ class UserController extends UserBase
             if ($company === '火眼推广20210420') {
                 Wallet::create()->data([
                     'phone' => $phone,
-                    'money' => 5 * 35
+                    'money' => 0
                 ])->save();
             } else {
                 Wallet::create()->data(['phone' => $phone])->save();
