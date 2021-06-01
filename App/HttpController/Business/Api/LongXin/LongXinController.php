@@ -321,7 +321,7 @@ class LongXinController extends LongXinBase
                 ->group('entName')
                 ->all();
             empty($num) ? $num = 0 : $num = count(obj2Arr($num));
-            return $this->writeJson(200, $num);
+            return $this->writeJson(200, null, $num);
         }
 
         $code = '';
