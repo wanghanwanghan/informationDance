@@ -319,8 +319,10 @@ class LongXinController extends LongXinBase
                 ->where('phone', $phone)
                 ->where('moduleId', 51)
                 ->group('entName')
-                ->count();
-            CommonService::getInstance()->log4PHP(DbManager::getInstance()->getLastQuery()->getLastQuery());
+                ->all();
+            $num = obj2Arr($num);
+            CommonService::getInstance()->log4PHP(count($num));
+            CommonService::getInstance()->log4PHP($num);
             return $this->writeJson(200, $num);
         }
 
