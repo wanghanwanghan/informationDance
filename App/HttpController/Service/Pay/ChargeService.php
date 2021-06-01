@@ -256,6 +256,7 @@ class ChargeService extends ServiceBase
                         'price' => 0,
                     ];
                     Charge::create()->data($insert)->save();
+                    return ['code' => 200, 'msg' => '新用户免费'];
                 }
             } catch (\Throwable $e) {
                 $this->writeErr($e, 'ChargeService');
