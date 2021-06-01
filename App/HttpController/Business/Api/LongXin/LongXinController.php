@@ -8,6 +8,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Pay\ChargeService;
 use Carbon\Carbon;
+use EasySwoole\ORM\DbManager;
 use wanghanwanghan\someUtils\control;
 
 class LongXinController extends LongXinBase
@@ -319,6 +320,7 @@ class LongXinController extends LongXinBase
                 ->where('moduleId', 51)
                 ->group('entName')
                 ->count();
+            CommonService::getInstance()->log4PHP(DbManager::getInstance()->getLastQuery()->getLastQuery());
             return $this->writeJson(200, $num);
         }
 
