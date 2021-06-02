@@ -22,8 +22,8 @@ class MoveOut extends AbstractCronTask
     static function getRule(): string
     {
         //每天的凌晨5点
-        //return '0 5 * * *';
-        return '*/2 * * * *';
+        return '0 5 * * *';
+        //return '*/2 * * * *';
     }
 
     static function getTaskName(): string
@@ -65,7 +65,7 @@ class MoveOut extends AbstractCronTask
                 $load_url = $one['load_url'];
                 $this->getFileByWget($load_url, TEMP_FILE_PATH, $name);
                 $filename_arr = ZipService::getInstance()->unzip(TEMP_FILE_PATH . $name, TEMP_FILE_PATH);
-                CommonService::getInstance()->log4PHP($filename_arr);
+                if (!empty($filename_arr)) $this->handleFileArr($filename_arr);
             }
         }
 
@@ -74,6 +74,15 @@ class MoveOut extends AbstractCronTask
         $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
         return true;
+    }
+
+    function handleFileArr($filename_arr)
+    {
+        //inv_20210601215801 股东变更
+        //inv_new_20210601215801 新股东
+
+        //basic_20210601215801 基本信息变更
+        //basic_new_20210601215801 新企业
     }
 
     //删除n天前创建的文件
