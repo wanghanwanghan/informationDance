@@ -15,7 +15,7 @@ class ZipService extends ServiceBase
     }
 
     //返回本次解压后的文件名
-    function unzip($filename, $path, $ext = '.zip'): array
+    function unzip($filename, $path, $ext = '.zip'): ?array
     {
         $filename = $filename . $ext;
 
@@ -23,7 +23,7 @@ class ZipService extends ServiceBase
 
         //先判断待解压的文件是否存在
         if (!file_exists($filename)) {
-            return ["文件 {$filename} 不存在！"];
+            return null;
         }
 
         //打开压缩包
