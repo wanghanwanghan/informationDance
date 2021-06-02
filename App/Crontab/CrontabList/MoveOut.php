@@ -78,7 +78,7 @@ class MoveOut extends AbstractCronTask
     {
         if (strpos($dir, 'informationDance') === false) return true;
 
-        if (is_dir($dir) && !empty($n)) {
+        if (is_dir($dir) && is_numeric($n)) {
             if ($dh = opendir($dir)) {
                 while (false !== ($file = readdir($dh))) {
                     if ($file !== '.' && $file !== '..') {
