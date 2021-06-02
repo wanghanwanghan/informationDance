@@ -62,16 +62,52 @@ class MoveOut extends AbstractCronTask
                 //不是前一天的
                 if (strpos($name, $target_time) === false) continue;
                 $load_url = $one['load_url'];
-                $this->getFileByWget($load_url);
+                $this->getFileByWget($load_url, TEMP_FILE_PATH);
             }
         }
+
+        $this->delFileByCtime(TEMP_FILE_PATH, 3);
 
         $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
         return true;
     }
 
-    function getFileByWget($url, $dir = '/tmp/', $ext = '.zip'): bool
+    //删除n天前创建的文件
+    function delFileByCtime($dir, $n = ''): bool
+    {
+        if (strpos($dir, 'informationDance') === false) return true;
+
+        if (is_dir($dir) && !empty($n)) {
+            if ($dh = opendir($dir)) {
+                while (false !== ($file = readdir($dh))) {
+                    if ($file !== '.' && $file !== '..') {
+                        $fullpath = $dir . $file;
+                        if (is_dir($fullpath)) {
+                            if (count(scandir($fullpath)) == 2) {
+                                //rmdir($fullpath);
+                                CommonService::getInstance()->log4PHP("rmdir {$fullpath}");
+                            } else {
+                                $this->delFileByCtime($fullpath, $n);
+                            }
+                        } else {
+                            $filedate = filectime($fullpath);
+                            $day = round((time() - $filedate) / 86400);
+                            if ($day > $n) {
+                                //unlink($fullpath);
+                                CommonService::getInstance()->log4PHP("unlink {$fullpath}");
+                            }
+                        }
+                    }
+                }
+            }
+            closedir($dh);
+        }
+
+        return true;
+    }
+
+    function getFileByWget($url, $dir, $ext = '.zip'): bool
     {
         $file_name = $dir . control::getUuid() . $ext;
         $commod = "wget -q {$url} -O {$file_name}";
