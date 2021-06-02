@@ -64,7 +64,8 @@ class MoveOut extends AbstractCronTask
                 if (strpos($name, $target_time) === false) continue;
                 $load_url = $one['load_url'];
                 $this->getFileByWget($load_url, TEMP_FILE_PATH, $name);
-                ZipService::getInstance()->unzip(TEMP_FILE_PATH . $name, TEMP_FILE_PATH);
+                $filename_arr = ZipService::getInstance()->unzip(TEMP_FILE_PATH . $name, TEMP_FILE_PATH);
+                CommonService::getInstance()->log4PHP($filename_arr);
             }
         }
 
