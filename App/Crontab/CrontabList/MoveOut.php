@@ -7,6 +7,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
+use wanghanwanghan\someUtils\control;
 
 class MoveOut extends AbstractCronTask
 {
@@ -61,12 +62,20 @@ class MoveOut extends AbstractCronTask
                 //不是前一天的
                 if (strpos($name, $target_time) === false) continue;
                 $load_url = $one['load_url'];
-                CommonService::getInstance()->log4PHP($load_url);
+                $this->getFileByWget($load_url);
             }
         }
 
         $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
+        return true;
+    }
+
+    function getFileByWget($url, $dir = '/tmp/', $ext = '.zip'): bool
+    {
+        $file_name = $dir . control::getUuid() . $ext;
+        $commod = "wget -q {$url} -O {$file_name}";
+        system($commod);
         return true;
     }
 
