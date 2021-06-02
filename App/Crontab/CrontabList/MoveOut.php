@@ -66,7 +66,7 @@ class MoveOut extends AbstractCronTask
             }
         }
 
-        $this->delFileByCtime(TEMP_FILE_PATH, 3);
+        $this->delFileByCtime(TEMP_FILE_PATH, 1);
 
         $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
@@ -81,7 +81,7 @@ class MoveOut extends AbstractCronTask
         if (is_dir($dir) && is_numeric($n)) {
             if ($dh = opendir($dir)) {
                 while (false !== ($file = readdir($dh))) {
-                    if ($file !== '.' && $file !== '..') {
+                    if ($file !== '.' && $file !== '..' && $file !== '.gitignore') {
                         $fullpath = $dir . $file;
                         if (is_dir($fullpath)) {
                             if (count(scandir($fullpath)) == 2) {
