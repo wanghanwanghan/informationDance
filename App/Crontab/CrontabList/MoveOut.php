@@ -5,6 +5,7 @@ namespace App\Crontab\CrontabList;
 use App\Crontab\CrontabBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
+use App\HttpController\Service\Zip\ZipService;
 use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use wanghanwanghan\someUtils\control;
@@ -63,6 +64,7 @@ class MoveOut extends AbstractCronTask
                 if (strpos($name, $target_time) === false) continue;
                 $load_url = $one['load_url'];
                 $this->getFileByWget($load_url, TEMP_FILE_PATH, $name);
+                ZipService::getInstance()->unzip(TEMP_FILE_PATH . $name, TEMP_FILE_PATH);
             }
         }
 
