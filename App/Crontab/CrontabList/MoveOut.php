@@ -62,7 +62,7 @@ class MoveOut extends AbstractCronTask
                 //不是前一天的
                 if (strpos($name, $target_time) === false) continue;
                 $load_url = $one['load_url'];
-                $this->getFileByWget($load_url, TEMP_FILE_PATH);
+                $this->getFileByWget($load_url, TEMP_FILE_PATH, $name);
             }
         }
 
@@ -106,9 +106,9 @@ class MoveOut extends AbstractCronTask
         return true;
     }
 
-    function getFileByWget($url, $dir, $ext = '.zip'): bool
+    function getFileByWget($url, $dir, $name, $ext = '.zip'): bool
     {
-        $file_name = $dir . control::getUuid() . $ext;
+        $file_name = $dir . $name . $ext;
         $commod = "wget -q {$url} -O {$file_name}";
         system($commod);
         return true;
