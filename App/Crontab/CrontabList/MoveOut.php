@@ -5,6 +5,7 @@ namespace App\Crontab\CrontabList;
 use App\Crontab\CrontabBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
+use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 
 class MoveOut extends AbstractCronTask
@@ -18,8 +19,8 @@ class MoveOut extends AbstractCronTask
 
     static function getRule(): string
     {
-        //每7天的凌晨2点
-        //return '0 2 */7 * *';
+        //每天的凌晨5点
+        //return '0 5 * * *';
         return '* * * * *';
     }
 
@@ -39,6 +40,8 @@ class MoveOut extends AbstractCronTask
             return true;
         }
 
+        $target_time = Carbon::now()->subDays(1)->format('Ymd');
+
         $sendHeaders['authorization'] = $this->createToken();
 
         $data = [
@@ -49,14 +52,18 @@ class MoveOut extends AbstractCronTask
 
         $res = (new CoHttpClient())->send($url, $data, $sendHeaders);
 
-        if ($res['code'] === 200 && !empty($res['data'])) {
+        if ($res['code'] - 0 === 200 && is_array($res['data']) && !empty($res['data'])) {
             foreach ($res['data'] as $one) {
-                //$one['state']
-                //$one['name']
-                //$one['load_url']
+                $state = $one['state'] - 0;
+                //返回错误
+                if ($state !== 1) continue;
+                $name = $one['name'];
+                //不是前一天的
+                if (strpos($name, $target_time) === false) continue;
+                $load_url = $one['load_url'];
+                CommonService::getInstance()->log4PHP($load_url);
             }
         }
-
 
         $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
