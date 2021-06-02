@@ -66,7 +66,7 @@ class MoveOut extends AbstractCronTask
             }
         }
 
-        $this->delFileByCtime(TEMP_FILE_PATH, 1);
+        $this->delFileByCtime(TEMP_FILE_PATH, 5);
 
         $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
@@ -94,8 +94,7 @@ class MoveOut extends AbstractCronTask
                             $filedate = filectime($fullpath);
                             $day = round((time() - $filedate) / 86400);
                             if ($day >= $n) {
-                                //unlink($fullpath);
-                                CommonService::getInstance()->log4PHP("unlink {$fullpath}");
+                                unlink($fullpath);
                             }
                         }
                     }
