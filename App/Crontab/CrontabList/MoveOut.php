@@ -74,7 +74,7 @@ class MoveOut extends AbstractCronTask
     }
 
     //删除n天前创建的文件
-    function delFileByCtime($dir, $n = ''): bool
+    function delFileByCtime($dir, $n = 10): bool
     {
         if (strpos($dir, 'informationDance') === false) return true;
 
