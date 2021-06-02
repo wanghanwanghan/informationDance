@@ -49,10 +49,14 @@ class MoveOut extends AbstractCronTask
 
         $res = (new CoHttpClient())->send($url, $data, $sendHeaders);
 
-        if (is_string($res)) CommonService::getInstance()->log4PHP('is_string');
-        if (is_array($res)) CommonService::getInstance()->log4PHP('is_array');
+        if ($res['code'] === 200 && !empty($res['data'])) {
+            foreach ($res['data'] as $one) {
+                //$one['state']
+                //$one['name']
+                //$one['load_url']
+            }
+        }
 
-        CommonService::getInstance()->log4PHP($res);
 
         $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
