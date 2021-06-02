@@ -93,7 +93,7 @@ class MoveOut extends AbstractCronTask
                         } else {
                             $filedate = filectime($fullpath);
                             $day = round((time() - $filedate) / 86400);
-                            if ($day > $n) {
+                            if ($day >= $n) {
                                 //unlink($fullpath);
                                 CommonService::getInstance()->log4PHP("unlink {$fullpath}");
                             }
