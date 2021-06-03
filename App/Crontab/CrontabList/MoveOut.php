@@ -86,12 +86,6 @@ class MoveOut extends AbstractCronTask
         //basic_new_20210601215801 新企业
 
 
-
-
-        CreateTableService::getInstance()->basic();
-        CreateTableService::getInstance()->inv();
-
-
     }
 
     //删除n天前创建的文件
