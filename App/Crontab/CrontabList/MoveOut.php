@@ -24,8 +24,8 @@ class MoveOut extends AbstractCronTask
     static function getRule(): string
     {
         //每天的凌晨5点
-        //return '0 5 * * *';
-        return '*/2 * * * *';
+        return '0 5 * * *';
+        //return '*/2 * * * *';
     }
 
     static function getTaskName(): string
@@ -89,17 +89,11 @@ class MoveOut extends AbstractCronTask
 
     function handleFileArr($filename_arr)
     {
-        //basic_20210601215801 基本信息变更
-        //basic_new_20210601215801 新企业
-        //inv_20210601215801 股东变更
-        //inv_new_20210601215801 新股东
-
         foreach ($filename_arr as $filename) {
             if (preg_match('/basic/', $filename)) {
                 $this->handleBasic($this->readCsv($filename));
             }
         }
-
     }
 
     function handleBasic($arr): void
@@ -134,9 +128,7 @@ class MoveOut extends AbstractCronTask
                 'WEBSITE' => $val[24],
                 'CHANGE_TYPE' => $val[25],
             ];
-
             $check = EntDbBasic::create()->where('SHXYDM', $val[2])->get();
-
             if (empty($check)) {
                 EntDbBasic::create()->data($insert)->save();
             } else {
@@ -144,7 +136,6 @@ class MoveOut extends AbstractCronTask
             }
         }
     }
-
 
     //删除n天前创建的文件
     function delFileByCtime($dir, $n = 10): bool
