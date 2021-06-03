@@ -289,11 +289,11 @@ class CreateTableService
         $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
             $table->setTableComment('授权书表')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
             $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
-            $table->colVarChar('phone',11)->setDefaultValue('');
-            $table->colVarChar('entName',50)->setDefaultValue('')->setColumnComment('公司名');
-            $table->colVarChar('name',50)->setDefaultValue('')->setColumnComment('授权书文件名');
-            $table->colTinyInt('status',3)->setIsUnsigned()->setColumnComment('1审核中，2未通过，3已通过');
-            $table->colVarChar('remark',255)->setDefaultValue('')->setColumnComment('备注');
+            $table->colVarChar('phone', 11)->setDefaultValue('');
+            $table->colVarChar('entName', 50)->setDefaultValue('')->setColumnComment('公司名');
+            $table->colVarChar('name', 50)->setDefaultValue('')->setColumnComment('授权书文件名');
+            $table->colTinyInt('status', 3)->setIsUnsigned()->setColumnComment('1审核中，2未通过，3已通过');
+            $table->colVarChar('remark', 255)->setDefaultValue('')->setColumnComment('备注');
             $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
             $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
         });
@@ -313,9 +313,9 @@ class CreateTableService
         $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
             $table->setTableComment('经纬度表')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
             $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
-            $table->colVarChar('target',50)->setDefaultValue('')->setColumnComment('主体，目前是手机号，以后也可以是别的');
-            $table->colVarChar('lng',15)->setDefaultValue('');
-            $table->colVarChar('lat',15)->setDefaultValue('');
+            $table->colVarChar('target', 50)->setDefaultValue('')->setColumnComment('主体，目前是手机号，以后也可以是别的');
+            $table->colVarChar('lng', 15)->setDefaultValue('');
+            $table->colVarChar('lat', 15)->setDefaultValue('');
             $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
             $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
         });
@@ -335,11 +335,11 @@ class CreateTableService
         $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
             $table->setTableComment('每天只能浏览100个企业')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
             $table->colBigInt('id', 20)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
-            $table->colVarChar('token',100)->setColumnComment('token');
-            $table->colVarChar('entName',100)->setColumnComment('企业名称');
+            $table->colVarChar('token', 100)->setColumnComment('token');
+            $table->colVarChar('entName', 100)->setColumnComment('企业名称');
             $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
             $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
-            $table->indexNormal('token_index','token');
+            $table->indexNormal('token_index', 'token');
         });
 
         $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
@@ -357,16 +357,16 @@ class CreateTableService
         $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
             $table->setTableComment('ocr识别消费队列')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
             $table->colBigInt('id', 20)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
-            $table->colVarChar('phone',11)->setDefaultValue('');
-            $table->colVarChar('reportNum',30)->setDefaultValue('')->setColumnComment('报告编号');
-            $table->colVarChar('catalogueNum',10)->setDefaultValue('')->setColumnComment('目录编号');
-            $table->colVarChar('catalogueName',10)->setDefaultValue('')->setColumnComment('目录名称');
-            $table->colTinyInt('status',3)->setDefaultValue(0)->setColumnComment('状态');
-            $table->colVarChar('filename',255)->setDefaultValue('')->setColumnComment('文件名，逗号分割');
+            $table->colVarChar('phone', 11)->setDefaultValue('');
+            $table->colVarChar('reportNum', 30)->setDefaultValue('')->setColumnComment('报告编号');
+            $table->colVarChar('catalogueNum', 10)->setDefaultValue('')->setColumnComment('目录编号');
+            $table->colVarChar('catalogueName', 10)->setDefaultValue('')->setColumnComment('目录名称');
+            $table->colTinyInt('status', 3)->setDefaultValue(0)->setColumnComment('状态');
+            $table->colVarChar('filename', 255)->setDefaultValue('')->setColumnComment('文件名，逗号分割');
             $table->colText('content')->setColumnComment('识别出来的内容');
             $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
             $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
-            $table->indexNormal('phone_reportNum_index',['reportNum','phone']);
+            $table->indexNormal('phone_reportNum_index', ['reportNum', 'phone']);
         });
 
         $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
@@ -397,7 +397,7 @@ class CreateTableService
             $table->colVarChar('purchaserName', 50)->setDefaultValue('');
             $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
             $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
-            $table->indexNormal('invoiceCode_invoiceNumber_index',['invoiceCode','invoiceNumber']);
+            $table->indexNormal('invoiceCode_invoiceNumber_index', ['invoiceCode', 'invoiceNumber']);
         });
 
         $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
@@ -415,15 +415,15 @@ class CreateTableService
         $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
             $table->setTableComment('对外接口计费')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
             $table->colBigInt('id', 20)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
-            $table->colInt('userId',11)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('用户主键');
-            $table->colInt('ProvideApiId',11)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('接口主键');
-            $table->colVarChar('requestId',32)->setDefaultValue('')->setColumnComment('请求唯一主键');
-            $table->colVarChar('requestUrl',256)->setDefaultValue('')->setColumnComment('请求url');
+            $table->colInt('userId', 11)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('用户主键');
+            $table->colInt('ProvideApiId', 11)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('接口主键');
+            $table->colVarChar('requestId', 32)->setDefaultValue('')->setColumnComment('请求唯一主键');
+            $table->colVarChar('requestUrl', 256)->setDefaultValue('')->setColumnComment('请求url');
             $table->colText('requestData')->setColumnComment('请求参数');
-            $table->colInt('responseCode',11)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('返回值');
+            $table->colInt('responseCode', 11)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('返回值');
             $table->colText('responseData')->setColumnComment('返回结果');
-            $table->colDecimal('spendTime',8,4)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('请求消耗时间');
-            $table->colDecimal('spendMoney',8,4)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('消耗金额');
+            $table->colDecimal('spendTime', 8, 4)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('请求消耗时间');
+            $table->colDecimal('spendMoney', 8, 4)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('消耗金额');
             $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
             $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
         });
@@ -443,15 +443,15 @@ class CreateTableService
         $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
             $table->setTableComment('公司信息')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
             $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
-            $table->colVarChar('username',32)->setDefaultValue('')->setColumnComment('公司/用户名称');
-            $table->colVarChar('appId',64)->setDefaultValue('');
-            $table->colVarChar('appSecret',64)->setDefaultValue('');
-            $table->colVarChar('allowIp',128)->setDefaultValue('');
-            $table->colDecimal('money',16,4)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('余额');
-            $table->colTinyInt('status',3)->setIsUnsigned()->setDefaultValue(1)->setColumnComment('状态，1可用，2不可用');
-            $table->colInt('created_at',11)->setIsUnsigned()->setDefaultValue(0);
-            $table->colInt('updated_at',11)->setIsUnsigned()->setDefaultValue(0);
-            $table->indexNormal('appId_index','appId');
+            $table->colVarChar('username', 32)->setDefaultValue('')->setColumnComment('公司/用户名称');
+            $table->colVarChar('appId', 64)->setDefaultValue('');
+            $table->colVarChar('appSecret', 64)->setDefaultValue('');
+            $table->colVarChar('allowIp', 128)->setDefaultValue('');
+            $table->colDecimal('money', 16, 4)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('余额');
+            $table->colTinyInt('status', 3)->setIsUnsigned()->setDefaultValue(1)->setColumnComment('状态，1可用，2不可用');
+            $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->indexNormal('appId_index', 'appId');
         });
 
         $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
@@ -469,15 +469,15 @@ class CreateTableService
         $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
             $table->setTableComment('接口信息')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
             $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
-            $table->colVarChar('path',128)->setDefaultValue('')->setColumnComment('接口地址');
-            $table->colVarChar('name',32)->setDefaultValue('')->setColumnComment('接口名称');
-            $table->colVarChar('desc',128)->setDefaultValue('')->setColumnComment('接口描述');
-            $table->colVarChar('source',32)->setDefaultValue('')->setColumnComment('接口来源');
-            $table->colDecimal('price',8,4)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('成本价格');
-            $table->colTinyInt('status',3)->setIsUnsigned()->setDefaultValue(1)->setColumnComment('状态，1可用，2不可用');
-            $table->colInt('created_at',11)->setIsUnsigned()->setDefaultValue(0);
-            $table->colInt('updated_at',11)->setIsUnsigned()->setDefaultValue(0);
-            $table->indexNormal('path_index','path');
+            $table->colVarChar('path', 128)->setDefaultValue('')->setColumnComment('接口地址');
+            $table->colVarChar('name', 32)->setDefaultValue('')->setColumnComment('接口名称');
+            $table->colVarChar('desc', 128)->setDefaultValue('')->setColumnComment('接口描述');
+            $table->colVarChar('source', 32)->setDefaultValue('')->setColumnComment('接口来源');
+            $table->colDecimal('price', 8, 4)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('成本价格');
+            $table->colTinyInt('status', 3)->setIsUnsigned()->setDefaultValue(1)->setColumnComment('状态，1可用，2不可用');
+            $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->indexNormal('path_index', 'path');
         });
 
         $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
@@ -497,12 +497,12 @@ class CreateTableService
             $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
             $table->colInt('userId', 11)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('用户主键');
             $table->colInt('apiId', 11)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('接口主键');
-            $table->colDecimal('price',8,4)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('用户调用价格');
-            $table->colTinyInt('status',3)->setIsUnsigned()->setDefaultValue(1)->setColumnComment('状态，1可用，2不可用');
-            $table->colInt('created_at',11)->setIsUnsigned()->setDefaultValue(0);
-            $table->colInt('updated_at',11)->setIsUnsigned()->setDefaultValue(0);
-            $table->indexNormal('userId_index','userId');
-            $table->indexNormal('apiId_index','apiId');
+            $table->colDecimal('price', 8, 4)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('用户调用价格');
+            $table->colTinyInt('status', 3)->setIsUnsigned()->setDefaultValue(1)->setColumnComment('状态，1可用，2不可用');
+            $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->indexNormal('userId_index', 'userId');
+            $table->indexNormal('apiId_index', 'apiId');
         });
 
         $obj = Manager::getInstance()->get(CreateConf::getInstance()->getConf('env.mysqlDatabase'))->getObj();
@@ -526,37 +526,37 @@ class CreateTableService
             $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
             $table->colInt('cid', 11)->setIsUnsigned()->setDefaultValue(0)->setColumnComment('公司id');
             $table->colInt('ANCHEYEAR', 11)->setIsUnsigned()->setDefaultValue(null)->setColumnComment('年份');
-            $table->colDecimal('VENDINC',20,2)->setDefaultValue(null)->setColumnComment('营业总收入');
-            $table->colDecimal('ASSGRO',20,2)->setDefaultValue(null)->setColumnComment('资产总额');
-            $table->colDecimal('MAIBUSINC',20,2)->setDefaultValue(null)->setColumnComment('主营业务收入');
-            $table->colDecimal('TOTEQU',20,2)->setDefaultValue(null)->setColumnComment('所有者权益');
-            $table->colDecimal('RATGRO',20,2)->setDefaultValue(null)->setColumnComment('纳税总额');
-            $table->colDecimal('PROGRO',20,2)->setDefaultValue(null)->setColumnComment('利润总额');
-            $table->colDecimal('NETINC',20,2)->setDefaultValue(null)->setColumnComment('净利润');
-            $table->colDecimal('LIAGRO',20,2)->setDefaultValue(null)->setColumnComment('负债总额');
-            $table->colDecimal('So1',20,2)->setDefaultValue(null)->setColumnComment('城镇职工养老保险人数');
-            $table->colDecimal('So2',20,2)->setDefaultValue(null)->setColumnComment('失业保险人数');
-            $table->colDecimal('So3',20,2)->setDefaultValue(null)->setColumnComment('职工医疗保险人数');
-            $table->colDecimal('So4',20,2)->setDefaultValue(null)->setColumnComment('工伤保险人数');
-            $table->colDecimal('So5',20,2)->setDefaultValue(null)->setColumnComment('生育保险人数');
-            $table->colDecimal('totalWagesSo1',20,2)->setDefaultValue(null)->setColumnComment('城镇职工养老保险缴费基数');
-            $table->colDecimal('totalWagesSo2',20,2)->setDefaultValue(null)->setColumnComment('失业保险缴费基数');
-            $table->colDecimal('totalWagesSo3',20,2)->setDefaultValue(null)->setColumnComment('职工医疗保险缴费基数');
-            $table->colDecimal('totalWagesSo4',20,2)->setDefaultValue(null)->setColumnComment('工伤保险缴费基数 保留字段');
-            $table->colDecimal('totalWagesSo5',20,2)->setDefaultValue(null)->setColumnComment('生育保险缴费基数');
-            $table->colDecimal('totalPaymentSo1',20,2)->setDefaultValue(null)->setColumnComment('城镇职工养老保险实缴基数');
-            $table->colDecimal('totalPaymentSo2',20,2)->setDefaultValue(null)->setColumnComment('失业保险实缴基数');
-            $table->colDecimal('totalPaymentSo3',20,2)->setDefaultValue(null)->setColumnComment('职工医疗保险实缴基数');
-            $table->colDecimal('totalPaymentSo4',20,2)->setDefaultValue(null)->setColumnComment('工伤保险实缴基数');
-            $table->colDecimal('totalPaymentSo5',20,2)->setDefaultValue(null)->setColumnComment('生育保险实缴基数');
-            $table->colDecimal('unPaidSocialInsSo1',20,2)->setDefaultValue(null)->setColumnComment('城镇职工养老保险累计欠缴');
-            $table->colDecimal('unPaidSocialInsSo2',20,2)->setDefaultValue(null)->setColumnComment('失业保险累计欠缴');
-            $table->colDecimal('unPaidSocialInsSo3',20,2)->setDefaultValue(null)->setColumnComment('职工医疗保险累计欠缴');
-            $table->colDecimal('unPaidSocialInsSo4',20,2)->setDefaultValue(null)->setColumnComment('工伤保险累计欠缴');
-            $table->colDecimal('unPaidSocialInsSo5',20,2)->setDefaultValue(null)->setColumnComment('生育保险累计欠缴');
-            $table->colInt('created_at',11)->setIsUnsigned()->setDefaultValue(0);
-            $table->colInt('updated_at',11)->setIsUnsigned()->setDefaultValue(0);
-            $table->indexNormal('cid_year_index',['cid','ANCHEYEAR']);
+            $table->colDecimal('VENDINC', 20, 2)->setDefaultValue(null)->setColumnComment('营业总收入');
+            $table->colDecimal('ASSGRO', 20, 2)->setDefaultValue(null)->setColumnComment('资产总额');
+            $table->colDecimal('MAIBUSINC', 20, 2)->setDefaultValue(null)->setColumnComment('主营业务收入');
+            $table->colDecimal('TOTEQU', 20, 2)->setDefaultValue(null)->setColumnComment('所有者权益');
+            $table->colDecimal('RATGRO', 20, 2)->setDefaultValue(null)->setColumnComment('纳税总额');
+            $table->colDecimal('PROGRO', 20, 2)->setDefaultValue(null)->setColumnComment('利润总额');
+            $table->colDecimal('NETINC', 20, 2)->setDefaultValue(null)->setColumnComment('净利润');
+            $table->colDecimal('LIAGRO', 20, 2)->setDefaultValue(null)->setColumnComment('负债总额');
+            $table->colDecimal('So1', 20, 2)->setDefaultValue(null)->setColumnComment('城镇职工养老保险人数');
+            $table->colDecimal('So2', 20, 2)->setDefaultValue(null)->setColumnComment('失业保险人数');
+            $table->colDecimal('So3', 20, 2)->setDefaultValue(null)->setColumnComment('职工医疗保险人数');
+            $table->colDecimal('So4', 20, 2)->setDefaultValue(null)->setColumnComment('工伤保险人数');
+            $table->colDecimal('So5', 20, 2)->setDefaultValue(null)->setColumnComment('生育保险人数');
+            $table->colDecimal('totalWagesSo1', 20, 2)->setDefaultValue(null)->setColumnComment('城镇职工养老保险缴费基数');
+            $table->colDecimal('totalWagesSo2', 20, 2)->setDefaultValue(null)->setColumnComment('失业保险缴费基数');
+            $table->colDecimal('totalWagesSo3', 20, 2)->setDefaultValue(null)->setColumnComment('职工医疗保险缴费基数');
+            $table->colDecimal('totalWagesSo4', 20, 2)->setDefaultValue(null)->setColumnComment('工伤保险缴费基数 保留字段');
+            $table->colDecimal('totalWagesSo5', 20, 2)->setDefaultValue(null)->setColumnComment('生育保险缴费基数');
+            $table->colDecimal('totalPaymentSo1', 20, 2)->setDefaultValue(null)->setColumnComment('城镇职工养老保险实缴基数');
+            $table->colDecimal('totalPaymentSo2', 20, 2)->setDefaultValue(null)->setColumnComment('失业保险实缴基数');
+            $table->colDecimal('totalPaymentSo3', 20, 2)->setDefaultValue(null)->setColumnComment('职工医疗保险实缴基数');
+            $table->colDecimal('totalPaymentSo4', 20, 2)->setDefaultValue(null)->setColumnComment('工伤保险实缴基数');
+            $table->colDecimal('totalPaymentSo5', 20, 2)->setDefaultValue(null)->setColumnComment('生育保险实缴基数');
+            $table->colDecimal('unPaidSocialInsSo1', 20, 2)->setDefaultValue(null)->setColumnComment('城镇职工养老保险累计欠缴');
+            $table->colDecimal('unPaidSocialInsSo2', 20, 2)->setDefaultValue(null)->setColumnComment('失业保险累计欠缴');
+            $table->colDecimal('unPaidSocialInsSo3', 20, 2)->setDefaultValue(null)->setColumnComment('职工医疗保险累计欠缴');
+            $table->colDecimal('unPaidSocialInsSo4', 20, 2)->setDefaultValue(null)->setColumnComment('工伤保险累计欠缴');
+            $table->colDecimal('unPaidSocialInsSo5', 20, 2)->setDefaultValue(null)->setColumnComment('生育保险累计欠缴');
+            $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->indexNormal('cid_year_index', ['cid', 'ANCHEYEAR']);
         });
 
         $obj = Manager::getInstance()->get($name)->getObj();
@@ -578,9 +578,9 @@ class CreateTableService
                 ->setTableEngine(Engine::INNODB)
                 ->setTableCharset(Character::UTF8MB4_GENERAL_CI);
             $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
-            $table->colVarChar('name',128)->setDefaultValue('')->setColumnComment('公司名称');
-            $table->colInt('created_at',11)->setIsUnsigned()->setDefaultValue(0);
-            $table->colInt('updated_at',11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colVarChar('name', 128)->setDefaultValue('')->setColumnComment('公司名称');
+            $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
         });
 
         $obj = Manager::getInstance()->get($name)->getObj();
@@ -592,7 +592,79 @@ class CreateTableService
         return 'ok';
     }
 
+    function basic()
+    {
+        $name = CreateConf::getInstance()->getConf('env.mysqlDatabaseEntDb');
 
+        $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
+            $table->setTableComment('企业基本信息表')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
+            $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
+            $table->colVarChar('ENTNAME', 64)->setDefaultValue('')->setColumnComment('公司名称');
+            $table->colVarChar('OLDNAME', 128)->setDefaultValue('')->setColumnComment('旧公司名称');
+            $table->colVarChar('SHXYDM', 32)->setDefaultValue('')->setColumnComment('统一代码');
+            $table->colVarChar('FRDB', 16)->setDefaultValue('')->setColumnComment('法人');
+            $table->colVarChar('ESDATE', 16)->setDefaultValue('')->setColumnComment('成立时间');
+            $table->colVarChar('ENTSTATUS', 16)->setDefaultValue('')->setColumnComment('状态');
+            $table->colDecimal('REGCAP', 14, 2)->setIsUnsigned()->setDefaultValue(0.00)->setColumnComment('注册资本');
+            $table->colVarChar('REGCAPCUR', 16)->setDefaultValue('')->setColumnComment('币种');
+            $table->colVarChar('DOM', 128)->setDefaultValue('')->setColumnComment('注册地址');
+            $table->colVarChar('ENTTYPE', 64)->setDefaultValue('')->setColumnComment('类型');
+            $table->colText('OPSCOPE')->setColumnComment('经营范围');
+            $table->colVarChar('REGORG', 64)->setDefaultValue('')->setColumnComment('所属部门');
+            $table->colVarChar('OPFROM', 16)->setDefaultValue('')->setColumnComment('OPFROM');
+            $table->colVarChar('OPTO', 16)->setDefaultValue('')->setColumnComment('OPTO');
+            $table->colVarChar('APPRDATE', 16)->setDefaultValue('')->setColumnComment('APPRDATE');
+            $table->colVarChar('ENDDATE', 16)->setDefaultValue('')->setColumnComment('ENDDATE');
+            $table->colVarChar('REVDATE', 16)->setDefaultValue('')->setColumnComment('REVDATE');
+            $table->colVarChar('CANDATE', 16)->setDefaultValue('')->setColumnComment('CANDATE');
+            $table->colVarChar('JWD', 32)->setDefaultValue('')->setColumnComment('经纬度');
+            $table->colVarChar('INDUSTRY', 32)->setDefaultValue('')->setColumnComment('行业');
+            $table->colVarChar('INDUSTRY_CODE', 4)->setDefaultValue('')->setColumnComment('INDUSTRY_CODE');
+            $table->colVarChar('PROVINCE', 16)->setDefaultValue('')->setColumnComment('省份');
+            $table->colVarChar('ORGID', 16)->setDefaultValue('')->setColumnComment('ORGID');
+            $table->colVarChar('ENGNAME', 64)->setDefaultValue('')->setColumnComment('公司英文名称');
+            $table->colVarChar('WEBSITE', 64)->setDefaultValue('')->setColumnComment('网站');
+            $table->colVarChar('CHANGE_TYPE', 4)->setDefaultValue('')->setColumnComment('CHANGE_TYPE');
+            $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
+        });
 
+        $obj = Manager::getInstance()->get($name)->getObj();
+
+        $obj->rawQuery($sql);
+
+        Manager::getInstance()->get($name)->recycleObj($obj);
+
+        return 'ok';
+    }
+
+    function inv()
+    {
+        $name = CreateConf::getInstance()->getConf('env.mysqlDatabaseEntDb');
+
+        $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
+            $table->setTableComment('企业股东表')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
+            $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
+            $table->colVarChar('ENTNAME', 64)->setDefaultValue('')->setColumnComment('公司名称');
+            $table->colVarChar('INV', 32)->setDefaultValue('')->setColumnComment('股东名称');
+            $table->colVarChar('SHXYDM', 32)->setDefaultValue('')->setColumnComment('统一代码');
+            $table->colVarChar('INVTYPE', 16)->setDefaultValue('')->setColumnComment('股东类型');
+            $table->colDecimal('SUBCONAM', 18, 4)->setIsUnsigned()->setDefaultValue(0.0000)->setColumnComment('出资金额');
+            $table->colVarChar('CONCUR', 8)->setDefaultValue('')->setColumnComment('币种');
+            $table->colDecimal('CONRATIO', 10, 4)->setIsUnsigned()->setDefaultValue(0.0000)->setColumnComment('出资比例');
+            $table->colVarChar('CONDATE', 16)->setDefaultValue('')->setColumnComment('时间');
+            $table->colVarChar('CHANGE_TYPE', 4)->setDefaultValue('')->setColumnComment('CHANGE_TYPE');
+            $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
+        });
+
+        $obj = Manager::getInstance()->get($name)->getObj();
+
+        $obj->rawQuery($sql);
+
+        Manager::getInstance()->get($name)->recycleObj($obj);
+
+        return 'ok';
+    }
 
 }

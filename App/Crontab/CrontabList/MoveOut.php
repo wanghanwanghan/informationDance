@@ -4,6 +4,7 @@ namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\Zip\ZipService;
 use Carbon\Carbon;
@@ -83,6 +84,14 @@ class MoveOut extends AbstractCronTask
 
         //basic_20210601215801 基本信息变更
         //basic_new_20210601215801 新企业
+
+
+
+
+        CreateTableService::getInstance()->basic();
+        CreateTableService::getInstance()->inv();
+
+
     }
 
     //删除n天前创建的文件
