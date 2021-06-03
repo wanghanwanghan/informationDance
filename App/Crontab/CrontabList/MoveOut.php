@@ -7,6 +7,7 @@ use App\HttpController\Models\EntDb\EntDbBasic;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
+use App\HttpController\Service\MoveOut\MoveOutService;
 use App\HttpController\Service\Zip\ZipService;
 use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
@@ -23,8 +24,8 @@ class MoveOut extends AbstractCronTask
 
     static function getRule(): string
     {
-        //每天的凌晨5点
-        return '0 5 * * *';
+        //每天的凌晨3点
+        return '0 3 * * *';
         //return '*/2 * * * *';
     }
 
@@ -75,6 +76,9 @@ class MoveOut extends AbstractCronTask
 
         $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
+        //更新所有监控中的企业
+        MoveOutService::getInstance()->updateDatabase();
+
         return true;
     }
 
@@ -87,7 +91,7 @@ class MoveOut extends AbstractCronTask
         fclose($handle);
     }
 
-    function handleFileArr($filename_arr)
+    function handleFileArr($filename_arr): void
     {
         foreach ($filename_arr as $filename) {
             if (preg_match('/basic/', $filename)) {
