@@ -3,6 +3,7 @@
 namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
+use App\HttpController\Models\EntDb\EntDbBasic;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
@@ -77,16 +78,73 @@ class MoveOut extends AbstractCronTask
         return true;
     }
 
+    function readCsv($filename): \Generator
+    {
+        $handle = fopen(TEMP_FILE_PATH . $filename, 'rb');
+        while (feof($handle) === false) {
+            yield fgetcsv($handle);
+        }
+        fclose($handle);
+    }
+
     function handleFileArr($filename_arr)
     {
+        //basic_20210601215801 基本信息变更
+        //basic_new_20210601215801 新企业
         //inv_20210601215801 股东变更
         //inv_new_20210601215801 新股东
 
-        //basic_20210601215801 基本信息变更
-        //basic_new_20210601215801 新企业
-
+        foreach ($filename_arr as $filename) {
+            if (preg_match('/basic/', $filename)) {
+                $this->handleBasic($this->readCsv($filename));
+            }
+        }
 
     }
+
+    function handleBasic($arr): void
+    {
+        foreach ($arr as $key => $val) {
+            if ($key === 0) continue;
+            $insert = [
+                'ENTNAME' => $val[0],
+                'OLDNAME' => $val[1],
+                'SHXYDM' => $val[2],
+                'FRDB' => $val[3],
+                'ESDATE' => $val[4],
+                'ENTSTATUS' => $val[5],
+                'REGCAP' => $val[6],
+                'REGCAPCUR' => $val[7],
+                'DOM' => $val[8],
+                'ENTTYPE' => $val[9],
+                'OPSCOPE' => $val[10],
+                'REGORG' => $val[11],
+                'OPFROM' => $val[12],
+                'OPTO' => $val[13],
+                'APPRDATE' => $val[14],
+                'ENDDATE' => $val[15],
+                'REVDATE' => $val[16],
+                'CANDATE' => $val[17],
+                'JWD' => $val[18],
+                'INDUSTRY' => $val[19],
+                'INDUSTRY_CODE' => $val[20],
+                'PROVINCE' => $val[21],
+                'ORGID' => $val[22],
+                'ENGNAME' => $val[23],
+                'WEBSITE' => $val[24],
+                'CHANGE_TYPE' => $val[25],
+            ];
+
+            $check = EntDbBasic::create()->where('SHXYDM', $val[2])->get();
+
+            if (empty($check)) {
+                EntDbBasic::create()->data($insert)->save();
+            } else {
+                EntDbBasic::create()->where('SHXYDM', $val[2])->update($insert);
+            }
+        }
+    }
+
 
     //删除n天前创建的文件
     function delFileByCtime($dir, $n = 10): bool
