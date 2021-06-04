@@ -101,7 +101,7 @@ class MoveOut extends AbstractCronTask
             }
         }
         foreach ($filename_arr as $filename) {
-            if (preg_match('/inv_\d+/', $filename)) {
+            if (preg_match('/^inv_\d+/', $filename)) {
                 $this->handleInv($this->readCsv($filename));
             }
         }
@@ -115,6 +115,14 @@ class MoveOut extends AbstractCronTask
                 $this->handleInvHistory($this->readCsv($filename));
             }
         }
+    }
+
+    function needContinue($handleName, $data): bool
+    {
+        if (empty($data['ENTNAME'])) return true;
+        if (empty($data['SHXYDM'])) return true;
+
+        return false;
     }
 
     function handleBasic($arr): void
@@ -157,14 +165,6 @@ class MoveOut extends AbstractCronTask
                 EntDbBasic::create()->where('SHXYDM', $val[2])->update($insert);
             }
         }
-    }
-
-    function needContinue($handleName, $data): bool
-    {
-        if (empty($data['ENTNAME'])) return true;
-        if (empty($data['SHXYDM'])) return true;
-
-        return false;
     }
 
     function handleInv($arr): void
