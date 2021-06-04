@@ -149,17 +149,24 @@ class MoveOut extends AbstractCronTask
                 'WEBSITE' => $val[24],
                 'CHANGE_TYPE' => $val[25],
             ];
+            if ($this->needContinue(__FUNCTION__, $insert)) continue;
             $check = EntDbBasic::create()->where('SHXYDM', $val[2])->get();
-            try {
-                if (empty($check)) {
-                    EntDbBasic::create()->data($insert)->save();
-                } else {
-                    EntDbBasic::create()->where('SHXYDM', $val[2])->update($insert);
-                }
-            } catch (\Throwable $e) {
-                CommonService::getInstance()->log4PHP($insert);
+            if (empty($check)) {
+                EntDbBasic::create()->data($insert)->save();
+            } else {
+                EntDbBasic::create()->where('SHXYDM', $val[2])->update($insert);
             }
         }
+    }
+
+    function needContinue($handleName, $data): bool
+    {
+        if ($handleName === 'handleBasic') {
+            if (empty($data['ENTNAME'])) return true;
+            if (empty($data['SHXYDM'])) return true;
+        }
+
+        return false;
     }
 
     function handleInv($arr): void
