@@ -9,16 +9,6 @@ class MoveOutService extends ServiceBase
 {
     use Singleton;
 
-    function onNewService(): ?bool
-    {
-        return parent::onNewService();
-    }
-
-    function __construct()
-    {
-        return parent::__construct();
-    }
-
     //更新所有监控中的企业
     function updateDatabase(): void
     {
