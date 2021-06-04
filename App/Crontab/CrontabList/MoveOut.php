@@ -149,10 +149,14 @@ class MoveOut extends AbstractCronTask
                 'CHANGE_TYPE' => $val[25],
             ];
             $check = EntDbBasic::create()->where('SHXYDM', $val[2])->get();
-            if (empty($check)) {
-                EntDbBasic::create()->data($insert)->save();
-            } else {
-                EntDbBasic::create()->where('SHXYDM', $val[2])->update($insert);
+            try {
+                if (empty($check)) {
+                    EntDbBasic::create()->data($insert)->save();
+                } else {
+                    EntDbBasic::create()->where('SHXYDM', $val[2])->update($insert);
+                }
+            } catch (\Throwable $e) {
+                CommonService::getInstance()->log4PHP($insert);
             }
         }
     }
