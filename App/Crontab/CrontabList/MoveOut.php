@@ -159,10 +159,14 @@ class MoveOut extends AbstractCronTask
             ];
             if ($this->needContinue(__FUNCTION__, $insert)) continue;
             $check = EntDbBasic::create()->where('SHXYDM', $val[2])->get();
-            if (empty($check)) {
-                EntDbBasic::create()->data($insert)->save();
-            } else {
-                EntDbBasic::create()->where('SHXYDM', $val[2])->update($insert);
+            try {
+                if (empty($check)) {
+                    EntDbBasic::create()->data($insert)->save();
+                } else {
+                    EntDbBasic::create()->where('SHXYDM', $val[2])->update($insert);
+                }
+            } catch (\Throwable $e) {
+                $this->writeErr($e);
             }
         }
     }
@@ -188,14 +192,18 @@ class MoveOut extends AbstractCronTask
                 'INV' => $val[1],
                 'SHXYDM' => $val[2],
             ])->get();
-            if (empty($check)) {
-                EntDbInv::create()->data($insert)->save();
-            } else {
-                EntDbInv::create()->where([
-                    'ENTNAME' => $val[0],
-                    'INV' => $val[1],
-                    'SHXYDM' => $val[2],
-                ])->update($insert);
+            try {
+                if (empty($check)) {
+                    EntDbInv::create()->data($insert)->save();
+                } else {
+                    EntDbInv::create()->where([
+                        'ENTNAME' => $val[0],
+                        'INV' => $val[1],
+                        'SHXYDM' => $val[2],
+                    ])->update($insert);
+                }
+            } catch (\Throwable $e) {
+                $this->writeErr($e);
             }
         }
     }
@@ -221,14 +229,18 @@ class MoveOut extends AbstractCronTask
                 'INV' => $val[1],
                 'SHXYDM' => $val[2],
             ])->get();
-            if (empty($check)) {
-                EntDbInv::create()->data($insert)->save();
-            } else {
-                EntDbInv::create()->where([
-                    'ENTNAME' => $val[0],
-                    'INV' => $val[1],
-                    'SHXYDM' => $val[2],
-                ])->update($insert);
+            try {
+                if (empty($check)) {
+                    EntDbInv::create()->data($insert)->save();
+                } else {
+                    EntDbInv::create()->where([
+                        'ENTNAME' => $val[0],
+                        'INV' => $val[1],
+                        'SHXYDM' => $val[2],
+                    ])->update($insert);
+                }
+            } catch (\Throwable $e) {
+                $this->writeErr($e);
             }
         }
     }
@@ -244,8 +256,12 @@ class MoveOut extends AbstractCronTask
             ];
             if ($this->needContinue(__FUNCTION__, $del)) continue;
             $check = EntDbInv::create()->where($del)->get();
-            if (!empty($check)) {
-                EntDbInv::create()->destroy($del);
+            try {
+                if (!empty($check)) {
+                    EntDbInv::create()->destroy($del);
+                }
+            } catch (\Throwable $e) {
+                $this->writeErr($e);
             }
         }
     }
@@ -311,14 +327,15 @@ class MoveOut extends AbstractCronTask
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
-        $redis = Redis::defer('redis');
-
-        $redis->select(14);
-
-        $redis->del(__FUNCTION__);
-
         CommonService::getInstance()->log4PHP($throwable->getTraceAsString());
     }
 
-
+    function writeErr(\Throwable $e): void
+    {
+        $file = $e->getFile();
+        $line = $e->getLine();
+        $msg = $e->getMessage();
+        $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
+        CommonService::getInstance()->log4PHP($content);
+    }
 }
