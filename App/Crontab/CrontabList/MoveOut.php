@@ -4,6 +4,7 @@ namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
 use App\HttpController\Models\EntDb\EntDbBasic;
+use App\HttpController\Models\EntDb\EntDbInv;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
@@ -25,8 +26,8 @@ class MoveOut extends AbstractCronTask
     static function getRule(): string
     {
         //每天的凌晨3点
-        return '0 3 * * *';
-        //return '*/2 * * * *';
+        //return '0 3 * * *';
+        return '*/2 * * * *';
     }
 
     static function getTaskName(): string
@@ -98,6 +99,21 @@ class MoveOut extends AbstractCronTask
                 $this->handleBasic($this->readCsv($filename));
             }
         }
+        foreach ($filename_arr as $filename) {
+            if (preg_match('/inv_\d+/', $filename)) {
+                $this->handleInv($this->readCsv($filename));
+            }
+        }
+        foreach ($filename_arr as $filename) {
+            if (preg_match('/inv_new_\d+/', $filename)) {
+                $this->handleInvNew($this->readCsv($filename));
+            }
+        }
+        foreach ($filename_arr as $filename) {
+            if (preg_match('/history_inv_\d+/', $filename)) {
+                $this->handleInvHistory($this->readCsv($filename));
+            }
+        }
     }
 
     function handleBasic($arr): void
@@ -137,6 +153,89 @@ class MoveOut extends AbstractCronTask
                 EntDbBasic::create()->data($insert)->save();
             } else {
                 EntDbBasic::create()->where('SHXYDM', $val[2])->update($insert);
+            }
+        }
+    }
+
+    function handleInv($arr): void
+    {
+        foreach ($arr as $key => $val) {
+            if ($key === 0) continue;
+            $insert = [
+                'ENTNAME' => $val[0],
+                'INV' => $val[1],
+                'SHXYDM' => $val[2],
+                'INVTYPE' => $val[3],
+                'SUBCONAM' => $val[4],
+                'CONCUR' => $val[5],
+                'CONRATIO' => $val[6],
+                'CONDATE' => $val[7],
+                'CHANGE_TYPE' => $val[8],
+            ];
+            $check = EntDbInv::create()->where([
+                'ENTNAME' => $val[0],
+                'INV' => $val[1],
+                'SHXYDM' => $val[2],
+            ])->get();
+            if (empty($check)) {
+                EntDbInv::create()->data($insert)->save();
+            } else {
+                EntDbInv::create()->where([
+                    'ENTNAME' => $val[0],
+                    'INV' => $val[1],
+                    'SHXYDM' => $val[2],
+                ])->update($insert);
+            }
+        }
+    }
+
+    function handleInvNew($arr): void
+    {
+        foreach ($arr as $key => $val) {
+            if ($key === 0) continue;
+            $insert = [
+                'ENTNAME' => $val[0],
+                'INV' => $val[1],
+                'SHXYDM' => $val[2],
+                'INVTYPE' => $val[3],
+                'SUBCONAM' => $val[4],
+                'CONCUR' => $val[5],
+                'CONRATIO' => $val[6],
+                'CONDATE' => $val[7],
+                'CHANGE_TYPE' => $val[8],
+            ];
+            $check = EntDbInv::create()->where([
+                'ENTNAME' => $val[0],
+                'INV' => $val[1],
+                'SHXYDM' => $val[2],
+            ])->get();
+            if (empty($check)) {
+                EntDbInv::create()->data($insert)->save();
+            } else {
+                EntDbInv::create()->where([
+                    'ENTNAME' => $val[0],
+                    'INV' => $val[1],
+                    'SHXYDM' => $val[2],
+                ])->update($insert);
+            }
+        }
+    }
+
+    function handleInvHistory($arr): void
+    {
+        foreach ($arr as $key => $val) {
+            if ($key === 0) continue;
+            $check = EntDbInv::create()->where([
+                'ENTNAME' => $val[0],
+                'SHXYDM' => $val[1],
+                'INV' => $val[2],
+            ])->get();
+            if (!empty($check)) {
+                EntDbInv::create()->destroy([
+                    'ENTNAME' => $val[0],
+                    'SHXYDM' => $val[1],
+                    'INV' => $val[2],
+                ]);
             }
         }
     }
