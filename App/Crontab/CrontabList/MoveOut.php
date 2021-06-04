@@ -12,6 +12,7 @@ use App\HttpController\Service\MoveOut\MoveOutService;
 use App\HttpController\Service\Zip\ZipService;
 use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
+use EasySwoole\RedisPool\Redis;
 use wanghanwanghan\someUtils\control;
 
 class MoveOut extends AbstractCronTask
@@ -305,6 +306,12 @@ class MoveOut extends AbstractCronTask
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
+        $redis = Redis::defer('redis');
+
+        $redis->select(14);
+
+        $redis->del(__FUNCTION__);
+
         CommonService::getInstance()->log4PHP($throwable->getTraceAsString());
     }
 
