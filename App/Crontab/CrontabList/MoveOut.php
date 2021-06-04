@@ -161,10 +161,8 @@ class MoveOut extends AbstractCronTask
 
     function needContinue($handleName, $data): bool
     {
-        if ($handleName === 'handleBasic') {
-            if (empty($data['ENTNAME'])) return true;
-            if (empty($data['SHXYDM'])) return true;
-        }
+        if (empty($data['ENTNAME'])) return true;
+        if (empty($data['SHXYDM'])) return true;
 
         return false;
     }
@@ -184,6 +182,7 @@ class MoveOut extends AbstractCronTask
                 'CONDATE' => $val[7],
                 'CHANGE_TYPE' => $val[8],
             ];
+            if ($this->needContinue(__FUNCTION__, $insert)) continue;
             $check = EntDbInv::create()->where([
                 'ENTNAME' => $val[0],
                 'INV' => $val[1],
@@ -216,6 +215,7 @@ class MoveOut extends AbstractCronTask
                 'CONDATE' => $val[7],
                 'CHANGE_TYPE' => $val[8],
             ];
+            if ($this->needContinue(__FUNCTION__, $insert)) continue;
             $check = EntDbInv::create()->where([
                 'ENTNAME' => $val[0],
                 'INV' => $val[1],
@@ -237,17 +237,15 @@ class MoveOut extends AbstractCronTask
     {
         foreach ($arr as $key => $val) {
             if ($key === 0) continue;
-            $check = EntDbInv::create()->where([
+            $del = [
                 'ENTNAME' => $val[0],
                 'SHXYDM' => $val[1],
                 'INV' => $val[2],
-            ])->get();
+            ];
+            if ($this->needContinue(__FUNCTION__, $del)) continue;
+            $check = EntDbInv::create()->where($del)->get();
             if (!empty($check)) {
-                EntDbInv::create()->destroy([
-                    'ENTNAME' => $val[0],
-                    'SHXYDM' => $val[1],
-                    'INV' => $val[2],
-                ]);
+                EntDbInv::create()->destroy($del);
             }
         }
     }
