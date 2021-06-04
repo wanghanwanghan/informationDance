@@ -6,14 +6,11 @@ use App\Crontab\CrontabBase;
 use App\HttpController\Models\EntDb\EntDbBasic;
 use App\HttpController\Models\EntDb\EntDbInv;
 use App\HttpController\Service\Common\CommonService;
-use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\MoveOut\MoveOutService;
 use App\HttpController\Service\Zip\ZipService;
 use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
-use EasySwoole\RedisPool\Redis;
-use wanghanwanghan\someUtils\control;
 
 class MoveOut extends AbstractCronTask
 {
@@ -27,8 +24,7 @@ class MoveOut extends AbstractCronTask
     static function getRule(): string
     {
         //每天的凌晨3点
-        //return '0 3 * * *';
-        return '*/2 * * * *';
+        return '0 3 * * *';
     }
 
     static function getTaskName(): string
