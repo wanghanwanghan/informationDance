@@ -436,7 +436,7 @@ class LongXinService extends ServiceBase
         ];
 
 
-        CommonService::getInstance()->log4PHP($toRange);
+        CommonService::getInstance()->log4PHP($toReturn);
 
 
 //        TaskService::getInstance()->create(new insertEnt($postData['entName'], $postData['code']));
