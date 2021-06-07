@@ -6,9 +6,13 @@ use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
+use App\HttpController\Service\Sms\SmsService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\XinDongService;
+use App\Task\Service\TaskService;
 use Carbon\Carbon;
+use EasySwoole\RedisPool\Redis;
+use wanghanwanghan\someUtils\control;
 
 class XinDongController extends ProvideBase
 {
@@ -40,6 +44,24 @@ class XinDongController extends ProvideBase
         }
 
         return true;
+    }
+
+    //发送短信
+    function sendSms()
+    {
+        $orderId = $this->getRequestData('orderId');//流水号
+        $phone = $this->getRequestData('phone');//法人手机号
+        $vCode = $this->getRequestData('vCode');//验证码
+
+        $this->csp->add($this->cspKey, function () use ($orderId, $phone, $vCode) {
+            return SmsService::getInstance()->comm($phone, $vCode);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        CommonService::getInstance()->log4PHP($res);
+
+        return $this->checkResponse($res);
     }
 
     //产品标准

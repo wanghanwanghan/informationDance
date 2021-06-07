@@ -81,6 +81,7 @@ class ProvideRouter
         $prefix = '/Business/Provide/XinDong/XinDongController/';
 
         $routeCollector->addGroup('/xd', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/sendSms', $prefix . 'sendSms');
             $routeCollector->addRoute(['GET', 'POST'], '/getProductStandard', $prefix . 'getProductStandard');
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceBaseData', $prefix . 'getFinanceBaseData');
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceBaseMergeData', $prefix . 'getFinanceBaseMergeData');

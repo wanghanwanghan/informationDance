@@ -46,6 +46,22 @@ class AliSms
         return new EasySms($this->conf);
     }
 
+    function comm($phone, $code): bool
+    {
+        $easySms = $this->createObj();
+
+        TaskService::getInstance()->create(function () use ($easySms, $phone, $code) {
+            return $easySms->send($phone, [
+                'template' => 'SMS_218160347',
+                'data' => [
+                    'code' => $code
+                ],
+            ]);
+        });
+
+        return true;
+    }
+
     function reg($phone, $code): bool
     {
         $easySms = $this->createObj();

@@ -19,17 +19,22 @@ class SmsService extends ServiceBase
         parent::__construct();
     }
 
-    function reg($phone, $code)
+    function comm($phone, $code): bool
+    {
+        return (new AliSms())->comm($phone, $code);
+    }
+
+    function reg($phone, $code): bool
     {
         return (new AliSms())->reg($phone, $code);
     }
 
-    function login($phone, $code)
+    function login($phone, $code): bool
     {
         return (new AliSms())->login($phone, $code);
     }
 
-    function afterUploadAuthBook($phone, $ext)
+    function afterUploadAuthBook($phone, $ext): bool
     {
         return (new AliSms())->afterUploadAuthBook($phone, $ext);
     }
