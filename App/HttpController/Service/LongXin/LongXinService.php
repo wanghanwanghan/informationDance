@@ -455,6 +455,19 @@ class LongXinService extends ServiceBase
             }
         }
 
+        //社保人数
+        foreach ($toReturn as $key => $oneTargetEnt) {
+            $social = $this->getSocialNum($oneTargetEnt['entId']);
+            !empty($social) ?: $social = ['AnnualSocial' => []];
+            foreach ($social['AnnualSocial'] as $oneSoc) {
+                $year = $oneSoc['ANCHEYEAR'] . '';
+                if (!is_numeric($year) || !isset($oneTargetEnt['result'][$year])) continue;
+                if (isset($oneSoc['so1']) && is_numeric($oneSoc['so1'])) {
+                    $toReturn[$key]['result'][$year]['SOCNUM'] = $oneSoc['so1'];
+                }
+            }
+        }
+
         CommonService::getInstance()->log4PHP($toReturn);
 
         return $this->checkRespFlag ?
