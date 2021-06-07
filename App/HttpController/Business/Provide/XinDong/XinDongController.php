@@ -153,5 +153,31 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //连续n年基数 含 并表判断+计算结果
+    function getFinanceCalMergeData()
+    {
+        $beginYear = $this->getRequestData('year', '');
+
+        $postData = [
+            'entName' => $this->getRequestData('entName', ''),
+            'code' => $this->getRequestData('code', ''),
+            'beginYear' => $beginYear,
+            'dataCount' => $this->getRequestData('dataCount', 3),//取最近几年的
+        ];
+
+        Carbon::now()->format('Ymd') > '20210420' ? $toRange = true : $toRange = false;
+
+        if (is_numeric($beginYear) && $beginYear >= 2010 && $beginYear <= date('Y') - 1) {
+            $this->csp->add($this->cspKey, function () use ($postData, $toRange) {
+                return (new LongXinService())->setCheckRespFlag(true)->getFinanceBaseMergeData($postData, $toRange);
+            });
+            $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        } else {
+            $res = [];
+            $this->responseMsg = 'year参数错误';
+        }
+
+        return $this->checkResponse($res);
+    }
 
 }

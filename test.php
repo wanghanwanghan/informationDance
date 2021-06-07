@@ -12,7 +12,7 @@ $url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceCalData';
 $url = 'https://api.meirixindong.com/provide/v1/fyy/entout/org';
 $url = 'https://api.meirixindong.com/provide/v1/fyy/entout/people';
 $url = 'https://api.meirixindong.com/provide/v1/ts/getGoodsInfo';
-$url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceBaseMergeData';
+$url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceCalMergeData';
 
 $appId = 'PHP_is_the_best_language_in_the_world';
 $appSecret = 'PHP_GO';
