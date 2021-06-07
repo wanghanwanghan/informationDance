@@ -483,6 +483,7 @@ class LongXinService extends ServiceBase
             ];
             //并表
             foreach ($toReturn as $oneTargetEnt) {
+                CommonService::getInstance()->log4PHP($oneTargetEnt);
                 if (isset($temp[$oneTargetEnt['result'][$tmpYear]])) {
                     $temp[$tmpYear] = [
                         'VENDINC' => $temp[$tmpYear]['VENDINC'] + $oneTargetEnt['result'][$tmpYear]['VENDINC'],
@@ -495,8 +496,6 @@ class LongXinService extends ServiceBase
                         'LIAGRO' => $temp[$tmpYear]['LIAGRO'] + $oneTargetEnt['result'][$tmpYear]['LIAGRO'],
                         'SOCNUM' => $temp[$tmpYear]['SOCNUM'] + $oneTargetEnt['result'][$tmpYear]['SOCNUM'],
                     ];
-                    CommonService::getInstance()->log4PHP($temp);
-                    CommonService::getInstance()->log4PHP($oneTargetEnt);
                 }
             }
         }
