@@ -457,6 +457,7 @@ class LongXinService extends ServiceBase
 
         //社保人数
         foreach ($toReturn as $key => $oneTargetEnt) {
+            if (empty($oneTargetEnt['result'])) continue;
             $social = $this->getSocialNum($oneTargetEnt['entId']);
             !empty($social) ?: $social = ['AnnualSocial' => []];
             foreach ($social['AnnualSocial'] as $oneSoc) {
@@ -468,11 +469,47 @@ class LongXinService extends ServiceBase
             }
         }
 
-        CommonService::getInstance()->log4PHP($toReturn);
+        //取哪几年的
+        $temp = [];
+        for ($i = $postData['dataCount']; $i--;) {
+            $tmpYear = $postData['beginYear'] - $i;
+            $tmpYear = $tmpYear . '';
+            $temp[$tmpYear] = [
+                'VENDINC' => null,
+                'ASSGRO' => null,
+                'ANCHEYEAR' => $tmpYear,
+                'MAIBUSINC' => null,
+                'TOTEQU' => null,
+                'RATGRO' => null,
+                'ispublic' => null,
+                'PROGRO' => null,
+                'NETINC' => null,
+                'LIAGRO' => null,
+                'SOCNUM' => null,
+            ];
+            //并表
+            foreach ($toReturn as $oneTargetEnt) {
+                if (isset($temp[$oneTargetEnt['ANCHEYEAR']])) {
+                    $temp[$tmpYear] = [
+                        'VENDINC' => $temp[$tmpYear]['VENDINC'] + $oneTargetEnt[$tmpYear]['VENDINC'],
+                        'ASSGRO' => $temp[$tmpYear]['ASSGRO'] + $oneTargetEnt[$tmpYear]['ASSGRO'],
+                        'MAIBUSINC' => $temp[$tmpYear]['MAIBUSINC'] + $oneTargetEnt[$tmpYear]['MAIBUSINC'],
+                        'TOTEQU' => $temp[$tmpYear]['TOTEQU'] + $oneTargetEnt[$tmpYear]['TOTEQU'],
+                        'RATGRO' => $temp[$tmpYear]['RATGRO'] + $oneTargetEnt[$tmpYear]['RATGRO'],
+                        'PROGRO' => $temp[$tmpYear]['PROGRO'] + $oneTargetEnt[$tmpYear]['PROGRO'],
+                        'NETINC' => $temp[$tmpYear]['NETINC'] + $oneTargetEnt[$tmpYear]['NETINC'],
+                        'LIAGRO' => $temp[$tmpYear]['LIAGRO'] + $oneTargetEnt[$tmpYear]['LIAGRO'],
+                        'SOCNUM' => $temp[$tmpYear]['SOCNUM'] + $oneTargetEnt[$tmpYear]['SOCNUM'],
+                    ];
+                }
+            }
+        }
+
+        CommonService::getInstance()->log4PHP($temp);
 
         return $this->checkRespFlag ?
-            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $toReturn]) :
-            ['code' => 200, 'msg' => '查询成功', 'data' => $toReturn];
+            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $temp]) :
+            ['code' => 200, 'msg' => '查询成功', 'data' => $temp];
     }
 
     //对外的最近三年财务数据 只返回一个字段
