@@ -362,6 +362,13 @@ class LongXinService extends ServiceBase
 
         if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
 
+        $toReturn = [
+            [
+                'entName' => $postData['entName'],
+                'entId' => $entId,
+            ]
+        ];
+
         //分支机构
         $postData = [
             'entName' => $postData['entName'],
@@ -370,6 +377,10 @@ class LongXinService extends ServiceBase
         ];
 
         $getBranchInfo = (new TaoShuService())->post($postData, 'getBranchInfo');
+
+        empty($getBranchInfo['RESULTDATA']) ?
+            $getBranchInfo = [] :
+            $getBranchInfo = $getBranchInfo['RESULTDATA'];
 
         //对外投资
         $postData = [
@@ -380,10 +391,52 @@ class LongXinService extends ServiceBase
 
         $getInvestmentAbroadInfo = (new TaoShuService())->post($postData, 'getInvestmentAbroadInfo');
 
-        $res = [
-            'getBranchInfo' => $getBranchInfo,
-            'getInvestmentAbroadInfo' => $getInvestmentAbroadInfo,
+        empty($getInvestmentAbroadInfo['RESULTDATA']) ?
+            $getInvestmentAbroadInfo = [] :
+            $getInvestmentAbroadInfo = $getInvestmentAbroadInfo['RESULTDATA'];
+
+        $i = 1;
+
+        if (!empty($getBranchInfo)) {
+            foreach ($getBranchInfo as $one) {
+                if ($i > 1) continue;
+                TaskService::getInstance()->create(new insertEnt($one['ENTNAME'], $one['SHXYDM']));
+                $entId = $this->getEntid($one['ENTNAME']);
+                $toReturn[] = [
+                    'entName' => $one['ENTNAME'],
+                    'entId' => $entId,
+                ];
+                $i++;
+            }
+        }
+
+        $i = 1;
+
+        if (!empty($getInvestmentAbroadInfo)) {
+            foreach ($getInvestmentAbroadInfo as $one) {
+                if ($i > 1) continue;
+                TaskService::getInstance()->create(new insertEnt($one['ENTNAME'], $one['SHXYDM']));
+                $entId = $this->getEntid($one['ENTNAME']);
+                $toReturn[] = [
+                    'entName' => $one['ENTNAME'],
+                    'entId' => $entId,
+                ];
+                $i++;
+            }
+        }
+
+        $ANCHEYEAR = '';
+        for ($i = 2010; $i <= date('Y'); $i++) {
+            $ANCHEYEAR .= $i . ',';
+        }
+        $arr = [
+            'entid' => $entId,
+            'ANCHEYEAR' => trim($ANCHEYEAR, ','),
+            'usercode' => $this->usercode
         ];
+
+
+        CommonService::getInstance()->log4PHP($toRange);
 
 
 //        TaskService::getInstance()->create(new insertEnt($postData['entName'], $postData['code']));
