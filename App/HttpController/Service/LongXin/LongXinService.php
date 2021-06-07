@@ -499,6 +499,11 @@ class LongXinService extends ServiceBase
             }
         }
 
+        //原值计算
+        if ($postData['dataCount'] > 1) {
+            $temp = $this->exprHandle($temp);
+        }
+
         return $this->checkRespFlag ?
             $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $temp]) :
             ['code' => 200, 'msg' => '查询成功', 'data' => $temp];
