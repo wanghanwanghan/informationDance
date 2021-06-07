@@ -472,8 +472,7 @@ class LongXinService extends ServiceBase
         //取哪几年的
         $temp = [];
         for ($i = $postData['dataCount']; $i--;) {
-            $tmpYear = $postData['beginYear'] - $i;
-            $tmpYear = $tmpYear . '';
+            $tmpYear = ($postData['beginYear'] - $i) . '';
             $temp[$tmpYear] = [
                 'VENDINC' => null,
                 'ASSGRO' => null,
@@ -489,7 +488,7 @@ class LongXinService extends ServiceBase
             ];
             //并表
             foreach ($toReturn as $oneTargetEnt) {
-                if (isset($temp[$oneTargetEnt['ANCHEYEAR']])) {
+                if (isset($temp[$oneTargetEnt['result']['ANCHEYEAR']])) {
                     $temp[$tmpYear] = [
                         'VENDINC' => $temp[$tmpYear]['VENDINC'] + $oneTargetEnt[$tmpYear]['VENDINC'],
                         'ASSGRO' => $temp[$tmpYear]['ASSGRO'] + $oneTargetEnt[$tmpYear]['ASSGRO'],
