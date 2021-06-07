@@ -429,91 +429,35 @@ class LongXinService extends ServiceBase
         for ($i = 2010; $i <= date('Y'); $i++) {
             $ANCHEYEAR .= $i . ',';
         }
-        $arr = [
-            'entid' => $entId,
-            'ANCHEYEAR' => trim($ANCHEYEAR, ','),
-            'usercode' => $this->usercode
-        ];
+        $ANCHEYEAR = trim($ANCHEYEAR, ',');
 
+        foreach ($toReturn as $key => $oneTargetEnt) {
+            if (empty($oneTargetEnt['entId'])) {
+                $toReturn[$key]['result'] = null;
+                continue;
+            }
+            $arr = [
+                'entid' => $oneTargetEnt['entId'],
+                'ANCHEYEAR' => $ANCHEYEAR,
+                'usercode' => $this->usercode
+            ];
+            $this->sendHeaders['authorization'] = $this->createToken($arr);
+            $res = (new CoHttpClient())->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
+            if (isset($res['total']) && $res['total'] > 0) {
+                foreach ($res['data'] as $oneYearData) {
+                    $oneYearData['SOCNUM'] = null;
+                    $toReturn[$key]['result'] = $oneYearData;
+                }
+            } else {
+                $toReturn[$key]['result'] = null;
+            }
+        }
 
         CommonService::getInstance()->log4PHP($toReturn);
 
-
-//        TaskService::getInstance()->create(new insertEnt($postData['entName'], $postData['code']));
-//
-//        $ANCHEYEAR = '';
-//        $temp = [];
-//        for ($i = 2010; $i <= date('Y'); $i++) {
-//            $ANCHEYEAR .= $i . ',';
-//            $temp[(string)$i] = null;
-//        }
-//        $arr = [
-//            'entid' => $entId,
-//            'ANCHEYEAR' => trim($ANCHEYEAR, ','),
-//            'usercode' => $this->usercode
-//        ];
-//
-//        $this->sendHeaders['authorization'] = $this->createToken($arr);
-//
-//        $res = (new CoHttpClient())->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
-//
-//        if (isset($res['total']) && $res['total'] > 0) {
-//            foreach ($res['data'] as $oneYearData) {
-//                $year = trim($oneYearData['ANCHEYEAR']) . '';
-//                if (!is_numeric($year)) continue;
-//                $oneYearData['SOCNUM'] = null;
-//                $temp[$year] = $oneYearData;
-//            }
-//            krsort($temp);
-//        }
-//
-//        //社保人数数组
-//        $social = $this->getSocialNum($entId);
-//
-//        !empty($social) ?: $social = ['AnnualSocial' => []];
-//
-//        foreach ($social['AnnualSocial'] as $oneSoc) {
-//            $year = $oneSoc['ANCHEYEAR'];
-//            if (!is_numeric($year) || !isset($temp[(string)$year])) continue;
-//            if (isset($oneSoc['so1']) && is_numeric($oneSoc['so1'])) $temp[(string)$year]['SOCNUM'] = $oneSoc['so1'];
-//        }
-//
-//        TaskService::getInstance()->create(new insertFinance($postData['entName'], $temp, $social['AnnualSocial']));
-//
-//        //原值计算
-//        if ($postData['dataCount'] > 1) {
-//            $temp = $this->exprHandle($temp);
-//        }
-//
-//        //取哪年的数据
-//        $readyReturn = [];
-//        for ($i = $postData['dataCount']; $i--;) {
-//            $tmp = $postData['beginYear'] - $i;
-//            $tmp = (string)$tmp;
-//            isset($temp[$tmp]) ? $readyReturn[$tmp] = $temp[$tmp] : $readyReturn[$tmp] = null;
-//        }
-//
-//        //数字落区间
-//        if ($toRange) {
-//            foreach ($readyReturn as $year => $arr) {
-//                if (empty($arr)) continue;
-//                foreach ($arr as $field => $val) {
-//                    if (in_array($field, $this->rangeArr[0]) && is_numeric($val)) {
-//                        $readyReturn[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArr[1]) - 1, $this->rangeArr[1]);
-//                    } elseif (in_array($field, $this->rangeArrRatio[0]) && is_numeric($val)) {
-//                        $readyReturn[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArrRatio[1]) - 1, $this->rangeArrRatio[1]);
-//                    } else {
-//                        $readyReturn[$year][$field] = $val;
-//                    }
-//                }
-//            }
-//        }
-//
-//        krsort($readyReturn);
-//
         return $this->checkRespFlag ?
-            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $res]) :
-            ['code' => 200, 'msg' => '查询成功', 'data' => $res];
+            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $toReturn]) :
+            ['code' => 200, 'msg' => '查询成功', 'data' => $toReturn];
     }
 
     //对外的最近三年财务数据 只返回一个字段
