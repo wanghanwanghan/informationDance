@@ -128,5 +128,30 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //单年基础数区间 含 并表判断
+    function getFinanceBaseMergeData()
+    {
+        $postData = [
+            'entName' => $this->getRequestData('entName', ''),
+            'code' => $this->getRequestData('code', ''),
+            'beginYear' => $this->getRequestData('year', ''),
+            'dataCount' => 1,//取最近几年的
+        ];
+
+        $beginYear = $this->getRequestData('year', '');
+
+        if (is_numeric($beginYear) && $beginYear >= 2010 && $beginYear <= date('Y')) {
+            $this->csp->add($this->cspKey, function () use ($postData) {
+                return (new LongXinService())->setCheckRespFlag(true)->getFinanceBaseMergeData($postData);
+            });
+            $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        } else {
+            $res = [];
+            $this->responseMsg = 'year参数错误';
+        }
+
+        return $this->checkResponse($res);
+    }
+
 
 }

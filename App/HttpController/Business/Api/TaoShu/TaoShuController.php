@@ -161,11 +161,9 @@ class TaoShuController extends TaoShuBase
 
         if (!is_array($res)) return $res;
 
-        if ($res['code'] == 200 && !empty($res['result']))
-        {
-            foreach ($res['result'] as &$one)
-            {
-                $one['CONRATIO']=formatPercent($one['CONRATIO']);
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                $one['CONRATIO'] = formatPercent($one['CONRATIO']);
             }
             unset($one);
         }
@@ -192,11 +190,9 @@ class TaoShuController extends TaoShuBase
 
         if (!is_array($res)) return $res;
 
-        if ($res['code'] == 200 && !empty($res['result']))
-        {
-            foreach ($res['result'] as &$one)
-            {
-                $one['CONRATIO']=formatPercent($one['CONRATIO']);
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                $one['CONRATIO'] = formatPercent($one['CONRATIO']);
             }
             unset($one);
         }
