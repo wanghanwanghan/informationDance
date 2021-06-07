@@ -57,11 +57,12 @@ class XinDongController extends ProvideBase
             return SmsService::getInstance()->comm($phone, $vCode);
         });
 
-        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-
-        CommonService::getInstance()->log4PHP($res);
-
-        return $this->checkResponse($res);
+        return $this->checkResponse([$this->cspKey => [
+            'code' => 200,
+            'paging' => null,
+            'result' => CspService::getInstance()->exec($this->csp, $this->cspTimeout),
+            'msg' => null,
+        ]]);
     }
 
     //产品标准

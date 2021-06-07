@@ -13,6 +13,7 @@ $url = 'https://api.meirixindong.com/provide/v1/fyy/entout/org';
 $url = 'https://api.meirixindong.com/provide/v1/fyy/entout/people';
 $url = 'https://api.meirixindong.com/provide/v1/ts/getGoodsInfo';
 $url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceCalMergeData';
+$url = 'https://api.meirixindong.com/provide/v1/xd/sendSms';
 
 $appId = 'PHP_is_the_best_language_in_the_world';
 $appSecret = 'PHP_GO';
@@ -31,6 +32,8 @@ $data = [
     'dataCount' => '3',
     'page' => 1,
     'pageSize' => 10,
+    'phone' => 18618457910,
+    'vCode' => 666666,
 ];
 
 //江苏彩虹永能新能源有限公司

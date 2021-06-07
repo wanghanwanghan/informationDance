@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\Sms;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\Task\Service\TaskService;
 use Carbon\Carbon;
@@ -51,12 +52,14 @@ class AliSms
         $easySms = $this->createObj();
 
         TaskService::getInstance()->create(function () use ($easySms, $phone, $code) {
-            return $easySms->send($phone, [
+            $res = $easySms->send($phone, [
                 'template' => 'SMS_218160347',
                 'data' => [
                     'code' => $code
                 ],
             ]);
+            CommonService::getInstance()->log4PHP($res);
+            return $res;
         });
 
         return true;
