@@ -370,26 +370,22 @@ class LongXinService extends ServiceBase
         ];
 
         //分支机构
-        $postData = [
+        $getBranchInfo = (new TaoShuService())->post([
             'entName' => $postData['entName'],
             'pageNo' => 1,
             'pageSize' => 100,
-        ];
-
-        $getBranchInfo = (new TaoShuService())->post($postData, 'getBranchInfo');
+        ], 'getBranchInfo');
 
         empty($getBranchInfo['RESULTDATA']) ?
             $getBranchInfo = [] :
             $getBranchInfo = $getBranchInfo['RESULTDATA'];
 
         //对外投资
-        $postData = [
+        $getInvestmentAbroadInfo = (new TaoShuService())->post([
             'entName' => $postData['entName'],
             'pageNo' => 1,
             'pageSize' => 100,
-        ];
-
-        $getInvestmentAbroadInfo = (new TaoShuService())->post($postData, 'getInvestmentAbroadInfo');
+        ], 'getInvestmentAbroadInfo');
 
         empty($getInvestmentAbroadInfo['RESULTDATA']) ?
             $getInvestmentAbroadInfo = [] :
