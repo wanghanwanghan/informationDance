@@ -488,17 +488,17 @@ class LongXinService extends ServiceBase
             ];
             //并表
             foreach ($toReturn as $oneTargetEnt) {
-                if (isset($temp[$oneTargetEnt['result']['ANCHEYEAR']])) {
+                if (isset($temp[$oneTargetEnt['result']])) {
                     $temp[$tmpYear] = [
-                        'VENDINC' => $temp[$tmpYear]['VENDINC'] + $oneTargetEnt[$tmpYear]['result']['VENDINC'],
-                        'ASSGRO' => $temp[$tmpYear]['ASSGRO'] + $oneTargetEnt[$tmpYear]['result']['ASSGRO'],
-                        'MAIBUSINC' => $temp[$tmpYear]['MAIBUSINC'] + $oneTargetEnt[$tmpYear]['result']['MAIBUSINC'],
-                        'TOTEQU' => $temp[$tmpYear]['TOTEQU'] + $oneTargetEnt[$tmpYear]['result']['TOTEQU'],
-                        'RATGRO' => $temp[$tmpYear]['RATGRO'] + $oneTargetEnt[$tmpYear]['result']['RATGRO'],
-                        'PROGRO' => $temp[$tmpYear]['PROGRO'] + $oneTargetEnt[$tmpYear]['result']['PROGRO'],
-                        'NETINC' => $temp[$tmpYear]['NETINC'] + $oneTargetEnt[$tmpYear]['result']['NETINC'],
-                        'LIAGRO' => $temp[$tmpYear]['LIAGRO'] + $oneTargetEnt[$tmpYear]['result']['LIAGRO'],
-                        'SOCNUM' => $temp[$tmpYear]['SOCNUM'] + $oneTargetEnt[$tmpYear]['result']['SOCNUM'],
+                        'VENDINC' => $temp[$tmpYear]['VENDINC'] + $oneTargetEnt['result'][$tmpYear]['VENDINC'],
+                        'ASSGRO' => $temp[$tmpYear]['ASSGRO'] + $oneTargetEnt['result'][$tmpYear]['ASSGRO'],
+                        'MAIBUSINC' => $temp[$tmpYear]['MAIBUSINC'] + $oneTargetEnt['result'][$tmpYear]['MAIBUSINC'],
+                        'TOTEQU' => $temp[$tmpYear]['TOTEQU'] + $oneTargetEnt['result'][$tmpYear]['TOTEQU'],
+                        'RATGRO' => $temp[$tmpYear]['RATGRO'] + $oneTargetEnt['result'][$tmpYear]['RATGRO'],
+                        'PROGRO' => $temp[$tmpYear]['PROGRO'] + $oneTargetEnt['result'][$tmpYear]['PROGRO'],
+                        'NETINC' => $temp[$tmpYear]['NETINC'] + $oneTargetEnt['result'][$tmpYear]['NETINC'],
+                        'LIAGRO' => $temp[$tmpYear]['LIAGRO'] + $oneTargetEnt['result'][$tmpYear]['LIAGRO'],
+                        'SOCNUM' => $temp[$tmpYear]['SOCNUM'] + $oneTargetEnt['result'][$tmpYear]['SOCNUM'],
                     ];
                 }
             }
