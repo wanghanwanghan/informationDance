@@ -165,7 +165,9 @@ class XinDongController extends ProvideBase
 
         if (is_numeric($beginYear) && $beginYear >= 2010 && $beginYear <= date('Y')) {
             $this->csp->add($this->cspKey, function () use ($postData) {
-                return (new LongXinService())->setCheckRespFlag(true)->getFinanceBaseMergeData($postData);
+                return (new LongXinService())
+                    ->setCheckRespFlag(true)
+                    ->getFinanceBaseMergeData($postData);
             });
             $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         } else {
@@ -192,7 +194,9 @@ class XinDongController extends ProvideBase
 
         if (is_numeric($beginYear) && $beginYear >= 2010 && $beginYear <= date('Y') - 1) {
             $this->csp->add($this->cspKey, function () use ($postData, $toRange) {
-                return (new LongXinService())->setCheckRespFlag(true)->getFinanceBaseMergeData($postData, $toRange);
+                return (new LongXinService())
+                    ->setCheckRespFlag(true)
+                    ->getFinanceBaseMergeData($postData, $toRange);
             });
             $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         } else {

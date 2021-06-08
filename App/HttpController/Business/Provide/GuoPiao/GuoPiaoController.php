@@ -122,6 +122,16 @@ class GuoPiaoController extends ProvideBase
         return $this->writeJson($res['code'], null, $res['data'], $res['message']);
     }
 
+    function getFinanceIncomeStatementAnnualReport()
+    {
+        $code = $this->getRequestData('code');
+
+        $res = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceIncomeStatementAnnualReport($code);
+
+        return $this->checkResponse($res);
+    }
+
+
 }
 
 
