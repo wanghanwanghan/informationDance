@@ -16,6 +16,9 @@ $url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceCalMergeData';
 $url = 'https://api.meirixindong.com/provide/v1/xd/sendSms';
 $url = 'https://api.meirixindong.com/provide/v1/zw/getFinanceBalanceSheetAnnual';
 
+$url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceCalMergeData';
+$url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceCalData';
+
 $appId = 'PHP_is_the_best_language_in_the_world';
 $appSecret = 'PHP_GO';
 $time = time();

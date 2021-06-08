@@ -136,7 +136,7 @@ class XinDongController extends ProvideBase
             'dataCount' => $this->getRequestData('dataCount', 3),//取最近几年的
         ];
 
-        Carbon::now()->format('Ymd') > '20210420' ? $toRange = true : $toRange = false;
+        Carbon::now()->format('Ymd') > '20211220' ? $toRange = true : $toRange = false;
 
         if (is_numeric($beginYear) && $beginYear >= 2010 && $beginYear <= date('Y') - 1) {
             $this->csp->add($this->cspKey, function () use ($postData, $toRange) {
@@ -190,7 +190,7 @@ class XinDongController extends ProvideBase
             'dataCount' => $this->getRequestData('dataCount', 3),//取最近几年的
         ];
 
-        Carbon::now()->format('Ymd') > '20210420' ? $toRange = true : $toRange = false;
+        Carbon::now()->format('Ymd') > '20211220' ? $toRange = true : $toRange = false;
 
         if (is_numeric($beginYear) && $beginYear >= 2010 && $beginYear <= date('Y') - 1) {
             $this->csp->add($this->cspKey, function () use ($postData, $toRange) {
