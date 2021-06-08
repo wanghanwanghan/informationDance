@@ -395,7 +395,7 @@ class LongXinService extends ServiceBase
 
         if (!empty($getBranchInfo)) {
             foreach ($getBranchInfo as $one) {
-                if ($i > 1) continue;
+                if ($i > 5) continue;
                 TaskService::getInstance()->create(new insertEnt($one['ENTNAME'], $one['SHXYDM']));
                 $entId = $this->getEntid($one['ENTNAME']);
                 $toReturn[] = [
@@ -410,7 +410,7 @@ class LongXinService extends ServiceBase
 
         if (!empty($getInvestmentAbroadInfo)) {
             foreach ($getInvestmentAbroadInfo as $one) {
-                if ($i > 1) continue;
+                if ($i > 5) continue;
                 TaskService::getInstance()->create(new insertEnt($one['ENTNAME'], $one['SHXYDM']));
                 $entId = $this->getEntid($one['ENTNAME']);
                 $toReturn[] = [
