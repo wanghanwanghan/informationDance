@@ -504,6 +504,8 @@ class LongXinService extends ServiceBase
             $temp = $this->exprHandle($temp);
         }
 
+        array_pop($temp);
+
         return $this->checkRespFlag ?
             $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $temp]) :
             ['code' => 200, 'msg' => '查询成功', 'data' => $temp];
