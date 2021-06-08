@@ -131,6 +131,32 @@ class GuoPiaoController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getFinanceIncomeStatement()
+    {
+        $code = $this->getRequestData('code');
+
+        $res = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceIncomeStatement($code);
+
+        return $this->checkResponse($res);
+    }
+
+    function getFinanceBalanceSheetAnnual()
+    {
+        $code = $this->getRequestData('code');
+
+        $res = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceBalanceSheetAnnual($code);
+
+        return $this->checkResponse($res);
+    }
+
+    function getFinanceBalanceSheet()
+    {
+        $code = $this->getRequestData('code');
+
+        $res = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceBalanceSheet($code);
+
+        return $this->checkResponse($res);
+    }
 
 }
 

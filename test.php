@@ -14,6 +14,7 @@ $url = 'https://api.meirixindong.com/provide/v1/fyy/entout/people';
 $url = 'https://api.meirixindong.com/provide/v1/ts/getGoodsInfo';
 $url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceCalMergeData';
 $url = 'https://api.meirixindong.com/provide/v1/xd/sendSms';
+$url = 'https://api.meirixindong.com/provide/v1/zw/getFinanceIncomeStatementAnnualReport';
 
 $appId = 'PHP_is_the_best_language_in_the_world';
 $appSecret = 'PHP_GO';
@@ -27,7 +28,7 @@ $data = [
     //'image' => new \CURLFile(realpath('./WechatIMG261-tuya.png'))
     'entName' => '北京京东世纪贸易有限公司',
     'id' => '370503198409120910',
-    'code' => '',
+    'code' => '91110108MA01KPGK0L',
     'year' => '2019',
     'dataCount' => '3',
     'page' => 1,
