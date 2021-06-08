@@ -467,7 +467,7 @@ class LongXinService extends ServiceBase
 
         //取哪几年的
         $temp = [];
-        for ($i = $postData['dataCount']; $i--;) {
+        for ($i = $postData['dataCount'] + 1; $i--;) {
             $tmpYear = ($postData['beginYear'] - $i) . '';
             $temp[$tmpYear] = [
                 'VENDINC' => null,
