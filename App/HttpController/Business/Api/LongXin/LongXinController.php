@@ -313,6 +313,7 @@ class LongXinController extends LongXinBase
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $getLookCount = $this->request()->getRequestParam('getLookCount') ?? '';
         $mergeData = $this->request()->getRequestParam('mergeData') ?? 0;
+        $mergeData = $mergeData - 0;
 
         if (!empty($getLookCount)) {
             //只返回一个免费次数
@@ -339,12 +340,11 @@ class LongXinController extends LongXinBase
                 'dataCount' => $dataCount,//取最近几年的
             ];
 
-            $res = (new LongXinService())->getFinanceData($postData, false);
-
-            $ress = (new LongXinService())->getFinanceBaseMergeData($postData, false);
-
-            CommonService::getInstance()->log4PHP($res);
-            CommonService::getInstance()->log4PHP($ress);
+            if ($mergeData === 1) {
+                $res = (new LongXinService())->getFinanceBaseMergeData($postData, false);
+            } else {
+                $res = (new LongXinService())->getFinanceData($postData, false);
+            }
 
             $charge = ChargeService::getInstance()->LongXin($this->request(), 51, $entName[$i]);
 
