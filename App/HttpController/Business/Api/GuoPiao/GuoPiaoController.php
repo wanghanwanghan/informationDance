@@ -324,6 +324,8 @@ class GuoPiaoController extends GuoPiaoBase
     {
         $code = $this->request()->getRequestParam('code') ?? '';
 
+        CommonService::getInstance()->log4PHP($code);
+
         $res = (new GuoPiaoService())->getFinanceIncomeStatementAnnualReport($code);
 
         return $this->checkResponse($res, __FUNCTION__);
