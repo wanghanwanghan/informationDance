@@ -265,6 +265,7 @@ class MoveOut extends AbstractCronTask
     //删除n天前创建的文件
     function delFileByCtime($dir, $n = 10): bool
     {
+        CommonService::getInstance()->log4PHP($dir);
         if (strpos($dir, 'informationDance') === false) return true;
 
         if (is_dir($dir) && is_numeric($n)) {
