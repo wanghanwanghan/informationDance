@@ -88,7 +88,7 @@ class GuoPiaoService extends ServiceBase
                 $res['Result'] = null;
         }
 
-        return $this->createReturn($res['code'], $res['Paging'], $res['Result'], isset($res['msg']) ? $res['msg'] : null);
+        return $this->createReturn($res['code'], $res['Paging'], $res['Result'], $res['msg'] ?? null);
     }
 
     //进项销项发票详情 客户端（税盘）专用
@@ -313,8 +313,6 @@ class GuoPiaoService extends ServiceBase
         $api_path = 'invoice/' . __FUNCTION__;
 
         $res = $this->readyToSend($api_path, $body);
-
-        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }

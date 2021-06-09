@@ -70,7 +70,7 @@ class GuoPiaoController extends GuoPiaoBase
             'code' => $res['code'],
             'paging' => $res['Paging'],
             'result' => $res['Result'],
-            'msg' => isset($res['msg']) ? $res['msg'] : null,
+            'msg' => $res['msg'] ?? null,
         ] : $this->writeJson($res['code'], $res['Paging'], $res['Result'], $res['msg']);
     }
 
@@ -324,9 +324,9 @@ class GuoPiaoController extends GuoPiaoBase
     {
         $code = $this->request()->getRequestParam('code') ?? '';
 
-        CommonService::getInstance()->log4PHP($code);
-
         $res = (new GuoPiaoService())->getFinanceIncomeStatementAnnualReport($code);
+
+        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkResponse($res, __FUNCTION__);
     }
