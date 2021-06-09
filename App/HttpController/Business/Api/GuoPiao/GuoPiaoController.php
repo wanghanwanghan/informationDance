@@ -5,6 +5,7 @@ namespace App\HttpController\Business\Api\GuoPiao;
 use App\HttpController\Models\Api\AuthBook;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\GuoPiao\GuoPiaoService;
+use wanghanwanghan\someUtils\control;
 
 class GuoPiaoController extends GuoPiaoBase
 {
@@ -338,6 +339,10 @@ class GuoPiaoController extends GuoPiaoBase
                 $row['sequence'] = $row['sequence'] - 0;
                 $model[$year][] = $row;
             }
+            //排序
+            foreach ($model as $year => $val) {
+                $model[$year] = control::sortArrByKey($val, 'sequence', 'asc', true);
+            }
             $res['data'] = jsonEncode($model);
         }
 
@@ -362,6 +367,10 @@ class GuoPiaoController extends GuoPiaoBase
                 }
                 $row['sequence'] = $row['sequence'] - 0;
                 $model[$year_month][] = $row;
+            }
+            //排序
+            foreach ($model as $year => $val) {
+                $model[$year] = control::sortArrByKey($val, 'sequence', 'asc', true);
             }
             $res['data'] = jsonEncode($model);
         }
@@ -388,6 +397,10 @@ class GuoPiaoController extends GuoPiaoBase
                 $row['sequence'] = $row['sequence'] - 0;
                 $model[$year][] = $row;
             }
+            //排序
+            foreach ($model as $year => $val) {
+                $model[$year] = control::sortArrByKey($val, 'sequence', 'asc', true);
+            }
             $res['data'] = jsonEncode($model);
         }
 
@@ -412,6 +425,10 @@ class GuoPiaoController extends GuoPiaoBase
                 }
                 $row['sequence'] = $row['sequence'] - 0;
                 $model[$year_month][] = $row;
+            }
+            //排序
+            foreach ($model as $year => $val) {
+                $model[$year] = control::sortArrByKey($val, 'sequence', 'asc', true);
             }
             $res['data'] = jsonEncode($model);
         }
