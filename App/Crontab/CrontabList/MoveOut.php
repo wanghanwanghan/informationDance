@@ -161,6 +161,7 @@ class MoveOut extends AbstractCronTask
                 if (empty($check)) {
                     EntDbBasic::create()->data($insert)->save();
                 } else {
+                    unset($insert['SHXYDM']);
                     EntDbBasic::create()->where('SHXYDM', $val[2])->update($insert);
                 }
             } catch (\Throwable $e) {
@@ -194,6 +195,9 @@ class MoveOut extends AbstractCronTask
                 if (empty($check)) {
                     EntDbInv::create()->data($insert)->save();
                 } else {
+                    unset($insert['ENTNAME']);
+                    unset($insert['INV']);
+                    unset($insert['SHXYDM']);
                     EntDbInv::create()->where([
                         'ENTNAME' => $val[0],
                         'INV' => $val[1],
@@ -231,6 +235,9 @@ class MoveOut extends AbstractCronTask
                 if (empty($check)) {
                     EntDbInv::create()->data($insert)->save();
                 } else {
+                    unset($insert['ENTNAME']);
+                    unset($insert['INV']);
+                    unset($insert['SHXYDM']);
                     EntDbInv::create()->where([
                         'ENTNAME' => $val[0],
                         'INV' => $val[1],
