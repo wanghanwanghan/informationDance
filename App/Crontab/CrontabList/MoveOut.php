@@ -52,7 +52,7 @@ class MoveOut extends AbstractCronTask
 //            'usercode' => 'j7uSz7ipmJ'
 //        ];
 //
-//        $url = 'http://39.106.95.155/data/daily_ent_mrxd/?_t=' . time();
+//        $url = 'http://39.106.95.155/data/daily_ent_mrxd/?t=' . time();
 //
 //        $res = (new CoHttpClient())->send($url, $data, $sendHeaders);
 //
@@ -266,7 +266,6 @@ class MoveOut extends AbstractCronTask
     //删除n天前创建的文件
     function delFileByCtime($dir, $n = 10): bool
     {
-        CommonService::getInstance()->log4PHP($dir);
         if (strpos($dir, 'informationDance') === false) return true;
 
         if (is_dir($dir) && is_numeric($n)) {
@@ -274,6 +273,7 @@ class MoveOut extends AbstractCronTask
                 while (false !== ($file = readdir($dh))) {
                     if ($file !== '.' && $file !== '..' && $file !== '.gitignore') {
                         $fullpath = $dir . $file;
+                        CommonService::getInstance()->log4PHP($fullpath);
                         if (is_dir($fullpath)) {
                             if (count(scandir($fullpath)) == 2) {
                                 //rmdir($fullpath);
