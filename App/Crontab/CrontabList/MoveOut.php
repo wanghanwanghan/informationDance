@@ -25,7 +25,7 @@ class MoveOut extends AbstractCronTask
     {
         //每天的凌晨3点
         //return '0 3 * * *';
-        return '*/3 * * * *';
+        return '* * * * *';
     }
 
     static function getTaskName(): string
@@ -83,6 +83,7 @@ class MoveOut extends AbstractCronTask
 
     function readCsv($filename): \Generator
     {
+        CommonService::getInstance()->log4PHP($filename);
         $handle = fopen(TEMP_FILE_PATH . $filename, 'rb');
         while (feof($handle) === false) {
             yield fgetcsv($handle);
