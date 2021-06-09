@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\MoveOut;
 
+use App\HttpController\Models\Api\MoveOutPhoneEntName;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\ServiceBase;
@@ -12,7 +13,7 @@ class MoveOutService extends ServiceBase
     use Singleton;
 
     //更新所有监控中的企业
-    function updateDatabase(): void
+    function updateDatabase(): ?array
     {
         //分公司:将园内企业名单作比对目标
         //提取信动T+1新企数据中的所有***分公司
@@ -26,8 +27,29 @@ class MoveOutService extends ServiceBase
         //提取信动T+2变更数据中的所有变更地址项的公司名称
         //与园内企业下属公司名称匹配的将开始接口反推的园内企业列为预警推荐目标
 
-        CreateTableService::getInstance()->information_dance_move_out_phone_entname();
-        CreateTableService::getInstance()->information_dance_move_out_entname_rel();
+        $list = MoveOutPhoneEntName::create()
+            ->where('status', 1)
+            ->where('expireTime', time(), '>')
+            ->all();
+
+        if (empty($list)) {
+            CommonService::getInstance()->log4PHP('move out 列表是空');
+            return null;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        return null;
     }
 
 }
