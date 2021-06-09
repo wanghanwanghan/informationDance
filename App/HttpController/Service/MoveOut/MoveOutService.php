@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\MoveOut;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\ServiceBase;
 use wanghanwanghan\someUtils\traits\Singleton;
 
@@ -27,9 +28,7 @@ class MoveOutService extends ServiceBase
         //与园内企业下属公司名称匹配的
         //将开始接口反推的园内企业列为预警推荐目标
 
-
-
-
+        CommonService::getInstance()->log4PHP(__CLASS__ . '运行开始');
 
 
     }
