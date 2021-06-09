@@ -25,7 +25,7 @@ class MoveOut extends AbstractCronTask
     {
         //每天的凌晨3点
         //return '0 3 * * *';
-        return '* * * * *';
+        return '*/2 * * * *';
     }
 
     static function getTaskName(): string
@@ -44,32 +44,32 @@ class MoveOut extends AbstractCronTask
             return true;
         }
 
-        $target_time = Carbon::now()->subDays(1)->format('Ymd');
-
-        $sendHeaders['authorization'] = $this->createToken();
-
-        $data = [
-            'usercode' => 'j7uSz7ipmJ'
-        ];
-
-        $url = 'http://39.106.95.155/data/daily_ent_mrxd/?_t=' . time();
-
-        $res = (new CoHttpClient())->send($url, $data, $sendHeaders);
-
-        if ($res['code'] - 0 === 200 && is_array($res['data']) && !empty($res['data'])) {
-            foreach ($res['data'] as $one) {
-                $state = $one['state'] - 0;
-                //返回错误
-                if ($state !== 1) continue;
-                $name = $one['name'];
-                //不是前一天的
-                if (strpos($name, $target_time) === false) continue;
-                $load_url = $one['load_url'];
-                $this->getFileByWget($load_url, TEMP_FILE_PATH, $name);
-                $filename_arr = ZipService::getInstance()->unzip(TEMP_FILE_PATH . $name, TEMP_FILE_PATH);
-                if (!empty($filename_arr)) $this->handleFileArr($filename_arr);
-            }
-        }
+//        $target_time = Carbon::now()->subDays(1)->format('Ymd');
+//
+//        $sendHeaders['authorization'] = $this->createToken();
+//
+//        $data = [
+//            'usercode' => 'j7uSz7ipmJ'
+//        ];
+//
+//        $url = 'http://39.106.95.155/data/daily_ent_mrxd/?_t=' . time();
+//
+//        $res = (new CoHttpClient())->send($url, $data, $sendHeaders);
+//
+//        if ($res['code'] - 0 === 200 && is_array($res['data']) && !empty($res['data'])) {
+//            foreach ($res['data'] as $one) {
+//                $state = $one['state'] - 0;
+//                //返回错误
+//                if ($state !== 1) continue;
+//                $name = $one['name'];
+//                //不是前一天的
+//                if (strpos($name, $target_time) === false) continue;
+//                $load_url = $one['load_url'];
+//                $this->getFileByWget($load_url, TEMP_FILE_PATH, $name);
+//                $filename_arr = ZipService::getInstance()->unzip(TEMP_FILE_PATH . $name, TEMP_FILE_PATH);
+//                if (!empty($filename_arr)) $this->handleFileArr($filename_arr);
+//            }
+//        }
 
         $this->delFileByCtime(TEMP_FILE_PATH, 5);
 
@@ -83,7 +83,6 @@ class MoveOut extends AbstractCronTask
 
     function readCsv($filename): \Generator
     {
-        CommonService::getInstance()->log4PHP($filename);
         $handle = fopen(TEMP_FILE_PATH . $filename, 'rb');
         while (feof($handle) === false) {
             yield fgetcsv($handle);
