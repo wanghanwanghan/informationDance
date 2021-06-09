@@ -6,6 +6,7 @@ use App\HttpController\Business\BusinessBase;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\MoveOut\MoveOutService;
 use App\HttpController\Service\QianQi\QianQiService;
 use EasySwoole\Pool\Manager;
 
@@ -18,7 +19,8 @@ class TestController extends BusinessBase
 
     function test()
     {
-
+        MoveOutService::getInstance()->updateDatabase();
+        $this->writeJson(random_int(100, 999));
     }
 
     //产品标准页面用
