@@ -35,7 +35,7 @@ class GuoPiaoController extends GuoPiaoBase
 
         if (isset($res['coHttpErr'])) return $this->writeJson(500, $res['Paging'], [], 'co请求错误');
 
-        (int)$res['code'] === 0 ? $res['code'] = 200 : $res['code'] = 600;
+        $res['code'] - 0 === 0 ? $res['code'] = 200 : $res['code'] = 600;
 
         //拿结果
         switch ($type) {
@@ -326,7 +326,20 @@ class GuoPiaoController extends GuoPiaoBase
 
         $res = (new GuoPiaoService())->getFinanceIncomeStatementAnnualReport($code);
 
-        CommonService::getInstance()->log4PHP($res);
+        //正常
+        if ($res['code'] - 0 === 0 && !empty($res['data'])) {
+            $data = jsonDecode($res['data']);
+            $model = [];
+            foreach ($data as $row) {
+                $year = substr($row['beginDate'], 0, 4) . '';
+                if (!isset($model[$year])) {
+                    $model[$year] = [];
+                }
+                $row['sequence'] = $row['sequence'] - 0;
+                $model[$year][] = $row;
+            }
+            $res['data'] = jsonEncode($model);
+        }
 
         return $this->checkResponse($res, __FUNCTION__);
     }
@@ -337,6 +350,21 @@ class GuoPiaoController extends GuoPiaoBase
         $code = $this->request()->getRequestParam('code') ?? '';
 
         $res = (new GuoPiaoService())->getFinanceIncomeStatement($code);
+
+        //正常
+        if ($res['code'] - 0 === 0 && !empty($res['data'])) {
+            $data = jsonDecode($res['data']);
+            $model = [];
+            foreach ($data as $row) {
+                $year = substr($row['beginDate'], 0, 4) . '';
+                if (!isset($model[$year])) {
+                    $model[$year] = [];
+                }
+                $row['sequence'] = $row['sequence'] - 0;
+                $model[$year][] = $row;
+            }
+            $res['data'] = jsonEncode($model);
+        }
 
         return $this->checkResponse($res, __FUNCTION__);
     }
