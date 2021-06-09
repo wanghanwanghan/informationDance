@@ -273,7 +273,6 @@ class MoveOut extends AbstractCronTask
                 while (false !== ($file = readdir($dh))) {
                     if ($file !== '.' && $file !== '..' && $file !== '.gitignore') {
                         $fullpath = $dir . $file;
-                        CommonService::getInstance()->log4PHP($fullpath);
                         if (is_dir($fullpath)) {
                             if (count(scandir($fullpath)) == 2) {
                                 //rmdir($fullpath);
@@ -284,6 +283,11 @@ class MoveOut extends AbstractCronTask
                         } else {
                             $filedate = filectime($fullpath);
                             $day = round((time() - $filedate) / 86400);
+                            CommonService::getInstance()->log4PHP([
+                                'file' => $fullpath,
+                                'n' => $day,
+                                'filedate' => $filedate,
+                            ]);
                             if ($day >= $n) {
                                 unlink($fullpath);
                             }
