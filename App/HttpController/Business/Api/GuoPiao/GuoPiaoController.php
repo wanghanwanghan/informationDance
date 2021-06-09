@@ -394,12 +394,12 @@ class GuoPiaoController extends GuoPiaoBase
                 if (!isset($model[$year])) {
                     $model[$year] = [];
                 }
-                $row['sequence'] = $row['sequence'] - 0;
+                $row['columnSequence'] = $row['columnSequence'] - 0;
                 $model[$year][] = $row;
             }
             //排序
             foreach ($model as $year => $val) {
-                $model[$year] = control::sortArrByKey($val, 'sequence', 'asc', true);
+                $model[$year] = control::sortArrByKey($val, 'columnSequence', 'asc', true);
             }
             $res['data'] = jsonEncode($model);
         }
