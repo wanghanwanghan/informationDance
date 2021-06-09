@@ -689,14 +689,14 @@ class CreateTableService
         return 'ok';
     }
 
-    function information_dance_move_out_entname_info()
+    function information_dance_move_out_entname_rel()
     {
         $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
             $table->setTableComment('企业迁移表')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
             $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
-            $table->colInt('pid', 11)->setIsUnsigned()->setColumnComment('母公司id');
+            $table->colInt('pid', 11)->setIsUnsigned()->setColumnComment('属于监控表中哪个公司');
+            $table->colInt('bid', 11)->setIsUnsigned()->setColumnComment('basic表中的id');
             $table->colVarChar('entName', 50)->setDefaultValue('');
-
             $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
             $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
         });

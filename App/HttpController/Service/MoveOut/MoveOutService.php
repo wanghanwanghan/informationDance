@@ -27,7 +27,7 @@ class MoveOutService extends ServiceBase
         //与园内企业下属公司名称匹配的将开始接口反推的园内企业列为预警推荐目标
 
         CreateTableService::getInstance()->information_dance_move_out_phone_entname();
-        CreateTableService::getInstance()->information_dance_move_out_entname_info();
+        CreateTableService::getInstance()->information_dance_move_out_entname_rel();
     }
 
 }
