@@ -327,6 +327,8 @@ class GuoPiaoController extends GuoPiaoBase
 
         $res = (new GuoPiaoService())->getFinanceIncomeStatementAnnualReport($code);
 
+        CommonService::getInstance()->log4PHP($res);
+
         //正常
         if ($res['code'] - 0 === 0 && !empty($res['data'])) {
             $data = jsonDecode($res['data']);
