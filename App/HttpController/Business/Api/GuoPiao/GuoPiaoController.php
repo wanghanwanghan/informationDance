@@ -418,11 +418,10 @@ class GuoPiaoController extends GuoPiaoBase
 
         $res = (new GuoPiaoService())->getFinanceBalanceSheetAnnual($code);
 
-        CommonService::getInstance()->log4PHP($res);
-
         //正常
         if ($res['code'] - 0 === 0 && !empty($res['data'])) {
             $data = jsonDecode($res['data']);
+            CommonService::getInstance()->log4PHP($data);
             $model = [];
             foreach ($data as $row) {
                 $year_month = substr(str_replace(['-'], '', $row['beginDate']), 0, 6) . '';
