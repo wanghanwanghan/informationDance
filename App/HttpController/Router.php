@@ -127,6 +127,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/create/authBook', $prefix . 'createAuthBook');//上传授权书后的确认按钮
             $routeCollector->addRoute(['GET', 'POST'], '/get/authBook', $prefix . 'getAuthBook');//获取用户授权书审核列表
             $routeCollector->addRoute(['GET', 'POST'], '/check/authBook', $prefix . 'checkAuthBook');//检查用户上没上传过企业授权书
+            $routeCollector->addRoute(['GET', 'POST'], '/check/auth', $prefix . 'checkAuth');//
         });
 
         return true;

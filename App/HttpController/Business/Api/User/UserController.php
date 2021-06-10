@@ -982,11 +982,30 @@ class UserController extends UserBase
 
         if (empty($res)) {
             return $this->writeJson(201, null, null, '请上传授权书以供我方向有关部门备案');
-        } elseif ($res->status !== 3) {
+        } elseif ($res->getAttr('status') !== 3) {
             return $this->writeJson(202, null, null, '请等待审核');
         } else {
             return $this->writeJson(200, null, null, '成功');
         }
+    }
+
+    //检查企业授权状态
+    function checkAuth()
+    {
+        $phone = $this->request()->getRequestParam('phone');
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+
+        try {
+            $res = AuthBook::create()->where([
+                'phone' => $phone,
+                'entName' => $entName,
+                'status' => 3,
+            ])->get();
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        return $this->writeJson(200, null, $res);
     }
 
 
