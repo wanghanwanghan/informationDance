@@ -180,7 +180,11 @@ class GuoPiaoController extends GuoPiaoBase
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $entName = $this->request()->getRequestParam('entName') ?? '';
         $code = $this->request()->getRequestParam('code') ?? '';
-        $callback = $this->request()->getRequestParam('callback') ?? 'https://pc.meirixindong.com/';
+        $callback = $this->request()->getRequestParam('callback') ?? '';
+
+        if (empty($callback)) {
+            $callback = "https://api.meirixindong.com/api/v1/user/addAuthEntName?entName={$entName}&phone={$phone}";
+        }
 
         $orderNo = $phone . time();
 

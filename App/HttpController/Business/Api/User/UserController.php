@@ -25,13 +25,8 @@ use wanghanwanghan\someUtils\control;
 
 class UserController extends UserBase
 {
-    public $connDB;
-
     function onRequest(?string $action): ?bool
     {
-        //DB链接名称
-        $this->connDB = CreateConf::getInstance()->getConf('env.mysqlDatabase');
-
         return parent::onRequest($action);
     }
 
@@ -1007,5 +1002,21 @@ class UserController extends UserBase
         return $this->writeJson(200, null, $res);
     }
 
+    function addAuthEntName()
+    {
+        $phone = $this->request()->getRequestParam('phone');
+        $entName = $this->request()->getRequestParam('entName');
+
+        try {
+            AuthBook::create()->where([
+                'phone' => $phone,
+                'entName' => $entName,
+            ])->get();
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        return $this->writeJson();
+    }
 
 }

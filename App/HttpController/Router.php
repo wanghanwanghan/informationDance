@@ -106,6 +106,7 @@ class Router extends AbstractRouter
         $prefix = '/Business/Api/User/UserController/';
 
         $routeCollector->addGroup('/user', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/addAuthEntName', $prefix . 'addAuthEntName');
             $routeCollector->addRoute(['GET', 'POST'], '/reg', $prefix . 'reg');//注册
             $routeCollector->addRoute(['GET', 'POST'], '/login', $prefix . 'login');//登录
             $routeCollector->addRoute(['GET', 'POST'], '/setLoginPassword', $prefix . 'setLoginPassword');//修改登陆密码
