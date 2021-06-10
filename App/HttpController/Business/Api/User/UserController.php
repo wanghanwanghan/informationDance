@@ -997,7 +997,6 @@ class UserController extends UserBase
 
         try {
             $res = AuthBook::create()->where([
-                'phone' => $phone,
                 'entName' => $entName,
                 'status' => 3,
             ])->get();
