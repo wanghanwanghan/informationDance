@@ -324,12 +324,17 @@ class GuoPiaoController extends GuoPiaoBase
         return $this->checkResponse($res, __FUNCTION__);
     }
 
-    //利润表 --年报查询
+    //利润表 -- 年报查询
     function getFinanceIncomeStatementAnnualReport()
     {
         $code = $this->request()->getRequestParam('code') ?? '';
 
         $res = (new GuoPiaoService())->getFinanceIncomeStatementAnnualReport($code);
+
+        CommonService::getInstance()->log4PHP([
+            '利润表 --年报查询',
+            $res
+        ]);
 
         //正常
         if ($res['code'] - 0 === 0 && !empty($res['data'])) {
@@ -360,7 +365,10 @@ class GuoPiaoController extends GuoPiaoBase
 
         $res = (new GuoPiaoService())->getFinanceIncomeStatement($code);
 
-        CommonService::getInstance()->log4PHP($res);
+        CommonService::getInstance()->log4PHP([
+            '利润表查询',
+            $res
+        ]);
 
         //正常
         if ($res['code'] - 0 === 0 && !empty($res['data'])) {
@@ -384,14 +392,17 @@ class GuoPiaoController extends GuoPiaoBase
         return $this->checkResponse($res, __FUNCTION__);
     }
 
-    //资产负债表-年度查询
+    //资产负债表 -- 年度查询
     function getFinanceBalanceSheetAnnual()
     {
         $code = $this->request()->getRequestParam('code') ?? '';
 
         $res = (new GuoPiaoService())->getFinanceBalanceSheetAnnual($code);
 
-        CommonService::getInstance()->log4PHP($res);
+        CommonService::getInstance()->log4PHP([
+            '资产负债表 -- 年度查询',
+            $res
+        ]);
 
         //正常
         if ($res['code'] - 0 === 0 && !empty($res['data'])) {
@@ -421,6 +432,11 @@ class GuoPiaoController extends GuoPiaoBase
         $code = $this->request()->getRequestParam('code') ?? '';
 
         $res = (new GuoPiaoService())->getFinanceBalanceSheet($code);
+
+        CommonService::getInstance()->log4PHP([
+            '资产负债表查询',
+            $res
+        ]);
 
         //正常
         if ($res['code'] - 0 === 0 && !empty($res['data'])) {
