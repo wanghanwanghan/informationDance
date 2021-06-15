@@ -15,8 +15,8 @@ $url = 'https://api.meirixindong.com/provide/v1/ts/getGoodsInfo';
 $url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceCalMergeData';
 $url = 'https://api.meirixindong.com/provide/v1/xd/sendSms';
 $url = 'https://api.meirixindong.com/provide/v1/zw/getFinanceBalanceSheetAnnual';
-
 $url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceCalMergeData';
+$url = 'https://api.meirixindong.com/provide/v1/ymt/bankCardInfo';
 
 $appId = 'PHP_is_the_best_language_in_the_world';
 $appSecret = 'PHP_GO';
@@ -45,6 +45,8 @@ $data = [
 //江苏中能硅业科技发展有限公司
 //远景能源有限公司
 //许继集团有限公司
+
+var_dump(urlencode('wanghan=123'));
 
 //$curl = curl_init();//初始化
 //curl_setopt($curl, CURLOPT_URL, $url);//设置请求地址

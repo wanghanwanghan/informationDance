@@ -5,6 +5,7 @@ namespace App\HttpController\Business\Provide\YunMaTong;
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Service\LongXin\LongXinService;
+use App\HttpController\Service\YunMaTong\YunMaTongService;
 
 class YunMaTongController extends ProvideBase
 {
@@ -40,10 +41,10 @@ class YunMaTongController extends ProvideBase
 
     function bankCardInfo()
     {
-        $avg = $this->getRequestData('avg');
+        $postData = $this->getRequestData('avg');
 
-        $this->csp->add($this->cspKey, function () use ($avg) {
-            return ['wang' => $avg];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new YunMaTongService())->bankCardInfo($postData);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
