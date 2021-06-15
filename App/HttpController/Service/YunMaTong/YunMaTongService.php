@@ -86,7 +86,11 @@ class YunMaTongService extends ServiceBase
         $url = 'https://m.ymtdata.com/bankcard/datainfo/1b001/authentication/json?bizorderno=' . $this->requestsn;
         $url = 'https://m.ymtdata.com/extend/authentication/json?bizorderno=' . $this->requestsn;
 
-        $body = $this->createRequestData(['bankcard' => $bankcard]);
+        $body = $this->createRequestData([
+            'transtype' => 'accountinfo',
+            'productid' => 'accounttype_query',
+            'bankcard' => $bankcard,
+        ]);
 
         $res = (new CoHttpClient())
             ->useCache(false)
