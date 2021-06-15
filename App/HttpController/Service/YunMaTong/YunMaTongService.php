@@ -29,6 +29,8 @@ class YunMaTongService extends ServiceBase
         $this->url = CreateConf::getInstance()->getConf('yunmatong.url');
         $this->bizno = CreateConf::getInstance()->getConf('yunmatong.bizno');
         $this->publicKey = CreateConf::getInstance()->getConf('yunmatong.publicKey');
+        CommonService::getInstance()->log4PHP($this->publicKey);
+        CommonService::getInstance()->log4PHP($this->privateKey);
         $this->privateKey = implode(PHP_EOL, CreateConf::getInstance()->getConf('yunmatong.privateKey'));
         $this->requestsn = control::getUuid();
 
