@@ -48,6 +48,13 @@ class YunMaTongService extends ServiceBase
 
         $res['paging'] = null;
 
+        if (isset($res['result']['consumestate'])) unset($res['result']['consumestate']);
+        if (isset($res['result']['consumemoney'])) unset($res['result']['consumemoney']);
+        if (isset($res['result']['photo'])) unset($res['result']['photo']);
+        if (isset($res['result']['areaid'])) unset($res['result']['areaid']);
+        if (isset($res['result']['areaname'])) unset($res['result']['areaname']);
+        if (isset($res['result']['provincename'])) unset($res['result']['provincename']);
+
         return $this->createReturn($res['code'], $res['paging'], $res['result'], $res['message']);
     }
 
