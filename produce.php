@@ -12,7 +12,8 @@ return [
             'reload_async' => true,
             'max_wait_time' => 3,
             'dispatch_mode' => 2,
-            'package_max_length' => 50 * 1024 * 1024,
+            'package_max_length' => 32 * 1024 * 1024,
+            'buffer_output_size' => 32 * 1024 * 1024,
         ],
         'TASK' => [
             'workerNum' => 10,

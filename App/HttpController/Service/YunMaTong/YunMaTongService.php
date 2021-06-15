@@ -18,7 +18,6 @@ class YunMaTongService extends ServiceBase
     }
 
     private $key;
-    private $url;
     private $bizno;
     private $publicKey;
     private $privateKey;
@@ -27,7 +26,6 @@ class YunMaTongService extends ServiceBase
     function __construct()
     {
         $this->key = CreateConf::getInstance()->getConf('yunmatong.key');
-        $this->url = CreateConf::getInstance()->getConf('yunmatong.url');
         $this->bizno = CreateConf::getInstance()->getConf('yunmatong.bizno');
         $this->publicKey = CreateConf::getInstance()->getConf('yunmatong.publicKey');
         $this->privateKey = CreateConf::getInstance()->getConf('yunmatong.privateKey');
@@ -87,7 +85,7 @@ class YunMaTongService extends ServiceBase
 
     function bankCardInfo($bankcard)
     {
-        $url = $this->url . '?bizorderno=' . $this->requestsn;
+        $url = 'https://m.ymtdata.com/bankcard/datainfo/1b001/authentication/json?bizorderno=' . $this->requestsn;
 
         $body = $this->createRequestData(['bankcard' => $bankcard]);
 
