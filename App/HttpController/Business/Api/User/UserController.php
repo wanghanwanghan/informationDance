@@ -993,6 +993,7 @@ class UserController extends UserBase
         try {
             $res = AuthBook::create()->where([
                 'entName' => $entName,
+                'phone' => $phone,
                 'status' => 3,
             ])->get();
         } catch (\Throwable $e) {
