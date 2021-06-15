@@ -47,36 +47,15 @@ $data = [
 //远景能源有限公司
 //许继集团有限公司
 
-$key = [
-    "-----BEGIN PUBLIC KEY-----",
-    "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDeDBNvXsuSFKQlvYJDsMwuCvXU",
-    "hd0q31ueOXTDNAbEz4OdMaXc71SZ9tQROePq7Qsy69I0ArmNsRQqYqEDYfM3YpSc",
-    "dsLxjVDFnLRrJ2to4c8/FMlSgoL8RYOZcBJ385OUYZyl5qVkLb9HDTCoQxQ+UcPk",
-    "iuISfsRdjGuiWrTuwwIDAQAB",
-    "-----END PUBLIC KEY-----"
-];
-
-openssl_public_encrypt(json_encode([
-    'key'=>1234323423534534,
-    'binkey'=>'sdkfhksdhfiuyirfkdf4',
-    'bankcard'=>343485728364826583,
-]), $encrypt, implode(PHP_EOL, $key));
-
-
-var_dump(base64_encode($encrypt));
-
-
-
-
-//$curl = curl_init();//初始化
-//curl_setopt($curl, CURLOPT_URL, $url);//设置请求地址
-//curl_setopt($curl, CURLOPT_POST, true);//设置post方式请求
-//curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 15);//几秒后没链接上就自动断开
-//curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-//curl_setopt($curl, CURLOPT_POSTFIELDS, $data);//提交的数据
-//curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);//返回值不直接显示
-//$res = curl_exec($curl);//发送请求
-//dd(json_decode($res, true));
+$curl = curl_init();//初始化
+curl_setopt($curl, CURLOPT_URL, $url);//设置请求地址
+curl_setopt($curl, CURLOPT_POST, true);//设置post方式请求
+curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 15);//几秒后没链接上就自动断开
+curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+curl_setopt($curl, CURLOPT_POSTFIELDS, $data);//提交的数据
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);//返回值不直接显示
+$res = curl_exec($curl);//发送请求
+dd(json_decode($res, true));
 
 //    哈希碰创
 //    let size= Math.pow(2, 16)

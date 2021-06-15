@@ -48,8 +48,12 @@ class YunMaTongService extends ServiceBase
         $postData['bizno'] = $this->bizno;
         $postData['requestsn'] = $this->requestsn;
         $postData['requesttime'] = Carbon::now()->format('YmdHis');
-        openssl_public_encrypt(json_encode($postData), $encrypt, implode(PHP_EOL, $this->publicKey));
-        $body['body'] = $this->bizno . base64_encode($encrypt);
+        $crypto = '';
+        foreach (str_split(json_encode($postData), 117) as $chunk) {
+            openssl_public_encrypt($chunk, $encrypted, implode(PHP_EOL, $this->publicKey));
+            $crypto .= $encrypted;
+        }
+        $body['body'] = $this->bizno . base64_encode($crypto);
 
         CommonService::getInstance()->log4PHP([
             'info' => '发送前',
