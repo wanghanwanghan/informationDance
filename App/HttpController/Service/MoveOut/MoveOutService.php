@@ -2,12 +2,16 @@
 
 namespace App\HttpController\Service\MoveOut;
 
+use App\HttpController\Models\Api\MoveOutEntNameFinance;
 use App\HttpController\Models\Api\MoveOutEntNameRel;
 use App\HttpController\Models\Api\MoveOutPhoneEntName;
 use App\HttpController\Models\EntDb\EntDbBasic;
 use App\HttpController\Models\EntDb\EntDbInv;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\LongDun\LongDunService;
+use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\ServiceBase;
+use Carbon\Carbon;
 use wanghanwanghan\someUtils\traits\Singleton;
 
 class MoveOutService extends ServiceBase
@@ -82,6 +86,26 @@ class MoveOutService extends ServiceBase
                         ]);
                     }
                 }
+            }
+
+            $check = MoveOutEntNameFinance::create()->where('entName', $oneEnt->entName)->get();
+
+            if (empty($check) || Carbon::now()->format('md') - 0 === 1231) {
+                //为空，或者每年年底跑一次，年底跑可以更新
+
+                //财务表现：园内企业营收、利润或纳税等关键指标，近3年连续下降100%或近2年下降200%的园内企业，列为预警推荐目标
+                $info = (new LongXinService())->setCheckRespFlag(true)->getFinanceData([
+                    'entName' => $oneEnt->entName,
+                    'code' => $oneEnt->code,
+                    'dataCount' => 3,
+                    'beginYear' => 2019,
+                ], false);
+
+                CommonService::getInstance()->log4PHP($info);
+
+
+                //人数表现：园内企业缴纳社保人数，近3年连续下降100%或近2年下降200%的园内企业，列为预警推荐目标
+
             }
         }
 
