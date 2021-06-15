@@ -49,8 +49,13 @@ class YunMaTongService extends ServiceBase
         $postData['requestsn'] = $this->requestsn;
         $postData['requesttime'] = Carbon::now()->format('YmdHis');
         openssl_public_encrypt(json_encode($postData), $encrypt, implode(PHP_EOL, $this->publicKey));
-        CommonService::getInstance()->log4PHP($encrypt);
         $body['body'] = $this->bizno . base64_encode($encrypt);
+
+        CommonService::getInstance()->log4PHP([
+            'info' => '发送前',
+            'postData' => $postData,
+            'body' => $body,
+        ]);
 
         return $body;
     }
@@ -60,13 +65,6 @@ class YunMaTongService extends ServiceBase
         $url = $this->url . '?bizorderno=' . $this->requestsn;
 
         $body = $this->createRequestData(['bankcard' => $bankcard]);
-
-        CommonService::getInstance()->log4PHP([
-            'info' => '发送前',
-            'url' => $url,
-            'postData' => $bankcard,
-            'body' => $body,
-        ]);
 
         $res = (new CoHttpClient())->useCache(false)->send($url, $body, [], [], 'postjson');
 
