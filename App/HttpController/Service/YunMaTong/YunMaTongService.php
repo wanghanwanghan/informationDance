@@ -64,6 +64,12 @@ class YunMaTongService extends ServiceBase
 
         $body = $this->createRequestData(['bankcard' => $bankcard]);
 
+        CommonService::getInstance()->log4PHP([
+            'info' => '发送前',
+            'url' => $url,
+            'body' => $body,
+        ]);
+
         $res = (new CoHttpClient())->useCache(false)->send($url, $body, [], [], 'postjson');
 
         CommonService::getInstance()->log4PHP([
