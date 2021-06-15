@@ -18,6 +18,7 @@ class ProvideRouter
         $this->GuoPiaoRouterV1($routeCollector);
         $this->XinDongRouterV1($routeCollector);
         $this->FaYanYuanRouterV1($routeCollector);
+        $this->YunMaTongRouterV1($routeCollector);
     }
 
     private function LongDunRouterV1(RouteCollector $routeCollector)
@@ -110,6 +111,15 @@ class ProvideRouter
         });
 
         return true;
+    }
+
+    private function YunMaTongRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Provide/YunMaTong/YunMaTongController/';
+
+        $routeCollector->addGroup('/ymt', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/select', $prefix . 'select');
+        });
     }
 
 }
