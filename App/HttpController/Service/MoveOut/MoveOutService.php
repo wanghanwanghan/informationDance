@@ -101,7 +101,10 @@ class MoveOutService extends ServiceBase
                     'beginYear' => 2019,
                 ], false);
 
-                CommonService::getInstance()->log4PHP($info);
+                CommonService::getInstance()->log4PHP([
+                    'entname' => $oneEnt->entName,
+                    'info' => $info
+                ]);
 
 
                 //人数表现：园内企业缴纳社保人数，近3年连续下降100%或近2年下降200%的园内企业，列为预警推荐目标
