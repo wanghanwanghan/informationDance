@@ -77,7 +77,7 @@ class YunMaTongService extends ServiceBase
             'url' => $url,
         ]);
 
-        $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body, [], [], 'postjson');
+        $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
 
         CommonService::getInstance()->log4PHP([
             'info' => '发送后',
