@@ -54,16 +54,16 @@ class YunMaTongService extends ServiceBase
         return $body;
     }
 
-    function bankCardInfo($postData)
+    function bankCardInfo($bankcard)
     {
         $url = $this->url . '?bizorderno=' . $this->requestsn;
 
-        $body = $this->createRequestData($postData);
+        $body = $this->createRequestData(['bankcard' => $bankcard]);
 
         CommonService::getInstance()->log4PHP([
             'info' => '发送前',
             'url' => $url,
-            'postData' => $postData,
+            'postData' => $bankcard,
             'body' => $body,
         ]);
 
