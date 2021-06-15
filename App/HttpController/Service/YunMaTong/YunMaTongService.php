@@ -32,9 +32,6 @@ class YunMaTongService extends ServiceBase
         $this->privateKey = CreateConf::getInstance()->getConf('yunmatong.privateKey');
         $this->requestsn = control::getUuid();
 
-        CommonService::getInstance()->log4PHP($this->publicKey);
-        CommonService::getInstance()->log4PHP($this->privateKey);
-
         return parent::__construct();
     }
 
@@ -51,7 +48,8 @@ class YunMaTongService extends ServiceBase
         $postData['bizno'] = $this->bizno;
         $postData['requestsn'] = $this->requestsn;
         $postData['requesttime'] = Carbon::now()->format('YmdHis');
-        openssl_public_encrypt(json_encode($postData), $encrypt, openssl_pkey_get_public($this->publicKey));
+        openssl_public_encrypt(json_encode($postData), $encrypt, implode(PHP_EOL, $this->publicKey));
+        CommonService::getInstance()->log4PHP($encrypt);
         $body['body'] = $this->bizno . base64_encode($encrypt);
 
         return $body;
