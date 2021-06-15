@@ -55,12 +55,6 @@ class YunMaTongService extends ServiceBase
         }
         $body['body'] = $this->bizno . base64_encode($crypto);
 
-        CommonService::getInstance()->log4PHP([
-            'info' => '发送前',
-            'postData' => $postData,
-            'body' => $body,
-        ]);
-
         return $body;
     }
 
