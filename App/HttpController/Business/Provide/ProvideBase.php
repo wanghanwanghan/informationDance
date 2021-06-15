@@ -90,7 +90,7 @@ class ProvideBase extends Index
                 'spendMoney' => $this->spendMoney,
             ])->save();
             //减金额
-            $this->spendMoney < 0 ?: RequestUserInfo::create()->where('id', $this->userId)->update([
+            $this->spendMoney < 0 || RequestUserInfo::create()->where('id', $this->userId)->update([
                 'money' => QueryBuilder::dec($this->spendMoney)
             ]);
         } catch (\Throwable $e) {
