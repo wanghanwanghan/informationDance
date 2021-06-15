@@ -37,9 +37,22 @@ class YunMaTongService extends ServiceBase
 
     private function checkResp($res)
     {
+        CommonService::getInstance()->log4PHP($res);
+
         if (isset($res['coHttpErr'])) return $this->createReturn(500, $res['paging'], [], 'co请求错误');
 
         return $this->createReturn($res['code'], $res['Paging'], $res['Result'], $res['msg']);
+    }
+
+    private function handleResp($res): string
+    {
+        $crypto = '';
+        foreach (str_split(base64_decode($res), 128) as $chunk) {
+            openssl_private_decrypt($chunk, $decrypted, implode(PHP_EOL, $this->privateKey));
+            $crypto .= $decrypted;
+        }
+
+        return urldecode($crypto);
     }
 
     private function createRequestData($postData): array
@@ -55,14 +68,6 @@ class YunMaTongService extends ServiceBase
         }
         $body['body'] = $this->bizno . base64_encode($crypto);
 
-
-        CommonService::getInstance()->log4PHP([
-            'info' => '发送前参数',
-            'postData' => $postData,
-            'body' => $body,
-        ]);
-
-
         return $body;
     }
 
@@ -72,45 +77,11 @@ class YunMaTongService extends ServiceBase
 
         $body = $this->createRequestData(['bankcard' => $bankcard]);
 
-        CommonService::getInstance()->log4PHP([
-            'info' => '发送前地址',
-            'url' => $url,
-        ]);
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(false)->send($url, $body);
 
-        $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
-
-        CommonService::getInstance()->log4PHP([
-            'info' => '发送后',
-            'res' => $res,
-        ]);
-
-        $res = base64_decode($res);
-
-        CommonService::getInstance()->log4PHP([
-            'info' => 'base64_decode',
-            'base64_decode' => $res,
-        ]);
-
-        openssl_private_decrypt($res, $decrypted_data, $this->privateKey);
-
-        CommonService::getInstance()->log4PHP([
-            'info' => 'openssl_private_decrypt',
-            'openssl_private_decrypt' => $decrypted_data,
-        ]);
-
-        $decrypted_data = urldecode($decrypted_data);
-
-        CommonService::getInstance()->log4PHP([
-            'info' => 'urldecode',
-            'urldecode' => $decrypted_data,
-        ]);
-
-        $decrypted_data = jsonDecode($decrypted_data);
-
-        CommonService::getInstance()->log4PHP([
-            'info' => 'jsonDecode',
-            'jsonDecode' => $decrypted_data,
-        ]);
+        return $this->checkResp($this->handleResp($res));
     }
 
 
