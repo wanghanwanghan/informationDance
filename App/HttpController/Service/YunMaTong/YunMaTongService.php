@@ -55,6 +55,14 @@ class YunMaTongService extends ServiceBase
         }
         $body['body'] = $this->bizno . base64_encode($crypto);
 
+
+        CommonService::getInstance()->log4PHP([
+            'info' => '发送前参数',
+            'postData' => $postData,
+            'body' => $body,
+        ]);
+
+
         return $body;
     }
 
@@ -65,9 +73,8 @@ class YunMaTongService extends ServiceBase
         $body = $this->createRequestData(['bankcard' => $bankcard]);
 
         CommonService::getInstance()->log4PHP([
-            'info' => '发送前',
+            'info' => '发送前地址',
             'url' => $url,
-            'body' => $body,
         ]);
 
         $res = (new CoHttpClient())->useCache(false)->send($url, $body, [], [], 'postjson');
