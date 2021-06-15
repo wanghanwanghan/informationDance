@@ -118,7 +118,7 @@ class ProvideRouter
         $prefix = '/Business/Provide/YunMaTong/YunMaTongController/';
 
         $routeCollector->addGroup('/ymt', function (RouteCollector $routeCollector) use ($prefix) {
-            $routeCollector->addRoute(['GET', 'POST'], '/select', $prefix . 'select');
+            $routeCollector->addRoute(['GET', 'POST'], '/bankCardInfo', $prefix . 'bankCardInfo');
         });
     }
 

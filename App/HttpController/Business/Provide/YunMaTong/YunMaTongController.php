@@ -38,7 +38,7 @@ class YunMaTongController extends ProvideBase
         return true;
     }
 
-    function select()
+    function bankCardInfo()
     {
         $avg = $this->getRequestData('avg');
 
