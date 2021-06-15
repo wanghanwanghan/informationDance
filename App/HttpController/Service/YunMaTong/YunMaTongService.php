@@ -37,11 +37,17 @@ class YunMaTongService extends ServiceBase
 
     private function checkResp($res)
     {
-        CommonService::getInstance()->log4PHP($res);
-
         if (isset($res['coHttpErr'])) return $this->createReturn(500, $res['paging'], [], 'co请求错误');
 
-        return $this->createReturn($res['code'], $res['Paging'], $res['Result'], $res['msg']);
+        if (isset($res['errcode']) && $res['errcode'] - 0 === 0) {
+            $res['code'] = 200;
+        } else {
+            $res['code'] = $res['errcode'];
+        }
+
+        $res['paging'] = null;
+
+        return $this->createReturn($res['code'], $res['paging'], $res['result'], $res['message']);
     }
 
     private function handleResp($res): string
@@ -52,7 +58,7 @@ class YunMaTongService extends ServiceBase
             $crypto .= $decrypted;
         }
 
-        return urldecode($crypto);
+        return jsonDecode(urldecode($crypto));
     }
 
     private function createRequestData($postData): array
