@@ -55,7 +55,7 @@ class FaYanYuanController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    //公开模型 企业
+    //公开模型 个人
     function entoutPeople()
     {
         $postData = [
