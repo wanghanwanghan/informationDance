@@ -2,13 +2,11 @@
 
 namespace App\HttpController\Service\YunMaTong;
 
-use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use Carbon\Carbon;
 use wanghanwanghan\someUtils\control;
-use wanghanwanghan\someUtils\utils\arr;
 
 class YunMaTongService extends ServiceBase
 {
@@ -86,6 +84,7 @@ class YunMaTongService extends ServiceBase
     function bankCardInfo($bankcard)
     {
         $url = 'https://m.ymtdata.com/bankcard/datainfo/1b001/authentication/json?bizorderno=' . $this->requestsn;
+        $url = 'https://m.ymtdata.com/extend/authentication/json?bizorderno=' . $this->requestsn;
 
         $body = $this->createRequestData(['bankcard' => $bankcard]);
 
