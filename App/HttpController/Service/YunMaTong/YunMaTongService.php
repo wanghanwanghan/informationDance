@@ -8,6 +8,7 @@ use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use Carbon\Carbon;
 use wanghanwanghan\someUtils\control;
+use wanghanwanghan\someUtils\utils\arr;
 
 class YunMaTongService extends ServiceBase
 {
@@ -50,7 +51,7 @@ class YunMaTongService extends ServiceBase
         return $this->createReturn($res['code'], $res['paging'], $res['result'], $res['message']);
     }
 
-    private function handleResp($res): string
+    private function handleResp($res): ?array
     {
         $crypto = '';
         foreach (str_split(base64_decode($res), 128) as $chunk) {
