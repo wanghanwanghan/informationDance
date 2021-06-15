@@ -70,7 +70,7 @@ class MoveOut extends AbstractCronTask
             }
         }
 
-        $this->delFileByCtime(TEMP_FILE_PATH, 3);
+        $this->delFileByCtime(TEMP_FILE_PATH, 5);
 
         $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
