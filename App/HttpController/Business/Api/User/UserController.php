@@ -577,8 +577,9 @@ class UserController extends UserBase
             if (in_array($typeDetail, ['开庭公告', '对外投资', '欠税公告', '股权出质'])) $tmp = 4;
             if (in_array($typeDetail, ['失信被执行人', '主要成员', '海关处罚', '股权质押'])) $tmp = 5;
             if (in_array($typeDetail, ['被执行信息', '一行两会', '对外担保'])) $tmp = 6;
-            if (in_array($typeDetail, ['裁判文书'])) $tmp = 7;
-            if (in_array($typeDetail, ['新闻舆情'])) $tmp = 8;
+            if (in_array($typeDetail, ['裁判文书', '环保监测'])) $tmp = 7;
+            if (in_array($typeDetail, ['新闻舆情', '环保监控'])) $tmp = 8;
+            if (in_array($typeDetail, ['环评公示'])) $tmp = 9;
 
             $detail->where('typeDetail', $tmp);
             $resTotle->where('typeDetail', $tmp);

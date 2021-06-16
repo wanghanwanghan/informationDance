@@ -895,6 +895,179 @@ class RunSupervisor extends AbstractCronTask
             unset($one);
         }
 
+        //重点监控企业名单=================================================================
+        $doc_type = 'epbparty_jkqy';
+        $postData = [
+            'keyword' => $entName,
+            'doc_type' => $doc_type,
+        ];
+
+        $res = (new FaYanYuanService())
+            ->setCheckRespFlag(true)
+            ->getList($this->fyyList . 'epb', $postData);
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                $check = SupervisorEntNameInfo::create()->where('keyNo', $one['epbparty_jkqyId'])->get();
+
+                if ($check) continue;
+
+                $detail = (new FaYanYuanService())->setCheckRespFlag(true)
+                    ->getDetail($this->fyyDetail . $doc_type, [
+                        'id' => $one['epbparty_jkqyId'],
+                        'doc_type' => $doc_type
+                    ]);
+
+                ($detail['code'] == 200 && !empty($detail['result'])) ? $detail = current($detail['result']) : $detail = null;
+
+                $one['detail'] = $detail;
+
+                strlen($one['sortTime']) > 9 ? $time = substr($one['sortTime'], 0, 10) : $time = time();
+
+                $pTime = date('Y-m-d', $time);
+
+                $content = "<p>名称: {$detail['eventName']}</p>";
+                $content .= "<p>类型: {$detail['eventType']}</p>";
+                $content .= "<p>日期: {$pTime})}</p>";
+
+                SupervisorEntNameInfo::create()->data([
+                    'entName' => $entName,
+                    'title' => 2,
+                    'type' => 3,
+                    'typeDetail' => 7,
+                    'timeRange' => $time,
+                    'level' => 3,
+                    'desc' => '重点监控企业名单',
+                    'content' => $content,
+                    'detailUrl' => '',
+                    'keyNo' => $one['epbparty_jkqyId'],
+                ])->save();
+
+                $this->addEntName($entName, 'gl');
+            }
+            unset($one);
+        }
+
+        //环保企业自行监测结果=================================================================
+        $doc_type = 'epbparty_zxjc';
+        $postData = [
+            'keyword' => $entName,
+            'doc_type' => $doc_type,
+        ];
+
+        $res = (new FaYanYuanService())
+            ->setCheckRespFlag(true)
+            ->getList($this->fyyList . 'epb', $postData);
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                $check = SupervisorEntNameInfo::create()->where('keyNo', $one['epbparty_zxjcId'])->get();
+
+                if ($check) continue;
+
+                $detail = (new FaYanYuanService())->setCheckRespFlag(true)
+                    ->getDetail($this->fyyDetail . $doc_type, [
+                        'id' => $one['epbparty_zxjcId'],
+                        'doc_type' => $doc_type
+                    ]);
+
+                ($detail['code'] == 200 && !empty($detail['result'])) ?
+                    $detail = current($detail['result']) : $detail = null;
+
+                $one['detail'] = $detail;
+
+                strlen($one['sortTime']) > 9 ? $time = substr($one['sortTime'], 0, 10) : $time = time();
+
+                $pTime = date('Y-m-d', $time);
+
+                $content = "<p>污染物排放方式: {$detail['dealWay']}</p>";
+                $content .= "<p>排放方向: {$detail['dealWhere']}</p>";
+                $content .= "<p>监测结果: {$detail['density']}</p>";
+                $content .= "<p>事件结果: {$detail['eventResult']}</p>";
+                $content .= "<p>监测方式: {$detail['monitorWay']}</p>";
+                $content .= "<p>监测指标/污染项目: {$detail['pollutant']}</p>";
+                $content .= "<p>监测时间: {$pTime})}</p>";
+                $content .= "<p>标准限值: {$detail['standard']}</p>";
+                $content .= "<p>监测点位名称: {$detail['station']}</p>";
+
+                SupervisorEntNameInfo::create()->data([
+                    'entName' => $entName,
+                    'title' => 2,
+                    'type' => 3,
+                    'typeDetail' => 8,
+                    'timeRange' => $time,
+                    'level' => 3,
+                    'desc' => '重点监控企业名单',
+                    'content' => $content,
+                    'detailUrl' => '',
+                    'keyNo' => $one['epbparty_zxjcId'],
+                ])->save();
+
+                $this->addEntName($entName, 'gl');
+            }
+            unset($one);
+        }
+
+        //环评公示数据=================================================================
+        $doc_type = 'epbparty_huanping';
+        $postData = [
+            'keyword' => $entName,
+            'doc_type' => $doc_type,
+        ];
+
+        $res = (new FaYanYuanService())
+            ->setCheckRespFlag(true)
+            ->getList($this->fyyList . 'epb', $postData);
+
+        if ($res['code'] == 200 && !empty($res['result'])) {
+            foreach ($res['result'] as &$one) {
+                $check = SupervisorEntNameInfo::create()->where('keyNo', $one['epbparty_huanpingId'])->get();
+
+                if ($check) continue;
+
+                $detail = (new FaYanYuanService())->setCheckRespFlag(true)
+                    ->getDetail($this->fyyDetail . $doc_type, [
+                        'id' => $one['epbparty_huanpingId'],
+                        'doc_type' => $doc_type
+                    ]);
+
+                ($detail['code'] == 200 && !empty($detail['result'])) ?
+                    $detail = current($detail['result']) : $detail = null;
+
+                $one['detail'] = $detail;
+
+                strlen($one['sortTime']) > 9 ? $time = substr($one['sortTime'], 0, 10) : $time = time();
+
+                $pTime = date('Y-m-d', $time);
+
+                $content = "<p>信息发布单位: {$detail['authority']}</p>";
+                $content .= "<p>评价机构: {$detail['evaluationAgency']}</p>";
+                $content .= "<p>公告类型: {$detail['eventName']}</p>";
+                $content .= "<p>审批类型: {$detail['eventType']}</p>";
+                $content .= "<p>建设地点: {$detail['projectArea']}</p>";
+                $content .= "<p>项目名称: {$detail['projectName']}</p>";
+                $content .= "<p>批准文号: {$detail['publishNo']}</p>";
+                $content .= "<p>发生时间: {$pTime})}</p>";
+                $content .= "<p>标题: {$detail['title']}</p>";
+
+                SupervisorEntNameInfo::create()->data([
+                    'entName' => $entName,
+                    'title' => 2,
+                    'type' => 3,
+                    'typeDetail' => 9,
+                    'timeRange' => $time,
+                    'level' => 3,
+                    'desc' => '环评公示数据',
+                    'content' => $content,
+                    'detailUrl' => '',
+                    'keyNo' => $one['epbparty_huanpingId'],
+                ])->save();
+
+                $this->addEntName($entName, 'gl');
+            }
+            unset($one);
+        }
+
         //税收违法=================================================================
         $doc_type = 'satparty_chufa';
         $postData = [
