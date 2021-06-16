@@ -298,7 +298,8 @@ class LongXinService extends ServiceBase
             'header' => $this->sendHeaders
         ]);
 
-        $res = (new CoHttpClient())->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
+        $res = (new CoHttpClient())->useCache(false)
+            ->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
 
         CommonService::getInstance()->log4PHP($res);
 
