@@ -8,15 +8,15 @@ include './vendor/autoload.php';
 $url = 'https://api.meirixindong.com/provide/v1/qq/getThreeYearsDataForLIAGRO_REL';
 $url = 'https://api.meirixindong.com/provide/v1/ts/getRegisterInfo';
 $url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceBaseData';
-//$url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceCalData';
-//$url = 'https://api.meirixindong.com/provide/v1/fyy/entout/org';
-//$url = 'https://api.meirixindong.com/provide/v1/fyy/entout/people';
-//$url = 'https://api.meirixindong.com/provide/v1/ts/getGoodsInfo';
-//$url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceCalMergeData';
-//$url = 'https://api.meirixindong.com/provide/v1/xd/sendSms';
-//$url = 'https://api.meirixindong.com/provide/v1/zw/getFinanceBalanceSheetAnnual';
-//$url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceCalMergeData';
-//$url = 'https://api.meirixindong.com/provide/v1/ymt/bankCardInfo';
+$url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceCalData';
+$url = 'https://api.meirixindong.com/provide/v1/fyy/entout/org';
+$url = 'https://api.meirixindong.com/provide/v1/fyy/entout/people';
+$url = 'https://api.meirixindong.com/provide/v1/ts/getGoodsInfo';
+$url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceCalMergeData';
+$url = 'https://api.meirixindong.com/provide/v1/xd/sendSms';
+$url = 'https://api.meirixindong.com/provide/v1/zw/getFinanceBalanceSheetAnnual';
+$url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceCalMergeData';
+$url = 'https://api.meirixindong.com/provide/v1/ymt/bankCardInfo';
 
 $appId = 'PHP_is_the_best_language_in_the_world';
 $appSecret = 'PHP_GO';
@@ -37,7 +37,7 @@ $data = [
     'pageSize' => 10,
     'phone' => 18618457910,
     'vCode' => 666666,
-    'bankcard' => '6222020200067018008',
+    'bankcard' => '6222030200016912739',
 ];
 
 //江苏彩虹永能新能源有限公司

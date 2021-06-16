@@ -117,4 +117,35 @@ class BaiDuService extends ServiceBase
         return $res;
     }
 
+    //地址转经纬度
+    function geoCoding($address): ?array
+    {
+        if (strlen($address) > 84) return null;
+
+        $url = 'http://api.map.baidu.com/geocoding/v3/?address=%s&output=%s&ak=%s&sn=%s';
+
+        $ak = '0E1KvDCpYStGPKkcp34EB8G9qDxC2evy';
+
+        $sk = 'MPMWnZFpC18ewyYCRFYQu3U9AEgBI57g';
+
+        $data = [
+            'address' => $address,
+            'output' => 'json',
+            'ak' => $ak,
+        ];
+
+        ksort($data);
+
+        $querystring = http_build_query($data);
+
+        $sn = md5(urlencode('/geocoding/v3/' . '?' . $querystring . $sk));
+
+        $url = sprintf($url, urlencode($address), 'json', $ak, $sn);
+
+        $res = (new CoHttpClient())->useCache(false)->send($url, [], [], [], 'get');
+
+        return is_string($res) ? jsonDecode($res) : $res;
+    }
+
+
 }

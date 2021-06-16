@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Test;
 
 use App\HttpController\Business\BusinessBase;
 use App\HttpController\Models\Provide\RequestUserInfo;
+use App\HttpController\Service\BaiDu\BaiDuService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\MoveOut\MoveOutService;
@@ -19,8 +20,8 @@ class TestController extends BusinessBase
 
     function test()
     {
-        MoveOutService::getInstance()->updateDatabase();
-        $this->writeJson(random_int(100, 999));
+        $res = BaiDuService::getInstance()->geoCoding('北京市海淀区上地十街10号');
+        $this->writeJson(random_int(100, 999), null, $res);
     }
 
     //产品标准页面用
