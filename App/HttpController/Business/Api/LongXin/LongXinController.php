@@ -344,7 +344,6 @@ class LongXinController extends LongXinBase
                 $res = (new LongXinService())->getFinanceBaseMergeData($postData, false);
             } else {
                 $res = (new LongXinService())->getFinanceData($postData, false);
-                CommonService::getInstance()->log4PHP($res);
             }
 
             $charge = ChargeService::getInstance()->LongXin($this->request(), 51, $entName[$i]);

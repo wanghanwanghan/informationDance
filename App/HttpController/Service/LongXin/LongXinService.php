@@ -294,6 +294,8 @@ class LongXinService extends ServiceBase
 
         $res = (new CoHttpClient())->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
 
+        CommonService::getInstance()->log4PHP($res);
+
         if (isset($res['total']) && $res['total'] > 0) {
             foreach ($res['data'] as $oneYearData) {
                 $year = trim($oneYearData['ANCHEYEAR']) . '';
