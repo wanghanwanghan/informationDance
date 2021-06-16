@@ -875,7 +875,7 @@ class RunSupervisor extends AbstractCronTask
                 $content = "<p>案号: {$detail['caseNo']}</p>";
                 $content .= "<p>类型: {$detail['eventName']}</p>";
                 $content .= "<p>结果: {$detail['eventResult']}</p>";
-                $content .= "<p>日期: {$pTime})}</p>";
+                $content .= "<p>日期: {$pTime}</p>";
 
                 SupervisorEntNameInfo::create()->data([
                     'entName' => $entName,
@@ -928,7 +928,7 @@ class RunSupervisor extends AbstractCronTask
 
                 $content = "<p>名称: {$detail['eventName']}</p>";
                 $content .= "<p>类型: {$detail['eventType']}</p>";
-                $content .= "<p>日期: {$pTime})}</p>";
+                $content .= "<p>日期: {$pTime}</p>";
 
                 SupervisorEntNameInfo::create()->data([
                     'entName' => $entName,
@@ -986,7 +986,7 @@ class RunSupervisor extends AbstractCronTask
                 $content .= "<p>事件结果: {$detail['eventResult']}</p>";
                 $content .= "<p>监测方式: {$detail['monitorWay']}</p>";
                 $content .= "<p>监测指标/污染项目: {$detail['pollutant']}</p>";
-                $content .= "<p>监测时间: {$pTime})}</p>";
+                $content .= "<p>监测时间: {$pTime}</p>";
                 $content .= "<p>标准限值: {$detail['standard']}</p>";
                 $content .= "<p>监测点位名称: {$detail['station']}</p>";
 
@@ -1047,7 +1047,7 @@ class RunSupervisor extends AbstractCronTask
                 $content .= "<p>建设地点: {$detail['projectArea']}</p>";
                 $content .= "<p>项目名称: {$detail['projectName']}</p>";
                 $content .= "<p>批准文号: {$detail['publishNo']}</p>";
-                $content .= "<p>发生时间: {$pTime})}</p>";
+                $content .= "<p>发生时间: {$pTime}</p>";
                 $content .= "<p>标题: {$detail['title']}</p>";
 
                 SupervisorEntNameInfo::create()->data([
@@ -1202,7 +1202,7 @@ class RunSupervisor extends AbstractCronTask
                 $content = "<p>处罚决定书文号: {$detail['yjCode']}</p>";
                 $content .= "<p>案件性质: {$detail['eventType']}</p>";
                 $content .= "<p>案件名称: {$detail['title']}</p>";
-                $content .= "<p>处罚日期: {$pTime})}</p>";
+                $content .= "<p>处罚日期: {$pTime}</p>";
 
                 SupervisorEntNameInfo::create()->data([
                     'entName' => $entName,
@@ -1254,7 +1254,7 @@ class RunSupervisor extends AbstractCronTask
                 $content = "<p>公告编号: {$detail['caseNo']}</p>";
                 $content .= "<p>名称: {$detail['eventName']}</p>";
                 $content .= "<p>结果: {$detail['eventResult']}</p>";
-                $content .= "<p>公告日期: {$pTime})}</p>";
+                $content .= "<p>公告日期: {$pTime}</p>";
 
                 SupervisorEntNameInfo::create()->data([
                     'entName' => $entName,
@@ -1306,7 +1306,7 @@ class RunSupervisor extends AbstractCronTask
                 $content = "<p>公告编号: {$detail['caseNo']}</p>";
                 $content .= "<p>名称: {$detail['eventName']}</p>";
                 $content .= "<p>结果: {$detail['eventResult']}</p>";
-                $content .= "<p>公告日期: {$pTime})}</p>";
+                $content .= "<p>公告日期: {$pTime}</p>";
 
                 SupervisorEntNameInfo::create()->data([
                     'entName' => $entName,
@@ -1358,7 +1358,7 @@ class RunSupervisor extends AbstractCronTask
                 $content = "<p>公告编号: {$detail['caseNo']}</p>";
                 $content .= "<p>名称: {$detail['eventName']}</p>";
                 $content .= "<p>结果: {$detail['eventResult']}</p>";
-                $content .= "<p>公告日期: {$pTime})}</p>";
+                $content .= "<p>公告日期: {$pTime}</p>";
 
                 SupervisorEntNameInfo::create()->data([
                     'entName' => $entName,
@@ -1410,7 +1410,7 @@ class RunSupervisor extends AbstractCronTask
                 $content = "<p>公告编号: {$detail['caseNo']}</p>";
                 $content .= "<p>违规行为: {$detail['caseCause']}</p>";
                 $content .= "<p>处罚结果: {$detail['eventResult']}</p>";
-                $content .= "<p>公告日期: {$pTime})}</p>";
+                $content .= "<p>公告日期: {$pTime}</p>";
 
                 SupervisorEntNameInfo::create()->data([
                     'entName' => $entName,
