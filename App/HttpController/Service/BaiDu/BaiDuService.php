@@ -134,11 +134,9 @@ class BaiDuService extends ServiceBase
             'ak' => $ak,
         ];
 
-        ksort($data);
-
         $querystring = http_build_query($data);
 
-        $sn = md5(urlencode('/geocoding/v3/' . '?' . $querystring . $sk));
+        $sn = md5(urlencode('/geocoding/v3/?' . $querystring . $sk));
 
         $url = sprintf($url, urlencode($address), 'json', $ak, $sn);
 
