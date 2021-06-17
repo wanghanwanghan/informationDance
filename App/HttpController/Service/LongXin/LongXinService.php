@@ -330,6 +330,8 @@ class LongXinService extends ServiceBase
             isset($temp[$tmp]) ? $readyReturn[$tmp] = $temp[$tmp] : $readyReturn[$tmp] = null;
         }
 
+        CommonService::getInstance()->log4PHP($readyReturn);
+
         //数字落区间
         if ($toRange) {
             foreach ($readyReturn as $year => $arr) {
