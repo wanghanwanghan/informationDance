@@ -274,6 +274,8 @@ class LongXinService extends ServiceBase
 
         $entId = $this->getEntid($postData['entName']);
 
+        CommonService::getInstance()->log4PHP($entId);
+
         if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
 
         TaskService::getInstance()->create(new insertEnt($postData['entName'], $postData['code']));
@@ -293,6 +295,8 @@ class LongXinService extends ServiceBase
         $this->sendHeaders['authorization'] = $this->createToken($arr);
 
         $res = (new CoHttpClient())->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
+
+        CommonService::getInstance()->log4PHP($res);
 
         if (isset($res['total']) && $res['total'] > 0) {
             foreach ($res['data'] as $oneYearData) {
