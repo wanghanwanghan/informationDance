@@ -41,10 +41,13 @@ class YunMaTongController extends ProvideBase
 
     function bankCardInfo()
     {
-        $bankcard = $this->getRequestData('bankcard');
+        $arr['bankcard'] = $this->getRequestData('bankcard');
+        $arr['realname'] = $this->getRequestData('realname');
+        $arr['idcard'] = $this->getRequestData('idcard');
+        $arr['mobile'] = $this->getRequestData('mobile');
 
-        $this->csp->add($this->cspKey, function () use ($bankcard) {
-            return (new YunMaTongService())->bankCardInfo($bankcard);
+        $this->csp->add($this->cspKey, function () use ($arr) {
+            return (new YunMaTongService())->bankCardInfo($arr);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);

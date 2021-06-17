@@ -81,15 +81,22 @@ class YunMaTongService extends ServiceBase
         return $body;
     }
 
-    function bankCardInfo($bankcard)
+    function bankCardInfo(array $arr)
     {
+        //一要素 五要素
         $url = 'https://m.ymtdata.com/bankcard/datainfo/1b001/authentication/json?bizorderno=' . $this->requestsn;
-        $url = 'https://m.ymtdata.com/extend/authentication/json?bizorderno=' . $this->requestsn;
+
+        //账户类型
+        //$url = 'https://m.ymtdata.com/extend/authentication/json?bizorderno=' . $this->requestsn;
 
         $body = $this->createRequestData([
             'transtype' => 'accountinfo',
-            'productid' => 'accounttype_query',
-            'bankcard' => $bankcard,
+            'productid' => 'accounttype',//accounttype accounttype_query
+            'bankcard' => $arr['bankcard'],
+            'bankaccounttype' => '1',
+            'realname' => $arr['realname'],
+            'idcard' => $arr['idcard'],
+            'mobile' => $arr['mobile'],
         ]);
 
         $res = (new CoHttpClient())
