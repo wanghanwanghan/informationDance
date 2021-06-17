@@ -7,6 +7,7 @@ use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\BaiDu\BaiDuService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\DaXiang\DaXiangService;
 use App\HttpController\Service\MoveOut\MoveOutService;
 use App\HttpController\Service\QianQi\QianQiService;
 use EasySwoole\Pool\Manager;
@@ -20,7 +21,7 @@ class TestController extends BusinessBase
 
     function test()
     {
-        $res = BaiDuService::getInstance()->geoCoding('北京市海淀区上地十街10号');
+        $res = (new DaXiangService())->test();
         $this->writeJson(random_int(100, 999), null, $res);
     }
 
