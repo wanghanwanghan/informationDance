@@ -123,7 +123,6 @@ class DaXiangService extends ServiceBase
     {
         return (new CoHttpClient())
             ->useCache(false)
-            ->needJsonDecode(false)
             ->send($this->urlTest, [
                 'appKey' => $this->appKeyTest,
                 'appSecret' => $this->appSecretTest,
