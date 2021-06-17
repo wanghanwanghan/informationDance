@@ -21,7 +21,7 @@ class TestController extends BusinessBase
 
     function test()
     {
-        $res = (new DaXiangService())->test();
+        $res =BaiDuService::getInstance()->addressToLatLng('北京市海淀区西钓鱼台嘉园');
         $this->writeJson(random_int(100, 999), null, $res);
     }
 

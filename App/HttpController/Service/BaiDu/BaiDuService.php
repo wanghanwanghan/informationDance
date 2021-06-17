@@ -124,7 +124,7 @@ class BaiDuService extends ServiceBase
     {
         if (strlen($address) > 84) return null;
 
-        $url = 'http://api.map.baidu.com/geocoding/v3/?address=%s&output=%s&ak=%s&sn=%s';
+        $url = 'https://api.map.baidu.com/geocoding/v3/?address=%s&output=%s&ak=%s&sn=%s';
 
         $data = [
             'address' => $address,
