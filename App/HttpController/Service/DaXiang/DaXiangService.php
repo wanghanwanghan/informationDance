@@ -7,6 +7,8 @@ use App\HttpController\Models\Api\InvoiceOut;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
+use Carbon\Carbon;
+use wanghanwanghan\someUtils\control;
 
 class DaXiangService extends ServiceBase
 {
@@ -121,11 +123,30 @@ class DaXiangService extends ServiceBase
 
     function test()
     {
-        return (new CoHttpClient())
+        $token_info = (new CoHttpClient())
             ->useCache(false)
             ->send($this->urlTest, [
                 'appKey' => $this->appKeyTest,
                 'appSecret' => $this->appSecretTest,
             ], [], [], 'postjson');
+
+        $token = $token_info['access_token'];
+
+        $url = 'https://sandbox.ele-cloud.com/api/business-credit/v3/queryEntInvo?access_token=';
+
+        $arr = [
+            'zipCode' => '0',
+            'encryptCode' => '0',
+            "dataExchangeId" => bcmul(microtime(true), 1000) . control::getUuid(15),
+            'entCode' => '',
+            'content' => ''
+        ];
+
+
+
+
+
+
+
     }
 }

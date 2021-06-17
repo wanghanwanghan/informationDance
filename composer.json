@@ -8,6 +8,7 @@
     "ext-gd": "*",
     "ext-iconv": "*",
     "ext-zip": "*",
+    "ext-bcmath": "*",
     "easyswoole/easyswoole": "3.3.x",
     "wanghanwanghan/someutils": "^1.0",
     "easyswoole/http-client": "^1.4",

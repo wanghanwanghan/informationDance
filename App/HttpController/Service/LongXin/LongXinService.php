@@ -222,6 +222,8 @@ class LongXinService extends ServiceBase
             $temp = $this->exprHandle($temp);
         }
 
+        CommonService::getInstance()->log4PHP($temp);
+
         //取哪年的数据
         $readyReturn = [];
         for ($i = $postData['dataCount']; $i--;) {

@@ -20,12 +20,12 @@ class BaiDuService extends ServiceBase
     private $clientId;
     private $clientSecret;
     private $checkWordUrl;
-
     private $clientIdForOrc;
     private $clientSecretForOcr;
     private $ocrUrl;
-
     private $getTokenUrl;
+    private $ak;
+    private $sk;
 
     function __construct()
     {
@@ -36,6 +36,8 @@ class BaiDuService extends ServiceBase
         $this->clientSecretForOcr = CreateConf::getInstance()->getConf('baidu.clientSecretForOcr');
         $this->ocrUrl = CreateConf::getInstance()->getConf('baidu.ocrUrl');
         $this->getTokenUrl = CreateConf::getInstance()->getConf('baidu.getTokenUrl');
+        $this->ak = CreateConf::getInstance()->getConf('baidu.ak');
+        $this->sk = CreateConf::getInstance()->getConf('baidu.sk');
         return parent::__construct();
     }
 
@@ -118,27 +120,23 @@ class BaiDuService extends ServiceBase
     }
 
     //地址转经纬度
-    function geoCoding($address): ?array
+    function addressToLatLng($address): ?array
     {
         if (strlen($address) > 84) return null;
 
         $url = 'http://api.map.baidu.com/geocoding/v3/?address=%s&output=%s&ak=%s&sn=%s';
 
-        $ak = '0E1KvDCpYStGPKkcp34EB8G9qDxC2evy';
-
-        $sk = 'MPMWnZFpC18ewyYCRFYQu3U9AEgBI57g';
-
         $data = [
             'address' => $address,
             'output' => 'json',
-            'ak' => $ak,
+            'ak' => $this->ak,
         ];
 
         $querystring = http_build_query($data);
 
-        $sn = md5(urlencode('/geocoding/v3/?' . $querystring . $sk));
+        $sn = md5(urlencode('/geocoding/v3/?' . $querystring . $this->sk));
 
-        $url = sprintf($url, urlencode($address), 'json', $ak, $sn);
+        $url = sprintf($url, urlencode($address), 'json', $this->ak, $sn);
 
         $res = (new CoHttpClient())->useCache(false)->send($url, [], [], [], 'get');
 
