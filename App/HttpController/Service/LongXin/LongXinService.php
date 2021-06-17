@@ -274,8 +274,6 @@ class LongXinService extends ServiceBase
 
         $entId = $this->getEntid($postData['entName']);
 
-        CommonService::getInstance()->log4PHP($entId);
-
         if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
 
         TaskService::getInstance()->create(new insertEnt($postData['entName'], $postData['code']));
@@ -295,8 +293,6 @@ class LongXinService extends ServiceBase
         $this->sendHeaders['authorization'] = $this->createToken($arr);
 
         $res = (new CoHttpClient())->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
-
-        CommonService::getInstance()->log4PHP($res);
 
         if (isset($res['total']) && $res['total'] > 0) {
             foreach ($res['data'] as $oneYearData) {
@@ -598,6 +594,8 @@ class LongXinService extends ServiceBase
         //36纳税总额同比 RATGRO_yoy
         //37所有者权益同比 TOTEQU_yoy
 
+        //38税收负担率 TBR_new
+
         $now = [];
         foreach ($origin as $year => $arr) {
             $now[$year] = [
@@ -670,6 +668,7 @@ class LongXinService extends ServiceBase
             'NETINC_yoy' => null,
             'RATGRO_yoy' => null,
             'TOTEQU_yoy' => null,
+            'TBR_new' => null,
         ];
 
         $retrun = [];
@@ -771,7 +770,8 @@ class LongXinService extends ServiceBase
         $origin = $this->nsze_yoy($origin);
         //37所有者权益同比 TOTEQU_yoy
         $origin = $this->syzqy_yoy($origin);
-
+        //38税收负担率 new
+        $origin = $this->ssfdl_new($origin);
         krsort($origin);
 
         return $origin;
@@ -1413,6 +1413,22 @@ class LongXinService extends ServiceBase
             }
 
             array_push($origin[$year], ($now - $last) / abs($last));
+        }
+
+        return $origin;
+    }
+
+    //new 38税收负担率 6纳税总额 - 4利润总额 * 0.2 / 2营业总收入
+    private function ssfdl_new($origin)
+    {
+        foreach ($origin as $year => $val) {
+            if (is_numeric($val[6]) && is_numeric($val[4]) && is_numeric($val[2]) && $val[2] !== 0) {
+                $value = ($val[6] - $val[4] * 0.2) / $val[2];
+            } else {
+                $value = null;
+            }
+
+            array_push($origin[$year], $value);
         }
 
         return $origin;

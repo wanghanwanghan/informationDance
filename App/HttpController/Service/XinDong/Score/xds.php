@@ -51,6 +51,8 @@ class xds
     //36纳税总额同比 RATGRO_yoy
     //37所有者权益同比 TOTEQU_yoy
 
+    //38税收负担率 TBR_new
+
     function __construct()
     {
         $this->ld = CreateConf::getInstance()->getConf('longdun.baseUrl');
@@ -126,6 +128,9 @@ class xds
 
         //担保能力 (0资产总额 - 1负债总额 - 股权质押接口的出质股权数额 - 动产抵押接口的被担保主债权数额 - 对外担保接口的主债权数额) / 0资产总额
         $score['GuaranteeAbility'] = $this->GuaranteeAbility($arr['result'], $entName);
+
+        //税负强度 28税收负担率 TBR_new
+        $score['TBR_new'] = $this->TBR_new($arr['result']);
 
         return $score;
     }
@@ -890,6 +895,51 @@ class xds
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['TBR'])) {
                 $val = round($arr['TBR'] * 100);
+                if ($val >= 0 && $val <= 1) {
+                    $score = 29;
+                } elseif ($val >= 1.1 && $val <= 1.5) {
+                    $score = 38;
+                } elseif ($val >= 1.51 && $val <= 3) {
+                    $score = 47;
+                } elseif ($val >= 3.1 && $val <= 6) {
+                    $score = 56;
+                } elseif ($val >= 6.1 && $val <= 10) {
+                    $score = 65;
+                } elseif ($val >= 10.1 && $val <= 15) {
+                    $score = 74;
+                } elseif ($val >= 15.1 && $val <= 20) {
+                    $score = 83;
+                } elseif ($val >= 20.1 && $val <= 30) {
+                    $score = 92;
+                } elseif ($val >= 30) {
+                    $score = 96;
+                } else {
+                    $score = null;
+                }
+                $r['year'] = $year;
+                $r['val'] = $val;
+                $r['score'] = $score;
+                break;
+            }
+        }
+
+        return $r;
+    }
+
+    //税负强度 38税收负担率 TBR_new
+    private function TBR_new($data): array
+    {
+        $r = [
+            'name' => '企业税负强度 new',
+            'field' => __FUNCTION__,
+            'year' => null,
+            'val' => null,
+            'score' => null
+        ];
+
+        foreach ($data as $year => $arr) {
+            if (is_numeric($arr['TBR_new'])) {
+                $val = round($arr['TBR_new'] * 100);
                 if ($val >= 0 && $val <= 1) {
                     $score = 29;
                 } elseif ($val >= 1.1 && $val <= 1.5) {
