@@ -46,6 +46,22 @@ class YunMaTongController extends ProvideBase
         $arr['idcard'] = $this->getRequestData('idcard');
         $arr['mobile'] = $this->getRequestData('mobile');
 
+        if (empty($arr['bankcard'])) {
+            return $this->writeJson(200, null, null, '银行卡号不能是空');
+        }
+
+        if (empty($arr['realname'])) {
+            return $this->writeJson(200, null, null, '姓名不能是空');
+        }
+
+        if (empty($arr['idcard'])) {
+            return $this->writeJson(200, null, null, '身份证号不能是空');
+        }
+
+        if (empty($arr['mobile'])) {
+            return $this->writeJson(200, null, null, '手机号不能是空');
+        }
+
         $this->csp->add($this->cspKey, function () use ($arr) {
             return (new YunMaTongService())->bankCardInfo($arr);
         });
