@@ -508,7 +508,7 @@ class UserController extends UserBase
 
         //先确定是一个公司，还是全部公司
         try {
-            $supervisorType > 2 ? $opt = '<=' : $opt = '=';
+            $supervisorType - 0 > 2 ? $opt = '<=' : $opt = '=';
 
             $entList = SupervisorPhoneEntName::create()->where([
                 'phone' => $phone,
