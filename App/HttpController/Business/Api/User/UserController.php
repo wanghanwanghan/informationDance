@@ -756,26 +756,27 @@ class UserController extends UserBase
 
         //导出每个公司的监控详情
         foreach ($entNameList as $one_ent_name) {
+            $insert = [];
             $data = SupervisorEntNameInfo::create()
                 ->field(['entName', '`level`', '`desc`', 'content', 'created_at'])
                 ->where('entName', $one_ent_name)
                 ->all();
+            $data = obj2Arr($data);
             if (!empty($data)) {
-                foreach ($data as $key => $one) {
-                    $one->content = str_replace(['<p>'], '', $one->content);
-                    $one->content = str_replace(['</p>'], "\n", $one->content);
-                    $data[$key]->content = $one->content;
+                foreach ($data as $one) {
+                    $one['content'] = str_replace(['<p>'], '', $one['content']);
+                    $one['content'] = str_replace(['</p>'], "\n", $one['content']);
+                    array_push($insert, array_values($one));
                 }
             } else {
                 $data = [];
             }
-            CommonService::getInstance()->log4PHP($data);
             $fileObject
                 ->addSheet($one_ent_name)
                 ->defaultFormat($colorStyle)
                 ->header(['企业名称', '风险等级', '风险说明', '风险内容', '监控时间'])
                 ->defaultFormat($wrapStyle)
-                ->data(jsonDecode(json_encode($data), true));
+                ->data($data);
         }
 
         $res = $fileObject->output();
