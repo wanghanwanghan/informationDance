@@ -746,7 +746,7 @@ class UserController extends UserBase
             ->header($header)
             ->defaultFormat($alignStyle)
             ->data($data)
-            ->setColumn('B:B', 100);
+            ->setColumn('B:B', 50);
 
         $format = new \Vtiful\Kernel\Format($fileHandle);
         //单元格有\n解析成换行
