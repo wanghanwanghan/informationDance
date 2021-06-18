@@ -320,7 +320,7 @@ class MoveOut extends AbstractCronTask
                                 //rmdir($fullpath);
                                 CommonService::getInstance()->log4PHP("rmdir {$fullpath}");
                             } else {
-                                $this->delFileByCtime($fullpath, $n);
+                                $this->delFileByCtime($fullpath, $n, $ignore);
                             }
                         } else {
                             $filedate = filectime($fullpath);
