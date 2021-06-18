@@ -749,15 +749,18 @@ class UserController extends UserBase
 
         $format = new \Vtiful\Kernel\Format($fileHandle);
         //单元格有\n解析成换行
-        $wrapStyle = $format->wrap()->toResource();
+        $wrapStyle = $alignStyle = $format
+            ->align(\Vtiful\Kernel\Format::FORMAT_ALIGN_CENTER, \Vtiful\Kernel\Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->wrap()
+            ->toResource();
 
         //导出每个公司的监控详情
         foreach ($entNameList as $one_ent_name) {
             $fileObject
                 ->addSheet($one_ent_name)
-                ->defaultFormat($alignStyle)
-                ->defaultFormat($wrapStyle)
+                ->defaultFormat($colorStyle)
                 ->header(['name', 'nickname', 'age'])
+                ->defaultFormat($wrapStyle)
                 ->data([
                     ["wanghan\n123", 'duanran', 22]
                 ]);
