@@ -757,7 +757,7 @@ class UserController extends UserBase
         //导出每个公司的监控详情
         foreach ($entNameList as $one_ent_name) {
             $data = SupervisorEntNameInfo::create()
-                ->field(['entName', 'level', 'desc', 'content', 'created_at'])
+                ->field(['entName', '`level`', '`desc`', 'content', 'created_at'])
                 ->where('entName', $one_ent_name)
                 ->all();
             if (!empty($data)) {
