@@ -753,8 +753,8 @@ class UserController extends UserBase
         //导出每个公司的监控详情
         foreach ($entNameList as $one_ent_name) {
             $fileObject
-                ->addSheet($one_ent_name)
                 ->defaultFormat($wrapStyle)
+                ->addSheet($one_ent_name)
                 ->header(['name', 'age'])
                 ->data([
                     ["wanghan\n123", 22]
