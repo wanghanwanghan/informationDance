@@ -748,12 +748,14 @@ class UserController extends UserBase
             ->data($data);
 
         $format = new \Vtiful\Kernel\Format($fileHandle);
+        //单元格有\n解析成换行
         $wrapStyle = $format->wrap()->toResource();
 
         //导出每个公司的监控详情
         foreach ($entNameList as $one_ent_name) {
             $fileObject
                 ->addSheet($one_ent_name)
+                ->defaultFormat($wrapStyle)
                 ->header(['name', 'age'])
                 ->defaultFormat($alignStyle)
                 ->data([
