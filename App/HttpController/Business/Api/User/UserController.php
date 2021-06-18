@@ -754,8 +754,8 @@ class UserController extends UserBase
         foreach ($entNameList as $one_ent_name) {
             $fileObject
                 ->addSheet($one_ent_name)
-                ->header(['name', 'age'])
                 ->defaultFormat($wrapStyle)
+                ->header(['name', 'age'])
                 ->data([
                     ["wanghan\n123", 22]
                 ]);
