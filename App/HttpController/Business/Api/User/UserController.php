@@ -771,12 +771,16 @@ class UserController extends UserBase
             } else {
                 $data = [];
             }
-            $fileObject
-                ->addSheet($one_ent_name)
-                ->defaultFormat($colorStyle)
-                ->header(['企业名称', '风险等级', '风险说明', '风险内容', '监控时间'])
-                ->defaultFormat($wrapStyle)
-                ->data($data);
+            try {
+                $fileObject
+                    ->addSheet($one_ent_name)
+                    ->defaultFormat($colorStyle)
+                    ->header(['企业名称', '风险等级', '风险说明', '风险内容', '监控时间'])
+                    ->defaultFormat($wrapStyle)
+                    ->data($data);
+            } catch (\Throwable $e) {
+                CommonService::getInstance()->log4PHP($e->getTraceAsString());
+            }
         }
 
         $res = $fileObject->output();
