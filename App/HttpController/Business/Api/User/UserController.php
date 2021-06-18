@@ -757,9 +757,9 @@ class UserController extends UserBase
                 ->addSheet($one_ent_name)
                 ->defaultFormat($alignStyle)
                 ->defaultFormat($wrapStyle)
-                ->header(['name', 'age'])
+                ->header(['name', 'nickname', 'age'])
                 ->data([
-                    ["wanghan\n123", 22]
+                    ["wanghan\n123", 'duanran', 22]
                 ]);
         }
 
