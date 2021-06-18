@@ -752,20 +752,18 @@ class UserController extends UserBase
 
         //导出每个公司的监控详情
         foreach ($entNameList as $one_ent_name) {
-            if (false) {
-                $fileObject
-                    ->addSheet($one_ent_name)
-                    ->header(['name', 'age'])
-                    ->defaultFormat($wrapStyle)
-                    ->data([
-                        ["wanghan\n123", 22]
-                    ]);
-            }
+            $fileObject
+                ->addSheet($one_ent_name)
+                ->header(['name', 'age'])
+                ->defaultFormat($wrapStyle)
+                ->data([
+                    ["wanghan\n123", 22]
+                ]);
         }
 
-        $fileObject->output();
+        $res = $fileObject->output();
 
-        return $this->writeJson(200, null, 'Static/Temp/' . $filename);
+        return $this->writeJson(200, null, 'Static/Temp/' . $filename, null, true, [$res]);
     }
 
     //修改风险阈值
