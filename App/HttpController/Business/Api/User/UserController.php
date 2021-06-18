@@ -778,6 +778,7 @@ class UserController extends UserBase
                     } else {
                         $one['level'] = '利好';
                     }
+                    $one['created_at'] = date('Y-m-d', $one['created_at']);
                     array_push($insert, array_values($one));
                 }
             } else {
