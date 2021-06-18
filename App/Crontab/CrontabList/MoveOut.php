@@ -5,6 +5,7 @@ namespace App\Crontab\CrontabList;
 use App\Crontab\CrontabBase;
 use App\HttpController\Models\EntDb\EntDbBasic;
 use App\HttpController\Models\EntDb\EntDbInv;
+use App\HttpController\Models\EntDb\EntDbModify;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\MoveOut\MoveOutService;
@@ -109,6 +110,11 @@ class MoveOut extends AbstractCronTask
         foreach ($filename_arr as $filename) {
             if (preg_match('/history_inv_\d+/', $filename)) {
                 $this->handleInvHistory($this->readCsv($filename));
+            }
+        }
+        foreach ($filename_arr as $filename) {
+            if (preg_match('/modify_\d+/', $filename)) {
+                $this->handleModify($this->readCsv($filename));
             }
         }
     }
@@ -263,6 +269,26 @@ class MoveOut extends AbstractCronTask
                 if (!empty($check)) {
                     EntDbInv::create()->destroy($del);
                 }
+            } catch (\Throwable $e) {
+                $this->writeErr($e);
+            }
+        }
+    }
+
+    function handleModify($arr): void
+    {
+        foreach ($arr as $key => $val) {
+            if ($key === 0) continue;
+            $insert = [
+                'ENTNAME' => $val[0],
+                'ALTITEM' => $val[1],
+                'ALTBE' => $val[2],
+                'ALTAF' => $val[3],
+                'ALTDATE' => trim(str_replace(['\\', '/'], '-', $val[4])),
+            ];
+            if (empty($val[0])) continue;
+            try {
+                EntDbModify::create()->data($insert)->save();
             } catch (\Throwable $e) {
                 $this->writeErr($e);
             }
