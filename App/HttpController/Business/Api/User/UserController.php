@@ -513,7 +513,7 @@ class UserController extends UserBase
             $entList = SupervisorPhoneEntName::create()->where([
                 'phone' => $phone,
                 'status' => 1,
-            ])->where('supervisorType', $supervisorType, $opt)->all();
+            ])->where('type', $supervisorType, $opt)->all();
 
             if (empty($entList)) {
                 //没有监控任何类型的公司
