@@ -304,14 +304,16 @@ class MoveOut extends AbstractCronTask
     }
 
     //删除n天前创建的文件
-    function delFileByCtime($dir, $n = 10): bool
+    function delFileByCtime($dir, $n = 10, $ignore = []): bool
     {
         if (strpos($dir, 'informationDance') === false) return true;
+
+        $ignore = array_merge($ignore, ['.', '..', '.gitignore']);
 
         if (is_dir($dir) && is_numeric($n)) {
             if ($dh = opendir($dir)) {
                 while (false !== ($file = readdir($dh))) {
-                    if ($file !== '.' && $file !== '..' && $file !== '.gitignore') {
+                    if (!in_array($file, $ignore, true)) {
                         $fullpath = $dir . $file;
                         if (is_dir($fullpath)) {
                             if (count(scandir($fullpath)) == 2) {
