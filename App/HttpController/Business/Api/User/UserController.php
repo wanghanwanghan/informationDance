@@ -760,6 +760,7 @@ class UserController extends UserBase
                 ->field(['entName', '`level`', '`desc`', 'content', 'created_at'])
                 ->where('entName', $one_ent_name)
                 ->all();
+            CommonService::getInstance()->log4PHP($data);
             if (!empty($data)) {
                 $data = $data->toArray();
                 foreach ($data as &$one) {
