@@ -760,14 +760,12 @@ class UserController extends UserBase
                 ->field(['entName', '`level`', '`desc`', 'content', 'created_at'])
                 ->where('entName', $one_ent_name)
                 ->all();
-            CommonService::getInstance()->log4PHP($data);
             if (!empty($data)) {
-                $data = $data->toArray();
-                foreach ($data as &$one) {
-                    $one['content'] = str_replace(['<p>'], '', $one['content']);
-                    $one['content'] = str_replace(['</p>'], "\n", $one['content']);
+                foreach ($data as $key => $one) {
+                    $one->content = str_replace(['<p>'], '', $one->content);
+                    $one->content = str_replace(['</p>'], "\n", $one->content);
+                    $data[$key]->content = $one->content;
                 }
-                unset($one);
             } else {
                 $data = [];
             }
