@@ -745,7 +745,8 @@ class UserController extends UserBase
             ->defaultFormat($colorStyle)
             ->header($header)
             ->defaultFormat($alignStyle)
-            ->data($data);
+            ->data($data)
+            ->setColumn('B:B', 100);
 
         $format = new \Vtiful\Kernel\Format($fileHandle);
         //单元格有\n解析成换行
@@ -779,7 +780,7 @@ class UserController extends UserBase
                     ->header(['企业名称', '风险等级', '风险说明', '风险内容', '监控时间'])
                     ->defaultFormat($wrapStyle)
                     ->data($insert)
-                    ->setColumn('A:A', 400);
+                    ->setColumn('A:E', 300);
             } catch (\Throwable $e) {
                 CommonService::getInstance()->log4PHP($e->getTraceAsString());
             }
