@@ -508,12 +508,10 @@ class UserController extends UserBase
 
         //先确定是一个公司，还是全部公司
         try {
-            $supervisorType - 0 > 2 ? $opt = '<=' : $opt = '=';
-
             $entList = SupervisorPhoneEntName::create()->where([
                 'phone' => $phone,
                 'status' => 1,
-            ])->where('type', $supervisorType, $opt)->all();
+            ])->all();
 
             if (empty($entList)) {
                 //没有监控任何类型的公司
@@ -522,7 +520,19 @@ class UserController extends UserBase
                 //监控了一堆公司
                 $tmp = [];
                 foreach ($entList as $one) {
-                    $tmp[] = $one->entName;
+                    if ($supervisorType - 0 === 1) {
+                        //type 1 3
+                        if (in_array($one->type - 0, [1, 3], true)) {
+                            $tmp[] = $one->entName;
+                        }
+                    } elseif ($supervisorType - 0 === 2) {
+                        //type 2 3
+                        if (in_array($one->type - 0, [2, 3], true)) {
+                            $tmp[] = $one->entName;
+                        }
+                    } else {
+                        $tmp[] = $one->entName;
+                    }
                 }
                 $entList = $tmp;
             }
