@@ -97,13 +97,21 @@ class MoveOutService extends ServiceBase
                 $info = (new LongXinService())->setCheckRespFlag(true)->getFinanceData([
                     'entName' => $oneEnt->entName,
                     'code' => $oneEnt->code,
-                    'dataCount' => 4,
+                    'dataCount' => 3,
                     'beginYear' => date('Y') - 2,
                 ], false);
 
+                CommonService::getInstance()->log4PHP($info);
+
+                $target['VENDINC_type'] = 0;
+                $target['PROGRO_type'] = 0;
+                $target['RATGRO_type'] = 0;
+
                 if ($info['code'] === 200 && !empty($info['result'])) {
                     foreach ($info['result'] as $year => $val) {
-                        CommonService::getInstance()->log4PHP($year);
+                        if (round($val['VENDINC_yoy'] * 100) > 100) $target['VENDINC_type']++;
+                        if (round($val['PROGRO_yoy'] * 100) > 100) $target['PROGRO_type']++;
+                        if (round($val['RATGRO_yoy'] * 100) > 100) $target['RATGRO_type']++;
                     }
                 }
 

@@ -222,8 +222,6 @@ class LongXinService extends ServiceBase
             $temp = $this->exprHandle($temp);
         }
 
-        CommonService::getInstance()->log4PHP($temp);
-
         //取哪年的数据
         $readyReturn = [];
         for ($i = $postData['dataCount']; $i--;) {
@@ -497,6 +495,7 @@ class LongXinService extends ServiceBase
         //37所有者权益同比 TOTEQU_yoy
 
         //38税收负担率 TBR_new
+        //39社保人数同比 SOCNUM_yoy
 
         $now = [];
         foreach ($origin as $year => $arr) {
@@ -571,6 +570,7 @@ class LongXinService extends ServiceBase
             'RATGRO_yoy' => null,
             'TOTEQU_yoy' => null,
             'TBR_new' => null,
+            'SOCNUM_yoy' => null,
         ];
 
         $retrun = [];
@@ -674,6 +674,9 @@ class LongXinService extends ServiceBase
         $origin = $this->syzqy_yoy($origin);
         //38税收负担率 new
         $origin = $this->ssfdl_new($origin);
+        //39社保人数同比
+        $origin = $this->socnum_yoy($origin);
+
         krsort($origin);
 
         return $origin;
@@ -1331,6 +1334,40 @@ class LongXinService extends ServiceBase
             }
 
             array_push($origin[$year], $value);
+        }
+
+        return $origin;
+    }
+
+    //39社保人数同比 socnum_yoy
+    private function socnum_yoy($origin)
+    {
+        foreach ($origin as $year => $val) {
+            //去年
+            $lastYear = $year - 1;
+
+            //如果去年没数据
+            if (!isset($origin[$lastYear]) || !is_numeric($origin[$lastYear][8])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //如果今年没数据
+            if (!is_numeric($origin[$year][8])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //两年都有数据
+            $last = $origin[$lastYear][8];
+            $now = $origin[$year][8];
+
+            if ($last === 0) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            array_push($origin[$year], ($now - $last) / abs($last));
         }
 
         return $origin;
