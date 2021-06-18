@@ -778,7 +778,8 @@ class UserController extends UserBase
                     ->defaultFormat($colorStyle)
                     ->header(['企业名称', '风险等级', '风险说明', '风险内容', '监控时间'])
                     ->defaultFormat($wrapStyle)
-                    ->data($insert);
+                    ->data($insert)
+                    ->setColumn('A:A', 400);
             } catch (\Throwable $e) {
                 CommonService::getInstance()->log4PHP($e->getTraceAsString());
             }
