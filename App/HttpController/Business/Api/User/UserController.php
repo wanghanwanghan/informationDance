@@ -508,11 +508,12 @@ class UserController extends UserBase
 
         //先确定是一个公司，还是全部公司
         try {
+            $supervisorType > 2 ? $opt = '<=' : $opt = '=';
+
             $entList = SupervisorPhoneEntName::create()->where([
                 'phone' => $phone,
                 'status' => 1,
-                'type' => $supervisorType - 0,
-            ])->all();
+            ])->where('supervisorType', $supervisorType, $opt)->all();
 
             if (empty($entList)) {
                 //没有监控任何类型的公司
