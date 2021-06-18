@@ -97,9 +97,11 @@ class MoveOutService extends ServiceBase
                 $info = (new LongXinService())->setCheckRespFlag(true)->getFinanceData([
                     'entName' => $oneEnt->entName,
                     'code' => $oneEnt->code,
-                    'dataCount' => 3,
-                    'beginYear' => 2019,
+                    'dataCount' => 4,
+                    'beginYear' => date('Y') - 2,
                 ], false);
+
+                CommonService::getInstance()->log4PHP($info);
 
                 //人数表现：园内企业缴纳社保人数，近3年连续下降100%或近2年下降200%的园内企业，列为预警推荐目标
 
