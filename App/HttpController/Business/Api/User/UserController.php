@@ -764,8 +764,8 @@ class UserController extends UserBase
             $data = obj2Arr($data);
             if (!empty($data)) {
                 foreach ($data as $one) {
-                    //$one['content'] = str_replace(['<p>'], '', $one['content']);
-                    //$one['content'] = str_replace(['</p>'], "\n", $one['content']);
+                    $one['content'] = str_replace(['<p>'], '', $one['content']);
+                    $one['content'] = str_replace(['</p>'], "\n", $one['content']);
                     array_push($insert, array_values($one));
                 }
             } else {
