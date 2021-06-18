@@ -756,14 +756,26 @@ class UserController extends UserBase
 
         //导出每个公司的监控详情
         foreach ($entNameList as $one_ent_name) {
+            $data = SupervisorEntNameInfo::create()
+                ->field(['entName', 'level', 'desc', 'content', 'created_at'])
+                ->where('entName', $one_ent_name)
+                ->all();
+            if (!empty($data)) {
+                $data = $data->toArray();
+                foreach ($data as &$one) {
+                    $one['content'] = str_replace(['<p>'], '', $one['content']);
+                    $one['content'] = str_replace(['</p>'], "\n", $one['content']);
+                }
+                unset($one);
+            } else {
+                $data = [];
+            }
             $fileObject
                 ->addSheet($one_ent_name)
                 ->defaultFormat($colorStyle)
-                ->header(['name', 'nickname', 'age'])
+                ->header(['企业名称', '风险等级', '风险说明', '风险内容', '监控时间'])
                 ->defaultFormat($wrapStyle)
-                ->data([
-                    ["wanghan\n123", 'duanran', 22]
-                ]);
+                ->data($data);
         }
 
         $res = $fileObject->output();
