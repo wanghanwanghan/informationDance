@@ -755,7 +755,7 @@ class UserController extends UserBase
             $fileObject
                 ->addSheet($one_ent_name)
                 ->header(['name', 'age'])
-                ->defaultFormat($wrapStyle)
+                ->defaultFormat($alignStyle)
                 ->data([
                     ["wanghan\n123", 22]
                 ]);
