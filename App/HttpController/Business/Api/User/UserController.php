@@ -767,12 +767,23 @@ class UserController extends UserBase
                 foreach ($data as $one) {
                     $one['content'] = str_replace(['<p>'], '', $one['content']);
                     $one['content'] = str_replace(['</p>'], "\n", $one['content']);
+                    if ($one['level'] - 0 === 1) {
+                        $one['level'] = '高风险';
+                    } elseif ($one['level'] - 0 === 2) {
+                        $one['level'] = '风险';
+                    } elseif ($one['level'] - 0 === 3) {
+                        $one['level'] = '警示';
+                    } elseif ($one['level'] - 0 === 4) {
+                        $one['level'] = '提示';
+                    } else {
+                        $one['level'] = '利好';
+                    }
                     array_push($insert, array_values($one));
                 }
             } else {
                 $data = [];
             }
-            CommonService::getInstance()->log4PHP($insert);
+
             try {
                 $fileObject
                     ->addSheet($one_ent_name)
@@ -780,7 +791,7 @@ class UserController extends UserBase
                     ->header(['企业名称', '风险等级', '风险说明', '风险内容', '监控时间'])
                     ->defaultFormat($wrapStyle)
                     ->data($insert)
-                    ->setColumn('A:E', 80);
+                    ->setColumn('A:E', 50);
             } catch (\Throwable $e) {
                 CommonService::getInstance()->log4PHP($e->getTraceAsString());
             }
