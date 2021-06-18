@@ -8,7 +8,6 @@ use App\HttpController\Models\Api\MoveOutPhoneEntName;
 use App\HttpController\Models\EntDb\EntDbBasic;
 use App\HttpController\Models\EntDb\EntDbInv;
 use App\HttpController\Service\Common\CommonService;
-use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\ServiceBase;
 use Carbon\Carbon;
@@ -92,8 +91,8 @@ class MoveOutService extends ServiceBase
 
             if (empty($check) || Carbon::now()->format('md') - 0 === 1231) {
                 //为空，或者每年年底跑一次，年底跑可以更新
-
                 //财务表现：园内企业营收、利润或纳税等关键指标，近3年连续下降100%或近2年下降200%的园内企业，列为预警推荐目标
+                //人数表现：园内企业缴纳社保人数，近3年连续下降100%或近2年下降200%的园内企业，列为预警推荐目标
                 $info = (new LongXinService())->setCheckRespFlag(true)->getFinanceData([
                     'entName' => $oneEnt->entName,
                     'code' => $oneEnt->code,
@@ -101,22 +100,27 @@ class MoveOutService extends ServiceBase
                     'beginYear' => date('Y') - 2,
                 ], false);
 
-                CommonService::getInstance()->log4PHP($info);
-
                 $target['VENDINC_type'] = 0;
                 $target['PROGRO_type'] = 0;
                 $target['RATGRO_type'] = 0;
+                $target['SOCNUM_type'] = 0;
 
                 if ($info['code'] === 200 && !empty($info['result'])) {
                     foreach ($info['result'] as $year => $val) {
-                        if (round($val['VENDINC_yoy'] * 100) > 100) $target['VENDINC_type']++;
-                        if (round($val['PROGRO_yoy'] * 100) > 100) $target['PROGRO_type']++;
-                        if (round($val['RATGRO_yoy'] * 100) > 100) $target['RATGRO_type']++;
+                        if (round($val['VENDINC_yoy'] * 100) < -100) $target['VENDINC_type']++;
+                        if (round($val['PROGRO_yoy'] * 100) < -100) $target['PROGRO_type']++;
+                        if (round($val['RATGRO_yoy'] * 100) < -100) $target['RATGRO_type']++;
+                        if (round($val['SOCNUM_yoy'] * 100) < -100) $target['SOCNUM_type']++;
+                    }
+                    //更新数据库
+                    if (!empty($check)) {
+                        $check->update($target);
+                    } else {
+                        $target['entName'] = $oneEnt->entName;
+                        $target['code'] = $oneEnt->code;
+                        MoveOutEntNameFinance::create()->data($target)->save();
                     }
                 }
-
-                //人数表现：园内企业缴纳社保人数，近3年连续下降100%或近2年下降200%的园内企业，列为预警推荐目标
-
             }
         }
 
