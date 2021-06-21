@@ -112,6 +112,7 @@ class XinDongController extends ProvideBase
         $range = $ratio = [];
 
         $range = FinanceRange::getInstance()->getRange('range');
+        $range = FinanceRange::getInstance()->getRange('rangeRatio');
 
         //周伯通
         if ($this->userId === 35) {
