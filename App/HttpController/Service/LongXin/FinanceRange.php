@@ -62,7 +62,7 @@ class FinanceRange
             ['name' => 'F02', 'range' => [5, 10]],
             ['name' => 'F01', 'range' => [0, 5]],
             ['name' => 'Z00', 'range' => [0, 0]],
-            ['name' => 'Z01', 'range' => [1, 5]],
+            ['name' => 'Z01', 'range' => [0, 5]],
             ['name' => 'Z02', 'range' => [5, 10]],
             ['name' => 'Z03', 'range' => [10, 20]],
             ['name' => 'Z04', 'range' => [20, 30]],
