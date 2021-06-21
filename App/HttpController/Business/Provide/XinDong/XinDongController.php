@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\XinDong;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Service\LongXin\FinanceRange;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Sms\SmsService;
 use App\HttpController\Service\TaoShu\TaoShuService;
@@ -108,8 +109,11 @@ class XinDongController extends ProvideBase
         $beginYear = $this->getRequestData('year', 2019) - 0;
         $dataCount = $this->getRequestData('dataCount', 1) - 0;
 
+        $range = $ratio = [];
+
         //周伯通
         if ($this->userId === 35) {
+            $range = FinanceRange::getInstance()->getRange('range');
             if ($beginYear === 2019 && $dataCount <= 2) {
                 $a = null;
             } elseif ($beginYear === 2018 && $dataCount === 1) {
@@ -120,10 +124,11 @@ class XinDongController extends ProvideBase
         }
 
         if (is_numeric($beginYear) && $beginYear >= 2010 && $beginYear <= date('Y')) {
-            $this->csp->add($this->cspKey, function () use ($postData) {
+            $this->csp->add($this->cspKey, function () use ($postData, $range, $ratio) {
                 return (new LongXinService())
                     ->setCheckRespFlag(true)
                     ->setCal(false)
+                    ->setRangeArr($range, $ratio)
                     ->getFinanceData($postData);
             });
             $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
