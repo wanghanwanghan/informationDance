@@ -199,6 +199,11 @@ class LongXinService extends ServiceBase
                 $year = trim($oneYearData['ANCHEYEAR']) . '';
                 if (!is_numeric($year)) continue;
                 $oneYearData['SOCNUM'] = null;
+                unset($oneYearData['TEL']);
+                unset($oneYearData['BUSST']);
+                unset($oneYearData['DOM']);
+                unset($oneYearData['EMAIL']);
+                unset($oneYearData['POSTALCODE']);
                 $temp[$year] = $oneYearData;
             }
             krsort($temp);
