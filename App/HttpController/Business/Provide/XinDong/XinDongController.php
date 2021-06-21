@@ -109,8 +109,6 @@ class XinDongController extends ProvideBase
         $beginYear = $this->getRequestData('year', 2019) - 0;
         $dataCount = $this->getRequestData('dataCount', 1) - 0;
 
-        $range = $ratio = [];
-
         $range = FinanceRange::getInstance()->getRange('range');
         $ratio = FinanceRange::getInstance()->getRange('rangeRatio');
 
