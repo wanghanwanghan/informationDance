@@ -182,7 +182,7 @@ class LongXinService extends ServiceBase
         $temp = [];
         for ($i = 2010; $i <= date('Y'); $i++) {
             $ANCHEYEAR .= $i . ',';
-            $temp[(string)$i] = null;
+            $temp[$i . ''] = null;
         }
         $arr = [
             'entid' => $entId,
