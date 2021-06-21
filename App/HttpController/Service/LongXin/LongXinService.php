@@ -250,9 +250,9 @@ class LongXinService extends ServiceBase
             foreach ($readyReturn as $year => $arr) {
                 if (empty($arr)) continue;
                 foreach ($arr as $field => $val) {
-                    if (in_array($field, $this->rangeArr[0]) && is_numeric($val)) {
+                    if (in_array($field, $this->rangeArr[0], true) && is_numeric($val)) {
                         $readyReturn[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArr[1]) - 1, $this->rangeArr[1]);
-                    } elseif (in_array($field, $this->rangeArrRatio[0]) && is_numeric($val)) {
+                    } elseif (in_array($field, $this->rangeArrRatio[0], true) && is_numeric($val)) {
                         $readyReturn[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArrRatio[1]) - 1, $this->rangeArrRatio[1]);
                     } else {
                         $readyReturn[$year][$field] = $val;
