@@ -20,6 +20,7 @@ class LongXinService extends ServiceBase
     private $baseUrl;
     private $sendHeaders;
 
+    public $cal = true;
     public $rangeArr = [];
     public $rangeArrRatio = [];
 
@@ -47,6 +48,13 @@ class LongXinService extends ServiceBase
     {
         $this->rangeArr = $range;
         $this->rangeArrRatio = $ratio;
+
+        return $this;
+    }
+
+    function setCal(bool $type): LongXinService
+    {
+        $this->cal = $type;
 
         return $this;
     }
@@ -225,7 +233,7 @@ class LongXinService extends ServiceBase
         TaskService::getInstance()->create(new insertFinance($postData['entName'], $temp, $social['AnnualSocial']));
 
         //原值计算
-        if ($postData['dataCount'] > 1) {
+        if ($postData['dataCount'] > 1 && $this->cal === true) {
             $temp = $this->exprHandle($temp);
         }
 
