@@ -217,7 +217,9 @@ class LongXinService extends ServiceBase
         foreach ($social['AnnualSocial'] as $oneSoc) {
             $year = $oneSoc['ANCHEYEAR'];
             if (!is_numeric($year) || !isset($temp[(string)$year])) continue;
-            if (isset($oneSoc['so1']) && is_numeric($oneSoc['so1'])) $temp[(string)$year]['SOCNUM'] = $oneSoc['so1'];
+            if (isset($oneSoc['so1']) && is_numeric($oneSoc['so1'])) {
+                $temp[(string)$year]['SOCNUM'] = $oneSoc['so1'];
+            }
         }
 
         TaskService::getInstance()->create(new insertFinance($postData['entName'], $temp, $social['AnnualSocial']));

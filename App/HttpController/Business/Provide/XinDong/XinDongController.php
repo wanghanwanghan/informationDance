@@ -4,15 +4,11 @@ namespace App\HttpController\Business\Provide\XinDong;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
-use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Sms\SmsService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\XinDongService;
-use App\Task\Service\TaskService;
 use Carbon\Carbon;
-use EasySwoole\RedisPool\Redis;
-use wanghanwanghan\someUtils\control;
 
 class XinDongController extends ProvideBase
 {
@@ -105,11 +101,23 @@ class XinDongController extends ProvideBase
         $postData = [
             'entName' => $this->getRequestData('entName', ''),
             'code' => $this->getRequestData('code', ''),
-            'beginYear' => $this->getRequestData('year', ''),
-            'dataCount' => 1,//取最近几年的
+            'beginYear' => $this->getRequestData('year', 2019),
+            'dataCount' => $this->getRequestData('dataCount', 1),
         ];
 
-        $beginYear = $this->getRequestData('year', '');
+        $beginYear = $this->getRequestData('year', 2019) - 0;
+        $dataCount = $this->getRequestData('dataCount', 1) - 0;
+
+        //周伯通
+        if ($this->userId === 35) {
+            if ($beginYear === 2019 && $dataCount <= 2) {
+                $a = null;
+            } elseif ($beginYear === 2018 && $dataCount === 1) {
+                $b = null;
+            } else {
+                return $this->writeJson(201, null, null, '参数错误');
+            }
+        }
 
         if (is_numeric($beginYear) && $beginYear >= 2010 && $beginYear <= date('Y')) {
             $this->csp->add($this->cspKey, function () use ($postData) {
