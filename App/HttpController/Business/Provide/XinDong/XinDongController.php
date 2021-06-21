@@ -111,9 +111,10 @@ class XinDongController extends ProvideBase
 
         $range = $ratio = [];
 
+        $range = FinanceRange::getInstance()->getRange('range');
+
         //周伯通
         if ($this->userId === 35) {
-            $range = FinanceRange::getInstance()->getRange('range');
             if ($beginYear === 2019 && $dataCount <= 2) {
                 $a = null;
             } elseif ($beginYear === 2018 && $dataCount === 1) {
