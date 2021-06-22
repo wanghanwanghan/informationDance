@@ -169,7 +169,8 @@ TEMP;
         $pdf->AddPage();
 
         //logo
-        $pdf->Image(REPORT_IMAGE_PATH . 'logo.jpg', '', '', 55, 20, '', '', 'T');
+        //$pdf->Image(REPORT_IMAGE_PATH . 'logo.jpg', '', '', 55, 20, '', '', 'T');
+        $pdf->Image(REPORT_IMAGE_PATH . 'zhlc_logo.jpg', '', '', 55, 20, '', '', 'T');
 
         //换行
         $pdf->ln(95);
