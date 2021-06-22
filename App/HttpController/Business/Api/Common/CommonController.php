@@ -194,5 +194,16 @@ class CommonController extends CommonBase
         return $this->writeJson(200, null, $insert, '成功');
     }
 
+    //地址转经纬度
+    function addressToLatLng()
+    {
+        $address = $this->request()->getRequestParam('address') ?? '';
+
+        if (strlen($address) > 84) return null;
+
+        $res = BaiDuService::getInstance()->addressToLatLng($address);
+
+        return $this->writeJson(200, null, $res, '成功');
+    }
 
 }

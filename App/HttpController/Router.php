@@ -56,6 +56,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/userLngLatUpload', $prefix . 'userLngLatUpload');//上传用户经纬度
             $routeCollector->addRoute(['GET', 'POST'], '/refundToWallet', $prefix . 'refundToWallet');//退钱到钱包
             $routeCollector->addRoute(['GET', 'POST'], '/ocrForBaiDu', $prefix . 'ocrForBaiDu');//百度ocr
+            $routeCollector->addRoute(['GET', 'POST'], '/addressToLatLng', $prefix . 'addressToLatLng');//百度地址转换
             $routeCollector->addRoute(['GET', 'POST'], '/ocrForHeHe', $prefix . 'ocrForHeHe');//合合ocr
             $routeCollector->addRoute(['GET', 'POST'], '/ocr/queue', $prefix . 'ocrQueue');//ocr识别
         });
