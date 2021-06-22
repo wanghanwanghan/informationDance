@@ -52,14 +52,12 @@ class AliSms
         $easySms = $this->createObj();
 
         TaskService::getInstance()->create(function () use ($easySms, $phone, $code) {
-            $res = $easySms->send($phone, [
+            return $easySms->send($phone, [
                 'template' => 'SMS_218160347',
                 'data' => [
                     'code' => $code
                 ],
             ]);
-            CommonService::getInstance()->log4PHP($res);
-            return $res;
         });
 
         return true;
