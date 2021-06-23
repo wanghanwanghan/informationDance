@@ -206,6 +206,8 @@ class CommonController extends CommonBase
 
         $res = (new LongXinService())->superSearch([]);
 
+        CommonService::getInstance()->log4PHP($res);
+
         return $this->writeJson(200, null, $res, '成功');
     }
 
