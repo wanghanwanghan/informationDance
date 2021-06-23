@@ -11,6 +11,7 @@ use App\HttpController\Service\BaiDu\BaiDuService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\HeHe\HeHeService;
+use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Pay\ChargeService;
 use EasySwoole\Http\Message\UploadFile;
 use EasySwoole\Mysqli\QueryBuilder;
@@ -201,7 +202,9 @@ class CommonController extends CommonBase
 
         if (strlen($address) > 84) return null;
 
-        $res = BaiDuService::getInstance()->addressToLatLng($address);
+        // $res = BaiDuService::getInstance()->addressToLatLng($address);
+
+        $res = (new LongXinService())->superSearch([]);
 
         return $this->writeJson(200, null, $res, '成功');
     }

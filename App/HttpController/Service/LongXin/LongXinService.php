@@ -175,6 +175,20 @@ class LongXinService extends ServiceBase
         return [];
     }
 
+    //超级搜索
+    function superSearch($postData)
+    {
+        $arr = [
+            'usercode' => $this->usercode
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())->send($this->baseUrl . 'api/super_search/', $arr, $this->sendHeaders);
+
+        return $res;
+    }
+
     //近n年的财务数据
     function getFinanceData($postData, $toRange = true)
     {
