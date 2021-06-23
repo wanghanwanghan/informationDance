@@ -37,6 +37,7 @@ class ChargeService extends ServiceBase
         50 => ['name' => '风险监控', 'desc' => '', 'basePrice' => 50],
         51 => ['name' => '财务资产', 'desc' => 'lx', 'basePrice' => 35],
         52 => ['name' => '二次特征', 'desc' => '', 'basePrice' => 50],
+        53 => ['name' => '超级搜索', 'desc' => '', 'basePrice' => 10],
 
         210 => ['name' => '极简报告', 'desc' => '', 'basePrice' => 80],
         211 => ['name' => '极简报告定制', 'desc' => '', 'basePrice' => 80],
@@ -243,7 +244,7 @@ class ChargeService extends ServiceBase
             try {
                 $num = Charge::create()
                     ->where('phone', $phone)
-                    ->where('moduleId', 51)
+                    ->where('moduleId', $moduleNum)
                     ->group('entName')
                     ->all();
                 empty($num) ? $num = 0 : $num = count(obj2Arr($num));

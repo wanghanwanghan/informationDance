@@ -13,6 +13,8 @@ use wanghanwanghan\someUtils\control;
 
 class LongXinController extends LongXinBase
 {
+    public $moduleNum;
+
     function onRequest(?string $action): ?bool
     {
         return parent::onRequest($action);
@@ -28,12 +30,17 @@ class LongXinController extends LongXinBase
     {
         $res['Paging'] = null;
 
+        if (isset($res['total'])) {
+            $res['Paging']['total'] = $res['total'] - 0;
+        }
+
         if (isset($res['coHttpErr'])) return $this->writeJson(500, $res['Paging'], [], 'co请求错误');
 
         $res['Result'] = $res['data'];
-        $res['Message'] = $res['msg'];
+        $res['Message'] = $res['msg'] ?? '';
 
-        $charge = ChargeService::getInstance()->LongXin($this->request(), 51);
+        //这个51要改
+        $charge = ChargeService::getInstance()->LongXin($this->request(), $this->moduleNum);
 
         if ($charge['code'] != 200) {
             return $this->writeJson((int)$charge['code'], null, null, $charge['msg'], false);
@@ -52,6 +59,8 @@ class LongXinController extends LongXinBase
         $code = $this->request()->getRequestParam('code') ?? '';
         $beginYear = $this->request()->getRequestParam('year') ?? '';
         $dataCount = $this->request()->getRequestParam('dataCount') ?? '';
+
+        $this->moduleNum = 51;
 
         $postData = [
             'entName' => $entName,
@@ -110,6 +119,8 @@ class LongXinController extends LongXinBase
         $beginYear = $this->request()->getRequestParam('year') ?? '';
         $dataCount = $this->request()->getRequestParam('dataCount') ?? '';
 
+        $this->moduleNum = 51;
+
         $return = [];
 
         for ($i = 0; $i < count($entName); $i++) {
@@ -162,6 +173,8 @@ class LongXinController extends LongXinBase
         $code = $this->request()->getRequestParam('code') ?? '';
         $beginYear = $this->request()->getRequestParam('year') ?? '';
         $dataCount = $this->request()->getRequestParam('dataCount') ?? '';
+
+        $this->moduleNum = 51;
 
         $postData = [
             'entName' => $entName,
@@ -230,6 +243,8 @@ class LongXinController extends LongXinBase
         $code = $this->request()->getRequestParam('code') ?? '';
         $beginYear = $this->request()->getRequestParam('year') ?? '';
         $dataCount = $this->request()->getRequestParam('dataCount') ?? '';
+
+        $this->moduleNum = 51;
 
         $return = [];
 
@@ -314,6 +329,8 @@ class LongXinController extends LongXinBase
         $getLookCount = $this->request()->getRequestParam('getLookCount') ?? '';
         $mergeData = $this->request()->getRequestParam('mergeData') ?? 0;
         $mergeData = $mergeData - 0;
+
+        $this->moduleNum = 51;
 
         if (!empty($getLookCount)) {
             //只返回一个免费次数
@@ -682,5 +699,59 @@ class LongXinController extends LongXinBase
         }
 
         return $this->writeJson(200, null, $ready, '成功', true, $temp);
+    }
+
+    //超级搜索
+    function superSearch()
+    {
+        $basic_entname = $this->request()->getRequestParam('basic_entname') ?? '';
+        if (!empty(trim($basic_entname))) {
+            $postData['basic_entname'] = "any:{$basic_entname}";
+        }
+
+        $basic_person_name = $this->request()->getRequestParam('basic_person_name') ?? '';
+        if (!empty(trim($basic_person_name))) {
+            $postData['basic_person_name'] = "any:{$basic_person_name}";
+        }
+
+        $basic_dom = $this->request()->getRequestParam('basic_dom') ?? '';
+        if (!empty(trim($basic_dom))) {
+            $postData['basic_dom'] = "any:{$basic_dom}";
+        }
+
+        $basic_regcap = $this->request()->getRequestParam('basic_regcap') ?? '';
+        if (!empty(trim($basic_regcap))) {
+            $postData['basic_regcap'] = "{$basic_regcap}￥999999999";
+        }
+
+        $basic_nicid = $this->request()->getRequestParam('basic_nicid') ?? '';
+        if (!empty(trim($basic_nicid))) {
+            $postData['basic_nicid'] = "{$basic_nicid}￥999999999";
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        $phone = $this->request()->getRequestParam('phone') ?? '';
+        $code = $this->request()->getRequestParam('code') ?? '';
+        $beginYear = $this->request()->getRequestParam('year') ?? '';
+        $dataCount = $this->request()->getRequestParam('dataCount') ?? '';
+
+        $this->moduleNum = 53;
+
+        $postData = [];
+
+        $res = (new LongXinService())->superSearch($postData);
+
+        return $this->checkResponse($res);
     }
 }

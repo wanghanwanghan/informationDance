@@ -129,10 +129,14 @@ class LongXinService extends ServiceBase
     {
         $res['Paging'] = null;
 
+        if (isset($res['total'])) {
+            $res['Paging']['total'] = $res['total'] - 0;
+        }
+
         if (isset($res['coHttpErr'])) return $this->createReturn(500, $res['Paging'], [], 'co请求错误');
 
         $res['Result'] = $res['data'];
-        $res['Message'] = $res['msg'];
+        $res['Message'] = $res['msg'] ?? '';
 
         return $this->createReturn((int)$res['code'], $res['Paging'], $res['Result'], $res['Message']);
     }
@@ -182,11 +186,13 @@ class LongXinService extends ServiceBase
             'usercode' => $this->usercode
         ];
 
+        $arr = array_merge($arr, $postData);
+
         $this->sendHeaders['authorization'] = $this->createToken($arr);
 
         $res = (new CoHttpClient())->send($this->baseUrl . 'api/super_search/', $arr, $this->sendHeaders);
 
-        return $res;
+        return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
 
     //近n年的财务数据

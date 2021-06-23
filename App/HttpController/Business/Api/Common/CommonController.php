@@ -202,11 +202,7 @@ class CommonController extends CommonBase
 
         if (strlen($address) > 84) return null;
 
-        // $res = BaiDuService::getInstance()->addressToLatLng($address);
-
-        $res = (new LongXinService())->superSearch([]);
-
-        CommonService::getInstance()->log4PHP($res);
+        $res = BaiDuService::getInstance()->addressToLatLng($address);
 
         return $this->writeJson(200, null, $res, '成功');
     }
