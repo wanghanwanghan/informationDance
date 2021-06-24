@@ -60,13 +60,11 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $code = $this->code;
 
         //取20个月的进项
-        for ($i=5;$i<=20;$i+=5)
-        {
+        for ($i = 5; $i <= 20; $i += 5) {
             $startDate = Carbon::now()->subMonths($i)->format('Y-m-d');
-            $endDate = Carbon::now()->subMonths($i-5)->format('Y-m-d');
+            $endDate = Carbon::now()->subMonths($i - 5)->format('Y-m-d');
 
-            for ($page=1;$page<=10000;$page++)
-            {
+            for ($page = 1; $page <= 10000; $page++) {
                 $res = (new GuoPiaoService())
                     ->setCheckRespFlag(true)
                     ->getInOrOutDetailByCert($code, 1, $startDate, $endDate, $page, 200);
@@ -74,19 +72,16 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 if ($res['code'] !== 200 || empty($res['result'])) break;
 
                 //数据入库
-                foreach ($res['result'] as $oneInvoice)
-                {
-                    try
-                    {
-                        $info = InvoiceIn::create()->where('invoiceCode',$oneInvoice['invoiceCode'])
-                            ->where('invoiceNumber',$oneInvoice['invoiceNumber'])->get();
+                foreach ($res['result'] as $oneInvoice) {
+                    try {
+                        $info = InvoiceIn::create()->where('invoiceCode', $oneInvoice['invoiceCode'])
+                            ->where('invoiceNumber', $oneInvoice['invoiceNumber'])->get();
 
                         if (!empty($info)) continue;
 
                         InvoiceIn::create()->data($oneInvoice)->save();
 
-                    }catch (\Throwable $e)
-                    {
+                    } catch (\Throwable $e) {
                         CommonService::getInstance()->log4PHP($e->getMessage());
                     }
                 }
@@ -94,13 +89,11 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
 
         //取20个月的销项
-        for ($i=5;$i<=20;$i+=5)
-        {
+        for ($i = 5; $i <= 20; $i += 5) {
             $startDate = Carbon::now()->subMonths($i)->format('Y-m-d');
-            $endDate = Carbon::now()->subMonths($i-5)->format('Y-m-d');
+            $endDate = Carbon::now()->subMonths($i - 5)->format('Y-m-d');
 
-            for ($page=1;$page<=10000;$page++)
-            {
+            for ($page = 1; $page <= 10000; $page++) {
                 $res = (new GuoPiaoService())
                     ->setCheckRespFlag(true)
                     ->getInOrOutDetailByCert($code, 2, $startDate, $endDate, $page, 200);
@@ -108,36 +101,33 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 if ($res['code'] !== 200 || empty($res['result'])) break;
 
                 //数据入库
-                foreach ($res['result'] as $oneInvoice)
-                {
-                    try
-                    {
-                        $info = InvoiceOut::create()->where('invoiceCode',$oneInvoice['invoiceCode'])
-                            ->where('invoiceNumber',$oneInvoice['invoiceNumber'])->get();
+                foreach ($res['result'] as $oneInvoice) {
+                    try {
+                        $info = InvoiceOut::create()->where('invoiceCode', $oneInvoice['invoiceCode'])
+                            ->where('invoiceNumber', $oneInvoice['invoiceNumber'])->get();
 
                         if (!empty($info)) continue;
 
                         InvoiceOut::create()->data($oneInvoice)->save();
 
-                    }catch (\Throwable $e)
-                    {
+                    } catch (\Throwable $e) {
                         CommonService::getInstance()->log4PHP($e->getMessage());
                     }
                 }
             }
         }
 
-        $in = InvoiceIn::create()->where('purchaserTaxNo',$this->code)->all();
+        $in = InvoiceIn::create()->where('purchaserTaxNo', $this->code)->all();
         $this->inDetail = obj2Arr($in);
-        $out = InvoiceOut::create()->where('salesTaxNo',$this->code)->all();
+        $out = InvoiceOut::create()->where('salesTaxNo', $this->code)->all();
         $this->outDetail = obj2Arr($out);
     }
 
     private function getReceiptDataTest()
     {
-        $in = InvoiceIn::create()->where('purchaserTaxNo',$this->code)->all();
+        $in = InvoiceIn::create()->where('purchaserTaxNo', $this->code)->all();
         $this->inDetail = obj2Arr($in);
-        $out = InvoiceOut::create()->where('salesTaxNo',$this->code)->all();
+        $out = InvoiceOut::create()->where('salesTaxNo', $this->code)->all();
         $this->outDetail = obj2Arr($out);
     }
 
@@ -145,10 +135,9 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     {
         $tmp = new TemplateProcessor(REPORT_MODEL_PATH . 'DeepReportModel_1.docx');
 
-        $userInfo = User::create()->where('phone',$this->phone)->get();
+        $userInfo = User::create()->where('phone', $this->phone)->get();
 
-        switch ($this->type)
-        {
+        switch ($this->type) {
             case 'xd':
                 $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'xd_logo.png', 'width' => 200, 'height' => 40]);
                 $tmp->setValue('selectMore', '如需更多信息登录 信动智调 查看');
@@ -166,7 +155,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         $tmp->setValue('entName', $this->entName);
 
-        $tmp->setValue('reportNum', substr($this->reportNum,0,14));
+        $tmp->setValue('reportNum', substr($this->reportNum, 0, 14));
 
         $tmp->setValue('time', Carbon::now()->format('Y年m月d日'));
 
@@ -176,113 +165,113 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $this->getReceiptDataTest();
 
         //发票
-        $invoiceObj = (new Invoice($this->inDetail,$this->outDetail));
+        $invoiceObj = (new Invoice($this->inDetail, $this->outDetail));
 
         //5.2主营商品分析
-        $zyspfx=$invoiceObj->zyspfx();
-        $reportVal['re_fpxx']['zyspfx']=$zyspfx;
+        $zyspfx = $invoiceObj->zyspfx();
+        $reportVal['re_fpxx']['zyspfx'] = $zyspfx;
 
         //5.4主要成本分析
-        $zycbfx=$invoiceObj->zycbfx();
-        $reportVal['re_fpjx']['zycbfx']=$zycbfx;
+        $zycbfx = $invoiceObj->zycbfx();
+        $reportVal['re_fpjx']['zycbfx'] = $zycbfx;
         //各种费用在统计周期内合并
-        $reportVal['re_fpjx']['zycbfx_new']=$invoiceObj->zycbfx_new($zycbfx[1]);
+        $reportVal['re_fpjx']['zycbfx_new'] = $invoiceObj->zycbfx_new($zycbfx[1]);
 
         //6.1企业开票情况汇总
-        $qykpqkhz=$invoiceObj->qykpqkhz();
-        $reportVal['re_fpxx']['qykpqkhz']=$qykpqkhz;
+        $qykpqkhz = $invoiceObj->qykpqkhz();
+        $reportVal['re_fpxx']['qykpqkhz'] = $qykpqkhz;
         //统计周期从这里拿
-        $reportVal['commonData']['zhouqi'] = $qykpqkhz['zhouqi']['min'].' - '.$qykpqkhz['zhouqi']['max'];
+        $reportVal['commonData']['zhouqi'] = $qykpqkhz['zhouqi']['min'] . ' - ' . $qykpqkhz['zhouqi']['max'];
 
         //6.2.1年度销项发票情况汇总
-        $ndxxfpqkhz=$invoiceObj->ndxxfpqkhz();
-        $reportVal['re_fpxx']['ndxxfpqkhz']=$ndxxfpqkhz;
+        $ndxxfpqkhz = $invoiceObj->ndxxfpqkhz();
+        $reportVal['re_fpxx']['ndxxfpqkhz'] = $ndxxfpqkhz;
 
         //6.2.2月度销项发票分析
-        $ydxxfpfx=$invoiceObj->ydxxfpfx();
-        $reportVal['re_fpxx']['ydxxfpfx']=$ydxxfpfx;
+        $ydxxfpfx = $invoiceObj->ydxxfpfx();
+        $reportVal['re_fpxx']['ydxxfpfx'] = $ydxxfpfx;
 
         //6.2.5单张开票金额TOP10记录
-        $dzkpjeTOP10jl_xx=$invoiceObj->dzkpjeTOP10jl_xx();
-        $reportVal['re_fpxx']['dzkpjeTOP10jl_xx']=$dzkpjeTOP10jl_xx;
-        empty($reportVal['re_fpxx']['dzkpjeTOP10jl_xx']) ?: $reportVal['re_fpxx']['dzkpjeTOP10jl_xx'] = control::sortArrByKey($reportVal['re_fpxx']['dzkpjeTOP10jl_xx'],'totalAmount',true);
+        $dzkpjeTOP10jl_xx = $invoiceObj->dzkpjeTOP10jl_xx();
+        $reportVal['re_fpxx']['dzkpjeTOP10jl_xx'] = $dzkpjeTOP10jl_xx;
+        empty($reportVal['re_fpxx']['dzkpjeTOP10jl_xx']) ?: $reportVal['re_fpxx']['dzkpjeTOP10jl_xx'] = control::sortArrByKey($reportVal['re_fpxx']['dzkpjeTOP10jl_xx'], 'totalAmount', true);
 
         //6.2.6累计开票金额TOP10企业汇总
-        $ljkpjeTOP10qyhz_xx=$invoiceObj->ljkpjeTOP10qyhz_xx();
-        $reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx']=$ljkpjeTOP10qyhz_xx;
-        empty($reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx']) ?: $reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'] = control::sortArrByKey($reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'],'total',true);
+        $ljkpjeTOP10qyhz_xx = $invoiceObj->ljkpjeTOP10qyhz_xx();
+        $reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'] = $ljkpjeTOP10qyhz_xx;
+        empty($reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx']) ?: $reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'] = control::sortArrByKey($reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'], 'total', true);
 
         //6.3.1下游客户稳定性分析
         //1，下游企业司龄分布
-        $xyqyslfb=$invoiceObj->xyqyslfb();
-        $reportVal['re_fpxx']['xyqyslfb']=$xyqyslfb;
+        $xyqyslfb = $invoiceObj->xyqyslfb();
+        $reportVal['re_fpxx']['xyqyslfb'] = $xyqyslfb;
         //2，下游企业合作年限分布
-        $xyqyhznxfb=$invoiceObj->xyqyhznxfb();
-        $reportVal['re_fpxx']['xyqyhznxfb']=$xyqyhznxfb;
+        $xyqyhznxfb = $invoiceObj->xyqyhznxfb();
+        $reportVal['re_fpxx']['xyqyhznxfb'] = $xyqyhznxfb;
         //3，下游企业更换情况
-        $xyqyghqk=$invoiceObj->xyqyghqk();
-        $reportVal['re_fpxx']['xyqyghqk']=$xyqyghqk;
+        $xyqyghqk = $invoiceObj->xyqyghqk();
+        $reportVal['re_fpxx']['xyqyghqk'] = $xyqyghqk;
 
         //6.3.2下游客户集中度
         //1，下游企业地域分布
-        $xyqydyfb=$invoiceObj->xyqydyfb();
-        $reportVal['re_fpxx']['xyqydyfb']=$xyqydyfb;
+        $xyqydyfb = $invoiceObj->xyqydyfb();
+        $reportVal['re_fpxx']['xyqydyfb'] = $xyqydyfb;
         //2，销售前十企业总占比
-        $xsqsqyzzb=$invoiceObj->xsqsqyzzb();
-        $reportVal['re_fpxx']['xsqsqyzzb']=$xsqsqyzzb;
+        $xsqsqyzzb = $invoiceObj->xsqsqyzzb();
+        $reportVal['re_fpxx']['xsqsqyzzb'] = $xsqsqyzzb;
 
         //6.3.3企业销售情况预测
-        $qyxsqkyc=$invoiceObj->qyxsqkyc();
-        $reportVal['re_fpxx']['qyxsqkyc']=$qyxsqkyc;
+        $qyxsqkyc = $invoiceObj->qyxsqkyc();
+        $reportVal['re_fpxx']['qyxsqkyc'] = $qyxsqkyc;
 
         //6.4.1年度进项发票情况汇总
-        $ndjxfpqkhz=$invoiceObj->ndjxfpqkhz();
-        $reportVal['re_fpjx']['ndjxfpqkhz']=$ndjxfpqkhz;
+        $ndjxfpqkhz = $invoiceObj->ndjxfpqkhz();
+        $reportVal['re_fpjx']['ndjxfpqkhz'] = $ndjxfpqkhz;
 
         //6.4.2月度进项发票分析
-        $ydjxfpfx=$invoiceObj->ydjxfpfx();
-        $reportVal['re_fpjx']['ydjxfpfx']=$ydjxfpfx;
+        $ydjxfpfx = $invoiceObj->ydjxfpfx();
+        $reportVal['re_fpjx']['ydjxfpfx'] = $ydjxfpfx;
 
         //6.4.3累计开票金额TOP10企业汇总
-        $ljkpjeTOP10qyhz_jx=$invoiceObj->ljkpjeTOP10qyhz_jx();
-        $reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx']=$ljkpjeTOP10qyhz_jx;
-        empty($reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx']) ?: $reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx'] = control::sortArrByKey($reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx'],'total',true);
+        $ljkpjeTOP10qyhz_jx = $invoiceObj->ljkpjeTOP10qyhz_jx();
+        $reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx'] = $ljkpjeTOP10qyhz_jx;
+        empty($reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx']) ?: $reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx'] = control::sortArrByKey($reportVal['re_fpjx']['ljkpjeTOP10qyhz_jx'], 'total', true);
 
         //6.4.4单张开票金额TOP10企业汇总
-        $dzkpjeTOP10jl_jx=$invoiceObj->dzkpjeTOP10jl_jx();
-        $reportVal['re_fpjx']['dzkpjeTOP10jl_jx']=$dzkpjeTOP10jl_jx;
-        empty($reportVal['re_fpjx']['dzkpjeTOP10jl_jx']) ?: $reportVal['re_fpjx']['dzkpjeTOP10jl_jx'] = control::sortArrByKey($reportVal['re_fpjx']['dzkpjeTOP10jl_jx'],'totalAmount',true);
+        $dzkpjeTOP10jl_jx = $invoiceObj->dzkpjeTOP10jl_jx();
+        $reportVal['re_fpjx']['dzkpjeTOP10jl_jx'] = $dzkpjeTOP10jl_jx;
+        empty($reportVal['re_fpjx']['dzkpjeTOP10jl_jx']) ?: $reportVal['re_fpjx']['dzkpjeTOP10jl_jx'] = control::sortArrByKey($reportVal['re_fpjx']['dzkpjeTOP10jl_jx'], 'totalAmount', true);
 
         //6.5.1上游共饮上稳定性分析
         //1，上游供应商司龄分布
-        $sygysslfb=$invoiceObj->sygysslfb();
-        $reportVal['re_fpjx']['sygysslfb']=$sygysslfb;
+        $sygysslfb = $invoiceObj->sygysslfb();
+        $reportVal['re_fpjx']['sygysslfb'] = $sygysslfb;
         //2，上游供应商合作年限分布
-        $sygyshznxfb=$invoiceObj->sygyshznxfb();
-        $reportVal['re_fpjx']['sygyshznxfb']=$sygyshznxfb;
+        $sygyshznxfb = $invoiceObj->sygyshznxfb();
+        $reportVal['re_fpjx']['sygyshznxfb'] = $sygyshznxfb;
         //3，上游供应商更换情况
-        $sygysghqk=$invoiceObj->sygysghqk();
-        $reportVal['re_fpjx']['sygysghqk']=$sygysghqk;
+        $sygysghqk = $invoiceObj->sygysghqk();
+        $reportVal['re_fpjx']['sygysghqk'] = $sygysghqk;
 
         //6.5.2上游供应商集中度分析
         //1，上游企业地域分布
-        $syqydyfb=$invoiceObj->syqydyfb();
-        $reportVal['re_fpjx']['syqydyfb']=$syqydyfb;
+        $syqydyfb = $invoiceObj->syqydyfb();
+        $reportVal['re_fpjx']['syqydyfb'] = $syqydyfb;
         //2，采购前十企业总占比
-        $cgqsqyzzb=$invoiceObj->cgqsqyzzb();
-        $reportVal['re_fpjx']['cgqsqyzzb']=$cgqsqyzzb;
+        $cgqsqyzzb = $invoiceObj->cgqsqyzzb();
+        $reportVal['re_fpjx']['cgqsqyzzb'] = $cgqsqyzzb;
 
         //6.5.3企业采购情况预测
-        $qycgqkyc=$invoiceObj->qycgqkyc();
-        $reportVal['re_fpjx']['qycgqkyc']=$qycgqkyc;
+        $qycgqkyc = $invoiceObj->qycgqkyc();
+        $reportVal['re_fpjx']['qycgqkyc'] = $qycgqkyc;
 
         //储存信动指数-发票项
-        $xdsForFaPiao=$invoiceObj->xdsForFaPiao();
-        $reportVal['re_fpjx']['xdsForFaPiao']=$xdsForFaPiao;
+        $xdsForFaPiao = $invoiceObj->xdsForFaPiao();
+        $reportVal['re_fpjx']['xdsForFaPiao'] = $xdsForFaPiao;
 
         //储存信动指数-上下游项
-        $xdsForShangxiayou=$invoiceObj->xdsForShangxiayou();
-        $reportVal['re_fpjx']['xdsForShangxiayou']=$xdsForShangxiayou;
+        $xdsForShangxiayou = $invoiceObj->xdsForShangxiayou();
+        $reportVal['re_fpjx']['xdsForShangxiayou'] = $xdsForShangxiayou;
 
         //数据填充
         $this->fillData($tmp, $reportVal);
@@ -317,24 +306,23 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         $tmp->saveAs(REPORT_PATH . $this->reportNum . '.docx');
 
-        $info = ReportInfo::create()->where('phone',$this->phone)->where('filename',$this->reportNum)->get();
+        $info = ReportInfo::create()->where('phone', $this->phone)->where('filename', $this->reportNum)->get();
 
-        $info->update(['status'=>2]);
+        $info->update(['status' => 2]);
 
-        $userEmail = User::create()->where('phone',$this->phone)->get();
+        $userEmail = User::create()->where('phone', $this->phone)->get();
 
-        CommonService::getInstance()->sendEmail($userEmail->email,[REPORT_PATH . $this->reportNum . '.docx'],'03',['entName'=>$this->entName]);
+        CommonService::getInstance()->sendEmail($userEmail->email, [REPORT_PATH . $this->reportNum . '.docx'], '03', ['entName' => $this->entName]);
 
-        ProcessService::getInstance()->sendToProcess('docx2doc',$this->reportNum);
+        ProcessService::getInstance()->sendToProcess('docx2doc', $this->reportNum);
 
         return true;
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
-        try
-        {
-            $info = ReportInfo::create()->where('phone',$this->phone)->where('filename',$this->reportNum)->get();
+        try {
+            $info = ReportInfo::create()->where('phone', $this->phone)->where('filename', $this->reportNum)->get();
 
             $file = $throwable->getFile();
             $line = $throwable->getLine();
@@ -342,10 +330,9 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
             $content = "[file => {$file}] [line => {$line}] [msg => {$msg}]";
 
-            $info->update(['status'=>1,'errInfo' => $content]);
+            $info->update(['status' => 1, 'errInfo' => $content]);
 
-        }catch (\Throwable $e)
-        {
+        } catch (\Throwable $e) {
 
         }
     }
@@ -353,184 +340,150 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     //下游稳定性
     private function xywdx($data)
     {
-        $siling=$data['下游司龄'];
-        $hezuo=$data['下游合作年限'];
+        $siling = $data['下游司龄'];
+        $hezuo = $data['下游合作年限'];
 
         //计算A
-        $type5=$siling['type5'] ?? 0;
-        $total=array_sum($siling);
-        if ($total == 0)
-        {
-            $A=0;
-        }else
-        {
-            $A=sprintf('%.1f',$type5/$total);
+        $type5 = $siling['type5'] ?? 0;
+        $total = array_sum($siling);
+        if ($total == 0) {
+            $A = 0;
+        } else {
+            $A = sprintf('%.1f', $type5 / $total);
 
-            if ($A >= 0.6)
-            {
-                $A=1;
-            }elseif ($A >= 0.4)
-            {
-                $A=0.9;
-            }else
-            {
-                $A=0.8;
+            if ($A >= 0.6) {
+                $A = 1;
+            } elseif ($A >= 0.4) {
+                $A = 0.9;
+            } else {
+                $A = 0.8;
             }
         }
 
         //计算B
-        if (isset($hezuo['type3']))
-        {
-            $type3=$hezuo['type3'];
-            $total=array_sum($hezuo);
-            if ($total == 0)
-            {
-                $B=0;
-            }else
-            {
-                $B=sprintf('%.1f',$type3/$total);
+        if (isset($hezuo['type3'])) {
+            $type3 = $hezuo['type3'];
+            $total = array_sum($hezuo);
+            if ($total == 0) {
+                $B = 0;
+            } else {
+                $B = sprintf('%.1f', $type3 / $total);
 
-                if ($B >= 0.6)
-                {
-                    $B=1;
-                }elseif ($B >= 0.4)
-                {
-                    $B=0.9;
-                }else
-                {
-                    $B=0.8;
+                if ($B >= 0.6) {
+                    $B = 1;
+                } elseif ($B >= 0.4) {
+                    $B = 0.9;
+                } else {
+                    $B = 0.8;
                 }
             }
-        }else
-        {
-            $B=0;
+        } else {
+            $B = 0;
         }
 
-        return [$A,$B];
+        return [$A, $B];
     }
 
     //下游集中度
     private function xyjzd($data)
     {
-        $dyfb=$data['下游地域分布'];
-        $xsqs=$data['下游销售前十'];
+        $dyfb = $data['下游地域分布'];
+        $xsqs = $data['下游销售前十'];
 
         //计算A
-        if (empty($dyfb))
-        {
-            $A=0;
-        }else
-        {
-            $dyfb=current($dyfb);
+        if (empty($dyfb)) {
+            $A = 0;
+        } else {
+            $dyfb = current($dyfb);
 
             //找出最大的数
-            $max=max($dyfb);
+            $max = max($dyfb);
 
-            $total=array_sum($dyfb);
+            $total = array_sum($dyfb);
 
-            $A=sprintf('%.1f',$max/$total);
+            $A = sprintf('%.1f', $max / $total);
 
-            if ($A >= 0.6)
-            {
-                $A=1;
-            }elseif ($A >= 0.4)
-            {
-                $A=0.9;
-            }else
-            {
-                $A=0.8;
+            if ($A >= 0.6) {
+                $A = 1;
+            } elseif ($A >= 0.4) {
+                $A = 0.9;
+            } else {
+                $A = 0.8;
             }
         }
 
         //计算B
-        if (empty($xsqs))
-        {
-            $B=0;
-        }else
-        {
-            $xsqs=current($xsqs);
+        if (empty($xsqs)) {
+            $B = 0;
+        } else {
+            $xsqs = current($xsqs);
 
-            $B=0;
-            foreach ($xsqs as $key => $one)
-            {
-                $B+=$one;
+            $B = 0;
+            foreach ($xsqs as $key => $one) {
+                $B += $one;
             }
 
-            if ($B >= 60)
-            {
-                $B=1;
-            }elseif ($B >= 40)
-            {
-                $B=0.9;
-            }else
-            {
-                $B=0.8;
+            if ($B >= 60) {
+                $B = 1;
+            } elseif ($B >= 40) {
+                $B = 0.9;
+            } else {
+                $B = 0.8;
             }
         }
 
-        return [$A,$B];
+        return [$A, $B];
     }
 
     //上游集中度
     private function syjzd($data)
     {
-        $dyfb=$data['上游地域分布'];
-        $xsqs=$data['上游销售前十'];
+        $dyfb = $data['上游地域分布'];
+        $xsqs = $data['上游销售前十'];
 
         //计算A
-        if (empty($dyfb))
-        {
-            $A=0;
-        }else
-        {
-            $dyfb=current($dyfb);
+        if (empty($dyfb)) {
+            $A = 0;
+        } else {
+            $dyfb = current($dyfb);
 
             //找出最大的数
-            $max=max($dyfb);
+            $max = max($dyfb);
 
-            $total=array_sum($dyfb);
+            $total = array_sum($dyfb);
 
-            $A=sprintf('%.1f',$max/$total);
+            $A = sprintf('%.1f', $max / $total);
 
-            if ($A >= 0.6)
-            {
-                $A=1;
-            }elseif ($A >= 0.4)
-            {
-                $A=0.9;
-            }else
-            {
-                $A=0.8;
+            if ($A >= 0.6) {
+                $A = 1;
+            } elseif ($A >= 0.4) {
+                $A = 0.9;
+            } else {
+                $A = 0.8;
             }
         }
 
         //计算B
-        if (empty($xsqs))
-        {
-            $B=0;
-        }else
-        {
-            $xsqs=current($xsqs);
+        if (empty($xsqs)) {
+            $B = 0;
+        } else {
+            $xsqs = current($xsqs);
 
-            $B=0;
-            foreach ($xsqs as $key => $one)
-            {
-                $B+=$one;
+            $B = 0;
+            foreach ($xsqs as $key => $one) {
+                $B += $one;
             }
 
-            if ($B >= 60)
-            {
-                $B=1;
-            }elseif ($B >= 40)
-            {
-                $B=0.9;
-            }else
-            {
-                $B=0.8;
+            if ($B >= 60) {
+                $B = 1;
+            } elseif ($B >= 40) {
+                $B = 0.9;
+            } else {
+                $B = 0.8;
             }
         }
 
-        return [$A,$B];
+        return [$A, $B];
     }
 
     //分数旁的一句话或几句话
@@ -542,19 +495,16 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //软件著作权
         $rz = (int)$data['SearchSoftwareCr']['total'];
 
-        if ($zl===0 && $rz<2) $this->fz_detail[] = '企业需进一步增强创新研发能力';
+        if ($zl === 0 && $rz < 2) $this->fz_detail[] = '企业需进一步增强创新研发能力';
 
         //龙信 财务
         if (empty($data['FinanceData'])) $this->fz_detail[] = '企业经营能力与核心竞争力方面需进一步提升';
-        if (!empty($data['FinanceData']) && mt_rand(0,100) > 80) $this->fx_detail[] = '企业需进一步加强在资产负债方面的管控意识';
+        if (!empty($data['FinanceData']) && mt_rand(0, 100) > 80) $this->fx_detail[] = '企业需进一步加强在资产负债方面的管控意识';
 
         //乾启 团队人数
-        foreach ($data['itemInfo'] as $oneYear)
-        {
-            if (isset($oneYear['yoy']) && !empty($oneYear['yoy']) && is_numeric($oneYear['yoy']))
-            {
-                if ($oneYear['yoy'] < 0.06)
-                {
+        foreach ($data['itemInfo'] as $oneYear) {
+            if (isset($oneYear['yoy']) && !empty($oneYear['yoy']) && is_numeric($oneYear['yoy'])) {
+                if ($oneYear['yoy'] < 0.06) {
                     $this->fz_detail[] = '企业团队人员管理方面需进一步加强';
                     break;
                 }
@@ -579,14 +529,12 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     //加入Ocr识别后的文字
     private function addOcrWords()
     {
-        try
-        {
-            $list = OcrQueue::create()->where('reportNum',$this->reportNum)->where('phone',$this->phone)->all();
+        try {
+            $list = OcrQueue::create()->where('reportNum', $this->reportNum)->where('phone', $this->phone)->all();
 
             $list = obj2Arr($list);
 
-        }catch (\Throwable $e)
-        {
+        } catch (\Throwable $e) {
 
         }
     }
@@ -594,21 +542,20 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     //月度销项发票数据
     private function ydxxfp($res)
     {
-        $data=$res;
+        $data = $res;
 
-        $xiaoxiang=$data['type1'];
+        $xiaoxiang = $data['type1'];
 
         //没有就给60分
         if (empty($xiaoxiang) || count($xiaoxiang) < 2) return 60;
 
-        $tmp=[];
+        $tmp = [];
 
-        foreach ($xiaoxiang as $year => $val)
-        {
-            array_push($tmp,array_sum($val));
+        foreach ($xiaoxiang as $year => $val) {
+            array_push($tmp, array_sum($val));
         }
 
-        $bi=sprintf('%.1f',($tmp[0] - $tmp[1]) / $tmp[1] * 100);
+        $bi = sprintf('%.1f', ($tmp[0] - $tmp[1]) / $tmp[1] * 100);
 
         if ($bi >= 21) return 100;
         if ($bi < 21 && $bi >= 11) return 90;
@@ -624,54 +571,48 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     //月度进项发票数据
     private function ydjxfp($res)
     {
-        $data=$res;
+        $data = $res;
 
-        $xiaoxiang=$data['type1'];
-        $jinxiang=$data['type2'];
+        $xiaoxiang = $data['type1'];
+        $jinxiang = $data['type2'];
 
         //没有就给60分
         if (empty($xiaoxiang) || empty($jinxiang)) return 60;
 
         //已进项发票为准，去匹配销项发票
-        foreach ($jinxiang as $year => $val)
-        {
+        foreach ($jinxiang as $year => $val) {
             //先取到最后一个月有数据的年和月
-            foreach ($val as $k => $v)
-            {
-                if (isset($yearMouthDay))
-                {
+            foreach ($val as $k => $v) {
+                if (isset($yearMouthDay)) {
                     continue;
                 }
 
-                if ($v > 0) $yearMouthDay=$year.'-'.$k.'-01';
+                if ($v > 0) $yearMouthDay = $year . '-' . $k . '-01';
             }
         }
 
         //往前12个月，计算数据
-        $jinxiangTotal=$xiaoxiangTotal=0;
-        for ($i=0;$i<12;$i++)
-        {
-            $format=Carbon::parse($yearMouthDay)->subMonths($i)->format('Y-m');
+        $jinxiangTotal = $xiaoxiangTotal = 0;
+        for ($i = 0; $i < 12; $i++) {
+            $format = Carbon::parse($yearMouthDay)->subMonths($i)->format('Y-m');
 
-            $year=explode('-',$format)[0];
-            $mouth=explode('-',$format)[1];
+            $year = explode('-', $format)[0];
+            $mouth = explode('-', $format)[1];
 
             //找进项
-            if (isset($jinxiang[$year][$mouth]))
-            {
-                $jinxiangTotal+=$jinxiang[$year][$mouth];
+            if (isset($jinxiang[$year][$mouth])) {
+                $jinxiangTotal += $jinxiang[$year][$mouth];
             }
 
             //找销项
-            if (isset($xiaoxiang[$year][$mouth]))
-            {
-                $xiaoxiangTotal+=$xiaoxiangTotal[$year][$mouth];
+            if (isset($xiaoxiang[$year][$mouth])) {
+                $xiaoxiangTotal += $xiaoxiangTotal[$year][$mouth];
             }
         }
 
-        if ($xiaoxiangTotal==0) return 60;
+        if ($xiaoxiangTotal == 0) return 60;
 
-        $bi=sprintf('%.1f',($xiaoxiangTotal - $jinxiangTotal) / $xiaoxiangTotal * 100);
+        $bi = sprintf('%.1f', ($xiaoxiangTotal - $jinxiangTotal) / $xiaoxiangTotal * 100);
 
         if ($bi >= 21) return 100;
         if ($bi < 21 && $bi >= 11) return 90;
@@ -688,11 +629,11 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     private function exprXDS($data)
     {
         //发票销项
-        $a=$this->ydxxfp($data['re_fpjx']['xdsForFaPiao']);
+        $a = $this->ydxxfp($data['re_fpjx']['xdsForFaPiao']);
         //发票进项
-        $b=$this->ydjxfp($data['re_fpjx']['xdsForFaPiao']);
+        $b = $this->ydjxfp($data['re_fpjx']['xdsForFaPiao']);
 
-        $this->fz['fapiao']=(0.6 * $a + 0.4 * $b) * 0.3;
+        $this->fz['fapiao'] = (0.6 * $a + 0.4 * $b) * 0.3;
 
         //企业性质
         $a = $this->qyxz($data['getRegisterInfo']);
@@ -1293,17 +1234,14 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
 
         $pieData = $labels = [];
-        foreach ($data['re_fpxx']['zyspfx'] as $one)
-        {
+        foreach ($data['re_fpxx']['zyspfx'] as $one) {
             $pieData[] = $one['jine'] - 0;
             $labels[] = "{$one['name']} (%.1f%%)";
         }
 
-        if (empty($pieData) || empty($labels))
-        {
-            $docObj->setValue('fpxx_zyspfx_img','');
-        }else
-        {
+        if (empty($pieData) || empty($labels)) {
+            $docObj->setValue('fpxx_zyspfx_img', '');
+        } else {
             $imgPath = (new NewGraphService())->setTitle('主营商品分析')->setLabels($labels)->pie($pieData);
 
             $docObj->setImageValue('fpxx_zyspfx_img', [
@@ -1330,26 +1268,21 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //如主营商品达到6种以上则触发该逻辑，则判断前2种占全部的占比，如占比超过90%，图表下方增加一句
         //“企业两种产品或服务占了总销售额的**%，主营产品或服务对企业的营业收⼊贡献度较⾼，需重点关注该产品或服务的市场竞品、定价策略、市场销售策略等潜在可能影响该产品或服务销售情况的因素”
 
-        if ($i > 5 && ($data['re_fpjx']['zycbfx'][0][0]['zhanbi'] + $data['re_fpjx']['zycbfx'][0][1]['zhanbi']) > 90)
-        {
-            $docObj->setValue('fpjx_zycbfx_sysSaid',"企业两种产品或服务占总销售额大于90%，主营产品或服务对企业的营业收⼊贡献度较⾼，需重点关注该产品或服务的市场竞品、定价策略、市场销售策略等潜在可能影响该产品或服务销售情况的因素");
-        }else
-        {
-            $docObj->setValue('fpjx_zycbfx_sysSaid','');
+        if ($i > 5 && ($data['re_fpjx']['zycbfx'][0][0]['zhanbi'] + $data['re_fpjx']['zycbfx'][0][1]['zhanbi']) > 90) {
+            $docObj->setValue('fpjx_zycbfx_sysSaid', "企业两种产品或服务占总销售额大于90%，主营产品或服务对企业的营业收⼊贡献度较⾼，需重点关注该产品或服务的市场竞品、定价策略、市场销售策略等潜在可能影响该产品或服务销售情况的因素");
+        } else {
+            $docObj->setValue('fpjx_zycbfx_sysSaid', '');
         }
 
         $pieData = $labels = [];
-        foreach ($data['re_fpjx']['zycbfx'][0] as $one)
-        {
+        foreach ($data['re_fpjx']['zycbfx'][0] as $one) {
             $pieData[] = $one['jine'] - 0;
             $labels[] = "{$one['name']}(%.1f%%)";
         }
 
-        if (empty($pieData) || empty($labels))
-        {
-            $docObj->setValue('fpjx_zycbfx_img','');
-        }else
-        {
+        if (empty($pieData) || empty($labels)) {
+            $docObj->setValue('fpjx_zycbfx_img', '');
+        } else {
             $imgPath = (new NewGraphService())->setTitle('主要成本分析')->setLabels($labels)->pie($pieData);
 
             $docObj->setImageValue('fpjx_zycbfx_img', [
@@ -1449,7 +1382,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('fpxx_qykpqkhz_zq', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //统计周期
-            $docObj->setValue('fpxx_qykpqkhz_zq#' . ($i + 1), $data['re_fpxx']['qykpqkhz']['zhouqi']['min'].' - '.$data['re_fpxx']['qykpqkhz']['zhouqi']['max']);
+            $docObj->setValue('fpxx_qykpqkhz_zq#' . ($i + 1), $data['re_fpxx']['qykpqkhz']['zhouqi']['min'] . ' - ' . $data['re_fpxx']['qykpqkhz']['zhouqi']['max']);
             //销项有效数
             $docObj->setValue('fpxx_qykpqkhz_xxs#' . ($i + 1), $data['re_fpxx']['qykpqkhz']['zhouqi']['xxNum']);
             //销项有效金额
@@ -1547,23 +1480,20 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
 
         $barData = $labels = $legends = [];
-        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val)
-        {
+        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val) {
             $barData[] = array_values($val['normal']);
-            $labels = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+            $labels = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
             $legends[] = $key;
         }
 
-        if (empty($barData) || empty($labels) || empty($legends))
-        {
-            $docObj->setValue('fpxx_ydxxfpfx_n_img','');
-        }else
-        {
+        if (empty($barData) || empty($labels) || empty($legends)) {
+            $docObj->setValue('fpxx_ydxxfpfx_n_img', '');
+        } else {
             $imgPath = (new NewGraphService())
                 ->setTitle('月度销项正常发票分析')
                 ->setXLabels($labels)
                 ->setLegends($legends)
-                ->setMargin([60,50,0,0])
+                ->setMargin([60, 50, 0, 0])
                 ->bar($barData);
 
             $docObj->setImageValue('fpxx_ydxxfpfx_n_img', [
@@ -1601,23 +1531,20 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
 
         $barData = $labels = $legends = [];
-        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val)
-        {
+        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val) {
             $barData[] = array_values($val['red']);
-            $labels = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+            $labels = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
             $legends[] = $key;
         }
 
-        if (empty($barData) || empty($labels) || empty($legends))
-        {
-            $docObj->setValue('fpxx_ydxxfpfx_r_img','');
-        }else
-        {
+        if (empty($barData) || empty($labels) || empty($legends)) {
+            $docObj->setValue('fpxx_ydxxfpfx_r_img', '');
+        } else {
             $imgPath = (new NewGraphService())
                 ->setTitle('月度销项红充发票分析')
                 ->setXLabels($labels)
                 ->setLegends($legends)
-                ->setMargin([60,50,0,0])
+                ->setMargin([60, 50, 0, 0])
                 ->bar($barData);
 
             $docObj->setImageValue('fpxx_ydxxfpfx_r_img', [
@@ -1655,23 +1582,20 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
 
         $barData = $labels = $legends = [];
-        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val)
-        {
+        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val) {
             $barData[] = array_values($val['cancel']);
-            $labels = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+            $labels = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
             $legends[] = $key;
         }
 
-        if (empty($barData) || empty($labels) || empty($legends))
-        {
-            $docObj->setValue('fpxx_ydxxfpfx_c_img','');
-        }else
-        {
+        if (empty($barData) || empty($labels) || empty($legends)) {
+            $docObj->setValue('fpxx_ydxxfpfx_c_img', '');
+        } else {
             $imgPath = (new NewGraphService())
                 ->setTitle('月度销项作废发票分析')
                 ->setXLabels($labels)
                 ->setLegends($legends)
-                ->setMargin([60,50,0,0])
+                ->setMargin([60, 50, 0, 0])
                 ->bar($barData);
 
             $docObj->setImageValue('fpxx_ydxxfpfx_c_img', [
@@ -1684,10 +1608,10 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //单张开票金额TOP10记录 销项
         $rows = count($data['re_fpxx']['dzkpjeTOP10jl_xx']);
         $docObj->cloneRow('fpxx_dzkpjeTOP10jl_xx_nf', $rows);
-        $data['re_fpxx']['dzkpjeTOP10jl_xx'] = control::sortArrByKey($data['re_fpxx']['dzkpjeTOP10jl_xx'],'totalAmount','desc',true);
+        $data['re_fpxx']['dzkpjeTOP10jl_xx'] = control::sortArrByKey($data['re_fpxx']['dzkpjeTOP10jl_xx'], 'totalAmount', 'desc', true);
         for ($i = 0; $i < $rows; $i++) {
             //开票年度
-            $docObj->setValue('fpxx_dzkpjeTOP10jl_xx_nf#' . ($i + 1), substr($data['re_fpxx']['dzkpjeTOP10jl_xx'][$i]['date'],0,4));
+            $docObj->setValue('fpxx_dzkpjeTOP10jl_xx_nf#' . ($i + 1), substr($data['re_fpxx']['dzkpjeTOP10jl_xx'][$i]['date'], 0, 4));
             //交易对手名称
             $docObj->setValue('fpxx_dzkpjeTOP10jl_xx_mc#' . ($i + 1), $data['re_fpxx']['dzkpjeTOP10jl_xx'][$i]['purchaserName']);
             //交易对手税号
@@ -1702,21 +1626,18 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         $pieData = $labels = [];
         $other = 100;
-        foreach ($data['re_fpxx']['dzkpjeTOP10jl_xx'] as $one)
-        {
+        foreach ($data['re_fpxx']['dzkpjeTOP10jl_xx'] as $one) {
             $other -= $one['zhanbi'] - 0;
             $pieData[] = $one['zhanbi'] - 0;
             $labels[] = "{$one['purchaserName']} (%.1f%%)";
         }
 
-        if (empty($pieData) || empty($labels))
-        {
-            $docObj->setValue('fpxx_dzkpjeTOP10jl_xx_img','');
-        }else
-        {
+        if (empty($pieData) || empty($labels)) {
+            $docObj->setValue('fpxx_dzkpjeTOP10jl_xx_img', '');
+        } else {
             if ($other > 0) {
-                array_push($pieData,$other);
-                array_push($labels,"其他 (%.1f%%)");
+                array_push($pieData, $other);
+                array_push($labels, "其他 (%.1f%%)");
             }
 
             $imgPath = (new NewGraphService())->setTitle('单张开票金额TOP10记录')->setLabels($labels)->pie($pieData);
@@ -1732,7 +1653,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $rows = count($data['re_fpxx']['ljkpjeTOP10qyhz_xx']);
         $docObj->cloneRow('fpxx_ljkpjeTOP10qyhz_xx_nf', $rows);
         $temp = array_values($data['re_fpxx']['ljkpjeTOP10qyhz_xx']);
-        $temp = control::sortArrByKey($temp,'total','desc',true);
+        $temp = control::sortArrByKey($temp, 'total', 'desc', true);
         for ($i = 0; $i < $rows; $i++) {
             //开票年度
             $docObj->setValue('fpxx_ljkpjeTOP10qyhz_xx_nf#' . ($i + 1), $temp[$i]['date']);
@@ -1752,21 +1673,18 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         $pieData = $labels = [];
         $other = 100;
-        foreach ($data['re_fpxx']['ljkpjeTOP10qyhz_xx'] as $one)
-        {
+        foreach ($data['re_fpxx']['ljkpjeTOP10qyhz_xx'] as $one) {
             $other -= $one['totalZhanbi'] - 0;
             $pieData[] = $one['totalZhanbi'] - 0;
             $labels[] = "{$one['name']} (%.1f%%)";
         }
 
-        if (empty($pieData) || empty($labels))
-        {
-            $docObj->setValue('fpxx_ljkpjeTOP10qyhz_xx_img','');
-        }else
-        {
+        if (empty($pieData) || empty($labels)) {
+            $docObj->setValue('fpxx_ljkpjeTOP10qyhz_xx_img', '');
+        } else {
             if ($other > 0) {
-                array_push($pieData,$other);
-                array_push($labels,"其他 (%.1f%%)");
+                array_push($pieData, $other);
+                array_push($labels, "其他 (%.1f%%)");
             }
 
             $imgPath = (new NewGraphService())->setTitle('累计开票金额TOP10企业汇总')->setLabels($labels)->pie($pieData);
@@ -1781,19 +1699,16 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //下游企业司龄分布（个）
         $barData = $labels = [];
         $barData = [array_values($data['re_fpxx']['xyqyslfb'])];
-        $labels = ['1年以下','2-3年','4-5年','6-9年','10年以上'];
+        $labels = ['1年以下', '2-3年', '4-5年', '6-9年', '10年以上'];
 
-        if (empty($barData) || empty($labels))
-        {
-            $docObj->setValue('fpxx_xyqyslfb_img','');
-        }else
-        {
-            if (!empty($data['re_fpxx']['xyqyslfb']))
-            {
+        if (empty($barData) || empty($labels)) {
+            $docObj->setValue('fpxx_xyqyslfb_img', '');
+        } else {
+            if (!empty($data['re_fpxx']['xyqyslfb'])) {
                 $imgPath = (new NewGraphService())
                     ->setTitle('下游企业司龄分布（个）')
                     ->setXLabels($labels)
-                    ->setMargin([60,50,0,40])
+                    ->setMargin([60, 50, 0, 40])
                     ->bar($barData);
 
                 $docObj->setImageValue('fpxx_xyqyslfb_img', [
@@ -1801,26 +1716,23 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                     'width' => 410,
                     'height' => 300
                 ]);
-            }else
-            {
-                $docObj->setValue('fpxx_xyqyslfb_img','');
+            } else {
+                $docObj->setValue('fpxx_xyqyslfb_img', '');
             }
         }
 
         //下游企业合作年限分布（个）
         $barData = $labels = [];
         $barData = [array_values($data['re_fpxx']['xyqyhznxfb'])];
-        $labels = ['1年','2年','3年以上'];
+        $labels = ['1年', '2年', '3年以上'];
 
-        if (empty($barData) || empty($labels))
-        {
-            $docObj->setValue('fpxx_xyqyhznxfb_img','');
-        }else
-        {
+        if (empty($barData) || empty($labels)) {
+            $docObj->setValue('fpxx_xyqyhznxfb_img', '');
+        } else {
             $imgPath = (new NewGraphService())
                 ->setTitle('下游企业合作年限分布（个）')
                 ->setXLabels($labels)
-                ->setMargin([60,50,0,40])
+                ->setMargin([60, 50, 0, 40])
                 ->bar($barData);
 
             $docObj->setImageValue('fpxx_xyqyhznxfb_img', [
@@ -1833,23 +1745,20 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //下游企业更换情况（个）
         $barData = $labels = $legends = [];
 
-        foreach ($data['re_fpxx']['xyqyghqk'] as $key => $val)
-        {
-            $labels = ['新增','退出'];
+        foreach ($data['re_fpxx']['xyqyghqk'] as $key => $val) {
+            $labels = ['新增', '退出'];
             $barData[] = $val;
             $legends[] = $key;
         }
 
-        if (empty($barData) || empty($legends))
-        {
-            $docObj->setValue('fpxx_xyqyghqk_img','');
-        }else
-        {
+        if (empty($barData) || empty($legends)) {
+            $docObj->setValue('fpxx_xyqyghqk_img', '');
+        } else {
             $imgPath = (new NewGraphService())
                 ->setTitle('下游企业更换情况（个）')
                 ->setXLabels($labels)
                 ->setLegends($legends)
-                ->setMargin([60,50,0,40])
+                ->setMargin([60, 50, 0, 40])
                 ->bar($barData);
 
             $docObj->setImageValue('fpxx_xyqyghqk_img', [
@@ -1862,31 +1771,27 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //下游企业稳定性评估  稳定性指数
         $xywdx = $this->xywdx($data['re_fpjx']['xdsForShangxiayou']);
         $xywdx = 0.35 * $xywdx[0] + 0.65 * $xywdx[1] + 0.2 > 1 ? 1 : 0.35 * $xywdx[0] + 0.65 * $xywdx[1] + 0.2;
-        $docObj->setValue('xywdx',sprintf('%.1f',$xywdx));
+        $docObj->setValue('xywdx', sprintf('%.1f', $xywdx));
 
         //下游企业地域分布（个）
         $barData = $labels = $legends = [];
 
-        foreach ($data['re_fpxx']['xyqydyfb'] as $key => $val)
-        {
+        foreach ($data['re_fpxx']['xyqydyfb'] as $key => $val) {
             $labels = array_keys($val);
             $barData[] = array_values($val);
             $legends[] = $key;
         }
 
-        if (empty($barData) || empty($legends) || empty($labels))
-        {
-            $docObj->setValue('fpxx_xyqydyfb_img','');
-        }else
-        {
-            if (!empty($data['re_fpxx']['xyqydyfb']))
-            {
+        if (empty($barData) || empty($legends) || empty($labels)) {
+            $docObj->setValue('fpxx_xyqydyfb_img', '');
+        } else {
+            if (!empty($data['re_fpxx']['xyqydyfb'])) {
                 $imgPath = (new NewGraphService())
                     ->setTitle('下游企业地域分布（个）')
                     ->setXLabels($labels)
                     ->setXLabelAngle(15)
                     ->setLegends($legends)
-                    ->setMargin([60,50,0,40])
+                    ->setMargin([60, 50, 0, 40])
                     ->bar($barData);
 
                 $docObj->setImageValue('fpxx_xyqydyfb_img', [
@@ -1894,17 +1799,15 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                     'width' => 410,
                     'height' => 300
                 ]);
-            }else
-            {
-                $docObj->setValue('fpxx_xyqydyfb_img','');
+            } else {
+                $docObj->setValue('fpxx_xyqydyfb_img', '');
             }
         }
 
         //销售前十企业总占比（%）
         $temp = [];
 
-        foreach ($data['re_fpxx']['xsqsqyzzb'] as $key => $val)
-        {
+        foreach ($data['re_fpxx']['xsqsqyzzb'] as $key => $val) {
             $barData = $labels = $legends = [];
             $labels = array_keys($val);
             $barData[] = array_values($val);
@@ -1915,55 +1818,47 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 ->setXLabels($labels)
                 ->setXLabelAngle(15)
                 ->setLegends($legends)
-                ->setMargin([130,50,0,40])
+                ->setMargin([130, 50, 0, 40])
                 ->bar($barData);
         }
 
-        if (!empty($temp))
-        {
-            for ($i=1;$i<=3;$i++)
-            {
-                if (isset($temp[$i-1]))
-                {
+        if (!empty($temp)) {
+            for ($i = 1; $i <= 3; $i++) {
+                if (isset($temp[$i - 1])) {
                     $docObj->setImageValue("fpxx_xsqsqyzzb_img{$i}", [
-                        'path' => $temp[$i-1],
+                        'path' => $temp[$i - 1],
                         'width' => 410,
                         'height' => 300
                     ]);
-                }else
-                {
-                    $docObj->setValue("fpxx_xsqsqyzzb_img{$i}",'');
+                } else {
+                    $docObj->setValue("fpxx_xsqsqyzzb_img{$i}", '');
                 }
             }
-        }else
-        {
-            $docObj->setValue('fpxx_xsqsqyzzb_img1','');
-            $docObj->setValue('fpxx_xsqsqyzzb_img2','');
-            $docObj->setValue('fpxx_xsqsqyzzb_img3','');
+        } else {
+            $docObj->setValue('fpxx_xsqsqyzzb_img1', '');
+            $docObj->setValue('fpxx_xsqsqyzzb_img2', '');
+            $docObj->setValue('fpxx_xsqsqyzzb_img3', '');
         }
 
         //下游集中度情况评估  集中度指数
         $xyjzd = $this->xyjzd($data['re_fpjx']['xdsForShangxiayou']);
         $xyjzd = 0.35 * $xyjzd[0] + 0.65 * $xyjzd[1] + 0.2 > 1 ? 1 : 0.35 * $xyjzd[0] + 0.65 * $xyjzd[1] + 0.2;
-        $docObj->setValue('xyjzd',sprintf('%.1f',$xyjzd));
+        $docObj->setValue('xyjzd', sprintf('%.1f', $xyjzd));
 
         //企业销售情况分布（万元）
         $lineData = $legends = [];
-        foreach ($data['re_fpxx']['qyxsqkyc'] as $key => $val)
-        {
+        foreach ($data['re_fpxx']['qyxsqkyc'] as $key => $val) {
             $lineData[] = array_values($val);
             $legends[] = $key;
         }
 
-        if (empty($lineData) || empty($legends))
-        {
-            $docObj->setValue('fpxx_qyxsqkyc_img','');
-        }else
-        {
+        if (empty($lineData) || empty($legends)) {
+            $docObj->setValue('fpxx_qyxsqkyc_img', '');
+        } else {
             $imgPath = (new NewGraphService())
                 ->setTitle('企业销售情况分布')
                 ->setLegends($legends)
-                ->setXLabels(['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'])
+                ->setXLabels(['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'])
                 ->line($lineData);
 
             $docObj->setImageValue('fpxx_qyxsqkyc_img', [
@@ -1979,7 +1874,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $docObj->cloneRow('fpjx_ndjxfpqkhz_zq', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //统计年份
-            $docObj->setValue('fpjx_ndjxfpqkhz_zq#' . ($i + 1), $data['re_fpjx']['ndjxfpqkhz']['min'].' - '.$data['re_fpjx']['ndjxfpqkhz']['max']);
+            $docObj->setValue('fpjx_ndjxfpqkhz_zq#' . ($i + 1), $data['re_fpjx']['ndjxfpqkhz']['min'] . ' - ' . $data['re_fpjx']['ndjxfpqkhz']['max']);
             //销项有效数
             $docObj->setValue('fpjx_ndjxfpqkhz_num#' . ($i + 1), $data['re_fpjx']['ndjxfpqkhz']['normalNum']);
             //销项有效金额
@@ -2014,23 +1909,20 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
 
         $barData = $labels = $legends = [];
-        foreach ($data['re_fpjx']['ydjxfpfx'] as $key => $val)
-        {
-            $labels = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+        foreach ($data['re_fpjx']['ydjxfpfx'] as $key => $val) {
+            $labels = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
             $barData[] = array_values($val);
             $legends[] = $key;
         }
 
-        if (empty($barData) || empty($legends))
-        {
-            $docObj->setValue('fpjx_ydjxfpfx_img','');
-        }else
-        {
+        if (empty($barData) || empty($legends)) {
+            $docObj->setValue('fpjx_ydjxfpfx_img', '');
+        } else {
             $imgPath = (new NewGraphService())
                 ->setTitle('月度进项发票分析')
                 ->setXLabels($labels)
                 ->setLegends($legends)
-                ->setMargin([60,0,0,0])
+                ->setMargin([60, 0, 0, 0])
                 ->bar($barData);
 
             $docObj->setImageValue('fpjx_ydjxfpfx_img', [
@@ -2043,7 +1935,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //单张开票金额TOP10企业汇总 进项
         $rows = count($data['re_fpjx']['dzkpjeTOP10jl_jx']);
         $docObj->cloneRow('fpjx_dzkpjeTOP10jl_jx_nf', $rows);
-        $data['re_fpjx']['dzkpjeTOP10jl_jx'] = control::sortArrByKey($data['re_fpjx']['dzkpjeTOP10jl_jx'],'totalAmount','desc',true);
+        $data['re_fpjx']['dzkpjeTOP10jl_jx'] = control::sortArrByKey($data['re_fpjx']['dzkpjeTOP10jl_jx'], 'totalAmount', 'desc', true);
         for ($i = 0; $i < $rows; $i++) {
             //开票年度
             $docObj->setValue('fpjx_dzkpjeTOP10jl_jx_nf#' . ($i + 1), $data['re_fpjx']['dzkpjeTOP10jl_jx'][$i]['date']);
@@ -2061,21 +1953,18 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         $pieData = $labels = [];
         $other = 100;
-        foreach ($data['re_fpjx']['dzkpjeTOP10jl_jx'] as $one)
-        {
+        foreach ($data['re_fpjx']['dzkpjeTOP10jl_jx'] as $one) {
             $other -= $one['zhanbi'] - 0;
             $pieData[] = $one['zhanbi'] - 0;
             $labels[] = "{$one['salesTaxName']} (%.1f%%)";
         }
 
-        if (empty($pieData) || empty($labels))
-        {
-            $docObj->setValue('fpjx_dzkpjeTOP10jl_jx_img','');
-        }else
-        {
+        if (empty($pieData) || empty($labels)) {
+            $docObj->setValue('fpjx_dzkpjeTOP10jl_jx_img', '');
+        } else {
             if ($other > 0) {
-                array_push($pieData,$other);
-                array_push($labels,"其他 (%.1f%%)");
+                array_push($pieData, $other);
+                array_push($labels, "其他 (%.1f%%)");
             }
 
             $imgPath = (new NewGraphService())->setTitle('单张开票金额TOP10企业汇总')->setLabels($labels)->pie($pieData);
@@ -2091,7 +1980,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $rows = count($data['re_fpjx']['ljkpjeTOP10qyhz_jx']);
         $docObj->cloneRow('fpjx_ljkpjeTOP10qyhz_jx_nf', $rows);
         $data['re_fpjx']['ljkpjeTOP10qyhz_jx'] = array_values($data['re_fpjx']['ljkpjeTOP10qyhz_jx']);
-        $data['re_fpjx']['ljkpjeTOP10qyhz_jx'] = control::sortArrByKey($data['re_fpjx']['ljkpjeTOP10qyhz_jx'],'total','desc',true);
+        $data['re_fpjx']['ljkpjeTOP10qyhz_jx'] = control::sortArrByKey($data['re_fpjx']['ljkpjeTOP10qyhz_jx'], 'total', 'desc', true);
         for ($i = 0; $i < $rows; $i++) {
             $temp = array_values($data['re_fpjx']['ljkpjeTOP10qyhz_jx']);
             //开票年度
@@ -2112,21 +2001,18 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         $pieData = $labels = [];
         $other = 100;
-        foreach ($data['re_fpjx']['ljkpjeTOP10qyhz_jx'] as $one)
-        {
+        foreach ($data['re_fpjx']['ljkpjeTOP10qyhz_jx'] as $one) {
             $other -= $one['totalZhanbi'] - 0;
             $pieData[] = $one['totalZhanbi'] - 0;
             $labels[] = "{$one['name']} (%.1f%%)";
         }
 
-        if (empty($pieData) || empty($labels))
-        {
-            $docObj->setValue('fpjx_ljkpjeTOP10qyhz_jx_img','');
-        }else
-        {
+        if (empty($pieData) || empty($labels)) {
+            $docObj->setValue('fpjx_ljkpjeTOP10qyhz_jx_img', '');
+        } else {
             if ($other > 0) {
-                array_push($pieData,$other);
-                array_push($labels,"其他 (%.1f%%)");
+                array_push($pieData, $other);
+                array_push($labels, "其他 (%.1f%%)");
             }
 
             $imgPath = (new NewGraphService())->setTitle('累计开票金额TOP10企业汇总')->setLabels($labels)->pie($pieData);
@@ -2141,17 +2027,15 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //上游供应商司龄分布（个）
         $barData = $labels = [];
         $barData = [array_values($data['re_fpjx']['sygysslfb'])];
-        $labels = ['1年以下','2-3年','4-5年','6-9年','10年以上'];
+        $labels = ['1年以下', '2-3年', '4-5年', '6-9年', '10年以上'];
 
-        if (empty($barData) || empty($labels))
-        {
-            $docObj->setValue('fpjx_sygysslfb_img','');
-        }else
-        {
+        if (empty($barData) || empty($labels)) {
+            $docObj->setValue('fpjx_sygysslfb_img', '');
+        } else {
             $imgPath = (new NewGraphService())
                 ->setTitle('上游供应商司龄分布（个）')
                 ->setXLabels($labels)
-                ->setMargin([60,50,0,40])
+                ->setMargin([60, 50, 0, 40])
                 ->bar($barData);
 
             $docObj->setImageValue('fpjx_sygysslfb_img', [
@@ -2163,24 +2047,21 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         //上游供应商地域分布（个）
         $barData = $labels = $legends = [];
-        foreach ($data['re_fpjx']['syqydyfb'] as $key => $val)
-        {
+        foreach ($data['re_fpjx']['syqydyfb'] as $key => $val) {
             $labels = array_keys($val);
             $barData[] = array_values($val);
             $legends[] = $key;
         }
 
-        if (empty($barData) || empty($labels))
-        {
-            $docObj->setValue('fpjx_syqydyfb_img','');
-        }else
-        {
+        if (empty($barData) || empty($labels)) {
+            $docObj->setValue('fpjx_syqydyfb_img', '');
+        } else {
             $imgPath = (new NewGraphService())
                 ->setTitle('上游供应商地域分布（个）')
                 ->setXLabels($labels)
                 ->setLegends($legends)
                 ->setXLabelAngle(15)
-                ->setMargin([60,50,0,40])
+                ->setMargin([60, 50, 0, 40])
                 ->bar($barData);
 
             $docObj->setImageValue('fpjx_syqydyfb_img', [
@@ -2192,8 +2073,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         //采购前十供应商总占比（%）
         $temp = [];
-        foreach ($data['re_fpjx']['cgqsqyzzb'] as $key => $val)
-        {
+        foreach ($data['re_fpjx']['cgqsqyzzb'] as $key => $val) {
             $barData = $labels = $legends = [];
             $labels = array_keys($val);
             $barData[] = array_values($val);
@@ -2204,37 +2084,32 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 ->setXLabels($labels)
                 ->setXLabelAngle(15)
                 ->setLegends($legends)
-                ->setMargin([130,50,0,40])
+                ->setMargin([130, 50, 0, 40])
                 ->bar($barData);
         }
 
-        if (!empty($temp))
-        {
-            for ($i=1;$i<=3;$i++)
-            {
-                if (isset($temp[$i-1]))
-                {
+        if (!empty($temp)) {
+            for ($i = 1; $i <= 3; $i++) {
+                if (isset($temp[$i - 1])) {
                     $docObj->setImageValue("fpjx_cgqsqyzzb_img{$i}", [
-                        'path' => $temp[$i-1],
+                        'path' => $temp[$i - 1],
                         'width' => 410,
                         'height' => 300
                     ]);
-                }else
-                {
-                    $docObj->setValue("fpjx_cgqsqyzzb_img{$i}",'');
+                } else {
+                    $docObj->setValue("fpjx_cgqsqyzzb_img{$i}", '');
                 }
             }
-        }else
-        {
-            $docObj->setValue('fpjx_cgqsqyzzb_img1','');
-            $docObj->setValue('fpjx_cgqsqyzzb_img2','');
-            $docObj->setValue('fpjx_cgqsqyzzb_img3','');
+        } else {
+            $docObj->setValue('fpjx_cgqsqyzzb_img1', '');
+            $docObj->setValue('fpjx_cgqsqyzzb_img2', '');
+            $docObj->setValue('fpjx_cgqsqyzzb_img3', '');
         }
 
         //上游集中度情况评估  集中度指数
         $syjzd = $this->syjzd($data['re_fpjx']['xdsForShangxiayou']);
         $syjzd = 0.35 * $syjzd[0] + 0.65 * $syjzd[1] + 0.2 > 1 ? 1 : 0.35 * $syjzd[0] + 0.65 * $syjzd[1] + 0.2;
-        $docObj->setValue('syjzd',sprintf('%.1f',$syjzd));
+        $docObj->setValue('syjzd', sprintf('%.1f', $syjzd));
 
         //7.9企业采购情况分布（万元）
         $lineData = $legends = $xLabels = [];
@@ -2242,11 +2117,9 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $xLabels = $data['re_fpjx']['qycgqkyc']['xAxes'];
         $lineData = [$data['re_fpjx']['qycgqkyc']['data']];
 
-        if (empty($legends) || empty($xLabels) || empty($lineData))
-        {
-            $docObj->setValue('fpjx_qycgqkyc_img','');
-        }else
-        {
+        if (empty($legends) || empty($xLabels) || empty($lineData)) {
+            $docObj->setValue('fpjx_qycgqkyc_img', '');
+        } else {
             $imgPath = (new NewGraphService())
                 ->setTitle('企业采购情况分布（万元）')
                 ->setLegends($legends)
@@ -2311,7 +2184,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $docObj->setValue('INDUSTRY', '');
         //经营范围
         $docObj->setValue('OPSCOPE', $data['GetBasicDetailsByName']['Scope']);
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,14,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 14, $this->entName, true);
         $docObj->setValue('jbxx_oneSaid', $oneSaid);
 
         //股东信息
@@ -2334,7 +2207,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("gd_CONDATE#" . ($i + 1), $this->formatDate($data['getShareHolderInfo'][$i]['CONDATE']));
         }
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,15,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 15, $this->entName, true);
         $docObj->setValue('gudongxx_oneSaid', $oneSaid);
 
         //高管信息
@@ -2349,7 +2222,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("gg_POSITION#" . ($i + 1), $data['getMainManagerInfo'][$i]['POSITION']);
         }
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,15,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 15, $this->entName, true);
         $docObj->setValue('ggxx_oneSaid', $oneSaid);
 
         //变更信息
@@ -2368,7 +2241,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("bg_ALTAF#" . ($i + 1), $data['getRegisterChangeInfo']['list'][$i]['ALTAF']);
         }
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,19,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 19, $this->entName, true);
         $docObj->setValue('bgxx_oneSaid', $oneSaid);
 
         //经营异常
@@ -2387,7 +2260,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("jjyc_RomoveReason#" . ($i + 1), $data['GetOpException']['list'][$i]['RomoveReason']);
         }
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,21,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 21, $this->entName, true);
         $docObj->setValue('jyycxx_oneSaid', $oneSaid);
 
         //实际控制人
@@ -2411,7 +2284,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("sjkzr_Path", '');
         }
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,16,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 16, $this->entName, true);
         $docObj->setValue('sjkzr_oneSaid', $oneSaid);
 
         //历史沿革
@@ -2496,7 +2369,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("qydwtz_CONDATE#" . ($i + 1), $this->formatDate($data['getInvestmentAbroadInfo']['list'][$i]['CONDATE']));
         }
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,23,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 23, $this->entName, true);
         $docObj->setValue('qydwtz_oneSaid', $oneSaid);
 
         //主要分支机构
@@ -2517,7 +2390,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("fzjg_PROVINCE#" . ($i + 1), $data['getBranchInfo'][$i]['PROVINCE']);
         }
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,18,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 18, $this->entName, true);
         $docObj->setValue('zyfzjg_oneSaid', $oneSaid);
 
         //银行信息
@@ -2541,7 +2414,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("gsgk_rz#" . ($i + 1), $data['SearchCompanyFinancings'][$i]['Investment'] . '，' . $data['SearchCompanyFinancings'][$i]['Amount']);
         }
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,22,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 22, $this->entName, true);
         $docObj->setValue('gsgk_oneSaid', $oneSaid);
 
         //招投标
@@ -2560,7 +2433,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("ztb_ChannelName#" . ($i + 1), $data['TenderSearch']['list'][$i]['ChannelName']);
         }
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,24,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 24, $this->entName, true);
         $docObj->setValue('ztb_oneSaid', $oneSaid);
 
         //购地信息
@@ -2583,7 +2456,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("gdxx_SignTime#" . ($i + 1), $this->formatDate($data['LandPurchaseList'][$i]['SignTime']));
         }
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,25,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 25, $this->entName, true);
         $docObj->setValue('gdxx_oneSaid', $oneSaid);
 
         //土地公示
@@ -2602,7 +2475,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("tdgs_PublishDate#" . ($i + 1), $this->formatDate($data['LandPublishList'][$i]['PublishDate']));
         }
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,26,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 26, $this->entName, true);
         $docObj->setValue('tdgs_oneSaid', $oneSaid);
 
         //土地转让
@@ -2627,7 +2500,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("tdzr_TransTime#" . ($i + 1), $this->formatDate($data['LandTransferList'][$i]['detail']['TransTime']));
         }
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,27,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 27, $this->entName, true);
         $docObj->setValue('tdzr_oneSaid', $oneSaid);
 
         //建筑资质
@@ -2650,7 +2523,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("jzzz_SignDept#" . ($i + 1), $data['Qualification'][$i]['SignDept']);
         }
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,29,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 29, $this->entName, true);
         $docObj->setValue('jzzz_oneSaid', $oneSaid);
 
         //建筑工程项目
@@ -2671,7 +2544,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("jzgc_Region#" . ($i + 1), $data['BuildingProject'][$i]['Region']);
         }
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,30,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 30, $this->entName, true);
         $docObj->setValue('jzgc_oneSaid', $oneSaid);
 
         //债券
@@ -2692,7 +2565,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("zq_LaunchDate#" . ($i + 1), $this->formatDate($data['BondList'][$i]['LaunchDate']));
         }
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,31,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 31, $this->entName, true);
         $docObj->setValue('zqxx_oneSaid', $oneSaid);
 
         //网站信息
@@ -2789,16 +2662,14 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("zp_PublishDate#" . ($i + 1), $this->formatDate($data['Recruitment'][$i]['PublishDate']));
         }
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,28,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 28, $this->entName, true);
         $docObj->setValue('zpxx_oneSaid', $oneSaid);
 
         //财务总揽
-        if (empty($data['FinanceData']['pic']))
-        {
+        if (empty($data['FinanceData']['pic'])) {
             $docObj->setValue("caiwu_pic", '无财务数据或企业类型错误');
 
-        }else
-        {
+        } else {
             $docObj->setImageValue("caiwu_pic", [
                 'path' => REPORT_IMAGE_TEMP_PATH . $data['FinanceData']['pic'],
                 'width' => 440,
@@ -2806,7 +2677,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             ]);
         }
 
-        $caiwu_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,0,$this->entName,true);
+        $caiwu_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 0, $this->entName, true);
         $docObj->setValue("caiwu_oneSaid", $caiwu_oneSaid);
 
         //业务概况
@@ -2936,7 +2807,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("nsxydj_total", (int)$data['satparty_xin']['total']);
 
-        $nsxydj_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,11,$this->entName,true);
+        $nsxydj_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 11, $this->entName, true);
         $docObj->setValue("nsxydj_oneSaid", $nsxydj_oneSaid);
 
         //税务许可信息
@@ -2959,7 +2830,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("swxk_total", (int)$data['satparty_xuke']['total']);
 
-        $swxk_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,13,$this->entName,true);
+        $swxk_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 13, $this->entName, true);
         $docObj->setValue("swxk_oneSaid", $swxk_oneSaid);
 
         //税务登记信息
@@ -2982,7 +2853,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("swdj_total", (int)$data['satparty_reg']['total']);
 
-        $swdj_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,12,$this->entName,true);
+        $swdj_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 12, $this->entName, true);
         $docObj->setValue("swdj_oneSaid", $swdj_oneSaid);
 
         //税务非正常户
@@ -3005,7 +2876,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("fzc_total", (int)$data['satparty_fzc']['total']);
 
-        $fzc_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,10,$this->entName,true);
+        $fzc_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 10, $this->entName, true);
         $docObj->setValue("fzc_oneSaid", $fzc_oneSaid);
 
         //欠税信息
@@ -3028,7 +2899,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("qs_total", (int)$data['satparty_qs']['total']);
 
-        $qs_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,8,$this->entName,true);
+        $qs_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 8, $this->entName, true);
         $docObj->setValue("qs_oneSaid", $qs_oneSaid);
 
         //涉税处罚公示
@@ -3053,7 +2924,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("sswf_total", (int)$data['satparty_chufa']['total']);
 
-        $sswf_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,9,$this->entName,true);
+        $sswf_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 9, $this->entName, true);
         $docObj->setValue("sswf_oneSaid", $sswf_oneSaid);
 
         //行政许可
@@ -3075,7 +2946,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("xzxk_total", (int)$data['GetAdministrativeLicenseList']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,32,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 32, $this->entName, true);
         $docObj->setValue('xzxk_oneSaid', $oneSaid);
 
         //行政处罚
@@ -3095,7 +2966,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("xzcf_total", (int)$data['GetAdministrativePenaltyList']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,33,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 33, $this->entName, true);
         $docObj->setValue('xzcf_oneSaid', $oneSaid);
 
         //环保处罚
@@ -3115,7 +2986,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("hbcf_total", (int)$data['epbparty']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,34,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 34, $this->entName, true);
         $docObj->setValue('hbcf_oneSaid', $oneSaid);
 
         //重点监控企业名单
@@ -3131,7 +3002,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("zdjkqy_total", (int)$data['epbparty_jkqy']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,35,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 35, $this->entName, true);
         $docObj->setValue('zdjkqy_oneSaid', $oneSaid);
 
         //环保企业自行监测结果
@@ -3151,7 +3022,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("zxjc_total", (int)$data['epbparty_zxjc']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,36,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 36, $this->entName, true);
         $docObj->setValue('zxjc_oneSaid', $oneSaid);
 
         //环评公示数据
@@ -3169,7 +3040,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("hpgs_total", (int)$data['epbparty_huanping']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,37,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 37, $this->entName, true);
         $docObj->setValue('hpgs_oneSaid', $oneSaid);
 
         //海关许可
@@ -3189,7 +3060,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("hgxx_total", (int)$data['custom_qy']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,38,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 38, $this->entName, true);
         $docObj->setValue('hgxx_oneSaid', $oneSaid);
 
         //海关许可
@@ -3209,7 +3080,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("hgxk_total", (int)$data['custom_xuke']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,39,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 39, $this->entName, true);
         $docObj->setValue('hgxk_oneSaid', $oneSaid);
 
         //海关信用
@@ -3227,7 +3098,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("hgxy_total", (int)$data['custom_credit']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,40,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 40, $this->entName, true);
         $docObj->setValue('hgxy_oneSaid', $oneSaid);
 
         //海关处罚
@@ -3245,7 +3116,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("hgcf_total", (int)$data['custom_punish']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,41,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 41, $this->entName, true);
         $docObj->setValue('hgcf_oneSaid', $oneSaid);
 
         //央行行政处罚
@@ -3267,7 +3138,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("yhxzcf_total", (int)$data['pbcparty']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,46,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 46, $this->entName, true);
         $docObj->setValue('yhxzcf_oneSaid', $oneSaid);
 
         //银保监会处罚公示
@@ -3289,7 +3160,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("ybjcf_total", (int)$data['pbcparty_cbrc']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,47,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 47, $this->entName, true);
         $docObj->setValue('ybjcf_oneSaid', $oneSaid);
 
         //证监处罚公示
@@ -3311,7 +3182,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("zjcf_total", (int)$data['pbcparty_csrc_chufa']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,48,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 48, $this->entName, true);
         $docObj->setValue('zjcf_oneSaid', $oneSaid);
 
         //证监会许可信息
@@ -3331,7 +3202,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("zjxk_total", (int)$data['pbcparty_csrc_xkpf']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,49,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 49, $this->entName, true);
         $docObj->setValue('zjxk_oneSaid', $oneSaid);
 
         //外汇局处罚
@@ -3355,7 +3226,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("whjcf_total", (int)$data['safe_chufa']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,50,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 50, $this->entName, true);
         $docObj->setValue('whjcf_oneSaid', $oneSaid);
 
         //外汇局许可
@@ -3377,7 +3248,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("whjxk_total", (int)$data['safe_xuke']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,51,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 51, $this->entName, true);
         $docObj->setValue('whjxk_oneSaid', $oneSaid);
 
         //法院公告
@@ -3425,7 +3296,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $docObj->setValue("fygg_total", (int)$data['fygg']['total']);
 
         //oneSaid
-        $fygg_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,3,$this->entName,true);
+        $fygg_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 3, $this->entName, true);
         $docObj->setValue("fygg_oneSaid", $fygg_oneSaid);
 
         //开庭公告
@@ -3473,7 +3344,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("ktgg_total", (int)$data['ktgg']['total']);
 
-        $ktgg_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,1,$this->entName,true);
+        $ktgg_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 1, $this->entName, true);
         $docObj->setValue("ktgg_oneSaid", $ktgg_oneSaid);
 
         //裁判文书
@@ -3524,7 +3395,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $docObj->setValue("cpws_total", (int)$data['cpws']['total']);
 
         //oneSaid
-        $cpws_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,2,$this->entName,true);
+        $cpws_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 2, $this->entName, true);
         $docObj->setValue("cpws_oneSaid", $cpws_oneSaid);
 
         //执行公告
@@ -3555,7 +3426,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $docObj->setValue("zxgg_total", (int)$data['zxgg']['total']);
 
         //oneSaid
-        $zxgg_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,4,$this->entName,true);
+        $zxgg_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 4, $this->entName, true);
         $docObj->setValue("zxgg_oneSaid", $zxgg_oneSaid);
 
         //失信公告
@@ -3587,7 +3458,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $docObj->setValue("sx_total", (int)$data['shixin']['total']);
 
         //oneSaid
-        $sx_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,5,$this->entName,true);
+        $sx_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 5, $this->entName, true);
         $docObj->setValue("sx_oneSaid", $sx_oneSaid);
 
         //被执行人
@@ -3610,7 +3481,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $docObj->setValue("bzxr_total", (int)$data['SearchZhiXing']['total']);
 
         //oneSaid
-        $bzxr_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,5,$this->entName,true);
+        $bzxr_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 5, $this->entName, true);
         $docObj->setValue("bzxr_oneSaid", $bzxr_oneSaid);
 
         //查封冻结扣押
@@ -3637,7 +3508,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $docObj->setValue("cdk_total", (int)$data['sifacdk']['total']);
 
         //oneSaid
-        $cdk_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,6,$this->entName,true);
+        $cdk_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 6, $this->entName, true);
         $docObj->setValue("cdk_oneSaid", $cdk_oneSaid);
 
         //动产抵押
@@ -3661,7 +3532,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("dcdy_total", (int)$data['getChattelMortgageInfo']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,43,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 43, $this->entName, true);
         $docObj->setValue('dcdy_oneSaid', $oneSaid);
 
         //股权出质
@@ -3685,7 +3556,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("gqcz_total", (int)$data['getEquityPledgedInfo']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,42,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 42, $this->entName, true);
         $docObj->setValue('gqcz_oneSaid', $oneSaid);
 
         //对外担保
@@ -3707,7 +3578,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("dwdb_total", (int)$data['GetAnnualReport']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,45,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 45, $this->entName, true);
         $docObj->setValue('dwdb_oneSaid', $oneSaid);
 
         //土地抵押
@@ -3729,7 +3600,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("tddy_total", (int)$data['GetLandMortgageList']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,44,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 44, $this->entName, true);
         $docObj->setValue('tddy_oneSaid', $oneSaid);
 
         //应收帐款
@@ -3749,7 +3620,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("yszk_total", (int)$data['company_zdw_yszkdsr']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,52,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 52, $this->entName, true);
         $docObj->setValue('yszk_oneSaid', $oneSaid);
 
         //租赁登记
@@ -3769,7 +3640,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("zldj_total", (int)$data['company_zdw_zldjdsr']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,56,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 56, $this->entName, true);
         $docObj->setValue('zldj_oneSaid', $oneSaid);
 
         //保证金质押
@@ -3793,7 +3664,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("bzjzy_total", (int)$data['company_zdw_bzjzydsr']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,54,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 54, $this->entName, true);
         $docObj->setValue('bzjzy_oneSaid', $oneSaid);
 
         //仓单质押
@@ -3815,7 +3686,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("cdzy_total", (int)$data['company_zdw_cdzydsr']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,55,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 55, $this->entName, true);
         $docObj->setValue('cdzy_oneSaid', $oneSaid);
 
         //所有权保留
@@ -3837,7 +3708,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("syqbl_total", (int)$data['company_zdw_syqbldsr']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,53,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 53, $this->entName, true);
         $docObj->setValue('syqbl_oneSaid', $oneSaid);
 
         //其他动产融资
@@ -3859,7 +3730,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         }
         $docObj->setValue("qtdcrz_total", (int)$data['company_zdw_qtdcdsr']['total']);
 
-        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,57,$this->entName,true);
+        $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 57, $this->entName, true);
         $docObj->setValue('qtdcrz_oneSaid', $oneSaid);
 
         //产品标准
@@ -3879,37 +3750,37 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //二次特征
         if (!empty($data['features'])) {
             //担保能力
-            $docObj->setValue('dbnl_s', $data['features']['GuaranteeAbility']['score']);
+            $docObj->setValue('dbnl_s', $data['features']['GuaranteeAbility']['score'] ?? '--');
             //还款能力
-            $docObj->setValue('hknl_s', $data['features']['RepaymentAbility']['score']);
+            $docObj->setValue('hknl_s', $data['features']['RepaymentAbility']['score'] ?? '--');
             //税负强度
-            $docObj->setValue('sfqd_s', $data['features']['TBR']['score']);
+            $docObj->setValue('sfqd_s', $data['features']['TBR']['score'] ?? '--');
             //总资产增长状况
-            $docObj->setValue('zzczzzk_s', $data['features']['ASSGRO_yoy']['score']);
+            $docObj->setValue('zzczzzk_s', $data['features']['ASSGRO_yoy']['score'] ?? '--');
             //资产周转能力
-            $docObj->setValue('zczznl_s', $data['features']['ATOL']['score']);
+            $docObj->setValue('zczznl_s', $data['features']['ATOL']['score'] ?? '--');
             //资产回报能力
-            $docObj->setValue('zchbnl_s', $data['features']['ASSETS']['score']);
+            $docObj->setValue('zchbnl_s', $data['features']['ASSETS']['score'] ?? '--');
             //企业纳税能力综合评分
-            $docObj->setValue('qynsnlzh_s', $data['features']['RATGRO']['score']);
+            $docObj->setValue('qynsnlzh_s', $data['features']['RATGRO']['score'] ?? '--');
             //企业人均盈利能力评分
-            $docObj->setValue('qyrjylnl_s', $data['features']['PERCAPITA_Y']['score']);
+            $docObj->setValue('qyrjylnl_s', $data['features']['PERCAPITA_Y']['score'] ?? '--');
             //企业人均产能评分
-            $docObj->setValue('qyrjcn_s', $data['features']['PERCAPITA_C']['score']);
+            $docObj->setValue('qyrjcn_s', $data['features']['PERCAPITA_C']['score'] ?? '--');
             //企业资本保值状况评分
-            $docObj->setValue('qyzbbzzk_s', $data['features']['TOTEQU']['score']);
+            $docObj->setValue('qyzbbzzk_s', $data['features']['TOTEQU']['score'] ?? '--');
             //企业主营业务健康度评分
-            $docObj->setValue('qyzyywjkd_s', $data['features']['DEBTL_H']['score']);
+            $docObj->setValue('qyzyywjkd_s', $data['features']['DEBTL_H']['score'] ?? '--');
             //企业利润增长能力评分
-            $docObj->setValue('qylrzznl_s', $data['features']['PROGRO_yoy']['score']);
+            $docObj->setValue('qylrzznl_s', $data['features']['PROGRO_yoy']['score'] ?? '--');
             //企业营收增长能力评分
-            $docObj->setValue('qyyszznl_s', $data['features']['MAIBUSINC_yoy']['score']);
+            $docObj->setValue('qyyszznl_s', $data['features']['MAIBUSINC_yoy']['score'] ?? '--');
             //企业盈利能力评分
-            $docObj->setValue('qyylnl_s', $data['features']['PROGRO']['score']);
+            $docObj->setValue('qyylnl_s', $data['features']['PROGRO']['score'] ?? '--');
             //企业资产负债状况评分
-            $docObj->setValue('qyzcfzzk_s', $data['features']['DEBTL']['score']);
+            $docObj->setValue('qyzcfzzk_s', $data['features']['DEBTL']['score'] ?? '--');
             //企业资产收益评分
-            $docObj->setValue('qyzcsy_s', $data['features']['ASSGROPROFIT_REL']['score']);
+            $docObj->setValue('qyzcsy_s', $data['features']['ASSGROPROFIT_REL']['score'] ?? '--');
         }
     }
 
@@ -4336,9 +4207,9 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                     }
 
                     if ($SOCNUM_1 !== null && $SOCNUM_2 !== null && $SOCNUM_2 !== 0) {
-                        $res[] = ['year' => $yearArr[$i], 'yoy' => ($SOCNUM_1 - $SOCNUM_2) / $SOCNUM_2 ,'num'=>$SOCNUM_1];
+                        $res[] = ['year' => $yearArr[$i], 'yoy' => ($SOCNUM_1 - $SOCNUM_2) / $SOCNUM_2, 'num' => $SOCNUM_1];
                     } else {
-                        $res[] = ['year' => $yearArr[$i], 'yoy' => null,'num'=>$SOCNUM_1];
+                        $res[] = ['year' => $yearArr[$i], 'yoy' => null, 'num' => $SOCNUM_1];
                     }
                 }
 
@@ -4391,7 +4262,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'dataCount' => 4,//取最近几年的
             ];
 
-            $res = (new LongXinService())->setCheckRespFlag(true)->getFinanceData($postData,false);
+            $res = (new LongXinService())->setCheckRespFlag(true)->getFinanceData($postData, false);
 
             if ($res['code'] !== 200) return '';
 
@@ -6046,14 +5917,12 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //产品标准
         $csp->add('ProductStandardInfo', function () {
 
-            $res = (new XinDongService())->setCheckRespFlag(true)->getProductStandard($this->entName,1,50);
+            $res = (new XinDongService())->setCheckRespFlag(true)->getProductStandard($this->entName, 1, 50);
 
-            if ($res['code']===200 && !empty($res['result']))
-            {
+            if ($res['code'] === 200 && !empty($res['result'])) {
                 $tmp['list'] = $res['result'];
                 $tmp['total'] = $res['paging']['total'];
-            }else
-            {
+            } else {
                 $tmp['list'] = null;
                 $tmp['total'] = 0;
             }

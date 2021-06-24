@@ -47,7 +47,7 @@ class WordController extends ExportBase
         try {
             $userInfo = User::create()->where('phone', $phone)->get();
             if ($email !== '20210425修改') {
-                $pay != 1 ?: $userInfo->update(['email' => $email]);
+                $pay != 1 || $userInfo->update(['email' => $email]);
             }
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
@@ -90,7 +90,7 @@ class WordController extends ExportBase
         try {
             $userInfo = User::create()->where('phone', $phone)->get();
             if ($email !== '20210425修改') {
-                $pay != 1 ?: $userInfo->update(['email' => $email]);
+                $pay != 1 || $userInfo->update(['email' => $email]);
             }
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
@@ -131,7 +131,7 @@ class WordController extends ExportBase
         try {
             $userInfo = User::create()->where('phone', $phone)->get();
             if ($email !== '20210425修改') {
-                $pay != 1 ?: $userInfo->update(['email' => $email]);
+                $pay != 1 || $userInfo->update(['email' => $email]);
             }
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);

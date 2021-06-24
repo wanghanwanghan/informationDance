@@ -790,7 +790,7 @@ class ChargeService extends ServiceBase
             //取得用户钱包余额
             $info = Wallet::create()->where('phone', $phone)->get();
             if (empty($info)) return ['code' => 201, 'msg' => '无用户钱包信息'];
-            $userMoney = $info->money;
+            $userMoney = $info->getAttr('money');
         } catch (\Throwable $e) {
             $this->writeErr($e, 'ChargeService');
             return ['code' => 201, 'msg' => '取得用户钱包信息失败'];
@@ -846,7 +846,7 @@ class ChargeService extends ServiceBase
             //取得用户钱包余额
             $info = Wallet::create()->where('phone', $phone)->get();
             if (empty($info)) return ['code' => 201, 'msg' => '无用户钱包信息'];
-            $userMoney = $info->money;
+            $userMoney = $info->getAttr('money');
         } catch (\Throwable $e) {
             $this->writeErr($e, 'ChargeService');
             return ['code' => 201, 'msg' => '取得用户钱包信息失败'];
@@ -902,7 +902,7 @@ class ChargeService extends ServiceBase
             //取得用户钱包余额
             $info = Wallet::create()->where('phone', $phone)->get();
             if (empty($info)) return ['code' => 201, 'msg' => '无用户钱包信息'];
-            $userMoney = $info->money;
+            $userMoney = $info->getAttr('money');
         } catch (\Throwable $e) {
             $this->writeErr($e, 'ChargeService');
             return ['code' => 201, 'msg' => '取得用户钱包信息失败'];
@@ -958,7 +958,7 @@ class ChargeService extends ServiceBase
             //取得用户钱包余额
             $info = Wallet::create()->where('phone', $phone)->get();
             if (empty($info)) return ['code' => 201, 'msg' => '无用户钱包信息'];
-            $userMoney = $info->money;
+            $userMoney = $info->getAttr('money');
         } catch (\Throwable $e) {
             $this->writeErr($e, 'ChargeService');
             return ['code' => 201, 'msg' => '取得用户钱包信息失败'];
@@ -1014,7 +1014,7 @@ class ChargeService extends ServiceBase
             //取得用户钱包余额
             $info = Wallet::create()->where('phone', $phone)->get();
             if (empty($info)) return ['code' => 201, 'msg' => '无用户钱包信息'];
-            $userMoney = $info->money;
+            $userMoney = $info->getAttr('money');
         } catch (\Throwable $e) {
             $this->writeErr($e, 'ChargeService');
             return ['code' => 201, 'msg' => '取得用户钱包信息失败'];
