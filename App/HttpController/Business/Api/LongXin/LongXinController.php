@@ -729,23 +729,6 @@ class LongXinController extends LongXinBase
             $postData['basic_nicid'] = "{$basic_nicid}￥999999999";
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-        $phone = $this->request()->getRequestParam('phone') ?? '';
-        $code = $this->request()->getRequestParam('code') ?? '';
-        $beginYear = $this->request()->getRequestParam('year') ?? '';
-        $dataCount = $this->request()->getRequestParam('dataCount') ?? '';
-
         $this->moduleNum = 53;
 
         $postData = [];
