@@ -39,10 +39,13 @@ class LongXinController extends LongXinBase
         $res['Result'] = $res['data'];
         $res['Message'] = $res['msg'] ?? '';
 
-        //这个51要改
-        $charge = ChargeService::getInstance()->LongXin($this->request(), $this->moduleNum);
+        if ($this->moduleNum !== 53) {
+            $charge = ChargeService::getInstance()->LongXin($this->request(), $this->moduleNum);
+        } else {
+            $charge['code'] = 200;
+        }
 
-        if ($charge['code'] != 200) {
+        if ($charge['code'] !== 200) {
             return $this->writeJson((int)$charge['code'], null, null, $charge['msg'], false);
         } else {
             if (isset($ext['refundToWallet']) && $ext['refundToWallet']) {
