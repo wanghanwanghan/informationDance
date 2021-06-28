@@ -738,6 +738,7 @@ class LongXinController extends LongXinBase
 
         $postData = [
             'pindex' => $pindex,
+            'psize' => 30,
         ];
 
         $res = (new LongXinService())->superSearch($postData);
