@@ -458,10 +458,6 @@ class xds
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['PROGRO_yoy'])) {
                 $val = round($arr['PROGRO_yoy'] * 100);
-                CommonService::getInstance()->log4PHP([
-                    $year,
-                    $val
-                ]);
                 if ($val <= -50) {
                     $score = 4;
                 } elseif ($val >= -50 && $val <= -21) {
@@ -730,6 +726,10 @@ class xds
             if (is_numeric($arr['NETINC']) && is_numeric($arr['CA_ASSGRO'])) {
                 if ($arr['CA_ASSGRO'] != 0) {
                     $val = round($arr['NETINC'] / $arr['CA_ASSGRO'] * 100);
+                    CommonService::getInstance()->log4PHP([
+                        $year,
+                        $val
+                    ]);
                     if ($val <= -10) {
                         $score = 4;
                     } elseif ($val >= -10 && $val <= -6) {
