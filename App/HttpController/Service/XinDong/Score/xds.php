@@ -150,7 +150,7 @@ class xds
             if (is_numeric($arr['NETINC']) && is_numeric($arr['A_ASSGROL'])) {
                 $arr['A_ASSGROL'] == 0 ? $val = 0 : $val = round($arr['NETINC'] / $arr['A_ASSGROL'] * 100);
                 if ($val <= -10) {
-                    $score = -4;
+                    $score = 4;
                 } elseif ($val >= -10 && $val <= -6) {
                     $score = 8;
                 } elseif ($val >= -5 && $val <= -1) {
