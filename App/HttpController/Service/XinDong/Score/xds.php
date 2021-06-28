@@ -1175,6 +1175,8 @@ class xds
         //实际控制人算不算进权重
         !empty($temp) ? $type = true : $type = false;
 
+        CommonService::getInstance()->log4PHP($data);
+
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['ASSGRO']) && is_numeric($arr['LIAGRO']) && $arr['ASSGRO'] != 0) {
                 isset($tmp['gqcz'][$year . 'year']) ? $gqcz = $tmp['gqcz'][$year . 'year'] : $gqcz = 0;
@@ -1212,7 +1214,7 @@ class xds
                 } else {
                     $score = null;
                 }
-                $type && $score !== null ? $score = intval($score * 0.7 + 100 * 0.3) : null;
+                ($type && $score !== null) ? $score = intval($score * 0.7 + 100 * 0.3) : null;
                 $r['year'] = $year;
                 $r['val'] = $val;
                 $r['score'] = $score;
