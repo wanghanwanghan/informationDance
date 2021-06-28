@@ -1183,6 +1183,10 @@ class xds
                 isset($tmp['dcdy'][$year . 'year']) ? $dcdy = $tmp['dcdy'][$year . 'year'] : $dcdy = 0;
                 isset($tmp['dwdb'][$year . 'year']) ? $dwdb = $tmp['dwdb'][$year . 'year'] : $dwdb = 0;
                 $val = ($arr['ASSGRO'] - $arr['LIAGRO'] - $gqcz - $dcdy - $dwdb) / $arr['ASSGRO'] * 100;
+                CommonService::getInstance()->log4PHP([
+                    'year' => $year,
+                    'val' => $val,
+                ]);
                 if ($val <= -10) {
                     $score = 4;
                 } elseif ($val >= -10 && $val <= -6) {
