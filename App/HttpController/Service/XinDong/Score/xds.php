@@ -148,48 +148,46 @@ class xds
 
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['NETINC']) && is_numeric($arr['A_ASSGROL'])) {
-                if ($arr['A_ASSGROL'] != 0) {
-                    $val = round($arr['NETINC'] / $arr['A_ASSGROL'] * 100);
-                    if ($val <= -10) {
-                        $score = -4;
-                    } elseif ($val >= -10 && $val <= -6) {
-                        $score = 8;
-                    } elseif ($val >= -5 && $val <= -1) {
-                        $score = 11;
-                    } elseif ($val >= -1 && $val <= 0) {
-                        $score = 16;
-                    } elseif ($val >= 0 && $val <= 1.2) {
-                        $score = 26;
-                    } elseif ($val >= 1.21 && $val <= 2.2) {
-                        $score = 31;
-                    } elseif ($val >= 2.21 && $val <= 3.3) {
-                        $score = 35;
-                    } elseif ($val >= 3.31 && $val <= 5.5) {
-                        $score = 42;
-                    } elseif ($val >= 5.51 && $val <= 8.3) {
-                        $score = 56;
-                    } elseif ($val >= 8.31 && $val <= 10.5) {
-                        $score = 72;
-                    } elseif ($val >= 10.51 && $val <= 20) {
-                        $score = 85;
-                    } elseif ($val >= 20.1 && $val <= 30) {
-                        $score = 92;
-                    } elseif ($val >= 30.1 && $val <= 50) {
-                        $score = 93;
-                    } elseif ($val >= 50.1 && $val <= 100) {
-                        $score = 94.5;
-                    } elseif ($val >= 100.1 && $val <= 300) {
-                        $score = 97.5;
-                    } elseif ($val >= 300) {
-                        $score = 99;
-                    } else {
-                        $score = null;
-                    }
-                    $r['year'] = $year;
-                    $r['val'] = $val;
-                    $r['score'] = $score;
-                    break;
+                $arr['A_ASSGROL'] == 0 ? $val = 0 : $val = round($arr['NETINC'] / $arr['A_ASSGROL'] * 100);
+                if ($val <= -10) {
+                    $score = -4;
+                } elseif ($val >= -10 && $val <= -6) {
+                    $score = 8;
+                } elseif ($val >= -5 && $val <= -1) {
+                    $score = 11;
+                } elseif ($val >= -1 && $val <= 0) {
+                    $score = 16;
+                } elseif ($val >= 0 && $val <= 1.2) {
+                    $score = 26;
+                } elseif ($val >= 1.21 && $val <= 2.2) {
+                    $score = 31;
+                } elseif ($val >= 2.21 && $val <= 3.3) {
+                    $score = 35;
+                } elseif ($val >= 3.31 && $val <= 5.5) {
+                    $score = 42;
+                } elseif ($val >= 5.51 && $val <= 8.3) {
+                    $score = 56;
+                } elseif ($val >= 8.31 && $val <= 10.5) {
+                    $score = 72;
+                } elseif ($val >= 10.51 && $val <= 20) {
+                    $score = 85;
+                } elseif ($val >= 20.1 && $val <= 30) {
+                    $score = 92;
+                } elseif ($val >= 30.1 && $val <= 50) {
+                    $score = 93;
+                } elseif ($val >= 50.1 && $val <= 100) {
+                    $score = 94.5;
+                } elseif ($val >= 100.1 && $val <= 300) {
+                    $score = 97.5;
+                } elseif ($val >= 300) {
+                    $score = 99;
+                } else {
+                    $score = null;
                 }
+                $r['year'] = $year;
+                $r['val'] = $val;
+                $r['score'] = $score;
+                break;
             }
         }
 
@@ -782,45 +780,43 @@ class xds
         ];
 
         foreach ($data as $year => $arr) {
-            if (is_numeric($arr['VENDINC']) && is_numeric($arr['A_ASSGROL'])) {
-                if ($arr['A_ASSGROL'] != 0) {
-                    $val = round($arr['VENDINC'] / $arr['A_ASSGROL'] * 100);
-                    if ($val >= 0 && $val <= 1) {
-                        $score = 12.5;
-                    } elseif ($val >= 1.1 && $val <= 2) {
-                        $score = 18.5;
-                    } elseif ($val >= 2.1 && $val <= 3) {
-                        $score = 26;
-                    } elseif ($val >= 3.1 && $val <= 5) {
-                        $score = 31;
-                    } elseif ($val >= 5.1 && $val <= 10) {
-                        $score = 35;
-                    } elseif ($val >= 10.1 && $val <= 20) {
-                        $score = 42;
-                    } elseif ($val >= 20.1 && $val <= 35) {
-                        $score = 56;
-                    } elseif ($val >= 35.1 && $val <= 50) {
-                        $score = 72;
-                    } elseif ($val >= 50.1 && $val <= 60) {
-                        $score = 85;
-                    } elseif ($val >= 60.1 && $val <= 70) {
-                        $score = 92;
-                    } elseif ($val >= 70.1 && $val <= 80) {
-                        $score = 93;
-                    } elseif ($val >= 80.1 && $val <= 100) {
-                        $score = 94.5;
-                    } elseif ($val >= 100.1 && $val <= 300) {
-                        $score = 97.5;
-                    } elseif ($val >= 300) {
-                        $score = 99;
-                    } else {
-                        $score = null;
-                    }
-                    $r['year'] = $year;
-                    $r['val'] = $val;
-                    $r['score'] = $score;
-                    break;
+            if (is_numeric($arr['VENDINC']) && $arr['VENDINC'] > 0 && is_numeric($arr['A_ASSGROL'])) {
+                $arr['A_ASSGROL'] == 0 ? $val = 0 : $val = round($arr['VENDINC'] / $arr['A_ASSGROL'] * 100);
+                if ($val >= 0 && $val <= 1) {
+                    $score = 12.5;
+                } elseif ($val >= 1.1 && $val <= 2) {
+                    $score = 18.5;
+                } elseif ($val >= 2.1 && $val <= 3) {
+                    $score = 26;
+                } elseif ($val >= 3.1 && $val <= 5) {
+                    $score = 31;
+                } elseif ($val >= 5.1 && $val <= 10) {
+                    $score = 35;
+                } elseif ($val >= 10.1 && $val <= 20) {
+                    $score = 42;
+                } elseif ($val >= 20.1 && $val <= 35) {
+                    $score = 56;
+                } elseif ($val >= 35.1 && $val <= 50) {
+                    $score = 72;
+                } elseif ($val >= 50.1 && $val <= 60) {
+                    $score = 85;
+                } elseif ($val >= 60.1 && $val <= 70) {
+                    $score = 92;
+                } elseif ($val >= 70.1 && $val <= 80) {
+                    $score = 93;
+                } elseif ($val >= 80.1 && $val <= 100) {
+                    $score = 94.5;
+                } elseif ($val >= 100.1 && $val <= 300) {
+                    $score = 97.5;
+                } elseif ($val >= 300) {
+                    $score = 99;
+                } else {
+                    $score = null;
                 }
+                $r['year'] = $year;
+                $r['val'] = $val;
+                $r['score'] = $score;
+                break;
             }
         }
 
@@ -1178,6 +1174,7 @@ class xds
         !empty($temp) ? $type = true : $type = false;
 
         foreach ($data as $year => $arr) {
+            $arr['ASSGRO'] != 0 ?: $arr['ASSGRO'] = 0.01;
             if (is_numeric($arr['ASSGRO']) && is_numeric($arr['LIAGRO']) && $arr['ASSGRO'] != 0) {
                 isset($tmp['gqcz'][$year . 'year']) ? $gqcz = $tmp['gqcz'][$year . 'year'] : $gqcz = 0;
                 isset($tmp['dcdy'][$year . 'year']) ? $dcdy = $tmp['dcdy'][$year . 'year'] : $dcdy = 0;
