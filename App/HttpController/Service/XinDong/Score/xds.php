@@ -1175,18 +1175,12 @@ class xds
         //实际控制人算不算进权重
         !empty($temp) ? $type = true : $type = false;
 
-        CommonService::getInstance()->log4PHP($data);
-
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['ASSGRO']) && is_numeric($arr['LIAGRO']) && $arr['ASSGRO'] != 0) {
                 isset($tmp['gqcz'][$year . 'year']) ? $gqcz = $tmp['gqcz'][$year . 'year'] : $gqcz = 0;
                 isset($tmp['dcdy'][$year . 'year']) ? $dcdy = $tmp['dcdy'][$year . 'year'] : $dcdy = 0;
                 isset($tmp['dwdb'][$year . 'year']) ? $dwdb = $tmp['dwdb'][$year . 'year'] : $dwdb = 0;
                 $val = ($arr['ASSGRO'] - $arr['LIAGRO'] - $gqcz - $dcdy - $dwdb) / $arr['ASSGRO'] * 100;
-                CommonService::getInstance()->log4PHP([
-                    'year' => $year,
-                    'val' => $val,
-                ]);
                 if ($val <= -10) {
                     $score = 4;
                 } elseif ($val >= -10 && $val <= -6) {

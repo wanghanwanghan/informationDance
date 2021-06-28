@@ -707,6 +707,8 @@ class LongXinController extends LongXinBase
     //超级搜索
     function superSearch()
     {
+        $pindex = $this->request()->getRequestParam('page') ?? 1;
+
         $basic_entname = $this->request()->getRequestParam('basic_entname') ?? '';
         if (!empty(trim($basic_entname))) {
             $postData['basic_entname'] = "any:{$basic_entname}";
@@ -734,7 +736,9 @@ class LongXinController extends LongXinBase
 
         $this->moduleNum = 53;
 
-        $postData = [];
+        $postData = [
+            'pindex' => $pindex,
+        ];
 
         $res = (new LongXinService())->superSearch($postData);
 
