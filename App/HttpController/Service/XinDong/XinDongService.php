@@ -577,8 +577,6 @@ class XinDongService extends ServiceBase
     {
         $res = (new xds())->cwScore($entName);
 
-        CommonService::getInstance()->log4PHP($res);
-
         return $this->checkResp(200, null, $res, '查询成功');
     }
 
