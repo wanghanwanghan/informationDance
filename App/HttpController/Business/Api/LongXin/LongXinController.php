@@ -46,7 +46,7 @@ class LongXinController extends LongXinBase
         }
 
         if ($charge['code'] !== 200) {
-            return $this->writeJson((int)$charge['code'], null, null, $charge['msg'], false);
+            return $this->writeJson($charge['code'], null, null, $charge['msg'], false);
         } else {
             if (isset($ext['refundToWallet']) && $ext['refundToWallet']) {
                 $res['code'] = 250;//本次查询不扣费

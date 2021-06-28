@@ -68,7 +68,7 @@ class xds
             'dataCount' => 4,
         ], false);
 
-        if (!isset($arr['code']) || !isset($arr['result']) || $arr['code'] !== 200 || empty($arr['result'])) {
+        if ($arr['code'] !== 200 || empty($arr['result'])) {
             return null;
         }
 
@@ -400,6 +400,7 @@ class xds
         ];
 
         foreach ($data as $year => $arr) {
+            is_numeric($arr['MAIBUSINC_yoy']) ?: $arr['MAIBUSINC_yoy'] = 0;
             if (is_numeric($arr['MAIBUSINC_yoy'])) {
                 $val = round($arr['MAIBUSINC_yoy'] * 100);
                 if ($val <= -50) {
@@ -838,6 +839,7 @@ class xds
         ];
 
         foreach ($data as $year => $arr) {
+            is_numeric($arr['ASSGRO_yoy']) ?: $arr['ASSGRO_yoy'] = 0;
             if (is_numeric($arr['ASSGRO_yoy'])) {
                 $val = round($arr['ASSGRO_yoy'] * 100);
                 if ($val < 0) {
