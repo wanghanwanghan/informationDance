@@ -991,8 +991,8 @@ class xds
         ];
 
         foreach ($data as $year => $arr) {
-            is_numeric($arr['DEBTL']) ?: $arr['DEBTL'] = 1.5;
-            is_numeric($arr['A_PROGROL']) ?: $arr['A_PROGROL'] = 0;
+            (is_numeric($arr['DEBTL']) && $arr['DEBTL'] > 0) ?: $arr['DEBTL'] = 1.5;
+            (is_numeric($arr['A_PROGROL']) && $arr['A_PROGROL'] > 0) ?: $arr['A_PROGROL'] = 0;
             if (is_numeric($arr['DEBTL']) && is_numeric($arr['A_PROGROL'])) {
                 $DEBTL = round($arr['DEBTL'] * 100);
                 $A_PROGROL = round($arr['A_PROGROL']);
