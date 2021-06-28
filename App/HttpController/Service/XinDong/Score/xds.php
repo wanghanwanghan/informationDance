@@ -1030,9 +1030,9 @@ class xds
                 }
 
                 if ($A_PROGROL <= -200) {
-                    $score2 = 12;
+                    $score2 = 8;
                 } elseif ($A_PROGROL >= -200 && $A_PROGROL <= 0) {
-                    $score2 = 19.5;
+                    $score2 = 15;
                 } elseif ($A_PROGROL >= 0 && $A_PROGROL <= 5) {
                     $score2 = 28;
                 } elseif ($A_PROGROL >= 5.1 && $A_PROGROL <= 10) {
