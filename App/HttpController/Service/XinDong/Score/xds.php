@@ -991,6 +991,7 @@ class xds
         ];
 
         foreach ($data as $year => $arr) {
+            is_numeric($arr['DEBTL']) ?: $arr['DEBTL'] = 1.5;
             if (is_numeric($arr['DEBTL']) && is_numeric($arr['A_PROGROL'])) {
                 $DEBTL = round($arr['DEBTL'] * 100);
                 $A_PROGROL = round($arr['A_PROGROL']);
@@ -1024,7 +1025,7 @@ class xds
                 } elseif ($DEBTL >= 150) {
                     $score1 = 11;
                 } else {
-                    $score1 = 11;
+                    $score1 = null;
                 }
 
                 if ($A_PROGROL <= -200) {
