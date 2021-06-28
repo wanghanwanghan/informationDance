@@ -244,6 +244,11 @@ class xds
                     $r['val'] = $val;
                     $r['score'] = $score;
                     break;
+                } else {
+                    $score = 11;
+                    $r['year'] = $year;
+                    $r['val'] = 150;
+                    $r['score'] = $score;
                 }
             }
         }
@@ -277,7 +282,7 @@ class xds
                 $total = substr($total['TotalStockPercent'], 0, -1);
                 if ($total >= 50) {
                     //如果第一个人就是大股东了，就直接返回
-                    $temp = $sjkzr['result']['BreakThroughList'][0];
+                    $temp = [];
                 } else {
                     //把返回的所有人加起来和100做减法，求出坑
                     $hole = 100;
@@ -331,6 +336,13 @@ class xds
                     $type && $score !== null ? $score = intval($score * 0.7 + 100 * 0.3) : $score = intval($score * 0.9);
                     $r['year'] = $year;
                     $r['val'] = $val;
+                    $r['score'] = $score;
+                    break;
+                } else {
+                    $score = 11;
+                    $type && $score !== null ? $score = intval($score * 0.7 + 100 * 0.3) : $score = intval($score * 0.9);
+                    $r['year'] = $year;
+                    $r['val'] = 150;
                     $r['score'] = $score;
                     break;
                 }
@@ -697,7 +709,7 @@ class xds
                 } elseif ($val >= 1000000) {
                     $score = 96.5;
                 } else {
-                    $score = 10;
+                    $score = 1;
                 }
                 $r['year'] = $year;
                 $r['val'] = $val;
@@ -731,7 +743,7 @@ class xds
                     } elseif ($val >= -5 && $val <= -1) {
                         $score = 11;
                     } elseif ($val >= -1 && $val <= 0) {
-                        $score = 16;
+                        $score = 15;
                     } elseif ($val >= 0 && $val <= 3.3) {
                         $score = 35;
                     } elseif ($val >= 3.31 && $val <= 5.5) {
@@ -1012,7 +1024,7 @@ class xds
                 } elseif ($DEBTL >= 150) {
                     $score1 = 11;
                 } else {
-                    $score1 = null;
+                    $score1 = 11;
                 }
 
                 if ($A_PROGROL <= -200) {
@@ -1155,7 +1167,7 @@ class xds
                 $total = substr($total['TotalStockPercent'], 0, -1);
                 if ($total >= 50) {
                     //如果第一个人就是大股东了，就直接返回
-                    $temp = $sjkzr['result']['BreakThroughList'][0];
+                    $temp = [];
                 } else {
                     //把返回的所有人加起来和100做减法，求出坑
                     $hole = 100;
