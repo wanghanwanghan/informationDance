@@ -354,32 +354,30 @@ class xds
         //
         foreach ($data as $year => $arr) {
             if (is_numeric($arr['NETINC']) && is_numeric($arr['MAIBUSINC'])) {
-                if ($arr['MAIBUSINC'] != 0) {
-                    $val = round($arr['NETINC'] / $arr['MAIBUSINC'] * 100);
-                    if ($val <= 0) {
-                        $score = 10;
-                    } elseif ($val >= 1 && $val <= 2) {
-                        $score = 15;
-                    } elseif ($val >= 3 && $val <= 5) {
-                        $score = 21;
-                    } elseif ($val >= 6 && $val <= 8) {
-                        $score = 30;
-                    } elseif ($val >= 9 && $val <= 10) {
-                        $score = 41;
-                    } elseif ($val > 10 && $val <= 100) {
-                        //每多5%加8分
-                        $score = intval($val / 5) * 8;
-                        $score <= 97 ?: $score = 97;
-                    } elseif ($val > 100) {
-                        $score = 97;
-                    } else {
-                        $score = null;
-                    }
-                    $r['year'] = $year;
-                    $r['val'] = $val;
-                    $r['score'] = $score;
-                    break;
+                $arr['MAIBUSINC'] == 0 ? $val = 0 : $val = round($arr['NETINC'] / $arr['MAIBUSINC'] * 100);
+                if ($val <= 0) {
+                    $score = 10;
+                } elseif ($val >= 1 && $val <= 2) {
+                    $score = 15;
+                } elseif ($val >= 3 && $val <= 5) {
+                    $score = 21;
+                } elseif ($val >= 6 && $val <= 8) {
+                    $score = 30;
+                } elseif ($val >= 9 && $val <= 10) {
+                    $score = 41;
+                } elseif ($val > 10 && $val <= 100) {
+                    //每多5%加8分
+                    $score = intval($val / 5) * 8;
+                    $score <= 97 ?: $score = 97;
+                } elseif ($val > 100) {
+                    $score = 97;
+                } else {
+                    $score = null;
                 }
+                $r['year'] = $year;
+                $r['val'] = $val;
+                $r['score'] = $score;
+                break;
             }
         }
 
