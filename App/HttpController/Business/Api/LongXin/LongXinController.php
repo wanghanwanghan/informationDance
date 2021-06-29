@@ -759,6 +759,17 @@ class LongXinController extends LongXinBase
             $postData['basic_enttype'] = "any:{$basic_enttype}";
         }
 
+        $basic_uniscid = $this->request()->getRequestParam('basic_uniscid') ?? '';
+        if (!empty(trim($basic_uniscid))) {
+            $basic_uniscid = trim($basic_uniscid, ',');
+            $postData['basic_uniscid'] = "any:{$basic_uniscid}";
+        }
+
+
+
+
+
+
 
         $this->moduleNum = 53;
 
