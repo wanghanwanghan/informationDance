@@ -350,4 +350,12 @@ class CommonService extends ServiceBase
         return preg_match($pattern, strtoupper($idCardStr));
     }
 
+    function spaceTo($str, $to = ','): string
+    {
+        $str = trim($str);
+        $arr = explode(' ', $str);
+        $arr = array_filter($arr);
+        return implode($to, $arr);
+    }
+
 }

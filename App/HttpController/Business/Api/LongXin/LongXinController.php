@@ -711,34 +711,14 @@ class LongXinController extends LongXinBase
 
         $basic_entname = $this->request()->getRequestParam('basic_entname') ?? '';
         if (!empty(trim($basic_entname))) {
+            $basic_entname = CommonService::getInstance()->spaceTo($basic_entname);
             $postData['basic_entname'] = "any:{$basic_entname}";
-        }
-
-        $basic_person_name = $this->request()->getRequestParam('basic_person_name') ?? '';
-        if (!empty(trim($basic_person_name))) {
-            $postData['basic_person_name'] = "any:{$basic_person_name}";
-        }
-
-        $basic_dom = $this->request()->getRequestParam('basic_dom') ?? '';
-        if (!empty(trim($basic_dom))) {
-            $postData['basic_dom'] = "any:{$basic_dom}";
-        }
-
-        $basic_regcap = $this->request()->getRequestParam('basic_regcap') ?? '';
-        if (!empty(trim($basic_regcap))) {
-            $postData['basic_regcap'] = "{$basic_regcap}￥999999999";
-        }
-
-        $basic_nicid = $this->request()->getRequestParam('basic_nicid') ?? '';
-        if (!empty(trim($basic_nicid))) {
-            $postData['basic_nicid'] = "{$basic_nicid}￥999999999";
         }
 
         $this->moduleNum = 53;
 
         $postData = [
             'pindex' => $pindex,
-            'psize' => '50',
         ];
 
         $res = (new LongXinService())->superSearch($postData);

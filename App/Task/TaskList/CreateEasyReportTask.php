@@ -2722,9 +2722,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = ['keyNo' => $this->entName];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'ECIException/GetOpException', $postData);
-
-            CommonService::getInstance()->log4PHP($res);
+            $res = (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get($this->ldUrl . 'ECIException/GetOpException', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
