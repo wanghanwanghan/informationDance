@@ -717,8 +717,18 @@ class LongXinController extends LongXinBase
             $postData['basic_entname'] = "any:{$basic_entname}";
         }
 
-        $this->moduleNum = 53;
+        $faren = $this->request()->getRequestParam('faren') ?? '';
+        if (!empty(trim($faren))) {
+            $faren = CommonService::getInstance()->spaceTo($faren);
+            $postData['faren'] = "any:{$faren}";
+        }
 
+
+
+
+
+
+        $this->moduleNum = 53;
 
         $res = (new LongXinService())->superSearch($postData);
 
