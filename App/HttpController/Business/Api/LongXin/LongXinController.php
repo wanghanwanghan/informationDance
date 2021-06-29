@@ -735,10 +735,12 @@ class LongXinController extends LongXinBase
             $postData['basic_dom'] = "all:{$basic_dom}";
         }
 
-
-
-
-
+        $regcap = $this->request()->getRequestParam('regcap') ?? '';
+        CommonService::getInstance()->log4PHP($regcap);
+        if (!empty(trim($regcap))) {
+            $regcap = str_replace(['-'], '￥', $regcap);
+            $postData['regcap'] = $regcap;
+        }
 
 
         $this->moduleNum = 53;
