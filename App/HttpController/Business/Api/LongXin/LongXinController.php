@@ -747,6 +747,12 @@ class LongXinController extends LongXinBase
             $postData['basic_nicid'] = "any:{$basic_nicid}";
         }
 
+        $basic_esdate = $this->request()->getRequestParam('$basic_esdate') ?? '';
+        if (!empty(trim($basic_esdate))) {
+            $basic_esdate = str_replace(['-'], '￥', $basic_esdate);
+            $postData['basic_esdate'] = $basic_esdate;
+        }
+
 
         $this->moduleNum = 53;
 
