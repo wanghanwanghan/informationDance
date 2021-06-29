@@ -997,10 +997,6 @@ class xds
                 $DEBTL = round($arr['DEBTL'] * 100);
                 $A_PROGROL = round($arr['A_PROGROL']);
 
-                CommonService::getInstance()->log4PHP([
-                    $DEBTL, $A_PROGROL
-                ]);
-
                 if ($DEBTL == 0) {
                     $score1 = 99.5;
                 } elseif ($DEBTL >= 0.1 && $DEBTL <= 5) {

@@ -800,8 +800,6 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //$oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,14,$this->entName,true);
         //$docObj->setValue('jbxx_oneSaid', $oneSaid);
 
-        CommonService::getInstance()->log4PHP($data['GetBasicDetailsByName']);
-
         //龙盾 基本信息
         //企业类型
         $docObj->setValue('ENTTYPE', $data['GetBasicDetailsByName']['EconKind']);
@@ -816,7 +814,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //成立日期
         $docObj->setValue('ESDATE', $this->formatDate($data['GetBasicDetailsByName']['StartDate']));
         //核准日期
-        $docObj->setValue('APPRDATE', $this->formatDate($data['GetBasicDetailsByName']['UpdatedDate']));
+        $docObj->setValue('APPRDATE', $this->formatDate($data['GetBasicDetailsByName']['CheckDate']));
         //经营状态
         $docObj->setValue('ENTSTATUS', $data['GetBasicDetailsByName']['Status']);
         //营业期限

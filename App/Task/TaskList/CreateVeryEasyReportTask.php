@@ -774,7 +774,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         //成立日期
         $docObj->setValue('ESDATE', $this->formatDate($data['GetBasicDetailsByName']['StartDate']));
         //核准日期
-        $docObj->setValue('APPRDATE', $this->formatDate($data['GetBasicDetailsByName']['UpdatedDate']));
+        $docObj->setValue('APPRDATE', $this->formatDate($data['GetBasicDetailsByName']['CheckDate']));
         //经营状态
         $docObj->setValue('ENTSTATUS', $data['GetBasicDetailsByName']['Status']);
         //营业期限
