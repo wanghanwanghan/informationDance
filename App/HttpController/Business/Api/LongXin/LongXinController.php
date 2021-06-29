@@ -748,6 +748,7 @@ class LongXinController extends LongXinBase
         }
 
         $basic_esdate = $this->request()->getRequestParam('basic_esdate') ?? '';
+        CommonService::getInstance()->log4PHP($basic_esdate);
         if (!empty(trim($basic_esdate))) {
             $basic_esdate = str_replace(['-'], '￥', $basic_esdate);
             $postData['basic_esdate'] = $basic_esdate;
