@@ -1125,8 +1125,6 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'ECIV4/GetBasicDetailsByName', $postData);
 
-            CommonService::getInstance()->log4PHP($res);
-
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
             return $res;
