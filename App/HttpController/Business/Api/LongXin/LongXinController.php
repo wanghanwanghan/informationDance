@@ -707,8 +707,12 @@ class LongXinController extends LongXinBase
     //超级搜索
     function superSearch()
     {
+        $pindex = $this->request()->getRequestParam('page') ?? '1';
+
+        !empty($pindex) ?: $pindex = 1;
+
         $postData = [
-            'pindex' => $this->request()->getRequestParam('page') ?? '1'
+            'pindex' => $pindex - 1
         ];
 
         $basic_entname = $this->request()->getRequestParam('basic_entname') ?? '';
@@ -722,10 +726,6 @@ class LongXinController extends LongXinBase
             $faren = CommonService::getInstance()->spaceTo($faren);
             $postData['faren'] = "any:{$faren}";
         }
-
-
-
-
 
 
         $this->moduleNum = 53;

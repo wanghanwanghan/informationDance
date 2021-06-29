@@ -61,6 +61,7 @@ $data = [
 //$res = curl_exec($curl);//发送请求
 //dd(json_decode($res, true));
 
+
 //    哈希碰创
 //    let size= Math.pow(2, 16)
 //    let data = {}
