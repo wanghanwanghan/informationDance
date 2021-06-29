@@ -742,20 +742,10 @@ class LongXinController extends LongXinBase
         }
 
         $basic_nicid = $this->request()->getRequestParam('basic_nicid') ?? '';
-
-
-        CommonService::getInstance()->log4PHP($basic_nicid);
-
-
-
-
-
         if (!empty(trim($basic_nicid))) {
-            $basic_nicid = str_replace(['-'], '￥', $basic_nicid);
-            $postData['basic_nicid'] = $basic_nicid;
+            $basic_nicid = trim($basic_nicid, ',');
+            $postData['basic_nicid'] = "any:{$basic_nicid}";
         }
-
-
 
 
         $this->moduleNum = 53;
