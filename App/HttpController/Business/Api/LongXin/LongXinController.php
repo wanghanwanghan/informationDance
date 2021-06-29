@@ -732,7 +732,7 @@ class LongXinController extends LongXinBase
         $basic_dom = $this->request()->getRequestParam('basic_dom') ?? '';
         if (!empty(trim($basic_dom))) {
             $basic_dom = CommonService::getInstance()->spaceTo($basic_dom);
-            $postData['basic_dom'] = "must:{$basic_dom}";
+            $postData['basic_dom'] = "any:{$basic_dom}";
         }
 
 
