@@ -765,11 +765,17 @@ class LongXinController extends LongXinBase
             $postData['basic_uniscid'] = "any:{$basic_uniscid}";
         }
 
+        $basic_ygrs = $this->request()->getRequestParam('basic_ygrs') ?? '';
+        if (!empty(trim($basic_ygrs))) {
+            $basic_ygrs = str_replace(['-'], '￥', $basic_ygrs);
+            $postData['basic_ygrs'] = $basic_ygrs;
+        }
 
-
-
-
-
+        $basic_regionid = $this->request()->getRequestParam('basic_regionid') ?? '';
+        if (!empty(trim($basic_regionid))) {
+            $basic_regionid = trim($basic_regionid, ',');
+            $postData['basic_regionid'] = "any:{$basic_regionid}";
+        }
 
         $this->moduleNum = 53;
 
