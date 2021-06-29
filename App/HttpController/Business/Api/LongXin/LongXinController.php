@@ -723,10 +723,10 @@ class LongXinController extends LongXinBase
             $postData['basic_entname'] = "any:{$basic_entname}";
         }
 
-        $faren = $this->request()->getRequestParam('faren') ?? '';
-        if (!empty(trim($faren))) {
-            $faren = CommonService::getInstance()->spaceTo($faren);
-            $postData['faren'] = "any:{$faren}";
+        $basic_person_name = $this->request()->getRequestParam('basic_person_name') ?? '';
+        if (!empty(trim($basic_person_name))) {
+            $basic_person_name = CommonService::getInstance()->spaceTo($basic_person_name);
+            $postData['basic_person_name'] = "any:{$basic_person_name}";
         }
 
         $basic_dom = $this->request()->getRequestParam('basic_dom') ?? '';
