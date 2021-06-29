@@ -800,6 +800,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //$oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone,14,$this->entName,true);
         //$docObj->setValue('jbxx_oneSaid', $oneSaid);
 
+        CommonService::getInstance()->log4PHP($data['GetBasicDetailsByName']);
+
         //龙盾 基本信息
         //企业类型
         $docObj->setValue('ENTTYPE', $data['GetBasicDetailsByName']['EconKind']);
@@ -2649,7 +2651,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         //淘数 基本信息 工商信息
         $csp->add('getRegisterInfo', function () {
 
-            $res = (new TaoShuService())->setCheckRespFlag(true)->post(['entName' => $this->entName], 'getRegisterInfo');
+            $res = (new TaoShuService())
+                ->setCheckRespFlag(true)
+                ->post(['entName' => $this->entName], 'getRegisterInfo');
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = current($res['result']) : $res = null;
 
@@ -2661,7 +2665,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = ['keyWord' => $this->entName];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'ECIV4/GetBasicDetailsByName', $postData);
+            $res = (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get($this->ldUrl . 'ECIV4/GetBasicDetailsByName', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
