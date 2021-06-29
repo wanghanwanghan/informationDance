@@ -2152,7 +2152,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //$docObj->setValue('ENTSTATUS', $data['getRegisterInfo']['ENTSTATUS']);
         //营业期限
         //$docObj->setValue('OPFROM', $this->formatDate($data['getRegisterInfo']['OPFROM']));
-        //$docObj->setValue('APPRDATE', $this->formatDate($data['getRegisterInfo']['APPRDATE']));
+        //$docObj->setValue('ENDDATE', $this->formatDate($data['getRegisterInfo']['APPRDATE']));
         //所属行业
         //$docObj->setValue('INDUSTRY', $data['getRegisterInfo']['INDUSTRY']);
         //经营范围
@@ -2179,7 +2179,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $docObj->setValue('ENTSTATUS', $data['GetBasicDetailsByName']['Status']);
         //营业期限
         $docObj->setValue('OPFROM', $this->formatDate($data['GetBasicDetailsByName']['TermStart']));
-        $docObj->setValue('APPRDATE', $this->formatDate($data['GetBasicDetailsByName']['TeamEnd']));
+        $docObj->setValue('ENDDATE', $this->formatDate($data['GetBasicDetailsByName']['TeamEnd']));
         //所属行业
         $docObj->setValue('INDUSTRY', '');
         //经营范围
