@@ -715,6 +715,8 @@ class LongXinController extends LongXinBase
             'pindex' => $pindex - 1
         ];
 
+        //should 是 or   must 是 and   must_not 是not
+
         $basic_entname = $this->request()->getRequestParam('basic_entname') ?? '';
         if (!empty(trim($basic_entname))) {
             $basic_entname = CommonService::getInstance()->spaceTo($basic_entname);
@@ -726,6 +728,17 @@ class LongXinController extends LongXinBase
             $faren = CommonService::getInstance()->spaceTo($faren);
             $postData['faren'] = "any:{$faren}";
         }
+
+        $basic_dom = $this->request()->getRequestParam('basic_dom') ?? '';
+        if (!empty(trim($basic_dom))) {
+            $basic_dom = CommonService::getInstance()->spaceTo($basic_dom);
+            $postData['basic_dom'] = "must:{$basic_dom}";
+        }
+
+
+
+
+
 
 
         $this->moduleNum = 53;
