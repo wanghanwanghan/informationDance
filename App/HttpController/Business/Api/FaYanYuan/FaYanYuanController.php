@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Api\FaYanYuan;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaYanYuan\FaYanYuanService;
 use App\HttpController\Service\Pay\ChargeService;
@@ -523,6 +524,8 @@ class FaYanYuanController extends FaYanYuanBase
         ];
 
         $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'sifa', $postData);
+
+        CommonService::getInstance()->log4PHP($res);
 
         $res = $this->checkResponse($res, $docType, 'list', false);
 
