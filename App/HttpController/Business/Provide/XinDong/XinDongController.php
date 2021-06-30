@@ -114,10 +114,12 @@ class XinDongController extends ProvideBase
 
         //周伯通
         if ($this->userId === 35) {
-            if ($beginYear === 2019 && $dataCount <= 2) {
+            if ($beginYear === 2020 && $dataCount <= 2) {
+                $a = null;
+            } elseif ($beginYear === 2019 && $dataCount <= 2) {
                 $a = null;
             } elseif ($beginYear === 2018 && $dataCount === 1) {
-                $b = null;
+                $a = null;
             } else {
                 return $this->writeJson(201, null, null, '参数错误');
             }

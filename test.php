@@ -28,11 +28,11 @@ $data = [
     'time' => $time,
     'sign' => $sign,
     //'image' => new \CURLFile(realpath('./WechatIMG261-tuya.png'))
-    'entName' => '高要区金利镇金奥达五金厂',
+    'entName' => '广州恒炫进出口有限公司',
     'id' => '370503198409120910',
-    'code' => '91110108MA01KPGK0L',
-    'year' => '2019',
-    'dataCount' => '3',
+    'code' => '91440101MA59TWJ94B',
+    'year' => '2020',
+    'dataCount' => '2',
     'page' => 1,
     'pageSize' => 10,
     'phone' => 18618457910,
@@ -51,15 +51,15 @@ $data = [
 //远景能源有限公司
 //许继集团有限公司
 
-//$curl = curl_init();//初始化
-//curl_setopt($curl, CURLOPT_URL, $url);//设置请求地址
-//curl_setopt($curl, CURLOPT_POST, true);//设置post方式请求
-//curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 15);//几秒后没链接上就自动断开
-//curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-//curl_setopt($curl, CURLOPT_POSTFIELDS, $data);//提交的数据
-//curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);//返回值不直接显示
-//$res = curl_exec($curl);//发送请求
-//dd(json_decode($res, true));
+$curl = curl_init();//初始化
+curl_setopt($curl, CURLOPT_URL, $url);//设置请求地址
+curl_setopt($curl, CURLOPT_POST, true);//设置post方式请求
+curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 15);//几秒后没链接上就自动断开
+curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+curl_setopt($curl, CURLOPT_POSTFIELDS, $data);//提交的数据
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);//返回值不直接显示
+$res = curl_exec($curl);//发送请求
+dd(json_decode($res, true));
 
 
 //    哈希碰创
