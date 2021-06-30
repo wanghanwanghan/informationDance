@@ -54,29 +54,26 @@ class LongDunController extends ProvideBase
         $this->csp->add($this->cspKey, function () use ($postData) {
             //先拿股票代码
             $info = (new LongDunService())->setCheckRespFlag(true)
-                ->get($this->ldListUrl.'ECIV4/GetBasicDetailsByName',['keyword'=>$postData['entName']]);
+                ->get($this->ldListUrl . 'ECIV4/GetBasicDetailsByName', ['keyword' => $postData['entName']]);
             if ($info['code'] === 200 && !empty($info['result'])) {
-                empty($info['result']['StockNumber']) ? $stock='' : $stock=$info['result']['StockNumber'];
-            }else{
+                empty($info['result']['StockNumber']) ? $stock = '' : $stock = $info['result']['StockNumber'];
+            } else {
                 $stock = '';
             }
-            if (empty($stock)) return ['code'=>201,'paging'=>null,'result'=>'null','msg'=>'股票代码是空'];
+            if (empty($stock)) return ['code' => 201, 'paging' => null, 'result' => 'null', 'msg' => '股票代码是空'];
             $postData = [
                 'stockCode' => $stock,
                 'pageIndex' => $postData['page'],
                 'pageSize' => $postData['pageSize'],
             ];
             return (new LongDunService())->setCheckRespFlag(true)
-                ->get($this->ldListUrl.'IPO/GetIPOGuarantee',$postData);
+                ->get($this->ldListUrl . 'IPO/GetIPOGuarantee', $postData);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         return $this->checkResponse($res);
     }
-
-
-
 
 
 }
