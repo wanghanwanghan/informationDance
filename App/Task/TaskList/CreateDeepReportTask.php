@@ -2181,7 +2181,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         $docObj->setValue('OPFROM', $this->formatDate($data['GetBasicDetailsByName']['TermStart']));
         $docObj->setValue('ENDDATE', $this->formatDate($data['GetBasicDetailsByName']['TeamEnd']));
         //所属行业
-        $docObj->setValue('INDUSTRY', '');
+        $docObj->setValue('INDUSTRY', $data['getRegisterInfo']['INDUSTRY']);
         //经营范围
         $docObj->setValue('OPSCOPE', $data['GetBasicDetailsByName']['Scope']);
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 14, $this->entName, true);
