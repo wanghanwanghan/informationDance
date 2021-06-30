@@ -60,7 +60,7 @@ class LongDunController extends ProvideBase
             } else {
                 $stock = '';
             }
-            if (empty($stock)) return ['code' => 201, 'paging' => null, 'result' => 'null', 'msg' => '股票代码是空'];
+            if (empty($stock)) return ['code' => 201, 'paging' => null, 'result' => null, 'msg' => '股票代码是空'];
             $postData = [
                 'stockCode' => $stock,
                 'pageIndex' => $postData['page'],
