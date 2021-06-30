@@ -151,8 +151,6 @@ class LongDunController extends LongDunBase
 
         $res = (new LongDunService())->get($this->baseUrl . 'Beneficiary/GetBeneficiary', $postData);
 
-        CommonService::getInstance()->log4PHP($res);
-
         $tmp = [];
 
         if (count($res['Result']['BreakThroughList']) > 0) {
@@ -169,6 +167,9 @@ class LongDunController extends LongDunBase
                 }
                 //求出坑的比例，如果比第一个人大，那就是特殊机构，如果没第一个人大，那第一个人就是控制人
                 if ($total > $hole) $tmp = $res['Result']['BreakThroughList'][0];
+                CommonService::getInstance()->log4PHP([
+                    $total, $hole
+                ]);
             }
         }
 
