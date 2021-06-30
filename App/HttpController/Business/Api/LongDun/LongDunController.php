@@ -151,6 +151,8 @@ class LongDunController extends LongDunBase
 
         $res = (new LongDunService())->get($this->baseUrl . 'Beneficiary/GetBeneficiary', $postData);
 
+        CommonService::getInstance()->log4PHP($res);
+
         $tmp = [];
 
         if (count($res['Result']['BreakThroughList']) > 0) {
