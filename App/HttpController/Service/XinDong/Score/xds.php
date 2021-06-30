@@ -242,14 +242,14 @@ class xds
                     }
                     $r['year'] = $year;
                     $r['val'] = $val;
-                    $r['score'] = $score;
-                    break;
+                    $r['score'] = intval($score * 0.85);
                 } else {
                     $score = 11;
                     $r['year'] = $year;
                     $r['val'] = 150;
-                    $r['score'] = $score;
+                    $r['score'] = intval($score * 0.85);
                 }
+                break;
             }
         }
 
@@ -333,19 +333,22 @@ class xds
                     } else {
                         $score = null;
                     }
-                    $type && $score !== null ? $score = intval($score * 0.7 + 100 * 0.3) : $score = intval($score * 0.9);
+                    $type && $score !== null ?
+                        $score = intval($score * 0.7 + 100 * 0.3) :
+                        $score = intval($score * 0.9);
                     $r['year'] = $year;
                     $r['val'] = $val;
                     $r['score'] = $score;
-                    break;
                 } else {
                     $score = 11;
-                    $type && $score !== null ? $score = intval($score * 0.7 + 100 * 0.3) : $score = intval($score * 0.9);
+                    $type ?
+                        $score = intval($score * 0.7 + 100 * 0.3) :
+                        $score = intval($score * 0.9);
                     $r['year'] = $year;
                     $r['val'] = 150;
-                    $r['score'] = $score;
-                    break;
+                    $r['score'] = intval($score * 0.9);
                 }
+                break;
             }
         }
 
@@ -610,7 +613,7 @@ class xds
                     }
                     $r['year'] = $year;
                     $r['val'] = $val;
-                    $r['score'] = $score;
+                    $r['score'] = intval($score * 0.7);
                     break;
                 }
             }
@@ -825,7 +828,7 @@ class xds
                 }
                 $r['year'] = $year;
                 $r['val'] = $val;
-                $r['score'] = $score;
+                $r['score'] = intval($score * 0.8);
                 break;
             }
         }
