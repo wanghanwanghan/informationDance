@@ -131,7 +131,7 @@ class UserController extends UserBase
 
         if ($userInfo->getAttr('isDestroy') == 1) return $this->writeJson(201, null, null, '手机号已注销');
 
-        //密码或者验证码登陆
+        //密码或者验证码登录
         if (!empty($vCode)) {
             $redis = Redis::defer('redis');
             $redis->select(14);

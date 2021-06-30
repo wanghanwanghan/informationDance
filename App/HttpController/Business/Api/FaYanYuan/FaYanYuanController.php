@@ -525,8 +525,6 @@ class FaYanYuanController extends FaYanYuanBase
 
         $res = (new FaYanYuanService())->getList($this->listBaseUrl . 'sifa', $postData);
 
-        CommonService::getInstance()->log4PHP($res);
-
         $res = $this->checkResponse($res, $docType, 'list', false);
 
         if (!is_array($res)) return $res;
