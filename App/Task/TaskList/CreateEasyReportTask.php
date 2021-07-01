@@ -3133,6 +3133,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $res = (new LongXinService())->setCheckRespFlag(true)->getFinanceData($postData, false);
 
+            CommonService::getInstance()->log4PHP($res);
+
             if ($res['code'] !== 200) return '';
 
             ksort($res['result']);

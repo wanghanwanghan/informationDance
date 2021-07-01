@@ -7044,43 +7044,32 @@ TEMP;
 
         //乾启 近三年团队人数变化率
         array_search('itemInfo', $catalog) === false ?: $csp->add('itemInfo', function () {
+            $postData = [
+                'entName' => $this->entName,
+                'code' => '',
+                'beginYear' => date('Y') - 2,
+                'dataCount' => 4,//取最近几年的
+            ];
 
-            $postData = ['entName' => $this->entName];
+            $res = (new LongXinService())->setCheckRespFlag(true)->getFinanceData($postData, false);
 
-            $res = (new QianQiService())->setCheckRespFlag(true)->getThreeYearsData($postData);
+            if ($res['code'] !== 200) return '';
 
-            if ($res['code'] === 200 && !empty($res['result'])) {
+            ksort($res['result']);
 
-                $yearArr = array_keys($res['result']);
-                $dataArr = array_values($res['result']);
-                $res = [];
+            $tmp = [];
 
-                for ($i = 0; $i < 3; $i++) {
-
-                    if (isset($dataArr[$i]['SOCNUM']) && is_numeric($dataArr[$i]['SOCNUM'])) {
-                        $SOCNUM_1 = (int)$dataArr[$i]['SOCNUM'];
-                    } else {
-                        $SOCNUM_1 = null;
-                    }
-
-                    if (isset($dataArr[$i + 1]['SOCNUM']) && is_numeric($dataArr[$i + 1]['SOCNUM'])) {
-                        $SOCNUM_2 = (int)$dataArr[$i + 1]['SOCNUM'];
-                    } else {
-                        $SOCNUM_2 = null;
-                    }
-
-                    if ($SOCNUM_1 !== null && $SOCNUM_2 !== null && $SOCNUM_2 !== 0) {
-                        $res[] = ['year' => $yearArr[$i], 'yoy' => ($SOCNUM_1 - $SOCNUM_2) / $SOCNUM_2, 'num' => $SOCNUM_1];
-                    } else {
-                        $res[] = ['year' => $yearArr[$i], 'yoy' => null, 'num' => $SOCNUM_1];
-                    }
+            if (!empty($res['result'])) {
+                foreach ($res['result'] as $year => $val) {
+                    array_push($tmp, [
+                        'year' => $year,
+                        'yoy' => is_numeric($val['SOCNUM_yoy']) ? sRound($val['SOCNUM_yoy'] * 100) : null,
+                        'num' => is_numeric($val['SOCNUM']) ? $val['SOCNUM'] - 0 : null,
+                    ]);
                 }
-
-            } else {
-                $res = null;
             }
 
-            return $res;
+            return $tmp;
         });
 
         //龙盾 建筑企业-专业注册人员
