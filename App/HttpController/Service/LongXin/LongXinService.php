@@ -220,7 +220,9 @@ class LongXinService extends ServiceBase
 
         $this->sendHeaders['authorization'] = $this->createToken($arr);
 
-        $res = (new CoHttpClient())->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
+        $res = (new CoHttpClient())
+            ->useCache(true)
+            ->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
 
         if (isset($res['total']) && $res['total'] > 0) {
             foreach ($res['data'] as $oneYearData) {
