@@ -1229,7 +1229,7 @@ class xds
                 ($type && $score !== null) ? $score = intval($score * 0.7 + 100 * 0.3) : null;
                 $r['year'] = $year;
                 $r['val'] = $val;
-                $r['score'] = $score;
+                $r['score'] = intval($score * 0.8);
                 break;
             }
         }
