@@ -272,9 +272,9 @@ class XinDongController extends ProvideBase
                 if ($finance['code'] === 200 && !empty($finance['result'])) {
                     foreach ($finance['result'] as $year => $val) {
                         if (!empty($val)) {
-                            $data['result']['VENDINC'] = $val['VENDINC'];
-                            $data['result']['ASSGRO'] = $val['ASSGRO'];
-                            $data['result']['SOCNUM'] = $val['SOCNUM'];
+                            $data['result']['VENDINC'] = is_numeric($val['VENDINC']) ? $val['VENDINC'] - 0 : null;
+                            $data['result']['ASSGRO'] = is_numeric($val['ASSGRO']) ? $val['ASSGRO'] - 0 : null;
+                            $data['result']['SOCNUM'] = is_numeric($val['SOCNUM']) ? $val['SOCNUM'] - 0 : null;
                             break;
                         }
                     }
