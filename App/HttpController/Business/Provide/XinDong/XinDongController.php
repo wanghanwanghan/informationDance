@@ -257,6 +257,7 @@ class XinDongController extends ProvideBase
                     'paging' => null,
                     'result' => [
                         'nic_id' => [],
+                        'year' => null,
                         'VENDINC' => null,
                         'ASSGRO' => null,
                         'SOCNUM' => null,
@@ -272,6 +273,7 @@ class XinDongController extends ProvideBase
                     foreach ($finance['result'] as $year => $val) {
                         if ($year - 0 === 2020) continue;
                         if (!empty($val)) {
+                            $data['result']['year'] = $year - 0;
                             $data['result']['VENDINC'] = is_numeric($val['VENDINC']) ? $val['VENDINC'] - 0 : null;
                             $data['result']['ASSGRO'] = is_numeric($val['ASSGRO']) ? $val['ASSGRO'] - 0 : null;
                             $data['result']['SOCNUM'] = is_numeric($val['SOCNUM']) ? $val['SOCNUM'] - 0 : null;
