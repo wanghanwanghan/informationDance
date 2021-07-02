@@ -252,7 +252,6 @@ class XinDongController extends ProvideBase
                         'beginYear' => date('Y') - 1,
                         'dataCount' => 3,
                     ], false);
-                CommonService::getInstance()->log4PHP($finance);
                 $data = [
                     'code' => 200,
                     'paging' => null,
