@@ -227,4 +227,18 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function superSearch()
+    {
+        $entName = $this->getRequestData('entName');
+        $code = $this->getRequestData('code');
+
+        empty($entName) ?: $postData['basic_entname'] = "any:{$entName}";
+        empty($code) ?: $postData['basic_uniscid'] = "any:{$code}";
+
+        $res = (new LongXinService())->setCheckRespFlag(true)->superSearch($postData);
+
+        return $this->checkResponse($res);
+    }
+
+
 }

@@ -92,6 +92,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceBaseMergeData', $prefix . 'getFinanceBaseMergeData');
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceCalData', $prefix . 'getFinanceCalData');
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceCalMergeData', $prefix . 'getFinanceCalMergeData');
+            $routeCollector->addRoute(['GET', 'POST'], '/superSearch', $prefix . 'superSearch');
         });
 
         return true;
