@@ -240,19 +240,18 @@ class XinDongController extends ProvideBase
             $postData['basic_entname'] = "any:{$entName}";
             $postData['basic_uniscid'] = "any:{$code}";
 
-            $this->csp->add($this->cspKey, function () use ($postData) {
+            $this->csp->add($this->cspKey, function () use ($postData, $entName, $code) {
                 $superSearch = (new LongXinService())
                     ->setCheckRespFlag(true)
                     ->superSearch($postData);
                 $finance = (new LongXinService())
                     ->setCheckRespFlag(true)
                     ->getFinanceData([
-                        'entName' => $postData['basic_entname'],
-                        'code' => $postData['basic_uniscid'],
+                        'entName' => $entName,
+                        'code' => $code,
                         'beginYear' => date('Y') - 1,
                         'dataCount' => 3,
                     ], false);
-                CommonService::getInstance()->log4PHP($finance);
                 $data = [
                     'code' => 200,
                     'paging' => null,
