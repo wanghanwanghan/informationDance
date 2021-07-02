@@ -235,7 +235,13 @@ class XinDongController extends ProvideBase
         empty($entName) ?: $postData['basic_entname'] = "any:{$entName}";
         empty($code) ?: $postData['basic_uniscid'] = "any:{$code}";
 
-        $res = (new LongXinService())->setCheckRespFlag(true)->superSearch($postData);
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->superSearch($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         return $this->checkResponse($res);
     }
