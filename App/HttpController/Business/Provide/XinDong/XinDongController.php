@@ -270,15 +270,13 @@ class XinDongController extends ProvideBase
                     }
                     $data['result']['nic_id'] = $nic_id;
                 }
-                if ($finance['code'] === 200) {
-                    if (!empty($finance['result'])) {
-                        foreach ($finance['result'] as $year => $val) {
-                            if (!empty($val)) {
-                                $data['result']['VENDINC'] = $val['VENDINC'];
-                                $data['result']['ASSGRO'] = $val['ASSGRO'];
-                                $data['result']['SOCNUM'] = $val['SOCNUM'];
-                                break;
-                            }
+                if ($finance['code'] === 200 && !empty($finance['result'])) {
+                    foreach ($finance['result'] as $year => $val) {
+                        if (!empty($val)) {
+                            $data['result']['VENDINC'] = $val['VENDINC'];
+                            $data['result']['ASSGRO'] = $val['ASSGRO'];
+                            $data['result']['SOCNUM'] = $val['SOCNUM'];
+                            break;
                         }
                     }
                 }
