@@ -232,16 +232,61 @@ class XinDongController extends ProvideBase
         $entName = $this->getRequestData('entName');
         $code = $this->getRequestData('code');
 
-        empty($entName) ?: $postData['basic_entname'] = "any:{$entName}";
-        empty($code) ?: $postData['basic_uniscid'] = "any:{$code}";
+        if (empty($entName) || empty($code)) {
+            $res = [];
+            $this->responseMsg = '参数不能是空';
+        } else {
+            $postData['basic_entname'] = "any:{$entName}";
+            $postData['basic_uniscid'] = "any:{$code}";
 
-        $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new LongXinService())
-                ->setCheckRespFlag(true)
-                ->superSearch($postData);
-        });
+            $this->csp->add($this->cspKey, function () use ($postData) {
+                $superSearch = (new LongXinService())
+                    ->setCheckRespFlag(true)
+                    ->superSearch($postData);
+                $finance = (new LongXinService())
+                    ->setCheckRespFlag(true)
+                    ->getFinanceData([
+                        'entName' => $postData['basic_entname'],
+                        'code' => $postData['basic_uniscid'],
+                        'beginYear' => date('Y') - 1,
+                        'dataCount' => 3,
+                    ], false);
+                $data = [
+                    'code' => 200,
+                    'paging' => null,
+                    'result' => [
+                        'nic_id' => [],
+                        'VENDINC' => null,
+                        'ASSGRO' => null,
+                        'SOCNUM' => null,
+                    ],
+                    'msg' => null,
+                ];
+                if ($superSearch['code'] === 200) {
+                    $nic_id = null;
+                    if (!empty($superSearch['result'])) {
+                        $nic_id = explode('-', current($superSearch['result'])['nic_id']);
+                        $nic_id = array_filter($nic_id);
+                    }
+                    $data['result']['nic_id'] = $nic_id;
+                }
+                if ($finance['code'] === 200) {
+                    if (!empty($finance['result'])) {
+                        foreach ($finance['result'] as $year => $val) {
+                            if (!empty($val)) {
+                                $data['result']['VENDINC'] = $val['VENDINC'];
+                                $data['result']['ASSGRO'] = $val['ASSGRO'];
+                                $data['result']['SOCNUM'] = $val['SOCNUM'];
+                                break;
+                            }
+                        }
+                    }
+                }
+                return $data;
+            });
 
-        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+            $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        }
 
         return $this->checkResponse($res);
     }
