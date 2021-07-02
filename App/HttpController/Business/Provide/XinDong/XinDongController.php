@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\XinDong;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\FinanceRange;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Sms\SmsService;
@@ -251,6 +252,7 @@ class XinDongController extends ProvideBase
                         'beginYear' => date('Y') - 1,
                         'dataCount' => 3,
                     ], false);
+                CommonService::getInstance()->log4PHP($finance);
                 $data = [
                     'code' => 200,
                     'paging' => null,
