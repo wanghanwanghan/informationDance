@@ -262,12 +262,9 @@ class XinDongController extends ProvideBase
                     ],
                     'msg' => null,
                 ];
-                if ($superSearch['code'] === 200) {
-                    $nic_id = null;
-                    if (!empty($superSearch['result'])) {
-                        $nic_id = explode('-', current($superSearch['result'])['nic_id']);
-                        $nic_id = array_filter($nic_id);
-                    }
+                if ($superSearch['code'] === 200 && !empty($superSearch['result'])) {
+                    $nic_id = explode('-', current($superSearch['result'])['nic_id']);
+                    $nic_id = array_filter($nic_id);
                     $data['result']['nic_id'] = $nic_id;
                 }
                 if ($finance['code'] === 200 && !empty($finance['result'])) {
