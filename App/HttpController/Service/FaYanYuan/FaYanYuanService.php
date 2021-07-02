@@ -198,5 +198,54 @@ class FaYanYuanService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResps($res) : $res;
     }
 
+    function sxbzxrPeople($postData)
+    {
+        $list = CreateConf::getInstance()->getConf('fayanyuan.list');
+
+        $url = $list . 'sxbzxr/portrait/people';
+
+        $postData['inquired_auth'] = 'authed:20210419-20220419';
+
+        $query = [
+            'query' => jsonEncode($postData)
+        ];
+
+        $headers = [
+            'shesu-auth' => jsonEncode([
+                'uid' => CreateConf::getInstance()->getConf('fayanyuan.shesu_auth_uid'),
+                'pwd' => CreateConf::getInstance()->getConf('fayanyuan.shesu_auth_pwd')
+            ]),
+            'Accept-Encoding' => 'gzip',
+        ];
+
+        $res = (new CoHttpClient())->useCache(false)->send($url, $query, $headers);
+
+        return $this->checkRespFlag ? $this->checkResps($res) : $res;
+    }
+
+    function xgbzxrPeople($postData)
+    {
+        $list = CreateConf::getInstance()->getConf('fayanyuan.list');
+
+        $url = $list . 'xgbzxr/portrait/people';
+
+        $postData['inquired_auth'] = 'authed:20210419-20220419';
+
+        $query = [
+            'query' => jsonEncode($postData)
+        ];
+
+        $headers = [
+            'shesu-auth' => jsonEncode([
+                'uid' => CreateConf::getInstance()->getConf('fayanyuan.shesu_auth_uid'),
+                'pwd' => CreateConf::getInstance()->getConf('fayanyuan.shesu_auth_pwd')
+            ]),
+            'Accept-Encoding' => 'gzip',
+        ];
+
+        $res = (new CoHttpClient())->useCache(false)->send($url, $query, $headers);
+
+        return $this->checkRespFlag ? $this->checkResps($res) : $res;
+    }
 
 }

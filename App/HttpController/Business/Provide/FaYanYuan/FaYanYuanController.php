@@ -72,7 +72,39 @@ class FaYanYuanController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //失信 个人
+    function sxbzxrPeople()
+    {
+        $postData = [
+            'name' => $this->getRequestData('entName'),
+            'id' => $this->getRequestData('id')
+        ];
 
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())->setCheckRespFlag(true)->sxbzxrPeople($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    //限高 个人
+    function xgbzxrPeople()
+    {
+        $postData = [
+            'name' => $this->getRequestData('entName'),
+            'id' => $this->getRequestData('id')
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())->setCheckRespFlag(true)->xgbzxrPeople($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
 }
 
 
