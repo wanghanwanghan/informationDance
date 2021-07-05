@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Api\XinDong;
 
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongDun\LongDunService;
+use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\XinDong\XinDongService;
 
@@ -128,40 +129,18 @@ class XinDongController extends XinDongBase
     function industryTop()
     {
         $entName = $this->request()->getRequestParam('entName');
-        $industry = $this->request()->getRequestParam('industry');
+        $entList = $this->request()->getRequestParam('entList');
 
-        $industry_arr = [
-            '新能源汽车' => [
-                '上汽通用五菱汽车股份有限公司',
-                '比亚迪股份有限公司',
-                '特斯拉（上海）有限公司',
-                '长城汽车股份有限公司',
-                '上海汽车集团股份有限公司',
-                '奇瑞汽车股份有限公司',
-                '一汽—大众汽车有限公司',
-                '上汽大众汽车有限公司',
-                '广州汽车集团股份有限公司',
-                '蔚来控股有限公司',
-                '北京汽车股份有限公司',
-                '东风汽车股份有限公司',
-                '广东小鹏汽车科技有限公司',
-                '北京车和家信息技术有限公司',
-                '浙江吉利控股集团有限公司',
-                '重庆长安汽车股份有限公司',
-            ],
-            '云计算行业' => [
-                '阿里云计算有限公司 ',
-                '腾讯云计算（北京）有限责任公司',
-                '华为云计算技术有限公司',
-                '百度云计算技术（北京）有限公司',
-                '珠海金山云科技有限公司',
-                '优刻得科技股份有限公司',
-                '京东云计算有限公司',
-                '新华三云计算技术有限公司',
-                '杭州朗和科技有限公司',
-                '浪潮云信息技术股份公司',
-            ]
+        $postData = [
+            'entName' => $entName,
+            'code' => '',
+            'beginYear' => date('Y') - 1,
+            'dataCount' => 5,
         ];
+
+        $ent_f = (new LongXinService())
+            ->setCheckRespFlag(true)
+            ->getFinanceData($entName, false);
 
 
     }
