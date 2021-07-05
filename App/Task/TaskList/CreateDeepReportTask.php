@@ -140,7 +140,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         switch ($this->type) {
             case 'xd':
                 $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'xd_logo.png', 'width' => 200, 'height' => 40]);
-                $tmp->setValue('selectMore', '如需更多信息登录 信动智调 查看');
+                $tmp->setValue('selectMore', '如需更多信息登录 中企链创 查看');
                 break;
             case 'wh':
                 $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'wh_logo.png', 'width' => 200, 'height' => 40]);
@@ -148,7 +148,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 break;
             default:
                 $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'xd_logo.png', 'width' => 200, 'height' => 40]);
-                $tmp->setValue('selectMore', '如需更多信息登录 信动智调 查看');
+                $tmp->setValue('selectMore', '如需更多信息登录 中企链创 查看');
         }
 
         $tmp->setValue('createEnt', $userInfo->company);
