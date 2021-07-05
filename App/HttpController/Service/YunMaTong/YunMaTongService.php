@@ -87,7 +87,7 @@ class YunMaTongService extends ServiceBase
         $url = 'https://m.ymtdata.com/bankcard/datainfo/1b001/authentication/json?bizorderno=' . $this->requestsn;
 
         //账户类型
-        //$url = 'https://m.ymtdata.com/extend/authentication/json?bizorderno=' . $this->requestsn;
+        $url = 'https://m.ymtdata.com/extend/authentication/json?bizorderno=' . $this->requestsn;
 
         $body = $this->createRequestData([
             'transtype' => 'accountinfo',
