@@ -147,7 +147,7 @@ class CreateEasyReportCustomizedTask extends TaskBase implements TaskInterface
         $tr = '';
 
         foreach ($data as $one) {
-            $tr .= "<p>".$one."</p>";
+            $tr .= "<p>" . $one . "</p>";
         }
 
         $data = $tr;
@@ -182,7 +182,7 @@ TEMP;
         //换行
         $pdf->ln(55);
 
-        $createUserInfo = User::create()->where('phone',$this->phone)->get();
+        $createUserInfo = User::create()->where('phone', $this->phone)->get();
 
         $pdf->SetFont('stsongstdlight', '', $this->pdf_Text);
         $html = <<<TEMP
@@ -243,147 +243,147 @@ TEMP;
 
         //如果是深度，填入发票数据
         if ($this->reportType === 51 || $this->reportType === '51') {
-            $code = (new GuoPiaoService())->getReceiptDataTest($this->entName,'getCode');
-            $this->inDetail = (new GuoPiaoService())->getReceiptDataTest($code,'in');
-            $this->outDetail = (new GuoPiaoService())->getReceiptDataTest($code,'out');
+            $code = (new GuoPiaoService())->getReceiptDataTest($this->entName, 'getCode');
+            $this->inDetail = (new GuoPiaoService())->getReceiptDataTest($code, 'in');
+            $this->outDetail = (new GuoPiaoService())->getReceiptDataTest($code, 'out');
 
             //发票
-            $invoiceObj = (new Invoice($this->inDetail,$this->outDetail));
+            $invoiceObj = (new Invoice($this->inDetail, $this->outDetail));
 
             //5.2主营商品分析
-            $zyspfx=$invoiceObj->zyspfx();
-            $cspData['re_fpxx']['zyspfx']=$zyspfx;
+            $zyspfx = $invoiceObj->zyspfx();
+            $cspData['re_fpxx']['zyspfx'] = $zyspfx;
 
             //5.4主要成本分析
-            $zycbfx=$invoiceObj->zycbfx();
-            $cspData['re_fpjx']['zycbfx']=$zycbfx;
+            $zycbfx = $invoiceObj->zycbfx();
+            $cspData['re_fpjx']['zycbfx'] = $zycbfx;
             //各种费用在统计周期内合并
-            $cspData['re_fpjx']['zycbfx_new']=$invoiceObj->zycbfx_new($zycbfx[1]);
+            $cspData['re_fpjx']['zycbfx_new'] = $invoiceObj->zycbfx_new($zycbfx[1]);
 
             //6.1企业开票情况汇总
-            $qykpqkhz=$invoiceObj->qykpqkhz();
-            $cspData['re_fpxx']['qykpqkhz']=$qykpqkhz;
+            $qykpqkhz = $invoiceObj->qykpqkhz();
+            $cspData['re_fpxx']['qykpqkhz'] = $qykpqkhz;
             //统计周期从这里拿
-            $cspData['commonData']['zhouqi'] = $qykpqkhz['zhouqi']['min'].' - '.$qykpqkhz['zhouqi']['max'];
+            $cspData['commonData']['zhouqi'] = $qykpqkhz['zhouqi']['min'] . ' - ' . $qykpqkhz['zhouqi']['max'];
 
             //6.2.1年度销项发票情况汇总
-            $ndxxfpqkhz=$invoiceObj->ndxxfpqkhz();
-            $cspData['re_fpxx']['ndxxfpqkhz']=$ndxxfpqkhz;
+            $ndxxfpqkhz = $invoiceObj->ndxxfpqkhz();
+            $cspData['re_fpxx']['ndxxfpqkhz'] = $ndxxfpqkhz;
 
             //6.2.2月度销项发票分析
-            $ydxxfpfx=$invoiceObj->ydxxfpfx();
-            $cspData['re_fpxx']['ydxxfpfx']=$ydxxfpfx;
+            $ydxxfpfx = $invoiceObj->ydxxfpfx();
+            $cspData['re_fpxx']['ydxxfpfx'] = $ydxxfpfx;
 
             //6.2.5单张开票金额TOP10记录
-            $dzkpjeTOP10jl_xx=$invoiceObj->dzkpjeTOP10jl_xx();
-            $cspData['re_fpxx']['dzkpjeTOP10jl_xx']=$dzkpjeTOP10jl_xx;
-            empty($cspData['re_fpxx']['dzkpjeTOP10jl_xx']) ?: $cspData['re_fpxx']['dzkpjeTOP10jl_xx'] = control::sortArrByKey($cspData['re_fpxx']['dzkpjeTOP10jl_xx'],'totalAmount',true);
+            $dzkpjeTOP10jl_xx = $invoiceObj->dzkpjeTOP10jl_xx();
+            $cspData['re_fpxx']['dzkpjeTOP10jl_xx'] = $dzkpjeTOP10jl_xx;
+            empty($cspData['re_fpxx']['dzkpjeTOP10jl_xx']) ?: $cspData['re_fpxx']['dzkpjeTOP10jl_xx'] = control::sortArrByKey($cspData['re_fpxx']['dzkpjeTOP10jl_xx'], 'totalAmount', true);
 
             //6.2.6累计开票金额TOP10企业汇总
-            $ljkpjeTOP10qyhz_xx=$invoiceObj->ljkpjeTOP10qyhz_xx();
-            $cspData['re_fpxx']['ljkpjeTOP10qyhz_xx']=$ljkpjeTOP10qyhz_xx;
-            empty($cspData['re_fpxx']['ljkpjeTOP10qyhz_xx']) ?: $cspData['re_fpxx']['ljkpjeTOP10qyhz_xx'] = control::sortArrByKey($cspData['re_fpxx']['ljkpjeTOP10qyhz_xx'],'total',true);
+            $ljkpjeTOP10qyhz_xx = $invoiceObj->ljkpjeTOP10qyhz_xx();
+            $cspData['re_fpxx']['ljkpjeTOP10qyhz_xx'] = $ljkpjeTOP10qyhz_xx;
+            empty($cspData['re_fpxx']['ljkpjeTOP10qyhz_xx']) ?: $cspData['re_fpxx']['ljkpjeTOP10qyhz_xx'] = control::sortArrByKey($cspData['re_fpxx']['ljkpjeTOP10qyhz_xx'], 'total', true);
 
             //6.3.1下游客户稳定性分析
             //1，下游企业司龄分布
-            $xyqyslfb=$invoiceObj->xyqyslfb();
-            $cspData['re_fpxx']['xyqyslfb']=$xyqyslfb;
+            $xyqyslfb = $invoiceObj->xyqyslfb();
+            $cspData['re_fpxx']['xyqyslfb'] = $xyqyslfb;
             //2，下游企业合作年限分布
-            $xyqyhznxfb=$invoiceObj->xyqyhznxfb();
-            $cspData['re_fpxx']['xyqyhznxfb']=$xyqyhznxfb;
+            $xyqyhznxfb = $invoiceObj->xyqyhznxfb();
+            $cspData['re_fpxx']['xyqyhznxfb'] = $xyqyhznxfb;
             //3，下游企业更换情况
-            $xyqyghqk=$invoiceObj->xyqyghqk();
-            $cspData['re_fpxx']['xyqyghqk']=$xyqyghqk;
+            $xyqyghqk = $invoiceObj->xyqyghqk();
+            $cspData['re_fpxx']['xyqyghqk'] = $xyqyghqk;
 
             //6.3.2下游客户集中度
             //1，下游企业地域分布
-            $xyqydyfb=$invoiceObj->xyqydyfb();
-            $cspData['re_fpxx']['xyqydyfb']=$xyqydyfb;
+            $xyqydyfb = $invoiceObj->xyqydyfb();
+            $cspData['re_fpxx']['xyqydyfb'] = $xyqydyfb;
             //2，销售前十企业总占比
-            $xsqsqyzzb=$invoiceObj->xsqsqyzzb();
-            $cspData['re_fpxx']['xsqsqyzzb']=$xsqsqyzzb;
+            $xsqsqyzzb = $invoiceObj->xsqsqyzzb();
+            $cspData['re_fpxx']['xsqsqyzzb'] = $xsqsqyzzb;
 
             //6.3.3企业销售情况预测
-            $qyxsqkyc=$invoiceObj->qyxsqkyc();
-            $cspData['re_fpxx']['qyxsqkyc']=$qyxsqkyc;
+            $qyxsqkyc = $invoiceObj->qyxsqkyc();
+            $cspData['re_fpxx']['qyxsqkyc'] = $qyxsqkyc;
 
             //6.4.1年度进项发票情况汇总
-            $ndjxfpqkhz=$invoiceObj->ndjxfpqkhz();
-            $cspData['re_fpjx']['ndjxfpqkhz']=$ndjxfpqkhz;
+            $ndjxfpqkhz = $invoiceObj->ndjxfpqkhz();
+            $cspData['re_fpjx']['ndjxfpqkhz'] = $ndjxfpqkhz;
 
             //6.4.2月度进项发票分析
-            $ydjxfpfx=$invoiceObj->ydjxfpfx();
-            $cspData['re_fpjx']['ydjxfpfx']=$ydjxfpfx;
+            $ydjxfpfx = $invoiceObj->ydjxfpfx();
+            $cspData['re_fpjx']['ydjxfpfx'] = $ydjxfpfx;
 
             //6.4.3累计开票金额TOP10企业汇总
-            $ljkpjeTOP10qyhz_jx=$invoiceObj->ljkpjeTOP10qyhz_jx();
-            $cspData['re_fpjx']['ljkpjeTOP10qyhz_jx']=$ljkpjeTOP10qyhz_jx;
-            empty($cspData['re_fpjx']['ljkpjeTOP10qyhz_jx']) ?: $cspData['re_fpjx']['ljkpjeTOP10qyhz_jx'] = control::sortArrByKey($cspData['re_fpjx']['ljkpjeTOP10qyhz_jx'],'total',true);
+            $ljkpjeTOP10qyhz_jx = $invoiceObj->ljkpjeTOP10qyhz_jx();
+            $cspData['re_fpjx']['ljkpjeTOP10qyhz_jx'] = $ljkpjeTOP10qyhz_jx;
+            empty($cspData['re_fpjx']['ljkpjeTOP10qyhz_jx']) ?: $cspData['re_fpjx']['ljkpjeTOP10qyhz_jx'] = control::sortArrByKey($cspData['re_fpjx']['ljkpjeTOP10qyhz_jx'], 'total', true);
 
             //6.4.4单张开票金额TOP10企业汇总
-            $dzkpjeTOP10jl_jx=$invoiceObj->dzkpjeTOP10jl_jx();
-            $cspData['re_fpjx']['dzkpjeTOP10jl_jx']=$dzkpjeTOP10jl_jx;
-            empty($cspData['re_fpjx']['dzkpjeTOP10jl_jx']) ?: $cspData['re_fpjx']['dzkpjeTOP10jl_jx'] = control::sortArrByKey($cspData['re_fpjx']['dzkpjeTOP10jl_jx'],'totalAmount',true);
+            $dzkpjeTOP10jl_jx = $invoiceObj->dzkpjeTOP10jl_jx();
+            $cspData['re_fpjx']['dzkpjeTOP10jl_jx'] = $dzkpjeTOP10jl_jx;
+            empty($cspData['re_fpjx']['dzkpjeTOP10jl_jx']) ?: $cspData['re_fpjx']['dzkpjeTOP10jl_jx'] = control::sortArrByKey($cspData['re_fpjx']['dzkpjeTOP10jl_jx'], 'totalAmount', true);
 
             //6.5.1上游共饮上稳定性分析
             //1，上游供应商司龄分布
-            $sygysslfb=$invoiceObj->sygysslfb();
-            $cspData['re_fpjx']['sygysslfb']=$sygysslfb;
+            $sygysslfb = $invoiceObj->sygysslfb();
+            $cspData['re_fpjx']['sygysslfb'] = $sygysslfb;
             //2，上游供应商合作年限分布
-            $sygyshznxfb=$invoiceObj->sygyshznxfb();
-            $cspData['re_fpjx']['sygyshznxfb']=$sygyshznxfb;
+            $sygyshznxfb = $invoiceObj->sygyshznxfb();
+            $cspData['re_fpjx']['sygyshznxfb'] = $sygyshznxfb;
             //3，上游供应商更换情况
-            $sygysghqk=$invoiceObj->sygysghqk();
-            $cspData['re_fpjx']['sygysghqk']=$sygysghqk;
+            $sygysghqk = $invoiceObj->sygysghqk();
+            $cspData['re_fpjx']['sygysghqk'] = $sygysghqk;
 
             //6.5.2上游供应商集中度分析
             //1，上游企业地域分布
-            $syqydyfb=$invoiceObj->syqydyfb();
-            $cspData['re_fpjx']['syqydyfb']=$syqydyfb;
+            $syqydyfb = $invoiceObj->syqydyfb();
+            $cspData['re_fpjx']['syqydyfb'] = $syqydyfb;
             //2，采购前十企业总占比
-            $cgqsqyzzb=$invoiceObj->cgqsqyzzb();
-            $cspData['re_fpjx']['cgqsqyzzb']=$cgqsqyzzb;
+            $cgqsqyzzb = $invoiceObj->cgqsqyzzb();
+            $cspData['re_fpjx']['cgqsqyzzb'] = $cgqsqyzzb;
 
             //6.5.3企业采购情况预测
-            $qycgqkyc=$invoiceObj->qycgqkyc();
-            $cspData['re_fpjx']['qycgqkyc']=$qycgqkyc;
+            $qycgqkyc = $invoiceObj->qycgqkyc();
+            $cspData['re_fpjx']['qycgqkyc'] = $qycgqkyc;
 
             //储存信动指数-发票项
-            $xdsForFaPiao=$invoiceObj->xdsForFaPiao();
-            $cspData['re_fpjx']['xdsForFaPiao']=$xdsForFaPiao;
+            $xdsForFaPiao = $invoiceObj->xdsForFaPiao();
+            $cspData['re_fpjx']['xdsForFaPiao'] = $xdsForFaPiao;
 
             //储存信动指数-上下游项
-            $xdsForShangxiayou=$invoiceObj->xdsForShangxiayou();
-            $cspData['re_fpjx']['xdsForShangxiayou']=$xdsForShangxiayou;
+            $xdsForShangxiayou = $invoiceObj->xdsForShangxiayou();
+            $cspData['re_fpjx']['xdsForShangxiayou'] = $xdsForShangxiayou;
 
             //填入pdf
             $this->ProductStandardInfo($pdf);
-            $this->zyspfx($pdf,$cspData);
-            $this->zycbfx($pdf,$cspData);
-            $this->shuifei($pdf,$cspData);
-            $this->dianfei($pdf,$cspData);
-            $this->ranqifei($pdf,$cspData);
-            $this->reli($pdf,$cspData);
-            $this->yunshu($pdf,$cspData);
-            $this->wuye($pdf,$cspData);
+            $this->zyspfx($pdf, $cspData);
+            $this->zycbfx($pdf, $cspData);
+            $this->shuifei($pdf, $cspData);
+            $this->dianfei($pdf, $cspData);
+            $this->ranqifei($pdf, $cspData);
+            $this->reli($pdf, $cspData);
+            $this->yunshu($pdf, $cspData);
+            $this->wuye($pdf, $cspData);
 
-            $this->qykpqkhz($pdf,$cspData);
-            $this->ndxxfpqkhz($pdf,$cspData);
-            $this->ydxxfpfx($pdf,$cspData);
-            $this->ydxxfpfx_red($pdf,$cspData);
-            $this->ydxxfpfx_cancel($pdf,$cspData);
-            $this->dzkpjeTOP10jl_xx($pdf,$cspData);
-            $this->ljkpjeTOP10qyhz_xx($pdf,$cspData);
-            $this->xykhwdxfx($pdf,$cspData);
-            $this->xykfjzdfx($pdf,$cspData);
-            $this->qyxsqkfb($pdf,$cspData);
-            $this->ndjxfpqkhz($pdf,$cspData);
-            $this->ydjxfpfx($pdf,$cspData);
-            $this->ljkpjeTOP10qyhz_jx($pdf,$cspData);
-            $this->dzkpjeTOP10jl_jx($pdf,$cspData);
-            $this->sygysslfb($pdf,$cspData);
-            $this->qycgqkfb($pdf,$cspData);
-        }else{
+            $this->qykpqkhz($pdf, $cspData);
+            $this->ndxxfpqkhz($pdf, $cspData);
+            $this->ydxxfpfx($pdf, $cspData);
+            $this->ydxxfpfx_red($pdf, $cspData);
+            $this->ydxxfpfx_cancel($pdf, $cspData);
+            $this->dzkpjeTOP10jl_xx($pdf, $cspData);
+            $this->ljkpjeTOP10qyhz_xx($pdf, $cspData);
+            $this->xykhwdxfx($pdf, $cspData);
+            $this->xykfjzdfx($pdf, $cspData);
+            $this->qyxsqkfb($pdf, $cspData);
+            $this->ndjxfpqkhz($pdf, $cspData);
+            $this->ydjxfpfx($pdf, $cspData);
+            $this->ljkpjeTOP10qyhz_jx($pdf, $cspData);
+            $this->dzkpjeTOP10jl_jx($pdf, $cspData);
+            $this->sygysslfb($pdf, $cspData);
+            $this->qycgqkfb($pdf, $cspData);
+        } else {
             $this->ProductStandardInfo($pdf);
         }
     }
@@ -391,8 +391,7 @@ TEMP;
     //基本信息 工商信息
     private function getRegisterInfo(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData) && !empty($cspData[__FUNCTION__]))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData) && !empty($cspData[__FUNCTION__])) {
             $ocrData = $this->getOcrData('0-0', 4);
 
             $html = <<<TEMP
@@ -504,14 +503,11 @@ TEMP;
     //基本信息 股东信息
     private function getShareHolderInfo(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = '';
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
-                foreach ($cspData[__FUNCTION__] as $one)
-                {
+            if (!empty($cspData[__FUNCTION__])) {
+                foreach ($cspData[__FUNCTION__] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$one['INV']}</td>";
                     $temp .= "<td>{$one['SHXYDM']}</td>";
@@ -549,16 +545,13 @@ TEMP;
     //基本信息 高管信息
     private function getMainManagerInfo(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = '';
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__] as $one)
-                {
+                foreach ($cspData[__FUNCTION__] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['NAME']}</td>";
@@ -591,16 +584,13 @@ TEMP;
     //基本信息 变更信息
     private function getRegisterChangeInfo(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = '';
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['ALTDATE']}</td>";
@@ -635,16 +625,13 @@ TEMP;
     //基本信息 经营异常
     private function GetOpException(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = '';
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$this->formatDate($one['AddDate'])}</td>";
@@ -679,20 +666,17 @@ TEMP;
     //基本信息 实际控制人
     private function Beneficiary(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $name = $stock = '';
 
-            $ocrData = $this->getOcrData('0-1',2);
+            $ocrData = $this->getOcrData('0-1', 2);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $name = $cspData[__FUNCTION__]['Name'];
                 $stock = $cspData[__FUNCTION__]['TotalStockPercent'];
 
-                foreach ($cspData[__FUNCTION__]['DetailInfoList'] as $one)
-                {
-                    $insert .= '<tr><td colspan="2">'.$one['Path'].'</td></tr>';
+                foreach ($cspData[__FUNCTION__]['DetailInfoList'] as $one) {
+                    $insert .= '<tr><td colspan="2">' . $one['Path'] . '</td></tr>';
                 }
             }
 
@@ -724,19 +708,16 @@ TEMP;
     //基本信息 历史沿革及重大事项
     private function getHistoricalEvolution(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
-            $ocrData = $this->getOcrData('0-2',2);
+        if (array_key_exists(__FUNCTION__, $cspData)) {
+            $ocrData = $this->getOcrData('0-2', 2);
 
             $insert = '';
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__] as $one)
-                {
-                    $one = str_replace(['，具体登录小程序查看'],'',$one);
+                foreach ($cspData[__FUNCTION__] as $one) {
+                    $one = str_replace(['，具体登录小程序查看'], '', $one);
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one}</td>";
@@ -766,20 +747,17 @@ TEMP;
     //基本信息 法人对外投资
     private function lawPersonInvestmentInfo(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('0-3',9);
+            $ocrData = $this->getOcrData('0-3', 9);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['NAME']}</td>";
@@ -826,20 +804,17 @@ TEMP;
     //基本信息 法人对外任职
     private function getLawPersontoOtherInfo(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('0-4',9);
+            $ocrData = $this->getOcrData('0-4', 9);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['NAME']}</td>";
@@ -886,20 +861,17 @@ TEMP;
     //基本信息 企业对外投资
     private function getInvestmentAbroadInfo(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('0-5',9);
+            $ocrData = $this->getOcrData('0-5', 9);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['ENTNAME']}</td>";
@@ -946,20 +918,17 @@ TEMP;
     //基本信息 分支机构
     private function getBranchInfo(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('0-6',6);
+            $ocrData = $this->getOcrData('0-6', 6);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['ENTNAME']}</td>";
@@ -1000,14 +969,12 @@ TEMP;
     //基本信息 银行信息
     private function GetCreditCodeNew(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = '';
 
-            $ocrData = $this->getOcrData('0-7',2);
+            $ocrData = $this->getOcrData('0-7', 2);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $temp = '<tr>';
                 $temp .= "<td>{$cspData[__FUNCTION__]['Bank']}</td>";
                 $temp .= "<td>{$cspData[__FUNCTION__]['BankAccount']}</td>";
@@ -1035,18 +1002,15 @@ TEMP;
     //公司概况 融资信息
     private function SearchCompanyFinancings(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = '';
 
-            $ocrData = $this->getOcrData('1-0',6);
+            $ocrData = $this->getOcrData('1-0', 6);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__] as $one)
-                {
+                foreach ($cspData[__FUNCTION__] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Round']}</td>";
@@ -1084,20 +1048,17 @@ TEMP;
     //公司概况 招投标
     private function TenderSearch(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('1-1',5);
+            $ocrData = $this->getOcrData('1-1', 5);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Title']}</td>";
@@ -1136,20 +1097,17 @@ TEMP;
     //公司概况 购地信息
     private function LandPurchaseList(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('1-2',7);
+            $ocrData = $this->getOcrData('1-2', 7);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Address']}</td>";
@@ -1192,20 +1150,17 @@ TEMP;
     //公司概况 土地公示
     private function LandPublishList(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('1-3',5);
+            $ocrData = $this->getOcrData('1-3', 5);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Address']}</td>";
@@ -1244,20 +1199,17 @@ TEMP;
     //公司概况 土地转让
     private function LandTransferList(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('1-4',8);
+            $ocrData = $this->getOcrData('1-4', 8);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Address']}</td>";
@@ -1302,20 +1254,17 @@ TEMP;
     //公司概况 建筑资质证书
     private function Qualification(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('1-5',7);
+            $ocrData = $this->getOcrData('1-5', 7);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Category']}</td>";
@@ -1358,20 +1307,17 @@ TEMP;
     //公司概况 建筑工程项目
     private function BuildingProject(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('1-6',6);
+            $ocrData = $this->getOcrData('1-6', 6);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['No']}</td>";
@@ -1379,9 +1325,8 @@ TEMP;
                     $temp .= "<td>{$one['Region']}</td>";
                     $temp .= "<td>{$one['Category']}</td>";
                     $ent = '';
-                    foreach ($one['ConsCoyList'] as $oneEnt)
-                    {
-                        $ent .= $oneEnt['Name'].'<br />';
+                    foreach ($one['ConsCoyList'] as $oneEnt) {
+                        $ent .= $oneEnt['Name'] . '<br />';
                     }
                     $temp .= "<td>{$ent}</td>";
                     $temp .= '</tr>';
@@ -1417,20 +1362,17 @@ TEMP;
     //公司概况 债券信息
     private function BondList(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('1-7',6);
+            $ocrData = $this->getOcrData('1-7', 6);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['ShortName']}</td>";
@@ -1471,20 +1413,17 @@ TEMP;
     //公司概况 网站信息
     private function GetCompanyWebSite(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('1-8',6);
+            $ocrData = $this->getOcrData('1-8', 6);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Title']}</td>";
@@ -1525,24 +1464,21 @@ TEMP;
     //公司概况 微博
     private function Microblog(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('1-9',5);
+            $ocrData = $this->getOcrData('1-9', 5);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Name']}</td>";
-                    $temp .= '<td><img src="'.$one['ImageUrl'].'" /></td>';
+                    $temp .= '<td><img src="' . $one['ImageUrl'] . '" /></td>';
                     $temp .= "<td>{$one['Tags']}</td>";
                     $temp .= "<td>{$one['Description']}</td>";
                     $temp .= '</tr>';
@@ -1577,20 +1513,17 @@ TEMP;
     //公司概况 新闻舆情
     private function CompanyNews(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('1-10',5);
+            $ocrData = $this->getOcrData('1-10', 5);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Title']}</td>";
@@ -1629,18 +1562,15 @@ TEMP;
     //团队招聘 近三年团队人数变化率
     private function itemInfo(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = '';
 
-            $ocrData = $this->getOcrData('2-0',3);
+            $ocrData = $this->getOcrData('2-0', 3);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__] as $one)
-                {
+                foreach ($cspData[__FUNCTION__] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$one['year']}</td>";
                     $temp .= "<td>{$one['num']}</td>";
@@ -1672,18 +1602,15 @@ TEMP;
     //团队招聘 建筑企业-专业注册人员
     private function BuildingRegistrar(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = '';
 
-            $ocrData = $this->getOcrData('2-1',5);
+            $ocrData = $this->getOcrData('2-1', 5);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__] as $one)
-                {
+                foreach ($cspData[__FUNCTION__] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Name']}</td>";
@@ -1719,18 +1646,15 @@ TEMP;
     //团队招聘 招聘信息
     private function Recruitment(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = '';
 
-            $ocrData = $this->getOcrData('2-2',7);
+            $ocrData = $this->getOcrData('2-2', 7);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__] as $one)
-                {
+                foreach ($cspData[__FUNCTION__] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Title']}</td>";
@@ -1770,14 +1694,12 @@ TEMP;
     //财务总揽 财务总揽
     private function FinanceData(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = '';
 
-            $ocrData = $this->getOcrData('3-0',1);
+            $ocrData = $this->getOcrData('3-0', 1);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $insert = <<<PIC
 <tr>
     <td>
@@ -1823,18 +1745,15 @@ TEMP;
     //业务概况 业务概况
     private function SearchCompanyCompanyProducts(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = '';
 
-            $ocrData = $this->getOcrData('4-0',5);
+            $ocrData = $this->getOcrData('4-0', 5);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
-                foreach ($cspData[__FUNCTION__] as $one)
-                {
+                foreach ($cspData[__FUNCTION__] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Name']}</td>";
@@ -1870,24 +1789,21 @@ TEMP;
     //创新能力 专利
     private function PatentV4Search(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('5-0',7);
+            $ocrData = $this->getOcrData('5-0', 7);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Title']}</td>";
-                    $temp .= "<td>".implode(';',$one['IPCDesc'])."</td>";
+                    $temp .= "<td>" . implode(';', $one['IPCDesc']) . "</td>";
                     $temp .= "<td>{$one['PublicationNumber']}</td>";
                     $temp .= "<td>{$one['LegalStatusDesc']}</td>";
                     $temp .= "<td>{$this->formatDate($one['ApplicationDate'])}</td>";
@@ -1926,20 +1842,17 @@ TEMP;
     //创新能力 软件著作权
     private function SearchSoftwareCr(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('5-1',7);
+            $ocrData = $this->getOcrData('5-1', 7);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Name']}</td>";
@@ -1982,29 +1895,24 @@ TEMP;
     //创新能力 商标
     private function tmSearch(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('5-2',7);
+            $ocrData = $this->getOcrData('5-2', 7);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Name']}</td>";
-                    $temp .= '<td><img src="'.$one['ImageUrl'].'" /></td>';
-                    if (isset($this->sblb[$one['IntCls']]))
-                    {
+                    $temp .= '<td><img src="' . $one['ImageUrl'] . '" /></td>';
+                    if (isset($this->sblb[$one['IntCls']])) {
                         $temp .= "<td>{$this->sblb[$one['IntCls']]}</td>";
-                    }else
-                    {
+                    } else {
                         $temp .= "<td> - </td>";
                     }
                     $temp .= "<td>{$one['RegNo']}</td>";
@@ -2044,20 +1952,17 @@ TEMP;
     //创新能力 作品著作权
     private function SearchCopyRight(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('5-3',6);
+            $ocrData = $this->getOcrData('5-3', 6);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['RegisterNo']}</td>";
@@ -2098,28 +2003,23 @@ TEMP;
     //创新能力 证书资质
     private function SearchCertification(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('5-4',6);
+            $ocrData = $this->getOcrData('5-4', 6);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Name']}</td>";
-                    if (isset($this->zzzs[$one['Type']]))
-                    {
+                    if (isset($this->zzzs[$one['Type']])) {
                         $temp .= "<td>{$this->zzzs[$one['Type']]}</td>";
-                    }else
-                    {
+                    } else {
                         $temp .= "<td> - </td>";
                     }
                     $temp .= "<td>{$this->formatDate($one['StartDate'])}</td>";
@@ -2158,20 +2058,17 @@ TEMP;
     //税务信息 纳税信用等级
     private function satparty_xin(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('6-0',6);
+            $ocrData = $this->getOcrData('6-0', 6);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['title']}</td>";
@@ -2212,20 +2109,17 @@ TEMP;
     //税务信息 税务许可信息
     private function satparty_xuke(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('6-1',6);
+            $ocrData = $this->getOcrData('6-1', 6);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$this->formatDate($one['detail']['sortTime'])}</td>";
@@ -2266,20 +2160,17 @@ TEMP;
     //税务信息 税务登记信息
     private function satparty_reg(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('6-2',6);
+            $ocrData = $this->getOcrData('6-2', 6);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['sortTimeString']}</td>";
@@ -2320,20 +2211,17 @@ TEMP;
     //税务信息 税务非正常户
     private function satparty_fzc(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('6-3',7);
+            $ocrData = $this->getOcrData('6-3', 7);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['title']}</td>";
@@ -2376,20 +2264,17 @@ TEMP;
     //税务信息 欠税信息
     private function satparty_qs(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('6-4',7);
+            $ocrData = $this->getOcrData('6-4', 7);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['title']}</td>";
@@ -2432,20 +2317,17 @@ TEMP;
     //税务信息 涉税处罚公示
     private function satparty_chufa(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('6-5',4);
+            $ocrData = $this->getOcrData('6-5', 4);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['title']}</td>";
@@ -2482,20 +2364,17 @@ TEMP;
     //行政管理信息 行政许可
     private function GetAdministrativeLicenseList(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('7-0',6);
+            $ocrData = $this->getOcrData('7-0', 6);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['CaseNo']}</td>";
@@ -2536,20 +2415,17 @@ TEMP;
     //行政管理信息 行政处罚
     private function GetAdministrativePenaltyList(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('7-1',7);
+            $ocrData = $this->getOcrData('7-1', 7);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['CaseNo']}</td>";
@@ -2592,20 +2468,17 @@ TEMP;
     //环保信息 环保处罚
     private function epbparty(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('8-0',7);
+            $ocrData = $this->getOcrData('8-0', 7);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['detail']['caseNo']}</td>";
@@ -2648,20 +2521,17 @@ TEMP;
     //环保信息 重点监控企业名单
     private function epbparty_jkqy(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('8-1',6);
+            $ocrData = $this->getOcrData('8-1', 6);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['title']}</td>";
@@ -2702,20 +2572,17 @@ TEMP;
     //环保信息 环保企业自行监测结果
     private function epbparty_zxjc(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('8-2',6);
+            $ocrData = $this->getOcrData('8-2', 6);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['detail']['pollutant']}</td>";
@@ -2756,20 +2623,17 @@ TEMP;
     //环保信息 环评公示数据
     private function epbparty_huanping(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('8-3',4);
+            $ocrData = $this->getOcrData('8-3', 4);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['title']}</td>";
@@ -2806,20 +2670,17 @@ TEMP;
     //海关信息 海关企业
     private function custom_qy(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('9-0',7);
+            $ocrData = $this->getOcrData('9-0', 7);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['detail']['regNo']}</td>";
@@ -2862,20 +2723,17 @@ TEMP;
     //海关信息 海关许可
     private function custom_xuke(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('9-1',5);
+            $ocrData = $this->getOcrData('9-1', 5);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['detail']['xkNo']}</td>";
@@ -2914,20 +2772,17 @@ TEMP;
     //海关信息 海关信用
     private function custom_credit(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('9-2',5);
+            $ocrData = $this->getOcrData('9-2', 5);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['detail']['authority']}</td>";
@@ -2966,20 +2821,17 @@ TEMP;
     //海关信息 海关处罚
     private function custom_punish(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('9-3',5);
+            $ocrData = $this->getOcrData('9-3', 5);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['detail']['ggType']}</td>";
@@ -3018,20 +2870,17 @@ TEMP;
     //一行两会信息 央行行政处罚
     private function pbcparty(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('10-0',7);
+            $ocrData = $this->getOcrData('10-0', 7);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['title']}</td>";
@@ -3074,20 +2923,17 @@ TEMP;
     //一行两会信息 银保监会处罚公示
     private function pbcparty_cbrc(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('10-1',7);
+            $ocrData = $this->getOcrData('10-1', 7);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['title']}</td>";
@@ -3130,20 +2976,17 @@ TEMP;
     //一行两会信息 证监会处罚公示
     private function pbcparty_csrc_chufa(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('10-2',7);
+            $ocrData = $this->getOcrData('10-2', 7);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['title']}</td>";
@@ -3186,20 +3029,17 @@ TEMP;
     //一行两会信息 证监会许可信息
     private function pbcparty_csrc_xkpf(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('10-3',6);
+            $ocrData = $this->getOcrData('10-3', 6);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['title']}</td>";
@@ -3240,20 +3080,17 @@ TEMP;
     //一行两会信息 外汇局处罚
     private function safe_chufa(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('10-4',7);
+            $ocrData = $this->getOcrData('10-4', 7);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['detail']['caseNo']}</td>";
@@ -3296,20 +3133,17 @@ TEMP;
     //一行两会信息 外汇局许可
     private function safe_xuke(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('10-5',7);
+            $ocrData = $this->getOcrData('10-5', 7);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['detail']['caseNo']}</td>";
@@ -3352,20 +3186,17 @@ TEMP;
     //司法涉诉与抵质押信息 法院公告
     private function fygg(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('11-0',8);
+            $ocrData = $this->getOcrData('11-0', 8);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $rowspan = count($one['detail']['partys']) === 0 ? 1 : count($one['detail']['partys']);
                     $temp = '<tr>';
                     $temp .= "<td rowspan=\"{$rowspan}\">{$i}</td>";
@@ -3375,17 +3206,13 @@ TEMP;
 
                     $first = true;
 
-                    if (!empty($one['detail']['partys']))
-                    {
-                        foreach ($one['detail']['partys'] as $party)
-                        {
-                            if ($first)
-                            {
+                    if (!empty($one['detail']['partys'])) {
+                        foreach ($one['detail']['partys'] as $party) {
+                            if ($first) {
                                 $temp .= "<td>{$party['caseCauseT']}</td>";
                                 $temp .= "<td>{$party['pname']}</td>";
                                 $temp .= "<td>{$party['partyTitleT']}</td>";
-                                switch ($party['partyPositionT'])
-                                {
+                                switch ($party['partyPositionT']) {
                                     case 'p':
                                         $temp .= "<td>原告</td>";
                                         break;
@@ -3403,14 +3230,12 @@ TEMP;
                                 }
                                 $temp .= '</tr>';
                                 $first = false;
-                            }else
-                            {
+                            } else {
                                 $temp .= '<tr>';
                                 $temp .= "<td>{$party['caseCauseT']}</td>";
                                 $temp .= "<td>{$party['pname']}</td>";
                                 $temp .= "<td>{$party['partyTitleT']}</td>";
-                                switch ($party['partyPositionT'])
-                                {
+                                switch ($party['partyPositionT']) {
                                     case 'p':
                                         $temp .= "<td>原告</td>";
                                         break;
@@ -3429,8 +3254,7 @@ TEMP;
                                 $temp .= '</tr>';
                             }
                         }
-                    }else
-                    {
+                    } else {
                         $temp .= "<td> -- </td>";
                         $temp .= "<td> -- </td>";
                         $temp .= "<td> -- </td>";
@@ -3472,20 +3296,17 @@ TEMP;
     //司法涉诉与抵质押信息 开庭公告
     private function ktgg(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('11-1',8);
+            $ocrData = $this->getOcrData('11-1', 8);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $rowspan = count($one['detail']['partys']) === 0 ? 1 : count($one['detail']['partys']);
                     $temp = '<tr>';
                     $temp .= "<td rowspan=\"{$rowspan}\">{$i}</td>";
@@ -3495,17 +3316,13 @@ TEMP;
 
                     $first = true;
 
-                    if (!empty($one['detail']['partys']))
-                    {
-                        foreach ($one['detail']['partys'] as $party)
-                        {
-                            if ($first)
-                            {
+                    if (!empty($one['detail']['partys'])) {
+                        foreach ($one['detail']['partys'] as $party) {
+                            if ($first) {
                                 $temp .= "<td>{$party['caseCauseT']}</td>";
                                 $temp .= "<td>{$party['pname']}</td>";
                                 $temp .= "<td>{$party['partyTitleT']}</td>";
-                                switch ($party['partyPositionT'])
-                                {
+                                switch ($party['partyPositionT']) {
                                     case 'p':
                                         $temp .= "<td>原告</td>";
                                         break;
@@ -3523,14 +3340,12 @@ TEMP;
                                 }
                                 $temp .= '</tr>';
                                 $first = false;
-                            }else
-                            {
+                            } else {
                                 $temp .= '<tr>';
                                 $temp .= "<td>{$party['caseCauseT']}</td>";
                                 $temp .= "<td>{$party['pname']}</td>";
                                 $temp .= "<td>{$party['partyTitleT']}</td>";
-                                switch ($party['partyPositionT'])
-                                {
+                                switch ($party['partyPositionT']) {
                                     case 'p':
                                         $temp .= "<td>原告</td>";
                                         break;
@@ -3549,8 +3364,7 @@ TEMP;
                                 $temp .= '</tr>';
                             }
                         }
-                    }else
-                    {
+                    } else {
                         $temp .= "<td> -- </td>";
                         $temp .= "<td> -- </td>";
                         $temp .= "<td> -- </td>";
@@ -3592,20 +3406,17 @@ TEMP;
     //司法涉诉与抵质押信息 裁判文书
     private function cpws(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('11-2',9);
+            $ocrData = $this->getOcrData('11-2', 9);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $rowspan = count($one['detail']['partys']) === 0 ? 1 : count($one['detail']['partys']);
                     $temp = '<tr>';
                     $temp .= "<td rowspan=\"{$rowspan}\">{$i}</td>";
@@ -3617,17 +3428,13 @@ TEMP;
 
                     $first = true;
 
-                    if (!empty($one['detail']['partys']))
-                    {
-                        foreach ($one['detail']['partys'] as $party)
-                        {
-                            if ($first)
-                            {
+                    if (!empty($one['detail']['partys'])) {
+                        foreach ($one['detail']['partys'] as $party) {
+                            if ($first) {
                                 $temp .= "<td>{$party['caseCauseT']}</td>";
                                 $temp .= "<td>{$party['pname']}</td>";
                                 $temp .= "<td>{$party['partyTitleT']}</td>";
-                                switch ($party['partyPositionT'])
-                                {
+                                switch ($party['partyPositionT']) {
                                     case 'p':
                                         $temp .= "<td>原告</td>";
                                         break;
@@ -3645,14 +3452,12 @@ TEMP;
                                 }
                                 $temp .= '</tr>';
                                 $first = false;
-                            }else
-                            {
+                            } else {
                                 $temp .= '<tr>';
                                 $temp .= "<td>{$party['caseCauseT']}</td>";
                                 $temp .= "<td>{$party['pname']}</td>";
                                 $temp .= "<td>{$party['partyTitleT']}</td>";
-                                switch ($party['partyPositionT'])
-                                {
+                                switch ($party['partyPositionT']) {
                                     case 'p':
                                         $temp .= "<td>原告</td>";
                                         break;
@@ -3671,8 +3476,7 @@ TEMP;
                                 $temp .= '</tr>';
                             }
                         }
-                    }else
-                    {
+                    } else {
                         $temp .= "<td> -- </td>";
                         $temp .= "<td> -- </td>";
                         $temp .= "<td> -- </td>";
@@ -3716,20 +3520,17 @@ TEMP;
     //司法涉诉与抵质押信息 执行公告
     private function zxgg(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('11-3',8);
+            $ocrData = $this->getOcrData('11-3', 8);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $rowspan = count($one['detail']['partys']) === 0 ? 1 : count($one['detail']['partys']);
                     $temp = '<tr>';
                     $temp .= "<td rowspan=\"{$rowspan}\">{$i}</td>";
@@ -3739,17 +3540,13 @@ TEMP;
 
                     $first = true;
 
-                    if (!empty($one['detail']['partys']))
-                    {
-                        foreach ($one['detail']['partys'] as $party)
-                        {
-                            if ($first)
-                            {
+                    if (!empty($one['detail']['partys'])) {
+                        foreach ($one['detail']['partys'] as $party) {
+                            if ($first) {
                                 $temp .= "<td>{$party['caseStateT']}</td>";
                                 $temp .= "<td>{$party['pname']}</td>";
                                 $temp .= "<td>{$party['execMoney']}</td>";
-                                switch ($party['partyType'])
-                                {
+                                switch ($party['partyType']) {
                                     case 'P':
                                         $temp .= "<td>自然人</td>";
                                         break;
@@ -3761,14 +3558,12 @@ TEMP;
                                 }
                                 $temp .= '</tr>';
                                 $first = false;
-                            }else
-                            {
+                            } else {
                                 $temp .= '<tr>';
                                 $temp .= "<td>{$party['caseStateT']}</td>";
                                 $temp .= "<td>{$party['pname']}</td>";
                                 $temp .= "<td>{$party['execMoney']}</td>";
-                                switch ($party['partyType'])
-                                {
+                                switch ($party['partyType']) {
                                     case 'P':
                                         $temp .= "<td>自然人</td>";
                                         break;
@@ -3781,8 +3576,7 @@ TEMP;
                                 $temp .= '</tr>';
                             }
                         }
-                    }else
-                    {
+                    } else {
                         $temp .= "<td> -- </td>";
                         $temp .= "<td> -- </td>";
                         $temp .= "<td> -- </td>";
@@ -3824,20 +3618,17 @@ TEMP;
     //司法涉诉与抵质押信息 失信公告
     private function shixin(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('11-4',8);
+            $ocrData = $this->getOcrData('11-4', 8);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $rowspan = count($one['detail']['partys']) === 0 ? 1 : count($one['detail']['partys']);
                     $temp = '<tr>';
                     $temp .= "<td rowspan=\"{$rowspan}\">{$i}</td>";
@@ -3847,20 +3638,16 @@ TEMP;
 
                     $first = true;
 
-                    if (!empty($one['detail']['partys']))
-                    {
-                        foreach ($one['detail']['partys'] as $party)
-                        {
-                            if ($first)
-                            {
+                    if (!empty($one['detail']['partys'])) {
+                        foreach ($one['detail']['partys'] as $party) {
+                            if ($first) {
                                 $temp .= "<td>{$party['lxqkT']}</td>";
                                 $temp .= "<td>{$party['jtqx']}</td>";
                                 $temp .= "<td>{$party['money']}</td>";
                                 $temp .= "<td>{$party['pname']}</td>";
                                 $temp .= '</tr>';
                                 $first = false;
-                            }else
-                            {
+                            } else {
                                 $temp .= '<tr>';
                                 $temp .= "<td>{$party['lxqkT']}</td>";
                                 $temp .= "<td>{$party['jtqx']}</td>";
@@ -3869,8 +3656,7 @@ TEMP;
                                 $temp .= '</tr>';
                             }
                         }
-                    }else
-                    {
+                    } else {
                         $temp .= "<td> -- </td>";
                         $temp .= "<td> -- </td>";
                         $temp .= "<td> -- </td>";
@@ -3912,20 +3698,17 @@ TEMP;
     //司法涉诉与抵质押信息 被执行人
     private function SearchZhiXing(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('11-5',6);
+            $ocrData = $this->getOcrData('11-5', 6);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Anno']}</td>";
@@ -3966,20 +3749,17 @@ TEMP;
     //司法涉诉与抵质押信息 司法查冻扣
     private function sifacdk(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('11-6',8);
+            $ocrData = $this->getOcrData('11-6', 8);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['detail']['caseNo']}</td>";
@@ -4024,20 +3804,17 @@ TEMP;
     //司法涉诉与抵质押信息 动产抵押
     private function getChattelMortgageInfo(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('11-7',7);
+            $ocrData = $this->getOcrData('11-7', 7);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['DJBH']}</td>";
@@ -4080,20 +3857,17 @@ TEMP;
     //司法涉诉与抵质押信息 股权出质
     private function getEquityPledgedInfo(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('11-8',7);
+            $ocrData = $this->getOcrData('11-8', 7);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['DJBH']}</td>";
@@ -4136,20 +3910,17 @@ TEMP;
     //司法涉诉与抵质押信息 对外担保
     private function GetAnnualReport(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('11-9',6);
+            $ocrData = $this->getOcrData('11-9', 6);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Creditor']}</td>";
@@ -4190,20 +3961,17 @@ TEMP;
     //司法涉诉与抵质押信息 土地抵押
     private function GetLandMortgageList(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('11-10',6);
+            $ocrData = $this->getOcrData('11-10', 6);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['StartDate']}</td>";
@@ -4244,20 +4012,17 @@ TEMP;
     //债权信息 应收账款
     private function company_zdw_yszkdsr(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('12-0',4);
+            $ocrData = $this->getOcrData('12-0', 4);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['detail']['transPro_desc']}</td>";
@@ -4294,20 +4059,17 @@ TEMP;
     //债权信息 所有权保留
     private function company_zdw_syqbldsr(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('12-1',5);
+            $ocrData = $this->getOcrData('12-1', 5);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['detail']['regClass']}</td>";
@@ -4346,20 +4108,17 @@ TEMP;
     //债权信息 租赁登记
     private function company_zdw_zldjdsr(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('13-0',4);
+            $ocrData = $this->getOcrData('13-0', 4);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['detail']['leaseMes_desc']}</td>";
@@ -4396,20 +4155,17 @@ TEMP;
     //债权信息 保证金质押登记
     private function company_zdw_bzjzydsr(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('13-1',6);
+            $ocrData = $this->getOcrData('13-1', 6);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['detail']['pledgePro_proMoney']}</td>";
@@ -4450,20 +4206,17 @@ TEMP;
     //债权信息 仓单质押
     private function company_zdw_cdzydsr(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('13-2',6);
+            $ocrData = $this->getOcrData('13-2', 6);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['detail']['pledgorFin_type']}</td>";
@@ -4504,20 +4257,17 @@ TEMP;
     //债权信息 其他动产融资
     private function company_zdw_qtdcdsr(Tcpdf $pdf, $cspData)
     {
-        if (array_key_exists(__FUNCTION__,$cspData))
-        {
+        if (array_key_exists(__FUNCTION__, $cspData)) {
             $insert = $num = '';
 
-            $ocrData = $this->getOcrData('13-3',5);
+            $ocrData = $this->getOcrData('13-3', 5);
 
-            if (!empty($cspData[__FUNCTION__]))
-            {
+            if (!empty($cspData[__FUNCTION__])) {
                 $i = 1;
 
                 $num = $cspData[__FUNCTION__]['total'];
 
-                foreach ($cspData[__FUNCTION__]['list'] as $one)
-                {
+                foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['detail']['basic_typeT']}</td>";
@@ -4557,8 +4307,8 @@ TEMP;
     private function ProductStandardInfo(Tcpdf $pdf)
     {
         $insert = $num = '';
-        $ocrData = $this->getOcrData('4-1',4);
-        $res = (new XinDongService())->setCheckRespFlag(true)->getProductStandard($this->entName,1,50);
+        $ocrData = $this->getOcrData('4-1', 4);
+        $res = (new XinDongService())->setCheckRespFlag(true)->getProductStandard($this->entName, 1, 50);
         if ($res['code'] === 200 && !empty($res['result'])) {
             $tmp['list'] = $res['result'];
             $tmp['total'] = $res['paging']['total'];
@@ -4605,7 +4355,7 @@ TEMP;
     private function zyspfx(Tcpdf $pdf, $data)
     {
         $insert = '';
-        $ocrData = $this->getOcrData('4-2',4);
+        $ocrData = $this->getOcrData('4-2', 4);
         $res = $data['re_fpxx']['zyspfx'];
         $zhouqi = "自 {$data['commonData']['zhouqi']} 的销项发票";;
         if (!empty($res)) {
@@ -4646,7 +4396,7 @@ TEMP;
     private function zycbfx(Tcpdf $pdf, $data)
     {
         $insert = '';
-        $ocrData = $this->getOcrData('4-3',4);
+        $ocrData = $this->getOcrData('4-3', 4);
         $res = $data['re_fpjx']['zycbfx'][0];
         $zhouqi = "自 {$data['commonData']['zhouqi']} 的进项发票";;
         if (!empty($res)) {
@@ -4687,7 +4437,7 @@ TEMP;
     private function shuifei(Tcpdf $pdf, $data)
     {
         $insert = '';
-        $ocrData = $this->getOcrData('4-4',4);
+        $ocrData = $this->getOcrData('4-4', 4);
         $res = $data['re_fpjx']['zycbfx_new']['shuifei'];
         if (!empty($res)) {
             $i = 1;
@@ -4724,7 +4474,7 @@ TEMP;
     private function dianfei(Tcpdf $pdf, $data)
     {
         $insert = '';
-        $ocrData = $this->getOcrData('4-5',4);
+        $ocrData = $this->getOcrData('4-5', 4);
         $res = $data['re_fpjx']['zycbfx_new']['dianfei'];
         if (!empty($res)) {
             $i = 1;
@@ -4761,7 +4511,7 @@ TEMP;
     private function ranqifei(Tcpdf $pdf, $data)
     {
         $insert = '';
-        $ocrData = $this->getOcrData('4-6',4);
+        $ocrData = $this->getOcrData('4-6', 4);
         $res = $data['re_fpjx']['zycbfx_new']['ranqifei'];
         if (!empty($res)) {
             $i = 1;
@@ -4798,7 +4548,7 @@ TEMP;
     private function reli(Tcpdf $pdf, $data)
     {
         $insert = '';
-        $ocrData = $this->getOcrData('4-7',4);
+        $ocrData = $this->getOcrData('4-7', 4);
         $res = $data['re_fpjx']['zycbfx_new']['reli'];
         if (!empty($res)) {
             $i = 1;
@@ -4835,7 +4585,7 @@ TEMP;
     private function yunshu(Tcpdf $pdf, $data)
     {
         $insert = '';
-        $ocrData = $this->getOcrData('4-8',4);
+        $ocrData = $this->getOcrData('4-8', 4);
         $res = $data['re_fpjx']['zycbfx_new']['yunshu'];
         if (!empty($res)) {
             $i = 1;
@@ -4872,7 +4622,7 @@ TEMP;
     private function wuye(Tcpdf $pdf, $data)
     {
         $insert = '';
-        $ocrData = $this->getOcrData('4-9',4);
+        $ocrData = $this->getOcrData('4-9', 4);
         $res = $data['re_fpjx']['zycbfx_new']['wuye'];
         if (!empty($res)) {
             $i = 1;
@@ -4908,14 +4658,14 @@ TEMP;
     //深度报告字段 必执行的 企业开票情况汇总
     private function qykpqkhz(Tcpdf $pdf, $data)
     {
-        $ocrData = $this->getOcrData('14-1',3);
+        $ocrData = $this->getOcrData('14-1', 3);
         $res = $data['re_fpxx']['qykpqkhz'];
         $insert = '<tr>';
-        $insert .= '<td>'.$res['zhouqi']['min'].' - '.$res['zhouqi']['max'].'</td>';
-        $insert .= '<td>'.$res['zhouqi']['xxNum'].'</td>';
-        $insert .= '<td>'.$res['zhouqi']['xxJine'].'</td>';
-        $insert .= '<td>'.$res['zhouqi']['jxNum'].'</td>';
-        $insert .= '<td>'.$res['zhouqi']['jxJine'].'</td>';
+        $insert .= '<td>' . $res['zhouqi']['min'] . ' - ' . $res['zhouqi']['max'] . '</td>';
+        $insert .= '<td>' . $res['zhouqi']['xxNum'] . '</td>';
+        $insert .= '<td>' . $res['zhouqi']['xxJine'] . '</td>';
+        $insert .= '<td>' . $res['zhouqi']['jxNum'] . '</td>';
+        $insert .= '<td>' . $res['zhouqi']['jxJine'] . '</td>';
         $insert .= '</tr>';
         $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
@@ -4941,9 +4691,9 @@ TEMP;
         $tmp = '';
         foreach ($res['qita'] as $year => $val) {
             $insert = '<tr>';
-            $insert .= '<td>'.$year.'</td>';
-            $insert .= '<td>'.$val['xxNum'].'</td>';
-            $insert .= '<td>'.$val['xxJine'].'</td>';
+            $insert .= '<td>' . $year . '</td>';
+            $insert .= '<td>' . $val['xxNum'] . '</td>';
+            $insert .= '<td>' . $val['xxJine'] . '</td>';
             $insert .= '</tr>';
             $tmp .= $insert;
         }
@@ -4964,23 +4714,23 @@ TEMP;
     //深度报告字段 必执行的 年度销项发票情况汇总
     private function ndxxfpqkhz(Tcpdf $pdf, $data)
     {
-        $ocrData = $this->getOcrData('14-3',12);
+        $ocrData = $this->getOcrData('14-3', 12);
         $res = $data['re_fpxx']['ndxxfpqkhz'];
         $tmp = '';
         foreach ($res as $year => $val) {
             $insert = '<tr>';
-            $insert .= '<td>'.$year.'</td>';
-            $insert .= '<td>'.$val['normal']['normalNum'].'</td>';
-            $insert .= '<td>'.$val['normal']['normalAmount'].'</td>';
-            $insert .= '<td>'.$val['normal']['normalTax'].'</td>';
-            $insert .= '<td>'.$val['red']['redNum'].'</td>';
-            $insert .= '<td>'.$val['red']['redAmount'].'</td>';
-            $insert .= '<td>'.$val['red']['redTax'].'</td>';
-            $insert .= '<td>'.$val['cancel']['cancelNum'].'</td>';
-            $insert .= '<td>'.$val['cancel']['cancelAmount'].'</td>';
-            $insert .= '<td>'.$val['cancel']['cancelTax'].'</td>';
-            $insert .= '<td>'.$val['normal']['numZhanbi'].'</td>';
-            $insert .= '<td>'.$val['normal']['AmountZhanbi'].'</td>';
+            $insert .= '<td>' . $year . '</td>';
+            $insert .= '<td>' . $val['normal']['normalNum'] . '</td>';
+            $insert .= '<td>' . $val['normal']['normalAmount'] . '</td>';
+            $insert .= '<td>' . $val['normal']['normalTax'] . '</td>';
+            $insert .= '<td>' . $val['red']['redNum'] . '</td>';
+            $insert .= '<td>' . $val['red']['redAmount'] . '</td>';
+            $insert .= '<td>' . $val['red']['redTax'] . '</td>';
+            $insert .= '<td>' . $val['cancel']['cancelNum'] . '</td>';
+            $insert .= '<td>' . $val['cancel']['cancelAmount'] . '</td>';
+            $insert .= '<td>' . $val['cancel']['cancelTax'] . '</td>';
+            $insert .= '<td>' . $val['normal']['numZhanbi'] . '</td>';
+            $insert .= '<td>' . $val['normal']['AmountZhanbi'] . '</td>';
             $insert .= '</tr>';
             $tmp .= $insert;
         }
@@ -5014,24 +4764,24 @@ TEMP;
     //深度报告字段 必执行的 月度销项正常发票分析
     private function ydxxfpfx(Tcpdf $pdf, $data)
     {
-        $ocrData = $this->getOcrData('14-4',13);
+        $ocrData = $this->getOcrData('14-4', 13);
         $res = $data['re_fpxx']['ydxxfpfx'];
         $tmp = '';
         foreach ($res as $year => $val) {
             $insert = '<tr>';
-            $insert .= '<td>'.$year.'</td>';
-            $insert .= '<td>'.$val['normal']['1'].'</td>';
-            $insert .= '<td>'.$val['normal']['2'].'</td>';
-            $insert .= '<td>'.$val['normal']['3'].'</td>';
-            $insert .= '<td>'.$val['normal']['4'].'</td>';
-            $insert .= '<td>'.$val['normal']['5'].'</td>';
-            $insert .= '<td>'.$val['normal']['6'].'</td>';
-            $insert .= '<td>'.$val['normal']['7'].'</td>';
-            $insert .= '<td>'.$val['normal']['8'].'</td>';
-            $insert .= '<td>'.$val['normal']['9'].'</td>';
-            $insert .= '<td>'.$val['normal']['10'].'</td>';
-            $insert .= '<td>'.$val['normal']['11'].'</td>';
-            $insert .= '<td>'.$val['normal']['12'].'</td>';
+            $insert .= '<td>' . $year . '</td>';
+            $insert .= '<td>' . $val['normal']['1'] . '</td>';
+            $insert .= '<td>' . $val['normal']['2'] . '</td>';
+            $insert .= '<td>' . $val['normal']['3'] . '</td>';
+            $insert .= '<td>' . $val['normal']['4'] . '</td>';
+            $insert .= '<td>' . $val['normal']['5'] . '</td>';
+            $insert .= '<td>' . $val['normal']['6'] . '</td>';
+            $insert .= '<td>' . $val['normal']['7'] . '</td>';
+            $insert .= '<td>' . $val['normal']['8'] . '</td>';
+            $insert .= '<td>' . $val['normal']['9'] . '</td>';
+            $insert .= '<td>' . $val['normal']['10'] . '</td>';
+            $insert .= '<td>' . $val['normal']['11'] . '</td>';
+            $insert .= '<td>' . $val['normal']['12'] . '</td>';
             $insert .= '</tr>';
             $tmp .= $insert;
         }
@@ -5064,10 +4814,9 @@ TEMP;
 
         //图
         $barData = $labels = $legends = [];
-        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val)
-        {
+        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val) {
             $barData[] = array_values($val['normal']);
-            $labels = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+            $labels = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
             $legends[] = $key;
         }
 
@@ -5078,10 +4827,10 @@ TEMP;
                 ->setTitle('月度销项正常发票分析')
                 ->setXLabels($labels)
                 ->setLegends($legends)
-                ->setMargin([60,50,0,0])
+                ->setMargin([60, 50, 0, 0])
                 ->bar($barData);
 
-            $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+            $imgPath = str_replace(ROOT_PATH, '', $imgPath);
             $insert = <<<PIC
 <tr>
     <td>
@@ -5102,24 +4851,24 @@ TEMP;
     //深度报告字段 必执行的 月度销项红充发票分析
     private function ydxxfpfx_red(Tcpdf $pdf, $data)
     {
-        $ocrData = $this->getOcrData('14-5',13);
+        $ocrData = $this->getOcrData('14-5', 13);
         $res = $data['re_fpxx']['ydxxfpfx'];
         $tmp = '';
         foreach ($res as $year => $val) {
             $insert = '<tr>';
-            $insert .= '<td>'.$year.'</td>';
-            $insert .= '<td>'.$val['red']['1'].'</td>';
-            $insert .= '<td>'.$val['red']['2'].'</td>';
-            $insert .= '<td>'.$val['red']['3'].'</td>';
-            $insert .= '<td>'.$val['red']['4'].'</td>';
-            $insert .= '<td>'.$val['red']['5'].'</td>';
-            $insert .= '<td>'.$val['red']['6'].'</td>';
-            $insert .= '<td>'.$val['red']['7'].'</td>';
-            $insert .= '<td>'.$val['red']['8'].'</td>';
-            $insert .= '<td>'.$val['red']['9'].'</td>';
-            $insert .= '<td>'.$val['red']['10'].'</td>';
-            $insert .= '<td>'.$val['red']['11'].'</td>';
-            $insert .= '<td>'.$val['red']['12'].'</td>';
+            $insert .= '<td>' . $year . '</td>';
+            $insert .= '<td>' . $val['red']['1'] . '</td>';
+            $insert .= '<td>' . $val['red']['2'] . '</td>';
+            $insert .= '<td>' . $val['red']['3'] . '</td>';
+            $insert .= '<td>' . $val['red']['4'] . '</td>';
+            $insert .= '<td>' . $val['red']['5'] . '</td>';
+            $insert .= '<td>' . $val['red']['6'] . '</td>';
+            $insert .= '<td>' . $val['red']['7'] . '</td>';
+            $insert .= '<td>' . $val['red']['8'] . '</td>';
+            $insert .= '<td>' . $val['red']['9'] . '</td>';
+            $insert .= '<td>' . $val['red']['10'] . '</td>';
+            $insert .= '<td>' . $val['red']['11'] . '</td>';
+            $insert .= '<td>' . $val['red']['12'] . '</td>';
             $insert .= '</tr>';
             $tmp .= $insert;
         }
@@ -5152,10 +4901,9 @@ TEMP;
 
         //图
         $barData = $labels = $legends = [];
-        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val)
-        {
+        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val) {
             $barData[] = array_values($val['red']);
-            $labels = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+            $labels = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
             $legends[] = $key;
         }
 
@@ -5166,10 +4914,10 @@ TEMP;
                 ->setTitle('月度销项红充发票分析')
                 ->setXLabels($labels)
                 ->setLegends($legends)
-                ->setMargin([60,50,0,0])
+                ->setMargin([60, 50, 0, 0])
                 ->bar($barData);
 
-            $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+            $imgPath = str_replace(ROOT_PATH, '', $imgPath);
             $insert = <<<PIC
 <tr>
     <td>
@@ -5190,24 +4938,24 @@ TEMP;
     //深度报告字段 必执行的 月度销项作废发票分析
     private function ydxxfpfx_cancel(Tcpdf $pdf, $data)
     {
-        $ocrData = $this->getOcrData('14-6',13);
+        $ocrData = $this->getOcrData('14-6', 13);
         $res = $data['re_fpxx']['ydxxfpfx'];
         $tmp = '';
         foreach ($res as $year => $val) {
             $insert = '<tr>';
-            $insert .= '<td>'.$year.'</td>';
-            $insert .= '<td>'.$val['cancel']['1'].'</td>';
-            $insert .= '<td>'.$val['cancel']['2'].'</td>';
-            $insert .= '<td>'.$val['cancel']['3'].'</td>';
-            $insert .= '<td>'.$val['cancel']['4'].'</td>';
-            $insert .= '<td>'.$val['cancel']['5'].'</td>';
-            $insert .= '<td>'.$val['cancel']['6'].'</td>';
-            $insert .= '<td>'.$val['cancel']['7'].'</td>';
-            $insert .= '<td>'.$val['cancel']['8'].'</td>';
-            $insert .= '<td>'.$val['cancel']['9'].'</td>';
-            $insert .= '<td>'.$val['cancel']['10'].'</td>';
-            $insert .= '<td>'.$val['cancel']['11'].'</td>';
-            $insert .= '<td>'.$val['cancel']['12'].'</td>';
+            $insert .= '<td>' . $year . '</td>';
+            $insert .= '<td>' . $val['cancel']['1'] . '</td>';
+            $insert .= '<td>' . $val['cancel']['2'] . '</td>';
+            $insert .= '<td>' . $val['cancel']['3'] . '</td>';
+            $insert .= '<td>' . $val['cancel']['4'] . '</td>';
+            $insert .= '<td>' . $val['cancel']['5'] . '</td>';
+            $insert .= '<td>' . $val['cancel']['6'] . '</td>';
+            $insert .= '<td>' . $val['cancel']['7'] . '</td>';
+            $insert .= '<td>' . $val['cancel']['8'] . '</td>';
+            $insert .= '<td>' . $val['cancel']['9'] . '</td>';
+            $insert .= '<td>' . $val['cancel']['10'] . '</td>';
+            $insert .= '<td>' . $val['cancel']['11'] . '</td>';
+            $insert .= '<td>' . $val['cancel']['12'] . '</td>';
             $insert .= '</tr>';
             $tmp .= $insert;
         }
@@ -5240,10 +4988,9 @@ TEMP;
 
         //图
         $barData = $labels = $legends = [];
-        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val)
-        {
+        foreach ($data['re_fpxx']['ydxxfpfx'] as $key => $val) {
             $barData[] = array_values($val['cancel']);
-            $labels = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+            $labels = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
             $legends[] = $key;
         }
 
@@ -5254,10 +5001,10 @@ TEMP;
                 ->setTitle('月度销项作废发票分析')
                 ->setXLabels($labels)
                 ->setLegends($legends)
-                ->setMargin([60,50,0,0])
+                ->setMargin([60, 50, 0, 0])
                 ->bar($barData);
 
-            $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+            $imgPath = str_replace(ROOT_PATH, '', $imgPath);
             $insert = <<<PIC
 <tr>
     <td>
@@ -5278,17 +5025,17 @@ TEMP;
     //深度报告字段 必执行的 单张开票金额TOP10记录 xx
     private function dzkpjeTOP10jl_xx(Tcpdf $pdf, $data)
     {
-        $ocrData = $this->getOcrData('14-7',6);
-        $res = control::sortArrByKey($data['re_fpxx']['dzkpjeTOP10jl_xx'],'totalAmount','desc',true);
+        $ocrData = $this->getOcrData('14-7', 6);
+        $res = control::sortArrByKey($data['re_fpxx']['dzkpjeTOP10jl_xx'], 'totalAmount', 'desc', true);
         $tmp = '';
         foreach ($res as $key => $val) {
             $insert = '<tr>';
-            $insert .= '<td>'.substr($val['date'],0,4).'</td>';
-            $insert .= '<td>'.$val['purchaserName'].'</td>';
-            $insert .= '<td>'.$val['purchaserTaxNo'].'</td>';
-            $insert .= '<td>'.$val['totalAmount'].'</td>';
-            $insert .= '<td>'.$val['totalTax'].'</td>';
-            $insert .= '<td>'.$val['zhanbi'].'</td>';
+            $insert .= '<td>' . substr($val['date'], 0, 4) . '</td>';
+            $insert .= '<td>' . $val['purchaserName'] . '</td>';
+            $insert .= '<td>' . $val['purchaserTaxNo'] . '</td>';
+            $insert .= '<td>' . $val['totalAmount'] . '</td>';
+            $insert .= '<td>' . $val['totalTax'] . '</td>';
+            $insert .= '<td>' . $val['zhanbi'] . '</td>';
             $insert .= '</tr>';
             $tmp .= $insert;
         }
@@ -5315,8 +5062,7 @@ TEMP;
         //图
         $pieData = $labels = [];
         $other = 100;
-        foreach ($data['re_fpxx']['dzkpjeTOP10jl_xx'] as $one)
-        {
+        foreach ($data['re_fpxx']['dzkpjeTOP10jl_xx'] as $one) {
             $other -= $one['zhanbi'] - 0;
             $pieData[] = $one['zhanbi'] - 0;
             $labels[] = "{$one['purchaserName']} (%.1f%%)";
@@ -5326,11 +5072,11 @@ TEMP;
             $insert = '';
         } else {
             if ($other > 0) {
-                array_push($pieData,$other);
-                array_push($labels,"其他 (%.1f%%)");
+                array_push($pieData, $other);
+                array_push($labels, "其他 (%.1f%%)");
             }
             $imgPath = (new NewGraphService())->setTitle('单张开票金额TOP10记录')->setLabels($labels)->pie($pieData);
-            $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+            $imgPath = str_replace(ROOT_PATH, '', $imgPath);
             $insert = <<<PIC
 <tr>
     <td>
@@ -5351,19 +5097,19 @@ TEMP;
     //深度报告字段 必执行的 累计开票金额TOP10企业汇总 xx
     private function ljkpjeTOP10qyhz_xx(Tcpdf $pdf, $data)
     {
-        $ocrData = $this->getOcrData('14-8',7);
+        $ocrData = $this->getOcrData('14-8', 7);
         $temp = array_values($data['re_fpxx']['ljkpjeTOP10qyhz_xx']);
-        $res = control::sortArrByKey($temp,'total','desc',true);
+        $res = control::sortArrByKey($temp, 'total', 'desc', true);
         $tmp = '';
         foreach ($res as $key => $val) {
             $insert = '<tr>';
-            $insert .= '<td>'.$val['date'].'</td>';
-            $insert .= '<td>'.$val['name'].'</td>';
-            $insert .= '<td>'.$val['purchaserTaxNo'].'</td>';
-            $insert .= '<td>'.$val['total'].'</td>';
-            $insert .= '<td>'.$val['num'].'</td>';
-            $insert .= '<td>'.$val['totalZhanbi'].'</td>';
-            $insert .= '<td>'.$val['numZhanbi'].'</td>';
+            $insert .= '<td>' . $val['date'] . '</td>';
+            $insert .= '<td>' . $val['name'] . '</td>';
+            $insert .= '<td>' . $val['purchaserTaxNo'] . '</td>';
+            $insert .= '<td>' . $val['total'] . '</td>';
+            $insert .= '<td>' . $val['num'] . '</td>';
+            $insert .= '<td>' . $val['totalZhanbi'] . '</td>';
+            $insert .= '<td>' . $val['numZhanbi'] . '</td>';
             $insert .= '</tr>';
             $tmp .= $insert;
         }
@@ -5391,8 +5137,7 @@ TEMP;
         //图
         $pieData = $labels = [];
         $other = 100;
-        foreach ($data['re_fpxx']['ljkpjeTOP10qyhz_xx'] as $one)
-        {
+        foreach ($data['re_fpxx']['ljkpjeTOP10qyhz_xx'] as $one) {
             $other -= $one['totalZhanbi'] - 0;
             $pieData[] = $one['totalZhanbi'] - 0;
             $labels[] = "{$one['name']} (%.1f%%)";
@@ -5402,11 +5147,11 @@ TEMP;
             $insert = '';
         } else {
             if ($other > 0) {
-                array_push($pieData,$other);
-                array_push($labels,"其他 (%.1f%%)");
+                array_push($pieData, $other);
+                array_push($labels, "其他 (%.1f%%)");
             }
             $imgPath = (new NewGraphService())->setTitle('累计开票金额TOP10企业汇总')->setLabels($labels)->pie($pieData);
-            $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+            $imgPath = str_replace(ROOT_PATH, '', $imgPath);
             $insert = <<<PIC
 <tr>
     <td>
@@ -5427,12 +5172,12 @@ TEMP;
     //深度报告字段 必执行的 下游客户稳定性分析
     private function xykhwdxfx(Tcpdf $pdf, $data)
     {
-        $ocrData = $this->getOcrData('14-10',7);
+        $ocrData = $this->getOcrData('14-10', 7);
 
         //下游企业司龄分布（个）
         $barData = $labels = [];
         $barData = [array_values($data['re_fpxx']['xyqyslfb'])];
-        $labels = ['1年以下','2-3年','4-5年','6-9年','10年以上'];
+        $labels = ['1年以下', '2-3年', '4-5年', '6-9年', '10年以上'];
 
         if (empty($barData) || empty($labels)) {
             $insert = '';
@@ -5440,10 +5185,10 @@ TEMP;
             if (!empty($data['re_fpxx']['xyqyslfb'])) {
                 $imgPath = (new NewGraphService())
                     ->setXLabels($labels)
-                    ->setMargin([60,50,0,40])
+                    ->setMargin([60, 50, 0, 40])
                     ->bar($barData);
 
-                $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+                $imgPath = str_replace(ROOT_PATH, '', $imgPath);
                 $insert = <<<PIC
 <tr>
     <td>
@@ -5469,7 +5214,7 @@ TEMP;
         //下游企业合作年限分布（个）
         $barData = $labels = [];
         $barData = [array_values($data['re_fpxx']['xyqyhznxfb'])];
-        $labels = ['1年','2年','3年以上'];
+        $labels = ['1年', '2年', '3年以上'];
 
         if (empty($barData) || empty($labels)) {
             $insert = '';
@@ -5477,10 +5222,10 @@ TEMP;
             if (!empty($data['re_fpxx']['xyqyhznxfb'])) {
                 $imgPath = (new NewGraphService())
                     ->setXLabels($labels)
-                    ->setMargin([60,50,0,40])
+                    ->setMargin([60, 50, 0, 40])
                     ->bar($barData);
 
-                $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+                $imgPath = str_replace(ROOT_PATH, '', $imgPath);
                 $insert = <<<PIC
 <tr>
     <td>
@@ -5506,9 +5251,8 @@ TEMP;
         //下游企业更换情况（个）
         $barData = $labels = $legends = [];
 
-        foreach ($data['re_fpxx']['xyqyghqk'] as $key => $val)
-        {
-            $labels = ['新增','退出'];
+        foreach ($data['re_fpxx']['xyqyghqk'] as $key => $val) {
+            $labels = ['新增', '退出'];
             $barData[] = $val;
             $legends[] = $key;
         }
@@ -5519,10 +5263,10 @@ TEMP;
             if (!empty($data['re_fpxx']['xyqyghqk'])) {
                 $imgPath = (new NewGraphService())
                     ->setXLabels($labels)
-                    ->setMargin([60,50,0,40])
+                    ->setMargin([60, 50, 0, 40])
                     ->bar($barData);
 
-                $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+                $imgPath = str_replace(ROOT_PATH, '', $imgPath);
                 $insert = <<<PIC
 <tr>
     <td>
@@ -5548,7 +5292,7 @@ TEMP;
         //下游企业稳定性评估  稳定性指数
         $xywdx = $this->xywdx($data['re_fpjx']['xdsForShangxiayou']);
         $xywdx = 0.35 * $xywdx[0] + 0.65 * $xywdx[1] + 0.2 > 1 ? 1 : 0.35 * $xywdx[0] + 0.65 * $xywdx[1] + 0.2;
-        $xywdx = sprintf('%.1f',$xywdx);
+        $xywdx = sprintf('%.1f', $xywdx);
 
         $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
@@ -5606,7 +5350,7 @@ TEMP;
     //深度报告字段 必执行的 下游客户集中度分析
     private function xykfjzdfx(Tcpdf $pdf, $data)
     {
-        $ocrData = $this->getOcrData('14-11',7);
+        $ocrData = $this->getOcrData('14-11', 7);
 
         //下游企业地域分布（个）
         $barData = $labels = $legends = [];
@@ -5626,10 +5370,10 @@ TEMP;
                     ->setXLabels($labels)
                     ->setXLabelAngle(15)
                     ->setLegends($legends)
-                    ->setMargin([60,50,0,40])
+                    ->setMargin([60, 50, 0, 40])
                     ->bar($barData);
 
-                $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+                $imgPath = str_replace(ROOT_PATH, '', $imgPath);
                 $insert = <<<PIC
 <tr>
     <td>
@@ -5655,7 +5399,7 @@ TEMP;
         //下游企业合作年限分布（个）
         $barData = $labels = [];
         $barData = [array_values($data['re_fpxx']['xyqyhznxfb'])];
-        $labels = ['1年','2年','3年以上'];
+        $labels = ['1年', '2年', '3年以上'];
 
         if (empty($barData) || empty($labels)) {
             $insert = '';
@@ -5663,10 +5407,10 @@ TEMP;
             if (!empty($data['re_fpxx']['xyqyhznxfb'])) {
                 $imgPath = (new NewGraphService())
                     ->setXLabels($labels)
-                    ->setMargin([60,50,0,40])
+                    ->setMargin([60, 50, 0, 40])
                     ->bar($barData);
 
-                $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+                $imgPath = str_replace(ROOT_PATH, '', $imgPath);
                 $insert = <<<PIC
 <tr>
     <td>
@@ -5692,8 +5436,7 @@ TEMP;
         //销售前十企业总占比（%）
         $temp = [];
 
-        foreach ($data['re_fpxx']['xsqsqyzzb'] as $key => $val)
-        {
+        foreach ($data['re_fpxx']['xsqsqyzzb'] as $key => $val) {
             $barData = $labels = $legends = [];
             $labels = array_keys($val);
             $barData[] = array_values($val);
@@ -5703,21 +5446,18 @@ TEMP;
                 ->setXLabels($labels)
                 ->setXLabelAngle(15)
                 ->setLegends($legends)
-                ->setMargin([130,50,0,40])
+                ->setMargin([130, 50, 0, 40])
                 ->bar($barData);
         }
 
-        if (!empty($temp))
-        {
-            for ($i=1;$i<=3;$i++)
-            {
-                if (isset($temp[$i-1]))
-                {
-                    $temp[$i-1] = str_replace(ROOT_PATH,'',$temp[$i-1]);
+        if (!empty($temp)) {
+            for ($i = 1; $i <= 3; $i++) {
+                if (isset($temp[$i - 1])) {
+                    $temp[$i - 1] = str_replace(ROOT_PATH, '', $temp[$i - 1]);
                     $insert = <<<PIC
 <tr>
     <td>
-        <img src="https://api.meirixindong.com/{$temp[$i-1]}" />    
+        <img src="https://api.meirixindong.com/{$temp[$i - 1]}" />    
     </td>
 </tr>
 PIC;
@@ -5731,13 +5471,11 @@ PIC;
 TEMP;
                     $pdf->writeHTML($html, true, false, false, false, '');
 
-                }else
-                {
+                } else {
 
                 }
             }
-        }else
-        {
+        } else {
             $insert = '';
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
@@ -5753,7 +5491,7 @@ TEMP;
         //下游集中度情况评估  集中度指数
         $xyjzd = $this->xyjzd($data['re_fpjx']['xdsForShangxiayou']);
         $xyjzd = 0.35 * $xyjzd[0] + 0.65 * $xyjzd[1] + 0.2 > 1 ? 1 : 0.35 * $xyjzd[0] + 0.65 * $xyjzd[1] + 0.2;
-        $xyjzd = sprintf('%.1f',$xyjzd);
+        $xyjzd = sprintf('%.1f', $xyjzd);
 
         $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
@@ -5809,7 +5547,7 @@ TEMP;
     //深度报告字段 必执行的 企业销售情况分布
     private function qyxsqkfb(Tcpdf $pdf, $data)
     {
-        $ocrData = $this->getOcrData('14-12',7);
+        $ocrData = $this->getOcrData('14-12', 7);
 
         //企业销售情况分布（万元）
         $lineData = $legends = [];
@@ -5823,10 +5561,10 @@ TEMP;
         } else {
             $imgPath = (new NewGraphService())
                 ->setLegends($legends)
-                ->setXLabels(['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'])
+                ->setXLabels(['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'])
                 ->line($lineData);
 
-            $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+            $imgPath = str_replace(ROOT_PATH, '', $imgPath);
             $insert = <<<PIC
 <tr>
     <td>
@@ -5850,12 +5588,12 @@ TEMP;
     //深度报告字段 必执行的 年度进项发票情况汇总
     private function ndjxfpqkhz(Tcpdf $pdf, $data)
     {
-        $ocrData = $this->getOcrData('14-14',7);
+        $ocrData = $this->getOcrData('14-14', 7);
 
         $insert = '<tr>';
-        $insert .= '<td>'.$data['re_fpjx']['ndjxfpqkhz']['min'].' - '.$data['re_fpjx']['ndjxfpqkhz']['max'].'</td>';
-        $insert .= '<td>'.$data['re_fpjx']['ndjxfpqkhz']['normalNum'].'</td>';
-        $insert .= '<td>'.$data['re_fpjx']['ndjxfpqkhz']['normal'].'</td>';
+        $insert .= '<td>' . $data['re_fpjx']['ndjxfpqkhz']['min'] . ' - ' . $data['re_fpjx']['ndjxfpqkhz']['max'] . '</td>';
+        $insert .= '<td>' . $data['re_fpjx']['ndjxfpqkhz']['normalNum'] . '</td>';
+        $insert .= '<td>' . $data['re_fpjx']['ndjxfpqkhz']['normal'] . '</td>';
         $insert .= '</tr>';
 
         $html = <<<TEMP
@@ -5878,25 +5616,25 @@ TEMP;
     //深度报告字段 必执行的 月度进项发票分析
     private function ydjxfpfx(Tcpdf $pdf, $data)
     {
-        $ocrData = $this->getOcrData('14-15',7);
+        $ocrData = $this->getOcrData('14-15', 7);
         //月度进项发票分析
         $res = $data['re_fpjx']['ydjxfpfx'];
         $tmp = '';
         foreach ($res as $year => $val) {
             $insert = '<tr>';
-            $insert .= '<td>'.$year.'</td>';
-            $insert .= '<td>'.$val['1'].'</td>';
-            $insert .= '<td>'.$val['2'].'</td>';
-            $insert .= '<td>'.$val['3'].'</td>';
-            $insert .= '<td>'.$val['4'].'</td>';
-            $insert .= '<td>'.$val['5'].'</td>';
-            $insert .= '<td>'.$val['6'].'</td>';
-            $insert .= '<td>'.$val['7'].'</td>';
-            $insert .= '<td>'.$val['8'].'</td>';
-            $insert .= '<td>'.$val['9'].'</td>';
-            $insert .= '<td>'.$val['10'].'</td>';
-            $insert .= '<td>'.$val['11'].'</td>';
-            $insert .= '<td>'.$val['12'].'</td>';
+            $insert .= '<td>' . $year . '</td>';
+            $insert .= '<td>' . $val['1'] . '</td>';
+            $insert .= '<td>' . $val['2'] . '</td>';
+            $insert .= '<td>' . $val['3'] . '</td>';
+            $insert .= '<td>' . $val['4'] . '</td>';
+            $insert .= '<td>' . $val['5'] . '</td>';
+            $insert .= '<td>' . $val['6'] . '</td>';
+            $insert .= '<td>' . $val['7'] . '</td>';
+            $insert .= '<td>' . $val['8'] . '</td>';
+            $insert .= '<td>' . $val['9'] . '</td>';
+            $insert .= '<td>' . $val['10'] . '</td>';
+            $insert .= '<td>' . $val['11'] . '</td>';
+            $insert .= '<td>' . $val['12'] . '</td>';
             $insert .= '</tr>';
             $tmp .= $insert;
         }
@@ -5929,9 +5667,8 @@ TEMP;
 
         //图
         $barData = $labels = $legends = [];
-        foreach ($data['re_fpjx']['ydjxfpfx'] as $key => $val)
-        {
-            $labels = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+        foreach ($data['re_fpjx']['ydjxfpfx'] as $key => $val) {
+            $labels = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
             $barData[] = array_values($val);
             $legends[] = $key;
         }
@@ -5943,10 +5680,10 @@ TEMP;
                 ->setTitle('月度进项发票分析')
                 ->setXLabels($labels)
                 ->setLegends($legends)
-                ->setMargin([60,0,0,0])
+                ->setMargin([60, 0, 0, 0])
                 ->bar($barData);
 
-            $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+            $imgPath = str_replace(ROOT_PATH, '', $imgPath);
             $insert = <<<PIC
 <tr>
     <td>
@@ -5967,19 +5704,19 @@ TEMP;
     //深度报告字段 必执行的 累计开票金额TOP10企业汇总 jx
     private function ljkpjeTOP10qyhz_jx(Tcpdf $pdf, $data)
     {
-        $ocrData = $this->getOcrData('14-16',7);
+        $ocrData = $this->getOcrData('14-16', 7);
         $temp = array_values($data['re_fpjx']['ljkpjeTOP10qyhz_jx']);
-        $res = control::sortArrByKey($temp,'total','desc',true);
+        $res = control::sortArrByKey($temp, 'total', 'desc', true);
         $tmp = '';
         foreach ($res as $key => $val) {
             $insert = '<tr>';
-            $insert .= '<td>'.$val['date'].'</td>';
-            $insert .= '<td>'.$val['name'].'</td>';
-            $insert .= '<td>'.$val['salesTaxNo'].'</td>';
-            $insert .= '<td>'.$val['total'].'</td>';
-            $insert .= '<td>'.$val['num'].'</td>';
-            $insert .= '<td>'.$val['totalZhanbi'].'</td>';
-            $insert .= '<td>'.$val['numZhanbi'].'</td>';
+            $insert .= '<td>' . $val['date'] . '</td>';
+            $insert .= '<td>' . $val['name'] . '</td>';
+            $insert .= '<td>' . $val['salesTaxNo'] . '</td>';
+            $insert .= '<td>' . $val['total'] . '</td>';
+            $insert .= '<td>' . $val['num'] . '</td>';
+            $insert .= '<td>' . $val['totalZhanbi'] . '</td>';
+            $insert .= '<td>' . $val['numZhanbi'] . '</td>';
             $insert .= '</tr>';
             $tmp .= $insert;
         }
@@ -6007,8 +5744,7 @@ TEMP;
         //图
         $pieData = $labels = [];
         $other = 100;
-        foreach ($data['re_fpjx']['ljkpjeTOP10qyhz_jx'] as $one)
-        {
+        foreach ($data['re_fpjx']['ljkpjeTOP10qyhz_jx'] as $one) {
             $other -= $one['totalZhanbi'] - 0;
             $pieData[] = $one['totalZhanbi'] - 0;
             $labels[] = "{$one['name']} (%.1f%%)";
@@ -6018,11 +5754,11 @@ TEMP;
             $insert = '';
         } else {
             if ($other > 0) {
-                array_push($pieData,$other);
-                array_push($labels,"其他 (%.1f%%)");
+                array_push($pieData, $other);
+                array_push($labels, "其他 (%.1f%%)");
             }
             $imgPath = (new NewGraphService())->setTitle('累计开票金额TOP10企业汇总')->setLabels($labels)->pie($pieData);
-            $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+            $imgPath = str_replace(ROOT_PATH, '', $imgPath);
             $insert = <<<PIC
 <tr>
     <td>
@@ -6043,17 +5779,17 @@ TEMP;
     //深度报告字段 必执行的 单张开票金额TOP10企业汇总 jx
     private function dzkpjeTOP10jl_jx(Tcpdf $pdf, $data)
     {
-        $ocrData = $this->getOcrData('14-17',6);
-        $res = control::sortArrByKey($data['re_fpjx']['dzkpjeTOP10jl_jx'],'totalAmount','desc',true);
+        $ocrData = $this->getOcrData('14-17', 6);
+        $res = control::sortArrByKey($data['re_fpjx']['dzkpjeTOP10jl_jx'], 'totalAmount', 'desc', true);
         $tmp = '';
         foreach ($res as $key => $val) {
             $insert = '<tr>';
-            $insert .= '<td>'.substr($val['date'],0,4).'</td>';
-            $insert .= '<td>'.$val['salesTaxName'].'</td>';
-            $insert .= '<td>'.$val['salesTaxNo'].'</td>';
-            $insert .= '<td>'.$val['totalAmount'].'</td>';
-            $insert .= '<td>'.$val['totalTax'].'</td>';
-            $insert .= '<td>'.$val['zhanbi'].'</td>';
+            $insert .= '<td>' . substr($val['date'], 0, 4) . '</td>';
+            $insert .= '<td>' . $val['salesTaxName'] . '</td>';
+            $insert .= '<td>' . $val['salesTaxNo'] . '</td>';
+            $insert .= '<td>' . $val['totalAmount'] . '</td>';
+            $insert .= '<td>' . $val['totalTax'] . '</td>';
+            $insert .= '<td>' . $val['zhanbi'] . '</td>';
             $insert .= '</tr>';
             $tmp .= $insert;
         }
@@ -6080,8 +5816,7 @@ TEMP;
         //图
         $pieData = $labels = [];
         $other = 100;
-        foreach ($data['re_fpjx']['dzkpjeTOP10jl_jx'] as $one)
-        {
+        foreach ($data['re_fpjx']['dzkpjeTOP10jl_jx'] as $one) {
             $other -= $one['zhanbi'] - 0;
             $pieData[] = $one['zhanbi'] - 0;
             $labels[] = "{$one['salesTaxName']} (%.1f%%)";
@@ -6091,11 +5826,11 @@ TEMP;
             $insert = '';
         } else {
             if ($other > 0) {
-                array_push($pieData,$other);
-                array_push($labels,"其他 (%.1f%%)");
+                array_push($pieData, $other);
+                array_push($labels, "其他 (%.1f%%)");
             }
             $imgPath = (new NewGraphService())->setTitle('单张开票金额TOP10企业汇总')->setLabels($labels)->pie($pieData);
-            $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+            $imgPath = str_replace(ROOT_PATH, '', $imgPath);
             $insert = <<<PIC
 <tr>
     <td>
@@ -6116,12 +5851,12 @@ TEMP;
     //深度报告字段 必执行的 上游供应商稳定性分析
     private function sygysslfb(Tcpdf $pdf, $data)
     {
-        $ocrData = $this->getOcrData('14-19',7);
+        $ocrData = $this->getOcrData('14-19', 7);
 
         //上游供应商司龄分布（个）
         $barData = $labels = [];
         $barData = [array_values($data['re_fpjx']['sygysslfb'])];
-        $labels = ['1年以下','2-3年','4-5年','6-9年','10年以上'];
+        $labels = ['1年以下', '2-3年', '4-5年', '6-9年', '10年以上'];
 
         if (empty($barData) || empty($labels)) {
             $insert = '';
@@ -6129,10 +5864,10 @@ TEMP;
             if (!empty($data['re_fpxx']['xyqyslfb'])) {
                 $imgPath = (new NewGraphService())
                     ->setXLabels($labels)
-                    ->setMargin([60,50,0,40])
+                    ->setMargin([60, 50, 0, 40])
                     ->bar($barData);
 
-                $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+                $imgPath = str_replace(ROOT_PATH, '', $imgPath);
                 $insert = <<<PIC
 <tr>
     <td>
@@ -6158,7 +5893,7 @@ TEMP;
         //下游企业合作年限分布（个）
         $barData = $labels = [];
         $barData = [array_values($data['re_fpxx']['xyqyhznxfb'])];
-        $labels = ['1年','2年','3年以上'];
+        $labels = ['1年', '2年', '3年以上'];
 
         if (empty($barData) || empty($labels)) {
             $insert = '';
@@ -6166,10 +5901,10 @@ TEMP;
             if (!empty($data['re_fpxx']['xyqyhznxfb'])) {
                 $imgPath = (new NewGraphService())
                     ->setXLabels($labels)
-                    ->setMargin([60,50,0,40])
+                    ->setMargin([60, 50, 0, 40])
                     ->bar($barData);
 
-                $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+                $imgPath = str_replace(ROOT_PATH, '', $imgPath);
                 $insert = <<<PIC
 <tr>
     <td>
@@ -6194,8 +5929,7 @@ TEMP;
 
         //上游供应商地域分布（个）
         $barData = $labels = $legends = [];
-        foreach ($data['re_fpjx']['syqydyfb'] as $key => $val)
-        {
+        foreach ($data['re_fpjx']['syqydyfb'] as $key => $val) {
             $labels = array_keys($val);
             $barData[] = array_values($val);
             $legends[] = $key;
@@ -6209,10 +5943,10 @@ TEMP;
                     ->setXLabels($labels)
                     ->setLegends($legends)
                     ->setXLabelAngle(15)
-                    ->setMargin([60,50,0,40])
+                    ->setMargin([60, 50, 0, 40])
                     ->bar($barData);
 
-                $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+                $imgPath = str_replace(ROOT_PATH, '', $imgPath);
                 $insert = <<<PIC
 <tr>
     <td>
@@ -6237,8 +5971,7 @@ TEMP;
 
         //采购前十供应商总占比（%）
         $temp = [];
-        foreach ($data['re_fpjx']['cgqsqyzzb'] as $key => $val)
-        {
+        foreach ($data['re_fpjx']['cgqsqyzzb'] as $key => $val) {
             $barData = $labels = $legends = [];
             $labels = array_keys($val);
             $barData[] = array_values($val);
@@ -6248,21 +5981,18 @@ TEMP;
                 ->setXLabels($labels)
                 ->setXLabelAngle(15)
                 ->setLegends($legends)
-                ->setMargin([130,50,0,40])
+                ->setMargin([130, 50, 0, 40])
                 ->bar($barData);
         }
 
-        if (!empty($temp))
-        {
-            for ($i=1;$i<=3;$i++)
-            {
-                if (isset($temp[$i-1]))
-                {
-                    $temp[$i-1] = str_replace(ROOT_PATH,'',$temp[$i-1]);
+        if (!empty($temp)) {
+            for ($i = 1; $i <= 3; $i++) {
+                if (isset($temp[$i - 1])) {
+                    $temp[$i - 1] = str_replace(ROOT_PATH, '', $temp[$i - 1]);
                     $insert = <<<PIC
 <tr>
     <td>
-        <img src="https://api.meirixindong.com/{$temp[$i-1]}" />    
+        <img src="https://api.meirixindong.com/{$temp[$i - 1]}" />    
     </td>
 </tr>
 PIC;
@@ -6275,13 +6005,11 @@ PIC;
 </table>
 TEMP;
                     $pdf->writeHTML($html, true, false, false, false, '');
-                }else
-                {
+                } else {
 
                 }
             }
-        }else
-        {
+        } else {
             $insert = '';
             $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
@@ -6297,7 +6025,7 @@ TEMP;
         //上游集中度情况评估  集中度指数
         $syjzd = $this->syjzd($data['re_fpjx']['xdsForShangxiayou']);
         $syjzd = 0.35 * $syjzd[0] + 0.65 * $syjzd[1] + 0.2 > 1 ? 1 : 0.35 * $syjzd[0] + 0.65 * $syjzd[1] + 0.2;
-        $syjzd = sprintf('%.1f',$syjzd);
+        $syjzd = sprintf('%.1f', $syjzd);
 
         $html = <<<TEMP
 <table border="1" cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: center">
@@ -6353,7 +6081,7 @@ TEMP;
     //深度报告字段 必执行的 企业采购情况分布
     private function qycgqkfb(Tcpdf $pdf, $data)
     {
-        $ocrData = $this->getOcrData('14-20',7);
+        $ocrData = $this->getOcrData('14-20', 7);
 
         $lineData = $legends = $xLabels = [];
         $legends = [$data['re_fpjx']['qycgqkyc']['label']];
@@ -6368,7 +6096,7 @@ TEMP;
                 ->setXLabels($xLabels)
                 ->line($lineData);
 
-            $imgPath = str_replace(ROOT_PATH,'',$imgPath);
+            $imgPath = str_replace(ROOT_PATH, '', $imgPath);
             $insert = <<<PIC
 <tr>
     <td>
@@ -6392,184 +6120,150 @@ TEMP;
     //下游稳定性
     private function xywdx($data)
     {
-        $siling=$data['下游司龄'];
-        $hezuo=$data['下游合作年限'];
+        $siling = $data['下游司龄'];
+        $hezuo = $data['下游合作年限'];
 
         //计算A
-        $type5=$siling['type5'] ?? 0;
-        $total=array_sum($siling);
-        if ($total == 0)
-        {
-            $A=0;
-        }else
-        {
-            $A=sprintf('%.1f',$type5/$total);
+        $type5 = $siling['type5'] ?? 0;
+        $total = array_sum($siling);
+        if ($total == 0) {
+            $A = 0;
+        } else {
+            $A = sprintf('%.1f', $type5 / $total);
 
-            if ($A >= 0.6)
-            {
-                $A=1;
-            }elseif ($A >= 0.4)
-            {
-                $A=0.9;
-            }else
-            {
-                $A=0.8;
+            if ($A >= 0.6) {
+                $A = 1;
+            } elseif ($A >= 0.4) {
+                $A = 0.9;
+            } else {
+                $A = 0.8;
             }
         }
 
         //计算B
-        if (isset($hezuo['type3']))
-        {
-            $type3=$hezuo['type3'];
-            $total=array_sum($hezuo);
-            if ($total == 0)
-            {
-                $B=0;
-            }else
-            {
-                $B=sprintf('%.1f',$type3/$total);
+        if (isset($hezuo['type3'])) {
+            $type3 = $hezuo['type3'];
+            $total = array_sum($hezuo);
+            if ($total == 0) {
+                $B = 0;
+            } else {
+                $B = sprintf('%.1f', $type3 / $total);
 
-                if ($B >= 0.6)
-                {
-                    $B=1;
-                }elseif ($B >= 0.4)
-                {
-                    $B=0.9;
-                }else
-                {
-                    $B=0.8;
+                if ($B >= 0.6) {
+                    $B = 1;
+                } elseif ($B >= 0.4) {
+                    $B = 0.9;
+                } else {
+                    $B = 0.8;
                 }
             }
-        }else
-        {
-            $B=0;
+        } else {
+            $B = 0;
         }
 
-        return [$A,$B];
+        return [$A, $B];
     }
 
     //下游集中度
     private function xyjzd($data)
     {
-        $dyfb=$data['下游地域分布'];
-        $xsqs=$data['下游销售前十'];
+        $dyfb = $data['下游地域分布'];
+        $xsqs = $data['下游销售前十'];
 
         //计算A
-        if (empty($dyfb))
-        {
-            $A=0;
-        }else
-        {
-            $dyfb=current($dyfb);
+        if (empty($dyfb)) {
+            $A = 0;
+        } else {
+            $dyfb = current($dyfb);
 
             //找出最大的数
-            $max=max($dyfb);
+            $max = max($dyfb);
 
-            $total=array_sum($dyfb);
+            $total = array_sum($dyfb);
 
-            $A=sprintf('%.1f',$max/$total);
+            $A = sprintf('%.1f', $max / $total);
 
-            if ($A >= 0.6)
-            {
-                $A=1;
-            }elseif ($A >= 0.4)
-            {
-                $A=0.9;
-            }else
-            {
-                $A=0.8;
+            if ($A >= 0.6) {
+                $A = 1;
+            } elseif ($A >= 0.4) {
+                $A = 0.9;
+            } else {
+                $A = 0.8;
             }
         }
 
         //计算B
-        if (empty($xsqs))
-        {
-            $B=0;
-        }else
-        {
-            $xsqs=current($xsqs);
+        if (empty($xsqs)) {
+            $B = 0;
+        } else {
+            $xsqs = current($xsqs);
 
-            $B=0;
-            foreach ($xsqs as $key => $one)
-            {
-                $B+=$one;
+            $B = 0;
+            foreach ($xsqs as $key => $one) {
+                $B += $one;
             }
 
-            if ($B >= 60)
-            {
-                $B=1;
-            }elseif ($B >= 40)
-            {
-                $B=0.9;
-            }else
-            {
-                $B=0.8;
+            if ($B >= 60) {
+                $B = 1;
+            } elseif ($B >= 40) {
+                $B = 0.9;
+            } else {
+                $B = 0.8;
             }
         }
 
-        return [$A,$B];
+        return [$A, $B];
     }
 
     //上游集中度
     private function syjzd($data)
     {
-        $dyfb=$data['上游地域分布'];
-        $xsqs=$data['上游销售前十'];
+        $dyfb = $data['上游地域分布'];
+        $xsqs = $data['上游销售前十'];
 
         //计算A
-        if (empty($dyfb))
-        {
-            $A=0;
-        }else
-        {
-            $dyfb=current($dyfb);
+        if (empty($dyfb)) {
+            $A = 0;
+        } else {
+            $dyfb = current($dyfb);
 
             //找出最大的数
-            $max=max($dyfb);
+            $max = max($dyfb);
 
-            $total=array_sum($dyfb);
+            $total = array_sum($dyfb);
 
-            $A=sprintf('%.1f',$max/$total);
+            $A = sprintf('%.1f', $max / $total);
 
-            if ($A >= 0.6)
-            {
-                $A=1;
-            }elseif ($A >= 0.4)
-            {
-                $A=0.9;
-            }else
-            {
-                $A=0.8;
+            if ($A >= 0.6) {
+                $A = 1;
+            } elseif ($A >= 0.4) {
+                $A = 0.9;
+            } else {
+                $A = 0.8;
             }
         }
 
         //计算B
-        if (empty($xsqs))
-        {
-            $B=0;
-        }else
-        {
-            $xsqs=current($xsqs);
+        if (empty($xsqs)) {
+            $B = 0;
+        } else {
+            $xsqs = current($xsqs);
 
-            $B=0;
-            foreach ($xsqs as $key => $one)
-            {
-                $B+=$one;
+            $B = 0;
+            foreach ($xsqs as $key => $one) {
+                $B += $one;
             }
 
-            if ($B >= 60)
-            {
-                $B=1;
-            }elseif ($B >= 40)
-            {
-                $B=0.9;
-            }else
-            {
-                $B=0.8;
+            if ($B >= 60) {
+                $B = 1;
+            } elseif ($B >= 40) {
+                $B = 0.9;
+            } else {
+                $B = 0.8;
             }
         }
 
-        return [$A,$B];
+        return [$A, $B];
     }
 
     //并发请求数据
@@ -7114,7 +6808,7 @@ TEMP;
                 'dataCount' => 4,//取最近几年的
             ];
 
-            $res = (new LongXinService())->setCheckRespFlag(true)->getFinanceData($postData,false);
+            $res = (new LongXinService())->setCheckRespFlag(true)->getFinanceData($postData, false);
 
             if ($res['code'] !== 200) return '';
 
@@ -7158,23 +6852,23 @@ TEMP;
 
             $tmp = [];
             //$tmp['pic'] = CommonService::getInstance()->createBarPic($res['result'], $labels, $extension);
-            $tmp['pic'][] = CommonService::getInstance()->createLinePic($lineTemp['MAIBUSINC_yoy'],$legend,[
+            $tmp['pic'][] = CommonService::getInstance()->createLinePic($lineTemp['MAIBUSINC_yoy'], $legend, [
                 'title' => $this->entName,
                 'subTitle' => '营收规模同比 此图为概况信息',
             ]);
-            $tmp['pic'][] = CommonService::getInstance()->createLinePic($lineTemp['PROGRO_yoy'],$legend,[
+            $tmp['pic'][] = CommonService::getInstance()->createLinePic($lineTemp['PROGRO_yoy'], $legend, [
                 'title' => $this->entName,
                 'subTitle' => '盈利能力同比 此图为概况信息',
             ]);
-            $tmp['pic'][] = CommonService::getInstance()->createLinePic($lineTemp['ASSGRO_yoy'],$legend,[
+            $tmp['pic'][] = CommonService::getInstance()->createLinePic($lineTemp['ASSGRO_yoy'], $legend, [
                 'title' => $this->entName,
                 'subTitle' => '资产规模同比 此图为概况信息',
             ]);
-            $tmp['pic'][] = CommonService::getInstance()->createLinePic($lineTemp['RATGRO_yoy'],$legend,[
+            $tmp['pic'][] = CommonService::getInstance()->createLinePic($lineTemp['RATGRO_yoy'], $legend, [
                 'title' => $this->entName,
                 'subTitle' => '纳税能力同比 此图为概况信息',
             ]);
-            $tmp['pic'][] = CommonService::getInstance()->createLinePic($lineTemp['LIAGRO_yoy'],$legend,[
+            $tmp['pic'][] = CommonService::getInstance()->createLinePic($lineTemp['LIAGRO_yoy'], $legend, [
                 'title' => $this->entName,
                 'subTitle' => '负债规模同比 此图为概况信息',
             ]);
