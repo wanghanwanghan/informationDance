@@ -91,12 +91,12 @@ class YunMaTongService extends ServiceBase
 
         $body = $this->createRequestData([
             'transtype' => 'accountinfo',
-            'productid' => 'accounttype',//accounttype accounttype_query
+            'productid' => 'accounttype_query',//accounttype_query accounttype
             'bankcard' => $arr['bankcard'],
-            'bankaccounttype' => '1',
-            'realname' => $arr['realname'],
-            'idcard' => $arr['idcard'],
-            'mobile' => $arr['mobile'],
+            //'bankaccounttype' => '1',
+            //'realname' => $arr['realname'],
+            //'idcard' => $arr['idcard'],
+            //'mobile' => $arr['mobile'],
         ]);
 
         $res = (new CoHttpClient())

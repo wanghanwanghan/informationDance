@@ -2623,7 +2623,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             //年份
             $docObj->setValue("tdrs_year#" . ($i + 1), $data['itemInfo'][$i]['year']);
             //人数
-            $docObj->setValue("tdrs_yoy#" . ($i + 1), (int)$data['itemInfo'][$i]['num']);
+            $docObj->setValue("tdrs_yoy#" . ($i + 1), $this->formatTo($data['itemInfo'][$i]['num']));
         }
 
         //建筑企业-专业注册人员

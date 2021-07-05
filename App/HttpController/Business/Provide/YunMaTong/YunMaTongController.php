@@ -51,15 +51,15 @@ class YunMaTongController extends ProvideBase
         }
 
         if (empty($arr['realname'])) {
-            return $this->writeJson(200, null, null, '姓名不能是空');
+            //return $this->writeJson(200, null, null, '姓名不能是空');
         }
 
         if (empty($arr['idcard'])) {
-            return $this->writeJson(200, null, null, '身份证号不能是空');
+            //return $this->writeJson(200, null, null, '身份证号不能是空');
         }
 
         if (empty($arr['mobile'])) {
-            return $this->writeJson(200, null, null, '手机号不能是空');
+            //return $this->writeJson(200, null, null, '手机号不能是空');
         }
 
         $this->csp->add($this->cspKey, function () use ($arr) {

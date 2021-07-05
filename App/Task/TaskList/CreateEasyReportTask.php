@@ -802,45 +802,45 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         //龙盾 基本信息
         //企业类型
-        $docObj->setValue('ENTTYPE', $data['GetBasicDetailsByName']['EconKind']);
+        $docObj->setValue('ENTTYPE', $this->formatTo($data['GetBasicDetailsByName']['EconKind']));
         //注册资本
-        $docObj->setValue('REGCAP', $data['GetBasicDetailsByName']['RegistCapi']);
+        $docObj->setValue('REGCAP', $this->formatTo($data['GetBasicDetailsByName']['RegistCapi']));
         //注册地址
-        $docObj->setValue('DOM', $data['GetBasicDetailsByName']['Address']);
+        $docObj->setValue('DOM', $this->formatTo($data['GetBasicDetailsByName']['Address']));
         //法人
-        $docObj->setValue('FRDB', $data['GetBasicDetailsByName']['OperName']);
+        $docObj->setValue('FRDB', $this->formatTo($data['GetBasicDetailsByName']['OperName']));
         //统一代码
-        $docObj->setValue('SHXYDM', $data['GetBasicDetailsByName']['CreditCode']);
+        $docObj->setValue('SHXYDM', $this->formatTo($data['GetBasicDetailsByName']['CreditCode']));
         //成立日期
         $docObj->setValue('ESDATE', $this->formatDate($data['GetBasicDetailsByName']['StartDate']));
         //核准日期
         $docObj->setValue('APPRDATE', $this->formatDate($data['GetBasicDetailsByName']['CheckDate']));
         //经营状态
-        $docObj->setValue('ENTSTATUS', $data['GetBasicDetailsByName']['Status']);
+        $docObj->setValue('ENTSTATUS', $this->formatTo($data['GetBasicDetailsByName']['Status']));
         //营业期限
         $docObj->setValue('OPFROM', $this->formatDate($data['GetBasicDetailsByName']['TermStart']));
         $docObj->setValue('ENDDATE', $this->formatDate($data['GetBasicDetailsByName']['TeamEnd']));
         //所属行业
-        $docObj->setValue('INDUSTRY', $data['getRegisterInfo']['INDUSTRY']);
+        $docObj->setValue('INDUSTRY', $this->formatTo($data['getRegisterInfo']['INDUSTRY']));
         //经营范围
-        $docObj->setValue('OPSCOPE', $data['GetBasicDetailsByName']['Scope']);
+        $docObj->setValue('OPSCOPE', $this->formatTo($data['GetBasicDetailsByName']['Scope']));
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 14, $this->entName, true);
-        $docObj->setValue('jbxx_oneSaid', $oneSaid);
+        $docObj->setValue('jbxx_oneSaid', $this->formatTo($oneSaid));
 
         //股东信息
         $rows = count($data['getShareHolderInfo']);
         $docObj->cloneRow('gd_INV', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //股东名称
-            $docObj->setValue("gd_INV#" . ($i + 1), $data['getShareHolderInfo'][$i]['INV']);
+            $docObj->setValue("gd_INV#" . ($i + 1), $this->formatTo($data['getShareHolderInfo'][$i]['INV']));
             //统一代码
-            $docObj->setValue("gd_SHXYDM#" . ($i + 1), $data['getShareHolderInfo'][$i]['SHXYDM']);
+            $docObj->setValue("gd_SHXYDM#" . ($i + 1), $this->formatTo($data['getShareHolderInfo'][$i]['SHXYDM']));
             //股东类型
-            $docObj->setValue("gd_INVTYPE#" . ($i + 1), $data['getShareHolderInfo'][$i]['INVTYPE']);
+            $docObj->setValue("gd_INVTYPE#" . ($i + 1), $this->formatTo($data['getShareHolderInfo'][$i]['INVTYPE']));
             //认缴出资额
-            $docObj->setValue("gd_SUBCONAM#" . ($i + 1), $data['getShareHolderInfo'][$i]['SUBCONAM']);
+            $docObj->setValue("gd_SUBCONAM#" . ($i + 1), $this->formatTo($data['getShareHolderInfo'][$i]['SUBCONAM']));
             //出资币种
-            $docObj->setValue("gd_CONCUR#" . ($i + 1), $data['getShareHolderInfo'][$i]['CONCUR']);
+            $docObj->setValue("gd_CONCUR#" . ($i + 1), $this->formatTo($data['getShareHolderInfo'][$i]['CONCUR']));
             //出资比例
             $docObj->setValue("gd_CONRATIO#" . ($i + 1), $this->formatPercent($data['getShareHolderInfo'][$i]['CONRATIO']));
             //出资时间
@@ -848,7 +848,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 15, $this->entName, true);
-        $docObj->setValue('gudongxx_oneSaid', $oneSaid);
+        $docObj->setValue('gudongxx_oneSaid', $this->formatTo($oneSaid));
 
         //高管信息
         $rows = count($data['getMainManagerInfo']);
@@ -857,13 +857,13 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("gg_no#" . ($i + 1), $i + 1);
             //姓名
-            $docObj->setValue("gg_NAME#" . ($i + 1), $data['getMainManagerInfo'][$i]['NAME']);
+            $docObj->setValue("gg_NAME#" . ($i + 1), $this->formatTo($data['getMainManagerInfo'][$i]['NAME']));
             //职位
-            $docObj->setValue("gg_POSITION#" . ($i + 1), $data['getMainManagerInfo'][$i]['POSITION']);
+            $docObj->setValue("gg_POSITION#" . ($i + 1), $this->formatTo($data['getMainManagerInfo'][$i]['POSITION']));
         }
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 15, $this->entName, true);
-        $docObj->setValue('ggxx_oneSaid', $oneSaid);
+        $docObj->setValue('ggxx_oneSaid', $this->formatTo($oneSaid));
 
         //变更信息
         $rows = count($data['getRegisterChangeInfo']['list']);
@@ -874,15 +874,15 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //变更日期
             $docObj->setValue("bg_ALTDATE#" . ($i + 1), $this->formatDate($data['getRegisterChangeInfo']['list'][$i]['ALTDATE']));
             //变更项目
-            $docObj->setValue("bg_ALTITEM#" . ($i + 1), $data['getRegisterChangeInfo']['list'][$i]['ALTITEM']);
+            $docObj->setValue("bg_ALTITEM#" . ($i + 1), $this->formatTo($data['getRegisterChangeInfo']['list'][$i]['ALTITEM']));
             //变更前
-            $docObj->setValue("bg_ALTBE#" . ($i + 1), $data['getRegisterChangeInfo']['list'][$i]['ALTBE']);
+            $docObj->setValue("bg_ALTBE#" . ($i + 1), $this->formatTo($data['getRegisterChangeInfo']['list'][$i]['ALTBE']));
             //变更后
-            $docObj->setValue("bg_ALTAF#" . ($i + 1), $data['getRegisterChangeInfo']['list'][$i]['ALTAF']);
+            $docObj->setValue("bg_ALTAF#" . ($i + 1), $this->formatTo($data['getRegisterChangeInfo']['list'][$i]['ALTAF']));
         }
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 19, $this->entName, true);
-        $docObj->setValue('bgxx_oneSaid', $oneSaid);
+        $docObj->setValue('bgxx_oneSaid', $this->formatTo($oneSaid));
 
         //经营异常
         $rows = count($data['GetOpException']['list']);
@@ -893,20 +893,20 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //列入一日
             $docObj->setValue("jjyc_AddDate#" . ($i + 1), $this->formatDate($data['GetOpException']['list'][$i]['AddDate']));
             //列入原因
-            $docObj->setValue("jjyc_AddReason#" . ($i + 1), $data['GetOpException']['list'][$i]['AddReason']);
+            $docObj->setValue("jjyc_AddReason#" . ($i + 1), $this->formatTo($data['GetOpException']['list'][$i]['AddReason']));
             //移除日期
             $docObj->setValue("jjyc_RemoveDate#" . ($i + 1), $this->formatDate($data['GetOpException']['list'][$i]['RemoveDate']));
             //移除原因
-            $docObj->setValue("jjyc_RomoveReason#" . ($i + 1), $data['GetOpException']['list'][$i]['RomoveReason']);
+            $docObj->setValue("jjyc_RomoveReason#" . ($i + 1), $this->formatTo($data['GetOpException']['list'][$i]['RomoveReason']));
         }
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 21, $this->entName, true);
-        $docObj->setValue('jyycxx_oneSaid', $oneSaid);
+        $docObj->setValue('jyycxx_oneSaid', $this->formatTo($oneSaid));
 
         //实际控制人
         if (!empty($data['Beneficiary'])) {
             //姓名
-            $docObj->setValue("sjkzr_Name", $data['Beneficiary']['Name']);
+            $docObj->setValue("sjkzr_Name", $this->formatTo($data['Beneficiary']['Name']));
             //持股比例
             $docObj->setValue("sjkzr_TotalStockPercent", $this->formatPercent($data['Beneficiary']['TotalStockPercent']));
             //股权链
@@ -914,21 +914,21 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             foreach ($data['Beneficiary']['DetailInfoList'] as $no => $onePath) {
                 $path .= '<w:br/>' . ($no + 1) . $onePath['Path'] . '<w:br/>';
             }
-            $docObj->setValue("sjkzr_Path", $path);
+            $docObj->setValue("sjkzr_Path", $this->formatTo($path));
         } else {
             //姓名
-            $docObj->setValue("sjkzr_Name", '');
+            $docObj->setValue("sjkzr_Name", $this->formatTo(''));
             //持股比例
             $docObj->setValue("sjkzr_TotalStockPercent", '因穿透股东中有政府部门或国资单位等特殊机构，故不予显示');
             //股权链
-            $docObj->setValue("sjkzr_Path", '');
+            $docObj->setValue("sjkzr_Path", $this->formatTo(''));
         }
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 16, $this->entName, true);
-        $docObj->setValue('sjkzr_oneSaid', $oneSaid);
+        $docObj->setValue('sjkzr_oneSaid', $this->formatTo($oneSaid));
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '1.1');
-        $docObj->setValue('sjkzr_ocr', $ocr);
+        $docObj->setValue('sjkzr_ocr', $this->formatTo($ocr));
 
         //历史沿革
         $rows = count($data['getHistoricalEvolution']);
@@ -937,11 +937,11 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("lsyg_no#" . ($i + 1), $i + 1);
             //内容
-            $docObj->setValue("lsyg_content#" . ($i + 1), $data['getHistoricalEvolution'][$i]);
+            $docObj->setValue("lsyg_content#" . ($i + 1), $this->formatTo($data['getHistoricalEvolution'][$i]));
         }
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '1.2');
-        $docObj->setValue('lsyg_ocr', $ocr);
+        $docObj->setValue('lsyg_ocr', $this->formatTo($ocr));
 
         //法人对外投资
         $rows = count($data['lawPersonInvestmentInfo']['list']);
@@ -950,26 +950,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("frdwtz_no#" . ($i + 1), $i + 1);
             //法人
-            $docObj->setValue("frdwtz_NAME#" . ($i + 1), $data['lawPersonInvestmentInfo']['list'][$i]['NAME']);
+            $docObj->setValue("frdwtz_NAME#" . ($i + 1), $this->formatTo($data['lawPersonInvestmentInfo']['list'][$i]['NAME']));
             //企业名称
-            $docObj->setValue("frdwtz_ENTNAME#" . ($i + 1), $data['lawPersonInvestmentInfo']['list'][$i]['ENTNAME']);
+            $docObj->setValue("frdwtz_ENTNAME#" . ($i + 1), $this->formatTo($data['lawPersonInvestmentInfo']['list'][$i]['ENTNAME']));
             //持股比例
             $docObj->setValue("frdwtz_CONRATIO#" . ($i + 1), $this->formatPercent($data['lawPersonInvestmentInfo']['list'][$i]['CONRATIO']));
             //注册资本
-            $docObj->setValue("frdwtz_REGCAP#" . ($i + 1), $data['lawPersonInvestmentInfo']['list'][$i]['REGCAP']);
+            $docObj->setValue("frdwtz_REGCAP#" . ($i + 1), $this->formatTo($data['lawPersonInvestmentInfo']['list'][$i]['REGCAP']));
             //统一社会信用代码
-            $docObj->setValue("frdwtz_SHXYDM#" . ($i + 1), $data['lawPersonInvestmentInfo']['list'][$i]['SHXYDM']);
+            $docObj->setValue("frdwtz_SHXYDM#" . ($i + 1), $this->formatTo($data['lawPersonInvestmentInfo']['list'][$i]['SHXYDM']));
             //认缴出资额
-            $docObj->setValue("frdwtz_SUBCONAM#" . ($i + 1), $data['lawPersonInvestmentInfo']['list'][$i]['SUBCONAM']);
+            $docObj->setValue("frdwtz_SUBCONAM#" . ($i + 1), $this->formatTo($data['lawPersonInvestmentInfo']['list'][$i]['SUBCONAM']));
             //状态
-            $docObj->setValue("frdwtz_ENTSTATUS#" . ($i + 1), $data['lawPersonInvestmentInfo']['list'][$i]['ENTSTATUS']);
+            $docObj->setValue("frdwtz_ENTSTATUS#" . ($i + 1), $this->formatTo($data['lawPersonInvestmentInfo']['list'][$i]['ENTSTATUS']));
             //认缴出资时间
             $docObj->setValue("frdwtz_CONDATE#" . ($i + 1), $this->formatDate($data['lawPersonInvestmentInfo']['list'][$i]['CONDATE']));
         }
         $docObj->setValue("frdwtz_total", (int)$data['lawPersonInvestmentInfo']['total']);
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '1.3');
-        $docObj->setValue('frdwtz_ocr', $ocr);
+        $docObj->setValue('frdwtz_ocr', $this->formatTo($ocr));
 
         //法人对外任职
         $rows = count($data['getLawPersontoOtherInfo']['list']);
@@ -978,26 +978,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("frdwrz_no#" . ($i + 1), $i + 1);
             //姓名
-            $docObj->setValue("frdwrz_NAME#" . ($i + 1), $data['getLawPersontoOtherInfo']['list'][$i]['NAME']);
+            $docObj->setValue("frdwrz_NAME#" . ($i + 1), $this->formatTo($data['getLawPersontoOtherInfo']['list'][$i]['NAME']));
             //任职企业名称
-            $docObj->setValue("frdwrz_ENTNAME#" . ($i + 1), $data['getLawPersontoOtherInfo']['list'][$i]['ENTNAME']);
+            $docObj->setValue("frdwrz_ENTNAME#" . ($i + 1), $this->formatTo($data['getLawPersontoOtherInfo']['list'][$i]['ENTNAME']));
             //统一社会信用代码
-            $docObj->setValue("frdwrz_SHXYDM#" . ($i + 1), $data['getLawPersontoOtherInfo']['list'][$i]['SHXYDM']);
+            $docObj->setValue("frdwrz_SHXYDM#" . ($i + 1), $this->formatTo($data['getLawPersontoOtherInfo']['list'][$i]['SHXYDM']));
             //成立日期
             $docObj->setValue("frdwrz_ESDATE#" . ($i + 1), $this->formatDate($data['getLawPersontoOtherInfo']['list'][$i]['ESDATE']));
             //注册资本
-            $docObj->setValue("frdwrz_REGCAP#" . ($i + 1), $data['getLawPersontoOtherInfo']['list'][$i]['REGCAP']);
+            $docObj->setValue("frdwrz_REGCAP#" . ($i + 1), $this->formatTo($data['getLawPersontoOtherInfo']['list'][$i]['REGCAP']));
             //经营状态
-            $docObj->setValue("frdwrz_ENTSTATUS#" . ($i + 1), $data['getLawPersontoOtherInfo']['list'][$i]['ENTSTATUS']);
+            $docObj->setValue("frdwrz_ENTSTATUS#" . ($i + 1), $this->formatTo($data['getLawPersontoOtherInfo']['list'][$i]['ENTSTATUS']));
             //职务
-            $docObj->setValue("frdwrz_POSITION#" . ($i + 1), $data['getLawPersontoOtherInfo']['list'][$i]['POSITION']);
+            $docObj->setValue("frdwrz_POSITION#" . ($i + 1), $this->formatTo($data['getLawPersontoOtherInfo']['list'][$i]['POSITION']));
             //是否法人
-            $docObj->setValue("frdwrz_ISFRDB#" . ($i + 1), $data['getLawPersontoOtherInfo']['list'][$i]['ISFRDB']);
+            $docObj->setValue("frdwrz_ISFRDB#" . ($i + 1), $this->formatTo($data['getLawPersontoOtherInfo']['list'][$i]['ISFRDB']));
         }
         $docObj->setValue("frdwrz_total", (int)$data['getLawPersontoOtherInfo']['total']);
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '1.4');
-        $docObj->setValue('frdwrz_ocr', $ocr);
+        $docObj->setValue('frdwrz_ocr', $this->formatTo($ocr));
 
         //企业对外投资
         $rows = count($data['getInvestmentAbroadInfo']['list']);
@@ -1006,17 +1006,17 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("qydwtz_no#" . ($i + 1), $i + 1);
             //被投资企业名称
-            $docObj->setValue("qydwtz_ENTNAME#" . ($i + 1), $data['getInvestmentAbroadInfo']['list'][$i]['ENTNAME']);
+            $docObj->setValue("qydwtz_ENTNAME#" . ($i + 1), $this->formatTo($data['getInvestmentAbroadInfo']['list'][$i]['ENTNAME']));
             //成立日期
             $docObj->setValue("qydwtz_ESDATE#" . ($i + 1), $this->formatDate($data['getInvestmentAbroadInfo']['list'][$i]['ESDATE']));
             //经营状态
-            $docObj->setValue("qydwtz_ENTSTATUS#" . ($i + 1), $data['getInvestmentAbroadInfo']['list'][$i]['ENTSTATUS']);
+            $docObj->setValue("qydwtz_ENTSTATUS#" . ($i + 1), $this->formatTo($data['getInvestmentAbroadInfo']['list'][$i]['ENTSTATUS']));
             //注册资本
-            $docObj->setValue("qydwtz_REGCAP#" . ($i + 1), $data['getInvestmentAbroadInfo']['list'][$i]['REGCAP']);
+            $docObj->setValue("qydwtz_REGCAP#" . ($i + 1), $this->formatTo($data['getInvestmentAbroadInfo']['list'][$i]['REGCAP']));
             //认缴出资额
-            $docObj->setValue("qydwtz_SUBCONAM#" . ($i + 1), $data['getInvestmentAbroadInfo']['list'][$i]['SUBCONAM']);
+            $docObj->setValue("qydwtz_SUBCONAM#" . ($i + 1), $this->formatTo($data['getInvestmentAbroadInfo']['list'][$i]['SUBCONAM']));
             //出资币种
-            $docObj->setValue("qydwtz_CONCUR#" . ($i + 1), $data['getInvestmentAbroadInfo']['list'][$i]['CONCUR']);
+            $docObj->setValue("qydwtz_CONCUR#" . ($i + 1), $this->formatTo($data['getInvestmentAbroadInfo']['list'][$i]['CONCUR']));
             //出资比例
             $docObj->setValue("qydwtz_CONRATIO#" . ($i + 1), $this->formatPercent($data['getInvestmentAbroadInfo']['list'][$i]['CONRATIO']));
             //出资时间
@@ -1025,10 +1025,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->setValue("qydwtz_total", (int)$data['getInvestmentAbroadInfo']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 23, $this->entName, true);
-        $docObj->setValue('qydwtz_oneSaid', $oneSaid);
+        $docObj->setValue('qydwtz_oneSaid', $this->formatTo($oneSaid));
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '1.5');
-        $docObj->setValue('qydwtz_ocr', $ocr);
+        $docObj->setValue('qydwtz_ocr', $this->formatTo($ocr));
 
         //主要分支机构
         $rows = count($data['getBranchInfo']['list']);
@@ -1037,23 +1037,23 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("fzjg_no#" . ($i + 1), $i + 1);
             //机构名称
-            $docObj->setValue("fzjg_ENTNAME#" . ($i + 1), $data['getBranchInfo']['list'][$i]['ENTNAME']);
+            $docObj->setValue("fzjg_ENTNAME#" . ($i + 1), $this->formatTo($data['getBranchInfo']['list'][$i]['ENTNAME']));
             //负责人
-            $docObj->setValue("fzjg_FRDB#" . ($i + 1), $data['getBranchInfo']['list'][$i]['FRDB']);
+            $docObj->setValue("fzjg_FRDB#" . ($i + 1), $this->formatTo($data['getBranchInfo']['list'][$i]['FRDB']));
             //成立日期
             $docObj->setValue("fzjg_ESDATE#" . ($i + 1), $this->formatDate($data['getBranchInfo']['list'][$i]['ESDATE']));
             //经营状态
-            $docObj->setValue("fzjg_ENTSTATUS#" . ($i + 1), $data['getBranchInfo']['list'][$i]['ENTSTATUS']);
+            $docObj->setValue("fzjg_ENTSTATUS#" . ($i + 1), $this->formatTo($data['getBranchInfo']['list'][$i]['ENTSTATUS']));
             //登记地省份
-            $docObj->setValue("fzjg_PROVINCE#" . ($i + 1), $data['getBranchInfo']['list'][$i]['PROVINCE']);
+            $docObj->setValue("fzjg_PROVINCE#" . ($i + 1), $this->formatTo($data['getBranchInfo']['list'][$i]['PROVINCE']));
         }
         $docObj->setValue("fzjg_total", (int)$data['getBranchInfo']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 18, $this->entName, true);
-        $docObj->setValue('zyfzjg_oneSaid', $oneSaid);
+        $docObj->setValue('zyfzjg_oneSaid', $this->formatTo($oneSaid));
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '1.6');
-        $docObj->setValue('zyfzjg_ocr', $ocr);
+        $docObj->setValue('zyfzjg_ocr', $this->formatTo($ocr));
 
         //银行信息
         $docObj->cloneRow('yhxx_no', 1);
@@ -1061,26 +1061,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("yhxx_no#" . ($i + 1), $i + 1);
             //开户行地址
-            $docObj->setValue("yhxx_khh#" . ($i + 1), $data['GetCreditCodeNew']['Bank']);
+            $docObj->setValue("yhxx_khh#" . ($i + 1), $this->formatTo($data['GetCreditCodeNew']['Bank']));
             //开户行号码
-            $docObj->setValue("yhxx_hm#" . ($i + 1), $data['GetCreditCodeNew']['BankAccount']);
+            $docObj->setValue("yhxx_hm#" . ($i + 1), $this->formatTo($data['GetCreditCodeNew']['BankAccount']));
         }
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '1.7');
-        $docObj->setValue('yhxx_ocr', $ocr);
+        $docObj->setValue('yhxx_ocr', $this->formatTo($ocr));
 
         //公司概况
         $rows = count($data['SearchCompanyFinancings']);
         $docObj->cloneRow('gsgk_rzjd', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //融资阶段
-            $docObj->setValue("gsgk_rzjd#" . ($i + 1), $data['SearchCompanyFinancings'][$i]['Round']);
+            $docObj->setValue("gsgk_rzjd#" . ($i + 1), $this->formatTo($data['SearchCompanyFinancings'][$i]['Round']));
             //融资
             $docObj->setValue("gsgk_rz#" . ($i + 1), $data['SearchCompanyFinancings'][$i]['Investment'] . '，' . $data['SearchCompanyFinancings'][$i]['Amount']);
         }
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 22, $this->entName, true);
-        $docObj->setValue('gsgk_oneSaid', $oneSaid);
+        $docObj->setValue('gsgk_oneSaid', $this->formatTo($oneSaid));
 
         //招投标
         $rows = count($data['TenderSearch']['list']);
@@ -1089,21 +1089,21 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("ztb_no#" . ($i + 1), $i + 1);
             //描述
-            $docObj->setValue("ztb_Title#" . ($i + 1), $data['TenderSearch']['list'][$i]['Title']);
+            $docObj->setValue("ztb_Title#" . ($i + 1), $this->formatTo($data['TenderSearch']['list'][$i]['Title']));
             //发布日期
             $docObj->setValue("ztb_Pubdate#" . ($i + 1), $this->formatDate($data['TenderSearch']['list'][$i]['Pubdate']));
             //所属地区
-            $docObj->setValue("ztb_ProvinceName#" . ($i + 1), $data['TenderSearch']['list'][$i]['ProvinceName']);
+            $docObj->setValue("ztb_ProvinceName#" . ($i + 1), $this->formatTo($data['TenderSearch']['list'][$i]['ProvinceName']));
             //项目分类
-            $docObj->setValue("ztb_ChannelName#" . ($i + 1), $data['TenderSearch']['list'][$i]['ChannelName']);
+            $docObj->setValue("ztb_ChannelName#" . ($i + 1), $this->formatTo($data['TenderSearch']['list'][$i]['ChannelName']));
         }
         $docObj->setValue("ztb_total", (int)$data['TenderSearch']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 24, $this->entName, true);
-        $docObj->setValue('ztb_oneSaid', $oneSaid);
+        $docObj->setValue('ztb_oneSaid', $this->formatTo($oneSaid));
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '2.1');
-        $docObj->setValue('ztb_ocr', $ocr);
+        $docObj->setValue('ztb_ocr', $this->formatTo($ocr));
 
         //购地信息
         $rows = count($data['LandPurchaseList']['list']);
@@ -1112,25 +1112,25 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("gdxx_no#" . ($i + 1), $i + 1);
             //项目位置
-            $docObj->setValue("gdxx_Address#" . ($i + 1), $data['LandPurchaseList']['list'][$i]['Address']);
+            $docObj->setValue("gdxx_Address#" . ($i + 1), $this->formatTo($data['LandPurchaseList']['list'][$i]['Address']));
             //土地用途
-            $docObj->setValue("gdxx_LandUse#" . ($i + 1), $data['LandPurchaseList']['list'][$i]['LandUse']);
+            $docObj->setValue("gdxx_LandUse#" . ($i + 1), $this->formatTo($data['LandPurchaseList']['list'][$i]['LandUse']));
             //面积
-            $docObj->setValue("gdxx_Area#" . ($i + 1), $data['LandPurchaseList']['list'][$i]['Area']);
+            $docObj->setValue("gdxx_Area#" . ($i + 1), $this->formatTo($data['LandPurchaseList']['list'][$i]['Area']));
             //行政区
-            $docObj->setValue("gdxx_AdminArea#" . ($i + 1), $data['LandPurchaseList']['list'][$i]['AdminArea']);
+            $docObj->setValue("gdxx_AdminArea#" . ($i + 1), $this->formatTo($data['LandPurchaseList']['list'][$i]['AdminArea']));
             //供地方式
-            $docObj->setValue("gdxx_SupplyWay#" . ($i + 1), $data['LandPurchaseList']['list'][$i]['SupplyWay']);
+            $docObj->setValue("gdxx_SupplyWay#" . ($i + 1), $this->formatTo($data['LandPurchaseList']['list'][$i]['SupplyWay']));
             //签订日期
             $docObj->setValue("gdxx_SignTime#" . ($i + 1), $this->formatDate($data['LandPurchaseList']['list'][$i]['SignTime']));
         }
         $docObj->setValue("gdxx_total", (int)$data['LandPurchaseList']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 25, $this->entName, true);
-        $docObj->setValue('gdxx_oneSaid', $oneSaid);
+        $docObj->setValue('gdxx_oneSaid', $this->formatTo($oneSaid));
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '2.2');
-        $docObj->setValue('gdxx_ocr', $ocr);
+        $docObj->setValue('gdxx_ocr', $this->formatTo($ocr));
 
         //土地公示
         $rows = count($data['LandPublishList']['list']);
@@ -1139,21 +1139,21 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("tdgs_no#" . ($i + 1), $i + 1);
             //地块位置
-            $docObj->setValue("tdgs_Address#" . ($i + 1), $data['LandPublishList']['list'][$i]['Address']);
+            $docObj->setValue("tdgs_Address#" . ($i + 1), $this->formatTo($data['LandPublishList']['list'][$i]['Address']));
             //发布机关
-            $docObj->setValue("tdgs_PublishGov#" . ($i + 1), $data['LandPublishList']['list'][$i]['PublishGov']);
+            $docObj->setValue("tdgs_PublishGov#" . ($i + 1), $this->formatTo($data['LandPublishList']['list'][$i]['PublishGov']));
             //行政区
-            $docObj->setValue("tdgs_AdminArea#" . ($i + 1), $data['LandPublishList']['list'][$i]['AdminArea']);
+            $docObj->setValue("tdgs_AdminArea#" . ($i + 1), $this->formatTo($data['LandPublishList']['list'][$i]['AdminArea']));
             //发布日期
             $docObj->setValue("tdgs_PublishDate#" . ($i + 1), $this->formatDate($data['LandPublishList']['list'][$i]['PublishDate']));
         }
         $docObj->setValue("tdgs_total", (int)$data['LandPublishList']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 26, $this->entName, true);
-        $docObj->setValue('tdgs_oneSaid', $oneSaid);
+        $docObj->setValue('tdgs_oneSaid', $this->formatTo($oneSaid));
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '2.3');
-        $docObj->setValue('tdgs_ocr', $ocr);
+        $docObj->setValue('tdgs_ocr', $this->formatTo($ocr));
 
         //土地转让
         $rows = count($data['LandTransferList']['list']);
@@ -1162,27 +1162,27 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("tdzr_no#" . ($i + 1), $i + 1);
             //土地坐落
-            $docObj->setValue("tdzr_Address#" . ($i + 1), $data['LandTransferList']['list'][$i]['Address']);
+            $docObj->setValue("tdzr_Address#" . ($i + 1), $this->formatTo($data['LandTransferList']['list'][$i]['Address']));
             //行政区
-            $docObj->setValue("tdzr_AdminArea#" . ($i + 1), $data['LandTransferList']['list'][$i]['AdminArea']);
+            $docObj->setValue("tdzr_AdminArea#" . ($i + 1), $this->formatTo($data['LandTransferList']['list'][$i]['AdminArea']));
             //原土地使用权人
-            $docObj->setValue("tdzr_OldOwner#" . ($i + 1), $data['LandTransferList']['list'][$i]['OldOwner']['Name']);
+            $docObj->setValue("tdzr_OldOwner#" . ($i + 1), $this->formatTo($data['LandTransferList']['list'][$i]['OldOwner']['Name']));
             //现土地使用权人
-            $docObj->setValue("tdzr_NewOwner#" . ($i + 1), $data['LandTransferList']['list'][$i]['NewOwner']['Name']);
+            $docObj->setValue("tdzr_NewOwner#" . ($i + 1), $this->formatTo($data['LandTransferList']['list'][$i]['NewOwner']['Name']));
             //成交额
-            $docObj->setValue("tdzr_TransAmt#" . ($i + 1), $data['LandTransferList']['list'][$i]['detail']['TransAmt']);
+            $docObj->setValue("tdzr_TransAmt#" . ($i + 1), $this->formatTo($data['LandTransferList']['list'][$i]['detail']['TransAmt']));
             //面积
-            $docObj->setValue("tdzr_Acreage#" . ($i + 1), $data['LandTransferList']['list'][$i]['detail']['Acreage']);
+            $docObj->setValue("tdzr_Acreage#" . ($i + 1), $this->formatTo($data['LandTransferList']['list'][$i]['detail']['Acreage']));
             //成交日期
             $docObj->setValue("tdzr_TransTime#" . ($i + 1), $this->formatDate($data['LandTransferList']['list'][$i]['detail']['TransTime']));
         }
         $docObj->setValue("tdzr_total", (int)$data['LandTransferList']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 27, $this->entName, true);
-        $docObj->setValue('tdzr_oneSaid', $oneSaid);
+        $docObj->setValue('tdzr_oneSaid', $this->formatTo($oneSaid));
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '2.4');
-        $docObj->setValue('tdzr_ocr', $ocr);
+        $docObj->setValue('tdzr_ocr', $this->formatTo($ocr));
 
         //建筑资质
         $rows = count($data['Qualification']['list']);
@@ -1191,25 +1191,25 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("jzzz_no#" . ($i + 1), $i + 1);
             //资质类别
-            $docObj->setValue("jzzz_Category#" . ($i + 1), $data['Qualification']['list'][$i]['Category']);
+            $docObj->setValue("jzzz_Category#" . ($i + 1), $this->formatTo($data['Qualification']['list'][$i]['Category']));
             //资质证书号
-            $docObj->setValue("jzzz_CertNo#" . ($i + 1), $data['Qualification']['list'][$i]['CertNo']);
+            $docObj->setValue("jzzz_CertNo#" . ($i + 1), $this->formatTo($data['Qualification']['list'][$i]['CertNo']));
             //资质名称
-            $docObj->setValue("jzzz_CertName#" . ($i + 1), $data['Qualification']['list'][$i]['CertName']);
+            $docObj->setValue("jzzz_CertName#" . ($i + 1), $this->formatTo($data['Qualification']['list'][$i]['CertName']));
             //发证日期
             $docObj->setValue("jzzz_SignDate#" . ($i + 1), $this->formatDate($data['Qualification']['list'][$i]['SignDate']));
             //证书有效期
             $docObj->setValue("jzzz_ValidPeriod#" . ($i + 1), $this->formatDate($data['Qualification']['list'][$i]['ValidPeriod']));
             //发证机关
-            $docObj->setValue("jzzz_SignDept#" . ($i + 1), $data['Qualification']['list'][$i]['SignDept']);
+            $docObj->setValue("jzzz_SignDept#" . ($i + 1), $this->formatTo($data['Qualification']['list'][$i]['SignDept']));
         }
         $docObj->setValue("jzzz_total", (int)$data['Qualification']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 29, $this->entName, true);
-        $docObj->setValue('jzzz_oneSaid', $oneSaid);
+        $docObj->setValue('jzzz_oneSaid', $this->formatTo($oneSaid));
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '2.5');
-        $docObj->setValue('jzzz_ocr', $ocr);
+        $docObj->setValue('jzzz_ocr', $this->formatTo($ocr));
 
         //建筑工程项目
         $rows = count($data['BuildingProject']['list']);
@@ -1218,23 +1218,23 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("jzgc_no#" . ($i + 1), $i + 1);
             //项目编码
-            $docObj->setValue("jzgc_No#" . ($i + 1), $data['BuildingProject']['list'][$i]['No']);
+            $docObj->setValue("jzgc_No#" . ($i + 1), $this->formatTo($data['BuildingProject']['list'][$i]['No']));
             //项目名称
-            $docObj->setValue("jzgc_ProjectName#" . ($i + 1), $data['BuildingProject']['list'][$i]['ProjectName']);
+            $docObj->setValue("jzgc_ProjectName#" . ($i + 1), $this->formatTo($data['BuildingProject']['list'][$i]['ProjectName']));
             //项目属地
-            $docObj->setValue("jzgc_Name#" . ($i + 1), $data['BuildingProject']['list'][$i]['ConsCoyList'][0]['Name']);
+            $docObj->setValue("jzgc_Name#" . ($i + 1), $this->formatTo($data['BuildingProject']['list'][$i]['ConsCoyList'][0]['Name']));
             //项目类别
-            $docObj->setValue("jzgc_Category#" . ($i + 1), $data['BuildingProject']['list'][$i]['Category']);
+            $docObj->setValue("jzgc_Category#" . ($i + 1), $this->formatTo($data['BuildingProject']['list'][$i]['Category']));
             //建设单位
-            $docObj->setValue("jzgc_Region#" . ($i + 1), $data['BuildingProject']['list'][$i]['Region']);
+            $docObj->setValue("jzgc_Region#" . ($i + 1), $this->formatTo($data['BuildingProject']['list'][$i]['Region']));
         }
         $docObj->setValue("jzgc_total", (int)$data['BuildingProject']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 30, $this->entName, true);
-        $docObj->setValue('jzgc_oneSaid', $oneSaid);
+        $docObj->setValue('jzgc_oneSaid', $this->formatTo($oneSaid));
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '2.6');
-        $docObj->setValue('jzgc_ocr', $ocr);
+        $docObj->setValue('jzgc_ocr', $this->formatTo($ocr));
 
         //债券
         $rows = count($data['BondList']['list']);
@@ -1243,11 +1243,11 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("zq_no#" . ($i + 1), $i + 1);
             //债券简称
-            $docObj->setValue("zq_ShortName#" . ($i + 1), $data['BondList']['list'][$i]['ShortName']);
+            $docObj->setValue("zq_ShortName#" . ($i + 1), $this->formatTo($data['BondList']['list'][$i]['ShortName']));
             //债券代码
-            $docObj->setValue("zq_BondCode#" . ($i + 1), $data['BondList']['list'][$i]['BondCode']);
+            $docObj->setValue("zq_BondCode#" . ($i + 1), $this->formatTo($data['BondList']['list'][$i]['BondCode']));
             //债券类型
-            $docObj->setValue("zq_BondType#" . ($i + 1), $data['BondList']['list'][$i]['BondType']);
+            $docObj->setValue("zq_BondType#" . ($i + 1), $this->formatTo($data['BondList']['list'][$i]['BondType']));
             //发行日期
             $docObj->setValue("zq_ReleaseDate#" . ($i + 1), $this->formatDate($data['BondList']['list'][$i]['ReleaseDate']));
             //上市日期
@@ -1256,10 +1256,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->setValue("zq_total", (int)$data['BondList']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 31, $this->entName, true);
-        $docObj->setValue('zqxx_oneSaid', $oneSaid);
+        $docObj->setValue('zqxx_oneSaid', $this->formatTo($oneSaid));
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '2.7');
-        $docObj->setValue('zqxx_ocr', $ocr);
+        $docObj->setValue('zqxx_ocr', $this->formatTo($ocr));
 
         //网站信息
         $rows = count($data['GetCompanyWebSite']['list']);
@@ -1268,20 +1268,20 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("web_no#" . ($i + 1), $i + 1);
             //网站名称
-            $docObj->setValue("web_Title#" . ($i + 1), $data['GetCompanyWebSite']['list'][$i]['Title']);
+            $docObj->setValue("web_Title#" . ($i + 1), $this->formatTo($data['GetCompanyWebSite']['list'][$i]['Title']));
             //网址
-            $docObj->setValue("web_HomeSite#" . ($i + 1), $data['GetCompanyWebSite']['list'][$i]['HomeSite']);
+            $docObj->setValue("web_HomeSite#" . ($i + 1), $this->formatTo($data['GetCompanyWebSite']['list'][$i]['HomeSite']));
             //域名
-            $docObj->setValue("web_YuMing#" . ($i + 1), $data['GetCompanyWebSite']['list'][$i]['YuMing']);
+            $docObj->setValue("web_YuMing#" . ($i + 1), $this->formatTo($data['GetCompanyWebSite']['list'][$i]['YuMing']));
             //网站备案/许可证号
-            $docObj->setValue("web_BeiAn#" . ($i + 1), $data['GetCompanyWebSite']['list'][$i]['BeiAn']);
+            $docObj->setValue("web_BeiAn#" . ($i + 1), $this->formatTo($data['GetCompanyWebSite']['list'][$i]['BeiAn']));
             //审核日期
             $docObj->setValue("web_SDate#" . ($i + 1), $this->formatDate($data['GetCompanyWebSite'][$i]['SDate']));
         }
         $docObj->setValue("web_total", (int)$data['GetCompanyWebSite']['total']);
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '2.8');
-        $docObj->setValue('web_ocr', $ocr);
+        $docObj->setValue('web_ocr', $this->formatTo($ocr));
 
         //微博
         $rows = count($data['Microblog']['list']);
@@ -1290,16 +1290,16 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("weibo_no#" . ($i + 1), $i + 1);
             //微博昵称
-            $docObj->setValue("weibo_Name#" . ($i + 1), $data['Microblog']['list'][$i]['Name']);
+            $docObj->setValue("weibo_Name#" . ($i + 1), $this->formatTo($data['Microblog']['list'][$i]['Name']));
             //行业类别
-            $docObj->setValue("weibo_Tags#" . ($i + 1), $data['Microblog']['list'][$i]['Tags']);
+            $docObj->setValue("weibo_Tags#" . ($i + 1), $this->formatTo($data['Microblog']['list'][$i]['Tags']));
             //简介
-            $docObj->setValue("weibo_Description#" . ($i + 1), $data['Microblog']['list'][$i]['Description']);
+            $docObj->setValue("weibo_Description#" . ($i + 1), $this->formatTo($data['Microblog']['list'][$i]['Description']));
         }
         $docObj->setValue("weibo_total", (int)$data['Microblog']['total']);
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '2.9');
-        $docObj->setValue('weibo_ocr', $ocr);
+        $docObj->setValue('weibo_ocr', $this->formatTo($ocr));
 
         //新闻舆情
         $rows = count($data['CompanyNews']['list']);
@@ -1308,16 +1308,16 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("xwyq_no#" . ($i + 1), $i + 1);
             //内容
-            $docObj->setValue("xwyq_Title#" . ($i + 1), $data['CompanyNews']['list'][$i]['Title']);
+            $docObj->setValue("xwyq_Title#" . ($i + 1), $this->formatTo($data['CompanyNews']['list'][$i]['Title']));
             //来源
-            $docObj->setValue("xwyq_Source#" . ($i + 1), $data['CompanyNews']['list'][$i]['Source']);
+            $docObj->setValue("xwyq_Source#" . ($i + 1), $this->formatTo($data['CompanyNews']['list'][$i]['Source']));
             //时间
             $docObj->setValue("xwyq_PublishTime#" . ($i + 1), $this->formatDate($data['CompanyNews']['list'][$i]['PublishTime']));
         }
         $docObj->setValue("xwyq_total", (int)$data['CompanyNews']['total']);
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '2.10');
-        $docObj->setValue('xwyq_ocr', $ocr);
+        $docObj->setValue('xwyq_ocr', $this->formatTo($ocr));
 
         //团队人数
         $rows = count($data['itemInfo']);
@@ -1326,13 +1326,13 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("tdrs_no#" . ($i + 1), $i + 1);
             //年份
-            $docObj->setValue("tdrs_year#" . ($i + 1), $data['itemInfo'][$i]['year']);
+            $docObj->setValue("tdrs_year#" . ($i + 1), $this->formatTo($data['itemInfo'][$i]['year']));
             //人数
-            $docObj->setValue("tdrs_yoy#" . ($i + 1), (int)$data['itemInfo'][$i]['num']);
+            $docObj->setValue("tdrs_yoy#" . ($i + 1), $this->formatTo($data['itemInfo'][$i]['num']));
         }
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '3.1');
-        $docObj->setValue('tdrs_ocr', $ocr);
+        $docObj->setValue('tdrs_ocr', $this->formatTo($ocr));
 
         //建筑企业-专业注册人员
         $rows = count($data['BuildingRegistrar']['list']);
@@ -1341,18 +1341,18 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("zyry_no#" . ($i + 1), $i + 1);
             //姓名
-            $docObj->setValue("zyry_Name#" . ($i + 1), $data['BuildingRegistrar']['list'][$i]['Name']);
+            $docObj->setValue("zyry_Name#" . ($i + 1), $this->formatTo($data['BuildingRegistrar']['list'][$i]['Name']));
             //注册类别
-            $docObj->setValue("zyry_Category#" . ($i + 1), $data['BuildingRegistrar']['list'][$i]['Category']);
+            $docObj->setValue("zyry_Category#" . ($i + 1), $this->formatTo($data['BuildingRegistrar']['list'][$i]['Category']));
             //注册号
-            $docObj->setValue("zyry_RegNo#" . ($i + 1), $data['BuildingRegistrar']['list'][$i]['RegNo']);
+            $docObj->setValue("zyry_RegNo#" . ($i + 1), $this->formatTo($data['BuildingRegistrar']['list'][$i]['RegNo']));
             //注册专业
-            $docObj->setValue("zyry_Specialty#" . ($i + 1), $data['BuildingRegistrar']['list'][$i]['Specialty']);
+            $docObj->setValue("zyry_Specialty#" . ($i + 1), $this->formatTo($data['BuildingRegistrar']['list'][$i]['Specialty']));
         }
         $docObj->setValue("zyry_total", (int)$data['BuildingRegistrar']['total']);
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '3.2');
-        $docObj->setValue('zyry_ocr', $ocr);
+        $docObj->setValue('zyry_ocr', $this->formatTo($ocr));
 
         //招聘信息
         $rows = count($data['Recruitment']['list']);
@@ -1361,25 +1361,25 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("zp_no#" . ($i + 1), $i + 1);
             //职位名称
-            $docObj->setValue("zp_Title#" . ($i + 1), $data['Recruitment']['list'][$i]['Title']);
+            $docObj->setValue("zp_Title#" . ($i + 1), $this->formatTo($data['Recruitment']['list'][$i]['Title']));
             //工作地点
-            $docObj->setValue("zp_ProvinceDesc#" . ($i + 1), $data['Recruitment']['list'][$i]['ProvinceDesc']);
+            $docObj->setValue("zp_ProvinceDesc#" . ($i + 1), $this->formatTo($data['Recruitment']['list'][$i]['ProvinceDesc']));
             //月薪
-            $docObj->setValue("zp_Salary#" . ($i + 1), $data['Recruitment']['list'][$i]['Salary']);
+            $docObj->setValue("zp_Salary#" . ($i + 1), $this->formatTo($data['Recruitment']['list'][$i]['Salary']));
             //经验
-            $docObj->setValue("zp_Experience#" . ($i + 1), $data['Recruitment']['list'][$i]['Experience']);
+            $docObj->setValue("zp_Experience#" . ($i + 1), $this->formatTo($data['Recruitment']['list'][$i]['Experience']));
             //学历
-            $docObj->setValue("zp_Education#" . ($i + 1), $data['Recruitment']['list'][$i]['Education']);
+            $docObj->setValue("zp_Education#" . ($i + 1), $this->formatTo($data['Recruitment']['list'][$i]['Education']));
             //发布日期
             $docObj->setValue("zp_PublishDate#" . ($i + 1), $this->formatDate($data['Recruitment']['list'][$i]['PublishDate']));
         }
         $docObj->setValue("zp_total", (int)$data['Recruitment']['total']);
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 28, $this->entName, true);
-        $docObj->setValue('zpxx_oneSaid', $oneSaid);
+        $docObj->setValue('zpxx_oneSaid', $this->formatTo($oneSaid));
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '3.3');
-        $docObj->setValue('zpxx_ocr', $ocr);
+        $docObj->setValue('zpxx_ocr', $this->formatTo($ocr));
 
         //财务总揽
         if (empty($data['FinanceData']['pic'])) {
@@ -1398,7 +1398,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         }
 
         $caiwu_oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 0, $this->entName, true);
-        $docObj->setValue("caiwu_oneSaid", $caiwu_oneSaid);
+        $docObj->setValue("caiwu_oneSaid", $this->formatTo($caiwu_oneSaid));
 
         //业务概况
         $rows = count($data['SearchCompanyCompanyProducts']);
@@ -1407,11 +1407,11 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("ywgk_no#" . ($i + 1), $i + 1);
             //产品名称
-            $docObj->setValue("ywgk_Name#" . ($i + 1), $data['SearchCompanyCompanyProducts'][$i]['Name']);
+            $docObj->setValue("ywgk_Name#" . ($i + 1), $this->formatTo($data['SearchCompanyCompanyProducts'][$i]['Name']));
             //产品领域
-            $docObj->setValue("ywgk_Domain#" . ($i + 1), $data['SearchCompanyCompanyProducts'][$i]['Domain']);
+            $docObj->setValue("ywgk_Domain#" . ($i + 1), $this->formatTo($data['SearchCompanyCompanyProducts'][$i]['Domain']));
             //产品描述
-            $docObj->setValue("ywgk_Description#" . ($i + 1), $data['SearchCompanyCompanyProducts'][$i]['Description']);
+            $docObj->setValue("ywgk_Description#" . ($i + 1), $this->formatTo($data['SearchCompanyCompanyProducts'][$i]['Description']));
         }
 
         //产品标准
@@ -1421,11 +1421,11 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("ps_no#" . ($i + 1), $i + 1);
             //产品名称
-            $docObj->setValue('ps_pname#' . ($i + 1), $data['ProductStandardInfo']['list'][$i]['PRODUCT_NAME']);
+            $docObj->setValue('ps_pname#' . ($i + 1), $this->formatTo($data['ProductStandardInfo']['list'][$i]['PRODUCT_NAME']));
             //标准名称
-            $docObj->setValue('ps_sname#' . ($i + 1), $data['ProductStandardInfo']['list'][$i]['STANDARD_NAME']);
+            $docObj->setValue('ps_sname#' . ($i + 1), $this->formatTo($data['ProductStandardInfo']['list'][$i]['STANDARD_NAME']));
             //标准编号
-            $docObj->setValue('ps_sno#' . ($i + 1), $data['ProductStandardInfo']['list'][$i]['STANDARD_CODE']);
+            $docObj->setValue('ps_sno#' . ($i + 1), $this->formatTo($data['ProductStandardInfo']['list'][$i]['STANDARD_CODE']));
         }
 
         //专利
@@ -1435,13 +1435,13 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("zl_no#" . ($i + 1), $i + 1);
             //名称
-            $docObj->setValue("zl_Title#" . ($i + 1), $data['PatentV4Search']['list'][$i]['Title']);
+            $docObj->setValue("zl_Title#" . ($i + 1), $this->formatTo($data['PatentV4Search']['list'][$i]['Title']));
             //专利类型
             $docObj->setValue("zl_IPCDesc#" . ($i + 1), implode(',', $data['PatentV4Search']['list'][$i]['IPCDesc']));
             //公开号
-            $docObj->setValue("zl_PublicationNumber#" . ($i + 1), $data['PatentV4Search']['list'][$i]['PublicationNumber']);
+            $docObj->setValue("zl_PublicationNumber#" . ($i + 1), $this->formatTo($data['PatentV4Search']['list'][$i]['PublicationNumber']));
             //法律状态
-            $docObj->setValue("zl_LegalStatusDesc#" . ($i + 1), $data['PatentV4Search']['list'][$i]['LegalStatusDesc']);
+            $docObj->setValue("zl_LegalStatusDesc#" . ($i + 1), $this->formatTo($data['PatentV4Search']['list'][$i]['LegalStatusDesc']));
             //申请日期
             $docObj->setValue("zl_ApplicationDate#" . ($i + 1), $this->formatDate($data['PatentV4Search']['list'][$i]['ApplicationDate']));
             //发布日期
@@ -1450,7 +1450,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->setValue("zl_total", (int)$data['PatentV4Search']['total']);
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '6.1');
-        $docObj->setValue('zl_ocr', $ocr);
+        $docObj->setValue('zl_ocr', $this->formatTo($ocr));
 
         //软件著作权
         $rows = count($data['SearchSoftwareCr']['list']);
@@ -1459,18 +1459,18 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("rjzzq_no#" . ($i + 1), $i + 1);
             //软件名称
-            $docObj->setValue("rjzzq_Name#" . ($i + 1), $data['SearchSoftwareCr']['list'][$i]['Name']);
+            $docObj->setValue("rjzzq_Name#" . ($i + 1), $this->formatTo($data['SearchSoftwareCr']['list'][$i]['Name']));
             //登记号
-            $docObj->setValue("rjzzq_RegisterNo#" . ($i + 1), $data['SearchSoftwareCr']['list'][$i]['RegisterNo']);
+            $docObj->setValue("rjzzq_RegisterNo#" . ($i + 1), $this->formatTo($data['SearchSoftwareCr']['list'][$i]['RegisterNo']));
             //登记批准日期
             $docObj->setValue("rjzzq_RegisterAperDate#" . ($i + 1), $this->formatDate($data['SearchSoftwareCr']['list'][$i]['RegisterAperDate']));
             //版本号
-            $docObj->setValue("rjzzq_VersionNo#" . ($i + 1), $data['SearchSoftwareCr']['list'][$i]['VersionNo']);
+            $docObj->setValue("rjzzq_VersionNo#" . ($i + 1), $this->formatTo($data['SearchSoftwareCr']['list'][$i]['VersionNo']));
         }
         $docObj->setValue("rjzzq_total", (int)$data['SearchSoftwareCr']['total']);
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '6.2');
-        $docObj->setValue('rjzzq_ocr', $ocr);
+        $docObj->setValue('rjzzq_ocr', $this->formatTo($ocr));
 
         //商标
         $rows = count($data['tmSearch']['list']);
@@ -1479,26 +1479,26 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("sb_no#" . ($i + 1), $i + 1);
             //商标
-            $docObj->setValue("sb_Name#" . ($i + 1), $data['tmSearch']['list'][$i]['Name']);
+            $docObj->setValue("sb_Name#" . ($i + 1), $this->formatTo($data['tmSearch']['list'][$i]['Name']));
             //图标
             if (empty($data['tmSearch']['list'][$i]['ImageUrl'])) {
-                $docObj->setValue("sb_img#" . ($i + 1), "");
+                $docObj->setValue("sb_img#" . ($i + 1), $this->formatTo(''));
             } else {
                 $docObj->setImageValue("sb_img#" . ($i + 1), ['path' => $data['tmSearch']['list'][$i]['ImageUrl'], 'width' => 50, 'height' => 50]);
             }
             //商标分类
-            $docObj->setValue("sb_FlowStatus#" . ($i + 1), $data['tmSearch']['list'][$i]['FlowStatus']);
+            $docObj->setValue("sb_FlowStatus#" . ($i + 1), $this->formatTo($data['tmSearch']['list'][$i]['FlowStatus']));
             //注册号
-            $docObj->setValue("sb_RegNo#" . ($i + 1), $data['tmSearch']['list'][$i]['RegNo']);
+            $docObj->setValue("sb_RegNo#" . ($i + 1), $this->formatTo($data['tmSearch']['list'][$i]['RegNo']));
             //流程状态
-            $docObj->setValue("sb_FlowStatusDesc#" . ($i + 1), $data['tmSearch']['list'][$i]['FlowStatusDesc']);
+            $docObj->setValue("sb_FlowStatusDesc#" . ($i + 1), $this->formatTo($data['tmSearch']['list'][$i]['FlowStatusDesc']));
             //申请日期
             $docObj->setValue("sb_AppDate#" . ($i + 1), $this->formatDate($data['tmSearch']['list'][$i]['AppDate']));
         }
         $docObj->setValue("sb_total", (int)$data['tmSearch']['total']);
 
         $ocr = OcrService::getInstance()->getOcrContentForReport($this->phone, $this->reportNum, '6.3');
-        $docObj->setValue('sb_ocr', $ocr);
+        $docObj->setValue('sb_ocr', $this->formatTo($ocr));
 
         //作品著作权
         $rows = count($data['SearchCopyRight']['list']);
@@ -1507,9 +1507,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("zpzzq_no#" . ($i + 1), $i + 1);
             //登记号
-            $docObj->setValue("zpzzq_RegisterNo#" . ($i + 1), $data['SearchCopyRight']['list'][$i]['RegisterNo']);
+            $docObj->setValue("zpzzq_RegisterNo#" . ($i + 1), $this->formatTo($data['SearchCopyRight']['list'][$i]['RegisterNo']));
             //作品名称
-            $docObj->setValue("zpzzq_Name#" . ($i + 1), $data['SearchCopyRight']['list'][$i]['Name']);
+            $docObj->setValue("zpzzq_Name#" . ($i + 1), $this->formatTo($data['SearchCopyRight']['list'][$i]['Name']));
             //创作完成日期
             $docObj->setValue("zpzzq_FinishDate#" . ($i + 1), $this->formatDate($data['SearchCopyRight']['list'][$i]['FinishDate']));
             //登记日期
@@ -1527,15 +1527,15 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("zzzs_no#" . ($i + 1), $i + 1);
             //证书名称
-            $docObj->setValue("zzzs_Name#" . ($i + 1), $data['SearchCertification']['list'][$i]['Name']);
+            $docObj->setValue("zzzs_Name#" . ($i + 1), $this->formatTo($data['SearchCertification']['list'][$i]['Name']));
             //证书类型
-            $docObj->setValue("zzzs_Type#" . ($i + 1), $data['SearchCertification']['list'][$i]['Type']);
+            $docObj->setValue("zzzs_Type#" . ($i + 1), $this->formatTo($data['SearchCertification']['list'][$i]['Type']));
             //证书生效时间
             $docObj->setValue("zzzs_StartDate#" . ($i + 1), $this->formatDate($data['SearchCertification']['list'][$i]['StartDate']));
             //证书截止日期
             $docObj->setValue("zzzs_EndDate#" . ($i + 1), $this->formatDate($data['SearchCertification']['list'][$i]['EndDate']));
             //证书编号
-            $docObj->setValue("zzzs_No#" . ($i + 1), $data['SearchCertification']['list'][$i]['No']);
+            $docObj->setValue("zzzs_No#" . ($i + 1), $this->formatTo($data['SearchCertification']['list'][$i]['No']));
         }
         $docObj->setValue("zzzs_total", (int)$data['SearchCertification']['total']);
 
@@ -1552,11 +1552,11 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("nsxydj_sortTimeString#" . ($i + 1), $this->formatDate($data['satparty_xin']['list'][$i]['sortTimeString']));
             //税务登记号
             //$docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
-            $docObj->setValue("SHXYDM#" . ($i + 1), $data['GetBasicDetailsByName']['CreditCode']);
+            $docObj->setValue("SHXYDM#" . ($i + 1), $this->formatTo($data['GetBasicDetailsByName']['CreditCode']));
             //纳税信用等级
-            $docObj->setValue("nsxydj_eventResult#" . ($i + 1), $data['satparty_xin']['list'][$i]['detail']['eventResult']);
+            $docObj->setValue("nsxydj_eventResult#" . ($i + 1), $this->formatTo($data['satparty_xin']['list'][$i]['detail']['eventResult']));
             //评定单位
-            $docObj->setValue("nsxydj_authority#" . ($i + 1), $data['satparty_xin']['list'][$i]['detail']['authority']);
+            $docObj->setValue("nsxydj_authority#" . ($i + 1), $this->formatTo($data['satparty_xin']['list'][$i]['detail']['authority']));
         }
         $docObj->setValue("nsxydj_total", (int)$data['satparty_xin']['total']);
 
@@ -1574,15 +1574,15 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("swxk_no#" . ($i + 1), $i + 1);
             //税务登记号
             //$docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
-            $docObj->setValue("SHXYDM#" . ($i + 1), $data['GetBasicDetailsByName']['CreditCode']);
+            $docObj->setValue("SHXYDM#" . ($i + 1), $this->formatTo($data['GetBasicDetailsByName']['CreditCode']));
             //评定时间
             $docObj->setValue("swxk_sortTimeString#" . ($i + 1), $this->formatDate($data['satparty_xuke']['list'][$i]['sortTimeString']));
             //发布时间
             $docObj->setValue("swxk_postTime#" . ($i + 1), $this->formatDate($data['satparty_xuke']['list'][$i]['detail']['postTime']));
             //事件名称
-            $docObj->setValue("swxk_eventName#" . ($i + 1), $data['satparty_xuke']['list'][$i]['detail']['eventName']);
+            $docObj->setValue("swxk_eventName#" . ($i + 1), $this->formatTo($data['satparty_xuke']['list'][$i]['detail']['eventName']));
             //管理机关
-            $docObj->setValue("swxk_authority#" . ($i + 1), $data['satparty_xuke']['list'][$i]['detail']['authority']);
+            $docObj->setValue("swxk_authority#" . ($i + 1), $this->formatTo($data['satparty_xuke']['list'][$i]['detail']['authority']));
         }
         $docObj->setValue("swxk_total", (int)$data['satparty_xuke']['total']);
 
@@ -1600,15 +1600,15 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("swdj_no#" . ($i + 1), $i + 1);
             //税务登记号
             //$docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
-            $docObj->setValue("SHXYDM#" . ($i + 1), $data['GetBasicDetailsByName']['CreditCode']);
+            $docObj->setValue("SHXYDM#" . ($i + 1), $this->formatTo($data['GetBasicDetailsByName']['CreditCode']));
             //评定时间
             $docObj->setValue("swdj_sortTimeString#" . ($i + 1), $this->formatDate($data['satparty_reg']['list'][$i]['sortTimeString']));
             //事件名称
-            $docObj->setValue("swdj_eventName#" . ($i + 1), $data['satparty_reg']['list'][$i]['detail']['eventName']);
+            $docObj->setValue("swdj_eventName#" . ($i + 1), $this->formatTo($data['satparty_reg']['list'][$i]['detail']['eventName']));
             //事件结果
-            $docObj->setValue("swdj_eventResult#" . ($i + 1), $data['satparty_reg']['list'][$i]['detail']['eventResult']);
+            $docObj->setValue("swdj_eventResult#" . ($i + 1), $this->formatTo($data['satparty_reg']['list'][$i]['detail']['eventResult']));
             //管理机关
-            $docObj->setValue("swdj_authority#" . ($i + 1), $data['satparty_reg']['list'][$i]['detail']['authority']);
+            $docObj->setValue("swdj_authority#" . ($i + 1), $this->formatTo($data['satparty_reg']['list'][$i]['detail']['authority']));
         }
         $docObj->setValue("swdj_total", (int)$data['satparty_reg']['total']);
 
@@ -1626,15 +1626,15 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("fzc_no#" . ($i + 1), $i + 1);
             //税务登记号
             //$docObj->setValue("SHXYDM#" . ($i + 1), $data['getRegisterInfo']['SHXYDM']);
-            $docObj->setValue("SHXYDM#" . ($i + 1), $data['GetBasicDetailsByName']['CreditCode']);
+            $docObj->setValue("SHXYDM#" . ($i + 1), $this->formatTo($data['GetBasicDetailsByName']['CreditCode']));
             //认定时间
             $docObj->setValue("fzc_sortTimeString#" . ($i + 1), $this->formatDate($data['satparty_fzc']['list'][$i]['sortTimeString']));
             //事件名称
-            $docObj->setValue("fzc_eventName#" . ($i + 1), $data['satparty_fzc']['list'][$i]['detail']['eventName']);
+            $docObj->setValue("fzc_eventName#" . ($i + 1), $this->formatTo($data['satparty_fzc']['list'][$i]['detail']['eventName']));
             //事件结果
-            $docObj->setValue("fzc_eventResult#" . ($i + 1), $data['satparty_fzc']['list'][$i]['detail']['eventResult']);
+            $docObj->setValue("fzc_eventResult#" . ($i + 1), $this->formatTo($data['satparty_fzc']['list'][$i]['detail']['eventResult']));
             //管理机关
-            $docObj->setValue("fzc_authority#" . ($i + 1), $data['satparty_fzc']['list'][$i]['detail']['authority']);
+            $docObj->setValue("fzc_authority#" . ($i + 1), $this->formatTo($data['satparty_fzc']['list'][$i]['detail']['authority']));
         }
         $docObj->setValue("fzc_total", (int)$data['satparty_fzc']['total']);
 
