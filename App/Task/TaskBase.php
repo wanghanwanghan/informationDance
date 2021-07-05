@@ -292,13 +292,17 @@ class TaskBase
     //判断时间用的，时间类的字段，只显示成 Y-m-d
     function formatDate($str)
     {
-        return formatDate($str);
+        $str = trim($str);
+
+        return empty($str) ? '--' : formatDate($str);
     }
 
     //判断比例用的，只显示成 10%
     function formatPercent($str)
     {
-        return formatPercent($str);
+        $str = trim($str);
+
+        return empty($str) ? '--' : formatPercent($str);
     }
 
     //显示--
