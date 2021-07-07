@@ -5,10 +5,14 @@ namespace App\HttpController\Business\Api\GuoPiao;
 use App\HttpController\Models\Api\AuthBook;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\GuoPiao\GuoPiaoService;
+use App\HttpController\Service\Pay\ChargeService;
 use wanghanwanghan\someUtils\control;
 
 class GuoPiaoController extends GuoPiaoBase
 {
+    public $moduleNum;//扣费的id
+    public $entName;//扣费用的entName
+
     function onRequest(?string $action): ?bool
     {
         return parent::onRequest($action);
@@ -65,6 +69,13 @@ class GuoPiaoController extends GuoPiaoBase
                 break;
             default:
                 $res['Result'] = null;
+        }
+
+        if ($this->moduleNum === 54) {
+            $charge = ChargeService::getInstance()->TwoTable($this->request(), $this->moduleNum);
+            if ($charge['code'] !== 200) {
+                return $this->writeJson($charge['code'], null, null, $charge['msg'], false);
+            }
         }
 
         return $writeJson !== true ? [
@@ -350,6 +361,9 @@ class GuoPiaoController extends GuoPiaoBase
             $res['data'] = jsonEncode($model);
         }
 
+        $this->moduleNum = 54;
+        $this->entName = $code;
+
         return $this->checkResponse($res, __FUNCTION__);
     }
 
@@ -378,6 +392,9 @@ class GuoPiaoController extends GuoPiaoBase
             }
             $res['data'] = jsonEncode($model);
         }
+
+        $this->moduleNum = 54;
+        $this->entName = $code;
 
         return $this->checkResponse($res, __FUNCTION__);
     }
@@ -408,6 +425,9 @@ class GuoPiaoController extends GuoPiaoBase
             $res['data'] = jsonEncode($model);
         }
 
+        $this->moduleNum = 54;
+        $this->entName = $code;
+
         return $this->checkResponse($res, __FUNCTION__);
     }
 
@@ -436,6 +456,9 @@ class GuoPiaoController extends GuoPiaoBase
             }
             $res['data'] = jsonEncode($model);
         }
+
+        $this->moduleNum = 54;
+        $this->entName = $code;
 
         return $this->checkResponse($res, __FUNCTION__);
     }

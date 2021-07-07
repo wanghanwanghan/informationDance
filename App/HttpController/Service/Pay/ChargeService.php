@@ -38,6 +38,7 @@ class ChargeService extends ServiceBase
         51 => ['name' => '财务资产', 'desc' => 'lx', 'basePrice' => 35],
         52 => ['name' => '二次特征', 'desc' => '', 'basePrice' => 50],
         53 => ['name' => '超级搜索', 'desc' => '', 'basePrice' => 10],
+        54 => ['name' => '财务两表', 'desc' => '', 'basePrice' => 200],
 
         210 => ['name' => '极简报告', 'desc' => '', 'basePrice' => 80],
         211 => ['name' => '极简报告定制', 'desc' => '', 'basePrice' => 80],
@@ -635,6 +636,147 @@ class ChargeService extends ServiceBase
 
     //二次特征
     function Features(Request $request, $moduleNum)
+    {
+        $phone = $this->getPhone($request);
+
+        $entName = $this->getEntName($request);
+
+        if (empty($phone) || empty($entName)) return ['code' => 201, 'msg' => '手机号或公司名不能是空'];
+
+        //获取扣费详情
+        $moduleInfo = $this->getModuleInfo($moduleNum);
+
+        //新用户前5天，每天前3个企业免费
+        try {
+            $info = User::create()->where('phone', $phone)->get();
+            if (empty($info)) return ['code' => 201, 'msg' => '无用户信息'];
+            //取得注册时间
+            $regTime = $info->created_at;
+        } catch (\Throwable $e) {
+            $this->writeErr($e, 'ChargeService');
+            return ['code' => 201, 'msg' => '取得用户信息失败'];
+        }
+
+        //新用户前5天，每天前3个企业免费
+        if (time() - $regTime < 5 * 86400) {
+            //是否免费
+            try {
+                //当天查询企业个数
+                $star = Carbon::now()->startOfDay()->timestamp;
+                $end = Carbon::now()->endOfDay()->timestamp;
+                $num = Charge::create()
+                    ->where('phone', $phone)
+                    ->where('moduleId', $moduleNum)
+                    ->where("(created_at > {$star} and created_at < {$end})")
+                    ->group('entName')
+                    ->all();
+                $num = obj2Arr($num);
+                empty($num) ? $num = 0 : $num = count($num);
+                if ($num <= 3) {
+                    //还在免费
+                    Charge::create()->data([
+                        'moduleId' => $moduleNum,
+                        'moduleName' => $moduleInfo['name'] . $moduleInfo['desc'],
+                        'entName' => $entName,
+                        'phone' => $phone,
+                        'price' => 0,
+                    ])->save();
+                    return ['code' => 200, 'msg' => '成功'];
+                }
+                //当天不免费了
+                $charge = Charge::create()
+                    ->where('phone', $phone)
+                    ->where('entName', $entName)
+                    ->where('moduleId', $moduleNum)
+                    ->order('created_at', 'desc')
+                    ->get();
+            } catch (\Throwable $e) {
+                $this->writeErr($e, 'ChargeService');
+            }
+        } else {
+            //是否免费
+            try {
+                $charge = Charge::create()
+                    ->where('phone', $phone)
+                    ->where('entName', $entName)
+                    ->where('moduleId', $moduleNum)
+                    ->where('price', 0, '<')
+                    ->order('created_at', 'desc')
+                    ->get();
+            } catch (\Throwable $e) {
+                $this->writeErr($e, 'ChargeService');
+            }
+        }
+
+        if (!empty($charge)) {
+            //取出上次计费时间
+            $time = $charge->created_at;
+            //缓存过期时间
+            $limitDay = CreateConf::getInstance()->getConf('xindong.chargeLimit');
+            //还在免费状态
+            if (time() - $time < $limitDay * 86400) {
+                //写入记录
+                try {
+                    $insert = [
+                        'moduleId' => $moduleNum,
+                        'moduleName' => $moduleInfo['name'] . $moduleInfo['desc'],
+                        'entName' => $entName,
+                        'phone' => $phone,
+                        'price' => 0,
+                    ];
+                    Charge::create()->data($insert)->save();
+                } catch (\Throwable $e) {
+                    $this->writeErr($e, 'ChargeService');
+                }
+                return ['code' => 200];
+            }
+        }
+
+        //等于false说明用户还没点确定支付，等于true说明用户点了确认支付
+        $pay = $this->getPay($request);
+
+        if (!$pay) return ['code' => 210, 'msg' => "此信息需消耗 {$moduleInfo['basePrice']} 元，有效期 7 天"];
+
+        try {
+            //取得用户钱包余额
+            $info = Wallet::create()->where('phone', $phone)->get();
+            if (empty($info)) return ['code' => 201, 'msg' => '无用户钱包信息'];
+            $userMoney = $info->money;
+        } catch (\Throwable $e) {
+            $this->writeErr($e, 'ChargeService');
+            return ['code' => 201, 'msg' => '取得用户钱包信息失败'];
+        }
+
+        if ($userMoney < $moduleInfo['basePrice']) return ['code' => 220, 'msg' => '用户余额不足'];
+
+        try {
+            //扣费
+            $money = $userMoney - $moduleInfo['basePrice'];
+            $info->update(['money' => $money > 0 ? $money : 0]);
+        } catch (\Throwable $e) {
+            $this->writeErr($e, 'ChargeService');
+            return ['code' => 201, 'msg' => '扣费失败'];
+        }
+
+        //写入记录
+        try {
+            $insert = [
+                'moduleId' => $moduleNum,
+                'moduleName' => $moduleInfo['name'] . $moduleInfo['desc'],
+                'entName' => $entName,
+                'phone' => $phone,
+                'price' => -$moduleInfo['basePrice'],
+            ];
+            Charge::create()->data($insert)->save();
+        } catch (\Throwable $e) {
+            $this->writeErr($e, 'ChargeService');
+        }
+
+        return ['code' => 200, 'msg' => '扣费成功'];
+    }
+
+    //财务两表
+    function TwoTable(Request $request, $moduleNum)
     {
         $phone = $this->getPhone($request);
 
