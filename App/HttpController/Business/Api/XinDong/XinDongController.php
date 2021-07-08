@@ -139,16 +139,34 @@ class XinDongController extends XinDongBase
         !is_array($fz_list) ?: $fz_list = array_unique($fz_list);
         !is_array($fm_list) ?: $fm_list = array_unique($fm_list);
 
+        $result = ['code' => 200, 'paging' => null, 'result' => null, 'msg' => null];
+
         if (empty($fz_list) || empty($fm_list)) {
-            $res = ['code' => 201, 'paging' => null, 'result' => null, 'msg' => null];
-            return $this->checkResponse($res);
+            return $this->checkResponse($result);
         }
 
         $res = XinDongService::getInstance()->industryTop($fz_list, $fm_list);
 
-        CommonService::getInstance()->log4PHP($res);
+        $fz_list = $fm_list = [];
 
-        return $this->checkResponse($res);
+        foreach ($res['fz_list'] as $key => $val) {
+            if ($val['info']['code'] === 200) {
+                $fz_list[$val['entName']] = $val['info']['result'];
+            }
+        }
+
+        foreach ($res['fm_list'] as $key => $val) {
+            if ($val['info']['code'] === 200) {
+                $fm_list[$val['entName']] = $val['info']['result'];
+            }
+        }
+
+        $result['result'] = [
+            'fz_list' => $fz_list,
+            'fm_list' => $fm_list,
+        ];
+
+        return $this->checkResponse($result);
     }
 
 }
