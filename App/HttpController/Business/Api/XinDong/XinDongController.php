@@ -133,8 +133,8 @@ class XinDongController extends XinDongBase
         $fm_list = $this->request()->getRequestParam('fm_list');
         $pay = $this->request()->getRequestParam('pay') ?? 0;
 
-        $fz_list = jsonDecode($fz_list);
-        $fm_list = jsonDecode($fm_list);
+        $fz_list = explode(',', $fz_list);
+        $fm_list = explode(',', $fm_list);
 
         !is_array($fz_list) ?: $fz_list = array_unique($fz_list);
         !is_array($fm_list) ?: $fm_list = array_unique($fm_list);

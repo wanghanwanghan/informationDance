@@ -5,6 +5,7 @@ namespace App\HttpController\Business\Provide\TaoShu;
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\TaoShu\TaoShuService;
 
 class TaoShuController extends ProvideBase
@@ -91,6 +92,29 @@ class TaoShuController extends ProvideBase
 
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getgoodsInfo');
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function getEntCaDistribution()
+    {
+        $cityCode = $this->getRequestData('cityCode', '');
+        $industryCode = $this->getRequestData('industryCode', '');
+
+        $postData = [
+            'city' => $cityCode,
+            'dalei' => $industryCode,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new TaoShuService(
+                CreateConf::getInstance()->getConf('taoshu.industryUid'),
+                CreateConf::getInstance()->getConf('taoshu.industryBaseUrl'),
+                implode(PHP_EOL, CreateConf::getInstance()->getConf('taoshu.industryPem'))
+            ))->setCheckRespFlag(true)->post($postData, 'getEntCaDistribution');
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);

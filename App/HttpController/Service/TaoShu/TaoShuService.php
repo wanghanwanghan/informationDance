@@ -17,13 +17,19 @@ class TaoShuService extends ServiceBase
     private $url;
     private $taoshuPEM;
 
-    function __construct()
+    function __construct(...$args)
     {
         parent::__construct();
 
         $this->uid = CreateConf::getInstance()->getConf('taoshu.uid');
         $this->url = CreateConf::getInstance()->getConf('taoshu.baseUrl');
         $this->taoshuPEM = implode(PHP_EOL, CreateConf::getInstance()->getConf('taoshu.pem'));
+
+        if (!empty($args)) {
+            $this->uid = $args[0];
+            $this->url = $args[1];
+            $this->taoshuPEM = $args[2];
+        }
 
         openssl_get_publickey($this->taoshuPEM);
     }
