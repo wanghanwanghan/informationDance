@@ -147,6 +147,8 @@ class XinDongController extends XinDongBase
 
         $res = XinDongService::getInstance()->industryTop($fz_list, $fm_list);
 
+        CommonService::getInstance()->log4PHP($res);
+
         $fz_list = $fm_list = [];
 
         foreach ($res['fz_list'] as $key => $val) {
