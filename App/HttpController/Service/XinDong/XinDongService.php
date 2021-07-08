@@ -7,6 +7,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaYanYuan\FaYanYuanService;
 use App\HttpController\Service\LongDun\LongDunService;
+use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\ServiceBase;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\Score\xds;
@@ -578,6 +579,42 @@ class XinDongService extends ServiceBase
         $res = (new xds())->cwScore($entName);
 
         return $this->checkResp(200, null, $res, '查询成功');
+    }
+
+    function industryTop($fz_list, $fm_list): array
+    {
+        foreach ($fz_list as $key => $oneEnt) {
+            $postData = [
+                'entName' => $oneEnt,
+                'code' => '',
+                'beginYear' => date('Y') - 1,
+                'dataCount' => 4,
+            ];
+            $info = (new LongXinService())->setCheckRespFlag(true)->getFinanceData($postData, false);
+            $fz_list[$key] = [
+                'entName' => $oneEnt,
+                'info' => $info,
+            ];
+        }
+
+        foreach ($fm_list as $key => $oneEnt) {
+            $postData = [
+                'entName' => $oneEnt,
+                'code' => '',
+                'beginYear' => date('Y') - 1,
+                'dataCount' => 4,
+            ];
+            $info = (new LongXinService())->setCheckRespFlag(true)->getFinanceData($postData, false);
+            $fm_list[$key] = [
+                'entName' => $oneEnt,
+                'info' => $info,
+            ];
+        }
+
+        return [
+            'fz_list' => $fz_list,
+            'fm_list' => $fm_list,
+        ];
     }
 
 }

@@ -39,6 +39,7 @@ class ChargeService extends ServiceBase
         52 => ['name' => '二次特征', 'desc' => '', 'basePrice' => 50],
         53 => ['name' => '超级搜索', 'desc' => '', 'basePrice' => 10],
         54 => ['name' => '财务两表', 'desc' => '', 'basePrice' => 200],
+        55 => ['name' => '行业top', 'desc' => '', 'basePrice' => 200],
 
         210 => ['name' => '极简报告', 'desc' => '', 'basePrice' => 80],
         211 => ['name' => '极简报告定制', 'desc' => '', 'basePrice' => 80],

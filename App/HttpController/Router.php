@@ -145,6 +145,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getAssetLeads', $prefix . 'getAssetLeads');//资产线索
             $routeCollector->addRoute(['GET', 'POST'], '/getNaCaoRegisterInfo', $prefix . 'getNaCaoRegisterInfo');//非企业信息
             $routeCollector->addRoute(['GET', 'POST'], '/getFeatures', $prefix . 'getFeatures');//二次特征分数
+            $routeCollector->addRoute(['GET', 'POST'], '/industryTop', $prefix . 'industryTop');//行业top
         });
 
         return true;

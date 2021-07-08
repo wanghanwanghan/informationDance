@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Api\XinDong;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
@@ -128,21 +129,26 @@ class XinDongController extends XinDongBase
     //行业top
     function industryTop()
     {
-        $entName = $this->request()->getRequestParam('entName');
-        $entList = $this->request()->getRequestParam('entList');
+        $fz_list = $this->request()->getRequestParam('fz_list');
+        $fm_list = $this->request()->getRequestParam('fm_list');
+        $pay = $this->request()->getRequestParam('pay') ?? 0;
 
-        $postData = [
-            'entName' => $entName,
-            'code' => '',
-            'beginYear' => date('Y') - 1,
-            'dataCount' => 5,
-        ];
+        $fz_list = jsonDecode($fz_list);
+        $fm_list = jsonDecode($fm_list);
 
-        $ent_f = (new LongXinService())
-            ->setCheckRespFlag(true)
-            ->getFinanceData($entName, false);
+        !is_array($fz_list) ?: $fz_list = array_unique($fz_list);
+        !is_array($fm_list) ?: $fm_list = array_unique($fm_list);
 
+        if (empty($fz_list) || empty($fm_list)) {
+            $res = ['code' => 201, 'paging' => null, 'result' => null, 'msg' => null];
+            return $this->checkResponse($res);
+        }
 
+        $res = XinDongService::getInstance()->industryTop($fz_list, $fm_list);
+
+        CommonService::getInstance()->log4PHP($res);
+
+        return $this->checkResponse($res);
     }
 
 }
