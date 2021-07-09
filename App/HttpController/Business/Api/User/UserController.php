@@ -22,6 +22,7 @@ use Carbon\Carbon;
 use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\ORM\DbManager;
 use EasySwoole\RedisPool\Redis;
+use Vtiful\Kernel\Format;
 use wanghanwanghan\someUtils\control;
 
 class UserController extends UserBase
@@ -745,18 +746,18 @@ class UserController extends UserBase
         $fileHandle = $fileObject->getHandle();
 
         //==========================================================================================================
-        $format = new \Vtiful\Kernel\Format($fileHandle);
+        $format = new Format($fileHandle);
 
         $colorStyle = $format
-            ->fontColor(\Vtiful\Kernel\Format::COLOR_ORANGE)
-            ->border(\Vtiful\Kernel\Format::BORDER_DASH_DOT)
-            ->align(\Vtiful\Kernel\Format::FORMAT_ALIGN_CENTER, \Vtiful\Kernel\Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->fontColor(Format::COLOR_ORANGE)
+            ->border(Format::BORDER_DASH_DOT)
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
             ->toResource();
 
-        $format = new \Vtiful\Kernel\Format($fileHandle);
+        $format = new Format($fileHandle);
 
         $alignStyle = $format
-            ->align(\Vtiful\Kernel\Format::FORMAT_ALIGN_CENTER, \Vtiful\Kernel\Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
             ->toResource();
         //==========================================================================================================
 
@@ -767,10 +768,10 @@ class UserController extends UserBase
             ->data($data)
             ->setColumn('B:B', 50);
 
-        $format = new \Vtiful\Kernel\Format($fileHandle);
+        $format = new Format($fileHandle);
         //单元格有\n解析成换行
-        $wrapStyle = $alignStyle = $format
-            ->align(\Vtiful\Kernel\Format::FORMAT_ALIGN_CENTER, \Vtiful\Kernel\Format::FORMAT_ALIGN_VERTICAL_CENTER)
+        $wrapStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
             ->wrap()
             ->toResource();
 
