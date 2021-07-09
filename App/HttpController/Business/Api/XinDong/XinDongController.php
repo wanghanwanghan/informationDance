@@ -145,10 +145,9 @@ class XinDongController extends XinDongBase
             return $this->checkResponse($result);
         }
 
-        CommonService::getInstance()->log4PHP($fz_list);
-        CommonService::getInstance()->log4PHP($fm_list);
-
         $res = XinDongService::getInstance()->industryTop($fz_list, $fm_list);
+
+        CommonService::getInstance()->log4PHP($res);
 
         $fz_list = $fm_list = [];
 
