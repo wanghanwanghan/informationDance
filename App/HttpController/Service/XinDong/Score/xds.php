@@ -1239,50 +1239,30 @@ class xds
 
     function industryTopScore($fz_list, $fm_list): array
     {
-        //先求出分母8个基础数据的和
         $VENDINC_total = [];
-        $ASSGRO_total = [];
-        $MAIBUSINC_total = [];
-        $TOTEQU_total = [];
-        $RATGRO_total = [];
-        $PROGRO_total = [];
-        $NETINC_total = [];
-        $LIAGRO_total = [];
+
         foreach ($fm_list as $entName => $val) {
             foreach ($val as $year => $data) {
                 $year = $year . '';
-
-                isset($VENDINC_total[$year]) ?
-                    $VENDINC_total[$year] += $data['VENDINC'] - 0 :
-                    $VENDINC_total[$year] = $data['VENDINC'] - 0;
-
-                isset($ASSGRO_total[$year]) ?
-                    $ASSGRO_total[$year] += $data['ASSGRO'] - 0 :
-                    $ASSGRO_total[$year] = $data['ASSGRO'] - 0;
-
-                isset($MAIBUSINC_total[$year]) ?
-                    $MAIBUSINC_total[$year] += $data['MAIBUSINC'] - 0 :
-                    $MAIBUSINC_total[$year] = $data['MAIBUSINC'] - 0;
-
-                isset($TOTEQU_total[$year]) ?
-                    $TOTEQU_total[$year] += $data['TOTEQU'] - 0 :
-                    $TOTEQU_total[$year] = $data['TOTEQU'] - 0;
-
-                isset($RATGRO_total[$year]) ?
-                    $RATGRO_total[$year] += $data['RATGRO'] - 0 :
-                    $RATGRO_total[$year] = $data['RATGRO'] - 0;
-
-                isset($PROGRO_total[$year]) ?
-                    $PROGRO_total[$year] += $data['PROGRO'] - 0 :
-                    $PROGRO_total[$year] = $data['PROGRO'] - 0;
-
-                isset($NETINC_total[$year]) ?
-                    $NETINC_total[$year] += $data['NETINC'] - 0 :
-                    $NETINC_total[$year] = $data['NETINC'] - 0;
-
-                isset($LIAGRO_total[$year]) ?
-                    $LIAGRO_total[$year] += $data['LIAGRO'] - 0 :
-                    $LIAGRO_total[$year] = $data['LIAGRO'] - 0;
+                $tmp = $data['VENDINC'] - 0;
+                if ($tmp === 0) {
+                    for ($i = 1; $i <= 100; $i++) {
+                        $tmpYear = ($year - $i) . '';
+                        if (isset($fm_list[$entName][$tmpYear])) {
+                            if (is_numeric($fm_list[$entName][$tmpYear]['VENDINC'])) {
+                                if ($fm_list[$entName][$tmpYear]['VENDINC'] !== 0) {
+                                    $tmp = $fm_list[$entName][$tmpYear]['VENDINC'] - 0;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (isset($VENDINC_total[$year])) {
+                    $VENDINC_total[$year] += $tmp - 0;
+                } else {
+                    $VENDINC_total[$year] = $tmp - 0;
+                }
             }
         }
 
@@ -1293,48 +1273,6 @@ class xds
                     $fz_list[$entName][$year]['industryTopVENDINC'] = null :
                     $fz_list[$entName][$year]['industryTopVENDINC'] = $VENDINC_total[$year] !== 0 ?
                         $data['VENDINC'] / $VENDINC_total[$year] :
-                        null;
-
-                !is_numeric($data['ASSGRO']) ?
-                    $fz_list[$entName][$year]['industryTopASSGRO'] = null :
-                    $fz_list[$entName][$year]['industryTopASSGRO'] = $ASSGRO_total[$year] !== 0 ?
-                        $data['ASSGRO'] / $ASSGRO_total[$year] :
-                        null;
-
-                !is_numeric($data['MAIBUSINC']) ?
-                    $fz_list[$entName][$year]['industryTopMAIBUSINC'] = null :
-                    $fz_list[$entName][$year]['industryTopMAIBUSINC'] = $MAIBUSINC_total[$year] !== 0 ?
-                        $data['MAIBUSINC'] / $MAIBUSINC_total[$year] :
-                        null;
-
-                !is_numeric($data['TOTEQU']) ?
-                    $fz_list[$entName][$year]['industryTopTOTEQU'] = null :
-                    $fz_list[$entName][$year]['industryTopTOTEQU'] = $TOTEQU_total[$year] !== 0 ?
-                        $data['TOTEQU'] / $TOTEQU_total[$year] :
-                        null;
-
-                !is_numeric($data['RATGRO']) ?
-                    $fz_list[$entName][$year]['industryTopRATGRO'] = null :
-                    $fz_list[$entName][$year]['industryTopRATGRO'] = $RATGRO_total[$year] !== 0 ?
-                        $data['RATGRO'] / $RATGRO_total[$year] :
-                        null;
-
-                !is_numeric($data['PROGRO']) ?
-                    $fz_list[$entName][$year]['industryTopPROGRO'] = null :
-                    $fz_list[$entName][$year]['industryTopPROGRO'] = $PROGRO_total[$year] !== 0 ?
-                        $data['PROGRO'] / $PROGRO_total[$year] :
-                        null;
-
-                !is_numeric($data['NETINC']) ?
-                    $fz_list[$entName][$year]['industryTopNETINC'] = null :
-                    $fz_list[$entName][$year]['industryTopNETINC'] = $NETINC_total[$year] !== 0 ?
-                        $data['NETINC'] / $NETINC_total[$year] :
-                        null;
-
-                !is_numeric($data['LIAGRO']) ?
-                    $fz_list[$entName][$year]['industryTopLIAGRO'] = null :
-                    $fz_list[$entName][$year]['industryTopLIAGRO'] = $LIAGRO_total[$year] !== 0 ?
-                        $data['LIAGRO'] / $LIAGRO_total[$year] :
                         null;
             }
         }
