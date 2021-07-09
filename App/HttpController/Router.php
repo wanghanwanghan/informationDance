@@ -121,6 +121,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/edit/oneSaid', $prefix . 'editOneSaid');//修改一句话
             $routeCollector->addRoute(['GET', 'POST'], '/get/oneSaid', $prefix . 'getOneSaid');//获取用户发布一句话
             $routeCollector->addRoute(['GET', 'POST'], '/create/supervisor', $prefix . 'createSupervisor');//创建风险监控
+            $routeCollector->addRoute(['GET', 'POST'], '/del/supervisor', $prefix . 'delSupervisor');//删除风险监控
             $routeCollector->addRoute(['GET', 'POST'], '/get/supervisor', $prefix . 'getSupervisor');//获取用户风险监控数据
             $routeCollector->addRoute(['GET', 'POST'], '/get/supervisorLimit', $prefix . 'getSupervisorLimit');//获取风险阈值
             $routeCollector->addRoute(['GET', 'POST'], '/get/supervisorListByExcel', $prefix . 'getSupervisorListByExcel');//导出列表

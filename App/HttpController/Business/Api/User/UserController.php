@@ -19,6 +19,7 @@ use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\Pay\wx\wxPayService;
 use App\HttpController\Service\User\UserService;
 use Carbon\Carbon;
+use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\ORM\DbManager;
 use EasySwoole\RedisPool\Redis;
 use wanghanwanghan\someUtils\control;
@@ -490,6 +491,24 @@ class UserController extends UserBase
         }
 
         return $this->writeJson(200, null, $data, '添加成功');
+    }
+
+    //删除风险监控
+    function delSupervisor()
+    {
+        $phone = $this->request()->getRequestParam('phone');
+        $entName = $this->request()->getRequestParam('entName');
+
+        if (empty($phone) || empty($entName)) {
+            return $this->writeJson(201, null, null, '参数错误');
+        }
+
+        SupervisorPhoneEntName::create()->destroy([
+            'phone' => $phone,
+            'entName' => $entName,
+        ]);
+
+        return $this->writeJson(200, null, null, '删除成功');
     }
 
     //获取用户风险监控数据
