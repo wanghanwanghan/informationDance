@@ -147,8 +147,6 @@ class XinDongController extends XinDongBase
 
         $res = XinDongService::getInstance()->industryTop($fz_list, $fm_list);
 
-        CommonService::getInstance()->log4PHP($res);
-
         $fz_list = $fm_list = [];
 
         foreach ($res['fz_list'] as $key => $val) {
@@ -163,9 +161,11 @@ class XinDongController extends XinDongBase
             }
         }
 
+        $res = XinDongService::getInstance()->industryTop($fz_list, $fm_list);
+
         $result['result'] = [
-            'fz_list' => $fz_list,
-            'fm_list' => $fm_list,
+            'fz_list' => $res[0],
+            'fm_list' => $res[1],
         ];
 
         return $this->checkResponse($result);

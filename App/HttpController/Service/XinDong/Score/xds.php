@@ -1236,4 +1236,109 @@ class xds
 
         return $r;
     }
+
+    function industryTopScore($fz_list, $fm_list): array
+    {
+        //先求出分母8个基础数据的和
+        $VENDINC_total = [];
+        $ASSGRO_total = [];
+        $MAIBUSINC_total = [];
+        $TOTEQU_total = [];
+        $RATGRO_total = [];
+        $PROGRO_total = [];
+        $NETINC_total = [];
+        $LIAGRO_total = [];
+        foreach ($fm_list as $entName => $val) {
+            foreach ($val as $year => $data) {
+                $year = $year . '';
+
+                isset($VENDINC_total[$year]) ?
+                    $VENDINC_total[$year] += $data['VENDINC'] - 0 :
+                    $VENDINC_total[$year] = $data['VENDINC'] - 0;
+
+                isset($ASSGRO_total[$year]) ?
+                    $ASSGRO_total[$year] += $data['ASSGRO'] - 0 :
+                    $ASSGRO_total[$year] = $data['ASSGRO'] - 0;
+
+                isset($MAIBUSINC_total[$year]) ?
+                    $MAIBUSINC_total[$year] += $data['MAIBUSINC'] - 0 :
+                    $MAIBUSINC_total[$year] = $data['MAIBUSINC'] - 0;
+
+                isset($TOTEQU_total[$year]) ?
+                    $TOTEQU_total[$year] += $data['TOTEQU'] - 0 :
+                    $TOTEQU_total[$year] = $data['TOTEQU'] - 0;
+
+                isset($RATGRO_total[$year]) ?
+                    $RATGRO_total[$year] += $data['RATGRO'] - 0 :
+                    $RATGRO_total[$year] = $data['RATGRO'] - 0;
+
+                isset($PROGRO_total[$year]) ?
+                    $PROGRO_total[$year] += $data['PROGRO'] - 0 :
+                    $PROGRO_total[$year] = $data['PROGRO'] - 0;
+
+                isset($NETINC_total[$year]) ?
+                    $NETINC_total[$year] += $data['NETINC'] - 0 :
+                    $NETINC_total[$year] = $data['NETINC'] - 0;
+
+                isset($LIAGRO_total[$year]) ?
+                    $LIAGRO_total[$year] += $data['LIAGRO'] - 0 :
+                    $LIAGRO_total[$year] = $data['LIAGRO'] - 0;
+            }
+        }
+
+        //然后用分子的去计算市场占有率
+        foreach ($fz_list as $entName => $val) {
+            foreach ($val as $year => $data) {
+                !is_numeric($data['VENDINC']) ?
+                    $fz_list[$entName][$year]['industryTop'] = null :
+                    $fz_list[$entName][$year]['industryTop'] = $VENDINC_total[$year] !== 0 ?
+                        $data['VENDINC'] / $VENDINC_total[$year] :
+                        null;
+
+                !is_numeric($data['ASSGRO']) ?
+                    $fz_list[$entName][$year]['industryTop'] = null :
+                    $fz_list[$entName][$year]['industryTop'] = $ASSGRO_total[$year] !== 0 ?
+                        $data['ASSGRO'] / $ASSGRO_total[$year] :
+                        null;
+
+                !is_numeric($data['MAIBUSINC']) ?
+                    $fz_list[$entName][$year]['industryTop'] = null :
+                    $fz_list[$entName][$year]['industryTop'] = $MAIBUSINC_total[$year] !== 0 ?
+                        $data['MAIBUSINC'] / $MAIBUSINC_total[$year] :
+                        null;
+
+                !is_numeric($data['TOTEQU']) ?
+                    $fz_list[$entName][$year]['industryTop'] = null :
+                    $fz_list[$entName][$year]['industryTop'] = $TOTEQU_total[$year] !== 0 ?
+                        $data['TOTEQU'] / $TOTEQU_total[$year] :
+                        null;
+
+                !is_numeric($data['RATGRO']) ?
+                    $fz_list[$entName][$year]['industryTop'] = null :
+                    $fz_list[$entName][$year]['industryTop'] = $RATGRO_total[$year] !== 0 ?
+                        $data['RATGRO'] / $RATGRO_total[$year] :
+                        null;
+
+                !is_numeric($data['PROGRO']) ?
+                    $fz_list[$entName][$year]['industryTop'] = null :
+                    $fz_list[$entName][$year]['industryTop'] = $PROGRO_total[$year] !== 0 ?
+                        $data['PROGRO'] / $PROGRO_total[$year] :
+                        null;
+
+                !is_numeric($data['NETINC']) ?
+                    $fz_list[$entName][$year]['industryTop'] = null :
+                    $fz_list[$entName][$year]['industryTop'] = $NETINC_total[$year] !== 0 ?
+                        $data['NETINC'] / $NETINC_total[$year] :
+                        null;
+
+                !is_numeric($data['LIAGRO']) ?
+                    $fz_list[$entName][$year]['industryTop'] = null :
+                    $fz_list[$entName][$year]['industryTop'] = $LIAGRO_total[$year] !== 0 ?
+                        $data['LIAGRO'] / $LIAGRO_total[$year] :
+                        null;
+            }
+        }
+
+        return [$fz_list, $fm_list];
+    }
 }
