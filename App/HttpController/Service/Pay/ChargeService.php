@@ -777,11 +777,13 @@ class ChargeService extends ServiceBase
     }
 
     //财务两表
-    function TwoTable(Request $request, $moduleNum)
+    function TwoTable(Request $request, $moduleNum, $entName = null)
     {
         $phone = $this->getPhone($request);
 
-        $entName = $this->getEntName($request);
+        if (empty($entName)) {
+            $entName = $this->getEntName($request);
+        }
 
         if (empty($phone) || empty($entName)) return ['code' => 201, 'msg' => '手机号或公司名不能是空'];
 

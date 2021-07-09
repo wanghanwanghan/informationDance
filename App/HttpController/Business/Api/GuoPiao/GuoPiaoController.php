@@ -72,7 +72,7 @@ class GuoPiaoController extends GuoPiaoBase
         }
 
         if ($this->moduleNum === 54) {
-            $charge = ChargeService::getInstance()->TwoTable($this->request(), $this->moduleNum);
+            $charge = ChargeService::getInstance()->TwoTable($this->request(), $this->moduleNum, $this->entName);
             if ($charge['code'] !== 200) {
                 return $this->writeJson($charge['code'], null, null, $charge['msg'], false);
             }
