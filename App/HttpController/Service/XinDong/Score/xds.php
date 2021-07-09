@@ -1252,6 +1252,7 @@ class xds
                             if (is_numeric($fm_list[$entName][$tmpYear]['VENDINC'])) {
                                 if ($fm_list[$entName][$tmpYear]['VENDINC'] !== 0) {
                                     $tmp = $fm_list[$entName][$tmpYear]['VENDINC'] - 0;
+                                    $fm_list[$entName][$year]['VENDINC'] = $tmp;
                                     break;
                                 }
                             }
