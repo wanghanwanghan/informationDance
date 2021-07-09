@@ -7,6 +7,7 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Pay\ChargeService;
+use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\XinDong\XinDongService;
 
 class XinDongController extends XinDongBase
@@ -147,8 +148,6 @@ class XinDongController extends XinDongBase
 
         $res = XinDongService::getInstance()->industryTop($fz_list, $fm_list);
 
-        CommonService::getInstance()->log4PHP($res);
-
         $fz_list = $fm_list = [];
 
         foreach ($res['fz_list'] as $key => $val) {
@@ -163,7 +162,7 @@ class XinDongController extends XinDongBase
             }
         }
 
-        $res = XinDongService::getInstance()->industryTop($fz_list, $fm_list);
+        $res = (new xds())->industryTopScore($fz_list, $fm_list);
 
         $result['result'] = [
             'fz_list' => $res[0],
