@@ -1239,8 +1239,8 @@ class xds
 
     function industryTopScore($fz_list, $fm_list): array
     {
-        CommonService::getInstance($fz_list);
-        CommonService::getInstance($fm_list);
+        CommonService::getInstance()->log4PHP($fz_list);
+        CommonService::getInstance()->log4PHP($fm_list);
         $VENDINC_total = [];
 
         foreach ($fm_list as $entName => $val) {
@@ -1269,7 +1269,7 @@ class xds
             }
         }
 
-        CommonService::getInstance($VENDINC_total);
+        CommonService::getInstance()->log4PHP($VENDINC_total);
 
         //然后用分子的去计算市场占有率
         foreach ($fz_list as $entName => $val) {
