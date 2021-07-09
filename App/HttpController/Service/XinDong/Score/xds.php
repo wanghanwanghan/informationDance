@@ -1290,50 +1290,50 @@ class xds
         foreach ($fz_list as $entName => $val) {
             foreach ($val as $year => $data) {
                 !is_numeric($data['VENDINC']) ?
-                    $fz_list[$entName][$year]['industryTop'] = null :
-                    $fz_list[$entName][$year]['industryTop'] = $VENDINC_total[$year] !== 0 ?
+                    $fz_list[$entName][$year]['industryTopVENDINC'] = null :
+                    $fz_list[$entName][$year]['industryTopVENDINC'] = $VENDINC_total[$year] !== 0 ?
                         $data['VENDINC'] / $VENDINC_total[$year] :
                         null;
 
                 !is_numeric($data['ASSGRO']) ?
-                    $fz_list[$entName][$year]['industryTop'] = null :
-                    $fz_list[$entName][$year]['industryTop'] = $ASSGRO_total[$year] !== 0 ?
+                    $fz_list[$entName][$year]['industryTopASSGRO'] = null :
+                    $fz_list[$entName][$year]['industryTopASSGRO'] = $ASSGRO_total[$year] !== 0 ?
                         $data['ASSGRO'] / $ASSGRO_total[$year] :
                         null;
 
                 !is_numeric($data['MAIBUSINC']) ?
-                    $fz_list[$entName][$year]['industryTop'] = null :
-                    $fz_list[$entName][$year]['industryTop'] = $MAIBUSINC_total[$year] !== 0 ?
+                    $fz_list[$entName][$year]['industryTopMAIBUSINC'] = null :
+                    $fz_list[$entName][$year]['industryTopMAIBUSINC'] = $MAIBUSINC_total[$year] !== 0 ?
                         $data['MAIBUSINC'] / $MAIBUSINC_total[$year] :
                         null;
 
                 !is_numeric($data['TOTEQU']) ?
-                    $fz_list[$entName][$year]['industryTop'] = null :
-                    $fz_list[$entName][$year]['industryTop'] = $TOTEQU_total[$year] !== 0 ?
+                    $fz_list[$entName][$year]['industryTopTOTEQU'] = null :
+                    $fz_list[$entName][$year]['industryTopTOTEQU'] = $TOTEQU_total[$year] !== 0 ?
                         $data['TOTEQU'] / $TOTEQU_total[$year] :
                         null;
 
                 !is_numeric($data['RATGRO']) ?
-                    $fz_list[$entName][$year]['industryTop'] = null :
-                    $fz_list[$entName][$year]['industryTop'] = $RATGRO_total[$year] !== 0 ?
+                    $fz_list[$entName][$year]['industryTopRATGRO'] = null :
+                    $fz_list[$entName][$year]['industryTopRATGRO'] = $RATGRO_total[$year] !== 0 ?
                         $data['RATGRO'] / $RATGRO_total[$year] :
                         null;
 
                 !is_numeric($data['PROGRO']) ?
-                    $fz_list[$entName][$year]['industryTop'] = null :
-                    $fz_list[$entName][$year]['industryTop'] = $PROGRO_total[$year] !== 0 ?
+                    $fz_list[$entName][$year]['industryTopPROGRO'] = null :
+                    $fz_list[$entName][$year]['industryTopPROGRO'] = $PROGRO_total[$year] !== 0 ?
                         $data['PROGRO'] / $PROGRO_total[$year] :
                         null;
 
                 !is_numeric($data['NETINC']) ?
-                    $fz_list[$entName][$year]['industryTop'] = null :
-                    $fz_list[$entName][$year]['industryTop'] = $NETINC_total[$year] !== 0 ?
+                    $fz_list[$entName][$year]['industryTopNETINC'] = null :
+                    $fz_list[$entName][$year]['industryTopNETINC'] = $NETINC_total[$year] !== 0 ?
                         $data['NETINC'] / $NETINC_total[$year] :
                         null;
 
                 !is_numeric($data['LIAGRO']) ?
-                    $fz_list[$entName][$year]['industryTop'] = null :
-                    $fz_list[$entName][$year]['industryTop'] = $LIAGRO_total[$year] !== 0 ?
+                    $fz_list[$entName][$year]['industryTopLIAGRO'] = null :
+                    $fz_list[$entName][$year]['industryTopLIAGRO'] = $LIAGRO_total[$year] !== 0 ?
                         $data['LIAGRO'] / $LIAGRO_total[$year] :
                         null;
             }
