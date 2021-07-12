@@ -925,7 +925,7 @@ class RunSupervisor extends AbstractCronTask
 
         if ($res['code'] == 200 && !empty($res['result'])) {
             foreach ($res['result'] as &$one) {
-                $check = SupervisorEntNameInfo::create()->where('keyNo', $one['epbparty_jkqyId'])->get();
+                $check = SupervisorEntNameInfo::create()->where('keyNo', $one['entryId'])->get();
 
                 if ($check) continue;
 
@@ -979,7 +979,7 @@ class RunSupervisor extends AbstractCronTask
 
         if ($res['code'] == 200 && !empty($res['result'])) {
             foreach ($res['result'] as &$one) {
-                $check = SupervisorEntNameInfo::create()->where('keyNo', $one['epbparty_zxjcId'])->get();
+                $check = SupervisorEntNameInfo::create()->where('keyNo', $one['entryId'])->get();
 
                 if ($check) continue;
 
@@ -1040,7 +1040,7 @@ class RunSupervisor extends AbstractCronTask
 
         if ($res['code'] == 200 && !empty($res['result'])) {
             foreach ($res['result'] as &$one) {
-                $check = SupervisorEntNameInfo::create()->where('keyNo', $one['epbparty_huanpingId'])->get();
+                $check = SupervisorEntNameInfo::create()->where('keyNo', $one['entryId'])->get();
 
                 if ($check) continue;
 
