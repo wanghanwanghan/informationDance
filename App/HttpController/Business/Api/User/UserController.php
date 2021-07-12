@@ -819,6 +819,7 @@ class UserController extends UserBase
                                 }
                                 $sourceDetail = $tmp;
                             }
+                            CommonService::getInstance()->log4PHP($sourceDetail);
                         }
                     }
                     $one['sourceDetail'] = $sourceDetail;
@@ -836,7 +837,7 @@ class UserController extends UserBase
                     ->header(['企业名称', '风险等级', '风险说明', '风险内容', '监控时间', '详细内容'])
                     ->defaultFormat($wrapStyle)
                     ->data($insert)
-                    ->setColumn('A:E', 50);
+                    ->setColumn('A:F', 50);
             } catch (\Throwable $e) {
                 CommonService::getInstance()->log4PHP($e->getTraceAsString());
             }
