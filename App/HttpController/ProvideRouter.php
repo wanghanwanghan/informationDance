@@ -126,7 +126,7 @@ class ProvideRouter
 
     private function FaHaiRouterV1(RouteCollector $routeCollector)
     {
-        $prefix = '/Business/Provide/FaiHai/FaHaiController/';
+        $prefix = '/Business/Provide/FaHai/FaHaiController/';
 
         $routeCollector->addGroup('/fh', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getKtgg', $prefix . 'getKtgg');
