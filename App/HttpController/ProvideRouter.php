@@ -19,6 +19,7 @@ class ProvideRouter
         $this->XinDongRouterV1($routeCollector);
         $this->FaYanYuanRouterV1($routeCollector);
         $this->YunMaTongRouterV1($routeCollector);
+        $this->FaHaiRouterV1($routeCollector);
     }
 
     private function LongDunRouterV1(RouteCollector $routeCollector)
@@ -122,5 +123,21 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/bankCardInfo', $prefix . 'bankCardInfo');
         });
     }
+
+    private function FaHaiRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Provide/FaiHai/FaHaiController/';
+
+        $routeCollector->addGroup('/fh', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getKtgg', $prefix . 'getKtgg');
+            $routeCollector->addRoute(['GET', 'POST'], '/getFygg', $prefix . 'getFygg');
+
+            $routeCollector->addRoute(['GET', 'POST'], '/getKtggDetail', $prefix . 'getKtggDetail');//开庭公告
+            $routeCollector->addRoute(['GET', 'POST'], '/getFyggDetail', $prefix . 'getFyggDetail');//法院公告
+        });
+
+        return true;
+    }
+
 
 }
