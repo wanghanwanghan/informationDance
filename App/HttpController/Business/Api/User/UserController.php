@@ -797,6 +797,30 @@ class UserController extends UserBase
                     } else {
                         $one['level'] = '利好';
                     }
+                    //处理详细内容
+                    $sourceDetail = '';
+                    if (!empty($one['sourceDetail'])) {
+                        $sourceDetail = jsonDecode($one['sourceDetail']);
+                        //法海相关
+                        if (isset($sourceDetail['body']) && !empty(trim($sourceDetail['body']))) {
+                            if (strpos($sourceDetail['body'], '<p>') !== false) {
+                                $sourceDetail = str_replace(['<p>', '</p>'], ['', PHP_EOL], $sourceDetail['body']);
+                            } elseif (!empty(jsonDecode($sourceDetail['body']))) {
+                                $tmp = '';
+                                foreach (jsonDecode($sourceDetail['body']) as $key => $val) {
+                                    $tmp .= "{$key}:$val" . PHP_EOL;
+                                }
+                                $sourceDetail = $tmp;
+                            } else {
+                                $tmp = '';
+                                foreach (mb_str_split($sourceDetail['body'], 15) as $val) {
+                                    $tmp .= $val . PHP_EOL;
+                                }
+                                $sourceDetail = $tmp;
+                            }
+                        }
+                    }
+                    $one['sourceDetail'] = $sourceDetail;
                     $one['created_at'] = date('Y-m-d', $one['created_at']);
                     array_push($insert, array_values($one));
                 }
