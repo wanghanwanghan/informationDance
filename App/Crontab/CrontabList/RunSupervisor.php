@@ -37,8 +37,8 @@ class RunSupervisor extends AbstractCronTask
     static function getRule(): string
     {
         //每7天的凌晨2点
-        //return '*/30 * * * *';
-        return '0 2 */7 * *';
+        return '*/10 * * * *';
+        //return '0 2 */7 * *';
     }
 
     static function getTaskName(): string
@@ -904,6 +904,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $one['entryId'],
+                    'sourceDetail' => empty($detail) ? '' : jsonEncode($detail),
                 ])->save();
 
                 $this->addEntName($entName, 'gl');
@@ -957,6 +958,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $one['epbparty_jkqyId'],
+                    'sourceDetail' => empty($detail) ? '' : jsonEncode($detail),
                 ])->save();
 
                 $this->addEntName($entName, 'gl');
@@ -1017,6 +1019,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $one['epbparty_zxjcId'],
+                    'sourceDetail' => empty($detail) ? '' : jsonEncode($detail),
                 ])->save();
 
                 $this->addEntName($entName, 'gl');
@@ -1077,6 +1080,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $one['epbparty_huanpingId'],
+                    'sourceDetail' => empty($detail) ? '' : jsonEncode($detail),
                 ])->save();
 
                 $this->addEntName($entName, 'gl');
@@ -1128,6 +1132,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $one['entryId'],
+                    'sourceDetail' => empty($detail) ? '' : jsonEncode($detail),
                 ])->save();
 
                 $this->addEntName($entName, 'gl');
@@ -1179,6 +1184,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $one['entryId'],
+                    'sourceDetail' => empty($detail) ? '' : jsonEncode($detail),
                 ])->save();
 
                 $this->addEntName($entName, 'gl');
@@ -1231,6 +1237,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $one['entryId'],
+                    'sourceDetail' => empty($detail) ? '' : jsonEncode($detail),
                 ])->save();
 
                 $this->addEntName($entName, 'gl');
@@ -1283,6 +1290,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $one['entryId'],
+                    'sourceDetail' => empty($detail) ? '' : jsonEncode($detail),
                 ])->save();
 
                 $this->addEntName($entName, 'gl');
@@ -1335,6 +1343,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $one['entryId'],
+                    'sourceDetail' => empty($detail) ? '' : jsonEncode($detail),
                 ])->save();
 
                 $this->addEntName($entName, 'gl');
@@ -1387,6 +1396,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $one['entryId'],
+                    'sourceDetail' => empty($detail) ? '' : jsonEncode($detail),
                 ])->save();
 
                 $this->addEntName($entName, 'gl');
@@ -1439,6 +1449,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $one['entryId'],
+                    'sourceDetail' => empty($detail) ? '' : jsonEncode($detail),
                 ])->save();
 
                 $this->addEntName($entName, 'gl');
