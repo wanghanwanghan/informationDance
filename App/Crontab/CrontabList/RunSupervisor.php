@@ -1717,6 +1717,7 @@ class RunSupervisor extends AbstractCronTask
                             'content' => $content,
                             'detailUrl' => '',
                             'keyNo' => $id,
+                            'sourceDetail' => jsonEncode($one),
                         ])->save();
 
                         $this->addEntName($entName, 'jy');
