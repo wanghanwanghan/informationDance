@@ -323,7 +323,9 @@ class RunSupervisor extends AbstractCronTask
                         'doc_type' => $doc_type
                     ]);
 
-                ($detail['code'] == 200 && !empty($detail['result'])) ? $detail = current($detail['result']) : $detail = null;
+                ($detail['code'] == 200 && !empty($detail['result'])) ?
+                    $detail = current($detail['result']) :
+                    $detail = null;
 
                 $one['detail'] = $detail;
 
@@ -359,6 +361,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $one['entryId'],
+                    'sourceDetail' => empty($detail) ? '' : jsonEncode($detail),
                 ])->save();
 
                 $this->addEntName($entName, 'sf');
@@ -387,7 +390,9 @@ class RunSupervisor extends AbstractCronTask
                         'doc_type' => $doc_type
                     ]);
 
-                ($detail['code'] == 200 && !empty($detail['result'])) ? $detail = current($detail['result']) : $detail = null;
+                ($detail['code'] == 200 && !empty($detail['result'])) ?
+                    $detail = current($detail['result']) :
+                    $detail = null;
 
                 $one['detail'] = $detail;
 
@@ -421,6 +426,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $one['entryId'],
+                    'sourceDetail' => empty($detail) ? '' : jsonEncode($detail),
                 ])->save();
 
                 $this->addEntName($entName, 'sf');
@@ -449,7 +455,9 @@ class RunSupervisor extends AbstractCronTask
                         'doc_type' => $doc_type
                     ]);
 
-                ($detail['code'] == 200 && !empty($detail['result'])) ? $detail = current($detail['result']) : $detail = null;
+                ($detail['code'] == 200 && !empty($detail['result'])) ?
+                    $detail = current($detail['result']) :
+                    $detail = null;
 
                 $one['detail'] = $detail;
 
@@ -485,6 +493,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $one['entryId'],
+                    'sourceDetail' => empty($detail) ? '' : jsonEncode($detail),
                 ])->save();
 
                 $this->addEntName($entName, 'sf');
@@ -538,6 +547,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $one['entryId'],
+                    'sourceDetail' => empty($detail) ? '' : jsonEncode($detail),
                 ])->save();
 
                 $this->addEntName($entName, 'sf');

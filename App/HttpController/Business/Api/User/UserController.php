@@ -19,8 +19,6 @@ use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\Pay\wx\wxPayService;
 use App\HttpController\Service\User\UserService;
 use Carbon\Carbon;
-use EasySwoole\Mysqli\QueryBuilder;
-use EasySwoole\ORM\DbManager;
 use EasySwoole\RedisPool\Redis;
 use Vtiful\Kernel\Format;
 use wanghanwanghan\someUtils\control;
@@ -782,11 +780,12 @@ class UserController extends UserBase
                 ->field(['entName', '`level`', '`desc`', 'content', 'created_at'])
                 ->where('entName', $one_ent_name)
                 ->all();
+
             $data = obj2Arr($data);
+
             if (!empty($data)) {
                 foreach ($data as $one) {
-                    $one['content'] = str_replace(['<p>'], '', $one['content']);
-                    $one['content'] = str_replace(['</p>'], "\n", $one['content']);
+                    $one['content'] = str_replace(['<p>', '</p>'], ['', "\n"], $one['content']);
                     if ($one['level'] - 0 === 1) {
                         $one['level'] = '高风险';
                     } elseif ($one['level'] - 0 === 2) {
@@ -809,7 +808,7 @@ class UserController extends UserBase
                 $fileObject
                     ->addSheet($one_ent_name)
                     ->defaultFormat($colorStyle)
-                    ->header(['企业名称', '风险等级', '风险说明', '风险内容', '监控时间'])
+                    ->header(['企业名称', '风险等级', '风险说明', '风险内容', '监控时间', '详细内容'])
                     ->defaultFormat($wrapStyle)
                     ->data($insert)
                     ->setColumn('A:E', 50);
