@@ -36,7 +36,6 @@ class FaYanYuanService extends ServiceBase
                 'total' => $res['totalCount'],
                 'totalPage' => $res['totalPageNum'],
             ];
-
         } else {
             $res['Paging'] = null;
         }

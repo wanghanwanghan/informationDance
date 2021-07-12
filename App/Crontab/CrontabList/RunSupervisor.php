@@ -37,7 +37,8 @@ class RunSupervisor extends AbstractCronTask
     static function getRule(): string
     {
         //每7天的凌晨2点
-        return '0 2 */7 * *';
+        return '*/30 * * * *';
+        //return '0 2 */7 * *';
     }
 
     static function getTaskName(): string
@@ -204,6 +205,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $one['Id'],
+                    'sourceDetail' => jsonEncode($one),
                 ])->save();
 
                 $this->addEntName($entName, 'sf');
@@ -241,6 +243,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $one['Id'],
+                    'sourceDetail' => jsonEncode($one),
                 ])->save();
 
                 $this->addEntName($entName, 'sf');
@@ -296,6 +299,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $id,
+                    'sourceDetail' => jsonEncode($one),
                 ])->save();
 
                 if ($level === 2) $this->addEntName($entName, 'sf');
@@ -604,6 +608,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $id,
+                    'sourceDetail' => jsonEncode($one),
                 ])->save();
 
                 $this->addEntName($entName, 'gs');
@@ -672,11 +677,10 @@ class RunSupervisor extends AbstractCronTask
                         'content' => $content,
                         'detailUrl' => '',
                         'keyNo' => $id,
+                        'sourceDetail' => jsonEncode($one),
                     ])->save();
 
                     $this->addEntName($entName, 'gs');
-                } else {
-                    continue;
                 }
             }
         }
@@ -716,6 +720,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $id,
+                    'sourceDetail' => jsonEncode($one),
                 ])->save();
 
                 $this->addEntName($entName, 'gs');
@@ -762,11 +767,10 @@ class RunSupervisor extends AbstractCronTask
                         'content' => $content,
                         'detailUrl' => '',
                         'keyNo' => $id,
+                        'sourceDetail' => jsonEncode($one),
                     ])->save();
 
                     $this->addEntName($entName, 'gs');
-                } else {
-                    continue;
                 }
             }
         }
@@ -808,6 +812,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $id,
+                    'sourceDetail' => jsonEncode($one),
                 ])->save();
 
                 $this->addEntName($entName, 'gl');
@@ -847,6 +852,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $one['Id'],
+                    'sourceDetail' => jsonEncode($one),
                 ])->save();
 
                 $this->addEntName($entName, 'gl');
@@ -1479,6 +1485,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $id,
+                    'sourceDetail' => jsonEncode($one),
                 ])->save();
 
                 if ($level === 2) $this->addEntName($entName, 'jy');
@@ -1518,6 +1525,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $one['ROWKEY'],
+                    'sourceDetail' => jsonEncode($one),
                 ])->save();
 
                 $this->addEntName($entName, 'jy');
@@ -1557,6 +1565,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $one['Id'],
+                    'sourceDetail' => jsonEncode($one),
                 ])->save();
 
                 $this->addEntName($entName, 'jy');
@@ -1598,6 +1607,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $one['ROWKEY'],
+                    'sourceDetail' => jsonEncode($one),
                 ])->save();
 
                 $this->addEntName($entName, 'jy');
@@ -1641,6 +1651,7 @@ class RunSupervisor extends AbstractCronTask
                         'content' => $content,
                         'detailUrl' => '',
                         'keyNo' => $id,
+                        'sourceDetail' => jsonEncode($one),
                     ])->save();
 
                     $this->addEntName($entName, 'jy');
@@ -1741,6 +1752,7 @@ class RunSupervisor extends AbstractCronTask
                     'content' => $content,
                     'detailUrl' => '',
                     'keyNo' => $id,
+                    'sourceDetail' => jsonEncode($one),
                 ])->save();
 
                 $this->addEntName($entName, 'jy');
