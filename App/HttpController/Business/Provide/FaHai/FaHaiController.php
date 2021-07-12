@@ -105,6 +105,7 @@ class FaHaiController extends ProvideBase
 
         $postData = [
             'id' => $id,
+            'doc_type' => $docType,
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData, $docType) {
@@ -126,6 +127,7 @@ class FaHaiController extends ProvideBase
 
         $postData = [
             'id' => $id,
+            'doc_type' => $docType,
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData, $docType) {
