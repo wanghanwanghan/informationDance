@@ -777,7 +777,7 @@ class UserController extends UserBase
         foreach ($entNameList as $one_ent_name) {
             $insert = [];
             $data = SupervisorEntNameInfo::create()
-                ->field(['entName', '`level`', '`desc`', 'content', 'sourceDetail', 'created_at'])
+                ->field(['entName', '`level`', '`desc`', 'content', 'created_at', 'sourceDetail'])
                 ->where('entName', $one_ent_name)
                 ->all();
 
@@ -819,7 +819,6 @@ class UserController extends UserBase
                                 }
                                 $sourceDetail = $tmp;
                             }
-                            CommonService::getInstance()->log4PHP($sourceDetail);
                         }
                     }
                     $one['sourceDetail'] = $sourceDetail;
