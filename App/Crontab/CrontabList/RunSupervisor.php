@@ -931,7 +931,7 @@ class RunSupervisor extends AbstractCronTask
 
                 $detail = (new FaYanYuanService())->setCheckRespFlag(true)
                     ->getDetail($this->fyyDetail . $doc_type, [
-                        'id' => $one['epbparty_jkqyId'],
+                        'id' => $one['entryId'],
                         'doc_type' => $doc_type
                     ]);
 
@@ -957,7 +957,7 @@ class RunSupervisor extends AbstractCronTask
                     'desc' => '重点监控企业名单',
                     'content' => $content,
                     'detailUrl' => '',
-                    'keyNo' => $one['epbparty_jkqyId'],
+                    'keyNo' => $one['entryId'],
                     'sourceDetail' => empty($detail) ? '' : jsonEncode($detail),
                 ])->save();
 
@@ -985,7 +985,7 @@ class RunSupervisor extends AbstractCronTask
 
                 $detail = (new FaYanYuanService())->setCheckRespFlag(true)
                     ->getDetail($this->fyyDetail . $doc_type, [
-                        'id' => $one['epbparty_zxjcId'],
+                        'id' => $one['entryId'],
                         'doc_type' => $doc_type
                     ]);
 
@@ -1018,7 +1018,7 @@ class RunSupervisor extends AbstractCronTask
                     'desc' => '重点监控企业名单',
                     'content' => $content,
                     'detailUrl' => '',
-                    'keyNo' => $one['epbparty_zxjcId'],
+                    'keyNo' => $one['entryId'],
                     'sourceDetail' => empty($detail) ? '' : jsonEncode($detail),
                 ])->save();
 
@@ -1046,7 +1046,7 @@ class RunSupervisor extends AbstractCronTask
 
                 $detail = (new FaYanYuanService())->setCheckRespFlag(true)
                     ->getDetail($this->fyyDetail . $doc_type, [
-                        'id' => $one['epbparty_huanpingId'],
+                        'id' => $one['entryId'],
                         'doc_type' => $doc_type
                     ]);
 
@@ -1079,7 +1079,7 @@ class RunSupervisor extends AbstractCronTask
                     'desc' => '环评公示数据',
                     'content' => $content,
                     'detailUrl' => '',
-                    'keyNo' => $one['epbparty_huanpingId'],
+                    'keyNo' => $one['entryId'],
                     'sourceDetail' => empty($detail) ? '' : jsonEncode($detail),
                 ])->save();
 
