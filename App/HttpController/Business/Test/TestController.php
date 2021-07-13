@@ -1888,7 +1888,7 @@ class TestController extends BusinessBase
                 ]);
                 continue;
             }
-            $entName = $getRegisterInfo['Name'];
+            $entName = $getRegisterInfo['result']['Name'];
             //=====getRegisterInfo=====getRegisterInfo=====getRegisterInfo=====getRegisterInfo=====
             $token_info = (new CoHttpClient())
                 ->useCache(false)
