@@ -9,6 +9,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\DaXiang\DaXiangService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
+use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\MoveOut\MoveOutService;
 use App\HttpController\Service\QianQi\QianQiService;
 use App\HttpController\Service\TaoShu\TaoShuService;
@@ -1877,17 +1878,17 @@ class TestController extends BusinessBase
         ];
 
         foreach ($arr as $val) {
-            $postData = ['entName' => $val];
-            $getRegisterInfo = (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getRegisterInfo');
+            $postData = ['keyWord' => $val];
+            $getRegisterInfo = (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get('http://api.qichacha.com/ECIV4/GetBasicDetailsByName', $postData);
             if ($getRegisterInfo['code'] !== 200) {
                 CommonService::getInstance()->log4PHP([
                     'code' => $val
                 ]);
                 continue;
             }
-            $entName = $getRegisterInfo['result'][0]['ENTNAME'];
             CommonService::getInstance()->log4PHP($getRegisterInfo);
-            CommonService::getInstance()->log4PHP($entName);
             break;
             //=====getRegisterInfo=====getRegisterInfo=====getRegisterInfo=====getRegisterInfo=====
             $token_info = (new CoHttpClient())
