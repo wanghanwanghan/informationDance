@@ -1910,14 +1910,12 @@ class TestController extends BusinessBase
                 ->useCache(false)
                 ->send("https://sandbox.ele-cloud.com/api/eplibrary-service/v1/exactQuery?access_token={$token}",
                     $arr, [], [], 'postjson');
-            CommonService::getInstance()->log4PHP($info);
-            CommonService::getInstance()->log4PHP($arr);
-            CommonService::getInstance()->log4PHP($entName);
-            break;
             if ($info['returnStateInfo']['returnCode'] - 0 !== 0) {
                 CommonService::getInstance()->log4PHP([
                     'entName' => $entName,
-                    'code' => $val
+                    'code' => $val,
+                    'returnCode' => $info['returnStateInfo']['returnCode'],
+                    'msg' => base64_decode($info['returnStateInfo']['returnMessage'])
                 ]);
                 continue;
             }
@@ -1925,6 +1923,7 @@ class TestController extends BusinessBase
             file_put_contents(LOG_PATH . 'ent.log', $content, FILE_APPEND | LOCK_EX);
             file_put_contents(LOG_PATH . 'ent.log', 'wanghan', FILE_APPEND | LOCK_EX);
             file_put_contents(LOG_PATH . 'ent.log', 'duanduan', FILE_APPEND | LOCK_EX);
+            break;
         }
     }
 
