@@ -1888,8 +1888,7 @@ class TestController extends BusinessBase
                 ]);
                 continue;
             }
-            CommonService::getInstance()->log4PHP($getRegisterInfo);
-            break;
+            $entName = $getRegisterInfo['Name'];
             //=====getRegisterInfo=====getRegisterInfo=====getRegisterInfo=====getRegisterInfo=====
             $token_info = (new CoHttpClient())
                 ->useCache(false)
@@ -1911,6 +1910,8 @@ class TestController extends BusinessBase
                 ->useCache(false)
                 ->send("https://sandbox.ele-cloud.com/api/eplibrary-service/v1/exactQuery?access_token={$token}",
                     $arr, [], [], 'postjson');
+            CommonService::getInstance()->log4PHP($info);
+            break;
             if ($info['returnStateInfo']['returnCode'] - 0 !== 0) {
                 CommonService::getInstance()->log4PHP([
                     'entName' => $entName,
