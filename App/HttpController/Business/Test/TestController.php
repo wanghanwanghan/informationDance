@@ -1920,9 +1920,7 @@ class TestController extends BusinessBase
                 continue;
             }
             $content = base64_decode($info['content']);
-            file_put_contents(LOG_PATH . 'ent.log', $content, FILE_APPEND | LOCK_EX);
-            file_put_contents(LOG_PATH . 'ent.log', 'wanghan', FILE_APPEND | LOCK_EX);
-            file_put_contents(LOG_PATH . 'ent.log', 'duanduan', FILE_APPEND | LOCK_EX);
+            file_put_contents(LOG_PATH . 'ent.log', $content . PHP_EOL, FILE_APPEND | LOCK_EX);
             break;
         }
     }
