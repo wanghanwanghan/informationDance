@@ -1921,7 +1921,6 @@ class TestController extends BusinessBase
             }
             $content = base64_decode($info['content']);
             file_put_contents(LOG_PATH . 'ent.log', $content . PHP_EOL, FILE_APPEND | LOCK_EX);
-            break;
         }
     }
 
