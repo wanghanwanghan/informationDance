@@ -21,8 +21,9 @@ class TestController extends BusinessBase
 
     function test()
     {
-        $res = MoveOutService::getInstance()->updateDatabase();
-        $this->writeJson(random_int(100, 999), null, $res);
+        $res = (new DaXiangService())->setCheckRespFlag(true)->test();
+
+        return $this->writeJson(200, null, $res);
     }
 
     //产品标准页面用

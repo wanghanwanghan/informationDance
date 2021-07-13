@@ -132,6 +132,8 @@ class DaXiangService extends ServiceBase
 
         $token = $token_info['access_token'];
 
+        return $token_info;
+
         $url = 'https://sandbox.ele-cloud.com/api/business-credit/v3/queryEntInvo?access_token=';
 
         $arr = [
@@ -141,11 +143,6 @@ class DaXiangService extends ServiceBase
             'entCode' => '',
             'content' => ''
         ];
-
-
-
-
-
 
 
     }
