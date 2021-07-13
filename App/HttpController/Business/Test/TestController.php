@@ -1911,6 +1911,8 @@ class TestController extends BusinessBase
                 ->send("https://sandbox.ele-cloud.com/api/eplibrary-service/v1/exactQuery?access_token={$token}",
                     $arr, [], [], 'postjson');
             CommonService::getInstance()->log4PHP($info);
+            CommonService::getInstance()->log4PHP($arr);
+            CommonService::getInstance()->log4PHP($entName);
             break;
             if ($info['returnStateInfo']['returnCode'] - 0 !== 0) {
                 CommonService::getInstance()->log4PHP([
