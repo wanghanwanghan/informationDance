@@ -8,6 +8,7 @@ use App\HttpController\Service\BaiDu\BaiDuService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\DaXiang\DaXiangService;
+use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\MoveOut\MoveOutService;
 use App\HttpController\Service\QianQi\QianQiService;
 use App\HttpController\Service\TaoShu\TaoShuService;
@@ -1877,9 +1878,47 @@ class TestController extends BusinessBase
 
         foreach ($arr as $val) {
             $postData = ['entName' => $val];
-            $res = (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getRegisterInfo');
-            CommonService::getInstance()->log4PHP($res);
+            $getRegisterInfo = (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getRegisterInfo');
+            if ($getRegisterInfo['code'] !== 200) {
+                CommonService::getInstance()->log4PHP([
+                    'code' => $val
+                ]);
+                continue;
+            }
+            $entName = $getRegisterInfo['result'][0]['ENTNAME'];
+            CommonService::getInstance()->log4PHP($getRegisterInfo);
+            CommonService::getInstance()->log4PHP($entName);
             break;
+            //=====getRegisterInfo=====getRegisterInfo=====getRegisterInfo=====getRegisterInfo=====
+            $token_info = (new CoHttpClient())
+                ->useCache(false)
+                ->send('https://sandbox.ele-cloud.com/api/authen/token', [
+                    'appKey' => 'FqLHA2j4XL52x5yPOk5nPki6',
+                    'appSecret' => 'pw6X9obZGMPVsxQ5TBP76qRW',
+                ], [], [], 'postjson');
+            $token = $token_info['access_token'];
+            list($usec, $sec) = explode(' ', microtime());
+            $cn_time = date('YmdHis', time()) . round($usec * 1000);
+            $arr = [
+                'zipCode' => '0',
+                'encryptCode' => '0',
+                'dataExchangeId' => $cn_time . '000000000000000',
+                'entCode' => '',
+                'content' => base64_encode(jsonEncode(['nsrmc' => $entName]))
+            ];
+            $info = (new CoHttpClient())
+                ->useCache(false)
+                ->send("https://sandbox.ele-cloud.com/api/eplibrary-service/v1/exactQuery?access_token={$token}",
+                    $arr, [], [], 'postjson');
+            if ($info['returnStateInfo']['returnCode'] - 0 !== 0) {
+                CommonService::getInstance()->log4PHP([
+                    'entName' => $entName,
+                    'code' => $val
+                ]);
+                continue;
+            }
+            $content = base64_decode($info['content']);
+            file_put_contents(LOG_PATH . 'ent.log', $content, FILE_APPEND | LOCK_EX);
         }
     }
 
