@@ -24,9 +24,9 @@ class DaXiangService extends ServiceBase
 
         $this->taxNo = '91110108MA01KPGK0L';
         $this->appKey = CreateConf::getInstance()->getConf('guopiao.key');
-        $this->appKeyTest = 'Mlfs7n9kofqPMaNVJSFoDcwS';
+        $this->appKeyTest = 'FqLHA2j4XL52x5yPOk5nPki6';
         $this->appSecret = CreateConf::getInstance()->getConf('guopiao.key');
-        $this->appSecretTest = 'awSW7gts8AS4StGV84HCKVCf';
+        $this->appSecretTest = 'pw6X9obZGMPVsxQ5TBP76qRW';
         $this->url = CreateConf::getInstance()->getConf('guopiao.url');
         $this->urlTest = 'https://sandbox.ele-cloud.com/api/authen/token';
 
@@ -121,7 +121,7 @@ class DaXiangService extends ServiceBase
         }
     }
 
-    function test()
+    function test($nsrmc)
     {
         $token_info = (new CoHttpClient())
             ->useCache(false)
@@ -132,18 +132,18 @@ class DaXiangService extends ServiceBase
 
         $token = $token_info['access_token'];
 
-        return $token_info;
-
-        $url = 'https://sandbox.ele-cloud.com/api/business-credit/v3/queryEntInvo?access_token=';
+        $url = "https://sandbox.ele-cloud.com/api/eplibrary-service/v1/exactQuery?access_token={$token}";
 
         $arr = [
             'zipCode' => '0',
             'encryptCode' => '0',
             "dataExchangeId" => bcmul(microtime(true), 1000) . control::getUuid(15),
             'entCode' => '',
-            'content' => ''
+            'content' => base64_encode(jsonEncode(['nsrmc' => $nsrmc]))
         ];
 
 
     }
 }
+
+
