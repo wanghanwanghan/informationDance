@@ -832,7 +832,7 @@ class UserController extends UserBase
                             $sourceDetail = $tmp;
                         }
                     }
-                    $one['sourceDetail'] = $sourceDetail;
+                    $one['sourceDetail'] = empty($sourceDetail) ? '--' : $sourceDetail;
                     $one['created_at'] = date('Y-m-d', $one['created_at']);
                     array_push($insert, array_values($one));
                 }
