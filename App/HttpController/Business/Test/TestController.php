@@ -1899,10 +1899,11 @@ class TestController extends BusinessBase
             $token = $token_info['access_token'];
             list($usec, $sec) = explode(' ', microtime());
             $cn_time = date('YmdHis', time()) . round($usec * 1000);
+            $id = str_pad($cn_time, 17, '0', STR_PAD_RIGHT) . str_pad(mt_rand(1, 999999), 15, '0', STR_PAD_RIGHT);
             $arr = [
                 'zipCode' => '0',
                 'encryptCode' => '0',
-                'dataExchangeId' => $cn_time . '000000000000000',
+                'dataExchangeId' => $id,
                 'entCode' => '',
                 'content' => base64_encode(jsonEncode(['nsrmc' => $entName]))
             ];
