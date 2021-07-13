@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\RedisPool\Redis;
 use wanghanwanghan\someUtils\control;
+use function Composer\Autoload\includeFile;
 
 class ProvideBase extends Index
 {
@@ -163,9 +164,11 @@ class ProvideBase extends Index
 
         $requestData = array_merge($raw, $form);
 
-        (isset($requestData['pageSize']) && $requestData['pageSize'] > 10) ?
-            $requestData['pageSize'] = 10 :
-            $requestData['pageSize'] = $requestData['pageSize'] - 0;
+        if (isset($requestData['pageSize'])) {
+            $requestData['pageSize'] > 10 ?
+                $requestData['pageSize'] = 10 :
+                $requestData['pageSize'] = $requestData['pageSize'] - 0;
+        }
 
         $this->requestData = $requestData;
 
