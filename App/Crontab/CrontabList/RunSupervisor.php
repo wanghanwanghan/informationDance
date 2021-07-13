@@ -1519,6 +1519,15 @@ class RunSupervisor extends AbstractCronTask
 
                 if ($check) continue;
 
+                $detail = (new TaoShuService())->setCheckRespFlag(true)
+                    ->post(['rowKey' => $one['ROWKEY']], 'getChattelMortgageDetailInfo');
+
+                ($detail['code'] == 200 && !empty($detail['result'])) ?
+                    $detail = $detail['result'] :
+                    $detail = null;
+
+                $one['detail'] = $detail;
+
                 strlen($one['DJRQ']) > 9 ? $time = $one['DJRQ'] : $time = '';
 
                 $content = "<p>登记编号: {$one['DJBH']}</p>";
@@ -1598,6 +1607,15 @@ class RunSupervisor extends AbstractCronTask
                 $check = SupervisorEntNameInfo::create()->where('keyNo', $one['ROWKEY'])->get();
 
                 if ($check) continue;
+
+                $detail = (new TaoShuService())->setCheckRespFlag(true)
+                    ->post(['rowKey' => $one['ROWKEY']], 'getEquityPledgedDetailInfo');
+
+                ($detail['code'] == 200 && !empty($detail['result'])) ?
+                    $detail = $detail['result'] :
+                    $detail = null;
+
+                $one['detail'] = $detail;
 
                 strlen($one['GSRQ']) > 9 ? $time = $one['GSRQ'] : $time = '';
 

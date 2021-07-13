@@ -820,6 +820,17 @@ class UserController extends UserBase
                                 $sourceDetail = $tmp;
                             }
                         }
+                        //企查查 - 失信信息
+                        if (isset($sourceDetail['Yiwu']) && !empty(trim($sourceDetail['Yiwu']))) {
+                            $tmp = "义务:{$sourceDetail['Yiwu']}" . PHP_EOL;
+                            if (isset($sourceDetail['Executestatus']) && !empty(trim($sourceDetail['Executestatus']))) {
+                                $tmp .= "执行:{$sourceDetail['Executestatus']}" . PHP_EOL;
+                            }
+                            if (isset($sourceDetail['Actionremark']) && !empty(trim($sourceDetail['Actionremark']))) {
+                                $tmp .= "执行依据:{$sourceDetail['Actionremark']}" . PHP_EOL;
+                            }
+                            $sourceDetail = $tmp;
+                        }
                     }
                     $one['sourceDetail'] = $sourceDetail;
                     $one['created_at'] = date('Y-m-d', $one['created_at']);
