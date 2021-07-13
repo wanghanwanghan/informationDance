@@ -777,6 +777,18 @@ class LongXinController extends LongXinBase
             $postData['basic_regionid'] = "any:{$basic_regionid}";
         }
 
+        $basic_opscope = $this->request()->getRequestParam('basic_opscope') ?? '';
+        if (!empty(trim($basic_opscope))) {
+            $basic_opscope = trim($basic_opscope, ',');
+            $postData['basic_opscope'] = "any:{$basic_opscope}";
+        }
+
+        $jingying_vc_round = $this->request()->getRequestParam('jingying_vc_round') ?? '';
+        if (!empty(trim($jingying_vc_round))) {
+            $jingying_vc_round = trim($jingying_vc_round, ',');
+            $postData['jingying_vc_round'] = "any:{$jingying_vc_round}";
+        }
+
         $this->moduleNum = 53;
 
         $res = (new LongXinService())->superSearch($postData);
