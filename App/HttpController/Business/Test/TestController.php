@@ -1903,7 +1903,7 @@ class TestController extends BusinessBase
             $arr = [
                 'zipCode' => '0',
                 'encryptCode' => '0',
-                'dataExchangeId' => $id,
+                'dataExchangeId' => $id . '',
                 'entCode' => '',
                 'content' => base64_encode(jsonEncode(['nsrmc' => $entName]))
             ];
