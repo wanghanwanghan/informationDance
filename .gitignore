@@ -5,6 +5,4 @@ git.sh
 dev.php
 produce.php
 /vendor
-test.php
-temp.php
-tmp.php
+/Work
