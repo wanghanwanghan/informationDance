@@ -24,6 +24,7 @@ class TestController extends BusinessBase
 
     function test()
     {
+        return $this->writeJson();
         $arr = [
             '916211020639409728',
             '91620100MA743Y7T41',
