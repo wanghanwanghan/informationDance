@@ -80,7 +80,7 @@ class UserController extends UserBase
         //找出pidPhone的id
         try {
             $pid = User::create()->where('phone', $pidPhone)->get();
-            empty($pid) ? $pid = 0 : $pid = $pid->id;
+            empty($pid) ? $pid = 0 : $pid = $pid->getAttr('id');
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
         }
