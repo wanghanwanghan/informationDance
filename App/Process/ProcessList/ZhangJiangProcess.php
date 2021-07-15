@@ -23,7 +23,6 @@ class ZhangJiangProcess extends ProcessBase
 
         if ($dh = opendir(TEMP_FILE_PATH)) {
             while (false !== ($file = readdir($dh))) {
-                CommonService::getInstance()->log4PHP($file);
                 if (strpos($file, 'zip') !== false) {
                     $filename_arr = ZipService::getInstance()
                         ->unzip(TEMP_FILE_PATH . $file, TEMP_FILE_PATH);
