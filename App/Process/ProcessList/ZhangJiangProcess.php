@@ -8,36 +8,46 @@ use App\HttpController\Models\EntDb\EntDbModify;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\Zip\ZipService;
 use App\Process\ProcessBase;
-use Carbon\Carbon;
+use EasySwoole\Component\Timer;
 use Swoole\Process;
 use Swoole\Coroutine;
 
 class ZhangJiangProcess extends ProcessBase
 {
+    public $is_start = false;
+
     protected function run($arg)
     {
         //可以用来初始化
         parent::run($arg);
+
+        // 每隔 1 秒执行一次
+        Timer::getInstance()->loop(1000, function () {
+            if ($this->is_start) {
+                $this->is_start = false;
+                if ($dh = opendir(TEMP_FILE_PATH)) {
+                    while (false !== ($file = readdir($dh))) {
+                        if (strpos($file, 'zip') !== false) {
+                            $filename_arr = ZipService::getInstance()
+                                ->unzip(TEMP_FILE_PATH . $file, TEMP_FILE_PATH);
+                            if (!empty($filename_arr)) {
+                                $this->handleFileArr($filename_arr);
+                            }
+                        }
+                    }
+                }
+                closedir($dh);
+            }
+        });
     }
 
     protected function onPipeReadable(Process $process)
     {
         parent::onPipeReadable($process);
 
-        CommonService::getInstance()->log4PHP($process->read() . ' at ' . Carbon::now()->format('Y-m-d H:i:s'));
+        $data = $process->read();
 
-        if ($dh = opendir(TEMP_FILE_PATH)) {
-            while (false !== ($file = readdir($dh))) {
-                if (strpos($file, 'zip') !== false) {
-                    $filename_arr = ZipService::getInstance()
-                        ->unzip(TEMP_FILE_PATH . $file, TEMP_FILE_PATH);
-                    if (!empty($filename_arr)) {
-                        $this->handleFileArr($filename_arr);
-                    }
-                }
-            }
-        }
-        closedir($dh);
+        $this->is_start = true;
 
         return true;
     }
