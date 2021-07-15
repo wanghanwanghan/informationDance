@@ -26,9 +26,9 @@ class TestController extends BusinessBase
 
     function test()
     {
-        ProcessService::getInstance()->sendToProcess('zhangjiang', 'go');
+        //ProcessService::getInstance()->sendToProcess('zhangjiang', 'go');
 
-        return $this->writeJson();
+        //return $this->writeJson();
 
         $arr = [
             '916211020639409728',
