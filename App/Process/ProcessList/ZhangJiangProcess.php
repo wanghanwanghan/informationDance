@@ -19,8 +19,6 @@ class ZhangJiangProcess extends ProcessBase
         //可以用来初始化
         parent::run($arg);
 
-        CommonService::getInstance()->log4PHP('zhangjiang start : ' . Carbon::now()->format('Y-m-d H:i:s'));
-
         if ($dh = opendir(TEMP_FILE_PATH)) {
             while (false !== ($file = readdir($dh))) {
                 if (strpos($file, 'zip') !== false) {
