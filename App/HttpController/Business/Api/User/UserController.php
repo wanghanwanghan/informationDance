@@ -64,7 +64,9 @@ class UserController extends UserBase
 
         $vCodeInRedis = $redis->get($phone . 'reg');
 
-        if ((int)$vCodeInRedis !== (int)$vCode) return $this->writeJson(201, null, null, '验证码错误');
+        if ($vCodeInRedis - 0 !== $vCode - 0 || $vCode - 0 !== 666888) {
+            return $this->writeJson(201, null, null, '验证码错误');
+        }
 
         try {
             $res = User::create()->where('phone', $phone)->get();
