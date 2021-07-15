@@ -25,18 +25,26 @@ class ZhangJiangProcess extends ProcessBase
         Timer::getInstance()->loop(1000, function () {
             if ($this->is_start) {
                 $this->is_start = false;
+                $zip_file_arr = [];
+                //获取zip
                 if ($dh = opendir(TEMP_FILE_PATH)) {
                     while (false !== ($file = readdir($dh))) {
-                        if (strpos($file, 'zip') !== false) {
-                            $filename_arr = ZipService::getInstance()
-                                ->unzip(TEMP_FILE_PATH . $file, TEMP_FILE_PATH);
-                            if (!empty($filename_arr)) {
-                                $this->handleFileArr($filename_arr);
-                            }
+                        if (false !== strpos($file, 'zip')) {
+                            array_push($zip_file_arr, $file);
                         }
                     }
                 }
                 closedir($dh);
+                //处理zip
+                foreach ($zip_file_arr as $file) {
+                    $filename_arr = ZipService::getInstance()
+                        ->unzip(TEMP_FILE_PATH . $file, TEMP_FILE_PATH);
+                    if (!empty($filename_arr)) {
+                        CommonService::getInstance()->log4PHP('==========读到的zip文件 ' . $file . ' ==========');
+                        $this->handleFileArr($filename_arr);
+                    }
+                }
+                CommonService::getInstance()->log4PHP('zip 全部处理完成');
             }
         });
     }
@@ -66,7 +74,7 @@ class ZhangJiangProcess extends ProcessBase
         }
         foreach ($filename_arr as $filename) {
             if (preg_match('/^inv_new_\d+/', $filename) || preg_match('/^股东及出资信息\(新增\)/', $filename)) {
-                $this->handleInvNew($this->readCsv($filename));
+                $this->handleInv($this->readCsv($filename));
             }
         }
         foreach ($filename_arr as $filename) {
@@ -148,64 +156,29 @@ class ZhangJiangProcess extends ProcessBase
 
     function handleInv($arr): void
     {
+        $add = 0;
         foreach ($arr as $key => $val) {
-            if ($key === 0) continue;
-            $insert = [
-                'ENTNAME' => $val[0],
-                'INV' => $val[1],
-                'SHXYDM' => $val[2],
-                'INVTYPE' => $val[3],
-                'SUBCONAM' => $val[4],
-                'CONCUR' => $val[5],
-                'CONRATIO' => $val[6],
-                'CONDATE' => $val[7],
-                'CHANGE_TYPE' => $val[8],
-            ];
-            if ($this->needContinue(__FUNCTION__, $insert)) continue;
-            $check = EntDbInv::create()->where([
-                'ENTNAME' => $val[0],
-                'INV' => $val[1],
-                'SHXYDM' => $val[2],
-            ])->get();
-            try {
-                if (empty($check)) {
-                    EntDbInv::create()->data($insert)->save();
-                } else {
-                    unset($insert['ENTNAME']);
-                    unset($insert['INV']);
-                    unset($insert['SHXYDM']);
-                    EntDbInv::create()->where([
-                        'ENTNAME' => $val[0],
-                        'INV' => $val[1],
-                        'SHXYDM' => $val[2],
-                    ])->update($insert);
-                }
-            } catch (\Throwable $e) {
-                $this->writeErr($e);
+            if ($key === 0) {
+                //傻逼数据格式不统一
+                current($val) === 'PROVINCE' ? $add = 1 : $add = 0;
+                continue;
             }
-        }
-    }
-
-    function handleInvNew($arr): void
-    {
-        foreach ($arr as $key => $val) {
-            if ($key === 0) continue;
             $insert = [
-                'ENTNAME' => $val[0],
-                'INV' => $val[1],
-                'SHXYDM' => $val[2],
-                'INVTYPE' => $val[3],
-                'SUBCONAM' => $val[4],
-                'CONCUR' => $val[5],
-                'CONRATIO' => $val[6],
-                'CONDATE' => $val[7],
-                'CHANGE_TYPE' => $val[8],
+                'ENTNAME' => $val[0 + $add],
+                'INV' => $val[1 + $add],
+                'SHXYDM' => $val[2 + $add],
+                'INVTYPE' => $val[3 + $add],
+                'SUBCONAM' => $val[4 + $add],
+                'CONCUR' => $val[5 + $add],
+                'CONRATIO' => $val[6 + $add],
+                'CONDATE' => $val[7 + $add],
+                'CHANGE_TYPE' => $val[8 + $add],
             ];
             if ($this->needContinue(__FUNCTION__, $insert)) continue;
             $check = EntDbInv::create()->where([
-                'ENTNAME' => $val[0],
-                'INV' => $val[1],
-                'SHXYDM' => $val[2],
+                'ENTNAME' => $val[0 + $add],
+                'INV' => $val[1 + $add],
+                'SHXYDM' => $val[2 + $add],
             ])->get();
             try {
                 if (empty($check)) {
@@ -215,9 +188,9 @@ class ZhangJiangProcess extends ProcessBase
                     unset($insert['INV']);
                     unset($insert['SHXYDM']);
                     EntDbInv::create()->where([
-                        'ENTNAME' => $val[0],
-                        'INV' => $val[1],
-                        'SHXYDM' => $val[2],
+                        'ENTNAME' => $val[0 + $add],
+                        'INV' => $val[1 + $add],
+                        'SHXYDM' => $val[2 + $add],
                     ])->update($insert);
                 }
             } catch (\Throwable $e) {

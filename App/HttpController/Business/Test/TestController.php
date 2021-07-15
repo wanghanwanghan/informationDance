@@ -29,6 +29,7 @@ class TestController extends BusinessBase
         ProcessService::getInstance()->sendToProcess('zhangjiang', 'go');
 
         return $this->writeJson();
+
         $arr = [
             '916211020639409728',
             '91620100MA743Y7T41',
@@ -1894,6 +1895,9 @@ class TestController extends BusinessBase
                 continue;
             }
             $entName = $getRegisterInfo['result']['Name'];
+            $status = $getRegisterInfo['result']['Status'];
+            $esData = $getRegisterInfo['result']['StartDate'];
+            $cDate = $getRegisterInfo['result']['CheckDate'];
             //=====getRegisterInfo=====getRegisterInfo=====getRegisterInfo=====getRegisterInfo=====
             $token_info = (new CoHttpClient())
                 ->useCache(false)
@@ -1926,7 +1930,11 @@ class TestController extends BusinessBase
                 continue;
             }
             $content = base64_decode($info['content']);
-            file_put_contents(LOG_PATH . 'ent.log', $content . PHP_EOL, FILE_APPEND | LOCK_EX);
+            $content = jsonDecode($content);
+            $content['data']['status'] = $status;
+            $content['data']['start'] = $esData;
+            $content['data']['check'] = $cDate;
+            file_put_contents(LOG_PATH . 'ent.log', jsonEncode($content) . PHP_EOL, FILE_APPEND | LOCK_EX);
         }
     }
 
