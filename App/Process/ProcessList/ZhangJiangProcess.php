@@ -8,6 +8,7 @@ use App\HttpController\Models\EntDb\EntDbModify;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\Zip\ZipService;
 use App\Process\ProcessBase;
+use Carbon\Carbon;
 use Swoole\Process;
 use Swoole\Coroutine;
 
@@ -18,8 +19,11 @@ class ZhangJiangProcess extends ProcessBase
         //可以用来初始化
         parent::run($arg);
 
+        CommonService::getInstance()->log4PHP('zhangjiang start : ' . Carbon::now()->format('Y-m-d H:i:s'));
+
         if ($dh = opendir(TEMP_FILE_PATH)) {
             while (false !== ($file = readdir($dh))) {
+                CommonService::getInstance()->log4PHP($file);
                 if (strpos($file, 'zip') !== false) {
                     $filename_arr = ZipService::getInstance()
                         ->unzip(TEMP_FILE_PATH . $file, TEMP_FILE_PATH);
