@@ -18,6 +18,11 @@ class ZhangJiangProcess extends ProcessBase
     {
         //可以用来初始化
         parent::run($arg);
+    }
+
+    protected function onPipeReadable(Process $process)
+    {
+        parent::onPipeReadable($process);
 
         if ($dh = opendir(TEMP_FILE_PATH)) {
             while (false !== ($file = readdir($dh))) {
@@ -31,22 +36,24 @@ class ZhangJiangProcess extends ProcessBase
             }
         }
         closedir($dh);
+
+        return true;
     }
 
     function handleFileArr($filename_arr): void
     {
         foreach ($filename_arr as $filename) {
-            if (preg_match('/^basic/', $filename) || preg_match('/企业基本信息\(变更\)/', $filename) || preg_match('/基本信息\(新增\)/', $filename)) {
+            if (preg_match('/^basic/', $filename) || preg_match('/^企业基本信息\(变更\)/', $filename) || preg_match('/^基本信息\(新增\)/', $filename)) {
                 $this->handleBasic($this->readCsv($filename));
             }
         }
         foreach ($filename_arr as $filename) {
-            if (preg_match('/^inv_\d+/', $filename) || preg_match('/股东及出资信息\(变更\)/', $filename)) {
+            if (preg_match('/^inv_\d+/', $filename) || preg_match('/^股东及出资信息\(变更\)/', $filename)) {
                 $this->handleInv($this->readCsv($filename));
             }
         }
         foreach ($filename_arr as $filename) {
-            if (preg_match('/^inv_new_\d+/', $filename) || preg_match('/股东及出资信息\(新增\)/', $filename)) {
+            if (preg_match('/^inv_new_\d+/', $filename) || preg_match('/^股东及出资信息\(新增\)/', $filename)) {
                 $this->handleInvNew($this->readCsv($filename));
             }
         }
@@ -56,7 +63,7 @@ class ZhangJiangProcess extends ProcessBase
             }
         }
         foreach ($filename_arr as $filename) {
-            if (preg_match('/^modify_\d+/', $filename) || preg_match('/企业变更信息/', $filename)) {
+            if (preg_match('/^modify_\d+/', $filename) || preg_match('/^企业变更信息/', $filename)) {
                 $this->handleModify($this->readCsv($filename));
             }
         }
@@ -255,13 +262,6 @@ class ZhangJiangProcess extends ProcessBase
         $msg = $e->getMessage();
         $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
         CommonService::getInstance()->log4PHP($content);
-    }
-
-    protected function onPipeReadable(Process $process)
-    {
-        parent::onPipeReadable($process);
-
-        return true;
     }
 
     protected function onShutDown()
