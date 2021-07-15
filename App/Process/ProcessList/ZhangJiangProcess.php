@@ -1,136 +1,35 @@
 <?php
 
-namespace App\Crontab\CrontabList;
+namespace App\Process\ProcessList;
 
-use App\Crontab\CrontabBase;
 use App\HttpController\Models\EntDb\EntDbBasic;
 use App\HttpController\Models\EntDb\EntDbInv;
 use App\HttpController\Models\EntDb\EntDbModify;
 use App\HttpController\Service\Common\CommonService;
-use App\HttpController\Service\HttpClient\CoHttpClient;
-use App\HttpController\Service\MoveOut\MoveOutService;
 use App\HttpController\Service\Zip\ZipService;
-use Carbon\Carbon;
-use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
+use App\Process\ProcessBase;
+use Swoole\Process;
+use Swoole\Coroutine;
 
-class MoveOut extends AbstractCronTask
+class ZhangJiangProcess extends ProcessBase
 {
-    private $crontabBase;
-
-    function __construct()
+    protected function run($arg)
     {
-        $this->crontabBase = new CrontabBase();
-    }
-
-    static function getRule(): string
-    {
-        //每7天的凌晨2点
-        //return '0 2 */7 * *';
-        //每天的凌晨3点
-        //return '0 3 * * *';
-
-        return '*/3 * * * *';
-    }
-
-    static function getTaskName(): string
-    {
-        return __CLASS__;
-    }
-
-    function run_backup(int $taskId, int $workerIndex): bool
-    {
-        //$workerIndex是task进程编号
-        //taskId是进程周期内第几个task任务
-        //可以用task，也可以用process
-
-        CommonService::getInstance()->log4PHP([
-            'move out start : ' . Carbon::now()->format('Y-m-d H:i:s')
-        ]);
-
-        if (!$this->crontabBase->withoutOverlapping(self::getTaskName())) {
-            CommonService::getInstance()->log4PHP(__CLASS__ . '不开始');
-            return true;
-        }
-
-        $target_time = Carbon::now()->subDays(1)->format('Ymd');
-
-        $sendHeaders['authorization'] = $this->createToken();
-
-        $data = [
-            'usercode' => 'j7uSz7ipmJ'
-        ];
-
-        $url = 'http://39.106.95.155/data/daily_ent_mrxd/?t=' . time();
-
-        $res = (new CoHttpClient())->send($url, $data, $sendHeaders);
-
-        if ($res['code'] - 0 === 200 && is_array($res['data']) && !empty($res['data'])) {
-            foreach ($res['data'] as $one) {
-                $state = $one['state'] - 0;
-                //返回错误
-                if ($state !== 1) continue;
-                $name = $one['name'];
-                //不是前一天的
-                if (strpos($name, $target_time) === false) continue;
-                $load_url = $one['load_url'];
-                $this->getFileByWget($load_url, TEMP_FILE_PATH, $name);
-                $filename_arr = ZipService::getInstance()->unzip(TEMP_FILE_PATH . $name, TEMP_FILE_PATH);
-                if (!empty($filename_arr)) $this->handleFileArr($filename_arr);
-            }
-        }
-
-        $this->delFileByCtime(TEMP_FILE_PATH, 5);
-
-        $this->crontabBase->removeOverlappingKey(self::getTaskName());
-
-        //更新所有监控中的企业
-        MoveOutService::getInstance()->updateDatabase();
-
-        CommonService::getInstance()->log4PHP([
-            'move out stop : ' . Carbon::now()->format('Y-m-d H:i:s')
-        ]);
-
-        return true;
-    }
-
-    function run(int $taskId, int $workerIndex): bool
-    {
-        CommonService::getInstance()->log4PHP([
-            'move out start : ' . Carbon::now()->format('Y-m-d H:i:s')
-        ]);
-
-        if (!$this->crontabBase->withoutOverlapping(self::getTaskName())) {
-            CommonService::getInstance()->log4PHP(__CLASS__ . '不开始');
-            return true;
-        }
+        //可以用来初始化
+        parent::run($arg);
 
         if ($dh = opendir(TEMP_FILE_PATH)) {
             while (false !== ($file = readdir($dh))) {
                 if (strpos($file, 'zip') !== false) {
                     $filename_arr = ZipService::getInstance()
                         ->unzip(TEMP_FILE_PATH . $file, TEMP_FILE_PATH);
-                    empty($filename_arr) ?: $this->handleFileArr($filename_arr);
+                    if (!empty($filename_arr)) {
+                        $this->handleFileArr($filename_arr);
+                    }
                 }
             }
         }
         closedir($dh);
-
-        $this->crontabBase->removeOverlappingKey(self::getTaskName());
-
-        CommonService::getInstance()->log4PHP([
-            'move out stop : ' . Carbon::now()->format('Y-m-d H:i:s')
-        ]);
-
-        return true;
-    }
-
-    function readCsv($filename): \Generator
-    {
-        $handle = fopen(TEMP_FILE_PATH . $filename, 'rb');
-        while (feof($handle) === false) {
-            yield fgetcsv($handle);
-        }
-        fclose($handle);
     }
 
     function handleFileArr($filename_arr): void
@@ -160,6 +59,16 @@ class MoveOut extends AbstractCronTask
                 $this->handleModify($this->readCsv($filename));
             }
         }
+    }
+
+    function readCsv($filename): \Generator
+    {
+        CommonService::getInstance()->log4PHP($filename, 'info', 'zhangjiang.log');
+        $handle = fopen(TEMP_FILE_PATH . $filename, 'rb');
+        while (feof($handle) === false) {
+            yield fgetcsv($handle);
+        }
+        fclose($handle);
     }
 
     function needContinue($handleName, $data): bool
@@ -338,72 +247,6 @@ class MoveOut extends AbstractCronTask
         }
     }
 
-    //删除n天前创建的文件
-    function delFileByCtime($dir, $n = 10, $ignore = []): bool
-    {
-        if (strpos($dir, 'informationDance') === false) return true;
-
-        $ignore = array_merge($ignore, ['.', '..', '.gitignore']);
-
-        if (is_dir($dir) && is_numeric($n)) {
-            if ($dh = opendir($dir)) {
-                while (false !== ($file = readdir($dh))) {
-                    if (!in_array($file, $ignore, true)) {
-                        $fullpath = $dir . $file;
-                        if (is_dir($fullpath)) {
-                            if (count(scandir($fullpath)) == 2) {
-                                //rmdir($fullpath);
-                                CommonService::getInstance()->log4PHP("rmdir {$fullpath}");
-                            } else {
-                                $this->delFileByCtime($fullpath, $n, $ignore);
-                            }
-                        } else {
-                            $filedate = filectime($fullpath);
-                            $day = round((time() - $filedate) / 86400);
-                            if ($day >= $n) {
-                                unlink($fullpath);
-                            }
-                        }
-                    }
-                }
-            }
-            closedir($dh);
-        }
-
-        return true;
-    }
-
-    function getFileByWget($url, $dir, $name, $ext = '.zip'): bool
-    {
-        $file_name = $dir . $name . $ext;
-        $commod = "wget -q {$url} -O {$file_name}";
-        system($commod);
-
-        //这里顺便给火眼发过去
-
-        return true;
-    }
-
-    function createToken()
-    {
-        $params = ['usercode' => 'j7uSz7ipmJ'];
-
-        $str = '';
-
-        ksort($params);
-
-        foreach ($params as $k => $val) {
-            $str .= $k . $val;
-        }
-
-        return hash_hmac('sha1', $str . 'j7uSz7ipmJ', 'EBjGihfGnxF');
-    }
-
-    function onException(\Throwable $throwable, int $taskId, int $workerIndex)
-    {
-        CommonService::getInstance()->log4PHP($throwable->getTraceAsString());
-    }
-
     function writeErr(\Throwable $e): void
     {
         $file = $e->getFile();
@@ -412,4 +255,22 @@ class MoveOut extends AbstractCronTask
         $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
         CommonService::getInstance()->log4PHP($content);
     }
+
+    protected function onPipeReadable(Process $process)
+    {
+        parent::onPipeReadable($process);
+
+        return true;
+    }
+
+    protected function onShutDown()
+    {
+    }
+
+    protected function onException(\Throwable $throwable, ...$args)
+    {
+        $this->writeErr($throwable);
+    }
+
+
 }

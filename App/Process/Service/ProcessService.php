@@ -6,7 +6,7 @@ use App\HttpController\Service\ServiceBase;
 use App\Process\ProcessList\ConsumeOcrProcess;
 use App\Process\ProcessList\Docx2Doc;
 use App\Process\ProcessList\TestProcess;
-use App\Process\ProcessList\WanBaoChuiProcess;
+use App\Process\ProcessList\ZhangJiangProcess;
 use EasySwoole\Component\Di;
 use EasySwoole\Component\Process\Config;
 use EasySwoole\Component\Process\Manager;
@@ -127,7 +127,7 @@ class ProcessService extends ServiceBase
     }
 
     //创建进程
-    private function wanbaochui($arg, $processNum): bool
+    private function zhangjiang($arg, $processNum): bool
     {
         //创建进程名
         $processName = __FUNCTION__;
@@ -145,7 +145,7 @@ class ProcessService extends ServiceBase
             $processConfig->setEnableCoroutine(true);//是否自动开启协程
             $processConfig->setMaxExitWaitTime(3);//最大退出等待时间
             //进ioc
-            Di::getInstance()->set($processName . $i, new WanBaoChuiProcess($processConfig));
+            Di::getInstance()->set($processName . $i, new ZhangJiangProcess($processConfig));
             //创建进程
             Manager::getInstance()->addProcess(Di::getInstance()->get($processName . $i));
             //

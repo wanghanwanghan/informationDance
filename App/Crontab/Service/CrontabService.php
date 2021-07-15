@@ -19,7 +19,7 @@ class CrontabService
         $this->createDeepReport();
         $this->deleteTimeoutOrder();
         $this->runSupervisor();
-        $this->runMoveOut();
+        //$this->runMoveOut();
 
         return true;
     }
