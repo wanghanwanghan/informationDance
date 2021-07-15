@@ -13,6 +13,7 @@ use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\MoveOut\MoveOutService;
 use App\HttpController\Service\QianQi\QianQiService;
 use App\HttpController\Service\TaoShu\TaoShuService;
+use EasySwoole\Component\Di;
 use EasySwoole\Pool\Manager;
 
 class TestController extends BusinessBase
@@ -24,6 +25,9 @@ class TestController extends BusinessBase
 
     function test()
     {
+        $customProcess = Di::getInstance()->get('zhangjiang0');
+        $customProcess->write('go');
+
         return $this->writeJson();
         $arr = [
             '916211020639409728',

@@ -24,6 +24,8 @@ class ZhangJiangProcess extends ProcessBase
     {
         parent::onPipeReadable($process);
 
+        CommonService::getInstance()->log4PHP($process->read() . ' at ' . Carbon::now()->format('Y-m-d H:i:s'));
+
         if ($dh = opendir(TEMP_FILE_PATH)) {
             while (false !== ($file = readdir($dh))) {
                 if (strpos($file, 'zip') !== false) {
