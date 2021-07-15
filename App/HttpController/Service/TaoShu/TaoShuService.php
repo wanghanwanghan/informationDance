@@ -149,7 +149,6 @@ class TaoShuService extends ServiceBase
 
     private function checkResp($res)
     {
-        CommonService::getInstance()->log4PHP($res);
         if (isset($res['PAGEINFO']) && isset($res['PAGEINFO']['TOTAL_COUNT']) && isset($res['PAGEINFO']['TOTAL_PAGE']) && isset($res['PAGEINFO']['CURRENT_PAGE'])) {
             $res['Paging'] = [
                 'page' => $res['PAGEINFO']['CURRENT_PAGE'],
