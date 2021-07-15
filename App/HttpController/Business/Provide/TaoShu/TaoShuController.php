@@ -99,14 +99,12 @@ class TaoShuController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    function getEntCaDistribution()
+    function getEntScore()
     {
-        $cityCode = $this->getRequestData('cityCode', '');
-        $industryCode = $this->getRequestData('industryCode', '');
+        $entName = $this->getRequestData('entName');
 
         $postData = [
-            'city' => $cityCode,
-            'dalei' => $industryCode,
+            'entName' => $entName,
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
@@ -114,7 +112,7 @@ class TaoShuController extends ProvideBase
                 CreateConf::getInstance()->getConf('taoshu.industryUid'),
                 CreateConf::getInstance()->getConf('taoshu.industryBaseUrl'),
                 implode(PHP_EOL, CreateConf::getInstance()->getConf('taoshu.industryPem'))
-            ))->setCheckRespFlag(true)->post($postData, 'getEntCaDistribution');
+            ))->setCheckRespFlag(true)->post($postData, 'getEntScore');
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
