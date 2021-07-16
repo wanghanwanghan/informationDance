@@ -36,6 +36,8 @@ class P extends AbstractProcess
 
         closedir($dh);
 
+        empty($zip_file_arr) || sort($zip_file_arr);
+
         //处理zip
         foreach ($zip_file_arr as $file) {
             $filename_arr = ZipService::getInstance()
