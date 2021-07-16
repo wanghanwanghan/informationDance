@@ -265,6 +265,16 @@ class P extends AbstractProcess
         $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
         CommonService::getInstance()->log4PHP($content);
     }
+
+    protected function onShutDown()
+    {
+        CommonService::getInstance()->log4PHP('onShutDown');
+    }
+
+    protected function onException(\Throwable $throwable, ...$args)
+    {
+        $this->writeErr($throwable);
+    }
 }
 
 CreateDefine::getInstance()->createDefine(__DIR__);
