@@ -42,6 +42,11 @@ class TaoShuTwoService extends ServiceBase
         $encrypt = base64_encode($encrypt);
         $result['key'] = $encrypt;
 
+        CommonService::getInstance()->log4PHP([
+            'enCode函数返回结果',
+            $result
+        ]);
+
         return $result;
     }
 
@@ -80,32 +85,18 @@ class TaoShuTwoService extends ServiceBase
             'useThisKey' => $this->useThisKey($body, $service)
         ];
 
-        CommonService::getInstance()->log4PHP([
-            'ac' => 'post之前',
-            'bc' => $p_arr,
-        ]);
-
         $data = (new CoHttpClient())->needJsonDecode(false)
+            ->useCache(false)
             ->send($this->url, $p_arr, $header, $options);
-
-        CommonService::getInstance()->log4PHP([
-            'ac' => 'post之后',
-            'bc' => $data,
-        ]);
 
         $data = urldecode($data);
 
         CommonService::getInstance()->log4PHP([
-            'ac' => 'urldecode之后',
-            'bc' => $data,
+            '返回结果',
+            $data
         ]);
 
         $rs = $this->deCode(json_decode($data), $this->taoshuPEM);
-
-        CommonService::getInstance()->log4PHP([
-            'ac' => 'deCode之后',
-            'bc' => $rs,
-        ]);
 
         $rs = jsonDecode($rs);
 
