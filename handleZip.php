@@ -41,7 +41,7 @@ class P extends AbstractProcess
             $filename_arr = ZipService::getInstance()
                 ->unzip(TEMP_FILE_PATH . $file, TEMP_FILE_PATH);
             if (!empty($filename_arr)) {
-                CommonService::getInstance()->log4PHP('==========读到的zip文件 ' . $file . ' ==========');
+                CommonService::getInstance()->log4PHP('读到的zip文件 ' . $file, 'info', 'zhangjiang.log');
                 //开始处理csv
                 $this->handleFileArr($filename_arr);
                 //删除对应的zip和csv
@@ -49,7 +49,7 @@ class P extends AbstractProcess
             }
         }
 
-        CommonService::getInstance()->log4PHP('zip 全部处理完成');
+        CommonService::getInstance()->log4PHP('zip 全部处理完成', 'info', 'zhangjiang.log');
     }
 
     function delFile($dir, $zip_name): bool
@@ -263,12 +263,12 @@ class P extends AbstractProcess
         $line = $e->getLine();
         $msg = $e->getMessage();
         $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
-        CommonService::getInstance()->log4PHP($content);
+        CommonService::getInstance()->log4PHP($content, 'info', 'zhangjiang.log');
     }
 
     protected function onShutDown()
     {
-        CommonService::getInstance()->log4PHP('onShutDown');
+        CommonService::getInstance()->log4PHP('onShutDown', 'info', 'zhangjiang.log');
     }
 
     protected function onException(\Throwable $throwable, ...$args)
