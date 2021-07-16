@@ -24,9 +24,9 @@ class P extends AbstractProcess
 {
     protected function run($arg)
     {
-
+        $res = EntDbBasic::create()->where('id', 10, '<')->all();
+        CommonService::getInstance()->log4PHP($res);
     }
-
 }
 
 CreateDefine::getInstance()->createDefine(__DIR__);
