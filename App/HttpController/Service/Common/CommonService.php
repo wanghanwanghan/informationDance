@@ -39,7 +39,8 @@ class CommonService extends ServiceBase
     //写log
     function log4PHP($content, $type = 'info', $filename = '')
     {
-        (!is_array($content) && !is_object($content)) ?: $content = json_encode($content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        (!is_array($content) && !is_object($content)) ?:
+            $content = json_encode($content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
         return control::writeLog($content, LOG_PATH, $type, $filename);
     }

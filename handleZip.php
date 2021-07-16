@@ -43,7 +43,7 @@ class P extends AbstractProcess
             $filename_arr = ZipService::getInstance()
                 ->unzip(TEMP_FILE_PATH . $file, TEMP_FILE_PATH);
             if (!empty($filename_arr)) {
-                CommonService::getInstance()->log4PHP('读到的zip文件 ' . $file, 'info', 'zhangjiang.log');
+                CommonService::getInstance()->log4PHP($file, 'info', 'zhangjiang.log');
                 //开始处理csv
                 $this->handleFileArr($filename_arr);
                 //删除对应的zip和csv
