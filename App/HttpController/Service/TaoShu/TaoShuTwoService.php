@@ -80,11 +80,32 @@ class TaoShuTwoService extends ServiceBase
             'useThisKey' => $this->useThisKey($body, $service)
         ];
 
-        $data = (new CoHttpClient())->needJsonDecode(false)->send($this->url, $p_arr, $header, $options, 'post');
+        CommonService::getInstance()->log4PHP([
+            'ac' => 'post之前',
+            'bc' => $p_arr,
+        ]);
+
+        $data = (new CoHttpClient())->needJsonDecode(false)
+            ->send($this->url, $p_arr, $header, $options);
+
+        CommonService::getInstance()->log4PHP([
+            'ac' => 'post之后',
+            'bc' => $data,
+        ]);
 
         $data = urldecode($data);
 
+        CommonService::getInstance()->log4PHP([
+            'ac' => 'urldecode之后',
+            'bc' => $data,
+        ]);
+
         $rs = $this->deCode(json_decode($data), $this->taoshuPEM);
+
+        CommonService::getInstance()->log4PHP([
+            'ac' => 'deCode之后',
+            'bc' => $rs,
+        ]);
 
         $rs = jsonDecode($rs);
 
