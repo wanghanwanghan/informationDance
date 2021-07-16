@@ -7,6 +7,7 @@ use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\TaoShu\TaoShuService;
+use App\HttpController\Service\TaoShu\TaoShuTwoService;
 
 class TaoShuController extends ProvideBase
 {
@@ -108,11 +109,9 @@ class TaoShuController extends ProvideBase
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new TaoShuService(
-                CreateConf::getInstance()->getConf('taoshu.industryUid'),
-                CreateConf::getInstance()->getConf('taoshu.industryBaseUrl'),
-                implode(PHP_EOL, CreateConf::getInstance()->getConf('taoshu.industryPem'))
-            ))->setCheckRespFlag(true)->post($postData, 'getEntScore');
+            return (new TaoShuTwoService())
+                ->setCheckRespFlag(true)
+                ->post($postData, 'getEntScore');
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
