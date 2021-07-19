@@ -75,5 +75,46 @@ class LongDunController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getProjectProductCheck()
+    {
+        $searchKey = $this->getRequestData('searchKey');
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
+
+        $postData = [
+            'searchKey' => $searchKey,
+            'pageIndex' => $page,
+            'pageSize' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get($this->ldListUrl . 'ProjectProductCheck/GetList', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function getCompatProductRecommend()
+    {
+        $id = $this->getRequestData('id');
+
+        $postData = [
+            'id' => $id,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get($this->ldListUrl . 'CompatProductRecommend/GetList', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
 
 }
