@@ -33,7 +33,7 @@ class HuoYanBase extends Index
                 'result' => $format === true ? control::changeArrVal($result, ['', null], '--', true) : $result,
                 'msg' => $msg
             ];
-            $this->response()->write(json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+            $this->response()->write(jsonEncode($data, false));
             $this->response()->withHeader('Content-type', 'application/json;charset=utf-8');
             $this->response()->withStatus($statusCode);
             return true;

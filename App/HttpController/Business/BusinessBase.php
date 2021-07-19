@@ -69,7 +69,7 @@ class BusinessBase extends Index
                 'msg' => $msg,
                 'ext' => $ext
             ];
-            $this->response()->write(json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+            $this->response()->write(jsonEncode($data, false));
             $this->response()->withHeader('Content-type', 'application/json;charset=utf-8');
             $this->response()->withStatus($statusCode);
             return true;

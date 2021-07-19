@@ -84,14 +84,14 @@ class ProvideBase extends Index
                 'requestIp' => $this->requestRealIp,
                 'requestId' => $this->requestId,
                 'requestUrl' => mb_substr($this->requestUrl, 0, 256),
-                'requestData' => json_encode($this->requestData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                'requestData' => jsonEncode($this->requestData, false),
                 'responseCode' => $this->responseCode,
-                'responseData' => json_encode($this->responseData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                'responseData' => jsonEncode($this->responseData, false),
                 'spendTime' => $this->spendTime,
                 'spendMoney' => $this->spendMoney,
             ])->save();
             //减金额
-            $this->spendMoney < 0 || RequestUserInfo::create()->where('id', $this->userId)->update([
+            $this->spendMoney <= 0 || RequestUserInfo::create()->where('id', $this->userId)->update([
                 'money' => QueryBuilder::dec($this->spendMoney)
             ]);
         } catch (\Throwable $e) {
@@ -131,7 +131,7 @@ class ProvideBase extends Index
                 'msg' => $msg,
                 'info' => $info,
             ];
-            $this->response()->write(json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+            $this->response()->write(jsonEncode($data, false));
             $this->response()->withHeader('Content-type', 'application/json;charset=utf-8');
             $this->response()->withStatus($statusCode);
             $this->alreadyWriteJson = true;

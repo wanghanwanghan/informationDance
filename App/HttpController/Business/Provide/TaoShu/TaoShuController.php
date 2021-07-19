@@ -135,7 +135,7 @@ class TaoShuController extends ProvideBase
 
         $postData = [
             'keyword' => $entName,
-            'level' => $level - 0 > 3 ? '3' : $level,
+            'level' => $level - 0 > 3 ? '3' : $level . '',
             'nodeType' => $nodeType,
             'attIds' => $attIds,
         ];
