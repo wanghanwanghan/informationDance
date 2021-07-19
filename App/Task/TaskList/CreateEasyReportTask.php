@@ -819,7 +819,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->setValue('ENTSTATUS', $this->formatTo($data['GetBasicDetailsByName']['Status']));
         //营业期限
         $docObj->setValue('OPFROM', $this->formatDate($data['GetBasicDetailsByName']['TermStart']));
-        $docObj->setValue('ENDDATE', $this->formatDate($data['GetBasicDetailsByName']['TeamEnd']));
+        $docObj->setValue('ENDDATE', $this->formatDate($data['GetBasicDetailsByName']['TeamEnd']) === '--' ?
+            '无固定期限' :
+            $this->formatDate($data['GetBasicDetailsByName']['TeamEnd']));
         //所属行业
         $docObj->setValue('INDUSTRY', $this->formatTo($data['getRegisterInfo']['INDUSTRY']));
         //经营范围
