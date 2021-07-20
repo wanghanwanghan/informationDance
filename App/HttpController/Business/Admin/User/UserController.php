@@ -76,10 +76,7 @@ class UserController extends UserBase
 
         $info = User::create()->where('phone', $phone)->get();
 
-        if (!empty($info)) return $this->writeJson(201, null, null, '手机号已注册');
-
-        if ($actionType === 'insert') {
-            $info = User::create()->where('phone', $phone)->get();
+        if ($actionType === 'update') {
             if (empty($info)) return $this->writeJson(201, null, null, '用户不存在');
             $info->update([
                 'phone' => $phone,
@@ -88,11 +85,11 @@ class UserController extends UserBase
                 'company' => $company,
                 'email' => $email,
             ]);
-
             Wallet::create()
                 ->where('phone', $phone)
                 ->update(['money' => $money]);
         } else {
+            if (!empty($info)) return $this->writeJson(201, null, null, '手机号已注册');
             User::create()->data([
                 'phone' => $phone,
                 'username' => $username,
@@ -100,7 +97,6 @@ class UserController extends UserBase
                 'company' => $company,
                 'email' => $email,
             ])->save();
-
             Wallet::create()->data([
                 'phone' => $phone,
                 'money' => $money,
