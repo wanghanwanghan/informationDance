@@ -449,9 +449,9 @@ class LongXinController extends LongXinBase
                         } else {
                             $VENDINC_s = 98;
                         }
-                        if ($yearKey == 2017) $VENDINC += $VENDINC_s * 0.1;
-                        if ($yearKey == 2018) $VENDINC += $VENDINC_s * 0.3;
-                        if ($yearKey == 2019) $VENDINC += $VENDINC_s * 0.6;
+                        if ($yearKey == $beginYear - 2) $VENDINC += $VENDINC_s * 0.1;
+                        if ($yearKey == $beginYear - 1) $VENDINC += $VENDINC_s * 0.3;
+                        if ($yearKey == $beginYear - 0) $VENDINC += $VENDINC_s * 0.6;
                         //==========================企业成长性状况==========================
                         if ($fieldArr['VENDINC_yoy'] <= -50) {
                             $VENDINC_yoy_s = 4;
