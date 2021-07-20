@@ -347,7 +347,7 @@ class LongXinController extends LongXinBase
         }
 
         $code = '';
-        $beginYear = 2020;
+        $beginYear = date('Y') - 1;
         $dataCount = 3;
         $ready = [];
 

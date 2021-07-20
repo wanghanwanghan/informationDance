@@ -62,6 +62,7 @@ class UserController extends UserBase
     //添加用户
     function addUser()
     {
+        $actionType = $this->getRequestData('actionType');
         $phone = $this->getRequestData('phone');
         $username = $this->getRequestData('username');
         $password = $this->getRequestData('password');
@@ -77,18 +78,34 @@ class UserController extends UserBase
 
         if (!empty($info)) return $this->writeJson(201, null, null, '手机号已注册');
 
-        User::create()->data([
-            'phone' => $phone,
-            'username' => $username,
-            'password' => $password,
-            'company' => $company,
-            'email' => $email,
-        ])->save();
+        if ($actionType === 'insert') {
+            $info = User::create()->where('phone', $phone)->get();
+            if (empty($info)) return $this->writeJson(201, null, null, '用户不存在');
+            $info->update([
+                'phone' => $phone,
+                'username' => $username,
+                'password' => $password,
+                'company' => $company,
+                'email' => $email,
+            ]);
 
-        Wallet::create()->data([
-            'phone' => $phone,
-            'money' => $money,
-        ])->save();
+            Wallet::create()
+                ->where('phone', $phone)
+                ->update(['money' => $money]);
+        } else {
+            User::create()->data([
+                'phone' => $phone,
+                'username' => $username,
+                'password' => $password,
+                'company' => $company,
+                'email' => $email,
+            ])->save();
+
+            Wallet::create()->data([
+                'phone' => $phone,
+                'money' => $money,
+            ])->save();
+        }
 
         return $this->writeJson(200, null, null, '成功');
     }
