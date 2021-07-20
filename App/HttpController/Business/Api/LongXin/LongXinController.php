@@ -347,7 +347,7 @@ class LongXinController extends LongXinBase
         }
 
         $code = '';
-        $beginYear = 2019;
+        $beginYear = 2020;
         $dataCount = 3;
         $ready = [];
 
@@ -484,9 +484,9 @@ class LongXinController extends LongXinBase
                         } else {
                             $VENDINC_yoy_s = 97.5;
                         }
-                        if ($yearKey == 2017) $VENDINC_yoy += $VENDINC_yoy_s * 0.1;
-                        if ($yearKey == 2018) $VENDINC_yoy += $VENDINC_yoy_s * 0.3;
-                        if ($yearKey == 2019) $VENDINC_yoy += $VENDINC_yoy_s * 0.6;
+                        if ($yearKey == $beginYear - 2) $VENDINC_yoy += $VENDINC_yoy_s * 0.1;
+                        if ($yearKey == $beginYear - 1) $VENDINC_yoy += $VENDINC_yoy_s * 0.3;
+                        if ($yearKey == $beginYear - 0) $VENDINC_yoy += $VENDINC_yoy_s * 0.6;
                         //==========================企业盈利能力==========================
                         $num = round($fieldArr['NETINC'] / $fieldArr['MAIBUSINC'] * 100);
                         if ($num < 0) {
@@ -504,9 +504,9 @@ class LongXinController extends LongXinBase
                         } else {
                             $NETINCMAIBUSINC_s = 97;
                         }
-                        if ($yearKey == 2017) $NETINCMAIBUSINC += $NETINCMAIBUSINC_s * 0.1;
-                        if ($yearKey == 2018) $NETINCMAIBUSINC += $NETINCMAIBUSINC_s * 0.3;
-                        if ($yearKey == 2019) $NETINCMAIBUSINC += $NETINCMAIBUSINC_s * 0.6;
+                        if ($yearKey == $beginYear - 2) $NETINCMAIBUSINC += $NETINCMAIBUSINC_s * 0.1;
+                        if ($yearKey == $beginYear - 1) $NETINCMAIBUSINC += $NETINCMAIBUSINC_s * 0.3;
+                        if ($yearKey == $beginYear - 0) $NETINCMAIBUSINC += $NETINCMAIBUSINC_s * 0.6;
                         //==========================企业盈利可持续能力==========================
                         if ($fieldArr['PROGRO_yoy'] <= -50) {
                             $PROGRO_yoy_s = 4;
@@ -539,9 +539,9 @@ class LongXinController extends LongXinBase
                         } else {
                             $PROGRO_yoy_s = 97;
                         }
-                        if ($yearKey == 2017) $PROGRO_yoy += $PROGRO_yoy_s * 0.1;
-                        if ($yearKey == 2018) $PROGRO_yoy += $PROGRO_yoy_s * 0.3;
-                        if ($yearKey == 2019) $PROGRO_yoy += $PROGRO_yoy_s * 0.6;
+                        if ($yearKey == $beginYear - 2) $PROGRO_yoy += $PROGRO_yoy_s * 0.1;
+                        if ($yearKey == $beginYear - 1) $PROGRO_yoy += $PROGRO_yoy_s * 0.3;
+                        if ($yearKey == $beginYear - 0) $PROGRO_yoy += $PROGRO_yoy_s * 0.6;
                         //==========================企业资产规模状况==========================
                         if ($fieldArr['ASSGRO'] < 0) {
                             $ASSGRO_s = 9;
@@ -578,9 +578,9 @@ class LongXinController extends LongXinBase
                         } else {
                             $ASSGRO_s = 98;
                         }
-                        if ($yearKey == 2017) $ASSGRO += $ASSGRO_s * 0.1;
-                        if ($yearKey == 2018) $ASSGRO += $ASSGRO_s * 0.3;
-                        if ($yearKey == 2019) $ASSGRO += $ASSGRO_s * 0.6;
+                        if ($yearKey == $beginYear - 2) $ASSGRO += $ASSGRO_s * 0.1;
+                        if ($yearKey == $beginYear - 1) $ASSGRO += $ASSGRO_s * 0.3;
+                        if ($yearKey == $beginYear - 0) $ASSGRO += $ASSGRO_s * 0.6;
                         //==========================企业资产增长状况==========================
                         if ($fieldArr['ASSGRO_yoy'] <= -50) {
                             $ASSGRO_yoy_s = 4;
@@ -613,9 +613,9 @@ class LongXinController extends LongXinBase
                         } else {
                             $ASSGRO_yoy_s = 98;
                         }
-                        if ($yearKey == 2017) $ASSGRO_yoy += $ASSGRO_yoy_s * 0.1;
-                        if ($yearKey == 2018) $ASSGRO_yoy += $ASSGRO_yoy_s * 0.3;
-                        if ($yearKey == 2019) $ASSGRO_yoy += $ASSGRO_yoy_s * 0.6;
+                        if ($yearKey == $beginYear - 2) $ASSGRO_yoy += $ASSGRO_yoy_s * 0.1;
+                        if ($yearKey == $beginYear - 1) $ASSGRO_yoy += $ASSGRO_yoy_s * 0.3;
+                        if ($yearKey == $beginYear - 0) $ASSGRO_yoy += $ASSGRO_yoy_s * 0.6;
                     }
 
                     $ext[$entNameKey] = [

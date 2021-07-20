@@ -9,7 +9,7 @@ class CreateDefine extends ServiceBase
     use Singleton;
 
     //只能在mainServerCreate中用
-    public function createDefine($root)
+    public function createDefine($root): bool
     {
         //用来做str_replace的
         define('ROOT_PATH', $root);

@@ -11,10 +11,20 @@ class TestEvent extends EventBase
 
     private $eventList = [];
 
+    protected function initSet(...$args): void
+    {
+        parent::initSet(...$args);
+    }
+
+    protected function initHook(...$args): void
+    {
+        parent::initHook(...$args);
+    }
+
     //在框架的initialize事件中进行注册事件
     function set($key, $item)
     {
-        parent::initSet();
+        $this->initSet();
 
         if (is_callable($item)) {
             $this->eventList[] = $key;
@@ -33,7 +43,7 @@ class TestEvent extends EventBase
     //全局调用，执行事件
     function hook($event, ...$arg)
     {
-        parent::initHook();
+        $this->initHook();
 
         $call = $this->get($event);
 

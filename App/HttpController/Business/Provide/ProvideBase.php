@@ -215,7 +215,7 @@ class ProvideBase extends Index
             return false;
         }
 
-        $this->userId = $userInfo->id;
+        $this->userId = $userInfo->getAttr('id');
 
         try {
             $apiInfo = RequestApiInfo::create()->where('path', $this->requestUrl)->get();
@@ -223,7 +223,7 @@ class ProvideBase extends Index
                 $this->writeJson(607, null, null, '请求接口不存在');
                 return false;
             }
-            $this->provideApiId = $apiInfo->id;
+            $this->provideApiId = $apiInfo->getAttr('id');
             $relationshipCheck = RequestUserApiRelationship::create()
                 ->where([
                     'userId' => $this->userId,
@@ -235,7 +235,7 @@ class ProvideBase extends Index
                 return false;
             }
             $this->spendMoney = $relationshipCheck->price;
-            if ($userInfo->money < $this->spendMoney) {
+            if ($userInfo->getAttr('money') < $this->spendMoney) {
                 $this->writeJson(609, null, null, '余额不足');
                 return false;
             }
@@ -245,7 +245,7 @@ class ProvideBase extends Index
             return false;
         }
 
-        $appSecret = $userInfo->appSecret;
+        $appSecret = $userInfo->getAttr('appSecret');
         $createSign = substr(strtoupper(md5($appId . $appSecret . $time)), 0, 30);
 
         if ($sign !== $createSign) {
@@ -272,12 +272,12 @@ class ProvideBase extends Index
             return false;
         }
 
-        if ($userInfo->status !== 1) {
+        if ($userInfo->getAttr('status') !== 1) {
             $this->writeJson(612, null, null, 'appId不可用');
             return false;
         }
 
-        $allowIp = $userInfo->allowIp;
+        $allowIp = $userInfo->getAttr('allowIp');
 
         if (!empty($allowIp)) {
             if (array_search($this->requestRealIp, explode(',', $allowIp), true)) {

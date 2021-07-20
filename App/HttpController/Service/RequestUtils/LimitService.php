@@ -19,7 +19,7 @@ class LimitService extends ServiceBase
     private $db;
 
     //mainServerCreate中调用
-    function create()
+    function create(): bool
     {
         $this->maxNum = CreateConf::getInstance()->getConf('env.limitServiceMaxNum');
         $this->db = CreateConf::getInstance()->getConf('env.limitServiceCacheRedisDB');
@@ -52,7 +52,7 @@ class LimitService extends ServiceBase
     }
 
     //随机一个过期时间
-    private function random()
+    private function random(): int
     {
         return control::randNum(2) * 6;//两位数 10 - 99，过期时间最少60秒
     }

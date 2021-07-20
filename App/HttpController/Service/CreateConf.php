@@ -13,22 +13,17 @@ class CreateConf extends ServiceBase
     private $yaConf = [];
 
     //只在mainServerCreate调用
-    function create($dir)
+    function create($dir): bool
     {
         if ($this->isCreate) return true;
 
         $iniDir = $dir . DIRECTORY_SEPARATOR . 'Yaconf' . DIRECTORY_SEPARATOR;
 
-        if ($dh = opendir($iniDir))
-        {
-            while (($file = readdir($dh)) !== false)
-            {
-                if (strpos($file, '.ini') !== false)
-                {
+        if ($dh = opendir($iniDir)) {
+            while (($file = readdir($dh)) !== false) {
+                if (strpos($file, '.ini') !== false) {
                     $key = current(explode('.', $file));
-
-                    foreach (\Yaconf::get($key) as $k => $conf)
-                    {
+                    foreach (\Yaconf::get($key) as $k => $conf) {
                         $this->yaConf[$key][$k] = $conf;
                     }
                 }
@@ -45,7 +40,7 @@ class CreateConf extends ServiceBase
     //获取配置
     function getConf(string $path)
     {
-        $path = explode('.',$path);
+        $path = explode('.', $path);
 
         return isset($this->yaConf[reset($path)][end($path)]) ? $this->yaConf[reset($path)][end($path)] : null;
     }

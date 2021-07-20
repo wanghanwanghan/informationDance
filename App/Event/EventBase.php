@@ -7,13 +7,13 @@ use EasySwoole\Component\Container;
 class EventBase extends Container
 {
     //自定义的
-    function initSet(...$args)
+    protected function initSet(...$args): void
     {
-        return true;
+
     }
 
-    function initHook(...$args)
+    protected function initHook(...$args): void
     {
-        return true;
+
     }
 }
