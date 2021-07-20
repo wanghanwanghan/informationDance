@@ -51,7 +51,7 @@ class CoHttpClient extends ServiceBase
         try {
             //发送请求
             if ($method === 'POST') $data = $request->post($postData);
-            if ($method === 'POSTJSON') $data = $request->postJson(jsonEncode($postData));
+            if ($method === 'POSTJSON') $data = $request->postJson(is_string($postData) ? $postData : jsonEncode($postData));
             if ($method === 'GET') $data = $request->get();
             //整理结果
             $data = $data->getBody();

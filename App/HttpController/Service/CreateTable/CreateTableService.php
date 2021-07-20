@@ -710,5 +710,27 @@ class CreateTableService
         return 'ok';
     }
 
+    function label()
+    {
+        $name = CreateConf::getInstance()->getConf('env.mysqlDatabaseEntDb');
+
+        $sql = DDLBuilder::table(__FUNCTION__, function (Table $table) {
+            $table->setTableComment('企业标签表')->setTableEngine(Engine::INNODB)->setTableCharset(Character::UTF8MB4_GENERAL_CI);
+            $table->colInt('id', 11)->setIsAutoIncrement()->setIsUnsigned()->setIsPrimaryKey()->setColumnComment('主键');
+            $table->colVarChar('ENTNAME', 64)->setDefaultValue('')->setColumnComment('公司名称');
+            $table->colDecimal('REGCAP', 14, 2)->setIsUnsigned()->setDefaultValue(0.00)->setColumnComment('注册资本');
+            $table->colInt('created_at', 11)->setIsUnsigned()->setDefaultValue(0);
+            $table->colInt('updated_at', 11)->setIsUnsigned()->setDefaultValue(0);
+        });
+
+        $obj = Manager::getInstance()->get($name)->getObj();
+
+        $obj->rawQuery($sql);
+
+        Manager::getInstance()->get($name)->recycleObj($obj);
+
+        return 'ok';
+    }
+
 
 }
