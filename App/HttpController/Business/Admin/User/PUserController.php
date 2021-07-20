@@ -38,6 +38,7 @@ class PUserController extends UserBase
     //添加用户
     function addUser()
     {
+        $actionType = $this->getRequestData('actionType');
         $username = $this->getRequestData('username');
         $money = $this->getRequestData('money');
 
@@ -45,7 +46,14 @@ class PUserController extends UserBase
 
         $check = RequestUserInfo::create()->where('username', $username)->get();
 
-        if (empty($check)) {
+        if ($actionType === 'update') {
+            if (empty($check)) return $this->writeJson(201);
+            $check->update([
+                'username' => $username,
+                'money' => $money,
+            ]);
+        } else {
+            if (!empty($check)) return $this->writeJson(201);
             $appId = strtoupper(control::getUuid());
             $appSecret = substr(strtoupper(control::getUuid()), 5, 20);
             RequestUserInfo::create()->data([
