@@ -39,6 +39,7 @@ class PUserController extends UserBase
     function addUser()
     {
         $actionType = $this->getRequestData('actionType');
+        $user_id = $this->getRequestData('user_id');
         $username = $this->getRequestData('username');
         $money = $this->getRequestData('money');
 
