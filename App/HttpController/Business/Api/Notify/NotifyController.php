@@ -64,7 +64,7 @@ class NotifyController extends BusinessBase
 
             $PurchaseList = PurchaseList::create()->get($orderInfo->purchaseType);
 
-            $payMoney = $walletInfo->money + $this->exprAddMoney($PurchaseList->money);
+            $payMoney = $walletInfo->getAttr('money') + $this->exprAddMoney($PurchaseList->getAttr('money'));
 
             //给用户加余额
             $walletInfo->update(['money' => $payMoney]);
@@ -108,11 +108,11 @@ class NotifyController extends BusinessBase
             //支付成功
             $status = '已支付';
 
-            $walletInfo = Wallet::create()->where('phone', $orderInfo->phone)->get();
+            $walletInfo = Wallet::create()->where('phone', $orderInfo->getAttr('phone'))->get();
 
-            $PurchaseList = PurchaseList::create()->get($orderInfo->purchaseType);
+            $PurchaseList = PurchaseList::create()->get($orderInfo->getAttr('purchaseType'));
 
-            $payMoney = $walletInfo->money + $this->exprAddMoney($PurchaseList->money);
+            $payMoney = $walletInfo->getAttr('money') + $this->exprAddMoney($PurchaseList->getAttr('money'));
 
             //给用户加余额
             $walletInfo->update(['money' => $payMoney]);
@@ -176,11 +176,11 @@ class NotifyController extends BusinessBase
             //支付成功
             $status = '已支付';
 
-            $walletInfo = Wallet::create()->where('phone', $orderInfo->phone)->get();
+            $walletInfo = Wallet::create()->where('phone', $orderInfo->getAttr('phone'))->get();
 
-            $PurchaseList = PurchaseList::create()->get($orderInfo->purchaseType);
+            $PurchaseList = PurchaseList::create()->get($orderInfo->getAttr('purchaseType'));
 
-            $payMoney = $walletInfo->money + $this->exprAddMoney($PurchaseList->money);
+            $payMoney = $walletInfo->getAttr('money') + $this->exprAddMoney($PurchaseList->getAttr('money'));
 
             //给用户加余额
             $walletInfo->update(['money' => $payMoney]);
