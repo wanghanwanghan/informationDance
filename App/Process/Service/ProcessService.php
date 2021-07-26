@@ -13,7 +13,7 @@ class ProcessService extends ServiceBase
     use Singleton;
 
     //总共创建了几个进程 [进程名 => 数量] 数量是从0开始的，代表第一个进程
-    public $processNo = [];
+    private $processNo = [];
 
     //只能在mainServerCreate中用
     function create($class = '', $processName = '', $arg = ['foo' => 'bar'], $processNum = 1): bool
