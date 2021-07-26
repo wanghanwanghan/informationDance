@@ -29,29 +29,34 @@ class DeleteTimeoutOrder extends AbstractCronTask
         return __CLASS__;
     }
 
-    function run(int $taskId, int $workerIndex)
+    function run(int $taskId, int $workerIndex): bool
     {
         //$workerIndex是task进程编号
         //taskId是进程周期内第几个task任务
         //可以用task，也可以用process
 
+        if (!$this->crontabBase->withoutOverlapping(self::getTaskName())) {
+            CommonService::getInstance()->log4PHP(__CLASS__ . '不开始');
+            return true;
+        }
+
         try {
-
             $now = Carbon::now()->subDay()->timestamp;
-
             PurchaseInfo::create()->destroy(function (QueryBuilder $builder) use ($now) {
                 $builder->where('orderStatus', '待支付')->where('created_at', $now, '<');
             });
-
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP($e->getMessage());
         }
+
+        $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
         return true;
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
+        $this->crontabBase->removeOverlappingKey(self::getTaskName());
         CommonService::getInstance()->log4PHP($throwable->getMessage());
     }
 

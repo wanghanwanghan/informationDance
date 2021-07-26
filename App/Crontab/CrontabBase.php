@@ -2,11 +2,18 @@
 
 namespace App\Crontab;
 
-use App\HttpController\Service\Common\CommonService;
 use EasySwoole\RedisPool\Redis;
 
 class CrontabBase
 {
+    private $redis_db_num = 14;
+
+    function setRedisDbNum(int $num): CrontabBase
+    {
+        $this->redis_db_num = $num;
+        return $this;
+    }
+
     function withoutOverlapping($className, $ttl = 86400): bool
     {
         //返回true是可以执行，返回false是不能执行
@@ -16,16 +23,16 @@ class CrontabBase
 
         $redis = Redis::defer('redis');
 
-        $redis->select(14);
+        $redis->select($this->redis_db_num);
 
-        $status = $redis->setNx($name, 'isRun') ? true : false;
+        $status = (bool)$redis->setNx($name, 'isRun');
 
         $status === false ?: $redis->expire($name, $ttl);
 
         return $status;
     }
 
-    function removeOverlappingKey($className)
+    function removeOverlappingKey($className): bool
     {
         $name = explode("\\", $className);
 
@@ -33,9 +40,9 @@ class CrontabBase
 
         $redis = Redis::defer('redis');
 
-        $redis->select(14);
+        $redis->select($this->redis_db_num);
 
-        return $redis->del($name);
+        return !!$redis->del($name);
     }
 
 

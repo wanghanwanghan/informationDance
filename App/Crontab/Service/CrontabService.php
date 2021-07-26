@@ -25,25 +25,25 @@ class CrontabService
     }
 
     //生成深度报告
-    private function createDeepReport()
+    private function createDeepReport(): Crontab
     {
         return Crontab::getInstance()->addTask(CreateDeepReport::class);
     }
 
     //删除待支付订单
-    private function deleteTimeoutOrder()
+    private function deleteTimeoutOrder(): Crontab
     {
         return Crontab::getInstance()->addTask(DeleteTimeoutOrder::class);
     }
 
     //风险监控
-    private function runSupervisor()
+    private function runSupervisor(): Crontab
     {
         return Crontab::getInstance()->addTask(RunSupervisor::class);
     }
 
     //迁出
-    private function runMoveOut()
+    private function runMoveOut(): Crontab
     {
         return Crontab::getInstance()->addTask(MoveOut::class);
     }
