@@ -64,7 +64,7 @@ class EasySwooleEvent implements Event
         ProcessService::getInstance()->create('consumeOcr');
         //ProcessService::getInstance()->create('test');
         //ProcessService::getInstance()->create('zhangjiang');
-        ProcessService::getInstance()->create_new(test_new_create::class, 'test_new_create');
+        ProcessService::getInstance()->create_new(test_new_create::class, 'test_new_create', ['wanghan' => 'duanran'], 5);
 
         //注册定时任务
         CrontabService::getInstance()->create();
