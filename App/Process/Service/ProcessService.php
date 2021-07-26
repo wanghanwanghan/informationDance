@@ -24,9 +24,13 @@ class ProcessService extends ServiceBase
     //给进程发参数
     function sendToProcess(string $name, string $arg)
     {
-        try {
+        if (!is_numeric(substr($name, -1))) {
+            //随机一个进程
             mt_srand();
             $name .= mt_rand(0, $this->processNo[$name]);
+        }
+
+        try {
             $processService = Di::getInstance()->get($name);
             $process = $processService->getProcess($name);
             return $process->write($arg);
