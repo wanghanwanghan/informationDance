@@ -35,7 +35,7 @@ class ProcessService extends ServiceBase
         }
     }
 
-    //新 循环创建自定义进程
+    //循环创建自定义进程
     private function loopCreate($classPath, $processName, $processNum, $arg): ?bool
     {
         //创建进程名
