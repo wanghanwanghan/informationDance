@@ -55,6 +55,14 @@ class QueryList1 extends AbstractProcess
                 ->send($url, empty($data) ? '{}' : $data, [], [], 'postjson');
             echo "数据行数:" . count($res['content']) . ' $i:' . $i . PHP_EOL;
             foreach ($res['content'] as $one) {
+                $establishDate = $one['establishDate'];
+                $registerDate = $one['registerDate'];
+                if (is_numeric($establishDate) && strlen($establishDate) === 13) {
+                    $one['establishDate'] = $this->msecdate($establishDate);
+                }
+                if (is_numeric($registerDate) && strlen($registerDate) === 13) {
+                    $one['registerDate'] = $this->msecdate($registerDate);
+                }
                 $tmp = array_map(function ($row) {
                     return '|||' . str_replace(['，', ','], ' ', $row);
                 }, $one);
@@ -65,6 +73,13 @@ class QueryList1 extends AbstractProcess
         fclose($fp);
 
         var_dump('wan cheng');
+    }
+
+    function msecdate($time): string
+    {
+        $a = substr($time, 0, 10);
+        $b = substr($time, 10);
+        return date('Y-m-d H:i:s', $a) . '.' . $b;
     }
 
     function writeErr(\Throwable $e): void
