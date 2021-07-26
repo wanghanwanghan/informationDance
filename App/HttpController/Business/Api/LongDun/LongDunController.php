@@ -144,8 +144,8 @@ class LongDunController extends LongDunBase
 
         $postData = [
             'companyName' => $entName,
-            'percent' => $percent,
-            'mode' => $mode,
+            'percent' => $percent - 0,
+            'mode' => $mode - 0,
         ];
 
         $res = (new LongDunService())->get($this->baseUrl . 'Beneficiary/GetBeneficiary', $postData);
