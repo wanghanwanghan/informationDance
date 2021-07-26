@@ -3,10 +3,6 @@
 namespace App\Process\Service;
 
 use App\HttpController\Service\ServiceBase;
-use App\Process\ProcessList\ConsumeOcrProcess;
-use App\Process\ProcessList\Docx2Doc;
-use App\Process\ProcessList\TestProcess;
-use App\Process\ProcessList\ZhangJiangProcess;
 use EasySwoole\Component\Di;
 use EasySwoole\Component\Process\Config;
 use EasySwoole\Component\Process\Manager;
@@ -20,13 +16,7 @@ class ProcessService extends ServiceBase
     public $processNo = [];
 
     //只能在mainServerCreate中用
-    public function create($funcName = '', $arg = ['foo' => 'bar'], $processNum = 1): bool
-    {
-        return empty($funcName) ? false : $this->$funcName($arg, $processNum);
-    }
-
-    //只能在mainServerCreate中用
-    public function create_new($class = '', $funcName = '', $arg = ['foo' => 'bar'], $processNum = 1): bool
+    public function create($class = '', $funcName = '', $arg = ['foo' => 'bar'], $processNum = 1): bool
     {
         return empty($funcName) ? false : $this->$funcName($class, $funcName, $arg, $processNum);
     }
@@ -73,126 +63,16 @@ class ProcessService extends ServiceBase
         return true;
     }
 
-    //新 创建进程
-    private function test_new_create($classPath, $funcName, $arg, $processNum): bool
+    //创建进程
+    private function docx2doc($class, $funcName, $arg, $processNum): bool
     {
-        return $this->loopCreate($classPath, $funcName, $processNum, $arg);
+        return $this->loopCreate($class, $funcName, $arg, $processNum);
     }
 
     //创建进程
-    private function test($arg, $processNum): bool
+    private function consumeOcr($class, $funcName, $arg, $processNum): bool
     {
-        //创建进程名
-        $processName = __FUNCTION__;
-
-        $this->processNo[$processName] = -1;
-
-        //循环创建
-        for ($i = $processNum; $i--;) {
-            $processConfig = new Config();
-            $processConfig->setProcessName($processName . $i);//设置进程名称
-            $processConfig->setProcessGroup($processName . 'Group');//设置进程组
-            $processConfig->setArg($arg);//传参
-            $processConfig->setRedirectStdinStdout(false);//是否重定向标准io
-            $processConfig->setPipeType($processConfig::PIPE_TYPE_SOCK_DGRAM);//设置管道类型
-            $processConfig->setEnableCoroutine(true);//是否自动开启协程
-            $processConfig->setMaxExitWaitTime(3);//最大退出等待时间
-            //进ioc
-            Di::getInstance()->set($processName . $i, new TestProcess($processConfig));
-            //创建进程
-            Manager::getInstance()->addProcess(Di::getInstance()->get($processName . $i));
-            //
-            $this->processNo[$processName]++;
-        }
-
-        return true;
-    }
-
-    //创建进程
-    private function docx2doc($arg, $processNum): bool
-    {
-        //创建进程名
-        $processName = __FUNCTION__;
-
-        $this->processNo[$processName] = -1;
-
-        //循环创建
-        for ($i = $processNum; $i--;) {
-            $processConfig = new Config();
-            $processConfig->setProcessName($processName . $i);//设置进程名称
-            $processConfig->setProcessGroup($processName . 'Group');//设置进程组
-            $processConfig->setArg($arg);//传参
-            $processConfig->setRedirectStdinStdout(false);//是否重定向标准io
-            $processConfig->setPipeType($processConfig::PIPE_TYPE_SOCK_DGRAM);//设置管道类型
-            $processConfig->setEnableCoroutine(true);//是否自动开启协程
-            $processConfig->setMaxExitWaitTime(3);//最大退出等待时间
-            //进ioc
-            Di::getInstance()->set($processName . $i, new Docx2Doc($processConfig));
-            //创建进程
-            Manager::getInstance()->addProcess(Di::getInstance()->get($processName . $i));
-            //
-            $this->processNo[$processName]++;
-        }
-
-        return true;
-    }
-
-    //创建进程
-    private function consumeOcr($arg, $processNum): bool
-    {
-        //创建进程名
-        $processName = __FUNCTION__;
-
-        $this->processNo[$processName] = -1;
-
-        //循环创建
-        for ($i = $processNum; $i--;) {
-            $processConfig = new Config();
-            $processConfig->setProcessName($processName . $i);//设置进程名称
-            $processConfig->setProcessGroup($processName . 'Group');//设置进程组
-            $processConfig->setArg($arg);//传参
-            $processConfig->setRedirectStdinStdout(false);//是否重定向标准io
-            $processConfig->setPipeType($processConfig::PIPE_TYPE_SOCK_DGRAM);//设置管道类型
-            $processConfig->setEnableCoroutine(true);//是否自动开启协程
-            $processConfig->setMaxExitWaitTime(3);//最大退出等待时间
-            //进ioc
-            Di::getInstance()->set($processName . $i, new ConsumeOcrProcess($processConfig));
-            //创建进程
-            Manager::getInstance()->addProcess(Di::getInstance()->get($processName . $i));
-            //
-            $this->processNo[$processName]++;
-        }
-
-        return true;
-    }
-
-    //创建进程
-    private function zhangjiang($arg, $processNum): bool
-    {
-        //创建进程名
-        $processName = __FUNCTION__;
-
-        $this->processNo[$processName] = -1;
-
-        //循环创建
-        for ($i = $processNum; $i--;) {
-            $processConfig = new Config();
-            $processConfig->setProcessName($processName . $i);//设置进程名称
-            $processConfig->setProcessGroup($processName . 'Group');//设置进程组
-            $processConfig->setArg($arg);//传参
-            $processConfig->setRedirectStdinStdout(false);//是否重定向标准io
-            $processConfig->setPipeType($processConfig::PIPE_TYPE_SOCK_DGRAM);//设置管道类型
-            $processConfig->setEnableCoroutine(true);//是否自动开启协程
-            $processConfig->setMaxExitWaitTime(3);//最大退出等待时间
-            //进ioc
-            Di::getInstance()->set($processName . $i, new ZhangJiangProcess($processConfig));
-            //创建进程
-            Manager::getInstance()->addProcess(Di::getInstance()->get($processName . $i));
-            //
-            $this->processNo[$processName]++;
-        }
-
-        return true;
+        return $this->loopCreate($class, $funcName, $arg, $processNum);
     }
 
 

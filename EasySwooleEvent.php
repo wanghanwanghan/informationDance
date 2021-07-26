@@ -4,7 +4,6 @@ namespace EasySwoole\EasySwoole;
 
 use App\Crontab\Service\CrontabService;
 use App\Event\EventList\TestEvent;
-use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateDefine;
 use App\HttpController\Service\CreateMysqlOrm;
@@ -14,7 +13,8 @@ use App\HttpController\Service\CreateMysqlPoolForProjectDb;
 use App\HttpController\Service\CreateRedisPool;
 use App\HttpController\Service\CreateSessionHandler;
 use App\HttpController\Service\RequestUtils\LimitService;
-use App\Process\ProcessList\test_new_create;
+use App\Process\ProcessList\ConsumeOcrProcess;
+use App\Process\ProcessList\Docx2Doc;
 use App\Process\Service\ProcessService;
 use App\SwooleTable\Service\SwooleTableService;
 use EasySwoole\EasySwoole\Swoole\EventRegister;
@@ -60,10 +60,8 @@ class EasySwooleEvent implements Event
         LimitService::getInstance()->create();
 
         //注册自定义进程
-        ProcessService::getInstance()->create('docx2doc');
-        ProcessService::getInstance()->create('consumeOcr');
-        //ProcessService::getInstance()->create('test');
-        //ProcessService::getInstance()->create('zhangjiang');
+        ProcessService::getInstance()->create(Docx2Doc::class, 'docx2doc');
+        ProcessService::getInstance()->create(ConsumeOcrProcess::class, 'consumeOcr');
 
         //注册定时任务
         CrontabService::getInstance()->create();
