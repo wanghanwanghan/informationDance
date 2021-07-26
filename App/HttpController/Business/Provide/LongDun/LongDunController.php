@@ -39,6 +39,29 @@ class LongDunController extends ProvideBase
         return true;
     }
 
+    //实际控制人和控制路径
+    function getBeneficiary()
+    {
+        $entName = $this->request()->getRequestParam('entName');
+        $percent = $this->request()->getRequestParam('percent') ?? 0;
+        $mode = $this->request()->getRequestParam('mode') ?? 0;
+
+        $postData = [
+            'companyName' => $entName,
+            'percent' => $percent - 0,
+            'mode' => $mode - 0,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongDunService())->setCheckRespFlag(true)
+                ->get($this->ldListUrl . 'Beneficiary/GetBeneficiary', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
     function getIPOGuarantee()
     {
         $entName = $this->getRequestData('entName', '');

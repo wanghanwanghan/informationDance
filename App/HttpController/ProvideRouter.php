@@ -30,6 +30,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getIPOGuarantee', $prefix . 'getIPOGuarantee');
             $routeCollector->addRoute(['GET', 'POST'], '/getProjectProductCheck', $prefix . 'getProjectProductCheck');
             $routeCollector->addRoute(['GET', 'POST'], '/getCompatProductRecommend', $prefix . 'getCompatProductRecommend');
+            $routeCollector->addRoute(['GET', 'POST'], '/getBeneficiary', $prefix . 'getBeneficiary');
         });
 
         return true;
