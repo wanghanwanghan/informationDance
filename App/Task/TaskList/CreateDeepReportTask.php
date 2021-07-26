@@ -3880,7 +3880,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $postData = [
                 'companyName' => $this->entName,
                 'percent' => 0,
-                'mode' => 0,
+                'mode' => 2,
             ];
 
             $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'Beneficiary/GetBeneficiary', $postData);
