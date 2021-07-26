@@ -16,9 +16,9 @@ class ProcessService extends ServiceBase
     public $processNo = [];
 
     //只能在mainServerCreate中用
-    public function create($class = '', $funcName = '', $arg = ['foo' => 'bar'], $processNum = 1): bool
+    function create($class = '', $processName = '', $arg = ['foo' => 'bar'], $processNum = 1): bool
     {
-        return empty($funcName) ? false : $this->$funcName($class, $funcName, $arg, $processNum);
+        return $this->loopCreate($class, $processName, $arg, $processNum);
     }
 
     //给进程发参数
@@ -62,18 +62,5 @@ class ProcessService extends ServiceBase
 
         return true;
     }
-
-    //创建进程
-    private function docx2doc($class, $funcName, $arg, $processNum): bool
-    {
-        return $this->loopCreate($class, $funcName, $arg, $processNum);
-    }
-
-    //创建进程
-    private function consumeOcr($class, $funcName, $arg, $processNum): bool
-    {
-        return $this->loopCreate($class, $funcName, $arg, $processNum);
-    }
-
 
 }
