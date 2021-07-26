@@ -2,7 +2,6 @@
 
 namespace App\HttpController\Business\Api\LongDun;
 
-use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\Pay\ChargeService;
