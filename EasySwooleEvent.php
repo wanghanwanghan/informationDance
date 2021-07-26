@@ -14,6 +14,7 @@ use App\HttpController\Service\CreateMysqlPoolForProjectDb;
 use App\HttpController\Service\CreateRedisPool;
 use App\HttpController\Service\CreateSessionHandler;
 use App\HttpController\Service\RequestUtils\LimitService;
+use App\Process\ProcessList\test_new_create;
 use App\Process\Service\ProcessService;
 use App\SwooleTable\Service\SwooleTableService;
 use EasySwoole\EasySwoole\Swoole\EventRegister;
@@ -63,6 +64,7 @@ class EasySwooleEvent implements Event
         ProcessService::getInstance()->create('consumeOcr');
         //ProcessService::getInstance()->create('test');
         //ProcessService::getInstance()->create('zhangjiang');
+        ProcessService::getInstance()->create_new(test_new_create::class, 'test_new_create');
 
         //注册定时任务
         CrontabService::getInstance()->create();
