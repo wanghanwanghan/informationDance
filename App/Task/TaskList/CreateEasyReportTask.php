@@ -2745,7 +2745,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 'mode' => 0,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'Beneficiary/GetBeneficiary', $postData);
+            $res = (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get($this->ldUrl . 'Beneficiary/GetBeneficiary', $postData);
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 

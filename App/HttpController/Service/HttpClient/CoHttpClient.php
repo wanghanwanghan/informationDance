@@ -111,7 +111,7 @@ class CoHttpClient extends ServiceBase
 
         if (is_array($postData)) {
             foreach ($postData as $key => $val) {
-                if (in_array($key, $unsetTarget)) continue;
+                if (in_array($key, $unsetTarget, true)) continue;
                 $data[$key] = $val;
             }
             krsort($data);

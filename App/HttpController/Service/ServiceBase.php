@@ -57,7 +57,7 @@ class ServiceBase
     }
 
     //
-    function useThisKey($arr, $salt = '')
+    function useThisKey($arr, $salt = ''): string
     {
         ksort($arr);
 

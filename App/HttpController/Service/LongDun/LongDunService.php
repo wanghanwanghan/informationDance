@@ -26,7 +26,7 @@ class LongDunService extends ServiceBase
     }
 
     //龙盾全羁绊是get请求
-    function get($url, $body)
+    function get($url, $body, array $ext = [])
     {
         $time = time();
 
@@ -38,7 +38,7 @@ class LongDunService extends ServiceBase
 
         $url .= '?' . http_build_query($body);
 
-        $resp = (new CoHttpClient())->send($url, $body, $header, [], 'get');
+        $resp = (new CoHttpClient())->send($url, $body, $header, $ext, 'get');
 
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
@@ -46,24 +46,20 @@ class LongDunService extends ServiceBase
     //处理结果给信息controller
     private function checkResp($res)
     {
-        if (isset($res['Paging']) && !empty($res['Paging']))
-        {
-            $res['Paging']=control::changeArrKey($res['Paging'],[
-                'PageSize'=>'pageSize',
-                'PageIndex'=>'page',
-                'TotalRecords'=>'total'
+        if (isset($res['Paging']) && !empty($res['Paging'])) {
+            $res['Paging'] = control::changeArrKey($res['Paging'], [
+                'PageSize' => 'pageSize',
+                'PageIndex' => 'page',
+                'TotalRecords' => 'total'
             ]);
-        }else
-        {
-            $res['Paging']=null;
+        } else {
+            $res['Paging'] = null;
         }
 
-        if (isset($res['coHttpErr'])) return $this->createReturn(500,$res['Paging'],[],'co请求错误');
+        if (isset($res['coHttpErr'])) return $this->createReturn(500, $res['Paging'], [], 'co请求错误');
 
-        return $this->createReturn((int)$res['Status'],$res['Paging'],$res['Result'],$res['Message']);
+        return $this->createReturn((int)$res['Status'], $res['Paging'], $res['Result'], $res['Message']);
     }
-
-
 
 
 }
