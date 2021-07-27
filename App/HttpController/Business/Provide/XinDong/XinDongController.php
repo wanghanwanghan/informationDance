@@ -228,6 +228,7 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //超级搜索
     function superSearch()
     {
         $entName = $this->getRequestData('entName');
@@ -289,6 +290,15 @@ class XinDongController extends ProvideBase
 
         return $this->checkResponse($res);
     }
+
+    //物流搜索
+    function logisticsSearch()
+    {
+
+    }
+
+
+
 
 
 }

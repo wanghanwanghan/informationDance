@@ -172,4 +172,30 @@ class XinDongController extends XinDongBase
         return $this->checkResponse($result);
     }
 
+    //物流搜索
+    function logisticsSearch()
+    {
+        $pindex = $this->request()->getRequestParam('page') ?? 1;
+
+        !empty($pindex) ?: $pindex = 1;
+
+        $postData = [
+            'pindex' => $pindex - 1,
+            'basic_entname' => "any:物流",
+            'jingying_vc_round' => "any:普通货运",
+            'basic_nicid' => "any:G5430",
+            'basic_status' => "any:1",
+        ];
+
+        //# 企业状态
+        //ex02_dict = (('1', '在营'), ('2', '吊销'), ('3', '注销'), ('4', '迁出'), ('5', '撤销'), ('6', '临时(个体工商户使用)'), ('8', '停业'), ('9', '其他'), ('9_01', '撤销'), ('9_02', '待迁入'),
+        //             ('9_03', '经营期限届满'), ('9_04', '清算中'), ('9_05', '停业'), ('9_06', '拟注销'), ('9_07', '非正常户'), ('21', '吊销未注销'), ('22', '吊销已注销'), ('30', '正在注销'), ('!', '-'),)
+        //should 是 or   must 是 and   must_not 是not
+
+        $res = (new LongXinService())->superSearch($postData);
+
+        return $this->checkResponse($res);
+    }
+
+
 }

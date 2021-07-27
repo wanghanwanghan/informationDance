@@ -147,6 +147,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getNaCaoRegisterInfo', $prefix . 'getNaCaoRegisterInfo');//非企业信息
             $routeCollector->addRoute(['GET', 'POST'], '/getFeatures', $prefix . 'getFeatures');//二次特征分数
             $routeCollector->addRoute(['GET', 'POST'], '/industryTop', $prefix . 'industryTop');//行业top
+            $routeCollector->addRoute(['GET', 'POST'], '/logisticsSearch', $prefix . 'logisticsSearch');//物流搜索
         });
 
         return true;
@@ -351,6 +352,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceTemp', $prefix . 'getFinanceTemp');//仿企名片时的财务数据
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceTempMergeData', $prefix . 'getFinanceTempMergeData');//仿企名片时的财务数据
             $routeCollector->addRoute(['GET', 'POST'], '/superSearch', $prefix . 'superSearch');
+
         });
 
         return true;
