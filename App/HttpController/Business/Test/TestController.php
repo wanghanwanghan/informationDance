@@ -13,8 +13,10 @@ use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\MoveOut\MoveOutService;
 use App\HttpController\Service\QianQi\QianQiService;
 use App\HttpController\Service\TaoShu\TaoShuService;
+use App\SwooleTable\Service\SwooleTableService;
 use EasySwoole\Component\Di;
 use EasySwoole\Pool\Manager;
+use wanghanwanghan\someUtils\control;
 
 class TestController extends BusinessBase
 {
@@ -25,6 +27,25 @@ class TestController extends BusinessBase
 
     function test()
     {
+        $table = SwooleTableService::getInstance()->getTableByName('test_table');
+
+        if (!empty($table)) {
+            for ($i = 10; $i--;) {
+                $table->set($i, [
+                    'id' => $i + 10,
+                    'name' => control::randomUserName(),
+                    'price' => round($i + 10, 2)
+                ]);
+            }
+            foreach ($table as $row) {
+                CommonService::getInstance()->log4PHP($row);
+            }
+            CommonService::getInstance()->log4PHP(count($table));
+        } else {
+            CommonService::getInstance()->log4PHP('空的');
+        }
+
+
         return $this->writeJson();
 
         $arr = [
