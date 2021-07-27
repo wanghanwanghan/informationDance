@@ -96,7 +96,7 @@ class SwooleTableService extends SwooleTableBase
         return null;
     }
 
-    private function getTableByName(string $name): ?Table
+    function getTableByName(string $name): ?Table
     {
         foreach ($this->tableInfo as $oneTable) {
             if ($name === $oneTable['name']) {

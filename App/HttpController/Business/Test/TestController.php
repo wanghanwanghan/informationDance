@@ -27,26 +27,7 @@ class TestController extends BusinessBase
 
     function test()
     {
-        for ($i = 100; $i--;) {
-            $id = control::getUuid(8);
-            $kv = [
-                'id' => $i,
-                'name' => control::randomUserName(),
-                'price' => 8.88,
-            ];
-            SwooleTableService::getInstance()
-                ->updateOrCreate('test_table', $kv, $id);
-        }
-
-        $page = 1;
-        $res = SwooleTableService::getInstance()->getPaginate('test_table', $page, 5);
-        $arr[] = $res;
-
-        $page = 2;
-        $res = SwooleTableService::getInstance()->getPaginate('test_table', $page, 5);
-        $arr[] = $res;
-
-        return $this->writeJson(200, null, $arr);
+        return $this->writeJson(200);
 
         $arr = [
             '913201927770424021',
