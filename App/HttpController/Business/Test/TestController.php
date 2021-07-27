@@ -27,7 +27,7 @@ class TestController extends BusinessBase
 
     function test()
     {
-        for ($i = 10; $i--;) {
+        for ($i = 100; $i--;) {
             $id = control::getUuid(8);
             $kv = [
                 'id' => $i,
@@ -38,9 +38,15 @@ class TestController extends BusinessBase
                 ->updateOrCreate('test_table', $kv, $id);
         }
 
-        $res = SwooleTableService::getInstance()->getAll('test_table');
+        $page = 1;
+        $res = SwooleTableService::getInstance()->getPaginate('test_table', $page, 5);
+        $arr[] = $res;
 
-        return $this->writeJson(200, null, $res);
+        $page = 2;
+        $res = SwooleTableService::getInstance()->getPaginate('test_table', $page, 5);
+        $arr[] = $res;
+
+        return $this->writeJson(200, null, $arr);
 
         $arr = [
             '913201927770424021',
