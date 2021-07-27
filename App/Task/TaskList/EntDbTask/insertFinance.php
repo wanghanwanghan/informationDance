@@ -25,6 +25,21 @@ class insertFinance extends TaskBase implements TaskInterface
         return true;
     }
 
+    function isUpdated($arr): int
+    {
+        //只要一个是数字，就说明已经更新了
+        $target = [
+            'VENDINC', 'ASSGRO', 'MAIBUSINC', 'TOTEQU', 'RATGRO',
+            'PROGRO', 'NETINC', 'LIAGRO', 'so1',
+        ];
+        foreach ($arr as $key => $val) {
+            if (in_array($key, $target, true) && is_numeric($val)) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
     function run(int $taskId, int $workerIndex)
     {
         if (empty($this->entName) || empty($this->finance)) return true;
@@ -75,8 +90,12 @@ class insertFinance extends TaskBase implements TaskInterface
                         'unPaidSocialInsSo3' => (!isset($rd['unPaidSocialInsSo3']) || !is_numeric($rd['unPaidSocialInsSo3'])) ? null : $rd['unPaidSocialInsSo3'],
                         'unPaidSocialInsSo4' => (!isset($rd['unPaidSocialInsSo4']) || !is_numeric($rd['unPaidSocialInsSo4'])) ? null : $rd['unPaidSocialInsSo4'],
                         'unPaidSocialInsSo5' => (!isset($rd['unPaidSocialInsSo5']) || !is_numeric($rd['unPaidSocialInsSo5'])) ? null : $rd['unPaidSocialInsSo5'],
+                        'isUpdated' => $this->isUpdated($rd),
                     ])->save();
                 } else {
+                    if ($check->getAttr('isUpdated') - 0 === 1 || $this->isUpdated($rd) === 0) {
+                        continue;
+                    }
                     $check->update([
                         'VENDINC' => (!isset($rd['VENDINC']) || !is_numeric($rd['VENDINC'])) ? null : $rd['VENDINC'],
                         'ASSGRO' => (!isset($rd['ASSGRO']) || !is_numeric($rd['ASSGRO'])) ? null : $rd['ASSGRO'],
@@ -106,6 +125,7 @@ class insertFinance extends TaskBase implements TaskInterface
                         'unPaidSocialInsSo3' => (!isset($rd['unPaidSocialInsSo3']) || !is_numeric($rd['unPaidSocialInsSo3'])) ? null : $rd['unPaidSocialInsSo3'],
                         'unPaidSocialInsSo4' => (!isset($rd['unPaidSocialInsSo4']) || !is_numeric($rd['unPaidSocialInsSo4'])) ? null : $rd['unPaidSocialInsSo4'],
                         'unPaidSocialInsSo5' => (!isset($rd['unPaidSocialInsSo5']) || !is_numeric($rd['unPaidSocialInsSo5'])) ? null : $rd['unPaidSocialInsSo5'],
+                        'isUpdated' => $this->isUpdated($rd),
                     ]);
                 }
             }
