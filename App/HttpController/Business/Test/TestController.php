@@ -27,26 +27,20 @@ class TestController extends BusinessBase
 
     function test()
     {
-        $table = SwooleTableService::getInstance()->getTableByName('test_table');
-
-        if (!empty($table)) {
-            for ($i = 10; $i--;) {
-                $table->set($i, [
-                    'id' => $i + 10,
-                    'name' => control::randomUserName(),
-                    'price' => round($i + 10, 2)
-                ]);
-            }
-            foreach ($table as $row) {
-                CommonService::getInstance()->log4PHP($row);
-            }
-            CommonService::getInstance()->log4PHP(count($table));
-        } else {
-            CommonService::getInstance()->log4PHP('空的');
+        for ($i = 10; $i--;) {
+            $id = control::getUuid(8);
+            $kv = [
+                'id' => $i,
+                'name' => control::randomUserName(),
+                'price' => 8.88,
+            ];
+            SwooleTableService::getInstance()
+                ->updateOrCreate('test_table', $kv, $id);
         }
 
+        $res = SwooleTableService::getInstance()->getAll('test_table');
 
-        return $this->writeJson();
+        return $this->writeJson(200, null, $res);
 
         $arr = [
             '913201927770424021',
