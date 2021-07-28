@@ -93,15 +93,6 @@ class CoHttpClient extends ServiceBase
     {
         $key = $this->createKey($url, $postData, $options);
 
-        if (strpos($url, 'GetBeneficiary') !== false) {
-            CommonService::getInstance()->log4PHP([
-                'name' => 'GetBeneficiary',
-                'url' => $url,
-                'postData' => $postData,
-                'key' => $key,
-            ]);
-        }
-
         return Redis::invoke('redis', function (\EasySwoole\Redis\Redis $redis) use ($key) {
             $redis->select($this->db);
             return $redis->get($key);

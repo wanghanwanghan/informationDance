@@ -509,10 +509,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         if (!isset($data[0])) return 0;
 
-        //业务特征
-        $ywtz = (new xds())->cwScore($this->entName);
-
-        CommonService::getInstance()->log4PHP($ywtz);
+        CommonService::getInstance()->log4PHP($data);
 
         switch ($type) {
             case 'fz':
