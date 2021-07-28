@@ -178,7 +178,7 @@ class GuoPiaoService extends ServiceBase
             'orderNo' => $orderNo,
         ];
 
-        $api_path = 'http://api.zoomwant.com:50001/data/information/getAuthentication';
+        $api_path = 'http://api.enterkey.cn:9200/data/information/getAuthentication';
 
         $res = $this->readyToSend($api_path, $data, false, false);
 

@@ -208,7 +208,7 @@ class LongXinService extends ServiceBase
 
         $ANCHEYEAR = '';
         $temp = [];
-        for ($i = 2010; $i <= date('Y'); $i++) {
+        for ($i = 2013; $i <= date('Y'); $i++) {
             $ANCHEYEAR .= $i . ',';
             $temp[$i . ''] = null;
         }
