@@ -1,20 +1,17 @@
 <?php
 
-use App\HttpController\Models\EntDb\EntDbBasic;
-use App\HttpController\Models\EntDb\EntDbInv;
-use App\HttpController\Models\EntDb\EntDbModify;
+use QL\QueryList;
+use Swoole\Coroutine;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateMysqlOrm;
 use App\HttpController\Service\CreateMysqlPoolForEntDb;
 use App\HttpController\Service\CreateMysqlPoolForMinZuJiDiDb;
 use App\HttpController\Service\CreateMysqlPoolForProjectDb;
-use App\HttpController\Service\Zip\ZipService;
 use \EasySwoole\EasySwoole\Core;
 use App\HttpController\Service\CreateDefine;
 use App\HttpController\Service\Common\CommonService;
 use \EasySwoole\Component\Process\Config;
 use \EasySwoole\Component\Process\AbstractProcess;
-use Swoole\Coroutine;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 
 require_once './vendor/autoload.php';
@@ -25,6 +22,11 @@ Core::getInstance()->initialize();
 class QueryList1 extends AbstractProcess
 {
     protected function run($arg)
+    {
+        $this->ql_1();
+    }
+
+    function run_1()
     {
         $data = [
             'checkBeginDate' => '2011-01-01',
@@ -75,6 +77,69 @@ class QueryList1 extends AbstractProcess
         var_dump('wan cheng');
     }
 
+    function run_2()
+    {
+        $fp = fopen('simuprolist.csv', 'w+');
+        for ($i = 0; $i <= 2000; $i++) {
+            $rand = mt_rand(1, 100000);
+            $url = "https://gs.amac.org.cn/amac-infodisc/api/pof/fund?rand={$rand}&page={$i}&size=100";
+            $res = (new CoHttpClient())
+                ->useCache(false)
+                ->setCheckRespFlag(false)
+                ->send($url, empty($data) ? '{}' : $data, [], [], 'postjson');
+            echo $i . PHP_EOL;
+            if (empty($res['content'])) {
+                var_dump($res);
+                break;
+            }
+            foreach ($res['content'] as $one) {
+                fwrite($fp, implode('|||', [$one['url'], $one['managerUrl']]) . PHP_EOL);
+            }
+        }
+        fclose($fp);
+        var_dump('wan cheng');
+    }
+
+    function ql_1()
+    {
+        // https://gs.amac.org.cn/amac-infodisc/res/pof/fund/351000133588.html
+        $fp = fopen('simuprolist.csv', 'r');
+        $detail_fp = fopen('simuprodetail.csv', 'w+');
+        $detail_arr = [];
+        $i = 1;
+        while (feof($fp) === false) {
+            echo $i . PHP_EOL;
+            $row = fgets($fp);
+            $arr = explode('|||', $row);
+            $url = "https://gs.amac.org.cn/amac-infodisc/res/pof/fund/{$arr[0]}";
+            $wholePage = QueryList::getInstance()->get($url);
+            $table = $wholePage->find(".table-response>table")->eq(0);
+            // 采集表的每行内容
+            $tableRows = $table->find('tr')->map(function ($row) {
+                return $row->find('td')->texts()->all();
+            });
+            if (!empty($tableRows)) {
+                foreach ($tableRows as $key => $val) {
+                    $name = rtrim(trim($val[0]), ':');
+                    $content = trim($val[1]);
+                    $detail_arr[$name] = empty($content) ? '--' : $content;
+                }
+                fwrite($detail_fp, implode('|||', $detail_arr) . PHP_EOL);
+                $detail_arr = array_map(function () {
+                    return '';
+                }, $detail_arr);
+            }
+            $i++;
+        }
+        fclose($fp);
+        fclose($detail_fp);
+        $excel_head = array_map(function () {
+            return '';
+        }, $detail_arr);
+        var_dump($excel_head);
+        var_dump('ql_1 wan cheng');
+    }
+
     function msecdate($time): string
     {
         $a = substr($time, 0, 10);
@@ -110,13 +175,13 @@ CreateMysqlPoolForMinZuJiDiDb::getInstance()->createMysql();
 CreateMysqlOrm::getInstance()->createMysqlOrm();
 CreateMysqlOrm::getInstance()->createEntDbOrm();
 
-$conf = new Config();
-
-$conf->setEnableCoroutine(true);
-
-$process = new QueryList1($conf);
-
-$process->getProcess()->start();
+for ($i = 1; $i--;) {
+    $conf = new Config();
+    $conf->setArg(['foo' => $i]);
+    $conf->setEnableCoroutine(true);
+    $process = new QueryList1($conf);
+    $process->getProcess()->start();
+}
 
 while (Swoole\Process::wait(true)) {
     var_dump('exit eee');

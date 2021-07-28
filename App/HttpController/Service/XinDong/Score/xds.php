@@ -272,7 +272,7 @@ class xds
             ->get($this->ld . 'Beneficiary/GetBeneficiary', [
                 'companyName' => $entName,
                 'percent' => 0,
-                'mode' => 0,
+                'mode' => 2,
             ]);
 
         $temp = [];
@@ -1162,7 +1162,7 @@ class xds
             ->get($this->ld . 'Beneficiary/GetBeneficiary', [
                 'companyName' => $entName,
                 'percent' => 0,
-                'mode' => 0,
+                'mode' => 2,
             ]);
 
         $temp = [];

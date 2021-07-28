@@ -14,6 +14,7 @@ use App\HttpController\Service\Ocr\OcrService;
 use App\HttpController\Service\OneSaid\OneSaidService;
 use App\HttpController\Service\QianQi\QianQiService;
 use App\HttpController\Service\TaoShu\TaoShuService;
+use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\XinDong\XinDongService;
 use App\Process\Service\ProcessService;
 use App\Task\TaskBase;
@@ -508,12 +509,15 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         if (!isset($data[0])) return 0;
 
+        //业务特征
+        $ywtz = (new xds())->cwScore($this->entName);
+
+        CommonService::getInstance()->log4PHP($ywtz);
+
         switch ($type) {
             case 'fz':
-
                 //营业收入
                 $vendInc = $data[0]['VENDINC'];
-
                 if ($vendInc > 20) $vendIncNum = 110;
                 if ($vendInc > 10 && $vendInc <= 20) $vendIncNum = 100;
                 if ($vendInc > 5 && $vendInc <= 10) $vendIncNum = 90;
@@ -521,10 +525,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 if ($vendInc >= -10 && $vendInc <= -1) $vendIncNum = 70;
                 if ($vendInc >= -20 && $vendInc <= -11) $vendIncNum = 60;
                 if ($vendInc <= -21) $vendIncNum = 50;
-
                 //净利润
                 $netInc = $data[0]['NETINC'];
-
                 if ($netInc > 20) $netIncNum = 110;
                 if ($netInc > 10 && $netInc <= 20) $netIncNum = 100;
                 if ($netInc > 5 && $netInc <= 10) $netIncNum = 90;
@@ -532,10 +534,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 if ($netInc >= -10 && $netInc <= -1) $netIncNum = 70;
                 if ($netInc >= -20 && $netInc <= -11) $netIncNum = 60;
                 if ($netInc <= -21) $netIncNum = 50;
-
                 //资产总额
                 $assGro = $data[0]['ASSGRO'];
-
                 if ($assGro > 20) $assGroNum = 110;
                 if ($assGro > 10 && $assGro <= 20) $assGroNum = 100;
                 if ($assGro > 5 && $assGro <= 10) $assGroNum = 90;
@@ -543,47 +543,36 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 if ($assGro >= -10 && $assGro <= -1) $assGroNum = 70;
                 if ($assGro >= -20 && $assGro <= -11) $assGroNum = 60;
                 if ($assGro <= -21) $assGroNum = 50;
-
                 return ($vendIncNum + $netIncNum + $assGroNum) / 3;
-
             case 'fx':
-
                 //负债总额/资产总额=资产负债率
-
                 if (count($data) < 2) return 0;
-
                 //今年负债总额
                 $liaGro1 = $data[0]['LIAGRO'];
                 //今年资产总额
                 $assGro1 = $data[0]['ASSGRO'];
-
                 //今年资产负债率
                 if ($assGro1 == 0) {
                     $fuzhailv1 = 0;
                 } else {
                     $fuzhailv1 = ($liaGro1 / $assGro1) * 100;
                 }
-
                 //去年负债总额
                 $liaGro2 = $data[1]['LIAGRO'];
                 //去年资产总额
                 $assGro2 = $data[1]['ASSGRO'];
-
                 //今年资产负债率
                 if ($assGro2 == 0) {
                     $fuzhailv2 = 0;
                 } else {
                     $fuzhailv2 = ($liaGro2 / $assGro2) * 100;
                 }
-
                 $num = (abs($fuzhailv1) + abs($fuzhailv2)) / 2;
-
                 if ($num > 80) return 100;
                 if ($num > 50 && $num <= 80) return 90;
                 if ($num > 30 && $num <= 50) return 80;
                 if ($num > 10 && $num <= 30) return 70;
                 if ($num > 0 && $num <= 10) return 60;
-
                 break;
         }
 
