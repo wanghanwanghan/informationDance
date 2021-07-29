@@ -563,10 +563,6 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         } else {
             if (is_numeric($data[0]['PROGRO_yoy'])) {
                 $val = round($data[0]['PROGRO_yoy'] * 100);
-                CommonService::getInstance()->log4PHP([
-                    '利润同比计算前' => $data[0]['PROGRO_yoy'],
-                    '利润同比计算后' => $val
-                ]);
                 if ($val <= -50) {
                     $score = 4;
                 } elseif ($val >= -50 && $val <= -21) {
