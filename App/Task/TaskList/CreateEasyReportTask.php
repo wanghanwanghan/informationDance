@@ -564,40 +564,40 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             if (is_numeric($data[0]['PROGRO_yoy'])) {
                 $val = round($data[0]['PROGRO_yoy'] * 100);
                 if ($val <= -50) {
-                    $score = 4;
+                    $score = 97;
                 } elseif ($val >= -50 && $val <= -21) {
-                    $score = 8;
+                    $score = 94;
                 } elseif ($val >= -20 && $val <= -11) {
-                    $score = 11;
+                    $score = 92;
                 } elseif ($val >= -10 && $val <= -6) {
-                    $score = 16;
+                    $score = 85;
                 } elseif ($val >= -5 && $val <= 0) {
-                    $score = 21;
+                    $score = 72;
                 } elseif ($val >= 0 && $val <= 5) {
-                    $score = 26;
+                    $score = 56;
                 } elseif ($val >= 6 && $val <= 10) {
-                    $score = 31;
+                    $score = 42;
                 } elseif ($val >= 11 && $val <= 25) {
                     $score = 35;
                 } elseif ($val >= 26 && $val <= 30) {
-                    $score = 42;
+                    $score = 31;
                 } elseif ($val >= 31 && $val <= 50) {
-                    $score = 56;
+                    $score = 26;
                 } elseif ($val >= 51 && $val <= 70) {
-                    $score = 72;
+                    $score = 21;
                 } elseif ($val >= 71 && $val <= 100) {
-                    $score = 85;
+                    $score = 16;
                 } elseif ($val >= 101 && $val <= 200) {
-                    $score = 92;
+                    $score = 11;
                 } elseif ($val >= 201 && $val <= 500) {
-                    $score = 94;
+                    $score = 8;
                 } elseif ($val >= 500) {
-                    $score = 97;
-                } else {
                     $score = 4;
+                } else {
+                    $score = 97;
                 }
             } else {
-                $score = 4;
+                $score = 97;
             }
         }
 
