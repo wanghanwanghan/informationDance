@@ -938,22 +938,112 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     }
 
     //财务资产
-    private function cwzc($data, $type)
+    private function cwzc($data, $type): array
     {
-        if (!is_array($data)) return 0;
+        if (!is_array($data)) return [0, 0];
 
-        if (empty($data)) return 0;
+        if (empty($data)) return [0, 0];
 
         $data = array_values($data);
 
-        if (!isset($data[0])) return 0;
+        if (!isset($data[0])) return [0, 0];
+
+        if ($type === 'fz') {
+            if (is_numeric($data[0]['NETINC']) && is_numeric($data[0]['A_ASSGROL'])) {
+                $data[0]['A_ASSGROL'] == 0 ? $now = false : $now = round($data[0]['NETINC'] / $data[0]['A_ASSGROL'], 6);
+            } else {
+                $now = false;
+            }
+            if (is_numeric($data[1]['NETINC']) && is_numeric($data[1]['A_ASSGROL'])) {
+                $data[1]['A_ASSGROL'] == 0 ? $last = false : $last = round($data[1]['NETINC'] / $data[1]['A_ASSGROL'], 6);
+            } else {
+                $last = false;
+            }
+            if ($now === false || $last === false) {
+                $score = 4;
+            } else {
+                $val = round((($now - $last) / abs($last)) * 100);
+                if ($val <= -10) {
+                    $score = 4;
+                } elseif ($val >= -10 && $val <= -6) {
+                    $score = 8;
+                } elseif ($val >= -5 && $val <= -1) {
+                    $score = 11;
+                } elseif ($val >= -1 && $val <= 0) {
+                    $score = 16;
+                } elseif ($val >= 0 && $val <= 1.2) {
+                    $score = 26;
+                } elseif ($val >= 1.21 && $val <= 2.2) {
+                    $score = 31;
+                } elseif ($val >= 2.21 && $val <= 3.3) {
+                    $score = 35;
+                } elseif ($val >= 3.31 && $val <= 5.5) {
+                    $score = 42;
+                } elseif ($val >= 5.51 && $val <= 8.3) {
+                    $score = 56;
+                } elseif ($val >= 8.31 && $val <= 10.5) {
+                    $score = 72;
+                } elseif ($val >= 10.51 && $val <= 20) {
+                    $score = 85;
+                } elseif ($val >= 20.1 && $val <= 30) {
+                    $score = 92;
+                } elseif ($val >= 30.1 && $val <= 50) {
+                    $score = 93;
+                } elseif ($val >= 50.1 && $val <= 100) {
+                    $score = 94.5;
+                } elseif ($val >= 100.1 && $val <= 300) {
+                    $score = 97.5;
+                } elseif ($val >= 300) {
+                    $score = 99;
+                } else {
+                    $score = 4;
+                }
+            }
+        } else {
+            if (is_numeric($data[0]['PROGRO_yoy'])) {
+                $val = round($data[0]['PROGRO_yoy'] * 100);
+                if ($val <= -50) {
+                    $score = 97;
+                } elseif ($val >= -50 && $val <= -21) {
+                    $score = 94;
+                } elseif ($val >= -20 && $val <= -11) {
+                    $score = 92;
+                } elseif ($val >= -10 && $val <= -6) {
+                    $score = 85;
+                } elseif ($val >= -5 && $val <= 0) {
+                    $score = 72;
+                } elseif ($val >= 0 && $val <= 5) {
+                    $score = 56;
+                } elseif ($val >= 6 && $val <= 10) {
+                    $score = 42;
+                } elseif ($val >= 11 && $val <= 25) {
+                    $score = 35;
+                } elseif ($val >= 26 && $val <= 30) {
+                    $score = 31;
+                } elseif ($val >= 31 && $val <= 50) {
+                    $score = 26;
+                } elseif ($val >= 51 && $val <= 70) {
+                    $score = 21;
+                } elseif ($val >= 71 && $val <= 100) {
+                    $score = 16;
+                } elseif ($val >= 101 && $val <= 200) {
+                    $score = 11;
+                } elseif ($val >= 201 && $val <= 500) {
+                    $score = 8;
+                } elseif ($val >= 500) {
+                    $score = 4;
+                } else {
+                    $score = 97;
+                }
+            } else {
+                $score = 97;
+            }
+        }
 
         switch ($type) {
             case 'fz':
-
                 //营业收入
                 $vendInc = $data[0]['VENDINC'];
-
                 if ($vendInc > 20) $vendIncNum = 110;
                 if ($vendInc > 10 && $vendInc <= 20) $vendIncNum = 100;
                 if ($vendInc > 5 && $vendInc <= 10) $vendIncNum = 90;
@@ -961,10 +1051,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 if ($vendInc >= -10 && $vendInc <= -1) $vendIncNum = 70;
                 if ($vendInc >= -20 && $vendInc <= -11) $vendIncNum = 60;
                 if ($vendInc <= -21) $vendIncNum = 50;
-
                 //净利润
                 $netInc = $data[0]['NETINC'];
-
                 if ($netInc > 20) $netIncNum = 110;
                 if ($netInc > 10 && $netInc <= 20) $netIncNum = 100;
                 if ($netInc > 5 && $netInc <= 10) $netIncNum = 90;
@@ -972,10 +1060,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 if ($netInc >= -10 && $netInc <= -1) $netIncNum = 70;
                 if ($netInc >= -20 && $netInc <= -11) $netIncNum = 60;
                 if ($netInc <= -21) $netIncNum = 50;
-
                 //资产总额
                 $assGro = $data[0]['ASSGRO'];
-
                 if ($assGro > 20) $assGroNum = 110;
                 if ($assGro > 10 && $assGro <= 20) $assGroNum = 100;
                 if ($assGro > 5 && $assGro <= 10) $assGroNum = 90;
@@ -983,51 +1069,40 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 if ($assGro >= -10 && $assGro <= -1) $assGroNum = 70;
                 if ($assGro >= -20 && $assGro <= -11) $assGroNum = 60;
                 if ($assGro <= -21) $assGroNum = 50;
-
-                return ($vendIncNum + $netIncNum + $assGroNum) / 3;
-
+                return [($vendIncNum + $netIncNum + $assGroNum) / 3, $score];
             case 'fx':
-
                 //负债总额/资产总额=资产负债率
-
-                if (count($data) < 2) return 0;
-
+                if (count($data) < 2) return [0, 0];
                 //今年负债总额
                 $liaGro1 = $data[0]['LIAGRO'];
                 //今年资产总额
                 $assGro1 = $data[0]['ASSGRO'];
-
                 //今年资产负债率
                 if ($assGro1 == 0) {
                     $fuzhailv1 = 0;
                 } else {
                     $fuzhailv1 = ($liaGro1 / $assGro1) * 100;
                 }
-
                 //去年负债总额
                 $liaGro2 = $data[1]['LIAGRO'];
                 //去年资产总额
                 $assGro2 = $data[1]['ASSGRO'];
-
                 //今年资产负债率
                 if ($assGro2 == 0) {
                     $fuzhailv2 = 0;
                 } else {
                     $fuzhailv2 = ($liaGro2 / $assGro2) * 100;
                 }
-
                 $num = (abs($fuzhailv1) + abs($fuzhailv2)) / 2;
-
-                if ($num > 80) return 100;
-                if ($num > 50 && $num <= 80) return 90;
-                if ($num > 30 && $num <= 50) return 80;
-                if ($num > 10 && $num <= 30) return 70;
-                if ($num > 0 && $num <= 10) return 60;
-
+                if ($num > 80) return [100, $score];
+                if ($num > 50 && $num <= 80) return [90, $score];
+                if ($num > 30 && $num <= 50) return [80, $score];
+                if ($num > 10 && $num <= 30) return [70, $score];
+                if ($num > 0 && $num <= 10) return [60, $score];
                 break;
         }
 
-        return 0;
+        return [0, 0];
     }
 
     //招投标
