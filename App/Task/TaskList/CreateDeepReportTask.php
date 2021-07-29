@@ -671,7 +671,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //财务资产
         $c = $this->cwzc($data['FinanceData']['data'], 'fz');
         //计算
-        $this->fz['caiwu'] = $c * 0.35;
+        $this->fz['caiwu'] = $c[0] * 0.6 + $c[1] * 0.4;
         //==============================================================================================================
         //行业位置
         $a = $this->hywz($data['FinanceData']['data'], $data['getRegisterInfo']);
@@ -688,7 +688,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //财务资产
         $d = $this->cwzc($data['FinanceData']['data'], 'fx');
         //计算
-        $this->fx['caiwu'] = 0.4 * $d;
+        $this->fx['caiwu'] = $d[0] * 0.5 + $d[1] * 0.5;
         //==============================================================================================================
         //近三年团队人数
         $a = $this->tdrs($data['itemInfo'], 'fx');

@@ -1,7 +1,6 @@
 <?php
 
 use QL\QueryList;
-use Swoole\Coroutine;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateMysqlOrm;
 use App\HttpController\Service\CreateMysqlPoolForEntDb;
@@ -23,7 +22,7 @@ class QueryList1 extends AbstractProcess
 {
     protected function run($arg)
     {
-        $this->ql_1();
+        $this->excel_1();
     }
 
     function run_1()
@@ -102,7 +101,7 @@ class QueryList1 extends AbstractProcess
 
     function ql_1()
     {
-        // https://gs.amac.org.cn/amac-infodisc/res/pof/fund/351000133588.html
+        // https://gs.amac.org.cn/amac-infodisc/res/pof/fund/1803191908100089.html
         $fp = fopen('simuprolist.csv', 'r');
         $detail_fp = fopen('simuprodetail.csv', 'w+');
         $detail_arr = [];
@@ -138,6 +137,42 @@ class QueryList1 extends AbstractProcess
         }, $detail_arr);
         var_dump($excel_head);
         var_dump('ql_1 wan cheng');
+    }
+
+    function excel_1()
+    {
+        $arr = [
+            '基金名称' => '--',
+            '基金编号' => '--',
+            '成立时间' => '--',
+            '备案时间' => '--',
+            '基金备案阶段' => '--',
+            '基金类型' => '--',
+            '币种' => '--',
+            '基金管理人名称' => '--',
+            '管理类型' => '--',
+            '托管人名称' => '--',
+            '运作状态' => '--',
+            '基金信息最后更新时间' => '--',
+            '基金业协会特别提示（针对基金）' => '--',
+        ];
+        $read_fp = fopen('simuprodetail.csv', 'r');
+        $fp = fopen('simu.csv', 'w+');
+        $csvHeader = implode(',', array_keys($arr)) . PHP_EOL;
+        fwrite($fp, $csvHeader);
+        $i = 1;
+        while (feof($read_fp) === false) {
+            $row = fgets($read_fp);
+            if (strlen($row) < 10) {
+                continue;
+            }
+            echo $i . PHP_EOL;
+            $row = str_replace('|||', ',', $row);
+            fwrite($fp, $row . PHP_EOL);
+            $i++;
+        }
+        fclose($read_fp);
+        fclose($fp);
     }
 
     function msecdate($time): string
