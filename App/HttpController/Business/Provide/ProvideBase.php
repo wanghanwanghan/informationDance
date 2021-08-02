@@ -8,13 +8,11 @@ use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\Provide\RequestRecode;
 use App\HttpController\Models\Provide\RequestUserApiRelationship;
 use App\HttpController\Models\Provide\RequestUserInfo;
-use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use Carbon\Carbon;
 use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\RedisPool\Redis;
 use wanghanwanghan\someUtils\control;
-use function Composer\Autoload\includeFile;
 
 class ProvideBase extends Index
 {
@@ -116,7 +114,7 @@ class ProvideBase extends Index
     }
 
     //重写writeJson
-    function writeJson($statusCode = 200, $paging = null, $result = null, $msg = null, $info = [])
+    function writeJson($statusCode = 200, $paging = null, $result = null, $msg = null, $info = []): bool
     {
         if (!$this->response()->isEndResponse()) {
             if (!empty($paging) && is_array($paging)) {
@@ -189,7 +187,8 @@ class ProvideBase extends Index
             $this->writeJson(601, null, null, 'appId格式不正确');
             return false;
         }
-        if (!is_numeric($time) || $time < 0) {
+        $time = str_pad($time, 13, '0', STR_PAD_RIGHT);
+        if (!is_numeric($time) || $time < 0 || strlen($time) !== 13) {
             $this->writeJson(602, null, null, 'time格式不正确');
             return false;
         }
@@ -197,7 +196,7 @@ class ProvideBase extends Index
             $this->writeJson(603, null, null, 'sign格式不正确');
             return false;
         }
-        if ((time() - $time > 300)) {
+        if (abs((microtime(true) * 1000 - $time) > 300)) {
             $this->writeJson(604, null, null, 'time超时');
             return false;
         }
@@ -234,7 +233,7 @@ class ProvideBase extends Index
                 $this->writeJson(608, null, null, '没有接口请求权限');
                 return false;
             }
-            $this->spendMoney = $relationshipCheck->price;
+            $this->spendMoney = $relationshipCheck->getAttr('price');
             if ($userInfo->getAttr('money') < $this->spendMoney) {
                 $this->writeJson(609, null, null, '余额不足');
                 return false;
@@ -246,9 +245,10 @@ class ProvideBase extends Index
         }
 
         $appSecret = $userInfo->getAttr('appSecret');
-        $createSign = substr(strtoupper(md5($appId . $appSecret . $time)), 0, 30);
+        $createSign10 = substr(strtoupper(md5($appId . $appSecret . substr($time, 0, 10))), 0, 30);
+        $createSign13 = substr(strtoupper(md5($appId . $appSecret . $time)), 0, 30);
 
-        if ($sign !== $createSign) {
+        if (!in_array($sign, [$createSign10, $createSign13], true)) {
             $this->writeJson(610, null, null, '签名验证错误');
             return false;
         }
@@ -257,14 +257,8 @@ class ProvideBase extends Index
         $sign_check = Redis::invoke('redis', function (\EasySwoole\Redis\Redis $redis) use ($sign) {
             $redis->select(14);
             $check = !!$redis->sAdd('sign_check_' . Carbon::now()->format('YmdH'), $sign);
-            if ($check) {
-                //添加成功，不是重复提交
-                $redis->expire('sign_check_' . Carbon::now()->format('YmdH'), control::randNum(2) * 6);
-                return true;
-            } else {
-                //已经添加过，是重复提交
-                return false;
-            }
+            $redis->expire('sign_check_' . Carbon::now()->format('YmdH'), control::randNum(2) * 6);
+            return $check;
         });
 
         if ($sign_check === false) {
