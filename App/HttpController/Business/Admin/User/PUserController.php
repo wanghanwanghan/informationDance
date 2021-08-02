@@ -152,4 +152,31 @@ class PUserController extends UserBase
         return $this->writeJson();
     }
 
+    //创建用户rsa密钥
+    function addRsaKey()
+    {
+        $uid = $this->getRequestData('uid');
+
+        $userInfo = RequestUserInfo::create()->get($uid);
+
+        if (!empty($userInfo->getAttr('rsaPub'))) {
+            return $this->writeJson(201);
+        }
+
+        //createRsa
+        $rsaInfo = control::createRsa(RSA_KEY_PATH, [
+            'config' => '/etc/pki/tls/openssl.cnf',
+        ]);
+
+        if (is_array($rsaInfo)) {
+            $userInfo->update([
+                'rsaPub' => $rsaInfo['pub'],
+                'rsaPri' => $rsaInfo['pri'],
+            ]);
+        }
+
+        return is_array($rsaInfo) ? $this->writeJson(200) : $this->writeJson(201);
+    }
+
+
 }

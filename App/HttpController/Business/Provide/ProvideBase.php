@@ -249,6 +249,7 @@ class ProvideBase extends Index
         $createSign10 = substr(strtoupper(md5($appId . $appSecret . substr($time, 0, 10))), 0, 30);
         $createSign13 = substr(strtoupper(md5($appId . $appSecret . $time)), 0, 30);
 
+        //10位时间和13位时间
         if (!in_array($sign, [$createSign10, $createSign13], true)) {
             $this->writeJson(610, null, null, '签名验证错误');
             return false;
