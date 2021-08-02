@@ -8,6 +8,7 @@ use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\Provide\RequestRecode;
 use App\HttpController\Models\Provide\RequestUserApiRelationship;
 use App\HttpController\Models\Provide\RequestUserInfo;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use Carbon\Carbon;
 use EasySwoole\Mysqli\QueryBuilder;
@@ -196,9 +197,10 @@ class ProvideBase extends Index
             $this->writeJson(603, null, null, 'sign格式不正确');
             return false;
         }
+        CommonService::getInstance()->log4PHP($time);
         if (abs((microtime(true) * 1000 - $time) > 300)) {
             $this->writeJson(604, null, null, 'time超时');
-            return false;
+            //return false;
         }
 
         try {
