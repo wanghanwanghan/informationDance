@@ -155,7 +155,7 @@ class PUserController extends UserBase
     //创建用户rsa密钥
     function addRsaKey()
     {
-        $uid = $this->getRequestData('uid');
+        $uid = $this->getRequestData('user_id');
 
         $userInfo = RequestUserInfo::create()->get($uid);
 
