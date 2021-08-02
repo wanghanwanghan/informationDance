@@ -197,10 +197,9 @@ class ProvideBase extends Index
             $this->writeJson(603, null, null, 'sign格式不正确');
             return false;
         }
-        CommonService::getInstance()->log4PHP($time);
-        if (abs((microtime(true) * 1000 - $time) > 300)) {
-            //$this->writeJson(604, null, null, 'time超时');
-            //return false;
+        if (abs((microtime(true) * 1000 - $time) > 300 * 1000)) {
+            $this->writeJson(604, null, null, 'time超时');
+            return false;
         }
 
         try {
