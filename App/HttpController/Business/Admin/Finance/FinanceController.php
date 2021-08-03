@@ -141,6 +141,8 @@ class FinanceController extends FinanceBase
 
     function setFinanceDataRange($num, $CkRangeNum): string
     {
+        $CkRangeNum = $CkRangeNum - 0;
+
         $num = trim($num);
 
         $str = '--';
