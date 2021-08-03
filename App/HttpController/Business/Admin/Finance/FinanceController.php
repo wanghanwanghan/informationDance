@@ -4,6 +4,9 @@ namespace App\HttpController\Business\Admin\Finance;
 
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\Provide\RequestUserInfo;
+use App\HttpController\Service\Common\CommonService;
+use EasySwoole\Http\Message\UploadFile;
+use wanghanwanghan\someUtils\control;
 
 class FinanceController extends FinanceBase
 {
@@ -35,6 +38,24 @@ class FinanceController extends FinanceBase
             'userList' => $userList,
             'entUserList' => $entUserList,
         ]);
+    }
+
+    function uploadEntList()
+    {
+        $files = $this->request()->getUploadedFiles();
+
+        foreach ($files as $key => $oneFile) {
+            if ($oneFile instanceof UploadFile) {
+                try {
+                    CommonService::getInstance()->log4PHP($oneFile->getTempName());
+                } catch (\Throwable $e) {
+                    $this->writeErr($e, __FUNCTION__);
+                    $path[$key] = $e->getMessage();
+                }
+            }
+        }
+
+        return $this->writeJson();
     }
 
 

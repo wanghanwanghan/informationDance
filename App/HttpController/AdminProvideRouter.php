@@ -65,6 +65,7 @@ class AdminProvideRouter
 
         $routeCollector->addGroup('/finance', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getIndex', $prefix . 'getIndex');
+            $routeCollector->addRoute(['GET', 'POST'], '/uploadEntList', $prefix . 'uploadEntList');
         });
 
         return true;
