@@ -101,8 +101,6 @@ class FinanceController extends FinanceBase
                 '资产总额', '负债总额', '纳税总额',
                 '主营业务收入', '所有者权益', '利润总额', '净利润', '社保人数',]) . PHP_EOL);
 
-        CommonService::getInstance()->log4PHP(jsonDecode($entList));
-
         foreach (jsonDecode($entList) as $oneEnt) {
             $postData = [
                 'entName' => $oneEnt,
@@ -113,8 +111,6 @@ class FinanceController extends FinanceBase
             $res = (new LongXinService())
                 ->setCheckRespFlag(true)
                 ->getFinanceData($postData, false);
-
-            CommonService::getInstance()->log4PHP($res);
 
             if (!empty($res['result']) && $res['code'] === 200) {
                 foreach ($res['result'] as $year => $val) {
