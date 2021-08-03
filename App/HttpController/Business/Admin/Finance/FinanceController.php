@@ -77,22 +77,13 @@ class FinanceController extends FinanceBase
         $payUserValue = $this->getRequestData('payUserValue');
         $entList = $this->getRequestData('entList');
 
-        $csvFile = TEMP_FILE_PATH . control::getUuid() . 'csv';
+        $csvFile = control::getUuid() . '.csv';
 
-        $fp = fopen($csvFile, 'w+');
+        $fp = fopen(TEMP_FILE_PATH . $csvFile, 'w+');
 
-        fwrite($fp, implode(',', [
-            '数据年份',
-            '企业名称',
-            '营业总收入',
-            '资产总额',
-            '负债总额',
-            '纳税总额',
-            '主营业务收入',
-            '所有者权益',
-            '利润总额',
-            '社保人数',
-        ]));
+        fwrite($fp, implode(',', ['数据年份', '企业名称', '营业总收入',
+                '资产总额', '负债总额', '纳税总额',
+                '主营业务收入', '所有者权益', '利润总额', '社保人数',]) . PHP_EOL);
 
         foreach (jsonDecode($entList) as $oneEnt) {
             $postData = [
@@ -119,7 +110,7 @@ class FinanceController extends FinanceBase
                         'NETINC' => is_numeric($val['NETINC']) ? sprintf('%.2f', $val['NETINC']) : '--',
                         'SOCNUM' => is_numeric($val['SOCNUM']) ? sprintf('%.2f', $val['SOCNUM']) : '--',
                     ];
-                    fwrite($fp, implode(',', array_values($row)));
+                    fwrite($fp, implode(',', array_values($row)) . PHP_EOL);
                     $tmp[] = $row;
                 }
             }
