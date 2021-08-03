@@ -91,16 +91,9 @@ class FinanceController extends FinanceBase
             $this->writeJson(201);
         }
 
-        try {
-            DbManager::getInstance()->startTransaction('mysqlDatabase');
-            $info->update([
-                'money' => QueryBuilder::dec($money)
-            ]);
-            DbManager::getInstance()->commit('mysqlDatabase');
-        } catch (\Throwable $e) {
-            DbManager::getInstance()->rollback('mysqlDatabase');
-            return $this->writeJson(201);
-        }
+        $info->update([
+            'money' => QueryBuilder::dec($money)
+        ]);
 
         $csvFile = control::getUuid() . '.csv';
 
