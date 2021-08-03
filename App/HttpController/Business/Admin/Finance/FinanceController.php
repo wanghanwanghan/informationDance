@@ -78,6 +78,7 @@ class FinanceController extends FinanceBase
         $payUserValue = $this->getRequestData('payUserValue');
         $money = $this->getRequestData('money', 0);
         $entList = $this->getRequestData('entList');
+        $CkRange = $this->getRequestData('CkRange');
 
         if (empty($payEntValue)) {
             $info = Wallet::create()->where('phone', $payUserValue)->get();
@@ -117,14 +118,14 @@ class FinanceController extends FinanceBase
                     $row = [
                         'YEAR' => $year,
                         'ENTNAME' => $oneEnt,
-                        'VENDINC' => is_numeric($val['VENDINC']) ? sprintf('%.2f', $val['VENDINC']) : '--',
-                        'ASSGRO' => is_numeric($val['ASSGRO']) ? sprintf('%.2f', $val['ASSGRO']) : '--',
-                        'LIAGRO' => is_numeric($val['LIAGRO']) ? sprintf('%.2f', $val['LIAGRO']) : '--',
-                        'RATGRO' => is_numeric($val['RATGRO']) ? sprintf('%.2f', $val['RATGRO']) : '--',
-                        'MAIBUSINC' => is_numeric($val['MAIBUSINC']) ? sprintf('%.2f', $val['MAIBUSINC']) : '--',
-                        'TOTEQU' => is_numeric($val['TOTEQU']) ? sprintf('%.2f', $val['TOTEQU']) : '--',
-                        'PROGRO' => is_numeric($val['PROGRO']) ? sprintf('%.2f', $val['PROGRO']) : '--',
-                        'NETINC' => is_numeric($val['NETINC']) ? sprintf('%.2f', $val['NETINC']) : '--',
+                        'VENDINC' => $this->setFinanceDataRange($val['VENDINC'], $CkRange),
+                        'ASSGRO' => $this->setFinanceDataRange($val['ASSGRO'], $CkRange),
+                        'LIAGRO' => $this->setFinanceDataRange($val['LIAGRO'], $CkRange),
+                        'RATGRO' => $this->setFinanceDataRange($val['RATGRO'], $CkRange),
+                        'MAIBUSINC' => $this->setFinanceDataRange($val['MAIBUSINC'], $CkRange),
+                        'TOTEQU' => $this->setFinanceDataRange($val['TOTEQU'], $CkRange),
+                        'PROGRO' => $this->setFinanceDataRange($val['PROGRO'], $CkRange),
+                        'NETINC' => $this->setFinanceDataRange($val['NETINC'], $CkRange),
                         'SOCNUM' => is_numeric($val['SOCNUM']) ? sprintf('%.2f', $val['SOCNUM']) : '--',
                     ];
                     fwrite($fp, implode(',', array_values($row)) . PHP_EOL);
@@ -136,6 +137,39 @@ class FinanceController extends FinanceBase
         fclose($fp);
 
         return $this->writeJson(200, null, ['list' => $tmp, 'file' => $csvFile]);
+    }
+
+    function setFinanceDataRange($num, $CkRangeNum): string
+    {
+        $num = trim($num);
+
+        $str = '--';
+
+        if (!is_numeric($num)) return $str;
+
+        $num = $num - 0;
+
+        if ($CkRangeNum === 1) {
+            $str = sprintf('%.2f', $num);
+        } else {
+            if ($num === 0) {
+                $str = 'Z';
+            } elseif ($num < 499) {
+                $str = 'A';
+            } elseif ($num < 999) {
+                $str = 'B';
+            } elseif ($num < 4999) {
+                $str = 'C';
+            } elseif ($num < 9999) {
+                $str = 'D';
+            } elseif ($num < 99999) {
+                $str = 'E';
+            } else {
+                $str = 'F';
+            }
+        }
+
+        return $str;
     }
 
 }
