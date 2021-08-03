@@ -3,11 +3,14 @@
 namespace App\HttpController\Business\Admin\Finance;
 
 use App\HttpController\Models\Api\User;
+use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
 use EasySwoole\Http\Message\UploadFile;
+use EasySwoole\Mysqli\QueryBuilder;
+use EasySwoole\ORM\DbManager;
 use Overtrue\Pinyin\Pinyin;
 use wanghanwanghan\someUtils\control;
 
@@ -75,7 +78,29 @@ class FinanceController extends FinanceBase
     {
         $payEntValue = $this->getRequestData('payEntValue');
         $payUserValue = $this->getRequestData('payUserValue');
+        $money = $this->getRequestData('money', 0);
         $entList = $this->getRequestData('entList');
+
+        if (empty($payEntValue)) {
+            $info = Wallet::create()->where('phone', $payUserValue)->get();
+        } else {
+            $info = RequestUserInfo::create()->where('appId', $payEntValue)->get();
+        }
+
+        if ($info->getAttr('money') < $money) {
+            $this->writeJson(201);
+        }
+
+        try {
+            DbManager::getInstance()->startTransaction('mysqlDatabase');
+            $info->update([
+                'money' => QueryBuilder::dec($money)
+            ]);
+            DbManager::getInstance()->commit('mysqlDatabase');
+        } catch (\Throwable $e) {
+            DbManager::getInstance()->rollback('mysqlDatabase');
+            return $this->writeJson(201);
+        }
 
         $csvFile = control::getUuid() . '.csv';
 
