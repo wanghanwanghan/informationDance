@@ -113,6 +113,9 @@ class FinanceController extends FinanceBase
             $res = (new LongXinService())
                 ->setCheckRespFlag(true)
                 ->getFinanceData($postData, false);
+
+            CommonService::getInstance()->log4PHP($res);
+
             if (!empty($res['result']) && $res['code'] === 200) {
                 foreach ($res['result'] as $year => $val) {
                     $row = [
