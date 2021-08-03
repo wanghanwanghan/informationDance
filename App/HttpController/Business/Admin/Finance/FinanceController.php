@@ -6,7 +6,7 @@ use App\HttpController\Models\Api\User;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use EasySwoole\Http\Message\UploadFile;
-use wanghanwanghan\someUtils\control;
+use Overtrue\Pinyin\Pinyin;
 
 class FinanceController extends FinanceBase
 {
@@ -64,6 +64,29 @@ class FinanceController extends FinanceBase
                 break;
             }
             $arr = explode(',', $row);
+            $pinyinContent = (new Pinyin())->convert($arr[0]);
+            CommonService::getInstance()->log4PHP($pinyinContent);
+//            if (!empty($pinyinContent)) {
+//                $modifyFromTo = ['lyu' => 'lv', 'nyu' => 'nv', 'ɑ' => 'a'];
+//                foreach ($pinyinContent as $key => $value) {
+//                    if (isset($modifyFromTo[$value])) {
+//                        $pinyinContent[$key] = $modifyFromTo[$value];
+//                    } else {
+//                        foreach ($modifyFromTo as $k => $v) {
+//                            $pinyinContent[$key] = str_replace($k, $v, $pinyinContent[$key]);
+//                        }
+//                    }
+//                }
+//            } else {
+//                $pinyinContent = '';
+//            }
+//
+//            if (empty($pinyinContent)) {
+//                $patch['pinyin'] = substr($patch['subject'], 0, -1);
+//            } else {
+//                $pinyinContent = ModifyPinyin::getInstance()->modifyArray($pinyinContent);
+//                $patch['pinyin'] = implode('', $pinyinContent);
+//            }
             $content[] = $arr[0];
         }
 
