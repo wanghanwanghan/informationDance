@@ -5,12 +5,9 @@ namespace App\HttpController\Business\Admin\Finance;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Models\Provide\RequestUserInfo;
-use App\HttpController\Service\Common\CommonService;
-use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
 use EasySwoole\Http\Message\UploadFile;
 use EasySwoole\Mysqli\QueryBuilder;
-use EasySwoole\ORM\DbManager;
 use Overtrue\Pinyin\Pinyin;
 use wanghanwanghan\someUtils\control;
 
