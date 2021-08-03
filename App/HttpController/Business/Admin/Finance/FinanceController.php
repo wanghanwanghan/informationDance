@@ -9,6 +9,7 @@ use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
 use EasySwoole\Http\Message\UploadFile;
 use Overtrue\Pinyin\Pinyin;
+use wanghanwanghan\someUtils\control;
 
 class FinanceController extends FinanceBase
 {
@@ -76,6 +77,23 @@ class FinanceController extends FinanceBase
         $payUserValue = $this->getRequestData('payUserValue');
         $entList = $this->getRequestData('entList');
 
+        $csvFile = TEMP_FILE_PATH . control::getUuid() . 'csv';
+
+        $fp = fopen($csvFile, 'w+');
+
+        fwrite($fp, implode(',', [
+            '数据年份',
+            '企业名称',
+            '营业总收入',
+            '资产总额',
+            '负债总额',
+            '纳税总额',
+            '主营业务收入',
+            '所有者权益',
+            '利润总额',
+            '社保人数',
+        ]));
+
         foreach (jsonDecode($entList) as $oneEnt) {
             $postData = [
                 'entName' => $oneEnt,
@@ -86,11 +104,30 @@ class FinanceController extends FinanceBase
             $res = (new LongXinService())
                 ->setCheckRespFlag(true)
                 ->getFinanceData($postData, false);
-            CommonService::getInstance()->log4PHP($res);
+            if (!empty($res['result']) && $res['code'] === 200) {
+                foreach ($res['result'] as $year => $val) {
+                    $row = [
+                        'YEAR' => $year,
+                        'ENTNAME' => $oneEnt,
+                        'VENDINC' => is_numeric($val['VENDINC']) ? sprintf('%.2f', $val['VENDINC']) : '--',
+                        'ASSGRO' => is_numeric($val['ASSGRO']) ? sprintf('%.2f', $val['ASSGRO']) : '--',
+                        'LIAGRO' => is_numeric($val['LIAGRO']) ? sprintf('%.2f', $val['LIAGRO']) : '--',
+                        'RATGRO' => is_numeric($val['RATGRO']) ? sprintf('%.2f', $val['RATGRO']) : '--',
+                        'MAIBUSINC' => is_numeric($val['MAIBUSINC']) ? sprintf('%.2f', $val['MAIBUSINC']) : '--',
+                        'TOTEQU' => is_numeric($val['TOTEQU']) ? sprintf('%.2f', $val['TOTEQU']) : '--',
+                        'PROGRO' => is_numeric($val['PROGRO']) ? sprintf('%.2f', $val['PROGRO']) : '--',
+                        'NETINC' => is_numeric($val['NETINC']) ? sprintf('%.2f', $val['NETINC']) : '--',
+                        'SOCNUM' => is_numeric($val['SOCNUM']) ? sprintf('%.2f', $val['SOCNUM']) : '--',
+                    ];
+                    fwrite($fp, implode(',', array_values($row)));
+                    $tmp[] = $row;
+                }
+            }
         }
 
+        fclose($fp);
 
-        return $this->writeJson(200, null, $res);
+        return $this->writeJson(200, null, ['list' => $tmp, 'file' => $csvFile]);
     }
 
 }
