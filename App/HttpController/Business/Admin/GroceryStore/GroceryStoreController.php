@@ -16,6 +16,22 @@ class GroceryStoreController extends GroceryStoreBase
         parent::afterAction($actionName);
     }
 
+    function traverseMenu($menus, &$result, $pid): bool
+    {
+        foreach ($menus as $child_menu) {
+            if ($child_menu['pid'] == $pid) {
+                $item = [
+                    'id' => $child_menu['id'],
+                    'label' => $child_menu['label'],
+                    'children' => []
+                ];
+                $this->traverseMenu($menus, $item['children'], $child_menu['id']);
+                $result[] = $item;
+            }
+        }
+        return true;
+    }
+
     function wuliuNode(): bool
     {
         $tmp = $this->request()->getRequestParam('tmp') ?? 1;
@@ -34,7 +50,7 @@ class GroceryStoreController extends GroceryStoreBase
 
         $res = [];
 
-        control::traverseMenu($menu, $res);
+        $this->traverseMenu($menu, $res, 0);
 
         return $this->writeJson(200, null, $res);
     }
