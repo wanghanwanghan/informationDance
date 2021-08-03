@@ -83,7 +83,7 @@ class FinanceController extends FinanceBase
 
         fwrite($fp, implode(',', ['数据年份', '企业名称', '营业总收入',
                 '资产总额', '负债总额', '纳税总额',
-                '主营业务收入', '所有者权益', '利润总额', '社保人数',]) . PHP_EOL);
+                '主营业务收入', '所有者权益', '利润总额', '净利润', '社保人数',]) . PHP_EOL);
 
         foreach (jsonDecode($entList) as $oneEnt) {
             $postData = [
