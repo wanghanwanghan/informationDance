@@ -12,10 +12,11 @@ class AdminRouter
     //加载后台全部api
     function addRouterV1(RouteCollector $routeCollector)
     {
+        $this->GroceryStore($routeCollector);
         $this->UserRouterV1($routeCollector);
     }
 
-    private function UserRouterV1(RouteCollector $routeCollector)
+    private function UserRouterV1(RouteCollector $routeCollector): bool
     {
         $prefix = '/Business/Admin/User/UserController/';
 
@@ -28,6 +29,17 @@ class AdminRouter
             $routeCollector->addRoute(['GET', 'POST'], '/purchase/do', $prefix . 'userPurchaseDo');
             $routeCollector->addRoute(['GET', 'POST'], '/getUserAuthBook', $prefix . 'getUserAuthBook');
             $routeCollector->addRoute(['GET', 'POST'], '/handleUserAuthBook', $prefix . 'handleUserAuthBook');
+        });
+
+        return true;
+    }
+
+    private function GroceryStore(RouteCollector $routeCollector): bool
+    {
+        $prefix = '/Business/Admin/GroceryStore/GroceryStoreController/';
+
+        $routeCollector->addGroup('/grocerystore', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/wuliuNode', $prefix . 'wuliuNode');
         });
 
         return true;
