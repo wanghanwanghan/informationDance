@@ -15,6 +15,7 @@ class AdminProvideRouter
         $this->UserRouterV1($routeCollector);
         $this->ApiRouterV1($routeCollector);
         $this->StatisticsRouterV1($routeCollector);
+        $this->FinanceRouterV1($routeCollector);
     }
 
     private function UserRouterV1(RouteCollector $routeCollector)
@@ -58,5 +59,15 @@ class AdminProvideRouter
         return true;
     }
 
+    private function FinanceRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Admin/Finance/FinanceController/';
+
+        $routeCollector->addGroup('/finance', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getIndex', $prefix . 'getIndex');
+        });
+
+        return true;
+    }
 
 }
