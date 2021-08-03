@@ -47,14 +47,27 @@ class FinanceController extends FinanceBase
         foreach ($files as $key => $oneFile) {
             if ($oneFile instanceof UploadFile) {
                 try {
-                    CommonService::getInstance()->log4PHP($oneFile->getTempName());
+                    $filename = $oneFile->getTempName();
+                    break;
                 } catch (\Throwable $e) {
                     return $this->writeErr($e, __FUNCTION__);
                 }
             }
         }
 
-        return $this->writeJson();
+        $fp = fopen($filename, 'r+');
+
+        while (feof($fp) === false) {
+            $row = fgets($fp);
+            $row = trim($row);
+            if (strlen($row) < 20) {
+                break;
+            }
+            $arr = explode(',', $row);
+            $content[] = $arr[0];
+        }
+
+        return $this->writeJson(200, null, $content);
     }
 
 
