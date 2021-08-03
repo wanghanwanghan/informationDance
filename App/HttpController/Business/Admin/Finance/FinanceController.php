@@ -60,12 +60,14 @@ class FinanceController extends FinanceBase
         while (feof($fp) === false) {
             $row = fgets($fp);
             $row = trim($row);
-            if (strlen($row) < 20) {
+            if (strlen($row) < 5) {
                 break;
             }
             $arr = explode(',', $row);
             $content[] = $arr[0];
         }
+
+        fclose($fp);
 
         return $this->writeJson(200, null, $content);
     }
