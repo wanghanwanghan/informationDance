@@ -49,8 +49,7 @@ class FinanceController extends FinanceBase
                 try {
                     CommonService::getInstance()->log4PHP($oneFile->getTempName());
                 } catch (\Throwable $e) {
-                    $this->writeErr($e, __FUNCTION__);
-                    $path[$key] = $e->getMessage();
+                    return $this->writeErr($e, __FUNCTION__);
                 }
             }
         }
