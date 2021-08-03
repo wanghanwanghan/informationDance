@@ -5,6 +5,7 @@ namespace App\HttpController\Business\Admin\Finance;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Models\Provide\RequestUserInfo;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
 use EasySwoole\Http\Message\UploadFile;
 use EasySwoole\Mysqli\QueryBuilder;
@@ -99,6 +100,8 @@ class FinanceController extends FinanceBase
         fwrite($fp, implode(',', ['数据年份', '企业名称', '营业总收入',
                 '资产总额', '负债总额', '纳税总额',
                 '主营业务收入', '所有者权益', '利润总额', '净利润', '社保人数',]) . PHP_EOL);
+
+        CommonService::getInstance()->log4PHP(jsonDecode($entList));
 
         foreach (jsonDecode($entList) as $oneEnt) {
             $postData = [
