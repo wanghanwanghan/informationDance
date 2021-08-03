@@ -5,6 +5,8 @@ namespace App\HttpController\Business\Admin\Finance;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\LongDun\LongDunService;
+use App\HttpController\Service\LongXin\LongXinService;
 use EasySwoole\Http\Message\UploadFile;
 use Overtrue\Pinyin\Pinyin;
 
@@ -22,11 +24,6 @@ class FinanceController extends FinanceBase
 
     function getIndex()
     {
-        $uid = $this->getRequestData('uid');
-        $aid = $this->getRequestData('aid');
-        $page = $this->getRequestData('page', 1);
-        $pageSize = $this->getRequestData('pageSize', 20);
-
         //个人用户
         $userList = User::create()->all();
 
@@ -73,5 +70,27 @@ class FinanceController extends FinanceBase
         return $this->writeJson(200, null, $content);
     }
 
+    function getFinanceData()
+    {
+        $payEntValue = $this->getRequestData('payEntValue');
+        $payUserValue = $this->getRequestData('payUserValue');
+        $entList = $this->getRequestData('entList');
+
+        foreach (jsonDecode($entList) as $oneEnt) {
+            $postData = [
+                'entName' => $oneEnt,
+                'code' => '',
+                'beginYear' => date('Y') - 1,
+                'dataCount' => 5,
+            ];
+            $res = (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getFinanceData($postData, false);
+            CommonService::getInstance()->log4PHP($res);
+        }
+
+
+        return $this->writeJson(200, null, $res);
+    }
 
 }
