@@ -44,7 +44,7 @@ class GroceryStoreController extends GroceryStoreBase
             ['id' => 4, 'pid' => 3, 'label' => '物流', 'cond' => 'basic_entname|物流'],
             ['id' => 5, 'pid' => 3, 'label' => '货运', 'cond' => 'basic_entname|货运'],
             ['id' => 6, 'pid' => 3, 'label' => '普通货运', 'cond' => 'basic_entname|普通货运'],
-            ['id' => 7, 'pid' => 2, 'label' => '经营范围属于？'],
+            ['id' => 7, 'pid' => 2, 'label' => '经营范围含有？'],
             ['id' => 8, 'pid' => 7, 'label' => '普通货运', 'cond' => 'basic_opscope|普通货运'],
             ['id' => 9, 'pid' => 7, 'label' => '不普通货运', 'cond' => 'basic_opscope|不普通货运'],
             ['id' => 10, 'pid' => 2, 'label' => '经营状态是？'],
