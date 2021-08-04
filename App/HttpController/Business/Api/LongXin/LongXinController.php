@@ -789,6 +789,12 @@ class LongXinController extends LongXinBase
             $postData['jingying_vc_round'] = "any:{$jingying_vc_round}";
         }
 
+        $basic_status = $this->request()->getRequestParam('basic_status') ?? '';
+        if (!empty(trim($basic_status))) {
+            $basic_status = trim($basic_status, ',');
+            $postData['basic_status'] = "any:{$basic_status}";
+        }
+
         $this->moduleNum = 53;
 
         $res = (new LongXinService())->superSearch($postData);
