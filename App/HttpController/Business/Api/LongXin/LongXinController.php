@@ -779,7 +779,7 @@ class LongXinController extends LongXinBase
 
         $basic_opscope = $this->request()->getRequestParam('basic_opscope') ?? '';
         if (!empty(trim($basic_opscope))) {
-            $basic_opscope = substr(' ', ',', $basic_opscope);
+            $basic_opscope = CommonService::getInstance()->spaceTo($basic_opscope);
             $postData['basic_opscope'] = "any:{$basic_opscope}";
         }
 
