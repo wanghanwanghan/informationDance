@@ -263,7 +263,7 @@ class LongXinService extends ServiceBase
         $readyReturn = [];
         for ($i = $postData['dataCount']; $i--;) {
             $tmp = $postData['beginYear'] - $i;
-            $tmp = (string)$tmp;
+            $tmp = $tmp . '';
             isset($temp[$tmp]) ? $readyReturn[$tmp] = $temp[$tmp] : $readyReturn[$tmp] = null;
         }
 

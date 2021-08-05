@@ -89,9 +89,11 @@ class FinanceController extends FinanceBase
             $this->writeJson(201);
         }
 
-        $info->update([
-            'money' => QueryBuilder::dec($money)
-        ]);
+        if ($money > 0) {
+            $info->update([
+                'money' => QueryBuilder::dec($money)
+            ]);
+        }
 
         $csvFile = control::getUuid() . '.csv';
 
@@ -114,6 +116,21 @@ class FinanceController extends FinanceBase
             '平均净资产',
             '企业人均产值',
             '企业人均盈利',
+            '净利率',
+            '资产周转率',
+            '总资产净利率',
+            '总资产回报率',
+            '净资产回报率A',
+            '净资产回报率B',
+            '资产负债率',
+            '权益乘数',
+            '主营业务比率',
+            '净资产负债率',
+            '营业利润率',
+            '资本保值增值率',
+            '营业净利率',
+            '总资产利润率',
+            '税收负担率',
         ];
 
         fwrite($fp, implode(',', $header) . PHP_EOL);
@@ -128,7 +145,6 @@ class FinanceController extends FinanceBase
             $res = (new LongXinService())
                 ->setCheckRespFlag(true)
                 ->getFinanceData($postData, false);
-
             if (!empty($res['result']) && $res['code'] === 200) {
                 foreach ($res['result'] as $year => $val) {
                     $row = [
@@ -148,6 +164,22 @@ class FinanceController extends FinanceBase
                         'CA_ASSGRO' => $this->setFinanceDataRange($val['CA_ASSGRO'], $CkRange),
                         'A_VENDINCL' => $this->setFinanceDataRange($val['A_VENDINCL'], $CkRange),
                         'A_PROGROL' => $this->setFinanceDataRange($val['A_PROGROL'], $CkRange),
+
+                        'C_INTRATESL' => $this->setFinanceRateDataRange($val['C_INTRATESL'], $CkRange),
+                        'ATOL' => $this->setFinanceRateDataRange($val['ATOL'], $CkRange),
+                        'ASSGRO_C_INTRATESL' => $this->setFinanceRateDataRange($val['ASSGRO_C_INTRATESL'], $CkRange),
+                        'ROAL' => $this->setFinanceRateDataRange($val['ROAL'], $CkRange),
+                        'ROE_AL' => $this->setFinanceRateDataRange($val['ROE_AL'], $CkRange),
+                        'ROE_BL' => $this->setFinanceRateDataRange($val['ROE_BL'], $CkRange),
+                        'DEBTL' => $this->setFinanceRateDataRange($val['DEBTL'], $CkRange),
+                        'EQUITYL' => is_numeric($val['EQUITYL']) ? sprintf('%.3f', $val['EQUITYL']) : '--',
+                        'MAIBUSINC_RATIOL' => $this->setFinanceRateDataRange($val['MAIBUSINC_RATIOL'], $CkRange),
+                        'NALR' => $this->setFinanceRateDataRange($val['NALR'], $CkRange),
+                        'OPM' => $this->setFinanceRateDataRange($val['OPM'], $CkRange),
+                        'ROCA' => $this->setFinanceRateDataRange($val['ROCA'], $CkRange),
+                        'NOR' => $this->setFinanceRateDataRange($val['NOR'], $CkRange),
+                        'PMOTA' => $this->setFinanceRateDataRange($val['PMOTA'], $CkRange),
+                        'TBR' => $this->setFinanceRateDataRange($val['TBR'], $CkRange),
                     ];
                     fwrite($fp, implode(',', array_values($row)) . PHP_EOL);
                     $tmp[] = $row;
@@ -195,4 +227,16 @@ class FinanceController extends FinanceBase
         return $str;
     }
 
+    function setFinanceRateDataRange($num, $CkRangeNum): string
+    {
+        $CkRangeNum = $CkRangeNum - 0;
+
+        $num = trim($num);
+
+        $str = '--';
+
+        if (!is_numeric($num)) return $str;
+
+        return sprintf('%.3f', $num * 100) . '%';
+    }
 }
