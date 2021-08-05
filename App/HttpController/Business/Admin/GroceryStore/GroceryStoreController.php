@@ -52,7 +52,6 @@ class GroceryStoreController extends GroceryStoreBase
             ['id' => 12, 'pid' => 10, 'label' => '吊销', 'cond' => 'basic_status|2'],
             ['id' => 13, 'pid' => 10, 'label' => '注销', 'cond' => 'basic_status|3'],
 
-
             ['id' => 14, 'pid' => 2, 'label' => '行业类型是？'],
         ];
 
