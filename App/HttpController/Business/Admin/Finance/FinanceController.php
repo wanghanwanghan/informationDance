@@ -97,9 +97,26 @@ class FinanceController extends FinanceBase
 
         $fp = fopen(TEMP_FILE_PATH . $csvFile, 'w+');
 
-        fwrite($fp, implode(',', ['数据年份', '企业名称', '营业总收入',
-                '资产总额', '负债总额', '纳税总额',
-                '主营业务收入', '所有者权益', '利润总额', '净利润', '净资产', '社保人数']) . PHP_EOL);
+        $header = [
+            '企业名称',
+            '数据年份',
+            '资产总额',
+            '负债总额',
+            '营业总收入',
+            '主营业务收入',
+            '利润总额',
+            '净利润',
+            '纳税总额',
+            '所有者权益',
+            '社保人数',
+            '净资产',
+            '平均资产总额',
+            '平均净资产',
+            '企业人均产值',
+            '企业人均盈利',
+        ];
+
+        fwrite($fp, implode(',', $header) . PHP_EOL);
 
         foreach (jsonDecode($entList) as $oneEnt) {
             $postData = [
@@ -115,18 +132,22 @@ class FinanceController extends FinanceBase
             if (!empty($res['result']) && $res['code'] === 200) {
                 foreach ($res['result'] as $year => $val) {
                     $row = [
-                        'YEAR' => $year,
                         'ENTNAME' => $oneEnt,
-                        'VENDINC' => $this->setFinanceDataRange($val['VENDINC'], $CkRange),
+                        'YEAR' => $year,
                         'ASSGRO' => $this->setFinanceDataRange($val['ASSGRO'], $CkRange),
                         'LIAGRO' => $this->setFinanceDataRange($val['LIAGRO'], $CkRange),
-                        'RATGRO' => $this->setFinanceDataRange($val['RATGRO'], $CkRange),
+                        'VENDINC' => $this->setFinanceDataRange($val['VENDINC'], $CkRange),
                         'MAIBUSINC' => $this->setFinanceDataRange($val['MAIBUSINC'], $CkRange),
-                        'TOTEQU' => $this->setFinanceDataRange($val['TOTEQU'], $CkRange),
                         'PROGRO' => $this->setFinanceDataRange($val['PROGRO'], $CkRange),
                         'NETINC' => $this->setFinanceDataRange($val['NETINC'], $CkRange),
-                        'C_ASSGROL' => $this->setFinanceDataRange($val['C_ASSGROL'], $CkRange),
+                        'RATGRO' => $this->setFinanceDataRange($val['RATGRO'], $CkRange),
+                        'TOTEQU' => $this->setFinanceDataRange($val['TOTEQU'], $CkRange),
                         'SOCNUM' => is_numeric($val['SOCNUM']) ? sprintf('%.2f', $val['SOCNUM']) : '--',
+                        'C_ASSGROL' => $this->setFinanceDataRange($val['C_ASSGROL'], $CkRange),
+                        'A_ASSGROL' => $this->setFinanceDataRange($val['A_ASSGROL'], $CkRange),
+                        'CA_ASSGRO' => $this->setFinanceDataRange($val['CA_ASSGRO'], $CkRange),
+                        'A_VENDINCL' => $this->setFinanceDataRange($val['A_VENDINCL'], $CkRange),
+                        'A_PROGROL' => $this->setFinanceDataRange($val['A_PROGROL'], $CkRange),
                     ];
                     fwrite($fp, implode(',', array_values($row)) . PHP_EOL);
                     $tmp[] = $row;
