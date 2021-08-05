@@ -231,14 +231,12 @@ class FinanceController extends FinanceBase
     {
         $CkRangeNum = $CkRangeNum - 0;
 
-        $strlen = strlen($num);
-
         $num = trim($num);
 
         $str = '--';
 
         if (!is_numeric($num)) return $str;
 
-        return sprintf('%.3f', str_pad($num, $strlen, '0', STR_PAD_RIGHT) * 100) . '%';
+        return sprintf('%.3f', $num * 100) . '%';
     }
 }
