@@ -37,9 +37,9 @@ class FileTransmissionController extends FileTransmissionBase
                     //获得文件的大小,返回byte
                     $info['file_size_byte'] = round(filesize($fullpath));
                     //获得文件的大小,返回kb
-                    $info['file_size_kb'] = round(filesize($fullpath) / 1024);
+                    $info['file_size_kb'] = round(filesize($fullpath) / 1024 / 1024, 2);
                     //获得文件的大小,返回mb
-                    $info['file_size_mb'] = round(filesize($fullpath) / 1024 / 1024);
+                    $info['file_size_mb'] = round(filesize($fullpath) / 1024 / 1024 / 1024, 2);
                     //获取文件的创建时间
                     $info['file_c_time'] = filectime($fullpath);
                     //文件的修改时间
