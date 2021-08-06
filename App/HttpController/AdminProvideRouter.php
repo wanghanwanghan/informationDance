@@ -16,6 +16,7 @@ class AdminProvideRouter
         $this->ApiRouterV1($routeCollector);
         $this->StatisticsRouterV1($routeCollector);
         $this->FinanceRouterV1($routeCollector);
+        $this->FileTransmissionRouterV1($routeCollector);
     }
 
     private function UserRouterV1(RouteCollector $routeCollector)
@@ -67,6 +68,18 @@ class AdminProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getIndex', $prefix . 'getIndex');
             $routeCollector->addRoute(['GET', 'POST'], '/uploadEntList', $prefix . 'uploadEntList');
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceData', $prefix . 'getFinanceData');
+        });
+
+        return true;
+    }
+
+    private function FileTransmissionRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Admin/FileTransmission/FileTransmissionController/';
+
+        $routeCollector->addGroup('/transmission', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getFileList', $prefix . 'getFileList');
+            $routeCollector->addRoute(['GET', 'POST'], '/uploadFileToDir', $prefix . 'uploadFileToDir');
         });
 
         return true;
