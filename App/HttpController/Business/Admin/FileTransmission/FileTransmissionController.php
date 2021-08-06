@@ -52,6 +52,10 @@ class FileTransmissionController extends FileTransmissionBase
         }
         closedir($dh);
 
+        if (!empty($res)) {
+            $res = control::sortArrByKey($res, 'file_c_time', 'desc', true);
+        }
+
         return $this->writeJson(200, null, $res);
     }
 
