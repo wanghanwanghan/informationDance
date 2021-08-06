@@ -235,4 +235,39 @@ class BusinessBase extends Index
 
         return (isset($requestData[$key])) ? $requestData[$key] : $default;
     }
+
+    //删除n天前创建的文件
+    function delFileByCtime($dir, $n = 10, $ignore = []): bool
+    {
+        if (strpos($dir, 'informationDance') === false) return true;
+
+        $ignore = array_merge($ignore, ['.', '..', '.gitignore']);
+
+        if (is_dir($dir) && is_numeric($n)) {
+            if ($dh = opendir($dir)) {
+                while (false !== ($file = readdir($dh))) {
+                    if (!in_array($file, $ignore, true)) {
+                        $fullpath = $dir . $file;
+                        if (is_dir($fullpath)) {
+                            if (count(scandir($fullpath)) == 2) {
+                                //rmdir($fullpath);
+                                CommonService::getInstance()->log4PHP("rmdir {$fullpath}");
+                            } else {
+                                $this->delFileByCtime($fullpath, $n, $ignore);
+                            }
+                        } else {
+                            $filedate = filectime($fullpath);
+                            $day = round((time() - $filedate) / 86400);
+                            if ($day >= $n) {
+                                unlink($fullpath);
+                            }
+                        }
+                    }
+                }
+            }
+            closedir($dh);
+        }
+
+        return true;
+    }
 }

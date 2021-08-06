@@ -3,7 +3,6 @@
 namespace App\HttpController\Business\Admin\FileTransmission;
 
 use EasySwoole\Http\Message\UploadFile;
-use Overtrue\Pinyin\Pinyin;
 use wanghanwanghan\someUtils\control;
 
 class FileTransmissionController extends FileTransmissionBase
@@ -73,7 +72,10 @@ class FileTransmissionController extends FileTransmissionBase
             }
         }
 
+        $this->delFileByCtime(TEMP_FILE_PATH, 14);
+
         return $this->writeJson(200);
     }
+
 
 }
