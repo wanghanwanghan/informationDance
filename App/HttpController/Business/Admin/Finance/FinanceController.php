@@ -235,7 +235,8 @@ class FinanceController extends FinanceBase
                 '7' => 'H',
                 '8' => 'I',
                 '9' => 'J',
-                '.' => '.',
+                '.' => '*',
+                '-' => '#',
             ];
             $str = strtr($str, $table);
         } else {
