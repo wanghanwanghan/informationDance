@@ -206,7 +206,7 @@ class FinanceController extends FinanceBase
 
         if ($CkRangeNum === 1) {
             $str = sprintf('%.2f', $num);
-        } else {
+        } elseif ($CkRangeNum === 2) {
             if ($num === 0) {
                 $str = 'Z';
             } elseif ($num < 499) {
@@ -222,6 +222,24 @@ class FinanceController extends FinanceBase
             } else {
                 $str = 'F';
             }
+        } elseif ($CkRangeNum === 3) {
+            $str = sprintf('%.3f', $num);
+            $table = [
+                '0' => 'A',
+                '1' => 'B',
+                '2' => 'C',
+                '3' => 'D',
+                '4' => 'E',
+                '5' => 'F',
+                '6' => 'G',
+                '7' => 'H',
+                '8' => 'I',
+                '9' => 'J',
+                '.' => '.',
+            ];
+            $str = strtr($str, $table);
+        } else {
+
         }
 
         return $str;
@@ -237,6 +255,30 @@ class FinanceController extends FinanceBase
 
         if (!is_numeric($num)) return $str;
 
-        return sprintf('%.3f', $num * 100) . '%';
+        if ($CkRangeNum === 1) {
+            $str = sprintf('%.3f', $num * 100) . '%';
+        } elseif ($CkRangeNum === 2) {
+            $str = sprintf('%.3f', $num * 100) . '%';
+        } elseif ($CkRangeNum === 3) {
+            $str = sprintf('%.3f', $num);
+            $table = [
+                '0' => 'A',
+                '1' => 'B',
+                '2' => 'C',
+                '3' => 'D',
+                '4' => 'E',
+                '5' => 'F',
+                '6' => 'G',
+                '7' => 'H',
+                '8' => 'I',
+                '9' => 'J',
+                '.' => '.',
+            ];
+            $str = strtr($str, $table);
+        } else {
+
+        }
+
+        return $str;
     }
 }
