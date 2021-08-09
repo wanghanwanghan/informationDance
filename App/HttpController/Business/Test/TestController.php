@@ -29,12 +29,7 @@ class TestController extends BusinessBase
 
     function test()
     {
-        $newJob = new QueueConf();
-        $newJob->setJobData([
-            'name' => control::getUuid()
-        ]);
 
-        QueueService::getInstance()->pushJob($newJob);
     }
 
     function test1()

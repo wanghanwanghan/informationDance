@@ -13,8 +13,6 @@ class QueueService extends ServiceBase
 
     private $redisDB = 15;
 
-    public $queueListKey = [];
-
     function __construct()
     {
         return parent::__construct();
@@ -26,9 +24,6 @@ class QueueService extends ServiceBase
             $redis = Redis::defer('redis');
             $redis->select($this->redisDB);
             $redis->set($conf->getJobId(), jsonEncode($conf->getJobData(), true), 3600);
-            if (!in_array($conf->getQueueListKey(), $this->queueListKey, true)) {
-                array_push($this->queueListKey, $conf->getQueueListKey());
-            }
             $redis->lPush($conf->getQueueListKey(), $conf->getJobId());
         } catch (\Throwable $e) {
             $filename = 'queue.log.' . date('Ymd', time());
