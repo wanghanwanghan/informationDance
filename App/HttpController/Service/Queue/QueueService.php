@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\Queue;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\ServiceBase;
 use EasySwoole\Component\Singleton;
 use EasySwoole\RedisPool\Redis;
@@ -10,40 +11,48 @@ class QueueService extends ServiceBase
 {
     use Singleton;
 
-    private $redisDB = 14;
+    private $redisDB = 15;
+
+    public $queueListKey = [];
 
     function __construct()
     {
         return parent::__construct();
     }
 
-    function onNewService(): ?bool
-    {
-        return parent::onNewService();
-    }
-
-    //job入队列，左进
     function pushJob(QueueConf $conf): bool
     {
         try {
             $redis = Redis::defer('redis');
             $redis->select($this->redisDB);
-            $redis->lPush($conf->getQueueListKey(), jsonEncode($conf->getJobData()));
+            $redis->set($conf->getJobId(), jsonEncode($conf->getJobData(), true), 3600);
+            if (!in_array($conf->getQueueListKey(), $this->queueListKey, true)) {
+                array_push($this->queueListKey, $conf->getQueueListKey());
+            }
+            $redis->lPush($conf->getQueueListKey(), $conf->getJobId());
         } catch (\Throwable $e) {
+            $filename = 'queue.log.' . date('Ymd', time());
+            CommonService::getInstance()->log4PHP($e->getTraceAsString(), 'pushJob', $filename);
             return false;
         }
 
         return true;
     }
 
-    //job出队列，右出
     function popJob(string $queueListKey): ?array
     {
         try {
             $redis = Redis::defer('redis');
             $redis->select($this->redisDB);
-            $data = $redis->rPop($queueListKey);
+            $jobId = $redis->rPop($queueListKey);
+            if ($jobId) {
+                $data = $redis->get($jobId);
+            } else {
+                return null;
+            }
         } catch (\Throwable $e) {
+            $filename = 'queue.log.' . date('Ymd', time());
+            CommonService::getInstance()->log4PHP($e->getTraceAsString(), 'popJob', $filename);
             return null;
         }
 

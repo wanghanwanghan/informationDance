@@ -8,38 +8,43 @@ class QueueConf
 {
     private $jobId;
     private $jobData;
-    private $queueListKey = 'defaultQueueListKey';
+    private $queueListKey;
+    private $execTime;//执行时间
 
-    function setJobId($id = ''): QueueConf
+    function __construct()
     {
-        !empty($id) ?: $id = control::getUuid(16);
-
-        $this->jobId = $id;
-
-        return $this;
+        $this->jobId = time() . control::getUuid(10);
+        $this->jobData = [];
+        $this->queueListKey = 'defaultQueueListKey';
+        $this->execTime = time();
     }
 
-    function setJobData(array $data = []): QueueConf
+    function setJobId(string $jobId): QueueConf
     {
-        $this->jobData = $data;
-
-        return $this;
-    }
-
-    function setQueueListKey(string $listKey = ''): QueueConf
-    {
-        empty($listKey) ?: $this->queueListKey = $listKey;
-
+        $this->jobId = $jobId;
         return $this;
     }
 
     function getJobId(): string
     {
-        $id = control::getUuid(16);
-
-        !empty($this->jobId) ?: $this->jobId = $id;
-
         return $this->jobId;
+    }
+
+    function setJobData(array $data): QueueConf
+    {
+        $this->jobData = $data;
+        return $this;
+    }
+
+    function getJobData(): array
+    {
+        return $this->jobData;
+    }
+
+    function setQueueListKey(string $queueListKey): QueueConf
+    {
+        $this->queueListKey = $queueListKey;
+        return $this;
     }
 
     function getQueueListKey(): string
@@ -47,11 +52,15 @@ class QueueConf
         return $this->queueListKey;
     }
 
-    function getJobData(): array
+    function setExecTime(int $time): QueueConf
     {
-        $this->jobData['jobId'] = $this->getJobId();
+        $this->execTime = $time;
+        return $this;
+    }
 
-        return $this->jobData;
+    function getExecTime(): int
+    {
+        return $this->execTime;
     }
 
 

@@ -12,6 +12,8 @@ use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\MoveOut\MoveOutService;
 use App\HttpController\Service\QianQi\QianQiService;
+use App\HttpController\Service\Queue\QueueConf;
+use App\HttpController\Service\Queue\QueueService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\SwooleTable\Service\SwooleTableService;
 use EasySwoole\Component\Di;
@@ -26,6 +28,16 @@ class TestController extends BusinessBase
     }
 
     function test()
+    {
+        $newJob = new QueueConf();
+        $newJob->setJobData([
+            'name' => control::getUuid()
+        ]);
+
+        QueueService::getInstance()->pushJob($newJob);
+    }
+
+    function test1()
     {
         return $this->writeJson(200);
 
@@ -853,6 +865,4 @@ class TestController extends BusinessBase
             return $this->writeJson(200, null, $temp, 'ok');
         }
     }
-
-
 }
