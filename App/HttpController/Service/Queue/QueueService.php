@@ -34,7 +34,7 @@ class QueueService extends ServiceBase
         return true;
     }
 
-    function popJob(string $queueListKey): ?array
+    function popJobData(string $queueListKey): ?array
     {
         try {
             $redis = Redis::defer('redis');

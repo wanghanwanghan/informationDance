@@ -3,10 +3,7 @@
 namespace App\Process\ProcessList;
 
 use App\HttpController\Service\Common\CommonService;
-use App\HttpController\Service\Queue\QueueConf;
-use App\HttpController\Service\Queue\QueueService;
 use App\Process\ProcessBase;
-use EasySwoole\RedisPool\Redis;
 use Swoole\Process;
 use Swoole\Coroutine;
 
@@ -18,18 +15,6 @@ class QueueProcess extends ProcessBase
     {
         //可以用来初始化
         parent::run($arg);
-
-        $key = (new QueueConf())->getQueueListKey();
-
-        while (true) {
-            $data = QueueService::getInstance()->popJob($key);
-            if (!$data) {
-                break;
-            }
-            CommonService::getInstance()->log4PHP($data);
-        }
-
-        CommonService::getInstance()->log4PHP('queue完成');
     }
 
     protected function onPipeReadable(Process $process)
