@@ -578,7 +578,7 @@ class XinDongService extends ServiceBase
     {
         $res = (new xds())->cwScore($entName);
 
-        foreach ($res as $one) {
+        foreach ($res as $key => $one) {
             if (is_numeric($one['score'])) {
                 if ($one['score'] < 20) {
                     $angle = 4.9;
@@ -600,7 +600,7 @@ class XinDongService extends ServiceBase
                 $angle = 0;
                 $word = '无';
             }
-            $one['pic'] = CommonService::getInstance()->createDashboardPic($angle, $word);
+            $one[$key]['pic'] = CommonService::getInstance()->createDashboardPic($angle, $word);
         }
 
         return $this->checkResp(200, null, $res, '查询成功');
