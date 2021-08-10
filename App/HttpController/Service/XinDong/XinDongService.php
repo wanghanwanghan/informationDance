@@ -601,7 +601,7 @@ class XinDongService extends ServiceBase
                 $angle = 0;
                 $word = '无';
             }
-            $one[$key]['pic'] = CommonService::getInstance()->createDashboardPic($angle, $word);
+            $res[$key]['pic'] = CommonService::getInstance()->createDashboardPic($angle, $word);
         }
 
         return $this->checkResp(200, null, $res, '查询成功');
