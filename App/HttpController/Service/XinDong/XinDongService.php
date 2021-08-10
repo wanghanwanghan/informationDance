@@ -669,17 +669,17 @@ class XinDongService extends ServiceBase
             }
             foreach ($field as $key => $one) {
                 $avgScore = round($one['score'] / $one['num']);
-                if ($avgScore) {
-                    if ($one['score'] < 20) {
+                if (is_numeric($avgScore)) {
+                    if ($avgScore < 20) {
                         $angle = 4.9;
                         $word = '弱';
-                    } elseif ($one['score'] < 40) {
+                    } elseif ($avgScore < 40) {
                         $angle = 5.6;
                         $word = '较弱';
-                    } elseif ($one['score'] < 60) {
+                    } elseif ($avgScore < 60) {
                         $angle = 0;
                         $word = '中等';
-                    } elseif ($one['score'] < 80) {
+                    } elseif ($avgScore < 80) {
                         $angle = 0.7;
                         $word = '较强';
                     } else {
