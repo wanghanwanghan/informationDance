@@ -663,6 +663,7 @@ class XinDongService extends ServiceBase
             foreach ($top as $one) {
                 $keys = array_keys($field);
                 $values = array_values($one);
+                CommonService::getInstance()->log4PHP($values);
                 if (in_array($values['field'], $keys, true) && is_numeric($values['score'])) {
                     $field[$values['field']]['score'] += $values['score'];
                     $field[$values['field']]['num']++;
