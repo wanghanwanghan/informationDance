@@ -307,13 +307,12 @@ class CommonService extends ServiceBase
 //            '4.9' => '高',
 //        ];
 
-        if ($word!=='无') {
+        if ($word !== '无') {
             foreach ($p as $one) {
                 $new_p = $this->angle([200, 190], $one, $angle);
                 $tmp[] = $new_p[0];
                 $tmp[] = $new_p[1];
             }
-
             imagepolygon($im, $tmp, 4, $red);
             imagefilledpolygon($im, $tmp, 4, $blue);
             imageellipse($im, 200, 190, 6, 6, $bg);//画圆

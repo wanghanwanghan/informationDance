@@ -579,7 +579,28 @@ class XinDongService extends ServiceBase
         $res = (new xds())->cwScore($entName);
 
         foreach ($res as $one) {
-            CommonService::getInstance()->createDashboardPic();
+            if (is_numeric($one['score'])) {
+                if ($one['score'] < 20) {
+                    $angle = 4.9;
+                    $word = '弱';
+                } elseif ($one['score'] < 40) {
+                    $angle = 5.6;
+                    $word = '较弱';
+                } elseif ($one['score'] < 60) {
+                    $angle = 0;
+                    $word = '中等';
+                } elseif ($one['score'] < 80) {
+                    $angle = 0.7;
+                    $word = '较强';
+                } else {
+                    $angle = 1.4;
+                    $word = '强';
+                }
+            } else {
+                $angle = 0;
+                $word = '无';
+            }
+            $one['pic'] = CommonService::getInstance()->createDashboardPic($angle, $word);
         }
 
         return $this->checkResp(200, null, $res, '查询成功');
