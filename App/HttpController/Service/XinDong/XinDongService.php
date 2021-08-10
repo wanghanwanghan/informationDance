@@ -717,7 +717,7 @@ class XinDongService extends ServiceBase
                 $word = '无';
             }
             if (isset($field)) {
-                $res[$key]['topPic'] = $field[$key]['pic'];
+                $res[$key]['topPic'] =  $field[$key]['pic'];
             }
             $res[$key]['pic'] = CommonService::getInstance()->createDashboardPic($angle, $word);
         }
