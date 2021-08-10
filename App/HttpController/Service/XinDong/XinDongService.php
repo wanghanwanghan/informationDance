@@ -578,6 +578,10 @@ class XinDongService extends ServiceBase
     {
         $res = (new xds())->cwScore($entName);
 
+        foreach ($res as $one) {
+            CommonService::getInstance()->createDashboardPic();
+        }
+
         return $this->checkResp(200, null, $res, '查询成功');
     }
 

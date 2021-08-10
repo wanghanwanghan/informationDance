@@ -244,7 +244,7 @@ class CommonService extends ServiceBase
     }
 
     //生成一个仪表盘图片
-    function createDashboardPic($angle): string
+    function createDashboardPic($angle, $word): string
     {
         //1、创建画布
         $im = imagecreate(400, 300);//创建一个基于调色板的图像
@@ -291,34 +291,41 @@ class CommonService extends ServiceBase
 
         $tmp = [];
 
-        $word = [
-            '1.4' => 'dgreen',
-            '0.7' => 'green',
-            '0' => 'yellow',
-            '5.6' => 'orange',
-            '4.9' => 'red',
-        ];
+//        $word = [
+//            '1.4' => 'dgreen',
+//            '0.7' => 'green',
+//            '0' => 'yellow',
+//            '5.6' => 'orange',
+//            '4.9' => 'red',
+//        ];
+//
+//        $word = [
+//            '1.4' => '低',
+//            '0.7' => '较低',
+//            '0' => '中',
+//            '5.6' => '较高',
+//            '4.9' => '高',
+//        ];
 
-        $word = [
-            '1.4' => '低',
-            '0.7' => '低',
-            '0' => '中',
-            '5.6' => '高',
-            '4.9' => '高',
-        ];
+        if ($word!=='无') {
+            foreach ($p as $one) {
+                $new_p = $this->angle([200, 190], $one, $angle);
+                $tmp[] = $new_p[0];
+                $tmp[] = $new_p[1];
+            }
 
-        foreach ($p as $one) {
-            $new_p = $this->angle([200, 190], $one, $angle);
-            $tmp[] = $new_p[0];
-            $tmp[] = $new_p[1];
+            imagepolygon($im, $tmp, 4, $red);
+            imagefilledpolygon($im, $tmp, 4, $blue);
+            imageellipse($im, 200, 190, 6, 6, $bg);//画圆
         }
 
-        imagepolygon($im, $tmp, 4, $red);
-        imagefilledpolygon($im, $tmp, 4, $blue);
+        if (mb_strlen($word) === 2) {
+            $width = 174;
+        } else {
+            $width = 187;
+        }
 
-        imagettftext($im, 20, 0, 185, 105, $black, SIMSUN_TTC, $word[$angle . ''] ?? '空');//水平绘制字符串
-
-        imageellipse($im, 200, 190, 6, 6, $bg);//画圆
+        imagettftext($im, 20, 0, $width, 105, $black, SIMSUN_TTC, $word);//水平绘制字符串
 
         $filename = control::getUuid(12) . '.jpg';
 
