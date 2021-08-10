@@ -29,7 +29,11 @@ class TestController extends BusinessBase
 
     function test()
     {
+        $angle = ['1.4', '0.7', '0', '5.6', '4.9'];
 
+        $res = CommonService::getInstance()->createDashboardPic($angle[array_rand($angle)]);
+
+        return $this->writeJson(200, null, $res);
     }
 
     function test1()

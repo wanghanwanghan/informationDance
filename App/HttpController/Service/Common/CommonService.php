@@ -243,6 +243,106 @@ class CommonService extends ServiceBase
         return $fileName;
     }
 
+    //生成一个仪表盘图片
+    function createDashboardPic($angle): string
+    {
+        //1、创建画布
+        $im = imagecreate(400, 300);//创建一个基于调色板的图像
+        $im = imagecreatetruecolor(400, 230);//创建一个真彩色图像
+
+        $bg = imagecolorallocate($im, 220, 220, 220);//创建颜色
+        $red = imagecolorallocate($im, 255, 0, 0);
+        $orange = imagecolorallocate($im, 255, 100, 0);
+        $yellow = imagecolorallocate($im, 255, 255, 0);
+        $green = imagecolorallocate($im, 0, 255, 0);
+        $dgreen = imagecolorallocate($im, 0, 150, 0);
+        $blue = imagecolorallocate($im, 0, 0, 255);
+        $black = imagecolorallocate($im, 0, 0, 0);
+
+        //2、开始绘画
+        imagefill($im, 0, 0, $bg);//填充背景颜色
+        for ($i = 0; $i < 500; $i++) {
+            $x = rand(1, 400);
+            $y = rand(1, 230);
+            imagesetpixel($im, $x, $y, $bg);//画点
+
+            $xx = rand(1, 400);
+            $yy = rand(1, 230);
+            imagesetpixel($im, $xx, $yy, $bg);
+        }
+
+        imagefilledarc($im, 200, 200, 380, 385, 180, 360, $red, IMG_ARC_EDGED);
+        imagefilledarc($im, 200, 200, 380, 385, 216, 360, $orange, IMG_ARC_EDGED);
+        imagefilledarc($im, 200, 200, 380, 385, 252, 360, $yellow, IMG_ARC_EDGED);
+        imagefilledarc($im, 200, 200, 380, 385, 288, 360, $green, IMG_ARC_EDGED);
+        imagefilledarc($im, 200, 200, 380, 385, 324, 360, $dgreen, IMG_ARC_EDGED);
+        imagefilledarc($im, 200, 200, 260, 265, 180, 360, $bg, IMG_ARC_EDGED);
+        imagefilledarc($im, 200, 200, 380, 385, 214, 217, $bg, IMG_ARC_EDGED);
+        imagefilledarc($im, 200, 200, 380, 385, 250, 253, $bg, IMG_ARC_EDGED);
+        imagefilledarc($im, 200, 200, 380, 385, 287, 290, $bg, IMG_ARC_EDGED);
+        imagefilledarc($im, 200, 200, 380, 385, 324, 326, $bg, IMG_ARC_EDGED);
+
+        $p = [
+            [185, 190],
+            [200, 115],
+            [215, 190],
+            [200, 210],
+        ];
+
+        $tmp = [];
+
+        $word = [
+            '1.4' => 'dgreen',
+            '0.7' => 'green',
+            '0' => 'yellow',
+            '5.6' => 'orange',
+            '4.9' => 'red',
+        ];
+
+        $word = [
+            '1.4' => '低',
+            '0.7' => '低',
+            '0' => '中',
+            '5.6' => '高',
+            '4.9' => '高',
+        ];
+
+        foreach ($p as $one) {
+            $new_p = $this->angle([200, 190], $one, $angle);
+            $tmp[] = $new_p[0];
+            $tmp[] = $new_p[1];
+        }
+
+        imagepolygon($im, $tmp, 4, $red);
+        imagefilledpolygon($im, $tmp, 4, $blue);
+
+        imagettftext($im, 20, 0, 185, 105, $black, SIMSUN_TTC, $word[$angle . ''] ?? '空');//水平绘制字符串
+
+        imageellipse($im, 200, 190, 6, 6, $bg);//画圆
+
+        $filename = control::getUuid(12) . '.jpg';
+
+        //3、输出图像
+        imagejpeg($im, REPORT_IMAGE_TEMP_PATH . $filename);
+
+        //4、释放资源
+        imagedestroy($im);
+
+        return $filename;
+    }
+
+    private function angle($p0, $p1, $c): array
+    {
+        //假设对图片上任意点(x,y)，绕一个坐标点(rx0,ry0)逆时针旋转a角度后的新的坐标设为(x0, y0)，有公式：
+        //x0 = (x - rx0) * cos(a) - (y - ry0) * sin(a) + rx0 ;
+        //y0 = (x - rx0) * sin(a) + (y - ry0) * cos(a) + ry0 ;
+
+        $x = ($p1[0] - $p0[0]) * cos($c) - ($p1[1] - $p0[1]) * sin($c) + $p0[0];
+        $y = ($p1[0] - $p0[0]) * sin($c) + ($p1[1] - $p0[1]) * cos($c) + $p0[1];
+
+        return [$x, $y];
+    }
+
     //发送验证码
     function sendCode($phone, $type)
     {

@@ -9,7 +9,6 @@
     "ext-iconv": "*",
     "ext-zip": "*",
     "ext-bcmath": "*",
-    "ext-xlswriter": "*",
     "easyswoole/easyswoole": "3.3.x",
     "wanghanwanghan/someutils": "^1.0",
     "easyswoole/http-client": "^1.4",
@@ -37,7 +36,8 @@
     "hashids/hashids": "^4.1",
     "lizhichao/one-img": "^0.1.0",
     "jaeger/querylist": "^4.2",
-    "overtrue/pinyin": "^4.0"
+    "overtrue/pinyin": "^4.0",
+    "intervention/image": "^2.6"
   },
   "autoload": {
     "psr-4": {
