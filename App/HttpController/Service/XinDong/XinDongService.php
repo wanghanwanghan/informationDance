@@ -641,6 +641,7 @@ class XinDongService extends ServiceBase
                 });
             }
             $top = CspService::getInstance()->exec($csp);
+            CommonService::getInstance()->log4PHP($top);
             $field = [
                 'MAIBUSINC_yoy' => ['score' => 0, 'num' => 0, 'pic' => ''],
                 'ASSGRO_yoy' => ['score' => 0, 'num' => 0, 'pic' => ''],
