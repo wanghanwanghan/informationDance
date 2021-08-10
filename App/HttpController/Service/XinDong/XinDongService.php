@@ -722,7 +722,7 @@ class XinDongService extends ServiceBase
             $res[$key]['pic'] = CommonService::getInstance()->createDashboardPic($angle, $word);
         }
 
-        return $this->checkResp(200, null, $res, '查询成功', isset($field) ? '有top' : '无top');
+        return $this->checkResp(200, null, $res, isset($field) ? '有top' : '无top');
     }
 
     function industryTop($fz_list, $fm_list): array
