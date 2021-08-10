@@ -579,6 +579,7 @@ class XinDongService extends ServiceBase
         $res = (new xds())->cwScore($entName);
 
         foreach ($res as $key => $one) {
+            CommonService::getInstance()->log4PHP($one);
             if (is_numeric($one['score'])) {
                 if ($one['score'] < 20) {
                     $angle = 4.9;
