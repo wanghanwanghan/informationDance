@@ -692,7 +692,7 @@ class XinDongService extends ServiceBase
                     $angle = 0;
                     $word = '无';
                 }
-                $field[$key]['pic'] = CommonService::getInstance()->createDashboardPic($angle, $word);
+                $field[$key]['pic'] =  CommonService::getInstance()->createDashboardPic($angle, $word);
             }
         }
 
