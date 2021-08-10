@@ -641,7 +641,6 @@ class XinDongService extends ServiceBase
                 });
             }
             $top = CspService::getInstance()->exec($csp);
-            CommonService::getInstance()->log4PHP($top);
             $field = [
                 'MAIBUSINC_yoy' => ['score' => 0, 'num' => 0, 'pic' => ''],
                 'ASSGRO_yoy' => ['score' => 0, 'num' => 0, 'pic' => ''],
@@ -663,6 +662,7 @@ class XinDongService extends ServiceBase
             ];
             foreach ($top as $one) {
                 $keys = array_keys($field);
+                CommonService::getInstance()->log4PHP($one);
                 if (in_array($one['field'], $keys, true) && is_numeric($one['score'])) {
                     $field[$one['field']]['score'] += $one['score'];
                     $field[$one['field']]['num']++;
