@@ -669,6 +669,7 @@ class XinDongService extends ServiceBase
             }
             foreach ($field as $key => $one) {
                 $avgScore = round($one['score'] / $one['num']);
+                $field[$key]['score'] = $avgScore;
                 if (is_numeric($avgScore)) {
                     if ($avgScore < 20) {
                         $angle = 4.9;
@@ -717,7 +718,8 @@ class XinDongService extends ServiceBase
                 $word = '无';
             }
             if (isset($field)) {
-                $res[$key]['topPic'] =  $field[$key]['pic'];
+                $res[$key]['topPic'] = $field[$key]['pic'];
+                $res[$key]['topScore'] = $field[$key]['topScore'];
             }
             $res[$key]['pic'] = CommonService::getInstance()->createDashboardPic($angle, $word);
         }
