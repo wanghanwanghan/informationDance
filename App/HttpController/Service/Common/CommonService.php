@@ -250,7 +250,7 @@ class CommonService extends ServiceBase
         $im = imagecreate(400, 300);//创建一个基于调色板的图像
         $im = imagecreatetruecolor(400, 230);//创建一个真彩色图像
 
-        $bg = imagecolorallocate($im, 220, 220, 220);//创建颜色
+        $bg = imagecolorallocate($im, 255, 255, 255);//创建颜色
         $red = imagecolorallocate($im, 255, 0, 0);
         $orange = imagecolorallocate($im, 255, 100, 0);
         $yellow = imagecolorallocate($im, 255, 255, 0);
