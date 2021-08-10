@@ -576,7 +576,73 @@ class XinDongService extends ServiceBase
     //二次特征分数
     function getFeatures($entName)
     {
+        //查看经营范围
+        $postData = ['entName' => $entName];
+        $OPSCOPE = (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getRegisterInfo');
+        $OPSCOPE = current($OPSCOPE['result']);
+        $OPSCOPE = $OPSCOPE['OPSCOPE'];
+
+        if (mb_strpos($OPSCOPE, '教育') !== false) {
+            $topList = [
+                '新东方教育科技集团有限公司',
+                '北京世纪好未来教育科技有限公司',
+                '北京高途云集教育科技有限公司',
+                '中公教育科技股份有限公司',
+                '北京新东方迅程网络科技股份有限公司',
+                '神州天立控股集团有限公司',
+                '深圳中教控股集团有限公司',
+                '四川希望教育产业集团有限公司',
+                '作业帮教育科技（北京）有限公司',
+                '北京猿力教育科技有限公司',
+            ];
+        } elseif (mb_strpos($OPSCOPE, '新能源汽车') !== false) {
+            $topList = [
+                '上汽通用五菱汽车股份有限公司',
+                '比亚迪股份有限公司',
+                '特斯拉（上海）有限公司',
+                '长城汽车股份有限公司',
+                '上海汽车集团股份有限公司',
+                '奇瑞汽车股份有限公司',
+                '一汽—大众汽车有限公司',
+                '上汽大众汽车有限公司',
+                '广州汽车集团股份有限公司',
+                '蔚来控股有限公司',
+                '北京汽车股份有限公司',
+                '东风汽车股份有限公司',
+                '广东小鹏汽车科技有限公司',
+                '北京车和家信息技术有限公司',
+                '浙江吉利控股集团有限公司',
+                '重庆长安汽车股份有限公司',
+            ];
+        } elseif (mb_strpos($OPSCOPE, '计算机软件') !== false || mb_strpos($OPSCOPE, '计算机硬件') !== false) {
+            $topList = [
+                '阿里云计算有限公司',
+                '腾讯云计算（北京）有限责任公司',
+                '华为云计算技术有限公司',
+                '百度云计算技术（北京）有限公司',
+                '珠海金山云科技有限公司',
+                '优刻得科技股份有限公司',
+                '京东云计算有限公司',
+                '新华三云计算技术有限公司',
+                '杭州朗和科技有限公司',
+                '浪潮云信息技术股份公司',
+            ];
+        } else {
+            $topList = [];
+        }
+
         $res = (new xds())->cwScore($entName);
+
+        if (!empty($topList)) {
+            $csp = CspService::getInstance()->create();
+            foreach ($topList as $key => $ent) {
+                $csp->add($key . '_', function () use ($ent) {
+                    return (new xds())->cwScore($ent);
+                });
+            }
+            $top = CspService::getInstance()->exec($csp);
+            CommonService::getInstance()->log4PHP($top);
+        }
 
         foreach ($res as $key => $one) {
             if (is_numeric($one['score'])) {
