@@ -641,7 +641,57 @@ class XinDongService extends ServiceBase
                 });
             }
             $top = CspService::getInstance()->exec($csp);
-            CommonService::getInstance()->log4PHP($top);
+            $field = [
+                'MAIBUSINC_yoy' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'ASSGRO_yoy' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'PROGRO' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'PROGRO_yoy' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'RATGRO' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'TBR' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'ASSGROPROFIT_REL' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'ASSETS' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'TOTEQU' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'DEBTL_H' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'DEBTL' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'ATOL' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'PERCAPITA_C' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'PERCAPITA_Y' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'RepaymentAbility' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'GuaranteeAbility' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'TBR_new' => ['score' => 0, 'num' => 0, 'pic' => ''],
+            ];
+            foreach ($top as $one) {
+                $keys = array_keys($field);
+                if (in_array($one['field'], $keys, true) && is_numeric($one['score'])) {
+                    $field[$one['field']]['score'] += $one['score'];
+                    $field[$one['field']]['num']++;
+                }
+            }
+            foreach ($field as $key => $one) {
+                $avgScore = round($one['score'] / $one['num']);
+                if ($avgScore) {
+                    if ($one['score'] < 20) {
+                        $angle = 4.9;
+                        $word = '弱';
+                    } elseif ($one['score'] < 40) {
+                        $angle = 5.6;
+                        $word = '较弱';
+                    } elseif ($one['score'] < 60) {
+                        $angle = 0;
+                        $word = '中等';
+                    } elseif ($one['score'] < 80) {
+                        $angle = 0.7;
+                        $word = '较强';
+                    } else {
+                        $angle = 1.4;
+                        $word = '强';
+                    }
+                } else {
+                    $angle = 0;
+                    $word = '无';
+                }
+                $field[$key]['pic'] = CommonService::getInstance()->createDashboardPic($angle, $word);
+            }
         }
 
         foreach ($res as $key => $one) {
@@ -665,6 +715,9 @@ class XinDongService extends ServiceBase
             } else {
                 $angle = 0;
                 $word = '无';
+            }
+            if (isset($field)) {
+                $res[$key]['topPic'] = $field[$key]['pic'];
             }
             $res[$key]['pic'] = CommonService::getInstance()->createDashboardPic($angle, $word);
         }
