@@ -407,7 +407,8 @@ class xds
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
-            'score' => null
+            'score' => null,
+            '_score' => null
         ];
 
         foreach ($data as $year => $arr) {
@@ -452,6 +453,51 @@ class xds
                 $r['score'] = $score;
                 break;
             }
+        }
+
+        foreach ($data as $year => $arr) {
+            if (is_numeric($arr['PROGRO_yoy'])) {
+                $val = round($arr['PROGRO_yoy'] * 100);
+                if ($val <= -50) {
+                    $score = 4;
+                } elseif ($val >= -50 && $val <= -21) {
+                    $score = 8;
+                } elseif ($val >= -20 && $val <= -11) {
+                    $score = 11;
+                } elseif ($val >= -10 && $val <= -6) {
+                    $score = 16;
+                } elseif ($val >= -5 && $val <= 0) {
+                    $score = 21;
+                } elseif ($val >= 0 && $val <= 5) {
+                    $score = 26;
+                } elseif ($val >= 6 && $val <= 10) {
+                    $score = 31;
+                } elseif ($val >= 11 && $val <= 25) {
+                    $score = 35;
+                } elseif ($val >= 26 && $val <= 30) {
+                    $score = 42;
+                } elseif ($val >= 31 && $val <= 50) {
+                    $score = 56;
+                } elseif ($val >= 51 && $val <= 70) {
+                    $score = 72;
+                } elseif ($val >= 71 && $val <= 100) {
+                    $score = 85;
+                } elseif ($val >= 101 && $val <= 200) {
+                    $score = 92;
+                } elseif ($val >= 201 && $val <= 500) {
+                    $score = 94;
+                } elseif ($val >= 500) {
+                    $score = 97;
+                } else {
+                    $score = null;
+                }
+                $r['_score'] = $score;
+                break;
+            }
+        }
+
+        if (is_numeric($r['_score']) && is_numeric($r['score'])) {
+            $r['score'] = (int)round($r['score'] * 0.7 + $r['_score'] * 0.3);
         }
 
         return $r;
