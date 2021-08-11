@@ -496,8 +496,6 @@ class xds
             }
         }
 
-        CommonService::getInstance()->log4PHP($r);
-
         if (is_numeric($r['_score']) && is_numeric($r['score'])) {
             $r['score'] = (int)round($r['score'] * 0.7 + $r['_score'] * 0.3);
         }
