@@ -452,7 +452,7 @@ class LongXinController extends LongXinBase
                         if ($yearKey == $beginYear - 2) $VENDINC += $VENDINC_s * 0.1;
                         if ($yearKey == $beginYear - 1) $VENDINC += $VENDINC_s * 0.3;
                         if ($yearKey == $beginYear - 0) $VENDINC += $VENDINC_s * 0.6;
-                        //==========================企业成长性状况==========================
+                        //==========================企业成长能力==========================
                         if ($fieldArr['VENDINC_yoy'] <= -50) {
                             $VENDINC_yoy_s = 4;
                         } elseif ($fieldArr['VENDINC_yoy'] >= -50 && $fieldArr['VENDINC_yoy'] <= -21) {
@@ -581,7 +581,7 @@ class LongXinController extends LongXinBase
                         if ($yearKey == $beginYear - 2) $ASSGRO += $ASSGRO_s * 0.1;
                         if ($yearKey == $beginYear - 1) $ASSGRO += $ASSGRO_s * 0.3;
                         if ($yearKey == $beginYear - 0) $ASSGRO += $ASSGRO_s * 0.6;
-                        //==========================企业资产增长状况==========================
+                        //==========================企业资产增长能力==========================
                         if ($fieldArr['ASSGRO_yoy'] <= -50) {
                             $ASSGRO_yoy_s = 4;
                         } elseif ($fieldArr['ASSGRO_yoy'] >= -50 && $fieldArr['ASSGRO_yoy'] <= -21) {
@@ -644,7 +644,7 @@ class LongXinController extends LongXinBase
                                 [
                                     'score' => $myVal['VENDINC_yoy'],
                                     'desc' => '1.按0分到100分划分，评分越高，企业发展与经营的增速越高,2.通过分析与企业营收增长能力有关行为后的评估结果。主要反映企业的成长速度，供判断企业的高成长性价值',
-                                    'features' => '企业成长性状况',
+                                    'features' => '企业成长能力',
                                 ],
                             ]
                         ];
@@ -678,7 +678,7 @@ class LongXinController extends LongXinBase
                                 [
                                     'score' => $myVal['ASSGRO_yoy'],
                                     'desc' => '1.按0分到100分划分，评分越高，企业规模增长的能力越强,2.通过分析与企业资产维度有关行为后的评估结果。主要反映企业的资产变化情况，供判断企业的整体规模与合作能力',
-                                    'features' => '企业资产增长状况',
+                                    'features' => '企业资产增长能力',
                                 ],
                             ]
                         ];

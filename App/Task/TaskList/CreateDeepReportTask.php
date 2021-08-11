@@ -3826,9 +3826,9 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         //二次特征
         if (!empty($data['features'])) {
-            //企业成长性状况
+            //企业成长能力
             $docObj->setValue('qyczx_s', $data['features']['MAIBUSINC_yoy']['score'] ?? '--');
-            //企业资产增长状况
+            //企业资产增长能力
             $docObj->setValue('qyzczc_s', $data['features']['ASSGRO_yoy']['score'] ?? '--');
             //企业盈利能力
             $docObj->setValue('qyyl_s', $data['features']['PROGRO']['score'] ?? '--');
@@ -3848,13 +3848,13 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue('qyzyywjkd_s', $data['features']['DEBTL_H']['score'] ?? '--');
             //企业资产经营健康度
             $docObj->setValue('qyzcjjjkd_s', $data['features']['DEBTL']['score'] ?? '--');
-            //企业资产周转能力
+            //企业营运周转能力
             $docObj->setValue('qyzczz_s', $data['features']['ATOL']['score'] ?? '--');
-            //企业人均产能
+            //企业人均产出能力
             $docObj->setValue('qyrjcn_s', $data['features']['PERCAPITA_C']['score'] ?? '--');
             //企业人均创收能力
             $docObj->setValue('qyrjcs_s', $data['features']['PERCAPITA_Y']['score'] ?? '--');
-            //企业还款能力
+            //企业偿付能力
             $docObj->setValue('qyhknl_s', $data['features']['RepaymentAbility']['score'] ?? '--');
             //企业担保能力
             $docObj->setValue('qydbnl_s', $data['features']['GuaranteeAbility']['score'] ?? '--');

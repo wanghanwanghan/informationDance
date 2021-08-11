@@ -117,7 +117,7 @@ class xds
         //资产周转能力 2营业收入 / 10平均资产总额
         $score['ATOL'] = $this->ATOL($arr['result']);
 
-        //企业人均产能评分 3主营业务收入 / 8缴纳社保人数人均
+        //企业人均产出能力评分 3主营业务收入 / 8缴纳社保人数人均
         $score['PERCAPITA_C'] = $this->PERCAPITA_C($arr['result']);
 
         //企业人均盈利能力评分 5净利润 / 8缴纳社保人数
@@ -403,7 +403,7 @@ class xds
     private function MAIBUSINC_yoy($data): array
     {
         $r = [
-            'name' => '企业成长性状况',
+            'name' => '企业成长能力',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
@@ -565,11 +565,11 @@ class xds
         return $r;
     }
 
-    //企业人均产能评分 3主营业务收入 / 8缴纳社保人数
+    //企业人均产出能力评分 3主营业务收入 / 8缴纳社保人数
     private function PERCAPITA_C($data): array
     {
         $r = [
-            'name' => '企业人均产能',
+            'name' => '企业人均产出能力',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
@@ -785,7 +785,7 @@ class xds
     private function ATOL($data): array
     {
         $r = [
-            'name' => '企业资产周转能力',
+            'name' => '企业营运周转能力',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
@@ -840,7 +840,7 @@ class xds
     private function ASSGRO_yoy($data): array
     {
         $r = [
-            'name' => '企业资产增长状况',
+            'name' => '企业资产增长能力',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
@@ -986,7 +986,7 @@ class xds
     private function RepaymentAbility($data): array
     {
         $r = [
-            'name' => '企业还款能力',
+            'name' => '企业偿付能力',
             'field' => __FUNCTION__,
             'year' => null,
             'val' => null,
