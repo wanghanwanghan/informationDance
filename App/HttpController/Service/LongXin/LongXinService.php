@@ -509,6 +509,9 @@ class LongXinService extends ServiceBase
             ->useCache(true)
             ->send('http://None/company_lianxi/', $arr, $this->sendHeaders);
 
+        CommonService::getInstance()->log4PHP($arr);
+        CommonService::getInstance()->log4PHP($res);
+
         return $this->checkRespFlag ?
             $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $res]) :
             ['code' => 200, 'msg' => '查询成功', 'data' => $res];
