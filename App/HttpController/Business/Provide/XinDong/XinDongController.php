@@ -317,7 +317,11 @@ class XinDongController extends ProvideBase
             $postData['basic_status'] = "any:{$basic_status}";
         }
 
-        $res = (new LongXinService())->setCheckRespFlag(true)->superSearch($postData);
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())->setCheckRespFlag(true)
+                ->superSearch($postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         return $this->checkResponse($res);
     }
