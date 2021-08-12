@@ -137,7 +137,7 @@ class DaXiangService extends ServiceBase
         $arr = [
             'zipCode' => '0',
             'encryptCode' => '0',
-            "dataExchangeId" => bcmul(microtime(true), 1000) . control::getUuid(15),
+            'dataExchangeId' => bcmul(microtime(true), 1000) . control::getUuid(15),
             'entCode' => '',
             'content' => base64_encode(jsonEncode(['nsrmc' => $nsrmc]))
         ];

@@ -486,6 +486,34 @@ class LongXinService extends ServiceBase
             ['code' => 200, 'msg' => '查询成功', 'data' => $return];
     }
 
+    //企业联系方式
+    function getEntLianXi($postData)
+    {
+        $entId = $this->getEntid($postData['entName']);
+
+        if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
+
+        $arr = [
+            'usercode' => $this->usercode,
+            'entid' => $entId,
+            'qudao' => $postData['qudao'] ?? 'a',
+            'lianxitype' => $postData['lianxitype'] ?? '123',
+            'zhiwei' => $postData['zhiwei'] ?? '1234567',
+            'emptycheck' => $postData['emptycheck'] ?? '0',
+            'total' => $postData['total'] ?? '300',
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())
+            ->useCache(true)
+            ->send('http://None/company_lianxi/', $arr, $this->sendHeaders);
+
+        return $this->checkRespFlag ?
+            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $res]) :
+            ['code' => 200, 'msg' => '查询成功', 'data' => $res];
+    }
+
     //原值计算
     function exprHandle($origin)
     {

@@ -297,8 +297,26 @@ class XinDongController extends ProvideBase
 
     }
 
+    //企业联系方式
+    function getEntLianXi()
+    {
+        $postData = [
+            'entName' => $this->getRequestData('entName', ''),
+            'code' => $this->getRequestData('code', ''),
+            'beginYear' => $this->getRequestData('year', 2019),
+            'dataCount' => $this->getRequestData('dataCount', 1),
+        ];
 
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getEntLianXi($postData);
+        });
 
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
 
 
 }
