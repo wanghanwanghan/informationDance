@@ -260,7 +260,7 @@ class XinDongController extends ProvideBase
 
     function rsaTest()
     {
-
+        return $this->writeJson(200, null, $this->requestData);
     }
 
 }
