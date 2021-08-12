@@ -102,6 +102,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getEntLianXi', $prefix . 'getEntLianXi');
             $routeCollector->addRoute(['GET', 'POST'], '/superSearch', $prefix . 'superSearch');
             $routeCollector->addRoute(['GET', 'POST'], '/logisticsSearch', $prefix . 'logisticsSearch');
+            $routeCollector->addRoute(['GET', 'POST'], '/rsaTest', $prefix . 'rsaTest');
         });
 
         return true;

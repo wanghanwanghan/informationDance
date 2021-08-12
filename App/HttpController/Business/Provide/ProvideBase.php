@@ -163,6 +163,24 @@ class ProvideBase extends Index
 
         $requestData = array_merge($raw, $form);
 
+        //有可能是rsa + aes的数据
+        if (isset($requestData['encrypt']) || isset($requestData['content'])) {
+            if (!empty($requestData['appId'])) {
+                $info = RequestUserInfo::create()->where('appId', $requestData['appId'])->get();
+                //拿公钥文件名
+                $rsa_pub_name = $info->getAttr('rsaPub');
+                //公钥解密
+                $stream = file_get_contents(RSA_KEY_PATH . $rsa_pub_name);
+                $aes_key = control::rsaDecrypt($requestData['encrypt'], $stream, 'pub');
+                //aes解密
+                $content = control::aesDecode($requestData['content'], $aes_key, 256);
+                $content_arr = jsonDecode($content);
+                if (is_array($content_arr)) {
+                    $requestData = array_merge($requestData, $content);
+                }
+            }
+        }
+
         if (isset($requestData['pageSize'])) {
             $requestData['pageSize'] > 10 ?
                 $requestData['pageSize'] = 10 :

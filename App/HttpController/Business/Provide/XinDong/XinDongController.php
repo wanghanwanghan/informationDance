@@ -258,5 +258,9 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function rsaTest()
+    {
+
+    }
 
 }
