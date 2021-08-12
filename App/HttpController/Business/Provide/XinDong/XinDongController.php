@@ -11,6 +11,7 @@ use App\HttpController\Service\Sms\SmsService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\XinDongService;
 use Carbon\Carbon;
+use wanghanwanghan\someUtils\control;
 
 class XinDongController extends ProvideBase
 {
@@ -260,7 +261,18 @@ class XinDongController extends ProvideBase
 
     function rsaTest()
     {
-        return $this->writeJson(200, null, $this->requestData);
+        $this->csp->add($this->cspKey, function () {
+            return [
+                'code' => 666,
+                'paging' => null,
+                'result' => $this->requestData,
+                'msg' => control::getUuid(),
+            ];
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
     }
 
 }
