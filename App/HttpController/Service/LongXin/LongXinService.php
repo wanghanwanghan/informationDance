@@ -489,6 +489,11 @@ class LongXinService extends ServiceBase
     //企业联系方式
     function getEntLianXi($postData)
     {
+        //1.石家庄近一周的数据推送，总量控制在1千条以上；
+        //2.推送频次每天1次，日更量有多少推多少；
+        //3.推送时间定为晚上，比如8点推送前一天的数据；
+        //备注：如果时间期限内数量不够，可以延长推送时间。
+
         $entId = $this->getEntid($postData['entName']);
 
         if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
