@@ -193,6 +193,8 @@ class LongXinService extends ServiceBase
         $res = (new CoHttpClient())->useCache(false)
             ->send($this->baseUrl . 'api/super_search/', $arr, $this->sendHeaders);
 
+        CommonService::getInstance()->log4PHP($res);
+
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
 
