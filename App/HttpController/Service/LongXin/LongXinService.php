@@ -508,7 +508,7 @@ class LongXinService extends ServiceBase
         $res = (new CoHttpClient())
             ->setCheckRespFlag(true)
             ->useCache(false)
-            ->send('http://None/company_lianxi/', $arr, $this->sendHeaders);
+            ->send($this->baseUrl . 'company_lianxi/', $arr, $this->sendHeaders);
 
         CommonService::getInstance()->log4PHP($arr);
         CommonService::getInstance()->log4PHP($res);
