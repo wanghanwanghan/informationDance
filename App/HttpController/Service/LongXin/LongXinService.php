@@ -506,7 +506,8 @@ class LongXinService extends ServiceBase
         $this->sendHeaders['authorization'] = $this->createToken($arr);
 
         $res = (new CoHttpClient())
-            ->useCache(true)
+            ->setCheckRespFlag(true)
+            ->useCache(false)
             ->send('http://None/company_lianxi/', $arr, $this->sendHeaders);
 
         CommonService::getInstance()->log4PHP($arr);
