@@ -190,7 +190,8 @@ class LongXinService extends ServiceBase
 
         $this->sendHeaders['authorization'] = $this->createToken($arr);
 
-        $res = (new CoHttpClient())->send($this->baseUrl . 'api/super_search/', $arr, $this->sendHeaders);
+        $res = (new CoHttpClient())->useCache(false)
+            ->send($this->baseUrl . 'api/super_search/', $arr, $this->sendHeaders);
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
