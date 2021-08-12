@@ -176,7 +176,7 @@ class ProvideBase extends Index
                 $content = control::aesDecode($requestData['content'], $aes_key, 256);
                 $content_arr = jsonDecode($content);
                 if (is_array($content_arr)) {
-                    $requestData = array_merge($requestData, $content);
+                    $requestData = array_merge($requestData, $content_arr);
                 }
             }
         }
