@@ -164,7 +164,7 @@ class ProvideBase extends Index
         $requestData = array_merge($raw, $form);
 
         //有可能是rsa + aes的数据
-        if (isset($requestData['encrypt']) || isset($requestData['content'])) {
+        if (isset($requestData['encrypt']) && isset($requestData['content'])) {
             if (!empty($requestData['appId'])) {
                 $info = RequestUserInfo::create()->where('appId', $requestData['appId'])->get();
                 //拿公钥文件名
