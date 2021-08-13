@@ -31,7 +31,7 @@ class TestController extends BusinessBase
     {
         $angle = ['1.4', '0.7', '0', '5.6', '4.9'];
 
-        $res = CommonService::getInstance()->createDashboardPic($angle[array_rand($angle)]);
+        //$res = CommonService::getInstance()->createDashboardPic($angle[array_rand($angle)]);
 
         $res = BaiDuService::getInstance()->addressToStructured('北京市海淀区信息路甲九号');
 
