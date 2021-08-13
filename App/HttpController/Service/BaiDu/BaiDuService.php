@@ -143,5 +143,25 @@ class BaiDuService extends ServiceBase
         return is_string($res) ? jsonDecode($res) : $res;
     }
 
+    //识别自然语言地址并进行少量补充和纠错
+    function addressToStructured($address): ?array
+    {
+        $url = 'https://api.map.baidu.com/address_analyzer/v1?address=%s&ak=%s&sn=%s';
+
+        $data = [
+            'address' => $address,
+            'ak' => $this->ak,
+        ];
+
+        $querystring = http_build_query($data);
+
+        $sn = md5(urlencode('/address_analyzer/v1/?' . $querystring . $this->sk));
+
+        $url = sprintf($url, urlencode($address), 'json', $this->ak, $sn);
+
+        $res = (new CoHttpClient())->useCache(false)->send($url, [], [], [], 'get');
+
+        return is_string($res) ? jsonDecode($res) : $res;
+    }
 
 }

@@ -33,6 +33,8 @@ class TestController extends BusinessBase
 
         $res = CommonService::getInstance()->createDashboardPic($angle[array_rand($angle)]);
 
+        $res = BaiDuService::getInstance()->addressToStructured('北京市海淀区信息路甲九号');
+
         return $this->writeJson(200, null, $res);
     }
 
