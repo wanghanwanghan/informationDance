@@ -9,6 +9,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\DaXiang\DaXiangService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
+use App\HttpController\Service\JuHe\JuHeService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\MoveOut\MoveOutService;
 use App\HttpController\Service\QianQi\QianQiService;
@@ -33,7 +34,9 @@ class TestController extends BusinessBase
 
         //$res = CommonService::getInstance()->createDashboardPic($angle[array_rand($angle)]);
 
-        $res = BaiDuService::getInstance()->addressToStructured('北京市海淀区信息路甲九号');
+        //$res = BaiDuService::getInstance()->addressToStructured('北京市海淀区信息路甲九号');
+
+        $res = JuHeService::getInstance()->test();
 
         return $this->writeJson(200, null, $res);
     }
