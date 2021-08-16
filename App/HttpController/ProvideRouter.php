@@ -102,7 +102,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getEntLianXi', $prefix . 'getEntLianXi');
             $routeCollector->addRoute(['GET', 'POST'], '/superSearch', $prefix . 'superSearch');
             $routeCollector->addRoute(['GET', 'POST'], '/logisticsSearch', $prefix . 'logisticsSearch');
-            $routeCollector->addRoute(['GET', 'POST'], '/rsaTest', $prefix . 'rsaTest');
+            $routeCollector->addRoute(['GET', 'POST'], '/invEntList', $prefix . 'invEntList');//蚂蚁发过来的企业五要素
         });
 
         return true;

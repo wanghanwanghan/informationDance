@@ -259,9 +259,15 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    function rsaTest()
+    function invEntList()
     {
-        $this->csp->add($this->cspKey, function () {
+        $data[] = $this->getRequestData('entName', '');
+        $data[] = $this->getRequestData('SocialCredit', '');
+        $data[] = $this->getRequestData('legalPerson', '');
+        $data[] = $this->getRequestData('idCard', '');
+        $data[] = $this->getRequestData('phone', '');
+
+        $this->csp->add($this->cspKey, function () use ($data) {
             return [
                 'code' => 666,
                 'paging' => null,
