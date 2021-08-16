@@ -36,7 +36,7 @@ class TestController extends BusinessBase
 
         //$res = BaiDuService::getInstance()->addressToStructured('北京市海淀区信息路甲九号');
 
-        $res = JuHeService::getInstance()->test();
+        $res = JuHeService::getInstance()->addressCompletion();
 
         return $this->writeJson(200, null, $res);
     }

@@ -11,21 +11,21 @@ class JuHeService extends ServiceBase
 {
     use Singleton;
 
-    private $testUrl;
-    private $testKey;
+    private $addressCompletionUrl;
+    private $addressCompletionKey;
 
     function __construct()
     {
-        $this->testUrl = CreateConf::getInstance()->getConf('juhe.testUrl');
-        $this->testKey = CreateConf::getInstance()->getConf('juhe.testKey');
+        $this->addressCompletionUrl = CreateConf::getInstance()->getConf('juhe.addressCompletionUrl');
+        $this->addressCompletionKey = CreateConf::getInstance()->getConf('juhe.addressCompletionKey');
         return parent::__construct();
     }
 
-    function test(): ?array
+    function addressCompletion(): ?array
     {
         $res = (new CoHttpClient())
             ->useCache(false)
-            ->send($this->testUrl . '?key=' . $this->testKey);
+            ->send($this->addressCompletionUrl . '?key=' . $this->addressCompletionKey);
 
         return is_array($res) ? $res : jsonDecode($res);
     }
