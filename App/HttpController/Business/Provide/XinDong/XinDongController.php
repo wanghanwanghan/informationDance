@@ -262,7 +262,7 @@ class XinDongController extends ProvideBase
     function invEntList()
     {
         $data[] = $this->getRequestData('entName', '');
-        $data[] = $this->getRequestData('SocialCredit', '');
+        $data[] = $this->getRequestData('socialCredit', '');
         $data[] = $this->getRequestData('legalPerson', '');
         $data[] = $this->getRequestData('idCard', '');
         $data[] = $this->getRequestData('phone', '');
