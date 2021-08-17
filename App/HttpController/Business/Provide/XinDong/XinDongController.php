@@ -254,9 +254,10 @@ class XinDongController extends ProvideBase
         $this->csp->add($this->cspKey . '1', function () use ($postData) {
             $postData = ['keyWord' => $postData['entName']];
             $ldUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
-            return (new LongDunService())
+            $res = (new LongDunService())
                 ->setCheckRespFlag(true)
                 ->get($ldUrl . 'ECICreditCode/GetCreditCodeNew', $postData);
+            return current($res['result']);
         });
 
         $this->csp->add($this->cspKey . '2', function () use ($postData) {
