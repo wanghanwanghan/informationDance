@@ -254,22 +254,38 @@ class XinDongController extends ProvideBase
         $this->csp->add($this->cspKey . '1', function () use ($postData) {
             $postData = ['keyWord' => $postData['entName']];
             $ldUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
-            $res = (new LongDunService())
+            return (new LongDunService())
                 ->setCheckRespFlag(true)
                 ->get($ldUrl . 'ECICreditCode/GetCreditCodeNew', $postData);
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
-            return $res;
         });
 
         $this->csp->add($this->cspKey . '2', function () use ($postData) {
-            return (new TaoShuService())
+            $res = (new TaoShuService())
                 ->setCheckRespFlag(true)
                 ->post($postData, 'getRegisterInfo');
+            return current($res['result']);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
-        CommonService::getInstance()->log4PHP($res);
+        $Bank = $res[$this->cspKey . '1']['Bank'];
+        $BankAccount = $res[$this->cspKey . '1']['BankAccount'];
+        $FR = $res[$this->cspKey . '2']['FRDB'];
+        $SHXYDM = $res[$this->cspKey . '2']['SHXYDM'];
+
+        $res = [
+            $this->cspKey => [
+                'code' => 200,
+                'paging' => null,
+                'result' => [
+                    'Bank' => $Bank,
+                    'BankAccount' => $BankAccount,
+                    'FR' => $FR,
+                    'SHXYDM' => $SHXYDM,
+                ],
+                'msg' => null,
+            ]
+        ];
 
         return $this->checkResponse($res);
     }
