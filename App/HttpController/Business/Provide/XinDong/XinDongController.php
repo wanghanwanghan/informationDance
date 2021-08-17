@@ -6,6 +6,8 @@ use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Models\EntDb\EntDbAreaInfo;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\FinanceRange;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Sms\SmsService;
@@ -240,6 +242,36 @@ class XinDongController extends ProvideBase
     function logisticsSearch()
     {
 
+    }
+
+    //开户行
+    function bankInfo(): bool
+    {
+        $postData = [
+            'entName' => $this->getRequestData('entName'),
+        ];
+
+        $this->csp->add($this->cspKey . '1', function () use ($postData) {
+            $postData = ['keyWord' => $postData['entName']];
+            $ldUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
+            $res = (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get($ldUrl . 'ECICreditCode/GetCreditCodeNew', $postData);
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            return $res;
+        });
+
+        $this->csp->add($this->cspKey . '2', function () use ($postData) {
+            return (new TaoShuService())
+                ->setCheckRespFlag(true)
+                ->post($postData, 'getRegisterInfo');
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        CommonService::getInstance()->log4PHP($res);
+
+        return $this->checkResponse($res);
     }
 
     //企业联系方式
