@@ -245,7 +245,7 @@ class XinDongController extends ProvideBase
     }
 
     //开户行
-    function bankInfo(): bool
+    function getBankInfo(): bool
     {
         $postData = [
             'entName' => $this->getRequestData('entName'),
