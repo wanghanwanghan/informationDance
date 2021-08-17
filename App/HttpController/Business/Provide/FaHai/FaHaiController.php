@@ -166,6 +166,27 @@ class FaHaiController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getSatpartyXinDetail(): bool
+    {
+        $id = $this->getRequestData('id');
+
+        $docType = 'satparty_xin';
+
+        $postData = [
+            'id' => $id,
+            'doc_type' => $docType,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData, $docType) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getDetail($this->detailBaseUrl . $docType, $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
 
 }
 
