@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\XinDong;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Models\EntDb\EntDbAreaInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\FinanceRange;
 use App\HttpController\Service\LongXin\LongXinService;
@@ -260,19 +261,47 @@ class XinDongController extends ProvideBase
     }
 
     //蚂蚁发过来的企业五要素
-    function invEntList()
+    function invEntList(): bool
     {
-        $data[] = $this->getRequestData('entName');
-        $data[] = $this->getRequestData('socialCredit');
-        $data[] = $this->getRequestData('legalPerson');
-        $data[] = $this->getRequestData('idCard');
-        $data[] = $this->getRequestData('phone');
+        $data['entName'] = $this->getRequestData('entName');
+        $data['socialCredit'] = $this->getRequestData('socialCredit');
+        $data['legalPerson'] = $this->getRequestData('legalPerson');
+        $data['idCard'] = $this->getRequestData('idCard');
+        $data['phone'] = $this->getRequestData('phone');
+
+        if (empty($data['entName'])) {
+            return $this->writeJson(601, null, null, '企业名称不能是空');
+        }
+
+        if (strlen($data['socialCredit']) !== 18) {
+            return $this->writeJson(600, null, null, '统一社会信用代码必须18位');
+        }
+
+        $areaCode = substr($data['socialCredit'], 2, 6) - 0;
+
+        $region = EntDbAreaInfo::create()->get($areaCode);
+
+        if (empty($region)) {
+            return $this->writeJson(605, null, null, '未找到行政区划');
+        }
+
+        $data['region'] = $region->getAttr('name');
+
+        $postData = ['entName' => $data['entName']];
+
+        $res = (new TaoShuService())
+            ->setCheckRespFlag(true)
+            ->post($postData, 'getRegisterInfo');
+
+        $res = current($res['result']);
+
+        $data['address'] = $res['DOM'];
 
         $this->csp->add($this->cspKey, function () use ($data) {
             return [
                 'code' => 666,
                 'paging' => null,
-                'result' => $this->requestData,
+                'result' => $data,
                 'msg' => control::getUuid(),
             ];
         });
