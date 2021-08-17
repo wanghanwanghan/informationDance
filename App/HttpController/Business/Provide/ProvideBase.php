@@ -98,7 +98,7 @@ class ProvideBase extends Index
         }
 
         //如果是rsa模式，只返回指定内容
-        if (isset($this->requestData['encrypt']) && isset($this->responseData['content'])) {
+        if (isset($this->requestData['encrypt']) && isset($this->requestData['content'])) {
             $this->requestData = [
                 'appId' => $this->requestData['appId'],
                 'time' => $this->requestData['time'],
