@@ -259,13 +259,14 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //蚂蚁发过来的企业五要素
     function invEntList()
     {
-        $data[] = $this->getRequestData('entName', '');
-        $data[] = $this->getRequestData('socialCredit', '');
-        $data[] = $this->getRequestData('legalPerson', '');
-        $data[] = $this->getRequestData('idCard', '');
-        $data[] = $this->getRequestData('phone', '');
+        $data[] = $this->getRequestData('entName');
+        $data[] = $this->getRequestData('socialCredit');
+        $data[] = $this->getRequestData('legalPerson');
+        $data[] = $this->getRequestData('idCard');
+        $data[] = $this->getRequestData('phone');
 
         $this->csp->add($this->cspKey, function () use ($data) {
             return [

@@ -20,6 +20,7 @@ class ProvideRouter
         $this->FaYanYuanRouterV1($routeCollector);
         $this->YunMaTongRouterV1($routeCollector);
         $this->FaHaiRouterV1($routeCollector);
+        $this->Notify($routeCollector);
     }
 
     private function LongDunRouterV1(RouteCollector $routeCollector)
@@ -148,5 +149,15 @@ class ProvideRouter
         return true;
     }
 
+    private function Notify(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Provide/Notify/NotifyController/';
+
+        $routeCollector->addGroup('/notify', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/creditAuthUrl', $prefix . 'creditAuthUrl');
+        });
+
+        return true;
+    }
 
 }
