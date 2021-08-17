@@ -257,7 +257,7 @@ class XinDongController extends ProvideBase
             $res = (new LongDunService())
                 ->setCheckRespFlag(true)
                 ->get($ldUrl . 'ECICreditCode/GetCreditCodeNew', $postData);
-            return current($res['result']);
+            return $res['result'];
         });
 
         $this->csp->add($this->cspKey . '2', function () use ($postData) {
