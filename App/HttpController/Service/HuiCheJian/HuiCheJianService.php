@@ -41,17 +41,18 @@ class HuiCheJianService extends ServiceBase
         $url = CreateConf::getInstance()->getConf('huihcejian.createPdfUrl');
 
         $postData = [
-            'entName' => $data['com'],
-            'socialCredit' => $data['com'],
-            'legalPerson' => $data['com'],
-            'idCard' => $data['com'],
-            'phone' => $data['com'],
-            'region' => $data['com'],
-            'address' => $data['com'],
-            'requestId' => $data['com'],
+            'entName' => $data['entName'],
+            'socialCredit' => $data['socialCredit'],
+            'legalPerson' => $data['legalPerson'],
+            'idCard' => $data['idCard'],
+            'phone' => $data['phone'],
+            'region' => $data['region'],
+            'address' => $data['address'],
+            'requestId' => $data['requestId'],
         ];
 
-        $res = (new CoHttpClient())->useCache(false)->send($url, $postData, $this->sendHeaders);
+        //$res = (new CoHttpClient())->useCache(false)->send($url, $postData, $this->sendHeaders);
+        $res = $postData;
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
