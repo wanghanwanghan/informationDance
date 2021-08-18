@@ -12,11 +12,6 @@ class BaiDuService extends ServiceBase
 {
     use Singleton;
 
-    function onNewService(): ?bool
-    {
-        return parent::onNewService();
-    }
-
     private $clientId;
     private $clientSecret;
     private $checkWordUrl;
@@ -146,7 +141,7 @@ class BaiDuService extends ServiceBase
     //识别自然语言地址并进行少量补充和纠错
     function addressToStructured($address): ?array
     {
-        $url = 'https://api.map.baidu.com/address_analyzer/v1?address=%s&ak=%s&sn=%s';
+        $url = 'https://api.map.baidu.com/address_analyzer/v1/?address=%s&ak=%s&sn=%s';
 
         $data = [
             'address' => $address,
