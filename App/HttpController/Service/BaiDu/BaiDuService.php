@@ -157,7 +157,7 @@ class BaiDuService extends ServiceBase
 
         $sn = md5(urlencode('/address_analyzer/v1/?' . $querystring . $this->sk));
 
-        $url = sprintf($url, urlencode($address), 'json', $this->ak, $sn);
+        $url = sprintf($url, urlencode($address), $this->ak, $sn);
 
         $res = (new CoHttpClient())->useCache(false)->send($url, [], [], [], 'get');
 

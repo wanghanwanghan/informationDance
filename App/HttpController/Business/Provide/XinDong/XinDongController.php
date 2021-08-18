@@ -319,6 +319,7 @@ class XinDongController extends ProvideBase
         $data['legalPerson'] = $this->getRequestData('legalPerson');
         $data['idCard'] = $this->getRequestData('idCard');
         $data['phone'] = $this->getRequestData('phone');
+        $data['requestId'] = $this->requestId;
 
         $data = (new MaYiService())->authEnt($data);
 

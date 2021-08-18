@@ -36,10 +36,6 @@ class MaYiService extends ServiceBase
 
     function authEnt($data): array
     {
-        $requestId = Carbon::now()->format('YmdHis') . control::getUuid(14);
-
-        $data['requestId'] = $requestId;
-
         if (empty($data['entName'])) {
             return $this->check(600, null, null, '企业名称不能是空');
         }
