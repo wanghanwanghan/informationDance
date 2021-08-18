@@ -83,7 +83,7 @@ class MaYiService extends ServiceBase
             'legalPerson' => $data['legalPerson'],
             'idCard' => $data['idCard'],
             'phone' => $data['phone'],
-            'region' => $data['region'],
+            'region' => $baiduApiRes['city'] ?? '',
             'requestDate' => time(),
             'status' => 0,
             'regAddress' => $baiduApiRes['regAddress'] ?? '',
