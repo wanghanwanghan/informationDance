@@ -45,16 +45,6 @@ class MaYiService extends ServiceBase
             return $this->check(605, null, null, '统一社会信用代码必须18位');
         }
 
-        $areaCode = substr($data['socialCredit'], 2, 6) - 0;
-
-        $region = EntDbAreaInfo::create()->get($areaCode);
-
-        if (empty($region)) {
-            return $this->check(610, null, null, '未找到行政区划');
-        }
-
-        $data['region'] = $region->getAttr('name');
-
         $postData = ['entName' => $data['entName']];
 
         $res = (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getRegisterInfo');
@@ -69,7 +59,7 @@ class MaYiService extends ServiceBase
         ])->get();
 
         if (!empty($check)) {
-            return $this->check(615, null, null, '已经授权过了');
+            return $this->check(610, null, null, '已经授权过了');
         }
 
         $baiduApi = BaiDuService::getInstance()->addressToStructured(trim($res['DOM']));
@@ -106,6 +96,8 @@ class MaYiService extends ServiceBase
             'town' => $baiduApiRes['town'] ?? '',
             'townCode' => $baiduApiRes['townCode'] ?? '',
         ])->save();
+
+        $data = array_merge($data, $baiduApiRes);
 
         return $this->check(200, null, $data, null);
     }

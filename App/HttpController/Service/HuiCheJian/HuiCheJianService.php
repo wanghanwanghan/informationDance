@@ -6,17 +6,12 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
+use wanghanwanghan\someUtils\utils\arr;
 
 class HuiCheJianService extends ServiceBase
 {
-    private $sendHeaders;
-
     function __construct()
     {
-        $this->sendHeaders = [
-            'content-type' => 'application/x-www-form-urlencoded',
-        ];
-
         return parent::__construct();
     }
 
@@ -36,9 +31,10 @@ class HuiCheJianService extends ServiceBase
         return $this->createReturn($res['code'], $res['Paging'], $res['Result'], $res['Message']);
     }
 
-    function send($data, $service)
+    function getAuthPdf($data): array
     {
-        //$url = CreateConf::getInstance()->getConf('huihcejian.createPdfUrl');
+        $url = CreateConf::getInstance()->getConf('huihcejian.getPdfUrl');
+        $appId = CreateConf::getInstance()->getConf('huihcejian.appId');
 
         $postData = [
             'entName' => $data['entName'],
@@ -51,8 +47,9 @@ class HuiCheJianService extends ServiceBase
             'requestId' => $data['requestId'],
         ];
 
-        //$res = (new CoHttpClient())->useCache(false)->send($url, $postData, $this->sendHeaders);
-        $res = $postData;
+        $res = (new CoHttpClient())->useCache(false)->send($url, $postData, [], [], 'postjson');
+
+        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
