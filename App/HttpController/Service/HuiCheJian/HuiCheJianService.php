@@ -38,7 +38,7 @@ class HuiCheJianService extends ServiceBase
 
     function send($data, $service)
     {
-        $url = CreateConf::getInstance()->getConf('huihcejian.createPdfUrl');
+        //$url = CreateConf::getInstance()->getConf('huihcejian.createPdfUrl');
 
         $postData = [
             'entName' => $data['entName'],
