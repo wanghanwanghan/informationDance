@@ -47,7 +47,10 @@ class HuiCheJianService extends ServiceBase
             'requestId' => $data['requestId'],
         ];
 
-        $res = (new CoHttpClient())->useCache(false)->send($url, $postData, [], [], 'postjson');
+        CommonService::getInstance()->log4PHP($postData);
+
+        $res = (new CoHttpClient())->useCache(false)
+            ->send($url, $postData, [], [], 'postjson');
 
         CommonService::getInstance()->log4PHP($res);
 
