@@ -97,6 +97,8 @@ class MaYiService extends ServiceBase
             'townCode' => $baiduApiRes['townCode'] ?? '',
         ])->save();
 
+        $data['region'] = $baiduApiRes['city'] ?? '';
+
         $data = array_merge($data, $baiduApiRes);
 
         return $this->check(200, null, $data, null);
