@@ -320,14 +320,10 @@ class XinDongController extends ProvideBase
         $data['idCard'] = $this->getRequestData('idCard');
         $data['phone'] = $this->getRequestData('phone');
 
-        CommonService::getInstance()->log4PHP($data);
-
         $data = (new MaYiService())->authEnt($data);
 
-        CommonService::getInstance()->log4PHP($data);
-
         $this->csp->add($this->cspKey, function () use ($data) {
-            return (new HuiCheJianService())->send($data, 'getAuthPdf');
+            return (new HuiCheJianService())->send($data['result'], 'getAuthPdf');
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);

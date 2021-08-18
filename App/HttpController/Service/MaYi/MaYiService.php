@@ -85,7 +85,7 @@ class MaYiService extends ServiceBase
             'region' => $data['region'],
             'requestDate' => time(),
             'status' => 0,
-        ]);
+        ])->save();
 
         return $this->check(200, null, $data, null);
     }
