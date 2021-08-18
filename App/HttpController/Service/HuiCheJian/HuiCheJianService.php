@@ -70,6 +70,8 @@ Eof;
             'content' => $content,
         ];
 
+        CommonService::getInstance()->log4PHP($post_data);
+
         $res = (new CoHttpClient())->useCache(false)
             ->send($url, $post_data, [], [], 'postjson');
 
