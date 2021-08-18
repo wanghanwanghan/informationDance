@@ -4,6 +4,7 @@ namespace App\HttpController\Service\MaYi;
 
 use App\HttpController\Models\Api\AntAuthList;
 use App\HttpController\Models\EntDb\EntDbAreaInfo;
+use App\HttpController\Service\BaiDu\BaiDuService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\ServiceBase;
 use App\HttpController\Service\TaoShu\TaoShuService;
@@ -71,6 +72,20 @@ class MaYiService extends ServiceBase
             return $this->check(615, null, null, '已经授权过了');
         }
 
+        $baiduApi = BaiDuService::getInstance()->addressToStructured(trim($res['DOM']));
+        $baiduApiRes = [];
+        if ($baiduApi['status'] === 0) {
+            $baiduApiRes['regAddress'] = $res['DOM'];
+            $baiduApiRes['province'] = $baiduApi['result']['province'];
+            $baiduApiRes['provinceCode'] = $baiduApi['result']['province_code'];
+            $baiduApiRes['city'] = $baiduApi['result']['city'];
+            $baiduApiRes['cityCode'] = $baiduApi['result']['city_code'];
+            $baiduApiRes['county'] = $baiduApi['result']['county'];
+            $baiduApiRes['countyCode'] = $baiduApi['result']['county_code'];
+            $baiduApiRes['town'] = $baiduApi['result']['town'];
+            $baiduApiRes['townCode'] = $baiduApi['result']['town_code'];
+        }
+
         AntAuthList::create()->data([
             'requestId' => $data['requestId'],
             'entName' => $data['entName'],
@@ -81,6 +96,15 @@ class MaYiService extends ServiceBase
             'region' => $data['region'],
             'requestDate' => time(),
             'status' => 0,
+            'regAddress' => $baiduApiRes['regAddress'] ?? '',
+            'province' => $baiduApiRes['province'] ?? '',
+            'provinceCode' => $baiduApiRes['provinceCode'] ?? '',
+            'city' => $baiduApiRes['city'] ?? '',
+            'cityCode' => $baiduApiRes['cityCode'] ?? '',
+            'county' => $baiduApiRes['county'] ?? '',
+            'countyCode' => $baiduApiRes['countyCode'] ?? '',
+            'town' => $baiduApiRes['town'] ?? '',
+            'townCode' => $baiduApiRes['townCode'] ?? '',
         ])->save();
 
         return $this->check(200, null, $data, null);
