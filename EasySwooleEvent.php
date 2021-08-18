@@ -15,6 +15,7 @@ use App\HttpController\Service\CreateSessionHandler;
 use App\HttpController\Service\RequestUtils\LimitService;
 use App\Process\ProcessList\ConsumeOcrProcess;
 use App\Process\ProcessList\Docx2Doc;
+use App\Process\ProcessList\PackAuthBookProcess;
 use App\Process\ProcessList\QueueProcess;
 use App\Process\Service\ProcessService;
 use App\SwooleTable\Service\SwooleTableService;
@@ -63,6 +64,7 @@ class EasySwooleEvent implements Event
         //注册自定义进程
         ProcessService::getInstance()->create(Docx2Doc::class, 'docx2doc');
         ProcessService::getInstance()->create(ConsumeOcrProcess::class, 'consumeOcr');
+        ProcessService::getInstance()->create(PackAuthBookProcess::class, 'packAuthBook');
 
         //注册定时任务
         CrontabService::getInstance()->create();
