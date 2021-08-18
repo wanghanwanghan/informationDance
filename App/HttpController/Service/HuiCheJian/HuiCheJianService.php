@@ -33,8 +33,8 @@ class HuiCheJianService extends ServiceBase
 
     function getAuthPdf($data): array
     {
-        $url = CreateConf::getInstance()->getConf('huihcejian.getPdfUrl');
-        $appId = CreateConf::getInstance()->getConf('huihcejian.appId');
+        $url = CreateConf::getInstance()->getConf('huichejian.getPdfUrl');
+        $appId = CreateConf::getInstance()->getConf('huichejian.appId');
 
         $postData = [
             'entName' => $data['entName'],
