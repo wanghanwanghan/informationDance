@@ -4,10 +4,8 @@ namespace App\HttpController\Business\Provide\XinDong;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
-use App\HttpController\Models\Api\AntAuthList;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
-use App\HttpController\Service\HuiCheJian\HuiCheJianService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\FinanceRange;
 use App\HttpController\Service\LongXin\LongXinService;
