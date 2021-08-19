@@ -5,6 +5,7 @@ namespace App\HttpController\Service\BaiDu;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
+use Carbon\Carbon;
 use EasySwoole\Component\Singleton;
 use EasySwoole\Http\Message\UploadFile;
 
@@ -21,6 +22,8 @@ class BaiDuService extends ServiceBase
     private $getTokenUrl;
     private $ak;
     private $sk;
+    private $ak_tmp;
+    private $sk_tmp;
 
     function __construct()
     {
@@ -33,6 +36,8 @@ class BaiDuService extends ServiceBase
         $this->getTokenUrl = CreateConf::getInstance()->getConf('baidu.getTokenUrl');
         $this->ak = CreateConf::getInstance()->getConf('baidu.ak');
         $this->sk = CreateConf::getInstance()->getConf('baidu.sk');
+        $this->ak_tmp = CreateConf::getInstance()->getConf('baidu.ak_tmp');
+        $this->sk_tmp = CreateConf::getInstance()->getConf('baidu.sk_tmp');
         return parent::__construct();
     }
 
@@ -143,22 +148,29 @@ class BaiDuService extends ServiceBase
     {
         $url = 'https://api.map.baidu.com/address_analyzer/v1/?address=%s&ak=%s&sn=%s';
 
+        if (time() % 2) {
+            $ak = $this->ak;
+            $sk = $this->sk;
+        } else {
+            $ak = $this->ak;
+            $sk = $this->sk;
+        }
+
         $data = [
             'address' => $address,
-            'ak' => $this->ak,
+            'ak' => $ak,
         ];
 
         $querystring = http_build_query($data);
 
-        $sn = md5(urlencode('/address_analyzer/v1/?' . $querystring . $this->sk));
+        $sn = md5(urlencode('/address_analyzer/v1/?' . $querystring . $sk));
 
-        $url = sprintf($url, urlencode($address), $this->ak, $sn);
+        $url = sprintf($url, urlencode($address), $ak, $sn);
 
         $res = (new CoHttpClient())->useCache(false)->send($url, [], [], [], 'get');
 
         return is_string($res) ? jsonDecode($res) : $res;
     }
-
 
 
 }

@@ -9,11 +9,6 @@ class ZipService extends ServiceBase
 {
     use Singleton;
 
-    function onNewService(): ?bool
-    {
-        return parent::onNewService();
-    }
-
     //返回本次解压后的文件名
     function unzip($filename, $path): ?array
     {
@@ -53,6 +48,23 @@ class ZipService extends ServiceBase
         zip_close($resource);
 
         return $unzip_filename;
+    }
+
+    function zip($fileArr, $zipName, $overwrite = false): ?string
+    {
+        $zip = new \ZipArchive;
+
+        $zip->open($zipName, $overwrite ? \ZIPARCHIVE::OVERWRITE : \ZIPARCHIVE::CREATE);
+
+        foreach ($fileArr as $one) {
+            $arr = explode(DIRECTORY_SEPARATOR, $one);
+            $name = end($arr);
+            $zip->addFile($one, $name);
+        }
+
+        $zip->close();
+
+        return $zipName;
     }
 
 }

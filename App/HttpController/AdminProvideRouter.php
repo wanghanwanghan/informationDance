@@ -17,6 +17,7 @@ class AdminProvideRouter
         $this->StatisticsRouterV1($routeCollector);
         $this->FinanceRouterV1($routeCollector);
         $this->FileTransmissionRouterV1($routeCollector);
+        $this->invoiceRouterV1($routeCollector);
     }
 
     private function UserRouterV1(RouteCollector $routeCollector)
@@ -80,6 +81,17 @@ class AdminProvideRouter
         $routeCollector->addGroup('/transmission', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getFileList', $prefix . 'getFileList');
             $routeCollector->addRoute(['GET', 'POST'], '/uploadFileToDir', $prefix . 'uploadFileToDir');
+        });
+
+        return true;
+    }
+
+    private function invoiceRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Admin/Invoice/InvoiceController/';
+
+        $routeCollector->addGroup('/invoice', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getList', $prefix . 'getList');
         });
 
         return true;
