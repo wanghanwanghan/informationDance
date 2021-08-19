@@ -324,7 +324,7 @@ class XinDongController extends ProvideBase
         $data = (new MaYiService())->authEnt($data);
 
         $this->csp->add($this->cspKey, function () use ($data) {
-            return (new HuiCheJianService())->getAuthPdf($data['result']);
+            return (new HuiCheJianService())->setCheckRespFlag(true)->getAuthPdf($data['result']);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);

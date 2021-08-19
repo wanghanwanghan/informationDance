@@ -2,6 +2,8 @@
 
 namespace App\HttpController\Service;
 
+use App\HttpController\Models\Provide\RequestUserInfo;
+use App\HttpController\Service\Common\CommonService;
 use wanghanwanghan\someUtils\control;
 
 class ServiceBase
@@ -73,4 +75,61 @@ class ServiceBase
     {
         return ($page - 1) * $pageSize;
     }
+
+    //coHttp之前，把传输参数加密
+    function beforeSendEncrypt($data, $appId, $merge = []): ?array
+    {
+        //拿rsa公钥
+        $userInfo = RequestUserInfo::create()->where('appId', $appId)->get();
+        $rsaPub = RSA_KEY_PATH . $userInfo->getAttr('rsaPub');
+        if (!file_exists($rsaPub)) {
+            CommonService::getInstance()->log4PHP("{$appId} 的Rsa不存在");
+            return null;
+        }
+
+        //生成Aes密钥
+        $aesKey = control::getUuid();
+
+        //加密Aes密钥
+        $encrypt = control::rsaEncrypt($aesKey, file_get_contents($rsaPub));
+
+        //加密内容
+        $content = control::aesEncode(jsonEncode($data, false), $aesKey, 256);
+
+        $postData = [
+            'encrypt' => $encrypt,
+            'content' => $content,
+        ];
+
+        if (!empty($merge)) {
+            $postData = array_merge($postData, $merge);
+        }
+
+        return $postData;
+    }
+
+    //
+    function afterSendEncrypt($data, $appId): ?array
+    {
+        $encrypt = $data['encrypt'];
+        $content = $data['content'];
+
+        //拿rsa公钥
+        $userInfo = RequestUserInfo::create()->where('appId', $appId)->get();
+        $rsaPub = RSA_KEY_PATH . $userInfo->getAttr('rsaPub');
+        if (!file_exists($rsaPub)) {
+            CommonService::getInstance()->log4PHP("{$appId} 的Rsa不存在");
+            return null;
+        }
+
+        //解密出Aes密钥
+        $aesKey = control::rsaDecrypt($encrypt, file_get_contents($rsaPub), 'pub');
+
+        //解密出内容
+        $content = openssl_decrypt(base64_decode($content), 'AES-256-ECB', $aesKey, OPENSSL_RAW_DATA);
+
+        return jsonDecode($content);
+    }
+
+
 }
