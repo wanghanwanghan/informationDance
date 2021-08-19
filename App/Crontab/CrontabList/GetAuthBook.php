@@ -1,31 +1,47 @@
 <?php
 
-namespace App\Process\ProcessList;
+namespace App\Crontab\CrontabList;
 
+use App\Crontab\CrontabBase;
 use App\HttpController\Models\Api\AntAuthList;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HuiCheJian\HuiCheJianService;
 use App\HttpController\Service\MaYi\MaYiService;
-use App\Process\ProcessBase;
 use Carbon\Carbon;
-use Swoole\Process;
+use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 
-class GetAuthBookProcess extends ProcessBase
+class GetAuthBook extends AbstractCronTask
 {
-    protected function run($arg)
+    private $crontabBase;
+
+    //每次执行任务都会执行构造函数
+    function __construct()
     {
-        //没发送的授权书，每月固定时间给大象发过去
-        while (true) {
+        $this->crontabBase = new CrontabBase();
+    }
 
-            //准备获取授权书的企业列表
-            $list = AntAuthList::create()->where([
-                'authDate' => 0,
-                'status' => MaYiService::STATUS_0,
-            ])->all();
+    static function getRule(): string
+    {
+        //每小时执行一次
+        return '0 * * * *';
+    }
 
-            if (empty($list)) {
-                continue;
-            }
+    static function getTaskName(): string
+    {
+        return __CLASS__;
+    }
+
+    function run(int $taskId, int $workerIndex)
+    {
+        CommonService::getInstance()->log4PHP(Carbon::now()->format('Y-m-d H:i:s'), 'GetAuthBookCrontabRunAt', 'ant.log');
+
+        //准备获取授权书的企业列表
+        $list = AntAuthList::create()->where([
+            'authDate' => 0,
+            'status' => MaYiService::STATUS_0,
+        ])->all();
+
+        if (!empty($list)) {
 
             foreach ($list as $oneEntInfo) {
 
@@ -44,8 +60,8 @@ class GetAuthBookProcess extends ProcessBase
                     ->setCheckRespFlag(true)->getAuthPdf($data);
 
                 if ($res['code'] !== 200) {
-                    CommonService::getInstance()->log4PHP($data, 'GetAuthBookProcessData', 'ant.log');
-                    CommonService::getInstance()->log4PHP($res['msg'] ?? '', 'GetAuthBookProcessMsg', 'ant.log');
+                    CommonService::getInstance()->log4PHP($data, 'GetAuthBookCrontabData', 'ant.log');
+                    CommonService::getInstance()->log4PHP($res['msg'] ?? '', 'GetAuthBookCrontabMsg', 'ant.log');
                     continue;
                 }
 
@@ -70,24 +86,12 @@ class GetAuthBookProcess extends ProcessBase
 
             }
 
-            \co::sleep(3600);
-
         }
     }
 
-    protected function onPipeReadable(Process $process)
+    function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
-        parent::onPipeReadable($process);
-        return true;
-    }
-
-    protected function onShutDown()
-    {
-    }
-
-    protected function onException(\Throwable $throwable, ...$args)
-    {
-        CommonService::getInstance()->log4PHP($throwable->getTraceAsString(), 'GetAuthBookProcessShutDown', 'ant.log');
+        CommonService::getInstance()->log4PHP($throwable->getTraceAsString(), 'GetAuthBookCrontabException', 'ant.log');
     }
 
 

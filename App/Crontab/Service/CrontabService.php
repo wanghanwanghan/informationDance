@@ -4,6 +4,7 @@ namespace App\Crontab\Service;
 
 use App\Crontab\CrontabList\CreateDeepReport;
 use App\Crontab\CrontabList\DeleteTimeoutOrder;
+use App\Crontab\CrontabList\GetAuthBook;
 use App\Crontab\CrontabList\MoveOut;
 use App\Crontab\CrontabList\RunSupervisor;
 use EasySwoole\Component\Singleton;
@@ -20,6 +21,7 @@ class CrontabService
         $this->deleteTimeoutOrder();
         $this->runSupervisor();
         //$this->runMoveOut();
+        $this->getAuthBook();
 
         return true;
     }
@@ -46,5 +48,10 @@ class CrontabService
     private function runMoveOut(): Crontab
     {
         return Crontab::getInstance()->addTask(MoveOut::class);
+    }
+
+    private function getAuthBook(): Crontab
+    {
+        return Crontab::getInstance()->addTask(GetAuthBook::class);
     }
 }
