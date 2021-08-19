@@ -65,6 +65,7 @@ class GetAuthBookProcess extends ProcessBase
                     'socialCredit' => $oneEntInfo->getAttr('socialCredit'),
                 ])->update([
                     'filePath' => $path . $filename,
+                    'authDate' => time(),
                     'status' => MaYiService::STATUS_1
                 ]);
 
