@@ -49,8 +49,11 @@ class GetAuthBookProcess extends ProcessBase
                     continue;
                 }
 
+                CommonService::getInstance()->log4PHP($res);
                 $res = current($res['result']);
+                CommonService::getInstance()->log4PHP($res);
                 $url = $res['url'];
+                CommonService::getInstance()->log4PHP($url);
 
                 $path = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
                 is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0644);
