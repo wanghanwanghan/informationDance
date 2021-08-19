@@ -85,7 +85,7 @@ class MaYiService extends ServiceBase
             'phone' => $data['phone'],
             'region' => $baiduApiRes['city'] ?? '',
             'requestDate' => time(),
-            'status' => 0,
+            'status' => self::STATUS_0,
             'regAddress' => $baiduApiRes['regAddress'] ?? '',
             'province' => $baiduApiRes['province'] ?? '',
             'provinceCode' => $baiduApiRes['provinceCode'] ?? '',
@@ -97,11 +97,7 @@ class MaYiService extends ServiceBase
             'townCode' => $baiduApiRes['townCode'] ?? '',
         ])->save();
 
-        $data['region'] = $baiduApiRes['city'] ?? '';
-
-        $data = array_merge($data, $baiduApiRes);
-
-        return $this->check(200, null, $data, null);
+        return $this->check(200, null, null, null);
     }
 
 

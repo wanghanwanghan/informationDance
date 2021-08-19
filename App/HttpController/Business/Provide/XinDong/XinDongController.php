@@ -4,7 +4,7 @@ namespace App\HttpController\Business\Provide\XinDong;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
-use App\HttpController\Models\EntDb\EntDbAreaInfo;
+use App\HttpController\Models\Api\AntAuthList;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HuiCheJian\HuiCheJianService;
@@ -16,7 +16,6 @@ use App\HttpController\Service\Sms\SmsService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\XinDongService;
 use Carbon\Carbon;
-use wanghanwanghan\someUtils\control;
 
 class XinDongController extends ProvideBase
 {
@@ -321,13 +320,13 @@ class XinDongController extends ProvideBase
         $data['phone'] = $this->getRequestData('phone');
         $data['requestId'] = $this->requestId;
 
-        $data = (new MaYiService())->authEnt($data);
-
         $this->csp->add($this->cspKey, function () use ($data) {
-            return (new HuiCheJianService())->setCheckRespFlag(true)->getAuthPdf($data['result']);
+            return (new MaYiService())->authEnt($data);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkResponse($res);
     }
