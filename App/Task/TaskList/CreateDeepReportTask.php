@@ -3824,40 +3824,119 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $docObj->setValue('ps_sno#' . ($i + 1), $data['ProductStandardInfo']['list'][$i]['STANDARD_CODE']);
         }
 
-        //二次特征
         if (!empty($data['features'])) {
             //企业成长能力
             $docObj->setValue('qyczx_s', $data['features']['MAIBUSINC_yoy']['score'] ?? '--');
+            $docObj->setImageValue('qyczx_s_pic', [
+                'path' => REPORT_IMAGE_TEMP_PATH . $data['features']['MAIBUSINC_yoy']['pic'],
+                'width' => 200,
+                'height' => 100,
+            ]);
             //企业资产增长能力
             $docObj->setValue('qyzczc_s', $data['features']['ASSGRO_yoy']['score'] ?? '--');
+            $docObj->setImageValue('qyzczc_s_pic', [
+                'path' => REPORT_IMAGE_TEMP_PATH . $data['features']['ASSGRO_yoy']['pic'],
+                'width' => 200,
+                'height' => 100,
+            ]);
             //企业盈利能力
             $docObj->setValue('qyyl_s', $data['features']['PROGRO']['score'] ?? '--');
+            $docObj->setImageValue('qyyl_s_pic', [
+                'path' => REPORT_IMAGE_TEMP_PATH . $data['features']['PROGRO']['pic'],
+                'width' => 200,
+                'height' => 100,
+            ]);
             //企业盈利可持续能力
             $docObj->setValue('qyylkcx_s', $data['features']['PROGRO_yoy']['score'] ?? '--');
+            $docObj->setImageValue('qyylkcx_s_pic', [
+                'path' => REPORT_IMAGE_TEMP_PATH . $data['features']['PROGRO_yoy']['pic'],
+                'width' => 200,
+                'height' => 100,
+            ]);
             //企业税收贡献能力
             $docObj->setValue('qyssgx_s', $data['features']['RATGRO']['score'] ?? '--');
+            $docObj->setImageValue('qyssgx_s_pic', [
+                'path' => REPORT_IMAGE_TEMP_PATH . $data['features']['RATGRO']['pic'],
+                'width' => 200,
+                'height' => 100,
+            ]);
             //企业税负强度
             $docObj->setValue('qysfqd_s', $data['features']['TBR']['score'] ?? '--');
+            $docObj->setImageValue('qysfqd_s_pic', [
+                'path' => REPORT_IMAGE_TEMP_PATH . $data['features']['TBR']['pic'],
+                'width' => 200,
+                'height' => 100,
+            ]);
             //企业资产收益能力
             $docObj->setValue('qyzcsy_s', $data['features']['ASSGROPROFIT_REL']['score'] ?? '--');
+            $docObj->setImageValue('qyzcsy_s_pic', [
+                'path' => REPORT_IMAGE_TEMP_PATH . $data['features']['ASSGROPROFIT_REL']['pic'],
+                'width' => 200,
+                'height' => 100,
+            ]);
             //企业资产回报能力
             $docObj->setValue('qyzchb_s', $data['features']['ASSETS']['score'] ?? '--');
+            $docObj->setImageValue('qyzchb_s_pic', [
+                'path' => REPORT_IMAGE_TEMP_PATH . $data['features']['ASSETS']['pic'],
+                'width' => 200,
+                'height' => 100,
+            ]);
             //企业资本保值状况
             $docObj->setValue('qyzbbz_s', $data['features']['TOTEQU']['score'] ?? '--');
+            $docObj->setImageValue('qyzbbz_s_pic', [
+                'path' => REPORT_IMAGE_TEMP_PATH . $data['features']['TOTEQU']['pic'],
+                'width' => 200,
+                'height' => 100,
+            ]);
             //企业主营业务健康度
             $docObj->setValue('qyzyywjkd_s', $data['features']['DEBTL_H']['score'] ?? '--');
+            $docObj->setImageValue('qyzyywjkd_s_pic', [
+                'path' => REPORT_IMAGE_TEMP_PATH . $data['features']['DEBTL_H']['pic'],
+                'width' => 200,
+                'height' => 100,
+            ]);
             //企业资产经营健康度
             $docObj->setValue('qyzcjjjkd_s', $data['features']['DEBTL']['score'] ?? '--');
+            $docObj->setImageValue('qyzcjjjkd_s_pic', [
+                'path' => REPORT_IMAGE_TEMP_PATH . $data['features']['DEBTL']['pic'],
+                'width' => 200,
+                'height' => 100,
+            ]);
             //企业营运周转能力
             $docObj->setValue('qyzczz_s', $data['features']['ATOL']['score'] ?? '--');
+            $docObj->setImageValue('qyzczz_s_pic', [
+                'path' => REPORT_IMAGE_TEMP_PATH . $data['features']['ATOL']['pic'],
+                'width' => 200,
+                'height' => 100,
+            ]);
             //企业人均产出能力
             $docObj->setValue('qyrjcn_s', $data['features']['PERCAPITA_C']['score'] ?? '--');
+            $docObj->setImageValue('qyrjcn_s_pic', [
+                'path' => REPORT_IMAGE_TEMP_PATH . $data['features']['PERCAPITA_C']['pic'],
+                'width' => 200,
+                'height' => 100,
+            ]);
             //企业人均创收能力
             $docObj->setValue('qyrjcs_s', $data['features']['PERCAPITA_Y']['score'] ?? '--');
+            $docObj->setImageValue('qyrjcs_s_pic', [
+                'path' => REPORT_IMAGE_TEMP_PATH . $data['features']['PERCAPITA_Y']['pic'],
+                'width' => 200,
+                'height' => 100,
+            ]);
             //企业偿付能力
             $docObj->setValue('qyhknl_s', $data['features']['RepaymentAbility']['score'] ?? '--');
+            $docObj->setImageValue('qyhknl_s_pic', [
+                'path' => REPORT_IMAGE_TEMP_PATH . $data['features']['RepaymentAbility']['pic'],
+                'width' => 200,
+                'height' => 100,
+            ]);
             //企业担保能力
             $docObj->setValue('qydbnl_s', $data['features']['GuaranteeAbility']['score'] ?? '--');
+            $docObj->setImageValue('qydbnl_s_pic', [
+                'path' => REPORT_IMAGE_TEMP_PATH . $data['features']['GuaranteeAbility']['pic'],
+                'width' => 200,
+                'height' => 100,
+            ]);
         }
     }
 
