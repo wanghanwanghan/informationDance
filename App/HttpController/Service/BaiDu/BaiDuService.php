@@ -152,8 +152,8 @@ class BaiDuService extends ServiceBase
             $ak = $this->ak;
             $sk = $this->sk;
         } else {
-            $ak = $this->ak;
-            $sk = $this->sk;
+            $ak = $this->ak_tmp;
+            $sk = $this->sk_tmp;
         }
 
         $data = [
