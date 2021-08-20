@@ -1146,10 +1146,25 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         if (!empty($data['features'])) {
             //企业成长能力
             $docObj->setValue('qyczx_s', $data['features']['MAIBUSINC_yoy']['score'] ?? '--');
+            $docObj->setImageValue('wanghanpic1', [
+                'path' => REPORT_IMAGE_TEMP_PATH . $data['features']['MAIBUSINC_yoy']['pic'],
+                'width' => 200,
+                'height' => 100,
+            ]);
             //企业资产增长能力
             $docObj->setValue('qyzczc_s', $data['features']['ASSGRO_yoy']['score'] ?? '--');
+            $docObj->setImageValue('wanghanpic2', [
+                'path' => REPORT_IMAGE_TEMP_PATH . $data['features']['ASSGRO_yoy']['pic'],
+                'width' => 200,
+                'height' => 100,
+            ]);
             //企业盈利能力
             $docObj->setValue('qyyl_s', $data['features']['PROGRO']['score'] ?? '--');
+            $docObj->setImageValue('wanghanpic3', [
+                'path' => REPORT_IMAGE_TEMP_PATH . $data['features']['PROGRO']['pic'],
+                'width' => 200,
+                'height' => 100,
+            ]);
             //企业盈利可持续能力
             $docObj->setValue('qyylkcx_s', $data['features']['PROGRO_yoy']['score'] ?? '--');
             //企业税收贡献能力
@@ -1528,7 +1543,6 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         $csp->add('features', function () {
             $res = (new XinDongService())->setCheckRespFlag(true)->getFeatures($this->entName);
             if ($res['code'] === 200 && !empty($res['result'])) {
-                CommonService::getInstance()->log4PHP($res);
                 return $res['result'];
             } else {
                 return [];
