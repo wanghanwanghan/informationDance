@@ -151,7 +151,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         //财务资产
         $c = $this->cwzc($data['FinanceData']['data'], 'fz');
         //计算
-        $this->fz['caiwu'] = ($c[0] * 0.6 + $c[1] * 0.4)*0.6;
+        $this->fz['caiwu'] = ($c[0] * 0.6 + $c[1] * 0.4) * 0.6;
         //==============================================================================================================
         //行业位置
         $a = $this->hywz($data['FinanceData']['data'], $data['getRegisterInfo']);
@@ -168,7 +168,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         //财务资产
         $d = $this->cwzc($data['FinanceData']['data'], 'fx');
         //计算
-        $this->fx['caiwu'] = ($d[0] * 0.5 + $d[1] * 0.5)*0.6;
+        $this->fx['caiwu'] = ($d[0] * 0.5 + $d[1] * 0.5) * 0.6;
         //==============================================================================================================
         //近三年团队人数
         $a = $this->tdrs($data['itemInfo'], 'fx');
@@ -1528,6 +1528,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
         $csp->add('features', function () {
             $res = (new XinDongService())->setCheckRespFlag(true)->getFeatures($this->entName);
             if ($res['code'] === 200 && !empty($res['result'])) {
+                CommonService::getInstance()->log4PHP($res);
                 return $res['result'];
             } else {
                 return [];

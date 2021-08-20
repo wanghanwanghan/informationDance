@@ -19,7 +19,7 @@ class InvoiceController extends InvoiceBase
 
     function getList(): bool
     {
-        $res=AntAuthList::create()->all();
+        $res = AntAuthList::create()->all();
 
         return $this->writeJson(200, null, $res);
     }
