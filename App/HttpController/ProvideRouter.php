@@ -20,6 +20,7 @@ class ProvideRouter
         $this->FaYanYuanRouterV1($routeCollector);
         $this->YunMaTongRouterV1($routeCollector);
         $this->FaHaiRouterV1($routeCollector);
+        $this->MaYiRouterV1($routeCollector);
         $this->Notify($routeCollector);
     }
 
@@ -147,6 +148,17 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getKtggDetail', $prefix . 'getKtggDetail');//开庭公告
             $routeCollector->addRoute(['GET', 'POST'], '/getFyggDetail', $prefix . 'getFyggDetail');//法院公告
             $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyXinDetail', $prefix . 'getSatpartyXinDetail');
+        });
+
+        return true;
+    }
+
+    private function MaYiRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Provide/MaYi/MaYiController/';
+
+        $routeCollector->addGroup('/my', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/invEntList', $prefix . 'invEntList');
         });
 
         return true;
