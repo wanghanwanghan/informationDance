@@ -4,6 +4,7 @@ namespace App\HttpController\Service\Zip;
 
 use App\HttpController\Service\ServiceBase;
 use EasySwoole\Component\Singleton;
+use wanghanwanghan\someUtils\control;
 
 class ZipService extends ServiceBase
 {
