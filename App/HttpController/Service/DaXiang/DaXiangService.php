@@ -134,7 +134,7 @@ class DaXiangService extends ServiceBase
                 'NSRSBH' => '911199999999CN0008',
                 'KM' => '1',//1进项 2销项发票
                 'FPLXDM' => '04',//发票类型
-                'KPKSRQ' => '2020-01-01',
+                'KPKSRQ' => '1970-01-01',
                 'KPJSRQ' => '2021-01-01',
             ]))
         ];
