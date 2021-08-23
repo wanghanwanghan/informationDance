@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Admin\Invoice;
 
 use App\HttpController\Models\Api\AntAuthList;
+use App\HttpController\Service\Common\CommonService;
 use wanghanwanghan\someUtils\control;
 
 class InvoiceController extends InvoiceBase
@@ -28,6 +29,7 @@ class InvoiceController extends InvoiceBase
     {
         $res = $this->getRequestData('zip_arr');
 
+        CommonService::getInstance()->log4PHP($res);
 
         return $this->writeJson(200, null, $res);
     }
