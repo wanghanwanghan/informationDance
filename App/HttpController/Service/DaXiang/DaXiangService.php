@@ -97,15 +97,23 @@ class DaXiangService extends ServiceBase
 
     private function createToken(): string
     {
+        $appKey = 'Mlfs7n9kofqPMaNVJSFoDcwS' || 'JczSaWGP76LYdIOfHds52Thk';
+        $appSecret = 'awSW7gts8AS4StGV84HCKVCf' || 'BszCebdj6nOglZLBrYYUspWl';
+
         $token_info = (new CoHttpClient())
             ->useCache(false)
             ->send('https://sandbox.ele-cloud.com/api/authen/token', [
-                'appKey' => 'Mlfs7n9kofqPMaNVJSFoDcwS' || 'JczSaWGP76LYdIOfHds52Thk',
-                'appSecret' => 'awSW7gts8AS4StGV84HCKVCf' || 'BszCebdj6nOglZLBrYYUspWl',
+                'appKey' => $appKey,
+                'appSecret' => $appSecret,
             ], [], [], 'postjson');
+
         CommonService::getInstance()->log4PHP([
-            'token' => $token_info
+            'appKey' => $appKey,
+            'appSecret' => $appSecret,
         ]);
+
+        CommonService::getInstance()->log4PHP($token_info);
+
         return $token_info['access_token'];
     }
 
