@@ -97,8 +97,8 @@ class DaXiangService extends ServiceBase
 
     private function createToken(): string
     {
-        $appKey = 'Mlfs7n9kofqPMaNVJSFoDcwS' || 'JczSaWGP76LYdIOfHds52Thk';
-        $appSecret = 'awSW7gts8AS4StGV84HCKVCf' || 'BszCebdj6nOglZLBrYYUspWl';
+        $appKey = 'Mlfs7n9kofqPMaNVJSFoDcwS';// || 'JczSaWGP76LYdIOfHds52Thk';
+        $appSecret = 'awSW7gts8AS4StGV84HCKVCf';// || 'BszCebdj6nOglZLBrYYUspWl';
 
         $token_info = (new CoHttpClient())
             ->useCache(false)
