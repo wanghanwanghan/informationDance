@@ -128,7 +128,7 @@ class DaXiangService extends ServiceBase
             'zipCode' => '0',
             'encryptCode' => '0',
             'dataExchangeId' => $id . '',
-            'entCode' => '140301321321333' || $this->taxNo,
+            'entCode' => '140301321321333',// || $this->taxNo,
             'content' => base64_encode(jsonEncode([
                 'page' => '1',
                 'NSRSBH' => '911199999999CN0008',
