@@ -55,12 +55,14 @@ class InvoiceController extends InvoiceBase
                 if (!empty($one->getAttr('filePath')) && file_exists(INV_AUTH_PATH . $one->getAttr('filePath'))) {
                     $pdf[] = INV_AUTH_PATH . $one->getAttr('filePath');
                 }
+                $insert = [];
                 $insert[] = $one->getAttr('province');
                 $insert[] = $one->getAttr('city');
                 $insert[] = $one->getAttr('entName');
                 $insert[] = $one->getAttr('socialCredit');
-                $insert[] = $one->getAttr('socialCredit');
-                $insert[] = $one->getAttr('socialCredit');
+                $tmp = (new MaYiService())->taxAuthoritiesCode(obj2Arr($one));
+                $insert[] = $tmp[0];
+                $insert[] = $tmp[1];
                 fwrite($fp, implode(',', $insert) . PHP_EOL);
             }
             fclose($fp);
