@@ -64,6 +64,7 @@ class InvoiceController extends InvoiceBase
                 $insert[] = $tmp[0];
                 $insert[] = $tmp[1];
                 $one->update([
+                    'regionId' => $tmp[0],
                     'sendDate' => time(),
                     'status' => MaYiService::STATUS_2,
                 ]);
