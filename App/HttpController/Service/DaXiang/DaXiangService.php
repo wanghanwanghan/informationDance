@@ -4,6 +4,7 @@ namespace App\HttpController\Service\DaXiang;
 
 use App\HttpController\Models\Api\InvoiceIn;
 use App\HttpController\Models\Api\InvoiceOut;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
@@ -94,55 +95,42 @@ class DaXiangService extends ServiceBase
         return $this->createReturn($res['code'], $res['Paging'], $res['Result'], $res['msg'] ?? null);
     }
 
-    //统一发送
-    private function readyToSend($api_path, $body, $isTest = false, $encryption = true)
-    {
-        if (preg_match('/^http/', $api_path)) {
-            $url = $api_path;
-        } elseif ($isTest) {
-            $url = $this->urlTest . $api_path;
-        } else {
-            $url = $this->url . $api_path;
-        }
-
-        if ($encryption) {
-            $param = $body['param'];
-            $json_param = jsonEncode($param);
-            $encryptedData = $this->encrypt($json_param, $isTest);
-            $base64_str = base64_encode($encryptedData);
-            $body['param'] = $base64_str;
-            $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
-            $res = base64_decode($res);
-            $res = $this->decrypt($res, $isTest);
-            return jsonDecode($res);
-        } else {
-            $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
-            return $res;
-        }
-    }
-
-    function test($nsrmc)
+    private function createToken(): string
     {
         $token_info = (new CoHttpClient())
             ->useCache(false)
-            ->send($this->urlTest, [
-                'appKey' => $this->appKeyTest,
-                'appSecret' => $this->appSecretTest,
+            ->send('https://openapi.ele-cloud.com/api/authen/token', [
+                'appKey' => 'JczSaWGP76LYdIOfHds52Thk',
+                'appSecret' => 'BszCebdj6nOglZLBrYYUspWl',
             ], [], [], 'postjson');
+        return $token_info['access_token'];
+    }
 
-        $token = $token_info['access_token'];
-
-        $url = "https://sandbox.ele-cloud.com/api/eplibrary-service/v1/exactQuery?access_token={$token}";
-
+    function getInv()
+    {
+        $url = 'https://openapi.ele-cloud.com/api/business-credit/v3/queryEntInvoicePage';
+        $token = $this->createToken();
+        list($usec, $sec) = explode(' ', microtime());
+        $cn_time = date('YmdHis', time()) . round($usec * 1000);
+        $id = str_pad($cn_time, 17, '0', STR_PAD_RIGHT) . str_pad(mt_rand(1, 999999), 15, '0', STR_PAD_RIGHT);
         $arr = [
             'zipCode' => '0',
             'encryptCode' => '0',
-            'dataExchangeId' => bcmul(microtime(true), 1000) . control::getUuid(15),
-            'entCode' => '',
-            'content' => base64_encode(jsonEncode(['nsrmc' => $nsrmc]))
+            'dataExchangeId' => $id . '',
+            'entCode' => '91110108MA01KPGK0L',
+            'content' => base64_encode(jsonEncode([
+                'page' => '1',
+                'NSRSBH' => $this->taxNo,
+                'KM' => '1',//1进项 2销项发票
+                'FPLXDM' => 'xxx',//发票类型 01 增值税 专用发票 02 货运运 输业增值 税专用发 票03 机动车 销售统一 发票04 增值税 普通发票： 10 增值税 普通发票 （电子） 11 增值税 普通发票 （卷式） 14 通行费 电子票 15 二手车
+                'KPKSRQ' => '1970-01-01',
+                'KPJSRQ' => '2021-08-01',
+            ]))
         ];
-
-
+        $info = (new CoHttpClient())->useCache(false)
+            ->send($url . "?access_token={$token}", $arr, [], [], 'postjson');
+        CommonService::getInstance()->log4PHP($arr);
+        CommonService::getInstance()->log4PHP($info);
     }
 }
 

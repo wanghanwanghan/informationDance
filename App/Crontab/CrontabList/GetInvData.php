@@ -5,11 +5,12 @@ namespace App\Crontab\CrontabList;
 use App\Crontab\CrontabBase;
 use App\HttpController\Models\Api\AntAuthList;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\DaXiang\DaXiangService;
 use App\HttpController\Service\MaYi\MaYiService;
 use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 
-class PackAuthBook extends AbstractCronTask
+class GetInvData extends AbstractCronTask
 {
     private $crontabBase;
 
@@ -21,8 +22,6 @@ class PackAuthBook extends AbstractCronTask
 
     static function getRule(): string
     {
-        //每月18号的23点执行一次
-        //return '0 23 18 * *';
         return '* * * * *';
     }
 
@@ -33,17 +32,16 @@ class PackAuthBook extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex)
     {
-        CommonService::getInstance()->log4PHP(Carbon::now()->format('Ymd'), 'PackAuthBookCrontabRunAt', 'ant.log');
+        CommonService::getInstance()->log4PHP(Carbon::now()->format('Ymd'), 'GetInvDataCrontabRunAt', 'ant.log');
 
-        //准备获取授权书的企业列表
-        $list = AntAuthList::create()->where([
-            'status' => MaYiService::STATUS_1,//pdf生成完毕，等待发送给大象
-        ])->all();
+        (new DaXiangService())->getInv();
+
+
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
-        CommonService::getInstance()->log4PHP($throwable->getTraceAsString(), 'PackAuthBookCrontabException', 'ant.log');
+        CommonService::getInstance()->log4PHP($throwable->getTraceAsString(), 'GetInvDataCrontabException', 'ant.log');
     }
 
 

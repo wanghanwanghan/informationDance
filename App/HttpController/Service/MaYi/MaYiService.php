@@ -16,7 +16,7 @@ class MaYiService extends ServiceBase
     const STATUS_0 = 0;//收到蚂蚁请求
     const STATUS_1 = 1;//pdf生成完毕
     const STATUS_2 = 2;//已经提交给大象
-    const STATUS_3 = 3;
+    const STATUS_3 = 3;//可以取数了
     const STATUS_4 = 4;
     const STATUS_5 = 5;
 
