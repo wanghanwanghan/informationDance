@@ -133,11 +133,19 @@ class DaXiangService extends ServiceBase
                 'page' => '1',
                 'NSRSBH' => '911199999999CN0008',
                 'KM' => '1',//1进项 2销项发票
-                'FPLXDM' => '04',//发票类型
-                'KPKSRQ' => '1970-01-01',
+                'FPLXDM' => '01',//发票类型
+                'KPKSRQ' => '2020-01-01',
                 'KPJSRQ' => '2021-01-01',
             ]))
         ];
+        //01增值税专用发票
+        //02货运运输业增值税专用发票
+        //03机动车销售统一发票
+        //04增值税普通发票
+        //10增值税普通发票电子
+        //11增值税普通发票卷式
+        //14通行费电子票
+        //15二手车
         $info = (new CoHttpClient())->useCache(false)
             ->send($url . "?access_token={$token}", $arr, [], [], 'postjson');
         CommonService::getInstance()->log4PHP($arr);
