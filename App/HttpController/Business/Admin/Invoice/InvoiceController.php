@@ -63,6 +63,10 @@ class InvoiceController extends InvoiceBase
                 $tmp = (new MaYiService())->taxAuthoritiesCode(obj2Arr($one));
                 $insert[] = $tmp[0];
                 $insert[] = $tmp[1];
+                $one->update([
+                    'sendDate' => time(),
+                    'status' => MaYiService::STATUS_2,
+                ]);
                 fwrite($fp, implode(',', $insert) . PHP_EOL);
             }
             fclose($fp);
