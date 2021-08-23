@@ -99,7 +99,7 @@ class DaXiangService extends ServiceBase
     {
         $token_info = (new CoHttpClient())
             ->useCache(false)
-            ->send('https://openapi.ele-cloud.com/api/authen/token', [
+            ->send('https://sandbox.ele-cloud.com/api/authen/token', [
                 'appKey' => 'JczSaWGP76LYdIOfHds52Thk',
                 'appSecret' => 'BszCebdj6nOglZLBrYYUspWl',
             ], [], [], 'postjson');
@@ -108,7 +108,7 @@ class DaXiangService extends ServiceBase
 
     function getInv()
     {
-        $url = 'https://openapi.ele-cloud.com/api/business-credit/v3/queryEntInvoicePage';
+        $url = 'https://sandbox.ele-cloud.com/api/business-credit/v3/queryEntInvoicePage';
         $token = $this->createToken();
         list($usec, $sec) = explode(' ', microtime());
         $cn_time = date('YmdHis', time()) . round($usec * 1000);
@@ -122,7 +122,7 @@ class DaXiangService extends ServiceBase
                 'page' => '1',
                 'NSRSBH' => $this->taxNo,
                 'KM' => '1',//1进项 2销项发票
-                'FPLXDM' => 'xxx',//发票类型 01 增值税 专用发票 02 货运运 输业增值 税专用发 票03 机动车 销售统一 发票04 增值税 普通发票： 10 增值税 普通发票 （电子） 11 增值税 普通发票 （卷式） 14 通行费 电子票 15 二手车
+                'FPLXDM' => '04',//发票类型
                 'KPKSRQ' => '1970-01-01',
                 'KPJSRQ' => '2021-08-01',
             ]))
