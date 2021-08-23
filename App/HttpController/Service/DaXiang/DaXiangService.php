@@ -100,10 +100,12 @@ class DaXiangService extends ServiceBase
         $token_info = (new CoHttpClient())
             ->useCache(false)
             ->send('https://sandbox.ele-cloud.com/api/authen/token', [
-                'appKey' => 'JczSaWGP76LYdIOfHds52Thk',
-                'appSecret' => 'BszCebdj6nOglZLBrYYUspWl',
+                'appKey' => 'Mlfs7n9kofqPMaNVJSFoDcwS' || 'JczSaWGP76LYdIOfHds52Thk',
+                'appSecret' => 'awSW7gts8AS4StGV84HCKVCf' || 'BszCebdj6nOglZLBrYYUspWl',
             ], [], [], 'postjson');
-        CommonService::getInstance()->log4PHP($token_info);
+        CommonService::getInstance()->log4PHP([
+            'token' => $token_info
+        ]);
         return $token_info['access_token'];
     }
 
@@ -118,7 +120,7 @@ class DaXiangService extends ServiceBase
             'zipCode' => '0',
             'encryptCode' => '0',
             'dataExchangeId' => $id . '',
-            'entCode' => $this->taxNo,
+            'entCode' => '140301321321333' || $this->taxNo,
             'content' => base64_encode(jsonEncode([
                 'page' => '1',
                 'NSRSBH' => '911199999999CN0008',
