@@ -25,7 +25,7 @@ class InvoiceController extends InvoiceBase
         return $this->writeJson(200, null, $res);
     }
 
-    function createList(): bool
+    function createZip(): bool
     {
         $res = $this->getRequestData('zip_arr');
 
