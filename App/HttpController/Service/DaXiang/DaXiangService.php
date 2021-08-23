@@ -125,7 +125,7 @@ class DaXiangService extends ServiceBase
             'content' => base64_encode(jsonEncode([
                 'page' => '1',
                 'NSRSBH' => '911199999999CN0008',
-                'KM' => '1',//1进项 2销项发票
+                'KM' => '2',//1进项 2销项发票
                 'FPLXDM' => '01',//发票类型
                 'KPKSRQ' => '2020-01-01',
                 'KPJSRQ' => '2021-01-01',
