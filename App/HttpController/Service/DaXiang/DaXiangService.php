@@ -108,7 +108,7 @@ class DaXiangService extends ServiceBase
 
     function getInv()
     {
-        $url = 'https://sandbox.ele-cloud.com/api/business-credit/v3/queryEntInvoicePage';
+        $url = 'https://openapi.ele-cloud.com/api/business-credit/v3/queryEntInvoicePage';
         $token = $this->createToken();
         list($usec, $sec) = explode(' ', microtime());
         $cn_time = date('YmdHis', time()) . round($usec * 1000);
