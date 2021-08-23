@@ -159,6 +159,7 @@ class ProvideRouter
 
         $routeCollector->addGroup('/my', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/invEntList', $prefix . 'invEntList');
+            $routeCollector->addRoute(['GET', 'POST'], '/invSelectAuth', $prefix . 'invSelectAuth');
         });
 
         return true;

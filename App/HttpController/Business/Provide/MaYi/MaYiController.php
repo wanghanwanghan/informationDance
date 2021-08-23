@@ -3,6 +3,8 @@
 namespace App\HttpController\Business\Provide\MaYi;
 
 use App\HttpController\Index;
+use App\HttpController\Models\Api\AntAuthList;
+use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\MaYi\MaYiService;
@@ -12,10 +14,12 @@ use wanghanwanghan\someUtils\control;
 class MaYiController extends Index
 {
     public $appId;
+    public $appSecret;
 
     function onRequest(?string $action): ?bool
     {
         $this->appId = CreateConf::getInstance()->getConf('mayi.appId');
+        $this->appSecret = CreateConf::getInstance()->getConf('mayi.appSecret');
         return parent::onRequest($action);
     }
 
@@ -55,7 +59,7 @@ class MaYiController extends Index
             $data = [
                 'code' => $result['code'],
                 'data' => $result['result'],
-                'msg' => $result['msg'],
+                'msg' => $result['msg'] ?? '处理成功',
                 'timestamp' => $timestamp - 0,
             ];
             $this->response()->write(json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
@@ -74,6 +78,45 @@ class MaYiController extends Index
 
         $tmp['head'] = $this->getRequestData('head');
         $tmp['body'] = $this->getRequestData('body');
+
+        if (!isset($tmp['head']['sign'])) {
+            return $this->writeJsons([
+                'code' => '0001',
+                'result' => [
+                    'authResultCode' => '0',
+                    'authResultMsg' => '认证授权失败',
+                ],
+            ]);
+        }
+
+        //拿rsa公钥
+        $userInfo = RequestUserInfo::create()->where('appId', $this->appId)->get();
+        $rsaPub = RSA_KEY_PATH . $userInfo->getAttr('rsaPub');
+        if (!file_exists($rsaPub)) {
+            CommonService::getInstance()->log4PHP("{$this->appId} 的Rsa不存在");
+            return $this->writeJsons([
+                'code' => '0001',
+                'result' => [
+                    'authResultCode' => '0',
+                    'authResultMsg' => '认证授权失败',
+                ],
+            ]);
+        }
+
+        $key = control::rsaDecrypt($tmp['head']['sign'], file_get_contents($rsaPub), 'pub');
+
+        $key = explode('_', $key);
+
+        if (!is_array($key) || $key[0] !== $this->appId) {
+            CommonService::getInstance()->log4PHP("{$this->appId} 的解密失败");
+            return $this->writeJsons([
+                'code' => '0001',
+                'result' => [
+                    'authResultCode' => '0',
+                    'authResultMsg' => '认证授权失败',
+                ],
+            ]);
+        }
 
         $data['entName'] = $tmp['body']['companyName'];
         $data['socialCredit'] = $tmp['body']['nsrsbh'];
@@ -100,6 +143,31 @@ class MaYiController extends Index
                 $res['result']['authResultCode'] = '1';
                 $res['result']['authResultMsg'] = '认证授权通过';
         }
+
+        return $this->writeJsons($res);
+    }
+
+    //企业认证授权结果查询接口
+    function invSelectAuth(): bool
+    {
+        $tmp['head'] = $this->getRequestData('head');
+        $tmp['body'] = $this->getRequestData('body');
+
+        $data['nsrsbh'] = $tmp['body']['nsrsbh'];
+        $data['authType'] = $tmp['body']['authType']; // PRELOAN 贷前 POSTLOAN 贷后
+
+        $info = AntAuthList::create()->where([
+            'socialCredit' => $data['nsrsbh']
+        ])->get();
+
+        $res['code'] = '0000';
+        $res['result'] = [
+            'nsrsbh' => $data['nsrsbh'],
+            'authId' => $info->getAttr('requestId'),
+            'authTime' => date('Y-m-d H:i:s', $info->getAttr('requestDate')),
+            'authResultCode' => '1',
+            'authResultMsg' => '认证授权通过',
+        ];
 
         return $this->writeJsons($res);
     }

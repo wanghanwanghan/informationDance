@@ -99,16 +99,17 @@ class DaXiangService extends ServiceBase
     {
         $token_info = (new CoHttpClient())
             ->useCache(false)
-            ->send('https://openapi.ele-cloud.com/api/authen/token', [
+            ->send('https://sandbox.ele-cloud.com/api/authen/token', [
                 'appKey' => 'JczSaWGP76LYdIOfHds52Thk',
                 'appSecret' => 'BszCebdj6nOglZLBrYYUspWl',
             ], [], [], 'postjson');
+        CommonService::getInstance()->log4PHP($token_info);
         return $token_info['access_token'];
     }
 
     function getInv()
     {
-        $url = 'https://openapi.ele-cloud.com/api/business-credit/v3/queryEntInvoicePage';
+        $url = 'https://sandbox.ele-cloud.com/api/business-credit/v3/queryEntInvoicePage';
         $token = $this->createToken();
         list($usec, $sec) = explode(' ', microtime());
         $cn_time = date('YmdHis', time()) . round($usec * 1000);
@@ -117,10 +118,10 @@ class DaXiangService extends ServiceBase
             'zipCode' => '0',
             'encryptCode' => '0',
             'dataExchangeId' => $id . '',
-            'entCode' => '91110108MA01KPGK0L',
+            'entCode' => $this->taxNo,
             'content' => base64_encode(jsonEncode([
                 'page' => '1',
-                'NSRSBH' => $this->taxNo,
+                'NSRSBH' => '911199999999CN0008',
                 'KM' => '1',//1进项 2销项发票
                 'FPLXDM' => '04',//发票类型
                 'KPKSRQ' => '1970-01-01',
