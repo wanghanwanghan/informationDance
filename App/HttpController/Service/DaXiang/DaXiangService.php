@@ -107,17 +107,10 @@ class DaXiangService extends ServiceBase
                 'appSecret' => $appSecret,
             ], [], [], 'postjson');
 
-        CommonService::getInstance()->log4PHP([
-            'appKey' => $appKey,
-            'appSecret' => $appSecret,
-        ]);
-
-        CommonService::getInstance()->log4PHP($token_info);
-
         return $token_info['access_token'];
     }
 
-    function getInv()
+    function getInv(): array
     {
         $url = 'https://sandbox.ele-cloud.com/api/business-credit/v3/queryEntInvoicePage';
         $token = $this->createToken();
@@ -138,6 +131,7 @@ class DaXiangService extends ServiceBase
                 'KPJSRQ' => '2021-01-01',
             ]))
         ];
+
         //01增值税专用发票
         //02货运运输业增值税专用发票
         //03机动车销售统一发票
@@ -146,10 +140,9 @@ class DaXiangService extends ServiceBase
         //11增值税普通发票卷式
         //14通行费电子票
         //15二手车
-        $info = (new CoHttpClient())->useCache(false)
+
+        return (new CoHttpClient())->useCache(false)
             ->send($url . "?access_token={$token}", $arr, [], [], 'postjson');
-        CommonService::getInstance()->log4PHP($arr);
-        CommonService::getInstance()->log4PHP($info);
     }
 }
 

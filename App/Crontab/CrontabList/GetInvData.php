@@ -34,8 +34,9 @@ class GetInvData extends AbstractCronTask
     {
         CommonService::getInstance()->log4PHP(Carbon::now()->format('Ymd'), 'GetInvDataCrontabRunAt', 'ant.log');
 
-        (new DaXiangService())->getInv();
+        $res = (new DaXiangService())->getInv();
 
+        CommonService::getInstance()->log4PHP($res);
 
     }
 
