@@ -46,7 +46,7 @@ class GetInvData extends AbstractCronTask
         $entCode = '140301321321333';
         $page = '1';
         $NSRSBH = '911199999999CN0008';
-        $KM = '2';
+        $KM = '1';
         $FPLXDM = '04';
         $KPKSRQ = '2020-01-01';
         $KPJSRQ = '2021-01-01';
