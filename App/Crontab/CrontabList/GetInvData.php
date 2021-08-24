@@ -57,7 +57,7 @@ class GetInvData extends AbstractCronTask
 
         if ($content['code'] === '0000' && !empty($content['data']['records'])) {
             foreach ($content['data']['records'] as $row) {
-                $this->writeFile($row, $NSRSBH);
+                $this->writeFile($row, $NSRSBH, 'out');
             }
         } else {
             $info = "{$NSRSBH} : page={$page} KM={$KM} FPLXDM={$FPLXDM} KPKSRQ={$KPKSRQ} KPJSRQ={$KPJSRQ}";
@@ -70,11 +70,11 @@ class GetInvData extends AbstractCronTask
         CommonService::getInstance()->log4PHP($throwable->getTraceAsString(), 'GetInvDataCrontabException', 'ant.log');
     }
 
-    function writeFile(array $row, string $NSRSBH): bool
+    function writeFile(array $row, string $NSRSBH, string $invType): bool
     {
         $store = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR;
 
-        $filename = $NSRSBH . '_key.json';
+        $filename = $NSRSBH . "_{$invType}.json";
 
         is_dir($store) || mkdir($store, 0644, true);
 
