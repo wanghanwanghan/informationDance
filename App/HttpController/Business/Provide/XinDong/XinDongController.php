@@ -146,6 +146,33 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //狮桥
+    function getFinanceBaseDataSQ(): bool
+    {
+        $beginYear = 2019;
+        $dataCount = 2;
+
+        $postData = [
+            'entName' => $this->getRequestData('entName', ''),
+            'code' => $this->getRequestData('code', ''),
+            'beginYear' => $beginYear,
+            'dataCount' => $dataCount,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->setCal(false)
+                ->getFinanceData($postData, false);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        CommonService::getInstance()->log4PHP($res);
+
+        return $this->checkResponse($res);
+    }
+
     //连续n年基数+计算结果
     function getFinanceCalData()
     {
