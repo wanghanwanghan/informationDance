@@ -33,15 +33,6 @@ class GetInvData extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex)
     {
-        //01增值税专用发票
-        //02货运运输业增值税专用发票
-        //03机动车销售统一发票
-        //04增值税普通发票
-        //10增值税普通发票电子
-        //11增值税普通发票卷式
-        //14通行费电子票
-        //15二手车销售统一发票
-
         $redis = Redis::defer('redis');
         $redis->select(15);
 
