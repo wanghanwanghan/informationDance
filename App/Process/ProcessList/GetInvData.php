@@ -56,7 +56,7 @@ class GetInvData extends ProcessBase
 
             if ($content['code'] === '0000' && !empty($content['data']['records'])) {
                 foreach ($content['data']['records'] as $row) {
-                    $this->writeFile($row, $NSRSBH, 'out');
+                    //$this->writeFile($row, $NSRSBH, 'out');
                 }
             } else {
                 $info = "{$NSRSBH} : page={$page} KM={$KM} FPLXDM={$FPLXDM} KPKSRQ={$KPKSRQ} KPJSRQ={$KPJSRQ}";
