@@ -149,7 +149,7 @@ class XinDongController extends ProvideBase
     //狮桥
     function getFinanceBaseDataSQ(): bool
     {
-        $beginYear = 2019;
+        $beginYear = 2020;
         $dataCount = 2;
 
         $postData = [
@@ -160,15 +160,41 @@ class XinDongController extends ProvideBase
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new LongXinService())
+            $res = (new LongXinService())
                 ->setCheckRespFlag(true)
                 ->setCal(false)
                 ->getFinanceData($postData, false);
+            if ($res['code'] === 200 && !empty($res['result'])) {
+                $indexTable = [
+                    '0' => 'O',
+                    '1' => 'C',
+                    '2' => 'E',
+                    '3' => 'I',
+                    '4' => 'G',
+                    '5' => 'A',
+                    '6' => 'H',
+                    '7' => 'F',
+                    '8' => 'D',
+                    '9' => 'B',
+                    '.' => '*',
+                    '-' => '#',
+                ];
+                foreach ($res['result'] as $year => $oneYearData) {
+                    foreach ($oneYearData as $field => $num) {
+                        if ($field === 'ispublic' || $field === 'SOCNUM') {
+                            unset($res['result'][$year][$field]);
+                            continue;
+                        }
+                        $tmp = strtr($num, $indexTable);
+                        $tmp = current(explode('*', $tmp));
+                        $res['result'][$year][$field] = $tmp;
+                    }
+                }
+            }
+            return $res;
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-
-        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkResponse($res);
     }
