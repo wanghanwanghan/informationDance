@@ -41,7 +41,15 @@ class GetInvData extends AbstractCronTask
         //10增值税普通发票电子
         //11增值税普通发票卷式
         //14通行费电子票
-        //15二手车
+        //15二手车销售统一发票
+
+        $list = AntAuthList::create()->where('status', MaYiService::STATUS_3)->all();
+
+
+
+
+
+
 
         $entCode = '140301321321333';
         $page = '1';

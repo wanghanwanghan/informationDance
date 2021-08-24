@@ -139,7 +139,7 @@ class DaXiangService extends ServiceBase
         //10增值税普通发票电子
         //11增值税普通发票卷式
         //14通行费电子票
-        //15二手车
+        //15二手车销售统一发票
 
         return (new CoHttpClient())->useCache(false)->send($url . "?access_token={$token}", $arr, [], [], 'postjson');
     }
