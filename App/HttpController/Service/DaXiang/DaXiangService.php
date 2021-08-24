@@ -110,7 +110,7 @@ class DaXiangService extends ServiceBase
         return $token_info['access_token'];
     }
 
-    function getInv(): array
+    function getInv($entCode, $page, $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ): array
     {
         $url = 'https://sandbox.ele-cloud.com/api/business-credit/v3/queryEntInvoicePage';
         $token = $this->createToken();
@@ -121,14 +121,14 @@ class DaXiangService extends ServiceBase
             'zipCode' => '0',
             'encryptCode' => '0',
             'dataExchangeId' => $id . '',
-            'entCode' => '140301321321333',// || $this->taxNo,
+            'entCode' => $entCode,// || $this->taxNo,
             'content' => base64_encode(jsonEncode([
-                'page' => '1',
-                'NSRSBH' => '911199999999CN0008',
-                'KM' => '2',//1进项 2销项发票
-                'FPLXDM' => '10',//发票类型
-                'KPKSRQ' => '2020-01-01',
-                'KPJSRQ' => '2021-08-01',
+                'page' => $page . '',
+                'NSRSBH' => $NSRSBH,
+                'KM' => $KM . '',//1进项 2销项发票
+                'FPLXDM' => $FPLXDM . '',//发票类型
+                'KPKSRQ' => $KPKSRQ,
+                'KPJSRQ' => $KPJSRQ,
             ]))
         ];
 

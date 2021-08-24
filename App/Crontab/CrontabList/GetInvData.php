@@ -34,9 +34,28 @@ class GetInvData extends AbstractCronTask
     {
         CommonService::getInstance()->log4PHP(Carbon::now()->format('Ymd'), 'GetInvDataCrontabRunAt', 'ant.log');
 
-        $res = (new DaXiangService())->getInv();
+        //01增值税专用发票
+        //02货运运输业增值税专用发票
+        //03机动车销售统一发票
+        //04增值税普通发票
+        //10增值税普通发票电子
+        //11增值税普通发票卷式
+        //14通行费电子票
+        //15二手车
 
-        CommonService::getInstance()->log4PHP($res);
+        $entCode = '140301321321333';
+        $page = '1';
+        $NSRSBH = '911199999999CN0008';
+        $KM = '2';
+        $FPLXDM = '10';
+        $KPKSRQ = '2020-01-01';
+        $KPJSRQ = '2021-08-01';
+
+        $res = (new DaXiangService())->getInv($entCode, $page, $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
+
+        $content = jsonDecode(base64_decode($res['content']));
+
+        CommonService::getInstance()->log4PHP($content);
 
     }
 
