@@ -44,12 +44,12 @@ class GetInvData extends AbstractCronTask
         //15二手车
 
         $entCode = '140301321321333';
-        $page = '2';
+        $page = '1';
         $NSRSBH = '911199999999CN0008';
         $KM = '2';
         $FPLXDM = '10';
         $KPKSRQ = '2020-01-01';
-        $KPJSRQ = '2021-08-01';
+        $KPJSRQ = '2021-01-01';
 
         $res = (new DaXiangService())->getInv($entCode, $page, $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
 
