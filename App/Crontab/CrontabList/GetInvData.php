@@ -62,7 +62,7 @@ class GetInvData extends AbstractCronTask
             CommonService::getInstance()->log4PHP($content['msg'], $info, 'ant.log');
         }
 
-        $store = MYJF_PATH . $NSRSBH . Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR;
+        $store = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR;
 
         is_dir($store) || mkdir($store, 0644);
 
