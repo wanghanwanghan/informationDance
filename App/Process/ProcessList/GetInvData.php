@@ -13,10 +13,10 @@ class GetInvData extends ProcessBase
         //可以用来初始化
         parent::run($arg);
         // 获取注册进程名称
-        //$this->getProcessName();
-        // 获取进程实例 \Swoole\Process
-        $name = $this->getProcess();
+        $name = $this->getProcessName();
         CommonService::getInstance()->log4PHP($name);
+        // 获取进程实例 \Swoole\Process
+        //$this->getProcess();
         // 获取当前进程Pid
         //$this->getPid();
         // 获取注册时传递的参数
