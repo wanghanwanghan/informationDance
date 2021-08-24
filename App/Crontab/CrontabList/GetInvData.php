@@ -62,7 +62,11 @@ class GetInvData extends AbstractCronTask
             CommonService::getInstance()->log4PHP($content['msg'], $info, 'ant.log');
         }
 
-        CommonService::getInstance()->log4PHP($content);
+        $store = MYJF_PATH . $NSRSBH . Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR;
+
+        is_dir($store) || mkdir($store, 0644);
+
+        file_put_contents($store . 'wanghan.txt', 'duanran123' . PHP_EOL);
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)

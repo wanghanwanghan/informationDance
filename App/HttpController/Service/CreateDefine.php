@@ -14,6 +14,8 @@ class CreateDefine extends ServiceBase
         //用来做str_replace的
         define('ROOT_PATH', $root);
 
+        define('MYJF_PATH', $root . DIRECTORY_SEPARATOR);
+
         define('STATIC_PATH', $root . DIRECTORY_SEPARATOR . 'Static' . DIRECTORY_SEPARATOR);
 
         define('LOG_PATH', STATIC_PATH . 'Log' . DIRECTORY_SEPARATOR);
