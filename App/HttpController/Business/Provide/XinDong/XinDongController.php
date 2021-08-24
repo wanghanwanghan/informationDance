@@ -129,6 +129,11 @@ class XinDongController extends ProvideBase
             }
         }
 
+        if ($this->userId === 1) {
+            $range = FinanceRange::getInstance()->getRange('range_yuanqi');
+            $ratio = FinanceRange::getInstance()->getRange('rangeRatio_yuanqi');
+        }
+
         if (is_numeric($beginYear) && $beginYear >= 2013 && $beginYear <= date('Y')) {
             $this->csp->add($this->cspKey, function () use ($postData, $range, $ratio) {
                 return (new LongXinService())
