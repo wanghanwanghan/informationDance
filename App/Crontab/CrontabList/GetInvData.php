@@ -9,6 +9,7 @@ use App\HttpController\Service\DaXiang\DaXiangService;
 use App\HttpController\Service\MaYi\MaYiService;
 use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
+use EasySwoole\RedisPool\Redis;
 
 class GetInvData extends AbstractCronTask
 {
@@ -22,7 +23,7 @@ class GetInvData extends AbstractCronTask
 
     static function getRule(): string
     {
-        return '* * * * *';
+        return '*/30 * * * *';
     }
 
     static function getTaskName(): string
@@ -32,8 +33,6 @@ class GetInvData extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex)
     {
-        CommonService::getInstance()->log4PHP(Carbon::now()->format('Ymd'), 'GetInvDataCrontabRunAt', 'ant.log');
-
         //01增值税专用发票
         //02货运运输业增值税专用发票
         //03机动车销售统一发票
@@ -43,52 +42,31 @@ class GetInvData extends AbstractCronTask
         //14通行费电子票
         //15二手车销售统一发票
 
-        $list = AntAuthList::create()->where('status', MaYiService::STATUS_3)->all();
+        $redis = Redis::defer('redis');
+        $redis->select(15);
 
-
-
-
-
-
-
-        $entCode = '140301321321333';
-        $page = '1';
-        $NSRSBH = '911199999999CN0008';
-        $KM = '2';
-        $FPLXDM = '10';
-        $KPKSRQ = '2020-01-01';
-        $KPJSRQ = '2021-08-01';
-
-        $res = (new DaXiangService())->getInv($entCode, $page, $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
-
-        $content = jsonDecode(base64_decode($res['content']));
-
-        if ($content['code'] === '0000' && !empty($content['data']['records'])) {
-            foreach ($content['data']['records'] as $row) {
-                $this->writeFile($row, $NSRSBH, 'out');
+        for ($i = 1; $i <= 10000; $i++) {
+            $limit = 1000;
+            $offset = ($i - 1) * $limit;
+            $list = AntAuthList::create()
+                ->where('status', MaYiService::STATUS_3)
+                ->limit($offset, $limit)->all();
+            if (empty($limit)) {
+                break;
             }
-        } else {
-            $info = "{$NSRSBH} : page={$page} KM={$KM} FPLXDM={$FPLXDM} KPKSRQ={$KPKSRQ} KPJSRQ={$KPJSRQ}";
-            CommonService::getInstance()->log4PHP($content['msg'], $info, 'ant.log');
+            foreach ($list as $one) {
+                $id = $one->getAttr('id');
+                $suffix = $id % 16;
+                //放到redis队列
+                $key = 'readyToGetInvData_' . $suffix;
+                $redis->lPush($key, jsonEncode($one, false));
+            }
         }
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
         CommonService::getInstance()->log4PHP($throwable->getTraceAsString(), 'GetInvDataCrontabException', 'ant.log');
-    }
-
-    function writeFile(array $row, string $NSRSBH, string $invType): bool
-    {
-        $store = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR;
-
-        $filename = $NSRSBH . "_{$invType}.json";
-
-        is_dir($store) || mkdir($store, 0644, true);
-
-        file_put_contents($store . $filename, jsonEncode($row, false) . PHP_EOL, FILE_APPEND | LOCK_EX);
-
-        return true;
     }
 
 }
