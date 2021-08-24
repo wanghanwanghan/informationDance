@@ -183,6 +183,7 @@ class FinanceRange
             ['name' => '5', 'range' => [1000, 500]],
             ['name' => '6', 'range' => [500, 100]],
             ['name' => '7', 'range' => [100, 0]],
+            ['name' => '7.5', 'range' => [0, 0]],
             ['name' => '8', 'range' => [0, 100]],
             ['name' => '9', 'range' => [100, 200]],
             ['name' => '10', 'range' => [200, 300]],
