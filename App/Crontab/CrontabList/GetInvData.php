@@ -44,7 +44,7 @@ class GetInvData extends AbstractCronTask
         //15二手车
 
         $entCode = '140301321321333';
-        $page = '1';
+        $page = '2';
         $NSRSBH = '911199999999CN0008';
         $KM = '2';
         $FPLXDM = '10';
@@ -55,8 +55,12 @@ class GetInvData extends AbstractCronTask
 
         $content = jsonDecode(base64_decode($res['content']));
 
-        CommonService::getInstance()->log4PHP($content);
+        if ($content['code'] === '0000' && !empty($content['data']['records'])) {
 
+        }
+
+
+        CommonService::getInstance()->log4PHP($content);
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
