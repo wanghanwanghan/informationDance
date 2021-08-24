@@ -8,13 +8,17 @@ use Swoole\Process;
 
 class GetInvData extends ProcessBase
 {
+    public $p_index;
+
     protected function run($arg)
     {
         //可以用来初始化
         parent::run($arg);
         // 获取注册进程名称
         $name = $this->getProcessName();
-        CommonService::getInstance()->log4PHP($name);
+        preg_match_all('/\d+/', $name, $all);
+        $this->p_index = current(current($all)) - 0;
+        CommonService::getInstance()->log4PHP($this->p_index);
         // 获取进程实例 \Swoole\Process
         //$this->getProcess();
         // 获取当前进程Pid
