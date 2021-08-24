@@ -219,13 +219,20 @@ class XinDongController extends ProvideBase
             'dataCount' => $this->getRequestData('dataCount', 3),//取最近几年的
         ];
 
-        $toRange = false;
+        $range = FinanceRange::getInstance()->getRange('range');
+        $ratio = FinanceRange::getInstance()->getRange('rangeRatio');
+
+        if ($this->userId === 1) {
+            $range = FinanceRange::getInstance()->getRange('range_yuanqi');
+            $ratio = FinanceRange::getInstance()->getRange('rangeRatio_yuanqi');
+        }
 
         if (is_numeric($beginYear) && $beginYear >= 2010 && $beginYear <= date('Y') - 1) {
-            $this->csp->add($this->cspKey, function () use ($postData, $toRange) {
+            $this->csp->add($this->cspKey, function () use ($postData, $range, $ratio) {
                 return (new LongXinService())
                     ->setCheckRespFlag(true)
-                    ->getFinanceData($postData, $toRange);
+                    ->setRangeArr($range, $ratio)
+                    ->getFinanceData($postData);
             });
             $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         } else {
