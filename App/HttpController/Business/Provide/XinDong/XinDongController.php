@@ -177,7 +177,7 @@ class XinDongController extends ProvideBase
                     '8' => 'D',
                     '9' => 'B',
                     '.' => '*',
-                    '-' => '#',
+                    '-' => 'J',
                 ];
                 foreach ($res['result'] as $year => $oneYearData) {
                     foreach ($oneYearData as $field => $num) {
