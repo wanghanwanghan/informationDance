@@ -126,9 +126,9 @@ class DaXiangService extends ServiceBase
                 'page' => '1',
                 'NSRSBH' => '911199999999CN0008',
                 'KM' => '2',//1进项 2销项发票
-                'FPLXDM' => '01',//发票类型
+                'FPLXDM' => '10',//发票类型
                 'KPKSRQ' => '2020-01-01',
-                'KPJSRQ' => '2021-01-01',
+                'KPJSRQ' => '2021-08-01',
             ]))
         ];
 
@@ -141,8 +141,7 @@ class DaXiangService extends ServiceBase
         //14通行费电子票
         //15二手车
 
-        return (new CoHttpClient())->useCache(false)
-            ->send($url . "?access_token={$token}", $arr, [], [], 'postjson');
+        return (new CoHttpClient())->useCache(false)->send($url . "?access_token={$token}", $arr, [], [], 'postjson');
     }
 }
 
