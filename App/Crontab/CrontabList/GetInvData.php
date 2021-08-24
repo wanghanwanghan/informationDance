@@ -57,8 +57,10 @@ class GetInvData extends AbstractCronTask
 
         if ($content['code'] === '0000' && !empty($content['data']['records'])) {
 
+        } else {
+            $info = "{$NSRSBH} : page={$page} KM={$KM} FPLXDM={$FPLXDM} KPKSRQ={$KPKSRQ} KPJSRQ={$KPJSRQ}";
+            CommonService::getInstance()->log4PHP($content['msg'], $info, 'ant.log');
         }
-
 
         CommonService::getInstance()->log4PHP($content);
     }
