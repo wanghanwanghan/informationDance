@@ -64,13 +64,12 @@ class GetInvData extends AbstractCronTask
 
         $store = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR;
 
-        is_dir($store) || mkdir($store, 0644);
-
         CommonService::getInstance()->log4PHP($store);
 
         if (is_dir($store)) {
             CommonService::getInstance()->log4PHP('有文件夹');
         } else {
+            mkdir($store, 0644);
             CommonService::getInstance()->log4PHP('没有文件夹');
         }
 
