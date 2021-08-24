@@ -46,27 +46,23 @@ class GetInvData extends AbstractCronTask
         $entCode = '140301321321333';
         $page = '1';
         $NSRSBH = '911199999999CN0008';
-        $KM = '1';
-        $FPLXDM = '04';
+        $KM = '2';
+        $FPLXDM = '10';
         $KPKSRQ = '2020-01-01';
-        $KPJSRQ = '2021-01-01';
+        $KPJSRQ = '2021-08-01';
 
         $res = (new DaXiangService())->getInv($entCode, $page, $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
 
         $content = jsonDecode(base64_decode($res['content']));
 
         if ($content['code'] === '0000' && !empty($content['data']['records'])) {
-
+            foreach ($content['data']['records'] as $row) {
+                $this->writeFile($row, $NSRSBH);
+            }
         } else {
             $info = "{$NSRSBH} : page={$page} KM={$KM} FPLXDM={$FPLXDM} KPKSRQ={$KPKSRQ} KPJSRQ={$KPJSRQ}";
             CommonService::getInstance()->log4PHP($content['msg'], $info, 'ant.log');
         }
-
-        $store = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR;
-
-        is_dir($store) || mkdir($store, 0644, true);
-
-        file_put_contents($store . 'wanghan.txt', 'duanran123' . PHP_EOL);
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
@@ -74,5 +70,17 @@ class GetInvData extends AbstractCronTask
         CommonService::getInstance()->log4PHP($throwable->getTraceAsString(), 'GetInvDataCrontabException', 'ant.log');
     }
 
+    function writeFile(array $row, string $NSRSBH): bool
+    {
+        $store = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR;
+
+        $filename = $NSRSBH . '_key.json';
+
+        is_dir($store) || mkdir($store, 0644, true);
+
+        file_put_contents($store . $filename, jsonEncode($row, false) . PHP_EOL, FILE_APPEND | LOCK_EX);
+
+        return true;
+    }
 
 }
