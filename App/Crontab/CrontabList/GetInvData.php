@@ -5,15 +5,14 @@ namespace App\Crontab\CrontabList;
 use App\Crontab\CrontabBase;
 use App\HttpController\Models\Api\AntAuthList;
 use App\HttpController\Service\Common\CommonService;
-use App\HttpController\Service\DaXiang\DaXiangService;
 use App\HttpController\Service\MaYi\MaYiService;
-use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use EasySwoole\RedisPool\Redis;
 
 class GetInvData extends AbstractCronTask
 {
-    private $crontabBase;
+    public $crontabBase;
+    public $redisKey = 'readyToGetInvData_';
 
     //每次执行任务都会执行构造函数
     function __construct()
@@ -49,7 +48,7 @@ class GetInvData extends AbstractCronTask
                 $id = $one->getAttr('id');
                 $suffix = $id % 16;
                 //放到redis队列
-                $key = 'readyToGetInvData_' . $suffix;
+                $key = $this->redisKey . $suffix;
                 $redis->lPush($key, jsonEncode($one, false));
             }
         }

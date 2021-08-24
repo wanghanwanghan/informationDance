@@ -11,6 +11,7 @@ use Swoole\Process;
 class GetInvData extends ProcessBase
 {
     public $p_index;
+    public $redisKey;
 
     protected function run($arg)
     {
@@ -20,6 +21,7 @@ class GetInvData extends ProcessBase
         $name = $this->getProcessName();
         preg_match_all('/\d+/', $name, $all);
         $this->p_index = current(current($all)) - 0;
+        $this->redisKey = 'readyToGetInvData_' . $this->p_index;
         // 获取进程实例 \Swoole\Process
         //$this->getProcess();
         // 获取当前进程Pid

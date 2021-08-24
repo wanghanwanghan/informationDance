@@ -187,6 +187,9 @@ class XinDongController extends ProvideBase
                         }
                         $tmp = strtr($num, $indexTable);
                         $tmp = current(explode('*', $tmp));
+                        if (strlen($tmp) > 1 && $tmp[0] !== 'J') {
+                            $tmp = substr($tmp, 0, -1);
+                        }
                         $res['result'][$year][$field] = $tmp;
                     }
                 }
