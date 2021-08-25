@@ -31,16 +31,12 @@ class GetInvData extends ProcessBase
         $redis->select(15);
 
         while (true) {
-
             $entInRedis = $redis->rPop($this->redisKey);
-
             if (empty($entInRedis)) {
                 \co::sleep(5);
                 continue;
             }
-
             $this->getDataByEle(jsonDecode($entInRedis));
-
         }
     }
 
