@@ -222,7 +222,7 @@ class LongXinService extends ServiceBase
         $this->sendHeaders['authorization'] = $this->createToken($arr);
 
         $res = (new CoHttpClient())
-            ->useCache(false)
+            ->useCache(true)
             ->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
 
         if (isset($res['total']) && $res['total'] > 0) {
