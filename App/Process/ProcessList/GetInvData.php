@@ -28,6 +28,7 @@ class GetInvData extends ProcessBase
         $this->redisKey = 'readyToGetInvData_' . $this->p_index;
 
         $redis = Redis::defer('redis');
+        $redis->select(15);
 
         while (true) {
 
@@ -38,9 +39,7 @@ class GetInvData extends ProcessBase
                 continue;
             }
 
-            $entInfo = jsonDecode($entInRedis);
-
-            $this->getDataByEle($entInfo);
+            $this->getDataByEle(jsonDecode($entInRedis));
 
         }
     }
@@ -54,8 +53,12 @@ class GetInvData extends ProcessBase
     //14通行费电子票
     //15二手车销售统一发票
 
-    function getDataByEle($entInfo)
+    function getDataByEle($entInfo): bool
     {
+        if (empty($entInfo)) {
+            return false;
+        }
+
         $KPKSRQ = Carbon::now()->subMonths(23)->startOfMonth()->format('Y-m-d');//开始日
         $KPJSRQ = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');//截止日
 
@@ -105,6 +108,7 @@ class GetInvData extends ProcessBase
             }
         }
 
+        return true;
     }
 
     function writeFile(array $row, string $NSRSBH, string $invType, string $FPLXDM): bool
