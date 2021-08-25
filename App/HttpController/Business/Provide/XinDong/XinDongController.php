@@ -213,8 +213,8 @@ class XinDongController extends ProvideBase
         $beginYear = $this->getRequestData('year', '');
 
         $postData = [
-            'entName' => $this->getRequestData('entName', ''),
-            'code' => $this->getRequestData('code', ''),
+            'entName' => $this->getRequestData('entName'),
+            'code' => $this->getRequestData('code'),
             'beginYear' => $beginYear,
             'dataCount' => $this->getRequestData('dataCount', 3),//取最近几年的
         ];
