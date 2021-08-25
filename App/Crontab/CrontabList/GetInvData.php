@@ -13,6 +13,7 @@ class GetInvData extends AbstractCronTask
 {
     public $crontabBase;
     public $redisKey = 'readyToGetInvData_';
+    public $customProcessNum = 16;//取数的自定义进程个数
 
     //每次执行任务都会执行构造函数
     function __construct()
@@ -22,6 +23,7 @@ class GetInvData extends AbstractCronTask
 
     static function getRule(): string
     {
+        //每月17号可以取上一个月全部数据
         return '*/30 * * * *';
     }
 
@@ -35,18 +37,18 @@ class GetInvData extends AbstractCronTask
         $redis = Redis::defer('redis');
         $redis->select(15);
 
-        for ($i = 1; $i <= 10000; $i++) {
+        for ($i = 1; $i <= 999999; $i++) {
             $limit = 1000;
             $offset = ($i - 1) * $limit;
             $list = AntAuthList::create()
                 ->where('status', MaYiService::STATUS_3)
                 ->limit($offset, $limit)->all();
-            if (empty($limit)) {
+            if (empty($list)) {
                 break;
             }
             foreach ($list as $one) {
                 $id = $one->getAttr('id');
-                $suffix = $id % 16;
+                $suffix = $id % $this->customProcessNum;
                 //放到redis队列
                 $key = $this->redisKey . $suffix;
                 $redis->lPush($key, jsonEncode($one, false));
