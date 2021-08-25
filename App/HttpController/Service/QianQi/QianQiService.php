@@ -547,7 +547,8 @@ class QianQiService extends ServiceBase
 
             $this->sendHeaders['authorization'] = $this->createToken($arr);
 
-            $res = (new CoHttpClient())->send($this->baseUrl . 'xindong/search/', $arr, $this->sendHeaders);
+            $res = (new CoHttpClient())->useCache(false)
+                ->send($this->baseUrl . 'xindong/search/', $arr, $this->sendHeaders);
 
             isset($res['data']) ?
                 $return[$yearStart - $i] = $this->wordToNum($res['data']) :
@@ -570,6 +571,10 @@ class QianQiService extends ServiceBase
 
         $yearStart = $this->getStartYear();
 
+        CommonService::getInstance()->log4PHP([
+            'entid' => $entId
+        ]);
+
         for ($i = 3; $i--;) {
             $arr = [
                 'entid' => $entId,
@@ -583,6 +588,7 @@ class QianQiService extends ServiceBase
             $res = (new CoHttpClient())->useCache(false)
                 ->send($this->baseUrl . 'xindong/search/', $arr, $this->sendHeaders);
 
+            CommonService::getInstance()->log4PHP($arr);
             CommonService::getInstance()->log4PHP($res);
 
             isset($res['data']) ? $return[$yearStart - $i] = $res['data'] : $return[$yearStart - $i] = '';
