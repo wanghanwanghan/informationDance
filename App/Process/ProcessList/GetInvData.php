@@ -35,7 +35,7 @@ class GetInvData extends ProcessBase
             $entInRedis = $redis->rPop($this->redisKey);
 
             if (empty($entInRedis)) {
-                \co::sleep(3600);
+                \co::sleep(5);
                 continue;
             }
 
