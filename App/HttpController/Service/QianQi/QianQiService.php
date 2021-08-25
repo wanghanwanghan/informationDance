@@ -583,9 +583,7 @@ class QianQiService extends ServiceBase
             $res = (new CoHttpClient())->useCache(false)
                 ->send($this->baseUrl . 'xindong/search/', $arr, $this->sendHeaders);
 
-            if ($yearStart - $i === 2020) {
-                CommonService::getInstance()->log4PHP($res);
-            }
+            CommonService::getInstance()->log4PHP($res);
 
             isset($res['data']) ? $return[$yearStart - $i] = $res['data'] : $return[$yearStart - $i] = '';
         }
