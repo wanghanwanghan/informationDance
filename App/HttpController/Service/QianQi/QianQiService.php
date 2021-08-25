@@ -580,7 +580,8 @@ class QianQiService extends ServiceBase
 
             $this->sendHeaders['authorization'] = $this->createToken($arr);
 
-            $res = (new CoHttpClient())->send($this->baseUrl . 'xindong/search/', $arr, $this->sendHeaders);
+            $res = (new CoHttpClient())->useCache(false)
+                ->send($this->baseUrl . 'xindong/search/', $arr, $this->sendHeaders);
 
             if ($yearStart - $i === 2020) {
                 CommonService::getInstance()->log4PHP($res);
