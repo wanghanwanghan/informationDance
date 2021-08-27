@@ -32,11 +32,7 @@ class TestController extends BusinessBase
 
     function test()
     {
-        $image = $this->request()->getUploadedFile('image');
-        $image = $image->getStream()->__toString();
-        $res = QiXiangYunService::getInstance()->ocr(base64_encode($image));
-
-        return $this->writeJson(200, null, $res);
+        return $this->writeJson(200, null);
     }
 
     function test1()

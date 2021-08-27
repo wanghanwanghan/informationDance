@@ -21,6 +21,7 @@ class ProvideRouter
         $this->YunMaTongRouterV1($routeCollector);
         $this->FaHaiRouterV1($routeCollector);
         $this->MaYiRouterV1($routeCollector);
+        $this->QiXiangYunRouterV1($routeCollector);
         $this->Notify($routeCollector);
     }
 
@@ -163,6 +164,18 @@ class ProvideRouter
         $routeCollector->addGroup('/my', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/invEntList', $prefix . 'invEntList');
             $routeCollector->addRoute(['GET', 'POST'], '/invSelectAuth', $prefix . 'invSelectAuth');
+        });
+
+        return true;
+    }
+
+    private function QiXiangYunRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Provide/QiXiangYun/QiXiangYunController/';
+
+        $routeCollector->addGroup('/qxy', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/cySync', $prefix . 'cySync');
+            $routeCollector->addRoute(['GET', 'POST'], '/ocr', $prefix . 'ocr');
         });
 
         return true;

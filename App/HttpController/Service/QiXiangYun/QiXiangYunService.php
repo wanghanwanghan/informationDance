@@ -2,12 +2,10 @@
 
 namespace App\HttpController\Service\QiXiangYun;
 
-use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use EasySwoole\Component\Singleton;
-use wanghanwanghan\someUtils\utils\str;
 
 class QiXiangYunService extends ServiceBase
 {
@@ -20,6 +18,16 @@ class QiXiangYunService extends ServiceBase
         $this->appkey = CreateConf::getInstance()->getConf('qixiangyun.appkey');
         $this->secret = CreateConf::getInstance()->getConf('qixiangyun.secret');
         return parent::__construct();
+    }
+
+    private function check($res): array
+    {
+        return [
+            'code' => 200,
+            'paging' => null,
+            'result' => $res,
+            'msg' => null,
+        ];
     }
 
     private function createToken(): string
@@ -45,7 +53,7 @@ class QiXiangYunService extends ServiceBase
     }
 
     //同步查验
-    function cySync(string $fpdm = '011002000811', string $fphm = '29937381', string $kprq = '2021-08-21', float $je = 738, string $jym = '258006')
+    function cySync(string $fpdm, string $fphm, string $kprq, float $je, string $jym)
     {
         $url = $this->testBaseUrl . 'FP/cy';
 
@@ -82,7 +90,7 @@ class QiXiangYunService extends ServiceBase
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'postjson');
 
-        return current($res['value']);
+        return $this->check(current($res['value']));
     }
 
     //ocr识别
@@ -114,9 +122,7 @@ class QiXiangYunService extends ServiceBase
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'postjson');
 
-        CommonService::getInstance()->log4PHP($res);
-
-        return $res['value'];
+        return $this->check($res['value']);
     }
 
 
