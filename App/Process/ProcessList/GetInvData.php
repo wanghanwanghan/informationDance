@@ -34,7 +34,7 @@ class GetInvData extends ProcessBase
             $entInRedis = $redis->rPop($this->redisKey);
             if (empty($entInRedis)) {
                 mt_srand();
-                \co::sleep(mt_rand(50, 100));
+                \co::sleep(mt_rand(60, 300));
                 continue;
             }
             $this->getDataByEle(jsonDecode($entInRedis));
