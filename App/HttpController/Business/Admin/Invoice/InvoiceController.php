@@ -22,9 +22,15 @@ class InvoiceController extends InvoiceBase
 
     function getList(): bool
     {
-        $res = AntAuthList::create()->all();
+        $entname = $this->getRequestData('entname');
 
-        return $this->writeJson(200, null, $res);
+        $orm = AntAuthList::create();
+
+        if (!empty($entname)) {
+            $orm->where('entName', "%{$entname}%", 'LIKE');
+        }
+
+        return $this->writeJson(200, null, $orm->all());
     }
 
     function createZip(): bool
