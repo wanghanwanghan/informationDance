@@ -91,5 +91,24 @@ class InvoiceController extends InvoiceBase
         return $this->writeJson(200, null, $path);
     }
 
+    function createGetDataTime(): bool
+    {
+        $ent_arr = $this->getRequestData('ent_arr');
+
+        foreach ($ent_arr as $one) {
+            $info = AntAuthList::create()->where([
+                'id' => $one['id'],
+                'status' => MaYiService::STATUS_2,
+            ])->get();
+            if (!empty($info)) {
+                $info->update([
+                    'canGetDataDate' => time(),
+                    'status' => MaYiService::STATUS_3,
+                ]);
+            }
+        }
+
+        return $this->writeJson();
+    }
 
 }
