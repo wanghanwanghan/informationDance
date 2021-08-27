@@ -13,6 +13,7 @@ use App\HttpController\Service\JuHe\JuHeService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\MoveOut\MoveOutService;
 use App\HttpController\Service\QianQi\QianQiService;
+use App\HttpController\Service\QiXiangYun\QiXiangYunService;
 use App\HttpController\Service\Queue\QueueConf;
 use App\HttpController\Service\Queue\QueueService;
 use App\HttpController\Service\TaoShu\TaoShuService;
@@ -30,14 +31,8 @@ class TestController extends BusinessBase
 
     function test()
     {
-        $angle = ['1.4', '0.7', '0', '5.6', '4.9'];
-
-        //$res = CommonService::getInstance()->createDashboardPic($angle[array_rand($angle)]);
-
-        $res[] = BaiDuService::getInstance()->addressToStructured('北京市海淀区信息路甲九号');
-        $res[] = BaiDuService::getInstance()->addressToStructured('洛川东路99号');
-
-        return $this->writeJson(200, null, $res);
+        QiXiangYunService::getInstance()->cySync();
+        return $this->writeJson(200);
     }
 
     function test1()

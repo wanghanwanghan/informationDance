@@ -20,7 +20,7 @@ class CoHttpClient extends ServiceBase
         parent::__construct();
 
         $this->db = CreateConf::getInstance()->getConf('env.coHttpCacheRedisDB');
-        $this->ttlDay = CreateConf::getInstance()->getConf('env.coHttpCacheDay');
+        $this->ttlDay = CreateConf::getInstance()->getConf('env.coHttpCacheDay') * 86400;
     }
 
     function send($url = '', $postData = [], $headers = [], $options = [], $method = 'post')
@@ -66,6 +66,12 @@ class CoHttpClient extends ServiceBase
         return $this->needJsonDecode ? jsonDecode($data) : $data;
     }
 
+    function setEx($day): CoHttpClient
+    {
+        $this->ttlDay = (int)($day * 86400);
+        return $this;
+    }
+
     function useCache($type = true)
     {
         $this->useCache = $type;
@@ -85,7 +91,7 @@ class CoHttpClient extends ServiceBase
         return Redis::invoke('redis', function (\EasySwoole\Redis\Redis $redis) use ($key, $result, $url, $postData) {
             $redis->select($this->db);
             $redis->setEx($url, 3600, jsonEncode($postData));
-            return $redis->setEx($key, $this->ttlDay * 86400, $result);
+            return $redis->setEx($key, $this->ttlDay, $result);
         });
     }
 
