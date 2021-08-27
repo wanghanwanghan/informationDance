@@ -67,17 +67,11 @@ class QiXiangYunController extends ProvideBase
 
     function ocr(): bool
     {
-        $image = $this->request()->getUploadedFile('image');
+        $image = $this->getRequestData('image');
 
-        if ($image instanceof UploadFile) {
-            $content = base64_encode($image->getStream()->__toString());
-        } else {
-            $content = '';
-        }
-
-        $this->csp->add($this->cspKey, function () use ($content) {
+        $this->csp->add($this->cspKey, function () use ($image) {
             return QiXiangYunService::getInstance()
-                ->setCheckRespFlag(true)->ocr($content);
+                ->setCheckRespFlag(true)->ocr($image);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
