@@ -94,8 +94,19 @@ class QiXiangYunService extends ServiceBase
             'imageData' => $base64,
         ];
 
+        $req_date = time() . '000';
+
+        $token = $this->createToken();
+
+        $sign = base64_encode(md5('POST_' . md5(json_encode($data)) . '_' . $req_date . '_' . $token . '_' . $this->secret));
+
+        $req_sign = "API-SV1:{$this->appkey}:" . $sign;
+
         $header = [
-            'content-type' => 'application/json;charset=UTF-8'
+            'content-type' => 'application/json;charset=UTF-8',
+            'access_token' => $token,
+            'req_date' => $req_date,
+            'req_sign' => $req_sign,
         ];
 
         $res = (new CoHttpClient())
