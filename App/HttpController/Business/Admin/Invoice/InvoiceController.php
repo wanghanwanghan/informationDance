@@ -23,11 +23,17 @@ class InvoiceController extends InvoiceBase
     function getList(): bool
     {
         $entname = $this->getRequestData('entname');
+        $status = $this->getRequestData('status');
+        $status = jsonDecode($status);
 
         $orm = AntAuthList::create();
 
         if (!empty($entname)) {
             $orm->where('entName', "%{$entname}%", 'LIKE');
+        }
+
+        if (!empty($status)) {
+            $orm->where('status', $status, 'IN');
         }
 
         return $this->writeJson(200, null, $orm->all());
