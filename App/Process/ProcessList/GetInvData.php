@@ -116,10 +116,12 @@ class GetInvData extends ProcessBase
         is_dir($store) || mkdir($store, 0644, true);
 
         if (empty($row)) {
-            file_put_contents($store . $filename, '', FILE_APPEND | LOCK_EX);
+            $content = '' . PHP_EOL;
         } else {
-            file_put_contents($store . $filename, jsonEncode($row, false) . PHP_EOL, FILE_APPEND | LOCK_EX);
+            $content = jsonEncode($row, false) . PHP_EOL;
         }
+
+        file_put_contents($store . $filename, $content, FILE_APPEND | LOCK_EX);
 
         return true;
     }
