@@ -12,6 +12,7 @@ use EasySwoole\RedisPool\Redis;
 class GetInvData extends AbstractCronTask
 {
     public $crontabBase;
+    public $belong = 0;
     public $redisKey = 'readyToGetInvData_';
     public $customProcessNum = 16;//取数的自定义进程个数
 
@@ -41,7 +42,7 @@ class GetInvData extends AbstractCronTask
             $limit = 1000;
             $offset = ($i - 1) * $limit;
             $list = AntAuthList::create()
-                ->where('status', MaYiService::STATUS_3)
+                ->where(['status' => MaYiService::STATUS_3, 'belong' => $this->belong])
                 ->limit($offset, $limit)->all();
             if (empty($list)) {
                 break;
