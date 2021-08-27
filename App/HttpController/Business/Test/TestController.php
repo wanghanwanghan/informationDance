@@ -36,6 +36,8 @@ class TestController extends BusinessBase
 
         $image = $image->getStream()->__toString();
 
+        CommonService::getInstance()->log4PHP($image);
+
         $res = QiXiangYunService::getInstance()->ocr(base64_encode($image));
 
         return $this->writeJson(200, null, $res);
