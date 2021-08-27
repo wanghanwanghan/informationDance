@@ -34,6 +34,8 @@ class TestController extends BusinessBase
     {
         $image = $this->request()->getUploadedFile('image');
 
+        CommonService::getInstance()->log4PHP($image);
+
         $image = $image->getStream()->__toString();
 
         CommonService::getInstance()->log4PHP($image);
