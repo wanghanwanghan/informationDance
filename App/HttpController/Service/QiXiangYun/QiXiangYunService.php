@@ -7,6 +7,7 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use EasySwoole\Component\Singleton;
+use wanghanwanghan\someUtils\utils\str;
 
 class QiXiangYunService extends ServiceBase
 {
@@ -40,11 +41,10 @@ class QiXiangYunService extends ServiceBase
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'postjson');
 
-        CommonService::getInstance()->log4PHP($res);
-
         return $res['value']['access_token'];
     }
 
+    //同步查验
     function cySync(string $fpdm = '011002000811', string $fphm = '29937381', string $kprq = '2021-08-21', float $je = 738, string $jym = '258006')
     {
         $url = $this->testBaseUrl . 'FP/cy';
@@ -82,9 +82,28 @@ class QiXiangYunService extends ServiceBase
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'postjson');
 
-        CommonService::getInstance()->log4PHP($res);
-
         return current($res['value']);
+    }
+
+    //ocr识别
+    function ocr(string $base64)
+    {
+        $url = $this->testBaseUrl . 'FP/sb';
+
+        $data = [
+            'imageData' => $base64,
+        ];
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8'
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'postjson');
+
+        return $res['value'];
     }
 
 

@@ -19,6 +19,7 @@ use App\HttpController\Service\Queue\QueueService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\SwooleTable\Service\SwooleTableService;
 use EasySwoole\Component\Di;
+use EasySwoole\Http\Message\UploadFile;
 use EasySwoole\Pool\Manager;
 use wanghanwanghan\someUtils\control;
 
@@ -31,8 +32,13 @@ class TestController extends BusinessBase
 
     function test()
     {
-        QiXiangYunService::getInstance()->cySync();
-        return $this->writeJson(200);
+        $image = $this->request()->getUploadedFile('image');
+
+        $image = $image->getStream()->__toString();
+
+        $res = QiXiangYunService::getInstance()->ocr(base64_encode($image));
+
+        return $this->writeJson(200, null, $res);
     }
 
     function test1()
