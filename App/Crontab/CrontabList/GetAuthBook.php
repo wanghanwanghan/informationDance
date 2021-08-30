@@ -69,7 +69,7 @@ class GetAuthBook extends AbstractCronTask
                 $url = $res['result']['url'];
 
                 $path = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
-                is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0644);
+                is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0755);
                 $filename = $oneEntInfo->getAttr('socialCredit') . '.pdf';
 
                 //储存pdf
