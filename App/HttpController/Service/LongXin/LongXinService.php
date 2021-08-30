@@ -60,7 +60,7 @@ class LongXinService extends ServiceBase
     }
 
     //二分找区间
-    function binaryFind(int $find, int $leftIndex, int $rightIndex, array $range): ?array
+    function binaryFind(float $find, int $leftIndex, int $rightIndex, array $range): ?array
     {
         if (!is_numeric($find)) return null;
 
