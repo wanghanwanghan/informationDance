@@ -80,7 +80,6 @@ class GetInvData extends ProcessBase
                     }
                 } else {
                     $info = "{$NSRSBH} : page={$page} KM={$KM} FPLXDM={$FPLXDM} KPKSRQ={$KPKSRQ} KPJSRQ={$KPJSRQ}";
-                    CommonService::getInstance()->log4PHP($content['msg'], $info, 'ant.log');
                     $this->writeFile([], $NSRSBH, 'in', $FPLXDM);
                     break;
                 }
@@ -99,7 +98,6 @@ class GetInvData extends ProcessBase
                     }
                 } else {
                     $info = "{$NSRSBH} : page={$page} KM={$KM} FPLXDM={$FPLXDM} KPKSRQ={$KPKSRQ} KPJSRQ={$KPJSRQ}";
-                    CommonService::getInstance()->log4PHP($content['msg'], $info, 'ant.log');
                     break;
                 }
             }

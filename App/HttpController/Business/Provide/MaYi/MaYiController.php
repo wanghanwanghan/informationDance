@@ -91,7 +91,6 @@ class MaYiController extends Index
         $userInfo = RequestUserInfo::create()->where('appId', $this->appId)->get();
         $rsaPub = RSA_KEY_PATH . $userInfo->getAttr('rsaPub');
         if (!file_exists($rsaPub)) {
-            CommonService::getInstance()->log4PHP("{$this->appId} 的Rsa不存在");
             return $this->writeJsons([
                 'code' => '0001',
                 'result' => [
@@ -106,7 +105,6 @@ class MaYiController extends Index
         $key = explode('_', $key);
 
         if (!is_array($key) || $key[0] !== $this->appId) {
-            CommonService::getInstance()->log4PHP("{$this->appId} 的解密失败");
             return $this->writeJsons([
                 'code' => '0001',
                 'result' => [

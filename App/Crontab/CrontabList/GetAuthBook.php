@@ -33,9 +33,6 @@ class GetAuthBook extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex)
     {
-        CommonService::getInstance()
-            ->log4PHP(Carbon::now()->format('Y-m-d H:i:s'), 'GetAuthBookCrontabRunAt', 'ant.log');
-
         //准备获取授权书的企业列表
         $list = AntAuthList::create()->where([
             'authDate' => 0,
@@ -61,8 +58,6 @@ class GetAuthBook extends AbstractCronTask
                     ->setCheckRespFlag(true)->getAuthPdf($data);
 
                 if ($res['code'] !== 200) {
-                    CommonService::getInstance()->log4PHP($data, 'GetAuthBookCrontabData', 'ant.log');
-                    CommonService::getInstance()->log4PHP($res['msg'] ?? '', 'GetAuthBookCrontabMsg', 'ant.log');
                     continue;
                 }
 
@@ -92,7 +87,7 @@ class GetAuthBook extends AbstractCronTask
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
-        CommonService::getInstance()->log4PHP($throwable->getTraceAsString(), 'GetAuthBookCrontabException', 'ant.log');
+
     }
 
 
