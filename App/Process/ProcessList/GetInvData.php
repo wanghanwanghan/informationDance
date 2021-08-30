@@ -103,7 +103,16 @@ class GetInvData extends ProcessBase
             }
         }
 
+        //通知蚂蚁
+        $this->sendToAnt($NSRSBH);
+
         return true;
+    }
+
+    //通知蚂蚁
+    function sendToAnt($NSRSBH)
+    {
+
     }
 
     function writeFile(array $row, string $NSRSBH, string $invType, string $FPLXDM): bool
