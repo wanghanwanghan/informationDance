@@ -122,11 +122,6 @@ function f($list, $field)
         curl_setopt($curl, CURLOPT_POSTFIELDS, $data);//提交的数据
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);//返回值不直接显示
         $res = curl_exec($curl);//发送请求
-
-        echo $ent . ' : ' . $res . PHP_EOL;
-
-        exit;
-
         $res = json_decode($res, true);
         if (!empty($res) && !empty($res['result'])) {
             foreach ($res['result'] as $year => $arr) {
