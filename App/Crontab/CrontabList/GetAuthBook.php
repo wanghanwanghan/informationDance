@@ -33,7 +33,8 @@ class GetAuthBook extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex)
     {
-        CommonService::getInstance()->log4PHP(Carbon::now()->format('Y-m-d H:i:s'), 'GetAuthBookCrontabRunAt', 'ant.log');
+        CommonService::getInstance()
+            ->log4PHP(Carbon::now()->format('Y-m-d H:i:s'), 'GetAuthBookCrontabRunAt', 'ant.log');
 
         //准备获取授权书的企业列表
         $list = AntAuthList::create()->where([
@@ -53,7 +54,7 @@ class GetAuthBook extends AbstractCronTask
                     'phone' => $oneEntInfo->getAttr('phone'),
                     'region' => $oneEntInfo->getAttr('city'),
                     'address' => $oneEntInfo->getAttr('regAddress'),
-                    'requestId' => $oneEntInfo->getAttr('requestId'),
+                    'requestId' => $oneEntInfo->getAttr('requestId') . time(),//海光用的，没啥用，随便传
                 ];
 
                 $res = (new HuiCheJianService())

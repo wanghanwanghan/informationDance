@@ -5201,7 +5201,9 @@ class MaYiService extends ServiceBase
 
         $postData = ['entName' => $data['entName']];
 
-        $res = (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getRegisterInfo');
+        $res = (new TaoShuService())
+            ->setCheckRespFlag(true)
+            ->post($postData, 'getRegisterInfo');
 
         $res = current($res['result']);
 
