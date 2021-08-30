@@ -74,8 +74,6 @@ class MaYiController extends Index
     //蚂蚁发过来的企业五要素
     function invEntList(): bool
     {
-        CommonService::getInstance()->log4PHP($this->getRequestData());
-
         $tmp['head'] = $this->getRequestData('head');
         $tmp['body'] = $this->getRequestData('body');
 
