@@ -164,9 +164,6 @@ class XinDongController extends ProvideBase
             'dataCount' => $dataCount,
         ];
 
-        CommonService::getInstance()->log4PHP($postData);
-
-
         $this->csp->add($this->cspKey, function () use ($postData) {
             $res = (new LongXinService())
                 ->setCheckRespFlag(true)
