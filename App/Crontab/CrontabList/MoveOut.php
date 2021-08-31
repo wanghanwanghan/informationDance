@@ -344,7 +344,8 @@ class MoveOut extends AbstractCronTask
         $commod = "wget -q {$url} -O {$file_name}";
         system($commod);
 
-        //这里顺便给火眼发过去
+        // 这里顺便给火眼发过去
+        // todo
 
         return true;
     }

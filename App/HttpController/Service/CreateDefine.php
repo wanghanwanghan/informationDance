@@ -16,6 +16,8 @@ class CreateDefine extends ServiceBase
 
         define('MYJF_PATH', $root . DIRECTORY_SEPARATOR . 'Myjf' . DIRECTORY_SEPARATOR);
 
+        define('BIN_PATH', $root . DIRECTORY_SEPARATOR . 'Bin' . DIRECTORY_SEPARATOR);
+
         define('STATIC_PATH', $root . DIRECTORY_SEPARATOR . 'Static' . DIRECTORY_SEPARATOR);
 
         define('LOG_PATH', STATIC_PATH . 'Log' . DIRECTORY_SEPARATOR);
