@@ -60,11 +60,14 @@ class PStatisticsController extends StatisticsBase
             'total' => $total,
         ];
 
-        if (!empty($data))
-        {
-            foreach ($data as $key => $val)
-            {
-                $data[$key]['ipDetail'] = IPv4Tool::query($val['requestIp']);
+        if (!empty($data)) {
+            foreach ($data as $key => $val) {
+                if (empty(trim($val['requestIp']))) {
+                    $ip_info = ['disp' => '本地'];
+                } else {
+                    $ip_info = IPv4Tool::query($val['requestIp']);
+                }
+                $data[$key]['ipDetail'] = $ip_info;
             }
         }
 
