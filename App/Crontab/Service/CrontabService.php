@@ -21,7 +21,7 @@ class CrontabService
         $this->createDeepReport();
         $this->deleteTimeoutOrder();
         $this->runSupervisor();
-        // $this->runMoveOut();
+        $this->runMoveOut();
         $this->getAuthBook();
         $this->getInvData();
 

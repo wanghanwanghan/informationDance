@@ -25,7 +25,7 @@ class MoveOut extends AbstractCronTask
     static function getRule(): string
     {
         //每天的凌晨3点
-        return '0 22 * * *';
+        return '0 21 * * *';
     }
 
     static function getTaskName(): string
@@ -345,7 +345,8 @@ class MoveOut extends AbstractCronTask
         system($commod);
 
         // 这里顺便给火眼发过去
-        // todo
+        $commod = BIN_PATH . 'ossutil64' . " cp {$file_name} oss://huike-backup/mrxd/";
+        //system($commod);
 
         return true;
     }
