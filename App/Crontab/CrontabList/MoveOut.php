@@ -24,12 +24,8 @@ class MoveOut extends AbstractCronTask
 
     static function getRule(): string
     {
-        //每7天的凌晨2点
-        //return '0 2 */7 * *';
         //每天的凌晨3点
-        //return '0 3 * * *';
-
-        return '*/3 * * * *';
+        return '0 16 * * *';
     }
 
     static function getTaskName(): string
@@ -37,7 +33,7 @@ class MoveOut extends AbstractCronTask
         return __CLASS__;
     }
 
-    function run_backup(int $taskId, int $workerIndex): bool
+    function run(int $taskId, int $workerIndex): bool
     {
         //$workerIndex是task进程编号
         //taskId是进程周期内第几个task任务
@@ -85,37 +81,6 @@ class MoveOut extends AbstractCronTask
 
         //更新所有监控中的企业
         MoveOutService::getInstance()->updateDatabase();
-
-        CommonService::getInstance()->log4PHP([
-            'move out stop : ' . Carbon::now()->format('Y-m-d H:i:s')
-        ]);
-
-        return true;
-    }
-
-    function run(int $taskId, int $workerIndex): bool
-    {
-        CommonService::getInstance()->log4PHP([
-            'move out start : ' . Carbon::now()->format('Y-m-d H:i:s')
-        ]);
-
-        if (!$this->crontabBase->withoutOverlapping(self::getTaskName())) {
-            CommonService::getInstance()->log4PHP(__CLASS__ . '不开始');
-            return true;
-        }
-
-        if ($dh = opendir(TEMP_FILE_PATH)) {
-            while (false !== ($file = readdir($dh))) {
-                if (strpos($file, 'zip') !== false) {
-                    $filename_arr = ZipService::getInstance()
-                        ->unzip(TEMP_FILE_PATH . $file, TEMP_FILE_PATH);
-                    empty($filename_arr) ?: $this->handleFileArr($filename_arr);
-                }
-            }
-        }
-        closedir($dh);
-
-        $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
         CommonService::getInstance()->log4PHP([
             'move out stop : ' . Carbon::now()->format('Y-m-d H:i:s')
