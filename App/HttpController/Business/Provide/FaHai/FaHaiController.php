@@ -188,6 +188,54 @@ class FaHaiController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getSatpartyReg(): bool
+    {
+        $entName = $this->getRequestData('entName');
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
+
+        $docType = 'satparty_reg';
+
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())->setCheckRespFlag(true)
+                ->getList($this->listBaseUrl . 'sat', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function getSatpartyRegDetail(): bool
+    {
+        $id = $this->getRequestData('id');
+
+        $docType = 'satparty_reg';
+
+        $postData = [
+            'id' => $id,
+            'doc_type' => $docType,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData, $docType) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getDetail($this->detailBaseUrl . $docType, $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+
 }
 
 

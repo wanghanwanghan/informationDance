@@ -148,10 +148,12 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getKtgg', $prefix . 'getKtgg');
             $routeCollector->addRoute(['GET', 'POST'], '/getFygg', $prefix . 'getFygg');
             $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyXin', $prefix . 'getSatpartyXin');
+            $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyReg', $prefix . 'getSatpartyReg');//税务登记列表
 
             $routeCollector->addRoute(['GET', 'POST'], '/getKtggDetail', $prefix . 'getKtggDetail');//开庭公告
             $routeCollector->addRoute(['GET', 'POST'], '/getFyggDetail', $prefix . 'getFyggDetail');//法院公告
             $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyXinDetail', $prefix . 'getSatpartyXinDetail');
+            $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyRegDetail', $prefix . 'getSatpartyRegDetail');
         });
 
         return true;
