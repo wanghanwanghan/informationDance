@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\XinDong;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Models\EntDb\EntDbFinance;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongDun\LongDunService;
@@ -210,11 +211,12 @@ class XinDongController extends ProvideBase
     //投中
     function getFinanceBaseDataTZ(): bool
     {
+        $entName = $this->getRequestData('entName', '');
         $beginYear = 2020;
         $dataCount = 5;
 
         $postData = [
-            'entName' => $this->getRequestData('entName', ''),
+            'entName' => $entName,
             'code' => $this->getRequestData('code', ''),
             'beginYear' => $beginYear,
             'dataCount' => $dataCount,
@@ -223,14 +225,55 @@ class XinDongController extends ProvideBase
         $range = FinanceRange::getInstance()->getRange('range_touzhong');
         $ratio = FinanceRange::getInstance()->getRange('rangeRatio_touzhong');
 
-        $this->csp->add($this->cspKey, function () use ($postData, $range, $ratio) {
-            return (new LongXinService())
-                ->setCheckRespFlag(true)
-                ->setRangeArr($range, $ratio)
-                ->getFinanceData($postData, true);
-        });
+        $f_info = EntDbFinance::create()->where('entName', $entName)->all();
 
-        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        if (!empty($f_info)) {
+            $this->spendMoney = 0;
+            $origin = [];
+            foreach ($f_info as $one) {
+                $origin[$one->getAttr('ANCHEYEAR') . ''] = [
+                    $one->getAttr('ASSGRO'),
+                    $one->getAttr('LIAGRO'),
+                    $one->getAttr('VENDINC'),
+                    $one->getAttr('MAIBUSINC'),
+                    $one->getAttr('PROGRO'),
+                    $one->getAttr('NETINC'),
+                    $one->getAttr('RATGRO'),
+                    $one->getAttr('TOTEQU'),
+                    $one->getAttr('So1'),
+                ];
+            }
+            $obj = new LongXinService();
+            $readyReturn = $obj->exprHandle($origin);
+            foreach ($readyReturn as $year => $arr) {
+                if (empty($arr)) continue;
+                foreach ($arr as $field => $val) {
+                    if (in_array($field, $range[0], true) && is_numeric($val)) {
+                        $readyReturn[$year][$field] = $obj->binaryFind($val, 0, count($range[1]) - 1, $range[1]);
+                    } elseif (in_array($field, $ratio[0], true) && is_numeric($val)) {
+                        $readyReturn[$year][$field] = $this->$obj($val, 0, count($ratio[1]) - 1, $ratio[1]);
+                    } else {
+                        $readyReturn[$year][$field] = $val;
+                    }
+                }
+            }
+            $res = [$this->cspKey => [
+                'code' => 200,
+                'paging' => null,
+                'result' => $readyReturn,
+                'msg' => null,
+            ]];
+            CommonService::getInstance()->log4PHP('投中特殊');
+            CommonService::getInstance()->log4PHP($res);
+        } else {
+            $this->csp->add($this->cspKey, function () use ($postData, $range, $ratio) {
+                return (new LongXinService())
+                    ->setCheckRespFlag(true)
+                    ->setRangeArr($range, $ratio)
+                    ->getFinanceData($postData, true);
+            });
+            $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        }
 
         return $this->checkResponse($res);
     }
