@@ -249,10 +249,13 @@ class XinDongController extends ProvideBase
                 }
             }
             krsort($readyReturn);
+            for ($i = $beginYear; $i >= $beginYear - $dataCount; $i--) {
+                $tmp[$i] = $readyReturn[$i] ?? $readyReturn[$i . ''];
+            }
             $res = [$this->cspKey => [
                 'code' => 200,
                 'paging' => null,
-                'result' => $readyReturn,
+                'result' => $tmp,
                 'msg' => null,
             ]];
         } else {
