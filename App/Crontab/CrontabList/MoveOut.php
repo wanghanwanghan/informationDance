@@ -25,7 +25,7 @@ class MoveOut extends AbstractCronTask
     static function getRule(): string
     {
         //每天的凌晨3点
-        return '30 14 * * *';
+        return '40 14 * * *';
     }
 
     static function getTaskName(): string
@@ -50,6 +50,10 @@ class MoveOut extends AbstractCronTask
 
         $target_time = Carbon::now()->subDays(2)->format('Ymd');
 
+        CommonService::getInstance()->log4PHP([
+            $target_time . 'target时间'
+        ]);
+
         $sendHeaders['authorization'] = $this->createToken();
 
         $data = [
@@ -62,6 +66,9 @@ class MoveOut extends AbstractCronTask
 
         if ($res['code'] - 0 === 200 && is_array($res['data']) && !empty($res['data'])) {
             foreach ($res['data'] as $one) {
+                CommonService::getInstance()->log4PHP([
+                    'res data里的' . $res['data']
+                ]);
                 $state = $one['state'] - 0;
                 //返回错误
                 if ($state !== 1) continue;
@@ -341,13 +348,7 @@ class MoveOut extends AbstractCronTask
     function getFileByWget($url, $dir, $name, $ext = '.zip'): bool
     {
         $file_name = $dir . $name . $ext;
-        CommonService::getInstance()->log4PHP([
-            'move out start : 下载开始 : ' . $file_name
-        ]);
         $commod = "wget -q {$url} -O {$file_name}";
-        CommonService::getInstance()->log4PHP([
-            'move out start : 下载结束'
-        ]);
         system($commod);
 
         // 这里顺便给火眼发过去

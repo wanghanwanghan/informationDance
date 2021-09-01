@@ -207,6 +207,62 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //投中
+    function getFinanceBaseDataTZ(): bool
+    {
+        $beginYear = 2020;
+        $dataCount = 2;
+
+        $postData = [
+            'entName' => $this->getRequestData('entName', ''),
+            'code' => $this->getRequestData('code', ''),
+            'beginYear' => $beginYear,
+            'dataCount' => $dataCount,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            $res = (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->setCal(false)
+                ->getFinanceData($postData, false);
+            if ($res['code'] === 200 && !empty($res['result'])) {
+                $indexTable = [
+                    '0' => 'O',
+                    '1' => 'C',
+                    '2' => 'E',
+                    '3' => 'I',
+                    '4' => 'G',
+                    '5' => 'A',
+                    '6' => 'H',
+                    '7' => 'F',
+                    '8' => 'D',
+                    '9' => 'B',
+                    '.' => '*',
+                    '-' => 'J',
+                ];
+                foreach ($res['result'] as $year => $oneYearData) {
+                    foreach ($oneYearData as $field => $num) {
+                        if ($field === 'ispublic' || $field === 'SOCNUM') {
+                            unset($res['result'][$year][$field]);
+                            continue;
+                        }
+                        $tmp = strtr($num, $indexTable);
+                        $tmp = current(explode('*', $tmp));
+                        if (strlen($tmp) > 1 && $tmp[0] !== 'J') {
+                            $tmp = substr($tmp, 0, -1);
+                        }
+                        $res['result'][$year][$field] = $tmp;
+                    }
+                }
+            }
+            return $res;
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
     //连续n年基数+计算结果
     function getFinanceCalData()
     {
