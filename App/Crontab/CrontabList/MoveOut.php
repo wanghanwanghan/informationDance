@@ -25,7 +25,7 @@ class MoveOut extends AbstractCronTask
     static function getRule(): string
     {
         //每天的凌晨3点
-        return '46 14 * * *';
+        return '0 3 * * *';
     }
 
     static function getTaskName(): string
@@ -48,7 +48,7 @@ class MoveOut extends AbstractCronTask
             return true;
         }
 
-        $target_time = Carbon::now()->subDays(2)->format('Ymd');
+        $target_time = Carbon::now()->subDays(1)->format('Ymd');
 
         $sendHeaders['authorization'] = $this->createToken();
 
@@ -71,7 +71,6 @@ class MoveOut extends AbstractCronTask
                 $load_url = $one['load_url'];
                 $this->getFileByWget($load_url, TEMP_FILE_PATH, $name);
                 $filename_arr = ZipService::getInstance()->unzip(TEMP_FILE_PATH . $name . '.zip', TEMP_FILE_PATH);
-                CommonService::getInstance()->log4PHP($filename_arr);
                 if (!empty($filename_arr)) $this->handleFileArr($filename_arr);
             }
         }

@@ -211,7 +211,7 @@ class XinDongController extends ProvideBase
     function getFinanceBaseDataTZ(): bool
     {
         $beginYear = 2020;
-        $dataCount = 2;
+        $dataCount = 5;
 
         $postData = [
             'entName' => $this->getRequestData('entName', ''),
@@ -220,42 +220,14 @@ class XinDongController extends ProvideBase
             'dataCount' => $dataCount,
         ];
 
-        $this->csp->add($this->cspKey, function () use ($postData) {
-            $res = (new LongXinService())
+        $range = FinanceRange::getInstance()->getRange('range_touzhong');
+        $ratio = FinanceRange::getInstance()->getRange('rangeRatio_touzhong');
+
+        $this->csp->add($this->cspKey, function () use ($postData, $range, $ratio) {
+            return (new LongXinService())
                 ->setCheckRespFlag(true)
-                ->setCal(false)
-                ->getFinanceData($postData, false);
-            if ($res['code'] === 200 && !empty($res['result'])) {
-                $indexTable = [
-                    '0' => 'O',
-                    '1' => 'C',
-                    '2' => 'E',
-                    '3' => 'I',
-                    '4' => 'G',
-                    '5' => 'A',
-                    '6' => 'H',
-                    '7' => 'F',
-                    '8' => 'D',
-                    '9' => 'B',
-                    '.' => '*',
-                    '-' => 'J',
-                ];
-                foreach ($res['result'] as $year => $oneYearData) {
-                    foreach ($oneYearData as $field => $num) {
-                        if ($field === 'ispublic' || $field === 'SOCNUM') {
-                            unset($res['result'][$year][$field]);
-                            continue;
-                        }
-                        $tmp = strtr($num, $indexTable);
-                        $tmp = current(explode('*', $tmp));
-                        if (strlen($tmp) > 1 && $tmp[0] !== 'J') {
-                            $tmp = substr($tmp, 0, -1);
-                        }
-                        $res['result'][$year][$field] = $tmp;
-                    }
-                }
-            }
-            return $res;
+                ->setRangeArr($range, $ratio)
+                ->getFinanceData($postData, true);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
