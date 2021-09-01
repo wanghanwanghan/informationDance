@@ -578,7 +578,7 @@ class LongXinService extends ServiceBase
                 $arr['NETINC'],
                 $arr['RATGRO'],
                 $arr['TOTEQU'],
-                $arr['SOCNUM'],
+                $arr['SOCNUM'] ?? $arr['So1'],
             ];
         }
         $origin = $now;

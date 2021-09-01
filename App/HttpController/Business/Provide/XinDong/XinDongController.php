@@ -232,17 +232,7 @@ class XinDongController extends ProvideBase
             $this->spendMoney = 0;
             $origin = [];
             foreach ($f_info as $one) {
-                $origin[$one->getAttr('ANCHEYEAR') . ''] = [
-                    $one->getAttr('ASSGRO'),
-                    $one->getAttr('LIAGRO'),
-                    $one->getAttr('VENDINC'),
-                    $one->getAttr('MAIBUSINC'),
-                    $one->getAttr('PROGRO'),
-                    $one->getAttr('NETINC'),
-                    $one->getAttr('RATGRO'),
-                    $one->getAttr('TOTEQU'),
-                    $one->getAttr('So1'),
-                ];
+                $origin[$one->getAttr('ANCHEYEAR') . ''] = obj2Arr($one);
             }
             $obj = new LongXinService();
             $readyReturn = $obj->exprHandle($origin);
