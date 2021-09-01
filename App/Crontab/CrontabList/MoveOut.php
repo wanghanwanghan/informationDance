@@ -341,7 +341,13 @@ class MoveOut extends AbstractCronTask
     function getFileByWget($url, $dir, $name, $ext = '.zip'): bool
     {
         $file_name = $dir . $name . $ext;
+        CommonService::getInstance()->log4PHP([
+            'move out start : 下载开始 : ' . $file_name
+        ]);
         $commod = "wget -q {$url} -O {$file_name}";
+        CommonService::getInstance()->log4PHP([
+            'move out start : 下载结束'
+        ]);
         system($commod);
 
         // 这里顺便给火眼发过去
