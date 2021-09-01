@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\XinDong;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Models\EntDb\EntDbEnt;
 use App\HttpController\Models\EntDb\EntDbFinance;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
@@ -225,9 +226,9 @@ class XinDongController extends ProvideBase
         $range = FinanceRange::getInstance()->getRange('range_touzhong');
         $ratio = FinanceRange::getInstance()->getRange('rangeRatio_touzhong');
 
-        $f_info = EntDbFinance::create()->where('entName', $entName)->all();
+        $ent_info = EntDbEnt::create()->where('name', $entName)->get();
 
-        if (!empty($f_info)) {
+        if (!empty($ent_info) && !empty(($f_info = EntDbFinance::create()->where('cid', $ent_info->getAttr('id'))->all()))) {
             $this->spendMoney = 0;
             $origin = [];
             foreach ($f_info as $one) {
