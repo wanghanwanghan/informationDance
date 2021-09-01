@@ -34,7 +34,7 @@ class ZipService extends ServiceBase
                 if (!is_dir($file_name)) {
                     //读取这个文件
                     $file_size = zip_entry_filesize($dir_resource);
-                    if ($file_size < (1024 * 1024 * 300)) {
+                    if ($file_size < (1024 * 1024 * 3000)) {
                         $file_content = zip_entry_read($dir_resource, $file_size);
                         file_put_contents($file_name, $file_content);
                         $unzip_filename[] = $filename_now;

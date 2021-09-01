@@ -25,7 +25,7 @@ class MoveOut extends AbstractCronTask
     static function getRule(): string
     {
         //每天的凌晨3点
-        return '0 21 * * *';
+        return '0 15 * * *';
     }
 
     static function getTaskName(): string
@@ -48,7 +48,7 @@ class MoveOut extends AbstractCronTask
             return true;
         }
 
-        $target_time = Carbon::now()->subDays(1)->format('Ymd');
+        $target_time = Carbon::now()->subDays(2)->format('Ymd');
 
         $sendHeaders['authorization'] = $this->createToken();
 
@@ -80,7 +80,7 @@ class MoveOut extends AbstractCronTask
         $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
         //更新所有监控中的企业
-        MoveOutService::getInstance()->updateDatabase();
+        //MoveOutService::getInstance()->updateDatabase();
 
         CommonService::getInstance()->log4PHP([
             'move out stop : ' . Carbon::now()->format('Y-m-d H:i:s')
