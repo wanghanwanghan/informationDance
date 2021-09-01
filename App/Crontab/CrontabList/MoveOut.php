@@ -25,7 +25,7 @@ class MoveOut extends AbstractCronTask
     static function getRule(): string
     {
         //每天的凌晨3点
-        return '0 15 * * *';
+        return '30 14 * * *';
     }
 
     static function getTaskName(): string
