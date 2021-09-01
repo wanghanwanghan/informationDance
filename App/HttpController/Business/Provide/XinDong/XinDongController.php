@@ -255,8 +255,6 @@ class XinDongController extends ProvideBase
                 'result' => $readyReturn,
                 'msg' => null,
             ]];
-            CommonService::getInstance()->log4PHP('投中特殊');
-            CommonService::getInstance()->log4PHP($res);
         } else {
             $this->csp->add($this->cspKey, function () use ($postData, $range, $ratio) {
                 return (new LongXinService())
