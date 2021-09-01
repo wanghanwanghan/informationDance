@@ -25,7 +25,7 @@ class MoveOut extends AbstractCronTask
     static function getRule(): string
     {
         //每天的凌晨3点
-        return '40 14 * * *';
+        return '46 14 * * *';
     }
 
     static function getTaskName(): string
@@ -50,10 +50,6 @@ class MoveOut extends AbstractCronTask
 
         $target_time = Carbon::now()->subDays(2)->format('Ymd');
 
-        CommonService::getInstance()->log4PHP([
-            $target_time . 'target时间'
-        ]);
-
         $sendHeaders['authorization'] = $this->createToken();
 
         $data = [
@@ -66,9 +62,6 @@ class MoveOut extends AbstractCronTask
 
         if ($res['code'] - 0 === 200 && is_array($res['data']) && !empty($res['data'])) {
             foreach ($res['data'] as $one) {
-                CommonService::getInstance()->log4PHP([
-                    'res data里的' . $res['data']
-                ]);
                 $state = $one['state'] - 0;
                 //返回错误
                 if ($state !== 1) continue;
@@ -77,10 +70,8 @@ class MoveOut extends AbstractCronTask
                 if (strpos($name, $target_time) === false) continue;
                 $load_url = $one['load_url'];
                 $this->getFileByWget($load_url, TEMP_FILE_PATH, $name);
-                $filename_arr = ZipService::getInstance()->unzip(TEMP_FILE_PATH . $name, TEMP_FILE_PATH);
-                CommonService::getInstance()->log4PHP([
-                    '解析出的文件' . $filename_arr
-                ]);
+                $filename_arr = ZipService::getInstance()->unzip(TEMP_FILE_PATH . $name . '.zip', TEMP_FILE_PATH);
+                CommonService::getInstance()->log4PHP($filename_arr);
                 if (!empty($filename_arr)) $this->handleFileArr($filename_arr);
             }
         }
