@@ -251,12 +251,13 @@ class XinDongController extends ProvideBase
                     if (in_array($field, $range[0], true) && is_numeric($val)) {
                         $readyReturn[$year][$field] = $obj->binaryFind($val, 0, count($range[1]) - 1, $range[1]);
                     } elseif (in_array($field, $ratio[0], true) && is_numeric($val)) {
-                        $readyReturn[$year][$field] = $this->$obj($val, 0, count($ratio[1]) - 1, $ratio[1]);
+                        $readyReturn[$year][$field] = $obj->binaryFind($val, 0, count($ratio[1]) - 1, $ratio[1]);
                     } else {
                         $readyReturn[$year][$field] = $val;
                     }
                 }
             }
+            krsort($readyReturn);
             $res = [$this->cspKey => [
                 'code' => 200,
                 'paging' => null,
