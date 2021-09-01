@@ -78,6 +78,9 @@ class MoveOut extends AbstractCronTask
                 $load_url = $one['load_url'];
                 $this->getFileByWget($load_url, TEMP_FILE_PATH, $name);
                 $filename_arr = ZipService::getInstance()->unzip(TEMP_FILE_PATH . $name, TEMP_FILE_PATH);
+                CommonService::getInstance()->log4PHP([
+                    '解析出的文件' . $filename_arr
+                ]);
                 if (!empty($filename_arr)) $this->handleFileArr($filename_arr);
             }
         }
