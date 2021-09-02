@@ -30,11 +30,6 @@ class PStatisticsController extends StatisticsBase
         $page = $this->getRequestData('page', 1);
         $pageSize = $this->getRequestData('pageSize', 20);
 
-        if ($date1 !== '' && $date2 !== '') {
-            $date1 = substr($date1, 0, 10);
-            $date2 = substr($date2, 0, 10);
-        }
-
         $year = Carbon::now()->year;
 
         $data = RequestRecode::create()->addSuffix($year)->alias('t1')
@@ -71,6 +66,13 @@ class PStatisticsController extends StatisticsBase
         if (is_numeric($aid)) {
             $data->where('t3.id', $aid);
             $total->where('t3.id', $aid);
+        }
+
+        if ($date1 !== '' && $date2 !== '') {
+            $date1 = Carbon::parse(substr($date1, 0, 10))->startOfDay()->timestamp;
+            $date2 = Carbon::parse(substr($date2, 0, 10))->endOfDay()->timestamp;
+            $data->where('t1.created_at', [$date1, $date2], 'IN');
+            $total->where('t1.created_at', [$date1, $date2], 'IN');
         }
 
         $data = $data->all();
