@@ -56,6 +56,7 @@ class AdminProvideRouter
 
         $routeCollector->addGroup('/statistics', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getStatisticsList', $prefix . 'getStatisticsList');
+            $routeCollector->addRoute(['GET', 'POST'], '/exportCsv', $prefix . 'exportCsv');
         });
 
         return true;
