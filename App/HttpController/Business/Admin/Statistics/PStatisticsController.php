@@ -155,6 +155,7 @@ class PStatisticsController extends StatisticsBase
         foreach ($data as $oneData) {
             if ($i === 1) {
                 $header = [
+                    '用户名称',
                     '接口名称',
                     '接口描述',
                     '是否成功',
@@ -167,6 +168,7 @@ class PStatisticsController extends StatisticsBase
                 file_put_contents(TEMP_FILE_PATH . $filename, implode(',', $header) . PHP_EOL);
             }
             $insert = [
+                $oneData->getAttr('username'),
                 $oneData->getAttr('name'),
                 $oneData->getAttr('desc'),
                 $oneData->getAttr('responseCode'),
