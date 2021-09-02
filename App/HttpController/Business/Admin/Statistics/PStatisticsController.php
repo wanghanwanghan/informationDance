@@ -2,7 +2,9 @@
 
 namespace App\HttpController\Business\Admin\Statistics;
 
+use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\Provide\RequestRecode;
+use App\HttpController\Models\Provide\RequestUserInfo;
 use Carbon\Carbon;
 use Ritaswc\ZxIPAddress\IPv4Tool;
 
@@ -71,7 +73,12 @@ class PStatisticsController extends StatisticsBase
             }
         }
 
-        return $this->writeJson(200, $paging, $data);
+        $ext = [
+            'user_info' => RequestUserInfo::create()->field(['id', 'username'])->all(),
+            'api_info' => RequestApiInfo::create()->field(['id', 'name', 'source'])->all(),
+        ];
+
+        return $this->writeJson(200, $paging, $data, null, true, $ext);
     }
 
 

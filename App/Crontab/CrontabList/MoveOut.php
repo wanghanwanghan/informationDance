@@ -337,9 +337,8 @@ class MoveOut extends AbstractCronTask
         $commod = "wget -q {$url} -O {$file_name}";
         system($commod);
 
-        // 这里顺便给火眼发过去
         $commod = BIN_PATH . 'ossutil64' . " cp {$file_name} oss://huike-backup/mrxd/";
-        //system($commod);
+        system($commod);
 
         return true;
     }
