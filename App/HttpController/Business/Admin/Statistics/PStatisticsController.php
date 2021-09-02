@@ -154,9 +154,29 @@ class PStatisticsController extends StatisticsBase
         $filename = control::getUuid() . '.csv';
         foreach ($data as $oneData) {
             if ($i === 1) {
-                file_put_contents(TEMP_FILE_PATH . $filename, implode(',', array_keys(obj2Arr($oneData))) . PHP_EOL);
+                $header = [
+                    '接口名称',
+                    '接口描述',
+                    '是否成功',
+                    '扣费金额',
+                    '接口成本',
+                    '请求ip',
+                    '请求时间',
+                    '请求唯一标记',
+                ];
+                file_put_contents(TEMP_FILE_PATH . $filename, implode(',', $header) . PHP_EOL);
             }
-            file_put_contents(TEMP_FILE_PATH . $filename, implode(',', array_values(obj2Arr($oneData))) . PHP_EOL, FILE_APPEND);
+            $insert = [
+                $oneData->getAttr('name'),
+                $oneData->getAttr('desc'),
+                $oneData->getAttr('responseCode'),
+                $oneData->getAttr('spendMoney'),
+                $oneData->getAttr('price'),
+                $oneData->getAttr('requestIp'),
+                date('Y-m-d H:i:s', $oneData->getAttr('created_at')),
+                $oneData->getAttr('requestId'),
+            ];
+            file_put_contents(TEMP_FILE_PATH . $filename, implode(',', $insert) . PHP_EOL, FILE_APPEND);
             $i++;
         }
 
