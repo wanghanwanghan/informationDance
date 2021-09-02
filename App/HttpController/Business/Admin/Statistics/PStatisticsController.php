@@ -30,9 +30,10 @@ class PStatisticsController extends StatisticsBase
         $page = $this->getRequestData('page', 1);
         $pageSize = $this->getRequestData('pageSize', 20);
 
-        CommonService::getInstance()->log4PHP($date1);
-        CommonService::getInstance()->log4PHP($date2);
-
+        if ($date1 !== '' && $date2 !== '') {
+            $date1 = substr($date1, 0, 10);
+            $date2 = substr($date2, 0, 10);
+        }
 
         $year = Carbon::now()->year;
 
@@ -56,12 +57,24 @@ class PStatisticsController extends StatisticsBase
                 't3.source',
                 't3.price',
             ])->order('t1.created_at', 'desc')
-            ->limit($this->exprOffset($page, $pageSize), $pageSize)->all();
+            ->limit($this->exprOffset($page, $pageSize), $pageSize);
 
         $total = RequestRecode::create()->addSuffix($year)->alias('t1')
             ->join('information_dance_request_user_info as t2', 't1.userId = t2.id', 'left')
-            ->join('information_dance_request_api_info as t3', 't1.provideApiId = t3.id', 'left')
-            ->count('t1.id');
+            ->join('information_dance_request_api_info as t3', 't1.provideApiId = t3.id', 'left');
+
+        if (is_numeric($uid)) {
+            $data->where('t2.id', $uid);
+            $total->where('t2.id', $uid);
+        }
+
+        if (is_numeric($aid)) {
+            $data->where('t3.id', $aid);
+            $total->where('t3.id', $aid);
+        }
+
+        $data = $data->all();
+        $total = $total->count('t1.id');
 
         $paging = [
             'page' => $page,
