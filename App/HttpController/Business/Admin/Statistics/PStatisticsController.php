@@ -25,8 +25,7 @@ class PStatisticsController extends StatisticsBase
     {
         $uid = $this->getRequestData('uid');
         $aid = $this->getRequestData('aid');
-        $date1 = $this->getRequestData('date1');
-        $date2 = $this->getRequestData('date2');
+        $date = $this->getRequestData('date');
         $page = $this->getRequestData('page', 1);
         $pageSize = $this->getRequestData('pageSize', 20);
 
@@ -68,11 +67,10 @@ class PStatisticsController extends StatisticsBase
             $total->where('t3.id', $aid);
         }
 
-        if (!empty($date1) && !empty($date2)) {
-            $date1 = Carbon::parse(substr($date1, 0, 10))->startOfDay()->timestamp;
-            $date2 = Carbon::parse(substr($date2, 0, 10))->endOfDay()->timestamp;
-            CommonService::getInstance()->log4PHP($date1);
-            CommonService::getInstance()->log4PHP($date2);
+        if (!empty($date)) {
+            $tmp = explode('|||', $date);
+            $date1 = Carbon::parse(substr($tmp[0], 0, 10))->subDay()->startOfDay()->timestamp;
+            $date2 = Carbon::parse(substr($tmp[1], 0, 10))->subDay()->endOfDay()->timestamp;
             $data->where('t1.created_at', [$date1, $date2], 'IN');
             $total->where('t1.created_at', [$date1, $date2], 'IN');
         }
