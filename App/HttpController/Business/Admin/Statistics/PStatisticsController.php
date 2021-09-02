@@ -5,6 +5,7 @@ namespace App\HttpController\Business\Admin\Statistics;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\Provide\RequestRecode;
 use App\HttpController\Models\Provide\RequestUserInfo;
+use App\HttpController\Service\Common\CommonService;
 use Carbon\Carbon;
 use Ritaswc\ZxIPAddress\IPv4Tool;
 
@@ -24,8 +25,14 @@ class PStatisticsController extends StatisticsBase
     {
         $uid = $this->getRequestData('uid');
         $aid = $this->getRequestData('aid');
+        $date1 = $this->getRequestData('date1');
+        $date2 = $this->getRequestData('date2');
         $page = $this->getRequestData('page', 1);
         $pageSize = $this->getRequestData('pageSize', 20);
+
+        CommonService::getInstance()->log4PHP($date1);
+        CommonService::getInstance()->log4PHP($date2);
+
 
         $year = Carbon::now()->year;
 
