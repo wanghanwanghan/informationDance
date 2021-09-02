@@ -177,7 +177,7 @@ class PStatisticsController extends StatisticsBase
                 $oneData->getAttr('spendMoney'),
                 $oneData->getAttr('price'),
                 $oneData->getAttr('requestIp'),
-                date('Y-m-d H:i:s', $oneData->getAttr('created_at')),
+                date('Y-m-d H:i:s', $oneData->getAttr('created_at') ?? time()),
                 $oneData->getAttr('requestId'),
             ];
             file_put_contents(TEMP_FILE_PATH . $filename, implode(',', $insert) . PHP_EOL, FILE_APPEND);
