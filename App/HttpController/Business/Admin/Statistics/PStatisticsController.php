@@ -68,9 +68,11 @@ class PStatisticsController extends StatisticsBase
             $total->where('t3.id', $aid);
         }
 
-        if ($date1 !== '' && $date2 !== '') {
+        if (!empty($date1) && !empty($date2)) {
             $date1 = Carbon::parse(substr($date1, 0, 10))->startOfDay()->timestamp;
             $date2 = Carbon::parse(substr($date2, 0, 10))->endOfDay()->timestamp;
+            CommonService::getInstance()->log4PHP($date1);
+            CommonService::getInstance()->log4PHP($date2);
             $data->where('t1.created_at', [$date1, $date2], 'IN');
             $total->where('t1.created_at', [$date1, $date2], 'IN');
         }
