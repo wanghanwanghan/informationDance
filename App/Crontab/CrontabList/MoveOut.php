@@ -43,11 +43,6 @@ class MoveOut extends AbstractCronTask
             'move out start : ' . Carbon::now()->format('Y-m-d H:i:s')
         ]);
 
-        if (!$this->crontabBase->withoutOverlapping(self::getTaskName())) {
-            CommonService::getInstance()->log4PHP(__CLASS__ . '不开始');
-            return true;
-        }
-
         $target_time = Carbon::now()->subDays(1)->format('Ymd');
 
         $sendHeaders['authorization'] = $this->createToken();
@@ -76,8 +71,6 @@ class MoveOut extends AbstractCronTask
         }
 
         $this->delFileByCtime(TEMP_FILE_PATH, 5);
-
-        $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
         //更新所有监控中的企业
         //MoveOutService::getInstance()->updateDatabase();
