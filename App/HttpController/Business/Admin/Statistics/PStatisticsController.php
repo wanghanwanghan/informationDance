@@ -69,8 +69,8 @@ class PStatisticsController extends StatisticsBase
 
         if (!empty($date)) {
             $tmp = explode('|||', $date);
-            $date1 = Carbon::parse(substr($tmp[0], 0, 10))->subDay()->startOfDay()->timestamp;
-            $date2 = Carbon::parse(substr($tmp[1], 0, 10))->subDay()->endOfDay()->timestamp;
+            $date1 = Carbon::parse($tmp[0])->startOfDay()->timestamp;
+            $date2 = Carbon::parse($tmp[1])->endOfDay()->timestamp;
             $data->where('t1.created_at', [$date1, $date2], 'BETWEEN');
             $total->where('t1.created_at', [$date1, $date2], 'BETWEEN');
         }
