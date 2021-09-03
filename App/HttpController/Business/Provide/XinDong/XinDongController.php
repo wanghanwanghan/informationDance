@@ -309,10 +309,27 @@ class XinDongController extends ProvideBase
             'TOTEQU_yoy' => 'TOTEQU_REL_yoy',
         ]);
 
-        //unset不要的
-        CommonService::getInstance()->log4PHP($result);
+        //留下要的字段 36个
+        $save = [
+            'ASSGRO_REL', 'ASSGRO_REL_yoy', 'LIAGRO_REL', 'LIAGRO_REL_yoy', 'VENDINC_REL',
+            'VENDINC_REL_yoy', 'MAIBUSINC_REL', 'MAIBUSINC_REL_yoy', 'PROGRO_REL', 'PROGRO_REL_yoy',
+            'NETINC_REL', 'NETINC_REL_yoy', 'RATGRO_REL', 'RATGRO_REL_yoy', 'TOTEQU_REL',
+            'TOTEQU_REL_yoy', 'SOCNUM', 'C_ASSGROL', 'C_ASSGROL_yoy', 'A_ASSGROL', 'A_ASSGROL_yoy',
+            'CA_ASSGROL', 'CA_ASSGROL_yoy', 'C_INTRATESL', 'ASSGRO_C_INTRATESL', 'A_VENDINCL', 'A_VENDINCL_yoy',
+            'A_PROGROL', 'A_PROGROL_yoy', 'ROAL', 'ROE_AL', 'ROE_BL', 'DEBTL', 'EQUITYL', 'ATOL', 'MAIBUSINC_RATIOL',
+        ];
 
-        $res[$this->cspKey]['result'] = $result;
+        foreach ($result as $year => $arr) {
+            foreach ($arr as $field => $val) {
+                if (in_array($field, $save, true)) {
+                    $temp[$year][$field] = $val;
+                }
+            }
+        }
+
+        CommonService::getInstance()->log4PHP($temp);
+
+        $res[$this->cspKey]['result'] = $temp;
 
         return $this->checkResponse($res);
     }
