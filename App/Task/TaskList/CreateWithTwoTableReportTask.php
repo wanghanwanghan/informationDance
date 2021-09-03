@@ -59,7 +59,7 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
             \co::sleep(60);//等待自定义进程中ocr识别完成
         }
 
-        $tmp = new TemplateProcessor(REPORT_MODEL_PATH . 'EasyReportModel_1.docx');
+        $tmp = new TemplateProcessor(REPORT_MODEL_PATH . 'TwoTableReportModel_1.docx');
 
         $userInfo = User::create()->where('phone', $this->phone)->get();
 
@@ -122,7 +122,9 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
 
         $userEmail = User::create()->where('phone', $this->phone)->get();
 
-        CommonService::getInstance()->sendEmail($userEmail->email, [REPORT_PATH . $this->reportNum . '.docx'], '02', ['entName' => $this->entName]);
+        CommonService::getInstance()->sendEmail($userEmail->email, [
+            REPORT_PATH . $this->reportNum . '.docx'
+        ], '04', ['entName' => $this->entName]);
 
         ProcessService::getInstance()->sendToProcess('docx2doc', $this->reportNum);
 

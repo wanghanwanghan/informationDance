@@ -159,7 +159,7 @@ class WordController extends ExportBase
             $code = 200;
             $paging = null;
             $res = ReportService::getInstance()->createTwoTable($entName, $reportNum, $phone, $type);
-            $msg = '简版报告生成中';
+            $msg = '两表报告生成中';
         }
 
         return $this->writeJson($code, $paging, $res, $msg);

@@ -12,6 +12,7 @@ use Amenadiel\JpGraph\Plot\PiePlot;
 use App\HttpController\Service\Common\EmailTemplate\Template01;
 use App\HttpController\Service\Common\EmailTemplate\Template02;
 use App\HttpController\Service\Common\EmailTemplate\Template03;
+use App\HttpController\Service\Common\EmailTemplate\Template04;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
@@ -403,7 +404,7 @@ class CommonService extends ServiceBase
 
         //设置文本或者html格式
         $mimeBean = new Html();
-        $templateNum = (string)str_pad($templateNum, 2, '0', STR_PAD_LEFT);
+        $templateNum = str_pad($templateNum, 2, '0', STR_PAD_LEFT);
         switch ($templateNum) {
             case '01':
                 //极简
@@ -416,6 +417,10 @@ class CommonService extends ServiceBase
             case '03':
                 //深度
                 $template = Template03::getInstance();
+                break;
+            case '04':
+                //两表
+                $template = Template04::getInstance();
                 break;
         }
         $mimeBean->setSubject($template->getSubject($options['entName']));
