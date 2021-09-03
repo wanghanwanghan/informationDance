@@ -327,8 +327,6 @@ class XinDongController extends ProvideBase
             }
         }
 
-        CommonService::getInstance()->log4PHP($temp);
-
         $res[$this->cspKey]['result'] = $temp;
 
         return $this->checkResponse($res);
