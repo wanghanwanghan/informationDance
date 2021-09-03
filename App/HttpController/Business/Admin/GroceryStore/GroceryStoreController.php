@@ -35,8 +35,6 @@ class GroceryStoreController extends GroceryStoreBase
 
     function wuliuNode(): bool
     {
-        $tmp = $this->request()->getRequestParam('tmp') ?? 1;
-
         $menu = [
             ['id' => 1, 'pid' => 0, 'label' => '您要查询哪个行业？'],
             ['id' => 2, 'pid' => 1, 'label' => '物流'],
