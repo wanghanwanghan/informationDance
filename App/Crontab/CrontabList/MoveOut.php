@@ -349,10 +349,12 @@ class MoveOut extends AbstractCronTask
     {
         $file_name = $dir . $name . $ext;
         $commod = "wget -q {$url} -O {$file_name}";
-        system($commod);
+        $system_res = system($commod);
+        CommonService::getInstance()->log4PHP($system_res, 'info', 'systemCmd.log');
 
         $commod = BIN_PATH . 'ossutil64' . " cp {$file_name} oss://huike-backup/mrxd/";
-        system($commod);
+        $system_res = system($commod);
+        CommonService::getInstance()->log4PHP($system_res, 'info', 'systemCmd.log');
 
         return true;
     }
