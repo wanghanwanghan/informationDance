@@ -278,7 +278,7 @@ class XinDongController extends ProvideBase
 
         $result = [];
 
-        foreach ($res as $year => $arr) {
+        foreach ($res[$this->cspKey]['result'] as $year => $arr) {
             foreach ($arr as $field => $val) {
                 if (!is_array($val)) {
                     $result[$year][$field] = $val;
@@ -312,7 +312,7 @@ class XinDongController extends ProvideBase
         //unset不要的
         CommonService::getInstance()->log4PHP($result);
 
-        $res['result'] = $result;
+        $res[$this->cspKey]['result'] = $result;
 
         return $this->checkResponse($res);
     }

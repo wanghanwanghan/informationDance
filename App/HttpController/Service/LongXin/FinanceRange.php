@@ -127,6 +127,11 @@ class FinanceRange
             'TOTEQU_yoy',//37所有者权益同比
             'TBR_new',//38税收负担率
             'SOCNUM_yoy',//39社保人数同比
+            'C_ASSGROL_yoy',//40净资产同比
+            'A_ASSGROL_yoy',//41平均资产总额同比
+            'CA_ASSGROL_yoy',//42平均净资产同比
+            'A_VENDINCL_yoy',//43企业人均产值同比
+            'A_PROGROL_yoy',//44企业人均盈利同比
         ],
         [
             ['name' => 'F13', 'range' => [-40.96, -20.48]],
@@ -277,6 +282,11 @@ class FinanceRange
             'TOTEQU_yoy',//37所有者权益同比
             'TBR_new',//38税收负担率
             'SOCNUM_yoy',//39社保人数同比
+            'C_ASSGROL_yoy',//40净资产同比
+            'A_ASSGROL_yoy',//41平均资产总额同比
+            'CA_ASSGROL_yoy',//42平均净资产同比
+            'A_VENDINCL_yoy',//43企业人均产值同比
+            'A_PROGROL_yoy',//44企业人均盈利同比
         ],
         [
             ['name' => 'A', 'range' => [-100, 0]],
@@ -485,6 +495,11 @@ class FinanceRange
             'TOTEQU_yoy',//37所有者权益同比
             'TBR_new',//38税收负担率
             'SOCNUM_yoy',//39社保人数同比
+            'C_ASSGROL_yoy',//40净资产同比
+            'A_ASSGROL_yoy',//41平均资产总额同比
+            'CA_ASSGROL_yoy',//42平均净资产同比
+            'A_VENDINCL_yoy',//43企业人均产值同比
+            'A_PROGROL_yoy',//44企业人均盈利同比
         ],
         [
             ['name' => 'R00', 'range' => [-40, -30]],
