@@ -274,6 +274,8 @@ class XinDongController extends ProvideBase
             $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         }
 
+        CommonService::getInstance()->log4PHP($res);
+
         return $this->checkResponse($res);
     }
 
