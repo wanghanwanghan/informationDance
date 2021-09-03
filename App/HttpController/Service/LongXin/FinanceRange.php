@@ -132,6 +132,8 @@ class FinanceRange
             'CA_ASSGROL_yoy',//42平均净资产同比
             'A_VENDINCL_yoy',//43企业人均产值同比
             'A_PROGROL_yoy',//44企业人均盈利同比
+            'EQUITYL',
+            'EQUITYL_new',
         ],
         [
             ['name' => 'F13', 'range' => [-40.96, -20.48]],
@@ -287,6 +289,8 @@ class FinanceRange
             'CA_ASSGROL_yoy',//42平均净资产同比
             'A_VENDINCL_yoy',//43企业人均产值同比
             'A_PROGROL_yoy',//44企业人均盈利同比
+            'EQUITYL',
+            'EQUITYL_new',
         ],
         [
             ['name' => 'A', 'range' => [-100, 0]],
@@ -500,6 +504,8 @@ class FinanceRange
             'CA_ASSGROL_yoy',//42平均净资产同比
             'A_VENDINCL_yoy',//43企业人均产值同比
             'A_PROGROL_yoy',//44企业人均盈利同比
+            'EQUITYL',
+            'EQUITYL_new',
         ],
         [
             ['name' => 'R00', 'range' => [-40, -30]],
