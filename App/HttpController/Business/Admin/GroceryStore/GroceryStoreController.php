@@ -23,7 +23,7 @@ class GroceryStoreController extends GroceryStoreBase
                 $item = [
                     'id' => $child_menu['id'],
                     'label' => $child_menu['label'],
-                    'cond' => $child_menu['cond'],
+                    'cond' => $child_menu['cond'] ?? '',
                     'children' => []
                 ];
                 $this->traverseMenu($menus, $item['children'], $child_menu['id']);
