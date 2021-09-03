@@ -16,6 +16,7 @@ use App\HttpController\Service\Sms\SmsService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\XinDongService;
 use Carbon\Carbon;
+use wanghanwanghan\someUtils\control;
 
 class XinDongController extends ProvideBase
 {
@@ -274,6 +275,44 @@ class XinDongController extends ProvideBase
             });
             $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         }
+
+        $result = [];
+
+        foreach ($res as $year => $arr) {
+            foreach ($arr as $field => $val) {
+                if (!is_array($val)) {
+                    $result[$year][$field] = $val;
+                } else {
+                    $result[$year][$field] = $val['name'];
+                }
+            }
+        }
+
+        //改键
+        $result = control::changeArrKey($result, [
+            'ASSGRO' => 'ASSGRO_REL',
+            'LIAGRO' => 'LIAGRO_REL',
+            'VENDINC' => 'VENDINC_REL',
+            'MAIBUSINC' => 'MAIBUSINC_REL',
+            'PROGRO' => 'PROGRO_REL',
+            'NETINC' => 'NETINC_REL',
+            'RATGRO' => 'RATGRO_REL',
+            'TOTEQU' => 'TOTEQU_REL',
+            'CA_ASSGRO' => 'CA_ASSGROL',
+            'ASSGRO_yoy' => 'ASSGRO_REL_yoy',
+            'LIAGRO_yoy' => 'LIAGRO_REL_yoy',
+            'VENDINC_yoy' => 'VENDINC_REL_yoy',
+            'MAIBUSINC_yoy' => 'MAIBUSINC_REL_yoy',
+            'PROGRO_yoy' => 'PROGRO_REL_yoy',
+            'NETINC_yoy' => 'NETINC_REL_yoy',
+            'RATGRO_yoy' => 'RATGRO_REL_yoy',
+            'TOTEQU_yoy' => 'TOTEQU_REL_yoy',
+        ]);
+
+        //unset不要的
+        CommonService::getInstance()->log4PHP($result);
+
+        $res['result'] = $result;
 
         return $this->checkResponse($res);
     }

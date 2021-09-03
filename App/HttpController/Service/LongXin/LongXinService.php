@@ -567,6 +567,12 @@ class LongXinService extends ServiceBase
         //38税收负担率 TBR_new
         //39社保人数同比 SOCNUM_yoy
 
+        //40净资产同比 C_ASSGROL_yoy
+        //41平均资产总额同比 A_ASSGROL_yoy
+        //42平均净资产同比 CA_ASSGROL_yoy
+        //43企业人均产值同比 A_VENDINCL_yoy
+        //44企业人均盈利同比 A_PROGROL_yoy
+
         $now = [];
         foreach ($origin as $year => $arr) {
             $now[$year] = [
@@ -641,6 +647,11 @@ class LongXinService extends ServiceBase
             'TOTEQU_yoy' => null,
             'TBR_new' => null,
             'SOCNUM_yoy' => null,
+            'C_ASSGROL_yoy' => null,
+            'A_ASSGROL_yoy' => null,
+            'CA_ASSGROL_yoy' => null,
+            'A_VENDINCL_yoy' => null,
+            'A_PROGROL_yoy' => null,
         ];
 
         $retrun = [];
@@ -746,6 +757,16 @@ class LongXinService extends ServiceBase
         $origin = $this->ssfdl_new($origin);
         //39社保人数同比
         $origin = $this->socnum_yoy($origin);
+        //40净资产同比 C_ASSGROL_yoy
+        $origin = $this->C_ASSGROL_yoy($origin);
+        //41平均资产总额同比 A_ASSGROL_yoy
+        $origin = $this->A_ASSGROL_yoy($origin);
+        //42平均净资产同比 CA_ASSGROL_yoy
+        $origin = $this->CA_ASSGROL_yoy($origin);
+        //43企业人均产值同比 A_VENDINCL_yoy
+        $origin = $this->A_VENDINCL_yoy($origin);
+        //44企业人均盈利同比 A_PROGROL_yoy
+        $origin = $this->A_PROGROL_yoy($origin);
 
         krsort($origin);
 
@@ -1440,6 +1461,151 @@ class LongXinService extends ServiceBase
             array_push($origin[$year], ($now - $last) / abs($last));
         }
 
+        return $origin;
+    }
+
+    //40净资产同比 C_ASSGROL_yoy
+    private function C_ASSGROL_yoy($origin)
+    {
+        foreach ($origin as $year => $val) {
+            //去年
+            $lastYear = $year - 1;
+            $index = 9;
+            //如果去年没数据
+            if (!isset($origin[$lastYear]) || !is_numeric($origin[$lastYear][$index])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+            //如果今年没数据
+            if (!is_numeric($val[$index])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+            //两年都有数据
+            $last = $origin[$lastYear][$index];
+            $now = $val[$index];
+            if ($last === 0) {
+                array_push($origin[$year], null);
+                continue;
+            }
+            array_push($origin[$year], ($now - $last) / abs($last));
+        }
+        return $origin;
+    }
+
+    //41平均资产总额同比 A_ASSGROL_yoy
+    private function A_ASSGROL_yoy($origin)
+    {
+        foreach ($origin as $year => $val) {
+            //去年
+            $lastYear = $year - 1;
+            $index = 10;
+            //如果去年没数据
+            if (!isset($origin[$lastYear]) || !is_numeric($origin[$lastYear][$index])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+            //如果今年没数据
+            if (!is_numeric($val[$index])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+            //两年都有数据
+            $last = $origin[$lastYear][$index];
+            $now = $val[$index];
+            if ($last === 0) {
+                array_push($origin[$year], null);
+                continue;
+            }
+            array_push($origin[$year], ($now - $last) / abs($last));
+        }
+        return $origin;
+    }
+
+    //42平均净资产同比 CA_ASSGROL_yoy
+    private function CA_ASSGROL_yoy($origin)
+    {
+        foreach ($origin as $year => $val) {
+            //去年
+            $lastYear = $year - 1;
+            $index = 11;
+            //如果去年没数据
+            if (!isset($origin[$lastYear]) || !is_numeric($origin[$lastYear][$index])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+            //如果今年没数据
+            if (!is_numeric($val[$index])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+            //两年都有数据
+            $last = $origin[$lastYear][$index];
+            $now = $val[$index];
+            if ($last === 0) {
+                array_push($origin[$year], null);
+                continue;
+            }
+            array_push($origin[$year], ($now - $last) / abs($last));
+        }
+        return $origin;
+    }
+
+    //43企业人均产值同比 A_VENDINCL_yoy
+    private function A_VENDINCL_yoy($origin)
+    {
+        foreach ($origin as $year => $val) {
+            //去年
+            $lastYear = $year - 1;
+            $index = 15;
+            //如果去年没数据
+            if (!isset($origin[$lastYear]) || !is_numeric($origin[$lastYear][$index])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+            //如果今年没数据
+            if (!is_numeric($val[$index])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+            //两年都有数据
+            $last = $origin[$lastYear][$index];
+            $now = $val[$index];
+            if ($last === 0) {
+                array_push($origin[$year], null);
+                continue;
+            }
+            array_push($origin[$year], ($now - $last) / abs($last));
+        }
+        return $origin;
+    }
+
+    //44企业人均盈利同比 A_PROGROL_yoy
+    private function A_PROGROL_yoy($origin)
+    {
+        foreach ($origin as $year => $val) {
+            //去年
+            $lastYear = $year - 1;
+            $index = 16;
+            //如果去年没数据
+            if (!isset($origin[$lastYear]) || !is_numeric($origin[$lastYear][$index])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+            //如果今年没数据
+            if (!is_numeric($val[$index])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+            //两年都有数据
+            $last = $origin[$lastYear][$index];
+            $now = $val[$index];
+            if ($last === 0) {
+                array_push($origin[$year], null);
+                continue;
+            }
+            array_push($origin[$year], ($now - $last) / abs($last));
+        }
         return $origin;
     }
 
