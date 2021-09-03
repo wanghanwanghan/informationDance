@@ -404,6 +404,7 @@ class Router extends AbstractRouter
         $routeCollector->addGroup('/export/word', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/createVeryEasy', $prefix . 'createVeryEasy');//极简报告
             $routeCollector->addRoute(['GET', 'POST'], '/createEasy', $prefix . 'createEasy');//简版报告
+            $routeCollector->addRoute(['GET', 'POST'], '/createTwoTable', $prefix . 'createTwoTable');//两表报告
             $routeCollector->addRoute(['GET', 'POST'], '/createDeep', $prefix . 'createDeep');//深度报告
         });
 
@@ -417,6 +418,7 @@ class Router extends AbstractRouter
         $routeCollector->addGroup('/export/pdf', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/createVeryEasy', $prefix . 'createVeryEasy');//极简报告
             $routeCollector->addRoute(['GET', 'POST'], '/createEasy', $prefix . 'createEasy');//简版报告
+            $routeCollector->addRoute(['GET', 'POST'], '/createTwoTable', $prefix . 'createTwoTable');//两表报告
             $routeCollector->addRoute(['GET', 'POST'], '/createDeep', $prefix . 'createDeep');//深度报告
         });
 

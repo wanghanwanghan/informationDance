@@ -8,6 +8,7 @@ use App\Task\Service\TaskService;
 use App\Task\TaskList\CreateEasyReportCustomizedTask;
 use App\Task\TaskList\CreateEasyReportTask;
 use App\Task\TaskList\CreateVeryEasyReportTask;
+use App\Task\TaskList\CreateWithTwoTableReportTask;
 use EasySwoole\Component\Singleton;
 
 class ReportService extends ServiceBase
@@ -20,6 +21,8 @@ class ReportService extends ServiceBase
     const REPORT_TYPE_31 = 31;//31是简版报告定制版pdf版
     const REPORT_TYPE_50 = 50;//50是深度报告
     const REPORT_TYPE_51 = 51;//51是深度报告定制版pdf版
+    const REPORT_TYPE_70 = 70;//70是两表报告
+    const REPORT_TYPE_71 = 71;//71是两表报告定制版pdf版
 
     //生成极简报告
     function createVeryEasy($entName, $reportNum, $phone, $type)
@@ -180,4 +183,34 @@ class ReportService extends ServiceBase
 
         return $reportNum;
     }
+
+    //生成两表报告
+    function createTwoTable($entName, $reportNum, $phone, $type)
+    {
+        try {
+            ReportInfo::create()->data([
+                'phone' => $phone,
+                'entName' => $entName,
+                'filename' => $reportNum,
+                'ext' => 'docx',
+                'type' => ReportService::REPORT_TYPE_70,
+                'status' => 3,//1是异常，2是完成，3是生成中
+                'errInfo' => '',
+                'belong' => $type,
+                'dataKey' => '',
+            ])->save();
+
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        //扔到task里
+        TaskService::getInstance()->create(new CreateWithTwoTableReportTask($entName, $reportNum, $phone, $type));
+
+        return $reportNum;
+    }
+
+
+
+
 }
