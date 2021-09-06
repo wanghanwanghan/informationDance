@@ -50,6 +50,10 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
         $res = (new LongDunService())
             ->setCheckRespFlag(true)
             ->get($this->ldUrl . 'ECIV4/GetBasicDetailsByName', $postData);
+        CommonService::getInstance()->log4PHP([
+            '__construct基本信息',
+            $res
+        ]);
         ($res['code'] === 200 && !empty($res['result'])) ?
             $this->code = $res['result']['GetBasicDetailsByName']['CreditCode'] :
             $this->code = '';
