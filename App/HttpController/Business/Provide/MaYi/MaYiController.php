@@ -117,7 +117,7 @@ class MaYiController extends Index
         $data['entName'] = $tmp['body']['companyName'];
         $data['socialCredit'] = $tmp['body']['nsrsbh'];
         $data['legalPerson'] = $tmp['body']['legalName'];
-        $data['idCard'] = $tmp['body']['idCode'];
+        $data['idCard'] = $tmp['body']['idCard'];
         $data['phone'] = $tmp['body']['mobile'];
         $data['requestId'] = control::getUuid();
 
