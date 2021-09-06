@@ -5058,6 +5058,7 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
         //财务两表 利润表 年报
         $csp->add('IncomeStatementAnnualReport', function () {
             $res = (new GuoPiaoService())
+                ->setCheckRespFlag(true)
                 ->getFinanceIncomeStatementAnnualReport($this->code);
             //正常
             $model = [];
@@ -5086,7 +5087,9 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
 
         //财务两表 资产负债表
         $csp->add('BalanceSheetAnnualReport', function () {
-            $res = (new GuoPiaoService())->getFinanceBalanceSheetAnnual($this->code);
+            $res = (new GuoPiaoService())
+                ->setCheckRespFlag(true)
+                ->getFinanceBalanceSheetAnnual($this->code);
             //正常
             $model = [];
             if ($res['code'] - 0 === 0 && !empty($res['data'])) {
