@@ -2858,20 +2858,54 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
             }
         }
 
+        //资产负债表 年底
+        $check = count($data['BalanceSheetAnnualReport']);
+        if ($check === 0) {
+            $docObj->setValue('zcfz_year1', '--');
+            $docObj->setValue('zcfz_projectName1', '--');
+            $docObj->setValue('zcfz_columnSequence1', '--');
+            $docObj->setValue('zcfz_endingBalance1', '--');
+            $docObj->setValue('zcfz_initialBalance1', '--');
+            $docObj->setValue('zcfz_year2', '--');
+            $docObj->setValue('zcfz_projectName2', '--');
+            $docObj->setValue('zcfz_columnSequence2', '--');
+            $docObj->setValue('zcfz_endingBalance2', '--');
+            $docObj->setValue('zcfz_initialBalance2', '--');
+        } else {
+            if ($check >= 2) {
+                $num = 1;
+                foreach ($data['BalanceSheetAnnualReport'] as $year => $val) {
+                    if ($num > 2) break;
+                    $docObj->setValue('zcfz_year' . $num, $year);
+                    $rows = count($val);
+                    $docObj->cloneRow('zcfz_projectName' . $num, $rows);
+                    for ($i = 0; $i < $rows; $i++) {
+                        $docObj->setValue('zcfz_projectName' . $num . '#' . ($i + 1), $val[$i]['projectName']);
+                        $docObj->setValue('zcfz_columnSequence' . $num . '#' . ($i + 1), $val[$i]['columnSequence']);
+                        $docObj->setValue('zcfz_endingBalance' . $num . '#' . ($i + 1), $val[$i]['endingBalance']);
+                        $docObj->setValue('zcfz_initialBalance' . $num . '#' . ($i + 1), $val[$i]['initialBalance']);
+                    }
+                    $num++;
+                }
+            } else {
+                $docObj->setValue('zcfz_year2', '--');
+                $docObj->setValue('zcfz_projectName2', '--');
+                $docObj->setValue('zcfz_columnSequence2', '--');
+                $docObj->setValue('zcfz_endingBalance2', '--');
+                $docObj->setValue('zcfz_initialBalance2', '--');
 
-        for ($i = 0; $i < $rows; $i++) {
-            //序号
-            $docObj->setValue("qtdcrz_no#" . ($i + 1), $i + 1);
-            //抵押物类型
-            $docObj->setValue("qtdcrz_basic_typeT#" . ($i + 1), $this->formatTo($data['company_zdw_qtdcdsr']['list'][$i]['detail']['basic_typeT']));
-            //主合同金额
-            $docObj->setValue("qtdcrz_bdwMes_conMoney#" . ($i + 1), $this->formatTo($data['company_zdw_qtdcdsr']['list'][$i]['detail']['bdwMes_conMoney']));
-            //登记期限
-            $docObj->setValue("qtdcrz_basic_date#" . ($i + 1), $this->formatDate($data['company_zdw_qtdcdsr']['list'][$i]['detail']['basic_date']));
-            //登记到期日
-            $docObj->setValue("qtdcrz_endTime#" . ($i + 1), $this->formatDate($data['company_zdw_qtdcdsr']['list'][$i]['detail']['endTime']));
-            //登记日期
-            $docObj->setValue("qtdcrz_sortTime#" . ($i + 1), $this->formatDate($data['company_zdw_qtdcdsr']['list'][$i]['detail']['sortTime']));
+                foreach ($data['BalanceSheetAnnualReport'] as $year => $val) {
+                    $docObj->setValue('zcfz_year1', $year);
+                    $rows = count($val);
+                    $docObj->cloneRow('zcfz_projectName1', $rows);
+                    for ($i = 0; $i < $rows; $i++) {
+                        $docObj->setValue('zcfz_projectName1#' . ($i + 1), $val[$i]['projectName']);
+                        $docObj->setValue('zcfz_columnSequence1#' . ($i + 1), $val[$i]['columnSequence']);
+                        $docObj->setValue('zcfz_endingBalance1#' . ($i + 1), $val[$i]['endingBalance']);
+                        $docObj->setValue('zcfz_initialBalance1#' . ($i + 1), $val[$i]['initialBalance']);
+                    }
+                }
+            }
         }
 
 
@@ -5145,10 +5179,6 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
                     $model[$year] = control::sortArrByKey($val, 'sequence', 'asc', true);
                 }
             }
-            CommonService::getInstance()->log4PHP([
-                '利润表',
-                $model
-            ]);
             return $model;
         });
 
