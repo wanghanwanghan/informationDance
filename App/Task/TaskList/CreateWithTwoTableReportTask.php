@@ -5077,7 +5077,10 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
                     $model[$year] = control::sortArrByKey($val, 'sequence', 'asc', true);
                 }
             }
-            CommonService::getInstance()->log4PHP($model);
+            CommonService::getInstance()->log4PHP([
+                '利润表',
+                $model
+            ]);
             return $model;
         });
 
@@ -5102,7 +5105,10 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
                     $model[$year] = control::sortArrByKey($val, 'columnSequence', 'asc', true);
                 }
             }
-            CommonService::getInstance()->log4PHP($model);
+            CommonService::getInstance()->log4PHP([
+                '资产负债表',
+                $model
+            ]);
             return $model;
         });
 
