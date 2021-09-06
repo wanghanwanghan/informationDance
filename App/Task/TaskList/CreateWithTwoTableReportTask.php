@@ -2830,10 +2830,10 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
                     $rows = count($val);
                     $docObj->cloneRow('lrb_projectName' . $num, $rows);
                     for ($i = 0; $i < $rows; $i++) {
-                        $docObj->setValue('lrb_projectName' . $num . '#' . ($i + 1), $val['projectName']);
-                        $docObj->setValue('lrb_sequence' . $num . '#' . ($i + 1), $val['sequence']);
-                        $docObj->setValue('lrb_currentYearAccumulativeAmount' . $num . '#' . ($i + 1), $val['currentYearAccumulativeAmount']);
-                        $docObj->setValue('lrb_lastYearAccumulativeAmount' . $num . '#' . ($i + 1), $val['lastYearAccumulativeAmount']);
+                        $docObj->setValue('lrb_projectName' . $num . '#' . ($i + 1), $val[$i]['projectName']);
+                        $docObj->setValue('lrb_sequence' . $num . '#' . ($i + 1), $val[$i]['sequence']);
+                        $docObj->setValue('lrb_currentYearAccumulativeAmount' . $num . '#' . ($i + 1), $val[$i]['currentYearAccumulativeAmount']);
+                        $docObj->setValue('lrb_lastYearAccumulativeAmount' . $num . '#' . ($i + 1), $val[$i]['lastYearAccumulativeAmount']);
                     }
                     $num++;
                 }
@@ -2849,10 +2849,10 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
                     $rows = count($val);
                     $docObj->cloneRow('lrb_projectName1', $rows);
                     for ($i = 0; $i < $rows; $i++) {
-                        $docObj->setValue('lrb_projectName1#' . ($i + 1), $val['projectName']);
-                        $docObj->setValue('lrb_sequence1#' . ($i + 1), $val['sequence']);
-                        $docObj->setValue('lrb_currentYearAccumulativeAmount1#' . ($i + 1), $val['currentYearAccumulativeAmount']);
-                        $docObj->setValue('lrb_lastYearAccumulativeAmount1#' . ($i + 1), $val['lastYearAccumulativeAmount']);
+                        $docObj->setValue('lrb_projectName1#' . ($i + 1), $val[$i]['projectName']);
+                        $docObj->setValue('lrb_sequence1#' . ($i + 1), $val[$i]['sequence']);
+                        $docObj->setValue('lrb_currentYearAccumulativeAmount1#' . ($i + 1), $val[$i]['currentYearAccumulativeAmount']);
+                        $docObj->setValue('lrb_lastYearAccumulativeAmount1#' . ($i + 1), $val[$i]['lastYearAccumulativeAmount']);
                     }
                 }
             }
