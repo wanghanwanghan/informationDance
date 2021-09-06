@@ -52,6 +52,7 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
             ->post(['entName' => $entName], 'getRegisterInfo');
         CommonService::getInstance()->log4PHP([
             '__construct基本信息',
+            $entName,
             $res
         ]);
         ($res['code'] === 200 && !empty($res['result'])) ?
