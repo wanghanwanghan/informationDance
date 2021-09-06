@@ -2860,53 +2860,53 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
 
         //资产负债表 年底
         $check = count($data['BalanceSheetAnnualReport']);
-        if ($check === 0) {
-            $docObj->setValue('zcfzb_year1', '--');
-            $docObj->setValue('zcfzb_projectName1', '--');
-            $docObj->setValue('zcfzb_columnSequence1', '--');
-            $docObj->setValue('zcfzb_endingBalance1', '--');
-            $docObj->setValue('zcfzb_initialBalance1', '--');
-            $docObj->setValue('zcfzb_year2', '--');
-            $docObj->setValue('zcfzb_projectName2', '--');
-            $docObj->setValue('zcfzb_columnSequence2', '--');
-            $docObj->setValue('zcfzb_endingBalance2', '--');
-            $docObj->setValue('zcfzb_initialBalance2', '--');
-        } else {
-            if ($check >= 2) {
-                $num = 1;
-                foreach ($data['BalanceSheetAnnualReport'] as $year => $val) {
-                    if ($num > 2) break;
-                    $docObj->setValue('zcfzb_year' . $num, $year);
-                    $rows = count($val);
-                    $docObj->cloneRow('zcfzb_projectName' . $num, $rows);
-                    for ($i = 0; $i < $rows; $i++) {
-                        $docObj->setValue('zcfzb_projectName' . $num . '#' . ($i + 1), $val[$i]['projectName']);
-                        $docObj->setValue('zcfzb_columnSequence' . $num . '#' . ($i + 1), $val[$i]['columnSequence']);
-                        $docObj->setValue('zcfzb_endingBalance' . $num . '#' . ($i + 1), $val[$i]['endingBalance']);
-                        $docObj->setValue('zcfzb_initialBalance' . $num . '#' . ($i + 1), $val[$i]['initialBalance']);
-                    }
-                    $num++;
-                }
-            } else {
-                $docObj->setValue('zcfzb_year2', '--');
-                $docObj->setValue('zcfzb_projectName2', '--');
-                $docObj->setValue('zcfzb_columnSequence2', '--');
-                $docObj->setValue('zcfzb_endingBalance2', '--');
-                $docObj->setValue('zcfzb_initialBalance2', '--');
-
-                foreach ($data['BalanceSheetAnnualReport'] as $year => $val) {
-                    $docObj->setValue('zcfzb_year1', $year);
-                    $rows = count($val);
-                    $docObj->cloneRow('zcfzb_projectName1', $rows);
-                    for ($i = 0; $i < $rows; $i++) {
-                        $docObj->setValue('zcfzb_projectName1#' . ($i + 1), $val[$i]['projectName']);
-                        $docObj->setValue('zcfzb_columnSequence1#' . ($i + 1), $val[$i]['columnSequence']);
-                        $docObj->setValue('zcfzb_endingBalance1#' . ($i + 1), $val[$i]['endingBalance']);
-                        $docObj->setValue('zcfzb_initialBalance1#' . ($i + 1), $val[$i]['initialBalance']);
-                    }
-                }
-            }
-        }
+//        if ($check === 0) {
+//            $docObj->setValue('zcfzb_year1', '--');
+//            $docObj->setValue('zcfzb_projectName1', '--');
+//            $docObj->setValue('zcfzb_columnSequence1', '--');
+//            $docObj->setValue('zcfzb_endingBalance1', '--');
+//            $docObj->setValue('zcfzb_initialBalance1', '--');
+//            $docObj->setValue('zcfzb_year2', '--');
+//            $docObj->setValue('zcfzb_projectName2', '--');
+//            $docObj->setValue('zcfzb_columnSequence2', '--');
+//            $docObj->setValue('zcfzb_endingBalance2', '--');
+//            $docObj->setValue('zcfzb_initialBalance2', '--');
+//        } else {
+//            if ($check >= 2) {
+//                $num = 1;
+//                foreach ($data['BalanceSheetAnnualReport'] as $year => $val) {
+//                    if ($num > 2) break;
+//                    $docObj->setValue('zcfzb_year' . $num, $year);
+//                    $rows = count($val);
+//                    $docObj->cloneRow('zcfzb_projectName' . $num, $rows);
+//                    for ($i = 0; $i < $rows; $i++) {
+//                        $docObj->setValue('zcfzb_projectName' . $num . '#' . ($i + 1), $val[$i]['projectName']);
+//                        $docObj->setValue('zcfzb_columnSequence' . $num . '#' . ($i + 1), $val[$i]['columnSequence']);
+//                        $docObj->setValue('zcfzb_endingBalance' . $num . '#' . ($i + 1), $val[$i]['endingBalance']);
+//                        $docObj->setValue('zcfzb_initialBalance' . $num . '#' . ($i + 1), $val[$i]['initialBalance']);
+//                    }
+//                    $num++;
+//                }
+//            } else {
+//                $docObj->setValue('zcfzb_year2', '--');
+//                $docObj->setValue('zcfzb_projectName2', '--');
+//                $docObj->setValue('zcfzb_columnSequence2', '--');
+//                $docObj->setValue('zcfzb_endingBalance2', '--');
+//                $docObj->setValue('zcfzb_initialBalance2', '--');
+//
+//                foreach ($data['BalanceSheetAnnualReport'] as $year => $val) {
+//                    $docObj->setValue('zcfzb_year1', $year);
+//                    $rows = count($val);
+//                    $docObj->cloneRow('zcfzb_projectName1', $rows);
+//                    for ($i = 0; $i < $rows; $i++) {
+//                        $docObj->setValue('zcfzb_projectName1#' . ($i + 1), $val[$i]['projectName']);
+//                        $docObj->setValue('zcfzb_columnSequence1#' . ($i + 1), $val[$i]['columnSequence']);
+//                        $docObj->setValue('zcfzb_endingBalance1#' . ($i + 1), $val[$i]['endingBalance']);
+//                        $docObj->setValue('zcfzb_initialBalance1#' . ($i + 1), $val[$i]['initialBalance']);
+//                    }
+//                }
+//            }
+//        }
 
 
     }
