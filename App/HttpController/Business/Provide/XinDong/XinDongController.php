@@ -257,7 +257,7 @@ class XinDongController extends ProvideBase
                 }
             }
             krsort($readyReturn);
-            for ($i = $beginYear; $i >= $beginYear - $dataCount; $i--) {
+            for ($i = $beginYear; $i > $beginYear - $dataCount; $i--) {
                 $tmp[$i] = $readyReturn[$i] ?? $readyReturn[$i . ''];
             }
             $res = [$this->cspKey => [
@@ -371,7 +371,7 @@ class XinDongController extends ProvideBase
                 }
             }
             krsort($readyReturn);
-            for ($i = $beginYear; $i >= $beginYear - $dataCount; $i--) {
+            for ($i = $beginYear; $i > $beginYear - $dataCount; $i--) {
                 $tmp[$i] = $readyReturn[$i] ?? $readyReturn[$i . ''];
             }
             $res = [$this->cspKey => [
