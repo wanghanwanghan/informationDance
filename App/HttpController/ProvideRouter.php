@@ -102,6 +102,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceBaseData', $prefix . 'getFinanceBaseData');
 
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceBaseDataSQ', $prefix . 'getFinanceBaseDataSQ');
+            $routeCollector->addRoute(['GET', 'POST'], '/getFinanceBaseDataZW', $prefix . 'getFinanceBaseDataZW');
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceBaseDataTZ', $prefix . 'getFinanceBaseDataTZ');
 
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceBaseMergeData', $prefix . 'getFinanceBaseMergeData');
