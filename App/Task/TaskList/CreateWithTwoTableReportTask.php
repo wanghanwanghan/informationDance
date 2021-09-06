@@ -8,6 +8,7 @@ use App\HttpController\Models\Api\ReportInfo;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\FaYanYuan\FaYanYuanService;
+use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Ocr\OcrService;
@@ -26,6 +27,7 @@ use wanghanwanghan\someUtils\control;
 class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
 {
     private $entName;
+    private $code;
     private $reportNum;
     private $phone;
     private $type;
@@ -43,6 +45,14 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
         $this->phone = $phone;
         $this->type = $type;
         $this->ocrDataInMysql = [];
+
+        $postData = ['keyWord' => $this->entName];
+        $res = (new LongDunService())
+            ->setCheckRespFlag(true)
+            ->get($this->ldUrl . 'ECIV4/GetBasicDetailsByName', $postData);
+        ($res['code'] === 200 && !empty($res['result'])) ?
+            $this->code = $res['result']['GetBasicDetailsByName']['CreditCode'] :
+            $this->code = '';
 
         return parent::__construct();
     }
@@ -5043,6 +5053,57 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
             } else {
                 return [];
             }
+        });
+
+        //财务两表 利润表 年报
+        $csp->add('IncomeStatementAnnualReport', function () {
+            $res = (new GuoPiaoService())
+                ->getFinanceIncomeStatementAnnualReport($this->code);
+            //正常
+            $model = [];
+            if ($res['code'] - 0 === 0 && !empty($res['data'])) {
+                $data = jsonDecode($res['data']);
+                $model = [];
+                foreach ($data as $row) {
+                    $year = substr($row['beginDate'], 0, 4) . '';
+                    if (!isset($model[$year])) {
+                        $model[$year] = [];
+                    }
+                    $row['sequence'] = $row['sequence'] - 0;
+                    $model[$year][] = $row;
+                }
+                //排序
+                foreach ($model as $year => $val) {
+                    $model[$year] = control::sortArrByKey($val, 'sequence', 'asc', true);
+                }
+            }
+            CommonService::getInstance()->log4PHP($model);
+            return $model;
+        });
+
+        //财务两表 资产负债表
+        $csp->add('BalanceSheetAnnualReport', function () {
+            $res = (new GuoPiaoService())->getFinanceBalanceSheetAnnual($this->code);
+            //正常
+            $model = [];
+            if ($res['code'] - 0 === 0 && !empty($res['data'])) {
+                $data = jsonDecode($res['data']);
+                $model = [];
+                foreach ($data as $row) {
+                    $year = substr($row['beginDate'], 0, 4) . '';
+                    if (!isset($model[$year])) {
+                        $model[$year] = [];
+                    }
+                    $row['columnSequence'] = $row['columnSequence'] - 0;
+                    $model[$year][] = $row;
+                }
+                //排序
+                foreach ($model as $year => $val) {
+                    $model[$year] = control::sortArrByKey($val, 'columnSequence', 'asc', true);
+                }
+            }
+            CommonService::getInstance()->log4PHP($model);
+            return $model;
         });
 
         return CspService::getInstance()->exec($csp, 10);

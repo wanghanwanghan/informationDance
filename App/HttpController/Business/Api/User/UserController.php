@@ -981,7 +981,6 @@ class UserController extends UserBase
 
             CommonService::getInstance()->sendSMS([
                 '18618457910',
-                '18600047886',
                 '18201611816',
             ], '03', '1');
 
