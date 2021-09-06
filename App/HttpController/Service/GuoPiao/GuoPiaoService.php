@@ -314,6 +314,11 @@ class GuoPiaoService extends ServiceBase
 
         $res = $this->readyToSend($api_path, $body);
 
+        CommonService::getInstance()->log4PHP([
+            '利润表service',
+            $res
+        ]);
+
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
