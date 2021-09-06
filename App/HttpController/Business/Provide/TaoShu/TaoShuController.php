@@ -64,6 +64,29 @@ class TaoShuController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getLawPersontoOtherInfo()
+    {
+        $entName = $this->getRequestData('entName', '');
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
+
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $page,
+            'pageSize' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new TaoShuService())
+                ->setCheckRespFlag(true)
+                ->post($postData, 'getLawPersontoOtherInfo');
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
     function getRegisterInfo()
     {
         $entName = $this->getRequestData('entName', '');
@@ -170,6 +193,52 @@ class TaoShuController extends ProvideBase
             return (new TaoShuService())
                 ->setCheckRespFlag(true)
                 ->post($postData, 'getEntGraphG');
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function getHistoryStockHolderInfo()
+    {
+        $entName = $this->getRequestData('entName', '');
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
+
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $page,
+            'pageSize' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new TaoShuService())
+                ->setCheckRespFlag(true)
+                ->post($postData, 'getHistoryStockHolderInfo');
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function getHistoryPersonInfo()
+    {
+        $entName = $this->getRequestData('entName', '');
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
+
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $page,
+            'pageSize' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new TaoShuService())
+                ->setCheckRespFlag(true)
+                ->post($postData, 'getHistoryPersonInfo');
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);

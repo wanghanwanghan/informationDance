@@ -44,12 +44,15 @@ class ProvideRouter
         $prefix = '/Business/Provide/TaoShu/TaoShuController/';
 
         $routeCollector->addGroup('/ts', function (RouteCollector $routeCollector) use ($prefix) {
-            $routeCollector->addRoute(['GET', 'POST'], '/lawPersonInvestmentInfo', $prefix . 'lawPersonInvestmentInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/lawPersonInvestmentInfo', $prefix . 'lawPersonInvestmentInfo');//法人对外投资
+            $routeCollector->addRoute(['GET', 'POST'], '/getLawPersontoOtherInfo', $prefix . 'getLawPersontoOtherInfo');//法人对外任职
             $routeCollector->addRoute(['GET', 'POST'], '/getRegisterInfo', $prefix . 'getRegisterInfo');
             $routeCollector->addRoute(['GET', 'POST'], '/getGoodsInfo', $prefix . 'getGoodsInfo');//企业生产的流通性产品信息
             $routeCollector->addRoute(['GET', 'POST'], '/getEntScore', $prefix . 'getEntScore');//企业竞争力
             $routeCollector->addRoute(['GET', 'POST'], '/getGraphGCoreData', $prefix . 'getGraphGCoreData');//企业核心图谱
             $routeCollector->addRoute(['GET', 'POST'], '/getEntGraphG', $prefix . 'getEntGraphG');//企业图谱查询
+            $routeCollector->addRoute(['GET', 'POST'], '/getHistoryStockHolderInfo', $prefix . 'getHistoryStockHolderInfo');//历史退出股东
+            $routeCollector->addRoute(['GET', 'POST'], '/getHistoryPersonInfo', $prefix . 'getHistoryPersonInfo');//历史退出高管
         });
 
         return true;

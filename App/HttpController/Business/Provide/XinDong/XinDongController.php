@@ -309,7 +309,7 @@ class XinDongController extends ProvideBase
             'TOTEQU_yoy' => 'TOTEQU_REL_yoy',
         ]);
 
-        //留下要的字段 36个
+        //留下要的字段
         $save = [
             'ASSGRO_REL', 'LIAGRO_REL', 'VENDINC_REL', 'MAIBUSINC_REL', 'PROGRO_REL', 'NETINC_REL',
             'RATGRO_REL', 'TOTEQU_REL', 'SOCNUM', 'ASSGRO_REL_yoy', 'LIAGRO_REL_yoy', 'VENDINC_REL_yoy',
