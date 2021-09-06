@@ -46,10 +46,10 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
         $this->type = $type;
         $this->ocrDataInMysql = [];
 
-        $postData = ['keyWord' => $this->entName];
-        $res = (new LongDunService())
+        //淘数 基本信息 工商信息
+        $res = (new TaoShuService())
             ->setCheckRespFlag(true)
-            ->get($this->ldUrl . 'ECIV4/GetBasicDetailsByName', $postData);
+            ->post(['entName' => $entName], 'getRegisterInfo');
         CommonService::getInstance()->log4PHP([
             '__construct基本信息',
             $res
