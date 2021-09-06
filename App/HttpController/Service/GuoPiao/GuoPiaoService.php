@@ -58,7 +58,7 @@ class GuoPiaoService extends ServiceBase
 
         if (isset($res['coHttpErr'])) return $this->createReturn(500, $res['Paging'], [], 'co请求错误');
 
-        (int)$res['code'] === 0 ? $res['code'] = 200 : $res['code'] = 600;
+        $res['code'] - 0 === 0 ? $res['code'] = 200 : $res['code'] = 600;
 
         //拿结果
         switch ($type) {
@@ -313,11 +313,6 @@ class GuoPiaoService extends ServiceBase
         $api_path = 'invoice/' . __FUNCTION__;
 
         $res = $this->readyToSend($api_path, $body);
-
-        CommonService::getInstance()->log4PHP([
-            '利润表service',
-            $res
-        ]);
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
