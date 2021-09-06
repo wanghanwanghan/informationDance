@@ -2807,6 +2807,74 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
                 'height' => 100,
             ]);
         }
+
+        //利润表 年底
+        $check = count($data['IncomeStatementAnnualReport']);
+        if ($check === 0) {
+            $docObj->setValue('lrb_year1', '--');
+            $docObj->setValue('lrb_projectName1', '--');
+            $docObj->setValue('lrb_sequence1', '--');
+            $docObj->setValue('lrb_currentYearAccumulativeAmount1', '--');
+            $docObj->setValue('lrb_lastYearAccumulativeAmount1', '--');
+            $docObj->setValue('lrb_year2', '--');
+            $docObj->setValue('lrb_projectName2', '--');
+            $docObj->setValue('lrb_sequence2', '--');
+            $docObj->setValue('lrb_currentYearAccumulativeAmount2', '--');
+            $docObj->setValue('lrb_lastYearAccumulativeAmount2', '--');
+        } else {
+            if ($check >= 2) {
+                $num = 1;
+                foreach ($data['IncomeStatementAnnualReport'] as $year => $val) {
+                    if ($num > 2) break;
+                    $docObj->setValue('lrb_year' . $num, $year);
+                    $rows = count($val);
+                    $docObj->cloneRow('lrb_projectName' . $num, $rows);
+                    for ($i = 0; $i < $rows; $i++) {
+                        $docObj->setValue('lrb_projectName' . $num . '#' . ($i + 1), $val['projectName']);
+                        $docObj->setValue('lrb_sequence' . $num . '#' . ($i + 1), $val['sequence']);
+                        $docObj->setValue('lrb_currentYearAccumulativeAmount' . $num . '#' . ($i + 1), $val['currentYearAccumulativeAmount']);
+                        $docObj->setValue('lrb_lastYearAccumulativeAmount' . $num . '#' . ($i + 1), $val['lastYearAccumulativeAmount']);
+                    }
+                    $num++;
+                }
+            } else {
+                $docObj->setValue('lrb_year2', '--');
+                $docObj->setValue('lrb_projectName2', '--');
+                $docObj->setValue('lrb_sequence2', '--');
+                $docObj->setValue('lrb_currentYearAccumulativeAmount2', '--');
+                $docObj->setValue('lrb_lastYearAccumulativeAmount2', '--');
+
+                foreach ($data['IncomeStatementAnnualReport'] as $year => $val) {
+                    $docObj->setValue('lrb_year1', $year);
+                    $rows = count($val);
+                    $docObj->cloneRow('lrb_projectName1', $rows);
+                    for ($i = 0; $i < $rows; $i++) {
+                        $docObj->setValue('lrb_projectName1#' . ($i + 1), $val['projectName']);
+                        $docObj->setValue('lrb_sequence1#' . ($i + 1), $val['sequence']);
+                        $docObj->setValue('lrb_currentYearAccumulativeAmount1#' . ($i + 1), $val['currentYearAccumulativeAmount']);
+                        $docObj->setValue('lrb_lastYearAccumulativeAmount1#' . ($i + 1), $val['lastYearAccumulativeAmount']);
+                    }
+                }
+            }
+        }
+
+
+        for ($i = 0; $i < $rows; $i++) {
+            //序号
+            $docObj->setValue("qtdcrz_no#" . ($i + 1), $i + 1);
+            //抵押物类型
+            $docObj->setValue("qtdcrz_basic_typeT#" . ($i + 1), $this->formatTo($data['company_zdw_qtdcdsr']['list'][$i]['detail']['basic_typeT']));
+            //主合同金额
+            $docObj->setValue("qtdcrz_bdwMes_conMoney#" . ($i + 1), $this->formatTo($data['company_zdw_qtdcdsr']['list'][$i]['detail']['bdwMes_conMoney']));
+            //登记期限
+            $docObj->setValue("qtdcrz_basic_date#" . ($i + 1), $this->formatDate($data['company_zdw_qtdcdsr']['list'][$i]['detail']['basic_date']));
+            //登记到期日
+            $docObj->setValue("qtdcrz_endTime#" . ($i + 1), $this->formatDate($data['company_zdw_qtdcdsr']['list'][$i]['detail']['endTime']));
+            //登记日期
+            $docObj->setValue("qtdcrz_sortTime#" . ($i + 1), $this->formatDate($data['company_zdw_qtdcdsr']['list'][$i]['detail']['sortTime']));
+        }
+
+
     }
 
     //并发请求数据
@@ -5106,10 +5174,6 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
                     $model[$year] = control::sortArrByKey($val, 'columnSequence', 'asc', true);
                 }
             }
-            CommonService::getInstance()->log4PHP([
-                '资产负债表',
-                $model
-            ]);
             return $model;
         });
 
