@@ -195,13 +195,17 @@ class XinDongController extends ProvideBase
                         }
                         $tmp = strtr($num, $indexTable);
                         $tmp = current(explode('*', $tmp));
-                        if ($tmp[0] !== 'J') {
-                            if (strlen($tmp) > 1) {
+                        if ($tmp[0] === 'J') {
+                            //负数
+                            if (strlen($tmp) >= 3) {
                                 $tmp = substr($tmp, 0, -1);
+                                $tmp = 'X' . $tmp;//有X说明要末尾补0
                             }
                         } else {
-                            if (strlen($tmp) > 2) {
+                            //正数
+                            if (strlen($tmp) >= 2) {
                                 $tmp = substr($tmp, 0, -1);
+                                $tmp = 'X' . $tmp;//有X说明要末尾补0
                             }
                         }
                         $res['result'][$year][$field] = $tmp;
