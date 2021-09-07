@@ -6,6 +6,7 @@ use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Models\EntDb\EntDbEnt;
 use App\HttpController\Models\EntDb\EntDbFinance;
+use App\HttpController\Models\EntDb\EntDbTzList;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongDun\LongDunService;
@@ -339,7 +340,10 @@ class XinDongController extends ProvideBase
     {
         $entName = $this->getRequestData('entName', '');
         $beginYear = 2020;
-        $dataCount = 5;
+
+        $check = EntDbTzList::create()->where('key', $entName)->get();
+
+        empty($check) ? $dataCount = 6 : $dataCount = 1;
 
         $postData = [
             'entName' => $entName,
