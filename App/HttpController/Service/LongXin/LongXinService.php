@@ -256,7 +256,7 @@ class LongXinService extends ServiceBase
         TaskService::getInstance()->create(new insertFinance($postData['entName'], $temp, $social['AnnualSocial']));
 
         //原值计算
-        if ($postData['dataCount'] > 1 && $this->cal === true) {
+        if ($this->cal === true) {
             $temp = $this->exprHandle($temp);
         }
 
