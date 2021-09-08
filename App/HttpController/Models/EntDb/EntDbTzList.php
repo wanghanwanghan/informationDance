@@ -8,7 +8,9 @@ use App\HttpController\Service\CreateConf;
 class EntDbTzList extends ModelBase
 {
     protected $tableName = 'tz_list';
-    protected $autoTimeStamp = false;
+    protected $autoTimeStamp = true;
+    protected $createTime = 'created_at';
+    protected $updateTime = 'updated_at';
 
     function __construct(array $data = [])
     {
