@@ -18,6 +18,7 @@ use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\XinDongService;
 use Carbon\Carbon;
 use wanghanwanghan\someUtils\control;
+use function GuzzleHttp\Psr7\uri_for;
 
 class XinDongController extends ProvideBase
 {
@@ -341,9 +342,31 @@ class XinDongController extends ProvideBase
         $entName = $this->getRequestData('entName', '');
         $beginYear = 2020;
 
+        if (empty($entName)) {
+            return $this->checkResponse([$this->cspKey => [
+                'code' => 201,
+                'paging' => null,
+                'result' => null,
+                'msg' => 'ent不能是空',
+            ]]);
+        }
+
         $check = EntDbTzList::create()->where('key', $entName)->get();
 
-        empty($check) ? $dataCount = 6 : $dataCount = 1;
+        if (empty($check)) {
+            $dataCount = 6;
+            EntDbTzList::create()->data([
+                'key' => $entName,
+                'creditCodeRegNo' => $this->getRequestData('code', ''),
+                'type' => '',
+            ])->save();
+        } else {
+            if ($check->getAttr('type') === '第一批') {
+                $dataCount = 1;
+            } else {
+                $dataCount = 6;
+            }
+        }
 
         $postData = [
             'entName' => $entName,
@@ -355,10 +378,9 @@ class XinDongController extends ProvideBase
         $range = FinanceRange::getInstance()->getRange('range_touzhong');
         $ratio = FinanceRange::getInstance()->getRange('rangeRatio_touzhong');
 
-        $ent_info = EntDbEnt::create()->where('name', $entName)->get();
+        $f_info = EntDbFinance::create()->where('cid', $check->getAttr('id'))->all();
 
-        if (!empty($ent_info) && !empty(($f_info = EntDbFinance::create()->where('cid', $ent_info->getAttr('id'))->all()))) {
-            $this->spendMoney = 0;//不扣钱
+        if (!empty($f_info)) {
             $origin = [];
             foreach ($f_info as $one) {
                 $origin[$one->getAttr('ANCHEYEAR') . ''] = obj2Arr($one);
