@@ -265,7 +265,9 @@ class LongXinService extends ServiceBase
         for ($i = $postData['dataCount']; $i--;) {
             $tmp = $postData['beginYear'] - $i;
             $tmp = $tmp . '';
-            isset($temp[$tmp]) ? $readyReturn[$tmp] = $temp[$tmp] : $readyReturn[$tmp] = null;
+            isset($temp[$tmp]) ?
+                $readyReturn[$tmp] = $temp[$tmp] :
+                $readyReturn[$tmp] = null;
         }
 
         //数字落区间
