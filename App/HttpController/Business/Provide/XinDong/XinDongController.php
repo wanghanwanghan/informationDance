@@ -378,7 +378,15 @@ class XinDongController extends ProvideBase
         $range = FinanceRange::getInstance()->getRange('range_touzhong');
         $ratio = FinanceRange::getInstance()->getRange('rangeRatio_touzhong');
 
-        $f_info = EntDbFinance::create()->where('cid', $check->getAttr('id'))->all();
+        $check = EntDbEnt::create()->where('name', $entName)->get();
+
+        if (empty($check)) {
+            $f_info = [];
+        } else {
+            $f_info = EntDbFinance::create()
+                ->where('cid', $check->getAttr('id'))
+                ->all();
+        }
 
         if (!empty($f_info)) {
             $origin = [];
