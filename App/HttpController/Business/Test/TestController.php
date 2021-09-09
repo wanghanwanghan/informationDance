@@ -33,11 +33,9 @@ class TestController extends BusinessBase
 
     function test()
     {
-        $path = MYJF_PATH . '911199999999CN0008/202108/911199999999CN0008_03_in.json';
-
         $res = OSSService::getInstance()
             ->getAliCli()
-            ->uploadFile('invoice-mrxd', 'test.json', $path);
+            ->putObject('invoice-mrxd', 'test', time());
 
         return $this->writeJson(200, null, $res);
     }
