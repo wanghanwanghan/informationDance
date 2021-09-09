@@ -432,6 +432,8 @@ class XinDongController extends ProvideBase
 
         $result = [];
 
+        CommonService::getInstance()->log4PHP($res[$this->cspKey]['result']);
+
         foreach ($res[$this->cspKey]['result'] as $year => $arr) {
             foreach ($arr as $field => $val) {
                 if (!is_array($val)) {
@@ -439,7 +441,7 @@ class XinDongController extends ProvideBase
                 } else {
                     //社保人数改int在这里
                     if ($field === 'SOCNUM') {
-                        $val['name'] = is_numeric($val['name']) ? (int)$val['name'] : null;
+                        //$val['name'] = is_numeric($val['name']) ? (int)$val['name'] : null;
                     }
                     $result[$year][$field] = $val['name'];
                 }
