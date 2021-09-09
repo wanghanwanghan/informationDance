@@ -12,6 +12,7 @@ use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\JuHe\JuHeService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\MoveOut\MoveOutService;
+use App\HttpController\Service\OSS\OSSService;
 use App\HttpController\Service\QianQi\QianQiService;
 use App\HttpController\Service\QiXiangYun\QiXiangYunService;
 use App\HttpController\Service\Queue\QueueConf;
@@ -32,15 +33,11 @@ class TestController extends BusinessBase
 
     function test()
     {
-        $config = new \EasySwoole\Oss\AliYun\Config([
-            'accessKeyId' => CreateConf::getInstance()->getConf('env.aliAk'),
-            'accessKeySecret' => CreateConf::getInstance()->getConf('env.aliSk'),
-            'endpoint' => 'oss-cn-beijing.aliyuncs.com',
-        ]);
-        $client = new \EasySwoole\Oss\AliYun\OssClient($config);
-        $data = $client->putObject('invoice-mrxd', 'test', __FILE__);
+        $res = OSSService::getInstance()
+            ->getAliCli()
+            ->putObject('invoice-mrxd', 'test', time());
 
-        return $this->writeJson(200, null, $data);
+        return $this->writeJson(200, null, $res);
     }
 
     function test1()
