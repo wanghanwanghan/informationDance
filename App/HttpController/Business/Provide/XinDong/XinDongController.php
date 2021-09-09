@@ -432,8 +432,6 @@ class XinDongController extends ProvideBase
 
         $result = [];
 
-        CommonService::getInstance()->log4PHP($res[$this->cspKey]['result']);
-
         foreach ($res[$this->cspKey]['result'] as $year => $arr) {
             foreach ($arr as $field => $val) {
                 if (!is_array($val)) {
