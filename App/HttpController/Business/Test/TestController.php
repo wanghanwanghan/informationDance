@@ -32,7 +32,15 @@ class TestController extends BusinessBase
 
     function test()
     {
-        return $this->writeJson(200, null);
+        $config = new \EasySwoole\Oss\AliYun\Config([
+            'accessKeyId' => CreateConf::getInstance()->getConf('env.aliAk'),
+            'accessKeySecret' => CreateConf::getInstance()->getConf('env.3gaS4i3csfClEZN8eQ8ijJ8ubj5qL7'),
+            'endpoint' => 'oss-cn-beijing.aliyuncs.com',
+        ]);
+        $client = new \EasySwoole\Oss\AliYun\OssClient($config);
+        $data = $client->putObject('invoice-mrxd', 'test', __FILE__);
+
+        return $this->writeJson(200, null, $data);
     }
 
     function test1()
