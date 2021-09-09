@@ -575,8 +575,6 @@ class LongXinService extends ServiceBase
         //43企业人均产值同比 A_VENDINCL_yoy
         //44企业人均盈利同比 A_PROGROL_yoy
 
-        CommonService::getInstance()->log4PHP($origin);
-
         $now = [];
         foreach ($origin as $year => $arr) {
             $now[$year] = [
@@ -588,7 +586,7 @@ class LongXinService extends ServiceBase
                 $arr['NETINC'],
                 $arr['RATGRO'],
                 $arr['TOTEQU'],
-                $arr['SOCNUM'] ?? $arr['So1'],
+                $arr['SOCNUM'] ?? $arr['So1'] ?? null,
             ];
         }
         $origin = $now;

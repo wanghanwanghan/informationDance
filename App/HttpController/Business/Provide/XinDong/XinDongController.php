@@ -368,6 +368,8 @@ class XinDongController extends ProvideBase
             }
         }
 
+        $dataCount = 6;
+
         $postData = [
             'entName' => $entName,
             'code' => $this->getRequestData('code', ''),
