@@ -156,11 +156,6 @@ class LongXinService extends ServiceBase
             ->useCache(false)
             ->send($this->baseUrl . 'company_detail/', $arr, $this->sendHeaders);
 
-        CommonService::getInstance()->log4PHP([
-            '企业名称' => $entId,
-            '社保人数' => $res
-        ]);
-
         if (!empty($res) && isset($res['data']) && !empty($res['data'])) {
             $tmp = $res['data'];
         } else {
