@@ -437,12 +437,9 @@ class XinDongController extends ProvideBase
         foreach ($res[$this->cspKey]['result'] as $year => $arr) {
             foreach ($arr as $field => $val) {
                 if (!is_array($val)) {
-                    $result[$year][$field] = $val;
-                } else {
                     //社保人数改int在这里
-                    if ($field === 'SOCNUM') {
-                        //$val['name'] = is_numeric($val['name']) ? (int)$val['name'] : null;
-                    }
+                    $result[$year][$field] = is_numeric($val) ? (int)$val : $val;
+                } else {
                     $result[$year][$field] = $val['name'];
                 }
             }
