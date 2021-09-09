@@ -437,6 +437,10 @@ class XinDongController extends ProvideBase
                 if (!is_array($val)) {
                     $result[$year][$field] = $val;
                 } else {
+                    //社保人数改int在这里
+                    if ($field === 'SOCNUM') {
+                        $val['name'] = is_numeric($val['name']) ? (int)$val['name'] : null;
+                    }
                     $result[$year][$field] = $val['name'];
                 }
             }
