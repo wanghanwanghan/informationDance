@@ -63,7 +63,7 @@ class EasySwooleEvent implements Event
         //注册自定义进程
         ProcessService::getInstance()->create(Docx2Doc::class, 'docx2doc');
         ProcessService::getInstance()->create(ConsumeOcrProcess::class, 'consumeOcr');
-        ProcessService::getInstance()->create(GetInvData::class, 'getInvData', [], 16);
+        ProcessService::getInstance()->create(GetInvData::class, 'getInvData', [], GetInvData::ProcessNum);
 
         //注册定时任务
         CrontabService::getInstance()->create();

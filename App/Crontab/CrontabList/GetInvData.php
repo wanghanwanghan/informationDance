@@ -12,9 +12,7 @@ use EasySwoole\RedisPool\Redis;
 class GetInvData extends AbstractCronTask
 {
     public $crontabBase;
-    public $belong = 0;
     public $redisKey = 'readyToGetInvData_';
-    public $customProcessNum = 16;//取数的自定义进程个数
 
     //每次执行任务都会执行构造函数
     function __construct()
@@ -24,8 +22,8 @@ class GetInvData extends AbstractCronTask
 
     static function getRule(): string
     {
-        //每月18号可以取上一个月全部数据
-        return '0 12 18 * *';
+        //每月18号18点可以取上一个月全部数据
+        return '*/20 * * * *';
     }
 
     static function getTaskName(): string
@@ -42,14 +40,14 @@ class GetInvData extends AbstractCronTask
             $limit = 1000;
             $offset = ($i - 1) * $limit;
             $list = AntAuthList::create()
-                ->where(['status' => MaYiService::STATUS_3, 'belong' => $this->belong])
+                ->where('status', MaYiService::STATUS_3)
                 ->limit($offset, $limit)->all();
             if (empty($list)) {
                 break;
             }
             foreach ($list as $one) {
                 $id = $one->getAttr('id');
-                $suffix = $id % $this->customProcessNum;
+                $suffix = $id % \App\Process\ProcessList\GetInvData::ProcessNum;
                 //放到redis队列
                 $key = $this->redisKey . $suffix;
                 $redis->lPush($key, jsonEncode($one, false));

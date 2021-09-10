@@ -11,6 +11,8 @@ use Swoole\Process;
 
 class GetInvData extends ProcessBase
 {
+    const ProcessNum = 16;
+
     public $p_index;
     public $redisKey;
     public $taxNo = '140301321321333';//91110108MA01KPGK0L
@@ -26,10 +28,10 @@ class GetInvData extends ProcessBase
         $this->p_index = current(current($all)) - 0;
         //要消费的队列名
         $this->redisKey = 'readyToGetInvData_' . $this->p_index;
-
         $redis = Redis::defer('redis');
         $redis->select(15);
 
+        //开始消费
         while (true) {
             $entInRedis = $redis->rPop($this->redisKey);
             if (empty($entInRedis)) {
@@ -58,11 +60,11 @@ class GetInvData extends ProcessBase
 
         $KPKSRQ = Carbon::now()->subMonths(23)->startOfMonth()->format('Y-m-d');//开始日
         $KPJSRQ = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');//截止日
+        $NSRSBH = $entInfo['socialCredit'];
 
         $KPKSRQ = '2020-01-01';
         $KPJSRQ = '2021-08-01';
-
-        $NSRSBH = $entInfo['socialCredit'];
+        $NSRSBH = '911199999999CN0008';
 
         $FPLXDMS = [
             '01', '02', '03', '04', '10', '11', '14', '15'

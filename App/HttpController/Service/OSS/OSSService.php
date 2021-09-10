@@ -2,7 +2,6 @@
 
 namespace App\HttpController\Service\OSS;
 
-use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\ServiceBase;
 use EasySwoole\Component\Singleton;
@@ -28,15 +27,9 @@ class OSSService extends ServiceBase
 
     function doUploadFile(string $bucket, string $storeName, string $path, int $timeout, ?array $option = null): ?string
     {
-        $res = $this->ali_oss_cli->uploadFile($bucket, $storeName, $path, $option);
+        $this->ali_oss_cli->uploadFile($bucket, $storeName, $path, $option);
 
-        CommonService::getInstance()->log4PHP($res);
-
-        $res = $this->ali_oss_cli->signUrl($bucket, $storeName, $timeout);
-
-        CommonService::getInstance()->log4PHP($res);
-
-        return $res;
+        return $this->ali_oss_cli->signUrl($bucket, $storeName, $timeout);
     }
 
 }
