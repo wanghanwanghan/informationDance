@@ -4,6 +4,8 @@ namespace App\Process\ProcessList;
 
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\DaXiang\DaXiangService;
+use App\HttpController\Service\OSS\OSSService;
+use App\HttpController\Service\Zip\ZipService;
 use App\Process\ProcessBase;
 use Carbon\Carbon;
 use EasySwoole\RedisPool\Redis;
@@ -111,10 +113,32 @@ class GetInvData extends ProcessBase
         return true;
     }
 
-    //通知蚂蚁
+    //上传到oss并且通知蚂蚁
     function sendToAnt($NSRSBH)
     {
+        $dir = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR;
 
+        $file_arr = [];
+
+        $ignore = [
+            '.', '..', '.gitignore',
+        ];
+
+        if ($dh = opendir($dir)) {
+            while (false !== ($file = readdir($dh))) {
+                if (!in_array($file, $ignore, true)) {
+                    $file_arr[] = $dir . $file;
+                }
+            }
+        }
+        closedir($dh);
+
+        if (!empty($file_arr)) {
+            $name = Carbon::now()->format('Ym') . "_{$NSRSBH}.zip";
+            $zip_file_name = ZipService::getInstance()->zip($file_arr, $name, true);
+            OSSService::getInstance()->doUploadFile('invoice-mrxd', $name, $zip_file_name, 3600);
+            CommonService::getInstance()->log4PHP($zip_file_name);
+        }
     }
 
     function writeFile(array $row, string $NSRSBH, string $invType, string $FPLXDM): bool
