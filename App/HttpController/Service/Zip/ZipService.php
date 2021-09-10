@@ -55,6 +55,8 @@ class ZipService extends ServiceBase
     {
         $zip = new \ZipArchive;
 
+        ($overwrite === true && file_exists($zipName)) ? $overwrite = true : $overwrite = false;
+
         $zip->open($zipName, $overwrite ? \ZIPARCHIVE::OVERWRITE : \ZIPARCHIVE::CREATE);
 
         foreach ($fileArr as $one) {
