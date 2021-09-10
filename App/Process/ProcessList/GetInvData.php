@@ -120,11 +120,10 @@ class GetInvData extends ProcessBase
 
         $file_arr = [];
 
-        $ignore = [
-            '.', '..', '.gitignore',
-        ];
-
         if ($dh = opendir($dir)) {
+            $ignore = [
+                '.', '..', '.gitignore',
+            ];
             while (false !== ($file = readdir($dh))) {
                 if (!in_array($file, $ignore, true)) {
                     $file_arr[] = $dir . $file;
@@ -136,8 +135,9 @@ class GetInvData extends ProcessBase
         if (!empty($file_arr)) {
             $name = Carbon::now()->format('Ym') . "_{$NSRSBH}.zip";
             $zip_file_name = ZipService::getInstance()->zip($file_arr, $name, true);
-            OSSService::getInstance()->doUploadFile('invoice-mrxd', $name, $zip_file_name, 3600);
+            $oss_file_name = OSSService::getInstance()->doUploadFile('invoice-mrxd', $name, $zip_file_name, 3600);
             CommonService::getInstance()->log4PHP($zip_file_name);
+            CommonService::getInstance()->log4PHP($oss_file_name);
         }
     }
 
