@@ -35,7 +35,7 @@ class TestController extends BusinessBase
     {
         OSSService::getInstance()
             ->getAliCli()
-            ->uploadFile('invoice-mrxd', 'TestController', __FILE__, 200);
+            ->uploadFile('invoice-mrxd', 'TestController', __FILE__);
 
         $res = OSSService::getInstance()
             ->getAliCli()
