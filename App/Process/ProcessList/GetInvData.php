@@ -17,6 +17,8 @@ class GetInvData extends ProcessBase
 
     public $p_index;
     public $redisKey;
+    public $oss_expire_time = 3600;
+    public $oss_bucket = 'invoice-mrxd';
     public $taxNo = '140301321321333';//91110108MA01KPGK0L
 
     protected function run($arg)
@@ -135,7 +137,8 @@ class GetInvData extends ProcessBase
         if (!empty($file_arr)) {
             $name = Carbon::now()->format('Ym') . "_{$NSRSBH}.zip";
             $zip_file_name = ZipService::getInstance()->zip($file_arr, $name, true);
-            $oss_file_name = OSSService::getInstance()->doUploadFile('invoice-mrxd', $name, $zip_file_name, 3600);
+            $oss_file_name = OSSService::getInstance()
+                ->doUploadFile($this->oss_bucket, $name, $zip_file_name, $this->oss_expire_time);
             CommonService::getInstance()->log4PHP($zip_file_name);
             CommonService::getInstance()->log4PHP($oss_file_name);
         }
