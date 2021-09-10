@@ -2,10 +2,10 @@
 
 namespace App\HttpController\Service\OSS;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\ServiceBase;
 use EasySwoole\Component\Singleton;
-use EasySwoole\Oss\AliYun\OssClient;
 
 class OSSService extends ServiceBase
 {
@@ -26,10 +26,17 @@ class OSSService extends ServiceBase
         $this->ali_oss_cli = new \EasySwoole\Oss\AliYun\OssClient($config);
     }
 
-    function getAliCli(): OssClient
+    function doUploadFile(string $bucket, string $storeName, string $path, int $timeout, ?array $option = null): ?string
     {
-        // $client->putObject('invoice-mrxd', 'test', __FILE__);
-        return $this->ali_oss_cli;
+        $res = $this->ali_oss_cli->uploadFile($bucket, $storeName, $path, $option);
+
+        CommonService::getInstance()->log4PHP($res);
+
+        $res = $this->ali_oss_cli->signUrl($bucket, $storeName, $timeout);
+
+        CommonService::getInstance()->log4PHP($res);
+
+        return $res;
     }
 
 }
