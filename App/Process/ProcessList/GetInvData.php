@@ -17,7 +17,7 @@ class GetInvData extends ProcessBase
 
     public $p_index;
     public $redisKey;
-    public $oss_expire_time = 3600;
+    public $oss_expire_time = 86400 * 7;
     public $oss_bucket = 'invoice-mrxd';
     public $taxNo = '140301321321333';//91110108MA01KPGK0L
 
@@ -40,7 +40,7 @@ class GetInvData extends ProcessBase
             $entInRedis = $redis->rPop($this->redisKey);
             if (empty($entInRedis)) {
                 mt_srand();
-                \co::sleep(mt_rand(5, 10));
+                \co::sleep(mt_rand(300, 600));
                 continue;
             }
             $this->getDataByEle(jsonDecode($entInRedis));
@@ -139,8 +139,6 @@ class GetInvData extends ProcessBase
             $zip_file_name = ZipService::getInstance()->zip($file_arr, $dir . $name, true);
             $oss_file_name = OSSService::getInstance()
                 ->doUploadFile($this->oss_bucket, $name, $zip_file_name, $this->oss_expire_time);
-            CommonService::getInstance()->log4PHP($zip_file_name);
-            CommonService::getInstance()->log4PHP($oss_file_name);
         }
     }
 
