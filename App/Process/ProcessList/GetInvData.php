@@ -40,7 +40,7 @@ class GetInvData extends ProcessBase
             $entInRedis = $redis->rPop($this->redisKey);
             if (empty($entInRedis)) {
                 mt_srand();
-                \co::sleep(mt_rand(6, 30));
+                \co::sleep(mt_rand(5, 10));
                 continue;
             }
             $this->getDataByEle(jsonDecode($entInRedis));
@@ -136,7 +136,7 @@ class GetInvData extends ProcessBase
 
         if (!empty($file_arr)) {
             $name = Carbon::now()->format('Ym') . "_{$NSRSBH}.zip";
-            $zip_file_name = ZipService::getInstance()->zip($file_arr, $name, true);
+            $zip_file_name = ZipService::getInstance()->zip($file_arr, $dir . $name, true);
             $oss_file_name = OSSService::getInstance()
                 ->doUploadFile($this->oss_bucket, $name, $zip_file_name, $this->oss_expire_time);
             CommonService::getInstance()->log4PHP($zip_file_name);
