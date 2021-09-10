@@ -150,7 +150,7 @@ class GetInvData extends ProcessBase
 
         $filename = $NSRSBH . "_{$FPLXDM}_{$invType}.json";
 
-        is_dir($store) || mkdir($store, 0644, true);
+        is_dir($store) || mkdir($store, 0755, true);
 
         if (empty($row)) {
             $content = '' . PHP_EOL;

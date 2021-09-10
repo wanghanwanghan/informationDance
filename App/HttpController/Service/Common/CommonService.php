@@ -87,7 +87,7 @@ class CommonService extends ServiceBase
 
         $path = OTHER_FILE_PATH . $suffix;
 
-        is_dir($path) || mkdir($path, 0644);
+        is_dir($path) || mkdir($path, 0755);
 
         return $path;
     }
