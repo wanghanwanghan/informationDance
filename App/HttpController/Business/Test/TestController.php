@@ -35,7 +35,11 @@ class TestController extends BusinessBase
     {
         $res = OSSService::getInstance()
             ->getAliCli()
-            ->putObject('invoice-mrxd', 'test', time());
+            ->uploadFile('invoice-mrxd', 'TestController', __FUNCTION__, 200);
+
+        $res = OSSService::getInstance()
+            ->getAliCli()
+            ->signUrl('invoice-mrxd', 'TestController', 100);
 
         return $this->writeJson(200, null, $res);
     }
