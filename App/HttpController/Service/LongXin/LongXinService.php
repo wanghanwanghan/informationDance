@@ -706,8 +706,8 @@ class LongXinService extends ServiceBase
             ->useCache(false)
             ->send($this->baseUrl . 'judgment_document_details/', $arr, $this->sendHeaders);
 
-        CommonService::getInstance()->log4PHP($res);
-
+        $res['data']['related'] = empty($res['related']) ? [] : $res['related'];
+        $res['data']['basic_info'] = empty($res['basic_info']) ? [] : $res['basic_info'];
 
         return $this->checkResp($res);
     }
