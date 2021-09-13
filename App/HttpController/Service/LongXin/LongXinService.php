@@ -837,6 +837,8 @@ class LongXinService extends ServiceBase
             ->useCache(false)
             ->send($this->baseUrl . 'executed_person_info/', $arr, $this->sendHeaders);
 
+        CommonService::getInstance()->log4PHP($res);
+
         return $this->checkResp($res);
     }
 
