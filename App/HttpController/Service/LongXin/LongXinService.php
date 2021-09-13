@@ -129,7 +129,7 @@ class LongXinService extends ServiceBase
     {
         $res['Paging'] = null;
 
-        if (isset($res['total'])) {
+        if (isset($res['total']) || isset($res['paging']['total'])) {
             $res['Paging']['total'] = $res['total'] - 0;
         }
 
@@ -836,8 +836,6 @@ class LongXinService extends ServiceBase
         $res = (new CoHttpClient())
             ->useCache(false)
             ->send($this->baseUrl . 'executed_person_info/', $arr, $this->sendHeaders);
-
-        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkResp($res);
     }
