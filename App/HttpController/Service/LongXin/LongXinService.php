@@ -706,17 +706,139 @@ class LongXinService extends ServiceBase
             ->useCache(false)
             ->send($this->baseUrl . 'judgment_document_details/', $arr, $this->sendHeaders);
 
-        $res['data']['related'] = empty($res['related']) ? [] : $res['related'];
-        $res['data']['basic_info'] = empty($res['basic_info']) ? [] : $res['basic_info'];
+        $res['data']['related'] = empty($res['related']) ? null : $res['related'];
+        $res['data']['basic_info'] = empty($res['basic_info']) ? null : $res['basic_info'];
 
         return $this->checkResp($res);
     }
 
+    //
+    function getKtggList($data): ?array
+    {
+        $entId = $this->getEntid($data['entName']);
 
+        if (empty($entId))
+            return ['code' => 102, 'msg' => 'entId是空', 'result' => [], 'paging' => null];
 
+        $arr = [
+            'entid' => $entId,
+            'usercode' => $this->usercode,
+            'pageIndex' => $data['page'] - 0,
+            'pageSize' => $data['pageSize'] - 0,
+        ];
 
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
 
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($this->baseUrl . 'open_court_announcement_info/', $arr, $this->sendHeaders);
 
+        return $this->checkResp($res);
+    }
+
+    //
+    function getKtggDetail($data): ?array
+    {
+        $arr = [
+            'usercode' => $this->usercode,
+            'mid' => $data['mid'],
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($this->baseUrl . 'open_court_announcement_details/', $arr, $this->sendHeaders);
+
+        return $this->checkResp($res);
+    }
+
+    //
+    function getFyggList($data): ?array
+    {
+        $entId = $this->getEntid($data['entName']);
+
+        if (empty($entId))
+            return ['code' => 102, 'msg' => 'entId是空', 'result' => [], 'paging' => null];
+
+        $arr = [
+            'entid' => $entId,
+            'usercode' => $this->usercode,
+            'pageIndex' => $data['page'] - 0,
+            'pageSize' => $data['pageSize'] - 0,
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($this->baseUrl . 'court_announcement_info/', $arr, $this->sendHeaders);
+
+        return $this->checkResp($res);
+    }
+
+    //
+    function getFyggDetail($data): ?array
+    {
+        $arr = [
+            'usercode' => $this->usercode,
+            'mid' => $data['mid'],
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($this->baseUrl . 'court_announcement_details/', $arr, $this->sendHeaders);
+
+        return $this->checkResp($res);
+    }
+
+    //
+    function getSxbzxr($data): ?array
+    {
+        $entId = $this->getEntid($data['entName']);
+
+        if (empty($entId))
+            return ['code' => 102, 'msg' => 'entId是空', 'result' => [], 'paging' => null];
+
+        $arr = [
+            'usercode' => $this->usercode,
+            'query' => $entId,
+            'page' => $data['page'] - 0,
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($this->baseUrl . 'dishonest_person_info/', $arr, $this->sendHeaders);
+
+        return $this->checkResp($res);
+    }
+
+    //
+    function getBzxr($data): ?array
+    {
+        $entId = $this->getEntid($data['entName']);
+
+        if (empty($entId))
+            return ['code' => 102, 'msg' => 'entId是空', 'result' => [], 'paging' => null];
+
+        $arr = [
+            'usercode' => $this->usercode,
+            'query' => $entId,
+            'page' => $data['page'] - 0,
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($this->baseUrl . 'executed_person_info/', $arr, $this->sendHeaders);
+
+        return $this->checkResp($res);
+    }
 
 
 

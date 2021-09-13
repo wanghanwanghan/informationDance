@@ -711,5 +711,115 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getKtggList(): bool
+    {
+        $postData = [
+            'entName' => $this->getRequestData('entName'),
+            'page' => $this->getRequestData('page', 1),
+            'pageSize' => 10,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getKtggList($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function getKtggDetail(): bool
+    {
+        $postData = [
+            'mid' => $this->getRequestData('mid'),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getKtggDetail($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function getFyggList(): bool
+    {
+        $postData = [
+            'entName' => $this->getRequestData('entName'),
+            'page' => $this->getRequestData('page', 1),
+            'pageSize' => 10,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getFyggList($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function getFyggDetail(): bool
+    {
+        $postData = [
+            'mid' => $this->getRequestData('mid'),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getFyggDetail($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function getSxbzxr(): bool
+    {
+        $postData = [
+            'entName' => $this->getRequestData('entName'),
+            'page' => $this->getRequestData('page', 1),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getSxbzxr($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function getBzxr(): bool
+    {
+        $postData = [
+            'entName' => $this->getRequestData('entName'),
+            'page' => $this->getRequestData('page', 1),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getBzxr($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+
+
 
 }
