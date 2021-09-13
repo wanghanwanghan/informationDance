@@ -133,12 +133,13 @@ class LongXinService extends ServiceBase
             $res['Paging']['total'] = $res['total'] - 0;
         }
 
-        if (isset($res['coHttpErr'])) return $this->createReturn(500, $res['Paging'], [], 'co请求错误');
+        if (isset($res['coHttpErr']))
+            return $this->createReturn(500, $res['Paging'], [], 'co请求错误');
 
         $res['Result'] = $res['data'];
         $res['Message'] = $res['msg'] ?? '';
 
-        return $this->createReturn((int)$res['code'], $res['Paging'], $res['Result'], $res['Message']);
+        return $this->createReturn($res['code'] - 0, $res['Paging'], $res['Result'], $res['Message']);
     }
 
     //取社保人数
@@ -667,7 +668,49 @@ class LongXinService extends ServiceBase
         return $retrun;
     }
 
+    //
+    function getCpwsList($data): ?array
+    {
+        $entId = $this->getEntid($data['entName']);
 
+        if (empty($entId))
+            return ['code' => 102, 'msg' => 'entId是空', 'result' => [], 'paging' => null];
+
+        $arr = [
+            'entid' => $entId,
+            'usercode' => $this->usercode,
+            'pageIndex' => $data['page'] - 0,
+            'pageSize' => $data['pageSize'] - 0,
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($this->baseUrl . 'judgment_document_info/', $arr, $this->sendHeaders);
+
+        return $this->checkResp($res);
+    }
+
+    //
+    function getCpwsDetail($data): ?array
+    {
+        $arr = [
+            'usercode' => $this->usercode,
+            'mid' => $data['mid'],
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($this->baseUrl . 'judgment_document_details/', $arr, $this->sendHeaders);
+
+        CommonService::getInstance()->log4PHP($res);
+
+
+        return $this->checkResp($res);
+    }
 
 
 

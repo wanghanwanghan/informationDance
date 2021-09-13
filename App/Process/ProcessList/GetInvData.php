@@ -47,13 +47,13 @@ class GetInvData extends ProcessBase
         }
     }
 
-    //01增值税专用发票
+    //01增值税专用发票 *** 本次蚂蚁用
     //02货运运输业增值税专用发票
     //03机动车销售统一发票
-    //04增值税普通发票
-    //10增值税普通发票电子
-    //11增值税普通发票卷式
-    //14通行费电子票
+    //04增值税普通发票 *** 本次蚂蚁用
+    //10增值税普通发票电子 *** 本次蚂蚁用
+    //11增值税普通发票卷式 *** 本次蚂蚁用
+    //14通行费电子票 *** 本次蚂蚁用
     //15二手车销售统一发票
 
     function getDataByEle($entInfo): bool
@@ -78,7 +78,8 @@ class GetInvData extends ProcessBase
         foreach ($FPLXDMS as $FPLXDM) {
             $KM = '1';
             for ($page = 1; $page <= 999999; $page++) {
-                $res = (new DaXiangService())->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
+                $res = (new DaXiangService())
+                    ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
                 $content = jsonDecode(base64_decode($res['content']));
                 if ($content['code'] === '0000' && !empty($content['data']['records'])) {
                     foreach ($content['data']['records'] as $row) {
@@ -96,7 +97,8 @@ class GetInvData extends ProcessBase
         foreach ($FPLXDMS as $FPLXDM) {
             $KM = '2';
             for ($page = 1; $page <= 999999; $page++) {
-                $res = (new DaXiangService())->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
+                $res = (new DaXiangService())
+                    ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
                 $content = jsonDecode(base64_decode($res['content']));
                 if ($content['code'] === '0000' && !empty($content['data']['records'])) {
                     foreach ($content['data']['records'] as $row) {
