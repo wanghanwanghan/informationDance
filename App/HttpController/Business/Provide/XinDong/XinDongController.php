@@ -156,6 +156,33 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //返原值专用
+    function getFinanceOriginal()
+    {
+        $postData = [
+            'entName' => $this->getRequestData('entName', ''),
+            'code' => $this->getRequestData('code', ''),
+            'beginYear' => $this->getRequestData('year', 2020),
+            'dataCount' => $this->getRequestData('dataCount', 5),
+        ];
+
+        $beginYear = $this->getRequestData('year', 2020);
+
+        if (is_numeric($beginYear) && $beginYear >= 2013 && $beginYear <= date('Y')) {
+            $this->csp->add($this->cspKey, function () use ($postData) {
+                return (new LongXinService())
+                    ->setCheckRespFlag(true)
+                    ->getFinanceData($postData, false);
+            });
+            $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        } else {
+            $res = [];
+            $this->responseMsg = 'year参数错误';
+        }
+
+        return $this->checkResponse($res);
+    }
+
     //狮桥
     function getFinanceBaseDataSQ(): bool
     {
@@ -818,8 +845,6 @@ class XinDongController extends ProvideBase
 
         return $this->checkResponse($res);
     }
-
-
 
 
 }
