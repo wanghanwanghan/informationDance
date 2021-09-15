@@ -24,7 +24,7 @@ class InvoiceController extends InvoiceBase
     {
         $entname = $this->getRequestData('entname');
         $status = $this->getRequestData('status');
-        $status = jsonDecode($status);
+        empty($status) ?: $status = jsonDecode($status);
 
         $orm = AntAuthList::create();
 
