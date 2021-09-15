@@ -141,6 +141,7 @@ class MaYiController extends Index
         $data['idCard'] = $tmp['body']['idCard'] ?? '';
         $data['phone'] = $tmp['body']['mobile'] ?? '';
         $data['requestId'] = control::getUuid();
+        $data['belong'] = 0;
 
         $res = (new MaYiService())->authEnt($data);
 
@@ -154,6 +155,12 @@ class MaYiController extends Index
                 $res['code'] = '0001';
                 $res['result']['authResultCode'] = '0';
                 $res['result']['authResultMsg'] = '缺少参数';
+                break;
+            case 606:
+            case 615:
+                $res['code'] = '9999';
+                $res['result']['authResultCode'] = '0';
+                $res['result']['authResultMsg'] = '系统异常';
                 break;
             default:
                 $res['code'] = '0000';

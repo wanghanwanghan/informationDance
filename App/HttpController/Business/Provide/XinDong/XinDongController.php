@@ -692,6 +692,7 @@ class XinDongController extends ProvideBase
         $data['idCard'] = $this->getRequestData('idCard');
         $data['phone'] = $this->getRequestData('phone');
         $data['requestId'] = $this->requestId;
+        $data['belong'] = 1;//provide公司id
 
         $this->csp->add($this->cspKey, function () use ($data) {
             return (new MaYiService())->authEnt($data);

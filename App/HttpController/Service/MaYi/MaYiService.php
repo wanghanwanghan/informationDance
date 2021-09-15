@@ -5205,6 +5205,10 @@ class MaYiService extends ServiceBase
             ->setCheckRespFlag(true)
             ->post($postData, 'getRegisterInfo');
 
+        if (empty($res['result'])) {
+            return $this->check(606, null, null, '未找到匹配的企业');
+        }
+
         $res = current($res['result']);
 
         $data['address'] = $res['DOM'];
@@ -5221,15 +5225,15 @@ class MaYiService extends ServiceBase
         $baiduApi = BaiDuService::getInstance()->addressToStructured(trim($res['DOM']));
         $baiduApiRes = [];
         if ($baiduApi['status'] === 0) {
-            $baiduApiRes['regAddress'] = $res['DOM'];
-            $baiduApiRes['province'] = $baiduApi['result']['province'];
-            $baiduApiRes['provinceCode'] = $baiduApi['result']['province_code'];
-            $baiduApiRes['city'] = $baiduApi['result']['city'];
-            $baiduApiRes['cityCode'] = $baiduApi['result']['city_code'];
-            $baiduApiRes['county'] = $baiduApi['result']['county'];
-            $baiduApiRes['countyCode'] = $baiduApi['result']['county_code'];
-            $baiduApiRes['town'] = $baiduApi['result']['town'];
-            $baiduApiRes['townCode'] = $baiduApi['result']['town_code'];
+            $baiduApiRes['regAddress'] = $res['DOM'] ?? '';
+            $baiduApiRes['province'] = $baiduApi['result']['province'] ?? '';
+            $baiduApiRes['provinceCode'] = $baiduApi['result']['province_code'] ?? '';
+            $baiduApiRes['city'] = $baiduApi['result']['city'] ?? '';
+            $baiduApiRes['cityCode'] = $baiduApi['result']['city_code'] ?? '';
+            $baiduApiRes['county'] = $baiduApi['result']['county'] ?? '';
+            $baiduApiRes['countyCode'] = $baiduApi['result']['county_code'] ?? '';
+            $baiduApiRes['town'] = $baiduApi['result']['town'] ?? '';
+            $baiduApiRes['townCode'] = $baiduApi['result']['town_code'] ?? '';
         }
 
         AntAuthList::create()->data([
@@ -5241,6 +5245,7 @@ class MaYiService extends ServiceBase
             'phone' => $data['phone'],
             'region' => $baiduApiRes['city'] ?? '',
             'requestDate' => time(),
+            'belong' => $data['belong'],
             'status' => self::STATUS_0,
             'regAddress' => $baiduApiRes['regAddress'] ?? '',
             'province' => $baiduApiRes['province'] ?? '',

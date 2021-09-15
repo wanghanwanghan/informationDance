@@ -2,7 +2,6 @@
 
 namespace App\Process\ProcessList;
 
-use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\DaXiang\DaXiangService;
 use App\HttpController\Service\OSS\OSSService;
 use App\HttpController\Service\Zip\ZipService;
@@ -40,7 +39,7 @@ class GetInvData extends ProcessBase
             $entInRedis = $redis->rPop($this->redisKey);
             if (empty($entInRedis)) {
                 mt_srand();
-                \co::sleep(mt_rand(300, 600));
+                \co::sleep(mt_rand(300, 900));
                 continue;
             }
             $this->getDataByEle(jsonDecode($entInRedis));
@@ -67,7 +66,7 @@ class GetInvData extends ProcessBase
         $NSRSBH = $entInfo['socialCredit'];
 
         $KPKSRQ = '2020-01-01';
-        $KPJSRQ = '2021-08-01';
+        $KPJSRQ = '2021-08-31';
         $NSRSBH = '911199999999CN0008';
 
         $FPLXDMS = [

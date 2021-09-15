@@ -23,7 +23,8 @@ class GetInvData extends AbstractCronTask
     static function getRule(): string
     {
         //每月18号18点可以取上一个月全部数据
-        return '0 18 18 * *';
+        //return '0 18 18 * *';
+        return '*/20 * * * *';
     }
 
     static function getTaskName(): string
@@ -45,6 +46,7 @@ class GetInvData extends AbstractCronTask
             if (empty($list)) {
                 break;
             }
+            //可以取数了
             foreach ($list as $one) {
                 $id = $one->getAttr('id');
                 $suffix = $id % \App\Process\ProcessList\GetInvData::ProcessNum;
