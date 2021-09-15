@@ -2,6 +2,7 @@
 
 namespace App\Process\ProcessList;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\DaXiang\DaXiangService;
 use App\HttpController\Service\OSS\OSSService;
 use App\HttpController\Service\Zip\ZipService;
@@ -140,6 +141,9 @@ class GetInvData extends ProcessBase
             $zip_file_name = ZipService::getInstance()->zip($file_arr, $dir . $name, true);
             $oss_file_name = OSSService::getInstance()
                 ->doUploadFile($this->oss_bucket, $name, $zip_file_name, $this->oss_expire_time);
+            CommonService::getInstance()->log4PHP([
+                '下载地址' => $oss_file_name
+            ]);
         }
     }
 
