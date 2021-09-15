@@ -13,13 +13,10 @@ use wanghanwanghan\someUtils\control;
 
 class MaYiController extends Index
 {
-    public $appId;
-    public $appSecret;
-
     function onRequest(?string $action): ?bool
     {
-        $this->appId = CreateConf::getInstance()->getConf('mayi.appId');
-        $this->appSecret = CreateConf::getInstance()->getConf('mayi.appSecret');
+        $this->dev_appId = CreateConf::getInstance()->getConf('mayi.dev_appId');
+        $this->dev_appSecret = CreateConf::getInstance()->getConf('mayi.dev_appSecret');
         return parent::onRequest($action);
     }
 
@@ -77,48 +74,72 @@ class MaYiController extends Index
         $tmp['head'] = $this->getRequestData('head');
         $tmp['body'] = $this->getRequestData('body');
 
-        if (!isset($tmp['head']['sign'])) {
+        if (!isset($tmp['head']['appId']) || empty($tmp['head']['appId'])) {
             return $this->writeJsons([
                 'code' => '0001',
                 'result' => [
                     'authResultCode' => '0',
-                    'authResultMsg' => '认证授权失败',
+                    'authResultMsg' => '缺少appId',
+                ],
+            ]);
+        }
+
+        if (!isset($tmp['head']['sign']) || empty($tmp['head']['sign'])) {
+            return $this->writeJsons([
+                'code' => '0001',
+                'result' => [
+                    'authResultCode' => '0',
+                    'authResultMsg' => '缺少sign',
                 ],
             ]);
         }
 
         //拿rsa公钥
-        $userInfo = RequestUserInfo::create()->where('appId', $this->appId)->get();
+        $userInfo = RequestUserInfo::create()->where('appId', $tmp['head']['appId'])->get();
+        if (empty($userInfo)) {
+            return $this->writeJsons([
+                'code' => '9999',
+                'result' => [
+                    'authResultCode' => '0',
+                    'authResultMsg' => '系统异常',
+                ],
+            ]);
+        }
         $rsaPub = RSA_KEY_PATH . $userInfo->getAttr('rsaPub');
         if (!file_exists($rsaPub)) {
             return $this->writeJsons([
-                'code' => '0001',
+                'code' => '9999',
                 'result' => [
                     'authResultCode' => '0',
-                    'authResultMsg' => '认证授权失败',
+                    'authResultMsg' => '系统异常',
                 ],
             ]);
         }
 
-        $key = control::rsaDecrypt($tmp['head']['sign'], file_get_contents($rsaPub), 'pub');
+        $pkeyid = openssl_get_publickey(file_get_contents($rsaPub));
+        $ret = openssl_verify(json_encode([
+            'nsrsbh' => $tmp['nsrsbh'] ?? '',
+            'companyName' => $tmp['companyName'] ?? '',
+            'legalName' => $tmp['legalName'] ?? '',
+            'mobile' => $tmp['mobile'] ?? '',
+            'idCard' => $tmp['idCard'] ?? '',
+        ]), base64_decode($tmp['head']['sign']), $pkeyid, OPENSSL_ALGO_MD5);
 
-        $key = explode('_', $key);
-
-        if (!is_array($key) || $key[0] !== $this->appId) {
+        if ($ret !== 1) {
             return $this->writeJsons([
-                'code' => '0001',
+                'code' => '0002',
                 'result' => [
                     'authResultCode' => '0',
-                    'authResultMsg' => '认证授权失败',
+                    'authResultMsg' => '验签失败',
                 ],
             ]);
         }
 
-        $data['entName'] = $tmp['body']['companyName'];
-        $data['socialCredit'] = $tmp['body']['nsrsbh'];
-        $data['legalPerson'] = $tmp['body']['legalName'];
-        $data['idCard'] = $tmp['body']['idCard'];
-        $data['phone'] = $tmp['body']['mobile'];
+        $data['entName'] = $tmp['body']['companyName'] ?? '';
+        $data['socialCredit'] = $tmp['body']['nsrsbh'] ?? '';
+        $data['legalPerson'] = $tmp['body']['legalName'] ?? '';
+        $data['idCard'] = $tmp['body']['idCard'] ?? '';
+        $data['phone'] = $tmp['body']['mobile'] ?? '';
         $data['requestId'] = control::getUuid();
 
         $res = (new MaYiService())->authEnt($data);
@@ -132,7 +153,7 @@ class MaYiController extends Index
             case 605:
                 $res['code'] = '0001';
                 $res['result']['authResultCode'] = '0';
-                $res['result']['authResultMsg'] = '认证授权失败';
+                $res['result']['authResultMsg'] = '缺少参数';
                 break;
             default:
                 $res['code'] = '0000';
