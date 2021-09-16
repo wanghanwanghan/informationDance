@@ -124,6 +124,75 @@ function desensitization($num)
     return $num - 0;
 }
 
+//毫秒时间戳
+function microTimeNew(): string
+{
+    return substr(microtime(true) * 1000, 0, 13);
+}
+
+//发票状态 大象值转蚂蚁需要的值
+function changeFPZT($FPZT): string
+{
+    //大象 : 1-正常 2-作废 3-冲红 8-失控 9-异常
+    //蚂蚁 : 0-正常 2-作废 3-红字 1-失控 4-异常
+
+    switch (trim($FPZT)) {
+        case '1':
+            $ret = '0';
+            break;
+        case '2':
+            $ret = '2';
+            break;
+        case '3':
+            $ret = '3';
+            break;
+        case '8':
+            $ret = '1';
+            break;
+        case '9':
+            $ret = '4';
+            break;
+        default:
+            $ret = '';
+    }
+
+    return $ret;
+}
+
+//购方类型 大象值转蚂蚁需要的值
+function changeGMFLX($GMFLX): string
+{
+    //大象 : 01企业 02机关事业单位 03个人 04其他
+    //蚂蚁 : 1企业 2个人 3其他
+
+    switch (trim($GMFLX)) {
+        case '02':
+            $ret = '4';
+            break;
+        case '04':
+            $ret = '3';
+            break;
+        case '01':
+            $ret = '1';
+            break;
+        case '03':
+            $ret = '2';
+            break;
+        default:
+            $ret = '';
+    }
+
+    return $ret;
+}
+
+//大象发票专用，数据库字段不能是null，所以null值转换为''
+function changeNull($data)
+{
+    return strlen($data) === 0 ? '' : $data;
+}
+
+
+
 
 
 
