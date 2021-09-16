@@ -317,67 +317,110 @@ class GetInvData extends ProcessBase
                     'fphm' => $arr['FPHM'],
                     'direction' => $invType,//01-购买方 02-销售方
                 ])->get();
+                if (!empty($check_exists)) return false;//已经存在了
+                $insert = [
+                    'fpdm' => changeNull($arr['FPDM']),//'发票代码',
+                    'fphm' => changeNull($arr['FPHM']),//'发票号码',
+                    'kplx' => changeNull($arr['HLPBS']),//'开票类型 0-蓝字 1-红字',
+                    'xfsh' => changeNull($arr['XHFSBH']),//'销售方纳税人识别号',
+                    'xfmc' => changeNull($arr['XHFMC']),//'销售方名称',
+                    'xfdzdh' => changeNull($arr['XHFDZDH']),//'销售方地址电话',
+                    'xfyhzh' => changeNull($arr['XHFYHZH']),//'销售方银行账号',
+                    'gfsh' => changeNull($arr['GMFSBH']),//'购买方纳税人识别号',
+                    'gfmc' => changeNull($arr['GMFMC']),//'购买方名称',
+                    'gfdzdh' => changeNull($arr['GMFDZDH']),//'购买方地址电话',
+                    'gfyhzh' => changeNull($arr['GMFYHZH']),//'购买方银行账号',
+                    'gmflx' => changeNull(changeGMFLX($arr['GMFLX'])),//'购买方类型 1企业 2个人 3其他',
+                    'kpr' => changeNull($arr['KPR']),//'开票人',
+                    'skr' => changeNull($arr['SKR']),//'收款人',
+                    'fhr' => changeNull($arr['FHR']),//'复核人',
+                    'yfpdm' => changeNull($arr['YFPDM']),//'原发票代码 kplx为1时必填',
+                    'yfphm' => changeNull($arr['YFPHM']),//'原发票号码 kplx为1时必填',
+                    'je' => changeNull($arr['HJJE']),//'金额',
+                    'se' => changeNull($arr['HJSE']),//'税额',
+                    'jshj' => changeNull($arr['JSHJ']),//'价税合计 单位元 2位小数',
+                    'bz' => changeNull($arr['BZ']),//'备注',
+                    'zfbz' => changeNull(changeFPZT($arr['FPZT'])) === '2' ? '1' : '0',//'作废标志 0-未作废 1-作废',
+                    'zfsj' => '',//'作废时间',
+                    'kprq' => changeNull($arr['KPRQ']),//'开票日期',
+                    'kprq_sort' => microTimeNew() - 0,//'排序用',
+                    'fplx' => changeNull($arr['FPLXDM']),//'发票类型代码 01 02 03 04 10 11 14 15',
+                    'fpztDm' => changeNull(changeFPZT($arr['FPZT'])),//'发票状态代码 0-正常 1-失控 2-作废 3-红字 4-异常票',
+                    'slbz' => (is_numeric(changeNull($arr['HJSE'])) && changeNull($arr['HJSE']) > 0) ? '1' : '0',//'税率标识 0-不含税税率 1-含税税率',
+                    'rzdklBdjgDm' => changeNull($arr['RZZT']),//'认证状态 0-未认证 1-已认证 2-已认证未抵扣',
+                    'rzdklBdrq' => changeNull($arr['RZRQ']),//'认证日期',
+                    'direction' => $invType,//'01-购买方 02-销售方',
+                    'nsrsbh' => $NSRSBH,//'查询企业税号',
+                    'jym' => changeNull($arr['JYM']),//'校验码',
+                    'jqbh' => changeNull($arr['JQBH']),//'机器编号',
+                    'rzsq' => changeNull($arr['RZSQ']),//'认证归属期',
+                    'rzfs' => changeNull($arr['RZFS']),//'认证方式 1-勾选认证 2-扫描认证',
+                    'gmfsf' => changeNull($arr['GMFSF']),//'购买方省份',
+                    'gmfsj' => changeNull($arr['GMFSJ']),//'购买方手机',
+                    'gmfwx' => changeNull($arr['GMFWX']),//'购买方微信',
+                    'gmfyx' => changeNull($arr['GMFYX']),//'购买方邮箱',
+                    'qdbs' => changeNull($arr['QDBS']),//'是否有销货清单 0否 1是 默认为0',
+                ];
+                $insert_detail = [];
+                if (!empty($arr['FPMX'])) {
+                    //先要含有明细
+                    $dm = changeNull($arr['FPDM']);
+                    $hm = changeNull($arr['FPHM']);
+                    if (!empty($dm) && !empty($hm)) {
+                        //发票代码和号码不能错误
+                        $check_exists = EntInvoiceDetail::create()->addSuffix($dm, $hm, $FPLXDM)->where([
+                            'fpdm' => $dm,
+                            'fphm' => $hm,
+                        ])->get();
+                        if (empty($check_exists)) {
+                            //没存过明细才会存
+                            $i_num = 1;
+                            foreach ($arr['FPMX'] as $oneDetail) {
+                                $insert_detail[] = [
+                                    'spbm' => changeNull($oneDetail['SPBM']),//'税收分类编码',
+                                    'mc' => changeNull($oneDetail['SPMC']),//'如果为折扣行 商品名称须与被折扣行的商品名称相同 不能多行折扣',
+                                    'jldw' => changeNull($oneDetail['DW']),//'单位',
+                                    'shul' => changeNull($oneDetail['SPSL']),//'数量 6位小数',
+                                    'je' => changeNull($oneDetail['JE']),//'含税金额 2位小数',
+                                    'sl' => changeNull($oneDetail['SL']),//'税率 3位小数 例1%为0.010',
+                                    'se' => changeNull($oneDetail['SE']),//'税额 3位小数 例1%为0.010',
+                                    'dj' => changeNull($oneDetail['DJ']),//'不含税单价',
+                                    'ggxh' => changeNull($oneDetail['GGXH']),//'规格型号',
+                                    'mxxh' => $i_num,
+                                    'fpdm' => $dm,//'发票代码',
+                                    'fphm' => $hm,//'发票号码',
+                                    'fphxz' => changeNull($oneDetail['FPHXZ']),//'是否折扣行 0否 1是 默认0表示正常商品行',
+                                    'hsdj' => changeNull($oneDetail['HSDJ']),//'含税单价',
+                                ];
+                                $i_num++;
+                            }
+                        }
+                    }
+                }
 
-                $sql = <<<Eof
-CREATE TABLE `invoice_type2_0` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `fpdm` varchar(16) NOT NULL DEFAULT '' COMMENT '发票代码',
-  `fphm` varchar(16) NOT NULL DEFAULT '' COMMENT '发票号码',
-  `kplx` varchar(4) NOT NULL DEFAULT '' COMMENT '开票类型 0-蓝字 1-红字',
-  `xfsh` varchar(32) NOT NULL DEFAULT '' COMMENT '销售方纳税人识别号',
-  `xfmc` varchar(128) NOT NULL DEFAULT '' COMMENT '销售方名称',
-  `xfdzdh` varchar(128) NOT NULL DEFAULT '' COMMENT '销售方地址电话',
-  `xfyhzh` varchar(128) NOT NULL DEFAULT '' COMMENT '销售方银行账号',
-  `gfsh` varchar(32) NOT NULL DEFAULT '' COMMENT '购买方纳税人识别号',
-  `gfmc` varchar(128) NOT NULL DEFAULT '' COMMENT '购买方名称',
-  `gfdzdh` varchar(128) NOT NULL DEFAULT '' COMMENT '购买方地址电话',
-  `gfyhzh` varchar(128) NOT NULL DEFAULT '' COMMENT '购买方银行账号',
-  `gmflx` varchar(4) NOT NULL DEFAULT '' COMMENT '购买方类型 1企业 2个人 3其他',
-  `kpr` varchar(16) NOT NULL DEFAULT '' COMMENT '开票人',
-  `skr` varchar(16) NOT NULL DEFAULT '' COMMENT '收款人',
-  `fhr` varchar(16) NOT NULL DEFAULT '' COMMENT '复核人',
-  `yfpdm` varchar(16) NOT NULL DEFAULT '' COMMENT '原发票代码 kplx为1时必填',
-  `yfphm` varchar(16) NOT NULL DEFAULT '' COMMENT '原发票号码 kplx为1时必填',
-  `je` varchar(32) NOT NULL DEFAULT '' COMMENT '金额',
-  `se` varchar(32) NOT NULL DEFAULT '' COMMENT '税额',
-  `jshj` varchar(32) NOT NULL DEFAULT '' COMMENT '价税合计 单位元 2位小数',
-  `bz` varchar(256) NOT NULL DEFAULT '' COMMENT '备注',
-  `zfbz` varchar(4) NOT NULL DEFAULT '' COMMENT '作废标志 0-未作废 1-作废',
-  `zfsj` varchar(16) NOT NULL DEFAULT '' COMMENT '作废时间',
-  `kprq` varchar(16) NOT NULL DEFAULT '' COMMENT '开票日期',
-  `kprq_sort` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '排序用',
-  `fplx` varchar(4) NOT NULL DEFAULT '' COMMENT '发票类型代码 01 02 03 04 10 11 14 15',
-  `fpztDm` varchar(4) NOT NULL DEFAULT '' COMMENT '发票状态代码 0-正常 1-失控 2-作废 3-红字 4-异常票',
-  `slbz` varchar(4) NOT NULL DEFAULT '' COMMENT '税率标识 0-不含税税率 1-含税税率',
-  `rzdklBdjgDm` varchar(4) NOT NULL DEFAULT '' COMMENT '认证状态 0-未认证 1-已认证 2-已认证未抵扣',
-  `rzdklBdrq` varchar(16) NOT NULL DEFAULT '' COMMENT '认证日期',
-  `direction` varchar(4) NOT NULL DEFAULT '' COMMENT '01-购买方 02-销售方',
-  `nsrsbh` varchar(32) NOT NULL DEFAULT '' COMMENT '查询企业税号',
-  `jym` varchar(32) NOT NULL DEFAULT '' COMMENT '校验码',
-  `jqbh` varchar(32) NOT NULL DEFAULT '' COMMENT '机器编号',
-  `rzsq` varchar(16) NOT NULL DEFAULT '' COMMENT '认证归属期',
-  `rzfs` varchar(4) NOT NULL DEFAULT '' COMMENT '认证方式 1-勾选认证 2-扫描认证',
-  `gmfsf` varchar(32) NOT NULL DEFAULT '' COMMENT '购买方省份',
-  `gmfsj` varchar(16) NOT NULL DEFAULT '' COMMENT '购买方手机',
-  `gmfwx` varchar(64) NOT NULL DEFAULT '' COMMENT '购买方微信',
-  `gmfyx` varchar(64) NOT NULL DEFAULT '' COMMENT '购买方邮箱',
-  `qdbs` varchar(4) NOT NULL DEFAULT '' COMMENT '是否有销货清单 0否 1是 默认为0',
-  `created_at` int(11) unsigned NOT NULL DEFAULT '0',
-  `updated_at` int(11) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `fpdm_fphm_direction_index` (`fpdm`,`fphm`,`direction`) USING BTREE,
-  KEY `nsrsbh_direction_kprq_sort_index` (`nsrsbh`,`direction`,`kprq_sort`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='发票样式type2表';
-Eof;
-
-
-
-
-
-
-
-
-
+                //do insert
+                $conn = CreateConf::getInstance()->getConf('env.mysqlDatabaseEntDb');
+                try {
+                    DbManager::getInstance()->startTransaction($conn);
+                    //发票主表
+                    EntInvoice::create()->addSuffix($NSRSBH, $FPLXDM)->data($insert)->save();
+                    if (!empty($insert_detail)) {
+                        //发票明细表
+                        EntInvoiceDetail::create()->addSuffix($arr['FPDM'], $arr['FPHM'], $FPLXDM)
+                            ->saveAll($insert_detail, false, false);
+                    }
+                    DbManager::getInstance()->commit($conn);
+                } catch (\Throwable $e) {
+                    DbManager::getInstance()->rollback($conn);
+                    return CommonService::getInstance()->log4PHP([
+                        'data1' => $insert,
+                        'data2' => $insert_detail,
+                        'NSRSBH' => $NSRSBH,
+                        'FPLXDM' => $FPLXDM,
+                        'invType' => $invType,
+                        'error' => $e->getTraceAsString(),
+                    ], 'doinsert', 'inv_store_mysql_error.log');
+                }
             } else {
                 $wanghan = 1;
             }

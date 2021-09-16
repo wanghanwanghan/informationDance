@@ -25,7 +25,6 @@ class EntInvoice extends ModelBase
 
         $this->tableName(implode('_', [
             $this->tableName,
-            $type,
             $this->suffixNum($nsrsbh),
         ]));
 
