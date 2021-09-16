@@ -85,6 +85,10 @@ class GetInvData extends ProcessBase
             for ($page = 1; $page <= 999999; $page++) {
                 $res = (new DaXiangService())
                     ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
+                CommonService::getInstance()->log4PHP([
+                    'content里是啥',
+                    $res
+                ]);
                 $content = jsonDecode(base64_decode($res['content']));
                 if ($content['code'] === '0000' && !empty($content['data']['records'])) {
                     foreach ($content['data']['records'] as $row) {
