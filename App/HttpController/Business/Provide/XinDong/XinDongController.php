@@ -451,6 +451,7 @@ class XinDongController extends ProvideBase
             $this->csp->add($this->cspKey, function () use ($postData, $range, $ratio) {
                 return (new LongXinService())
                     ->setCheckRespFlag(true)
+                    ->setRangeIsYuan(true)
                     ->setRangeArr($range, $ratio)
                     ->getFinanceData($postData, true);
             });
