@@ -141,7 +141,9 @@ class DaXiangService extends ServiceBase
         //14通行费电子票
         //15二手车销售统一发票
 
-        return (new CoHttpClient())->useCache(false)->send($url . "?access_token={$token}", $arr, [], [], 'postjson');
+        return (new CoHttpClient())
+            ->useCache(false)
+            ->send($url . "?access_token={$token}", $arr, [], [], 'postjson');
     }
 }
 
