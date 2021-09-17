@@ -58,6 +58,7 @@ class GetInvData extends AbstractCronTask
             }
         }
 
+        $this->sendToAnt();
     }
 
     //通知蚂蚁
