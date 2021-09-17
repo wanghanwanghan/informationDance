@@ -21,6 +21,8 @@ class GetInvData extends ProcessBase
     const ProcessNum = 16;
 
     public $p_index;
+    public $currentAesKey;
+    public $iv = '1234567890abcdef';
     public $redisKey;
     public $readToSendAntFlag;
     public $oss_expire_time = 86400 * 7;
@@ -51,6 +53,7 @@ class GetInvData extends ProcessBase
                 \co::sleep(mt_rand(3, 9));
                 continue;
             }
+            $this->currentAesKey = $redis->hGet($this->readToSendAntFlag, 'current_aes_key');
             $this->getDataByEle(jsonDecode($entInRedis));
         }
     }
@@ -184,7 +187,10 @@ class GetInvData extends ProcessBase
                         ->all();
                     empty($detail) ? $oneInv->fpxxMxs = null : $oneInv->fpxxMxs = $detail;
                 }
-                file_put_contents($store . $filename, jsonEncode($list, false) . PHP_EOL, FILE_APPEND | LOCK_EX);
+                $content = jsonEncode($list, false);
+                //AES-128-CTR
+                $content = openssl_encrypt($content, 'AES-128-CTR', $this->currentAesKey, OPENSSL_RAW_DATA, $this->iv);
+                file_put_contents($store . $filename, $content . PHP_EOL, FILE_APPEND | LOCK_EX);
             }
         }
 

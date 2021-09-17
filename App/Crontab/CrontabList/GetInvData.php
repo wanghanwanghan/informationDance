@@ -8,10 +8,12 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\MaYi\MaYiService;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use EasySwoole\RedisPool\Redis;
+use wanghanwanghan\someUtils\control;
 
 class GetInvData extends AbstractCronTask
 {
     public $crontabBase;
+    public $currentAesKey;
     public $redisKey = 'readyToGetInvData_';
     public $readToSendAntFlag = 'readyToGetInvData_readToSendAntFlag_';
 
@@ -35,8 +37,12 @@ class GetInvData extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex)
     {
+        $this->currentAesKey = control::getUuid(16);
+
         $redis = Redis::defer('redis');
         $redis->select(15);
+
+        $redis->hset($this->readToSendAntFlag, 'current_aes_key', $this->currentAesKey);
 
         for ($i = 1; $i <= 999999; $i++) {
             $limit = 1000;
@@ -70,7 +76,7 @@ class GetInvData extends AbstractCronTask
                 \co::sleep(3);
                 continue;
             }
-            $this->sendToAnt();
+            $ret = $this->sendToAnt();
             break;
         }
 
@@ -78,9 +84,33 @@ class GetInvData extends AbstractCronTask
     }
 
     //通知蚂蚁
-    function sendToAnt()
+    function sendToAnt(): bool
     {
-        CommonService::getInstance()->log4PHP('正在通知蚂蚁');
+        //根据三个id，通知不同的url
+        $url_arr = [
+            36 => 'http://invoicecommercial.dev.dl.alipaydev.com/api/wezTech/collectNotify',
+            41 => 'http://invoicecommercial.dev.dl.alipaydev.com/api/wezTech/collectNotify',
+            42 => 'http://invoicecommercial.dev.dl.alipaydev.com/api/wezTech/collectNotify',
+        ];
+
+        $collectNotify = [
+            'body' => [
+                [
+                    'nsrsbh' => 'string // 授权的企业税号',
+                    'authTime' => 'string // 授权时间',
+                    'authResultCode' => 'string // 取数结果状态码 0000取数成功 XXXX取数失败',
+                    'companyName' => 'string // 公司名称',
+                    'fileSecret' => 'string // 对称钥秘⽂',
+                    'fileKeyList' => '[string] // ⽂件路径',
+                ],
+            ],
+            'head' => [
+                'sign' => 'string // 签名',
+                'notifyChannel' => 'string // 通知 渠道'
+            ],
+        ];
+
+        return true;
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
