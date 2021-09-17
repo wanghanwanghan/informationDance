@@ -4,7 +4,9 @@ namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
 use App\HttpController\Models\Api\AntAuthList;
+use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\MaYi\MaYiService;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use EasySwoole\RedisPool\Redis;
@@ -79,8 +81,6 @@ class GetInvData extends AbstractCronTask
             $ret = $this->sendToAnt();
             break;
         }
-
-        CommonService::getInstance()->log4PHP('通知蚂蚁完毕');
     }
 
     //通知蚂蚁
@@ -93,22 +93,69 @@ class GetInvData extends AbstractCronTask
             42 => 'http://invoicecommercial.dev.dl.alipaydev.com/api/wezTech/collectNotify',
         ];
 
-        $collectNotify = [
-            'body' => [
-                [
-                    'nsrsbh' => 'string // 授权的企业税号',
-                    'authTime' => 'string // 授权时间',
-                    'authResultCode' => 'string // 取数结果状态码 0000取数成功 XXXX取数失败',
-                    'companyName' => 'string // 公司名称',
-                    'fileSecret' => 'string // 对称钥秘⽂',
-                    'fileKeyList' => '[string] // ⽂件路径',
-                ],
-            ],
-            'head' => [
-                'sign' => 'string // 签名',
-                'notifyChannel' => 'string // 通知 渠道'
-            ],
-        ];
+        $total = AntAuthList::create()
+            ->where('belong', [36, 41, 42], 'IN')
+            ->count();
+
+        if (empty($total)) return false;
+
+        $totalPage = $total / 2000 + 1;
+
+        for ($page = 1; $page <= $totalPage; $page++) {
+            $offset = ($page - 1) * 2000;
+            $list = AntAuthList::create()
+                ->where('belong', [36, 41, 42], 'IN')
+                ->limit($offset, 2000)
+                ->all();
+            if (empty($list)) break;
+            foreach ($list as $oneReadyToSend) {
+                $lastReqTime = $oneReadyToSend->getAttr('lastReqTime');
+                //拿私钥
+                $id = $oneReadyToSend->getAttr('belong') - 0;
+                $info = RequestUserInfo::create()->get($id);
+                $rsa_pri_name = $info->getAttr('rsaPri');
+                //5天以内的才算取数成功
+                if (time() - $lastReqTime < 86400 * 5) {
+                    $authResultCode = '0000';
+                    //拿私钥加密
+                    $stream = file_get_contents(RSA_KEY_PATH . $rsa_pri_name);
+                    //AES加密key用RSA加密
+                    $fileSecret = control::rsaEncrypt($this->currentAesKey, $stream, 'pri');
+                    $fileKeyList = [
+                        $oneReadyToSend->getAttr('lastReqUrl')
+                    ];
+                } else {
+                    $authResultCode = '9999';
+                    $fileSecret = '';
+                    $fileKeyList = [];
+                }
+                $body = [
+                    'nsrsbh' => $oneReadyToSend->getAttr('socialCredit'),//授权的企业税号
+                    'authResultCode' => $authResultCode,//取数结果状态码 0000取数成功 XXXX取数失败
+                    'companyName' => $oneReadyToSend->getAttr('entName'),//公司名称
+                    'authTime' => $oneReadyToSend->getAttr('requestDate'),//授权时间
+                    'fileSecret' => $fileSecret,//对称钥秘⽂
+                    'fileKeyList' => $fileKeyList,//文件路径
+                ];
+                //sign md5 with rsa
+                $private_key = file_get_contents(RSA_KEY_PATH . $rsa_pri_name);
+                $pkeyid = openssl_get_privatekey($private_key);
+                $pkeyid = openssl_pkey_get_private($private_key);
+                $verify = openssl_sign(json_encode($body), $signature, $pkeyid, OPENSSL_ALGO_MD5);
+                //准备通知
+                $collectNotify = [
+                    'body' => [$body],
+                    'head' => [
+                        'sign' => $signature,//签名
+                        'notifyChannel' => '',//通知 渠道
+                    ],
+                ];
+                $url = $url_arr[$id];
+                $ret = (new CoHttpClient())
+                    ->useCache(false)
+                    ->send($url, $collectNotify);
+            }
+        }
 
         return true;
     }
