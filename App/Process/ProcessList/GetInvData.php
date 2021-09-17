@@ -132,7 +132,7 @@ class GetInvData extends ProcessBase
         return true;
     }
 
-    //上传到oss
+    //上传到oss 发票已经入完mysql
     function sendToOSS($NSRSBH)
     {
         //只有蚂蚁的税号才上传oss
