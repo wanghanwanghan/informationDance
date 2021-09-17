@@ -38,7 +38,7 @@ class GetInvData extends ProcessBase
         $this->p_index = current(current($all)) - 0;
         //要消费的队列名
         $this->redisKey = 'readyToGetInvData_' . $this->p_index;
-        $this->readToSendAntFlag = 'readyToGetInvData_readToSendAntFlag_' . $this->p_index;
+        $this->readToSendAntFlag = 'readyToGetInvData_readToSendAntFlag_';
         $redis = Redis::defer('redis');
         $redis->select(15);
 
@@ -46,7 +46,7 @@ class GetInvData extends ProcessBase
         while (true) {
             $entInRedis = $redis->rPop($this->redisKey);
             if (empty($entInRedis)) {
-                $redis->set($this->readToSendAntFlag, 0);
+                $redis->hset($this->readToSendAntFlag, $this->readToSendAntFlag . $this->p_index, 0);
                 mt_srand();
                 \co::sleep(mt_rand(3, 9));
                 continue;

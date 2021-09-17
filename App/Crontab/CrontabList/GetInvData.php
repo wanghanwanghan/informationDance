@@ -54,7 +54,7 @@ class GetInvData extends AbstractCronTask
                 //放到redis队列
                 $key = $this->redisKey . $suffix;
                 $redis->lPush($key, jsonEncode($one, false));
-                $redis->set($this->readToSendAntFlag . $suffix, 1);
+                $redis->hset($this->readToSendAntFlag, $this->readToSendAntFlag . $suffix, 1);
             }
         }
 
