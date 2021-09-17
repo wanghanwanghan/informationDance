@@ -363,7 +363,7 @@ class GetInvData extends ProcessBase
                         'FPLXDM' => $FPLXDM,
                         'invType' => $invType,
                         'error' => $e->getTraceAsString(),
-                    ], 'doinsert', 'inv_store_mysql_error.log');
+                    ], 'doinsertDetail', 'inv_store_mysql_error.log');
                 }
             } elseif ($FPLXDM === 'type2') {
                 //一张发票只属于一个公司的进项和另一个公司的销项
@@ -474,7 +474,7 @@ class GetInvData extends ProcessBase
                         'FPLXDM' => $FPLXDM,
                         'invType' => $invType,
                         'error' => $e->getTraceAsString(),
-                    ], 'doinsert', 'inv_store_mysql_error.log');
+                    ], 'doinsertDetail', 'inv_store_mysql_error.log');
                 }
             } else {
                 $wanghan = 1;
@@ -488,7 +488,7 @@ class GetInvData extends ProcessBase
                 'errorTrace' => $e->getTraceAsString(),
                 'errorLine' => $e->getLine(),
                 'errorMsg' => $e->getMessage(),
-            ], 'info', 'inv_store_mysql_error.log');
+            ], 'doinsert', 'inv_store_mysql_error.log');
         }
 
         return true;
