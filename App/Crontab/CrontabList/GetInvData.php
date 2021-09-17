@@ -58,6 +58,7 @@ class GetInvData extends AbstractCronTask
             }
         }
 
+        //判断 $this->readToSendAntFlag 里是不是都是0，0代表没有处理的任务
         $this->sendToAnt();
     }
 
