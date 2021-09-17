@@ -430,7 +430,8 @@ class GetInvData extends ProcessBase
                 'NSRSBH' => $NSRSBH,
                 'FPLXDM' => $FPLXDM,
                 'invType' => $invType,
-                'error' => $e->getTraceAsString(),
+                'errorTrace' => $e->getTraceAsString(),
+                'errorMsg' => $e->getMessage(),
             ], 'info', 'inv_store_mysql_error.log');
         }
 
