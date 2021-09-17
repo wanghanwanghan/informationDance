@@ -189,7 +189,7 @@ class GetInvData extends ProcessBase
                 }
                 $content = jsonEncode($list, false);
                 //AES-128-CTR
-                $content = openssl_encrypt($content, 'AES-128-CTR', $this->currentAesKey, OPENSSL_RAW_DATA, $this->iv);
+                $content = base64_encode(openssl_encrypt($content, 'AES-128-CTR', $this->currentAesKey, OPENSSL_RAW_DATA, $this->iv));
                 file_put_contents($store . $filename, $content . PHP_EOL, FILE_APPEND | LOCK_EX);
             }
         }
