@@ -13,6 +13,7 @@ class GetInvData extends AbstractCronTask
 {
     public $crontabBase;
     public $redisKey = 'readyToGetInvData_';
+    public $readToSendAntFlag = 'readyToGetInvData_readToSendAntFlag_';
 
     //每次执行任务都会执行构造函数
     function __construct()
@@ -53,8 +54,16 @@ class GetInvData extends AbstractCronTask
                 //放到redis队列
                 $key = $this->redisKey . $suffix;
                 $redis->lPush($key, jsonEncode($one, false));
+                $redis->set($this->readToSendAntFlag . $suffix, 1);
             }
         }
+
+    }
+
+    //通知蚂蚁
+    function sendToAnt()
+    {
+
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)

@@ -22,6 +22,7 @@ class GetInvData extends ProcessBase
 
     public $p_index;
     public $redisKey;
+    public $readToSendAntFlag;
     public $oss_expire_time = 86400 * 7;
     public $oss_bucket = 'invoice-mrxd';
     public $taxNo = '140301321321333';//91110108MA01KPGK0L
@@ -37,6 +38,7 @@ class GetInvData extends ProcessBase
         $this->p_index = current(current($all)) - 0;
         //要消费的队列名
         $this->redisKey = 'readyToGetInvData_' . $this->p_index;
+        $this->readToSendAntFlag = 'readyToGetInvData_readToSendAntFlag_' . $this->p_index;
         $redis = Redis::defer('redis');
         $redis->select(15);
 
@@ -44,6 +46,7 @@ class GetInvData extends ProcessBase
         while (true) {
             $entInRedis = $redis->rPop($this->redisKey);
             if (empty($entInRedis)) {
+                $redis->set($this->readToSendAntFlag, 0);
                 mt_srand();
                 \co::sleep(mt_rand(3, 9));
                 continue;
@@ -216,12 +219,6 @@ class GetInvData extends ProcessBase
         }
 
         return true;
-    }
-
-    //通知蚂蚁
-    function sendToAnt()
-    {
-
     }
 
     function writeFile(array $row, string $NSRSBH, string $invType, string $FPLXDM): bool
