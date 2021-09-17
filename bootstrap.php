@@ -209,6 +209,14 @@ function sqlRaw(string $sql, string $conn): ?array
     return $res['result'];
 }
 
+//随机字符串
+function getRandomStr($len = 16): string
+{
+    mt_srand();
+    $char_set = array_merge(range('a', 'z'), range('A', 'Z'), range('0', '9'));
+    shuffle($char_set);
+    return implode('', array_slice($char_set, 0, $len));
+}
 
 
 

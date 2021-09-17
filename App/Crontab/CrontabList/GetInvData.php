@@ -37,7 +37,7 @@ class GetInvData extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex)
     {
-        $this->currentAesKey = control::getUuid(16);
+        $this->currentAesKey = getRandomStr();
 
         $redis = Redis::defer('redis');
         $redis->select(15);
