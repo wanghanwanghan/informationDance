@@ -59,13 +59,28 @@ class GetInvData extends AbstractCronTask
         }
 
         //判断 $this->readToSendAntFlag 里是不是都是0，0代表没有处理的任务
-        $this->sendToAnt();
+        while (true) {
+            $flag_arr = [];
+            $num = \App\Process\ProcessList\GetInvData::ProcessNum;
+            for ($i = $num; $i--;) {
+                $flag = $redis->hGet($this->readToSendAntFlag, $this->readToSendAntFlag . $num) - 0;
+                $flag !== 0 ?: $flag_arr[] = $flag;
+            }
+            if (count($flag_arr) !== $num) {
+                \co::sleep(3);
+                continue;
+            }
+            $this->sendToAnt();
+            break;
+        }
+
+        CommonService::getInstance()->log4PHP('通知蚂蚁完毕');
     }
 
     //通知蚂蚁
     function sendToAnt()
     {
-
+        CommonService::getInstance()->log4PHP('正在通知蚂蚁');
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
