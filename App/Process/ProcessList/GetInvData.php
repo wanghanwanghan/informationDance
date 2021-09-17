@@ -87,7 +87,7 @@ class GetInvData extends ProcessBase
                     ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
                 if (!isset($res['content'])) {
                     CommonService::getInstance()->log4PHP($res, 'getInv', 'inv_store_mysql_error.log');
-                    continue;
+                    break;
                 }
                 $content = jsonDecode(base64_decode($res['content']));
                 if ($content['code'] === '0000' && !empty($content['data']['records'])) {
@@ -111,7 +111,7 @@ class GetInvData extends ProcessBase
                     ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
                 if (!isset($res['content'])) {
                     CommonService::getInstance()->log4PHP($res, 'getInv', 'inv_store_mysql_error.log');
-                    continue;
+                    break;
                 }
                 $content = jsonDecode(base64_decode($res['content']));
                 if ($content['code'] === '0000' && !empty($content['data']['records'])) {
