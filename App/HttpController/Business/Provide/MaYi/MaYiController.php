@@ -141,7 +141,7 @@ class MaYiController extends Index
         $data['idCard'] = $tmp['body']['idCard'] ?? '';
         $data['phone'] = $tmp['body']['mobile'] ?? '';
         $data['requestId'] = control::getUuid();
-        $data['belong'] = 0;
+        $data['belong'] = $userInfo->getAttr('id');
 
         $res = (new MaYiService())->authEnt($data);
 

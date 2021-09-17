@@ -2,7 +2,10 @@
 
 use App\Command\CommandList\TestCommand;
 use App\HttpController\Service\Common\CommonService;
+use App\Services\Log\Log;
 use EasySwoole\EasySwoole\Command\CommandContainer;
+use EasySwoole\Mysqli\QueryBuilder;
+use EasySwoole\ORM\DbManager;
 
 //bootstrap 允许在框架未初始化之前，初始化其他业务
 
@@ -191,7 +194,20 @@ function changeNull($data)
     return strlen($data) === 0 ? '' : $data;
 }
 
-
+//执行sql
+function sqlRaw(string $sql, string $conn): ?array
+{
+    try {
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->raw($sql);
+        $res = DbManager::getInstance()
+            ->query($queryBuilder, true, $conn)
+            ->toArray();
+    } catch (\Throwable $e) {
+        return null;
+    }
+    return $res['result'];
+}
 
 
 

@@ -85,6 +85,10 @@ class GetInvData extends ProcessBase
             for ($page = 1; $page <= 999999; $page++) {
                 $res = (new DaXiangService())
                     ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
+                if (!isset($res['content'])) {
+                    CommonService::getInstance()->log4PHP($res, 'getInv', 'inv_store_mysql_error.log');
+                    continue;
+                }
                 $content = jsonDecode(base64_decode($res['content']));
                 if ($content['code'] === '0000' && !empty($content['data']['records'])) {
                     foreach ($content['data']['records'] as $row) {
@@ -105,6 +109,10 @@ class GetInvData extends ProcessBase
             for ($page = 1; $page <= 999999; $page++) {
                 $res = (new DaXiangService())
                     ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
+                if (!isset($res['content'])) {
+                    CommonService::getInstance()->log4PHP($res, 'getInv', 'inv_store_mysql_error.log');
+                    continue;
+                }
                 $content = jsonDecode(base64_decode($res['content']));
                 if ($content['code'] === '0000' && !empty($content['data']['records'])) {
                     foreach ($content['data']['records'] as $row) {
@@ -118,26 +126,75 @@ class GetInvData extends ProcessBase
             }
         }
 
-        //通知蚂蚁
-        $this->sendToAnt($NSRSBH);
+        //上传到oss
+        $this->sendToOSS($NSRSBH);
 
         return true;
     }
 
-    //上传到oss并且通知蚂蚁
-    function sendToAnt($NSRSBH)
+    //上传到oss
+    function sendToOSS($NSRSBH)
     {
-        $dir = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR;
+        //只有蚂蚁的税号才上传oss
+        //蚂蚁区块链dev id 36
+        //蚂蚁区块链pre id 41
+        //蚂蚁区块链pro id 42
 
+        $info = AntAuthList::create()
+            ->where('belong', [36, 41, 42], 'IN')
+            ->where('socialCredit', $NSRSBH)
+            ->get();
+
+        if (empty($info)) return false;
+
+        $store = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR;
+        is_dir($store) || mkdir($store, 0755, true);
+
+        //取全部发票写入文件
+        $total = EntInvoice::create()
+            ->addSuffix($NSRSBH, 'wusuowei')
+            ->where('nsrsbh', $NSRSBH)
+            ->count();
+
+        if (empty($total)) {
+            $filename = $NSRSBH . "_page_1.json";
+            file_put_contents($store . $filename, '', FILE_APPEND | LOCK_EX);
+        } else {
+            $totalPage = $total / 3000 + 1;
+            //每个文件存3000张发票
+            for ($page = 1; $page <= $totalPage; $page++) {
+                //每个文件存3000张发票
+                $filename = $NSRSBH . "_page_{$page}.json";
+                $offset = ($page - 1) * 3000;
+                $list = EntInvoice::create()
+                    ->addSuffix($NSRSBH, 'wusuowei')
+                    ->where('nsrsbh', $NSRSBH)
+                    ->limit($offset, 3000)
+                    ->all();
+                //没有数据了
+                if (empty($list)) break;
+                foreach ($list as $oneInv) {
+                    //每张添加明细
+                    $detail = EntInvoiceDetail::create()
+                        ->addSuffix($oneInv->getAttr('fpdm'), $oneInv->getAttr('fphm'), 'wusuowei')
+                        ->where(['fpdm' => $oneInv->getAttr('fpdm') - 0, 'fphm' => $oneInv->getAttr('fphm') - 0])
+                        ->all();
+                    empty($detail) ? $oneInv->fpxxMxs = null : $oneInv->fpxxMxs = $detail;
+                }
+                file_put_contents($store . $filename, jsonEncode($list, false) . PHP_EOL, FILE_APPEND | LOCK_EX);
+            }
+        }
+
+        //上传oss
         $file_arr = [];
 
-        if ($dh = opendir($dir)) {
+        if ($dh = opendir($store)) {
             $ignore = [
                 '.', '..', '.gitignore',
             ];
             while (false !== ($file = readdir($dh))) {
                 if (!in_array($file, $ignore, true)) {
-                    $file_arr[] = $dir . $file;
+                    $file_arr[] = $store . $file;
                 }
             }
         }
@@ -145,7 +202,7 @@ class GetInvData extends ProcessBase
 
         if (!empty($file_arr)) {
             $name = Carbon::now()->format('Ym') . "_{$NSRSBH}.zip";
-            $zip_file_name = ZipService::getInstance()->zip($file_arr, $dir . $name, true);
+            $zip_file_name = ZipService::getInstance()->zip($file_arr, $store . $name, true);
             $oss_file_name = OSSService::getInstance()
                 ->doUploadFile($this->oss_bucket, $name, $zip_file_name, $this->oss_expire_time);
             //更新上次取数时间和oss地址
@@ -156,24 +213,21 @@ class GetInvData extends ProcessBase
                     'lastReqUrl' => $oss_file_name,
                 ]);
         }
+
+        return true;
+    }
+
+    //通知蚂蚁
+    function sendToAnt()
+    {
+
     }
 
     function writeFile(array $row, string $NSRSBH, string $invType, string $FPLXDM): bool
     {
-        $store = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR;
-
-        $filename = $NSRSBH . "_{$FPLXDM}_{$invType}.json";
-
-        is_dir($store) || mkdir($store, 0755, true);
-
-        if (empty($row)) {
-            $content = '' . PHP_EOL;
-        } else {
+        if (!empty($row)) {
             $this->storeMysql($row, $NSRSBH, $FPLXDM, $invType);
-            $content = jsonEncode($row, false) . PHP_EOL;
         }
-
-        file_put_contents($store . $filename, $content, FILE_APPEND | LOCK_EX);
 
         return true;
     }
