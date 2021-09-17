@@ -431,6 +431,7 @@ class GetInvData extends ProcessBase
                 'FPLXDM' => $FPLXDM,
                 'invType' => $invType,
                 'errorTrace' => $e->getTraceAsString(),
+                'errorLine' => $e->getLine(),
                 'errorMsg' => $e->getMessage(),
             ], 'info', 'inv_store_mysql_error.log');
         }
