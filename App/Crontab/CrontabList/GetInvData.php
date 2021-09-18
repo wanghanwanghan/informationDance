@@ -146,7 +146,7 @@ class GetInvData extends AbstractCronTask
                     'body' => [$body],
                     'head' => [
                         'sign' => base64_encode($signature),//签名
-                        'notifyChannel' => '',//通知 渠道
+                        'notifyChannel' => 'ELEPHANT',//通知 渠道
                     ],
                 ];
                 $url = $url_arr[$id];
