@@ -154,6 +154,15 @@ class GetInvData extends AbstractCronTask
                 $ret = (new CoHttpClient())
                     ->useCache(false)
                     ->send($url, $collectNotify);
+
+                CommonService::getInstance()->log4PHP([
+                    '给蚂蚁发送http',
+                    $collectNotify
+                ]);
+                CommonService::getInstance()->log4PHP([
+                    '蚂蚁返回http内容',
+                    $ret
+                ]);
             }
         }
 

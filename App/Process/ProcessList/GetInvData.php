@@ -88,48 +88,52 @@ class GetInvData extends ProcessBase
         //进项
         foreach ($FPLXDMS as $FPLXDM) {
             $KM = '1';
-            for ($page = 1; $page <= 999999; $page++) {
-                $res = (new DaXiangService())
-                    ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
-                if (!isset($res['content'])) {
-                    CommonService::getInstance()->log4PHP($res, 'getInv', 'inv_store_mysql_error.log');
-                    break;
-                }
-                $content = jsonDecode(base64_decode($res['content']));
-                if ($content['code'] === '0000' && !empty($content['data']['records'])) {
-                    foreach ($content['data']['records'] as $row) {
-                        $this->writeFile($row, $NSRSBH, 'in', $FPLXDM);
-                    }
-                } else {
-                    $info = "{$NSRSBH} : page={$page} KM={$KM} FPLXDM={$FPLXDM} KPKSRQ={$KPKSRQ} KPJSRQ={$KPJSRQ}";
-                    CommonService::getInstance()->log4PHP($info);
-                    $this->writeFile([], $NSRSBH, 'in', $FPLXDM);
-                    break;
-                }
-            }
+            $row = jsonDecode('{"FPDM":"6100193130","FPHM":"19080618","KPRQ":"2021-04-12","FPLXDM":"01","JYM":"60528157992286950909","JQBH":null,"HJJE":"47169.81","HJSE":"2830.19","JSHJ":"50000.00","FPZT":"2","HLPBS":"0","YFPDM":"","YFPHM":"","SKR":"","FHR":"","KPR":"","BZ":"","RZZT":"0","RZRQ":null,"RZSQ":null,"RZFS":null,"GMFYHZH":"购方银行账号9999999999999999","GMFMC":"测试专用购方名称","GMFSBH":"911199999999CN0008","GMFLX":null,"GMFSF":null,"GMFSJ":null,"GMFWX":null,"GMFYX":null,"GMFDZDH":"购方地址电话11111111111","XHFMC":"测试专用销方名称","XHFSBH":"911199999999CN0007","XHFDZDH":"销方地址电话888888888888","XHFYHZH":"销方银行账号77777777777","QDBS":null,"FPMX":[{"FPHXZ":"0","SPBM":null,"SPMC":"*金融服务*担保费","GGXH":"","DW":"","SPSL":"1","DJ":"47169.811320754716981","HSDJ":null,"JE":"47169.81","SL":"0.06","SE":"2830.19"}]}', true);
+            $this->writeFile($row, $NSRSBH, 'in', $FPLXDM);
+//            for ($page = 1; $page <= 999999; $page++) {
+//                $res = (new DaXiangService())
+//                    ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
+//                if (!isset($res['content'])) {
+//                    CommonService::getInstance()->log4PHP($res, 'getInv', 'inv_store_mysql_error.log');
+//                    break;
+//                }
+//                $content = jsonDecode(base64_decode($res['content']));
+//                if ($content['code'] === '0000' && !empty($content['data']['records'])) {
+//                    foreach ($content['data']['records'] as $row) {
+//                        $this->writeFile($row, $NSRSBH, 'in', $FPLXDM);
+//                    }
+//                } else {
+//                    $info = "{$NSRSBH} : page={$page} KM={$KM} FPLXDM={$FPLXDM} KPKSRQ={$KPKSRQ} KPJSRQ={$KPJSRQ}";
+//                    CommonService::getInstance()->log4PHP($info);
+//                    $this->writeFile([], $NSRSBH, 'in', $FPLXDM);
+//                    break;
+//                }
+//            }
         }
 
         //销项
         foreach ($FPLXDMS as $FPLXDM) {
             $KM = '2';
-            for ($page = 1; $page <= 999999; $page++) {
-                $res = (new DaXiangService())
-                    ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
-                if (!isset($res['content'])) {
-                    CommonService::getInstance()->log4PHP($res, 'getInv', 'inv_store_mysql_error.log');
-                    break;
-                }
-                $content = jsonDecode(base64_decode($res['content']));
-                if ($content['code'] === '0000' && !empty($content['data']['records'])) {
-                    foreach ($content['data']['records'] as $row) {
-                        $this->writeFile($row, $NSRSBH, 'out', $FPLXDM);
-                    }
-                } else {
-                    $info = "{$NSRSBH} : page={$page} KM={$KM} FPLXDM={$FPLXDM} KPKSRQ={$KPKSRQ} KPJSRQ={$KPJSRQ}";
-                    CommonService::getInstance()->log4PHP($info);
-                    break;
-                }
-            }
+            $row = jsonDecode('{"FPDM":"3600202130","FPHM":"06434108","KPRQ":"2021-04-12","FPLXDM":"01","JYM":"55546475513300096455","JQBH":null,"HJJE":"94339.62","HJSE":"5660.38","JSHJ":"100000.00","FPZT":"2","HLPBS":"0","YFPDM":"","YFPHM":"","SKR":"","FHR":"","KPR":"","BZ":"","RZZT":"0","RZRQ":null,"RZSQ":null,"RZFS":null,"GMFYHZH":"购方银行账号9999999999999999","GMFMC":"测试专用购方名称","GMFSBH":"911199999999CN0008","GMFLX":null,"GMFSF":null,"GMFSJ":null,"GMFWX":null,"GMFYX":null,"GMFDZDH":"购方地址电话11111111111","XHFMC":"测试专用销方名称","XHFSBH":"911199999999CN0007","XHFDZDH":"销方地址电话888888888888","XHFYHZH":"销方银行账号77777777777","QDBS":null,"FPMX":[{"FPHXZ":"0","SPBM":null,"SPMC":"*信息技术服务*信息技术服务","GGXH":"","DW":"次","SPSL":"1","DJ":"94339.622641509433962","HSDJ":null,"JE":"94339.62","SL":"0.06","SE":"5660.38"}]}', true);
+            $this->writeFile($row, $NSRSBH, 'out', $FPLXDM);
+//            for ($page = 1; $page <= 999999; $page++) {
+//                $res = (new DaXiangService())
+//                    ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
+//                if (!isset($res['content'])) {
+//                    CommonService::getInstance()->log4PHP($res, 'getInv', 'inv_store_mysql_error.log');
+//                    break;
+//                }
+//                $content = jsonDecode(base64_decode($res['content']));
+//                if ($content['code'] === '0000' && !empty($content['data']['records'])) {
+//                    foreach ($content['data']['records'] as $row) {
+//                        $this->writeFile($row, $NSRSBH, 'out', $FPLXDM);
+//                    }
+//                } else {
+//                    $info = "{$NSRSBH} : page={$page} KM={$KM} FPLXDM={$FPLXDM} KPKSRQ={$KPKSRQ} KPJSRQ={$KPJSRQ}";
+//                    CommonService::getInstance()->log4PHP($info);
+//                    break;
+//                }
+//            }
         }
 
         //上传到oss
