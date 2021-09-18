@@ -14,91 +14,24 @@ use wanghanwanghan\someUtils\control;
 class DaXiangService extends ServiceBase
 {
     public $taxNo;
-    public $key;
-    public $keyTest;
-    public $url;
-    public $urlTest;
+    public $appKey;
+    public $appSecret;
 
     function __construct()
     {
         parent::__construct();
 
         $this->taxNo = '91110108MA01KPGK0L';
-        $this->appKey = CreateConf::getInstance()->getConf('guopiao.key');
-        $this->appKeyTest = 'FqLHA2j4XL52x5yPOk5nPki6';
-        $this->appSecret = CreateConf::getInstance()->getConf('guopiao.key');
-        $this->appSecretTest = 'pw6X9obZGMPVsxQ5TBP76qRW';
-        $this->url = CreateConf::getInstance()->getConf('guopiao.url');
-        $this->urlTest = 'https://sandbox.ele-cloud.com/api/authen/token';
+        $this->appKey = 'JczSaWGP76LYdIOfHds52Thk';
+        $this->appSecret = 'BszCebdj6nOglZLBrYYUspWl';
 
         return true;
     }
 
-    private function encrypt($str, $isTest = false)
-    {
-        $isTest === true ? $key = $this->keyTest : $key = $this->key;
-        return openssl_encrypt($str, 'aes-128-ecb', $key, OPENSSL_RAW_DATA);
-    }
-
-    private function decrypt($str, $isTest = false)
-    {
-        $isTest === true ? $key = $this->keyTest : $key = $this->key;
-        return openssl_decrypt($str, 'aes-128-ecb', $key, OPENSSL_RAW_DATA);
-    }
-
-    private function checkResp($res, $type)
-    {
-        if (isset($res['data']['total']) &&
-            isset($res['data']['pageSize']) &&
-            isset($res['data']['currentPage'])) {
-            $res['Paging'] = [
-                'page' => $res['data']['currentPage'],
-                'pageSize' => $res['data']['pageSize'],
-                'total' => $res['data']['total'],
-            ];
-        } else {
-            $res['Paging'] = null;
-        }
-
-        if (isset($res['coHttpErr'])) return $this->createReturn(500, $res['Paging'], [], 'co请求错误');
-
-        (int)$res['code'] === 0 ? $res['code'] = 200 : $res['code'] = 600;
-
-        //拿结果
-        switch ($type) {
-            case 'getReceiptDetailByClient':
-            case 'getReceiptDetailByCert':
-                $res['Result'] = $res['data']['invoices'];
-                break;
-            case 'getInvoiceOcr':
-                $res['Result'] = empty($res['data']) ? null : current($res['data']);
-                break;
-            case 'getTaxInvoiceUpgrade':
-            case 'getInvoiceMain':
-            case 'getInvoiceGoods':
-            case 'getEssential':
-                $res['Result'] = empty($res['data']) ? null : $res['data'];
-                break;
-            case 'getIncometaxMonthlyDeclaration':
-            case 'getIncometaxAnnualReport':
-            case 'getFinanceIncomeStatementAnnualReport':
-            case 'getFinanceIncomeStatement':
-            case 'getFinanceBalanceSheetAnnual':
-            case 'getFinanceBalanceSheet':
-            case 'getVatReturn':
-                $res['Result'] = is_string($res['data']) ? jsonDecode($res['data']) : $res['data'];
-                break;
-            default:
-                $res['Result'] = null;
-        }
-
-        return $this->createReturn($res['code'], $res['Paging'], $res['Result'], $res['msg'] ?? null);
-    }
-
     private function createToken(): string
     {
-        $appKey = 'Mlfs7n9kofqPMaNVJSFoDcwS';// || 'JczSaWGP76LYdIOfHds52Thk';
-        $appSecret = 'awSW7gts8AS4StGV84HCKVCf';// || 'BszCebdj6nOglZLBrYYUspWl';
+        $appKey = 'Mlfs7n9kofqPMaNVJSFoDcwS';
+        $appSecret = 'awSW7gts8AS4StGV84HCKVCf';
 
         $token_info = (new CoHttpClient())
             ->useCache(false)
