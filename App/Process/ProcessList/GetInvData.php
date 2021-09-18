@@ -175,6 +175,39 @@ class GetInvData extends ProcessBase
                 $list = EntInvoice::create()
                     ->addSuffix($NSRSBH, 'wusuowei')
                     ->where('nsrsbh', $NSRSBH)
+                    ->field([
+                        'fpdm',
+                        'fphm',
+                        'kplx',
+                        'xfsh',
+                        'xfmc',
+                        'xfdzdh',
+                        'xfyhzh',
+                        'gfsh',
+                        'gfmc',
+                        'gfdzdh',
+                        'gfyhzh',
+                        'gmflx',
+                        'kpr',
+                        'skr',
+                        'fhr',
+                        'yfpdm',
+                        'yfphm',
+                        'je',
+                        'se',
+                        'jshj',
+                        'bz',
+                        'zfbz',
+                        'zfsj',
+                        'kprq',
+                        'fplx',
+                        'fpztDm',
+                        'slbz',
+                        'rzdklBdjgDm',
+                        'rzdklBdrq',
+                        'direction',
+                        'nsrsbh',
+                    ])
                     ->limit($offset, 3000)
                     ->all();
                 //没有数据了
@@ -184,6 +217,18 @@ class GetInvData extends ProcessBase
                     $detail = EntInvoiceDetail::create()
                         ->addSuffix($oneInv->getAttr('fpdm'), $oneInv->getAttr('fphm'), 'wusuowei')
                         ->where(['fpdm' => $oneInv->getAttr('fpdm') - 0, 'fphm' => $oneInv->getAttr('fphm') - 0])
+                        ->field([
+                            'spbm',
+                            'mc',
+                            'jldw',
+                            'shul',
+                            'je',
+                            'sl',
+                            'se',
+                            'mxxh',
+                            'dj',
+                            'ggxh',
+                        ])
                         ->all();
                     empty($detail) ? $oneInv->fpxxMxs = null : $oneInv->fpxxMxs = $detail;
                 }
