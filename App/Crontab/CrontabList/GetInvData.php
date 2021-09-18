@@ -137,11 +137,24 @@ class GetInvData extends AbstractCronTask
                     'fileSecret' => $fileSecret,//对称钥秘⽂
                     'fileKeyList' => $fileKeyList,//文件路径
                 ];
+                CommonService::getInstance()->log4PHP([
+                    '准备发送的body' => $body
+                ]);
                 //sign md5 with rsa
                 $private_key = file_get_contents(RSA_KEY_PATH . $rsa_pri_name);
-                $pkeyid = openssl_get_privatekey($private_key);
+                CommonService::getInstance()->log4PHP([
+                    'rsa_pri_路径' => RSA_KEY_PATH . $rsa_pri_name,
+                    'private_key' => $private_key,
+                ]);
                 $pkeyid = openssl_pkey_get_private($private_key);
+                CommonService::getInstance()->log4PHP([
+                    '$pkeyid' => $pkeyid
+                ]);
                 $verify = openssl_sign(json_encode($body), $signature, $pkeyid, OPENSSL_ALGO_MD5);
+                CommonService::getInstance()->log4PHP([
+                    'signature' => $signature,
+                    'verify' => $verify,
+                ]);
                 //准备通知
                 $collectNotify = [
                     'body' => [$body],
@@ -151,8 +164,7 @@ class GetInvData extends AbstractCronTask
                     ],
                 ];
                 CommonService::getInstance()->log4PHP([
-                    '给蚂蚁发送http',
-                    $collectNotify
+                    'collectNotify' => $collectNotify,
                 ]);
                 $url = $url_arr[$id];
                 $ret = (new CoHttpClient())
