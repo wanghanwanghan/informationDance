@@ -15,8 +15,13 @@ class QiXiangYunService extends ServiceBase
     {
         $this->baseUrl = CreateConf::getInstance()->getConf('qixiangyun.baseUrl');
         $this->testBaseUrl = CreateConf::getInstance()->getConf('qixiangyun.testBaseUrl');
+
         $this->appkey = CreateConf::getInstance()->getConf('qixiangyun.appkey');
+        $this->testAppkey = CreateConf::getInstance()->getConf('qixiangyun.testAppkey');
+
         $this->secret = CreateConf::getInstance()->getConf('qixiangyun.secret');
+        $this->testSecret = CreateConf::getInstance()->getConf('qixiangyun.testSecret');
+
         return parent::__construct();
     }
 
@@ -36,8 +41,8 @@ class QiXiangYunService extends ServiceBase
 
         $data = [
             'grant_type' => 'client_credentials',
-            'client_appkey' => $this->appkey,
-            'client_secret' => md5($this->secret),
+            'client_appkey' => $this->testAppkey,
+            'client_secret' => md5($this->testSecret),
         ];
 
         $header = [
@@ -74,9 +79,9 @@ class QiXiangYunService extends ServiceBase
 
         $token = $this->createToken();
 
-        $sign = base64_encode(md5('POST_' . md5(json_encode($data)) . '_' . $req_date . '_' . $token . '_' . $this->secret));
+        $sign = base64_encode(md5('POST_' . md5(json_encode($data)) . '_' . $req_date . '_' . $token . '_' . $this->testSecret));
 
-        $req_sign = "API-SV1:{$this->appkey}:" . $sign;
+        $req_sign = "API-SV1:{$this->testAppkey}:" . $sign;
 
         $header = [
             'content-type' => 'application/json;charset=UTF-8',
@@ -106,9 +111,9 @@ class QiXiangYunService extends ServiceBase
 
         $token = $this->createToken();
 
-        $sign = base64_encode(md5('POST_' . md5(json_encode($data)) . '_' . $req_date . '_' . $token . '_' . $this->secret));
+        $sign = base64_encode(md5('POST_' . md5(json_encode($data)) . '_' . $req_date . '_' . $token . '_' . $this->testSecret));
 
-        $req_sign = "API-SV1:{$this->appkey}:" . $sign;
+        $req_sign = "API-SV1:{$this->testAppkey}:" . $sign;
 
         $header = [
             'content-type' => 'application/json;charset=UTF-8',
@@ -155,9 +160,9 @@ class QiXiangYunService extends ServiceBase
 
         $token = $this->createToken();
 
-        $sign = base64_encode(md5('POST_' . md5(json_encode($data)) . '_' . $req_date . '_' . $token . '_' . $this->secret));
+        $sign = base64_encode(md5('POST_' . md5(json_encode($data)) . '_' . $req_date . '_' . $token . '_' . $this->testSecret));
 
-        $req_sign = "API-SV1:{$this->appkey}:" . $sign;
+        $req_sign = "API-SV1:{$this->testAppkey}:" . $sign;
 
         $header = [
             'content-type' => 'application/json;charset=UTF-8',
