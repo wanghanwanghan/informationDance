@@ -211,6 +211,9 @@ class GetInvData extends ProcessBase
 
         if (!empty($file_arr)) {
             $name = Carbon::now()->format('Ym') . "_{$NSRSBH}.zip";
+            if (file_exists($store . $name)) {
+                unlink($store . $name);
+            }
             $zip_file_name = ZipService::getInstance()->zip($file_arr, $store . $name, true);
             $oss_file_name = OSSService::getInstance()
                 ->doUploadFile($this->oss_bucket, $name, $zip_file_name, $this->oss_expire_time);
