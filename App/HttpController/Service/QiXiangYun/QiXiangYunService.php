@@ -125,5 +125,53 @@ class QiXiangYunService extends ServiceBase
         return $this->check($res['value']);
     }
 
+    //获取发票
+    function getInv(string $nsrsbh, string $kpyf, string $jxxbz, string $fplx, string $page)
+    {
+        //01	增值税专用发票
+        //03	机动车销售统一发票
+        //04	增值税普通发票
+        //08	增值税电子专用发票
+        //10	增值税普票发票（电子）
+        //11	增值税普票发票（卷票）
+        //14	通行费发票
+        //15	二手车统一销售发票
+        //17	海关缴款书
+
+        $url = $this->testBaseUrl . 'FP/cj';
+
+        $data = [
+            'nsrsbh' => $nsrsbh,
+            'kpyf' => $kpyf - 0,//Ym
+            'jxxbz' => $jxxbz,//jx xx
+            'fplx' => str_pad($fplx, 2, '0', STR_PAD_LEFT),
+            'page' => [
+                'pageSize' => 100,
+                'currentPage' => $page - 0,
+            ],
+        ];
+
+        $req_date = time() . '000';
+
+        $token = $this->createToken();
+
+        $sign = base64_encode(md5('POST_' . md5(json_encode($data)) . '_' . $req_date . '_' . $token . '_' . $this->secret));
+
+        $req_sign = "API-SV1:{$this->appkey}:" . $sign;
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'access_token' => $token,
+            'req_date' => $req_date,
+            'req_sign' => $req_sign,
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'postjson');
+
+        return $this->check($res['value']);
+    }
 
 }
