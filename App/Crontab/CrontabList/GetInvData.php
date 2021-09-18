@@ -137,39 +137,26 @@ class GetInvData extends AbstractCronTask
                     'fileSecret' => $fileSecret,//对称钥秘⽂
                     'fileKeyList' => $fileKeyList,//文件路径
                 ];
-                CommonService::getInstance()->log4PHP([
-                    '准备发送的body' => $body
-                ]);
                 //sign md5 with rsa
                 $private_key = file_get_contents(RSA_KEY_PATH . $rsa_pri_name);
-                CommonService::getInstance()->log4PHP([
-                    'rsa_pri_路径' => RSA_KEY_PATH . $rsa_pri_name,
-                    'private_key' => $private_key,
-                ]);
                 $pkeyid = openssl_pkey_get_private($private_key);
-                CommonService::getInstance()->log4PHP([
-                    '$pkeyid' => $pkeyid
-                ]);
                 $verify = openssl_sign(json_encode($body), $signature, $pkeyid, OPENSSL_ALGO_MD5);
-                CommonService::getInstance()->log4PHP([
-                    'signature' => $signature,
-                    'verify' => $verify,
-                ]);
                 //准备通知
                 $collectNotify = [
                     'body' => [$body],
                     'head' => [
-                        'sign' => $signature,//签名
+                        'sign' => base64_encode($signature),//签名
                         'notifyChannel' => '',//通知 渠道
                     ],
                 ];
-                CommonService::getInstance()->log4PHP([
-                    'collectNotify' => $collectNotify,
-                ]);
                 $url = $url_arr[$id];
                 $ret = (new CoHttpClient())
                     ->useCache(false)
                     ->send($url, $collectNotify);
+
+                CommonService::getInstance()->log4PHP([
+                    'collectNotify' => $collectNotify,
+                ]);
                 CommonService::getInstance()->log4PHP([
                     '蚂蚁返回http内容',
                     $ret
