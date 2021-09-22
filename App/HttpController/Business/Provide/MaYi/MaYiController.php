@@ -74,8 +74,6 @@ class MaYiController extends Index
         $tmp['head'] = $this->getRequestData('head');
         $tmp['body'] = $this->getRequestData('body');
 
-        CommonService::getInstance()->log4PHP($tmp);
-
         if (!isset($tmp['head']['appId']) || empty($tmp['head']['appId'])) {
             return $this->writeJsons([
                 'code' => '0001',
@@ -130,16 +128,12 @@ class MaYiController extends Index
             'mobile' => $tmp['body']['mobile'] ?? '',
         ];
 
-        CommonService::getInstance()->log4PHP($v);
-
         $ret = openssl_verify(
             jsonEncode($v, false),
-            base64_decode($tmp['body']['head']['sign']),
+            base64_decode($tmp['head']['sign']),
             $pkeyid,
             OPENSSL_ALGO_MD5
         );
-
-        CommonService::getInstance()->log4PHP($ret);
 
         if ($ret !== 1) {
             return $this->writeJsons([
