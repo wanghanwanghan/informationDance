@@ -88,9 +88,7 @@ Eof;
         $ret = (new CoHttpClient())->useCache(false)->send($url, $collectNotify);
 
 
-
-
-        var_dump($collectNotify);
+        var_dump(jsonEncode($collectNotify, false));
 
     }
 
