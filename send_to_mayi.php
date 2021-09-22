@@ -87,9 +87,9 @@ Eof;
         $ret = (new CoHttpClient())->useCache(false)->send($url, $collectNotify);
 
 
-        echo json_encode([$body], 256) . PHP_EOL;
+        echo json_encode([$body], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL;
 
-        echo json_encode($collectNotify, 256) . PHP_EOL;
+        echo json_encode($collectNotify, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL;
 
 
     }
