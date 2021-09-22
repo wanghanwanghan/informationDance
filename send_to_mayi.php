@@ -68,9 +68,9 @@ Eof;
         $body = [
             'nsrsbh' => '91330108MA2KE69H8J',//授权的企业税号
             'authResultCode' => '0000',//取数结果状态码 0000取数成功 XXXX取数失败
+            'fileSecret' => $fileSecret,//对称钥秘⽂
             'companyName' => '杭州随便文化传媒有限公司',//公司名称
             'authTime' => '1632300556000',//授权时间
-            'fileSecret' => $fileSecret,//对称钥秘⽂
             'fileKeyList' => $fileKeyList,//文件路径
         ];
         //sign md5 with rsa
