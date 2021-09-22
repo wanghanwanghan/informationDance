@@ -89,6 +89,10 @@ Eof;
             ->useCache(false)
             ->send($url, $collectNotify);
 
+
+
+
+        var_dump($collectNotify);
         var_dump($ret);
 
     }
