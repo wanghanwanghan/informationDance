@@ -125,7 +125,7 @@ for ($i = 1; $i--;) {
     $conf = new Config();
     $conf->setArg(['foo' => $i]);
     $conf->setEnableCoroutine(true);
-    $process = new user_process($conf);
+    $process = new send_to_mayi($conf);
     $process->getProcess()->start();
 }
 
