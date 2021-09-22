@@ -85,15 +85,12 @@ Eof;
             ],
         ];
 
-        $ret = (new CoHttpClient())
-            ->useCache(false)
-            ->send($url, $collectNotify);
+        $ret = (new CoHttpClient())->useCache(false)->send($url, $collectNotify);
 
 
 
 
         var_dump($collectNotify);
-        var_dump($ret);
 
     }
 
