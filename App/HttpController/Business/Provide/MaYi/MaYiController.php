@@ -116,23 +116,15 @@ class MaYiController extends Index
             ]);
         }
 
-        $v = [
+        $pkeyid = openssl_get_publickey(file_get_contents($rsaPub));
+
+        $ret = openssl_verify(jsonEncode([
             'legalName' => $tmp['legalName'] ?? '',
             'nsrsbh' => $tmp['nsrsbh'] ?? '',
             'idCard' => $tmp['idCard'] ?? '',
             'companyName' => $tmp['companyName'] ?? '',
             'mobile' => $tmp['mobile'] ?? '',
-        ];
-
-        CommonService::getInstance()->log4PHP($v);
-
-        $pkeyid = openssl_get_publickey(file_get_contents($rsaPub));
-
-        CommonService::getInstance()->log4PHP($pkeyid);
-
-        $ret = openssl_verify(json_encode($v), base64_decode($tmp['head']['sign']), $pkeyid, OPENSSL_ALGO_MD5);
-
-        CommonService::getInstance()->log4PHP($ret);
+        ], false), base64_decode($tmp['head']['sign']), $pkeyid, OPENSSL_ALGO_MD5);
 
         if ($ret !== 1) {
             return $this->writeJsons([
