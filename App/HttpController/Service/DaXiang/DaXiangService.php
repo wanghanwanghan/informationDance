@@ -28,6 +28,7 @@ class DaXiangService extends ServiceBase
         return true;
     }
 
+    //
     private function createToken(): string
     {
         $appKey = 'Mlfs7n9kofqPMaNVJSFoDcwS';
@@ -43,6 +44,7 @@ class DaXiangService extends ServiceBase
         return $token_info['access_token'];
     }
 
+    //
     function getInv($entCode, $page, $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ): array
     {
         $url = 'https://sandbox.ele-cloud.com/api/business-credit/v3/queryEntInvoicePage';
