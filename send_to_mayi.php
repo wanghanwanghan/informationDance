@@ -70,7 +70,7 @@ Eof;
             'fileSecret' => $fileSecret,//对称钥秘⽂
             'companyName' => '杭州随便文化传媒有限公司',//公司名称
             'authTime' => '1632300556000',//授权时间
-            'fileKeyList' => json_encode([]),//文件路径
+            'fileKeyList' => [],//文件路径
         ];
         //sign md5 with rsa
         $pkeyid = openssl_pkey_get_private($this->pri_str);
@@ -89,6 +89,7 @@ Eof;
 
         var_dump(json_encode([$body], 256));
         var_dump(jsonEncode($collectNotify, false));
+        var_dump($ret);
 
     }
 
