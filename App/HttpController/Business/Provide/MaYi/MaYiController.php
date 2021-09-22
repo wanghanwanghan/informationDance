@@ -127,6 +127,9 @@ class MaYiController extends Index
         CommonService::getInstance()->log4PHP($v);
 
         $pkeyid = openssl_get_publickey(file_get_contents($rsaPub));
+
+        CommonService::getInstance()->log4PHP($pkeyid);
+
         $ret = openssl_verify(json_encode($v), base64_decode($tmp['head']['sign']), $pkeyid, OPENSSL_ALGO_MD5);
 
         CommonService::getInstance()->log4PHP($ret);
