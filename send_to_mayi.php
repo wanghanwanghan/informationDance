@@ -63,7 +63,6 @@ Eof;
         $url = 'http://invoicecommercial.dev.dl.alipaydev.com/api/wezTech/collectNotify';
 
         $fileSecret = control::rsaEncrypt($this->currentAesKey, $this->pri_str, 'pri');
-        $fileKeyList = [];
 
         $body = [
             'nsrsbh' => '91330108MA2KE69H8J',//授权的企业税号
@@ -71,7 +70,7 @@ Eof;
             'fileSecret' => $fileSecret,//对称钥秘⽂
             'companyName' => '杭州随便文化传媒有限公司',//公司名称
             'authTime' => '1632300556000',//授权时间
-            'fileKeyList' => $fileKeyList,//文件路径
+            'fileKeyList' => json_encode([]),//文件路径
         ];
         //sign md5 with rsa
         $pkeyid = openssl_pkey_get_private($this->pri_str);
