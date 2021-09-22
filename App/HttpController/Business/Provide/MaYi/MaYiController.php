@@ -97,7 +97,9 @@ class MaYiController extends Index
         }
 
         //拿rsa公钥
-        $userInfo = RequestUserInfo::create()->where('appId', $tmp['head']['appId'])->get();
+        $userInfo = RequestUserInfo::create()
+            ->where('appId', $tmp['head']['appId'])
+            ->get();
         if (empty($userInfo)) {
             return $this->writeJsons([
                 'code' => '9999',
