@@ -118,11 +118,11 @@ class MaYiController extends Index
 
         $pkeyid = openssl_get_publickey(file_get_contents($rsaPub));
         $ret = openssl_verify(json_encode([
-            'nsrsbh' => $tmp['nsrsbh'] ?? '',
-            'companyName' => $tmp['companyName'] ?? '',
             'legalName' => $tmp['legalName'] ?? '',
-            'mobile' => $tmp['mobile'] ?? '',
+            'nsrsbh' => $tmp['nsrsbh'] ?? '',
             'idCard' => $tmp['idCard'] ?? '',
+            'companyName' => $tmp['companyName'] ?? '',
+            'mobile' => $tmp['mobile'] ?? '',
         ]), base64_decode($tmp['head']['sign']), $pkeyid, OPENSSL_ALGO_MD5);
 
         if ($ret !== 1) {
