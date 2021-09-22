@@ -74,6 +74,8 @@ class MaYiController extends Index
         $tmp['head'] = $this->getRequestData('head');
         $tmp['body'] = $this->getRequestData('body');
 
+        CommonService::getInstance()->log4PHP($tmp);
+
         if (!isset($tmp['head']['appId']) || empty($tmp['head']['appId'])) {
             return $this->writeJsons([
                 'code' => '0001',
@@ -118,13 +120,24 @@ class MaYiController extends Index
 
         $pkeyid = openssl_get_publickey(file_get_contents($rsaPub));
 
-        $ret = openssl_verify(jsonEncode([
-            'legalName' => $tmp['legalName'] ?? '',
-            'nsrsbh' => $tmp['nsrsbh'] ?? '',
-            'idCard' => $tmp['idCard'] ?? '',
-            'companyName' => $tmp['companyName'] ?? '',
-            'mobile' => $tmp['mobile'] ?? '',
-        ], false), base64_decode($tmp['head']['sign']), $pkeyid, OPENSSL_ALGO_MD5);
+        $v = [
+            'legalName' => $tmp['body']['legalName'] ?? '',
+            'nsrsbh' => $tmp['body']['nsrsbh'] ?? '',
+            'idCard' => $tmp['body']['idCard'] ?? '',
+            'companyName' => $tmp['body']['companyName'] ?? '',
+            'mobile' => $tmp['body']['mobile'] ?? '',
+        ];
+
+        CommonService::getInstance()->log4PHP($v);
+
+        $ret = openssl_verify(
+            jsonEncode($v, false),
+            base64_decode($tmp['body']['head']['sign']),
+            $pkeyid,
+            OPENSSL_ALGO_MD5
+        );
+
+        CommonService::getInstance()->log4PHP($ret);
 
         if ($ret !== 1) {
             return $this->writeJsons([
