@@ -132,15 +132,15 @@ class GetInvData extends AbstractCronTask
                 $body = [
                     'nsrsbh' => $oneReadyToSend->getAttr('socialCredit'),//授权的企业税号
                     'authResultCode' => $authResultCode,//取数结果状态码 0000取数成功 XXXX取数失败
-                    'companyName' => $oneReadyToSend->getAttr('entName'),//公司名称
-                    'authTime' => $oneReadyToSend->getAttr('requestDate'),//授权时间
                     'fileSecret' => $fileSecret,//对称钥秘⽂
+                    'companyName' => $oneReadyToSend->getAttr('entName'),//公司名称
+                    'authTime' => date('Y-m-d H:i:s', $oneReadyToSend->getAttr('requestDate')),//授权时间
                     'fileKeyList' => $fileKeyList,//文件路径
                 ];
                 //sign md5 with rsa
                 $private_key = file_get_contents(RSA_KEY_PATH . $rsa_pri_name);
                 $pkeyid = openssl_pkey_get_private($private_key);
-                $verify = openssl_sign(json_encode($body), $signature, $pkeyid, OPENSSL_ALGO_MD5);
+                $verify = openssl_sign(jsonEncode([$body], false), $signature, $pkeyid, OPENSSL_ALGO_MD5);
                 //准备通知
                 $collectNotify = [
                     'body' => [$body],

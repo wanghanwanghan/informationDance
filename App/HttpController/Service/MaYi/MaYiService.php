@@ -5244,7 +5244,7 @@ class MaYiService extends ServiceBase
             'idCard' => $data['idCard'],
             'phone' => $data['phone'],
             'region' => $baiduApiRes['city'] ?? '',
-            'requestDate' => microTimeNew(),
+            'requestDate' => time(),
             'belong' => $data['belong'],
             'status' => self::STATUS_0,
             'regAddress' => $baiduApiRes['regAddress'] ?? '',
