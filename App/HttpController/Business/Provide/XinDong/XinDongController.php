@@ -203,6 +203,8 @@ class XinDongController extends ProvideBase
         } else {
             $f_info = EntDbFinance::create()
                 ->where('cid', $check->getAttr('id'))
+                ->order('ANCHEYEAR', 'DESC')
+                ->limit(0, 2)
                 ->field([
                     'ASSGRO',
                     'LIAGRO',
@@ -213,8 +215,7 @@ class XinDongController extends ProvideBase
                     'TOTEQU',
                     'VENDINC',
                     'ANCHEYEAR',
-                ])
-                ->all();
+                ])->all();
         }
 
         if (!empty($f_info)) {
@@ -236,7 +237,6 @@ class XinDongController extends ProvideBase
                     ->setCal(false)
                     ->getFinanceData($postData, false);
             });
-
             $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         }
 
@@ -256,6 +256,7 @@ class XinDongController extends ProvideBase
                 '-' => 'J',
             ];
             foreach ($res['result'] as $year => $oneYearData) {
+                CommonService::getInstance()->log4PHP($res);
                 foreach ($oneYearData as $field => $num) {
                     if ($field === 'ispublic' || $field === 'SOCNUM' || $field === 'ANCHEYEAR') {
                         unset($res['result'][$year][$field]);
