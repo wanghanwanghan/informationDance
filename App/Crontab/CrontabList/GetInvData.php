@@ -28,8 +28,8 @@ class GetInvData extends AbstractCronTask
     static function getRule(): string
     {
         //每月18号18点可以取上一个月全部数据
-        return '0 18 18 * *';
-        //return '*/30 * * * *';
+        //return '0 18 18 * *';
+        return '*/30 * * * *';
     }
 
     static function getTaskName(): string
@@ -149,6 +149,14 @@ class GetInvData extends AbstractCronTask
                         'notifyChannel' => 'ELEPHANT',//通知 渠道
                     ],
                 ];
+                CommonService::getInstance()->log4PHP([
+                    '签名json',
+                    jsonEncode([$body], false)
+                ]);
+                CommonService::getInstance()->log4PHP([
+                    '发送给蚂蚁的内容',
+                    $collectNotify
+                ]);
                 $url = $url_arr[$id];
                 $ret = (new CoHttpClient())
                     ->useCache(false)
