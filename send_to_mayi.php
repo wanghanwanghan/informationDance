@@ -93,6 +93,7 @@ Eof;
 
         echo json_encode($collectNotify, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL;
 
+        var_dump($ret);
 
     }
 
