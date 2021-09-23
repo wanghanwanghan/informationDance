@@ -69,12 +69,12 @@ Eof;
             'authResultCode' => '0000',//取数结果状态码 0000取数成功 XXXX取数失败
             'fileSecret' => $fileSecret,//对称钥秘⽂
             'companyName' => '杭州随便文化传媒有限公司',//公司名称
-            'authTime' => '1632300556000',//授权时间
+            'authTime' => '2021-09-22 12:34:45',//授权时间
             'fileKeyList' => [],//文件路径
         ];
         //sign md5 with rsa
         $pkeyid = openssl_pkey_get_private($this->pri_str);
-        $verify = openssl_sign(json_encode([$body], 256), $signature, $pkeyid, OPENSSL_ALGO_MD5);
+        $verify = openssl_sign(json_encode([$body], 320), $signature, $pkeyid, OPENSSL_ALGO_MD5);
         //准备通知
         $collectNotify = [
             'body' => [$body],
@@ -85,7 +85,6 @@ Eof;
         ];
 
         $ret = (new CoHttpClient())->useCache(false)->send($url, $collectNotify);
-
 
         echo json_encode([$body], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL;
 
