@@ -90,7 +90,7 @@ Rof;
             'companyName' => '杭州随便文化传媒有限公司',//公司名称
             'authTime' => '2021-10-22 12:34:45',//授权时间
             'fileKeyList' => [
-                'http://invoice-mrxd.oss-cn-beijing.aliyuncs.com/202109_91330108MA2KE69H8J.zip?OSSAccessKeyId=LTAI4GFmzB3tJgMTpcM35EPP&Expires=1632971608&Signature=ukAxuRR9TH7OzGEyA6uCrXv7QXE%3D'
+                'http://invoice-mrxd.oss-cn-beijing.aliyuncs.com/202109/91330108MA2KE69H8J_page_1.json?OSSAccessKeyId=LTAI4GFmzB3tJgMTpcM35EPP&Expires=1632990638&Signature=TVdKIpruwm19cpvu3nuMdkqCTrs%3D'
             ],//文件路径
         ];
         //sign md5 with rsa
