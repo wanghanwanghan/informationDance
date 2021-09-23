@@ -240,6 +240,11 @@ class XinDongController extends ProvideBase
             $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         }
 
+        CommonService::getInstance()->log4PHP($this->cspKey);
+        CommonService::getInstance()->log4PHP($res);
+
+
+
         if ($res[$this->csp]['code'] === 200 && !empty($res[$this->csp]['result'])) {
             $indexTable = [
                 '0' => 'O',
