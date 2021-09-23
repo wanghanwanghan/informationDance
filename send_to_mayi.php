@@ -28,7 +28,18 @@ Core::getInstance()->initialize();
 
 class send_to_mayi extends AbstractProcess
 {
-    public $pri_str = <<<Eof
+    public $pub_str = <<<Eof
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuppDpYsLE7EkHXVZhNCe
+FtqMvfxDX4FmYxTZNT/twHltVbgEn4lQQ0FTeKYRZk0oplGKGGgcQWQT5NYT4pfX
+AfKbUqD78Nlot28Tsq+H/BVCr7joaIHQCQbe+CQ3R8G7ZMEELYGEPIXdjb2g8HRe
+Oo9wZjG0VAH6hOeAguoH+DHyY54aCPwStF8AVv9e2EWJFqTLgx37tXMhH+CXbchw
+LXgsOcf/CBNsXYfM7AgkuWXF4jEyjDP9p1v20BeCn1UrJ1P8laUZNvv+sJeti2x0
+BtalB89NfQ72VL0SwS310QGxQ0ssZfoXrndYQMtq0TaR0g1uz4ibb/N8aw0cwmkP
+TQIDAQAB
+-----END PUBLIC KEY-----
+Eof;
+    public $pri_str = <<<Rof
 -----BEGIN PRIVATE KEY-----
 MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDK1da3WBBdzfo3
 RTqqwzm/R7DLRg+/i0kd+kGenkevJFm6EbD5PF+qQsKfS8/XrCAaL+A3sDjCdTZa
@@ -57,7 +68,8 @@ Fl77UihO293bGW95QSJK5MO3R11elxclFpofOgkCgYAX/v9xC1+1XKxVuo5knxxK
 wrw2lJObnDXs2bq+4i+Yvql+AsZWiof6JRR+IOtGOX3OH7haAFpaFJCpVJB+W8Tl
 /h/5usUNiODhF7ct+AYitg==
 -----END PRIVATE KEY-----
-Eof;
+Rof;
+
 
     public $currentAesKey = 'XbrAdtkxFflSaIoE';
     public $iv = '1234567890abcdef';
@@ -69,7 +81,7 @@ Eof;
         //$this->sendToOSS('91330108MA2KE69H8J');
         $url = 'http://invoicecommercial.dev.dl.alipaydev.com/api/wezTech/collectNotify';
 
-        $fileSecret = control::rsaEncrypt($this->currentAesKey, $this->pri_str, 'pri');
+        $fileSecret = control::rsaEncrypt($this->currentAesKey, $this->pub_str, 'pri');
 
         $body = [
             'nsrsbh' => '91330108MA2KE69H8J',//授权的企业税号
