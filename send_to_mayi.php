@@ -76,7 +76,7 @@ Eof;
             'authResultCode' => '0000',//取数结果状态码 0000取数成功 XXXX取数失败
             'fileSecret' => $fileSecret,//对称钥秘⽂
             'companyName' => '杭州随便文化传媒有限公司',//公司名称
-            'authTime' => '2021-09-22 12:34:45',//授权时间
+            'authTime' => '2021-10-22 12:34:45',//授权时间
             'fileKeyList' => [
                 'http://invoice-mrxd.oss-cn-beijing.aliyuncs.com/202109_91330108MA2KE69H8J.zip?OSSAccessKeyId=LTAI4GFmzB3tJgMTpcM35EPP&Expires=1632971608&Signature=ukAxuRR9TH7OzGEyA6uCrXv7QXE%3D'
             ],//文件路径
@@ -98,7 +98,9 @@ Eof;
 
         $ret = (new CoHttpClient())->useCache(false)->send($url, $collectNotify);
 
-        var_dump($ret);
+        echo jsonEncode([$body], false) . PHP_EOL;
+        echo jsonEncode($collectNotify, false) . PHP_EOL;
+
 
     }
 
