@@ -191,7 +191,6 @@ class GetInvData extends ProcessBase
                         'gfmc',
                         'gfdzdh',
                         'gfyhzh',
-                        'gmflx',
                         'kpr',
                         'skr',
                         'fhr',

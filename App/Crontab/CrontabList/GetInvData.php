@@ -122,9 +122,9 @@ class GetInvData extends AbstractCronTask
                     $stream = file_get_contents(RSA_KEY_PATH . $rsa_pub_name);
                     //AES加密key用RSA加密
                     $fileSecret = control::rsaEncrypt($this->currentAesKey, $stream, 'pub');
-                    $fileKeyList = [
-                        $oneReadyToSend->getAttr('lastReqUrl')
-                    ];
+                    $fileKeyList = empty($oneReadyToSend->getAttr('lastReqUrl')) ?
+                        [] :
+                        array_filter(explode(',', $oneReadyToSend->getAttr('lastReqUrl')));
                 } else {
                     $authResultCode = '9999';
                     $fileSecret = '';
