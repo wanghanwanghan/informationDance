@@ -81,7 +81,7 @@ Rof;
         //$this->sendToOSS('91330108MA2KE69H8J');
         $url = 'http://invoicecommercial.dev.dl.alipaydev.com/api/wezTech/collectNotify';
 
-        $fileSecret = control::rsaEncrypt($this->currentAesKey, $this->pub_str, 'pri');
+        $fileSecret = control::rsaEncrypt($this->currentAesKey, $this->pub_str, 'pub');
 
         $body = [
             'nsrsbh' => '91330108MA2KE69H8J',//授权的企业税号
