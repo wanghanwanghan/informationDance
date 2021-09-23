@@ -113,6 +113,7 @@ Rof;
         echo jsonEncode($collectNotify, false) . PHP_EOL;
 
         var_dump($ret);
+        var_dump($ret);
 
     }
 
