@@ -210,7 +210,7 @@ class XinDongController extends ProvideBase
                     'NETINC',
                     'PROGRO',
                     'RATGRO',
-                    'VENDINC',
+                    'TOTEQU',
                     'VENDINC',
                     'ANCHEYEAR',
                 ])
