@@ -367,7 +367,7 @@ class XinDongController extends ProvideBase
     function getFinanceBaseDataTZ(): bool
     {
         $entName = $this->getRequestData('entName', '');
-        $beginYear = 2019;
+        $beginYear = 2020;
 
         if (empty($entName)) {
             return $this->checkResponse([$this->cspKey => [
