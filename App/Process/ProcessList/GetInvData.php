@@ -91,10 +91,6 @@ class GetInvData extends ProcessBase
             for ($page = 1; $page <= 999999; $page++) {
                 $res = (new DaXiangService())
                     ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
-                CommonService::getInstance()->log4PHP([
-                    '大象的进项',
-                    $res
-                ]);
                 if (!isset($res['content'])) {
                     CommonService::getInstance()->log4PHP($res, 'getInv', 'inv_store_mysql_error.log');
                     break;
