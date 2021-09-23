@@ -66,39 +66,39 @@ Eof;
 
     protected function run($arg)
     {
-        $this->sendToOSS('91330108MA2KE69H8J');
-//        $url = 'http://invoicecommercial.dev.dl.alipaydev.com/api/wezTech/collectNotify';
-//
-//        $fileSecret = control::rsaEncrypt($this->currentAesKey, $this->pri_str, 'pri');
-//
-//        $body = [
-//            'nsrsbh' => '91330108MA2KE69H8J',//授权的企业税号
-//            'authResultCode' => '0000',//取数结果状态码 0000取数成功 XXXX取数失败
-//            'fileSecret' => $fileSecret,//对称钥秘⽂
-//            'companyName' => '杭州随便文化传媒有限公司',//公司名称
-//            'authTime' => '2021-09-22 12:34:45',//授权时间
-//            'fileKeyList' => [
-//                'http://invoice-mrxd.oss-cn-beijing.aliyuncs.com/202109_911199999999CN0008.zip?OSSAccessKeyId=LTAI4GFmzB3tJgMTpcM35EPP&Expires=1632968470&Signature=biBlhSOgUDBslfxZxxUKqAFOx3E%3D'
-//            ],//文件路径
-//        ];
-//        //sign md5 with rsa
-//        $pkeyid = openssl_pkey_get_private($this->pri_str);
-//        $verify = openssl_sign(json_encode(
-//            [$body],
-//            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
-//        ), $signature, $pkeyid, OPENSSL_ALGO_MD5);
-//        //准备通知
-//        $collectNotify = [
-//            'body' => [$body],
-//            'head' => [
-//                'sign' => base64_encode($signature),//签名
-//                'notifyChannel' => 'ELEPHANT',//通知 渠道
-//            ],
-//        ];
-//
-//        $ret = (new CoHttpClient())->useCache(false)->send($url, $collectNotify);
-//
-//        var_dump($ret);
+        //$this->sendToOSS('91330108MA2KE69H8J');
+        $url = 'http://invoicecommercial.dev.dl.alipaydev.com/api/wezTech/collectNotify';
+
+        $fileSecret = control::rsaEncrypt($this->currentAesKey, $this->pri_str, 'pri');
+
+        $body = [
+            'nsrsbh' => '91330108MA2KE69H8J',//授权的企业税号
+            'authResultCode' => '0000',//取数结果状态码 0000取数成功 XXXX取数失败
+            'fileSecret' => $fileSecret,//对称钥秘⽂
+            'companyName' => '杭州随便文化传媒有限公司',//公司名称
+            'authTime' => '2021-09-22 12:34:45',//授权时间
+            'fileKeyList' => [
+                'http://invoice-mrxd.oss-cn-beijing.aliyuncs.com/202109_91330108MA2KE69H8J.zip?OSSAccessKeyId=LTAI4GFmzB3tJgMTpcM35EPP&Expires=1632971608&Signature=ukAxuRR9TH7OzGEyA6uCrXv7QXE%3D'
+            ],//文件路径
+        ];
+        //sign md5 with rsa
+        $pkeyid = openssl_pkey_get_private($this->pri_str);
+        $verify = openssl_sign(json_encode(
+            [$body],
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        ), $signature, $pkeyid, OPENSSL_ALGO_MD5);
+        //准备通知
+        $collectNotify = [
+            'body' => [$body],
+            'head' => [
+                'sign' => base64_encode($signature),//签名
+                'notifyChannel' => 'ELEPHANT',//通知 渠道
+            ],
+        ];
+
+        $ret = (new CoHttpClient())->useCache(false)->send($url, $collectNotify);
+
+        var_dump($ret);
 
     }
 
