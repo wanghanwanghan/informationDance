@@ -21,8 +21,8 @@ use \EasySwoole\Component\Process\AbstractProcess;
 use EasySwoole\ORM\DbManager;
 use wanghanwanghan\someUtils\control;
 
-require_once '../vendor/autoload.php';
-require_once '../bootstrap.php';
+require_once './vendor/autoload.php';
+require_once './bootstrap.php';
 
 Core::getInstance()->initialize();
 
