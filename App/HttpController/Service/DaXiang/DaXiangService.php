@@ -36,9 +36,9 @@ class DaXiangService extends ServiceBase
 
         $token_info = (new CoHttpClient())
             ->useCache(false)
-            ->send('https://sandbox.ele-cloud.com/api/authen/token', [
-                'appKey' => $appKey,
-                'appSecret' => $appSecret,
+            ->send('https://openapi.ele-cloud.com/api/authen/token', [
+                'appKey' => $this->appKey,
+                'appSecret' => $this->appSecret,
             ], [], [], 'postjson');
 
         return $token_info['access_token'];
@@ -47,7 +47,7 @@ class DaXiangService extends ServiceBase
     //
     function getInv($entCode, $page, $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ): array
     {
-        $url = 'https://sandbox.ele-cloud.com/api/business-credit/v3/queryEntInvoicePage';
+        $url = 'https://openapi.ele-cloud.com/api/business-credit/v3/queryEntInvoicePage';
         $token = $this->createToken();
         list($usec, $sec) = explode(' ', microtime());
         $cn_time = date('YmdHis', time()) . round($usec * 1000);

@@ -25,9 +25,9 @@ class GetInvData extends ProcessBase
     public $iv = '1234567890abcdef';
     public $redisKey;
     public $readToSendAntFlag;
-    public $oss_expire_time = 86400 * 7;
+    public $oss_expire_time = 86400 * 60;
     public $oss_bucket = 'invoice-mrxd';
-    public $taxNo = '140301321321333';//91110108MA01KPGK0L
+    public $taxNo = '91110108MA01KPGK0L';
 
     protected function run($arg)
     {
@@ -77,9 +77,9 @@ class GetInvData extends ProcessBase
         $KPJSRQ = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');//截止日
         $NSRSBH = $entInfo['socialCredit'];
 
-        $KPKSRQ = '2020-01-01';
-        $KPJSRQ = '2021-08-31';
-        $NSRSBH = '911199999999CN0008';
+        //$KPKSRQ = '2020-01-01';
+        //$KPJSRQ = '2021-08-31';
+        //$NSRSBH = '911199999999CN0008';
 
         $FPLXDMS = [
             '01', '02', '03', '04', '10', '11', '14', '15'

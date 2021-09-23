@@ -29,7 +29,7 @@ class GetInvData extends AbstractCronTask
     {
         //每月18号18点可以取上一个月全部数据
         //return '0 18 18 * *';
-        return '*/20 * * * *';
+        return '13 18 * * *';
     }
 
     static function getTaskName(): string
@@ -88,9 +88,9 @@ class GetInvData extends AbstractCronTask
     {
         //根据三个id，通知不同的url
         $url_arr = [
-            36 => 'http://invoicecommercialv2.dev.dl.alipaydev.com/api/wezTech/collectNotify',
-            41 => 'http://invoicecommercialv2.dev.dl.alipaydev.com/api/wezTech/collectNotify',
-            42 => 'http://invoicecommercialv2.dev.dl.alipaydev.com/api/wezTech/collectNotify',
+            36 => 'https://invoicecommercialv2.dl.alipaydev.com/api/wezTech/collectNotify',
+            41 => 'https://invoicecommercialv2.dl.alipaydev.com/api/wezTech/collectNotify',
+            42 => 'https://invoicecommercialv2.dl.alipaydev.com/api/wezTech/collectNotify',
         ];
 
         $total = AntAuthList::create()
@@ -152,9 +152,26 @@ class GetInvData extends AbstractCronTask
                 ];
 
                 $url = $url_arr[$id];
+
+                $header = [
+                    'content-type' => 'application/json;charset=UTF-8',
+                ];
+
+                CommonService::getInstance()->log4PHP(jsonEncode([
+                    '税号' => $oneReadyToSend->getAttr('socialCredit'),
+                    '最终发给蚂蚁' => $collectNotify
+                ], false));
+
                 $ret = (new CoHttpClient())
                     ->useCache(false)
-                    ->send($url, $collectNotify);
+                    ->needJsonDecode(true)
+                    ->send($url, jsonEncode($collectNotify, false), $header, [], 'postjson');
+
+                CommonService::getInstance()->log4PHP([
+                    '税号' => $oneReadyToSend->getAttr('socialCredit'),
+                    '蚂蚁最终返回' => $ret
+                ]);
+
             }
         }
 
