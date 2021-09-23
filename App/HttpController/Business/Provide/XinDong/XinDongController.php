@@ -240,7 +240,7 @@ class XinDongController extends ProvideBase
             $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         }
 
-        if ($res['code'] === 200 && !empty($res['result'])) {
+        if ($res[$this->csp]['code'] === 200 && !empty($res[$this->csp]['result'])) {
             $indexTable = [
                 '0' => 'O',
                 '1' => 'C',
@@ -255,11 +255,10 @@ class XinDongController extends ProvideBase
                 '.' => '*',
                 '-' => 'J',
             ];
-            foreach ($res['result'] as $year => $oneYearData) {
-                CommonService::getInstance()->log4PHP($res);
+            foreach ($res[$this->csp]['result'] as $year => $oneYearData) {
                 foreach ($oneYearData as $field => $num) {
                     if ($field === 'ispublic' || $field === 'SOCNUM' || $field === 'ANCHEYEAR') {
-                        unset($res['result'][$year][$field]);
+                        unset($res[$this->csp]['result'][$year][$field]);
                         continue;
                     }
                     $tmp = strtr($num, $indexTable);
@@ -277,7 +276,7 @@ class XinDongController extends ProvideBase
                             $tmp = 'X' . $tmp;//有X说明要末尾补0
                         }
                     }
-                    $res['result'][$year][$field] = $tmp;
+                    $res[$this->csp]['result'][$year][$field] = $tmp;
                 }
             }
         }
