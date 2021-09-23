@@ -240,11 +240,7 @@ class XinDongController extends ProvideBase
             $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         }
 
-        CommonService::getInstance()->log4PHP($tmp);
-        CommonService::getInstance()->log4PHP($this->cspKey);
-        CommonService::getInstance()->log4PHP($res);
-
-        if ($res[$this->csp]['code'] === 200 && !empty($res[$this->csp]['result'])) {
+        if ($res[$this->cspKey]['code'] === 200 && !empty($res[$this->cspKey]['result'])) {
             $indexTable = [
                 '0' => 'O',
                 '1' => 'C',
@@ -259,10 +255,10 @@ class XinDongController extends ProvideBase
                 '.' => '*',
                 '-' => 'J',
             ];
-            foreach ($res[$this->csp]['result'] as $year => $oneYearData) {
+            foreach ($res[$this->cspKey]['result'] as $year => $oneYearData) {
                 foreach ($oneYearData as $field => $num) {
                     if ($field === 'ispublic' || $field === 'SOCNUM' || $field === 'ANCHEYEAR') {
-                        unset($res[$this->csp]['result'][$year][$field]);
+                        unset($res[$this->cspKey]['result'][$year][$field]);
                         continue;
                     }
                     $tmp = strtr($num, $indexTable);
@@ -280,7 +276,7 @@ class XinDongController extends ProvideBase
                             $tmp = 'X' . $tmp;//有X说明要末尾补0
                         }
                     }
-                    $res[$this->csp]['result'][$year][$field] = $tmp;
+                    $res[$this->cspKey]['result'][$year][$field] = $tmp;
                 }
             }
         }
