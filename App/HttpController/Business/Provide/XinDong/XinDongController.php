@@ -196,55 +196,90 @@ class XinDongController extends ProvideBase
             'dataCount' => $dataCount,
         ];
 
-        $this->csp->add($this->cspKey, function () use ($postData) {
-            $res = (new LongXinService())
-                ->setCheckRespFlag(true)
-                ->setCal(false)
-                ->getFinanceData($postData, false);
-            if ($res['code'] === 200 && !empty($res['result'])) {
-                $indexTable = [
-                    '0' => 'O',
-                    '1' => 'C',
-                    '2' => 'E',
-                    '3' => 'I',
-                    '4' => 'G',
-                    '5' => 'A',
-                    '6' => 'H',
-                    '7' => 'F',
-                    '8' => 'D',
-                    '9' => 'B',
-                    '.' => '*',
-                    '-' => 'J',
-                ];
-                foreach ($res['result'] as $year => $oneYearData) {
-                    foreach ($oneYearData as $field => $num) {
-                        if ($field === 'ispublic' || $field === 'SOCNUM' || $field === 'ANCHEYEAR') {
-                            unset($res['result'][$year][$field]);
-                            continue;
-                        }
-                        $tmp = strtr($num, $indexTable);
-                        $tmp = current(explode('*', $tmp));
-                        if ($tmp[0] === 'J') {
-                            //负数
-                            if (strlen($tmp) >= 3) {
-                                $tmp = substr($tmp, 0, -1);
-                                $tmp = 'X' . $tmp;//有X说明要末尾补0
-                            }
-                        } else {
-                            //正数
-                            if (strlen($tmp) >= 2) {
-                                $tmp = substr($tmp, 0, -1);
-                                $tmp = 'X' . $tmp;//有X说明要末尾补0
-                            }
-                        }
-                        $res['result'][$year][$field] = $tmp;
+        $check = EntDbEnt::create()->where('name', $this->getRequestData('entName'))->get();
+
+        if (empty($check)) {
+            $f_info = [];
+        } else {
+            $f_info = EntDbFinance::create()
+                ->where('cid', $check->getAttr('id'))
+                ->field([
+                    'ASSGRO',
+                    'LIAGRO',
+                    'MAIBUSINC',
+                    'NETINC',
+                    'PROGRO',
+                    'RATGRO',
+                    'VENDINC',
+                    'VENDINC',
+                    'ANCHEYEAR',
+                ])
+                ->all();
+        }
+
+        if (!empty($f_info)) {
+            $this->spendMoney = 0;
+            $tmp = [];
+            foreach ($f_info as $one) {
+                $tmp[$one->ANCHEYEAR . ''] = obj2Arr($one);
+            }
+            $res = [$this->cspKey => [
+                'code' => 200,
+                'paging' => null,
+                'result' => $tmp,
+                'msg' => null,
+            ]];
+        } else {
+            $this->csp->add($this->cspKey, function () use ($postData) {
+                return (new LongXinService())
+                    ->setCheckRespFlag(true)
+                    ->setCal(false)
+                    ->getFinanceData($postData, false);
+            });
+
+            $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        }
+
+        if ($res['code'] === 200 && !empty($res['result'])) {
+            $indexTable = [
+                '0' => 'O',
+                '1' => 'C',
+                '2' => 'E',
+                '3' => 'I',
+                '4' => 'G',
+                '5' => 'A',
+                '6' => 'H',
+                '7' => 'F',
+                '8' => 'D',
+                '9' => 'B',
+                '.' => '*',
+                '-' => 'J',
+            ];
+            foreach ($res['result'] as $year => $oneYearData) {
+                foreach ($oneYearData as $field => $num) {
+                    if ($field === 'ispublic' || $field === 'SOCNUM' || $field === 'ANCHEYEAR') {
+                        unset($res['result'][$year][$field]);
+                        continue;
                     }
+                    $tmp = strtr($num, $indexTable);
+                    $tmp = current(explode('*', $tmp));
+                    if ($tmp[0] === 'J') {
+                        //负数
+                        if (strlen($tmp) >= 3) {
+                            $tmp = substr($tmp, 0, -1);
+                            $tmp = 'X' . $tmp;//有X说明要末尾补0
+                        }
+                    } else {
+                        //正数
+                        if (strlen($tmp) >= 2) {
+                            $tmp = substr($tmp, 0, -1);
+                            $tmp = 'X' . $tmp;//有X说明要末尾补0
+                        }
+                    }
+                    $res['result'][$year][$field] = $tmp;
                 }
             }
-            return $res;
-        });
-
-        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        }
 
         return $this->checkResponse($res);
     }
