@@ -266,13 +266,12 @@ class GetInvData extends ProcessBase
             $zip_file_name = ZipService::getInstance()->zip($file_arr, $store . $name, true);
             $oss_file_name = OSSService::getInstance()
                 ->doUploadFile($this->oss_bucket, $name, $zip_file_name, $this->oss_expire_time);
-            CommonService::getInstance()->log4PHP($oss_file_name);
             //更新上次取数时间和oss地址
             AntAuthList::create()
                 ->where('socialCredit', $NSRSBH)
                 ->update([
                     'lastReqTime' => time(),
-                    'lastReqUrl' => $oss_file_name,
+                    'lastReqUrl' => $oss_file_name,//存个文件前缀吧，然后用file_exists去判断page到第几个了
                 ]);
         }
 

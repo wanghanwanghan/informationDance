@@ -32,4 +32,10 @@ class OSSService extends ServiceBase
         return $this->ali_oss_cli->signUrl($bucket, $storeName, $timeout);
     }
 
+    function createObjectDir(string $bucket, string $dirName, ?array $option = null): OSSService
+    {
+        $this->ali_oss_cli->createObjectDir($bucket, $dirName, $option);
+        return $this;
+    }
+
 }

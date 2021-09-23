@@ -88,9 +88,9 @@ class GetInvData extends AbstractCronTask
     {
         //根据三个id，通知不同的url
         $url_arr = [
-            36 => 'http://invoicecommercial.dev.dl.alipaydev.com/api/wezTech/collectNotify',
-            41 => 'http://invoicecommercial.dev.dl.alipaydev.com/api/wezTech/collectNotify',
-            42 => 'http://invoicecommercial.dev.dl.alipaydev.com/api/wezTech/collectNotify',
+            36 => 'http://invoicecommercialv2.dev.dl.alipaydev.com/api/wezTech/collectNotify',
+            41 => 'http://invoicecommercialv2.dev.dl.alipaydev.com/api/wezTech/collectNotify',
+            42 => 'http://invoicecommercialv2.dev.dl.alipaydev.com/api/wezTech/collectNotify',
         ];
 
         $total = AntAuthList::create()
@@ -113,14 +113,15 @@ class GetInvData extends AbstractCronTask
                 //拿私钥
                 $id = $oneReadyToSend->getAttr('belong') - 0;
                 $info = RequestUserInfo::create()->get($id);
+                $rsa_pub_name = $info->getAttr('rsaPub');
                 $rsa_pri_name = $info->getAttr('rsaPri');
                 //5天以内的才算取数成功
                 if (time() - $lastReqTime < 86400 * 5) {
                     $authResultCode = '0000';
-                    //拿私钥加密
-                    $stream = file_get_contents(RSA_KEY_PATH . $rsa_pri_name);
+                    //拿公钥加密
+                    $stream = file_get_contents(RSA_KEY_PATH . $rsa_pub_name);
                     //AES加密key用RSA加密
-                    $fileSecret = control::rsaEncrypt($this->currentAesKey, $stream, 'pri');
+                    $fileSecret = control::rsaEncrypt($this->currentAesKey, $stream, 'pub');
                     $fileKeyList = [
                         $oneReadyToSend->getAttr('lastReqUrl')
                     ];
@@ -149,23 +150,11 @@ class GetInvData extends AbstractCronTask
                         'notifyChannel' => 'ELEPHANT',//通知 渠道
                     ],
                 ];
-                CommonService::getInstance()->log4PHP([
-                    '签名json',
-                    jsonEncode([$body], false)
-                ]);
-                CommonService::getInstance()->log4PHP([
-                    '发送给蚂蚁的内容',
-                    $collectNotify
-                ]);
+
                 $url = $url_arr[$id];
                 $ret = (new CoHttpClient())
                     ->useCache(false)
                     ->send($url, $collectNotify);
-
-                CommonService::getInstance()->log4PHP([
-                    '蚂蚁返回http内容',
-                    $ret
-                ]);
             }
         }
 

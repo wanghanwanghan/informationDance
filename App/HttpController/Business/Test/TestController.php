@@ -33,10 +33,9 @@ class TestController extends BusinessBase
 
     function test()
     {
-        $res = OSSService::getInstance()
-            ->doUploadFile('invoice-mrxd', 'testcro', __FILE__, 100);
+        OSSService::getInstance()->createObjectDir('invoice-mrxd', 2020);
 
-        return $this->writeJson(200, null, $res);
+        return $this->writeJson(200);
     }
 
     function test1()
