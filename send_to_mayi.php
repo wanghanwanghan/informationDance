@@ -107,7 +107,7 @@ Rof;
 
         $ret = (new CoHttpClient())
             ->useCache(false)
-            ->send($url, $collectNotify, [], [], 'postjson');
+            ->send($url, jsonEncode($collectNotify, false), [], [], 'postjson');
 
         echo jsonEncode([$body], false) . PHP_EOL;
         echo jsonEncode($collectNotify, false) . PHP_EOL;
