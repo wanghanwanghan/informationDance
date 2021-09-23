@@ -79,7 +79,7 @@ Rof;
     protected function run($arg)
     {
         //$this->sendToOSS('91330108MA2KE69H8J');
-        $url = 'http://invoicecommercialv2.dev.dl.alipaydev.com/api/wezTech/collectNotify';
+        $url = 'http://invoicecommercialv2.dl.alipaydev.com/api/wezTech/collectNotify';
 
         $fileSecret = control::rsaEncrypt($this->currentAesKey, $this->pub_str, 'pub');
 
@@ -112,6 +112,7 @@ Rof;
         echo jsonEncode([$body], false) . PHP_EOL;
         echo jsonEncode($collectNotify, false) . PHP_EOL;
 
+        var_dump($ret);
 
     }
 
