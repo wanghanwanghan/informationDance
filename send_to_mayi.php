@@ -74,7 +74,10 @@ Eof;
         ];
         //sign md5 with rsa
         $pkeyid = openssl_pkey_get_private($this->pri_str);
-        $verify = openssl_sign(json_encode([$body], 320), $signature, $pkeyid, OPENSSL_ALGO_MD5);
+        $verify = openssl_sign(json_encode(
+            [$body],
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        ), $signature, $pkeyid, OPENSSL_ALGO_MD5);
         //准备通知
         $collectNotify = [
             'body' => [$body],
