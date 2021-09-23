@@ -33,8 +33,6 @@ class TestController extends BusinessBase
 
     function test()
     {
-        OSSService::getInstance()->createObjectDir('invoice-mrxd', '20202021');
-
         return $this->writeJson(200);
     }
 

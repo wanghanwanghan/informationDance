@@ -78,39 +78,39 @@ Rof;
 
     protected function run($arg)
     {
-        //$this->sendToOSS('91330108MA2KE69H8J');
-        $url = 'http://invoicecommercialv2.dev.dl.alipaydev.com/api/wezTech/collectNotify';
-
-        $fileSecret = control::rsaEncrypt($this->currentAesKey, $this->pub_str, 'pub');
-
-        $body = [
-            'nsrsbh' => '91330108MA2KE69H8J',//授权的企业税号
-            'authResultCode' => '0000',//取数结果状态码 0000取数成功 XXXX取数失败
-            'fileSecret' => $fileSecret,//对称钥秘⽂
-            'companyName' => '杭州随便文化传媒有限公司',//公司名称
-            'authTime' => '2021-10-22 12:34:45',//授权时间
-            'fileKeyList' => [
-                'http://invoice-mrxd.oss-cn-beijing.aliyuncs.com/202109_91330108MA2KE69H8J.zip?OSSAccessKeyId=LTAI4GFmzB3tJgMTpcM35EPP&Expires=1632971608&Signature=ukAxuRR9TH7OzGEyA6uCrXv7QXE%3D'
-            ],//文件路径
-        ];
-        //sign md5 with rsa
-        $pkeyid = openssl_pkey_get_private($this->pri_str);
-        $verify = openssl_sign(jsonEncode([$body], false), $signature, $pkeyid, OPENSSL_ALGO_MD5);
-        //准备通知
-        $collectNotify = [
-            'body' => [$body],
-            'head' => [
-                'sign' => base64_encode($signature),//签名
-                'notifyChannel' => 'ELEPHANT',//通知 渠道
-            ],
-        ];
-
-        $ret = (new CoHttpClient())
-            ->useCache(false)
-            ->send($url, $collectNotify);
-
-        echo jsonEncode([$body], false) . PHP_EOL;
-        echo jsonEncode($collectNotify, false) . PHP_EOL;
+        $this->sendToOSS('91330108MA2KE69H8J');
+//        $url = 'http://invoicecommercialv2.dev.dl.alipaydev.com/api/wezTech/collectNotify';
+//
+//        $fileSecret = control::rsaEncrypt($this->currentAesKey, $this->pub_str, 'pub');
+//
+//        $body = [
+//            'nsrsbh' => '91330108MA2KE69H8J',//授权的企业税号
+//            'authResultCode' => '0000',//取数结果状态码 0000取数成功 XXXX取数失败
+//            'fileSecret' => $fileSecret,//对称钥秘⽂
+//            'companyName' => '杭州随便文化传媒有限公司',//公司名称
+//            'authTime' => '2021-10-22 12:34:45',//授权时间
+//            'fileKeyList' => [
+//                'http://invoice-mrxd.oss-cn-beijing.aliyuncs.com/202109_91330108MA2KE69H8J.zip?OSSAccessKeyId=LTAI4GFmzB3tJgMTpcM35EPP&Expires=1632971608&Signature=ukAxuRR9TH7OzGEyA6uCrXv7QXE%3D'
+//            ],//文件路径
+//        ];
+//        //sign md5 with rsa
+//        $pkeyid = openssl_pkey_get_private($this->pri_str);
+//        $verify = openssl_sign(jsonEncode([$body], false), $signature, $pkeyid, OPENSSL_ALGO_MD5);
+//        //准备通知
+//        $collectNotify = [
+//            'body' => [$body],
+//            'head' => [
+//                'sign' => base64_encode($signature),//签名
+//                'notifyChannel' => 'ELEPHANT',//通知 渠道
+//            ],
+//        ];
+//
+//        $ret = (new CoHttpClient())
+//            ->useCache(false)
+//            ->send($url, $collectNotify);
+//
+//        echo jsonEncode([$body], false) . PHP_EOL;
+//        echo jsonEncode($collectNotify, false) . PHP_EOL;
 
 
     }
@@ -225,29 +225,23 @@ Rof;
             ];
             while (false !== ($file = readdir($dh))) {
                 if (!in_array($file, $ignore, true)) {
-                    $file_arr[] = $store . $file;
+                    $file_arr[] = OSSService::getInstance()
+                        ->doUploadFile(
+                            $this->oss_bucket,
+                            Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $file,
+                            $store . $file,
+                            $this->oss_expire_time
+                        );
                 }
             }
-        }
-        closedir($dh);
-
-        if (!empty($file_arr)) {
-            $name = Carbon::now()->format('Ym') . "_{$NSRSBH}.zip";
-            if (file_exists($store . $name)) {
-                unlink($store . $name);
-            }
-            $zip_file_name = ZipService::getInstance()->zip($file_arr, $store . $name, true);
-            $oss_file_name = OSSService::getInstance()
-                ->doUploadFile($this->oss_bucket, $name, $zip_file_name, $this->oss_expire_time);
-            CommonService::getInstance()->log4PHP($oss_file_name);
-            //更新上次取数时间和oss地址
             AntAuthList::create()
                 ->where('socialCredit', $NSRSBH)
                 ->update([
                     'lastReqTime' => time(),
-                    'lastReqUrl' => $oss_file_name,
+                    'lastReqUrl' => empty($file_arr) ? '' : implode(',', $file_arr),
                 ]);
         }
+        closedir($dh);
 
         return true;
     }

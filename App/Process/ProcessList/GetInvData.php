@@ -252,28 +252,40 @@ class GetInvData extends ProcessBase
             ];
             while (false !== ($file = readdir($dh))) {
                 if (!in_array($file, $ignore, true)) {
-                    $file_arr[] = $store . $file;
+                    $file_arr[] = OSSService::getInstance()
+                        ->doUploadFile(
+                            $this->oss_bucket,
+                            Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $file,
+                            $store . $file,
+                            $this->oss_expire_time
+                        );
                 }
             }
-        }
-        closedir($dh);
-
-        if (!empty($file_arr)) {
-            $name = Carbon::now()->format('Ym') . "_{$NSRSBH}.zip";
-            if (file_exists($store . $name)) {
-                unlink($store . $name);
-            }
-            $zip_file_name = ZipService::getInstance()->zip($file_arr, $store . $name, true);
-            $oss_file_name = OSSService::getInstance()
-                ->doUploadFile($this->oss_bucket, $name, $zip_file_name, $this->oss_expire_time);
-            //更新上次取数时间和oss地址
             AntAuthList::create()
                 ->where('socialCredit', $NSRSBH)
                 ->update([
                     'lastReqTime' => time(),
-                    'lastReqUrl' => $oss_file_name,//存个文件前缀吧，然后用file_exists去判断page到第几个了
+                    'lastReqUrl' => empty($file_arr) ? '' : implode(',', $file_arr),
                 ]);
         }
+        closedir($dh);
+
+//        if (!empty($file_arr)) {
+//            $name = Carbon::now()->format('Ym') . "_{$NSRSBH}.zip";
+//            if (file_exists($store . $name)) {
+//                unlink($store . $name);
+//            }
+//            $zip_file_name = ZipService::getInstance()->zip($file_arr, $store . $name, true);
+//            $oss_file_name = OSSService::getInstance()
+//                ->doUploadFile($this->oss_bucket, $name, $zip_file_name, $this->oss_expire_time);
+//            //更新上次取数时间和oss地址
+//            AntAuthList::create()
+//                ->where('socialCredit', $NSRSBH)
+//                ->update([
+//                    'lastReqTime' => time(),
+//                    'lastReqUrl' => $oss_file_name,//存个文件前缀吧，然后用file_exists去判断page到第几个了
+//                ]);
+//        }
 
         return true;
     }
