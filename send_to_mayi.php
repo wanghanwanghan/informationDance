@@ -122,7 +122,7 @@ Eof;
 
         //取全部发票写入文件
         $total = EntInvoice::create()
-            ->addSuffix('91330108MA2KE69H8J', 'wusuowei')
+            ->addSuffix('911199999999CN0008', 'wusuowei')
             ->where('nsrsbh', $NSRSBH)
             ->count();
 
@@ -137,7 +137,7 @@ Eof;
                 $filename = $NSRSBH . "_page_{$page}.json";
                 $offset = ($page - 1) * 3000;
                 $list = EntInvoice::create()
-                    ->addSuffix('91330108MA2KE69H8J', 'wusuowei')
+                    ->addSuffix('911199999999CN0008', 'wusuowei')
                     ->where('nsrsbh', $NSRSBH)
                     ->field([
                         'fpdm',
