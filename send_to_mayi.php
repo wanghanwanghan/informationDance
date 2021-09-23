@@ -105,9 +105,14 @@ Rof;
             ],
         ];
 
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+        ];
+
         $ret = (new CoHttpClient())
             ->useCache(false)
-            ->send($url, jsonEncode($collectNotify, false), [], [], 'postjson');
+            ->needJsonDecode(true)
+            ->send($url, jsonEncode($collectNotify, false), $header, [], 'postjson');
 
         echo jsonEncode([$body], false) . PHP_EOL;
         echo jsonEncode($collectNotify, false) . PHP_EOL;
