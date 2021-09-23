@@ -56,7 +56,7 @@ wrw2lJObnDXs2bq+4i+Yvql+AsZWiof6JRR+IOtGOX3OH7haAFpaFJCpVJB+W8Tl
 -----END PRIVATE KEY-----
 Eof;
 
-    public $currentAesKey = 'DrPEsgNVA4fBmtZ3';
+    public $currentAesKey = 'XbrAdtkxFflSaIoE';
 
     protected function run($arg)
     {
@@ -70,7 +70,9 @@ Eof;
             'fileSecret' => $fileSecret,//对称钥秘⽂
             'companyName' => '杭州随便文化传媒有限公司',//公司名称
             'authTime' => '2021-09-22 12:34:45',//授权时间
-            'fileKeyList' => [],//文件路径
+            'fileKeyList' => [
+                'http://invoice-mrxd.oss-cn-beijing.aliyuncs.com/202109_911199999999CN0008.zip?OSSAccessKeyId=LTAI4GFmzB3tJgMTpcM35EPP&Expires=1632968470&Signature=biBlhSOgUDBslfxZxxUKqAFOx3E%3D'
+            ],//文件路径
         ];
         //sign md5 with rsa
         $pkeyid = openssl_pkey_get_private($this->pri_str);
