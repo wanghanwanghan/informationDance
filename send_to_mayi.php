@@ -10,6 +10,9 @@ use App\HttpController\Service\CreateMysqlPoolForEntDb;
 use App\HttpController\Service\CreateMysqlPoolForMinZuJiDiDb;
 use App\HttpController\Service\CreateMysqlPoolForProjectDb;
 use App\HttpController\Service\HttpClient\CoHttpClient;
+use App\HttpController\Service\OSS\OSSService;
+use App\HttpController\Service\Zip\ZipService;
+use Carbon\Carbon;
 use \EasySwoole\EasySwoole\Core;
 use App\HttpController\Service\CreateDefine;
 use App\HttpController\Service\Common\CommonService;
@@ -57,46 +60,183 @@ wrw2lJObnDXs2bq+4i+Yvql+AsZWiof6JRR+IOtGOX3OH7haAFpaFJCpVJB+W8Tl
 Eof;
 
     public $currentAesKey = 'XbrAdtkxFflSaIoE';
+    public $iv = '1234567890abcdef';
+    public $oss_expire_time = 86400 * 7;
+    public $oss_bucket = 'invoice-mrxd';
 
     protected function run($arg)
     {
-        $url = 'http://invoicecommercial.dev.dl.alipaydev.com/api/wezTech/collectNotify';
+        $this->sendToOSS('91330108MA2KE69H8J');
+//        $url = 'http://invoicecommercial.dev.dl.alipaydev.com/api/wezTech/collectNotify';
+//
+//        $fileSecret = control::rsaEncrypt($this->currentAesKey, $this->pri_str, 'pri');
+//
+//        $body = [
+//            'nsrsbh' => '91330108MA2KE69H8J',//授权的企业税号
+//            'authResultCode' => '0000',//取数结果状态码 0000取数成功 XXXX取数失败
+//            'fileSecret' => $fileSecret,//对称钥秘⽂
+//            'companyName' => '杭州随便文化传媒有限公司',//公司名称
+//            'authTime' => '2021-09-22 12:34:45',//授权时间
+//            'fileKeyList' => [
+//                'http://invoice-mrxd.oss-cn-beijing.aliyuncs.com/202109_911199999999CN0008.zip?OSSAccessKeyId=LTAI4GFmzB3tJgMTpcM35EPP&Expires=1632968470&Signature=biBlhSOgUDBslfxZxxUKqAFOx3E%3D'
+//            ],//文件路径
+//        ];
+//        //sign md5 with rsa
+//        $pkeyid = openssl_pkey_get_private($this->pri_str);
+//        $verify = openssl_sign(json_encode(
+//            [$body],
+//            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+//        ), $signature, $pkeyid, OPENSSL_ALGO_MD5);
+//        //准备通知
+//        $collectNotify = [
+//            'body' => [$body],
+//            'head' => [
+//                'sign' => base64_encode($signature),//签名
+//                'notifyChannel' => 'ELEPHANT',//通知 渠道
+//            ],
+//        ];
+//
+//        $ret = (new CoHttpClient())->useCache(false)->send($url, $collectNotify);
+//
+//        var_dump($ret);
 
-        $fileSecret = control::rsaEncrypt($this->currentAesKey, $this->pri_str, 'pri');
+    }
 
-        $body = [
-            'nsrsbh' => '91330108MA2KE69H8J',//授权的企业税号
-            'authResultCode' => '0000',//取数结果状态码 0000取数成功 XXXX取数失败
-            'fileSecret' => $fileSecret,//对称钥秘⽂
-            'companyName' => '杭州随便文化传媒有限公司',//公司名称
-            'authTime' => '2021-09-22 12:34:45',//授权时间
-            'fileKeyList' => [
-                'http://invoice-mrxd.oss-cn-beijing.aliyuncs.com/202109_911199999999CN0008.zip?OSSAccessKeyId=LTAI4GFmzB3tJgMTpcM35EPP&Expires=1632968470&Signature=biBlhSOgUDBslfxZxxUKqAFOx3E%3D'
-            ],//文件路径
-        ];
-        //sign md5 with rsa
-        $pkeyid = openssl_pkey_get_private($this->pri_str);
-        $verify = openssl_sign(json_encode(
-            [$body],
-            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
-        ), $signature, $pkeyid, OPENSSL_ALGO_MD5);
-        //准备通知
-        $collectNotify = [
-            'body' => [$body],
-            'head' => [
-                'sign' => base64_encode($signature),//签名
-                'notifyChannel' => 'ELEPHANT',//通知 渠道
-            ],
-        ];
+    //上传到oss 发票已经入完mysql
+    function sendToOSS($NSRSBH)
+    {
+        //只有蚂蚁的税号才上传oss
+        //蚂蚁区块链dev id 36
+        //蚂蚁区块链pre id 41
+        //蚂蚁区块链pro id 42
 
-        $ret = (new CoHttpClient())->useCache(false)->send($url, $collectNotify);
+        $info = AntAuthList::create()
+            ->where('belong', [36, 41, 42], 'IN')
+            ->where('socialCredit', $NSRSBH)
+            ->get();
 
-        echo json_encode([$body], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL;
+        if (empty($info)) return false;
 
-        echo json_encode($collectNotify, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL;
+        $store = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR;
+        is_dir($store) || mkdir($store, 0755, true);
 
-        var_dump($ret);
+        //取全部发票写入文件
+        $total = EntInvoice::create()
+            ->addSuffix('91330108MA2KE69H8J', 'wusuowei')
+            ->where('nsrsbh', $NSRSBH)
+            ->count();
 
+        if (empty($total)) {
+            $filename = $NSRSBH . "_page_1.json";
+            file_put_contents($store . $filename, '', FILE_APPEND | LOCK_EX);
+        } else {
+            $totalPage = $total / 3000 + 1;
+            //每个文件存3000张发票
+            for ($page = 1; $page <= $totalPage; $page++) {
+                //每个文件存3000张发票
+                $filename = $NSRSBH . "_page_{$page}.json";
+                $offset = ($page - 1) * 3000;
+                $list = EntInvoice::create()
+                    ->addSuffix('91330108MA2KE69H8J', 'wusuowei')
+                    ->where('nsrsbh', $NSRSBH)
+                    ->field([
+                        'fpdm',
+                        'fphm',
+                        'kplx',
+                        'xfsh',
+                        'xfmc',
+                        'xfdzdh',
+                        'xfyhzh',
+                        'gfsh',
+                        'gfmc',
+                        'gfdzdh',
+                        'gfyhzh',
+                        'gmflx',
+                        'kpr',
+                        'skr',
+                        'fhr',
+                        'yfpdm',
+                        'yfphm',
+                        'je',
+                        'se',
+                        'jshj',
+                        'bz',
+                        'zfbz',
+                        'zfsj',
+                        'kprq',
+                        'fplx',
+                        'fpztDm',
+                        'slbz',
+                        'rzdklBdjgDm',
+                        'rzdklBdrq',
+                        'direction',
+                        'nsrsbh',
+                    ])
+                    ->limit($offset, 3000)
+                    ->all();
+                //没有数据了
+                if (empty($list)) break;
+                foreach ($list as $oneInv) {
+                    //每张添加明细
+                    $detail = EntInvoiceDetail::create()
+                        ->addSuffix($oneInv->getAttr('fpdm'), $oneInv->getAttr('fphm'), 'wusuowei')
+                        ->where(['fpdm' => $oneInv->getAttr('fpdm') - 0, 'fphm' => $oneInv->getAttr('fphm') - 0])
+                        ->field([
+                            'spbm',
+                            'mc',
+                            'jldw',
+                            'shul',
+                            'je',
+                            'sl',
+                            'se',
+                            'mxxh',
+                            'dj',
+                            'ggxh',
+                        ])
+                        ->all();
+                    empty($detail) ? $oneInv->fpxxMxs = null : $oneInv->fpxxMxs = $detail;
+                }
+                $content = jsonEncode($list, false);
+                //AES-128-CTR
+                $content = base64_encode(openssl_encrypt($content, 'AES-128-CTR', $this->currentAesKey, OPENSSL_RAW_DATA, $this->iv));
+                file_put_contents($store . $filename, $content . PHP_EOL, FILE_APPEND | LOCK_EX);
+            }
+        }
+
+        //上传oss
+        $file_arr = [];
+
+        if ($dh = opendir($store)) {
+            $ignore = [
+                '.', '..', '.gitignore',
+            ];
+            while (false !== ($file = readdir($dh))) {
+                if (!in_array($file, $ignore, true)) {
+                    $file_arr[] = $store . $file;
+                }
+            }
+        }
+        closedir($dh);
+
+        if (!empty($file_arr)) {
+            $name = Carbon::now()->format('Ym') . "_{$NSRSBH}.zip";
+            if (file_exists($store . $name)) {
+                unlink($store . $name);
+            }
+            $zip_file_name = ZipService::getInstance()->zip($file_arr, $store . $name, true);
+            $oss_file_name = OSSService::getInstance()
+                ->doUploadFile($this->oss_bucket, $name, $zip_file_name, $this->oss_expire_time);
+            CommonService::getInstance()->log4PHP($oss_file_name);
+            //更新上次取数时间和oss地址
+            AntAuthList::create()
+                ->where('socialCredit', $NSRSBH)
+                ->update([
+                    'lastReqTime' => time(),
+                    'lastReqUrl' => $oss_file_name,
+                ]);
+        }
+
+        return true;
     }
 
     function writeErr(\Throwable $e): void

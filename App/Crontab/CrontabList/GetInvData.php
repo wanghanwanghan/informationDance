@@ -71,8 +71,8 @@ class GetInvData extends AbstractCronTask
             $flag_arr = [];
             $num = \App\Process\ProcessList\GetInvData::ProcessNum;
             for ($i = $num; $i--;) {
-                $flag = $redis->hGet($this->readToSendAntFlag, $this->readToSendAntFlag . $num) - 0;
-                $flag !== 0 ?: $flag_arr[] = $flag;
+                $flag = $redis->hGet($this->readToSendAntFlag, $this->readToSendAntFlag . $i) - 0;
+                $flag === 1 ?: $flag_arr[] = $flag;
             }
             if (count($flag_arr) !== $num) {
                 \co::sleep(3);
