@@ -2,7 +2,6 @@
 
 use App\Command\CommandList\TestCommand;
 use App\HttpController\Service\Common\CommonService;
-use App\Services\Log\Log;
 use EasySwoole\EasySwoole\Command\CommandContainer;
 use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\ORM\DbManager;
@@ -218,7 +217,30 @@ function getRandomStr($len = 16): string
     return implode('', array_slice($char_set, 0, $len));
 }
 
+//保留几位小数
+function changeDecimal($num, $precision = 2): string
+{
+    if (!is_numeric($num)) return '';
 
+    $num = round($num, $precision) . '';
+
+    if (strpos($num, '.') === false) {
+        $num .= '.';
+        for ($i = $precision; $i--;) {
+            $num .= '0';
+        }
+    }
+
+    $len = strlen(substr($num, strpos($num, '.') + 1));
+
+    if ($precision !== $len) {
+        for ($i = ($precision - $len); $i--;) {
+            $num .= '0';
+        }
+    }
+
+    return $num;
+}
 
 
 
