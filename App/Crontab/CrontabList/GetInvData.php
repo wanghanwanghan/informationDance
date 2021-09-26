@@ -29,7 +29,7 @@ class GetInvData extends AbstractCronTask
     {
         //每月18号18点可以取上一个月全部数据
         //return '0 18 18 * *';
-        return '37 11 * * *';
+        return '40 11 * * *';
     }
 
     static function getTaskName(): string
@@ -115,7 +115,7 @@ class GetInvData extends AbstractCronTask
                 $info = RequestUserInfo::create()->get($id);
                 $rsa_pub_name = $info->getAttr('rsaPub');
                 $rsa_pri_name = $info->getAttr('rsaPri');
-                //5天以内的才算取数成功
+                //5天以内的才算取数成功，上传oss后更新lastReqTime，然后才会执行这里
                 if (time() - $lastReqTime < 86400 * 5) {
                     $authResultCode = '0000';
                     //拿公钥加密
@@ -152,6 +152,11 @@ class GetInvData extends AbstractCronTask
                         'notifyChannel' => 'ELEPHANT',//通知 渠道
                     ],
                 ];
+
+                CommonService::getInstance()->log4PHP([
+                    '发给蚂蚁的',
+                    $collectNotify
+                ]);
 
                 $url = $url_arr[$id];
 
