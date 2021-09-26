@@ -341,9 +341,9 @@ class GetInvData extends ProcessBase
                     'fhr' => changeNull($arr['FHR']),//'复核人',
                     'yfpdm' => changeNull($arr['YFPDM']),//'原发票代码 kplx为1时必填',
                     'yfphm' => changeNull($arr['YFPHM']),//'原发票号码 kplx为1时必填',
-                    'je' => changeNull($arr['HJJE']),//'金额',
-                    'se' => changeNull($arr['HJSE']),//'税额',
-                    'jshj' => changeDecimal(changeNull($arr['JSHJ']), 2),//'价税合计 单位元 2位小数',
+                    'je' => changeDecimal($arr['HJJE'], 2),//'金额',
+                    'se' => changeDecimal($arr['HJSE'], 2),//'税额',
+                    'jshj' => changeDecimal($arr['JSHJ'], 2),//'价税合计 单位元 2位小数',
                     'bz' => changeNull($arr['BZ']),//'备注',
                     'zfbz' => changeNull(changeFPZT($arr['FPZT'])) === '2' ? 'Y' : 'N',//'作废标志 N-未作废 Y-作废',
                     'zfsj' => '',//'作废时间',
@@ -377,17 +377,28 @@ class GetInvData extends ProcessBase
                             'fpdm' => $dm,
                             'fphm' => $hm,
                         ])->get();
+                        //计算一下金额税额价税合计，如果发票主体中没有，就添加进去
+                        $je = $se = 0;
                         if (empty($check_exists)) {
                             //没存过明细才会存
                             $i_num = 1;
                             foreach ($arr['FPMX'] as $oneDetail) {
+                                //计算一下金额税额价税合计，如果发票主体中没有，就添加进去
+                                if (is_numeric($oneDetail['JE'])) {
+                                    $je_tmp = round($oneDetail['JE'], 3);
+                                    $je += $je_tmp;
+                                }
+                                if (is_numeric($oneDetail['SE'])) {
+                                    $se_tmp = round($oneDetail['SE'], 3);
+                                    $se += $se_tmp;
+                                }
                                 $insert_detail[] = [
                                     'spbm' => changeNull($oneDetail['SPBM']),//'税收分类编码',
                                     'mc' => changeNull($oneDetail['SPMC']),//'如果为折扣行 商品名称须与被折扣行的商品名称相同 不能多行折扣',
                                     'jldw' => changeNull($oneDetail['DW']),//'单位',
-                                    'shul' => changeNull($oneDetail['SPSL']),//'数量 6位小数',
-                                    'je' => changeDecimal(changeNull($oneDetail['JE']), 2),//'含税金额 2位小数',
-                                    'sl' => changeDecimal(changeNull($oneDetail['SL']), 3),//'税率 3位小数 例1%为0.010',
+                                    'shul' => changeNull($oneDetail['SPSL']),//'数量',
+                                    'je' => changeDecimal($oneDetail['JE'], 2),//'含税金额 2位小数',
+                                    'sl' => changeDecimal($oneDetail['SL'], 3),//'税率 3位小数 例1%为0.010',
                                     'se' => changeNull($oneDetail['SE']),//'税额',
                                     'dj' => changeNull($oneDetail['DJ']),//'不含税单价',
                                     'ggxh' => changeNull($oneDetail['GGXH']),//'规格型号',
@@ -408,6 +419,11 @@ class GetInvData extends ProcessBase
                 try {
                     DbManager::getInstance()->startTransaction($conn);
                     //发票主表
+                    if (!is_numeric($insert['je']) || is_numeric($insert['se'])) {
+                        $insert['je'] = changeDecimal($je, 2);
+                        $insert['se'] = changeDecimal($se, 2);
+                        $insert['jshj'] = changeDecimal($je + $se, 2);
+                    }
                     EntInvoice::create()->addSuffix($NSRSBH, $FPLXDM)->data($insert)->save();
                     if (!empty($insert_detail)) {
                         //发票明细表

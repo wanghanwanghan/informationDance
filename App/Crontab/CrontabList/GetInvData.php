@@ -122,8 +122,6 @@ class GetInvData extends AbstractCronTask
                     $stream = file_get_contents(RSA_KEY_PATH . $rsa_pub_name);
                     //AES加密key用RSA加密
                     $fileSecret = control::rsaEncrypt($this->currentAesKey, $stream, 'pub');
-                    $fileSecret = control::rsaEncrypt('zhoupingniubibii', $stream, 'pub');
-                    CommonService::getInstance()->log4PHP('走到这里了');
                     $fileKeyList = empty($oneReadyToSend->getAttr('lastReqUrl')) ?
                         [] :
                         array_filter(explode(',', $oneReadyToSend->getAttr('lastReqUrl')));
