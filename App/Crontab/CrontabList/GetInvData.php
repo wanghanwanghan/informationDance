@@ -29,7 +29,7 @@ class GetInvData extends AbstractCronTask
     {
         //每月18号18点可以取上一个月全部数据
         //return '0 18 18 * *';
-        return '16 18 * * *';
+        return '40 11 * * *';
     }
 
     static function getTaskName(): string
@@ -122,6 +122,8 @@ class GetInvData extends AbstractCronTask
                     $stream = file_get_contents(RSA_KEY_PATH . $rsa_pub_name);
                     //AES加密key用RSA加密
                     $fileSecret = control::rsaEncrypt($this->currentAesKey, $stream, 'pub');
+                    $fileSecret = control::rsaEncrypt('zhoupingniubibii', $stream, 'pub');
+                    CommonService::getInstance()->log4PHP('走到这里了');
                     $fileKeyList = empty($oneReadyToSend->getAttr('lastReqUrl')) ?
                         [] :
                         array_filter(explode(',', $oneReadyToSend->getAttr('lastReqUrl')));
@@ -157,21 +159,10 @@ class GetInvData extends AbstractCronTask
                     'content-type' => 'application/json;charset=UTF-8',
                 ];
 
-                CommonService::getInstance()->log4PHP(jsonEncode([
-                    '税号' => $oneReadyToSend->getAttr('socialCredit'),
-                    '最终发给蚂蚁' => $collectNotify
-                ], false));
-
                 $ret = (new CoHttpClient())
                     ->useCache(false)
                     ->needJsonDecode(true)
                     ->send($url, jsonEncode($collectNotify, false), $header, [], 'postjson');
-
-                CommonService::getInstance()->log4PHP([
-                    '税号' => $oneReadyToSend->getAttr('socialCredit'),
-                    '蚂蚁最终返回' => $ret
-                ]);
-
             }
         }
 
