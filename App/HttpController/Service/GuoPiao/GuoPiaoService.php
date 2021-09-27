@@ -219,7 +219,7 @@ class GuoPiaoService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
-    //进销项发票信息
+    //进销项发票信息 信动专用
     function getInvoiceMain($code, $dataType, $startDate, $endDate, $page)
     {
         $param['taxNumber'] = $code;
@@ -238,7 +238,7 @@ class GuoPiaoService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
-    //进销项发票商品明细
+    //进销项发票商品明细 信动专用
     function getInvoiceGoods($code, $dataType, $startDate, $endDate, $page)
     {
         $param['taxNumber'] = $code;

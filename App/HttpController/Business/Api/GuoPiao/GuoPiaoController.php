@@ -265,7 +265,7 @@ class GuoPiaoController extends GuoPiaoBase
         return $this->checkResponse($res, __FUNCTION__);
     }
 
-    //进销项发票信息
+    //进销项发票信息 信动专用
     function getInvoiceMain()
     {
         $code = $this->request()->getRequestParam('code') ?? '';
@@ -285,7 +285,7 @@ class GuoPiaoController extends GuoPiaoBase
         return $this->checkResponse($res, __FUNCTION__);
     }
 
-    //进销项发票商品明细
+    //进销项发票商品明细 信动专用
     function getInvoiceGoods()
     {
         $code = $this->request()->getRequestParam('code') ?? '';
