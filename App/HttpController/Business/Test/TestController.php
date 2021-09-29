@@ -196,10 +196,15 @@ class TestController extends BusinessBase
             '天津滨海通达动力科技有限公司',
         ];
 
+        $fp = fopen(BIN_PATH . 'res.csv', 'w+');
+
         foreach ($list as $one) {
             $res = (new TaoShuService())->post(['entName' => $one], 'getRegisterInfo');
-            return $this->writeJson(200, null, $res);
+            $code = trim($res['RESULTDATA'][0]['SHXYDM']);
+            fwrite($fp, $one . ',' . $code . PHP_EOL);
         }
+
+        fclose($fp);
 
         return $this->writeJson(200);
     }
