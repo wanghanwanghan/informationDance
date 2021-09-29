@@ -198,7 +198,7 @@ class TestController extends BusinessBase
 
         foreach ($list as $one) {
             $res = (new TaoShuService())->post(['entName' => $one], 'getRegisterInfo');
-            return $this->writeJson(200);
+            return $this->writeJson(200,$res);
         }
 
         return $this->writeJson(200);
