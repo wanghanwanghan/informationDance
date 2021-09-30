@@ -39,6 +39,11 @@ class TestController extends BusinessBase
             'page' => '1',
         ]);
 
+        $res = (new LongXinService())->vcQueryList([
+            'entName' => '苏州蛙声科技有限公司',
+            'vcId' => 'Fcl13toBQJ3',
+        ]);
+
         return $this->writeJson(200, null, $res);
     }
 

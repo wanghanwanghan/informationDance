@@ -870,11 +870,32 @@ class LongXinService extends ServiceBase
             ->useCache(false)
             ->send($this->baseUrl . 'vc_query_list/', $arr, $this->sendHeaders);
 
-        CommonService::getInstance()->log4PHP($res);
-
         return $this->checkResp($res);
     }
 
+    //
+    function vcQueryDetail($data): ?array
+    {
+        $entId = $this->getEntid($data['entName']);
+        $vcId = $this->getEntid($data['vcId']);
+
+        if (empty($entId))
+            return ['code' => 102, 'msg' => 'entId是空', 'result' => [], 'paging' => null];
+
+        $arr = [
+            'usercode' => $this->usercode,
+            'entid' => $entId,
+            'inv_id' => $vcId,
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($this->baseUrl . 'vc_detail/', $arr, $this->sendHeaders);
+
+        return $this->checkResp($res);
+    }
 
 
 
