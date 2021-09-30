@@ -877,7 +877,6 @@ class LongXinService extends ServiceBase
     function vcQueryDetail($data): ?array
     {
         $entId = $this->getEntid($data['entName']);
-        $vcId = $this->getEntid($data['vcId']);
 
         if (empty($entId))
             return ['code' => 102, 'msg' => 'entId是空', 'result' => [], 'paging' => null];
@@ -885,7 +884,7 @@ class LongXinService extends ServiceBase
         $arr = [
             'usercode' => $this->usercode,
             'entid' => $entId,
-            'inv_id' => $vcId,
+            'inv_id' => $data['vcId'],
         ];
 
         $this->sendHeaders['authorization'] = $this->createToken($arr);
