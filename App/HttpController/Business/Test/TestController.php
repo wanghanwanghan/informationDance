@@ -34,10 +34,37 @@ class TestController extends BusinessBase
 
     function test()
     {
-        $res = (new LongXinService())->vcQueryList([
-            'entName' => '北京优幕科技有限责任公司',
-            'page' => '1',
-        ]);
+        $list = [
+            '苏州蛙声科技有限公司',
+            '北京百炼智能科技有限公司',
+            '北京所思信息科技有限责任公司',
+            '数数信息科技（上海）有限公司',
+            '湖南汇知信息科技有限公司',
+            '广州奇志信息科技有限公司',
+            '杭州雅拓信息技术有限公司',
+            '深圳市霍克视觉科技有限公司',
+            '上海黑湖科技有限公司',
+            '深圳市清日科技有限公司',
+            '北京优幕科技有限责任公司',
+            '上海亘岩网络科技有限公司',
+            '云学堂信息科技（江苏）有限公司',
+            '深圳索信达数据技术有限公司',
+            '北京中交兴路信息科技有限公司',
+            '舟谱数据技术南京有限公司',
+            '广州赛意信息科技股份有限公司',
+            '上海威派格智慧水务股份有限公司',
+            '珍岛信息技术（上海）股份有限公司',
+            '车主邦（北京）科技有限公司',
+        ];
+
+        foreach ($list as $one) {
+            $res = (new LongXinService())->vcQueryList([
+                'entName' => $one,
+                'page' => '1',
+            ]);
+            CommonService::getInstance()->log4PHP($res);
+        }
+
 
 //        $res = (new LongXinService())->vcQueryDetail([
 //            'entName' => '苏州蛙声科技有限公司',
