@@ -35,18 +35,15 @@ class TestController extends BusinessBase
     function test()
     {
         $res = (new LongXinService())->vcQueryList([
-            'entName' => '苏州蛙声科技有限公司',
+            'entName' => '北京优幕科技有限责任公司',
             'page' => '1',
         ]);
 
-        $res = (new LongXinService())->vcQueryDetail([
-            'entName' => '苏州蛙声科技有限公司',
-            'vcId' => 'Fcl13toBQJ3',
-        ]);
+//        $res = (new LongXinService())->vcQueryDetail([
+//            'entName' => '苏州蛙声科技有限公司',
+//            'vcId' => 'Fcl13toBQJ3',
+//        ]);
 
-        $image = $this->request()->getUploadedFile('image');
-
-        $res = BaiDuService::getInstance()->imageQualityEnhance($image);
 
         return $this->writeJson(200, null, $res);
     }
