@@ -44,6 +44,10 @@ class TestController extends BusinessBase
             'vcId' => 'Fcl13toBQJ3',
         ]);
 
+        $image = $this->request()->getUploadedFile('image');
+
+        $res = BaiDuService::getInstance()->imageQualityEnhance($image);
+
         return $this->writeJson(200, null, $res);
     }
 

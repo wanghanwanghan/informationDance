@@ -8,6 +8,7 @@ use App\HttpController\Service\ServiceBase;
 use Carbon\Carbon;
 use EasySwoole\Component\Singleton;
 use EasySwoole\Http\Message\UploadFile;
+use wanghanwanghan\someUtils\utils\arr;
 
 class BaiDuService extends ServiceBase
 {
@@ -25,6 +26,9 @@ class BaiDuService extends ServiceBase
     private $ak_tmp;
     private $sk_tmp;
 
+    private $ak_image;
+    private $sk_image;
+
     function __construct()
     {
         $this->clientId = CreateConf::getInstance()->getConf('baidu.clientId');
@@ -38,6 +42,8 @@ class BaiDuService extends ServiceBase
         $this->sk = CreateConf::getInstance()->getConf('baidu.sk');
         $this->ak_tmp = CreateConf::getInstance()->getConf('baidu.ak_tmp');
         $this->sk_tmp = CreateConf::getInstance()->getConf('baidu.sk_tmp');
+        $this->ak_image = 'lwQ5Fmy3UimGjKBs5ghQEkXF';//图片增强
+        $this->sk_image = 'zA5hr3DGpi3gwnLKRWiX3PvdukjVi5Q3';//图片增强
         return parent::__construct();
     }
 
@@ -172,5 +178,24 @@ class BaiDuService extends ServiceBase
         return is_string($res) ? jsonDecode($res) : $res;
     }
 
+    //图片无损放大
+    function imageQualityEnhance(UploadFile $file): ?array
+    {
+        $url = 'https://aip.baidubce.com/rest/2.0/image-process/v1/image_quality_enhance';
+
+        $token = $this->getToken($this->ak_image, $this->sk_image);
+
+        $url = $url . "?access_token={$token}";
+
+        $headers = ['Content-Type' => 'application/x-www-form-urlencoded'];
+
+        $file = $file->getStream()->__toString();
+
+        $postData = ['image' => base64_encode($file)];
+
+        $res = (new CoHttpClient())->useCache(false)->send($url, $postData, $headers);
+
+        return is_string($res) ? jsonDecode($res) : $res;
+    }
 
 }
