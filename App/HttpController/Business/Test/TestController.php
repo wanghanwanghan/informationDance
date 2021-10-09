@@ -63,12 +63,12 @@ class TestController extends BusinessBase
                 'page' => '1',
             ]);
 
-            CommonService::getInstance()->log4PHP($res);
-
-            $res = (new LongXinService())->vcQueryDetail([
-                'entName' => $one,
-                'vcId' => $res['result']['inv_id'],
-            ]);
+            foreach ($res['result'] as $key => $two) {
+                $res['result'][$key]['detail'] = (new LongXinService())->vcQueryDetail([
+                    'entName' => $one,
+                    'vcId' => $two['inv_id'],
+                ]);
+            }
 
             CommonService::getInstance()->log4PHP($res);
         }
