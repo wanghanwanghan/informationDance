@@ -73,6 +73,10 @@ class TestController extends BusinessBase
             CommonService::getInstance()->log4PHP($res);
         }
 
+        $image = $this->request()->getUploadedFile('image');
+
+        $res = BaiDuService::getInstance()->imageQualityEnhance($image);
+
         return $this->writeJson(200, null, $res);
     }
 
