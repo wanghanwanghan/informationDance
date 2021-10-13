@@ -238,7 +238,6 @@ class XinDongController extends ProvideBase
                     ->getFinanceData($postData, false);
             });
             $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-            CommonService::getInstance()->log4PHP($res);
         }
 
         if ($res[$this->cspKey]['code'] === 200 && !empty($res[$this->cspKey]['result'])) {
