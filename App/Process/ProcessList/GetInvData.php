@@ -164,7 +164,7 @@ class GetInvData extends ProcessBase
 
         if (empty($total)) {
             $filename = $NSRSBH . "_page_1.json";
-            file_put_contents($store . $filename, '', FILE_APPEND | LOCK_EX);
+            file_put_contents($store . $filename, '');
         } else {
             $totalPage = $total / 3000 + 1;
             //每个文件存3000张发票
@@ -234,7 +234,7 @@ class GetInvData extends ProcessBase
                 $content = jsonEncode($list, false);
                 //AES-128-CTR
                 $content = base64_encode(openssl_encrypt($content, 'AES-128-CTR', $this->currentAesKey, OPENSSL_RAW_DATA, $this->iv));
-                file_put_contents($store . $filename, $content . PHP_EOL, FILE_APPEND | LOCK_EX);
+                file_put_contents($store . $filename, $content . PHP_EOL);
             }
         }
 
