@@ -72,7 +72,8 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/sendCertificateAccess', $prefix . 'sendCertificateAccess');//证书授权
             $routeCollector->addRoute(['GET', 'POST'], '/getReceiptDetailByClient', $prefix . 'getReceiptDetailByClient');//进销项发票详情（税盘）
             $routeCollector->addRoute(['GET', 'POST'], '/getReceiptDetailByCert', $prefix . 'getReceiptDetailByCert');//进销项发票详情（证书）
-            $routeCollector->addRoute(['GET', 'POST'], '/getInvoiceOcr', $prefix . 'getInvoiceOcr');//发票实时ocr
+            $routeCollector->addRoute(['GET', 'POST'], '/getInvoiceOcr', $prefix . 'getInvoiceOcr');//发票实时ocr查验
+            $routeCollector->addRoute(['GET', 'POST'], '/getInvoiceCheck', $prefix . 'getInvoiceCheck');//发票实时查验
             $routeCollector->addRoute(['GET', 'POST'], '/getAuthentication', $prefix . 'getAuthentication');//企业授权认证
             $routeCollector->addRoute(['GET', 'POST'], '/getTaxInvoice', $prefix . 'getTaxInvoice');//进销项发票统计查询
             $routeCollector->addRoute(['GET', 'POST'], '/getTaxInvoiceUpgrade', $prefix . 'getTaxInvoiceUpgrade');//进销项月度发票统计查询

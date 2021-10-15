@@ -67,6 +67,7 @@ class GuoPiaoService extends ServiceBase
                 $res['Result'] = $res['data']['invoices'];
                 break;
             case 'getInvoiceOcr':
+            case 'getInvoiceCheck':
                 $res['Result'] = empty($res['data']) ? null : current($res['data']);
                 break;
             case 'getTaxInvoiceUpgrade':
@@ -152,7 +153,7 @@ class GuoPiaoService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
-    //实时ocr
+    //实时ocr查验
     function getInvoiceOcr($image)
     {
         //图片steam的base64编码
@@ -164,6 +165,20 @@ class GuoPiaoService extends ServiceBase
         $api_path = 'invoice/realTimeRecognize';
 
         $res = $this->readyToSend($api_path, $body);
+
+        return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
+    }
+
+    //实时查验
+    function getInvoiceCheck($data)
+    {
+        $body = [];
+        $body['param'] = $data;
+        $body['taxNo'] = $this->taxNo;
+
+        $res = $this->readyToSend('invoice/checkInvoice', $body);
+
+        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }

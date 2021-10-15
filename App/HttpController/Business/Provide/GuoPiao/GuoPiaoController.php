@@ -71,6 +71,25 @@ class GuoPiaoController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getInvoiceCheck()
+    {
+        $postData = [
+            'invoiceCode' => $this->getRequestData('invoiceCode'),
+            'invoiceNumber' => $this->getRequestData('invoiceNumber'),
+            'billingDate' => $this->getRequestData('billingDate'),
+            'totalAmount' => $this->getRequestData('totalAmount'),
+            'checkCode' => $this->getRequestData('checkCode'),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new GuoPiaoService())->setCheckRespFlag(true)->getInvoiceCheck($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
     function getAuthentication()
     {
         $appId = $this->getRequestData('appId', '');
