@@ -166,6 +166,8 @@ class GuoPiaoService extends ServiceBase
 
         $res = $this->readyToSend($api_path, $body);
 
+        CommonService::getInstance()->log4PHP($res);
+
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
@@ -177,6 +179,8 @@ class GuoPiaoService extends ServiceBase
         $body['taxNo'] = $this->taxNo;
 
         $res = $this->readyToSend('invoice/checkInvoice', $body);
+
+        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
