@@ -474,7 +474,7 @@ class XinDongController extends ProvideBase
         $save = [
             'ASSGRO', 'LIAGRO', 'VENDINC',
             'MAIBUSINC', 'PROGRO', 'NETINC',
-            'RATGRO', 'TOTEQU', 'SOCNUM',
+            'RATGRO', 'TOTEQU',
         ];
 
         foreach ($result as $year => $arr) {
