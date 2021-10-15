@@ -398,6 +398,98 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //销售易
+    function getFinanceBaseDataXSY(): bool
+    {
+        $entName = $this->getRequestData('entName', '');
+        $beginYear = 2020;
+        $dataCount = 1;
+
+        $postData = [
+            'entName' => $entName,
+            'code' => $this->getRequestData('code', ''),
+            'beginYear' => $beginYear,
+            'dataCount' => $dataCount,
+        ];
+
+        $range = FinanceRange::getInstance()->getRange('range');
+        $ratio = FinanceRange::getInstance()->getRange('rangeRatio');
+
+        $ent_info = EntDbEnt::create()->where('name', $entName)->get();
+
+        if (!empty($ent_info) && !empty(($f_info = EntDbFinance::create()->where('cid', $ent_info->getAttr('id'))->all()))) {
+            // $this->spendMoney = 0;
+            $origin = [];
+            foreach ($f_info as $one) {
+                $origin[$one->getAttr('ANCHEYEAR') . ''] = obj2Arr($one);
+            }
+            $obj = new LongXinService();
+            $readyReturn = $obj->exprHandle($origin);
+            foreach ($readyReturn as $year => $arr) {
+                if (empty($arr)) continue;
+                foreach ($arr as $field => $val) {
+                    if (in_array($field, $range[0], true) && is_numeric($val)) {
+                        !is_numeric($val) ?: $val = $val * 10000;
+                        $readyReturn[$year][$field] = $obj->binaryFind($val, 0, count($range[1]) - 1, $range[1]);
+                    } elseif (in_array($field, $ratio[0], true) && is_numeric($val)) {
+                        $readyReturn[$year][$field] = $obj->binaryFind($val, 0, count($ratio[1]) - 1, $ratio[1]);
+                    } else {
+                        $readyReturn[$year][$field] = $val;
+                    }
+                }
+            }
+            krsort($readyReturn);
+            for ($i = $beginYear; $i > $beginYear - $dataCount; $i--) {
+                $tmp[$i] = $readyReturn[$i] ?? $readyReturn[$i . ''];
+            }
+            $res = [$this->cspKey => [
+                'code' => 200,
+                'paging' => null,
+                'result' => $tmp,
+                'msg' => null,
+            ]];
+        } else {
+            $this->csp->add($this->cspKey, function () use ($postData, $range, $ratio) {
+                return (new LongXinService())
+                    ->setCheckRespFlag(true)
+                    ->setRangeArr($range, $ratio)
+                    ->getFinanceData($postData, true);
+            });
+            $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        }
+
+        $result = [];
+
+        foreach ($res[$this->cspKey]['result'] as $year => $arr) {
+            foreach ($arr as $field => $val) {
+                if (!is_array($val)) {
+                    $result[$year][$field] = $val;
+                } else {
+                    $result[$year][$field] = $val['name'];
+                }
+            }
+        }
+
+        //留下要的字段
+        $save = [
+            'ASSGRO', 'LIAGRO', 'VENDINC',
+            'MAIBUSINC', 'PROGRO', 'NETINC',
+            'RATGRO', 'TOTEQU', 'SOCNUM',
+        ];
+
+        foreach ($result as $year => $arr) {
+            foreach ($arr as $field => $val) {
+                if (in_array($field, $save, true)) {
+                    $temp[$year][$field] = $val;
+                }
+            }
+        }
+
+        $res[$this->cspKey]['result'] = $temp;
+
+        return $this->checkResponse($res);
+    }
+
     //投中
     function getFinanceBaseDataTZ(): bool
     {
