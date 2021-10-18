@@ -202,7 +202,7 @@ class BaiDuService extends ServiceBase
     //圆形区域地址检索
     function circularSearch(string $query, float $lat, float $lng, int $radius): ?array
     {
-        $url = 'https://api.map.baidu.com/place/v2/search?query=%s&location=%s&radius=%s&output=json&ak=%s&sn=%s';
+        $url = 'https://api.map.baidu.com/place/v2/search?query=%s&location=%s&radius=%s&output=%s&ak=%s&sn=%s';
 
         if (time() % 2) {
             $ak = $this->ak;
