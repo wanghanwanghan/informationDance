@@ -2,6 +2,8 @@
 
 namespace App\HttpController\Business\Api\XinDong;
 
+use App\HttpController\Models\Api\FinancesSearch;
+use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongDun\LongDunService;
@@ -9,6 +11,7 @@ use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\XinDong\XinDongService;
+use wanghanwanghan\someUtils\control;
 
 class XinDongController extends XinDongBase
 {
@@ -289,6 +292,14 @@ class XinDongController extends XinDongBase
             $postData['basic_status'] = "any:{$basic_status}";
         }
 
+        $user_id = User::create()
+            ->where('phone', $this->request()->getRequestParam('phone'))
+            ->get()->getAttr('id');
+
+        if (!is_numeric($user_id)) {
+            return $this->writeJson(201);
+        }
+
         $postData['pindex'] = 0;
 
         $group = time();
@@ -297,24 +308,36 @@ class XinDongController extends XinDongBase
 
             $res = (new LongXinService())->superSearch($postData);
 
-            CommonService::getInstance()->log4PHP($res);
-            break;
+            if ($res['total'] - 0 > 0 && $res['code'] - 0 === 200 && !empty($res['data'])) {
 
+                foreach ($res['data'] as $one) {
 
+                    try {
+                        FinancesSearch::create()->data([
+                            'group' => $group,
+                            'userId' => $user_id,
+                            'entName' => trim($one['ENTNAME']),
+                            'historyEntname' => trim($one['history_entname']),
+                            'code' => trim($one['UNISCID']),
+                            'ESDATE' => trim($one['ESDATE']),
+                            'ENTSTATUS' => trim($one['ENTSTATUS']),
+                            'detail' => jsonEncode($one, false),
+                        ])->save();
+                    } catch (\Throwable $e) {
+                        continue;
+                    }
 
+                }
 
-
-
-
+            } else {
+                break;
+            }
 
             $postData['pindex']++;
 
         }
 
-
-
-
-        return $this->checkResponse($res);
+        return $this->writeJson(200);
     }
 
 
