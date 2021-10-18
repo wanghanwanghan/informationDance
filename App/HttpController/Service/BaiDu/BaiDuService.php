@@ -216,7 +216,7 @@ class BaiDuService extends ServiceBase
             'query' => $query,
             'location' => implode(',', [$lat, $lng]),
             'radius' => $radius,
-            'output' => 'json',
+            'output' => 'json',//
             'ak' => $ak,
         ];
 

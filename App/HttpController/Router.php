@@ -150,6 +150,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/industryTop', $prefix . 'industryTop');//行业top
             $routeCollector->addRoute(['GET', 'POST'], '/logisticsSearch', $prefix . 'logisticsSearch');//物流搜索
             $routeCollector->addRoute(['GET', 'POST'], '/financesSearch', $prefix . 'financesSearch');//金融搜索
+            $routeCollector->addRoute(['GET', 'POST'], '/financesSearchResToMysql', $prefix . 'financesSearchResToMysql');//金融搜索
         });
 
         return true;

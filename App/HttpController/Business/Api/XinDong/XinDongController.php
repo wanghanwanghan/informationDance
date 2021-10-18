@@ -202,6 +202,118 @@ class XinDongController extends XinDongBase
     {
         $res = [];
 
+
+        return $this->checkResponse($res);
+    }
+
+    //金融搜索结果加入mysql
+    function financesSearchResToMysql(): bool
+    {
+        //should 是 or   must 是 and   must_not 是not
+
+        $basic_entname = $this->request()->getRequestParam('basic_entname') ?? '';
+        if (!empty(trim($basic_entname))) {
+            $basic_entname = CommonService::getInstance()->spaceTo($basic_entname);
+            $postData['basic_entname'] = "any:{$basic_entname}";
+        }
+
+        $basic_person_name = $this->request()->getRequestParam('basic_person_name') ?? '';
+        if (!empty(trim($basic_person_name))) {
+            $basic_person_name = CommonService::getInstance()->spaceTo($basic_person_name);
+            $postData['basic_person_name'] = "any:{$basic_person_name}";
+        }
+
+        $basic_dom = $this->request()->getRequestParam('basic_dom') ?? '';
+        if (!empty(trim($basic_dom))) {
+            $basic_dom = CommonService::getInstance()->spaceTo($basic_dom);
+            $postData['basic_dom'] = "all:{$basic_dom}";
+        }
+
+        $basic_regcap = $this->request()->getRequestParam('basic_regcap') ?? '';
+        if (!empty(trim($basic_regcap))) {
+            $basic_regcap = str_replace(['-'], '￥', $basic_regcap);
+            $postData['basic_regcap'] = $basic_regcap;
+        }
+
+        $basic_nicid = $this->request()->getRequestParam('basic_nicid') ?? '';
+        if (!empty(trim($basic_nicid))) {
+            $basic_nicid = trim($basic_nicid, ',');
+            $postData['basic_nicid'] = "any:{$basic_nicid}";
+        }
+
+        $basic_esdate = $this->request()->getRequestParam('basic_esdate') ?? '';
+        if (!empty($basic_esdate)) {
+            $basic_esdate = substr($basic_esdate[0], 0, 10) . '￥' . substr($basic_esdate[1], 0, 10);
+            $postData['basic_esdate'] = $basic_esdate;
+        }
+
+        $basic_enttype = $this->request()->getRequestParam('basic_enttype') ?? '';
+        if (!empty(trim($basic_enttype))) {
+            $basic_enttype = trim($basic_enttype, ',');
+            $postData['basic_enttype'] = "any:{$basic_enttype}";
+        }
+
+        $basic_uniscid = $this->request()->getRequestParam('basic_uniscid') ?? '';
+        if (!empty(trim($basic_uniscid))) {
+            $basic_uniscid = trim($basic_uniscid, ',');
+            $postData['basic_uniscid'] = "any:{$basic_uniscid}";
+        }
+
+        $basic_ygrs = $this->request()->getRequestParam('basic_ygrs') ?? '';
+        if (!empty(trim($basic_ygrs))) {
+            $basic_ygrs = str_replace(['-'], '￥', $basic_ygrs);
+            $postData['basic_ygrs'] = $basic_ygrs;
+        }
+
+        $basic_regionid = $this->request()->getRequestParam('basic_regionid') ?? '';
+        if (!empty(trim($basic_regionid))) {
+            $basic_regionid = trim($basic_regionid, ',');
+            $postData['basic_regionid'] = "any:{$basic_regionid}";
+        }
+
+        $basic_opscope = $this->request()->getRequestParam('basic_opscope') ?? '';
+        if (!empty(trim($basic_opscope))) {
+            $basic_opscope = CommonService::getInstance()->spaceTo($basic_opscope);
+            $postData['basic_opscope'] = "any:{$basic_opscope}";
+        }
+
+        $jingying_vc_round = $this->request()->getRequestParam('jingying_vc_round') ?? '';
+        if (!empty(trim($jingying_vc_round))) {
+            $jingying_vc_round = trim($jingying_vc_round, ',');
+            $postData['jingying_vc_round'] = "any:{$jingying_vc_round}";
+        }
+
+        $basic_status = $this->request()->getRequestParam('basic_status') ?? '';
+        if (!empty(trim($basic_status))) {
+            $basic_status = trim($basic_status, ',');
+            $postData['basic_status'] = "any:{$basic_status}";
+        }
+
+        $postData['pindex'] = 0;
+
+        $group = time();
+
+        while (true) {
+
+            $res = (new LongXinService())->superSearch($postData);
+
+            CommonService::getInstance()->log4PHP($res);
+            break;
+
+
+
+
+
+
+
+
+            $postData['pindex']++;
+
+        }
+
+
+
+
         return $this->checkResponse($res);
     }
 
