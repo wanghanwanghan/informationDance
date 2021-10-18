@@ -198,4 +198,36 @@ class BaiDuService extends ServiceBase
         return is_string($res) ? jsonDecode($res) : $res;
     }
 
+    //圆形区域地址检索
+    function circularSearch(string $query, float $lat, float $lng, int $radius): ?array
+    {
+        $url = 'https://api.map.baidu.com/place/v2/search?query=%s&location=%s&radius=%s&ak=%s&sn=%s';
+
+        if (time() % 2) {
+            $ak = $this->ak;
+            $sk = $this->sk;
+        } else {
+            $ak = $this->ak_tmp;
+            $sk = $this->sk_tmp;
+        }
+
+        $data = [
+            'query' => $query,
+            'location' => implode(',', [$lat, $lng]),
+            'radius' => $radius,
+            'ak' => $ak,
+        ];
+
+        $querystring = http_build_query($data);
+
+        $sn = md5(urlencode('/place/v2/?' . $querystring . $sk));
+
+        $url = sprintf($url, urlencode($query), implode(',', [$lat, $lng]), $radius, $ak, $sn);
+
+        $res = (new CoHttpClient())->useCache(false)->send($url, [], [], [], 'get');
+
+        return is_string($res) ? jsonDecode($res) : $res;
+    }
+
+
 }

@@ -28,7 +28,7 @@ class XinDongController extends XinDongBase
 
     //这里放一些需要组合其他接口然后对外输出的逻辑
 
-    private function checkResponse($res)
+    private function checkResponse($res): bool
     {
         return $this->writeJson((int)$res['code'], $res['paging'], $res['result'], $res['msg']);
     }
@@ -173,7 +173,7 @@ class XinDongController extends XinDongBase
     }
 
     //物流搜索
-    function logisticsSearch()
+    function logisticsSearch(): bool
     {
         $pindex = $this->request()->getRequestParam('page') ?? 1;
 
@@ -193,6 +193,14 @@ class XinDongController extends XinDongBase
         //should 是 or   must 是 and   must_not 是not
 
         $res = (new LongXinService())->superSearch($postData);
+
+        return $this->checkResponse($res);
+    }
+
+    //金融搜索
+    function financesSearch(): bool
+    {
+        $res = [];
 
         return $this->checkResponse($res);
     }
