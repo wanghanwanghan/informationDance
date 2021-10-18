@@ -202,7 +202,7 @@ class BaiDuService extends ServiceBase
     //圆形区域地址检索
     function circularSearch(string $query, float $lat, float $lng, int $radius): ?array
     {
-        $url = 'https://api.map.baidu.com/place/v2/search?query=%s&location=%s&radius=%s&ak=%s&sn=%s';
+        $url = 'https://api.map.baidu.com/place/v2/search?query=%s&location=%s&radius=%s&output=json&ak=%s&sn=%s';
 
         if (time() % 2) {
             $ak = $this->ak;
@@ -223,13 +223,9 @@ class BaiDuService extends ServiceBase
 
         $sn = md5(urlencode('/place/v2/search?' . $querystring . $sk));
 
-        $url = sprintf($url, urlencode($query), implode(',', [$lat, $lng]), $radius, $ak, $sn);
-
-        CommonService::getInstance()->log4PHP($url);
+        $url = sprintf($url, urlencode($query), urlencode(implode(',', [$lat, $lng])), $radius, $ak, $sn);
 
         $res = (new CoHttpClient())->useCache(false)->send($url, [], [], [], 'get');
-
-        CommonService::getInstance()->log4PHP($res);
 
         return is_string($res) ? jsonDecode($res) : $res;
     }
