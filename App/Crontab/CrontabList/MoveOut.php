@@ -40,10 +40,6 @@ class MoveOut extends AbstractCronTask
         //taskId是进程周期内第几个task任务
         //可以用task，也可以用process
 
-        CommonService::getInstance()->log4PHP([
-            'move out start : ' . Carbon::now()->format('Y-m-d H:i:s')
-        ]);
-
         $target_time = Carbon::now()->subDays(1)->format('Ymd');
 
         $sendHeaders['authorization'] = $this->createToken();
@@ -88,10 +84,6 @@ class MoveOut extends AbstractCronTask
 
         //更新所有监控中的企业
         //MoveOutService::getInstance()->updateDatabase();
-
-        CommonService::getInstance()->log4PHP([
-            'move out stop : ' . Carbon::now()->format('Y-m-d H:i:s')
-        ]);
 
         return true;
     }
