@@ -221,7 +221,7 @@ class BaiDuService extends ServiceBase
 
         $querystring = http_build_query($data);
 
-        $sn = md5(urlencode('/place/v2/?' . $querystring . $sk));
+        $sn = md5(urlencode('/place/v2/search?' . $querystring . $sk));
 
         $url = sprintf($url, urlencode($query), implode(',', [$lat, $lng]), $radius, $ak, $sn);
 
