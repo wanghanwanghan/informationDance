@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\BaiDu;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
@@ -224,7 +225,11 @@ class BaiDuService extends ServiceBase
 
         $url = sprintf($url, urlencode($query), implode(',', [$lat, $lng]), $radius, $ak, $sn);
 
+        CommonService::getInstance()->log4PHP($url);
+
         $res = (new CoHttpClient())->useCache(false)->send($url, [], [], [], 'get');
+
+        CommonService::getInstance()->log4PHP($res);
 
         return is_string($res) ? jsonDecode($res) : $res;
     }

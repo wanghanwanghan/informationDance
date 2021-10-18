@@ -36,7 +36,7 @@ class TestController extends BusinessBase
     {
         //116.283824,40.051075
         $res = BaiDuService::getInstance()->circularSearch('公司', 40.051, 116.283, 3000);
-        return $this->writeJson(200, $res);
+        return $this->writeJson(200, null, $res);
     }
 
     function test1()
