@@ -216,6 +216,7 @@ class BaiDuService extends ServiceBase
             'query' => $query,
             'location' => implode(',', [$lat, $lng]),
             'radius' => $radius,
+            'output' => 'json',
             'ak' => $ak,
         ];
 
@@ -223,7 +224,7 @@ class BaiDuService extends ServiceBase
 
         $sn = md5(urlencode('/place/v2/search?' . $querystring . $sk));
 
-        $url = sprintf($url, urlencode($query), urlencode(implode(',', [$lat, $lng])), $radius, $ak, $sn);
+        $url = sprintf($url, urlencode($query), urlencode(implode(',', [$lat, $lng])), $radius, 'json', $ak, $sn);
 
         $res = (new CoHttpClient())->useCache(false)->send($url, [], [], [], 'get');
 
