@@ -43,7 +43,7 @@ class TestController extends BusinessBase
 
         $stream = ssh2_exec($conn, 'ls');
 
-        stream_set_blocking($stream, true);
+
         $stream = stream_get_contents($stream);
 
 
