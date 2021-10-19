@@ -224,8 +224,8 @@ SELECT
 FROM
 	`information_dance_finances_search_first` 
 WHERE
-	userId = {$user_info->getAttr('id')},
-    is_show = 1 
+	userId = {$user_info->getAttr('id')} 
+	AND is_show = 1 
 GROUP BY
 	`group`,
 	groupDesc 
@@ -251,11 +251,11 @@ SELECT
 FROM
 	`information_dance_finances_search_first` 
 WHERE
-	userId = {$user_info->getAttr('id')},
-    is_show = 1 
+	userId = {$user_info->getAttr('id')} 
+	AND is_show = 1 
 GROUP BY
 	`group`,
-	groupDesc 
+	groupDesc
 eof;
 
         $paging = sqlRaw($sql);
