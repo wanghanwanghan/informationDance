@@ -224,7 +224,8 @@ SELECT
 FROM
 	`information_dance_finances_search_first` 
 WHERE
-	userId = {$user_info->getAttr('id')} 
+	userId = {$user_info->getAttr('id')},
+    is_show = 1 
 GROUP BY
 	`group`,
 	groupDesc 
@@ -240,6 +241,26 @@ eof;
             'paging' => null,
             'result' => $res,
         ];
+
+        $sql = <<<eof
+SELECT
+	userId,
+	`group`,
+	groupDesc,
+	count( 1 ) AS num 
+FROM
+	`information_dance_finances_search_first` 
+WHERE
+	userId = {$user_info->getAttr('id')},
+    is_show = 1 
+GROUP BY
+	`group`,
+	groupDesc 
+eof;
+
+        $paging = sqlRaw($sql);
+
+        $tmp['paging'] = count($paging);
 
         return $this->checkResponse($tmp);
     }
