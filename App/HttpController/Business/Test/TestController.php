@@ -35,27 +35,6 @@ class TestController extends BusinessBase
     function test()
     {
 
-        $conn = ssh2_connect('59.110.13.197', '22');
-
-        $rs = ssh2_auth_password($conn, 'ytdydd', 'Quan9867Tai2');
-
-        $sftp = ssh2_sftp($conn);
-
-        $handle = fopen('ssh2.sftp://' . intval($sftp) . '/ic', 'r');
-
-        if (!$handle) {
-            return $this->writeJson(201, null);
-        }
-
-        while (feof($handle) === false) {
-            CommonService::getInstance()->log4PHP(fgets($handle));
-        }
-
-        ssh2_disconnect($sftp);
-
-        $conn = null;
-        $sftp = null;
-
         return $this->writeJson(200, null);
     }
 
