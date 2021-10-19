@@ -41,10 +41,14 @@ class TestController extends BusinessBase
 
         $sftp = ssh2_sftp($conn);
 
-        $handle = fopen('ssh2.sftp://' . intval($sftp) . '/ic', 'rb');
+        $handle = fopen('ssh2.sftp://' . intval($sftp) . '/ic', 'r');
 
-        while (!feof($handle)) {
-            CommonService::getInstance()->log4PHP(fread($handle, 2048));
+        if (!$handle) {
+            return $this->writeJson(201, null);
+        }
+
+        while (feof($handle) === false) {
+            CommonService::getInstance()->log4PHP(fgets($handle));
         }
 
         ssh2_disconnect($sftp);
