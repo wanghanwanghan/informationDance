@@ -2,6 +2,8 @@
 
 use App\Command\CommandList\TestCommand;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateConf;
+use App\Services\Log\Log;
 use EasySwoole\EasySwoole\Command\CommandContainer;
 use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\ORM\DbManager;
@@ -194,8 +196,12 @@ function changeNull($data)
 }
 
 //执行sql
-function sqlRaw(string $sql, string $conn): ?array
+function sqlRaw(string $sql, string $conn = null): ?array
 {
+    if (empty($conn)) {
+        $conn = CreateConf::getInstance()->getConf('env.mysqlDatabase');
+    }
+
     try {
         $queryBuilder = new QueryBuilder();
         $queryBuilder->raw($sql);

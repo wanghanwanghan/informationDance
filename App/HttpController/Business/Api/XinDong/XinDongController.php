@@ -200,11 +200,40 @@ class XinDongController extends XinDongBase
         return $this->checkResponse($res);
     }
 
-    //金融搜索
-    function financesSearch(): bool
+    //
+    function financesGroupSearch(): bool
     {
-        $res = [];
+        $phone = $this->request()->getRequestParam('phone');
+        $page = $this->request()->getRequestParam('page');
 
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+
+        $user_info = User::create()->where('phone', $phone)->get();
+
+        if (empty($user_info)) {
+            return $this->writeJson(201);
+        }
+
+        $sql = <<<eof
+SELECT
+	userId,
+	`group`,
+	groupDesc,
+	count( 1 ) AS num 
+FROM
+	`information_dance_finances_search_first` 
+WHERE
+	userId = {$user_info->getAttr('id')} 
+GROUP BY
+	`group`,
+	groupDesc 
+ORDER BY
+	`group` DESC 
+	LIMIT {$offset},{$limit}
+eof;
+
+        $res = sqlRaw($sql);
 
         return $this->checkResponse($res);
     }
