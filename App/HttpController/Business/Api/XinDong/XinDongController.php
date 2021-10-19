@@ -228,6 +228,13 @@ class XinDongController extends XinDongBase
             $res = $model->all();
             $total = $model->lastQueryResult()->getTotalCount();
 
+            if (!empty($res)) {
+                $res = obj2Arr($res);
+                foreach ($res as $key => $val) {
+                    $res[$key]['detail'] = jsonDecode($val['detail']);
+                }
+            }
+
             $tmp = [
                 'code' => 200,
                 'paging' => ['total' => $total],
