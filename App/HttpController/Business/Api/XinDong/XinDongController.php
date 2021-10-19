@@ -260,7 +260,7 @@ eof;
 
         $paging = sqlRaw($sql);
 
-        $tmp['paging'] = empty($paging) ? 0 : count($paging);
+        $tmp['paging']['total'] = empty($paging) ? 0 : count($paging);
 
         return $this->checkResponse($tmp);
     }
