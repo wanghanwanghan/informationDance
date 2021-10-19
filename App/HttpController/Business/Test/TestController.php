@@ -41,7 +41,7 @@ class TestController extends BusinessBase
 
         $sftp = ssh2_sftp($conn);
 
-        $stream = ssh2_exec($conn, 'ls -l');
+        $stream = ssh2_exec($conn, 'ls');
 
         stream_set_blocking($stream, true);
         $stream = stream_get_contents($stream);
