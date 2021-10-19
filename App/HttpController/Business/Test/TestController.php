@@ -34,9 +34,26 @@ class TestController extends BusinessBase
 
     function test()
     {
-        //116.283824,40.051075
-        $res = BaiDuService::getInstance()->circularSearch('公司', 40.051, 116.283, 3000);
-        return $this->writeJson(200, null, $res);
+
+        $conn = ssh2_connect('59.110.13.197', '22');
+
+        $rs = ssh2_auth_password($conn, 'ytdydd', 'Quan9867Tai2');
+
+        $sftp = ssh2_sftp($conn);
+
+        $stream = ssh2_exec($conn, 'ls -l');
+
+
+        CommonService::getInstance()->log4PHP($rs);
+        CommonService::getInstance()->log4PHP($stream);
+
+
+        ssh2_disconnect($sftp);
+
+        $conn = null;
+        $sftp = null;
+
+        return $this->writeJson(200, null);
     }
 
     function test1()

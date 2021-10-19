@@ -9,6 +9,7 @@
     "ext-iconv": "*",
     "ext-zip": "*",
     "ext-bcmath": "*",
+    "ext-ssh2": "*",
     "easyswoole/easyswoole": "3.3.x",
     "wanghanwanghan/someutils": "^1.0",
     "easyswoole/http-client": "^1.4",
