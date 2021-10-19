@@ -235,7 +235,13 @@ eof;
 
         $res = sqlRaw($sql);
 
-        return $this->checkResponse($res);
+        $tmp = [
+            'code' => 200,
+            'paging' => null,
+            'result' => $res,
+        ];
+
+        return $this->checkResponse($tmp);
     }
 
     //金融搜索结果加入mysql
