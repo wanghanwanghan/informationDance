@@ -43,6 +43,7 @@ class TestController extends BusinessBase
 
         $stream = ssh2_exec($conn, 'ls -l');
 
+        $stream = stream_get_contents($stream);
 
         CommonService::getInstance()->log4PHP($rs);
         CommonService::getInstance()->log4PHP($stream);
