@@ -215,6 +215,29 @@ class XinDongController extends XinDongBase
             return $this->writeJson(201);
         }
 
+        $group_name = $this->request()->getRequestParam('group_name');
+
+        if (is_numeric($group_name) && $group_name - 0 > 100) {
+
+            $model = FinancesSearch::create()->where([
+                'userId' => $user_info->getAttr('id'),
+                'group' => $group_name,
+                'is_show' => 1,
+            ])->page($page)->withTotalCount();
+
+            $res = $model->all();
+            $total = $model->lastQueryResult()->getTotalCount();
+
+            $tmp = [
+                'code' => 200,
+                'paging' => ['total' => $total],
+                'result' => $res,
+            ];
+
+            return $this->checkResponse($tmp);
+        }
+
+
         $sql = <<<eof
 SELECT
 	userId,
