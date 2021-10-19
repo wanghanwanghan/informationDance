@@ -48,7 +48,6 @@ class TestController extends BusinessBase
         $stream = stream_get_contents($stream);
 
 
-        CommonService::getInstance()->log4PHP($rs);
         CommonService::getInstance()->log4PHP($stream);
 
 
