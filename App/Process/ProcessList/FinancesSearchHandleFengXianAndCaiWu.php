@@ -40,7 +40,7 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
             foreach ($list as $one) {
 
                 $postData = [
-                    'keyNo' => $one->entName,
+                    'searchKey' => $one->entName,
                 ];
 
                 $res = (new LongDunService())->setCheckRespFlag(true)
