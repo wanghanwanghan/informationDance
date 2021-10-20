@@ -3,6 +3,7 @@
 namespace App\Process\ProcessList;
 
 use App\HttpController\Models\Api\FinancesSearch;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\Process\ProcessBase;
@@ -32,6 +33,11 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
             'fengxian' => '等待处理',
             'is_show' => 1,
         ])->page(1)->all();
+
+        CommonService::getInstance()->log4PHP([
+            '第一步',
+            $list
+        ]);
 
         if (!empty($list)) {
 
