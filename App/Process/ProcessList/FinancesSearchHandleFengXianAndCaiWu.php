@@ -49,7 +49,7 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
                 if ($res['code'] == 200 && !empty($res['result'])) {
 
                     $one->update([
-                        'fengxian' => $res['result']['VerifyResult']
+                        'fengxian' => $res['result']['VerifyResult'] - 0
                     ]);
 
                 }
