@@ -228,11 +228,6 @@ class XinDongController extends XinDongBase
 
             $res = $model->all();
 
-
-            $sql = DbManager::getInstance()->getLastQuery()->getLastQuery();
-            CommonService::getInstance()->log4PHP($sql);
-
-
             $total = $model->lastQueryResult()->getTotalCount();
 
             if (!empty($res)) {
