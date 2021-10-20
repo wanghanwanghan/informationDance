@@ -44,7 +44,7 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
                 ];
 
                 $res = (new LongDunService())->setCheckRespFlag(true)
-                    ->get($this->ldUrl . 'ECIException/GetOpException', $postData);
+                    ->get($this->ldUrl . 'ExceptionCheck/GetList', $postData);
 
                 CommonService::getInstance()->log4PHP($res);
 
