@@ -224,7 +224,7 @@ class XinDongController extends XinDongBase
                 'userId' => $user_info->getAttr('id'),
                 'group' => $group_name,
                 'is_show' => 1,
-            ])->page($page)->order('fengxian DESC,caiwu DESC')->withTotalCount();
+            ])->page($page)->order('fengxian', 'DESC')->order('caiwu', 'DESC')->withTotalCount();
 
             $res = $model->all();
 
