@@ -457,4 +457,39 @@ eof;
         return $this->checkResponse($tmp);
     }
 
+    //处理一批名单的财务标签
+    function financesSearchHandleCaiWuLabel(): bool
+    {
+        $group_name = $this->request()->getRequestParam('group_name') ?? '';
+        $phone = $this->request()->getRequestParam('phone') ?? '';
+
+        $user_info = User::create()->where('phone', $phone)->get();
+
+        if (empty($user_info)) {
+            return $this->writeJson(201);
+        }
+
+        FinancesSearch::create()->where([
+            'userId' => $user_info->getAttr('id'),
+            'group' => $group_name,
+            'caiwu' => '',
+            'is_show' => 1,
+        ])->update([
+            'caiwu' => '等待处理'
+        ]);
+
+        $tmp = [
+            'code' => 200,
+            'paging' => null,
+            'result' => null,
+            'msg' => '',
+        ];
+
+        return $this->checkResponse($tmp);
+    }
+
+
+
+
+
 }

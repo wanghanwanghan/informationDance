@@ -6,6 +6,7 @@ use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongDun\LongDunService;
+use App\HttpController\Service\LongXin\LongXinService;
 use App\Process\ProcessBase;
 use Swoole\Process;
 
@@ -36,8 +37,6 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
 
         if (!empty($list)) {
 
-            CommonService::getInstance()->log4PHP($list);
-
             foreach ($list as $one) {
 
                 $postData = [
@@ -51,6 +50,12 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
 
                     $one->update([
                         'fengxian' => $res['result']['VerifyResult'] - 0
+                    ]);
+
+                } else {
+
+                    $one->update([
+                        'fengxian' => '处理失败'
                     ]);
 
                 }
@@ -68,6 +73,42 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
         ])->page(1)->all();
 
         if (!empty($list)) {
+
+            foreach ($list as $one) {
+
+                $postData = [
+                    'entName' => $one->entName,
+                    'code' => '',
+                    'beginYear' => 2020,
+                    'dataCount' => 1,
+                ];
+
+                $res = (new LongXinService())
+                    ->setCheckRespFlag(true)
+                    ->getFinanceData($postData, false);
+
+                CommonService::getInstance()->log4PHP($res);
+
+                if ($res['code'] == 200) {
+
+                    ksort($res['result']);
+
+                    $tmp = current($res['result']);
+
+                    $one->update([
+                        'caiwu' => is_numeric($tmp['VENDINC']) ? $tmp['VENDINC'] : '无数据'
+                    ]);
+
+                } else {
+
+                    $one->update([
+                        'caiwu' => '处理失败'
+                    ]);
+
+                }
+
+
+            }
 
         }
     }
