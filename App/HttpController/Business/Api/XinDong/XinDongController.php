@@ -432,11 +432,29 @@ eof;
         $group_name = $this->request()->getRequestParam('group_name') ?? '';
         $phone = $this->request()->getRequestParam('phone') ?? '';
 
+        $user_info = User::create()->where('phone', $phone)->get();
 
+        if (empty($user_info)) {
+            return $this->writeJson(201);
+        }
 
+        FinancesSearch::create()->where([
+            'userId' => $user_info->getAttr('id'),
+            'group' => $group_name,
+            'fengxian' => '',
+            'is_show' => 1,
+        ])->update([
+            'fengxian' => '等待处理'
+        ]);
 
+        $tmp = [
+            'code' => 200,
+            'paging' => null,
+            'result' => null,
+            'msg' => null,
+        ];
 
-        return $this->checkResponse();
+        return $this->checkResponse($tmp);
     }
 
 }
