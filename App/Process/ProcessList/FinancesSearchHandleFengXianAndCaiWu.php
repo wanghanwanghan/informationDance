@@ -22,7 +22,6 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
 
         while (true) {
             $this->h_fengxian();
-            break;
             $this->h_caiwu();
             \co::sleep(5);
         }
@@ -37,6 +36,8 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
 
         if (!empty($list)) {
 
+            CommonService::getInstance()->log4PHP($list);
+
             foreach ($list as $one) {
 
                 $postData = [
@@ -45,8 +46,6 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
 
                 $res = (new LongDunService())->setCheckRespFlag(true)
                     ->get($this->ldUrl . 'ExceptionCheck/GetList', $postData);
-
-                CommonService::getInstance()->log4PHP($res);
 
                 if ($res['code'] == 200 && !empty($res['result'])) {
 
