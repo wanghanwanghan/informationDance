@@ -426,5 +426,17 @@ eof;
         return $this->writeJson(200);
     }
 
+    //处理一批名单的风险标签
+    function financesSearchHandleFengXianLabel(): bool
+    {
+        $group_name = $this->request()->getRequestParam('group_name') ?? '';
+        $phone = $this->request()->getRequestParam('phone') ?? '';
+
+
+
+
+
+        return $this->checkResponse();
+    }
 
 }
