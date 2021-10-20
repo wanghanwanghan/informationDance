@@ -451,7 +451,7 @@ eof;
             'code' => 200,
             'paging' => null,
             'result' => null,
-            'msg' => null,
+            'msg' => '',
         ];
 
         return $this->checkResponse($tmp);

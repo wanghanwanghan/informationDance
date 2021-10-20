@@ -15,6 +15,7 @@ use App\HttpController\Service\CreateSessionHandler;
 use App\HttpController\Service\RequestUtils\LimitService;
 use App\Process\ProcessList\ConsumeOcrProcess;
 use App\Process\ProcessList\Docx2Doc;
+use App\Process\ProcessList\FinancesSearchHandleFengXianAndCaiWu;
 use App\Process\ProcessList\GetInvData;
 use App\Process\Service\ProcessService;
 use App\SwooleTable\Service\SwooleTableService;
@@ -64,6 +65,7 @@ class EasySwooleEvent implements Event
         ProcessService::getInstance()->create(Docx2Doc::class, 'docx2doc');
         ProcessService::getInstance()->create(ConsumeOcrProcess::class, 'consumeOcr');
         ProcessService::getInstance()->create(GetInvData::class, 'getInvData', [], GetInvData::ProcessNum);
+        ProcessService::getInstance()->create(FinancesSearchHandleFengXianAndCaiWu::class, 'FinancesSearchHandleFengXianAndCaiWu');
 
         //注册定时任务
         CrontabService::getInstance()->create();
