@@ -11,6 +11,7 @@ use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\XinDong\XinDongService;
+use EasySwoole\ORM\DbManager;
 use wanghanwanghan\someUtils\control;
 
 class XinDongController extends XinDongBase
@@ -223,9 +224,15 @@ class XinDongController extends XinDongBase
                 'userId' => $user_info->getAttr('id'),
                 'group' => $group_name,
                 'is_show' => 1,
-            ])->page($page)->withTotalCount();
+            ])->page($page)->order('fengxian,caiwu', 'DESC')->withTotalCount();
 
             $res = $model->all();
+
+
+            $sql = DbManager::getInstance()->getLastQuery()->getLastQuery();
+            CommonService::getInstance()->log4PHP($sql);
+
+
             $total = $model->lastQueryResult()->getTotalCount();
 
             if (!empty($res)) {
@@ -487,9 +494,6 @@ eof;
 
         return $this->checkResponse($tmp);
     }
-
-
-
 
 
 }

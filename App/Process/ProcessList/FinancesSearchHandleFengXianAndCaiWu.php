@@ -87,8 +87,6 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
                     ->setCheckRespFlag(true)
                     ->getFinanceData($postData, false);
 
-                CommonService::getInstance()->log4PHP($res);
-
                 if ($res['code'] == 200) {
 
                     ksort($res['result']);
