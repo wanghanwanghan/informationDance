@@ -490,5 +490,32 @@ eof;
         return $this->checkResponse($tmp);
     }
 
+    //修改组描述
+    function financesSearchEditGroupDesc(): bool
+    {
+        $group_desc = $this->request()->getRequestParam('groupDesc') ?? '';
+        $group = $this->request()->getRequestParam('group') ?? '';
+        $phone = $this->request()->getRequestParam('phone') ?? '';
+
+        $user_info = User::create()->where('phone', $phone)->get();
+
+        if (empty($user_info)) {
+            return $this->writeJson(201);
+        }
+
+        FinancesSearch::create()->where([
+            'userId' => $user_info->getAttr('id'),
+            'group' => $group,
+        ])->update([
+            'groupDesc' => trim($group_desc)
+        ]);
+
+        return $this->checkResponse([
+            'code' => 200,
+            'paging' => null,
+            'result' => null,
+            'msg' => '',
+        ]);
+    }
 
 }
