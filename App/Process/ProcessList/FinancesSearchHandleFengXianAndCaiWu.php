@@ -46,12 +46,10 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
                 $res = (new LongDunService())->setCheckRespFlag(true)
                     ->get($this->ldUrl . 'ExceptionCheck/GetList', $postData);
 
-                CommonService::getInstance()->log4PHP($res);
-
                 if ($res['code'] == 200 && !empty($res['result'])) {
 
                     $one->update([
-                        'fengxian' => count($res['result'])
+                        'fengxian' => $res['result']['VerifyResult']
                     ]);
 
                 }
