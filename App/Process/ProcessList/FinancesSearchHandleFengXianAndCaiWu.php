@@ -22,6 +22,7 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
 
         while (true) {
             $this->h_fengxian();
+            break;
             $this->h_caiwu();
             \co::sleep(5);
         }
@@ -34,11 +35,6 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
             'is_show' => 1,
         ])->page(1)->all();
 
-        CommonService::getInstance()->log4PHP([
-            '第一步',
-            $list
-        ]);
-
         if (!empty($list)) {
 
             foreach ($list as $one) {
@@ -49,6 +45,8 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
 
                 $res = (new LongDunService())->setCheckRespFlag(true)
                     ->get($this->ldUrl . 'ECIException/GetOpException', $postData);
+
+                CommonService::getInstance()->log4PHP($res);
 
                 if ($res['code'] == 200 && !empty($res['result'])) {
 
