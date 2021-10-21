@@ -148,20 +148,21 @@ class TaoShuController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    function getGraphGCoreData()
+    function getGraphGCoreData(): bool
     {
         $entName = $this->getRequestData('entName');
-        $level = $this->getRequestData('level', 3);//3
+        $level = $this->getRequestData('level', '3');//3
         $nodeType = $this->getRequestData('nodeType', 'GS');
         $attIds = $this->getRequestData('attIds', 'R101;R102;R103;R104;R105;R106;R107;R108');
-        $attIds = str_replace(',', ';', $attIds);
 
         $postData = [
             'keyword' => $entName,
+            'attIds' => $attIds,
             'level' => $level - 0 > 3 ? '3' : $level . '',
             'nodeType' => $nodeType,
-            'attIds' => $attIds,
         ];
+
+        CommonService::getInstance()->log4PHP($postData);
 
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new TaoShuService())
