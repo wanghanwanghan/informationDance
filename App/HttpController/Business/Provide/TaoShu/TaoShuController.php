@@ -269,13 +269,15 @@ class TaoShuController extends ProvideBase
     {
         $entName = $this->getRequestData('entName');
         $attIds = $this->getRequestData('attIds', 'R101');//R101;R102
-        $level = $this->getRequestData('level', 1);//6
+        $level = $this->getRequestData('level', '3');//6
 
         $postData = [
             'entName' => $entName,
             'attIds' => $attIds,
             'level' => $level,
         ];
+
+        CommonService::getInstance()->log4PHP($postData);
 
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new TaoShuService())
