@@ -510,13 +510,13 @@ class TaoShuController extends ProvideBase
     function getCustomEntPenaltyInfo(): bool
     {
         $entName = $this->getRequestData('entName');
-        $page = $this->getRequestData('page');
-        $pageSize = $this->getRequestData('pageSize');
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
 
         $postData = [
             'entName' => $entName,
-            //'pageNo' => $page,
-            //'pageSize' => $pageSize,
+            'pageNo' => $page - 0,
+            'pageSize' => $pageSize - 0,
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
