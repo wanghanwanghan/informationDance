@@ -175,13 +175,12 @@ class TaoShuController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    function getEntGraphG()
+    function getEntGraphG(): bool
     {
         $entName = $this->getRequestData('entName');
-        $level = $this->getRequestData('level');
+        $level = $this->getRequestData('level', 1);
         $nodeType = $this->getRequestData('nodeType');
         $attIds = $this->getRequestData('attIds', 'R101;R102;R103;R104;R105;R106;R107;R108');
-        $attIds = str_replace(',', ';', $attIds);
 
         $postData = [
             'keyword' => $entName,
