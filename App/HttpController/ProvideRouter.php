@@ -53,6 +53,31 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getEntGraphG', $prefix . 'getEntGraphG');//企业图谱查询
             $routeCollector->addRoute(['GET', 'POST'], '/getHistoryStockHolderInfo', $prefix . 'getHistoryStockHolderInfo');//历史退出股东
             $routeCollector->addRoute(['GET', 'POST'], '/getHistoryPersonInfo', $prefix . 'getHistoryPersonInfo');//历史退出高管
+            $routeCollector->addRoute(['GET', 'POST'], '/getEntGraphGShortData', $prefix . 'getEntGraphGShortData');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getGeoPositionInfo', $prefix . 'getGeoPositionInfo');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getInternetShopInfo', $prefix . 'getInternetShopInfo');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getEnterpriseProfileInfo', $prefix . 'getEnterpriseProfileInfo');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getEntLogoInfo', $prefix . 'getEntLogoInfo');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getICPRecordInfo', $prefix . 'getICPRecordInfo');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getAPPInfo', $prefix . 'getAPPInfo');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getActualAddrInfo', $prefix . 'getActualAddrInfo');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getRecruitmentInfo', $prefix . 'getRecruitmentInfo');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getBiddingInfo', $prefix . 'getBiddingInfo');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getCustomEntRegisterInfo', $prefix . 'getCustomEntRegisterInfo');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getCustomEntCreditLevelInfo', $prefix . 'getCustomEntCreditLevelInfo');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getCustomEntPenaltyInfo', $prefix . 'getCustomEntPenaltyInfo');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getEntActualContoller', $prefix . 'getEntActualContoller');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getAssociatePersonOfficeInfo', $prefix . 'getAssociatePersonOfficeInfo');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getAssociatePersonInvestmentInfo', $prefix . 'getAssociatePersonInvestmentInfo');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getQualifyCertifyInfo', $prefix . 'getQualifyCertifyInfo');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getDataExploreInfo', $prefix . 'getDataExploreInfo');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getEntHonorInfo', $prefix . 'getEntHonorInfo');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getEntLable', $prefix . 'getEntLable');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getEntChronicleInfo', $prefix . 'getEntChronicleInfo');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getEntContactInfo', $prefix . 'getEntContactInfo');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getEntsRelevanceSeekGraphG', $prefix . 'getEntsRelevanceSeekGraphG');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getRecruitmentDetailInfo', $prefix . 'getRecruitmentDetailInfo');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getBiddingDetailInfo', $prefix . 'getBiddingDetailInfo');//
         });
 
         return true;
