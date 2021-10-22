@@ -88,9 +88,9 @@ class GetInvData extends AbstractCronTask
     {
         //根据三个id，通知不同的url
         $url_arr = [
-            36 => 'https://invoicecommercialv2.dl.alipaydev.com/api/wezTech/collectNotify',
-            41 => 'https://invoicecommercialv2.dl.alipaydev.com/api/wezTech/collectNotify',
-            42 => 'https://invoicecommercialv2.dl.alipaydev.com/api/wezTech/collectNotify',
+            36 => 'https://invoicecommercialv2.dl.alipaydev.com/api/wezTech/collectNotify',//dev
+            41 => 'https://invoicecommercial.antfin.com/api/wezTech/collectNotify',//pre
+            42 => 'https://invoicecommercialv2.dl.alipaydev.com/api/wezTech/collectNotify',//pro
         ];
 
         $total = AntAuthList::create()

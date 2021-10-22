@@ -179,14 +179,14 @@ class TaoShuController extends ProvideBase
     {
         $entName = $this->getRequestData('entName');
         $level = $this->getRequestData('level', 1);
-        $nodeType = $this->getRequestData('nodeType');
+        $nodeType = $this->getRequestData('nodeType', 'GS');
         $attIds = $this->getRequestData('attIds', 'R101;R102;R103;R104;R105;R106;R107;R108');
 
         $postData = [
             'keyword' => $entName,
+            'attIds' => $attIds,
             'level' => $level - 0 > 3 ? '3' : $level . '',
             'nodeType' => $nodeType,
-            'attIds' => $attIds,
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
