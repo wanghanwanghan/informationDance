@@ -4,8 +4,6 @@ namespace App\HttpController\Business\Provide\TaoShu;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
-use App\HttpController\Service\Common\CommonService;
-use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\TaoShu\TaoShuTwoService;
 
@@ -161,8 +159,6 @@ class TaoShuController extends ProvideBase
             'level' => $level - 0 > 3 ? '3' : $level . '',
             'nodeType' => $nodeType,
         ];
-
-        CommonService::getInstance()->log4PHP($postData);
 
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new TaoShuService())
