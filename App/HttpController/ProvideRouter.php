@@ -222,6 +222,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/cySync', $prefix . 'cySync');
             $routeCollector->addRoute(['GET', 'POST'], '/ocr', $prefix . 'ocr');
             $routeCollector->addRoute(['GET', 'POST'], '/createEnt', $prefix . 'createEnt');
+            $routeCollector->addRoute(['GET', 'POST'], '/getInv', $prefix . 'getInv');
         });
 
         return true;

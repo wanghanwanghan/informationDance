@@ -91,6 +91,32 @@ class QiXiangYunController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getInv(): bool
+    {
+        $nsrsbh = $this->getRequestData('nsrsbh', '91110108MA01KPGK0L');
+        $kpyf = $this->getRequestData('kpyf', '202109');
+        $jxxbz = $this->getRequestData('jxxbz', 'jx');
+        $fplx = $this->getRequestData('fplx', '01');
+        $page = $this->getRequestData('page', '1');
+
+        $postData = [
+            $nsrsbh,
+            $kpyf,
+            $jxxbz,
+            $fplx,
+            $page,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return QiXiangYunService::getInstance()
+                ->setCheckRespFlag(true)->getInv(...$postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
 }
 
 
