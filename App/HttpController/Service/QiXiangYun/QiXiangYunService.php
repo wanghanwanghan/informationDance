@@ -258,7 +258,7 @@ class QiXiangYunService extends ServiceBase
             'fplxs' => [
                 '01', '03', '04', '08', '10', '11', '14', '15', '17'
             ],
-            'addJob' => true
+            'addJob' => false
         ];
 
         $req_date = time() . '000';
