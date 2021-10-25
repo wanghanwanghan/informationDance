@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\QiXiangYun;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
@@ -58,7 +59,7 @@ class QiXiangYunService extends ServiceBase
     }
 
     //同步查验
-    function cySync(string $fpdm, string $fphm, string $kprq, float $je, string $jym)
+    function cySync(string $fpdm, string $fphm, string $kprq, float $je, string $jym): array
     {
         $url = $this->testBaseUrl . 'FP/cy';
 
@@ -99,7 +100,7 @@ class QiXiangYunService extends ServiceBase
     }
 
     //ocr识别
-    function ocr(string $base64)
+    function ocr(string $base64): array
     {
         $url = $this->testBaseUrl . 'FP/sb';
 
@@ -131,7 +132,7 @@ class QiXiangYunService extends ServiceBase
     }
 
     //获取发票
-    function getInv(string $nsrsbh, string $kpyf, string $jxxbz, string $fplx, string $page)
+    function getInv(string $nsrsbh, string $kpyf, string $jxxbz, string $fplx, string $page): array
     {
         //01	增值税专用发票
         //03	机动车销售统一发票
@@ -148,7 +149,7 @@ class QiXiangYunService extends ServiceBase
         $data = [
             'nsrsbh' => $nsrsbh,
             'kpyf' => $kpyf - 0,//Ym
-            'jxxbz' => $jxxbz,//jx xx
+            'jxxbz' => $jxxbz,//jx xxx
             'fplx' => str_pad($fplx, 2, '0', STR_PAD_LEFT),
             'page' => [
                 'pageSize' => 100,
@@ -178,5 +179,68 @@ class QiXiangYunService extends ServiceBase
 
         return $this->check($res['value']);
     }
+
+    //创建企业
+    function createEnt(): array
+    {
+        $url = $this->testBaseUrl . 'AGG/org/create';
+
+        //{
+        //      "nsrsbh": "北京税号",
+        //      "aggOrgName": "北京企业名称",
+        //      "orgTaxLogin": {
+        //        "dq": "11",
+        //        "gdsdlfs": "2",
+        //        "gdsdlzh": "账号",
+        //        "gdsdlmm": "密码",
+        //        "grdlfs":"1",
+        //        "sflx":"身份类型", //取值：FDDBR法定代表人、CWFZR财务负责人、BSY办税员、LPR领票人
+        //        "gryhm":"个人用户名",
+        //        "gryhmm":"个人密码",
+        //        "zrrsfzh":"个人证件号码"
+        //      }
+        //    }
+
+        $data = [
+            'nsrsbh' => '91110108MA01KPGK0L',
+            'aggOrgName' => '北京每日信动科技有限公司',
+            'orgTaxLogin' => [
+                'dq' => '11',
+                'gdsdlfs' => '2',
+                'gdsdlzh' => '91110108MA01KPGK0L',
+                'gdsdlmm' => '8tMkahzZ',
+                'grdlfs' => '1',
+                'sflx' => 'FDDBR',//取值：FDDBR法定代表人、CWFZR财务负责人、BSY办税员、LPR领票人
+                'gryhm' => '18201611816',
+                'gryhmm' => 'Liqi123456',
+                'zrrsfzh' => '372328198704051258',
+            ]
+        ];
+
+        $req_date = time() . '000';
+
+        $token = $this->createToken();
+
+        $sign = base64_encode(md5('POST_' . md5(json_encode($data)) . '_' . $req_date . '_' . $token . '_' . $this->testSecret));
+
+        $req_sign = "API-SV1:{$this->testAppkey}:" . $sign;
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'access_token' => $token,
+            'req_date' => $req_date,
+            'req_sign' => $req_sign,
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'postjson');
+
+        CommonService::getInstance()->log4PHP($res);
+
+        return $this->check($res['value']);
+    }
+
 
 }

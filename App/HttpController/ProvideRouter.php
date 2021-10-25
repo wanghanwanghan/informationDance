@@ -221,6 +221,7 @@ class ProvideRouter
         $routeCollector->addGroup('/qxy', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/cySync', $prefix . 'cySync');
             $routeCollector->addRoute(['GET', 'POST'], '/ocr', $prefix . 'ocr');
+            $routeCollector->addRoute(['GET', 'POST'], '/createEnt', $prefix . 'createEnt');
         });
 
         return true;
