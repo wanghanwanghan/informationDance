@@ -214,7 +214,7 @@ class QiXiangYunService extends ServiceBase
                 'grdlfs' => '1',
                 'sflx' => 'FDDBR',//取值：FDDBR法定代表人、CWFZR财务负责人、BSY办税员、LPR领票人
                 'gryhm' => '18201611816',
-                'gryhmm' => 'Liqi123456',
+                'gryhmm' => 'liqi123456!',
                 'zrrsfzh' => '372328198704051258',
             ]
         ];
