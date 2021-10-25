@@ -117,6 +117,19 @@ class QiXiangYunController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getFpxzStatus(): bool
+    {
+        $this->csp->add($this->cspKey, function () {
+            return QiXiangYunService::getInstance()
+                ->setCheckRespFlag(true)->getFpxzStatus();
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+
 }
 
 

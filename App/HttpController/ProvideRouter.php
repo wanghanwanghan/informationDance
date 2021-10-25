@@ -223,6 +223,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/ocr', $prefix . 'ocr');
             $routeCollector->addRoute(['GET', 'POST'], '/createEnt', $prefix . 'createEnt');
             $routeCollector->addRoute(['GET', 'POST'], '/getInv', $prefix . 'getInv');
+            $routeCollector->addRoute(['GET', 'POST'], '/getFpxzStatus', $prefix . 'getFpxzStatus');
         });
 
         return true;

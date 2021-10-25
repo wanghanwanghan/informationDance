@@ -244,5 +244,46 @@ class QiXiangYunService extends ServiceBase
         return $this->check($res['value']);
     }
 
+    //获取发票下载任务状态
+    function getFpxzStatus(): array
+    {
+        $url = $this->testBaseUrl . 'FP/getFpxzStatus';
+
+        $data = [
+            'nsrsbh' => '91110108MA01KPGK0L',
+            'kpyf' => 202109,
+            'jxxbzs' => [
+                'jx', 'xx'
+            ],
+            'fplxs' => [
+                '01', '03', '04', '08', '10', '11', '14', '15', '17'
+            ],
+            'addJob' => true
+        ];
+
+        $req_date = time() . '000';
+
+        $token = $this->createToken();
+
+        $sign = base64_encode(md5('POST_' . md5(json_encode($data)) . '_' . $req_date . '_' . $token . '_' . $this->testSecret));
+
+        $req_sign = "API-SV1:{$this->testAppkey}:" . $sign;
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'access_token' => $token,
+            'req_date' => $req_date,
+            'req_sign' => $req_sign,
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'postjson');
+
+        CommonService::getInstance()->log4PHP($res);
+
+        return $this->check($res['value']);
+    }
 
 }
