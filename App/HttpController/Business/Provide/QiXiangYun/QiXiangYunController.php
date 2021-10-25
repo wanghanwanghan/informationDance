@@ -79,6 +79,17 @@ class QiXiangYunController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function createEnt(): bool
+    {
+        $this->csp->add($this->cspKey, function () {
+            return QiXiangYunService::getInstance()
+                ->setCheckRespFlag(true)->createEnt();
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
 
 }
 
