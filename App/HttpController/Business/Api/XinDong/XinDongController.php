@@ -562,7 +562,7 @@ eof;
             return $this->writeJson(201);
         }
 
-        $filename = control::getUuid() . '.txt';
+        $filename = control::getUuid() . '.csv';
         $base_path_and_filename = TEMP_FILE_PATH . $filename;
 
         file_put_contents($base_path_and_filename, '导出时间 ' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL);
@@ -592,7 +592,9 @@ eof;
                 $tmp[] = $one->lianjie;
             }
 
-            file_put_contents($base_path_and_filename, implode('||', $tmp) . PHP_EOL, FILE_APPEND);
+            $str = implode('||', $tmp) . PHP_EOL;
+
+            file_put_contents($base_path_and_filename, $str, FILE_APPEND);
 
             $page++;
         }
