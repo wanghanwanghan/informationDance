@@ -578,9 +578,9 @@ eof;
 
             if (empty($list)) break;
 
-            $tmp = [];
-
             foreach ($list as $one) {
+                $tmp = [];
+
                 $tmp[] = $one->entName;
                 $tmp[] = $one->historyEntname;
                 $tmp[] = $one->code;
@@ -590,11 +590,10 @@ eof;
                 $tmp[] = $one->fengxian;
                 $tmp[] = $one->caiwu;
                 $tmp[] = $one->lianjie;
+
+                $str = implode('||', $tmp) . PHP_EOL;
+                file_put_contents($base_path_and_filename, $str, FILE_APPEND);
             }
-
-            $str = implode('||', $tmp) . PHP_EOL;
-
-            file_put_contents($base_path_and_filename, $str, FILE_APPEND);
 
             $page++;
         }
