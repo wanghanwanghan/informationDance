@@ -156,6 +156,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/financesSearchHandleCaiWuLabel', $prefix . 'financesSearchHandleCaiWuLabel');//
             $routeCollector->addRoute(['GET', 'POST'], '/financesSearchHandleLianJieLabel', $prefix . 'financesSearchHandleLianJieLabel');//
             $routeCollector->addRoute(['GET', 'POST'], '/financesSearchEditGroupDesc', $prefix . 'financesSearchEditGroupDesc');//
+            $routeCollector->addRoute(['GET', 'POST'], '/financesSearchExportDetail', $prefix . 'financesSearchExportDetail');//
         });
 
         return true;

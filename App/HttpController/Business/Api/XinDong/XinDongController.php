@@ -11,6 +11,7 @@ use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\XinDong\XinDongService;
+use Carbon\Carbon;
 use EasySwoole\ORM\DbManager;
 use wanghanwanghan\someUtils\control;
 
@@ -548,5 +549,62 @@ eof;
             'msg' => '',
         ]);
     }
+
+    //导出详情列表
+    function financesSearchExportDetail(): bool
+    {
+        $group = $this->request()->getRequestParam('group') ?? '';
+        $phone = $this->request()->getRequestParam('phone') ?? '';
+
+        $user_info = User::create()->where('phone', $phone)->get();
+
+        if (empty($user_info)) {
+            return $this->writeJson(201);
+        }
+
+        $filename = control::getUuid() . '.csv';
+        $base_path_and_filename = TEMP_FILE_PATH . $filename;
+
+        file_put_contents($base_path_and_filename, '导出时间 ' . Carbon::now()->format('Y-m-d H:i:s'));
+
+        $page = 1;
+
+        while (true) {
+
+            $list = FinancesSearch::create()->where([
+                'userId' => $user_info->getAttr('id'),
+                'group' => $group,
+            ])->page($page, 500)->all();
+
+            if (empty($list)) break;
+
+            $tmp = [];
+
+            foreach ($list as $one) {
+                $tmp[] = $one->entName;
+                $tmp[] = $one->historyEntname;
+                $tmp[] = $one->code;
+                $tmp[] = $one->ESDATE;
+                $tmp[] = $one->ENTSTATUS;
+                $tmp[] = $one->financesLabel;
+                $tmp[] = $one->fengxian;
+                $tmp[] = $one->caiwu;
+                $tmp[] = $one->lianjie;
+            }
+
+            file_put_contents($base_path_and_filename, implode('||', $tmp) . PHP_EOL, FILE_APPEND);
+
+            $page++;
+        }
+
+
+        return $this->checkResponse([
+            'code' => 200,
+            'paging' => null,
+            'result' => $filename,
+            'msg' => '',
+        ]);
+    }
+
 
 }
