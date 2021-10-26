@@ -505,10 +505,10 @@ eof;
         FinancesSearch::create()->where([
             'userId' => $user_info->getAttr('id'),
             'group' => $group_name,
-            'lianxi' => '',
+            'lianjie' => '',
             'is_show' => 1,
         ])->update([
-            'lianxi' => '等待处理'
+            'lianjie' => '等待处理'
         ]);
 
         $tmp = [

@@ -24,7 +24,7 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
         while (true) {
             $this->h_fengxian();
             $this->h_caiwu();
-            $this->h_lianxi();
+            $this->h_lianjie();
             \co::sleep(5);
         }
     }
@@ -114,10 +114,10 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
         }
     }
 
-    private function h_lianxi(): void
+    private function h_lianjie(): void
     {
         $list = FinancesSearch::create()->where([
-            'lianxi' => '等待处理',
+            'lianjie' => '等待处理',
             'is_show' => 1,
         ])->page(1)->all();
 
@@ -136,14 +136,14 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
                 if ($res['code'] == 200) {
 
                     $one->update([
-                        'lianxi' => count($res['result']),
-                        'lianxiDetail' => is_string($res['result']) ? $res['result'] : jsonEncode($res['result'], false),
+                        'lianjie' => count($res['result']),
+                        'lianjieDetail' => is_string($res['result']) ? $res['result'] : jsonEncode($res['result'], false),
                     ]);
 
                 } else {
 
                     $one->update([
-                        'lianxi' => '处理失败'
+                        'lianjie' => '处理失败'
                     ]);
 
                 }
