@@ -598,7 +598,6 @@ eof;
             $page++;
         }
 
-
         return $this->checkResponse([
             'code' => 200,
             'paging' => null,
