@@ -562,10 +562,10 @@ eof;
             return $this->writeJson(201);
         }
 
-        $filename = control::getUuid() . '.csv';
+        $filename = control::getUuid() . '.txt';
         $base_path_and_filename = TEMP_FILE_PATH . $filename;
 
-        file_put_contents($base_path_and_filename, '导出时间 ' . Carbon::now()->format('Y-m-d H:i:s'));
+        file_put_contents($base_path_and_filename, '导出时间 ' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL);
 
         $page = 1;
 
