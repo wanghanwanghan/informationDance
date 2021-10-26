@@ -34,7 +34,7 @@ class XinDongController extends XinDongBase
 
     private function checkResponse($res): bool
     {
-        return $this->writeJson((int)$res['code'], $res['paging'], $res['result'], $res['msg']);
+        return $this->writeJson((int)$res['code'], $res['paging'], $res['result'], $res['msg'] ?? null);
     }
 
     //控股法人股东的司法风险
