@@ -137,7 +137,9 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
 
                     $one->update([
                         'lianjie' => count($res['result']),
-                        'lianjieDetail' => is_string($res['result']) ? $res['result'] : jsonEncode($res['result'], false),
+                        'lianjieDetail' => is_string($res['result']) ?
+                            $res['result'] :
+                            jsonEncode($res['result'], false),
                     ]);
 
                 } else {
