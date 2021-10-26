@@ -51,7 +51,9 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
 
                     $one->update([
                         'fengxian' => $res['result']['VerifyResult'] - 0,
-                        'fengxianDetail' => is_string($res['result']) ? $res['result'] : jsonEncode($res['result'], false),
+                        'fengxianDetail' => is_string($res['result']) ?
+                            $res['result'] :
+                            jsonEncode($res['result'], false),
                     ]);
 
                 } else {
