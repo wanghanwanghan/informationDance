@@ -24,6 +24,7 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
         while (true) {
             $this->h_fengxian();
             $this->h_caiwu();
+            $this->h_lianxi();
             \co::sleep(5);
         }
     }
@@ -49,7 +50,8 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
                 if ($res['code'] == 200 && !empty($res['result'])) {
 
                     $one->update([
-                        'fengxian' => $res['result']['VerifyResult'] - 0
+                        'fengxian' => $res['result']['VerifyResult'] - 0,
+                        'fengxianDetail' => is_string($res['result']) ? $res['result'] : jsonEncode($res['result'], false),
                     ]);
 
                 } else {
@@ -94,7 +96,8 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
                     $tmp = current($res['result']);
 
                     $one->update([
-                        'caiwu' => is_numeric($tmp['VENDINC']) ? $tmp['VENDINC'] : '无数据'
+                        'caiwu' => is_numeric($tmp['VENDINC']) ? $tmp['VENDINC'] : '无数据',
+                        'caiwuDetail' => is_string($tmp) ? $tmp : jsonEncode($tmp, false),
                     ]);
 
                 } else {
@@ -105,6 +108,45 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
 
                 }
 
+
+            }
+
+        }
+    }
+
+    private function h_lianxi(): void
+    {
+        $list = FinancesSearch::create()->where([
+            'lianxi' => '等待处理',
+            'is_show' => 1,
+        ])->page(1)->all();
+
+        if (!empty($list)) {
+
+            foreach ($list as $one) {
+
+                $post_data = [
+                    'entName' => $one->entName
+                ];
+
+                $res = (new LongXinService())
+                    ->setCheckRespFlag(true)
+                    ->getEntLianXi($post_data);
+
+                if ($res['code'] == 200) {
+
+                    $one->update([
+                        'lianxi' => count($res['result']),
+                        'lianxiDetail' => is_string($res['result']) ? $res['result'] : jsonEncode($res['result'], false),
+                    ]);
+
+                } else {
+
+                    $one->update([
+                        'lianxi' => '处理失败'
+                    ]);
+
+                }
 
             }
 

@@ -154,6 +154,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/financesSearchResToMysql', $prefix . 'financesSearchResToMysql');//
             $routeCollector->addRoute(['GET', 'POST'], '/financesSearchHandleFengXianLabel', $prefix . 'financesSearchHandleFengXianLabel');//
             $routeCollector->addRoute(['GET', 'POST'], '/financesSearchHandleCaiWuLabel', $prefix . 'financesSearchHandleCaiWuLabel');//
+            $routeCollector->addRoute(['GET', 'POST'], '/financesSearchHandleLianJieLabel', $prefix . 'financesSearchHandleLianJieLabel');//
             $routeCollector->addRoute(['GET', 'POST'], '/financesSearchEditGroupDesc', $prefix . 'financesSearchEditGroupDesc');//
         });
 

@@ -6,6 +6,7 @@ use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Service\QiXiangYun\QiXiangYunService;
 use EasySwoole\Http\Message\UploadFile;
+use EasySwoole\RedisPool\Redis;
 
 class QiXiangYunController extends ProvideBase
 {
