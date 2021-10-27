@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\TaoShu;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\TaoShu\TaoShuTwoService;
 
@@ -123,6 +124,8 @@ class TaoShuController extends ProvideBase
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkResponse($res);
     }
