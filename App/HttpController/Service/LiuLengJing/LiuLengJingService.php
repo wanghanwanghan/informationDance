@@ -48,9 +48,7 @@ class LiuLengJingService extends ServiceBase
             $arr[$ret_key]['total'] - 0 :
             null;
 
-        $ret = (isset($arr[$ret_key]['records']) && is_numeric($arr[$ret_key]['records'])) ?
-            $arr[$ret_key]['records'] :
-            null;
+        $ret = (isset($arr[$ret_key]['records'])) ? $arr[$ret_key]['records'] : null;
 
         return $this->createReturn($arr[$ret_key]['code'] - 0, ['total' => $total], $ret, $arr[$ret_key]['msg']);
     }
