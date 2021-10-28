@@ -94,6 +94,8 @@ class LiuLengJingService extends ServiceBase
 
         $res = is_string($res) ? jsonDecode($res) : obj2Arr($res);
 
+        CommonService::getInstance()->log4PHP($res);
+
         return $this->checkRespFlag ? $this->check($res, __FUNCTION__) : $res;
     }
 
