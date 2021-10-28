@@ -57,10 +57,10 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
 
                             $model = [
                                 'title' => '经营异常',
-                                'desc' => $one['AddReason'],
+                                'desc' => $oneFX['AddReason'],
                                 'content' => '',
-                                'date' => $one['AddDate'],
-                                'remarks' => $one['DecisionOffice'],
+                                'date' => $oneFX['AddDate'],
+                                'remarks' => $oneFX['DecisionOffice'],
                                 'reservedFields' => '',
                             ];
 
