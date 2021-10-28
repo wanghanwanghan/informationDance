@@ -31,6 +31,17 @@ class LiuLengJingService extends ServiceBase
         return parent::__construct();
     }
 
+    private function check(array $arr, string $type): array
+    {
+        $total = (isset($arr['total']) && is_numeric($arr['total'])) ? $arr['total'] - 0 : null;
+
+        $ret = (isset($arr['records']) && is_numeric($arr['records'])) ?
+            $arr['records'] :
+            null;
+
+        return $this->createReturn($arr['code'] - 0, ['total' => $total], $ret);
+    }
+
     private function createParams(array $params, string $method, string $version = '1.0'): array
     {
         $body = [
@@ -68,7 +79,22 @@ class LiuLengJingService extends ServiceBase
 
         $res = (new CoHttpClient())->useCache(false)->send($this->baseUrl, $params);
 
-        return is_string($res) ? jsonDecode($res) : $res;
+        $res = is_string($res) ? jsonDecode($res) : obj2Arr($res);
+
+        return $this->checkRespFlag ? $this->check($res, __FUNCTION__) : $res;
+    }
+
+    //中国专利评分估值数据_结果
+    function patentCnIndexHit(array $arr): ?array
+    {
+        $params = $this->createParams($arr, 'patent.cn.index.hit');
+        $params['sign'] = $this->createSign($params);
+
+        $res = (new CoHttpClient())->useCache(false)->send($this->baseUrl, $params);
+
+        $res = is_string($res) ? jsonDecode($res) : obj2Arr($res);
+
+        return $this->checkRespFlag ? $this->check($res, __FUNCTION__) : $res;
     }
 
 }

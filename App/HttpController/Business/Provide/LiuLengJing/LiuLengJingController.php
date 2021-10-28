@@ -61,7 +61,27 @@ class LiuLengJingController extends ProvideBase
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
-        CommonService::getInstance()->log4PHP($res);
+        return $this->checkResponse($res);
+    }
+
+    function patentCnIndexHit(): bool
+    {
+        $ans = $this->getRequestData('ans', '');
+        $page = $this->getRequestData('page', 1);
+
+        $postData = [
+            'pageNum' => $page - 0,
+            'pageSize' => 10,
+        ];
+
+        if (!empty($ans)) $postData['ans'] = $ans . '';
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return LiuLengJingService::getInstance()
+                ->setCheckRespFlag(true)->patentCnIndexHit($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         return $this->checkResponse($res);
     }

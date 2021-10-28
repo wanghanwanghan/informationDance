@@ -236,6 +236,7 @@ class ProvideRouter
 
         $routeCollector->addGroup('/llj', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/patentCnBasics', $prefix . 'patentCnBasics');
+            $routeCollector->addRoute(['GET', 'POST'], '/patentCnIndexHit', $prefix . 'patentCnIndexHit');
         });
 
         return true;
