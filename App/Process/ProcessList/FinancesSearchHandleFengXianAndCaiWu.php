@@ -72,7 +72,7 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
 
                     $one->update([
                         'fengxian' => $res['result']['VerifyResult'] - 0,
-                        'fengxianDetail' => empty($fengxianDetail) ? '' : $fengxianDetail
+                        'fengxianDetail' => empty($fengxianDetail) ? '' : jsonEncode($fengxianDetail, false)
                     ]);
 
                 } else {
