@@ -32,6 +32,8 @@ class LiuLengJingService extends ServiceBase
 
     private function check(array $arr, string $type): array
     {
+        CommonService::getInstance()->log4PHP($arr);
+
         $ret_key = '';
 
         for ($i = 0; $i < strlen($type); $i++) {
