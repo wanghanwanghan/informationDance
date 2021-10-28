@@ -6,6 +6,7 @@ use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\Export\Excel\ExportExcelService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Pay\ChargeService;
@@ -562,11 +563,7 @@ eof;
             return $this->writeJson(201);
         }
 
-        $filename = control::getUuid() . '.csv';
-        $base_path_and_filename = TEMP_FILE_PATH . $filename;
-
-        file_put_contents($base_path_and_filename, '导出时间 ' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL);
-
+        $data = [];
         $page = 1;
 
         while (true) {
@@ -580,28 +577,28 @@ eof;
 
             foreach ($list as $one) {
                 $tmp = [];
-
                 $tmp[] = $one->entName;
                 $tmp[] = $one->historyEntname;
                 $tmp[] = $one->code;
                 $tmp[] = $one->ESDATE;
                 $tmp[] = $one->ENTSTATUS;
-                $tmp[] = $one->financesLabel;
                 $tmp[] = $one->fengxian;
                 $tmp[] = $one->caiwu;
                 $tmp[] = $one->lianjie;
-
-                $str = implode('|', $tmp) . PHP_EOL;
-                file_put_contents($base_path_and_filename, $str, FILE_APPEND);
+                $data[] = $tmp;
             }
 
             $page++;
         }
 
+        $path = (new ExportExcelService())->setExcelHeader([
+            '企业名称', '曾用名', '统一社会信用代码', '成立时间', '状态', '风险个数', '财务标签', '链接个数'
+        ])->setExcelAllData($data)->store();
+
         return $this->checkResponse([
             'code' => 200,
             'paging' => null,
-            'result' => $filename,
+            'result' => $path,
             'msg' => '',
         ]);
     }
