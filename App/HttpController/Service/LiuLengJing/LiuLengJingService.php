@@ -7,7 +7,6 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use EasySwoole\Component\Singleton;
-use wanghanwanghan\someUtils\utils\str;
 
 class LiuLengJingService extends ServiceBase
 {
@@ -33,15 +32,25 @@ class LiuLengJingService extends ServiceBase
 
     private function check(array $arr, string $type): array
     {
-        CommonService::getInstance()->log4PHP($arr);
+        $ret_key = '';
 
-        $total = (isset($arr['total']) && is_numeric($arr['total'])) ? $arr['total'] - 0 : null;
+        for ($i = 0; $i < strlen($type); $i++) {
+            if (ord($type[$i]) >= ord('A') && ord($type[$i]) <= ord('Z')) {
+                $ret_key .= '_' . strtolower($type[$i]);
+            } else {
+                $ret_key .= $type[$i];
+            }
+        }
 
-        $ret = (isset($arr['records']) && is_numeric($arr['records'])) ?
-            $arr['records'] :
+        $ret_key .= '_response';
+
+        $total = (isset($arr[$ret_key]['total']) && is_numeric($arr[$ret_key]['total'])) ? $arr[$ret_key]['total'] - 0 : null;
+
+        $ret = (isset($arr[$ret_key]['records']) && is_numeric($arr[$ret_key]['records'])) ?
+            $arr[$ret_key]['records'] :
             null;
 
-        return $this->createReturn($arr['code'] - 0, ['total' => $total], $ret);
+        return $this->createReturn($arr[$ret_key]['code'] - 0, ['total' => $total], $ret, $arr[$ret_key]['msg']);
     }
 
     private function createParams(array $params, string $method, string $version = '1.0'): array
