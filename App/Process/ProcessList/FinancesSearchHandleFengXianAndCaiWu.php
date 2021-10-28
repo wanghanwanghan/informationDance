@@ -47,13 +47,32 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
                 $res = (new LongDunService())->setCheckRespFlag(true)
                     ->get($this->ldUrl . 'ExceptionCheck/GetList', $postData);
 
-                if ($res['code'] == 200 && !empty($res['result'])) {
+                if ($res['code'] === 200 && !empty($res['result'])) {
+
+                    $fengxianDetail = [];
+
+                    if (!empty($res['result']['Data']) && is_array($res['result']['Data'])) {
+
+                        foreach ($res['result']['Data'] as $oneFX) {
+
+                            $model = [
+                                'title' => '经营异常',
+                                'desc' => $one['AddReason'],
+                                'content' => '',
+                                'date' => $one['AddDate'],
+                                'remarks' => $one['DecisionOffice'],
+                                'reservedFields' => '',
+                            ];
+
+                            $fengxianDetail[] = $model;
+
+                        }
+
+                    }
 
                     $one->update([
                         'fengxian' => $res['result']['VerifyResult'] - 0,
-                        'fengxianDetail' => is_string($res['result']) ?
-                            $res['result'] :
-                            jsonEncode($res['result'], false),
+                        'fengxianDetail' => empty($fengxianDetail) ? '' : $fengxianDetail
                     ]);
 
                 } else {
