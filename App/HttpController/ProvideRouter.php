@@ -22,6 +22,7 @@ class ProvideRouter
         $this->FaHaiRouterV1($routeCollector);
         $this->MaYiRouterV1($routeCollector);
         $this->QiXiangYunRouterV1($routeCollector);
+        $this->LiuLengJingRouterV1($routeCollector);
         $this->Notify($routeCollector);
     }
 
@@ -224,6 +225,17 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/createEnt', $prefix . 'createEnt');
             $routeCollector->addRoute(['GET', 'POST'], '/getInv', $prefix . 'getInv');
             $routeCollector->addRoute(['GET', 'POST'], '/getFpxzStatus', $prefix . 'getFpxzStatus');
+        });
+
+        return true;
+    }
+
+    private function LiuLengJingRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Provide/LiuLengJing/LiuLengJingController/';
+
+        $routeCollector->addGroup('/llj', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/patentCnBasics', $prefix . 'patentCnBasics');
         });
 
         return true;

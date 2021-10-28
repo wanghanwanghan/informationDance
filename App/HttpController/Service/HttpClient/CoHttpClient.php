@@ -110,7 +110,7 @@ class CoHttpClient extends ServiceBase
         if (isset($options['useThisKey'])) return $options['useThisKey'];
 
         $unsetTarget = [
-            'rt', 'sign'
+            'rt', 'sign', 'timestamp'
         ];
 
         $data = [];
