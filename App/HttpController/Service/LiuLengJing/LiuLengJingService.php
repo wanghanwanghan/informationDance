@@ -44,7 +44,9 @@ class LiuLengJingService extends ServiceBase
 
         $ret_key .= '_response';
 
-        $total = (isset($arr[$ret_key]['total']) && is_numeric($arr[$ret_key]['total'])) ? $arr[$ret_key]['total'] - 0 : null;
+        $total = (isset($arr[$ret_key]['total']) && is_numeric($arr[$ret_key]['total'])) ?
+            $arr[$ret_key]['total'] - 0 :
+            null;
 
         $ret = (isset($arr[$ret_key]['records']) && is_numeric($arr[$ret_key]['records'])) ?
             $arr[$ret_key]['records'] :
