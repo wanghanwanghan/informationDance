@@ -26,7 +26,7 @@ class ExportExcelService extends ServiceBase
 
     function setExcelAllData(array $data): ExportExcelService
     {
-        $this->data = $data;
+        $this->data = obj2Arr($data);
         return $this;
     }
 
