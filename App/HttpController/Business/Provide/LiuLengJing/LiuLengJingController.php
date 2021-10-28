@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\LiuLengJing;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LiuLengJing\LiuLengJingService;
 use App\HttpController\Service\QiXiangYun\QiXiangYunService;
 use EasySwoole\Http\Message\UploadFile;
@@ -59,6 +60,8 @@ class LiuLengJingController extends ProvideBase
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkResponse($res);
     }
