@@ -33,6 +33,8 @@ class LiuLengJingService extends ServiceBase
 
     private function check(array $arr, string $type): array
     {
+        CommonService::getInstance()->log4PHP($arr);
+
         $total = (isset($arr['total']) && is_numeric($arr['total'])) ? $arr['total'] - 0 : null;
 
         $ret = (isset($arr['records']) && is_numeric($arr['records'])) ?
@@ -93,8 +95,6 @@ class LiuLengJingService extends ServiceBase
         $res = (new CoHttpClient())->useCache(false)->send($this->baseUrl, $params);
 
         $res = is_string($res) ? jsonDecode($res) : obj2Arr($res);
-
-        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkRespFlag ? $this->check($res, __FUNCTION__) : $res;
     }
