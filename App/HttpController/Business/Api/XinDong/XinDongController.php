@@ -585,6 +585,7 @@ eof;
                 $tmp[] = $one->fengxian;
                 $tmp[] = $one->caiwu;
                 $tmp[] = $one->lianjie;
+                $tmp[] = $one->remarks;
                 $data[] = $tmp;
             }
 
@@ -592,7 +593,7 @@ eof;
         }
 
         $path = (new ExportExcelService())->setExcelHeader([
-            '企业名称', '曾用名', '统一社会信用代码', '成立时间', '状态', '风险个数', '财务标签', '链接个数'
+            '企业名称', '曾用名', '统一社会信用代码', '成立时间', '状态', '风险个数', '财务标签', '链接个数', '备注'
         ])->setExcelAllData($data)->store();
 
         return $this->checkResponse([
