@@ -627,4 +627,25 @@ eof;
         ]);
     }
 
+    //
+    function editGroupRemarks(): bool
+    {
+        $id = $this->request()->getRequestParam('id') ?? '';
+        $remarks = $this->request()->getRequestParam('remarks') ?? '';
+        $phone = $this->request()->getRequestParam('phone') ?? '';
+
+        try {
+            FinancesSearch::create()->get($id)->update(['remarks' => trim($remarks)]);
+        } catch (\Throwable $e) {
+
+        }
+
+        return $this->checkResponse([
+            'code' => 200,
+            'paging' => null,
+            'result' => null,
+            'msg' => '1',
+        ]);
+    }
+
 }
