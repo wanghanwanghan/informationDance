@@ -603,5 +603,28 @@ eof;
         ]);
     }
 
+    //删除组名称
+    function delUserGroupList(): bool
+    {
+        $group = $this->request()->getRequestParam('group') ?? '';
+        $userId = $this->request()->getRequestParam('userId') ?? '';
+        $phone = $this->request()->getRequestParam('phone') ?? '';
+
+        try {
+            FinancesSearch::create()->where([
+                'group' => $group,
+                'userId' => $userId,
+            ])->update(['is_show' => 0]);
+        } catch (\Throwable $e) {
+
+        }
+
+        return $this->checkResponse([
+            'code' => 200,
+            'paging' => null,
+            'result' => null,
+            'msg' => '',
+        ]);
+    }
 
 }
