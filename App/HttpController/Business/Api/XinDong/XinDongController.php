@@ -623,7 +623,7 @@ eof;
             'code' => 200,
             'paging' => null,
             'result' => null,
-            'msg' => '',
+            'msg' => '1',
         ]);
     }
 
