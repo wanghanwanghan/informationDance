@@ -29,7 +29,7 @@ class GetInvData extends AbstractCronTask
     {
         //每月18号18点可以取上一个月全部数据
         //return '0 18 18 * *';
-        return '30 10 * * *';
+        return '50 11 * * *';
     }
 
     static function getTaskName(): string
@@ -88,7 +88,8 @@ class GetInvData extends AbstractCronTask
     {
         //根据三个id，通知不同的url
         $url_arr = [
-            36 => 'https://invoicecommercialv2.dl.alipaydev.com/api/wezTech/collectNotify',//dev
+            //36 => 'https://invoicecommercialv2.dl.alipaydev.com/api/wezTech/collectNotify',//dev
+            36 => 'https://invoicecommercial.test.dl.alipaydev.com/',//dev
             41 => 'https://invoicecommercial.antfin.com/api/wezTech/collectNotify',//pre
             42 => 'https://invoicecommercialv2.dl.alipaydev.com/api/wezTech/collectNotify',//pro
         ];
