@@ -23,7 +23,7 @@ class CrontabService
         $this->runSupervisor();
         $this->runMoveOut();
         $this->getAuthBook();
-        $this->getInvData();//1
+        //$this->getInvData();//1
 
         return true;
     }
