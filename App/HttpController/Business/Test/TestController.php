@@ -751,63 +751,115 @@ class TestController extends BusinessBase
     //产品标准页面用
     function product()
     {
-        //地图
-        try {
-            $mysqlObj = Manager::getInstance()
-                ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
-                ->getObj();
-            $sql = 'SELECT * FROM qyxx_copy1';
-            $list = $mysqlObj->rawQuery($sql);
-            $list = obj2Arr($list);
-            foreach ($list as $val) {
-                $map[$val['XZQH_NAME']] = $val['num'];
-            }
-        } catch (\Throwable $e) {
-            $this->writeErr($e, __FUNCTION__);
-        } finally {
-            Manager::getInstance()
-                ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
-                ->recycleObj($mysqlObj);
-        }
+//        //地图
+//        try {
+//            $mysqlObj = Manager::getInstance()
+//                ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
+//                ->getObj();
+//            $sql = 'SELECT * FROM qyxx_copy1';
+//            $list = $mysqlObj->rawQuery($sql);
+//            $list = obj2Arr($list);
+//            foreach ($list as $val) {
+//                $map[$val['XZQH_NAME']] = $val['num'];
+//            }
+//        } catch (\Throwable $e) {
+//            $this->writeErr($e, __FUNCTION__);
+//        } finally {
+//            Manager::getInstance()
+//                ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
+//                ->recycleObj($mysqlObj);
+//        }
+//
+//        //标准一级分类和个数
+//        try {
+//            $mysqlObj = Manager::getInstance()
+//                ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
+//                ->getObj();
+//            $sql = 'select JJHYDM,count(1) as num from cpxx where JJHYDM is not null group by JJHYDM';
+//            $list = $mysqlObj->rawQuery($sql);
+//            $list = obj2Arr($list);
+//        } catch (\Throwable $e) {
+//            $this->writeErr($e, __FUNCTION__);
+//            $list = [];
+//        } finally {
+//            Manager::getInstance()
+//                ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
+//                ->recycleObj($mysqlObj);
+//        }
+//
+//        $JJHYDM = $tmp = [];
+//
+//        foreach ($list as $index => $val) {
+//            if (preg_match('/[\xe0-\xef][\x80-\xbf]/', $val['JJHYDM'])) {
+//                if (isset($JJHYDM[trim($val['JJHYDM'])])) {
+//                    $JJHYDM[trim($val['JJHYDM'])] += $val['num'];
+//                } else {
+//                    $JJHYDM[trim($val['JJHYDM'])] = $val['num'];
+//                }
+//            }
+//        }
+//
+//        arsort($JJHYDM);
+//
+//        foreach ($JJHYDM as $key => $val) {
+//            $tmp[] = ['name' => $key, 'num' => $val];
+//        }
+//
+//        return $this->writeJson(200, null, [
+//            'k' => array_keys($map), 'v' => array_values($map), 'JJHYDM' => $tmp
+//        ]);
 
-        //标准一级分类和个数
-        try {
-            $mysqlObj = Manager::getInstance()
-                ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
-                ->getObj();
-            $sql = 'select JJHYDM,count(1) as num from cpxx where JJHYDM is not null group by JJHYDM';
-            $list = $mysqlObj->rawQuery($sql);
-            $list = obj2Arr($list);
-        } catch (\Throwable $e) {
-            $this->writeErr($e, __FUNCTION__);
-            $list = [];
-        } finally {
-            Manager::getInstance()
-                ->get(CreateConf::getInstance()->getConf('env.mysqlDatabaseMZJD'))
-                ->recycleObj($mysqlObj);
-        }
+        $k = [
+            'HongKong' => '香港(0)',
+            'Macau' => '澳门(0)',
+            'Taiwan' => '台湾(0)',
+            'Shanghai' => '上海(0)',
+            'Yunnan' => '云南(0)',
+            'InnerMongolia' => '内蒙(0)',
+            'Beijing' => '北京(0)',
+            'Jilin' => '吉林(0)',
+            'Sichuan' => '四川(0)',
+            'Tianjin' => '天津(0)',
+            'Ningxia' => '宁夏(0)',
+            'Anhui' => '安徽(0)',
+            'Shandong' => '山东(0)',
+            'Shanxi' => '山西(0)',
+            'Guangdong' => '广东(0)',
+            'Guangxi' => '广西(0)',
+            'Xinjiang' => '新疆(0)',
+            'Jiangsu' => '江苏(0)',
+            'Jiangxi' => '江西(0)',
+            'Hebei' => '河北(0)',
+            'Henan' => '河南(0)',
+            'Zhejiang' => '浙江(0)',
+            'Hainan' => '海南(0)',
+            'Hubei' => '湖北(0)',
+            'Hunan' => '湖南(0)',
+            'Gansu' => '甘肃(0)',
+            'Fujian' => '福建(0)',
+            'Tibet' => '西藏(0)',
+            'Guizhou' => '贵州(0)',
+            'Liaoning' => '辽宁(0)',
+            'Chongqing' => '重庆(0)',
+            'Shaanxi' => '陕西(0)',
+            'Qinghai' => '青海(0)',
+            'Heilongjiang' => '黑龙江(0)',
+        ];
 
-        $JJHYDM = $tmp = [];
+        $JJHYDM = [
+            'wanghan' => [
+                'name' => 'hanwang',
+                'num' => '666',
+            ]
+        ];
 
-        foreach ($list as $index => $val) {
-            if (preg_match('/[\xe0-\xef][\x80-\xbf]/', $val['JJHYDM'])) {
-                if (isset($JJHYDM[trim($val['JJHYDM'])])) {
-                    $JJHYDM[trim($val['JJHYDM'])] += $val['num'];
-                } else {
-                    $JJHYDM[trim($val['JJHYDM'])] = $val['num'];
-                }
-            }
-        }
+        $arr = [
+            'k' => $k,
+            'v' => null,
+            'JJHYDM' => $JJHYDM,
+        ];
 
-        arsort($JJHYDM);
-
-        foreach ($JJHYDM as $key => $val) {
-            $tmp[] = ['name' => $key, 'num' => $val];
-        }
-
-        return $this->writeJson(200, null, [
-            'k' => array_keys($map), 'v' => array_values($map), 'JJHYDM' => $tmp
-        ]);
+        return $this->writeJson(200, null, $arr);
     }
 
     function caiwu()
