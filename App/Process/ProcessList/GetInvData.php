@@ -12,6 +12,7 @@ use App\HttpController\Service\OSS\OSSService;
 use App\HttpController\Service\Zip\ZipService;
 use App\Process\ProcessBase;
 use Carbon\Carbon;
+use EasySwoole\Log\Logger;
 use EasySwoole\ORM\DbManager;
 use EasySwoole\RedisPool\Redis;
 use Swoole\Process;
@@ -91,6 +92,9 @@ class GetInvData extends ProcessBase
             for ($page = 1; $page <= 999999; $page++) {
                 $res = (new DaXiangService())
                     ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
+
+                CommonService::getInstance()->log4PHP($res);
+
                 if (!isset($res['content'])) {
                     CommonService::getInstance()->log4PHP($res, 'getInv', 'inv_store_mysql_error.log');
                     break;
@@ -115,6 +119,9 @@ class GetInvData extends ProcessBase
             for ($page = 1; $page <= 999999; $page++) {
                 $res = (new DaXiangService())
                     ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
+
+                CommonService::getInstance()->log4PHP($res);
+
                 if (!isset($res['content'])) {
                     CommonService::getInstance()->log4PHP($res, 'getInv', 'inv_store_mysql_error.log');
                     break;
