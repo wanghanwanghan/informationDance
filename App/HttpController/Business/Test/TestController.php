@@ -824,7 +824,7 @@ class TestController extends BusinessBase
             'Anhui' => '安徽(56724)',
             'Shandong' => '山东(15672)',
             'Shanxi' => '山西(39472)',
-            'Guangdong' => '广东(18082)',
+            'Guangdong' => '广东(180820)',
             'Guangxi' => '广西(20307)',
             'Xinjiang' => '新疆(29289)',
             'Jiangsu' => '江苏(84037)',
