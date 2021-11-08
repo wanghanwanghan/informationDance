@@ -167,14 +167,14 @@ class GetInvData extends ProcessBase
         $total = 0;
 
         if (empty($total)) {
-            $filename = $NSRSBH . "_page_1.json";
+            $filename = "{$NSRSBH}_page_1.json";
             file_put_contents($store . $filename, jsonEncode([]));
         } else {
             $totalPage = $total / 3000 + 1;
             //每个文件存3000张发票
             for ($page = 1; $page <= $totalPage; $page++) {
                 //每个文件存3000张发票
-                $filename = $NSRSBH . "_page_{$page}.json";
+                $filename = "{$NSRSBH}_page_{$page}.json";
                 $offset = ($page - 1) * 3000;
                 $list = EntInvoice::create()
                     ->addSuffix($NSRSBH, 'wusuowei')
