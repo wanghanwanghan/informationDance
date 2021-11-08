@@ -76,6 +76,12 @@ class DaXiangService extends ServiceBase
         //14通行费电子票
         //15二手车销售统一发票
 
+        CommonService::getInstance()->log4PHP([
+            'url' => $url,
+            'access_token' => $token,
+            'data' => $arr,
+        ]);
+
         return (new CoHttpClient())
             ->useCache(false)
             ->send($url . "?access_token={$token}", $arr, [], [], 'postjson');
