@@ -66,13 +66,15 @@ class XinDongController extends XinDongBase
             $stockPercent = str_replace(['%'], '', trim($one['StockPercent']));
             if ($stockPercent > 50) {
                 //查一下，用有没有股东判断这是自然人还是企业
-                $check = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'ECIPartner/GetList', ['searchKey' => $one['StockName']]);
+                $check = (new LongDunService())->setCheckRespFlag(true)
+                    ->get($this->ldUrl . 'ECIPartner/GetList', ['searchKey' => $one['StockName']]);
                 //有股东，说明是企业法人
                 ($check['code'] != 200 || empty($check['result'])) ?: $entName = $one['StockName'];
             }
         }
 
-        if (empty($entName)) return $this->checkResponse(['code' => 200, 'paging' => null, 'result' => [], 'msg' => '查询成功']);
+        if (empty($entName))
+            return $this->checkResponse(['code' => 200, 'paging' => null, 'result' => [], 'msg' => '查询成功']);
 
         //如果这里的entName不是空，说明有持股大于50的，企业股东
         $res = XinDongService::getInstance()->getCorporateShareholderRisk($entName);
