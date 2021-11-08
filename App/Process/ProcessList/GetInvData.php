@@ -164,8 +164,6 @@ class GetInvData extends ProcessBase
             ->where('nsrsbh', $NSRSBH)
             ->count();
 
-        $total = 0;
-
         if (empty($total)) {
             $filename = "{$NSRSBH}_page_1.json";
             file_put_contents($store . $filename, jsonEncode([]));
