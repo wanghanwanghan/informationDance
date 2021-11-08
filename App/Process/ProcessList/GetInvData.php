@@ -12,7 +12,6 @@ use App\HttpController\Service\OSS\OSSService;
 use App\HttpController\Service\Zip\ZipService;
 use App\Process\ProcessBase;
 use Carbon\Carbon;
-use EasySwoole\Log\Logger;
 use EasySwoole\ORM\DbManager;
 use EasySwoole\RedisPool\Redis;
 use Swoole\Process;
@@ -142,7 +141,7 @@ class GetInvData extends ProcessBase
     }
 
     //上传到oss 发票已经入完mysql
-    function sendToOSS($NSRSBH)
+    function sendToOSS($NSRSBH): bool
     {
         //只有蚂蚁的税号才上传oss
         //蚂蚁区块链dev id 36
@@ -165,9 +164,11 @@ class GetInvData extends ProcessBase
             ->where('nsrsbh', $NSRSBH)
             ->count();
 
+        $total = 0;
+
         if (empty($total)) {
             $filename = $NSRSBH . "_page_1.json";
-            file_put_contents($store . $filename, '');
+            file_put_contents($store . $filename, jsonEncode([]));
         } else {
             $totalPage = $total / 3000 + 1;
             //每个文件存3000张发票
