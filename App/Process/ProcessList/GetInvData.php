@@ -155,6 +155,9 @@ class GetInvData extends ProcessBase
 
         if (empty($info)) return false;
 
+        //每个文件存多少张发票
+        $dataInFile = 200;
+
         $store = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR;
         is_dir($store) || mkdir($store, 0755, true);
 
@@ -168,12 +171,12 @@ class GetInvData extends ProcessBase
             $filename = "{$NSRSBH}_page_1.json";
             file_put_contents($store . $filename, jsonEncode([]));
         } else {
-            $totalPage = $total / 3000 + 1;
+            $totalPage = $total / $dataInFile + 1;
             //每个文件存3000张发票
             for ($page = 1; $page <= $totalPage; $page++) {
                 //每个文件存3000张发票
                 $filename = "{$NSRSBH}_page_{$page}.json";
-                $offset = ($page - 1) * 3000;
+                $offset = ($page - 1) * $dataInFile;
                 $list = EntInvoice::create()
                     ->addSuffix($NSRSBH, 'wusuowei')
                     ->where('nsrsbh', $NSRSBH)
@@ -209,7 +212,7 @@ class GetInvData extends ProcessBase
                         'direction',
                         'nsrsbh',
                     ])
-                    ->limit($offset, 3000)
+                    ->limit($offset, $dataInFile)
                     ->all();
                 //没有数据了
                 if (empty($list)) break;
@@ -266,23 +269,6 @@ class GetInvData extends ProcessBase
                 ]);
         }
         closedir($dh);
-
-//        if (!empty($file_arr)) {
-//            $name = Carbon::now()->format('Ym') . "_{$NSRSBH}.zip";
-//            if (file_exists($store . $name)) {
-//                unlink($store . $name);
-//            }
-//            $zip_file_name = ZipService::getInstance()->zip($file_arr, $store . $name, true);
-//            $oss_file_name = OSSService::getInstance()
-//                ->doUploadFile($this->oss_bucket, $name, $zip_file_name, $this->oss_expire_time);
-//            //更新上次取数时间和oss地址
-//            AntAuthList::create()
-//                ->where('socialCredit', $NSRSBH)
-//                ->update([
-//                    'lastReqTime' => time(),
-//                    'lastReqUrl' => $oss_file_name,//存个文件前缀吧，然后用file_exists去判断page到第几个了
-//                ]);
-//        }
 
         return true;
     }
