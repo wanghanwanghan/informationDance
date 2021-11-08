@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use EasySwoole\ORM\DbManager;
 use EasySwoole\RedisPool\Redis;
 use Swoole\Process;
+use wanghanwanghan\someUtils\control;
 
 class GetInvData extends ProcessBase
 {
@@ -167,15 +168,18 @@ class GetInvData extends ProcessBase
             ->where('nsrsbh', $NSRSBH)
             ->count();
 
+        //随机文件名
+        $fileSuffix = control::getUuid(8);
+
         if (empty($total)) {
-            $filename = "{$NSRSBH}_page_1.json";
+            $filename = "{$NSRSBH}_page_1_{$fileSuffix}.json";
             file_put_contents($store . $filename, '');
         } else {
             $totalPage = $total / $dataInFile + 1;
             //每个文件存3000张发票
             for ($page = 1; $page <= $totalPage; $page++) {
                 //每个文件存3000张发票
-                $filename = "{$NSRSBH}_page_{$page}.json";
+                $filename = "{$NSRSBH}_page_{$page}_{$fileSuffix}.json";
                 $offset = ($page - 1) * $dataInFile;
                 $list = EntInvoice::create()
                     ->addSuffix($NSRSBH, 'wusuowei')
@@ -258,13 +262,15 @@ class GetInvData extends ProcessBase
             ];
             while (false !== ($file = readdir($dh))) {
                 if (!in_array($file, $ignore, true)) {
-                    $file_arr[] = OSSService::getInstance()
-                        ->doUploadFile(
-                            $this->oss_bucket,
-                            Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $file,
-                            $store . $file,
-                            $this->oss_expire_time
-                        );
+                    if (strpos($file, $fileSuffix) !== false) {
+                        $file_arr[] = OSSService::getInstance()
+                            ->doUploadFile(
+                                $this->oss_bucket,
+                                Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $file,
+                                $store . $file,
+                                $this->oss_expire_time
+                            );
+                    }
                 }
             }
             AntAuthList::create()
