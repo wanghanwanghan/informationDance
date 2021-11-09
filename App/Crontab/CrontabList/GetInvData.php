@@ -29,7 +29,7 @@ class GetInvData extends AbstractCronTask
     {
         //每月18号18点可以取上一个月全部数据
         //return '0 18 18 * *';
-        return '03 21 * * *';
+        return '14 10 * * *';
     }
 
     static function getTaskName(): string
