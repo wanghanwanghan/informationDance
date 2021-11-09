@@ -326,7 +326,7 @@ class GetInvData extends ProcessBase
                 $insert = [
                     'fpdm' => changeNull($arr['FPDM']),//'发票代码',
                     'fphm' => changeNull($arr['FPHM']),//'发票号码',
-                    'kplx' => changeNull($arr['HLPBS']),//'开票类型 0-蓝字 1-红字',
+                    'kplx' => strlen(changeNull($arr['HLPBS'])) === 0 ? '0' : changeNull($arr['HLPBS']),//'开票类型 0-蓝字 1-红字',
                     'xfsh' => changeNull($arr['XHFSBH']),//'销售方纳税人识别号',
                     'xfmc' => changeNull($arr['XHFMC']),//'销售方名称',
                     'xfdzdh' => changeNull($arr['XHFDZDH']),//'销售方地址电话',
