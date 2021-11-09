@@ -171,8 +171,6 @@ class GetInvData extends ProcessBase
         //随机文件名
         $fileSuffix = control::getUuid(8);
 
-        $total = 0;
-
         if (empty($total)) {
             $filename = "{$NSRSBH}_page_1_{$fileSuffix}.json";
             file_put_contents($store . $filename, '');
@@ -401,14 +399,14 @@ class GetInvData extends ProcessBase
                                     'shul' => changeNull($oneDetail['SPSL']),//'数量',
                                     'je' => changeDecimal($oneDetail['JE'], 2),//'含税金额 2位小数',
                                     'sl' => changeDecimal($oneDetail['SL'], 3),//'税率 3位小数 例1%为0.010',
-                                    'se' => changeNull($oneDetail['SE']),//'税额',
-                                    'dj' => changeNull($oneDetail['DJ']),//'不含税单价',
+                                    'se' => changeDecimal(changeNull($oneDetail['SE']), 2),//'税额',
+                                    'dj' => changeDecimal(changeNull($oneDetail['DJ']), 2),//'不含税单价',
                                     'ggxh' => changeNull($oneDetail['GGXH']),//'规格型号',
                                     'mxxh' => $i_num,
                                     'fpdm' => $dm,//'发票代码',
                                     'fphm' => $hm,//'发票号码',
                                     'fphxz' => changeNull($oneDetail['FPHXZ']),//'是否折扣行 0否 1是 默认0表示正常商品行',
-                                    'hsdj' => changeNull($oneDetail['HSDJ']),//'含税单价',
+                                    'hsdj' => changeDecimal(changeNull($oneDetail['HSDJ']), 2),//'含税单价',
                                 ];
                                 $i_num++;
                             }
