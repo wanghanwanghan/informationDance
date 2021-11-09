@@ -157,7 +157,7 @@ class GetInvData extends ProcessBase
         if (empty($info)) return false;
 
         //每个文件存多少张发票
-        $dataInFile = 300;
+        $dataInFile = 3000;
 
         $store = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR;
         is_dir($store) || mkdir($store, 0755, true);
@@ -170,6 +170,8 @@ class GetInvData extends ProcessBase
 
         //随机文件名
         $fileSuffix = control::getUuid(8);
+
+        $total = 0;
 
         if (empty($total)) {
             $filename = "{$NSRSBH}_page_1_{$fileSuffix}.json";
