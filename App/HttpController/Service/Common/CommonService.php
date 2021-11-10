@@ -38,7 +38,7 @@ class CommonService extends ServiceBase
     use Singleton;
 
     //写log
-    function log4PHP($content, $type = 'info', $filename = '')
+    function log4PHP($content, $type = 'info', $filename = ''): bool
     {
         (!is_array($content) && !is_object($content)) ?:
             $content = jsonEncode($content, false);

@@ -29,7 +29,7 @@ class GetInvData extends AbstractCronTask
     {
         //每月18号18点可以取上一个月全部数据
         //return '0 18 18 * *';
-        return '08 16 * * *';
+        return '16 10 * * *';
     }
 
     static function getTaskName(): string
@@ -155,7 +155,7 @@ class GetInvData extends AbstractCronTask
                 CommonService::getInstance()->log4PHP([
                     '发给蚂蚁的',
                     $collectNotify
-                ]);
+                ], 'info', 'ant.log');
 
                 $url = $url_arr[$id];
 
