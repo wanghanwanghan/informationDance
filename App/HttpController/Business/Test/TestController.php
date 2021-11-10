@@ -34,6 +34,30 @@ class TestController extends BusinessBase
 
     function test()
     {
+        $list = [
+            '安庆炼化曙光丁辛醇化工有限公司',
+            '安徽昊源化工集团有限公司',
+            '苏州嘉玺新材料供应链有限公司',
+            '江苏斯尔邦石化有限公司',
+            '浙江巴德富供应链管理有限公司',
+            '江苏中信国安新材料有限公司',
+            '天津虹致新材料有限公司',
+        ];
+
+        foreach ($list as $ent) {
+            $postData = [
+                'entName' => $ent,
+                'code' => '',
+                'beginYear' => 2020,
+                'dataCount' => 3,
+            ];
+            $res = (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->setCal(true)
+                ->getFinanceData($postData, false);
+            CommonService::getInstance()->log4PHP(jsonEncode($res));
+            break;
+        }
 
         return $this->writeJson(200, null);
     }
