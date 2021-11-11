@@ -273,7 +273,7 @@ class QiXiangYunService extends ServiceBase
                     'fplxs' => [
                         '01', '03', '04', '08', '10', '11', '14', '15', '17'
                     ],
-                    'addJob' => false
+                    'addJob' => true//true是发起任务，false是查询任务状态
                 ];
 
                 $req_date = time() . '000';
@@ -312,7 +312,7 @@ class QiXiangYunService extends ServiceBase
                 'fplxs' => [
                     '01', '03', '04', '08', '10', '11', '14', '15', '17'
                 ],
-                'addJob' => false
+                'addJob' => true
             ];
 
             $req_date = time() . '000';
