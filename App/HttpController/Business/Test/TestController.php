@@ -117,10 +117,10 @@ class TestController extends BusinessBase
 
         if ($num > 100) {
             $num = ceil($num) / 100;
-            $num = $num . '00';
+            $num = ceil($num) . '00';
         } elseif ($num > 10) {
             $num = ceil($num) / 10;
-            $num = $num . '0';
+            $num = ceil($num) . '0';
         }
 
         return changeDecimal($num);
