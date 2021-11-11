@@ -3,26 +3,13 @@
 namespace App\HttpController\Business\Test;
 
 use App\HttpController\Business\BusinessBase;
-use App\HttpController\Models\Provide\RequestUserInfo;
-use App\HttpController\Service\BaiDu\BaiDuService;
 use App\HttpController\Service\Common\CommonService;
-use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\DaXiang\DaXiangService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
-use App\HttpController\Service\JuHe\JuHeService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
-use App\HttpController\Service\MoveOut\MoveOutService;
-use App\HttpController\Service\OSS\OSSService;
 use App\HttpController\Service\QianQi\QianQiService;
-use App\HttpController\Service\QiXiangYun\QiXiangYunService;
-use App\HttpController\Service\Queue\QueueConf;
-use App\HttpController\Service\Queue\QueueService;
-use App\HttpController\Service\TaoShu\TaoShuService;
-use App\SwooleTable\Service\SwooleTableService;
-use EasySwoole\Component\Di;
-use EasySwoole\Http\Message\UploadFile;
-use EasySwoole\Pool\Manager;
+use Carbon\Carbon;
 use wanghanwanghan\someUtils\control;
 
 class TestController extends BusinessBase
@@ -30,6 +17,30 @@ class TestController extends BusinessBase
     function onRequest(?string $action): ?bool
     {
         return true;
+    }
+
+
+    function getInv(): bool
+    {
+        $page = $this->request()->getRequestParam('page');
+        $NSRSBH = $this->request()->getRequestParam('NSRSBH');
+        $KM = $this->request()->getRequestParam('KM');// 1 进项
+
+        $FPLXDMS = [
+            '01', '02', '03', '04', '10', '11', '14', '15'
+        ];
+
+        $KPKSRQ = Carbon::now()->subMonths(23)->startOfMonth()->format('Y-m-d');//开始日
+        $KPJSRQ = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');//截止日
+
+        foreach ($FPLXDMS as $FPLXDM) {
+            $res = (new DaXiangService())
+                ->getInv('91110108MA01KPGK0L', $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
+            $content = jsonDecode(base64_decode($res['content']));
+            CommonService::getInstance()->log4PHP($content);
+        }
+
+        return $this->writeJson(200, null, control::getUuid());
     }
 
     function test()
@@ -44,6 +55,8 @@ class TestController extends BusinessBase
             '天津虹致新材料有限公司',
         ];
 
+        $fp = fopen('res.txt', 'w+');
+
         foreach ($list as $ent) {
             $postData = [
                 'entName' => $ent,
@@ -55,9 +68,13 @@ class TestController extends BusinessBase
                 ->setCheckRespFlag(true)
                 ->setCal(true)
                 ->getFinanceData($postData, false);
-            CommonService::getInstance()->log4PHP(jsonEncode($res));
-            break;
+
+            foreach ($res['result'] as $year => $val) {
+
+            }
         }
+
+        fclose($fp);
 
         return $this->writeJson(200, null);
     }
