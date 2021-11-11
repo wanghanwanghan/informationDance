@@ -69,7 +69,42 @@ class TestController extends BusinessBase
                 ->setCal(true)
                 ->getFinanceData($postData, false);
 
+            CommonService::getInstance()->log4PHP($res);
+
             foreach ($res['result'] as $year => $val) {
+
+                //            'ASSGRO',//0资产总额
+                //            'LIAGRO',//1负债总额
+                //            'VENDINC',//2营业总收入
+                //            'MAIBUSINC',//3主营业务收入
+                //            'PROGRO',//4利润总额
+                //            'NETINC',//5净利润
+                //            'RATGRO',//6纳税总额
+                //            'TOTEQU',//7所有者权益
+                //            'C_ASSGROL',//9净资产
+                //            'A_ASSGROL',//10平均资产总额
+                //            'CA_ASSGRO',//11平均净资产
+                //            'A_VENDINCL',//15企业人均产值
+                //            'A_PROGROL',//16企业人均盈利
+                $insert = [
+                    $year,
+                    $val['VENDINC'],
+                    $val['ASSGRO'],
+                    $val['LIAGRO'],
+                    $val['RATGRO'],
+                    $val['MAIBUSINC'],
+                    $val['TOTEQU'],
+                    $val['PROGRO'],
+                    $val['NETINC'],
+                    $val['CA_ASSGRO'],
+                    $val['A_ASSGROL'],
+                    $val['VENDINC'],
+                ];
+
+
+
+
+
 
             }
         }
