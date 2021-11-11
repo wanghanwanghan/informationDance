@@ -411,6 +411,8 @@ class GetInvData extends ProcessBase
                                 $i_num++;
                             }
                         }
+                    } else {
+                        CommonService::getInstance()->log4PHP($arr, 'info', 'dontHaveFpmx.log');
                     }
                 }
 
