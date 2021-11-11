@@ -87,6 +87,7 @@ class TestController extends BusinessBase
                 //            'A_VENDINCL',//15企业人均产值
                 //            'A_PROGROL',//16企业人均盈利
                 $insert = [
+                    $ent,
                     $year,
                     $val['VENDINC'],
                     $val['ASSGRO'],
