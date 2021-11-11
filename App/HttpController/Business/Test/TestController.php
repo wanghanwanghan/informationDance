@@ -115,7 +115,7 @@ class TestController extends BusinessBase
     {
         if (!is_numeric($num)) return '';
 
-        $num > 0 ? $type = 'y' : $type = 'n';
+        $num >= 0 ? $type = 'y' : $type = 'n';
         $num = trim($num, '-');
 
         if ($num > 100) {
