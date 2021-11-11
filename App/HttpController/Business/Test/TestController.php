@@ -115,6 +115,9 @@ class TestController extends BusinessBase
     {
         if (!is_numeric($num)) return '';
 
+        $num > 0 ? $type = 'y' : $type = 'n';
+        $num = trim($num, '-');
+
         if ($num > 100) {
             $num = ceil($num) / 100;
             $num = ceil($num) . '00';
@@ -123,7 +126,7 @@ class TestController extends BusinessBase
             $num = ceil($num) . '0';
         }
 
-        return changeDecimal($num);
+        return $type === 'y' ? changeDecimal($num) : '-' . changeDecimal($num);
     }
 
     function test1()
