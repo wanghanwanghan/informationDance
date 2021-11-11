@@ -89,16 +89,16 @@ class TestController extends BusinessBase
                 $insert = [
                     $ent,
                     $year,
-                    changeDecimal($val['VENDINC']),
-                    changeDecimal($val['ASSGRO']),
-                    changeDecimal($val['LIAGRO']),
-                    changeDecimal($val['RATGRO']),
-                    changeDecimal($val['MAIBUSINC']),
-                    changeDecimal($val['TOTEQU']),
-                    changeDecimal($val['PROGRO']),
-                    changeDecimal($val['NETINC']),
-                    changeDecimal($val['CA_ASSGRO']),
-                    changeDecimal($val['A_ASSGROL']),
+                    $this->numnum($val['VENDINC']),
+                    $this->numnum($val['ASSGRO']),
+                    $this->numnum($val['LIAGRO']),
+                    $this->numnum($val['RATGRO']),
+                    $this->numnum($val['MAIBUSINC']),
+                    $this->numnum($val['TOTEQU']),
+                    $this->numnum($val['PROGRO']),
+                    $this->numnum($val['NETINC']),
+                    $this->numnum($val['CA_ASSGRO']),
+                    $this->numnum($val['A_ASSGROL']),
                     $val['SOCNUM'],
                 ];
 
@@ -109,6 +109,21 @@ class TestController extends BusinessBase
         fclose($fp);
 
         return $this->writeJson(200, null);
+    }
+
+    function numnum($num): string
+    {
+        if (!is_numeric($num)) return '';
+
+        if ($num > 100) {
+            $num = ceil($num) / 100;
+            $num = $num . '00';
+        } elseif ($num > 10) {
+            $num = ceil($num) / 10;
+            $num = $num . '0';
+        }
+
+        return changeDecimal($num);
     }
 
     function test1()
