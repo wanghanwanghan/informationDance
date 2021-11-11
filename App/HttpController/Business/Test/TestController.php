@@ -9,6 +9,7 @@ use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\QianQi\QianQiService;
+use App\HttpController\Service\QiXiangYun\QiXiangYunService;
 use Carbon\Carbon;
 use wanghanwanghan\someUtils\control;
 
@@ -43,8 +44,21 @@ class TestController extends BusinessBase
         return $this->writeJson(200, null, control::getUuid());
     }
 
-    function test()
+    function test(): bool
     {
+        // 91440300MA5DMM0H7K 深圳市信工科技发展有限公司
+        // 91110114057321139M 北京润泽天佑科技有限公司
+
+        $nsrsbh = $this->request()->getRequestParam('nsrsbh');
+        $kpyf = $this->request()->getRequestParam('kpyf');
+        $jxxbz = $this->request()->getRequestParam('jxxbz');
+        $fplx = $this->request()->getRequestParam('fplx');
+        $page = $this->request()->getRequestParam('page');
+
+        $res = QiXiangYunService::getInstance()->getInv($nsrsbh, $kpyf, $jxxbz, $fplx, $page);
+
+        return $this->writeJson(200, null, $res);
+
         $list = [
             '安庆炼化曙光丁辛醇化工有限公司',
             '安徽昊源化工集团有限公司',

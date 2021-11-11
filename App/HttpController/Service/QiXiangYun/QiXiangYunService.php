@@ -12,6 +12,13 @@ class QiXiangYunService extends ServiceBase
 {
     use Singleton;
 
+    private $baseUrl;
+    private $testBaseUrl;
+    private $appkey;
+    private $testAppkey;
+    private $secret;
+    private $testSecret;
+
     function __construct()
     {
         $this->baseUrl = CreateConf::getInstance()->getConf('qixiangyun.baseUrl');
@@ -149,7 +156,7 @@ class QiXiangYunService extends ServiceBase
         $data = [
             'nsrsbh' => $nsrsbh,
             'kpyf' => $kpyf - 0,//Ym
-            'jxxbz' => $jxxbz,//jx xxx
+            'jxxbz' => $jxxbz,//jx xx
             'fplx' => str_pad($fplx, 2, '0', STR_PAD_LEFT),
             'page' => [
                 'pageSize' => 100,
@@ -161,7 +168,11 @@ class QiXiangYunService extends ServiceBase
 
         $token = $this->createToken();
 
-        $sign = base64_encode(md5('POST_' . md5(json_encode($data)) . '_' . $req_date . '_' . $token . '_' . $this->testSecret));
+        $sign = base64_encode(
+            md5(
+                'POST_' . md5(json_encode($data)) . '_' . $req_date . '_' . $token . '_' . $this->testSecret
+            )
+        );
 
         $req_sign = "API-SV1:{$this->testAppkey}:" . $sign;
 
