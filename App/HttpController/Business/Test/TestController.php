@@ -101,7 +101,7 @@ class TestController extends BusinessBase
                     $val['SOCNUM'],
                 ];
 
-                fwrite($fp, implode('|', $insert) . PHP_EOL, FILE_APPEND);
+                fwrite($fp, implode('|', $insert) . PHP_EOL);
             }
         }
 
