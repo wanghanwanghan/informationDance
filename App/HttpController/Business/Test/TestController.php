@@ -44,6 +44,13 @@ class TestController extends BusinessBase
         return $this->writeJson(200, null, control::getUuid());
     }
 
+    function getFpxzStatus(): bool
+    {
+        $nsrsbh = $this->request()->getRequestParam('nsrsbh');
+        QiXiangYunService::getInstance()->getFpxzStatus($nsrsbh);
+        return $this->writeJson(200, null);
+    }
+
     function test(): bool
     {
         // 91440300MA5DMM0H7K 深圳市信工科技发展有限公司
