@@ -98,14 +98,10 @@ class TestController extends BusinessBase
                     $val['NETINC'],
                     $val['CA_ASSGRO'],
                     $val['A_ASSGROL'],
-                    $val['VENDINC'],
+                    $val['SOCNUM'],
                 ];
 
-
-
-
-
-
+                file_put_contents($fp, implode('|', $insert) . PHP_EOL, FILE_APPEND);
             }
         }
 
