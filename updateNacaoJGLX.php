@@ -40,7 +40,7 @@ class P extends AbstractProcess
 
                 if (empty($type)) continue;
 
-                $one->update(['JGLX' => $type]);
+                $one->update(['JGLX' => trim($type, '-')]);
 
             }
 
