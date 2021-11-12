@@ -36,6 +36,8 @@ class P extends AbstractProcess
                 $type = \wanghanwanghan\someUtils\moudles\nsrsbh\nsrsbhToType::getInstance()
                     ->setNsrsbh($UNISCID)->getType();
 
+                if (empty($type)) continue;
+
                 $one->update(['JGLX' => $type]);
 
             }
