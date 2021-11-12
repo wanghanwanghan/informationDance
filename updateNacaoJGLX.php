@@ -33,6 +33,8 @@ class P extends AbstractProcess
 
                 $UNISCID = trim($one->UNISCID);
 
+                if (empty($UNISCID)) continue;
+
                 $type = \wanghanwanghan\someUtils\moudles\nsrsbh\nsrsbhToType::getInstance()
                     ->setNsrsbh($UNISCID)->getType();
 
