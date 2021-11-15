@@ -24,8 +24,17 @@ class P extends AbstractProcess
 
         while (true) {
 
+            //4000页以前
+            //$list = \App\HttpController\Models\EntDb\EntDbNacaoBasic::create()
+            //    ->page($page, 500)
+            //    ->order('entid', 'asc')
+            //    ->all();
+
+            //4000页以后
             $list = \App\HttpController\Models\EntDb\EntDbNacaoBasic::create()
-                ->page($page, 500)->order('entid', 'asc')->all();
+                ->page($page, 500)
+                ->order('entid', 'desc')
+                ->all();
 
             CommonService::getInstance()->log4PHP("处理到了第{$page}页", 'info', 'P_class_.log');
 
