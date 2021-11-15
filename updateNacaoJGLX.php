@@ -27,7 +27,7 @@ class P extends AbstractProcess
             $list = \App\HttpController\Models\EntDb\EntDbNacaoBasic::create()
                 ->page($page, 500)->all();
 
-            CommonService::getInstance()->log4PHP(["处理到了第{$page}页"],'info','P_class_.log');
+            CommonService::getInstance()->log4PHP("处理到了第{$page}页", 'info', 'P_class_.log');
 
             if (empty($list)) break;
 
