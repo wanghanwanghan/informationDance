@@ -36,7 +36,7 @@ class P extends AbstractProcess
                 ->order('entid', 'desc')
                 ->all();
 
-            CommonService::getInstance()->log4PHP("处理到了第{$page}页", 'info', 'P_class_.log');
+            CommonService::getInstance()->log4PHP("处理到了第{$page}页", 'info', 'p_class.log');
 
             if (empty($list)) break;
 
