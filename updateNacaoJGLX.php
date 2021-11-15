@@ -24,8 +24,10 @@ class P extends AbstractProcess
 
         while (true) {
 
+            $offset = ($page - 1) * 500;
+
             $list = \App\HttpController\Models\EntDb\EntDbNacaoBasic::create()
-                ->page($page, 500)->all();
+                ->limit($offset, 500)->all();
 
             CommonService::getInstance()->log4PHP("处理到了第{$page}页", 'info', 'P_class_.log');
 
