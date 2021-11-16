@@ -9,6 +9,7 @@ use App\HttpController\Models\EntDb\EntDbFinance;
 use App\HttpController\Models\EntDb\EntDbTzList;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\DaXiang\DaXiangService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\FinanceRange;
 use App\HttpController\Service\LongXin\LongXinService;
@@ -996,6 +997,10 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getInv()
+    {
+
+    }
 
 
 }
