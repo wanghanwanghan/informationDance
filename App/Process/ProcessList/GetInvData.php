@@ -268,6 +268,7 @@ class GetInvData extends ProcessBase
             while (false !== ($file = readdir($dh))) {
                 if (!in_array($file, $ignore, true)) {
                     if (strpos($file, $fileSuffix) !== false) {
+                        CommonService::getInstance()->log4PHP($file, 'info', 'upload_oss.log');
                         $file_arr[] = OSSService::getInstance()
                             ->doUploadFile(
                                 $this->oss_bucket,
@@ -293,7 +294,6 @@ class GetInvData extends ProcessBase
     function writeFile(array $row, string $NSRSBH, string $invType, string $FPLXDM): bool
     {
         if (!empty($row)) {
-            CommonService::getInstance()->log4PHP($row, 'info', 'inserting.log');
             $this->storeMysql($row, $NSRSBH, $FPLXDM, $invType);
         }
 
