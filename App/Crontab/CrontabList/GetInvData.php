@@ -4,6 +4,7 @@ namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
 use App\HttpController\Models\Api\AntAuthList;
+use App\HttpController\Models\EntDb\EntInvoice;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
@@ -90,7 +91,7 @@ class GetInvData extends AbstractCronTask
         $url_arr = [
             36 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
             41 => 'https://invoicecommercial-pre.antfin.com/api/wezTech/collectNotify',//pre
-            42 => 'https://invoicecommercialv2.dl.alipaydev.com/api/wezTech/collectNotify',//pro
+            42 => 'https://invoicecommercial.antfin.com/api/wezTech/collectNotify',//pro
         ];
 
         $total = AntAuthList::create()
@@ -130,10 +131,22 @@ class GetInvData extends AbstractCronTask
                     $fileSecret = '';
                     $fileKeyList = [];
                 }
+
+                //拿一下这个企业的进项销项总发票数字
+                $in = EntInvoice::create()->addSuffix($oneReadyToSend->getAttr('socialCredit'), '')->where([
+                    'nsrsbh' => $oneReadyToSend->getAttr('socialCredit'),
+                    'direction' => '01',//01-进项
+                ])->count();
+                $out = EntInvoice::create()->addSuffix($oneReadyToSend->getAttr('socialCredit'), '')->where([
+                    'nsrsbh' => $oneReadyToSend->getAttr('socialCredit'),
+                    'direction' => '02',//02-销项
+                ])->count();
+
                 $body = [
                     'nsrsbh' => $oneReadyToSend->getAttr('socialCredit'),//授权的企业税号
                     'authResultCode' => $authResultCode,//取数结果状态码 0000取数成功 XXXX取数失败
                     'fileSecret' => $fileSecret,//对称钥秘⽂
+                    'totalCount' => $in + $out,//总发票条数
                     'companyName' => $oneReadyToSend->getAttr('entName'),//公司名称
                     'authTime' => date('Y-m-d H:i:s', $oneReadyToSend->getAttr('requestDate')),//授权时间
                     'fileKeyList' => $fileKeyList,//文件路径
@@ -162,15 +175,20 @@ class GetInvData extends AbstractCronTask
                     'content-type' => 'application/json;charset=UTF-8',
                 ];
 
-                $ret = (new CoHttpClient())
-                    ->useCache(false)
-                    ->needJsonDecode(true)
-                    ->send($url, jsonEncode($collectNotify, false), $header, [], 'postjson');
+                //生产环境先不通知
+                if ($oneReadyToSend->belong - 0 !== 42) {
 
-                CommonService::getInstance()->log4PHP([
-                    '蚂蚁返回的',
-                    $ret
-                ]);
+                    $ret = (new CoHttpClient())
+                        ->useCache(false)
+                        ->needJsonDecode(true)
+                        ->send($url, jsonEncode($collectNotify, false), $header, [], 'postjson');
+
+                    CommonService::getInstance()->log4PHP([
+                        '蚂蚁返回的',
+                        $ret
+                    ]);
+
+                }
 
             }
         }
