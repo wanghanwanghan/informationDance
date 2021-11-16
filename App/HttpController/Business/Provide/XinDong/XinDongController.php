@@ -975,5 +975,27 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getJobInfo(): bool
+    {
+        $postData = [
+            'entName' => $this->getRequestData('entName'),
+            'page' => $this->getRequestData('page', 1),
+            'title' => $this->getRequestData('title'),
+            'position' => $this->getRequestData('position'),
+            'industry' => $this->getRequestData('industry'),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getJobInfo($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+
 
 }

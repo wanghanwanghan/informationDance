@@ -891,6 +891,42 @@ class LongXinService extends ServiceBase
         return $this->checkResp($res);
     }
 
+    //
+    function getJobInfo($data): ?array
+    {
+        $entId = $this->getEntid($data['entName']);
+
+        if (empty($entId))
+            return ['code' => 102, 'msg' => 'entId是空', 'result' => [], 'paging' => null];
+
+        $arr = [
+            'usercode' => $this->usercode,
+            'entid' => $entId,
+            'pageSize' => '20',//最多200
+            'pageIndex' => $data['page'] . '',
+            'title' => $data['title'] ?? '',//招聘标题，示例："动力工程师"
+            'position' => $data['position'] ?? '',//招聘职位，示例："动力工程师"
+            'industry' => $data['industry'] ?? '',//招聘行业，示例："电子商务"
+            //发布日期 区间搜索
+            //2010-01-01$2020-01-01 表示注册日期在2010年1月1日-2020年1月1日之间的
+            //$2020-01-01 表示2020年1月1日之前的
+            //2010-01-01$ 表示2010年1月1日之后的
+            'pdate' => $data['pdate'] ?? '',
+        ];
+
+        $arr = array_filter($arr);
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($this->baseUrl . 'job/', $arr, $this->sendHeaders);
+
+        CommonService::getInstance()->log4PHP($res);
+
+        return $this->checkResp($res);
+    }
+
 
 
 
