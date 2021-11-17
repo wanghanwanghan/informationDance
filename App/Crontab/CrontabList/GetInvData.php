@@ -146,7 +146,7 @@ class GetInvData extends AbstractCronTask
                     'nsrsbh' => $oneReadyToSend->getAttr('socialCredit'),//授权的企业税号
                     'authResultCode' => $authResultCode,//取数结果状态码 0000取数成功 XXXX取数失败
                     'fileSecret' => $fileSecret,//对称钥秘⽂
-                    'totalCount' => $in + $out,//总发票条数
+                    //'totalCount' => $in + $out,//总发票条数，先不带上，等周平通知
                     'companyName' => $oneReadyToSend->getAttr('entName'),//公司名称
                     'authTime' => date('Y-m-d H:i:s', $oneReadyToSend->getAttr('requestDate')),//授权时间
                     'fileKeyList' => $fileKeyList,//文件路径
