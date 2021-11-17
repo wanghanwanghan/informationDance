@@ -299,7 +299,7 @@ class GetInvData extends ProcessBase
                 $NSRSBH,
                 $FPLXDM,
                 $invType
-            ]);
+            ], 'info', "tianyanCheck{$this->p_index}.log");
             $this->storeMysql($row, $NSRSBH, $FPLXDM, $invType);
         }
 
