@@ -433,13 +433,13 @@ class GetInvData extends ProcessBase
                 try {
                     DbManager::getInstance()->startTransaction($conn);
                     //发票主表
-                    if (is_numeric($insert['je']) && isset($je)) {
+                    if (!is_numeric($insert['je']) && isset($je)) {
                         $insert['je'] = changeDecimal($je, 2);
                     }
-                    if (is_numeric($insert['se']) && isset($se)) {
+                    if (!is_numeric($insert['se']) && isset($se)) {
                         $insert['se'] = changeDecimal($se, 2);
                     }
-                    if (is_numeric($insert['je']) && is_numeric($insert['se']) && isset($je) && isset($se)) {
+                    if (!is_numeric($insert['jshj']) && isset($je) && isset($se)) {
                         $insert['jshj'] = changeDecimal($je + $se, 2);
                     }
                     EntInvoice::create()->addSuffix($NSRSBH, $FPLXDM)->data($insert)->save();
