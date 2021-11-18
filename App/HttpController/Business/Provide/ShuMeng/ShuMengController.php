@@ -60,6 +60,26 @@ class ShuMengController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getBidsResult_z(): bool
+    {
+        $entName = $this->getRequestData('entName', '');
+        $page = $this->getRequestData('page', 1);
+
+        $postData = [
+            'entName' => $entName,
+            'page' => $page . '',
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return ShuMengService::getInstance()
+                ->setCheckRespFlag(true)->getBidsResult_z($postData['entName'], $postData['page']);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
 
 }
 

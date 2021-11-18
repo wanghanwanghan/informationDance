@@ -24,22 +24,18 @@ class ShuMengService extends ServiceBase
 
     private function check($res): array
     {
-        if ($res['retCode'] === '000000' || $res['retCode'] === '000001') {
-            $code = 200;
-        } else {
-            $code = $res['retCode'] - 0;
-        }
+        $res['status'] === 1 ? $code = 200 : $code = $res['status'] - 0;
 
-        if (!empty($res['result']) && isset($res['result']['total'])) {
-            $paging['total'] = $res['result']['total'] - 0;
+        if (!empty($res['data']) && isset($res['data']['totalSize'])) {
+            $paging['total'] = $res['data']['totalSize'] - 0;
         } else {
             $paging = null;
         }
 
-        if (!empty($res['result']['items'])) {
-            $result = $res['result']['items'];
-        } elseif (!empty($res['result'])) {
-            $result = $res['result'];
+        if (!empty($res['data']['dataList'])) {
+            $result = $res['data']['dataList'];
+        } elseif (!empty($res['data'])) {
+            $result = $res['data'];
         } else {
             $result = null;
         }
@@ -48,7 +44,7 @@ class ShuMengService extends ServiceBase
             'code' => $code,
             'paging' => $paging,
             'result' => $result,
-            'msg' => $res['retMsg'] ?? $res['message'] ?? null,
+            'msg' => $res['message'] ?? null,
         ];
     }
 
@@ -95,13 +91,34 @@ class ShuMengService extends ServiceBase
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'postJson');
 
-
-        CommonService::getInstance()->log4PHP($data);
-        CommonService::getInstance()->log4PHP($res);
-
-
         return $this->check($res);
     }
 
+    //中标供应商数据查询接口
+    function getBidsResult_z(string $entName, string $page, string $type = '精确查询'): array
+    {
+        $url = 'http://114.115.209.33:18570/bids/getBidsResult_c';
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+        ];
+
+        $data = [
+            'signature' => $this->createSignature('bids_proc_211118', 'DZ21NLE-A1CA8'),
+            'queryParams' => [
+                'zbgys' => trim($entName),//采购单位名称
+                'zbgys_type' => $type,//采购单位名称_查询方式 模糊检索 精确查询
+                'page_number' => trim($page) - 0,
+                'page_size' => 10,
+            ],
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'postJson');
+
+        return $this->check($res);
+    }
 
 }
