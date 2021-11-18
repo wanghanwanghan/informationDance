@@ -52,7 +52,7 @@ class ShuMengService extends ServiceBase
         ];
     }
 
-    private function createSignature(string $ak, string $sk = 'wwwbaijiacicomWEB'): array
+    private function createSignature(string $ak, string $sk): array
     {
         $time = time() . random_int(100, 999);
 
@@ -66,7 +66,7 @@ class ShuMengService extends ServiceBase
             'sign' => '',
         ];
 
-        $arr['sign'] = strtoupper(hash_hmac('md5', implode('-', [$ak, $time, $nonce]), $sk));
+        $arr['sign'] = strtoupper(hash_hmac('md5', implode('-', [$ak, $time, $nonce]), 'wwwbaijiacicomWEB'));
 
         return $arr;
     }
@@ -81,7 +81,7 @@ class ShuMengService extends ServiceBase
         ];
 
         $data = [
-            'signature' => $this->createSignature('applicationId'),
+            'signature' => $this->createSignature('bids_proc_211118', 'DZ21NLE-A1CA8'),
             'queryParams' => [
                 'cgdwmc' => trim($entName),//采购单位名称
                 'cgdwmc_type' => $type,//采购单位名称_查询方式 模糊检索 精确查询
