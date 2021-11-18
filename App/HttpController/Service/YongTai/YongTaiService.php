@@ -28,6 +28,7 @@ class YongTaiService extends ServiceBase
 
     private function check($res): array
     {
+        // 返回样式1
         if ($res['retCode'] === '000000' || $res['retCode'] === '000001') {
             $code = 200;
         } else {
@@ -40,13 +41,42 @@ class YongTaiService extends ServiceBase
             $paging = null;
         }
 
-        $result = $res['result']['items'] ?? null;
+        if (!empty($res['result']['items'])) {
+            $result = $res['result']['items'];
+        } elseif (!empty($res['result'])) {
+            $result = $res['result'];
+        } else {
+            $result = null;
+        }
+
+        // 返回样式2
+        if (isset($res['error_code']) && isset($res['message'])) {
+            if ($res['error_code'] === 0) {
+                $code = 200;
+            } else {
+                $code = $res['error_code'] - 0;
+            }
+
+            if (!empty($res['data']) && isset($res['data']['total'])) {
+                $paging['total'] = $res['data']['total'] - 0;
+            } else {
+                $paging = null;
+            }
+
+            if (!empty($res['data']['items'])) {
+                $result = $res['data']['items'];
+            } elseif (!empty($res['data'])) {
+                $result = $res['data'];
+            } else {
+                $result = null;
+            }
+        }
 
         return [
             'code' => $code,
             'paging' => $paging,
             'result' => $result,
-            'msg' => $res['retMsg'] ?? null,
+            'msg' => $res['retMsg'] ?? $res['message'] ?? null,
         ];
     }
 
@@ -78,5 +108,167 @@ class YongTaiService extends ServiceBase
         return $this->check($res);
     }
 
+    function getHolder(string $entName, string $code, string $page): array
+    {
+        $url = 'https://quanweidu.cn/api/open/ic/holderV5/1003';
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'token' => $this->token,
+        ];
+
+        $data = [
+            'name' => trim($entName),
+            'code' => trim($code),
+            'pageNum' => trim($page) - 0,
+            'pageSize' => 10,
+        ];
+
+        $data = array_filter($data);
+
+        $url .= '?' . http_build_query($data);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'get');
+
+        return $this->check($res);
+    }
+
+    function getHolderChange(string $entName, string $id, string $page): array
+    {
+        $url = 'https://ibd.cn/api/open/ic/holderChange/1015';
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'token' => $this->token,
+        ];
+
+        $data = [
+            'name' => trim($entName),
+            'id' => trim($id),//公司id
+            'pageNum' => trim($page) - 0,
+        ];
+
+        $data = array_filter($data);
+
+        $url .= '?' . http_build_query($data);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'get');
+
+        return $this->check($res);
+    }
+
+    function getChangeinfo(string $entName, string $code, string $page): array
+    {
+        $url = 'https://ibd.cn/api/open/ic/changeinfov2/1004';
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'token' => $this->token,
+        ];
+
+        $data = [
+            'name' => trim($entName),
+            'code' => trim($code),
+            'pageNum' => trim($page) - 0,
+        ];
+
+        $data = array_filter($data);
+
+        $url .= '?' . http_build_query($data);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'get');
+
+        return $this->check($res);
+    }
+
+    function getBaseinfo(string $entName, string $code): array
+    {
+        $url = 'https://quanweidu.cn/api/open/ic/baseinfoV2/1001';
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'token' => $this->token,
+        ];
+
+        $data = [
+            'name' => trim($entName),
+            'code' => trim($code),
+        ];
+
+        $data = array_filter($data);
+
+        $url .= '?' . http_build_query($data);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'get');
+
+        return $this->check($res);
+    }
+
+    function getEnterpriseTicketQuery(string $entName, string $code, string $page): array
+    {
+        $url = 'https://quanweidu.cn/api/open/yy/ic/enterpriseTicketQuery/3034';
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'token' => $this->token,
+        ];
+
+        $data = [
+            'keyword' => trim($entName),
+            'pageNum' => trim($page) - 0,
+            'size' => 10,
+        ];
+
+        $data = array_filter($data);
+
+        $url .= '?' . http_build_query($data);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'get');
+
+        return $this->check($res);
+    }
+
+    function getStaff(string $entName, string $code, string $page): array
+    {
+        $url = 'https://quanweidu.cn/api/open/ic/staffV3/1002';
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'token' => $this->token,
+        ];
+
+        $data = [
+            'name' => trim($entName),
+            'code' => trim($code),
+            'pageNum' => trim($page) - 0,
+            'pageSize' => 10,
+        ];
+
+        $data = array_filter($data);
+
+        $url .= '?' . http_build_query($data);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'get');
+
+        return $this->check($res);
+    }
 
 }

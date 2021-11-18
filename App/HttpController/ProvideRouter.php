@@ -251,6 +251,12 @@ class ProvideRouter
 
         $routeCollector->addGroup('/yt', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getBranch', $prefix . 'getBranch');
+            $routeCollector->addRoute(['GET', 'POST'], '/getHolder', $prefix . 'getHolder');
+            $routeCollector->addRoute(['GET', 'POST'], '/getHolderChange', $prefix . 'getHolderChange');
+            $routeCollector->addRoute(['GET', 'POST'], '/getChangeinfo', $prefix . 'getChangeinfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getBaseinfo', $prefix . 'getBaseinfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getEnterpriseTicketQuery', $prefix . 'getEnterpriseTicketQuery');
+            $routeCollector->addRoute(['GET', 'POST'], '/getStaff', $prefix . 'getStaff');
         });
 
         return true;

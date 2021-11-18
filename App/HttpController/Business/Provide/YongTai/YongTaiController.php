@@ -59,6 +59,128 @@ class YongTaiController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getHolder(): bool
+    {
+        $entName = $this->getRequestData('entName', '');
+        $page = $this->getRequestData('page', 1);
+
+        $postData = [
+            'entName' => $entName,
+            'page' => $page . '',
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return YongTaiService::getInstance()
+                ->setCheckRespFlag(true)->getHolder($postData['entName'], '', $postData['page']);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function getHolderChange(): bool
+    {
+        $entName = $this->getRequestData('entName', '');
+        $page = $this->getRequestData('page', 1);
+
+        $postData = [
+            'entName' => $entName,
+            'page' => $page . '',
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return YongTaiService::getInstance()
+                ->setCheckRespFlag(true)->getHolderChange($postData['entName'], '', $postData['page']);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function getChangeinfo(): bool
+    {
+        $entName = $this->getRequestData('entName', '');
+        $page = $this->getRequestData('page', 1);
+
+        $postData = [
+            'entName' => $entName,
+            'page' => $page . '',
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return YongTaiService::getInstance()
+                ->setCheckRespFlag(true)->getChangeinfo($postData['entName'], '', $postData['page']);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function getBaseinfo(): bool
+    {
+        $entName = $this->getRequestData('entName', '');
+
+        $postData = [
+            'entName' => $entName,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return YongTaiService::getInstance()
+                ->setCheckRespFlag(true)->getBaseinfo($postData['entName'], '');
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function getEnterpriseTicketQuery(): bool
+    {
+        $entName = $this->getRequestData('entName', '');
+        $page = $this->getRequestData('page', 1);
+
+        $postData = [
+            'entName' => $entName,
+            'page' => $page . '',
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return YongTaiService::getInstance()
+                ->setCheckRespFlag(true)->getEnterpriseTicketQuery($postData['entName'], '', $postData['page']);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function getStaff(): bool
+    {
+        $entName = $this->getRequestData('entName', '');
+        $page = $this->getRequestData('page', 1);
+
+        $postData = [
+            'entName' => $entName,
+            'page' => $page . '',
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return YongTaiService::getInstance()
+                ->setCheckRespFlag(true)->getStaff($postData['entName'], '', $postData['page']);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+
+
+
+
 }
 
 
