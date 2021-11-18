@@ -98,6 +98,7 @@ class ShuMengService extends ServiceBase
             ->send($url, $data, $header, [], 'postJson');
 
 
+        CommonService::getInstance()->log4PHP($data);
         CommonService::getInstance()->log4PHP($res);
 
 
