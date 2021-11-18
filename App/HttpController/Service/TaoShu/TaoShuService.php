@@ -131,7 +131,7 @@ class TaoShuService extends ServiceBase
         $p_arr['uid'] = $this->uid;
         $p_arr['data'] = jsonEncode($postBodyJson);
 
-        //$options
+        //options
         $options = [
             'useThisKey' => $this->useThisKey($body, $service)
         ];
@@ -143,6 +143,8 @@ class TaoShuService extends ServiceBase
         $rs = $this->quantumDecode(json_decode($data), $this->taoshuPEM);
 
         $rs = jsonDecode($rs);
+
+        CommonService::getInstance()->log4PHP($rs);
 
         return $this->checkRespFlag ? $this->checkResp($rs) : $rs;
     }
