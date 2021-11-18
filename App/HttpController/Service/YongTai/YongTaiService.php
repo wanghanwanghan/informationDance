@@ -28,11 +28,25 @@ class YongTaiService extends ServiceBase
 
     private function check($res): array
     {
+        if ($res['retCode'] === '000000' || $res['retCode'] === '000001') {
+            $code = 200;
+        } else {
+            $code = $res['retCode'] - 0;
+        }
+
+        if (!empty($res['result']) && isset($res['result']['total'])) {
+            $paging['total'] = $res['result']['total'] - 0;
+        } else {
+            $paging = null;
+        }
+
+        $result = $res['result']['items'] ?? null;
+
         return [
-            'code' => 200,
-            'paging' => null,
-            'result' => $res,
-            'msg' => null,
+            'code' => $code,
+            'paging' => $paging,
+            'result' => $result,
+            'msg' => $res['retMsg'] ?? null,
         ];
     }
 
@@ -61,10 +75,7 @@ class YongTaiService extends ServiceBase
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'get');
 
-        CommonService::getInstance()->log4PHP($res);
-
-
-        return $this->check(current($res['value']));
+        return $this->check($res);
     }
 
 
