@@ -23,6 +23,7 @@ class ProvideRouter
         $this->MaYiRouterV1($routeCollector);
         $this->QiXiangYunRouterV1($routeCollector);
         $this->LiuLengJingRouterV1($routeCollector);
+        $this->YongTaiRouterV1($routeCollector);
         $this->Notify($routeCollector);
     }
 
@@ -239,6 +240,17 @@ class ProvideRouter
         $routeCollector->addGroup('/llj', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/patentCnBasics', $prefix . 'patentCnBasics');
             $routeCollector->addRoute(['GET', 'POST'], '/patentCnIndexHit', $prefix . 'patentCnIndexHit');
+        });
+
+        return true;
+    }
+
+    private function YongTaiRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Provide/YongTai/YongTaiController/';
+
+        $routeCollector->addGroup('/yt', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getBranch', $prefix . 'getBranch');
         });
 
         return true;
