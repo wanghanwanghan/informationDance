@@ -24,6 +24,7 @@ class ProvideRouter
         $this->QiXiangYunRouterV1($routeCollector);
         $this->LiuLengJingRouterV1($routeCollector);
         $this->YongTaiRouterV1($routeCollector);
+        $this->ShuMengRouterV1($routeCollector);
         $this->Notify($routeCollector);
     }
 
@@ -257,6 +258,18 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getBaseinfo', $prefix . 'getBaseinfo');
             $routeCollector->addRoute(['GET', 'POST'], '/getEnterpriseTicketQuery', $prefix . 'getEnterpriseTicketQuery');
             $routeCollector->addRoute(['GET', 'POST'], '/getStaff', $prefix . 'getStaff');
+        });
+
+        return true;
+    }
+
+    private function ShuMengRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Provide/ShuMeng/ShuMengController/';
+
+        $routeCollector->addGroup('/sm', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getBidsResult_c', $prefix . 'getBidsResult_c');
+            $routeCollector->addRoute(['GET', 'POST'], '/getBidsResult_z', $prefix . 'getBidsResult_z');
         });
 
         return true;
