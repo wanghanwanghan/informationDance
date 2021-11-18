@@ -97,7 +97,7 @@ class ShuMengService extends ServiceBase
     //中标供应商数据查询接口
     function getBidsResult_z(string $entName, string $page, string $type = '精确查询'): array
     {
-        $url = 'http://114.115.209.33:18570/bids/getBidsResult_c';
+        $url = 'http://114.115.209.33:18570/bids/getBidsResult_z';
 
         $header = [
             'content-type' => 'application/json;charset=UTF-8',
