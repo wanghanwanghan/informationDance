@@ -68,7 +68,7 @@ class ShuMengService extends ServiceBase
 
         $sign = hash_hmac('md5', implode('-', [$ak, $time, $nonce]), $sk);
 
-        $arr['sign'] = $sign;
+        $arr['sign'] = strtoupper($sign);
 
         return $arr;
     }
