@@ -252,6 +252,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getEntAnnReportForGuaranteeInfo', $prefix . 'getEntAnnReportForGuaranteeInfo');//企业年报对外担保信息
             $routeCollector->addRoute(['GET', 'POST'], '/frbg', $prefix . 'frbg');//法人变更
             $routeCollector->addRoute(['GET', 'POST'], '/getGoodsInfo', $prefix . 'getGoodsInfo');//企业生产的流通性产品信息
+            $routeCollector->addRoute(['GET', 'POST'], '/getEntScore', $prefix . 'getEntScore');//企业竞争力
         });
 
         return true;

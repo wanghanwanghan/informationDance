@@ -2,10 +2,9 @@
 
 namespace App\HttpController\Business\Api\TaoShu;
 
-use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\TaoShu\TaoShuService;
-use EasySwoole\Mysqli\QueryBuilder;
+use App\HttpController\Service\TaoShu\TaoShuTwoService;
 use EasySwoole\Pool\Manager;
 
 class TaoShuController extends TaoShuBase
@@ -420,6 +419,20 @@ class TaoShuController extends TaoShuBase
         ];
 
         $res = (new TaoShuService())->post($postData, __FUNCTION__);
+
+        return $this->checkResponse($res);
+    }
+
+    //企业竞争力
+    function getEntScore()
+    {
+        $entName = $this->getRequestData('entName');
+
+        $postData = [
+            'entName' => $entName,
+        ];
+
+        $res = (new TaoShuTwoService())->post($postData, __FUNCTION__);
 
         return $this->checkResponse($res);
     }
