@@ -20,7 +20,7 @@ class TaoShuController extends ProvideBase
         parent::afterAction($actionName);
     }
 
-    function checkResponse($res)
+    function checkResponse($res): bool
     {
         if (empty($res[$this->cspKey])) {
             $this->responseCode = 500;
@@ -40,7 +40,7 @@ class TaoShuController extends ProvideBase
         return true;
     }
 
-    function lawPersonInvestmentInfo()
+    function lawPersonInvestmentInfo(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $page = $this->getRequestData('page', 1);
@@ -63,7 +63,7 @@ class TaoShuController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    function getLawPersontoOtherInfo()
+    function getLawPersontoOtherInfo(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $page = $this->getRequestData('page', 1);
@@ -86,7 +86,7 @@ class TaoShuController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    function getRegisterInfo()
+    function getRegisterInfo(): bool
     {
         $entName = $this->getRequestData('entName', '');
 
@@ -105,7 +105,7 @@ class TaoShuController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    function getGoodsInfo()
+    function getGoodsInfo(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $page = $this->getRequestData('page', 1);
@@ -128,7 +128,7 @@ class TaoShuController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    function getEntScore()
+    function getEntScore(): bool
     {
         $entName = $this->getRequestData('entName');
 
