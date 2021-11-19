@@ -144,6 +144,8 @@ class TaoShuService extends ServiceBase
 
         $rs = jsonDecode($rs);
 
+        CommonService::getInstance()->log4PHP($rs);
+
         return $this->checkRespFlag ? $this->checkResp($rs) : $rs;
     }
 

@@ -137,7 +137,7 @@ class TaoShuController extends ProvideBase
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new TaoShuTwoService())
+            return (new TaoShuService())
                 ->setCheckRespFlag(true)
                 ->post($postData, 'getEntScore');
         });
