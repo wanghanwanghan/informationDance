@@ -88,7 +88,11 @@ class TaoShuTwoService extends ServiceBase
 
         $data = urldecode($data);
 
+        CommonService::getInstance()->log4PHP($data);
+
         $rs = $this->deCode(json_decode($data), $this->taoshuPEM);
+
+        CommonService::getInstance()->log4PHP($rs);
 
         $rs = jsonDecode($rs);
 
