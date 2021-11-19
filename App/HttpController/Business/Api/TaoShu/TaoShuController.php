@@ -426,7 +426,7 @@ class TaoShuController extends TaoShuBase
     //企业竞争力
     function getEntScore()
     {
-        $entName = $this->getRequestData('entName');
+        $entName = $this->request()->getRequestParam('entName') ?? '';
 
         $postData = [
             'entName' => $entName,
