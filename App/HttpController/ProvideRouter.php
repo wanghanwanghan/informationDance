@@ -157,6 +157,8 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getBzxr', $prefix . 'getBzxr');//被执行人
             $routeCollector->addRoute(['GET', 'POST'], '/getJobInfo', $prefix . 'getJobInfo');//招聘信息
             $routeCollector->addRoute(['GET', 'POST'], '/getInv', $prefix . 'getInv');//大象发票
+            $routeCollector->addRoute(['GET', 'POST'], '/vcQueryList', $prefix . 'vcQueryList');//投融快讯
+            $routeCollector->addRoute(['GET', 'POST'], '/vcQueryDetail', $prefix . 'vcQueryDetail');//投融快讯
 
         });
 

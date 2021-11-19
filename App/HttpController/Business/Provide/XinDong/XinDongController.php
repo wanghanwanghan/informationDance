@@ -1002,5 +1002,41 @@ class XinDongController extends ProvideBase
 
     }
 
+    function vcQueryList(): bool
+    {
+        $postData = [
+            'entName' => $this->getRequestData('entName'),
+            'page' => $this->getRequestData('page', 1),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->vcQueryList($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function vcQueryDetail(): bool
+    {
+        $postData = [
+            'entName' => $this->getRequestData('entName'),
+            'id' => $this->getRequestData('id'),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->vcQueryDetail($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
 
 }

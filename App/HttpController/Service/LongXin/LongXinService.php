@@ -879,7 +879,7 @@ class LongXinService extends ServiceBase
         $arr = [
             'usercode' => $this->usercode,
             'entid' => $entId,
-            'inv_id' => $data['vcId'],
+            'inv_id' => $data['id'],
         ];
 
         $this->sendHeaders['authorization'] = $this->createToken($arr);
