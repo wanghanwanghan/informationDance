@@ -662,7 +662,18 @@ class XinDongController extends ProvideBase
 
         $ent_info = EntDbEnt::create()->where('name', $entName)->get();
 
-        if (!empty($ent_info) && !empty(($f_info = EntDbFinance::create()->where('cid', $ent_info->getAttr('id'))->all()))) {
+        $ANCHEYEAR = [];
+        for ($i = $beginYear; $i >= $beginYear - $dataCount; $i--) {
+            $ANCHEYEAR[] = $i;
+        }
+
+        $f_info = EntDbFinance::create()
+            ->where('cid', $ent_info->getAttr('id'))
+            ->order('ANCHEYEAR', 'DESC')
+            ->where('ANCHEYEAR', $ANCHEYEAR, 'IN')
+            ->all();
+
+        if (!empty($ent_info) && !empty($f_info)) {
             // $this->spendMoney = 0;
             $origin = [];
             foreach ($f_info as $one) {
