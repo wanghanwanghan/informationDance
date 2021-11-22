@@ -721,8 +721,7 @@ class XinDongController extends ProvideBase
 
         //留下要的字段
         $save = [
-            'VENDINC', 'NETINC', 'RATGRO',
-            'VENDINC_yoy', 'NETINC_yoy'
+            'RATGRO',
         ];
 
         foreach ($result as $year => $arr) {
