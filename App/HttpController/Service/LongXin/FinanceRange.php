@@ -883,6 +883,35 @@ class FinanceRange
         ]
     ];
 
+    //pc端 智能评价服务系统里的财务营业总收入字段区间
+    public $range_pc = [
+        '',
+        [
+            //2营业总收入
+            'VENDINC' => [
+                ['name' => 'a', 'range' => [50, 99]],
+                ['name' => 'b', 'range' => [99, 500]],
+                ['name' => 'c', 'range' => [500, 999]],
+                ['name' => 'd', 'range' => [999, 2999]],
+                ['name' => 'e', 'range' => [2999, 4999]],
+                ['name' => 'f', 'range' => [4999, 7999]],
+                ['name' => 'g', 'range' => [7999, 9999]],
+                ['name' => 'h', 'range' => [9999, 49999]],
+                ['name' => 'i', 'range' => [49999, 99999]],
+                ['name' => 'j', 'range' => [99999, 499999]],
+                ['name' => 'k', 'range' => [499999, 999999]],
+                ['name' => 'l', 'range' => [999999, 4999999]],
+                ['name' => 'm', 'range' => [4999999, 9999999999]],
+            ],
+        ],
+    ];
+    public $rangeRatio_pc = [
+        '',
+        [
+
+        ]
+    ];
+
     function getRange($attr): array
     {
         return $this->{$attr};

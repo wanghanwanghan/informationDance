@@ -674,7 +674,6 @@ class XinDongController extends ProvideBase
                 if (empty($arr)) continue;
                 foreach ($arr as $field => $val) {
                     if (isset($range[1][$field]) && is_numeric($val)) {
-                        !is_numeric($val) ?: $val = $val * 10000;
                         $readyReturn[$year][$field] = $obj->binaryFind(
                             $val, 0, count($range[1][$field]) - 1, $range[1][$field]
                         );
