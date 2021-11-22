@@ -472,7 +472,7 @@ eof;
         $user_info = User::create()->where('phone', $phone)->get();
 
         if (empty($user_info)) {
-            return $this->writeJson(201);
+            return $this->writeJson(201);//
         }
 
         FinancesSearch::create()->where([
