@@ -602,7 +602,9 @@ class LongXinService extends ServiceBase
         //43企业人均产值同比 A_VENDINCL_yoy
         //44企业人均盈利同比 A_PROGROL_yoy
 
-        //45营收复合增速（两年）
+        //45营业总收入复合增速（两年） VENDINC_CGR
+        //46营业总收入同比的平均（两年） VENDINC_yoy_ave_2
+        //47净利润同比的平均（两年） NETINC_yoy_ave_2
 
         $now = [];
         foreach ($origin as $year => $arr) {
@@ -684,6 +686,8 @@ class LongXinService extends ServiceBase
             'A_VENDINCL_yoy' => null,
             'A_PROGROL_yoy' => null,
             'VENDINC_CGR' => null,
+            'VENDINC_yoy_ave_2' => null,
+            'NETINC_yoy_ave_2' => null,
         ];
 
         $retrun = [];
@@ -1046,6 +1050,10 @@ class LongXinService extends ServiceBase
         $origin = $this->A_PROGROL_yoy($origin);
         //45营收复合增速（两年）
         $origin = $this->VENDINC_CGR($origin);
+        //46营业总收入同比的平均（两年）
+        $origin = $this->VENDINC_yoy_ave_2($origin);
+        //47净利润同比的平均（两年）
+        $origin = $this->NETINC_yoy_ave_2($origin);
 
         krsort($origin);
 
@@ -1928,6 +1936,68 @@ class LongXinService extends ServiceBase
             $num = pow($num, 1 / 3) * $expr;
 
             array_push($origin[$year], $num - 1);
+        }
+
+        return $origin;
+    }
+
+    //46营业总收入同比(32)的平均（两年）
+    private function VENDINC_yoy_ave_2($origin)
+    {
+        foreach ($origin as $year => $val) {
+
+            //去年
+            $lastYear = $year - 1;
+            $index = 32;
+
+            //如果去年没数据
+            if (!isset($origin[$lastYear]) || !is_numeric($origin[$lastYear][$index])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //如果今年没数据
+            if (!is_numeric($val[$index])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //两年都有数据
+            $last = $origin[$lastYear][$index];
+            $now = $val[$index];
+
+            array_push($origin[$year], ($now + $last) / 2);
+        }
+
+        return $origin;
+    }
+
+    //47净利润同比(35)的平均（两年）
+    private function NETINC_yoy_ave_2($origin)
+    {
+        foreach ($origin as $year => $val) {
+
+            //去年
+            $lastYear = $year - 1;
+            $index = 35;
+
+            //如果去年没数据
+            if (!isset($origin[$lastYear]) || !is_numeric($origin[$lastYear][$index])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //如果今年没数据
+            if (!is_numeric($val[$index])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //两年都有数据
+            $last = $origin[$lastYear][$index];
+            $now = $val[$index];
+
+            array_push($origin[$year], ($now + $last) / 2);
         }
 
         return $origin;
