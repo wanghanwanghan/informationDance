@@ -594,6 +594,77 @@ class FinanceRange
         ]
     ];
 
+    //六棱镜
+    public $range_liulengjing = [
+        '',
+        [
+            //2营业总收入
+            'VENDINC' => [
+                ['name' => 'a', 'range' => [-9999999999, -500]],
+                ['name' => 'b', 'range' => [-500, 1]],
+                ['name' => 'c', 'range' => [1, 500]],
+                ['name' => 'd', 'range' => [500, 1000]],
+                ['name' => 'e', 'range' => [1000, 2000]],
+                ['name' => 'f', 'range' => [2000, 3000]],
+                ['name' => 'g', 'range' => [3000, 5000]],
+                ['name' => 'h', 'range' => [5000, 10000]],
+                ['name' => 'i', 'range' => [10000, 20000]],
+                ['name' => 'j', 'range' => [20000, 30000]],
+                ['name' => 'k', 'range' => [30000, 9999999999]],
+            ],
+            //5净利润
+            'NETINC' => [
+                ['name' => 'a', 'range' => [-9999999999, -50]],
+                ['name' => 'b', 'range' => [-50, 1]],
+                ['name' => 'c', 'range' => [1, 50]],
+                ['name' => 'd', 'range' => [50, 100]],
+                ['name' => 'e', 'range' => [100, 1000]],
+                ['name' => 'f', 'range' => [1000, 2500]],
+                ['name' => 'g', 'range' => [2500, 5000]],
+                ['name' => 'h', 'range' => [5000, 10000]],
+                ['name' => 'i', 'range' => [10000, 9999999999]],
+            ],
+            //6纳税总额
+            'RATGRO' => [
+                ['name' => 'a', 'range' => [-9999999999, -100]],
+                ['name' => 'b', 'range' => [-100, 1]],
+                ['name' => 'c', 'range' => [1, 100]],
+                ['name' => 'd', 'range' => [100, 300]],
+                ['name' => 'e', 'range' => [300, 500]],
+                ['name' => 'f', 'range' => [500, 1000]],
+                ['name' => 'g', 'range' => [1000, 2000]],
+                ['name' => 'h', 'range' => [2000, 5000]],
+                ['name' => 'i', 'range' => [5000, 10000]],
+                ['name' => 'j', 'range' => [10000, 9999999999]],
+            ],
+        ],
+    ];
+    public $rangeRatio_liulengjing = [
+        '',
+        [
+            //32营业总收入同比
+            'VENDINC_yoy' => [
+                ['name' => 'a', 'range' => [-0.15, -0.1]],
+                ['name' => 'b', 'range' => [-0.1, -0.05]],
+                ['name' => 'c', 'range' => [-0.05, 0]],
+                ['name' => 'd', 'range' => [0, 0]],
+                ['name' => 'e', 'range' => [0, 0.05]],
+                ['name' => 'f', 'range' => [0.05, 0.1]],
+                ['name' => 'g', 'range' => [0.1, 0.15]],
+            ],
+            //35净利润同比
+            'NETINC_yoy' => [
+                ['name' => 'a', 'range' => [-0.15, -0.1]],
+                ['name' => 'b', 'range' => [-0.1, -0.05]],
+                ['name' => 'c', 'range' => [-0.05, 0]],
+                ['name' => 'd', 'range' => [0, 0]],
+                ['name' => 'e', 'range' => [0, 0.05]],
+                ['name' => 'f', 'range' => [0.05, 0.1]],
+                ['name' => 'g', 'range' => [0.1, 0.15]],
+            ],
+        ]
+    ];
+
     function getRange($attr): array
     {
         return $this->{$attr};

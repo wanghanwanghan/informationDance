@@ -68,7 +68,11 @@ class GetAuthBook extends AbstractCronTask
                 $filename = $oneEntInfo->getAttr('socialCredit') . '.pdf';
 
                 //储存pdf
-                file_put_contents(INV_AUTH_PATH . $path . $filename, file_get_contents($url), FILE_APPEND | LOCK_EX);
+                file_put_contents(
+                    INV_AUTH_PATH . $path . $filename,
+                    file_get_contents($url),
+                    FILE_APPEND | LOCK_EX
+                );
 
                 //更新数据库
                 AntAuthList::create()->where([

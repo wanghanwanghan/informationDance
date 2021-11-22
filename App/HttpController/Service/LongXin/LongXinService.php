@@ -208,7 +208,7 @@ class LongXinService extends ServiceBase
     }
 
     //近n年的财务数据
-    function getFinanceData($postData, $toRange = true)
+    function getFinanceData($postData, $toRange = true): array
     {
         $check = $this->alreadyInserted($postData);
 
@@ -286,13 +286,33 @@ class LongXinService extends ServiceBase
             foreach ($readyReturn as $year => $arr) {
                 if (empty($arr)) continue;
                 foreach ($arr as $field => $val) {
-                    if (in_array($field, $this->rangeArr[0], true) && is_numeric($val)) {
-                        !$this->rangeIsYuan ?: $val = $val * 10000;
-                        $readyReturn[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArr[1]) - 1, $this->rangeArr[1]);
-                    } elseif (in_array($field, $this->rangeArrRatio[0], true) && is_numeric($val)) {
-                        $readyReturn[$year][$field] = $this->binaryFind($val, 0, count($this->rangeArrRatio[1]) - 1, $this->rangeArrRatio[1]);
+                    //判断是哪一种区间样子，六棱镜跟别的不一样
+                    if ($this->rangeArr[0] === '') {
+                        if (isset($this->rangeArr[1][$field]) && is_numeric($val)) {
+                            !$this->rangeIsYuan ?: $val = $val * 10000;
+                            $readyReturn[$year][$field] = $this->binaryFind(
+                                $val, 0, count($this->rangeArr[1][$field]) - 1, $this->rangeArr[1][$field]
+                            );
+                        } elseif (isset($this->rangeArrRatio[1][$field]) && is_numeric($val)) {
+                            $readyReturn[$year][$field] = $this->binaryFind(
+                                $val, 0, count($this->rangeArrRatio[1][$field]) - 1, $this->rangeArrRatio[1][$field]
+                            );
+                        } else {
+                            $readyReturn[$year][$field] = $val;
+                        }
                     } else {
-                        $readyReturn[$year][$field] = $val;
+                        if (in_array($field, $this->rangeArr[0], true) && is_numeric($val)) {
+                            !$this->rangeIsYuan ?: $val = $val * 10000;
+                            $readyReturn[$year][$field] = $this->binaryFind(
+                                $val, 0, count($this->rangeArr[1]) - 1, $this->rangeArr[1]
+                            );
+                        } elseif (in_array($field, $this->rangeArrRatio[0], true) && is_numeric($val)) {
+                            $readyReturn[$year][$field] = $this->binaryFind(
+                                $val, 0, count($this->rangeArrRatio[1]) - 1, $this->rangeArrRatio[1]
+                            );
+                        } else {
+                            $readyReturn[$year][$field] = $val;
+                        }
                     }
                 }
             }
@@ -582,6 +602,8 @@ class LongXinService extends ServiceBase
         //43企业人均产值同比 A_VENDINCL_yoy
         //44企业人均盈利同比 A_PROGROL_yoy
 
+        //45营收复合增速（两年）
+
         $now = [];
         foreach ($origin as $year => $arr) {
             $now[$year] = [
@@ -661,6 +683,7 @@ class LongXinService extends ServiceBase
             'CA_ASSGROL_yoy' => null,
             'A_VENDINCL_yoy' => null,
             'A_PROGROL_yoy' => null,
+            'VENDINC_CGR' => null,
         ];
 
         $retrun = [];
@@ -1021,6 +1044,8 @@ class LongXinService extends ServiceBase
         $origin = $this->A_VENDINCL_yoy($origin);
         //44企业人均盈利同比 A_PROGROL_yoy
         $origin = $this->A_PROGROL_yoy($origin);
+        //45营收复合增速（两年）
+        $origin = $this->VENDINC_CGR($origin);
 
         krsort($origin);
 
@@ -1860,6 +1885,51 @@ class LongXinService extends ServiceBase
             }
             array_push($origin[$year], ($now - $last) / abs($last));
         }
+        return $origin;
+    }
+
+    //45营收复合增速（两年）
+    private function VENDINC_CGR($origin)
+    {
+        foreach ($origin as $year => $val) {
+
+            //去年
+            $lastYear = $year - 1;
+            $index = 2;
+
+            //如果去年没数据
+            if (!isset($origin[$lastYear]) || !is_numeric($origin[$lastYear][$index])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //如果今年没数据
+            if (!is_numeric($val[$index])) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //两年都有数据
+            $last = $origin[$lastYear][$index];
+            $now = $val[$index];
+
+            if ($now === 0) {
+                array_push($origin[$year], null);
+                continue;
+            }
+
+            //开3次方
+            $expr = 1;
+            $num = $now / $last;
+            if (is_numeric($num) && $num < 0) {
+                $expr = -1;
+            }
+            $num = $expr * $num;
+            $num = pow($num, 1 / 3) * $expr;
+
+            array_push($origin[$year], $num - 1);
+        }
+
         return $origin;
     }
 
