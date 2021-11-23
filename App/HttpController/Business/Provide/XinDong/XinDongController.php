@@ -669,8 +669,8 @@ class XinDongController extends ProvideBase
 
         $f_info = EntDbFinance::create()
             ->where('cid', $ent_info->getAttr('id'))
-            ->order('ANCHEYEAR', 'DESC')
             ->where('ANCHEYEAR', $ANCHEYEAR, 'IN')
+            ->order('ANCHEYEAR', 'DESC')
             ->all();
 
         if (!empty($ent_info) && !empty($f_info)) {
@@ -701,6 +701,9 @@ class XinDongController extends ProvideBase
             for ($i = $beginYear; $i > $beginYear - $dataCount; $i--) {
                 $tmp[$i] = $readyReturn[$i] ?? $readyReturn[$i . ''];
             }
+
+            CommonService::getInstance()->log4PHP('走这里');
+
             $res = [$this->cspKey => [
                 'code' => 200,
                 'paging' => null,
