@@ -702,8 +702,6 @@ class XinDongController extends ProvideBase
                 $tmp[$i] = $readyReturn[$i] ?? $readyReturn[$i . ''];
             }
 
-            CommonService::getInstance()->log4PHP('走这里');
-
             $res = [$this->cspKey => [
                 'code' => 200,
                 'paging' => null,
