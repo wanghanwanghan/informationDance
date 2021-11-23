@@ -6,6 +6,7 @@ use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongDun\LongDunService;
+use App\HttpController\Service\LongXin\FinanceRange;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\Process\ProcessBase;
 use Swoole\Process;
@@ -106,9 +107,13 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
                     'dataCount' => 1,
                 ];
 
+                $range = FinanceRange::getInstance()->getRange('range_pc');
+                $ratio = FinanceRange::getInstance()->getRange('rangeRatio_pc');
+
                 $res = (new LongXinService())
                     ->setCheckRespFlag(true)
-                    ->getFinanceData($postData, false);
+                    ->setRangeArr($range, $ratio)
+                    ->getFinanceData($postData, true);
 
                 if ($res['code'] == 200) {
 
@@ -117,7 +122,7 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
                     $tmp = current($res['result']);
 
                     $one->update([
-                        'caiwu' => is_numeric($tmp['VENDINC']) ? $tmp['VENDINC'] : '无数据',
+                        'caiwu' => $tmp['VENDINC']['name'] ?? '无数据',
                         'caiwuDetail' => is_string($tmp) ? $tmp : jsonEncode($tmp, false),
                     ]);
 
