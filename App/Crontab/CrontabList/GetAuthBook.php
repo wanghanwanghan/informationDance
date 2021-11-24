@@ -57,8 +57,6 @@ class GetAuthBook extends AbstractCronTask
                 $res = (new HuiCheJianService())
                     ->setCheckRespFlag(true)->getAuthPdf($data);
 
-                CommonService::getInstance()->log4PHP($res);
-
                 if ($res['code'] !== 200) {
                     continue;
                 }
