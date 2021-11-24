@@ -129,7 +129,7 @@ class FinancesSearchHandleFengXianAndCaiWu extends ProcessBase
                 } else {
 
                     $one->update([
-                        'caiwu' => '处理失败'
+                        'caiwu' => '无数据'
                     ]);
 
                 }

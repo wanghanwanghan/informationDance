@@ -22,8 +22,8 @@ class GetAuthBook extends AbstractCronTask
 
     static function getRule(): string
     {
-        //每5分钟执行一次
-        return '*/5 * * * *';
+        //每分钟执行一次
+        return '* * * * *';
     }
 
     static function getTaskName(): string
@@ -56,6 +56,8 @@ class GetAuthBook extends AbstractCronTask
 
                 $res = (new HuiCheJianService())
                     ->setCheckRespFlag(true)->getAuthPdf($data);
+
+                CommonService::getInstance()->log4PHP($res);
 
                 if ($res['code'] !== 200) {
                     continue;
