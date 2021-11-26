@@ -169,10 +169,23 @@ class ProvideBase extends Index
         $raw = jsonDecode($string);
         $form = $this->request()->getRequestParam();
 
+        CommonService::getInstance()->log4PHP('string:');
+        CommonService::getInstance()->log4PHP($string);
+
+        CommonService::getInstance()->log4PHP('form:');
+        CommonService::getInstance()->log4PHP($form);
+
         !empty($raw) ?: $raw = [];
         !empty($form) ?: $form = [];
 
+        CommonService::getInstance()->log4PHP('准备合并之前:');
+        CommonService::getInstance()->log4PHP($raw);
+        CommonService::getInstance()->log4PHP($form);
+
         $requestData = array_merge($raw, $form);
+
+        CommonService::getInstance()->log4PHP('合并后:');
+        CommonService::getInstance()->log4PHP($requestData);
 
         //有可能是rsa + aes的数据
         if (isset($requestData['encrypt']) && isset($requestData['content'])) {
