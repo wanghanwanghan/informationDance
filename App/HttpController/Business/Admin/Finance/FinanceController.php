@@ -245,7 +245,7 @@ class FinanceController extends FinanceBase
             $str = ltrim($str, '-');
             $len = strlen($str);
             if ($len >= 3) {
-                $str = str_pad(substr($str, 0, 1), $len - 1, '0', STR_PAD_RIGHT);
+                $str = substr($str, 0, -2) . '00';
             } elseif ($len === 2) {
                 $str = substr($str, 0, 1) . '0';
             } else {
@@ -297,7 +297,7 @@ class FinanceController extends FinanceBase
             $str = ltrim($str, '-');
             $len = strlen($str);
             if ($len >= 3) {
-                $str = str_pad(substr($str, 0, 1), $len - 1, '0', STR_PAD_RIGHT);
+                $str = substr($str, 0, -2) . '00';
             } elseif ($len === 2) {
                 $str = substr($str, 0, 1) . '0';
             } else {
