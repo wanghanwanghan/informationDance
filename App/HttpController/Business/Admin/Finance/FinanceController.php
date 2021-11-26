@@ -71,7 +71,7 @@ class FinanceController extends FinanceBase
         return $this->writeJson(200, null, $content);
     }
 
-    function getFinanceData()
+    function getFinanceData(): bool
     {
         $payEntValue = $this->getRequestData('payEntValue');
         $payUserValue = $this->getRequestData('payUserValue');
@@ -223,7 +223,7 @@ class FinanceController extends FinanceBase
                 $str = 'F';
             }
         } elseif ($CkRangeNum === 3) {
-            $str = sprintf('%.3f', $num);
+            $str = sprintf('%.2f', $num);
             $table = [
                 '0' => 'A',
                 '1' => 'B',
@@ -239,8 +239,22 @@ class FinanceController extends FinanceBase
                 '-' => '#',
             ];
             $str = strtr($str, $table);
-        } else {
+        } elseif ($CkRangeNum === 4) {
+            $str = ceil($num) . '';
+            $str < 0 ? $symbol = '-' : $symbol = '';
+            $str = ltrim($str, '-');
+            $len = strlen($str);
+            if ($len >= 3) {
+                $str = substr($str, 0, 1) . '00';
+            } elseif ($len === 2) {
+                $str = substr($str, 0, 1) . '0';
+            } else {
 
+            }
+            $str = $symbol . $str;
+            $str = sprintf('%.2f', $str);
+        } else {
+            $str = '出错了';
         }
 
         return $str;
@@ -277,8 +291,22 @@ class FinanceController extends FinanceBase
                 '-' => '#',
             ];
             $str = strtr($str, $table);
-        } else {
+        } elseif ($CkRangeNum === 4) {
+            $str = ceil($num * 100) . '';
+            $str < 0 ? $symbol = '-' : $symbol = '';
+            $str = ltrim($str, '-');
+            $len = strlen($str);
+            if ($len >= 3) {
+                $str = substr($str, 0, 1) . '00';
+            } elseif ($len === 2) {
+                $str = substr($str, 0, 1) . '0';
+            } else {
 
+            }
+            $str = $symbol . $str;
+            $str = sprintf('%.3f', $str) . '%';
+        } else {
+            $str = '出错了';
         }
 
         return $str;
