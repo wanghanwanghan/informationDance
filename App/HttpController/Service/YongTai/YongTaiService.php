@@ -165,7 +165,7 @@ class YongTaiService extends ServiceBase
 
     function getChangeinfo(string $entName, string $code, string $page): array
     {
-        $url = 'https://ibd.cn/api/open/ic/changeinfov2/1004';
+        $url = 'https://quanweidu.cn/api/open/ic/changeinfoV3/1004';
 
         $header = [
             'content-type' => 'application/json;charset=UTF-8',
