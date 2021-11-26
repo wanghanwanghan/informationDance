@@ -169,8 +169,8 @@ class ProvideBase extends Index
         $raw = jsonDecode($string);
         $form = $this->request()->getRequestParam();
 
-        CommonService::getInstance()->log4PHP('string:');
-        CommonService::getInstance()->log4PHP($string);
+        CommonService::getInstance()->log4PHP('raw:');
+        CommonService::getInstance()->log4PHP($raw);
 
         CommonService::getInstance()->log4PHP('form:');
         CommonService::getInstance()->log4PHP($form);
