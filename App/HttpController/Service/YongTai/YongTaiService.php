@@ -271,4 +271,313 @@ class YongTaiService extends ServiceBase
         return $this->check($res);
     }
 
+    function getSearch(string $entName, string $page): array
+    {
+        $url = 'https://quanweidu.cn/api/open/ic/search/1036';
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'token' => $this->token,
+        ];
+
+        $data = [
+            'word' => trim($entName),
+            'pageNum' => trim($page) - 0,
+        ];
+
+        $url .= '?' . http_build_query($data);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'get');
+
+        return $this->check($res);
+    }
+
+    function getHistorynames(string $entName): array
+    {
+        $url = 'https://quanweidu.cn/api/open/ic/historynames/1053';
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'token' => $this->token,
+        ];
+
+        $data = [
+            'name' => trim($entName),
+        ];
+
+        $url .= '?' . http_build_query($data);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'get');
+
+        return $this->check($res);
+    }
+
+    function getTaxescode(string $entName): array
+    {
+        $url = 'https://quanweidu.cn/api/open/ic/taxescode/1032';
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'token' => $this->token,
+        ];
+
+        $data = [
+            'name' => trim($entName),
+        ];
+
+        $url .= '?' . http_build_query($data);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'get');
+
+        return $this->check($res);
+    }
+
+    function getParentcompany(string $entName, string $code): array
+    {
+        $url = 'https://quanweidu.cn/api/open/ic/parentcompany/1054';
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'token' => $this->token,
+        ];
+
+        $data = [
+            'name' => trim($entName),
+            'code' => trim($code),
+        ];
+
+        $data = array_filter($data);
+
+        $url .= '?' . http_build_query($data);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'get');
+
+        return $this->check($res);
+    }
+
+    function getEciother(string $entName): array
+    {
+        $url = 'https://quanweidu.cn/api/open/ic/eciother/1052';
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'token' => $this->token,
+        ];
+
+        $data = [
+            'name' => trim($entName),
+        ];
+
+        $data = array_filter($data);
+
+        $url .= '?' . http_build_query($data);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'get');
+
+        return $this->check($res);
+    }
+
+    function getAnnualreport(string $entName, string $code, string $page): array
+    {
+        $url = 'https://quanweidu.cn/api/open/ic/annualreportv2/1008';
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'token' => $this->token,
+        ];
+
+        $data = [
+            'name' => trim($entName),
+            'code' => trim($code),
+            'pageNum' => trim($page) - 0,
+            'pageSize' => 10,
+        ];
+
+        $data = array_filter($data);
+
+        $url .= '?' . http_build_query($data);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'get');
+
+        return $this->check($res);
+    }
+
+    function getBaseinfop(string $entName, string $code): array
+    {
+        $url = 'https://quanweidu.cn/api/open/ic/baseinfoV3/1005';
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'token' => $this->token,
+        ];
+
+        $data = [
+            'name' => trim($entName),
+            'code' => trim($code),
+        ];
+
+        $data = array_filter($data);
+
+        $url .= '?' . http_build_query($data);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'get');
+
+        return $this->check($res);
+    }
+
+    function getBaseinfos(string $entName, string $code): array
+    {
+        $url = 'https://quanweidu.cn/api/open/ic/baseinfoV5/1006';
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'token' => $this->token,
+        ];
+
+        $data = [
+            'name' => trim($entName),
+            'code' => trim($code),
+        ];
+
+        $data = array_filter($data);
+
+        $url .= '?' . http_build_query($data);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'get');
+
+        return $this->check($res);
+    }
+
+    function getSpecial(string $entName): array
+    {
+        $url = 'https://quanweidu.cn/api/open/tpa/ic/special/4006';
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'token' => $this->token,
+        ];
+
+        $data = [
+            'keyword' => trim($entName),
+        ];
+
+        $data = array_filter($data);
+
+        $url .= '?' . http_build_query($data);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'get');
+
+        return $this->check($res);
+    }
+
+    function getInverst(string $entName, string $code, string $page): array
+    {
+        $url = 'https://quanweidu.cn/api/open/ic/inverstV2/1007';
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'token' => $this->token,
+        ];
+
+        $data = [
+            'name' => trim($entName),
+            'code' => trim($code),
+            'page_num' => trim($page) - 0,
+            'page_size' => 20,
+        ];
+
+        $data = array_filter($data);
+
+        $url .= '?' . http_build_query($data);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'get');
+
+        return $this->check($res);
+    }
+
+    function getComverify(string $entName, string $code, string $fr): array
+    {
+        $url = 'https://quanweidu.cn/api/open/ic/comverify/1009';
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'token' => $this->token,
+        ];
+
+        $data = [
+            'name' => trim($entName),
+            'code' => trim($code),
+            'legal_person_name' => trim($fr),
+        ];
+
+        $data = array_filter($data);
+
+        $url .= '?' . http_build_query($data);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'get');
+
+        return $this->check($res);
+    }
+
+    function getContact(string $entName, string $code, string $page): array
+    {
+        $url = 'https://quanweidu.cn/api/open/ic/contact/1010';
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'token' => $this->token,
+        ];
+
+        $data = [
+            'name' => trim($entName),
+            'code' => trim($code),
+            'page_num' => trim($page) - 0,
+            'page_size' => 20,
+        ];
+
+        $data = array_filter($data);
+
+        $url .= '?' . http_build_query($data);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'get');
+
+        return $this->check($res);
+    }
+
 }

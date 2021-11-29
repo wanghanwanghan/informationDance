@@ -261,6 +261,18 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getBaseinfo', $prefix . 'getBaseinfo');
             $routeCollector->addRoute(['GET', 'POST'], '/getEnterpriseTicketQuery', $prefix . 'getEnterpriseTicketQuery');
             $routeCollector->addRoute(['GET', 'POST'], '/getStaff', $prefix . 'getStaff');
+            $routeCollector->addRoute(['GET', 'POST'], '/getSearch', $prefix . 'getSearch');
+            $routeCollector->addRoute(['GET', 'POST'], '/getHistorynames', $prefix . 'getHistorynames');
+            $routeCollector->addRoute(['GET', 'POST'], '/getTaxescode', $prefix . 'getTaxescode');
+            $routeCollector->addRoute(['GET', 'POST'], '/getParentcompany', $prefix . 'getParentcompany');
+            $routeCollector->addRoute(['GET', 'POST'], '/getEciother', $prefix . 'getEciother');
+            $routeCollector->addRoute(['GET', 'POST'], '/getAnnualreport', $prefix . 'getAnnualreport');
+            $routeCollector->addRoute(['GET', 'POST'], '/getBaseinfop', $prefix . 'getBaseinfop');
+            $routeCollector->addRoute(['GET', 'POST'], '/getBaseinfos', $prefix . 'getBaseinfos');
+            $routeCollector->addRoute(['GET', 'POST'], '/getSpecial', $prefix . 'getSpecial');
+            $routeCollector->addRoute(['GET', 'POST'], '/getInverst', $prefix . 'getInverst');
+            $routeCollector->addRoute(['GET', 'POST'], '/getComverify', $prefix . 'getComverify');
+            $routeCollector->addRoute(['GET', 'POST'], '/getContact', $prefix . 'getContact');
         });
 
         return true;
