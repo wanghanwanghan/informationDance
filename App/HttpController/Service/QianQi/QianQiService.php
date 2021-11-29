@@ -419,7 +419,7 @@ class QianQiService extends ServiceBase
     //startYear
     private function getStartYear()
     {
-        return (int)date('m') >= 10 ? date('Y') - 1 : date('Y') - 2;
+        return date('m') - 0 >= 10 ? date('Y') - 1 : date('Y') - 2;
     }
 
     //整理数据，把字母转换成数字

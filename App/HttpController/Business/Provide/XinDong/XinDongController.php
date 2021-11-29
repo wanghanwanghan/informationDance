@@ -592,7 +592,7 @@ class XinDongController extends ProvideBase
             foreach ($arr as $field => $val) {
                 if (!is_array($val)) {
                     //社保人数改int在这里
-                    $result[$year][$field] = is_numeric($val) ? (int)$val : $val;
+                    $result[$year][$field] = is_numeric($val) ? $val - 0 : $val;
                 } else {
                     $result[$year][$field] = $val['name'];
                 }

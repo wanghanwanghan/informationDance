@@ -59,7 +59,7 @@ class BusinessBase extends Index
         if (!$this->response()->isEndResponse()) {
             if (!empty($paging) && is_array($paging)) {
                 foreach ($paging as $key => $val) {
-                    $paging[$key] = (int)$val;
+                    $paging[$key] = $val - 0;
                 }
             }
             $data = [
@@ -149,7 +149,7 @@ class BusinessBase extends Index
 
         if (strlen($tokenPhone) != 11 || strlen($reqPhone) != 11) return false;
 
-        return (int)$reqPhone === (int)$tokenPhone;
+        return $reqPhone - 0 === $tokenPhone - 0;
     }
 
     //check limit
