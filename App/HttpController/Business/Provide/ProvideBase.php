@@ -131,7 +131,7 @@ class ProvideBase extends Index
         if (!$this->response()->isEndResponse()) {
             if (!empty($paging) && is_array($paging)) {
                 foreach ($paging as $key => $val) {
-                    $paging[$key] = (int)$val;
+                    $paging[$key] = $val - 0;
                 }
             }
             $data = [
