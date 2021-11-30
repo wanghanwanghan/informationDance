@@ -41,8 +41,8 @@ class YongTaiService extends ServiceBase
             $paging = null;
         }
 
-        if (!empty($res['result']['items'])) {
-            $result = $res['result']['items'];
+        if (isset($res['result']['items'])) {
+            empty($res['result']['items']) ? $result = null : $result = $res['result']['items'];
         } elseif (!empty($res['result'])) {
             $result = $res['result'];
         } else {
