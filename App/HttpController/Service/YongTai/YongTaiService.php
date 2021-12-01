@@ -78,7 +78,7 @@ class YongTaiService extends ServiceBase
             'code' => $code,
             'paging' => $paging,
             'result' => $result,
-            'msg' => $res['retMsg'] ?? $res['message'] ?? null,
+            'msg' => $res['retMsg'] ?? $res['message'] ?? '',
         ];
     }
 
