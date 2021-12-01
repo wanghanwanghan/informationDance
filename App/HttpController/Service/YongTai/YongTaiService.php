@@ -35,9 +35,9 @@ class YongTaiService extends ServiceBase
             $code = $res['retCode'] - 0;
         }
 
-        if (!empty($res['result']) && isset($res['result']['total'])) {
+        if (isset($res['result']['total'])) {
             $paging['total'] = $res['result']['total'] - 0;
-        } elseif (!empty($res['result']) && isset($res['result']['paging'])) {
+        } elseif (isset($res['result']['paging'])) {
             $paging['total'] = $res['result']['paging']['total'] - 0;
         } else {
             $paging = null;
@@ -59,7 +59,7 @@ class YongTaiService extends ServiceBase
                 $code = $res['error_code'] - 0;
             }
 
-            if (!empty($res['data']) && isset($res['data']['total'])) {
+            if (isset($res['data']['total'])) {
                 $paging['total'] = $res['data']['total'] - 0;
             } else {
                 $paging = null;
