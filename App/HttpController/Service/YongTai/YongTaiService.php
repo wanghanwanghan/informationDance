@@ -37,6 +37,8 @@ class YongTaiService extends ServiceBase
 
         if (!empty($res['result']) && isset($res['result']['total'])) {
             $paging['total'] = $res['result']['total'] - 0;
+        } elseif (!empty($res['result']) && isset($res['result']['paging'])) {
+            $paging['total'] = $res['result']['paging']['total'] - 0;
         } else {
             $paging = null;
         }
