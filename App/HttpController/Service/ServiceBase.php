@@ -143,7 +143,7 @@ class ServiceBase
             if (empty($val)) {
                 $ext[$key] = null;
             } elseif (!is_string($val)) {
-                $ext[$key] = jsonEncode(trim($val), false);
+                $ext[$key] = jsonEncode($val, false);
             } else {
                 $ext[$key] = trim($val);
             }
