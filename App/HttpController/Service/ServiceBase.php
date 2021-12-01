@@ -156,7 +156,10 @@ class ServiceBase
                 ->get();
             if (empty($info)) {
                 $ext['requestId'] = $this->requestId;
-                RequestSourceRecode::create()->addSuffix(date('Y'))->data($ext)->save();
+                RequestSourceRecode::create()
+                    ->addSuffix(date('Y'))
+                    ->data($ext)
+                    ->save();
             } else {
                 $info->update($ext);
             }
