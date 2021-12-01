@@ -5,17 +5,14 @@ namespace App\HttpController\Service\FaYanYuan;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
+use App\HttpController\Service\RequestUtils\StatisticsService;
 use App\HttpController\Service\ServiceBase;
 
 class FaYanYuanService extends ServiceBase
 {
-    function onNewService(): ?bool
-    {
-        return parent::onNewService();
-    }
-
     private $authCode;
     private $rt;
+    private $sourceName = '法海';
 
     function __construct()
     {
@@ -25,7 +22,7 @@ class FaYanYuanService extends ServiceBase
         return parent::__construct();
     }
 
-    private function checkResp($res, $docType, $type = 'list')
+    private function checkResp($res, $docType, $type = 'list'): array
     {
         $type = ucfirst($type);
 
@@ -54,7 +51,7 @@ class FaYanYuanService extends ServiceBase
         return $this->createReturn($res['code'], $res['Paging'], $res['Result'], $res['msg']);
     }
 
-    private function checkResps($res)
+    private function checkResps($res): array
     {
         if (isset($res['coHttpErr'])) return $this->createReturn(500, null, null, 'co请求错误');
 
@@ -73,6 +70,7 @@ class FaYanYuanService extends ServiceBase
         return $this->createReturn($code, null, $result, $msg);
     }
 
+    //法海
     function getList($url, $body)
     {
         $sign_num = md5($this->authCode . $this->rt);
@@ -88,7 +86,7 @@ class FaYanYuanService extends ServiceBase
             'range' => $range
         ];
 
-        $json_data = jsonEncode($json_data);
+        $json_data = jsonEncode($json_data, false);
 
         $data = [
             'authCode' => $this->authCode,
@@ -99,9 +97,18 @@ class FaYanYuanService extends ServiceBase
 
         $resp = (new CoHttpClient())->send($url, $data);
 
+        $this->recodeSourceCurl([
+            'sourceName' => $this->sourceName,
+            'apiName' => last(explode('/', trim($url, '/'))),
+            'requestUrl' => trim(trim($url), '/'),
+            'requestData' => $data,
+            'responseData' => $resp,
+        ]);
+
         return $this->checkRespFlag ? $this->checkResp($resp, $doc_type) : $resp;
     }
 
+    //法海
     function getListForPerson($url, $body)
     {
         $sign_num = md5($this->authCode . $this->rt);
@@ -119,7 +126,7 @@ class FaYanYuanService extends ServiceBase
             'range' => $range
         ];
 
-        $json_data = jsonEncode($json_data);
+        $json_data = jsonEncode($json_data, false);
 
         $data = [
             'authCode' => $this->authCode,
@@ -128,9 +135,20 @@ class FaYanYuanService extends ServiceBase
             'args' => $json_data
         ];
 
-        return (new CoHttpClient())->send($url, $data);
+        $resp = (new CoHttpClient())->send($url, $data);
+
+        $this->recodeSourceCurl([
+            'sourceName' => $this->sourceName,
+            'apiName' => last(explode('/', trim($url, '/'))),
+            'requestUrl' => trim(trim($url), '/'),
+            'requestData' => $data,
+            'responseData' => $resp,
+        ]);
+
+        return $resp;
     }
 
+    //法海
     function getDetail($url, $body)
     {
         $sign_num = md5($this->authCode . $this->rt);
@@ -143,6 +161,14 @@ class FaYanYuanService extends ServiceBase
         ];
 
         $resp = (new CoHttpClient())->send($url, $data);
+
+        $this->recodeSourceCurl([
+            'sourceName' => $this->sourceName,
+            'apiName' => last(explode('/', trim($url, '/'))),
+            'requestUrl' => trim(trim($url), '/'),
+            'requestData' => $data,
+            'responseData' => $resp,
+        ]);
 
         return $this->checkRespFlag ? $this->checkResp($resp, $body['doc_type'], 'detail') : $resp;
     }

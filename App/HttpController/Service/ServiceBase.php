@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service;
 
+use App\HttpController\Models\Provide\RequestSourceRecode;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use wanghanwanghan\someUtils\control;
@@ -11,8 +12,12 @@ class ServiceBase
     //各个service在返回结果之前进行返回值检测
     public $checkRespFlag = false;
 
+    //信动调用数据源接口记次用
+    public $requestId = null;
+
     function __construct()
     {
+        $this->requestId = control::getUuid();
         return true;
     }
 
@@ -26,7 +31,7 @@ class ServiceBase
         $logFileName = $which . '.log.' . date('Ymd', time());
 
         //给程序员看的
-        if ($e instanceof \Throwable || $e instanceof \Exception) {
+        if ($e instanceof \Throwable) {
             $file = $e->getFile();
             $line = $e->getLine();
             $msg = $e->getMessage();
@@ -40,7 +45,7 @@ class ServiceBase
     }
 
     //true 说明是XinDongService要用结果，不需要给controller打印输出
-    function setCheckRespFlag(bool $flag)
+    function setCheckRespFlag(bool $flag): ServiceBase
     {
         $this->checkRespFlag = $flag;
         return $this;
@@ -131,5 +136,33 @@ class ServiceBase
         return jsonDecode($content);
     }
 
+    //信动调用数据源接口记次
+    function recodeSourceCurl(array $ext): void
+    {
+        foreach ($ext as $key => $val) {
+            if (empty($val)) {
+                $ext[$key] = null;
+            } elseif (!is_string($val)) {
+                $ext[$key] = jsonEncode(trim($val), false);
+            } else {
+                $ext[$key] = trim($val);
+            }
+        }
+
+        try {
+            $info = RequestSourceRecode::create()
+                ->addSuffix(date('Y'))
+                ->where('requestId', $this->requestId)
+                ->get();
+            if (empty($info)) {
+                $ext['requestId'] = $this->requestId;
+                RequestSourceRecode::create()->data($ext)->save();
+            } else {
+                $info->update($ext);
+            }
+        } catch (\Throwable $e) {
+            CommonService::getInstance()->log4PHP($e->getTraceAsString());
+        }
+    }
 
 }

@@ -26,14 +26,14 @@ class StatisticsService extends ServiceBase
     }
 
     //添加请求耗时
-    function addResTime(float $time)
+    function addResTime(float $time): StatisticsService
     {
         $this->resTime = $time;
         return $this;
     }
 
     //通过请求地址统计
-    function byPath()
+    function byPath(): bool
     {
         if (empty($this->pathInfo)) return true;
 
@@ -65,6 +65,5 @@ class StatisticsService extends ServiceBase
 
         return true;
     }
-
 
 }
