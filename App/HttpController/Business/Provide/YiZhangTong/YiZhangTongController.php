@@ -62,7 +62,6 @@ class YiZhangTongController extends ProvideBase
             'productCode' => $this->getRequestData('productCode'),
             'UMCode' => $this->getRequestData('UMCode'),
             'marketPersonnelCode' => $this->getRequestData('marketPersonnelCode'),
-            'bz' => '',
         ];
 
         $this->csp->add($this->cspKey, function () use ($post_data) {
