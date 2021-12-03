@@ -4,7 +4,6 @@ namespace App\HttpController\Business\Provide\YiZhangTong;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
-use App\HttpController\Service\BaiXiang\BaiXiangService;
 use App\HttpController\Service\YiZhangTong\YiZhangTongService;
 
 class YiZhangTongController extends ProvideBase
@@ -51,6 +50,28 @@ class YiZhangTongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //静默注册/登陆功能接口
+    function getLogin(): bool
+    {
+        $post_data = [
+            'silentLoginFlag' => $this->getRequestData('silentLoginFlag'),
+            'userName' => $this->getRequestData('userName'),
+            'certificateNum' => $this->getRequestData('certificateNum'),
+            'userPhone' => $this->getRequestData('userPhone'),
+            'companyName' => $this->getRequestData('companyName'),
+            'productCode' => $this->getRequestData('productCode'),
+            'UMCode' => $this->getRequestData('UMCode'),
+            'marketPersonnelCode' => $this->getRequestData('marketPersonnelCode'),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($post_data) {
+            return (new YiZhangTongService())->setCheckRespFlag(true)->getLogin($post_data);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
 
 }
 

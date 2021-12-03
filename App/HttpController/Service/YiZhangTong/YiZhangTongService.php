@@ -99,4 +99,32 @@ str;
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
+    //静默注册/登陆功能接口
+    function getLogin(array $msg)
+    {
+        $ser_id = '1001100058';
+
+        $msg = $this->createMsg(array_filter($msg));
+
+        $post_data = [
+            'serviceId' => $ser_id,
+            'appId' => $this->test_app_id,
+            'requestId' => control::getUuid(),
+            'timestamp' => $this->time,
+            'channel' => $this->test_channel,
+            'signture' => $this->createSign($msg, $ser_id),
+            'ak' => $this->send_ak,
+            'message' => $msg,
+        ];
+
+        $resp = (new CoHttpClient())
+            ->useCache(false)
+            ->send($this->test_url, $post_data, $this->header, [], 'postjson');
+
+        CommonService::getInstance()->log4PHP($resp);
+
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
+
+
 }
