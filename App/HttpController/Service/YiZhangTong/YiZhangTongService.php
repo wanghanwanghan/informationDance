@@ -106,6 +106,8 @@ str;
     {
         $ser_id = '1001100058';
 
+        $msg['channelCode'] = 'XWD';
+
         $msg = $this->createMsg(array_filter($msg));
 
         $post_data = [
