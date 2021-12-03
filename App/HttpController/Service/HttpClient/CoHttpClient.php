@@ -33,6 +33,10 @@ class CoHttpClient extends ServiceBase
 
         $method = strtoupper($method);
 
+        if ($method === 'GET' && strpos($url, '?') === false) {
+            $url .= '?' . http_build_query($postData);
+        }
+
         //新建请求
         $request = new HttpClient($url);
 

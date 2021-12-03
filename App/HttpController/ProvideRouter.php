@@ -25,6 +25,7 @@ class ProvideRouter
         $this->LiuLengJingRouterV1($routeCollector);
         $this->YongTaiRouterV1($routeCollector);
         $this->ShuMengRouterV1($routeCollector);
+        $this->BaiXiangRouterV1($routeCollector);
         $this->Notify($routeCollector);
     }
 
@@ -285,6 +286,17 @@ class ProvideRouter
         $routeCollector->addGroup('/sm', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getBidsResult_c', $prefix . 'getBidsResult_c');
             $routeCollector->addRoute(['GET', 'POST'], '/getBidsResult_z', $prefix . 'getBidsResult_z');
+        });
+
+        return true;
+    }
+
+    private function BaiXiangRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Provide/BaiXiang/BaiXiangController/';
+
+        $routeCollector->addGroup('/bx', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getDptEnterpriseMedicineDetailList', $prefix . 'getDptEnterpriseMedicineDetailList');
         });
 
         return true;
