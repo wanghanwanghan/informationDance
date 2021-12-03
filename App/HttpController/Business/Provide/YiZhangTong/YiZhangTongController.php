@@ -43,9 +43,7 @@ class YiZhangTongController extends ProvideBase
     function getProductList(): bool
     {
         $this->csp->add($this->cspKey, function () {
-            return (new YiZhangTongService())
-                ->setCheckRespFlag(true)
-                ->getProductList();
+            return (new YiZhangTongService())->setCheckRespFlag(true)->getProductList();
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);

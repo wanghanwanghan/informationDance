@@ -26,6 +26,7 @@ class ProvideRouter
         $this->YongTaiRouterV1($routeCollector);
         $this->ShuMengRouterV1($routeCollector);
         $this->BaiXiangRouterV1($routeCollector);
+        $this->YiZhangTongRouterV1($routeCollector);
         $this->Notify($routeCollector);
     }
 
@@ -298,6 +299,17 @@ class ProvideRouter
         $routeCollector->addGroup('/bx', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getDptEnterpriseMedicineDetailList', $prefix . 'getDptEnterpriseMedicineDetailList');
             $routeCollector->addRoute(['GET', 'POST'], '/getDptDrugDetail', $prefix . 'getDptDrugDetail');
+        });
+
+        return true;
+    }
+
+    private function YiZhangTongRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Provide/YiZhangTong/YiZhangTongController/';
+
+        $routeCollector->addGroup('/yzt', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getProductList', $prefix . 'getProductList');
         });
 
         return true;
