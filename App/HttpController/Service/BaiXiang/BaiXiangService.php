@@ -62,7 +62,10 @@ class BaiXiangService extends ServiceBase
 
         $header = $this->createHeader($this->test_app_id, $this->test_secret);
 
-        $resp = (new CoHttpClient())->send($url, $post_data, $header, [], 'get');
+        $resp = (new CoHttpClient())
+            ->useCache(false)
+            ->setCheckRespFlag(true)
+            ->send($url, $post_data, $header, [], 'get');
 
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
