@@ -67,6 +67,8 @@ class BaiXiangService extends ServiceBase
             ->setCheckRespFlag(true)
             ->send($url, $post_data, $header, [], 'get');
 
+        CommonService::getInstance()->log4PHP($resp);
+
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
