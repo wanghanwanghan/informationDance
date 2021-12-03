@@ -60,6 +60,8 @@ str;
 
     private function createMsg(array $data): string
     {
+        CommonService::getInstance()->log4PHP($data);
+
         return base64_encode(
             openssl_encrypt(
                 jsonEncode($data, false), 'AES-128-CBC', $this->ak, OPENSSL_RAW_DATA, 'hanasian12345678'
@@ -121,6 +123,7 @@ str;
             ->useCache(false)
             ->send($this->test_url, $post_data, $this->header, [], 'postjson');
 
+        CommonService::getInstance()->log4PHP($post_data);
         CommonService::getInstance()->log4PHP($resp);
 
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
