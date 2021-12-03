@@ -47,7 +47,7 @@ class BaiXiangService extends ServiceBase
         ];
     }
 
-    //药典通企业详情
+    //药典通 企业详情
     function getDptEnterpriseMedicineDetailList($entname = '', $creditcode = '', $licreccode = '')
     {
         $post_data = [
@@ -66,9 +66,26 @@ class BaiXiangService extends ServiceBase
             ->useCache(false)
             ->send($url, $post_data, $header, [], 'get');
 
-        CommonService::getInstance()->log4PHP($resp);
-
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
+    //药典通 药品详情
+    function getDptDrugDetail($drugcode = '')
+    {
+        $post_data = [
+            'drugcode' => trim($drugcode),
+        ];
+
+        $post_data = array_filter($post_data);
+
+        $url = $this->test_url . '/dpt/drug/detail';
+
+        $header = $this->createHeader($this->test_app_id, $this->test_secret);
+
+        $resp = (new CoHttpClient())
+            ->useCache(false)
+            ->send($url, $post_data, $header, [], 'get');
+
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
 }

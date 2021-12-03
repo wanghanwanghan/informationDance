@@ -40,7 +40,7 @@ class BaiXiangController extends ProvideBase
         return true;
     }
 
-    //
+    //药典通 企业详情
     function getDptEnterpriseMedicineDetailList(): bool
     {
         $entName = $this->getRequestData('entName');
@@ -59,6 +59,29 @@ class BaiXiangController extends ProvideBase
 
         return $this->checkResponse($res);
     }
+
+    //药典通 药品详情
+    function getDptDrugDetail(): bool
+    {
+        $drugCode = $this->getRequestData('drugCode');
+
+        $postData = [
+            'drugcode' => $drugCode,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new BaiXiangService())
+                ->setCheckRespFlag(true)
+                ->getDptDrugDetail($postData['drugcode']);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+
+
 
 
 }
