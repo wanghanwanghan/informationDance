@@ -310,6 +310,7 @@ class ProvideRouter
 
         $routeCollector->addGroup('/yzt', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getProductList', $prefix . 'getProductList');
+            $routeCollector->addRoute(['GET', 'POST'], '/getLogin', $prefix . 'getLogin');
         });
 
         return true;
