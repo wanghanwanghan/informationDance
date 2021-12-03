@@ -50,7 +50,9 @@ class BaiXiangController extends ProvideBase
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new BaiXiangService())->getDptEnterpriseMedicineDetailList($postData['entname']);
+            return (new BaiXiangService())
+                ->setCheckRespFlag(true)
+                ->getDptEnterpriseMedicineDetailList($postData['entname']);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);

@@ -64,7 +64,6 @@ class BaiXiangService extends ServiceBase
 
         $resp = (new CoHttpClient())
             ->useCache(false)
-            ->setCheckRespFlag(true)
             ->send($url, $post_data, $header, [], 'get');
 
         CommonService::getInstance()->log4PHP($resp);
