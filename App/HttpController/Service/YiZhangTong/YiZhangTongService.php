@@ -66,12 +66,18 @@ str;
             )
         );
 
+        CommonService::getInstance()->log4PHP('createMsg');
+        CommonService::getInstance()->log4PHP($str);
+
         return $type === 1 ? $str : str_replace(['\\r', '\\n'], '', $str);
     }
 
     private function createSign(string $msg, string $ser_id, int $type): string
     {
         $str = hash('sha256', $msg . $this->test_app_secret . $this->time . $ser_id . $this->test_channel);
+
+        CommonService::getInstance()->log4PHP('createSign');
+        CommonService::getInstance()->log4PHP($str);
 
         return $type === 1 ? $str : urlencode($str);
     }
@@ -83,7 +89,7 @@ str;
 
         $msg = $this->createMsg([
             'channelCode' => 'XWD',
-        ], 1);
+        ], 2);
 
         $post_data = [
             'serviceId' => $ser_id,
@@ -91,7 +97,7 @@ str;
             'requestId' => control::getUuid(),
             'timestamp' => $this->time,
             'channel' => $this->test_channel,
-            'signture' => $this->createSign($msg, $ser_id, 1),
+            'signture' => $this->createSign($msg, $ser_id, 2),
             'ak' => $this->send_ak,
             'message' => $msg,
         ];
@@ -99,6 +105,9 @@ str;
         $resp = (new CoHttpClient())
             ->useCache(false)
             ->send($this->test_url, $post_data, $this->header, [], 'postjson');
+
+        CommonService::getInstance()->log4PHP($post_data);
+        CommonService::getInstance()->log4PHP($resp);
 
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
