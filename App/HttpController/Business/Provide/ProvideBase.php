@@ -184,10 +184,6 @@ class ProvideBase extends Index
                 $stream = file_get_contents(RSA_KEY_PATH . $rsa_pri_name);
                 $aes_key = control::rsaDecrypt($requestData['encrypt'], $stream, 'pri');
                 //aes解密
-                if (empty($requestData['encodeMode'])) {
-                    $this->writeJson(600, null, null, 'encodeMode不能是空');
-                    return false;
-                }
                 $content = control::aesDecode($requestData['content'], $aes_key, 128, $requestData['encodeMode']);
                 $content_arr = jsonDecode($content);
                 if (is_array($content_arr)) {
@@ -212,8 +208,9 @@ class ProvideBase extends Index
         $appId = $this->requestData['appId'] ?? '';
         $time = $this->requestData['time'] ?? '';
         $sign = $this->requestData['sign'] ?? '';
+        $encodeMode = $this->requestData['encodeMode'] ?? '';
 
-        if (empty($appId) || empty($time) || empty($sign)) {
+        if (empty($appId) || empty($time) || empty($sign) || empty($encodeMode)) {
             $this->writeJson(600, null, null, '鉴权参数不能是空');
             return false;
         }
