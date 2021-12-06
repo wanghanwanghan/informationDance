@@ -60,8 +60,6 @@ str;
 
     private function createMsg(array $data): string
     {
-        CommonService::getInstance()->log4PHP($data);
-
         return base64_encode(
             openssl_encrypt(
                 jsonEncode($data, false), 'AES-128-CBC', $this->ak, OPENSSL_RAW_DATA, 'hanasian12345678'
@@ -105,8 +103,9 @@ str;
     function getLogin(array $msg)
     {
         $ser_id = '1001100058';
-
         $msg['channelCode'] = 'XWD';
+
+        CommonService::getInstance()->log4PHP(array_filter($msg));
 
         $msg = $this->createMsg(array_filter($msg));
 
