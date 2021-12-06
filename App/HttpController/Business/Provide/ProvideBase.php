@@ -184,7 +184,11 @@ class ProvideBase extends Index
                 $stream = file_get_contents(RSA_KEY_PATH . $rsa_pri_name);
                 $aes_key = control::rsaDecrypt($requestData['encrypt'], $stream, 'pri');
                 //aes解密
-                $content = control::aesDecode($requestData['content'], $aes_key, 128);
+                if (empty($requestData['encodeMode'])) {
+                    $this->writeJson(600, null, null, 'encodeMode不能是空');
+                    return false;
+                }
+                $content = control::aesDecode($requestData['content'], $aes_key, 128, $requestData['encodeMode']);
                 $content_arr = jsonDecode($content);
                 if (is_array($content_arr)) {
                     $requestData = array_merge($requestData, $content_arr);
