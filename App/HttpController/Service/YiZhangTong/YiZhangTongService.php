@@ -49,7 +49,13 @@ str;
     {
         $res['responseCode'] - 0 === 0 ? $code = 200 : $code = $res['responseCode'];
 
-        $paging = null;
+        if (isset($res['responseData']['result']['count'])) {
+            $paging = [
+                'total' => $res['responseData']['result']['count'],
+            ];
+        } else {
+            $paging = null;
+        }
 
         $result = $res['responseData'];
 
