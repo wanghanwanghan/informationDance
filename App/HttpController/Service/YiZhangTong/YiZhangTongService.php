@@ -58,7 +58,7 @@ str;
         return $this->createReturn($code, $paging, $result, $msg);
     }
 
-    private function createMsg(array $data): string
+    private function createMsg(array $data, int $type): string
     {
         $str = base64_encode(
             openssl_encrypt(
@@ -66,14 +66,14 @@ str;
             )
         );
 
-        return str_replace(['\\r', '\\n'], '', $str);
+        return $type === 1 ? $str : str_replace(['\\r', '\\n'], '', $str);
     }
 
-    private function createSign(string $msg, string $ser_id): string
+    private function createSign(string $msg, string $ser_id, int $type): string
     {
         $str = hash('sha256', $msg . $this->test_app_secret . $this->time . $ser_id . $this->test_channel);
 
-        return urlencode($str);
+        return $type === 1 ? $str : urlencode($str);
     }
 
     //产品列表接口
@@ -83,7 +83,7 @@ str;
 
         $msg = $this->createMsg([
             'channelCode' => 'XWD',
-        ]);
+        ], 1);
 
         $post_data = [
             'serviceId' => $ser_id,
@@ -91,7 +91,7 @@ str;
             'requestId' => control::getUuid(),
             'timestamp' => $this->time,
             'channel' => $this->test_channel,
-            'signture' => $this->createSign($msg, $ser_id),
+            'signture' => $this->createSign($msg, $ser_id, 1),
             'ak' => $this->send_ak,
             'message' => $msg,
         ];
@@ -109,7 +109,7 @@ str;
         $ser_id = '1001100058';
         $msg['channelCode'] = 'XWD';
 
-        $msg = $this->createMsg(array_filter($msg));
+        $msg = $this->createMsg(array_filter($msg), 2);
 
         $post_data = [
             'serviceId' => $ser_id,
@@ -117,7 +117,7 @@ str;
             'requestId' => control::getUuid(),
             'timestamp' => $this->time,
             'channel' => $this->test_channel,
-            'signture' => $this->createSign($msg, $ser_id),
+            'signture' => $this->createSign($msg, $ser_id, 2),
             'ak' => $this->send_ak,
             'message' => $msg,
         ];
