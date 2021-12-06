@@ -58,7 +58,7 @@ str;
         return $this->createReturn($code, $paging, $result, $msg);
     }
 
-    private function createMsg(array $data, int $type): string
+    private function createMsg(array $data): string
     {
         $str = base64_encode(
             openssl_encrypt(
@@ -66,10 +66,7 @@ str;
             )
         );
 
-        CommonService::getInstance()->log4PHP('createMsg');
-        CommonService::getInstance()->log4PHP($str);
-
-        return $type === 1 ? $str : str_replace(['\\r', '\\n'], '', $str);
+        return str_replace(['\\r', '\\n'], '', $str);
     }
 
     private function createSign(string $msg, string $ser_id): string
@@ -84,7 +81,7 @@ str;
 
         $msg = $this->createMsg([
             'channelCode' => 'XWD',
-        ], 2);
+        ]);
 
         $post_data = [
             'serviceId' => $ser_id,
@@ -100,9 +97,6 @@ str;
         $resp = (new CoHttpClient())
             ->useCache(false)
             ->send($this->test_url, $post_data, $this->header, [], 'postjson');
-
-        CommonService::getInstance()->log4PHP($post_data);
-        CommonService::getInstance()->log4PHP($resp);
 
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
@@ -113,7 +107,7 @@ str;
         $ser_id = '1001100058';
         $msg['channelCode'] = 'XWD';
 
-        $msg = $this->createMsg(array_filter($msg), 2);
+        $msg = $this->createMsg(array_filter($msg));
 
         $post_data = [
             'serviceId' => $ser_id,
@@ -130,7 +124,32 @@ str;
             ->useCache(false)
             ->send($this->test_url, $post_data, $this->header, [], 'postjson');
 
-        CommonService::getInstance()->log4PHP($post_data);
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
+
+    //订单列表查询
+    function getOrderList(array $msg)
+    {
+        $ser_id = '1001100060';
+        $msg['channelAgent'] = 'XWD';
+
+        $msg = $this->createMsg(array_filter($msg));
+
+        $post_data = [
+            'serviceId' => $ser_id,
+            'appId' => $this->test_app_id,
+            'requestId' => control::getUuid(),
+            'timestamp' => $this->time,
+            'channel' => $this->test_channel,
+            'signture' => $this->createSign($msg, $ser_id),
+            'ak' => $this->send_ak,
+            'message' => urlencode($msg),
+        ];
+
+        $resp = (new CoHttpClient())
+            ->useCache(false)
+            ->send($this->test_url, $post_data, $this->header, [], 'postjson');
+
         CommonService::getInstance()->log4PHP($resp);
 
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;

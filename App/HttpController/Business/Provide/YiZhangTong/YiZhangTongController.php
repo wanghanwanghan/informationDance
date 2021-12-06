@@ -73,6 +73,31 @@ class YiZhangTongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //订单列表查询
+    function getOrderList(): bool
+    {
+        $post_data = [
+            'loanUserName' => $this->getRequestData('loanUserName'),
+            'loanCorpName' => $this->getRequestData('loanCorpName'),
+            'loanOrderCode' => $this->getRequestData('loanOrderCode'),
+            'caUser' => $this->getRequestData('caUser'),
+            'productCode' => $this->getRequestData('productCode'),
+            'startDate' => $this->getRequestData('startDate'),
+            'endDate' => $this->getRequestData('endDate'),
+            'currentPage' => $this->getRequestData('currentPage'),
+            'pageSize' => $this->getRequestData('pageSize'),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($post_data) {
+            return (new YiZhangTongService())->setCheckRespFlag(true)->getOrderList($post_data);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+
 }
 
 
