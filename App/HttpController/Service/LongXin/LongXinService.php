@@ -15,6 +15,8 @@ use App\Task\TaskList\EntDbTask\insertFinance;
 
 class LongXinService extends ServiceBase
 {
+    private $sourceName = '西南';
+
     private $usercode;
     private $userkey;
     private $baseUrl;
@@ -165,6 +167,14 @@ class LongXinService extends ServiceBase
             ->useCache(false)
             ->send($this->baseUrl . 'company_detail/', $arr, $this->sendHeaders);
 
+        $this->recodeSourceCurl([
+            'sourceName' => $this->sourceName,
+            'apiName' => last(explode('/', trim($this->baseUrl . 'company_detail/', '/'))),
+            'requestUrl' => trim(trim($this->baseUrl . 'company_detail/'), '/'),
+            'requestData' => $arr,
+            'responseData' => $res,
+        ]);
+
         if (!empty($res) && isset($res['data']) && !empty($res['data'])) {
             $tmp = $res['data'];
         } else {
@@ -235,6 +245,14 @@ class LongXinService extends ServiceBase
         $res = (new CoHttpClient())
             ->useCache(false)
             ->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
+
+        $this->recodeSourceCurl([
+            'sourceName' => $this->sourceName,
+            'apiName' => last(explode('/', trim($this->baseUrl . 'ar_caiwu/', '/'))),
+            'requestUrl' => trim(trim($this->baseUrl . 'ar_caiwu/'), '/'),
+            'requestData' => $arr,
+            'responseData' => $res,
+        ]);
 
         if (isset($res['total']) && $res['total'] > 0) {
             foreach ($res['data'] as $oneYearData) {
