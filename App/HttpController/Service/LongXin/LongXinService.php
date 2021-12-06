@@ -258,7 +258,7 @@ class LongXinService extends ServiceBase
             'sourceName' => $this->sourceName,
             'apiName' => last(explode('/', trim($this->baseUrl . 'ar_caiwu/', '/'))),
             'requestUrl' => trim(trim($this->baseUrl . 'ar_caiwu/'), '/'),
-            'requestData' => $arr,
+            'requestData' => array_merge($arr, $postData),
             'responseData' => $res,
         ]);
 
