@@ -72,14 +72,9 @@ str;
         return $type === 1 ? $str : str_replace(['\\r', '\\n'], '', $str);
     }
 
-    private function createSign(string $msg, string $ser_id, int $type): string
+    private function createSign(string $msg, string $ser_id): string
     {
-        $str = hash('sha256', $msg . $this->test_app_secret . $this->time . $ser_id . $this->test_channel);
-
-        CommonService::getInstance()->log4PHP('createSign');
-        CommonService::getInstance()->log4PHP($str);
-
-        return $type === 1 ? $str : urlencode($str);
+        return hash('sha256', $msg . $this->test_app_secret . $this->time . $ser_id . $this->test_channel);
     }
 
     //产品列表接口
@@ -97,9 +92,9 @@ str;
             'requestId' => control::getUuid(),
             'timestamp' => $this->time,
             'channel' => $this->test_channel,
-            'signture' => $this->createSign($msg, $ser_id, 2),
+            'signture' => $this->createSign($msg, $ser_id),
             'ak' => $this->send_ak,
-            'message' => $msg,
+            'message' => urlencode($msg),
         ];
 
         $resp = (new CoHttpClient())
@@ -126,9 +121,9 @@ str;
             'requestId' => control::getUuid(),
             'timestamp' => $this->time,
             'channel' => $this->test_channel,
-            'signture' => $this->createSign($msg, $ser_id, 2),
+            'signture' => $this->createSign($msg, $ser_id),
             'ak' => $this->send_ak,
-            'message' => $msg,
+            'message' => urlencode($msg),
         ];
 
         $resp = (new CoHttpClient())
