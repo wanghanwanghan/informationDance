@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\YiZhangTong;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\YiZhangTong\YiZhangTongService;
 
 class YiZhangTongController extends ProvideBase
@@ -87,6 +88,9 @@ class YiZhangTongController extends ProvideBase
             'currentPage' => $this->getRequestData('currentPage'),
             'pageSize' => $this->getRequestData('pageSize'),
         ];
+
+        CommonService::getInstance()->log4PHP($this->requestData);
+        CommonService::getInstance()->log4PHP($this->$post_data);
 
         $this->csp->add($this->cspKey, function () use ($post_data) {
             return (new YiZhangTongService())->setCheckRespFlag(true)->getOrderList($post_data);
