@@ -137,7 +137,7 @@ class ServiceBase
     }
 
     //信动调用数据源接口记次
-    function recodeSourceCurl(array $ext): void
+    function recodeSourceCurl(array $ext, bool $type = false): void
     {
         foreach ($ext as $key => $val) {
             if (empty($val)) {
@@ -152,10 +152,10 @@ class ServiceBase
         try {
             $info = RequestSourceRecode::create()
                 ->addSuffix(date('Y'))
-                ->where('requestId', $this->requestId)
+                ->where('requestId', $type === false ? $this->requestId : control::getUuid())
                 ->get();
             if (empty($info)) {
-                $ext['requestId'] = $this->requestId;
+                $ext['requestId'] = $type === false ? $this->requestId : control::getUuid();
                 RequestSourceRecode::create()
                     ->addSuffix(date('Y'))
                     ->data($ext)

@@ -173,7 +173,7 @@ class LongXinService extends ServiceBase
             'requestUrl' => trim(trim($this->baseUrl . 'company_detail/'), '/'),
             'requestData' => $arr,
             'responseData' => $res,
-        ]);
+        ], true);
 
         if (!empty($res) && isset($res['data']) && !empty($res['data'])) {
             $tmp = $res['data'];
@@ -203,8 +203,6 @@ class LongXinService extends ServiceBase
     //超级搜索
     function superSearch($postData)
     {
-        CommonService::getInstance()->log4PHP(123);
-
         $arr = [
             'usercode' => $this->usercode
         ];
