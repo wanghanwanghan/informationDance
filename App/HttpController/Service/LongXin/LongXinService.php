@@ -203,6 +203,8 @@ class LongXinService extends ServiceBase
     //超级搜索
     function superSearch($postData)
     {
+        CommonService::getInstance()->log4PHP(123);
+
         $arr = [
             'usercode' => $this->usercode
         ];
@@ -213,6 +215,14 @@ class LongXinService extends ServiceBase
 
         $res = (new CoHttpClient())->useCache(false)
             ->send($this->baseUrl . 'api/super_search/', $arr, $this->sendHeaders);
+
+        $this->recodeSourceCurl([
+            'sourceName' => $this->sourceName,
+            'apiName' => last(explode('/', trim($this->baseUrl . 'api/super_search/', '/'))),
+            'requestUrl' => trim(trim($this->baseUrl . 'api/super_search/'), '/'),
+            'requestData' => $arr,
+            'responseData' => $res,
+        ]);
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
