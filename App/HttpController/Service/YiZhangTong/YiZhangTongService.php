@@ -60,16 +60,20 @@ str;
 
     private function createMsg(array $data): string
     {
-        return base64_encode(
+        $str = base64_encode(
             openssl_encrypt(
                 jsonEncode($data, false), 'AES-128-CBC', $this->ak, OPENSSL_RAW_DATA, 'hanasian12345678'
             )
         );
+
+        return str_replace(['\\r', '\\n'], '', $str);
     }
 
     private function createSign(string $msg, string $ser_id): string
     {
-        return hash('sha256', $msg . $this->test_app_secret . $this->time . $ser_id . $this->test_channel);
+        $str = hash('sha256', $msg . $this->test_app_secret . $this->time . $ser_id . $this->test_channel);
+
+        return urlencode($str);
     }
 
     //产品列表接口
@@ -104,8 +108,6 @@ str;
     {
         $ser_id = '1001100058';
         $msg['channelCode'] = 'XWD';
-
-        CommonService::getInstance()->log4PHP(array_filter($msg));
 
         $msg = $this->createMsg(array_filter($msg));
 
