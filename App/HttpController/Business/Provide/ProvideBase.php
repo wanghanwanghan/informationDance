@@ -183,25 +183,12 @@ class ProvideBase extends Index
                 $rsa_pri_name = $info->getAttr('rsaPri');
                 //私钥解密
                 $stream = file_get_contents(RSA_KEY_PATH . $rsa_pri_name);
-
-                CommonService::getInstance()->log4PHP($stream);
-
                 $aes_key = control::rsaDecrypt($requestData['encrypt'], $stream, 'pri');
-
-                CommonService::getInstance()->log4PHP($aes_key);
-
                 //aes解密
                 $content = control::aesDecode($requestData['content'], $aes_key, 128, $requestData['encodeMode']);
-
-                CommonService::getInstance()->log4PHP($content);
-
                 $content_arr = jsonDecode($content);
-
-                CommonService::getInstance()->log4PHP($content_arr);
-
                 if (is_array($content_arr)) {
                     $requestData = array_merge($requestData, $content_arr);
-                    CommonService::getInstance()->log4PHP($requestData);
                 }
             }
         }
