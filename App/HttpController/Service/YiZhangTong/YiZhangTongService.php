@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\YiZhangTong;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use wanghanwanghan\someUtils\control;
@@ -124,6 +125,8 @@ str;
             'ak' => $this->send_ak,
             'message' => urlencode($msg),
         ];
+
+        CommonService::getInstance()->log4PHP($post_data);
 
         $resp = (new CoHttpClient())
             ->useCache(false)
