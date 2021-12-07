@@ -113,9 +113,13 @@ str;
         $ser_id = '1001100058';
         $msg['channelCode'] = 'XWD';
 
-        CommonService::getInstance()->log4PHP(array_filter($msg));
+        CommonService::getInstance()->log4PHP(array_filter($msg, function ($val) {
+            return !(($val === '' || $val === null));
+        }));
 
-        $msg = $this->createMsg(array_filter($msg));
+        $msg = $this->createMsg(array_filter($msg, function ($val) {
+            return !(($val === '' || $val === null));
+        }));
 
         $post_data = [
             'serviceId' => $ser_id,
