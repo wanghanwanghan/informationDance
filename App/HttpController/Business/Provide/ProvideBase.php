@@ -13,6 +13,7 @@ use App\HttpController\Service\CreateConf;
 use Carbon\Carbon;
 use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\RedisPool\Redis;
+use Illuminate\Support\Facades\Log;
 use wanghanwanghan\someUtils\control;
 
 class ProvideBase extends Index
@@ -209,6 +210,8 @@ class ProvideBase extends Index
         $time = $this->requestData['time'] ?? '';
         $sign = $this->requestData['sign'] ?? '';
         $encodeMode = $this->requestData['encodeMode'] ?? '';
+
+        CommonService::getInstance()->log4PHP($this->requestData);
 
         if (empty($appId) || empty($time) || empty($sign) || empty($encodeMode)) {
             $this->writeJson(600, null, null, '鉴权参数不能是空');
