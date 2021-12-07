@@ -54,7 +54,7 @@ class YiZhangTongController extends ProvideBase
     function getLogin(): bool
     {
         $post_data = [
-            'silentLoginFlag' => $this->getRequestData('silentLoginFlag'),
+            'silentLoginFlag' => $this->getRequestData('silentLoginFlag', '0'),
             'userName' => $this->getRequestData('userName'),
             'certificateNum' => $this->getRequestData('certificateNum'),
             'userPhone' => $this->getRequestData('userPhone'),
