@@ -5,6 +5,7 @@ namespace App\HttpController\Business\Provide\YiZhangTong;
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Service\YiZhangTong\YiZhangTongService;
+use wanghanwanghan\someUtils\control;
 
 class YiZhangTongController extends ProvideBase
 {
@@ -54,6 +55,7 @@ class YiZhangTongController extends ProvideBase
     function getLogin(): bool
     {
         $post_data = [
+            'requestId' => $this->getRequestData('requestId', control::getUuid()),
             'silentLoginFlag' => $this->getRequestData('silentLoginFlag', '0'),
             'userName' => $this->getRequestData('userName'),
             'certificateNum' => $this->getRequestData('certificateNum'),
