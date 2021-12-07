@@ -128,8 +128,6 @@ str;
             'message' => urlencode($msg),
         ];
 
-        CommonService::getInstance()->log4PHP($post_data);
-
         $resp = (new CoHttpClient())
             ->useCache(false)
             ->send($this->test_url, $post_data, $this->header, [], 'postjson');
@@ -142,6 +140,8 @@ str;
     {
         $ser_id = '1001100060';
         $msg['channelAgent'] = 'XWD';
+
+        CommonService::getInstance()->log4PHP(array_filter($msg));
 
         $msg = $this->createMsg(array_filter($msg));
 
