@@ -209,9 +209,8 @@ class ProvideBase extends Index
         $appId = $this->requestData['appId'] ?? '';
         $time = $this->requestData['time'] ?? '';
         $sign = $this->requestData['sign'] ?? '';
-        $encodeMode = $this->requestData['encodeMode'] ?? '';
 
-        if (empty($appId) || empty($time) || empty($sign) || empty($encodeMode)) {
+        if (empty($appId) || empty($time) || empty($sign)) {
             $this->writeJson(600, null, null, '鉴权参数不能是空');
             return false;
         }
