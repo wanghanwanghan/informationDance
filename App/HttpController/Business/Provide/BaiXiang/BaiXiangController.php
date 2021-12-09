@@ -45,14 +45,14 @@ class BaiXiangController extends ProvideBase
     {
         $entName = $this->getRequestData('entName');
 
-        $postData = [
-            'entname' => $entName,
-        ];
+        preg_match('/([\x81-\xfe][\x40-\xfe])/', $entName) ?
+            $postData = ['entname' => $entName, 'code' => '',] :
+            $postData = ['entname' => '', 'code' => $entName,];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new BaiXiangService())
                 ->setCheckRespFlag(true)
-                ->getDptEnterpriseMedicineDetailList($postData['entname']);
+                ->getDptEnterpriseMedicineDetailList($postData['entname'], $postData['code']);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
@@ -79,9 +79,6 @@ class BaiXiangController extends ProvideBase
 
         return $this->checkResponse($res);
     }
-
-
-
 
 
 }
