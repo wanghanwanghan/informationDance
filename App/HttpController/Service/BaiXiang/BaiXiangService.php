@@ -123,6 +123,8 @@ class BaiXiangService extends ServiceBase
             return !(($val === '' || $val === null));
         });
 
+        CommonService::getInstance()->log4PHP($post_data);
+
         $url = $this->test_url . '/dpt/instrument/detail';
 
         $header = $this->createHeader($this->test_app_id, $this->test_secret);
