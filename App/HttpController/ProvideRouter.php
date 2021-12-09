@@ -299,6 +299,8 @@ class ProvideRouter
         $routeCollector->addGroup('/bx', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getDptEnterpriseMedicineDetailList', $prefix . 'getDptEnterpriseMedicineDetailList');
             $routeCollector->addRoute(['GET', 'POST'], '/getDptDrugDetail', $prefix . 'getDptDrugDetail');
+            $routeCollector->addRoute(['GET', 'POST'], '/getDptHospitalDetail', $prefix . 'getDptHospitalDetail');
+            $routeCollector->addRoute(['GET', 'POST'], '/getDptInstrumentDetail', $prefix . 'getDptInstrumentDetail');
         });
 
         return true;

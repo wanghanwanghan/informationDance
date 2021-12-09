@@ -88,4 +88,50 @@ class BaiXiangService extends ServiceBase
 
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
+
+    //药典通 医疗机构详情
+    function getDptHospitalDetail($name = '', $regnum = '', $id = '')
+    {
+        $post_data = [
+            'name' => trim($name),
+            'regnum' => trim($regnum),
+            'id' => trim($id),
+        ];
+
+        $post_data = array_filter($post_data);
+
+        $url = $this->test_url . '/dpt/hospital/detail';
+
+        $header = $this->createHeader($this->test_app_id, $this->test_secret);
+
+        $resp = (new CoHttpClient())
+            ->useCache(false)
+            ->send($url, $post_data, $header, [], 'get');
+
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
+
+    //药典通 医疗器械详情
+    function getDptInstrumentDetail($codetype = '', $instrumentcode = '')
+    {
+        $post_data = [
+            'codetype' => trim($codetype),//注册证编号/备案号类型 0:注册证号或备案号 1:注册证编号 2:备案号
+            'instrumentcode' => trim($instrumentcode),//注册证编号/备案号
+        ];
+
+        $post_data = array_filter($post_data, function ($val) {
+            return !(($val === '' || $val === null));
+        });
+
+        $url = $this->test_url . '/dpt/instrument/detail';
+
+        $header = $this->createHeader($this->test_app_id, $this->test_secret);
+
+        $resp = (new CoHttpClient())
+            ->useCache(false)
+            ->send($url, $post_data, $header, [], 'get');
+
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
+
 }

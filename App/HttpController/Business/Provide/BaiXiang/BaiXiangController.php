@@ -80,6 +80,48 @@ class BaiXiangController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //药典通 医疗机构详情
+    function getDptHospitalDetail(): bool
+    {
+        $entName = $this->getRequestData('entName');
+
+        preg_match('/([\x81-\xfe][\x40-\xfe])/', $entName) ?
+            $postData = ['entName' => $entName, 'code' => '',] :
+            $postData = ['entName' => '', 'code' => $entName,];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new BaiXiangService())
+                ->setCheckRespFlag(true)
+                ->getDptHospitalDetail($postData['entName'], $postData['code']);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    //药典通 医疗器械详情
+    function getDptInstrumentDetail(): bool
+    {
+        $codetype = $this->getRequestData('codetype');//注册证编号/备案号类型 0:注册证号或备案号 1:注册证编号 2:备案号
+        $instrumentcode = $this->getRequestData('instrumentcode');//注册证编号/备案号
+
+        $postData = [
+            'codetype' => $codetype,
+            'instrumentcode' => $instrumentcode,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new BaiXiangService())
+                ->setCheckRespFlag(true)
+                ->getDptInstrumentDetail($postData['codetype'], $postData['instrumentcode']);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
 
 }
 
