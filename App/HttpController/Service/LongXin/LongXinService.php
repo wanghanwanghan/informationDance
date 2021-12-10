@@ -1958,7 +1958,7 @@ class LongXinService extends ServiceBase
             $last = $origin[$lastYear][$index];
             $now = $val[$index];
 
-            if ($now === 0) {
+            if ($last === 0) {
                 array_push($origin[$year], null);
                 continue;
             }
