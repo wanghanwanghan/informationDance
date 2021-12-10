@@ -1312,7 +1312,6 @@ class LongXinService extends ServiceBase
     //21权益乘数 1 / (1 - 资产负债率)
     private function qycs($origin)
     {
-        CommonService::getInstance()->log4PHP($origin);
         foreach ($origin as $year => $val) {
             if (is_numeric($val[20]) && $val[20] !== 1 && $val[20] !== '1') {
                 (1 - $val[20]) === 0 ? $value = null : $value = 1 / (1 - $val[20]);
