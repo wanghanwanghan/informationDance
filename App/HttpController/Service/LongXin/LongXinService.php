@@ -164,7 +164,7 @@ class LongXinService extends ServiceBase
         $this->sendHeaders['authorization'] = $this->createToken($arr);
 
         $res = (new CoHttpClient())
-            ->useCache(false)
+            ->useCache(true)
             ->send($this->baseUrl . 'company_detail/', $arr, $this->sendHeaders);
 
         $this->recodeSourceCurl([
@@ -232,7 +232,9 @@ class LongXinService extends ServiceBase
 
         $check = $this->alreadyInserted($postData);
 
-        $entId = $this->getEntid($postData['entName']);
+        $cond = !empty($postData['code']) ? $postData['code'] : $postData['entName'];
+
+        $entId = $this->getEntid($cond);
 
         //==============================================================================================================
         CommonService::getInstance()->log4PHP(['查询的参数' => $postData], 'info', $logFileName);
@@ -258,7 +260,7 @@ class LongXinService extends ServiceBase
         $this->sendHeaders['authorization'] = $this->createToken($arr);
 
         $res = (new CoHttpClient())
-            ->useCache(false)
+            ->useCache(true)
             ->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
 
         //==============================================================================================================
