@@ -1314,7 +1314,7 @@ class LongXinService extends ServiceBase
     {
         foreach ($origin as $year => $val) {
             if (is_numeric($val[20]) && $val[20] !== 1) {
-                $value = 1 / (1 - $val[20]);
+                1 - $val[20] === 0 ? $value = null : $value = 1 / (1 - $val[20]);
             } else {
                 $value = null;
             }
@@ -1806,7 +1806,7 @@ class LongXinService extends ServiceBase
                 continue;
             }
             //两年都有数据
-            $last = $origin[$lastYear][$index];
+            $last = $origin[$lastYear][$index] - 0;
             $now = $val[$index];
             if ($last === 0) {
                 array_push($origin[$year], null);
