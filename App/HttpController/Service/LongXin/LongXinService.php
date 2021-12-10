@@ -1314,7 +1314,7 @@ class LongXinService extends ServiceBase
     {
         CommonService::getInstance()->log4PHP($origin);
         foreach ($origin as $year => $val) {
-            if (is_numeric($val[20]) && $val[20] !== 1) {
+            if (is_numeric($val[20]) && $val[20] !== 1 && $val[20] !== '1') {
                 (1 - $val[20]) === 0 ? $value = null : $value = 1 / (1 - $val[20]);
             } else {
                 $value = null;
