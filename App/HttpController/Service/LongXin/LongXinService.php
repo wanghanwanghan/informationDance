@@ -228,9 +228,16 @@ class LongXinService extends ServiceBase
     //近n年的财务数据
     function getFinanceData($postData, $toRange = true): array
     {
+        $logFileName = 'getFinanceData.log.' . date('Ymd', time());
+
         $check = $this->alreadyInserted($postData);
 
         $entId = $this->getEntid($postData['entName']);
+
+        //==============================================================================================================
+        CommonService::getInstance()->log4PHP(['查询的参数' => $postData], 'info', $logFileName);
+        CommonService::getInstance()->log4PHP(['返回的entid' => $entId], 'info', $logFileName);
+        //==============================================================================================================
 
         if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
 
@@ -253,6 +260,10 @@ class LongXinService extends ServiceBase
         $res = (new CoHttpClient())
             ->useCache(false)
             ->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
+
+        //==============================================================================================================
+        CommonService::getInstance()->log4PHP(['返回的ar_caiwu' => $res], 'info', $logFileName);
+        //==============================================================================================================
 
         $this->recodeSourceCurl([
             'sourceName' => $this->sourceName,

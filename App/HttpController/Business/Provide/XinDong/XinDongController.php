@@ -158,7 +158,7 @@ class XinDongController extends ProvideBase
     }
 
     //返原值专用
-    function getFinanceOriginal()
+    function getFinanceOriginal(): bool
     {
         $postData = [
             'entName' => $this->getRequestData('entName', ''),
