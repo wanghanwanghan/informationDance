@@ -146,12 +146,13 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
 
             $f_data_info = $this->getFinanceOriginal($entname);
 
+            $witch_file_flag = 'right';
+            $data_arr = [];
+
             if (is_array($f_data_info) && !empty($f_data_info['result'])) {
 
                 //有数字返回的
                 foreach ($f_data_info['result'] as $year => $item) {
-                    $witch_file_flag = 'right';
-                    $data_arr = [];
                     is_numeric($item['VENDINC']) ? $_VENDINC = round($item['VENDINC'], 2) : $_VENDINC = '';
                     is_numeric($item['ASSGRO']) ? $_ASSGRO = round($item['ASSGRO'], 2) : $_ASSGRO = '';
                     is_numeric($item['MAIBUSINC']) ? $_MAIBUSINC = round($item['MAIBUSINC'], 2) : $_MAIBUSINC = '';
@@ -204,36 +205,6 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
                     ];
                 }
 
-                foreach ($data_arr as $year => $wh) {
-                    if ($witch_file_flag === 'right') {
-                        file_put_contents(
-                            $this->workPath . $this->all_right_ent_txt_file_name,
-                            implode('|', $wh) . PHP_EOL,
-                            FILE_APPEND
-                        );
-                    } else {
-
-                        $head = array_slice($wh, 0, 4);
-                        $temp = array_slice($wh, 4);
-                        $temp = array_map(function ($row) {
-                            return (is_numeric($row) && $row != 0) ? '正常值' : $row;
-                        }, $temp);
-
-                        //写摘要文件
-                        file_put_contents(
-                            $this->workPath . $this->data_desc_txt_file_name,
-                            implode('|', array_merge($head, $temp)) . PHP_EOL,
-                            FILE_APPEND
-                        );
-
-                        file_put_contents(
-                            $this->workPath . $this->have_null_ent_txt_file_name,
-                            implode('|', $wh) . PHP_EOL,
-                            FILE_APPEND
-                        );
-                    }
-                }
-
             } else {
 
                 file_put_contents(
@@ -256,6 +227,36 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
 
             }
 
+            foreach ($data_arr as $year => $wh) {
+                if ($witch_file_flag === 'right') {
+                    file_put_contents(
+                        $this->workPath . $this->all_right_ent_txt_file_name,
+                        implode('|', $wh) . PHP_EOL,
+                        FILE_APPEND
+                    );
+                } else {
+
+                    $head = array_slice($wh, 0, 4);
+                    $temp = array_slice($wh, 4);
+                    $temp = array_map(function ($row) {
+                        return (is_numeric($row) && $row != 0) ? '正常值' : $row;
+                    }, $temp);
+
+                    //写摘要文件
+                    file_put_contents(
+                        $this->workPath . $this->data_desc_txt_file_name,
+                        implode('|', array_merge($head, $temp)) . PHP_EOL,
+                        FILE_APPEND
+                    );
+
+                    file_put_contents(
+                        $this->workPath . $this->have_null_ent_txt_file_name,
+                        implode('|', $wh) . PHP_EOL,
+                        FILE_APPEND
+                    );
+                }
+            }
+
         }
     }
 
@@ -275,8 +276,9 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
                         CommonService::getInstance()->log4PHP("准备处理的文件 : {$file}");
                         $this->readXlsx($file);
                         file_put_contents($this->backPath . $file, file_get_contents($this->workPath . $file));
-                        //unlink($this->workPath . $file);
-                        CommonService::getInstance()->log4PHP('准备unlink : ' . $this->workPath . $file);
+                        if (strpos($this->workPath . $file, '.xlsx') !== false) {
+                            @unlink($this->workPath . $file);
+                        };
                     }
                 }
             }
