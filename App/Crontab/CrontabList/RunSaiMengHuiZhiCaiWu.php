@@ -108,9 +108,6 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
 
     function readXlsx($xlsx_name)
     {
-        $xlsx_name = trim(trim($xlsx_name), '/');
-        strpos($xlsx_name, '/') !== false ?: $xlsx_name = $this->workPath . $xlsx_name;
-
         CommonService::getInstance()->log4PHP("准备打开的文件名称 : {$xlsx_name}");
 
         $excel_read = new \Vtiful\Kernel\Excel(['path' => $this->workPath]);
