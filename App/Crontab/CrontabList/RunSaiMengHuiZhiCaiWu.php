@@ -113,6 +113,8 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
         $excel_read = new \Vtiful\Kernel\Excel(['path' => $this->workPath]);
         $read = $excel_read->openFile($xlsx_name)->openSheet();
 
+        CommonService::getInstance()->log4PHP("excel打开flag : {$read}");
+
         while (true) {
 
             $one = $excel_read->nextRow([
