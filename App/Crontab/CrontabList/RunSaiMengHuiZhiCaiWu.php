@@ -278,7 +278,7 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
                         file_put_contents($this->backPath . $file, file_get_contents($this->workPath . $file));
                         if (strpos($this->workPath . $file, '.xlsx') !== false) {
                             @unlink($this->workPath . $file);
-                        };
+                        }
                     }
                 }
             }
