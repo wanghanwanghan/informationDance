@@ -46,9 +46,6 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
     {
         $this->crontabBase = new CrontabBase();
         $this->createDir();
-
-        CommonService::getInstance()->log4PHP($this->workPath);
-        CommonService::getInstance()->log4PHP($this->backPath);
     }
 
     static function getRule(): string
