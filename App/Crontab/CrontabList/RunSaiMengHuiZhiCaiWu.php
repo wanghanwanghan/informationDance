@@ -52,8 +52,8 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
         $this->crontabBase = new CrontabBase();
         $this->createDir();
         $this->all_right_ent_txt_file_name = control::getUuid() . '.txt';
-        $this->have_null_ent_txt_file_name = control::getUuid() . '.txt';
-        $this->data_desc_txt_file_name = control::getUuid() . '.txt';
+        $this->have_null_ent_txt_file_name = 'NULL' . control::getUuid() . '.txt';
+        $this->data_desc_txt_file_name = 'DESC' . control::getUuid() . '.txt';
     }
 
     static function getRule(): string
@@ -76,13 +76,6 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
 
         $this->backPath = $this->filePath . 'Back/' . $Ym . '/' . $d . '/';
         $this->workPath = $this->filePath . 'Work/' . $Ym . '/' . $d . '/';
-
-        return true;
-    }
-
-    function moveFileToBack($filename): bool
-    {
-
 
         return true;
     }
