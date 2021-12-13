@@ -66,10 +66,7 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
         $Ym = Carbon::now()->format('Ym');
         $d = 'day' . Carbon::now()->format('d');
 
-        is_dir($this->filePath . 'Back/' . $Ym) || mkdir($this->filePath . 'Back/' . $Ym, 0755, true);
         is_dir($this->filePath . 'Back/' . $Ym . '/' . $d) || mkdir($this->filePath . 'Back/' . $Ym . '/' . $d, 0755, true);
-
-        is_dir($this->filePath . 'Work/' . $Ym) || mkdir($this->filePath . 'Work/' . $Ym, 0755, true);
         is_dir($this->filePath . 'Work/' . $Ym . '/' . $d) || mkdir($this->filePath . 'Work/' . $Ym . '/' . $d, 0755, true);
 
         $this->backPath = $this->filePath . 'Back/' . $Ym . '/' . $d . '/';
