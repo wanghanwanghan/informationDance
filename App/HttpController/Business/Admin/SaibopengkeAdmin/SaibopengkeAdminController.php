@@ -72,7 +72,7 @@ class SaibopengkeAdminController extends Index
             return $this->writeJson(201, null, '类型错误');
         }
 
-        $type === 'success' ? $type = 1 : $type = 3;
+        $type === 'success' ? $type = 2 : $type = 4;
 
         try {
             Saibopengke_Data_List_Model::create()->get($id)->update([
