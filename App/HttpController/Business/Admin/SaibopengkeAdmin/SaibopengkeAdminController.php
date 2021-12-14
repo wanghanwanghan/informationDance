@@ -144,7 +144,9 @@ class SaibopengkeAdminController extends Index
         }
 
         $zip = TEMP_FILE_PATH . control::getUuid() . '.zip';
-        empty($file_arr) ? $result = [] : $result = ZipService::getInstance()->zip($file_arr, $zip);
+        empty($file_arr) ?
+            $result = [] :
+            $result = str_replace(ROOT_PATH, '', ZipService::getInstance()->zip($file_arr, $zip));
 
         return $this->writeJson(200, $result);
     }
