@@ -54,6 +54,7 @@ class AdminRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getDataList', $prefix . 'getDataList');
             $routeCollector->addRoute(['GET', 'POST'], '/statusChange', $prefix . 'statusChange');
             $routeCollector->addRoute(['GET', 'POST'], '/getExportZip', $prefix . 'getExportZip');
+            $routeCollector->addRoute(['GET', 'POST'], '/uploadEntList', $prefix . 'uploadEntList');
         });
 
         return true;

@@ -6,6 +6,8 @@ use App\HttpController\Index;
 use App\HttpController\Models\Admin\SaibopengkeAdmin\Saibopengke_Data_List_Model;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\Zip\ZipService;
+use Carbon\Carbon;
+use EasySwoole\Http\Message\UploadFile;
 use wanghanwanghan\someUtils\control;
 
 class SaibopengkeAdminController extends Index
@@ -123,8 +125,6 @@ class SaibopengkeAdminController extends Index
 
         $result = $model->all();
 
-        CommonService::getInstance()->log4PHP($result);
-
         $file_arr = [];
 
         foreach ($result as $one) {
@@ -151,5 +151,27 @@ class SaibopengkeAdminController extends Index
         return $this->writeJson(200, $result);
     }
 
+    function uploadEntList(): bool
+    {
+        $files = $this->request()->getUploadedFiles();
+
+        $y = Carbon::now()->format('Y');
+        $m = Carbon::now()->format('m');
+        $d = Carbon::now()->format('d');
+
+        $path = ROOT_PATH . "/TempWork/SaiMengHuiZhi/Work/{$y}{$m}/day{$d}/";
+
+        foreach ($files as $key => $oneFile) {
+            if ($oneFile instanceof UploadFile) {
+                try {
+                    $oneFile->moveTo($path . $oneFile->getClientFilename());
+                } catch (\Throwable $e) {
+                    return $this->writeJson(202);
+                }
+            }
+        }
+
+        return $this->writeJson(200);
+    }
 
 }
