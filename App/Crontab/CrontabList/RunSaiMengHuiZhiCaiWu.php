@@ -3,6 +3,7 @@
 namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
+use App\HttpController\Models\Admin\SaibopengkeAdmin\Saibopengke_Data_List_Model;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use Carbon\Carbon;
@@ -218,6 +219,12 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
                     FILE_APPEND
                 );
 
+                Saibopengke_Data_List_Model::create()->data([
+                    'handleDate' => date('Ymd'),
+                    'entName' => $entname,
+                    'status' => 4,
+                ])->save();
+
             }
 
             foreach ($data_arr as $year => $wh) {
@@ -228,7 +235,6 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
                         FILE_APPEND
                     );
                 } else {
-
                     $head = array_slice($wh, 0, 4);
                     $temp = array_slice($wh, 4);
                     $temp = array_map(function ($row) {
@@ -247,6 +253,36 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
                         implode('|', $wh) . PHP_EOL,
                         FILE_APPEND
                     );
+                }
+            }
+
+            //入数据库之前的整理
+            $readytoinsert = [];
+            foreach ($data_arr as $year => $wh) {
+                if ($witch_file_flag === 'right') {
+                    $readytoinsert[$entname . 'right'][] = $wh;
+                } else {
+                    $readytoinsert[$entname][] = $wh;
+                }
+            }
+
+            //入数据库
+            foreach ($readytoinsert as $ent => $val) {
+                if (preg_match('/right/', $ent)) {
+                    $name = str_replace('right', '', $ent);
+                    Saibopengke_Data_List_Model::create()->data([
+                        'handleDate' => date('Ymd'),
+                        'entName' => $name,
+                        'status' => 2,
+                        'responseData' => jsonEncode($val, false),
+                    ])->save();
+                } else {
+                    Saibopengke_Data_List_Model::create()->data([
+                        'handleDate' => date('Ymd'),
+                        'entName' => $ent,
+                        'status' => 3,
+                        'responseData' => jsonEncode($val, false),
+                    ])->save();
                 }
             }
 
