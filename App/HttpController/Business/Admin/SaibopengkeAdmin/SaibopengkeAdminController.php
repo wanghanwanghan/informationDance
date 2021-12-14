@@ -53,5 +53,33 @@ class SaibopengkeAdminController extends Index
         return $this->writeJson(200, $result);
     }
 
+    function statusChange(): bool
+    {
+        $string = $this->request()->getBody()->__toString();
+        $raw = jsonDecode($string);
+
+        $id = $raw['id'] ?? '';
+        $type = $raw['type'] ?? '';
+
+        if (!is_numeric($id) || $id <= 0) {
+            return $this->writeJson(201, null, 'id错误');
+        }
+
+        if (!in_array($type, ['success', 'close'], true)) {
+            return $this->writeJson(201, null, '类型错误');
+        }
+
+        $type === 'success' ? $type = 1 : $type = 3;
+
+        try {
+            Saibopengke_Data_List_Model::create()->get($id)->update([
+                'status' => $type
+            ]);
+            return $this->writeJson();
+        } catch (\Throwable $e) {
+            return $this->writeJson(201);
+        }
+    }
+
 
 }
