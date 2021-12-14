@@ -36,9 +36,10 @@ class SaibopengkeAdminController extends Index
             return $this->writeJson(201, null, '页码不能是空');
         }
 
-        $model = Saibopengke_Data_List_Model::create()->where([
-
-        ])->page($page)->withTotalCount();
+        $model = Saibopengke_Data_List_Model::create()
+            ->where('handleDate', [$start - 0, $stop - 0], 'BETWEEN')
+            ->where('status', $radio - 0)
+            ->page($page)->withTotalCount();
 
         $res = $model->all();
         $total = $model->lastQueryResult()->getTotalCount();
