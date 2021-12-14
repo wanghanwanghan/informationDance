@@ -19,10 +19,13 @@ class SaibopengkeAdminController extends Index
 
     function getDataList(): bool
     {
-        $start = $this->request()->getRequestParam('start');
-        $stop = $this->request()->getRequestParam('stop');
-        $radio = $this->request()->getRequestParam('radio');
-        $page = $this->request()->getRequestParam('page');
+        $string = $this->request()->getBody()->__toString();
+        $raw = jsonDecode($string);
+
+        $start = $raw['start'] ?? '';
+        $stop = $raw['stop'] ?? '';
+        $radio = $raw['radio'] ?? '';
+        $page = $raw['page'] ?? '';
 
         if (!is_numeric($start) || !is_numeric($stop)) {
             return $this->writeJson(201, null, '日期不能是空');
