@@ -221,6 +221,8 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
 
                 Saibopengke_Data_List_Model::create()->data([
                     'handleDate' => date('Ymd'),
+                    'filename' => $this->have_null_ent_txt_file_name,
+                    'descname' => $this->data_desc_txt_file_name,
                     'entName' => $entname,
                     'status' => 4,
                     'responseData' => '',
@@ -273,6 +275,8 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
                     $name = str_replace('right', '', $ent);
                     Saibopengke_Data_List_Model::create()->data([
                         'handleDate' => date('Ymd'),
+                        'filename' => $this->all_right_ent_txt_file_name,
+                        'descname' => $this->data_desc_txt_file_name,
                         'entName' => $name,
                         'status' => 2,
                         'responseData' => jsonEncode($val, false),
@@ -280,6 +284,8 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
                 } else {
                     Saibopengke_Data_List_Model::create()->data([
                         'handleDate' => date('Ymd'),
+                        'filename' => $this->have_null_ent_txt_file_name,
+                        'descname' => $this->data_desc_txt_file_name,
                         'entName' => $ent,
                         'status' => 3,
                         'responseData' => jsonEncode($val, false),
