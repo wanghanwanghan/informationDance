@@ -12,6 +12,7 @@ class AdminRouter
     //加载后台全部api
     function addRouterV1(RouteCollector $routeCollector)
     {
+        $this->SaibopengkeAdmin($routeCollector);
         $this->GroceryStore($routeCollector);
         $this->UserRouterV1($routeCollector);
     }
@@ -40,6 +41,17 @@ class AdminRouter
 
         $routeCollector->addGroup('/grocerystore', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/wuliuNode', $prefix . 'wuliuNode');
+        });
+
+        return true;
+    }
+
+    private function SaibopengkeAdmin(RouteCollector $routeCollector): bool
+    {
+        $prefix = '/Business/Admin/SaibopengkeAdmin/SaibopengkeAdminController/';
+
+        $routeCollector->addGroup('/sbpk', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getDataList', $prefix . 'getDataList');
         });
 
         return true;
