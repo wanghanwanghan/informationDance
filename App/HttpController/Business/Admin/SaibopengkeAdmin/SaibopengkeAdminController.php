@@ -4,6 +4,9 @@ namespace App\HttpController\Business\Admin\SaibopengkeAdmin;
 
 use App\HttpController\Index;
 use App\HttpController\Models\Admin\SaibopengkeAdmin\Saibopengke_Data_List_Model;
+use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\Zip\ZipService;
+use wanghanwanghan\someUtils\control;
 
 class SaibopengkeAdminController extends Index
 {
@@ -83,6 +86,67 @@ class SaibopengkeAdminController extends Index
         } catch (\Throwable $e) {
             return $this->writeJson(201);
         }
+    }
+
+    function getExportZip(): bool
+    {
+        $string = $this->request()->getBody()->__toString();
+        $raw = jsonDecode($string);
+
+        $start = $raw['start'] ?? '';
+        $stop = $raw['stop'] ?? '';
+        $radio = $raw['radio'] ?? '';
+        $page = $raw['page'] ?? '';
+
+        if (!is_numeric($start) || !is_numeric($stop)) {
+            return $this->writeJson(201, null, '日期不能是空');
+        }
+
+        if (!is_numeric($radio)) {
+            return $this->writeJson(201, null, '状态不能是空');
+        }
+
+        if (!is_numeric($page)) {
+            return $this->writeJson(201, null, '页码不能是空');
+        }
+
+        $model = Saibopengke_Data_List_Model::create();
+
+        if ($radio !== 1) {
+            $model->where('status', $radio - 0);
+        }
+
+        $model->where('handleDate', [$start - 0, $stop - 0], 'BETWEEN')
+            ->field(['handleDate', 'filename', 'descname'])
+            ->group('handleDate,filename,descname')
+            ->all();
+
+        $result = $model->all();
+
+        CommonService::getInstance()->log4PHP($result);
+
+        $file_arr = [];
+
+        foreach ($result as $one) {
+            //拼路径
+            $y = substr($one->handleDate, 0, 4);
+            $m = substr($one->handleDate, 4, 2);
+            $d = substr($one->handleDate, 6, 2);
+            $path = ROOT_PATH . "/TempWork/SaiMengHuiZhi/Work/{$y}{$m}/day{$d}/";
+            $filename = $path . $one->filename;
+            if (!in_array($filename, $file_arr, true)) {
+                $file_arr[] = $filename;
+            }
+            $descname = $path . $one->descname;
+            if (!in_array($descname, $file_arr, true)) {
+                $file_arr[] = $descname;
+            }
+        }
+
+        $zip = TEMP_FILE_PATH . control::getUuid() . '.zip';
+        empty($file_arr) ? $result = [] : $result = ZipService::getInstance()->zip($file_arr, $zip);
+
+        return $this->writeJson(200, $result);
     }
 
 

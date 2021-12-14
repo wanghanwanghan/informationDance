@@ -53,6 +53,7 @@ class AdminRouter
         $routeCollector->addGroup('/sbpk', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getDataList', $prefix . 'getDataList');
             $routeCollector->addRoute(['GET', 'POST'], '/statusChange', $prefix . 'statusChange');
+            $routeCollector->addRoute(['GET', 'POST'], '/getExportZip', $prefix . 'getExportZip');
         });
 
         return true;
