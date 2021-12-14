@@ -223,6 +223,7 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
                     'handleDate' => date('Ymd'),
                     'entName' => $entname,
                     'status' => 4,
+                    'responseData' => '',
                 ])->save();
 
             }
