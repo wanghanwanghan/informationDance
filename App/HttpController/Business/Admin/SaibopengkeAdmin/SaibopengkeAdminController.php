@@ -41,8 +41,11 @@ class SaibopengkeAdminController extends Index
 
         $model = Saibopengke_Data_List_Model::create()
             ->where('handleDate', [$start - 0, $stop - 0], 'BETWEEN')
-            ->where('status', $radio - 0)
             ->page($page)->withTotalCount();
+
+        if ($radio !== 1) {
+            $model->where('status', $radio - 0);
+        }
 
         $res = $model->all();
         $total = $model->lastQueryResult()->getTotalCount();
