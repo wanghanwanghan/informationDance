@@ -143,6 +143,8 @@ class SaibopengkeAdminController extends Index
             }
         }
 
+        CommonService::getInstance()->log4PHP($file_arr);
+
         $zip = TEMP_FILE_PATH . control::getUuid() . '.zip';
         empty($file_arr) ?
             $result = [] :
