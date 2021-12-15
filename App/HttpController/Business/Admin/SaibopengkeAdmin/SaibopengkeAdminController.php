@@ -125,6 +125,8 @@ class SaibopengkeAdminController extends Index
 
         $result = $model->all();
 
+        CommonService::getInstance()->log4PHP($result);
+
         $file_arr = [];
 
         foreach ($result as $one) {
