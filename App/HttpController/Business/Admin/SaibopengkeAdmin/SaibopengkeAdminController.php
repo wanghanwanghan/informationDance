@@ -8,6 +8,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\Zip\ZipService;
 use Carbon\Carbon;
 use EasySwoole\Http\Message\UploadFile;
+use EasySwoole\ORM\DbManager;
 use wanghanwanghan\someUtils\control;
 
 class SaibopengkeAdminController extends Index
@@ -125,7 +126,9 @@ class SaibopengkeAdminController extends Index
 
         $result = $model->all();
 
-        CommonService::getInstance()->log4PHP($result);
+        $sql = DbManager::getInstance()->getLastQuery()->getLastQuery();
+
+        CommonService::getInstance()->log4PHP($sql);
 
         $file_arr = [];
 
