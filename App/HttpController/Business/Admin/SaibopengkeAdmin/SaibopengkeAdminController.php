@@ -119,16 +119,9 @@ class SaibopengkeAdminController extends Index
             $model->where('status', $radio - 0);
         }
 
-        $model->where('handleDate', [$start - 0, $stop - 0], 'BETWEEN')
+        $result = $model->where('handleDate', [$start - 0, $stop - 0], 'BETWEEN')
             ->field(['handleDate', 'filename', 'descname'])
-            ->group('handleDate,filename,descname')
-            ->all();
-
-        $result = $model->all();
-
-        $sql = DbManager::getInstance()->getLastQuery()->getLastQuery();
-
-        CommonService::getInstance()->log4PHP($sql);
+            ->group('handleDate,filename,descname')->all();
 
         $file_arr = [];
 
@@ -147,8 +140,6 @@ class SaibopengkeAdminController extends Index
                 $file_arr[] = $descname;
             }
         }
-
-        CommonService::getInstance()->log4PHP($file_arr);
 
         $zip = TEMP_FILE_PATH . control::getUuid() . '.zip';
         empty($file_arr) ?
