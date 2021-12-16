@@ -102,12 +102,8 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
 
     function readXlsx($xlsx_name)
     {
-        CommonService::getInstance()->log4PHP("准备打开的文件名称 : {$xlsx_name}");
-
         $excel_read = new \Vtiful\Kernel\Excel(['path' => $this->workPath]);
         $read = $excel_read->openFile($xlsx_name)->openSheet();
-
-        CommonService::getInstance()->log4PHP("excel打开flag : {$read}");
 
         while (true) {
 
@@ -120,9 +116,6 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
             if (empty($one)) {
                 break;
             }
-
-            CommonService::getInstance()->log4PHP('行数据');
-            CommonService::getInstance()->log4PHP($one);
 
             $entname = $this->strtr_func($one[0]);
             $code = $this->strtr_func($one[1]);
@@ -309,7 +302,6 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
             while (false !== ($file = readdir($dh))) {
                 if (!in_array($file, $ignore, true)) {
                     if (strpos($file, '.xlsx') !== false) {
-                        CommonService::getInstance()->log4PHP("准备处理的文件 : {$file}");
                         $this->readXlsx($file);
                         file_put_contents($this->backPath . $file, file_get_contents($this->workPath . $file));
                         if (strpos($this->workPath . $file, '.xlsx') !== false) {

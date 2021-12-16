@@ -4,15 +4,16 @@ namespace App\HttpController\Business\Admin\SaibopengkeAdmin;
 
 use App\HttpController\Index;
 use App\HttpController\Models\Admin\SaibopengkeAdmin\Saibopengke_Data_List_Model;
-use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Zip\ZipService;
 use Carbon\Carbon;
 use EasySwoole\Http\Message\UploadFile;
-use EasySwoole\ORM\DbManager;
 use wanghanwanghan\someUtils\control;
 
 class SaibopengkeAdminController extends Index
 {
+    public $appid = '5BBFE57DE6DD0C8CDBC5D16A31125D5F';
+
     function onRequest(?string $action): ?bool
     {
         return parent::onRequest($action);
@@ -62,6 +63,7 @@ class SaibopengkeAdminController extends Index
 
         $result['list'] = $res;
         $result['total'] = $total;
+        $result['user_money'] = RequestUserInfo::create()->where('appId', $this->appid)->field(['money'])->get();
 
         return $this->writeJson(200, $result);
     }
