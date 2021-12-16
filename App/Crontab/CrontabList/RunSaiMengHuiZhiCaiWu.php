@@ -202,7 +202,7 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
             } else {
 
                 file_put_contents(
-                    $this->workPath . $this->have_null_ent_txt_file_name,
+                    $this->workPath . $this->data_desc_txt_file_name,
                     implode('|', [
                         $entname, $code, $address,
                         '无数据',
@@ -221,7 +221,7 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
 
                 Saibopengke_Data_List_Model::create()->data([
                     'handleDate' => date('Ymd'),
-                    'filename' => $this->have_null_ent_txt_file_name,
+                    'filename' => $this->data_desc_txt_file_name,
                     'descname' => $this->data_desc_txt_file_name,
                     'entName' => $entname,
                     'status' => 4,
