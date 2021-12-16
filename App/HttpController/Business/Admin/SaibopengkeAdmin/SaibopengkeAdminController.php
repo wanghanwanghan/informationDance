@@ -8,6 +8,7 @@ use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Zip\ZipService;
 use Carbon\Carbon;
 use EasySwoole\Http\Message\UploadFile;
+use EasySwoole\Mysqli\QueryBuilder;
 use wanghanwanghan\someUtils\control;
 
 class SaibopengkeAdminController extends Index
@@ -87,6 +88,13 @@ class SaibopengkeAdminController extends Index
         }
 
         $type === 'success' ? $type = 2 : $type = 4;
+
+        if ($type === 4) {
+            //加15金额
+            RequestUserInfo::create()->where('appId', $this->appid)->update([
+                'money' => QueryBuilder::inc(15)
+            ]);
+        }
 
         try {
             Saibopengke_Data_List_Model::create()->get($id)->update([
