@@ -51,7 +51,10 @@ class SaibopengkeAdminController extends Index
             $model->where('status', $radio - 0);
         }
 
-        $model->where('handleDate', [$start - 0, $stop - 0], 'BETWEEN')
+        $start = substr($start, 0, 10) - 0;
+        $stop = substr($stop, 0, 10) - 0;
+
+        $model->where('created_at', [$start, $stop], 'BETWEEN')
             ->page($page)->withTotalCount();
 
         $res = $model->all();
@@ -119,7 +122,10 @@ class SaibopengkeAdminController extends Index
             $model->where('status', $radio - 0);
         }
 
-        $result = $model->where('handleDate', [$start - 0, $stop - 0], 'BETWEEN')
+        $start = substr($start, 0, 10) - 0;
+        $stop = substr($stop, 0, 10) - 0;
+
+        $result = $model->where('created_at', [$start, $stop], 'BETWEEN')
             ->field(['handleDate', 'filename', 'descname'])
             ->group('handleDate,filename,descname')->all();
 
