@@ -3,11 +3,14 @@
 namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
+use App\HttpController\Business\Admin\SaibopengkeAdmin\SaibopengkeAdminController;
 use App\HttpController\Models\Admin\SaibopengkeAdmin\Saibopengke_Data_List_Model;
+use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
+use EasySwoole\Mysqli\QueryBuilder;
 use wanghanwanghan\someUtils\control;
 
 class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
@@ -284,6 +287,13 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
                         'responseData' => jsonEncode($val, false),
                     ])->save();
                 }
+                //扣15块钱
+                $appid = (new SaibopengkeAdminController())->appid;
+
+                RequestUserInfo::create()->where('appId', $appid)->update([
+                    'money' => QueryBuilder::dec(15)
+                ]);
+
             }
 
         }

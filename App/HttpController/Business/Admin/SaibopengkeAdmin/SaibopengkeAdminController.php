@@ -63,7 +63,9 @@ class SaibopengkeAdminController extends Index
 
         $result['list'] = $res;
         $result['total'] = $total;
-        $result['user_money'] = RequestUserInfo::create()->where('appId', $this->appid)->field(['money'])->get();
+        $result['user_money'] = RequestUserInfo::create()
+            ->where('appId', $this->appid)
+            ->field(['money'])->get();
 
         return $this->writeJson(200, $result);
     }
