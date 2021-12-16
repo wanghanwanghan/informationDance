@@ -123,8 +123,6 @@ class BaiXiangService extends ServiceBase
             return !(($val === '' || $val === null));
         });
 
-        CommonService::getInstance()->log4PHP($post_data);
-
         $url = $this->test_url . '/dpt/instrument/detail';
 
         $header = $this->createHeader($this->test_app_id, $this->test_secret);
@@ -132,6 +130,8 @@ class BaiXiangService extends ServiceBase
         $resp = (new CoHttpClient())
             ->useCache(false)
             ->send($url, $post_data, $header, [], 'get');
+
+        CommonService::getInstance()->log4PHP($resp);
 
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
