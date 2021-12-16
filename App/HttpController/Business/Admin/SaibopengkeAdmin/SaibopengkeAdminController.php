@@ -89,17 +89,16 @@ class SaibopengkeAdminController extends Index
 
         $type === 'success' ? $type = 2 : $type = 4;
 
-        if ($type === 4) {
-            //加15金额
-            RequestUserInfo::create()->where('appId', $this->appid)->update([
-                'money' => QueryBuilder::inc(15)
-            ]);
-        }
-
         try {
             Saibopengke_Data_List_Model::create()->get($id)->update([
                 'status' => $type
             ]);
+            if ($type === 4) {
+                //加15金额
+                RequestUserInfo::create()->where('appId', $this->appid)->update([
+                    'money' => QueryBuilder::inc(15)
+                ]);
+            }
             return $this->writeJson();
         } catch (\Throwable $e) {
             return $this->writeJson(201);
