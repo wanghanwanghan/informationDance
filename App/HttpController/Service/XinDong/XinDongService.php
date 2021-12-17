@@ -771,7 +771,13 @@ class XinDongService extends ServiceBase
     {
         if (empty($code)) return '';
 
-        $scale = VendincScale2020Model::create()->where('code', $code)->get();
+        if (substr($code, 0, 1) === '9') {
+            $where = ['code', $code];
+        } else {
+            $where = ['entname', $code];
+        }
+
+        $scale = VendincScale2020Model::create()->where($where)->get();
 
         return empty($scale) ? '' : $scale->getAttr('label');
     }
@@ -779,6 +785,7 @@ class XinDongService extends ServiceBase
     //2020年营收规模标签转换
     function vendincScaleLabelChange(string $label): array
     {
+        if (empty($label)) return ['未找到', '未找到'];
         if ($label === 'F') return ['F', '负数'];
 
         $label_num = substr($label, 1) - 0;
@@ -828,5 +835,6 @@ class XinDongService extends ServiceBase
 
         return ['A' . $after_change_num, $desc];
     }
+
 
 }

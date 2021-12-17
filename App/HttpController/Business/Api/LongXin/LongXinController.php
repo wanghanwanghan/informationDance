@@ -322,7 +322,7 @@ class LongXinController extends LongXinBase
     }
 
     //仿企名片时的财务数据
-    function getFinanceTemp()
+    function getFinanceTemp(): bool
     {
         $entName = $this->request()->getRequestParam('entName') ?? '';
         $entName = explode(',', $entName);

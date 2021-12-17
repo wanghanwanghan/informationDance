@@ -159,6 +159,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/financesSearchExportDetail', $prefix . 'financesSearchExportDetail');//
             $routeCollector->addRoute(['GET', 'POST'], '/delUserGroupList', $prefix . 'delUserGroupList');//
             $routeCollector->addRoute(['GET', 'POST'], '/editGroupRemarks', $prefix . 'editGroupRemarks');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getVendincScale', $prefix . 'getVendincScale');//
         });
 
         return true;

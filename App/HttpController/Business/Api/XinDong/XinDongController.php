@@ -40,7 +40,7 @@ class XinDongController extends XinDongBase
     }
 
     //控股法人股东的司法风险
-    function getCorporateShareholderRisk()
+    function getCorporateShareholderRisk(): bool
     {
         $entName = $this->request()->getRequestParam('entName');
         $page = $this->request()->getRequestParam('page') ?? 1;
@@ -648,6 +648,33 @@ eof;
             'paging' => null,
             'result' => null,
             'msg' => '1',
+        ]);
+    }
+
+    //
+    function getVendincScale(): bool
+    {
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $entName = explode(',', $entName);
+        if (empty($entName)) {
+            return $this->writeJson(201, null, null, '公司名称不能是空');
+        }
+
+        $res = [];
+
+        foreach ($entName as $ent) {
+            $label = (new XinDongService())->getVendincScale($ent, 2020);
+            $tmp = (new XinDongService())->vendincScaleLabelChange($label);
+            array_unshift($tmp, $ent);
+            $res[] = ['entname' => $tmp[0], 'label' => $tmp[1], 'desc' => $tmp[2]];
+        }
+
+        CommonService::getInstance()->log4PHP($res);
+
+        return $this->checkResponse([
+            'code' => 200,
+            'paging' => null,
+            'result' => $res,
         ]);
     }
 
