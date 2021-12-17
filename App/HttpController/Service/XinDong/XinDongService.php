@@ -772,9 +772,9 @@ class XinDongService extends ServiceBase
         if (empty($code)) return '';
 
         if (substr($code, 0, 1) === '9') {
-            $where = ['code', $code];
+            $where = ['code' => $code];
         } else {
-            $where = ['entname', $code];
+            $where = ['entname' => $code];
         }
 
         $scale = VendincScale2020Model::create()->where($where)->get();
