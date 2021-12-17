@@ -801,7 +801,7 @@ class LongXinController extends LongXinBase
         $res = (new LongXinService())->superSearch($postData);
 
         if (!empty($res['data'])) {
-            //添加规模
+            //添加2020营收规模
             foreach ($res['data'] as $key => $oneEnt) {
                 $res['data'][$key]['vendincScale'] = (new XinDongService())->getVendincScale($oneEnt['UNISCID'], 2020);
             }
