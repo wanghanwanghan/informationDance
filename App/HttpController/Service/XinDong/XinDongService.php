@@ -575,7 +575,7 @@ class XinDongService extends ServiceBase
     }
 
     //二次特征分数
-    function getFeatures($entName)
+    function getFeatures($entName): array
     {
         //查看经营范围
         $postData = ['entName' => $entName];
@@ -774,6 +774,57 @@ class XinDongService extends ServiceBase
         $scale = VendincScale2020Model::create()->where('code', $code)->get();
 
         return empty($scale) ? '' : $scale->getAttr('label');
+    }
+
+    //2020年营收规模标签转换
+    function vendincScaleLabelChange(string $label): string
+    {
+        if ($label === 'F') return $label;
+
+        $label_num = substr($label, 1) - 0;
+
+        switch ($label_num) {
+            case $label_num <= 2:
+                $after_change_num = 1;
+                break;
+            case $label_num <= 4:
+                $after_change_num = 2;
+                break;
+            case $label_num <= 5:
+                $after_change_num = 3;
+                break;
+            case $label_num <= 7:
+                $after_change_num = 4;
+                break;
+            case $label_num <= 9:
+                $after_change_num = 5;
+                break;
+            case $label_num <= 12:
+                $after_change_num = 6;
+                break;
+            case $label_num <= 14:
+                $after_change_num = 7;
+                break;
+            case $label_num <= 18:
+                $after_change_num = 8;
+                break;
+            case $label_num <= 23:
+                $after_change_num = 9;
+                break;
+            case $label_num <= 27:
+                $after_change_num = 10;
+                break;
+            case $label_num <= 32:
+                $after_change_num = 11;
+                break;
+            case $label_num <= 36:
+                $after_change_num = 12;
+                break;
+            default:
+                $after_change_num = 13;
+        }
+
+        return 'A' . $after_change_num;
     }
 
 }
