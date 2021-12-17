@@ -14,6 +14,6 @@ class VendincScale2020Model extends ModelBase
     {
         parent::__construct($data);
 
-        $this->connectionName = CreateConf::getInstance()->getConf('env.mysqlDatabaseEntDb');
+        $this->connectionName = CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3');
     }
 }
