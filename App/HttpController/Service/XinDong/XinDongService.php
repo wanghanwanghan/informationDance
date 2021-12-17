@@ -767,8 +767,10 @@ class XinDongService extends ServiceBase
     }
 
     //2020年营收规模
-    function getVendincScale(string $code, int $year = 2020): ?string
+    function getVendincScale(?string $code, int $year = 2020): ?string
     {
+        if (empty($code)) return '';
+
         $scale = VendincScale2020Model::create()->where('code', $code)->get();
 
         return empty($scale) ? '' : $scale->getAttr('label');
