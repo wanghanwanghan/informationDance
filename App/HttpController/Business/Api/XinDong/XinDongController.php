@@ -669,8 +669,6 @@ eof;
             $res[] = ['entname' => $tmp[0], 'label' => $tmp[1], 'desc' => $tmp[2]];
         }
 
-        CommonService::getInstance()->log4PHP($res);
-
         return $this->checkResponse([
             'code' => 200,
             'paging' => null,
