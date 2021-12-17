@@ -826,7 +826,7 @@ class XinDongService extends ServiceBase
 
         $desc = control::getUuid(8);
 
-        return ['A' . $after_change_num, 'desc' => $desc];
+        return ['A' . $after_change_num, $desc];
     }
 
 }
