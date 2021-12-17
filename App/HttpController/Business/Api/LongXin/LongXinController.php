@@ -705,7 +705,7 @@ class LongXinController extends LongXinBase
     }
 
     //超级搜索
-    function superSearch()
+    function superSearch(): bool
     {
         $pindex = $this->request()->getRequestParam('page') ?? '1';
 
@@ -798,6 +798,14 @@ class LongXinController extends LongXinBase
         $this->moduleNum = 53;
 
         $res = (new LongXinService())->superSearch($postData);
+
+
+        CommonService::getInstance()->log4PHP('在这里');
+        CommonService::getInstance()->log4PHP($res);
+
+
+
+
 
         return $this->checkResponse($res);
     }
