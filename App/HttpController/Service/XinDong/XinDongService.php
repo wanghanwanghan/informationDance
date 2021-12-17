@@ -3,6 +3,7 @@
 namespace App\HttpController\Service\XinDong;
 
 use App\Csp\Service\CspService;
+use App\HttpController\Models\BusinessBase\VendincScale2020Model;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaYanYuan\FaYanYuanService;
@@ -763,6 +764,14 @@ class XinDongService extends ServiceBase
             'fz_list' => $fz_list,
             'fm_list' => $fm_list,
         ];
+    }
+
+    //2020年营收规模
+    function getVendincScale(string $code, int $year = 2020): ?string
+    {
+        $scale = VendincScale2020Model::create()->where('code', $code)->get();
+
+        return empty($scale) ? '' : $scale->getAttr('label');
     }
 
 }

@@ -135,7 +135,7 @@ class LongXinService extends ServiceBase
     }
 
     //整理请求结果
-    private function checkResp($res)
+    private function checkResp($res): array
     {
         $res['Paging'] = null;
 

@@ -7,6 +7,7 @@ use App\HttpController\Models\Api\Charge;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Pay\ChargeService;
+use App\HttpController\Service\XinDong\XinDongService;
 use Carbon\Carbon;
 use EasySwoole\ORM\DbManager;
 use wanghanwanghan\someUtils\control;
@@ -799,13 +800,12 @@ class LongXinController extends LongXinBase
 
         $res = (new LongXinService())->superSearch($postData);
 
-
-        CommonService::getInstance()->log4PHP('在这里');
-        CommonService::getInstance()->log4PHP($res);
-
-
-
-
+        if (!empty($res['data'])) {
+            //添加规模
+            foreach ($res['data'] as $key => $oneEnt) {
+                $res['data'][$key]['vendincScale'] = (new XinDongService())->getVendincScale($oneEnt['UNISCID'], 2020);
+            }
+        }
 
         return $this->checkResponse($res);
     }
