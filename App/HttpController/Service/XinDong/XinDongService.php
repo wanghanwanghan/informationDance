@@ -777,9 +777,9 @@ class XinDongService extends ServiceBase
     }
 
     //2020年营收规模标签转换
-    function vendincScaleLabelChange(string $label): string
+    function vendincScaleLabelChange(string $label): array
     {
-        if ($label === 'F') return $label;
+        if ($label === 'F') return ['F', '负数'];
 
         $label_num = substr($label, 1) - 0;
 
@@ -824,7 +824,9 @@ class XinDongService extends ServiceBase
                 $after_change_num = 13;
         }
 
-        return 'A' . $after_change_num;
+        $desc = control::getUuid(8);
+
+        return ['A' . $after_change_num, 'desc' => $desc];
     }
 
 }
