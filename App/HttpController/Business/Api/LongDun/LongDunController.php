@@ -6,6 +6,7 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\User\UserService;
+use App\HttpController\Service\XinDong\XinDongService;
 use EasySwoole\Pool\Manager;
 use wanghanwanghan\someUtils\control;
 
@@ -675,26 +676,12 @@ class LongDunController extends LongDunBase
 
         $res = (new LongDunService())->get($this->baseUrl . 'ECIV4/GetBasicDetailsByName', $postData);
 
-        //2018年营业收入区间
-        $mysql = CreateConf::getInstance()->getConf('env.mysqlDatabase');
-        try {
-            $obj = Manager::getInstance()->get($mysql)->getObj();
-            $obj->queryBuilder()->where('entName', $entName)->get('qiyeyingshoufanwei');
-            $range = $obj->execBuilder();
-            Manager::getInstance()->get($mysql)->recycleObj($obj);
-        } catch (\Throwable $e) {
-            $this->writeErr($e, __FUNCTION__);
-            $range = [];
-        }
+        //2020营收范围
+        $label = (new XinDongService())->getVendincScale($entName, 2020);
+        $tmp = (new XinDongService())->vendincScaleLabelChange($label);
+        array_unshift($tmp, $entName);
 
-        $vendinc = [];
-
-        foreach ($range as $one) {
-            $vendinc[] = $one;
-        }
-
-        !empty($vendinc) ?: $vendinc = '';
-        $res['Result']['VENDINC'] = $vendinc;
+        $res['Result']['VENDINC'] = ['entname' => $tmp[0], 'label' => $tmp[1], 'desc' => $tmp[2]];
 
         (!isset($res['Result']['StartDate']) || empty($res['Result']['StartDate'])) ?: $res['Result']['StartDate'] = substr($res['Result']['StartDate'], 0, 10);
         (!isset($res['Result']['CheckDate']) || empty($res['Result']['CheckDate'])) ?: $res['Result']['CheckDate'] = substr($res['Result']['CheckDate'], 0, 10);

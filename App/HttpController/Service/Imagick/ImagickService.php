@@ -44,6 +44,7 @@ class ImagickService
         return intval($num);
     }
 
+    //取返色
     function colorInverse($color): string
     {
         $color = str_replace('#', '', $color);
