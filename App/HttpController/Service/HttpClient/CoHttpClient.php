@@ -52,6 +52,10 @@ class CoHttpClient extends ServiceBase
         //设置head头
         empty($headers) ?: $request->setHeaders($headers, true, false);
 
+        CommonService::getInstance()->log4PHP($url);
+        CommonService::getInstance()->log4PHP($postData);
+        CommonService::getInstance()->log4PHP($headers);
+
         try {
             //发送请求
             if ($method === 'POST') $data = $request->post($postData);
@@ -59,6 +63,7 @@ class CoHttpClient extends ServiceBase
             if ($method === 'GET') $data = $request->get();
             //整理结果
             $data = $data->getBody();
+            CommonService::getInstance()->log4PHP($data);
         } catch (\Exception $e) {
             $this->writeErr($e, 'CoHttpClient');
             return ['coHttpErr' => 'error'];
