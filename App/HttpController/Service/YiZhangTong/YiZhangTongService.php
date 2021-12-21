@@ -24,10 +24,20 @@ class YiZhangTongService extends ServiceBase
     function __construct()
     {
         parent::__construct();
+
         $this->test_url = 'https://smelp-wg-web-stg1.ocft.com/smelp-wg/smelp_wg';
         $this->test_app_id = 'APP_1400';
         $this->test_channel = '1009';
-        $this->test_app_secret = 'dHKq/fx1/7F9lUWkHhv1Dw==';
+        $this->test_app_secret = 'dHKq/fx1/7F9lUWkHhv1Dw==';//C7uPeZqYKjFnPtHSvXxIBw==
+        //生产环境
+        $this->test_rsa_pub = <<<Eof
+-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDCDBjliWG6EfL8VnTSSoNAWeOZ
++5Z0Rnn9m5ifcF260BUwqzU0o8Ejs5lo9bRFbO6S5aFtZ8qmHS8qyQ0d20sQsXuI
+3JHQMoKkwRNl/rzcuI1lF4goFYA70uQvWWdaNlDsLqa2/+az5FLgLA2i9QRqWsrN
+9ThVymMplwpStSFlaQIDAQAB
+-----END PUBLIC KEY-----
+Eof;
         $this->test_rsa_pub = <<<str
 -----BEGIN PUBLIC KEY-----
 MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZKs+rCLRSPeS0ioV9lLDztKF3
@@ -39,8 +49,10 @@ str;
         $this->time = time() . mt_rand(100, 999);
 
         $this->ak = control::getUuid(16);
+
         $pkey = openssl_pkey_get_public($this->test_rsa_pub);
         openssl_public_encrypt($this->ak, $send_ak, $pkey);
+
         $this->send_ak = base64_encode($send_ak);
     }
 

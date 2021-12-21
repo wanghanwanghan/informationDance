@@ -49,12 +49,6 @@ class YiZhangTongController extends ProvideBase
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
-        CommonService::getInstance()->log4PHP([
-            '接口名称' => __FUNCTION__,
-            '参数' => '',
-            '返回结果' => $res,
-        ]);
-
         return $this->checkResponse($res);
     }
 
@@ -79,12 +73,6 @@ class YiZhangTongController extends ProvideBase
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
-        CommonService::getInstance()->log4PHP([
-            '接口名称' => __FUNCTION__,
-            '参数' => $post_data,
-            '返回结果' => $res,
-        ]);
-
         return $this->checkResponse($res);
     }
 
@@ -108,12 +96,6 @@ class YiZhangTongController extends ProvideBase
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-
-        CommonService::getInstance()->log4PHP([
-            '接口名称' => __FUNCTION__,
-            '参数' => $post_data,
-            '返回结果' => $res,
-        ]);
 
         return $this->checkResponse($res);
     }
