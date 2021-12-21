@@ -11,6 +11,7 @@ class YiZhangTongService extends ServiceBase
     private $test_url;
     private $test_app_id;
     private $test_channel;
+    private $test_channel_code;
     private $test_app_secret;
     private $test_rsa_pub;
 
@@ -25,9 +26,11 @@ class YiZhangTongService extends ServiceBase
     {
         parent::__construct();
 
+        //https://smew.ocft.com/smelp-wg/smelp_wg
         $this->test_url = 'https://smelp-wg-web-stg1.ocft.com/smelp-wg/smelp_wg';
         $this->test_app_id = 'APP_1400';
         $this->test_channel = '1009';
+        $this->test_channel_code = 'XWD';
         $this->test_app_secret = 'dHKq/fx1/7F9lUWkHhv1Dw==';//C7uPeZqYKjFnPtHSvXxIBw==
         //生产环境
         $this->test_rsa_pub = <<<Eof
@@ -97,7 +100,7 @@ str;
         $ser_id = '1001100057';
 
         $msg = $this->createMsg([
-            'channelCode' => 'XWD',
+            'channelCode' => $this->test_channel_code,
         ]);
 
         $post_data = [
@@ -122,7 +125,7 @@ str;
     function getLogin(array $msg)
     {
         $ser_id = '1001100058';
-        $msg['channelCode'] = 'XWD';
+        $msg['channelCode'] = $this->test_channel_code;
 
         $msg = $this->createMsg(array_filter($msg, function ($val) {
             return !(($val === '' || $val === null));
@@ -150,7 +153,7 @@ str;
     function getOrderList(array $msg)
     {
         $ser_id = '1001100060';
-        $msg['channelAgent'] = 'XWD';
+        $msg['channelAgent'] = $this->test_channel_code;
 
         $msg = $this->createMsg(array_filter($msg));
 
