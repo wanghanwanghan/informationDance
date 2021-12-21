@@ -594,7 +594,10 @@ class XinDongService extends ServiceBase
                 'UNISCID' => $ent_info->getAttr('UNISCID'),
                 'ishistory' => 1,
             ])->all();
-            $ent_info->latlng = EntDbNacaoClass::create()->where('entid', $ent_info->getAttr('entid'))->get();
+            $ent_info->latlng = EntDbNacaoClass::create()
+                ->where('entid', $ent_info->getAttr('entid'))
+                ->field(['lat', 'lng'])
+                ->get();
         }
 
         return $this->checkResp(200, null, $ent_info, '查询成功');
