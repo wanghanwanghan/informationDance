@@ -590,13 +590,10 @@ class XinDongService extends ServiceBase
 
         if (!empty($ent_info)) {
             //补充信息
-            $ent_info->extension = EntDbNacao::create()->where('UNISCID', $ent_info->getAttr('UNISCID'))->all();
-            if (!empty($ent_info->extension)) {
-                foreach ($ent_info->extension as $index => $oneEntInfo) {
-                    $ent_info->extension[$index]->latlng = EntDbNacaoClass::create()
-                        ->where('entid', $oneEntInfo->getAttr('entid'))->get();
-                }
-            }
+            $ent_info->ishistory = EntDbNacao::create()->where([
+                'UNISCID' => $ent_info->getAttr('UNISCID'),
+                'ishistory' => 1,
+            ])->all();
             $ent_info->latlng = EntDbNacaoClass::create()->where('entid', $ent_info->getAttr('entid'))->get();
         }
 
