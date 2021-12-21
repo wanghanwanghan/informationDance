@@ -180,6 +180,8 @@ class LongXinService extends ServiceBase
 
             $arr['version'] = 'A1';
 
+            $this->sendHeaders['authorization'] = $this->createToken($arr);
+
             $haha = (new CoHttpClient())
                 ->useCache(true)
                 ->send($this->baseUrl . 'company_detail/', $arr, $this->sendHeaders);
