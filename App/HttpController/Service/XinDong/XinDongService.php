@@ -572,8 +572,10 @@ class XinDongService extends ServiceBase
     }
 
     //非企信息
-    function getNaCaoRegisterInfo($entName)
+    function getNaCaoRegisterInfo($post_data): array
     {
+        $entName = $post_data['entName'];
+
         if (empty($entName)) return $this->checkResp(200, null, null, '查询条件是空');
 
         $check = mb_substr($entName, 0, 5);
