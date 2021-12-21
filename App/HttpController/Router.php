@@ -448,6 +448,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/test', $prefix . 'test');
             $routeCollector->addRoute(['GET', 'POST'], '/getInv', $prefix . 'getInv');
             $routeCollector->addRoute(['GET', 'POST'], '/getFpxzStatus', $prefix . 'getFpxzStatus');
+            $routeCollector->addRoute(['GET', 'POST'], '/fadadatest', $prefix . 'fadadatest');
         });
 
         return true;

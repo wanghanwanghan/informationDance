@@ -5,6 +5,7 @@ namespace App\HttpController\Business\Test;
 use App\HttpController\Business\BusinessBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\DaXiang\DaXiangService;
+use App\HttpController\Service\FaDaDa\FaDaDaService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
@@ -20,6 +21,12 @@ class TestController extends BusinessBase
         return true;
     }
 
+    function fadadatest()
+    {
+        (new FaDaDaService())->getRegister([
+            'entName' => '北京每日信动科技有限公司'
+        ]);
+    }
 
     function getInv(): bool
     {
