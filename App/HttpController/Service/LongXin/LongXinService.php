@@ -167,8 +167,6 @@ class LongXinService extends ServiceBase
             ->useCache(true)
             ->send($this->baseUrl . 'company_detail/', $arr, $this->sendHeaders);
 
-        CommonService::getInstance()->log4PHP($res);
-
         $this->recodeSourceCurl([
             'sourceName' => $this->sourceName,
             'apiName' => last(explode('/', trim($this->baseUrl . 'company_detail/', '/'))),
