@@ -4,6 +4,9 @@ namespace App\HttpController\Service\XinDong;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Models\BusinessBase\VendincScale2020Model;
+use App\HttpController\Models\EntDb\EntDbNacao;
+use App\HttpController\Models\EntDb\EntDbNacaoBasic;
+use App\HttpController\Models\EntDb\EntDbNacaoClass;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaYanYuan\FaYanYuanService;
@@ -571,7 +574,30 @@ class XinDongService extends ServiceBase
     //非企信息
     function getNaCaoRegisterInfo($entName)
     {
+        if (empty($entName)) return $this->checkResp(200, null, null, '查询条件是空');
 
+        $check = mb_substr($entName, 0, 5);
+
+        $basic_model = EntDbNacaoBasic::create();
+
+        is_numeric($check) ?
+            $basic_model->where('UNISCID', $entName) :
+            $basic_model->where('ENTNAME', $entName);
+
+        $ent_info = $basic_model->get();
+
+        if (!empty($ent_info)) {
+            //补充信息
+            $ent_info->extension = EntDbNacao::create()->where('UNISCID', $ent_info->getAttr('UNISCID'))->all();
+            if (!empty($ent_info->extension)) {
+                foreach ($ent_info->extension as $oneEntInfo) {
+                    $oneEntInfo->latlng = EntDbNacaoClass::create()->where('entid', $oneEntInfo->getAttr('entid'))->get();
+                }
+            }
+            $ent_info->latlng = EntDbNacaoClass::create()->where('entid', $ent_info->getAttr('entid'))->get();
+        }
+
+        return $this->checkResp(200, null, $ent_info, '查询成功');
     }
 
     //二次特征分数
@@ -793,55 +819,55 @@ class XinDongService extends ServiceBase
         switch ($label_num) {
             case $label_num <= 2:
                 $after_change_num = 1;
-                $desc='微型，一般指规模在100万以下';
+                $desc = '微型，一般指规模在100万以下';
                 break;
             case $label_num <= 4:
                 $after_change_num = 2;
-                $desc='小型C类，一般指规模在100万以上，500万以下';
+                $desc = '小型C类，一般指规模在100万以上，500万以下';
                 break;
             case $label_num <= 5:
                 $after_change_num = 3;
-                $desc='小型B类，一般指规模在500万以上，1000万以下';
+                $desc = '小型B类，一般指规模在500万以上，1000万以下';
                 break;
             case $label_num <= 7:
                 $after_change_num = 4;
-                $desc='小型A类，一般指规模在1000万以上，3000万以下';
+                $desc = '小型A类，一般指规模在1000万以上，3000万以下';
                 break;
             case $label_num <= 9:
                 $after_change_num = 5;
-                $desc='中型C类，一般指规模在3000万以上，5000万以下';
+                $desc = '中型C类，一般指规模在3000万以上，5000万以下';
                 break;
             case $label_num <= 12:
                 $after_change_num = 6;
-                $desc='中型B类，一般指规模在5000万以上，8000万以下';
+                $desc = '中型B类，一般指规模在5000万以上，8000万以下';
                 break;
             case $label_num <= 14:
                 $after_change_num = 7;
-                $desc='中型A类，一般指规模在8000万以上，1亿以下';
+                $desc = '中型A类，一般指规模在8000万以上，1亿以下';
                 break;
             case $label_num <= 18:
                 $after_change_num = 8;
-                $desc='大型C类，一般指规模在1亿以上，5亿以下';
+                $desc = '大型C类，一般指规模在1亿以上，5亿以下';
                 break;
             case $label_num <= 23:
                 $after_change_num = 9;
-                $desc='大型B类，一般指规模在5亿以上，10亿以下';
+                $desc = '大型B类，一般指规模在5亿以上，10亿以下';
                 break;
             case $label_num <= 27:
                 $after_change_num = 10;
-                $desc='大型A类，一般指规模在10亿以上，50亿以下';
+                $desc = '大型A类，一般指规模在10亿以上，50亿以下';
                 break;
             case $label_num <= 32:
                 $after_change_num = 11;
-                $desc='特大型C类，一般指规模在50亿以上，100亿以下';
+                $desc = '特大型C类，一般指规模在50亿以上，100亿以下';
                 break;
             case $label_num <= 36:
                 $after_change_num = 12;
-                $desc='特大型B类，一般指规模在100亿以上，500亿以下';
+                $desc = '特大型B类，一般指规模在100亿以上，500亿以下';
                 break;
             default:
                 $after_change_num = 13;
-                $desc='特大型A类，一般指规模在500亿以上';
+                $desc = '特大型A类，一般指规模在500亿以上';
         }
 
         return ['A' . $after_change_num, $desc];

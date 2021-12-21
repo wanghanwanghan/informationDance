@@ -1146,5 +1146,22 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getNaCaoRegisterInfo(): bool
+    {
+        $postData = [
+            'entName' => trim($this->getRequestData('entName')),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new XinDongService())
+                ->setCheckRespFlag(true)
+                ->getNaCaoRegisterInfo($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
 
 }
