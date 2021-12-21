@@ -2,7 +2,6 @@
 
 namespace App\HttpController\Service\YiZhangTong;
 
-use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use wanghanwanghan\someUtils\control;
@@ -140,8 +139,6 @@ str;
     {
         $ser_id = '1001100060';
         $msg['channelAgent'] = 'XWD';
-
-        CommonService::getInstance()->log4PHP(array_filter($msg));
 
         $msg = $this->createMsg(array_filter($msg));
 

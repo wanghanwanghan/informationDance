@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\YiZhangTong;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\YiZhangTong\YiZhangTongService;
 use wanghanwanghan\someUtils\control;
 
@@ -48,6 +49,12 @@ class YiZhangTongController extends ProvideBase
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
+        CommonService::getInstance()->log4PHP([
+            '接口名称' => __FUNCTION__,
+            '参数' => '',
+            '返回结果' => $res,
+        ]);
+
         return $this->checkResponse($res);
     }
 
@@ -72,6 +79,12 @@ class YiZhangTongController extends ProvideBase
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
+        CommonService::getInstance()->log4PHP([
+            '接口名称' => __FUNCTION__,
+            '参数' => $post_data,
+            '返回结果' => $res,
+        ]);
+
         return $this->checkResponse($res);
     }
 
@@ -95,6 +108,12 @@ class YiZhangTongController extends ProvideBase
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        CommonService::getInstance()->log4PHP([
+            '接口名称' => __FUNCTION__,
+            '参数' => $post_data,
+            '返回结果' => $res,
+        ]);
 
         return $this->checkResponse($res);
     }
