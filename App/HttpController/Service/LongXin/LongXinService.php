@@ -12,6 +12,7 @@ use App\HttpController\Service\TaoShu\TaoShuService;
 use App\Task\Service\TaskService;
 use App\Task\TaskList\EntDbTask\insertEnt;
 use App\Task\TaskList\EntDbTask\insertFinance;
+use Carbon\Carbon;
 
 class LongXinService extends ServiceBase
 {
@@ -174,6 +175,24 @@ class LongXinService extends ServiceBase
             'requestData' => $arr,
             'responseData' => $res,
         ], true);
+
+        if (Carbon::now()->format('Ym') - 0 === 202112) {
+
+            $arr['version'] = 'A1';
+
+            $haha = (new CoHttpClient())
+                ->useCache(true)
+                ->send($this->baseUrl . 'company_detail/', $arr, $this->sendHeaders);
+
+            $this->recodeSourceCurl([
+                'sourceName' => $this->sourceName,
+                'apiName' => last(explode('/', trim($this->baseUrl . 'company_detail/', '/'))),
+                'requestUrl' => trim(trim($this->baseUrl . 'company_detail/'), '/'),
+                'requestData' => $arr,
+                'responseData' => $haha,
+            ], true);
+
+        }
 
         if (!empty($res) && isset($res['data']) && !empty($res['data'])) {
             $tmp = $res['data'];
