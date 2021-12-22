@@ -21,11 +21,25 @@ class TestController extends BusinessBase
         return true;
     }
 
-    function fadadatest()
+    function fadadatest(): bool
     {
-        (new FaDaDaService())->getRegister([
-            'entName' => '北京每日信动科技有限公司'
-        ]);
+        $entname = $this->request()->getRequestParam('entname');
+
+        $res = (new FaDaDaService())->getRegister(['entName' => $entname]);
+
+        $cust_id = $res['result'];
+
+        $arr['cert_flag'] = 1;
+        $arr['customer_id'] = $cust_id;
+        $arr['file_name'] = 1;
+        $arr['file_size'] = 1;
+        $arr['noper_time'] = 1;
+        $arr['original_sha256'] = 1;
+        $arr['preservation_desc'] = 1;
+        $arr['preservation_name'] = 1;
+        $arr['transaction_id'] = 1;
+
+        return $this->writeJson(200, null, $arr);
     }
 
     function getInv(): bool
