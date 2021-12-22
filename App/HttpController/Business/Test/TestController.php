@@ -29,15 +29,16 @@ class TestController extends BusinessBase
 
         $cust_id = $res['result'];
 
-        $arr['cert_flag'] = 1;
         $arr['customer_id'] = $cust_id;
-        $arr['file_name'] = 1;
-        $arr['file_size'] = 1;
-        $arr['noper_time'] = 1;
-        $arr['original_sha256'] = 1;
-        $arr['preservation_desc'] = 1;
-        $arr['preservation_name'] = 1;
-        $arr['transaction_id'] = 1;
+        $arr['preservation_desc'] = $entname . '哈希存证';
+        $arr['preservation_name'] = $entname;
+        $arr['file_name'] = md5($entname);
+        $arr['noper_time'] = control::string2Number(md5($entname)) . '';
+        $arr['file_size'] = control::string2Number(md5($entname)) . '';
+        $arr['original_sha256'] = hash('sha256', $entname);
+        $arr['transaction_id'] = md5($entname);
+        $arr['cert_flag'] = '1';
+
 
         return $this->writeJson(200, null, $arr);
     }
