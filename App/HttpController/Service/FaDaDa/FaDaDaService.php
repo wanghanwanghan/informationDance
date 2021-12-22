@@ -62,10 +62,8 @@ class FaDaDaService extends ServiceBase
         return true;
     }
 
-    private function checkResp(string $res): array
+    private function checkResp(array $res): array
     {
-        $res = jsonDecode($res);
-
         if (isset($res['code']) && $res['code'] - 0 === 1) {
             $code = 200;
         } else {
