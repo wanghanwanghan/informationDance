@@ -31,7 +31,7 @@ class TestController extends BusinessBase
 
         $arr['customer_id'] = $cust_id;
         $arr['preservation_desc'] = $entname . '哈希存证';
-        $arr['preservation_name'] = $entname;
+        $arr['preservation_name'] = $entname . '哈希存证';
         $arr['file_name'] = md5($entname);
         $arr['noper_time'] = control::string2Number(md5($entname)) . '';
         $arr['file_size'] = control::string2Number(md5($entname)) . '';
