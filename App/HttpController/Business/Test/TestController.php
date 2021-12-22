@@ -40,11 +40,16 @@ class TestController extends BusinessBase
         $arr['transaction_id'] = md5($entname);
         $arr['cert_flag'] = '1';
 
-        $res = (new FaDaDaService())->setCheckRespFlag(true)->getHashDeposit($arr);
 
-        $arr['hash_deposit_id'] = $res['result'];
+        $res = (new FaDaDaService())->setCheckRespFlag(true)->getCustomSignature([
+            'content' => $entname,
+            'customer_id' => '01E5E35C9B0DA89ED18E0FA1903A2F7E',
+        ]);
 
-        FaDaDaHashDepositModel::create()->data($arr)->save();
+        CommonService::getInstance()->log4PHP($res);
+
+
+
 
         return $this->writeJson(200, null, $res);
     }

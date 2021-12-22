@@ -2,11 +2,9 @@
 
 namespace App\HttpController\Service\FaDaDa;
 
-use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use Carbon\Carbon;
-use wanghanwanghan\someUtils\control;
 
 class FaDaDaService extends ServiceBase
 {
@@ -26,7 +24,7 @@ class FaDaDaService extends ServiceBase
     //实名存证方案基础对接流程：
     //一、【注册账号+实名存证】
     //1. 注册账号✅
-    //2. 实名存证/哈希存证（注：设置cert_flag=1自动申请编号证书）
+    //2. 实名存证/哈希存证（注：设置cert_flag=1自动申请编号证书）✅
     //3. 印章上传/自定义印章
     //二、【生成合同+发起签署】
     //1. 合同上传/模板上传+模板填充
@@ -178,10 +176,36 @@ class FaDaDaService extends ServiceBase
             ->useCache($this->curl_use_cache)
             ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
 
-        CommonService::getInstance()->log4PHP($resp);
-
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
+    //
+    function getCustomSignature(array $arr)
+    {
+        $url_ext = 'custom_signature.api';
+
+        $section_1 = $this->app_id . strtoupper(md5($this->timestamp));
+
+        $section_2 = strtoupper(sha1($this->app_secret . $arr['content'] . $arr['customer_id']));
+
+        $section_3 = strtoupper(sha1($section_1 . $section_2));
+
+        $msg_digest = base64_encode($section_3);
+
+        $post_data = [
+            'app_id' => $this->app_id,
+            'timestamp' => $this->timestamp,
+            'v' => '2.0',
+            'msg_digest' => $msg_digest,
+            'customer_id' => $arr['customer_id'],
+            'content' => $arr['content'],
+        ];
+
+        $resp = (new CoHttpClient())
+            ->useCache($this->curl_use_cache)
+            ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
+
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
 
 }
