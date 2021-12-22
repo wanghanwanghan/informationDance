@@ -42,7 +42,7 @@ class TestController extends BusinessBase
 
 
         $res = (new FaDaDaService())->setCheckRespFlag(true)->getCustomSignature([
-            'content' => $entname,
+            'content' => '肖鹃收购央行确认章',
             'customer_id' => '01E5E35C9B0DA89ED18E0FA1903A2F7E',
         ]);
 
