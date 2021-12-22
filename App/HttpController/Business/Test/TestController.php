@@ -25,7 +25,7 @@ class TestController extends BusinessBase
     {
         $entname = $this->request()->getRequestParam('entname');
 
-        $res = (new FaDaDaService())->getRegister(['entName' => $entname]);
+        $res = (new FaDaDaService())->setCheckRespFlag(true)->getRegister(['entName' => $entname]);
 
         $cust_id = $res['result'];
 
