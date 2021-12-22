@@ -39,8 +39,12 @@ class TestController extends BusinessBase
         $arr['transaction_id'] = md5($entname);
         $arr['cert_flag'] = '1';
 
+        $res = (new FaDaDaService())->setCheckRespFlag(true)->getHashDeposit($arr);
 
-        return $this->writeJson(200, null, $arr);
+
+
+
+        return $this->writeJson(200, null, $res);
     }
 
     function getInv(): bool
