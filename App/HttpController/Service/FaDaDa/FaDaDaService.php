@@ -178,6 +178,8 @@ class FaDaDaService extends ServiceBase
             ->useCache($this->curl_use_cache)
             ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
 
+        CommonService::getInstance()->log4PHP($resp);
+
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
