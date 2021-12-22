@@ -46,6 +46,10 @@ class CoHttpClient extends ServiceBase
             $time = 60;
         }
 
+        if (isset($options['enableSSL'])) {
+            $request->setEnableSSL(!!$options['enableSSL']);
+        }
+
         $request->setTimeout($time);
         $request->setConnectTimeout($time);
 

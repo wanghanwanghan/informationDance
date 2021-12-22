@@ -65,7 +65,7 @@ class FaDaDaService extends ServiceBase
 
     }
 
-    private function getHeader(string $type): array
+    private function getHeader(string $type = ''): array
     {
         switch (strtolower($type)) {
             case 'json':
@@ -111,7 +111,7 @@ class FaDaDaService extends ServiceBase
 
         $resp = (new CoHttpClient())
             ->useCache(false)
-            ->send($this->url . $url_ext, $post_data, $this->getHeader('form'));
+            ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
 
         CommonService::getInstance()->log4PHP($resp);
 
