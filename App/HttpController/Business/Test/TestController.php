@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Test;
 
 use App\HttpController\Business\BusinessBase;
+use App\HttpController\Models\Api\FaDaDaHashDepositModel;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\DaXiang\DaXiangService;
 use App\HttpController\Service\FaDaDa\FaDaDaService;
@@ -41,8 +42,9 @@ class TestController extends BusinessBase
 
         $res = (new FaDaDaService())->setCheckRespFlag(true)->getHashDeposit($arr);
 
+        $arr['hash_deposit_id'] = $res['result'];
 
-
+        FaDaDaHashDepositModel::create()->data($arr)->save();
 
         return $this->writeJson(200, null, $res);
     }
