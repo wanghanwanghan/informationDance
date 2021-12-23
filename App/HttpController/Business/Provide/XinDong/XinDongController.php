@@ -1180,4 +1180,26 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getEntNicName(): bool
+    {
+        $postData = [
+            'entName' => trim($this->getRequestData('entName')),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getEntDetail($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        if (!empty($res[$this->cspKey]['result']['BASIC'])) {
+            $res[$this->cspKey]['result'] = $res[$this->cspKey]['result']['BASIC']['nic_name'] ?? '';
+        }
+
+        return $this->checkResponse($res);
+    }
+
+
 }

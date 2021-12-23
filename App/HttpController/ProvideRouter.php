@@ -164,6 +164,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/vcQueryDetail', $prefix . 'vcQueryDetail');//投融快讯
             $routeCollector->addRoute(['GET', 'POST'], '/getNaCaoRegisterInfo', $prefix . 'getNaCaoRegisterInfo');//非企业信息
             $routeCollector->addRoute(['GET', 'POST'], '/getEntDetail', $prefix . 'getEntDetail');//企业详情
+            $routeCollector->addRoute(['GET', 'POST'], '/getEntNicName', $prefix . 'getEntNicName');//四级分类
 
         });
 
