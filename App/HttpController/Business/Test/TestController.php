@@ -8,6 +8,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\DaXiang\DaXiangService;
 use App\HttpController\Service\FaDaDa\FaDaDaService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
+use App\HttpController\Service\HuiCheJian\HuiCheJianService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\QianQi\QianQiService;
@@ -24,32 +25,19 @@ class TestController extends BusinessBase
 
     function fadadatest(): bool
     {
-        $entname = $this->request()->getRequestParam('entname');
+        $data = [
+            'entName' => '深圳市碧桂融鑫六十二号投资管理合伙企业（有限合伙）',
+            'socialCredit' => '123456789012345678',
+            'legalPerson' => '王瀚',
+            'idCard' => '111111111111111111',
+            'phone' => '13800138000',
+            'region' => '13302000000',
+            'address' => '河北省邢台市桥西区达活泉11号楼901',
+            'requestId' => control::getUuid(),//海光用的，没啥用，随便传
+        ];
 
-        $res = (new FaDaDaService())->setCheckRespFlag(true)->getRegister(['entName' => $entname]);
-
-        $cust_id = $res['result'];
-
-        $arr['customer_id'] = $cust_id;
-        $arr['preservation_desc'] = $entname . '哈希存证';
-        $arr['preservation_name'] = $entname . '哈希存证';
-        $arr['file_name'] = md5($entname);
-        $arr['noper_time'] = control::string2Number(md5($entname)) . '';
-        $arr['file_size'] = control::string2Number(md5($entname)) . '';
-        $arr['original_sha256'] = hash('sha256', $entname);
-        $arr['transaction_id'] = md5($entname);
-        $arr['cert_flag'] = '1';
-
-
-        $res = (new FaDaDaService())->setCheckRespFlag(true)->getCustomSignature([
-            'content' => '肖鹃收购央行确认章',
-            'customer_id' => '01E5E35C9B0DA89ED18E0FA1903A2F7E',
-        ]);
-
-        CommonService::getInstance()->log4PHP($res);
-
-
-
+        $res = (new HuiCheJianService())
+            ->setCheckRespFlag(true)->getAuthPdf($data);
 
         return $this->writeJson(200, null, $res);
     }

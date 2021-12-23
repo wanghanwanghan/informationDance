@@ -27,6 +27,7 @@ class ProvideRouter
         $this->ShuMengRouterV1($routeCollector);
         $this->BaiXiangRouterV1($routeCollector);
         $this->YiZhangTongRouterV1($routeCollector);
+        $this->FaDaDaRouterV1($routeCollector);
         $this->Notify($routeCollector);
     }
 
@@ -317,6 +318,17 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getProductList', $prefix . 'getProductList');
             $routeCollector->addRoute(['GET', 'POST'], '/getLogin', $prefix . 'getLogin');
             $routeCollector->addRoute(['GET', 'POST'], '/getOrderList', $prefix . 'getOrderList');
+        });
+
+        return true;
+    }
+
+    private function FaDaDaRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Provide/FaDaDa/FaDaDaController/';
+
+        $routeCollector->addGroup('/fdd', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getAuthFile', $prefix . 'getAuthFile');
         });
 
         return true;

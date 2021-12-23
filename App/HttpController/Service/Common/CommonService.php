@@ -123,7 +123,7 @@ class CommonService extends ServiceBase
     }
 
     //创建验证码
-    function createVerifyCode(Response $response, $codeContent = '', $type = 'image')
+    function createVerifyCode(Response $response, $codeContent = '', $type = 'image'): bool
     {
         $type = strtolower($type);
         strlen($codeContent) !== 0 ?: $codeContent = control::getUuid(4);
@@ -351,7 +351,7 @@ class CommonService extends ServiceBase
     }
 
     //发送验证码
-    function sendCode($phone, $type)
+    function sendCode($phone, $type): string
     {
         $type = strtolower($type);
         $code = control::randNum(6);
@@ -370,7 +370,7 @@ class CommonService extends ServiceBase
     }
 
     //发送短信
-    function sendSMS($phoneArr, $templateNum, $code = '')
+    function sendSMS($phoneArr, $templateNum, $code = ''): string
     {
         $ak = CreateConf::getInstance()->getConf('env.qiNiuAk');
         $sk = CreateConf::getInstance()->getConf('env.qiNiuSk');
@@ -390,7 +390,7 @@ class CommonService extends ServiceBase
     }
 
     //发送邮件
-    function sendEmail($sendTo, $addAttachment = [], $templateNum = '01', $options = [])
+    function sendEmail($sendTo, $addAttachment = [], $templateNum = '01', $options = []): bool
     {
         $config = new MailerConfig();
         $config->setServer(CreateConf::getInstance()->getConf('env.mailServer'));
@@ -462,6 +462,7 @@ class CommonService extends ServiceBase
         return preg_match($pattern, strtoupper($idCardStr));
     }
 
+    //
     function spaceTo($str, $to = ','): string
     {
         $str = trim($str);

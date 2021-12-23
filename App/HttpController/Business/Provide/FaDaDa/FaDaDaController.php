@@ -38,13 +38,32 @@ class FaDaDaController extends ProvideBase
     }
 
     //
-    function getDptEnterpriseMedicineDetailList(): bool
+    function getAuthFile(): bool
     {
         $entName = $this->getRequestData('entName');
+        $code = $this->getRequestData('code');
 
         $postData = [
-            'entName' => $entName
+            'entName' => $entName,
+            'code' => $code,
         ];
+
+        $sql = <<<Eof
+CREATE TABLE `information_dance_fa_da_da_auth` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `entName` varchar(64) NOT NULL DEFAULT '',
+  `code` varchar(32) NOT NULL DEFAULT '',
+  `transaction_id` varchar(64) NOT NULL DEFAULT '交易号',
+  `contract_id` varchar(64) NOT NULL DEFAULT '合同号',
+  `customer_id` varchar(64) NOT NULL DEFAULT '客户号',
+  `signature_id` varchar(64) NOT NULL DEFAULT '印章号',
+  `created_at` int(11) unsigned NOT NULL DEFAULT '0',
+  `updated_at` int(11) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `customer_id_index` (`customer_id`),
+  KEY `hash_deposit_id_index` (`hash_deposit_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='法大大存证';
+Eof;
 
         $this->csp->add($this->cspKey, function () use ($postData) {
 
