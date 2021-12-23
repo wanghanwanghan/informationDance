@@ -33,7 +33,7 @@ class XinDongController extends ProvideBase
         parent::afterAction($actionName);
     }
 
-    function checkResponse($res)
+    function checkResponse($res): bool
     {
         if (empty($res[$this->cspKey])) {
             $this->responseCode = 500;
@@ -54,7 +54,7 @@ class XinDongController extends ProvideBase
     }
 
     //发送短信
-    function sendSms()
+    function sendSms(): bool
     {
         $orderId = $this->getRequestData('orderId');//流水号
         $phone = $this->getRequestData('phone');//法人手机号
@@ -73,7 +73,7 @@ class XinDongController extends ProvideBase
     }
 
     //产品标准
-    function getProductStandard()
+    function getProductStandard(): bool
     {
         $entName = $this->getRequestData('entName');
         $page = $this->getRequestData('page', 1);
@@ -89,7 +89,7 @@ class XinDongController extends ProvideBase
     }
 
     //企业基本信息
-    function getRegisterInfo()
+    function getRegisterInfo(): bool
     {
         $entName = $this->getRequestData('entName', '');
 
@@ -107,7 +107,7 @@ class XinDongController extends ProvideBase
     }
 
     //单年基础数区间
-    function getFinanceBaseData()
+    function getFinanceBaseData(): bool
     {
         $postData = [
             'entName' => $this->getRequestData('entName', ''),
@@ -752,7 +752,7 @@ class XinDongController extends ProvideBase
     }
 
     //连续n年基数+计算结果
-    function getFinanceCalData()
+    function getFinanceCalData(): bool
     {
         $beginYear = $this->getRequestData('year', '');
 
@@ -788,7 +788,7 @@ class XinDongController extends ProvideBase
     }
 
     //单年基础数区间 含 并表判断
-    function getFinanceBaseMergeData()
+    function getFinanceBaseMergeData(): bool
     {
         $postData = [
             'entName' => $this->getRequestData('entName', ''),
@@ -815,7 +815,7 @@ class XinDongController extends ProvideBase
     }
 
     //连续n年基数 含 并表判断+计算结果
-    function getFinanceCalMergeData()
+    function getFinanceCalMergeData(): bool
     {
         $beginYear = $this->getRequestData('year', '');
 
@@ -903,7 +903,7 @@ class XinDongController extends ProvideBase
     }
 
     //企业联系方式
-    function getEntLianXi()
+    function getEntLianXi(): bool
     {
         $postData = [
             'entName' => $this->getRequestData('entName', ''),
@@ -1163,5 +1163,21 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getEntDetail(): bool
+    {
+        $postData = [
+            'entName' => trim($this->getRequestData('entName')),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getEntDetail($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
 
 }
