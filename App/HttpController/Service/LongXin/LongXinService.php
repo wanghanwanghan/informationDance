@@ -176,26 +176,6 @@ class LongXinService extends ServiceBase
             'responseData' => $res,
         ], true);
 
-        if (Carbon::now()->format('Ym') - 0 === 202112) {
-
-            $arr['version'] = 'A1';
-
-            $this->sendHeaders['authorization'] = $this->createToken($arr);
-
-            $haha = (new CoHttpClient())
-                ->useCache(true)
-                ->send($this->baseUrl . 'company_detail/', $arr, $this->sendHeaders);
-
-            $this->recodeSourceCurl([
-                'sourceName' => $this->sourceName,
-                'apiName' => last(explode('/', trim($this->baseUrl . 'company_detail/', '/'))),
-                'requestUrl' => trim(trim($this->baseUrl . 'company_detail/'), '/'),
-                'requestData' => $arr,
-                'responseData' => $haha,
-            ], true);
-
-        }
-
         if (!empty($res) && isset($res['data']) && !empty($res['data'])) {
             $tmp = $res['data'];
         } else {
@@ -257,11 +237,6 @@ class LongXinService extends ServiceBase
 
         $entId = $this->getEntid($cond);
 
-        //==============================================================================================================
-        CommonService::getInstance()->log4PHP(['查询的参数' => $postData], 'info', $logFileName);
-        CommonService::getInstance()->log4PHP(['返回的entid' => $entId], 'info', $logFileName);
-        //==============================================================================================================
-
         if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
 
         TaskService::getInstance()->create(new insertEnt($postData['entName'], $postData['code']));
@@ -283,10 +258,6 @@ class LongXinService extends ServiceBase
         $res = (new CoHttpClient())
             ->useCache(true)
             ->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
-
-        //==============================================================================================================
-        CommonService::getInstance()->log4PHP(['返回的ar_caiwu' => $res], 'info', $logFileName);
-        //==============================================================================================================
 
         $this->recodeSourceCurl([
             'sourceName' => $this->sourceName,
@@ -386,7 +357,7 @@ class LongXinService extends ServiceBase
     }
 
     //近n年的财务数据 含 并表
-    function getFinanceBaseMergeData($postData, $toRange = true)
+    function getFinanceBaseMergeData($postData, $toRange = true): array
     {
         $check = $this->alreadyInserted($postData);
 
@@ -544,7 +515,7 @@ class LongXinService extends ServiceBase
     }
 
     //对外的最近三年财务数据 只返回一个字段
-    function getThreeYearsReturnOneField($postData, $field)
+    function getThreeYearsReturnOneField($postData, $field): array
     {
         $entId = $this->getEntid($postData['entName']);
 
@@ -609,7 +580,7 @@ class LongXinService extends ServiceBase
     }
 
     //原值计算
-    function exprHandle($origin)
+    function exprHandle($origin): array
     {
         //0资产总额 ASSGRO
         //1负债总额 LIAGRO

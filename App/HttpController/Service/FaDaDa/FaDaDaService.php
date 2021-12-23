@@ -25,10 +25,10 @@ class FaDaDaService extends ServiceBase
     //一、【注册账号+实名存证】
     //1. 注册账号✅
     //2. 实名存证/哈希存证（注：设置cert_flag=1自动申请编号证书）✅
-    //3. 印章上传/自定义印章
+    //3. 印章上传/自定义印章✅
     //二、【生成合同+发起签署】
-    //1. 合同上传/模板上传+模板填充
-    //2. 手动签署/自动签署
+    //1. 合同上传/模板上传+模板填充✅
+    //2. 手动签署/自动签署✅
     //3. 合同归档
     //
     //【对接说明】
@@ -199,6 +199,140 @@ class FaDaDaService extends ServiceBase
             'msg_digest' => $msg_digest,
             'customer_id' => $arr['customer_id'],
             'content' => $arr['content'],
+        ];
+
+        $resp = (new CoHttpClient())
+            ->useCache($this->curl_use_cache)
+            ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
+
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
+
+    //
+    function uploadTemplate(array $arr)
+    {
+        $url_ext = 'uploadtemplate.api';
+
+        $section_1 = $this->app_id . strtoupper(md5($this->timestamp));
+
+        $section_2 = strtoupper(sha1($this->app_secret . $arr['template_id']));
+
+        $section_3 = strtoupper(sha1($section_1 . $section_2));
+
+        $msg_digest = base64_encode($section_3);
+
+        $post_data = [
+            'app_id' => $this->app_id,
+            'timestamp' => $this->timestamp,
+            'v' => '2.0',
+            'msg_digest' => $msg_digest,
+            'template_id' => $arr['template_id'],
+            'doc_url' => $arr['doc_url'],
+        ];
+
+        $resp = (new CoHttpClient())
+            ->useCache($this->curl_use_cache)
+            ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
+
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
+
+    //
+    function uploadSignature(array $arr)
+    {
+        $url_ext = 'add_signature.api';
+
+        $section_1 = $this->app_id . strtoupper(md5($this->timestamp));
+
+        $section_2 = strtoupper(sha1($this->app_secret . $arr['customer_id'] . $arr['signature_img_base64']));
+
+        $section_3 = strtoupper(sha1($section_1 . $section_2));
+
+        $msg_digest = base64_encode($section_3);
+
+        $post_data = [
+            'app_id' => $this->app_id,
+            'timestamp' => $this->timestamp,
+            'v' => '2.0',
+            'msg_digest' => $msg_digest,
+            'customer_id' => $arr['customer_id'],
+            'signature_img_base64' => $arr['signature_img_base64'],
+        ];
+
+        $resp = (new CoHttpClient())
+            ->useCache($this->curl_use_cache)
+            ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
+
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
+
+    //
+    function fillTemplate(array $arr)
+    {
+        $url_ext = 'generate_contract.api';
+
+        $section_1 = $this->app_id . strtoupper(md5($this->timestamp));
+
+        ksort($arr['parameter_map']);
+
+        $arr['parameter_map'] = jsonEncode($arr['parameter_map'], false);
+
+        $section_2 = strtoupper(sha1(
+                $this->app_secret . $arr['template_id'] . $arr['contract_id']) . $arr['parameter_map']
+        );
+
+        $section_3 = strtoupper(sha1($section_1 . $section_2));
+
+        $msg_digest = base64_encode($section_3);
+
+        $post_data = [
+            'app_id' => $this->app_id,
+            'timestamp' => $this->timestamp,
+            'v' => '2.0',
+            'msg_digest' => $msg_digest,
+            'doc_title' => $arr['doc_title'],
+            'template_id' => $arr['template_id'],
+            'contract_id' => $arr['contract_id'],//合同编号
+            'font_size' => $arr['font_size'],//字体大小
+            'font_type' => $arr['font_type'],//字体类型 0-宋体；1-仿宋；2-黑体；3-楷体；4-微软雅黑
+            'fill_type' => $arr['fill_type'],//填充类型 0 pdf 模板、1 在线填充模板
+            'parameter_map' => $arr['parameter_map'],//填充内容 json key val
+        ];
+
+        $resp = (new CoHttpClient())
+            ->useCache($this->curl_use_cache)
+            ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
+
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
+
+    //
+    function getExtsignAuto(array $arr)
+    {
+        $url_ext = 'extsign_auto.api';
+
+        $section_1 = $this->app_id . strtoupper(md5($this->timestamp));
+
+        $section_2 = strtoupper(sha1($this->app_secret . $arr['customer_id']));
+
+        $section_3 = strtoupper(sha1($section_1 . $section_2));
+
+        $msg_digest = base64_encode($section_3);
+
+        $post_data = [
+            'app_id' => $this->app_id,
+            'timestamp' => $this->timestamp,
+            'v' => '2.0',
+            'msg_digest' => $msg_digest,
+            'transaction_id' => $arr['transaction_id'],
+            'contract_id' => $arr['contract_id'],
+            'customer_id' => $arr['customer_id'],
+            'doc_title' => $arr['doc_title'],
+            'position_type' => $arr['position_type'],//定位类型 0-关键字（默认） 1-坐标
+            'sign_keyword' => $arr['sign_keyword'],//定位关键字 关键字为文档中的文字内容（能被ctrl+f查找功能检索到）
+            'keyword_strategy' => $arr['keyword_strategy'],//0 所有关键字签章 1 第一个关键字签章 2 最后一个关键字签章
+            'signature_id' => $arr['signature_id'],
+            'signature_show_time' => $arr['signature_show_time'],//时间戳显示方式 1 显示 2 不显示
         ];
 
         $resp = (new CoHttpClient())
