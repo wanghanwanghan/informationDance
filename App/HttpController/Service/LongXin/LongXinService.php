@@ -28,11 +28,6 @@ class LongXinService extends ServiceBase
     public $rangeArr = [];
     public $rangeArrRatio = [];
 
-    function onNewService(): ?bool
-    {
-        return parent::onNewService();
-    }
-
     function __construct()
     {
         $this->usercode = CreateConf::getInstance()->getConf('longxin.usercode');
@@ -63,6 +58,7 @@ class LongXinService extends ServiceBase
         return $this;
     }
 
+    //
     function setCal(bool $type): LongXinService
     {
         $this->cal = $type;
@@ -183,6 +179,36 @@ class LongXinService extends ServiceBase
         }
 
         return $tmp;
+    }
+
+    //企业详情
+    function getEntDetail($postData)
+    {
+        $entId = $this->getEntid($postData['entName']);
+
+        if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
+
+        $arr = [
+            'entid' => $entId,
+            'version' => 'A1',
+            'usercode' => $this->usercode
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())
+            ->useCache(true)
+            ->send($this->baseUrl . 'company_detail/', $arr, $this->sendHeaders);
+
+        $this->recodeSourceCurl([
+            'sourceName' => $this->sourceName,
+            'apiName' => last(explode('/', trim($this->baseUrl . 'company_detail/', '/'))),
+            'requestUrl' => trim(trim($this->baseUrl . 'company_detail/'), '/'),
+            'requestData' => $arr,
+            'responseData' => $res,
+        ], true);
+
+        return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
 
     //是否已经入库
