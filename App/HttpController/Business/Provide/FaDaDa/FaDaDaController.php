@@ -78,8 +78,8 @@ CREATE TABLE `fa_da_da_user` (
   `account_type` varchar(4) NOT NULL DEFAULT '' COMMENT '2是企业 1是个人',
   `customer_id` varchar(64) NOT NULL DEFAULT '' COMMENT '客户号',
   `open_id` varchar(64) NOT NULL DEFAULT '' COMMENT '在信动的唯一键',
-  
-  
+  `evidence_no` varchar(64) NOT NULL DEFAULT '' COMMENT '哈希存证唯一键',
+  `signature_id` varchar(64) NOT NULL DEFAULT '' COMMENT '印章唯一键',
   `created_at` int(11) unsigned NOT NULL DEFAULT '0',
   `updated_at` int(11) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),

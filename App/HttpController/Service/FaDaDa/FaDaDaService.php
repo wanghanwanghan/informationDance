@@ -101,6 +101,8 @@ class FaDaDaService extends ServiceBase
                 'customer_id' => $ent_customer_id . '',
                 'open_id' => $openId,
             ])->save();
+        } else {
+            $ent_customer_id = $ent_customer_info->getAttr('customer_id');
         }
 
         //==============================================================================================================
@@ -129,10 +131,114 @@ class FaDaDaService extends ServiceBase
                 'customer_id' => $people_customer_id . '',
                 'open_id' => $openId,
             ])->save();
+        } else {
+            $people_customer_id = $people_customer_info->getAttr('customer_id');
         }
+
+        //==============================================================================================================
+
+        //企业是否哈希存证过
+        $ent_hash_info = FaDaDaUserModel::create()
+            ->where('customer_id', $ent_customer_id)
+            ->get();
+
+        if (empty($ent_hash_info->getAttr('evidence_no'))) {
+            $this->timestamp = Carbon::now()->format('YmdHis');
+            $data = [
+                'cert_flag' => '1',//自动申请编号证书
+                'customer_id' => $ent_customer_id,
+                'file_name' => control::getUuid() . '.pdf',
+                'file_size' => mt_rand(1024, 4096) . '',
+                'noper_time' => time() . '',
+                'original_sha256' => hash('sha256', $ent_customer_id),
+                'preservation_desc' => $arr['entName'],
+                'preservation_name' => $arr['entName'],
+                'transaction_id' => control::getUuid(),
+            ];
+            $ent_hash_info = $this->getHashDeposit($data);
+            if ($ent_hash_info['code'] === 200) {
+                $ent_hash_id = $ent_hash_info['result'];
+            } else {
+                return $this->createReturn(
+                    $ent_hash_info['code'], null, $ent_hash_info['result'], $ent_hash_info['msg']
+                );
+            }
+            //数据入库
+            FaDaDaUserModel::create()->where('customer_id', $ent_customer_id)->update([
+                'evidence_no' => $ent_hash_id
+            ]);
+        } else {
+            $ent_hash_id = $ent_hash_info->getAttr('evidence_no');
+        }
+
+        //==============================================================================================================
+
+        //法人是否哈希存证过
+        $people_hash_info = FaDaDaUserModel::create()
+            ->where('customer_id', $people_customer_id)
+            ->get();
+
+        if (empty($people_hash_info->getAttr('evidence_no'))) {
+            $this->timestamp = Carbon::now()->format('YmdHis');
+            $data = [
+                'cert_flag' => '1',//自动申请编号证书
+                'customer_id' => $people_customer_id,
+                'file_name' => control::getUuid() . '.pdf',
+                'file_size' => mt_rand(1024, 4096) . '',
+                'noper_time' => time() . '',
+                'original_sha256' => hash('sha256', $people_customer_id),
+                'preservation_desc' => $arr['legalPerson'],
+                'preservation_name' => $arr['legalPerson'],
+                'transaction_id' => control::getUuid(),
+            ];
+            $people_hash_info = $this->getHashDeposit($data);
+            if ($people_hash_info['code'] === 200) {
+                $people_hash_id = $people_hash_info['result'];
+            } else {
+                return $this->createReturn(
+                    $people_hash_info['code'], null, $people_hash_info['result'], $people_hash_info['msg']
+                );
+            }
+            //数据入库
+            FaDaDaUserModel::create()->where('customer_id', $people_customer_id)->update([
+                'evidence_no' => $people_hash_id
+            ]);
+        } else {
+            $people_hash_id = $people_hash_info->getAttr('evidence_no');
+        }
+
+        //==============================================================================================================
+
+        //企业是否上传过印章
+        $ent_sign_info = FaDaDaUserModel::create()
+            ->where('customer_id', $ent_customer_id)
+            ->get();
+
+        if (empty($ent_sign_info->getAttr('signature_id'))) {
+            $this->timestamp = Carbon::now()->format('YmdHis');
+            $ent_sign_info = $this->uploadSignature([
+                'customer_id' => $ent_customer_id,
+                'signature_img_base64' => $ent_sign_base64,
+            ]);
+            if ($ent_sign_info['code'] === 200) {
+                $ent_sign_id = $ent_sign_info['result']['signature_id'];
+            } else {
+                return $this->createReturn(
+                    $ent_sign_info['code'], null, $ent_sign_info['result'], $ent_sign_info['msg']
+                );
+            }
+            //数据入库
+            FaDaDaUserModel::create()->where('customer_id', $ent_customer_id)->update([
+                'signature_id' => $ent_sign_id
+            ]);
+        } else {
+            $ent_sign_id = $ent_sign_info->getAttr('signature_id');
+        }
+
 
         $result = [];
         $msg = '';
+
 
         return $this->createReturn(200, null, $result, $msg);
     }
