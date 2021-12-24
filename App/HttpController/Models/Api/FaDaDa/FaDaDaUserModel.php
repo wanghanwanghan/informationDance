@@ -1,12 +1,12 @@
 <?php
 
-namespace App\HttpController\Models\Api;
+namespace App\HttpController\Models\Api\FaDaDa;
 
 use App\HttpController\Models\ModelBase;
 
-class FaDaDaHashDepositModel extends ModelBase
+class FaDaDaUserModel extends ModelBase
 {
-    protected $tableName = 'information_dance_fa_da_da_hash_deposit';
+    protected $tableName = 'fa_da_da_user';
 
     protected $autoTimeStamp = true;
     protected $createTime = 'created_at';

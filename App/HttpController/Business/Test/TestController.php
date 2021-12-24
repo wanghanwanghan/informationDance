@@ -3,7 +3,6 @@
 namespace App\HttpController\Business\Test;
 
 use App\HttpController\Business\BusinessBase;
-use App\HttpController\Models\Api\FaDaDaHashDepositModel;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\DaXiang\DaXiangService;
 use App\HttpController\Service\FaDaDa\FaDaDaService;
@@ -25,21 +24,7 @@ class TestController extends BusinessBase
 
     function fadadatest(): bool
     {
-        $data = [
-            'entName' => '深圳市碧桂融鑫六十二号投资管理合伙企业（有限合伙）',
-            'socialCredit' => '123456789012345678',
-            'legalPerson' => '王瀚',
-            'idCard' => '111111111111111111',
-            'phone' => '13800138000',
-            'region' => '13302000000',
-            'address' => '河北省邢台市桥西区达活泉11号楼901',
-            'requestId' => control::getUuid(),//海光用的，没啥用，随便传
-        ];
 
-        $res = (new HuiCheJianService())
-            ->setCheckRespFlag(true)->getAuthPdf($data);
-
-        return $this->writeJson(200, null, $res);
     }
 
     function getInv(): bool

@@ -2,9 +2,11 @@
 
 namespace App\HttpController\Service\FaDaDa;
 
+use App\HttpController\Models\Api\FaDaDa\FaDaDaUserModel;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use Carbon\Carbon;
+use wanghanwanghan\someUtils\control;
 
 class FaDaDaService extends ServiceBase
 {
@@ -22,7 +24,6 @@ class FaDaDaService extends ServiceBase
         $this->url = 'https://testapi.fadada.com:8443/api/';
         $this->app_id = '405806';
         $this->app_secret = 'UFPU9C3kfnKb6kdDyugOhqir';
-        $this->account_type = '2';
 
         if (strtolower($type) === 'test') {
             $this->url = 'https://testapi.fadada.com:8443/api/';
@@ -67,12 +68,6 @@ class FaDaDaService extends ServiceBase
         }
     }
 
-    //企业在信动的主键
-    private function getOpenId(array $arr): string
-    {
-        return md5(trim($arr['entName']) . 'meirixindong123');
-    }
-
     function setCurlUseCache(bool $type): FaDaDaService
     {
         $this->curl_use_cache = $type;
@@ -80,13 +75,76 @@ class FaDaDaService extends ServiceBase
     }
 
     //
-    function getRegister(array $arr)
+    function getAuthFile(array $arr): array
+    {
+        //企业是否注册过
+        $ent_customer_info = FaDaDaUserModel::create()
+            ->where("(`entName` = '{$arr['entName']}' OR `code` = '{$arr['socialCredit']}') AND `account_type` = '2'")
+            ->get();
+
+        if (empty($ent_customer_info)) {
+            $this->timestamp = Carbon::now()->format('YmdHis');
+            $openId = control::getUuid();
+            $ent_customer_info = $this->getRegister($openId, '2');
+            if ($ent_customer_info['code'] === 200) {
+                $ent_customer_id = $ent_customer_info['result'];
+            } else {
+                return $this->createReturn(
+                    $ent_customer_info['code'], null, $ent_customer_info['result'], $ent_customer_info['msg']
+                );
+            }
+            //数据入库
+            FaDaDaUserModel::create()->data([
+                'entName' => $arr['entName'],
+                'code' => $arr['socialCredit'],
+                'account_type' => '2',
+                'customer_id' => $ent_customer_id . '',
+                'open_id' => $openId,
+            ])->save();
+        }
+
+        //==============================================================================================================
+
+        //法人是否注册过
+        $people_customer_info = FaDaDaUserModel::create()
+            ->where("(`entName` = '{$arr['legalPerson']}' OR `code` = '{$arr['idCard']}') AND `account_type` = '1'")
+            ->get();
+
+        if (empty($people_customer_info)) {
+            $this->timestamp = Carbon::now()->format('YmdHis');
+            $openId = control::getUuid();
+            $people_customer_info = $this->getRegister($openId, '2');
+            if ($people_customer_info['code'] === 200) {
+                $people_customer_id = $people_customer_info['result'];
+            } else {
+                return $this->createReturn(
+                    $people_customer_info['code'], null, $people_customer_info['result'], $people_customer_info['msg']
+                );
+            }
+            //数据入库
+            FaDaDaUserModel::create()->data([
+                'entName' => $arr['legalPerson'],
+                'code' => $arr['idCard'],
+                'account_type' => '1',
+                'customer_id' => $people_customer_id . '',
+                'open_id' => $openId,
+            ])->save();
+        }
+
+        $result = [];
+        $msg = '';
+
+        return $this->createReturn(200, null, $result, $msg);
+    }
+
+    //
+    private function getRegister(string $openId, string $accountType)
     {
         $url_ext = 'account_register.api';
 
         $section_1 = $this->app_id . strtoupper(md5($this->timestamp));
 
-        $section_2 = strtoupper(sha1($this->app_secret . $this->account_type . $this->getOpenId($arr)));
+        $section_2 = strtoupper(sha1($this->app_secret . $accountType . $openId));
 
         $section_3 = strtoupper(sha1($section_1 . $section_2));
 
@@ -97,8 +155,8 @@ class FaDaDaService extends ServiceBase
             'timestamp' => $this->timestamp,
             'v' => '2.0',
             'msg_digest' => $msg_digest,
-            'open_id' => $this->getOpenId($arr),
-            'account_type' => $this->account_type,
+            'open_id' => $openId,
+            'account_type' => $accountType,
         ];
 
         $resp = (new CoHttpClient())
@@ -109,7 +167,7 @@ class FaDaDaService extends ServiceBase
     }
 
     //
-    function getHashDeposit(array $arr)
+    private function getHashDeposit(array $arr)
     {
         $url_ext = 'hash_deposit.api';
 
@@ -156,7 +214,7 @@ class FaDaDaService extends ServiceBase
     }
 
     //
-    function getCustomSignature(array $arr)
+    private function getCustomSignature(array $arr)
     {
         $url_ext = 'custom_signature.api';
 
@@ -185,7 +243,7 @@ class FaDaDaService extends ServiceBase
     }
 
     //
-    function uploadTemplate(array $arr)
+    private function uploadTemplate(array $arr)
     {
         $url_ext = 'uploadtemplate.api';
 
@@ -214,7 +272,7 @@ class FaDaDaService extends ServiceBase
     }
 
     //
-    function uploadSignature(array $arr)
+    private function uploadSignature(array $arr)
     {
         $url_ext = 'add_signature.api';
 
@@ -243,7 +301,7 @@ class FaDaDaService extends ServiceBase
     }
 
     //
-    function fillTemplate(array $arr)
+    private function fillTemplate(array $arr)
     {
         $url_ext = 'generate_contract.api';
 
@@ -283,7 +341,7 @@ class FaDaDaService extends ServiceBase
     }
 
     //
-    function getExtsignAuto(array $arr)
+    private function getExtsignAuto(array $arr)
     {
         $url_ext = 'extsign_auto.api';
 

@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\FaDaDa;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Service\FaDaDa\FaDaDaService;
 
 class FaDaDaController extends ProvideBase
 {
@@ -41,37 +42,52 @@ class FaDaDaController extends ProvideBase
     function getAuthFile(): bool
     {
         $entName = $this->getRequestData('entName');
-        $code = $this->getRequestData('code');
+        $socialCredit = $this->getRequestData('socialCredit');
+        $legalPerson = $this->getRequestData('legalPerson');
+        $idCard = $this->getRequestData('idCard');
+        $phone = $this->getRequestData('phone');
+        $city = $this->getRequestData('city');
+        $regAddress = $this->getRequestData('regAddress');
 
         $postData = [
             'entName' => $entName,
-            'code' => $code,
+            'socialCredit' => $socialCredit,
+            'legalPerson' => $legalPerson,
+            'idCard' => $idCard,
+            'phone' => $phone,
+            'city' => $city,
+            'regAddress' => $regAddress,
         ];
 
-        $sql = <<<Eof
-CREATE TABLE `information_dance_fa_da_da_auth` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `entName` varchar(64) NOT NULL DEFAULT '',
-  `code` varchar(32) NOT NULL DEFAULT '',
-  `transaction_id` varchar(64) NOT NULL DEFAULT '交易号',
-  `contract_id` varchar(64) NOT NULL DEFAULT '合同号',
-  `customer_id` varchar(64) NOT NULL DEFAULT '客户号',
-  `signature_id` varchar(64) NOT NULL DEFAULT '印章号',
-  `created_at` int(11) unsigned NOT NULL DEFAULT '0',
-  `updated_at` int(11) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `customer_id_index` (`customer_id`),
-  KEY `hash_deposit_id_index` (`hash_deposit_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='法大大存证';
-Eof;
-
         $this->csp->add($this->cspKey, function () use ($postData) {
-
+            return (new FaDaDaService())->setCheckRespFlag(true)->getAuthFile($postData);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         return $this->checkResponse($res);
+    }
+
+    function test()
+    {
+        $sql = <<<Eof
+CREATE TABLE `fa_da_da_user` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `entName` varchar(64) NOT NULL DEFAULT '',
+  `code` varchar(32) NOT NULL DEFAULT '',
+  `account_type` varchar(4) NOT NULL DEFAULT '' COMMENT '2是企业 1是个人',
+  `customer_id` varchar(64) NOT NULL DEFAULT '' COMMENT '客户号',
+  `open_id` varchar(64) NOT NULL DEFAULT '' COMMENT '在信动的唯一键',
+  
+  
+  `created_at` int(11) unsigned NOT NULL DEFAULT '0',
+  `updated_at` int(11) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `entName_index` (`entName`),
+  KEY `code_index` (`code`),
+  KEY `customer_id_index` (`customer_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='法大大用户表';
+Eof;
     }
 
 
