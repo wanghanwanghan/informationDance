@@ -821,6 +821,8 @@ class TaoShuController extends ProvideBase
             'pageSize' => $pageSize . '',
         ];
 
+        CommonService::getInstance()->log4PHP($postData);
+
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new TaoShuService())
                 ->setCheckRespFlag(true)
