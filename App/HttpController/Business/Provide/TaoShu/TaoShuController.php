@@ -809,5 +809,28 @@ class TaoShuController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getMainManagerInfo(): bool
+    {
+        $entName = $this->getRequestData('entName') ?? '';
+        $page = $this->getRequestData('page') ?? 1;
+        $pageSize = $this->getRequestData('pageSize') ?? 10;
+
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $page,
+            'pageSize' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new TaoShuService())
+                ->setCheckRespFlag(true)
+                ->post($postData, 'getMainManagerInfo');
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
 
 }

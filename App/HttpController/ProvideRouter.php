@@ -84,6 +84,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getEntsRelevanceSeekGraphG', $prefix . 'getEntsRelevanceSeekGraphG');//
             $routeCollector->addRoute(['GET', 'POST'], '/getRecruitmentDetailInfo', $prefix . 'getRecruitmentDetailInfo');//
             $routeCollector->addRoute(['GET', 'POST'], '/getBiddingDetailInfo', $prefix . 'getBiddingDetailInfo');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getMainManagerInfo', $prefix . 'getMainManagerInfo');//企业主要管理人员
         });
 
         return true;
