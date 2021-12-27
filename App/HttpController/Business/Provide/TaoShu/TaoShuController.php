@@ -811,14 +811,14 @@ class TaoShuController extends ProvideBase
 
     function getMainManagerInfo(): bool
     {
-        $entName = $this->getRequestData('entName') ?? '';
-        $page = $this->getRequestData('page') ?? 1;
-        $pageSize = $this->getRequestData('pageSize') ?? 10;
+        $entName = $this->getRequestData('entName');
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
 
         $postData = [
             'entName' => $entName,
-            'pageNo' => $page,
-            'pageSize' => $pageSize,
+            'pageNo' => $page . '',
+            'pageSize' => $pageSize . '',
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
