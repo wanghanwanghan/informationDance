@@ -193,7 +193,7 @@ class ProvideBase extends Index
             }
         }
 
-        if (isset($requestData['pageSize'])) {
+        if (isset($requestData['pageSize']) && !isset($requestData['xindong'])) {
             $requestData['pageSize'] > 10 ?
                 $requestData['pageSize'] = 10 :
                 $requestData['pageSize'] = $requestData['pageSize'] - 0;
