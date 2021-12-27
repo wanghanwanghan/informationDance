@@ -26,12 +26,13 @@ class YiZhangTongService extends ServiceBase
     {
         parent::__construct();
 
+        //https://smelp-wg-web-stg1.ocft.com/smelp-wg/smelp_wg
         //https://smew.ocft.com/smelp-wg/smelp_wg
-        $this->test_url = 'https://smelp-wg-web-stg1.ocft.com/smelp-wg/smelp_wg';
+        $this->test_url = 'https://smew.ocft.com/smelp-wg/smelp_wg';
         $this->test_app_id = 'APP_1400';
         $this->test_channel = '1009';
         $this->test_channel_code = 'XWD';
-        $this->test_app_secret = 'dHKq/fx1/7F9lUWkHhv1Dw==';//C7uPeZqYKjFnPtHSvXxIBw==
+        $this->test_app_secret = 'C7uPeZqYKjFnPtHSvXxIBw==';//dHKq/fx1/7F9lUWkHhv1Dw==
         //生产环境
         $this->test_rsa_pub = <<<Eof
 -----BEGIN PUBLIC KEY-----
@@ -41,14 +42,14 @@ MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDCDBjliWG6EfL8VnTSSoNAWeOZ
 9ThVymMplwpStSFlaQIDAQAB
 -----END PUBLIC KEY-----
 Eof;
-        $this->test_rsa_pub = <<<str
------BEGIN PUBLIC KEY-----
-MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZKs+rCLRSPeS0ioV9lLDztKF3
-8INbwuKt4U5YrbG0kg7O9KxyDaA2X2OtwO2YZDZ5S71/bgGyxaHbmdwzEuEJT0iy
-7St8/U609nOQuRZsYtAsWfkCesjiXDJUk54ZhlZwo6NxeBRfhgJnwz/772DusCEu
-tv6KR7pT0nAqXHIyXQIDAQAB
------END PUBLIC KEY-----
-str;
+//        $this->test_rsa_pub = <<<str
+//-----BEGIN PUBLIC KEY-----
+//MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZKs+rCLRSPeS0ioV9lLDztKF3
+//8INbwuKt4U5YrbG0kg7O9KxyDaA2X2OtwO2YZDZ5S71/bgGyxaHbmdwzEuEJT0iy
+//7St8/U609nOQuRZsYtAsWfkCesjiXDJUk54ZhlZwo6NxeBRfhgJnwz/772DusCEu
+//tv6KR7pT0nAqXHIyXQIDAQAB
+//-----END PUBLIC KEY-----
+//str;
         $this->time = time() . mt_rand(100, 999);
 
         $this->ak = control::getUuid(16);
