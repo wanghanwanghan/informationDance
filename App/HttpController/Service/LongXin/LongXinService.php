@@ -2064,12 +2064,12 @@ class LongXinService extends ServiceBase
         return $origin;
     }
 
-    //48主营业务净利润率 NPMOMB 2主营业务 / 5净利润
+    //48主营业务净利润率 NPMOMB 5净利润 / 2主营业务
     private function NPMOMB($origin)
     {
         foreach ($origin as $year => $val) {
-            if (is_numeric($val[2]) && is_numeric($val[5]) && $val[5] !== 0) {
-                $value = $val[2] / $val[5];
+            if (is_numeric($val[5]) && is_numeric($val[2]) && $val[2] !== 0) {
+                $value = $val[5] / $val[2];
             } else {
                 $value = null;
             }
