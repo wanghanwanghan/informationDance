@@ -77,7 +77,7 @@ class ShuMengService extends ServiceBase
         ];
 
         $data = [
-            'signature' => $this->createSignature('bids_proc_211118', 'DZ21NLE-A1CA8'),
+            'signature' => $this->createSignature('bids_proc_211227', 'MAya3-iiiL'),
             'queryParams' => [
                 'cgdwmc' => trim($entName),//采购单位名称
                 'cgdwmc_type' => $type,//采购单位名称_查询方式 模糊检索 精确查询
@@ -106,7 +106,7 @@ class ShuMengService extends ServiceBase
         ];
 
         $data = [
-            'signature' => $this->createSignature('bids_proc_211118', 'DZ21NLE-A1CA8'),
+            'signature' => $this->createSignature('bids_proc_211227', 'MAya3-iiiL'),
             'queryParams' => [
                 'zbgys' => trim($entName),//采购单位名称
                 'zbgys_type' => $type,//采购单位名称_查询方式 模糊检索 精确查询
