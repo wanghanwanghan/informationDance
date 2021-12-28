@@ -746,6 +746,7 @@ class LongXinService extends ServiceBase
             'VENDINC_CGR' => null,
             'VENDINC_yoy_ave_2' => null,
             'NETINC_yoy_ave_2' => null,
+            'NPMOMB' => null,
         ];
 
         $retrun = [];
