@@ -9,9 +9,6 @@ class JingZhunService extends ServiceBase
 {
     use Singleton;
 
-    private $base_url = 'https://data-api.jingdata.com/x/api/investment/list';
-
-
     function __construct()
     {
         return parent::__construct();

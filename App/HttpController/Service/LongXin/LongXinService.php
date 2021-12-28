@@ -662,6 +662,7 @@ class LongXinService extends ServiceBase
         //45营业总收入复合增速（两年） VENDINC_CGR
         //46营业总收入同比的平均（两年） VENDINC_yoy_ave_2
         //47净利润同比的平均（两年） NETINC_yoy_ave_2
+        //48主营业务净利润率 NPMOMB
 
         $now = [];
         foreach ($origin as $year => $arr) {
@@ -1111,6 +1112,8 @@ class LongXinService extends ServiceBase
         $origin = $this->VENDINC_yoy_ave_2($origin);
         //47净利润同比的平均（两年）
         $origin = $this->NETINC_yoy_ave_2($origin);
+        //48主营业务净利润率 NPMOMB
+        $origin = $this->NPMOMB($origin);
 
         krsort($origin);
 
@@ -2055,6 +2058,22 @@ class LongXinService extends ServiceBase
             $now = $val[$index];
 
             array_push($origin[$year], ($now + $last) / 2);
+        }
+
+        return $origin;
+    }
+
+    //48主营业务净利润率 NPMOMB 2主营业务 / 5净利润
+    private function NPMOMB($origin)
+    {
+        foreach ($origin as $year => $val) {
+            if (is_numeric($val[2]) && is_numeric($val[5]) && $val[5] !== 0) {
+                $value = $val[2] / $val[5];
+            } else {
+                $value = null;
+            }
+
+            array_push($origin[$year], $value);
         }
 
         return $origin;

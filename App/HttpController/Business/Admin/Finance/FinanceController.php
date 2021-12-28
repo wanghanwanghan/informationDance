@@ -180,6 +180,24 @@ class FinanceController extends FinanceBase
                         'NOR' => $this->setFinanceRateDataRange($val['NOR'], $CkRange),
                         'PMOTA' => $this->setFinanceRateDataRange($val['PMOTA'], $CkRange),
                         'TBR' => $this->setFinanceRateDataRange($val['TBR'], $CkRange),
+                        'ASSGRO_yoy' => $this->setFinanceRateDataRange($val['ASSGRO_yoy'], $CkRange),
+                        'LIAGRO_yoy' => $this->setFinanceRateDataRange($val['LIAGRO_yoy'], $CkRange),
+                        'VENDINC_yoy' => $this->setFinanceRateDataRange($val['VENDINC_yoy'], $CkRange),
+                        'MAIBUSINC_yoy' => $this->setFinanceRateDataRange($val['MAIBUSINC_yoy'], $CkRange),
+                        'PROGRO_yoy' => $this->setFinanceRateDataRange($val['PROGRO_yoy'], $CkRange),
+                        'NETINC_yoy' => $this->setFinanceRateDataRange($val['NETINC_yoy'], $CkRange),
+                        'RATGRO_yoy' => $this->setFinanceRateDataRange($val['RATGRO_yoy'], $CkRange),
+                        'TOTEQU_yoy' => $this->setFinanceRateDataRange($val['TOTEQU_yoy'], $CkRange),
+                        'SOCNUM_yoy' => $this->setFinanceRateDataRange($val['SOCNUM_yoy'], $CkRange),
+                        'C_ASSGROL_yoy' => $this->setFinanceRateDataRange($val['C_ASSGROL_yoy'], $CkRange),
+                        'A_ASSGROL_yoy' => $this->setFinanceRateDataRange($val['A_ASSGROL_yoy'], $CkRange),
+                        'CA_ASSGROL_yoy' => $this->setFinanceRateDataRange($val['CA_ASSGROL_yoy'], $CkRange),
+                        'A_VENDINCL_yoy' => $this->setFinanceRateDataRange($val['A_VENDINCL_yoy'], $CkRange),
+                        'A_PROGROL_yoy' => $this->setFinanceRateDataRange($val['A_PROGROL_yoy'], $CkRange),
+                        'VENDINC_CGR' => $this->setFinanceRateDataRange($val['VENDINC_CGR'], $CkRange),
+                        'VENDINC_yoy_ave_2' => $this->setFinanceRateDataRange($val['VENDINC_yoy_ave_2'], $CkRange),
+                        'NETINC_yoy_ave_2' => $this->setFinanceRateDataRange($val['NETINC_yoy_ave_2'], $CkRange),
+                        'NPMOMB' => $this->setFinanceRateDataRange($val['NPMOMB'], $CkRange),
                     ];
                     fwrite($fp, implode(',', array_values($row)) . PHP_EOL);
                     $tmp[] = $row;
@@ -311,4 +329,5 @@ class FinanceController extends FinanceBase
 
         return $str;
     }
+
 }
