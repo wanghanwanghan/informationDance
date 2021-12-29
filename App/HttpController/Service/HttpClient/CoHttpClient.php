@@ -82,13 +82,13 @@ class CoHttpClient extends ServiceBase
         return $this;
     }
 
-    function useCache($type = true)
+    function useCache($type = true): CoHttpClient
     {
         $this->useCache = $type;
         return $this;
     }
 
-    function needJsonDecode($type)
+    function needJsonDecode($type): CoHttpClient
     {
         $this->needJsonDecode = $type;
         return $this;
