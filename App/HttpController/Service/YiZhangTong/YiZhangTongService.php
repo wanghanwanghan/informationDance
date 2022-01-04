@@ -31,7 +31,7 @@ class YiZhangTongService extends ServiceBase
         $this->test_url = 'https://smew.ocft.com/smelp-wg/smelp_wg';
         $this->test_app_id = 'APP_1400';
         $this->test_channel = '1009';
-        $this->test_channel_code = 'XWD';
+        $this->test_channel_code = 'mrxd00';
         $this->test_app_secret = 'C7uPeZqYKjFnPtHSvXxIBw==';//dHKq/fx1/7F9lUWkHhv1Dw==
         //生产环境
         $this->test_rsa_pub = <<<Eof
