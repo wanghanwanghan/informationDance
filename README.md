@@ -1,4 +1,4 @@
-<h1 align="center"> 信息跳动 </h1>
+<h1 align="center"> 每日信动 </h1>
 
 ## 安装
 
