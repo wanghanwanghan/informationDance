@@ -3,6 +3,8 @@
 namespace App\HttpController\Service\FaDaDa;
 
 use App\HttpController\Models\Api\FaDaDa\FaDaDaUserModel;
+use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateSeal\SealService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use Carbon\Carbon;
@@ -218,7 +220,7 @@ class FaDaDaService extends ServiceBase
             $this->timestamp = Carbon::now()->format('YmdHis');
             $ent_sign_info = $this->uploadSignature([
                 'customer_id' => $ent_customer_id,
-                'signature_img_base64' => $ent_sign_base64,
+                'signature_img_base64' => $this->getEntSignBase64($arr),
             ]);
             if ($ent_sign_info['code'] === 200) {
                 $ent_sign_id = $ent_sign_info['result']['signature_id'];
@@ -235,12 +237,67 @@ class FaDaDaService extends ServiceBase
             $ent_sign_id = $ent_sign_info->getAttr('signature_id');
         }
 
+        //企业是否上传过法人照片
+        $personal_sign_info = FaDaDaUserModel::create()
+            ->where('customer_id', $people_customer_id)
+            ->get();
+
+        if (empty($personal_sign_info->getAttr('signature_id'))) {
+            $this->timestamp = Carbon::now()->format('YmdHis');
+            $personal_sign_info = $this->uploadSignature([
+                'customer_id' => $people_customer_id,
+                'signature_img_base64' => $this->getPersonalSignBase64($arr),
+            ]);
+            //log
+            CommonService::getInstance()->log4PHP($personal_sign_info,'info','personal_sign_info');
+            if ($personal_sign_info['code'] === 200) {
+                $personal_sign_id = $personal_sign_info['result']['signature_id'];
+            } else {
+                return $this->createReturn(
+                    $personal_sign_info['code'], null, $personal_sign_info['result'], $personal_sign_info['msg']
+                );
+            }
+            //数据入库
+            FaDaDaUserModel::create()->where('customer_id', $people_customer_id)->update([
+                'signature_id' => $personal_sign_id
+            ]);
+
+        } else {
+            $ent_sign_id = $personal_sign_info->getAttr('signature_id');
+        }
 
         $result = [];
         $msg = '';
 
 
         return $this->createReturn(200, null, $result, $msg);
+    }
+
+    /**
+     * 获取人图片base64数据
+     * @param $arr
+     * @return string
+     */
+    private function getPersonalSignBase64($arr){
+        $cc = new SealService();
+        $path = 'personal.png';
+        $cc::personalSeal($path,$arr['entName']);
+        return base64_encode(file_get_contents($path));
+    }
+
+    /**
+     * 获取签章图片base64数据
+     * @param $arr
+     * @return string
+     */
+    private function getEntSignBase64($arr){
+        $num = $arr['socialCredit'];
+        $num_arr = str_split($num);
+        $num = implode('', array_reverse($num_arr));
+        $path = 'qianzhang.png';
+        $cc = new SealService($arr['entName'], $num, 200);
+        $cc->saveImg($path, "");
+        return base64_encode(file_get_contents($path));
     }
 
     //
