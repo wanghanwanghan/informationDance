@@ -23,7 +23,7 @@ function jsonEncode($target, $urlEncode = true)
         json_encode($target);
 }
 
-//解
+//解test
 function jsonDecode($target, $type = true)
 {
     return json_decode($target, $type);
