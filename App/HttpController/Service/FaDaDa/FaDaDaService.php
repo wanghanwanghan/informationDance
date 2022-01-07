@@ -76,55 +76,138 @@ class FaDaDaService extends ServiceBase
         return $this;
     }
 
-    //
+    /**
+     * 企业授权
+     * @param array $arr
+     * @return array
+     * @throws \EasySwoole\Mysqli\Exception\Exception
+     * @throws \EasySwoole\ORM\Exception\Exception
+     * @throws \Throwable
+     */
     function getAuthFile(array $arr): array
     {
-        //企业是否注册过
+        //企业注册
+        list($ent_customer_id,$entCustomerErrorData) = $this->getEntCustomer($arr);
+        if(!empty($entCustomerErrorData)) return $entCustomerErrorData;
+        //法人是否注册过
+        list($people_customer_id,$peopleCustomerErrorData) = $this->getPeopleCustomer($arr);
+        if(!empty($peopleCustomerErrorData)) return $peopleCustomerErrorData;
+        //企业哈希存证
+        list($ent_hash_id,$entHashErrorData) = $this->entHash($ent_customer_id,$arr);
+        if(!empty($entHashErrorData)) return $entHashErrorData;
+        //法人哈希存证
+        list($people_hash_id,$peopleHashErrorData) = $this->peopleHash($people_customer_id,$arr);
+        if(!empty($peopleHashErrorData)) return $peopleHashErrorData;
+        //企业上传印章
+        list($ent_sign_id,$entSignErrorData) = $this->entSign($ent_customer_id,$arr);
+        if(!empty($entSignErrorData)) return $entSignErrorData;
+        //企业上传法人照片
+        list($personal_sign_id,$personalSignErrorData) = $this->personalSign($people_customer_id,$arr);
+        if(!empty($personalSignErrorData)) return $personalSignErrorData;
+        $arr['template_id'] = control::getUuid();//模版ID 本地自增
+        $arr['contract_id'] = control::getUuid();//合同编号
+
+        //模板上传
+        $uploadTemplateErrorData = $this->checkRet($this->uploadTemplate($arr));
+        if(!empty($uploadTemplateErrorData)) return $uploadTemplateErrorData;
+        //模板填充
+        $fillTemplateErrorData = $this->checkRet($this->fillTemplate($arr));
+        if(!empty($fillTemplateErrorData)) return $fillTemplateErrorData;
+        //自动签署
+        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAuto($arr));
+        if(!empty($ExtsignAutoErrorData)) return $ExtsignAutoErrorData;
+        //合同下载
+        $downLoadContractErrorData = $this->checkRet($this->downLoadContract($arr));
+        if(!empty($downLoadContractErrorData)) return $downLoadContractErrorData;
+
+        //数据入库
+        FaDaDaUserModel::create()->where('customer_id', $ent_customer_id)->update([
+            'template_id' => $arr['template_id'],'contract_id' => $arr['contract_id']
+        ]);
+        FaDaDaUserModel::create()->where('customer_id', $people_customer_id)->update([
+            'template_id' => $arr['template_id'],'contract_id' => $arr['contract_id']
+        ]);
+        $result = [];
+        $msg = '';
+        return $this->createReturn(200, null, $result, $msg);
+    }
+
+    /**
+     * 检查接口返回是否成功
+     * @param $ret
+     * @return array|string
+     */
+    private function checkRet($ret){
+        if (!$ret['code'] === 200) {
+            return $this->createReturn(
+                $ret['code'], null, $ret['result'], $ret['msg']
+            );
+        }
+        return '';
+    }
+
+
+    /**
+     * 企业注册
+     * @param $arr
+     * @return array|mixed|string|null
+     * @throws \EasySwoole\Mysqli\Exception\Exception
+     * @throws \EasySwoole\ORM\Exception\Exception
+     * @throws \Throwable
+     */
+    private function getEntCustomer($arr){
         $ent_customer_info = FaDaDaUserModel::create()
             ->where("(`entName` = '{$arr['entName']}' OR `code` = '{$arr['socialCredit']}') AND `account_type` = '2'")
             ->get();
 
         if (empty($ent_customer_info)) {
-            $this->timestamp = Carbon::now()->format('YmdHis');
-            $openId = control::getUuid();
-            $ent_customer_info = $this->getRegister($openId, '2');
-            if ($ent_customer_info['code'] === 200) {
-                $ent_customer_id = $ent_customer_info['result'];
-            } else {
-                return $this->createReturn(
-                    $ent_customer_info['code'], null, $ent_customer_info['result'], $ent_customer_info['msg']
-                );
-            }
-            //数据入库
-            FaDaDaUserModel::create()->data([
-                'entName' => $arr['entName'],
-                'code' => $arr['socialCredit'],
-                'account_type' => '2',
-                'customer_id' => $ent_customer_id . '',
-                'open_id' => $openId,
-            ])->save();
-        } else {
-            $ent_customer_id = $ent_customer_info->getAttr('customer_id');
+            return $ent_customer_info->getAttr('customer_id');;
         }
+        $ent_customer_id = '';
+        $errorData = '';
+        $this->timestamp = Carbon::now()->format('YmdHis');
+        $openId = control::getUuid();
+        $ent_customer_info = $this->getRegister($openId, '2');
+        if ($ent_customer_info['code'] === 200) {
+            $ent_customer_id = $ent_customer_info['result'];
+        } else {
+            $errorData = $this->createReturn(
+                $ent_customer_info['code'], null, $ent_customer_info['result'], $ent_customer_info['msg']
+            );
+        }
+        //数据入库
+        FaDaDaUserModel::create()->data([
+            'entName' => $arr['entName'],
+            'code' => $arr['socialCredit'],
+            'account_type' => '2',
+            'customer_id' => $ent_customer_id . '',
+            'open_id' => $openId,
+        ])->save();
+        return [$ent_customer_id,$errorData];
+    }
 
-        //==============================================================================================================
-
-        //法人是否注册过
+    /**
+     * 法人注册
+     * @param $arr
+     * @return array|mixed|string|null
+     * @throws \EasySwoole\Mysqli\Exception\Exception
+     * @throws \EasySwoole\ORM\Exception\Exception
+     * @throws \Throwable
+     */
+    private function getPeopleCustomer($arr){
         $people_customer_info = FaDaDaUserModel::create()
             ->where("(`entName` = '{$arr['legalPerson']}' OR `code` = '{$arr['idCard']}') AND `account_type` = '1'")
             ->get();
-
         if (empty($people_customer_info)) {
-            $this->timestamp = Carbon::now()->format('YmdHis');
-            $openId = control::getUuid();
-            $people_customer_info = $this->getRegister($openId, '2');
-            if ($people_customer_info['code'] === 200) {
-                $people_customer_id = $people_customer_info['result'];
-            } else {
-                return $this->createReturn(
-                    $people_customer_info['code'], null, $people_customer_info['result'], $people_customer_info['msg']
-                );
-            }
+            return $people_customer_info->getAttr('customer_id');;
+        }
+        $people_customer_id = '';
+        $errorData = '';
+        $this->timestamp = Carbon::now()->format('YmdHis');
+        $openId = control::getUuid();
+        $people_customer_info = $this->getRegister($openId, '2');
+        if ($people_customer_info['code'] === 200) {
+            $people_customer_id = $people_customer_info['result'];
             //数据入库
             FaDaDaUserModel::create()->data([
                 'entName' => $arr['legalPerson'],
@@ -134,143 +217,178 @@ class FaDaDaService extends ServiceBase
                 'open_id' => $openId,
             ])->save();
         } else {
-            $people_customer_id = $people_customer_info->getAttr('customer_id');
+            $errorData =  $this->createReturn(
+                $people_customer_info['code'], null, $people_customer_info['result'], $people_customer_info['msg']
+            );
         }
+        return [$people_customer_id,$errorData];
+    }
 
-        //==============================================================================================================
-
-        //企业是否哈希存证过
+    /**
+     * 企业哈希存证
+     * @param $ent_customer_id
+     * @param $arr
+     * @return array|mixed|string|null
+     * @throws \EasySwoole\Mysqli\Exception\Exception
+     * @throws \EasySwoole\ORM\Exception\Exception
+     * @throws \Throwable
+     */
+    private function entHash($ent_customer_id,$arr){
         $ent_hash_info = FaDaDaUserModel::create()
             ->where('customer_id', $ent_customer_id)
             ->get();
-
-        if (empty($ent_hash_info->getAttr('evidence_no'))) {
-            $this->timestamp = Carbon::now()->format('YmdHis');
-            $data = [
-                'cert_flag' => '1',//自动申请编号证书
-                'customer_id' => $ent_customer_id,
-                'file_name' => control::getUuid() . '.pdf',
-                'file_size' => mt_rand(1024, 4096) . '',
-                'noper_time' => time() . '',
-                'original_sha256' => hash('sha256', $ent_customer_id),
-                'preservation_desc' => $arr['entName'],
-                'preservation_name' => $arr['entName'],
-                'transaction_id' => control::getUuid(),
-            ];
-            $ent_hash_info = $this->getHashDeposit($data);
-            if ($ent_hash_info['code'] === 200) {
-                $ent_hash_id = $ent_hash_info['result'];
-            } else {
-                return $this->createReturn(
-                    $ent_hash_info['code'], null, $ent_hash_info['result'], $ent_hash_info['msg']
-                );
-            }
+        if (!empty($ent_hash_info->getAttr('evidence_no'))) {
+            return $ent_hash_info->getAttr('evidence_no');
+        }
+        $ent_hash_id = '';
+        $errorData = '';
+        $this->timestamp = Carbon::now()->format('YmdHis');
+        $data = [
+            'cert_flag' => '1',//自动申请编号证书
+            'customer_id' => $ent_customer_id,
+            'file_name' => control::getUuid() . '.pdf',
+            'file_size' => mt_rand(1024, 4096) . '',
+            'noper_time' => time() . '',
+            'original_sha256' => hash('sha256', $ent_customer_id),
+            'preservation_desc' => $arr['entName'],
+            'preservation_name' => $arr['entName'],
+            'transaction_id' => control::getUuid(),
+        ];
+        $ent_hash_info = $this->getHashDeposit($data);
+        if ($ent_hash_info['code'] === 200) {
+            $ent_hash_id = $ent_hash_info['result'];
             //数据入库
             FaDaDaUserModel::create()->where('customer_id', $ent_customer_id)->update([
                 'evidence_no' => $ent_hash_id
             ]);
         } else {
-            $ent_hash_id = $ent_hash_info->getAttr('evidence_no');
+            $errorData = $this->createReturn(
+                $ent_hash_info['code'], null, $ent_hash_info['result'], $ent_hash_info['msg']
+            );
         }
+        return [$ent_hash_id,$errorData];
+    }
 
-        //==============================================================================================================
-
-        //法人是否哈希存证过
+    /**
+     * 法人哈希存证
+     * @param $people_customer_id
+     * @param $arr
+     * @return array|mixed|string|null
+     * @throws \EasySwoole\Mysqli\Exception\Exception
+     * @throws \EasySwoole\ORM\Exception\Exception
+     * @throws \Throwable
+     */
+    private function peopleHash($people_customer_id,$arr){
         $people_hash_info = FaDaDaUserModel::create()
             ->where('customer_id', $people_customer_id)
             ->get();
-
-        if (empty($people_hash_info->getAttr('evidence_no'))) {
-            $this->timestamp = Carbon::now()->format('YmdHis');
-            $data = [
-                'cert_flag' => '1',//自动申请编号证书
-                'customer_id' => $people_customer_id,
-                'file_name' => control::getUuid() . '.pdf',
-                'file_size' => mt_rand(1024, 4096) . '',
-                'noper_time' => time() . '',
-                'original_sha256' => hash('sha256', $people_customer_id),
-                'preservation_desc' => $arr['legalPerson'],
-                'preservation_name' => $arr['legalPerson'],
-                'transaction_id' => control::getUuid(),
-            ];
-            $people_hash_info = $this->getHashDeposit($data);
-            if ($people_hash_info['code'] === 200) {
-                $people_hash_id = $people_hash_info['result'];
-            } else {
-                return $this->createReturn(
-                    $people_hash_info['code'], null, $people_hash_info['result'], $people_hash_info['msg']
-                );
-            }
+        if (!empty($people_hash_info->getAttr('evidence_no'))) {
+            return $people_hash_info->getAttr('evidence_no');
+        }
+        $people_hash_id = '';
+        $errorData = '';
+        $this->timestamp = Carbon::now()->format('YmdHis');
+        $data = [
+            'cert_flag' => '1',//自动申请编号证书
+            'customer_id' => $people_customer_id,
+            'file_name' => control::getUuid() . '.pdf',
+            'file_size' => mt_rand(1024, 4096) . '',
+            'noper_time' => time() . '',
+            'original_sha256' => hash('sha256', $people_customer_id),
+            'preservation_desc' => $arr['legalPerson'],
+            'preservation_name' => $arr['legalPerson'],
+            'transaction_id' => control::getUuid(),
+        ];
+        $people_hash_info = $this->getHashDeposit($data);
+        if ($people_hash_info['code'] === 200) {
+            $people_hash_id = $people_hash_info['result'];
             //数据入库
             FaDaDaUserModel::create()->where('customer_id', $people_customer_id)->update([
                 'evidence_no' => $people_hash_id
             ]);
         } else {
-            $people_hash_id = $people_hash_info->getAttr('evidence_no');
+            $errorData =  $this->createReturn(
+                $people_hash_info['code'], null, $people_hash_info['result'], $people_hash_info['msg']
+            );
         }
+        return [$people_hash_id,$errorData];
+    }
 
-        //==============================================================================================================
-
-        //企业是否上传过印章
+    /**
+     * 企业上传印章
+     * @param $ent_customer_id
+     * @param $arr
+     * @return array|mixed|string|null
+     * @throws \EasySwoole\Mysqli\Exception\Exception
+     * @throws \EasySwoole\ORM\Exception\Exception
+     * @throws \Throwable
+     */
+    private function entSign($ent_customer_id,$arr){
         $ent_sign_info = FaDaDaUserModel::create()
             ->where('customer_id', $ent_customer_id)
             ->get();
-
-        if (empty($ent_sign_info->getAttr('signature_id'))) {
-            $this->timestamp = Carbon::now()->format('YmdHis');
-            $ent_sign_info = $this->uploadSignature([
-                'customer_id' => $ent_customer_id,
-                'signature_img_base64' => $this->getEntSignBase64($arr),
-            ]);
-            if ($ent_sign_info['code'] === 200) {
-                $ent_sign_id = $ent_sign_info['result']['signature_id'];
-            } else {
-                return $this->createReturn(
-                    $ent_sign_info['code'], null, $ent_sign_info['result'], $ent_sign_info['msg']
-                );
-            }
-            //数据入库
-            FaDaDaUserModel::create()->where('customer_id', $ent_customer_id)->update([
-                'signature_id' => $ent_sign_id
-            ]);
-        } else {
-            $ent_sign_id = $ent_sign_info->getAttr('signature_id');
+        if (!empty($ent_sign_info->getAttr('signature_id'))) {
+            return $ent_sign_info->getAttr('signature_id');
         }
+        $ent_sign_id = '';
+        $errorData = '';
+        $this->timestamp = Carbon::now()->format('YmdHis');
+        $ent_sign_info = $this->uploadSignature([
+            'customer_id' => $ent_customer_id,
+            'signature_img_base64' => $this->getEntSignBase64($arr),
+        ]);
+        if ($ent_sign_info['code'] === 200) {
+            $ent_sign_id = $ent_sign_info['result']['signature_id'];
+        } else {
+            $errorData = $this->createReturn(
+                $ent_sign_info['code'], null, $ent_sign_info['result'], $ent_sign_info['msg']
+            );
+        }
+        //数据入库
+        FaDaDaUserModel::create()->where('customer_id', $ent_customer_id)->update([
+            'signature_id' => $ent_sign_id
+        ]);
+        return [$ent_sign_id,$errorData];
+    }
 
-        //企业是否上传过法人照片
+    /**
+     * 法人照片上传
+     * @param $people_customer_id
+     * @param $arr
+     * @return array|void
+     * @throws \EasySwoole\Mysqli\Exception\Exception
+     * @throws \EasySwoole\ORM\Exception\Exception
+     * @throws \Throwable
+     */
+    private function personalSign($people_customer_id,$arr){
         $personal_sign_info = FaDaDaUserModel::create()
             ->where('customer_id', $people_customer_id)
             ->get();
-
-        if (empty($personal_sign_info->getAttr('signature_id'))) {
-            $this->timestamp = Carbon::now()->format('YmdHis');
-            $personal_sign_info = $this->uploadSignature([
-                'customer_id' => $people_customer_id,
-                'signature_img_base64' => $this->getPersonalSignBase64($arr),
-            ]);
-            //log
-            CommonService::getInstance()->log4PHP($personal_sign_info,'info','personal_sign_info');
-            if ($personal_sign_info['code'] === 200) {
-                $personal_sign_id = $personal_sign_info['result']['signature_id'];
-            } else {
-                return $this->createReturn(
-                    $personal_sign_info['code'], null, $personal_sign_info['result'], $personal_sign_info['msg']
-                );
-            }
-            //数据入库
-            FaDaDaUserModel::create()->where('customer_id', $people_customer_id)->update([
-                'signature_id' => $personal_sign_id
-            ]);
-
-        } else {
-            $ent_sign_id = $personal_sign_info->getAttr('signature_id');
+        if(!empty($personal_sign_info->getAttr('signature_id'))){
+            return $personal_sign_info->getAttr('signature_id');
         }
+        $personal_sign_id = '';
+        $errorData = '';
+        $this->timestamp = Carbon::now()->format('YmdHis');
+        $personal_sign_info = $this->uploadSignature([
+            'customer_id' => $people_customer_id,
+            'signature_img_base64' => $this->getPersonalSignBase64($arr),
+        ]);
+        //log
+        //CommonService::getInstance()->log4PHP($personal_sign_info,'info','personal_sign_info');
+        if ($personal_sign_info['code'] === 200) {
+            $personal_sign_id = $personal_sign_info['result']['signature_id'];
+        } else {
+            $errorData = $this->createReturn(
+                $personal_sign_info['code'], null, $personal_sign_info['result'], $personal_sign_info['msg']
+            );
+        }
+        //数据入库
+        FaDaDaUserModel::create()->where('customer_id', $people_customer_id)->update([
+            'signature_id' => $personal_sign_id
+        ]);
 
-        $result = [];
-        $msg = '';
-
-
-        return $this->createReturn(200, null, $result, $msg);
+        return [$personal_sign_id,$errorData];
     }
 
     /**
@@ -300,7 +418,12 @@ class FaDaDaService extends ServiceBase
         return base64_encode(file_get_contents($path));
     }
 
-    //
+    /**
+     * 注册账号
+     * @param string $openId
+     * @param string $accountType
+     * @return array|mixed|string[]
+     */
     private function getRegister(string $openId, string $accountType)
     {
         $url_ext = 'account_register.api';
@@ -329,7 +452,11 @@ class FaDaDaService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
-    //
+    /**
+     * 实名信息哈希存证
+     * @param array $arr
+     * @return array|mixed|string[]
+     */
     private function getHashDeposit(array $arr)
     {
         $url_ext = 'hash_deposit.api';
@@ -376,7 +503,11 @@ class FaDaDaService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
-    //
+    /**
+     * 自定义印章
+     * @param array $arr
+     * @return array|mixed|string[]
+     */
     private function getCustomSignature(array $arr)
     {
         $url_ext = 'custom_signature.api';
@@ -405,7 +536,11 @@ class FaDaDaService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
-    //
+    /**
+     * 模板上传
+     * @param array $arr
+     * @return array|mixed|string[]
+     */
     private function uploadTemplate(array $arr)
     {
         $url_ext = 'uploadtemplate.api';
@@ -424,17 +559,21 @@ class FaDaDaService extends ServiceBase
             'v' => '2.0',
             'msg_digest' => $msg_digest,
             'template_id' => $arr['template_id'],
-            'doc_url' => $arr['doc_url'],
+            'doc_url' => "https://api.meirixindong.com/Static/AuthBookModel/fdd_template.pdf",
         ];
 
         $resp = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
-
+        CommonService::getInstance()->log4PHP($resp,'info','uploadTemplate');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
-    //
+    /**
+     * 印章上传
+     * @param array $arr
+     * @return array|mixed|string[]
+     */
     private function uploadSignature(array $arr)
     {
         $url_ext = 'add_signature.api';
@@ -463,7 +602,11 @@ class FaDaDaService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
-    //
+    /**
+     * 模板填充
+     * @param array $arr
+     * @return array|mixed|string[]
+     */
     private function fillTemplate(array $arr)
     {
         $url_ext = 'generate_contract.api';
@@ -487,9 +630,9 @@ class FaDaDaService extends ServiceBase
             'timestamp' => $this->timestamp,
             'v' => '2.0',
             'msg_digest' => $msg_digest,
-            'doc_title' => $arr['doc_title'],
-            'template_id' => $arr['template_id'],
-            'contract_id' => $arr['contract_id'],//合同编号
+            'doc_title' => $arr['doc_title'],//非必填
+            'template_id' => control::getUuid(),//模版ID 本地自增
+            'contract_id' => control::getUuid(),//合同编号
             'font_size' => $arr['font_size'],//字体大小
             'font_type' => $arr['font_type'],//字体类型 0-宋体；1-仿宋；2-黑体；3-楷体；4-微软雅黑
             'fill_type' => $arr['fill_type'],//填充类型 0 pdf 模板、1 在线填充模板
@@ -499,11 +642,15 @@ class FaDaDaService extends ServiceBase
         $resp = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
-
+        CommonService::getInstance()->log4PHP($resp,'info','generate_contract');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
-    //
+    /**
+     * 自动签署
+     * @param array $arr
+     * @return array|mixed|string[]
+     */
     private function getExtsignAuto(array $arr)
     {
         $url_ext = 'extsign_auto.api';
@@ -535,8 +682,38 @@ class FaDaDaService extends ServiceBase
         $resp = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
-
+        CommonService::getInstance()->log4PHP($resp,'info','extsign_auto');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
+    /**
+     * 合同下载
+     * @param $arr
+     * @return array|mixed|string[]
+     */
+    private function downLoadContract($arr){
+        $url_ext = 'downLoadContract.api';
+
+        $section_1 = $this->app_id . strtoupper(md5($this->timestamp));
+
+        $section_2 = strtoupper(sha1($this->app_secret . $arr['contract_id']));
+
+        $section_3 = strtoupper(sha1($section_1 . $section_2));
+
+        $msg_digest = base64_encode($section_3);
+
+        $post_data = [
+            'app_id' => $this->app_id,
+            'timestamp' => $this->timestamp,
+            'v' => '2.0',
+            'msg_digest' => $msg_digest,
+            'contract_id' => $arr['contract_id'],
+        ];
+
+        $resp = (new CoHttpClient())
+            ->useCache($this->curl_use_cache)
+            ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
+        CommonService::getInstance()->log4PHP($resp,'info','downLoadContract');
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
 }

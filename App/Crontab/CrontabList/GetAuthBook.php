@@ -44,13 +44,13 @@ class GetAuthBook extends AbstractCronTask
             foreach ($list as $oneEntInfo) {
 
                 $data = [
-                    'entName' => $oneEntInfo->getAttr('entName'),
-                    'socialCredit' => $oneEntInfo->getAttr('socialCredit'),
-                    'legalPerson' => $oneEntInfo->getAttr('legalPerson'),
+                    'entName' => $oneEntInfo->getAttr('entName'),// entName companyname
+                    'socialCredit' => $oneEntInfo->getAttr('socialCredit'),//taxno  newtaxno
+                    'legalPerson' => $oneEntInfo->getAttr('legalPerson'),//signName
                     'idCard' => $oneEntInfo->getAttr('idCard'),
-                    'phone' => $oneEntInfo->getAttr('phone'),
-                    'region' => $oneEntInfo->getAttr('city'),
-                    'address' => $oneEntInfo->getAttr('regAddress'),
+                    'phone' => $oneEntInfo->getAttr('phone'),//phoneno
+                    'region' => $oneEntInfo->getAttr('city'),//region
+                    'address' => $oneEntInfo->getAttr('regAddress'),//address
                     'requestId' => $oneEntInfo->getAttr('requestId') . time(),//海光用的，没啥用，随便传
                 ];
 
