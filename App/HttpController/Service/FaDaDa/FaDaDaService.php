@@ -121,10 +121,16 @@ class FaDaDaService extends ServiceBase
         $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAuto($arr,$personal_sign_id,550,680));
         if(!empty($ExtsignAutoErrorData)) return $ExtsignAutoErrorData;
         //合同下载
-        $downLoadContractErrorData = $this->checkRet($this->downLoadContract($arr));
+        $pdf_path = $downLoadContractErrorData = $this->checkRet($this->downLoadContract($arr));
         if(!empty($downLoadContractErrorData)) return $downLoadContractErrorData;
 
         //数据入库
+        FaDaDaUserModel::create()->where('customer_id', $ent_customer_id)->update([
+            'pdf' => $pdf_path
+        ]);
+        FaDaDaUserModel::create()->where('customer_id', $people_customer_id)->update([
+            'pdf' => $pdf_path
+        ]);
         FaDaDaUserModel::create()->where('customer_id', $ent_customer_id)->update([
             'template_id' => $arr['template_id'],'contract_id' => $arr['contract_id']
         ]);
@@ -623,7 +629,7 @@ class FaDaDaService extends ServiceBase
             'companyName' => $arr['entName'],
             'taxNo' => $arr['socialCredit'],
             'newTaxNo' => $arr['socialCredit'],
-            'signName' => $arr['legalPerson'],
+            'signName' => '',
             'phoneNo' => $arr['phone'],
             'region' => $arr['region'],
             'address' => $arr['address'],
@@ -694,7 +700,7 @@ class FaDaDaService extends ServiceBase
             'position_type' => 1,//定位类型 0-关键字（默认） 1-坐标
 //            'sign_keyword' => $arr['sign_keyword'],//定位关键字 关键字为文档中的文字内容（能被ctrl+f查找功能检索到）
 //            'keyword_strategy' => $arr['keyword_strategy'],//0 所有关键字签章 1 第一个关键字签章 2 最后一个关键字签章
-            'signature_id' => $arr['signature_id'],
+            'signature_id' => $signature_id,
 //            'signature_show_time' => $arr['signature_show_time'],//时间戳显示方式 1 显示 2 不显示
             'signature_positions'=>'[{"pagenum":0,"x":'.$x.',"y":'.$y.'}]',
         ];
@@ -744,13 +750,14 @@ class FaDaDaService extends ServiceBase
         $path = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
         is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0755);
         $filename = $arr['contract_id'];
+        $path = INV_AUTH_PATH . $path . $filename;
         //储存pdf
         file_put_contents(
-            INV_AUTH_PATH . $path . $filename,
+            $path,
             $resp,
             FILE_APPEND | LOCK_EX
         );
-        CommonService::getInstance()->log4PHP(INV_AUTH_PATH . $path . $filename,'info','downLoadContract');
-        return true;
+        CommonService::getInstance()->log4PHP($path,'info','downLoadContract');
+        return $path;
     }
 }
