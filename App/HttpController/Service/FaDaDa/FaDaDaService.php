@@ -674,14 +674,14 @@ class FaDaDaService extends ServiceBase
      * @param array $arr
      * @return array|mixed|string[]
      */
-    private function getExtsignAuto(array $arr,$ent_customer_id,$signature_id,$x,$y)
+    private function getExtsignAuto(array $arr,$customer_id,$signature_id,$x,$y)
     {
         $url_ext = 'extsign_auto.api';
         //交易号 每次请求视为一个交易。 只允许长度<=32 的英文或数字字符。 交易号为接入平台生成，必须保证唯一并自行记录
         $transaction_id = control::getUuid();
         $section_1 = $this->app_id . strtoupper(md5($transaction_id.$this->timestamp));
 
-        $section_2 = strtoupper(sha1($this->app_secret . $arr['customer_id']));
+        $section_2 = strtoupper(sha1($this->app_secret . $customer_id));
 
         $section_3 = strtoupper(sha1($section_1 . $section_2));
 
@@ -694,7 +694,7 @@ class FaDaDaService extends ServiceBase
             'msg_digest' => $msg_digest,
             'transaction_id' => $transaction_id,
             'contract_id' => $arr['contract_id']??'',
-            'customer_id' => $ent_customer_id,
+            'customer_id' => $customer_id,
             'doc_title' => $arr['doc_title']??'合同',
             'position_type' => 1,//定位类型 0-关键字（默认） 1-坐标
 //            'sign_keyword' => $arr['sign_keyword'],//定位关键字 关键字为文档中的文字内容（能被ctrl+f查找功能检索到）
