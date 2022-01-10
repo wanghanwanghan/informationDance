@@ -119,7 +119,7 @@ class FaDaDaService extends ServiceBase
         $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAuto($arr,$ent_customer_id,$ent_sign_id,510,580));
         if(!empty($ExtsignAutoErrorData)) return $ExtsignAutoErrorData;
         //自动签署法人姓名
-        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAuto($arr,$ent_customer_id,$personal_sign_id,550,680));
+        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAuto($arr,$people_customer_id,$personal_sign_id,550,680));
         if(!empty($ExtsignAutoErrorData)) return $ExtsignAutoErrorData;
         //合同下载
         $pdf_path = $downLoadContractErrorData = $this->checkRet($this->downLoadContract($arr));
@@ -150,9 +150,7 @@ class FaDaDaService extends ServiceBase
      */
     private function checkRet($ret){
         if (!isset($ret['code']) || !$ret['code'] === 200) {
-            return $this->createReturn(
-                $ret['code']??'300', null, $ret['result']??'', $ret['msg']??''
-            );
+            return $ret;
         }
         return '';
     }
@@ -751,7 +749,7 @@ class FaDaDaService extends ServiceBase
         $path = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
         is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0755);
         $filename = $arr['contract_id'];
-        $path = INV_AUTH_PATH . $path . $filename.'pdf';
+        $path = INV_AUTH_PATH . $path . $filename.'.pdf';
         //储存pdf
         file_put_contents(
             $path,
