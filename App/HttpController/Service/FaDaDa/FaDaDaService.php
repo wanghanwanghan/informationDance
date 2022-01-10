@@ -116,10 +116,10 @@ class FaDaDaService extends ServiceBase
         $fillTemplateErrorData = $this->checkRet($this->fillTemplate($arr));
         if(!empty($fillTemplateErrorData)) return $fillTemplateErrorData;
         //自动签署企业印章
-        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAuto($arr,$ent_sign_id,510,580));
+        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAuto($arr,$ent_customer_id,$ent_sign_id,510,580));
         if(!empty($ExtsignAutoErrorData)) return $ExtsignAutoErrorData;
         //自动签署法人姓名
-        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAuto($arr,$personal_sign_id,550,680));
+        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAuto($arr,$ent_customer_id,$personal_sign_id,550,680));
         if(!empty($ExtsignAutoErrorData)) return $ExtsignAutoErrorData;
         //合同下载
         $pdf_path = $downLoadContractErrorData = $this->checkRet($this->downLoadContract($arr));
@@ -151,7 +151,7 @@ class FaDaDaService extends ServiceBase
     private function checkRet($ret){
         if (!isset($ret['code']) || !$ret['code'] === 200) {
             return $this->createReturn(
-                $ret['code'], null, $ret['result'], $ret['msg']
+                $ret['code']??'300', null, $ret['result']??'', $ret['msg']??''
             );
         }
         return '';
@@ -676,7 +676,7 @@ class FaDaDaService extends ServiceBase
      * @param array $arr
      * @return array|mixed|string[]
      */
-    private function getExtsignAuto(array $arr,$signature_id,$x,$y)
+    private function getExtsignAuto(array $arr,$ent_customer_id,$signature_id,$x,$y)
     {
         $url_ext = 'extsign_auto.api';
         //交易号 每次请求视为一个交易。 只允许长度<=32 的英文或数字字符。 交易号为接入平台生成，必须保证唯一并自行记录
@@ -696,7 +696,7 @@ class FaDaDaService extends ServiceBase
             'msg_digest' => $msg_digest,
             'transaction_id' => $transaction_id,
             'contract_id' => $arr['contract_id']??'',
-            'customer_id' => $arr['customer_id']??'',
+            'customer_id' => $ent_customer_id,
             'doc_title' => $arr['doc_title']??'合同',
             'position_type' => 1,//定位类型 0-关键字（默认） 1-坐标
 //            'sign_keyword' => $arr['sign_keyword'],//定位关键字 关键字为文档中的文字内容（能被ctrl+f查找功能检索到）
@@ -751,7 +751,7 @@ class FaDaDaService extends ServiceBase
         $path = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
         is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0755);
         $filename = $arr['contract_id'];
-        $path = INV_AUTH_PATH . $path . $filename;
+        $path = INV_AUTH_PATH . $path . $filename.'pdf';
         //储存pdf
         file_put_contents(
             $path,
