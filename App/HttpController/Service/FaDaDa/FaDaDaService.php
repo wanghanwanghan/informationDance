@@ -90,6 +90,7 @@ class FaDaDaService extends ServiceBase
         //企业注册
         list($ent_customer_id,$entCustomerErrorData) = $this->getEntCustomer($arr);
         if(!empty($entCustomerErrorData)) return $entCustomerErrorData;
+        $arr['customer_id'] = $ent_customer_id;
         //法人是否注册过
         list($people_customer_id,$peopleCustomerErrorData) = $this->getPeopleCustomer($arr);
         if(!empty($peopleCustomerErrorData)) return $peopleCustomerErrorData;
@@ -148,7 +149,7 @@ class FaDaDaService extends ServiceBase
      * @return array|string
      */
     private function checkRet($ret){
-        if (!$ret['code'] === 200) {
+        if (!isset($ret['code']) || !$ret['code'] === 200) {
             return $this->createReturn(
                 $ret['code'], null, $ret['result'], $ret['msg']
             );
@@ -625,14 +626,14 @@ class FaDaDaService extends ServiceBase
     {
         $url_ext = 'generate_contract.api';
         $arr['parameter_map'] = [
-            'entName' => $arr['entName'],
-            'companyName' => $arr['entName'],
-            'taxNo' => $arr['socialCredit'],
-            'newTaxNo' => $arr['socialCredit'],
+            'entName' => $arr['entName']??'',
+            'companyName' => $arr['entName']??'',
+            'taxNo' => $arr['socialCredit']??'',
+            'newTaxNo' => $arr['socialCredit']??'',
             'signName' => '',
-            'phoneNo' => $arr['phone'],
-            'region' => $arr['region'],
-            'address' => $arr['address'],
+            'phoneNo' => $arr['phone']??'',
+            'region' => $arr['region']??'地区',
+            'address' => $arr['address']??'地址',
             'date' => date('Y-m-d H:i:s',time())
         ];
         $section_1 = $this->app_id . strtoupper(md5($this->timestamp));
@@ -694,9 +695,9 @@ class FaDaDaService extends ServiceBase
             'v' => '2.0',
             'msg_digest' => $msg_digest,
             'transaction_id' => $transaction_id,
-            'contract_id' => $arr['contract_id'],
-            'customer_id' => $arr['customer_id'],
-            'doc_title' => $arr['doc_title'],
+            'contract_id' => $arr['contract_id']??'',
+            'customer_id' => $arr['customer_id']??'',
+            'doc_title' => $arr['doc_title']??'合同',
             'position_type' => 1,//定位类型 0-关键字（默认） 1-坐标
 //            'sign_keyword' => $arr['sign_keyword'],//定位关键字 关键字为文档中的文字内容（能被ctrl+f查找功能检索到）
 //            'keyword_strategy' => $arr['keyword_strategy'],//0 所有关键字签章 1 第一个关键字签章 2 最后一个关键字签章
