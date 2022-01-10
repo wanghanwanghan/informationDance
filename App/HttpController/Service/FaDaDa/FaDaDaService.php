@@ -122,9 +122,7 @@ class FaDaDaService extends ServiceBase
         $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAuto($arr,$people_customer_id,$personal_sign_id,550,680));
         if(!empty($ExtsignAutoErrorData)) return $ExtsignAutoErrorData;
         //合同下载
-        $pdf_path = $downLoadContractErrorData = $this->checkRet($this->downLoadContract($arr));
-        if(!empty($downLoadContractErrorData)) return $downLoadContractErrorData;
-
+        $pdf_path = $this->downLoadContract($arr);
         //数据入库
         FaDaDaUserModel::create()->where('customer_id', $ent_customer_id)->update([
             'pdf' => $pdf_path
@@ -408,7 +406,7 @@ class FaDaDaService extends ServiceBase
     private function getPersonalSignBase64($arr){
         $cc = new SealService();
         $path = TEMP_FILE_PATH.'personal.png';
-        $cc::personalSeal($path,$arr['entName']);
+        $cc::personalSeal($path,$arr['legalPerson']);
         return base64_encode(file_get_contents($path));
     }
 
@@ -425,7 +423,7 @@ class FaDaDaService extends ServiceBase
         $cc = new SealService($arr['entName'], $num, 200);
         $cc->saveImg($path, "");
         //缩小图片
-        $path = $cc->scaleImg($path, 170, 170);
+        $path = $cc->scaleImg($path, 150, 150);
         return base64_encode(file_get_contents($path));
     }
 
@@ -632,7 +630,7 @@ class FaDaDaService extends ServiceBase
             'phoneNo' => $arr['phone']??'',
             'region' => $arr['region']??'地区',
             'address' => $arr['address']??'地址',
-            'date' => date('Y-m-d H:i:s',time())
+            'date' => date('Y-m-d',time())
         ];
         $section_1 = $this->app_id . strtoupper(md5($this->timestamp));
 
