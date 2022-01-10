@@ -113,8 +113,11 @@ class FaDaDaService extends ServiceBase
         //模板填充
         $fillTemplateErrorData = $this->checkRet($this->fillTemplate($arr));
         if(!empty($fillTemplateErrorData)) return $fillTemplateErrorData;
-        //自动签署
-        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAuto($arr));
+        //自动签署企业印章
+        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAuto($arr,$ent_sign_id,510,580));
+        if(!empty($ExtsignAutoErrorData)) return $ExtsignAutoErrorData;
+        //自动签署法人姓名
+        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAuto($arr,$personal_sign_id,550,680));
         if(!empty($ExtsignAutoErrorData)) return $ExtsignAutoErrorData;
         //合同下载
         $downLoadContractErrorData = $this->checkRet($this->downLoadContract($arr));
@@ -398,7 +401,7 @@ class FaDaDaService extends ServiceBase
      */
     private function getPersonalSignBase64($arr){
         $cc = new SealService();
-        $path = 'personal.png';
+        $path = TEMP_FILE_PATH.'personal.png';
         $cc::personalSeal($path,$arr['entName']);
         return base64_encode(file_get_contents($path));
     }
@@ -412,9 +415,11 @@ class FaDaDaService extends ServiceBase
         $num = $arr['socialCredit'];
         $num_arr = str_split($num);
         $num = implode('', array_reverse($num_arr));
-        $path = 'qianzhang.png';
+        $path = TEMP_FILE_PATH.'qianzhang.png';
         $cc = new SealService($arr['entName'], $num, 200);
         $cc->saveImg($path, "");
+        //缩小图片
+        $path = $cc->scaleImg($path,'/', 170, 170);
         return base64_encode(file_get_contents($path));
     }
 
@@ -610,16 +615,26 @@ class FaDaDaService extends ServiceBase
     private function fillTemplate(array $arr)
     {
         $url_ext = 'generate_contract.api';
-
+        $arr['parameter_map'] = [
+            'entName' => $arr['entName'],
+            'companyName' => $arr['entName'],
+            'taxNo' => $arr['socialCredit'],
+            'newTaxNo' => $arr['socialCredit'],
+            'signName' => $arr['legalPerson'],
+            'phoneNo' => $arr['phone'],
+            'region' => $arr['region'],
+            'address' => $arr['address'],
+            'date' => date('Y-m-d H:i:s',time())
+        ];
         $section_1 = $this->app_id . strtoupper(md5($this->timestamp));
 
         ksort($arr['parameter_map']);
 
-        $arr['parameter_map'] = jsonEncode($arr['parameter_map'], false);
+        $arr['parameter_map'] = (string)jsonEncode($arr['parameter_map'], false);
 
         $section_2 = strtoupper(sha1(
-                $this->app_secret . $arr['template_id'] . $arr['contract_id']) . $arr['parameter_map']
-        );
+                $this->app_secret . $arr['template_id'] . $arr['contract_id'])
+        ) . $arr['parameter_map'];
 
         $section_3 = strtoupper(sha1($section_1 . $section_2));
 
@@ -630,12 +645,12 @@ class FaDaDaService extends ServiceBase
             'timestamp' => $this->timestamp,
             'v' => '2.0',
             'msg_digest' => $msg_digest,
-            'doc_title' => $arr['doc_title'],//非必填
-            'template_id' => control::getUuid(),//模版ID 本地自增
-            'contract_id' => control::getUuid(),//合同编号
-            'font_size' => $arr['font_size'],//字体大小
-            'font_type' => $arr['font_type'],//字体类型 0-宋体；1-仿宋；2-黑体；3-楷体；4-微软雅黑
-            'fill_type' => $arr['fill_type'],//填充类型 0 pdf 模板、1 在线填充模板
+//            'doc_title' => $arr['doc_title'],//非必填
+            'template_id' => $arr['template_id'],//模版ID 本地自增
+            'contract_id' => $arr['contract_id'],//合同编号
+//            'font_size' => $arr['font_size'],//字体大小
+//            'font_type' => $arr['font_type'],//字体类型 0-宋体；1-仿宋；2-黑体；3-楷体；4-微软雅黑
+//            'fill_type' => $arr['fill_type'],//填充类型 0 pdf 模板、1 在线填充模板
             'parameter_map' => $arr['parameter_map'],//填充内容 json key val
         ];
 
@@ -651,11 +666,12 @@ class FaDaDaService extends ServiceBase
      * @param array $arr
      * @return array|mixed|string[]
      */
-    private function getExtsignAuto(array $arr)
+    private function getExtsignAuto(array $arr,$signature_id,$x,$y)
     {
         $url_ext = 'extsign_auto.api';
-
-        $section_1 = $this->app_id . strtoupper(md5($this->timestamp));
+        //交易号 每次请求视为一个交易。 只允许长度<=32 的英文或数字字符。 交易号为接入平台生成，必须保证唯一并自行记录
+        $transaction_id = control::getUuid();
+        $section_1 = $this->app_id . strtoupper(md5($transaction_id.$this->timestamp));
 
         $section_2 = strtoupper(sha1($this->app_secret . $arr['customer_id']));
 
@@ -668,15 +684,16 @@ class FaDaDaService extends ServiceBase
             'timestamp' => $this->timestamp,
             'v' => '2.0',
             'msg_digest' => $msg_digest,
-            'transaction_id' => $arr['transaction_id'],
+            'transaction_id' => $transaction_id,
             'contract_id' => $arr['contract_id'],
             'customer_id' => $arr['customer_id'],
             'doc_title' => $arr['doc_title'],
-            'position_type' => $arr['position_type'],//定位类型 0-关键字（默认） 1-坐标
-            'sign_keyword' => $arr['sign_keyword'],//定位关键字 关键字为文档中的文字内容（能被ctrl+f查找功能检索到）
-            'keyword_strategy' => $arr['keyword_strategy'],//0 所有关键字签章 1 第一个关键字签章 2 最后一个关键字签章
+            'position_type' => 1,//定位类型 0-关键字（默认） 1-坐标
+//            'sign_keyword' => $arr['sign_keyword'],//定位关键字 关键字为文档中的文字内容（能被ctrl+f查找功能检索到）
+//            'keyword_strategy' => $arr['keyword_strategy'],//0 所有关键字签章 1 第一个关键字签章 2 最后一个关键字签章
             'signature_id' => $arr['signature_id'],
-            'signature_show_time' => $arr['signature_show_time'],//时间戳显示方式 1 显示 2 不显示
+//            'signature_show_time' => $arr['signature_show_time'],//时间戳显示方式 1 显示 2 不显示
+            'signature_positions'=>'[{"pagenum":0,"x":'.$x.',"y":'.$y.'}]',
         ];
 
         $resp = (new CoHttpClient())
@@ -709,11 +726,26 @@ class FaDaDaService extends ServiceBase
             'msg_digest' => $msg_digest,
             'contract_id' => $arr['contract_id'],
         ];
-
         $resp = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
-            ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
-        CommonService::getInstance()->log4PHP($resp,'info','downLoadContract');
-        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+            ->needJsonDecode(false)
+            ->send(
+                $this->url . $url_ext,
+                $post_data,
+                $this->getHeader('form'),
+                ['enableSSL' => true],
+                'GET'
+            );
+        $path = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
+        is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0755);
+        $filename = $arr['contract_id'];
+        //储存pdf
+        file_put_contents(
+            INV_AUTH_PATH . $path . $filename,
+            $resp,
+            FILE_APPEND | LOCK_EX
+        );
+        CommonService::getInstance()->log4PHP(INV_AUTH_PATH . $path . $filename,'info','downLoadContract');
+        return true;
     }
 }

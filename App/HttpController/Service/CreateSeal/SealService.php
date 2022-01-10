@@ -262,7 +262,7 @@ class SealService
         }
     }
 
-    public static function personalSeal($filePath,$name, $width = 250, $height = 100)
+    public static function personalSeal($filePath,$name, $width = 120, $height = 40)
     {
         if ($width/$height<2){
             throw new Exception("宽度必须大于等于高度的3倍");
@@ -285,6 +285,45 @@ class SealService
         imagettftext($img, $fontSize, 0, ceil(($width - $fontBox[2]) / 2), ceil(($height - $fontBox[1] - $fontBox[7]) / 2), $fontColor, $font, $name);
         imagepng($img, $filePath);
         imagedestroy($img);
+    }
+
+    public function scaleImg($picName, $maxx = 800, $maxy = 450)
+    {
+        $info = getimageSize($picName);//获取图片的基本信息
+        $w = $info[0];//获取宽度
+        $h = $info[1];//获取高度
+
+        if($w<=$maxx&&$h<=$maxy){
+            return $picName;
+        }
+        $im = imagecreatefrompng($picName);
+        //计算缩放比例
+        if (($maxx / $w) > ($maxy / $h)) {
+            $b = $maxy / $h;
+        } else {
+            $b = $maxx / $w;
+        }
+        //计算出缩放后的尺寸
+        $nw = floor($w * $b);
+        $nh = floor($h * $b);
+        //创建一个新的图像源（目标图像）
+        $nim = imagecreatetruecolor($nw, $nh);
+        //透明背景变黑处理
+        //2.上色
+        $color=imagecolorallocate($nim,255,255,255);
+        //3.设置透明
+        imagecolortransparent($nim,$color);
+        imagefill($nim,0,0,$color);
+
+        //执行等比缩放
+        imagecopyresampled($nim, $im, 0, 0, 0, 0, $nw, $nh, $w, $h);
+        $savePath = TEMP_FILE_PATH.'qianzhang2.png';
+        imagepng($nim,$savePath);
+        //释放图片资源
+        imagedestroy($im);
+        imagedestroy($nim);
+        //返回结果
+        return $savePath;
     }
 
 }
