@@ -420,7 +420,7 @@ class FaDaDaService extends ServiceBase
         $cc = new SealService($arr['entName'], $num, 200);
         $cc->saveImg($path, "");
         //缩小图片
-        $path = $cc->scaleImg($path,'/', 170, 170);
+        $path = $cc->scaleImg($path, 170, 170);
         return base64_encode(file_get_contents($path));
     }
 
