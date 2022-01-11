@@ -282,7 +282,7 @@ class SealService
         $fontBox = imagettfbbox($fontSize, 0, $font, $name);//获取文字所需的尺寸大小
 
         $fontColor = imagecolorallocate($img, 255, 0, 0);
-        imagettftext($img, $fontSize, 0, ceil(($width - $fontBox[2]) / 2), ceil(($height - $fontBox[1] - $fontBox[7]) / 2), $fontColor, $font, $name);
+        imagettftext($img, $fontSize, 0, ceil(0), ceil(($height - $fontBox[1] - $fontBox[7]) / 2), $fontColor, $font, $name);
         imagepng($img, $filePath);
         imagedestroy($img);
     }
