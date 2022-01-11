@@ -56,7 +56,7 @@ class GetAuthBook extends AbstractCronTask
                 ];
 
                 $res = (new FaDaDaService())->setCheckRespFlag(true)->getAuthFile($data);
-
+                CommonService::getInstance()->log4PHP($res,'info','get_auth_file_return_res');
 //                $res = (new HuiCheJianService())
 //                    ->setCheckRespFlag(true)->getAuthPdf($data);
 
