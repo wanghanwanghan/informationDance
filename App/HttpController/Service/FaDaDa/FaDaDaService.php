@@ -630,7 +630,7 @@ class FaDaDaService extends ServiceBase
             'phoneNo' => $arr['phone']??'',
             'region' => $arr['city']??'',
             'address' => $arr['regAddress']??'',
-            'date' => date('Y年m月d',time())
+            'date' => date('Y年m月d日',time())
         ];
         $section_1 = $this->app_id . strtoupper(md5($this->timestamp));
 
