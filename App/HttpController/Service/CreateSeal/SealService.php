@@ -211,8 +211,8 @@ class SealService
         $this->startAngle = $stang;
         $this->charAngle = $crang;
         $this->centerDot = array('x' => $rad, 'y' => $rad);
-        $this->font = dirname(__FILE__) . '/simsun.ttc';
-        $this->font = dirname(__FILE__) . '/simhei.ttf';
+//        $this->font = dirname(__FILE__) . '/simsun.ttc';
+        $this->font = dirname(__FILE__) . '/simkai.ttf';
         $this->fontSize = $fsize;
         $this->innerRadius = $inrad;  //默认0,没有
         $this->spacing = 1;
@@ -262,7 +262,7 @@ class SealService
         }
     }
 
-    public static function personalSeal($filePath,$name, $width = 210, $height = 21)
+    public static function personalSeal($filePath,$name, $width = 210, $height = 35)
     {
         if ($width/$height<2){
             throw new Exception("宽度必须大于等于高度的3倍");
@@ -277,7 +277,7 @@ class SealService
         if ($charset != 'UTF-8') {
             $name = mb_convert_encoding($name, 'UTF-8', 'GBK');
         }
-        $font = dirname(__FILE__) . '/simsun.ttc';
+        $font = dirname(__FILE__) . '/simkai.ttf';
         $fontSize = 50*$height/100;
         $fontBox = imagettfbbox($fontSize, 0, $font, $name);//获取文字所需的尺寸大小
 

@@ -630,7 +630,7 @@ class FaDaDaService extends ServiceBase
             'phoneNo' => $arr['phone']??'',
             'region' => $arr['city']??'',
             'address' => $arr['regAddress']??'',
-            'date' => date('Y-m-d',time())
+            'date' => date('Y年m月d',time())
         ];
         $section_1 = $this->app_id . strtoupper(md5($this->timestamp));
 
@@ -747,10 +747,10 @@ class FaDaDaService extends ServiceBase
         $path = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
         is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0755);
         $filename = $arr['contract_id'];
-        $path = INV_AUTH_PATH . $path . $filename.'.pdf';
+        $path = $path . $filename.'.pdf';
         //储存pdf
         file_put_contents(
-            $path,
+            INV_AUTH_PATH .$path,
             $resp,
             FILE_APPEND | LOCK_EX
         );
