@@ -136,7 +136,7 @@ class FaDaDaService extends ServiceBase
         FaDaDaUserModel::create()->where('customer_id', $people_customer_id)->update([
             'template_id' => $arr['template_id'],'contract_id' => $arr['contract_id']
         ]);
-        $result = [];
+        $result = ['url'=>$pdf_path];
         $msg = '';
         return $this->createReturn(200, null, $result, $msg);
     }
@@ -628,8 +628,8 @@ class FaDaDaService extends ServiceBase
             'newTaxNo' => $arr['socialCredit']??'',
             'signName' => '',
             'phoneNo' => $arr['phone']??'',
-            'region' => $arr['region']??'地区',
-            'address' => $arr['address']??'地址',
+            'region' => $arr['city']??'',
+            'address' => $arr['regAddress']??'',
             'date' => date('Y-m-d',time())
         ];
         $section_1 = $this->app_id . strtoupper(md5($this->timestamp));

@@ -5,6 +5,7 @@ namespace App\Crontab\CrontabList;
 use App\Crontab\CrontabBase;
 use App\HttpController\Models\Api\AntAuthList;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\FaDaDa\FaDaDaService;
 use App\HttpController\Service\HuiCheJian\HuiCheJianService;
 use App\HttpController\Service\MaYi\MaYiService;
 use Carbon\Carbon;
@@ -49,13 +50,15 @@ class GetAuthBook extends AbstractCronTask
                     'legalPerson' => $oneEntInfo->getAttr('legalPerson'),//signName
                     'idCard' => $oneEntInfo->getAttr('idCard'),
                     'phone' => $oneEntInfo->getAttr('phone'),//phoneno
-                    'region' => $oneEntInfo->getAttr('city'),//region
-                    'address' => $oneEntInfo->getAttr('regAddress'),//address
+                    'city' => $oneEntInfo->getAttr('city'),//region
+                    'regAddress' => $oneEntInfo->getAttr('regAddress'),//address
                     'requestId' => $oneEntInfo->getAttr('requestId') . time(),//海光用的，没啥用，随便传
                 ];
 
-                $res = (new HuiCheJianService())
-                    ->setCheckRespFlag(true)->getAuthPdf($data);
+                $res = (new FaDaDaService())->setCheckRespFlag(true)->getAuthFile($data);
+
+//                $res = (new HuiCheJianService())
+//                    ->setCheckRespFlag(true)->getAuthPdf($data);
 
                 if ($res['code'] !== 200) {
                     continue;
@@ -63,23 +66,12 @@ class GetAuthBook extends AbstractCronTask
 
                 $url = $res['result']['url'];
 
-                $path = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
-                is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0755);
-                $filename = $oneEntInfo->getAttr('socialCredit') . '.pdf';
-
-                //储存pdf
-                file_put_contents(
-                    INV_AUTH_PATH . $path . $filename,
-                    file_get_contents($url),
-                    FILE_APPEND | LOCK_EX
-                );
-
                 //更新数据库
                 AntAuthList::create()->where([
                     'entName' => $oneEntInfo->getAttr('entName'),
                     'socialCredit' => $oneEntInfo->getAttr('socialCredit'),
                 ])->update([
-                    'filePath' => $path . $filename,
+                    'filePath' => $url,
                     'authDate' => time(),
                     'status' => MaYiService::STATUS_1
                 ]);
