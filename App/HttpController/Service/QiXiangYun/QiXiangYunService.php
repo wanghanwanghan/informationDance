@@ -59,7 +59,7 @@ class QiXiangYunService extends ServiceBase
         ];
 
         $res = (new CoHttpClient())
-            ->useCache(true)->setEx(0.3)
+            ->useCache(false)->setEx(0.3)
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'postjson');
         CommonService::getInstance()->log4PHP($res,'info','qixiangyun_createToken');
