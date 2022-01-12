@@ -62,6 +62,7 @@ class QiXiangYunService extends ServiceBase
             ->useCache(true)->setEx(0.3)
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'postjson');
+        CommonService::getInstance()->log4PHP($res,'info','qixiangyun_createToken');
 
         return $res['value']['access_token'];
     }
@@ -259,90 +260,55 @@ class QiXiangYunService extends ServiceBase
     //获取发票下载任务状态
     function getFpxzStatus(string $nsrsbh, $kpyf = ''): array
     {
-        $url = $this->baseUrl . 'FP/getFpxzStatus';
-
-        if (empty($kpyf)) {
-            for ($i = 1; $i <= 24; $i++) {
-                $kpyf = Carbon::now()->subMonths($i)->format('Ym');
-                $data = [
-                    'nsrsbh' => $nsrsbh,
-                    'kpyf' => $kpyf - 0,//Ym
-                    'jxxbzs' => [
-                        'jx', 'xx'
-                    ],
-                    'fplxs' => [
-                        '01', '03', '04', '08', '10', '11', '14', '15', '17'
-                    ],
-                    'addJob' => true//true是发起任务，false是查询任务状态
-                ];
-
-                $req_date = time() . '000';
-
-                $token = $this->createToken();
-
-                $sign = base64_encode(
-                    md5(
-                        'POST_' . md5(json_encode($data)) . '_' . $req_date . '_' . $token . '_' . $this->secret
-                    )
-                );
-
-                $req_sign = "API-SV1:{$this->appkey}:" . $sign;
-
-                $header = [
-                    'content-type' => 'application/json;charset=UTF-8',
-                    'access_token' => $token,
-                    'req_date' => $req_date,
-                    'req_sign' => $req_sign,
-                ];
-
-                $res = (new CoHttpClient())
-                    ->useCache(false)
-                    ->needJsonDecode(true)
-                    ->send($url, $data, $header, [], 'postjson');
-
-                CommonService::getInstance()->log4PHP($res);
-            }
-        } else {
-            $data = [
-                'nsrsbh' => $nsrsbh,
-                'kpyf' => $kpyf - 0,//Ym
-                'jxxbzs' => [
-                    'jx', 'xx'
-                ],
-                'fplxs' => [
-                    '01', '03', '04', '08', '10', '11', '14', '15', '17'
-                ],
-                'addJob' => true
-            ];
-
-            $req_date = time() . '000';
-
-            $token = $this->createToken();
-
-            $sign = base64_encode(
-                md5(
-                    'POST_' . md5(json_encode($data)) . '_' . $req_date . '_' . $token . '_' . $this->secret
-                )
-            );
-
-            $req_sign = "API-SV1:{$this->appkey}:" . $sign;
-
-            $header = [
-                'content-type' => 'application/json;charset=UTF-8',
-                'access_token' => $token,
-                'req_date' => $req_date,
-                'req_sign' => $req_sign,
-            ];
-
-            $res = (new CoHttpClient())
-                ->useCache(false)
-                ->needJsonDecode(true)
-                ->send($url, $data, $header, [], 'postjson');
-
-            CommonService::getInstance()->log4PHP($res);
+        $res = [];
+        //获取一个月的
+        if (!empty($kpyf)) {
+            $this->actionGetFpxzStatus($nsrsbh, $kpyf);
+            return $res;
         }
-
-        return [];
+        //获取24个月的数据
+        for ($i = 1; $i <= 24; $i++) {
+            $kpyf = Carbon::now()->subMonths($i)->format('Ym');
+            $this->actionGetFpxzStatus($nsrsbh, $kpyf);
+        }
+        return $res;
     }
 
+    /**
+     * 更具月份获取企享云通过税务局查询发票进度
+     * @param $nsrsbh
+     * @param $kpyf
+     * @return void
+     */
+    function actionGetFpxzStatus($nsrsbh, $kpyf)
+    {
+        $url = $this->testBaseUrl . 'FP/getFpxzStatus';
+        $data = [
+            'nsrsbh' => $nsrsbh,
+            'kpyf' => $kpyf - 0,//Ym
+            'jxxbzs' => ['jx', 'xx'],
+            'fplxs' => ['01', '03', '04', '08', '10', '11', '14', '15', '17'],
+            'addJob' => true
+        ];
+
+        $req_date = time() . '000';
+        $token = $this->createToken();
+        $sign = base64_encode(
+            md5('POST_' . md5(json_encode($data)) . '_' . $req_date . '_' . $token . '_' . $this->secret)
+        );
+        $req_sign = "API-SV1:{$this->appkey}:" . $sign;
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'access_token' => $token,
+            'req_date' => $req_date,
+            'req_sign' => $req_sign,
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'postjson');
+
+        CommonService::getInstance()->log4PHP($res);
+    }
 }
