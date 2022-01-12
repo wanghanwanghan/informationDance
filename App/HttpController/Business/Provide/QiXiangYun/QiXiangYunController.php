@@ -120,9 +120,10 @@ class QiXiangYunController extends ProvideBase
 
     function getFpxzStatus(): bool
     {
-        $this->csp->add($this->cspKey, function () {
+        $nsrsbh = $this->getRequestData('nsrsbh', '91110108MA01KPGK0L');
+        $this->csp->add($this->cspKey, function () use ($nsrsbh)  {
             return QiXiangYunService::getInstance()
-                ->setCheckRespFlag(true)->getFpxzStatus();
+                ->setCheckRespFlag(true)->getFpxzStatus($nsrsbh);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
