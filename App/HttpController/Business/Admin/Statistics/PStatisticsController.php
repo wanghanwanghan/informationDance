@@ -149,7 +149,7 @@ class PStatisticsController extends StatisticsBase
                 $sql .= " UNION SELECT * FROM information_dance_request_recode_" . $endYear;
                 break;
         }
-        return " FROM( " . $sql . " ) ";
+        return " FROM( " . $sql . " ) as t";
     }
 
     function exportCsv()
