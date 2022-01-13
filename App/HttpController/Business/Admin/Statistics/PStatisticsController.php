@@ -54,9 +54,10 @@ class PStatisticsController extends StatisticsBase
         try {
 
             DbManager::getInstance()->startTransaction('mrxd');
-
+            $f = 't1.id,t1.requestId,t1.requestIp,t1.requestData,t1.responseCode,t1.responseData,t1.spendTime,'.
+                't1.spendMoney,t1.created_at,t2.username,t3.path,t3.name,t3.desc,t3.source,t3.price';
             $data = DbManager::getInstance()->query(
-                (new QueryBuilder())->raw("SELECT SQL_CALC_FOUND_ROWS * " . $sql . " order by t1.created_at desc limit "
+                (new QueryBuilder())->raw("SELECT SQL_CALC_FOUND_ROWS ".$f . $sql . " order by t1.created_at desc limit "
                     . $this->exprOffset($page, $pageSize) . ' ,' . $pageSize), true, 'mrxd')
                 ->getResult();
 
