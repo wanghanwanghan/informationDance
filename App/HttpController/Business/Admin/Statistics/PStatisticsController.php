@@ -187,16 +187,16 @@ class PStatisticsController extends StatisticsBase
                 file_put_contents(TEMP_FILE_PATH . $filename, implode(',', $header) . PHP_EOL);
             }
             $insert = [
-                $oneData->getAttr('username'),
-                $oneData->getAttr('name'),
-                $oneData->getAttr('desc'),
-                $oneData->getAttr('path'),
-                $oneData->getAttr('responseCode'),
-                $oneData->getAttr('spendMoney'),
-                $oneData->getAttr('price'),
-                $oneData->getAttr('requestIp'),
-                date('Y-m-d H:i:s', $oneData->getAttr('created_at') ?? time()),
-                $oneData->getAttr('requestId'),
+                $oneData['username'],
+                $oneData['name'],
+                $oneData['desc'],
+                $oneData['path'],
+                $oneData['responseCode'],
+                $oneData['spendMoney'],
+                $oneData['price'],
+                $oneData['requestIp'],
+                date('Y-m-d H:i:s', $oneData['created_at'] ?? time()),
+                $oneData['requestId'],
             ];
             file_put_contents(TEMP_FILE_PATH . $filename, implode(',', $insert) . PHP_EOL, FILE_APPEND);
             $i++;
