@@ -50,6 +50,8 @@ class PStatisticsController extends StatisticsBase
         }
 
         $sql = $sql . $querySql;
+        CommonService::getInstance()->log4PHP("SELECT SQL_CALC_FOUND_ROWS * " . $sql . " order by t1.created_at desc limit "
+            . $this->exprOffset($page, $pageSize) . ' ,' . $pageSize,'info','getStatisticsList_sql');
         $data = DbManager::getInstance()->query(
             (new QueryBuilder())->raw("SELECT SQL_CALC_FOUND_ROWS * " . $sql . " order by t1.created_at desc limit "
                 . $this->exprOffset($page, $pageSize) . ' ,' . $pageSize), true, 'mrxd')
