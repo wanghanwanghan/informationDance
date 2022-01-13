@@ -77,6 +77,8 @@ class PStatisticsController extends StatisticsBase
         $requestUserInfoList = getArrByKey(RequestUserInfo::getListByIds($userIds),'id');
         $provideApiIds = array_column($data,'provideApiId');
         $requestApiInfoList = getArrByKey(RequestApiInfo::getListByIds($provideApiIds),'id');
+        CommonService::getInstance()->log4PHP($requestUserInfoList,'info','requestApiInfoList');
+        CommonService::getInstance()->log4PHP($requestApiInfoList,'info','requestApiInfoList');
 
         $paging = [
             'page' => $page,
@@ -92,8 +94,8 @@ class PStatisticsController extends StatisticsBase
                     $ip_info = IPv4Tool::query($val['requestIp']);
                 }
                 $data[$key]['ipDetail'] = $ip_info;
-                $provideApiId = $date[$key]['provideApiId'];
-                $userId = $date[$key]['userId'];
+                $provideApiId = $val['provideApiId'];
+                $userId = $val['userId'];
                 $date[$key]['path'] = $requestApiInfoList[$provideApiId]['path'];
                 $date[$key]['name'] = $requestApiInfoList[$provideApiId]['name'];
                 $date[$key]['desc'] = $requestApiInfoList[$provideApiId]['desc'];
