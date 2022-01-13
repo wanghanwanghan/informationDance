@@ -57,8 +57,6 @@ class PStatisticsController extends StatisticsBase
             $data->where('t1.created_at', [$date1, $date2], 'BETWEEN');
         }
 
-        $data = $data->all();
-
         $paging = [
             'page' => $page,
             'pageSize' => $pageSize,
