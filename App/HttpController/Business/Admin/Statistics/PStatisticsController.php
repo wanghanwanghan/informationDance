@@ -33,22 +33,22 @@ class PStatisticsController extends StatisticsBase
         $pageSize = $this->getRequestData('pageSize', 20);
 
         $sql = $this->getSqlByYear($date);
-        $querySql = '';
+        $querySql = '1=1';
         if (is_numeric($uid)) {
-            $querySql .= ' t2.id = ' . $uid;
+            $querySql .= ' and t2.id = ' . $uid;
         }
 
         if (is_numeric($aid)) {
-            $querySql .= ' t3.id = ' . $aid;
+            $querySql .= ' and t3.id = ' . $aid;
         }
 
         if (!empty($date)) {
             $tmp = explode('|||', $date);
             $date1 = Carbon::parse($tmp[0])->startOfDay()->timestamp;
             $date2 = Carbon::parse($tmp[1])->endOfDay()->timestamp;
-            $querySql .= ' t1.created_at between '.$date1.' and '.$date2 ;
+            $querySql .= ' and t1.created_at between '.$date1.' and '.$date2 ;
         }
-        $querySql = empty($querySql)?'':' where '.$querySql;
+        $querySql = ($querySql == '1=1') ? '' : ' where ' . $querySql;
         $sql = $sql . $querySql;
         CommonService::getInstance()->log4PHP("SELECT SQL_CALC_FOUND_ROWS * " . $sql . " order by t1.created_at desc limit "
             . $this->exprOffset($page, $pageSize) . ' ,' . $pageSize,'info','getStatisticsList_sql');
