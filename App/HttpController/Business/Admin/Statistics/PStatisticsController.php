@@ -39,11 +39,11 @@ class PStatisticsController extends StatisticsBase
 
         $data = DbManager::getInstance()->query(
             (new QueryBuilder())->raw("SELECT SQL_CALC_FOUND_ROWS * " . $sql . " order by t1.created_at desc limit "
-                . $this->exprOffset($page, $pageSize) . ' ,' . $pageSize), true, 'default')
+                . $this->exprOffset($page, $pageSize) . ' ,' . $pageSize), true, 'mrxd')
             ->getResult();
 
         $total = DbManager::getInstance()->query(
-            (new QueryBuilder())->raw("SELECT FOUND_ROWS " . $sql), true, 'default')
+            (new QueryBuilder())->raw("SELECT FOUND_ROWS " . $sql), true, 'mrxd')
             ->getResult();
 
         if (is_numeric($uid)) {
