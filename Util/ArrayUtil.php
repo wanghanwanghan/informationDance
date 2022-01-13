@@ -1,7 +1,5 @@
 <?php
 
-namespace Util;
-
 /**
  * 将对象改为由某一个唯一值为索引的数组
  * @param $objs

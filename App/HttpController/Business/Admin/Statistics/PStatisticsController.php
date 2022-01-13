@@ -11,7 +11,6 @@ use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\ORM\DbManager;
 use Ritaswc\ZxIPAddress\IPv4Tool;
 use wanghanwanghan\someUtils\control;
-use Util\ArrayUtil;
 
 class PStatisticsController extends StatisticsBase
 {
