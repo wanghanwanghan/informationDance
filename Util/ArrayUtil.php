@@ -1,12 +1,6 @@
 <?php
 
-//自定义命令
-use App\Command\CommandList\TestCommand;
-use EasySwoole\EasySwoole\Command\CommandContainer;
-
-CommandContainer::getInstance()->set(new TestCommand());
-
-//******************注册常用全局函数******************
+namespace Util;
 
 /**
  * 将对象改为由某一个唯一值为索引的数组
@@ -14,7 +8,7 @@ CommandContainer::getInstance()->set(new TestCommand());
  * @param $key
  * @return array
  */
-function getArrByKey($objs,$key)
+function getArrByKey($objs,$key): array
 {
     if(empty($objs)){
         return [];
