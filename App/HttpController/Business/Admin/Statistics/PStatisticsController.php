@@ -31,12 +31,8 @@ class PStatisticsController extends StatisticsBase
         $date = $this->getRequestData('date');
         $page = $this->getRequestData('page', 1);
         $pageSize = $this->getRequestData('pageSize', 20);
-        $year = Carbon::now()->year;
-        $sql = "SELECT * FROM information_dance_request_recode_" . $year;
-        if (!empty($date)) {
-            $sql = $this->getSqlByYear($date);
-        }
 
+        $sql = $this->getSqlByYear($date);
         $data = DbManager::getInstance()->query(
             (new QueryBuilder())->raw("SELECT SQL_CALC_FOUND_ROWS * " . $sql . " order by t1.created_at desc limit "
                 . $this->exprOffset($page, $pageSize) . ' ,' . $pageSize), true, 'mrxd')
@@ -95,10 +91,15 @@ class PStatisticsController extends StatisticsBase
      */
     private function getSqlByYear($date): string
     {
-        $tmp = explode('|||', $date);
-        $startYear = substr($tmp[0], 0, 4);
-        $endYear = substr($tmp[1], 0, 4);
-        $dValue = $endYear - $startYear;
+        $dValue = 0;
+        $startYear = Carbon::now()->year;
+        if(!empty($date)){
+            $tmp = explode('|||', $date);
+            $startYear = substr($tmp[0], 0, 4);
+            $endYear = substr($tmp[1], 0, 4);
+            $dValue = $endYear - $startYear;
+        }
+
         switch ($dValue) {
             case 0:
                 $sql = "SELECT * FROM information_dance_request_recode_" . $startYear;
