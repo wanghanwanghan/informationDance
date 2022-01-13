@@ -60,6 +60,7 @@ class PStatisticsController extends StatisticsBase
         $total = DbManager::getInstance()->query(
             (new QueryBuilder())->raw("SELECT FOUND_ROWS() as num "), true, 'mrxd')
             ->getResultOne();
+            CommonService::getInstance()->log4PHP($total,'info','getStatisticsList_data_total');
 
         $paging = [
             'page' => $page,
