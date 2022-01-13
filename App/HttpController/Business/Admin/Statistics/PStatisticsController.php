@@ -35,18 +35,18 @@ class PStatisticsController extends StatisticsBase
         $sql = $this->getSqlByYear($date);
         $querySql = '1=1';
         if (is_numeric($uid)) {
-            $querySql .= ' and t2.id = ' . $uid;
+            $querySql .= ' and userId = ' . $uid;
         }
 
         if (is_numeric($aid)) {
-            $querySql .= ' and t3.id = ' . $aid;
+            $querySql .= ' and provideApiId = ' . $aid;
         }
 
         if (!empty($date)) {
             $tmp = explode('|||', $date);
             $date1 = Carbon::parse($tmp[0])->startOfDay()->timestamp;
             $date2 = Carbon::parse($tmp[1])->endOfDay()->timestamp;
-            $querySql .= ' and t1.created_at between '.$date1.' and '.$date2 ;
+            $querySql .= ' and created_at between '.$date1.' and '.$date2 ;
         }
         $querySql = ($querySql == '1=1') ? '' : ' where ' . $querySql;
         $sql = $sql . $querySql;
@@ -55,11 +55,11 @@ class PStatisticsController extends StatisticsBase
 
             DbManager::getInstance()->startTransaction('mrxd');
             $field = $this->getField();
-            CommonService::getInstance()->log4PHP("SELECT SQL_CALC_FOUND_ROWS " . $field . $sql . " order by t1.created_at desc limit "
+            CommonService::getInstance()->log4PHP("SELECT SQL_CALC_FOUND_ROWS " . $field . $sql . " order by created_at desc limit "
                 . $this->exprOffset($page, $pageSize) . ' ,' . $pageSize,'info','getStatisticsListSql');
 
             $data = DbManager::getInstance()->query(
-                (new QueryBuilder())->raw("SELECT SQL_CALC_FOUND_ROWS " . $field . $sql . " order by t1.created_at desc limit "
+                (new QueryBuilder())->raw("SELECT SQL_CALC_FOUND_ROWS " . $field . $sql . " order by created_at desc limit "
                     . $this->exprOffset($page, $pageSize) . ' ,' . $pageSize), true, 'mrxd', 15)
                 ->getResult();
 
@@ -72,6 +72,11 @@ class PStatisticsController extends StatisticsBase
         }catch (\Throwable $e) {
             DbManager::getInstance()->rollback('mrxd');
         }
+
+        $userIds = array_column($data,'userId');
+        $requestUserInfoList = getArrByKey(RequestUserInfo::getListByIds($userIds),'id');
+        $provideApiIds = array_column($data,'provideApiId');
+        $requestApiInfoList = getArrByKey(RequestApiInfo::getListByIds($provideApiIds),'id');
 
         $paging = [
             'page' => $page,
@@ -87,9 +92,16 @@ class PStatisticsController extends StatisticsBase
                     $ip_info = IPv4Tool::query($val['requestIp']);
                 }
                 $data[$key]['ipDetail'] = $ip_info;
+                $provideApiId = $date[$key]['provideApiId'];
+                $userId = $date[$key]['userId'];
+                $date[$key]['path'] = $requestApiInfoList[$provideApiId]['path'];
+                $date[$key]['name'] = $requestApiInfoList[$provideApiId]['name'];
+                $date[$key]['desc'] = $requestApiInfoList[$provideApiId]['desc'];
+                $date[$key]['source'] = $requestApiInfoList[$provideApiId]['source'];
+                $date[$key]['price'] = $requestApiInfoList[$provideApiId]['price'];
+                $date[$key]['username'] = $requestUserInfoList[$userId]['username'];
             }
         }
-
         $ext = [
             'user_info' => RequestUserInfo::create()->field(['id', 'username'])->all(),
             'api_info' => RequestApiInfo::create()->field(['id', 'name', 'source'])->all(),
@@ -97,6 +109,7 @@ class PStatisticsController extends StatisticsBase
 
         return $this->writeJson(200, $paging, $data, null, true, $ext);
     }
+
 
     /**
      * 获取joinSQL
@@ -136,9 +149,7 @@ class PStatisticsController extends StatisticsBase
                 $sql .= " UNION SELECT * FROM information_dance_request_recode_" . $endYear;
                 break;
         }
-        return " FROM( " . $sql . " ) AS t1
-                LEFT JOIN information_dance_request_user_info AS t2 ON t1.userId = t2.id
-                LEFT JOIN information_dance_request_api_info AS t3 ON t1.provideApiId = t3.id";
+        return " FROM( " . $sql . " ) ";
     }
 
     function exportCsv()
@@ -214,20 +225,16 @@ class PStatisticsController extends StatisticsBase
      */
     private function getField(): string
     {
-        return 't1.id,
-        t1.requestId,
-        t1.requestIp,
-        t1.requestData,
-        t1.responseCode,
-        t1.responseData,
-        t1.spendTime,
-        t1.spendMoney,
-        t1.created_at,
-        t2.username,
-        t3.path,
-        t3.name,
-        t3.desc,
-        t3.source,
-        t3.price';
+        return 'id,
+        requestId,
+        requestIp,
+        requestData,
+        responseCode,
+        responseData,
+        spendTime,
+        spendMoney,
+        created_at,
+        provideApiId,
+        userId';
     }
 }

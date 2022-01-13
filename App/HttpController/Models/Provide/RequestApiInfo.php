@@ -11,4 +11,9 @@ class RequestApiInfo extends ModelBase
     protected $autoTimeStamp = true;
     protected $createTime = 'created_at';
     protected $updateTime = 'updated_at';
+
+    public static function getListByIds($ids){
+        if(empty($ids)) return [];
+        return self::create()->where('id in ('.implode(',',$ids).')')->all();
+    }
 }
