@@ -50,17 +50,19 @@ class PStatisticsController extends StatisticsBase
         }
         $querySql = ($querySql == '1=1') ? '' : ' where ' . $querySql;
         $sql = $sql . $querySql;
-        CommonService::getInstance()->log4PHP("SELECT SQL_CALC_FOUND_ROWS * " . $sql . " order by t1.created_at desc limit "
-            . $this->exprOffset($page, $pageSize) . ' ,' . $pageSize,'info','getStatisticsList_sql');
+
         $data = DbManager::getInstance()->query(
             (new QueryBuilder())->raw("SELECT SQL_CALC_FOUND_ROWS * " . $sql . " order by t1.created_at desc limit "
                 . $this->exprOffset($page, $pageSize) . ' ,' . $pageSize), true, 'mrxd')
             ->getResult();
 
+        CommonService::getInstance()->log4PHP(
+            DbManager::getInstance()->getLastQuery()->getLastQuery()
+        );
+
         $total = DbManager::getInstance()->query(
             (new QueryBuilder())->raw("SELECT FOUND_ROWS() as num "), true, 'mrxd')
             ->getResultOne();
-            CommonService::getInstance()->log4PHP($total,'info','getStatisticsList_data_total');
 
         $paging = [
             'page' => $page,
