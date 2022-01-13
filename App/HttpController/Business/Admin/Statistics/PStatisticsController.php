@@ -43,7 +43,7 @@ class PStatisticsController extends StatisticsBase
             ->getResult();
 
         $total = DbManager::getInstance()->query(
-            (new QueryBuilder())->raw("SELECT FOUND_ROWS " . $sql), true, 'mrxd')
+            (new QueryBuilder())->raw("SELECT FOUND_ROWS() " . $sql), true, 'mrxd')
             ->getResult();
 
         if (is_numeric($uid)) {
