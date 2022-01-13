@@ -54,10 +54,9 @@ class PStatisticsController extends StatisticsBase
         try {
 
             DbManager::getInstance()->startTransaction('mrxd');
-            $f = 't1.id,t1.requestId,t1.requestIp,t1.requestData,t1.responseCode,t1.responseData,t1.spendTime,'.
-                't1.spendMoney,t1.created_at,t2.username,t3.path,t3.name,t3.desc,t3.source,t3.price';
+            $field = $this->getField();
             $data = DbManager::getInstance()->query(
-                (new QueryBuilder())->raw("SELECT SQL_CALC_FOUND_ROWS ".$f . $sql . " order by t1.created_at desc limit "
+                (new QueryBuilder())->raw("SELECT SQL_CALC_FOUND_ROWS " . $field . $sql . " order by t1.created_at desc limit "
                     . $this->exprOffset($page, $pageSize) . ' ,' . $pageSize), true, 'mrxd')
                 ->getResult();
 
@@ -145,45 +144,29 @@ class PStatisticsController extends StatisticsBase
         $aid = $this->getRequestData('aid');
         $date = $this->getRequestData('date');
 
-        $year = Carbon::now()->year;
-
-        $data = RequestRecode::create()->addSuffix($year)->alias('t1')
-            ->join('information_dance_request_user_info as t2', 't1.userId = t2.id', 'left')
-            ->join('information_dance_request_api_info as t3', 't1.provideApiId = t3.id', 'left')
-            ->field([
-                't1.id',
-                't1.requestId',
-                't1.requestIp',
-                't1.requestData',
-                't1.responseCode',
-                't1.responseData',
-                't1.spendTime',
-                't1.spendMoney',
-                't1.created_at',
-                't2.username',
-                't3.path',
-                't3.name',
-                't3.desc',
-                't3.source',
-                't3.price',
-            ]);
-
+        $sql = $this->getSqlByYear($date);
+        $querySql = '1=1';
         if (is_numeric($uid)) {
-            $data->where('t2.id', $uid);
+            $querySql .= ' and t2.id = ' . $uid;
         }
 
         if (is_numeric($aid)) {
-            $data->where('t3.id', $aid);
+            $querySql .= ' and t3.id = ' . $aid;
         }
 
         if (!empty($date)) {
             $tmp = explode('|||', $date);
             $date1 = Carbon::parse($tmp[0])->startOfDay()->timestamp;
             $date2 = Carbon::parse($tmp[1])->endOfDay()->timestamp;
-            $data->where('t1.created_at', [$date1, $date2], 'BETWEEN');
+            $querySql .= ' and t1.created_at between '.$date1.' and '.$date2 ;
         }
+        $querySql = ($querySql == '1=1') ? '' : ' where ' . $querySql;
+        $sql = $sql . $querySql;
 
-        $data = $data->all();
+        $field = $this->getField();
+        $data = DbManager::getInstance()->query(
+            (new QueryBuilder())->raw("SELECT SQL_CALC_FOUND_ROWS ".$field . $sql . " order by t1.created_at desc "), true, 'mrxd')
+            ->getResult();
 
         $i = 1;
         $filename = control::getUuid() . '.csv';
@@ -222,4 +205,26 @@ class PStatisticsController extends StatisticsBase
         return $this->writeJson(200, null, ['filename' => $filename]);
     }
 
+    /**
+     * 获取查询字段
+     * @return string
+     */
+    private function getField(): string
+    {
+        return 't1.id,
+        t1.requestId,
+        t1.requestIp,
+        t1.requestData,
+        t1.responseCode,
+        t1.responseData,
+        t1.spendTime,
+        t1.spendMoney,
+        t1.created_at,
+        t2.username,
+        t3.path,
+        t3.name,
+        t3.desc,
+        t3.source,
+        t3.price';
+    }
 }
