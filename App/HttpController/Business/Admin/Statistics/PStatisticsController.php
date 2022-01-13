@@ -60,10 +60,6 @@ class PStatisticsController extends StatisticsBase
                     . $this->exprOffset($page, $pageSize) . ' ,' . $pageSize), true, 'mrxd')
                 ->getResult();
 
-            CommonService::getInstance()->log4PHP(
-                DbManager::getInstance()->getLastQuery()->getLastQuery()
-            );
-
             $total = DbManager::getInstance()->query(
                 (new QueryBuilder())->raw("SELECT FOUND_ROWS() as num "), true, 'mrxd')
                 ->getResultOne();
