@@ -43,17 +43,15 @@ class PStatisticsController extends StatisticsBase
             ->getResult();
 
         $total = DbManager::getInstance()->query(
-            (new QueryBuilder())->raw("SELECT FOUND_ROWS() " . $sql), true, 'mrxd')
+            (new QueryBuilder())->raw("SELECT FOUND_ROWS() as num " . $sql), true, 'mrxd')
             ->getResult();
 
         if (is_numeric($uid)) {
             $data->where('t2.id', $uid);
-            $total->where('t2.id', $uid);
         }
 
         if (is_numeric($aid)) {
             $data->where('t3.id', $aid);
-            $total->where('t3.id', $aid);
         }
 
         if (!empty($date)) {
@@ -61,16 +59,14 @@ class PStatisticsController extends StatisticsBase
             $date1 = Carbon::parse($tmp[0])->startOfDay()->timestamp;
             $date2 = Carbon::parse($tmp[1])->endOfDay()->timestamp;
             $data->where('t1.created_at', [$date1, $date2], 'BETWEEN');
-            $total->where('t1.created_at', [$date1, $date2], 'BETWEEN');
         }
 
         $data = $data->all();
-        $total = $total->count('t1.id');
 
         $paging = [
             'page' => $page,
             'pageSize' => $pageSize,
-            'total' => $total,
+            'total' => $total['num'],
         ];
 
         if (!empty($data)) {
