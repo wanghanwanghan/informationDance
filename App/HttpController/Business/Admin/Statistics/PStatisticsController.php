@@ -7,6 +7,8 @@ use App\HttpController\Models\Provide\RequestRecode;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use Carbon\Carbon;
+use EasySwoole\Mysqli\QueryBuilder;
+use EasySwoole\ORM\DbManager;
 use Ritaswc\ZxIPAddress\IPv4Tool;
 use wanghanwanghan\someUtils\control;
 
@@ -29,34 +31,20 @@ class PStatisticsController extends StatisticsBase
         $date = $this->getRequestData('date');
         $page = $this->getRequestData('page', 1);
         $pageSize = $this->getRequestData('pageSize', 20);
-
         $year = Carbon::now()->year;
+        $sql = "SELECT * FROM information_dance_request_recode_" . $year;
+        if (!empty($date)) {
+            $sql = $this->getSqlByYear($date);
+        }
 
-        $data = RequestRecode::create()->addSuffix($year)->alias('t1')
-            ->join('information_dance_request_user_info as t2', 't1.userId = t2.id', 'left')
-            ->join('information_dance_request_api_info as t3', 't1.provideApiId = t3.id', 'left')
-            ->field([
-                't1.id',
-                't1.requestId',
-                't1.requestIp',
-                't1.requestData',
-                't1.responseCode',
-                't1.responseData',
-                't1.spendTime',
-                't1.spendMoney',
-                't1.created_at',
-                't2.username',
-                't3.path',
-                't3.name',
-                't3.desc',
-                't3.source',
-                't3.price',
-            ])->order('t1.created_at', 'desc')
-            ->limit($this->exprOffset($page, $pageSize), $pageSize);
+        $data = DbManager::getInstance()->query(
+            (new QueryBuilder())->raw("SELECT SQL_CALC_FOUND_ROWS * " . $sql . " order by t1.created_at desc limit "
+                . $this->exprOffset($page, $pageSize) . ' ,' . $pageSize), true, 'default')
+            ->getResult();
 
-        $total = RequestRecode::create()->addSuffix($year)->alias('t1')
-            ->join('information_dance_request_user_info as t2', 't1.userId = t2.id', 'left')
-            ->join('information_dance_request_api_info as t3', 't1.provideApiId = t3.id', 'left');
+        $total = DbManager::getInstance()->query(
+            (new QueryBuilder())->raw("SELECT FOUND_ROWS " . $sql), true, 'default')
+            ->getResult();
 
         if (is_numeric($uid)) {
             $data->where('t2.id', $uid);
@@ -102,6 +90,44 @@ class PStatisticsController extends StatisticsBase
         ];
 
         return $this->writeJson(200, $paging, $data, null, true, $ext);
+    }
+
+    /**
+     * 获取joinSQL
+     * @param $date
+     * @return string
+     */
+    private function getSqlByYear($date): string
+    {
+        $tmp = explode('|||', $date);
+        $startYear = substr($tmp[0], 0, 4);
+        $endYear = substr($tmp[1], 0, 4);
+        $dValue = $endYear - $startYear;
+        switch ($dValue) {
+            case 0:
+                $sql = "SELECT * FROM information_dance_request_recode_" . $startYear;
+                break;
+            case 1:
+                $sql = "SELECT * FROM information_dance_request_recode_" . $startYear
+                    . " UNION SELECT * FROM information_dance_request_recode_" . $endYear;
+                break;
+            case 2:
+                $middleYear = $startYear + 1;
+                $sql = "SELECT * FROM information_dance_request_recode_" . $startYear
+                    . " UNION SELECT * FROM information_dance_request_recode_" . $middleYear
+                    . " UNION SELECT * FROM information_dance_request_recode_" . $endYear;
+                break;
+            default:
+                $sql = "SELECT * FROM information_dance_request_recode_" . $startYear;
+                for ($i = 1; $i > $dValue; $i++) {
+                    $sql .= " UNION SELECT * FROM information_dance_request_recode_" . ($startYear + $i);
+                }
+                $sql .= " UNION SELECT * FROM information_dance_request_recode_" . $endYear;
+                break;
+        }
+        return " FROM( " . $sql . " ) AS t1
+                LEFT JOIN information_dance_request_user_info AS t2 ON t1.userId = t2.id
+                LEFT JOIN information_dance_request_api_info AS t3 ON t1.provideApiId = t3.id";
     }
 
     function exportCsv()
