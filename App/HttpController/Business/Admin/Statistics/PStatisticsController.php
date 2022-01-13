@@ -57,7 +57,7 @@ class PStatisticsController extends StatisticsBase
             $field = $this->getField();
             $data = DbManager::getInstance()->query(
                 (new QueryBuilder())->raw("SELECT SQL_CALC_FOUND_ROWS " . $field . $sql . " order by t1.created_at desc limit "
-                    . $this->exprOffset($page, $pageSize) . ' ,' . $pageSize), true, 'mrxd')
+                    . $this->exprOffset($page, $pageSize) . ' ,' . $pageSize), true, 'mrxd', 15)
                 ->getResult();
 
             $total = DbManager::getInstance()->query(
@@ -165,7 +165,7 @@ class PStatisticsController extends StatisticsBase
 
         $field = $this->getField();
         $data = DbManager::getInstance()->query(
-            (new QueryBuilder())->raw("SELECT SQL_CALC_FOUND_ROWS ".$field . $sql . " order by t1.created_at desc "), true, 'mrxd')
+            (new QueryBuilder())->raw("SELECT SQL_CALC_FOUND_ROWS " . $field . $sql . " order by t1.created_at desc "), true, 'mrxd', 15)
             ->getResult();
 
         $i = 1;

@@ -24,7 +24,7 @@ class CreateMysqlPoolForProjectDb extends AbstractPool
             'user' => CreateConf::getInstance()->getConf('env.mysqlUser'),
             'password' => CreateConf::getInstance()->getConf('env.mysqlPassword'),
             'database' => CreateConf::getInstance()->getConf('env.mysqlDatabase'),
-            'timeout' => 5,
+            'timeout' => 15,
             'charset' => 'utf8mb4',
         ]);
 
