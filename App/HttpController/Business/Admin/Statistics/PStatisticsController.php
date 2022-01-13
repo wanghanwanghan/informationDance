@@ -33,6 +33,23 @@ class PStatisticsController extends StatisticsBase
         $pageSize = $this->getRequestData('pageSize', 20);
 
         $sql = $this->getSqlByYear($date);
+        $querySql = ' where ';
+        if (is_numeric($uid)) {
+            $querySql .= ' t2.id = ' . $uid;
+        }
+
+        if (is_numeric($aid)) {
+            $querySql .= ' t3.id = ' . $aid;
+        }
+
+        if (!empty($date)) {
+            $tmp = explode('|||', $date);
+            $date1 = Carbon::parse($tmp[0])->startOfDay()->timestamp;
+            $date2 = Carbon::parse($tmp[1])->endOfDay()->timestamp;
+            $querySql .= ' t1.created_at between '.$date1.' and '.$date2 ;
+        }
+
+        $sql = $sql . $querySql;
         $data = DbManager::getInstance()->query(
             (new QueryBuilder())->raw("SELECT SQL_CALC_FOUND_ROWS * " . $sql . " order by t1.created_at desc limit "
                 . $this->exprOffset($page, $pageSize) . ' ,' . $pageSize), true, 'mrxd')
@@ -40,22 +57,7 @@ class PStatisticsController extends StatisticsBase
 
         $total = DbManager::getInstance()->query(
             (new QueryBuilder())->raw("SELECT FOUND_ROWS() as num "), true, 'mrxd')
-            ->getResult();
-
-        if (is_numeric($uid)) {
-            $data->where('t2.id', $uid);
-        }
-
-        if (is_numeric($aid)) {
-            $data->where('t3.id', $aid);
-        }
-
-        if (!empty($date)) {
-            $tmp = explode('|||', $date);
-            $date1 = Carbon::parse($tmp[0])->startOfDay()->timestamp;
-            $date2 = Carbon::parse($tmp[1])->endOfDay()->timestamp;
-            $data->where('t1.created_at', [$date1, $date2], 'BETWEEN');
-        }
+            ->getResultOne();
 
         $paging = [
             'page' => $page,
