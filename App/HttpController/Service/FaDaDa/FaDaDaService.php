@@ -569,7 +569,7 @@ class FaDaDaService extends ServiceBase
             'v' => '2.0',
             'msg_digest' => $msg_digest,
             'template_id' => $arr['template_id'],
-            'doc_url' => "https://api.meirixindong.com/Static/AuthBookModel/fdd_template.pdf",
+            'doc_url' => "https://api.meirixindong.com/Static/AuthBookModel/qxy_template.pdf",
         ];
         CommonService::getInstance()->log4PHP($post_data,'info','uploadtemplate_param_arr');
         $resp = (new CoHttpClient())
