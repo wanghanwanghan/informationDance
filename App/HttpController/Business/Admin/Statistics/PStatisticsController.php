@@ -77,8 +77,6 @@ class PStatisticsController extends StatisticsBase
         $requestUserInfoList = getArrByKey(RequestUserInfo::getListByIds($userIds),'id');
         $provideApiIds = array_column($data,'provideApiId');
         $requestApiInfoList = getArrByKey(RequestApiInfo::getListByIds($provideApiIds),'id');
-//        CommonService::getInstance()->log4PHP($requestUserInfoList,'info','requestApiInfoList');
-//        CommonService::getInstance()->log4PHP($requestApiInfoList,'info','requestApiInfoList');
 
         $paging = [
             'page' => $page,
@@ -96,18 +94,12 @@ class PStatisticsController extends StatisticsBase
                 $data[$key]['ipDetail'] = $ip_info;
                 $provideApiId = $val['provideApiId'];
                 $userId = $val['userId'];
-                dingAlarmMarkdown('getStatisticsList',
-                    [
-                        ['name'=>'requestApiInfo','msg'=>json_encode($requestApiInfoList[$provideApiId])],
-                        ['name'=>'path','msg'=>$requestApiInfoList[$provideApiId]['path']??'']
-                    ]
-                );
-                $date[$key]['path'] = $requestApiInfoList[$provideApiId]['path']??'';
-                $date[$key]['name'] = $requestApiInfoList[$provideApiId]['name']??'';
-                $date[$key]['desc'] = $requestApiInfoList[$provideApiId]['desc']??'';
-                $date[$key]['source'] = $requestApiInfoList[$provideApiId]['source']??'';
-                $date[$key]['price'] = $requestApiInfoList[$provideApiId]['price']??'';
-                $date[$key]['username'] = $requestUserInfoList[$userId]['username']??'';
+                $data[$key]['path'] = $requestApiInfoList[$provideApiId]['path']??'';
+                $data[$key]['name'] = $requestApiInfoList[$provideApiId]['name']??'';
+                $data[$key]['desc'] = $requestApiInfoList[$provideApiId]['desc']??'';
+                $data[$key]['source'] = $requestApiInfoList[$provideApiId]['source']??'';
+                $data[$key]['price'] = $requestApiInfoList[$provideApiId]['price']??'';
+                $data[$key]['username'] = $requestUserInfoList[$userId]['username']??'';
             }
         }
         $ext = [
