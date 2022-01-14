@@ -61,6 +61,8 @@ class GetAuthBook extends AbstractCronTask
 //                    ->setCheckRespFlag(true)->getAuthPdf($data);
 
                 if ($res['code'] !== 200) {
+                    $message = ['name'=>'异常内容','msg'=>json_encode($res)];
+                    dingAlarmMarkdown('法大大授权书接口异常',$message);
                     continue;
                 }
 
