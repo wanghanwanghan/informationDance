@@ -96,14 +96,18 @@ class PStatisticsController extends StatisticsBase
                 $data[$key]['ipDetail'] = $ip_info;
                 $provideApiId = $val['provideApiId'];
                 $userId = $val['userId'];
-                CommonService::getInstance()->log4PHP($requestUserInfoList[$userId],'info','requestUserInfoListOne');
-                CommonService::getInstance()->log4PHP($requestApiInfoList[$provideApiId],'info','requestApiInfoListOne');
-                $date[$key]['path'] = $requestApiInfoList[$provideApiId]['path'];
-                $date[$key]['name'] = $requestApiInfoList[$provideApiId]['name'];
-                $date[$key]['desc'] = $requestApiInfoList[$provideApiId]['desc'];
-                $date[$key]['source'] = $requestApiInfoList[$provideApiId]['source'];
-                $date[$key]['price'] = $requestApiInfoList[$provideApiId]['price'];
-                $date[$key]['username'] = $requestUserInfoList[$userId]['username'];
+                dingAlarmMarkdown('getStatisticsList',
+                    [
+                        ['name'=>'requestApiInfo','msg'=>json_encode($requestApiInfoList[$provideApiId])],
+                        ['name'=>'path','msg'=>$requestApiInfoList[$provideApiId]['path']??'']
+                    ]
+                );
+                $date[$key]['path'] = $requestApiInfoList[$provideApiId]['path']??'';
+                $date[$key]['name'] = $requestApiInfoList[$provideApiId]['name']??'';
+                $date[$key]['desc'] = $requestApiInfoList[$provideApiId]['desc']??'';
+                $date[$key]['source'] = $requestApiInfoList[$provideApiId]['source']??'';
+                $date[$key]['price'] = $requestApiInfoList[$provideApiId]['price']??'';
+                $date[$key]['username'] = $requestUserInfoList[$userId]['username']??'';
             }
         }
         $ext = [

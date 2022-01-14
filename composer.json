@@ -47,7 +47,8 @@
       "App\\": "App/"
     },
     "files": [
-      "Util/ArrayUtil.php"
+      "Util/ArrayUtil.php",
+      "Util/DingAlarm.php"
     ]
   }
 }
