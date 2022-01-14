@@ -161,27 +161,30 @@ class PStatisticsController extends StatisticsBase
         $sql = $this->getSqlByYear($date);
         $querySql = '1=1';
         if (is_numeric($uid)) {
-            $querySql .= ' and t2.id = ' . $uid;
+            $querySql .= ' and id = ' . $uid;
         }
 
         if (is_numeric($aid)) {
-            $querySql .= ' and t3.id = ' . $aid;
+            $querySql .= ' and id = ' . $aid;
         }
 
         if (!empty($date)) {
             $tmp = explode('|||', $date);
             $date1 = Carbon::parse($tmp[0])->startOfDay()->timestamp;
             $date2 = Carbon::parse($tmp[1])->endOfDay()->timestamp;
-            $querySql .= ' and t1.created_at between '.$date1.' and '.$date2 ;
+            $querySql .= ' and created_at between '.$date1.' and '.$date2 ;
         }
         $querySql = ($querySql == '1=1') ? '' : ' where ' . $querySql;
         $sql = $sql . $querySql;
 
         $field = $this->getField();
         $data = DbManager::getInstance()->query(
-            (new QueryBuilder())->raw("SELECT SQL_CALC_FOUND_ROWS " . $field . $sql . " order by t1.created_at desc "), true, 'mrxd', 15)
+            (new QueryBuilder())->raw("SELECT SQL_CALC_FOUND_ROWS " . $field . $sql . " order by created_at desc "), true, 'mrxd', 15)
             ->getResult();
-
+        $userIds = array_column($data,'userId');
+        $requestUserInfoList = getArrByKey(RequestUserInfo::getListByIds($userIds),'id');
+        $provideApiIds = array_column($data,'provideApiId');
+        $requestApiInfoList = getArrByKey(RequestApiInfo::getListByIds($provideApiIds),'id');
         $i = 1;
         $filename = control::getUuid() . '.csv';
         foreach ($data as $oneData) {
@@ -200,14 +203,16 @@ class PStatisticsController extends StatisticsBase
                 ];
                 file_put_contents(TEMP_FILE_PATH . $filename, implode(',', $header) . PHP_EOL);
             }
+            $provideApiId = $oneData['provideApiId'];
+            $userId = $oneData['userId'];
             $insert = [
-                $oneData['username'],
-                $oneData['name'],
-                $oneData['desc'],
-                $oneData['path'],
+                $requestUserInfoList[$userId]['username'],
+                $requestApiInfoList[$provideApiId]['name'],
+                $requestApiInfoList[$provideApiId]['desc'],
+                $requestApiInfoList[$provideApiId]['path'],
                 $oneData['responseCode'],
                 $oneData['spendMoney'],
-                $oneData['price'],
+                $requestApiInfoList[$provideApiId]['price'],
                 $oneData['requestIp'],
                 date('Y-m-d H:i:s', $oneData['created_at'] ?? time()),
                 $oneData['requestId'],
@@ -215,7 +220,6 @@ class PStatisticsController extends StatisticsBase
             file_put_contents(TEMP_FILE_PATH . $filename, implode(',', $insert) . PHP_EOL, FILE_APPEND);
             $i++;
         }
-
         return $this->writeJson(200, null, ['filename' => $filename]);
     }
 
