@@ -50,6 +50,7 @@ class LogController extends LogBase
                     $info['file_m_time'] = filemtime($fullpath);
                     //文件的最后访问时间
                     $info['file_a_time'] = fileatime($fullpath);
+                    $info['info'] = $this->readLog($fullpath);
                     $res[] = $info;
                 }
             }
@@ -58,6 +59,11 @@ class LogController extends LogBase
         return $this->writeJson(200, [], $res);
     }
 
+    /**
+     * 获取文件总行数
+     * @param $file
+     * @return int
+     */
     function getFileLineNum($file): int
     {
         if (!is_file($file)) return 0;
@@ -80,26 +86,24 @@ class LogController extends LogBase
         return $i - 0;
     }
 
-    function readLog($file, $page = 1, $limit = 20): array
+    /**
+     * 获取文件内容
+     * @param $file
+     * @return array|string
+     */
+    function readLog($file): array
     {
-
-        if (!is_file($file)) return ['文件不存在'];
+        if (!is_file($file)) return '文件内容为空';
 
         $handle = new \SplFileObject($file, 'r');
-
-        $offset = ($page - 1) * $limit;
-
-        $handle->seek($offset);
-
-        $res = [];
-
-        for ($i = 0; $i < $limit; $i++) {
+        $handle->seek(0);
+        $res = '';
+        while (true){
             $current = $handle->current();
             if (!$current) break;
-            $res[] = $current;
+            $res .= $current;
             $handle->next();
         }
-
         return $res;
     }
 }
