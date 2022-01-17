@@ -91,7 +91,7 @@ class LogController extends LogBase
      * @param $file
      * @return array|string
      */
-    function readLog($file): array
+    function readLog($file): string
     {
         if (!is_file($file)) return '文件内容为空';
 
