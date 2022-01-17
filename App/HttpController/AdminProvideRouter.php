@@ -18,6 +18,7 @@ class AdminProvideRouter
         $this->FinanceRouterV1($routeCollector);
         $this->FileTransmissionRouterV1($routeCollector);
         $this->invoiceRouterV1($routeCollector);
+        $this->ErrorLogRouterV1($routeCollector);
     }
 
     private function UserRouterV1(RouteCollector $routeCollector)
@@ -95,6 +96,21 @@ class AdminProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getList', $prefix . 'getList');
             $routeCollector->addRoute(['GET', 'POST'], '/createZip', $prefix . 'createZip');
             $routeCollector->addRoute(['GET', 'POST'], '/createGetDataTime', $prefix . 'createGetDataTime');
+        });
+
+        return true;
+    }
+
+    /**
+     * 错误日志
+     * @param RouteCollector $routeCollector
+     * @return bool
+     */
+    private function ErrorLogRouterV1(RouteCollector $routeCollector){
+        $prefix = '/Business/Admin/Log/LogController/';
+
+        $routeCollector->addGroup('/log', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getErrList', $prefix . 'getErrList');
         });
 
         return true;
