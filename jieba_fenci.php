@@ -68,8 +68,12 @@ class P extends AbstractProcess
                 ];
             }
 
-            jieba_model::create()->addSuffix(ord($entname) % 20)
+            $res = jieba_model::create()->addSuffix(ord($entname) % 20)
                 ->saveAll($insert, true, false);
+
+            \App\HttpController\Service\Common\CommonService::getInstance()->log4PHP(
+                $res, 'info', 'jieba.log'
+            );
 
             $i++;
 
@@ -94,7 +98,9 @@ class P extends AbstractProcess
 
     protected function onException(\Throwable $throwable, ...$args)
     {
-        $this->writeErr($throwable);
+        \App\HttpController\Service\Common\CommonService::getInstance()->log4PHP(
+            $throwable->getTraceAsString(), 'info', 'jieba.log'
+        );
     }
 }
 
