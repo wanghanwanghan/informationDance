@@ -61,8 +61,8 @@ while (feof($fp) === false) {
             'database' => 'shang_pin_tiao_ma',
             'username' => 'mrxd',
             'password' => 'zbxlbj@2018*()',
-            'charset' => 'utf8mbt',
-            'collation' => 'utf8mbt_general_ci',
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_general_ci',
             'strict' => false,
             'prefix' => '',
         ]
