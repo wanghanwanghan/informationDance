@@ -95,6 +95,8 @@ class P extends AbstractProcess
 
             $i++;
 
+            var_dump($insert);
+
             if ($i % 100000 === 0) {
                 \App\HttpController\Service\Common\CommonService::getInstance()->log4PHP(
                     "已经处理到了第 {$i} 行", 'info', 'jieba.log'
