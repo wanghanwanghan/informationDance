@@ -1,10 +1,10 @@
 <?php
 
 use App\HttpController\Service\CreateConf;
-use \EasySwoole\EasySwoole\Core;
+use EasySwoole\EasySwoole\Core;
 use App\HttpController\Service\CreateDefine;
-use \EasySwoole\Component\Process\Config;
-use \EasySwoole\Component\Process\AbstractProcess;
+use EasySwoole\Component\Process\Config;
+use EasySwoole\Component\Process\AbstractProcess;
 use EasySwoole\ORM\Db\Connection;
 use EasySwoole\ORM\DbManager;
 use Swoole\Coroutine;
@@ -68,8 +68,12 @@ class P extends AbstractProcess
                 ];
             }
 
+            var_dump($insert);
+
             $res = jieba_model::create()->addSuffix(ord($entname) % 20)
                 ->saveAll($insert, true, false);
+
+            var_dump($insert);
 
             \App\HttpController\Service\Common\CommonService::getInstance()->log4PHP(
                 $res, 'info', 'jieba.log'
