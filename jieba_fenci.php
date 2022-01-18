@@ -68,12 +68,12 @@ class P extends AbstractProcess
                 ];
             }
 
-            var_dump($insert);
+            var_dump('123');
 
             $res = jieba_model::create()->addSuffix(ord($entname) % 20)
-                ->saveAll($insert, true, false);
+                ->saveAll($insert, false, false);
 
-            var_dump($insert);
+            var_dump('321');
 
             \App\HttpController\Service\Common\CommonService::getInstance()->log4PHP(
                 $res, 'info', 'jieba.log'
