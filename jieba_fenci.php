@@ -73,8 +73,9 @@ while (feof($fp) === false) {
     $i++;
 
     if ($i % 100000 === 0) {
+        $o_o = date('Y-m-d H:i:s') . " 已经处理到了第 {$i} 行";
         file_put_contents(
-            '/home/wwwroot/informationDance/Static/Log/jieba.log', "已经处理到了第 {$i} 行" . PHP_EOL, FILE_APPEND
+            '/home/wwwroot/informationDance/Static/Log/jieba.log', $o_o . PHP_EOL, FILE_APPEND
         );
     }
 
