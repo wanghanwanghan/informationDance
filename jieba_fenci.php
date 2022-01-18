@@ -68,11 +68,8 @@ class P extends AbstractProcess
                 ];
             }
 
-            var_dump($insert);
-
             jieba_model::create()->addSuffix(ord($entname) % 20)
-                ->data($insert)
-                ->save();
+                ->saveAll($insert, true, false);
 
             $i++;
 
