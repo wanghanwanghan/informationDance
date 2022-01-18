@@ -50,7 +50,7 @@ CreateMysqlOrm::getInstance()->createEntDbOrm();
 $config = new \EasySwoole\ORM\Db\Config();
 
 //数据库配置
-$config->setHost('rm-2ze5r17pbzd3l7rak.mysql.rds.aliyuncs.com');
+$config->setHost('rm-2ze5r17pbzd3l7rakyo.mysql.rds.aliyuncs.com');
 $config->setPort(3306);
 $config->setUser('mrxd');
 $config->setPassword('zbxlbj@2018*()');
