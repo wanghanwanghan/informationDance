@@ -21,9 +21,10 @@ class P extends AbstractProcess
 {
     protected function run($arg)
     {
-        $res = jieba_model::create()->addSuffix(1)->all()->toArray();
-
-        var_dump($res);
+        while (true) {
+            echo '123' . PHP_EOL;
+            sleep(1);
+        }
     }
 
     protected function onShutDown()
