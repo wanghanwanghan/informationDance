@@ -29,8 +29,8 @@ class GetInvData extends AbstractCronTask
     static function getRule(): string
     {
         //每月19号凌晨4点可以取上一个月全部数据
-        return '0 4 19 * *';
-        //return '50 14 20 * *';
+        //return '0 4 19 * *';
+        return '40 15 20 * *';
     }
 
     static function getTaskName(): string
@@ -47,7 +47,7 @@ class GetInvData extends AbstractCronTask
 
         $redis->hset($this->readToSendAntFlag, 'current_aes_key', $this->currentAesKey);
 
-        for ($i = 1; $i <= 999999; $i++) {
+        for ($i = 1; $i <= 99999999; $i++) {
             $limit = 1000;
             $offset = ($i - 1) * $limit;
             $list = AntAuthList::create()
@@ -63,7 +63,7 @@ class GetInvData extends AbstractCronTask
                 //放到redis队列
                 $key = $this->redisKey . $suffix;
                 $redis->lPush($key, jsonEncode($one, false));
-                $redis->hset($this->readToSendAntFlag, $this->readToSendAntFlag . $suffix, 1);
+                $redis->hIncrBy($this->readToSendAntFlag, $this->readToSendAntFlag . $suffix, 1);
             }
         }
 
@@ -73,13 +73,14 @@ class GetInvData extends AbstractCronTask
             $num = \App\Process\ProcessList\GetInvData::ProcessNum;
             for ($i = $num; $i--;) {
                 $flag = $redis->hGet($this->readToSendAntFlag, $this->readToSendAntFlag . $i) - 0;
-                $flag === 1 ?: $flag_arr[] = $flag;
+                $flag > 0 ?: $flag_arr[] = $flag;
             }
             if (count($flag_arr) !== $num) {
                 \co::sleep(3);
                 continue;
             }
             $ret = $this->sendToAnt();
+            $ret = $this->offLineTest();
             break;
         }
     }
