@@ -294,12 +294,6 @@ class GetInvData extends ProcessBase
     function writeFile(array $row, string $NSRSBH, string $invType, string $FPLXDM): bool
     {
         if (!empty($row)) {
-            CommonService::getInstance()->log4PHP([
-                $row,
-                $NSRSBH,
-                $FPLXDM,
-                $invType
-            ], 'info', "tianyanCheck{$this->p_index}.log");
             $this->storeMysql($row, $NSRSBH, $FPLXDM, $invType);
         }
 

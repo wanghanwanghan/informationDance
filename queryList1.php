@@ -13,8 +13,8 @@ use \EasySwoole\Component\Process\Config;
 use \EasySwoole\Component\Process\AbstractProcess;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 
-require_once './vendor/autoload.php';
-require_once './bootstrap.php';
+include './vendor/autoload.php';
+include './bootstrap.php';
 
 Core::getInstance()->initialize();
 
@@ -22,7 +22,27 @@ class QueryList1 extends AbstractProcess
 {
     protected function run($arg)
     {
-        $this->excel_1();
+        $this->get_hg();
+    }
+
+    //海关列表
+    function get_hg(): void
+    {
+        $url = "https://www.hsbianma.com/search?keywords=0504&filterFailureCode=true";
+
+        $wholePage = QueryList::getInstance()->get($url);
+
+        $table = $wholePage->find('tbody')->eq(0);
+
+        // 采集表的每行内容
+        $tableRows = $table->find('tr')->map(function ($row) {
+            return $row->find('td')->texts()->all();
+        });
+
+
+        dd($tableRows);
+
+
     }
 
     function run_1()
@@ -204,11 +224,11 @@ class QueryList1 extends AbstractProcess
 
 CreateDefine::getInstance()->createDefine(__DIR__);
 CreateConf::getInstance()->create(__DIR__);
-CreateMysqlPoolForProjectDb::getInstance()->createMysql();
-CreateMysqlPoolForEntDb::getInstance()->createMysql();
-CreateMysqlPoolForMinZuJiDiDb::getInstance()->createMysql();
-CreateMysqlOrm::getInstance()->createMysqlOrm();
-CreateMysqlOrm::getInstance()->createEntDbOrm();
+//CreateMysqlPoolForProjectDb::getInstance()->createMysql();
+//CreateMysqlPoolForEntDb::getInstance()->createMysql();
+//CreateMysqlPoolForMinZuJiDiDb::getInstance()->createMysql();
+//CreateMysqlOrm::getInstance()->createMysqlOrm();
+//CreateMysqlOrm::getInstance()->createEntDbOrm();
 
 for ($i = 1; $i--;) {
     $conf = new Config();
