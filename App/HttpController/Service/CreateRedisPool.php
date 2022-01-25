@@ -14,8 +14,10 @@ class CreateRedisPool extends ServiceBase
     public function createRedis()
     {
         $conf = new RedisConfig();
-        $conf->setHost(CreateConf::getInstance()->getConf('env.redisHost'));
-        $conf->setPort(CreateConf::getInstance()->getConf('env.redisPort'));
+//        $conf->setHost(CreateConf::getInstance()->getConf('env.redisHost'));
+//        $conf->setPort(CreateConf::getInstance()->getConf('env.redisPort'));
+        $conf->setHost('39.105.35.154');
+        $conf->setPort(56379);
         $conf->setTimeout(5);
         $conf->setAuth(CreateConf::getInstance()->getConf('env.redisPassword'));
         $conf->setSerialize(RedisConfig::SERIALIZE_NONE);

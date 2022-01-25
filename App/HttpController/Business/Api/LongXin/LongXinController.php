@@ -348,7 +348,10 @@ class LongXinController extends LongXinBase
         }
 
         $code = '';
-        $beginYear = date('Y') - 1;
+        $beginYear = date('Y') - 2;
+        if (date('m') > 7) {
+            $beginYear = date('Y') - 1;
+        }
         $dataCount = 3;
         $ready = [];
 

@@ -40,7 +40,8 @@
     "jaeger/querylist": "^4.2",
     "overtrue/pinyin": "^4.0",
     "intervention/image": "^2.6",
-    "easyswoole/oss": "^1.1"
+    "easyswoole/oss": "^1.1",
+    "ext-redis": "*"
   },
   "autoload": {
     "psr-4": {
