@@ -107,7 +107,7 @@ class LongXinService extends ServiceBase
     }
 
     //公司名称换取entid
-    public function getEntid($entName): ?string
+    private function getEntid($entName): ?string
     {
         $ctype = preg_match('/\d{5}/', $entName) ? 1 : 3;
 
