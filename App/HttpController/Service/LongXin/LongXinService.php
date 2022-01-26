@@ -107,7 +107,7 @@ class LongXinService extends ServiceBase
     }
 
     //公司名称换取entid
-    private function getEntid($entName): ?string
+    public function getEntid($entName): ?string
     {
         $ctype = preg_match('/\d{5}/', $entName) ? 1 : 3;
 
@@ -118,7 +118,7 @@ class LongXinService extends ServiceBase
         ];
 
         $this->sendHeaders['authorization'] = $this->createToken($arr);
-
+var_dump($this->baseUrl . 'getentid/', $arr, $this->sendHeaders);
         $res = (new CoHttpClient())->useCache(false)
             ->send($this->baseUrl . 'getentid/', $arr, $this->sendHeaders);
 
@@ -2080,5 +2080,130 @@ class LongXinService extends ServiceBase
         return $origin;
     }
 
+
+    //近n年的财务数据
+    function getFinanceDataTwo($postData, $toRange = true): array
+    {
+        $logFileName = 'getFinanceData.log.' . date('Ymd', time());
+
+        $check = $this->alreadyInserted($postData);
+
+        $cond = !empty($postData['code']) ? $postData['code'] : $postData['entName'];
+
+        $entId = $this->getEntid($cond);
+
+        if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
+
+        TaskService::getInstance()->create(new insertEnt($postData['entName'], $postData['code']));
+
+        $ANCHEYEAR = '';
+        $temp = [];
+        for ($i = 2013; $i <= date('Y'); $i++) {
+            $ANCHEYEAR .= $i . ',';
+            $temp[$i . ''] = null;
+        }
+        $arr = [
+            'entid' => $entId,
+            'ANCHEYEAR' => trim($ANCHEYEAR, ','),
+            'usercode' => $this->usercode
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())
+            ->useCache(true)
+            ->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
+
+        $this->recodeSourceCurl([
+            'sourceName' => $this->sourceName,
+            'apiName' => last(explode('/', trim($this->baseUrl . 'ar_caiwu/', '/'))),
+            'requestUrl' => trim(trim($this->baseUrl . 'ar_caiwu/'), '/'),
+            'requestData' => array_merge($arr, $postData),
+            'responseData' => $res,
+        ]);
+
+        if (isset($res['total']) && $res['total'] > 0) {
+            foreach ($res['data'] as $oneYearData) {
+                $year = trim($oneYearData['ANCHEYEAR']) . '';
+                if (!is_numeric($year)) continue;
+                $oneYearData['SOCNUM'] = null;
+                $temp[$year] = $oneYearData;
+            }
+            krsort($temp);
+        }
+
+        //社保人数数组
+        $social = $this->getSocialNum($entId);
+
+        !empty($social) ?: $social = ['AnnualSocial' => []];
+
+        foreach ($social['AnnualSocial'] as $oneSoc) {
+            $year = $oneSoc['ANCHEYEAR'];
+            if (!is_numeric($year) || !isset($temp[(string)$year])) continue;
+            if (isset($oneSoc['so1']) && is_numeric($oneSoc['so1'])) {
+                $temp[(string)$year]['SOCNUM'] = $oneSoc['so1'];
+            }
+        }
+
+        TaskService::getInstance()->create(new insertFinance($postData['entName'], $temp, $social['AnnualSocial']));
+
+        //原值计算
+        if ($this->cal === true) {
+            $temp = $this->exprHandle($temp);
+        }
+
+        //取哪年的数据
+        $readyReturn = [];
+        for ($i = $postData['dataCount']; $i--;) {
+            $tmp = $postData['beginYear'] - $i;
+            $tmp = $tmp . '';
+            isset($temp[$tmp]) ?
+                $readyReturn[$tmp] = $temp[$tmp] :
+                $readyReturn[$tmp] = null;
+        }
+
+        //数字落区间
+        if ($toRange) {
+            foreach ($readyReturn as $year => $arr) {
+                if (empty($arr)) continue;
+                foreach ($arr as $field => $val) {
+                    //判断是哪一种区间样子，六棱镜跟别的不一样
+                    if ($this->rangeArr[0] === '') {
+                        if (isset($this->rangeArr[1][$field]) && is_numeric($val)) {
+                            !$this->rangeIsYuan ?: $val = $val * 10000;
+                            $readyReturn[$year][$field] = $this->binaryFind(
+                                $val, 0, count($this->rangeArr[1][$field]) - 1, $this->rangeArr[1][$field]
+                            );
+                        } elseif (isset($this->rangeArrRatio[1][$field]) && is_numeric($val)) {
+                            $readyReturn[$year][$field] = $this->binaryFind(
+                                $val, 0, count($this->rangeArrRatio[1][$field]) - 1, $this->rangeArrRatio[1][$field]
+                            );
+                        } else {
+                            $readyReturn[$year][$field] = $val;
+                        }
+                    } else {
+                        if (in_array($field, $this->rangeArr[0], true) && is_numeric($val)) {
+                            !$this->rangeIsYuan ?: $val = $val * 10000;
+                            $readyReturn[$year][$field] = $this->binaryFind(
+                                $val, 0, count($this->rangeArr[1]) - 1, $this->rangeArr[1]
+                            );
+                        } elseif (in_array($field, $this->rangeArrRatio[0], true) && is_numeric($val)) {
+                            $readyReturn[$year][$field] = $this->binaryFind(
+                                $val, 0, count($this->rangeArrRatio[1]) - 1, $this->rangeArrRatio[1]
+                            );
+                        } else {
+                            $readyReturn[$year][$field] = $val;
+                        }
+                    }
+                }
+            }
+        }
+
+        krsort($readyReturn);
+return $readyReturn;
+//        return $this->checkRespFlag ?
+//            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn]) :
+//            ['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn];
+    }
 
 }
