@@ -158,7 +158,7 @@ class FinanceController extends FinanceBase
                 'entName' => $oneEnt,
                 'code' => '',
                 'beginYear' => date('m')-0>=7?date('Y') - 1:date('Y')-2,
-                'dataCount' => 5,
+                'dataCount' => 6,
             ];
             $res = (new LongXinService())
                 ->setCheckRespFlag(true)
