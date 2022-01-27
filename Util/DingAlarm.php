@@ -28,8 +28,8 @@ function request_by_curl($remote_server, $post_string) {
 function dingAlarmMarkdown($title,$text){
     $webhook = 'https://oapi.dingtalk.com/robot/send?access_token=188728702d363a6eb79bccd584361da3f6de3a83e19071403345871747cd2482';
     $content = "# **{$title}log**\n";
-    foreach ($text as $item) {
-        $content .= "> **{$item['name']}：** {$item['msg']}\n\n";
+    foreach ($text as $key=>$item) {
+        $content .= "> **{$key}：** {$item}\n\n";
     }
 
     $msg = ['title'=>$title,'text'=>$content];

@@ -120,7 +120,7 @@ class LongXinService extends ServiceBase
         $this->sendHeaders['authorization'] = $this->createToken($arr);
         $res = (new CoHttpClient())->useCache(false)
             ->send($this->baseUrl . 'getentid/', $arr, $this->sendHeaders);
-
+        dingAlarmMarkdown('公司名称换取entid',['res'=>$res]);
         if (!empty($res) && isset($res['data']) && !empty($res['data'])) {
             $entid = $res['data'];
         } else {
@@ -2112,7 +2112,7 @@ class LongXinService extends ServiceBase
         $res = (new CoHttpClient())
             ->useCache(true)
             ->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
-
+        dingAlarmMarkdown('公司名称财务数据',['res'=>$res]);
         $this->recodeSourceCurl([
             'sourceName' => $this->sourceName,
             'apiName' => last(explode('/', trim($this->baseUrl . 'ar_caiwu/', '/'))),
