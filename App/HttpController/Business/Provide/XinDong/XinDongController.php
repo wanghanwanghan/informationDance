@@ -1208,13 +1208,13 @@ class XinDongController extends ProvideBase
         if (empty($entName)) {
             return $this->writeJson(201, null, null, '公司名称不能是空');
         }
-        $return = [];
         $postData = [
             'entName' => $entName,
             'code' => '',
             'beginYear' => 2020,
             'dataCount' => 3,//取最近几年的
         ];
+        dingAlarmMarkdown('getFinanceDataTwo',['postData'=>$postData]);
         $res = (new LongXinService())->getFinanceDataTwo($postData);
         return $this->checkResponse($res);
     }
