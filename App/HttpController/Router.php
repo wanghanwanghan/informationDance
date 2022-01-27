@@ -365,8 +365,6 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceTemp', $prefix . 'getFinanceTemp');//仿企名片时的财务数据
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceTempMergeData', $prefix . 'getFinanceTempMergeData');//仿企名片时的财务数据
             $routeCollector->addRoute(['GET', 'POST'], '/superSearch', $prefix . 'superSearch');
-            $routeCollector->addRoute(['GET', 'POST'], '/getFinanceDataTwo', $prefix . 'getFinanceDataTwo');//仿企名片时的财务数据
-
         });
 
         return true;
