@@ -2115,9 +2115,7 @@ class LongXinService extends ServiceBase
         $res = (new CoHttpClient())
             ->useCache(true)
             ->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
-//        dingAlarmMarkdown('公司名称财务数据',['res'=>$res]);
         CommonService::getInstance()->log4PHP($res,'info','getFinanceDataTwoRes');
-
         $this->recodeSourceCurl([
             'sourceName' => $this->sourceName,
             'apiName' => last(explode('/', trim($this->baseUrl . 'ar_caiwu/', '/'))),
