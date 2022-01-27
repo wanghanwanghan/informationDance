@@ -3,6 +3,7 @@
 use App\HttpController\Service\HttpClient\CoHttpClient;
 
 function request_by_curl($remote_server, $post_string) {
+
     $data = (new CoHttpClient())
         ->send($remote_server, $post_string, array ('Content-Type: application/json;charset=utf-8'));
 //    $ch = curl_init();
