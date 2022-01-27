@@ -1217,6 +1217,7 @@ class XinDongController extends ProvideBase
         ];
         CommonService::getInstance()->log4PHP($postData,'info','getFinanceDataTwo');
 //        dingAlarmMarkdown('getFinanceDataTwo',['postData'=>$postData]);
+        $res[$this->cspKey] = '123456';
         $res = (new LongXinService())->getFinanceDataTwo($postData);
         return $this->checkResponse($res);
     }
