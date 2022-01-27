@@ -1216,7 +1216,7 @@ class XinDongController extends ProvideBase
             'dataCount' => 3,//取最近几年的
         ];
         CommonService::getInstance()->log4PHP($postData,'info','getFinanceDataTwo');
-        dingAlarmMarkdown('getFinanceDataTwo',['postData'=>$postData]);
+//        dingAlarmMarkdown('getFinanceDataTwo',['postData'=>$postData]);
         $res = (new LongXinService())->getFinanceDataTwo($postData);
         return $this->checkResponse($res);
     }

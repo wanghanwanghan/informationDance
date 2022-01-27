@@ -121,7 +121,7 @@ class LongXinService extends ServiceBase
         $res = (new CoHttpClient())->useCache(false)
             ->send($this->baseUrl . 'getentid/', $arr, $this->sendHeaders);
         CommonService::getInstance()->log4PHP($res,'info','getEntid');
-        dingAlarmMarkdown('公司名称换取entid',['res'=>$res]);
+//        dingAlarmMarkdown('公司名称换取entid',['res'=>$res]);
         if (!empty($res) && isset($res['data']) && !empty($res['data'])) {
             $entid = $res['data'];
         } else {
@@ -2095,7 +2095,7 @@ class LongXinService extends ServiceBase
         if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
 
         TaskService::getInstance()->create(new insertEnt($postData['entName'], $postData['code']));
-
+        CommonService::getInstance()->log4PHP($entId,'info','getEntidres');
         $ANCHEYEAR = '';
         $temp = [];
         for ($i = 2013; $i <= date('Y'); $i++) {
@@ -2113,7 +2113,7 @@ class LongXinService extends ServiceBase
         $res = (new CoHttpClient())
             ->useCache(true)
             ->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
-        dingAlarmMarkdown('公司名称财务数据',['res'=>$res]);
+//        dingAlarmMarkdown('公司名称财务数据',['res'=>$res]);
         CommonService::getInstance()->log4PHP($res,'info','getFinanceDataTwoRes');
 
         $this->recodeSourceCurl([
