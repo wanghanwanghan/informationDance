@@ -1214,10 +1214,7 @@ class XinDongController extends ProvideBase
             'beginYear' => 2020,
             'dataCount' => 3,//取最近几年的
         ];
-        CommonService::getInstance()->log4PHP($postData,'info','getFinanceDataTwo');
-//        $res = (new LongXinService())->getFinanceDataTwo($postData);
 
-//        return $this->checkResponse([$this->cspKey => $res]);
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new LongXinService())
                 ->setCheckRespFlag(true)
