@@ -120,6 +120,7 @@ class LongXinService extends ServiceBase
         $this->sendHeaders['authorization'] = $this->createToken($arr);
         $res = (new CoHttpClient())->useCache(false)
             ->send($this->baseUrl . 'getentid/', $arr, $this->sendHeaders);
+        CommonService::getInstance()->log4PHP($res,'info','getEntid');
         dingAlarmMarkdown('公司名称换取entid',['res'=>$res]);
         if (!empty($res) && isset($res['data']) && !empty($res['data'])) {
             $entid = $res['data'];
@@ -2113,6 +2114,8 @@ class LongXinService extends ServiceBase
             ->useCache(true)
             ->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
         dingAlarmMarkdown('公司名称财务数据',['res'=>$res]);
+        CommonService::getInstance()->log4PHP($res,'info','getFinanceDataTwoRes');
+
         $this->recodeSourceCurl([
             'sourceName' => $this->sourceName,
             'apiName' => last(explode('/', trim($this->baseUrl . 'ar_caiwu/', '/'))),
