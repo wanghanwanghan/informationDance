@@ -1215,8 +1215,15 @@ class XinDongController extends ProvideBase
             'dataCount' => 3,//取最近几年的
         ];
         CommonService::getInstance()->log4PHP($postData,'info','getFinanceDataTwo');
-        $res = (new LongXinService())->getFinanceDataTwo($postData);
-        CommonService::getInstance()->log4PHP($res,'info','getFinanceDataTwoResCC');
-        return $this->checkResponse([$this->cspKey => $res]);
+//        $res = (new LongXinService())->getFinanceDataTwo($postData);
+
+//        return $this->checkResponse([$this->cspKey => $res]);
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())->getFinanceDataTwo($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+//        CommonService::getInstance()->log4PHP($res,'info','getFinanceDataTwoResCC');
+        return $this->checkResponse($res);
     }
 }
