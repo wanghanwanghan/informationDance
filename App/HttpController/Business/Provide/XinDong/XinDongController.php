@@ -1203,6 +1203,7 @@ class XinDongController extends ProvideBase
 
     public function getFinanceDataTwo(): bool
     {
+
         $entName = $this->request()->getRequestParam('entName') ?? '';
         $entName = explode(',', $entName);
         if (empty($entName)) {
@@ -1214,6 +1215,7 @@ class XinDongController extends ProvideBase
             'beginYear' => 2020,
             'dataCount' => 3,//取最近几年的
         ];
+        CommonService::getInstance()->log4PHP($postData,'info','getFinanceDataTwo');
         dingAlarmMarkdown('getFinanceDataTwo',['postData'=>$postData]);
         $res = (new LongXinService())->getFinanceDataTwo($postData);
         return $this->checkResponse($res);
