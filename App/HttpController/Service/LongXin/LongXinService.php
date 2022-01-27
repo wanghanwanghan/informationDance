@@ -118,6 +118,7 @@ class LongXinService extends ServiceBase
         ];
 
         $this->sendHeaders['authorization'] = $this->createToken($arr);
+        CommonService::getInstance()->log4PHP($arr,'info','getEntIdParam');
         $res = (new CoHttpClient())->useCache(false)
             ->send($this->baseUrl . 'getentid/', $arr, $this->sendHeaders);
         CommonService::getInstance()->log4PHP($res,'info','getEntid');
