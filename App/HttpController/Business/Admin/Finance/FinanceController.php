@@ -157,7 +157,7 @@ class FinanceController extends FinanceBase
             $postData = [
                 'entName' => $oneEnt,
                 'code' => '',
-                'beginYear' => date('Y') - 1,
+                'beginYear' => date('m')-0>=7?date('Y') - 1:date('Y')-2,
                 'dataCount' => 5,
             ];
             $res = (new LongXinService())
