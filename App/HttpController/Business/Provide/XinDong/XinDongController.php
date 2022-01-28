@@ -1211,7 +1211,14 @@ class XinDongController extends ProvideBase
         }
 
         $resOne = (new xds())->cwScoreTwo($entName);
-        $this->csp->add($this->cspKey,['code' => 200, 'msg' => '查询成功', 'data' => $resOne]);
+
+        $this->csp->add($this->cspKey,[
+            'code' => 200,
+            'paging' => null,
+            'result' => $resOne,
+            'msg' => '查询成功',
+            'checkRespFlag' => false,
+        ]);
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         CommonService::getInstance()->log4PHP($res,'info','getFinanceDataTwoResCC');
         return $this->checkResponse($res);
