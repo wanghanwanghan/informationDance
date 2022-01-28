@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Admin\User;
 
 use App\HttpController\Models\Provide\RequestUserApiRelationship;
 use App\HttpController\Models\Provide\RequestUserInfo;
+use App\HttpController\Models\Provide\RequestUserInfoLog;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateSessionHandler;
 use EasySwoole\Mysqli\QueryBuilder;
@@ -51,8 +52,9 @@ class PUserController extends UserBase
             if (empty($check)) return $this->writeJson(201);
             $check->update([
                 'username' => $username,
-                'money' => $money,
+                'money' => $money + $check->getAttr('money'),
             ]);
+            RequestUserInfoLog::addOne($username,$money);
         } else {
             if (!empty($check)) return $this->writeJson(201);
             $appId = strtoupper(control::getUuid());
@@ -63,6 +65,7 @@ class PUserController extends UserBase
                 'appSecret' => $appSecret,
                 'money' => $money,
             ])->save();
+            RequestUserInfoLog::addOne($username,$money);
         }
 
         return $this->writeJson(200);
