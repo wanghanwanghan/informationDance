@@ -1209,16 +1209,18 @@ class XinDongController extends ProvideBase
         if (empty($entName)) {
             return $this->writeJson(201, null, null, '公司名称不能是空');
         }
-
-        $resOne = (new xds())->cwScoreTwo($entName);
-
-        $this->csp->add($this->cspKey,[
-            'code' => 200,
-            'paging' => null,
-            'result' => $resOne,
-            'msg' => '查询成功',
-            'checkRespFlag' => false,
-        ]);
+        $this->csp->add($this->cspKey . '_', function () use ($entName) {
+            return (new xds())->cwScoreTwo($entName);
+        });
+//        $resOne = (new xds())->cwScoreTwo($entName);
+//
+//        $this->csp->add($this->cspKey,[
+//            'code' => 200,
+//            'paging' => null,
+//            'result' => $resOne,
+//            'msg' => '查询成功',
+//            'checkRespFlag' => false,
+//        ]);
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         CommonService::getInstance()->log4PHP($res,'info','getFinanceDataTwoResCC');
         return $this->checkResponse($res);
