@@ -678,11 +678,6 @@ class LongXinService extends ServiceBase
                 $arr['RATGRO'],
                 $arr['TOTEQU'],
                 $arr['SOCNUM'] ?? $arr['So1'] ?? null,
-                $arr['TEL'],
-                $arr['BUSST'],
-                $arr['DOM'],
-                $arr['EMAIL'],
-                $arr['POSTALCODE'],
             ];
         }
         $origin = $now;
@@ -754,11 +749,7 @@ class LongXinService extends ServiceBase
             'VENDINC_yoy_ave_2' => null,
             'NETINC_yoy_ave_2' => null,
             'NPMOMB' => null,
-            'TEL'=>null,
-            'BUSST'=>null,
-            'DOM'=>null,
-            'EMAIL'=>null,
-            'POSTALCODE'=>null,
+
         ];
 
         $retrun = [];
