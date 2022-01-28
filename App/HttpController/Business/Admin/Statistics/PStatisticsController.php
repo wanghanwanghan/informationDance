@@ -161,11 +161,11 @@ class PStatisticsController extends StatisticsBase
         $sql = $this->getSqlByYear($date);
         $querySql = '1=1';
         if (is_numeric($uid)) {
-            $querySql .= ' and id = ' . $uid;
+            $querySql .= ' and userId = ' . $uid;
         }
 
         if (is_numeric($aid)) {
-            $querySql .= ' and id = ' . $aid;
+            $querySql .= ' and provideApiId = ' . $aid;
         }
 
         if (!empty($date)) {
