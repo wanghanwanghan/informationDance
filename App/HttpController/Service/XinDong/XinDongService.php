@@ -758,6 +758,161 @@ class XinDongService extends ServiceBase
 
         return $this->checkResp(200, null, $res, isset($field) ? '有top' : '无top');
     }
+    //二次特征分数
+    function getFeaturesTwo($entName): array
+    {
+        //查看经营范围
+        $postData = ['entName' => $entName];
+        $OPSCOPE = (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getRegisterInfo');
+        $OPSCOPE = current($OPSCOPE['result']);
+        $OPSCOPE = $OPSCOPE['OPSCOPE'];
+
+        if (mb_strpos($OPSCOPE, '教育') !== false) {
+            $topList = [
+                '新东方教育科技集团有限公司',
+                '北京世纪好未来教育科技有限公司',
+                '北京高途云集教育科技有限公司',
+                '中公教育科技股份有限公司',
+                '北京新东方迅程网络科技股份有限公司',
+                '神州天立控股集团有限公司',
+                '深圳中教控股集团有限公司',
+                '四川希望教育产业集团有限公司',
+                '作业帮教育科技（北京）有限公司',
+                '北京猿力教育科技有限公司',
+            ];
+        } elseif (mb_strpos($OPSCOPE, '新能源汽车') !== false) {
+            $topList = [
+                '上汽通用五菱汽车股份有限公司',
+                '比亚迪股份有限公司',
+                '特斯拉（上海）有限公司',
+                '长城汽车股份有限公司',
+                '上海汽车集团股份有限公司',
+                '奇瑞汽车股份有限公司',
+                '一汽—大众汽车有限公司',
+                '上汽大众汽车有限公司',
+                '广州汽车集团股份有限公司',
+                '蔚来控股有限公司',
+                '北京汽车股份有限公司',
+                '东风汽车股份有限公司',
+                '广东小鹏汽车科技有限公司',
+                '北京车和家信息技术有限公司',
+                '浙江吉利控股集团有限公司',
+                '重庆长安汽车股份有限公司',
+            ];
+        } elseif (mb_strpos($OPSCOPE, '计算机软件') !== false || mb_strpos($OPSCOPE, '计算机硬件') !== false) {
+            $topList = [
+                '阿里云计算有限公司',
+                '腾讯云计算（北京）有限责任公司',
+                '华为云计算技术有限公司',
+                '百度云计算技术（北京）有限公司',
+                '珠海金山云科技有限公司',
+                '优刻得科技股份有限公司',
+                '京东云计算有限公司',
+                '新华三云计算技术有限公司',
+                '杭州朗和科技有限公司',
+                '浪潮云信息技术股份公司',
+            ];
+        } else {
+            $topList = [];
+        }
+
+        $res = (new xds())->cwScoreTwo($entName);
+
+        if (!empty($topList)) {
+            $csp = CspService::getInstance()->create();
+            foreach ($topList as $key => $ent) {
+                $csp->add($key . '_', function () use ($ent) {
+                    return (new xds())->cwScoreTwo($ent);
+                });
+            }
+            $top = CspService::getInstance()->exec($csp);
+            $field = [
+                'MAIBUSINC_yoy' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'ASSGRO_yoy' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'PROGRO' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'PROGRO_yoy' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'RATGRO' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'TBR' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'ASSGROPROFIT_REL' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'ASSETS' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'TOTEQU' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'DEBTL_H' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'DEBTL' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'ATOL' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'PERCAPITA_C' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'PERCAPITA_Y' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'RepaymentAbility' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'GuaranteeAbility' => ['score' => 0, 'num' => 0, 'pic' => ''],
+                'TBR_new' => ['score' => 0, 'num' => 0, 'pic' => ''],
+            ];
+            foreach ($top as $one) {
+                $keys = array_keys($field);
+                foreach ($one as $key => $arr) {
+                    if (in_array($arr['field'], $keys, true) && is_numeric($arr['score'])) {
+                        $field[$arr['field']]['score'] += $arr['score'];
+                        $field[$arr['field']]['num']++;
+                    }
+                }
+            }
+            foreach ($field as $key => $one) {
+                $avgScore = round($one['score'] / $one['num']);
+                $field[$key]['score'] = $avgScore;
+                if (is_numeric($avgScore)) {
+                    if ($avgScore < 20) {
+                        $angle = 4.9;
+                        $word = '弱';
+                    } elseif ($avgScore < 40) {
+                        $angle = 5.6;
+                        $word = '较弱';
+                    } elseif ($avgScore < 60) {
+                        $angle = 0;
+                        $word = '中等';
+                    } elseif ($avgScore < 80) {
+                        $angle = 0.7;
+                        $word = '较强';
+                    } else {
+                        $angle = 1.4;
+                        $word = '强';
+                    }
+                } else {
+                    $angle = 0;
+                    $word = '无';
+                }
+                $field[$key]['pic'] = CommonService::getInstance()->createDashboardPic($angle, $word);
+            }
+        }
+
+        foreach ($res as $key => $one) {
+            if (is_numeric($one['score'])) {
+                if ($one['score'] < 20) {
+                    $angle = 4.9;
+                    $word = '弱';
+                } elseif ($one['score'] < 40) {
+                    $angle = 5.6;
+                    $word = '较弱';
+                } elseif ($one['score'] < 60) {
+                    $angle = 0;
+                    $word = '中等';
+                } elseif ($one['score'] < 80) {
+                    $angle = 0.7;
+                    $word = '较强';
+                } else {
+                    $angle = 1.4;
+                    $word = '强';
+                }
+            } else {
+                $angle = 0;
+                $word = '无';
+            }
+            if (isset($field)) {
+                $res[$key]['topPic'] = $field[$key]['pic'];
+                $res[$key]['topScore'] = $field[$key]['score'];
+            }
+            $res[$key]['pic'] = CommonService::getInstance()->createDashboardPic($angle, $word);
+        }
+
+        return $this->checkResp(200, null, $res, isset($field) ? '有top' : '无top');
+    }
 
     function industryTop($fz_list, $fm_list): array
     {

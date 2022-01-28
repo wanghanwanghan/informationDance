@@ -208,7 +208,8 @@ class xds
 
         //税负强度 28税收负担率 TBR_new
         $score['TBR_new'] = $this->TBR_new($arr['result']);
-        return ['code' => 200, 'msg' => '查询成功', 'data' => $score];
+
+        return $score;
     }
 
     //企业资产收益评分 总资产收益率 = 5净利润 / 10平均资产总额
