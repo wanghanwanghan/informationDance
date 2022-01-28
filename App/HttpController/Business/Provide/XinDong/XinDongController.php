@@ -1226,6 +1226,7 @@ class XinDongController extends ProvideBase
 //        return $this->checkResponse($res);
         $entName = $this->request()->getRequestParam('entName');
         $res = XinDongService::getInstance()->getFeaturesTwo($entName);
+        CommonService::getInstance()->log4PHP($res,'info','getFinanceDataTwoResCC');
         return $this->checkResponse($res);
     }
 }
