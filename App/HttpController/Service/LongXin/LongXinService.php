@@ -2155,11 +2155,18 @@ class LongXinService extends ServiceBase
 
         TaskService::getInstance()->create(new insertFinance($postData['entName'], $temp, $social['AnnualSocial']));
 
+        $tempTwo = $temp;
         //原值计算
         if ($this->cal === true) {
             $temp = $this->exprHandle($temp);
         }
-
+        foreach ($temp as $year=>$val){
+            $temp[$year]['TEL'] = $tempTwo[$year]['TEL'];
+            $temp[$year]['BUSST'] = $tempTwo[$year]['BUSST'];
+            $temp[$year]['DOM'] = $tempTwo[$year]['DOM'];
+            $temp[$year]['EMAIL'] = $tempTwo[$year]['EMAIL'];
+            $temp[$year]['POSTALCODE'] = $tempTwo[$year]['POSTALCODE'];
+        }
         //取哪年的数据
         $readyReturn = [];
         for ($i = $postData['dataCount']; $i--;) {
