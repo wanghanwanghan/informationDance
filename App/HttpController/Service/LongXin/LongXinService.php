@@ -749,6 +749,11 @@ class LongXinService extends ServiceBase
             'VENDINC_yoy_ave_2' => null,
             'NETINC_yoy_ave_2' => null,
             'NPMOMB' => null,
+            'TEL'=>null,
+            'BUSST'=>null,
+            'DOM'=>null,
+            'EMAIL'=>null,
+            'POSTALCODE'=>null,
         ];
 
         $retrun = [];
