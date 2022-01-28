@@ -17,6 +17,5 @@ class RequestUserInfoLog extends ModelBase
             'create_time' => time(),
             'money' => $money,
         ])->save();
-        CommonService::getInstance()->log4PHP($res,'info','RequestUserInfoLog_addOne');
     }
 }
