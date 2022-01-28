@@ -54,7 +54,7 @@ class PUserController extends UserBase
                 'username' => $username,
                 'money' => $money + $check->getAttr('money'),
             ]);
-            RequestUserInfoLog::addOne($username,$money);
+            RequestUserInfoLog::create()->addOne($username,$money);
         } else {
             if (!empty($check)) return $this->writeJson(201);
             $appId = strtoupper(control::getUuid());
@@ -65,7 +65,7 @@ class PUserController extends UserBase
                 'appSecret' => $appSecret,
                 'money' => $money,
             ])->save();
-            RequestUserInfoLog::addOne($username,$money);
+            RequestUserInfoLog::create()->addOne($username,$money);
         }
 
         return $this->writeJson(200);

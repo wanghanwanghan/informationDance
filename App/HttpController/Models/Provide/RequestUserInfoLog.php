@@ -3,6 +3,7 @@
 namespace App\HttpController\Models\Provide;
 
 use App\HttpController\Models\ModelBase;
+use App\HttpController\Service\Common\CommonService;
 
 class RequestUserInfoLog extends ModelBase
 {
@@ -10,11 +11,12 @@ class RequestUserInfoLog extends ModelBase
 
     protected $autoTimeStamp = true;
 
-    public static function addOne($username,$money){
-        self::create()->data([
+    public function addOne($username,$money){
+        $res = self::create()->data([
             'username' => $username,
             'create_time' => time(),
             'money' => $money,
         ])->save();
+        CommonService::getInstance()->log4PHP($res,'info','RequestUserInfoLog_addOne');
     }
 }
