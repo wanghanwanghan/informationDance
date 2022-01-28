@@ -1225,7 +1225,18 @@ class XinDongController extends ProvideBase
 //        CommonService::getInstance()->log4PHP($res,'info','getFinanceDataTwoResCC');
 //        return $this->checkResponse($res);
         $entName = $this->request()->getRequestParam('entName');
-        $res = XinDongService::getInstance()->getFeaturesTwo($entName);
+//        $res = XinDongService::getInstance()->getFeaturesTwo($entName);
+//        CommonService::getInstance()->log4PHP($res,'info','getFinanceDataTwoResCC');
+//        return $this->checkResponse($res);
+
+
+        $this->csp->add($this->cspKey, function () use ($entName) {
+            return (new XinDongService())
+                ->setCheckRespFlag(true)
+                ->getFeaturesTwo($entName);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         CommonService::getInstance()->log4PHP($res,'info','getFinanceDataTwoResCC');
         return $this->checkResponse($res);
     }
