@@ -16,6 +16,7 @@ use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\MaYi\MaYiService;
 use App\HttpController\Service\Sms\SmsService;
 use App\HttpController\Service\TaoShu\TaoShuService;
+use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\XinDong\XinDongService;
 use Carbon\Carbon;
 use wanghanwanghan\someUtils\control;
@@ -1208,19 +1209,9 @@ class XinDongController extends ProvideBase
         if (empty($entName)) {
             return $this->writeJson(201, null, null, '公司名称不能是空');
         }
-        $postData = [
-            'entName' => $entName,
-            'code' => '',
-            'beginYear' => 2020,
-            'dataCount' => 3,//取最近几年的
-        ];
 
-        $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new LongXinService())
-                ->setCheckRespFlag(true)
-                ->getFinanceDataTwo($postData);
-        });
-
+        $resOne = (new xds())->cwScoreTwo($entName);
+        $this->csp->add($this->cspKey,$resOne);
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         CommonService::getInstance()->log4PHP($res,'info','getFinanceDataTwoResCC');
         return $this->checkResponse($res);
