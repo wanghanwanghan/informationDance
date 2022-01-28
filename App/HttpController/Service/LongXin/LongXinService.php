@@ -2129,11 +2129,16 @@ class LongXinService extends ServiceBase
                 $year = trim($oneYearData['ANCHEYEAR']) . '';
                 if (!is_numeric($year)) continue;
                 $oneYearData['SOCNUM'] = null;
+//                unset($oneYearData['TEL']);//后加的字段
+//                unset($oneYearData['BUSST']);//后加的字段
+//                unset($oneYearData['DOM']);//后加的字段
+//                unset($oneYearData['EMAIL']);//后加的字段
+//                unset($oneYearData['POSTALCODE']);//后加的字段
                 $temp[$year] = $oneYearData;
             }
             krsort($temp);
         }
-
+        CommonService::getInstance()->log4PHP($res,'info','getFinanceDataTwoOneYearData');
         //社保人数数组
         $social = $this->getSocialNum($entId);
 
