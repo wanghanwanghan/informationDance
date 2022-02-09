@@ -281,7 +281,7 @@ class QiXiangYunService extends ServiceBase
      */
     function actionGetFpxzStatus($nsrsbh, $kpyf)
     {
-        $url = $this->testBaseUrl . 'FP/getFpxzStatus';
+        $url = $this->baseUrl . 'FP/getFpxzStatus';
         $data = [
             'nsrsbh' => $nsrsbh,
             'kpyf' => $kpyf - 0,//Ym
