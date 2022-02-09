@@ -30,7 +30,7 @@ class GetInvData extends AbstractCronTask
     {
         //每月19号凌晨4点可以取上一个月全部数据
         //return '0 4 19 * *';
-        return '24 19 9 * *';
+        return '30 19 9 * *';
     }
 
     static function getTaskName(): string
@@ -149,8 +149,8 @@ class GetInvData extends AbstractCronTask
                     'fileSecret' => $fileSecret,//对称钥秘⽂
                     'companyName' => $oneReadyToSend->getAttr('entName'),//公司名称
                     'authTime' => date('Y-m-d H:i:s', $oneReadyToSend->getAttr('requestDate')),//授权时间
-                    'fileKeyList' => $fileKeyList,//文件路径
                     'totalCount' => ($in + $out) . '',
+                    'fileKeyList' => $fileKeyList,//文件路径
                 ];
 
                 //sign md5 with rsa
