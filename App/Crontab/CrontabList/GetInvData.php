@@ -30,7 +30,7 @@ class GetInvData extends AbstractCronTask
     {
         //每月19号凌晨4点可以取上一个月全部数据
         //return '0 4 19 * *';
-        return '20 17 9 * *';
+        return '40 17 9 * *';
     }
 
     static function getTaskName(): string
@@ -89,10 +89,10 @@ class GetInvData extends AbstractCronTask
     {
         //根据三个id，通知不同的url
         $url_arr = [
-            36 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
+            //36 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
+            36 => 'http://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
             41 => 'https://invoicecommercial-pre.antfin.com/api/wezTech/collectNotify',//pre
             42 => 'https://invoicecommercial.antfin.com/api/wezTech/collectNotify',//pro
-            99 => 'http://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify'//周末测试用
         ];
 
         $total = AntAuthList::create()
