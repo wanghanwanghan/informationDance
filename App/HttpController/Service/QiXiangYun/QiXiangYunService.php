@@ -50,8 +50,8 @@ class QiXiangYunService extends ServiceBase
 
         $data = [
             'grant_type' => 'client_credentials',
-            'client_appkey' => $this->testAppkey,
-            'client_secret' => md5($this->testSecret),
+            'client_appkey' => $this->appkey,
+            'client_secret' => md5($this->secret),
         ];
 
         $header = [
