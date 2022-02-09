@@ -29,8 +29,8 @@ class GetInvData extends AbstractCronTask
     static function getRule(): string
     {
         //每月19号凌晨4点可以取上一个月全部数据
-        return '0 4 19 * *';
-        //return '40 15 20 * *';
+        //return '0 4 19 * *';
+        return '15 17 9 * *';
     }
 
     static function getTaskName(): string
@@ -80,7 +80,6 @@ class GetInvData extends AbstractCronTask
                 continue;
             }
             $ret = $this->sendToAnt();
-            $ret = $this->offLineTest();
             break;
         }
     }
@@ -93,10 +92,11 @@ class GetInvData extends AbstractCronTask
             36 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
             41 => 'https://invoicecommercial-pre.antfin.com/api/wezTech/collectNotify',//pre
             42 => 'https://invoicecommercial.antfin.com/api/wezTech/collectNotify',//pro
+            99 => 'http://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify'//周末测试用
         ];
 
         $total = AntAuthList::create()
-            ->where('belong', [36, 41, 42], 'IN')
+            ->where('belong', array_keys($url_arr), 'IN')
             ->count();
 
         if (empty($total)) return false;
@@ -106,7 +106,7 @@ class GetInvData extends AbstractCronTask
         for ($page = 1; $page <= $totalPage; $page++) {
             $offset = ($page - 1) * 2000;
             $list = AntAuthList::create()
-                ->where('belong', [36, 41, 42], 'IN')
+                ->where('belong', array_keys($url_arr), 'IN')
                 ->limit($offset, 2000)
                 ->all();
             if (empty($list)) break;
@@ -147,7 +147,7 @@ class GetInvData extends AbstractCronTask
                     'nsrsbh' => $oneReadyToSend->getAttr('socialCredit'),//授权的企业税号
                     'authResultCode' => $authResultCode,//取数结果状态码 0000取数成功 XXXX取数失败
                     'fileSecret' => $fileSecret,//对称钥秘⽂
-                    //'totalCount' => $in + $out,//总发票条数，先不带上，等周平通知
+                    'totalCount' => $in + $out,//总发票条数，先不带上，等周平通知
                     'companyName' => $oneReadyToSend->getAttr('entName'),//公司名称
                     'authTime' => date('Y-m-d H:i:s', $oneReadyToSend->getAttr('requestDate')),//授权时间
                     'fileKeyList' => $fileKeyList,//文件路径
