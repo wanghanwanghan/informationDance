@@ -152,10 +152,12 @@ class GetInvData extends AbstractCronTask
                     'fileKeyList' => $fileKeyList,//文件路径
                     'totalCount' => ($in + $out) . '',
                 ];
+
                 //sign md5 with rsa
                 $private_key = file_get_contents(RSA_KEY_PATH . $rsa_pri_name);
                 $pkeyid = openssl_pkey_get_private($private_key);
                 $verify = openssl_sign(jsonEncode([$body], false), $signature, $pkeyid, OPENSSL_ALGO_MD5);
+
                 //准备通知
                 $collectNotify = [
                     'body' => [$body],
