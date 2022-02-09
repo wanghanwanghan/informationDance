@@ -62,7 +62,7 @@ class QiXiangYunService extends ServiceBase
             ->useCache(false)->setEx(0.3)
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'postjson');
-//        CommonService::getInstance()->log4PHP($res,'info','qixiangyun_createToken');
+        CommonService::getInstance()->log4PHP($res,'info','qixiangyun_createToken');
         return $res['value']['access_token'];
     }
 
