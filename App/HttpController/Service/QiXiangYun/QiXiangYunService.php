@@ -46,7 +46,7 @@ class QiXiangYunService extends ServiceBase
 
     private function createToken(): string
     {
-        $url = $this->testBaseUrl . 'AGG/oauth2/login';
+        $url = $this->baseUrl  . 'AGG/oauth2/login';
 
         $data = [
             'grant_type' => 'client_credentials',
