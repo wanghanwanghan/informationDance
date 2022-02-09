@@ -152,7 +152,7 @@ class QiXiangYunService extends ServiceBase
         //15	二手车统一销售发票
         //17	海关缴款书
 
-        $url = $this->testBaseUrl . 'FP/cj';
+        $url = $this->baseUrl . 'FP/cj';
 
         $data = [
             'nsrsbh' => $nsrsbh,
