@@ -53,7 +53,7 @@ class QiXiangYunService extends ServiceBase
             'client_appkey' => $this->appkey,
             'client_secret' => md5($this->secret),
         ];
-
+        CommonService::getInstance()->log4PHP($this->secret,'info','qixiangyun_createTokenParamSecret');
         $header = [
             'content-type' => 'application/json;charset=UTF-8'
         ];
