@@ -57,7 +57,7 @@ class QiXiangYunService extends ServiceBase
         $header = [
             'content-type' => 'application/json;charset=UTF-8'
         ];
-
+        CommonService::getInstance()->log4PHP([$url, $data, $header],'info','qixiangyun_createTokenParam');
         $res = (new CoHttpClient())
             ->useCache(false)->setEx(0.3)
             ->needJsonDecode(true)
@@ -281,7 +281,7 @@ class QiXiangYunService extends ServiceBase
      */
     function actionGetFpxzStatus($nsrsbh, $kpyf)
     {
-        $url = 'http://api.qixiangyun.com/v1/FP/getFpxzStatus';
+        $url = $this->baseUrl . 'FP/getFpxzStatus';
         $data = [
             'nsrsbh' => $nsrsbh,
             'kpyf' => $kpyf - 0,//Ym
