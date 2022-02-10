@@ -19,7 +19,6 @@ class ProvideRouter
         $this->GuoPiaoRouterV1($routeCollector);
         $this->XinDongRouterV1($routeCollector);
         $this->FaYanYuanRouterV1($routeCollector);
-        $this->FaYanYuanRouterV2($routeCollector);//lingshi
         $this->YunMaTongRouterV1($routeCollector);
         $this->FaHaiRouterV1($routeCollector);
         $this->MaYiRouterV1($routeCollector);
