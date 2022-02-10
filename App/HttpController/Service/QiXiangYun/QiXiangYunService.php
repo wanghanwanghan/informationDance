@@ -293,7 +293,7 @@ class QiXiangYunService extends ServiceBase
         $req_date = time() . '000';
         $token = $this->createToken();
         $sign = base64_encode(
-            md5('POST_' . md5(json_encode($data)) . '_' . $req_date . '_' . $token . '_' . $this->testSecret)
+            md5('POST_' . md5(json_encode($data,false)) . '_' . $req_date . '_' . $token . '_' . $this->Secret)
         );
         $req_sign = "API-SV1:{$this->appkey}:" . $sign;
         $header = [
@@ -301,6 +301,7 @@ class QiXiangYunService extends ServiceBase
             'access_token' => $token,
             'req_date' => $req_date,
             'req_sign' => $req_sign,
+//            'Accept' => 'application/json',
         ];
         CommonService::getInstance()->log4PHP([$url, $data, $header],'info','actionGetFpxzStatusParam');
         $res = (new CoHttpClient())
