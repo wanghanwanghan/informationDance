@@ -30,7 +30,7 @@ class GetInvData extends AbstractCronTask
     {
         //每月19号凌晨4点可以取上一个月全部数据
         //return '0 4 19 * *';
-        return '20 17 9 * *';
+        return '33 19 9 * *';
     }
 
     static function getTaskName(): string
@@ -89,10 +89,10 @@ class GetInvData extends AbstractCronTask
     {
         //根据三个id，通知不同的url
         $url_arr = [
-            36 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
+            //36 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
+            36 => 'http://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
             41 => 'https://invoicecommercial-pre.antfin.com/api/wezTech/collectNotify',//pre
             42 => 'https://invoicecommercial.antfin.com/api/wezTech/collectNotify',//pro
-            99 => 'http://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify'//周末测试用
         ];
 
         $total = AntAuthList::create()
@@ -147,15 +147,17 @@ class GetInvData extends AbstractCronTask
                     'nsrsbh' => $oneReadyToSend->getAttr('socialCredit'),//授权的企业税号
                     'authResultCode' => $authResultCode,//取数结果状态码 0000取数成功 XXXX取数失败
                     'fileSecret' => $fileSecret,//对称钥秘⽂
-                    'totalCount' => $in + $out,//总发票条数，先不带上，等周平通知
                     'companyName' => $oneReadyToSend->getAttr('entName'),//公司名称
                     'authTime' => date('Y-m-d H:i:s', $oneReadyToSend->getAttr('requestDate')),//授权时间
+                    'totalCount' => ($in + $out) . '',
                     'fileKeyList' => $fileKeyList,//文件路径
                 ];
+
                 //sign md5 with rsa
                 $private_key = file_get_contents(RSA_KEY_PATH . $rsa_pri_name);
                 $pkeyid = openssl_pkey_get_private($private_key);
                 $verify = openssl_sign(jsonEncode([$body], false), $signature, $pkeyid, OPENSSL_ALGO_MD5);
+
                 //准备通知
                 $collectNotify = [
                     'body' => [$body],
@@ -165,11 +167,6 @@ class GetInvData extends AbstractCronTask
                     ],
                 ];
 
-                CommonService::getInstance()->log4PHP([
-                    '发给蚂蚁的',
-                    $collectNotify
-                ], 'info', 'ant.log');
-
                 $url = $url_arr[$id];
 
                 $header = [
@@ -178,6 +175,11 @@ class GetInvData extends AbstractCronTask
 
                 //生产环境先不通知
                 if ($oneReadyToSend->belong - 0 !== 42) {
+
+                    CommonService::getInstance()->log4PHP([
+                        '发给蚂蚁的',
+                        $collectNotify
+                    ], 'info', 'ant.log');
 
                     $ret = (new CoHttpClient())
                         ->useCache(false)
