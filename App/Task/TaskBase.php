@@ -308,7 +308,7 @@ class TaskBase
     //显示--
     function formatTo($data, $to = '--')
     {
-        return empty($data) ? $to : $data;
+        return empty($data) ? $to : addslashes($data);
     }
 
     //pdf目录
