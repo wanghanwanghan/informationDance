@@ -293,7 +293,7 @@ class QiXiangYunService extends ServiceBase
         $req_date = time() . '000';
         $token = $this->createToken();
         $sign = base64_encode(
-            md5('POST_' . md5(json_encode($data,false)) . '_' . $req_date . '_' . $token . '_' . $this->Secret)
+            md5('POST_' . md5(json_encode($data,false)) . '_' . $req_date . '_' . $token . '_' . $this->secret)
         );
         $req_sign = "API-SV1:{$this->appkey}:" . $sign;
         $header = [
