@@ -765,6 +765,13 @@ class XinDongService extends ServiceBase
         return $this->checkResp(200, null, ['res'=>$res,'data'=>$data], isset($field) ? '有top' : '无top');
     }
 
+    //二次特征分数
+    function getFeaturesForApi($entName): array
+    {
+        $res= (new xds())->cwScore($entName);
+        return $this->checkResp(200, null, $res, 'success');
+    }
+
     function industryTop($fz_list, $fm_list): array
     {
         foreach ($fz_list as $key => $oneEnt) {
