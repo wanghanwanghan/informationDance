@@ -251,6 +251,8 @@ class FaHaiController extends ProvideBase
             'pageno' => $page,
             'range' => $pageSize,
         ];
+        CommonService::getInstance()->log4PHP($postData,'info','getCpwsParam');
+
         $res = (new FaYanYuanService())
             ->setCheckRespFlag(true)
             ->getList($this->listBaseUrl . 'sifa', $postData);
