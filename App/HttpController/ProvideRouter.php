@@ -187,6 +187,11 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/sxbzxr/people', $prefix . 'sxbzxrPeople');
             $routeCollector->addRoute(['GET', 'POST'], '/xgbzxr/org', $prefix . 'xgbzxrOrg');
             $routeCollector->addRoute(['GET', 'POST'], '/xgbzxr/people', $prefix . 'xgbzxrPeople');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCpws', $prefix . 'getCpws');
+            $routeCollector->addRoute(['GET', 'POST'], '/getZxgg', $prefix . 'getZxgg');
+            $routeCollector->addRoute(['GET', 'POST'], '/getShixin', $prefix . 'getShixin');
+            $routeCollector->addRoute(['GET', 'POST'], '/getSifacdk', $prefix . 'getSifacdk');
+            $routeCollector->addRoute(['GET', 'POST'], '/getJudicialSaleList', $prefix . 'getJudicialSaleList');
         });
 
         return true;
@@ -215,11 +220,6 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getFyggDetail', $prefix . 'getFyggDetail');//法院公告
             $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyXinDetail', $prefix . 'getSatpartyXinDetail');
             $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyRegDetail', $prefix . 'getSatpartyRegDetail');
-            $routeCollector->addRoute(['GET', 'POST'], '/getCpws', $prefix . 'getCpws');
-            $routeCollector->addRoute(['GET', 'POST'], '/getzxgg', $prefix . 'getzxgg');
-            $routeCollector->addRoute(['GET', 'POST'], '/getShixin', $prefix . 'getShixin');
-            $routeCollector->addRoute(['GET', 'POST'], '/getSifacdk', $prefix . 'getSifacdk');
-            $routeCollector->addRoute(['GET', 'POST'], '/getJudicialSaleList', $prefix . 'getJudicialSaleList');
         });
 
         return true;
