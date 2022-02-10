@@ -13,7 +13,6 @@ class ProvideRouter
     function addRouterV1(RouteCollector $routeCollector)
     {
         $this->LongDunRouterV1($routeCollector);
-        $this->LongDunRouterV2($routeCollector);//lingshi
         $this->TaoShuRouterV1($routeCollector);
         $this->QianQiRouterV1($routeCollector);
         $this->GuoPiaoRouterV1($routeCollector);
@@ -48,16 +47,6 @@ class ProvideRouter
         return true;
     }
 
-    private function LongDunRouterV2(RouteCollector $routeCollector)
-    {
-        $prefix = '/Business/Api/LongDun/LongDunController/';
-
-        $routeCollector->addGroup('/qcc', function (RouteCollector $routeCollector) use ($prefix) {
-            $routeCollector->addRoute(['GET', 'POST'], '/getAdministrativePenaltyList', $prefix . 'getAdministrativePenaltyList');//行政处罚
-        });
-
-        return true;
-    }
 
     private function TaoShuRouterV1(RouteCollector $routeCollector)
     {
