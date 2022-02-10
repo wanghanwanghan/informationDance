@@ -40,6 +40,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getProjectProductCheck', $prefix . 'getProjectProductCheck');
             $routeCollector->addRoute(['GET', 'POST'], '/getCompatProductRecommend', $prefix . 'getCompatProductRecommend');
             $routeCollector->addRoute(['GET', 'POST'], '/getBeneficiary', $prefix . 'getBeneficiary');
+            $routeCollector->addRoute(['GET', 'POST'], '/getAdministrativePenaltyList', $prefix . 'getAdministrativePenaltyList');//行政处罚
         });
 
         return true;
@@ -214,6 +215,11 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getFyggDetail', $prefix . 'getFyggDetail');//法院公告
             $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyXinDetail', $prefix . 'getSatpartyXinDetail');
             $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyRegDetail', $prefix . 'getSatpartyRegDetail');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCpws', $prefix . 'getCpws');
+            $routeCollector->addRoute(['GET', 'POST'], '/getzxgg', $prefix . 'getzxgg');
+            $routeCollector->addRoute(['GET', 'POST'], '/getShixin', $prefix . 'getShixin');
+            $routeCollector->addRoute(['GET', 'POST'], '/getSifacdk', $prefix . 'getSifacdk');
+            $routeCollector->addRoute(['GET', 'POST'], '/getJudicialSaleList', $prefix . 'getJudicialSaleList');
         });
 
         return true;
