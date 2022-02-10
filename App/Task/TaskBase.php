@@ -308,7 +308,17 @@ class TaskBase
     //显示--
     function formatTo($data, $to = '--')
     {
-        return empty($data) ? $to : addslashes($data);
+        if (empty($data)) {
+            return $to;
+        }
+
+        $data = trim($data);
+
+        if (preg_match('/</', $data) && preg_match('/>/', $data)) {
+            return $to;
+        }
+
+        return $data;
     }
 
     //pdf目录
