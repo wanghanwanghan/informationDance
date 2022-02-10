@@ -236,7 +236,7 @@ class FaHaiController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    function getCpws()
+    function getCpws(): bool
     {
         $entName = $this->getRequestData('entName');
         $page = $this->getRequestData('page', 1);
@@ -261,7 +261,7 @@ class FaHaiController extends ProvideBase
 
         return $this->checkResponse($res);
     }
-    function getZxgg()
+    function getZxgg(): bool
     {
         $entName = $this->getRequestData('entName');
         $page = $this->getRequestData('page', 1);
@@ -286,7 +286,7 @@ class FaHaiController extends ProvideBase
 
         return $this->checkResponse($res);
     }
-    function getShixin()
+    function getShixin(): bool
     {
         $entName = $this->getRequestData('entName');
         $page = $this->getRequestData('page', 1);
@@ -311,7 +311,7 @@ class FaHaiController extends ProvideBase
 
         return $this->checkResponse($res);
     }
-    function getSifacdk()
+    function getSifacdk(): bool
     {
         $entName = $this->getRequestData('entName');
         $page = $this->getRequestData('page', 1);
@@ -337,7 +337,7 @@ class FaHaiController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    function getJudicialSaleList()
+    function getJudicialSaleList(): bool
     {
         $entName = $this->request()->getRequestParam('entName');
         $page = $this->request()->getRequestParam('page') ?? 1;
