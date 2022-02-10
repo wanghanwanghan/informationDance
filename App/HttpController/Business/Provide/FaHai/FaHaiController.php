@@ -6,6 +6,7 @@ use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaYanYuan\FaYanYuanService;
+use App\HttpController\Service\LongDun\LongDunService;
 
 class FaHaiController extends ProvideBase
 {
@@ -235,7 +236,127 @@ class FaHaiController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getCpws()
+    {
+        $entName = $this->getRequestData('entName');
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
 
+        $docType = 'cpws';
+
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getList($this->listBaseUrl . 'sifa', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+    function getZxgg()
+    {
+        $entName = $this->getRequestData('entName');
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
+
+        $docType = 'zxgg';
+
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getList($this->listBaseUrl . 'sifa', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+    function getShixin()
+    {
+        $entName = $this->getRequestData('entName');
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
+
+        $docType = 'shixin';
+
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getList($this->listBaseUrl . 'sifa', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+    function getSifacdk()
+    {
+        $entName = $this->getRequestData('entName');
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
+
+        $docType = 'sifacdk';
+
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getList($this->listBaseUrl . 'sifa', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function getJudicialSaleList()
+    {
+        $entName = $this->request()->getRequestParam('entName');
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData = [
+            'keyWord' => $entName,
+            'pageIndex' => $page,
+            'pageSize' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongDunService())->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'JudicialSale/GetJudicialSaleList', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
 }
 
 

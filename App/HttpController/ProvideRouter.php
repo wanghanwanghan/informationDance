@@ -205,21 +205,7 @@ class ProvideRouter
 
         return true;
     }
-    private function FaYanYuanRouterV2(RouteCollector $routeCollector)
-    {
-        $prefix = '/Business/Api/FaYanYuan/FaYanYuanController/';
 
-        $routeCollector->addGroup('/fyy', function (RouteCollector $routeCollector) use ($prefix) {
-            $routeCollector->addRoute(['GET', 'POST'], '/getCpws', $prefix . 'getCpws');
-            $routeCollector->addRoute(['GET', 'POST'], '/getZxgg', $prefix . 'getZxgg');
-            $routeCollector->addRoute(['GET', 'POST'], '/getShixin', $prefix . 'getShixin');
-            $routeCollector->addRoute(['GET', 'POST'], '/getSifacdk', $prefix . 'getSifacdk');
-            $routeCollector->addRoute(['GET', 'POST'], '/getJudicialSaleList', $prefix . 'getJudicialSaleList');
-
-        });
-
-        return true;
-    }
     private function YunMaTongRouterV1(RouteCollector $routeCollector)
     {
         $prefix = '/Business/Provide/YunMaTong/YunMaTongController/';
@@ -243,6 +229,12 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getFyggDetail', $prefix . 'getFyggDetail');//法院公告
             $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyXinDetail', $prefix . 'getSatpartyXinDetail');
             $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyRegDetail', $prefix . 'getSatpartyRegDetail');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCpws', $prefix . 'getCpws');
+            $routeCollector->addRoute(['GET', 'POST'], '/getZxgg', $prefix . 'getZxgg');
+            $routeCollector->addRoute(['GET', 'POST'], '/getShixin', $prefix . 'getShixin');
+            $routeCollector->addRoute(['GET', 'POST'], '/getSifacdk', $prefix . 'getSifacdk');
+            $routeCollector->addRoute(['GET', 'POST'], '/getJudicialSaleList', $prefix . 'getJudicialSaleList');
+
         });
 
         return true;
