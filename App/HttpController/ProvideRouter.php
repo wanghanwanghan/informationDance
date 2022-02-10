@@ -168,6 +168,8 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getEntDetail', $prefix . 'getEntDetail');//企业详情
             $routeCollector->addRoute(['GET', 'POST'], '/getEntNicName', $prefix . 'getEntNicName');//四级分类
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceDataTwo', $prefix . 'getFinanceDataTwo');//四级分类
+            $routeCollector->addRoute(['GET', 'POST'], '/getFinanceDataForApi', $prefix . 'getFinanceDataForApi');//四级分类
+
         });
 
         return true;
