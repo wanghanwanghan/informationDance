@@ -253,12 +253,11 @@ class FaHaiController extends ProvideBase
         ];
         CommonService::getInstance()->log4PHP($postData,'info','getCpwsParam');
 
-        $res = (new FaYanYuanService())
-            ->setCheckRespFlag(true)
-            ->getList($this->listBaseUrl . 'sifa', $postData);
-        CommonService::getInstance()->log4PHP($res,'info','getCpws');
-
-        $this->csp->add($this->cspKey, $res);
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getList($this->listBaseUrl . 'sifa', $postData);
+        });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
