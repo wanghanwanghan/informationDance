@@ -41,6 +41,8 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getCompatProductRecommend', $prefix . 'getCompatProductRecommend');
             $routeCollector->addRoute(['GET', 'POST'], '/getBeneficiary', $prefix . 'getBeneficiary');
             $routeCollector->addRoute(['GET', 'POST'], '/getAdministrativePenaltyList', $prefix . 'getAdministrativePenaltyList');//行政处罚
+            $routeCollector->addRoute(['GET', 'POST'], '/getJudicialSaleList', $prefix . 'getJudicialSaleList');
+
         });
 
         return true;
@@ -191,7 +193,6 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getZxgg', $prefix . 'getZxgg');
             $routeCollector->addRoute(['GET', 'POST'], '/getShixin', $prefix . 'getShixin');
             $routeCollector->addRoute(['GET', 'POST'], '/getSifacdk', $prefix . 'getSifacdk');
-            $routeCollector->addRoute(['GET', 'POST'], '/getJudicialSaleList', $prefix . 'getJudicialSaleList');
         });
 
         return true;
