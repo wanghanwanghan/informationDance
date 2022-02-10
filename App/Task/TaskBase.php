@@ -315,10 +315,10 @@ class TaskBase
         $data = trim($data);
 
         if (preg_match('/</', $data) && preg_match('/>/', $data)) {
-            return $to;
+            $data = strip_tags($data);
         }
 
-        return $data;
+        return addslashes($data);
     }
 
     //pdf目录
