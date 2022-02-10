@@ -1363,6 +1363,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         //微博
         $rows = count($data['Microblog']['list']);
+        CommonService::getInstance()->log4PHP($data['Microblog']);
         $docObj->cloneRow('weibo_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
