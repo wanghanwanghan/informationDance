@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\FaHai;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaYanYuan\FaYanYuanService;
 use App\HttpController\Service\LongDun\LongDunService;
@@ -250,12 +251,12 @@ class FaHaiController extends ProvideBase
             'pageno' => $page,
             'range' => $pageSize,
         ];
+        $res = (new FaYanYuanService())
+            ->setCheckRespFlag(true)
+            ->getList($this->listBaseUrl . 'sifa', $postData);
+        CommonService::getInstance()->log4PHP($res,'info','getCpws');
 
-        $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new FaYanYuanService())
-                ->setCheckRespFlag(true)
-                ->getList($this->listBaseUrl . 'sifa', $postData);
-        });
+        $this->csp->add($this->cspKey, $res);
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
