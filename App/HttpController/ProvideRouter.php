@@ -13,11 +13,13 @@ class ProvideRouter
     function addRouterV1(RouteCollector $routeCollector)
     {
         $this->LongDunRouterV1($routeCollector);
+        $this->LongDunRouterV2($routeCollector);//lingshi
         $this->TaoShuRouterV1($routeCollector);
         $this->QianQiRouterV1($routeCollector);
         $this->GuoPiaoRouterV1($routeCollector);
         $this->XinDongRouterV1($routeCollector);
         $this->FaYanYuanRouterV1($routeCollector);
+        $this->FaYanYuanRouterV2($routeCollector);//lingshi
         $this->YunMaTongRouterV1($routeCollector);
         $this->FaHaiRouterV1($routeCollector);
         $this->MaYiRouterV1($routeCollector);
@@ -42,6 +44,17 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getBeneficiary', $prefix . 'getBeneficiary');
             $routeCollector->addRoute(['GET', 'POST'], '/getAdministrativePenaltyList', $prefix . 'getAdministrativePenaltyList');//行政处罚
 
+        });
+
+        return true;
+    }
+
+    private function LongDunRouterV2(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Api/LongDun/LongDunController/';
+
+        $routeCollector->addGroup('/qcc', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getAdministrativePenaltyList', $prefix . 'getAdministrativePenaltyList');//行政处罚
         });
 
         return true;
@@ -188,6 +201,15 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/sxbzxr/people', $prefix . 'sxbzxrPeople');
             $routeCollector->addRoute(['GET', 'POST'], '/xgbzxr/org', $prefix . 'xgbzxrOrg');
             $routeCollector->addRoute(['GET', 'POST'], '/xgbzxr/people', $prefix . 'xgbzxrPeople');
+        });
+
+        return true;
+    }
+    private function FaYanYuanRouterV2(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Api/FaYanYuan/FaYanYuanController/';
+
+        $routeCollector->addGroup('/fyy', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getCpws', $prefix . 'getCpws');
             $routeCollector->addRoute(['GET', 'POST'], '/getZxgg', $prefix . 'getZxgg');
             $routeCollector->addRoute(['GET', 'POST'], '/getShixin', $prefix . 'getShixin');
@@ -198,7 +220,6 @@ class ProvideRouter
 
         return true;
     }
-
     private function YunMaTongRouterV1(RouteCollector $routeCollector)
     {
         $prefix = '/Business/Provide/YunMaTong/YunMaTongController/';
