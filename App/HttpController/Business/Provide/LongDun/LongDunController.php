@@ -175,7 +175,7 @@ class LongDunController extends ProvideBase
             'pageIndex' => $page,
             'pageSize' => $pageSize,
         ];
-
+        CommonService::getInstance()->log4PHP($postData,'info','tenderSearchParam');
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new LongDunService())->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'Tender/Search', $postData);
         });
