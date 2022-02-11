@@ -290,7 +290,7 @@ class QiXiangYunService extends ServiceBase
             'addJob' => true
         ];
 
-        $req_date = time() . '000';
+        $req_date = time() . mt_rand(100, 999);
         $token = $this->createToken();
         $sign = base64_encode(
             md5('POST_' . md5(jsonEncode($data, false)) . '_' . $req_date . '_' . $token . '_' . $this->secret)
@@ -301,7 +301,6 @@ class QiXiangYunService extends ServiceBase
             'access_token' => $token,
             'req_date' => $req_date,
             'req_sign' => $req_sign,
-//            'Accept' => 'application/json',
         ];
         CommonService::getInstance()->log4PHP([$url, $data, $header], 'info', 'actionGetFpxzStatusParam');
         $res = (new CoHttpClient())
