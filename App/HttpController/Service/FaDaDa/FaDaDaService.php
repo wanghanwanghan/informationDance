@@ -23,9 +23,9 @@ class FaDaDaService extends ServiceBase
     {
         parent::__construct();
 
-        $this->url = 'https://testapi.fadada.com:8443/api/';
-        $this->app_id = '405806';
-        $this->app_secret = 'UFPU9C3kfnKb6kdDyugOhqir';
+        $this->url = 'https://textapi.fadada.com/api2/';
+        $this->app_id = '501605';
+        $this->app_secret = 'W7Ou4okvZy1RuHNJws4FfpgP';
 
         if (strtolower($type) === 'test') {
             $this->url = 'https://testapi.fadada.com:8443/api/';
