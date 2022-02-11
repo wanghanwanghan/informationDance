@@ -41,7 +41,6 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getCompatProductRecommend', $prefix . 'getCompatProductRecommend');
             $routeCollector->addRoute(['GET', 'POST'], '/getBeneficiary', $prefix . 'getBeneficiary');
             $routeCollector->addRoute(['GET', 'POST'], '/getAdministrativePenaltyList', $prefix . 'getAdministrativePenaltyList');//行政处罚
-
         });
 
         return true;

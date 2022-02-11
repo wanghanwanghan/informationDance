@@ -5,6 +5,7 @@ namespace App\HttpController\Business\Provide\LongDun;
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongDun\LongDunService;
 
 class LongDunController extends ProvideBase
@@ -140,4 +141,25 @@ class LongDunController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //行政处罚
+    function getAdministrativePenaltyList()
+    {
+        $entName = $this->request()->getRequestParam('entName');
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData = [
+            'searchKey' => $entName,
+            'pageIndex' => $page,
+            'pageSize' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongDunService())->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'AdministrativePenalty/GetAdministrativePenaltyList', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
 }
