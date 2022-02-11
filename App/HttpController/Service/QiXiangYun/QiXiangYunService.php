@@ -46,23 +46,23 @@ class QiXiangYunService extends ServiceBase
 
     private function createToken(): string
     {
-        $url = $this->baseUrl  . 'AGG/oauth2/login';
+        $url = $this->baseUrl . 'AGG/oauth2/login';
 
         $data = [
             'grant_type' => 'client_credentials',
             'client_appkey' => $this->appkey,
             'client_secret' => md5($this->secret),
         ];
-        CommonService::getInstance()->log4PHP($this->secret,'info','qixiangyun_createTokenParamSecret');
+        CommonService::getInstance()->log4PHP($this->secret, 'info', 'qixiangyun_createTokenParamSecret');
         $header = [
             'content-type' => 'application/json;charset=UTF-8'
         ];
-        CommonService::getInstance()->log4PHP([$url, $data, $header],'info','qixiangyun_createTokenParam');
+        CommonService::getInstance()->log4PHP([$url, $data, $header], 'info', 'qixiangyun_createTokenParam');
         $res = (new CoHttpClient())
             ->useCache(false)->setEx(0.3)
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'postjson');
-        CommonService::getInstance()->log4PHP($res,'info','qixiangyun_createToken');
+        CommonService::getInstance()->log4PHP($res, 'info', 'qixiangyun_createToken');
         return $res['value']['access_token'];
     }
 
@@ -293,7 +293,7 @@ class QiXiangYunService extends ServiceBase
         $req_date = time() . '000';
         $token = $this->createToken();
         $sign = base64_encode(
-            md5('POST_' . md5(json_encode($data,false)) . '_' . $req_date . '_' . $token . '_' . $this->secret)
+            md5('POST_' . md5(jsonEncode($data, false)) . '_' . $req_date . '_' . $token . '_' . $this->secret)
         );
         $req_sign = "API-SV1:{$this->appkey}:" . $sign;
         $header = [
@@ -303,7 +303,7 @@ class QiXiangYunService extends ServiceBase
             'req_sign' => $req_sign,
 //            'Accept' => 'application/json',
         ];
-        CommonService::getInstance()->log4PHP([$url, $data, $header],'info','actionGetFpxzStatusParam');
+        CommonService::getInstance()->log4PHP([$url, $data, $header], 'info', 'actionGetFpxzStatusParam');
         $res = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(true)
