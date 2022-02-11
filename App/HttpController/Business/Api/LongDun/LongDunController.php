@@ -207,7 +207,7 @@ class LongDunController extends LongDunBase
     function tenderSearch()
     {
         $entName = $this->request()->getRequestParam('entName');
-        $page = $this->request()->getRequestParam('page') ?? 1;
+        $page = $this->request()->getRequestParam('pageNo') ?? 1;
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         $postData = [
