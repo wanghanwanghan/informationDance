@@ -180,7 +180,9 @@ class LongDunController extends ProvideBase
         CommonService::getInstance()->log4PHP($res,'info','tenderSearchRes');
 
         $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new LongDunService())->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'Tender/Search', $postData);
+            return (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'Tender/Search', $postData);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
