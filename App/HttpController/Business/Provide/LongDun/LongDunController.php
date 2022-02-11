@@ -162,4 +162,26 @@ class LongDunController extends ProvideBase
 
         return $this->checkResponse($res);
     }
+
+    //招投标
+    function tenderSearch()
+    {
+        $entName = $this->request()->getRequestParam('entName');
+        $page = $this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData = [
+            'searchKey' => $entName,
+            'pageIndex' => $page,
+            'pageSize' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongDunService())->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'Tender/Search', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
 }
