@@ -287,7 +287,7 @@ class QiXiangYunService extends ServiceBase
             'kpyf' => $kpyf - 0,//Ym
             'jxxbzs' => ['jx', 'xx'],
             'fplxs' => ['01', '03', '04', '08', '10', '11', '14', '15', '17'],
-            'addJob' => true
+            'addJob' => false
         ];
 
         $req_date = time() . mt_rand(100, 999);
