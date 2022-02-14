@@ -54,9 +54,9 @@ class GetInvData extends ProcessBase
                 \co::sleep(mt_rand(30, 90));
                 continue;
             }
-            $redis->hIncrBy($this->readToSendAntFlag, $this->readToSendAntFlag . $this->p_index, -1);
             $this->currentAesKey = $redis->hGet($this->readToSendAntFlag, 'current_aes_key');
             $this->getDataByEle(jsonDecode($entInRedis));
+            $redis->hIncrBy($this->readToSendAntFlag, $this->readToSendAntFlag . $this->p_index, -1);
         }
     }
 
