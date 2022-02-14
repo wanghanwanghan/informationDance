@@ -171,11 +171,11 @@ class QiXiangYunService extends ServiceBase
 
         $sign = base64_encode(
             md5(
-                'POST_' . md5(json_encode($data)) . '_' . $req_date . '_' . $token . '_' . $this->testSecret
+                'POST_' . md5(json_encode($data)) . '_' . $req_date . '_' . $token . '_' . $this->secret
             )
         );
 
-        $req_sign = "API-SV1:{$this->testAppkey}:" . $sign;
+        $req_sign = "API-SV1:{$this->appkey}:" . $sign;
 
         $header = [
             'content-type' => 'application/json;charset=UTF-8',
