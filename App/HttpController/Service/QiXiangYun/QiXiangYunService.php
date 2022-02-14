@@ -155,7 +155,7 @@ class QiXiangYunService extends ServiceBase
         $url = $this->baseUrl . 'FP/cj';
 
         $data = [
-            'nsrsbh' => $nsrsbh,
+            'nsrsbh' => '91110108MA01KPGK0L',
             'kpyf' => $kpyf - 0,//Ym
             'jxxbz' => $jxxbz,//jx xx
             'fplx' => str_pad($fplx, 2, '0', STR_PAD_LEFT),
