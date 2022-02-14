@@ -176,7 +176,7 @@ class GetInvData extends AbstractCronTask
                 ];
 
                 //生产环境先不通知
-                if ($oneReadyToSend->belong - 0 === 42) {
+                if ($oneReadyToSend->belong - 0 === 41) {
 
                     CommonService::getInstance()->log4PHP([
                         '发给蚂蚁的',
