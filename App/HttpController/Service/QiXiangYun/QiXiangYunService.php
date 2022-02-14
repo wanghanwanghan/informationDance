@@ -302,11 +302,12 @@ class QiXiangYunService extends ServiceBase
             'req_date' => $req_date,
             'req_sign' => $req_sign,
         ];
-        CommonService::getInstance()->log4PHP([$url, $data, $header], 'info', 'actionGetFpxzStatusParam');
+//        CommonService::getInstance()->log4PHP([$url, $data, $header], 'info', 'actionGetFpxzStatusParam');
         $res = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'postjson');
+        CommonService::getInstance()->log4PHP([$url, $data, $header,$res], 'info', 'actionGetFpxzStatusParam');
 
         CommonService::getInstance()->log4PHP($res);
     }
