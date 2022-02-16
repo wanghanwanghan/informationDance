@@ -70,7 +70,7 @@ class LongXinService extends ServiceBase
     function binaryFind(float $find, int $leftIndex, int $rightIndex, array $range): ?array
     {
         if (!is_numeric($find)) return null;
-
+        CommonService::getInstance()->log4PHP([$find,  $leftIndex,  $rightIndex,  $range],'info','binaryFindDetail1');
         //如果不在所有区间内
         if ($leftIndex > $rightIndex) {
             if ($find < $range[0]['range'][0]) return $range[0];
@@ -78,18 +78,20 @@ class LongXinService extends ServiceBase
                 return $range[count($range) - 1];
             return null;
         }
-
+        CommonService::getInstance()->log4PHP([$find,  $leftIndex,  $rightIndex,  $range],'info','binaryFindDetail2');
         $middle = ($leftIndex + $rightIndex) / 2;
 
         //如果大于第二个数，肯定在右边
         if ($find > $range[$middle]['range'][1]) {
             return $this->binaryFind($find, $middle + 1, $rightIndex, $range);
         }
+        CommonService::getInstance()->log4PHP([$find,  $leftIndex,  $rightIndex,  $range],'info','binaryFindDetail3');
 
         //如果小于第一个数，肯定在左边
         if ($find < $range[$middle]['range'][0])
 
             return $this->binaryFind($find, $leftIndex, $middle - 1, $range);
+        CommonService::getInstance()->log4PHP([$find,  $leftIndex,  $rightIndex,  $range],'info','binaryFindDetail4');
 
         return $range[$middle];
     }
