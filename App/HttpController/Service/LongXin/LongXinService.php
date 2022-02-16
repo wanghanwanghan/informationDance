@@ -88,6 +88,7 @@ class LongXinService extends ServiceBase
 
         //如果小于第一个数，肯定在左边
         if ($find < $range[$middle]['range'][0])
+
             return $this->binaryFind($find, $leftIndex, $middle - 1, $range);
 
         return $range[$middle];
@@ -352,12 +353,15 @@ class LongXinService extends ServiceBase
                             $readyReturn[$year][$field] = $this->binaryFind(
                                 $val, 0, count($this->rangeArr[1][$field]) - 1, $this->rangeArr[1][$field]
                             );
+                            CommonService::getInstance()->log4PHP($readyReturn[$year][$field],'info','binaryFind1');
                         } elseif (isset($this->rangeArrRatio[1][$field]) && is_numeric($val)) {
                             $readyReturn[$year][$field] = $this->binaryFind(
                                 $val, 0, count($this->rangeArrRatio[1][$field]) - 1, $this->rangeArrRatio[1][$field]
                             );
+                            CommonService::getInstance()->log4PHP($readyReturn[$year][$field],'info','binaryFind2');
                         } else {
                             $readyReturn[$year][$field] = $val;
+                            CommonService::getInstance()->log4PHP($readyReturn[$year][$field],'info','binaryFind3');
                         }
                     } else {
                         if (in_array($field, $this->rangeArr[0], true) && is_numeric($val)) {
@@ -365,12 +369,15 @@ class LongXinService extends ServiceBase
                             $readyReturn[$year][$field] = $this->binaryFind(
                                 $val, 0, count($this->rangeArr[1]) - 1, $this->rangeArr[1]
                             );
+                            CommonService::getInstance()->log4PHP($readyReturn[$year][$field],'info','binaryFind4');
                         } elseif (in_array($field, $this->rangeArrRatio[0], true) && is_numeric($val)) {
                             $readyReturn[$year][$field] = $this->binaryFind(
                                 $val, 0, count($this->rangeArrRatio[1]) - 1, $this->rangeArrRatio[1]
                             );
+                            CommonService::getInstance()->log4PHP($readyReturn[$year][$field],'info','binaryFind5');
                         } else {
                             $readyReturn[$year][$field] = $val;
+                            CommonService::getInstance()->log4PHP($readyReturn[$year][$field],'info','binaryFind6');
                         }
                     }
                 }
