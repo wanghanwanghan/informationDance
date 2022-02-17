@@ -70,7 +70,6 @@ class LongXinService extends ServiceBase
     function binaryFind(float $find, int $leftIndex, int $rightIndex, array $range): ?array
     {
         if (!is_numeric($find)) return null;
-        CommonService::getInstance()->log4PHP([$find,  $leftIndex,  $rightIndex,  $range],'info','binaryFindDetail1');
         //如果不在所有区间内
         if ($leftIndex > $rightIndex) {
             if ($find < $range[0]['range'][0]) return $range[0];
@@ -78,20 +77,17 @@ class LongXinService extends ServiceBase
                 return $range[count($range) - 1];
             return null;
         }
-        CommonService::getInstance()->log4PHP([$find,  $leftIndex,  $rightIndex,  $range],'info','binaryFindDetail2');
         $middle = ($leftIndex + $rightIndex) / 2;
 
         //如果大于第二个数，肯定在右边
         if ($find > $range[$middle]['range'][1]) {
             return $this->binaryFind($find, $middle + 1, $rightIndex, $range);
         }
-        CommonService::getInstance()->log4PHP([$find,  $leftIndex,  $rightIndex,  $range],'info','binaryFindDetail3');
 
         //如果小于第一个数，肯定在左边
         if ($find < $range[$middle]['range'][0])
 
             return $this->binaryFind($find, $leftIndex, $middle - 1, $range);
-        CommonService::getInstance()->log4PHP([$find,  $leftIndex,  $rightIndex,  $range],'info','binaryFindDetail4');
 
         return $range[$middle];
     }
@@ -355,15 +351,12 @@ class LongXinService extends ServiceBase
                             $readyReturn[$year][$field] = $this->binaryFind(
                                 $val, 0, count($this->rangeArr[1][$field]) - 1, $this->rangeArr[1][$field]
                             );
-                            CommonService::getInstance()->log4PHP($readyReturn[$year][$field],'info','binaryFind1');
                         } elseif (isset($this->rangeArrRatio[1][$field]) && is_numeric($val)) {
                             $readyReturn[$year][$field] = $this->binaryFind(
                                 $val, 0, count($this->rangeArrRatio[1][$field]) - 1, $this->rangeArrRatio[1][$field]
                             );
-                            CommonService::getInstance()->log4PHP($readyReturn[$year][$field],'info','binaryFind2');
                         } else {
                             $readyReturn[$year][$field] = $val;
-                            CommonService::getInstance()->log4PHP($readyReturn[$year][$field],'info','binaryFind3');
                         }
                     } else {
                         if (in_array($field, $this->rangeArr[0], true) && is_numeric($val)) {
@@ -371,15 +364,12 @@ class LongXinService extends ServiceBase
                             $readyReturn[$year][$field] = $this->binaryFind(
                                 $val, 0, count($this->rangeArr[1]) - 1, $this->rangeArr[1]
                             );
-                            CommonService::getInstance()->log4PHP($readyReturn[$year][$field],'info','binaryFind4');
                         } elseif (in_array($field, $this->rangeArrRatio[0], true) && is_numeric($val)) {
                             $readyReturn[$year][$field] = $this->binaryFind(
                                 $val, 0, count($this->rangeArrRatio[1]) - 1, $this->rangeArrRatio[1]
                             );
-                            CommonService::getInstance()->log4PHP($readyReturn[$year][$field],'info','binaryFind5');
                         } else {
                             $readyReturn[$year][$field] = $val;
-                            CommonService::getInstance()->log4PHP($readyReturn[$year][$field],'info','binaryFind6');
                         }
                     }
                 }
@@ -2229,4 +2219,23 @@ class LongXinService extends ServiceBase
             ['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn];
     }
 
+    //取社保人数
+    public function getCompanyList($data)
+    {
+        $arr = [
+            'ENTNAME' => $data['emtName'],
+            'usercode' => $this->usercode,
+            'pageIndex' => $data['page'] - 0,
+            'pageSize' => 20,
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())
+            ->useCache(true)
+            ->send($this->baseUrl . 'company_list/', $arr, $this->sendHeaders);
+
+        return $this->checkResp($res);
+    }
 }
+

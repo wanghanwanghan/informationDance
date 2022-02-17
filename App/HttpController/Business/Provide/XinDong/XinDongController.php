@@ -1254,4 +1254,22 @@ class XinDongController extends ProvideBase
         CommonService::getInstance()->log4PHP($res,'info','getFinanceDataTwoResCC');
         return $this->checkResponse($res);
     }
+
+    function getCompanyList(): bool
+    {
+        $postData = [
+            'entName' => $this->getRequestData('entName'),
+            'page' => $this->getRequestData('page', 1),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getCompanyList($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
 }
