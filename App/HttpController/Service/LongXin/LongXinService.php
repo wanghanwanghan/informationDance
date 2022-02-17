@@ -2230,7 +2230,7 @@ class LongXinService extends ServiceBase
         ];
 
         $this->sendHeaders['authorization'] = $this->createToken($arr);
-
+        CommonService::getInstance()->log4PHP([$this->baseUrl . 'company_list/', $arr, $this->sendHeaders],'info','getCompanyList');
         $res = (new CoHttpClient())
             ->useCache(true)
             ->send($this->baseUrl . 'company_list/', $arr, $this->sendHeaders);
