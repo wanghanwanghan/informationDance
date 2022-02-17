@@ -2223,7 +2223,7 @@ class LongXinService extends ServiceBase
     public function getCompanyList($data)
     {
         $arr = [
-            'ENTNAME' => $data['emtName'],
+            'ENTNAME' => $data['entName'],
             'usercode' => $this->usercode,
             'pageIndex' => $data['page'] - 0,
             'pageSize' => 20,
