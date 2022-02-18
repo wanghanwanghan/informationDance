@@ -758,17 +758,18 @@ class XinDongService extends ServiceBase
 
         return $this->checkResp(200, null, $res, isset($field) ? '有top' : '无top');
     }
+
     //二次特征分数
     function getFeaturesTwo($entName): array
     {
-        list($res ,$data)= (new xds())->cwScoreTwo($entName);
-        return $this->checkResp(200, null, ['res'=>$res,'data'=>$data], isset($field) ? '有top' : '无top');
+        list($res, $data) = (new xds())->cwScoreTwo($entName);
+        return $this->checkResp(200, null, ['res' => $res, 'data' => $data], isset($field) ? '有top' : '无top');
     }
 
     //二次特征分数
     function getFeaturesForApi($entName): array
     {
-        $res= (new xds())->cwScore($entName);
+        $res = (new xds())->cwScore($entName);
         return $this->checkResp(200, null, $res, 'success');
     }
 
@@ -887,6 +888,11 @@ class XinDongService extends ServiceBase
         }
 
         return ['A' . $after_change_num, $desc];
+    }
+
+    function getNicCode($postData)
+    {
+        return 123;
     }
 
 

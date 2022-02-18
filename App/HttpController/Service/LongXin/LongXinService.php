@@ -117,11 +117,11 @@ class LongXinService extends ServiceBase
         ];
 
         $this->sendHeaders['authorization'] = $this->createToken($arr);
-        CommonService::getInstance()->log4PHP($arr,'info','getEntIdParam');
+        CommonService::getInstance()->log4PHP($arr, 'info', 'getEntIdParam');
         $res = (new CoHttpClient())->useCache(false)
             ->send($this->baseUrl . 'getentid/', $arr, $this->sendHeaders);
-        CommonService::getInstance()->log4PHP($this->baseUrl . 'getentid/','info','getEntidUrl');
-        CommonService::getInstance()->log4PHP($res,'info','getEntid');
+        CommonService::getInstance()->log4PHP($this->baseUrl . 'getentid/', 'info', 'getEntidUrl');
+        CommonService::getInstance()->log4PHP($res, 'info', 'getEntid');
 //        dingAlarmMarkdown('公司名称换取entid',['res'=>$res]);
         if (!empty($res) && isset($res['data']) && !empty($res['data'])) {
             $entid = $res['data'];
@@ -2097,7 +2097,7 @@ class LongXinService extends ServiceBase
         if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
 
         TaskService::getInstance()->create(new insertEnt($postData['entName'], $postData['code']));
-        CommonService::getInstance()->log4PHP($entId,'info','getEntidres');
+        CommonService::getInstance()->log4PHP($entId, 'info', 'getEntidres');
         $ANCHEYEAR = '';
         $temp = [];
         for ($i = 2013; $i <= date('Y'); $i++) {
@@ -2115,7 +2115,7 @@ class LongXinService extends ServiceBase
         $res = (new CoHttpClient())
             ->useCache(true)
             ->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
-        CommonService::getInstance()->log4PHP($res,'info','getFinanceDataTwoRes');
+        CommonService::getInstance()->log4PHP($res, 'info', 'getFinanceDataTwoRes');
         $this->recodeSourceCurl([
             'sourceName' => $this->sourceName,
             'apiName' => last(explode('/', trim($this->baseUrl . 'ar_caiwu/', '/'))),
@@ -2138,7 +2138,7 @@ class LongXinService extends ServiceBase
             }
             krsort($temp);
         }
-        CommonService::getInstance()->log4PHP($res,'info','getFinanceDataTwoOneYearData');
+        CommonService::getInstance()->log4PHP($res, 'info', 'getFinanceDataTwoOneYearData');
         //社保人数数组
         $social = $this->getSocialNum($entId);
 
@@ -2159,7 +2159,7 @@ class LongXinService extends ServiceBase
         if ($this->cal === true) {
             $temp = $this->exprHandle($temp);
         }
-        foreach ($temp as $year=>$val){
+        foreach ($temp as $year => $val) {
             $temp[$year]['TEL'] = $tempTwo[$year]['TEL'];
             $temp[$year]['BUSST'] = $tempTwo[$year]['BUSST'];
             $temp[$year]['DOM'] = $tempTwo[$year]['DOM'];
@@ -2219,8 +2219,7 @@ class LongXinService extends ServiceBase
             ['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn];
     }
 
-    //取社保人数
-    public function getCompanyList($data)
+    public function getCompanyList($data): array
     {
         $arr = [
             'ENTNAME' => $data['entName'],
@@ -2230,7 +2229,7 @@ class LongXinService extends ServiceBase
         ];
 
         $this->sendHeaders['authorization'] = $this->createToken($arr);
-        CommonService::getInstance()->log4PHP([$this->baseUrl . 'company_list/', $arr, $this->sendHeaders],'info','getCompanyList');
+        CommonService::getInstance()->log4PHP([$this->baseUrl . 'company_list/', $arr, $this->sendHeaders], 'info', 'getCompanyList');
         $res = (new CoHttpClient())
             ->useCache(true)
             ->send($this->baseUrl . 'company_list/', $arr, $this->sendHeaders);

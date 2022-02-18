@@ -1274,4 +1274,23 @@ class XinDongController extends ProvideBase
 
         return $this->checkResponse($res);
     }
+
+    function getNicCode(): bool
+    {
+        $postData = [
+            'entName' => $this->getRequestData('entName'),
+            'code' => $this->getRequestData('code'),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new XinDongService())
+                ->setCheckRespFlag(true)
+                ->getNicCode($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
 }
