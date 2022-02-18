@@ -124,8 +124,10 @@ class XinDongController extends ProvideBase
         $ratio = FinanceRange::getInstance()->getRange('rangeRatio');
 
         //周伯通或者客一客，天创信用
-        if ($this->userId === 35 || $this->userId === 51 || $this->userId === 51) {
-            if ($beginYear === 2020 && $dataCount <= 2) {
+        if ($this->userId === 35 || $this->userId === 51 || $this->userId === 52) {
+            if ($beginYear === 2021 && $dataCount <= 2) {
+                $a = null;
+            } elseif ($beginYear === 2020 && $dataCount <= 2) {
                 $a = null;
             } elseif ($beginYear === 2019 && $dataCount <= 2) {
                 $a = null;
@@ -1237,7 +1239,7 @@ class XinDongController extends ProvideBase
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-        CommonService::getInstance()->log4PHP($res,'info','getFinanceDataTwoResCC');
+        CommonService::getInstance()->log4PHP($res, 'info', 'getFinanceDataTwoResCC');
         return $this->checkResponse($res);
     }
 
@@ -1251,7 +1253,7 @@ class XinDongController extends ProvideBase
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-        CommonService::getInstance()->log4PHP($res,'info','getFinanceDataTwoResCC');
+        CommonService::getInstance()->log4PHP($res, 'info', 'getFinanceDataTwoResCC');
         return $this->checkResponse($res);
     }
 
