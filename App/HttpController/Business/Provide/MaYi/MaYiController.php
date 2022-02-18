@@ -74,7 +74,7 @@ class MaYiController extends Index
         $tmp['head'] = $this->getRequestData('head');
         $tmp['body'] = $this->getRequestData('body');
 
-        if (!isset($tmp['head']['appId']) || empty($tmp['head']['appId'])) {
+        if (empty($tmp['head']['appId'])) {
             return $this->writeJsons([
                 'code' => '0001',
                 'result' => [
@@ -84,7 +84,7 @@ class MaYiController extends Index
             ]);
         }
 
-        if (!isset($tmp['head']['sign']) || empty($tmp['head']['sign'])) {
+        if (empty($tmp['head']['sign'])) {
             return $this->writeJsons([
                 'code' => '0001',
                 'result' => [
