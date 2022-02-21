@@ -890,9 +890,29 @@ class XinDongService extends ServiceBase
         return ['A' . $after_change_num, $desc];
     }
 
-    function getNicCode($postData)
+    function getNicCode($postData): ?array
     {
-        return 123;
+        //先查询四级分类标签
+        $sql = 'select * from si_ji_fen_lei';
+
+        if (!empty($postData['entName']) && !empty($postData['code'])) {
+            $sql .= " where entName = {$postData['entName']} and code5 = {$postData['code']}";
+        } elseif (empty($postData['entName']) && !empty($postData['code'])) {
+            $sql .= " where code5 = {$postData['code']}";
+        } elseif (!empty($postData['entName']) && empty($postData['code'])) {
+            $sql .= " where entName = {$postData['entName']}";
+        } else {
+            return null;
+        }
+
+        $sql .= ' limit 1';
+
+        $res = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_si_ji_fen_lei'));
+
+        //然后用code5去nic_code表中查询full_name
+
+
+        return $res;
     }
 
 
