@@ -916,7 +916,7 @@ class XinDongService extends ServiceBase
         //然后用code5去nic_code表中查询full_name
         $retData = [];
         foreach ($res as $v) {
-            $retData []= sqlRaw("select full_name,nic_id from nic_code where nic_id = '{$v['code5']}'", CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
+            $retData []= sqlRaw("select full_name from nic_code where nic_id = '{$v['code5']}'", CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
         }
         CommonService::getInstance()->log4PHP($retData, 'info', 'getNicCode_nic_code');
 
