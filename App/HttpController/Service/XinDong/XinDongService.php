@@ -892,26 +892,21 @@ class XinDongService extends ServiceBase
 
     function getNicCode($postData): ?array
     {
+        if(empty($postData['entName']) && empty($postData['code'])){
+            return '请传entName或者code';
+        }
         //先查询四级分类标签
-        $sql = 'select * from si_ji_fen_lei';
-
-        if (!empty($postData['entName']) && !empty($postData['code'])) {
-            $sql .= " where entName = '{$postData['entName']}' and code1 = '{$postData['code']}'";
+        $sql = 'select * from si_ji_fen_lei  where 1=1';
+        if (!empty($postData['entName']) ) {
+            $sql .= " and entName = '{$postData['entName']}' ";
         } elseif (empty($postData['entName']) && !empty($postData['code'])) {
-            $sql .= " where code1 = '{$postData['code']}'";
-        } elseif (!empty($postData['entName']) && empty($postData['code'])) {
-            $sql .= " where entName = '{$postData['entName']}'";
-        } else {
-            return null;
+            $sql .= " and code1 = '{$postData['code']}'";
         }
 
         $sql .= ' limit 1';
-
         $res = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_si_ji_fen_lei'));
-        CommonService::getInstance()->log4PHP([$sql,$res], 'info', 'getNicCodeSi_ji_fen_lei');
-
         if(empty($res)){
-            return [];
+            return $this->checkResp(200, null, [], '查询成功');
         }
         //然后用code5去nic_code表中查询full_name
         $retData = [];
