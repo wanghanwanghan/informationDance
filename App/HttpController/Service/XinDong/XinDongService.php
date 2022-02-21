@@ -893,7 +893,7 @@ class XinDongService extends ServiceBase
     function getNicCode($postData): ?array
     {
         if(empty($postData['entName']) && empty($postData['code'])){
-            return '请传entName或者code';
+            return $this->checkResp(500, null, [], '请传entName或者code');
         }
         //先查询四级分类标签
         $sql = 'select * from si_ji_fen_lei  where 1=1';
