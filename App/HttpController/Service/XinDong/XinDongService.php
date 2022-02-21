@@ -896,9 +896,9 @@ class XinDongService extends ServiceBase
         $sql = 'select * from si_ji_fen_lei';
 
         if (!empty($postData['entName']) && !empty($postData['code'])) {
-            $sql .= " where entName = {$postData['entName']} and code5 = {$postData['code']}";
+            $sql .= " where entName = {$postData['entName']} and code1 = {$postData['code']}";
         } elseif (empty($postData['entName']) && !empty($postData['code'])) {
-            $sql .= " where code5 = {$postData['code']}";
+            $sql .= " where code1 = {$postData['code']}";
         } elseif (!empty($postData['entName']) && empty($postData['code'])) {
             $sql .= " where entName = {$postData['entName']}";
         } else {
@@ -908,11 +908,17 @@ class XinDongService extends ServiceBase
         $sql .= ' limit 1';
 
         $res = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_si_ji_fen_lei'));
+        CommonService::getInstance()->log4PHP([$sql,$res], 'info', 'getNicCodeSi_ji_fen_lei');
 
+        if(empty($res)){
+            return [];
+        }
         //然后用code5去nic_code表中查询full_name
-
-
-        return $res;
+        $retData = [];
+        foreach ($res as $v) {
+            $retData []= sqlRaw("select full_name,code5 from nic_code where code5 = ".$v['code5'], CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
+        }
+        return $retData;
     }
 
 
