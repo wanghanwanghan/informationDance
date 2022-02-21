@@ -896,11 +896,11 @@ class XinDongService extends ServiceBase
         $sql = 'select * from si_ji_fen_lei';
 
         if (!empty($postData['entName']) && !empty($postData['code'])) {
-            $sql .= " where entName = {$postData['entName']} and code1 = {$postData['code']}";
+            $sql .= " where entName = '{$postData['entName']}' and code1 = '{$postData['code']}'";
         } elseif (empty($postData['entName']) && !empty($postData['code'])) {
-            $sql .= " where code1 = {$postData['code']}";
+            $sql .= " where code1 = '{$postData['code']}'";
         } elseif (!empty($postData['entName']) && empty($postData['code'])) {
-            $sql .= " where entName = {$postData['entName']}";
+            $sql .= " where entName = '{$postData['entName']}'";
         } else {
             return null;
         }
@@ -916,7 +916,7 @@ class XinDongService extends ServiceBase
         //然后用code5去nic_code表中查询full_name
         $retData = [];
         foreach ($res as $v) {
-            $retData []= sqlRaw("select full_name,code5 from nic_code where code5 = ".$v['code5'], CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
+            $retData []= sqlRaw("select full_name,code5 from nic_code where code5 = '{$v['code5']}'", CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
         }
         return $retData;
     }
