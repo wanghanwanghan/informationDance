@@ -10,6 +10,8 @@ use App\HttpController\Service\CreateMysqlOrm;
 use App\HttpController\Service\CreateMysqlPoolForEntDb;
 use App\HttpController\Service\CreateMysqlPoolForMinZuJiDiDb;
 use App\HttpController\Service\CreateMysqlPoolForProjectDb;
+use App\HttpController\Service\CreateMysqlPoolForRDS3NicCode;
+use App\HttpController\Service\CreateMysqlPoolForRDS3SiJiFenLei;
 use App\HttpController\Service\CreateRedisPool;
 use App\HttpController\Service\CreateSessionHandler;
 use App\HttpController\Service\RequestUtils\LimitService;
@@ -50,11 +52,15 @@ class EasySwooleEvent implements Event
         CreateMysqlPoolForProjectDb::getInstance()->createMysql();
         CreateMysqlPoolForEntDb::getInstance()->createMysql();
         CreateMysqlPoolForMinZuJiDiDb::getInstance()->createMysql();
+        CreateMysqlPoolForRDS3NicCode::getInstance()->createMysql();
+        CreateMysqlPoolForRDS3SiJiFenLei::getInstance()->createMysql();
 
         //mysql orm
         CreateMysqlOrm::getInstance()->createMysqlOrm();
         CreateMysqlOrm::getInstance()->createEntDbOrm();
         CreateMysqlOrm::getInstance()->createRDS3Orm();
+        CreateMysqlOrm::getInstance()->createRDS3NicCodeOrm();
+        CreateMysqlOrm::getInstance()->createRDS3SiJiFenLeiOrm();
 
         //redis pool
         CreateRedisPool::getInstance()->createRedis();
