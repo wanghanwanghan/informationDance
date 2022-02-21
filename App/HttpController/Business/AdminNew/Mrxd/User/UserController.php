@@ -18,13 +18,8 @@ class UserController extends ControllerBase
 
     function reg(): bool
     {
-        $company = $this->request()->getRequestParam('company') ?? '';
-        $username = $this->request()->getRequestParam('username') ?? '';
-        $phone = $this->request()->getRequestParam('phone') ?? '';
-        $email = $this->request()->getRequestParam('email') ?? 'test@test.com';
-        $pidPhone = $this->request()->getRequestParam('pidPhone') ?? 0;//注册裂变
-
-        return $this->writeJson(200, null, '', '注册成功');
+        return $this->writeJson();
     }
+
 
 }
