@@ -161,7 +161,6 @@ class FaYanYuanService extends ServiceBase
         ];
 
         $resp = (new CoHttpClient())->send($url, $data);
-        CommonService::getInstance()->log4PHP([$url,$data],'info','getDetail');
 
         $this->recodeSourceCurl([
             'sourceName' => $this->sourceName,
@@ -170,6 +169,7 @@ class FaYanYuanService extends ServiceBase
             'requestData' => $data,
             'responseData' => $resp,
         ]);
+        CommonService::getInstance()->log4PHP([$url,$data,$resp],'info','getDetail');
 
         return $this->checkRespFlag ? $this->checkResp($resp, $body['doc_type'], 'detail') : $resp;
     }
