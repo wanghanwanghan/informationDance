@@ -251,7 +251,6 @@ class FaHaiController extends ProvideBase
             'pageno' => $page,
             'range' => $pageSize,
         ];
-        CommonService::getInstance()->log4PHP($postData,'info','getCpwsParam');
 
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new FaYanYuanService())
@@ -317,12 +316,7 @@ class FaHaiController extends ProvideBase
     //裁判文书详情
     function getCpwsDetail()
     {
-        $id = $this->request()->getRequestParam('id') ?? '';
-
-        $this->entName = $this->request()->getRequestParam('entName') ?? '';
-
-        $this->moduleNum = 2;
-
+        $id = $this->getRequestData('id') ?? '';
         $postData = ['id' => $id];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
