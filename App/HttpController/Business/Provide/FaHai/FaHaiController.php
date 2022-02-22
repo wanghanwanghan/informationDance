@@ -321,7 +321,6 @@ class FaHaiController extends ProvideBase
 
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new FaYanYuanService())
-                ->setCheckRespFlag(true)
                 ->getDetail($this->detailBaseUrl . 'cpws', $postData);
         });
 
