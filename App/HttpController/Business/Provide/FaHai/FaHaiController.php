@@ -326,11 +326,24 @@ class FaHaiController extends ProvideBase
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-        CommonService::getInstance()->log4PHP($res,'info','getCpwsDetail');
-
         return $this->checkResponse($res);
     }
 
+    //失信公告详情
+    function getShixinDetail()
+    {
+        $id = $this->request()->getRequestParam('id') ?? '';
+        $docType = 'shixin';
+        $postData = ['id' => $id,'doc_type' => $docType];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getDetail($this->detailBaseUrl . $docType, $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
 
     function getSifacdk(): bool
     {

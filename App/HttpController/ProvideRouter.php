@@ -226,7 +226,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getSifacdk', $prefix . 'getSifacdk');
             $routeCollector->addRoute(['GET', 'POST'], '/getJudicialSaleList', $prefix . 'getJudicialSaleList');
             $routeCollector->addRoute(['GET', 'POST'], '/getCpwsDetail', $prefix . 'getCpwsDetail');//裁判文书
-
+            $routeCollector->addRoute(['GET', 'POST'], '/getShixinDetail', $prefix . 'getShixinDetail');//裁判文书
         });
 
         return true;
