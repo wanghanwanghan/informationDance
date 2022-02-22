@@ -317,8 +317,8 @@ class FaHaiController extends ProvideBase
     function getCpwsDetail()
     {
         $id = $this->getRequestData('id') ?? '';
-        $postData = ['id' => $id];
-
+        $docType = 'cpws';
+        $postData = ['id' => $id,'doc_type' => $docType];
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new FaYanYuanService())
                 ->setCheckRespFlag(true)
