@@ -313,6 +313,30 @@ class FaHaiController extends ProvideBase
 
         return $this->checkResponse($res);
     }
+
+    //裁判文书详情
+    function getCpwsDetail()
+    {
+        $id = $this->request()->getRequestParam('id') ?? '';
+
+        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+
+        $this->moduleNum = 2;
+
+        $postData = ['id' => $id];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getDetail($this->detailBaseUrl . 'cpws', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+
     function getSifacdk(): bool
     {
         $entName = $this->getRequestData('entName');
