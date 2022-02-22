@@ -192,6 +192,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/sxbzxr/people', $prefix . 'sxbzxrPeople');
             $routeCollector->addRoute(['GET', 'POST'], '/xgbzxr/org', $prefix . 'xgbzxrOrg');
             $routeCollector->addRoute(['GET', 'POST'], '/xgbzxr/people', $prefix . 'xgbzxrPeople');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCpwsDetail', $prefix . 'getCpwsDetail');//裁判文书
         });
 
         return true;

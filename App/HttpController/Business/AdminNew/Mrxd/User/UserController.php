@@ -21,5 +21,7 @@ class UserController extends ControllerBase
         return $this->writeJson();
     }
 
+    //登录
+    //修改密码   用户冻结， 新增用户（管理员）
 
 }

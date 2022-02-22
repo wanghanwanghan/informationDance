@@ -16,4 +16,5 @@ class RequestApiInfo extends ModelBase
         if(empty($ids)) return [];
         return self::create()->where('id in ('.implode(',',$ids).')')->all();
     }
+
 }

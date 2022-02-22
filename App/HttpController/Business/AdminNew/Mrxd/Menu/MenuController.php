@@ -15,6 +15,8 @@ class MenuController extends ControllerBase
     {
         parent::afterAction($actionName);
     }
-
+    /**
+     *  客户权限的增删改查
+     */
 
 }
