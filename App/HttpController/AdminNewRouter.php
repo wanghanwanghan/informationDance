@@ -15,6 +15,8 @@ class AdminNewRouter
     function addRouterV1(RouteCollector $routeCollector)
     {
         $this->UserRouterV1($routeCollector, 'Mrxd', 'User', 'User');
+        $this->UserRouterV1($routeCollector, 'Mrxd', 'Api', 'Api');
+        $this->UserRouterV1($routeCollector, 'Mrxd', 'Menu', 'Menu');
     }
 
     private function UserRouterV1(RouteCollector $routeCollector, $ent, $module, $name): bool

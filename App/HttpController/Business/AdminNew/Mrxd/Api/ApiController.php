@@ -28,23 +28,35 @@ class ApiController extends ControllerBase
         $source = $form['source'];
         $price = $form['price'];
         $apiDoc = $form['apiDoc'];
+        $sort_num = $form['sort_num'];
 
         if (empty($path) || empty($name)) return $this->writeJson(201);
         if (empty($source) || empty($price)) return $this->writeJson(201);
 
+        $checkAdmin = AdminNewApi::create()->where('path',$path)->get();
         $check = RequestApiInfo::create()->where('path',$path)->get();
+        if (!empty($check) && !empty($checkAdmin)) return $this->writeJson(201);
 
-        if (!empty($check)) return $this->writeJson(201);
-
-        RequestApiInfo::create()->data([
-            'path' => $path,
-            'name' => $name,
-            'desc' => $desc,
-            'source' => $source,
-            'price' => $price,
-            'apiDoc' => $apiDoc,
-        ])->save();
-
+        if(empty($check)){
+            RequestApiInfo::create()->data([
+                'path' => $path,
+                'name' => $name,
+                'desc' => $desc,
+                'source' => $source,
+                'price' => $price,
+                'apiDoc' => $apiDoc,
+            ])->save();
+        }
+        if(empty($checkAdmin)){
+            AdminNewApi::create()->data([
+                'path' => $path,
+                'api_name' => $name,
+                'desc' => $desc,
+                'source' => $source,
+                'price' => $price,
+                'sort_num' => $sort_num,
+            ])->save();
+        }
         return $this->writeJson(200);
     }
     function getInterfaceList(){
@@ -52,15 +64,7 @@ class ApiController extends ControllerBase
 
         return $this->writeJson(200,null,$res);
     }
-    function getInterfaceDetail(){
 
-    }
-    function deleteInterface(){
-
-    }
-    function updateInterface(){
-
-    }
 
 
 }
