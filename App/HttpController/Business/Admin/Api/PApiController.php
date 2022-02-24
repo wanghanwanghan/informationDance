@@ -82,6 +82,7 @@ class PApiController extends ApiBase
         $status = $this->getRequestData('status');
         $apiDoc = $this->getRequestData('apiDoc');
         $sort_num = $this->getRequestData('sort_num');
+        $source = $this->getRequestData('source');
 
         $info = RequestApiInfo::create()->where('id',$aid)->get();
         $infoAdmin = AdminNewApi::create()->where('path',$path)->get();
@@ -95,7 +96,18 @@ class PApiController extends ApiBase
         empty($price) ?: $update['price'] = sprintf('%3.f',$price);
         $status === '启用' ? $update['status'] = 1 : $update['status'] = 0;
         empty($apiDoc) ?: $update['apiDoc'] = $apiDoc;
-        $infoAdmin->update($updateAdmin);
+        if(empty($infoAdmin)){
+            AdminNewApi::create()->data([
+                'path' => $path,
+                'api_name' => $name,
+                'desc' => $desc,
+                'source' => $source,
+                'price' => $price,
+                'sort_num' => $sort_num,
+            ])->save();
+        }else{
+            $infoAdmin->update($updateAdmin);
+        }
         $info->update($update);
 
         return $this->writeJson();
