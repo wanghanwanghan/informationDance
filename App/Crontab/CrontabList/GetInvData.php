@@ -152,6 +152,8 @@ class GetInvData extends AbstractCronTask
                     'totalCount' => ($in + $out) . '',
                     'fileKeyList' => $fileKeyList,//文件路径
                 ];
+                //authTime 和当前时间对比在一个月之内，$in + $out都是空时，返回状态：没准备好；
+                // 增加，对没准备好数据的记录表，方便日后和大象对账
 
                 ksort($body);//周平说参数升序
 
