@@ -30,7 +30,7 @@ class GetInvData extends AbstractCronTask
     {
         //每月19号凌晨4点可以取上一个月全部数据
         //return '0 4 19 * *';
-        return '39 21 14 * *';
+        return '10 18 25 * * ';//'39 21 14 * *';
     }
 
     static function getTaskName(): string
@@ -178,7 +178,7 @@ class GetInvData extends AbstractCronTask
                 ];
 
                 //生产环境先不通知
-                if ($oneReadyToSend->belong - 0 === 41) {
+                if ($oneReadyToSend->belong - 0 === 36) {
 
                     CommonService::getInstance()->log4PHP([
                         '发给蚂蚁的',
