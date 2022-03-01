@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\YiZhangTong;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use wanghanwanghan\someUtils\control;
@@ -168,11 +169,10 @@ Eof;
             'ak' => $this->send_ak,
             'message' => urlencode($msg),
         ];
-
         $resp = (new CoHttpClient())
             ->useCache(false)
             ->send($this->test_url, $post_data, $this->header, [], 'postjson');
-
+        CommonService::getInstance()->log4PHP([$this->test_url, $post_data, $this->header,$resp],'info','getOrderList_param_res');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
