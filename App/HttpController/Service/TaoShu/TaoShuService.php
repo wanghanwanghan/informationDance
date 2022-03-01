@@ -143,6 +143,7 @@ class TaoShuService extends ServiceBase
         $rs = $this->quantumDecode(json_decode($data), $this->taoshuPEM);
 
         $rs = jsonDecode($rs);
+        CommonService::getInstance()->log4PHP($rs,'info','taoshu_post_ret');
 
         return $this->checkRespFlag ? $this->checkResp($rs) : $rs;
     }
