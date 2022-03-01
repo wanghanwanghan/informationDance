@@ -63,6 +63,53 @@ class TaoShuController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //企业对外投资
+    function getInvestmentAbroadInfo()
+    {
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $pageNo,
+            'pageSize' => $pageSize,
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new TaoShuService())
+                ->setCheckRespFlag(true)
+                ->post($postData, __FUNCTION__);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    //企业分支机构
+    function getBranchInfo()
+    {
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $pageNo,
+            'pageSize' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new TaoShuService())
+                ->setCheckRespFlag(true)
+                ->post($postData, __FUNCTION__);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
     function getLawPersontoOtherInfo(): bool
     {
         $entName = $this->getRequestData('entName', '');
