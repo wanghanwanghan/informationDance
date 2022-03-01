@@ -64,7 +64,7 @@ class TaoShuController extends ProvideBase
     }
 
     //企业对外投资
-    function getInvestmentAbroadInfo()
+    function getInvestmentAbroadInfo(): bool
     {
         $entName = $this->request()->getRequestParam('entName') ?? '';
         $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
@@ -87,7 +87,7 @@ class TaoShuController extends ProvideBase
     }
 
     //企业分支机构
-    function getBranchInfo()
+    function getBranchInfo(): bool
     {
         $entName = $this->request()->getRequestParam('entName') ?? '';
         $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
