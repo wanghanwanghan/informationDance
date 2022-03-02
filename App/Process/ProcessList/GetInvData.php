@@ -105,6 +105,7 @@ class GetInvData extends ProcessBase
                     foreach ($content['data']['records'] as $row) {
                         $this->writeFile($row, $NSRSBH, 'in', $FPLXDM);
                     }
+                    //这里记录成功月份
                 } else {
                     $info = "{$NSRSBH} : page={$page} KM={$KM} FPLXDM={$FPLXDM} KPKSRQ={$KPKSRQ} KPJSRQ={$KPJSRQ}";
                     CommonService::getInstance()
