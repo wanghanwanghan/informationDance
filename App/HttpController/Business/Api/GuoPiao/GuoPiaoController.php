@@ -182,7 +182,9 @@ class GuoPiaoController extends GuoPiaoBase
     {
         $image = $this->request()->getRequestParam('image') ?? '';
 
-        return $this->writeJson(200, null, $image);
+        $res = (new GuoPiaoService())->getInvoiceOcr($image);
+
+        return $this->checkResponse($res, __FUNCTION__);
     }
 
     //企业授权认证
