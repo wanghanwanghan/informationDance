@@ -93,6 +93,8 @@ class GetInvData extends ProcessBase
             for ($page = 1; $page <= 999999; $page++) {
                 $res = (new DaXiangService())
                     ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
+                CommonService::getInstance()
+                    ->log4PHP($res, 'info', "GetInvData_in_res");
 
                 \co::sleep(0.3);
 
