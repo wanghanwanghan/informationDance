@@ -74,10 +74,16 @@ class GetInvData extends ProcessBase
         if (empty($entInfo)) {
             return false;
         }
-
-        $KPKSRQ = Carbon::now()->subMonths(23)->startOfMonth()->format('Y-m-d');//开始日
-        $KPJSRQ = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');//截止日
         $NSRSBH = $entInfo['socialCredit'];
+        $info = AntAuthList::create()->where('socialCredit', $NSRSBH)->get();
+        $big_kprq = $info->getAttr('big_kprq');
+        if(empty($big_kprq)){
+            $KPKSRQ = Carbon::now()->subMonths(23)->startOfMonth()->format('Y-m-d');//开始日
+        }else{
+            $KPKSRQ = date('Y-m-d',$big_kprq);
+        }
+        $KPJSRQ = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');//截止日
+
 
         //$KPKSRQ = '2020-01-01';
         //$KPJSRQ = '2021-08-31';
@@ -86,7 +92,7 @@ class GetInvData extends ProcessBase
         $FPLXDMS = [
             '01', '02', '03', '04', '10', '11', '14', '15'
         ];
-
+        $kprq = [];
         //进项
         foreach ($FPLXDMS as $FPLXDM) {
             $KM = '1';
@@ -104,8 +110,9 @@ class GetInvData extends ProcessBase
                 }
                 $content = jsonDecode(base64_decode($res['content']));
                 if ($content['code'] === '0000' && !empty($content['data']['records'])) {
+
                     foreach ($content['data']['records'] as $row) {
-                        $this->writeFile($row, $NSRSBH, 'in', $FPLXDM);
+                        $kprq[] = $this->writeFile($row, $NSRSBH, 'in', $FPLXDM);
                     }
                     //这里记录成功月份
                 } else {
@@ -133,7 +140,7 @@ class GetInvData extends ProcessBase
                 $content = jsonDecode(base64_decode($res['content']));
                 if ($content['code'] === '0000' && !empty($content['data']['records'])) {
                     foreach ($content['data']['records'] as $row) {
-                        $this->writeFile($row, $NSRSBH, 'out', $FPLXDM);
+                        $kprq[] = $this->writeFile($row, $NSRSBH, 'out', $FPLXDM);
                     }
                 } else {
                     $info = "{$NSRSBH} : page={$page} KM={$KM} FPLXDM={$FPLXDM} KPKSRQ={$KPKSRQ} KPJSRQ={$KPJSRQ}";
@@ -143,15 +150,20 @@ class GetInvData extends ProcessBase
                 }
             }
         }
-
+        foreach ($kprq as $key=>$item) {
+            if(!empty($item)){
+                $kprq[$key] = strtotime($item);
+            }
+        }
+        $bigKprq = max($kprq);
         //上传到oss
-        $this->sendToOSS($NSRSBH);
+        $this->sendToOSS($NSRSBH,$bigKprq);
 
         return true;
     }
 
     //上传到oss 发票已经入完mysql
-    function sendToOSS($NSRSBH): bool
+    function sendToOSS($NSRSBH,$bigKprq): bool
     {
         //只有蚂蚁的税号才上传oss
         //蚂蚁区块链dev id 36
@@ -288,6 +300,7 @@ class GetInvData extends ProcessBase
                 ->update([
                     'lastReqTime' => time(),
                     'lastReqUrl' => empty($file_arr) ? '' : implode(',', $file_arr),
+                    'big_kprq' => $bigKprq
                 ]);
         }
         closedir($dh);
@@ -299,9 +312,10 @@ class GetInvData extends ProcessBase
     {
         if (!empty($row)) {
             $this->storeMysql($row, $NSRSBH, $FPLXDM, $invType);
+            return $row['KPRQ'];
         }
 
-        return true;
+        return '';
     }
 
     private function storeMysql(array $arr, string $NSRSBH, string $FPLXDM, string $invType): bool

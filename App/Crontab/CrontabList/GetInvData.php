@@ -4,6 +4,7 @@ namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
 use App\HttpController\Models\Api\AntAuthList;
+use App\HttpController\Models\Api\AntEmptyLog;
 use App\HttpController\Models\EntDb\EntInvoice;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
@@ -30,7 +31,7 @@ class GetInvData extends AbstractCronTask
     {
         //每月19号凌晨4点可以取上一个月全部数据
         //return '0 4 19 * *';
-        return '06 16 02 * * ';//'39 21 14 * *';
+        return '14 17 02 * * ';//'39 21 14 * *';
     }
 
     static function getTaskName(): string
@@ -153,9 +154,13 @@ class GetInvData extends AbstractCronTask
                     'fileKeyList' => $fileKeyList,//文件路径
 
                 ];
-//                if(empty($in + $out) && (time()-$body['authTime'])/86400 < 30 ){
-//                    $body['authResultCode'] = '9000';//'没准备好';
-//                }
+                if(empty($in + $out) && (time()-$body['authTime'])/86400 < 30 ){
+                    $body['authResultCode'] = '9000';//'没准备好';
+                    AntEmptyLog::create()->data([
+                        'nsrsbh' => $body['nsrsbh'],
+                        'data' => json_encode($body)
+                    ])->save();
+                }
                 //authTime 和当前时间对比在一个月之内，$in + $out都是空时，返回状态：没准备好；
                 // 增加，对没准备好数据的记录表，方便日后和大象对账
 
