@@ -55,7 +55,8 @@ class GetAuthBook extends AbstractCronTask
                     'requestId' => $oneEntInfo->getAttr('requestId') . time(),//海光用的，没啥用，随便传
                 ];
 
-                $res = (new FaDaDaService())->setCheckRespFlag(true)->getAuthFile($data);
+                //多个文件盖章，是否是只有企业授权书需要去判断是否需要盖章，确定下一个企业是否一定只会有一个是需要盖章的
+                $res = (new FaDaDaService())->setCheckRespFlag(true)->getAuthFileForAnt($data);
                 CommonService::getInstance()->log4PHP($res,'info','get_auth_file_return_res');
 //                $res = (new HuiCheJianService())
 //                    ->setCheckRespFlag(true)->getAuthPdf($data);

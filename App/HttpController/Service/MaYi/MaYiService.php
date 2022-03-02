@@ -3,6 +3,7 @@
 namespace App\HttpController\Service\MaYi;
 
 use App\HttpController\Models\Api\AntAuthList;
+use App\HttpController\Models\Api\AntAuthSealDetail;
 use App\HttpController\Models\EntDb\EntDbAreaInfo;
 use App\HttpController\Service\BaiDu\BaiDuService;
 use App\HttpController\Service\Common\CommonService;
@@ -5236,7 +5237,7 @@ class MaYiService extends ServiceBase
             $baiduApiRes['townCode'] = $baiduApi['result']['town_code'] ?? '';
         }
 
-        AntAuthList::create()->data([
+        $id = AntAuthList::create()->data([
             'requestId' => $data['requestId'],
             'entName' => $data['entName'],
             'socialCredit' => $data['socialCredit'],
@@ -5258,6 +5259,15 @@ class MaYiService extends ServiceBase
             'townCode' => $baiduApiRes['townCode'] ?? '',
         ])->save();
         //增加除授权书其他证书的表，并做关联
+        AntAuthSealDetail::create()->data([
+            'is_seal'=> $data['fileData'][''],
+            'coordinate'=> $data['fileData']['coordinate'],
+            'is_return'=> $data['fileData']['is_return'],
+            'file_address'=> $data['fileData']['file_address'],
+            'file_id'=> $data['fileData']['file_id'],
+            'ant_auth_id'=> $id,
+        ])->save();
+
         return $this->check(200, null, null, null);
     }
 

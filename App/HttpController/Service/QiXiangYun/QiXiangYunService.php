@@ -250,8 +250,9 @@ class QiXiangYunService extends ServiceBase
             ->useCache(false)
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'postjson');
+        CommonService::getInstance()->log4PHP([$url, $data, $header,$res], 'info', 'createEnt_Param_res:q');
 
-        CommonService::getInstance()->log4PHP($res);
+//        CommonService::getInstance()->log4PHP($res);
 
         return $this->check($res['value']);
     }

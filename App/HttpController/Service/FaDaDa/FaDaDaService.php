@@ -141,6 +141,63 @@ class FaDaDaService extends ServiceBase
         return $this->createReturn(200, null, $result, $msg);
     }
 
+    public function getAuthFileForAnt(array $arr): array
+    {
+        CommonService::getInstance()->log4PHP($arr,'info','get_auth_file_param_arr');
+        //企业注册
+        list($ent_customer_id,$entCustomerErrorData) = $this->getEntCustomer($arr);
+        if(!empty($entCustomerErrorData)) return $entCustomerErrorData;
+        $arr['customer_id'] = $ent_customer_id;
+        //法人是否注册过
+//        list($people_customer_id,$peopleCustomerErrorData) = $this->getPeopleCustomer($arr);
+//        if(!empty($peopleCustomerErrorData)) return $peopleCustomerErrorData;
+        //企业哈希存证
+//        list($ent_hash_id,$entHashErrorData) = $this->entHash($ent_customer_id,$arr);
+//        if(!empty($entHashErrorData)) return $entHashErrorData;
+        //法人哈希存证
+//        list($people_hash_id,$peopleHashErrorData) = $this->peopleHash($people_customer_id,$arr);
+//        if(!empty($peopleHashErrorData)) return $peopleHashErrorData;
+        //企业上传印章
+        list($ent_sign_id,$entSignErrorData) = $this->entSign($ent_customer_id,$arr);
+        if(!empty($entSignErrorData)) return $entSignErrorData;
+        //企业上传法人照片
+//        list($personal_sign_id,$personalSignErrorData) = $this->personalSign($people_customer_id,$arr);
+//        if(!empty($personalSignErrorData)) return $personalSignErrorData;
+//        $arr['template_id'] = control::getUuid();//模版ID 本地自增
+//        $arr['contract_id'] = control::getUuid();//合同编号
+
+        //模板上传
+        $uploadTemplateErrorData = $this->checkRet($this->uploadTemplate($arr));
+        if(!empty($uploadTemplateErrorData)) return $uploadTemplateErrorData;
+        //模板填充
+        $fillTemplateErrorData = $this->checkRet($this->fillTemplate($arr));
+//        if(!empty($fillTemplateErrorData)) return $fillTemplateErrorData;
+        //自动签署企业印章
+        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAuto($arr,$ent_customer_id,$ent_sign_id,510,580));
+        if(!empty($ExtsignAutoErrorData)) return $ExtsignAutoErrorData;
+        //自动签署法人姓名
+//        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAuto($arr,$people_customer_id,$personal_sign_id,593,681));
+//        if(!empty($ExtsignAutoErrorData)) return $ExtsignAutoErrorData;
+        //合同下载
+        $pdf_path = $this->downLoadContract($arr);
+        //数据入库
+        FaDaDaUserModel::create()->where('customer_id', $ent_customer_id)->update([
+            'pdf' => $pdf_path
+        ]);
+//        FaDaDaUserModel::create()->where('customer_id', $people_customer_id)->update([
+//            'pdf' => $pdf_path
+//        ]);
+        FaDaDaUserModel::create()->where('customer_id', $ent_customer_id)->update([
+            'template_id' => $arr['template_id'],'contract_id' => $arr['contract_id']
+        ]);
+//        FaDaDaUserModel::create()->where('customer_id', $people_customer_id)->update([
+//            'template_id' => $arr['template_id'],'contract_id' => $arr['contract_id']
+//        ]);
+        $result = ['url'=>$pdf_path];
+        $msg = '';
+        return $this->createReturn(200, null, $result, $msg);
+    }
+
     /**
      * 检查接口返回是否成功
      * @param $ret
