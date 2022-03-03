@@ -78,7 +78,7 @@ class TaoShuController extends ProvideBase
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new TaoShuService())
                 ->setCheckRespFlag(true)
-                ->post($postData, __FUNCTION__);
+                ->post($postData, 'getInvestmentAbroadInfo');
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
@@ -102,7 +102,7 @@ class TaoShuController extends ProvideBase
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new TaoShuService())
                 ->setCheckRespFlag(true)
-                ->post($postData, __FUNCTION__);
+                ->post($postData, 'getBranchInfo');
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
