@@ -99,8 +99,6 @@ class GetInvData extends ProcessBase
             for ($page = 1; $page <= 999999; $page++) {
                 $res = (new DaXiangService())
                     ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
-                CommonService::getInstance()
-                    ->log4PHP($res, 'info', "GetInvData_in_res");
 
                 \co::sleep(0.3);
 
@@ -112,7 +110,8 @@ class GetInvData extends ProcessBase
                 if ($content['code'] === '0000' && !empty($content['data']['records'])) {
 
                     foreach ($content['data']['records'] as $row) {
-                        $kprq[] = $this->writeFile($row, $NSRSBH, 'in', $FPLXDM);
+                        $rq = $this->writeFile($row, $NSRSBH, 'in', $FPLXDM);
+                        $kprq[$rq] = $rq;
                     }
                     //这里记录成功月份
                 } else {
@@ -140,7 +139,8 @@ class GetInvData extends ProcessBase
                 $content = jsonDecode(base64_decode($res['content']));
                 if ($content['code'] === '0000' && !empty($content['data']['records'])) {
                     foreach ($content['data']['records'] as $row) {
-                        $kprq[] = $this->writeFile($row, $NSRSBH, 'out', $FPLXDM);
+                        $rq = $this->writeFile($row, $NSRSBH, 'out', $FPLXDM);
+                        $kprq[$rq] = $rq;
                     }
                 } else {
                     $info = "{$NSRSBH} : page={$page} KM={$KM} FPLXDM={$FPLXDM} KPKSRQ={$KPKSRQ} KPJSRQ={$KPJSRQ}";

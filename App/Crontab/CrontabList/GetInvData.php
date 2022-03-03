@@ -152,7 +152,7 @@ class GetInvData extends AbstractCronTask
                     'authTime' => date('Y-m-d H:i:s', $oneReadyToSend->getAttr('requestDate')),//授权时间
                     'totalCount' => ($in + $out) . '',
                     'fileKeyList' => $fileKeyList,//文件路径
-
+                    'type' => 'FP' //通知发票
                 ];
                 if(empty($in + $out) && (time()-$body['authTime'])/86400 < 30 ){
                     $body['authResultCode'] = '9000';//'没准备好';
