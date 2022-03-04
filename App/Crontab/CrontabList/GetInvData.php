@@ -31,7 +31,7 @@ class GetInvData extends AbstractCronTask
     {
         //每月19号凌晨4点可以取上一个月全部数据
         //return '0 4 19 * *';
-        return '14 17 02 * * ';//'39 21 14 * *';
+        return '20 16 0 * * ';//'39 21 14 * *';
     }
 
     static function getTaskName(): string
@@ -152,7 +152,7 @@ class GetInvData extends AbstractCronTask
                     'authTime' => date('Y-m-d H:i:s', $oneReadyToSend->getAttr('requestDate')),//授权时间
                     'totalCount' => ($in + $out) . '',
                     'fileKeyList' => $fileKeyList,//文件路径
-                    'type' => 'FP' //通知发票
+//                    'type' => 'FP' //通知发票
                 ];
                 if(empty($in + $out) && (time()-$body['authTime'])/86400 < 30 ){
                     $body['authResultCode'] = '9000';//'没准备好';
@@ -187,7 +187,7 @@ class GetInvData extends AbstractCronTask
                 ];
 
                 //生产环境先不通知
-                if ($oneReadyToSend->belong - 0 === 36) {
+                if ($oneReadyToSend->belong - 0 === 42) {
 
                     CommonService::getInstance()->log4PHP([
                         '发给蚂蚁的',

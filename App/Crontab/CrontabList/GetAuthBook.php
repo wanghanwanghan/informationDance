@@ -12,6 +12,7 @@ use App\HttpController\Service\FaDaDa\FaDaDaService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\HuiCheJian\HuiCheJianService;
 use App\HttpController\Service\MaYi\MaYiService;
+use App\HttpController\Service\OSS\OSSService;
 use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use wanghanwanghan\someUtils\control;
@@ -20,6 +21,8 @@ class GetAuthBook extends AbstractCronTask
 {
     private $crontabBase;
     public $currentAesKey;
+    public $oss_bucket = 'invoice-mrxd';
+    public $oss_expire_time = 86400 * 60;
 
     //每次执行任务都会执行构造函数
     function __construct()
@@ -71,25 +74,30 @@ class GetAuthBook extends AbstractCronTask
                 $DetailList = AntAuthSealDetail::create()->where([
                     'ant_auth_id' => $oneEntInfo->getAttr('id'),
                 ])->all();
+                $type = 0;
+                $url = [];
+                $urlArr = [];
                 foreach ($DetailList as $value){
-                    if($value->getAttr('is_seal')){
-
+                    if($value->getAttr('is_seal') == 1){
+                        $type = $value->getAttr('type')==2?2:0;
+                        $url[$value->getAttr('type')] = $this->getSealUrl($data);
+                    }else{
+                        $urlArr[] = $value->getAttr('file_address');
                     }
                 }
-                //多个文件盖章，是否是只有企业授权书需要去判断是否需要盖章，确定下一个企业是否一定只会有一个是需要盖章的
-                $res = (new FaDaDaService())->setCheckRespFlag(true)->getAuthFileForAnt($data);
-                CommonService::getInstance()->log4PHP($res,'info','get_auth_file_return_res');
-//                $res = (new HuiCheJianService())
-//                    ->setCheckRespFlag(true)->getAuthPdf($data);
-                //type=AGREEMET
-
-                if ($res['code'] !== 200) {
-                    $message = ['name'=>'异常内容','msg'=>json_encode($res)];
-                    dingAlarmMarkdown('法大大授权书接口异常',$message);
-                    continue;
+                if($type != 2){//数字代办委托书盖章加填充
+                    $url['2'] = $this->getDataSealUrl($data);
                 }
-
-                $url = $res['result']['url'];
+                foreach ($url as $type => $v){
+                    $file_url = $this->getOssUrl($v);
+                    AntAuthSealDetail::create()->where([
+                        'type' => $type,
+                        'ant_auth_id' => $oneEntInfo->getAttr('id'),
+                    ])->update([
+                        'file_url' => $file_url,
+                    ]);
+                    $urlArr[] = $file_url;
+                }
 
                 //更新数据库
                 AntAuthList::create()->where([
@@ -111,18 +119,17 @@ class GetAuthBook extends AbstractCronTask
                 $stream = file_get_contents(RSA_KEY_PATH . $rsa_pub_name);
                 //AES加密key用RSA加密
                 $fileSecret = control::rsaEncrypt($this->currentAesKey, $stream, 'pub');
-                $urlArr = $this->getFlieUrl($oneEntInfo->getAttr('id'));
+//                $urlArr = $this->getFlieUrl($oneEntInfo->getAttr('id'));
                 $fileKeyList = empty($urlArr) ? [] : array_filter($urlArr);
                 $body = [
                     'nsrsbh' => $oneEntInfo->getAttr('socialCredit'),//授权的企业税号
                     'fileSecret' => $fileSecret,//对称钥秘⽂
                     'companyName' => $oneEntInfo->getAttr('entName'),//公司名称
-                    'authTime' => date('Y-m-d H:i:s', $urlArr->getAttr('requestDate')),//授权时间
+                    'authTime' => date('Y-m-d H:i:s', $oneEntInfo->getAttr('requestDate')),//授权时间
                     'totalCount' => count($urlArr) . '',
                     'fileKeyList' => $fileKeyList,//文件路径
-                    'type' => '' //通知发票
+                    'type' => 'AGREEMET' //通知类型
                 ];
-
                 ksort($body);//周平说参数升序
 
                 //sign md5 with rsa
@@ -181,5 +188,44 @@ class GetAuthBook extends AbstractCronTask
             $urlArr[] = $item->getAttr('file_url');
         }
         return $urlArr;
+    }
+
+    /*
+     * 多个文件盖章，是否是只有企业授权书需要去判断是否需要盖章，确定下一个企业是否一定只会有一个是需要盖章的
+     */
+    public function getSealUrl($data){
+        $res = (new FaDaDaService())->setCheckRespFlag(true)->getAuthFileForAnt($data);
+        CommonService::getInstance()->log4PHP($res,'info','get_auth_file_return_res');
+        if ($res['code'] !== 200) {
+            $message = ['name'=>'异常内容','msg'=>json_encode($res)];
+            dingAlarmMarkdown('法大大授权书接口异常',$message);
+            return '';
+        }
+        return $res['result']['url'];
+    }
+
+    /*
+     * 获取需要填充数据和盖章的授权书
+     */
+    public function getDataSealUrl($data){
+        $res = (new FaDaDaService())->setCheckRespFlag(true)->getAuthFile($data);
+        CommonService::getInstance()->log4PHP($res,'info','get_auth_file_return_res');
+        if ($res['code'] !== 200) {
+            $message = ['name'=>'异常内容','msg'=>json_encode($res)];
+            dingAlarmMarkdown('法大大授权书接口异常',$message);
+            return '';
+        }
+        return $res['result']['url'];
+    }
+
+    public function getOssUrl($path){
+        if(empty($path)) return '';
+        return OSSService::getInstance()
+            ->doUploadFile(
+                $this->oss_bucket,
+                Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $path,
+                INV_AUTH_PATH .$path,
+                $this->oss_expire_time
+            );
     }
 }
