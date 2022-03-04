@@ -60,6 +60,7 @@ class GetAuthBook extends AbstractCronTask
                 CommonService::getInstance()->log4PHP($res,'info','get_auth_file_return_res');
 //                $res = (new HuiCheJianService())
 //                    ->setCheckRespFlag(true)->getAuthPdf($data);
+                //type=AGREEMET
 
                 if ($res['code'] !== 200) {
                     $message = ['name'=>'异常内容','msg'=>json_encode($res)];
