@@ -5258,15 +5258,22 @@ class MaYiService extends ServiceBase
             'town' => $baiduApiRes['town'] ?? '',
             'townCode' => $baiduApiRes['townCode'] ?? '',
         ])->save();
+
         //增加除授权书其他证书的表，并做关联
-        AntAuthSealDetail::create()->data([
-            'is_seal'=> $data['fileData'][''],
-            'coordinate'=> $data['fileData']['coordinate'],
-            'is_return'=> $data['fileData']['is_return'],
-            'file_address'=> $data['fileData']['file_address'],
-            'file_id'=> $data['fileData']['file_id'],
-            'ant_auth_id'=> $id,
-        ])->save();
+        if(!empty($data['fileData'])){
+            foreach ($data['fileData'] as $datum) {
+                AntAuthSealDetail::create()->data([
+                    'is_seal'=> $datum['is_seal'],
+                    'coordinate'=> $datum['coordinate'],
+                    'is_return'=> $datum['is_return'],
+                    'file_address'=> $datum['file_address'],
+                    'file_id'=> $datum['file_id'],
+                    'ant_auth_id'=> $id,
+                ])->save();
+            }
+        }
+
+
 
         return $this->check(200, null, null, null);
     }

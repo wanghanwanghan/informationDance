@@ -136,7 +136,7 @@ class TaoShuService extends ServiceBase
             'useThisKey' => $this->useThisKey($body, $service)
         ];
 
-        $data = (new CoHttpClient())->needJsonDecode(false)->send($this->url, $p_arr, $header, $options, 'post');
+        $data = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($this->url, $p_arr, $header, $options, 'post');
 
         $data = urldecode($data);
 

@@ -4,6 +4,7 @@ namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
 use App\HttpController\Models\Api\AntAuthList;
+use App\HttpController\Models\Api\AntAuthSealDetail;
 use App\HttpController\Models\Api\AntEmptyLog;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
@@ -67,7 +68,14 @@ class GetAuthBook extends AbstractCronTask
                     'regAddress' => $oneEntInfo->getAttr('regAddress'),//address
                     'requestId' => $oneEntInfo->getAttr('requestId') . time(),//海光用的，没啥用，随便传
                 ];
+                $DetailList = AntAuthSealDetail::create()->where([
+                    'ant_auth_id' => $oneEntInfo->getAttr('id'),
+                ])->all();
+                foreach ($DetailList as $value){
+                    if($value->getAttr('is_seal')){
 
+                    }
+                }
                 //多个文件盖章，是否是只有企业授权书需要去判断是否需要盖章，确定下一个企业是否一定只会有一个是需要盖章的
                 $res = (new FaDaDaService())->setCheckRespFlag(true)->getAuthFileForAnt($data);
                 CommonService::getInstance()->log4PHP($res,'info','get_auth_file_return_res');
@@ -103,27 +111,17 @@ class GetAuthBook extends AbstractCronTask
                 $stream = file_get_contents(RSA_KEY_PATH . $rsa_pub_name);
                 //AES加密key用RSA加密
                 $fileSecret = control::rsaEncrypt($this->currentAesKey, $stream, 'pub');
-                $fileKeyList = empty($oneReadyToSend->getAttr('lastReqUrl')) ?
-                    [] :
-                    array_filter(explode(',', $oneReadyToSend->getAttr('lastReqUrl')));
+                $urlArr = $this->getFlieUrl($oneEntInfo->getAttr('id'));
+                $fileKeyList = empty($urlArr) ? [] : array_filter($urlArr);
                 $body = [
-                    'nsrsbh' => $oneReadyToSend->getAttr('socialCredit'),//授权的企业税号
+                    'nsrsbh' => $oneEntInfo->getAttr('socialCredit'),//授权的企业税号
                     'fileSecret' => $fileSecret,//对称钥秘⽂
-                    'companyName' => $oneReadyToSend->getAttr('entName'),//公司名称
-                    'authTime' => date('Y-m-d H:i:s', $oneReadyToSend->getAttr('requestDate')),//授权时间
-                    'totalCount' => ($in + $out) . '',
+                    'companyName' => $oneEntInfo->getAttr('entName'),//公司名称
+                    'authTime' => date('Y-m-d H:i:s', $urlArr->getAttr('requestDate')),//授权时间
+                    'totalCount' => count($urlArr) . '',
                     'fileKeyList' => $fileKeyList,//文件路径
                     'type' => '' //通知发票
                 ];
-                if(empty($in + $out) && (time()-$body['authTime'])/86400 < 30 ){
-                    $body['authResultCode'] = '9000';//'没准备好';
-                    AntEmptyLog::create()->data([
-                        'nsrsbh' => $body['nsrsbh'],
-                        'data' => json_encode($body)
-                    ])->save();
-                }
-                //authTime 和当前时间对比在一个月之内，$in + $out都是空时，返回状态：没准备好；
-                // 增加，对没准备好数据的记录表，方便日后和大象对账
 
                 ksort($body);//周平说参数升序
 
@@ -153,7 +151,7 @@ class GetAuthBook extends AbstractCronTask
 
     }
 
-    function sendAnt($url,$collectNotify){
+    public function sendAnt($url,$collectNotify){
         $header = [
             'content-type' => 'application/json;charset=UTF-8',
         ];
@@ -172,5 +170,16 @@ class GetAuthBook extends AbstractCronTask
             '蚂蚁返回的',
             $ret
         ]);
+    }
+    public function getFlieUrl($ant_auth_id){
+        $list = AntAuthSealDetail::create()->where([
+            'ant_auth_id' => $ant_auth_id,
+        ])->all();
+        if(empty($list)) return [];
+        $urlArr = [];
+        foreach ($list as $item) {
+            $urlArr[] = $item->getAttr('file_url');
+        }
+        return $urlArr;
     }
 }
