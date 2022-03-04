@@ -4,16 +4,21 @@ namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
 use App\HttpController\Models\Api\AntAuthList;
+use App\HttpController\Models\Api\AntEmptyLog;
+use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\FaDaDa\FaDaDaService;
+use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\HuiCheJian\HuiCheJianService;
 use App\HttpController\Service\MaYi\MaYiService;
 use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
+use wanghanwanghan\someUtils\control;
 
 class GetAuthBook extends AbstractCronTask
 {
     private $crontabBase;
+    public $currentAesKey;
 
     //每次执行任务都会执行构造函数
     function __construct()
@@ -34,6 +39,14 @@ class GetAuthBook extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex)
     {
+        $this->currentAesKey = getRandomStr();
+        //根据三个id，通知不同的url
+        $url_arr = [//http://invoicecommercial.test.dl.alipaydev.com
+            36 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
+//            36 => 'http://invoicecommercial.dev.dl.alipaydev.com/api/wezTech/collectNotify',//http://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
+            41 => 'https://invoicecommercial-pre.antfin.com/api/wezTech/collectNotify',//pre
+            42 => 'https://invoicecommercial.antfin.com/api/wezTech/collectNotify',//pro
+        ];
         //准备获取授权书的企业列表
         $list = AntAuthList::create()->where([
             'authDate' => 0,
@@ -79,7 +92,57 @@ class GetAuthBook extends AbstractCronTask
                     'authDate' => time(),
                     'status' => MaYiService::STATUS_1
                 ]);
+                $lastReqTime = $oneEntInfo->getAttr('lastReqTime');
+                //拿私钥
+                $id = $oneEntInfo->getAttr('belong') - 0;
+                $info = RequestUserInfo::create()->get($id);
+                $rsa_pub_name = $info->getAttr('rsaPub');
+                $rsa_pri_name = $info->getAttr('rsaPri');
+                $authResultCode = '0000';
+                //拿公钥加密
+                $stream = file_get_contents(RSA_KEY_PATH . $rsa_pub_name);
+                //AES加密key用RSA加密
+                $fileSecret = control::rsaEncrypt($this->currentAesKey, $stream, 'pub');
+                $fileKeyList = empty($oneReadyToSend->getAttr('lastReqUrl')) ?
+                    [] :
+                    array_filter(explode(',', $oneReadyToSend->getAttr('lastReqUrl')));
+                $body = [
+                    'nsrsbh' => $oneReadyToSend->getAttr('socialCredit'),//授权的企业税号
+                    'fileSecret' => $fileSecret,//对称钥秘⽂
+                    'companyName' => $oneReadyToSend->getAttr('entName'),//公司名称
+                    'authTime' => date('Y-m-d H:i:s', $oneReadyToSend->getAttr('requestDate')),//授权时间
+                    'totalCount' => ($in + $out) . '',
+                    'fileKeyList' => $fileKeyList,//文件路径
+                    'type' => '' //通知发票
+                ];
+                if(empty($in + $out) && (time()-$body['authTime'])/86400 < 30 ){
+                    $body['authResultCode'] = '9000';//'没准备好';
+                    AntEmptyLog::create()->data([
+                        'nsrsbh' => $body['nsrsbh'],
+                        'data' => json_encode($body)
+                    ])->save();
+                }
+                //authTime 和当前时间对比在一个月之内，$in + $out都是空时，返回状态：没准备好；
+                // 增加，对没准备好数据的记录表，方便日后和大象对账
 
+                ksort($body);//周平说参数升序
+
+                //sign md5 with rsa
+                $private_key = file_get_contents(RSA_KEY_PATH . $rsa_pri_name);
+                $pkeyid = openssl_pkey_get_private($private_key);
+                openssl_sign(jsonEncode([$body], false), $signature, $pkeyid, OPENSSL_ALGO_MD5);
+
+                //准备通知
+                $collectNotify = [
+                    'body' => [$body],
+                    'head' => [
+                        'sign' => base64_encode($signature),//签名
+                        'notifyChannel' => 'ELEPHANT',//通知 渠道
+                    ],
+                ];
+
+                $url = $url_arr[$id];
+                $this->sendAnt($url,$collectNotify);
             }
 
         }
@@ -90,5 +153,24 @@ class GetAuthBook extends AbstractCronTask
 
     }
 
+    function sendAnt($url,$collectNotify){
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+        ];
 
+        CommonService::getInstance()->log4PHP([
+            '发给蚂蚁的',
+            $collectNotify
+        ], 'info', 'ant.log');
+
+        $ret = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, jsonEncode($collectNotify, false), $header, [], 'postjson');
+
+        CommonService::getInstance()->log4PHP([
+            '蚂蚁返回的',
+            $ret
+        ]);
+    }
 }
