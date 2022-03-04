@@ -89,7 +89,7 @@ class GetAuthBook extends AbstractCronTask
                     $url['2'] = $this->getDataSealUrl($data);
                 }
                 foreach ($url as $type => $v){
-                    $file_url = $this->getOssUrl($v);
+                    $file_url = $this->getOssUrl($v,$data['socialCredit']);
                     AntAuthSealDetail::create()->where([
                         'type' => $type,
                         'ant_auth_id' => $oneEntInfo->getAttr('id'),
