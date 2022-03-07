@@ -148,15 +148,15 @@ class FaDaDaService extends ServiceBase
         list($ent_customer_id,$entCustomerErrorData) = $this->getEntCustomer($arr);
         if(!empty($entCustomerErrorData)) return $entCustomerErrorData;
         $arr['customer_id'] = $ent_customer_id;
-        //法人是否注册过
-//        list($people_customer_id,$peopleCustomerErrorData) = $this->getPeopleCustomer($arr);
-//        if(!empty($peopleCustomerErrorData)) return $peopleCustomerErrorData;
-        //企业哈希存证
-//        list($ent_hash_id,$entHashErrorData) = $this->entHash($ent_customer_id,$arr);
-//        if(!empty($entHashErrorData)) return $entHashErrorData;
-        //法人哈希存证
-//        list($people_hash_id,$peopleHashErrorData) = $this->peopleHash($people_customer_id,$arr);
-//        if(!empty($peopleHashErrorData)) return $peopleHashErrorData;
+        法人是否注册过
+        list($people_customer_id,$peopleCustomerErrorData) = $this->getPeopleCustomer($arr);
+        if(!empty($peopleCustomerErrorData)) return $peopleCustomerErrorData;
+        企业哈希存证
+        list($ent_hash_id,$entHashErrorData) = $this->entHash($ent_customer_id,$arr);
+        if(!empty($entHashErrorData)) return $entHashErrorData;
+        法人哈希存证
+        list($people_hash_id,$peopleHashErrorData) = $this->peopleHash($people_customer_id,$arr);
+        if(!empty($peopleHashErrorData)) return $peopleHashErrorData;
         //企业上传印章
         list($ent_sign_id,$entSignErrorData) = $this->entSign($ent_customer_id,$arr);
         if(!empty($entSignErrorData)) return $entSignErrorData;
