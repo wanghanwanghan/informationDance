@@ -137,6 +137,22 @@ class XinDongController extends ProvideBase
                 return $this->writeJson(201, null, null, '参数错误');
             }
         }
+        //天创信用
+        if ($this->userId === 52) {
+            if ($beginYear === 2022 && $dataCount <= 3) {
+                $a = null;
+            }else if ($beginYear === 2021 && $dataCount <= 3) {
+                $a = null;
+            } elseif ($beginYear === 2020 && $dataCount <= 3) {
+                $a = null;
+            } elseif ($beginYear === 2019 && $dataCount <= 2) {
+                $a = null;
+            } elseif ($beginYear === 2018 && $dataCount === 1) {
+                $a = null;
+            } else {
+                return $this->writeJson(201, null, null, '参数错误');
+            }
+        }
 
         if ($this->userId === 1) {
             $range = FinanceRange::getInstance()->getRange('range_yuanqi');
