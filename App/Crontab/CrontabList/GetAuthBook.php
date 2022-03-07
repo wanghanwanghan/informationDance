@@ -78,15 +78,16 @@ class GetAuthBook extends AbstractCronTask
                 $url = [];
                 $urlArr = [];
                 foreach ($DetailList as $value){
+                    $type = $value->getAttr('type')==2?2:0;
                     if($value->getAttr('is_seal') == 1){
-                        $type = $value->getAttr('type')==2?2:0;
-                        $url[$value->getAttr('type')] = $this->getSealUrl($data);
+                        if($value->getAttr('type') !=2 ){
+                            $url[$value->getAttr('type')] = $this->getSealUrl($data);
+                        }else{//数字代办委托书盖章加填充
+                            $url['2'] = $this->getDataSealUrl($data);
+                        }
                     }else{
                         $urlArr[] = $value->getAttr('file_address');
                     }
-                }
-                if($type != 2){//数字代办委托书盖章加填充
-                    $url['2'] = $this->getDataSealUrl($data);
                 }
                 foreach ($url as $type => $v){
                     $file_url = $this->getOssUrl($v,$data['socialCredit']);
