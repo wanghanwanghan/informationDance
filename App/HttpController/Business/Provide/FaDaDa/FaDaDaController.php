@@ -88,11 +88,13 @@ class FaDaDaController extends ProvideBase
             'phone' => $phone,
             'city' => $city,
             'regAddress' => $regAddress,
-            'file_address' => $file_address
+            'file_address' => $file_address,
+            'xNum'=>$xNum,
+            'yNum'=>$yNum,
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new FaDaDaService())->setCheckRespFlag(true)->getAuthFileForAnt($postData,$xNum,$yNum);
+            return (new FaDaDaService())->setCheckRespFlag(true)->getAuthFileForAnt($postData);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);

@@ -141,7 +141,7 @@ class FaDaDaService extends ServiceBase
         return $this->createReturn(200, null, $result, $msg);
     }
 
-    public function getAuthFileForAnt(array $arr,$x,$y): array
+    public function getAuthFileForAnt(array $arr): array
     {
         CommonService::getInstance()->log4PHP($arr,'info','get_auth_file_param_arr');
         //企业注册
@@ -173,7 +173,7 @@ class FaDaDaService extends ServiceBase
 //        $fillTemplateErrorData = $this->checkRet($this->fillTemplate($arr));
 //        if(!empty($fillTemplateErrorData)) return $fillTemplateErrorData;
         //自动签署企业印章
-        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAuto($arr,$ent_customer_id,$ent_sign_id,$x,$y));
+        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAuto($arr,$ent_customer_id,$ent_sign_id,$arr['xNum'],$arr['yNum']));
         if(!empty($ExtsignAutoErrorData)) return $ExtsignAutoErrorData;
         //自动签署法人姓名
 //        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAuto($arr,$people_customer_id,$personal_sign_id,593,681));
