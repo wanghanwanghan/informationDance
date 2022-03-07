@@ -74,14 +74,12 @@ class GetAuthBook extends AbstractCronTask
                 $DetailList = AntAuthSealDetail::create()->where([
                     'ant_auth_id' => $oneEntInfo->getAttr('id'),
                 ])->all();
-                $type = 0;
                 $url = [];
                 $urlArr = [];
                 foreach ($DetailList as $value){
-                    $type = $value->getAttr('type')==2?2:0;
-                    if($value->getAttr('is_seal') == 1){
+                    if($value->getAttr('is_seal')){
                         if($value->getAttr('type') !=2 ){
-                            $url[$value->getAttr('type')] = $this->getSealUrl($data);
+                            $url[$value->getAttr('type')] = $this->getSealUrl($data,$value->getAttr('xCoordinate'),$value->getAttr('yCoordinate'));
                         }else{//数字代办委托书盖章加填充
                             $url['2'] = $this->getDataSealUrl($data);
                         }
@@ -194,8 +192,8 @@ class GetAuthBook extends AbstractCronTask
     /*
      * 多个文件盖章，是否是只有企业授权书需要去判断是否需要盖章，确定下一个企业是否一定只会有一个是需要盖章的
      */
-    public function getSealUrl($data){
-        $res = (new FaDaDaService())->setCheckRespFlag(true)->getAuthFileForAnt($data);
+    public function getSealUrl($data,$x,$y){
+        $res = (new FaDaDaService())->setCheckRespFlag(true)->getAuthFileForAnt($data,$x,$y);
         CommonService::getInstance()->log4PHP($res,'info','get_auth_file_return_res');
         if ($res['code'] !== 200) {
             $message = ['name'=>'异常内容','msg'=>json_encode($res)];
@@ -219,12 +217,12 @@ class GetAuthBook extends AbstractCronTask
         return $res['result']['url'];
     }
 
-    public function getOssUrl($path){
+    public function getOssUrl($path,$socialCredit){
         if(empty($path)) return '';
         return OSSService::getInstance()
             ->doUploadFile(
                 $this->oss_bucket,
-                Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $path,
+                Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $socialCredit.'page'.control::getUuid().'pdf',
                 INV_AUTH_PATH .$path,
                 $this->oss_expire_time
             );
