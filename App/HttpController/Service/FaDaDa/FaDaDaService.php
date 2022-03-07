@@ -148,13 +148,13 @@ class FaDaDaService extends ServiceBase
         list($ent_customer_id,$entCustomerErrorData) = $this->getEntCustomer($arr);
         if(!empty($entCustomerErrorData)) return $entCustomerErrorData;
         $arr['customer_id'] = $ent_customer_id;
-        法人是否注册过
+//        法人是否注册过
         list($people_customer_id,$peopleCustomerErrorData) = $this->getPeopleCustomer($arr);
         if(!empty($peopleCustomerErrorData)) return $peopleCustomerErrorData;
-        企业哈希存证
+//        企业哈希存证
         list($ent_hash_id,$entHashErrorData) = $this->entHash($ent_customer_id,$arr);
         if(!empty($entHashErrorData)) return $entHashErrorData;
-        法人哈希存证
+//        法人哈希存证
         list($people_hash_id,$peopleHashErrorData) = $this->peopleHash($people_customer_id,$arr);
         if(!empty($peopleHashErrorData)) return $peopleHashErrorData;
         //企业上传印章
@@ -170,7 +170,7 @@ class FaDaDaService extends ServiceBase
         $uploadTemplateErrorData = $this->checkRet($this->uploadTemplate($arr,$arr['file_address']));
         if(!empty($uploadTemplateErrorData)) return $uploadTemplateErrorData;
         //模板填充
-        $fillTemplateErrorData = $this->checkRet($this->fillTemplate($arr));
+//        $fillTemplateErrorData = $this->checkRet($this->fillTemplate($arr));
 //        if(!empty($fillTemplateErrorData)) return $fillTemplateErrorData;
         //自动签署企业印章
         $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAuto($arr,$ent_customer_id,$ent_sign_id,$x,$y));
