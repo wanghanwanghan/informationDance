@@ -805,7 +805,7 @@ class FaDaDaService extends ServiceBase
         $path = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
         is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0755);
         $filename = $arr['contract_id'];
-        $path = $path . $filename.'1.pdf';
+        $path = $path . $filename.'-'.Carbon::now()->format('Ymd').'.pdf';
         //储存pdf
         file_put_contents(
             INV_AUTH_PATH .$path,
