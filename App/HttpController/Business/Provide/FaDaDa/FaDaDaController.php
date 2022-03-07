@@ -77,8 +77,9 @@ class FaDaDaController extends ProvideBase
         $phone = $this->getRequestData('phone');
         $city = $this->getRequestData('city');
         $regAddress = $this->getRequestData('regAddress');
-        $x = $this->getRequestData('x');
-        $y = $this->getRequestData('y');
+        $xNum = $this->getRequestData('x');
+        $yNum = $this->getRequestData('y');
+        $file_address = $this->getRequestData('file_address');
         $postData = [
             'entName' => $entName,
             'socialCredit' => $socialCredit,
@@ -87,10 +88,11 @@ class FaDaDaController extends ProvideBase
             'phone' => $phone,
             'city' => $city,
             'regAddress' => $regAddress,
+            'file_address' => $file_address
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new FaDaDaService())->setCheckRespFlag(true)->getAuthFileForAnt($postData,$x,$y);
+            return (new FaDaDaService())->setCheckRespFlag(true)->getAuthFileForAnt($postData,$xNum,$yNum);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
