@@ -79,7 +79,7 @@ class GetAuthBook extends AbstractCronTask
                 foreach ($DetailList as $value){
                     if($value->getAttr('is_seal')){
                         if($value->getAttr('type') !=2 ){
-                            $url[$value->getAttr('type')] = $this->getSealUrl($data,$value->getAttr('xCoordinate'),$value->getAttr('yCoordinate'));
+                            $url[$value->getAttr('type')] = $this->getSealUrl($data,$value->getAttr('xCoordinate'),$value->getAttr('yCoordinate'),$value->getAttr('file_address'));
                         }else{//数字代办委托书盖章加填充
                             $url['2'] = $this->getDataSealUrl($data);
                         }
@@ -192,7 +192,8 @@ class GetAuthBook extends AbstractCronTask
     /*
      * 多个文件盖章，是否是只有企业授权书需要去判断是否需要盖章，确定下一个企业是否一定只会有一个是需要盖章的
      */
-    public function getSealUrl($data,$x,$y){
+    public function getSealUrl($data,$x,$y,$file_address){
+        $data['file_address'] = $file_address;
         $res = (new FaDaDaService())->setCheckRespFlag(true)->getAuthFileForAnt($data,$x,$y);
         CommonService::getInstance()->log4PHP($res,'info','get_auth_file_return_res');
         if ($res['code'] !== 200) {

@@ -167,7 +167,7 @@ class FaDaDaService extends ServiceBase
 //        $arr['contract_id'] = control::getUuid();//合同编号
 
         //模板上传
-        $uploadTemplateErrorData = $this->checkRet($this->uploadTemplate($arr));
+        $uploadTemplateErrorData = $this->checkRet($this->uploadTemplate($arr,$arr['file_address']));
         if(!empty($uploadTemplateErrorData)) return $uploadTemplateErrorData;
         //模板填充
         $fillTemplateErrorData = $this->checkRet($this->fillTemplate($arr));
@@ -608,7 +608,7 @@ class FaDaDaService extends ServiceBase
      * @param array $arr
      * @return array|mixed|string[]
      */
-    private function uploadTemplate(array $arr)
+    private function uploadTemplate(array $arr,$doc_url = "https://api.meirixindong.com/Static/AuthBookModel/qxy_template.pdf")
     {
         $url_ext = 'uploadtemplate.api';
 
@@ -626,7 +626,7 @@ class FaDaDaService extends ServiceBase
             'v' => '2.0',
             'msg_digest' => $msg_digest,
             'template_id' => $arr['template_id'],
-            'doc_url' => "https://api.meirixindong.com/Static/AuthBookModel/qxy_template.pdf",
+            'doc_url' => $doc_url,
         ];
         CommonService::getInstance()->log4PHP($post_data,'info','uploadtemplate_param_arr');
         $resp = (new CoHttpClient())
