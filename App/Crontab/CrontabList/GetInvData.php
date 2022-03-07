@@ -152,7 +152,7 @@ class GetInvData extends AbstractCronTask
                     'authTime' => date('Y-m-d H:i:s', $oneReadyToSend->getAttr('requestDate')),//授权时间
                     'totalCount' => ($in + $out) . '',
                     'fileKeyList' => $fileKeyList,//文件路径
-//                    'type' => 'FP' //通知发票
+                    'type' => 'FP' //通知发票
                 ];
                 $num = $in + $out;
                 $dateM = (time()-$oneReadyToSend->getAttr('requestDate'))/86400;
