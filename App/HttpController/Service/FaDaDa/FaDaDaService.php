@@ -628,6 +628,7 @@ class FaDaDaService extends ServiceBase
             'template_id' => $arr['template_id'],
             'doc_url' => $doc_url,
         ];
+
         CommonService::getInstance()->log4PHP($post_data,'info','uploadtemplate_param_arr');
         $resp = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
