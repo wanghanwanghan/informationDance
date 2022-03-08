@@ -167,7 +167,7 @@ class FaDaDaService extends ServiceBase
         $arr['contract_id'] = control::getUuid();//合同编号
 
         //模板上传
-        $uploadTemplateErrorData = $this->checkRet($this->uploadTemplate($arr,$arr['file_address']));
+        $uploadTemplateErrorData = $this->checkRet($this->uploaddocs($arr,$arr['file_address']));
         if(!empty($uploadTemplateErrorData)) return $uploadTemplateErrorData;
         //模板填充
         $fillTemplateErrorData = $this->checkRet($this->fillTemplate($arr));
@@ -715,7 +715,7 @@ class FaDaDaService extends ServiceBase
             'contract_id' => $arr['contract_id'],//合同编号
 //            'font_size' => $arr['font_size'],//字体大小
 //            'font_type' => $arr['font_type'],//字体类型 0-宋体；1-仿宋；2-黑体；3-楷体；4-微软雅黑
-            'fill_type' => 0,//填充类型 0 pdf 模板、1 在线填充模板
+//            'fill_type' => $arr['fill_type'],//填充类型 0 pdf 模板、1 在线填充模板
             'parameter_map' => $arr['parameter_map'],//填充内容 json key val
         ];
         CommonService::getInstance()->log4PHP($post_data,'info','generate_contract_param_arr');
@@ -858,5 +858,35 @@ class FaDaDaService extends ServiceBase
         );
         CommonService::getInstance()->log4PHP($path,'info','downLoadContract');
         return $path;
+    }
+
+    public function uploaddocs($arr,$doc_url){
+        $url_ext = 'uploaddocs.api';
+
+        $section_1 = $this->app_id . strtoupper(md5($this->timestamp));
+
+        $section_2 = strtoupper(sha1($this->app_secret . $arr['contract_id']));
+
+        $section_3 = strtoupper(sha1($section_1 . $section_2));
+
+        $msg_digest = base64_encode($section_3);
+
+        $post_data = [
+            'app_id' => $this->app_id,
+            'timestamp' => $this->timestamp,
+            'v' => '2.0',
+            'msg_digest' => $msg_digest,
+            'contract_id' => $arr['contract_id'],
+            'doc_url' => $doc_url,
+            'doc_title' =>'合同',
+            'doc_type' =>'.pdf'
+        ];
+
+        CommonService::getInstance()->log4PHP($post_data,'info','uploaddocs_param_arr');
+        $resp = (new CoHttpClient())
+            ->useCache($this->curl_use_cache)
+            ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
+        CommonService::getInstance()->log4PHP($resp,'info','uploaddocs');
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 }
