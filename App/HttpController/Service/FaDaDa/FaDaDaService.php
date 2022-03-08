@@ -163,8 +163,8 @@ class FaDaDaService extends ServiceBase
         //企业上传法人照片
 //        list($personal_sign_id,$personalSignErrorData) = $this->personalSign($people_customer_id,$arr);
 //        if(!empty($personalSignErrorData)) return $personalSignErrorData;
-//        $arr['template_id'] = control::getUuid();//模版ID 本地自增
-//        $arr['contract_id'] = control::getUuid();//合同编号
+        $arr['template_id'] = control::getUuid();//模版ID 本地自增
+        $arr['contract_id'] = control::getUuid();//合同编号
 
         //模板上传
         $uploadTemplateErrorData = $this->checkRet($this->uploadTemplate($arr,$arr['file_address']));
