@@ -127,8 +127,8 @@ class MaYiController extends Index
             'idCard' => $tmp['body']['idCard'] ?? '',
             'companyName' => $tmp['body']['companyName'] ?? '',
             'mobile' => $tmp['body']['mobile'] ?? '',
+            'fileData' => $tmp['body']['fileData'] ?? '',
         ];
-
         $ret = openssl_verify(
             jsonEncode($v, false),
             base64_decode($tmp['head']['sign']),

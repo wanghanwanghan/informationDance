@@ -77,8 +77,6 @@ class FaDaDaController extends ProvideBase
         $phone = $this->getRequestData('phone');
         $city = $this->getRequestData('city');
         $regAddress = $this->getRequestData('regAddress');
-        $xNum = $this->getRequestData('x');
-        $yNum = $this->getRequestData('y');
         $file_address = $this->getRequestData('file_address');
         $postData = [
             'entName' => $entName,
@@ -89,8 +87,6 @@ class FaDaDaController extends ProvideBase
             'city' => $city,
             'regAddress' => $regAddress,
             'file_address' => $file_address,
-            'xNum'=>$xNum,
-            'yNum'=>$yNum,
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {

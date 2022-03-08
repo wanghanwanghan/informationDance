@@ -173,7 +173,7 @@ class FaDaDaService extends ServiceBase
 //        $fillTemplateErrorData = $this->checkRet($this->fillTemplate($arr));
 //        if(!empty($fillTemplateErrorData)) return $fillTemplateErrorData;
         //自动签署企业印章
-        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAuto($arr,$ent_customer_id,$ent_sign_id,$arr['xNum'],$arr['yNum']));
+        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAutoByWord($arr,$ent_customer_id,$ent_sign_id,'#盖章处#'));
         if(!empty($ExtsignAutoErrorData)) return $ExtsignAutoErrorData;
         //自动签署法人姓名
 //        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAuto($arr,$people_customer_id,$personal_sign_id,593,681));
@@ -758,6 +758,49 @@ class FaDaDaService extends ServiceBase
             'signature_id' => $signature_id,
 //            'signature_show_time' => $arr['signature_show_time'],//时间戳显示方式 1 显示 2 不显示
             'signature_positions'=>'[{"pagenum":0,"x":'.$x.',"y":'.$y.'}]',
+        ];
+        CommonService::getInstance()->log4PHP($post_data,'info','extsign_auto_param_arr');
+
+        $resp = (new CoHttpClient())
+            ->useCache($this->curl_use_cache)
+            ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
+        CommonService::getInstance()->log4PHP($resp,'info','extsign_auto');
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
+
+    /**
+     * 自动签署
+     * @param array $arr
+     * @return array|mixed|string[]
+     */
+    private function getExtsignAutoByWord(array $arr,$customer_id,$signature_id,$writing)
+    {
+        $url_ext = 'extsign_auto.api';
+        //交易号 每次请求视为一个交易。 只允许长度<=32 的英文或数字字符。 交易号为接入平台生成，必须保证唯一并自行记录
+        $transaction_id = control::getUuid();
+        $section_1 = $this->app_id . strtoupper(md5($transaction_id.$this->timestamp));
+
+        $section_2 = strtoupper(sha1($this->app_secret . $customer_id));
+
+        $section_3 = strtoupper(sha1($section_1 . $section_2));
+
+        $msg_digest = base64_encode($section_3);
+
+        $post_data = [
+            'app_id' => $this->app_id,
+            'timestamp' => $this->timestamp,
+            'v' => '2.0',
+            'msg_digest' => $msg_digest,
+            'transaction_id' => $transaction_id,
+            'contract_id' => $arr['contract_id']??'',
+            'customer_id' => $customer_id,
+            'doc_title' => $arr['doc_title']??'合同',
+            'position_type' => 0,//定位类型 0-关键字（默认） 1-坐标
+            'sign_keyword' => $writing,//定位关键字 关键字为文档中的文字内容（能被ctrl+f查找功能检索到）
+            'keyword_strategy' => 2,//0 所有关键字签章 1 第一个关键字签章 2 最后一个关键字签章
+            'signature_id' => $signature_id,
+//            'signature_show_time' => $arr['signature_show_time'],//时间戳显示方式 1 显示 2 不显示
+//            'signature_positions'=>'[{"pagenum":0,"x":'.$x.',"y":'.$y.'}]',
         ];
         CommonService::getInstance()->log4PHP($post_data,'info','extsign_auto_param_arr');
 
