@@ -715,7 +715,7 @@ class FaDaDaService extends ServiceBase
             'contract_id' => $arr['contract_id'],//合同编号
 //            'font_size' => $arr['font_size'],//字体大小
 //            'font_type' => $arr['font_type'],//字体类型 0-宋体；1-仿宋；2-黑体；3-楷体；4-微软雅黑
-//            'fill_type' => $arr['fill_type'],//填充类型 0 pdf 模板、1 在线填充模板
+            'fill_type' => 0,//填充类型 0 pdf 模板、1 在线填充模板
             'parameter_map' => $arr['parameter_map'],//填充内容 json key val
         ];
         CommonService::getInstance()->log4PHP($post_data,'info','generate_contract_param_arr');
