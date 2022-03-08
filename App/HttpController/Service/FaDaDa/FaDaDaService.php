@@ -170,8 +170,8 @@ class FaDaDaService extends ServiceBase
         $uploadTemplateErrorData = $this->checkRet($this->uploadTemplate($arr,$arr['file_address']));
         if(!empty($uploadTemplateErrorData)) return $uploadTemplateErrorData;
         //模板填充
-//        $fillTemplateErrorData = $this->checkRet($this->fillTemplate($arr));
-//        if(!empty($fillTemplateErrorData)) return $fillTemplateErrorData;
+        $fillTemplateErrorData = $this->checkRet($this->fillTemplate($arr));
+        if(!empty($fillTemplateErrorData)) return $fillTemplateErrorData;
         //自动签署企业印章
         $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAutoByWord($arr,$ent_customer_id,$ent_sign_id,'#盖章处#'));
         if(!empty($ExtsignAutoErrorData)) return $ExtsignAutoErrorData;
@@ -626,6 +626,7 @@ class FaDaDaService extends ServiceBase
             'v' => '2.0',
             'msg_digest' => $msg_digest,
             'template_id' => $arr['template_id'],
+            'contract_id' => $arr['contract_id'],
             'doc_url' => $doc_url,
         ];
 
