@@ -5263,12 +5263,14 @@ class MaYiService extends ServiceBase
         if(!empty($data['fileData'])){
             foreach ($data['fileData'] as $datum) {
                 AntAuthSealDetail::create()->data([
-                    'is_seal'=> $datum['is_seal'],
+                    'isSeal'=> $datum['isSeal'],
                     'coordinate'=> $datum['coordinate'],
-                    'is_return'=> $datum['is_return'],
-                    'file_address'=> $datum['file_address'],
-                    'file_id'=> $datum['file_id'],
-                    'ant_auth_id'=> $id,
+                    'isReturn'=> $datum['isReturn'],
+                    'fileAddress'=> $datum['fileAddress'],
+                    'fileId'=> $datum['fileId'],
+                    'antAuthId'=> $id,
+                    'type' => $datum['type'],
+                    'fileSecret' => $datum['fileSecret'],
                 ])->save();
             }
         }

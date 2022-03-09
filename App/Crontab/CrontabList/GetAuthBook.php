@@ -76,16 +76,24 @@ class GetAuthBook extends AbstractCronTask
                 ])->all();
                 $url = [];
                 $urlArr = [];
+                $fileData = [];
                 foreach ($DetailList as $value){
-                    if($value->getAttr('is_seal')){
+                    if($value->getAttr('isSeal')){
                         if($value->getAttr('type') !=2 ){
-                            $url[$value->getAttr('type')] = $this->getSealUrl($data,$value->getAttr('file_address'));
+                            $url[$value->getAttr('type')] = $this->getSealUrl($data,$value->getAttr('fileAddress'));
                         }else{//数字代办委托书盖章加填充
                             $url['2'] = $this->getDataSealUrl($data);
                         }
                     }else{
-                        $urlArr[] = $value->getAttr('file_address');
+                        $urlArr[$value->getAttr('type')] = $value->getAttr('fileAddress');
                     }
+                    $fileData[$value->getAttr('type')] = [
+                        'firlAddress' => $urlArr[$value->getAttr('type')],
+                        'fileSecret' => $value->getAttr('fileSecret'),
+                        'type' => '',
+                        'isSealed' => '',
+                        'fileName' => '',
+                    ];
                 }
                 foreach ($url as $type => $v){
                     $file_url = $this->getOssUrl($v,$data['socialCredit']);
@@ -121,13 +129,21 @@ class GetAuthBook extends AbstractCronTask
 //                $urlArr = $this->getFlieUrl($oneEntInfo->getAttr('id'));
                 $fileKeyList = empty($urlArr) ? [] : array_filter($urlArr);
                 $body = [
+                    'authResultCode' => $authResultCode,
+                    'orderNo'=> $oneEntInfo->getAttr('orderNo'),
                     'nsrsbh' => $oneEntInfo->getAttr('socialCredit'),//授权的企业税号
+                    'notifyType' => 'AGREEMENT', //通知类型
+                    'fileData' => [
+                        'firlAddress'=>'',
+                        'fileSecret' => '',
+
+                    ],
                     'fileSecret' => $fileSecret,//对称钥秘⽂
                     'companyName' => $oneEntInfo->getAttr('entName'),//公司名称
                     'authTime' => date('Y-m-d H:i:s', $oneEntInfo->getAttr('requestDate')),//授权时间
                     'totalCount' => count($urlArr) . '',
                     'fileKeyList' => $fileKeyList,//文件路径
-                    'type' => 'AGREEMENT' //通知类型
+
                 ];
                 ksort($body);//周平说参数升序
 
