@@ -309,10 +309,10 @@ class XinDongController extends ProvideBase
     /**
      * 每日查询上限
      */
-    public function limitEntNumByApiid($keyName,$entName,$apiId,$maxNum){
+    public function limitEntNumByApiid($keyName,$entName,$maxNum){
 
         $time = date('Ymd',time());
-        $key = $keyName.$apiId.$time;
+        $key = $keyName.$this->userId.$time;
         $redis = \EasySwoole\RedisPool\Redis::defer('redis');
         $redis->select(14);
         $num = $redis->hlen($key);
@@ -333,7 +333,7 @@ class XinDongController extends ProvideBase
         $dataCount = 3;
         $entName = $this->getRequestData('entName', '');
         $apiId = $this->getRequestData('apiId', '');
-        if($this->limitEntNumByApiid('getFinanceBaseDataYBR',$entName,$apiId,5)){
+        if($this->limitEntNumByApiid('getFinanceBaseDataYBR',$entName,5)){
             $this->writeJson(201, null, null, '请求次数已经达到上限100');
         }
         $postData = [
