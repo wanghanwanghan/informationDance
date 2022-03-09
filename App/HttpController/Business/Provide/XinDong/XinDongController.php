@@ -329,6 +329,7 @@ class XinDongController extends ProvideBase
     //益博睿
     function getFinanceBaseDataYBR(): bool
     {
+        dingAlarmMarkdown('每日查询上限',[['name'=>'数量','msg'=>11],['name'=>'名称','msg'=>11]]);
         $beginYear = 2020;
         $dataCount = 3;
         $entName = $this->getRequestData('entName', '');
