@@ -19,6 +19,7 @@ use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\XinDong\XinDongService;
 use Carbon\Carbon;
+use EasySwoole\Redis\Redis;
 use wanghanwanghan\someUtils\control;
 use function GuzzleHttp\Psr7\uri_for;
 
@@ -305,20 +306,39 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    /**
+     * 每日查询上限
+     */
+    public function limitEntNumByApiid($keyName,$entName,$apiId,$maxNum){
+        $redis = \EasySwoole\RedisPool\Redis::defer('redis');
+        $redis->select(14);
+        $redis->hset($keyName.$apiId,$entName,$entName);
+        $redis->expire($keyName.$apiId,86400);
+        $num = $redis->hlen($keyName.$apiId);
+        if($num >= $maxNum){
+            return true;
+        }
+        return false;
+    }
+
     //益博睿
     function getFinanceBaseDataYBR(): bool
     {
         $beginYear = 2020;
         $dataCount = 3;
-
+        $entName = $this->getRequestData('entName', '');
+        $apiId = $this->getRequestData('apiId', '');
+        if($this->limitEntNumByApiid('getFinanceBaseDataYBR',$entName,$apiId,100)){
+            $this->writeJson(201, null, null, '请求次数已经达到上限100');
+        }
         $postData = [
-            'entName' => $this->getRequestData('entName', ''),
+            'entName' => $entName,
             'code' => $this->getRequestData('code', ''),
             'beginYear' => $beginYear,
             'dataCount' => $dataCount,
         ];
 
-        $check = EntDbEnt::create()->where('name', $this->getRequestData('entName'))->get();
+        $check = EntDbEnt::create()->where('name', $entName)->get();
 
         if (empty($check)) {
             $f_info = [];
