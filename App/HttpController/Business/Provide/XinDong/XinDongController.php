@@ -331,7 +331,7 @@ class XinDongController extends ProvideBase
         $dataCount = 3;
         $entName = $this->getRequestData('entName', '');
         $apiId = $this->getRequestData('apiId', '');
-        if($this->limitEntNumByApiid('getFinanceBaseDataYBR',$entName,$apiId,100)){
+        if($this->limitEntNumByApiid('getFinanceBaseDataYBR',$entName,$apiId,5)){
             $this->writeJson(201, null, null, '请求次数已经达到上限100');
         }
         $postData = [
