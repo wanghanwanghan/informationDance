@@ -53,7 +53,7 @@ class LogController extends LogBase
                     $info['file_a_time'] = fileatime($fullpath);
                     $info['info'] = $this->readLog($fullpath);
                     $res[] = $info;
-                    if($i > 100) break;
+                    if($i > 50) break;
                 }
             }
         }
