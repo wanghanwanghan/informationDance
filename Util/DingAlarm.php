@@ -1,11 +1,14 @@
 <?php
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 
 function request_by_curl($remote_server, $post_string) {
 
     $data = (new CoHttpClient())
         ->send($remote_server, $post_string, array ('Content-Type: application/json;charset=utf-8'));
+    CommonService::getInstance()->log4PHP($data,'info','ding_alarm_request_by_curl');
+
     return $data;
 }
 
