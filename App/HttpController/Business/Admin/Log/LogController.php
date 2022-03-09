@@ -26,9 +26,10 @@ class LogController extends LogBase
         $dir = LOG_PATH ;
 
         $res = [];
-
+        $i = 0;
         if ($dh = opendir($dir)) {
             while (false !== ($file = readdir($dh))) {
+                $i++;
                 if (!in_array($file, $ignore, true)) {
                     $fullpath = $dir . DIRECTORY_SEPARATOR . $file;
                     $info = [];
@@ -52,6 +53,7 @@ class LogController extends LogBase
                     $info['file_a_time'] = fileatime($fullpath);
                     $info['info'] = $this->readLog($fullpath);
                     $res[] = $info;
+                    if($i > 100) break;
                 }
             }
         }
