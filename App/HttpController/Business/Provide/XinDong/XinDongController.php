@@ -309,14 +309,14 @@ class XinDongController extends ProvideBase
     /**
      * 每日查询上限
      */
-    public function limitEntNumByApiid($keyName,$entName,$maxNum){
+    public function limitEntNumByUserId($keyName,$entName,$maxNum){
 
         $time = date('Ymd',time());
         $key = $keyName.$this->userId.$time;
         $redis = \EasySwoole\RedisPool\Redis::defer('redis');
         $redis->select(14);
         $num = $redis->hlen($key);
-        dingAlarmMarkdownForWork('每日查询上限',[['name'=>'数量','msg'=>$num],['name'=>'名称','msg'=>$entName]]);
+//        dingAlarmMarkdownForWork('每日查询上限',[['name'=>'数量','msg'=>$num],['name'=>'名称','msg'=>$entName]]);
         if($num >= $maxNum){
             return true;
         }else if (!$num) {
@@ -332,9 +332,23 @@ class XinDongController extends ProvideBase
         $beginYear = 2020;
         $dataCount = 3;
         $entName = $this->getRequestData('entName', '');
-        $apiId = $this->getRequestData('apiId', '');
-        if($this->limitEntNumByApiid('getFinanceBaseDataYBR',$entName,5)){
+        if($this->limitEntNumByUserId('getFinanceBaseDataYBR',$entName,100)){
             $this->writeJson(201, null, null, '请求次数已经达到上限100');
+        }
+        if ($this->userId === 53) {
+            if ($beginYear === 2022 && $dataCount <= 3) {
+                $a = null;
+            }else if ($beginYear === 2021 && $dataCount <= 3) {
+                $a = null;
+            } elseif ($beginYear === 2020 && $dataCount <= 3) {
+                $a = null;
+            } elseif ($beginYear === 2019 && $dataCount <= 2) {
+                $a = null;
+            } elseif ($beginYear === 2018 && $dataCount === 1) {
+                $a = null;
+            } else {
+                return $this->writeJson(201, null, null, '参数错误');
+            }
         }
         $postData = [
             'entName' => $entName,
