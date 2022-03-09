@@ -332,10 +332,10 @@ class XinDongController extends ProvideBase
         $beginYear = 2020;
         $dataCount = 3;
         $entName = $this->getRequestData('entName', '');
-        if($this->limitEntNumByUserId('getFinanceBaseDataYBR',$entName,100)){
-            $this->writeJson(201, null, null, '请求次数已经达到上限100');
-        }
         if ($this->userId === 53) {
+            if($this->limitEntNumByUserId('getFinanceBaseDataYBR',$entName,100)){
+                $this->writeJson(201, null, null, '请求次数已经达到上限100');
+            }
             if ($beginYear === 2022 && $dataCount <= 3) {
                 $a = null;
             }else if ($beginYear === 2021 && $dataCount <= 3) {
