@@ -316,7 +316,7 @@ class XinDongController extends ProvideBase
         $redis = \EasySwoole\RedisPool\Redis::defer('redis');
         $redis->select(14);
         $num = $redis->hlen($key);
-        dingAlarmMarkdown('每日查询上限',[['name'=>'数量','msg'=>$num],['name'=>'名称','msg'=>$entName]]);
+        dingAlarmMarkdownForWork('每日查询上限',[['name'=>'数量','msg'=>$num],['name'=>'名称','msg'=>$entName]]);
         if($num >= $maxNum){
             return true;
         }else if (!$num) {
@@ -329,7 +329,6 @@ class XinDongController extends ProvideBase
     //益博睿
     function getFinanceBaseDataYBR(): bool
     {
-        dingAlarmMarkdownForWork('每日查询上限',[['name'=>'数量','msg'=>11],['name'=>'名称','msg'=>11]]);
         $beginYear = 2020;
         $dataCount = 3;
         $entName = $this->getRequestData('entName', '');
