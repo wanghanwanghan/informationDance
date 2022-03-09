@@ -310,14 +310,17 @@ class XinDongController extends ProvideBase
      * 每日查询上限
      */
     public function limitEntNumByApiid($keyName,$entName,$apiId,$maxNum){
+        $time = date('Ymd',time());
+        $key = $keyName.$apiId.$time;
         $redis = \EasySwoole\RedisPool\Redis::defer('redis');
         $redis->select(14);
-        $redis->hset($keyName.$apiId,$entName,$entName);
-        $redis->expire($keyName.$apiId,86400);
-        $num = $redis->hlen($keyName.$apiId);
+        $num = $redis->hlen($key);
         if($num >= $maxNum){
             return true;
+        }else if (!$num) {
+            $redis->expire($key,86400);
         }
+        $redis->hset($key,$entName,$entName);
         return false;
     }
 
