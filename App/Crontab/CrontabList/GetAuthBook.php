@@ -35,7 +35,7 @@ class GetAuthBook extends AbstractCronTask
     static function getRule(): string
     {
         //每分钟执行一次
-        return '46 17 10 * *';
+        return '52 17 10 * *';
     }
 
     static function getTaskName(): string
@@ -108,11 +108,11 @@ class GetAuthBook extends AbstractCronTask
                         ];
                         $flieDetail[$value->getAttr('type')]['fileId'] = $value->getAttr('fileId');
                     }
-                    CommonService::getInstance()->log4PHP($url, 'info', 'get_auth_file_list_urlArr');
                     //如果不需要盖章，就跳过
                     if ($notNoodIsSeal) {
                         continue;
                     }
+                    CommonService::getInstance()->log4PHP($url, 'info', 'get_auth_file_list_urlArr');
                     foreach ($url as $type => $v) {
                         $res1 = AntAuthSealDetail::create()->where([
                             'type' => $type,
