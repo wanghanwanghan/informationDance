@@ -35,7 +35,7 @@ class GetAuthBook extends AbstractCronTask
     static function getRule(): string
     {
         //每分钟执行一次
-        return '59 17 10 * *';
+        return '2 18 10 * *';
     }
 
     static function getTaskName(): string
@@ -123,7 +123,7 @@ class GetAuthBook extends AbstractCronTask
                                 'status' => empty($v) ? 2 : 1
                             ]);
                         } catch (\Throwable $e) {
-                            CommonService::getInstance()->log4PHP($e, 'info', 'get_auth_file_list_url_v');
+                            CommonService::getInstance()->log4PHP($e->getTraceAsString(), 'info', 'get_auth_file_list_url_v');
                         }
                         list($file_url, $fileName) = $this->getOssUrl($v, $data['socialCredit'], $flieDetail[$type]);
                         CommonService::getInstance()->log4PHP($fileData, 'info', 'get_auth_file_list_file_url');
@@ -192,7 +192,7 @@ class GetAuthBook extends AbstractCronTask
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
-
+        CommonService::getInstance()->log4PHP($throwable->getTraceAsString(), 'info', '123123123123');
     }
 
     public function sendAnt($url, $collectNotify)
