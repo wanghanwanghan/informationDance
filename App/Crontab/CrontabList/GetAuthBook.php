@@ -34,7 +34,7 @@ class GetAuthBook extends AbstractCronTask
     static function getRule(): string
     {
         //每分钟执行一次
-        return '18 16 10 * *';
+        return '22 16 10 * *';
     }
 
     static function getTaskName(): string
@@ -68,6 +68,8 @@ class GetAuthBook extends AbstractCronTask
 
         if (!empty($list)) {
             foreach ($list as $oneEntInfo) {
+                CommonService::getInstance()->log4PHP($oneEntInfo,'info','get_auth_file_list_oneEntInfo');
+
                 $data = [
                     'entName' => $oneEntInfo->getAttr('entName'),// entName companyname
                     'socialCredit' => $oneEntInfo->getAttr('socialCredit'),//taxno  newtaxno
