@@ -102,13 +102,11 @@ class GetAuthBook extends AbstractCronTask
                         }
                         $fileData[$value->getAttr('type')] = [
                             'fileAddress' => '',
-                            'fileSecret' => $value->getAttr('fileSecret'),
                             'type' => $value->getAttr('type'),
                             'isSealed' => (boolean)$value->getAttr('isSealed'),
                             'fileName' => '',
                         ];
                         $flieDetail[$value->getAttr('type')]['fileId'] = $value->getAttr('fileId');
-                        $flieDetail[$value->getAttr('type')]['fileSecret'] = $value->getAttr('fileSecret');
                     }
                     CommonService::getInstance()->log4PHP($url, 'info', 'get_auth_file_list_urlArr');
                     //如果不需要盖章，就跳过
@@ -246,7 +244,6 @@ class GetAuthBook extends AbstractCronTask
 
     public function getOssUrl($path, $socialCredit, $flieDetail)
     {
-//        $flieDetail['fileSecret'];
         if (empty($path)) return '';
 
         $fileName = $socialCredit . '_' . $flieDetail['fileId'] . '_' . control::getUuid(8);
