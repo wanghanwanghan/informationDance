@@ -8,7 +8,7 @@ class AntAuthSealDetail extends ModelBase
 {
     protected $tableName = 'information_dance_ant_auth_seal_detail';
 
-    protected $autoTimeStamp = true;
+    protected $autoTimeStamp = false;
     protected $createTime = 'created_at';
     protected $updateTime = 'updated_at';
 
