@@ -33,7 +33,7 @@ class GetAuthBook extends AbstractCronTask
     static function getRule(): string
     {
         //每分钟执行一次
-        return '44 18 10 * *';
+        return '49 18 10 * *';
     }
 
     static function getTaskName(): string
@@ -44,16 +44,31 @@ class GetAuthBook extends AbstractCronTask
     function run(int $taskId, int $workerIndex)
     {
         $this->currentAesKey = getRandomStr();
-        //根据三个id，通知不同的url
-        $url_arr = [//http://invoicecommercial.test.dl.alipaydev.com
+
+        $url_arr = [
             36 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
             1 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
             41 => 'https://invoicecommercial-pre.antfin.com/api/wezTech/collectNotify',//pre
             42 => 'https://invoicecommercial.antfin.com/api/wezTech/collectNotify',//pro
         ];
+
         $ids = $this->getNeedSealID();
 
-        $list = sqlRaw("select * from information_dance_ant_auth_list where id in(" . implode(',', $ids) . ") or (authDate = 0 and status = '" . MaYiService::STATUS_0 . "')", CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        $ids = implode(',', $ids);
+
+        $sql = <<<Eof
+SELECT
+	* 
+FROM
+	information_dance_ant_auth_list 
+WHERE
+	id IN ( {$ids} ) 
+	OR (
+	authDate = 0
+	AND STATUS = 0)
+Eof;
+        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+
         $url = [];
         $fileData = [];
         $flieDetail = [];
