@@ -63,7 +63,7 @@ class GetAuthBook extends AbstractCronTask
         $fileData = [];
 //        $fileIdS = [];
         $flieDetail = [];
-//        CommonService::getInstance()->log4PHP($list,'info','get_auth_file_list');
+        CommonService::getInstance()->log4PHP($list,'info','get_auth_file_list');
 
         if (!empty($list)) {
             foreach ($list as $oneEntInfo) {
@@ -83,7 +83,7 @@ class GetAuthBook extends AbstractCronTask
                 $DetailList = AntAuthSealDetail::create()->where([
                     'antAuthId' => $oneEntInfo['id'],
                 ])->all();
-//                CommonService::getInstance()->log4PHP($DetailList,'info','get_auth_file_list_DetailList');
+                CommonService::getInstance()->log4PHP($DetailList,'info','get_auth_file_list_DetailList');
 
                 if(empty($DetailList)){
                     $url['2'] = $this->getDataSealUrl($data);
