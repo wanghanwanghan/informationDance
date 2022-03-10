@@ -5,13 +5,11 @@ namespace App\Crontab\CrontabList;
 use App\Crontab\CrontabBase;
 use App\HttpController\Models\Api\AntAuthList;
 use App\HttpController\Models\Api\AntAuthSealDetail;
-use App\HttpController\Models\Api\AntEmptyLog;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaDaDa\FaDaDaService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
-use App\HttpController\Service\HuiCheJian\HuiCheJianService;
 use App\HttpController\Service\MaYi\MaYiService;
 use App\HttpController\Service\OSS\OSSService;
 use Carbon\Carbon;
@@ -20,7 +18,7 @@ use wanghanwanghan\someUtils\control;
 
 class GetAuthBook extends AbstractCronTask
 {
-    private $crontabBase;
+    public $crontabBase;
     public $currentAesKey;
     public $iv = '1234567890abcdef';
     public $oss_bucket = 'invoice-mrxd';
@@ -35,8 +33,7 @@ class GetAuthBook extends AbstractCronTask
     static function getRule(): string
     {
         //每分钟执行一次
-        return '35 18 10 * *';
-
+        return '44 18 10 * *';
     }
 
     static function getTaskName(): string
@@ -51,26 +48,18 @@ class GetAuthBook extends AbstractCronTask
         $url_arr = [//http://invoicecommercial.test.dl.alipaydev.com
             36 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
             1 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
-//            36 => 'http://invoicecommercial.dev.dl.alipaydev.com/api/wezTech/collectNotify',//http://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
             41 => 'https://invoicecommercial-pre.antfin.com/api/wezTech/collectNotify',//pre
             42 => 'https://invoicecommercial.antfin.com/api/wezTech/collectNotify',//pro
         ];
         $ids = $this->getNeedSealID();
-        //准备获取授权书的企业列表
-//        $list = AntAuthList::create()->where([
-//            'authDate' => 0,
-//            'status' => MaYiService::STATUS_0,
-//        ])->all();
+
         $list = sqlRaw("select * from information_dance_ant_auth_list where id in(" . implode(',', $ids) . ") or (authDate = 0 and status = '" . MaYiService::STATUS_0 . "')", CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $url = [];
         $fileData = [];
-//        $fileIdS = [];
         $flieDetail = [];
-        CommonService::getInstance()->log4PHP($list, 'info', 'get_auth_file_list');
 
         if (!empty($list)) {
             foreach ($list as $oneEntInfo) {
-                CommonService::getInstance()->log4PHP($oneEntInfo, 'info', 'get_auth_file_list_oneEntInfo');
 
                 $data = [
                     'entName' => $oneEntInfo['entName'],// entName companyname
@@ -80,13 +69,11 @@ class GetAuthBook extends AbstractCronTask
                     'phone' => $oneEntInfo['phone'],//phoneno
                     'city' => $oneEntInfo['city'],//region
                     'regAddress' => $oneEntInfo['regAddress'],//address
-//                    'requestId' => $oneEntInfo->getAttr('requestId') . time(),//海光用的，没啥用，随便传
                 ];
-//                CommonService::getInstance()->log4PHP($data,'info','get_auth_file_list_data');
+
                 $DetailList = AntAuthSealDetail::create()->where([
                     'antAuthId' => $oneEntInfo['id'],
                 ])->all();
-                CommonService::getInstance()->log4PHP($DetailList, 'info', 'get_auth_file_list_DetailList');
 
                 if (empty($DetailList)) {
                     $url['2'] = $this->getDataSealUrl($data);
@@ -104,38 +91,33 @@ class GetAuthBook extends AbstractCronTask
                         }
                         $fileData[$value->getAttr('type')] = [
                             'fileAddress' => '',
-                            'type' => $value->getAttr('type'),
+                            'type' => $value->getAttr('type') . '',
                             'isSealed' => (boolean)$value->getAttr('isSealed'),
                             'fileName' => '',
                         ];
                         $flieDetail[$value->getAttr('type')]['fileId'] = $value->getAttr('fileId');
                     }
+
                     //如果不需要盖章，就跳过
                     if ($notNoodIsSeal) {
                         continue;
                     }
-                    CommonService::getInstance()->log4PHP($url, 'info', 'get_auth_file_list_urlArr');
+
                     foreach ($url as $type => $v) {
-                        try {
-                            $res1 = AntAuthSealDetail::create()->where([
-                                'type' => $type,
-                                'antAuthId' => $oneEntInfo['id'],
-                            ])->update([
-                                'fileUrl' => $v,
-                                'status' => empty($v) ? 2 : 1
-                            ]);
-                        } catch (\Throwable $e) {
-                            CommonService::getInstance()->log4PHP($e->getTraceAsString(), 'info', 'get_auth_file_list_url_v');
-                        }
+                        $res1 = AntAuthSealDetail::create()->where([
+                            'type' => $type,
+                            'antAuthId' => $oneEntInfo['id'],
+                        ])->update([
+                            'fileUrl' => $v,
+                            'status' => empty($v) ? 2 : 1
+                        ]);
                         list($file_url, $fileName) = $this->getOssUrl($v, $data['socialCredit'], $flieDetail[$type]);
-                        CommonService::getInstance()->log4PHP($fileData, 'info', 'get_auth_file_list_file_url');
 
                         $fileData[$type]['fileAddress'] = $file_url;
                         $fileData[$type]['fileName'] = $fileName;
                         ksort($fileData[$type]);
                     }
                 }
-                CommonService::getInstance()->log4PHP($fileData, 'info', 'get_auth_file_list_fileData');
 
                 //更新数据库
                 AntAuthList::create()->where([
@@ -216,7 +198,7 @@ class GetAuthBook extends AbstractCronTask
         CommonService::getInstance()->log4PHP([
             '蚂蚁返回',
             $ret
-        ],'info', 'ant_ret.log');
+        ], 'info', 'ant_ret.log');
     }
 
     /*
@@ -226,7 +208,6 @@ class GetAuthBook extends AbstractCronTask
     {
         $data['file_address'] = $file_address;
         $res = (new FaDaDaService())->setCheckRespFlag(true)->getAuthFileForAnt($data);
-        CommonService::getInstance()->log4PHP($res, 'info', 'get_auth_file_return_res');
         if ($res['code'] !== 200) {
             $message = ['name' => '异常内容', 'msg' => json_encode($res)];
             dingAlarmMarkdownForWork('法大大授权书接口异常', $message);
@@ -241,7 +222,6 @@ class GetAuthBook extends AbstractCronTask
     public function getDataSealUrl($data)
     {
         $res = (new FaDaDaService())->setCheckRespFlag(true)->getAuthFile($data);
-        CommonService::getInstance()->log4PHP($res, 'info', 'get_auth_file_return_res');
         if ($res['code'] !== 200) {
             $message = ['name' => '异常内容', 'msg' => json_encode($res)];
             dingAlarmMarkdownForWork('法大大授权书接口异常', $message);
