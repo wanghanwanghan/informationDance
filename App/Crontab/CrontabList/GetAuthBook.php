@@ -100,7 +100,6 @@ class GetAuthBook extends AbstractCronTask
                             'isSealed' => $value->getAttr('isSealed'),
                             'fileName' => '',
                         ];
-//                        $fileIdS[$value->getAttr('type')] = $value->getAttr('fileId');
                         $flieDetail[$value->getAttr('type')]['fileId'] = $value->getAttr('fileId');
                         $flieDetail[$value->getAttr('type')]['fileSecret'] = $value->getAttr('fileSecret');
                     }
@@ -111,6 +110,7 @@ class GetAuthBook extends AbstractCronTask
                             'ant_auth_id' => $oneEntInfo->getAttr('id'),
                         ])->update([
                             'file_url' => $file_url,
+                            'status' => empty($file_url)?2:1
                         ]);
                         $fileData[$type]['fileAddress'] = $file_url;
                         $fileData[$type]['fileName'] = $fileName;
