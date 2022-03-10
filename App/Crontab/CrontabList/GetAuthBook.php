@@ -35,7 +35,7 @@ class GetAuthBook extends AbstractCronTask
     static function getRule(): string
     {
         //每分钟执行一次
-        return '52 17 10 * *';
+        return '55 17 10 * *';
     }
 
     static function getTaskName(): string
@@ -114,14 +114,17 @@ class GetAuthBook extends AbstractCronTask
                     }
                     CommonService::getInstance()->log4PHP($url, 'info', 'get_auth_file_list_urlArr');
                     foreach ($url as $type => $v) {
-                        $res1 = AntAuthSealDetail::create()->where([
-                            'type' => $type,
-                            'antAuthId' => $oneEntInfo['id'],
-                        ])->update([
-                            'fileUrl' => $v,
-                            'status' => empty($v) ? 2 : 1
-                        ]);
-                        CommonService::getInstance()->log4PHP($res1, 'info', 'get_auth_file_list_url_v');
+                        try {
+                            $res1 = AntAuthSealDetail::create()->where([
+                                'type' => $type,
+                                'antAuthId' => $oneEntInfo['id'],
+                            ])->update([
+                                'fileUrl' => $v,
+                                'status' => empty($v) ? 2 : 1
+                            ]);
+                        }catch ( \Exception $e){
+                            CommonService::getInstance()->log4PHP($e, 'info', 'get_auth_file_list_url_v');
+                        }
                         list($file_url, $fileName) = $this->getOssUrl($v, $data['socialCredit'], $flieDetail[$type]);
                         CommonService::getInstance()->log4PHP($fileData, 'info', 'get_auth_file_list_file_url');
 
