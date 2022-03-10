@@ -81,6 +81,7 @@ class GetAuthBook extends AbstractCronTask
                 $DetailList = AntAuthSealDetail::create()->where([
                     'ant_auth_id' => $oneEntInfo->getAttr('id'),
                 ])->all();
+                CommonService::getInstance()->log4PHP($list,'info','get_auth_file_list_DetailList');
 
                 if(empty($DetailList)){
                     $url['2'] = $this->getDataSealUrl($data);
