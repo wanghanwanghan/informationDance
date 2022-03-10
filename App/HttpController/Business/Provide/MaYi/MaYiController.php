@@ -127,8 +127,12 @@ class MaYiController extends Index
             'idCard' => $tmp['body']['idCard'] ?? '',
             'companyName' => $tmp['body']['companyName'] ?? '',
             'mobile' => $tmp['body']['mobile'] ?? '',
-            'fileData' => $tmp['body']['fileData'] ?? '',
         ];
+        if(!empty($tmp['body']['fileData'])){
+            $v['orderNo'] = $tmp['body']['orderNo'] ?? '';
+            $v['fileData'] = $tmp['body']['fileData'] ?? '';
+        }
+        ksort($v);
         $ret = openssl_verify(
             jsonEncode($v, false),
             base64_decode($tmp['head']['sign']),
@@ -154,6 +158,7 @@ class MaYiController extends Index
         $data['requestId'] = control::getUuid();
         $data['belong'] = $userInfo->getAttr('id');
         $data['fileData'] = $tmp['body']['fileData'] ?? '';
+        $data['orderNo'] = $tmp['body']['orderNo'] ?? '';
 
         $res = (new MaYiService())->authEnt($data);
 

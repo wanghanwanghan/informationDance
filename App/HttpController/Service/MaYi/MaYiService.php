@@ -5257,6 +5257,7 @@ class MaYiService extends ServiceBase
             'countyCode' => $baiduApiRes['countyCode'] ?? '',
             'town' => $baiduApiRes['town'] ?? '',
             'townCode' => $baiduApiRes['townCode'] ?? '',
+            'orderNo' => $data['orderNo'],
         ])->save();
 
         //增加除授权书其他证书的表，并做关联

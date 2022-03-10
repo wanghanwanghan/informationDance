@@ -56,11 +56,11 @@ class GetAuthBook extends AbstractCronTask
             'authDate' => 0,
             'status' => MaYiService::STATUS_0,
         ])->all();
-
+        $url = [];
+        $urlArr = [];
+        $fileData = [];
         if (!empty($list)) {
-
             foreach ($list as $oneEntInfo) {
-
                 $data = [
                     'entName' => $oneEntInfo->getAttr('entName'),// entName companyname
                     'socialCredit' => $oneEntInfo->getAttr('socialCredit'),//taxno  newtaxno
@@ -74,76 +74,66 @@ class GetAuthBook extends AbstractCronTask
                 $DetailList = AntAuthSealDetail::create()->where([
                     'ant_auth_id' => $oneEntInfo->getAttr('id'),
                 ])->all();
-                $url = [];
-                $urlArr = [];
-                $fileData = [];
-                foreach ($DetailList as $value){
-                    if($value->getAttr('isSeal')){
-                        if($value->getAttr('type') !=2 ){
-                            $url[$value->getAttr('type')] = $this->getSealUrl($data,$value->getAttr('fileAddress'));
-                        }else{//数字代办委托书盖章加填充
-                            $url['2'] = $this->getDataSealUrl($data);
-                        }
-                    }else{
-                        $urlArr[$value->getAttr('type')] = $value->getAttr('fileAddress');
-                    }
-                    $fileData[$value->getAttr('type')] = [
-                        'firlAddress' => $urlArr[$value->getAttr('type')],
-                        'fileSecret' => $value->getAttr('fileSecret'),
-                        'type' => '',
-                        'isSealed' => '',
-                        'fileName' => '',
-                    ];
-                }
-                foreach ($url as $type => $v){
-                    $file_url = $this->getOssUrl($v,$data['socialCredit']);
-                    AntAuthSealDetail::create()->where([
-                        'type' => $type,
-                        'ant_auth_id' => $oneEntInfo->getAttr('id'),
-                    ])->update([
-                        'file_url' => $file_url,
-                    ]);
-                    $urlArr[] = $file_url;
-                }
 
+                if(empty($DetailList)){
+                    $url['2'] = $this->getDataSealUrl($data);
+                }else {
+                    foreach ($DetailList as $value) {
+                        if ($value->getAttr('isSeal')) {
+                            if ($value->getAttr('type') != 2) {
+                                $url[$value->getAttr('type')] = $this->getSealUrl($data, $value->getAttr('fileAddress'));
+                            } else {//数字代办委托书盖章加填充
+                                $url['2'] = $this->getDataSealUrl($data);
+                            }
+                        } else {
+                            $urlArr[$value->getAttr('type')] = $value->getAttr('fileAddress');
+                        }
+                        $fileData[$value->getAttr('type')] = [
+                            'fileAddress' => '',
+                            'fileSecret' => $value->getAttr('fileSecret'),
+                            'type' => $value->getAttr('type'),
+                            'isSealed' => $value->getAttr('isSealed'),
+                            'fileName' => '',
+                        ];
+                    }
+                    foreach ($url as $type => $v) {
+                        list($file_url, $fileName) = $this->getOssUrl($v, $data['socialCredit']);
+                        AntAuthSealDetail::create()->where([
+                            'type' => $type,
+                            'ant_auth_id' => $oneEntInfo->getAttr('id'),
+                        ])->update([
+                            'file_url' => $file_url,
+                        ]);
+                        $urlArr[] = $file_url;
+                        $fileData[$type]['fileAddress'] = $file_url;
+                        $fileData[$type]['fileName'] = $fileName;
+                    }
+                }
                 //更新数据库
                 AntAuthList::create()->where([
                     'entName' => $oneEntInfo->getAttr('entName'),
                     'socialCredit' => $oneEntInfo->getAttr('socialCredit'),
                 ])->update([
-                    'filePath' => $url,
+                    'filePath' => $url['2'],
                     'authDate' => time(),
                     'status' => MaYiService::STATUS_1
                 ]);
-                $lastReqTime = $oneEntInfo->getAttr('lastReqTime');
+
+                //蚂蚁没有传需要盖章的文件过来时，就不需要通知蚂蚁
+                if(empty($DetailList)) continue;
+
                 //拿私钥
                 $id = $oneEntInfo->getAttr('belong') - 0;
                 $info = RequestUserInfo::create()->get($id);
-                $rsa_pub_name = $info->getAttr('rsaPub');
                 $rsa_pri_name = $info->getAttr('rsaPri');
                 $authResultCode = '0000';
-                //拿公钥加密
-                $stream = file_get_contents(RSA_KEY_PATH . $rsa_pub_name);
-                //AES加密key用RSA加密
-                $fileSecret = control::rsaEncrypt($this->currentAesKey, $stream, 'pub');
-//                $urlArr = $this->getFlieUrl($oneEntInfo->getAttr('id'));
-                $fileKeyList = empty($urlArr) ? [] : array_filter($urlArr);
+                ksort($fileData);
                 $body = [
                     'authResultCode' => $authResultCode,
                     'orderNo'=> $oneEntInfo->getAttr('orderNo'),
                     'nsrsbh' => $oneEntInfo->getAttr('socialCredit'),//授权的企业税号
                     'notifyType' => 'AGREEMENT', //通知类型
-                    'fileData' => [
-                        'firlAddress'=>'',
-                        'fileSecret' => '',
-
-                    ],
-                    'fileSecret' => $fileSecret,//对称钥秘⽂
-                    'companyName' => $oneEntInfo->getAttr('entName'),//公司名称
-                    'authTime' => date('Y-m-d H:i:s', $oneEntInfo->getAttr('requestDate')),//授权时间
-                    'totalCount' => count($urlArr) . '',
-                    'fileKeyList' => $fileKeyList,//文件路径
-
+                    'fileData' => $fileData
                 ];
                 ksort($body);//周平说参数升序
 
@@ -160,7 +150,6 @@ class GetAuthBook extends AbstractCronTask
                         'notifyChannel' => 'ELEPHANT',//通知 渠道
                     ],
                 ];
-
                 $url = $url_arr[$id];
                 $this->sendAnt($url,$collectNotify);
             }
@@ -236,12 +225,13 @@ class GetAuthBook extends AbstractCronTask
 
     public function getOssUrl($path,$socialCredit){
         if(empty($path)) return '';
-        return OSSService::getInstance()
+        $fileName = $socialCredit.'page'.control::getUuid(8).'pdf';
+        return [OSSService::getInstance()
             ->doUploadFile(
                 $this->oss_bucket,
-                Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $socialCredit.'page'.control::getUuid().'pdf',
+                Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $fileName,
                 INV_AUTH_PATH .$path,
                 $this->oss_expire_time
-            );
+            ),$fileName];
     }
 }
