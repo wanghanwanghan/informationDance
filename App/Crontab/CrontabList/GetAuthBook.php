@@ -277,7 +277,7 @@ Eof;
             'status' => 0,
             'isSeal' => 'true'
         ])->all();
-        $ids = [];
+        $ids = [0];
         foreach ($list as $item) {
             $ids[$item->getAttr('antAuthId')] = $item->getAttr('antAuthId');
         }
