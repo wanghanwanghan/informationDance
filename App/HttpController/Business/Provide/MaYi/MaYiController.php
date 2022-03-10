@@ -135,6 +135,12 @@ class MaYiController extends Index
         //新方式
         if (!empty($tmp['body']['fileData'])) {
             $v['orderNo'] = $tmp['body']['orderNo'] ?? '';
+
+            foreach ($tmp['body']['fileData'] as &$one) {
+                ksort($one);
+            }
+            unset($one);
+
             $v['fileData'] = $tmp['body']['fileData'];
             ksort($v);
         }
