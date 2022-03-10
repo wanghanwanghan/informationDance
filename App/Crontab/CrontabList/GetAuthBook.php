@@ -183,17 +183,7 @@ class GetAuthBook extends AbstractCronTask
             $ret
         ]);
     }
-    public function getFlieUrl($ant_auth_id){
-        $list = AntAuthSealDetail::create()->where([
-            'ant_auth_id' => $ant_auth_id,
-        ])->all();
-        if(empty($list)) return [];
-        $urlArr = [];
-        foreach ($list as $item) {
-            $urlArr[] = $item->getAttr('file_url');
-        }
-        return $urlArr;
-    }
+
 
     /*
      * 多个文件盖章，是否是只有企业授权书需要去判断是否需要盖章，确定下一个企业是否一定只会有一个是需要盖章的
