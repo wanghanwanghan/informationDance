@@ -114,6 +114,7 @@ class GetAuthBook extends AbstractCronTask
                         ]);
                         $fileData[$type]['fileAddress'] = $file_url;
                         $fileData[$type]['fileName'] = $fileName;
+                        ksort($fileData[$type]);
                     }
                 }
                 //更新数据库
@@ -135,13 +136,12 @@ class GetAuthBook extends AbstractCronTask
                 $info = RequestUserInfo::create()->get($id);
                 $rsa_pri_name = $info->getAttr('rsaPri');
                 $authResultCode = '0000';
-                ksort($fileData);
                 $body = [
                     'authResultCode' => $authResultCode,
                     'orderNo'=> $oneEntInfo->getAttr('orderNo'),
                     'nsrsbh' => $oneEntInfo->getAttr('socialCredit'),//授权的企业税号
                     'notifyType' => 'AGREEMENT', //通知类型
-                    'fileData' => $fileData
+                    'fileData' => array_values($fileData)
                 ];
                 ksort($body);//周平说参数升序
 
