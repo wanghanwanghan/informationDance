@@ -22,7 +22,7 @@ class GuoPiaoController extends ProvideBase
         parent::afterAction($actionName);
     }
 
-    function checkResponse($res)
+    function checkResponse($res): bool
     {
         if (empty($res[$this->cspKey])) {
             $this->responseCode = $res['code'] ?? 500;
@@ -42,7 +42,7 @@ class GuoPiaoController extends ProvideBase
         return true;
     }
 
-    function getInvoiceOcr()
+    function getInvoiceOcr(): bool
     {
         $imageStr = $this->getRequestData('image', '');
         $imageJpg = $this->request()->getUploadedFile('image');
@@ -71,7 +71,7 @@ class GuoPiaoController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    function getInvoiceCheck()
+    function getInvoiceCheck(): bool
     {
         $postData = [
             'invoiceCode' => $this->getRequestData('invoiceCode'),
@@ -90,7 +90,7 @@ class GuoPiaoController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    function getAuthentication()
+    function getAuthentication(): bool
     {
         $appId = $this->getRequestData('appId', '');
         $entName = $this->getRequestData('entName', '');
@@ -141,7 +141,7 @@ class GuoPiaoController extends ProvideBase
         return $this->writeJson($res['code'], null, $res['data'], $res['message']);
     }
 
-    function getFinanceIncomeStatementAnnualReport()
+    function getFinanceIncomeStatementAnnualReport(): bool
     {
         $code = $this->getRequestData('code');
 
@@ -150,7 +150,7 @@ class GuoPiaoController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    function getFinanceIncomeStatement()
+    function getFinanceIncomeStatement(): bool
     {
         $code = $this->getRequestData('code');
 
@@ -159,7 +159,7 @@ class GuoPiaoController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    function getFinanceBalanceSheetAnnual()
+    function getFinanceBalanceSheetAnnual(): bool
     {
         $code = $this->getRequestData('code');
 
@@ -168,7 +168,7 @@ class GuoPiaoController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    function getFinanceBalanceSheet()
+    function getFinanceBalanceSheet(): bool
     {
         $code = $this->getRequestData('code');
 
