@@ -158,11 +158,11 @@ class GetAuthBook extends AbstractCronTask
 
                 $body = [
                     'sealResultCode' => $authResultCode,
-                    'orderNo' => $oneEntInfo['orderNo'],
+                    'orderNo' => $oneEntInfo['orderNo'] . '',
                     'nsrsbh' => $oneEntInfo['socialCredit'],//授权的企业税号
                     'notifyType' => 'AGREEMENT', //通知类型
                     'fileData' => array_values($fileData),
-                    //'fileSecret' => $fileSecret,//对称钥秘⽂
+                    'fileSecret' => $fileSecret,//对称钥秘⽂
                 ];
                 ksort($body);//周平说参数升序
 
