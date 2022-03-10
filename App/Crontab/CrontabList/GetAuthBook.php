@@ -230,7 +230,7 @@ class GetAuthBook extends AbstractCronTask
     public function getOssUrl($path,$socialCredit,$flieDetail){
 //        $flieDetail['fileSecret'];
         if(empty($path)) return '';
-        $fileName = $socialCredit.'_'.$flieDetail['fileId'].'_'.control::getUuid(8).'pdf';
+        $fileName = $socialCredit.'_'.$flieDetail['fileId'].'_'.control::getUuid(8).'.pdf';
         return [OSSService::getInstance()
             ->doUploadFile(
                 $this->oss_bucket,
