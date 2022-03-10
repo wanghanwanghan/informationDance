@@ -34,7 +34,7 @@ class GetAuthBook extends AbstractCronTask
     static function getRule(): string
     {
         //每分钟执行一次
-        return '22 16 10 * *';
+        return '31 16 10 * *';
     }
 
     static function getTaskName(): string
@@ -71,18 +71,18 @@ class GetAuthBook extends AbstractCronTask
                 CommonService::getInstance()->log4PHP($oneEntInfo,'info','get_auth_file_list_oneEntInfo');
 
                 $data = [
-                    'entName' => $oneEntInfo->getAttr('entName'),// entName companyname
-                    'socialCredit' => $oneEntInfo->getAttr('socialCredit'),//taxno  newtaxno
-                    'legalPerson' => $oneEntInfo->getAttr('legalPerson'),//signName
-                    'idCard' => $oneEntInfo->getAttr('idCard'),
-                    'phone' => $oneEntInfo->getAttr('phone'),//phoneno
-                    'city' => $oneEntInfo->getAttr('city'),//region
-                    'regAddress' => $oneEntInfo->getAttr('regAddress'),//address
-                    'requestId' => $oneEntInfo->getAttr('requestId') . time(),//海光用的，没啥用，随便传
+                    'entName' => $oneEntInfo['entName'],// entName companyname
+                    'socialCredit' => $oneEntInfo['socialCredit'],//taxno  newtaxno
+                    'legalPerson' => $oneEntInfo['legalPerson'],//signName
+                    'idCard' => $oneEntInfo['idCard'],
+                    'phone' => $oneEntInfo['phone'],//phoneno
+                    'city' => $oneEntInfo['city'],//region
+                    'regAddress' => $oneEntInfo['regAddress'],//address
+//                    'requestId' => $oneEntInfo->getAttr('requestId') . time(),//海光用的，没啥用，随便传
                 ];
                 CommonService::getInstance()->log4PHP($data,'info','get_auth_file_list_data');
                 $DetailList = AntAuthSealDetail::create()->where([
-                    'ant_auth_id' => $oneEntInfo->getAttr('id'),
+                    'ant_auth_id' => $oneEntInfo['id'],
                 ])->all();
                 CommonService::getInstance()->log4PHP($DetailList,'info','get_auth_file_list_DetailList');
 
@@ -119,7 +119,7 @@ class GetAuthBook extends AbstractCronTask
                         list($file_url, $fileName) = $this->getOssUrl($v, $data['socialCredit'],$flieDetail[$type]);
                         AntAuthSealDetail::create()->where([
                             'type' => $type,
-                            'ant_auth_id' => $oneEntInfo->getAttr('id'),
+                            'ant_auth_id' => $oneEntInfo['id'],
                         ])->update([
                             'file_url' => $file_url,
                             'status' => empty($file_url)?2:1
@@ -133,8 +133,8 @@ class GetAuthBook extends AbstractCronTask
 
                 //更新数据库
                 AntAuthList::create()->where([
-                    'entName' => $oneEntInfo->getAttr('entName'),
-                    'socialCredit' => $oneEntInfo->getAttr('socialCredit'),
+                    'entName' => $oneEntInfo['entName'],
+                    'socialCredit' => $oneEntInfo['socialCredit'],
                     'status' => MaYiService::STATUS_0
                 ])->update([
                     'filePath' => $url['2'],
@@ -146,14 +146,14 @@ class GetAuthBook extends AbstractCronTask
                 if(empty($DetailList)) continue;
 
                 //拿私钥
-                $id = $oneEntInfo->getAttr('belong') - 0;
+                $id = $oneEntInfo['belong'] - 0;
                 $info = RequestUserInfo::create()->get($id);
                 $rsa_pri_name = $info->getAttr('rsaPri');
                 $authResultCode = '0000';
                 $body = [
                     'authResultCode' => $authResultCode,
-                    'orderNo'=> $oneEntInfo->getAttr('orderNo'),
-                    'nsrsbh' => $oneEntInfo->getAttr('socialCredit'),//授权的企业税号
+                    'orderNo'=> $oneEntInfo['orderNo'],
+                    'nsrsbh' => $oneEntInfo['socialCredit'],//授权的企业税号
                     'notifyType' => 'AGREEMENT', //通知类型
                     'fileData' => array_values($fileData)
                 ];
