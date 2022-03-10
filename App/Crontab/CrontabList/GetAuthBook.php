@@ -35,7 +35,7 @@ class GetAuthBook extends AbstractCronTask
     static function getRule(): string
     {
         //每分钟执行一次
-        return '33 17 10 * *';
+        return '41 17 10 * *';
     }
 
     static function getTaskName(): string
@@ -68,7 +68,7 @@ class GetAuthBook extends AbstractCronTask
 
         if (!empty($list)) {
             foreach ($list as $oneEntInfo) {
-//                CommonService::getInstance()->log4PHP($oneEntInfo,'info','get_auth_file_list_oneEntInfo');
+                CommonService::getInstance()->log4PHP($oneEntInfo,'info','get_auth_file_list_oneEntInfo');
 
                 $data = [
                     'entName' => $oneEntInfo['entName'],// entName companyname
@@ -121,7 +121,10 @@ class GetAuthBook extends AbstractCronTask
                             'fileUrl' => $v,
                             'status' => empty($v) ? 2 : 1
                         ]);
+                        CommonService::getInstance()->log4PHP($fileData, 'info', 'get_auth_file_list_url_v');
                         list($file_url, $fileName) = $this->getOssUrl($v, $data['socialCredit'], $flieDetail[$type]);
+                        CommonService::getInstance()->log4PHP($fileData, 'info', 'get_auth_file_list_file_url');
+
                         $fileData[$type]['fileAddress'] = $file_url;
                         $fileData[$type]['fileName'] = $fileName;
                         ksort($fileData[$type]);
