@@ -59,6 +59,7 @@ class GetAuthBook extends AbstractCronTask
         $url = [];
         $urlArr = [];
         $fileData = [];
+        $fileIdS = [];
         if (!empty($list)) {
             foreach ($list as $oneEntInfo) {
                 $data = [
@@ -95,16 +96,16 @@ class GetAuthBook extends AbstractCronTask
                             'isSealed' => $value->getAttr('isSealed'),
                             'fileName' => '',
                         ];
+                        $fileIdS[$value->getAttr('type')] = $value->getAttr('fileId');
                     }
                     foreach ($url as $type => $v) {
-                        list($file_url, $fileName) = $this->getOssUrl($v, $data['socialCredit']);
+                        list($file_url, $fileName) = $this->getOssUrl($v, $data['socialCredit'],$fileIdS[$type]);
                         AntAuthSealDetail::create()->where([
                             'type' => $type,
                             'ant_auth_id' => $oneEntInfo->getAttr('id'),
                         ])->update([
                             'file_url' => $file_url,
                         ]);
-                        $urlArr[] = $file_url;
                         $fileData[$type]['fileAddress'] = $file_url;
                         $fileData[$type]['fileName'] = $fileName;
                     }
@@ -223,9 +224,9 @@ class GetAuthBook extends AbstractCronTask
         return $res['result']['url'];
     }
 
-    public function getOssUrl($path,$socialCredit){
+    public function getOssUrl($path,$socialCredit,$fileId){
         if(empty($path)) return '';
-        $fileName = $socialCredit.'page'.control::getUuid(8).'pdf';
+        $fileName = $socialCredit.'_'.$fileId.'_'.control::getUuid(8).'pdf';
         return [OSSService::getInstance()
             ->doUploadFile(
                 $this->oss_bucket,
