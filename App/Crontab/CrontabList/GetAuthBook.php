@@ -120,6 +120,7 @@ class GetAuthBook extends AbstractCronTask
                 AntAuthList::create()->where([
                     'entName' => $oneEntInfo->getAttr('entName'),
                     'socialCredit' => $oneEntInfo->getAttr('socialCredit'),
+                    'status' => MaYiService::STATUS_0
                 ])->update([
                     'filePath' => $url['2'],
                     'authDate' => time(),
