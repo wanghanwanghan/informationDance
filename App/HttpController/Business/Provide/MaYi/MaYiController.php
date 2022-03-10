@@ -145,6 +145,8 @@ class MaYiController extends Index
             ksort($v);
         }
 
+        CommonService::getInstance()->log4PHP($v);
+
         $ret = openssl_verify(
             jsonEncode($v, false),
             base64_decode($tmp['head']['sign']),
