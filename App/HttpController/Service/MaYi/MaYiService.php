@@ -5219,64 +5219,62 @@ class MaYiService extends ServiceBase
             'socialCredit' => $data['socialCredit'],
         ])->get();
 
-        if (!empty($check)) {
-            return $this->check(610, null, null, '已经授权过了');
-        }
+        if (empty($check)) {
+            $baiduApi = BaiDuService::getInstance()->addressToStructured(trim($res['DOM']));
+            $baiduApiRes = [];
+            if ($baiduApi['status'] === 0) {
+                $baiduApiRes['regAddress'] = $res['DOM'] ?? '';
+                $baiduApiRes['province'] = $baiduApi['result']['province'] ?? '';
+                $baiduApiRes['provinceCode'] = $baiduApi['result']['province_code'] ?? '';
+                $baiduApiRes['city'] = $baiduApi['result']['city'] ?? '';
+                $baiduApiRes['cityCode'] = $baiduApi['result']['city_code'] ?? '';
+                $baiduApiRes['county'] = $baiduApi['result']['county'] ?? '';
+                $baiduApiRes['countyCode'] = $baiduApi['result']['county_code'] ?? '';
+                $baiduApiRes['town'] = $baiduApi['result']['town'] ?? '';
+                $baiduApiRes['townCode'] = $baiduApi['result']['town_code'] ?? '';
+            }
 
-        $baiduApi = BaiDuService::getInstance()->addressToStructured(trim($res['DOM']));
-        $baiduApiRes = [];
-        if ($baiduApi['status'] === 0) {
-            $baiduApiRes['regAddress'] = $res['DOM'] ?? '';
-            $baiduApiRes['province'] = $baiduApi['result']['province'] ?? '';
-            $baiduApiRes['provinceCode'] = $baiduApi['result']['province_code'] ?? '';
-            $baiduApiRes['city'] = $baiduApi['result']['city'] ?? '';
-            $baiduApiRes['cityCode'] = $baiduApi['result']['city_code'] ?? '';
-            $baiduApiRes['county'] = $baiduApi['result']['county'] ?? '';
-            $baiduApiRes['countyCode'] = $baiduApi['result']['county_code'] ?? '';
-            $baiduApiRes['town'] = $baiduApi['result']['town'] ?? '';
-            $baiduApiRes['townCode'] = $baiduApi['result']['town_code'] ?? '';
+            $id = AntAuthList::create()->data([
+                'requestId' => $data['requestId'],
+                'entName' => $data['entName'],
+                'socialCredit' => $data['socialCredit'],
+                'legalPerson' => $data['legalPerson'],
+                'idCard' => $data['idCard'],
+                'phone' => $data['phone'],
+                'region' => $baiduApiRes['city'] ?? '',
+                'requestDate' => time(),
+                'belong' => $data['belong'],
+                'status' => self::STATUS_0,
+                'regAddress' => $baiduApiRes['regAddress'] ?? '',
+                'province' => $baiduApiRes['province'] ?? '',
+                'provinceCode' => $baiduApiRes['provinceCode'] ?? '',
+                'city' => $baiduApiRes['city'] ?? '',
+                'cityCode' => $baiduApiRes['cityCode'] ?? '',
+                'county' => $baiduApiRes['county'] ?? '',
+                'countyCode' => $baiduApiRes['countyCode'] ?? '',
+                'town' => $baiduApiRes['town'] ?? '',
+                'townCode' => $baiduApiRes['townCode'] ?? '',
+                'orderNo' => $data['orderNo'],
+            ])->save();
+        } else {
+            $id = $check->getAttr('id');
         }
-
-        $id = AntAuthList::create()->data([
-            'requestId' => $data['requestId'],
-            'entName' => $data['entName'],
-            'socialCredit' => $data['socialCredit'],
-            'legalPerson' => $data['legalPerson'],
-            'idCard' => $data['idCard'],
-            'phone' => $data['phone'],
-            'region' => $baiduApiRes['city'] ?? '',
-            'requestDate' => time(),
-            'belong' => $data['belong'],
-            'status' => self::STATUS_0,
-            'regAddress' => $baiduApiRes['regAddress'] ?? '',
-            'province' => $baiduApiRes['province'] ?? '',
-            'provinceCode' => $baiduApiRes['provinceCode'] ?? '',
-            'city' => $baiduApiRes['city'] ?? '',
-            'cityCode' => $baiduApiRes['cityCode'] ?? '',
-            'county' => $baiduApiRes['county'] ?? '',
-            'countyCode' => $baiduApiRes['countyCode'] ?? '',
-            'town' => $baiduApiRes['town'] ?? '',
-            'townCode' => $baiduApiRes['townCode'] ?? '',
-            'orderNo' => $data['orderNo'],
-        ])->save();
 
         //增加除授权书其他证书的表，并做关联
-        if(!empty($data['fileData'])){
+        if (!empty($data['fileData'])) {
             foreach ($data['fileData'] as $datum) {
                 AntAuthSealDetail::create()->data([
-                    'isSeal'=> $datum['isSeal'],
-                    'coordinate'=> $datum['coordinate'],
-                    'isReturn'=> $datum['isReturn'],
-                    'fileAddress'=> $datum['fileAddress'],
-                    'fileId'=> $datum['fileId'],
-                    'antAuthId'=> $id,
+                    'isSeal' => $datum['isSeal'],
+                    'coordinate' => $datum['coordinate'],
+                    'isReturn' => $datum['isReturn'],
+                    'fileAddress' => $datum['fileAddress'],
+                    'fileId' => $datum['fileId'],
+                    'antAuthId' => $id,
                     'type' => $datum['type'],
                     'fileSecret' => $datum['fileSecret'],
                 ])->save();
             }
         }
-
-
 
         return $this->check(200, null, null, null);
     }
