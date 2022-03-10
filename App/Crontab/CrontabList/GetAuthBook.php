@@ -239,7 +239,7 @@ class GetAuthBook extends AbstractCronTask
         ])->all();
         $ids = [];
         foreach ($list as $item) {
-            $ids[] = $item->getAttr('antAuthId');
+            $ids[$item->getAttr('antAuthId')] = $item->getAttr('antAuthId');
         }
         return $ids;
     }
