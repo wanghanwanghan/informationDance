@@ -35,7 +35,7 @@ class GetAuthBook extends AbstractCronTask
     static function getRule(): string
     {
         //每分钟执行一次
-        return '7 18 10 * *';
+        return '17 18 10 * *';
     }
 
     static function getTaskName(): string
@@ -49,6 +49,7 @@ class GetAuthBook extends AbstractCronTask
         //根据三个id，通知不同的url
         $url_arr = [//http://invoicecommercial.test.dl.alipaydev.com
             36 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
+            1 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
 //            36 => 'http://invoicecommercial.dev.dl.alipaydev.com/api/wezTech/collectNotify',//http://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
             41 => 'https://invoicecommercial-pre.antfin.com/api/wezTech/collectNotify',//pre
             42 => 'https://invoicecommercial.antfin.com/api/wezTech/collectNotify',//pro
@@ -212,9 +213,9 @@ class GetAuthBook extends AbstractCronTask
             ->send($url, jsonEncode($collectNotify, false), $header, [], 'postjson');
 
         CommonService::getInstance()->log4PHP([
-            '蚂蚁返回的',
+            '蚂蚁返回',
             $ret
-        ]);
+        ], 'info', 'ant.log');
     }
 
     /*
@@ -264,7 +265,7 @@ class GetAuthBook extends AbstractCronTask
             $this->iv
         ));
 
-        file_put_contents(INV_AUTH_PATH . $path . '.aes', $content . PHP_EOL);
+        file_put_contents(INV_AUTH_PATH . $path . '.aes', $content);
 
         return [OSSService::getInstance()
             ->doUploadFile(
