@@ -207,7 +207,7 @@ class GetAuthBook extends AbstractCronTask
         CommonService::getInstance()->log4PHP($res,'info','get_auth_file_return_res');
         if ($res['code'] !== 200) {
             $message = ['name'=>'异常内容','msg'=>json_encode($res)];
-            dingAlarmMarkdown('法大大授权书接口异常',$message);
+            dingAlarmMarkdownForWork('法大大授权书接口异常',$message);
             return '';
         }
         return $res['result']['url'];
@@ -221,7 +221,7 @@ class GetAuthBook extends AbstractCronTask
         CommonService::getInstance()->log4PHP($res,'info','get_auth_file_return_res');
         if ($res['code'] !== 200) {
             $message = ['name'=>'异常内容','msg'=>json_encode($res)];
-            dingAlarmMarkdown('法大大授权书接口异常',$message);
+            dingAlarmMarkdownForWork('法大大授权书接口异常',$message);
             return '';
         }
         return $res['result']['url'];
