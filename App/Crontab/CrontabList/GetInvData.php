@@ -89,9 +89,8 @@ class GetInvData extends AbstractCronTask
     function sendToAnt(): bool
     {
         //根据三个id，通知不同的url
-        $url_arr = [//http://invoicecommercial.test.dl.alipaydev.com
+        $url_arr = [
             36 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
-//            36 => 'http://invoicecommercial.dev.dl.alipaydev.com/api/wezTech/collectNotify',//http://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
             41 => 'https://invoicecommercial-pre.antfin.com/api/wezTech/collectNotify',//pre
             42 => 'https://invoicecommercial.antfin.com/api/wezTech/collectNotify',//pro
         ];
@@ -155,8 +154,8 @@ class GetInvData extends AbstractCronTask
                     'type' => 'INVOICE' //通知发票
                 ];
                 $num = $in + $out;
-                $dateM = (time()-$oneReadyToSend->getAttr('requestDate'))/86400;
-                if(empty($num) && $dateM < 30 ){
+                $dateM = (time() - $oneReadyToSend->getAttr('requestDate')) / 86400;
+                if (empty($num) && $dateM < 30) {
                     $body['authResultCode'] = '9000';//'没准备好';
                     AntEmptyLog::create()->data([
                         'nsrsbh' => $body['nsrsbh'],
@@ -189,7 +188,7 @@ class GetInvData extends AbstractCronTask
                 ];
 
                 //生产环境先不通知
-                if ($oneReadyToSend->belong - 0 === 41) {
+                if ($oneReadyToSend->belong - 0 === 36) {
 
                     CommonService::getInstance()->log4PHP([
                         '发给蚂蚁的',
