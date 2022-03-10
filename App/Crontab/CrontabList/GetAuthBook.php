@@ -72,7 +72,6 @@ Eof;
         $url = [];
         $fileData = [];
         $flieDetail = [];
-
         if (!empty($list)) {
             foreach ($list as $oneEntInfo) {
 
@@ -119,7 +118,7 @@ Eof;
                     }
 
                     foreach ($url as $type => $v) {
-                        $res1 = AntAuthSealDetail::create()->where([
+                        AntAuthSealDetail::create()->where([
                             'type' => $type,
                             'antAuthId' => $oneEntInfo['id'],
                         ])->update([

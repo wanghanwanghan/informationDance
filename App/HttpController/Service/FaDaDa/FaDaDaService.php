@@ -498,7 +498,7 @@ class FaDaDaService extends ServiceBase
             'open_id' => $openId,
             'account_type' => $accountType,
         ];
-        CommonService::getInstance()->log4PHP($post_data,'info','account_register_param_arr');
+//        CommonService::getInstance()->log4PHP($post_data,'info','account_register_param_arr');
         $resp = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
@@ -549,7 +549,7 @@ class FaDaDaService extends ServiceBase
             'transaction_id' => $arr['transaction_id'],//交易号 字符 len <= 32
             'cert_flag' => $arr['cert_flag'],//是否认证成功后自动申请编号证书 默认参数值为0 不申请 参数值为1 自动申请
         ];
-        CommonService::getInstance()->log4PHP($post_data,'info','hash_deposit_param_arr');
+//        CommonService::getInstance()->log4PHP($post_data,'info','hash_deposit_param_arr');
 
         $resp = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
@@ -618,11 +618,11 @@ class FaDaDaService extends ServiceBase
             'doc_url' => $doc_url,
         ];
 
-        CommonService::getInstance()->log4PHP($post_data,'info','uploadtemplate_param_arr');
+//        CommonService::getInstance()->log4PHP($post_data,'info','uploadtemplate_param_arr');
         $resp = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
-        CommonService::getInstance()->log4PHP($resp,'info','uploadTemplate');
+//        CommonService::getInstance()->log4PHP($resp,'info','uploadTemplate');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
@@ -651,7 +651,7 @@ class FaDaDaService extends ServiceBase
             'customer_id' => $arr['customer_id'],
             'signature_img_base64' => $arr['signature_img_base64'],
         ];
-        CommonService::getInstance()->log4PHP($post_data,'info','add_signature_param_arr');
+//        CommonService::getInstance()->log4PHP($post_data,'info','add_signature_param_arr');
 
         $resp = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
@@ -706,11 +706,11 @@ class FaDaDaService extends ServiceBase
 //            'fill_type' => $arr['fill_type'],//填充类型 0 pdf 模板、1 在线填充模板
             'parameter_map' => $arr['parameter_map'],//填充内容 json key val
         ];
-        CommonService::getInstance()->log4PHP($post_data,'info','generate_contract_param_arr');
+//        CommonService::getInstance()->log4PHP($post_data,'info','generate_contract_param_arr');
         $resp = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
-        CommonService::getInstance()->log4PHP($resp,'info','generate_contract');
+//        CommonService::getInstance()->log4PHP($resp,'info','generate_contract');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
@@ -748,12 +748,12 @@ class FaDaDaService extends ServiceBase
 //            'signature_show_time' => $arr['signature_show_time'],//时间戳显示方式 1 显示 2 不显示
             'signature_positions'=>'[{"pagenum":0,"x":'.$x.',"y":'.$y.'}]',
         ];
-        CommonService::getInstance()->log4PHP($post_data,'info','extsign_auto_param_arr');
+//        CommonService::getInstance()->log4PHP($post_data,'info','extsign_auto_param_arr');
 
         $resp = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
-        CommonService::getInstance()->log4PHP($resp,'info','extsign_auto');
+//        CommonService::getInstance()->log4PHP($resp,'info','extsign_auto');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
@@ -791,12 +791,12 @@ class FaDaDaService extends ServiceBase
 //            'signature_show_time' => $arr['signature_show_time'],//时间戳显示方式 1 显示 2 不显示
 //            'signature_positions'=>'[{"pagenum":0,"x":'.$x.',"y":'.$y.'}]',
         ];
-        CommonService::getInstance()->log4PHP($post_data,'info','extsign_auto_param_arr');
+//        CommonService::getInstance()->log4PHP($post_data,'info','extsign_auto_param_arr');
 
         $resp = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
-        CommonService::getInstance()->log4PHP($resp,'info','extsign_auto');
+//        CommonService::getInstance()->log4PHP($resp,'info','extsign_auto');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
@@ -823,7 +823,7 @@ class FaDaDaService extends ServiceBase
             'msg_digest' => $msg_digest,
             'contract_id' => $arr['contract_id'],
         ];
-        CommonService::getInstance()->log4PHP($post_data,'info','downLoadContract_arr');
+//        CommonService::getInstance()->log4PHP($post_data,'info','downLoadContract_arr');
         $resp = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->needJsonDecode(false)
@@ -844,7 +844,7 @@ class FaDaDaService extends ServiceBase
             $resp,
             FILE_APPEND | LOCK_EX
         );
-        CommonService::getInstance()->log4PHP($path,'info','downLoadContract');
+//        CommonService::getInstance()->log4PHP($path,'info','downLoadContract');
         return $path;
     }
 
@@ -870,11 +870,11 @@ class FaDaDaService extends ServiceBase
             'doc_type' =>'.pdf'
         ];
 
-        CommonService::getInstance()->log4PHP($post_data,'info','uploaddocs_param_arr');
+//        CommonService::getInstance()->log4PHP($post_data,'info','uploaddocs_param_arr');
         $resp = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
-        CommonService::getInstance()->log4PHP($resp,'info','uploaddocs');
+//        CommonService::getInstance()->log4PHP($resp,'info','uploaddocs');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 }
