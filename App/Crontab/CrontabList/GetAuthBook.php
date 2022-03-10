@@ -34,7 +34,7 @@ class GetAuthBook extends AbstractCronTask
     static function getRule(): string
     {
         //每分钟执行一次
-        return '39 16 10 * *';
+        return '47 16 10 * *';
     }
 
     static function getTaskName(): string
@@ -64,11 +64,11 @@ class GetAuthBook extends AbstractCronTask
         $fileData = [];
 //        $fileIdS = [];
         $flieDetail = [];
-        CommonService::getInstance()->log4PHP($list,'info','get_auth_file_list');
+//        CommonService::getInstance()->log4PHP($list,'info','get_auth_file_list');
 
         if (!empty($list)) {
             foreach ($list as $oneEntInfo) {
-                CommonService::getInstance()->log4PHP($oneEntInfo,'info','get_auth_file_list_oneEntInfo');
+//                CommonService::getInstance()->log4PHP($oneEntInfo,'info','get_auth_file_list_oneEntInfo');
 
                 $data = [
                     'entName' => $oneEntInfo['entName'],// entName companyname
@@ -80,11 +80,11 @@ class GetAuthBook extends AbstractCronTask
                     'regAddress' => $oneEntInfo['regAddress'],//address
 //                    'requestId' => $oneEntInfo->getAttr('requestId') . time(),//海光用的，没啥用，随便传
                 ];
-                CommonService::getInstance()->log4PHP($data,'info','get_auth_file_list_data');
+//                CommonService::getInstance()->log4PHP($data,'info','get_auth_file_list_data');
                 $DetailList = AntAuthSealDetail::create()->where([
                     'antAuthId' => $oneEntInfo['id'],
                 ])->all();
-                CommonService::getInstance()->log4PHP($DetailList,'info','get_auth_file_list_DetailList');
+//                CommonService::getInstance()->log4PHP($DetailList,'info','get_auth_file_list_DetailList');
 
                 if(empty($DetailList)){
                     $url['2'] = $this->getDataSealUrl($data);
@@ -111,6 +111,7 @@ class GetAuthBook extends AbstractCronTask
                         $flieDetail[$value->getAttr('type')]['fileId'] = $value->getAttr('fileId');
                         $flieDetail[$value->getAttr('type')]['fileSecret'] = $value->getAttr('fileSecret');
                     }
+                    CommonService::getInstance()->log4PHP($urlArr,'info','get_auth_file_list_urlArr');
                     //如果不需要盖章，就跳过
                     if($notNoodIsSeal){
                         continue;
