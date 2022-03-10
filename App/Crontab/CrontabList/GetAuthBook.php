@@ -8,6 +8,7 @@ use App\HttpController\Models\Api\AntAuthSealDetail;
 use App\HttpController\Models\Api\AntEmptyLog;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaDaDa\FaDaDaService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\HuiCheJian\HuiCheJianService;
@@ -51,11 +52,13 @@ class GetAuthBook extends AbstractCronTask
             41 => 'https://invoicecommercial-pre.antfin.com/api/wezTech/collectNotify',//pre
             42 => 'https://invoicecommercial.antfin.com/api/wezTech/collectNotify',//pro
         ];
+        $ids = $this->getNeedSealID();
         //准备获取授权书的企业列表
-        $list = AntAuthList::create()->where([
-            'authDate' => 0,
-            'status' => MaYiService::STATUS_0,
-        ])->all();
+//        $list = AntAuthList::create()->where([
+//            'authDate' => 0,
+//            'status' => MaYiService::STATUS_0,
+//        ])->all();
+        $list = sqlRaw("select * from information_dance_ant_auth_list where id in(".implode(',',$ids).") or (authDate = 0 and status = '".MaYiService::STATUS_0."')", CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $url = [];
         $urlArr = [];
         $fileData = [];
@@ -224,5 +227,16 @@ class GetAuthBook extends AbstractCronTask
                 INV_AUTH_PATH .$path,
                 $this->oss_expire_time
             ),$fileName];
+    }
+
+    public function getNeedSealID(){
+        $list = AntAuthSealDetail::create()->where([
+            'status' => 0,
+        ])->all();
+        $ids = [];
+        foreach ($list as $item) {
+            $ids[] = $item->getAttr('antAuthId');
+        }
+        return $ids;
     }
 }
