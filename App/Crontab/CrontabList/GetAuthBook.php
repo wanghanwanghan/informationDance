@@ -35,7 +35,7 @@ class GetAuthBook extends AbstractCronTask
     static function getRule(): string
     {
         //每分钟执行一次
-        return '7 18 10 * *';
+        return '22 18 10 * *';
     }
 
     static function getTaskName(): string
@@ -214,7 +214,7 @@ class GetAuthBook extends AbstractCronTask
         CommonService::getInstance()->log4PHP([
             '蚂蚁返回的',
             $ret
-        ]);
+        ],'info', 'ant_ret.log');
     }
 
     /*
