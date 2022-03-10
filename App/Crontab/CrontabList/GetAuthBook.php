@@ -64,11 +64,11 @@ class GetAuthBook extends AbstractCronTask
         $fileData = [];
 //        $fileIdS = [];
         $flieDetail = [];
-        CommonService::getInstance()->log4PHP($list,'info','get_auth_file_list');
+        CommonService::getInstance()->log4PHP($list, 'info', 'get_auth_file_list');
 
         if (!empty($list)) {
             foreach ($list as $oneEntInfo) {
-                CommonService::getInstance()->log4PHP($oneEntInfo,'info','get_auth_file_list_oneEntInfo');
+                CommonService::getInstance()->log4PHP($oneEntInfo, 'info', 'get_auth_file_list_oneEntInfo');
 
                 $data = [
                     'entName' => $oneEntInfo['entName'],// entName companyname
@@ -84,7 +84,7 @@ class GetAuthBook extends AbstractCronTask
                 $DetailList = AntAuthSealDetail::create()->where([
                     'antAuthId' => $oneEntInfo['id'],
                 ])->all();
-                CommonService::getInstance()->log4PHP($DetailList,'info','get_auth_file_list_DetailList');
+                CommonService::getInstance()->log4PHP($DetailList, 'info', 'get_auth_file_list_DetailList');
 
                 if (empty($DetailList)) {
                     $url['2'] = $this->getDataSealUrl($data);
@@ -122,7 +122,7 @@ class GetAuthBook extends AbstractCronTask
                                 'fileUrl' => $v,
                                 'status' => empty($v) ? 2 : 1
                             ]);
-                        }catch ( \Exception $e){
+                        } catch (\Throwable $e) {
                             CommonService::getInstance()->log4PHP($e, 'info', 'get_auth_file_list_url_v');
                         }
                         list($file_url, $fileName) = $this->getOssUrl($v, $data['socialCredit'], $flieDetail[$type]);
