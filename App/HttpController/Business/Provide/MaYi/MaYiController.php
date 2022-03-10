@@ -122,6 +122,7 @@ class MaYiController extends Index
         $pkeyid = openssl_get_publickey(file_get_contents($rsaPub));
 
         //三个协议文件必传，要不都需要盖章，要不都不用盖章，不传说明是老的授权方式
+
         //老方式
         $v = [
             'legalName' => $tmp['body']['legalName'] ?? '',
@@ -130,6 +131,7 @@ class MaYiController extends Index
             'companyName' => $tmp['body']['companyName'] ?? '',
             'mobile' => $tmp['body']['mobile'] ?? '',
         ];
+
         //新方式
         if (!empty($tmp['body']['fileData'])) {
             $v['orderNo'] = $tmp['body']['orderNo'] ?? '';
