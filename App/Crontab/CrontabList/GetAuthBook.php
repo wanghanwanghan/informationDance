@@ -22,6 +22,7 @@ class GetAuthBook extends AbstractCronTask
 {
     private $crontabBase;
     public $currentAesKey;
+    public $iv = '1234567890abcdef';
     public $oss_bucket = 'invoice-mrxd';
     public $oss_expire_time = 86400 * 60;
 
@@ -58,7 +59,7 @@ class GetAuthBook extends AbstractCronTask
 //            'authDate' => 0,
 //            'status' => MaYiService::STATUS_0,
 //        ])->all();
-        $list = sqlRaw("select * from information_dance_ant_auth_list where id in(".implode(',',$ids).") or (authDate = 0 and status = '".MaYiService::STATUS_0."')", CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        $list = sqlRaw("select * from information_dance_ant_auth_list where id in(" . implode(',', $ids) . ") or (authDate = 0 and status = '" . MaYiService::STATUS_0 . "')", CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $url = [];
         $fileData = [];
 //        $fileIdS = [];
@@ -85,9 +86,9 @@ class GetAuthBook extends AbstractCronTask
                 ])->all();
 //                CommonService::getInstance()->log4PHP($DetailList,'info','get_auth_file_list_DetailList');
 
-                if(empty($DetailList)){
+                if (empty($DetailList)) {
                     $url['2'] = $this->getDataSealUrl($data);
-                }else {
+                } else {
                     $notNoodIsSeal = false;
                     foreach ($DetailList as $value) {
                         if ($value->getAttr('isSeal')) {
@@ -109,9 +110,9 @@ class GetAuthBook extends AbstractCronTask
                         $flieDetail[$value->getAttr('type')]['fileId'] = $value->getAttr('fileId');
                         $flieDetail[$value->getAttr('type')]['fileSecret'] = $value->getAttr('fileSecret');
                     }
-                    CommonService::getInstance()->log4PHP($url,'info','get_auth_file_list_urlArr');
+                    CommonService::getInstance()->log4PHP($url, 'info', 'get_auth_file_list_urlArr');
                     //如果不需要盖章，就跳过
-                    if($notNoodIsSeal){
+                    if ($notNoodIsSeal) {
                         continue;
                     }
                     foreach ($url as $type => $v) {
@@ -120,15 +121,15 @@ class GetAuthBook extends AbstractCronTask
                             'antAuthId' => $oneEntInfo['id'],
                         ])->update([
                             'fileUrl' => $v,
-                            'status' => empty($v)?2:1
+                            'status' => empty($v) ? 2 : 1
                         ]);
-                        list($file_url, $fileName) = $this->getOssUrl($v, $data['socialCredit'],$flieDetail[$type]);
+                        list($file_url, $fileName) = $this->getOssUrl($v, $data['socialCredit'], $flieDetail[$type]);
                         $fileData[$type]['fileAddress'] = $file_url;
                         $fileData[$type]['fileName'] = $fileName;
                         ksort($fileData[$type]);
                     }
                 }
-                CommonService::getInstance()->log4PHP($fileData,'info','get_auth_file_list_fileData');
+                CommonService::getInstance()->log4PHP($fileData, 'info', 'get_auth_file_list_fileData');
 
                 //更新数据库
                 AntAuthList::create()->where([
@@ -142,19 +143,26 @@ class GetAuthBook extends AbstractCronTask
                 ]);
 
                 //蚂蚁没有传需要盖章的文件过来时，就不需要通知蚂蚁
-                if(empty($DetailList)) continue;
+                if (empty($DetailList)) continue;
 
-                //拿私钥
                 $id = $oneEntInfo['belong'] - 0;
                 $info = RequestUserInfo::create()->get($id);
+                $rsa_pub_name = $info->getAttr('rsaPub');
                 $rsa_pri_name = $info->getAttr('rsaPri');
                 $authResultCode = '0000';
+
+                //拿公钥加密
+                $stream = file_get_contents(RSA_KEY_PATH . $rsa_pub_name);
+                //AES加密key用RSA加密
+                $fileSecret = control::rsaEncrypt($this->currentAesKey, $stream, 'pub');
+
                 $body = [
-                    'authResultCode' => $authResultCode,
-                    'orderNo'=> $oneEntInfo['orderNo'],
+                    'sealResultCode' => $authResultCode,
+                    'orderNo' => $oneEntInfo['orderNo'],
                     'nsrsbh' => $oneEntInfo['socialCredit'],//授权的企业税号
                     'notifyType' => 'AGREEMENT', //通知类型
-                    'fileData' => array_values($fileData)
+                    'fileData' => array_values($fileData),
+                    //'fileSecret' => $fileSecret,//对称钥秘⽂
                 ];
                 ksort($body);//周平说参数升序
 
@@ -172,7 +180,7 @@ class GetAuthBook extends AbstractCronTask
                     ],
                 ];
                 $url = $url_arr[$id];
-                $this->sendAnt($url,$collectNotify);
+                $this->sendAnt($url, $collectNotify);
             }
 
         }
@@ -183,7 +191,8 @@ class GetAuthBook extends AbstractCronTask
 
     }
 
-    public function sendAnt($url,$collectNotify){
+    public function sendAnt($url, $collectNotify)
+    {
         $header = [
             'content-type' => 'application/json;charset=UTF-8',
         ];
@@ -204,17 +213,17 @@ class GetAuthBook extends AbstractCronTask
         ]);
     }
 
-
     /*
      * 多个文件盖章，是否是只有企业授权书需要去判断是否需要盖章，确定下一个企业是否一定只会有一个是需要盖章的
      */
-    public function getSealUrl($data,$file_address){
+    public function getSealUrl($data, $file_address)
+    {
         $data['file_address'] = $file_address;
         $res = (new FaDaDaService())->setCheckRespFlag(true)->getAuthFileForAnt($data);
-        CommonService::getInstance()->log4PHP($res,'info','get_auth_file_return_res');
+        CommonService::getInstance()->log4PHP($res, 'info', 'get_auth_file_return_res');
         if ($res['code'] !== 200) {
-            $message = ['name'=>'异常内容','msg'=>json_encode($res)];
-            dingAlarmMarkdownForWork('法大大授权书接口异常',$message);
+            $message = ['name' => '异常内容', 'msg' => json_encode($res)];
+            dingAlarmMarkdownForWork('法大大授权书接口异常', $message);
             return '';
         }
         return $res['result']['url'];
@@ -223,31 +232,48 @@ class GetAuthBook extends AbstractCronTask
     /*
      * 获取需要填充数据和盖章的授权书
      */
-    public function getDataSealUrl($data){
+    public function getDataSealUrl($data)
+    {
         $res = (new FaDaDaService())->setCheckRespFlag(true)->getAuthFile($data);
-        CommonService::getInstance()->log4PHP($res,'info','get_auth_file_return_res');
+        CommonService::getInstance()->log4PHP($res, 'info', 'get_auth_file_return_res');
         if ($res['code'] !== 200) {
-            $message = ['name'=>'异常内容','msg'=>json_encode($res)];
-            dingAlarmMarkdownForWork('法大大授权书接口异常',$message);
+            $message = ['name' => '异常内容', 'msg' => json_encode($res)];
+            dingAlarmMarkdownForWork('法大大授权书接口异常', $message);
             return '';
         }
         return $res['result']['url'];
     }
 
-    public function getOssUrl($path,$socialCredit,$flieDetail){
+    public function getOssUrl($path, $socialCredit, $flieDetail)
+    {
 //        $flieDetail['fileSecret'];
-        if(empty($path)) return '';
-        $fileName = $socialCredit.'_'.$flieDetail['fileId'].'_'.control::getUuid(8).'.pdf';
+        if (empty($path)) return '';
+
+        $fileName = $socialCredit . '_' . $flieDetail['fileId'] . '_' . control::getUuid(8);
+
+        $content = file_get_contents(INV_AUTH_PATH . $path);
+
+        $content = base64_encode(openssl_encrypt(
+            $content,
+            'AES-128-CTR',
+            $this->currentAesKey,
+            OPENSSL_RAW_DATA,
+            $this->iv
+        ));
+
+        file_put_contents(INV_AUTH_PATH . $path . '.aes', $content . PHP_EOL);
+
         return [OSSService::getInstance()
             ->doUploadFile(
                 $this->oss_bucket,
                 Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $fileName,
-                INV_AUTH_PATH .$path,
+                INV_AUTH_PATH . $path . '.aes',
                 $this->oss_expire_time
-            ),$fileName];
+            ), $fileName];
     }
 
-    public function getNeedSealID(){
+    public function getNeedSealID()
+    {
         $list = AntAuthSealDetail::create()->where([
             'status' => 0,
             'isSeal' => 'true'
