@@ -34,7 +34,7 @@ class GetAuthBook extends AbstractCronTask
     static function getRule(): string
     {
         //每分钟执行一次
-        return '11 16 10 * *';
+        return '18 16 10 * *';
     }
 
     static function getTaskName(): string
@@ -78,10 +78,11 @@ class GetAuthBook extends AbstractCronTask
                     'regAddress' => $oneEntInfo->getAttr('regAddress'),//address
                     'requestId' => $oneEntInfo->getAttr('requestId') . time(),//海光用的，没啥用，随便传
                 ];
+                CommonService::getInstance()->log4PHP($data,'info','get_auth_file_list_data');
                 $DetailList = AntAuthSealDetail::create()->where([
                     'ant_auth_id' => $oneEntInfo->getAttr('id'),
                 ])->all();
-                CommonService::getInstance()->log4PHP($list,'info','get_auth_file_list_DetailList');
+                CommonService::getInstance()->log4PHP($DetailList,'info','get_auth_file_list_DetailList');
 
                 if(empty($DetailList)){
                     $url['2'] = $this->getDataSealUrl($data);
