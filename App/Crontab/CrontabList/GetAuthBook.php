@@ -115,14 +115,14 @@ class GetAuthBook extends AbstractCronTask
                         continue;
                     }
                     foreach ($url as $type => $v) {
-                        list($file_url, $fileName) = $this->getOssUrl($v, $data['socialCredit'],$flieDetail[$type]);
                         AntAuthSealDetail::create()->where([
                             'type' => $type,
                             'antAuthId' => $oneEntInfo['id'],
                         ])->update([
-                            'fileUrl' => $file_url,
-                            'status' => empty($file_url)?2:1
+                            'fileUrl' => $v,
+                            'status' => empty($v)?2:1
                         ]);
+                        list($file_url, $fileName) = $this->getOssUrl($v, $data['socialCredit'],$flieDetail[$type]);
                         $fileData[$type]['fileAddress'] = $file_url;
                         $fileData[$type]['fileName'] = $fileName;
                         ksort($fileData[$type]);
