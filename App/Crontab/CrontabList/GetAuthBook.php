@@ -83,6 +83,7 @@ class GetAuthBook extends AbstractCronTask
                 if(empty($DetailList)){
                     $url['2'] = $this->getDataSealUrl($data);
                 }else {
+                    $notNoodIsSeal = false;
                     foreach ($DetailList as $value) {
                         if ($value->getAttr('isSeal')) {
                             if ($value->getAttr('type') != 2) {
@@ -91,17 +92,22 @@ class GetAuthBook extends AbstractCronTask
                                 $url['2'] = $this->getDataSealUrl($data);
                             }
                         } else {
+                            $notNoodIsSeal = true;
                             $urlArr[$value->getAttr('type')] = $value->getAttr('fileAddress');
                         }
                         $fileData[$value->getAttr('type')] = [
                             'fileAddress' => '',
                             'fileSecret' => $value->getAttr('fileSecret'),
                             'type' => $value->getAttr('type'),
-                            'isSealed' => $value->getAttr('isSealed'),
+                            'isSealed' => (boolean)$value->getAttr('isSealed'),
                             'fileName' => '',
                         ];
                         $flieDetail[$value->getAttr('type')]['fileId'] = $value->getAttr('fileId');
                         $flieDetail[$value->getAttr('type')]['fileSecret'] = $value->getAttr('fileSecret');
+                    }
+                    //如果不需要盖章，就跳过
+                    if($notNoodIsSeal){
+                        continue;
                     }
                     foreach ($url as $type => $v) {
                         list($file_url, $fileName) = $this->getOssUrl($v, $data['socialCredit'],$flieDetail[$type]);
@@ -237,6 +243,7 @@ class GetAuthBook extends AbstractCronTask
     public function getNeedSealID(){
         $list = AntAuthSealDetail::create()->where([
             'status' => 0,
+            'isSeal' => 'true'
         ])->all();
         $ids = [];
         foreach ($list as $item) {
