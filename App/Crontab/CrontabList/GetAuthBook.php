@@ -34,7 +34,7 @@ class GetAuthBook extends AbstractCronTask
     static function getRule(): string
     {
         //每分钟执行一次
-        return '56 15 10 * *';
+        return '05 16 10 * *';
     }
 
     static function getTaskName(): string
@@ -64,6 +64,8 @@ class GetAuthBook extends AbstractCronTask
         $fileData = [];
 //        $fileIdS = [];
         $flieDetail = [];
+        CommonService::getInstance()->log4PHP($list,'info','get_auth_file_list');
+
         if (!empty($list)) {
             foreach ($list as $oneEntInfo) {
                 $data = [
@@ -123,6 +125,8 @@ class GetAuthBook extends AbstractCronTask
                         ksort($fileData[$type]);
                     }
                 }
+                CommonService::getInstance()->log4PHP($fileData,'info','get_auth_file_list_fileData');
+
                 //更新数据库
                 AntAuthList::create()->where([
                     'entName' => $oneEntInfo->getAttr('entName'),
