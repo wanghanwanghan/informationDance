@@ -34,7 +34,7 @@ class GetAuthBook extends AbstractCronTask
     static function getRule(): string
     {
         //每分钟执行一次
-        return '47 16 10 * *';
+        return '53 16 10 * *';
     }
 
     static function getTaskName(): string
@@ -60,7 +60,6 @@ class GetAuthBook extends AbstractCronTask
 //        ])->all();
         $list = sqlRaw("select * from information_dance_ant_auth_list where id in(".implode(',',$ids).") or (authDate = 0 and status = '".MaYiService::STATUS_0."')", CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $url = [];
-        $urlArr = [];
         $fileData = [];
 //        $fileIdS = [];
         $flieDetail = [];
@@ -99,7 +98,6 @@ class GetAuthBook extends AbstractCronTask
                             }
                         } else {
                             $notNoodIsSeal = true;
-                            $urlArr[$value->getAttr('type')] = $value->getAttr('fileAddress');
                         }
                         $fileData[$value->getAttr('type')] = [
                             'fileAddress' => '',
@@ -111,7 +109,7 @@ class GetAuthBook extends AbstractCronTask
                         $flieDetail[$value->getAttr('type')]['fileId'] = $value->getAttr('fileId');
                         $flieDetail[$value->getAttr('type')]['fileSecret'] = $value->getAttr('fileSecret');
                     }
-                    CommonService::getInstance()->log4PHP($urlArr,'info','get_auth_file_list_urlArr');
+                    CommonService::getInstance()->log4PHP($url,'info','get_auth_file_list_urlArr');
                     //如果不需要盖章，就跳过
                     if($notNoodIsSeal){
                         continue;
