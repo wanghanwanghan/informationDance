@@ -197,7 +197,7 @@ class QiXiangYunService extends ServiceBase
     //创建企业
     function createEnt(): array
     {
-        $url = $this->testBaseUrl . 'AGG/org/create';
+        $url = $this->baseUrl . 'AGG/org/create';
 
         //{
         //      "nsrsbh": "北京税号",
