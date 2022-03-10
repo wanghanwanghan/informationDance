@@ -35,7 +35,7 @@ class GetAuthBook extends AbstractCronTask
     static function getRule(): string
     {
         //每分钟执行一次
-        return '28 18 10 * *';
+        return '35 18 10 * *';
 
     }
 
