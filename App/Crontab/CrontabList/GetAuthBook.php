@@ -106,7 +106,7 @@ Eof;
                         $fileData[$value->getAttr('type')] = [
                             'fileAddress' => '',
                             'type' => $value->getAttr('type') . '',
-                            'isSealed' => (boolean)$value->getAttr('isSealed'),
+                            'isSealed' => (boolean)$value->getAttr('isSeal'),
                             'fileName' => '',
                         ];
                         $flieDetail[$value->getAttr('type')]['fileId'] = $value->getAttr('fileId');
