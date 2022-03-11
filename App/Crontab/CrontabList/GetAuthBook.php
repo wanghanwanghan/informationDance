@@ -190,7 +190,7 @@ Eof;
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
-        CommonService::getInstance()->log4PHP($throwable->getTraceAsString(), 'info', '123123123123');
+        CommonService::getInstance()->log4PHP($throwable->getTraceAsString(), 'info', 'CrontabList_GetAuthBook');
     }
 
     public function sendAnt($url, $collectNotify)
