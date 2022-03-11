@@ -30,7 +30,9 @@ class ChuangLanService extends ServiceBase
         $header = ['content-type' => 'application/form-data;charset=UTF-8'];
         $data = [
             'mobiles' => $param['mobiles'],
-            'type' => 0
+            'type' => 0,
+            'appKey' => $this->appKey,
+            'appId' => $this->appId,
         ];
         $res = (new CoHttpClient())
             ->useCache(false)
