@@ -189,7 +189,7 @@ class QiXiangYunService extends ServiceBase
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'postjson');
 
-        CommonService::getInstance()->log4PHP($res);
+        CommonService::getInstance()->log4PHP([$url, $data, $header,$res],'info','getInv');
 
         return $this->check($res['value']);
     }
