@@ -95,11 +95,11 @@ Eof;
                     foreach ($DetailList as $value) {
                         $orderNo = $value->getAttr('orderNo');
                         if ($value->getAttr('isSeal')) {
-                            if ($value->getAttr('type') != 2) {
+//                            if ($value->getAttr('type') != 2) {
                                 $url[$value->getAttr('type')] = $this->getSealUrl($data, $value->getAttr('fileAddress'));
-                            } else {//数字代办委托书盖章加填充
-                                $url['2'] = $this->getDataSealUrl($data);
-                            }
+//                            } else {//数字代办委托书盖章加填充
+//                                $url['2'] = $this->getDataSealUrl($data);
+//                            }
                         } else {
                             $notNoodIsSeal = true;
                         }
