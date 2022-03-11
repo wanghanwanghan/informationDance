@@ -251,7 +251,7 @@ class FaDaDaService extends ServiceBase
             ->where("(`entName` = '{$arr['legalPerson']}' OR `code` = '{$arr['idCard']}') AND `account_type` = '1'")
             ->get();
         if (empty($people_customer_info)) {
-            return $people_customer_info->getAttr('customer_id');;
+            return [$people_customer_info->getAttr('customer_id'),''];;
         }
         $people_customer_id = '';
         $errorData = '';
@@ -290,7 +290,7 @@ class FaDaDaService extends ServiceBase
             ->where('customer_id', $ent_customer_id)
             ->get();
         if (!empty($ent_hash_info->getAttr('evidence_no'))) {
-            return $ent_hash_info->getAttr('evidence_no');
+            return [$ent_hash_info->getAttr('evidence_no'),''];
         }
         $ent_hash_id = '';
         $errorData = '';
@@ -335,7 +335,7 @@ class FaDaDaService extends ServiceBase
             ->where('customer_id', $people_customer_id)
             ->get();
         if (!empty($people_hash_info->getAttr('evidence_no'))) {
-            return $people_hash_info->getAttr('evidence_no');
+            return [$people_hash_info->getAttr('evidence_no'),''];
         }
         $people_hash_id = '';
         $errorData = '';
@@ -380,7 +380,7 @@ class FaDaDaService extends ServiceBase
             ->where('customer_id', $ent_customer_id)
             ->get();
         if (!empty($ent_sign_info->getAttr('signature_id'))) {
-            return $ent_sign_info->getAttr('signature_id');
+            return [$ent_sign_info->getAttr('signature_id'),''];
         }
         $ent_sign_id = '';
         $errorData = '';
@@ -417,7 +417,7 @@ class FaDaDaService extends ServiceBase
             ->where('customer_id', $people_customer_id)
             ->get();
         if(!empty($personal_sign_info->getAttr('signature_id'))){
-            return $personal_sign_info->getAttr('signature_id');
+            return [$personal_sign_info->getAttr('signature_id'),''];
         }
         $personal_sign_id = '';
         $errorData = '';
