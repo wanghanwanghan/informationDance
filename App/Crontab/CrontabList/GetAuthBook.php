@@ -149,11 +149,6 @@ Eof;
                 $rsa_pri_name = $info->getAttr('rsaPri');
                 $authResultCode = '0000';
 
-                CommonService::getInstance()->log4PHP([
-                    $rsa_pub_name,
-                    $rsa_pri_name,
-                ], 'info', 'rsa_file_name');
-
                 //拿公钥加密
                 $stream = file_get_contents(RSA_KEY_PATH . $rsa_pub_name);
                 //AES加密key用RSA加密
