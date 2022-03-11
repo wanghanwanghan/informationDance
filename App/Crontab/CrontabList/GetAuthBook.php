@@ -95,11 +95,7 @@ Eof;
                     foreach ($DetailList as $value) {
                         $orderNo = $value->getAttr('orderNo');
                         if ($value->getAttr('isSeal') === 'true') {
-//                            if ($value->getAttr('type') != 2) {
                             $url[$value->getAttr('type')] = $this->getSealUrl($data, $value->getAttr('fileAddress'));
-//                            } else {//数字代办委托书盖章加填充
-//                                $url['2'] = $this->getDataSealUrl($data);
-//                            }
                         } else {
                             $notNoodIsSeal = true;
                         }
@@ -168,8 +164,6 @@ Eof;
                 ];
                 ksort($body);//周平说参数升序
 
-                CommonService::getInstance()->log4PHP($body);
-
                 //sign md5 with rsa
                 $private_key = file_get_contents(RSA_KEY_PATH . $rsa_pri_name);
                 $pkeyid = openssl_pkey_get_private($private_key);
@@ -201,20 +195,10 @@ Eof;
             'content-type' => 'application/json;charset=UTF-8',
         ];
 
-        CommonService::getInstance()->log4PHP([
-            '发给蚂蚁的',
-            $collectNotify
-        ], 'info', 'xy_ant.log');
-
         $ret = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(true)
             ->send($url, jsonEncode($collectNotify, false), $header, [], 'postjson');
-
-        CommonService::getInstance()->log4PHP([
-            '蚂蚁返回',
-            $ret
-        ], 'info', 'xy_ant.log');
     }
 
     /*

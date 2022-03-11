@@ -86,7 +86,6 @@ class FaDaDaService extends ServiceBase
      */
     function getAuthFile(array $arr): array
     {
-        CommonService::getInstance()->log4PHP($arr,'info','get_auth_file_param_arr');
         //企业注册
         list($ent_customer_id,$entCustomerErrorData) = $this->getEntCustomer($arr);
         if(!empty($entCustomerErrorData)) return $entCustomerErrorData;
@@ -143,7 +142,6 @@ class FaDaDaService extends ServiceBase
 
     public function getAuthFileForAnt(array $arr): array
     {
-        CommonService::getInstance()->log4PHP($arr,'info','get_auth_file_param_arr');
         //企业注册
         list($ent_customer_id,$entCustomerErrorData) = $this->getEntCustomer($arr);
         if(!empty($entCustomerErrorData)) return $entCustomerErrorData;
