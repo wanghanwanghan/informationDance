@@ -147,6 +147,8 @@ Eof;
                 //蚂蚁没有传需要盖章的文件过来时，就不需要通知蚂蚁
                 if (empty($DetailList)) continue;
 
+                CommonService::getInstance()->log4PHP($oneEntInfo);
+
                 $id = $oneEntInfo['belong'] - 0;
                 $info = RequestUserInfo::create()->get($id);
                 $rsa_pub_name = $info->getAttr('rsaPub');
