@@ -203,7 +203,7 @@ class GetInvData extends AbstractCronTask
                     CommonService::getInstance()->log4PHP([
                         '蚂蚁返回的',
                         $ret
-                    ]);
+                    ], 'info', 'ant.log');
 
                 }
 
