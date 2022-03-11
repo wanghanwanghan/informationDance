@@ -213,7 +213,7 @@ class FaDaDaService extends ServiceBase
             ->get();
 
         if (empty($ent_customer_info)) {
-            return $ent_customer_info->getAttr('customer_id');;
+            return [$ent_customer_info->getAttr('customer_id'),''];
         }
         $ent_customer_id = '';
         $errorData = '';
