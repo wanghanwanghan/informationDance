@@ -168,6 +168,8 @@ Eof;
                 ];
                 ksort($body);//周平说参数升序
 
+                CommonService::getInstance()->log4PHP($body);
+
                 //sign md5 with rsa
                 $private_key = file_get_contents(RSA_KEY_PATH . $rsa_pri_name);
                 $pkeyid = openssl_pkey_get_private($private_key);
