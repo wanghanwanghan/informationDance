@@ -166,7 +166,7 @@ class GuoPiaoService extends ServiceBase
 
         $res = $this->readyToSend($api_path, $body);
 
-        CommonService::getInstance()->log4PHP($res);
+        CommonService::getInstance()->log4PHP([$api_path, $body,$res],'info','getInvoiceOcr');
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
