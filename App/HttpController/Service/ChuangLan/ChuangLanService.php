@@ -29,10 +29,10 @@ class ChuangLanService extends ServiceBase
         $url = 'https://api.253.com/open/unn/batch-ucheck';
         $header = ['content-type' => 'application/form-data;charset=UTF-8'];
         $data = [
+            'appId' => $this->appId,
+            'appKey' => $this->appKey,
             'mobiles' => $param['mobiles'],
             'type' => 0,
-            'appKey' => $this->appKey,
-            'appId' => $this->appId,
         ];
         $res = (new CoHttpClient())
             ->useCache(false)
