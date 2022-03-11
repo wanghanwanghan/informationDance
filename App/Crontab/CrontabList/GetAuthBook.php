@@ -167,7 +167,10 @@ Eof;
                     'fileSecret' => $fileSecret,//对称钥秘⽂
                 ];
                 ksort($body);//周平说参数升序
-
+                CommonService::getInstance()->log4PHP([
+                    '发给蚂蚁的body',
+                    $body
+                ], 'info', 'ant.log');
                 //sign md5 with rsa
                 $private_key = file_get_contents(RSA_KEY_PATH . $rsa_pri_name);
                 $pkeyid = openssl_pkey_get_private($private_key);
