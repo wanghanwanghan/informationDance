@@ -27,7 +27,9 @@ class ChuangLanService extends ServiceBase
     function getCheckPhoneStatus($param)
     {
         $url = 'https://api.253.com/open/unn/batch-ucheck';
-        $header = ['content-type' => 'application/form-data;charset=UTF-8'];
+        $header = [
+//            'content-type' => 'application/form-data;charset=UTF-8'
+        ];
         $data = [
             'appId' => $this->appId,
             'appKey' => $this->appKey,
@@ -36,8 +38,8 @@ class ChuangLanService extends ServiceBase
         ];
         $res = (new CoHttpClient())
             ->useCache(false)
-            ->send($url, http_build_query($data), $header);
-        CommonService::getInstance()->log4PHP([$url, $data, $header, $res], 'info', 'getCheckPhoneStatus');
+            ->send($url, $data, $header);
+//        CommonService::getInstance()->log4PHP([$url, $data, $header, $res], 'info', 'getCheckPhoneStatus');
         return $res;
     }
 }
