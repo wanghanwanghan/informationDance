@@ -94,9 +94,9 @@ Eof;
                     $notNoodIsSeal = false;
                     foreach ($DetailList as $value) {
                         $orderNo = $value->getAttr('orderNo');
-                        if ($value->getAttr('isSeal')) {
+                        if ($value->getAttr('isSeal') === 'true') {
 //                            if ($value->getAttr('type') != 2) {
-                                $url[$value->getAttr('type')] = $this->getSealUrl($data, $value->getAttr('fileAddress'));
+                            $url[$value->getAttr('type')] = $this->getSealUrl($data, $value->getAttr('fileAddress'));
 //                            } else {//数字代办委托书盖章加填充
 //                                $url['2'] = $this->getDataSealUrl($data);
 //                            }
@@ -106,7 +106,7 @@ Eof;
                         $fileData[$value->getAttr('type')] = [
                             'fileAddress' => '',
                             'type' => $value->getAttr('type') . '',
-                            'isSealed' => (boolean)$value->getAttr('isSeal'),
+                            'isSealed' => $value->getAttr('isSeal') === 'true',
                             'fileName' => '',
                         ];
                         $flieDetail[$value->getAttr('type')]['fileId'] = $value->getAttr('fileId');
@@ -167,10 +167,9 @@ Eof;
                     'fileSecret' => $fileSecret,//对称钥秘⽂
                 ];
                 ksort($body);//周平说参数升序
-                CommonService::getInstance()->log4PHP([
-                    '发给蚂蚁的body',
-                    $body
-                ], 'info', 'ant.log');
+
+                CommonService::getInstance()->log4PHP($body);
+
                 //sign md5 with rsa
                 $private_key = file_get_contents(RSA_KEY_PATH . $rsa_pri_name);
                 $pkeyid = openssl_pkey_get_private($private_key);
@@ -205,7 +204,7 @@ Eof;
         CommonService::getInstance()->log4PHP([
             '发给蚂蚁的',
             $collectNotify
-        ], 'info', 'ant.log');
+        ], 'info', 'xy_ant.log');
 
         $ret = (new CoHttpClient())
             ->useCache(false)
@@ -215,7 +214,7 @@ Eof;
         CommonService::getInstance()->log4PHP([
             '蚂蚁返回',
             $ret
-        ], 'info', 'ant_ret.log');
+        ], 'info', 'xy_ant.log');
     }
 
     /*
