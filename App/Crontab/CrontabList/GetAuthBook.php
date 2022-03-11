@@ -169,12 +169,12 @@ Eof;
                 ];
                 ksort($body);//周平说参数升序
 
-                CommonService::getInstance()->log4PHP($body, 'info', 'sign_data');
-
                 //sign md5 with rsa
                 $private_key = file_get_contents(RSA_KEY_PATH . $rsa_pri_name);
                 $pkeyid = openssl_pkey_get_private($private_key);
                 openssl_sign(jsonEncode([$body], false), $signature, $pkeyid, OPENSSL_ALGO_MD5);
+
+                CommonService::getInstance()->log4PHP([$body], 'info', 'sign_data');
 
                 //准备通知
                 $collectNotify = [
