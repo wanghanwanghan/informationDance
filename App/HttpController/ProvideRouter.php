@@ -29,6 +29,15 @@ class ProvideRouter
         $this->YiZhangTongRouterV1($routeCollector);
         $this->FaDaDaRouterV1($routeCollector);
         $this->Notify($routeCollector);
+        $this->ChuangLanV1($routeCollector);
+    }
+
+    private function ChuangLanV1(RouteCollector $routeCollector){
+        $prefix = '/Business/Provide/ChuangLan/ChuangLanController/';
+        $routeCollector->addGroup('/cl', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getCheckPhoneStatus', $prefix . 'getCheckPhoneStatus');
+        });
+        return true;
     }
 
     private function LongDunRouterV1(RouteCollector $routeCollector)
