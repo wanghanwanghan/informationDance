@@ -5264,6 +5264,7 @@ class MaYiService extends ServiceBase
         if (!empty($data['fileData'])) {
             foreach ($data['fileData'] as $datum) {
                 AntAuthSealDetail::create()->data([
+                    'orderNo' => $data['orderNo'],
                     'isSeal' => $datum['isSeal'],
                     'isReturn' => $datum['isReturn'],
                     'fileAddress' => $datum['fileAddress'],

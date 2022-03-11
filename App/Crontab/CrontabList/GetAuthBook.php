@@ -47,7 +47,6 @@ class GetAuthBook extends AbstractCronTask
 
         $url_arr = [
             36 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
-            1 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
             41 => 'https://invoicecommercial-pre.antfin.com/api/wezTech/collectNotify',//pre
             42 => 'https://invoicecommercial.antfin.com/api/wezTech/collectNotify',//pro
         ];
@@ -94,6 +93,7 @@ Eof;
                 } else {
                     $notNoodIsSeal = false;
                     foreach ($DetailList as $value) {
+                        $orderNo = $value->getAttr('orderNo');
                         if ($value->getAttr('isSeal')) {
                             if ($value->getAttr('type') != 2) {
                                 $url[$value->getAttr('type')] = $this->getSealUrl($data, $value->getAttr('fileAddress'));
@@ -160,7 +160,7 @@ Eof;
 
                 $body = [
                     'sealResultCode' => $authResultCode,
-                    'orderNo' => $oneEntInfo['orderNo'] . '',
+                    'orderNo' => $orderNo . '',
                     'nsrsbh' => $oneEntInfo['socialCredit'],//授权的企业税号
                     'notifyType' => 'AGREEMENT', //通知类型
                     'fileData' => array_values($fileData),
