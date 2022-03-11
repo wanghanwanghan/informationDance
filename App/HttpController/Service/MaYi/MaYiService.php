@@ -5271,7 +5271,7 @@ class MaYiService extends ServiceBase
                     'fileId' => $datum['fileId'],
                     'antAuthId' => $id,
                     'type' => $datum['type'],
-                    'fileSecret' => $datum['fileSecret'],
+                    'fileSecret' => $datum['fileSecret'] ?? '',
                 ])->save();
             }
         }
