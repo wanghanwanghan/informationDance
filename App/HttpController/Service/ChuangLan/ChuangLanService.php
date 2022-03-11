@@ -36,7 +36,7 @@ class ChuangLanService extends ServiceBase
         ];
         $res = (new CoHttpClient())
             ->useCache(false)
-            ->send($url, $data, $header);
+            ->send($url, http_build_query($data), $header);
         CommonService::getInstance()->log4PHP([$url, $data, $header, $res], 'info', 'getCheckPhoneStatus');
         return $res;
     }

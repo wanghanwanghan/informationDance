@@ -878,6 +878,50 @@ class TaoShuController extends ProvideBase
 
         return $this->checkResponse($res);
     }
+    //企业变更信息
+    function getRegisterChangeInfo()
+    {
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $pageNo,
+            'pageSize' => $pageSize,
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new TaoShuService())
+                ->setCheckRespFlag(true)
+                ->post($postData, 'getRegisterChangeInfo');
+        });
 
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    //企业股东及出资信息
+    function getShareHolderInfo()
+    {
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $pageNo,
+            'pageSize' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new TaoShuService())
+                ->setCheckRespFlag(true)
+                ->post($postData, 'getShareHolderInfo');
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
 }

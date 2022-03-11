@@ -100,6 +100,9 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getRecruitmentDetailInfo', $prefix . 'getRecruitmentDetailInfo');//
             $routeCollector->addRoute(['GET', 'POST'], '/getBiddingDetailInfo', $prefix . 'getBiddingDetailInfo');//
             $routeCollector->addRoute(['GET', 'POST'], '/getMainManagerInfo', $prefix . 'getMainManagerInfo');//企业主要管理人员
+            $routeCollector->addRoute(['GET', 'POST'], '/getRegisterChangeInfo', $prefix . 'getRegisterChangeInfo');//企业变更信息
+            $routeCollector->addRoute(['GET', 'POST'], '/getShareHolderInfo', $prefix . 'getShareHolderInfo');//企业股东及出资信息
+
         });
 
         return true;
