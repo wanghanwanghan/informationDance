@@ -199,20 +199,10 @@ Eof;
             'content-type' => 'application/json;charset=UTF-8',
         ];
 
-        CommonService::getInstance()->log4PHP([
-            '发给蚂蚁的',
-            $collectNotify
-        ], 'info', 'xy_ant.log');
-
         $ret = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(true)
             ->send($url, jsonEncode($collectNotify, false), $header, [], 'postjson');
-
-        CommonService::getInstance()->log4PHP([
-            '蚂蚁返回',
-            $ret
-        ], 'info', 'xy_ant.log');
     }
 
     /*
