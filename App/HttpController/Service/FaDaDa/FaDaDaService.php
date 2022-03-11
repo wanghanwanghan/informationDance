@@ -212,7 +212,7 @@ class FaDaDaService extends ServiceBase
             ->where("(`entName` = '{$arr['entName']}' OR `code` = '{$arr['socialCredit']}') AND `account_type` = '2'")
             ->get();
 
-        if (empty($ent_customer_info)) {
+        if (!empty($ent_customer_info)) {
             return [$ent_customer_info->getAttr('customer_id'),''];
         }
         $ent_customer_id = '';
@@ -250,7 +250,7 @@ class FaDaDaService extends ServiceBase
         $people_customer_info = FaDaDaUserModel::create()
             ->where("(`entName` = '{$arr['legalPerson']}' OR `code` = '{$arr['idCard']}') AND `account_type` = '1'")
             ->get();
-        if (empty($people_customer_info)) {
+        if (!empty($people_customer_info)) {
             return [$people_customer_info->getAttr('customer_id'),''];;
         }
         $people_customer_id = '';
