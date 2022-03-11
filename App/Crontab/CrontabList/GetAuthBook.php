@@ -149,6 +149,11 @@ Eof;
                 $rsa_pri_name = $info->getAttr('rsaPri');
                 $authResultCode = '0000';
 
+                CommonService::getInstance()->log4PHP([
+                    $rsa_pub_name,
+                    $rsa_pri_name,
+                ], 'info', 'rsa_file_name');
+
                 //拿公钥加密
                 $stream = file_get_contents(RSA_KEY_PATH . $rsa_pub_name);
                 //AES加密key用RSA加密
@@ -164,6 +169,8 @@ Eof;
                 ];
                 ksort($body);//周平说参数升序
 
+                CommonService::getInstance()->log4PHP($body, 'info', 'sign_data');
+
                 //sign md5 with rsa
                 $private_key = file_get_contents(RSA_KEY_PATH . $rsa_pri_name);
                 $pkeyid = openssl_pkey_get_private($private_key);
@@ -177,7 +184,11 @@ Eof;
                         'notifyChannel' => 'ELEPHANT',//通知 渠道
                     ],
                 ];
+
+                CommonService::getInstance()->log4PHP($collectNotify, 'info', 'notify_data');
+
                 $url = $url_arr[$id];
+
                 $this->sendAnt($url, $collectNotify);
             }
 
