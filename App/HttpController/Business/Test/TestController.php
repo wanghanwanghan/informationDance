@@ -24,7 +24,12 @@ class TestController extends BusinessBase
 
     function fadadatest(): bool
     {
+        return true;
+    }
 
+    function zhichiLogin(): bool
+    {
+        return $this->writeJson(200, null, control::getUuid());
     }
 
     function getInv(): bool
