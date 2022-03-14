@@ -55,10 +55,10 @@ class GuoPiaoController extends ProvideBase
 
         $size = strlen(base64_decode($image));
 
-        if ($size / 1024 / 1024 > 2) {
+        if ($size / 1024 / 1024 > 3) {
             return $this->checkResponse([
                 $this->cspKey => '',
-                'msg' => '图片大小不能超过2m',
+                'msg' => '图片大小不能超过3m',
             ]);
         }
 
