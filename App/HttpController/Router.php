@@ -50,7 +50,7 @@ class Router extends AbstractRouter
     }
 
     private function ZhiChiRouterV1(RouteCollector $routeCollector){
-        $prefix = '/Business/Api\ZhiChi/ZhiChiController/';
+        $prefix = '/Business/Api/ZhiChi/ZhiChiController/';
         $routeCollector->addGroup('/zc', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/directUrl', $prefix . 'directUrl');
         });
