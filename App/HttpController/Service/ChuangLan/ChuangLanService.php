@@ -42,4 +42,22 @@ class ChuangLanService extends ServiceBase
         CommonService::getInstance()->log4PHP([$url, $data, $header, $res], 'info', 'getCheckPhoneStatus');
         return $res;
     }
+
+    function mobileNetStatus($param){
+        $url = 'https://api.253.com/open/zwsjmd/mobile_netstatus';
+        $header = [
+//            'content-type' => 'application/form-data;charset=UTF-8'
+        ];
+        $data = [
+            'appId' => $this->appId,
+            'appKey' => $this->appKey,
+            'mobiles' => $param['mobiles'],
+            'type' => 0,
+        ];
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($url, $data, $header);
+        CommonService::getInstance()->log4PHP([$url, $data, $header, $res], 'info', 'getCheckPhoneStatus');
+        return $res;
+    }
 }

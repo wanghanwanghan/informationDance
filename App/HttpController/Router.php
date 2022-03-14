@@ -29,6 +29,7 @@ class Router extends AbstractRouter
             $this->ExportWordRouterV1($routeCollector);//导出word
             $this->ExportPdfRouterV1($routeCollector);//导出pdf
             $this->TestRouterV1($routeCollector);//测试路由
+            $this->ZhiChiRouterV1($routeCollector);//智齿科技
         });
 
         $routeCollector->addGroup('/admin/v1', function (RouteCollector $routeCollector) {
@@ -48,6 +49,12 @@ class Router extends AbstractRouter
         });
     }
 
+    private function ZhiChiRouterV1(RouteCollector $routeCollector){
+        $prefix = '/Business/Api\ZhiChi/ZhiChiController/';
+        $routeCollector->addGroup('/zc', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/directUrl', $prefix . 'directUrl');
+        });
+    }
     private function CommonRouterV1(RouteCollector $routeCollector)
     {
         $prefix = '/Business/Api/Common/CommonController/';
