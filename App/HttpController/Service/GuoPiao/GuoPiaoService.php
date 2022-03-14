@@ -164,9 +164,7 @@ class GuoPiaoService extends ServiceBase
 
         $api_path = 'invoice/realTimeRecognize';
 
-        $res = $this->readyToSend($api_path, $body);
-
-        CommonService::getInstance()->log4PHP([$api_path, $body,$res],'info','getInvoiceOcr');
+        $res = $this->readyToSend($api_path, $body, false, true, true);
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
@@ -178,9 +176,7 @@ class GuoPiaoService extends ServiceBase
         $body['param'] = $data;
         $body['taxNo'] = $this->taxNo;
 
-        $res = $this->readyToSend('invoice/checkInvoice', $body);
-
-        CommonService::getInstance()->log4PHP($res);
+        $res = $this->readyToSend('invoice/checkInvoice', $body, false, true, true);
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
@@ -412,7 +408,7 @@ class GuoPiaoService extends ServiceBase
     }
 
     //统一发送
-    private function readyToSend($api_path, $body, $isTest = false, $encryption = true)
+    private function readyToSend($api_path, $body, $isTest = false, $encryption = true, $zwUrl = false)
     {
         if (preg_match('/^http/', $api_path)) {
             $url = $api_path;
@@ -428,6 +424,11 @@ class GuoPiaoService extends ServiceBase
             $encryptedData = $this->encrypt($json_param, $isTest);
             $base64_str = base64_encode($encryptedData);
             $body['param'] = $base64_str;
+
+            if ($zwUrl) {
+                $url = 'http://api.zoomwant.com:50001/api/' . $api_path;
+            }
+
             $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
             $res = base64_decode($res);
             $res = $this->decrypt($res, $isTest);
