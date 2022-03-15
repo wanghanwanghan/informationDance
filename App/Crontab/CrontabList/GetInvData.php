@@ -31,7 +31,7 @@ class GetInvData extends AbstractCronTask
     {
         //每月19号凌晨4点可以取上一个月全部数据
         //return '0 4 19 * *';
-        return '00 16 15 * * ';
+        return '10 16 15 * * ';
     }
 
     static function getTaskName(): string
@@ -180,6 +180,7 @@ class GetInvData extends AbstractCronTask
                         'notifyChannel' => 'ELEPHANT',//通知 渠道
                     ],
                 ];
+                CommonService::getInstance()->log4PHP($collectNotify, 'info', 'GetInvData_data');
 
                 $url = $url_arr[$id];
 
