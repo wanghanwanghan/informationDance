@@ -1,12 +1,13 @@
 <?php
 
-namespace App\HttpController\Business\Api\ZhiChi;
+namespace App\HttpController\Business\Provide\ZhiChi;
 
-use App\HttpController\Business\Api\ChuangLan\ChuangLanBase;
+use App\Csp\Service\CspService;
+use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\ZhiChi\ZhiChiService;
 
-class ZhiChiController extends ChuangLanBase
+class ZhiChiController extends ProvideBase
 {
     function onRequest(?string $action): ?bool
     {
@@ -19,9 +20,15 @@ class ZhiChiController extends ChuangLanBase
     }
 
     function directUrl(){
-        $res = (new ZhiChiService())->directUrl();
-        return $this->writeJson($res['code'], null, $res['data'], $res['message']);
+        $this->csp->add($this->cspKey, function (){
+            return (new ZhiChiService())
+                ->setCheckRespFlag(true)
+                ->directUrl();
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
     }
+
     function checkResponse($res)
     {
         if (empty($res[$this->cspKey])) {

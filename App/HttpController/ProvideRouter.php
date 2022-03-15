@@ -30,6 +30,7 @@ class ProvideRouter
         $this->FaDaDaRouterV1($routeCollector);
         $this->Notify($routeCollector);
         $this->ChuangLanV1($routeCollector);
+        $this->ZhiChiRouterV1($routeCollector);//智齿科技
     }
 
     private function ChuangLanV1(RouteCollector $routeCollector){
@@ -39,6 +40,13 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/mobileNetStatus', $prefix . 'mobileNetStatus');
         });
         return true;
+    }
+
+    private function ZhiChiRouterV1(RouteCollector $routeCollector){
+        $prefix = '/Business/Provide/ZhiChi/ZhiChiController/';
+        $routeCollector->addGroup('/zc', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/directUrl', $prefix . 'directUrl');
+        });
     }
 
     private function LongDunRouterV1(RouteCollector $routeCollector)
