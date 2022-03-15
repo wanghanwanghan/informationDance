@@ -38,10 +38,10 @@ class ZhiChiController extends ProvideBase
             $this->spendMoney = 0;
             $this->responseMsg = '请求超时';
         } else {
-            $this->responseCode = $res[$this->cspKey]['code'];
+            $this->responseCode = $res[$this->cspKey]['ret_code'];
             $this->responsePaging = $res[$this->cspKey]['paging'];
-            $this->responseData = $res[$this->cspKey]['data'];
-            $this->responseMsg = $res[$this->cspKey]['message'];
+            $this->responseData = $res[$this->cspKey]['item'];
+            $this->responseMsg = $res[$this->cspKey]['ret_msg'];
 
             $res[$this->cspKey]['code'] === 200 ?: $this->spendMoney = 0;
         }
