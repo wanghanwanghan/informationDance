@@ -48,7 +48,7 @@ class ZhiChiService extends ServiceBase
         ];
         $res = (new CoHttpClient())
             ->useCache(false)
-            ->send($url, $data, $header);
+            ->send($url, $data, $header,[],'POSTJSON');
         CommonService::getInstance()->log4PHP([$url, $data, $header, $res], 'info', 'zhichi_directUrl');
         return $res;
 
