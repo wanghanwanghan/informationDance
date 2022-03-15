@@ -38,7 +38,7 @@ class ZhiChiService extends ServiceBase
         $token = $tokenRes['item']['token'];
         $header = [
             'token'=>$token,
-            'content-type'=>"application/json",
+//            'content-type'=>"application/json",
         ];
 
         $url = 'https://www.soboten.com/api/oss/5/direct_url';
