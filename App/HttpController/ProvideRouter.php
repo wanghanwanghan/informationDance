@@ -36,6 +36,7 @@ class ProvideRouter
         $prefix = '/Business/Provide/ChuangLan/ChuangLanController/';
         $routeCollector->addGroup('/cl', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getCheckPhoneStatus', $prefix . 'getCheckPhoneStatus');
+            $routeCollector->addRoute(['GET', 'POST'], '/mobileNetStatus', $prefix . 'mobileNetStatus');
         });
         return true;
     }

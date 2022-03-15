@@ -51,13 +51,12 @@ class ChuangLanService extends ServiceBase
         $data = [
             'appId' => $this->appId,
             'appKey' => $this->appKey,
-            'mobiles' => $param['mobiles'],
-            'type' => 0,
+            'mobile' => $param['mobile']
         ];
         $res = (new CoHttpClient())
             ->useCache(false)
             ->send($url, $data, $header);
-        CommonService::getInstance()->log4PHP([$url, $data, $header, $res], 'info', 'getCheckPhoneStatus');
+        CommonService::getInstance()->log4PHP([$url, $data, $header, $res], 'info', 'mobile_netstatus');
         return $res;
     }
 }

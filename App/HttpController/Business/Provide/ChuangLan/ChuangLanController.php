@@ -38,6 +38,25 @@ class ChuangLanController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function mobileNetStatus(){
+        $mobile = $this->getRequestData('mobile');
+        if (empty($mobile))
+            return $this->writeJson(201, null, null, 'mobile参数不能是空');
+
+        $postData = [
+            'mobile' => $mobile,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new ChuangLanService())
+                ->setCheckRespFlag(true)
+                ->mobileNetStatus($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+
     function checkResponse($res)
     {
         if (empty($res[$this->cspKey])) {
