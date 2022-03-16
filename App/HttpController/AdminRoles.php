@@ -9,19 +9,19 @@ class AdminRoles
 {
     use Singleton;
 
-    public $prefix = "/Business/AdminRoles/%s/%s/%sController/";
+    public $prefix = "/Business/AdminRoles/%s/%sController/";
 
     //加载后台全部api
     function addRouterV1(RouteCollector $routeCollector)
     {
-        $this->UserRouterV1($routeCollector, 'Mrxd', 'User', 'User');
+        $this->UserRouterV1($routeCollector, 'User', 'User');
     }
 
-    private function UserRouterV1(RouteCollector $routeCollector, $ent, $module, $name): bool
+    private function UserRouterV1(RouteCollector $routeCollector, $module, $name): bool
     {
-        $prefix = sprintf($this->prefix, $ent, $module, $name);
+        $prefix = sprintf($this->prefix, $module, $name);
 
-        $routeCollector->addGroup("/{$ent}/{$module}", function (RouteCollector $routeCollector) use ($prefix) {
+        $routeCollector->addGroup("/{$module}", function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/userLogin', $prefix . 'userLogin');
         });
 

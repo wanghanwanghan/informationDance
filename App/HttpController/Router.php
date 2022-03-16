@@ -47,6 +47,10 @@ class Router extends AbstractRouter
         $routeCollector->addGroup('/provide/v1', function (RouteCollector $routeCollector) {
             ProvideRouter::getInstance()->addRouterV1($routeCollector);
         });
+
+        $routeCollector->addGroup('/admin_roles/v1', function (RouteCollector $routeCollector) {
+            AdminRoles::getInstance()->addRouterV1($routeCollector);
+        });
     }
 
     private function ZhiChiRouterV1(RouteCollector $routeCollector){
