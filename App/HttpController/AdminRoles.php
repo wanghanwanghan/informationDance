@@ -23,8 +23,8 @@ class AdminRoles
 
         $routeCollector->addGroup("/{$module}", function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/userLogin', $prefix . 'userLogin');
+            $routeCollector->addRoute(['GET', 'POST'], '/getInfoByToken', $prefix . 'getInfoByToken');
         });
-
         return true;
     }
 }

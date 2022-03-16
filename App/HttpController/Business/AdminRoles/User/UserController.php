@@ -53,4 +53,20 @@ class UserController extends UserBase
             return $this->writeJson(200, '',$data, '登录成功');
         }
     }
+
+    function getInfoByToken(){
+        $token = $this->getRequestData('token') ?? '';
+        if (empty($token)) return $this->writeJson(201, null, null, 'token不可以为空');
+        $info = RequestUserInfo::create()->where("token = '{$token}'")->get();
+        if(empty($info)){
+            return $this->writeJson(201, null, null, 'token不存在');
+        }
+        $data = [
+            'username'=>$info->username,
+            'money'=>$info->money,
+            'roles'=>$info->roles,
+            'id'=>$info->id
+        ];
+        return $this->writeJson(200, '',$data, '成功');
+    }
 }
