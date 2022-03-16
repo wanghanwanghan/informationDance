@@ -34,7 +34,7 @@ class UserController extends UserBase
     //用户登录
     function userLogin()
     {
-        $appId = $this->request()->getRequestParam('appId') ?? '';
+        $appId = $this->request()->getRequestParam('username') ?? '';
         $password = $this->request()->getRequestParam('password') ?? '';
         if (empty($appId) || empty($password) ) return $this->writeJson(201, null, null, '登录信息错误');
         $info = RequestUserInfo::create()->where("appId = '{$appId}' and password = '{$password}'")->get();
