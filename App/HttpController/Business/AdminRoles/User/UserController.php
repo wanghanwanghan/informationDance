@@ -50,7 +50,7 @@ class UserController extends UserBase
                 'roles'=>$info->roles,
                 'id'=>$info->id
             ];
-            return $this->writeJson(200, $data, null, '登录成功');
+            return $this->writeJson(200, '',$data, '登录成功');
         }
     }
 }
