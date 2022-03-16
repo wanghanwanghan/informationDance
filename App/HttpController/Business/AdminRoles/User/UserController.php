@@ -41,7 +41,7 @@ class UserController extends UserBase
         if(empty($info)){
             return $this->writeJson(201, null, null, '账号密码错误');
         }else{
-            $newToken = UserService::getInstance()->createAccessToken($info->phone, $info->password);
+            $newToken = UserService::getInstance()->createAccessToken($info->appId, $info->password);
             $info->update(['token' => $newToken]);
             $data = [
                 'token'=>$newToken,
