@@ -5,6 +5,7 @@ namespace App\HttpController\Business\Admin\SaibopengkeAdmin;
 use App\HttpController\Index;
 use App\HttpController\Models\Admin\SaibopengkeAdmin\Saibopengke_Data_List_Model;
 use App\HttpController\Models\Provide\RequestUserInfo;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\Zip\ZipService;
 use Carbon\Carbon;
 use EasySwoole\Http\Message\UploadFile;
@@ -101,7 +102,8 @@ class SaibopengkeAdminController extends Index
             }
             return $this->writeJson();
         } catch (\Throwable $e) {
-            return $this->writeJson(201);
+            CommonService::getInstance()->log4PHP($e->getTraceAsString());
+            return $this->writeJson(201, null, 'update错误');
         }
     }
 
