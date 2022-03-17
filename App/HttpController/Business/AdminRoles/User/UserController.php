@@ -85,9 +85,9 @@ class UserController extends UserBase
     function getApiListByUser(){
         $appId = $this->getRequestData('username') ?? '';
         $token = $this->getRequestData('token') ?? '';
-        $isLogin = $this->checkUserIsLogin($token,$appId);
-        if($isLogin != $this->isLogin){
-            return $isLogin;
+        $info = $this->checkUserIsLogin($token,$appId);
+        if(is_bool($info)){
+            return $info;
         }
 //        if (empty($token) || empty($appId)) return $this->writeJson(201, null, null, '参数不可以为空');
 //        $info = RequestUserInfo::create()->where("token = '{$token}' and appId = '{$appId}'")->get();
@@ -121,7 +121,7 @@ class UserController extends UserBase
         if(empty($info)){
             return $this->writeJson(201, null, null, '用户未登录');
         }
-        return $this->isLogin;
+        return $info;
     }
 
     /**
@@ -131,9 +131,9 @@ class UserController extends UserBase
     {
         $appId = $this->getRequestData('username') ?? '';
         $token = $this->getRequestData('token') ?? '';
-        $isLogin = $this->checkUserIsLogin($token,$appId);
-        if($isLogin != $this->isLogin){
-            return $isLogin;
+        $info = $this->checkUserIsLogin($token,$appId);
+        if(is_bool($info)){
+            return $info;
         }
 
         $aid = $this->getRequestData('aid');
