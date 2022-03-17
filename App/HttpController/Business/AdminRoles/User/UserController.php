@@ -33,7 +33,9 @@ class UserController extends UserBase
         parent::afterAction($actionName);
     }
 
-    //用户登录
+    /**
+     * 用户登录
+    */
     function userLogin()
     {
         $appId = $this->getRequestData('username') ?? '';
@@ -56,7 +58,7 @@ class UserController extends UserBase
         }
     }
 
-    /*
+    /**
      * 根据token 获取用户明细
      */
     function getInfoByToken(){
@@ -81,6 +83,7 @@ class UserController extends UserBase
     function getApiListByUser(){
         $appId = $this->getRequestData('username') ?? '';
         $token = $this->getRequestData('token') ?? '';
+        dingAlarmSimple(['$appId'=>$appId,'$token'=>$token]);
         if (empty($token) || empty($appId)) return $this->writeJson(201, null, null, '参数不可以为空');
         $info = RequestUserInfo::create()->where("token = '{$token}' and appId = '{$appId}'")->get();
         if(empty($info)){
@@ -104,5 +107,13 @@ class UserController extends UserBase
             ];
         }
         return $this->writeJson(200, '',$data, '成功');
+    }
+
+    private function checkUserIsLogin(){
+        if (empty($token) || empty($appId)) return $this->writeJson(201, null, null, '参数不可以为空');
+        $info = RequestUserInfo::create()->where("token = '{$token}' and appId = '{$appId}'")->get();
+        if(empty($info)){
+            return $this->writeJson(201, null, null, '用户未登录');
+        }
     }
 }

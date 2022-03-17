@@ -29,6 +29,18 @@ function dingAlarmMarkdown($title,$text){
     return request_by_curl($webhook, json_encode($data));
 }
 
+function dingAlarmSimple($arr){
+    $title = '测试日志';
+    $text = [];
+    foreach ($arr as $key=>$item) {
+        $text[] = [
+           'name' => $key,
+            'msg' => $item,
+        ];
+    }
+    dingAlarmMarkdownForWork($title,$text);
+}
+
 //function ding
 function dingAlarmMarkdownForWork($title,$text){
 $webhook = 'https://oapi.dingtalk.com/robot/send?access_token=188728702d363a6eb79bccd584361da3f6de3a83e19071403345871747cd2482';
