@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\AdminRoles\User;
 
+use App\HttpController\Models\AdminNew\AdminNewApi;
 use App\HttpController\Models\Api\AuthBook;
 use App\HttpController\Models\Api\LngLat;
 use App\HttpController\Models\Api\PurchaseInfo;
@@ -23,6 +24,7 @@ use wanghanwanghan\someUtils\control;
 
 class UserController extends UserBase
 {
+    public $isLogin = 'success';
     function onRequest(?string $action): ?bool
     {
         return parent::onRequest($action);
@@ -83,12 +85,15 @@ class UserController extends UserBase
     function getApiListByUser(){
         $appId = $this->getRequestData('username') ?? '';
         $token = $this->getRequestData('token') ?? '';
-        dingAlarmSimple(['$appId'=>$appId,'$token'=>$token]);
-        if (empty($token) || empty($appId)) return $this->writeJson(201, null, null, '参数不可以为空');
-        $info = RequestUserInfo::create()->where("token = '{$token}' and appId = '{$appId}'")->get();
-        if(empty($info)){
-            return $this->writeJson(201, null, null, '用户未登录');
+        $isLogin = $this->checkUserIsLogin($token,$appId);
+        if($isLogin != $this->isLogin){
+            return $isLogin;
         }
+//        if (empty($token) || empty($appId)) return $this->writeJson(201, null, null, '参数不可以为空');
+//        $info = RequestUserInfo::create()->where("token = '{$token}' and appId = '{$appId}'")->get();
+//        if(empty($info)){
+//            return $this->writeJson(201, null, null, '用户未登录');
+//        }
         $shipList = RequestUserApiRelationship::create()->where(" userId = {$info->id}")->all();
         $data = [];
         foreach ($shipList as $item) {
@@ -109,11 +114,65 @@ class UserController extends UserBase
         return $this->writeJson(200, '',$data, '成功');
     }
 
-    private function checkUserIsLogin(){
+    private function checkUserIsLogin($token,$appId){
+        dingAlarmSimple(['$appId'=>$appId,'$token'=>$token]);
         if (empty($token) || empty($appId)) return $this->writeJson(201, null, null, '参数不可以为空');
         $info = RequestUserInfo::create()->where("token = '{$token}' and appId = '{$appId}'")->get();
         if(empty($info)){
             return $this->writeJson(201, null, null, '用户未登录');
         }
+        return $this->isLogin;
+    }
+
+    /**
+     * 修改接口详情
+     */
+    function editApi()
+    {
+        $appId = $this->getRequestData('username') ?? '';
+        $token = $this->getRequestData('token') ?? '';
+        $isLogin = $this->checkUserIsLogin($token,$appId);
+        if($isLogin != $this->isLogin){
+            return $isLogin;
+        }
+
+        $aid = $this->getRequestData('aid');
+        $path = $this->getRequestData('path');
+        $name = $this->getRequestData('name');
+        $desc = $this->getRequestData('desc');
+        $price = $this->getRequestData('price');
+        $status = $this->getRequestData('status');
+        $apiDoc = $this->getRequestData('apiDoc');
+        $sort_num = $this->getRequestData('sort_num');
+        $source = $this->getRequestData('source');
+
+        $info = RequestApiInfo::create()->where('id',$aid)->get();
+        $infoAdmin = AdminNewApi::create()->where('path',$path)->get();
+
+        $update = [];
+        $updateAdmin = [];
+        empty($sort_num) ?: $updateAdmin['sort_num'] = $sort_num;
+        empty($path) ?: $update['path'] = $path;$updateAdmin['path'] = $path;
+        empty($name) ?: $update['name'] = $name;$updateAdmin['name'] = $name;
+        empty($desc) ?: $update['desc'] = $desc;$updateAdmin['desc'] = $desc;
+        empty($source) ?: $update['source'] = $source;$updateAdmin['source'] = $source;
+        empty($price) ?: $update['price'] = sprintf('%3.f',$price);
+        $status === '启用' ? $update['status'] = 1 : $update['status'] = 0;
+        empty($apiDoc) ?: $update['apiDoc'] = $apiDoc;
+        if(empty($infoAdmin)){
+            AdminNewApi::create()->data([
+                'path' => $path,
+                'api_name' => $name,
+                'desc' => $desc,
+                'source' => $source,
+                'price' => $price,
+                'sort_num' => $sort_num,
+            ])->save();
+        }else{
+            $infoAdmin->update($updateAdmin);
+        }
+        $info->update($update);
+
+        return $this->writeJson();
     }
 }
