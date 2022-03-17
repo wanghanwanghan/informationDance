@@ -56,6 +56,9 @@ class UserController extends UserBase
         }
     }
 
+    /*
+     * 根据token 获取用户明细
+     */
     function getInfoByToken(){
         $token = $this->getRequestData('token') ?? '';
         if (empty($token)) return $this->writeJson(201, null, null, 'token不可以为空');
