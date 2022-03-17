@@ -115,7 +115,7 @@ class UserController extends UserBase
     }
 
     private function checkUserIsLogin($token,$appId){
-        dingAlarmSimple(['$appId'=>$appId,'$token'=>$token]);
+//        dingAlarmSimple(['$appId'=>$appId,'$token'=>$token]);
         if (empty($token) || empty($appId)) return $this->writeJson(201, null, null, '参数不可以为空');
         $info = RequestUserInfo::create()->where("token = '{$token}' and appId = '{$appId}'")->get();
         if(empty($info)){
@@ -173,6 +173,42 @@ class UserController extends UserBase
         }
         $info->update($update);
 
+        return $this->writeJson();
+    }
+
+    /**
+     * 修改user和api的关系
+     */
+    function editUserApi()
+    {
+        $appId = $this->getRequestData('username') ?? '';
+        $token = $this->getRequestData('token') ?? '';
+        $info = $this->checkUserIsLogin($token,$appId);
+        if(is_bool($info)){
+            return $info;
+        }
+        $uid = $this->getRequestData('uid');
+        $apiInfo = $this->getRequestData('apiInfo');
+        if (empty($uid)) return $this->writeJson(201);
+        //先将这个用户的所有接口改为不可用
+        RequestUserApiRelationship::create()->where('userId', $uid)->update([
+            'status' => 0
+        ]);
+        //再将可用的接口改为可用
+        foreach ($apiInfo as $one) {
+            $check = RequestUserApiRelationship::create()->where('userId', $uid)->where('apiId', $one['id'])->get();
+            if (empty($check)) {
+                RequestUserApiRelationship::create()->data([
+                    'userId' => $uid,
+                    'apiId' => $one['id'],
+                    'price' => $one['price'] + 0.2,
+                ])->save();
+            } else {
+                $check->update([
+                    'status' => 1
+                ]);
+            }
+        }
         return $this->writeJson();
     }
 }
