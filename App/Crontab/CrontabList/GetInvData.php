@@ -152,7 +152,7 @@ class GetInvData extends AbstractCronTask
                     'authTime' => date('Y-m-d H:i:s', $oneReadyToSend->getAttr('requestDate')),//授权时间
                     'totalCount' => ($in + $out) . '',
                     'fileKeyList' => $fileKeyList,//文件路径
-                    'notifyType' => 'INVOICE' //通知发票
+                    //'notifyType' => 'INVOICE' //通知发票
                 ];
                 $num = $in + $out;
                 $dateM = (time() - $oneReadyToSend->getAttr('requestDate')) / 86400;
@@ -163,7 +163,7 @@ class GetInvData extends AbstractCronTask
                         'data' => json_encode($body)
                     ])->save();
                 }
-                //authTime 和当前时间对比在一个月之内，$in + $out都是空时，返回状态：没准备好；
+                // authTime 和当前时间对比在一个月之内，$in + $out都是空时，返回状态：没准备好；
                 // 增加，对没准备好数据的记录表，方便日后和大象对账
 
                 ksort($body);//周平说参数升序
