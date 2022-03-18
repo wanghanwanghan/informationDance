@@ -12,6 +12,7 @@ use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\Provide\RequestUserApiRelationship;
 use App\HttpController\Models\Provide\RequestUserInfo;
+use App\HttpController\Models\Provide\RoleInfo;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\Pay\ali\aliPayService;
 use App\HttpController\Service\Pay\wx\wxPayService;
@@ -305,5 +306,19 @@ class UserController extends UserBase
             'status' => $info->status,
         ];
         return $this->writeJson(200, '', $data, '成功');
+    }
+
+    public function editRole(){
+        $id = $this->getRequestData('roleId') ?? '';
+        $name = $this->getRequestData('roleName') ?? '';
+        $status = $this->getRequestData('status') ?? '';
+        $info = RoleInfo::create()->where("id = '{$id}'")->get();
+        if(empty($info)){
+            return $this->writeJson(201, null, null, $name.'不存在');
+        }
+        $info->update([
+            'status' => $status
+        ]);
+        return $this->writeJson();
     }
 }
