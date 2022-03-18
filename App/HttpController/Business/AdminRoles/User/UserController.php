@@ -57,7 +57,7 @@ class UserController extends UserBase
 
         $path = rtrim($path, '/');
         $path = explode('/', $path);
-
+        dingAlarmSimple(['$path'=>$path,'$pass'=>$pass]);
         if (!empty($path)) {
             //检查url在不在直接放行数组
             $len = count($path);
