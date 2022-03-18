@@ -27,6 +27,8 @@ class AdminRoles
             $routeCollector->addRoute(['GET', 'POST'], '/getApiListByUser', $prefix . 'getApiListByUser');
             $routeCollector->addRoute(['GET', 'POST'], '/editApi', $prefix . 'editApi');
             $routeCollector->addRoute(['GET', 'POST'], '/editUserApi', $prefix . 'editUserApi');
+            $routeCollector->addRoute(['GET', 'POST'], '/getUserList', $prefix . 'getUserList');
+            $routeCollector->addRoute(['GET', 'POST'], '/getUserInfoByAppId', $prefix . 'getUserInfoByAppId');
         });
         return true;
     }

@@ -25,6 +25,7 @@ use wanghanwanghan\someUtils\control;
 class UserController extends UserBase
 {
     public $isLogin = 'success';
+
     function onRequest(?string $action): ?bool
     {
         return parent::onRequest($action);
@@ -37,56 +38,58 @@ class UserController extends UserBase
 
     /**
      * 用户登录
-    */
+     */
     function userLogin()
     {
         $appId = $this->getRequestData('username') ?? '';
         $password = $this->getRequestData('password') ?? '';
-        if (empty($appId) || empty($password) ) return $this->writeJson(201, null, null, '登录信息错误');
+        if (empty($appId) || empty($password)) return $this->writeJson(201, null, null, '登录信息错误');
         $info = RequestUserInfo::create()->where("appId = '{$appId}' and password = '{$password}'")->get();
-        if(empty($info)){
+        if (empty($info)) {
             return $this->writeJson(201, null, null, '账号密码错误');
-        }else{
+        } else {
             $newToken = UserService::getInstance()->createAccessToken($info->appId, $info->password);
             $info->update(['token' => $newToken]);
             $data = [
-                'token'=>$newToken,
-                'username'=>$info->username,
-                'money'=>$info->money,
-                'roles'=>$info->roles,
-                'id'=>$info->id
+                'token' => $newToken,
+                'username' => $info->username,
+                'money' => $info->money,
+                'roles' => $info->roles,
+                'id' => $info->id
             ];
-            return $this->writeJson(200, '',$data, '登录成功');
+            return $this->writeJson(200, '', $data, '登录成功');
         }
     }
 
     /**
      * 根据token 获取用户明细
      */
-    function getInfoByToken(){
+    function getInfoByToken()
+    {
         $token = $this->getRequestData('token') ?? '';
         if (empty($token)) return $this->writeJson(201, null, null, 'token不可以为空');
         $info = RequestUserInfo::create()->where("token = '{$token}'")->get();
-        if(empty($info)){
+        if (empty($info)) {
             return $this->writeJson(201, null, null, 'token不存在');
         }
         $data = [
-            'username'=>$info->username,
-            'money'=>$info->money,
-            'roles'=>$info->roles,
-            'id'=>$info->id
+            'username' => $info->username,
+            'money' => $info->money,
+            'roles' => $info->roles,
+            'id' => $info->id
         ];
-        return $this->writeJson(200, '',$data, '成功');
+        return $this->writeJson(200, '', $data, '成功');
     }
 
     /**
      * 根据用户获取用户的接口明细
      */
-    function getApiListByUser(){
+    function getApiListByUser()
+    {
         $appId = $this->getRequestData('username') ?? '';
         $token = $this->getRequestData('token') ?? '';
-        $info = $this->checkUserIsLogin($token,$appId);
-        if(is_bool($info)){
+        $info = $this->checkUserIsLogin($token, $appId);
+        if (is_bool($info)) {
             return $info;
         }
 //        if (empty($token) || empty($appId)) return $this->writeJson(201, null, null, '参数不可以为空');
@@ -111,14 +114,15 @@ class UserController extends UserBase
                 'updated_at' => $apiInfo->updated_at,
             ];
         }
-        return $this->writeJson(200, '',$data, '成功');
+        return $this->writeJson(200, '', $data, '成功');
     }
 
-    private function checkUserIsLogin($token,$appId){
+    private function checkUserIsLogin($token, $appId)
+    {
 //        dingAlarmSimple(['$appId'=>$appId,'$token'=>$token]);
         if (empty($token) || empty($appId)) return $this->writeJson(201, null, null, '参数不可以为空');
         $info = RequestUserInfo::create()->where("token = '{$token}' and appId = '{$appId}'")->get();
-        if(empty($info)){
+        if (empty($info)) {
             return $this->writeJson(201, null, null, '用户未登录');
         }
         return $info;
@@ -131,8 +135,8 @@ class UserController extends UserBase
     {
         $appId = $this->getRequestData('username') ?? '';
         $token = $this->getRequestData('token') ?? '';
-        $info = $this->checkUserIsLogin($token,$appId);
-        if(is_bool($info)){
+        $info = $this->checkUserIsLogin($token, $appId);
+        if (is_bool($info)) {
             return $info;
         }
 
@@ -146,20 +150,24 @@ class UserController extends UserBase
         $sort_num = $this->getRequestData('sort_num');
         $source = $this->getRequestData('source');
 
-        $info = RequestApiInfo::create()->where('id',$aid)->get();
-        $infoAdmin = AdminNewApi::create()->where('path',$path)->get();
+        $info = RequestApiInfo::create()->where('id', $aid)->get();
+        $infoAdmin = AdminNewApi::create()->where('path', $path)->get();
 
         $update = [];
         $updateAdmin = [];
         empty($sort_num) ?: $updateAdmin['sort_num'] = $sort_num;
-        empty($path) ?: $update['path'] = $path;$updateAdmin['path'] = $path;
-        empty($name) ?: $update['name'] = $name;$updateAdmin['name'] = $name;
-        empty($desc) ?: $update['desc'] = $desc;$updateAdmin['desc'] = $desc;
-        empty($source) ?: $update['source'] = $source;$updateAdmin['source'] = $source;
-        empty($price) ?: $update['price'] = sprintf('%3.f',$price);
+        empty($path) ?: $update['path'] = $path;
+        $updateAdmin['path'] = $path;
+        empty($name) ?: $update['name'] = $name;
+        $updateAdmin['name'] = $name;
+        empty($desc) ?: $update['desc'] = $desc;
+        $updateAdmin['desc'] = $desc;
+        empty($source) ?: $update['source'] = $source;
+        $updateAdmin['source'] = $source;
+        empty($price) ?: $update['price'] = sprintf('%3.f', $price);
         $status === '启用' ? $update['status'] = 1 : $update['status'] = 0;
         empty($apiDoc) ?: $update['apiDoc'] = $apiDoc;
-        if(empty($infoAdmin)){
+        if (empty($infoAdmin)) {
             AdminNewApi::create()->data([
                 'path' => $path,
                 'api_name' => $name,
@@ -168,7 +176,7 @@ class UserController extends UserBase
                 'price' => $price,
                 'sort_num' => $sort_num,
             ])->save();
-        }else{
+        } else {
             $infoAdmin->update($updateAdmin);
         }
         $info->update($update);
@@ -183,8 +191,8 @@ class UserController extends UserBase
     {
         $appId = $this->getRequestData('username') ?? '';
         $token = $this->getRequestData('token') ?? '';
-        $info = $this->checkUserIsLogin($token,$appId);
-        if(is_bool($info)){
+        $info = $this->checkUserIsLogin($token, $appId);
+        if (is_bool($info)) {
             return $info;
         }
         $uid = $this->getRequestData('uid');
@@ -210,5 +218,48 @@ class UserController extends UserBase
             }
         }
         return $this->writeJson();
+    }
+
+    public function getUserList()
+    {
+        $resList = RequestUserInfo::create()->all();
+        $data = [];
+        foreach ($resList as $item) {
+            $data[] = [
+                'id'=>$item->getAttr('id'),
+                'username'=>$item->getAttr('username'),
+                'appId'=>$item->getAttr('appId'),
+                'appSecret'=>$item->getAttr('appSecret'),
+                'rsaPub'=>$item->getAttr('rsaPub'),
+                'rsaPri'=>$item->getAttr('rsaPri'),
+                'allowIp'=>$item->getAttr('allowIp'),
+                'money'=>$item->getAttr('money'),
+                'status'=>$item->getAttr('status'),
+                'roles'=>$item->getAttr('roles'),
+            ];
+        }
+        return $this->writeJson(200, '', $data, '成功');
+    }
+
+    public function getUserInfoByAppId(){
+        $appId = $this->getRequestData('username') ?? '';
+        if (empty($appId)) return $this->writeJson(201, null, null, 'username不可以为空');
+        $info = RequestUserInfo::create()->where("appId = '{$appId}'")->get();
+        if (empty($info)) {
+            return $this->writeJson(201, null, null, 'token不存在');
+        }
+        $data = [
+            'username' => $info->username,
+            'money' => $info->money,
+            'roles' => $info->roles,
+            'id' => $info->id,
+            'appId' => $info->appId,
+            'appSecret' => $info->appSecret,
+            'rsaPub' => $info->rsaPub,
+            'rsaPri' => $info->rsaPri,
+            'allowIp' => $info->allowIp,
+            'status' => $info->status,
+        ];
+        return $this->writeJson(200, '', $data, '成功');
     }
 }
