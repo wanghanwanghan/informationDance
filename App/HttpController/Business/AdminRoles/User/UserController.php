@@ -334,4 +334,32 @@ class UserController extends UserBase
         $res = RequestApiInfo::create()->all();
         return $this->writeJson(200,null,$res);
     }
+
+    public function getUserApiList(){
+        $appId = $this->getRequestData('appId') ?? '';
+        $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
+        $shipList = RequestUserApiRelationship::create()->where(" userId = {$info->id}")->all();
+        $res = RequestApiInfo::create()->all();
+        $res = $this->getArrSetKey($res,'id');
+        $shipList = $this->getArrSetKey($res,'apiId');
+        foreach ($res as $key => $v){
+            if(isset($shipList[$key]) && $shipList[$key]['status'] == 1) {
+                $res[$key]['price'] = $shipList[$key]['price'];
+                $res[$key]['own'] = 1;
+            }
+            $res[$key]['own'] = 2;
+        }
+        dingAlarmSimple(['$res'=>$res]);
+        return $this->writeJson(200,null,$res);
+    }
+
+    public function getArrSetKey($data,$key){
+        $data = json_decode(json_encode($data),true);
+        if(empty($datum)) return [];
+        $arr = [];
+        foreach ($data as $datum) {
+            $arr[$datum[$key]] = $datum;
+        }
+        return $arr;
+    }
 }

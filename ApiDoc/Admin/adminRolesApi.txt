@@ -81,16 +81,24 @@
      money      = 1000
      roles      = 1
 //======================================================================================================================
-描述:获取角色列表
-地址:AdminRoles/v1/User/getRoleList
-方法:get/post
-参数:
-     username = PHP_is_the_best_language_in_the_world
-     token    = 231er2r3q
+    描述:获取角色列表
+    地址:AdminRoles/v1/User/getRoleList
+    方法:get/post
+    参数:
+         username = PHP_is_the_best_language_in_the_world
+         token    = 231er2r3q
 //======================================================================================================================
-描述:获取api列表
-地址:AdminRoles/v1/User/getAllApiList
-方法:get/post
-参数:
-     username = PHP_is_the_best_language_in_the_world
-     token    = 231er2r3q
+    描述:获取api列表
+    地址:AdminRoles/v1/User/getAllApiList
+    方法:get/post
+    参数:
+         username = PHP_is_the_best_language_in_the_world
+         token    = 231er2r3q
+//======================================================================================================================
+    描述:获取api列表
+    地址:AdminRoles/v1/User/getUserApiList
+    方法:get/post
+    参数:
+         username = PHP_is_the_best_language_in_the_world
+         token    = 231er2r3q
+         appId    = PHP_is_the_best_language_in_the_world
