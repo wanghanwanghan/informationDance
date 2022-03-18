@@ -3,25 +3,13 @@
 namespace App\HttpController\Business\AdminRoles\User;
 
 use App\HttpController\Models\AdminNew\AdminNewApi;
-use App\HttpController\Models\Api\AuthBook;
-use App\HttpController\Models\Api\LngLat;
-use App\HttpController\Models\Api\PurchaseInfo;
-use App\HttpController\Models\Api\PurchaseList;
-use App\HttpController\Models\Api\User;
-use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\Provide\RequestUserApiRelationship;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Models\Provide\RequestUserInfoLog;
 use App\HttpController\Models\Provide\RoleInfo;
 use App\HttpController\Service\CreateConf;
-use App\HttpController\Service\Pay\ali\aliPayService;
-use App\HttpController\Service\Pay\wx\wxPayService;
 use App\HttpController\Service\User\UserService;
-use Carbon\Carbon;
-use EasySwoole\RedisPool\Redis;
-use EasySwoole\Session\Session;
-use Endroid\QrCode\QrCode;
 use wanghanwanghan\someUtils\control;
 
 class UserController extends UserBase
@@ -32,7 +20,7 @@ class UserController extends UserBase
         if(!$this->checkRouter()){
             $appId = $this->getRequestData('username') ?? '';
             $token = $this->getRequestData('token') ?? '';
-            dingAlarmSimple(['$appId'=>$appId,'$token'=>$token]);
+            //dingAlarmSimple(['$appId'=>$appId,'$token'=>$token]);
             if (empty($token) || empty($appId)) return $this->writeJson(201, null, null, '参数不可以为空');
             $info = RequestUserInfo::create()->where("token = '{$token}' and appId = '{$appId}'")->get();
             if (empty($info)) {
