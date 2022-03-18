@@ -31,6 +31,8 @@ class AdminRoles
             $routeCollector->addRoute(['GET', 'POST'], '/getUserInfoByAppId', $prefix . 'getUserInfoByAppId');
             $routeCollector->addRoute(['GET', 'POST'], '/editRole', $prefix . 'editRole');
             $routeCollector->addRoute(['GET', 'POST'], '/addUser', $prefix . 'addUser');
+            $routeCollector->addRoute(['GET', 'POST'], '/getRoleList', $prefix . 'getRoleList');
+
         });
         return true;
     }

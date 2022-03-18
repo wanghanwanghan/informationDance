@@ -273,6 +273,22 @@ class UserController extends UserBase
     }
 
     /**
+     * 获取所有角色
+     */
+    public function getRoleList(){
+        $list = RoleInfo::create()->all();
+        $data = [];
+        foreach ($list as $item) {
+            $data[] = [
+                'id' => $item->getAttr('id'),
+                'name' => $item->getAttr('name'),
+                'status' => $item->getAttr('status'),
+            ];
+        }
+        return $this->writeJson(200, '', $data, '成功');
+    }
+
+    /**
      * 添加用户,修改用户信息
      */
     function addUser()
