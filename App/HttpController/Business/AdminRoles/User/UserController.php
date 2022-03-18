@@ -25,14 +25,13 @@ use wanghanwanghan\someUtils\control;
 
 class UserController extends UserBase
 {
-    public $isLogin = 'success';
 
     function onRequest(?string $action): ?bool
     {
         if(!$this->checkRouter()){
             $appId = $this->getRequestData('username') ?? '';
             $token = $this->getRequestData('token') ?? '';
-            dingAlarmSimple(['$appId'=>$appId,'$token'=>$token]);
+//            dingAlarmSimple(['$appId'=>$appId,'$token'=>$token]);
             if (empty($token) || empty($appId)) return $this->writeJson(201, null, null, '参数不可以为空');
             $info = RequestUserInfo::create()->where("token = '{$token}' and appId = '{$appId}'")->get();
             if (empty($info)) {
@@ -52,24 +51,17 @@ class UserController extends UserBase
     {
         //直接放行的url，只判断url最后两个在不在数组中
         $pass = CreateConf::getInstance()->getConf('env.passRouter');
-
-        // /api/v1/comm/create/verifyCode
         $path = $this->request()->getSwooleRequest()->server['path_info'];
-
         $path = rtrim($path, '/');
         $path = explode('/', $path);
-        dingAlarmSimple(['$path'=>json_encode($path),'$pass'=>json_encode($pass)]);
         if (!empty($path)) {
             //检查url在不在直接放行数组
             $len = count($path);
-
             //取最后两个
             $path = implode('/', [$path[$len - 2], $path[$len - 1]]);
-
             //在数组里就放行
             if (in_array($path, $pass)) return true;
         }
-
         return false;
     }
 
@@ -126,15 +118,6 @@ class UserController extends UserBase
     {
         $appId = $this->getRequestData('username') ?? '';
         $token = $this->getRequestData('token') ?? '';
-//        $info = $this->checkUserIsLogin($token, $appId);
-//        if (is_bool($info)) {
-//            return $info;
-//        }
-//        if (empty($token) || empty($appId)) return $this->writeJson(201, null, null, '参数不可以为空');
-//        $info = RequestUserInfo::create()->where("token = '{$token}' and appId = '{$appId}'")->get();
-//        if(empty($info)){
-//            return $this->writeJson(201, null, null, '用户未登录');
-//        }
         $info = RequestUserInfo::create()->where("token = '{$token}' and appId = '{$appId}'")->get();
         $shipList = RequestUserApiRelationship::create()->where(" userId = {$info->id}")->all();
         $data = [];
@@ -156,29 +139,11 @@ class UserController extends UserBase
         return $this->writeJson(200, '', $data, '成功');
     }
 
-    private function checkUserIsLogin($token, $appId)
-    {
-//        dingAlarmSimple(['$appId'=>$appId,'$token'=>$token]);
-        if (empty($token) || empty($appId)) return $this->writeJson(201, null, null, '参数不可以为空');
-        $info = RequestUserInfo::create()->where("token = '{$token}' and appId = '{$appId}'")->get();
-        if (empty($info)) {
-            return $this->writeJson(201, null, null, '用户未登录');
-        }
-        return $info;
-    }
-
     /**
      * 修改接口详情
      */
     function editApi()
     {
-        $appId = $this->getRequestData('username') ?? '';
-        $token = $this->getRequestData('token') ?? '';
-        $info = $this->checkUserIsLogin($token, $appId);
-        if (is_bool($info)) {
-            return $info;
-        }
-
         $aid = $this->getRequestData('aid');
         $path = $this->getRequestData('path');
         $name = $this->getRequestData('name');
@@ -228,12 +193,6 @@ class UserController extends UserBase
      */
     function editUserApi()
     {
-        $appId = $this->getRequestData('username') ?? '';
-        $token = $this->getRequestData('token') ?? '';
-        $info = $this->checkUserIsLogin($token, $appId);
-        if (is_bool($info)) {
-            return $info;
-        }
         $uid = $this->getRequestData('uid');
         $apiInfo = $this->getRequestData('apiInfo');
         if (empty($uid)) return $this->writeJson(201);
@@ -308,6 +267,9 @@ class UserController extends UserBase
         return $this->writeJson(200, '', $data, '成功');
     }
 
+    /**
+     * 修改角色
+     */
     public function editRole(){
         $id = $this->getRequestData('roleId') ?? '';
         $name = $this->getRequestData('roleName') ?? '';
