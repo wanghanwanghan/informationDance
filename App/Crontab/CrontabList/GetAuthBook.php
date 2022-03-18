@@ -47,7 +47,7 @@ class GetAuthBook extends AbstractCronTask
 
         $url_arr = [
             //36 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
-            36 => 'http://invoicecommercial.dev.dl.alipaydev.com',//test rsa和dev一样
+            36 => 'http://invoicecommercial.dev.dl.alipaydev.com/api/wezTech/collectNotify',//test rsa和dev一样
             41 => 'https://invoicecommercial-pre.antfin.com/api/wezTech/collectNotify',//pre
             42 => 'https://invoicecommercial.antfin.com/api/wezTech/collectNotify',//pro
         ];
