@@ -12,6 +12,7 @@ use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\Provide\RequestUserApiRelationship;
 use App\HttpController\Models\Provide\RequestUserInfo;
+use App\HttpController\Models\Provide\RequestUserInfoLog;
 use App\HttpController\Models\Provide\RoleInfo;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\Pay\ali\aliPayService;
@@ -282,5 +283,44 @@ class UserController extends UserBase
             'status' => $status
         ]);
         return $this->writeJson();
+    }
+
+    /**
+     * 添加用户,修改用户信息
+     */
+    function addUser()
+    {
+        $actionType = $this->getRequestData('actionType');
+        $username = $this->getRequestData('username');
+        $money = $this->getRequestData('money');
+        $roles = $this->getRequestData('roles');
+
+        if (empty($username) || empty($money)) return $this->writeJson(201);
+
+        $check = RequestUserInfo::create()->where('username', $username)->get();
+
+        if ($actionType === 'update') {
+            if (empty($check)) return $this->writeJson(201);
+            $check->update([
+                'username' => $username,
+                'money' => $money + $check->getAttr('money'),
+                'roles' => $roles,
+            ]);
+            RequestUserInfoLog::create()->addOne($username,$money);
+        } else {
+            if (!empty($check)) return $this->writeJson(201);
+            $appId = strtoupper(control::getUuid());
+            $appSecret = substr(strtoupper(control::getUuid()), 5, 20);
+            RequestUserInfo::create()->data([
+                'username' => $username,
+                'appId' => $appId,
+                'appSecret' => $appSecret,
+                'money' => $money,
+                'roles' => $roles
+            ])->save();
+            RequestUserInfoLog::create()->addOne($username,$money);
+        }
+
+        return $this->writeJson(200);
     }
 }
