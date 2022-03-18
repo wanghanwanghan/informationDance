@@ -326,4 +326,12 @@ class UserController extends UserBase
 
         return $this->writeJson(200);
     }
+
+    /*
+     * 获取所有接口
+     */
+    public function getAllApiList(){
+        $res = RequestApiInfo::create()->all();
+        return $this->writeJson(200,null,$res);
+    }
 }

@@ -32,6 +32,7 @@ class AdminRoles
             $routeCollector->addRoute(['GET', 'POST'], '/editRole', $prefix . 'editRole');
             $routeCollector->addRoute(['GET', 'POST'], '/addUser', $prefix . 'addUser');
             $routeCollector->addRoute(['GET', 'POST'], '/getRoleList', $prefix . 'getRoleList');
+            $routeCollector->addRoute(['GET', 'POST'], '/getAllApiList', $prefix . 'getAllApiList');
 
         });
         return true;

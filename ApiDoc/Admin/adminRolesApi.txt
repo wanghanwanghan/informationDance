@@ -88,3 +88,9 @@
      username = PHP_is_the_best_language_in_the_world
      token    = 231er2r3q
 //======================================================================================================================
+描述:获取api列表
+地址:AdminRoles/v1/User/getAllApiList
+方法:get/post
+参数:
+     username = PHP_is_the_best_language_in_the_world
+     token    = 231er2r3q
