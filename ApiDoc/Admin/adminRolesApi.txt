@@ -3,27 +3,29 @@
 地址:AdminRoles/v1/User/userLogin
 方法:get/post
 参数:
-     username = admin
+     username = PHP_is_the_best_language_in_the_world
      password = xxx
 //======================================================================================================================
 描述:根据token 获取用户明细
 地址:AdminRoles/v1/User/getInfoByToken
 方法:get/post
 参数:
+     username = PHP_is_the_best_language_in_the_world
      token = ewr343dsada
 //======================================================================================================================
 描述:根据用户获取用户的接口明细
 地址:AdminRoles/v1/User/getApiListByUser
 方法:get/post
 参数:
-     username = admin
+     username = PHP_is_the_best_language_in_the_world
      token    = 231er2r3q
+     appId    = PHP_is_the_best_language_in_the_world
 //======================================================================================================================
 描述:修改接口详情
 地址:AdminRoles/v1/User/editApi
 方法:get/post
 参数:
-     username = admin
+     username = PHP_is_the_best_language_in_the_world
      token    = 231er2r3q
      aid      = 32132
      path     = /provide/v1/cl/getCheckPhoneStatus
@@ -39,7 +41,7 @@
 地址:AdminRoles/v1/User/editUserApi
 方法:get/post
 参数:
-     username = admin
+     username = PHP_is_the_best_language_in_the_world
      token    = 231er2r3q
      uid      = 1231
      apiInfo  = [1=>[],2=>[]] 这个用户的改完后拥有的接口明细
@@ -48,20 +50,22 @@
 地址:AdminRoles/v1/User/getUserList
 方法:get/post
 参数:
-     username = admin
+     username = PHP_is_the_best_language_in_the_world
      token    = 231er2r3q
 //======================================================================================================================
 描述:根据appId获取用户信息
 地址:AdminRoles/v1/User/getUserInfoByAppId
 方法:get/post
 参数:
-     username = admin
+     username = PHP_is_the_best_language_in_the_world
      token    = 231er2r3q
 //======================================================================================================================
 描述:修改角色
 地址:AdminRoles/v1/User/editRole
 方法:get/post
 参数:
+     username = PHP_is_the_best_language_in_the_world
+     token    = 231er2r3q
      roleId   = 1
      roleName = admin
      status   = 1
@@ -70,6 +74,8 @@
 地址:AdminRoles/v1/User/addUser
 方法:get/post
 参数:
+     username   = PHP_is_the_best_language_in_the_world
+     token      = 231er2r3q
      actionType = update
      username   = 信动
      money      = 1000

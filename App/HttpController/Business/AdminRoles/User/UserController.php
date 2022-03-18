@@ -117,9 +117,8 @@ class UserController extends UserBase
      */
     function getApiListByUser()
     {
-        $appId = $this->getRequestData('username') ?? '';
-        $token = $this->getRequestData('token') ?? '';
-        $info = RequestUserInfo::create()->where("token = '{$token}' and appId = '{$appId}'")->get();
+        $appId = $this->getRequestData('appId') ?? '';
+        $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
         $shipList = RequestUserApiRelationship::create()->where(" userId = {$info->id}")->all();
         $data = [];
         foreach ($shipList as $item) {
