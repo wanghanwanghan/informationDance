@@ -10,11 +10,4 @@ class RoleInfo extends ModelBase
 
     protected $autoTimeStamp = true;
 
-    public function addOne($username,$money){
-        $res = self::create()->data([
-            'username' => $username,
-            'create_time' => time(),
-            'money' => $money,
-        ])->save();
-    }
 }
