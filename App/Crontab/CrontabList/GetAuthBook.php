@@ -46,7 +46,8 @@ class GetAuthBook extends AbstractCronTask
         $this->currentAesKey = getRandomStr();
 
         $url_arr = [
-            36 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
+            //36 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
+            36 => 'http://invoicecommercial.dev.dl.alipaydev.com',//test rsa和dev一样
             41 => 'https://invoicecommercial-pre.antfin.com/api/wezTech/collectNotify',//pre
             42 => 'https://invoicecommercial.antfin.com/api/wezTech/collectNotify',//pro
         ];
@@ -169,7 +170,7 @@ Eof;
                 $pkeyid = openssl_pkey_get_private($private_key);
                 openssl_sign(jsonEncode([$body], false), $signature, $pkeyid, OPENSSL_ALGO_MD5);
 
-                CommonService::getInstance()->log4PHP([$body], 'info', 'sign_data');
+                CommonService::getInstance()->log4PHP([$body], 'info', 'notify_auth');
 
                 //准备通知
                 $collectNotify = [
@@ -180,7 +181,7 @@ Eof;
                     ],
                 ];
 
-                CommonService::getInstance()->log4PHP($collectNotify, 'info', 'notify_data');
+                CommonService::getInstance()->log4PHP($collectNotify, 'info', 'notify_auth');
 
                 $url = $url_arr[$id];
 
