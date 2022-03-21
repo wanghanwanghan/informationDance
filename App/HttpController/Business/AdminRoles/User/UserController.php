@@ -634,7 +634,8 @@ class UserController extends UserBase
         ];
 
         $res = (new TaoShuService())->post($postData, 'getShareHolderInfo');
-        $res = TaoShuController::class->checkResponse($res, false);
+        $TaoShuController = new TaoShuController();
+        $res = $TaoShuController->checkResponse($res, false);
         if (!is_array($res)) return [];
         if ($res['code'] == 200 && !empty($res['result'])) {
             foreach ($res['result'] as &$one) {
