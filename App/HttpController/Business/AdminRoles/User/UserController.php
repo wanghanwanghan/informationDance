@@ -422,6 +422,7 @@ class UserController extends UserBase
             dingAlarmSimple(['$data'=>$data,'BatchSeachLog-$res'=>$res]);
             $this->writeJson(200,null,'导入成功');
         }catch (\Throwable $throwable){
+            dingAlarmSimple(['error'=>$throwable->getMessage()]);
             $this->writeJson(201,null,$throwable->getMessage());
         }
     }
