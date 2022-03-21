@@ -485,7 +485,8 @@ class UserController extends UserBase
         foreach ($entNames as $ent) {
             $postData = ['entName' => $ent['entName']];
             $res = (new TaoShuService())->post($postData, 'getRegisterInfo');
-            $res = TaoShuController::class->checkResponse($res, false);
+            $TaoShuController = new TaoShuController();
+            $res = $TaoShuController->checkResponse($res, false);
             dingAlarm('陶数查询企业基本信息异常',['$postData'=>$postData,'$res'=>$res]);
             if (!is_array($res)) continue;
 
