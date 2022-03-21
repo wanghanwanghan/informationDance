@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\AdminRoles\User;
 
 use App\HttpController\Models\AdminNew\AdminNewApi;
+use App\HttpController\Models\Provide\BatchSeachLog;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\Provide\RequestUserApiRelationship;
 use App\HttpController\Models\Provide\RequestUserInfo;
@@ -10,6 +11,8 @@ use App\HttpController\Models\Provide\RequestUserInfoLog;
 use App\HttpController\Models\Provide\RoleInfo;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\User\UserService;
+use EasySwoole\Utility\File;
+use PhpOffice\PhpWord\IOFactory;
 use wanghanwanghan\someUtils\control;
 
 class UserController extends UserBase
@@ -335,6 +338,9 @@ class UserController extends UserBase
         return $this->writeJson(200,null,$res);
     }
 
+    /**
+     * 获取所有接口和用户的关系和这个用户的接口价格
+     */
     public function getUserApiList(){
         $appId = $this->getRequestData('appId') ?? '';
         $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
@@ -361,5 +367,42 @@ class UserController extends UserBase
             $arr[$datum[$key]] = $datum;
         }
         return $arr;
+    }
+
+
+    public function importData(){
+        $appId = $this->getRequestData('username') ?? '';
+        $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
+        try {
+            $file = $this->request()->getUploadedFile('file');
+            dingAlarmSimple(['$file'=>$file]);
+            $path = EASYSWOOLE_ROOT.TEMP_FILE_PATH;
+            if(!is_dir($path)){
+                File::createDirectory($path);
+            }
+            $path = $path.'/'.$file->getClientFilename();
+            $file->moveTo($path);
+            $spreadsheet = IOFactory::load($path);
+            //读取默认工作表
+            $worksheet = $spreadsheet->getSheet(0);
+            //取得一共有多少行
+            $allRow = $worksheet->getHighestRow();
+            $data = [];
+            $userId = $info->id;
+            $batchNum = control::getUuid();
+            for($i = 2; $i <= $allRow; $i++)
+            {
+                $data[$i]['userId'] = $userId;
+                $data[$i]['batchNum'] = $batchNum;
+                $data[$i]['entName'] = $spreadsheet->getActiveSheet()->getCell('A'.$i)->getValue();
+                $data[$i]['socialCredit'] = $spreadsheet->getActiveSheet()->getCell('B'.$i)->getValue();
+//                UserModel::create($data)->save();
+            }
+            $res = BatchSeachLog::create()->saveAll($data);
+            dingAlarmSimple(['$data'=>$data,'BatchSeachLog-$res'=>$res]);
+            $this->writeJson(200,null,'导入成功');
+        }catch (\Throwable $throwable){
+            $this->writeJson(201,null,$throwable->getMessage());
+        }
     }
 }
