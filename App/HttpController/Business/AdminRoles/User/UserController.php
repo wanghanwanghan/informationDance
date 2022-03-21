@@ -426,6 +426,9 @@ class UserController extends UserBase
         }
     }
 
+    /**
+     * 根据需要导出的类型批次号获取导出的文件
+     */
     public function exportBaseInformation(){
         $types = $this->getRequestData('types') ?? '';
         $batchNum = $this->getRequestData('batchNum') ?? '';

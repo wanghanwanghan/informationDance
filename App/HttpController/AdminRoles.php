@@ -35,6 +35,7 @@ class AdminRoles
             $routeCollector->addRoute(['GET', 'POST'], '/getAllApiList', $prefix . 'getAllApiList');
             $routeCollector->addRoute(['GET', 'POST'], '/getUserApiList', $prefix . 'getUserApiList');
             $routeCollector->addRoute(['GET', 'POST'], '/importData', $prefix . 'importData');
+            $routeCollector->addRoute(['GET', 'POST'], '/exportBaseInformation', $prefix . 'exportBaseInformation');
         });
         return true;
     }
