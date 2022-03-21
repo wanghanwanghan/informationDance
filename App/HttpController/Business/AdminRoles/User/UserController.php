@@ -390,11 +390,12 @@ class UserController extends UserBase
         $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
         try {
             $files = $this->request()->getUploadedFiles();
-            $path = '';
+            $path = $fileName = '';
             foreach ($files as $key => $oneFile) {
                 if ($oneFile instanceof UploadFile) {
                     try {
-                        $path = EASYSWOOLE_ROOT.TEMP_FILE_PATH . $oneFile->getClientFilename();
+                        $fileName = $oneFile->getClientFilename();
+                        $path = TEMP_FILE_PATH . $fileName;
                         $oneFile->moveTo($path);
                     } catch (\Throwable $e) {
                         return $this->writeErr($e, __FUNCTION__);
@@ -402,24 +403,32 @@ class UserController extends UserBase
                 }
             }
             dingAlarmSimple(['$path'=>$path]);
-            $spreadsheet = IOFactory::load($path);
-            //读取默认工作表
-            $worksheet = $spreadsheet->getSheet(0);
-            //取得一共有多少行
-            $allRow = $worksheet->getHighestRow();
-            $data = [];
-            $userId = $info->id;
-            $batchNum = control::getUuid();
-            for($i = 2; $i <= $allRow; $i++)
-            {
-                $data[$i]['userId'] = $userId;
-                $data[$i]['batchNum'] = $batchNum;
-                $data[$i]['entName'] = $spreadsheet->getActiveSheet()->getCell('A'.$i)->getValue();
-                $data[$i]['socialCredit'] = $spreadsheet->getActiveSheet()->getCell('B'.$i)->getValue();
-//                UserModel::create($data)->save();
-            }
-            $res = BatchSeachLog::create()->saveAll($data);
-            dingAlarmSimple(['$data'=>$data,'BatchSeachLog-$res'=>$res]);
+            $config = [
+                'path' => TEMP_FILE_PATH // xlsx文件保存路径
+            ];
+            $excel  = new \Vtiful\Kernel\Excel($config);
+            $data = $excel->openFile($fileName)
+                ->openSheet()
+                ->getSheetData();
+            dingAlarmSimple(['$data'=>$data]);
+//            $spreadsheet = IOFactory::load($path);
+//            //读取默认工作表
+//            $worksheet = $spreadsheet->getSheet(0);
+//            //取得一共有多少行
+//            $allRow = $worksheet->getHighestRow();
+//            $data = [];
+//            $userId = $info->id;
+//            $batchNum = control::getUuid();
+//            for($i = 2; $i <= $allRow; $i++)
+//            {
+//                $data[$i]['userId'] = $userId;
+//                $data[$i]['batchNum'] = $batchNum;
+//                $data[$i]['entName'] = $spreadsheet->getActiveSheet()->getCell('A'.$i)->getValue();
+//                $data[$i]['socialCredit'] = $spreadsheet->getActiveSheet()->getCell('B'.$i)->getValue();
+////                UserModel::create($data)->save();
+//            }
+//            $res = BatchSeachLog::create()->saveAll($data);
+//            dingAlarmSimple(['$data'=>$data,'BatchSeachLog-$res'=>$res]);
             $this->writeJson(200,null,'导入成功');
         }catch (\Throwable $throwable){
             dingAlarmSimple(['error'=>$throwable->getMessage()]);
