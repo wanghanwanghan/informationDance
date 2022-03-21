@@ -410,7 +410,7 @@ class UserController extends UserBase
             $data = $excel->openFile($fileName)
                 ->openSheet()
                 ->getSheetData();
-            dingAlarmSimple(['$data'=>json_encode($data)]);
+            dingAlarmSimple(['$fileName'=>$fileName,'$data'=>json_encode($data)]);
 //            $spreadsheet = IOFactory::load($path);
 //            //读取默认工作表
 //            $worksheet = $spreadsheet->getSheet(0);
