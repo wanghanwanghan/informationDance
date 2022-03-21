@@ -125,7 +125,7 @@ class XinDongController extends ProvideBase
         $ratio = FinanceRange::getInstance()->getRange('rangeRatio');
 
         //周伯通或者客一客，天创信用
-        if ($this->userId === 35 || $this->userId === 51) {
+        if ($this->userId === 35 || $this->userId === 51 || $this->userId === 54) {
             if ($beginYear === 2021 && $dataCount <= 2) {
                 $a = null;
             } elseif ($beginYear === 2020 && $dataCount <= 2) {
@@ -142,7 +142,7 @@ class XinDongController extends ProvideBase
         if ($this->userId === 52) {
             if ($beginYear === 2022 && $dataCount <= 3) {
                 $a = null;
-            }else if ($beginYear === 2021 && $dataCount <= 3) {
+            } else if ($beginYear === 2021 && $dataCount <= 3) {
                 $a = null;
             } elseif ($beginYear === 2020 && $dataCount <= 3) {
                 $a = null;
@@ -309,20 +309,21 @@ class XinDongController extends ProvideBase
     /**
      * 每日查询上限
      */
-    public function limitEntNumByUserId($keyName,$entName,$maxNum){
+    public function limitEntNumByUserId($keyName, $entName, $maxNum)
+    {
 
-        $time = date('Ymd',time());
-        $key = $keyName.$this->userId.$time;
+        $time = date('Ymd', time());
+        $key = $keyName . $this->userId . $time;
         $redis = \EasySwoole\RedisPool\Redis::defer('redis');
         $redis->select(14);
         $num = $redis->hlen($key);
 //        dingAlarmMarkdownForWork('每日查询上限',[['name'=>'数量','msg'=>$num],['name'=>'名称','msg'=>$entName]]);
-        if($num >= $maxNum){
+        if ($num >= $maxNum) {
             return true;
-        }else if (!$num) {
-            $redis->expire($key,86400);
+        } else if (!$num) {
+            $redis->expire($key, 86400);
         }
-        $redis->hset($key,$entName,$entName);
+        $redis->hset($key, $entName, $entName);
         return false;
     }
 
@@ -333,12 +334,12 @@ class XinDongController extends ProvideBase
         $dataCount = 3;
         $entName = $this->getRequestData('entName', '');
         if ($this->userId === 53) {
-            if($this->limitEntNumByUserId('getFinanceBaseDataYBR',$entName,100)){
+            if ($this->limitEntNumByUserId('getFinanceBaseDataYBR', $entName, 100)) {
                 $this->writeJson(201, null, null, '请求次数已经达到上限100');
             }
             if ($beginYear === 2022 && $dataCount <= 3) {
                 $a = null;
-            }else if ($beginYear === 2021 && $dataCount <= 3) {
+            } else if ($beginYear === 2021 && $dataCount <= 3) {
                 $a = null;
             } elseif ($beginYear === 2020 && $dataCount <= 3) {
                 $a = null;
