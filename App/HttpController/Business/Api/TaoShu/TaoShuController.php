@@ -21,7 +21,7 @@ class TaoShuController extends TaoShuBase
     }
 
     //检验龙盾返回值，并给客户计费
-    private function checkResponse($res, $writeJson = true)
+    public function checkResponse($res, $writeJson = true)
     {
         if (isset($res['PAGEINFO']) && isset($res['PAGEINFO']['TOTAL_COUNT']) && isset($res['PAGEINFO']['TOTAL_PAGE']) && isset($res['PAGEINFO']['CURRENT_PAGE'])) {
             $res['Paging'] = [

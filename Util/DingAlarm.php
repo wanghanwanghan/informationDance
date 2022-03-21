@@ -40,6 +40,16 @@ function dingAlarmSimple($arr){
     }
     dingAlarmMarkdownForWork($title,$text);
 }
+function dingAlarm($title,$arr){
+    $text = [];
+    foreach ($arr as $key=>$item) {
+        $text[] = [
+            'name' => $key,
+            'msg' => $item,
+        ];
+    }
+    dingAlarmMarkdownForWork($title,$text);
+}
 
 //function ding
 function dingAlarmMarkdownForWork($title,$text){
