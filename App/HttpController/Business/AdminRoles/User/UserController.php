@@ -428,10 +428,10 @@ class UserController extends UserBase
             }
             $res = BatchSeachLog::create()->saveAll($data);
             dingAlarmSimple(['$data' => json_encode($data), 'BatchSeachLog-$res' => json_encode($res)]);
-            $this->writeJson(200, null, '导入成功');
+            return $this->writeJson(200, null, '导入成功');
         } catch (\Throwable $throwable) {
             dingAlarmSimple(['error' => $throwable->getMessage()]);
-            $this->writeJson(201, null, $throwable->getMessage());
+            return $this->writeJson(201, null, $throwable->getMessage());
         }
     }
 
@@ -444,7 +444,7 @@ class UserController extends UserBase
         $batchNum = $this->getRequestData('batchNum') ?? '';
         $appId = $this->getRequestData('username') ?? '';
         if (empty($types) || empty($batchNum) || empty($appId)) {
-            $this->writeJson(201, null, '', '部分参数为空，请检查后再次请求');
+            return $this->writeJson(201, null, '', '部分参数为空，请检查后再次请求');
         }
         $typeArr = explode(',', $types);
         $fileArr = [];
@@ -459,7 +459,7 @@ class UserController extends UserBase
             }
         }
         if (empty($emptyTypes)) {
-            $this->writeJson(200, null, $fileArr, '成功');
+            return $this->writeJson(200, null, $fileArr, '成功');
         }
         $list = BatchSeachLog::create()->where("batchNum = '{$batchNum}' and userId = {$info->id}")->all();
         $nameArr = [];
@@ -477,9 +477,9 @@ class UserController extends UserBase
             $this->inseartChargingLog($info->id, $batchNum, $typeKey, $data, $filePath);
         }
         if (empty($fileArr)) {
-            $this->writeJson(201, null, '', "没有找到对应类型{$types}的数据信息");
+            return $this->writeJson(201, null, '', "没有找到对应类型{$types}的数据信息");
         }else{
-            $this->writeJson(200, null, $fileArr, '成功');
+            return $this->writeJson(200, null, $fileArr, '成功');
         }
     }
 
