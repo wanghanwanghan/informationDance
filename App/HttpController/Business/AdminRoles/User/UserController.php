@@ -13,6 +13,7 @@ use App\HttpController\Models\Provide\RequestUserInfoLog;
 use App\HttpController\Models\Provide\RoleInfo;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongDun\LongDunService;
+use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\User\UserService;
 use EasySwoole\Http\Message\UploadFile;
@@ -406,10 +407,12 @@ class UserController extends UserBase
             $config = [
                 'path' => TEMP_FILE_PATH // xlsx文件保存路径
             ];
-            $excel  = new \Vtiful\Kernel\Excel($config);
-            $data = $excel->openFile($fileName)
-                ->openSheet()
-                ->getSheetData();
+            $excel_read  = new \Vtiful\Kernel\Excel($config);
+            $excel_read->openFile($fileName)->openSheet();
+            while ($one = $excel_read->nextRow([])) {
+                $data[] = $one;
+            }
+
             dingAlarmSimple(['$fileName'=>$fileName,'$data'=>json_encode($data)]);
 //            $spreadsheet = IOFactory::load($path);
 //            //读取默认工作表
@@ -523,7 +526,7 @@ class UserController extends UserBase
                 $res['result'][0]['VENDINC'] = $vendinc;
                 $re = $res['result']['0'];
                 $insertData = [
-                    $entName,
+                    $ent['entName'],
                     $re['ENTNAME'],
                     $re['OLDNAME'],
                     $re['SHXYDM'],
@@ -560,9 +563,12 @@ class UserController extends UserBase
     public function qichachaRegisterInfo($entNames){
 
     }
+    /*
+     * 陶数导出企业经营异常信息
+     */
     public function taoshuGetOperatingExceptionRota($entNames)
     {
-        $fileName = EASYSWOOLE_ROOT.TEMP_FILE_PATH.date('YmdHis',time()).'企业经商异常信息.csv';
+        $fileName = EASYSWOOLE_ROOT.TEMP_FILE_PATH.date('YmdHis',time()).'企业经营异常信息.csv';
         $insertData = [
             '公司名称', '列入经营异常名录原因', '列入日期','作出决定机关（列入）','移出经营异常名录原因','移出日期','作出决定机关（移出）'
         ];
@@ -601,9 +607,12 @@ class UserController extends UserBase
         }
     }
 
+    /*
+     * 导出陶数股东信息
+     */
     public function taoshuGetShareHolderInfo($entNames)
     {
-        $fileName = EASYSWOOLE_ROOT.TEMP_FILE_PATH.date('YmdHis',time()).'企业经商异常信息.csv';
+        $fileName = EASYSWOOLE_ROOT.TEMP_FILE_PATH.date('YmdHis',time()).'企业股东信息.csv';
         $insertData = [
             '公司名称', '股东名称', '统一社会信用代码','股东类型','认缴出资额','出资币种','出资比例','出资时间'
         ];
@@ -679,5 +688,42 @@ class UserController extends UserBase
             'file_path' => $file
         ])->save();
         return true;
+    }
+
+    public function xinanGetFinanceNotAuth($entNames){
+
+        $fileName = EASYSWOOLE_ROOT.TEMP_FILE_PATH.date('YmdHis',time()).'企业经商异常信息.csv';
+        $insertData = [
+            '公司名称','年', '股东名称', '统一社会信用代码','股东类型','认缴出资额','出资币种','出资比例','出资时间'
+        ];
+        file_put_contents($fileName,  implode(',', replace($insertData)). PHP_EOL, FILE_APPEND);
+        $data = [];
+        foreach ($entNames as $ent) {
+            $postData = [
+                'entName' => $ent['entName'],
+                'code' => $ent['socialCredit'],
+                'beginYear' => 2018,
+                'dataCount' => 3,//取最近几年的
+            ];
+            $res = (new LongXinService())->getFinanceData($postData, false);
+            if (!empty($res['data'])) {
+                $tmp = [];
+                foreach ($res['data'] as $year => $val) {
+                    $tmp[$year]['ASSGRO_yoy'] = round($val['ASSGRO_yoy'] * 100);
+                    $tmp[$year]['LIAGRO_yoy'] = round($val['LIAGRO_yoy'] * 100);
+                    $tmp[$year]['VENDINC_yoy'] = round($val['VENDINC_yoy'] * 100);
+                    $tmp[$year]['MAIBUSINC_yoy'] = round($val['MAIBUSINC_yoy'] * 100);
+                    $tmp[$year]['PROGRO_yoy'] = round($val['PROGRO_yoy'] * 100);
+                    $tmp[$year]['NETINC_yoy'] = round($val['NETINC_yoy'] * 100);
+                    $tmp[$year]['RATGRO_yoy'] = round($val['RATGRO_yoy'] * 100);
+                    $tmp[$year]['TOTEQU_yoy'] = round($val['TOTEQU_yoy'] * 100);
+                    if (array_sum($tmp[$year]) === 0.0) {
+                        //如果最后是0，说明所有年份数据都是空，本次查询不收费
+                        $dataCount--;
+                    }
+                }
+                $res['data'] = $tmp;
+            }
+        }
     }
 }

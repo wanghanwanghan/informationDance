@@ -31,7 +31,7 @@ class BarchChargingLog extends ModelBase
             self::TYPE_TAOSU => 'taoshuGetOperatingExceptionRota',
         ],
         self::TYOPE_NIAN_BAO => [
-            self::TYPE_XI_NAN
+            self::TYPE_XI_NAN =>'xinanGetFinanceNotAuth'
         ],
         self::TYPE_PAN_JUE => [
             self::TYPE_FAHAI
