@@ -495,9 +495,10 @@ class UserController extends UserBase
             '经营业务范围', '登记机关', '经营期限自', '经营期限至', '核准日期', '死亡日期', '吊销日期', '注销日期', '地理坐标',
             '行业领域', '行业领域代码', '省份', '组织机构代码', '企业英文名', '企业官网'
         ];
-        file_put_contents($file, implode(',', $insertData) . PHP_EOL, FILE_APPEND);
+        $res = file_put_contents($file, implode(',', $insertData) . PHP_EOL, FILE_APPEND);
+
         $data = [];
-//        dingAlarm('taoshuRegisterInfo导出日志', ['$entNames' => json_encode($entNames)]);
+        dingAlarm('file_put_contents', ['$res' => json_encode($res)]);
         foreach ($entNames as $ent) {
             $postData = ['entName' => $ent['entName']];
             $res = (new TaoShuService())->post($postData, 'getRegisterInfo');
