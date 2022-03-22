@@ -418,7 +418,7 @@ class UserController extends UserBase
                 $data[$i]['userId'] = $info->id;
                 $data[$i]['batchNum'] = $batchNum;
                 $data[$i]['entName'] = $one['0']??'';
-                $data[$i]['socialCredit'] = $one['2']??'';
+                $data[$i]['socialCredit'] = $one['1']??'';
                 $i++;
             }
             $res = BatchSeachLog::create()->saveAll($data);
