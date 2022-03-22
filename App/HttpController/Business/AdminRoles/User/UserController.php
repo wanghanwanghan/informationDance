@@ -498,7 +498,7 @@ class UserController extends UserBase
         $res = file_put_contents($file, implode(',', $insertData) . PHP_EOL, FILE_APPEND);
 
         $data = [];
-        dingAlarm('file_put_contents', ['$res' => json_encode($res)]);
+        dingAlarm('file_put_contents', ['$res' => json_encode($res),'$file'=>$file]);
         foreach ($entNames as $ent) {
             $postData = ['entName' => $ent['entName']];
             $res = (new TaoShuService())->post($postData, 'getRegisterInfo');
