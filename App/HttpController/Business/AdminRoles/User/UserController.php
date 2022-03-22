@@ -489,7 +489,7 @@ class UserController extends UserBase
     public function taoshuRegisterInfo($entNames)
     {
         $fileName = date('YmdHis', time()) . '企业基本信息.csv';
-        $file = EASYSWOOLE_ROOT . TEMP_FILE_PATH . $fileName;
+        $file = TEMP_FILE_PATH . $fileName;
         $insertData = [
             '公司名称', '企业名称', '曾用名', '统一社会信用代码', '法定代表人', '成立日期', '经营状态', '注册资本', '注册资本币种', '地址', '企业类型',
             '经营业务范围', '登记机关', '经营期限自', '经营期限至', '核准日期', '死亡日期', '吊销日期', '注销日期', '地理坐标',
@@ -575,7 +575,7 @@ class UserController extends UserBase
     public function taoshuGetOperatingExceptionRota($entNames)
     {
         $fileName = date('YmdHis', time()) . '企业经营异常信息.csv';
-        $file = EASYSWOOLE_ROOT . TEMP_FILE_PATH . $fileName;
+        $file = TEMP_FILE_PATH . $fileName;
         $insertData = [
             '公司名称', '列入经营异常名录原因', '列入日期', '作出决定机关（列入）', '移出经营异常名录原因', '移出日期', '作出决定机关（移出）'
         ];
@@ -620,7 +620,7 @@ class UserController extends UserBase
     private function taoshuGetShareHolderInfo($entNames)
     {
         $fileName = date('YmdHis', time()) . '企业股东信息.csv';
-        $file = EASYSWOOLE_ROOT . TEMP_FILE_PATH . $fileName;
+        $file = TEMP_FILE_PATH . $fileName;
         $insertData = [
             '公司名称', '股东名称', '统一社会信用代码', '股东类型', '认缴出资额', '出资币种', '出资比例', '出资时间'
         ];
@@ -709,7 +709,7 @@ class UserController extends UserBase
     public function xinanGetFinanceNotAuth($entNames)
     {
         $fileName = date('YmdHis', time()) . '年报.csv';
-        $file = EASYSWOOLE_ROOT . TEMP_FILE_PATH . $fileName;
+        $file = TEMP_FILE_PATH . $fileName;
         $insertData = [
             '公司名称', '年', '股东名称', '统一社会信用代码', '股东类型', '认缴出资额', '出资币种', '出资比例', '出资时间'
         ];
