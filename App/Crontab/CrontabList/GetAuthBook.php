@@ -170,8 +170,6 @@ Eof;
                 $pkeyid = openssl_pkey_get_private($private_key);
                 openssl_sign(jsonEncode([$body], false), $signature, $pkeyid, OPENSSL_ALGO_MD5);
 
-                CommonService::getInstance()->log4PHP([$body], 'info', 'notify_auth');
-
                 //准备通知
                 $collectNotify = [
                     'body' => [$body],
@@ -206,6 +204,8 @@ Eof;
             ->useCache(false)
             ->needJsonDecode(true)
             ->send($url, jsonEncode($collectNotify, false), $header, [], 'postjson');
+
+        CommonService::getInstance()->log4PHP($ret, 'info', 'notify_auth');
     }
 
     /*
