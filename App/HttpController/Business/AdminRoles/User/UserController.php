@@ -411,9 +411,10 @@ class UserController extends UserBase
 //            dingAlarmSimple(['TEMP_FILE_PATH'=>TEMP_FILE_PATH,'$excel_read'=>json_encode($excel_read)]);
             $read = $excel_read->openFile($fileName)->openSheet();
             dingAlarmSimple(['$read'=>json_encode($read)]);
-            $one = $excel_read->nextRow([]);
-            dingAlarmSimple(['$one'=>json_encode($one)]);
+            $one1 = $excel_read->nextRow([]);
+            dingAlarmSimple(['$one'=>json_encode($one1)]);
             while ($one = $excel_read->nextRow([])) {
+                dingAlarmSimple(['$one'=>json_encode($one)]);
                 $data[] = $one;
             }
 
