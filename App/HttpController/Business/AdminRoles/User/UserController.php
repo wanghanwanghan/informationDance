@@ -475,7 +475,7 @@ class UserController extends UserBase
     /**
      * 陶数导出多个公司的基本信息
      */
-    public function taoshuRegisterInfo($entNames){
+    private function taoshuRegisterInfo($entNames){
         $fileName = EASYSWOOLE_ROOT.TEMP_FILE_PATH.date('YmdHis',time()).'企业基本信息.csv';
         $insertData = [
             '公司名称', '企业名称', '曾用名','统一社会信用代码','法定代表人','成立日期','经营状态','注册资本','注册资本币种','地址','企业类型',
@@ -555,7 +555,7 @@ class UserController extends UserBase
     /*
      * 陶数导出企业经营异常信息
      */
-    public function taoshuGetOperatingExceptionRota($entNames)
+    private function taoshuGetOperatingExceptionRota($entNames)
     {
         $fileName = EASYSWOOLE_ROOT.TEMP_FILE_PATH.date('YmdHis',time()).'企业经营异常信息.csv';
         $insertData = [
@@ -586,7 +586,7 @@ class UserController extends UserBase
         return [$fileName,$data];
     }
 
-    public function qichahchaGetOpException($entNames)
+    private function qichahchaGetOpException($entNames)
     {
         foreach ($entNames as $ent) {
             $postData = [
@@ -599,7 +599,7 @@ class UserController extends UserBase
     /*
      * 导出陶数股东信息
      */
-    public function taoshuGetShareHolderInfo($entNames)
+    private function taoshuGetShareHolderInfo($entNames)
     {
         $fileName = EASYSWOOLE_ROOT.TEMP_FILE_PATH.date('YmdHis',time()).'企业股东信息.csv';
         $insertData = [
@@ -634,7 +634,7 @@ class UserController extends UserBase
         return [$fileName,$data];
     }
 
-    public function getShareHolderInfo($entName,$pageNo = 1){
+    private function getShareHolderInfo($entName,$pageNo = 1){
         $postData = [
             'entName' => $entName,
             'pageNo' => $pageNo,
