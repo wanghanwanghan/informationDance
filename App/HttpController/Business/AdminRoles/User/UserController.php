@@ -417,8 +417,8 @@ class UserController extends UserBase
             while ($one = $excel_read->nextRow([])) {
 //                dingAlarmSimple(['$one'=>json_encode($one)]);
 
-                $onei = json_decode(json_encode($one),true);
-                $data[] = $onei;
+//                $onei = json_decode(json_encode($one),true);
+                $data[] = $one;
             }
 
             dingAlarmSimple(['$data'=>json_encode($data)]);
