@@ -411,35 +411,18 @@ class UserController extends UserBase
 //            dingAlarmSimple(['TEMP_FILE_PATH'=>TEMP_FILE_PATH,'$excel_read'=>json_encode($excel_read)]);
             $read = $excel_read->openFile($fileName)->openSheet();
             dingAlarmSimple(['$read'=>json_encode($read)]);
-            $one1 = $excel_read->nextRow([]);
-            dingAlarmSimple(['$one1'=>json_encode($one1)]);
-            $data = [];
+            $excel_read->nextRow([]);
+            $data = [];$i=0;
+            $batchNum = control::getUuid();
             while ($one = $excel_read->nextRow([])) {
-//                dingAlarmSimple(['$one'=>json_encode($one)]);
-
-//                $onei = json_decode(json_encode($one),true);
-                $data[] = $one;
+                $data[$i]['userId'] = $info->id;
+                $data[$i]['batchNum'] = $batchNum;
+                $data[$i]['entName'] = $one['0'];
+                $data[$i]['socialCredit'] = $one['2'];
+                $i++;
             }
-
-            dingAlarmSimple(['$data'=>json_encode($data)]);
-//            $spreadsheet = IOFactory::load($path);
-//            //读取默认工作表
-//            $worksheet = $spreadsheet->getSheet(0);
-//            //取得一共有多少行
-//            $allRow = $worksheet->getHighestRow();
-//            $data = [];
-//            $userId = $info->id;
-//            $batchNum = control::getUuid();
-//            for($i = 2; $i <= $allRow; $i++)
-//            {
-//                $data[$i]['userId'] = $userId;
-//                $data[$i]['batchNum'] = $batchNum;
-//                $data[$i]['entName'] = $spreadsheet->getActiveSheet()->getCell('A'.$i)->getValue();
-//                $data[$i]['socialCredit'] = $spreadsheet->getActiveSheet()->getCell('B'.$i)->getValue();
-////                UserModel::create($data)->save();
-//            }
-//            $res = BatchSeachLog::create()->saveAll($data);
-//            dingAlarmSimple(['$data'=>$data,'BatchSeachLog-$res'=>$res]);
+            $res = BatchSeachLog::create()->saveAll($data);
+            dingAlarmSimple(['$data'=>$data,'BatchSeachLog-$res'=>$res]);
             $this->writeJson(200,null,'导入成功');
         }catch (\Throwable $throwable){
             dingAlarmSimple(['error'=>$throwable->getMessage()]);
