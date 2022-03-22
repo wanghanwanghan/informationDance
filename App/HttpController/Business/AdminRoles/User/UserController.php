@@ -412,9 +412,9 @@ class UserController extends UserBase
             $read = $excel_read->openFile($fileName)->openSheet();
             dingAlarmSimple(['$read'=>json_encode($read)]);
             $one = $excel_read->nextRow([]);
-            dingAlarmSimple(['$one'=>json_decode($one)]);
+            dingAlarmSimple(['$one'=>json_encode($one)]);
             while ($one = $excel_read->nextRow([])) {
-                $data[] = json_decode($one);
+                $data[] = $one;
             }
 
             dingAlarmSimple(['$data'=>json_encode($data)]);
