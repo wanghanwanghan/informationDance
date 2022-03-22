@@ -485,13 +485,13 @@ class UserController extends UserBase
         ];
         file_put_contents($fileName,  implode(',', $insertData). PHP_EOL, FILE_APPEND);
         $data = [];
-        dingAlarm('taoshuRegisterInfo导出日志',['$entNames'=>$entNames]);
+        dingAlarm('taoshuRegisterInfo导出日志',['$entNames'=>json_encode($entNames)]);
         foreach ($entNames as $ent) {
             $postData = ['entName' => $ent['entName']];
             $res = (new TaoShuService())->post($postData, 'getRegisterInfo');
             $TaoShuController = new TaoShuController();
             $res = $TaoShuController->checkResponse($res, false);
-            dingAlarm('陶数查询企业基本信息异常',['$postData'=>$postData,'$res'=>$res]);
+            dingAlarm('陶数查询企业基本信息异常',['$postData'=>json_encode($postData),'$res'=>json_encode($res)]);
             if (!is_array($res)) continue;
 
             if ($res['code'] == 200 || !empty($res['result'])) {
