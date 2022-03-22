@@ -469,17 +469,18 @@ class UserController extends UserBase
         }
         foreach ($emptyTypes as $emptyType) {
             $emptyType = explode('-', $emptyType);
+            $typeKey = implode('-',$emptyType);
             $fun = BarchChargingLog::$type_map[$emptyType['0']][$emptyType['1']];
             list($filePath, $data) = $this->{$fun}($nameArr);
-            dingAlarm('导出数据返回', ['$filePath' => $filePath]);
-
-            $fileArr[$emptyType] = $filePath;
-            $this->inseartChargingLog($info->id, $batchNum, implode('-',$emptyType), $data, $filePath);
+//            dingAlarm('导出数据返回', ['$filePath' => $filePath]);
+            $fileArr[$typeKey] = $filePath;
+            $this->inseartChargingLog($info->id, $batchNum, $typeKey, $data, $filePath);
         }
         if (empty($fileArr)) {
             $this->writeJson(201, null, '', "没有找到对应类型{$types}的数据信息");
+        }else{
+            $this->writeJson(200, null, $fileArr, '成功');
         }
-        $this->writeJson(200, null, $fileArr, '成功');
     }
 
     /**
