@@ -474,7 +474,7 @@ class UserController extends UserBase
             dingAlarm('导出数据返回', ['$filePath' => $filePath]);
 
             $fileArr[$emptyType] = $filePath;
-            $this->inseartChargingLog($info->id, $batchNum, $emptyType, $data, $filePath);
+            $this->inseartChargingLog($info->id, $batchNum, implode('-',$emptyType), $data, $filePath);
         }
         if (empty($fileArr)) {
             $this->writeJson(201, null, '', "没有找到对应类型{$types}的数据信息");
