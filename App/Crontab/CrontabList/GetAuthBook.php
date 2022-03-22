@@ -52,7 +52,7 @@ class GetAuthBook extends AbstractCronTask
             42 => 'https://invoicecommercial.antfin.com/api/wezTech/collectNotify',//pro
         ];
 
-        $ids = $this->getNeedSealID();
+        $ids = $this->getNeedSealID();//123123
 
         $ids = implode(',', $ids);
 
