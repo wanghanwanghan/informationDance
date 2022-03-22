@@ -485,6 +485,7 @@ class UserController extends UserBase
         ];
         file_put_contents($fileName,  implode(',', replace($insertData)). PHP_EOL, FILE_APPEND);
         $data = [];
+        dingAlarm('taoshuRegisterInfo导出日志',['$entNames'=>$entNames]);
         foreach ($entNames as $ent) {
             $postData = ['entName' => $ent['entName']];
             $res = (new TaoShuService())->post($postData, 'getRegisterInfo');
