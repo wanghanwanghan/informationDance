@@ -414,12 +414,12 @@ class UserController extends UserBase
             $one1 = $excel_read->nextRow([]);
             dingAlarmSimple(['$one1'=>json_encode($one1)]);
             $data = [];
-            while ($one = $excel_read->nextRow([])) {
-//                dingAlarmSimple(['$one'=>json_encode($one)]);
-                $data[] = json_encode($one);
-            }
+//            while ($one = $excel_read->nextRow([])) {
+////                dingAlarmSimple(['$one'=>json_encode($one)]);
+//                $data[] = json_encode($one);
+//            }
 
-            dingAlarmSimple(['$data'=>json_encode($data)]);
+//            dingAlarmSimple(['$data'=>json_encode($data)]);
 //            $spreadsheet = IOFactory::load($path);
 //            //读取默认工作表
 //            $worksheet = $spreadsheet->getSheet(0);
