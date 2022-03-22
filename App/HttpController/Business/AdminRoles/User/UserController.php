@@ -403,14 +403,11 @@ class UserController extends UserBase
                     }
                 }
             }
-            dingAlarmSimple(['$path'=>$path]);
             $config = [
                 'path' => TEMP_FILE_PATH // xlsx文件保存路径
             ];
             $excel_read  = new \Vtiful\Kernel\Excel($config);
-//            dingAlarmSimple(['TEMP_FILE_PATH'=>TEMP_FILE_PATH,'$excel_read'=>json_encode($excel_read)]);
             $read = $excel_read->openFile($fileName)->openSheet();
-            dingAlarmSimple(['$read'=>json_encode($read)]);
             $excel_read->nextRow([]);
             $data = [];$i=0;
             $batchNum = control::getUuid();
@@ -422,7 +419,7 @@ class UserController extends UserBase
                 $i++;
             }
             $res = BatchSeachLog::create()->saveAll($data);
-            dingAlarmSimple(['$data'=>$data,'BatchSeachLog-$res'=>$res]);
+            dingAlarmSimple(['$data'=>json_encode($data),'BatchSeachLog-$res'=>json_encode($res)]);
             $this->writeJson(200,null,'导入成功');
         }catch (\Throwable $throwable){
             dingAlarmSimple(['error'=>$throwable->getMessage()]);
@@ -660,7 +657,7 @@ class UserController extends UserBase
      */
     public function searchChargingLog($user_id,$batchNum,$type){
         $startTime = strtotime('-3 day');
-        $log = BarchChargingLog::create()->where("userId = {$user_id} and batchNum = {$batchNum} and type = {$type} and created_at>{$startTime} order by created_at desc limit 1")->get();
+        $log = BarchChargingLog::create()->where("userId = {$user_id} and batchNum = {$batchNum} and type = {$type} and created_at>{$startTime} order by created_at desc ")->get();
         if(empty($log)){
             return '';
         }
