@@ -462,8 +462,8 @@ class UserController extends UserBase
         foreach ($emptyTypes as $emptyType) {
             $emptyType = explode('-',$emptyType);
             $fun = BarchChargingLog::$type_map[$emptyType['0']][$emptyType['1']];
-            dingAlarm('导出日志-方法名',['$fun'=>$fun,'$emptyType'=>json_encode($emptyType)]);
-            list($filePath,$data) = $this->$fun($nameArr);
+//            dingAlarm('导出日志-方法名',['$fun'=>$fun,'$emptyType'=>json_encode($emptyType)]);
+            list($filePath,$data) = $this->taoshuRegisterInfo($nameArr);
             $fileArr[$emptyType] = $filePath;
             $this->inseartChargingLog($info->id,$batchNum,$emptyType,$data,$filePath);
         }
@@ -476,7 +476,7 @@ class UserController extends UserBase
     /**
      * 陶数导出多个公司的基本信息
      */
-    private function taoshuRegisterInfo($entNames){
+    public function taoshuRegisterInfo($entNames){
         $fileName = EASYSWOOLE_ROOT.TEMP_FILE_PATH.date('YmdHis',time()).'企业基本信息.csv';
         $insertData = [
             '公司名称', '企业名称', '曾用名','统一社会信用代码','法定代表人','成立日期','经营状态','注册资本','注册资本币种','地址','企业类型',
@@ -557,7 +557,7 @@ class UserController extends UserBase
     /*
      * 陶数导出企业经营异常信息
      */
-    private function taoshuGetOperatingExceptionRota($entNames)
+    public function taoshuGetOperatingExceptionRota($entNames)
     {
         $fileName = EASYSWOOLE_ROOT.TEMP_FILE_PATH.date('YmdHis',time()).'企业经营异常信息.csv';
         $insertData = [
