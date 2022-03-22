@@ -405,12 +405,14 @@ class UserController extends UserBase
             }
             dingAlarmSimple(['$path'=>$path]);
             $config = [
-                'path' => $path // xlsx文件保存路径
+                'path' => TEMP_FILE_PATH // xlsx文件保存路径
             ];
             $excel_read  = new \Vtiful\Kernel\Excel($config);
-            dingAlarmSimple(['TEMP_FILE_PATH'=>TEMP_FILE_PATH,'$excel_read'=>json_encode($excel_read)]);
+//            dingAlarmSimple(['TEMP_FILE_PATH'=>TEMP_FILE_PATH,'$excel_read'=>json_encode($excel_read)]);
             $read = $excel_read->openFile($fileName)->openSheet();
             dingAlarmSimple(['$read'=>json_encode($read)]);
+            $one = $excel_read->nextRow([]);
+            dingAlarmSimple(['$one'=>json_encode($one)]);
             while ($one = $excel_read->nextRow([])) {
                 $data[] = $one;
             }
