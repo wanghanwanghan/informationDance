@@ -458,12 +458,12 @@ class UserController extends UserBase
             $nameArr[$k]['entName'] = $v->getAttr('entName');
             $nameArr[$k]['socialCredit'] = $v->getAttr('socialCredit');
         }
-        dingAlarm('导出日志-方法名',['$nameArr'=>json_encode($nameArr),'$emptyTypes'=>json_encode($emptyTypes)]);
         foreach ($emptyTypes as $emptyType) {
             $emptyType = explode('-',$emptyType);
             $fun = BarchChargingLog::$type_map[$emptyType['0']][$emptyType['1']];
-            dingAlarm('导出日志-方法名',['$fun'=>$fun,'$emptyType'=>json_encode($emptyType)]);
             list($filePath,$data) = $this->{$fun}($nameArr);
+            dingAlarm('导出数据返回',['$filePath'=>$filePath,'$data'=>json_encode($data)]);
+
             $fileArr[$emptyType] = $filePath;
             $this->inseartChargingLog($info->id,$batchNum,$emptyType,$data,$filePath);
         }
