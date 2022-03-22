@@ -452,7 +452,7 @@ class UserController extends UserBase
         if(empty($emptyTypes)){
             $this->writeJson(200,null, $fileArr,'成功');
         }
-        $list = BatchSeachLog::create()->where("batchNum = {$batchNum} and userId = {$info->id}")->all();
+        $list = BatchSeachLog::create()->where("batchNum = '{$batchNum}' and userId = {$info->id}")->all();
         $nameArr = [];
         foreach($list as $k=>$v){
             $nameArr[$k]['entName'] = $v->getAttr('entName');
