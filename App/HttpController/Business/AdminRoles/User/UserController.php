@@ -28,7 +28,7 @@ class UserController extends UserBase
 
     function onRequest(?string $action): ?bool
     {
-        if(!$this->checkRouter()){
+        if (!$this->checkRouter()) {
             $appId = $this->getRequestData('username') ?? '';
             $token = $this->getRequestData('token') ?? '';
             //dingAlarmSimple(['$appId'=>$appId,'$token'=>$token]);
@@ -230,16 +230,16 @@ class UserController extends UserBase
         $data = [];
         foreach ($resList as $item) {
             $data[] = [
-                'id'=>$item->getAttr('id'),
-                'username'=>$item->getAttr('username'),
-                'appId'=>$item->getAttr('appId'),
-                'appSecret'=>$item->getAttr('appSecret'),
-                'rsaPub'=>$item->getAttr('rsaPub'),
-                'rsaPri'=>$item->getAttr('rsaPri'),
-                'allowIp'=>$item->getAttr('allowIp'),
-                'money'=>$item->getAttr('money'),
-                'status'=>$item->getAttr('status'),
-                'roles'=>$item->getAttr('roles'),
+                'id' => $item->getAttr('id'),
+                'username' => $item->getAttr('username'),
+                'appId' => $item->getAttr('appId'),
+                'appSecret' => $item->getAttr('appSecret'),
+                'rsaPub' => $item->getAttr('rsaPub'),
+                'rsaPri' => $item->getAttr('rsaPri'),
+                'allowIp' => $item->getAttr('allowIp'),
+                'money' => $item->getAttr('money'),
+                'status' => $item->getAttr('status'),
+                'roles' => $item->getAttr('roles'),
             ];
         }
         return $this->writeJson(200, '', $data, '成功');
@@ -248,7 +248,8 @@ class UserController extends UserBase
     /**
      * 根据appId获取用户信息
      */
-    public function getUserInfoByAppId(){
+    public function getUserInfoByAppId()
+    {
         $appId = $this->getRequestData('username') ?? '';
         if (empty($appId)) return $this->writeJson(201, null, null, 'username不可以为空');
         $info = RequestUserInfo::create()->where("appId = '{$appId}'")->get();
@@ -273,13 +274,14 @@ class UserController extends UserBase
     /**
      * 修改角色
      */
-    public function editRole(){
+    public function editRole()
+    {
         $id = $this->getRequestData('roleId') ?? '';
         $name = $this->getRequestData('roleName') ?? '';
         $status = $this->getRequestData('status') ?? '';
         $info = RoleInfo::create()->where("id = '{$id}'")->get();
-        if(empty($info)){
-            return $this->writeJson(201, null, null, $name.'不存在');
+        if (empty($info)) {
+            return $this->writeJson(201, null, null, $name . '不存在');
         }
         $info->update([
             'status' => $status
@@ -290,7 +292,8 @@ class UserController extends UserBase
     /**
      * 获取所有角色
      */
-    public function getRoleList(){
+    public function getRoleList()
+    {
         $list = RoleInfo::create()->all();
         $data = [];
         foreach ($list as $item) {
@@ -324,7 +327,7 @@ class UserController extends UserBase
                 'money' => $money + $check->getAttr('money'),
                 'roles' => $roles,
             ]);
-            RequestUserInfoLog::create()->addOne($username,$money);
+            RequestUserInfoLog::create()->addOne($username, $money);
         } else {
             if (!empty($check)) return $this->writeJson(201);
             $appId = strtoupper(control::getUuid());
@@ -336,7 +339,7 @@ class UserController extends UserBase
                 'money' => $money,
                 'roles' => $roles
             ])->save();
-            RequestUserInfoLog::create()->addOne($username,$money);
+            RequestUserInfoLog::create()->addOne($username, $money);
         }
 
         return $this->writeJson(200);
@@ -345,23 +348,25 @@ class UserController extends UserBase
     /*
      * 获取所有接口
      */
-    public function getAllApiList(){
+    public function getAllApiList()
+    {
         $res = RequestApiInfo::create()->all();
-        return $this->writeJson(200,null,$res);
+        return $this->writeJson(200, null, $res);
     }
 
     /**
      * 获取所有接口和用户的关系和这个用户的接口价格
      */
-    public function getUserApiList(){
+    public function getUserApiList()
+    {
         $appId = $this->getRequestData('appId') ?? '';
         $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
         $shipList = RequestUserApiRelationship::create()->where(" userId = {$info->id}")->all();
         $res = RequestApiInfo::create()->all();
-        $res = $this->getArrSetKey($res,'id');
-        $shipList = $this->getArrSetKey($res,'apiId');
-        foreach ($res as $key => $v){
-            if(isset($shipList[$key]) && $shipList[$key]['status'] == 1) {
+        $res = $this->getArrSetKey($res, 'id');
+        $shipList = $this->getArrSetKey($res, 'apiId');
+        foreach ($res as $key => $v) {
+            if (isset($shipList[$key]) && $shipList[$key]['status'] == 1) {
                 $res[$key]['price'] = $shipList[$key]['price'];
                 $res[$key]['billing_plan'] = $shipList[$key]['billing_plan'];
                 $res[$key]['cache_day'] = $shipList[$key]['cache_day'];
@@ -369,13 +374,14 @@ class UserController extends UserBase
             }
             $res[$key]['own'] = 2;
         }
-        dingAlarmSimple(['$res'=>$res]);
-        return $this->writeJson(200,null,$res);
+        dingAlarmSimple(['$res' => $res]);
+        return $this->writeJson(200, null, $res);
     }
 
-    public function getArrSetKey($data,$key){
-        $data = json_decode(json_encode($data),true);
-        if(empty($datum)) return [];
+    public function getArrSetKey($data, $key)
+    {
+        $data = json_decode(json_encode($data), true);
+        if (empty($datum)) return [];
         $arr = [];
         foreach ($data as $datum) {
             $arr[$datum[$key]] = $datum;
@@ -386,7 +392,8 @@ class UserController extends UserBase
     /**
      * 批量导入数据
      */
-    public function importData(){
+    public function importData()
+    {
         $appId = $this->getRequestData('username') ?? '';
         $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
         try {
@@ -406,92 +413,96 @@ class UserController extends UserBase
             $config = [
                 'path' => TEMP_FILE_PATH // xlsx文件保存路径
             ];
-            $excel_read  = new \Vtiful\Kernel\Excel($config);
+            $excel_read = new \Vtiful\Kernel\Excel($config);
             $read = $excel_read->openFile($fileName)->openSheet();
             $excel_read->nextRow([]);
-            $data = [];$i=0;
+            $data = [];
+            $i = 0;
             $batchNum = control::getUuid();
             while ($one = $excel_read->nextRow([])) {
                 $data[$i]['userId'] = $info->id;
                 $data[$i]['batchNum'] = $batchNum;
-                $data[$i]['entName'] = $one['0']??'';
-                $data[$i]['socialCredit'] = $one['1']??'';
+                $data[$i]['entName'] = $one['0'] ?? '';
+                $data[$i]['socialCredit'] = $one['1'] ?? '';
                 $i++;
             }
             $res = BatchSeachLog::create()->saveAll($data);
-            dingAlarmSimple(['$data'=>json_encode($data),'BatchSeachLog-$res'=>json_encode($res)]);
-            $this->writeJson(200,null,'导入成功');
-        }catch (\Throwable $throwable){
-            dingAlarmSimple(['error'=>$throwable->getMessage()]);
-            $this->writeJson(201,null,$throwable->getMessage());
+            dingAlarmSimple(['$data' => json_encode($data), 'BatchSeachLog-$res' => json_encode($res)]);
+            $this->writeJson(200, null, '导入成功');
+        } catch (\Throwable $throwable) {
+            dingAlarmSimple(['error' => $throwable->getMessage()]);
+            $this->writeJson(201, null, $throwable->getMessage());
         }
     }
 
     /**
      * 根据需要导出的类型批次号获取导出的文件
      */
-    public function exportBaseInformation(){
+    public function exportBaseInformation()
+    {
         $types = $this->getRequestData('types') ?? '';
         $batchNum = $this->getRequestData('batchNum') ?? '';
         $appId = $this->getRequestData('username') ?? '';
-        if(empty($types) || empty($batchNum) || empty($appId)){
-            $this->writeJson(201,null,'','部分参数为空，请检查后再次请求');
+        if (empty($types) || empty($batchNum) || empty($appId)) {
+            $this->writeJson(201, null, '', '部分参数为空，请检查后再次请求');
         }
-        $typeArr = explode(',',$types);
+        $typeArr = explode(',', $types);
         $fileArr = [];
         $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
         $emptyTypes = [];
         foreach ($typeArr as $type) {
-            $file = $this->searchChargingLog($info->id,$batchNum,$type);
-            if(!empty($file)){
+            $file = $this->searchChargingLog($info->id, $batchNum, $type);
+            if (!empty($file)) {
                 $fileArr[$type] = $file;
-            }else{
+            } else {
                 $emptyTypes[] = $type;
             }
         }
-        if(empty($emptyTypes)){
-            $this->writeJson(200,null, $fileArr,'成功');
+        if (empty($emptyTypes)) {
+            $this->writeJson(200, null, $fileArr, '成功');
         }
         $list = BatchSeachLog::create()->where("batchNum = '{$batchNum}' and userId = {$info->id}")->all();
         $nameArr = [];
-        foreach($list as $k=>$v){
+        foreach ($list as $k => $v) {
             $nameArr[$k]['entName'] = $v->getAttr('entName');
             $nameArr[$k]['socialCredit'] = $v->getAttr('socialCredit');
         }
         foreach ($emptyTypes as $emptyType) {
-            $emptyType = explode('-',$emptyType);
+            $emptyType = explode('-', $emptyType);
             $fun = BarchChargingLog::$type_map[$emptyType['0']][$emptyType['1']];
-            list($filePath,$data) = $this->{$fun}($nameArr);
-            dingAlarm('导出数据返回',['$filePath'=>$filePath,'$data'=>json_encode($data)]);
+            list($filePath, $data) = $this->{$fun}($nameArr);
+            dingAlarm('导出数据返回', ['$filePath' => $filePath]);
 
             $fileArr[$emptyType] = $filePath;
-            $this->inseartChargingLog($info->id,$batchNum,$emptyType,$data,$filePath);
+            $this->inseartChargingLog($info->id, $batchNum, $emptyType, $data, $filePath);
         }
-        if(empty($fileArr)){
-            $this->writeJson(201,null,'',"没有找到对应类型{$types}的数据信息");
+        if (empty($fileArr)) {
+            $this->writeJson(201, null, '', "没有找到对应类型{$types}的数据信息");
         }
-        $this->writeJson(200,null, $fileArr,'成功');
+        $this->writeJson(200, null, $fileArr, '成功');
     }
 
     /**
      * 陶数导出多个公司的基本信息
      */
-    public function taoshuRegisterInfo($entNames){
-        $fileName = EASYSWOOLE_ROOT.TEMP_FILE_PATH.date('YmdHis',time()).'企业基本信息.csv';
+    public function taoshuRegisterInfo($entNames)
+    {
+        $fileName = date('YmdHis', time()) . '企业基本信息.csv';
+        $file = EASYSWOOLE_ROOT . TEMP_FILE_PATH . $fileName;
         $insertData = [
-            '公司名称', '企业名称', '曾用名','统一社会信用代码','法定代表人','成立日期','经营状态','注册资本','注册资本币种','地址','企业类型',
-            '经营业务范围', '登记机关','经营期限自','经营期限至','核准日期','死亡日期','吊销日期','注销日期','地理坐标',
-            '行业领域','行业领域代码','省份','组织机构代码','企业英文名','企业官网'
+            '公司名称', '企业名称', '曾用名', '统一社会信用代码', '法定代表人', '成立日期', '经营状态', '注册资本', '注册资本币种', '地址', '企业类型',
+            '经营业务范围', '登记机关', '经营期限自', '经营期限至', '核准日期', '死亡日期', '吊销日期', '注销日期', '地理坐标',
+            '行业领域', '行业领域代码', '省份', '组织机构代码', '企业英文名', '企业官网'
         ];
-        file_put_contents($fileName,  implode(',', $insertData). PHP_EOL, FILE_APPEND);
+        file_put_contents($file, implode(',', $insertData) . PHP_EOL, FILE_APPEND);
         $data = [];
-        dingAlarm('taoshuRegisterInfo导出日志',['$entNames'=>json_encode($entNames)]);
+//        dingAlarm('taoshuRegisterInfo导出日志', ['$entNames' => json_encode($entNames)]);
         foreach ($entNames as $ent) {
             $postData = ['entName' => $ent['entName']];
             $res = (new TaoShuService())->post($postData, 'getRegisterInfo');
             $TaoShuController = new TaoShuController();
             $res = $TaoShuController->checkResponse($res, false);
-            dingAlarm('陶数查询企业基本信息异常',['$postData'=>json_encode($postData),'$res'=>json_encode($res)]);
+//            dingAlarm('陶数查询企业基本信息异常', ['$postData' => json_encode($postData), '$res' => json_encode($res)]);
             if (!is_array($res)) continue;
 
             if ($res['code'] == 200 || !empty($res['result'])) {
@@ -544,26 +555,29 @@ class UserController extends UserBase
                     $re['ENGNAME'],
                     $re['WEBSITE'],
                 ];
-            file_put_contents($fileName,  implode(',', $this->replace($insertData)). PHP_EOL, FILE_APPEND);
+                file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
                 $data[] = $insertData;
             }
         }
-        return [$fileName,$data];
+        return [$fileName, $data];
     }
 
-    public function qichachaRegisterInfo($entNames){
+    public function qichachaRegisterInfo($entNames)
+    {
 
     }
+
     /*
      * 陶数导出企业经营异常信息
      */
     public function taoshuGetOperatingExceptionRota($entNames)
     {
-        $fileName = EASYSWOOLE_ROOT.TEMP_FILE_PATH.date('YmdHis',time()).'企业经营异常信息.csv';
+        $fileName = date('YmdHis', time()) . '企业经营异常信息.csv';
+        $file = EASYSWOOLE_ROOT . TEMP_FILE_PATH . $fileName;
         $insertData = [
-            '公司名称', '列入经营异常名录原因', '列入日期','作出决定机关（列入）','移出经营异常名录原因','移出日期','作出决定机关（移出）'
+            '公司名称', '列入经营异常名录原因', '列入日期', '作出决定机关（列入）', '移出经营异常名录原因', '移出日期', '作出决定机关（移出）'
         ];
-        file_put_contents($fileName,  implode(',', $this->replace($insertData)). PHP_EOL, FILE_APPEND);
+        file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         $data = [];
         foreach ($entNames as $ent) {
             $postData = [
@@ -580,12 +594,12 @@ class UserController extends UserBase
                     $re['DATEOUT'],
                     $re['REGORGOUT']
                 ];
-                file_put_contents($fileName,  implode(',', $this->replace($insertData)). PHP_EOL, FILE_APPEND);
+                file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
                 $data[] = $insertData;
             }
         }
 
-        return [$fileName,$data];
+        return [$fileName, $data];
     }
 
     private function qichahchaGetOpException($entNames)
@@ -603,19 +617,20 @@ class UserController extends UserBase
      */
     private function taoshuGetShareHolderInfo($entNames)
     {
-        $fileName = EASYSWOOLE_ROOT.TEMP_FILE_PATH.date('YmdHis',time()).'企业股东信息.csv';
+        $fileName = date('YmdHis', time()) . '企业股东信息.csv';
+        $file = EASYSWOOLE_ROOT . TEMP_FILE_PATH . $fileName;
         $insertData = [
-            '公司名称', '股东名称', '统一社会信用代码','股东类型','认缴出资额','出资币种','出资比例','出资时间'
+            '公司名称', '股东名称', '统一社会信用代码', '股东类型', '认缴出资额', '出资币种', '出资比例', '出资时间'
         ];
-        file_put_contents($fileName,  implode(',', $this->replace($insertData)). PHP_EOL, FILE_APPEND);
+        file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         $data = [];
         foreach ($entNames as $ent) {
             $entName = $ent['entName'];
-            list($data1,$totalPage) = $this->getShareHolderInfo($entName,1);
-            if($totalPage>1){
-                for ($i=2;$i<=$totalPage;$i++){
-                    list($data2,$totalPage2) = $this->getShareHolderInfo($entName,$i);
-                    $data1 = array_merge($data2,$data1);
+            list($data1, $totalPage) = $this->getShareHolderInfo($entName, 1);
+            if ($totalPage > 1) {
+                for ($i = 2; $i <= $totalPage; $i++) {
+                    list($data2, $totalPage2) = $this->getShareHolderInfo($entName, $i);
+                    $data1 = array_merge($data2, $data1);
                 }
             }
             foreach ($data1 as $re) {
@@ -629,14 +644,15 @@ class UserController extends UserBase
                     $re['CONRATIO'],
                     $re['CONDATE'],
                 ];
-                file_put_contents($fileName, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+                file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
                 $data[] = $insertData;
             }
         }
-        return [$fileName,$data];
+        return [$fileName, $data];
     }
 
-    private function getShareHolderInfo($entName,$pageNo = 1){
+    private function getShareHolderInfo($entName, $pageNo = 1)
+    {
         $postData = [
             'entName' => $entName,
             'pageNo' => $pageNo,
@@ -653,15 +669,17 @@ class UserController extends UserBase
             }
             unset($one);
         }
-        return [$res['result'],$res['paging']['totalPage']];
+        return [$res['result'], $res['paging']['totalPage']];
     }
+
     /**
      * 查询这个用户对应批次，对应数据类型，以往的查询记录
      */
-    public function searchChargingLog($user_id,$batchNum,$type){
+    public function searchChargingLog($user_id, $batchNum, $type)
+    {
         $startTime = strtotime('-3 day');
         $log = BarchChargingLog::create()->where("userId = '{$user_id}' and batchNum = '{$batchNum}' and type = '{$type}' and created_at>{$startTime} order by created_at desc ")->get();
-        if(empty($log)){
+        if (empty($log)) {
             return '';
         }
         return $log->file_path;
@@ -670,7 +688,9 @@ class UserController extends UserBase
     /**
      * 添加计费的查询记录
      */
-    public function inseartChargingLog($user_id,$batchNum,$type,$data,$file){
+    public function inseartChargingLog($user_id, $batchNum, $type, $data, $file)
+    {
+        dingAlarm('inseartChargingLog', ['$user_id' => $user_id,'$batchNum'=>$batchNum,'$type'=>$type,'$file'=>$file]);
         BarchChargingLog::create([
             'type' => $type,
             'ret' => $data,
@@ -681,13 +701,17 @@ class UserController extends UserBase
         return true;
     }
 
-    public function xinanGetFinanceNotAuth($entNames){
-
-        $fileName = EASYSWOOLE_ROOT.TEMP_FILE_PATH.date('YmdHis',time()).'企业经商异常信息.csv';
+    /**
+     * 西南年报
+     */
+    public function xinanGetFinanceNotAuth($entNames)
+    {
+        $fileName = date('YmdHis', time()) . '年报.csv';
+        $file = EASYSWOOLE_ROOT . TEMP_FILE_PATH . $fileName;
         $insertData = [
-            '公司名称','年', '股东名称', '统一社会信用代码','股东类型','认缴出资额','出资币种','出资比例','出资时间'
+            '公司名称', '年', '股东名称', '统一社会信用代码', '股东类型', '认缴出资额', '出资币种', '出资比例', '出资时间'
         ];
-        file_put_contents($fileName,  implode(',', $this->replace($insertData)). PHP_EOL, FILE_APPEND);
+        file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         $data = [];
         foreach ($entNames as $ent) {
             $postData = [
@@ -717,11 +741,13 @@ class UserController extends UserBase
             }
         }
     }
-    public function replace($arr){
+
+    public function replace($arr)
+    {
         foreach ($arr as &$item) {
-            $item = str_replace(',','  ',$item);
-            $item = str_replace("\n",'  ',$item);
-            $item = str_replace("\r",'  ',$item);
+            $item = str_replace(',', '  ', $item);
+            $item = str_replace("\n", '  ', $item);
+            $item = str_replace("\r", '  ', $item);
         }
         return $arr;
     }
