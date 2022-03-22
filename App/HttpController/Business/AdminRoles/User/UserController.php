@@ -35,7 +35,8 @@ class UserController extends UserBase
             if (empty($token) || empty($appId)) return $this->writeJson(201, null, null, '参数不可以为空');
             $info = RequestUserInfo::create()->where("token = '{$token}' and appId = '{$appId}'")->get();
             if (empty($info)) {
-                return $this->writeJson(201, null, null, '用户未登录');
+                 $this->writeJson(201, null, null, '用户未登录');
+                 return false;
             }
         }
         return parent::onRequest($action);
@@ -586,8 +587,8 @@ class UserController extends UserBase
             ];
             $res = (new TaoShuService())->post($postData, 'getOperatingExceptionRota');
             dingAlarm('taoshuGetOperatingExceptionRota', ['$res' => json_encode($res)]);
-            if(empty($res['result'])) continue;
-            foreach ($res['result'] as $re) {
+            if(empty($res['RESULTDATA'])) continue;
+            foreach ($res['RESULTDATA'] as $re) {
                 $insertData = [
                     $ent['entName'],
                     $re['REASONIN'],
