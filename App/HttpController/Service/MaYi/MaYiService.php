@@ -5265,7 +5265,8 @@ class MaYiService extends ServiceBase
             foreach ($data['fileData'] as $datum) {
                 AntAuthSealDetail::create()->data([
                     'orderNo' => $data['orderNo'],
-                    'isSeal' => $datum['isSeal'],
+                    //蚂蚁传过来的意思是 是否已经盖过章
+                    'isSeal' => $datum['isSeal'] === 'true' ? 'false' : 'true',
                     'isReturn' => $datum['isReturn'],
                     'fileAddress' => $datum['fileAddress'],
                     'fileId' => $datum['fileId'],
