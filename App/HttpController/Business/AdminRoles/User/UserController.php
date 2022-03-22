@@ -691,7 +691,7 @@ class UserController extends UserBase
     public function inseartChargingLog($user_id, $batchNum, $type, $data, $file)
     {
         dingAlarm('inseartChargingLog', ['$user_id' => $user_id,'$batchNum'=>$batchNum,'$type'=>$type,'$file'=>$file]);
-        BarchChargingLog::create([
+        BarchChargingLog::create()->data([
             'type' => $type,
             'ret' => $data,
             'userId' => $user_id,
