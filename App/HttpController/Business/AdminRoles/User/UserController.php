@@ -504,7 +504,6 @@ class UserController extends UserBase
             $res = (new TaoShuService())->post($postData, 'getRegisterInfo');
             $TaoShuController = new TaoShuController();
             $res = $TaoShuController->checkResponse($res, false);
-//            dingAlarm('陶数查询企业基本信息异常', ['$postData' => json_encode($postData), '$res' => json_encode($res)]);
             if (!is_array($res)) continue;
 
             if ($res['code'] == 200 || !empty($res['result'])) {
@@ -569,7 +568,7 @@ class UserController extends UserBase
 
     }
 
-    /*
+    /**
      * 陶数导出企业经营异常信息
      */
     public function taoshuGetOperatingExceptionRota($entNames)
@@ -586,6 +585,8 @@ class UserController extends UserBase
                 'entName' => $ent['entName'],
             ];
             $res = (new TaoShuService())->post($postData, 'getOperatingExceptionRota');
+            dingAlarm('taoshuGetOperatingExceptionRota', ['$res' => json_encode($res)]);
+            if(empty($res['result'])) continue;
             foreach ($res['result'] as $re) {
                 $insertData = [
                     $ent['entName'],
@@ -635,6 +636,7 @@ class UserController extends UserBase
                     $data1 = array_merge($data2, $data1);
                 }
             }
+            if(empty($data1)) continue;
             foreach ($data1 as $re) {
                 $insertData = [
                     $entName,
@@ -692,7 +694,7 @@ class UserController extends UserBase
      */
     public function inseartChargingLog($user_id, $batchNum, $type, $data, $file)
     {
-        dingAlarm('inseartChargingLog', ['$user_id' => $user_id,'$batchNum'=>$batchNum,'$type'=>$type,'$file'=>$file]);
+//        dingAlarm('inseartChargingLog', ['$user_id' => $user_id,'$batchNum'=>$batchNum,'$type'=>$type,'$file'=>$file]);
         BarchChargingLog::create()->data([
             'type' => $type,
             'ret' => json_encode($data),
