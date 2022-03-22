@@ -657,7 +657,7 @@ class UserController extends UserBase
      */
     public function searchChargingLog($user_id,$batchNum,$type){
         $startTime = strtotime('-3 day');
-        $log = BarchChargingLog::create()->where("userId = {$user_id} and batchNum = {$batchNum} and type = {$type} and created_at>{$startTime} order by created_at desc ")->get();
+        $log = BarchChargingLog::create()->where("userId = '{$user_id}' and batchNum = '{$batchNum}' and type = '{$type}' and created_at>{$startTime} order by created_at desc ")->get();
         if(empty($log)){
             return '';
         }
