@@ -460,7 +460,7 @@ class UserController extends UserBase
         }
         foreach ($emptyTypes as $emptyType) {
             $emptyType = explode('-',$emptyType);
-            $fun = BarchChargingLog::$type_map[$emptyType['0']][$emptyType['2']];
+            $fun = BarchChargingLog::$type_map[$emptyType['0']][$emptyType['1']];
             dingAlarm('导出日志-方法名',['$fun'=>$fun,'$emptyType'=>json_encode($emptyType)]);
             list($filePath ,$data)= $this->$fun($nameArr);
             $fileArr[$emptyType] = $filePath;
