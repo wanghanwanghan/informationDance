@@ -483,7 +483,7 @@ class UserController extends UserBase
             '经营业务范围', '登记机关','经营期限自','经营期限至','核准日期','死亡日期','吊销日期','注销日期','地理坐标',
             '行业领域','行业领域代码','省份','组织机构代码','企业英文名','企业官网'
         ];
-        file_put_contents($fileName,  implode(',', replace($insertData)). PHP_EOL, FILE_APPEND);
+        file_put_contents($fileName,  implode(',', $insertData). PHP_EOL, FILE_APPEND);
         $data = [];
         dingAlarm('taoshuRegisterInfo导出日志',['$entNames'=>$entNames]);
         foreach ($entNames as $ent) {
@@ -544,7 +544,7 @@ class UserController extends UserBase
                     $re['ENGNAME'],
                     $re['WEBSITE'],
                 ];
-            file_put_contents($fileName,  implode(',', replace($insertData)). PHP_EOL, FILE_APPEND);
+            file_put_contents($fileName,  implode(',', $this->replace($insertData)). PHP_EOL, FILE_APPEND);
                 $data[] = $insertData;
             }
         }
@@ -563,7 +563,7 @@ class UserController extends UserBase
         $insertData = [
             '公司名称', '列入经营异常名录原因', '列入日期','作出决定机关（列入）','移出经营异常名录原因','移出日期','作出决定机关（移出）'
         ];
-        file_put_contents($fileName,  implode(',', replace($insertData)). PHP_EOL, FILE_APPEND);
+        file_put_contents($fileName,  implode(',', $this->replace($insertData)). PHP_EOL, FILE_APPEND);
         $data = [];
         foreach ($entNames as $ent) {
             $postData = [
@@ -580,7 +580,7 @@ class UserController extends UserBase
                     $re['DATEOUT'],
                     $re['REGORGOUT']
                 ];
-                file_put_contents($fileName,  implode(',', replace($insertData)). PHP_EOL, FILE_APPEND);
+                file_put_contents($fileName,  implode(',', $this->replace($insertData)). PHP_EOL, FILE_APPEND);
                 $data[] = $insertData;
             }
         }
@@ -607,7 +607,7 @@ class UserController extends UserBase
         $insertData = [
             '公司名称', '股东名称', '统一社会信用代码','股东类型','认缴出资额','出资币种','出资比例','出资时间'
         ];
-        file_put_contents($fileName,  implode(',', replace($insertData)). PHP_EOL, FILE_APPEND);
+        file_put_contents($fileName,  implode(',', $this->replace($insertData)). PHP_EOL, FILE_APPEND);
         $data = [];
         foreach ($entNames as $ent) {
             $entName = $ent['entName'];
@@ -629,7 +629,7 @@ class UserController extends UserBase
                     $re['CONRATIO'],
                     $re['CONDATE'],
                 ];
-                file_put_contents($fileName, implode(',', replace($insertData)) . PHP_EOL, FILE_APPEND);
+                file_put_contents($fileName, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
                 $data[] = $insertData;
             }
         }
@@ -687,7 +687,7 @@ class UserController extends UserBase
         $insertData = [
             '公司名称','年', '股东名称', '统一社会信用代码','股东类型','认缴出资额','出资币种','出资比例','出资时间'
         ];
-        file_put_contents($fileName,  implode(',', replace($insertData)). PHP_EOL, FILE_APPEND);
+        file_put_contents($fileName,  implode(',', $this->replace($insertData)). PHP_EOL, FILE_APPEND);
         $data = [];
         foreach ($entNames as $ent) {
             $postData = [
@@ -716,5 +716,13 @@ class UserController extends UserBase
                 $res['data'] = $tmp;
             }
         }
+    }
+    public function replace($arr){
+        foreach ($arr as &$item) {
+            $item = str_replace(',','  ',$item);
+            $item = str_replace("\n",'  ',$item);
+            $item = str_replace("\r",'  ',$item);
+        }
+        return $arr;
     }
 }
