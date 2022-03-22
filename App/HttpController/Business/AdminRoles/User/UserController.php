@@ -408,7 +408,9 @@ class UserController extends UserBase
                 'path' => TEMP_FILE_PATH // xlsx文件保存路径
             ];
             $excel_read  = new \Vtiful\Kernel\Excel($config);
-            $excel_read->openFile($fileName)->openSheet();
+            dingAlarmSimple(['$excel_read'=>json_encode($excel_read)]);
+            $read = $excel_read->openFile($fileName)->openSheet();
+            dingAlarmSimple(['$read'=>json_encode($read)]);
             while ($one = $excel_read->nextRow([])) {
                 $data[] = $one;
             }
