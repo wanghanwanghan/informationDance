@@ -458,6 +458,7 @@ class UserController extends UserBase
             $nameArr[$k]['entName'] = $v->getAttr('entName');
             $nameArr[$k]['socialCredit'] = $v->getAttr('socialCredit');
         }
+        dingAlarm('导出日志-方法名',['$nameArr'=>json_encode($nameArr),'$emptyTypes'=>json_encode($emptyTypes)]);
         foreach ($emptyTypes as $emptyType) {
             $emptyType = explode('-',$emptyType);
             $fun = BarchChargingLog::$type_map[$emptyType['0']][$emptyType['1']];
