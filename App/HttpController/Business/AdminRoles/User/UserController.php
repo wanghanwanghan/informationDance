@@ -5,6 +5,7 @@ namespace App\HttpController\Business\AdminRoles\User;
 use App\HttpController\Business\Api\TaoShu\TaoShuController;
 use App\HttpController\Models\AdminNew\AdminNewApi;
 use App\HttpController\Models\Provide\BarchChargingLog;
+use App\HttpController\Models\Provide\BarchTypeApiRelation;
 use App\HttpController\Models\Provide\BatchSeachLog;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\Provide\RequestUserApiRelationship;
@@ -472,6 +473,7 @@ class UserController extends UserBase
         }
         return $this->writeJson(200, null, $data,'成功');
     }
+
     /**
      * 根据需要导出的类型批次号获取导出的文件
      */
@@ -908,5 +910,76 @@ class UserController extends UserBase
             'range' => 10,
         ];
         return (new FaYanYuanService())->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sifa', $postData);
+    }
+
+    /**
+     * 获取这个用户可以导出的接口类型和接口名称
+     */
+    public function getTypeMapByAPPId(){
+        $appId = $this->getRequestData('username') ?? '';
+        $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
+        $listRelation = RequestUserApiRelationship::create()->where("userId = {$info->id} and status = 1")->all();
+        if(empty($listRelation)){
+            return $this->writeJson(201, null, '', "这个用户没有开通接口");
+        }
+        $apiIds = [];
+        foreach ($listRelation as $item) {
+            $apiIds[$item->getAttr('apiId')] = $item->getAttr('apiId');
+        }
+        $listTypeApiRelation =  BarchTypeApiRelation::create()->where("apiId in (".implode(',',$apiIds).")")->all();
+        $data = [];
+        foreach ($listTypeApiRelation as $item) {
+            $data[] = [
+                'type' => $item->getAttr('typeBase').'>'.$item->getAttr('typeTwo').'-'.$item->getAttr('typeSanfang'),
+                'name' => $item->getAttr('name')
+            ];
+        }
+        return $this->writeJson(201, null, $data, "成功");
+    }
+
+    /**
+     * 获取所有可以导出的类型
+     */
+    public function getAllTypeMap(){
+        $list = BarchTypeApiRelation::create()->all();
+        return $this->writeJson(
+            201,
+            null,
+            [
+                'list'=>$list,
+                'tripartite'=>BarchTypeApiRelation::TRIPARTITE_MAP,
+                'typeBase'=>BarchTypeApiRelation::TYPE_BASE_MAP
+            ],
+            "成功");
+    }
+
+    /**
+     * 添加或修改批次导出的类型
+     */
+    public function addBatchType(){
+        $apiId = $this->getRequestData('apiId');
+        $typeSanfang = $this->getRequestData('typeSanfang');
+        $typeBase = $this->getRequestData('typeBase');
+        $typeTwo = $this->getRequestData('typeTwo');
+        $name = $this->getRequestData('name');
+        $remarks = $this->getRequestData('remarks');
+        $fun = $this->getRequestData('fun');
+        $info = BarchTypeApiRelation::create()->where('apiId', $apiId)->get();
+        $update = [
+            'apiId' => $apiId,
+            'typeSanfang' => $typeSanfang,
+            'typeBase' => $typeBase,
+            'typeTwo' => $typeTwo,
+            'name' => $name,
+            'remarks' => $remarks,
+            'fun' => $fun,
+        ];
+        if (empty($info)) {
+            BarchTypeApiRelation::create()->data($update)->save();
+        } else {
+            $info->update($update);
+        }
+
+        return $this->writeJson();
     }
 }

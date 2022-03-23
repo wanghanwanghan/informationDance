@@ -38,6 +38,10 @@ class AdminRoles
             $routeCollector->addRoute(['GET', 'POST'], '/exportBaseInformation', $prefix . 'exportBaseInformation');
             $routeCollector->addRoute(['GET', 'POST'], '/getBatchNumDetail', $prefix . 'getBatchNumDetail');
             $routeCollector->addRoute(['GET', 'POST'], '/getBatchNumList', $prefix . 'getBatchNumList');
+            $routeCollector->addRoute(['GET', 'POST'], '/getBatchNumList', $prefix . 'getAllTypeMap');
+            $routeCollector->addRoute(['GET', 'POST'], '/getBatchNumList', $prefix . 'getTypeMapByAPPId');
+            $routeCollector->addRoute(['GET', 'POST'], '/getBatchNumList', $prefix . 'addBatchType');
+
         });
         return true;
     }
