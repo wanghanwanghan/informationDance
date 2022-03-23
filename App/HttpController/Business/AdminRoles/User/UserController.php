@@ -783,7 +783,7 @@ class UserController extends UserBase
             'doc_type' => $docType,
             'keyword' => $entName,
             'pageno' => $page,
-            'range' => 100,
+            'range' => 10,
         ];
         return (new FaYanYuanService())->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sifa', $postData);
 
