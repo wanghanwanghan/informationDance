@@ -461,7 +461,7 @@ class UserController extends UserBase
         $batchNum = $this->getRequestData('batchNum') ?? '';
         $appId = $this->getRequestData('username') ?? '';
         $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
-        $list = BarchChargingLog::create()->where("userId = {$info->id} and batchNum = {$batchNum}")->all();
+        $list = BarchChargingLog::create()->where("userId = {$info->id} and batchNum = '{$batchNum}'")->all();
         $data = [];
         foreach ($list as $item) {
             $data[] = [
