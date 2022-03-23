@@ -508,12 +508,9 @@ class UserController extends UserBase
             $nameArr[$k]['entName'] = $v->getAttr('entName');
             $nameArr[$k]['socialCredit'] = $v->getAttr('socialCredit');
         }
-        foreach ($emptyTypes as $emptyType) {//$emptyType格式：1>1-1
-            $emptyTypeArr = explode('-', $emptyType);
-            $tripartite = $emptyTypeArr['1'];
-            $twoType = explode('>',$emptyTypeArr['0']);
-            dingAlarm('$twoType', ['$twoType' => json_encode($twoType),'$tripartite'=>$tripartite]);
-            $fun = BarchChargingLog::$type_map[$twoType['0']][$twoType['1']][$tripartite];
+        foreach ($emptyTypes as $emptyType) {
+            $barchTypeApiRelationInfo = BarchTypeApiRelation::create()->where('id', $emptyType)->get();
+            $fun = $barchTypeApiRelationInfo->id;
             dingAlarm('$twoType', ['$fun' => $fun]);
             list($filePath, $data) = $this->{$fun}($nameArr);
             dingAlarm('导出数据返回', ['$filePath' => $filePath]);
@@ -930,7 +927,7 @@ class UserController extends UserBase
         $data = [];
         foreach ($listTypeApiRelation as $item) {
             $data[] = [
-                'type' => $item->getAttr('typeBase').'>'.$item->getAttr('typeTwo').'-'.$item->getAttr('typeSanfang'),
+                'type' => $item->getAttr('id'),
                 'name' => $item->getAttr('name')
             ];
         }
@@ -960,7 +957,6 @@ class UserController extends UserBase
         $apiId = $this->getRequestData('apiId');
         $typeSanfang = $this->getRequestData('typeSanfang');
         $typeBase = $this->getRequestData('typeBase');
-        $typeTwo = $this->getRequestData('typeTwo');
         $name = $this->getRequestData('name');
         $remarks = $this->getRequestData('remarks');
         $fun = $this->getRequestData('fun');
@@ -969,7 +965,6 @@ class UserController extends UserBase
             'apiId' => $apiId,
             'typeSanfang' => $typeSanfang,
             'typeBase' => $typeBase,
-            'typeTwo' => $typeTwo,
             'name' => $name,
             'remarks' => $remarks,
             'fun' => $fun,

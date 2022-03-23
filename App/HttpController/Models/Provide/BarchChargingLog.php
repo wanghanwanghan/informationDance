@@ -26,13 +26,13 @@ class BarchChargingLog extends ModelBase
     const TYPE_CAIWU_8 = 21;                           //财务
 
     const TYPE_SIFA = 3;                            //司法
-    const TYPE_SIFA_KTGG = 31;                       //开庭公告
-    const TYPE_SIFA_PJWC = 32;                       //判决文书
-    const TYPE_SIFA_FYGG = 33;                       //法院公告
-    const TYPE_SIFA_ZXGG = 34;                       //执行公告
-    const TYPE_SIFA_SXGG = 35;                       //失信公告
-    const TYPE_SIFA_SFCFDJKY = 36;                   //司法查封冻结扣押
-    const TYPE_SIFA_SFPM = 37;                       //司法拍卖
+    const TYPE_SIFA_KTGG = 1;                       //开庭公告
+    const TYPE_SIFA_PJWC = 2;                       //判决文书
+    const TYPE_SIFA_FYGG = 3;                       //法院公告
+    const TYPE_SIFA_ZXGG = 4;                       //执行公告
+    const TYPE_SIFA_SXGG = 5;                       //失信公告
+    const TYPE_SIFA_SFCFDJKY = 6;                   //司法查封冻结扣押
+    const TYPE_SIFA_SFPM = 7;                       //司法拍卖
 
     const TYPE_SHESHUI = 4;                         //涉税
     const TYPE_SHESHUI_QSGG = 41;                    //欠税公告
