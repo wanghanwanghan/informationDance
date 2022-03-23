@@ -770,7 +770,7 @@ class UserController extends UserBase
             'id'
         ];
         file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
-        foreach ($entNames as $entName) {
+        foreach ($entNames as $ent) {
             $data = $this->getCpws($ent['entName'],1);
             dingAlarm('裁判文书',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
         }
