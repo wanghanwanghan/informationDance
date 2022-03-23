@@ -821,11 +821,12 @@ class UserController extends UserBase
         $pname = [];
         $partyTitleT = [];
         $partyPositionT = [];
+        $partyPositionTMap = ['p'=>'原告','d'=>'被告','t'=>'第三人','u'=>'当事人'];
         foreach ($data['partys'] as $v) {
-            $caseCauseT[] = $v['caseCauseT'];
+            $caseCauseT = $v['caseCauseT'];
             $pname[] = $v['pname'];
             $partyTitleT[] = $v['partyTitleT'];
-            $partyPositionT[] = $v['partyPositionT'];
+            $partyPositionT[] = $partyPositionTMap[$v['partyPositionT']]??$v['partyPositionT'];
         }
         $insertData = [
             $name,
