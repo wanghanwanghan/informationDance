@@ -772,7 +772,7 @@ class UserController extends UserBase
         file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
         foreach ($entNames as $entName) {
             $data = $this->getCpws($entName,1);
-            dingAlarm('裁判文书',['$data'=>json_encode($data)]);
+            dingAlarm('裁判文书',['$entName'=>$entName,'$data'=>json_encode($data)]);
         }
     }
 
