@@ -785,7 +785,7 @@ class UserController extends UserBase
             'pageno' => $page,
             'range' => 100,
         ];
-        $res = (new FaYanYuanService())->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sifa', $postData);
+        return (new FaYanYuanService())->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sifa', $postData);
 
     }
 }
