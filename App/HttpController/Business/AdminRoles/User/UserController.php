@@ -512,7 +512,7 @@ class UserController extends UserBase
             $twoType = explode('>',$emptyType['1']);
             $fun = BarchChargingLog::$type_map[$twoType['0']][$twoType['1']][$tripartite];
             list($filePath, $data) = $this->{$fun}($nameArr);
-//            dingAlarm('导出数据返回', ['$filePath' => $filePath]);
+            dingAlarm('导出数据返回', ['$filePath' => $filePath]);
             $fileArr[$emptyType] = $filePath;
             $this->inseartChargingLog($info->id, $batchNum, $emptyType, $data, $filePath);
         }
