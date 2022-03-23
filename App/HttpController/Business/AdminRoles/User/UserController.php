@@ -509,7 +509,7 @@ class UserController extends UserBase
         foreach ($emptyTypes as $emptyType) {//$emptyType格式：1>1-1
             $emptyTypeArr = explode('-', $emptyType);
             $tripartite = $emptyTypeArr['1'];
-            $twoType = explode('>',$emptyType['0']);
+            $twoType = explode('>',$emptyTypeArr['0']);
             dingAlarm('$twoType', ['$twoType' => json_encode($twoType),'$tripartite'=>$tripartite]);
             $fun = BarchChargingLog::$type_map[$twoType['0']][$twoType['1']][$tripartite];
             dingAlarm('$twoType', ['$fun' => $fun]);
