@@ -34,7 +34,7 @@ class BarchChargingLog extends ModelBase
             self::TYPE_XI_NAN =>'xinanGetFinanceNotAuth'
         ],
         self::TYPE_PAN_JUE => [
-            self::TYPE_FAHAI
+            self::TYPE_FAHAI => 'fahaiGetCpws'
         ],
     ];
     protected $tableName = 'information_dance_barch_charging_log';

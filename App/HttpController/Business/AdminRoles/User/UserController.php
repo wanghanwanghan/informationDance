@@ -12,6 +12,7 @@ use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Models\Provide\RequestUserInfoLog;
 use App\HttpController\Models\Provide\RoleInfo;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\FaYanYuan\FaYanYuanService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\TaoShu\TaoShuService;
@@ -755,5 +756,36 @@ class UserController extends UserBase
             $item = str_replace("\r", '  ', $item);
         }
         return $arr;
+    }
+
+    public function fahaiGetCpws($entNames){
+        $fileName = date('YmdHis', time()) . '裁判文书.csv';
+        $file = TEMP_FILE_PATH . $fileName;
+        $header = [
+            '公司名',
+            '接口提供方',
+            '标题',
+            '内容',
+            '日期',
+            'id'
+        ];
+        file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        foreach ($entNames as $entName) {
+            $data = $this->getCpws($entName,1);
+            dingAlarm('裁判文书',$data);
+        }
+    }
+
+    public function getCpws($entName,$page)
+    {
+        $docType = 'cpws';
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => 100,
+        ];
+        $res = (new FaYanYuanService())->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sifa', $postData);
+
     }
 }
