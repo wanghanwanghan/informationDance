@@ -451,7 +451,7 @@ class UserController extends UserBase
             $data[$item->getAttr('batchNum')]['entCount'] = $count+$data[$item->getAttr('batchNum')]['entCount'];
             $data[$item->getAttr('batchNum')]['created_at'] = $item->getAttr('created_at');
         }
-        return $this->writeJson(200, null, $data,'成功');
+        return $this->writeJson(200, null, array_values($data),'成功');
     }
 
     /**

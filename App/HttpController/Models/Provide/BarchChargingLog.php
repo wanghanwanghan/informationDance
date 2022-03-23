@@ -17,9 +17,18 @@ class BarchChargingLog extends ModelBase
     const TYPE_TAOSU = 2;//淘数
     const TYPE_XI_NAN = 3;//西南
     const TYPE_FAHAI = 4;//法海
+
+    const TYPE_GONGSHANG = 1;//工商信息
+    const TYPE_GONGSHANG_BASIC = 1;//基本信息
+    const TYPE_GONGSHANG_GUDONG = 2;//股东
+    const TYPE_GONGSHANG_CONTROLLER = 3;//实际控制人
+    const TYPE_GONGSHANG_ADMINISTRATOR = 4;//企业主要管理人
+    const TYPE_GONGSHANG_BRANCH = 5;
+
+
     public $a = [
         '工商信息'=>["基本信息",'股东','实际控制人','企业主要管理人','分支机构','变更信息','法人变更','经营异常'],
-        '财务' => [''],
+        '财务' => ['8个数'],
         '司法' => ['开庭公告','判决文书','法院公告','执行公告','失信公告','司法查封冻结扣押','司法拍卖'],
         '涉税' => ['欠税公告','涉税处罚公示','税务非正常户公示','纳税信用等级','税务登记','税务许可'],
         '知识产权' => ['商标','专利','软件著作权','作品著作权','企业证书查询'],
