@@ -974,7 +974,38 @@ class UserController extends UserBase
         } else {
             $info->update($update);
         }
-
         return $this->writeJson();
+    }
+
+    /**
+     * 陶数 - 导出企业主要管理人
+     */
+    public function tsGetMainManagerInfo($entNames){
+        $fileName = date('YmdHis', time()) . '企业主要管理人.csv';
+        $file = TEMP_FILE_PATH . $fileName;
+        $header = [
+            '公司名',
+            '姓名',
+            '职务',
+            '是否法定代表人',
+        ];
+        file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        $resData = [];
+        foreach ($entNames as $ent) {
+            $data = $this->getMainManagerInfo($ent['entName'],1);
+            if(empty($data)) continue;
+            dingAlarm('企业主要管理人',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
+
+        }
+        return [$fileName, $resData];
+    }
+
+    private function getMainManagerInfo($entName,$page){
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $page,
+            'pageSize' => 10,
+        ];
+        return (new TaoShuService())->post($postData, 'getMainManagerInfo');
     }
 }
