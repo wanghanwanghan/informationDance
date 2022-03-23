@@ -430,7 +430,7 @@ class UserController extends UserBase
             }
             $res = BatchSeachLog::create()->saveAll($data);
             dingAlarmSimple(['$data' => json_encode($data), 'BatchSeachLog-$res' => json_encode($res)]);
-            return $this->writeJson(200, null, '导入成功');
+            return $this->writeJson(200, null, $batchNum,'导入成功');
         } catch (\Throwable $throwable) {
             dingAlarmSimple(['error' => $throwable->getMessage()]);
             return $this->writeJson(201, null, $throwable->getMessage());
