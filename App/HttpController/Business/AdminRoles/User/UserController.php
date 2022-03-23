@@ -483,7 +483,7 @@ class UserController extends UserBase
         if (empty($types) || empty($batchNum) || empty($appId)) {
             return $this->writeJson(201, null, '', '部分参数为空，请检查后再次请求');
         }
-        $typeArr = explode(',', $types);
+        $typeArr = json_decode($types,true);
         $fileArr = [];
         $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
         $emptyTypes = [];
@@ -495,23 +495,26 @@ class UserController extends UserBase
                 $emptyTypes[] = $type;
             }
         }
+        //表示需要查询的数据已经在数据库中查询过了，只需要返回数据库中的文件即可
         if (empty($emptyTypes)) {
             return $this->writeJson(200, null, $fileArr, '成功');
         }
+
         $list = BatchSeachLog::create()->where("batchNum = '{$batchNum}' and userId = {$info->id}")->all();
         $nameArr = [];
         foreach ($list as $k => $v) {
             $nameArr[$k]['entName'] = $v->getAttr('entName');
             $nameArr[$k]['socialCredit'] = $v->getAttr('socialCredit');
         }
-        foreach ($emptyTypes as $emptyType) {
-            $emptyType = explode('-', $emptyType);
-            $typeKey = implode('-',$emptyType);
-            $fun = BarchChargingLog::$type_map[$emptyType['0']][$emptyType['1']];
+        foreach ($emptyTypes as $emptyType) {//$emptyType格式：1>1-1
+            $emptyTypeArr = explode('-', $emptyType);
+            $tripartite = $emptyTypeArr['1'];
+            $twoType = explode('>',$emptyType['1']);
+            $fun = BarchChargingLog::$type_map[$twoType['0']][$twoType['1']][$tripartite];
             list($filePath, $data) = $this->{$fun}($nameArr);
 //            dingAlarm('导出数据返回', ['$filePath' => $filePath]);
-            $fileArr[$typeKey] = $filePath;
-            $this->inseartChargingLog($info->id, $batchNum, $typeKey, $data, $filePath);
+            $fileArr[$emptyType] = $filePath;
+            $this->inseartChargingLog($info->id, $batchNum, $emptyType, $data, $filePath);
         }
         if (empty($fileArr)) {
             return $this->writeJson(201, null, '', "没有找到对应类型{$types}的数据信息");
@@ -652,7 +655,7 @@ class UserController extends UserBase
         }
     }
 
-    /*
+    /**
      * 导出陶数股东信息
      */
     private function taoshuGetShareHolderInfo($entNames)

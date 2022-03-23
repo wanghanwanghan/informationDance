@@ -7,51 +7,77 @@ use App\HttpController\Models\ModelBase;
 class BarchChargingLog extends ModelBase
 {
 
-    const TYPE_JI_BEN = 1;//基本信息
-    const TYPE_GU_DONG = 2;//股东信息
-    const TYPE_JING_SHANG_YI_CHANG = 3;//经商异常
-    const TYOPE_NIAN_BAO = 4;//财务
-    const TYPE_PAN_JUE = 5;//裁判文书
+    const TYPE_TRIPARTITE_QICHACHA = 1;//企查查
+    const TYPE_TRIPARTITE_TAOSU = 2;//淘数
+    const TYPE_TRIPARTITE_XI_NAN = 3;//西南
+    const TYPE_TRIPARTITE_FAHAI = 4;//法海
 
-    const TYPE_QICHACHA = 1;//企查查
-    const TYPE_TAOSU = 2;//淘数
-    const TYPE_XI_NAN = 3;//西南
-    const TYPE_FAHAI = 4;//法海
+    const TYPE_GONGSHANG = 1;                       //工商信息
+    const TYPE_GONGSHANG_JB = 11;                //基本信息
+    const TYPE_GONGSHANG_GD = 12;               //股东
+    const TYPE_GONGSHANG_SJKGR = 13;           //实际控制人
+    const TYPE_GONGSHANG_QYZYGLR = 14;        //企业主要管理人
+    const TYPE_GONGSHANG_FZJG = 15;               //分支机构
+    const TYPE_GONGSHANG_BGXX = 16;               //变更信息
+    const TYPE_GONGSHANG_FRBG = 17;          //法人变更
+    const TYPE_GONGSHANG_JYYC = 18;             //经营异常
 
-    const TYPE_GONGSHANG = 1;//工商信息
-    const TYPE_GONGSHANG_BASIC = 1;//基本信息
-    const TYPE_GONGSHANG_GUDONG = 2;//股东
-    const TYPE_GONGSHANG_CONTROLLER = 3;//实际控制人
-    const TYPE_GONGSHANG_ADMINISTRATOR = 4;//企业主要管理人
-    const TYPE_GONGSHANG_BRANCH = 5;
+    const TYPE_CAIWU = 2;                           //财务
+    const TYPE_CAIWU_8 = 21;                           //财务
+
+    const TYPE_SIFA = 3;                            //司法
+    const TYPE_SIFA_KTGG = 31;                       //开庭公告
+    const TYPE_SIFA_PJWC = 32;                       //判决文书
+    const TYPE_SIFA_FYGG = 33;                       //法院公告
+    const TYPE_SIFA_ZXGG = 34;                       //执行公告
+    const TYPE_SIFA_SXGG = 35;                       //失信公告
+    const TYPE_SIFA_SFCFDJKY = 36;                   //司法查封冻结扣押
+    const TYPE_SIFA_SFPM = 37;                       //司法拍卖
+
+    const TYPE_SHESHUI = 4;                         //涉税
+    const TYPE_SHESHUI_QSGG = 41;                    //欠税公告
+    const TYPE_SHESHUI_SSCFGS = 42;                  //涉税处罚公示
+    const TYPE_SHESHUI_SWFZCHGS = 43;                //税务非正常户公示
+    const TYPE_SHESHUI_NSXYDJ = 44;                  //纳税信用等级
+    const TYPE_SHESHUI_SWDJ = 45;                    //税务登记
+    const TYPE_SHESHUI_SWXK = 46;                    //税务许可
+
+    const TYPE_ZHISHICHANQUAN = 5;                  //知识产权
+    const TYPE_ZHISHICHANQUAN_SB = 51;                  //商标
+    const TYPE_ZHISHICHANQUAN_ZL = 52;                  //专利
+    const TYPE_ZHISHICHANQUAN_RJZZQ = 53;                  //软件著作权
+    const TYPE_ZHISHICHANQUAN_ZPZZQ = 54;                  //作品著作权
+    const TYPE_ZHISHICHANQUAN_QYZSCX = 55;                  //企业证书查询
+
+    const TYPE_JINRONGJIANGUAN = 6;                 //金融监管
+    const TYPE_JINRONGJIANGUAN_YHXZCF = 61;                 //央行行政处罚
+    const TYPE_JINRONGJIANGUAN_YBJHCFGS = 62;                 //银保监会处罚公示
+    const TYPE_JINRONGJIANGUAN_ZJCFGS = 63;                 //证监处罚公示
+    const TYPE_JINRONGJIANGUAN_ZJHXKPFDJ = 64;                 //证监会许可批复登记
+    const TYPE_JINRONGJIANGUAN_WHJCF = 65;                 //外汇局处罚
+    const TYPE_JINRONGJIANGUAN_WHJXK = 66;                 //外汇局许可
 
 
-    public $a = [
-        '工商信息'=>["基本信息",'股东','实际控制人','企业主要管理人','分支机构','变更信息','法人变更','经营异常'],
-        '财务' => ['8个数'],
-        '司法' => ['开庭公告','判决文书','法院公告','执行公告','失信公告','司法查封冻结扣押','司法拍卖'],
-        '涉税' => ['欠税公告','涉税处罚公示','税务非正常户公示','纳税信用等级','税务登记','税务许可'],
-        '知识产权' => ['商标','专利','软件著作权','作品著作权','企业证书查询'],
-        '金融监管' => ['央行行政处罚','银保监会处罚公示','证监处罚公示','证监会许可批复登记','外汇局处罚','外汇局许可']
-    ];
     public static $type_map = [
-        self::TYPE_JI_BEN => [
-            self::TYPE_QICHACHA => 'qichachaRegisterInfo',
-            self::TYPE_TAOSU => 'taoshuRegisterInfo',
+        self::TYPE_GONGSHANG => [
+            self::TYPE_GONGSHANG_JB => [ self::TYPE_TRIPARTITE_TAOSU => 'taoshuRegisterInfo'],
+            self::TYPE_GONGSHANG_GD => [ self::TYPE_TRIPARTITE_TAOSU => 'taoshuGetShareHolderInfo'],
+            self::TYPE_GONGSHANG_SJKGR => [ self::TYPE_TRIPARTITE_TAOSU => ''],
+            self::TYPE_GONGSHANG_QYZYGLR => [ self::TYPE_TRIPARTITE_TAOSU => ''],
+            self::TYPE_GONGSHANG_FZJG => [ self::TYPE_TRIPARTITE_TAOSU => ''],
+            self::TYPE_GONGSHANG_BGXX => [ self::TYPE_TRIPARTITE_TAOSU => ''],
+            self::TYPE_GONGSHANG_FRBG => [ self::TYPE_TRIPARTITE_TAOSU => ''],
+            self::TYPE_GONGSHANG_JYYC => [ self::TYPE_TRIPARTITE_TAOSU => 'taoshuGetOperatingExceptionRota'],
         ],
-        self::TYPE_GU_DONG => [
-            self::TYPE_QICHACHA,
-            self::TYPE_TAOSU => 'taoshuGetShareHolderInfo',
-        ],
-        self::TYPE_JING_SHANG_YI_CHANG => [
-            self::TYPE_QICHACHA => 'qichahchaGetOpException',
-            self::TYPE_TAOSU => 'taoshuGetOperatingExceptionRota',
-        ],
-        self::TYOPE_NIAN_BAO => [
-            self::TYPE_XI_NAN =>'xinanGetFinanceNotAuth'
-        ],
-        self::TYPE_PAN_JUE => [
-            self::TYPE_FAHAI => 'fahaiGetCpws'
+        self::TYPE_CAIWU => [],
+        self::TYPE_SIFA => [
+            self::TYPE_SIFA_KTGG => [self::TYPE_TRIPARTITE_FAHAI => ''],
+            self::TYPE_SIFA_PJWC => [self::TYPE_TRIPARTITE_FAHAI => 'fahaiGetCpws'],
+            self::TYPE_SIFA_FYGG => [self::TYPE_TRIPARTITE_FAHAI => ''],
+            self::TYPE_SIFA_ZXGG => [self::TYPE_TRIPARTITE_FAHAI => ''],
+            self::TYPE_SIFA_SXGG => [self::TYPE_TRIPARTITE_FAHAI => ''],
+            self::TYPE_SIFA_SFCFDJKY => [self::TYPE_TRIPARTITE_FAHAI => ''],
+            self::TYPE_SIFA_SFPM => [self::TYPE_TRIPARTITE_FAHAI => ''],
         ],
     ];
     protected $tableName = 'information_dance_barch_charging_log';
