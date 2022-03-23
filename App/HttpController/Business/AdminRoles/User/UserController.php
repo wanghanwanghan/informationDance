@@ -745,7 +745,10 @@ class UserController extends UserBase
                 }
                 $res['data'] = $tmp;
             }
+            dingAlarm('裁判文书明细',['$entName'=>$ent['entName'],'$data'=>json_encode($res)]);
+
         }
+
     }
 
     public function replace($arr)
