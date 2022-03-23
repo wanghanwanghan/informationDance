@@ -510,7 +510,9 @@ class UserController extends UserBase
             $emptyTypeArr = explode('-', $emptyType);
             $tripartite = $emptyTypeArr['1'];
             $twoType = explode('>',$emptyType['1']);
+            dingAlarm('$twoType', ['$twoType' => json_encode($twoType),'$tripartite'=>$tripartite]);
             $fun = BarchChargingLog::$type_map[$twoType['0']][$twoType['1']][$tripartite];
+            dingAlarm('$twoType', ['$fun' => $fun]);
             list($filePath, $data) = $this->{$fun}($nameArr);
             dingAlarm('导出数据返回', ['$filePath' => $filePath]);
             $fileArr[$emptyType] = $filePath;
