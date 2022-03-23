@@ -36,6 +36,8 @@ class AdminRoles
             $routeCollector->addRoute(['GET', 'POST'], '/getUserApiList', $prefix . 'getUserApiList');
             $routeCollector->addRoute(['GET', 'POST'], '/importData', $prefix . 'importData');
             $routeCollector->addRoute(['GET', 'POST'], '/exportBaseInformation', $prefix . 'exportBaseInformation');
+            $routeCollector->addRoute(['GET', 'POST'], '/getBatchNumDetail', $prefix . 'getBatchNumDetail');
+            $routeCollector->addRoute(['GET', 'POST'], '/getBatchNumList', $prefix . 'getBatchNumList');
         });
         return true;
     }

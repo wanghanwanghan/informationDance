@@ -438,6 +438,41 @@ class UserController extends UserBase
     }
 
     /**
+     * 获取这个用户下的导入的批次号list
+     */
+    public function getBatchNumList(){
+        $appId = $this->getRequestData('username') ?? '';
+        $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
+        $list = BatchSeachLog::create()->where("userId = {$info->id}")->all();
+        $data = [];
+        foreach ($list as $item) {
+            $count = $data[$item->getAttr('batchNum')]['entCount']??0;
+            $data[$item->getAttr('batchNum')]['batchNum'] = $item->getAttr('batchNum');
+            $data[$item->getAttr('batchNum')]['entCount'] = $count+$data[$item->getAttr('batchNum')]['entCount'];
+            $data[$item->getAttr('batchNum')]['created_at'] = $item->getAttr('created_at');
+        }
+        return $this->writeJson(200, null, $data,'成功');
+    }
+
+    /**
+     * 获取这个批次号导出的所有数据信息
+     */
+    public function getBatchNumDetail(){
+        $batchNum = $this->getRequestData('batchNum') ?? '';
+        $appId = $this->getRequestData('username') ?? '';
+        $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
+        $list = BarchChargingLog::create()->where("userId = {$info->id} and batchNum = {$batchNum}")->all();
+        $data = [];
+        foreach ($list as $item) {
+            $data[] = [
+                'type' => $item->getAttr('type'),
+                'file_path' => $item->getAttr('file_path'),
+                'created_at' => $item->getAttr('created_at'),
+            ];
+        }
+        return $this->writeJson(200, null, $data,'成功');
+    }
+    /**
      * 根据需要导出的类型批次号获取导出的文件
      */
     public function exportBaseInformation()
