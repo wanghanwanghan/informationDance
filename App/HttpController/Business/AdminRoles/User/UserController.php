@@ -448,7 +448,7 @@ class UserController extends UserBase
         foreach ($list as $item) {
             $count = $data[$item->getAttr('batchNum')]['entCount']??0;
             $data[$item->getAttr('batchNum')]['batchNum'] = $item->getAttr('batchNum');
-            $data[$item->getAttr('batchNum')]['entCount'] = $count+$data[$item->getAttr('batchNum')]['entCount'];
+            $data[$item->getAttr('batchNum')]['entCount'] = 1+$count;
             $data[$item->getAttr('batchNum')]['created_at'] = $item->getAttr('created_at');
         }
         return $this->writeJson(200, null, array_values($data),'成功');
