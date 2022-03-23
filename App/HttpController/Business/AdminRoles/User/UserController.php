@@ -510,7 +510,7 @@ class UserController extends UserBase
         }
         foreach ($emptyTypes as $emptyType) {
             $barchTypeApiRelationInfo = BarchTypeApiRelation::create()->where('id', $emptyType)->get();
-            $fun = $barchTypeApiRelationInfo->id;
+            $fun = $barchTypeApiRelationInfo->fun;
             dingAlarm('$twoType', ['$fun' => $fun]);
             list($filePath, $data) = $this->{$fun}($nameArr);
             dingAlarm('导出数据返回', ['$filePath' => $filePath]);
