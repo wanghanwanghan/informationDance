@@ -702,7 +702,7 @@ class UserController extends UserBase
             'ret' => json_encode($data),
             'userId' => $user_id,
             'batchNum' => $batchNum,
-            'file_path' => $file
+            'file_path' => is_array($file)?json_encode($file):$file
         ])->save();
         return true;
     }
@@ -760,22 +760,125 @@ class UserController extends UserBase
 
     public function fahaiGetCpws($entNames){
         $fileName = date('YmdHis', time()) . '裁判文书.csv';
+        $fileNameBasic = date('YmdHis', time()) . '裁判文书详情标题.csv';
+        $fileNameRelated = date('YmdHis', time()) . '裁判文书详情明细.csv';
         $file = TEMP_FILE_PATH . $fileName;
         $header = [
             '公司名',
-            '接口提供方',
             '标题',
             '内容',
             '日期',
             'id'
         ];
-        file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        file_put_contents( $file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        $header = [
+            '公司名',
+            'id',
+            '案号',//caseNo
+            '内容',//body
+            '法院',//court
+            '裁判文书ID',//cpwsId
+            '审判员',//judge
+            '判决结果',//judgeResult
+            '审结日期',//sortTime
+            '标题',//title
+            '审判程序',//trialProcedure
+            '依据',//yiju
+        ];
+        file_put_contents(TEMP_FILE_PATH . $fileNameBasic, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        $header_related = [
+            '公司名',
+            '文书id',
+            '当事人出生日期',
+            '受理费',
+            '案由',
+            '文书类型',
+            '法院类型',
+            '律师事务所',
+            '委托律师（辩护人）',
+            '判决金额',
+            '诉讼地位（原审）',
+            '胜负关系',
+            '当前称号',
+            '主体类型','当事人名称'
+        ];
+        file_put_contents(TEMP_FILE_PATH . $fileNameRelated, implode(',', $header_related) . PHP_EOL, FILE_APPEND);
+        $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getCpws($ent['entName'],1);
-            dingAlarm('裁判文书',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
+            if(empty($data['cpwsList'])) continue;
+            if(isset($data['totalPageNum']) && $data['totalPageNum']>1){
+                for($i=2;$i<=$data['totalPageNum'];$i++){
+                    $data2 = $this->getCpws($ent['entName'],1);
+                    $data = array_merge($data,$data2);
+                }
+            }
+
+            foreach ($data['cpwsList'] as $datum) {
+                $insertData = [
+                    $ent['entName'],
+                    $datum['title'],
+                    $datum['body'],
+                    $datum['sortTimeString'],
+                    $datum['entryId'],
+                ];
+                $resData[] = $insertData;
+                $this->fhgetCpwsDetail($datum['entryId'],TEMP_FILE_PATH . $fileNameBasic,TEMP_FILE_PATH . $fileNameRelated,$ent['entName']);
+                file_put_contents($fileName, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+
+            }
+//            dingAlarm('裁判文书',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
         }
+        return [[$fileName,$fileNameBasic,$fileNameRelated], $resData];
     }
 
+    public function fhgetCpwsDetail($id,$daochufilename_basic_info,$daochufilename_related,$name){
+        $postData = ['id' => $id];
+        $docType = 'cpws';
+        $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
+        dingAlarm('裁判文书明细',['$entName'=>$name,'$data'=>json_encode($res)]);
+return '';
+        $data = $this->getData('https://api.meirixindong.com/provide/v1/fh/getCpwsDetail',$name,1,'',$id);
+        if(empty($data)){
+            return [];
+        }
+        $insertData = [
+            $name,
+            $id,
+            $data['0']['caseNo'],
+            $data['0']['body'],
+            $data['0']['court'],
+            $data['0']['cpwsId'],
+            $data['0']['judge'],
+            $data['0']['judgeResult'],
+            $data['0']['sortTime'],
+            $data['0']['title'],
+            $data['0']['trialProcedure'],
+            $data['0']['yiju'],
+        ];
+        file_put_contents($daochufilename_basic_info, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+
+        foreach ($data['0']['partys'] as $v) {
+            $insertData_related = [
+                $name,
+                $id,
+                $v['birthday'],
+                $v['caf'],
+                $v['caseCauseT'],
+                $v['caseTypeT'],
+                $v['courtTypeT'],
+                $v['lawOffice'],
+                $v['lawyer'],
+                $v['partyFeeT'],
+                $v['partyPositionT'],
+                $v['partyResultT'],
+                $v['partyTitleT'],
+                $v['partyType'],
+                $v['pname'],
+            ];
+            file_put_contents($daochufilename_related, implode(',', $this->replace($insertData_related)) . PHP_EOL, FILE_APPEND);
+        }
+    }
     public function getCpws($entName,$page)
     {
         $docType = 'cpws';
