@@ -1016,7 +1016,7 @@ Eof;
             $dataList = $data['RESULTDATA'];
             if(isset($data['PAGEINFO']['TOTAL_PAGE']) && $data['PAGEINFO']['TOTAL_PAGE']>1){
                 for($i=2;$i<=$data['PAGEINFO']['TOTAL_PAGE'];$i++){
-                    $data2 = $this->getCpws($ent['entName'],1);
+                    $data2 = $this->getMainManagerInfo($ent['entName'],1);
                     $dataList = array_merge($dataList,$data2['RESULTDATA']);
                 }
             }
@@ -1161,5 +1161,57 @@ Eof;
             'pageSize' => 10,
         ];
         return (new TaoShuService())->post($postData, 'getInvestmentAbroadInfo');
+    }
+
+    /**
+     * 陶数 - 企业变更信息
+     */
+    private function tsGetRegisterChangeInfo($entNames){
+
+        $fileName = date('YmdHis', time()) . '企业变更信息.csv';
+        $file = TEMP_FILE_PATH . $fileName;
+        $header = [
+            '总公司',
+            '变更事项',
+            '变更前内容',
+            '变更后内容',
+            '变更时间',
+        ];
+        file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        $resData = [];
+        foreach ($entNames as $ent) {
+            $data = $this->getRegisterChangeInfo($ent['entName'],1);
+
+            if(empty($data['RESULTDATA'])) continue;
+            if(isset($data['PAGEINFO']['TOTAL_PAGE']) && $data['PAGEINFO']['TOTAL_PAGE']>1){
+                for($i=2;$i<=$data['PAGEINFO']['TOTAL_PAGE'];$i++){
+                    $data2 = $this->getRegisterChangeInfo($ent['entName'],1);
+                    $data['RESULTDATA'] = array_merge($data['RESULTDATA'],$data2['RESULTDATA']);
+                }
+            }
+            foreach ($data['RESULTDATA'] as $datum) {
+                $insertData = [
+                    $ent['entName'],
+                    $datum['ALTITEM'],
+                    $datum['ALTBE'],
+                    $datum['ALTAF'],
+                    $datum['ALTDATE'],
+                ];
+                file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+                $resData[] = $insertData;
+            }
+            dingAlarm('企业变更信息',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
+
+        }
+        return [$fileName, $resData];
+    }
+
+    private function getRegisterChangeInfo($entName,$pageNo){
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $pageNo,
+            'pageSize' => 10,
+        ];
+        return  (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getRegisterChangeInfo');
     }
 }
