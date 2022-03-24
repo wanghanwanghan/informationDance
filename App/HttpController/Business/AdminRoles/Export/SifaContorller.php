@@ -302,22 +302,21 @@ class SifaContorller  extends UserController
     public function fhGetZxgg($entNames){
         $fileName = date('YmdHis', time()) . '执行公告.csv';
         $file = TEMP_FILE_PATH . $fileName;
-//        $header = [
-//            '公司名',
-//            '公告日期',
-//            '当事人',
-//            '公告类型',
-//            '公告标题',
-//            '公告内容',
-//            '法院名称',
-//            '法院id',
-//            '案由编号',
-//            '案由',
-//            '刊登版面',
-//            '企业名/姓名',
-//            '主体类型'
-//        ];
-//        file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        $header = [
+            '公司名',
+            '地址',
+            '内容',
+            '案号',
+            '终本日期',
+            '法院名称',
+            '申请人',
+            '立案日期',
+            '标题',
+            '依据文书',
+            '依据单位',
+            '当事人',
+        ];
+        file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getZxgg($ent['entName'],1);
@@ -359,7 +358,30 @@ class SifaContorller  extends UserController
         $docType = 'zxgg';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
         dingAlarm('执行公告详情',['$res'=>json_encode($res)]);
-        return [];
+        $data = $res['zxgg']['0'];
+        if(empty($data)){
+            return [];
+        }
+        $partys = [];
+        foreach ($data['partys'] as $v) {
+            $partys[] = '当事人名称'.$v['pname'].';主体类型'.$v['partyType'].';身份证号码'.$v['idcardNo'].';执行金额'.$v['execMoney'].';案件状态'.$v['caseStateT'];
+        }
+        $insertData = [
+            $name,
+            $data['address'],
+            $data['body'],
+            $data['caseNo'],
+            $data['closeDate'],
+            $data['court'],
+            $data['proposer'],
+            $data['sortTime'],
+            $data['title'],
+            $data['yjCode'],
+            $data['yjdw'],
+            implode('    ',$partys)
+        ];
+        file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+        return $insertData;
     }
     public function getShixin($entName,$page){
         $docType = 'shixin';
