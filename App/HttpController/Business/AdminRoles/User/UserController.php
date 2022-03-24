@@ -995,8 +995,8 @@ class UserController extends UserBase
             dingAlarm('企业主要管理人$data1',['$data'=>json_encode($data)]);
             if(empty($data['RESULTDATA'])) continue;
             $dataList = $data['RESULTDATA'];
-            if(isset($data['PAGEINFO']['TOTAL_COUNT']) && $data['PAGEINFO']['TOTAL_COUNT']>1){
-                for($i=2;$i<=$data['PAGEINFO']['TOTAL_COUNT'];$i++){
+            if(isset($data['PAGEINFO']['TOTAL_PAGE']) && $data['PAGEINFO']['TOTAL_PAGE']>1){
+                for($i=2;$i<=$data['PAGEINFO']['TOTAL_PAGE'];$i++){
                     $data2 = $this->getCpws($ent['entName'],1);
                     $dataList = array_merge($dataList,$data2['RESULTDATA']);
                 }
@@ -1044,8 +1044,8 @@ class UserController extends UserBase
         foreach ($entNames as $ent) {
             $data = $this->getBranchInfo($ent['entName'],1);
             if(empty($data['RESULTDATA'])) continue;
-            if(isset($data['PAGEINFO']['TOTAL_COUNT']) && $data['PAGEINFO']['TOTAL_COUNT']>1){
-                for($i=2;$i<=$data['PAGEINFO']['TOTAL_COUNT'];$i++){
+            if(isset($data['PAGEINFO']['TOTAL_PAGE']) && $data['PAGEINFO']['TOTAL_PAGE']>1){
+                for($i=2;$i<=$data['PAGEINFO']['TOTAL_PAGE'];$i++){
                     $data2 = $this->getBranchInfo($ent['entName'],1);
                     $data['RESULTDATA'] = array_merge($data['RESULTDATA'],$data2['RESULTDATA']);
                 }
