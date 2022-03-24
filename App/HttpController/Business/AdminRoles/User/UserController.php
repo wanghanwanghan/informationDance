@@ -1123,7 +1123,7 @@ Eof;
         file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
         $resData = [];
         foreach ($entNames as $ent) {
-            $data = $this->getBranchInfo($ent['entName'],1);
+            $data = $this->getInvestmentAbroadInfo($ent['entName'],1);
             dingAlarm('企业对外投资$data',['$data'=>json_encode($data)]);
 
             if(empty($data['RESULTDATA'])) continue;
@@ -1158,7 +1158,7 @@ Eof;
         $postData = [
             'entName' => $entName,
             'pageNo' => $pageNo,
-            'pageSize' => 1000,
+            'pageSize' => 10,
         ];
         return (new TaoShuService())->post($postData, 'getInvestmentAbroadInfo');
     }
