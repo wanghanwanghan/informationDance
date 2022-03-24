@@ -511,7 +511,6 @@ class UserController extends UserBase
         foreach ($emptyTypes as $emptyType) {
             $barchTypeApiRelationInfo = BarchTypeApiRelation::create()->where('id', $emptyType)->get();
             $fun = $barchTypeApiRelationInfo->fun;
-            dingAlarm('$twoType', ['$fun' => $fun]);
             list($filePath, $data) = $this->{$fun}($nameArr);
             dingAlarm('导出数据返回', ['$filePath' => $filePath]);
             $fileArr[$emptyType] = $filePath;
@@ -1010,7 +1009,7 @@ class UserController extends UserBase
                 file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
                 $resData[] = $insertData;
             }
-            dingAlarm('企业主要管理人',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
+            dingAlarm('企业主要管理人',['$entName'=>$ent['entName'],'$data'=>json_encode($resData)]);
 
         }
         return [$fileName, $resData];
