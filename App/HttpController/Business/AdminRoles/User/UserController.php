@@ -455,7 +455,7 @@ SELECT
 	a.created_at 
 FROM
 	information_dance_batch_seach_log AS a
-	LEFT JOIN ( SELECT DISTINCT ( batchNum ) FROM information_dance_batch_seach_log where userId = {$info->id} ORDER BY id DESC LIMIT {$limit},$pageSize ) AS b ON a.batchNum = b.batchNum 
+	LEFT JOIN ( SELECT DISTINCT ( batchNum ) FROM information_dance_batch_seach_log where userId = {$info->id} ORDER BY id DESC LIMIT {$limit},{$pageSize} ) AS b ON a.batchNum = b.batchNum 
 GROUP BY
 	batchNum
 Eof;
