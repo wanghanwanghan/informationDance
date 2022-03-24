@@ -668,7 +668,7 @@ Eof;
     public function getAllTypeMap(){
         $list = BarchTypeApiRelation::create()->all();
         return $this->writeJson(
-            201,
+            200,
             null,
             [
                 'list'=>$list,
