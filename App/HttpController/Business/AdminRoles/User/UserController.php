@@ -1105,6 +1105,8 @@ Eof;
      * 陶数 - 企业对外投资
      */
     private function tsGetInvestmentAbroadInfo($entNames){
+        dingAlarm('企业对外投资',['$entNames'=>json_encode($entNames)]);
+
         $fileName = date('YmdHis', time()) . '企业对外投资.csv';
         $file = TEMP_FILE_PATH . $fileName;
         $header = [
