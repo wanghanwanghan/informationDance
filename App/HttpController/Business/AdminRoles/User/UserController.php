@@ -465,7 +465,13 @@ GROUP BY
 	batchNum
 Eof;
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-        return $this->writeJson(200, null, ['list'=>$list,'count'=>$count['0']['num']],'成功');
+        $paging = [
+            'page' => $pageNo,
+            'pageSize' => $pageSize,
+            'total' => $count['0']['num'],
+            'totalPage' => (int)$count['0']['num']/$pageSize+1,
+        ];
+        return $this->writeJson(200, $paging, $list,'成功');
     }
 
     /**
