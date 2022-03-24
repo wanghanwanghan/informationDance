@@ -994,14 +994,15 @@ class UserController extends UserBase
             $data = $this->getMainManagerInfo($ent['entName'],1);
             dingAlarm('企业主要管理人$data1',['$data'=>json_encode($data)]);
             if(empty($data['RESULTDATA'])) continue;
+            $dataList = $data['RESULTDATA'];
             if(isset($data['PAGEINFO']['TOTAL_COUNT']) && $data['PAGEINFO']['TOTAL_COUNT']>1){
                 for($i=2;$i<=$data['PAGEINFO']['TOTAL_COUNT'];$i++){
                     $data2 = $this->getCpws($ent['entName'],1);
-                    $data['RESULTDATA'] = array_merge($data['RESULTDATA'],$data2['RESULTDATA']);
+                    $dataList = array_push($dataList,$data2['RESULTDATA']);
                 }
             }
-            dingAlarm('企业主要管理人$data2',['$data'=>json_encode($data)]);
-            foreach ($data['RESULTDATA'] as $datum) {
+            dingAlarm('企业主要管理人$data2',['$data'=>json_encode($dataList)]);
+            foreach ($dataList as $datum) {
                 $resData[] = $insertData = [
                     $ent['entName'],
                     $datum['NAME'],
