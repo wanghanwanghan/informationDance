@@ -994,7 +994,7 @@ class UserController extends UserBase
         foreach ($entNames as $ent) {
             $data = $this->getMainManagerInfo($ent['entName'],1);
             if(empty($data['RESULTDATA'])) continue;
-            if(isset($data['totalPageNum']) && $data['totalPageNum']>1){
+            if(isset($data['PAGEINFO']['TOTAL_COUNT']) && $data['PAGEINFO']['TOTAL_COUNT']>1){
                 for($i=2;$i<=$data['PAGEINFO']['TOTAL_COUNT'];$i++){
                     $data2 = $this->getCpws($ent['entName'],1);
                     $data['RESULTDATA'] = array_merge($data['RESULTDATA'],$data2['RESULTDATA']);
@@ -1041,23 +1041,26 @@ class UserController extends UserBase
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getBranchInfo($ent['entName'],1);
-//            if(empty($data['RESULTDATA'])) continue;
-//            if(isset($data['totalPageNum']) && $data['totalPageNum']>1){
-//                for($i=2;$i<=$data['PAGEINFO']['TOTAL_COUNT'];$i++){
-//                    $data2 = $this->getCpws($ent['entName'],1);
-//                    $data['RESULTDATA'] = array_merge($data['RESULTDATA'],$data2['RESULTDATA']);
-//                }
-//            }
-//            foreach ($data['RESULTDATA'] as $datum) {
-//                $insertData = [
-//                    $ent['entName'],
-//                    $datum['NAME'],
-//                    $datum['POSITION'],
-//                    $datum['ISFRDB'],
-//                ];
-//                file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
-//                $resData[] = $insertData;
-//            }
+            if(empty($data['RESULTDATA'])) continue;
+            if(isset($data['PAGEINFO']['TOTAL_COUNT']) && $data['PAGEINFO']['TOTAL_COUNT']>1){
+                for($i=2;$i<=$data['PAGEINFO']['TOTAL_COUNT'];$i++){
+                    $data2 = $this->getBranchInfo($ent['entName'],1);
+                    $data['RESULTDATA'] = array_merge($data['RESULTDATA'],$data2['RESULTDATA']);
+                }
+            }
+            foreach ($data['RESULTDATA'] as $datum) {
+                $insertData = [
+                    $ent['entName'],
+                    $datum['ENTNAME'],
+                    $datum['SHXYDM'],
+                    $datum['FRDB'],
+                    $datum['ESDATE'],
+                    $datum['ENTSTATUS'],
+                    $datum['PROVINCE']
+                ];
+                file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+                $resData[] = $insertData;
+            }
             dingAlarm('企业分支机构',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
 
         }
