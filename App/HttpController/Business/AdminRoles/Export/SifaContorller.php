@@ -63,7 +63,6 @@ class SifaContorller  extends UserController
         $postData = ['id' => $id];
         $docType = 'cpws';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
-        dingAlarm('裁判文书明细',['$entName'=>$name,'$data'=>json_encode($res)]);
         $data = $res['cpws']['0'];
         if(empty($data)){
             return [];
@@ -116,5 +115,101 @@ class SifaContorller  extends UserController
             'range' => 10,
         ];
         return (new FaYanYuanService())->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sifa', $postData);
+    }
+
+    public function fhGetKtgg($entNames){
+        $fileName = date('YmdHis', time()) . '开庭公告.csv';
+        $file = TEMP_FILE_PATH . $fileName;
+        $header = [
+            '公司名',
+            '接口提供方',
+            'id',
+            '开庭公告ID',//ktggId
+            '内容',//body
+            '案号',//caseNo
+            '法院',//court
+            '法庭',//courtroom
+            '审判员',//judge
+            '组织者',//organizer
+            '开庭时间',//sortTime
+            '标题',//title
+            '案由',
+            '当事人名称',
+            '当前称号',
+            '诉讼地位（原审）',
+        ];
+        file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        $resData = [];
+        foreach ($entNames as $ent) {
+            $data = $this->getKtgg($ent['entName'],1);
+            dingAlarm('开庭公告',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
+            if(empty($data['ktggList'])) continue;
+            if(isset($data['totalPageNum']) && $data['totalPageNum']>1){
+                for($i=2;$i<=$data['totalPageNum'];$i++){
+                    $data2 = $this->getKtgg($ent['entName'],1);
+                    $data['ktggList'] = array_merge($data['ktggList'],$data2['ktggList']);
+                }
+            }
+            foreach ($data['ktggList'] as $datum) {
+                $resData[] = $this->fhgetKtggDetail($datum['entryId'],$file,$ent['entName']);
+            }
+//            dingAlarm('裁判文书',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
+        }
+        return [$fileName, $resData];
+    }
+
+    public function getKtgg($entName,$page){
+        $docType = 'ktgg';
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => 10,
+        ];
+        return (new FaYanYuanService())->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sifa', $postData);
+    }
+
+    //开庭公告详情
+    function fhgetKtggDetail($id)
+    {
+        $postData = ['id' => $id];
+        $docType = 'ktgg';
+        $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
+        dingAlarm('裁判文书详情',['$data'=>json_encode($res)]);
+        return '';
+        $data = $res['cpws']['0'];
+        if(empty($data)){
+            return [];
+        }
+        $caseCauseT = [];
+        $pname = [];
+        $partyTitleT = [];
+        $partyPositionT = [];
+        $partyPositionTMap = ['p'=>'原告','d'=>'被告','t'=>'第三人','u'=>'当事人'];
+        foreach ($data['partys'] as $v) {
+            $caseCauseT = $v['caseCauseT'];
+            $pname[] = $v['pname'];
+            $partyTitleT[] = $v['partyTitleT'];
+            $partyPositionT[] = $partyPositionTMap[$v['partyPositionT']]??$v['partyPositionT'];
+        }
+        $insertData = [
+            $name,
+            $data['caseNo'],
+            $data['body'],
+            $data['court'],
+            $data['cpwsId'],
+            $data['judge'],
+            $data['judgeResult'],
+            $data['sortTime'],
+            $data['title'],
+            $data['trialProcedure'],
+            $data['yiju'],
+            implode('  ',$caseCauseT),
+            implode('  ',$pname),
+            implode('  ',$partyTitleT),
+            implode('  ',$partyPositionT),
+        ];
+        file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+        return $insertData;
     }
 }

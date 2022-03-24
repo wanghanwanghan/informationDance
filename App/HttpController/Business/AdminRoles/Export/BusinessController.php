@@ -25,7 +25,6 @@ class BusinessController  extends UserController
         $res = file_put_contents($file, implode(',', $insertData) . PHP_EOL, FILE_APPEND);
 
         $data = [];
-        dingAlarm('file_put_contents', ['$res' => json_encode($res),'$file'=>$file]);
         foreach ($entNames as $ent) {
             $postData = ['entName' => $ent['entName']];
             $res = (new TaoShuService())->post($postData, 'getRegisterInfo');
@@ -108,7 +107,6 @@ class BusinessController  extends UserController
                 'entName' => $ent['entName'],
             ];
             $res = (new TaoShuService())->post($postData, 'getOperatingExceptionRota');
-            dingAlarm('taoshuGetOperatingExceptionRota', ['$res' => json_encode($res)]);
             if(empty($res['RESULTDATA'])) continue;
             foreach ($res['RESULTDATA'] as $re) {
                 $insertData = [
@@ -205,7 +203,6 @@ class BusinessController  extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getMainManagerInfo($ent['entName'],1);
-            dingAlarm('企业主要管理人$data1',['$data'=>json_encode($data)]);
             if(empty($data['RESULTDATA'])) continue;
             $dataList = $data['RESULTDATA'];
             if(isset($data['PAGEINFO']['TOTAL_PAGE']) && $data['PAGEINFO']['TOTAL_PAGE']>1){
@@ -214,7 +211,6 @@ class BusinessController  extends UserController
                     $dataList = array_merge($dataList,$data2['RESULTDATA']);
                 }
             }
-            dingAlarm('企业主要管理人$data2',['$data'=>json_encode($dataList)]);
             foreach ($dataList as $datum) {
                 $resData[] = $insertData = [
                     $ent['entName'],
@@ -226,7 +222,6 @@ class BusinessController  extends UserController
                 file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
             }
 //            dingAlarm('企业主要管理人',['$entName'=>$ent['entName'],'$data'=>json_encode($resData)]);
-
         }
         return [$fileName, $resData];
     }
@@ -279,8 +274,7 @@ class BusinessController  extends UserController
                 file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
                 $resData[] = $insertData;
             }
-            dingAlarm('企业分支机构',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
-
+//            dingAlarm('企业分支机构',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
         }
         return [$fileName, $resData];
     }
@@ -318,8 +312,7 @@ class BusinessController  extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getInvestmentAbroadInfo($ent['entName'],1);
-            dingAlarm('企业对外投资$data',['$data'=>json_encode($data)]);
-
+//            dingAlarm('企业对外投资$data',['$data'=>json_encode($data)]);
             if(empty($data['RESULTDATA'])) continue;
             if(isset($data['PAGEINFO']['TOTAL_PAGE']) && $data['PAGEINFO']['TOTAL_PAGE']>1){
                 for($i=2;$i<=$data['PAGEINFO']['TOTAL_PAGE'];$i++){
@@ -343,8 +336,7 @@ class BusinessController  extends UserController
                 file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
                 $resData[] = $insertData;
             }
-            dingAlarm('企业对外投资',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
-
+//            dingAlarm('企业对外投资',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
         }
         return [$fileName, $resData];
     }
@@ -375,7 +367,7 @@ class BusinessController  extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getRegisterChangeInfo($ent['entName'],1);
-            dingAlarm('企业变更信息',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
+//            dingAlarm('企业变更信息',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
             if(empty($data['result'])) continue;
             if(isset($data['paging']['totalPage']) && $data['paging']['totalPage']>1){
                 for($i=2;$i<=$data['paging']['totalPage'];$i++){
