@@ -1200,7 +1200,6 @@ Eof;
                 file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
                 $resData[] = $insertData;
             }
-            dingAlarm('企业变更信息',['$entName'=>$ent['entName'],'$resData'=>json_encode($resData)]);
 
         }
         return [$fileName, $resData];
