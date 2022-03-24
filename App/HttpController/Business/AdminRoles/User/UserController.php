@@ -992,6 +992,7 @@ class UserController extends UserBase
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getMainManagerInfo($ent['entName'],1);
+            dingAlarm('企业主要管理人$data',['$data'=>json_encode($data)]);
             if(empty($data['RESULTDATA'])) continue;
             if(isset($data['PAGEINFO']['TOTAL_COUNT']) && $data['PAGEINFO']['TOTAL_COUNT']>1){
                 for($i=2;$i<=$data['PAGEINFO']['TOTAL_COUNT'];$i++){
