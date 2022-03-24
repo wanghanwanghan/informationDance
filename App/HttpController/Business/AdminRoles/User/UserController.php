@@ -536,12 +536,11 @@ Eof;
                 case 1:
                     $BusinessController = new BusinessController();
                     list($filePath, $data) = $BusinessController->{$fun}($nameArr);
+                    break;
                 case 3:
                     $SifaContorller = new SifaContorller();
                     list($filePath, $data) = $SifaContorller->{$fun}($nameArr);
-                default:
-                    $BusinessController = new BusinessController();
-                    list($filePath, $data) = $BusinessController->{$fun}($nameArr);
+                    break;
             }
             dingAlarm('导出数据返回', ['$filePath' => $filePath]);
             $fileArr[$emptyType] = $filePath;
