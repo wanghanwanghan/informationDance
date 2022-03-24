@@ -1008,7 +1008,7 @@ class UserController extends UserBase
                     $datum['ISFRDB'],
                 ];
                 file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
-                $data[] = $insertData;
+                $resData[] = $insertData;
             }
             dingAlarm('企业主要管理人',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
 
@@ -1023,5 +1023,54 @@ class UserController extends UserBase
             'pageSize' => 10,
         ];
         return (new TaoShuService())->post($postData, 'getMainManagerInfo');
+    }
+
+    private function tsGetBranchInfo($entNames){
+        $fileName = date('YmdHis', time()) . '企业分支机构.csv';
+        $file = TEMP_FILE_PATH . $fileName;
+        $header = [
+            '总公司',
+            '分支机构名称',
+            '统一社会信用代码',
+            '负责人',
+            '成立日期',
+            '经营状态',
+            '登记地省份',
+        ];
+        file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        $resData = [];
+        foreach ($entNames as $ent) {
+            $data = $this->getBranchInfo($ent['entName'],1);
+//            if(empty($data['RESULTDATA'])) continue;
+//            if(isset($data['totalPageNum']) && $data['totalPageNum']>1){
+//                for($i=2;$i<=$data['PAGEINFO']['TOTAL_COUNT'];$i++){
+//                    $data2 = $this->getCpws($ent['entName'],1);
+//                    $data['RESULTDATA'] = array_merge($data['RESULTDATA'],$data2['RESULTDATA']);
+//                }
+//            }
+//            foreach ($data['RESULTDATA'] as $datum) {
+//                $insertData = [
+//                    $ent['entName'],
+//                    $datum['NAME'],
+//                    $datum['POSITION'],
+//                    $datum['ISFRDB'],
+//                ];
+//                file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+//                $resData[] = $insertData;
+//            }
+            dingAlarm('企业分支机构',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
+
+        }
+        return [$fileName, $resData];
+    }
+
+    private function getBranchInfo($entName,$pageNo){
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $pageNo,
+            'pageSize' => 10,
+        ];
+
+        return (new TaoShuService())->post($postData, 'getBranchInfo');
     }
 }
