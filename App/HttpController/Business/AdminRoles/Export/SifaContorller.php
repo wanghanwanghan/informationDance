@@ -192,14 +192,14 @@ class SifaContorller  extends UserController
         }
         $insertData = [
             $name,
-            $data['0']['body'],
-            $data['0']['caseNo'],
-            $data['0']['court'],
-            $data['0']['courtroom'],
-            $data['0']['judge'],
-            $data['0']['organizer'],
-            date('Y-m-d H:i:s',$data['0']['sortTime']),
-            $data['0']['title'],
+            $data['body'],
+            $data['caseNo'],
+            $data['court'],
+            $data['courtroom'],
+            $data['judge'],
+            $data['organizer'],
+            date('Y-m-d H:i:s',$data['sortTime']),
+            $data['title'],
             implode('  ',$caseCauseT),
             implode('  ',$pname),
             implode('  ',$partyTitleT),
@@ -217,18 +217,16 @@ class SifaContorller  extends UserController
         $file = TEMP_FILE_PATH . $fileName;
         $header = [
             '公司名',
-            '公告日期',
-            '当事人',
-            '公告类型',
-            '公告标题',
-            '公告内容',
-            '法院名称',
-            '法院id',
-            '案由编号',
+            '内容',//body
+            '案号',//caseNo
+            '法院',//court
+            '版面',//layout
+            '立案时间',//sortTime
+            '标题',//title
             '案由',
-            '刊登版面',
-            '企业名/姓名',
-            '主体类型'
+            '当事人名称',
+            '当前称号',
+            '诉讼地位（原审）',
         ];
         file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
         $resData = [];
@@ -270,20 +268,29 @@ class SifaContorller  extends UserController
         if(empty($data)){
             return [];
         }
+        $caseCauseT = [];
+        $pname = [];
+        $partyTitleT = [];
+        $partyPositionT = [];
+        $partyPositionTMap = ['p'=>'原告','d'=>'被告','t'=>'第三人','u'=>'当事人'];
+        foreach ($data['partys'] as $v) {
+            $caseCauseT = $v['caseCauseT'];
+            $pname[] = $v['pname'];
+            $partyTitleT[] = $v['partyTitleT'];
+            $partyPositionT[] = $partyPositionTMap[$v['partyPositionT']]??$v['partyPositionT'];
+        }
         $insertData = [
             $name,
-            $data['sdate'],
-            $data['pname'],
-            $data['gtype'],
+            $data['body'],
+            $data['caseNo'],
+            $data['court'],
+            $data['layout'],
+            date('Y-m-d H:i:s',$data['sortTime']),
             $data['title'],
-            $data['content'],
-            $data['courtname'],
-            $data['court_id'],
-            $data['causecode_id'],
-            $data['causename'],
-            $data['pubpage'],
-            $data['ENTNAME'],
-            $data['ptype']
+            implode('  ',$caseCauseT),
+            implode('  ',$pname),
+            implode('  ',$partyTitleT),
+            implode('  ',$partyPositionT),
         ];
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         return $insertData;
