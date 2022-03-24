@@ -446,10 +446,16 @@ class UserController extends UserBase
         $pageNo = $this->getRequestData('pageNo') ?? '';
         $pageNo = empty($pageNo)?1:$pageNo;
         $pageSize = $this->getRequestData('pageSize') ?? '';
-        $pageNo = empty($pageSize)?10:$pageSize;
+        $pageSize = empty($pageSize)?10:$pageSize;
         $appId = $this->getRequestData('username') ?? '';
         $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
         $limit = ($pageNo-1)*$pageSize;
+        $countSql = <<<Eof
+SELECT count(DISTINCT ( batchNum ))as num FROM information_dance_batch_seach_log where userId = {$info->id} 
+Eof;
+
+        $count = sqlRaw($countSql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        dingAlarm('$count', ['$count' => $count]);
         $sql = <<<Eof
 SELECT
 	a.batchNum,
@@ -466,7 +472,7 @@ Eof;
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
 //        $list = BatchSeachLog::create()->where("userId = {$info->id}")->all();
 
-        return $this->writeJson(200, null, $list,'成功');
+        return $this->writeJson(200, null, ['list'=>$list,'count'=>$count['0']['num']],'成功');
     }
 
     /**
