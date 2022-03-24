@@ -1182,14 +1182,14 @@ Eof;
         foreach ($entNames as $ent) {
             $data = $this->getRegisterChangeInfo($ent['entName'],1);
             dingAlarm('企业变更信息',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
-            if(empty($data['RESULTDATA'])) continue;
-            if(isset($data['PAGEINFO']['TOTAL_PAGE']) && $data['PAGEINFO']['TOTAL_PAGE']>1){
-                for($i=2;$i<=$data['PAGEINFO']['TOTAL_PAGE'];$i++){
+            if(empty($data['result'])) continue;
+            if(isset($data['paging']['totalPage']) && $data['paging']['totalPage']>1){
+                for($i=2;$i<=$data['paging']['totalPage'];$i++){
                     $data2 = $this->getRegisterChangeInfo($ent['entName'],1);
-                    $data['RESULTDATA'] = array_merge($data['RESULTDATA'],$data2['RESULTDATA']);
+                    $data['result'] = array_merge($data['result'],$data2['result']);
                 }
             }
-            foreach ($data['RESULTDATA'] as $datum) {
+            foreach ($data['result'] as $datum) {
                 $insertData = [
                     $ent['entName'],
                     $datum['ALTITEM'],
