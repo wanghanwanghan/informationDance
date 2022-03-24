@@ -1006,6 +1006,7 @@ class UserController extends UserBase
                     $datum['POSITION'],
                     $datum['ISFRDB'],
                 ];
+                dingAlarm('企业主要管理人明细',['$data'=>json_encode($resData)]);
                 file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
             }
             dingAlarm('企业主要管理人',['$entName'=>$ent['entName'],'$data'=>json_encode($resData)]);
