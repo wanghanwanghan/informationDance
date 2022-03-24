@@ -469,7 +469,7 @@ Eof;
             'page' => $pageNo,
             'pageSize' => $pageSize,
             'total' => $count['0']['num'],
-            'totalPage' => (int)$count['0']['num']/$pageSize+1,
+            'totalPage' => (int)($count['0']['num']/$pageSize)+1,
         ];
         return $this->writeJson(200, $paging, $list,'成功');
     }
