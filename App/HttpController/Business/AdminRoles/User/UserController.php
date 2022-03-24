@@ -443,8 +443,10 @@ class UserController extends UserBase
      */
     public function getBatchNumList(){
         $appId = $this->getRequestData('username') ?? '';
-        $pageNo = $this->getRequestData('pageNo') ?? '1';
-        $pageSize = $this->getRequestData('pageSize') ?? '10';
+        $pageNo = $this->getRequestData('pageNo') ?? '';
+        $pageNo = empty($pageNo)?1:$pageNo;
+        $pageSize = $this->getRequestData('pageSize') ?? '';
+        $pageNo = empty($pageSize)?10:$pageSize;
         $appId = $this->getRequestData('username') ?? '';
         $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
         $limit = ($pageNo-1)*$pageSize;
