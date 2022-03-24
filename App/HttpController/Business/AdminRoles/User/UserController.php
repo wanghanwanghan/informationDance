@@ -443,16 +443,26 @@ class UserController extends UserBase
      */
     public function getBatchNumList(){
         $appId = $this->getRequestData('username') ?? '';
+        $pageNo = $this->getRequestData('pageNo') ?? '1';
+        $pageSize = $this->getRequestData('pageSize') ?? '10';
+        $appId = $this->getRequestData('username') ?? '';
         $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
-        $list = BatchSeachLog::create()->where("userId = {$info->id}")->all();
-        $data = [];
-        foreach ($list as $item) {
-            $count = $data[$item->getAttr('batchNum')]['entCount']??0;
-            $data[$item->getAttr('batchNum')]['batchNum'] = $item->getAttr('batchNum');
-            $data[$item->getAttr('batchNum')]['entCount'] = 1+$count;
-            $data[$item->getAttr('batchNum')]['created_at'] = $item->getAttr('created_at');
-        }
-        return $this->writeJson(200, null, array_values($data),'成功');
+        $limit = ($pageNo-1)*$pageSize;
+        $sql = <<<Eof
+SELECT
+	a.batchNum,
+	count( a.entName ) as entCount,
+	a.created_at 
+FROM
+	information_dance_batch_seach_log AS a
+	LEFT JOIN ( SELECT DISTINCT ( batchNum ) FROM information_dance_batch_seach_log where userId = {$info->id} ORDER BY id DESC LIMIT {$limit},$pageSize ) AS b ON a.batchNum = b.batchNum 
+GROUP BY
+	batchNum
+Eof;
+        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+//        $list = BatchSeachLog::create()->where("userId = {$info->id}")->all();
+
+        return $this->writeJson(200, null, $list,'成功');
     }
 
     /**
@@ -1027,6 +1037,9 @@ class UserController extends UserBase
         return (new TaoShuService())->post($postData, 'getMainManagerInfo');
     }
 
+    /**
+     * 陶数-企业分支机构
+     */
     private function tsGetBranchInfo($entNames){
         $fileName = date('YmdHis', time()) . '企业分支机构.csv';
         $file = TEMP_FILE_PATH . $fileName;
@@ -1077,5 +1090,76 @@ class UserController extends UserBase
         ];
 
         return (new TaoShuService())->post($postData, 'getBranchInfo');
+    }
+
+    /**
+     * 陶数 - 企业对外投资
+     */
+    private function tsGetInvestmentAbroadInfo($entNames){
+        $fileName = date('YmdHis', time()) . '企业对外投资.csv';
+        $file = TEMP_FILE_PATH . $fileName;
+        $header = [
+            '总公司',
+            '被投企业名称',
+            '统一社会信用代码',
+            '成立日期',
+            '经营状态',
+            '注册资本',
+            '认缴出资额',
+            '出资币种',
+            '出资比例',
+            '出资时间'
+        ];
+        file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        $resData = [];
+        foreach ($entNames as $ent) {
+            $data = $this->getBranchInfo($ent['entName'],1);
+            if(empty($data['RESULTDATA'])) continue;
+            if(isset($data['PAGEINFO']['TOTAL_PAGE']) && $data['PAGEINFO']['TOTAL_PAGE']>1){
+                for($i=2;$i<=$data['PAGEINFO']['TOTAL_PAGE'];$i++){
+                    $data2 = $this->getBranchInfo($ent['entName'],1);
+                    $data['RESULTDATA'] = array_merge($data['RESULTDATA'],$data2['RESULTDATA']);
+                }
+            }
+            foreach ($data['RESULTDATA'] as $datum) {
+                $insertData = [
+                    $ent['entName'],
+                    $datum['ENTNAME'],
+                    $datum['SHXYDM'],
+                    $datum['ESDATE'],
+                    $datum['ENTSTATUS'],
+                    $datum['REGCAP'],
+                    $datum['SUBCONAM'],
+                    $datum['CONCUR'],
+                    formatPercent($datum['CONRATIO']),
+                    $datum['CONDATE']??''
+                ];
+                file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+                $resData[] = $insertData;
+            }
+            dingAlarm('企业对外投资',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
+
+        }
+        return [$fileName, $resData];
+    }
+    private function getInvestmentAbroadInfo($entName,$pageNo){
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $pageNo,
+            'pageSize' => 10,
+        ];
+
+        $res = (new TaoShuService())->post($postData, 'getInvestmentAbroadInfo');
+
+//        $res = $this->checkResponse($res, false);
+//
+//        if (!is_array($res)) return $res;
+//
+//        if ($res['code'] == 200 && !empty($res['result'])) {
+//            foreach ($res['result'] as &$one) {
+//                $one['CONRATIO'] = formatPercent($one['CONRATIO']);
+//            }
+//            unset($one);
+//        }
     }
 }
