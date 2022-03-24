@@ -832,7 +832,7 @@ class UserController extends UserBase
             if(isset($data['totalPageNum']) && $data['totalPageNum']>1){
                 for($i=2;$i<=$data['totalPageNum'];$i++){
                     $data2 = $this->getCpws($ent['entName'],1);
-                    $data = array_merge($data,$data2);
+                    $data['cpwsList'] = array_merge($data['cpwsList'],$data2['cpwsList']);
                 }
             }
             foreach ($data['cpwsList'] as $datum) {
@@ -993,7 +993,23 @@ class UserController extends UserBase
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getMainManagerInfo($ent['entName'],1);
-            if(empty($data)) continue;
+            if(empty($data['RESULTDATA'])) continue;
+            if(isset($data['totalPageNum']) && $data['totalPageNum']>1){
+                for($i=2;$i<=$data['PAGEINFO']['TOTAL_COUNT'];$i++){
+                    $data2 = $this->getCpws($ent['entName'],1);
+                    $data['RESULTDATA'] = array_merge($data['RESULTDATA'],$data2['RESULTDATA']);
+                }
+            }
+            foreach ($data['RESULTDATA'] as $datum) {
+                $insertData = [
+                    $ent['entName'],
+                    $datum['NAME'],
+                    $datum['POSITION'],
+                    $datum['ISFRDB'],
+                ];
+                file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+                $data[] = $insertData;
+            }
             dingAlarm('企业主要管理人',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
 
         }
