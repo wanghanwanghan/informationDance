@@ -1000,14 +1000,13 @@ class UserController extends UserBase
                 }
             }
             foreach ($data['RESULTDATA'] as $datum) {
-                $insertData = [
+                $resData[] = $insertData = [
                     $ent['entName'],
                     $datum['NAME'],
                     $datum['POSITION'],
                     $datum['ISFRDB'],
                 ];
                 file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
-                $resData[] = $insertData;
             }
             dingAlarm('企业主要管理人',['$entName'=>$ent['entName'],'$data'=>json_encode($resData)]);
 
