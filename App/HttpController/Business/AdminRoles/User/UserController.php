@@ -543,8 +543,6 @@ Eof;
                     $BusinessController = new BusinessController();
                     list($filePath, $data) = $BusinessController->{$fun}($nameArr);
             }
-
-            list($filePath, $data) = $this->{$fun}($nameArr);
             dingAlarm('导出数据返回', ['$filePath' => $filePath]);
             $fileArr[$emptyType] = $filePath;
             $this->inseartChargingLog($info->id, $batchNum, $emptyType, $data, $filePath);
