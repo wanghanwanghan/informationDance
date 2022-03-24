@@ -998,7 +998,7 @@ class UserController extends UserBase
             if(isset($data['PAGEINFO']['TOTAL_COUNT']) && $data['PAGEINFO']['TOTAL_COUNT']>1){
                 for($i=2;$i<=$data['PAGEINFO']['TOTAL_COUNT'];$i++){
                     $data2 = $this->getCpws($ent['entName'],1);
-                    $dataList = array_push($dataList,$data2['RESULTDATA']);
+                    $dataList = array_merge($dataList,$data2['RESULTDATA']);
                 }
             }
             dingAlarm('企业主要管理人$data2',['$data'=>json_encode($dataList)]);
