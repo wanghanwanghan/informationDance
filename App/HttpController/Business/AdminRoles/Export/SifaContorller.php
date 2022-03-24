@@ -117,14 +117,14 @@ class SifaContorller  extends UserController
         return (new FaYanYuanService())->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sifa', $postData);
     }
 
+    /**
+     * 法海 - 开庭公告
+     */
     public function fhGetKtgg($entNames){
         $fileName = date('YmdHis', time()) . '开庭公告.csv';
         $file = TEMP_FILE_PATH . $fileName;
         $header = [
             '公司名',
-            '接口提供方',
-            'id',
-            '开庭公告ID',//ktggId
             '内容',//body
             '案号',//caseNo
             '法院',//court
@@ -153,7 +153,6 @@ class SifaContorller  extends UserController
             foreach ($data['ktggList'] as $datum) {
                 $resData[] = $this->fhgetKtggDetail($datum['entryId'],$file,$ent['entName']);
             }
-//            dingAlarm('裁判文书',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
         }
         return [$fileName, $resData];
     }
@@ -170,14 +169,13 @@ class SifaContorller  extends UserController
     }
 
     //开庭公告详情
-    function fhgetKtggDetail($id)
+    function fhgetKtggDetail($id,$file,$name)
     {
         $postData = ['id' => $id];
         $docType = 'ktgg';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
-        dingAlarm('裁判文书详情',['$data'=>json_encode($res)]);
-        return '';
-        $data = $res['cpws']['0'];
+        dingAlarm('开庭公告详情',['$data'=>json_encode($res)]);
+        $data = $res['ktgg']['0'];
         if(empty($data)){
             return [];
         }
@@ -194,16 +192,14 @@ class SifaContorller  extends UserController
         }
         $insertData = [
             $name,
-            $data['caseNo'],
-            $data['body'],
-            $data['court'],
-            $data['cpwsId'],
-            $data['judge'],
-            $data['judgeResult'],
-            $data['sortTime'],
-            $data['title'],
-            $data['trialProcedure'],
-            $data['yiju'],
+            $data['0']['body'],
+            $data['0']['caseNo'],
+            $data['0']['court'],
+            $data['0']['courtroom'],
+            $data['0']['judge'],
+            $data['0']['organizer'],
+            date('Y-m-d H:i:s',$data['0']['sortTime']),
+            $data['0']['title'],
             implode('  ',$caseCauseT),
             implode('  ',$pname),
             implode('  ',$partyTitleT),
@@ -211,5 +207,163 @@ class SifaContorller  extends UserController
         ];
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         return $insertData;
+    }
+
+    /**
+     * 法海- 法院公告
+     */
+    public function fhGetFygg($entNames){
+        $fileName = date('YmdHis', time()) . '法院公告.csv';
+        $file = TEMP_FILE_PATH . $fileName;
+        $header = [
+            '公司名',
+            '公告日期',
+            '当事人',
+            '公告类型',
+            '公告标题',
+            '公告内容',
+            '法院名称',
+            '法院id',
+            '案由编号',
+            '案由',
+            '刊登版面',
+            '企业名/姓名',
+            '主体类型'
+        ];
+        file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        $resData = [];
+        foreach ($entNames as $ent) {
+            $data = $this->getFygg($ent['entName'],1);
+            dingAlarm('法院公告',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
+            if(empty($data['fyggList'])) continue;
+            if(isset($data['totalPageNum']) && $data['totalPageNum']>1){
+                for($i=2;$i<=$data['totalPageNum'];$i++){
+                    $data2 = $this->getFygg($ent['entName'],1);
+                    $data['fyggList'] = array_merge($data['fyggList'],$data2['fyggList']);
+                }
+            }
+            foreach ($data['fyggList'] as $datum) {
+                $resData[] = $this->fhgetfyggDetail($datum['entryId'],$file,$ent['entName']);
+            }
+        }
+        return [$fileName, $resData];
+    }
+
+    public function getFygg($entName,$page){
+        $docType = 'fygg';
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => 10,
+        ];
+        return (new FaYanYuanService())->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sifa', $postData);
+    }
+    //开庭公告详情
+    function fhgetfyggDetail($id,$file,$name)
+    {
+        $postData = ['id' => $id];
+        $docType = 'fygg';
+        $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
+        dingAlarm('法院公告详情',['$data'=>json_encode($res)]);
+        $data = $res['fygg']['0'];
+        if(empty($data)){
+            return [];
+        }
+        $insertData = [
+            $name,
+            $data['sdate'],
+            $data['pname'],
+            $data['gtype'],
+            $data['title'],
+            $data['content'],
+            $data['courtname'],
+            $data['court_id'],
+            $data['causecode_id'],
+            $data['causename'],
+            $data['pubpage'],
+            $data['ENTNAME'],
+            $data['ptype']
+        ];
+        file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+        return $insertData;
+    }
+
+    /**
+     * 法海 - 执行公告
+     */
+    public function fhGetZxgg($entNames){
+        $fileName = date('YmdHis', time()) . '执行公告.csv';
+        $file = TEMP_FILE_PATH . $fileName;
+//        $header = [
+//            '公司名',
+//            '公告日期',
+//            '当事人',
+//            '公告类型',
+//            '公告标题',
+//            '公告内容',
+//            '法院名称',
+//            '法院id',
+//            '案由编号',
+//            '案由',
+//            '刊登版面',
+//            '企业名/姓名',
+//            '主体类型'
+//        ];
+//        file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        $resData = [];
+        foreach ($entNames as $ent) {
+            $data = $this->getZxgg($ent['entName'],1);
+            dingAlarm('执行公告',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
+            if(empty($data['fyggList'])) continue;
+            if(isset($data['totalPageNum']) && $data['totalPageNum']>1){
+                for($i=2;$i<=$data['totalPageNum'];$i++){
+                    $data2 = $this->getZxgg($ent['entName'],1);
+                    $data['fyggList'] = array_merge($data['fyggList'],$data2['fyggList']);
+                }
+            }
+            foreach ($data['fyggList'] as $datum) {
+                $resData[] = $this->getZxggDetail($datum['entryId'],$file,$ent['entName']);
+            }
+        }
+        return [$fileName, $resData];
+    }
+
+    public function getZxgg($entName,$page){
+        $docType = 'zxgg';
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => 10,
+        ];
+        return (new FaYanYuanService())->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl'). 'sifa', $postData);
+    }
+    //执行公告详情
+    function getZxggDetail($id,$file,$name)
+    {
+        $postData = ['id' => $id];
+        $docType = 'zxgg';
+        $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
+        dingAlarm('执行公告详情',['$res'=>json_encode($res)]);
+        return [];
+    }
+    public function getShixin($entName,$page){
+        $docType = 'shixin';
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => 10,
+        ];
+        return (new FaYanYuanService())->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sifa', $postData);
+    }
+
+    //失信公告详情
+    function getShixinDetail($id,$file,$name)
+    {
+        $postData = ['id' => $id];
+        $docType = 'shixin';
+        $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
     }
 }
