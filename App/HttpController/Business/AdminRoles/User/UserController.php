@@ -1158,7 +1158,7 @@ Eof;
         $postData = [
             'entName' => $entName,
             'pageNo' => $pageNo,
-            'pageSize' => 10,
+            'pageSize' => 1000,
         ];
         return (new TaoShuService())->post($postData, 'getInvestmentAbroadInfo');
     }
