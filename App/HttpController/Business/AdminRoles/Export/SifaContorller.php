@@ -73,7 +73,7 @@ class SifaContorller  extends UserController
         $partyPositionT = [];
         $partyPositionTMap = ['p'=>'原告','d'=>'被告','t'=>'第三人','u'=>'当事人'];
         foreach ($data['partys'] as $v) {
-            $caseCauseT = $v['caseCauseT'];
+            $caseCauseT = !empty($v['caseCauseT'])?$v['caseCauseT']:'';
             $pname[] = $v['pname'];
             $partyTitleT[] = $v['partyTitleT'];
             $partyPositionT[] = $partyPositionTMap[$v['partyPositionT']]??$v['partyPositionT'];
@@ -185,7 +185,7 @@ class SifaContorller  extends UserController
         $partyPositionT = [];
         $partyPositionTMap = ['p'=>'原告','d'=>'被告','t'=>'第三人','u'=>'当事人'];
         foreach ($data['partys'] as $v) {
-            $caseCauseT = $v['caseCauseT'];
+            $caseCauseT = !empty($v['caseCauseT'])?$v['caseCauseT']:'';
             $pname[] = $v['pname'];
             $partyTitleT[] = $v['partyTitleT'];
             $partyPositionT[] = $partyPositionTMap[$v['partyPositionT']]??$v['partyPositionT'];
@@ -274,7 +274,7 @@ class SifaContorller  extends UserController
         $partyPositionT = [];
         $partyPositionTMap = ['p'=>'原告','d'=>'被告','t'=>'第三人','u'=>'当事人'];
         foreach ($data['partys'] as $v) {
-            $caseCauseT = $v['caseCauseT'];
+            $caseCauseT = !empty($v['caseCauseT'])?$v['caseCauseT']:'';
             $pname[] = $v['pname'];
             $partyTitleT[] = $v['partyTitleT'];
             $partyPositionT[] = $partyPositionTMap[$v['partyPositionT']]??$v['partyPositionT'];
@@ -322,14 +322,14 @@ class SifaContorller  extends UserController
         foreach ($entNames as $ent) {
             $data = $this->getZxgg($ent['entName'],1);
             dingAlarm('执行公告',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
-            if(empty($data['fyggList'])) continue;
+            if(empty($data['zxggList'])) continue;
             if(isset($data['totalPageNum']) && $data['totalPageNum']>1){
                 for($i=2;$i<=$data['totalPageNum'];$i++){
                     $data2 = $this->getZxgg($ent['entName'],1);
-                    $data['fyggList'] = array_merge($data['fyggList'],$data2['fyggList']);
+                    $data['zxggList'] = array_merge($data['zxggList'],$data2['zxggList']);
                 }
             }
-            foreach ($data['fyggList'] as $datum) {
+            foreach ($data['zxggList'] as $datum) {
                 $resData[] = $this->getZxggDetail($datum['entryId'],$file,$ent['entName']);
             }
         }
@@ -344,7 +344,13 @@ class SifaContorller  extends UserController
             'pageno' => $page,
             'range' => 10,
         ];
-        return (new FaYanYuanService())->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl'). 'sifa', $postData);
+        $res = (new FaYanYuanService())->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl'). 'sifa', $postData);
+        foreach ($res['zxggList'] as &$one) {
+            if (!isset($one['body'])) continue;
+            $one['body'] = preg_replace('/[a-z]/i', '', trim($one['body']));
+        }
+        unset($one);
+        return $res;
     }
     //执行公告详情
     function getZxggDetail($id,$file,$name)
