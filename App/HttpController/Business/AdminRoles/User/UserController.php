@@ -992,7 +992,7 @@ class UserController extends UserBase
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getMainManagerInfo($ent['entName'],1);
-            dingAlarm('企业主要管理人$data',['$data'=>json_encode($data)]);
+            dingAlarm('企业主要管理人$data1',['$data'=>json_encode($data)]);
             if(empty($data['RESULTDATA'])) continue;
             if(isset($data['PAGEINFO']['TOTAL_COUNT']) && $data['PAGEINFO']['TOTAL_COUNT']>1){
                 for($i=2;$i<=$data['PAGEINFO']['TOTAL_COUNT'];$i++){
@@ -1000,6 +1000,7 @@ class UserController extends UserBase
                     $data['RESULTDATA'] = array_merge($data['RESULTDATA'],$data2['RESULTDATA']);
                 }
             }
+            dingAlarm('企业主要管理人$data2',['$data'=>json_encode($data)]);
             foreach ($data['RESULTDATA'] as $datum) {
                 $resData[] = $insertData = [
                     $ent['entName'],
@@ -1010,7 +1011,7 @@ class UserController extends UserBase
                 dingAlarm('企业主要管理人明细',['$data'=>json_encode($resData)]);
                 file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
             }
-            dingAlarm('企业主要管理人',['$entName'=>$ent['entName'],'$data'=>json_encode($resData)]);
+//            dingAlarm('企业主要管理人',['$entName'=>$ent['entName'],'$data'=>json_encode($resData)]);
 
         }
         return [$fileName, $resData];
