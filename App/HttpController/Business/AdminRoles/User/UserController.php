@@ -1105,7 +1105,6 @@ Eof;
      * 陶数 - 企业对外投资
      */
     private function tsGetInvestmentAbroadInfo($entNames){
-        dingAlarm('企业对外投资',['$entNames'=>json_encode($entNames)]);
 
         $fileName = date('YmdHis', time()) . '企业对外投资.csv';
         $file = TEMP_FILE_PATH . $fileName;
@@ -1125,6 +1124,8 @@ Eof;
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getBranchInfo($ent['entName'],1);
+            dingAlarm('企业对外投资$data',['$data'=>json_encode($data)]);
+
             if(empty($data['RESULTDATA'])) continue;
             if(isset($data['PAGEINFO']['TOTAL_PAGE']) && $data['PAGEINFO']['TOTAL_PAGE']>1){
                 for($i=2;$i<=$data['PAGEINFO']['TOTAL_PAGE'];$i++){
