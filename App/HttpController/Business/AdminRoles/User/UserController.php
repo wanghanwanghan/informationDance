@@ -442,20 +442,17 @@ class UserController extends UserBase
      * 获取这个用户下的导入的批次号list
      */
     public function getBatchNumList(){
-        $appId = $this->getRequestData('username') ?? '';
         $pageNo = $this->getRequestData('pageNo') ?? '';
-        $pageNo = empty($pageNo)?1:$pageNo;
         $pageSize = $this->getRequestData('pageSize') ?? '';
-        $pageSize = empty($pageSize)?10:$pageSize;
         $appId = $this->getRequestData('username') ?? '';
         $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
+        $pageSize = empty($pageSize)?10:$pageSize;
+        $pageNo = empty($pageNo)?1:$pageNo;
         $limit = ($pageNo-1)*$pageSize;
         $countSql = <<<Eof
 SELECT count(DISTINCT ( batchNum ))as num FROM information_dance_batch_seach_log where userId = {$info->id} 
 Eof;
-
         $count = sqlRaw($countSql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-        dingAlarm('$count', ['$count' => $count]);
         $sql = <<<Eof
 SELECT
 	a.batchNum,
@@ -467,11 +464,7 @@ FROM
 GROUP BY
 	batchNum
 Eof;
-        dingAlarm('$sql', ['$sql' => $sql]);
-
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-//        $list = BatchSeachLog::create()->where("userId = {$info->id}")->all();
-
         return $this->writeJson(200, null, ['list'=>$list,'count'=>$count['0']['num']],'成功');
     }
 
@@ -1127,7 +1120,7 @@ Eof;
             if(empty($data['RESULTDATA'])) continue;
             if(isset($data['PAGEINFO']['TOTAL_PAGE']) && $data['PAGEINFO']['TOTAL_PAGE']>1){
                 for($i=2;$i<=$data['PAGEINFO']['TOTAL_PAGE'];$i++){
-                    $data2 = $this->getBranchInfo($ent['entName'],1);
+                    $data2 = $this->getInvestmentAbroadInfo($ent['entName'],1);
                     $data['RESULTDATA'] = array_merge($data['RESULTDATA'],$data2['RESULTDATA']);
                 }
             }
@@ -1158,18 +1151,6 @@ Eof;
             'pageNo' => $pageNo,
             'pageSize' => 10,
         ];
-
-        $res = (new TaoShuService())->post($postData, 'getInvestmentAbroadInfo');
-
-//        $res = $this->checkResponse($res, false);
-//
-//        if (!is_array($res)) return $res;
-//
-//        if ($res['code'] == 200 && !empty($res['result'])) {
-//            foreach ($res['result'] as &$one) {
-//                $one['CONRATIO'] = formatPercent($one['CONRATIO']);
-//            }
-//            unset($one);
-//        }
+        return (new TaoShuService())->post($postData, 'getInvestmentAbroadInfo');
     }
 }
