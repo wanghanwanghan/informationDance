@@ -459,6 +459,8 @@ FROM
 GROUP BY
 	batchNum
 Eof;
+        dingAlarm('$sql', ['$sql' => $sql]);
+
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
 //        $list = BatchSeachLog::create()->where("userId = {$info->id}")->all();
 
