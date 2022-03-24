@@ -1181,7 +1181,7 @@ Eof;
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getRegisterChangeInfo($ent['entName'],1);
-
+            dingAlarm('企业变更信息',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
             if(empty($data['RESULTDATA'])) continue;
             if(isset($data['PAGEINFO']['TOTAL_PAGE']) && $data['PAGEINFO']['TOTAL_PAGE']>1){
                 for($i=2;$i<=$data['PAGEINFO']['TOTAL_PAGE'];$i++){
@@ -1200,7 +1200,7 @@ Eof;
                 file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
                 $resData[] = $insertData;
             }
-            dingAlarm('企业变更信息',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
+            dingAlarm('企业变更信息',['$entName'=>$ent['entName'],'$resData'=>json_encode($resData)]);
 
         }
         return [$fileName, $resData];
