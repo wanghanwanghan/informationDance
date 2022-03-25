@@ -382,7 +382,7 @@ class UserController extends UserBase
             }
             $res[$key]['own'] = 2;
         }
-        dingAlarmSimple(['$res' => $res]);
+        dingAlarmSimple(['$res' => json_encode($res)]);
         return $this->writeJson(200, null, $res);
     }
 
@@ -390,7 +390,7 @@ class UserController extends UserBase
     {
         $data = json_decode(json_encode($data), true);
         dingAlarmSimple(['getArrSetKey' => json_encode($data)]);
-        if (empty($datum)) return [];
+        if (empty($data)) return [];
         $arr = [];
         foreach ($data as $datum) {
             $arr[$datum[$key]] = $datum;
