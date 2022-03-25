@@ -389,6 +389,7 @@ class UserController extends UserBase
     public function getArrSetKey($data, $key)
     {
         $data = json_decode(json_encode($data), true);
+        dingAlarmSimple(['getArrSetKey' => $data]);
         if (empty($datum)) return [];
         $arr = [];
         foreach ($data as $datum) {
