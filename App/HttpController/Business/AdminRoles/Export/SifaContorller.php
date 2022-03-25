@@ -5,6 +5,7 @@ namespace App\HttpController\Business\AdminRoles\Export;
 use App\HttpController\Business\AdminRoles\User\UserController;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaYanYuan\FaYanYuanService;
+use App\HttpController\Service\LongDun\LongDunService;
 
 class SifaContorller  extends UserController
 {
@@ -461,5 +462,91 @@ class SifaContorller  extends UserController
         ];
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         return $insertData;
+    }
+
+    public function fhGetSifacdk($entNames)
+    {
+        $fileName = date('YmdHis', time()) . '司法查封冻结扣押.csv';
+        $file = TEMP_FILE_PATH . $fileName;
+//        $header = [
+//            '公司名',
+//            '内容',//body
+//            '案号',//caseNo
+//            '法院',//court
+//            '发布时间',//postTime
+//            '立案时间',//sortTime
+//            '义务',//yiwu
+//            '依据文号',//yjCode
+//            '依据单位',//yjdw
+//            '当事人'
+//        ];
+//        file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        $resData = [];
+        foreach ($entNames as $ent) {
+            $data = $this->getSifacdk($ent['entName'], 1);
+            dingAlarm('司法查封冻结扣押', ['$entName' => $ent['entName'], '$data' => json_encode($data)]);
+            if (empty($data['sifacdkList'])) continue;
+            if (isset($data['totalPageNum']) && $data['totalPageNum'] > 1) {
+                for ($i = 2; $i <= $data['totalPageNum']; $i++) {
+                    $data2 = $this->getSifacdk($ent['entName'], 1);
+                    $data['sifacdkList'] = array_merge($data['sifacdkList'], $data2['sifacdkList']);
+                }
+            }
+            foreach ($data['sifacdkList'] as $datum) {
+                $resData[] = $this->getSifacdkDetail($datum['entryId'], $file, $ent['entName']);
+            }
+        }
+        return [$fileName, $resData];
+    }
+
+    public function getSifacdk($entName,$page){
+        $docType = 'sifacdk';
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => 10,
+        ];
+        return (new FaYanYuanService())->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sifa', $postData);
+    }
+
+    //司法查封冻结扣押详情
+    function getSifacdkDetail($id,$file,$name)
+    {
+        $postData = ['id' => $id];
+        $docType = 'sifacdk';
+        $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
+        dingAlarm('司法查封冻结扣押详情',['$data'=>json_encode($res)]);
+        return [];
+    }
+    /**
+     * 企查查 - 司法拍卖
+     */
+    public function qccGetJudicialSaleList($entNames){
+        foreach ($entNames as $ent) {
+            $data = $this->getSifacdk($ent['entName'], 1);
+            dingAlarm('司法查封冻结扣押', ['$entName' => $ent['entName'], '$data' => json_encode($data)]);
+        }
+    }
+
+    /**
+     * 企查查 - 司法拍卖
+     */
+    public function getJudicialSaleList($entName,$page){
+        $postData = [
+            'keyWord' => $entName,
+            'pageIndex' => $page,
+            'pageSize' => 10,
+        ];
+        return (new LongDunService())->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'JudicialSale/GetJudicialSaleList', $postData);
+    }
+
+    //司法拍卖详情
+    function getJudicialSaleListDetail($id,$file,$name)
+    {
+        $postData = ['id' => $id];
+        $res = (new LongDunService())->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'JudicialSale/GetJudicialSaleDetail', $postData);
+        dingAlarm('司法拍卖详情',['$data'=>json_encode($res)]);
+        return '';
     }
 }
