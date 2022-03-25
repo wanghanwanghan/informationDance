@@ -217,7 +217,7 @@ class UserController extends UserBase
                     'price' => $one['price'] + 0.2,
                     'billing_plan' => $one['billing_plan'],
                     'cache_day' => $one['cache_day'],
-                    'kidType' => $one['kidType'],
+                    'kidTypes' => $one['kidTypes'],
                 ])->save();
             } else {
                 $check->update([
@@ -622,7 +622,7 @@ Eof;
         $kidTypes = [];
         foreach ($listRelation as $item) {
             $apiIds[$item->getAttr('apiId')] = $item->getAttr('apiId');
-            $kidTypes[$item->getAttr('apiId')] = $item->getAttr('kidType');
+            $kidTypes[$item->getAttr('apiId')] = $item->getAttr('kidTypes');
         }
         $listTypeApiRelation =  BarchTypeApiRelation::create()->where("apiId in (".implode(',',$apiIds).")")->all();
         $data = [];
@@ -630,7 +630,7 @@ Eof;
             $data[] = [
                 'type' => $item->getAttr('id'),
                 'name' => $item->getAttr('name'),
-                'kidType' => $kidTypes[$item->getAttr('apiId')]
+                'kidTypes' => $kidTypes[$item->getAttr('apiId')]
             ];
         }
         return $this->writeJson(201, null, $data, "成功");
