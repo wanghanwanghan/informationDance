@@ -635,7 +635,7 @@ Eof;
                 'kidTypes' => $kidTypes[$item->getAttr('apiId')]
             ];
         }
-        return $this->writeJson(201, null, $data, "成功");
+        return $this->writeJson(200, null, $data, "成功");
     }
 
     /**
