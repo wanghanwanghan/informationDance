@@ -33,7 +33,7 @@ class FinanceContorller  extends UserController
         foreach ($kidTypesKeyArr as $item) {
             $insertData[] = $this->kidTpye[$item];
         }
-        dingAlarm('年报头',['$data'=>json_encode($insertData)]);
+//        dingAlarm('年报头',['$data'=>json_encode($insertData)]);
 
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         $resData = [];

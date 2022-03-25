@@ -165,6 +165,19 @@
          remarks    = 陶数-工商-基本信息
          fun        = taoshuGetShareHolderInfo
 //======================================================================================================================
+    描述:添加或修改批次导出的类型
+    地址:AdminRoles/v1/User/editApiUserRelation
+    方法:get/post
+    参数:
+         username = PHP_is_the_best_language_in_the_world
+         token    = 231er2r3q
+         relationshipId      = 1   //关系表ID
+         cache_day = 1
+         price   = 1
+         status    = 1
+         billing_plan  =
+         kidTypes    = 2018-3|ASSGRO,LIAGRO,VENDINC,MAIBUSINC,PROGRO,NETINC,RATGRO,TOTEQU,SOCNUM
+
 //======================================================================================================================
 //======================================================================================================================
 
