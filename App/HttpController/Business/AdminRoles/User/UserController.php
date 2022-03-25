@@ -383,7 +383,7 @@ class UserController extends UserBase
             $res[$key]['own'] = 2;
         }
         dingAlarmSimple(['$res' => json_encode($res)]);
-        return $this->writeJson(200, null, $res);
+        return $this->writeJson(200, null, array_values($res));
     }
 
     public function getArrSetKey($data, $key)
