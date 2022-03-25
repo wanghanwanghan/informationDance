@@ -20,11 +20,11 @@ class FinanceContorller  extends UserController
     ];
     /**
      * 西南年报
-     * 2018-3/ASSGRO,LIAGRO,VENDINC,MAIBUSINC,PROGRO
+     * 2018-3/ASSGRO,LIAGRO,VENDINC,MAIBUSINC,PROGRO,NETINC,RATGRO,TOTEQU,SOCNUM
      */
     public function xinanGetFinanceNotAuth($entNames,$kidTypes)
     {
-        $kidTypes = explode('/',$kidTypes);
+        $kidTypes = explode('|',$kidTypes);
         $kidTypeList = explode('-',$kidTypes['0']);
         $kidTypesKeyArr = explode(',',$kidTypes['1']);
         $fileName = date('YmdHis', time()) . '年报.csv';
