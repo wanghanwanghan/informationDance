@@ -243,23 +243,23 @@ Eof;
 
         $fileName = $socialCredit . '_' . $flieDetail['fileId'] . '_' . control::getUuid(8);
 
-        $content = file_get_contents(INV_AUTH_PATH . $path);
+        //$content = file_get_contents(INV_AUTH_PATH . $path);
 
-        $content = base64_encode(openssl_encrypt(
-            $content,
-            'AES-128-CTR',
-            $this->currentAesKey,
-            OPENSSL_RAW_DATA,
-            $this->iv
-        ));
+        //$content = base64_encode(openssl_encrypt(
+        //    $content,
+        //    'AES-128-CTR',
+        //    $this->currentAesKey,
+        //    OPENSSL_RAW_DATA,
+        //    $this->iv
+        //));
 
-        file_put_contents(INV_AUTH_PATH . $path . '.aes', $content);
+        //file_put_contents(INV_AUTH_PATH . $path . '.aes', $content);
 
         return [OSSService::getInstance()
             ->doUploadFile(
                 $this->oss_bucket,
                 Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $fileName,
-                INV_AUTH_PATH . $path . '.aes',
+                INV_AUTH_PATH . $path,
                 $this->oss_expire_time
             ), $fileName];
     }
