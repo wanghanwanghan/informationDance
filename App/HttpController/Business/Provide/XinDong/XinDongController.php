@@ -330,27 +330,22 @@ class XinDongController extends ProvideBase
     //益博睿
     function getFinanceBaseDataYBR(): bool
     {
-        $beginYear = 2020;
-        $dataCount = 3;
         $entName = $this->getRequestData('entName', '');
-        if ($this->userId === 53) {
-            if ($this->limitEntNumByUserId('getFinanceBaseDataYBR', $entName, 100)) {
-                $this->writeJson(201, null, null, '请求次数已经达到上限100');
-            }
-            if ($beginYear === 2022 && $dataCount <= 3) {
-                $a = null;
-            } else if ($beginYear === 2021 && $dataCount <= 3) {
-                $a = null;
-            } elseif ($beginYear === 2020 && $dataCount <= 3) {
-                $a = null;
-            } elseif ($beginYear === 2019 && $dataCount <= 2) {
-                $a = null;
-            } elseif ($beginYear === 2018 && $dataCount === 1) {
-                $a = null;
-            } else {
-                return $this->writeJson(201, null, null, '参数错误');
-            }
+        $year = $this->getRequestData('year', '');
+        $userInputYear = explode(',', trim($year, ','));
+        $beginYear = 2021;
+        $dataCount = 3;
+
+        if ($this->limitEntNumByUserId(__FUNCTION__, $entName, 100)) {
+            return $this->writeJson(201, null, null, '请求次数已经达到上限100');
         }
+        if (empty($entName)) {
+            return $this->writeJson(201, null, null, 'entName不能是空');
+        }
+        if (empty($year)) {
+            return $this->writeJson(201, null, null, 'year不能是空');
+        }
+
         $postData = [
             'entName' => $entName,
             'code' => $this->getRequestData('code', ''),
@@ -365,8 +360,6 @@ class XinDongController extends ProvideBase
         } else {
             $f_info = EntDbFinance::create()
                 ->where('cid', $check->getAttr('id'))
-                ->order('ANCHEYEAR', 'DESC')
-                ->limit(0, 2)
                 ->field([
                     'ASSGRO',
                     'LIAGRO',
@@ -384,7 +377,10 @@ class XinDongController extends ProvideBase
             $this->spendMoney = 0;
             $tmp = [];
             foreach ($f_info as $one) {
-                $tmp[$one->ANCHEYEAR . ''] = obj2Arr($one);
+                //只能是year里的年份
+                if (in_array($one->ANCHEYEAR . '', $userInputYear)) {
+                    $tmp[$one->ANCHEYEAR . ''] = obj2Arr($one);
+                }
             }
             $res = [$this->cspKey => [
                 'code' => 200,
@@ -418,27 +414,29 @@ class XinDongController extends ProvideBase
                 '-' => 'J',
             ];
             foreach ($res[$this->cspKey]['result'] as $year => $oneYearData) {
-                foreach ($oneYearData as $field => $num) {
-                    if ($field === 'ispublic' || $field === 'SOCNUM' || $field === 'ANCHEYEAR') {
-                        unset($res[$this->cspKey]['result'][$year][$field]);
-                        continue;
-                    }
-                    $tmp = strtr($num, $indexTable);
-                    $tmp = current(explode('*', $tmp));
-                    if ($tmp[0] === 'J') {
-                        //负数
-                        if (strlen($tmp) >= 3) {
-                            $tmp = substr($tmp, 0, -1);
-                            $tmp = 'X' . $tmp;//有X说明要末尾补0
+                if (in_array($year, $userInputYear)) {
+                    foreach ($oneYearData as $field => $num) {
+                        if ($field === 'ispublic' || $field === 'SOCNUM' || $field === 'ANCHEYEAR') {
+                            unset($res[$this->cspKey]['result'][$year][$field]);
+                            continue;
                         }
-                    } else {
-                        //正数
-                        if (strlen($tmp) >= 2) {
-                            $tmp = substr($tmp, 0, -1);
-                            $tmp = 'X' . $tmp;//有X说明要末尾补0
+                        $tmp = strtr($num, $indexTable);
+                        $tmp = current(explode('*', $tmp));
+                        if ($tmp[0] === 'J') {
+                            //负数
+                            if (strlen($tmp) >= 3) {
+                                $tmp = substr($tmp, 0, -1);
+                                $tmp = 'X' . $tmp;//有X说明要末尾补0
+                            }
+                        } else {
+                            //正数
+                            if (strlen($tmp) >= 2) {
+                                $tmp = substr($tmp, 0, -1);
+                                $tmp = 'X' . $tmp;//有X说明要末尾补0
+                            }
                         }
+                        $res[$this->cspKey]['result'][$year][$field] = $tmp;
                     }
-                    $res[$this->cspKey]['result'][$year][$field] = $tmp;
                 }
             }
         }
