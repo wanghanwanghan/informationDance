@@ -464,23 +464,30 @@ class SifaContorller  extends UserController
         return $insertData;
     }
 
+    /**
+     * 法海 - 司法查封冻结扣押
+     */
     public function fhGetSifacdk($entNames)
     {
         $fileName = date('YmdHis', time()) . '司法查封冻结扣押.csv';
         $file = TEMP_FILE_PATH . $fileName;
-//        $header = [
-//            '公司名',
-//            '内容',//body
-//            '案号',//caseNo
-//            '法院',//court
-//            '发布时间',//postTime
-//            '立案时间',//sortTime
-//            '义务',//yiwu
-//            '依据文号',//yjCode
-//            '依据单位',//yjdw
-//            '当事人'
-//        ];
-//        file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        $header = [
+            '公司名',
+            '标题',
+            '正文',
+            '审结时间',
+            '事件日期',
+            '标的名称',
+            '审理法院',
+            '当事人',
+            '标题',
+            '资产类别',
+            '案号',
+            '标的类型',
+            '发布时间',
+            '金额（元）',
+        ];
+        file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getSifacdk($ent['entName'], 1);
@@ -517,15 +524,35 @@ class SifaContorller  extends UserController
         $docType = 'sifacdk';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
         dingAlarm('司法查封冻结扣押详情',['$data'=>json_encode($res)]);
-        return [];
+        $data = $res['sifacdk']['0'];
+        if(empty($data)){
+            return [];
+        }
+        $insertData = [
+            $name,
+            $data['title'],
+            $data['body'],
+            $data['sortTime'],
+            $data['eventDate'],
+            $data['objectName'],
+            $data['court'],
+            $data['pname'],
+            $data['action'],
+            $data['caseNo'],
+            $data['objectType'],
+            $data['postTime'],
+            $data['money'],
+        ];
+        file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+        return $insertData;
     }
     /**
      * 企查查 - 司法拍卖
      */
     public function qccGetJudicialSaleList($entNames){
         foreach ($entNames as $ent) {
-            $data = $this->getSifacdk($ent['entName'], 1);
-            dingAlarm('司法查封冻结扣押', ['$entName' => $ent['entName'], '$data' => json_encode($data)]);
+            $data = $this->getJudicialSaleList($ent['entName'], 1);
+            dingAlarm('司法拍卖', ['$entName' => $ent['entName'], '$data' => json_encode($data)]);
         }
     }
 

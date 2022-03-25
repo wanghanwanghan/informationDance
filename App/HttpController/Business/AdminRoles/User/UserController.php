@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\AdminRoles\User;
 
 use App\HttpController\Business\AdminRoles\Export\BusinessController;
+use App\HttpController\Business\AdminRoles\Export\FinanceContorller;
 use App\HttpController\Business\AdminRoles\Export\SifaContorller;
 use App\HttpController\Business\Api\TaoShu\TaoShuController;
 use App\HttpController\Models\AdminNew\AdminNewApi;
@@ -216,6 +217,7 @@ class UserController extends UserBase
                     'price' => $one['price'] + 0.2,
                     'billing_plan' => $one['billing_plan'],
                     'cache_day' => $one['cache_day'],
+                    'kidType' => $one['kidType'],
                 ])->save();
             } else {
                 $check->update([
@@ -375,6 +377,7 @@ class UserController extends UserBase
                 $res[$key]['price'] = $shipList[$key]['price'];
                 $res[$key]['billing_plan'] = $shipList[$key]['billing_plan'];
                 $res[$key]['cache_day'] = $shipList[$key]['cache_day'];
+                $res[$key]['kidType'] = $shipList[$key]['kidType'];
                 $res[$key]['own'] = 1;
             }
             $res[$key]['own'] = 2;
@@ -501,6 +504,7 @@ Eof;
     public function exportBaseInformation()
     {
         $types = $this->getRequestData('types') ?? '';
+        $kidTypes = $this->getRequestData('kidTypes') ?? '';
         $batchNum = $this->getRequestData('batchNum') ?? '';
         $appId = $this->getRequestData('username') ?? '';
         if (empty($types) || empty($batchNum) || empty($appId)) {
@@ -511,7 +515,7 @@ Eof;
         $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
         $emptyTypes = [];
         foreach ($typeArr as $type) {
-            $file = $this->searchChargingLog($info->id, $batchNum, $type);
+            $file = $this->searchChargingLog($info->id, $batchNum, $type,$kidTypes);
             if (!empty($file)) {
                 $fileArr[$type] = $file;
             } else {
@@ -537,6 +541,10 @@ Eof;
                     $BusinessController = new BusinessController();
                     list($filePath, $data) = $BusinessController->{$fun}($nameArr);
                     break;
+                case 2:
+                    $FinanceContorller = new FinanceContorller();
+                    list($filePath, $data) = $FinanceContorller->{$fun}($nameArr,$kidTypes);
+                    break;
                 case 3:
                     $SifaContorller = new SifaContorller();
                     list($filePath, $data) = $SifaContorller->{$fun}($nameArr);
@@ -544,7 +552,7 @@ Eof;
             }
             dingAlarm('导出数据返回', ['$filePath' => $filePath]);
             $fileArr[$emptyType] = $filePath;
-            $this->inseartChargingLog($info->id, $batchNum, $emptyType, $data, $filePath);
+            $this->inseartChargingLog($info->id, $batchNum, $emptyType,$kidTypes, $data, $filePath);
         }
         if (empty($fileArr)) {
             return $this->writeJson(201, null, '', "没有找到对应类型{$types}的数据信息");
@@ -556,10 +564,15 @@ Eof;
     /**
      * 查询这个用户对应批次，对应数据类型，以往的查询记录
      */
-    public function searchChargingLog($user_id, $batchNum, $type)
+    public function searchChargingLog($user_id, $batchNum, $type,$kidTypes)
     {
         $startTime = strtotime('-3 day');
-        $log = BarchChargingLog::create()->where("userId = '{$user_id}' and batchNum = '{$batchNum}' and type = '{$type}' and created_at>{$startTime} order by created_at desc ")->get();
+        $sql = "userId = '{$user_id}' and batchNum = '{$batchNum}' and type = '{$type}' and created_at>{$startTime}";
+        if($type == 2)//财务
+        {
+            $sql .= " and kidTypes = '{$kidTypes}'";
+        }
+        $log = BarchChargingLog::create()->where($sql." order by created_at desc ")->get();
         if (empty($log)) {
             return '';
         }
@@ -569,61 +582,17 @@ Eof;
     /**
      * 添加计费的查询记录
      */
-    public function inseartChargingLog($user_id, $batchNum, $type, $data, $file)
+    public function inseartChargingLog($user_id, $batchNum, $type, $kidTypes,$data, $file)
     {
-//        dingAlarm('inseartChargingLog', ['$user_id' => $user_id,'$batchNum'=>$batchNum,'$type'=>$type,'$file'=>$file]);
         BarchChargingLog::create()->data([
             'type' => $type,
             'ret' => json_encode($data),
             'userId' => $user_id,
             'batchNum' => $batchNum,
-            'file_path' => is_array($file)?json_encode($file):$file
+            'file_path' => is_array($file)?json_encode($file):$file,
+            'kidTypes' => $kidTypes
         ])->save();
         return true;
-    }
-
-    /**
-     * 西南年报
-     */
-    public function xinanGetFinanceNotAuth($entNames)
-    {
-        $fileName = date('YmdHis', time()) . '年报.csv';
-        $file = TEMP_FILE_PATH . $fileName;
-        $insertData = [
-            '公司名称', '年', '股东名称', '统一社会信用代码', '股东类型', '认缴出资额', '出资币种', '出资比例', '出资时间'
-        ];
-        file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
-        $data = [];
-        foreach ($entNames as $ent) {
-            $postData = [
-                'entName' => $ent['entName'],
-                'code' => $ent['socialCredit'],
-                'beginYear' => 2018,
-                'dataCount' => 3,//取最近几年的
-            ];
-            $res = (new LongXinService())->getFinanceData($postData, false);
-            if (!empty($res['data'])) {
-                $tmp = [];
-                foreach ($res['data'] as $year => $val) {
-                    $tmp[$year]['ASSGRO_yoy'] = round($val['ASSGRO_yoy'] * 100);
-                    $tmp[$year]['LIAGRO_yoy'] = round($val['LIAGRO_yoy'] * 100);
-                    $tmp[$year]['VENDINC_yoy'] = round($val['VENDINC_yoy'] * 100);
-                    $tmp[$year]['MAIBUSINC_yoy'] = round($val['MAIBUSINC_yoy'] * 100);
-                    $tmp[$year]['PROGRO_yoy'] = round($val['PROGRO_yoy'] * 100);
-                    $tmp[$year]['NETINC_yoy'] = round($val['NETINC_yoy'] * 100);
-                    $tmp[$year]['RATGRO_yoy'] = round($val['RATGRO_yoy'] * 100);
-                    $tmp[$year]['TOTEQU_yoy'] = round($val['TOTEQU_yoy'] * 100);
-                    if (array_sum($tmp[$year]) === 0.0) {
-                        //如果最后是0，说明所有年份数据都是空，本次查询不收费
-                        $dataCount--;
-                    }
-                }
-                $res['data'] = $tmp;
-            }
-            dingAlarm('裁判文书明细',['$entName'=>$ent['entName'],'$data'=>json_encode($res)]);
-
-        }
-
     }
 
     public function replace($arr)
@@ -648,15 +617,18 @@ Eof;
             return $this->writeJson(201, null, '', "这个用户没有开通接口");
         }
         $apiIds = [];
+        $kidTypes = [];
         foreach ($listRelation as $item) {
             $apiIds[$item->getAttr('apiId')] = $item->getAttr('apiId');
+            $kidTypes[$item->getAttr('apiId')] = $item->getAttr('kidType');
         }
         $listTypeApiRelation =  BarchTypeApiRelation::create()->where("apiId in (".implode(',',$apiIds).")")->all();
         $data = [];
         foreach ($listTypeApiRelation as $item) {
             $data[] = [
                 'type' => $item->getAttr('id'),
-                'name' => $item->getAttr('name')
+                'name' => $item->getAttr('name'),
+                'kidType' => $kidTypes[$item->getAttr('apiId')]
             ];
         }
         return $this->writeJson(201, null, $data, "成功");
@@ -704,4 +676,5 @@ Eof;
         }
         return $this->writeJson();
     }
+
 }

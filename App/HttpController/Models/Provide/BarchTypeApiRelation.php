@@ -27,4 +27,8 @@ class BarchTypeApiRelation extends ModelBase
         '5' => '知识产权',
         '6' => '金融监管'
     ];
+
+    const KiD_TYPE = [
+            ''=>''
+    ];
 }
