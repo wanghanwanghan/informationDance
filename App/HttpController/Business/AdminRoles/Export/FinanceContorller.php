@@ -20,6 +20,7 @@ class FinanceContorller  extends UserController
     ];
     /**
      * 西南年报
+     * 2018-3/ASSGRO,LIAGRO,VENDINC,MAIBUSINC,PROGRO
      */
     public function xinanGetFinanceNotAuth($entNames,$kidTypes)
     {
@@ -30,8 +31,10 @@ class FinanceContorller  extends UserController
         $file = TEMP_FILE_PATH . $fileName;
         $insertData = ['公司名称', '年'];
         foreach ($kidTypesKeyArr as $item) {
-            $insertData[] = $this->kidTpye[$item]['value'];
+            $insertData[] = $this->kidTpye[$item];
         }
+        dingAlarm('年报头',['$data'=>json_encode($insertData)]);
+
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         $resData = [];
         foreach ($entNames as $ent) {
@@ -50,13 +53,13 @@ class FinanceContorller  extends UserController
                     $ent['entName'],
                     $year,
                 ];
-                foreach ($kidTypesKeyArr as $key=>$item) {
-                    $insertData[] = $datum[$key];
+                foreach ($kidTypesKeyArr as $item) {
+                    $insertData[] = $datum[$item]??'';
                 }
                 $resData[] = $insertData;
                 file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
             }
-            dingAlarm('年报',['$entName'=>$ent['entName'],'$data'=>json_encode($res)]);
+            dingAlarm('年报',['$entName'=>$ent['entName'],'$data'=>json_encode($resData)]);
         }
         return [$fileName, $resData];
     }
