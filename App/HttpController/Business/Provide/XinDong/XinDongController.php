@@ -360,6 +360,7 @@ class XinDongController extends ProvideBase
         } else {
             $f_info = EntDbFinance::create()
                 ->where('cid', $check->getAttr('id'))
+                ->where('ANCHEYEAR', [2021, 2020, 2019], 'IN')
                 ->field([
                     'ASSGRO',
                     'LIAGRO',
@@ -437,6 +438,8 @@ class XinDongController extends ProvideBase
                         }
                         $res[$this->cspKey]['result'][$year][$field] = $tmp;
                     }
+                } else {
+                    unset($res[$this->cspKey]['result'][$year]);
                 }
             }
         }
