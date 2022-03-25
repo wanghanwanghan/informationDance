@@ -330,32 +330,24 @@ class XinDongController extends ProvideBase
     //益博睿
     function getFinanceBaseDataYBR(): bool
     {
-        $beginYear = 2020;
-        $dataCount = 3;
         $entName = $this->getRequestData('entName', '');
-        if ($this->userId === 53) {
-            if ($this->limitEntNumByUserId('getFinanceBaseDataYBR', $entName, 100)) {
-                $this->writeJson(201, null, null, '请求次数已经达到上限100');
-            }
-            if ($beginYear === 2022 && $dataCount <= 3) {
-                $a = null;
-            } else if ($beginYear === 2021 && $dataCount <= 3) {
-                $a = null;
-            } elseif ($beginYear === 2020 && $dataCount <= 3) {
-                $a = null;
-            } elseif ($beginYear === 2019 && $dataCount <= 2) {
-                $a = null;
-            } elseif ($beginYear === 2018 && $dataCount === 1) {
-                $a = null;
-            } else {
-                return $this->writeJson(201, null, null, '参数错误');
-            }
+        $beginYear = $this->getRequestData('beginYear', '2020');
+
+        if ($this->limitEntNumByUserId('getFinanceBaseDataYBR', $entName, 100)) {
+            $this->writeJson(201, null, null, '请求次数已经达到上限100');
         }
+        if (!is_numeric($beginYear)) {
+            $this->writeJson(201, null, null, 'beginYear必须是数字');
+        }
+        if (!empty($entName)) {
+            $this->writeJson(201, null, null, 'entName不能是空');
+        }
+
         $postData = [
             'entName' => $entName,
             'code' => $this->getRequestData('code', ''),
             'beginYear' => $beginYear,
-            'dataCount' => $dataCount,
+            'dataCount' => 1,
         ];
 
         $check = EntDbEnt::create()->where('name', $entName)->get();
@@ -365,8 +357,7 @@ class XinDongController extends ProvideBase
         } else {
             $f_info = EntDbFinance::create()
                 ->where('cid', $check->getAttr('id'))
-                ->order('ANCHEYEAR', 'DESC')
-                ->limit(0, 2)
+                ->where('ANCHEYEAR', $beginYear)
                 ->field([
                     'ASSGRO',
                     'LIAGRO',
