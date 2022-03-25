@@ -379,8 +379,10 @@ class UserController extends UserBase
                 $res[$key]['cache_day'] = $shipList[$key]['cache_day'];
                 $res[$key]['kidTypes'] = $shipList[$key]['kidTypes'];
                 $res[$key]['own'] = 1;
+            }else{
+                $res[$key]['own'] = 2;
             }
-            $res[$key]['own'] = 2;
+
         }
         dingAlarmSimple(['$res' => json_encode($res)]);
         return $this->writeJson(200, null, array_values($res));
