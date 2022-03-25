@@ -331,23 +331,25 @@ class XinDongController extends ProvideBase
     function getFinanceBaseDataYBR(): bool
     {
         $entName = $this->getRequestData('entName', '');
-        $beginYear = $this->getRequestData('beginYear', '2020');
+        $year = $this->getRequestData('year', '');
+        $beginYear = 2021;
+        $dataCount = 3;
 
-        if ($this->limitEntNumByUserId('getFinanceBaseDataYBR', $entName, 100)) {
-            $this->writeJson(201, null, null, '请求次数已经达到上限100');
+        if ($this->limitEntNumByUserId(__FUNCTION__, $entName, 100)) {
+            return $this->writeJson(201, null, null, '请求次数已经达到上限100');
         }
-        if (!is_numeric($beginYear)) {
-            $this->writeJson(201, null, null, 'beginYear必须是数字');
+        if (empty($entName)) {
+            return $this->writeJson(201, null, null, 'entName不能是空');
         }
-        if (!empty($entName)) {
-            $this->writeJson(201, null, null, 'entName不能是空');
+        if (empty($year)) {
+            return $this->writeJson(201, null, null, 'year不能是空');
         }
 
         $postData = [
             'entName' => $entName,
             'code' => $this->getRequestData('code', ''),
             'beginYear' => $beginYear,
-            'dataCount' => 1,
+            'dataCount' => $dataCount,
         ];
 
         $check = EntDbEnt::create()->where('name', $entName)->get();
@@ -357,7 +359,6 @@ class XinDongController extends ProvideBase
         } else {
             $f_info = EntDbFinance::create()
                 ->where('cid', $check->getAttr('id'))
-                ->where('ANCHEYEAR', $beginYear)
                 ->field([
                     'ASSGRO',
                     'LIAGRO',
