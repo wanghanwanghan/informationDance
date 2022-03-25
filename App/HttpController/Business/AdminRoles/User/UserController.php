@@ -630,6 +630,7 @@ Eof;
         $data = [];
         foreach ($listTypeApiRelation as $item) {
             $data[] = [
+                'typeBase' => $item->getAttr('typeBase'),
                 'type' => $item->getAttr('id'),
                 'name' => $item->getAttr('name'),
                 'kidTypes' => $kidTypes[$item->getAttr('apiId')]
