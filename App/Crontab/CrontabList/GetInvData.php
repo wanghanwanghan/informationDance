@@ -31,7 +31,7 @@ class GetInvData extends AbstractCronTask
     {
         //每月19号凌晨4点可以取上一个月全部数据
         //return '0 4 19 * *';
-        return '10 16 23 * * ';
+        return '30 14 25 * * ';
     }
 
     static function getTaskName(): string
@@ -156,7 +156,7 @@ class GetInvData extends AbstractCronTask
                 ];
                 $num = $in + $out;
                 $dateM = (time() - $oneReadyToSend->getAttr('requestDate')) / 86400;
-                if (empty($num) && $dateM < 30) {
+                if (true || (empty($num) && $dateM < 30)) {
                     $body['authResultCode'] = '9000';//'没准备好';
                     AntEmptyLog::create()->data([
                         'nsrsbh' => $body['nsrsbh'],
@@ -188,8 +188,10 @@ class GetInvData extends AbstractCronTask
                     'content-type' => 'application/json;charset=UTF-8',
                 ];
 
+                CommonService::getInstance()->log4PHP($collectNotify, 'info', 'notify_fp');
+
                 //生产环境先不通知
-                if ($oneReadyToSend->belong - 0 === 36) {
+                if ($oneReadyToSend->belong - 0 === 360) {
                     CommonService::getInstance()->log4PHP([$body], 'info', 'notify_fp');
 
                     $ret = (new CoHttpClient())
