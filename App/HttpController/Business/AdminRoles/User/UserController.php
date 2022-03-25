@@ -568,7 +568,7 @@ Eof;
     {
         $startTime = strtotime('-3 day');
         $sql = "userId = '{$user_id}' and batchNum = '{$batchNum}' and type = '{$type}' and created_at>{$startTime}";
-        if($type == 2)//财务
+        if(!empty(kidTypes))//财务
         {
             $sql .= " and kidTypes = '{$kidTypes}'";
         }
