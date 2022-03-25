@@ -371,7 +371,7 @@ class UserController extends UserBase
         $shipList = RequestUserApiRelationship::create()->where(" userId = {$info->id}")->all();
         $res = RequestApiInfo::create()->all();
         $res = $this->getArrSetKey($res, 'id');
-        $shipList = $this->getArrSetKey($res, 'apiId');
+        $shipList = $this->getArrSetKey($shipList, 'apiId');
         foreach ($res as $key => $v) {
             if (isset($shipList[$key]) && $shipList[$key]['status'] == 1) {
                 $res[$key]['price'] = $shipList[$key]['price'];
