@@ -584,6 +584,7 @@ Eof;
      */
     public function inseartChargingLog($user_id, $batchNum, $type, $kidTypes,$data, $file)
     {
+        dingAlarm('添加计费的查询记录', ['$kidTypes' => $kidTypes]);
         BarchChargingLog::create()->data([
             'type' => $type,
             'ret' => json_encode($data),
