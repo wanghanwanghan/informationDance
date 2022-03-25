@@ -437,6 +437,8 @@ class XinDongController extends ProvideBase
                         }
                         $res[$this->cspKey]['result'][$year][$field] = $tmp;
                     }
+                } else {
+                    unset($res[$this->cspKey]['result'][$year]);
                 }
             }
         }
