@@ -352,7 +352,7 @@ class SifaContorller  extends UserController
         return $res;
     }
     //执行公告详情
-    function getZxggDetail($id,$file,$name)
+    public function getZxggDetail($id,$file,$name)
     {
         $postData = ['id' => $id];
         $docType = 'zxgg';
@@ -364,7 +364,7 @@ class SifaContorller  extends UserController
         }
         $partys = [];
         foreach ($data['partys'] as $v) {
-            $partys[] = '当事人名称'.$v['pname'].';主体类型'.$v['partyType'].';身份证号码'.$v['idcardNo'].';执行金额'.$v['execMoney'].';案件状态'.$v['caseStateT'];
+            $partys[] = '当事人名称:'.$v['pname'].';主体类型:'.$v['partyType'].';身份证号码:'.$v['idcardNo'].';执行金额:'.$v['execMoney'].';案件状态:'.$v['caseStateT'];
         }
         $insertData = [
             $name,
@@ -378,10 +378,47 @@ class SifaContorller  extends UserController
             $data['title'],
             $data['yjCode'],
             $data['yjdw'],
-            implode('    ',$partys)
+            implode('；   ',$partys)
         ];
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         return $insertData;
+    }
+
+    /**
+     * 法海 - 失信公告
+     */
+    public function fhGetShixin($entNames){
+        $fileName = date('YmdHis', time()) . '失信公告.csv';
+        $file = TEMP_FILE_PATH . $fileName;
+        $header = [
+            '公司名',
+            '内容',//body
+            '案号',//caseNo
+            '法院',//court
+            '发布时间',//postTime
+            '立案时间',//sortTime
+            '义务',//yiwu
+            '依据文号',//yjCode
+            '依据单位',//yjdw
+            '当事人'
+        ];
+        file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        $resData = [];
+        foreach ($entNames as $ent) {
+            $data = $this->getShixin($ent['entName'],1);
+            dingAlarm('失信公告',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
+            if(empty($data['shixinList'])) continue;
+            if(isset($data['totalPageNum']) && $data['totalPageNum']>1){
+                for($i=2;$i<=$data['totalPageNum'];$i++){
+                    $data2 = $this->getShixin($ent['entName'],1);
+                    $data['shixinList'] = array_merge($data['shixinList'],$data2['shixinList']);
+                }
+            }
+            foreach ($data['shixinList'] as $datum) {
+                $resData[] = $this->getShixinDetail($datum['entryId'],$file,$ent['entName']);
+            }
+        }
+        return [$fileName, $resData];
     }
     public function getShixin($entName,$page){
         $docType = 'shixin';
@@ -400,5 +437,29 @@ class SifaContorller  extends UserController
         $postData = ['id' => $id];
         $docType = 'shixin';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
+        dingAlarm('失信公告详情',['$data'=>json_encode($res)]);
+        $data = $res['shixin']['0'];
+        if(empty($data)){
+            return [];
+        }
+        $partys = [];
+        foreach ($data['partys'] as $v) {
+            $partys[] = '当事人名称:'.$v['pname'].';具体情形:'.$v['jtqx'].';主体类型:'.$v['partyType'].';涉案金额:'.$v['money'].
+                ';履行情况:'.$v['lxqkT'].';省份:'.$v['province'].';身份证号码:'.$v['idcardNo'].';年龄:'.$v['age'];
+        }
+        $insertData = [
+            $name,
+            $data['body'],
+            $data['caseNo'],
+            $data['court'],
+            date('Y-m-d H:i:s',$data['postTime']),
+            date('Y-m-d H:i:s',$data['sortTime']),
+            $data['yiwu'],
+            $data['yjCode'],
+            $data['yjdw'],
+            implode('    ',$partys)
+        ];
+        file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+        return $insertData;
     }
 }
