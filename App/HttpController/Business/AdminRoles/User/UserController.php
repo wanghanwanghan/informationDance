@@ -379,6 +379,7 @@ class UserController extends UserBase
                 $res[$key]['billing_plan'] = $shipList[$key]['billing_plan'];
                 $res[$key]['cache_day'] = $shipList[$key]['cache_day'];
                 $res[$key]['kidTypes'] = $shipList[$key]['kidTypes'];
+                $res[$key]['kidTypes'] = $shipList[$key]['kidTypes'];
                 $res[$key]['relationshipId'] = $shipList[$key]['id'];
                 $res[$key]['own'] = 1;
             }else{
@@ -691,26 +692,18 @@ Eof;
     public function editApiUserRelation(){
         $relationshipId = $this->getRequestData('relationshipId');
         $cache_day = $this->getRequestData('cache_day');
-        $price = $this->getRequestData('price');
-        $status = $this->getRequestData('status');
         $billing_plan = $this->getRequestData('billing_plan');
         $kidTypes = $this->getRequestData('kidTypes');
         if(empty($relationshipId)){
-            return $this->writeJson(200, null, '', "关系ID不可以为空");
+            return $this->writeJson(201, null, '', "关系ID不可以为空");
         }
         $info = RequestUserApiRelationship::create()->where("id = ".$relationshipId)->get();
         if(empty($info)){
-            return $this->writeJson(200, null, '', "根据关系ID没有查到数据");
+            return $this->writeJson(201, null, '', "根据关系ID没有查到数据");
         }
         $update = [];
         if(!empty($cache_day)){
             $update['cache_day'] = $cache_day;
-        }
-        if(!empty($price)){
-            $update['price'] = $price;
-        }
-        if(!empty($status)){
-            $update['status'] = $status;
         }
         if(!empty($billing_plan)){
             $update['billing_plan'] = $billing_plan;

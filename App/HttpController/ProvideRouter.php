@@ -251,6 +251,14 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getJudicialSaleList', $prefix . 'getJudicialSaleList');
             $routeCollector->addRoute(['GET', 'POST'], '/getCpwsDetail', $prefix . 'getCpwsDetail');//裁判文书
             $routeCollector->addRoute(['GET', 'POST'], '/getShixinDetail', $prefix . 'getShixinDetail');//裁判文书
+            $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyChufa', $prefix . 'getSatpartyChufa');
+            $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyChufaDetail', $prefix . 'getSatpartyChufaDetail');
+            $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyQs', $prefix . 'getSatpartyQs');
+            $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyQsDetail', $prefix . 'getSatpartyQsDetail');
+            $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyFzc', $prefix . 'getSatpartyFzc');
+            $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyFzcDetail', $prefix . 'getSatpartyFzcDetail');
+            $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyXuke', $prefix . 'getSatpartyXuke');
+            $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyXukeDetail', $prefix . 'getSatpartyXukeDetail');
         });
 
         return true;

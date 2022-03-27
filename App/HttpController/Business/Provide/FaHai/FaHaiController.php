@@ -391,6 +391,156 @@ class FaHaiController extends ProvideBase
 
         return $this->checkResponse($res);
     }
+
+    //涉税处罚
+    public function getSatpartyChufa(){
+        $entName = $this->request()->getRequestParam('entName');
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+        $docType = 'satparty_chufa';
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => $pageSize,
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getList($this->listBaseUrl . 'sifa', $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+
+    //涉税处罚公示详情
+    function getSatpartyChufaDetail()
+    {
+        $id = $this->request()->getRequestParam('id') ?? '';
+        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+        $postData = ['id' => $id];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getDetail($this->detailBaseUrl . 'satparty_chufa', $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+
+    //欠税公告
+    function getSatpartyQs()
+    {
+        $entName = $this->request()->getRequestParam('entName');
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        $docType = 'satparty_qs';
+
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => $pageSize,
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getList($this->listBaseUrl . 'sat', $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+
+    //欠税公告详情
+    function getSatpartyQsDetail()
+    {
+        $id = $this->request()->getRequestParam('id') ?? '';
+        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+        $postData = ['id' => $id];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getDetail($this->detailBaseUrl . 'satparty_qs', $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+
+    //税务非正常户公示
+    function getSatpartyFzc()
+    {
+        $entName = $this->request()->getRequestParam('entName');
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+        $docType = 'satparty_fzc';
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => $pageSize,
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getList($this->listBaseUrl . 'sat', $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+
+    //税务非正常户公示详情
+    function getSatpartyFzcDetail()
+    {
+        $id = $this->request()->getRequestParam('id') ?? '';
+        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+        $postData = ['id' => $id];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getDetail($this->detailBaseUrl . 'satparty_fzc', $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+
+    //税务许可
+    function getSatpartyXuke()
+    {
+        $entName = $this->request()->getRequestParam('entName');
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+        $docType = 'satparty_xuke';
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => $pageSize,
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getList($this->listBaseUrl . 'sat', $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+
+    //税务许可详情
+    function getSatpartyXukeDetail()
+    {
+        $id = $this->request()->getRequestParam('id') ?? '';
+        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+        $postData = ['id' => $id];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getDetail($this->detailBaseUrl . 'satparty_xuke', $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+
 }
 
 

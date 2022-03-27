@@ -546,34 +546,4 @@ class SifaContorller  extends UserController
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         return $insertData;
     }
-    /**
-     * 企查查 - 司法拍卖
-     */
-    public function qccGetJudicialSaleList($entNames){
-        foreach ($entNames as $ent) {
-            $data = $this->getJudicialSaleList($ent['entName'], 1);
-            dingAlarm('司法拍卖', ['$entName' => $ent['entName'], '$data' => json_encode($data)]);
-        }
-    }
-
-    /**
-     * 企查查 - 司法拍卖
-     */
-    public function getJudicialSaleList($entName,$page){
-        $postData = [
-            'keyWord' => $entName,
-            'pageIndex' => $page,
-            'pageSize' => 10,
-        ];
-        return (new LongDunService())->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'JudicialSale/GetJudicialSaleList', $postData);
-    }
-
-    //司法拍卖详情
-    function getJudicialSaleListDetail($id,$file,$name)
-    {
-        $postData = ['id' => $id];
-        $res = (new LongDunService())->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'JudicialSale/GetJudicialSaleDetail', $postData);
-        dingAlarm('司法拍卖详情',['$data'=>json_encode($res)]);
-        return '';
-    }
 }
