@@ -144,7 +144,6 @@ class GuangZhouYinLianService extends ServiceBase
      * 车辆数量查询
      */
     public function queryVehicleCount($postData){
-        dingAlarm('车辆数量查询',['1'=>1]);
         $method = 'gnete.upbc.vehicle.queryVehicleCount';
         /*
          merOrdrNo  商户交易订单号，需保证在商户端不重复; 格式：15 位商户号+8 位交易日期+9 位序数字列号
@@ -185,9 +184,12 @@ class GuangZhouYinLianService extends ServiceBase
             'biz_content' => $biz_content,
             'sign' => ''
         ];
-        $data['sign'] = md5(json_encode($data));
+        $data['sign'] = md5(http_build_query($data));
+        $header = [
+            'content-type' => 'text/json;charset=UTF-8'
+        ];
         dingAlarm('车辆数量查询',['$data'=>json_encode($data)]);
-        $res = (new CoHttpClient())->send($this->testUrl, $data);
+        $res = (new CoHttpClient())->send($this->testUrl, $data,$header);
         dingAlarm('车辆数量查询',['$res'=>json_encode($res)]);
         return $res;
     }
