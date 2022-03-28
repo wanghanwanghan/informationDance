@@ -193,9 +193,11 @@ class GuangZhouYinLianService extends ServiceBase
         openssl_free_key($privateKey);
         //签名转换的byte数组 256
         $signByteArr = $this->getBytes($resign);
+        dingAlarm('车辆数量查询',['$signByteArr'=>json_encode($signByteArr)]);
         // var_dump($signByteArr);
         //对签名进行处理，获取发送的签名内容 512位十六进制字符串
         $signArr = $this->encodeHex($signByteArr);
+        dingAlarm('车辆数量查询',['$signArr'=>json_encode($signArr)]);
         $sign = implode($signArr);
         $postArr['sign'] = $sign;
         //请求发送内容
