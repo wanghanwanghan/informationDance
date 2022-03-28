@@ -118,7 +118,7 @@ class FinanceContorller  extends UserController
             if(isset($data[$i])){
                 $resData[$data[$i]['status']][] = $data[$i];
             }else{
-                $this->getFinanceOriginal($entname,1,$year);
+                $this->getFinanceOriginal($entname,1,$i);
                 $yearData = FinanceData::create()->where("entName = '{$entname}' and year = {$i}")->get();
                 $resData[$yearData['status']][] = $yearData;
             }
