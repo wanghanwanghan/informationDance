@@ -4,7 +4,7 @@ namespace App\HttpController\Business\Provide\GuangZhouYinLian;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
-use App\HttpController\Service\FaYanYuan\GuangZhouYinLianService;
+use App\HttpController\Service\GuangZhouYinLian\GuangZhouYinLianService;
 
 class GuangZhouYinLianController extends ProvideBase
 {
