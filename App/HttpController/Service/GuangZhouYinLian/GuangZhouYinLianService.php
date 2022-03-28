@@ -182,8 +182,8 @@ class GuangZhouYinLianService extends ServiceBase
             'sign_alg' => $this->sign_alg,
             'method' => $method,
             'biz_content' => $biz_content,
-            'sign' => ''
         ];
+        dingAlarm('车辆数量查询-http_build_query',['$data'=>http_build_query($data)]);
         $data['sign'] = md5(http_build_query($data));
         $header = [
             'content-type' => 'text/json;charset=UTF-8'
