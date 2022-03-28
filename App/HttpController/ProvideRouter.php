@@ -403,4 +403,12 @@ class ProvideRouter
         return true;
     }
 
+    private function SaibopengkeAdmin(RouteCollector $routeCollector): bool
+    {
+        $prefix = '/Business/Admin/SaibopengkeAdmin/SaibopengkeAdminController/';
+        $routeCollector->addGroup('/sbpk', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/uploadEntList', $prefix . 'uploadEntList');
+        });
+        return true;
+    }
 }
