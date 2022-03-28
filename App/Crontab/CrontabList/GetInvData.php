@@ -156,7 +156,7 @@ class GetInvData extends AbstractCronTask
                 ];
                 $num = $in + $out;
                 $dateM = (time() - $oneReadyToSend->getAttr('requestDate')) / 86400;
-                if ((empty($num) && $dateM < 30)) {
+                if (empty($num) && $dateM < 30) {
                     $body['authResultCode'] = '9000';//'没准备好';
                     AntEmptyLog::create()->data([
                         'nsrsbh' => $body['nsrsbh'],
