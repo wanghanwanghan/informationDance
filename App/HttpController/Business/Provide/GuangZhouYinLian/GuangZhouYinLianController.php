@@ -23,7 +23,7 @@ class GuangZhouYinLianController extends ProvideBase
         $postData = [];
         $this->csp->add($this->cspKey, function () use ($postData) {
             dingAlarm('车辆数量查询',['rukou'=>2]);
-            return (new GuangZhouYinLianService())->setCheckRespFlag(true)->queryVehicleCount($postData);
+            return (new GuangZhouYinLianService())->queryVehicleCount($postData);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
