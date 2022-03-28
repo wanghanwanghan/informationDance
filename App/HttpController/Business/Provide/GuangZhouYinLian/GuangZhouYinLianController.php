@@ -5,7 +5,6 @@ namespace App\HttpController\Business\Provide\GuangZhouYinLian;
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Service\FaYanYuan\GuangZhouYinLianService;
-use App\HttpController\Service\GuoPiao\GuoPiaoService;
 
 class GuangZhouYinLianController extends ProvideBase
 {
@@ -23,12 +22,14 @@ class GuangZhouYinLianController extends ProvideBase
         dingAlarm('车辆数量查询',['rukou'=>1]);
         $postData = [];
         $this->csp->add($this->cspKey, function () use ($postData) {
+            dingAlarm('车辆数量查询',['rukou'=>2]);
             return (new GuangZhouYinLianService())->setCheckRespFlag(true)->queryVehicleCount($postData);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         return $this->checkResponse($res);
+
     }
     function checkResponse($res): bool
     {
