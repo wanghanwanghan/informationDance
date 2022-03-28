@@ -189,7 +189,7 @@ class GuangZhouYinLianService extends ServiceBase
         ];
         $data['sign'] = md5(json_encode($data));
         $res = (new CoHttpClient())->send($this->testUrl, $data);
-        dingAlarm('车辆数量查询',[['$data'=>$data],'$res'=>$res]);
+        dingAlarm('车辆数量查询',['$data'=>json_encode($data),'$res'=>json_encode($res)]);
         return $res;
     }
 
