@@ -13,7 +13,7 @@ class GuangZhouYinLianService extends ServiceBase
     private $sign_alg = 5;
     private $busiMerno = '898441650210002';
     private $testUrl = 'https://testapi.gnete.com:9083/routejson';
-    private $test_secret = 'mer-fat-905975ed38ff446c91247b1c91a82d41.p12';
+    private $privateKey = 'mer-fat-905975ed38ff446c91247b1c91a82d41.p12';
     private $secret_password = '123456';
     private $test_pub_secret = 'ogw-fat-2048-cfca.der';
     function __construct()
@@ -175,7 +175,8 @@ class GuangZhouYinLianService extends ServiceBase
                 'merOrdrNo' => $merOrdrNo,
             ]
         ];
-        $data = [
+
+        $signArr = [
             'app_id' => $this->app_id,
             'timestamp' => date('Y-m-d H:i:s',$time),
             'v' => $this->v,
@@ -183,13 +184,25 @@ class GuangZhouYinLianService extends ServiceBase
             'method' => $method,
             'biz_content' => json_encode($biz_content),
         ];
-        dingAlarm('车辆数量查询-http_build_query',['$data'=>http_build_query($data)]);
-        $data['sign'] = md5(http_build_query($data));
+        $content = http_build_query($signArr);
+        dingAlarm('车辆数量查询-http_build_query',['$data'=>$content]);
+        $privateKey = openssl_get_privatekey($this->privateKey);
+        openssl_sign($content, $resign, $privateKey, $this->sign_alg);
+        openssl_free_key($privateKey);
+        //签名转换的byte数组 256
+        $signByteArr = $this->getBytes($resign);
+        // var_dump($signByteArr);
+        //对签名进行处理，获取发送的签名内容 512位十六进制字符串
+        $signArr = $this->encodeHex($signByteArr);
+        $sign = implode($signArr);
+        $postArr['sign'] = $sign;
+        //请求发送内容
+//        $postData = http_build_query($postArr);
         $header = [
             'content-type' => 'text/json;charset=UTF-8'
         ];
-        dingAlarm('车辆数量查询',['$data'=>json_encode($data),'url'=>$this->testUrl]);
-        $res = (new CoHttpClient())->send($this->testUrl, $data,$header);
+        dingAlarm('车辆数量查询',['$data'=>json_encode($postArr),'url'=>$this->testUrl]);
+        $res = (new CoHttpClient())->send($this->testUrl, $postArr,$header,[],'POSTJSON');
         dingAlarm('车辆数量查询',['$res'=>json_encode($res)]);
         return $res;
     }
@@ -285,5 +298,49 @@ class GuangZhouYinLianService extends ServiceBase
              licenseNoType  号牌种类
          */
 
+    }
+
+    /**
+     * 字符串转换成字节数组
+     * @param  [String] $str
+     * @return [byte[]]
+     */
+    public function getBytes($str) {
+        $len = strlen($str);
+        $bytes = array();
+        for($i=0;$i<$len;$i++) {
+            if(ord($str[$i]) >= 128){
+                $byte = ord($str[$i]) - 256;
+            }else{
+                $byte = ord($str[$i]);
+            }
+            $bytes[] =  $byte ;
+        }
+        return $bytes;
+
+    }
+
+
+    public function encodeHex($data){
+        $toDigits=self::$digits_lower;
+        $len=count($data);
+        $i=0;
+        $out=array();
+        for($var=0;$i<$len;++$i){
+
+            $var1=240&$data[$i];
+
+            $index1=self::unsignedRight($var1,4);
+
+            $out[$var]=$toDigits[$index1];
+
+            $var++;
+            $index2=15&$data[$i];
+            $out[$var]=$toDigits[$index2];
+            $var++;
+        }
+
+
+        return $out;
     }
 }
