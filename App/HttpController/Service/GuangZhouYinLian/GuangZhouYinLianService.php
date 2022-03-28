@@ -1,5 +1,5 @@
 <?php
-namespace App\HttpController\Service\FaYanYuan;
+namespace App\HttpController\Service\GuangZhouYinLian;
 
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
