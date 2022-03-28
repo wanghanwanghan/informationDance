@@ -6,17 +6,23 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\RequestUtils\StatisticsService;
 use App\HttpController\Service\ServiceBase;
+use wanghanwanghan\someUtils\control;
 
 class GuangZhouYinLianService extends ServiceBase
 {
-    private $app_id;
+    private $app_id = '5dc387b32c07871d371334e9c45120ba';
     private $timestamp;
     private $v = '1.0.1';
     private $sign_alg = 5;
+    private $busiMerno = '898441650210002';
+    private $testUrl = 'https://testapi.gnete.com:9083/routejson';
+    private $test_secret = 'mer-fat-905975ed38ff446c91247b1c91a82d41.p12';
+    private $secret_password = '123456';
+    private $test_pub_secret = 'ogw-fat-2048-cfca.der';
     function __construct()
     {
-        $this->app_id = CreateConf::getInstance()->getConf('guangzhouyinlian.app_id');
-        $this->timestamp = time() * 1000;
+//        $this->app_id = CreateConf::getInstance()->getConf('guangzhouyinlian.app_id');
+//        $this->timestamp = time() * 1000;
         return parent::__construct();
     }
 
@@ -140,8 +146,8 @@ class GuangZhouYinLianService extends ServiceBase
     /*
      * 车辆数量查询
      */
-    public function queryVehicleCount(){
-        //gnete.upbc.vehicle.queryVehicleCount
+    public function queryVehicleCount($postData){
+        $method = 'gnete.upbc.vehicle.queryVehicleCount';
         /*
          merOrdrNo  商户交易订单号，需保证在商户端不重复; 格式：15 位商户号+8 位交易日期+9 位序数字列号
          busiId     商户开通的业务 ID
@@ -153,6 +159,37 @@ class GuangZhouYinLianService extends ServiceBase
              certNo         证件号码
              vin            车架号
          */
+        $time = time();
+        $sndDt = date('YmdHis',$time);
+        $merOrdrNo = $this->busiMerno.$sndDt.control::randNum(9);;
+        $biz_content = [
+            'sndDt' => $sndDt,
+            'busiMerNo' => $this->busiMerno,
+            'msgBody' => [
+                'busiId' => '00270002',
+                'vehicleVerifyInf' => [
+                    'certNo' => '140624198802132541',
+                    'certType' => '0',
+                    'userNo' => '',
+                    'name' => '',
+                    'vin' => ''
+                ],
+                'bizFunc' => '721001',
+                'merOrdrNo' => $merOrdrNo,
+            ]
+        ];
+        $data = [
+            'app_id' => $this->app_id,
+            'timestamp' => date('Y-m-d H:i:s',$time),
+            'v' => $this->v,
+            'sign_alg' => $this->sign_alg,
+            'method' => $method,
+            'biz_content' => $biz_content,
+            'sign' => ''
+        ];
+        $res = (new CoHttpClient())->send($this->testUrl, $data);
+        dingAlarm('车辆数量查询',[['$data'=>$data],'$res'=>$res]);
+        return $res;
     }
 
     /*

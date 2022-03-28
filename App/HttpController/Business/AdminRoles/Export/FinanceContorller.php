@@ -3,6 +3,8 @@
 namespace App\HttpController\Business\AdminRoles\Export;
 
 use App\HttpController\Business\AdminRoles\User\UserController;
+use App\HttpController\Models\Admin\SaibopengkeAdmin\FinanceData;
+use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\LongXin\LongXinService;
 
 class FinanceContorller  extends UserController
@@ -63,5 +65,124 @@ class FinanceContorller  extends UserController
         }
         return [$fileName, $resData];
     }
+
+    public function smhzGetFinanceOriginal($entNames,$kidTypes){
+        $kidTypes = explode('|',$kidTypes);
+        $kidTypeList = explode('-',$kidTypes['0']);
+        $kidTypesKeyArr = explode(',',$kidTypes['1']);
+        $fileName = date('YmdHis', time()) . '年报.csv';
+        $file = TEMP_FILE_PATH . $fileName;
+        $insertData = ['公司名称', '年'];
+        foreach ($kidTypesKeyArr as $item) {
+            $insertData[] = $this->kidTpye[$item];
+        }
+
+        file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+        $resData = [];
+        foreach ($entNames as $ent) {
+            $res = $this->getFinanceOriginalData($ent['entName'],$kidTypeList['1'],$kidTypeList['0']);
+            dingAlarm('getFinanceOriginalData',['$res'=>json_encode($res)]);
+
+            if(empty($res)){
+                continue;
+            }
+            foreach ($res as $year=>$datum) {
+                $insertData = [
+                    $ent['entName'],
+                    $year,
+                ];
+                foreach ($kidTypesKeyArr as $item) {
+                    if(isset($datum[$item]) && is_numeric($datum[$item])){
+                        $insertData[] = round($datum[$item],2);
+                    }else if(isset($datum[$item]) && !is_numeric($datum[$item])){
+                        $insertData[] = '';
+                    }
+                }
+                $resData[] = $insertData;
+                file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+            }
+        }
+        return [$fileName, $resData];
+    }
+
+    function getFinanceOriginalData($entname,$dataCount,$year): ?array
+    {
+        $data = FinanceData::create()->where("entName = '{$entname}'")->all();
+        if(empty($data)){
+            $this->getFinanceOriginal($entname,$dataCount,$year);
+        }
+        $resData = [];
+        $data = $this->getArrSetKey($data,'year');
+        for ($i=$year;$i<=($year+$dataCount);$i++)
+        {
+            if(isset($data[$i])){
+                $resData[$data[$i]['status']][] = $data[$i];
+            }else{
+                $this->getFinanceOriginal($entname,1,$year);
+                $yearData = FinanceData::create()->where("entName = '{$entname}' and year = {$i}")->get();
+                $resData[$yearData['status']][] = $yearData;
+            }
+        }
+        return $resData;
+
+    }
+
+    public function getFinanceOriginal($entname,$dataCount,$year){
+        $url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceOriginal';
+        $appId = '5BBFE57DE6DD0C8CDBC5D16A31125D5F';
+        $appSecret = 'C2F24A85DF750882FAD7';
+        $time = time() . mt_rand(100, 999);
+        $sign = substr(strtoupper(md5($appId . $appSecret . $time)), 0, 30);
+        $data = [
+            'appId' => $appId,
+            'time' => $time,
+            'sign' => $sign,
+            'entName' => $entname,
+            'dataCount' => $dataCount,
+            'year' => $year
+        ];
+        $res = (new CoHttpClient())->useCache(true)->send($url, $data);
+        $this->insertFinanceData($res['result'],$entname);
+        return true;
+    }
+
+    public function insertFinanceData($data,$entname){
+        if(empty($data)){
+            dingAlarm('insertFinanceData',['$entName'=>$entname,'$data'=>json_encode($data)]);
+            return false;
+        }
+        foreach ($data as $year=>$value){
+            $status = 1;
+            if(!is_numeric($value['VENDINC']) || empty($value['VENDINC']) ||
+                !is_numeric($value['ASSGRO']) || empty($value['ASSGRO']) ||
+                !is_numeric($value['MAIBUSINC']) || empty($value['MAIBUSINC']) ||
+                !is_numeric($value['TOTEQU']) || empty($value['TOTEQU']) ||
+                !is_numeric($value['RATGRO']) || empty($value['RATGRO']) ||
+                !is_numeric($value['PROGRO']) || empty($value['PROGRO']) ||
+                !is_numeric($value['NETINC']) || empty($value['NETINC']) ||
+                !is_numeric($value['LIAGRO']) || empty($value['LIAGRO']) ||
+                !is_numeric($value['SOCNUM']) || empty($value['SOCNUM'])
+            ){
+                $status = 2;
+            }
+            $insert = [
+                'entName'=>$entname,
+                'year'=>$year,
+                'VENDINC'=>$value['VENDINC'],
+                'ASSGRO'=>$value['ASSGRO'],
+                'MAIBUSINC'=>$value['MAIBUSINC'],
+                'TOTEQU'=>$value['TOTEQU'],
+                'RATGRO'=>$value['RATGRO'],
+                'PROGRO'=>$value['PROGRO'],
+                'NETINC'=>$value['NETINC'],
+                'LIAGRO'=>$value['LIAGRO'],
+                'SOCNUM'=>$value['SOCNUM'],
+                'status'=>$status,
+            ];
+            FinanceData::create()->data($insert)->save();
+        }
+        return true;
+    }
+
 
 }

@@ -49,14 +49,12 @@ class AdminRouter
     private function SaibopengkeAdmin(RouteCollector $routeCollector): bool
     {
         $prefix = '/Business/Admin/SaibopengkeAdmin/SaibopengkeAdminController/';
-
         $routeCollector->addGroup('/sbpk', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getDataList', $prefix . 'getDataList');
             $routeCollector->addRoute(['GET', 'POST'], '/statusChange', $prefix . 'statusChange');
             $routeCollector->addRoute(['GET', 'POST'], '/getExportZip', $prefix . 'getExportZip');
             $routeCollector->addRoute(['GET', 'POST'], '/uploadEntList', $prefix . 'uploadEntList');
         });
-
         return true;
     }
 

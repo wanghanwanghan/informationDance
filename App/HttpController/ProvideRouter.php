@@ -31,6 +31,15 @@ class ProvideRouter
         $this->Notify($routeCollector);
         $this->ChuangLanV1($routeCollector);
         $this->ZhiChiRouterV1($routeCollector);//智齿科技
+        $this->GuangZhouYinLianV1($routeCollector);
+    }
+
+    private function GuangZhouYinLianV1(RouteCollector $routeCollector){
+        $prefix = '/Business/Provide/GuangZhouYinLian/GuangZhouYinLianController/';
+        $routeCollector->addGroup('/gzyl', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/queryVehicleCount', $prefix . 'queryVehicleCount');
+        });
+        return true;
     }
 
     private function ChuangLanV1(RouteCollector $routeCollector){
