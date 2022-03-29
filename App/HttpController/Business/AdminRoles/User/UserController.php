@@ -636,6 +636,7 @@ Eof;
         $listTypeApiRelation =  BarchTypeApiRelation::create()->where("apiId in (".implode(',',$apiIds).")")->all();
         $data = [];
         foreach ($listTypeApiRelation as $item) {
+            if($item->getAttr('id') == 15) continue;
             $data[] = [
                 'typeBase' => $item->getAttr('typeBase'),
                 'type' => $item->getAttr('id'),

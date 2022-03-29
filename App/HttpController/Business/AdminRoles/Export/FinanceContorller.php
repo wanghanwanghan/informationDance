@@ -86,10 +86,10 @@ class FinanceContorller  extends UserController
             if(empty($res)){
                 continue;
             }
-            foreach ($res['1'] as $year=>$datum) {
+            foreach ($res['1'] as $datum) {
                 $insertData = [
                     $ent['entName'],
-                    $year,
+                    $datum['year'],
                 ];
                 foreach ($kidTypesKeyArr as $item) {
                     if(isset($datum[$item]) && is_numeric($datum[$item])){
