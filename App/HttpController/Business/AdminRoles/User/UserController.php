@@ -752,12 +752,13 @@ Eof;
     public function getAbnormalFinance(){
         $appId = $this->getRequestData('appId');
         $ids = $this->getRequestData('ids');
+        $batchNum = $this->getRequestData('batchNum');
         if(empty($ids)){
             return $this->writeJson(201, null, '', "没有查到数据");
         }
         $FinanceContorller = new FinanceContorller();
         $ids = json_decode($ids,true);
-        $file = $FinanceContorller->getSmhzAbnormalFinance($ids,$appId);
+        $file = $FinanceContorller->getSmhzAbnormalFinance($ids,$appId,$batchNum);
         return $this->writeJson(200,[],$file,'成功');
     }
 }

@@ -196,7 +196,7 @@ class FinanceContorller  extends UserController
         return true;
     }
 
-    public function getSmhzAbnormalFinance($ids,$appId){
+    public function getSmhzAbnormalFinance($ids,$appId,$batchNum){
         $list = FinanceData::create()->where("id in (".implode($ids).")")->all();
         $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
         $listRelation = RequestUserApiRelationship::create()->where("userId = {$info->id} and status = 1 and apiId = 157")->get();
@@ -214,6 +214,7 @@ class FinanceContorller  extends UserController
         }
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         $list = json_decode(json_encode($list),true);
+        $data = [];
         foreach ($list as $item) {
             $insertData = [
                 $item['entName'],
@@ -230,7 +231,9 @@ class FinanceContorller  extends UserController
             RequestUserInfo::create()->where('appId', $appId)->update([
                 'money' => QueryBuilder::dec($year_price_detail[$item['year']]['price'])
             ]);
+            $data = $insertData;
         }
+        $this->inseartChargingLog($info->id, $batchNum, 15, $kidTypes,$data, $file, 2);
         return $file;
     }
 
