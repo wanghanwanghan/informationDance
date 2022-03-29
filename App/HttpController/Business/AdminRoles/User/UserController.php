@@ -219,6 +219,7 @@ class UserController extends UserBase
                     'billing_plan' => $one['billing_plan'],
                     'cache_day' => $one['cache_day'],
                     'kidTypes' => $one['kidTypes'],
+                    'year_price_detail' => $one['year_price_detail']
                 ])->save();
             } else {
                 $check->update([
@@ -369,6 +370,9 @@ class UserController extends UserBase
     {
         $appId = $this->getRequestData('appId') ?? '';
         $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
+        if(empty($info)){
+            return $this->writeJson(201, null, [],'没有查询到这个用户的相关信息');
+        }
         $shipList = RequestUserApiRelationship::create()->where(" userId = {$info->id}")->all();
         $res = RequestApiInfo::create()->all();
         $res = $this->getArrSetKey($res, 'id');
@@ -381,6 +385,7 @@ class UserController extends UserBase
                 $res[$key]['kidTypes'] = $shipList[$key]['kidTypes'];
                 $res[$key]['kidTypes'] = $shipList[$key]['kidTypes'];
                 $res[$key]['relationshipId'] = $shipList[$key]['id'];
+                $res[$key]['year_price_detail'] = $shipList[$key]['year_price_detail'];
                 $res[$key]['own'] = 1;
             }else{
                 $res[$key]['own'] = 2;
