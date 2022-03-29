@@ -471,9 +471,9 @@ SELECT
 	a.created_at 
 FROM
 	information_dance_batch_seach_log AS a
-	LEFT JOIN ( SELECT DISTINCT ( batchNum ) FROM information_dance_batch_seach_log where userId = {$info->id} ORDER BY id DESC LIMIT {$limit},{$pageSize} ) AS b ON a.batchNum = b.batchNum 
+	LEFT JOIN ( SELECT DISTINCT ( batchNum ) FROM information_dance_batch_seach_log where userId = {$info->id}  LIMIT {$limit},{$pageSize} ) AS b ON a.batchNum = b.batchNum 
 GROUP BY
-	batchNum
+	batchNum  order by id 
 Eof;
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $paging = [
@@ -539,6 +539,7 @@ Eof;
             $nameArr[$k]['entName'] = $v->getAttr('entName');
             $nameArr[$k]['socialCredit'] = $v->getAttr('socialCredit');
         }
+        $dataFinanceSmhz = [];
         foreach ($emptyTypes as $emptyType) {
             $barchTypeApiRelationInfo = BarchTypeApiRelation::create()->where('id', $emptyType)->get();
             $fun = $barchTypeApiRelationInfo->fun;
@@ -563,6 +564,12 @@ Eof;
             dingAlarm('导出数据返回', ['$filePath' => $filePath]);
             $fileArr[$emptyType] = $filePath;
             $this->inseartChargingLog($info->id, $batchNum, $emptyType,$kidTypes, $data, $filePath);
+            if(!empty($data['2'])){
+                $dataFinanceSmhz = array_merge($dataFinanceSmhz,$data['2']);
+            }
+        }
+        if(in_array(15,$emptyTypes) && !empty($fileArr)){
+            return $this->writeJson(200, null, ['file'=>$fileArr,'data'=>$dataFinanceSmhz], '成功');
         }
         if (empty($fileArr)) {
             return $this->writeJson(201, null, '', "没有找到对应类型{$types}的数据信息");
@@ -714,5 +721,16 @@ Eof;
         }
         $info->update($update);
         return true;
+    }
+
+    public function getAbnormalFinance(){
+        $appId = $this->getRequestData('appId');
+        $ids = $this->getRequestData('id');
+        if(empty($ids)){
+            return $this->writeJson(201, null, '', "没有查到数据");
+        }
+        $FinanceContorller = new FinanceContorller();
+        $ids = json_decode($ids,true);
+        return $FinanceContorller->getSmhzAbnormalFinance($ids,$appId);
     }
 }

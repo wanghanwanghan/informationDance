@@ -4,6 +4,8 @@ namespace App\HttpController\Business\AdminRoles\Export;
 
 use App\HttpController\Business\AdminRoles\User\UserController;
 use App\HttpController\Models\Admin\SaibopengkeAdmin\FinanceData;
+use App\HttpController\Models\Provide\RequestUserApiRelationship;
+use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\LongXin\LongXinService;
 
@@ -76,7 +78,6 @@ class FinanceContorller  extends UserController
         foreach ($kidTypesKeyArr as $item) {
             $insertData[] = $this->kidTpye[$item];
         }
-
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         $resData = [];
         foreach ($entNames as $ent) {
@@ -86,20 +87,39 @@ class FinanceContorller  extends UserController
             if(empty($res)){
                 continue;
             }
-            foreach ($res['1'] as $datum) {
-                $insertData = [
-                    $ent['entName'],
-                    $datum['year'],
-                ];
-                foreach ($kidTypesKeyArr as $item) {
-                    if(isset($datum[$item]) && is_numeric($datum[$item])){
-                        $insertData[] = round($datum[$item],2);
-                    }else if(isset($datum[$item]) && !is_numeric($datum[$item])){
-                        $insertData[] = '';
+            if(!empty($res['1'])) {
+                foreach ($res['1'] as $datum) {
+                    $insertData = [
+                        $ent['entName'],
+                        $datum['year'],
+                    ];
+                    foreach ($kidTypesKeyArr as $item) {
+                        if (isset($datum[$item]) && is_numeric($datum[$item])) {
+                            $insertData[] = round($datum[$item], 2);
+                        } else if (isset($datum[$item]) && !is_numeric($datum[$item])) {
+                            $insertData[] = '';
+                        }
                     }
+                    $resData['1'][] = $insertData;
+                    file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
                 }
-                $resData[] = $insertData;
-                file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+            }
+            if(!empty($res['2'])) {
+                foreach ($res['2'] as $datum) {
+                    $insertData = [
+                        'entName'=>$ent['entName'],
+                        'year'=>$datum['year'],
+                        'id'=>$datum['id'],
+                    ];
+                    foreach ($kidTypesKeyArr as $item) {
+                        if (isset($datum[$item]) && is_numeric($datum[$item])) {
+                            $insertData[$item] = '正常';
+                        } else if (isset($datum[$item]) && !is_numeric($datum[$item])) {
+                            $insertData[$item] = '0';
+                        }
+                    }
+                    $resData['2'][] = $insertData;
+                }
             }
         }
         return [$fileName, $resData];
@@ -187,5 +207,39 @@ class FinanceContorller  extends UserController
         return true;
     }
 
+    public function getSmhzAbnormalFinance($ids,$appId){
+        $list = FinanceData::create()->where("id in (".implode($ids).")")->all();
+        $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
+        $listRelation = RequestUserApiRelationship::create()->where("userId = {$info->id} and status = 1 and apiId = 157")->get();
+        if(empty($list)){
+            return '';
+        }
+        $kidTypes = explode('|',$listRelation->kidTypes);
+        $kidTypesKeyArr = explode(',',$kidTypes['1']);
+        $fileName = date('YmdHis', time()) . '年报.csv';
+        $file = TEMP_FILE_PATH . $fileName;
+        $insertData = ['公司名称', '年'];
+        foreach ($kidTypesKeyArr as $item) {
+            $insertData[] = $this->kidTpye[$item];
+        }
+        file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+        $list = json_decode(json_encode($list),true);
+        foreach ($list as $item) {
+            $insertData = [
+                $item['entName'],
+                $item['year'],
+            ];
+            foreach ($kidTypesKeyArr as $kidType) {
+                if (isset($item[$kidType]) && is_numeric($item[$kidType])) {
+                    $insertData[] = round($item[$kidType], 2);
+                } else if (isset($item[$kidType]) && !is_numeric($item[$kidType])) {
+                    $insertData[] = 0;
+                }
+            }
+            file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+
+        }
+        return $file;
+    }
 
 }
