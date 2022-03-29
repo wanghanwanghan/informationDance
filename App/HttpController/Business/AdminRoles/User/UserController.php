@@ -732,7 +732,7 @@ Eof;
         if(!empty($year_price_detail)){
             $update['year_price_detail'] = $year_price_detail;
         }
-        dingAlarm('editApiUserRelation',['$update'=>$update]);
+        dingAlarm('editApiUserRelation',['$update'=>json_encode($update)]);
         $info->update($update);
         return true;
     }
