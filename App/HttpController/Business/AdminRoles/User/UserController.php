@@ -551,6 +551,7 @@ Eof;
         $dataFinanceSmhz = [];
         foreach ($emptyTypes as $emptyType) {
             $barchTypeApiRelationInfo = BarchTypeApiRelation::create()->where('id', $emptyType)->get();
+            $requestUserApiRelationship = RequestUserApiRelationship::create()->where("userId = {$info->id} and apiId = {$barchTypeApiRelationInfo->apiId}")->get();
             $fun = $barchTypeApiRelationInfo->fun;
             switch ($barchTypeApiRelationInfo->typeBase){
                 case 1:
@@ -559,7 +560,7 @@ Eof;
                     break;
                 case 2:
                     $FinanceContorller = new FinanceContorller();
-                    list($filePath, $data) = $FinanceContorller->{$fun}($nameArr,$kidTypes);
+                    list($filePath, $data) = $FinanceContorller->{$fun}($nameArr,$requestUserApiRelationship);
                     break;
                 case 3:
                     $SifaContorller = new SifaContorller();
@@ -710,6 +711,7 @@ Eof;
         $cache_day = $this->getRequestData('cache_day');
         $billing_plan = $this->getRequestData('billing_plan');
         $kidTypes = $this->getRequestData('kidTypes');
+        $year_price_detail = $this->getRequestData('year_price_detail');
         if(empty($relationshipId)){
             return $this->writeJson(201, null, '', "关系ID不可以为空");
         }
@@ -726,6 +728,9 @@ Eof;
         }
         if(!empty($kidTypes)){
             $update['kidTypes'] = $kidTypes;
+        }
+        if(!empty($year_price_detail)){
+            $update['year_price_detail'] = $year_price_detail;
         }
         $info->update($update);
         return true;

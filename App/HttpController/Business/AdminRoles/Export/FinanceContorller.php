@@ -69,8 +69,9 @@ class FinanceContorller  extends UserController
         return [$fileName, $resData];
     }
 
-    public function smhzGetFinanceOriginal($entNames,$kidTypes){
-        $kidTypes = explode('|',$kidTypes);
+    public function smhzGetFinanceOriginal($entNames,$relation){
+        $kidTypes = explode('|',$relation->kidTypes);
+        $year_price_detail = json_decode($relation->kidTypes);
         $kidTypeList = explode('-',$kidTypes['0']);
         $kidTypesKeyArr = explode(',',$kidTypes['1']);
         $fileName = date('YmdHis', time()) . '年报.csv';
@@ -89,38 +90,35 @@ class FinanceContorller  extends UserController
                 file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
                 continue;
             }
-            if(!empty($res['1'])) {
-                foreach ($res['1'] as $datum) {
+            if(!empty($res)) {
+                foreach ($res as $datum) {
                     $insertData = [
                         $ent['entName'],
                         $datum['year'],
                     ];
-                    foreach ($kidTypesKeyArr as $item) {
-                        if (isset($datum[$item]) && is_numeric($datum[$item])) {
-                            $insertData[] = round($datum[$item], 2);
-                        } else if (isset($datum[$item]) && !is_numeric($datum[$item])) {
-                            $insertData[] = '';
-                        }
-                    }
-                    $resData['1'][] = $insertData;
-                    file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
-                }
-            }
-            if(!empty($res['2'])) {
-                foreach ($res['2'] as $datum) {
-                    $insertData = [
+                    $insertData2 = [
                         'entName'=>$ent['entName'],
                         'year'=>$datum['year'],
                         'id'=>$datum['id'],
                     ];
                     foreach ($kidTypesKeyArr as $item) {
-                        if (isset($datum[$item]) && is_numeric($datum[$item])) {
-                            $insertData[$item] = '正常';
-                        } else if (isset($datum[$item]) && !is_numeric($datum[$item])) {
-                            $insertData[$item] = '0';
+                        if(in_array($item,$year_price_detail[$datum['year']]['cond']) && (!is_numeric($datum[$item]) || empty($datum[$item]))){
+                            if (isset($datum[$item]) && is_numeric($datum[$item])) {
+                                $insertData2[$item] = '正常';
+                            } else if (isset($datum[$item]) && !is_numeric($datum[$item])) {
+                                $insertData2[$item] = '0';
+                            }
+                            $resData['2'][] = $insertData2;
+                        }else{
+                            if (isset($datum[$item]) && is_numeric($datum[$item])) {
+                                $insertData[] = round($datum[$item], 2);
+                            } else if (isset($datum[$item]) && !is_numeric($datum[$item])) {
+                                $insertData[] = '';
+                            }
                         }
                     }
-                    $resData['2'][] = $insertData;
+                    $resData['1'][] = $insertData;
+                    file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
                 }
             }
         }
@@ -138,11 +136,11 @@ class FinanceContorller  extends UserController
         for ($i=$year;$i<=($year+$dataCount-1);$i++)
         {
             if(isset($data[$i])){
-                $resData[$data[$i]['status']][] = $data[$i];
+                $resData[] = $data[$i];
             }else{
                 $this->getFinanceOriginal($entname,1,$i);
                 $yearData = FinanceData::create()->where("entName = '{$entname}' and year = {$i}")->get();
-                $resData[$yearData['status']][] = $yearData;
+                $resData[] = $yearData;
             }
         }
         return $resData;
@@ -175,19 +173,6 @@ class FinanceContorller  extends UserController
             return false;
         }
         foreach ($data as $year=>$value){
-            $status = 1;
-            if(!is_numeric($value['VENDINC']) || empty($value['VENDINC']) ||
-                !is_numeric($value['ASSGRO']) || empty($value['ASSGRO']) ||
-                !is_numeric($value['MAIBUSINC']) || empty($value['MAIBUSINC']) ||
-                !is_numeric($value['TOTEQU']) || empty($value['TOTEQU']) ||
-                !is_numeric($value['RATGRO']) || empty($value['RATGRO']) ||
-                !is_numeric($value['PROGRO']) || empty($value['PROGRO']) ||
-                !is_numeric($value['NETINC']) || empty($value['NETINC']) ||
-                !is_numeric($value['LIAGRO']) || empty($value['LIAGRO']) ||
-                !is_numeric($value['SOCNUM']) || empty($value['SOCNUM'])
-            ){
-                $status = 2;
-            }
             $insert = [
                 'entName'=>$entname,
                 'year'=>$year,
@@ -200,10 +185,8 @@ class FinanceContorller  extends UserController
                 'NETINC'=>$value['NETINC']??'',
                 'LIAGRO'=>$value['LIAGRO']??'',
                 'SOCNUM'=>empty($value['SOCNUM'])?'':$value['SOCNUM'],
-                'status'=>$status,
             ];
             dingAlarm('insertFinanceData',['$entName'=>$entname,'$insert'=>json_encode($insert)]);
-
             FinanceData::create()->data($insert)->save();
         }
         return true;
