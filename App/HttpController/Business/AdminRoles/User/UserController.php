@@ -523,6 +523,7 @@ Eof;
         $batchNum = $this->getRequestData('batchNum') ?? '';
         $appId = $this->getRequestData('username') ?? '';
         if (empty($types) || empty($batchNum) || empty($appId)) {
+            dingAlarm('部分参数为空',['$types'=>$types,'$batchNum'=>$batchNum,'$appId'=>$appId]);
             return $this->writeJson(201, null, '', '部分参数为空，请检查后再次请求');
         }
         $typeArr = json_decode($types,true);
@@ -530,6 +531,12 @@ Eof;
         $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
         $emptyTypes = [];
         foreach ($typeArr as $type) {
+            $kidTypes = '';
+            if($type == 15){
+                $barchTypeApiRelationInfo = BarchTypeApiRelation::create()->where('id', $type)->get();
+                $requestUserApiRelationship = RequestUserApiRelationship::create()->where("userId = {$info->id} and apiId = {$barchTypeApiRelationInfo->apiId}")->get();
+                $kidTypes = $requestUserApiRelationship->kidTypes;
+            }
             $file = $this->searchChargingLog($info->id, $batchNum, $type,$kidTypes);
             if (!empty($file)) {
                 $fileArr[$type] = $file;
@@ -595,11 +602,11 @@ Eof;
     {
         $startTime = strtotime('-3 day');
         $sql = "userId = '{$user_id}' and batchNum = '{$batchNum}' and type = '{$type}' and created_at>{$startTime}";
-        if(!empty(kidTypes))//财务
+        if(!empty($kidTypes))//财务
         {
             $sql .= " and kidTypes = '{$kidTypes}'";
         }
-        $log = BarchChargingLog::create()->where($sql." order by created_at desc ")->get();
+        $log = BarchChargingLog::create()->where($sql." and status = 1 order by created_at desc ")->get();
         if (empty($log)) {
             return '';
         }
@@ -609,7 +616,7 @@ Eof;
     /**
      * 添加计费的查询记录
      */
-    public function inseartChargingLog($user_id, $batchNum, $type, $kidTypes,$data, $file)
+    public function inseartChargingLog($user_id, $batchNum, $type, $kidTypes,$data, $file,$status = 1)
     {
         BarchChargingLog::create()->data([
             'type' => $type,
@@ -617,7 +624,8 @@ Eof;
             'userId' => $user_id,
             'batchNum' => $batchNum,
             'file_path' => is_array($file)?json_encode($file):$file,
-            'kidTypes' => $kidTypes
+            'kidTypes' => $kidTypes,
+            'status' => $status
         ])->save();
         return true;
     }
