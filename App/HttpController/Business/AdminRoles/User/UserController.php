@@ -560,7 +560,7 @@ Eof;
                     break;
                 case 2:
                     $FinanceContorller = new FinanceContorller();
-                    list($filePath, $data) = $FinanceContorller->{$fun}($nameArr,$requestUserApiRelationship);
+                    list($filePath, $data) = $FinanceContorller->{$fun}($nameArr,$requestUserApiRelationship,$info->appId);
                     break;
                 case 3:
                     $SifaContorller = new SifaContorller();
@@ -712,7 +712,7 @@ Eof;
         $billing_plan = $this->getRequestData('billing_plan');
         $kidTypes = $this->getRequestData('kidTypes');
         $year_price_detail = $this->getRequestData('year_price_detail');
-        dingAlarm('editApiUserRelation',['$year_price_detail'=>$year_price_detail]);
+//        dingAlarm('editApiUserRelation',['$year_price_detail'=>$year_price_detail]);
         if(empty($relationshipId)){
             return $this->writeJson(201, null, '', "关系ID不可以为空");
         }
@@ -733,19 +733,23 @@ Eof;
         if(!empty($year_price_detail)){
             $update['year_price_detail'] = $year_price_detail;
         }
-        dingAlarm('editApiUserRelation',['$update'=>json_encode($update)]);
+//        dingAlarm('editApiUserRelation',['$update'=>json_encode($update)]);
         $info->update($update);
         return $this->writeJson();
     }
 
+    /**
+     * 导出非正常财务数据
+     */
     public function getAbnormalFinance(){
         $appId = $this->getRequestData('appId');
-        $ids = $this->getRequestData('id');
+        $ids = $this->getRequestData('ids');
         if(empty($ids)){
             return $this->writeJson(201, null, '', "没有查到数据");
         }
         $FinanceContorller = new FinanceContorller();
         $ids = json_decode($ids,true);
-        return $FinanceContorller->getSmhzAbnormalFinance($ids,$appId);
+        $file = $FinanceContorller->getSmhzAbnormalFinance($ids,$appId);
+        return $this->writeJson(200,[],$file,'成功');
     }
 }

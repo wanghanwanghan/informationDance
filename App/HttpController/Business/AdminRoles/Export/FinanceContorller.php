@@ -70,9 +70,9 @@ class FinanceContorller  extends UserController
         return [$fileName, $resData];
     }
 
-    public function smhzGetFinanceOriginal($entNames,$relation){
+    public function smhzGetFinanceOriginal($entNames,$relation,$appId){
         $kidTypes = explode('|',$relation->kidTypes);
-        $year_price_detail = json_decode($relation->kidTypes);
+        $year_price_detail = getArrByKey(json_decode($relation->year_price_detail),'year');
         $kidTypeList = explode('-',$kidTypes['0']);
         $kidTypesKeyArr = explode(',',$kidTypes['1']);
         $fileName = date('YmdHis', time()) . '年报.csv';
@@ -116,9 +116,9 @@ class FinanceContorller  extends UserController
                             } else if (isset($datum[$item]) && !is_numeric($datum[$item])) {
                                 $insertData[] = '';
                             }
-                            //RequestUserInfo::create()->where('appId', $appid)->update([
-                            //                    'money' => QueryBuilder::dec(15)
-                            //                ]);
+                            RequestUserInfo::create()->where('appId', $appId)->update([
+                                                'money' => QueryBuilder::dec($year_price_detail[$datum['year']]['price'])
+                                            ]);
                         }
                     }
                     $resData['1'][] = $insertData;
@@ -203,6 +203,7 @@ class FinanceContorller  extends UserController
         if(empty($list)){
             return '';
         }
+        $year_price_detail = getArrByKey(json_decode($listRelation->year_price_detail),'year');
         $kidTypes = explode('|',$listRelation->kidTypes);
         $kidTypesKeyArr = explode(',',$kidTypes['1']);
         $fileName = date('YmdHis', time()) . '年报.csv';
@@ -226,7 +227,9 @@ class FinanceContorller  extends UserController
                 }
             }
             file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
-
+            RequestUserInfo::create()->where('appId', $appId)->update([
+                'money' => QueryBuilder::dec($year_price_detail[$item['year']]['price'])
+            ]);
         }
         return $file;
     }
