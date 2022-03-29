@@ -712,6 +712,7 @@ Eof;
         $billing_plan = $this->getRequestData('billing_plan');
         $kidTypes = $this->getRequestData('kidTypes');
         $year_price_detail = $this->getRequestData('year_price_detail');
+        dingAlarm('editApiUserRelation',['$year_price_detail'=>$year_price_detail]);
         if(empty($relationshipId)){
             return $this->writeJson(201, null, '', "关系ID不可以为空");
         }
