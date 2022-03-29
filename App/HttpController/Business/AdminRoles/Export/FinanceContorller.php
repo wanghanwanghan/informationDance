@@ -50,6 +50,7 @@ class FinanceContorller  extends UserController
             ];
             $res = (new LongXinService())->getFinanceData($postData, false);
             if(empty($res['data'])){
+                file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
                 continue;
             }
             foreach ($res['data'] as $year=>$datum) {
@@ -85,6 +86,7 @@ class FinanceContorller  extends UserController
             dingAlarm('getFinanceOriginalData',['$res'=>json_encode($res)]);
 
             if(empty($res)){
+                file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
                 continue;
             }
             if(!empty($res['1'])) {

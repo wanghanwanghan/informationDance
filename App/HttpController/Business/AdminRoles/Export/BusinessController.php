@@ -30,7 +30,10 @@ class BusinessController  extends UserController
             $res = (new TaoShuService())->post($postData, 'getRegisterInfo');
             $TaoShuController = new TaoShuController();
             $res = $TaoShuController->checkResponse($res, false);
-            if (!is_array($res)) continue;
+            if (!is_array($res)) {
+                file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+                continue;
+            }
 
             if ($res['code'] == 200 || !empty($res['result'])) {
                 //2018年营业收入区间
@@ -85,6 +88,7 @@ class BusinessController  extends UserController
                 file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
                 $data[] = $insertData;
             }
+            file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
         }
         return [$fileName, $data];
     }
@@ -107,7 +111,10 @@ class BusinessController  extends UserController
                 'entName' => $ent['entName'],
             ];
             $res = (new TaoShuService())->post($postData, 'getOperatingExceptionRota');
-            if(empty($res['RESULTDATA'])) continue;
+            if(empty($res['RESULTDATA'])) {
+                file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+                continue;
+            }
             foreach ($res['RESULTDATA'] as $re) {
                 $insertData = [
                     $ent['entName'],
@@ -147,7 +154,10 @@ class BusinessController  extends UserController
                     $data1 = array_merge($data2, $data1);
                 }
             }
-            if(empty($data1)) continue;
+            if(empty($data1)) {
+                file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+                continue;
+            }
             foreach ($data1 as $re) {
                 $insertData = [
                     $entName,
@@ -203,7 +213,10 @@ class BusinessController  extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getMainManagerInfo($ent['entName'],1);
-            if(empty($data['RESULTDATA'])) continue;
+            if(empty($data['RESULTDATA'])) {
+                file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+                continue;
+            }
             $dataList = $data['RESULTDATA'];
             if(isset($data['PAGEINFO']['TOTAL_PAGE']) && $data['PAGEINFO']['TOTAL_PAGE']>1){
                 for($i=2;$i<=$data['PAGEINFO']['TOTAL_PAGE'];$i++){
@@ -254,7 +267,10 @@ class BusinessController  extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getBranchInfo($ent['entName'],1);
-            if(empty($data['RESULTDATA'])) continue;
+            if(empty($data['RESULTDATA'])) {
+                file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+                continue;
+            }
             if(isset($data['PAGEINFO']['TOTAL_PAGE']) && $data['PAGEINFO']['TOTAL_PAGE']>1){
                 for($i=2;$i<=$data['PAGEINFO']['TOTAL_PAGE'];$i++){
                     $data2 = $this->getBranchInfo($ent['entName'],1);
@@ -313,7 +329,10 @@ class BusinessController  extends UserController
         foreach ($entNames as $ent) {
             $data = $this->getInvestmentAbroadInfo($ent['entName'],1);
 //            dingAlarm('企业对外投资$data',['$data'=>json_encode($data)]);
-            if(empty($data['RESULTDATA'])) continue;
+            if(empty($data['RESULTDATA'])) {
+                file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+                continue;
+            }
             if(isset($data['PAGEINFO']['TOTAL_PAGE']) && $data['PAGEINFO']['TOTAL_PAGE']>1){
                 for($i=2;$i<=$data['PAGEINFO']['TOTAL_PAGE'];$i++){
                     $data2 = $this->getInvestmentAbroadInfo($ent['entName'],1);
@@ -368,7 +387,10 @@ class BusinessController  extends UserController
         foreach ($entNames as $ent) {
             $data = $this->getRegisterChangeInfo($ent['entName'],1);
 //            dingAlarm('企业变更信息',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
-            if(empty($data['result'])) continue;
+            if(empty($data['result'])) {
+                file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+                continue;
+            }
             if(isset($data['paging']['totalPage']) && $data['paging']['totalPage']>1){
                 for($i=2;$i<=$data['paging']['totalPage'];$i++){
                     $data2 = $this->getRegisterChangeInfo($ent['entName'],1);

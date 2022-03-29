@@ -38,7 +38,10 @@ class SifaContorller  extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getCpws($ent['entName'],1);
-            if(empty($data['cpwsList'])) continue;
+            if(empty($data['cpwsList'])) {
+                file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+                continue;
+            }
             if(isset($data['totalPageNum']) && $data['totalPageNum']>1){
                 for($i=2;$i<=$data['totalPageNum'];$i++){
                     $data2 = $this->getCpws($ent['entName'],1);
@@ -66,6 +69,7 @@ class SifaContorller  extends UserController
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
         $data = $res['cpws']['0'];
         if(empty($data)){
+            file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
             return [];
         }
         $caseCauseT = [];
@@ -144,7 +148,10 @@ class SifaContorller  extends UserController
         foreach ($entNames as $ent) {
             $data = $this->getKtgg($ent['entName'],1);
             dingAlarm('开庭公告',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
-            if(empty($data['ktggList'])) continue;
+            if(empty($data['ktggList'])) {
+                file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+                continue;
+            }
             if(isset($data['totalPageNum']) && $data['totalPageNum']>1){
                 for($i=2;$i<=$data['totalPageNum'];$i++){
                     $data2 = $this->getKtgg($ent['entName'],1);
@@ -178,6 +185,7 @@ class SifaContorller  extends UserController
         dingAlarm('开庭公告详情',['$data'=>json_encode($res)]);
         $data = $res['ktgg']['0'];
         if(empty($data)){
+            file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
             return [];
         }
         $caseCauseT = [];
@@ -234,7 +242,10 @@ class SifaContorller  extends UserController
         foreach ($entNames as $ent) {
             $data = $this->getFygg($ent['entName'],1);
             dingAlarm('法院公告',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
-            if(empty($data['fyggList'])) continue;
+            if(empty($data['fyggList'])) {
+                file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+                continue;
+            }
             if(isset($data['totalPageNum']) && $data['totalPageNum']>1){
                 for($i=2;$i<=$data['totalPageNum'];$i++){
                     $data2 = $this->getFygg($ent['entName'],1);
@@ -267,6 +278,7 @@ class SifaContorller  extends UserController
         dingAlarm('法院公告详情',['$data'=>json_encode($res)]);
         $data = $res['fygg']['0'];
         if(empty($data)){
+            file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
             return [];
         }
         $caseCauseT = [];
@@ -321,8 +333,11 @@ class SifaContorller  extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getZxgg($ent['entName'],1);
-            dingAlarm('执行公告',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
-            if(empty($data['zxggList'])) continue;
+//            dingAlarm('执行公告',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
+            if(empty($data['zxggList'])) {
+                file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+                continue;
+            }
             if(isset($data['totalPageNum']) && $data['totalPageNum']>1){
                 for($i=2;$i<=$data['totalPageNum'];$i++){
                     $data2 = $this->getZxgg($ent['entName'],1);
@@ -361,6 +376,7 @@ class SifaContorller  extends UserController
         dingAlarm('执行公告详情',['$res'=>json_encode($res)]);
         $data = $res['zxgg']['0'];
         if(empty($data)){
+            file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
             return [];
         }
         $partys = [];
@@ -408,7 +424,10 @@ class SifaContorller  extends UserController
         foreach ($entNames as $ent) {
             $data = $this->getShixin($ent['entName'],1);
             dingAlarm('失信公告',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
-            if(empty($data['shixinList'])) continue;
+            if(empty($data['shixinList'])) {
+                file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+                continue;
+            }
             if(isset($data['totalPageNum']) && $data['totalPageNum']>1){
                 for($i=2;$i<=$data['totalPageNum'];$i++){
                     $data2 = $this->getShixin($ent['entName'],1);
@@ -438,9 +457,10 @@ class SifaContorller  extends UserController
         $postData = ['id' => $id];
         $docType = 'shixin';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
-        dingAlarm('失信公告详情',['$data'=>json_encode($res)]);
+//        dingAlarm('失信公告详情',['$data'=>json_encode($res)]);
         $data = $res['shixin']['0'];
         if(empty($data)){
+            file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
             return [];
         }
         $partys = [];
@@ -492,7 +512,10 @@ class SifaContorller  extends UserController
         foreach ($entNames as $ent) {
             $data = $this->getSifacdk($ent['entName'], 1);
             dingAlarm('司法查封冻结扣押', ['$entName' => $ent['entName'], '$data' => json_encode($data)]);
-            if (empty($data['sifacdkList'])) continue;
+            if (empty($data['sifacdkList'])) {
+                file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+                continue;
+            }
             if (isset($data['totalPageNum']) && $data['totalPageNum'] > 1) {
                 for ($i = 2; $i <= $data['totalPageNum']; $i++) {
                     $data2 = $this->getSifacdk($ent['entName'], 1);
@@ -526,6 +549,7 @@ class SifaContorller  extends UserController
         dingAlarm('司法查封冻结扣押详情',['$data'=>json_encode($res)]);
         $data = $res['sifacdk']['0'];
         if(empty($data)){
+            file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
             return [];
         }
         $insertData = [
