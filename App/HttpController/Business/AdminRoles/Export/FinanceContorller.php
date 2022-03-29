@@ -142,13 +142,13 @@ class FinanceContorller  extends UserController
             'year' => $year
         ];
         $res = (new CoHttpClient())->useCache(true)->send($url, $data);
+        dingAlarm('insertFinanceData',['$entName'=>$entname,'$data'=>json_encode($res)]);
         $this->insertFinanceData($res['result'],$entname);
         return true;
     }
 
     public function insertFinanceData($data,$entname){
         if(empty($data)){
-            dingAlarm('insertFinanceData',['$entName'=>$entname,'$data'=>json_encode($data)]);
             return false;
         }
         foreach ($data as $year=>$value){
