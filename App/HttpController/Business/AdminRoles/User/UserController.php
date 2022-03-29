@@ -464,14 +464,19 @@ class UserController extends UserBase
 SELECT count(DISTINCT ( batchNum ))as num FROM information_dance_batch_seach_log where userId = {$info->id} 
 Eof;
         $count = sqlRaw($countSql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        $dataSql = <<<Eof
+SELECT DISTINCT ( batchNum ) FROM information_dance_batch_seach_log where userId = {$info->id}  LIMIT {$limit},{$pageSize}
+Eof;
+        $list = sqlRaw($dataSql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        $batchNums = array_column($list,'batchNum');
+        $batchNumsStr = implode(',',$batchNums);
         $sql = <<<Eof
 SELECT
-	a.batchNum,
-	count( a.entName ) as entCount,
-	a.created_at 
+	batchNum,
+	count( entName ) as entCount,
+	created_at 
 FROM
-	information_dance_batch_seach_log AS a
-	LEFT JOIN ( SELECT DISTINCT ( batchNum ) FROM information_dance_batch_seach_log where userId = {$info->id}  LIMIT {$limit},{$pageSize} ) AS b ON a.batchNum = b.batchNum 
+	information_dance_batch_seach_log where batchNum in {$batchNumsStr}
 GROUP BY
 	batchNum  order by id desc
 Eof;
