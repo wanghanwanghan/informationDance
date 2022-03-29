@@ -735,7 +735,7 @@ Eof;
         }
         dingAlarm('editApiUserRelation',['$update'=>json_encode($update)]);
         $info->update($update);
-        return true;
+        return $this->writeJson();
     }
 
     public function getAbnormalFinance(){
