@@ -465,7 +465,7 @@ SELECT count(DISTINCT ( batchNum ))as num FROM information_dance_batch_seach_log
 Eof;
         $count = sqlRaw($countSql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $dataSql = <<<Eof
-SELECT DISTINCT ( batchNum ) FROM information_dance_batch_seach_log where userId = {$info->id}  LIMIT {$limit},{$pageSize} order by id desc
+SELECT DISTINCT ( batchNum ) FROM information_dance_batch_seach_log where userId = {$info->id} order by id desc LIMIT {$limit},{$pageSize} 
 Eof;
         $list = sqlRaw($dataSql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $batchNums = array_column($list,'batchNum');
