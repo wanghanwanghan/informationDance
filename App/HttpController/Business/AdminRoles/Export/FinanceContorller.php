@@ -8,6 +8,7 @@ use App\HttpController\Models\Provide\RequestUserApiRelationship;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\LongXin\LongXinService;
+use EasySwoole\Mysqli\QueryBuilder;
 
 class FinanceContorller  extends UserController
 {
@@ -115,6 +116,9 @@ class FinanceContorller  extends UserController
                             } else if (isset($datum[$item]) && !is_numeric($datum[$item])) {
                                 $insertData[] = '';
                             }
+                            //RequestUserInfo::create()->where('appId', $appid)->update([
+                            //                    'money' => QueryBuilder::dec(15)
+                            //                ]);
                         }
                     }
                     $resData['1'][] = $insertData;
