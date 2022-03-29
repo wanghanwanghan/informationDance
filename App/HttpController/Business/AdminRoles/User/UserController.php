@@ -453,7 +453,7 @@ class UserController extends UserBase
      * 获取这个用户下的导入的批次号list
      */
     public function getBatchNumList(){
-        $pageNo = $this->getRequestData('pageNo') ?? '';
+        $pageNo = $this->getRequestData('pageNO') ?? '';
         $pageSize = $this->getRequestData('pageSize') ?? '';
         $appId = $this->getRequestData('username') ?? '';
         $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
@@ -473,7 +473,7 @@ FROM
 	information_dance_batch_seach_log AS a
 	LEFT JOIN ( SELECT DISTINCT ( batchNum ) FROM information_dance_batch_seach_log where userId = {$info->id}  LIMIT {$limit},{$pageSize} ) AS b ON a.batchNum = b.batchNum 
 GROUP BY
-	batchNum  order by id 
+	batchNum  order by id desc
 Eof;
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $paging = [
