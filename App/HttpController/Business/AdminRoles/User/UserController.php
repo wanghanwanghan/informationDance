@@ -441,7 +441,6 @@ class UserController extends UserBase
                 $i++;
             }
             $res = BatchSeachLog::create()->saveAll($data);
-            dingAlarmSimple(['$data' => json_encode($data), 'BatchSeachLog-$res' => json_encode($res)]);
             return $this->writeJson(200, null, $batchNum,'导入成功');
         } catch (\Throwable $throwable) {
             dingAlarmSimple(['error' => $throwable->getMessage()]);
@@ -480,7 +479,6 @@ FROM
 GROUP BY
 	batchNum  order by id desc
 Eof;
-        dingAlarm('getBatchNumList',['$sql'=>$sql]);
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $paging = [
             'page' => $pageNo,
@@ -567,7 +565,7 @@ Eof;
                     list($filePath, $data) = $SheshuiContorller->{$fun}($nameArr);
                     break;
             }
-            dingAlarm('导出数据返回', ['$filePath' => $filePath]);
+//            dingAlarm('导出数据返回', ['$filePath' => $filePath]);
             $fileArr[$emptyType] = $filePath;
             $this->inseartChargingLog($info->id, $batchNum, $emptyType,$kidTypes, $data, $filePath);
             if(!empty($data['2'])){
@@ -607,7 +605,6 @@ Eof;
      */
     public function inseartChargingLog($user_id, $batchNum, $type, $kidTypes,$data, $file)
     {
-        dingAlarm('添加计费的查询记录', ['$kidTypes' => $kidTypes]);
         BarchChargingLog::create()->data([
             'type' => $type,
             'ret' => json_encode($data),
