@@ -86,7 +86,7 @@ class FinanceContorller  extends UserController
             if(empty($res)){
                 continue;
             }
-            foreach ($res as $year=>$datum) {
+            foreach ($res['1'] as $year=>$datum) {
                 $insertData = [
                     $ent['entName'],
                     $year,
@@ -113,7 +113,7 @@ class FinanceContorller  extends UserController
         }
         $resData = [];
         $data = $this->getArrSetKey($data,'year');
-        for ($i=$year;$i<=($year+$dataCount);$i++)
+        for ($i=$year;$i<=($year+$dataCount-1);$i++)
         {
             if(isset($data[$i])){
                 $resData[$data[$i]['status']][] = $data[$i];
