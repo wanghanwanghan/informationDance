@@ -475,6 +475,7 @@ FROM
 GROUP BY
 	batchNum  order by id desc
 Eof;
+        dingAlarm('getBatchNumList',['$sql'=>$sql]);
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $paging = [
             'page' => $pageNo,
