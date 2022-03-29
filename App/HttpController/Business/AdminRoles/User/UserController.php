@@ -469,14 +469,14 @@ SELECT DISTINCT ( batchNum ) FROM information_dance_batch_seach_log where userId
 Eof;
         $list = sqlRaw($dataSql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $batchNums = array_column($list,'batchNum');
-        $batchNumsStr = implode(',',$batchNums);
+        $batchNumsStr = "'".implode("','",$batchNums)."'";
         $sql = <<<Eof
 SELECT
 	batchNum,
 	count( entName ) as entCount,
 	created_at 
 FROM
-	information_dance_batch_seach_log where batchNum in {$batchNumsStr}
+	information_dance_batch_seach_log where batchNum in({$batchNumsStr} )
 GROUP BY
 	batchNum  order by id desc
 Eof;
