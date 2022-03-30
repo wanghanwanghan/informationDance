@@ -190,7 +190,7 @@ class GuangZhouYinLianService extends ServiceBase
         dingAlarm('车辆数量查询',['pkey'=>json_encode($privateKey)]);
         openssl_sign($content, $resign, $privateKey['pkey'], OPENSSL_ALGO_MD5);
         dingAlarm('车辆数量查询',['pkey'=>$privateKey['pkey'],'strlen_$resign'=>strlen($resign)]);
-        openssl_free_key($privateKey);
+//        openssl_free_key($privateKey);
         //签名转换的byte数组 256
         $signByteArr = $this->getBytes($resign);
         dingAlarm('车辆数量查询',['$signByteArr'=>json_encode($signByteArr)]);
