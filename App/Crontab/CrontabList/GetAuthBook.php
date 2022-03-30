@@ -113,7 +113,7 @@ Eof;
                     if ($notNoodIsSeal) {
                         continue;
                     }
-
+                    CommonService::getInstance()->log4PHP([$url],'info','AntAuthSealDetail');
                     foreach ($url as $type => $v) {
                         AntAuthSealDetail::create()->where([
                             'type' => $type,
