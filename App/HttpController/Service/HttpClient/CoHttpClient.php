@@ -68,6 +68,7 @@ class CoHttpClient extends ServiceBase
             dingAlarm('http返回',['$data'=>json_encode($data)]);
 //          CommonService::getInstance()->log4PHP([$url,$postData,$data],'info','http_return_data');
         } catch (\Exception $e) {
+            dingAlarm('http返回$e',['$data'=>json_encode($e)]);
             $this->writeErr($e, 'CoHttpClient');
             return ['coHttpErr' => 'error'];
         }
