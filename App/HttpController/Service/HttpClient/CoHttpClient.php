@@ -27,9 +27,11 @@ class CoHttpClient extends ServiceBase
     {
         //从缓存中拿
         $this->useCache ? $take = $this->takeResult($url, $postData, $options) : $take = [];
+        dingAlarm('http',['log'=>1]);
 
         //不是空，说明缓存里有数据，直接返回
         if (!empty($take)) return $this->needJsonDecode ? jsonDecode($take) : $take;
+        dingAlarm('http',['log'=>2]);
 
         $method = strtoupper($method);
 
@@ -55,7 +57,7 @@ class CoHttpClient extends ServiceBase
 
         //设置head头
         empty($headers) ?: $request->setHeaders($headers, true, false);
-
+        dingAlarm('http',['log'=>3]);
         try {
             //发送请求
             if ($method === 'POST') $data = $request->post($postData);
