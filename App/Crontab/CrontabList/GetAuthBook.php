@@ -96,12 +96,16 @@ Eof;
                 } else {
                     $notNoodIsSeal = false;
                     foreach ($DetailList as $value) {
+                        if ($value->getAttr('isSeal') != 'true')
+                        {$notNoodIsSeal = true;}
+                    }
+                    //如果不需要盖章，就跳过
+                    if ($notNoodIsSeal) {
+                        continue;
+                    }
+                    foreach ($DetailList as $value) {
                         $orderNo = $value->getAttr('orderNo');
-                        if ($value->getAttr('isSeal') === 'true') {
-                            $url[$value->getAttr('type')] = $this->getSealUrl($data, $value->getAttr('fileAddress'));
-                        } else {
-                            $notNoodIsSeal = true;
-                        }
+                        $url[$value->getAttr('type')] = $this->getSealUrl($data, $value->getAttr('fileAddress'));
                         $fileData[$value->getAttr('type')] = [
                             'fileAddress' => '',
                             'type' => $value->getAttr('type') . '',
@@ -111,10 +115,6 @@ Eof;
                         $flieDetail[$value->getAttr('type')]['fileId'] = $value->getAttr('fileId');
                     }
 
-                    //如果不需要盖章，就跳过
-                    if ($notNoodIsSeal) {
-                        continue;
-                    }
                     CommonService::getInstance()->log4PHP([$url],'info','AntAuthSealDetail');
                     foreach ($url as $type => $v) {
                         AntAuthSealDetail::create()->where([
