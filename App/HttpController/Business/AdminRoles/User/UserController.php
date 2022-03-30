@@ -392,14 +392,14 @@ class UserController extends UserBase
             }
 
         }
-        dingAlarmSimple(['$res' => json_encode($res)]);
+//        dingAlarmSimple(['$res' => json_encode($res)]);
         return $this->writeJson(200, null, array_values($res));
     }
 
     public function getArrSetKey($data, $key)
     {
         $data = json_decode(json_encode($data), true);
-        dingAlarmSimple(['getArrSetKey' => json_encode($data)]);
+//        dingAlarmSimple(['getArrSetKey' => json_encode($data)]);
         if (empty($data)) return [];
         $arr = [];
         foreach ($data as $datum) {
@@ -448,7 +448,7 @@ class UserController extends UserBase
             $res = BatchSeachLog::create()->saveAll($data);
             return $this->writeJson(200, null, $batchNum,'导入成功');
         } catch (\Throwable $throwable) {
-            dingAlarmSimple(['error' => $throwable->getMessage()]);
+//            dingAlarmSimple(['error' => $throwable->getMessage()]);
             return $this->writeJson(201, null, $throwable->getMessage());
         }
     }
