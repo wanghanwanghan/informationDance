@@ -187,7 +187,8 @@ class GuangZhouYinLianService extends ServiceBase
         $postArr = $signArr;
         $content = http_build_query($signArr);
         $privateKey = openssl_get_privatekey(file_get_contents(RSA_KEY_PATH .$this->privateKey));
-        openssl_sign($content, $resign, $privateKey['pkey'], OPENSSL_ALGO_MD5);
+        openssl_sign($content, $resign, $privateKey, OPENSSL_ALGO_MD5);
+        openssl_free_key($privateKey);
         //签名转换的byte数组 256
         $signByteArr = $this->getBytes($resign);
         // var_dump($signByteArr);
