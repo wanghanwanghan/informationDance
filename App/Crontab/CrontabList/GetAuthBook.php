@@ -69,7 +69,7 @@ WHERE
 Eof;
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
 
-        $url = [];
+
         $fileData = [];
         $flieDetail = [];
         if (!empty($list)) {
@@ -88,7 +88,7 @@ Eof;
                 $DetailList = AntAuthSealDetail::create()->where([
                     'antAuthId' => $oneEntInfo['id'],
                 ])->all();
-
+                $url = [];
                 if (empty($DetailList)) {
                     $url['2'] = $this->getDataSealUrl($data);
                 } else {
