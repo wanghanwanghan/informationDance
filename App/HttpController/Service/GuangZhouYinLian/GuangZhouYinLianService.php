@@ -198,12 +198,12 @@ class GuangZhouYinLianService extends ServiceBase
 
         $postArr['sign'] = $sign;
         //请求发送内容
-//        $postData = http_build_query($postArr);
+        $postData = http_build_query($postArr);
         $header = [
             'content-type' => 'text/json;charset=UTF-8'
         ];
-        dingAlarm('车辆数量查询',['$data'=>json_encode($postArr),'url'=>$this->testUrl]);
-        $res = (new CoHttpClient())->useCache(false)->send($this->testUrl, $postArr,$header);
+        dingAlarm('车辆数量查询',['$data'=>json_encode($postData),'url'=>$this->testUrl]);
+        $res = (new CoHttpClient())->useCache(false)->send($this->testUrl, $postData,$header);
         dingAlarm('车辆数量查询',['$res'=>json_encode($res)]);
         return $res;
     }
