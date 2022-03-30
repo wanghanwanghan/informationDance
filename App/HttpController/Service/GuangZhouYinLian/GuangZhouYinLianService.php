@@ -10,7 +10,7 @@ class GuangZhouYinLianService extends ServiceBase
     private $app_id = '5dc387b32c07871d371334e9c45120ba';
     private $timestamp;
     private $v = '1.0.1';
-    private $sign_alg = 5;
+    private $sign_alg = 1;
     private $busiMerno = '898441650210002';
     private $testUrl = 'https://testapi.gnete.com:9083/routejson';
     private $privateKey = 'bussiness_private_dev.pem';// 'mer-fat-905975ed38ff446c91247b1c91a82d41.p12'; //'';bussiness_private.pem   bussiness_private_dev.pem
@@ -189,7 +189,8 @@ class GuangZhouYinLianService extends ServiceBase
         $privateKey = openssl_get_privatekey(file_get_contents(RSA_KEY_PATH .$this->privateKey));
 //        openssl_pkcs12_read(file_get_contents(RSA_KEY_PATH .$this->privateKey),$privateKey,123456);
 //        openssl_sign($content, $resign, $privateKey['pkey'], OPENSSL_ALGO_MD5);
-        openssl_sign($content, $resign, $privateKey, OPENSSL_ALGO_MD5);
+        dingAlarm('车辆数量查询 $privateKey ',['$privateKey'=>$privateKey]);
+        openssl_sign($content, $resign, $privateKey, OPENSSL_ALGO_SHA256);
         openssl_free_key($privateKey);
         //签名转换的byte数组 256
         $signByteArr = $this->getBytes($resign);
