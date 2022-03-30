@@ -327,7 +327,8 @@ class GuangZhouYinLianService extends ServiceBase
 
 
     public function encodeHex($data){
-        $toDigits=self::$digits_lower;
+        $digits_lower = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' );
+        $toDigits=$digits_lower;
         $len=count($data);
         $i=0;
         $out=array();
@@ -347,5 +348,17 @@ class GuangZhouYinLianService extends ServiceBase
 
 
         return $out;
+    }
+
+     function unsignedRight($int, $n){
+        for ($i=0; $i < $n; $i++) {
+            if( $int < 0 ){
+                $int >>= 1;
+                $int &= PHP_INT_MAX;
+            }else{
+                $int >>= 1;
+            }
+        }
+        return $int;
     }
 }
