@@ -178,20 +178,19 @@ class GuangZhouYinLianService extends ServiceBase
 
         $signArr = [
             'app_id' => $this->app_id,
+            'method' => $method,
             'timestamp' => date('Y-m-d H:i:s',$time),
             'v' => $this->v,
             'sign_alg' => $this->sign_alg,
-            'method' => $method,
             'biz_content' => json_encode($biz_content),
         ];
         $postArr = $signArr;
         $content = http_build_query($signArr);
-        $privateKey = openssl_get_privatekey(RSA_KEY_PATH .$this->privateKey);
+        $privateKey = openssl_get_privatekey(file_get_contents(RSA_KEY_PATH .$this->privateKey));
         openssl_sign($content, $resign, $privateKey, OPENSSL_ALGO_MD5);
         openssl_free_key($privateKey);
         //签名转换的byte数组 256
         $signByteArr = $this->getBytes($resign);
-        // var_dump($signByteArr);
         //对签名进行处理，获取发送的签名内容 512位十六进制字符串
         $signArr = $this->encodeHex($signByteArr);
         $sign = implode($signArr);
