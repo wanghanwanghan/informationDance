@@ -73,6 +73,7 @@ Eof;
         $fileData = [];
         $flieDetail = [];
         if (!empty($list)) {
+            CommonService::getInstance()->log4PHP([$list],'info','listAntAuthSealDetail');
             foreach ($list as $oneEntInfo) {
 
                 $data = [
