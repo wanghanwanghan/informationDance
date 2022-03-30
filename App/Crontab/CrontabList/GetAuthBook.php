@@ -94,13 +94,20 @@ Eof;
                     CommonService::getInstance()->log4PHP([$data],'info','emptyAntAuthSealDetail');
                     $url['2'] = $this->getDataSealUrl($data);
                 } else {
-                    $notNoodIsSeal = false;
+                    $notNoodIsSeal = [];
+                    $detailArr = [];
                     foreach ($DetailList as $value) {
+                        $detailArr[$value->orderNo] = $value;
                         if ($value->getAttr('isSeal') != 'true')
-                        {$notNoodIsSeal = true;}
+                        {$notNoodIsSeal[$value->orderNo] = $value->orderNo;}
                     }
-                    //如果不需要盖章，就跳过
-                    if ($notNoodIsSeal) {
+                    //如果不需要盖章，就去掉这次的请求
+                    if(!empty($notNoodIsSeal)){
+                        foreach ($notNoodIsSeal as $item) {
+                            unset($detailArr[$item]);
+                        }
+                    }
+                    if (empty($detailArr)) {
                         continue;
                     }
                     foreach ($DetailList as $value) {
