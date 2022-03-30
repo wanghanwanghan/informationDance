@@ -90,6 +90,7 @@ Eof;
                 ])->all();
                 $url = [];
                 if (empty($DetailList)) {
+                    CommonService::getInstance()->log4PHP([$data],'info','emptyAntAuthSealDetail');
                     $url['2'] = $this->getDataSealUrl($data);
                 } else {
                     $notNoodIsSeal = false;
