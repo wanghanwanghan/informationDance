@@ -97,7 +97,7 @@ Eof;
                     $notNoodIsSeal = [];
                     $detailArr = [];
                     foreach ($DetailList as $value) {
-                        $detailArr[$value->orderNo] = $value;
+                        $detailArr[$value->orderNo][] = $value;
                         if ($value->getAttr('isSeal') != 'true')
                         {$notNoodIsSeal[$value->orderNo] = $value->orderNo;}
                     }
@@ -110,16 +110,19 @@ Eof;
                     if (empty($detailArr)) {
                         continue;
                     }
-                    foreach ($DetailList as $value) {
-                        $orderNo = $value->getAttr('orderNo');
-                        $url[$value->getAttr('type')] = $this->getSealUrl($data, $value->getAttr('fileAddress'));
-                        $fileData[$value->getAttr('type')] = [
-                            'fileAddress' => '',
-                            'type' => $value->getAttr('type') . '',
-                            'isSealed' => true,
-                            'fileName' => '',
-                        ];
-                        $flieDetail[$value->getAttr('type')]['fileId'] = $value->getAttr('fileId');
+                    foreach ($detailArr as $v) {
+                        foreach ($v as $value){
+                            $orderNo = $value->getAttr('orderNo');
+                            $url[$value->getAttr('type')] = $this->getSealUrl($data, $value->getAttr('fileAddress'));
+                            $fileData[$value->getAttr('type')] = [
+                                'fileAddress' => '',
+                                'type' => $value->getAttr('type') . '',
+                                'isSealed' => true,
+                                'fileName' => '',
+                            ];
+                            $flieDetail[$value->getAttr('type')]['fileId'] = $value->getAttr('fileId');
+                        }
+
                     }
 
                     CommonService::getInstance()->log4PHP([$url],'info','AntAuthSealDetail');
