@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\FaDaDa;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\FaDaDa\FaDaDaService;
 
 class FaDaDaController extends ProvideBase
@@ -58,6 +59,7 @@ class FaDaDaController extends ProvideBase
             'city' => $city,
             'regAddress' => $regAddress,
         ];
+        CommonService::getInstance()->log4PHP([$postData],'info','getAuthFile');
 
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new FaDaDaService())->setCheckRespFlag(true)->getAuthFile($postData);
