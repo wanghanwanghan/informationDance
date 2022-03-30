@@ -149,6 +149,10 @@ class LongDunController extends LongDunBase
             'mode' => $mode - 0,
         ];
 
+        if (!!$pay === false) {
+            return $this->writeJson(210, null, null, '此信息需消耗 16 元，有效期 7 天');
+        }
+
         $res = (new LongDunService())->get($this->baseUrl . 'Beneficiary/GetBeneficiary', $postData);
 
         $tmp = [];
