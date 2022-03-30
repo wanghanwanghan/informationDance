@@ -93,7 +93,8 @@ Eof;
                 if (empty($DetailList)) {
                     CommonService::getInstance()->log4PHP([$data],'info','emptyAntAuthSealDetail');
                     $url['2'] = $this->getDataSealUrl($data);
-                } else {
+                }
+                else {
                     $notNoodIsSeal = [];
                     $detailArr = [];
                     foreach ($DetailList as $value) {
@@ -110,10 +111,11 @@ Eof;
                     if (empty($detailArr)) {
                         continue;
                     }
+                    $urlD = [];
                     foreach ($detailArr as $v) {
                         foreach ($v as $value){
                             $orderNo = $value->getAttr('orderNo');
-                            $url[$value->getAttr('type')] = $this->getSealUrl($data, $value->getAttr('fileAddress'));
+                            $urlD[$orderNo][$value->getAttr('type')] = $this->getSealUrl($data, $value->getAttr('fileAddress'));
                             $fileData[$value->getAttr('type')] = [
                                 'fileAddress' => '',
                                 'type' => $value->getAttr('type') . '',
@@ -122,24 +124,27 @@ Eof;
                             ];
                             $flieDetail[$value->getAttr('type')]['fileId'] = $value->getAttr('fileId');
                         }
-
                     }
 
                     CommonService::getInstance()->log4PHP([$url],'info','AntAuthSealDetail');
-                    foreach ($url as $type => $v) {
-                        AntAuthSealDetail::create()->where([
-                            'type' => $type,
-                            'antAuthId' => $oneEntInfo['id'],
-                        ])->update([
-                            'fileUrl' => $v,
-                            'status' => empty($v) ? 2 : 1
-                        ]);
-                        list($file_url, $fileName) = $this->getOssUrl($v, $data['socialCredit'], $flieDetail[$type]);
+                    foreach ($urlD as $orderNo=>$order){
+                        foreach ($order as $type => $v) {
+                            AntAuthSealDetail::create()->where([
+                                'orderNo'=>$orderNo,
+                                'type' => $type,
+                                'antAuthId' => $oneEntInfo['id'],
+                            ])->update([
+                                'fileUrl' => $v,
+                                'status' => empty($v) ? 2 : 1
+                            ]);
+                            list($file_url, $fileName) = $this->getOssUrl($v, $data['socialCredit'], $flieDetail[$type]);
 
-                        $fileData[$type]['fileAddress'] = $file_url;
-                        $fileData[$type]['fileName'] = $fileName;
-                        ksort($fileData[$type]);
+                            $fileData[$type]['fileAddress'] = $file_url;
+                            $fileData[$type]['fileName'] = $fileName;
+                            ksort($fileData[$type]);
+                        }
                     }
+
                 }
 
                 //更新数据库
