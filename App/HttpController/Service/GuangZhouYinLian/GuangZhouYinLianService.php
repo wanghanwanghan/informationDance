@@ -185,21 +185,15 @@ class GuangZhouYinLianService extends ServiceBase
             'biz_content' => json_encode($biz_content),
         ];
         $content = http_build_query($signArr);
-        dingAlarm('车辆数量查询-http_build_query',['$data'=>$content]);
         openssl_pkcs12_read(file_get_contents(RSA_KEY_PATH .$this->privateKey),$privateKey,123456);
-        dingAlarm('车辆数量查询',['pkey'=>json_encode($privateKey)]);
         openssl_sign($content, $resign, $privateKey['pkey'], OPENSSL_ALGO_MD5);
-        dingAlarm('车辆数量查询',['pkey'=>$privateKey['pkey'],'strlen_$resign'=>strlen($resign)]);
-//        openssl_free_key($privateKey);
         //签名转换的byte数组 256
         $signByteArr = $this->getBytes($resign);
-        dingAlarm('车辆数量查询',['$signByteArr'=>json_encode($signByteArr)]);
         // var_dump($signByteArr);
         //对签名进行处理，获取发送的签名内容 512位十六进制字符串
         $signArr = $this->encodeHex($signByteArr);
-        dingAlarm('车辆数量查询',['$signArr'=>json_encode($signArr)]);
         $sign = implode($signArr);
-        dingAlarm('车辆数量查询',['$sign'=>$sign]);
+//        dingAlarm('车辆数量查询',['$sign'=>$sign]);
         $postArr['sign'] = $sign;
         //请求发送内容
 //        $postData = http_build_query($postArr);
