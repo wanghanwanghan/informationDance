@@ -13,7 +13,7 @@ class GuangZhouYinLianService extends ServiceBase
     private $sign_alg = 5;
     private $busiMerno = '898441650210002';
     private $testUrl = 'https://testapi.gnete.com:9083/routejson';
-    private $privateKey = 'mer-fat-905975ed38ff446c91247b1c91a82d41.p12';
+    private $privateKey = 'bussiness_private.pem';
     private $secret_password = '123456';
     private $test_pub_secret = 'ogw-fat-2048-cfca.der';
     function __construct()
@@ -186,7 +186,7 @@ class GuangZhouYinLianService extends ServiceBase
         ];
         $postArr = $signArr;
         $content = http_build_query($signArr);
-        openssl_pkcs12_read(file_get_contents(RSA_KEY_PATH .$this->privateKey),$privateKey,123456);
+        $privateKey = openssl_get_privatekey(file_get_contents(RSA_KEY_PATH .$this->privateKey));
         openssl_sign($content, $resign, $privateKey['pkey'], OPENSSL_ALGO_MD5);
         //签名转换的byte数组 256
         $signByteArr = $this->getBytes($resign);
