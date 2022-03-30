@@ -48,7 +48,8 @@ function dingAlarm($title,$arr){
             'msg' => $item,
         ];
     }
-    dingAlarmMarkdownForWork($title,$text);
+    $res = dingAlarmMarkdownForWork($title,$text);
+    CommonService::getInstance()->log4PHP($res,'info','dingAlarm');
 }
 
 //function ding
