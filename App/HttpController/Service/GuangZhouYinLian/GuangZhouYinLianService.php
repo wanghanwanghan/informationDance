@@ -373,7 +373,7 @@ class GuangZhouYinLianService extends ServiceBase
 
             $var1=240&$data[$i];
 
-            $index1=self::unsignedRight($var1,4);
+            $index1=$this->unsignedRight($var1,4);
 
             $out[$var]=$toDigits[$index1];
 
