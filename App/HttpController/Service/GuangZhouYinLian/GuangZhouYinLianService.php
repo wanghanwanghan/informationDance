@@ -201,7 +201,7 @@ class GuangZhouYinLianService extends ServiceBase
             'content-type' => 'text/json;charset=UTF-8'
         ];
         dingAlarm('车辆数量查询',['$data'=>json_encode($postArr),'url'=>$this->testUrl]);
-        $res = (new CoHttpClient())->send($this->testUrl, $postArr,$header,[],'POSTJSON');
+        $res = (new CoHttpClient())->useCache(false)->send($this->testUrl, $postArr,$header,[],'POSTJSON');
         dingAlarm('车辆数量查询',['$res'=>json_encode($res)]);
         return $res;
     }
