@@ -65,10 +65,8 @@ class CoHttpClient extends ServiceBase
             if ($method === 'GET') $data = $request->get();
             //整理结果
             $data = $data->getBody();
-//            dingAlarm('http返回',['$data'=>json_encode($data)]);
-//            if(strpos($url,'testapi.gnete.com')){
-                CommonService::getInstance()->log4PHP([$url,$postData,$data],'info','http_return_data');
-//            }
+            dingAlarm('http返回',['$data'=>json_encode($data)]);
+//          CommonService::getInstance()->log4PHP([$url,$postData,$data],'info','http_return_data');
         } catch (\Exception $e) {
             $this->writeErr($e, 'CoHttpClient');
             return ['coHttpErr' => 'error'];
