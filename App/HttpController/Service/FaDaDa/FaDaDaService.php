@@ -86,6 +86,7 @@ class FaDaDaService extends ServiceBase
      */
     function getAuthFile(array $arr): array
     {
+        CommonService::getInstance()->log4PHP([$arr],'info','getAuthFile$arr');
         //企业注册
         list($ent_customer_id,$entCustomerErrorData) = $this->getEntCustomer($arr);
         if(!empty($entCustomerErrorData)) return $entCustomerErrorData;
