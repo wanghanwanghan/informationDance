@@ -66,7 +66,7 @@ class CoHttpClient extends ServiceBase
             //整理结果
             $data = $data->getBody();
 //            dingAlarm('http返回',['$data'=>json_encode($data)]);
-            if($method === 'POSTJSON'){
+            if($url === 'https://testapi.gnete.com:9083/routejson'){
                 CommonService::getInstance()->log4PHP([$postData,$data],'info','http_return_data');
             }
         } catch (\Exception $e) {
