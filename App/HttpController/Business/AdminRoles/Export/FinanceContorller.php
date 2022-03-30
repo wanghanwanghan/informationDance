@@ -65,7 +65,7 @@ class FinanceContorller  extends UserController
                 $resData[] = $insertData;
                 file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
             }
-            dingAlarm('年报',['$entName'=>$ent['entName'],'$data'=>json_encode($resData)]);
+//            dingAlarm('年报',['$entName'=>$ent['entName'],'$data'=>json_encode($resData)]);
         }
         return [$fileName, $resData];
     }
@@ -85,7 +85,7 @@ class FinanceContorller  extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
             $res = $this->getFinanceOriginalData($ent['entName'],$kidTypeList['1'],$kidTypeList['0']);
-            dingAlarm('getFinanceOriginalData',['$res'=>json_encode($res)]);
+//            dingAlarm('getFinanceOriginalData',['$res'=>json_encode($res)]);
 
             if(empty($res)){
                 file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
@@ -152,7 +152,7 @@ class FinanceContorller  extends UserController
     }
 
     public function getFinanceOriginal($entname,$dataCount,$year){
-        dingAlarm('insertFinanceData',['$entName'=>$entname,'$dataCount'=>$dataCount,'$year'=>$year]);
+//        dingAlarm('insertFinanceData',['$entName'=>$entname,'$dataCount'=>$dataCount,'$year'=>$year]);
         $url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceOriginal';
         $appId = '5BBFE57DE6DD0C8CDBC5D16A31125D5F';
         $appSecret = 'C2F24A85DF750882FAD7';
@@ -167,7 +167,7 @@ class FinanceContorller  extends UserController
             'year' => $year
         ];
         $res = (new CoHttpClient())->useCache(true)->send($url, $data);
-        dingAlarm('insertFinanceData',['$entName'=>$entname,'$data'=>json_encode($res)]);
+//        dingAlarm('insertFinanceData',['$entName'=>$entname,'$data'=>json_encode($res)]);
         $this->insertFinanceData($res['result'],$entname);
         return true;
     }
@@ -190,7 +190,7 @@ class FinanceContorller  extends UserController
                 'LIAGRO'=>$value['LIAGRO']??'',
                 'SOCNUM'=>empty($value['SOCNUM'])?'':$value['SOCNUM'],
             ];
-            dingAlarm('insertFinanceData',['$entName'=>$entname,'$insert'=>json_encode($insert)]);
+//            dingAlarm('insertFinanceData',['$entName'=>$entname,'$insert'=>json_encode($insert)]);
             FinanceData::create()->data($insert)->save();
         }
         return true;

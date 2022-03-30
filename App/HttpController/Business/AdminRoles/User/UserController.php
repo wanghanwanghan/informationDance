@@ -523,7 +523,7 @@ Eof;
         $batchNum = $this->getRequestData('batchNum') ?? '';
         $appId = $this->getRequestData('username') ?? '';
         if (empty($types) || empty($batchNum) || empty($appId)) {
-            dingAlarm('部分参数为空',['$types'=>$types,'$batchNum'=>$batchNum,'$appId'=>$appId]);
+//            dingAlarm('部分参数为空',['$types'=>$types,'$batchNum'=>$batchNum,'$appId'=>$appId]);
             return $this->writeJson(201, null, '', '部分参数为空，请检查后再次请求');
         }
         $typeArr = json_decode($types,true);

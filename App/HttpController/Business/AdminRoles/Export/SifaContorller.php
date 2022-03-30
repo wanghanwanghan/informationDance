@@ -147,7 +147,7 @@ class SifaContorller  extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getKtgg($ent['entName'],1);
-            dingAlarm('开庭公告',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
+//            dingAlarm('开庭公告',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
             if(empty($data['ktggList'])) {
                 file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
                 continue;
@@ -182,7 +182,7 @@ class SifaContorller  extends UserController
         $postData = ['id' => $id];
         $docType = 'ktgg';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
-        dingAlarm('开庭公告详情',['$data'=>json_encode($res)]);
+//        dingAlarm('开庭公告详情',['$data'=>json_encode($res)]);
         $data = $res['ktgg']['0'];
         if(empty($data)){
             file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
@@ -241,7 +241,7 @@ class SifaContorller  extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getFygg($ent['entName'],1);
-            dingAlarm('法院公告',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
+//            dingAlarm('法院公告',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
             if(empty($data['fyggList'])) {
                 file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
                 continue;
@@ -275,7 +275,7 @@ class SifaContorller  extends UserController
         $postData = ['id' => $id];
         $docType = 'fygg';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
-        dingAlarm('法院公告详情',['$data'=>json_encode($res)]);
+//        dingAlarm('法院公告详情',['$data'=>json_encode($res)]);
         $data = $res['fygg']['0'];
         if(empty($data)){
             file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
@@ -373,7 +373,7 @@ class SifaContorller  extends UserController
         $postData = ['id' => $id];
         $docType = 'zxgg';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
-        dingAlarm('执行公告详情',['$res'=>json_encode($res)]);
+//        dingAlarm('执行公告详情',['$res'=>json_encode($res)]);
         $data = $res['zxgg']['0'];
         if(empty($data)){
             file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
@@ -423,7 +423,7 @@ class SifaContorller  extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getShixin($ent['entName'],1);
-            dingAlarm('失信公告',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
+//            dingAlarm('失信公告',['$entName'=>$ent['entName'],'$data'=>json_encode($data)]);
             if(empty($data['shixinList'])) {
                 file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
                 continue;
@@ -511,7 +511,7 @@ class SifaContorller  extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getSifacdk($ent['entName'], 1);
-            dingAlarm('司法查封冻结扣押', ['$entName' => $ent['entName'], '$data' => json_encode($data)]);
+//            dingAlarm('司法查封冻结扣押', ['$entName' => $ent['entName'], '$data' => json_encode($data)]);
             if (empty($data['sifacdkList'])) {
                 file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
                 continue;
@@ -546,7 +546,7 @@ class SifaContorller  extends UserController
         $postData = ['id' => $id];
         $docType = 'sifacdk';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
-        dingAlarm('司法查封冻结扣押详情',['$data'=>json_encode($res)]);
+//        dingAlarm('司法查封冻结扣押详情',['$data'=>json_encode($res)]);
         $data = $res['sifacdk']['0'];
         if(empty($data)){
             file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);

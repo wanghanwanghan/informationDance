@@ -14,7 +14,7 @@ class SheshuiContorller  extends UserController
     public function fhGetSatpartyChufa($entNames){
         foreach ($entNames as $ent) {
             $data = $this->getSatpartyChufa($ent['entName'], 1);
-            dingAlarm('涉税处罚公示',['$data'=>json_encode($data)]);
+//            dingAlarm('涉税处罚公示',['$data'=>json_encode($data)]);
             if (empty($data)) continue;
         }
         return ['',[]];
