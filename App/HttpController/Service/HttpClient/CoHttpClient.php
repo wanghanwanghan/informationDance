@@ -27,12 +27,8 @@ class CoHttpClient extends ServiceBase
     {
         //从缓存中拿
         $this->useCache ? $take = $this->takeResult($url, $postData, $options) : $take = [];
-        dingAlarm('http',['log'=>1]);
-
         //不是空，说明缓存里有数据，直接返回
         if (!empty($take)) return $this->needJsonDecode ? jsonDecode($take) : $take;
-        dingAlarm('http',['log'=>2]);
-
         $method = strtoupper($method);
 
         if ($method === 'GET' && strpos($url, '?') === false) {
@@ -57,7 +53,6 @@ class CoHttpClient extends ServiceBase
 
         //设置head头
         empty($headers) ?: $request->setHeaders($headers, true, false);
-        dingAlarm('http',['log'=>3]);
         try {
             //发送请求
             if ($method === 'POST') $data = $request->post($postData);
@@ -67,10 +62,9 @@ class CoHttpClient extends ServiceBase
             if ($method === 'GET') $data = $request->get();
             //整理结果
             $data = $data->getBody();
-            dingAlarm('http返回',['$data'=>json_encode($data)]);
+            dingAlarm('http返回',['$url'=>$url,'$data'=>json_encode($data),'$postData'=>$postData]);
 //          CommonService::getInstance()->log4PHP([$url,$postData,$data],'info','http_return_data');
         } catch (\Exception $e) {
-            dingAlarm('http返回$e',['$data'=>json_encode($e)]);
             $this->writeErr($e, 'CoHttpClient');
             return ['coHttpErr' => 'error'];
         }
