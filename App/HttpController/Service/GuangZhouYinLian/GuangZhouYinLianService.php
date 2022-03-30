@@ -199,6 +199,7 @@ class GuangZhouYinLianService extends ServiceBase
         $signArr = $this->encodeHex($signByteArr);
         dingAlarm('车辆数量查询',['$signArr'=>json_encode($signArr)]);
         $sign = implode($signArr);
+        dingAlarm('车辆数量查询',['$sign'=>$sign]);
         $postArr['sign'] = $sign;
         //请求发送内容
 //        $postData = http_build_query($postArr);
