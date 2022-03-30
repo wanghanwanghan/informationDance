@@ -184,6 +184,7 @@ class GuangZhouYinLianService extends ServiceBase
             'method' => $method,
             'biz_content' => json_encode($biz_content),
         ];
+        $postArr = $signArr;
         $content = http_build_query($signArr);
         openssl_pkcs12_read(file_get_contents(RSA_KEY_PATH .$this->privateKey),$privateKey,123456);
         openssl_sign($content, $resign, $privateKey['pkey'], OPENSSL_ALGO_MD5);
@@ -194,7 +195,7 @@ class GuangZhouYinLianService extends ServiceBase
         $signArr = $this->encodeHex($signByteArr);
         $sign = implode($signArr);
 //        dingAlarm('车辆数量查询',['$sign'=>$sign]);
-        $postArr = $signArr;
+
         $postArr['sign'] = $sign;
         //请求发送内容
 //        $postData = http_build_query($postArr);
