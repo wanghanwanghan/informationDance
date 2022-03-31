@@ -89,6 +89,15 @@ class FinanceContorller  extends UserController
             $res = $this->getFinanceOriginalData($ent['entName'],$kidTypeList['1'],$kidTypeList['0']);
 //            dingAlarm('getFinanceOriginalData',['$res'=>json_encode($res)]);
             if(empty($res)){
+                $insertData2 = [
+                    'entName'=>$ent['entName'],
+                    'year'=>$kidTypeList['0'],
+                    'id'=>'',
+                ];
+                foreach ($kidTypesKeyArr as $item) {
+                        $insertData2[$item] = '0';
+                }
+                $resData['2'][] = $insertData2;
                 file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
                 continue;
             }
@@ -105,19 +114,19 @@ class FinanceContorller  extends UserController
                     ];
                     $yichangData = [];
                     foreach ($kidTypesKeyArr as $item1) {
-                        dingAlarm('$yichangData',[
-                            'in_array'=>in_array($item1, $year_price_detail[$datum['year']]['cond']),
-                            'year'=>$datum[$item1] == 0.00,
-                            '$datum[$item1]'=>$datum[$item1],
-                            'cond_year'=>json_encode($year_price_detail[$datum['year']]['cond']),
-                            '$item1'=>json_encode($item1),
-                            ]
-                        );
-                        if (in_array($item1, $year_price_detail[$datum['year']]['cond']) && $datum[$item1] == 0.00 ) {
+//                        dingAlarm('$yichangData',[
+//                            'in_array'=>in_array($item1, $year_price_detail[$datum['year']]['cond']),
+//                            'year'=>$datum[$item1] == 0.00,
+//                            '$datum[$item1]'=>$datum[$item1],
+//                            'cond_year'=>json_encode($year_price_detail[$datum['year']]['cond']),
+//                            '$item1'=>json_encode($item1),
+//                            ]
+//                        );
+                        if (in_array($item1, $year_price_detail[$datum['year']]['cond']) && $datum[$item1] == '0.00' ) {
                             $yichangData = $datum;
                         }
                     }
-                    dingAlarm('insertFinanceData',['empty$yichangData'=>$yichangData]);
+                    dingAlarm('empty$yichangData',['empty$yichangData'=>$yichangData]);
                     if(empty($yichangData)){
                         foreach ($kidTypesKeyArr as $item) {
                             if (isset($datum[$item]) && !empty($datum[$item])) {
@@ -194,6 +203,20 @@ class FinanceContorller  extends UserController
     }
 
     public function insertFinanceData($data,$entname){
+
+        foreach ($data as $year1=>$datum) {
+            $value = '';
+            foreach ($datum as $item) {
+                if(!empty($item))
+                {
+                    $value = $item;
+                }
+            }
+            if(empty($value)) unset($data[$year1]);
+        }
+        if(empty($data)){
+            return false;
+        }
         foreach ($data as $year=>$value){
             if(empty($value))continue;
             $insert = [
