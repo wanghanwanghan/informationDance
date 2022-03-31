@@ -102,6 +102,9 @@ class FinanceContorller  extends UserController
             }
             if(!empty($res)) {
                 foreach ($res as $datum) {
+                    if($year_price_detail[$datum['year']]['cond']){
+                        continue;
+                    }
                     $insertData = [
                         $ent['entName'],
                         $datum['year'],
