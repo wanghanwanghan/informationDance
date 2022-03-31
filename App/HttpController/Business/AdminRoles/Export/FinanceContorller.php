@@ -107,17 +107,17 @@ class FinanceContorller  extends UserController
                     foreach ($kidTypesKeyArr as $item1) {
                         dingAlarm('$yichangData',[
                             'in_array'=>in_array($item1, $year_price_detail[$datum['year']]['cond']),
-                            'year'=>empty($datum[$item1]),
+                            'year'=>$datum[$item1] == 0.00,
                             '$datum[$item1]'=>$datum[$item1],
-                            'cond_year'=>$year_price_detail[$datum['year']]['cond'],
-                            '$item1'=>$item1,
+                            'cond_year'=>json_encode($year_price_detail[$datum['year']]['cond']),
+                            '$item1'=>json_encode($item1),
                             ]
                         );
-                        if (in_array($item1, $year_price_detail[$datum['year']]['cond']) && empty($datum[$item1])) {
+                        if (in_array($item1, $year_price_detail[$datum['year']]['cond']) && $datum[$item1] == 0.00 ) {
                             $yichangData = $datum;
                         }
                     }
-                    dingAlarm('insertFinanceData',['empty$yichangData'=>empty($yichangData)]);
+                    dingAlarm('insertFinanceData',['empty$yichangData'=>$yichangData]);
                     if(empty($yichangData)){
                         if (isset($datum[$item]) && !empty($datum[$item])) {
                             $insertData[] = round($datum[$item], 2);
@@ -190,10 +190,8 @@ class FinanceContorller  extends UserController
     }
 
     public function insertFinanceData($data,$entname){
-        if(empty($data)){
-            return false;
-        }
         foreach ($data as $year=>$value){
+            if(empty($value))continue;
             $insert = [
                 'entName'=>$entname,
                 'year'=>$year,
