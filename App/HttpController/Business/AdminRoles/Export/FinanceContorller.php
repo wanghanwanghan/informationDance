@@ -162,7 +162,7 @@ class FinanceContorller  extends UserController
         }
         $resData = [];
         $data = $this->getArrSetKey($data,'year');
-        for ($i=$year;$i<=($year+$dataCount-1);$i++)
+        for ($i=($year-$dataCount);$i<=$year;$i++)
         {
             if(isset($data[$i])){
                 $resData[] = $data[$i];
@@ -188,7 +188,7 @@ class FinanceContorller  extends UserController
             'time' => $time,
             'sign' => $sign,
             'entName' => $entname,
-            'dataCount' => $dataCount,
+            'dataCount' => 10,
             'year' => $year
         ];
         $res = (new CoHttpClient())->useCache(true)->send($url, $data);
