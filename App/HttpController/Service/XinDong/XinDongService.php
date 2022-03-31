@@ -3,6 +3,7 @@
 namespace App\HttpController\Service\XinDong;
 
 use App\Csp\Service\CspService;
+use App\ElasticSearch\Service\ElasticSearchService;
 use App\HttpController\Models\BusinessBase\VendincScale2020Model;
 use App\HttpController\Models\EntDb\EntDbNacao;
 use App\HttpController\Models\EntDb\EntDbNacaoBasic;
@@ -918,9 +919,11 @@ class XinDongService extends ServiceBase
         return $this->checkResp(200, null, $retData, '查询成功');
     }
 
-    //
     function searchClue()
     {
+        $es = (new ElasticSearchService())->createSearchBean()->getBody();
+
+
     }
 
 
