@@ -71,6 +71,7 @@ class FinanceContorller  extends UserController
     }
 
     public function smhzGetFinanceOriginal($entNames,$relation,$appId){
+        dingAlarm('getFinanceOriginalData',['$relation'=>json_encode($relation)]);
         $kidTypes = explode('|',$relation->kidTypes);
         $year_price_detail = getArrByKey(json_decode($relation->year_price_detail),'year');
         $kidTypeList = explode('-',$kidTypes['0']);
@@ -84,6 +85,7 @@ class FinanceContorller  extends UserController
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         $resData = [];
         foreach ($entNames as $ent) {
+            dingAlarm('getFinanceOriginalData',['$kidTypeList'=>json_encode($kidTypeList)]);
             $res = $this->getFinanceOriginalData($ent['entName'],$kidTypeList['1'],$kidTypeList['0']);
             dingAlarm('getFinanceOriginalData',['$res'=>json_encode($res)]);
             if(empty($res)){
