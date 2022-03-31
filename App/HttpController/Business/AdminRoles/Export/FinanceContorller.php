@@ -71,7 +71,7 @@ class FinanceContorller  extends UserController
     }
 
     public function smhzGetFinanceOriginal($entNames,$relation,$appId){
-        dingAlarm('getFinanceOriginalData',['$relation'=>json_encode($relation)]);
+//        dingAlarm('getFinanceOriginalData',['$relation'=>json_encode($relation)]);
         $kidTypes = explode('|',$relation->kidTypes);
         $year_price_detail = getArrByKey(json_decode($relation->year_price_detail),'year');
         $kidTypeList = explode('-',$kidTypes['0']);
@@ -98,7 +98,6 @@ class FinanceContorller  extends UserController
                         $insertData2[$item] = '0';
                 }
                 $resData['2'][] = $insertData2;
-                file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
                 continue;
             }
             if(!empty($res)) {
@@ -153,7 +152,9 @@ class FinanceContorller  extends UserController
                     }
                 }
             }
+            dingAlarm('$insertData2',['$insertData2'=>json_encode($insertData2)]);
         }
+
         return [$fileName, $resData];
     }
 
@@ -195,7 +196,7 @@ class FinanceContorller  extends UserController
             'year' => $year
         ];
         $res = (new CoHttpClient())->useCache(true)->send($url, $data);
-        dingAlarm('insertFinanceData',['$entName'=>$entname,'$data'=>json_encode($res)]);
+//        dingAlarm('insertFinanceData',['$entName'=>$entname,'$data'=>json_encode($res)]);
         if($res['code'] == 200 && !empty($res['result'])){
             $this->insertFinanceData($res['result'],$entname);
         }
@@ -232,7 +233,7 @@ class FinanceContorller  extends UserController
                 'LIAGRO'=>$value['LIAGRO']??'',
                 'SOCNUM'=>empty($value['SOCNUM'])?'':$value['SOCNUM'],
             ];
-            dingAlarm('insertFinanceData',['$entName'=>$entname,'$insert'=>json_encode($insert)]);
+//            dingAlarm('insertFinanceData',['$entName'=>$entname,'$insert'=>json_encode($insert)]);
             FinanceData::create()->data($insert)->save();
         }
         return true;
