@@ -85,9 +85,9 @@ class FinanceContorller  extends UserController
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         $resData = [];
         foreach ($entNames as $ent) {
-            dingAlarm('getFinanceOriginalData',['$kidTypeList'=>json_encode($kidTypeList)]);
+//            dingAlarm('getFinanceOriginalData',['$kidTypeList'=>json_encode($kidTypeList)]);
             $res = $this->getFinanceOriginalData($ent['entName'],$kidTypeList['1'],$kidTypeList['0']);
-            dingAlarm('getFinanceOriginalData',['$res'=>json_encode($res)]);
+//            dingAlarm('getFinanceOriginalData',['$res'=>json_encode($res)]);
             if(empty($res)){
                 file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
                 continue;
@@ -117,6 +117,7 @@ class FinanceContorller  extends UserController
                             } else if (isset($datum[$item]) && !is_numeric($datum[$item])) {
                                 $insertData[] = '';
                             }
+                            dingAlarm('getFinanceOriginalData',['$year_price_detail'=>json_encode($year_price_detail),'year'=>json_encode($year_price_detail[$datum['year']])]);
                             RequestUserInfo::create()->where('appId', $appId)->update([
                                                 'money' => QueryBuilder::dec($year_price_detail[$datum['year']]['price'])
                                             ]);
