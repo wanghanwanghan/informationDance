@@ -104,6 +104,11 @@ class FinanceContorller  extends UserController
                         'id'=>$datum['id'],
                     ];
                     foreach ($kidTypesKeyArr as $item) {
+                        dingAlarm('getFinanceOriginalData',[
+                            '$item'=>$item,
+                            'cond_year'=>json_encode($year_price_detail[$datum['year']]['cond']),
+                            '$datum[$item]'=>$datum[$item]
+                        ]);
                         if(in_array($item,$year_price_detail[$datum['year']]['cond']) && (!is_numeric($datum[$item]) || empty($datum[$item]))){
                             if (isset($datum[$item]) && is_numeric($datum[$item])) {
                                 $insertData2[$item] = '正常';
@@ -117,7 +122,7 @@ class FinanceContorller  extends UserController
                             } else if (isset($datum[$item]) && !is_numeric($datum[$item])) {
                                 $insertData[] = '';
                             }
-                            dingAlarm('getFinanceOriginalData',['$year_price_detail'=>json_encode($year_price_detail),'year'=>json_encode($year_price_detail[$datum['year']]),'$datum_year'=>$datum['year']]);
+//                            dingAlarm('getFinanceOriginalData',['$year_price_detail'=>json_encode($year_price_detail),'year'=>json_encode($year_price_detail[$datum['year']]),'$datum_year'=>$datum['year']]);
                             $price = $year_price_detail[$datum['year']]['price']??0;
                             RequestUserInfo::create()->where('appId', $appId)->update([
                                                 'money' => QueryBuilder::dec($price)
@@ -171,7 +176,9 @@ class FinanceContorller  extends UserController
         ];
         $res = (new CoHttpClient())->useCache(true)->send($url, $data);
         dingAlarm('insertFinanceData',['$entName'=>$entname,'$data'=>json_encode($res)]);
-        $this->insertFinanceData($res['result'],$entname);
+        if($res['code'] == 200 && !empty($res['result'])){
+            $this->insertFinanceData($res['result'],$entname);
+        }
         return true;
     }
 
