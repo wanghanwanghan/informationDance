@@ -229,7 +229,6 @@ class FinanceContorller  extends UserController
                 'LIAGRO'=>$value['LIAGRO']??'',
                 'SOCNUM'=>empty($value['SOCNUM'])?'':$value['SOCNUM'],
             ];
-//            dingAlarm('insertFinanceData',['$entName'=>$entname,'$insert'=>json_encode($insert)]);
             FinanceData::create()->data($insert)->save();
         }
         return true;

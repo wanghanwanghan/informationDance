@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\AdminRoles\Export;
 
+use App\Csp\Service\CspService;
 use App\HttpController\Business\AdminRoles\User\UserController;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaYanYuan\FaYanYuanService;
@@ -33,11 +34,20 @@ class SheshuiContorller  extends UserController
         foreach ($entNames as $ent) {
             $data = $this->getSatpartyChufa($ent['entName'], 1);
             dingAlarm('涉税处罚公示',['$data'=>json_encode($data)]);
-            if (empty($data)) {
+            if (empty($data['satparty_chufaList'])) {
                 continue;
             }
+            if (isset($data['totalPageNum']) && $data['totalPageNum'] > 1) {
+                for ($i = 2; $i <= $data['totalPageNum']; $i++) {
+                    $data2 = $this->getSatpartyChufa($ent['entName'], 1);
+                    $data['satparty_chufaList'] = array_merge($data['satparty_chufaList'], $data2['satparty_chufaList']);
+                }
+            }
+            foreach ($data['satparty_chufaList'] as $datum) {
+                $resData[] = $this->fhGetSatpartyChufaDetail($datum['entryId'], $file, $ent['entName']);
+            }
         }
-        return ['',[]];
+        return [$fileName, $resData];
     }
 
     /**
@@ -52,5 +62,20 @@ class SheshuiContorller  extends UserController
             'range' => 10,
         ];
         return (new FaYanYuanService())->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sat', $postData);
+    }
+
+    public function fhGetSatpartyChufaDetail($id,$file,$name){
+        $postData = ['id' => $id];
+        $res = (new FaYanYuanService())
+            ->setCheckRespFlag(true)
+            ->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . 'satparty_chufa', $postData);
+        dingAlarm('涉税处罚公示详情',['$data'=>json_encode($res)]);
+        return '';
+//
+//        $data = $res['sifacdk']['0'];
+//        if(empty($data)){
+//            file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+//            return [];
+//        }
     }
 }
