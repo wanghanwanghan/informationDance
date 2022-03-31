@@ -119,10 +119,12 @@ class FinanceContorller  extends UserController
                     }
                     dingAlarm('insertFinanceData',['empty$yichangData'=>$yichangData]);
                     if(empty($yichangData)){
-                        if (isset($datum[$item]) && !empty($datum[$item])) {
-                            $insertData[] = round($datum[$item], 2);
-                        } else if (isset($datum[$item]) && empty($datum[$item])) {
-                            $insertData[] = '';
+                        foreach ($kidTypesKeyArr as $item) {
+                            if (isset($datum[$item]) && !empty($datum[$item])) {
+                                $insertData[] = round($datum[$item], 2);
+                            } else if (isset($datum[$item]) && empty($datum[$item])) {
+                                $insertData[] = '';
+                            }
                         }
                         $price = $year_price_detail[$datum['year']]['price']??0;
                         RequestUserInfo::create()->where('appId', $appId)->update([
@@ -131,10 +133,12 @@ class FinanceContorller  extends UserController
                         $resData['1'][] = $insertData;
                         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
                     }else{
-                        if (isset($datum[$item]) && !empty($datum[$item])) {
-                            $insertData2[$item] = '正常';
-                        } else if (isset($datum[$item]) && empty($datum[$item])) {
-                            $insertData2[$item] = '0';
+                        foreach ($kidTypesKeyArr as $item) {
+                            if (isset($datum[$item]) && !empty($datum[$item])) {
+                                $insertData2[$item] = '正常';
+                            } else if (isset($datum[$item]) && empty($datum[$item])) {
+                                $insertData2[$item] = '0';
+                            }
                         }
                         $resData['2'][] = $insertData2;
                     }
