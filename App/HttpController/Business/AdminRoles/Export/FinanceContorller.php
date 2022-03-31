@@ -85,8 +85,7 @@ class FinanceContorller  extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
             $res = $this->getFinanceOriginalData($ent['entName'],$kidTypeList['1'],$kidTypeList['0']);
-//            dingAlarm('getFinanceOriginalData',['$res'=>json_encode($res)]);
-
+            dingAlarm('getFinanceOriginalData',['$res'=>json_encode($res)]);
             if(empty($res)){
                 file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
                 continue;
