@@ -102,7 +102,7 @@ class FinanceContorller  extends UserController
             }
             if(!empty($res)) {
                 foreach ($res as $datum) {
-                    dingAlarm('empty$yichangData',['$datum'=>json_encode($datum),'$year_price_detail_year'=>json_encode($year_price_detail[$datum['year']])]);
+//                    dingAlarm('empty$yichangData',['$datum'=>json_encode($datum),'$year_price_detail_year'=>json_encode($year_price_detail[$datum['year']])]);
                     if(empty($datum)|| !isset($year_price_detail[$datum['year']]['cond'])){
                         continue;
                     }
@@ -148,7 +148,7 @@ class FinanceContorller  extends UserController
                     }
                 }
             }
-            dingAlarm('$resData',['$resData'=>json_encode($resData)]);
+//            dingAlarm('$resData',['$resData'=>json_encode($resData)]);
         }
 
         return [$fileName, $resData];
@@ -192,7 +192,7 @@ class FinanceContorller  extends UserController
             'year' => $year
         ];
         $res = (new CoHttpClient())->useCache(true)->send($url, $data);
-//        dingAlarm('insertFinanceData',['$entName'=>$entname,'$data'=>json_encode($res)]);
+        dingAlarm('insertFinanceData',['$entName'=>$entname,'$data'=>json_encode($res)]);
         if($res['code'] == 200 && !empty($res['result'])){
             $this->insertFinanceData($res['result'],$entname);
         }
