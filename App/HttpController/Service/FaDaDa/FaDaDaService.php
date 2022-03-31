@@ -251,7 +251,7 @@ class FaDaDaService extends ServiceBase
             ->where("(`entName` = '{$arr['legalPerson']}' OR `code` = '{$arr['idCard']}') AND `account_type` = '1'")
             ->get();
         if (!empty($people_customer_info)) {
-            return [$people_customer_info->getAttr('customer_id'),''];;
+            return [$people_customer_info->getAttr('customer_id'),''];
         }
         $people_customer_id = '';
         $errorData = '';
