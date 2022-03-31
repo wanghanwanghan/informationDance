@@ -761,4 +761,43 @@ Eof;
         $file = $FinanceContorller->getSmhzAbnormalFinance($ids,$appId,$batchNum);
         return $this->writeJson(200,[],$file,'成功');
     }
+
+    public function getFBatchNumList(){
+        $pageNo = $this->getRequestData('pageNO') ?? '';
+        $pageSize = $this->getRequestData('pageSize') ?? '';
+        $appId = $this->getRequestData('username') ?? '';
+        $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
+        $pageSize = empty($pageSize)?10:$pageSize;
+        $pageNo = empty($pageNo)?1:$pageNo;
+        $limit = ($pageNo-1)*$pageSize;
+        $countSql = <<<Eof
+SELECT count(DISTINCT ( batchNum ))as num FROM information_dance_barch_charging_log where userId = {$info->id}  and  type= 15
+Eof;
+        $count = sqlRaw($countSql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        $dataSql = <<<Eof
+SELECT DISTINCT ( batchNum ) FROM information_dance_barch_charging_log where userId = {$info->id}   and  type= 15 order by id desc LIMIT {$limit},{$pageSize} 
+Eof;
+        $list = sqlRaw($dataSql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        $batchNums = array_column($list,'batchNum');
+        $batchNumsStr = "'".implode("','",$batchNums)."'";
+        $sql = <<<Eof
+SELECT
+	batchNum,
+	count( entName ) as entCount,
+	created_at 
+FROM
+	information_dance_batch_seach_log where batchNum in({$batchNumsStr} )
+GROUP BY
+	batchNum  order by id desc
+Eof;
+        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        $paging = [
+            'page' => $pageNo,
+            'pageSize' => $pageSize,
+            'total' => $count['0']['num'],
+            'totalPage' => (int)($count['0']['num']/$pageSize)+1,
+        ];
+        return $this->writeJson(200, $paging, $list,'成功');
+    }
+
 }
