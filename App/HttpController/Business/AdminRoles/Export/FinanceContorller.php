@@ -102,7 +102,8 @@ class FinanceContorller  extends UserController
             }
             if(!empty($res)) {
                 foreach ($res as $datum) {
-                    if($year_price_detail[$datum['year']]['cond']){
+                    dingAlarm('empty$yichangData',['$datum'=>json_encode($datum),'$year_price_detail_year'=>$year_price_detail[$datum['year']]]);
+                    if(empty($datum)|| !isset($year_price_detail[$datum['year']]['cond'])){
                         continue;
                     }
                     $insertData = [
@@ -116,17 +117,17 @@ class FinanceContorller  extends UserController
                     ];
                     $yichangData = [];
                     foreach ($kidTypesKeyArr as $item1) {
-                        dingAlarm('$yichangData',[
-                            'in_array'=>in_array($item1, $year_price_detail[$datum['year']]['cond']),
-                            'year'=>$datum[$item1] == 0.00,
-                            '$datum[$item1]'=>$datum[$item1],
-                            'cond_year'=>json_encode($year_price_detail[$datum['year']]['cond']),
-                            '$item1'=>json_encode($item1),
-                            ]
-                        );
+//                        dingAlarm('$yichangData',[
+//                            'in_array'=>in_array($item1, $year_price_detail[$datum['year']]['cond']),
+//                            'year'=>$datum[$item1] == 0.00,
+//                            '$datum[$item1]'=>$datum[$item1],
+//                            'cond_year'=>json_encode($year_price_detail[$datum['year']]['cond']),
+//                            '$item1'=>json_encode($item1),
+//                            ]
+//                        );
 //                        dingAlarm('empty$yichangData',['empty$yichangData'=>json_encode($yichangData)]);
                         if (in_array($item1, $year_price_detail[$datum['year']]['cond']) && $datum[$item1] == 0 ) {
-                            dingAlarm('empty$yichangData',['$yichangData'=>1]);
+//                            dingAlarm('empty$yichangData',['$yichangData'=>1]);
                             $yichangData = 1;
                             break;
                         }
