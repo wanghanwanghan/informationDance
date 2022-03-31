@@ -664,7 +664,7 @@ class XinDongController extends ProvideBase
                 'code' => 201,
                 'paging' => null,
                 'result' => null,
-                'msg' => 'ent不能是空',
+                'msg' => 'entName不能是空',
             ]]);
         }
 
