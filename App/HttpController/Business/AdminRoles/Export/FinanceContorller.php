@@ -102,7 +102,7 @@ class FinanceContorller  extends UserController
             }
             if(!empty($res)) {
                 foreach ($res as $datum) {
-                    dingAlarm('empty$yichangData',['$datum'=>json_encode($datum),'$year_price_detail_year'=>$year_price_detail[$datum['year']]]);
+                    dingAlarm('empty$yichangData',['$datum'=>json_encode($datum),'$year_price_detail_year'=>json_encode($year_price_detail[$datum['year']])]);
                     if(empty($datum)|| !isset($year_price_detail[$datum['year']]['cond'])){
                         continue;
                     }
