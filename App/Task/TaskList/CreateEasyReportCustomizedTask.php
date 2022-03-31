@@ -4357,7 +4357,7 @@ TEMP;
         $insert = '';
         $ocrData = $this->getOcrData('4-2', 4);
         $res = $data['re_fpxx']['zyspfx'];
-        $zhouqi = "自 {$data['commonData']['zhouqi']} 的销项发票";;
+        $zhouqi = "自 {$data['commonData']['zhouqi']} 的销项发票";
         if (!empty($res)) {
             $i = 1;
             foreach ($res as $one) {
@@ -4398,7 +4398,7 @@ TEMP;
         $insert = '';
         $ocrData = $this->getOcrData('4-3', 4);
         $res = $data['re_fpjx']['zycbfx'][0];
-        $zhouqi = "自 {$data['commonData']['zhouqi']} 的进项发票";;
+        $zhouqi = "自 {$data['commonData']['zhouqi']} 的进项发票";
         if (!empty($res)) {
             $i = 1;
             foreach ($res as $one) {

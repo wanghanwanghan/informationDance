@@ -435,7 +435,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         if (!isset($cw[0])) return 0;
 
         //先拿到营业总收入
-        $vendInc = $cw[0][2];;
+        $vendInc = $cw[0][2];
 
         $sshy = trim($jb['INDUSTRY']);
 

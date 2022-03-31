@@ -158,7 +158,7 @@ class GuangZhouYinLianService extends ServiceBase
          */
         $time = time();
         $sndDt = date('YmdHis',$time);
-        $merOrdrNo = $this->busiMerno.$sndDt.control::randNum(9);;
+        $merOrdrNo = $this->busiMerno.$sndDt.control::randNum(9);
         $biz_content = [
             'sndDt' => $sndDt,
             'busiMerNo' => $this->busiMerno,
