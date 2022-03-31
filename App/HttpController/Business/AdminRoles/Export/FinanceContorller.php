@@ -122,11 +122,11 @@ class FinanceContorller  extends UserController
 //                            '$item1'=>json_encode($item1),
 //                            ]
 //                        );
-                        if (in_array($item1, $year_price_detail[$datum['year']]['cond']) && $datum[$item1] == '0.00' ) {
+                        if (in_array($item1, $year_price_detail[$datum['year']]['cond']) && $datum[$item1] == 0 ) {
                             $yichangData = $datum;
                         }
                     }
-                    dingAlarm('empty$yichangData',['empty$yichangData'=>$yichangData]);
+                    dingAlarm('empty$yichangData',['empty$yichangData'=>json_encode($yichangData)]);
                     if(empty($yichangData)){
                         foreach ($kidTypesKeyArr as $item) {
                             if (isset($datum[$item]) && !empty($datum[$item])) {
@@ -207,7 +207,7 @@ class FinanceContorller  extends UserController
         foreach ($data as $year1=>$datum) {
             $value = '';
             foreach ($datum as $item) {
-                if(!empty($item))
+                if(!empty($item) || $item == 0 || !is_numeric($item))
                 {
                     $value = $item;
                 }
