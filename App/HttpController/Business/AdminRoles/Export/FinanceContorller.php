@@ -105,18 +105,25 @@ class FinanceContorller  extends UserController
                     ];
                     $yichangData = [];
                     foreach ($kidTypesKeyArr as $item1) {
+                        dingAlarm('$yichangData',[
+                            'in_array'=>in_array($item1, $year_price_detail[$datum['year']]['cond']),
+                            'year'=>empty($datum[$item1]),
+                            '$datum[$item1]'=>$datum[$item1],
+                            'cond_year'=>$year_price_detail[$datum['year']]['cond'],
+                            '$item1'=>$item1,
+                            ]
+                        );
                         if (in_array($item1, $year_price_detail[$datum['year']]['cond']) && empty($datum[$item1])) {
                             $yichangData = $datum;
                         }
                     }
-
+                    dingAlarm('insertFinanceData',['empty$yichangData'=>empty($yichangData)]);
                     if(empty($yichangData)){
                         if (isset($datum[$item]) && !empty($datum[$item])) {
                             $insertData[] = round($datum[$item], 2);
                         } else if (isset($datum[$item]) && empty($datum[$item])) {
                             $insertData[] = '';
                         }
-//                            dingAlarm('getFinanceOriginalData',['$year_price_detail'=>json_encode($year_price_detail),'year'=>json_encode($year_price_detail[$datum['year']]),'$datum_year'=>$datum['year']]);
                         $price = $year_price_detail[$datum['year']]['price']??0;
                         RequestUserInfo::create()->where('appId', $appId)->update([
                             'money' => QueryBuilder::dec($price)
@@ -160,7 +167,7 @@ class FinanceContorller  extends UserController
     }
 
     public function getFinanceOriginal($entname,$dataCount,$year){
-        dingAlarm('insertFinanceData',['$entName'=>$entname,'$dataCount'=>$dataCount,'$year'=>$year]);
+//        dingAlarm('insertFinanceData',['$entName'=>$entname,'$dataCount'=>$dataCount,'$year'=>$year]);
         $url = 'https://api.meirixindong.com/provide/v1/xd/getFinanceOriginal';
         $appId = '5BBFE57DE6DD0C8CDBC5D16A31125D5F';
         $appSecret = 'C2F24A85DF750882FAD7';
