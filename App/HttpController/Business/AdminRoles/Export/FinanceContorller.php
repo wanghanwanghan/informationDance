@@ -113,19 +113,21 @@ class FinanceContorller  extends UserController
                     ];
                     $yichangData = [];
                     foreach ($kidTypesKeyArr as $item1) {
-//                        dingAlarm('$yichangData',[
-//                            'in_array'=>in_array($item1, $year_price_detail[$datum['year']]['cond']),
-//                            'year'=>$datum[$item1] == 0.00,
-//                            '$datum[$item1]'=>$datum[$item1],
-//                            'cond_year'=>json_encode($year_price_detail[$datum['year']]['cond']),
-//                            '$item1'=>json_encode($item1),
-//                            ]
-//                        );
+                        dingAlarm('$yichangData',[
+                            'in_array'=>in_array($item1, $year_price_detail[$datum['year']]['cond']),
+                            'year'=>$datum[$item1] == 0.00,
+                            '$datum[$item1]'=>$datum[$item1],
+                            'cond_year'=>json_encode($year_price_detail[$datum['year']]['cond']),
+                            '$item1'=>json_encode($item1),
+                            ]
+                        );
+//                        dingAlarm('empty$yichangData',['empty$yichangData'=>json_encode($yichangData)]);
                         if (in_array($item1, $year_price_detail[$datum['year']]['cond']) && $datum[$item1] == 0 ) {
-                            $yichangData = $datum;
+                            dingAlarm('empty$yichangData',['$yichangData'=>1]);
+                            $yichangData = 1;
+                            break;
                         }
                     }
-                    dingAlarm('empty$yichangData',['empty$yichangData'=>json_encode($yichangData)]);
                     if(empty($yichangData)){
                         foreach ($kidTypesKeyArr as $item) {
                             if (isset($datum[$item]) && !empty($datum[$item])) {
@@ -152,7 +154,7 @@ class FinanceContorller  extends UserController
                     }
                 }
             }
-            dingAlarm('$insertData2',['$insertData2'=>json_encode($insertData2)]);
+            dingAlarm('$resData',['$resData'=>json_encode($resData)]);
         }
 
         return [$fileName, $resData];
