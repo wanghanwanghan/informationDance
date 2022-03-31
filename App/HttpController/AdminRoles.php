@@ -42,6 +42,8 @@ class AdminRoles
             $routeCollector->addRoute(['GET', 'POST'], '/getTypeMapByAPPId', $prefix . 'getTypeMapByAPPId');
             $routeCollector->addRoute(['GET', 'POST'], '/addBatchType', $prefix . 'addBatchType');
             $routeCollector->addRoute(['GET', 'POST'], '/editApiUserRelation', $prefix . 'editApiUserRelation');
+            $routeCollector->addRoute(['GET', 'POST'], '/getFBatchNumList', $prefix . 'getFBatchNumList');
+
         });
         return true;
     }

@@ -763,6 +763,7 @@ Eof;
     }
 
     public function getFBatchNumList(){
+        dingAlarm('getFBatchNumList',['$countSql'=>1]);
         $pageNo = $this->getRequestData('pageNO') ?? '';
         $pageSize = $this->getRequestData('pageSize') ?? '';
         $appId = $this->getRequestData('username') ?? '';
@@ -770,7 +771,7 @@ Eof;
         $pageSize = empty($pageSize)?10:$pageSize;
         $pageNo = empty($pageNo)?1:$pageNo;
         $limit = ($pageNo-1)*$pageSize;
-        dingAlarm('getFBatchNumList',['$countSql'=>1]);
+
         $countSql = <<<Eof
 SELECT count(DISTINCT ( batchNum ))as num FROM information_dance_barch_charging_log where userId = {$info->id}  and  type= 15
 Eof;
