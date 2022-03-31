@@ -117,9 +117,10 @@ class FinanceContorller  extends UserController
                             } else if (isset($datum[$item]) && !is_numeric($datum[$item])) {
                                 $insertData[] = '';
                             }
-                            dingAlarm('getFinanceOriginalData',['$year_price_detail'=>json_encode($year_price_detail),'year'=>json_encode($year_price_detail[$datum['year']])]);
+                            dingAlarm('getFinanceOriginalData',['$year_price_detail'=>json_encode($year_price_detail),'year'=>json_encode($year_price_detail[$datum['year']]),'$datum_year'=>$datum['year']]);
+                            $price = $year_price_detail[$datum['year']]['price']??0;
                             RequestUserInfo::create()->where('appId', $appId)->update([
-                                                'money' => QueryBuilder::dec($year_price_detail[$datum['year']]['price'])
+                                                'money' => QueryBuilder::dec($price)
                                             ]);
                         }
                     }
