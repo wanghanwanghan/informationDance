@@ -87,7 +87,7 @@ class FinanceContorller  extends UserController
         foreach ($entNames as $ent) {
 //            dingAlarm('getFinanceOriginalData',['$kidTypeList'=>json_encode($kidTypeList)]);
             $res = $this->getFinanceOriginalData($ent['entName'],$kidTypeList['1'],$kidTypeList['0']);
-            dingAlarm('getFinanceOriginalData',['$res'=>json_encode($res)]);
+            dingAlarm('getFinanceOriginalData',['$res'=>json_encode($res),'$year_price_detail'=>json_encode($year_price_detail)]);
             if(empty($res)){
                 $insertData2 = [
                     'entName'=>$ent['entName'],
