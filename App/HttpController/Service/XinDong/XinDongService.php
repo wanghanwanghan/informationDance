@@ -892,12 +892,12 @@ class XinDongService extends ServiceBase
 
     function getNicCode($postData): ?array
     {
-        if(empty($postData['entName']) && empty($postData['code'])){
+        if (empty($postData['entName']) && empty($postData['code'])) {
             return $this->checkResp(500, null, [], '请传entName或者code');
         }
         //先查询四级分类标签
         $sql = 'select * from si_ji_fen_lei  where 1=1';
-        if (!empty($postData['entName']) ) {
+        if (!empty($postData['entName'])) {
             $sql .= " and entName = '{$postData['entName']}' ";
         } elseif (empty($postData['entName']) && !empty($postData['code'])) {
             $sql .= " and code1 = '{$postData['code']}'";
@@ -905,17 +905,22 @@ class XinDongService extends ServiceBase
 
         $sql .= ' limit 1';
         $res = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_si_ji_fen_lei'));
-        if(empty($res)){
+        if (empty($res)) {
             return $this->checkResp(200, null, [], '查询成功');
         }
         //然后用code5去nic_code表中查询full_name
         $retData = [];
         foreach ($res as $v) {
-            $retData []= sqlRaw("select full_name from nic_code where nic_id = '{$v['code5']}'", CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
+            $retData [] = sqlRaw("select full_name from nic_code where nic_id = '{$v['code5']}'", CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
         }
         CommonService::getInstance()->log4PHP($retData, 'info', 'getNicCode_nic_code');
 
-        return $this->checkResp(200, null, $retData, '查询成功');;
+        return $this->checkResp(200, null, $retData, '查询成功');
+    }
+
+    //
+    function searchClue()
+    {
     }
 
 

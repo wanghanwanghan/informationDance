@@ -208,6 +208,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceDataForApi', $prefix . 'getFinanceDataForApi');//
             $routeCollector->addRoute(['GET', 'POST'], '/getCompanyList', $prefix . 'getCompanyList');//
             $routeCollector->addRoute(['GET', 'POST'], '/getNicCode', $prefix . 'getNicCode');//
+            $routeCollector->addRoute(['GET', 'POST'], '/searchClue', $prefix . 'searchClue');//
 
         });
 
