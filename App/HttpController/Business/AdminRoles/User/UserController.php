@@ -773,10 +773,12 @@ Eof;
         $countSql = <<<Eof
 SELECT count(DISTINCT ( batchNum ))as num FROM information_dance_barch_charging_log where userId = {$info->id}  and  type= 15
 Eof;
+        dingAlarm('getFBatchNumList',['$countSql'=>$countSql]);
         $count = sqlRaw($countSql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $dataSql = <<<Eof
 SELECT DISTINCT ( batchNum ) FROM information_dance_barch_charging_log where userId = {$info->id}   and  type= 15 order by id desc LIMIT {$limit},{$pageSize} 
 Eof;
+        dingAlarm('getFBatchNumList',['$dataSql'=>$dataSql]);
         $list = sqlRaw($dataSql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $batchNums = array_column($list,'batchNum');
         $batchNumsStr = "'".implode("','",$batchNums)."'";
@@ -790,6 +792,7 @@ FROM
 GROUP BY
 	batchNum  order by id desc
 Eof;
+        dingAlarm('getFBatchNumList',['$sql'=>$sql]);
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $paging = [
             'page' => $pageNo,
