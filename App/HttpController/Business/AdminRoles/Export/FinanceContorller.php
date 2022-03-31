@@ -87,7 +87,7 @@ class FinanceContorller  extends UserController
         foreach ($entNames as $ent) {
 //            dingAlarm('getFinanceOriginalData',['$kidTypeList'=>json_encode($kidTypeList)]);
             $res = $this->getFinanceOriginalData($ent['entName'],$kidTypeList['1'],$kidTypeList['0']);
-            dingAlarm('getFinanceOriginalData',['$res'=>json_encode($res),'$year_price_detail'=>json_encode($year_price_detail)]);
+//            dingAlarm('getFinanceOriginalData',['$res'=>json_encode($res),'$year_price_detail'=>json_encode($year_price_detail)]);
             if(empty($res)){
                 $insertData2 = [
                     'entName'=>$ent['entName'],
@@ -117,17 +117,7 @@ class FinanceContorller  extends UserController
                     ];
                     $yichangData = [];
                     foreach ($kidTypesKeyArr as $item1) {
-//                        dingAlarm('$yichangData',[
-//                            'in_array'=>in_array($item1, $year_price_detail[$datum['year']]['cond']),
-//                            'year'=>$datum[$item1] == 0.00,
-//                            '$datum[$item1]'=>$datum[$item1],
-//                            'cond_year'=>json_encode($year_price_detail[$datum['year']]['cond']),
-//                            '$item1'=>json_encode($item1),
-//                            ]
-//                        );
-//                        dingAlarm('empty$yichangData',['empty$yichangData'=>json_encode($yichangData)]);
                         if (in_array($item1, $year_price_detail[$datum['year']]['cond']) && $datum[$item1] == 0 ) {
-//                            dingAlarm('empty$yichangData',['$yichangData'=>1]);
                             $yichangData = 1;
                             break;
                         }
