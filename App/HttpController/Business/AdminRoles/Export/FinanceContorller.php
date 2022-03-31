@@ -105,15 +105,15 @@ class FinanceContorller  extends UserController
                     ];
                     $yichangData = [];
                     foreach ($kidTypesKeyArr as $item1) {
-                        if (in_array($item1, $year_price_detail[$datum['year']]['cond']) && (!is_numeric($datum[$item1]) || empty($datum[$item1]))) {
+                        if (in_array($item1, $year_price_detail[$datum['year']]['cond']) && empty($datum[$item1])) {
                             $yichangData = $datum;
                         }
                     }
 
                     if(empty($yichangData)){
-                        if (isset($datum[$item]) && is_numeric($datum[$item])) {
+                        if (isset($datum[$item]) && !empty($datum[$item])) {
                             $insertData[] = round($datum[$item], 2);
-                        } else if (isset($datum[$item]) && !is_numeric($datum[$item])) {
+                        } else if (isset($datum[$item]) && empty($datum[$item])) {
                             $insertData[] = '';
                         }
 //                            dingAlarm('getFinanceOriginalData',['$year_price_detail'=>json_encode($year_price_detail),'year'=>json_encode($year_price_detail[$datum['year']]),'$datum_year'=>$datum['year']]);
@@ -121,16 +121,16 @@ class FinanceContorller  extends UserController
                         RequestUserInfo::create()->where('appId', $appId)->update([
                             'money' => QueryBuilder::dec($price)
                         ]);
+                        $resData['1'][] = $insertData;
+                        file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
                     }else{
-                        if (isset($datum[$item]) && is_numeric($datum[$item])) {
+                        if (isset($datum[$item]) && !empty($datum[$item])) {
                             $insertData2[$item] = '正常';
-                        } else if (isset($datum[$item]) && !is_numeric($datum[$item])) {
+                        } else if (isset($datum[$item]) && empty($datum[$item])) {
                             $insertData2[$item] = '0';
                         }
                         $resData['2'][] = $insertData2;
                     }
-                    $resData['1'][] = $insertData;
-                    file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
                 }
             }
         }
