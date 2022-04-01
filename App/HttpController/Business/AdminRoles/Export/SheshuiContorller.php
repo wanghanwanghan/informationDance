@@ -13,7 +13,7 @@ class SheshuiContorller  extends UserController
      * 法海 - 涉税处罚公示
      */
     public function fhGetSatpartyChufa($entNames){
-        dingAlarm('涉税处罚公示',['fhGetSatpartyChufa'=>json_encode($entNames)]);
+//        dingAlarm('涉税处罚公示',['fhGetSatpartyChufa'=>json_encode($entNames)]);
         $fileName = date('YmdHis', time()) . '涉税处罚公示.csv';
         $file = TEMP_FILE_PATH . $fileName;
         $header = [
@@ -29,14 +29,13 @@ class SheshuiContorller  extends UserController
             '处罚时间',
             '税务登记号',
             '标题',
-            '数据类型',
             '事件名称'
         ];
         file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getSatpartyChufa($ent['entName'], 1);
-            dingAlarm('涉税处罚公示',['$datum'=>json_encode($data),'entName'=>$ent['entName']]);
+//            dingAlarm('涉税处罚公示',['$datum'=>json_encode($data),'entName'=>$ent['entName']]);
             if (empty($data['satparty_chufaList'])) {
                 continue;
             }
@@ -47,7 +46,7 @@ class SheshuiContorller  extends UserController
                 }
             }
             foreach ($data['satparty_chufaList'] as $datum) {
-                dingAlarm('涉税处罚公示',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
+//                dingAlarm('涉税处罚公示',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
                 $resData[] = $this->fhGetSatpartyChufaDetail($datum['entryId'], $file, $ent['entName']);
             }
         }
@@ -72,7 +71,7 @@ class SheshuiContorller  extends UserController
         $postData = ['id' => $id];
         $docType = 'satparty_chufa';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
-        dingAlarm('涉税处罚公示详情',['$data'=>json_encode($res),'$id'=>$id]);
+//        dingAlarm('涉税处罚公示详情',['$data'=>json_encode($res),'$id'=>$id]);
         $data = $res['satparty_chufa']['0'];
         if(empty($data)){
             file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
@@ -91,7 +90,6 @@ class SheshuiContorller  extends UserController
             $data['sortTime'],
             $data['taxpayerId'],
             $data['title'],
-            $data['dataType'],
             $data['eventName']
         ];
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
@@ -118,14 +116,13 @@ class SheshuiContorller  extends UserController
             '税种',
             '税务登记号',
             '标题',
-            '数据类型',
             '税务局等级'
         ];
         file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getSatpartyQs($ent['entName'], 1);//
-            dingAlarm('欠税公告',['$data'=>json_encode($data)]);
+//            dingAlarm('欠税公告',['$data'=>json_encode($data)]);
             if (empty($data['satparty_qsList'])) {
                 continue;
             }
@@ -160,7 +157,7 @@ class SheshuiContorller  extends UserController
         $postData = ['id' => $id];
         $docType = 'satparty_qs';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
-        dingAlarm('欠税公告详情',['$res'=>json_encode($res)]);
+//        dingAlarm('欠税公告详情',['$res'=>json_encode($res)]);
         $data = $res['satparty_qs']['0'];
         if(empty($data)){
             file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
@@ -180,7 +177,6 @@ class SheshuiContorller  extends UserController
             $data['taxCategory'],
             $data['taxpayerId'],
             $data['title'],
-            $data['dataType'],
             $data['authorityRank']
         ];
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
@@ -206,13 +202,12 @@ class SheshuiContorller  extends UserController
             '认定时间',
             '税务登记号',
             '标题',
-            '数据类别',
         ];
         file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getSatpartyFzc($ent['entName'], 1);//
-            dingAlarm('税务非正常户公示',['$data'=>json_encode($data)]);
+//            dingAlarm('税务非正常户公示',['$data'=>json_encode($data)]);
             if (empty($data['satparty_fzcList'])) {
                 continue;
             }
@@ -246,7 +241,7 @@ class SheshuiContorller  extends UserController
         $postData = ['id' => $id];
         $docType = 'satparty_fzc';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
-        dingAlarm('税务非正常户公示详情',['$res'=>json_encode($res)]);
+//        dingAlarm('税务非正常户公示详情',['$res'=>json_encode($res)]);
         $data = $res['satparty_fzc']['0'];
         if(empty($data)){
             file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
@@ -265,7 +260,6 @@ class SheshuiContorller  extends UserController
             $data['sortTime'],
             $data['taxpayerId'],
             $data['title'],
-            $data['dataType']
         ];
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         return $insertData;
@@ -290,13 +284,12 @@ class SheshuiContorller  extends UserController
             '认定时间',
             '税务登记号',
             '标题',
-            '数据类别',
         ];
         file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getSatpartyXuke($ent['entName'], 1);//
-            dingAlarm('税务许可',['$data'=>json_encode($data)]);
+//            dingAlarm('税务许可',['$data'=>json_encode($data)]);
             if (empty($data['satparty_xukeList'])) {
                 continue;
             }
@@ -307,7 +300,7 @@ class SheshuiContorller  extends UserController
                 }
             }
             foreach ($data['satparty_xukeList'] as $datum) {
-                dingAlarm('税务许可',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
+//                dingAlarm('税务许可',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
                 $resData[] = $this->fhGetSatpartyXukeDetail($datum['entryId'], $file, $ent['entName']);
             }
         }
@@ -331,7 +324,7 @@ class SheshuiContorller  extends UserController
         $postData = ['id' => $id];
         $docType = 'satparty_xuke';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
-        dingAlarm('税务许可详情',['$res'=>json_encode($res)]);
+//        dingAlarm('税务许可详情',['$res'=>json_encode($res)]);
         $data = $res['satparty_xuke']['0'];
         if(empty($data)){
             file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
@@ -350,7 +343,6 @@ class SheshuiContorller  extends UserController
             $data['sortTime'],
             $data['taxpayerId'],
             $data['title'],
-            $data['dataType']
         ];
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         return $insertData;
@@ -373,13 +365,12 @@ class SheshuiContorller  extends UserController
             '评定时间',
             '税务登记号',
             '标题',
-            '数据类别',
         ];
         file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getSatpartyXin($ent['entName'], 1);//
-            dingAlarm('纳税信用等级',['$data'=>json_encode($data)]);
+//            dingAlarm('纳税信用等级',['$data'=>json_encode($data)]);
             if (empty($data['satparty_xinList'])) {
                 continue;
             }
@@ -390,7 +381,7 @@ class SheshuiContorller  extends UserController
                 }
             }
             foreach ($data['satparty_xinList'] as $datum) {
-                dingAlarm('纳税信用等级',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
+//                dingAlarm('纳税信用等级',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
                 $resData[] = $this->fhGetSatpartyXinDetail($datum['entryId'], $file, $ent['entName']);
             }
         }
@@ -416,7 +407,7 @@ class SheshuiContorller  extends UserController
         $postData = ['id' => $id];
         $docType = 'satparty_xin';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
-        dingAlarm('纳税信用等级详情',['$res'=>json_encode($res)]);
+//        dingAlarm('纳税信用等级详情',['$res'=>json_encode($res)]);
         $data = $res['satparty_xuke']['0'];
         if(empty($data)){
             file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
@@ -433,7 +424,6 @@ class SheshuiContorller  extends UserController
             $data['sortTime'],
             $data['taxpayerId'],
             $data['title'],
-            $data['dataType']
         ];
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         return $insertData;
@@ -458,13 +448,12 @@ class SheshuiContorller  extends UserController
             '评定时间',
             '税务登记号',
             '标题',
-            '数据类别',
         ];
         file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getSatpartyReg($ent['entName'], 1);//
-            dingAlarm('税务登记',['$data'=>json_encode($data)]);
+//            dingAlarm('税务登记',['$data'=>json_encode($data)]);
             if (empty($data['satparty_regList'])) {
                 continue;
             }
@@ -475,7 +464,7 @@ class SheshuiContorller  extends UserController
                 }
             }
             foreach ($data['satparty_regList'] as $datum) {
-                dingAlarm('税务登记',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
+//                dingAlarm('税务登记',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
                 $resData[] = $this->fhGetSatpartyRegDetail($datum['entryId'], $file, $ent['entName']);
             }
         }
@@ -501,7 +490,7 @@ class SheshuiContorller  extends UserController
         $postData = ['id' => $id];
         $docType = 'satparty_reg';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
-        dingAlarm('税务登记详情',['$res'=>json_encode($res)]);
+//        dingAlarm('税务登记详情',['$res'=>json_encode($res)]);
         $data = $res['satparty_reg']['0'];
         if(empty($data)){
             file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
@@ -520,7 +509,6 @@ class SheshuiContorller  extends UserController
             $data['sortTime'],
             $data['taxpayerId'],
             $data['title'],
-            $data['dataType']
         ];
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         return $insertData;
