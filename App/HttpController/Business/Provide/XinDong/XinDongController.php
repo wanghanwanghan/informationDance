@@ -423,8 +423,7 @@ class XinDongController extends ProvideBase
                             unset($res[$this->cspKey]['result'][$year][$field]);
                             continue;
                         }
-                        $tmp = strtr($num, $indexTable);
-                        $res[$this->cspKey]['result'][$year][$field] = $tmp;
+                        $res[$this->cspKey]['result'][$year][$field] = strtr($num, $indexTable);
                     }
                 } else {
                     unset($res[$this->cspKey]['result'][$year]);
