@@ -30,7 +30,7 @@ class FinanceContorller  extends UserController
      */
     public function xinanGetFinanceNotAuth($entNames,$relation,$appId)
     {
-        dingAlarm('xinanGetFinanceNotAuth_tou',['$entNames'=>$entNames]);
+//        dingAlarm('xinanGetFinanceNotAuth_tou',['$entNames'=>$entNames]);
         $kidTypes = explode('|',$relation->kidTypes);
         $kidTypeList = explode('-',$kidTypes['0']);
         $kidTypesKeyArr = explode(',',$kidTypes['1']);
@@ -50,7 +50,7 @@ class FinanceContorller  extends UserController
                 'dataCount' => $kidTypeList['1'],//取最近几年的
             ];
             $res = (new LongXinService())->getFinanceData($postData, false);
-            dingAlarm('xinanGetFinanceNotAuth',['$res'=>$res]);
+//            dingAlarm('xinanGetFinanceNotAuth',['$res'=>$res]);
             if(empty($res['data'])){
                 $insertStr = $ent['entName'].','.$kidTypeList['0'];
                 for ($i=1;$i<count($kidTypesKeyArr);$i++){
@@ -76,7 +76,7 @@ class FinanceContorller  extends UserController
     }
 
     public function smhzGetFinanceOriginal($entNames,$relation,$appId){
-        dingAlarm('smhzGetFinanceOriginal',['$relation'=>json_encode($relation)]);
+//        dingAlarm('smhzGetFinanceOriginal',['$relation'=>json_encode($relation)]);
         $kidTypes = explode('|',$relation->kidTypes);
         $year_price_detail = getArrByKey(json_decode($relation->year_price_detail),'year');
         $kidTypeList = explode('-',$kidTypes['0']);
@@ -90,9 +90,9 @@ class FinanceContorller  extends UserController
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         $resData = [];
         foreach ($entNames as $ent) {
-            dingAlarm('getFinanceOriginalData',['$kidTypeList'=>json_encode($kidTypeList)]);
+//            dingAlarm('getFinanceOriginalData',['$kidTypeList'=>json_encode($kidTypeList)]);
             $res = $this->getFinanceOriginalData($ent['entName'],$kidTypeList['1'],$kidTypeList['0']);
-            dingAlarm('getFinanceOriginalData',['$res'=>json_encode($res),'$year_price_detail'=>json_encode($year_price_detail)]);
+//            dingAlarm('getFinanceOriginalData',['$res'=>json_encode($res),'$year_price_detail'=>json_encode($year_price_detail)]);
             if(empty($res)){
                 $insertData2 = [
                     'entName'=>$ent['entName'],
@@ -197,7 +197,7 @@ class FinanceContorller  extends UserController
             'year' => $year
         ];
         $res = (new CoHttpClient())->useCache(true)->send($url, $data);
-        dingAlarm('insertFinanceData',['$entName'=>$entname,'$data'=>json_encode($res)]);
+//        dingAlarm('insertFinanceData',['$entName'=>$entname,'$data'=>json_encode($res)]);
         if($res['code'] == 200 && !empty($res['result'])){
             $this->insertFinanceData($res['result'],$entname);
         }
