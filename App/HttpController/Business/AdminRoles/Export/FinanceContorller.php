@@ -203,14 +203,16 @@ class FinanceContorller  extends UserController
     public function insertFinanceData($data,$entname){
 
         foreach ($data as $year1=>$datum) {
-            $value = '';
+            $value = [];
             foreach ($datum as $item) {
                 if(!empty($item) || $item == 0 || !is_numeric($item))
                 {
-                    $value = $item;
+                    $value['0'] = 0;
+                }else{
+                    $value['1'] = 1;
                 }
             }
-            if(empty($value)) unset($data[$year1]);
+            if(count($value) == 1 && isset($value['0'])) unset($data[$year1]);
         }
         if(empty($data)){
             return false;
