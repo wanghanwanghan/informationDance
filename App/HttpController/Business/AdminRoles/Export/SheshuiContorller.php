@@ -22,12 +22,14 @@ class SheshuiContorller  extends UserController
             '事件结果',
             '企业法定代表人',
             '法人身份证号码',
+            '处罚金额',
             '企业名称',
             '发布时间',
             '处罚时间',
             '税务登记号',
             '标题',
             '数据类型',
+            '事件名称'
         ];
         file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
         $resData = [];
@@ -69,12 +71,59 @@ class SheshuiContorller  extends UserController
         $docType = 'satparty_chufa';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
         dingAlarm('涉税处罚公示详情',['$data'=>json_encode($res),'$id'=>$id]);
-        return '';
-//
-//        $data = $res['sifacdk']['0'];
-//        if(empty($data)){
-//            file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
-//            return [];
-//        }
+        $data = $res['satparty_chufa']['0'];
+        if(empty($data)){
+            file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+            return [];
+        }
+        $insertData = [
+            $name,
+            $data['authority'],
+            $data['body'],
+            $data['eventResult'],
+            $data['legalRepresentative'],
+            $data['lrIdcard'],
+            $data['money'],
+            $data['pname'],
+            $data['postTime'],
+            $data['sortTime'],
+            $data['taxpayerId'],
+            $data['title'],
+            $data['dataType'],
+            $data['eventName']
+        ];
+        file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+        return $insertData;
+    }
+
+    /*
+     * 法海 - 欠税公告
+     */
+    public function fhGetSatpartyQs($entNames){
+        foreach ($entNames as $ent) {
+            $data = $this->getSatpartyQs($ent['entName'], 1);
+            dingAlarm('欠税公告',['$data'=>$data]);
+        }
+    }
+    public function getSatpartyQs($entName,$page){
+        $docType = 'satparty_qs';
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => 10,
+        ];
+        return (new FaYanYuanService())->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl')  . 'sat', $postData);
+    }
+
+    //欠税公告详情
+    function getSatpartyQsDetail($id)
+    {
+        $postData = ['id' => $id];
+
+        $docType = 'satparty_qs';
+
+        $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
+        dingAlarm('欠税公告详情',['$res'=>$res]);
     }
 }
