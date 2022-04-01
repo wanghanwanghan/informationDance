@@ -13,6 +13,7 @@ class SheshuiContorller  extends UserController
      * 法海 - 涉税处罚公示
      */
     public function fhGetSatpartyChufa($entNames){
+        dingAlarm('涉税处罚公示',['fhGetSatpartyChufa'=>json_encode($entNames)]);
         $fileName = date('YmdHis', time()) . '涉税处罚公示.csv';
         $file = TEMP_FILE_PATH . $fileName;
         $header = [
