@@ -45,7 +45,7 @@ class SheshuiContorller  extends UserController
                 }
             }
             foreach ($data['satparty_chufaList'] as $datum) {
-//                dingAlarm('涉税处罚公示',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
+                dingAlarm('涉税处罚公示',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
                 $resData[] = $this->fhGetSatpartyChufaDetail($datum['entryId'], $file, $ent['entName']);
             }
         }
@@ -120,6 +120,7 @@ class SheshuiContorller  extends UserController
             '税务局等级'
         ];
         file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getSatpartyQs($ent['entName'], 1);//
 //            dingAlarm('欠税公告',['$data'=>json_encode($data)]);
@@ -206,6 +207,7 @@ class SheshuiContorller  extends UserController
             '数据类别',
         ];
         file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getSatpartyFzc($ent['entName'], 1);//
             dingAlarm('税务非正常户公示',['$data'=>json_encode($data)]);
@@ -289,6 +291,7 @@ class SheshuiContorller  extends UserController
             '数据类别',
         ];
         file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getSatpartyXuke($ent['entName'], 1);//
             dingAlarm('税务许可',['$data'=>json_encode($data)]);
@@ -371,6 +374,7 @@ class SheshuiContorller  extends UserController
             '数据类别',
         ];
         file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getSatpartyXin($ent['entName'], 1);//
             dingAlarm('纳税信用等级',['$data'=>json_encode($data)]);
@@ -455,6 +459,7 @@ class SheshuiContorller  extends UserController
             '数据类别',
         ];
         file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getSatpartyReg($ent['entName'], 1);//
             dingAlarm('税务登记',['$data'=>json_encode($data)]);
