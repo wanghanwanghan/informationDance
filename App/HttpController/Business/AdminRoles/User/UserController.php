@@ -519,7 +519,6 @@ Eof;
     public function exportBaseInformation()
     {
         $types = $this->getRequestData('types') ?? '';
-        $kidTypes = $this->getRequestData('kidTypes') ?? '';
         $batchNum = $this->getRequestData('batchNum') ?? '';
         $appId = $this->getRequestData('username') ?? '';
         if (empty($types) || empty($batchNum) || empty($appId)) {
@@ -530,8 +529,9 @@ Eof;
         $fileArr = [];
         $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
         $emptyTypes = [];
+        $kidTypes = '';
         foreach ($typeArr as $type) {
-            $kidTypes = '';
+
             if($type == 15){
                 $barchTypeApiRelationInfo = BarchTypeApiRelation::create()->where('id', $type)->get();
                 $requestUserApiRelationship = RequestUserApiRelationship::create()->where("userId = {$info->id} and apiId = {$barchTypeApiRelationInfo->apiId}")->get();
