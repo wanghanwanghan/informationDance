@@ -339,6 +339,7 @@ class XinDongController extends ProvideBase
         $dataCount = 3;
 
         $this->spendMoney = 0;
+        $msg = '';
 
         if ($this->limitEntNumByUserId(__FUNCTION__, $entName, 100)) {
             return $this->writeJson(201, null, null, '请求次数已经达到上限100');
@@ -346,7 +347,7 @@ class XinDongController extends ProvideBase
         if (empty($entName)) {
             return $this->writeJson(201, null, null, 'entName不能是空');
         }
-        if (empty($year)) {
+        if (empty($year) || empty($userInputYear)) {
             return $this->writeJson(201, null, null, 'year不能是空');
         }
         if (empty($pay) || !in_array(strtolower($pay), ['y', 'n'], true)) {
@@ -390,7 +391,7 @@ class XinDongController extends ProvideBase
                 }
             }
 
-            //pay控制
+            //pay控制，判断tmp里有几年是符合需求的
 
             $res = [$this->cspKey => [
                 'code' => 200,
