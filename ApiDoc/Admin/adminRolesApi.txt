@@ -186,7 +186,7 @@
 
 //======================================================================================================================
     描述:获取这个年报批次号的异常数据
-    地址:AdminRoles/v1/User/getFBatchNumList
+    地址:AdminRoles/v1/User/getFAbnormalData
     方法:get/post
     参数:
          username = PHP_is_the_best_language_in_the_world
