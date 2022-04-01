@@ -203,9 +203,10 @@ class FinanceContorller  extends UserController
     public function insertFinanceData($data,$entname){
 
         foreach ($data as $year1=>$datum) {
+            if(empty($datum))unset($data[$year1]);
             $value = [];
             foreach ($datum as $item) {
-                if(empty($item) || !is_numeric($item))
+                if(empty($item))
                 {
                     $value['2'] = 2;
                 }else{
@@ -218,7 +219,6 @@ class FinanceContorller  extends UserController
             return false;
         }
         foreach ($data as $year=>$value){
-            if(empty($value))continue;
             $info = FinanceData::create()->where("entName = '{$entname}' and year = '$year'")->get();
             if(!empty($info)){
                 continue;
