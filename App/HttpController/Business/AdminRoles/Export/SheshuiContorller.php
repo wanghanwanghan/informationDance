@@ -45,7 +45,7 @@ class SheshuiContorller  extends UserController
                 }
             }
             foreach ($data['satparty_chufaList'] as $datum) {
-                dingAlarm('涉税处罚公示',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
+//                dingAlarm('涉税处罚公示',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
                 $resData[] = $this->fhGetSatpartyChufaDetail($datum['entryId'], $file, $ent['entName']);
             }
         }
@@ -100,10 +100,45 @@ class SheshuiContorller  extends UserController
      * 法海 - 欠税公告
      */
     public function fhGetSatpartyQs($entNames){
+        $fileName = date('YmdHis', time()) . '欠税公告.csv';
+        $file = TEMP_FILE_PATH . $fileName;
+        $header = [
+            '公司名',
+            '局（政府单位）',
+            '内容',
+            '事件名称',
+            '企业法定代表人',
+            '法人身份证号码',
+            '欠税金额',
+            '企业名称',
+            '发布时间',
+            '欠税时间',
+            '税种',
+            '税务登记号',
+            '标题',
+            '数据类型',
+            '税务局等级'
+        ];
+        file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
         foreach ($entNames as $ent) {
-            $data = $this->getSatpartyQs($ent['entName'], 1);
-            dingAlarm('欠税公告',['$data'=>json_encode($data)]);
+            $data = $this->getSatpartyQs($ent['entName'], 1);//
+//            dingAlarm('欠税公告',['$data'=>json_encode($data)]);
+            if (empty($data['satparty_qsList'])) {
+                continue;
+            }
+            if (isset($data['totalPageNum']) && $data['totalPageNum'] > 1) {
+                for ($i = 2; $i <= $data['totalPageNum']; $i++) {
+                    $data2 = $this->getSatpartyQs($ent['entName'], 1);
+                    $data['satparty_qsList'] = array_merge($data['satparty_qsList'], $data2['satparty_qsList']);
+                }
+            }
+            foreach ($data['satparty_qsList'] as $datum) {
+//                dingAlarm('涉税处罚公示',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
+                $resData[] = $this->fhgetSatpartyQsDetail($datum['entryId'], $file, $ent['entName']);
+            }
         }
+        return [$fileName, $resData];
+
     }
     public function getSatpartyQs($entName,$page){
         $docType = 'satparty_qs';
@@ -117,13 +152,202 @@ class SheshuiContorller  extends UserController
     }
 
     //欠税公告详情
-    function getSatpartyQsDetail($id)
+    function fhgetSatpartyQsDetail($id,$file,$name)
     {
         $postData = ['id' => $id];
-
         $docType = 'satparty_qs';
-
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
         dingAlarm('欠税公告详情',['$res'=>json_encode($res)]);
+        $data = $res['satparty_qs']['0'];
+        if(empty($data)){
+            file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+            return [];
+        }
+        $insertData = [
+            $name,
+            $data['authority'],
+            $data['body'],
+            $data['eventName'],
+            $data['legalRepresentative'],
+            $data['lrIdcard'],
+            $data['money'],
+            $data['pname'],
+            $data['postTime'],
+            $data['sortTime'],
+            $data['taxCategory'],
+            $data['taxpayerId'],
+            $data['title'],
+            $data['dataType'],
+            $data['authorityRank']
+        ];
+        file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+        return $insertData;
+    }
+
+    /*
+     * 税务非正常户公示
+     */
+    public function fhGetSatpartyFzc($entNames){
+        $fileName = date('YmdHis', time()) . '税务非正常户公示.csv';
+        $file = TEMP_FILE_PATH . $fileName;
+        $header = [
+            '公司名',
+            '局（政府单位）',
+            '内容',
+            '事件名称',
+            '事件结果',
+            '企业法定代表人',
+            '法人身份证号码',
+            '企业名称',
+            '发布时间',
+            '认定时间',
+            '税务登记号',
+            '标题',
+            '数据类别',
+        ];
+        file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        foreach ($entNames as $ent) {
+            $data = $this->getSatpartyFzc($ent['entName'], 1);//
+            dingAlarm('税务非正常户公示',['$data'=>json_encode($data)]);
+            if (empty($data['satparty_fzcList'])) {
+                continue;
+            }
+            if (isset($data['totalPageNum']) && $data['totalPageNum'] > 1) {
+                for ($i = 2; $i <= $data['totalPageNum']; $i++) {
+                    $data2 = $this->getSatpartyFzc($ent['entName'], 1);
+                    $data['satparty_fzcList'] = array_merge($data['satparty_fzcList'], $data2['satparty_fzcList']);
+                }
+            }
+            foreach ($data['satparty_fzcList'] as $datum) {
+//                dingAlarm('税务非正常户公示',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
+                $resData[] = $this->fhGetSatpartyFzcDetail($datum['entryId'], $file, $ent['entName']);
+            }
+        }
+        return [$fileName, $resData];
+    }
+    public function getSatpartyFzc($entName,$page){
+        $docType = 'satparty_fzc';
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => 10,
+        ];
+        return (new FaYanYuanService())->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sat', $postData);
+    }
+
+    //税务非正常户公示详情
+    function fhGetSatpartyFzcDetail($id,$file,$name)
+    {
+        $postData = ['id' => $id];
+        $docType = 'satparty_fzc';
+        $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
+        dingAlarm('税务非正常户公示详情',['$res'=>json_encode($res)]);
+        $data = $res['satparty_fzc']['0'];
+        if(empty($data)){
+            file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+            return [];
+        }
+        $insertData = [
+            $name,
+            $data['authority'],
+            $data['body'],
+            $data['eventName'],
+            $data['eventResult'],
+            $data['legalRepresentative'],
+            $data['lrIdcard'],
+            $data['pname'],
+            $data['postTime'],
+            $data['sortTime'],
+            $data['taxpayerId'],
+            $data['title'],
+            $data['dataType']
+        ];
+        file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+        return $insertData;
+    }
+
+    /*
+     * 税务许可
+     */
+    public function fhGetSatpartyXuke($entNames){
+        $fileName = date('YmdHis', time()) . '税务许可.csv';
+        $file = TEMP_FILE_PATH . $fileName;
+        $header = [
+            '公司名',
+            '局（政府单位）',
+            '内容',
+            '事件名称',
+            '事件结果',
+            '企业法定代表人',
+            '法人身份证号码',
+            '企业名称',
+            '发布时间',
+            '认定时间',
+            '税务登记号',
+            '标题',
+            '数据类别',
+        ];
+        file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        foreach ($entNames as $ent) {
+            $data = $this->getSatpartyXuke($ent['entName'], 1);//
+            dingAlarm('税务许可',['$data'=>json_encode($data)]);
+            if (empty($data['satparty_xukeList'])) {
+                continue;
+            }
+            if (isset($data['totalPageNum']) && $data['totalPageNum'] > 1) {
+                for ($i = 2; $i <= $data['totalPageNum']; $i++) {
+                    $data2 = $this->getSatpartyXuke($ent['entName'], 1);
+                    $data['satparty_xukeList'] = array_merge($data['satparty_xukeList'], $data2['satparty_xukeList']);
+                }
+            }
+            foreach ($data['satparty_xukeList'] as $datum) {
+//                dingAlarm('税务许可',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
+                $resData[] = $this->fhGetSatpartyXukeDetail($datum['entryId'], $file, $ent['entName']);
+            }
+        }
+        return [$fileName, $resData];
+    }
+
+    public function getSatpartyXuke($entName,$page){
+        $docType = 'satparty_xuke';
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => 10,
+        ];
+        return (new FaYanYuanService())->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sat', $postData);
+    }
+
+    //税务许可详情
+    public function fhGetSatpartyXukeDetail($id,$file,$name)
+    {
+        $postData = ['id' => $id];
+        $docType = 'satparty_xuke';
+        $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
+        dingAlarm('税务许可详情',['$res'=>json_encode($res)]);
+        $data = $res['satparty_xuke']['0'];
+        if(empty($data)){
+            file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+            return [];
+        }
+        $insertData = [
+            $name,
+            $data['authority'],
+            $data['body'],
+            $data['eventName'],
+            $data['eventResult'],
+            $data['legalRepresentative'],
+            $data['lrIdcard'],
+            $data['pname'],
+            $data['postTime'],
+            $data['sortTime'],
+            $data['taxpayerId'],
+            $data['title'],
+            $data['dataType']
+        ];
+        file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+        return $insertData;
     }
 }
