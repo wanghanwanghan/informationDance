@@ -205,8 +205,8 @@ class FinanceContorller  extends UserController
         foreach ($data as $year1=>$datum) {
             if(empty($datum))unset($data[$year1]);
             $value = [];
-            foreach ($datum as $item) {
-                if(empty($item))
+            foreach ($datum as $k => $item) {
+                if(empty($item) && $k!='ANCHEYEAR')
                 {
                     $value['2'] = 2;
                 }else{
