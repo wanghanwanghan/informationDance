@@ -15,6 +15,11 @@ $param1 = [
 //接口方法。
 $ret1 = $client->getElementsBaseInfo($param1);
 
+
+
+
+
+
 var_dump($ret1);exit;
 
 
