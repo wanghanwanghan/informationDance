@@ -33,7 +33,7 @@ class SheshuiContorller  extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getSatpartyChufa($ent['entName'], 1);
-            dingAlarm('涉税处罚公示',['$data'=>json_encode($data)]);
+            dingAlarm('涉税处罚公示',['$data'=>json_encode($data),'entName'=>$ent['entName']]);
             if (empty($data['satparty_chufaList'])) {
                 continue;
             }

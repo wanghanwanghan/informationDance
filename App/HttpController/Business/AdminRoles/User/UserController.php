@@ -802,7 +802,7 @@ Eof;
     }
 
     /**
-     * 获取年报这个批次号的异常数据
+     * 获取这个年报批次号的异常数据
      */
     public function getFAbnormalData(){
         $batchNum = $this->getRequestData('batchNum');
