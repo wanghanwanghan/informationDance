@@ -30,6 +30,7 @@ class FinanceContorller  extends UserController
      */
     public function xinanGetFinanceNotAuth($entNames,$relation,$appId)
     {
+        dingAlarm('xinanGetFinanceNotAuth_tou',['$entNames'=>$entNames]);
         $kidTypes = explode('|',$relation->kidTypes);
         $kidTypeList = explode('-',$kidTypes['0']);
         $kidTypesKeyArr = explode(',',$kidTypes['1']);
@@ -39,8 +40,6 @@ class FinanceContorller  extends UserController
         foreach ($kidTypesKeyArr as $item) {
             $insertData[] = $this->kidTpye[$item];
         }
-//        dingAlarm('年报头',['$data'=>json_encode($insertData)]);
-
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         $resData = [];
         foreach ($entNames as $ent) {
@@ -73,7 +72,7 @@ class FinanceContorller  extends UserController
     }
 
     public function smhzGetFinanceOriginal($entNames,$relation,$appId){
-//        dingAlarm('getFinanceOriginalData',['$relation'=>json_encode($relation)]);
+        dingAlarm('smhzGetFinanceOriginal',['$relation'=>json_encode($relation)]);
         $kidTypes = explode('|',$relation->kidTypes);
         $year_price_detail = getArrByKey(json_decode($relation->year_price_detail),'year');
         $kidTypeList = explode('-',$kidTypes['0']);
