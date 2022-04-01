@@ -35,6 +35,7 @@ class SheshuiContorller  extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getSatpartyChufa($ent['entName'], 1);
+            dingAlarm('涉税处罚公示',['$datum'=>json_encode($data),'entName'=>$ent['entName']]);
             if (empty($data['satparty_chufaList'])) {
                 continue;
             }
@@ -123,7 +124,7 @@ class SheshuiContorller  extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getSatpartyQs($ent['entName'], 1);//
-//            dingAlarm('欠税公告',['$data'=>json_encode($data)]);
+            dingAlarm('欠税公告',['$data'=>json_encode($data)]);
             if (empty($data['satparty_qsList'])) {
                 continue;
             }
@@ -305,7 +306,7 @@ class SheshuiContorller  extends UserController
                 }
             }
             foreach ($data['satparty_xukeList'] as $datum) {
-//                dingAlarm('税务许可',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
+                dingAlarm('税务许可',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
                 $resData[] = $this->fhGetSatpartyXukeDetail($datum['entryId'], $file, $ent['entName']);
             }
         }
@@ -388,7 +389,7 @@ class SheshuiContorller  extends UserController
                 }
             }
             foreach ($data['satparty_xinList'] as $datum) {
-//                dingAlarm('纳税信用等级',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
+                dingAlarm('纳税信用等级',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
                 $resData[] = $this->fhGetSatpartyXinDetail($datum['entryId'], $file, $ent['entName']);
             }
         }
@@ -473,7 +474,7 @@ class SheshuiContorller  extends UserController
                 }
             }
             foreach ($data['satparty_regList'] as $datum) {
-//                dingAlarm('税务登记',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
+                dingAlarm('税务登记',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
                 $resData[] = $this->fhGetSatpartyRegDetail($datum['entryId'], $file, $ent['entName']);
             }
         }
