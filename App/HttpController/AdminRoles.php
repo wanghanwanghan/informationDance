@@ -43,6 +43,7 @@ class AdminRoles
             $routeCollector->addRoute(['GET', 'POST'], '/addBatchType', $prefix . 'addBatchType');
             $routeCollector->addRoute(['GET', 'POST'], '/editApiUserRelation', $prefix . 'editApiUserRelation');
             $routeCollector->addRoute(['GET', 'POST'], '/getFBatchNumList', $prefix . 'getFBatchNumList');
+            $routeCollector->addRoute(['GET', 'POST'], '/getFAbnormalData', $prefix . 'getFAbnormalData');
 
         });
         return true;

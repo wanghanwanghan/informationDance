@@ -802,4 +802,21 @@ Eof;
         return $this->writeJson(200, $paging, $list,'成功');
     }
 
+    /**
+     * 获取年报这个批次号的异常数据
+     */
+    public function getFAbnormalData(){
+        $batchNum = $this->getRequestData('batchNum');
+        $appId = $this->getRequestData('username');
+        if(empty($appId) || empty($batchNum)){
+            return $this->writeJson(201, null, '', "没有查到数据");
+        }
+        $info = RequestUserInfo::create()->where(" appId = '{$appId}' ")->get();
+        $logInfo = BarchChargingLog::create()->where("type = 15 and userId = {$info->id} and batchNum = {$batchNum}")->get();
+        if(empty($logInfo)){
+            return $this->writeJson(201, null, '', "没有查到数据");
+        }
+        $ret = json_decode($logInfo->ret,true);
+        return $this->writeJson(200, '', $ret['2']??[],'成功');
+    }
 }
