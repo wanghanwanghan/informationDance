@@ -51,6 +51,7 @@ class FinanceContorller  extends UserController
                 'dataCount' => $kidTypeList['1'],//取最近几年的
             ];
             $res = (new LongXinService())->getFinanceData($postData, false);
+            dingAlarm('xinanGetFinanceNotAuth',['$res'=>$res]);
             if(empty($res['data'])){
                 file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
                 continue;
@@ -86,9 +87,9 @@ class FinanceContorller  extends UserController
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         $resData = [];
         foreach ($entNames as $ent) {
-//            dingAlarm('getFinanceOriginalData',['$kidTypeList'=>json_encode($kidTypeList)]);
+            dingAlarm('getFinanceOriginalData',['$kidTypeList'=>json_encode($kidTypeList)]);
             $res = $this->getFinanceOriginalData($ent['entName'],$kidTypeList['1'],$kidTypeList['0']);
-//            dingAlarm('getFinanceOriginalData',['$res'=>json_encode($res),'$year_price_detail'=>json_encode($year_price_detail)]);
+            dingAlarm('getFinanceOriginalData',['$res'=>json_encode($res),'$year_price_detail'=>json_encode($year_price_detail)]);
             if(empty($res)){
                 $insertData2 = [
                     'entName'=>$ent['entName'],
@@ -217,6 +218,10 @@ class FinanceContorller  extends UserController
         }
         foreach ($data as $year=>$value){
             if(empty($value))continue;
+            $info = FinanceData::create()->where("entName = '{$entname}' and year = '$year'")->get();
+            if(!empty($info)){
+                continue;
+            }
             $insert = [
                 'entName'=>$entname,
                 'year'=>$year,
