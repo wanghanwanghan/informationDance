@@ -531,8 +531,7 @@ Eof;
         $emptyTypes = [];
         $kidTypes = '';
         foreach ($typeArr as $type) {
-
-            if($type == 15){
+            if($type == 15 || $type == 13){
                 $barchTypeApiRelationInfo = BarchTypeApiRelation::create()->where('id', $type)->get();
                 $requestUserApiRelationship = RequestUserApiRelationship::create()->where("userId = {$info->id} and apiId = {$barchTypeApiRelationInfo->apiId}")->get();
                 $kidTypes = $requestUserApiRelationship->kidTypes;
