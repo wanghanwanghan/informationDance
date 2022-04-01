@@ -802,7 +802,7 @@ Eof;
         $charging_log_list = sqlRaw($dataSql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $retMap = [];
         foreach ($charging_log_list as $item) {
-            $retMap[$item->getAttr('batchNum')] = json_decode($item->getAttr('ret'),true);
+            $retMap[$item['batchNum']] = json_decode($item['ret'],true);
         }
         $list = json_decode(json_encode($list),true);
         foreach ($list as $k=>$v){
