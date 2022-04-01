@@ -207,12 +207,12 @@ class FinanceContorller  extends UserController
             foreach ($datum as $item) {
                 if(!empty($item) || $item == 0 || !is_numeric($item))
                 {
-                    $value['0'] = 0;
+                    $value['2'] = 2;
                 }else{
                     $value['1'] = 1;
                 }
             }
-            if(count($value) == 1 && isset($value['0'])) unset($data[$year1]);
+            if(count($value) == 1 && isset($value['2'])) unset($data[$year1]);
         }
         if(empty($data)){
             return false;
