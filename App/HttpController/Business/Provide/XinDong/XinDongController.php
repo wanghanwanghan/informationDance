@@ -419,25 +419,11 @@ class XinDongController extends ProvideBase
             foreach ($res[$this->cspKey]['result'] as $year => $oneYearData) {
                 if (in_array($year, $userInputYear)) {
                     foreach ($oneYearData as $field => $num) {
-                        if ($field === 'ispublic' || $field === 'SOCNUM' || $field === 'ANCHEYEAR') {
+                        if ($field === 'ispublic' || $field === 'ANCHEYEAR') {
                             unset($res[$this->cspKey]['result'][$year][$field]);
                             continue;
                         }
                         $tmp = strtr($num, $indexTable);
-                        $tmp = current(explode('*', $tmp));
-                        if ($tmp[0] === 'J') {
-                            //负数
-                            if (strlen($tmp) >= 3) {
-                                $tmp = substr($tmp, 0, -1);
-                                $tmp = 'X' . $tmp;//有X说明要末尾补0
-                            }
-                        } else {
-                            //正数
-                            if (strlen($tmp) >= 2) {
-                                $tmp = substr($tmp, 0, -1);
-                                $tmp = 'X' . $tmp;//有X说明要末尾补0
-                            }
-                        }
                         $res[$this->cspKey]['result'][$year][$field] = $tmp;
                     }
                 } else {
