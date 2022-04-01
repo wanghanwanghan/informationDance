@@ -52,7 +52,11 @@ class FinanceContorller  extends UserController
             $res = (new LongXinService())->getFinanceData($postData, false);
             dingAlarm('xinanGetFinanceNotAuth',['$res'=>$res]);
             if(empty($res['data'])){
-                file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+                $insertStr = $ent['entName'].','.$kidTypeList['0'];
+                for ($i=1;$i<count($kidTypesKeyArr);$i++){
+                    $insertStr.=',0';
+                }
+                file_put_contents($file, $insertStr . PHP_EOL, FILE_APPEND);
                 continue;
             }
             foreach ($res['data'] as $year=>$datum) {
@@ -61,7 +65,7 @@ class FinanceContorller  extends UserController
                     $year,
                 ];
                 foreach ($kidTypesKeyArr as $item) {
-                    $insertData[] = $datum[$item]??'';
+                    $insertData[] = $datum[$item]??'0';
                 }
                 $resData[] = $insertData;
                 file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
@@ -128,7 +132,7 @@ class FinanceContorller  extends UserController
                             if (isset($datum[$item]) && !empty($datum[$item])) {
                                 $insertData[] = round($datum[$item], 2);
                             } else if (isset($datum[$item]) && empty($datum[$item])) {
-                                $insertData[] = '';
+                                $insertData[] = 0;
                             }
                         }
                         $price = $year_price_detail[$datum['year']]['price']??0;
