@@ -350,4 +350,173 @@ class SheshuiContorller  extends UserController
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         return $insertData;
     }
+
+    /*
+     * 法海 - 纳税信用等级
+     */
+    public function fhGetSatpartyXin($entNames){
+        $fileName = date('YmdHis', time()) . '纳税信用等级.csv';
+        $file = TEMP_FILE_PATH . $fileName;
+        $header = [
+            '公司名',
+            '局（政府单位）',
+            '内容',
+            '事件结果（级别）',
+            '企业法定代表人',
+            '企业名称',
+            '发布时间',
+            '评定时间',
+            '税务登记号',
+            '标题',
+            '数据类别',
+        ];
+        file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        foreach ($entNames as $ent) {
+            $data = $this->getSatpartyXin($ent['entName'], 1);//
+            dingAlarm('纳税信用等级',['$data'=>json_encode($data)]);
+            if (empty($data['satparty_xinList'])) {
+                continue;
+            }
+            if (isset($data['totalPageNum']) && $data['totalPageNum'] > 1) {
+                for ($i = 2; $i <= $data['totalPageNum']; $i++) {
+                    $data2 = $this->getSatpartyXin($ent['entName'], 1);
+                    $data['satparty_xinList'] = array_merge($data['satparty_xinList'], $data2['satparty_xinList']);
+                }
+            }
+            foreach ($data['satparty_xinList'] as $datum) {
+//                dingAlarm('纳税信用等级',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
+                $resData[] = $this->fhGetSatpartyXinDetail($datum['entryId'], $file, $ent['entName']);
+            }
+        }
+        return [$fileName, $resData];
+    }
+
+    //纳税信用等级
+    public function getSatpartyXin($entName,$page)
+    {
+        $docType = 'satparty_xin';
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => 10,
+        ];
+        return (new FaYanYuanService())->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sat', $postData);
+    }
+
+    //纳税信用等级详情
+    public function fhGetSatpartyXinDetail($id,$file,$name)
+    {
+        $postData = ['id' => $id];
+        $docType = 'satparty_xin';
+        $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
+        dingAlarm('纳税信用等级详情',['$res'=>json_encode($res)]);
+        $data = $res['satparty_xuke']['0'];
+        if(empty($data)){
+            file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+            return [];
+        }
+        $insertData = [
+            $name,
+            $data['authority'],
+            $data['body'],
+            $data['eventResult'],
+            $data['legalRepresentative'],
+            $data['pname'],
+            $data['postTime'],
+            $data['sortTime'],
+            $data['taxpayerId'],
+            $data['title'],
+            $data['dataType']
+        ];
+        file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+        return $insertData;
+    }
+
+    /*
+     * 税务登记
+     */
+    public function fhGetSatpartyReg($entNames){
+        $fileName = date('YmdHis', time()) . '税务登记.csv';
+        $file = TEMP_FILE_PATH . $fileName;
+        $header = [
+            '公司名',
+            '局（政府单位）',
+            '内容',
+            '事件名称',
+            '事件结果',
+            '企业法定代表人',
+            '法人身份证号码',
+            '企业名称',
+            '发布时间',
+            '评定时间',
+            '税务登记号',
+            '标题',
+            '数据类别',
+        ];
+        file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
+        foreach ($entNames as $ent) {
+            $data = $this->getSatpartyReg($ent['entName'], 1);//
+            dingAlarm('税务登记',['$data'=>json_encode($data)]);
+            if (empty($data['satparty_regList'])) {
+                continue;
+            }
+            if (isset($data['totalPageNum']) && $data['totalPageNum'] > 1) {
+                for ($i = 2; $i <= $data['totalPageNum']; $i++) {
+                    $data2 = $this->getSatpartyReg($ent['entName'], 1);
+                    $data['satparty_regList'] = array_merge($data['satparty_regList'], $data2['satparty_regList']);
+                }
+            }
+            foreach ($data['satparty_regList'] as $datum) {
+//                dingAlarm('税务登记',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
+                $resData[] = $this->fhGetSatpartyRegDetail($datum['entryId'], $file, $ent['entName']);
+            }
+        }
+        return [$fileName, $resData];
+
+    }
+    //税务登记
+    public function getSatpartyReg($entName,$page)
+    {
+        $docType = 'satparty_reg';
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => 10,
+        ];
+        return (new FaYanYuanService())->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sat', $postData);
+    }
+
+    //税务登记详情
+    public function fhGetSatpartyRegDetail($id,$file,$name)
+    {
+        $postData = ['id' => $id];
+        $docType = 'satparty_reg';
+        $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
+        dingAlarm('税务登记详情',['$res'=>json_encode($res)]);
+        $data = $res['satparty_reg']['0'];
+        if(empty($data)){
+            file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+            return [];
+        }
+        $insertData = [
+            $name,
+            $data['authority'],
+            $data['body'],
+            $data['eventName'],
+            $data['eventResult'],
+            $data['legalRepresentative'],
+            $data['lrIdcard'],
+            $data['pname'],
+            $data['postTime'],
+            $data['sortTime'],
+            $data['taxpayerId'],
+            $data['title'],
+            $data['dataType']
+        ];
+        file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+        return $insertData;
+    }
+
 }
