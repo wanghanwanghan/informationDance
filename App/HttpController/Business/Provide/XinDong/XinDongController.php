@@ -333,13 +333,11 @@ class XinDongController extends ProvideBase
         $entName = $this->getRequestData('entName', '');
         $year = $this->getRequestData('year', '');
         $userInputYear = explode(',', trim($year, ','));
-        $pay = $this->getRequestData('pay', '');//y or n
 
         $beginYear = 2021;
         $dataCount = 3;
 
-        $this->spendMoney = 0;
-        $msg = '';
+        $this->spendMoney = 1;
 
         if ($this->limitEntNumByUserId(__FUNCTION__, $entName, 100)) {
             return $this->writeJson(201, null, null, '请求次数已经达到上限100');
@@ -349,9 +347,6 @@ class XinDongController extends ProvideBase
         }
         if (empty($year) || empty($userInputYear)) {
             return $this->writeJson(201, null, null, 'year不能是空');
-        }
-        if (empty($pay) || !in_array(strtolower($pay), ['y', 'n'], true)) {
-            return $this->writeJson(201, null, null, 'pay参数错误');
         }
 
         $postData = [
@@ -390,9 +385,6 @@ class XinDongController extends ProvideBase
                     $tmp[$one->ANCHEYEAR . ''] = obj2Arr($one);
                 }
             }
-
-            //pay控制，判断tmp里有几年是符合需求的
-
             $res = [$this->cspKey => [
                 'code' => 200,
                 'paging' => null,
@@ -410,9 +402,6 @@ class XinDongController extends ProvideBase
         }
 
         if ($res[$this->cspKey]['code'] === 200 && !empty($res[$this->cspKey]['result'])) {
-
-            //pay控制
-
             $indexTable = [
                 '0' => 'O',
                 '1' => 'C',
@@ -427,7 +416,6 @@ class XinDongController extends ProvideBase
                 '.' => '*',
                 '-' => 'J',
             ];
-
             foreach ($res[$this->cspKey]['result'] as $year => $oneYearData) {
                 if (in_array($year, $userInputYear)) {
                     foreach ($oneYearData as $field => $num) {
