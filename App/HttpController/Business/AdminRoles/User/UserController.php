@@ -812,7 +812,7 @@ Eof;
             return $this->writeJson(201, null, '', "没有查到数据");
         }
         $info = RequestUserInfo::create()->where(" appId = '{$appId}' ")->get();
-        $logInfo = BarchChargingLog::create()->where("type = 15 and userId = {$info->id} and batchNum = {$batchNum}")->get();
+        $logInfo = BarchChargingLog::create()->where("type = 15 and userId = {$info->id} and batchNum = '{$batchNum}'")->get();
         if(empty($logInfo)){
             return $this->writeJson(201, null, '', "没有查到数据");
         }
