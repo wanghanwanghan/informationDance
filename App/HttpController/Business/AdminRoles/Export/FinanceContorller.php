@@ -139,9 +139,9 @@ class FinanceContorller  extends UserController
                         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
                     }else{
                         foreach ($kidTypesKeyArr as $item) {
-                            if (isset($datum[$item]) && $datum[$item1] != 0 ) {
+                            if (isset($datum[$item]) && $datum[$item] != 0 ) {
                                 $insertData2[$item] = '正常';
-                            } else if (isset($datum[$item]) && $datum[$item1] == 0 ) {
+                            } else if (isset($datum[$item]) && $datum[$item] == 0 ) {
                                 $insertData2[$item] = '0';
                             }
                         }
