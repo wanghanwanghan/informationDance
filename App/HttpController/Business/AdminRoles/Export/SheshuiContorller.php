@@ -33,7 +33,6 @@ class SheshuiContorller  extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getSatpartyChufa($ent['entName'], 1);
-            dingAlarm('涉税处罚公示',['$data'=>json_encode($data),'entName'=>$ent['entName']]);
             if (empty($data['satparty_chufaList'])) {
                 continue;
             }
@@ -44,6 +43,7 @@ class SheshuiContorller  extends UserController
                 }
             }
             foreach ($data['satparty_chufaList'] as $datum) {
+                dingAlarm('涉税处罚公示',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
                 $resData[] = $this->fhGetSatpartyChufaDetail($datum['entryId'], $file, $ent['entName']);
             }
         }
@@ -66,10 +66,9 @@ class SheshuiContorller  extends UserController
 
     public function fhGetSatpartyChufaDetail($id,$file,$name){
         $postData = ['id' => $id];
-        $res = (new FaYanYuanService())
-            ->setCheckRespFlag(true)
-            ->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . 'satparty_chufa', $postData);
-        dingAlarm('涉税处罚公示详情',['$data'=>json_encode($res)]);
+        $docType = 'satparty_chufa';
+        $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
+        dingAlarm('涉税处罚公示详情',['$data'=>json_encode($res),'$id'=>$id]);
         return '';
 //
 //        $data = $res['sifacdk']['0'];
