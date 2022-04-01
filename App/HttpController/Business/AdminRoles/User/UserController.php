@@ -761,6 +761,9 @@ Eof;
         return $this->writeJson(200,[],$file,'成功');
     }
 
+    /*
+     * 获取赛博绘制年报的批次号
+     */
     public function getFBatchNumList(){
         $pageNo = $this->getRequestData('pageNO') ?? '';
         $pageSize = $this->getRequestData('pageSize') ?? '';
@@ -792,6 +795,20 @@ GROUP BY
 Eof;
         dingAlarm('getFBatchNumList',['$sql'=>$sql]);
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+
+        $dataSql = <<<Eof
+SELECT ret,batchNum FROM information_dance_barch_charging_log where batchNum in({$batchNumsStr} )
+Eof;
+        $charging_log_list = sqlRaw($dataSql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        $retMap = [];
+        foreach ($charging_log_list as $item) {
+            $retMap[$item->getAttr('batchNum')] = json_decode($item->getAttr('ret'),true);
+        }
+        $list = json_decode(json_encode($list),true);
+        foreach ($list as $k=>$v){
+            $list[$k]['data_detail']['abnormal'] = count($retMap[$v['batchNum']]['2']);
+            $list[$k]['data_detail']['normal'] = count($retMap[$v['batchNum']]['1']);
+        }
         $paging = [
             'page' => $pageNo,
             'pageSize' => $pageSize,
