@@ -102,7 +102,7 @@ class SheshuiContorller  extends UserController
     public function fhGetSatpartyQs($entNames){
         foreach ($entNames as $ent) {
             $data = $this->getSatpartyQs($ent['entName'], 1);
-            dingAlarm('欠税公告',['$data'=>$data]);
+            dingAlarm('欠税公告',['$data'=>json_encode($data)]);
         }
     }
     public function getSatpartyQs($entName,$page){
@@ -124,6 +124,6 @@ class SheshuiContorller  extends UserController
         $docType = 'satparty_qs';
 
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
-        dingAlarm('欠税公告详情',['$res'=>$res]);
+        dingAlarm('欠税公告详情',['$res'=>json_encode($res)]);
     }
 }
