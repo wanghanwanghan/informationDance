@@ -131,12 +131,12 @@ Eof;
             'v' => $v,
             'sign_alg' => $sign_alg,
             'method' => $method,
-            'biz_content' => $biz_content,
+            'biz_content' => jsonEncode($biz_content),
         ];
 
         //sign sha256 with rsa
         $pkeyid = openssl_pkey_get_private($this->pri_test);
-        openssl_sign(jsonEncode($sign_arr, false), $signature, $pkeyid, OPENSSL_ALGO_SHA256);
+        openssl_sign(http_build_query($sign_arr), $signature, $pkeyid, OPENSSL_ALGO_SHA256);
 
         $signature = $this->getBytes($signature);
 
@@ -161,9 +161,9 @@ Eof;
 
     protected function run($arg)
     {
-        $date = \Carbon\Carbon::now()->format('Ymd');
-        $timestamp = \Carbon\Carbon::now()->format('YmdHis');
-        $timestamp_ = \Carbon\Carbon::now()->format('Y-m-d H:i:s');
+        $date = \Carbon\Carbon::now()->format('Ymd');//20220402
+        $timestamp = \Carbon\Carbon::now()->format('YmdHis');//20220402153840
+        $timestamp_ = \Carbon\Carbon::now()->format('Y-m-d H:i:s');//2022-04-02 15:38:40
 
         $app_id = '5dc387b32c07871d371334e9c45120ba';
         $busiMerno = '898441650210002';
@@ -195,32 +195,23 @@ Eof;
             'remark2' => '',
         ];
 
-        $req_content = jsonEncode($biz_content, false);
-
         $sign_arr = [
             'app_id' => $app_id,
             'timestamp' => $timestamp_,
             'v' => $v,
             'sign_alg' => $sign_alg,
             'method' => $method,
-            'biz_content' => $req_content,
+            'biz_content' => jsonEncode($biz_content, false)
         ];
-
-        $sign_data = http_build_query($sign_arr);
-
-        $sign_data = '';
-        foreach ($sign_arr as $key => $val) {
-            $sign_data .= $key . '=' . $val . '&';
-        }
-        $sign_data = rtrim($sign_data, '&');
 
         //sign sha256 with rsa
         $pkeyid = openssl_pkey_get_private($this->pri_test);
 
-        openssl_sign(jsonEncode($sign_data, false), $signature, $pkeyid, OPENSSL_ALGO_SHA256);
+        openssl_sign(http_build_query($sign_arr), $signature, $pkeyid, OPENSSL_ALGO_SHA256);
 
+        //签名转换的byte数组 256
         $signature = $this->getBytes($signature);
-
+        //对签名进行处理，获取发送的签名内容 512位十六进制字符串
         $signature = $this->encodeHex($signature);
 
         $sign = implode($signature);
@@ -229,16 +220,10 @@ Eof;
 
         $post_data = http_build_query($post_arr);
 
-        $post_data = '';
-        foreach ($post_arr as $key => $val) {
-            $post_data .= $key . '=' . $val . '&';
-        }
-        $post_data = rtrim($post_data, '&');
-
         $res = (new \App\HttpController\Service\HttpClient\CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(false)
-            ->send($url, jsonEncode($post_data, false), [], ['enableSSL' => true], 'postjson');
+            ->send($url, $post_data, [], ['enableSSL' => true], 'postjson');
 
         dd($res);
     }
