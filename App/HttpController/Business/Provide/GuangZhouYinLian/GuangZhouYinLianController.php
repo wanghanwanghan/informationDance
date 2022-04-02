@@ -34,13 +34,13 @@ class GuangZhouYinLianController extends ProvideBase
         if (empty($res[$this->cspKey])) {
             $this->responseCode = $res['code'] ?? 500;
             $this->responsePaging = $res['paging'] ?? null;
-            $this->responseData = $res['result'] ?? null;
+            $this->responseData = $res['response'] ?? null;
             $this->spendMoney = 0;
             $this->responseMsg = $res['msg'] ?? '请求超时';
         } else {
             $this->responseCode = $res[$this->cspKey]['code'];
             $this->responsePaging = $res[$this->cspKey]['paging'];
-            $this->responseData = $res[$this->cspKey]['result'];
+            $this->responseData = $res[$this->cspKey]['response'];
             $this->responseMsg = $res[$this->cspKey]['msg'];
 
             $res[$this->cspKey]['code'] === 200 ?: $this->spendMoney = 0;
