@@ -148,6 +148,24 @@ class QiXiangYunController extends ProvideBase
 
         return $this->checkResponse($res);
     }
+
+    public function getGxgxztStatus(): bool
+    {
+        $nsrsbh = $this->getRequestData('nsrsbh', '91110108MA01KPGK0L');
+        $skssq = $this->getRequestData('skssq', '202010');
+        $postData = [
+            'nsrsbh' => $nsrsbh,
+            'skssq' => $skssq
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData)  {
+            return QiXiangYunService::getInstance()
+                ->setCheckRespFlag(true)->getGxgxztStatus($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
 }
 
 

@@ -297,6 +297,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getInv', $prefix . 'getInv');
             $routeCollector->addRoute(['GET', 'POST'], '/getFpxzStatus', $prefix . 'getFpxzStatus');
             $routeCollector->addRoute(['GET', 'POST'], '/getCjYgxByFplxs', $prefix . 'getCjYgxByFplxs');
+            $routeCollector->addRoute(['GET', 'POST'], '/getGxgxztStatus', $prefix . 'getGxgxztStatus');
         });
 
         return true;

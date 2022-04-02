@@ -374,4 +374,38 @@ class QiXiangYunService extends ServiceBase
         CommonService::getInstance()->log4PHP([$url, $data, $header, $res], 'info', 'cjYgx_ret');
         return $res;
     }
+
+    /*
+     * 获取已勾选发票归集任务状态
+     */
+    public function getGxgxztStatus($postData){
+        $url = $this->baseUrl . 'FP/getGxgxztStatus';
+        $nsrsbh = $postData['nsrsbh'];
+        $skssq = $postData['skssq'];
+        $data = [
+            'nsrsbh' => $nsrsbh,
+            'skssq' => $skssq,
+            'addJob' => true
+        ];
+        $req_date = time() . mt_rand(100, 999);
+        $token = $this->createToken();
+        $sign = base64_encode(
+            md5('POST_' . md5(jsonEncode($data, false)) . '_' . $req_date . '_' . $token . '_' . $this->secret)
+        );
+        $req_sign = "API-SV1:{$this->appkey}:" . $sign;
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'access_token' => $token,
+            'req_date' => $req_date,
+            'req_sign' => $req_sign,
+        ];
+//        CommonService::getInstance()->log4PHP([$url, $data, $header], 'info', 'actionGetFpxzStatusParam');
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'postjson');
+        dingAlarm('获取已勾选发票归集任务状态', ['$res' => json_encode($res)]);
+        CommonService::getInstance()->log4PHP([$url, $data, $header, $res], 'info', 'cjYgx_ret');
+        return $res;
+    }
 }
