@@ -193,9 +193,9 @@ Eof;
             'msgBody' => [
                 'busiId' => '00270002',
                 'vehicleVerifyInf' => [
-                    'certNo' => '140624198802132541',
+                    'certNo' => '150121199110112910',
                     'certType' => '0',
-                    'userNo' => '',
+                    'userNo' => '888888',
                     'name' => '',
                     'vin' => ''
                 ],
