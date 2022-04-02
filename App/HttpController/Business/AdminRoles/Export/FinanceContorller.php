@@ -292,6 +292,7 @@ class FinanceContorller  extends UserController
     }
 
     public function searchFinanceChargeLog($financeId,$price,$userId,$batchNum){
+        dingAlarm('searchFinanceChargeLog',['sql'=>"id = {$financeId} and price = '{$price}' and userId = {$userId} and batchNum = '{$batchNum}'"]);
         $info = FinanceChargeLog::create()->where("id = {$financeId} and price = '{$price}' and userId = {$userId} and batchNum = '{$batchNum}'")->get();
         return empty($info)?true:false;
     }
