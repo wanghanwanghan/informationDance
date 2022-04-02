@@ -287,8 +287,8 @@ class FinanceContorller  extends UserController
             $data = $insertData;
         }
         dingAlarm('getSmhzAbnormalFinance',['$data'=>json_encode($data)]);
-        $this->inseartChargingLog($info->id, $batchNum, 15, $kidTypes,$data, $file, 2);
-        return $file;
+        $this->inseartChargingLog($info->id, $batchNum, 15, $kidTypes,$data, $fileName, 2);
+        return $fileName;
     }
 
 
