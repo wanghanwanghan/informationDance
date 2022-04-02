@@ -323,8 +323,7 @@ class QiXiangYunService extends ServiceBase
             $res = $this->cjYgx($nsrsbh, $fplx, $skssq, 1);
             if ($res['result']['success']) {
                 $resData = array_merge($resData, $res['value']['list']);
-            }
-            {
+            } else{
                 dingAlarm('已勾选发票归集异常', ['$res' => $res]);
             }
             if ($res['value']['page']['totalPage'] > 1) {
@@ -332,8 +331,7 @@ class QiXiangYunService extends ServiceBase
                     $res2 = $this->cjYgx($nsrsbh, $fplx, $skssq, $i);
                     if ($res2['result']['success']) {
                         $resData = array_merge($resData, $res2['value']['list']);
-                    }
-                    {
+                    }else{
                         dingAlarm('已勾选发票归集异常', ['$res' => $res]);
                     }
                 }
