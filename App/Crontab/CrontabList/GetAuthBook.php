@@ -88,6 +88,7 @@ Eof;
 
                 $DetailList = AntAuthSealDetail::create()->where([
                     'antAuthId' => $oneEntInfo['id'],
+                    'status' => 1
                 ])->all();
                 $url = [];
                 if (empty($DetailList)) {
