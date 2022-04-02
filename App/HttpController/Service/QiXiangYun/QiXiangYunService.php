@@ -318,7 +318,7 @@ class QiXiangYunService extends ServiceBase
         $nsrsbh = $postData['nsrsbh'];
         $skssq = $postData['skssq'];
         $resData = [];
-        $fplxs = ['01', '03', '04', '08', '10', '11', '14', '15', '17'];
+        $fplxs = ['01', '03',  '08',   '14',  '17'];
         foreach ($fplxs as $fplx) {
             $res = $this->cjYgx($nsrsbh, $fplx, $skssq, 1);
             if ($res['result']['success']) {
