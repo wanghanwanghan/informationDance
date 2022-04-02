@@ -153,7 +153,7 @@ class QiXiangYunController extends ProvideBase
     {
         $nsrsbh = $this->getRequestData('nsrsbh', '91110108MA01KPGK0L');
         $skssq = $this->getRequestData('skssq', '202010');
-        $addJob = $this->getRequestData('skssq', true);
+        $addJob = $this->getRequestData('addJob', true);
         $postData = [
             'nsrsbh' => $nsrsbh,
             'skssq' => $skssq,
