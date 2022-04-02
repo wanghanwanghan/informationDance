@@ -153,7 +153,7 @@ Eof;
                     'socialCredit' => $oneEntInfo['socialCredit'],
                     'status' => MaYiService::STATUS_0
                 ])->update([
-                    'filePath' => $url['2'],
+                    'filePath' => $url['2']??'',
                     'authDate' => time(),
                     'status' => MaYiService::STATUS_1
                 ]);
