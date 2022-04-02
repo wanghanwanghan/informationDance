@@ -212,7 +212,7 @@ Eof;
             'sign_alg' => $this->sign_alg,
             'biz_content' => json_encode($biz_content),
         ];
-        $pkeyid = openssl_get_privatekey($this->privateKey);
+        $pkeyid = openssl_pkey_get_private($this->privateKey);
         openssl_sign(http_build_query($signArr), $signature, $pkeyid, OPENSSL_ALGO_SHA256);
         $signature = $this->getBytes($signature);
         $signature = $this->encodeHex($signature);

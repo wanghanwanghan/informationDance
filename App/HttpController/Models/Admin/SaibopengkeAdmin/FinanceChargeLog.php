@@ -4,7 +4,7 @@ namespace App\HttpController\Models\Admin\SaibopengkeAdmin;
 
 use App\HttpController\Models\ModelBase;
 
-class Finance_Charge_Log extends ModelBase
+class FinanceChargeLog extends ModelBase
 {
     protected $tableName = 'finance_charge_log';
     protected $autoTimeStamp = true;

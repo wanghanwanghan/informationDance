@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\AdminRoles\Export;
 
 use App\HttpController\Business\AdminRoles\User\UserController;
+use App\HttpController\Models\Admin\SaibopengkeAdmin\FinanceChargeLog;
 use App\HttpController\Models\Admin\SaibopengkeAdmin\FinanceData;
 use App\HttpController\Models\Provide\RequestUserApiRelationship;
 use App\HttpController\Models\Provide\RequestUserInfo;
@@ -277,14 +278,32 @@ class FinanceContorller  extends UserController
                 }
             }
             file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
-            RequestUserInfo::create()->where('appId', $appId)->update([
-                'money' => QueryBuilder::dec($year_price_detail[$item['year']]['price'])
-            ]);
-            $data = $insertData;
+            if($this->searchFinanceChargeLog($item['id'],$year_price_detail[$item['year']]['price'],$user_id,$batchNum)){
+                RequestUserInfo::create()->where('appId', $appId)->update([
+                    'money' => QueryBuilder::dec($year_price_detail[$item['year']]['price'])
+                ]);
+                $this->insertFinanceChargeLog($item['id'],$year_price_detail[$item['year']]['price'],$user_id,$batchNum);
+                $data = $insertData;
+            }
+
         }
-        $this->inseartChargingLog($user_id, $batchNum, 15, $listRelation->kidTypes,$data, $fileName, 2);
+        $this->inseartChargingLog($user_id, $batchNum, 15, implode(',',$ids),$data, $fileName, 2);
         return $fileName;
     }
 
+    public function searchFinanceChargeLog($financeId,$price,$userId,$batchNum){
+        $info = FinanceChargeLog::create()->where("id = {$financeId} and price = '{$price}' and userId = {$userId} and batchNum = '{$batchNum}'")->get();
+        return empty($info)?true:false;
+    }
 
+    public function insertFinanceChargeLog($financeId,$price,$userId,$batchNum){
+        $add = [
+            'financeId'=>$financeId,
+            'price' => $price,
+            'userId' => $userId,
+            'batchNum' => $batchNum
+        ];
+        FinanceChargeLog::create()->data($add)->save();
+        return true;
+    }
 }

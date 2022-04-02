@@ -757,12 +757,11 @@ Eof;
             return $this->writeJson(201, null, '', "没有查到数据");
         }
         $FinanceContorller = new FinanceContorller();
-        $ids = json_decode($ids,true);
-        $file = $this->searchChargingLog($info->id, $batchNum, 15);
+        $file = $this->searchChargingLog($info->id, $batchNum, 15,$ids);
         if(!empty($file)){
             return $this->writeJson(200,[],$file,'成功');
         }
-        $file = $FinanceContorller->getSmhzAbnormalFinance($ids,$appId,$batchNum,$user_id);
+        $file = $FinanceContorller->getSmhzAbnormalFinance(json_decode($ids,true),$appId,$batchNum,$info->id);
         return $this->writeJson(200,[],$file,'成功');
     }
 
