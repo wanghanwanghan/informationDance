@@ -324,7 +324,7 @@ class QiXiangYunService extends ServiceBase
             if ($res['result']['success']) {
                 $resData = array_merge($resData, $res['value']['list']);
             } else{
-                dingAlarm('已勾选发票归集异常', ['$res' => $res]);
+                dingAlarm('已勾选发票归集异常', ['$res' => json_encode($res)]);
             }
             if ($res['value']['page']['totalPage'] > 1) {
                 for ($i = 2; $i <= $res['value']['page']['totalPage']; $i++) {
@@ -332,7 +332,7 @@ class QiXiangYunService extends ServiceBase
                     if ($res2['result']['success']) {
                         $resData = array_merge($resData, $res2['value']['list']);
                     }else{
-                        dingAlarm('已勾选发票归集异常', ['$res' => $res]);
+                        dingAlarm('已勾选发票归集异常', ['$res' => json_encode($res)]);
                     }
                 }
             }
@@ -370,7 +370,7 @@ class QiXiangYunService extends ServiceBase
             ->useCache(false)
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'postjson');
-        CommonService::getInstance()->log4PHP([$url, $data, $header, $res], 'info', 'actionGetFpxzStatusParam');
+        CommonService::getInstance()->log4PHP([$url, $data, $header, $res], 'info', 'cjYgx_ret');
         return $res;
     }
 }
