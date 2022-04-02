@@ -385,7 +385,7 @@ class QiXiangYunService extends ServiceBase
         $data = [
             'nsrsbh' => $nsrsbh,
             'skssq' => $skssq,
-            'addJob' => true
+            'addJob' => $postData['addJob']
         ];
         $req_date = time() . mt_rand(100, 999);
         $token = $this->createToken();
