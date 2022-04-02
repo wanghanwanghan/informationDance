@@ -308,8 +308,71 @@ class QiXiangYunService extends ServiceBase
             ->useCache(false)
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'postjson');
-        CommonService::getInstance()->log4PHP([$url, $data, $header,$res], 'info', 'actionGetFpxzStatusParam');
+//        CommonService::getInstance()->log4PHP([$url, $data, $header,$res], 'info', 'actionGetFpxzStatusParam');
 
         CommonService::getInstance()->log4PHP($res);
+    }
+
+    public function getCjYgxByFplxs($postData)
+    {
+        $nsrsbh = $postData['nsrsbh'];
+        $skssq = $postData['skssq'];
+        $resData = [];
+        $fplxs = ['01', '03', '04', '08', '10', '11', '14', '15', '17'];
+        foreach ($fplxs as $fplx) {
+            $res = $this->cjYgx($nsrsbh, $fplx, $skssq, 1);
+            if ($res['result']['success']) {
+                $resData = array_merge($resData, $res['value']['list']);
+            }
+            {
+                dingAlarm('已勾选发票归集异常', ['$res' => $res]);
+            }
+            if ($res['value']['page']['totalPage'] > 1) {
+                for ($i = 2; $i <= $res['value']['page']['totalPage']; $i++) {
+                    $res2 = $this->cjYgx($nsrsbh, $fplx, $skssq, $i);
+                    if ($res2['result']['success']) {
+                        $resData = array_merge($resData, $res2['value']['list']);
+                    }
+                    {
+                        dingAlarm('已勾选发票归集异常', ['$res' => $res]);
+                    }
+                }
+            }
+
+        }
+        return $resData;
+    }
+
+    public function cjYgx($nsrsbh, $fplx, $skssq, $currentPage)
+    {
+        $url = $this->baseUrl . 'FP/cjYgx';
+        $data = [
+            'nsrsbh' => $nsrsbh,
+            'fplx' => $fplx,
+            'skssq' => $skssq, //税款所属期，格式yyyyMM，202010
+            'page' => [
+                'pageSize' => 20,
+                'currentPage' => $currentPage
+            ]
+        ];
+        $req_date = time() . mt_rand(100, 999);
+        $token = $this->createToken();
+        $sign = base64_encode(
+            md5('POST_' . md5(jsonEncode($data, false)) . '_' . $req_date . '_' . $token . '_' . $this->secret)
+        );
+        $req_sign = "API-SV1:{$this->appkey}:" . $sign;
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'access_token' => $token,
+            'req_date' => $req_date,
+            'req_sign' => $req_sign,
+        ];
+//        CommonService::getInstance()->log4PHP([$url, $data, $header], 'info', 'actionGetFpxzStatusParam');
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'postjson');
+        CommonService::getInstance()->log4PHP([$url, $data, $header, $res], 'info', 'actionGetFpxzStatusParam');
+        return $res;
     }
 }
