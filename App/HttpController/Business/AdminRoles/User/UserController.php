@@ -757,7 +757,8 @@ Eof;
             return $this->writeJson(201, null, '', "没有查到数据");
         }
         $FinanceContorller = new FinanceContorller();
-        $file = $this->searchChargingLog($info->id, $batchNum, 15,$ids);
+
+        $file = $this->searchChargingLog($info->id, $batchNum, 15,implode(',',json_decode($ids,true)));
         if(!empty($file)){
             return $this->writeJson(200,[],$file,'成功');
         }
