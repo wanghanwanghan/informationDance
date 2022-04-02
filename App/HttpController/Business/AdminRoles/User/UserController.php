@@ -597,7 +597,7 @@ Eof;
     /**
      * 查询这个用户对应批次，对应数据类型，以往的查询记录
      */
-    public function searchChargingLog($user_id, $batchNum, $type,$kidTypes)
+    public function searchChargingLog($user_id, $batchNum, $type,$kidTypes = '')
     {
         $startTime = strtotime('-3 day');
         $sql = "userId = '{$user_id}' and batchNum = '{$batchNum}' and type = '{$type}' and created_at>{$startTime}";
@@ -752,12 +752,17 @@ Eof;
         $appId = $this->getRequestData('appId');
         $ids = $this->getRequestData('ids');
         $batchNum = $this->getRequestData('batchNum');
+        $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
         if(empty($ids)){
             return $this->writeJson(201, null, '', "没有查到数据");
         }
         $FinanceContorller = new FinanceContorller();
         $ids = json_decode($ids,true);
-        $file = $FinanceContorller->getSmhzAbnormalFinance($ids,$appId,$batchNum);
+        $file = $this->searchChargingLog($info->id, $batchNum, 15);
+        if(!empty($file)){
+            return $this->writeJson(200,[],$file,'成功');
+        }
+        $file = $FinanceContorller->getSmhzAbnormalFinance($ids,$appId,$batchNum,$user_id);
         return $this->writeJson(200,[],$file,'成功');
     }
 
