@@ -44,6 +44,7 @@ class AdminRoles
             $routeCollector->addRoute(['GET', 'POST'], '/editApiUserRelation', $prefix . 'editApiUserRelation');
             $routeCollector->addRoute(['GET', 'POST'], '/getFBatchNumList', $prefix . 'getFBatchNumList');
             $routeCollector->addRoute(['GET', 'POST'], '/getFAbnormalData', $prefix . 'getFAbnormalData');
+            $routeCollector->addRoute(['GET', 'POST'], '/getAbnormalFinance', $prefix . 'getAbnormalFinance');
 
         });
         return true;
