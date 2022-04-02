@@ -186,7 +186,7 @@ Eof;
          */
         $time = time();
         $sndDt = date('YmdHis',$time);
-        $merOrdrNo = $this->busiMerno.$sndDt.control::randNum(9);
+        $merOrdrNo = $this->busiMerno.date('Ymd',$time).control::randNum(9);
         $biz_content = [
             'sndDt' => $sndDt,
             'busiMerNo' => $this->busiMerno,
@@ -212,30 +212,16 @@ Eof;
             'sign_alg' => $this->sign_alg,
             'biz_content' => json_encode($biz_content),
         ];
-        $postArr = $signArr;
-        $content = http_build_query($signArr);
-        $privateKey = openssl_get_privatekey($this->privateKey);
-//        openssl_pkcs12_read(file_get_contents(RSA_KEY_PATH .$this->privateKey),$privateKey,123456);
-//        openssl_sign($content, $resign, $privateKey['pkey'], OPENSSL_ALGO_MD5);
-        dingAlarm('车辆数量查询 $privateKey ',['$privateKey'=>$privateKey]);
-        openssl_sign($content, $resign, $privateKey, OPENSSL_ALGO_SHA256);
-        openssl_free_key($privateKey);
-        //签名转换的byte数组 256
-        $signByteArr = $this->getBytes($resign);
-        //对签名进行处理，获取发送的签名内容 512位十六进制字符串
-        $signArr = $this->encodeHex($signByteArr);
-        $sign = implode($signArr);
-//        dingAlarm('车辆数量查询',['$sign'=>$sign]);
-
-        $postArr['sign'] = $sign;
-        //请求发送内容
-        $postData = http_build_query($postArr);
-        $header = [
-            'content-type' => 'text/json;charset=UTF-8'
-        ];
-        dingAlarm('车辆数量查询',['$data'=>json_encode($postData),'url'=>$this->testUrl]);
-        $res = $this->request($this->testUrl,$postData);
-//        $res = (new CoHttpClient())->useCache(false)->send($this->testUrl, $postData,$header);
+        $pkeyid = openssl_get_privatekey($this->privateKey);
+        openssl_sign(http_build_query($signArr), $signature, $pkeyid, OPENSSL_ALGO_SHA256);
+        $signature = $this->getBytes($signature);
+        $signature = $this->encodeHex($signature);
+        $sign = implode($signature);
+        $post_arr = array_merge($signArr, ['sign' => $sign]);
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(false)
+            ->send($this->testUrl, jsonEncode($post_arr, false), [], ['enableSSL' => true], 'postjson');
         dingAlarm('车辆数量查询',['$res'=>json_encode($res)]);
         return $res;
     }
