@@ -597,7 +597,7 @@ Eof;
     /**
      * 查询这个用户对应批次，对应数据类型，以往的查询记录
      */
-    public function searchChargingLog($user_id, $batchNum, $type,$kidTypes = '')
+    public function searchChargingLog($user_id, $batchNum, $type,$kidTypes = '',$status=1)
     {
         $startTime = strtotime('-3 day');
         $sql = "userId = '{$user_id}' and batchNum = '{$batchNum}' and type = '{$type}' and created_at>{$startTime}";
@@ -606,7 +606,7 @@ Eof;
             $sql .= " and kidTypes = '{$kidTypes}'";
         }
         dingAlarm('searchChargingLog',['$sql'=>$sql]);
-        $log = BarchChargingLog::create()->where($sql." and status = 1 order by created_at desc ")->get();
+        $log = BarchChargingLog::create()->where($sql." and status = {$status} order by created_at desc ")->get();
         if (empty($log)) {
             return '';
         }
@@ -759,7 +759,7 @@ Eof;
         }
         $FinanceContorller = new FinanceContorller();
 
-        $file = $this->searchChargingLog($info->id, $batchNum, 15,implode(',',json_decode($ids,true)));
+        $file = $this->searchChargingLog($info->id, $batchNum, 15,implode(',',json_decode($ids,true)),2);
         if(!empty($file)){
             return $this->writeJson(200,[],$file,'成功');
         }
