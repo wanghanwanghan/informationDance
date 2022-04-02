@@ -247,14 +247,15 @@ class FinanceContorller  extends UserController
     }
 
     public function getSmhzAbnormalFinance($ids,$appId,$batchNum){
-        dingAlarm('getSmhzAbnormalFinance',['$ids'=>$ids,'$appId'=>$appId,'$batchNum'=>$batchNum]);
-        $list = FinanceData::create()->where("id in (".implode($ids).")")->all();
+        dingAlarm('getSmhzAbnormalFinance',['$ids'=>json_encode($ids),'$appId'=>$appId,'$batchNum'=>$batchNum]);
+        $list = FinanceData::create()->where("id in (".implode(',',$ids).")")->all();
+        dingAlarm('getSmhzAbnormalFinance',['$list'=>json_encode($list)]);
         $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
         $listRelation = RequestUserApiRelationship::create()->where("userId = {$info->id} and status = 1 and apiId = 157")->get();
         if(empty($list)){
             return '';
         }
-        dingAlarm('getSmhzAbnormalFinance',['$listRelation'=>$listRelation]);
+        dingAlarm('getSmhzAbnormalFinance',['$listRelation'=>json_encode($listRelation)]);
         $year_price_detail = getArrByKey(json_decode($listRelation->year_price_detail),'year');
         $kidTypes = explode('|',$listRelation->kidTypes);
         $kidTypesKeyArr = explode(',',$kidTypes['1']);
@@ -285,7 +286,7 @@ class FinanceContorller  extends UserController
             ]);
             $data = $insertData;
         }
-        dingAlarm('getSmhzAbnormalFinance',['$data'=>$data]);
+        dingAlarm('getSmhzAbnormalFinance',['$data'=>json_encode($data)]);
         $this->inseartChargingLog($info->id, $batchNum, 15, $kidTypes,$data, $file, 2);
         return $file;
     }
