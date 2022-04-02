@@ -241,7 +241,8 @@ Eof;
             ->needJsonDecode(false)
             ->send($this->testUrl, $postData, $header, ['enableSSL' => true], 'postjson');
         dingAlarm('车辆数量查询',['$res'=>json_encode($res)]);
-        return $res;
+
+        return json_decode($res);
     }
 
     function request($url,$data){
