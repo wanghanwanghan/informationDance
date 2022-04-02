@@ -7,13 +7,41 @@ use wanghanwanghan\someUtils\control;
 
 class GuangZhouYinLianService extends ServiceBase
 {
+    private $privateKey = <<<Eof
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEA767Gc8oWD9ckvkt6rHRg+AC8yESbAgwfLc+lWh4Izs/rvxqA
+db8/hAcpO1h+6tBVzNc+3nitxN53etJyRs2Bjf0nlh74AguaNk1S/kkdzOsGdLDr
+5stC/5YOXjhNB2FjzZi5r/0tk5Y/vmsRZIBCTbbwqTvc6WhPNZzDZYUhFyr3oZsR
+bf3tRqfWUdTMQdX+TTOjJheVMSzK4375m76qPa36hMaM0ha/cbFdMtWj3WxkaCPm
+blfwTdkxOlA7EegL6dW3UH5bRXKWUPGMev0J+LB2fe2e4gp1HoGDJQkhQac04alY
+PUfxgNf3pzEJgXOW/qRgKCffK7vgmLiXBGAASQIDAQABAoIBAQDS5KTngxwwaeyB
+qCZTkb802GlDieIeRg41H+ztQ1oapyZWq3n2oQXBJQ/pkO9zq0aji41c8TBs9haJ
+MpysoexpxCNN2wf7vLu/JgBtkGYxRWcTzAx1scnM2/reeomEgfPwFn7kVFAC+YQz
+B0Bxfs1YViyhq/OwSEDR+pKPRDmeiFL4zrPa27JO9TX6lLnwAEB5zgsk/DbpIon9
+PO7BejPQ0Dth2K12YmDUGoSNFhgshLGSoYPF+BPAVAYpPOnwmbEq35X85000xi56
+XZbU9NoiFABtp8Ft9YCxX+9yBjnraCH5c2SDkT1T6/wBLA8JvTRQtE2SYAPXjs3h
+4xug4+CBAoGBAP35J2Gqg49iZum6KH4lOIQLzvjVl0fXy9ZciRI4y8VUvTZHurUT
+Tr/ka6HbGfA6ujUO+XOm16Gu5eildbF7FOgM+SvRYspRvzfm8hLZjfhjD/XzZ4qH
+As8KApioavelExcX9QLpLAcs5OOlSQFT5wP5Syeg+lYNdo2qfbgI4IyxAoGBAPGY
+bU8A7RuPIk9knKvsNOr6FI0tpmgBosBh8MIyD9sScvF3kjEmltkruSCoJE6T9SvS
+a3G/SNMFUx6vczIM05pSdXLTDBcBOdRL3yRPpcaDkjj/J9/UV5h7jM2l/YkA3p8n
+pm3dkFy31wDlHcnCp8P+IbadJWJEJk284Zm/2zMZAoGBAJzwxAc0SUvncNTptnAN
+LBlc+q8FvhAlJ871K7bY5gKw1KOgO539qmImEuTX8fVjNQHomPmAlitRWr0i0dG0
+zzx+F9Od9kAzt8ghrGE9kt90x74ihU8zEudBtk0DdeZGWb+hjEQaNpzQfzi1QKHT
+aSQpfumkLk3Sz/nG6x04TxphAoGAPrwwFkXNTEy8whUEQfiSPTo3P/nMrlFOa9qC
+5EqPp3mA84bzJWQ546bg6cP/uY/eKET5tY3QYUuOq/cvWJ3QDNDAwtJe31JoK+KP
+zSQJjiT4QWiweATxwhzDEVu7HGpnZLitFPZl2E28vPTB6XRskA5bvsnLvVqo/6K+
+imgxiXECgYBrnmW0i8IRYD9AlQdxJDreBfvrsiW4RdbH5s3Ar/5nmNQpz9TLusgj
+FeUxasdoXjSBuMb3Zc/aJQFfZa5Ql64QbMtM1q9v83G1iysPXP+bXqg3Wr/Ea9Jk
+ezbvJLTt45TL9P3xd3x2cYNDZfWxga68E73QFjU8T5KdJiw0GNUNnA==
+-----END RSA PRIVATE KEY-----
+Eof;
     private $app_id = '5dc387b32c07871d371334e9c45120ba';
     private $timestamp;
     private $v = '1.0.1';
     private $sign_alg = 1;
     private $busiMerno = '898441650210002';
     private $testUrl = 'https://testapi.gnete.com:9083/routejson';
-    private $privateKey = 'bussiness_private_dev.pem';// 'mer-fat-905975ed38ff446c91247b1c91a82d41.p12'; //'';bussiness_private.pem   bussiness_private_dev.pem
     private $secret_password = '123456';
     private $test_pub_secret = 'ogw-fat-2048-cfca.der';
     function __construct()
@@ -186,7 +214,7 @@ class GuangZhouYinLianService extends ServiceBase
         ];
         $postArr = $signArr;
         $content = http_build_query($signArr);
-        $privateKey = openssl_get_privatekey(file_get_contents(RSA_KEY_PATH .$this->privateKey));
+        $privateKey = openssl_get_privatekey($this->privateKey);
 //        openssl_pkcs12_read(file_get_contents(RSA_KEY_PATH .$this->privateKey),$privateKey,123456);
 //        openssl_sign($content, $resign, $privateKey['pkey'], OPENSSL_ALGO_MD5);
         dingAlarm('车辆数量查询 $privateKey ',['$privateKey'=>$privateKey]);
