@@ -139,7 +139,6 @@ class QiXiangYunController extends ProvideBase
             'nsrsbh' => $nsrsbh,
             'skssq' => $skssq
         ];
-        dingAlarm('getCjYgxByFplxs',['$postData'=>$postData]);
         $this->csp->add($this->cspKey, function () use ($postData)  {
             return QiXiangYunService::getInstance()
                 ->setCheckRespFlag(true)->getCjYgxByFplxs($postData);
