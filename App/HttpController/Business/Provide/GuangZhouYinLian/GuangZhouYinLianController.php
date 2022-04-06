@@ -53,21 +53,25 @@ class GuangZhouYinLianController extends ProvideBase
 
     function queryInancialBank(): bool
     {
-        $name      = $this->getRequestData('name');
-        $userNo    = $this->getRequestData('userNo');
-        $certType  = $this->getRequestData('certType');
-        $certNo    = $this->getRequestData('certNo');
-        $vin       = $this->getRequestData('vin');
-        $licenseNo = $this->getRequestData('licenseNo');
-        $bizFunc   = $this->getRequestData('bizFunc');
-        $postData  = [
-            'name'      => $name,
-            'userNo'    => $userNo,
-            'certType'  => $certType,
-            'certNo'    => $certNo,
-            'vin'       => $vin,
-            'licenseNo' => $licenseNo,
-            'bizFunc'   => $bizFunc
+        $name             = $this->getRequestData('name');
+        $userNo           = $this->getRequestData('userNo');
+        $certType         = $this->getRequestData('certType');
+        $certNo           = $this->getRequestData('certNo');
+        $vin              = $this->getRequestData('vin');
+        $licenseNo        = $this->getRequestData('licenseNo');
+        $bizFunc          = $this->getRequestData('bizFunc');
+        $firstBeneficiary = $this->getRequestData('firstBeneficiary');
+        $areaNo           = $this->getRequestData('areaNo');
+        $postData         = [
+            'name'             => $name,
+            'userNo'           => $userNo,
+            'certType'         => $certType,
+            'certNo'           => $certNo,
+            'vin'              => $vin,
+            'licenseNo'        => $licenseNo,
+            'areaNo'           => $areaNo,
+            'firstBeneficiary' => $firstBeneficiary,
+            'bizFunc'          => $bizFunc
         ];
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new GuangZhouYinLianService())->setCheckRespFlag(true)->queryInancialBank($postData);

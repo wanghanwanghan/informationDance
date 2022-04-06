@@ -198,14 +198,14 @@ Eof;
             'msgBody'   => [
                 'busiId'           => '00270001',
                 'vehicleVerifyInf' => [
-                    'name'      => $postData['name'],           //张万珍',
-                    'userNo'    => $postData['userNo'],         //'888888',
-                    'certType'  => $postData['certType'],       //'0',
-                    'certNo'    => $postData['certNo'],         //'142129195506080532',
-                    'vin'       => $postData['vin'],            //'LVSHFC0HH309074',
-                    'licenseNo' => $postData['licenseNo'],      //'京08NN2',
-                    //                    'areaNo',
-                    //                    'firstBeneficiary'
+                    'name'             => $postData['name'],           //张万珍',
+                    'userNo'           => $postData['userNo'],         //'888888',
+                    'certType'         => $postData['certType'],       //'0',
+                    'certNo'           => $postData['certNo'],         //'142129195506080532',
+                    'vin'              => $postData['vin'],            //'LVSHFC0HH309074',
+                    'licenseNo'        => $postData['licenseNo'],      //'京08NN2',
+                    'areaNo'           => $postData['areaNo'],
+                    'firstBeneficiary' => $postData['firstBeneficiary'],
                 ],
                 'bizFunc'          => $postData['bizFunc'],//'711004',
                 'merOrdrNo'        => $merOrdrNo,
@@ -217,7 +217,7 @@ Eof;
             ->useCache(false)
             ->needJsonDecode(false)
             ->send($this->testUrl, $postData, $header, ['enableSSL' => true], 'postjson');
-        dingAlarm('金融风控查询', ['$res' => json_encode($res), '$biz_content' => $biz_content]);
+        dingAlarm('金融风控查询', ['$res' => json_encode($res), '$biz_content' => json_encode($biz_content)]);
         return json_decode($res, true);
     }
 
@@ -271,7 +271,6 @@ Eof;
         $postArr    = $signArr;
         $content    = http_build_query($signArr);
         $privateKey = openssl_get_privatekey($this->privateKey);
-        dingAlarm('车辆数量查询 $privateKey ', ['$privateKey' => $privateKey]);
         openssl_sign($content, $resign, $privateKey, OPENSSL_ALGO_SHA256);
         openssl_free_key($privateKey);
         //签名转换的byte数组 256
@@ -283,7 +282,6 @@ Eof;
         $header          = [
             'content-type' => 'text/json;charset=UTF-8'
         ];
-        //请求发送内容
         return [http_build_query($postArr), $header];
     }
 
