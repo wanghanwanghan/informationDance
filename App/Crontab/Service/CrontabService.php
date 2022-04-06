@@ -23,7 +23,7 @@ class CrontabService
         $this->deleteTimeoutOrder();
         $this->runSupervisor();
         $this->runMoveOut();
-        //$this->getAuthBook();
+        $this->getAuthBook();
         $this->getInvData();//123123123
         $this->RunSaiMengHuiZhiCaiWu();
 
