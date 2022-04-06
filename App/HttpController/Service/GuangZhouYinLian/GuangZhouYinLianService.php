@@ -189,7 +189,7 @@ Eof;
             'sndDt' => $sndDt,
             'busiMerNo' => $this->busiMerno,
             'msgBody' => [
-                'busiId' => '00270002',
+                'busiId' => '00270001',
                 'vehicleVerifyInf' => [
                     'name' => '张万珍',
                     'userNo' => '888888',
