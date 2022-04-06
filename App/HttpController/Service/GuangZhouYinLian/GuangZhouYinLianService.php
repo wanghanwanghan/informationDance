@@ -192,7 +192,7 @@ Eof;
                 'busiId' => '00270002',
                 'vehicleVerifyInf' => [
                     'name' => '张万珍',
-                    'userNo' => '',
+                    'userNo' => '888888',
                     'certType' => '0',
                     'certNo' => '142129195506080532',
                     'vin' => 'LVSHFC0HH309074',
