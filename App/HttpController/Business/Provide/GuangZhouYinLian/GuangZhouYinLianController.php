@@ -34,7 +34,7 @@ class GuangZhouYinLianController extends ProvideBase
     {
         $postData = [];
         $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new GuangZhouYinLianService())->setCheckRespFlag(true)->queryVehicleCount($postData);
+            return (new GuangZhouYinLianService())->setCheckRespFlag(true)->queryInancialBank($postData);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
