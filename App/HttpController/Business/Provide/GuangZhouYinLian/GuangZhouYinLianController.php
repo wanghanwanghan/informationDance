@@ -29,6 +29,19 @@ class GuangZhouYinLianController extends ProvideBase
         return $this->checkResponse($res);
 
     }
+
+    function queryInancialBank(): bool
+    {
+        $postData = [];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new GuangZhouYinLianService())->setCheckRespFlag(true)->queryVehicleCount($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+
+    }
     function checkResponse($res): bool
     {
         if (empty($res[$this->cspKey])) {
