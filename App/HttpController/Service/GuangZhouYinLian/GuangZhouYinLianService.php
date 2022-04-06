@@ -207,7 +207,7 @@ Eof;
                     //                    'areaNo',
                     //                    'firstBeneficiary'
                 ],
-                'bizFunc'          => '711004',
+                'bizFunc'          => $postData['bizFunc'],//'711004',
                 'merOrdrNo'        => $merOrdrNo,
             ]
         ];
@@ -217,7 +217,7 @@ Eof;
             ->useCache(false)
             ->needJsonDecode(false)
             ->send($this->testUrl, $postData, $header, ['enableSSL' => true], 'postjson');
-        dingAlarm('金融风控查询', ['$res' => json_encode($res)]);
+        dingAlarm('金融风控查询', ['$res' => json_encode($res), '$biz_content' => $biz_content]);
         return json_decode($res, true);
     }
 

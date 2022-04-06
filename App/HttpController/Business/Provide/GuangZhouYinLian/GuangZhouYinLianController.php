@@ -59,13 +59,15 @@ class GuangZhouYinLianController extends ProvideBase
         $certNo    = $this->getRequestData('certNo');
         $vin       = $this->getRequestData('vin');
         $licenseNo = $this->getRequestData('licenseNo');
+        $bizFunc   = $this->getRequestData('bizFunc');
         $postData  = [
             'name'      => $name,
             'userNo'    => $userNo,
             'certType'  => $certType,
             'certNo'    => $certNo,
             'vin'       => $vin,
-            'licenseNo' => $licenseNo
+            'licenseNo' => $licenseNo,
+            'bizFunc'   => $bizFunc
         ];
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new GuangZhouYinLianService())->setCheckRespFlag(true)->queryInancialBank($postData);
