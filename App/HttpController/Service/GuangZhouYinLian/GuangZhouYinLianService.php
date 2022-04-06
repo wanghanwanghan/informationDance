@@ -152,25 +152,66 @@ Eof;
 
     /*
      * 金融风控查询
+     * 711004 车辆历史上理赔情况
+     * 711005 车辆历史上过户次数
+     * 711006 车辆历史出险次数
+     * 711009 商业险保单止期是否大于等当前日期
+     * 711010 交强险保单止期是否大于等当前日期
+     * 711011 保单第一受益人判定（建行、本人）
+     * 711013 是否购买车损险
+     * 711014 是否购买盗抢险
+     * 711015 是否购买三者险
+     * 711016 是否购买交强险
+     * 711019 新车购置价
+     * 711021 车辆价值判定
+     *
+     * merOrdrNo  商户交易订单号，需保证在商户端不重复; 格式：15 位商户号+8 位交易日期+9 位序数字列号
+     * busiId     商户开通的业务 ID
+     * bizFunc    业务功能
+     * vehicleVerifyInf  验证信息
+     *      name        客户名称
+     *      userNo      客户标识
+     *      certType    证件类型
+     *      certNo      证件号码
+     *      vin         车架号
+     *      licenseNo   号牌号码
+     *      areaNo      业务地区码
+     *      firstBeneficiary    保单第一受益人
      */
     public function queryInancialBank(){
         $method = 'gnete.upbc.vehicle.queryInancialBank';
-        /* merOrdrNo  商户交易订单号，需保证在商户端不重复; 格式：15 位商户号+8 位交易日期+9 位序数字列号
-         * busiId     商户开通的业务 ID
-         * bizFunc    业务功能
-         * vehicleVerifyInf  验证信息
-         *      name        客户名称
-         *      userNo      客户标识
-         *      certType    证件类型
-         *      certNo      证件号码
-         *      vin         车架号
-         *      licenseNo   号牌号码
-         *      areaNo      业务地区码
-         *      firstBeneficiary    保单第一受益人
-         */
         $time = time();
         $sndDt = date('YmdHis',$time);
         $merOrdrNo = $this->busiMerno.date('Ymd',$time).control::randNum(9);
+
+
+        $biz_content = [
+            'sndDt' => $sndDt,
+            'busiMerNo' => $this->busiMerno,
+            'msgBody' => [
+                'busiId' => '00270002',
+                'vehicleVerifyInf' => [
+                    'name' => '张万珍',
+                    'userNo' => '',
+                    'certType' => '0',
+                    'certNo' => '142129195506080532',
+                    'vin' => 'LVSHFC0HH309074',
+                    'licenseNo' => '京08NN2',
+//                    'areaNo',
+//                    'firstBeneficiary'
+                ],
+                'bizFunc' => '711004',
+                'merOrdrNo' => $merOrdrNo,
+            ]
+        ];
+        list($postData,$header) = $this->rsaData($method,$time,$biz_content);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(false)
+            ->send($this->testUrl, $postData, $header, ['enableSSL' => true], 'postjson');
+        dingAlarm('金融风控查询',['$res'=>json_encode($res)]);
+        return json_decode($res,true);
     }
 
     /*
@@ -197,18 +238,7 @@ Eof;
                 'merOrdrNo' => $merOrdrNo,
             ]
         ];
-        $signArr = [
-            'app_id' => $this->app_id,
-            'method' => $method,
-            'timestamp' => date('Y-m-d H:i:s',$time),
-            'v' => $this->v,
-            'sign_alg' => $this->sign_alg,
-            'biz_content' => json_encode($biz_content),
-        ];
-        $postData = $this->rsaData($signArr);
-        $header = [
-            'content-type' => 'text/json;charset=UTF-8'
-        ];
+        list($postData,$header) = $this->rsaData($method,$time,$biz_content);
         $res = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(false)
@@ -219,7 +249,15 @@ Eof;
     /*
      * 统一加密
      */
-    public function rsaData($signArr){
+    public function rsaData($method,$time,$biz_content){
+        $signArr = [
+            'app_id' => $this->app_id,
+            'method' => $method,
+            'timestamp' => date('Y-m-d H:i:s',$time),
+            'v' => $this->v,
+            'sign_alg' => $this->sign_alg,
+            'biz_content' => json_encode($biz_content),
+        ];
         $postArr = $signArr;
         $content = http_build_query($signArr);
         $privateKey = openssl_get_privatekey($this->privateKey);
@@ -232,46 +270,12 @@ Eof;
         $signArr = $this->encodeHex($signByteArr);
         $sign = implode($signArr);
         $postArr['sign'] = $sign;
+        $header = [
+            'content-type' => 'text/json;charset=UTF-8'
+        ];
         //请求发送内容
-        return http_build_query($postArr);
+        return [http_build_query($postArr),$header];
     }
-
-    function request($url,$data){
-        $header = ["Content-type:text/json;charset=utf-8"];
-
-        $curl=curl_init();
-
-        //根据是否发送https请求设置是否进行证书检测
-//        if($isHttps){
-//            //没有证书，规避证书检测
-//            curl_setopt($curl,CURLOPT_SSL_VERIFYPEER,false);//规避SSL验证
-//            curl_setopt($curl,CURLOPT_SSL_VERIFYHOST, false);//跳过HOST验证
-//        }else{
-
-            curl_setopt($curl,CURLOPT_SSL_VERIFYPEER,false);
-            curl_setopt($curl,CURLOPT_SSL_VERIFYHOST, false);
-//        }
-        curl_setopt($curl,CURLOPT_URL,$url);
-        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true); // 使用自动跳转
-        curl_setopt($curl, CURLOPT_AUTOREFERER, true); // 自动设置Referer
-        curl_setopt($curl, CURLOPT_POST, true); // 发送一个常规的Post请求
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $data); // Post提交的数据包
-        curl_setopt($curl, CURLOPT_TIMEOUT, 10000); // 设置超时限制防止死循环
-        curl_setopt($curl, CURLOPT_HEADER, false); // 显示返回的Header区域内容
-        //curl_setopt($curl, CURLOPT_PROXY, '127.0.0.1:8888');
-        //设置请求头
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $header);//设置请求数据
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-
-        $res=curl_exec($curl);
-        if($res==false){
-            echo "请求发送失败:". curl_error($curl)."\n";
-        }
-        curl_close($curl);
-
-        return $res;
-    }
-
 
     /*
      * 车辆车架号查询

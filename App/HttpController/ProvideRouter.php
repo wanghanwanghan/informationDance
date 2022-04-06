@@ -38,6 +38,7 @@ class ProvideRouter
         $prefix = '/Business/Provide/GuangZhouYinLian/GuangZhouYinLianController/';
         $routeCollector->addGroup('/gzyl', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/queryVehicleCount', $prefix . 'queryVehicleCount');
+            $routeCollector->addRoute(['GET', 'POST'], '/queryInancialBank', $prefix . 'queryInancialBank');
         });
         return true;
     }
