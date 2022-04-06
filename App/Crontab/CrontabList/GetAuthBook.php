@@ -88,7 +88,7 @@ Eof;
 
                 $DetailList = AntAuthSealDetail::create()->where([
                     'antAuthId' => $oneEntInfo['id'],
-                    'status' => 1
+                    'status' => 0
                 ])->all();
                 $url = [];
                 if (empty($DetailList)) {
@@ -289,8 +289,15 @@ Eof;
             'isSeal' => 'true'
         ])->all();
         $ids = [0];
+        $idMap = [];
         foreach ($list as $item) {
+            $idMap[$item->getAttr('antAuthId')][] = $item->getAttr('id');
             $ids[$item->getAttr('antAuthId')] = $item->getAttr('antAuthId');
+        }
+        foreach ($idMap as $id=>$v) {
+            if(count($v) == 2){
+                unset($ids[$id]);
+            }
         }
         return $ids;
     }

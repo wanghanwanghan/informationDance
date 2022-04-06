@@ -137,7 +137,7 @@ Eof;
      * 身份证二要素验证
      */
     public function checkIdTwoEle(){
-        //gnete.upbc.verify.checkIdTwoEle
+        $method = 'gnete.upbc.verify.checkIdTwoEle';
         /*
          merOrdrNo  商户交易订单号，需保证在商户端不重复; 格式：15 位商户号+8 位交易日期+9 位序数字列号
          busiId     商户开通的业务 ID
@@ -145,13 +145,16 @@ Eof;
             name          姓名
             certNo        证件号码
         */
+        $time = time();
+        $sndDt = date('YmdHis',$time);
+        $merOrdrNo = $this->busiMerno.date('Ymd',$time).control::randNum(9);
     }
 
     /*
      * 金融风控查询
      */
     public function queryInancialBank(){
-        // gnete.upbc.vehicle.queryInancialBank
+        $method = 'gnete.upbc.vehicle.queryInancialBank';
         /* merOrdrNo  商户交易订单号，需保证在商户端不重复; 格式：15 位商户号+8 位交易日期+9 位序数字列号
          * busiId     商户开通的业务 ID
          * bizFunc    业务功能
@@ -165,7 +168,9 @@ Eof;
          *      areaNo      业务地区码
          *      firstBeneficiary    保单第一受益人
          */
-
+        $time = time();
+        $sndDt = date('YmdHis',$time);
+        $merOrdrNo = $this->busiMerno.date('Ymd',$time).control::randNum(9);
     }
 
     /*
@@ -173,17 +178,6 @@ Eof;
      */
     public function queryVehicleCount($postData){
         $method = 'gnete.upbc.vehicle.queryVehicleCount';
-        /*
-         merOrdrNo  商户交易订单号，需保证在商户端不重复; 格式：15 位商户号+8 位交易日期+9 位序数字列号
-         busiId     商户开通的业务 ID
-         bizFunc    业务功能  721001
-         vehicleVerifyInf       验证信息
-             name           客户名称
-             userNo         客户标识
-             certType       证件类型
-             certNo         证件号码
-             vin            车架号
-         */
         $time = time();
         $sndDt = date('YmdHis',$time);
         $merOrdrNo = $this->busiMerno.date('Ymd',$time).control::randNum(9);
@@ -203,7 +197,6 @@ Eof;
                 'merOrdrNo' => $merOrdrNo,
             ]
         ];
-
         $signArr = [
             'app_id' => $this->app_id,
             'method' => $method,
@@ -212,11 +205,24 @@ Eof;
             'sign_alg' => $this->sign_alg,
             'biz_content' => json_encode($biz_content),
         ];
+        $postData = $this->rsaData($signArr);
+        $header = [
+            'content-type' => 'text/json;charset=UTF-8'
+        ];
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(false)
+            ->send($this->testUrl, $postData, $header, ['enableSSL' => true], 'postjson');
+        dingAlarm('车辆数量查询',['$res'=>json_encode($res)]);
+        return json_decode($res,true);
+    }
+    /*
+     * 统一加密
+     */
+    public function rsaData($signArr){
         $postArr = $signArr;
         $content = http_build_query($signArr);
         $privateKey = openssl_get_privatekey($this->privateKey);
-//        openssl_pkcs12_read(file_get_contents(RSA_KEY_PATH .$this->privateKey),$privateKey,123456);
-//        openssl_sign($content, $resign, $privateKey['pkey'], OPENSSL_ALGO_MD5);
         dingAlarm('车辆数量查询 $privateKey ',['$privateKey'=>$privateKey]);
         openssl_sign($content, $resign, $privateKey, OPENSSL_ALGO_SHA256);
         openssl_free_key($privateKey);
@@ -227,22 +233,7 @@ Eof;
         $sign = implode($signArr);
         $postArr['sign'] = $sign;
         //请求发送内容
-        $postData = http_build_query($postArr);
-        $header = [
-            'content-type' => 'text/json;charset=UTF-8'
-        ];
-//        dingAlarm('车辆数量查询',['$data'=>json_encode($postData),'url'=>$this->testUrl]);
-//        $res = $this->request($this->testUrl,$postData);
-////        $res = (new CoHttpClient())->useCache(false)->send($this->testUrl, $postData,$header);
-//        dingAlarm('车辆数量查询',['$res'=>json_encode($res)]);
-
-        $res = (new \App\HttpController\Service\HttpClient\CoHttpClient())
-            ->useCache(false)
-            ->needJsonDecode(false)
-            ->send($this->testUrl, $postData, $header, ['enableSSL' => true], 'postjson');
-        dingAlarm('车辆数量查询',['$res'=>json_encode($res)]);
-
-        return json_decode($res,true);
+        return http_build_query($postArr);
     }
 
     function request($url,$data){
