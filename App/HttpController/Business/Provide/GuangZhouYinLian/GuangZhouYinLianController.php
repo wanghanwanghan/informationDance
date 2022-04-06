@@ -17,6 +17,7 @@ class GuangZhouYinLianController extends ProvideBase
     {
         parent::afterAction($actionName);
     }
+
     function queryVehicleCount(): bool
     {
         $postData = [];
@@ -30,9 +31,42 @@ class GuangZhouYinLianController extends ProvideBase
 
     }
 
+    function checkResponse($res): bool
+    {
+        if (empty($res[$this->cspKey])) {
+            $this->responseCode   = $res['code'] ?? 500;
+            $this->responsePaging = $res['paging'] ?? null;
+            $this->responseData   = $res['response'] ?? null;
+            $this->spendMoney     = 0;
+            $this->responseMsg    = $res['msg'] ?? '请求超时';
+        } else {
+            $this->responseCode   = $res[$this->cspKey]['code'];
+            $this->responsePaging = $res[$this->cspKey]['paging'];
+            $this->responseData   = $res[$this->cspKey]['response'];
+            $this->responseMsg    = $res[$this->cspKey]['msg'];
+
+            $res[$this->cspKey]['code'] === 200 ?: $this->spendMoney = 0;
+        }
+
+        return true;
+    }
+
     function queryInancialBank(): bool
     {
-        $postData = [];
+        $name      = $this->getRequestData('name');
+        $userNo    = $this->getRequestData('userNo');
+        $certType  = $this->getRequestData('certType');
+        $certNo    = $this->getRequestData('certNo');
+        $vin       = $this->getRequestData('vin');
+        $licenseNo = $this->getRequestData('licenseNo');
+        $postData  = [
+            'name'      => $name,
+            'userNo'    => $userNo,
+            'certType'  => $certType,
+            'certNo'    => $certNo,
+            'vin'       => $vin,
+            'licenseNo' => $licenseNo
+        ];
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new GuangZhouYinLianService())->setCheckRespFlag(true)->queryInancialBank($postData);
         });
@@ -41,24 +75,5 @@ class GuangZhouYinLianController extends ProvideBase
 
         return $this->checkResponse($res);
 
-    }
-    function checkResponse($res): bool
-    {
-        if (empty($res[$this->cspKey])) {
-            $this->responseCode = $res['code'] ?? 500;
-            $this->responsePaging = $res['paging'] ?? null;
-            $this->responseData = $res['response'] ?? null;
-            $this->spendMoney = 0;
-            $this->responseMsg = $res['msg'] ?? '请求超时';
-        } else {
-            $this->responseCode = $res[$this->cspKey]['code'];
-            $this->responsePaging = $res[$this->cspKey]['paging'];
-            $this->responseData = $res[$this->cspKey]['response'];
-            $this->responseMsg = $res[$this->cspKey]['msg'];
-
-            $res[$this->cspKey]['code'] === 200 ?: $this->spendMoney = 0;
-        }
-
-        return true;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\HttpController\Service\GuangZhouYinLian;
 
 use App\HttpController\Service\HttpClient\CoHttpClient;
@@ -7,7 +8,7 @@ use wanghanwanghan\someUtils\control;
 
 class GuangZhouYinLianService extends ServiceBase
 {
-    private $privateKey = <<<Eof
+    private $privateKey      = <<<Eof
 -----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEA767Gc8oWD9ckvkt6rHRg+AC8yESbAgwfLc+lWh4Izs/rvxqA
 db8/hAcpO1h+6tBVzNc+3nitxN53etJyRs2Bjf0nlh74AguaNk1S/kkdzOsGdLDr
@@ -36,14 +37,15 @@ FeUxasdoXjSBuMb3Zc/aJQFfZa5Ql64QbMtM1q9v83G1iysPXP+bXqg3Wr/Ea9Jk
 ezbvJLTt45TL9P3xd3x2cYNDZfWxga68E73QFjU8T5KdJiw0GNUNnA==
 -----END RSA PRIVATE KEY-----
 Eof;
-    private $app_id = '5dc387b32c07871d371334e9c45120ba';
+    private $app_id          = '5dc387b32c07871d371334e9c45120ba';
     private $timestamp;
-    private $v = '1.0.1';
-    private $sign_alg = 1;
-    private $busiMerno = '898441650210002';
-    private $testUrl = 'https://testapi.gnete.com:9083/routejson';
+    private $v               = '1.0.1';
+    private $sign_alg        = 1;
+    private $busiMerno       = '898441650210002';
+    private $testUrl         = 'https://testapi.gnete.com:9083/routejson';
     private $secret_password = '123456';
     private $test_pub_secret = 'ogw-fat-2048-cfca.der';
+
     function __construct()
     {
 //        $this->app_id = CreateConf::getInstance()->getConf('guangzhouyinlian.app_id');
@@ -55,7 +57,8 @@ Eof;
      * 人脸识别验证
      * @return void
      */
-    public function checkFaceNew(){
+    public function checkFaceNew()
+    {
         //gnete.upbc.verify.checkFaceNew
         /*
          merOrdrNo  商户交易订单号，需保证在商户端不重复; 格式：15 位商户号+8 位交易日期+9 位序数字列号
@@ -70,7 +73,8 @@ Eof;
     /*
      * 银行卡二要素验证
      */
-    public function checkCardTwoEle(){
+    public function checkCardTwoEle()
+    {
         //gnete.upbc.verify.checkCardTwoEle
         /*
          merOrdrNo  商户交易订单号，需保证在商户端不重复; 格式：15 位商户号+8 位交易日期+9 位序数字列号
@@ -85,7 +89,8 @@ Eof;
     /*
      * 银行卡三要素验证
      */
-    public function checkCardThreeEle(){
+    public function checkCardThreeEle()
+    {
         //gnete.upbc.verify.checkCardThreeEle
         /*
          merOrdrNo  商户交易订单号，需保证在商户端不重复; 格式：15 位商户号+8 位交易日期+9 位序数字列号
@@ -102,7 +107,8 @@ Eof;
     /*
      * 银行卡四要素验证
      */
-    public function checkCardFourEle(){
+    public function checkCardFourEle()
+    {
         //gnete.upbc.verify.checkCardFourEle
         /*
          merOrdrNo  商户交易订单号，需保证在商户端不重复; 格式：15 位商户号+8 位交易日期+9 位序数字列号
@@ -120,7 +126,8 @@ Eof;
     /*
      * 运营商三要素验证
      */
-    public function checkTelThreeEle(){
+    public function checkTelThreeEle()
+    {
         //gnete.upbc.verify. checkTelThreeEle
         /*
          merOrdrNo  商户交易订单号，需保证在商户端不重复; 格式：15 位商户号+8 位交易日期+9 位序数字列号
@@ -136,7 +143,8 @@ Eof;
     /*
      * 身份证二要素验证
      */
-    public function checkIdTwoEle(){
+    public function checkIdTwoEle()
+    {
         $method = 'gnete.upbc.verify.checkIdTwoEle';
         /*
          merOrdrNo  商户交易订单号，需保证在商户端不重复; 格式：15 位商户号+8 位交易日期+9 位序数字列号
@@ -145,9 +153,9 @@ Eof;
             name          姓名
             certNo        证件号码
         */
-        $time = time();
-        $sndDt = date('YmdHis',$time);
-        $merOrdrNo = $this->busiMerno.date('Ymd',$time).control::randNum(9);
+        $time      = time();
+        $sndDt     = date('YmdHis', $time);
+        $merOrdrNo = $this->busiMerno . date('Ymd', $time) . control::randNum(9);
     }
 
     /*
@@ -178,109 +186,112 @@ Eof;
      *      areaNo      业务地区码
      *      firstBeneficiary    保单第一受益人
      */
-    public function queryInancialBank(){
-        $method = 'gnete.upbc.vehicle.queryInancialBank';
-        $time = time();
-        $sndDt = date('YmdHis',$time);
-        $merOrdrNo = $this->busiMerno.date('Ymd',$time).control::randNum(9);
-
-
+    public function queryInancialBank($postData)
+    {
+        $method      = 'gnete.upbc.vehicle.queryInancialBank';
+        $time        = time();
+        $sndDt       = date('YmdHis', $time);
+        $merOrdrNo   = $this->busiMerno . date('Ymd', $time) . control::randNum(9);
         $biz_content = [
-            'sndDt' => $sndDt,
+            'sndDt'     => $sndDt,
             'busiMerNo' => $this->busiMerno,
-            'msgBody' => [
-                'busiId' => '00270001',
+            'msgBody'   => [
+                'busiId'           => '00270001',
                 'vehicleVerifyInf' => [
-                    'name' => '张万珍',
-                    'userNo' => '888888',
-                    'certType' => '0',
-                    'certNo' => '142129195506080532',
-                    'vin' => 'LVSHFC0HH309074',
-                    'licenseNo' => '京08NN2',
-//                    'areaNo',
-//                    'firstBeneficiary'
+                    'name'      => $postData['name'],           //张万珍',
+                    'userNo'    => $postData['userNo'],         //'888888',
+                    'certType'  => $postData['certType'],       //'0',
+                    'certNo'    => $postData['certNo'],         //'142129195506080532',
+                    'vin'       => $postData['vin'],            //'LVSHFC0HH309074',
+                    'licenseNo' => $postData['licenseNo'],      //'京08NN2',
+                    //                    'areaNo',
+                    //                    'firstBeneficiary'
                 ],
-                'bizFunc' => '711004',
-                'merOrdrNo' => $merOrdrNo,
+                'bizFunc'          => '711004',
+                'merOrdrNo'        => $merOrdrNo,
             ]
         ];
-        list($postData,$header) = $this->rsaData($method,$time,$biz_content);
+        list($postData, $header) = $this->rsaData($method, $time, $biz_content);
 
         $res = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(false)
             ->send($this->testUrl, $postData, $header, ['enableSSL' => true], 'postjson');
-        dingAlarm('金融风控查询',['$res'=>json_encode($res)]);
-        return json_decode($res,true);
+        dingAlarm('金融风控查询', ['$res' => json_encode($res)]);
+        return json_decode($res, true);
     }
 
     /*
      * 车辆数量查询
      */
-    public function queryVehicleCount($postData){
-        $method = 'gnete.upbc.vehicle.queryVehicleCount';
-        $time = time();
-        $sndDt = date('YmdHis',$time);
-        $merOrdrNo = $this->busiMerno.date('Ymd',$time).control::randNum(9);
+    public function queryVehicleCount($postData)
+    {
+        $method      = 'gnete.upbc.vehicle.queryVehicleCount';
+        $time        = time();
+        $sndDt       = date('YmdHis', $time);
+        $merOrdrNo   = $this->busiMerno . date('Ymd', $time) . control::randNum(9);
         $biz_content = [
-            'sndDt' => $sndDt,
+            'sndDt'     => $sndDt,
             'busiMerNo' => $this->busiMerno,
-            'msgBody' => [
-                'busiId' => '00270002',
+            'msgBody'   => [
+                'busiId'           => '00270002',
                 'vehicleVerifyInf' => [
-                    'certNo' => '150121199110112910',
+                    'certNo'   => '150121199110112910',
                     'certType' => '0',
-                    'userNo' => '888888',
-                    'name' => '',
-                    'vin' => ''
+                    'userNo'   => '888888',
+                    'name'     => '',
+                    'vin'      => ''
                 ],
-                'bizFunc' => '721001',
-                'merOrdrNo' => $merOrdrNo,
+                'bizFunc'          => '721001',
+                'merOrdrNo'        => $merOrdrNo,
             ]
         ];
-        list($postData,$header) = $this->rsaData($method,$time,$biz_content);
+        list($postData, $header) = $this->rsaData($method, $time, $biz_content);
         $res = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(false)
             ->send($this->testUrl, $postData, $header, ['enableSSL' => true], 'postjson');
-        dingAlarm('车辆数量查询',['$res'=>json_encode($res)]);
-        return json_decode($res,true);
+        dingAlarm('车辆数量查询', ['$res' => json_encode($res)]);
+        return json_decode($res, true);
     }
+
     /*
      * 统一加密
      */
-    public function rsaData($method,$time,$biz_content){
-        $signArr = [
-            'app_id' => $this->app_id,
-            'method' => $method,
-            'timestamp' => date('Y-m-d H:i:s',$time),
-            'v' => $this->v,
-            'sign_alg' => $this->sign_alg,
+    public function rsaData($method, $time, $biz_content)
+    {
+        $signArr    = [
+            'app_id'      => $this->app_id,
+            'method'      => $method,
+            'timestamp'   => date('Y-m-d H:i:s', $time),
+            'v'           => $this->v,
+            'sign_alg'    => $this->sign_alg,
             'biz_content' => json_encode($biz_content),
         ];
-        $postArr = $signArr;
-        $content = http_build_query($signArr);
+        $postArr    = $signArr;
+        $content    = http_build_query($signArr);
         $privateKey = openssl_get_privatekey($this->privateKey);
-        dingAlarm('车辆数量查询 $privateKey ',['$privateKey'=>$privateKey]);
+        dingAlarm('车辆数量查询 $privateKey ', ['$privateKey' => $privateKey]);
         openssl_sign($content, $resign, $privateKey, OPENSSL_ALGO_SHA256);
         openssl_free_key($privateKey);
         //签名转换的byte数组 256
         $signByteArr = $this->getBytes($resign);
         //对签名进行处理，获取发送的签名内容 512位十六进制字符串
-        $signArr = $this->encodeHex($signByteArr);
-        $sign = implode($signArr);
+        $signArr         = $this->encodeHex($signByteArr);
+        $sign            = implode($signArr);
         $postArr['sign'] = $sign;
-        $header = [
+        $header          = [
             'content-type' => 'text/json;charset=UTF-8'
         ];
         //请求发送内容
-        return [http_build_query($postArr),$header];
+        return [http_build_query($postArr), $header];
     }
 
     /*
      * 车辆车架号查询
      */
-    public function queryVehicleVin(){
+    public function queryVehicleVin()
+    {
         //gnete.upbc.vehicle.queryVehicleVin
         /*
          merOrdrNo  商户交易订单号，需保证在商户端不重复; 格式：15 位商户号+8 位交易日期+9 位序数字列号
@@ -298,7 +309,8 @@ Eof;
     /*
      * 价值最高的车辆车架号查询
      */
-    public function queryVehicleVinTop(){
+    public function queryVehicleVinTop()
+    {
         //gnete.upbc.vehicle.queryVehicleVinTop
         /*
          merOrdrNo  商户交易订单号，需保证在商户端不重复; 格式：15 位商户号+8 位交易日期+9 位序数字列号
@@ -316,7 +328,8 @@ Eof;
     /*
      * 最近购买的车辆车架号查询
      */
-    public function queryVehicleVinRecent(){
+    public function queryVehicleVinRecent()
+    {
         //gnete.upbc.vehicle.queryVehicleVinRecent
         /*
          merOrdrNo  商户交易订单号，需保证在商户端不重复; 格式：15 位商户号+8 位交易日期+9 位序数字列号
@@ -334,7 +347,8 @@ Eof;
     /*
      * 车架号信息查询
      */
-    public function queryVehicleInfo(){
+    public function queryVehicleInfo()
+    {
         //gnete.upbc.vehicle.queryVehicleInfo
         /*
          merOrdrNo  商户交易订单号，需保证在商户端不重复; 格式：15 位商户号+8 位交易日期+9 位序数字列号
@@ -355,7 +369,8 @@ Eof;
     /*
      * 二手车信息查询
      */
-    public function queryUsedVehicleInfo(){
+    public function queryUsedVehicleInfo()
+    {
         //gnete.upbc.vehicle.queryUsedVehicleInfo
         /*
          merOrdrNo  商户交易订单号，需保证在商户端不重复; 格式：15 位商户号+8 位交易日期+9 位序数字列号
@@ -375,39 +390,41 @@ Eof;
      * @param  [String] $str
      * @return [byte[]]
      */
-    public function getBytes($str) {
-        $len = strlen($str);
+    public function getBytes($str)
+    {
+        $len   = strlen($str);
         $bytes = array();
-        for($i=0;$i<$len;$i++) {
-            if(ord($str[$i]) >= 128){
+        for ($i = 0; $i < $len; $i++) {
+            if (ord($str[$i]) >= 128) {
                 $byte = ord($str[$i]) - 256;
-            }else{
+            } else {
                 $byte = ord($str[$i]);
             }
-            $bytes[] =  $byte ;
+            $bytes[] = $byte;
         }
         return $bytes;
 
     }
 
 
-    public function encodeHex($data){
-        $digits_lower = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' );
-        $toDigits=$digits_lower;
-        $len=count($data);
-        $i=0;
-        $out=array();
-        for($var=0;$i<$len;++$i){
+    public function encodeHex($data)
+    {
+        $digits_lower = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');
+        $toDigits     = $digits_lower;
+        $len          = count($data);
+        $i            = 0;
+        $out          = array();
+        for ($var = 0; $i < $len; ++$i) {
 
-            $var1=240&$data[$i];
+            $var1 = 240 & $data[$i];
 
-            $index1=$this->unsignedRight($var1,4);
+            $index1 = $this->unsignedRight($var1, 4);
 
-            $out[$var]=$toDigits[$index1];
+            $out[$var] = $toDigits[$index1];
 
             $var++;
-            $index2=15&$data[$i];
-            $out[$var]=$toDigits[$index2];
+            $index2    = 15 & $data[$i];
+            $out[$var] = $toDigits[$index2];
             $var++;
         }
 
@@ -415,12 +432,13 @@ Eof;
         return $out;
     }
 
-     function unsignedRight($int, $n){
-        for ($i=0; $i < $n; $i++) {
-            if( $int < 0 ){
+    function unsignedRight($int, $n)
+    {
+        for ($i = 0; $i < $n; $i++) {
+            if ($int < 0) {
                 $int >>= 1;
                 $int &= PHP_INT_MAX;
-            }else{
+            } else {
                 $int >>= 1;
             }
         }
