@@ -209,7 +209,7 @@ class FaDaDaService extends ServiceBase
      */
     private function getEntCustomer($arr){
         $ent_customer_info = FaDaDaUserModel::create()
-            ->where("(`entName` = '{$arr['entName']}' OR `code` = '{$arr['socialCredit']}') AND `account_type` = '2'")
+            ->where("(`entName` = '{$arr['entName']}' OR `code` = '{$arr['socialCredit']}') AND `account_type` = '2' order by id desc ")
             ->get();
 
         if (!empty($ent_customer_info)) {
