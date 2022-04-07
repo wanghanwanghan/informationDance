@@ -112,9 +112,17 @@ class FinanceContorller  extends UserController
                 continue;
             }
             if(!empty($res)) {
-                foreach ($res as $datum) {
+                foreach ($res as $vYear=>$datum) {
 //                    dingAlarm('empty$yichangData',['$datum'=>json_encode($datum),'$year_price_detail_year'=>json_encode($year_price_detail[$datum['year']])]);
                     if(empty($datum)|| !isset($year_price_detail[$datum['year']]['cond'])){
+                        $insertDataEmpty = [
+                            'entName'=>$ent['entName'],
+                            'year'=>$vYear,
+                        ];
+                        foreach ($kidTypesKeyArr as $item) {
+                            $insertDataEmpty[$item] = '0';
+                        }
+                        $resData['2'][] = $insertDataEmpty;
                         continue;
                     }
                     $insertData = [
