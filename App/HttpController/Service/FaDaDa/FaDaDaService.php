@@ -791,12 +791,12 @@ class FaDaDaService extends ServiceBase
 //            'signature_show_time' => $arr['signature_show_time'],//时间戳显示方式 1 显示 2 不显示
 //            'signature_positions'=>'[{"pagenum":0,"x":'.$x.',"y":'.$y.'}]',
         ];
-//        CommonService::getInstance()->log4PHP($post_data,'info','extsign_auto_param_arr');
+        CommonService::getInstance()->log4PHP($post_data,'info','extsign_auto_param_arr');
 
         $resp = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $url_ext, $post_data, $this->getHeader('form'), ['enableSSL' => true]);
-//        CommonService::getInstance()->log4PHP($resp,'info','extsign_auto');
+        CommonService::getInstance()->log4PHP($resp,'info','extsign_auto');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
