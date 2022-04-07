@@ -196,11 +196,11 @@ class FinanceContorller  extends UserController
         for ($i=($year-$dataCount);$i<=$year;$i++)
         {
             if(isset($data[$i])){
-                $resData[] = $data[$i];
+                $resData[$i] = $data[$i];
             }else{
                 $this->getFinanceOriginal($entname,1,$i);
                 $yearData = FinanceData::create()->where("entName = '{$entname}' and year = {$i}")->get();
-                $resData[] = $yearData;
+                $resData[$i] = json_decode(json_encode($yearData),true);
             }
         }
         return $resData;
