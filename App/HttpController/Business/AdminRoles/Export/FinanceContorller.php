@@ -337,9 +337,9 @@ class FinanceContorller  extends UserController
         if(!isset($logInfo->ret['2']) || empty($logInfo) || empty($logInfo->ret['2'])){
             return '';
         }
-        $ret = json_decode($logInfo->ret['2'],true);
+        $ret = json_decode($logInfo->ret,true);
         dingAlarm('getFAbnormalDataText',['$ret'=>json_encode($ret)]);
-        foreach ($ret as $v){
+        foreach ($ret['2'] as $v){
             $insertData = [
                 $v['entName'],
                 $v['year'],
