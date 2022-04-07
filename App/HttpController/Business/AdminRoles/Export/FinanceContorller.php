@@ -5,12 +5,15 @@ namespace App\HttpController\Business\AdminRoles\Export;
 use App\HttpController\Business\AdminRoles\User\UserController;
 use App\HttpController\Models\Admin\SaibopengkeAdmin\FinanceChargeLog;
 use App\HttpController\Models\Admin\SaibopengkeAdmin\FinanceData;
+use App\HttpController\Models\Provide\BarchChargingLog;
 use App\HttpController\Models\Provide\RequestUserApiRelationship;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\LongXin\LongXinService;
+use Carbon\Carbon;
 use EasySwoole\Mysqli\QueryBuilder;
+use wanghanwanghan\someUtils\control;
 
 class FinanceContorller  extends UserController
 {
@@ -81,6 +84,8 @@ class FinanceContorller  extends UserController
         $kidTypes = explode('|',$relation->kidTypes);
         $year_price_detail = getArrByKey(json_decode($relation->year_price_detail),'year');
         $kidTypeList = explode('-',$kidTypes['0']);
+        $year = $kidTypeList['0'];
+        $yearCount = $kidTypeList['1'];
         $kidTypesKeyArr = explode(',',$kidTypes['1']);
         $fileName = date('YmdHis', time()) . '年报.csv';
         $file = TEMP_FILE_PATH . $fileName;
@@ -92,7 +97,7 @@ class FinanceContorller  extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
 //            dingAlarm('getFinanceOriginalData',['$kidTypeList'=>json_encode($kidTypeList)]);
-            $res = $this->getFinanceOriginalData($ent['entName'],$kidTypeList['1'],$kidTypeList['0']);
+            $res = $this->getFinanceOriginalData($ent['entName'],$yearCount,$year);
 //            dingAlarm('getFinanceOriginalData',['$res'=>json_encode($res),'$year_price_detail'=>json_encode($year_price_detail)]);
             if(empty($res)){
                 $insertData2 = [
@@ -152,6 +157,18 @@ class FinanceContorller  extends UserController
                         }
                         $resData['2'][] = $insertData2;
                     }
+                }
+            }else{
+                for ($i=($year-$yearCount);$i<=$year;$i++)
+                {
+                    $insertDataEmpty = [
+                        'entName'=>$ent['entName'],
+                        'year'=>$i,
+                    ];
+                    foreach ($kidTypesKeyArr as $item) {
+                        $insertDataEmpty[$item] = '0';
+                    }
+                    $resData['2'][] = $insertDataEmpty;
                 }
             }
 //            dingAlarm('$resData',['$resData'=>json_encode($resData)]);
@@ -306,5 +323,49 @@ class FinanceContorller  extends UserController
         ];
         FinanceChargeLog::create()->data($add)->save();
         return true;
+    }
+
+    public function getFAbnormalDataText(){
+        $Ym = Carbon::now()->format('Ym');
+        $d = 'day' . Carbon::now()->format('d');
+        $workPath = ROOT_PATH . '/TempWork/SaiMengHuiZhi/' . 'Work/' . $Ym . '/' . $d . '/';
+        $batchNum = $this->getRequestData('batchNum');
+        $appId = $this->getRequestData('username');
+        if(empty($appId) || empty($batchNum)){
+            return $this->writeJson(201, null, '', "没有查到数据");
+        }
+        $info = RequestUserInfo::create()->where(" appId = '{$appId}' ")->get();
+        $logInfo = BarchChargingLog::create()->where("type = 15 and userId = {$info->id} and batchNum = '{$batchNum}'")->get();
+        if(empty($logInfo)){
+            return $this->writeJson(201, null, '', "没有查到数据");
+        }
+        $ret = json_decode($logInfo->ret,true);
+        $fileName = 'DESC' . control::getUuid() . '.txt';
+        foreach ($ret as $v){
+            $insertData = [
+                $v['entName'],
+                $v['year'],
+                $v['VENDINC']??'',
+                $v['ASSGRO']??'',
+                $v['MAIBUSINC']??'',
+                $v['TOTEQU']??'',
+                $v['RATGRO']??'',
+                $v['PROGRO']??'',
+                $v['NETINC']??'',
+                $v['LIAGRO']??'',
+                $v['SOCNUM']??'',
+            ];
+            foreach ($insertData as $k=>$val){
+                if($val == ''){
+                    unset($insertData[$k]);
+                }
+            }
+            file_put_contents(
+                $workPath . $fileName,
+                implode('|', $insertData) . PHP_EOL,
+                FILE_APPEND
+            );
+        }
+        return $fileName;
     }
 }
