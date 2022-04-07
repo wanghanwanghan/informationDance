@@ -567,7 +567,7 @@ Eof;
                     break;
                 case 2:
                     $FinanceContorller = new FinanceContorller();
-                    list($filePath, $data) = $FinanceContorller->{$fun}($nameArr,$requestUserApiRelationship,$info->appId);
+                    list($filePath, $data) = $FinanceContorller->{$fun}($nameArr,$requestUserApiRelationship,$info->appId,$batchNum);
                     break;
                 case 3:
                     $SifaContorller = new SifaContorller();

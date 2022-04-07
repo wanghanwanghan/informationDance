@@ -32,7 +32,7 @@ class FinanceContorller  extends UserController
      * 西南年报
      * 2018-3/ASSGRO,LIAGRO,VENDINC,MAIBUSINC,PROGRO,NETINC,RATGRO,TOTEQU,SOCNUM
      */
-    public function xinanGetFinanceNotAuth($entNames,$relation,$appId)
+    public function xinanGetFinanceNotAuth($entNames,$relation,$appId,$batchNum)
     {
 //        dingAlarm('xinanGetFinanceNotAuth_tou',['$entNames'=>$entNames]);
         $kidTypes = explode('|',$relation->kidTypes);
@@ -79,10 +79,12 @@ class FinanceContorller  extends UserController
         return [$fileName, $resData];
     }
 
-    public function smhzGetFinanceOriginal($entNames,$relation,$appId){
+    public function smhzGetFinanceOriginal($entNames,$relation,$appId,$batchNum){
 //        dingAlarm('smhzGetFinanceOriginal',['$relation'=>json_encode($relation)]);
         $kidTypes = explode('|',$relation->kidTypes);
         $year_price_detail = getArrByKey(json_decode($relation->year_price_detail),'year');
+        $ent_price_detail = $relation->ent_price_detail;
+        $price_type = $relation->price_type;
         $kidTypeList = explode('-',$kidTypes['0']);
         $year = $kidTypeList['0'];
         $yearCount = $kidTypeList['1'];
@@ -112,6 +114,13 @@ class FinanceContorller  extends UserController
                 continue;
             }
             if(!empty($res)) {
+                if($price_type == 2){
+                    if($this->searchFinanceChargeLog('',$ent_price_detail,$relation->userId,$ent['entName'])) {
+                        RequestUserInfo::create()->where('appId', $appId)->update([
+                            'money' => QueryBuilder::dec($ent_price_detail)]);
+                        $this->insertFinanceChargeLog('', $ent_price_detail, $relation->userId, $batchNum, $ent['entName'], 1);
+                    }
+                }
                 foreach ($res as $vYear=>$datum) {
 //                    dingAlarm('empty$yichangData',['$datum'=>json_encode($datum),'$year_price_detail_year'=>json_encode($year_price_detail[$datum['year']])]);
                     if(empty($datum)|| !isset($year_price_detail[$datum['year']]['cond'])){
@@ -149,10 +158,12 @@ class FinanceContorller  extends UserController
                                 $insertData[] = 0;
                             }
                         }
-                        $price = $year_price_detail[$datum['year']]['price']??0;
-                        RequestUserInfo::create()->where('appId', $appId)->update([
-                            'money' => QueryBuilder::dec($price)
-                        ]);
+                        if($price_type == 1 && $this->searchFinanceChargeLog($datum['id'],$year_price_detail[$datum['year']]['price'],$relation->user_id,'')){
+                            $price = $year_price_detail[$datum['year']]['price'] ?? 0;
+                            RequestUserInfo::create()->where('appId', $appId)->update([
+                                'money' => QueryBuilder::dec($price)]);
+                            $this->insertFinanceChargeLog($datum['id'],$price,$relation->userId,$batchNum,$ent['entName'],1);
+                        }
                         $resData['1'][] = $insertData;
                         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
                     }else{
@@ -279,6 +290,8 @@ class FinanceContorller  extends UserController
             return '';
         }
         $year_price_detail = getArrByKey(json_decode($listRelation->year_price_detail),'year');
+        $ent_price_detail = $listRelation->ent_price_detail;
+        $price_type = $listRelation->price_type;
         $kidTypes = explode('|',$listRelation->kidTypes);
         $kidTypesKeyArr = explode(',',$kidTypes['1']);
         $fileName = date('YmdHis', time()) . '年报.csv';
@@ -289,6 +302,16 @@ class FinanceContorller  extends UserController
         }
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         $list = json_decode(json_encode($list),true);
+        $entNames = array_column($list,'entName');
+        if($price_type == 2){
+            foreach ($entNames as $entName) {
+                if($this->searchFinanceChargeLog('',$ent_price_detail,$user_id,$entName)){
+                    RequestUserInfo::create()->where('appId', $appId)->update([
+                        'money' => QueryBuilder::dec($ent_price_detail)]);
+                    $this->insertFinanceChargeLog($item['id'],$year_price_detail[$item['year']]['price'],$user_id,$batchNum,$item['entName'],1);
+                }
+            }
+        }
         $data = [];
         foreach ($list as $item) {
             $insertData = [
@@ -303,31 +326,42 @@ class FinanceContorller  extends UserController
                 }
             }
             file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
-            if($this->searchFinanceChargeLog($item['id'],$year_price_detail[$item['year']]['price'],$user_id,$batchNum)){
+            if($price_type ==1 && $this->searchFinanceChargeLog($item['id'],$year_price_detail[$item['year']]['price'],$user_id,'')){
                 RequestUserInfo::create()->where('appId', $appId)->update([
-                    'money' => QueryBuilder::dec($year_price_detail[$item['year']]['price'])
-                ]);
-                $this->insertFinanceChargeLog($item['id'],$year_price_detail[$item['year']]['price'],$user_id,$batchNum);
-                $data = $insertData;
+                    'money' => QueryBuilder::dec($year_price_detail[$item['year']]['price'])]);
+                $this->insertFinanceChargeLog($item['id'],$year_price_detail[$item['year']]['price'],$user_id,$batchNum,$item['entName'],1);
             }
+            $data = $insertData;
 
         }
         $this->inseartChargingLog($user_id, $batchNum, 15, implode(',',$ids),$data, $fileName, 2);
         return $fileName;
     }
 
-    public function searchFinanceChargeLog($financeId,$price,$userId,$batchNum){
-        dingAlarm('searchFinanceChargeLog',['sql'=>"financeId = {$financeId} and price = '{$price}' and userId = {$userId} and batchNum = '{$batchNum}'"]);
-        $info = FinanceChargeLog::create()->where("financeId = {$financeId} and price = '{$price}' and userId = {$userId} and batchNum = '{$batchNum}'")->get();
+    public function searchFinanceChargeLog($financeId,$price,$userId,$entName){
+//        dingAlarm('searchFinanceChargeLog',['sql'=>"financeId = {$financeId} and price = '{$price}' and userId = {$userId} and batchNum = '{$batchNum}'"]);
+        $sql = "  userId = {$userId} and status!=1  ";
+        if(!empty($financeId)){
+            $sql.= " and financeId = {$financeId}";
+        }
+        if(!empty($entName)){
+            $sql.= " and entName = {$entName}";
+        }
+        if(!empty($price)){
+            $sql.= " and price = {$price}";
+        }
+        $info = FinanceChargeLog::create()->where($sql)->get();
         return empty($info)?true:false;
     }
 
-    public function insertFinanceChargeLog($financeId,$price,$userId,$batchNum){
+    public function insertFinanceChargeLog($financeId,$price,$userId,$batchNum,$entName,$status){
         $add = [
             'financeId'=>$financeId,
             'price' => $price,
             'userId' => $userId,
-            'batchNum' => $batchNum
+            'batchNum' => $batchNum,
+            'entName' => $entName,
+            'status' => $status
         ];
         FinanceChargeLog::create()->data($add)->save();
         return true;
