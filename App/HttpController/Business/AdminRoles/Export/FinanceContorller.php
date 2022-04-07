@@ -325,12 +325,10 @@ class FinanceContorller  extends UserController
         return true;
     }
 
-    public function getFAbnormalDataText(){
+    public function getAbnormalDataText($batchNum,$appId){
         $Ym = Carbon::now()->format('Ym');
         $d = 'day' . Carbon::now()->format('d');
         $workPath = ROOT_PATH . '/TempWork/SaiMengHuiZhi/' . 'Work/' . $Ym . '/' . $d . '/';
-        $batchNum = $this->getRequestData('batchNum');
-        $appId = $this->getRequestData('username');
         if(empty($appId) || empty($batchNum)){
             return $this->writeJson(201, null, '', "没有查到数据");
         }
@@ -366,6 +364,7 @@ class FinanceContorller  extends UserController
                 FILE_APPEND
             );
         }
-        return $this->writeJson(200, '', $fileName,'成功');
+        dingAlarm('getFAbnormalDataText',['$fileName'=>$fileName]);
+        return $fileName;
     }
 }

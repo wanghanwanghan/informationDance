@@ -842,4 +842,14 @@ Eof;
         $ret = json_decode($logInfo->ret,true);
         return $this->writeJson(200, '', $ret['2']??[],'成功');
     }
+
+    public function getFAbnormalDataText(){
+        $batchNum = $this->getRequestData('batchNum');
+        $appId = $this->getRequestData('username');
+        if(empty($appId) || empty($batchNum)){
+            return $this->writeJson(201, null, '', "没有查到数据");
+        }
+        $file = $this->getAbnormalDataText($batchNum,$appId);
+        return $this->writeJson(200, '', $file,'成功');
+    }
 }
