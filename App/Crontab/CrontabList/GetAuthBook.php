@@ -55,17 +55,17 @@ class GetAuthBook extends AbstractCronTask
         $ids = $this->getNeedSealID();//123123
 
         $ids = implode(',', $ids);
-
+        $idSql = 'authDate = 0 AND STATUS = 0';
+        if(!empty($ids)){
+            $idSql = "id IN ( {$ids} ) OR (authDate = 0 AND STATUS = 0)";
+        }
         $sql = <<<Eof
 SELECT
 	* 
 FROM
 	information_dance_ant_auth_list 
 WHERE
-	id IN ( {$ids} ) 
-	OR (
-	authDate = 0
-	AND STATUS = 0)
+	{$idSql}
 Eof;
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
 
@@ -88,7 +88,8 @@ Eof;
 
                 $DetailList = AntAuthSealDetail::create()->where([
                     'antAuthId' => $oneEntInfo['id'],
-                    'status' => 0
+                    'status' => 0,
+                    'fileUrl' => ''
                 ])->all();
                 $url = [];
                 if (empty($DetailList)) {
@@ -286,7 +287,8 @@ Eof;
     {
         $list = AntAuthSealDetail::create()->where([
             'status' => 0,
-            'isSeal' => 'true'
+            'isSeal' => 'true',
+            'fileUrl' => ''
         ])->all();
         $ids = [0];
         $idMap = [];
