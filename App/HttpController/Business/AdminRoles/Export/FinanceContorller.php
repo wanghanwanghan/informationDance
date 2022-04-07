@@ -366,6 +366,6 @@ class FinanceContorller  extends UserController
                 FILE_APPEND
             );
         }
-        return $fileName;
+        return $this->writeJson(200, '', $fileName,'成功');
     }
 }
