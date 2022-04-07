@@ -720,6 +720,8 @@ Eof;
         $cache_day = $this->getRequestData('cache_day');
         $billing_plan = $this->getRequestData('billing_plan');
         $kidTypes = $this->getRequestData('kidTypes');
+        $priceType = $this->getRequestData('priceType');
+        $ent_price_detail = $this->getRequestData('ent_price_detail');
         $year_price_detail = $this->getRequestData('year_price_detail');
 //        dingAlarm('editApiUserRelation',['$year_price_detail'=>$year_price_detail]);
         if(empty($relationshipId)){
@@ -741,6 +743,12 @@ Eof;
         }
         if(!empty($year_price_detail)){
             $update['year_price_detail'] = $year_price_detail;
+        }
+        if(!empty($ent_price_detail)){
+            $update['ent_price_detail'] = $ent_price_detail;
+        }
+        if(!empty($priceType)){
+            $update['price_type'] = $priceType;
         }
 //        dingAlarm('editApiUserRelation',['$update'=>json_encode($update)]);
         $info->update($update);
