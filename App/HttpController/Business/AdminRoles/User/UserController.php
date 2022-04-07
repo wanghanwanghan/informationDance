@@ -849,7 +849,8 @@ Eof;
         if(empty($appId) || empty($batchNum)){
             return $this->writeJson(201, null, '', "没有查到数据");
         }
-        $file = $this->getAbnormalDataText($batchNum,$appId);
+
+        $file = (new FinanceContorller())->getAbnormalDataText($batchNum,$appId);
         return $this->writeJson(200, '', $file,'成功');
     }
 }
