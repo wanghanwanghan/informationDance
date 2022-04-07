@@ -328,7 +328,10 @@ class FinanceContorller  extends UserController
     public function getAbnormalDataText($batchNum,$appId){
         $Ym = Carbon::now()->format('Ym');
         $d = 'day' . Carbon::now()->format('d');
+
         $workPath = ROOT_PATH . '/TempWork/SaiMengHuiZhi/' . 'Work/' . $Ym . '/' . $d . '/';
+        $fileName = 'DESC' . control::getUuid() . '.text';
+        $path = '/TempWork/SaiMengHuiZhi/' . 'Work/' . $Ym . '/' . $d . '/'.$fileName;
         if(empty($appId) || empty($batchNum)){
             return $this->writeJson(201, null, '', "没有查到数据");
         }
@@ -338,7 +341,7 @@ class FinanceContorller  extends UserController
             return $this->writeJson(201, null, '', "没有查到数据");
         }
         $ret = json_decode($logInfo->ret,true);
-        $fileName = 'DESC' . control::getUuid() . '.txt';
+
         foreach ($ret as $v){
             $insertData = [
                 $v['entName'],
@@ -364,7 +367,7 @@ class FinanceContorller  extends UserController
                 FILE_APPEND
             );
         }
-        dingAlarm('getFAbnormalDataText',['$fileName'=>$fileName]);
-        return $fileName;
+        dingAlarm('getFAbnormalDataText',['$fileName'=>$path]);
+        return $path;
     }
 }
