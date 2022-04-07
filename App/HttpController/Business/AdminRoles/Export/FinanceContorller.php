@@ -334,11 +334,11 @@ class FinanceContorller  extends UserController
         $path = '/TempWork/SaiMengHuiZhi/' . 'Work/' . $Ym . '/' . $d . '/'.$fileName;
         $info = RequestUserInfo::create()->where(" appId = '{$appId}' ")->get();
         $logInfo = BarchChargingLog::create()->where("type = 15 and userId = {$info->id} and batchNum = '{$batchNum}'")->get();
-        if(empty($logInfo)){
+        if(!isset($logInfo->ret['2']) || empty($logInfo) || empty($logInfo->ret['2'])){
             return '';
         }
-        $ret = json_decode($logInfo->ret,true);
-
+        $ret = json_decode($logInfo->ret['2'],true);
+        dingAlarm('getFAbnormalDataText',['$ret'=>json_encode($ret)]);
         foreach ($ret as $v){
             $insertData = [
                 $v['entName'],
