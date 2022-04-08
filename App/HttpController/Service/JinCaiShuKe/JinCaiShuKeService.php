@@ -99,9 +99,33 @@ class JinCaiShuKeService extends ServiceBase
     }
 
     //发票提取
-    function S000523(string $nsrsbh, string $start, string $stop)
+    function S000523(string $nsrsbh, string $rwh, $page, $pageSize)
     {
+        $content = [
+            'mode' => '2',
+            'rwh' => trim($rwh),
+            'page' => trim($page),
+            'pageSize' => $pageSize - 0 > 1000 ? '1000' : trim($pageSize),
+        ];
 
+        $signType = '0';
+
+        $post_data = [
+            'appid' => $this->appKey,
+            'serviceid' => __FUNCTION__,
+            'jtnsrsbh' => $this->jtnsrsbh,
+            'nsrsbh' => trim($nsrsbh),
+            'content' => base64_encode(jsonEncode($content, false)),
+            'signature' => $this->signature($content, trim($nsrsbh), __FUNCTION__, $signType),
+            'signType' => $signType,
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->setCheckRespFlag(false)
+            ->send($this->url, $post_data, [], ['enableSSL' => true]);
+
+        return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
 }
 

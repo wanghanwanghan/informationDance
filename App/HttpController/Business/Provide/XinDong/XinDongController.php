@@ -1441,18 +1441,45 @@ class XinDongController extends ProvideBase
 
     function collectInvoice(): bool
     {
-        $m = $this->getRequestData('m');
+        $nsrsbh = $this->getRequestData('nsrsbh');
+        $start = $this->getRequestData('start');
+        $stop = $this->getRequestData('stop');
 
         $postData = [
-            'nsrsbh' => '91110108MA01KPGK0L',
-            'start' => "2021-{$m}-01",
-            'stop' => "2021-{$m}-31",
+            'nsrsbh' => $nsrsbh,
+            'start' => $start,
+            'stop' => $stop,
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new JinCaiShuKeService())
                 ->setCheckRespFlag(true)
                 ->S000519($postData['nsrsbh'], $postData['start'], $postData['stop']);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function getInvoice(): bool
+    {
+        $nsrsbh = $this->getRequestData('nsrsbh');
+        $rwh = $this->getRequestData('rwh');
+        $page = $this->getRequestData('page');
+        $pageSize = $this->getRequestData('pageSize');
+
+        $postData = [
+            'nsrsbh' => $nsrsbh,
+            'rwh' => $rwh,
+            'page' => trim($page),
+            'pageSize' => trim($pageSize),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new JinCaiShuKeService())
+                ->setCheckRespFlag(true)
+                ->S000523($postData['nsrsbh'], $postData['rwh'], $postData['page'], $postData['pageSize']);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
