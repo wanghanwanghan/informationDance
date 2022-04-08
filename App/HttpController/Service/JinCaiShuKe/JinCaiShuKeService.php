@@ -36,15 +36,13 @@ class JinCaiShuKeService extends ServiceBase
     {
         $content = base64_encode(jsonEncode($content, false));
 
-        $arr = [
-            'appid' => $this->appKey,
-            'content' => $content,
-            'jtnsrsbh' => $this->jtnsrsbh,
-            'nsrsbh' => $nsrsbh,
-            'serviceid' => $serviceid,
-        ];
-
-        $str = '?' . http_build_query($arr);
+        $str = '?' . http_build_query([
+                'appid' => $this->appKey,
+                'content' => $content,
+                'jtnsrsbh' => $this->jtnsrsbh,
+                'nsrsbh' => $nsrsbh,
+                'serviceid' => $serviceid,
+            ]);
 
         return $signType === '0' ?
             hash_hmac('sha256', $str, $this->appSecret) :
