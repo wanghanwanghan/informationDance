@@ -8,7 +8,6 @@ use App\HttpController\Models\Admin\SaibopengkeAdmin\FinanceData;
 use App\HttpController\Models\Provide\BarchChargingLog;
 use App\HttpController\Models\Provide\RequestUserApiRelationship;
 use App\HttpController\Models\Provide\RequestUserInfo;
-use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\LongXin\LongXinService;
 use Carbon\Carbon;
@@ -56,7 +55,6 @@ class FinanceContorller  extends UserController
                 'dataCount' => $kidTypeList['1'],//取最近几年的
             ];
             $res = (new LongXinService())->getFinanceData($postData, false);
-//            dingAlarm('xinanGetFinanceNotAuth',['$res'=>$res]);
             if(empty($res['data'])){
                 $insertStr = $ent['entName'].','.$kidTypeList['0'];
                 for ($i=1;$i<count($kidTypesKeyArr);$i++){
@@ -76,13 +74,11 @@ class FinanceContorller  extends UserController
                 $resData[] = $insertData;
                 file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
             }
-//            dingAlarm('年报',['$entName'=>$ent['entName'],'$data'=>json_encode($resData)]);
         }
         return [$fileName, $resData];
     }
 
     public function smhzGetFinanceOriginal($entNames,$relation,$appId,$batchNum){
-        dingAlarm('smhzGetFinanceOriginal',['$relation'=>json_encode($relation)]);
         $kidTypes = explode('|',$relation->kidTypes);
         $year_price_detail = getArrByKey(json_decode($relation->year_price_detail),'year');
         $ent_price_detail = $relation->ent_price_detail;
@@ -100,13 +96,11 @@ class FinanceContorller  extends UserController
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         $resData = [];
         foreach ($entNames as $ent) {
-//            dingAlarm('getFinanceOriginalData',['$kidTypeList'=>json_encode($kidTypeList)]);
             $res = $this->getFinanceOriginalData($ent['entName'],$yearCount,$year);
             $inserDataArr = [];
             $flag = false;
             if(!empty($res)) {
                 foreach ($res as $vYear=>$datum) {
-//                    dingAlarm('empty$yichangData',['$datum'=>json_encode($datum),'$year_price_detail_year'=>json_encode($year_price_detail[$datum['year']])]);
                     if(empty($datum)|| ($price_type == self::PRICE_TYPE_1 && !isset($year_price_detail[$vYear]['cond']))){
                         $insertDataEmpty = [
                             'entName'=>$ent['entName'],
@@ -158,7 +152,6 @@ class FinanceContorller  extends UserController
                     'money' => QueryBuilder::dec($ent_price_detail)]);
                 $this->insertFinanceChargeLog('', $ent_price_detail, $relation->userId, $batchNum, $ent['entName'], 1);
             }
-            dingAlarm('$inserDataArr',['$inserDataArr'=>json_encode($inserDataArr)]);
 
             if($flag){
                 foreach ($inserDataArr as $v){
@@ -366,7 +359,6 @@ class FinanceContorller  extends UserController
     public function getAbnormalDataText($batchNum,$appId){
         $Ym = Carbon::now()->format('Ym');
         $d = 'day' . Carbon::now()->format('d');
-
         $workPath = ROOT_PATH . '/TempWork/SaiMengHuiZhi/' . 'Work/' . $Ym . '/' . $d . '/';
         $fileName = 'DESC' . control::getUuid() . '.text';
         $path = '/TempWork/SaiMengHuiZhi/' . 'Work/' . $Ym . '/' . $d . '/'.$fileName;
@@ -376,26 +368,7 @@ class FinanceContorller  extends UserController
             return '';
         }
         $ret = json_decode($logInfo->ret,true);
-        dingAlarm('getFAbnormalDataText',['$ret'=>json_encode($ret)]);
-        $res1 = [];
-        foreach ($ret['1'] as $v){
-            $insert = [
-                $v['entName'],
-                $v['year'],
-                isset($v['VENDINC'])?'正常':'',
-                isset($v['ASSGRO'])?'正常':'',
-                isset($v['MAIBUSINC'])?'正常':'',
-                isset($v['TOTEQU'])?'正常':'',
-                isset($v['RATGRO'])?'正常':'',
-                isset($v['PROGRO'])?'正常':'',
-                isset($v['NETINC'])?'正常':'',
-                isset($v['LIAGRO'])?'正常':'',
-                isset($v['SOCNUM'])?'正常':'',
-            ];
-            $insert = array_filter($insert);
-            $res1[] = $insert;
-        }
-        $res2 = [];
+        $res = [];
         foreach ($ret['2'] as $v){
             $insertData = [
                 $v['entName'],
@@ -415,17 +388,9 @@ class FinanceContorller  extends UserController
                     unset($insertData[$k]);
                 }
             }
-            $res2[] = $insertData;
+            $res[] = $insertData;
 
         }
-        $res = array_merge($res1,$res2);
-        $nameArr = [];
-        $yearArr = [];
-        foreach ($res as $key=>$v){
-            $nameArr[$key] = $v['0'];
-            $yearArr[$key] = $v['1'];
-        }
-        array_multisort($nameArr,SORT_ASC,$yearArr,SORT_ASC,$res);
         foreach ($res as $val){
             file_put_contents(
             $workPath . $fileName,
@@ -433,7 +398,6 @@ class FinanceContorller  extends UserController
             FILE_APPEND
             );
         }
-        dingAlarm('getFAbnormalDataText',['$fileName'=>$path]);
         return $path;
     }
 
