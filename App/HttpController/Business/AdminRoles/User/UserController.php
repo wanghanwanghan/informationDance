@@ -387,6 +387,8 @@ class UserController extends UserBase
                 $res[$key]['kidTypes'] = $shipList[$key]['kidTypes'];
                 $res[$key]['relationshipId'] = $shipList[$key]['id'];
                 $res[$key]['year_price_detail'] = $shipList[$key]['year_price_detail'];
+                $res[$key]['price_type'] = $shipList[$key]['price_type'];
+                $res[$key]['ent_price_detail'] = $shipList[$key]['ent_price_detail'];
                 $res[$key]['own'] = 1;
             }else{
                 $res[$key]['own'] = 2;
