@@ -427,7 +427,7 @@ class FinanceContorller extends UserController
             $whereStr.=" and batchNum = {$postData['batchNum']}";
         }
         if (!empty($postData['status'])) {
-            $whereStr.=" and batchNum = {$postData['status']}";
+            $whereStr.=" and status = {$postData['status']}";
         }
         if (!empty($postData['created_at'])) {
                 $tmp = explode('|||', $postData['created_at']);
@@ -436,6 +436,7 @@ class FinanceContorller extends UserController
             $whereStr .= ' and created_at between '.$date1.' and '.$date2 ;
         }
         $limit = ($pageNo - 1) * $pageSize;
+        dingAlarm('getFinanceChargeLog',['$whereStr'=>$whereStr]);
         $count = FinanceChargeLog::create()->where($whereStr)->count();
         $list  = FinanceChargeLog::create()->where($whereStr)->limit((int)$limit, (int)$pageSize)->all();
         return [$list, $count];
