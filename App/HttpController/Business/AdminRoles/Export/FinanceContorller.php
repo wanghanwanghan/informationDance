@@ -420,7 +420,7 @@ class FinanceContorller extends UserController
      */
     public function getFinanceChargeLog($postData)
     {
-        $pageNo          = empty($postData['pageNo'])?$postData['pageNo']:1;
+        $pageNo          = empty($postData['pageNo'])?1:$postData['pageNo'] ;
         $pageSize        = $postData['pageSize'] ?? 10;
         $whereStr = 'userId = '.$postData['userId'];
         if (!empty($postData['batchNum'])) {
