@@ -284,6 +284,7 @@ class FinanceContorller  extends UserController
     }
 
     public function getSmhzAbnormalFinance($ids,$appId,$batchNum,$user_id){
+        $ids = array_filter($ids);
         $list = FinanceData::create()->where("id in (".implode(',',$ids).")")->all();
         $listRelation = RequestUserApiRelationship::create()->where("userId = {$user_id} and status = 1 and apiId = 157")->get();
         if(empty($list)){
@@ -308,7 +309,7 @@ class FinanceContorller  extends UserController
                 if($this->searchFinanceChargeLog('',$ent_price_detail,$user_id,$entName)){
                     RequestUserInfo::create()->where('appId', $appId)->update([
                         'money' => QueryBuilder::dec($ent_price_detail)]);
-                    $this->insertFinanceChargeLog($item['id'],$year_price_detail[$item['year']]['price'],$user_id,$batchNum,$item['entName'],1);
+                    $this->insertFinanceChargeLog($item['id'],$ent_price_detail,$user_id,$batchNum,$item['entName'],1);
                 }
             }
         }
