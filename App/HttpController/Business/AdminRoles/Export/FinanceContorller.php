@@ -161,17 +161,17 @@ class FinanceContorller  extends UserController
             dingAlarm('$inserDataArr',['$inserDataArr'=>json_encode($inserDataArr)]);
 
             if($flag){
-                $data = [];
-                foreach ($inserDataArr as $k=>$v){
+                foreach ($inserDataArr as $v){
+                    $data = [];
                     foreach ($v as $key=>$item) {
                         if(in_array($key,['id','year','entName'])){
-                            $data[$k][$key] = $item;
+                            $data[$key] = $item;
                         }else{
-                            $data[$k][$key] = empty($item)?0:'正常';
+                            $data[$key] = empty($item)?0:'正常';
                         }
                     }
+                    $resData[2][] = $data;
                 }
-                $resData[2] = array_merge($resData[2],$data);
             }else{
                 foreach ($inserDataArr as $value){
                     if($price_type == self::PRICE_TYPE_1 && $this->searchFinanceChargeLog($value['id'],$year_price_detail[$value['year']]['price'],$relation->userId,'')){
