@@ -307,7 +307,7 @@ class FinanceContorller extends UserController
                     RequestUserInfo::create()->where('appId', $appId)->update([
                                                                                   'money' => QueryBuilder::dec($ent_price_detail)
                                                                               ]);
-                    $this->insertFinanceChargeLog($item['id'], $ent_price_detail, $user_id, $batchNum, $item['entName'], 1);
+                    $this->insertFinanceChargeLog($item['id'], $ent_price_detail, $user_id, $batchNum, $entName, 1);
                 }
             }
         }
@@ -434,7 +434,7 @@ class FinanceContorller extends UserController
         }
         $limit = ($pageNo - 1) * $pageSize;
         $count = FinanceChargeLog::create()->where($where)->count();
-        $list  = FinanceChargeLog::create()->where($where)->limit($limit, $pageSize)->all();
+        $list  = FinanceChargeLog::create()->where($where)->limit((int)$limit, (int)$pageSize)->all();
         return [$list, $count];
     }
 }
