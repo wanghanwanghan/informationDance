@@ -135,8 +135,8 @@ class FinanceContorller  extends UserController
                         continue;
                     }
                     $insertData = [
-                        $ent['entName'],
-                        $datum['year'],
+                        'entName'=>$ent['entName'],
+                        'year'=>$datum['year'],
                     ];
                     $insertData2 = [
                         'entName'=>$ent['entName'],
@@ -153,9 +153,9 @@ class FinanceContorller  extends UserController
                     if(empty($yichangData)){
                         foreach ($kidTypesKeyArr as $item) {
                             if (isset($datum[$item]) && !empty($datum[$item])) {
-                                $insertData[] = round($datum[$item], 2);
+                                $insertData[$item] = round($datum[$item], 2);
                             } else if (isset($datum[$item]) && empty($datum[$item])) {
-                                $insertData[] = 0;
+                                $insertData[$item] = 0;
                             }
                         }
                         if($price_type == 1 && $this->searchFinanceChargeLog($datum['id'],$year_price_detail[$datum['year']]['price'],$relation->userId,'')){
@@ -386,15 +386,15 @@ class FinanceContorller  extends UserController
             $insert = [
                 $v['entName'],
                 $v['year'],
-                $v['VENDINC']?'正常':'',
-                $v['ASSGRO']?'正常':'',
-                $v['MAIBUSINC']?'正常':'',
-                $v['TOTEQU']?'正常':'',
-                $v['RATGRO']?'正常':'',
-                $v['PROGRO']?'正常':'',
-                $v['NETINC']?'正常':'',
-                $v['LIAGRO']?'正常':'',
-                $v['SOCNUM']?'正常':'',
+                isset($v['VENDINC'])?'正常':'',
+                isset($v['ASSGRO'])?'正常':'',
+                isset($v['MAIBUSINC'])?'正常':'',
+                isset($v['TOTEQU'])?'正常':'',
+                isset($v['RATGRO'])?'正常':'',
+                isset($v['PROGRO'])?'正常':'',
+                isset($v['NETINC'])?'正常':'',
+                isset($v['LIAGRO'])?'正常':'',
+                isset($v['SOCNUM'])?'正常':'',
             ];
             $insert = array_filter($insert);
             $res1[] = $insert;
