@@ -876,7 +876,7 @@ Eof;
 
     public function getFinanceChargeLogByUser(){
         $appId = $this->getRequestData('username');
-        $pageSize = $this->getRequestData('pageSize')??10;
+        $pageSize = empty($this->getRequestData('pageSize'))?10:$this->getRequestData('pageSize');
         $info = RequestUserInfo::create()->where(" appId = '{$appId}' ")->get();
         $param = [
             'userId' => $info->id,

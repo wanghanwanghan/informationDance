@@ -435,6 +435,7 @@ class FinanceContorller extends UserController
         $limit = ($pageNo - 1) * $pageSize;
         $count = FinanceChargeLog::create()->where($where)->count();
         $list  = FinanceChargeLog::create()->where($where)->limit((int)$limit, (int)$pageSize)->all();
+        dingAlarm('getFinanceChargeLog',['$count'=>$count,'$list'=>json_encode($list)]);
         return [$list, $count];
     }
 }
