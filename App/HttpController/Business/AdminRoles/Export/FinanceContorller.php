@@ -422,24 +422,27 @@ class FinanceContorller extends UserController
     {
         $pageNo          = $postData['pageNo'] ?? 1;
         $pageSize        = $postData['pageSize'] ?? 10;
-        $where['userId'] = $postData['userId'];
+        $whereStr = 'userId = '.$postData['userId'];
         if (!empty($postData['batchNum'])) {
-            $where['batchNum'] = $postData['batchNum'];
+            $whereStr.=" and batchNum = {$postData['batchNum']}";
         }
         if (!empty($postData['status'])) {
-            $where['status'] = $postData['status'];
+            $whereStr.=" and batchNum = {$postData['status']}";
         }
         if (!empty($postData['created_at'])) {
-            $where['created_at'] = $postData['created_at'];
+                $tmp = explode('|||', $postData['created_at']);
+                $date1 = Carbon::parse($tmp[0])->startOfDay()->timestamp;
+                $date2 = Carbon::parse($tmp[1])->endOfDay()->timestamp;
+            $whereStr .= ' and created_at between '.$date1.' and '.$date2 ;
         }
         $limit = ($pageNo - 1) * $pageSize;
-        $count = FinanceChargeLog::create()->where($where)->count();
-        $list  = FinanceChargeLog::create()->where($where)->limit((int)$limit, (int)$pageSize)->all();
+        $count = FinanceChargeLog::create()->where($whereStr)->count();
+        $list  = FinanceChargeLog::create()->where($whereStr)->limit((int)$limit, (int)$pageSize)->all();
         return [$list, $count];
     }
 
     public function refund($id,$appId){
-        $info = FinanceChargeLog::create()->where("id = {$id}")->get();
+        $info = FinanceChargeLog::create()->where("id = {$id} and status = 1")->get();
         if(empty($info)){
             return false;
         }
