@@ -48,7 +48,6 @@ class JinCaiShuKeService extends ServiceBase
     //
     private function checkResp($res): array
     {
-        CommonService::getInstance()->log4PHP($res);
         return $this->createReturn($res['code'], $res['Paging'], $res['Result'], $res['msg'] ?? null);
     }
 
@@ -76,8 +75,11 @@ class JinCaiShuKeService extends ServiceBase
 
         $res = (new CoHttpClient())
             ->useCache(false)
-            ->needJsonDecode(true)
+            ->setCheckRespFlag(false)
             ->send($this->url, $post_data, [], [], 'postjson');
+
+        CommonService::getInstance()->log4PHP(['请求的' => $post_data]);
+        CommonService::getInstance()->log4PHP(['返回的' => $res]);
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
