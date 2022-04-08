@@ -381,6 +381,25 @@ class FinanceContorller  extends UserController
         }
         $ret = json_decode($logInfo->ret,true);
         dingAlarm('getFAbnormalDataText',['$ret'=>json_encode($ret)]);
+        $res1 = [];
+        foreach ($ret['1'] as $v){
+            $insert = [
+                $v['entName'],
+                $v['year'],
+                $v['VENDINC']?'正常':'',
+                $v['ASSGRO']?'正常':'',
+                $v['MAIBUSINC']?'正常':'',
+                $v['TOTEQU']?'正常':'',
+                $v['RATGRO']?'正常':'',
+                $v['PROGRO']?'正常':'',
+                $v['NETINC']?'正常':'',
+                $v['LIAGRO']?'正常':'',
+                $v['SOCNUM']?'正常':'',
+            ];
+            $insert = array_filter($insert);
+            $res1[] = $insert;
+        }
+        $res2 = [];
         foreach ($ret['2'] as $v){
             $insertData = [
                 $v['entName'],
@@ -400,10 +419,22 @@ class FinanceContorller  extends UserController
                     unset($insertData[$k]);
                 }
             }
+            $res2[] = $insertData;
+
+        }
+        $res = array_merge($res1,$res2);
+        $nameArr = [];
+        $yearArr = [];
+        foreach ($res as $key=>$v){
+            $nameArr[$key] = $v['0'];
+            $yearArr[$key] = $v['1'];
+        }
+        array_multisort($nameArr,SORT_ASC,$yearArr,SORT_ASC,$res);
+        foreach ($res as $val){
             file_put_contents(
-                $workPath . $fileName,
-                implode('|', $insertData) . PHP_EOL,
-                FILE_APPEND
+            $workPath . $fileName,
+            implode('|', $val) . PHP_EOL,
+            FILE_APPEND
             );
         }
         dingAlarm('getFAbnormalDataText',['$fileName'=>$path]);
