@@ -28,7 +28,12 @@ class JinCaiShuKeService extends ServiceBase
     //
     private function checkResp($res): array
     {
-        return $this->createReturn($res['code'], $res['Paging'], $res['Result'], $res['msg'] ?? null);
+        $res['code'] !== '0000' ?: $res['code'] = 200;
+        $arr['content'] = jsonDecode(base64_decode($res['content']));
+        $arr['uuid'] = $res['uuid'];
+        $res['Result'] = $arr;
+
+        return $this->createReturn($res['code'], $res['Paging'] ?? null, $res['Result'], $res['msg'] ?? null);
     }
 
     //
@@ -88,10 +93,36 @@ class JinCaiShuKeService extends ServiceBase
 
         $res = (new CoHttpClient())
             ->useCache(false)
-            ->setCheckRespFlag(false)
             ->send($this->url, $post_data, [], ['enableSSL' => true]);
 
-        CommonService::getInstance()->log4PHP(['返回的' => $res]);
+        return $this->checkRespFlag ? $this->checkResp($res) : $res;
+    }
+
+    //发票提取
+    function S000523(string $nsrsbh, string $rwh, $page, $pageSize): array
+    {
+        $content = [
+            'mode' => '2',
+            'rwh' => trim($rwh),
+            'page' => trim($page),
+            'pageSize' => $pageSize - 0 > 1000 ? '1000' : trim($pageSize),
+        ];
+
+        $signType = '0';
+
+        $post_data = [
+            'appid' => $this->appKey,
+            'serviceid' => __FUNCTION__,
+            'jtnsrsbh' => $this->jtnsrsbh,
+            'nsrsbh' => trim($nsrsbh),
+            'content' => base64_encode(jsonEncode($content, false)),
+            'signature' => $this->signature($content, trim($nsrsbh), __FUNCTION__, $signType),
+            'signType' => $signType,
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($this->url, $post_data, [], ['enableSSL' => true]);
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
