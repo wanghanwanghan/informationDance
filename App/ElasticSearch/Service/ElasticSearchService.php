@@ -30,7 +30,7 @@ class ElasticSearchService extends ServiceBase
         $bean = new Search();
         empty($setIndex) ?: $bean->setIndex($setIndex);
         empty($setType) ?: $bean->setType($setType);
-        empty($setBody) ?: $bean->setBody($setBody);
+        empty($setBody) ?: $bean->setBody($setBody);//array or string
         $this->searchBean = $bean;
         return $this;
     }

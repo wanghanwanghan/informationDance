@@ -210,6 +210,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getCompanyList', $prefix . 'getCompanyList');//
             $routeCollector->addRoute(['GET', 'POST'], '/getNicCode', $prefix . 'getNicCode');//
             $routeCollector->addRoute(['GET', 'POST'], '/searchClue', $prefix . 'searchClue');//
+            $routeCollector->addRoute(['GET', 'POST'], '/collectInvoice', $prefix . 'collectInvoice');//金财发票归集
 
         });
 
