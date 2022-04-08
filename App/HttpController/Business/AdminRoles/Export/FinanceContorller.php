@@ -158,7 +158,7 @@ class FinanceContorller  extends UserController
                                 $insertData[] = 0;
                             }
                         }
-                        if($price_type == 1 && $this->searchFinanceChargeLog($datum['id'],$year_price_detail[$datum['year']]['price'],$relation->user_id,'')){
+                        if($price_type == 1 && $this->searchFinanceChargeLog($datum['id'],$year_price_detail[$datum['year']]['price'],$relation->userId,'')){
                             $price = $year_price_detail[$datum['year']]['price'] ?? 0;
                             RequestUserInfo::create()->where('appId', $appId)->update([
                                 'money' => QueryBuilder::dec($price)]);
