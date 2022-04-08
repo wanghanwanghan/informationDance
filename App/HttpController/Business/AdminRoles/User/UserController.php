@@ -891,9 +891,22 @@ Eof;
         $paging = [
             'page' => $this->getRequestData('pageNo')??1,
             'pageSize' => $pageSize,
-            'total' => $count['0']['num'],
+            'total' => $count,
             'totalPage' => (int)($count/$pageSize)+1,
         ];
         return $this->writeJson(200, $paging, $list,'成功');
+    }
+
+    public function actionRefund(){
+        $appId = $this->getRequestData('username');
+        $id = $this->getRequestData('id');
+        if(empty($id)){
+            return $this->writeJson(201, null, '', "参数为空");
+        }
+        $res = (new FinanceContorller())->refund($id,$appId);
+        if(!$res){
+            return $this->writeJson(201, null, '', "没有查询到计费日志");
+        }
+        return $this->writeJson(200, '', $res,'成功');
     }
 }

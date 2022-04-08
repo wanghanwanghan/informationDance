@@ -435,7 +435,17 @@ class FinanceContorller extends UserController
         $limit = ($pageNo - 1) * $pageSize;
         $count = FinanceChargeLog::create()->where($where)->count();
         $list  = FinanceChargeLog::create()->where($where)->limit((int)$limit, (int)$pageSize)->all();
-        dingAlarm('getFinanceChargeLog',['$count'=>$count,'$list'=>json_encode($list)]);
         return [$list, $count];
+    }
+
+    public function refund($id,$appId){
+        $info = FinanceChargeLog::create()->where("id = {$id}")->get();
+        if(empty($info)){
+            return false;
+        }
+        FinanceChargeLog::create()->where("id = {$id} and status = 1")->update(['status'=>2]);
+        RequestUserInfo::create()->where('appId', $appId)->update([
+            'money' => QueryBuilder::inc($info->price)]);
+        return true;
     }
 }
