@@ -864,4 +864,27 @@ Eof;
         $file = (new FinanceContorller())->getAbnormalDataText($batchNum,$appId);
         return $this->writeJson(200, '', $file,'成功');
     }
+
+    public function getFinanceChargeLogByUser(){
+        $appId = $this->getRequestData('username');
+        $pageSize = $this->getRequestData('pageSize')??10;
+        $info = RequestUserInfo::create()->where(" appId = '{$appId}' ")->get();
+        $param = [
+            'userId' => $info->id,
+            'batchNum' => $this->getRequestData('batchNum'),
+            'pageSize' => $pageSize,
+            'pageNo' => $this->getRequestData('pageNo'),
+            'status' => $this->getRequestData('status'),
+            'created_at' => $this->getRequestData('created_at'),
+        ];
+        list($list,$count) = (new FinanceContorller())->getFinanceChargeLog($param);
+
+        $paging = [
+            'page' => $this->getRequestData('pageNo')??1,
+            'pageSize' => $pageSize,
+            'total' => $count['0']['num'],
+            'totalPage' => (int)($count/$pageSize)+1,
+        ];
+        return $this->writeJson(200, $paging, $list,'成功');
+    }
 }

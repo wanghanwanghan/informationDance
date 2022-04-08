@@ -409,4 +409,26 @@ class FinanceContorller  extends UserController
         dingAlarm('getFAbnormalDataText',['$fileName'=>$path]);
         return $path;
     }
+
+    /**
+     * 获取计费日志
+     */
+    public function getFinanceChargeLog($postData){
+        $pageNo = $postData['pageNo']??1;
+        $pageSize = $postData['pageSize']??10;
+        $where['userId'] = $postData['userId'];
+        if(!empty($postData['batchNum'])){
+            $where['batchNum'] = $postData['batchNum'];
+        }
+        if(!empty($postData['status'])){
+            $where['status'] = $postData['status'];
+        }
+        if(!empty($postData['created_at'])){
+            $where['created_at'] = $postData['created_at'];
+        }
+        $limit = ($pageNo-1)*$pageSize;
+        $count = FinanceChargeLog::create()->where($where)->count();
+        $list = FinanceChargeLog::create()->where($where)->limit($limit,$pageSize)->all();
+        return [$list,$count];
+    }
 }
