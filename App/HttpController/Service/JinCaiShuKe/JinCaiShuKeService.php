@@ -26,6 +26,12 @@ class JinCaiShuKeService extends ServiceBase
     }
 
     //
+    private function checkResp($res): array
+    {
+        return $this->createReturn($res['code'], $res['Paging'], $res['Result'], $res['msg'] ?? null);
+    }
+
+    //
     private function signature(array $content, string $nsrsbh, string $serviceid, string $signType): string
     {
         $arr = [
@@ -45,18 +51,12 @@ class JinCaiShuKeService extends ServiceBase
             ));
     }
 
-    //
-    private function checkResp($res): array
-    {
-        return $this->createReturn($res['code'], $res['Paging'], $res['Result'], $res['msg'] ?? null);
-    }
-
     //发票归集
     function S000519(string $nsrsbh, string $start, string $stop): array
     {
         $content = [
             'sjlxs' => '1,2',//数据类型 1:进项票 2:销项票
-            'fplxs' => '01,08,03,04,10,11,14,15,17',//发票类型 01-增值税专用发票 08-增值税专用发票（电子）03-机动车销售统一发票 ...
+            'fplxs' => '01,08,03,04,10,11,14,15',//发票类型 01-增值税专用发票 08-增值税专用发票（电子）03-机动车销售统一发票 ...
             'kprqq' => trim($start),//开票(填发)日期起 YYYY-MM-DD
             'kprqz' => trim($stop),//开票(填发)日期止 日期起止范围必须在同一个月内
         ];
