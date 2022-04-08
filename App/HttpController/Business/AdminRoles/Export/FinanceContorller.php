@@ -158,6 +158,8 @@ class FinanceContorller  extends UserController
                     'money' => QueryBuilder::dec($ent_price_detail)]);
                 $this->insertFinanceChargeLog('', $ent_price_detail, $relation->userId, $batchNum, $ent['entName'], 1);
             }
+            dingAlarm('$inserDataArr',['$inserDataArr'=>json_encode($inserDataArr)]);
+
             if($flag){
                 $data = [];
                 foreach ($inserDataArr as $k=>$v){
