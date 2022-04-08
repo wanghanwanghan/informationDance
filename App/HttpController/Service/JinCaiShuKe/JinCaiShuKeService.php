@@ -36,7 +36,7 @@ class JinCaiShuKeService extends ServiceBase
     {
         $arr = [
             'appid' => $this->appKey,
-            'content' => jsonEncode($content, false),
+            'content' => base64_encode(jsonEncode($content, false)),
             'jtnsrsbh' => $this->jtnsrsbh,
             'nsrsbh' => $nsrsbh,
             'serviceid' => $serviceid,
