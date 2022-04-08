@@ -68,7 +68,7 @@ class JinCaiShuKeService extends ServiceBase
             'serviceid' => __FUNCTION__,
             'jtnsrsbh' => $this->jtnsrsbh,
             'nsrsbh' => trim($nsrsbh),
-            'content' => $content,
+            'content' => base64_encode(jsonEncode($content, false)),
             'signature' => $this->signature($content, trim($nsrsbh), __FUNCTION__, $signType),
             'signType' => $signType,
         ];
@@ -78,7 +78,8 @@ class JinCaiShuKeService extends ServiceBase
             ->setCheckRespFlag(false)
             ->send($this->url, $post_data, [], [], 'postjson');
 
-        CommonService::getInstance()->log4PHP(['请求的' => $post_data]);
+        CommonService::getInstance()->log4PHP(['请求的' => $content]);
+        CommonService::getInstance()->log4PHP(['请求体' => $post_data]);
         CommonService::getInstance()->log4PHP(['返回的' => $res]);
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
