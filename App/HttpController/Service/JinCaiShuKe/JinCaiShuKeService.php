@@ -36,18 +36,22 @@ class JinCaiShuKeService extends ServiceBase
     {
         $content = base64_encode(jsonEncode($content, false));
 
-        $str = '?' . http_build_query([
-                'appid' => $this->appKey,
-                'content' => $content,
-                'jtnsrsbh' => $this->jtnsrsbh,
-                'nsrsbh' => $nsrsbh,
-                'serviceid' => $serviceid,
-            ]);
+        $arr = [
+            'appid' => $this->appKey,
+            'content' => $content,
+            'jtnsrsbh' => $this->jtnsrsbh,
+            'nsrsbh' => $nsrsbh,
+            'serviceid' => $serviceid,
+        ];
 
-        CommonService::getInstance()->log4PHP(['签名' => $str]);
+        $str = '?';
+
+        foreach ($arr as $key => $val) {
+            $str .= "{$key}={$val}&";
+        }
 
         return $signType === '0' ?
-            base64_encode(hash_hmac('sha256', $str, $this->appSecret)) :
+            base64_encode(hash_hmac('sha256', rtrim($str, '&'), $this->appSecret)) :
             strtoupper(md5(
                 $this->appKey .
                 $this->appSecret .
