@@ -345,10 +345,10 @@ class FinanceContorller  extends UserController
             $sql.= " and financeId = {$financeId}";
         }
         if(!empty($entName)){
-            $sql.= " and entName = {$entName}";
+            $sql.= " and entName = '{$entName}'";
         }
         if(!empty($price)){
-            $sql.= " and price = {$price}";
+            $sql.= " and price = '{$price}'";
         }
         $info = FinanceChargeLog::create()->where($sql)->get();
         return empty($info)?true:false;
