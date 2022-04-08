@@ -44,6 +44,8 @@ class JinCaiShuKeService extends ServiceBase
                 'serviceid' => $serviceid,
             ]);
 
+        CommonService::getInstance()->log4PHP(['签名体' => $str]);
+
         return $signType === '0' ?
             hash_hmac('sha256', $str, $this->appSecret) :
             strtoupper(md5(
