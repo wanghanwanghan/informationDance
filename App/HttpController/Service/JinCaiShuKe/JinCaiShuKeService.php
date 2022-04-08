@@ -28,7 +28,11 @@ class JinCaiShuKeService extends ServiceBase
     //
     private function checkResp($res): array
     {
-        return $this->createReturn($res['code'], $res['Paging'], $res['Result'], $res['msg'] ?? null);
+        $res['code'] !== '0000' ?: $res['code'] = 200;
+        $arr['content'] = jsonDecode(base64_decode($res['content']));
+        $arr['uuid'] = $res['uuid'];
+        $res['Result'] = $arr;
+        return $this->createReturn($res['code'], $res['Paging'] ?? null, $res['Result'], $res['msg'] ?? null);
     }
 
     //
@@ -91,9 +95,13 @@ class JinCaiShuKeService extends ServiceBase
             ->setCheckRespFlag(false)
             ->send($this->url, $post_data, [], ['enableSSL' => true]);
 
-        CommonService::getInstance()->log4PHP(['返回的' => $res]);
-
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
+    }
+
+    //发票提取
+    function S000523(string $nsrsbh, string $start, string $stop)
+    {
+
     }
 }
 
