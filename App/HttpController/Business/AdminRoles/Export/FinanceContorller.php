@@ -420,7 +420,7 @@ class FinanceContorller extends UserController
      */
     public function getFinanceChargeLog($postData)
     {
-        $pageNo          = $postData['pageNo'] ?? 1;
+        $pageNo          = empty($postData['pageNo'])?$postData['pageNo']:1;
         $pageSize        = $postData['pageSize'] ?? 10;
         $whereStr = 'userId = '.$postData['userId'];
         if (!empty($postData['batchNum'])) {
@@ -438,7 +438,8 @@ class FinanceContorller extends UserController
         $limit = ($pageNo - 1) * $pageSize;
         dingAlarm('getFinanceChargeLog',['$whereStr'=>$whereStr]);
         $count = FinanceChargeLog::create()->where($whereStr)->count();
-        $list  = FinanceChargeLog::create()->where($whereStr)->limit((int)$limit, (int)$pageSize)->all();
+        dingAlarm('getFinanceChargeLog',['$whereStr'=>$whereStr." order by id desc limit {$limit},{$pageSize}"]);
+        $list  = FinanceChargeLog::create()->where($whereStr." order by id desc limit {$limit},{$pageSize}")->all();
         return [$list, $count];
     }
 
