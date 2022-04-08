@@ -91,8 +91,6 @@ class JinCaiShuKeService extends ServiceBase
             ->setCheckRespFlag(false)
             ->send($this->url, $post_data, [], ['enableSSL' => true]);
 
-        CommonService::getInstance()->log4PHP(['请求的' => $content]);
-        CommonService::getInstance()->log4PHP(['请求体' => $post_data]);
         CommonService::getInstance()->log4PHP(['返回的' => $res]);
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
