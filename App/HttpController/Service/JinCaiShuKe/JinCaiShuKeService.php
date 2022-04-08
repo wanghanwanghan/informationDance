@@ -32,6 +32,7 @@ class JinCaiShuKeService extends ServiceBase
         $arr['content'] = jsonDecode(base64_decode($res['content']));
         $arr['uuid'] = $res['uuid'];
         $res['Result'] = $arr;
+
         return $this->createReturn($res['code'], $res['Paging'] ?? null, $res['Result'], $res['msg'] ?? null);
     }
 
