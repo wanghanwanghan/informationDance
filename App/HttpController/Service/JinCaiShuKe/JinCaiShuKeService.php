@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\JinCaiShuKe;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 
@@ -44,6 +45,13 @@ class JinCaiShuKeService extends ServiceBase
             ));
     }
 
+    //
+    private function checkResp($res): array
+    {
+        CommonService::getInstance()->log4PHP($res);
+        return $this->createReturn($res['code'], $res['Paging'], $res['Result'], $res['msg'] ?? null);
+    }
+
     //发票归集
     function S000519(string $nsrsbh, string $start, string $stop): array
     {
@@ -66,10 +74,12 @@ class JinCaiShuKeService extends ServiceBase
             'signType' => $signType,
         ];
 
-        return (new CoHttpClient())
+        $res = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(true)
             ->send($this->url, $post_data, [], [], 'postjson');
+
+        return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
 }
 

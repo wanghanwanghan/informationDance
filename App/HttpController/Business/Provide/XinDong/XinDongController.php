@@ -10,6 +10,7 @@ use App\HttpController\Models\EntDb\EntDbTzList;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\DaXiang\DaXiangService;
+use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\FinanceRange;
 use App\HttpController\Service\LongXin\LongXinService;
@@ -1431,6 +1432,27 @@ class XinDongController extends ProvideBase
             return (new XinDongService())
                 ->setCheckRespFlag(true)
                 ->getNicCode($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function collectInvoice(): bool
+    {
+        $m = $this->getRequestData('m');
+
+        $postData = [
+            'nsrsbh' => '91110108MA01KPGK0L',
+            'start' => "2021-{$m}-01",
+            'stop' => "2021-{$m}-31",
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new JinCaiShuKeService())
+                ->setCheckRespFlag(true)
+                ->S000519($postData['nsrsbh'], $postData['start'], $postData['stop']);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
