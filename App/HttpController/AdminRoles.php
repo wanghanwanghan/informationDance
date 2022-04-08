@@ -47,6 +47,7 @@ class AdminRoles
             $routeCollector->addRoute(['GET', 'POST'], '/getAbnormalFinance', $prefix . 'getAbnormalFinance');
             $routeCollector->addRoute(['GET', 'POST'], '/getFAbnormalDataText', $prefix . 'getFAbnormalDataText');
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceChargeLogByUser', $prefix . 'getFinanceChargeLogByUser');
+            $routeCollector->addRoute(['GET', 'POST'], '/actionRefund', $prefix . 'actionRefund');
         });
         return true;
     }
