@@ -431,8 +431,8 @@ class FinanceContorller extends UserController
         }
         if (!empty($postData['created_at'])) {
                 $tmp = explode('|||', $postData['created_at']);
-                $date1 = Carbon::parse($tmp[0])->startOfDay()->timestamp;
-                $date2 = Carbon::parse($tmp[1])->endOfDay()->timestamp;
+                $date1 = strtotime($tmp['0']);
+                $date2 = strtotime($tmp['1']);
             $whereStr .= ' and created_at between '.$date1.' and '.$date2 ;
         }
         $limit = ($pageNo - 1) * $pageSize;
