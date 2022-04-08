@@ -50,8 +50,12 @@ class JinCaiShuKeService extends ServiceBase
             $str .= "{$key}={$val}&";
         }
 
+        $str = rtrim($str, '&');
+
+        CommonService::getInstance()->log4PHP(['签名' => $str]);
+
         return $signType === '0' ?
-            base64_encode(hash_hmac('sha256', rtrim($str, '&'), $this->appSecret)) :
+            base64_encode(hash_hmac('sha256', $str, $this->appSecret)) :
             strtoupper(md5(
                 $this->appKey .
                 $this->appSecret .
