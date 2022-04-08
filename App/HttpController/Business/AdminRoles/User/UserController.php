@@ -819,13 +819,22 @@ SELECT ret,batchNum FROM information_dance_barch_charging_log where batchNum in(
 Eof;
         $charging_log_list = sqlRaw($dataSql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $retMap = [];
+        $abnormal = [];
+        $normal = [];
         foreach ($charging_log_list as $item) {
-            $retMap[$item['batchNum']] = json_decode($item['ret'],true);
+            $ret = json_decode($item['ret'],true);
+            foreach ($ret['1'] as $item1) {
+                $normal[$item['batchNum']][$item1['entName']] = $item1['entName'];
+            }
+            foreach ($ret['2'] as $item2) {
+                $abnormal[$item['batchNum']][$item2['entName']] = $item2['entName'];
+            }
+
         }
         $list = json_decode(json_encode($list),true);
         foreach ($list as $k=>$v){
-            $list[$k]['data_detail']['abnormal'] = count($retMap[$v['batchNum']]['2']);
-            $list[$k]['data_detail']['normal'] = count($retMap[$v['batchNum']]['1']);
+            $list[$k]['data_detail']['abnormal'] = count($abnormal[$v['batchNum']]);
+            $list[$k]['data_detail']['normal'] = count($normal[$v['batchNum']]);
         }
         $paging = [
             'page' => $pageNo,

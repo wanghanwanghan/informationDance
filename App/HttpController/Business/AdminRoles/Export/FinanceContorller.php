@@ -160,7 +160,7 @@ class FinanceContorller  extends UserController
                         if(in_array($key,['id','year','entName'])){
                             $data[$key] = $item;
                         }else{
-                            $data[$key] = empty($item)?0:'正常';
+                            $data[$key] = empty($item)?'0':'正常';
                         }
                     }
                     $resData[2][] = $data;
