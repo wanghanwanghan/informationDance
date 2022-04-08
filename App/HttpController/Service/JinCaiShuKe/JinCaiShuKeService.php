@@ -92,14 +92,13 @@ class JinCaiShuKeService extends ServiceBase
 
         $res = (new CoHttpClient())
             ->useCache(false)
-            ->setCheckRespFlag(false)
             ->send($this->url, $post_data, [], ['enableSSL' => true]);
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
 
     //发票提取
-    function S000523(string $nsrsbh, string $rwh, $page, $pageSize)
+    function S000523(string $nsrsbh, string $rwh, $page, $pageSize): array
     {
         $content = [
             'mode' => '2',
@@ -122,7 +121,6 @@ class JinCaiShuKeService extends ServiceBase
 
         $res = (new CoHttpClient())
             ->useCache(false)
-            ->setCheckRespFlag(false)
             ->send($this->url, $post_data, [], ['enableSSL' => true]);
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
