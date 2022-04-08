@@ -129,10 +129,10 @@ class FinanceContorller  extends UserController
                         if (in_array($item1, $year_price_detail[$vYear]['cond']) && $datum[$item1] == 0 ) {
                             $flag = true;
                         }
-                        if (isset($datum[$item]) && !empty($datum[$item])) {
-                            $insertData[$item] = round($datum[$item], 2);
-                        } else if (isset($datum[$item]) && empty($datum[$item])) {
-                            $insertData[$item] = 0;
+                        if (isset($datum[$item1]) && !empty($datum[$item1])) {
+                            $insertData[$item1] = round($datum[$item1], 2);
+                        } else if (isset($datum[$item1]) && empty($datum[$item1])) {
+                            $insertData[$item1] = 0;
                         }
                     }
                     $inserDataArr[] = $insertData;
