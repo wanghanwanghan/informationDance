@@ -273,6 +273,11 @@ class FinanceContorller  extends UserController
 
     public function getSmhzAbnormalFinance($ids,$appId,$batchNum,$user_id){
         $ids = array_filter($ids);
+        foreach ($ids as $k=>$id){
+            if($id == '--'){
+                unset($ids[$k]);
+            }
+        }
         $list = FinanceData::create()->where("id in (".implode(',',$ids).")")->all();
         $listRelation = RequestUserApiRelationship::create()->where("userId = {$user_id} and status = 1 and apiId = 157")->get();
         if(empty($list)){
