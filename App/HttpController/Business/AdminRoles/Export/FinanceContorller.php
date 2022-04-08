@@ -80,7 +80,7 @@ class FinanceContorller  extends UserController
     }
 
     public function smhzGetFinanceOriginal($entNames,$relation,$appId,$batchNum){
-//        dingAlarm('smhzGetFinanceOriginal',['$relation'=>json_encode($relation)]);
+        dingAlarm('smhzGetFinanceOriginal',['$relation'=>json_encode($relation)]);
         $kidTypes = explode('|',$relation->kidTypes);
         $year_price_detail = getArrByKey(json_decode($relation->year_price_detail),'year');
         $ent_price_detail = $relation->ent_price_detail;

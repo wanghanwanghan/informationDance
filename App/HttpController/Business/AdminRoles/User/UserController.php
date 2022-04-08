@@ -558,6 +558,7 @@ Eof;
         $dataFinanceSmhz = [];
         foreach ($emptyTypes as $emptyType) {
             $barchTypeApiRelationInfo = BarchTypeApiRelation::create()->where('id', $emptyType)->get();
+            dingAlarm('exportBaseInformation',['userId'=>$info->id,'apiId'=>$barchTypeApiRelationInfo->apiId]);
             $requestUserApiRelationship = RequestUserApiRelationship::create()->where("userId = {$info->id} and apiId = {$barchTypeApiRelationInfo->apiId}")->get();
             $fun = $barchTypeApiRelationInfo->fun;
             switch ($barchTypeApiRelationInfo->typeBase){
