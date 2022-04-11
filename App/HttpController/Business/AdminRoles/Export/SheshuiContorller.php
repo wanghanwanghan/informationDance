@@ -41,7 +41,7 @@ class SheshuiContorller  extends UserController
             }
             if (isset($data['totalPageNum']) && $data['totalPageNum'] > 1) {
                 for ($i = 2; $i <= $data['totalPageNum']; $i++) {
-                    $data2 = $this->getSatpartyChufa($ent['entName'], 1);
+                    $data2 = $this->getSatpartyChufa($ent['entName'], $i);
                     $data['satparty_chufaList'] = array_merge($data['satparty_chufaList'], $data2['satparty_chufaList']);
                 }
             }
@@ -128,7 +128,7 @@ class SheshuiContorller  extends UserController
             }
             if (isset($data['totalPageNum']) && $data['totalPageNum'] > 1) {
                 for ($i = 2; $i <= $data['totalPageNum']; $i++) {
-                    $data2 = $this->getSatpartyQs($ent['entName'], 1);
+                    $data2 = $this->getSatpartyQs($ent['entName'], $i);
                     $data['satparty_qsList'] = array_merge($data['satparty_qsList'], $data2['satparty_qsList']);
                 }
             }
@@ -213,7 +213,7 @@ class SheshuiContorller  extends UserController
             }
             if (isset($data['totalPageNum']) && $data['totalPageNum'] > 1) {
                 for ($i = 2; $i <= $data['totalPageNum']; $i++) {
-                    $data2 = $this->getSatpartyFzc($ent['entName'], 1);
+                    $data2 = $this->getSatpartyFzc($ent['entName'], $i);
                     $data['satparty_fzcList'] = array_merge($data['satparty_fzcList'], $data2['satparty_fzcList']);
                 }
             }
@@ -295,7 +295,7 @@ class SheshuiContorller  extends UserController
             }
             if (isset($data['totalPageNum']) && $data['totalPageNum'] > 1) {
                 for ($i = 2; $i <= $data['totalPageNum']; $i++) {
-                    $data2 = $this->getSatpartyXuke($ent['entName'], 1);
+                    $data2 = $this->getSatpartyXuke($ent['entName'], $i);
                     $data['satparty_xukeList'] = array_merge($data['satparty_xukeList'], $data2['satparty_xukeList']);
                 }
             }
@@ -376,7 +376,7 @@ class SheshuiContorller  extends UserController
             }
             if (isset($data['totalPageNum']) && $data['totalPageNum'] > 1) {
                 for ($i = 2; $i <= $data['totalPageNum']; $i++) {
-                    $data2 = $this->getSatpartyXin($ent['entName'], 1);
+                    $data2 = $this->getSatpartyXin($ent['entName'], $i);
                     $data['satparty_xinList'] = array_merge($data['satparty_xinList'], $data2['satparty_xinList']);
                 }
             }
@@ -459,7 +459,7 @@ class SheshuiContorller  extends UserController
             }
             if (isset($data['totalPageNum']) && $data['totalPageNum'] > 1) {
                 for ($i = 2; $i <= $data['totalPageNum']; $i++) {
-                    $data2 = $this->getSatpartyReg($ent['entName'], 1);
+                    $data2 = $this->getSatpartyReg($ent['entName'], $i);
                     $data['satparty_regList'] = array_merge($data['satparty_regList'], $data2['satparty_regList']);
                 }
             }

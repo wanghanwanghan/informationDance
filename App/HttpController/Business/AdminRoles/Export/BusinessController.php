@@ -220,7 +220,7 @@ class BusinessController  extends UserController
             $dataList = $data['RESULTDATA'];
             if(isset($data['PAGEINFO']['TOTAL_PAGE']) && $data['PAGEINFO']['TOTAL_PAGE']>1){
                 for($i=2;$i<=$data['PAGEINFO']['TOTAL_PAGE'];$i++){
-                    $data2 = $this->getMainManagerInfo($ent['entName'],1);
+                    $data2 = $this->getMainManagerInfo($ent['entName'],$i);
                     $dataList = array_merge($dataList,$data2['RESULTDATA']);
                 }
             }
@@ -273,7 +273,7 @@ class BusinessController  extends UserController
             }
             if(isset($data['PAGEINFO']['TOTAL_PAGE']) && $data['PAGEINFO']['TOTAL_PAGE']>1){
                 for($i=2;$i<=$data['PAGEINFO']['TOTAL_PAGE'];$i++){
-                    $data2 = $this->getBranchInfo($ent['entName'],1);
+                    $data2 = $this->getBranchInfo($ent['entName'],$i);
                     $data['RESULTDATA'] = array_merge($data['RESULTDATA'],$data2['RESULTDATA']);
                 }
             }
@@ -335,7 +335,7 @@ class BusinessController  extends UserController
             }
             if(isset($data['PAGEINFO']['TOTAL_PAGE']) && $data['PAGEINFO']['TOTAL_PAGE']>1){
                 for($i=2;$i<=$data['PAGEINFO']['TOTAL_PAGE'];$i++){
-                    $data2 = $this->getInvestmentAbroadInfo($ent['entName'],1);
+                    $data2 = $this->getInvestmentAbroadInfo($ent['entName'],$i);
                     $data['RESULTDATA'] = array_merge($data['RESULTDATA'],$data2['RESULTDATA']);
                 }
             }
@@ -393,7 +393,7 @@ class BusinessController  extends UserController
             }
             if(isset($data['paging']['totalPage']) && $data['paging']['totalPage']>1){
                 for($i=2;$i<=$data['paging']['totalPage'];$i++){
-                    $data2 = $this->getRegisterChangeInfo($ent['entName'],1);
+                    $data2 = $this->getRegisterChangeInfo($ent['entName'],$i);
                     $data['result'] = array_merge($data['result'],$data2['result']);
                 }
             }

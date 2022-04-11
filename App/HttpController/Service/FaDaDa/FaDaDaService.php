@@ -596,7 +596,7 @@ class FaDaDaService extends ServiceBase
      * @param array $arr
      * @return array|mixed|string[]
      */
-    private function uploadTemplate(array $arr,$doc_url = "https://api.meirixindong.com/Static/AuthBookModel/qxy_template.pdf")
+    private function uploadTemplate(array $arr,$doc_url = "https://api.meirixindong.com/Static/AuthBookModel/dx_template.pdf")
     {
         $url_ext = 'uploadtemplate.api';
 
