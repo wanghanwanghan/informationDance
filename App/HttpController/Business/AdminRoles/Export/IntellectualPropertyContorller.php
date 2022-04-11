@@ -222,7 +222,6 @@ class IntellectualPropertyContorller extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getTmSearch($ent['entName'], 1);
-            dingAlarm('商标',['$datum'=>json_encode($data),'entName'=>$ent['entName']]);
             if (empty($data['Result'])) {
                 continue;
             }
@@ -234,7 +233,6 @@ class IntellectualPropertyContorller extends UserController
                 }
             }
             foreach ($data['Result'] as $datum) {
-                dingAlarm('商标',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
                 $resData[] = $this->getTmSearchDetail($datum['Id'], $file, $ent['entName']);
             }
         }
@@ -259,13 +257,13 @@ class IntellectualPropertyContorller extends UserController
     {
         $postData = ['id' => $id];
         $res = (new LongDunService())->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'tm/GetDetails', $postData);
-        dingAlarm('商标详情',['$res'=>json_encode($res)]);
         $data = $res['Result'];
         if(empty($data)){
             file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
             return [];
         }
         $insertData = [
+            $name,
             $data['RegNo'],
             $data['Name'],
             $data['AppDate'],
@@ -310,7 +308,6 @@ class IntellectualPropertyContorller extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getPatentV4Search($ent['entName'], 1);
-            dingAlarm('专利',['$datum'=>json_encode($data),'entName'=>$ent['entName']]);
             if (empty($data['Result'])) {
                 continue;
             }
@@ -322,7 +319,6 @@ class IntellectualPropertyContorller extends UserController
                 }
             }
             foreach ($data['Result'] as $datum) {
-                dingAlarm('专利',['$datum'=>json_encode($datum),'entName'=>$ent['entName']]);
                 $resData[] = $this->getPatentV4SearchDetail($datum['Id'], $file, $ent['entName']);
             }
         }
@@ -347,8 +343,7 @@ class IntellectualPropertyContorller extends UserController
     {
         $postData = ['id' => $id];
         $res = (new LongDunService())->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'PatentV4/GetDetails', $postData);
-        dingAlarm('专利详情',['$res'=>json_encode($res)]);
-        $data = $res['Result']['Data'];
+        $data = $res['Result'];
         if(empty($data)){
             file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
             return [];
