@@ -50,11 +50,9 @@ class JinCaiShuKeService extends ServiceBase
         ];
 
         $str = '?';
-
-        foreach ($arr as $key => $val) {
+        array_walk($arr, function ($val, $key) use (&$str) {
             $str .= "{$key}={$val}&";
-        }
-
+        });
         $str = rtrim($str, '&');
 
         return $signType === '0' ?
