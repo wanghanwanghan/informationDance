@@ -808,7 +808,6 @@ FROM
 GROUP BY
 	batchNum  order by id desc
 Eof;
-        dingAlarm('getFBatchNumList',['$sql'=>$sql]);
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
 
         $dataSql = <<<Eof
