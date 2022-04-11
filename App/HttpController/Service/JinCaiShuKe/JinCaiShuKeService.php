@@ -2,7 +2,6 @@
 
 namespace App\HttpController\Service\JinCaiShuKe;
 
-use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 
