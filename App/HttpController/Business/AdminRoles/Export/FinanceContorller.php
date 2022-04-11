@@ -302,7 +302,7 @@ class FinanceContorller extends UserController
         $list     = json_decode(json_encode($list), true);
         $entNames = array_column($list, 'entName');
         if ($price_type == self::PRICE_TYPE_2) {
-            foreach ($entNames as $entName) {
+            foreach (array_unique($entNames) as $entName) {
                 if ($this->searchFinanceChargeLog('', $ent_price_detail, $user_id, $entName)) {
                     RequestUserInfo::create()->where('appId', $appId)->update([
                                                                                   'money' => QueryBuilder::dec($ent_price_detail)
