@@ -38,6 +38,7 @@ class IntellectualPropertyContorller extends UserController
 //            }
         }
 //        return [$fileName, $resData];
+        return ['',''];
     }
 
     /**

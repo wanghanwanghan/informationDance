@@ -4,6 +4,7 @@ namespace App\HttpController\Business\AdminRoles\User;
 
 use App\HttpController\Business\AdminRoles\Export\BusinessController;
 use App\HttpController\Business\AdminRoles\Export\FinanceContorller;
+use App\HttpController\Business\AdminRoles\Export\IntellectualPropertyContorller;
 use App\HttpController\Business\AdminRoles\Export\SheshuiContorller;
 use App\HttpController\Business\AdminRoles\Export\SifaContorller;
 use App\HttpController\Business\Api\TaoShu\TaoShuController;
@@ -560,6 +561,7 @@ Eof;
         $dataFinanceSmhz = [];
         foreach ($emptyTypes as $emptyType) {
             $barchTypeApiRelationInfo = BarchTypeApiRelation::create()->where('id', $emptyType)->get();
+            if(empty($barchTypeApiRelationInfo))continue;
             $requestUserApiRelationship = RequestUserApiRelationship::create()->where("userId = {$info->id} and apiId = {$barchTypeApiRelationInfo->apiId}")->get();
             $fun = $barchTypeApiRelationInfo->fun;
             switch ($barchTypeApiRelationInfo->typeBase){
@@ -578,6 +580,9 @@ Eof;
                 case 4:
                     $SheshuiContorller = new SheshuiContorller();
                     list($filePath, $data) = $SheshuiContorller->{$fun}($nameArr);
+                    break;
+                case 5:
+                    list($filePath, $data) = (new IntellectualPropertyContorller())->{$fun}($nameArr);
                     break;
             }
 //            dingAlarm('导出数据返回', ['$filePath' => $filePath]);
