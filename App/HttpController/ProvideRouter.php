@@ -70,7 +70,11 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getBeneficiary', $prefix . 'getBeneficiary');
             $routeCollector->addRoute(['GET', 'POST'], '/getAdministrativePenaltyList', $prefix . 'getAdministrativePenaltyList');//行政处罚
             $routeCollector->addRoute(['GET', 'POST'], '/tenderSearch', $prefix . 'tenderSearch');//招投标
-
+            $routeCollector->addRoute(['GET', 'POST'], '/getSearchSoftwareCr', $prefix . 'getSearchSoftwareCr');//软件著作权
+            $routeCollector->addRoute(['GET', 'POST'], '/getSearchCopyRight', $prefix . 'getSearchCopyRight');//作品著作权
+            $routeCollector->addRoute(['GET', 'POST'], '/getSearchCertification', $prefix . 'getSearchCertification');//企业证书查询
+            $routeCollector->addRoute(['GET', 'POST'], '/getTmSearch', $prefix . 'getTmSearch');//商标
+            $routeCollector->addRoute(['GET', 'POST'], '/getPatentV4Search', $prefix . 'getPatentV4Search');//专利
         });
 
         return true;

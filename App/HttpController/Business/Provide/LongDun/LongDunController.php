@@ -189,4 +189,20 @@ class LongDunController extends ProvideBase
 
         return $this->checkResponse($res);
     }
+
+    public function getSearchSoftwareCr(){
+
+    }
+    public function getSearchCopyRight(){
+
+    }
+    public function getSearchCertification(){
+
+    }
+    public function getTmSearch(){
+
+    }
+    public function getPatentV4Search(){
+
+    }
 }
