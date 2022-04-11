@@ -206,31 +206,31 @@ class GetInvData extends ProcessBase
                     ->addSuffix($NSRSBH, 'wusuowei')
                     ->where('nsrsbh', $NSRSBH)
                     ->field([
-                        'fpdm',
-                        'fphm',
-                        'kplx',
-                        'xfsh',
-                        'xfmc',
-                        'xfdzdh',
-                        'xfyhzh',
-                        'gfsh',
-                        'gfmc',
-                        'gfdzdh',
-                        'gfyhzh',
-                        'kpr',
-                        'skr',
-                        'fhr',
+                        'fpdm',//
+                        'fphm',//
+                        'kplx',//
+                        'xfsh',//
+                        'xfmc',//
+                        'xfdzdh',//
+                        'xfyhzh',//
+                        'gfsh',//
+                        'gfmc',//
+                        'gfdzdh',//
+                        'gfyhzh',//
+                        'kpr',//
+                        'skr',//
+                        'fhr',//
                         'yfpdm',
                         'yfphm',
-                        'je',
-                        'se',
-                        'jshj',
-                        'bz',
+                        'je',//
+                        'se',//
+                        'jshj',//
+                        'bz',//
                         'zfbz',
                         'zfsj',
-                        'kprq',
-                        'fplx',
-                        'fpztDm',
+                        'kprq',//
+                        'fplx',//
+                        'fpztDm',//
                         'slbz',
                         'rzdklBdjgDm',
                         'rzdklBdrq',
@@ -247,16 +247,16 @@ class GetInvData extends ProcessBase
                         ->addSuffix($oneInv->getAttr('fpdm'), $oneInv->getAttr('fphm'), 'wusuowei')
                         ->where(['fpdm' => $oneInv->getAttr('fpdm') - 0, 'fphm' => $oneInv->getAttr('fphm') - 0])
                         ->field([
-                            'spbm',
-                            'mc',
-                            'jldw',
-                            'shul',
-                            'je',
-                            'sl',
-                            'se',
-                            'mxxh',
-                            'dj',
-                            'ggxh',
+                            'spbm',//
+                            'mc',//
+                            'jldw',//
+                            'shul',//
+                            'je',//
+                            'sl',//
+                            'se',//
+                            'mxxh',//
+                            'dj',//
+                            'ggxh',//
                         ])
                         ->all();
                     empty($detail) ? $oneInv->fpxxMxs = null : $oneInv->fpxxMxs = $detail;
