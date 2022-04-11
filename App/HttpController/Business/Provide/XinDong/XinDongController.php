@@ -357,6 +357,8 @@ class XinDongController extends ProvideBase
             'dataCount' => $dataCount,
         ];
 
+        CommonService::getInstance()->log4PHP($postData);
+
         $check = EntDbEnt::create()->where('name', $entName)->get();
 
         if (empty($check)) {
