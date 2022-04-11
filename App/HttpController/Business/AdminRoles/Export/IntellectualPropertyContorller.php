@@ -31,8 +31,8 @@ class IntellectualPropertyContorller extends UserController
             if (empty($data['Result'])) {
                 continue;
             }
-            if (isset($data['TotalRecords']) && $data['TotalRecords'] > $data['PageSize']) {
-                $totalP = (int)($data['TotalRecords']/$data['PageSize'])+1;
+            $totalP = (int)($data['Paging']['TotalRecords']/$data['Paging']['PageSize'])+1;
+            if ($totalP > 1) {
                 for ($i = 2; $i <= $totalP; $i++) {
                     $data2 = $this->getSearchSoftwareCr($ent['entName'], $i);
                     $data['Result'] = array_merge($data['Result'], $data2['Result']);
@@ -92,8 +92,8 @@ class IntellectualPropertyContorller extends UserController
             if (empty($data['Result'])) {
                 continue;
             }
-            if (isset($data['TotalRecords']) && $data['TotalRecords'] > $data['PageSize']) {
-                $totalP = (int)($data['TotalRecords']/$data['PageSize'])+1;
+            $totalP = (int)($data['Paging']['TotalRecords']/$data['Paging']['PageSize'])+1;
+            if ($totalP > 1) {
                 for ($i = 2; $i <= $totalP; $i++) {
                     $data2 = $this->getSearchCopyRight($ent['entName'], $i);
                     $data['Result'] = array_merge($data['Result'], $data2['Result']);
@@ -153,8 +153,8 @@ class IntellectualPropertyContorller extends UserController
             if (empty($data['Result'])) {
                 continue;
             }
-            if (isset($data['TotalRecords']) && $data['TotalRecords'] > $data['PageSize']) {
-                $totalP = (int)($data['TotalRecords']/$data['PageSize'])+1;
+            $totalP = (int)($data['Paging']['TotalRecords']/$data['Paging']['PageSize'])+1;
+            if ($totalP>1) {
                 for ($i = 2; $i <= $totalP; $i++) {
                     $data2 = $this->getSearchCertification($ent['entName'], $i);
                     $data['Result'] = array_merge($data['Result'], $data2['Result']);
@@ -228,8 +228,8 @@ class IntellectualPropertyContorller extends UserController
             if (empty($data['Result'])) {
                 continue;
             }
-            if (isset($data['TotalRecords']) && $data['TotalRecords'] > $data['PageSize']) {
-                $totalP = (int)($data['TotalRecords']/$data['PageSize'])+1;
+            $totalP = (int)($data['Paging']['TotalRecords']/$data['Paging']['PageSize'])+1;
+            if ($totalP > 1) {
                 for ($i = 2; $i <= $totalP; $i++) {
                     $data2 = $this->getTmSearch($ent['entName'], $i);
                     $data['Result'] = array_merge($data['Result'], $data2['Result']);
@@ -289,8 +289,8 @@ class IntellectualPropertyContorller extends UserController
             if (empty($data['Result'])) {
                 continue;
             }
-            if (isset($data['TotalRecords']) && $data['TotalRecords'] > $data['PageSize']) {
-                $totalP = (int)($data['TotalRecords']/$data['PageSize'])+1;
+            $totalP = (int)($data['Paging']['TotalRecords']/$data['Paging']['PageSize'])+1;
+            if ($totalP > 1) {
                 for ($i = 2; $i <= $totalP; $i++) {
                     $data2 = $this->getPatentV4Search($ent['entName'], $i);
                     $data['Result'] = array_merge($data['Result'], $data2['Result']);
