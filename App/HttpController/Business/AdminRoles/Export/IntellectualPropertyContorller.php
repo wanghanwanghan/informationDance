@@ -138,7 +138,6 @@ class IntellectualPropertyContorller extends UserController
         $fileName = date('YmdHis', time()) . '企业证书查询.csv';
         $file = TEMP_FILE_PATH . $fileName;
         $header = [
-            '公司名',
             '企业名称',
             '有效期起',
             '有效期至',
@@ -194,7 +193,6 @@ class IntellectualPropertyContorller extends UserController
             return [];
         }
         $insertData = [
-            $name,
             $data['企业名称'],
             $data['有效期起'],
             $data['有效期至'],
@@ -213,12 +211,12 @@ class IntellectualPropertyContorller extends UserController
         $file = TEMP_FILE_PATH . $fileName;
         $header = [
             '公司名',
-            '名称',//Name
-            '类型',//Category
-            '登记号',//RegisterNo
-            '登记日期',//RegisterDate
-            '完成日期',//FinishDate
-            '首次发表日期',//PublishDate
+            '注册号',//RegNo
+            '商标名',//Name
+            '申请日期',//AppDate
+            '申请人中文',//ApplicantCn
+            '申请人英文',//ApplicantEn
+            '流程状态描述',//FlowStatusDesc
         ];
         file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
         $resData = [];
@@ -262,7 +260,21 @@ class IntellectualPropertyContorller extends UserController
         $postData = ['id' => $id];
         $res = (new LongDunService())->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'tm/GetDetails', $postData);
         dingAlarm('商标详情',['$res'=>json_encode($res)]);
-        return '';
+        $data = $res['Result'];
+        if(empty($data)){
+            file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+            return [];
+        }
+        $insertData = [
+            $data['RegNo'],
+            $data['Name'],
+            $data['AppDate'],
+            $data['ApplicantCn'],
+            $data['ApplicantEn'],
+            $data['FlowStatusDesc'],
+        ];
+        file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+        return $insertData;
     }
 
 
@@ -274,12 +286,25 @@ class IntellectualPropertyContorller extends UserController
         $file = TEMP_FILE_PATH . $fileName;
         $header = [
             '公司名',
-            '名称',//Name
-            '类型',//Category
-            '登记号',//RegisterNo
-            '登记日期',//RegisterDate
-            '完成日期',//FinishDate
-            '首次发表日期',//PublishDate
+            '代理人',//Agent
+            '法律状态日期',//LegalStatusDate
+            '审查官',//PrimaryExaminer
+            '助理审查官',// AssiantExaminer
+            '引用',// Cites
+            '其他参考文献',// OtherReferences
+            '国际专利分类号（IPC）',//IPCList
+            '申请号',// ApplicationNumber
+            '申请日',//ApplicationDate
+            '公开（公告）号',//PublicationNumber
+            '公开（公告）日',//PublicationDate
+            '法律状态详情',//LegalStatusDesc
+            '标题',//Title
+            '摘要介绍',//Abstract
+            '专利代理机构',//Agency
+            '类型名称',//KindCodeDesc
+            '国际专利分类详情',// IPCDesc  arr
+            '发明人',//InventorStringList
+            '申请人',//AssigneestringList
         ];
         file_put_contents($file, implode(',', $header) . PHP_EOL, FILE_APPEND);
         $resData = [];
@@ -323,6 +348,35 @@ class IntellectualPropertyContorller extends UserController
         $postData = ['id' => $id];
         $res = (new LongDunService())->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'PatentV4/GetDetails', $postData);
         dingAlarm('专利详情',['$res'=>json_encode($res)]);
-        return '';
+        $data = $res['Result']['Data'];
+        if(empty($data)){
+            file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
+            return [];
+        }
+        $insertData = [
+            $name,
+            $data['Agent'],
+            $data['LegalStatusDate'],
+            $data['PrimaryExaminer'],
+            $data['AssiantExaminer'],
+            $data['Cites'],
+            $data['OtherReferences'],
+            $data['IPCList'],
+            $data['ApplicationNumber'],
+            $data['ApplicationDate'],
+            $data['PublicationNumber'],
+            $data['PublicationDate'],
+            $data['LegalStatusDesc'],
+            $data['Title'],
+            $data['Abstract'],
+            $data['Agency'],
+            $data['KindCodeDesc'],
+            $data['Title'],
+            implode('|',$data['IPCDesc']),
+            implode('|',$data['InventorStringList']),
+            implode('|',$data['AssigneestringList']),
+        ];
+        file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
+        return $insertData;
     }
 }
