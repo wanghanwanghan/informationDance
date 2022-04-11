@@ -226,8 +226,8 @@ class GetInvData extends ProcessBase
                         'se',//
                         'jshj',//
                         'bz',//
-                        'zfbz',
-                        'zfsj',
+                        'zfbz',//
+                        'zfsj',//
                         'kprq',//
                         'fplx',//
                         'fpztDm',//
