@@ -436,9 +436,7 @@ class FinanceContorller extends UserController
             $whereStr .= ' and created_at between '.$date1.' and '.$date2 ;
         }
         $limit = ($pageNo - 1) * $pageSize;
-        dingAlarm('getFinanceChargeLog',['$whereStr'=>$whereStr]);
         $count = FinanceChargeLog::create()->where($whereStr)->count();
-        dingAlarm('getFinanceChargeLog',['$whereStr'=>$whereStr." order by id desc limit {$limit},{$pageSize}"]);
         $list  = FinanceChargeLog::create()->where($whereStr." order by id desc limit {$limit},{$pageSize}")->all();
         return [$list, $count];
     }

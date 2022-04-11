@@ -560,7 +560,6 @@ Eof;
         $dataFinanceSmhz = [];
         foreach ($emptyTypes as $emptyType) {
             $barchTypeApiRelationInfo = BarchTypeApiRelation::create()->where('id', $emptyType)->get();
-            dingAlarm('exportBaseInformation',['userId'=>$info->id,'apiId'=>$barchTypeApiRelationInfo->apiId]);
             $requestUserApiRelationship = RequestUserApiRelationship::create()->where("userId = {$info->id} and apiId = {$barchTypeApiRelationInfo->apiId}")->get();
             $fun = $barchTypeApiRelationInfo->fun;
             switch ($barchTypeApiRelationInfo->typeBase){
@@ -726,7 +725,6 @@ Eof;
         $priceType = $this->getRequestData('priceType');
         $ent_price_detail = $this->getRequestData('ent_price_detail');
         $year_price_detail = $this->getRequestData('year_price_detail');
-//        dingAlarm('editApiUserRelation',['$year_price_detail'=>$year_price_detail]);
         if(empty($relationshipId)){
             return $this->writeJson(201, null, '', "关系ID不可以为空");
         }
@@ -753,7 +751,6 @@ Eof;
         if(!empty($priceType)){
             $update['price_type'] = $priceType;
         }
-//        dingAlarm('editApiUserRelation',['$update'=>json_encode($update)]);
         $info->update($update);
         return $this->writeJson();
     }
