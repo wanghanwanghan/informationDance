@@ -617,7 +617,7 @@ Eof;
         {
             $sql .= " and kidTypes = '{$kidTypes}'";
         }
-        dingAlarm('searchChargingLog',['$sql'=>$sql]);
+//        dingAlarm('searchChargingLog',['$sql'=>$sql]);
         $log = BarchChargingLog::create()->where($sql." and status = {$status} order by created_at desc ")->get();
         if (empty($log)) {
             return '';
