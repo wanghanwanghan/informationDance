@@ -75,6 +75,7 @@ class FinancialRegulationController extends UserController
         $postData = ['id' => $id];
         $docType = 'pbcparty';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
+        dingAlarm('央行行政处罚详情',['$res'=>json_encode($res)]);
         $data = $res[$docType]['0'];
         if(empty($data)){
             file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
@@ -171,6 +172,7 @@ class FinancialRegulationController extends UserController
         $postData = ['id' => $id];
         $docType = 'pbcparty_cbrc';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
+        dingAlarm('银保监会处罚公示详情',['$res'=>json_encode($res)]);
         $data = $res[$docType]['0'];
         if(empty($data)){
             file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
@@ -265,6 +267,7 @@ class FinancialRegulationController extends UserController
         $postData = ['id' => $id];
         $docType = 'pbcparty_csrc_chufa';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
+        dingAlarm('证监处罚公示详情',['$res'=>json_encode($res)]);
         $data = $res[$docType]['0'];
         if(empty($data)){
             file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
@@ -354,6 +357,7 @@ class FinancialRegulationController extends UserController
         $postData = ['id' => $id];
         $docType = 'pbcparty_csrc_xkpf';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
+        dingAlarm('证监会许可批复等级详情',['$res'=>json_encode($res)]);
         $data = $res[$docType]['0'];
         if(empty($data)){
             file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
@@ -440,6 +444,7 @@ class FinancialRegulationController extends UserController
         $postData = ['id' => $id];
         $docType = 'safe_chufa';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
+        dingAlarm('外汇局处罚详情',['$res'=>json_encode($res)]);
         $data = $res[$docType]['0'];
         if(empty($data)){
             file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
@@ -529,6 +534,7 @@ class FinancialRegulationController extends UserController
         $postData = ['id' => $id];
         $docType = 'safe_xuke';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
+        dingAlarm('外汇局许可详情',['$res'=>json_encode($res)]);
         $data = $res[$docType]['0'];
         if(empty($data)){
             file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
