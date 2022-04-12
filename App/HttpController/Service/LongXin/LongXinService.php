@@ -302,7 +302,6 @@ class LongXinService extends ServiceBase
         ]);
 
         if (isset($res['total']) && $res['total'] > 0) {
-            CommonService::getInstance()->log4PHP($res, __FUNCTION__);
             foreach ($res['data'] as $oneYearData) {
                 $year = trim($oneYearData['ANCHEYEAR']);
                 if (!is_numeric($year)) continue;
