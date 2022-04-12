@@ -40,7 +40,7 @@ class insertFinance extends TaskBase implements TaskInterface
         return 0;
     }
 
-    function run(int $taskId, int $workerIndex)
+    function run(int $taskId, int $workerIndex): bool
     {
         if (empty($this->entName) || empty($this->finance)) return true;
 

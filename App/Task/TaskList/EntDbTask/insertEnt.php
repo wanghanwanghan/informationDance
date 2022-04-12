@@ -21,7 +21,7 @@ class insertEnt extends TaskBase implements TaskInterface
         return true;
     }
 
-    function run(int $taskId, int $workerIndex)
+    function run(int $taskId, int $workerIndex): bool
     {
         if (empty($this->entName)) return true;
 
