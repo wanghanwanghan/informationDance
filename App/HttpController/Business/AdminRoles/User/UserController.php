@@ -4,6 +4,7 @@ namespace App\HttpController\Business\AdminRoles\User;
 
 use App\HttpController\Business\AdminRoles\Export\BusinessController;
 use App\HttpController\Business\AdminRoles\Export\FinanceContorller;
+use App\HttpController\Business\AdminRoles\Export\FinancialRegulationController;
 use App\HttpController\Business\AdminRoles\Export\IntellectualPropertyContorller;
 use App\HttpController\Business\AdminRoles\Export\SheshuiContorller;
 use App\HttpController\Business\AdminRoles\Export\SifaContorller;
