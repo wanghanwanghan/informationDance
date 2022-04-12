@@ -584,6 +584,9 @@ Eof;
                 case 5:
                     list($filePath, $data) = (new IntellectualPropertyContorller())->{$fun}($nameArr);
                     break;
+                case 6:
+                    list($filePath, $data) = (new FinancialRegulationController())->{$fun}($nameArr);
+                    break;
             }
 //            dingAlarm('导出数据返回', ['$filePath' => $filePath]);
             $fileArr[$emptyType] = $filePath;
