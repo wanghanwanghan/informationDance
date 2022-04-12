@@ -323,9 +323,9 @@ class LongXinService extends ServiceBase
 
         foreach ($social['AnnualSocial'] as $oneSoc) {
             $year = $oneSoc['ANCHEYEAR'];
-            if (!is_numeric($year) || !isset($temp[(string)$year])) continue;
+            if (!is_numeric($year) || !isset($temp[$year . ''])) continue;
             if (isset($oneSoc['so1']) && is_numeric($oneSoc['so1'])) {
-                $temp[(string)$year]['SOCNUM'] = $oneSoc['so1'];
+                $temp[$year . '']['SOCNUM'] = $oneSoc['so1'];
             }
         }
 
