@@ -83,7 +83,7 @@ class FinancialRegulationController extends UserController
 
         $insertData = [
             $name,
-            date('Y-m-d',$data['sortTime']),
+            date('Y-m-d',$data['sortTime']/1000),
             $data['eventDesc'],
             $data['authority'],
             $data['body'],
@@ -96,7 +96,7 @@ class FinancialRegulationController extends UserController
             $data['pname'],
             $data['eventType'],
             $data['title'],
-            date('Y-m-d',$data['postTime']),
+            date('Y-m-d',$data['postTime']/1000),
         ];
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         return $insertData;
@@ -179,7 +179,7 @@ class FinancialRegulationController extends UserController
 
         $insertData = [
             $name,
-            date('Y-m-d',$data['sortTime']),
+            date('Y-m-d',$data['sortTime']/1000),
             $data['eventDesc'],
             $data['authority'],
             $data['body'],
@@ -192,7 +192,7 @@ class FinancialRegulationController extends UserController
             $data['pname'],
             $data['eventType'],
             $data['title'],
-            date('Y-m-d',$data['postTime']),
+            date('Y-m-d',$data['postTime']/1000),
         ];
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         return $insertData;
@@ -281,8 +281,8 @@ class FinancialRegulationController extends UserController
             $data['legalRepresentative'],
             $data['authority'],
             $data['eventResult'],
-            date('Y-m-d',$data['sortTime']),
-            date('Y-m-d',$data['postTime']),
+            date('Y-m-d',$data['sortTime']/1000),
+            date('Y-m-d',$data['postTime']/1000),
             $data['pname'],
             $data['title'],
             $data['body']
@@ -365,9 +365,9 @@ class FinancialRegulationController extends UserController
             $data['caseNo'],
             $data['eventName'],
             $data['authority'],
-            date('Y-m-d',$data['sortTime']),
-            date('Y-m-d',$data['startTime']),
-            date('Y-m-d',$data['postTime']),
+            date('Y-m-d',$data['sortTime']/1000),
+            date('Y-m-d',$data['startTime']/1000),
+            date('Y-m-d',$data['postTime']/1000),
             $data['pname'],
             $data['title'],
             $data['body'],
@@ -456,7 +456,7 @@ class FinancialRegulationController extends UserController
             $data['eventResult'],
             $data['companyNo'],
             $data['money'],
-            date('Y-m-d',$data['sortTime']),
+            date('Y-m-d',$data['sortTime']/1000),
             $data['pname'],
             $data['body'],
         ];
@@ -546,7 +546,7 @@ class FinancialRegulationController extends UserController
             $data['companyNo'],
             $data['bank'],
             $data['money'],
-            date('Y-m-d',$data['sortTime']),
+            date('Y-m-d',$data['sortTime']/1000),
             $data['pname'],
             $data['body'],
         ];
