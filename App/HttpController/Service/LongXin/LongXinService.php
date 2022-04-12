@@ -301,7 +301,7 @@ class LongXinService extends ServiceBase
 
         if (isset($res['total']) && $res['total'] > 0) {
             foreach ($res['data'] as $oneYearData) {
-                $year = trim($oneYearData['ANCHEYEAR']) . '';
+                $year = trim($oneYearData['ANCHEYEAR']);
                 if (!is_numeric($year)) continue;
                 $oneYearData['SOCNUM'] = null;
                 unset($oneYearData['TEL']);//后加的字段
@@ -309,6 +309,7 @@ class LongXinService extends ServiceBase
                 unset($oneYearData['DOM']);//后加的字段
                 unset($oneYearData['EMAIL']);//后加的字段
                 unset($oneYearData['POSTALCODE']);//后加的字段
+                unset($oneYearData['EMPNUM']);//后加的字段
                 $temp[$year] = $oneYearData;
             }
             krsort($temp);
