@@ -276,6 +276,12 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyFzcDetail', $prefix . 'getSatpartyFzcDetail');
             $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyXuke', $prefix . 'getSatpartyXuke');
             $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyXukeDetail', $prefix . 'getSatpartyXukeDetail');
+            $routeCollector->addRoute(['GET', 'POST'], '/getPbcparty', $prefix . 'getPbcparty');
+            $routeCollector->addRoute(['GET', 'POST'], '/getPbcpartyCbrc', $prefix . 'getPbcpartyCbrc');
+            $routeCollector->addRoute(['GET', 'POST'], '/getPbcpartyCsrcChufa', $prefix . 'getPbcpartyCsrcChufa');
+            $routeCollector->addRoute(['GET', 'POST'], '/getPbcpartyCsrcXkpf', $prefix . 'getPbcpartyCsrcXkpf');
+            $routeCollector->addRoute(['GET', 'POST'], '/getSafeChufa', $prefix . 'getSafeChufa');
+            $routeCollector->addRoute(['GET', 'POST'], '/getSafeXuke', $prefix . 'getSafeXuke');
         });
 
         return true;
