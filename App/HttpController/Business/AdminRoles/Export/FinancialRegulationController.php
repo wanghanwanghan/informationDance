@@ -83,7 +83,7 @@ class FinancialRegulationController extends UserController
 
         $insertData = [
             $name,
-            date('Y-m-d H:i:s',$data['sortTime']),
+            date('Y-m-d',$data['sortTime']),
             $data['eventDesc'],
             $data['authority'],
             $data['body'],
@@ -96,7 +96,7 @@ class FinancialRegulationController extends UserController
             $data['pname'],
             $data['eventType'],
             $data['title'],
-            date('Y-m-d H:i:s',$data['postTime']),
+            date('Y-m-d',$data['postTime']),
         ];
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         return $insertData;
@@ -179,7 +179,7 @@ class FinancialRegulationController extends UserController
 
         $insertData = [
             $name,
-            date('Y-m-d H:i:s',$data['sortTime']),
+            date('Y-m-d',$data['sortTime']),
             $data['eventDesc'],
             $data['authority'],
             $data['body'],
@@ -192,7 +192,7 @@ class FinancialRegulationController extends UserController
             $data['pname'],
             $data['eventType'],
             $data['title'],
-            date('Y-m-d H:i:s',$data['postTime']),
+            date('Y-m-d',$data['postTime']),
         ];
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         return $insertData;
@@ -273,20 +273,19 @@ class FinancialRegulationController extends UserController
 
         $insertData = [
             $name,
-            date('Y-m-d H:i:s',$data['sortTime']),
-            $data['eventDesc'],
-            $data['authority'],
-            $data['body'],
-            $data['eventYiju'],
-            $data['caseNo'],
             $data['eventName'],
+            $data['caseNo'],
+            $data['eventDesc'],
+            $data['eventYiju'],
+            $data['company'],
             $data['legalRepresentative'],
+            $data['authority'],
             $data['eventResult'],
-            $data['eventDate'],
+            date('Y-m-d',$data['sortTime']),
+            date('Y-m-d',$data['postTime']),
             $data['pname'],
-            $data['eventType'],
             $data['title'],
-            date('Y-m-d H:i:s',$data['postTime']),
+            $data['body']
         ];
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         return $insertData;
@@ -366,9 +365,9 @@ class FinancialRegulationController extends UserController
             $data['caseNo'],
             $data['eventName'],
             $data['authority'],
-            date('Y-m-d H:i:s',$data['sortTime']),
-            date('Y-m-d H:i:s',$data['startTime']),
-            date('Y-m-d H:i:s',$data['postTime']),
+            date('Y-m-d',$data['sortTime']),
+            date('Y-m-d',$data['startTime']),
+            date('Y-m-d',$data['postTime']),
             $data['pname'],
             $data['title'],
             $data['body'],
@@ -457,7 +456,7 @@ class FinancialRegulationController extends UserController
             $data['eventResult'],
             $data['companyNo'],
             $data['money'],
-            date('Y-m-d H:i:s',$data['sortTime']),
+            date('Y-m-d',$data['sortTime']),
             $data['pname'],
             $data['body'],
         ];
@@ -547,7 +546,7 @@ class FinancialRegulationController extends UserController
             $data['companyNo'],
             $data['bank'],
             $data['money'],
-            date('Y-m-d H:i:s',$data['sortTime']),
+            date('Y-m-d',$data['sortTime']),
             $data['pname'],
             $data['body'],
         ];
