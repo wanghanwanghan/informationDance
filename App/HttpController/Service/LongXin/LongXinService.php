@@ -265,7 +265,9 @@ class LongXinService extends ServiceBase
 
         $check = $this->alreadyInserted($postData);
 
-        $cond = !empty($postData['code']) ? $postData['code'] : $postData['entName'];
+        $cond = !empty($postData['code']) && strlen(trim($postData['code'])) > 15 ?
+            trim($postData['code']) :
+            $postData['entName'];
 
         $entId = $this->getEntid($cond);
 
