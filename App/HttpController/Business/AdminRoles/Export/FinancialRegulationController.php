@@ -494,7 +494,8 @@ class FinancialRegulationController extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getSafeXuke($ent['entName'],1);
-            if(empty($data['safe_chufaList'])) {
+            dingAlarm('外汇局许可',['$res'=>json_encode($data)]);
+            if(empty($data['safe_xukeList'])) {
                 file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
                 continue;
             }

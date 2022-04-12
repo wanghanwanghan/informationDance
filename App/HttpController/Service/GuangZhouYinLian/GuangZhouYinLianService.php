@@ -8,7 +8,7 @@ use wanghanwanghan\someUtils\control;
 
 class GuangZhouYinLianService extends ServiceBase
 {
-    private $privateKey      = <<<Eof
+    private $testPrivateKey      = <<<Eof
 -----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEA767Gc8oWD9ckvkt6rHRg+AC8yESbAgwfLc+lWh4Izs/rvxqA
 db8/hAcpO1h+6tBVzNc+3nitxN53etJyRs2Bjf0nlh74AguaNk1S/kkdzOsGdLDr
@@ -37,14 +37,48 @@ FeUxasdoXjSBuMb3Zc/aJQFfZa5Ql64QbMtM1q9v83G1iysPXP+bXqg3Wr/Ea9Jk
 ezbvJLTt45TL9P3xd3x2cYNDZfWxga68E73QFjU8T5KdJiw0GNUNnA==
 -----END RSA PRIVATE KEY-----
 Eof;
-    private $app_id          = '5dc387b32c07871d371334e9c45120ba';
+    private $privateKey = <<<Eof
+-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCQ0USj6AmW+4lQ
+Fy0hMmcmz+O69DE65HKTWdkooXH2KaGRjsGiabq/km+fd8xe8eTaCBgKaYB+LHMB
+HDvy+FCQMBPpBQuak0KGCYTDNQuUD0vDudZ7PmhmM0z/JcnL4MT81Tsj3B3uwxUv
+2eHb+qKlGYmVsxUk7rVQn7BSr8hqADrHT2bGBll/zz2tslPJP0/wXle3hCWhuyhS
+sNeQUw5LFs/84wyfdvMEnAswQm9ikm5UUdGLKDF7L8UPKw6/20ZChbh2v5OzCnsd
+ALLPlL3Yk37BiIr9FYwEIgyP/FyQUUE5wdCx+27XsLtlDOmYHqLBYka2OM2VN4y7
+qq+hOWx1AgMBAAECggEAN3IoGalJoqkD1cpJ2R/3JoEJ7BZ6ktXMmGYaIthNTbZ6
+ycQilxBsE9T5L9EqSl/LAz9+FN5399cE4TPyMACqt8nwlZL88l3XZoJWdnbky/df
+RrzsRZuLVTXnEPli3dBdG4B4eC5at4OxpPSC6Tp480VnzA0Y118dxJSfackrrol8
+hwMyqYvSV02vdcDJPxPoKiYfmf2lOpDFEayqIKqJYmo4+tytlg1dMPEjqH7ArIKL
+qm0AejekCMO7ILQPgCl29pzPur5F/7UX0BUI7nSDyO0jewV/dJ71fp090fEMo7Rx
+wnroUNZHRS+IAFE9+BshidscApzUp4P/mPWhPQDSsQKBgQDA0Ww1xKqmT9g9oMtj
+EZ28wGXzLv48LgkEwbIHoBHQlBJPSk/UVQyCUlBmjwwCLBeYt7Ve2SPqzTd5XRvP
+3Hg8HAbVZtm3h1dvKKs+aSHsYi5RLvq6hPt+Qgkxe4418WId2bU0FyagktJFH35m
+Jwq2MvnJfXuPxfd0ufldnOZD2wKBgQDARU5huYHwnXUTCF6lTVnB5MZ25YQVXHRl
+vCeK3+yUoU+O42hS/kZ+ls6DmREdUJC06caTMB4q19faXLwISEy5wRXmdDAgV/zB
+DnGFgTR6kEzPdqFL0Mw1NIps0ev7ZUJAunod5JbGElvRUejNYBb3z0oGpstzY6tE
++CFxfsYp7wKBgBajwE/j4qGaeGpsCdV9CQdTk+Tk3KcWRKrRT2UDz3OtHyU+NXdZ
+8RkQLy6Llz5eDPs6fso/Nq9oHx5Z510Vpuxv4gGGjQO2mXaM0OaIE5qcwJF5saja
+2mitukScHEuLJxkYKeWO3lM2SgghtYarCN/xxlB5MlvkQ7Tp7TSnqoXHAoGBALKL
+KWBCXdHMxfzolss16xXMlieutlsHweb/NFEX45+ZtEFiF2yKR3giHp/BskzglaAK
+PqZL1pe+W+mgl9OxH96W2PlqB47hZgr4mJ56/vqZqVo2NU4sFJWLtseaoGKRA1cM
+U34S2ZgRUEYuo9qjUnDIg1tt5BvBADhJmvTD3sztAoGALv4LjotLObFEmUFhqefR
+kwO2QTVLFvOHP0HOpzaI7wu80YBNXBED6r5EUOi1UiAaQO6fe6wH0HoD6V66l8ES
+mCV6nuyBCa10hBNgf/akaiaCP4l0odoXwCQpSRAhKYf2wpRiWgmAbgmvH2JsyzKI
+LbDDlU4oDXyG5JgwEmKbG24=
+-----END PRIVATE KEY-----
+Eof;
+
+    private $testApp_id      = '5dc387b32c07871d371334e9c45120ba';
+    private $app_id          = '62399d4baa687386502fa99462c82872';
     private $timestamp;
     private $v               = '1.0.1';
     private $sign_alg        = 1;
-    private $busiMerno       = '898441650210002';
+    private $busiMerno       = '898440048161870';
+    private $testBusiMerno       = '898441650210002';
     private $testUrl         = 'https://testapi.gnete.com:9083/routejson';
-    private $secret_password = '123456';
-    private $test_pub_secret = 'ogw-fat-2048-cfca.der';
+    private $url         = 'https://api.gnete.com/routejson';
+//    private $secret_password = '123456';
+//    private $test_pub_secret = 'ogw-fat-2048-cfca.der';
 
     function __construct()
     {
