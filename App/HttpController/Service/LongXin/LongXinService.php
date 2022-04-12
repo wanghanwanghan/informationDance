@@ -117,15 +117,16 @@ class LongXinService extends ServiceBase
             'includegeti' => trim($includegeti),//不包含个体
         ];
 
-        CommonService::getInstance()->log4PHP($arr, 'in', 'entid');
-
         $this->sendHeaders['authorization'] = $this->createToken($arr);
 
         $res = (new CoHttpClient())
             ->useCache(false)
             ->send($this->baseUrl . 'getentid/', $arr, $this->sendHeaders);
 
-        CommonService::getInstance()->log4PHP($res, 'out', 'entid');
+        CommonService::getInstance()->log4PHP([
+            'in' => $arr,
+            'out' => $res,
+        ], 'info', 'entid');
 
         if (!empty($res) && isset($res['data']) && !empty($res['data'])) {
             $entid = $res['data'];
