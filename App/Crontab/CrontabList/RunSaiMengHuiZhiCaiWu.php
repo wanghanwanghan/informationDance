@@ -140,10 +140,14 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
             $witch_file_flag = 'right';
             $data_arr = [];
 
-            if (is_array($f_data_info) && !empty($f_data_info['result'])) {
-
+            if (is_array($f_data_info) && !empty($f_data_info['result']['data'])) {
+                $data_info = $f_data_info['result']['data'];
+                $empnum_arr = [];
+                foreach ($f_data_info['result']['otherData'] as $y=>$item){
+                    $empnum_arr[$y] = $item['EMPNUM'];
+                }
                 //有数字返回的
-                foreach ($f_data_info['result'] as $year => $item) {
+                foreach ($data_info as $year => $item) {
                     is_numeric($item['VENDINC']) ? $_VENDINC = round($item['VENDINC'], 2) : $_VENDINC = '';
                     is_numeric($item['ASSGRO']) ? $_ASSGRO = round($item['ASSGRO'], 2) : $_ASSGRO = '';
                     is_numeric($item['MAIBUSINC']) ? $_MAIBUSINC = round($item['MAIBUSINC'], 2) : $_MAIBUSINC = '';
@@ -153,7 +157,7 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
                     is_numeric($item['NETINC']) ? $_NETINC = round($item['NETINC'], 2) : $_NETINC = '';
                     is_numeric($item['LIAGRO']) ? $_LIAGRO = round($item['LIAGRO'], 2) : $_LIAGRO = '';
                     is_numeric($item['SOCNUM']) ? $_SOCNUM = round($item['SOCNUM'], 2) : $_SOCNUM = '';
-
+                    is_numeric($empnum_arr[$year]) ? $_EMPNUM = round($empnum_arr[$year], 2) : $_EMPNUM = '';
                     if (!is_numeric($_VENDINC) || $_VENDINC == 0) {
                         $witch_file_flag = 'have_null';
                     }
@@ -193,6 +197,7 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
                         $_NETINC,
                         $_LIAGRO,
                         $_SOCNUM,
+                        $_EMPNUM
                     ];
                 }
 
@@ -202,6 +207,7 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
                     $this->workPath . $this->data_desc_txt_file_name,
                     implode('|', [
                         $entname, $code, $address,
+                        '无数据',
                         '无数据',
                         '无数据',
                         '无数据',
