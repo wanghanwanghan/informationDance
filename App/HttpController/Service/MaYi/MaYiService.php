@@ -5192,6 +5192,7 @@ class MaYiService extends ServiceBase
 
     function authEnt($data): array
     {
+        dingAlarm('authEnt',['$data'=>json_encode($data)]);
         if (empty($data['entName'])) {
             return $this->check(600, null, null, '企业名称不能是空');
         }
@@ -5263,7 +5264,7 @@ class MaYiService extends ServiceBase
         //增加除授权书其他证书的表，并做关联
         if (!empty($data['fileData'])) {
             foreach ($data['fileData'] as $datum) {
-                dingAlarm('insertAntAuthSealDetail',['id'=>$id,'$datum'=>$datum]);
+                dingAlarm('insertAntAuthSealDetail',['id'=>$id,'$datum'=>json_encode($datum)]);
                 AntAuthSealDetail::create()->data([
                     'orderNo' => $data['orderNo'],
                     //蚂蚁传过来的意思是 是否已经盖过章
