@@ -234,7 +234,8 @@ class FinanceContorller extends UserController
 
     public function insertFinanceData($data, $entname)
     {
-
+        $data = $data['data'];
+        $otherData = $data['otherData'];
         foreach ($data as $year1 => $datum) {
             if (empty($datum)) unset($data[$year1]);
             $value = [];
@@ -250,6 +251,10 @@ class FinanceContorller extends UserController
         }
         if (empty($data)) {
             return false;
+        }
+        $empnum_arr = [];
+        foreach ($otherData as $y=>$item) {
+            $empnum_arr[$y] = $item['EMPNUM'];
         }
         foreach ($data as $year => $value) {
             $info = FinanceData::create()->where("entName = '{$entname}' and year = '$year'")->get();
@@ -268,6 +273,7 @@ class FinanceContorller extends UserController
                 'NETINC'    => $value['NETINC'] ?? '',
                 'LIAGRO'    => $value['LIAGRO'] ?? '',
                 'SOCNUM'    => empty($value['SOCNUM']) ? '' : $value['SOCNUM'],
+                'EMPNUM'    => $empnum_arr[$year]??'',
             ];
             FinanceData::create()->data($insert)->save();
         }
