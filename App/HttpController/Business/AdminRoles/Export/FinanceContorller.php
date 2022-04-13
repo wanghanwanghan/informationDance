@@ -26,6 +26,7 @@ class FinanceContorller extends UserController
         'RATGRO'    => '纳税总额',
         'TOTEQU'    => '所有者权益合计',
         'SOCNUM'    => '社保人数',
+        'EMPNUM'    => '从业人数',
     ];
     const PRICE_TYPE_1 = 1;//按年收费
     const PRICE_TYPE_2 = 2;//按公司收费
