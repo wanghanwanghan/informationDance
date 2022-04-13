@@ -395,7 +395,7 @@ class LongXinService extends ServiceBase
 
         return $this->checkRespFlag ?
             $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn]) :
-            ['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn, 'otherData' => $readyOtherReturn];
+            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => ['data'=>$readyReturn, 'otherData' => $readyOtherReturn]]);
     }
 
     //近n年的财务数据 含 并表
