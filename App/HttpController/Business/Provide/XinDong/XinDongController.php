@@ -395,11 +395,11 @@ class XinDongController extends ProvideBase
         } else {
             $this->csp->add($this->cspKey, function () use ($postData) {
                 return (new LongXinService())
+                    ->setCheckRespFlag(true)
                     ->setCal(false)
                     ->getFinanceData($postData, false);
             });
             $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-            CommonService::getInstance()->log4PHP($res);
         }
 
         if ($res[$this->cspKey]['code'] === 200 && !empty($res[$this->cspKey]['result'])) {
