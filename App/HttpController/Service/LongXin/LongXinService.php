@@ -340,13 +340,16 @@ class LongXinService extends ServiceBase
         }
 
         //取哪年的数据
-        $readyReturn = [];
+        $readyReturn = $readyOtherReturn = [];
         for ($i = $postData['dataCount']; $i--;) {
             $tmp = $postData['beginYear'] - $i;
             $tmp = $tmp . '';
             isset($temp[$tmp]) ?
                 $readyReturn[$tmp] = $temp[$tmp] :
                 $readyReturn[$tmp] = null;
+            isset($temp[$tmp]) ?
+                $readyOtherReturn[$tmp] = $temp[$tmp] :
+                $readyOtherReturn[$tmp] = null;
         }
 
         //数字落区间
@@ -387,10 +390,11 @@ class LongXinService extends ServiceBase
         }
 
         krsort($readyReturn);
+        krsort($readyOtherReturn);
 
         return $this->checkRespFlag ?
-            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn, 'otherData' => $otherData]) :
-            ['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn, 'otherData' => $otherData];
+            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn, 'otherData' => $readyOtherReturn]) :
+            ['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn, 'otherData' => $readyOtherReturn];
     }
 
     //近n年的财务数据 含 并表
