@@ -281,6 +281,7 @@ class LongXinService extends ServiceBase
             $ANCHEYEAR .= $i . ',';
             $temp[$i . ''] = null;
         }
+        $otherData = $temp;
         $arr = [
             'entid' => $entId,
             'ANCHEYEAR' => trim($ANCHEYEAR, ','),
@@ -305,6 +306,7 @@ class LongXinService extends ServiceBase
             foreach ($res['data'] as $oneYearData) {
                 $year = trim($oneYearData['ANCHEYEAR']);
                 if (!is_numeric($year)) continue;
+                $otherData[$year] = $oneYearData;
                 $oneYearData['SOCNUM'] = null;
                 unset($oneYearData['TEL']);//后加的字段
                 unset($oneYearData['BUSST']);//后加的字段
@@ -387,8 +389,8 @@ class LongXinService extends ServiceBase
         krsort($readyReturn);
 
         return $this->checkRespFlag ?
-            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn]) :
-            ['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn];
+            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn, 'otherData' => $otherData]) :
+            ['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn, 'otherData' => $otherData];
     }
 
     //近n年的财务数据 含 并表
