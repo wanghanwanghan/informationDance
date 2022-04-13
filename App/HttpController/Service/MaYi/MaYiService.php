@@ -5263,6 +5263,7 @@ class MaYiService extends ServiceBase
         //增加除授权书其他证书的表，并做关联
         if (!empty($data['fileData'])) {
             foreach ($data['fileData'] as $datum) {
+                dingAlarm('insertAntAuthSealDetail',['id'=>$id,'$datum'=>$datum]);
                 AntAuthSealDetail::create()->data([
                     'orderNo' => $data['orderNo'],
                     //蚂蚁传过来的意思是 是否已经盖过章
