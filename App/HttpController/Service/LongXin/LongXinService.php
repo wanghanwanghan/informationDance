@@ -317,6 +317,7 @@ class LongXinService extends ServiceBase
                 $temp[$year] = $oneYearData;
             }
             krsort($temp);
+            krsort($otherData);
         }
 
         //社保人数数组
@@ -347,8 +348,8 @@ class LongXinService extends ServiceBase
             isset($temp[$tmp]) ?
                 $readyReturn[$tmp] = $temp[$tmp] :
                 $readyReturn[$tmp] = null;
-            isset($temp[$tmp]) ?
-                $readyOtherReturn[$tmp] = $temp[$tmp] :
+            isset($otherData[$tmp]) ?
+                $readyOtherReturn[$tmp] = $otherData[$tmp] :
                 $readyOtherReturn[$tmp] = null;
         }
 
