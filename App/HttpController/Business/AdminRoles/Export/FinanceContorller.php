@@ -235,8 +235,8 @@ class FinanceContorller extends UserController
 
     public function insertFinanceData($data, $entname)
     {
-        $data = $data['data'];
         $otherData = $data['otherData'];
+        $data = $data['data'];
         foreach ($data as $year1 => $datum) {
             if (empty($datum)) unset($data[$year1]);
             $value = [];
