@@ -1443,8 +1443,8 @@ class XinDongController extends ProvideBase
     function collectInvoice(): bool
     {
         $nsrsbh = $this->getRequestData('nsrsbh');
-        $start = $this->getRequestData('start');
-        $stop = $this->getRequestData('stop');
+        $start = $this->getRequestData('start');//YYYY-MM-DD
+        $stop = $this->getRequestData('stop');//YYYY-MM-DD
 
         $postData = [
             'nsrsbh' => $nsrsbh,
