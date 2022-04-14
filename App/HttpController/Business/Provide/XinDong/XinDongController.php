@@ -1439,6 +1439,7 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //发票归集
     function collectInvoice(): bool
     {
         $nsrsbh = $this->getRequestData('nsrsbh');
@@ -1462,6 +1463,7 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //发票提取
     function getInvoice(): bool
     {
         $nsrsbh = $this->getRequestData('nsrsbh');
