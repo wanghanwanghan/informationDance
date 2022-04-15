@@ -370,7 +370,7 @@ class SheshuiContorller  extends UserController
         $resData = [];
         foreach ($entNames as $ent) {
             $data = $this->getSatpartyXin($ent['entName'], 1);//
-            dingAlarm('纳税信用等级',['$data'=>json_encode($data)]);
+//            dingAlarm('纳税信用等级',['$data'=>json_encode($data)]);
             if (empty($data['satparty_xinList'])) {
                 continue;
             }
@@ -407,8 +407,8 @@ class SheshuiContorller  extends UserController
         $postData = ['id' => $id];
         $docType = 'satparty_xin';
         $res = (new FaYanYuanService())->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $docType, $postData);
-        dingAlarm('纳税信用等级详情',['$res'=>json_encode($res)]);
-        $data = $res['satparty_xuke']['0'];
+//        dingAlarm('纳税信用等级详情',['$res'=>json_encode($res)]);
+        $data = $res['satparty_xin']['0'];
         if(empty($data)){
             file_put_contents($file, ',,,,,,,,,,,,,,,,,,,,,,,,,,' . PHP_EOL, FILE_APPEND);
             return [];
