@@ -97,8 +97,8 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
             'time' => $time,
             'sign' => $sign,
             'entName' => $entname,
-            'year' => 2021,
-            'dataCount' => 4,
+            'year' => 2020,
+            'dataCount' => 3,
         ];
 
         return (new CoHttpClient())->useCache(true)->send($url, $data);
