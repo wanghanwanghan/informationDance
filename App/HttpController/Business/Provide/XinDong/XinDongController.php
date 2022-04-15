@@ -1439,11 +1439,12 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //发票归集
     function collectInvoice(): bool
     {
         $nsrsbh = $this->getRequestData('nsrsbh');
-        $start = $this->getRequestData('start');
-        $stop = $this->getRequestData('stop');
+        $start = $this->getRequestData('start');//YYYY-MM-DD
+        $stop = $this->getRequestData('stop');//YYYY-MM-DD
 
         $postData = [
             'nsrsbh' => $nsrsbh,
@@ -1462,6 +1463,7 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //发票提取
     function getInvoice(): bool
     {
         $nsrsbh = $this->getRequestData('nsrsbh');
