@@ -123,6 +123,36 @@ class JinCaiShuKeService extends ServiceBase
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
+
+    //发票认证
+    function S000514(string $nsrsbh, string $Period, string $BillType, string $DeductibleMode, array $InvoiceList): array
+    {
+        $content = [
+            'Period' => trim($Period),//企业当前税款所属期 YYYYMM
+            'BillType' => trim($BillType),//票据类型 0:增值税发票 1:海关缴款书
+            'DeductibleMode' => trim($DeductibleMode),//1:抵扣勾选；(默认为1) -1:取消抵扣勾选； 2:退税认证； 4：不抵扣勾选； -4：取消不抵扣勾选；
+            'InvoiceList' => $InvoiceList,//发票数据 最多100张发票
+        ];
+
+        $signType = '0';
+
+        $post_data = [
+            'appid' => $this->appKey,
+            'serviceid' => __FUNCTION__,
+            'jtnsrsbh' => $this->jtnsrsbh,
+            'nsrsbh' => trim($nsrsbh),
+            'content' => base64_encode(jsonEncode($content, false)),
+            'signature' => $this->signature($content, trim($nsrsbh), __FUNCTION__, $signType),
+            'signType' => $signType,
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($this->url, $post_data, [], ['enableSSL' => true]);
+
+        return $this->checkRespFlag ? $this->checkResp($res) : $res;
+    }
+
 }
 
 

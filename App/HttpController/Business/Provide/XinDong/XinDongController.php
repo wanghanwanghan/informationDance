@@ -1489,4 +1489,37 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //发票认证
+    function invCertification(): bool
+    {
+        $nsrsbh = $this->getRequestData('nsrsbh');
+        $Period = $this->getRequestData('Period');
+        $BillType = $this->getRequestData('BillType');
+        $DeductibleMode = $this->getRequestData('DeductibleMode');
+        $InvoiceList = $this->getRequestData('InvoiceList');
+
+        //'InvoiceCode' => 'xxx',//发票代码 增值税发票时，不为空 缴款书发票时，可为空
+        //'InvoiceNumber' => 'xxx',
+        //'NotDeductibleType' => 'xxx',//不抵扣类型 认证模式=4时（不抵扣勾选时需要）需要传。不传则默认5 1：用于非应税项目 2：用于免税项目 3：用于集体福利或者个人消费 4：遭受非正常损失 5：其他
+        //'ValidTax' => '',//有效税额
+
+        $postData = [
+            'nsrsbh' => $nsrsbh,
+            'Period' => $Period,
+            'BillType' => $BillType,
+            'DeductibleMode' => $DeductibleMode,
+            'InvoiceList' => jsonDecode($InvoiceList),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new JinCaiShuKeService())
+                ->setCheckRespFlag(true)
+                ->S000514($postData['nsrsbh'], $postData['Period'], $postData['BillType'], $postData['DeductibleMode'], $postData['InvoiceList']);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
 }
