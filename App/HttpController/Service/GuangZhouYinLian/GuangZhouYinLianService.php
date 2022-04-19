@@ -73,17 +73,30 @@ Eof;
     private $timestamp;
     private $v               = '1.0.1';
     private $sign_alg        = 1;
-    private $busiMerno       = '898440048161870';
-    private $testBusiMerno       = '898441650210002';
+    private $busiMerno1       = '898440048161870';
+    private $busiMerno2       = '898440048161874';
+    private $busiMerno3       = '898440048161875';
+    private $testBusiMerno    = '898441650210002';
     private $testUrl         = 'https://testapi.gnete.com:9083/routejson';
     private $url         = 'https://api.gnete.com/routejson';
-//    private $secret_password = '123456';
-//    private $test_pub_secret = 'ogw-fat-2048-cfca.der';
+    private $bizFuncArr = [];
 
     function __construct()
     {
-//        $this->app_id = CreateConf::getInstance()->getConf('guangzhouyinlian.app_id');
-//        $this->timestamp = time() * 1000;
+        $this->bizFuncArr = [
+        '711004' => $this->busiMerno1,
+        '711021' => $this->busiMerno1,
+        '711005' => $this->busiMerno2,
+        '711006' => $this->busiMerno2,
+        '711011' => $this->busiMerno2,
+        '711019' => $this->busiMerno2,
+        '711009' => $this->busiMerno3,
+        '711010' => $this->busiMerno3,
+        '711013' => $this->busiMerno3,
+        '711014' => $this->busiMerno3,
+        '711015' => $this->busiMerno3,
+        '711016' => $this->busiMerno3,
+    ];
         return parent::__construct();
     }
 
@@ -222,13 +235,16 @@ Eof;
      */
     public function queryInancialBank($postData)
     {
+        if(!isset($this->bizFuncArr[$postData['bizFunc']])){
+            return ['subMsg'=>"bizFunc{$postData['bizFunc']}错误",'subCode'=>201];
+        }
         $method      = 'gnete.upbc.vehicle.queryInancialBank';
         $time        = time();
         $sndDt       = date('YmdHis', $time);
-        $merOrdrNo   = $this->busiMerno . date('Ymd', $time) . control::randNum(9);
+        $merOrdrNo   = $this->bizFuncArr[$postData['bizFunc']] . date('Ymd', $time) . control::randNum(9);
         $biz_content = [
             'sndDt'     => $sndDt,
-            'busiMerNo' => $this->busiMerno,
+            'busiMerNo' => $this->bizFuncArr[$postData['bizFunc']],
             'msgBody'   => [
                 'busiId'           => '00270001',
                 'vehicleVerifyInf' => [
