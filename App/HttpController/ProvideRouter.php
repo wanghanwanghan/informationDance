@@ -37,7 +37,7 @@ class ProvideRouter
     private function GuangZhouYinLianV1(RouteCollector $routeCollector){
         $prefix = '/Business/Provide/GuangZhouYinLian/GuangZhouYinLianController/';
         $routeCollector->addGroup('/gzyl', function (RouteCollector $routeCollector) use ($prefix) {
-            $routeCollector->addRoute(['GET', 'POST'], '/queryVehicleCount', $prefix . 'queryVehicleCount');
+            $routeCollector->addRoute(['GET', 'POST'], '/queryUsedVehicleInfo', $prefix . 'queryUsedVehicleInfo');
             $routeCollector->addRoute(['GET', 'POST'], '/queryInancialBank', $prefix . 'queryInancialBank');
         });
         return true;

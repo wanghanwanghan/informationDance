@@ -31,6 +31,18 @@ class GuangZhouYinLianController extends ProvideBase
 
     }
 
+    function queryUsedVehicleInfo(): bool
+    {
+        $postData = [];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new GuangZhouYinLianService())->setCheckRespFlag(true)->queryUsedVehicleInfo($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
     function checkResponse($res): bool
     {
         if (empty($res[$this->cspKey])) {

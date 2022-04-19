@@ -417,20 +417,37 @@ Eof;
     /*
      * 二手车信息查询
      */
-    public function queryUsedVehicleInfo()
+    public function queryUsedVehicleInfo($postData)
     {
-        //gnete.upbc.vehicle.queryUsedVehicleInfo
-        /*
-         merOrdrNo  商户交易订单号，需保证在商户端不重复; 格式：15 位商户号+8 位交易日期+9 位序数字列号
-         busiId     商户开通的业务 ID
-         bizFunc    业务功能  731001: 最大损失金额查询
-         vehicleVerifyInf       验证信息
-             userNo         客户标识
-             vin            车架号
-             licenseNo      号牌号码
-             licenseNoType  号牌种类
-         */
-
+        if(!isset($this->bizFuncArr[$postData['bizFunc']])){
+            return ['subMsg'=>"bizFunc{$postData['bizFunc']}错误",'subCode'=>201];
+        }
+        $method      = 'gnete.upbc.vehicle.queryUsedVehicleInfo';
+        $time        = time();
+        $sndDt       = date('YmdHis', $time);
+        $merOrdrNo   = $this->busiMerno1 . date('Ymd', $time) . control::randNum(9);
+        $biz_content = [
+            'sndDt'     => $sndDt,
+            'busiMerNo' => $this->busiMerno1,
+            'msgBody'   => [
+                'busiId'           => '00270007',
+                'vehicleVerifyInf' => [
+                    'userNo'           => $postData['userNo'],         //'888888',
+                    'vin'              => $postData['vin'],            //'LVSHFC0HH309074',
+                    'licenseNo'        => $postData['licenseNo'],      //'京08NN2',
+                    'licenseNoType'    => $postData['licenseNoType'],
+                ],
+                'bizFunc'          => '731001',
+                'merOrdrNo'        => $merOrdrNo,
+            ]
+        ];
+        list($postData, $header) = $this->rsaData($method, $time, $biz_content);
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(false)
+            ->send($this->testUrl, $postData, $header, ['enableSSL' => true], 'postjson');
+        dingAlarm('二手车信息查询', ['$res' => json_encode($res), '$biz_content' => json_encode($biz_content)]);
+        return json_decode($res, true);
     }
 
     /**
