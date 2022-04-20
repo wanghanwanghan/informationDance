@@ -266,7 +266,7 @@ Eof;
         $res = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(false)
-            ->send($this->testUrl, $postData, $header, ['enableSSL' => true], 'postjson');
+            ->send($this->url, $postData, $header, ['enableSSL' => true], 'postjson');
         dingAlarm('金融风控查询', ['$res' => json_encode($res), '$biz_content' => json_encode($biz_content)]);
         return json_decode($res, true);
     }
