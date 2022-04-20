@@ -300,7 +300,7 @@ Eof;
         $res = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(false)
-            ->send($this->testUrl, $postData, $header, ['enableSSL' => true], 'postjson');
+            ->send($this->url, $postData, $header, ['enableSSL' => true], 'postjson');
         dingAlarm('车辆数量查询', ['$res' => json_encode($res)]);
         return json_decode($res, true);
     }
@@ -442,7 +442,7 @@ Eof;
         $res = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(false)
-            ->send($this->testUrl, $postData, $header, ['enableSSL' => true], 'postjson');
+            ->send($this->url, $postData, $header, ['enableSSL' => true], 'postjson');
         dingAlarm('二手车信息查询', ['$res' => json_encode($res), '$biz_content' => json_encode($biz_content)]);
         return json_decode($res, true);
     }
