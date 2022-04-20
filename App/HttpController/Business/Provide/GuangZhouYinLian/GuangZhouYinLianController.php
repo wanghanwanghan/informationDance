@@ -33,7 +33,16 @@ class GuangZhouYinLianController extends ProvideBase
 
     function queryUsedVehicleInfo(): bool
     {
-        $postData = [];
+        $userNo           = $this->getRequestData('userNo');
+        $licenseNoType    = $this->getRequestData('licenseNoType');
+        $vin              = $this->getRequestData('vin');
+        $licenseNo        = $this->getRequestData('licenseNo');
+        $postData         = [
+            'userNo'           => $userNo,
+            'vin'              => $vin,
+            'licenseNo'        => $licenseNo,
+            'licenseNoType'    => $licenseNoType,
+        ];
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new GuangZhouYinLianService())->setCheckRespFlag(true)->queryUsedVehicleInfo($postData);
         });

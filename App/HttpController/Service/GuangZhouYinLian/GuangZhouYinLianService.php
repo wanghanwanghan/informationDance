@@ -419,9 +419,6 @@ Eof;
      */
     public function queryUsedVehicleInfo($postData)
     {
-        if(!isset($this->bizFuncArr[$postData['bizFunc']])){
-            return ['subMsg'=>"bizFunc{$postData['bizFunc']}错误",'subCode'=>201];
-        }
         $method      = 'gnete.upbc.vehicle.queryUsedVehicleInfo';
         $time        = time();
         $sndDt       = date('YmdHis', $time);
