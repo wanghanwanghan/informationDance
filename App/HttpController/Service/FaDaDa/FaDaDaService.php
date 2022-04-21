@@ -4,6 +4,7 @@ namespace App\HttpController\Service\FaDaDa;
 
 use App\HttpController\Models\Api\FaDaDa\FaDaDaUserModel;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateSeal\SealService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
@@ -24,13 +25,13 @@ class FaDaDaService extends ServiceBase
         parent::__construct();
 
         $this->url = 'https://textapi.fadada.com/api2/';
-        $this->app_id = '501605';
-        $this->app_secret = 'W7Ou4okvZy1RuHNJws4FfpgP';
+        $this->app_id = CreateConf::getInstance()->getConf('fadada.app_id');
+        $this->app_secret = CreateConf::getInstance()->getConf('fadada.app_secret');
 
         if (strtolower($type) === 'test') {
             $this->url = 'https://testapi.fadada.com:8443/api/';
-            $this->app_id = '405806';
-            $this->app_secret = 'UFPU9C3kfnKb6kdDyugOhqir';
+            $this->app_id = CreateConf::getInstance()->getConf('fadada.app_id_test');
+            $this->app_secret = CreateConf::getInstance()->getConf('fadada.app_secret_test');
         }
 
         $this->timestamp = Carbon::now()->format('YmdHis');
