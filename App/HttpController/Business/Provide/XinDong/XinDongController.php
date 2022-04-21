@@ -194,7 +194,7 @@ class XinDongController extends ProvideBase
         if (is_numeric($beginYear) && $beginYear >= 2013 && $beginYear <= date('Y')) {
             $this->csp->add($this->cspKey, function () use ($postData) {
                 return (new LongXinService())
-                    ->setCheckRespFlag(false)
+                    ->setCheckRespFlag(true)
                     ->setCal(!!$postData['cal'])
                     ->getFinanceData($postData, false);
             });
