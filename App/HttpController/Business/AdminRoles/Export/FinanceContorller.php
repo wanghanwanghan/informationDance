@@ -226,9 +226,10 @@ class FinanceContorller extends UserController
             'year'      => $year
         ];
         $res       = (new CoHttpClient())->useCache(true)->send($url, $data);
-//        dingAlarm('insertFinanceData',['$entName'=>$entname,'$data'=>json_encode($res)]);
         if ($res['code'] == 200 && !empty($res['result'])) {
             $this->insertFinanceData($res['result'], $entname);
+        }else{
+            dingAlarm('insertFinanceData',['$entName'=>$entname,'$data'=>json_encode($res)]);
         }
         return true;
     }
