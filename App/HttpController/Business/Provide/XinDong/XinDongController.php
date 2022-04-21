@@ -186,6 +186,7 @@ class XinDongController extends ProvideBase
             'code' => $this->getRequestData('code', ''),
             'beginYear' => $this->getRequestData('year', 2020),
             'dataCount' => $this->getRequestData('dataCount', 5),
+            'cal' => $this->getRequestData('cal', 0),
         ];
 
         $beginYear = $this->getRequestData('year', 2020);
@@ -194,7 +195,7 @@ class XinDongController extends ProvideBase
             $this->csp->add($this->cspKey, function () use ($postData) {
                 return (new LongXinService())
                     ->setCheckRespFlag(false)
-                    ->setCal(false)
+                    ->setCal(!!$postData['cal'])
                     ->getFinanceData($postData, false);
             });
             $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
