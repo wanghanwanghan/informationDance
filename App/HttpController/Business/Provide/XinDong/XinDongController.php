@@ -187,6 +187,7 @@ class XinDongController extends ProvideBase
             'beginYear' => $this->getRequestData('year', 2020),
             'dataCount' => $this->getRequestData('dataCount', 5),
             'cal' => $this->getRequestData('cal', 0),
+            'flag' => $this->getRequestData('flag', 0),
         ];
 
         $beginYear = $this->getRequestData('year', 2020);
@@ -194,7 +195,7 @@ class XinDongController extends ProvideBase
         if (is_numeric($beginYear) && $beginYear >= 2013 && $beginYear <= date('Y')) {
             $this->csp->add($this->cspKey, function () use ($postData) {
                 return (new LongXinService())
-                    ->setCheckRespFlag(true)
+                    ->setCheckRespFlag(!!$postData['flag'])
                     ->setCal(!!$postData['cal'])
                     ->getFinanceData($postData, false);
             });
