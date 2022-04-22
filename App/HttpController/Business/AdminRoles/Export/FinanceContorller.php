@@ -196,7 +196,7 @@ class FinanceContorller extends UserController
         }
         $resData = [];
         $data    = $this->getArrSetKey($data, 'year');
-        for ($i = ($year - $dataCount); $i <= $year; $i++) {
+        for ($i = ($year - $dataCount + 1); $i <= $year; $i++) {
             if (isset($data[$i])) {
                 $resData[$i] = $data[$i];
             } else {
