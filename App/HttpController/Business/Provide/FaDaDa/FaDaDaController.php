@@ -93,7 +93,7 @@ class FaDaDaController extends ProvideBase
         CommonService::getInstance()->log4PHP([$postData],'info','getAuthFile');
 
         $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new FaDaDaService())->setCheckRespFlag(true)->getAuthFile($postData);
+            return (new FaDaDaService())->setCheckRespFlag(true)->getAuthFileByFile($postData);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
