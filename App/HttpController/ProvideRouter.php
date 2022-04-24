@@ -404,6 +404,7 @@ class ProvideRouter
         $routeCollector->addGroup('/fdd', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getAuthFile', $prefix . 'getAuthFile');
             $routeCollector->addRoute(['GET', 'POST'], '/getAuthFileForAnt', $prefix . 'getAuthFileForAnt');
+            $routeCollector->addRoute(['GET', 'POST'], '/getAuthFileByFile', $prefix . 'getAuthFileByFile');
         });
 
         return true;

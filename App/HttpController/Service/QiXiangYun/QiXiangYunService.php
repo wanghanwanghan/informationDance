@@ -338,7 +338,7 @@ class QiXiangYunService extends ServiceBase
             }
 
         }
-        return $resData;
+        return ['code'=>200,'result'=>$resData];
     }
 
     public function cjYgx($nsrsbh, $fplx, $skssq, $currentPage)
@@ -371,7 +371,7 @@ class QiXiangYunService extends ServiceBase
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'postjson');
         dingAlarm('已勾选发票归集', ['$res' => json_encode($res)]);
-        CommonService::getInstance()->log4PHP([$url, $data, $header, $res], 'info', 'cjYgx_ret');
+//        CommonService::getInstance()->log4PHP([$url, $data, $header, $res], 'info', 'cjYgx_ret');
         return $res;
     }
 

@@ -70,6 +70,37 @@ class FaDaDaController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    public function getAuthFileByFile(): bool
+    {
+        $entName = $this->getRequestData('entName');
+        $socialCredit = $this->getRequestData('socialCredit');
+        $legalPerson = $this->getRequestData('legalPerson');
+        $idCard = $this->getRequestData('idCard');
+        $phone = $this->getRequestData('phone');
+        $city = $this->getRequestData('city');
+        $regAddress = $this->getRequestData('regAddress');
+        $file = $this->getRequestData('file');
+        $postData = [
+            'entName' => $entName,
+            'socialCredit' => $socialCredit,
+            'legalPerson' => $legalPerson,
+            'idCard' => $idCard,
+            'phone' => $phone,
+            'city' => $city,
+            'regAddress' => $regAddress,
+            'file' => $file,
+        ];
+        CommonService::getInstance()->log4PHP([$postData],'info','getAuthFile');
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaDaDaService())->setCheckRespFlag(true)->getAuthFile($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
     function getAuthFileForAnt(): bool
     {
         $entName = $this->getRequestData('entName');
