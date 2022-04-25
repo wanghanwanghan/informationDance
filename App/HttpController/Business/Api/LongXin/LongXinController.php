@@ -814,4 +814,18 @@ class LongXinController extends LongXinBase
         return $this->checkResponse($res);
     }
 
+     /**
+      * 
+      * 支持的搜索条件 
+        https://api.meirixindong.com/api/v1/lx/getSearchOption? 
+      * 
+      * 
+     */
+     function getSearchOption(): bool
+     { 
+         $searchOptionArr = (new LongXinService())->getSearchOption([]);
+ 
+         return $this->writeJson(200, null, $searchOptionArr, '成功', true, []);
+     }
+
 }

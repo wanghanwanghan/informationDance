@@ -253,6 +253,23 @@ class LongXinService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
 
+    //高级搜索支持的搜索条件
+    function getSearchOption($postData)
+    {
+        return [ 
+            'subjectTypeMap' => [
+                'desc' => '主体类型',
+                'type' => 'radio',
+                'data' => $this->subjectTypeMapV2,
+            ],
+            'companyTypeMap' => [
+                'desc' => '主体类型',
+                'type' => 'radio',
+                'data' => $this->companyTypeMap,
+            ],
+        ];
+    }
+
     //近n年的财务数据
     function getFinanceData($postData, $toRange = true): array
     {
