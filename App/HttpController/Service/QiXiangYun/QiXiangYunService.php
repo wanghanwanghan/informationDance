@@ -308,8 +308,8 @@ class QiXiangYunService extends ServiceBase
             ->useCache(false)
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'postjson');
-        dingAlarm('actionGetFpxzStatusParam',['$url'=>$url, '$data'=>$data, '$header'=>$header,'$res'=>$res]);
-//        CommonService::getInstance()->log4PHP([$url, $data, $header,$res], 'info', 'actionGetFpxzStatusParam');
+//        dingAlarm('actionGetFpxzStatusParam',['$url'=>json_encode($url), '$data'=>json_encode($data), '$header'=>json_encode($header),'$res'=>json_encode($res)]);
+        CommonService::getInstance()->log4PHP([$url, $data, $header,$res], 'info', 'actionGetFpxzStatusParam');
 //        CommonService::getInstance()->log4PHP($res);
     }
 
