@@ -28,6 +28,42 @@ class LongXinService extends ServiceBase
     public $rangeArr = [];
     public $rangeArrRatio = [];
 
+    //主体类型
+    public $subjectTypeAll = 10;
+    public $subjectTypeAllDes =  '全部';
+    public $subjectTypeFactory = 20;
+    public $subjectTypeFactoryDes =  '工厂';
+    
+    // 企业类型
+    public $companyTypePrivateRun = 10;
+    public $companyTypePrivateRunDes =  '民营';
+    public $companyTypeStateRun = 20;
+    public $companyTypeStateRunDes =  '国营';
+
+    // 注册资本
+    public $registeredCapitalLeve1 = 10;
+    public $registeredCapitalLeve1Des =  '100万以内';
+
+    public $registeredCapitalLeve2 = 20;
+    public $registeredCapitalLeve2Des =  '100-200万';
+
+    // 营业状态
+    public $businessStatusOpen = 10;
+    public $businessStatusOpenDes = '营业中';
+
+    // 成立年限
+    public $yearOfEstablishmentLeve1 = 10 ;
+    public $yearOfEstablishmentLeve1Des = '1年内' ;
+
+    // 融资阶段
+    public $financingStageNone = 10;
+    public $financingStageNoneDes = '未融资';
+
+    // 公司规模
+    public $companySizeLeve1 = 10;
+    public $companySizeLeve1Des = '20人以下';
+
+
     function __construct()
     {
         $this->usercode = CreateConf::getInstance()->getConf('longxin.usercode');
@@ -40,6 +76,69 @@ class LongXinService extends ServiceBase
         ];
 
         return parent::__construct();
+    }
+
+    // 获取营业年限map
+    function getCompanySizeMap($getAll = false) 
+    {
+        return [
+            $this->companySizeLeve1 => $this->companySizeLeve1Des
+        ];
+    }
+
+    // 获取营业年限map
+    function getFinancingStageMap($getAll = false) 
+    {
+        return [
+            $this->financingStageNone => $this->financingStageNoneDes
+        ];
+    }
+
+    // 获取营业年限map
+    function getYearOfEstablishmentMap($getAll = false) 
+    {
+        return [
+            $this->yearOfEstablishmentLeve1 => $this->yearOfEstablishmentLeve1Des
+        ];
+    }
+
+    // 获取营业状态map
+    function getBusinessStatusMap($getAll = false) 
+    {
+        return [
+            $this->businessStatusOpen => $this->businessStatusOpenDes
+        ];
+    }
+
+    // 获取主体类型
+    function getSubjectTypeMap($getAll = false) 
+    {
+        if ($getAll) {
+            return array_merge($this->subjectTypeMap, [$this->subjectTypeAll => $this->subjectTypeAllDes]);
+        }
+        
+        return [
+            $this->subjectTypeFactory => $this->subjectTypeFactoryDes
+        ];  
+        
+    }
+
+    // 获取企业类型
+    function getCompanyTypeMap($getAll = false) 
+    { 
+        return [
+            $this->companyTypePrivateRun => $this->companyTypePrivateRunDes,
+            $this->companyTypeStateRun => $this->companyTypeStateRunDes,
+        ];
+        
+    }
+
+    // 注册资本map
+    function getRegisteredCapitalLeveMap($getAll = false){
+        return [
+            $this->registeredCapitalLeve1 => $this->registeredCapitalLeve1Des,
+            $this->registeredCapitalLeve2 => $this->registeredCapitalLeve2Des,
+        ];
     }
 
     //更换区间
@@ -253,19 +352,116 @@ class LongXinService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
 
-    //高级搜索支持的搜索条件
+    /**
+     * 高级搜索支持的搜索条件
+     * 返回示例
+     * 注意：type：radio 单选  select 多选  
+    {
+	"subjectTypeMap": {
+		"desc": "主体类型",
+		"key": "subjectType",
+		"type": "radio",
+		"data": {
+			"20": "工厂"
+		}
+	},
+	"companyTypeMap": {
+		"desc": "企业类型",
+		"key": "companyType",
+		"type": "radio",
+		"data": {
+			"10": "民营",
+			"20": "国营"
+		}
+	},
+	"registeredCapitalLeveMap": {
+		"desc": "注册资本",
+		"key": "registeredCapitalLeve",
+		"type": "radio",
+		"data": {
+			"10": "100万以内",
+			"20": "100-200万"
+		}
+	},
+	"businessStatusMap": {
+		"desc": "营业状态",
+		"type": "radio",
+		"key": "businessStatus",
+		"data": {
+			"10": "营业中"
+		}
+	},
+	"yearOfEstablishmentMap": {
+		"desc": "营业年限",
+		"type": "radio",
+		"key": "yearOfEstablishment",
+		"data": {
+			"10": "1年内"
+		}
+	},
+	"financingStageMap": {
+		"desc": "融资阶段",
+		"type": "radio",
+		"key": "financingStage",
+		"data": {
+			"10": "未融资"
+		}
+	},
+	"companySizeMap": {
+		"desc": "企业规模",
+		"type": "radio",
+		"key": "companySizeMap",
+		"data": {
+			"10": "20人以下"
+		}
+	}
+}
+     * 
+    */
     function getSearchOption($postData)
     {
         return [ 
             'subjectTypeMap' => [
                 'desc' => '主体类型',
+                'key' => 'subjectType',
                 'type' => 'radio',
-                'data' => $this->subjectTypeMapV2,
+                'data' => $this->getSubjectTypeMap(),
             ],
             'companyTypeMap' => [
-                'desc' => '主体类型',
+                'desc' => '企业类型',
+                'key' => 'companyType',
                 'type' => 'radio',
-                'data' => $this->companyTypeMap,
+                'data' => $this->getCompanyTypeMap(),
+            ],
+            'registeredCapitalLeveMap' => [
+                'desc' => '注册资本',
+                'key' => 'registeredCapitalLeve',
+                'type' => 'radio',
+                'data' => $this->getRegisteredCapitalLeveMap(), 
+            ],
+            'businessStatusMap' => [
+                'desc' => '营业状态',
+                'type' => 'radio',
+                'key' => 'businessStatus',
+                'data' => $this->getBusinessStatusMap(), 
+            ],
+            'yearOfEstablishmentMap' => [
+                'desc' => '营业年限',
+                'type' => 'radio',
+                'key' => 'yearOfEstablishment',
+                'data' => $this->getYearOfEstablishmentMap(), 
+            ],
+            'financingStageMap' => [
+                'desc' => '融资阶段',
+                'type' => 'radio',
+                'key' => 'financingStage',
+                'data' => $this->getFinancingStageMap(), 
+            ],
+            'companySizeMap' => [
+                'desc' => '企业规模',
+                'type' => 'radio',
+                'key' => 'companySizeMap',
+                'data' => $this->getCompanySizeMap(), 
             ],
         ];
     }
