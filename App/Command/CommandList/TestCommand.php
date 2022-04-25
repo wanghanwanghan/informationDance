@@ -23,6 +23,6 @@ class TestCommand extends CommandBase
     //php easyswoole help test
     function help(array $args): ?string
     {
-        return   json_encode( (new LongXinService())->getSearchOption([]) ) . PHP_EOL;
+        return   json_encode( (new LongXinService())->advancedSearch([]) ) . PHP_EOL;
     }
 }

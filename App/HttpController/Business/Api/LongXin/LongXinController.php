@@ -828,4 +828,45 @@ class LongXinController extends LongXinBase
          return $this->writeJson(200, null, $searchOptionArr, '成功', true, []);
      }
 
+     /**
+      * 
+      * 高级搜索 
+        https://api.meirixindong.com/api/v1/lx/advancedSearch? 
+      * 
+      * 
+     */
+    function advancedSearch(): bool
+    { 
+        $pindex = $this->request()->getRequestParam('page') ?? '1';
+
+        !empty($pindex) ?: $pindex = 1;
+
+        $postData = [
+            'pindex' => $pindex - 1
+        ];
+
+        //should 是 or   must 是 and   must_not 是not
+
+        $reg_status = $this->request()->getRequestParam('businessStatus') ?? '';
+        if (!empty(trim($reg_status))) {
+            $basic_entname = CommonService::getInstance()->spaceTo($basic_entname);
+            $postData['basic_entname'] = "any:{$basic_entname}";
+        }
+
+        $this->moduleNum = 53;
+
+        $res = (new LongXinService())->advancedSearch($postData);
+
+        // if (!empty($res['data'])) {
+        //     //添加2020营收规模
+        //     foreach ($res['data'] as $key => $oneEnt) {
+        //         $scale = (new XinDongService())->getVendincScale($oneEnt['UNISCID'], 2020);
+        //         $res['data'][$key]['vendincScale'] = (new XinDongService())->vendincScaleLabelChange($scale);
+        //     }
+        // }
+
+        // return $this->checkResponse($res);
+        return $this->writeJson(200, null, $res, '成功', true, []);
+    }
+
 }

@@ -13,6 +13,7 @@ use App\Task\Service\TaskService;
 use App\Task\TaskList\EntDbTask\insertEnt;
 use App\Task\TaskList\EntDbTask\insertFinance;
 use Carbon\Carbon;
+use App\ElasticSearch\Service\ElasticSearchService;
 
 class LongXinService extends ServiceBase
 {
@@ -464,6 +465,35 @@ class LongXinService extends ServiceBase
                 'data' => $this->getCompanySizeMap(), 
             ],
         ];
+    }
+
+    //高级搜索
+    function advancedSearch($postData)
+    {
+        $arr = [
+            'usercode' => $this->usercode
+        ];
+
+        $arr = array_merge($arr, $postData);
+
+        $es = (new ElasticSearchService())->createSearchBean()->getBody();
+
+        return $es ;
+
+        // $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        // $res = (new CoHttpClient())->useCache(false)
+        //     ->send($this->baseUrl . 'api/super_search/', $arr, $this->sendHeaders);
+
+        // $this->recodeSourceCurl([
+        //     'sourceName' => $this->sourceName,
+        //     'apiName' => last(explode('/', trim($this->baseUrl . 'api/super_search/', '/'))),
+        //     'requestUrl' => trim(trim($this->baseUrl . 'api/super_search/'), '/'),
+        //     'requestData' => $arr,
+        //     'responseData' => $res,
+        // ]);
+
+        // return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
 
     //近n年的财务数据
