@@ -267,7 +267,7 @@ class QiXiangYunService extends ServiceBase
             return $res;
         }
         //获取24个月的数据
-        for ($i = 1; $i <= 24; $i++) {
+        for ($i = 1; $i <= 36; $i++) {
             $kpyf = Carbon::now()->subMonths($i)->format('Ym');
             $this->actionGetFpxzStatus($nsrsbh, $kpyf);
         }
@@ -308,9 +308,9 @@ class QiXiangYunService extends ServiceBase
             ->useCache(false)
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'postjson');
+        dingAlarm('actionGetFpxzStatusParam',['$url'=>$url, '$data'=>$data, '$header'=>$header,'$res'=>$res]);
 //        CommonService::getInstance()->log4PHP([$url, $data, $header,$res], 'info', 'actionGetFpxzStatusParam');
-
-        CommonService::getInstance()->log4PHP($res);
+//        CommonService::getInstance()->log4PHP($res);
     }
 
     public function getCjYgxByFplxs($postData)

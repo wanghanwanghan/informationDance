@@ -29,9 +29,11 @@ class QiXiangYunController extends ProvideBase
             $this->spendMoney = 0;
             $this->responseMsg = '请求超时';
         } else {
+            $result['result'] = $res[$this->cspKey]['result']??'';
+            $result['value'] = $res[$this->cspKey]['value']??'';
             $this->responseCode = $res[$this->cspKey]['code'];
             $this->responsePaging = $res[$this->cspKey]['paging'];
-            $this->responseData = $res[$this->cspKey]['result'];
+            $this->responseData = $result;
             $this->responseMsg = $res[$this->cspKey]['msg'];
 
             $res[$this->cspKey]['code'] === 200 ?: $this->spendMoney = 0;
