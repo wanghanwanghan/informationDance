@@ -288,7 +288,7 @@ class QiXiangYunService extends ServiceBase
             'kpyf' => $kpyf - 0,//Ym
             'jxxbzs' => ['jx', 'xx'],
             'fplxs' => ['01', '03', '04', '08', '10', '11', '14', '15', '17'],
-            'addJob' => false //true发起归集，FALSE 查询上次归集状态
+            'addJob' => true //true发起归集，FALSE 查询上次归集状态
         ];
 
         $req_date = time() . mt_rand(100, 999);
