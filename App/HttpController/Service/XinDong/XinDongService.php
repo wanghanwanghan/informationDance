@@ -27,6 +27,73 @@ class XinDongService extends ServiceBase
     private $fyyList;
     private $ldUrl;
 
+    //主体类型
+    public $subjectTypeAll = 10;
+    public $subjectTypeAllDes =  '全部';
+    public $subjectTypeFactory = 20;
+    public $subjectTypeFactoryDes =  '工厂';
+    
+    // 企业类型
+    public $company_org_type_youxian = 10;
+    public $company_org_type_youxian_des =  '有限责任'; 
+    public $company_org_type_youxian2 = 15;
+    public $company_org_type_youxian2_des =  '有限公司'; 
+
+    public $company_org_type_gufen = 20;
+    public $company_org_type_gufen_des =  '股份'; 
+
+    public $company_org_type_fengongsi = 25;
+    public $company_org_type_fengongsi_des =  '分公司'; 
+    public $company_org_type_zongsongsi = 30;
+    public $company_org_type_zongsongsi_des =  '总公司'; 
+
+    public $company_org_type_youxianhehuo = 35;
+    public $company_org_type_youxianhehuo_des =  '有限合伙'; 
+
+    // 成立年限
+    public $estiblish_year_under_2 = 2;
+    public $estiblish_year_under_2_des = '2年以内';
+
+    public $estiblish_year_2to5 = 5;
+    public $estiblish_year_2to5_des = '2-5年';
+
+    public $estiblish_year_5to10 = 5;
+    public $estiblish_year_5to10_des = '5-10年';
+
+    public $estiblish_year_10to15 = 5;
+    public $estiblish_year_10to15_des = '5-10年';
+
+    public $estiblish_year_more_than_10 = 10;
+    public $estiblish_year_more_than_10_des = '10年以上';
+
+    //营业状态  迁入、迁出、、清算 
+    public $reg_status_cunxu = 5;
+    public $reg_status_cunxu_des = '存续';
+    public $reg_status_zaiye = 10;
+    public $reg_status_zaiye_des = '在业';
+    public $reg_status_diaoxiao = 15;
+    public $reg_status_diaoxiao_des = '吊销';
+    public $reg_status_zhuxiao = 20;
+    public $reg_status_zhuxiao_des = '注销';
+    public $reg_status_tingye = 25;
+    public $reg_status_tingye_des = '停业';
+
+    //注册资本
+    public $reg_capital_50 = 5;
+    public $reg_capital_50_des = '50万元以下';
+    public $reg_capital_50to100 = 10;
+    public $reg_capital_50to100_des = '50-100万';
+    public $reg_capital_100to200 = 20;
+    public $reg_capital_100to200_des = '100-200万';
+    public $reg_capital_200to500 = 30;
+    public $reg_capital_200to500_des = '200-500万';
+    public $reg_capital_500to1000 = 40;
+    public $reg_capital_500to1000_des = '500-1000万';
+    public $reg_capital_1000to10000 = 50;
+    public $reg_capital_1000to10000_des = '1000万-1亿';
+    public $reg_capital_10000to100000 = 60;
+    public $reg_capital_10000to100000_des = '1亿-10亿'; 
+
     function __construct()
     {
         $this->fyyList = CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl');
@@ -34,6 +101,73 @@ class XinDongService extends ServiceBase
 
         return parent::__construct();
     }
+
+    // 获取注册资本
+    function getRegCapital($getAll = false) 
+    {
+       $map = [
+           $this->reg_capital_50 = $this->reg_capital_50_des,
+           $this->reg_capital_50to100 = $this->reg_capital_50to100_des, 
+           $this->reg_capital_100to200 = $this->reg_capital_100to200_des,  
+           $this->reg_capital_200to500 = $this->reg_capital_200to500_des,  
+           $this->reg_capital_500to1000 = $this->reg_capital_500to1000_des,  
+           $this->reg_capital_1000to10000 = $this->reg_capital_1000to10000_des,  
+           $this->reg_capital_10000to100000 = $this->reg_capital_10000to100000_des, 
+       ];
+
+       if ($getAll) {
+           return array_merge($map,[0 => '全部']);
+       }
+    } 
+
+    // 获取营业状态
+    function getRegStatus($getAll = false) 
+    {
+       $map = [
+           $this->reg_status_cunxu = $this->reg_status_cunxu_des,
+           $this->reg_status_zaiye = $this->reg_status_zaiye_des,
+           $this->reg_status_diaoxiao = $this->reg_status_diaoxiao_des,
+           $this->reg_status_zhuxiao = $this->reg_status_zhuxiao_des,
+           $this->reg_status_tingye = $this->reg_status_tingye_des,
+       ];
+
+       if ($getAll) {
+           return array_merge($map,[0 => '全部']);
+       }
+    } 
+
+    // 获取企业成立年限
+    function getEstiblishYear($getAll = false) 
+    {
+       $map = [
+           $this->estiblish_year_under_2 =$this->estiblish_year_under_2_des,
+           $this->estiblish_year_2to5 =$this->estiblish_year_2to5_des,
+           $this->estiblish_year_5to10 =$this->estiblish_year_5to10_des,
+           $this->estiblish_year_10to15 =$this->estiblish_year_10to15_des,
+           $this->estiblish_year_more_than_10 =$this->estiblish_year_more_than_10_des,
+       ];
+
+       if ($getAll) {
+           return array_merge($map,[0 => '全部']);
+       }
+    } 
+
+    // 获取企业类型
+     function getCompanyOrgType($getAll = false) 
+     {
+        $map = [
+            $this->company_org_type_youxian = $this->company_org_type_youxian_des,
+            $this->company_org_type_youxian2 = $this->company_org_type_youxian2_des,
+            $this->company_org_type_gufen = $this->company_org_type_gufen_des,
+            $this->company_org_type_fengongsi = $this->company_org_type_fengongsi_des,
+            $this->company_org_type_zongsongsi = $this->company_org_type_zongsongsi_des,
+            $this->company_org_type_youxianhehuo = $this->company_org_type_youxianhehuo_des, 
+        ];
+
+        if ($getAll) {
+            return array_merge($map,[0 => '全部']);
+        }
+     } 
 
     //处理结果给信息controller
     private function checkResp($code, $paging, $result, $msg)
@@ -926,5 +1060,109 @@ class XinDongService extends ServiceBase
 
     }
 
+     /**
+     * 高级搜索支持的搜索条件
+     * 返回示例
+     * 注意：type：radio 单选  select 多选
+     * 
+    */
+    function getSearchOption($postData)
+    {
+        
+        return $this->checkResp(200, null, [
+            'company_org_type' => [
+                'desc' => '企业类型',
+                'key' => 'company_org_type',
+                'type' => 'select',
+                'data' => $this->getCompanyOrgType(),
+            ], 
+            'estiblish_year_nums' => [
+                'desc' => '成立年限',
+                'key' => 'estiblish_year_nums',
+                'type' => 'select',
+                'data' => $this->getEstiblishYear(),
+            ], 
+            'reg_status' => [
+                'desc' => '营业状态',
+                'key' => 'reg_status',
+                'type' => 'select',
+                'data' => $this->getRegStatus(),
+            ], 
+            'reg_capital' => [
+                'desc' => '注册资本',
+                'key' => 'reg_capital',
+                'type' => 'select',
+                'data' => $this->getRegCapital(),
+            ],
+            'ying_shou_gui_mo' => [
+                'desc' => '营收规模',
+                'key' => 'ying_shou_gui_mo',
+                'type' => 'select',
+                'data' => $this->getRegCapital(),
+            ],
+        ], '查询成功');
+    }
+
+     //高级搜索
+     function advancedSearch($postData)
+     {
+ 
+         $elasticSearchService = (new ElasticSearchService());
+         $elasticSearchService->setByPage($postData['page'],$postData['size']); 
+        
+         // must match
+         $addMustMatchQueryLists = [
+             'name',
+             'company_org_type',
+             'business_scope',
+             'business_scope',
+             'reg_status',
+             'property1',
+             'ying_shou_gui_mo',
+             'si_ji_fen_lei_code',
+             'gao_xin_ji_shu',
+             'deng_ling_qi_ye',
+             'tuan_dui_ren_shu',
+             'tong_xun_di_zhi',
+             'web',
+             'yi_ban_ren',
+             'shang_shi_xin_xi',
+             'app',
+             'shang_pin_data',
+         ];
+         foreach($addMustMatchQueryLists as $field){
+             !empty($postData[$field]) && $elasticSearchService->addMustMatchQuery($field, $postData[$field]);
+         }
+         
+         // must range
+         $addMustRangeQueryLists = [
+             'estiblish_time' =>['min'=> $postData['min_estiblish_time'], 'max'=> $postData['max_estiblish_time']],
+             'reg_capital' =>['min'=> $postData['min_reg_capital'], 'max'=> $postData['max_reg_capital']]
+         ];
+         foreach($addMustRangeQueryLists as $field=>$item){
+             (!empty($postData[$item['min']])||!empty($postData[$item['max']])) && 
+                 $elasticSearchService->addMustRangeQuery($field, $postData[$item['min']], $postData[$item['max']]);
+         }
+ 
+        // go(function () use ( $elasticSearchService) {
+             $elasticsearch = new ElasticSearch(
+                 new  Config([
+                     'host' => "es-cn-7mz2m3tqe000cxkfn.public.elasticsearch.aliyuncs.com",
+                     'port' => 9200,
+                     'username'=>'elastic',
+                     'password'=>'zbxlbj@2018*()',
+                 ])
+             ); 
+             $bean = new  Search();
+             $bean->setIndex('company_287_all');
+             $bean->setType('_doc');
+             $bean->setBody($elasticSearchService->queryArr);
+             $response = $elasticsearch->client()->search($bean)->getBody(); 
+             CommonService::getInstance()->log4PHP(json_encode(['re-queryArr'=>$elasticSearchService->queryArr]), 'info', 'souke.log');
+             CommonService::getInstance()->log4PHP(json_encode(['re-response'=>$response]), 'info', 'souke.log');
+            
+        //  });
+        return $this->checkResp(200, null, $response, '查询成功');
+     }
 
 }

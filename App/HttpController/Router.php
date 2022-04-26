@@ -175,6 +175,8 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/delUserGroupList', $prefix . 'delUserGroupList');//
             $routeCollector->addRoute(['GET', 'POST'], '/editGroupRemarks', $prefix . 'editGroupRemarks');//
             $routeCollector->addRoute(['GET', 'POST'], '/getVendincScale', $prefix . 'getVendincScale');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getSearchOption', $prefix . 'getSearchOption');// 返回接口支持的搜索项 https://api.meirixindong.com//api/v1/xd/getSearchOption
+            $routeCollector->addRoute(['GET', 'POST'], '/advancedSearch', $prefix . 'advancedSearch');// 高级搜索 https://api.meirixindong.com//api/v1/xd/getSearchOption
         });
 
         return true;
@@ -380,9 +382,6 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceTemp', $prefix . 'getFinanceTemp');//仿企名片时的财务数据
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceTempMergeData', $prefix . 'getFinanceTempMergeData');//仿企名片时的财务数据
             $routeCollector->addRoute(['GET', 'POST'], '/superSearch', $prefix . 'superSearch');
-            $routeCollector->addRoute(['GET', 'POST'], '/getSearchOption', $prefix . 'getSearchOption');// 返回接口支持的搜索项
-            $routeCollector->addRoute(['GET', 'POST'], '/advancedSearch', $prefix . 'advancedSearch');// 高级搜索
-
         });
 
         return true;

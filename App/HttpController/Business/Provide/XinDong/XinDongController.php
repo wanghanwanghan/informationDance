@@ -1631,4 +1631,70 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    /**
+      * 
+      * 支持的搜索条件 
+        https://api.meirixindong.com//api/v1/xd/getSearchOption? 
+      * 
+      * 
+     */
+    function getSearchOption(): bool
+    { 
+        $searchOptionArr = (new XinDongService())->getSearchOption([]);
+
+        return $this->writeJson(200, null, $searchOptionArr, '成功', true, []);
+    }
+
+    
+     /**
+      * 
+      * 高级搜索 
+        https://api.meirixindong.com/api/v1/lx/advancedSearch? 
+      * 
+      * 
+     */
+    function advancedSearch(): bool
+    { 
+        $pindex = $this->request()->getRequestParam('page') ?? '1'; 
+
+
+        $postData = $this->formatRequestData(
+            $this->request()->getRequestParam(),
+            [
+                // key => 默认值值
+                'name' => '' ,
+                'company_org_type' => '' ,
+                'estiblish_year_nums' => '' ,
+                'reg_status' => '' ,
+                'reg_capital' => '' ,
+                'ying_shou_gui_mo' => '' , 
+                'business_scope' => '' ,  
+                'property1' => '' , 
+                'si_ji_fen_lei_code' => '' ,
+                'gao_xin_ji_shu' => '' ,
+                'deng_ling_qi_ye' => '' ,
+                'tuan_dui_ren_shu' => '' ,
+                'tong_xun_di_zhi' => '' ,
+                'web' => '' ,
+                'yi_ban_ren' => '' ,
+                'shang_shi_xin_xi' => '' ,
+                'app' => '' ,
+                'shang_pin_data' => '' ,
+                'page' => 1,
+                'size' => 10,
+            ]
+        );  
+
+        $res = (new XinDongService())->advancedSearch($postData);
+
+        return $this->writeJson(200, null, $res, '成功', true, []);
+    }
+
+    function formatRequestData($requestDataArr, $config){
+        $return = [];
+        foreach($config as $key => $defaultValue){
+            $return[$key] = $requestDataArr[$key] ?? $defaultValue; 
+        }
+        return $return;
+    }
 }

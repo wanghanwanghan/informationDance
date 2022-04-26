@@ -26,7 +26,7 @@ class BusinessBase extends Index
         $this->startResTime = microtime(true);
 
         $checkRouter = $this->checkRouter();
-
+        CommonService::getInstance()->log4PHP(json_encode(['action'=>$action]), 'info', 'souke.log');
         $checkToken = $this->checkToken();
 
         if (!$checkRouter && !$checkToken) $this->writeJson(240, null, null, 'token错误');

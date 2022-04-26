@@ -13,7 +13,7 @@ class ElasticSearchService extends ServiceBase
     private $config;
     private $searchBean;
 
-    private $queryArr;
+    public $queryArr;
 
     function __construct()
     {
