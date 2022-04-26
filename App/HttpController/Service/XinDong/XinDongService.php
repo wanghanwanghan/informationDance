@@ -109,13 +109,13 @@ class XinDongService extends ServiceBase
     function getRegCapital($getAll = false) 
     {
        $map = [
-           $this->reg_capital_50 = $this->reg_capital_50_des,
-           $this->reg_capital_50to100 = $this->reg_capital_50to100_des, 
-           $this->reg_capital_100to200 = $this->reg_capital_100to200_des,  
-           $this->reg_capital_200to500 = $this->reg_capital_200to500_des,  
-           $this->reg_capital_500to1000 = $this->reg_capital_500to1000_des,  
-           $this->reg_capital_1000to10000 = $this->reg_capital_1000to10000_des,  
-           $this->reg_capital_10000to100000 = $this->reg_capital_10000to100000_des, 
+           $this->reg_capital_50  =>  $this->reg_capital_50_des,
+           $this->reg_capital_50to100  =>  $this->reg_capital_50to100_des, 
+           $this->reg_capital_100to200  =>  $this->reg_capital_100to200_des,  
+           $this->reg_capital_200to500  =>  $this->reg_capital_200to500_des,  
+           $this->reg_capital_500to1000  =>  $this->reg_capital_500to1000_des,  
+           $this->reg_capital_1000to10000  =>  $this->reg_capital_1000to10000_des,  
+           $this->reg_capital_10000to100000  =>  $this->reg_capital_10000to100000_des, 
        ];
 
        if ($getAll) {
@@ -128,11 +128,11 @@ class XinDongService extends ServiceBase
     function getRegStatus($getAll = false) 
     {
        $map = [
-           $this->reg_status_cunxu = $this->reg_status_cunxu_des,
-           $this->reg_status_zaiye = $this->reg_status_zaiye_des,
-           $this->reg_status_diaoxiao = $this->reg_status_diaoxiao_des,
-           $this->reg_status_zhuxiao = $this->reg_status_zhuxiao_des,
-           $this->reg_status_tingye = $this->reg_status_tingye_des,
+           $this->reg_status_cunxu  =>  $this->reg_status_cunxu_des,
+           $this->reg_status_zaiye  =>  $this->reg_status_zaiye_des,
+           $this->reg_status_diaoxiao  =>  $this->reg_status_diaoxiao_des,
+           $this->reg_status_zhuxiao  =>  $this->reg_status_zhuxiao_des,
+           $this->reg_status_tingye  =>  $this->reg_status_tingye_des,
        ];
 
        if ($getAll) {
@@ -146,11 +146,11 @@ class XinDongService extends ServiceBase
     function getEstiblishYear($getAll = false) 
     {
        $map = [
-           $this->estiblish_year_under_2 =$this->estiblish_year_under_2_des,
-           $this->estiblish_year_2to5 =$this->estiblish_year_2to5_des,
-           $this->estiblish_year_5to10 =$this->estiblish_year_5to10_des,
-           $this->estiblish_year_10to15 =$this->estiblish_year_10to15_des,
-           $this->estiblish_year_more_than_10 =$this->estiblish_year_more_than_10_des,
+           $this->estiblish_year_under_2 => $this->estiblish_year_under_2_des,
+           $this->estiblish_year_2to5  => $this->estiblish_year_2to5_des,
+           $this->estiblish_year_5to10  => $this->estiblish_year_5to10_des,
+           $this->estiblish_year_10to15  => $this->estiblish_year_10to15_des,
+           $this->estiblish_year_more_than_10  => $this->estiblish_year_more_than_10_des,
        ];
 
        if ($getAll) {
@@ -164,12 +164,12 @@ class XinDongService extends ServiceBase
      function getCompanyOrgType($getAll = false) 
      {
         $map = [
-            $this->company_org_type_youxian = $this->company_org_type_youxian_des,
-            $this->company_org_type_youxian2 = $this->company_org_type_youxian2_des,
-            $this->company_org_type_gufen = $this->company_org_type_gufen_des,
-            $this->company_org_type_fengongsi = $this->company_org_type_fengongsi_des,
-            $this->company_org_type_zongsongsi = $this->company_org_type_zongsongsi_des,
-            $this->company_org_type_youxianhehuo = $this->company_org_type_youxianhehuo_des, 
+            $this->company_org_type_youxian => $this->company_org_type_youxian_des,
+            $this->company_org_type_youxian2 => $this->company_org_type_youxian2_des,
+            $this->company_org_type_gufen => $this->company_org_type_gufen_des,
+            $this->company_org_type_fengongsi => $this->company_org_type_fengongsi_des,
+            $this->company_org_type_zongsongsi => $this->company_org_type_zongsongsi_des,
+            $this->company_org_type_youxianhehuo => $this->company_org_type_youxianhehuo_des, 
         ];
 
         if ($getAll) {
