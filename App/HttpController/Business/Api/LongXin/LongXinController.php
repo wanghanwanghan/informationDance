@@ -856,16 +856,7 @@ class LongXinController extends LongXinBase
         $this->moduleNum = 53;
 
         $res = (new LongXinService())->advancedSearch($postData);
-
-        // if (!empty($res['data'])) {
-        //     //添加2020营收规模
-        //     foreach ($res['data'] as $key => $oneEnt) {
-        //         $scale = (new XinDongService())->getVendincScale($oneEnt['UNISCID'], 2020);
-        //         $res['data'][$key]['vendincScale'] = (new XinDongService())->vendincScaleLabelChange($scale);
-        //     }
-        // }
-
-        // return $this->checkResponse($res);
+        
         return $this->writeJson(200, null, $res, '成功', true, []);
     }
 

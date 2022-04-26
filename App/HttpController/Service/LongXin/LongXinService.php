@@ -14,6 +14,9 @@ use App\Task\TaskList\EntDbTask\insertEnt;
 use App\Task\TaskList\EntDbTask\insertFinance;
 use Carbon\Carbon;
 use App\ElasticSearch\Service\ElasticSearchService;
+use EasySwoole\ElasticSearch\Config;
+use EasySwoole\ElasticSearch\ElasticSearch;
+use EasySwoole\ElasticSearch\RequestBean\Search;
 
 class LongXinService extends ServiceBase
 {
@@ -470,30 +473,63 @@ class LongXinService extends ServiceBase
     //高级搜索
     function advancedSearch($postData)
     {
-        $arr = [
-            'usercode' => $this->usercode
+
+        $elasticSearchService = (new ElasticSearchService());
+        $elasticSearchService->setByPage($postData['page'],$postData['size']); 
+
+        // must match
+        $addMustMatchQueryLists = [
+            'name',
+            'company_org_type',
+            'business_scope',
+            'business_scope',
+            'reg_status',
+            'property1',
+            'ying_shou_gui_mo',
+            'si_ji_fen_lei_code',
+            'gao_xin_ji_shu',
+            'deng_ling_qi_ye',
+            'tuan_dui_ren_shu',
+            'tong_xun_di_zhi',
+            'web',
+            'yi_ban_ren',
+            'shang_shi_xin_xi',
+            'app',
+            'shang_pin_data',
         ];
+        foreach($addMustMatchQueryLists as $field){
+            !empty($postData[$field]) && $elasticSearchService->addMustMatchQuery($field, $postData[$field]);
+        }
+        
+        // must range
+        $addMustRangeQueryLists = [
+            'estiblish_time' =>['min'=> $postData['min_estiblish_time'], 'max'=> $postData['max_estiblish_time']],
+            'reg_capital' =>['min'=> $postData['min_reg_capital'], 'max'=> $postData['max_reg_capital']]
+        ];
+        foreach($addMustRangeQueryLists as $field=>$item){
+            (!empty($postData[$item['min']])||!empty($postData[$item['max']])) && 
+                $elasticSearchService->addMustRangeQuery($field, $postData[$item['min']], $postData[$item['max']]);
+        }
 
-        $arr = array_merge($arr, $postData);
+        CommonService::getInstance()->log4PHP(json_encode(['搜客-高级搜搜-es-query' => $this->queryArr]), 'info', 'souke.log');
 
-        $es = (new ElasticSearchService())->createSearchBean()->getBody();
-
-        return $es ;
-
-        // $this->sendHeaders['authorization'] = $this->createToken($arr);
-
-        // $res = (new CoHttpClient())->useCache(false)
-        //     ->send($this->baseUrl . 'api/super_search/', $arr, $this->sendHeaders);
-
-        // $this->recodeSourceCurl([
-        //     'sourceName' => $this->sourceName,
-        //     'apiName' => last(explode('/', trim($this->baseUrl . 'api/super_search/', '/'))),
-        //     'requestUrl' => trim(trim($this->baseUrl . 'api/super_search/'), '/'),
-        //     'requestData' => $arr,
-        //     'responseData' => $res,
-        // ]);
-
-        // return $this->checkRespFlag ? $this->checkResp($res) : $res;
+        go(function () use ( $elasticSearchService) {
+            $elasticsearch = new ElasticSearch(
+                new  Config([
+                    'host' => "es-cn-7mz2m3tqe000cxkfn.public.elasticsearch.aliyuncs.com",
+                    'port' => 9200,
+                    'username'=>'elastic',
+                    'password'=>'zbxlbj@2018*()',
+                ])
+            ); 
+            $bean = new  Search();
+            $bean->setIndex('company_287_all');
+            $bean->setType('_doc');
+            $bean->setBody($elasticSearchService->queryArr);
+            $response = $elasticsearch->client()->search($bean)->getBody(); 
+            CommonService::getInstance()->log4PHP(json_encode($response), 'info', 'zhangjiang.log');
+            return $response;
+        });
     }
 
     //近n年的财务数据

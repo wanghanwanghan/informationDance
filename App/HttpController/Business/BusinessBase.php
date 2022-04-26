@@ -26,8 +26,12 @@ class BusinessBase extends Index
         $this->startResTime = microtime(true);
 
         $checkRouter = $this->checkRouter();
+        if($action==='advancedSearch'){
 
-        $checkToken = $this->checkToken();
+        }else{
+            $checkToken = $this->checkToken();
+        }
+        // $checkToken = $this->checkToken();
 
         if (!$checkRouter && !$checkToken) $this->writeJson(240, null, null, 'token错误');
 

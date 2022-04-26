@@ -13,6 +13,8 @@ class ElasticSearchService extends ServiceBase
     private $config;
     private $searchBean;
 
+    private $queryArr;
+
     function __construct()
     {
         $this->config = new Config([
@@ -41,5 +43,38 @@ class ElasticSearchService extends ServiceBase
             ->client()
             ->search($this->searchBean)
             ->getBody();
+    }
+
+    function addMustMatchQuery($field, $value){
+        $this->queryArr['query']['bool']['must'][] = ['match' => [$field => $value]];
+    }
+
+    function addMustTermQuery($field, $value){
+        $this->queryArr['query']['bool']['must'][] =  ['term' => [$field => $value]]; 
+    }
+
+    function addMustRangeQuery($field, $minValue, $maxValue){
+        $rangeArr = [];
+        if($minValue>0){
+            $rangeArr['gte'] = $minValue; 
+        }
+        if($maxValue>0){
+            $rangeArr['lte'] = $maxValue; 
+        }
+        $this->queryArr['query']['bool']['must'][] =  ['range' => [$field => [$rangeArr]]]; 
+    }
+
+    function setByPage($page, $size = 20){
+        $offset = ($page-1)*$size;
+        $this->addSize( $size); 
+        $this->addFrom( $offset);  
+    }
+
+    function addSize($size){
+        $this->queryArr['size'] =  $size; 
+    }
+
+    function addFrom($from){
+        $this->queryArr['from'] =  $from; 
     }
 }
