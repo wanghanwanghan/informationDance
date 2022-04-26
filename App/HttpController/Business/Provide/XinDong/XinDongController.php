@@ -343,7 +343,7 @@ class XinDongController extends ProvideBase
         $this->spendMoney = 1;
 
         if ($this->limitEntNumByUserId(__FUNCTION__, $entName, 10000)) {
-            return $this->writeJson(201, null, null, '请求次数已经达到上限100');
+            return $this->writeJson(201, null, null, '请求次数已经达到上限10000');
         }
         if (empty($entName)) {
             return $this->writeJson(201, null, null, 'entName不能是空');
@@ -378,6 +378,113 @@ class XinDongController extends ProvideBase
                     'VENDINC',
                     'ANCHEYEAR',
                 ])->all();
+        }
+
+        if (!empty($f_info)) {
+            $tmp = [];
+            foreach ($f_info as $one) {
+                //只能是year里的年份
+                if (in_array($one->ANCHEYEAR . '', $userInputYear, true)) {
+                    $tmp[$one->ANCHEYEAR . ''] = obj2Arr($one);
+                }
+            }
+            $res = [$this->cspKey => [
+                'code' => 200,
+                'paging' => null,
+                'result' => $tmp,
+                'msg' => null,
+            ]];
+        } else {
+            $this->csp->add($this->cspKey, function () use ($postData) {
+                return (new LongXinService())
+                    ->setCheckRespFlag(true)
+                    ->setCal(false)
+                    ->getFinanceData($postData, false);
+            });
+            $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        }
+
+        if ($res[$this->cspKey]['code'] === 200 && !empty($res[$this->cspKey]['result'])) {
+            $indexTable = [
+                '0' => 'O',
+                '1' => 'C',
+                '2' => 'E',
+                '3' => 'I',
+                '4' => 'G',
+                '5' => 'A',
+                '6' => 'H',
+                '7' => 'F',
+                '8' => 'D',
+                '9' => 'B',
+                '.' => '*',
+                '-' => 'J',
+            ];
+            foreach ($res[$this->cspKey]['result'] as $year => $oneYearData) {
+                if (in_array($year, $userInputYear)) {
+                    foreach ($oneYearData as $field => $num) {
+                        if ($field === 'ispublic' || $field === 'ANCHEYEAR') {
+                            unset($res[$this->cspKey]['result'][$year][$field]);
+                            continue;
+                        }
+                        $res[$this->cspKey]['result'][$year][$field] = strtr($num, $indexTable);
+                    }
+                } else {
+                    unset($res[$this->cspKey]['result'][$year]);
+                }
+            }
+        }
+
+        return $this->checkResponse($res);
+    }
+
+    //上海圈讯
+    function getFinanceBaseDataQX(): bool
+    {
+        $entName = $this->getRequestData('entName', '');
+        $year = $this->getRequestData('year', '');
+        $userInputYear = explode(',', trim($year, ','));
+
+        $beginYear = 2021;
+        $dataCount = 3;
+
+        $this->spendMoney = 1;
+
+        if ($this->limitEntNumByUserId(__FUNCTION__, $entName, 50)) {
+            return $this->writeJson(201, null, null, '请求次数已经达到上限50');
+        }
+        if (empty($entName)) {
+            return $this->writeJson(201, null, null, 'entName不能是空');
+        }
+        if (empty($year) || empty($userInputYear)) {
+            return $this->writeJson(201, null, null, 'year不能是空');
+        }
+
+        $postData = [
+            'entName' => $entName,
+            'code' => $this->getRequestData('code', ''),
+            'beginYear' => $beginYear,
+            'dataCount' => $dataCount,
+        ];
+
+        $check = EntDbEnt::create()->where('name', $entName)->get();
+
+        if (empty($check)) {
+            $f_info = [];
+        } else {
+            $f_info = EntDbFinance::create()
+                ->where('cid', $check->getAttr('id'))
+                ->where('ANCHEYEAR', [2021, 2020, 2019], 'IN')
+                ->field([
+                            'ASSGRO',
+                            'LIAGRO',
+                            'MAIBUSINC',
+                            'NETINC',
+                            'PROGRO',
+                            'RATGRO',
+                            'TOTEQU',
+                            'VENDINC',
+                            'ANCHEYEAR',
+                        ])->all();
         }
 
         if (!empty($f_info)) {
