@@ -380,7 +380,8 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceTemp', $prefix . 'getFinanceTemp');//仿企名片时的财务数据
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceTempMergeData', $prefix . 'getFinanceTempMergeData');//仿企名片时的财务数据
             $routeCollector->addRoute(['GET', 'POST'], '/superSearch', $prefix . 'superSearch');
-            $routeCollector->addRoute(['GET', 'POST'], '/getSearchOption', $prefix . 'getSearchOption');// 支持的搜索项
+            $routeCollector->addRoute(['GET', 'POST'], '/getSearchOption', $prefix . 'getSearchOption');// 返回接口支持的搜索项
+            $routeCollector->addRoute(['GET', 'POST'], '/advancedSearch', $prefix . 'advancedSearch');// 高级搜索
 
         });
 

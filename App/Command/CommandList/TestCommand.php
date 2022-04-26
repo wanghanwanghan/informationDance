@@ -3,7 +3,7 @@
 namespace App\Command\CommandList;
 
 use App\Command\CommandBase;
-
+use App\HttpController\Service\LongXin\LongXinService;
 class TestCommand extends CommandBase
 {
     function commandName(): string
@@ -23,6 +23,6 @@ class TestCommand extends CommandBase
     //php easyswoole help test
     function help(array $args): ?string
     {
-        return 'this is help' . PHP_EOL;
+        return   json_encode( (new LongXinService())->advancedSearch([]) ) . PHP_EOL;
     }
 }
