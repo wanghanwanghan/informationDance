@@ -1069,7 +1069,7 @@ class XinDongService extends ServiceBase
     function getSearchOption($postData)
     {
         
-        return $this->checkResp(200, null, [
+        return  [
             'company_org_type' => [
                 'desc' => '企业类型',
                 'key' => 'company_org_type',
@@ -1100,7 +1100,7 @@ class XinDongService extends ServiceBase
                 'type' => 'select',
                 'data' => $this->getRegCapital(),
             ],
-        ], '查询成功');
+        ];
     }
 
      //高级搜索
@@ -1162,7 +1162,7 @@ class XinDongService extends ServiceBase
              CommonService::getInstance()->log4PHP(json_encode(['re-response'=>$response]), 'info', 'souke.log');
             
         //  });
-        return $this->checkResp(200, null, $response, '查询成功');
+        return  $response;
      }
 
 }

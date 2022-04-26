@@ -679,7 +679,7 @@ eof;
     /**
       * 
       * 支持的搜索条件 
-        https://api.meirixindong.com//api/v1/xd/getSearchOption? 
+       https://api.meirixindong.com/api/v1/xd/getSearchOption?phone=18201611816
       * 
       * 
      */
