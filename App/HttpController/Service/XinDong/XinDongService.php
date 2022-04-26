@@ -121,6 +121,7 @@ class XinDongService extends ServiceBase
        if ($getAll) {
            return array_merge($map,[0 => '全部']);
        }
+       return $map;
     } 
 
     // 获取营业状态
@@ -137,6 +138,8 @@ class XinDongService extends ServiceBase
        if ($getAll) {
            return array_merge($map,[0 => '全部']);
        }
+       return $map;
+
     } 
 
     // 获取企业成立年限
@@ -153,6 +156,8 @@ class XinDongService extends ServiceBase
        if ($getAll) {
            return array_merge($map,[0 => '全部']);
        }
+       return $map;
+
     } 
 
     // 获取企业类型
@@ -170,6 +175,8 @@ class XinDongService extends ServiceBase
         if ($getAll) {
             return array_merge($map,[0 => '全部']);
         }
+        return $map;
+
      } 
 
     //处理结果给信息controller
@@ -1165,7 +1172,7 @@ class XinDongService extends ServiceBase
              CommonService::getInstance()->log4PHP(json_encode(['re-response'=>$response]), 'info', 'souke.log');
             
         //  });
-        return  $response;
+        return  json_decode($response,true);
      }
 
 }
