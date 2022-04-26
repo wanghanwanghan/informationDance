@@ -19,6 +19,9 @@ use App\HttpController\Service\XinDong\Score\xds;
 use EasySwoole\Pool\Manager;
 use wanghanwanghan\someUtils\control;
 use wanghanwanghan\someUtils\traits\Singleton;
+use EasySwoole\ElasticSearch\Config;
+use EasySwoole\ElasticSearch\ElasticSearch;
+use EasySwoole\ElasticSearch\RequestBean\Search;
 
 class XinDongService extends ServiceBase
 {

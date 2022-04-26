@@ -13,10 +13,6 @@ use App\Task\Service\TaskService;
 use App\Task\TaskList\EntDbTask\insertEnt;
 use App\Task\TaskList\EntDbTask\insertFinance;
 use Carbon\Carbon;
-use App\ElasticSearch\Service\ElasticSearchService;
-use EasySwoole\ElasticSearch\Config;
-use EasySwoole\ElasticSearch\ElasticSearch;
-use EasySwoole\ElasticSearch\RequestBean\Search;
 
 class LongXinService extends ServiceBase
 {
