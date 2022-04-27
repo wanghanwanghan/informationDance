@@ -41,9 +41,9 @@ class CreateMysqlPoolForRDS3Prism1 extends AbstractPool
     {
         return Manager::getInstance()
             ->register(
-                CreateMysqlPoolForEntDb::getInstance(),
+                CreateMysqlPoolForRDS3Prism1::getInstance(),
                 CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1')
             );
-            
+
     }
 }

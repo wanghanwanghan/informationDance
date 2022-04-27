@@ -41,7 +41,7 @@ class CreateMysqlPoolForRDS3NicCode extends AbstractPool
     {
         return Manager::getInstance()
             ->register(
-                CreateMysqlPoolForEntDb::getInstance(),
+                CreateMysqlPoolForRDS3NicCode::getInstance(),
                 CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code')
             );
     }

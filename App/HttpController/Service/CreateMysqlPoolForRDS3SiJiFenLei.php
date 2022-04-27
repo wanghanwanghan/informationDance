@@ -41,7 +41,7 @@ class CreateMysqlPoolForRDS3SiJiFenLei extends AbstractPool
     {
         return Manager::getInstance()
             ->register(
-                CreateMysqlPoolForEntDb::getInstance(),
+                CreateMysqlPoolForRDS3SiJiFenLei::getInstance(),
                 CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_si_ji_fen_lei')
             );
     }
