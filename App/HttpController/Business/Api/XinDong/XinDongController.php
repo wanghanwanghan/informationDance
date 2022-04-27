@@ -773,10 +773,10 @@ eof;
      */
     function getCompanyBasicInfo(): bool
     {  
-        $companyId = $this->request()->getRequestParam('id'); 
-        if (!$companyId) {
-            $this->writeJson(201, null, null, '参数缺失');
-        }
+        // $companyId = $this->request()->getRequestParam('id'); 
+        // if (!$companyId) {
+        //     $this->writeJson(201, null, null, '参数缺失');
+        // }
 
         // $res = Company::create()->where('id', 1)->get();
         $res = (new XinDongService())->getCompanyBasicInfo();

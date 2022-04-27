@@ -13,6 +13,7 @@ use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Service\CreateConf;
 use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\ORM\DbManager;
+use  App\HttpController\Service\XinDong\XinDongService;
 
 
 class TestCommand extends CommandBase
@@ -37,6 +38,14 @@ class TestCommand extends CommandBase
     { 
         // return 'dddd'.json_encode(CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1')).PHP_EOL;
          
+        go(function() {
+            /* 调用协程API */
+            // 用户可以在这里调用上述协程 API
+            $res = (new XinDongService())->getCompanyBasicInfo();
+            CommonService::getInstance()->log4PHP(json_encode($res), 'info', 'souke.log');
+        
+        });
+
         
  
         return 'this is exec' . PHP_EOL;
