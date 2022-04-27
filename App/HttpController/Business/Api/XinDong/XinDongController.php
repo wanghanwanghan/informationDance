@@ -733,7 +733,7 @@ eof;
         $responseJson = (new XinDongService())->advancedSearch($postData);
         $responseArr = @json_decode($responseJson,true);
          
-        return $this->writeJson(200, intval($responseArr['hits']['total'])/$postData['size'], $responseArr['hits']['hits'], '成功', true, []);
+        return $this->writeJson(200, intval($responseArr['hits']['total'])/$postData['size'], $responseArr['hits']['hits']['_source'], '成功', true, []);
     }
 
     function formatRequestData($requestDataArr, $config){
