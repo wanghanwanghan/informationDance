@@ -9,6 +9,7 @@ use App\HttpController\Service\Common\CommonService;
 use EasySwoole\ElasticSearch\Config;
 use EasySwoole\ElasticSearch\ElasticSearch;
 use EasySwoole\ElasticSearch\RequestBean\Search;
+use App\HttpController\Models\RDS3\Company;
 
 class TestCommand extends CommandBase
 {
@@ -30,6 +31,9 @@ class TestCommand extends CommandBase
     //php easyswoole help test
     function help(array $args): ?string
     { 
+         
+        $res = Company::create()->where('id', 1)->get();
+        return json_encode($res).PHP_EOL ;
          
 
         $elasticsearch = new ElasticSearch(

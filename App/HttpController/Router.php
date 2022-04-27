@@ -177,6 +177,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getVendincScale', $prefix . 'getVendincScale');//
             $routeCollector->addRoute(['GET', 'POST'], '/getSearchOption', $prefix . 'getSearchOption');// 返回接口支持的搜索项 https://api.meirixindong.com//api/v1/xd/getSearchOption
             $routeCollector->addRoute(['GET', 'POST'], '/advancedSearch', $prefix . 'advancedSearch');// 高级搜索 https://api.meirixindong.com//api/v1/xd/getSearchOption
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyBasicInfo', $prefix . 'getCompanyBasicInfo');// 高级搜索 https://api.meirixindong.com//api/v1/xd/getSearchOption
         });
 
         return true;
