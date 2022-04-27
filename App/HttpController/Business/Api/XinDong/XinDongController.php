@@ -778,13 +778,16 @@ eof;
             $this->writeJson(201, null, null, '参数缺失');
         }
         // $res = sqlRaw("select * form company limit 1");
-        $res =\App\HttpController\Models\RDS3\Company::create()->limit(1)->get();
+        $retData [] = sqlRaw("select full_name from nic_code  limit 1    ", CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
+       
+        // $res =\App\HttpController\Models\RDS3\Company::create()->limit(1)->get();
         // $res = (new XinDongService())->getCompanyBasicInfo();
         
         // $res = [
         //     // CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'),
         //     // CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'),
         // ];
-        return $this->writeJson(200, intval($responseArr['hits']['total'])/$postData['size'], $res, '成功', true, []);
+        return $this->writeJson(200, 
+        0, $retData, '成功', true, []);
     }
 }
