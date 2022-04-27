@@ -12,6 +12,11 @@ use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\XinDong\XinDongService;
+use App\HttpController\Models\RDS3\Company;
+use EasySwoole\ElasticSearch\Config;
+use EasySwoole\ElasticSearch\ElasticSearch;
+use EasySwoole\ElasticSearch\RequestBean\Search;
+use App\ElasticSearch\Service\ElasticSearchService;
 use Carbon\Carbon;
 use EasySwoole\ORM\DbManager;
 use wanghanwanghan\someUtils\control;
@@ -732,6 +737,15 @@ eof;
         $responseJson = (new XinDongService())->advancedSearch($elasticSearchService);
         $responseArr = @json_decode($responseJson,true);
          
+        if(
+            !(new XinDongService())->saveSearchHistory(
+                $this->loginUserinfo['id'],
+                json_encode($elasticSearchService->query),
+                ''
+            )
+        ){
+            return $this->writeJson(201, null, null, '记录搜索历史失败！请联系管理员');
+        };
         return $this->writeJson(200, intval($responseArr['hits']['total'])/$postData['size'], $responseArr['hits']['hits'], '成功', true, []);
     }
 
@@ -741,5 +755,24 @@ eof;
             $return[$key] = $requestDataArr[$key] ?? $defaultValue; 
         }
         return $return;
+    }
+
+    /**
+      * 
+      * 高级搜索 
+        https://api.meirixindong.com/api/v1/xd/getCompanyBasicInfo 
+      * 
+      * 
+     */
+    function getCompanyBasicInfo(): bool
+    {  
+        $companyId = $this->request()->getRequestParam('id'); 
+        if (!$companyId) {
+            $this->writeJson(201, null, null, '参数缺失');
+        }
+
+        $res = Company::create()->where('id', 1)->get();
+        
+        return $this->writeJson(200, intval($responseArr['hits']['total'])/$postData['size'], $res, '成功', true, []);
     }
 }

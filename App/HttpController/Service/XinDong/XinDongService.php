@@ -103,18 +103,18 @@ class XinDongService extends ServiceBase
     // 获取注册资本
     function getRegCapital($getAll = false) 
     {
-       $map = array_values([
-        $this->reg_capital_50  =>  $this->reg_capital_50_des,
-        $this->reg_capital_50to100  =>  $this->reg_capital_50to100_des, 
-        $this->reg_capital_100to200  =>  $this->reg_capital_100to200_des,  
-        $this->reg_capital_200to500  =>  $this->reg_capital_200to500_des,  
-        $this->reg_capital_500to1000  =>  $this->reg_capital_500to1000_des,  
-        $this->reg_capital_1000to10000  =>  $this->reg_capital_1000to10000_des,  
-        $this->reg_capital_10000to100000  =>  $this->reg_capital_10000to100000_des, 
-    ]);
+       $map = [
+           $this->reg_capital_50  =>  $this->reg_capital_50_des,
+           $this->reg_capital_50to100  =>  $this->reg_capital_50to100_des, 
+           $this->reg_capital_100to200  =>  $this->reg_capital_100to200_des,  
+           $this->reg_capital_200to500  =>  $this->reg_capital_200to500_des,  
+           $this->reg_capital_500to1000  =>  $this->reg_capital_500to1000_des,  
+           $this->reg_capital_1000to10000  =>  $this->reg_capital_1000to10000_des,  
+           $this->reg_capital_10000to100000  =>  $this->reg_capital_10000to100000_des, 
+       ];
 
        if ($getAll) {
-           return array_merge($map,[  '全部']);
+           return array_merge($map,[0 => '全部']);
        }
        return $map;
     } 
@@ -122,16 +122,16 @@ class XinDongService extends ServiceBase
     // 获取营业状态
     function getRegStatus($getAll = false) 
     {
-       $map = array_values([
-        $this->reg_status_cunxu  =>  $this->reg_status_cunxu_des,
-        $this->reg_status_zaiye  =>  $this->reg_status_zaiye_des,
-        $this->reg_status_diaoxiao  =>  $this->reg_status_diaoxiao_des,
-        $this->reg_status_zhuxiao  =>  $this->reg_status_zhuxiao_des,
-        $this->reg_status_tingye  =>  $this->reg_status_tingye_des,
-    ]);
+       $map = [
+           $this->reg_status_cunxu  =>  $this->reg_status_cunxu_des,
+           $this->reg_status_zaiye  =>  $this->reg_status_zaiye_des,
+           $this->reg_status_diaoxiao  =>  $this->reg_status_diaoxiao_des,
+           $this->reg_status_zhuxiao  =>  $this->reg_status_zhuxiao_des,
+           $this->reg_status_tingye  =>  $this->reg_status_tingye_des,
+       ];
 
        if ($getAll) {
-           return array_merge($map,[ '全部']);
+           return array_merge($map,[0 => '全部']);
        }
        return $map;
 
@@ -140,16 +140,16 @@ class XinDongService extends ServiceBase
     // 获取企业成立年限
     function getEstiblishYear($getAll = false) 
     {
-       $map = array_values([
-        $this->estiblish_year_under_2 => $this->estiblish_year_under_2_des,
-        $this->estiblish_year_2to5  => $this->estiblish_year_2to5_des,
-        $this->estiblish_year_5to10  => $this->estiblish_year_5to10_des,
-        $this->estiblish_year_10to15  => $this->estiblish_year_10to15_des,
-        $this->estiblish_year_more_than_10  => $this->estiblish_year_more_than_10_des,
-    ]);
+       $map = [
+           $this->estiblish_year_under_2 => $this->estiblish_year_under_2_des,
+           $this->estiblish_year_2to5  => $this->estiblish_year_2to5_des,
+           $this->estiblish_year_5to10  => $this->estiblish_year_5to10_des,
+           $this->estiblish_year_10to15  => $this->estiblish_year_10to15_des,
+           $this->estiblish_year_more_than_10  => $this->estiblish_year_more_than_10_des,
+       ];
 
        if ($getAll) {
-           return array_merge($map,[ '全部']);
+           return array_merge($map,[0 => '全部']);
        }
        return $map;
 
@@ -158,17 +158,17 @@ class XinDongService extends ServiceBase
     // 获取企业类型
      function getCompanyOrgType($getAll = false) 
      {
-        $map =array_values(( [
+        $map = [
             $this->company_org_type_youxian => $this->company_org_type_youxian_des,
             $this->company_org_type_youxian2 => $this->company_org_type_youxian2_des,
             $this->company_org_type_gufen => $this->company_org_type_gufen_des,
             $this->company_org_type_fengongsi => $this->company_org_type_fengongsi_des,
             $this->company_org_type_zongsongsi => $this->company_org_type_zongsongsi_des,
             $this->company_org_type_youxianhehuo => $this->company_org_type_youxianhehuo_des, 
-        ]));
+        ];
 
-        if ($getAll) { 
-            return array_merge($map,['全部']);
+        if ($getAll) {
+            return array_merge($map,[0 => '全部']);
         }
         return $map;
 
@@ -1075,35 +1075,35 @@ class XinDongService extends ServiceBase
     {
         
         return  [
-            10 => [
+           [
                 'pid' => 10,
                 'desc' => '企业类型',
                 'key' => 'company_org_type',
                 'type' => 'select',
                 'data' => $this->getCompanyOrgType(),
             ], 
-            20 => [
+             [
                 'pid' => 20,
                 'desc' => '成立年限',
                 'key' => 'estiblish_year_nums',
                 'type' => 'select',
                 'data' => $this->getEstiblishYear(),
             ], 
-            30 => [
+             [
                 'pid' => 30,
                 'desc' => '营业状态',
                 'key' => 'reg_status',
                 'type' => 'select',
                 'data' => $this->getRegStatus(),
             ], 
-            40 => [
+             [
                 'pid' => 40,
                 'desc' => '注册资本',
                 'key' => 'reg_capital',
                 'type' => 'select',
                 'data' => $this->getRegCapital(),
             ],
-            50 => [
+            [
                 'pid' => 50,
                 'desc' => '营收规模',
                 'key' => 'ying_shou_gui_mo',
@@ -1127,11 +1127,11 @@ class XinDongService extends ServiceBase
         $bean = new  Search();
         $bean->setIndex('company_287_all');
         $bean->setType('_doc');
-        $bean->setBody($elasticSearchService->queryArr);
+        $bean->setBody($elasticSearchService->query);
         $response = $elasticsearch->client()->search($bean)->getBody(); 
-        CommonService::getInstance()->log4PHP(json_encode(['re-queryArr'=>$elasticSearchService->queryArr]), 'info', 'souke.log');
+        CommonService::getInstance()->log4PHP(json_encode(['re-query'=>$elasticSearchService->query]), 'info', 'souke.log');
         CommonService::getInstance()->log4PHP(json_encode(['re-response'=>$response]), 'info', 'souke.log');
-
+        
         return  $response;
      }
 
@@ -1140,7 +1140,6 @@ class XinDongService extends ServiceBase
        
         // must match
         $addMustMatchQueryLists = [
-            'name',
             'company_org_type',
             'business_scope',
             'business_scope',
@@ -1161,6 +1160,14 @@ class XinDongService extends ServiceBase
         foreach($addMustMatchQueryLists as $field){
             !empty($postData[$field]) && $elasticSearchService->addMustMatchQuery($field, $postData[$field]);
         }
+
+        // must match_phrase
+        $addMustMatchPhraseQueryLists = [
+            'name',
+        ];
+        foreach($addMustMatchPhraseQueryLists as $field){
+            !empty($postData[$field]) && $elasticSearchService->addMustAatchPhraseQuery($field, $postData[$field]);
+        } 
         
         // must range
         $addMustRangeQueryLists = [
@@ -1176,19 +1183,11 @@ class XinDongService extends ServiceBase
        return  $elasticSearchService;
      }
 
-     function saveSearchHistory(){
-        UserSearchHistory::create()->data([
-            'entName' => $entName,
-            'title' => 1,
-            'type' => 0,
-            'typeDetail' => 7,
-            'timeRange' => $time,
-            'level' => 3,
-            'desc' => '裁判文书',
-            'content' => $content,
-            'detailUrl' => '',
-            'keyNo' => $one['entryId'],
-            'sourceDetail' => empty($detail) ? '' : jsonEncode($detail),
+     function saveSearchHistory($userId, $query, $queryCname){
+        return UserSearchHistory::create()->data([
+            'userId' => $userId,
+            'query' => $query,
+            'query_cname' => $queryCname,
         ])->save();
      }
 }

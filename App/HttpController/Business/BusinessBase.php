@@ -19,6 +19,8 @@ class BusinessBase extends Index
     public $startResTime = 0;//请求开始时间，带毫秒
     public $stopResTime = 0;//请求结束时间，带毫秒
 
+    public $loginUserinfo = [];
+
     function onRequest(?string $action): ?bool
     {
         parent::onRequest($action);
@@ -26,7 +28,6 @@ class BusinessBase extends Index
         $this->startResTime = microtime(true);
 
         $checkRouter = $this->checkRouter();
-        CommonService::getInstance()->log4PHP(json_encode(['action'=>$action]), 'info', 'souke.log');
         $checkToken = $this->checkToken();
 
         if (!$checkRouter && !$checkToken) $this->writeJson(240, null, null, 'token错误');
@@ -123,6 +124,10 @@ class BusinessBase extends Index
         return false;
     }
 
+    private function setLoginUserInfo($userInfo){
+        $this->loginUserinfo = $userInfo;
+    }
+
     //check token
     private function checkToken(): bool
     {
@@ -138,6 +143,7 @@ class BusinessBase extends Index
         }
 
         if (empty($res)) return false;
+        $this->setLoginUserInfo($res);
 
         $tokenInfo = UserService::getInstance()->decodeAccessToken($requestToken);
 
