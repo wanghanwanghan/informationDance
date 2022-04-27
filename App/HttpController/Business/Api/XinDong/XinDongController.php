@@ -12,7 +12,7 @@ use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\XinDong\XinDongService;
-use App\HttpController\Models\RDS3\Company;
+// use App\HttpController\Models\RDS3\Company;
 use EasySwoole\ElasticSearch\Config;
 use EasySwoole\ElasticSearch\ElasticSearch;
 use EasySwoole\ElasticSearch\RequestBean\Search;
@@ -778,7 +778,7 @@ eof;
             $this->writeJson(201, null, null, '参数缺失');
         }
         // $res = sqlRaw("select * form company limit 1");
-        $res = Company::create()->limit(1)->get();
+        $res =\App\HttpController\Models\RDS3\Company::create()->limit(1)->get();
         // $res = (new XinDongService())->getCompanyBasicInfo();
         
         // $res = [
