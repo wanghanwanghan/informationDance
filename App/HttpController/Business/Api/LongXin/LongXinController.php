@@ -369,7 +369,7 @@ class LongXinController extends LongXinBase
             } else {
                 $res = (new LongXinService())
                     ->setCal(true)
-                    ->setCheckRespFlag(false)
+                    ->setCheckRespFlag(true)
                     ->getFinanceData($postData, false);
             }
 
