@@ -17,7 +17,7 @@ class Company extends ModelBase
     {
         parent::__construct($data);
 
-        $this->connectionName = CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1');
+        $this->connectionName = CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code');
     }
     
 }
