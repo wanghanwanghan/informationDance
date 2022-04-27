@@ -15,6 +15,7 @@ use App\HttpController\Service\XinDong\XinDongService;
 use EasySwoole\ElasticSearch\Config;
 use EasySwoole\ElasticSearch\ElasticSearch;
 use EasySwoole\ElasticSearch\RequestBean\Search;
+use App\ElasticSearch\Service\ElasticSearchService;
 use Carbon\Carbon;
 use EasySwoole\ORM\DbManager;
 use wanghanwanghan\someUtils\control;
