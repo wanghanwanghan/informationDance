@@ -777,9 +777,13 @@ eof;
         if (!$companyId) {
             $this->writeJson(201, null, null, '参数缺失');
         }
-        $res = sqlRaw("select * form company limit 1");
+        // $res = sqlRaw("select * form company limit 1");
         // $res = Company::create()->where('id', 1)->get();
         // $res = (new XinDongService())->getCompanyBasicInfo();
+        $res = [
+            CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'),
+            CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'),
+        ];
         return $this->writeJson(200, intval($responseArr['hits']['total'])/$postData['size'], $res, '成功', true, []);
     }
 }
