@@ -1080,31 +1080,36 @@ class XinDongService extends ServiceBase
     {
         
         return  [
-            'company_org_type' => [
+            10 => [
+                'pid' => 10,
                 'desc' => '企业类型',
                 'key' => 'company_org_type',
                 'type' => 'select',
                 'data' => $this->getCompanyOrgType(),
             ], 
-            'estiblish_year_nums' => [
+            20 => [
+                'pid' => 20,
                 'desc' => '成立年限',
                 'key' => 'estiblish_year_nums',
                 'type' => 'select',
                 'data' => $this->getEstiblishYear(),
             ], 
-            'reg_status' => [
+            30 => [
+                'pid' => 30,
                 'desc' => '营业状态',
                 'key' => 'reg_status',
                 'type' => 'select',
                 'data' => $this->getRegStatus(),
             ], 
-            'reg_capital' => [
+            40 => [
+                'pid' => 40,
                 'desc' => '注册资本',
                 'key' => 'reg_capital',
                 'type' => 'select',
                 'data' => $this->getRegCapital(),
             ],
-            'ying_shou_gui_mo' => [
+            50 => [
+                'pid' => 50,
                 'desc' => '营收规模',
                 'key' => 'ying_shou_gui_mo',
                 'type' => 'select',
