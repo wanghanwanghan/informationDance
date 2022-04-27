@@ -739,7 +739,7 @@ eof;
         if(
             !(new XinDongService())->saveSearchHistory(
                 $this->loginUserinfo['id'],
-                json_encode($elasticSearchService->queryArr),
+                json_encode($elasticSearchService->query),
                 ''
             )
         ){

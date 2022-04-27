@@ -1127,9 +1127,9 @@ class XinDongService extends ServiceBase
         $bean = new  Search();
         $bean->setIndex('company_287_all');
         $bean->setType('_doc');
-        $bean->setBody($elasticSearchService->queryArr);
+        $bean->setBody($elasticSearchService->query);
         $response = $elasticsearch->client()->search($bean)->getBody(); 
-        CommonService::getInstance()->log4PHP(json_encode(['re-queryArr'=>$elasticSearchService->queryArr]), 'info', 'souke.log');
+        CommonService::getInstance()->log4PHP(json_encode(['re-query'=>$elasticSearchService->query]), 'info', 'souke.log');
         CommonService::getInstance()->log4PHP(json_encode(['re-response'=>$response]), 'info', 'souke.log');
         
         return  $response;

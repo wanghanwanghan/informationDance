@@ -13,7 +13,7 @@ class ElasticSearchService extends ServiceBase
     private $config;
     private $searchBean;
 
-    public $queryArr;
+    public $query; //默认都放数组里 如果啥条件都没有 取全部的时候 用json （默认用数组有点问题）
 
     function __construct()
     {
@@ -46,15 +46,15 @@ class ElasticSearchService extends ServiceBase
     }
 
     function addMustMatchQuery($field, $value){
-        $this->queryArr['query']['bool']['must'][] = ['match' => [$field => $value]];
+        $this->query['query']['bool']['must'][] = ['match' => [$field => $value]];
     }
 
     function addMustAatchPhraseQuery($field, $value){
-        $this->queryArr['query']['bool']['must'][] = ['match_phrase' => [$field => $value]];
+        $this->query['query']['bool']['must'][] = ['match_phrase' => [$field => $value]];
     }
 
     function addMustTermQuery($field, $value){
-        $this->queryArr['query']['bool']['must'][] =  ['term' => [$field => $value]]; 
+        $this->query['query']['bool']['must'][] =  ['term' => [$field => $value]]; 
     }
 
     function addMustRangeQuery($field, $minValue, $maxValue){
@@ -65,7 +65,7 @@ class ElasticSearchService extends ServiceBase
         if($maxValue>0){
             $rangeArr['lte'] = $maxValue; 
         }
-        $this->queryArr['query']['bool']['must'][] =  ['range' => [$field => [$rangeArr]]]; 
+        $this->query['query']['bool']['must'][] =  ['range' => [$field => [$rangeArr]]]; 
     }
 
     function setByPage($page, $size = 20){
@@ -74,17 +74,28 @@ class ElasticSearchService extends ServiceBase
         $this->addFrom( $offset);  
     }
 
-    function addSize($size){
-        $this->queryArr['size'] =  $size; 
+    function addSize($size = 5){
+        $this->query['size'] =  $size; 
     }
 
-    function addFrom($from){
-        $this->queryArr['from'] =  $from; 
+    function addFrom($from = 0){
+        $this->query['from'] =  $from; 
     }
 
     function setDefault(){
-        if(empty($this->queryArr['query']['bool']['must'])){
-            $this->queryArr['query']['bool']['must'][] =  ['match_all' => []]; 
+        if(empty($this->query['query']['bool']['must'])){
+            $this->query =   
+            '{
+                "size": "'.$this->query['size'].'",
+                "from": '.$this->query['from'].',
+                "query": {
+                    "bool": {
+                        "must": [{
+                            "match_all": {}
+                        }]
+                    }
+                }
+            }';
         }
     }
 }
