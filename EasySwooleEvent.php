@@ -57,6 +57,7 @@ class EasySwooleEvent implements Event
         CreateMysqlPoolForRDS3SiJiFenLei::getInstance()->createMysql();
         CreateMysqlPoolForRDS3Prism1::getInstance()->createMysql();
 
+        
         //mysql orm
         CreateMysqlOrm::getInstance()->createMysqlOrm();
         CreateMysqlOrm::getInstance()->createEntDbOrm();

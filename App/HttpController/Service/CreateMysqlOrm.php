@@ -154,6 +154,7 @@ class CreateMysqlOrm extends ServiceBase
         $config->setDatabase(CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
         $config->setCharset('utf8mb4');
 
+        
         //链接池配置
         $config->setGetObjectTimeout(3.0); //设置获取连接池对象超时时间
         $config->setIntervalCheckTime(30 * 1000); //设置检测连接存活执行回收和创建的周期
