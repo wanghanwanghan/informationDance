@@ -1140,7 +1140,6 @@ class XinDongService extends ServiceBase
        
         // must match
         $addMustMatchQueryLists = [
-            'name',
             'company_org_type',
             'business_scope',
             'business_scope',
@@ -1161,6 +1160,14 @@ class XinDongService extends ServiceBase
         foreach($addMustMatchQueryLists as $field){
             !empty($postData[$field]) && $elasticSearchService->addMustMatchQuery($field, $postData[$field]);
         }
+
+        // must match_phrase
+        $addMustMatchPhraseQueryLists = [
+            'name',
+        ];
+        foreach($addMustMatchPhraseQueryLists as $field){
+            !empty($postData[$field]) && $elasticSearchService->addMustAatchPhraseQuery($field, $postData[$field]);
+        } 
         
         // must range
         $addMustRangeQueryLists = [

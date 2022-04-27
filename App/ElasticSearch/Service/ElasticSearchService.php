@@ -49,6 +49,10 @@ class ElasticSearchService extends ServiceBase
         $this->queryArr['query']['bool']['must'][] = ['match' => [$field => $value]];
     }
 
+    function addMustAatchPhraseQuery($field, $value){
+        $this->queryArr['query']['bool']['must'][] = ['match_phrase' => [$field => $value]];
+    }
+
     function addMustTermQuery($field, $value){
         $this->queryArr['query']['bool']['must'][] =  ['term' => [$field => $value]]; 
     }
