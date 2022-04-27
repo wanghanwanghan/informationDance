@@ -773,12 +773,12 @@ eof;
      */
     function getCompanyBasicInfo(): bool
     {  
-        // $companyId = $this->request()->getRequestParam('id'); 
-        // if (!$companyId) {
-        //     $this->writeJson(201, null, null, '参数缺失');
-        // }
-
-        $res = Company::create()->where('id', 1)->get();
+        $companyId = $this->request()->getRequestParam('id'); 
+        if (!$companyId) {
+            $this->writeJson(201, null, null, '参数缺失');
+        }
+        $res = sqlRaw("select * form company limit 1");
+        // $res = Company::create()->where('id', 1)->get();
         // $res = (new XinDongService())->getCompanyBasicInfo();
         return $this->writeJson(200, intval($responseArr['hits']['total'])/$postData['size'], $res, '成功', true, []);
     }
