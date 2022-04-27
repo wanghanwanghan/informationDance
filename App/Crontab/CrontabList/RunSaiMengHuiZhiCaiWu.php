@@ -122,8 +122,8 @@ class RunSaiMengHuiZhiCaiWu extends AbstractCronTask
             }
 
             $entname = $this->strtr_func($one[0]);
-            $code = $this->strtr_func($one[1]);
-            $address = $this->strtr_func($one[2]);
+            $code = $this->strtr_func($one[1]??'');
+            $address = $this->strtr_func($one[2]??'');
 
             //  `VENDINC` decimal(20,2) DEFAULT NULL COMMENT '营业总收入',
             //  `ASSGRO` decimal(20,2) DEFAULT NULL COMMENT '资产总额',
