@@ -746,7 +746,14 @@ eof;
         ){
             return $this->writeJson(201, null, null, '记录搜索历史失败！请联系管理员');
         };
-        return $this->writeJson(200, intval($responseArr['hits']['total'])/$postData['size'], $responseArr['hits']['hits'], '成功', true, []);
+        return $this->writeJson(200, 
+          [
+            'page' => $postData['page']??1,
+            'pageSize' =>$postData['size']??20,
+            'total' => intval($responseArr['hits']['total']),
+            'totalPage' => (int)floor(intval($responseArr['hits']['total'])/($postData['size']??20)),
+        ] 
+       , $responseArr['hits']['hits'], '成功', true, []);
     }
 
     function formatRequestData($requestDataArr, $config){

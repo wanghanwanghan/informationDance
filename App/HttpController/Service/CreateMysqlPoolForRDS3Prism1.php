@@ -8,7 +8,7 @@ use EasySwoole\Mysqli\Config;
 use EasySwoole\Pool\AbstractPool;
 use EasySwoole\Pool\Manager;
 
-class CreateMysqlPoolForRDS3SiJiFenLei extends AbstractPool
+class CreateMysqlPoolForRDS3Prism1 extends AbstractPool
 {
     use Singleton;
 
@@ -23,7 +23,7 @@ class CreateMysqlPoolForRDS3SiJiFenLei extends AbstractPool
             'port' => CreateConf::getInstance()->getConf('env.mysqlPortRDS_3'),
             'user' => CreateConf::getInstance()->getConf('env.mysqlUserRDS_3'),
             'password' => CreateConf::getInstance()->getConf('env.mysqlPasswordRDS_3'),
-            'database' => CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_si_ji_fen_lei'),
+            'database' => CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'),
             'timeout' => 5,
             'charset' => 'utf8mb4',
         ]);
@@ -41,8 +41,9 @@ class CreateMysqlPoolForRDS3SiJiFenLei extends AbstractPool
     {
         return Manager::getInstance()
             ->register(
-                CreateMysqlPoolForRDS3SiJiFenLei::getInstance(),
-                CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_si_ji_fen_lei')
+                CreateMysqlPoolForRDS3Prism1::getInstance(),
+                CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1')
             );
+
     }
 }
