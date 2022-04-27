@@ -41,7 +41,8 @@ class TestCommand extends CommandBase
         go(function() {
             /* 调用协程API */
             // 用户可以在这里调用上述协程 API
-            $res = (new XinDongService())->getCompanyBasicInfo();
+            // $res = (new XinDongService())->getCompanyBasicInfo();
+            $res = Company::create()->where('id', 1)->get();
             CommonService::getInstance()->log4PHP(json_encode($res), 'info', 'souke.log');
         
         });
