@@ -778,7 +778,7 @@ eof;
             $this->writeJson(201, null, null, '参数缺失');
         }
         // $res = sqlRaw("select * form company limit 1");
-        $res = Company::create()->limit(1)->all();
+        $res = Company::create()->limit(1)->get();
         // $res = (new XinDongService())->getCompanyBasicInfo();
         
         // $res = [
