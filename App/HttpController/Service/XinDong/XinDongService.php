@@ -1131,6 +1131,7 @@ class XinDongService extends ServiceBase
         $response = $elasticsearch->client()->search($bean)->getBody(); 
         CommonService::getInstance()->log4PHP(json_encode(['re-queryArr'=>$elasticSearchService->queryArr]), 'info', 'souke.log');
         CommonService::getInstance()->log4PHP(json_encode(['re-response'=>$response]), 'info', 'souke.log');
+        CommonService::getInstance()->log4PHP(json_encode($this->loginUserinfo), 'info', 'souke.log');
 
         return  $response;
      }
