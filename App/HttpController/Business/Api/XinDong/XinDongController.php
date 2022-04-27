@@ -700,10 +700,8 @@ eof;
      */
     function advancedSearch(): bool
     { 
-        $pindex = $this->request()->getRequestParam('page') ?? '1'; 
-
-
-        $postData = $this->formatRequestData(
+        
+         $postData = $this->formatRequestData(
             $this->request()->getRequestParam(),
             [
                 // key => 默认值值
@@ -729,8 +727,9 @@ eof;
                 'size' => 10,
             ]
         );  
-
-        $responseJson = (new XinDongService())->advancedSearch($postData);
+        $elasticSearchService =  (new XinDongService())->setEsSearchQuery($postData,(new ElasticSearchService())); 
+       
+        $responseJson = (new XinDongService())->advancedSearch($elasticSearchService);
         $responseArr = @json_decode($responseJson,true);
          
         return $this->writeJson(200, intval($responseArr['hits']['total'])/$postData['size'], $responseArr['hits']['hits'], '成功', true, []);

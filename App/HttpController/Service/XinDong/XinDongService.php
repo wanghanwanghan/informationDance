@@ -4,6 +4,7 @@ namespace App\HttpController\Service\XinDong;
 
 use App\Csp\Service\CspService;
 use App\ElasticSearch\Service\ElasticSearchService;
+use App\HttpController\Models\Api\UserSearchHistory;
 use App\HttpController\Models\BusinessBase\VendincScale2020Model;
 use App\HttpController\Models\EntDb\EntDbNacao;
 use App\HttpController\Models\EntDb\EntDbNacaoBasic;
@@ -1119,67 +1120,81 @@ class XinDongService extends ServiceBase
     }
 
      //高级搜索
-     function advancedSearch($postData)
-     {
- 
-         $elasticSearchService = (new ElasticSearchService());
-         $elasticSearchService->setByPage($postData['page'],$postData['size']); 
-        
-         // must match
-         $addMustMatchQueryLists = [
-             'name',
-             'company_org_type',
-             'business_scope',
-             'business_scope',
-             'reg_status',
-             'property1',
-             'ying_shou_gui_mo',
-             'si_ji_fen_lei_code',
-             'gao_xin_ji_shu',
-             'deng_ling_qi_ye',
-             'tuan_dui_ren_shu',
-             'tong_xun_di_zhi',
-             'web',
-             'yi_ban_ren',
-             'shang_shi_xin_xi',
-             'app',
-             'shang_pin_data',
-         ];
-         foreach($addMustMatchQueryLists as $field){
-             !empty($postData[$field]) && $elasticSearchService->addMustMatchQuery($field, $postData[$field]);
-         }
-         
-         // must range
-         $addMustRangeQueryLists = [
-             'estiblish_time' =>['min'=> $postData['min_estiblish_time'], 'max'=> $postData['max_estiblish_time']],
-             'reg_capital' =>['min'=> $postData['min_reg_capital'], 'max'=> $postData['max_reg_capital']]
-         ];
-         foreach($addMustRangeQueryLists as $field=>$item){
-             (!empty($postData[$item['min']])||!empty($postData[$item['max']])) && 
-                 $elasticSearchService->addMustRangeQuery($field, $postData[$item['min']], $postData[$item['max']]);
-         }
-         
-         $elasticSearchService->setDefault();
-         
-        // go(function () use ( $elasticSearchService) {
-             $elasticsearch = new ElasticSearch(
-                 new  Config([
-                     'host' => "es-cn-7mz2m3tqe000cxkfn.public.elasticsearch.aliyuncs.com",
-                     'port' => 9200,
-                     'username'=>'elastic',
-                     'password'=>'zbxlbj@2018*()',
-                 ])
-             ); 
-             $bean = new  Search();
-             $bean->setIndex('company_287_all');
-             $bean->setType('_doc');
-             $bean->setBody($elasticSearchService->queryArr);
-             $response = $elasticsearch->client()->search($bean)->getBody(); 
-             CommonService::getInstance()->log4PHP(json_encode(['re-queryArr'=>$elasticSearchService->queryArr]), 'info', 'souke.log');
-             CommonService::getInstance()->log4PHP(json_encode(['re-response'=>$response]), 'info', 'souke.log');
-            
-        //  });
+     function advancedSearch($elasticSearchService)
+     { 
+        $elasticsearch = new ElasticSearch(
+            new  Config([
+                'host' => "es-cn-7mz2m3tqe000cxkfn.public.elasticsearch.aliyuncs.com",
+                'port' => 9200,
+                'username'=>'elastic',
+                'password'=>'zbxlbj@2018*()',
+            ])
+        ); 
+        $bean = new  Search();
+        $bean->setIndex('company_287_all');
+        $bean->setType('_doc');
+        $bean->setBody($elasticSearchService->queryArr);
+        $response = $elasticsearch->client()->search($bean)->getBody(); 
+        CommonService::getInstance()->log4PHP(json_encode(['re-queryArr'=>$elasticSearchService->queryArr]), 'info', 'souke.log');
+        CommonService::getInstance()->log4PHP(json_encode(['re-response'=>$response]), 'info', 'souke.log');
+
         return  $response;
      }
 
+     function setEsSearchQuery($postData, $elasticSearchService){ 
+        $elasticSearchService->setByPage($postData['page'],$postData['size']); 
+       
+        // must match
+        $addMustMatchQueryLists = [
+            'name',
+            'company_org_type',
+            'business_scope',
+            'business_scope',
+            'reg_status',
+            'property1',
+            'ying_shou_gui_mo',
+            'si_ji_fen_lei_code',
+            'gao_xin_ji_shu',
+            'deng_ling_qi_ye',
+            'tuan_dui_ren_shu',
+            'tong_xun_di_zhi',
+            'web',
+            'yi_ban_ren',
+            'shang_shi_xin_xi',
+            'app',
+            'shang_pin_data',
+        ];
+        foreach($addMustMatchQueryLists as $field){
+            !empty($postData[$field]) && $elasticSearchService->addMustMatchQuery($field, $postData[$field]);
+        }
+        
+        // must range
+        $addMustRangeQueryLists = [
+            'estiblish_time' =>['min'=> $postData['min_estiblish_time'], 'max'=> $postData['max_estiblish_time']],
+            'reg_capital' =>['min'=> $postData['min_reg_capital'], 'max'=> $postData['max_reg_capital']]
+        ];
+        foreach($addMustRangeQueryLists as $field=>$item){
+            (!empty($postData[$item['min']])||!empty($postData[$item['max']])) && 
+                $elasticSearchService->addMustRangeQuery($field, $postData[$item['min']], $postData[$item['max']]);
+        }
+        
+        $elasticSearchService->setDefault();
+       return  $elasticSearchService;
+     }
+
+     function saveSearchHistory(){
+        UserSearchHistory::create()->data([
+            'entName' => $entName,
+            'title' => 1,
+            'type' => 0,
+            'typeDetail' => 7,
+            'timeRange' => $time,
+            'level' => 3,
+            'desc' => '裁判文书',
+            'content' => $content,
+            'detailUrl' => '',
+            'keyNo' => $one['entryId'],
+            'sourceDetail' => empty($detail) ? '' : jsonEncode($detail),
+        ])->save();
+     }
 }
