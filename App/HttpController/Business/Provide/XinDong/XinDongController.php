@@ -1630,5 +1630,4 @@ class XinDongController extends ProvideBase
 
         return $this->checkResponse($res);
     }
-
 }

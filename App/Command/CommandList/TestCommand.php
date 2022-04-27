@@ -4,8 +4,15 @@ namespace App\Command\CommandList;
 
 use App\Command\CommandBase;
 use App\HttpController\Service\LongXin\LongXinService;
+use App\ElasticSearch\Service\ElasticSearchService;
+use App\HttpController\Service\Common\CommonService;
+use EasySwoole\ElasticSearch\Config;
+use EasySwoole\ElasticSearch\ElasticSearch;
+use EasySwoole\ElasticSearch\RequestBean\Search;
+
 class TestCommand extends CommandBase
 {
+    public $queryArr = [];
     function commandName(): string
     {
         return 'test';
@@ -22,7 +29,8 @@ class TestCommand extends CommandBase
 
     //php easyswoole help test
     function help(array $args): ?string
-    {
-        return   json_encode( (new LongXinService())->advancedSearch([]) ) . PHP_EOL;
-    }
+    { 
+         
+        return 'this is help' . PHP_EOL;
+    } 
 }
