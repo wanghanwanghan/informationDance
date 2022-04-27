@@ -1190,4 +1190,10 @@ class XinDongService extends ServiceBase
             'query_cname' => $queryCname,
         ])->save();
      }
+
+     function getCompanyBasicInfo(){
+        $retData = sqlRaw("select full_name from nic_code where nic_id = 1 ", 
+        CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
+        return $retData;
+     }
 }
