@@ -209,7 +209,6 @@ function sqlRaw(string $sql, string $conn = null): ?array
             ->query($queryBuilder, true, $conn)
             ->toArray();
     } catch (\Throwable $e) {
-        CommonService::getInstance()->log4PHP(json_encode($e), 'info', 'souke.log');
         return null;
     }
     return $res['result'];
