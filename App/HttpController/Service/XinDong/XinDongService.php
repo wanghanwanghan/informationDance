@@ -1131,8 +1131,7 @@ class XinDongService extends ServiceBase
         $response = $elasticsearch->client()->search($bean)->getBody(); 
         CommonService::getInstance()->log4PHP(json_encode(['re-queryArr'=>$elasticSearchService->queryArr]), 'info', 'souke.log');
         CommonService::getInstance()->log4PHP(json_encode(['re-response'=>$response]), 'info', 'souke.log');
-        CommonService::getInstance()->log4PHP(json_encode($this->loginUserinfo), 'info', 'souke.log');
-
+        
         return  $response;
      }
 
@@ -1177,19 +1176,11 @@ class XinDongService extends ServiceBase
        return  $elasticSearchService;
      }
 
-     function saveSearchHistory(){
-        UserSearchHistory::create()->data([
-            'entName' => $entName,
-            'title' => 1,
-            'type' => 0,
-            'typeDetail' => 7,
-            'timeRange' => $time,
-            'level' => 3,
-            'desc' => '裁判文书',
-            'content' => $content,
-            'detailUrl' => '',
-            'keyNo' => $one['entryId'],
-            'sourceDetail' => empty($detail) ? '' : jsonEncode($detail),
+     function saveSearchHistory($userId, $query, $queryCname){
+        return UserSearchHistory::create()->data([
+            'userId' => $userId,
+            'query' => $query,
+            'query_cname' => $queryCname,
         ])->save();
      }
 }

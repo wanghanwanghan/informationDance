@@ -736,6 +736,11 @@ eof;
         $responseJson = (new XinDongService())->advancedSearch($elasticSearchService);
         $responseArr = @json_decode($responseJson,true);
          
+        (new XinDongService())->saveSearchHistory(
+            $this->loginUserinfo['id'],
+            $elasticSearchService->queryArr,
+            ''
+        );
         return $this->writeJson(200, intval($responseArr['hits']['total'])/$postData['size'], $responseArr['hits']['hits'], '成功', true, []);
     }
 
