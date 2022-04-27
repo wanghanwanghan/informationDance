@@ -77,4 +77,10 @@ class ElasticSearchService extends ServiceBase
     function addFrom($from){
         $this->queryArr['from'] =  $from; 
     }
+
+    function setDefault(){
+        if(empty($this->queryArr['query']['bool']['must'])){
+            $this->queryArr['query']['bool']['must'][] =  ['match_all' => []]; 
+        }
+    }
 }

@@ -1153,7 +1153,9 @@ class XinDongService extends ServiceBase
              (!empty($postData[$item['min']])||!empty($postData[$item['max']])) && 
                  $elasticSearchService->addMustRangeQuery($field, $postData[$item['min']], $postData[$item['max']]);
          }
- 
+         
+         $elasticSearchService->setDefault();
+         
         // go(function () use ( $elasticSearchService) {
              $elasticsearch = new ElasticSearch(
                  new  Config([
