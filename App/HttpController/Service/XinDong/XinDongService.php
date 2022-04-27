@@ -1172,7 +1172,7 @@ class XinDongService extends ServiceBase
              CommonService::getInstance()->log4PHP(json_encode(['re-response'=>$response]), 'info', 'souke.log');
             
         //  });
-        return  json_decode($response,true);
+        return  $response;
      }
 
 }
