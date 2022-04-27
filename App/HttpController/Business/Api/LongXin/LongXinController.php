@@ -370,6 +370,8 @@ class LongXinController extends LongXinBase
                 $res = (new LongXinService())->setCal(true)->getFinanceData($postData, false);
             }
 
+            CommonService::getInstance()->log4PHP($res);
+
             $charge = ChargeService::getInstance()->LongXin($this->request(), 51, $entName[$i]);
 
             if ($charge['code'] !== 200) {
