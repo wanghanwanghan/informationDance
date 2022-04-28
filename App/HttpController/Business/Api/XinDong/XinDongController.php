@@ -941,19 +941,26 @@ eof;
                 }
             }';
         }
-        // $elasticsearch = new ElasticSearch(
-        //     new  Config([
-        //         'host' => "es-cn-7mz2m3tqe000cxkfn.public.elasticsearch.aliyuncs.com",
-        //         'port' => 9200,
-        //         'username'=>'elastic',
-        //         'password'=>'zbxlbj@2018*()',
-        //     ])
-        // ); 
-        // $bean = new  Search();
-        // $bean->setIndex('company_287_all');
-        // $bean->setType('_doc');
-        // $bean->setBody($queryArr);
-        // $response = $elasticsearch->client()->search($bean)->getBody(); 
+
+        UserSearchHistory::create()->data([
+            'userId' => $this->loginUserinfo['id'],
+            'query' => is_array($queryArr)?json_encode($queryArr):$queryArr,
+            'query_cname' =>json_encode($this->request()->getRequestParam()),
+        ])->save(); 
+
+        $elasticsearch = new ElasticSearch(
+            new  Config([
+                'host' => "es-cn-7mz2m3tqe000cxkfn.public.elasticsearch.aliyuncs.com",
+                'port' => 9200,
+                'username'=>'elastic',
+                'password'=>'zbxlbj@2018*()',
+            ])
+        ); 
+        $bean = new  Search();
+        $bean->setIndex('company_287_all');
+        $bean->setType('_doc');
+        $bean->setBody($queryArr);
+        $response = $elasticsearch->client()->search($bean)->getBody(); 
         CommonService::getInstance()->log4PHP(json_encode(['re-query'=>$queryArr]), 'info', 'souke.log');
         CommonService::getInstance()->log4PHP(json_encode(['re-response'=>$response]), 'info', 'souke.log');
         
@@ -971,11 +978,7 @@ eof;
         // ){
         //     return $this->writeJson(201, null, null, '记录搜索历史失败！请联系管理员');
         // };
-        UserSearchHistory::create()->data([
-            'userId' => $this->loginUserinfo['id'],
-            'query' => is_array($queryArr)?json_encode($queryArr):$queryArr,
-            'query_cname' =>json_encode($this->request()->getRequestParam()),
-        ])->save(); 
+       
         return $this->writeJson(200, 
           [
               
