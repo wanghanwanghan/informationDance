@@ -17,7 +17,7 @@ class ArLable extends ModelBase
     {
         parent::__construct($data);
 
-        $this->connectionName = CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_business_base');
+        $this->connectionName = CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3');
     }
     
 }
