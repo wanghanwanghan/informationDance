@@ -804,6 +804,6 @@ eof;
 
         return  (new LongXinService())->setCheckRespFlag(true)->getCpwsList($postData); 
 
-        return $this->checkResponse($res);
+        // return $this->checkResponse($res);
     }
 }
