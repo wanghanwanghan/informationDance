@@ -1191,22 +1191,7 @@ class XinDongService extends ServiceBase
         ])->save();
      }
 
-     function getCompanyBasicInfo(){
-        $retData [] = sqlRaw("select full_name from nic_code where  limit 1 ", CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
-
-        return $retData;
-        
-         $sql = "select full_name from nic_code  limit 2 ";
-        $retData =  sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
-        CommonService::getInstance()->log4PHP(json_encode($retData), 'info', 'souke.log');
-
-        $retData2 = sqlRaw("select * from company  LIMIT 1 ", 
-        CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
-        CommonService::getInstance()->log4PHP(json_encode($retData2), 'info', 'souke.log');
-
-        return [
-            $retData,
-            $retData2
-        ];
+     function getCompanyBasicInfo(){ 
+        return [ ];
      }
 }

@@ -857,4 +857,23 @@ eof;
         return   $this->writeJson(200,   ['total' => 1], $res['result'], '成功', true, []);  
         // return $this->checkResponse($res); 
     }
+
+    /**
+      * 
+      * 专业资质 荣誉称号  
+        https://api.meirixindong.com/api/v1/xd/getProfessionalQualifications 
+      * 
+      * 
+     */
+    function getProfessionalQualifications(): bool
+    {  
+        // $companyId = intval($this->request()->getRequestParam('id')); 
+        // if (!$companyId) {
+        //     $this->writeJson(201, null, null, '参数缺失');
+        // }
+        
+        $retData  =\App\HttpController\Models\RDS3\XdHighTec::create()->limit(2)->get();
+        
+        return $this->writeJson(200, 0, $retData, '成功', true, []);
+    }
 }
