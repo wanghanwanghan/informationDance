@@ -802,6 +802,6 @@ eof;
             $this->writeJson(201, null, null, '参数缺失');
         }
 
-        return   $this->writeJson(200, 0, (new LongXinService())->setCheckRespFlag(true)->getCpwsList($postData), '成功', true, []);  
+        return   $this->writeJson(200, 0, (new LongXinService())->setCheckRespFlag(true)->getCpwsList($postData)['result'], '成功', true, []);  
     }
 }
