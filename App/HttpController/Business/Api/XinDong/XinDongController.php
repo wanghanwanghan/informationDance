@@ -20,6 +20,7 @@ use App\ElasticSearch\Service\ElasticSearchService;
 use Carbon\Carbon;
 use EasySwoole\ORM\DbManager;
 use wanghanwanghan\someUtils\control;
+use App\HttpController\Models\Api\UserSearchHistory;
 
 class XinDongController extends XinDongBase
 {
@@ -768,6 +769,7 @@ eof;
         
         //名称  name  全名匹配 {"query":{"bool":{"must":[{"match_phrase":{"name":"北京德龙"}}]}}}
         $name = trim($this->request()->getRequestParam('searchText', ''));
+        $name = '北京德';
         if ($name) {
             $queryArr['query']['bool']['must'][] = [
                 'match_phrase' => [
@@ -779,6 +781,12 @@ eof;
         // [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
         $searchOptionStr =  trim($this->request()->getRequestParam('searchOption', ''));
         $searchOptionArr = json_decode($searchOptionStr, true);
+        $searchOptionArr = [
+            [
+                'type' => 10,
+                'value' => [10,15,20]
+            ]
+        ];
         foreach($searchOptionArr as $item){
             // 企业类型  {"query":{"bool":{"must":[{"bool":{"should":[{"match_phrase":{"company_org_type":"有限责任公司"}},{"match_phrase":{"company_org_type":"股份"}}]}},{"bool":{"should":[{"match_phrase":{"reg_location":"北京"}},{"match_phrase":{"reg_location":"上海"}}]}},{"match_phrase":{"name":"北京德龙"}}]}}}
             if($item['type'] == 10){
@@ -862,41 +870,67 @@ eof;
             if($item['type'] == 50){
                 $boolQuery = []; 
                 $map = [
-                    
+                    5 => ['A1','A2'], //微型
+                    10 => ['A3','A4'], //小型C类
+                    15 => ['A5'],// 小型B类
+                    20 => ['A6','A7'],// 小型A类
+                    25 => ['A8','A9'],// 中型C类
+                    30 => ['A10','A11','A12'],// 中型B类
+                    40 => ['A13','A14'],// 中型A类
+                    45 => ['A15','A16','A17','A18'],// 大型C类
+                    50 => ['A19','A20','A21','A22','A23'],//大型B类
+
                 ];
-                foreach($map as $type=>$cname){
+                foreach($map as $type=>$subItem){
                     if(in_array($type, $item['value'])){
-                        $boolQuery['bool']['should'][] = 
-                        ['match_phrase' => ['company_org_type' => $cname]]; 
+                        foreach($subItem as $subValue){
+                            $boolQuery['bool']['should'][] = 
+                            ['term' => ['ying_shou_gui_mo' => $subValue]]; 
+                        } 
                     } ;
                 } 
                 $queryArr['query']['bool']['must'][] = $boolQuery;
             }
         }
-
-        // 企业类型  company_org_type
-        $companyOrgType =  trim($this->request()->getRequestParam('searchText', ''));
-
-        $elasticSearchService =  (new XinDongService())->setEsSearchQuery($postData,(new ElasticSearchService())); 
+        
+        // $elasticsearch = new ElasticSearch(
+        //     new  Config([
+        //         'host' => "es-cn-7mz2m3tqe000cxkfn.public.elasticsearch.aliyuncs.com",
+        //         'port' => 9200,
+        //         'username'=>'elastic',
+        //         'password'=>'zbxlbj@2018*()',
+        //     ])
+        // ); 
+        // $bean = new  Search();
+        // $bean->setIndex('company_287_all');
+        // $bean->setType('_doc');
+        // $bean->setBody($queryArr);
+        // $response = $elasticsearch->client()->search($bean)->getBody(); 
+        CommonService::getInstance()->log4PHP(json_encode(['re-query'=>$queryArr]), 'info', 'souke.log');
+        CommonService::getInstance()->log4PHP(json_encode(['re-response'=>$response]), 'info', 'souke.log');
+        
+        // $elasticSearchService =  (new XinDongService())->setEsSearchQuery($postData,(new ElasticSearchService())); 
        
-        $responseJson = (new XinDongService())->advancedSearch($elasticSearchService);
-        $responseArr = @json_decode($responseJson,true);
+        // $responseJson = (new XinDongService())->advancedSearch($elasticSearchService);
+        $responseArr = @json_decode($response,true);
          
-        if(
-            !(new XinDongService())->saveSearchHistory(
-                $this->loginUserinfo['id'],
-                json_encode($elasticSearchService->query),
-                ''
-            )
-        ){
-            return $this->writeJson(201, null, null, '记录搜索历史失败！请联系管理员');
-        };
+        // if(
+        //     !(new XinDongService())->saveSearchHistory(
+        //         $this->loginUserinfo['id'],
+        //         json_encode($elasticSearchService->query),
+        //         ''
+        //     )
+        // ){
+        //     return $this->writeJson(201, null, null, '记录搜索历史失败！请联系管理员');
+        // };
+        UserSearchHistory::create()->data([
+            'userId' => $this->loginUserinfo['id'],
+            'query' => $queryArr,
+            'query_cname' => $queryCname,
+        ])->save(); 
         return $this->writeJson(200, 
           [
-            'page' => $postData['page']??1,
-            'pageSize' =>$postData['size']??20,
-            'total' => intval($responseArr['hits']['total']),
-            'totalPage' => (int)floor(intval($responseArr['hits']['total'])/($postData['size']??20)),
+              
         ] 
        , $responseArr['hits']['hits'], '成功', true, []);
     }

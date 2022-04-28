@@ -94,10 +94,10 @@ class XinDongService extends ServiceBase
     public $reg_capital_500to1000_des = '中型C类';
     public $reg_capital_1000to10000 = 30;
     // public $reg_capital_1000to10000_des = '1000万-1亿';
-    public $reg_capital_1000to10000_des = '中型C类';
-    public $reg_capital_10000to100000 = 35;
+    public $reg_capital_1000to10000_des = '中型B类';
+    // public $reg_capital_10000to100000 = 35;
     // public $reg_capital_10000to100000_des = '1亿-10亿'; 
-    public $reg_capital_10000to100000_des = '中型B类'; 
+    // public $reg_capital_10000to100000_des = '中型A类'; 
 
     public $reg_capital_minddle_a = 40;
     public $reg_capital_minddle_a_des = '中型A类';
@@ -135,7 +135,7 @@ class XinDongService extends ServiceBase
            $this->reg_capital_200to500  =>  $this->reg_capital_200to500_des,  
            $this->reg_capital_500to1000  =>  $this->reg_capital_500to1000_des,  
            $this->reg_capital_1000to10000  =>  $this->reg_capital_1000to10000_des,  
-           $this->reg_capital_10000to100000  =>  $this->reg_capital_10000to100000_des,
+        //    $this->reg_capital_10000to100000  =>  $this->reg_capital_10000to100000_des,
            $this->reg_capital_minddle_a  =>  $this->reg_capital_minddle_a_des,
            $this->reg_capital_big_c  =>  $this->reg_capital_big_c_des,
            $this->reg_capital_big_b  =>  $this->reg_capital_big_b_des,
