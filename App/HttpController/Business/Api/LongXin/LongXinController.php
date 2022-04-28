@@ -367,8 +367,13 @@ class LongXinController extends LongXinBase
             if ($mergeData === 1) {
                 $res = (new LongXinService())->getFinanceBaseMergeData($postData, false);
             } else {
-                $res = (new LongXinService())->getFinanceData($postData, false);
+                $res = (new LongXinService())
+                    ->setCal(true)
+                    ->setCheckRespFlag(true)
+                    ->getFinanceData($postData, false);
             }
+
+            CommonService::getInstance()->log4PHP($res);
 
             $charge = ChargeService::getInstance()->LongXin($this->request(), 51, $entName[$i]);
 
@@ -385,9 +390,9 @@ class LongXinController extends LongXinBase
             //36纳税总额同比 RATGRO_yoy
             //37所有者权益同比 TOTEQU_yoy
 
-            if (!empty($res['data'])) {
+            if (!empty($res['result'])) {
                 $tmp = [];
-                foreach ($res['data'] as $year => $val) {
+                foreach ($res['result'] as $year => $val) {
                     $tmp[$year]['ASSGRO'] = desensitization(intval(round($val['ASSGRO'])));//资产总额
                     $tmp[$year]['ASSGRO_yoy'] = round($val['ASSGRO_yoy'] * 100);
                     $tmp[$year]['LIAGRO'] = desensitization(intval(round($val['LIAGRO'])));
@@ -407,7 +412,7 @@ class LongXinController extends LongXinBase
                     $tmp[$year]['SOCNUM'] = intval(round($val['SOCNUM']));
                     $tmp[$year]['SOCNUM_yoy'] = round($val['SOCNUM_yoy'] * 100);
                 }
-                $res['data'] = $tmp;
+                $res['result'] = $tmp;
                 $ready[$entName[$i]] = $tmp;
 
                 foreach ($ready as $entNameKey => $arr) {

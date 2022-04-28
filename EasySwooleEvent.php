@@ -12,7 +12,7 @@ use App\HttpController\Service\CreateMysqlPoolForMinZuJiDiDb;
 use App\HttpController\Service\CreateMysqlPoolForProjectDb;
 use App\HttpController\Service\CreateMysqlPoolForRDS3NicCode;
 use App\HttpController\Service\CreateMysqlPoolForRDS3SiJiFenLei;
-use App\HttpController\Service\CreateMysqlPoolForRDS3Prism1;
+// use App\HttpController\Service\CreateMysqlPoolForRDS3Prism1;
 use App\HttpController\Service\CreateRedisPool;
 use App\HttpController\Service\CreateSessionHandler;
 use App\HttpController\Service\RequestUtils\LimitService;
@@ -55,9 +55,9 @@ class EasySwooleEvent implements Event
         CreateMysqlPoolForMinZuJiDiDb::getInstance()->createMysql();
         CreateMysqlPoolForRDS3NicCode::getInstance()->createMysql();
         CreateMysqlPoolForRDS3SiJiFenLei::getInstance()->createMysql();
-        CreateMysqlPoolForRDS3Prism1::getInstance()->createMysql();
+        // CreateMysqlPoolForRDS3Prism1::getInstance()->createMysql();
 
-        
+
         //mysql orm
         CreateMysqlOrm::getInstance()->createMysqlOrm();
         CreateMysqlOrm::getInstance()->createEntDbOrm();

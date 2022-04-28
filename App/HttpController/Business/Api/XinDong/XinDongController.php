@@ -12,7 +12,7 @@ use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\XinDong\XinDongService;
-use App\HttpController\Models\RDS3\Company;
+// use App\HttpController\Models\RDS3\Company;
 use EasySwoole\ElasticSearch\Config;
 use EasySwoole\ElasticSearch\ElasticSearch;
 use EasySwoole\ElasticSearch\RequestBean\Search;
@@ -773,13 +773,76 @@ eof;
      */
     function getCompanyBasicInfo(): bool
     {  
-        $companyId = $this->request()->getRequestParam('id'); 
+        $companyId = intval($this->request()->getRequestParam('id')); 
         if (!$companyId) {
             $this->writeJson(201, null, null, '参数缺失');
         }
-
-        $res = Company::create()->where('id', 1)->get();
         
-        return $this->writeJson(200, intval($responseArr['hits']['total'])/$postData['size'], $res, '成功', true, []);
+        $retData  =\App\HttpController\Models\RDS3\Company::create()->where('id', $companyId)->get();
+        
+        return $this->writeJson(200, 0, $retData, '成功', true, []);
+    }
+
+     /**
+      * 
+      * 高级搜索 
+        https://api.meirixindong.com/api/v1/xd/getCpwsList 
+      * 
+      * 
+     */
+    function getCpwsList(): bool
+    {
+        $postData = [
+            'entName' => trim($this->getRequestData('entName')),
+            'page' => $this->getRequestData('page', 1),
+            'pageSize' => 10,
+        ];
+
+        if (!$postData['entName']) {
+            $this->writeJson(201, null, null, '参数缺失');
+        }
+
+        $res = (new LongXinService())->setCheckRespFlag(true)->getCpwsList($postData);
+        return   $this->writeJson(200,  $res['paging'],  $res['result'], '成功', true, []);  
+    }
+
+     /**
+      * 
+      *  
+        https://api.meirixindong.com/api/v1/xd/getCpwsDetail 
+      * 
+      * 
+     */
+    function getCpwsDetail(): bool
+    {
+        $postData = [
+            'mid' => $this->getRequestData('mid'),
+        ];
+
+        $res = (new LongXinService())->setCheckRespFlag(true)->getCpwsDetail($postData); 
+
+        return   $this->writeJson(200,  ['total' => 1],  $res['result'], '成功', true, []);  
+        // return $this->checkResponse($res);
+    }
+
+    /**
+      * 
+      *  
+        https://api.meirixindong.com/api/v1/xd/getKtggList 
+      * 
+      * 
+     */
+    function getKtggList(): bool
+    {
+        $postData = [
+            'entName' => $this->getRequestData('entName'),
+            'page' => $this->getRequestData('page', 1),
+            'pageSize' => 10,
+        ];
+
+         $res = (new LongXinService())->setCheckRespFlag(true)->getKtggList($postData);
+
+         return   $this->writeJson(200,  $res['paging'],  $res['result'], '成功', true, []);  
+        // return $this->checkResponse($res); 
     }
 }

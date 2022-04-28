@@ -10,6 +10,11 @@ use EasySwoole\ElasticSearch\Config;
 use EasySwoole\ElasticSearch\ElasticSearch;
 use EasySwoole\ElasticSearch\RequestBean\Search;
 use App\HttpController\Models\RDS3\Company;
+use App\HttpController\Service\CreateConf;
+use EasySwoole\Mysqli\QueryBuilder;
+use EasySwoole\ORM\DbManager;
+use  App\HttpController\Service\XinDong\XinDongService;
+
 
 class TestCommand extends CommandBase
 {
@@ -31,59 +36,20 @@ class TestCommand extends CommandBase
     //php easyswoole help test
     function help(array $args): ?string
     { 
+        // return 'dddd'.json_encode(CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1')).PHP_EOL;
          
-        $res = Company::create()->where('id', 1)->get();
-        return json_encode($res).PHP_EOL ;
-         
-
-        $elasticsearch = new ElasticSearch(
-            new  Config([
-                'host' => "es-cn-7mz2m3tqe000cxkfn.public.elasticsearch.aliyuncs.com",
-                'port' => 9200,
-                'username'=>'elastic',
-                'password'=>'zbxlbj@2018*()',
-    
-            ])
-        ); 
+        go(function() {
+            /* 调用协程API */
+            // 用户可以在这里调用上述协程 API
+            // $res = (new XinDongService())->getCompanyBasicInfo();
+            $res = Company::create()->where('id', 1)->get();
+            CommonService::getInstance()->log4PHP(json_encode($res), 'info', 'souke.log');
         
-        go(function () use ($elasticsearch) {
-            $this->setDefault();
-            $bean = new  Search();
-            $bean->setIndex('company_287_all');
-            $bean->setType('_doc');
-            // $bean->setBody(($this->queryArr));
-            $bean->setBody(('{
-                "size": "1",
-                "from": 0,
-                "query": {
-                    "bool": {
-                        "must": [{
-                            "match_all": {}
-                        }]
-                    }
-                }
-            }'));
-            $response = $elasticsearch->client()->search($bean)->getBody(); 
-            CommonService::getInstance()->log4PHP(json_encode($response), 'info', 'zhangjiang.log');
-            CommonService::getInstance()->log4PHP(json_encode($this->queryArr), 'info', 'zhangjiang.log');
-          
         });
 
-        return    json_encode( $response ) . PHP_EOL; 
-
-    }
-
-    function setDefault(){
-        if(empty($this->queryArr['query']['bool']['must'])){
-            // $this->queryArr['query']['bool']['must'][] =  ['match_all' =>null ]; 
-            $this->queryArr['query'] =  json_decode('{
-                "bool": {
-                    "must": [{
-                        "match_all": {}
-                    }]
-                }
-            }',true);
-        }
-    }
+        
+ 
+        return 'this is exec' . PHP_EOL;
+    } 
  
 }
