@@ -1033,7 +1033,7 @@ eof;
         //     $this->writeJson(201, null, null, '参数缺失');
         // }
         
-        $retData  =\App\HttpController\Models\RDS3\XdDl::create()->limit(2)->get();
+        $retData  =\App\HttpController\Models\RDS3\XdDl::create()->limit(2)->all();
         
         return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
     }
@@ -1052,7 +1052,7 @@ eof;
         //     $this->writeJson(201, null, null, '参数缺失');
         // }
         
-        $retData  =\App\HttpController\Models\RDS3\XdDlRzGlTx::create()->limit(2)->get();
+        $retData  =\App\HttpController\Models\RDS3\XdDlRzGlTx::create()->limit(2)->all();
         
         return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
     }
