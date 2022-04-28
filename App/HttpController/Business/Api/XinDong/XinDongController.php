@@ -778,6 +778,17 @@ eof;
             ];
         }
 
+        // basic_opscope: 经营范围
+        $basic_opscope = trim($this->request()->getRequestParam('basic_opscope', ''));
+        if($basic_opscope){
+            $queryArr['query']['bool']['must'][] = [
+                'match_phrase' => [
+                    'business_scope' => $basic_opscope,
+                ]
+            ];
+        }
+
+
         // [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
         $searchOptionStr =  trim($this->request()->getRequestParam('searchOption', ''));
         $searchOptionArr = json_decode($searchOptionStr, true);
@@ -901,6 +912,33 @@ eof;
             }
         }
         
+        //四级分类 basic_nicid: A0111,A0112,A0113,
+        $siJiFenLeiStrs = trim($this->request()->getRequestParam('basic_nicid', ''));
+        $siJiFenLeiArr = explode(',', $siJiFenLeiStrs);
+        if(!empty($siJiFenLeiArr)){
+            foreach($siJiFenLeiArr as $item){
+                $boolQuery['bool']['should'][] = 
+                ['match_phrase' => ['si_ji_fen_lei_code' => $item]];
+            }
+            $queryArr['query']['bool']['must'][] = $boolQuery;
+        }
+
+        if(empty($queryArr)){
+            $size = $this->request()->getRequestParam('size',10);
+            $page = $this->request()->getRequestParam('page',1);
+            $offset  =  ($page-1)*$size;
+            $queryArr = '{
+                "size": "'.($size).'",
+                "from": '.$offset.',
+                "query": {
+                    "bool": {
+                        "must": [{
+                            "match_all": {}
+                        }]
+                    }
+                }
+            }';
+        }
         // $elasticsearch = new ElasticSearch(
         //     new  Config([
         //         'host' => "es-cn-7mz2m3tqe000cxkfn.public.elasticsearch.aliyuncs.com",
@@ -933,8 +971,8 @@ eof;
         // };
         UserSearchHistory::create()->data([
             'userId' => $this->loginUserinfo['id'],
-            'query' => json_encode($queryArr),
-            'query_cname' => '',
+            'query' => is_array($queryArr)?json_encode($queryArr):$queryArr,
+            'query_cname' =>json_encode($this->request()->getRequestParam()),
         ])->save(); 
         return $this->writeJson(200, 
           [
