@@ -7,7 +7,7 @@ use App\HttpController\Service\CreateConf;
 
 class XdHighTec extends ModelBase
 {
-    protected $tableName = 'company';
+    protected $tableName = 'xd_hightech';
 
     protected $autoTimeStamp = true;
     protected $createTime = 'created_at';
