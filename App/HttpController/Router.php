@@ -176,8 +176,9 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/editGroupRemarks', $prefix . 'editGroupRemarks');//
             $routeCollector->addRoute(['GET', 'POST'], '/getVendincScale', $prefix . 'getVendincScale');//
             $routeCollector->addRoute(['GET', 'POST'], '/getSearchOption', $prefix . 'getSearchOption');// 返回接口支持的搜索项 https://api.meirixindong.com//api/v1/xd/getSearchOption
-            $routeCollector->addRoute(['GET', 'POST'], '/advancedSearch', $prefix . 'advancedSearch');// 高级搜索 https://api.meirixindong.com//api/v1/xd/getSearchOption
-            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyBasicInfo', $prefix . 'getCompanyBasicInfo');// 高级搜索 https://api.meirixindong.com//api/v1/xd/getSearchOption
+            $routeCollector->addRoute(['GET', 'POST'], '/advancedSearch', $prefix . 'advancedSearch');// 高级搜索 https://api.meirixindong.com//api/v1/xd/advancedSearch
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyBasicInfo', $prefix . 'getCompanyBasicInfo');// 高级搜索 https://api.meirixindong.com//api/v1/xd/getCompanyBasicInfo
+            $routeCollector->addRoute(['GET', 'POST'], '/getCpwsList', $prefix . 'getCpwsList');// 高级搜索 https://api.meirixindong.com//api/v1/xd/getCpwsList
         });
 
         return true;

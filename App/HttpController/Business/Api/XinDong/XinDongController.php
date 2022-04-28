@@ -782,4 +782,28 @@ eof;
         
         return $this->writeJson(200, 0, $retData, '成功', true, []);
     }
+
+     /**
+      * 
+      * 高级搜索 
+        https://api.meirixindong.com/api/v1/xd/getCpwsList 
+      * 
+      * 
+     */
+    function getCpwsList(): bool
+    {
+        $postData = [
+            'entName' => trim($this->getRequestData('entName')),
+            'page' => $this->getRequestData('page', 1),
+            'pageSize' => 10,
+        ];
+
+        if (!$postData['entName']) {
+            $this->writeJson(201, null, null, '参数缺失');
+        }
+
+        return  (new LongXinService())->setCheckRespFlag(true)->getCpwsList($postData); 
+
+        return $this->checkResponse($res);
+    }
 }
