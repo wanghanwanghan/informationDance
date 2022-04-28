@@ -778,8 +778,8 @@ eof;
             $this->writeJson(201, null, null, '参数缺失');
         }
         // $res = sqlRaw("select * form company limit 1");
-        $retData [] = sqlRaw("select full_name from nic_code  limit 1    ", CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
-        $retData [] = sqlRaw("select * from company  limit 1    ", CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
+        // $retData [] = sqlRaw("select full_name from nic_code  limit 1    ", CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
+        // $retData [] = sqlRaw("select * from company  limit 1    ", CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
        
         $retData [] =\App\HttpController\Models\RDS3\Company::create()->limit(1)->get();
         // $res = (new XinDongService())->getCompanyBasicInfo();

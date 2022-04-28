@@ -7,7 +7,7 @@ use App\HttpController\Service\CreateConf;
 
 class Company extends ModelBase
 {
-    protected $tableName = 'nic_code';
+    protected $tableName = 'company';
 
     protected $autoTimeStamp = true;
     protected $createTime = 'created_at';
@@ -17,8 +17,7 @@ class Company extends ModelBase
     {
         parent::__construct($data);
 
-        $this->connectionName = CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code');
-        // $this->connectionName = CreateConf::getInstance()->getConf('prism1');
+        $this->connectionName = CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1');
     }
     
 }
