@@ -785,7 +785,15 @@ eof;
             [
                 'type' => 10,
                 'value' => [10,15,20]
-            ]
+            ],
+            [
+                'type' => 20,
+                'value' => [10,15,20]
+            ],
+            [
+                'type' => 50,
+                'value' => [40,45,50]
+            ],
         ];
         foreach($searchOptionArr as $item){
             // 企业类型  {"query":{"bool":{"must":[{"bool":{"should":[{"match_phrase":{"company_org_type":"有限责任公司"}},{"match_phrase":{"company_org_type":"股份"}}]}},{"bool":{"should":[{"match_phrase":{"reg_location":"北京"}},{"match_phrase":{"reg_location":"上海"}}]}},{"match_phrase":{"name":"北京德龙"}}]}}}
