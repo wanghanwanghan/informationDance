@@ -802,7 +802,7 @@ eof;
             $this->writeJson(201, null, null, '参数缺失');
         }
 
-        return  (new LongXinService())->setCheckRespFlag(true)->getCpwsList($postData); 
+        return  (new LongXinService())->setCheckRespFlag(false)->getCpwsList($postData); 
 
         // return $this->checkResponse($res);
     }
