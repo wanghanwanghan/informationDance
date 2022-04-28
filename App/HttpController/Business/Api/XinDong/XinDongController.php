@@ -845,4 +845,16 @@ eof;
          return   $this->writeJson(200,  $res['paging'],  $res['result'], '成功', true, []);  
         // return $this->checkResponse($res); 
     }
+
+    function getKtggDetail($data): ?bool
+    {
+        $postData = [
+            'mid' => $this->getRequestData('mid'),
+        ];
+
+        $res = (new LongXinService())->setCheckRespFlag(true)->getKtggDetail($postData);
+        
+        return   $this->writeJson(200,   ['total' => 1],,  $res['result'], '成功', true, []);  
+        // return $this->checkResponse($res); 
+    }
 }
