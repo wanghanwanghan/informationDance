@@ -773,7 +773,7 @@ eof;
      */
     function getCompanyBasicInfo(): bool
     {  
-        $companyId = intval($this->request()->getRequestParam('id')); 
+        $companyId = intval($this->request()->getRequestParam('xd_id')); 
         if (!$companyId) {
             return  $this->writeJson(201, null, null, '参数缺失(企业ID)');
         }
