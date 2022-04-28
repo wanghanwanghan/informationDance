@@ -937,7 +937,7 @@ eof;
      /**
       * 
       * 获取企业的营收规模  
-        https://api.meirixindong.com/api/v1/xd/getEmploymenInfo 
+        https://api.meirixindong.com/api/v1/xd/getBusinessScaleInfo 
       * 
       * 
      */
@@ -949,6 +949,30 @@ eof;
         }
         
         $retData  =\App\HttpController\Models\RDS3\ArLable::create()->where('entname', $entname)->get();
+        
+        return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
+    }
+
+    /**
+      * 
+      * 获取企业的营收规模  
+        https://api.meirixindong.com/api/v1/xd/getMainProducts 
+      * 
+      * 
+     */
+    function getMainProducts(): bool
+    {  
+        $type = trim($this->request()->getRequestParam('type')); 
+        if (!in_array($type,['ios', 'andoriod'])) {
+            $this->writeJson(201, null, null, '参数缺失');
+        }
+
+        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+        if (!$companyId) {
+            $this->writeJson(201, null, null, '参数缺失');
+        }
+        
+        $retData  =\App\HttpController\Models\RDS3\XdAppAndroid::create()->where('xd_id', $companyId)->get();
         
         return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
     }
