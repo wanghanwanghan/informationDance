@@ -842,7 +842,7 @@ eof;
 
          $res = (new LongXinService())->setCheckRespFlag(true)->getKtggList($postData);
 
-         return   $this->writeJson(200,  ['total' => 1],  $res, '成功', true, []);  
+         return   $this->writeJson(200,  $res['paging'],  $res['result'], '成功', true, []);  
         // return $this->checkResponse($res); 
     }
 }
