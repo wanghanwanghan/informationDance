@@ -876,4 +876,23 @@ eof;
         
         return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
     }
+    
+    /**
+      * 
+      * 专业资质 荣誉称号  
+        https://api.meirixindong.com/api/v1/xd/getDengLingQualifications 
+      * 
+      * 
+     */
+    function getDengLingQualifications(): bool
+    {  
+        // $companyId = intval($this->request()->getRequestParam('id')); 
+        // if (!$companyId) {
+        //     $this->writeJson(201, null, null, '参数缺失');
+        // }
+        
+        $retData  =\App\HttpController\Models\RDS3\XdDl::create()->limit(2)->get();
+        
+        return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
+    }
 }
