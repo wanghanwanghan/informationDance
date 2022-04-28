@@ -861,6 +861,9 @@ eof;
             // 营收规模 
             if($item['type'] == 50){
                 $boolQuery = []; 
+                $map = [
+                    
+                ];
                 foreach($map as $type=>$cname){
                     if(in_array($type, $item['value'])){
                         $boolQuery['bool']['should'][] = 

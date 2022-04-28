@@ -78,19 +78,44 @@ class XinDongService extends ServiceBase
 
     //注册资本
     public $reg_capital_50 = 5;
-    public $reg_capital_50_des = '50万元以下';
+    // public $reg_capital_50_des = '50万元以下' 
+    public $reg_capital_50_des = '微型';
     public $reg_capital_50to100 = 10;
-    public $reg_capital_50to100_des = '50-100万';
-    public $reg_capital_100to200 = 20;
-    public $reg_capital_100to200_des = '100-200万';
-    public $reg_capital_200to500 = 30;
-    public $reg_capital_200to500_des = '200-500万';
-    public $reg_capital_500to1000 = 40;
-    public $reg_capital_500to1000_des = '500-1000万';
-    public $reg_capital_1000to10000 = 50;
-    public $reg_capital_1000to10000_des = '1000万-1亿';
-    public $reg_capital_10000to100000 = 60;
-    public $reg_capital_10000to100000_des = '1亿-10亿'; 
+    // public $reg_capital_50to100_des = '50-100万' 
+    public $reg_capital_50to100_des = '小型C类';
+    public $reg_capital_100to200 = 15;
+    // public $reg_capital_100to200_des = '100-200万';
+    public $reg_capital_100to200_des = '小型B类';
+    public $reg_capital_200to500 = 20;
+    // public $reg_capital_200to500_des = '200-500万';
+    public $reg_capital_200to500_des = '小型A类';
+    public $reg_capital_500to1000 = 25;
+    // public $reg_capital_500to1000_des = '500-1000万';
+    public $reg_capital_500to1000_des = '中型C类';
+    public $reg_capital_1000to10000 = 30;
+    // public $reg_capital_1000to10000_des = '1000万-1亿';
+    public $reg_capital_1000to10000_des = '中型C类';
+    public $reg_capital_10000to100000 = 35;
+    // public $reg_capital_10000to100000_des = '1亿-10亿'; 
+    public $reg_capital_10000to100000_des = '中型B类'; 
+
+    public $reg_capital_minddle_a = 40;
+    public $reg_capital_minddle_a_des = '中型A类';
+
+    public $reg_capital_big_c = 45;
+    public $reg_capital_big_c_des = '大型C类';
+
+    public $reg_capital_big_b = 50;
+    public $reg_capital_big_b_des = '大型B类';
+    public $reg_capital_big_A = 60;
+    public $reg_capital_big_A_des = '大型A类';
+
+    public $reg_capital_super_big_C = 65;
+    public $reg_capital_super_big_C_des = '特大型C类';
+    public $reg_capital_super_big_B = 70;
+    public $reg_capital_super_big_B_des = '特大型B类';
+    public $reg_capital_super_big_A = 80;
+    public $reg_capital_super_big_A_des = '特大型A类';
 
     function __construct()
     {
@@ -110,7 +135,15 @@ class XinDongService extends ServiceBase
            $this->reg_capital_200to500  =>  $this->reg_capital_200to500_des,  
            $this->reg_capital_500to1000  =>  $this->reg_capital_500to1000_des,  
            $this->reg_capital_1000to10000  =>  $this->reg_capital_1000to10000_des,  
-           $this->reg_capital_10000to100000  =>  $this->reg_capital_10000to100000_des, 
+           $this->reg_capital_10000to100000  =>  $this->reg_capital_10000to100000_des,
+           $this->reg_capital_minddle_a  =>  $this->reg_capital_minddle_a_des,
+           $this->reg_capital_big_c  =>  $this->reg_capital_big_c_des,
+           $this->reg_capital_big_b  =>  $this->reg_capital_big_b_des,
+           $this->reg_capital_big_A  =>  $this->reg_capital_big_A_des,
+           $this->reg_capital_super_big_C  =>  $this->reg_capital_super_big_C_des,
+           $this->reg_capital_super_big_B  =>  $this->reg_capital_super_big_B_des,
+           $this->reg_capital_super_big_A  =>  $this->reg_capital_super_big_A_des,
+            
        ];
 
        if ($getAll) {
