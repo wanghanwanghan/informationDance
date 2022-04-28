@@ -780,6 +780,7 @@ eof;
 
         // basic_opscope: 经营范围
         $basic_opscope = trim($this->request()->getRequestParam('basic_opscope', ''));
+        $basic_opscope = "外科(骨科专业)";
         if($basic_opscope){
             $queryArr['query']['bool']['must'][] = [
                 'match_phrase' => [
@@ -915,6 +916,7 @@ eof;
         //四级分类 basic_nicid: A0111,A0112,A0113,
         $siJiFenLeiStrs = trim($this->request()->getRequestParam('basic_nicid', ''));
         $siJiFenLeiArr = explode(',', $siJiFenLeiStrs);
+        $siJiFenLeiArr = ['Q8512','F5172'];
         if(!empty($siJiFenLeiArr)){
             foreach($siJiFenLeiArr as $item){
                 $boolQuery['bool']['should'][] = 
