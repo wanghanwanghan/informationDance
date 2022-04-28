@@ -981,7 +981,12 @@ eof;
        
         return $this->writeJson(200, 
           [
-              
+            'page' => $page,
+            'pageSize' =>$size,
+            'total' => intval($responseArr['hits']['total']),
+            'totalPage' => (int)floor(intval($responseArr['hits']['total'])/
+            ($size)),
+         
         ] 
        , $responseArr['hits']['hits'], '成功', true, []);
     }
