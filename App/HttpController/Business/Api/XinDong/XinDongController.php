@@ -775,7 +775,7 @@ eof;
     {  
         $companyId = intval($this->request()->getRequestParam('id')); 
         if (!$companyId) {
-            $this->writeJson(201, null, null, '参数缺失');
+            return  $this->writeJson(201, null, null, '参数缺失(企业ID)');
         }
         
         $retData  =\App\HttpController\Models\RDS3\Company::create()->where('id', $companyId)->get();
@@ -799,7 +799,7 @@ eof;
         ];
 
         if (!$postData['entName']) {
-            $this->writeJson(201, null, null, '参数缺失');
+            return $this->writeJson(201, null, null, '参数缺失(企业名称)');
         }
 
         $res = (new LongXinService())->setCheckRespFlag(true)->getCpwsList($postData);
@@ -926,7 +926,7 @@ eof;
     {  
         $companyId = intval($this->request()->getRequestParam('xd_id')); 
         if (!$companyId) {
-            $this->writeJson(201, null, null, '参数缺失');
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
         
         $retData  =\App\HttpController\Models\RDS3\TuanDuiGuiMo::create()->where('xd_id', $companyId)->get();
@@ -945,7 +945,7 @@ eof;
     {  
         $entname = trim($this->request()->getRequestParam('entname')); 
         if (!$entname) {
-            $this->writeJson(201, null, null, '参数缺失');
+            return  $this->writeJson(201, null, null, '参数缺失(企业名称)');
         }
         
         $retData  =\App\HttpController\Models\RDS3\ArLable::create()->where('entname', $entname)->get();
@@ -964,12 +964,12 @@ eof;
     {  
         $type = trim($this->request()->getRequestParam('type')); 
         if (!in_array($type,['ios', 'andoriod'])) {
-            $this->writeJson(201, null, null, '参数缺失');
+            return  $this->writeJson(201, null, null, '参数缺失(类型)');
         }
 
         $companyId = intval($this->request()->getRequestParam('xd_id')); 
         if (!$companyId) {
-            $this->writeJson(201, null, null, '参数缺失');
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
         
         $retData  =\App\HttpController\Models\RDS3\XdAppAndroid::create()->where('xd_id', $companyId)->get();
