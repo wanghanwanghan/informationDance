@@ -800,17 +800,25 @@ Eof;
         $pageNo = $this->getRequestData('pageNO') ?? '';
         $pageSize = $this->getRequestData('pageSize') ?? '';
         $appId = $this->getRequestData('username') ?? '';
+        $createdAt = $this->getRequestData('created_at')?? '';
         $info = RequestUserInfo::create()->where(" appId = '{$appId}'")->get();
         $pageSize = empty($pageSize)?10:$pageSize;
         $pageNo = empty($pageNo)?1:$pageNo;
         $limit = ($pageNo-1)*$pageSize;
+        $whereStr = '';
+        if (!empty($createdAt)) {
+            $tmp = explode('|||', $createdAt);
+            $date1 = strtotime($tmp['0']);
+            $date2 = strtotime($tmp['1']);
+            $whereStr .= ' and created_at between '.$date1.' and '.$date2 ;
+        }
 
         $countSql = <<<Eof
-SELECT count(DISTINCT ( batchNum ))as num FROM information_dance_barch_charging_log where userId = {$info->id}  and  type= 15
+SELECT count(DISTINCT ( batchNum ))as num FROM information_dance_barch_charging_log where userId = {$info->id}  and  type= 15 {$whereStr}
 Eof;
         $count = sqlRaw($countSql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $dataSql = <<<Eof
-SELECT DISTINCT ( batchNum ) FROM information_dance_barch_charging_log where userId = {$info->id}   and  type= 15 order by id desc LIMIT {$limit},{$pageSize} 
+SELECT DISTINCT ( batchNum ) FROM information_dance_barch_charging_log where userId = {$info->id}   and  type= 15 {$whereStr} order by id desc LIMIT {$limit},{$pageSize} 
 Eof;
         $list = sqlRaw($dataSql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $batchNums = array_column($list,'batchNum');
