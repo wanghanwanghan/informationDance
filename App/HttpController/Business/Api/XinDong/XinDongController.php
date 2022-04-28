@@ -805,4 +805,16 @@ eof;
         $res = (new LongXinService())->setCheckRespFlag(true)->getCpwsList($postData);
         return   $this->writeJson(200,  $res['paging'],  $res['result'], '成功', true, []);  
     }
+
+    function getCpwsDetail(): bool
+    {
+        $postData = [
+            'mid' => $this->getRequestData('mid'),
+        ];
+
+        $res = (new LongXinService())->setCheckRespFlag(true)->getCpwsDetail($postData); 
+
+        return   $this->writeJson(200,  $res['paging'],  $res, '成功', true, []);  
+        // return $this->checkResponse($res);
+    }
 }
