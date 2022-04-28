@@ -893,7 +893,7 @@ eof;
                     if(in_array($type, $item['value'])){
                         foreach($subItem as $subValue){
                             $boolQuery['bool']['should'][] = 
-                            ['term' => ['ying_shou_gui_mo' => $subValue]]; 
+                            ['match_phrase' => ['ying_shou_gui_mo' => $subValue]]; 
                         } 
                     } ;
                 } 
