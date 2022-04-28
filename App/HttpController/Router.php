@@ -180,6 +180,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getCompanyBasicInfo', $prefix . 'getCompanyBasicInfo');// 获取企业基本信息 https://api.meirixindong.com//api/v1/xd/getCompanyBasicInfo
             $routeCollector->addRoute(['GET', 'POST'], '/getCpwsList', $prefix . 'getCpwsList');// 获取司法信息-裁判文书列表 https://api.meirixindong.com//api/v1/xd/getCpwsList
             $routeCollector->addRoute(['GET', 'POST'], '/getCpwsDetail', $prefix . 'getCpwsDetail');// 获取司法信息-裁判文书详情 https://api.meirixindong.com//api/v1/xd/getCpwsDetail
+            $routeCollector->addRoute(['GET', 'POST'], '/getKtggList', $prefix . 'getKtggList');// 获取司法信息-裁判文书详情 https://api.meirixindong.com//api/v1/xd/getKtggList
         });
 
         return true;

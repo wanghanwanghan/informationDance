@@ -806,6 +806,13 @@ eof;
         return   $this->writeJson(200,  $res['paging'],  $res['result'], '成功', true, []);  
     }
 
+     /**
+      * 
+      *  
+        https://api.meirixindong.com/api/v1/xd/getCpwsDetail 
+      * 
+      * 
+     */
     function getCpwsDetail(): bool
     {
         $postData = [
@@ -816,5 +823,26 @@ eof;
 
         return   $this->writeJson(200,  ['total' => 1],  $res['result'], '成功', true, []);  
         // return $this->checkResponse($res);
+    }
+
+    /**
+      * 
+      *  
+        https://api.meirixindong.com/api/v1/xd/getKtggList 
+      * 
+      * 
+     */
+    function getKtggList(): bool
+    {
+        $postData = [
+            'entName' => $this->getRequestData('entName'),
+            'page' => $this->getRequestData('page', 1),
+            'pageSize' => 10,
+        ];
+
+         $res = (new LongXinService())->setCheckRespFlag(true)->getKtggList($postData);
+
+         return   $this->writeJson(200,  ['total' => 1],  $res, '成功', true, []);  
+        // return $this->checkResponse($res); 
     }
 }
