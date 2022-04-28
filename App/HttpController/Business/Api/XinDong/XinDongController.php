@@ -926,7 +926,7 @@ eof;
         UserSearchHistory::create()->data([
             'userId' => $this->loginUserinfo['id'],
             'query' => $queryArr,
-            'query_cname' => $queryCname,
+            'query_cname' => '',
         ])->save(); 
         return $this->writeJson(200, 
           [
