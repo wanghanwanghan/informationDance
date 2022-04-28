@@ -924,12 +924,12 @@ eof;
      */
     function getEmploymenInfo(): bool
     {  
-        // $companyId = intval($this->request()->getRequestParam('id')); 
-        // if (!$companyId) {
-        //     $this->writeJson(201, null, null, '参数缺失');
-        // }
+        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+        if (!$companyId) {
+            $this->writeJson(201, null, null, '参数缺失');
+        }
         
-        $retData  =\App\HttpController\Models\RDS3\TuanDuiGuiMo::create()->limit(2)->get();
+        $retData  =\App\HttpController\Models\RDS3\TuanDuiGuiMo::create()->where('xd_id', $companyId)->get();
         
         return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
     }
