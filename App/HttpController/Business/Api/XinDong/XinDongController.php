@@ -933,4 +933,23 @@ eof;
         
         return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
     }
+
+     /**
+      * 
+      * 获取企业的营收规模  
+        https://api.meirixindong.com/api/v1/xd/getEmploymenInfo 
+      * 
+      * 
+     */
+    function getBusinessScaleInfo(): bool
+    {  
+        $entname = trim($this->request()->getRequestParam('entname')); 
+        if (!$entname) {
+            $this->writeJson(201, null, null, '参数缺失');
+        }
+        
+        $retData  =\App\HttpController\Models\RDS3\ArLable::create()->where('entname', $entname)->get();
+        
+        return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
+    }
 }
