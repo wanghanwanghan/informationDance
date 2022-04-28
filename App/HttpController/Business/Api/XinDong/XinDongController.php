@@ -846,7 +846,7 @@ eof;
         // return $this->checkResponse($res); 
     }
 
-    function getKtggDetail($data): ?bool
+    function getKtggDetail(): ?bool
     {
         $postData = [
             'mid' => $this->getRequestData('mid'),
@@ -854,7 +854,7 @@ eof;
 
         $res = (new LongXinService())->setCheckRespFlag(true)->getKtggDetail($postData);
         
-        return   $this->writeJson(200,   ['total' => 1], $res, '成功', true, []);  
+        return   $this->writeJson(200,   ['total' => 1], $res['result'], '成功', true, []);  
         // return $this->checkResponse($res); 
     }
 }
