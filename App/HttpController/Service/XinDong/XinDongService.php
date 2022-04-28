@@ -55,14 +55,14 @@ class XinDongService extends ServiceBase
     public $estiblish_year_2to5 = 5;
     public $estiblish_year_2to5_des = '2-5年';
 
-    public $estiblish_year_5to10 = 5;
+    public $estiblish_year_5to10 = 10;
     public $estiblish_year_5to10_des = '5-10年';
 
-    public $estiblish_year_10to15 = 5;
-    public $estiblish_year_10to15_des = '5-10年';
+    public $estiblish_year_10to15 = 15;
+    public $estiblish_year_10to15_des = '10-15年';
 
-    public $estiblish_year_more_than_10 = 10;
-    public $estiblish_year_more_than_10_des = '10年以上';
+    public $estiblish_year_more_than_20 = 20;
+    public $estiblish_year_more_than_20_des = '15-20年';
 
     //营业状态  迁入、迁出、、清算 
     public $reg_status_cunxu = 5;
@@ -145,7 +145,7 @@ class XinDongService extends ServiceBase
            $this->estiblish_year_2to5  => $this->estiblish_year_2to5_des,
            $this->estiblish_year_5to10  => $this->estiblish_year_5to10_des,
            $this->estiblish_year_10to15  => $this->estiblish_year_10to15_des,
-           $this->estiblish_year_more_than_10  => $this->estiblish_year_more_than_10_des,
+           $this->estiblish_year_more_than_20  => $this->estiblish_year_more_than_20_des,
        ];
 
        if ($getAll) {
@@ -153,7 +153,7 @@ class XinDongService extends ServiceBase
        }
        return $map;
 
-    } 
+    }  
 
     // 获取企业类型
      function getCompanyOrgType($getAll = false) 

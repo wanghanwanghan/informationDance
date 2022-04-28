@@ -90,7 +90,6 @@ CreateMysqlPoolForEntDb::getInstance()->createMysql();
 CreateMysqlPoolForMinZuJiDiDb::getInstance()->createMysql();
 CreateMysqlPoolForRDS3NicCode::getInstance()->createMysql();
 CreateMysqlPoolForRDS3SiJiFenLei::getInstance()->createMysql();
-CreateMysqlPoolForRDS3Prism1::getInstance()->createMysql();
 
 //mysql orm
 CreateMysqlOrm::getInstance()->createMysqlOrm();

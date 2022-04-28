@@ -705,7 +705,6 @@ eof;
      */
     function advancedSearch(): bool
     { 
-        
          $postData = $this->formatRequestData(
             $this->request()->getRequestParam(),
             [
@@ -732,6 +731,149 @@ eof;
                 'size' => 10,
             ]
         );  
+        $elasticSearchService =  (new XinDongService())->setEsSearchQuery($postData,(new ElasticSearchService())); 
+       
+        $responseJson = (new XinDongService())->advancedSearch($elasticSearchService);
+        $responseArr = @json_decode($responseJson,true);
+         
+        if(
+            !(new XinDongService())->saveSearchHistory(
+                $this->loginUserinfo['id'],
+                json_encode($elasticSearchService->query),
+                ''
+            )
+        ){
+            return $this->writeJson(201, null, null, '记录搜索历史失败！请联系管理员');
+        };
+        return $this->writeJson(200, 
+          [
+            'page' => $postData['page']??1,
+            'pageSize' =>$postData['size']??20,
+            'total' => intval($responseArr['hits']['total']),
+            'totalPage' => (int)floor(intval($responseArr['hits']['total'])/($postData['size']??20)),
+        ] 
+       , $responseArr['hits']['hits'], '成功', true, []);
+    }
+
+    /**
+      * 
+      * 高级搜索 
+        https://api.meirixindong.com/api/v1/xd/advancedSearch2 
+      * 
+      * 
+     */
+    function advancedSearch2(): bool
+    { 
+        $queryArr = [];
+        
+        //名称  name  全名匹配 {"query":{"bool":{"must":[{"match_phrase":{"name":"北京德龙"}}]}}}
+        $name = trim($this->request()->getRequestParam('searchText', ''));
+        if ($name) {
+            $queryArr['query']['bool']['must'][] = [
+                'match_phrase' => [
+                    'name' => $name,
+                ]
+            ];
+        }
+
+        // [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
+        $searchOptionStr =  trim($this->request()->getRequestParam('searchOption', ''));
+        $searchOptionArr = json_decode($searchOptionStr, true);
+        foreach($searchOptionArr as $item){
+            // 企业类型  {"query":{"bool":{"must":[{"bool":{"should":[{"match_phrase":{"company_org_type":"有限责任公司"}},{"match_phrase":{"company_org_type":"股份"}}]}},{"bool":{"should":[{"match_phrase":{"reg_location":"北京"}},{"match_phrase":{"reg_location":"上海"}}]}},{"match_phrase":{"name":"北京德龙"}}]}}}
+            if($item['type'] == 10){
+                $boolQuery = []; 
+                foreach((new XinDongService())->getCompanyOrgType() as $type=>$cname){
+                    if(in_array($type, $item['value'])){
+                        $boolQuery['bool']['should'][] = 
+                        ['match_phrase' => ['company_org_type' => $cname]]; 
+                    } ;
+                } 
+                $queryArr['query']['bool']['must'][] = $boolQuery;
+            }
+
+            // 成立年限  {"query":{"bool":{"must":[{"bool":{"should":[{"match_phrase":{"company_org_type":"有限责任公司"}},{"match_phrase":{"company_org_type":"股份"}}]}},{"bool":{"should":[{"range":{"estiblish_time":{"gte":"1997-05-12 "}}},{"range":{"estiblish_time":{"lte":"2022-05-12 "}}}]}},{"match_phrase":{"name":"北京德龙"}}]}}}
+            if($item['type'] == 20){
+                $boolQuery = []; 
+                $map = [
+                    // 2年以内
+                    2 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -2 year')), 'max' => date('Y-m-d')  ],
+                    // 2-5年
+                    5 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -5 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -2 year'))  ],
+                    // 5-10年
+                    10 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -10 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -5 year'))  ],
+                    // 10-15年
+                    15 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -15 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -10 year'))  ],
+                    // 15-20年
+                    20 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -20 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -15 year'))  ],
+                ];
+                foreach($map  as $type=>$subItem){
+                    if(in_array($type, $item['value'])){
+                        $boolQuery['bool']['should'][] = 
+                            ['range' => ['estiblish_time' => ['lte' => $subItem['max'] ]]];
+                        $boolQuery['bool']['should'][] = 
+                            ['range' => ['estiblish_time' => ['gte' => $subItem['min'] ]]];
+                    } ;
+                } 
+                $queryArr['query']['bool']['must'][] = $boolQuery;
+            }
+
+            // 营业状态   {"query":{"bool":{"must":[{"bool":{"should":[{"match_phrase":{"company_org_type":"有限责任公司"}},{"match_phrase":{"company_org_type":"股份"}}]}},{"bool":{"should":[{"match_phrase":{"reg_location":"北京"}},{"match_phrase":{"reg_location":"上海"}}]}},{"match_phrase":{"name":"北京德龙"}}]}}}
+            if($item['type'] == 30){
+                $boolQuery = []; 
+                foreach((new XinDongService())->getRegStatus() as $type=>$cname){
+                    if(in_array($type, $item['value'])){
+                        $boolQuery['bool']['should'][] = 
+                        ['match_phrase' => ['reg_status' => $cname]]; 
+                    } ;
+                } 
+                $queryArr['query']['bool']['must'][] = $boolQuery;
+            }
+
+            // 注册资本
+            if($item['type'] == 40){
+                $boolQuery = []; 
+                $map = [
+                    // 50万以下 
+                    5 => ['min'=>0, 'max' => 50  ],
+                    // 50-100万
+                    10 =>  ['min'=>50, 'max' => 100  ], 
+                    // 100-200万
+                    20 =>  ['min'=>100, 'max' => 200  ],
+                    // 200-500万
+                    30 =>  ['min'=>200, 'max' => 500  ],
+                    // 500-1000万
+                    40 =>  ['min'=>500, 'max' => 1000  ],
+                    // 1000-1亿
+                    50 =>  ['min'=>1000, 'max' => 10000  ],
+                ];
+                foreach($map  as $type=>$subItem){
+                    if(in_array($type, $item['value'])){
+                        $boolQuery['bool']['should'][] = 
+                            ['range' => ['reg_capital' => ['lte' => $subItem['max'] ]]];
+                        $boolQuery['bool']['should'][] = 
+                            ['range' => ['reg_capital' => ['gte' => $subItem['min'] ]]];
+                    } ;
+                } 
+                $queryArr['query']['bool']['must'][] = $boolQuery;
+            }
+
+            // 营收规模 
+            if($item['type'] == 50){
+                $boolQuery = []; 
+                foreach($map as $type=>$cname){
+                    if(in_array($type, $item['value'])){
+                        $boolQuery['bool']['should'][] = 
+                        ['match_phrase' => ['company_org_type' => $cname]]; 
+                    } ;
+                } 
+                $queryArr['query']['bool']['must'][] = $boolQuery;
+            }
+        }
+
+        // 企业类型  company_org_type
+        $companyOrgType =  trim($this->request()->getRequestParam('searchText', ''));
+
         $elasticSearchService =  (new XinDongService())->setEsSearchQuery($postData,(new ElasticSearchService())); 
        
         $responseJson = (new XinDongService())->advancedSearch($elasticSearchService);
@@ -872,7 +1014,7 @@ eof;
         //     $this->writeJson(201, null, null, '参数缺失');
         // }
         
-        $retData  =\App\HttpController\Models\RDS3\XdHighTec::create()->limit(2)->get();
+        $retData  =\App\HttpController\Models\RDS3\XdHighTec::create()->limit(2)->all();
         
         return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
     }
