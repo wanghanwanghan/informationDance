@@ -896,7 +896,7 @@ eof;
         return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
     }
 
-     /**
+    /**
       * 
       * 专业资质 荣誉称号 (Iso) 
         https://api.meirixindong.com/api/v1/xd/getIsoQualifications 
@@ -911,6 +911,25 @@ eof;
         // }
         
         $retData  =\App\HttpController\Models\RDS3\XdDlRzGlTx::create()->limit(2)->get();
+        
+        return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
+    }
+
+    /**
+      * 
+      * 获取企业的人员规模信息  
+        https://api.meirixindong.com/api/v1/xd/getEmploymenInfo 
+      * 
+      * 
+     */
+    function getEmploymenInfo(): bool
+    {  
+        // $companyId = intval($this->request()->getRequestParam('id')); 
+        // if (!$companyId) {
+        //     $this->writeJson(201, null, null, '参数缺失');
+        // }
+        
+        $retData  =\App\HttpController\Models\RDS3\TuanDuiGuiMo::create()->limit(2)->get();
         
         return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
     }
