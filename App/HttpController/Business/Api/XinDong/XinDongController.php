@@ -861,11 +861,11 @@ eof;
     /**
       * 
       * 专业资质 荣誉称号  
-        https://api.meirixindong.com/api/v1/xd/getProfessionalQualifications 
+        https://api.meirixindong.com/api/v1/xd/getHighTecQualifications 
       * 
       * 
      */
-    function getProfessionalQualifications(): bool
+    function getHighTecQualifications(): bool
     {  
         // $companyId = intval($this->request()->getRequestParam('id')); 
         // if (!$companyId) {
@@ -874,6 +874,6 @@ eof;
         
         $retData  =\App\HttpController\Models\RDS3\XdHighTec::create()->limit(2)->get();
         
-        return $this->writeJson(200, 0, $retData, '成功', true, []);
+        return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
     }
 }
