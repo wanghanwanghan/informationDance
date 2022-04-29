@@ -982,7 +982,7 @@ eof;
         } 
 
         //传过来的searchOption 例子 [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
-        $searchOptionStr =  trim($this->request()->getRequestParam('searchOption', ''));
+        $searchOptionStr =  trim($this->request()->getRequestParam('searchOption'));
         $searchOptionArr = json_decode($searchOptionStr, true);
         
         // 把具体需要搜索的各项摘出来
