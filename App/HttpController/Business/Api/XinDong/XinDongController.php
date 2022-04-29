@@ -763,7 +763,7 @@ eof;
       * 
       * 
      */
-    function advancedSearch(): bool
+    function advancedSearch2(): bool
     { 
         $queryArr = [];
         
@@ -965,8 +965,8 @@ eof;
        , $responseArr['hits']['hits'], '成功', true, []);
     }
 
-    // 新版（尚未启用|）
-    function advancedSearch2(): bool
+    // 新版 
+    function advancedSearch(): bool
     { 
         $ElasticSearchService = new ElasticSearchService(); 
         
@@ -1086,8 +1086,6 @@ eof;
         }
         (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldPhraseQuery( 'ying_shou_gui_mo' , $matchedCnames) ;  
     
-         
-        
         //四级分类 basic_nicid: A0111,A0112,A0113,
         $siJiFenLeiStrs = trim($this->request()->getRequestParam('basic_nicid', ''));
         $siJiFenLeiStrs && $siJiFenLeiArr = explode(',', $siJiFenLeiStrs); 
@@ -1110,12 +1108,7 @@ eof;
 
         //设置默认值 不传任何条件 搜全部
         $ElasticSearchService->setDefault() ;  
-        // return $this->writeJson(200, 
-        // [], [
-        //     $searchOptionArr,
-        //     $estiblish_time_values,
-        //     $ElasticSearchService->query
-        // ], '成功', true, []); 
+
         $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
         $responseArr = @json_decode($responseJson,true); 
         
