@@ -699,12 +699,12 @@ eof;
     
      /**
       * 
-      * 高级搜索 
+      * 高级搜索 (旧的)
         https://api.meirixindong.com/api/v1/xd/advancedSearch 
       * 
       * 
      */
-    function advancedSearch(): bool
+    function advancedSearch2(): bool
     { 
          $postData = $this->formatRequestData(
             $this->request()->getRequestParam(),
@@ -758,12 +758,12 @@ eof;
 
     /**
       * 
-      * 高级搜索 
+      * 高级搜索 （新的）
         https://api.meirixindong.com/api/v1/xd/advancedSearch2 
       * 
       * 
      */
-    function advancedSearch2(): bool
+    function advancedSearch(): bool
     { 
         $queryArr = [];
         
@@ -967,17 +967,7 @@ eof;
         // $elasticSearchService =  (new XinDongService())->setEsSearchQuery($postData,(new ElasticSearchService())); 
        
         // $responseJson = (new XinDongService())->advancedSearch($elasticSearchService);
-        $responseArr = @json_decode($response,true);
-         
-        // if(
-        //     !(new XinDongService())->saveSearchHistory(
-        //         $this->loginUserinfo['id'],
-        //         json_encode($elasticSearchService->query),
-        //         ''
-        //     )
-        // ){
-        //     return $this->writeJson(201, null, null, '记录搜索历史失败！请联系管理员');
-        // };
+        $responseArr = @json_decode($response,true); 
        
         return $this->writeJson(200, 
           [
