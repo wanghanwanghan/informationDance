@@ -695,66 +695,7 @@ eof;
 
         return $this->writeJson(200, null, $searchOptionArr, '成功', true, []);
     }
-
-    
-     /**
-      * 
-      * 高级搜索 (旧的)
-        https://api.meirixindong.com/api/v1/xd/advancedSearch 
-      * 
-      * 
-     */
-    function advancedSearch3(): bool
-    { 
-         $postData = $this->formatRequestData(
-            $this->request()->getRequestParam(),
-            [
-                // key => 默认值值
-                'name' => '' ,
-                'company_org_type' => '' ,
-                'estiblish_year_nums' => '' ,
-                'reg_status' => '' ,
-                'reg_capital' => '' ,
-                'ying_shou_gui_mo' => '' , 
-                'business_scope' => '' ,  
-                'property1' => '' , 
-                'si_ji_fen_lei_code' => '' ,
-                'gao_xin_ji_shu' => '' ,
-                'deng_ling_qi_ye' => '' ,
-                'tuan_dui_ren_shu' => '' ,
-                'tong_xun_di_zhi' => '' ,
-                'web' => '' ,
-                'yi_ban_ren' => '' ,
-                'shang_shi_xin_xi' => '' ,
-                'app' => '' ,
-                'shang_pin_data' => '' ,
-                'page' => 1,
-                'size' => 10,
-            ]
-        );  
-        $elasticSearchService =  (new XinDongService())->setEsSearchQuery($postData,(new ElasticSearchService())); 
-       
-        $responseJson = (new XinDongService())->advancedSearch($elasticSearchService);
-        $responseArr = @json_decode($responseJson,true);
-         
-        if(
-            !(new XinDongService())->saveSearchHistory(
-                $this->loginUserinfo['id'],
-                json_encode($elasticSearchService->query),
-                ''
-            )
-        ){
-            return $this->writeJson(201, null, null, '记录搜索历史失败！请联系管理员');
-        };
-        return $this->writeJson(200, 
-          [
-            'page' => $postData['page']??1,
-            'pageSize' =>$postData['size']??20,
-            'total' => intval($responseArr['hits']['total']),
-            'totalPage' => (int)floor(intval($responseArr['hits']['total'])/($postData['size']??20)),
-        ] 
-       , $responseArr['hits']['hits'], '成功', true, []);
-    }
+ 
 
     /**
       * 
@@ -1136,15 +1077,7 @@ eof;
          
         ] 
        , $responseArr['hits']['hits'], '成功', true, []);
-    }
-
-    function formatRequestData($requestDataArr, $config){
-        $return = [];
-        foreach($config as $key => $defaultValue){
-            $return[$key] = $requestDataArr[$key] ?? $defaultValue; 
-        }
-        return $return;
-    }
+    } 
 
     /**
       * 
@@ -1162,7 +1095,7 @@ eof;
         
         $retData  =\App\HttpController\Models\RDS3\Company::create()->where('id', $companyId)->get();
         
-        return $this->writeJson(200, 0, $retData, '成功', true, []);
+        return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
     }
 
      /**
@@ -1259,18 +1192,12 @@ eof;
         if (!$companyId) {
             return  $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
+ 
+        $model = \App\HttpController\Models\RDS3\XdHighTec::create()
+            ->where('xd_id', $companyId)->page($page)->withTotalCount();
+        $retData = $model->all(); 
 
-        //数据的总记录条数
-        $total = \App\HttpController\Models\RDS3\XdHighTec::create()->where('xd_id', $companyId)->count(); 
-
-        $retData  =\App\HttpController\Models\RDS3\XdHighTec::create()
-        ->where('xd_id', $companyId)
-        ->limit($offset, $size)
-        ->all();
-        
-        return $this->writeJson(200,
-         ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)],
-          $retData, '成功', true, []);
+        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
     }
 
     /**
@@ -1292,16 +1219,12 @@ eof;
         if (!$companyId) {
             return  $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
+ 
+        $model = \App\HttpController\Models\RDS3\XdDl::create()
+            ->where('xd_id', $companyId)->page($page)->withTotalCount();
+        $retData = $model->all();
 
-        $retData  =\App\HttpController\Models\RDS3\XdDl::create()
-        ->where('xd_id', $companyId)
-        ->limit($offset, $size)->all();
-        //数据的总记录条数
-        $total = \App\HttpController\Models\RDS3\XdDl::create()->where('xd_id', $companyId)->count();
-
-        return $this->writeJson(200,
-         ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)],
-          $retData, '成功', true, []);
+        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
     }
 
     /**
@@ -1329,9 +1252,7 @@ eof;
         $retData = $model->all();
         $total = $model->lastQueryResult()->getTotalCount(); 
         
-        return $this->writeJson(200,
-         ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)],
-          $retData, '成功', true, []);
+        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
     
     }
 
@@ -1412,8 +1333,6 @@ eof;
             $total = $model->lastQueryResult()->getTotalCount();  
         } 
  
-        return $this->writeJson(200,
-         ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)],
-          $retData, '成功', true, []);
+        return $this->writeJson(200,  ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
     }
 }
