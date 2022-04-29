@@ -1080,10 +1080,17 @@ eof;
             50 => ['A19','A20','A21','A22','A23'],//大型B类 
         ];
 
-        $matchedCnames = [];
+        $matchedCnamesRaw = [];
         foreach($ying_shou_gui_mo_values as $item){
-            $item && $matchedCnames[] = $map[$item]; 
+            $item && $matchedCnamesRaw[] = $map[$item]; 
         }
+        $matchedCnames = [];
+        foreach($matchedCnamesRaw as $items){
+            foreach($items as $item){
+                $matchedCnames[] = $item;
+            }
+        }
+
         (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldPhraseQuery( 'ying_shou_gui_mo' , $matchedCnames) ;  
     
         //四级分类 basic_nicid: A0111,A0112,A0113,
