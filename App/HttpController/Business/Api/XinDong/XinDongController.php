@@ -1120,7 +1120,7 @@ eof;
         ->all();
         
         return $this->writeJson(200,
-         ['total' => $total,'page' => $page, 'pageSize' => $size, ],
+         ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)],
           $retData, '成功', true, []);
     }
 
@@ -1133,14 +1133,19 @@ eof;
      */
     function getDengLingQualifications(): bool
     {  
-        // $companyId = intval($this->request()->getRequestParam('id')); 
-        // if (!$companyId) {
-        //     $this->writeJson(201, null, null, '参数缺失');
-        // }
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?:1; 
+        $size = intval($this->request()->getRequestParam('size')); 
+        $size = $size>0 ?:10; 
+        $offset = ($page-1)*$size;  
         
-        $retData  =\App\HttpController\Models\RDS3\XdDl::create()->limit(2)->all();
-        
-        return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
+        $retData  =\App\HttpController\Models\RDS3\XdDl::create()->limit($offset, $size)->all();
+        //数据的总记录条数
+        $total = \App\HttpController\Models\RDS3\XdDl::create()->count();
+
+        return $this->writeJson(200,
+         ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)],
+          $retData, '成功', true, []);
     }
 
     /**
@@ -1152,14 +1157,21 @@ eof;
      */
     function getIsoQualifications(): bool
     {  
-        // $companyId = intval($this->request()->getRequestParam('id')); 
-        // if (!$companyId) {
-        //     $this->writeJson(201, null, null, '参数缺失');
-        // }
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?:1; 
+        $size = intval($this->request()->getRequestParam('size')); 
+        $size = $size>0 ?:10; 
+        $offset = ($page-1)*$size;  
         
-        $retData  =\App\HttpController\Models\RDS3\XdDlRzGlTx::create()->limit(2)->all();
+        $retData  =\App\HttpController\Models\RDS3\XdDlRzGlTx::create()->limit($offset, $size)->all();
         
-        return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
+        //数据的总记录条数
+        $total = \App\HttpController\Models\RDS3\XdDlRzGlTx::create()->count();
+
+        return $this->writeJson(200,
+         ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)],
+          $retData, '成功', true, []);
+    
     }
 
     /**
@@ -1202,13 +1214,19 @@ eof;
 
     /**
       * 
-      * 获取企业的营收规模  
+      * 获取主营产品
         https://api.meirixindong.com/api/v1/xd/getMainProducts 
       * 
       * 
      */
     function getMainProducts(): bool
     {  
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?:1; 
+        $size = intval($this->request()->getRequestParam('size')); 
+        $size = $size>0 ?:10; 
+        $offset = ($page-1)*$size;  
+
         $type = trim($this->request()->getRequestParam('type')); 
         if (!in_array($type,['ios', 'andoriod'])) {
             return  $this->writeJson(201, null, null, '参数缺失(类型)');
@@ -1220,8 +1238,19 @@ eof;
         }
         
         // $retData  =\App\HttpController\Models\RDS3\XdAppAndroid::create()->where('xd_id', $companyId)->limt(2)->all();
-        $retData  =\App\HttpController\Models\RDS3\XdAppAndroid::create()->limit(2)->all();
+        $retData  =\App\HttpController\Models\RDS3\XdAppAndroid::create()
+        ->where('xd_id', $companyId)
+        ->limit($offset,$size)
+        ->all();
+
+        //数据的总记录条数
+        $total = \App\HttpController\Models\RDS3\XdDlRzGlTx::create()
+        ->where('xd_id', $companyId)
+        ->count();
+
         
-        return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
+        return $this->writeJson(200,
+         ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)],
+          $retData, '成功', true, []);
     }
 }
