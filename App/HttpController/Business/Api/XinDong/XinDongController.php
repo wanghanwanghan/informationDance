@@ -1047,7 +1047,7 @@ eof;
         $basiRegionidStr = trim($this->request()->getRequestParam('basic_regionid')); 
         $basiRegionidStr && $basiRegionidArr = explode(',',$basiRegionidStr);
         if(!empty($basiRegionidArr)){ 
-            $ElasticSearchService->addMustShouldPrefixQuery( 'si_ji_fen_lei_code' , $siJiFenLeiArr) ;  
+            $ElasticSearchService->addMustShouldPrefixQuery( 'reg_number' , $basiRegionidArr) ;  
         }
 
         $size = $this->request()->getRequestParam('size')??10;
