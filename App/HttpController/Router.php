@@ -177,11 +177,18 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getVendincScale', $prefix . 'getVendincScale');//
             $routeCollector->addRoute(['GET', 'POST'], '/getSearchOption', $prefix . 'getSearchOption');// 返回接口支持的搜索项 https://api.meirixindong.com//api/v1/xd/getSearchOption
             $routeCollector->addRoute(['GET', 'POST'], '/advancedSearch', $prefix . 'advancedSearch');// 高级搜索 https://api.meirixindong.com//api/v1/xd/advancedSearch
+            $routeCollector->addRoute(['GET', 'POST'], '/advancedSearch2', $prefix . 'advancedSearch2');// 高级搜索 https://api.meirixindong.com//api/v1/xd/advancedSearch2
             $routeCollector->addRoute(['GET', 'POST'], '/getCompanyBasicInfo', $prefix . 'getCompanyBasicInfo');// 获取企业基本信息 https://api.meirixindong.com//api/v1/xd/getCompanyBasicInfo
             $routeCollector->addRoute(['GET', 'POST'], '/getCpwsList', $prefix . 'getCpwsList');// 获取司法信息-裁判文书列表 https://api.meirixindong.com//api/v1/xd/getCpwsList
             $routeCollector->addRoute(['GET', 'POST'], '/getCpwsDetail', $prefix . 'getCpwsDetail');// 获取司法信息-裁判文书详情 https://api.meirixindong.com//api/v1/xd/getCpwsDetail
             $routeCollector->addRoute(['GET', 'POST'], '/getKtggList', $prefix . 'getKtggList');// 司法信息-开庭公告列表 https://api.meirixindong.com//api/v1/xd/getKtggList
             $routeCollector->addRoute(['GET', 'POST'], '/getKtggDetail', $prefix . 'getKtggDetail');// 司法信息-开庭公告详情 https://api.meirixindong.com//api/v1/xd/getKtggDetail
+            $routeCollector->addRoute(['GET', 'POST'], '/getHighTecQualifications', $prefix . 'getHighTecQualifications');// 专业资质和荣誉称号 https://api.meirixindong.com//api/v1/xd/getHighTecQualifications
+            $routeCollector->addRoute(['GET', 'POST'], '/getDengLingQualifications', $prefix . 'getDengLingQualifications');// 专业资质和荣誉称号 https://api.meirixindong.com//api/v1/xd/getDengLingQualifications
+            $routeCollector->addRoute(['GET', 'POST'], '/getIsoQualifications', $prefix . 'getIsoQualifications');// 专业资质和荣誉称号 https://api.meirixindong.com//api/v1/xd/getIsoQualifications
+            $routeCollector->addRoute(['GET', 'POST'], '/getEmploymenInfo', $prefix . 'getEmploymenInfo');// 专业资质和荣誉称号 https://api.meirixindong.com//api/v1/xd/getEmploymenInfo
+            $routeCollector->addRoute(['GET', 'POST'], '/getBusinessScaleInfo', $prefix . 'getBusinessScaleInfo');// 营收规模 https://api.meirixindong.com//api/v1/xd/getBusinessScaleInfo
+            $routeCollector->addRoute(['GET', 'POST'], '/getMainProducts', $prefix . 'getMainProducts');// 营收规模 https://api.meirixindong.com//api/v1/xd/getMainProducts
         });
 
         return true;

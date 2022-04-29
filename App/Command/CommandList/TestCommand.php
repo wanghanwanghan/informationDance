@@ -36,14 +36,15 @@ class TestCommand extends CommandBase
     //php easyswoole help test
     function help(array $args): ?string
     { 
-        // return 'dddd'.json_encode(CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1')).PHP_EOL;
-         
+        
         go(function() {
             /* 调用协程API */
             // 用户可以在这里调用上述协程 API
             // $res = (new XinDongService())->getCompanyBasicInfo();
-            $res = Company::create()->where('id', 1)->get();
-            CommonService::getInstance()->log4PHP(json_encode($res), 'info', 'souke.log');
+            $list = sqlRaw("select * form company limit 1");
+
+            // $res = Company::create()->where('id', 1)->get();
+            CommonService::getInstance()->log4PHP(json_encode($list), 'info', 'souke.log');
         
         });
 

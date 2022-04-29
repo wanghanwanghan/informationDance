@@ -55,14 +55,14 @@ class XinDongService extends ServiceBase
     public $estiblish_year_2to5 = 5;
     public $estiblish_year_2to5_des = '2-5年';
 
-    public $estiblish_year_5to10 = 5;
+    public $estiblish_year_5to10 = 10;
     public $estiblish_year_5to10_des = '5-10年';
 
-    public $estiblish_year_10to15 = 5;
-    public $estiblish_year_10to15_des = '5-10年';
+    public $estiblish_year_10to15 = 15;
+    public $estiblish_year_10to15_des = '10-15年';
 
-    public $estiblish_year_more_than_10 = 10;
-    public $estiblish_year_more_than_10_des = '10年以上';
+    public $estiblish_year_more_than_20 = 20;
+    public $estiblish_year_more_than_20_des = '15-20年';
 
     //营业状态  迁入、迁出、、清算 
     public $reg_status_cunxu = 5;
@@ -78,19 +78,44 @@ class XinDongService extends ServiceBase
 
     //注册资本
     public $reg_capital_50 = 5;
-    public $reg_capital_50_des = '50万元以下';
+    // public $reg_capital_50_des = '50万元以下' 
+    public $reg_capital_50_des = '微型';
     public $reg_capital_50to100 = 10;
-    public $reg_capital_50to100_des = '50-100万';
-    public $reg_capital_100to200 = 20;
-    public $reg_capital_100to200_des = '100-200万';
-    public $reg_capital_200to500 = 30;
-    public $reg_capital_200to500_des = '200-500万';
-    public $reg_capital_500to1000 = 40;
-    public $reg_capital_500to1000_des = '500-1000万';
-    public $reg_capital_1000to10000 = 50;
-    public $reg_capital_1000to10000_des = '1000万-1亿';
-    public $reg_capital_10000to100000 = 60;
-    public $reg_capital_10000to100000_des = '1亿-10亿'; 
+    // public $reg_capital_50to100_des = '50-100万' 
+    public $reg_capital_50to100_des = '小型C类';
+    public $reg_capital_100to200 = 15;
+    // public $reg_capital_100to200_des = '100-200万';
+    public $reg_capital_100to200_des = '小型B类';
+    public $reg_capital_200to500 = 20;
+    // public $reg_capital_200to500_des = '200-500万';
+    public $reg_capital_200to500_des = '小型A类';
+    public $reg_capital_500to1000 = 25;
+    // public $reg_capital_500to1000_des = '500-1000万';
+    public $reg_capital_500to1000_des = '中型C类';
+    public $reg_capital_1000to10000 = 30;
+    // public $reg_capital_1000to10000_des = '1000万-1亿';
+    public $reg_capital_1000to10000_des = '中型B类';
+    // public $reg_capital_10000to100000 = 35;
+    // public $reg_capital_10000to100000_des = '1亿-10亿'; 
+    // public $reg_capital_10000to100000_des = '中型A类'; 
+
+    public $reg_capital_minddle_a = 40;
+    public $reg_capital_minddle_a_des = '中型A类';
+
+    public $reg_capital_big_c = 45;
+    public $reg_capital_big_c_des = '大型C类';
+
+    public $reg_capital_big_b = 50;
+    public $reg_capital_big_b_des = '大型B类';
+    public $reg_capital_big_A = 60;
+    public $reg_capital_big_A_des = '大型A类';
+
+    public $reg_capital_super_big_C = 65;
+    public $reg_capital_super_big_C_des = '特大型C类';
+    public $reg_capital_super_big_B = 70;
+    public $reg_capital_super_big_B_des = '特大型B类';
+    public $reg_capital_super_big_A = 80;
+    public $reg_capital_super_big_A_des = '特大型A类';
 
     function __construct()
     {
@@ -110,7 +135,15 @@ class XinDongService extends ServiceBase
            $this->reg_capital_200to500  =>  $this->reg_capital_200to500_des,  
            $this->reg_capital_500to1000  =>  $this->reg_capital_500to1000_des,  
            $this->reg_capital_1000to10000  =>  $this->reg_capital_1000to10000_des,  
-           $this->reg_capital_10000to100000  =>  $this->reg_capital_10000to100000_des, 
+        //    $this->reg_capital_10000to100000  =>  $this->reg_capital_10000to100000_des,
+           $this->reg_capital_minddle_a  =>  $this->reg_capital_minddle_a_des,
+           $this->reg_capital_big_c  =>  $this->reg_capital_big_c_des,
+           $this->reg_capital_big_b  =>  $this->reg_capital_big_b_des,
+           $this->reg_capital_big_A  =>  $this->reg_capital_big_A_des,
+           $this->reg_capital_super_big_C  =>  $this->reg_capital_super_big_C_des,
+           $this->reg_capital_super_big_B  =>  $this->reg_capital_super_big_B_des,
+           $this->reg_capital_super_big_A  =>  $this->reg_capital_super_big_A_des,
+            
        ];
 
        if ($getAll) {
@@ -145,7 +178,7 @@ class XinDongService extends ServiceBase
            $this->estiblish_year_2to5  => $this->estiblish_year_2to5_des,
            $this->estiblish_year_5to10  => $this->estiblish_year_5to10_des,
            $this->estiblish_year_10to15  => $this->estiblish_year_10to15_des,
-           $this->estiblish_year_more_than_10  => $this->estiblish_year_more_than_10_des,
+           $this->estiblish_year_more_than_20  => $this->estiblish_year_more_than_20_des,
        ];
 
        if ($getAll) {
@@ -153,7 +186,7 @@ class XinDongService extends ServiceBase
        }
        return $map;
 
-    } 
+    }  
 
     // 获取企业类型
      function getCompanyOrgType($getAll = false) 
@@ -1191,22 +1224,7 @@ class XinDongService extends ServiceBase
         ])->save();
      }
 
-     function getCompanyBasicInfo(){
-        $retData [] = sqlRaw("select full_name from nic_code where  limit 1 ", CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
-
-        return $retData;
-        
-         $sql = "select full_name from nic_code  limit 2 ";
-        $retData =  sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
-        CommonService::getInstance()->log4PHP(json_encode($retData), 'info', 'souke.log');
-
-        $retData2 = sqlRaw("select * from company  LIMIT 1 ", 
-        CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
-        CommonService::getInstance()->log4PHP(json_encode($retData2), 'info', 'souke.log');
-
-        return [
-            $retData,
-            $retData2
-        ];
+     function getCompanyBasicInfo(){ 
+        return [ ];
      }
 }
