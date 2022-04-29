@@ -918,6 +918,7 @@ eof;
         $siJiFenLeiStrs && $siJiFenLeiArr = explode(',', $siJiFenLeiStrs);
         // $siJiFenLeiArr = ['Q8512','F5172'];
         if(!empty($siJiFenLeiArr)){
+            $boolQuery = [];
             foreach($siJiFenLeiArr as $item){
                 $boolQuery['bool']['should'][] = 
                 ['match_phrase' => ['si_ji_fen_lei_code' => $item]];
@@ -925,7 +926,18 @@ eof;
             $queryArr['query']['bool']['must'][] = $boolQuery;
         }
 
-        // 地区
+        // 地区 basic_regionid: 110101,110102,
+        $basiRegionidStr = trim($this->request()->getRequestParam('basic_regionid', ''));
+        $basiRegionidStr = "110101,110102";
+        $basiRegionidStr && $basiRegionidArr = explode(',',$basiRegionidStr);
+        if(!empty($basiRegionidArr)){ 
+            $boolQuery = [];
+            foreach($basiRegionidArr as $item){
+                $boolQuery['bool']['should'][] = 
+                ['prefix' => ['reg_number' => $item]];
+            }
+            $queryArr['query']['bool']['must'][] = $boolQuery;
+        }
 
         if(empty($queryArr)){
             $size = $this->request()->getRequestParam('size')??10;
