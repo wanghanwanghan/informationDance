@@ -978,7 +978,7 @@ eof;
             'basic_opscope' =>trim($this->request()->getRequestParam('basic_opscope')),
         ];
         foreach($addMustMatchPhraseQueryMap as $field=>$value){
-            $ElasticSearchService->addMustMatchPhraseQuery( $field , $value) ; 
+            $value && $ElasticSearchService->addMustMatchPhraseQuery( $field , $value) ; 
         } 
 
         //传过来的searchOption 例子 [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
@@ -1016,9 +1016,9 @@ eof;
         // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索  
         $matchedCnames = [];
         foreach($org_type_values as $orgType){
-            $matchedCnames[] = (new XinDongService())->getCompanyOrgType()[$orgType]; 
+            $orgType && $matchedCnames[] = (new XinDongService())->getCompanyOrgType()[$orgType]; 
         }
-        $ElasticSearchService->addMustShouldPhraseQuery( 'company_org_type' , $matchedCnames) ;
+        (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldPhraseQuery( 'company_org_type' , $matchedCnames) ;
     
         // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索
         $matchedCnames = [];
@@ -1035,16 +1035,16 @@ eof;
             20 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -20 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -15 year'))  ],
         ];
         foreach($estiblish_time_values as $item){
-            $matchedCnames[] = $map[$item]; 
+            $item && $matchedCnames[] = $map[$item]; 
         } 
-        $ElasticSearchService->addMustShouldRangeQuery( 'estiblish_time' , $matchedCnames) ; 
+        (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldRangeQuery( 'estiblish_time' , $matchedCnames) ; 
     
         // 营业状态   传过来的是 10  20  转换成文案后 去匹配  
         $matchedCnames = [];
         foreach($reg_status_values as $item){
-            $matchedCnames[] = (new XinDongService())->getRegStatus()[$item]; 
+            $item && $matchedCnames[] = (new XinDongService())->getRegStatus()[$item]; 
         }
-        $ElasticSearchService->addMustShouldPhraseQuery( 'reg_status' , $matchedCnames) ; 
+        (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldPhraseQuery( 'reg_status' , $matchedCnames) ; 
     
         // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
         $map = [
@@ -1063,30 +1063,29 @@ eof;
         ];
         $matchedCnames = [];
         foreach($reg_capital_values as $item){
-            $matchedCnames[] = $map[$item]; 
+            $item && $matchedCnames[] = $map[$item]; 
         } 
-        $ElasticSearchService->addMustShouldRangeQuery( 'reg_capital' , $matchedCnames) ;  
+        (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldRangeQuery( 'reg_capital' , $matchedCnames) ;  
          
         // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
-        if($item['pid'] == 50){ 
-            $map = [
-                5 => ['A1','A2'], //微型
-                10 => ['A3','A4'], //小型C类
-                15 => ['A5'],// 小型B类
-                20 => ['A6','A7'],// 小型A类
-                25 => ['A8','A9'],// 中型C类
-                30 => ['A10','A11','A12'],// 中型B类
-                40 => ['A13','A14'],// 中型A类
-                45 => ['A15','A16','A17','A18'],// 大型C类
-                50 => ['A19','A20','A21','A22','A23'],//大型B类 
-            ];
- 
-            $matchedCnames = [];
-            foreach($ying_shou_gui_mo_values as $item){
-                $matchedCnames[] = $map[$item]; 
-            }
-            $ElasticSearchService->addMustShouldPhraseQuery( 'ying_shou_gui_mo' , $matchedCnames) ;  
+        $map = [
+            5 => ['A1','A2'], //微型
+            10 => ['A3','A4'], //小型C类
+            15 => ['A5'],// 小型B类
+            20 => ['A6','A7'],// 小型A类
+            25 => ['A8','A9'],// 中型C类
+            30 => ['A10','A11','A12'],// 中型B类
+            40 => ['A13','A14'],// 中型A类
+            45 => ['A15','A16','A17','A18'],// 大型C类
+            50 => ['A19','A20','A21','A22','A23'],//大型B类 
+        ];
+
+        $matchedCnames = [];
+        foreach($ying_shou_gui_mo_values as $item){
+            $item && $matchedCnames[] = $map[$item]; 
         }
+        (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldPhraseQuery( 'ying_shou_gui_mo' , $matchedCnames) ;  
+    
          
         
         //四级分类 basic_nicid: A0111,A0112,A0113,
