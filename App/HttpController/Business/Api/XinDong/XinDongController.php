@@ -1106,19 +1106,21 @@ eof;
      */
     function getHighTecQualifications(): bool
     {  
-        // $companyId = intval($this->request()->getRequestParam('id')); 
-        // if (!$companyId) {
-        //     $this->writeJson(201, null, null, '参数缺失');
-        // }
+        $page = intval($this->request()->getRequestParam('page',1)); 
+        $size = intval($this->request()->getRequestParam('size',10)); 
+        $offset = ($page-1)*$size; 
         
-        // $info = PurchaseList::create()->limit($this->exprOffset($page, $pageSize), (int)$pageSize)->all();
+        // $info = PurchaseList::create()
+        // ->limit($offset, $size), (int)$pageSize)->all();
 
-        // //数据的总记录条数
-        // $total = PurchaseList::create()->count();
+        //数据的总记录条数
+        // $total = \App\HttpController\Models\RDS3\XdHighTec::create()->count();
 
         // ['page' => $page, 'pageSize' => $pageSize, 'total' => $total]
 
-        $retData  =\App\HttpController\Models\RDS3\XdHighTec::create()->limit(2)->all();
+        $retData  =\App\HttpController\Models\RDS3\XdHighTec::create()
+        ->limit($offset, $size)
+        ->all();
         
         return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
     }
@@ -1218,7 +1220,8 @@ eof;
             return $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
         
-        $retData  =\App\HttpController\Models\RDS3\XdAppAndroid::create()->where('xd_id', $companyId)->limt(2)->all();
+        // $retData  =\App\HttpController\Models\RDS3\XdAppAndroid::create()->where('xd_id', $companyId)->limt(2)->all();
+        $retData  =\App\HttpController\Models\RDS3\XdAppAndroid::create()->limit(2)->all();
         
         return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
     }
