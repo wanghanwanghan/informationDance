@@ -704,7 +704,7 @@ eof;
       * 
       * 
      */
-    function advancedSearch(): bool
+    function advancedSearch2(): bool
     { 
          $postData = $this->formatRequestData(
             $this->request()->getRequestParam(),
@@ -763,7 +763,7 @@ eof;
       * 
       * 
      */
-    function advancedSearch2(): bool
+    function advancedSearch(): bool
     { 
         $queryArr = [];
         
@@ -928,7 +928,7 @@ eof;
 
         // 地区 basic_regionid: 110101,110102,
         $basiRegionidStr = trim($this->request()->getRequestParam('basic_regionid', ''));
-        $basiRegionidStr = "110101,110102";
+        // $basiRegionidStr = "110101,110102";
         $basiRegionidStr && $basiRegionidArr = explode(',',$basiRegionidStr);
         if(!empty($basiRegionidArr)){ 
             $boolQuery = [];
