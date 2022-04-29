@@ -1134,7 +1134,16 @@ class XinDongService extends ServiceBase
                 'desc' => '注册资本',
                 'key' => 'reg_capital',
                 'type' => 'select',
-                'data' => $this->getRegCapital(),
+                // 'data' => $this->getRegCapital(),
+                'data' =>  [
+                    10 => '100万以内',
+                    15 => '100-500万',
+                    20 => '500-1000万',
+                    25 => '1000万-5000万',
+                    30 => '5000万-1亿',
+                    35 => '1亿-10亿',
+                    40 => '10亿以上',  
+                ],
             ],
             [
                 'pid' => 50,
