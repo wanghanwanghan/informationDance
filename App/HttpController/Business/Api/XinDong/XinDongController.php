@@ -838,9 +838,9 @@ eof;
                 foreach($map  as $type=>$subItem){
                     if(in_array($type, $item['value'])){
                         $boolQuery['bool']['should'][] = 
-                            ['range' => ['estiblish_time' => ['lte' => $subItem['max'] ]]];
-                        $boolQuery['bool']['should'][] = 
-                            ['range' => ['estiblish_time' => ['gte' => $subItem['min'] ]]];
+                            ['range' => ['estiblish_time' => ['lte' => $subItem['max'],'gte' => $subItem['min'] ]]];
+                        // $boolQuery['bool']['should'][] = 
+                        //     ['range' => ['estiblish_time' => ['gte' => $subItem['min'] ]]];
                     } ;
                 } 
                 $queryArr['query']['bool']['must'][] = $boolQuery;
@@ -887,9 +887,9 @@ eof;
                 foreach($map  as $type=>$subItem){
                     if(in_array($type, $item['value'])){
                         $boolQuery['bool']['should'][] = 
-                            ['range' => ['reg_capital' => ['lte' => $subItem['max'] ]]];
-                        $boolQuery['bool']['should'][] = 
-                            ['range' => ['reg_capital' => ['gte' => $subItem['min'] ]]];
+                            ['range' => ['reg_capital' => ['lte' => $subItem['max'],'gte' => $subItem['min'] ]]];
+                        // $boolQuery['bool']['should'][] = 
+                        //     ['range' => ['reg_capital' => ['gte' => $subItem['min'] ]]];
                     } ;
                 } 
                 $queryArr['query']['bool']['must'][] = $boolQuery;
