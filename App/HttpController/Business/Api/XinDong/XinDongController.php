@@ -963,107 +963,126 @@ eof;
     // 新版（尚未启用|）
     function advancedSearch2(): bool
     { 
-        $ElasticSearchService = new ElasticSearchService();
-
-        $queryArr = [];
+        $ElasticSearchService = new ElasticSearchService(); 
         
-        //名称  name  全名匹配 
-        $name = trim($this->request()->getRequestParam('searchText', ''));
-        // $name = '北京德';
-        if ($name) {
-            $ElasticSearchService->addMustMatchPhraseQuery( 'name' , $name) ; 
-        }
-
-        // basic_opscope: 经营范围
-        $basic_opscope = trim($this->request()->getRequestParam('basic_opscope', ''));
-        // $basic_opscope = "外科(骨科专业)";
-        if($basic_opscope){
-            $ElasticSearchService->addMustMatchPhraseQuery( 'business_scope' , $basic_opscope) ;
+        // 需要按文本搜索的  
+        $addMustMatchPhraseQueryMap = [
+            // 名称  name  全名匹配 
+            'name' =>trim($this->request()->getRequestParam('searchText')),
+            // basic_opscope: 经营范围
+            'basic_opscope' =>trim($this->request()->getRequestParam('basic_opscope')),
+        ];
+        foreach($addMustMatchPhraseQueryMap as $field=>$value){
+            $ElasticSearchService->addMustMatchPhraseQuery( $field , $value) ; 
         } 
 
-        // [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
+        //传过来的searchOption 例子 [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
         $searchOptionStr =  trim($this->request()->getRequestParam('searchOption', ''));
         $searchOptionArr = json_decode($searchOptionStr, true);
-         
-        foreach($searchOptionArr as $item){
-            // 企业类型   
+        
+        // 把具体需要搜索的各项摘出来
+        $org_type_values = [];  // 企业类型  
+        $estiblish_time_values = [];  // 成立年限  
+        $reg_status_values = [];// 营业状态 
+        $reg_capital_values = [];  // 注册资本
+        $ying_shou_gui_mo_values = [];  // 营收规模
+        foreach($searchOptionArr as $item){ 
             if($item['pid'] == 10){
-                $orgTypes = explode(',',$item['value']); 
-                $matchedCnames = [];
-                foreach($orgTypes as $orgType){
-                    $matchedCnames[] = (new XinDongService())->getCompanyOrgType()[$orgType]; 
-                }
-                $ElasticSearchService->addMustShouldPhraseQuery( 'company_org_type' , $matchedCnames) ;
+                $org_type_values = explode(',',$item['value']);  
             }
-
-            // 成立年限  
+ 
             if($item['pid'] == 20){ 
-                $map = [
-                    // 2年以内
-                    2 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -2 year')), 'max' => date('Y-m-d')  ],
-                    // 2-5年
-                    5 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -5 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -2 year'))  ],
-                    // 5-10年
-                    10 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -10 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -5 year'))  ],
-                    // 10-15年
-                    15 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -15 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -10 year'))  ],
-                    // 15-20年
-                    20 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -20 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -15 year'))  ],
-                ];
-                $ElasticSearchService->addMustShouldRangeQuery( 'estiblish_time' , $matchedCnames) ; 
+                $estiblish_time_values = explode(',',$item['value']); 
             }
-
-            // 营业状态   
+   
             if($item['pid'] == 30){
-                $regStatuss = explode(',',$item['value']); 
-                $matchedCnames = [];
-                foreach($regStatuss as $regStatus){
-                    $matchedCnames[] = (new XinDongService())->getRegStatus()[$regStatus]; 
-                }
-                $ElasticSearchService->addMustShouldPhraseQuery( 'reg_status' , $matchedCnames) ; 
+                $reg_status_values = explode(',',$item['value']); 
             }
-
-            // 注册资本
+ 
             if($item['pid'] == 40){ 
-                $map = [
-                    // 50万以下 
-                    5 => ['min'=>0, 'max' => 50  ],
-                    // 50-100万
-                    10 =>  ['min'=>50, 'max' => 100  ], 
-                    // 100-200万
-                    20 =>  ['min'=>100, 'max' => 200  ],
-                    // 200-500万
-                    30 =>  ['min'=>200, 'max' => 500  ],
-                    // 500-1000万
-                    40 =>  ['min'=>500, 'max' => 1000  ],
-                    // 1000-1亿
-                    50 =>  ['min'=>1000, 'max' => 10000  ],
-                ];
-                $ElasticSearchService->addMustShouldRangeQuery( 'reg_capital' , $map) ; 
+                $reg_capital_values = explode(',',$item['value']);  
             }
-
-            // 营收规模 
+  
             if($item['pid'] == 50){ 
-                $map = [
-                    5 => ['A1','A2'], //微型
-                    10 => ['A3','A4'], //小型C类
-                    15 => ['A5'],// 小型B类
-                    20 => ['A6','A7'],// 小型A类
-                    25 => ['A8','A9'],// 中型C类
-                    30 => ['A10','A11','A12'],// 中型B类
-                    40 => ['A13','A14'],// 中型A类
-                    45 => ['A15','A16','A17','A18'],// 大型C类
-                    50 => ['A19','A20','A21','A22','A23'],//大型B类 
-                ];
-
-                $arrs = explode(',',$item['value']); 
-                $matchedCnames = [];
-                foreach($arrs as $item){
-                    $matchedCnames[] = $map[$item]; 
-                }
-                $ElasticSearchService->addMustShouldPhraseQuery( 'ying_shou_gui_mo' , $matchedCnames) ;  
+                $ying_shou_gui_mo_values = explode(',',$item['value']);
             }
         }
+
+        // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索  
+        $matchedCnames = [];
+        foreach($org_type_values as $orgType){
+            $matchedCnames[] = (new XinDongService())->getCompanyOrgType()[$orgType]; 
+        }
+        $ElasticSearchService->addMustShouldPhraseQuery( 'company_org_type' , $matchedCnames) ;
+    
+        // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索
+        $matchedCnames = [];
+        $map = [
+            // 2年以内
+            2 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -2 year')), 'max' => date('Y-m-d')  ],
+            // 2-5年
+            5 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -5 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -2 year'))  ],
+            // 5-10年
+            10 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -10 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -5 year'))  ],
+            // 10-15年
+            15 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -15 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -10 year'))  ],
+            // 15-20年
+            20 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -20 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -15 year'))  ],
+        ];
+        foreach($estiblish_time_values as $item){
+            $matchedCnames[] = $map[$item]; 
+        } 
+        $ElasticSearchService->addMustShouldRangeQuery( 'estiblish_time' , $matchedCnames) ; 
+    
+        // 营业状态   传过来的是 10  20  转换成文案后 去匹配  
+        $matchedCnames = [];
+        foreach($reg_status_values as $item){
+            $matchedCnames[] = (new XinDongService())->getRegStatus()[$item]; 
+        }
+        $ElasticSearchService->addMustShouldPhraseQuery( 'reg_status' , $matchedCnames) ; 
+    
+        // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
+        $map = [
+            // 50万以下 
+            5 => ['min'=>0, 'max' => 50  ],
+            // 50-100万
+            10 =>  ['min'=>50, 'max' => 100  ], 
+            // 100-200万
+            20 =>  ['min'=>100, 'max' => 200  ],
+            // 200-500万
+            30 =>  ['min'=>200, 'max' => 500  ],
+            // 500-1000万
+            40 =>  ['min'=>500, 'max' => 1000  ],
+            // 1000-1亿
+            50 =>  ['min'=>1000, 'max' => 10000  ],
+        ];
+        $matchedCnames = [];
+        foreach($reg_capital_values as $item){
+            $matchedCnames[] = $map[$item]; 
+        } 
+        $ElasticSearchService->addMustShouldRangeQuery( 'reg_capital' , $matchedCnames) ;  
+         
+        // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
+        if($item['pid'] == 50){ 
+            $map = [
+                5 => ['A1','A2'], //微型
+                10 => ['A3','A4'], //小型C类
+                15 => ['A5'],// 小型B类
+                20 => ['A6','A7'],// 小型A类
+                25 => ['A8','A9'],// 中型C类
+                30 => ['A10','A11','A12'],// 中型B类
+                40 => ['A13','A14'],// 中型A类
+                45 => ['A15','A16','A17','A18'],// 大型C类
+                50 => ['A19','A20','A21','A22','A23'],//大型B类 
+            ];
+ 
+            $matchedCnames = [];
+            foreach($ying_shou_gui_mo_values as $item){
+                $matchedCnames[] = $map[$item]; 
+            }
+            $ElasticSearchService->addMustShouldPhraseQuery( 'ying_shou_gui_mo' , $matchedCnames) ;  
+        }
+         
         
         //四级分类 basic_nicid: A0111,A0112,A0113,
         $siJiFenLeiStrs = trim($this->request()->getRequestParam('basic_nicid', ''));
@@ -1078,42 +1097,26 @@ eof;
         if(!empty($basiRegionidArr)){ 
             $ElasticSearchService->addMustShouldPrefixQuery( 'si_ji_fen_lei_code' , $siJiFenLeiArr) ;  
         }
-        $ElasticSearchService->addSize() ;
-        $ElasticSearchService->setDefault() ;
-        if(empty($queryArr)){
-            $size = $this->request()->getRequestParam('size')??10;
-            $page = $this->request()->getRequestParam('page')??1;
-            $offset  =  ($page-1)*$size;
-            $queryArr = '{"size":"'.($size).'","from":'.$offset.',"query":{"bool":{"must":[{"match_all":{}}]}}}';
-        }
 
-        UserSearchHistory::create()->data([
-            'userId' => $this->loginUserinfo['id'],
-            'query' => is_array($queryArr)?json_encode($queryArr):$queryArr,
-            'query_cname' =>json_encode($this->request()->getRequestParam()),
-        ])->save(); 
+        $size = $this->request()->getRequestParam('size')??10;
+        $page = $this->request()->getRequestParam('page')??1;
+        $offset  =  ($page-1)*$size;
+        $ElasticSearchService->addSize($size) ;
+        $ElasticSearchService->addFrom($offset) ;
 
-        $elasticsearch = new ElasticSearch(
-            new  Config([
-                'host' => "es-cn-7mz2m3tqe000cxkfn.public.elasticsearch.aliyuncs.com",
-                'port' => 9200,
-                'username'=>'elastic',
-                'password'=>'zbxlbj@2018*()',
-            ])
-        ); 
-        $bean = new  Search();
-        $bean->setIndex('company_287_all');
-        $bean->setType('_doc');
-        $bean->setBody($queryArr);
-        $response = $elasticsearch->client()->search($bean)->getBody(); 
-        CommonService::getInstance()->log4PHP(json_encode(['re-query'=>$queryArr]), 'info', 'souke.log');
-        CommonService::getInstance()->log4PHP(json_encode(['re-response'=>$response]), 'info', 'souke.log');
+        //设置默认值 不传任何条件 搜全部
+        $ElasticSearchService->setDefault() ;  
+       
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
+        $responseArr = @json_decode($responseJson,true); 
         
-        // $elasticSearchService =  (new XinDongService())->setEsSearchQuery($postData,(new ElasticSearchService())); 
-       
-        // $responseJson = (new XinDongService())->advancedSearch($elasticSearchService);
-        $responseArr = @json_decode($response,true); 
-       
+        // 记录搜索历史
+        (new XinDongService())->saveSearchHistory(
+            $this->loginUserinfo['id'], 
+            is_array($ElasticSearchService->query)?json_encode($ElasticSearchService->query):$ElasticSearchService->query, 
+            json_encode($this->request()->getRequestParam())
+        );
+
         return $this->writeJson(200, 
           [
             'page' => $page,
