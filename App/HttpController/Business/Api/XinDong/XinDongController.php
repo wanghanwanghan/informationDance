@@ -1323,14 +1323,12 @@ eof;
         if (!$companyId) {
             return  $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
-
-        $retData  =\App\HttpController\Models\RDS3\XdDlRzGlTx::create()
-        ->where('xd_id', $companyId)
-        ->limit($offset, $size)->all();
+ 
+        $model = \App\HttpController\Models\RDS3\XdDlRzGlTx::create()
+            ->where('xd_id', $companyId)->page($page)->withTotalCount();
+        $retData = $model->all();
+        $total = $model->lastQueryResult()->getTotalCount(); 
         
-        //数据的总记录条数
-        $total = \App\HttpController\Models\RDS3\XdDlRzGlTx::create()->where('xd_id', $companyId)->count();
-
         return $this->writeJson(200,
          ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)],
           $retData, '成功', true, []);
@@ -1353,7 +1351,7 @@ eof;
         
         $retData  =\App\HttpController\Models\RDS3\TuanDuiGuiMo::create()->where('xd_id', $companyId)->get();
         
-        return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
+        return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
     }
 
      /**
@@ -1372,7 +1370,7 @@ eof;
         
         $retData  =\App\HttpController\Models\RDS3\ArLable::create()->where('entname', $entname)->get();
         
-        return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
+        return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
     }
 
     /**
@@ -1401,13 +1399,15 @@ eof;
         }
 
         if($type == 'ios'){  
-            $model = \App\HttpController\Models\RDS3\XdAppIos::create()->page($page)->withTotalCount();
+            $model = \App\HttpController\Models\RDS3\XdAppIos::create()
+            ->where('xd_id', $companyId)->page($page)->withTotalCount();
             $retData = $model->all();
             $total = $model->lastQueryResult()->getTotalCount(); 
         }
 
         if($type == 'andoriod'){
-            $model = \App\HttpController\Models\RDS3\XdAppAndroid::create()->page($page)->withTotalCount();
+            $model = \App\HttpController\Models\RDS3\XdAppAndroid::create()
+            ->where('xd_id', $companyId)->page($page)->withTotalCount();
             $retData = $model->all();
             $total = $model->lastQueryResult()->getTotalCount();  
         } 
