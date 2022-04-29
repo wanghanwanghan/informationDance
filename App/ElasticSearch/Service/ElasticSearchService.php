@@ -90,9 +90,9 @@ class ElasticSearchService extends ServiceBase
         $boolQuery = [];  
         foreach($map  as $subItem){
             $boolQuery['bool']['should'][] = 
-                    ['range' => [$field => ['lte' => $subItem['max'] ]]];
-            $boolQuery['bool']['should'][] = 
-                ['range' => [$field => ['gte' => $subItem['min'] ]]];
+                    ['range' => [$field => ['lte' => $subItem['max'] ,'gte' => $subItem['min']]]];
+            // $boolQuery['bool']['should'][] = 
+            //     ['range' => [$field => ['gte' => $subItem['min'] ]]];
         } 
         
         $this->query['query']['bool']['must'][] = $boolQuery; 
