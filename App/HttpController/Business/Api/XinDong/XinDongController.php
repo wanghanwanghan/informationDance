@@ -1296,10 +1296,16 @@ eof;
         $size = $size>0 ?:10; 
         $offset = ($page-1)*$size;  
 
+        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
         //数据的总记录条数
-        $total = \App\HttpController\Models\RDS3\XdHighTec::create()->count(); 
+        $total = \App\HttpController\Models\RDS3\XdHighTec::create()->where('xd_id', $companyId)->count(); 
 
         $retData  =\App\HttpController\Models\RDS3\XdHighTec::create()
+        ->where('xd_id', $companyId)
         ->limit($offset, $size)
         ->all();
         
@@ -1322,10 +1328,17 @@ eof;
         $size = intval($this->request()->getRequestParam('size')); 
         $size = $size>0 ?:10; 
         $offset = ($page-1)*$size;  
-        
-        $retData  =\App\HttpController\Models\RDS3\XdDl::create()->limit($offset, $size)->all();
+
+        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+        $retData  =\App\HttpController\Models\RDS3\XdDl::create()
+        ->where('xd_id', $companyId)
+        ->limit($offset, $size)->all();
         //数据的总记录条数
-        $total = \App\HttpController\Models\RDS3\XdDl::create()->count();
+        $total = \App\HttpController\Models\RDS3\XdDl::create()->where('xd_id', $companyId)->count();
 
         return $this->writeJson(200,
          ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)],
@@ -1347,10 +1360,17 @@ eof;
         $size = $size>0 ?:10; 
         $offset = ($page-1)*$size;  
         
-        $retData  =\App\HttpController\Models\RDS3\XdDlRzGlTx::create()->limit($offset, $size)->all();
+        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+        $retData  =\App\HttpController\Models\RDS3\XdDlRzGlTx::create()
+        ->where('xd_id', $companyId)
+        ->limit($offset, $size)->all();
         
         //数据的总记录条数
-        $total = \App\HttpController\Models\RDS3\XdDlRzGlTx::create()->count();
+        $total = \App\HttpController\Models\RDS3\XdDlRzGlTx::create()->where('xd_id', $companyId)->count();
 
         return $this->writeJson(200,
          ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)],
