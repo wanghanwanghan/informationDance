@@ -704,7 +704,7 @@ eof;
       * 
       * 
      */
-    function advancedSearch2(): bool
+    function advancedSearch(): bool
     { 
          $postData = $this->formatRequestData(
             $this->request()->getRequestParam(),
@@ -763,7 +763,7 @@ eof;
       * 
       * 
      */
-    function advancedSearch(): bool
+    function advancedSearch2(): bool
     { 
         $queryArr = [];
         
@@ -924,6 +924,8 @@ eof;
             }
             $queryArr['query']['bool']['must'][] = $boolQuery;
         }
+
+        // 地区
 
         if(empty($queryArr)){
             $size = $this->request()->getRequestParam('size')??10;
@@ -1204,7 +1206,7 @@ eof;
             return $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
         
-        $retData  =\App\HttpController\Models\RDS3\XdAppAndroid::create()->where('xd_id', $companyId)->get();
+        $retData  =\App\HttpController\Models\RDS3\XdAppAndroid::create()->where('xd_id', $companyId)->limt(2)->all();
         
         return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
     }
