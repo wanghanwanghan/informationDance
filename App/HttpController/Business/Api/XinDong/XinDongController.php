@@ -983,8 +983,8 @@ eof;
           [
             'page' => $page,
             'pageSize' =>$size,
-            'total' => intval($responseArr['hits']['total']),
-            'totalPage' => (int)floor(intval($responseArr['hits']['total'])/
+            'total' => intval($responseArr['hits']['total']['value']),
+            'totalPage' => (int)floor(intval($responseArr['hits']['total']['value'])/
             ($size)),
          
         ] 
