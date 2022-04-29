@@ -769,7 +769,7 @@ eof;
         
         //名称  name  全名匹配 {"query":{"bool":{"must":[{"match_phrase":{"name":"北京德龙"}}]}}}
         $name = trim($this->request()->getRequestParam('searchText', ''));
-        $name = '北京德';
+        // $name = '北京德';
         if ($name) {
             $queryArr['query']['bool']['must'][] = [
                 'match_phrase' => [
@@ -780,7 +780,7 @@ eof;
 
         // basic_opscope: 经营范围
         $basic_opscope = trim($this->request()->getRequestParam('basic_opscope', ''));
-        $basic_opscope = "外科(骨科专业)";
+        // $basic_opscope = "外科(骨科专业)";
         if($basic_opscope){
             $queryArr['query']['bool']['must'][] = [
                 'match_phrase' => [
@@ -793,20 +793,20 @@ eof;
         // [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
         $searchOptionStr =  trim($this->request()->getRequestParam('searchOption', ''));
         $searchOptionArr = json_decode($searchOptionStr, true);
-        $searchOptionArr = [
-            [
-                'type' => 10,
-                'value' => [10,15,20]
-            ],
-            [
-                'type' => 20,
-                'value' => [10,15,20]
-            ],
-            [
-                'type' => 50,
-                'value' => [40,45,50]
-            ],
-        ];
+        // $searchOptionArr = [
+        //     [
+        //         'type' => 10,
+        //         'value' => [10,15,20]
+        //     ],
+        //     [
+        //         'type' => 20,
+        //         'value' => [10,15,20]
+        //     ],
+        //     [
+        //         'type' => 50,
+        //         'value' => [40,45,50]
+        //     ],
+        // ];
         foreach($searchOptionArr as $item){
             // 企业类型  {"query":{"bool":{"must":[{"bool":{"should":[{"match_phrase":{"company_org_type":"有限责任公司"}},{"match_phrase":{"company_org_type":"股份"}}]}},{"bool":{"should":[{"match_phrase":{"reg_location":"北京"}},{"match_phrase":{"reg_location":"上海"}}]}},{"match_phrase":{"name":"北京德龙"}}]}}}
             if($item['type'] == 10){
@@ -916,7 +916,7 @@ eof;
         //四级分类 basic_nicid: A0111,A0112,A0113,
         $siJiFenLeiStrs = trim($this->request()->getRequestParam('basic_nicid', ''));
         $siJiFenLeiArr = explode(',', $siJiFenLeiStrs);
-        $siJiFenLeiArr = ['Q8512','F5172'];
+        // $siJiFenLeiArr = ['Q8512','F5172'];
         if(!empty($siJiFenLeiArr)){
             foreach($siJiFenLeiArr as $item){
                 $boolQuery['bool']['should'][] = 
@@ -926,8 +926,8 @@ eof;
         }
 
         if(empty($queryArr)){
-            $size = $this->request()->getRequestParam('size',10);
-            $page = $this->request()->getRequestParam('page',1);
+            $size = $this->request()->getRequestParam('size')??10;
+            $page = $this->request()->getRequestParam('page')??1;
             $offset  =  ($page-1)*$size;
             $queryArr = '{
                 "size": "'.($size).'",
@@ -1107,6 +1107,13 @@ eof;
         //     $this->writeJson(201, null, null, '参数缺失');
         // }
         
+        // $info = PurchaseList::create()->limit($this->exprOffset($page, $pageSize), (int)$pageSize)->all();
+
+        // //数据的总记录条数
+        // $total = PurchaseList::create()->count();
+
+        // ['page' => $page, 'pageSize' => $pageSize, 'total' => $total]
+
         $retData  =\App\HttpController\Models\RDS3\XdHighTec::create()->limit(2)->all();
         
         return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
