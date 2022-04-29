@@ -1244,7 +1244,7 @@ eof;
         ->all();
 
         //数据的总记录条数
-        $total = \App\HttpController\Models\RDS3\XdDlRzGlTx::create()
+        $total = \App\HttpController\Models\RDS3\XdAppAndroid::create()
         ->where('xd_id', $companyId)
         ->count();
 
