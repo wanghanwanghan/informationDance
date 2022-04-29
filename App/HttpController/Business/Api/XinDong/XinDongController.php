@@ -1106,15 +1106,15 @@ eof;
      */
     function getHighTecQualifications(): bool
     {  
-        $page = intval($this->request()->getRequestParam('page',1)); 
-        $size = intval($this->request()->getRequestParam('size',10)); 
+        $page = intval($this->request()->getRequestParam('page')) ?? 1; 
+        $size = intval($this->request()->getRequestParam('size')) ?? 10; 
         $offset = ($page-1)*$size; 
         
         // $info = PurchaseList::create()
         // ->limit($offset, $size), (int)$pageSize)->all();
 
         //数据的总记录条数
-        // $total = \App\HttpController\Models\RDS3\XdHighTec::create()->count();
+        $total = \App\HttpController\Models\RDS3\XdHighTec::create()->count();
 
         // ['page' => $page, 'pageSize' => $pageSize, 'total' => $total]
 
@@ -1122,7 +1122,7 @@ eof;
         ->limit($offset, $size)
         ->all();
         
-        return $this->writeJson(200, ['total' => 100], $retData, '成功', true, []);
+        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, ], $retData, '成功', true, []);
     }
 
     /**
