@@ -1196,7 +1196,7 @@ eof;
         $model = \App\HttpController\Models\RDS3\XdHighTec::create()
             ->where('xd_id', $companyId)->page($page)->withTotalCount();
         $retData = $model->all(); 
-
+        $total = $model->lastQueryResult()->getTotalCount(); 
         return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
     }
 
@@ -1223,7 +1223,7 @@ eof;
         $model = \App\HttpController\Models\RDS3\XdDl::create()
             ->where('xd_id', $companyId)->page($page)->withTotalCount();
         $retData = $model->all();
-
+        $total = $model->lastQueryResult()->getTotalCount(); 
         return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
     }
 
