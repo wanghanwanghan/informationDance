@@ -915,7 +915,7 @@ eof;
         
         //四级分类 basic_nicid: A0111,A0112,A0113,
         $siJiFenLeiStrs = trim($this->request()->getRequestParam('basic_nicid', ''));
-        $siJiFenLeiArr = explode(',', $siJiFenLeiStrs);
+        $siJiFenLeiStrs && $siJiFenLeiArr = explode(',', $siJiFenLeiStrs);
         // $siJiFenLeiArr = ['Q8512','F5172'];
         if(!empty($siJiFenLeiArr)){
             foreach($siJiFenLeiArr as $item){
