@@ -1119,10 +1119,12 @@ eof;
         // ['page' => $page, 'pageSize' => $pageSize, 'total' => $total]
 
         $retData  =\App\HttpController\Models\RDS3\XdHighTec::create()
-        ->limit($offset, $size)
+        ->limit(1, 20)
         ->all();
         
-        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, ], $retData, '成功', true, []);
+        return $this->writeJson(200,
+         ['total' => $total,'page' => $page, 'pageSize' => $size, ],
+          $retData, '成功', true, []);
     }
 
     /**
