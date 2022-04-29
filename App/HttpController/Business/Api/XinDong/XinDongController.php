@@ -809,7 +809,7 @@ eof;
         // ];
         foreach($searchOptionArr as $item){
             // 企业类型  {"query":{"bool":{"must":[{"bool":{"should":[{"match_phrase":{"company_org_type":"有限责任公司"}},{"match_phrase":{"company_org_type":"股份"}}]}},{"bool":{"should":[{"match_phrase":{"reg_location":"北京"}},{"match_phrase":{"reg_location":"上海"}}]}},{"match_phrase":{"name":"北京德龙"}}]}}}
-            if($item['type'] == 10){
+            if($item['pid'] == 10){
                 $boolQuery = []; 
                 foreach((new XinDongService())->getCompanyOrgType() as $type=>$cname){
                     if(in_array($type, $item['value'])){
@@ -821,7 +821,7 @@ eof;
             }
 
             // 成立年限  {"query":{"bool":{"must":[{"bool":{"should":[{"match_phrase":{"company_org_type":"有限责任公司"}},{"match_phrase":{"company_org_type":"股份"}}]}},{"bool":{"should":[{"range":{"estiblish_time":{"gte":"1997-05-12 "}}},{"range":{"estiblish_time":{"lte":"2022-05-12 "}}}]}},{"match_phrase":{"name":"北京德龙"}}]}}}
-            if($item['type'] == 20){
+            if($item['pid'] == 20){
                 $boolQuery = []; 
                 $map = [
                     // 2年以内
@@ -847,7 +847,7 @@ eof;
             }
 
             // 营业状态   {"query":{"bool":{"must":[{"bool":{"should":[{"match_phrase":{"company_org_type":"有限责任公司"}},{"match_phrase":{"company_org_type":"股份"}}]}},{"bool":{"should":[{"match_phrase":{"reg_location":"北京"}},{"match_phrase":{"reg_location":"上海"}}]}},{"match_phrase":{"name":"北京德龙"}}]}}}
-            if($item['type'] == 30){
+            if($item['pid'] == 30){
                 $boolQuery = []; 
                 foreach((new XinDongService())->getRegStatus() as $type=>$cname){
                     if(in_array($type, $item['value'])){
@@ -859,7 +859,7 @@ eof;
             }
 
             // 注册资本
-            if($item['type'] == 40){
+            if($item['pid'] == 40){
                 $boolQuery = []; 
                 /*
                     10 => '100万以内',
@@ -896,7 +896,7 @@ eof;
             }
 
             // 营收规模 
-            if($item['type'] == 50){
+            if($item['pid'] == 50){
                 $boolQuery = []; 
                 $map = [
                     5 => ['A1','A2'], //微型
@@ -1043,7 +1043,7 @@ eof;
         // ];
         foreach($searchOptionArr as $item){
             // 企业类型  {"query":{"bool":{"must":[{"bool":{"should":[{"match_phrase":{"company_org_type":"有限责任公司"}},{"match_phrase":{"company_org_type":"股份"}}]}},{"bool":{"should":[{"match_phrase":{"reg_location":"北京"}},{"match_phrase":{"reg_location":"上海"}}]}},{"match_phrase":{"name":"北京德龙"}}]}}}
-            if($item['type'] == 10){
+            if($item['pid'] == 10){
                 $orgTypes = explode(',',$item['value']); 
                 $matchedCnames = [];
                 foreach($orgTypes as $orgType){
@@ -1053,7 +1053,7 @@ eof;
             }
 
             // 成立年限  {"query":{"bool":{"must":[{"bool":{"should":[{"match_phrase":{"company_org_type":"有限责任公司"}},{"match_phrase":{"company_org_type":"股份"}}]}},{"bool":{"should":[{"range":{"estiblish_time":{"gte":"1997-05-12 "}}},{"range":{"estiblish_time":{"lte":"2022-05-12 "}}}]}},{"match_phrase":{"name":"北京德龙"}}]}}}
-            if($item['type'] == 20){
+            if($item['pid'] == 20){
                 $boolQuery = []; 
                 $map = [
                     // 2年以内
@@ -1071,7 +1071,7 @@ eof;
             }
 
             // 营业状态   {"query":{"bool":{"must":[{"bool":{"should":[{"match_phrase":{"company_org_type":"有限责任公司"}},{"match_phrase":{"company_org_type":"股份"}}]}},{"bool":{"should":[{"match_phrase":{"reg_location":"北京"}},{"match_phrase":{"reg_location":"上海"}}]}},{"match_phrase":{"name":"北京德龙"}}]}}}
-            if($item['type'] == 30){
+            if($item['pid'] == 30){
                 $regStatuss = explode(',',$item['value']); 
                 $matchedCnames = [];
                 foreach($regStatuss as $regStatus){
@@ -1081,7 +1081,7 @@ eof;
             }
 
             // 注册资本
-            if($item['type'] == 40){
+            if($item['pid'] == 40){
                 $boolQuery = []; 
                 $map = [
                     // 50万以下 
@@ -1101,7 +1101,7 @@ eof;
             }
 
             // 营收规模 
-            if($item['type'] == 50){
+            if($item['pid'] == 50){
                 $boolQuery = []; 
                 $map = [
                     5 => ['A1','A2'], //微型
