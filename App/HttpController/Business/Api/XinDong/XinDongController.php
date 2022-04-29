@@ -916,7 +916,7 @@ eof;
             // 名称  name  全名匹配 
             'name' =>trim($this->request()->getRequestParam('searchText')),
             // basic_opscope: 经营范围
-            'basic_opscope' =>trim($this->request()->getRequestParam('basic_opscope')),
+            'business_scope' =>trim($this->request()->getRequestParam('basic_opscope')),
         ];
         foreach($addMustMatchPhraseQueryMap as $field=>$value){
             $value && $ElasticSearchService->addMustMatchPhraseQuery( $field , $value) ; 
