@@ -1134,7 +1134,16 @@ class XinDongService extends ServiceBase
                 'desc' => '注册资本',
                 'key' => 'reg_capital',
                 'type' => 'select',
-                'data' => $this->getRegCapital(),
+                // 'data' => $this->getRegCapital(),
+                'data' =>  [
+                    10 => '100万以内',
+                    15 => '100-500万',
+                    20 => '500-1000万',
+                    25 => '1000万-5000万',
+                    30 => '5000万-1亿',
+                    35 => '1亿-10亿',
+                    40 => '10亿以上',  
+                ],
             ],
             [
                 'pid' => 50,
@@ -1166,55 +1175,7 @@ class XinDongService extends ServiceBase
         CommonService::getInstance()->log4PHP(json_encode(['re-response'=>$response]), 'info', 'souke.log');
         
         return  $response;
-     }
-
-     function setEsSearchQuery($postData, $elasticSearchService){ 
-        $elasticSearchService->setByPage($postData['page'],$postData['size']); 
-       
-        // must match
-        $addMustMatchQueryLists = [
-            'company_org_type',
-            'business_scope',
-            'business_scope',
-            'reg_status',
-            'property1',
-            'ying_shou_gui_mo',
-            'si_ji_fen_lei_code',
-            'gao_xin_ji_shu',
-            'deng_ling_qi_ye',
-            'tuan_dui_ren_shu',
-            'tong_xun_di_zhi',
-            'web',
-            'yi_ban_ren',
-            'shang_shi_xin_xi',
-            'app',
-            'shang_pin_data',
-        ];
-        foreach($addMustMatchQueryLists as $field){
-            !empty($postData[$field]) && $elasticSearchService->addMustMatchQuery($field, $postData[$field]);
-        }
-
-        // must match_phrase
-        $addMustMatchPhraseQueryLists = [
-            'name',
-        ];
-        foreach($addMustMatchPhraseQueryLists as $field){
-            !empty($postData[$field]) && $elasticSearchService->addMustAatchPhraseQuery($field, $postData[$field]);
-        } 
-        
-        // must range
-        $addMustRangeQueryLists = [
-            'estiblish_time' =>['min'=> $postData['min_estiblish_time'], 'max'=> $postData['max_estiblish_time']],
-            'reg_capital' =>['min'=> $postData['min_reg_capital'], 'max'=> $postData['max_reg_capital']]
-        ];
-        foreach($addMustRangeQueryLists as $field=>$item){
-            (!empty($postData[$item['min']])||!empty($postData[$item['max']])) && 
-                $elasticSearchService->addMustRangeQuery($field, $postData[$item['min']], $postData[$item['max']]);
-        }
-        
-        $elasticSearchService->setDefault();
-       return  $elasticSearchService;
-     }
+     } 
 
      function saveSearchHistory($userId, $query, $queryCname){
         return UserSearchHistory::create()->data([
@@ -1223,8 +1184,5 @@ class XinDongService extends ServiceBase
             'query_cname' => $queryCname,
         ])->save();
      }
-
-     function getCompanyBasicInfo(){ 
-        return [ ];
-     }
+ 
 }
