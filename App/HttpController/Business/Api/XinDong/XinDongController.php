@@ -1449,19 +1449,33 @@ eof;
         if (!$companyId) {
             return $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
-        
-        // $retData  =\App\HttpController\Models\RDS3\XdAppAndroid::create()->where('xd_id', $companyId)->limt(2)->all();
-        $retData  =\App\HttpController\Models\RDS3\XdAppAndroid::create()
-        ->where('xd_id', $companyId)
-        ->limit($offset,$size)
-        ->all();
 
-        //数据的总记录条数
-        $total = \App\HttpController\Models\RDS3\XdAppAndroid::create()
-        ->where('xd_id', $companyId)
-        ->count();
+        if($type == 'ios'){
+            // $retData  =\App\HttpController\Models\RDS3\XdAppAndroid::create()->where('xd_id', $companyId)->limt(2)->all();
+            $retData  =\App\HttpController\Models\RDS3\XdAppIos::create()
+            ->where('xd_id', $companyId)
+            ->limit($offset,$size)
+            ->all();
 
-        
+            //数据的总记录条数
+            $total = \App\HttpController\Models\RDS3\XdAppIos::create()
+            ->where('xd_id', $companyId)
+            ->count();
+        }
+
+        if($type == 'andoriod'){
+            // $retData  =\App\HttpController\Models\RDS3\XdAppAndroid::create()->where('xd_id', $companyId)->limt(2)->all();
+            $retData  =\App\HttpController\Models\RDS3\XdAppAndroid::create()
+            ->where('xd_id', $companyId)
+            ->limit($offset,$size)
+            ->all();
+
+            //数据的总记录条数
+            $total = \App\HttpController\Models\RDS3\XdAppAndroid::create()
+            ->where('xd_id', $companyId)
+            ->count();
+        } 
+ 
         return $this->writeJson(200,
          ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)],
           $retData, '成功', true, []);
