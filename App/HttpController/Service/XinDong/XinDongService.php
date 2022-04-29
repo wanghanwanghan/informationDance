@@ -1199,7 +1199,7 @@ class XinDongService extends ServiceBase
             'name',
         ];
         foreach($addMustMatchPhraseQueryLists as $field){
-            !empty($postData[$field]) && $elasticSearchService->addMustAatchPhraseQuery($field, $postData[$field]);
+            !empty($postData[$field]) && $elasticSearchService->addMustMatchPhraseQuery($field, $postData[$field]);
         } 
         
         // must range
