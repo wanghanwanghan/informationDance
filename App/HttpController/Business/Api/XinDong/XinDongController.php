@@ -1037,14 +1037,14 @@ eof;
         (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldPhraseQuery( 'ying_shou_gui_mo' , $matchedCnames) ;  
     
         //四级分类 basic_nicid: A0111,A0112,A0113,
-        $siJiFenLeiStrs = trim($this->request()->getRequestParam('basic_nicid', ''));
+        $siJiFenLeiStrs = trim($this->request()->getRequestParam('basic_nicid'));
         $siJiFenLeiStrs && $siJiFenLeiArr = explode(',', $siJiFenLeiStrs); 
         if(!empty($siJiFenLeiArr)){
             $ElasticSearchService->addMustShouldPhraseQuery( 'si_ji_fen_lei_code' , $siJiFenLeiArr) ;   
         }
 
         // 地区 basic_regionid: 110101,110102,
-        $basiRegionidStr = trim($this->request()->getRequestParam('basic_regionid', '')); 
+        $basiRegionidStr = trim($this->request()->getRequestParam('basic_regionid')); 
         $basiRegionidStr && $basiRegionidArr = explode(',',$basiRegionidStr);
         if(!empty($basiRegionidArr)){ 
             $ElasticSearchService->addMustShouldPrefixQuery( 'si_ji_fen_lei_code' , $siJiFenLeiArr) ;  
