@@ -916,11 +916,16 @@ eof;
             }
             $queryArr['query']['bool']['must'][] = $boolQuery;
         }
+        
+        $size = $this->request()->getRequestParam('size')??10;
+        $page = $this->request()->getRequestParam('page')??1; 
+        $offset  =  ($page-1)*$size;
+
+        $queryArr['size'] =  $size; 
+        $queryArr['from'] =  $offset; 
 
         if(empty($queryArr)){
-            $size = $this->request()->getRequestParam('size')??10;
-            $page = $this->request()->getRequestParam('page')??1;
-            $offset  =  ($page-1)*$size;
+            
             $queryArr = '{"size":"'.($size).'","from":'.$offset.',"query":{"bool":{"must":[{"match_all":{}}]}}}';
         }
 
