@@ -115,17 +115,7 @@ class ElasticSearchService extends ServiceBase
     function setDefault(){
         if(empty($this->query['query']['bool']['must'])){
             $this->query =   
-            '{
-                "size": "'.$this->query['size'].'",
-                "from": '.$this->query['from'].',
-                "query": {
-                    "bool": {
-                        "must": [{
-                            "match_all": {}
-                        }]
-                    }
-                }
-            }';
+            '{"size":"'.$this->query['size'].'","from":'.$this->query['from'].',"query":{"bool":{"must":[{"match_all":{}}]}}}';
         }
     }
 }

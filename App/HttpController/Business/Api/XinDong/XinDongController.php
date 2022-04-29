@@ -993,23 +993,23 @@ eof;
         $ying_shou_gui_mo_values = [];  // 营收规模
         foreach($searchOptionArr as $item){ 
             if($item['pid'] == 10){
-                $org_type_values = explode(',',$item['value']);  
+                $org_type_values = $item['value'];  
             }
  
             if($item['pid'] == 20){ 
-                $estiblish_time_values = explode(',',$item['value']); 
+                $estiblish_time_values = $item['value']; 
             }
    
             if($item['pid'] == 30){
-                $reg_status_values = explode(',',$item['value']); 
+                $reg_status_values = $item['value']; 
             }
  
             if($item['pid'] == 40){ 
-                $reg_capital_values = explode(',',$item['value']);  
+                $reg_capital_values = $item['value']; 
             }
   
             if($item['pid'] == 50){ 
-                $ying_shou_gui_mo_values = explode(',',$item['value']);
+                $ying_shou_gui_mo_values = $item['value']; 
             }
         }
 
