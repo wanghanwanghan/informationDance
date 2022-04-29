@@ -1111,11 +1111,11 @@ eof;
         //设置默认值 不传任何条件 搜全部
         $ElasticSearchService->setDefault() ;  
         return $this->writeJson(200, 
-        [
-           
-       
-      ] 
-     , $ElasticSearchService->query, '成功', true, []); 
+        [], [
+            $searchOptionArr,
+            $estiblish_time_values,
+            $ElasticSearchService->query
+        ], '成功', true, []); 
         $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
         $responseArr = @json_decode($responseJson,true); 
         
