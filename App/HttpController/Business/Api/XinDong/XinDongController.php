@@ -1110,15 +1110,10 @@ eof;
         $page = $page>0 ?:1; 
         $size = intval($this->request()->getRequestParam('size')); 
         $size = $size>0 ?:10; 
-        $offset = ($page-1)*$size; 
-        
-        // $info = PurchaseList::create()
-        // ->limit($offset, $size), (int)$pageSize)->all();
+        $offset = ($page-1)*$size;  
 
         //数据的总记录条数
-        $total = \App\HttpController\Models\RDS3\XdHighTec::create()->count();
-
-        // ['page' => $page, 'pageSize' => $pageSize, 'total' => $total]
+        $total = \App\HttpController\Models\RDS3\XdHighTec::create()->count(); 
 
         $retData  =\App\HttpController\Models\RDS3\XdHighTec::create()
         ->limit($offset, $size)
