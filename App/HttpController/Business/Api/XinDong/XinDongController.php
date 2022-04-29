@@ -758,7 +758,7 @@ eof;
 
     /**
       * 
-      * 高级搜索 （新的）
+      * 高级搜索 |着急上线 先直接写的query  有时间 需要用es service的集成方法
         https://api.meirixindong.com/api/v1/xd/advancedSearch2 
       * 
       * 
@@ -767,9 +767,8 @@ eof;
     { 
         $queryArr = [];
         
-        //名称  name  全名匹配 {"query":{"bool":{"must":[{"match_phrase":{"name":"北京德龙"}}]}}}
+        //名称  name  全名匹配 
         $name = trim($this->request()->getRequestParam('searchText'));
-        // $name = '北京德';
         if ($name) {
             $queryArr['query']['bool']['must'][] = [
                 'match_phrase' => [
@@ -779,8 +778,7 @@ eof;
         }
 
         // basic_opscope: 经营范围
-        $basic_opscope = trim($this->request()->getRequestParam('basic_opscope'));
-        // $basic_opscope = "外科(骨科专业)";
+        $basic_opscope = trim($this->request()->getRequestParam('basic_opscope')); 
         if($basic_opscope){
             $queryArr['query']['bool']['must'][] = [
                 'match_phrase' => [
@@ -792,23 +790,9 @@ eof;
 
         // [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
         $searchOptionStr =  trim($this->request()->getRequestParam('searchOption'));
-        $searchOptionArr = json_decode($searchOptionStr, true);
-        // $searchOptionArr = [
-        //     [
-        //         'type' => 10,
-        //         'value' => [10,15,20]
-        //     ],
-        //     [
-        //         'type' => 20,
-        //         'value' => [10,15,20]
-        //     ],
-        //     [
-        //         'type' => 50,
-        //         'value' => [40,45,50]
-        //     ],
-        // ];
+        $searchOptionArr = json_decode($searchOptionStr, true); 
         foreach($searchOptionArr as $item){
-            // 企业类型  {"query":{"bool":{"must":[{"bool":{"should":[{"match_phrase":{"company_org_type":"有限责任公司"}},{"match_phrase":{"company_org_type":"股份"}}]}},{"bool":{"should":[{"match_phrase":{"reg_location":"北京"}},{"match_phrase":{"reg_location":"上海"}}]}},{"match_phrase":{"name":"北京德龙"}}]}}}
+            // 企业类型  
             if($item['pid'] == 10){
                 $boolQuery = []; 
                 foreach((new XinDongService())->getCompanyOrgType() as $type=>$cname){
@@ -820,7 +804,7 @@ eof;
                 $queryArr['query']['bool']['must'][] = $boolQuery;
             }
 
-            // 成立年限  {"query":{"bool":{"must":[{"bool":{"should":[{"match_phrase":{"company_org_type":"有限责任公司"}},{"match_phrase":{"company_org_type":"股份"}}]}},{"bool":{"should":[{"range":{"estiblish_time":{"gte":"1997-05-12 "}}},{"range":{"estiblish_time":{"lte":"2022-05-12 "}}}]}},{"match_phrase":{"name":"北京德龙"}}]}}}
+            // 成立年限  
             if($item['pid'] == 20){
                 $boolQuery = []; 
                 $map = [
@@ -838,15 +822,13 @@ eof;
                 foreach($map  as $type=>$subItem){
                     if(in_array($type, $item['value'])){
                         $boolQuery['bool']['should'][] = 
-                            ['range' => ['estiblish_time' => ['lte' => $subItem['max'],'gte' => $subItem['min'] ]]];
-                        // $boolQuery['bool']['should'][] = 
-                        //     ['range' => ['estiblish_time' => ['gte' => $subItem['min'] ]]];
+                            ['range' => ['estiblish_time' => ['lte' => $subItem['max'],'gte' => $subItem['min'] ]]];                        
                     } ;
                 } 
                 $queryArr['query']['bool']['must'][] = $boolQuery;
             }
 
-            // 营业状态   {"query":{"bool":{"must":[{"bool":{"should":[{"match_phrase":{"company_org_type":"有限责任公司"}},{"match_phrase":{"company_org_type":"股份"}}]}},{"bool":{"should":[{"match_phrase":{"reg_location":"北京"}},{"match_phrase":{"reg_location":"上海"}}]}},{"match_phrase":{"name":"北京德龙"}}]}}}
+            // 营业状态  
             if($item['pid'] == 30){
                 $boolQuery = []; 
                 foreach((new XinDongService())->getRegStatus() as $type=>$cname){
@@ -860,16 +842,7 @@ eof;
 
             // 注册资本
             if($item['pid'] == 40){
-                $boolQuery = []; 
-                /*
-                    10 => '100万以内',
-                    15 => '100-500万',
-                    20 => '500-1000万',
-                    25 => '1000万-5000万',
-                    30 => '5000万-1亿',
-                    35 => '1亿-10亿',
-                    40 => '10亿以上',  
-                */
+                $boolQuery = [];  
                 $map = [ 
                     // 100万以下
                     10 =>  ['min'=>0, 'max' => 100  ], 
@@ -888,8 +861,7 @@ eof;
                     if(in_array($type, $item['value'])){
                         $boolQuery['bool']['should'][] = 
                             ['range' => ['reg_capital' => ['lte' => $subItem['max'],'gte' => $subItem['min'] ]]];
-                        // $boolQuery['bool']['should'][] = 
-                        //     ['range' => ['reg_capital' => ['gte' => $subItem['min'] ]]];
+                        
                     } ;
                 } 
                 $queryArr['query']['bool']['must'][] = $boolQuery;
@@ -907,8 +879,7 @@ eof;
                     30 => ['A10','A11','A12'],// 中型B类
                     40 => ['A13','A14'],// 中型A类
                     45 => ['A15','A16','A17','A18'],// 大型C类
-                    50 => ['A19','A20','A21','A22','A23'],//大型B类
-
+                    50 => ['A19','A20','A21','A22','A23'],//大型B类 
                 ];
                 foreach($map as $type=>$subItem){
                     if(in_array($type, $item['value'])){
@@ -924,8 +895,7 @@ eof;
         
         //四级分类 basic_nicid: A0111,A0112,A0113,
         $siJiFenLeiStrs = trim($this->request()->getRequestParam('basic_nicid'));
-        $siJiFenLeiStrs && $siJiFenLeiArr = explode(',', $siJiFenLeiStrs);
-        // $siJiFenLeiArr = ['Q8512','F5172'];
+        $siJiFenLeiStrs && $siJiFenLeiArr = explode(',', $siJiFenLeiStrs); 
         if(!empty($siJiFenLeiArr)){
             $boolQuery = [];
             foreach($siJiFenLeiArr as $item){
@@ -936,8 +906,7 @@ eof;
         }
 
         // 地区 basic_regionid: 110101,110102,
-        $basiRegionidStr = trim($this->request()->getRequestParam('basic_regionid'));
-        // $basiRegionidStr = "110101,110102";
+        $basiRegionidStr = trim($this->request()->getRequestParam('basic_regionid')); 
         $basiRegionidStr && $basiRegionidArr = explode(',',$basiRegionidStr);
         if(!empty($basiRegionidArr)){ 
             $boolQuery = [];
@@ -952,17 +921,7 @@ eof;
             $size = $this->request()->getRequestParam('size')??10;
             $page = $this->request()->getRequestParam('page')??1;
             $offset  =  ($page-1)*$size;
-            $queryArr = '{
-                "size": "'.($size).'",
-                "from": '.$offset.',
-                "query": {
-                    "bool": {
-                        "must": [{
-                            "match_all": {}
-                        }]
-                    }
-                }
-            }';
+            $queryArr = '{"size":"'.($size).'","from":'.$offset.',"query":{"bool":{"must":[{"match_all":{}}]}}}';
         }
 
         UserSearchHistory::create()->data([
@@ -987,9 +946,6 @@ eof;
         CommonService::getInstance()->log4PHP(json_encode(['re-query'=>$queryArr]), 'info', 'souke.log');
         CommonService::getInstance()->log4PHP(json_encode(['re-response'=>$response]), 'info', 'souke.log');
         
-        // $elasticSearchService =  (new XinDongService())->setEsSearchQuery($postData,(new ElasticSearchService())); 
-       
-        // $responseJson = (new XinDongService())->advancedSearch($elasticSearchService);
         $responseArr = @json_decode($response,true); 
        
         return $this->writeJson(200, 
@@ -1004,13 +960,14 @@ eof;
        , $responseArr['hits']['hits'], '成功', true, []);
     }
 
+    // 新版（尚未启用|）
     function advancedSearch2(): bool
     { 
         $ElasticSearchService = new ElasticSearchService();
 
         $queryArr = [];
         
-        //名称  name  全名匹配 {"query":{"bool":{"must":[{"match_phrase":{"name":"北京德龙"}}]}}}
+        //名称  name  全名匹配 
         $name = trim($this->request()->getRequestParam('searchText', ''));
         // $name = '北京德';
         if ($name) {
@@ -1027,22 +984,9 @@ eof;
         // [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
         $searchOptionStr =  trim($this->request()->getRequestParam('searchOption', ''));
         $searchOptionArr = json_decode($searchOptionStr, true);
-        // $searchOptionArr = [
-        //     [
-        //         'type' => 10,
-        //         'value' => [10,15,20]
-        //     ],
-        //     [
-        //         'type' => 20,
-        //         'value' => [10,15,20]
-        //     ],
-        //     [
-        //         'type' => 50,
-        //         'value' => [40,45,50]
-        //     ],
-        // ];
+         
         foreach($searchOptionArr as $item){
-            // 企业类型  {"query":{"bool":{"must":[{"bool":{"should":[{"match_phrase":{"company_org_type":"有限责任公司"}},{"match_phrase":{"company_org_type":"股份"}}]}},{"bool":{"should":[{"match_phrase":{"reg_location":"北京"}},{"match_phrase":{"reg_location":"上海"}}]}},{"match_phrase":{"name":"北京德龙"}}]}}}
+            // 企业类型   
             if($item['pid'] == 10){
                 $orgTypes = explode(',',$item['value']); 
                 $matchedCnames = [];
@@ -1052,9 +996,8 @@ eof;
                 $ElasticSearchService->addMustShouldPhraseQuery( 'company_org_type' , $matchedCnames) ;
             }
 
-            // 成立年限  {"query":{"bool":{"must":[{"bool":{"should":[{"match_phrase":{"company_org_type":"有限责任公司"}},{"match_phrase":{"company_org_type":"股份"}}]}},{"bool":{"should":[{"range":{"estiblish_time":{"gte":"1997-05-12 "}}},{"range":{"estiblish_time":{"lte":"2022-05-12 "}}}]}},{"match_phrase":{"name":"北京德龙"}}]}}}
-            if($item['pid'] == 20){
-                $boolQuery = []; 
+            // 成立年限  
+            if($item['pid'] == 20){ 
                 $map = [
                     // 2年以内
                     2 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -2 year')), 'max' => date('Y-m-d')  ],
@@ -1070,7 +1013,7 @@ eof;
                 $ElasticSearchService->addMustShouldRangeQuery( 'estiblish_time' , $matchedCnames) ; 
             }
 
-            // 营业状态   {"query":{"bool":{"must":[{"bool":{"should":[{"match_phrase":{"company_org_type":"有限责任公司"}},{"match_phrase":{"company_org_type":"股份"}}]}},{"bool":{"should":[{"match_phrase":{"reg_location":"北京"}},{"match_phrase":{"reg_location":"上海"}}]}},{"match_phrase":{"name":"北京德龙"}}]}}}
+            // 营业状态   
             if($item['pid'] == 30){
                 $regStatuss = explode(',',$item['value']); 
                 $matchedCnames = [];
@@ -1081,8 +1024,7 @@ eof;
             }
 
             // 注册资本
-            if($item['pid'] == 40){
-                $boolQuery = []; 
+            if($item['pid'] == 40){ 
                 $map = [
                     // 50万以下 
                     5 => ['min'=>0, 'max' => 50  ],
@@ -1101,8 +1043,7 @@ eof;
             }
 
             // 营收规模 
-            if($item['pid'] == 50){
-                $boolQuery = []; 
+            if($item['pid'] == 50){ 
                 $map = [
                     5 => ['A1','A2'], //微型
                     10 => ['A3','A4'], //小型C类
@@ -1112,8 +1053,7 @@ eof;
                     30 => ['A10','A11','A12'],// 中型B类
                     40 => ['A13','A14'],// 中型A类
                     45 => ['A15','A16','A17','A18'],// 大型C类
-                    50 => ['A19','A20','A21','A22','A23'],//大型B类
-
+                    50 => ['A19','A20','A21','A22','A23'],//大型B类 
                 ];
 
                 $arrs = explode(',',$item['value']); 
@@ -1127,15 +1067,13 @@ eof;
         
         //四级分类 basic_nicid: A0111,A0112,A0113,
         $siJiFenLeiStrs = trim($this->request()->getRequestParam('basic_nicid', ''));
-        $siJiFenLeiStrs && $siJiFenLeiArr = explode(',', $siJiFenLeiStrs);
-        // $siJiFenLeiArr = ['Q8512','F5172'];
+        $siJiFenLeiStrs && $siJiFenLeiArr = explode(',', $siJiFenLeiStrs); 
         if(!empty($siJiFenLeiArr)){
             $ElasticSearchService->addMustShouldPhraseQuery( 'si_ji_fen_lei_code' , $siJiFenLeiArr) ;   
         }
 
         // 地区 basic_regionid: 110101,110102,
-        $basiRegionidStr = trim($this->request()->getRequestParam('basic_regionid', ''));
-        // $basiRegionidStr = "110101,110102";
+        $basiRegionidStr = trim($this->request()->getRequestParam('basic_regionid', '')); 
         $basiRegionidStr && $basiRegionidArr = explode(',',$basiRegionidStr);
         if(!empty($basiRegionidArr)){ 
             $ElasticSearchService->addMustShouldPrefixQuery( 'si_ji_fen_lei_code' , $siJiFenLeiArr) ;  
