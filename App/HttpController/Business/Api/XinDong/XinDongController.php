@@ -971,8 +971,8 @@ eof;
         // }
         foreach($web_values as $value){
             if($value){
-                $ElasticSearchService->addMustExistsQuery( 'web') ; 
-                $ElasticSearchService->addMustNotTermQuery( 'web','--') ; 
+                // $ElasticSearchService->addMustExistsQuery( 'web') ; 
+                $ElasticSearchService->addMustRegexpQuery( 'web', ".+") ; 
                 
                 break;
             }
