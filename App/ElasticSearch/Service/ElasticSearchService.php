@@ -52,6 +52,12 @@ class ElasticSearchService extends ServiceBase
     function addMustMatchPhraseQuery($field, $value){
         $this->query['query']['bool']['must'][] = ['match_phrase' => [$field => $value]];
     }
+    function addMustExistsQuery($field){
+        $this->query['query']['bool']['must'][] = ['exists' => ['field' => $field]];
+    }
+    function addMustNotExistsQuery($field){
+        $this->query['query']['bool']['must_not'][] = ['exists' => ['field' => $field]];
+    }
     function addMustShouldPrefixQuery($field, $valueArr){
         $boolQuery = []; 
         foreach($valueArr as $value){

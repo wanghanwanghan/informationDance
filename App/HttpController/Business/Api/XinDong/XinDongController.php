@@ -922,6 +922,12 @@ eof;
             $value && $ElasticSearchService->addMustMatchPhraseQuery( $field , $value) ; 
         } 
 
+        //必须存在官网
+        $hasWeb = intval($this->request()->getRequestParam('hasWeb'));
+        if($hasWeb){
+            $ElasticSearchService->addMustExistsQuery( 'web') ; 
+        }
+
         //传过来的searchOption 例子 [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
         $searchOptionStr =  trim($this->request()->getRequestParam('searchOption'));
         $searchOptionArr = json_decode($searchOptionStr, true);
