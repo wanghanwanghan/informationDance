@@ -23,7 +23,6 @@ use wanghanwanghan\someUtils\traits\Singleton;
 use EasySwoole\ElasticSearch\Config;
 use EasySwoole\ElasticSearch\ElasticSearch;
 use EasySwoole\ElasticSearch\RequestBean\Search;
-use static;
 
 class XinDongService extends ServiceBase
 {
