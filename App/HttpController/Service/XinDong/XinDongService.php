@@ -1204,7 +1204,7 @@ class XinDongService extends ServiceBase
         ])->save();
      }
      
-     static function formatEsDate($dataArr, $fieldsArr){
+     function formatEsDate($dataArr, $fieldsArr){
         foreach($dataArr as &$dataItem){
             foreach($fieldsArr as $field){
                 if($dataItem['_source'][$field]>0){
