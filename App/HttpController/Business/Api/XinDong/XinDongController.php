@@ -1028,7 +1028,7 @@ eof;
             70 => ['min' => 5000, 'max' => 10000000  ], //'5000人以上', 
         ];
         $matchedCnames = [];
-        foreach($reg_capital_values as $item){
+        foreach($tuan_dui_ren_shu_values as $item){
             $item && $matchedCnames[] = $map[$item]; 
         } 
         (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldRangeQuery( 'tuan_dui_ren_shu' , $matchedCnames) ;  
