@@ -61,8 +61,10 @@ class XinDongService extends ServiceBase
     public $estiblish_year_10to15 = 15;
     public $estiblish_year_10to15_des = '10-15年';
 
-    public $estiblish_year_more_than_20 = 20;
-    public $estiblish_year_more_than_20_des = '15-20年';
+    public $estiblish_year_15to20 = 20;
+    public $estiblish_year_15to20_des = '15-20年';
+    public $estiblish_year_more_than_20 = 25;
+    public $estiblish_year_more_than_20_des = '20年以上';
 
     //营业状态  迁入、迁出、、清算 
     public $reg_status_cunxu = 5;
@@ -178,6 +180,7 @@ class XinDongService extends ServiceBase
            $this->estiblish_year_2to5  => $this->estiblish_year_2to5_des,
            $this->estiblish_year_5to10  => $this->estiblish_year_5to10_des,
            $this->estiblish_year_10to15  => $this->estiblish_year_10to15_des,
+           $this->estiblish_year_15to20  => $this->estiblish_year_15to20_des, 
            $this->estiblish_year_more_than_20  => $this->estiblish_year_more_than_20_des,
        ];
 
