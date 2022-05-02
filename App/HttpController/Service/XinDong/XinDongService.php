@@ -1170,6 +1170,15 @@ class XinDongService extends ServiceBase
                     70 =>'5000人以上',
                 ],
             ],
+            [
+                'pid' => 70,
+                'desc' => '是否有官网',
+                'key' => 'web',
+                'type' => 'select',
+                'data' => [
+                    10 =>'必须有官网',  
+                ],
+            ],
         ];
     }
 

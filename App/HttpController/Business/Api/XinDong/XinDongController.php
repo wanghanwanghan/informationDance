@@ -922,11 +922,7 @@ eof;
             $value && $ElasticSearchService->addMustMatchPhraseQuery( $field , $value) ; 
         } 
 
-        //必须存在官网
-        $hasWeb = intval($this->request()->getRequestParam('hasWeb'));
-        if($hasWeb){
-            $ElasticSearchService->addMustExistsQuery( 'web') ; 
-        }
+        
 
         //传过来的searchOption 例子 [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
         $searchOptionStr =  trim($this->request()->getRequestParam('searchOption'));
@@ -939,6 +935,7 @@ eof;
         $reg_capital_values = [];  // 注册资本
         $ying_shou_gui_mo_values = [];  // 营收规模
         $tuan_dui_ren_shu_values = [];  // 团队人数
+        $web_values = [];
         foreach($searchOptionArr as $item){ 
             if($item['pid'] == 10){
                 $org_type_values = $item['value'];  
@@ -961,6 +958,21 @@ eof;
             }
             if($item['pid'] == 60){ 
                 $tuan_dui_ren_shu_values = $item['value']; 
+            }
+            if($item['pid'] == 70){ 
+                $web_values = $item['value']; 
+            }
+        }
+
+        //必须存在官网
+        // $hasWeb = intval($this->request()->getRequestParam('hasWeb'));
+        // if($hasWeb){
+        //     $ElasticSearchService->addMustExistsQuery( 'web') ; 
+        // }
+        foreach($web_values as $value){
+            if($value){
+                $ElasticSearchService->addMustExistsQuery( 'web') ; 
+                break;
             }
         }
 
