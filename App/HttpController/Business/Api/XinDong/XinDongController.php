@@ -1095,6 +1095,13 @@ eof;
             json_encode($this->request()->getRequestParam())
         );
 
+        $hits = (new XinDongService())::formatEsDate($responseArr['hits']['hits'], [
+            'estiblish_time',
+            'from_time',
+            'to_time',
+            'approved_time'
+        ]);
+
         return $this->writeJson(200, 
           [
             'page' => $page,
@@ -1104,8 +1111,10 @@ eof;
             ($size)),
          
         ] 
-       , $responseArr['hits']['hits'], '成功', true, []);
+       , $hits, '成功', true, []);
     } 
+
+
 
     /**
       * 

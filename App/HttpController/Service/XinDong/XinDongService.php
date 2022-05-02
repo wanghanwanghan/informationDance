@@ -23,6 +23,7 @@ use wanghanwanghan\someUtils\traits\Singleton;
 use EasySwoole\ElasticSearch\Config;
 use EasySwoole\ElasticSearch\ElasticSearch;
 use EasySwoole\ElasticSearch\RequestBean\Search;
+use static;
 
 class XinDongService extends ServiceBase
 {
@@ -1202,5 +1203,18 @@ class XinDongService extends ServiceBase
             'query_cname' => $queryCname,
         ])->save();
      }
- 
+     
+     static function formatEsDate($dataArr, $fieldsArr){
+        foreach($dataArr as &$dataItem){
+            foreach($fieldsArr as $field){
+                if($dataItem['_source'][$field]>0){
+                    $tmpArr = explode(' ', $dataItem['_source'][$field]);
+                    $dataItem['_source'][$field] = $tmpArr[0];
+                    // $dataItem['_source'][$field] = date('Y-m-d',strtotime($dataItem['_source'][$field])) ;
+                }
+            }
+        }
+
+        return $dataArr;
+     }
 }
