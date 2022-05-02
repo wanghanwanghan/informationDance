@@ -1227,7 +1227,11 @@ class XinDongService extends ServiceBase
                         '万',
                         ''
                     );
-                    // $dataItem['_source'][$field] = date('Y-m-d',strtotime($dataItem['_source'][$field])) ;
+                    $dataItem['_source'][$field] = str_replace(
+                        '.',
+                        '',
+                        $dataItem['_source'][$field]
+                    );
                 }
             }
         }
