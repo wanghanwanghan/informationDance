@@ -1101,7 +1101,7 @@ eof;
             'to_time',
             'approved_time'
         ]);
-        $hits = (new XinDongService())::formatEsMoney($responseArr['hits']['hits'], [
+        $hits = (new XinDongService())::formatEsMoney($hits, [
             'reg_capital', 
         ]);
 
