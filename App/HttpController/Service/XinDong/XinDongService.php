@@ -1203,7 +1203,7 @@ class XinDongService extends ServiceBase
         ])->save();
      }
      
-     function formatEsDate($dataArr, $fieldsArr){
+     static function formatEsDate($dataArr, $fieldsArr){
         foreach($dataArr as &$dataItem){
             foreach($fieldsArr as $field){
                 if($dataItem['_source'][$field]>0){
@@ -1216,4 +1216,32 @@ class XinDongService extends ServiceBase
 
         return $dataArr;
      }
+     static function formatEsMoney($dataArr, $fieldsArr){
+        foreach($dataArr as &$dataItem){
+            foreach($fieldsArr as $field){
+                if($dataItem['_source'][$field]>0){
+                     
+                    $dataItem['_source'][$field] = self::replaceBetween(
+                        $dataItem['_source'][$field],
+                        '.',
+                        '万',
+                        ''
+                    );
+                    // $dataItem['_source'][$field] = date('Y-m-d',strtotime($dataItem['_source'][$field])) ;
+                }
+            }
+        }
+
+        return $dataArr;
+     }
+
+     static function replaceBetween($str, $needle_start, $needle_end, $replacement) {
+        $pos = strpos($str, $needle_start);
+        $start = $pos === false ? 0 : $pos + strlen($needle_start);
+    
+        $pos = strpos($str, $needle_end, $start);
+        $end = $pos === false ? strlen($str) : $pos;
+    
+        return substr_replace($str, $replacement, $start, $end - $start);
+    }
 }
