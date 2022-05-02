@@ -1155,6 +1155,21 @@ class XinDongService extends ServiceBase
                 'type' => 'select',
                 'data' => $this->getRegCapital(),
             ],
+            [
+                'pid' => 60,
+                'desc' => '公司人数',
+                'key' => 'tuan_dui_ren_shu',
+                'type' => 'select',
+                'data' => [
+                    10 =>'10人以下', 
+                    20 =>'10-50人', 
+                    30 =>'50-100人', 
+                    40 =>'100-500人', 
+                    50 =>'500-1000人', 
+                    60 =>'1000-5000人', 
+                    70 =>'5000人以上',
+                ],
+            ],
         ];
     }
 

@@ -932,6 +932,7 @@ eof;
         $reg_status_values = [];// 营业状态 
         $reg_capital_values = [];  // 注册资本
         $ying_shou_gui_mo_values = [];  // 营收规模
+        $tuan_dui_ren_shu_values = [];  // 团队人数
         foreach($searchOptionArr as $item){ 
             if($item['pid'] == 10){
                 $org_type_values = $item['value'];  
@@ -951,6 +952,9 @@ eof;
   
             if($item['pid'] == 50){ 
                 $ying_shou_gui_mo_values = $item['value']; 
+            }
+            if($item['pid'] == 60){ 
+                $tuan_dui_ren_shu_values = $item['value']; 
             }
         }
 
@@ -1012,6 +1016,24 @@ eof;
         } 
         (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldRangeQuery( 'reg_capital' , $matchedCnames) ;  
          
+
+        // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
+        $map = [
+            10 => ['min' => 0, 'max' => 10  ],//'10人以下', 
+            20 => ['min' => 10, 'max' => 50  ], //'10-50人', 
+            30 => ['min' => 50, 'max' => 100  ], //'50-100人', 
+            40 => ['min' => 100, 'max' => 500  ], //'100-500人', 
+            50 => ['min' => 500, 'max' => 1000  ], //'500-1000人', 
+            60 => ['min' => 1000, 'max' => 5000  ], //'1000-5000人', 
+            70 => ['min' => 5000, 'max' => 10000000  ], //'5000人以上', 
+        ];
+        $matchedCnames = [];
+        foreach($reg_capital_values as $item){
+            $item && $matchedCnames[] = $map[$item]; 
+        } 
+        (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldRangeQuery( 'tuan_dui_ren_shu' , $matchedCnames) ;  
+         
+
         // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
         $map = [
             5 => ['A1','A2'], //微型
@@ -1037,7 +1059,9 @@ eof;
         }
 
         (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldPhraseQuery( 'ying_shou_gui_mo' , $matchedCnames) ;  
-    
+        
+
+
         //四级分类 basic_nicid: A0111,A0112,A0113,
         $siJiFenLeiStrs = trim($this->request()->getRequestParam('basic_nicid'));
         $siJiFenLeiStrs && $siJiFenLeiArr = explode(',', $siJiFenLeiStrs); 
