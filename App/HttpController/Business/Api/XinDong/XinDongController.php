@@ -922,8 +922,11 @@ eof;
             $value && $ElasticSearchService->addMustMatchPhraseQuery( $field , $value) ; 
         } 
 
-        
-
+        // 搜索shang_pin_data 商品信息 appStr:五香;农庄
+        $appStr =   trim($this->request()->getRequestParam('appStr')); 
+        $appStr && $appStrDatas = explode(';', $appStr);
+        !empty($appStrDatas) && $ElasticSearchService->addMustShouldPhraseQuery( 'shang_pin_data.name' , $appStrDatas) ;
+    
         //传过来的searchOption 例子 [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
         $searchOptionStr =  trim($this->request()->getRequestParam('searchOption'));
         $searchOptionArr = json_decode($searchOptionStr, true);
