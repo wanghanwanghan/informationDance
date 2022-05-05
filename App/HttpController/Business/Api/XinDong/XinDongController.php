@@ -21,6 +21,7 @@ use Carbon\Carbon;
 use EasySwoole\ORM\DbManager;
 use wanghanwanghan\someUtils\control;
 use App\HttpController\Models\Api\UserSearchHistory;
+use EasySwoole\Mysqli\QueryBuilder;
 
 class XinDongController extends XinDongBase
 {
@@ -1262,4 +1263,34 @@ eof;
  
         return $this->writeJson(200,  ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
     }
+
+    /**
+      * 
+      * 删除搜索历史
+        https://api.meirixindong.com/api/v1/xd/delSearchHistory 
+      * 
+      * 
+     */
+    function delSearchHistory(): bool
+    {  
+        $id = intval($this->request()->getRequestParam('id')); 
+        if (!$id) {
+            return $this->writeJson(201, null, null, '参数缺失');
+        } 
+
+        
+        $res = UserSearchHistory::create()->destroy(function (QueryBuilder $builder) use ($id) {
+            $builder->where([
+                'id' => $id,
+                'userId' => $this->loginUserinfo['id'],
+            ]);
+        }); 
+        
+        if(!$res){
+            return $this->writeJson(204, null, null, '删除失败');
+        }
+
+        return $this->writeJson(200,  [], [], '成功', true, []);
+    }
+
 }

@@ -191,6 +191,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/saveSearchHistroy', $prefix . 'saveSearchHistroy');// 营收规模 https://api.meirixindong.com/api/v1/xd/saveSearchHistroy
             $routeCollector->addRoute(['GET', 'POST'], '/getTagInfo', $prefix . 'getTagInfo');// 营收规模 https://api.meirixindong.com/api/v1/xd/getTagInfo
             $routeCollector->addRoute(['GET', 'POST'], '/getSearchHistory', $prefix . 'getSearchHistory');// 营收规模 https://api.meirixindong.com/api/v1/xd/getSearchHistory
+            $routeCollector->addRoute(['GET', 'POST'], '/delSearchHistory', $prefix . 'delSearchHistory');// 营收规模 https://api.meirixindong.com/api/v1/xd/delSearchHistory
         });
 
         return true;
