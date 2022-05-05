@@ -1276,12 +1276,16 @@ eof;
         $id = intval($this->request()->getRequestParam('id')); 
         if (!$id) {
             return $this->writeJson(201, null, null, '参数缺失');
-        }  
+        }   
         
-        $res = UserSearchHistory::create()->destroy(function (QueryBuilder $builder) use ($id) {
-            $builder->where('id', $id)->where('userId' , $this->loginUserinfo['id']);
-        }); 
-        
+        try {
+            $res = UserSearchHistory::create()->destroy(function (QueryBuilder $builder) use ($id) {
+                $builder->where('id', $id)->where('userId' , $this->loginUserinfo['id']);
+            }); 
+        } catch (\Throwable $e) {
+            CommonService::getInstance()->log4PHP($e->getMessage());
+        }
+
         if(!$res){
             return $this->writeJson(204, null, null, '删除失败');
         }
