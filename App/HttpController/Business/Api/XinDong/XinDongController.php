@@ -1257,7 +1257,7 @@ eof;
         $total = $model->lastQueryResult()->getTotalCount(); 
         
         foreach($retData as &$dataitem){
-           // $dataitem['post_data'] = json_decode($dataitem['post_data'], true);
+           $dataitem['post_data'] = json_decode($dataitem['post_data'], true);
         }
  
         return $this->writeJson(200,  ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
