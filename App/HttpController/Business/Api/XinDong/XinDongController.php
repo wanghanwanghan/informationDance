@@ -1235,4 +1235,31 @@ eof;
 
         return $this->writeJson(200, ['total' => 1], (new XinDongService())->getAllTags($companyData), '成功', true, []);
     }
+
+     /**
+      * 
+      * 获取主营产品
+        https://api.meirixindong.com/api/v1/xd/getSearchHistory 
+      * 
+      * 
+     */
+    function getSearchHistory(): bool
+    {  
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?:1; 
+        $size = intval($this->request()->getRequestParam('size')); 
+        $size = $size>0 ?:10; 
+        $offset = ($page-1)*$size;  
+
+        $model = \App\HttpController\Models\RDS3\XdAppIos::create()
+            ->where('userId', $this->loginUserinfo['id'])->page($page)->withTotalCount();
+        $retData = $model->all();
+        $total = $model->lastQueryResult()->getTotalCount(); 
+        
+        foreach($retData as &$dataitem){
+            $dataitem['post_data'] = json_decode($dataitem['post_data'], true);
+        }
+ 
+        return $this->writeJson(200,  ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+    }
 }
