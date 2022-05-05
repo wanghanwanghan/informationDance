@@ -1284,16 +1284,45 @@ class XinDongService extends ServiceBase
         return $strArr[0];
     }
 
-    function getAllTags($companyData){
-        $yingShouGuiMoData  =\App\HttpController\Models\RDS3\ArLable::create()->where('entname', $companyData['name'])->get();
-        
+    function getAllTags($companyData): array
+    { 
         // 标签
         $tags = [];
 
         // 营收规模 
-        $yingShouGuiMoTag = (new XinDongService())::getYingShouGuiMoTag($yingShouGuiMoData['label']);
-        $yingShouGuiMoTag && $tags = $yingShouGuiMoTag;
+        $yingShouGuiMoData  =\App\HttpController\Models\RDS3\ArLable::create()->where('entname', $companyData['name'])->get();
+        $yingShouGuiMoData && $yingShouGuiMoTag = (new XinDongService())::getYingShouGuiMoTag($yingShouGuiMoData['label']);
+        $yingShouGuiMoTag && $tags[50] = $yingShouGuiMoTag;
 
+        // 团队规模
+        $tuanDuiGuiMoData  = \App\HttpController\Models\RDS3\TuanDuiGuiMo::create()->where('xd_id', $companyData['id'])->get();
+        $tuanDuiGuiMoData && $tuanDuiGuiMoTag = self::getTuanDuiGuiMoTag($tuanDuiGuiMoData['num']);
+        $tuanDuiGuiMoTag && $tags[60] = $tuanDuiGuiMoTag;
+
+        // 是否有ISO
         return $tags;
+    }
+
+    static function getTuanDuiGuiMoTag($nums){ 
+        $map = self::getTuanDuiGuiMoMap();
+        foreach($map as $item){
+            if(
+                $item['min'] <= $nums &&
+                $item['max'] >= $nums 
+            ){
+                return $item['des'];
+            }
+        }
+   }
+    static function getTuanDuiGuiMoMap(){ 
+         return $map = [
+            10 => ['min' => 0, 'max' => 10 , 'des' => '10人以下' ],//, 
+            20 => ['min' => 10, 'max' => 50  , 'des' => '10-50人' ], //, 
+            30 => ['min' => 50, 'max' => 100  , 'des' => '50-100人' ], //, 
+            40 => ['min' => 100, 'max' => 500 , 'des' => '100-500人'  ], //, 
+            50 => ['min' => 500, 'max' => 1000  , 'des' => '500-1000人' ], //, 
+            60 => ['min' => 1000, 'max' => 5000  , 'des' => '1000-5000人' ], //, 
+            70 => ['min' => 5000, 'max' => 10000000 , 'des' => '5000人以上' ], //, 
+        ];
     }
 }
