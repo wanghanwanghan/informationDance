@@ -1110,7 +1110,13 @@ eof;
 
         $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
         $responseArr = @json_decode($responseJson,true); 
-        
+        CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
+            [
+                'es_query' => $ElasticSearchService->query,
+                'post_data' => $this->request()->getRequestParam(),
+            ]
+        ));
+
         // 记录搜索历史
         (new XinDongService())->saveSearchHistory(
             $this->loginUserinfo['id'], 
