@@ -1278,6 +1278,12 @@ eof;
             return $this->writeJson(201, null, null, '参数缺失');
         }   
         
+        if(
+           !UserSearchHistory::create()->where('id', $id)->where('userId' , $this->loginUserinfo['id'])->get()
+        ){
+            return $this->writeJson(203, null, null, '没有该数据');
+        } 
+
         try {
             $res = UserSearchHistory::create()->destroy(function (QueryBuilder $builder) use ($id) {
                 $builder->where('id', $id)->where('userId' , $this->loginUserinfo['id']);
