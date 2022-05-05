@@ -1251,7 +1251,7 @@ eof;
         $size = $size>0 ?:10; 
         $offset = ($page-1)*$size;  
 
-        $model = \App\HttpController\Models\RDS3\XdAppIos::create()
+        $model =  UserSearchHistory::create()
             ->where('userId', $this->loginUserinfo['id'])->page($page)->withTotalCount();
         $retData = $model->all();
         $total = $model->lastQueryResult()->getTotalCount(); 
