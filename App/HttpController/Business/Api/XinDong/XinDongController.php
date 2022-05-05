@@ -1243,7 +1243,7 @@ eof;
         $yingShouGuiMoData  =\App\HttpController\Models\RDS3\ArLable::create()->where('entname', $companyData['name'])->get();
         // 营收规模 标签
         $tags = [
-            'ying_shou_gui_mo' =>  (new LongXinService())->vendincScaleLabelChange($yingShouGuiMoData['label']),
+            'ying_shou_gui_mo' =>  (new XinDongService())->vendincScaleLabelChange($yingShouGuiMoData['label']),
         ];
         return $this->writeJson(200, ['total' => 1], $tags, '成功', true, []);
     }
