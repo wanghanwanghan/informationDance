@@ -145,7 +145,6 @@ class XinDongService extends ServiceBase
            $this->reg_capital_super_big_C  =>  $this->reg_capital_super_big_C_des,
            $this->reg_capital_super_big_B  =>  $this->reg_capital_super_big_B_des,
            $this->reg_capital_super_big_A  =>  $this->reg_capital_super_big_A_des,
-            
        ];
 
        if ($getAll) {

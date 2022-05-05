@@ -1236,8 +1236,15 @@ eof;
             return $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
 
-        $retData  =\App\HttpController\Models\RDS3\Company::create()->where('id', $companyId)->get();
-        
-        return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
+        $companyData  =\App\HttpController\Models\RDS3\Company::create()->where('id', $companyId)->get();
+        if(!$companyData){
+            return $this->writeJson(201, null, null, '没有该企业');
+        }
+        $yingShouGuiMoData  =\App\HttpController\Models\RDS3\ArLable::create()->where('entname', $companyData['name'])->get();
+        // 营收规模 标签
+        $tags = [
+            'ying_shou_gui_mo' =>  (new LongXinService())->vendincScaleLabelChange($yingShouGuiMoData['label']),
+        ];
+        return $this->writeJson(200, ['total' => 1], $tags, '成功', true, []);
     }
 }
