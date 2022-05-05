@@ -926,6 +926,16 @@ eof;
             'reg_capital', 
         ]);
 
+        foreach($hits as &$dataItem){
+            $webStr = trim($dataItem['_source']['web']);
+            if(!$webStr){
+                continue; 
+            }
+
+            $webArr = explode('&&&', $webStr);
+            !empty($webArr) && $dataItem['_source']['web'] = end($webArr);
+        }
+    
         return $this->writeJson(200, 
           [
             'page' => $page,
@@ -951,7 +961,7 @@ eof;
          if(!$res){
             return  $this->writeJson(201, null, null, '保存失败，请联系管理员');
          }
-         
+
          return $this->writeJson(200, ['total' => 1], [], '成功', true, []);
      }
 
