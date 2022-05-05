@@ -1234,17 +1234,13 @@ eof;
         $companyId = intval($this->request()->getRequestParam('xd_id')); 
         if (!$companyId) {
             return $this->writeJson(201, null, null, '参数缺失(企业id)');
-        }
+        } 
 
         $companyData  =\App\HttpController\Models\RDS3\Company::create()->where('id', $companyId)->get();
         if(!$companyData){
             return $this->writeJson(201, null, null, '没有该企业');
         }
-        $yingShouGuiMoData  =\App\HttpController\Models\RDS3\ArLable::create()->where('entname', $companyData['name'])->get();
-        // 营收规模 标签
-        $tags = [
-            'ying_shou_gui_mo' =>  (new XinDongService())->vendincScaleLabelChange($yingShouGuiMoData['label']),
-        ];
-        return $this->writeJson(200, ['total' => 1], $tags, '成功', true, []);
+
+        return $this->writeJson(200, ['total' => 1], (new XinDongService())->getAllTags($companyData), '成功', true, []);
     }
 }

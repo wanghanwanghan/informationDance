@@ -1255,4 +1255,45 @@ class XinDongService extends ServiceBase
     
         return substr_replace($str, $replacement, $start, $end - $start);
     }
+
+    static function mapYingShouGuiMo(): array
+    { 
+
+        return  [
+            'A1' => '微型，一般指规模在100万以下',
+            'A2' => '小型C类，一般指规模在100万以上，500万以下',
+            'A3' => '小型B类，一般指规模在500万以上，1000万以下',
+            'A4' => '小型A类，一般指规模在1000万以上，3000万以下',
+            'A5' => '中型C类，一般指规模在3000万以上，5000万以下',
+            'A6' => '中型B类，一般指规模在5000万以上，8000万以下',
+            'A7' => '中型A类，一般指规模在8000万以上，1亿以下',
+            'A8' => '大型C类，一般指规模在1亿以上，5亿以下',
+            'A9' => '大型B类，一般指规模在5亿以上，10亿以下',
+            'A10' => '大型A类，一般指规模在10亿以上，50亿以下',
+            'A11' => '特大型C类，一般指规模在50亿以上，100亿以下',
+            'A12' => '特大型B类，一般指规模在100亿以上，500亿以下',
+            'A13' => '特大型A类，一般指规模在500亿以上',
+        ]; 
+    }
+
+    static function getYingShouGuiMoTag(string $yingShouGuiMo): string
+    { 
+
+        $str = self::mapYingShouGuiMo()[$yingShouGuiMo];
+        $strArr = explode('，', $str);
+        return $strArr[0];
+    }
+
+    function getAllTags($companyData){
+        $yingShouGuiMoData  =\App\HttpController\Models\RDS3\ArLable::create()->where('entname', $companyData['name'])->get();
+        
+        // 标签
+        $tags = [];
+
+        // 营收规模 
+        $yingShouGuiMoTag = (new XinDongService())::getYingShouGuiMoTag($yingShouGuiMoData['label']);
+        $yingShouGuiMoTag && $tags = $yingShouGuiMoTag;
+
+        return $tags;
+    }
 }
