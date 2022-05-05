@@ -967,7 +967,7 @@ eof;
 
     /**
       * 
-      * 高级搜索 
+      * 基本信息 
         https://api.meirixindong.com/api/v1/xd/getCompanyBasicInfo 
       * 
       * 
@@ -1220,5 +1220,24 @@ eof;
         } 
  
         return $this->writeJson(200,  ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+    }
+
+     /**
+      * 
+      * 获取企业标签
+        https://api.meirixindong.com/api/v1/xd/getTagInfo 
+      * 
+      * 
+     */
+    function getTagInfo(): bool
+    {   
+        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+        if (!$companyId) {
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+        $retData  =\App\HttpController\Models\RDS3\Company::create()->where('id', $companyId)->get();
+        
+        return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
     }
 }
