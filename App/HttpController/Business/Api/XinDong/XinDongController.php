@@ -1276,14 +1276,10 @@ eof;
         $id = intval($this->request()->getRequestParam('id')); 
         if (!$id) {
             return $this->writeJson(201, null, null, '参数缺失');
-        } 
-
+        }  
         
         $res = UserSearchHistory::create()->destroy(function (QueryBuilder $builder) use ($id) {
-            $builder->where([
-                'id' => $id,
-                'userId' => $this->loginUserinfo['id'],
-            ]);
+            $builder->where('id', $id)->where('userId' , $this->loginUserinfo['id']);
         }); 
         
         if(!$res){
