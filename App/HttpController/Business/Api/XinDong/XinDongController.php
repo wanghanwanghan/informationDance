@@ -951,7 +951,8 @@ eof;
          if(!$res){
             return  $this->writeJson(201, null, null, '保存失败，请联系管理员');
          }
-         return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
+         
+         return $this->writeJson(200, ['total' => 1], [], '成功', true, []);
      }
 
     /**
