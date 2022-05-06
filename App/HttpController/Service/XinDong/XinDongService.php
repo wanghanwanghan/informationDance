@@ -1317,7 +1317,28 @@ class XinDongService extends ServiceBase
         $jinChukouTag = self::getJinChuKouTag($companyData['id']);
         $jinChukouTag && $tags[100] = $jinChukouTag;
 
+        //商品
+        $shangPinTag = self::getShangPinTag($companyData['name']);
+        $shangPinTag && $tags[110] = $shangPinTag;
+
         return $tags;
+    }
+
+    static function getShangPinTag($companyName):string
+    {
+        if(
+            self::checkIfIsShangPinCompany($companyName)
+        ){
+            return '商品';
+        }
+
+        return ""; 
+    }
+    static function checkIfIsShangPinCompany($companyName):bool
+    {
+       return  \App\HttpController\Models\RDS3\ShangPinTiaoMaJieBa::create()
+                ->where('entname', $companyName) 
+                ->get() ?true : false;
     }
 
     static function getJinChuKouTag($companyId):string
