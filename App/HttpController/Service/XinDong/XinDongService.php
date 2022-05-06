@@ -145,7 +145,6 @@ class XinDongService extends ServiceBase
            $this->reg_capital_super_big_C  =>  $this->reg_capital_super_big_C_des,
            $this->reg_capital_super_big_B  =>  $this->reg_capital_super_big_B_des,
            $this->reg_capital_super_big_A  =>  $this->reg_capital_super_big_A_des,
-            
        ];
 
        if ($getAll) {
@@ -1255,5 +1254,170 @@ class XinDongService extends ServiceBase
         $end = $pos === false ? strlen($str) : $pos;
     
         return substr_replace($str, $replacement, $start, $end - $start);
+    }
+
+    static function mapYingShouGuiMo(): array
+    { 
+
+        return  [
+            'A1' => '微型，一般指规模在100万以下',
+            'A2' => '小型C类，一般指规模在100万以上，500万以下',
+            'A3' => '小型B类，一般指规模在500万以上，1000万以下',
+            'A4' => '小型A类，一般指规模在1000万以上，3000万以下',
+            'A5' => '中型C类，一般指规模在3000万以上，5000万以下',
+            'A6' => '中型B类，一般指规模在5000万以上，8000万以下',
+            'A7' => '中型A类，一般指规模在8000万以上，1亿以下',
+            'A8' => '大型C类，一般指规模在1亿以上，5亿以下',
+            'A9' => '大型B类，一般指规模在5亿以上，10亿以下',
+            'A10' => '大型A类，一般指规模在10亿以上，50亿以下',
+            'A11' => '特大型C类，一般指规模在50亿以上，100亿以下',
+            'A12' => '特大型B类，一般指规模在100亿以上，500亿以下',
+            'A13' => '特大型A类，一般指规模在500亿以上',
+        ]; 
+    }
+
+    static function getYingShouGuiMoTag(string $yingShouGuiMo): string
+    { 
+
+        $str = self::mapYingShouGuiMo()[$yingShouGuiMo];
+        $strArr = explode('，', $str);
+        return $strArr[0];
+    }
+
+    function getAllTags($companyData): array
+    { 
+        // 标签
+        $tags = [];
+
+        // 营收规模 
+        $yingShouGuiMoData  =\App\HttpController\Models\RDS3\ArLable::create()->where('entname', $companyData['name'])->get();
+        $yingShouGuiMoData && $yingShouGuiMoTag = (new XinDongService())::getYingShouGuiMoTag($yingShouGuiMoData['label']);
+        $yingShouGuiMoTag && $tags[50] = $yingShouGuiMoTag;
+
+        // 团队规模
+        $tuanDuiGuiMoData  = \App\HttpController\Models\RDS3\TuanDuiGuiMo::create()->where('xd_id', $companyData['id'])->get();
+        $tuanDuiGuiMoData && $tuanDuiGuiMoTag = self::getTuanDuiGuiMoTag($tuanDuiGuiMoData['num']);
+        $tuanDuiGuiMoTag && $tags[60] = $tuanDuiGuiMoTag;
+
+        // 是否有ISO
+        $isoTag = self::getIsoTag($companyData['id']);
+        $isoTag && $tags[80] = $isoTag;
+
+        return $tags;
+    }
+
+    static function getIsoTag($companyId):string
+    {
+        if(
+            self::checkIfHasIso($companyId)
+        ){
+            return 'ISO';
+        }
+
+        return ""; 
+    }
+
+    static function checkIfHasIso($companyId):bool
+    {
+        return  \App\HttpController\Models\RDS3\XdDlRzGlTx::create()
+                ->where('xd_id', $companyId)->get() ?true : false;
+    }
+
+    static function getTuanDuiGuiMoTag($nums){ 
+        $map = self::getTuanDuiGuiMoMap();
+        foreach($map as $item){
+            if(
+                $item['min'] <= $nums &&
+                $item['max'] >= $nums 
+            ){
+                return $item['des'];
+            }
+        }
+   }
+    static function getTuanDuiGuiMoMap(){ 
+         return $map = [
+            10 => ['min' => 0, 'max' => 10 , 'des' => '10人以下' ],//, 
+            20 => ['min' => 10, 'max' => 50  , 'des' => '10-50人' ], //, 
+            30 => ['min' => 50, 'max' => 100  , 'des' => '50-100人' ], //, 
+            40 => ['min' => 100, 'max' => 500 , 'des' => '100-500人'  ], //, 
+            50 => ['min' => 500, 'max' => 1000  , 'des' => '500-1000人' ], //, 
+            60 => ['min' => 1000, 'max' => 5000  , 'des' => '1000-5000人' ], //, 
+            70 => ['min' => 5000, 'max' => 10000000 , 'des' => '5000人以上' ], //, 
+        ];
+    }
+
+    // 获取所有曾用名称
+    static function getAllUsedNames($dataArr){
+        $allNames = [ $dataArr['name'] => $dataArr['name']];        
+        $newNames = self::autoSearchNewNames($dataArr);
+        $oldNames = self::autoSearchOldNames($dataArr);
+        return array_merge($allNames, $newNames, $oldNames);
+    }
+
+    //往后找到最新的names
+    static function autoSearchNewNames($dataArr){  
+        $names = [];
+        // 容错次数
+        $nums = 1;
+        while($dataArr['property2']>0) {
+            if($nums>=20){
+                break;
+            }
+            $retData  =\App\HttpController\Models\RDS3\Company::create()
+                ->field(['id','name','property2'])
+                ->where('id', $dataArr['property2'])
+                ->get();
+            if($retData){
+                $dataArr = [
+                    'id' => $retData->id,
+                    'name' => $retData->name,
+                    'property2' => $retData->property2,
+                ]; 
+                $names[$dataArr['name']] = $dataArr['name'];
+            }
+            else{
+                $dataArr = [
+                    'id' => 0,
+                    'name' => 0,
+                    'property2' => 0,
+                ]; 
+            }
+           $nums ++;
+        }
+        
+       return $names;
+    }
+
+    //往前找到旧的names
+    static function autoSearchOldNames($dataArr){ 
+        $names = [];
+        // 容错次数
+        $nums = 1;
+        while($dataArr['id']>0) {
+            if($nums>=20){
+                break;
+            }
+            $retData  =\App\HttpController\Models\RDS3\Company::create()
+                ->field(['id','name','property2'])
+                ->where('property2', $dataArr['id'])
+                ->get();
+            if($retData){
+                $dataArr = [
+                    'id' => $retData->id,
+                    'name' => $retData->name,
+                    'property2' => $retData->property2,
+                ];
+                $names[$dataArr['name']] = $dataArr['name'];
+            }
+            else{
+                $dataArr = [
+                    'id' => 0,
+                    'name' => 0,
+                    'property2' => 0,
+                ];
+            }
+            $nums ++; 
+        } 
+       return $names;
     }
 }

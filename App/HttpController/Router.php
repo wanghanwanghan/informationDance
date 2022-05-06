@@ -189,6 +189,12 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getBusinessScaleInfo', $prefix . 'getBusinessScaleInfo');// 营收规模 https://api.meirixindong.com//api/v1/xd/getBusinessScaleInfo
             $routeCollector->addRoute(['GET', 'POST'], '/getMainProducts', $prefix . 'getMainProducts');// 营收规模 https://api.meirixindong.com//api/v1/xd/getMainProducts
             $routeCollector->addRoute(['GET', 'POST'], '/saveSearchHistroy', $prefix . 'saveSearchHistroy');// 营收规模 https://api.meirixindong.com/api/v1/xd/saveSearchHistroy
+            $routeCollector->addRoute(['GET', 'POST'], '/getTagInfo', $prefix . 'getTagInfo');// 营收规模 https://api.meirixindong.com/api/v1/xd/getTagInfo
+            $routeCollector->addRoute(['GET', 'POST'], '/getSearchHistory', $prefix . 'getSearchHistory');// 营收规模 https://api.meirixindong.com/api/v1/xd/getSearchHistory
+            $routeCollector->addRoute(['GET', 'POST'], '/delSearchHistory', $prefix . 'delSearchHistory');// 营收规模 https://api.meirixindong.com/api/v1/xd/delSearchHistory
+            $routeCollector->addRoute(['GET', 'POST'], '/getInvestorInfo', $prefix . 'getInvestorInfo');// 营收规模 https://api.meirixindong.com/api/v1/xd/getInvestorInfo
+            $routeCollector->addRoute(['GET', 'POST'], '/getStaffInfo', $prefix . 'getStaffInfo');// 营收规模 https://api.meirixindong.com/api/v1/xd/getStaffInfo
+            $routeCollector->addRoute(['GET', 'POST'], '/getNamesInfo', $prefix . 'getNamesInfo');// 营收规模 https://api.meirixindong.com/api/v1/xd/getNamesInfo
         });
 
         return true;

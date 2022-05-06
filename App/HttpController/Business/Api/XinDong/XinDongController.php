@@ -21,6 +21,7 @@ use Carbon\Carbon;
 use EasySwoole\ORM\DbManager;
 use wanghanwanghan\someUtils\control;
 use App\HttpController\Models\Api\UserSearchHistory;
+use EasySwoole\Mysqli\QueryBuilder;
 
 class XinDongController extends XinDongBase
 {
@@ -839,15 +840,7 @@ eof;
          
 
         // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
-        $map = [
-            10 => ['min' => 0, 'max' => 10  ],//'10人以下', 
-            20 => ['min' => 10, 'max' => 50  ], //'10-50人', 
-            30 => ['min' => 50, 'max' => 100  ], //'50-100人', 
-            40 => ['min' => 100, 'max' => 500  ], //'100-500人', 
-            50 => ['min' => 500, 'max' => 1000  ], //'500-1000人', 
-            60 => ['min' => 1000, 'max' => 5000  ], //'1000-5000人', 
-            70 => ['min' => 5000, 'max' => 10000000  ], //'5000人以上', 
-        ];
+        $map =  (new XinDongService())::getTuanDuiGuiMoMap();
         $matchedCnames = [];
         foreach($tuan_dui_ren_shu_values as $item){
             $item && $matchedCnames[] = $map[$item]; 
@@ -967,7 +960,7 @@ eof;
 
     /**
       * 
-      * 高级搜索 
+      * 基本信息 
         https://api.meirixindong.com/api/v1/xd/getCompanyBasicInfo 
       * 
       * 
@@ -1221,4 +1214,216 @@ eof;
  
         return $this->writeJson(200,  ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
     }
+
+     /**
+      * 
+      * 获取企业标签
+        https://api.meirixindong.com/api/v1/xd/getTagInfo 
+      * 
+      * 
+     */
+    function getTagInfo(): bool
+    {   
+        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+        if (!$companyId) {
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
+        } 
+
+        $companyData  =\App\HttpController\Models\RDS3\Company::create()->where('id', $companyId)->get();
+        if(!$companyData){
+            return $this->writeJson(201, null, null, '没有该企业');
+        }
+
+        return $this->writeJson(200, ['total' => 1], (new XinDongService())->getAllTags($companyData), '成功', true, []);
+    }
+
+     /**
+      * 
+      * 获取主营产品
+        https://api.meirixindong.com/api/v1/xd/getSearchHistory 
+      * 
+      * 
+     */
+    function getSearchHistory(): bool
+    {  
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?:1; 
+        $size = intval($this->request()->getRequestParam('size')); 
+        $size = $size>0 ?:10; 
+        $offset = ($page-1)*$size;  
+
+        $model =  UserSearchHistory::create()
+            ->where('userId', $this->loginUserinfo['id'])->page($page)->withTotalCount();
+        $retData = $model->all();
+        $total = $model->lastQueryResult()->getTotalCount(); 
+        
+        foreach($retData as &$dataitem){
+           $dataitem['post_data_arr'] = json_decode($dataitem['post_data'], true);
+        }
+ 
+        return $this->writeJson(200,  ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+    }
+
+    /**
+      * 
+      * 删除搜索历史
+        https://api.meirixindong.com/api/v1/xd/delSearchHistory 
+      * 
+      * 
+     */
+    function delSearchHistory(): bool
+    {  
+        $id = intval($this->request()->getRequestParam('id')); 
+        if (!$id) {
+            return $this->writeJson(201, null, null, '参数缺失');
+        }   
+        
+        if(
+           !UserSearchHistory::create()->where('id', $id)->where('userId' , $this->loginUserinfo['id'])->get()
+        ){
+            return $this->writeJson(203, null, null, '没有该数据');
+        } 
+
+        try {
+            $res = UserSearchHistory::create()->destroy(function (QueryBuilder $builder) use ($id) {
+                $builder->where('id', $id)->where('userId' , $this->loginUserinfo['id']);
+            }); 
+        } catch (\Throwable $e) {
+            CommonService::getInstance()->log4PHP($e->getMessage());
+        }
+
+        if(!$res){
+            return $this->writeJson(204, null, null, '删除失败');
+        }
+
+        return $this->writeJson(200,  [], [], '成功', true, []);
+    }
+
+    /**
+      * 
+      * 股东信息
+        https://api.meirixindong.com/api/v1/xd/getInvestorInfo 
+      * 
+      * 
+     */
+    function getInvestorInfo(): bool
+    {  
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?:1; 
+        $size = intval($this->request()->getRequestParam('size')); 
+        $size = $size>0 ?:10; 
+        $offset = ($page-1)*$size;  
+        
+        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+        
+        //优先从工商股东信息取
+        $model = \App\HttpController\Models\RDS3\CompanyInvestor::create()
+            ->where('company_id', $companyId)->page($page)->withTotalCount();
+        // 没有工商股东信息 从企业自发查
+        if(!$model){
+            $model = \App\HttpController\Models\RDS3\CompanyInvestorEntPub::create()
+                ->where('company_id', $companyId)->page($page)->withTotalCount();
+        }
+        $retData = $model->all();
+        $total = $model->lastQueryResult()->getTotalCount(); 
+        
+        foreach($retData as &$dataItem){
+            if(
+                $dataItem['investor_type'] == 2 
+            ){
+                $companyModel = \App\HttpController\Models\RDS3\Company::create()
+                    ->where('id', $dataItem['investor_id'])->get();
+                $dataItem['name'] = $companyModel->name;
+            }
+
+            if(
+                $dataItem['investor_type'] == 1 
+            ){
+                $humanModel = \App\HttpController\Models\RDS3\Human::create()
+                    ->where('id', $dataItem['investor_id'])->get();
+                $dataItem['name'] = $humanModel->name;
+            } 
+        }
+
+        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+    
+    }
+
+    /**
+      * 
+      * 人员信息
+        https://api.meirixindong.com/api/v1/xd/getStaffInfo 
+      * 
+      * 
+     */
+    function getStaffInfo(): bool
+    {  
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?:1; 
+        $size = intval($this->request()->getRequestParam('size')); 
+        $size = $size>0 ?:10; 
+        $offset = ($page-1)*$size;  
+        
+        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+        
+        $model = \App\HttpController\Models\RDS3\CompanyStaff::create()
+            ->where('company_id', $companyId)->page($page)->withTotalCount(); 
+        $retData = $model->all();
+        $total = $model->lastQueryResult()->getTotalCount(); 
+
+        foreach($retData as &$dataItem){
+            $humanModel = \App\HttpController\Models\RDS3\Human::create()
+                ->where('id', $dataItem['staff_id'])->get();
+            $dataItem['name'] = $humanModel->name;
+        }
+        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+    
+    }
+
+    /**
+      * 
+      * 曾用名
+        https://api.meirixindong.com/api/v1/xd/getNamesInfo 
+      * 
+      * 
+     */
+    function getNamesInfo(): bool
+    {  
+        // $page = intval($this->request()->getRequestParam('page'));
+        // $page = $page>0 ?:1; 
+        // $size = intval($this->request()->getRequestParam('size')); 
+        // $size = $size>0 ?:10; 
+        // $offset = ($page-1)*$size;  
+        
+        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+        
+        $model = \App\HttpController\Models\RDS3\Company::create()
+                    // ->field(['id','name','property2'])
+                ->where('id', $companyId)
+                ->get(); 
+        if(!$model){
+            return  $this->writeJson(201, null, null, '数据缺失(企业id)');
+        }
+
+        $names = (new XinDongService())::getAllUsedNames(
+            [
+                'id' => $model->id,
+                'name' => $model->name,
+                'property2' => $model->property2,
+            ]
+        );
+       
+        return $this->writeJson(200, [], $names, '成功', true, []);
+    
+    } 
+
 }
