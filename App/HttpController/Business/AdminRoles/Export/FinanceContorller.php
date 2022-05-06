@@ -404,6 +404,7 @@ class FinanceContorller extends UserController
                 $v['NETINC'] == '' ? '' : $v['NETINC'],
                 $v['LIAGRO'] == '' ? '' : $v['LIAGRO'],
                 $v['SOCNUM'] == '' ? '' : $v['SOCNUM'],
+                $v['EMPNUM'] == '' ? '' : $v['EMPNUM'],
             ];
             foreach ($insertData as $k => $val) {
                 if ($val == '') {
