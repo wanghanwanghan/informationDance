@@ -1330,6 +1330,24 @@ eof;
         $retData = $model->all();
         $total = $model->lastQueryResult()->getTotalCount(); 
         
+        foreach($retData as &$dataItem){
+            if(
+                $dataItem['investor_type'] == 2 
+            ){
+                $companyModel = \App\HttpController\Models\RDS3\Company::create()
+                    ->where('id', $dataItem['investor_id'])->get();
+                $dataItem['name'] = $companyModel->name;
+            }
+
+            if(
+                $dataItem['investor_type'] == 1 
+            ){
+                $humanModel = \App\HttpController\Models\RDS3\Human::create()
+                    ->where('id', $dataItem['investor_id'])->get();
+                $dataItem['name'] = $humanModel->name;
+            } 
+        }
+
         return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
     
     }
@@ -1361,10 +1379,45 @@ eof;
 
         foreach($retData as &$dataItem){
             $humanModel = \App\HttpController\Models\RDS3\Human::create()
-            ->where('id', $dataItem['staff_id'])->get();
+                ->where('id', $dataItem['staff_id'])->get();
             $dataItem['name'] = $humanModel->name;
         }
         return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
     
     }
+
+    /**
+      * 
+      * 曾用名
+        https://api.meirixindong.com/api/v1/xd/getNamesInfo 
+      * 
+      * 
+     */
+    function getNamesInfo(): bool
+    {  
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?:1; 
+        $size = intval($this->request()->getRequestParam('size')); 
+        $size = $size>0 ?:10; 
+        $offset = ($page-1)*$size;  
+        
+        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+        
+        $model = \App\HttpController\Models\RDS3\CompanyStaff::create()
+            ->where('company_id', $companyId)->page($page)->withTotalCount(); 
+        $retData = $model->all();
+        $total = $model->lastQueryResult()->getTotalCount(); 
+
+        foreach($retData as &$dataItem){
+            $humanModel = \App\HttpController\Models\RDS3\Human::create()
+                ->where('id', $dataItem['staff_id'])->get();
+            $dataItem['name'] = $humanModel->name;
+        }
+        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+    
+    }
+
 }
