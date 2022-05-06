@@ -1313,7 +1313,28 @@ class XinDongService extends ServiceBase
         $shangShiGongsiTag = self::getShangShiTag($companyData['id']);
         $shangShiGongsiTag && $tags[95] = $shangShiGongsiTag;
 
+        //进出口企业
+        $jinChukouTag = self::getJinChuKouTag($companyData['id']);
+        $jinChukouTag && $tags[100] = $jinChukouTag;
+
         return $tags;
+    }
+
+    static function getJinChuKouTag($companyId):string
+    {
+        if(
+            self::checkIfJinChuKou($companyId)
+        ){
+            return '进出口型企业';
+        }
+
+        return ""; 
+    }
+    static function checkIfJinChuKou($companyId):bool
+    {
+       return  \App\HttpController\Models\RDS3\HgGoods::create()
+                ->where('xd_id', $companyId) 
+                ->get() ?true : false;
     }
 
     static function getShangShiTag($companyId):string
