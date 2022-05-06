@@ -1336,9 +1336,9 @@ eof;
             ){
                 $companyModel = \App\HttpController\Models\RDS3\Company::create()
                     ->where('id', $dataItem['investor_id'])->get();
-                $dataItem['name'] = $companyModel->name;
-                $capital = json_decode($dataItem['capital'],true);
-                $dataItem['capitalData'] = $capital;
+                $dataItem['name'] = $companyModel->name; 
+                $dataItem['capitalData'] = @json_decode($dataItem['capital'],true);
+                $dataItem['capitalActlData'] = @json_decode($dataItem['capitalActl'],true);
                 
             }
 
@@ -1349,6 +1349,7 @@ eof;
                     ->where('id', $dataItem['investor_id'])->get();
                 $dataItem['name'] = $humanModel->name;
                 $dataItem['capitalData'] = [['amomon'=>$dataItem['capital'],'time'=>'','paymet'=>'']];
+                $dataItem['capitalActlData'] = [['amomon'=>$dataItem['capitalActl'],'time'=>'','paymet'=>'']];
             } 
         }
 
