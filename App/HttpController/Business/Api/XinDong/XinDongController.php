@@ -1333,4 +1333,38 @@ eof;
         return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
     
     }
+
+    /**
+      * 
+      * 人员信息
+        https://api.meirixindong.com/api/v1/xd/getStaffInfo 
+      * 
+      * 
+     */
+    function getStaffInfo(): bool
+    {  
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?:1; 
+        $size = intval($this->request()->getRequestParam('size')); 
+        $size = $size>0 ?:10; 
+        $offset = ($page-1)*$size;  
+        
+        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+        
+        $model = \App\HttpController\Models\RDS3\CompanyStaff::create()
+            ->where('company_id', $companyId)->page($page)->withTotalCount(); 
+        $retData = $model->all();
+        $total = $model->lastQueryResult()->getTotalCount(); 
+
+        foreach($retData as &$dataItem){
+            $humanModel = \App\HttpController\Models\RDS3\Human::create()
+            ->where('id', $dataItem['staff_id'])->get();
+            $dataItem['name'] = $humanModel->name;
+        }
+        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+    
+    }
 }
