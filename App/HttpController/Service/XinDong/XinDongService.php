@@ -1304,7 +1304,7 @@ class XinDongService extends ServiceBase
         $isoTag && $tags[80] = $isoTag;
         // 是否瞪羚
         $dengLingTag = self::getDengLingTag($companyData['id']);
-        $dengLingTag && $tags[80] = $dengLingTag;
+        $dengLingTag && $tags[85] = $dengLingTag;
 
         return $tags;
     }
