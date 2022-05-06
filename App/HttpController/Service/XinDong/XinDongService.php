@@ -1302,6 +1302,9 @@ class XinDongService extends ServiceBase
         // 是否有ISO
         $isoTag = self::getIsoTag($companyData['id']);
         $isoTag && $tags[80] = $isoTag;
+        // 是否瞪羚
+        $dengLingTag = self::getDengLingTag($companyData['id']);
+        $dengLingTag && $tags[80] = $dengLingTag;
 
         return $tags;
     }
@@ -1317,9 +1320,26 @@ class XinDongService extends ServiceBase
         return ""; 
     }
 
+    static function getDengLingTag($companyId):string
+    {
+        if(
+            self::checkIfHasDengLing($companyId)
+        ){
+            return '瞪羚';
+        }
+
+        return ""; 
+    }
+
     static function checkIfHasIso($companyId):bool
     {
         return  \App\HttpController\Models\RDS3\XdDlRzGlTx::create()
+                ->where('xd_id', $companyId)->get() ?true : false;
+    }
+
+    static function checkIfHasDengLing($companyId):bool
+    {
+        return  \App\HttpController\Models\RDS3\XdDl::create()
                 ->where('xd_id', $companyId)->get() ?true : false;
     }
 
