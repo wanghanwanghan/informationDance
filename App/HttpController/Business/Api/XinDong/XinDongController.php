@@ -721,6 +721,21 @@ eof;
             $value && $ElasticSearchService->addMustMatchPhraseQuery( $field , $value) ; 
         } 
 
+        // 搜索战略新兴产业
+        $basicJlxxcyidStr = trim($this->request()->getRequestParam('basic_jlxxcyid'));
+        $basicJlxxcyidStr && $basicJlxxcyidArr = json_decode( $basicJlxxcyidStr,true);
+        if(
+            !empty($basicJlxxcyidArr)
+        ){
+            $siJiFenLeiDatas = \App\HttpController\Models\RDS3\ZlxxcyNicCode::create()
+                ->where('zlxxcy_id', $basicJlxxcyidArr, 'IN') 
+                ->all();
+            $matchedCnames = array_column($siJiFenLeiDatas, 'nic_id');
+            (!empty($matchedCnames)) && $ElasticSearchService
+                ->addMustShouldPhraseQuery( 'si_ji_fen_lei_code' , $matchedCnames) ; 
+    
+        }
+
         // 搜索shang_pin_data 商品信息 appStr:五香;农庄
         $appStr =   trim($this->request()->getRequestParam('appStr')); 
         $appStr && $appStrDatas = explode(';', $appStr);
