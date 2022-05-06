@@ -1305,6 +1305,9 @@ class XinDongService extends ServiceBase
         // 是否瞪羚
         $dengLingTag = self::getDengLingTag($companyData['id']);
         $dengLingTag && $tags[85] = $dengLingTag;
+        // 高新技术
+        $highTecTag = self::getHighTecTag($companyData['id']);
+        $highTecTag && $tags[90] = $highTecTag;
 
         return $tags;
     }
@@ -1320,6 +1323,17 @@ class XinDongService extends ServiceBase
         return ""; 
     }
 
+    static function getHighTecTag($companyId):string
+    {
+        if(
+            self::checkIfIsHighTec($companyId)
+        ){
+            return '高新技术';
+        }
+
+        return ""; 
+    }
+
     static function getDengLingTag($companyId):string
     {
         if(
@@ -1329,6 +1343,14 @@ class XinDongService extends ServiceBase
         }
 
         return ""; 
+    }
+
+    static function checkIfIsHighTec($companyId):bool
+    {
+       return  \App\HttpController\Models\RDS3\XdHighTec::create()
+                ->where('xd_id', $companyId)
+                ->where('dateto', date('Y-m-d'), '>')
+                ->get() ?true : false;
     }
 
     static function checkIfHasIso($companyId):bool
