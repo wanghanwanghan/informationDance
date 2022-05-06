@@ -1300,7 +1300,27 @@ class XinDongService extends ServiceBase
         $tuanDuiGuiMoTag && $tags[60] = $tuanDuiGuiMoTag;
 
         // 是否有ISO
+        $isoTag = self::getIsoTag($companyData['id']);
+        $isoTag && $tags[80] = $isoTag;
+
         return $tags;
+    }
+
+    static function getIsoTag($companyId):string
+    {
+        if(
+            self::checkIfHasIso($companyId)
+        ){
+            return 'ISO';
+        }
+
+        return ""; 
+    }
+
+    static function checkIfHasIso($companyId):bool
+    {
+        return  \App\HttpController\Models\RDS3\XdDlRzGlTx::create()
+                ->where('xd_id', $companyId)->get() ?true : false;
     }
 
     static function getTuanDuiGuiMoTag($nums){ 
