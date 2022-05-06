@@ -1309,7 +1309,29 @@ class XinDongService extends ServiceBase
         $highTecTag = self::getHighTecTag($companyData['id']);
         $highTecTag && $tags[90] = $highTecTag;
 
+        // 上市公司
+        $shangShiGongsiTag = self::getShangShiTag($companyData['id']);
+        $shangShiGongsiTag && $tags[95] = $shangShiGongsiTag;
+
         return $tags;
+    }
+
+    static function getShangShiTag($companyId):string
+    {
+        if(
+            self::checkIfShangeShi($companyId)
+        ){
+            return '上市公司';
+        }
+
+        return ""; 
+    }
+
+    static function checkIfShangeShi($companyId):bool
+    {
+       return  \App\HttpController\Models\RDS3\XdAggreListedFinance::create()
+                ->where('xd_id', $companyId) 
+                ->get() ?true : false;
     }
 
     static function getIsoTag($companyId):string
