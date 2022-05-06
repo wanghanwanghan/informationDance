@@ -723,7 +723,7 @@ eof;
 
         // 搜索战略新兴产业
         $basicJlxxcyidStr = trim($this->request()->getRequestParam('basic_jlxxcyid'));
-        $basicJlxxcyidStr && $basicJlxxcyidArr = json_decode( $basicJlxxcyidStr,true);
+        $basicJlxxcyidStr && $basicJlxxcyidArr = explode(',',  $basicJlxxcyidStr);
         if(
             !empty($basicJlxxcyidArr)
         ){
@@ -731,7 +731,7 @@ eof;
                 ->where('zlxxcy_id', $basicJlxxcyidArr, 'IN') 
                 ->all();
             $matchedCnames = array_column($siJiFenLeiDatas, 'nic_id');
-            (!empty($matchedCnames)) && $ElasticSearchService
+           $ElasticSearchService
                 ->addMustShouldPhraseQuery( 'si_ji_fen_lei_code' , $matchedCnames) ; 
     
         }
