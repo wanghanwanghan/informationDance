@@ -1351,7 +1351,7 @@ class XinDongService extends ServiceBase
         $allNames = [ $dataArr['name'] => $dataArr['name']];        
         $newNames = self::autoSearchNewNames($dataArr);
         $oldNames = self::autoSearchOldNames($dataArr);
-        return array_merge($allNames, $newNames, $oldNames);
+        return array_values(array_merge($allNames, $newNames, $oldNames));
     }
 
     //往后找到最新的names
