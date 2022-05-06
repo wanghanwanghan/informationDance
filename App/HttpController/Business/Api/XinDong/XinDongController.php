@@ -1395,29 +1395,35 @@ eof;
      */
     function getNamesInfo(): bool
     {  
-        $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?:1; 
-        $size = intval($this->request()->getRequestParam('size')); 
-        $size = $size>0 ?:10; 
-        $offset = ($page-1)*$size;  
+        // $page = intval($this->request()->getRequestParam('page'));
+        // $page = $page>0 ?:1; 
+        // $size = intval($this->request()->getRequestParam('size')); 
+        // $size = $size>0 ?:10; 
+        // $offset = ($page-1)*$size;  
         
         $companyId = intval($this->request()->getRequestParam('xd_id')); 
         if (!$companyId) {
             return  $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
         
-        $model = \App\HttpController\Models\RDS3\CompanyStaff::create()
-            ->where('company_id', $companyId)->page($page)->withTotalCount(); 
-        $retData = $model->all();
-        $total = $model->lastQueryResult()->getTotalCount(); 
-
-        foreach($retData as &$dataItem){
-            $humanModel = \App\HttpController\Models\RDS3\Human::create()
-                ->where('id', $dataItem['staff_id'])->get();
-            $dataItem['name'] = $humanModel->name;
+        $model = \App\HttpController\Models\RDS3\Company::create()
+                    // ->field(['id','name','property2'])
+                ->where('id', $companyId)
+                ->get(); 
+        if(!$model){
+            return  $this->writeJson(201, null, null, '数据缺失(企业id)');
         }
-        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+
+        $names = (new XinDongService())::getAllUsedNames(
+            [
+                'id' => $model->id,
+                'name' => $model->name,
+                'property2' => $model->property2,
+            ]
+        );
+       
+        return $this->writeJson(200, [], $names, '成功', true, []);
     
-    }
+    } 
 
 }

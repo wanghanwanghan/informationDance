@@ -1345,4 +1345,79 @@ class XinDongService extends ServiceBase
             70 => ['min' => 5000, 'max' => 10000000 , 'des' => '5000人以上' ], //, 
         ];
     }
+
+    // 获取所有曾用名称
+    static function getAllUsedNames($dataArr){
+        $allNames = [ $dataArr['name'] => $dataArr['name']];        
+        $newNames = self::autoSearchNewNames($dataArr);
+        $oldNames = self::autoSearchOldNames($dataArr);
+        return array_merge($allNames, $newNames, $oldNames);
+    }
+
+    //往后找到最新的names
+    static function autoSearchNewNames($dataArr){  
+        $names = [];
+        // 容错次数
+        $nums = 1;
+        while($dataArr['property2']>0) {
+            if($nums>=20){
+                break;
+            }
+            $retData  =\App\HttpController\Models\RDS3\Company::create()
+                ->field(['id','name','property2'])
+                ->where('id', $dataArr['property2'])
+                ->get();
+            if($retData){
+                $dataArr = [
+                    'id' => $retData->id,
+                    'name' => $retData->name,
+                    'property2' => $retData->property2,
+                ]; 
+                $names[$dataArr['name']] = $dataArr['name'];
+            }
+            else{
+                $dataArr = [
+                    'id' => 0,
+                    'name' => 0,
+                    'property2' => 0,
+                ]; 
+            }
+           $nums ++;
+        }
+        
+       return $names;
+    }
+
+    //往前找到旧的names
+    static function autoSearchOldNames($dataArr){ 
+        $names = [];
+        // 容错次数
+        $nums = 1;
+        while($dataArr['id']>0) {
+            if($nums>=20){
+                break;
+            }
+            $retData  =\App\HttpController\Models\RDS3\Company::create()
+                ->field(['id','name','property2'])
+                ->where('property2', $dataArr['id'])
+                ->get();
+            if($retData){
+                $dataArr = [
+                    'id' => $retData->id,
+                    'name' => $retData->name,
+                    'property2' => $retData->property2,
+                ];
+                $names[$dataArr['name']] = $dataArr['name'];
+            }
+            else{
+                $dataArr = [
+                    'id' => 0,
+                    'name' => 0,
+                    'property2' => 0,
+                ];
+            }
+            $nums ++; 
+        } 
+       return $names;
+    }
 }
