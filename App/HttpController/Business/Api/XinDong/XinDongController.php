@@ -1299,4 +1299,38 @@ eof;
         return $this->writeJson(200,  [], [], '成功', true, []);
     }
 
+    /**
+      * 
+      * 股东信息
+        https://api.meirixindong.com/api/v1/xd/getInvestorInfo 
+      * 
+      * 
+     */
+    function getInvestorInfo(): bool
+    {  
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?:1; 
+        $size = intval($this->request()->getRequestParam('size')); 
+        $size = $size>0 ?:10; 
+        $offset = ($page-1)*$size;  
+        
+        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+        
+        //优先从工商股东信息取
+        $model = \App\HttpController\Models\RDS3\CompanyInvestor::create()
+            ->where('company_id', $companyId)->page($page)->withTotalCount();
+        // 没有工商股东信息 从企业自发查
+        if(!$model){
+            $model = \App\HttpController\Models\RDS3\CompanyInvestorEntPub::create()
+                ->where('company_id', $companyId)->page($page)->withTotalCount();
+        }
+        $retData = $model->all();
+        $total = $model->lastQueryResult()->getTotalCount(); 
+        
+        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+    
+    }
 }
