@@ -1636,10 +1636,10 @@ eof;
         $ElasticSearchService->addMustMatchQuery( 'xd_id' , $companyId) ;  
 
         $size = $this->request()->getRequestParam('size')??1;
-        $page = $this->request()->getRequestParam('page')??1;
+        $page = $this->request()->getRequestParam('page')??10;
         $offset  =  ($page-1)*$size;
-        $ElasticSearchService->addSize($size) ;
-        $ElasticSearchService->addFrom($offset) ; 
+        $ElasticSearchService->addSize(1) ;
+        $ElasticSearchService->addFrom(0) ; 
 
         $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
         $responseArr = @json_decode($responseJson,true); 
@@ -1666,15 +1666,24 @@ eof;
             $retData = $dataItem['_source']['shang_pin_data'];
             break;
         }
-        
+
+         
+        $total =  count($retData); //total items in array       
+        $totalPages = ceil( $total/ $size ); //calculate total pages
+        $page = max($page, 1); //get 1 page when $_GET['page'] <= 0
+        $page = min($page, $totalPages); //get last page when $_GET['page'] > $totalPages
+        $offset = ($page - 1) * $size;
+        if( $offset < 0 ) $offset = 0;
+
+        $retData = array_slice( $retData, $offset, $size );
+
+
         return $this->writeJson(200, 
           [
             'page' => $page,
             'pageSize' =>$size,
             'total' => count($retData),
-            'totalPage' => (int)floor(count($retData)/
-            10),
-         
+            'totalPage' => $totalPages, 
         ] 
        , $retData, '成功', true, []);
     }
