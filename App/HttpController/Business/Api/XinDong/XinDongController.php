@@ -753,7 +753,8 @@ eof;
         $reg_capital_values = [];  // 注册资本
         $ying_shou_gui_mo_values = [];  // 营收规模
         $tuan_dui_ren_shu_values = [];  // 团队人数
-        $web_values = [];
+        $web_values = []; //官网
+        $app_values = []; //官网
         foreach($searchOptionArr as $item){ 
             if($item['pid'] == 10){
                 $org_type_values = $item['value'];  
@@ -780,18 +781,25 @@ eof;
             if($item['pid'] == 70){ 
                 $web_values = $item['value']; 
             }
+            if($item['pid'] == 80){ 
+                $app_values = $item['value']; 
+            }
         }
 
-        //必须存在官网
-        // $hasWeb = intval($this->request()->getRequestParam('hasWeb'));
-        // if($hasWeb){
-        //     $ElasticSearchService->addMustExistsQuery( 'web') ; 
-        // }
+        //必须存在官网 
         foreach($web_values as $value){
             if($value){
                 // $ElasticSearchService->addMustExistsQuery( 'web') ; 
                 $ElasticSearchService->addMustRegexpQuery( 'web', ".+") ; 
                 
+                break;
+            }
+        }
+
+        //必须存在APP 
+        foreach($app_values as $value){
+            if($value){ 
+                $ElasticSearchService->addMustRegexpQuery( 'app', ".+") ;  
                 break;
             }
         }

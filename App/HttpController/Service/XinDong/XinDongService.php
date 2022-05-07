@@ -1171,11 +1171,20 @@ class XinDongService extends ServiceBase
             ],
             [
                 'pid' => 70,
-                'desc' => '是否有官网',
+                'desc' => '有无官网',
                 'key' => 'web',
                 'type' => 'select',
                 'data' => [
-                    10 =>'必须有官网',  
+                    10 =>'有',  
+                ],
+            ],
+            [
+                'pid' => 80,
+                'desc' => '有无APP',
+                'key' => 'web',
+                'type' => 'select',
+                'data' => [
+                    10 =>'有',  
                 ],
             ],
         ];
