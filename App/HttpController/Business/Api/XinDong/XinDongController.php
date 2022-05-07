@@ -1107,9 +1107,9 @@ eof;
     function getHighTecQualifications(): bool
     {  
         $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?:1; 
+        $page = $page>0 ?$page:1; 
         $size = intval($this->request()->getRequestParam('size')); 
-        $size = $size>0 ?:10; 
+        $size = $size>0 ?$size:10; 
         $offset = ($page-1)*$size;  
 
         $companyId = intval($this->request()->getRequestParam('xd_id')); 
@@ -1134,9 +1134,9 @@ eof;
     function getDengLingQualifications(): bool
     {  
         $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?:1; 
+        $page = $page>0 ?$page:1; 
         $size = intval($this->request()->getRequestParam('size')); 
-        $size = $size>0 ?:10; 
+        $size = $size>0 ?$size:10; 
         $offset = ($page-1)*$size;  
 
         $companyId = intval($this->request()->getRequestParam('xd_id')); 
@@ -1161,9 +1161,9 @@ eof;
     function getIsoQualifications(): bool
     {  
         $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?:1; 
+        $page = $page>0 ?$page:1; 
         $size = intval($this->request()->getRequestParam('size')); 
-        $size = $size>0 ?:10; 
+        $size = $size>0 ?$size:10; 
         $offset = ($page-1)*$size;  
         
         $companyId = intval($this->request()->getRequestParam('xd_id')); 
@@ -1228,9 +1228,9 @@ eof;
     function getMainProducts(): bool
     {  
         $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?:1; 
+        $page = $page>0 ?$page:1; 
         $size = intval($this->request()->getRequestParam('size')); 
-        $size = $size>0 ?:10; 
+        $size = $size>0 ?$size:10; 
         $offset = ($page-1)*$size;  
 
         $type = trim($this->request()->getRequestParam('type')); 
@@ -1292,9 +1292,9 @@ eof;
     function getSearchHistory(): bool
     {  
         $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?:1; 
+        $page = $page>0 ?$page:1; 
         $size = intval($this->request()->getRequestParam('size')); 
-        $size = $size>0 ?:10; 
+        $size = $size>0 ?$size:10; 
         $offset = ($page-1)*$size;  
 
         $model =  UserSearchHistory::create()
@@ -1354,9 +1354,9 @@ eof;
     function getInvestorInfo(): bool
     {  
         $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?:1; 
+        $page = $page>0 ?$page:1; 
         $size = intval($this->request()->getRequestParam('size')); 
-        $size = $size>0 ?:10; 
+        $size = $size>0 ?$size:10; 
         $offset = ($page-1)*$size;  
         
         $companyId = intval($this->request()->getRequestParam('xd_id')); 
@@ -1428,9 +1428,9 @@ eof;
     function getStaffInfo(): bool
     {  
         $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?:1; 
+        $page = $page>0 ?$page:1; 
         $size = intval($this->request()->getRequestParam('size')); 
-        $size = $size>0 ?:10; 
+        $size = $size>0 ?$size:10; 
         $offset = ($page-1)*$size;  
         
         $companyId = intval($this->request()->getRequestParam('xd_id')); 
@@ -1462,9 +1462,9 @@ eof;
     function getNamesInfo(): bool
     {  
         // $page = intval($this->request()->getRequestParam('page'));
-        // $page = $page>0 ?:1; 
+        // $page = $page>0 ?$page:1; 
         // $size = intval($this->request()->getRequestParam('size')); 
-        // $size = $size>0 ?:10; 
+        // $size = $size>0 ?$size:10; 
         // $offset = ($page-1)*$size;  
         
         $companyId = intval($this->request()->getRequestParam('xd_id')); 
