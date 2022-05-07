@@ -866,11 +866,22 @@ eof;
         // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
         $map =  (new XinDongService())::getTuanDuiGuiMoMap();
         $matchedCnames = [];
+        // foreach($tuan_dui_ren_shu_values as $item){
+        //     $item && $matchedCnames[] = $map[$item]; 
+        // } 
+        // (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldRangeQuery( 'tuan_dui_ren_shu' , $matchedCnames) ;  
+        
         foreach($tuan_dui_ren_shu_values as $item){
-            $item && $matchedCnames[] = $map[$item]; 
+            $tmp = $map[$item]['epreg']; 
+            foreach($tmp as $tmp_item){
+                $matchedCnames[] = $tmp_item;
+            } 
         } 
-        (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldRangeQuery( 'tuan_dui_ren_shu' , $matchedCnames) ;  
-         
+        (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldRegexpQuery( 
+            'tuan_dui_ren_shu' , $matchedCnames
+        ) ;  
+       
+
 
         // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
         $map = [
@@ -1424,7 +1435,8 @@ eof;
             } 
         }
 
-        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 
+        'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
     
     }
 

@@ -61,6 +61,16 @@ class ElasticSearchService extends ServiceBase
         $this->query['query']['bool']['must'][] = ['regexp' => [$field => $value]];
     }
 
+    function addMustShouldRegexpQuery($field, $valueArr){
+        $boolQuery = []; 
+        foreach($valueArr as $value){
+            $boolQuery['bool']['should'][] = 
+                ['regexp' => [$field => $value]]; 
+        } 
+         
+        $this->query['query']['bool']['must'][] = $boolQuery; 
+    }
+
     function addMustExistsQuery($field){
         $this->query['query']['bool']['must'][] = ['exists' => ['field' => $field]];
     }
