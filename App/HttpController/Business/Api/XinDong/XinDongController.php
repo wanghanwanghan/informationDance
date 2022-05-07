@@ -22,6 +22,7 @@ use EasySwoole\ORM\DbManager;
 use wanghanwanghan\someUtils\control;
 use App\HttpController\Models\Api\UserSearchHistory;
 use EasySwoole\Mysqli\QueryBuilder;
+use EasySwoole\Http\Message\UploadFile;
 
 class XinDongController extends XinDongBase
 {
@@ -1445,5 +1446,38 @@ eof;
         return $this->writeJson(200, [], $names, '成功', true, []);
     
     } 
+    
+    // 上传商机
+    function uploadBusinessOpportunity(): bool
+    {
+        $files = $this->request()->getUploadedFiles();
 
+        $y = Carbon::now()->format('Y');
+        $m = Carbon::now()->format('m');
+
+        $path = ROOT_PATH . "/TempWork/SouKe/Work/{$y}{$m}/";
+        if (!file_exists($path)) {
+            mkdir($path, 0777, true);
+        }
+
+        foreach ($files as $key => $oneFile) {
+            if ($oneFile instanceof UploadFile) {
+                try {
+                    $fileName = $path . '_' . $this->loginUserinfo['id'] . '_' . $oneFile->getClientFilename();
+                    if (!file_exists($path)){
+                        $oneFile->moveTo($fileName);
+                    } else
+                    {
+                        CommonService::getInstance()->log4PHP(
+                            '[souKe]-uploadEntList 文件已存在['.$fileName.']'
+                        );
+                    }
+                } catch (\Throwable $e) {
+                    return $this->writeJson(202);
+                }
+            }
+        }
+
+        return $this->writeJson(200);
+    }
 }
