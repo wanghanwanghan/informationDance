@@ -1556,7 +1556,7 @@ eof;
     }
 
     // 
-    function getIntroduction(): bool
+    function getEsBasicInfo(): bool
     {
         $companyId = intval($this->request()->getRequestParam('xd_id')); 
         if (!$companyId) {
