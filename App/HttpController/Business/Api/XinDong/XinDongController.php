@@ -1554,4 +1554,71 @@ eof;
 
         return $this->writeJson(200);
     }
+
+    // 
+    function getIntroduction(): bool
+    {
+        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+        
+        $ElasticSearchService = new ElasticSearchService(); 
+        
+        $ElasticSearchService->addMustMatchQuery( 'xd_id' , $companyId) ;  
+
+        $size = $this->request()->getRequestParam('size')??1;
+        $page = $this->request()->getRequestParam('page')??1;
+        $offset  =  ($page-1)*$size;
+        $ElasticSearchService->addSize($size) ;
+        $ElasticSearchService->addFrom($offset) ; 
+
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
+        $responseArr = @json_decode($responseJson,true); 
+        CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
+            [
+                'es_query' => $ElasticSearchService->query,
+                'post_data' => $this->request()->getRequestParam(),
+            ]
+        )); 
+
+        // 格式化下日期和时间
+        $hits = (new XinDongService())::formatEsDate($responseArr['hits']['hits'], [
+            'estiblish_time',
+            'from_time',
+            'to_time',
+            'approved_time'
+        ]);
+        $hits = (new XinDongService())::formatEsMoney($hits, [
+            'reg_capital', 
+        ]);
+
+        foreach($hits as &$dataItem){
+            $dataItem['_source']['tags'] = array_values(
+                (new XinDongService())::getAllTagesByData(
+                    $dataItem['_source']
+                )
+            );
+
+            $webStr = trim($dataItem['_source']['web']);
+            if(!$webStr){
+                continue; 
+            }
+
+            $webArr = explode('&&&', $webStr);
+            !empty($webArr) && $dataItem['_source']['web'] = end($webArr); 
+        }
+    
+        return $this->writeJson(200, 
+          [
+            'page' => $page,
+            'pageSize' =>$size,
+            'total' => intval($responseArr['hits']['total']['value']),
+            'totalPage' => (int)floor(intval($responseArr['hits']['total']['value'])/
+            ($size)),
+         
+        ] 
+       , $hits, '成功', true, []);
+    }
 }
