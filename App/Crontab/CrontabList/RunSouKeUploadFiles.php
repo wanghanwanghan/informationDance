@@ -5,6 +5,7 @@ namespace App\Crontab\CrontabList;
 use App\Crontab\CrontabBase;
 use App\HttpController\Business\Admin\SaibopengkeAdmin\SaibopengkeAdminController;
 use App\HttpController\Models\Admin\SaibopengkeAdmin\Saibopengke_Data_List_Model;
+use App\HttpController\Models\Api\UserBusinessOpportunity;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
@@ -12,6 +13,7 @@ use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use EasySwoole\Mysqli\QueryBuilder;
 use wanghanwanghan\someUtils\control;
+use App\HttpController\Models\Api\UserSearchHistory;
 
 class RunSouKeUploadFiles extends AbstractCronTask
 {
@@ -98,9 +100,14 @@ class RunSouKeUploadFiles extends AbstractCronTask
             $entname = $this->strtr_func($one[0]);
             $code = $this->strtr_func($one[1]??'');
             $address = $this->strtr_func($one[2]??''); 
+            // UserBusinessOpportunity::create()->data([
+            //     'userId' => $userId, 
+            //     'post_data' => $postDataStr,
+            // ])->save();
             CommonService::getInstance()->log4PHP(
                 '[souKe]- readXlsx['.json_encode(
-                    [
+                    [   
+                        $xlsx_name,
                         $entname,
                         $code,
                         $address,
@@ -122,7 +129,7 @@ class RunSouKeUploadFiles extends AbstractCronTask
                 if (!in_array($file, $ignore, true)) {
                     if (strpos($file, '.xlsx') !== false) {
                         $this->readXlsx($file); 
-                        @unlink($this->workPath . $file);
+                        // @unlink($this->workPath . $file);
                     }
                 }
             }
