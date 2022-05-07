@@ -1682,7 +1682,7 @@ eof;
           [
             'page' => $page,
             'pageSize' =>$size,
-            'total' => count($retData),
+            'total' => $total,
             'totalPage' => $totalPages, 
         ] 
        , $retData, '成功', true, []);
