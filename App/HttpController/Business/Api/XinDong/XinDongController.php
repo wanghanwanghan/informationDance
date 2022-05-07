@@ -943,11 +943,13 @@ eof;
 
             $webArr = explode('&&&', $webStr);
             !empty($webArr) && $dataItem['_source']['web'] = end($webArr);
-            $dataItem['_source']['tags'] = (new XinDongService())->getAllTags(
-                [
-                   'id' =>  $dataItem['_source']['xd_id'],
-                   'name' =>  $dataItem['_source']['name'],
-                ]
+            $dataItem['_source']['tags'] = array_values(
+                (new XinDongService())->getAllTags(
+                    [
+                    'id' =>  $dataItem['_source']['xd_id'],
+                    'name' =>  $dataItem['_source']['name'],
+                    ]
+                )
             );
         }
     
@@ -1002,6 +1004,13 @@ eof;
                 'from_time',
                 'to_time',
                 'approved_time',
+            ]
+        );
+        $retData = (new XinDongService())::formatObjMoney(
+            $retData,
+            [
+                'reg_capital',
+                'actual_capital', 
             ]
         );
         return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);

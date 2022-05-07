@@ -1236,6 +1236,27 @@ class XinDongService extends ServiceBase
         return $dataObj;
      }
 
+     static function formatObjMoney($dataObj, $fieldsArr){
+        foreach($fieldsArr as $field){
+            if($dataObj->$field>0){
+                $dataObj->$field = self::replaceBetween(
+                    $dataObj->$field,
+                    '.',
+                    '万',
+                    ''
+                );
+                $dataObj->$field = str_replace(
+                    '.',
+                    '',
+                    $dataObj->$field
+                ); 
+                // $dataItem['_source'][$field] = date('Y-m-d',strtotime($dataItem['_source'][$field])) ;
+            }
+        } 
+
+        return $dataObj;
+     }
+
      static function formatEsMoney($dataArr, $fieldsArr){
         foreach($dataArr as &$dataItem){
             foreach($fieldsArr as $field){
