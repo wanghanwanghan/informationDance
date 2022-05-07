@@ -1466,7 +1466,7 @@ eof;
             if ($oneFile instanceof UploadFile) {
                 try {
                     $fileName = $path .  $this->loginUserinfo['id'] . '_' . $oneFile->getClientFilename();
-                    if (!file_exists($path)){
+                    if (!file_exists($fileName)){
                         $oneFile->moveTo($fileName);
                     } else
                     {
