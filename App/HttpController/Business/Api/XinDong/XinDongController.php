@@ -1635,8 +1635,8 @@ eof;
         
         $ElasticSearchService->addMustMatchQuery( 'xd_id' , $companyId) ;  
 
-        $size = $this->request()->getRequestParam('size')??1;
-        $page = $this->request()->getRequestParam('page')??10;
+        $size = $this->request()->getRequestParam('size')??10;
+        $page = $this->request()->getRequestParam('page')??1;
         $offset  =  ($page-1)*$size;
         $ElasticSearchService->addSize(1) ;
         $ElasticSearchService->addFrom(0) ; 
