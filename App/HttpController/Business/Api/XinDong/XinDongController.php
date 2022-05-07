@@ -943,6 +943,12 @@ eof;
 
             $webArr = explode('&&&', $webStr);
             !empty($webArr) && $dataItem['_source']['web'] = end($webArr);
+            $dataItem['_source']['tags'] = (new XinDongService())->getAllTags(
+                [
+                   'id' =>  $dataItem['_source']['xd_id'],
+                   'name' =>  $dataItem['_source']['name'],
+                ]
+            );
         }
     
         return $this->writeJson(200, 
