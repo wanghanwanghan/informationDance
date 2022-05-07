@@ -8,6 +8,7 @@ use App\Crontab\CrontabList\GetAuthBook;
 use App\Crontab\CrontabList\GetInvData;
 use App\Crontab\CrontabList\MoveOut;
 use App\Crontab\CrontabList\RunSaiMengHuiZhiCaiWu;
+use App\Crontab\CrontabList\RunSouKeUploadFiles;
 use App\Crontab\CrontabList\RunSupervisor;
 use EasySwoole\Component\Singleton;
 use EasySwoole\EasySwoole\Crontab\Crontab;
