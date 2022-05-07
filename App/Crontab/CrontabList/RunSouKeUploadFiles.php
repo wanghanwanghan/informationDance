@@ -6,6 +6,7 @@ use App\Crontab\CrontabBase;
 use App\HttpController\Business\Admin\SaibopengkeAdmin\SaibopengkeAdminController;
 use App\HttpController\Models\Admin\SaibopengkeAdmin\Saibopengke_Data_List_Model;
 use App\HttpController\Models\Api\UserBusinessOpportunity;
+use App\HttpController\Models\Api\UserBusinessOpportunityBatch;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
@@ -85,9 +86,15 @@ class RunSouKeUploadFiles extends AbstractCronTask
     {
         $tmpArr = explode('_', $xlsx_name);
         $userId = $tmpArr[0];
+ 
+        array_shift($tmpArr); 
+        $batchNum = implode('_', $tmpArr);
 
-        $batchNum = $userId.'_'.date('YmdHis'); 
-
+        // 把这个保存到表
+        $id = UserBusinessOpportunityBatch::create()->data([
+            'userId' => $userId, 
+            'batch' => $batchNum, 
+        ])->save();
 
         $excel_read = new \Vtiful\Kernel\Excel(['path' => $this->workPath]); 
         $read = $excel_read->openFile($xlsx_name)->openSheet();
@@ -109,19 +116,19 @@ class RunSouKeUploadFiles extends AbstractCronTask
                 'userId' => $userId, 
                 'name' => $entname,
                 'code' => $code,
-                'batch' => $batchNum,
+                'batch' => $id,
             ])->save();
-            CommonService::getInstance()->log4PHP(
-                '[souKe]- readXlsx['.json_encode(
-                    [   
-                        $xlsx_name,
-                        'userId' => $userId, 
-                        'name' => $entname,
-                        'code' => $code,
-                        'batch' => $batchNum,
-                    ]
-                ).']'
-            ); 
+            // CommonService::getInstance()->log4PHP(
+            //     '[souKe]- readXlsx['.json_encode(
+            //         [   
+            //             $xlsx_name,
+            //             'userId' => $userId, 
+            //             'name' => $entname,
+            //             'code' => $code,
+            //             'batch' => $batchNum,
+            //         ]
+            //     ).']'
+            // ); 
 
         }
     }

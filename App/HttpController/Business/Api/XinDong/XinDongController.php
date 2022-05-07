@@ -978,7 +978,8 @@ eof;
          // 记录搜索历史
          $res = (new XinDongService())->saveSearchHistory(
              $this->loginUserinfo['id'],  
-             json_encode($this->request()->getRequestParam())
+             json_encode($this->request()->getRequestParam()),
+             $this->request()->getRequestParam('query_name')
          );
 
          if(!$res){
@@ -1312,7 +1313,7 @@ eof;
         $total = $model->lastQueryResult()->getTotalCount(); 
         
         foreach($retData as &$dataitem){
-           $dataitem['post_data_arr'] = json_decode($dataitem['post_data'], true);
+           $dataitem['post_data_arr'] = json_decode($dataitem['post_data'], true); 
         }
  
         return $this->writeJson(200,  ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);

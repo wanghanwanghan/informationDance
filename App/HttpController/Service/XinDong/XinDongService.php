@@ -1212,10 +1212,11 @@ class XinDongService extends ServiceBase
         return  $response;
      } 
 
-     function saveSearchHistory($userId,  $postDataStr){
+     function saveSearchHistory($userId,  $postDataStr, $canme = ''){
         return UserSearchHistory::create()->data([
             'userId' => $userId, 
             'post_data' => $postDataStr,
+            'query' => $canme,
         ])->save();
      }
      
