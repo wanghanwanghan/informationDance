@@ -1374,8 +1374,16 @@ eof;
                 $companyModel = \App\HttpController\Models\RDS3\Company::create()
                     ->where('id', $dataItem['investor_id'])->get();
                 $dataItem['name'] = $companyModel->name; 
-                $dataItem['capitalData'] = @json_decode($dataItem['capital'],true);
-                $dataItem['capitalActlData'] = @json_decode($dataItem['capitalActl'],true);
+                if(XinDongService::isJson($dataItem['capital'])){
+                    $dataItem['capitalData'] = @json_decode($dataItem['capital'],true);
+                }else{
+                    $dataItem['capitalData'] = [['amomon'=>$dataItem['capital'],'time'=>'','paymet'=>'']];
+                }
+                if(XinDongService::isJson($dataItem['capitalActl'])){
+                    $dataItem['capitalActlData'] = @json_decode($dataItem['capitalActl'],true);
+                }else{
+                    $dataItem['capitalActlData'] = [['amomon'=>$dataItem['capitalActl'],'time'=>'','paymet'=>'']];
+                } 
                 
             }
 
@@ -1385,8 +1393,16 @@ eof;
                 $humanModel = \App\HttpController\Models\RDS3\Human::create()
                     ->where('id', $dataItem['investor_id'])->get();
                 $dataItem['name'] = $humanModel->name;
-                $dataItem['capitalData'] = [['amomon'=>$dataItem['capital'],'time'=>'','paymet'=>'']];
-                $dataItem['capitalActlData'] = [['amomon'=>$dataItem['capitalActl'],'time'=>'','paymet'=>'']];
+                if(XinDongService::isJson($dataItem['capital'])){
+                    $dataItem['capitalData'] = @json_decode($dataItem['capital'],true);
+                }else{
+                    $dataItem['capitalData'] = [['amomon'=>$dataItem['capital'],'time'=>'','paymet'=>'']];
+                }
+                if(XinDongService::isJson($dataItem['capitalActl'])){
+                    $dataItem['capitalActlData'] = @json_decode($dataItem['capitalActl'],true);
+                }else{
+                    $dataItem['capitalActlData'] = [['amomon'=>$dataItem['capitalActl'],'time'=>'','paymet'=>'']];
+                }
             } 
         }
 

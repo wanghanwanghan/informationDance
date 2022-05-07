@@ -1358,6 +1358,11 @@ class XinDongService extends ServiceBase
         return $tags;
     }
 
+    static function isJson($string) {
+        json_decode($string);
+        return json_last_error() === JSON_ERROR_NONE;
+     }
+
     static function getAllTagesByData($dataItem){
         // 标签
         $tags = [];
