@@ -1451,7 +1451,9 @@ eof;
     function uploadBusinessOpportunity(): bool
     {
         $files = $this->request()->getUploadedFiles();
-
+        CommonService::getInstance()->log4PHP(
+            '[souKe]-uploadEntList files['.json_encode($files).']'
+        );
         $y = Carbon::now()->format('Y');
         $m = Carbon::now()->format('m');
 
@@ -1475,6 +1477,11 @@ eof;
                 } catch (\Throwable $e) {
                     return $this->writeJson(202);
                 }
+            }
+            else{
+                CommonService::getInstance()->log4PHP(
+                    '[souKe]-uploadEntList 不是实例['.json_encode($oneFile).']'
+                );
             }
         }
 
