@@ -83,6 +83,12 @@ class RunSouKeUploadFiles extends AbstractCronTask
 
     function readXlsx($xlsx_name)
     {
+        $tmpArr = explode('_', $xlsx_name);
+        $userId = $tmpArr[0];
+
+        $batchNum = $userId.'_'.date('YmdHis'); 
+
+
         $excel_read = new \Vtiful\Kernel\Excel(['path' => $this->workPath]); 
         $read = $excel_read->openFile($xlsx_name)->openSheet();
         while (true) {
@@ -98,19 +104,21 @@ class RunSouKeUploadFiles extends AbstractCronTask
             }
 
             $entname = $this->strtr_func($one[0]);
-            $code = $this->strtr_func($one[1]??'');
-            $address = $this->strtr_func($one[2]??''); 
-            // UserBusinessOpportunity::create()->data([
-            //     'userId' => $userId, 
-            //     'post_data' => $postDataStr,
-            // ])->save();
+            $code = $this->strtr_func($one[1]??''); 
+            UserBusinessOpportunity::create()->data([
+                'userId' => $userId, 
+                'name' => $entname,
+                'code' => $code,
+                'batch' => $batchNum,
+            ])->save();
             CommonService::getInstance()->log4PHP(
                 '[souKe]- readXlsx['.json_encode(
                     [   
                         $xlsx_name,
-                        $entname,
-                        $code,
-                        $address,
+                        'userId' => $userId, 
+                        'name' => $entname,
+                        'code' => $code,
+                        'batch' => $batchNum,
                     ]
                 ).']'
             ); 
@@ -129,7 +137,7 @@ class RunSouKeUploadFiles extends AbstractCronTask
                 if (!in_array($file, $ignore, true)) {
                     if (strpos($file, '.xlsx') !== false) {
                         $this->readXlsx($file); 
-                        // @unlink($this->workPath . $file);
+                        @unlink($this->workPath . $file);
                     }
                 }
             }
