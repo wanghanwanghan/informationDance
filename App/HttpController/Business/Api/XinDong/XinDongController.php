@@ -937,14 +937,11 @@ eof;
 
         foreach($hits as &$dataItem){
             $dataItem['_source']['tags'] = array_values(
-                (new XinDongService())->getAllTags(
-                    [
-                    'id' =>  $dataItem['_source']['xd_id'],
-                    'name' =>  $dataItem['_source']['name'],
-                    ]
+                (new XinDongService())::getAllTagesByData(
+                    $dataItem['_source']
                 )
             );
-            
+
             $webStr = trim($dataItem['_source']['web']);
             if(!$webStr){
                 continue; 
