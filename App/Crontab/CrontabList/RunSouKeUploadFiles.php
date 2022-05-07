@@ -116,7 +116,7 @@ class RunSouKeUploadFiles extends AbstractCronTask
                 'userId' => $userId, 
                 'name' => $entname,
                 'code' => $code,
-                'batch' => $id,
+                'batchId' => $id,
             ])->save();
             // CommonService::getInstance()->log4PHP(
             //     '[souKe]- readXlsx['.json_encode(
