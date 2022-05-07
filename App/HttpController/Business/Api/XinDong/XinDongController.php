@@ -1465,7 +1465,7 @@ eof;
         foreach ($files as $key => $oneFile) {
             if ($oneFile instanceof UploadFile) {
                 try {
-                    $fileName = $path . '_' . $this->loginUserinfo['id'] . '_' . $oneFile->getClientFilename();
+                    $fileName = $path .  $this->loginUserinfo['id'] . '_' . $oneFile->getClientFilename();
                     if (!file_exists($path)){
                         $oneFile->moveTo($fileName);
                     } else
