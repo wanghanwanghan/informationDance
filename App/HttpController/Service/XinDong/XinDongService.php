@@ -1374,20 +1374,20 @@ class XinDongService extends ServiceBase
         $tuanDuiGuiMoTag && $tags[60] = $tuanDuiGuiMoTag;
 
         // 是否有ISO
-        $isoTag = self::getIsoTag($companyData['id']);
-        $isoTag && $tags[80] = $isoTag;
+        // $isoTag = self::getIsoTag($companyData['id']);
+        // $isoTag && $tags[80] = $isoTag;
         // 是否瞪羚 
         $dataItem['deng_ling_qi_ye'] && $tags[85] = '瞪羚';
         // 高新技术 
         $dataItem['gao_xin_ji_shu'] && $tags[90] = '高新技术';
 
         // 上市公司
-        $shangShiGongsiTag = self::getShangShiTag($companyData['id']);
-        $shangShiGongsiTag && $tags[95] = $shangShiGongsiTag;
+        // $shangShiGongsiTag = self::getShangShiTag($companyData['id']);
+        // $shangShiGongsiTag && $tags[95] = $shangShiGongsiTag;
 
         //进出口企业
-        $jinChukouTag = self::getJinChuKouTag($companyData['id']);
-        $jinChukouTag && $tags[100] = $jinChukouTag;
+        // $jinChukouTag = self::getJinChuKouTag($companyData['id']);
+        // $jinChukouTag && $tags[100] = $jinChukouTag;
 
         //商品 
         $dataItem['shang_shi_xin_xi'] && $tags[110] = '商品';
