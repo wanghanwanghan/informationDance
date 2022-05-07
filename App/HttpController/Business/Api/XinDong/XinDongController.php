@@ -936,13 +936,6 @@ eof;
         ]);
 
         foreach($hits as &$dataItem){
-            $webStr = trim($dataItem['_source']['web']);
-            if(!$webStr){
-                continue; 
-            }
-
-            $webArr = explode('&&&', $webStr);
-            !empty($webArr) && $dataItem['_source']['web'] = end($webArr);
             $dataItem['_source']['tags'] = array_values(
                 (new XinDongService())->getAllTags(
                     [
@@ -951,6 +944,14 @@ eof;
                     ]
                 )
             );
+            
+            $webStr = trim($dataItem['_source']['web']);
+            if(!$webStr){
+                continue; 
+            }
+
+            $webArr = explode('&&&', $webStr);
+            !empty($webArr) && $dataItem['_source']['web'] = end($webArr); 
         }
     
         return $this->writeJson(200, 
