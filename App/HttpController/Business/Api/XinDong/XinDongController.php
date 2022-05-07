@@ -1619,6 +1619,6 @@ eof;
             ($size)),
          
         ] 
-       , $hits, '成功', true, []);
+       , $hits[0]['_source'], '成功', true, []);
     }
 }
