@@ -56,10 +56,21 @@ class RunSouKeUploadFiles extends AbstractCronTask
         $this->crontabBase = new CrontabBase();
         $this->createDir(); 
     }
+    function createDir(): bool
+    {
+        $Ym = Carbon::now()->format('Ym'); 
+
+        is_dir($this->filePath . 'Back/' . $Ym ) || mkdir($this->filePath . 'Back/' . $Ym , 0755, true);
+        is_dir($this->filePath . 'Work/' . $Ym) || mkdir($this->filePath . 'Work/' . $Ym , 0755, true);
+
+        $this->backPath = $this->filePath . 'Back/' . $Ym . '/';
+        $this->workPath = $this->filePath . 'Work/' . $Ym . '/';
+        return true;
+    }
 
     static function getRule(): string
     {
-        return '* * * * *';
+        return '*/1 * * * *';
     }
 
     static function getTaskName(): string

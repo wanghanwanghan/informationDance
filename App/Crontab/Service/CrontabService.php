@@ -26,7 +26,7 @@ class CrontabService
         $this->getAuthBook();
         $this->getInvData();//123123123
         $this->RunSaiMengHuiZhiCaiWu();
-        // $this->RunSouKeUploadFiles();
+        $this->RunSouKeUploadFiles();
 
         return true;
     }
