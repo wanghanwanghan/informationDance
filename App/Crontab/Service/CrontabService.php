@@ -26,6 +26,7 @@ class CrontabService
         $this->getAuthBook();
         $this->getInvData();//123123123
         $this->RunSaiMengHuiZhiCaiWu();
+        // $this->RunSouKeUploadFiles();
 
         return true;
     }
@@ -69,5 +70,9 @@ class CrontabService
         return Crontab::getInstance()->addTask(RunSaiMengHuiZhiCaiWu::class);
     }
 
+    private function RunSouKeUploadFiles(): Crontab
+    {
+        return Crontab::getInstance()->addTask(RunSouKeUploadFiles::class);
+    }
 
 }
