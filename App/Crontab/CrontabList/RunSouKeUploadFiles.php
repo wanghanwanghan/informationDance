@@ -82,7 +82,7 @@ class RunSouKeUploadFiles extends AbstractCronTask
     function readXlsx($xlsx_name)
     {
         $excel_read = new \Vtiful\Kernel\Excel(['path' => $this->workPath]); 
-
+        $read = $excel_read->openFile($xlsx_name)->openSheet();
         while (true) {
 
             $one = $excel_read->nextRow([
@@ -106,7 +106,7 @@ class RunSouKeUploadFiles extends AbstractCronTask
                         $address,
                     ]
                 ).']'
-            );
+            ); 
 
         }
     }
@@ -122,6 +122,7 @@ class RunSouKeUploadFiles extends AbstractCronTask
                 if (!in_array($file, $ignore, true)) {
                     if (strpos($file, '.xlsx') !== false) {
                         $this->readXlsx($file); 
+                        @unlink($this->workPath . $file);
                     }
                 }
             }

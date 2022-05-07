@@ -1031,10 +1031,14 @@ eof;
      */
     function getCpwsList(): bool
     {
+        $page = $this->getRequestData('page');
+        $page = $page > 0? $page :1;
+        $pageSize = $this->getRequestData('size');
+        $pageSize = $pageSize > 0? $pageSize :10;
         $postData = [
             'entName' => trim($this->getRequestData('entName')),
-            'page' => $this->getRequestData('page', 1),
-            'pageSize' => 10,
+            'page' => $page,
+            'pageSize' => $pageSize,
         ];
 
         if (!$postData['entName']) {
@@ -1073,10 +1077,15 @@ eof;
      */
     function getKtggList(): bool
     {
+        $page = $this->getRequestData('page');
+        $page = $page > 0? $page :1;
+        $pageSize = $this->getRequestData('size');
+        $pageSize = $pageSize > 0? $pageSize :10;
+
         $postData = [
             'entName' => $this->getRequestData('entName'),
-            'page' => $this->getRequestData('page', 1),
-            'pageSize' => 10,
+            'page' => $page,
+            'pageSize' => $pageSize,
         ];
 
          $res = (new LongXinService())->setCheckRespFlag(true)->getKtggList($postData);
