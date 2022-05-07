@@ -1223,6 +1223,19 @@ class XinDongService extends ServiceBase
 
         return $dataArr;
      }
+
+     static function formatObjDate($dataObj, $fieldsArr){
+        foreach($fieldsArr as $field){
+            if($dataObj->$field>0){
+                $tmpArr = explode(' ', $dataObj->$field);
+                $dataObj->$field = $tmpArr[0];
+                // $dataItem['_source'][$field] = date('Y-m-d',strtotime($dataItem['_source'][$field])) ;
+            }
+        } 
+
+        return $dataObj;
+     }
+
      static function formatEsMoney($dataArr, $fieldsArr){
         foreach($dataArr as &$dataItem){
             foreach($fieldsArr as $field){

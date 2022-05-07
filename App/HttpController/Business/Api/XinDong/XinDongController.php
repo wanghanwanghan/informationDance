@@ -995,7 +995,15 @@ eof;
         }
         
         $retData  =\App\HttpController\Models\RDS3\Company::create()->where('id', $companyId)->get();
-        
+        $retData = (new XinDongService())::formatObjDate(
+            $retData,
+            [
+                'estiblish_time',
+                'from_time',
+                'to_time',
+                'approved_time',
+            ]
+        );
         return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
     }
 
