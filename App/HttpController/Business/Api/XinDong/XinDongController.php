@@ -1671,7 +1671,7 @@ eof;
         $total =  count($retData); //total items in array       
         $totalPages = ceil( $total/ $size ); //calculate total pages
         $page = max($page, 1); //get 1 page when $_GET['page'] <= 0
-        $page = min($page, $totalPages); //get last page when $_GET['page'] > $totalPages
+        // $page = min($page, $totalPages); //get last page when $_GET['page'] > $totalPages
         $offset = ($page - 1) * $size;
         if( $offset < 0 ) $offset = 0;
 
