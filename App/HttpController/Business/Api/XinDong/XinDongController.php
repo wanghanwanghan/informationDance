@@ -1599,7 +1599,7 @@ eof;
             array_pop($tmpArr);
             $dataItem['_source']['gong_si_jian_jie_data_arr'] = [];
             foreach($tmpArr as $tmpItem_){
-                $dataItem['_source']['gong_si_jian_jie_data_arr'][] = $tmpItem_;
+                $dataItem['_source']['gong_si_jian_jie_data_arr'][] = [$tmpItem_];
             }
             
             $dataItem['_source']['tags'] = array_values(
