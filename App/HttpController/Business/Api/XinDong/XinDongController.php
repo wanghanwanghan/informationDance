@@ -1595,7 +1595,13 @@ eof;
         ]);
 
         foreach($hits as &$dataItem){
-            $dataItem['_source']['gong_si_jian_jie_data_arr'] = explode('&&&', trim($dataItem['_source']['gong_si_jian_jie']));
+            $tmpArr = explode('&&&', trim($dataItem['_source']['gong_si_jian_jie']));
+            array_pop($tmpArr);
+            $dataItem['_source']['gong_si_jian_jie_data_arr'] = [];
+            foreach($tmpArr as $tmpItem_){
+                $dataItem['_source']['gong_si_jian_jie_data_arr'][] = $tmpItem_;
+            }
+            
             $dataItem['_source']['tags'] = array_values(
                 (new XinDongService())::getAllTagesByData(
                     $dataItem['_source']
