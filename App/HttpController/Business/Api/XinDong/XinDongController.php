@@ -1303,18 +1303,58 @@ eof;
             return  $this->writeJson(201, null, null, '参数缺失(类型)');
         }
 
+       
+        $highTecCount = \App\HttpController\Models\RDS3\XdHighTec::create()
+                ->where('xd_id', $companyId)->count();
+
+        $isoCount = \App\HttpController\Models\RDS3\XdDlRzGlTx::create()
+                ->where('xd_id', $companyId)->count();
+
+
         $iosCount = \App\HttpController\Models\RDS3\XdAppIos::create()
                 ->where('xd_id', $companyId)->count();
         $andoriodCount = \App\HttpController\Models\RDS3\XdAppAndroid::create()
                 ->where('xd_id', $companyId)->count();      
 
+        $guDongCount = \App\HttpController\Models\RDS3\CompanyInvestor::create()
+                ->where('company_id', $companyId)->count();
+        // 没有工商股东信息 从企业自发查
+        if(!$guDongCount){
+                $guDongCount = \App\HttpController\Models\RDS3\CompanyInvestorEntPub::create()
+                    ->where('company_id', $companyId)->count();
+        } 
+
+        $employeeCount = \App\HttpController\Models\RDS3\CompanyStaff::create()
+                    ->where('company_id', $companyId)->count();   
+
+
+        // 商品信息
+        $ElasticSearchService = new ElasticSearchService();  
+        $ElasticSearchService->addMustMatchQuery( 'xd_id' , $companyId) ;   
+        $ElasticSearchService->addSize(1) ;
+        $ElasticSearchService->addFrom(0) ; 
+            
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
+        $responseArr = @json_decode($responseJson,true);  
+        // 格式化下日期和时间
+        $hits = $responseArr['hits']['hits'];
+        $hits = (new XinDongService())::formatEsMoney($hits, [
+            'reg_capital', 
+        ]); 
+            
+        foreach($hits as $dataItem){
+            $retData = $dataItem['_source']['shang_pin_data'];
+            break;
+        }           
+        $shangPinTotal =  count($retData); //total items in array     
+        
         $retData = [
             // 股东+人员
-            'gong_shang' => 5,
+            'gong_shang' => intval($employeeCount + $guDongCount),
             // 商品
-            'shang_pin' => 5,
+            'shang_pin' => $shangPinTotal,
             //专业资质 iso+高新
-            'rong_yu' => 5,
+            'rong_yu' =>  intval($highTecCount + $isoCount),
             //ios +andoriod
             'app' => intval($iosCount+$andoriodCount),
         ];    
