@@ -1156,7 +1156,7 @@ class XinDongService extends ServiceBase
             ],
             [
                 'pid' => 60,
-                'desc' => '公司人数',
+                'desc' => '企业规模',
                 'key' => 'tuan_dui_ren_shu',
                 'type' => 'select',
                 'data' => [
