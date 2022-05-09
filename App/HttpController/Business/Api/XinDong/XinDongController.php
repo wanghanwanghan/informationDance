@@ -933,6 +933,7 @@ eof;
         $offset  =  ($page-1)*$size;
         $ElasticSearchService->addSize($size) ;
         $ElasticSearchService->addFrom($offset) ;
+        $ElasticSearchService->addSort('xd_id', 'desc') ;
 
         //设置默认值 不传任何条件 搜全部
         $ElasticSearchService->setDefault() ;  
