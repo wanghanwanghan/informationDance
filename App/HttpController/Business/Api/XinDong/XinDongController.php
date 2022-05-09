@@ -942,7 +942,7 @@ eof;
         $responseArr = @json_decode($responseJson,true); 
         CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
             [
-                'hits' => $responseArr['hits']['hits'],
+                // 'hits' => $responseArr['hits']['hits'],
                 'es_query' => $ElasticSearchService->query,
                 'post_data' => $this->request()->getRequestParam(),
             ]
