@@ -201,6 +201,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getUserBusinessOpportunityExcel', $prefix . 'getUserBusinessOpportunityExcel');// 营收规模 https://api.meirixindong.com/api/v1/xd/getUserBusinessOpportunityExcel
             $routeCollector->addRoute(['GET', 'POST'], '/getUploadOpportunityLists', $prefix . 'getUploadOpportunityLists');// 营收规模 https://api.meirixindong.com/api/v1/xd/getUploadOpportunityLists
             $routeCollector->addRoute(['GET', 'POST'], '/saveOpportunity', $prefix . 'saveOpportunity');// 营收规模 https://api.meirixindong.com/api/v1/xd/saveOpportunity
+            $routeCollector->addRoute(['GET', 'POST'], '/getCountInfo', $prefix . 'getCountInfo');// 营收规模 https://api.meirixindong.com/api/v1/xd/getCountInfo
         });
 
         return true;

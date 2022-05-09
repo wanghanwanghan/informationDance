@@ -1290,6 +1290,29 @@ eof;
         return $this->writeJson(200,  ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
     }
 
+    function getCountInfo(): bool
+    {  
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?$page:1; 
+        $size = intval($this->request()->getRequestParam('size')); 
+        $size = $size>0 ?$size:10; 
+        $offset = ($page-1)*$size;  
+
+        $xdId = intval($this->request()->getRequestParam('xd_id')); 
+        if (!$xdId) {
+            return  $this->writeJson(201, null, null, '参数缺失(类型)');
+        }
+
+        $retData = [
+            'iso' => 5,
+            'gao_xin' => 5,
+            'ios' => 5,
+            'andoriod' => 5,
+        ];    
+ 
+        return $this->writeJson(200,  [  ], $retData, '成功', true, []);
+    }
+
      /**
       * 
       * 获取企业标签
