@@ -1301,7 +1301,19 @@ eof;
             return $this->writeJson(201, null, null, '没有该企业');
         }
 
-        return $this->writeJson(200, ['total' => 1], (new XinDongService())->getAllTags($companyData), '成功', true, []);
+        $ElasticSearchService = new ElasticSearchService(); 
+        
+        $ElasticSearchService->addMustMatchQuery( 'xd_id' , $companyId) ;  
+ 
+        $ElasticSearchService->addSize(1) ;
+        $ElasticSearchService->addFrom(0) ; 
+
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
+        $responseArr = @json_decode($responseJson,true); 
+
+        return $this->writeJson(200, ['total' => 1], 
+        XinDongService::getAllTagesByData($responseArr['hits']['hits'][0]['_source']), 
+        '成功', true, []);
     }
 
      /**

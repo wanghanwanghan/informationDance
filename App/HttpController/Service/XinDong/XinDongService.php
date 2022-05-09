@@ -1326,47 +1326,7 @@ class XinDongService extends ServiceBase
         $str = self::mapYingShouGuiMo()[$yingShouGuiMo];
         $strArr = explode('，', $str);
         return $strArr[0];
-    }
-
-    function getAllTags($companyData): array
-    { 
-        // 标签
-        $tags = [];
-
-        // 营收规模 
-        $yingShouGuiMoData  =\App\HttpController\Models\RDS3\ArLable::create()->where('entname', $companyData['name'])->get();
-        $yingShouGuiMoData && $yingShouGuiMoTag = (new XinDongService())::getYingShouGuiMoTag($yingShouGuiMoData['label']);
-        $yingShouGuiMoTag && $tags[50] = $yingShouGuiMoTag;
-
-        // 团队规模
-        $tuanDuiGuiMoData  = \App\HttpController\Models\RDS3\TuanDuiGuiMo::create()->where('xd_id', $companyData['id'])->get();
-        $tuanDuiGuiMoData && $tuanDuiGuiMoTag = self::getTuanDuiGuiMoTag($tuanDuiGuiMoData['num']);
-        $tuanDuiGuiMoTag && $tags[60] = $tuanDuiGuiMoTag;
-
-        // 是否有ISO
-        $isoTag = self::getIsoTag($companyData['id']);
-        $isoTag && $tags[80] = $isoTag;
-        // 是否瞪羚
-        $dengLingTag = self::getDengLingTag($companyData['id']);
-        $dengLingTag && $tags[85] = $dengLingTag;
-        // 高新技术
-        $highTecTag = self::getHighTecTag($companyData['id']);
-        $highTecTag && $tags[90] = $highTecTag;
-
-        // 上市公司
-        $shangShiGongsiTag = self::getShangShiTag($companyData['id']);
-        $shangShiGongsiTag && $tags[95] = $shangShiGongsiTag;
-
-        //进出口企业
-        $jinChukouTag = self::getJinChuKouTag($companyData['id']);
-        $jinChukouTag && $tags[100] = $jinChukouTag;
-
-        //商品
-        $shangPinTag = self::getShangPinTag($companyData['name']);
-        $shangPinTag && $tags[110] = $shangPinTag;
-
-        return $tags;
-    }
+    } 
 
     static function isJson($string) {
         json_decode($string);
