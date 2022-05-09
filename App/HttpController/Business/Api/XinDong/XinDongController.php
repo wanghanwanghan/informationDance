@@ -24,6 +24,7 @@ use App\HttpController\Models\Api\UserSearchHistory;
 use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\Http\Message\UploadFile;
 use App\HttpController\Models\Api\UserBusinessOpportunity;
+use App\HttpController\Models\Api\UserBusinessOpportunityBatch;
 use Vtiful\Kernel\Format;
 class XinDongController extends XinDongBase
 {
@@ -1793,5 +1794,28 @@ eof;
         $res = $fileObject->output();
 
         return $this->writeJson(200, null, 'Static/Temp/' . $filename, null, true, [$res]);
+    }
+
+    // 获取上传列表
+    function getUploadOpportunityLists(): bool
+    {  
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?$page:1; 
+        $size = intval($this->request()->getRequestParam('size')); 
+        $size = $size>0 ?$size:10; 
+        $offset = ($page-1)*$size;   
+        
+        $model = UserBusinessOpportunityBatch::create()
+            ->where('userId', $this->loginUserinfo['id'])->page($page)->withTotalCount(); 
+        $retData = $model->all();
+        $total = $model->lastQueryResult()->getTotalCount(); 
+
+        // foreach($retData as &$dataItem){
+        //     $humanModel = \App\HttpController\Models\RDS3\Human::create()
+        //         ->where('id', $dataItem['staff_id'])->get();
+        //     $dataItem['name'] = $humanModel->name;
+        // }
+        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+    
     }
 }
