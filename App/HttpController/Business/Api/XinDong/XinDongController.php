@@ -1304,10 +1304,14 @@ eof;
         }
 
         $retData = [
-            'iso' => 5,
-            'gao_xin' => 5,
-            'ios' => 5,
-            'andoriod' => 5,
+            // 股东+人员
+            'gong_shang' => 5,
+            // 商品
+            'shang_pin' => 5,
+            //专业资质 iso+高新
+            'rong_yu' => 5,
+            //ios +andoriod
+            'app' => 5,
         ];    
  
         return $this->writeJson(200,  [  ], $retData, '成功', true, []);
