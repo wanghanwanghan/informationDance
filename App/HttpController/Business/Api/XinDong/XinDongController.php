@@ -1832,13 +1832,13 @@ eof;
             ->where('id', $xdIdsArr, 'IN')
             ->all();
         foreach($companyDatas as $companyDataItem){
-            (new XinDongService())->saveOpportunity(
+            XinDongService::saveOpportunity(
                 [
                     'userId' => $this->loginUserinfo['id'], 
                     'name' => $companyDataItem['name'],
                     'code' => $companyDataItem['property1'],
                     'batchId' => 0,
-                    'source' => 10,
+                    'source' => UserBusinessOpportunity::$sourceFromSave,
                 ]
             );
         }

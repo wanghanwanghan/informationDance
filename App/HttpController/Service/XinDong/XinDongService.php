@@ -1579,7 +1579,7 @@ class XinDongService extends ServiceBase
        return $names;
     }
 
-     function saveOpportunity($dataItem){
+     static function saveOpportunity($dataItem){
         try {
             $res = UserBusinessOpportunity::create()->data([
                         'userId' => $dataItem['userId'], 
