@@ -113,7 +113,7 @@ class RunSouKeUploadFiles extends AbstractCronTask
 
             $entname = $this->strtr_func($one[0]);
             $code = $this->strtr_func($one[1]??'');  
-            XinDongService::saveOpportunity(
+            (new XinDongService())->saveOpportunity(
                 [
                     'userId' => $userId, 
                     'name' => $entname,

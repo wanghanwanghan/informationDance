@@ -1579,13 +1579,14 @@ class XinDongService extends ServiceBase
        return $names;
     }
 
-    static function saveOpportunity($dataItem){
+     function saveOpportunity($dataItem){
         try {
             $res = UserBusinessOpportunity::create()->data([
                         'userId' => $dataItem['userId'], 
                         'name' => $dataItem['entname'],
                         'code' =>  $dataItem['code'], 
                         'batchId' => $dataItem['batchId'],   
+                        'source' => $dataItem['source'],   
                     ])->save();
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP($e->getMessage());
