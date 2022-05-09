@@ -119,7 +119,7 @@ class RunSouKeUploadFiles extends AbstractCronTask
                     'name' => $entname,
                     'code' => $code,
                     'batchId' => $id,
-                    'source' => UserBusinessOpportunity::$sourceFromImport,
+                    'source' => 5,
                 ]
             );
 
