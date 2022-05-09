@@ -24,7 +24,7 @@ use App\HttpController\Models\Api\UserSearchHistory;
 use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\Http\Message\UploadFile;
 use App\HttpController\Models\Api\UserBusinessOpportunity;
-
+use Vtiful\Kernel\Format;
 class XinDongController extends XinDongBase
 {
     private $ldUrl;
