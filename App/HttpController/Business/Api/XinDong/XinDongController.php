@@ -1298,10 +1298,15 @@ eof;
         $size = $size>0 ?$size:10; 
         $offset = ($page-1)*$size;  
 
-        $xdId = intval($this->request()->getRequestParam('xd_id')); 
-        if (!$xdId) {
+        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+        if (!$companyId) {
             return  $this->writeJson(201, null, null, '参数缺失(类型)');
         }
+
+        $iosCount = \App\HttpController\Models\RDS3\XdAppIos::create()
+                ->where('xd_id', $companyId)->count();
+        $andoriodCount = \App\HttpController\Models\RDS3\XdAppAndroid::create()
+                ->where('xd_id', $companyId)->count();      
 
         $retData = [
             // 股东+人员
@@ -1311,7 +1316,7 @@ eof;
             //专业资质 iso+高新
             'rong_yu' => 5,
             //ios +andoriod
-            'app' => 5,
+            'app' => intval($iosCount+$andoriodCount),
         ];    
  
         return $this->writeJson(200,  [  ], $retData, '成功', true, []);
