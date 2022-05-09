@@ -11,9 +11,6 @@ class UserBusinessOpportunity extends ModelBase
 
     protected $autoTimeStamp = true;
     protected $createTime = 'created_at';
-    protected $updateTime = 'updated_at';
-
-    static $sourceFromImport = 5;
-    static $sourceFromSave = 10;
+    protected $updateTime = 'updated_at'; 
     
 }
