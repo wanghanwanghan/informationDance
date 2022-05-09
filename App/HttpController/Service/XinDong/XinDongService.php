@@ -1498,9 +1498,14 @@ class XinDongService extends ServiceBase
     }
  
 
-    // 获取所有曾用名称
-    static function getAllUsedNames($dataArr){
-        $allNames = [ $dataArr['name'] => $dataArr['name']];        
+    // 获取所有曾用名称 $getAll: 为true的时候  当前的名字也要了
+    static function getAllUsedNames($dataArr, $getAll = false){
+        if ($getAll) {
+            $allNames = [ $dataArr['name'] => $dataArr['name']];    
+        }
+        else{
+            $allNames = [ ];    
+        }     
         $newNames = self::autoSearchNewNames($dataArr);
         $oldNames = self::autoSearchOldNames($dataArr);
         return array_values(array_merge($allNames, $newNames, $oldNames));
