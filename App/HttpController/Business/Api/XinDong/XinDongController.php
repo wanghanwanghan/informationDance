@@ -23,6 +23,7 @@ use wanghanwanghan\someUtils\control;
 use App\HttpController\Models\Api\UserSearchHistory;
 use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\Http\Message\UploadFile;
+use App\HttpController\Models\Api\UserBusinessOpportunity;
 
 class XinDongController extends XinDongBase
 {
@@ -1715,7 +1716,7 @@ eof;
     }
 
     // 导出
-    function getSupervisorListByExcel()
+    function getUserBusinessOpportunityExcel()
     {
         $phone = $this->request()->getRequestParam('phone');
         $entNameList = $this->request()->getRequestParam('entNameList') ?? '';
@@ -1727,7 +1728,7 @@ eof;
 
         $excel = new \Vtiful\Kernel\Excel($config);
 
-        $filename = control::getUuid(8) . '.xlsx';
+        $filename = 'souke_'.control::getUuid(8) . '.xlsx';
 
         $header = [
             '序号',
@@ -1736,26 +1737,19 @@ eof;
         ];
 
         try {
-            $list = SupervisorPhoneEntName::create()
-                ->where('phone', $phone)
-                ->where('entName', $entNameList, 'IN')
+            $list = UserBusinessOpportunity::create()
+                // ->where('phone', $phone)
+                // ->where('entName', $entNameList, 'IN')
+                ->limit(2)
                 ->all();
             $data = [];
             $i = 1;
-            foreach ($list as $one) {
-                $num = jsonDecode($one->currentNum);
-                $tmp = [
-                    $i,
-                    $one->entName,
-                    $one->type === 1 ? '重点对象' : $one->type === 2 ? '合作方' : '全部',
-                    ($one->type === 1 || $one->type === 3) ? $num['zyf'] : 0,
-                    ($one->type === 2 || $one->type === 3) ? $num['hzf']['sf'] : 0,
-                    ($one->type === 2 || $one->type === 3) ? $num['hzf']['gs'] : 0,
-                    ($one->type === 2 || $one->type === 3) ? $num['hzf']['gl'] : 0,
-                    ($one->type === 2 || $one->type === 3) ? $num['hzf']['jy'] : 0,
-                    date('Y-m-d', $one->updated_at),
-                ];
-                array_push($data, $tmp);
+            foreach ($list as $one) { 
+                
+                array_push($data, [
+                    $one['name'],
+                    $one['code'],
+                ]);
                 $i++;
             }
         } catch (\Throwable $e) {
@@ -1786,94 +1780,15 @@ eof;
             ->header($header)
             ->defaultFormat($alignStyle)
             ->data($data)
-            ->setColumn('B:B', 50);
+            ->setColumn('B:B', 50)
+        ;
 
         $format = new Format($fileHandle);
         //单元格有\n解析成换行
         $wrapStyle = $format
             ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
             ->wrap()
-            ->toResource();
-
-        //导出每个公司的监控详情
-        foreach ($entNameList as $one_ent_name) {
-            $insert = [];
-            $data = SupervisorEntNameInfo::create()
-                ->field(['entName', '`level`', '`desc`', 'content', 'created_at', 'sourceDetail'])
-                ->where('entName', $one_ent_name)
-                ->all();
-
-            $data = obj2Arr($data);
-
-            if (!empty($data)) {
-                foreach ($data as $one) {
-                    $one['content'] = str_replace(['<p>', '</p>'], ['', "\n"], $one['content']);
-                    if ($one['level'] - 0 === 1) {
-                        $one['level'] = '高风险';
-                    } elseif ($one['level'] - 0 === 2) {
-                        $one['level'] = '风险';
-                    } elseif ($one['level'] - 0 === 3) {
-                        $one['level'] = '警示';
-                    } elseif ($one['level'] - 0 === 4) {
-                        $one['level'] = '提示';
-                    } else {
-                        $one['level'] = '利好';
-                    }
-                    //处理详细内容
-                    $sourceDetail = '';
-                    if (!empty($one['sourceDetail'])) {
-                        $sourceDetail = jsonDecode($one['sourceDetail']);
-                        //法海相关
-                        if (isset($sourceDetail['body']) && !empty(trim($sourceDetail['body']))) {
-                            if (strpos($sourceDetail['body'], '<p>') !== false) {
-                                $sourceDetail = str_replace(['<p>', '</p>'], ['', PHP_EOL], $sourceDetail['body']);
-                            } elseif (!empty(jsonDecode($sourceDetail['body']))) {
-                                $tmp = '';
-                                foreach (jsonDecode($sourceDetail['body']) as $key => $val) {
-                                    $tmp .= "{$key}:{$val}" . PHP_EOL;
-                                }
-                                $sourceDetail = $tmp;
-                            } else {
-                                $tmp = '';
-                                $sourceDetail['body'] = str_replace(['{', '}'], '', $sourceDetail['body']);
-                                foreach (mb_str_split($sourceDetail['body'], 15) as $val) {
-                                    $tmp .= $val . PHP_EOL;
-                                }
-                                $sourceDetail = $tmp;
-                            }
-                        }
-                        //企查查 - 失信信息
-                        if (isset($sourceDetail['Yiwu']) && !empty(trim($sourceDetail['Yiwu']))) {
-                            $tmp = "义务:{$sourceDetail['Yiwu']}" . PHP_EOL;
-                            if (isset($sourceDetail['Executestatus']) && !empty(trim($sourceDetail['Executestatus']))) {
-                                $tmp .= "执行:{$sourceDetail['Executestatus']}" . PHP_EOL;
-                            }
-                            if (isset($sourceDetail['Actionremark']) && !empty(trim($sourceDetail['Actionremark']))) {
-                                $tmp .= "执行依据:{$sourceDetail['Actionremark']}" . PHP_EOL;
-                            }
-                            $sourceDetail = $tmp;
-                        }
-                    }
-                    $one['sourceDetail'] = empty(trim($sourceDetail)) ? '--' : $sourceDetail;
-                    $one['created_at'] = date('Y-m-d', $one['created_at']);
-                    array_push($insert, array_values($one));
-                }
-            } else {
-                $data = [];
-            }
-
-            try {
-                $fileObject
-                    ->addSheet($one_ent_name)
-                    ->defaultFormat($colorStyle)
-                    ->header(['企业名称', '风险等级', '风险说明', '风险内容', '监控时间', '详细内容'])
-                    ->defaultFormat($wrapStyle)
-                    ->data($insert)
-                    ->setColumn('A:F', 50);
-            } catch (\Throwable $e) {
-                CommonService::getInstance()->log4PHP($e->getTraceAsString());
-            }
-        }
+            ->toResource(); 
 
         $res = $fileObject->output();
 
