@@ -1838,7 +1838,7 @@ eof;
                     'name' => $companyDataItem['name'],
                     'code' => $companyDataItem['property1'],
                     'batchId' => 0,
-                    'source' => UserBusinessOpportunity::$sourceFromSave,
+                    'source' => 10,
                 ]
             );
         }
