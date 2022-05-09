@@ -1191,7 +1191,7 @@ class XinDongService extends ServiceBase
     }
 
      //高级搜索
-     function advancedSearch($elasticSearchService)
+     function advancedSearch($elasticSearchService, $index = 'company_20220509')
      { 
         $elasticsearch = new ElasticSearch(
             new  Config([
@@ -1202,7 +1202,7 @@ class XinDongService extends ServiceBase
             ])
         ); 
         $bean = new  Search();
-        $bean->setIndex('company_287_all');
+        $bean->setIndex($index);
         $bean->setType('_doc');
         $bean->setBody($elasticSearchService->query);
         $response = $elasticsearch->client()->search($bean)->getBody(); 
@@ -1389,24 +1389,20 @@ class XinDongService extends ServiceBase
         $tuanDuiGuiMoTag && $tags[60] = $tuanDuiGuiMoTag;
 
         // 是否有ISO
-        $isoTag = self::getIsoTag($dataItem['xd_id']);
-        $isoTag && $tags[80] = $isoTag;
+        $dataItem['iso'] && $tags[80] = 'ISO'; 
         // 是否瞪羚 
         $dataItem['deng_ling_qi_ye'] && $tags[85] = '瞪羚';
         // 高新技术 
         $dataItem['gao_xin_ji_shu'] && $tags[90] = '高新技术';
 
         // 上市公司
-        $dataItem['shang_shi_xin_xi'] && $tags[95] = '高新技术';
-        // $shangShiGongsiTag = self::getShangShiTag($companyData['id']);
-        // $shangShiGongsiTag && $tags[95] = $shangShiGongsiTag;
+        $dataItem['shang_shi_xin_xi'] && $tags[95] = '高新技术'; 
 
-        //进出口企业
-        $jinChukouTag = self::getJinChuKouTag($dataItem['xd_id']);
-        $jinChukouTag && $tags[100] = $jinChukouTag;
+        //进出口企业 
+        $dataItem['jin_chu_kou'] && $tags[100] = '进出口型企业';
 
         //商品 
-        $dataItem['shang_shi_xin_xi'] && $tags[110] = '商品';
+        $dataItem['shang_pin_data'] && $tags[110] = '商品';
 
         return $tags;
     }

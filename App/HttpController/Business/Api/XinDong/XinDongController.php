@@ -954,18 +954,19 @@ eof;
             'reg_capital', 
         ]);
 
-        foreach($hits as &$dataItem){
+        foreach($hits as &$dataItem){ 
+            // 添加tag  
             $dataItem['_source']['tags'] = array_values(
                 (new XinDongService())::getAllTagesByData(
-                    $dataItem['_source']
+                    $dataItem['_source'] 
                 )
             );
 
+            // 官网
             $webStr = trim($dataItem['_source']['web']);
             if(!$webStr){
                 continue; 
-            }
-
+            } 
             $webArr = explode('&&&', $webStr);
             !empty($webArr) && $dataItem['_source']['web'] = end($webArr); 
         }
@@ -1595,6 +1596,7 @@ eof;
         ]);
 
         foreach($hits as &$dataItem){
+            // 公司简介
             $tmpArr = explode('&&&', trim($dataItem['_source']['gong_si_jian_jie']));
             array_pop($tmpArr);
             $dataItem['_source']['gong_si_jian_jie_data_arr'] = [];
@@ -1602,12 +1604,14 @@ eof;
                 $dataItem['_source']['gong_si_jian_jie_data_arr'][] = [$tmpItem_];
             }
             
+            // tag信息
             $dataItem['_source']['tags'] = array_values(
                 (new XinDongService())::getAllTagesByData(
                     $dataItem['_source']
                 )
             );
 
+            // 官网信息
             $webStr = trim($dataItem['_source']['web']);
             if(!$webStr){
                 continue; 
