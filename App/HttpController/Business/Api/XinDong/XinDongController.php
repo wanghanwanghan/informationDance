@@ -1412,7 +1412,9 @@ eof;
         $offset = ($page-1)*$size;  
 
         $model =  UserSearchHistory::create()
-            ->where('userId', $this->loginUserinfo['id'])->page($page)->withTotalCount();
+            ->where('userId', $this->loginUserinfo['id'])
+            ->order('id', 'DESC')
+            ->page($page)->withTotalCount();
         $retData = $model->all();
         $total = $model->lastQueryResult()->getTotalCount(); 
         
