@@ -23,6 +23,7 @@ use wanghanwanghan\someUtils\traits\Singleton;
 use EasySwoole\ElasticSearch\Config;
 use EasySwoole\ElasticSearch\ElasticSearch;
 use EasySwoole\ElasticSearch\RequestBean\Search;
+use App\HttpController\Models\Api\UserBusinessOpportunity;
 
 class XinDongService extends ServiceBase
 {
@@ -1576,5 +1577,19 @@ class XinDongService extends ServiceBase
             $nums ++; 
         } 
        return $names;
+    }
+
+    static function saveOpportunity($dataItem){
+        try {
+            $res = UserBusinessOpportunity::create()->data([
+                        'userId' => $dataItem['userId'], 
+                        'name' => $dataItem['entname'],
+                        'code' =>  $dataItem['code'], 
+                        'batchId' => $dataItem['batchId'],   
+                    ])->save();
+        } catch (\Throwable $e) {
+            CommonService::getInstance()->log4PHP($e->getMessage());
+        } 
+        return $res;
     }
 }

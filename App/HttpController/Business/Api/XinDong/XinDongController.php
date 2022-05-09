@@ -25,6 +25,7 @@ use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\Http\Message\UploadFile;
 use App\HttpController\Models\Api\UserBusinessOpportunity;
 use App\HttpController\Models\Api\UserBusinessOpportunityBatch;
+use App\HttpController\Models\RDS3\Company;
 use Vtiful\Kernel\Format;
 class XinDongController extends XinDongBase
 {
@@ -1818,4 +1819,32 @@ eof;
         return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
     
     }
+
+     // 领取商机
+     function saveOpportunity(): bool
+     {  
+        $xdIdsStr = $this->request()->getRequestParam('xd_ids');
+        if(!$xdIdsStr){
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+        $xdIdsArr = explode(',', $xdIdsStr);
+        $companyDatas = Company::create()
+            ->where('id', $xdIdsArr, 'IN')
+            ->all();
+        foreach($companyDatas as $companyDataItem){
+            XinDongService::saveOpportunity(
+                [
+                    'userId' => $this->loginUserinfo['id'], 
+                    'name' => $companyDataItem['name'],
+                    'code' => $companyDataItem['property1'],
+                    'batchId' => 0,
+                    'source' => UserBusinessOpportunity::$sourceFromSave,
+                ]
+            );
+        }
+        
+        
+         return $this->writeJson(200, [], [], '成功', true, []);
+     
+     }
 }

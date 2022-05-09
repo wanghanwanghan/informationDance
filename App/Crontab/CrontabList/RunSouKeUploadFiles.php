@@ -15,6 +15,7 @@ use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use EasySwoole\Mysqli\QueryBuilder;
 use wanghanwanghan\someUtils\control;
 use App\HttpController\Models\Api\UserSearchHistory;
+use App\HttpController\Service\XinDong\XinDongService;
 
 class RunSouKeUploadFiles extends AbstractCronTask
 {
@@ -111,24 +112,16 @@ class RunSouKeUploadFiles extends AbstractCronTask
             }
 
             $entname = $this->strtr_func($one[0]);
-            $code = $this->strtr_func($one[1]??''); 
-            UserBusinessOpportunity::create()->data([
-                'userId' => $userId, 
-                'name' => $entname,
-                'code' => $code,
-                'batchId' => $id,
-            ])->save();
-            // CommonService::getInstance()->log4PHP(
-            //     '[souKe]- readXlsx['.json_encode(
-            //         [   
-            //             $xlsx_name,
-            //             'userId' => $userId, 
-            //             'name' => $entname,
-            //             'code' => $code,
-            //             'batch' => $batchNum,
-            //         ]
-            //     ).']'
-            // ); 
+            $code = $this->strtr_func($one[1]??'');  
+            XinDongService::saveOpportunity(
+                [
+                    'userId' => $userId, 
+                    'name' => $entname,
+                    'code' => $code,
+                    'batchId' => $id,
+                    'source' => UserBusinessOpportunity::$sourceFromImport,
+                ]
+            );
 
         }
     }
