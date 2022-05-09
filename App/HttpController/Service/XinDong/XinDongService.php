@@ -1583,7 +1583,7 @@ class XinDongService extends ServiceBase
         try {
             $res = UserBusinessOpportunity::create()->data([
                         'userId' => $dataItem['userId'], 
-                        'name' => $dataItem['entname'],
+                        'name' => $dataItem['name'],
                         'code' =>  $dataItem['code'], 
                         'batchId' => $dataItem['batchId'],   
                         'source' => $dataItem['source'],   
