@@ -1966,6 +1966,7 @@ eof;
         $page = $this->request()->getRequestParam('page')??1;
         $offset  =  ($page-1)*$size;  
          
+        $retData = $retData['result'];
         $total =  count($retData); //total items in array       
         $totalPages = ceil( $total/ $size ); //calculate total pages
         $page = max($page, 1); //get 1 page when $_GET['page'] <= 0
