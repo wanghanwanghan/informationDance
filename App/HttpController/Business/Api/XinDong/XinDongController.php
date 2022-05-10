@@ -716,8 +716,8 @@ eof;
 
         $searchText = trim($this->request()->getRequestParam('searchText'));
         $matchedCnames = [
-            [ 'name' => $searchText,],
-            [ 'basic_opscope' => $searchText,],
+            [ 'field'=>'name' ,'value'=> $searchText,],
+            [ 'field'=>'basic_opscope' ,'value'=> $searchText,], 
         ];
         $ElasticSearchService->addMustShouldPhraseQueryV2($matchedCnames) ;  
 
