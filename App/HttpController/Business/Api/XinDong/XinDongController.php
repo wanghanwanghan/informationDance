@@ -1046,7 +1046,7 @@ eof;
             return  $this->writeJson(201, null, null, '参数缺失(企业ID)');
         }
         
-        $retData  =\App\HttpController\Models\RDS3\Company::create()->where('id', $companyId)->get();
+        $retData  = Company::create()->where('id', $companyId)->get();
         $retData = (new XinDongService())::formatObjDate(
             $retData,
             [
@@ -1063,7 +1063,7 @@ eof;
                 'actual_capital', 
             ]
         );
-        return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
+        return $this->writeJson(200, ['total' => 1],  (array) $retData, '成功', true, []);
     }
 
      /**
