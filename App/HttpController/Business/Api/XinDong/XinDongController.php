@@ -1955,15 +1955,11 @@ eof;
     {
         $postData = [
             'entName' => $this->getRequestData('entName', ''),
-        ];
+        ]; 
 
-        $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new LongXinService())
-                ->setCheckRespFlag(true)
-                ->getEntLianXi($postData);
-        });
-
-        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        $res =  (new LongXinService())
+        ->setCheckRespFlag(true)
+        ->getEntLianXi($postData);
 
         return $this->checkResponse($res);
     }
