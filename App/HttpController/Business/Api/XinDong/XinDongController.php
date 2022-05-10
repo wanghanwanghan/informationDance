@@ -1958,10 +1958,29 @@ eof;
             'entName' => $this->getRequestData('entName', ''),
         ]; 
 
-        $res =  (new LongXinService())
+        $retData =  (new LongXinService())
         ->setCheckRespFlag(true)
         ->getEntLianXi($postData);
 
-        return $this->checkResponse($res);
+        $size = $this->request()->getRequestParam('size')??10;
+        $page = $this->request()->getRequestParam('page')??1;
+        $offset  =  ($page-1)*$size;  
+         
+        $total =  count($retData); //total items in array       
+        $totalPages = ceil( $total/ $size ); //calculate total pages
+        $page = max($page, 1); //get 1 page when $_GET['page'] <= 0
+        // $page = min($page, $totalPages); //get last page when $_GET['page'] > $totalPages
+        $offset = ($page - 1) * $size;
+        if( $offset < 0 ) $offset = 0;
+
+        $retData = array_slice( $retData, $offset, $size ); 
+        return $this->writeJson(200, 
+          [
+            'page' => $page,
+            'pageSize' =>$size,
+            'total' => $total,
+            'totalPage' => $totalPages, 
+        ] 
+       , $retData, '成功', true, []); 
     }
 }
