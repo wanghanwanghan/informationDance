@@ -715,12 +715,15 @@ eof;
         $ElasticSearchService = new ElasticSearchService(); 
 
         $searchText = trim($this->request()->getRequestParam('searchText'));
-        $matchedCnames = [
-            [ 'field'=>'name' ,'value'=> $searchText],
-            [ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
-            [ 'field'=>'basic_opscope' ,'value'=> $searchText] 
-        ];
-        $ElasticSearchService->addMustShouldPhraseQueryV2($matchedCnames) ;  
+        if($searchText){
+            $matchedCnames = [
+                [ 'field'=>'name' ,'value'=> $searchText],
+                [ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
+                [ 'field'=>'basic_opscope' ,'value'=> $searchText] 
+            ];
+            $ElasticSearchService->addMustShouldPhraseQueryV2($matchedCnames) ;  
+        }
+       
 
 
         // 需要按文本搜索的  
