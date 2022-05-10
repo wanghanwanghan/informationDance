@@ -756,9 +756,9 @@ Eof;
         if(!empty($billing_plan)){
             $update['billing_plan'] = $billing_plan;
         }
-        if(!empty($kidTypes)){
-            $update['kidTypes'] = $kidTypes;
-        }
+//        if(!empty($kidTypes)){
+//            $update['kidTypes'] = $kidTypes;
+//        }
         if(!empty($year_price_detail)){
             $update['year_price_detail'] = $year_price_detail;
         }
