@@ -1239,11 +1239,12 @@ class XinDongService extends ServiceBase
 
      static function formatObjDate($dataObj, $fieldsArr){
         foreach($fieldsArr as $field){
-            if($dataObj->$field>0){
-                $tmpArr = explode(' ', $dataObj->$field);
-                $dataObj->$field = $tmpArr[0];
-                // $dataItem['_source'][$field] = date('Y-m-d',strtotime($dataItem['_source'][$field])) ;
+            if($dataObj->$field  == '0000-00-00 00:00:00'){
+                $dataObj->$field =  '--';
+                continue;
             }
+            $tmpArr = explode(' ', $dataObj->$field);
+            $dataObj->$field = $tmpArr[0];
         } 
 
         return $dataObj;
