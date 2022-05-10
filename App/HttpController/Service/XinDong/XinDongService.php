@@ -34,12 +34,12 @@ class XinDongService extends ServiceBase
     
     // 企业类型
     public $company_org_type_youxian = 10;
-    public $company_org_type_youxian_des =  '有限责任'; 
+    public $company_org_type_youxian_des =  '有限责任公司'; 
     public $company_org_type_youxian2 = 15;
     public $company_org_type_youxian2_des =  '有限公司'; 
 
     public $company_org_type_gufen = 20;
-    public $company_org_type_gufen_des =  '股份'; 
+    public $company_org_type_gufen_des =  '股份有限公司'; 
 
     public $company_org_type_fengongsi = 25;
     public $company_org_type_fengongsi_des =  '分公司'; 
@@ -47,7 +47,7 @@ class XinDongService extends ServiceBase
     public $company_org_type_zongsongsi_des =  '总公司'; 
 
     public $company_org_type_youxianhehuo = 35;
-    public $company_org_type_youxianhehuo_des =  '有限合伙'; 
+    public $company_org_type_youxianhehuo_des =  '有限合伙企业'; 
 
     // 成立年限
     public $estiblish_year_under_2 = 2;
@@ -201,6 +201,9 @@ class XinDongService extends ServiceBase
             $this->company_org_type_fengongsi => $this->company_org_type_fengongsi_des,
             $this->company_org_type_zongsongsi => $this->company_org_type_zongsongsi_des,
             $this->company_org_type_youxianhehuo => $this->company_org_type_youxianhehuo_des, 
+            40 => '外商独资公司', 
+            50 => '个人独资企业', 
+            60 => '国有独资公司', 
         ];
 
         if ($getAll) {
@@ -1114,6 +1117,7 @@ class XinDongService extends ServiceBase
            [
                 'pid' => 10,
                 'desc' => '企业类型',
+                'detail' => '',
                 'key' => 'company_org_type',
                 'type' => 'select',
                 'data' => $this->getCompanyOrgType(),
@@ -1121,6 +1125,7 @@ class XinDongService extends ServiceBase
              [
                 'pid' => 20,
                 'desc' => '成立年限',
+                'detail' => '',
                 'key' => 'estiblish_year_nums',
                 'type' => 'select',
                 'data' => $this->getEstiblishYear(),
@@ -1128,6 +1133,7 @@ class XinDongService extends ServiceBase
              [
                 'pid' => 30,
                 'desc' => '营业状态',
+                'detail' => '',
                 'key' => 'reg_status',
                 'type' => 'select',
                 'data' => $this->getRegStatus(),
@@ -1135,6 +1141,7 @@ class XinDongService extends ServiceBase
              [
                 'pid' => 40,
                 'desc' => '注册资本',
+                'detail' => '',
                 'key' => 'reg_capital',
                 'type' => 'select',
                 // 'data' => $this->getRegCapital(),
@@ -1152,12 +1159,27 @@ class XinDongService extends ServiceBase
                 'pid' => 50,
                 'desc' => '营收规模',
                 'key' => 'ying_shou_gui_mo',
+                'detail' => '
+                微型，一般指规模在100万以下
+                小型C类，一般指规模在100万以上，500万以下
+                小型B类，一般指规模在500万以上，1000万以下
+                小型A类，一般指规模在1000万以上，3000万以下
+                中型C类，一般指规模在3000万以上，5000万以下
+                中型B类，一般指规模在5000万以上，8000万以下
+                中型A类，一般指规模在8000万以上，1亿以下
+                大型C类，一般指规模在1亿以上，5亿以下
+                大型B类，一般指规模在5亿以上，10亿以下
+                大型A类，一般指规模在10亿以上，50亿以下
+                特大型C类，一般指规模在50亿以上，100亿以下
+                特大型B类，一般指规模在100亿以上，500亿以下
+                特大型A类，一般指规模在500亿以上',
                 'type' => 'select',
                 'data' => $this->getRegCapital(),
             ],
             [
                 'pid' => 60,
                 'desc' => '企业规模',
+                'detail' => '',
                 'key' => 'tuan_dui_ren_shu',
                 'type' => 'select',
                 'data' => [
@@ -1173,6 +1195,7 @@ class XinDongService extends ServiceBase
             [
                 'pid' => 70,
                 'desc' => '有无官网',
+                'detail' => '',
                 'key' => 'web',
                 'type' => 'select',
                 'data' => [
@@ -1182,6 +1205,7 @@ class XinDongService extends ServiceBase
             [
                 'pid' => 80,
                 'desc' => '有无APP',
+                'detail' => '',
                 'key' => 'web',
                 'type' => 'select',
                 'data' => [
