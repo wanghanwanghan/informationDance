@@ -1229,6 +1229,9 @@ class XinDongService extends ServiceBase
                     $dataItem['_source'][$field] = $tmpArr[0];
                     // $dataItem['_source'][$field] = date('Y-m-d',strtotime($dataItem['_source'][$field])) ;
                 }
+                else{
+                    $dataItem['_source'][$field] = '--';
+                }
             }
         }
 
