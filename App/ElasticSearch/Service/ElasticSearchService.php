@@ -96,6 +96,16 @@ class ElasticSearchService extends ServiceBase
         $this->query['query']['bool']['must'][] = $boolQuery;
     }
 
+    function addMustShouldPhraseQueryV2($valueArr){
+        $boolQuery = []; 
+        foreach($valueArr as $valueItem){
+            $boolQuery['bool']['should'][] = 
+                ['match_phrase' => [$valueItem['field'] => $valueItem['value']]]; 
+        } 
+         
+        $this->query['query']['bool']['must'][] = $boolQuery;
+    }
+
     function addMustTermQuery($field, $value){
         $this->query['query']['bool']['must'][] =  ['term' => [$field => $value]]; 
     }

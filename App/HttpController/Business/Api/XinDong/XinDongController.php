@@ -713,11 +713,19 @@ eof;
     function advancedSearch(): bool
     { 
         $ElasticSearchService = new ElasticSearchService(); 
-        
+
+        $searchText = trim($this->request()->getRequestParam('searchText'));
+        $matchedCnames = [
+            [ 'name' => $searchText,],
+            [ 'basic_opscope' => $searchText,],
+        ];
+        $ElasticSearchService->addMustShouldPhraseQueryV2($matchedCnames) ;  
+
+
         // 需要按文本搜索的  
         $addMustMatchPhraseQueryMap = [
             // 名称  name  全名匹配 
-            'name' =>trim($this->request()->getRequestParam('searchText')),
+            // 'name' =>trim($this->request()->getRequestParam('searchText')),
             // basic_opscope: 经营范围
             'business_scope' =>trim($this->request()->getRequestParam('basic_opscope')),
         ];
