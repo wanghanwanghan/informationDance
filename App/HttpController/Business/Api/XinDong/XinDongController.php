@@ -1553,8 +1553,7 @@ eof;
             } 
         }
 
-        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 
-        'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
     
     }
 
