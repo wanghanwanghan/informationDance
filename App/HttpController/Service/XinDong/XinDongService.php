@@ -1271,20 +1271,24 @@ class XinDongService extends ServiceBase
      static function formatEsMoney($dataArr, $fieldsArr){
         foreach($dataArr as &$dataItem){
             foreach($fieldsArr as $field){
-                if($dataItem['_source'][$field]>0){
-                     
-                    $dataItem['_source'][$field] = self::replaceBetween(
-                        $dataItem['_source'][$field],
-                        '.',
-                        '万',
-                        ''
-                    );
-                    $dataItem['_source'][$field] = str_replace(
-                        '.',
-                        '',
-                        $dataItem['_source'][$field]
-                    );
+                if($dataItem['_source'][$field]<=0){
+                    continue;
                 }
+                // 不包含
+                if(strpos('www.jb51.net','jb51') === false){
+                    continue;
+                } 
+                $dataItem['_source'][$field] = self::replaceBetween(
+                    $dataItem['_source'][$field],
+                    '.',
+                    '万',
+                    ''
+                );
+                $dataItem['_source'][$field] = str_replace(
+                    '.',
+                    '',
+                    $dataItem['_source'][$field]
+                );
             }
         }
 
