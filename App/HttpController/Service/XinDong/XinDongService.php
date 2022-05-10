@@ -1120,7 +1120,44 @@ class XinDongService extends ServiceBase
                 'detail' => '',
                 'key' => 'company_org_type',
                 'type' => 'select',
-                'data' => $this->getCompanyOrgType(),
+                'data' =>  [
+                    $this->company_org_type_youxian => [
+                        'cname' =>$this->company_org_type_youxian_des, 
+                        'detail' => '',
+                    ],
+                    $this->company_org_type_youxian2 => [
+                        'cname' => $this->company_org_type_youxian2_des,
+                        'detail' => '',
+                    ],
+                    $this->company_org_type_gufen => [
+                        'cname' =>  $this->company_org_type_gufen_des,
+                        'detail' => '',
+                    ],
+                    $this->company_org_type_fengongsi => [
+                        'cname' => $this->company_org_type_fengongsi_des,
+                        'detail' => '',
+                    ],
+                    $this->company_org_type_zongsongsi => [
+                        'cname' => $this->company_org_type_zongsongsi_des,
+                        'detail' => '',
+                    ],
+                    $this->company_org_type_youxianhehuo => [
+                        'cname' => $this->company_org_type_youxianhehuo_des,
+                        'detail' => '',
+                    ], 
+                    40 => [
+                        'cname' =>  '外商独资公司',
+                        'detail' => '',
+                    ], 
+                    50 =>  [
+                        'cname' =>  '个人独资企业',
+                        'detail' => '',
+                    ],  
+                    60 =>  [
+                        'cname' =>  '国有独资公司',
+                        'detail' => '',
+                    ],  
+                ],
             ], 
              [
                 'pid' => 20,
@@ -1128,7 +1165,32 @@ class XinDongService extends ServiceBase
                 'detail' => '',
                 'key' => 'estiblish_year_nums',
                 'type' => 'select',
-                'data' => $this->getEstiblishYear(),
+                'data' => [
+                    $this->estiblish_year_under_2 => [
+                        'cname' => $this->estiblish_year_under_2_des,
+                        'detail' => '',
+                    ], 
+                    $this->estiblish_year_2to5  => [
+                        'cname' => $this->estiblish_year_2to5_des ,
+                        'detail' => '',
+                    ],
+                    $this->estiblish_year_5to10  => [
+                        'cname' => $this->estiblish_year_5to10_des,
+                        'detail' => '',
+                    ],
+                    $this->estiblish_year_10to15  => [
+                        'cname' =>  $this->estiblish_year_10to15_des,
+                        'detail' => '',
+                    ],
+                    $this->estiblish_year_15to20  => [
+                        'cname' => $this->estiblish_year_15to20_des,
+                        'detail' => '',
+                    ], 
+                    $this->estiblish_year_more_than_20  => [
+                        'cname' => $this->estiblish_year_more_than_20_des,
+                        'detail' => '',
+                    ],
+                ],
             ], 
              [
                 'pid' => 30,
@@ -1136,7 +1198,28 @@ class XinDongService extends ServiceBase
                 'detail' => '',
                 'key' => 'reg_status',
                 'type' => 'select',
-                'data' => $this->getRegStatus(),
+                'data' => [
+                    $this->reg_status_cunxu  =>  [
+                        'cname' => $this->reg_status_cunxu_des,
+                        'detail' => '',
+                    ],
+                    $this->reg_status_zaiye  =>  [
+                        'cname' => $this->reg_status_zaiye_des,
+                        'detail' => '',
+                    ],
+                    $this->reg_status_diaoxiao  =>  [
+                        'cname' => $this->reg_status_diaoxiao_des,
+                        'detail' => '',
+                    ],
+                    $this->reg_status_zhuxiao  =>  [
+                        'cname' => $this->reg_status_zhuxiao_des,
+                        'detail' => '',
+                    ],
+                    $this->reg_status_tingye  => [
+                        'cname' => $this->reg_status_tingye_des,
+                        'detail' => '',
+                    ],
+                ],
             ], 
              [
                 'pid' => 40,
@@ -1146,13 +1229,34 @@ class XinDongService extends ServiceBase
                 'type' => 'select',
                 // 'data' => $this->getRegCapital(),
                 'data' =>  [
-                    10 => '100万以内',
-                    15 => '100-500万',
-                    20 => '500-1000万',
-                    25 => '1000万-5000万',
-                    30 => '5000万-1亿',
-                    35 => '1亿-10亿',
-                    40 => '10亿以上',  
+                    10 => [
+                        'cname' => '100万以内',
+                        'detail' => '',
+                    ],
+                    15 => [
+                        'cname' => '100-500万',
+                        'detail' => '',
+                    ],
+                    20 => [
+                        'cname' =>  '500-1000万',
+                        'detail' => '',
+                    ],
+                    25 => [
+                        'cname' => '1000万-5000万',
+                        'detail' => '',
+                    ],
+                    30 => [
+                        'cname' =>  '5000万-1亿',
+                        'detail' => '',
+                    ],
+                    35 => [
+                        'cname' => '1亿-10亿',
+                        'detail' => '',
+                    ],
+                    40 => [
+                        'cname' => '10亿以上',
+                        'detail' => '',
+                    ],  
                 ],
             ],
             [
@@ -1161,7 +1265,61 @@ class XinDongService extends ServiceBase
                 'key' => 'ying_shou_gui_mo',
                 'detail' => '',
                 'type' => 'select',
-                'data' => $this->getRegCapital(),
+                'data' => [
+                    $this->reg_capital_50  =>  [
+                        'cname' => $this->reg_capital_50_des,
+                        'detail' => '',
+                    ],
+                    $this->reg_capital_50to100  =>  [
+                        'cname' => $this->reg_capital_50to100_des,
+                        'detail' => '',
+                    ], 
+                    $this->reg_capital_100to200  =>  [
+                        'cname' => $this->reg_capital_100to200_des,
+                        'detail' => '',
+                    ],  
+                    $this->reg_capital_200to500  =>  [
+                        'cname' => $this->reg_capital_200to500_des,
+                        'detail' => '',
+                    ],  
+                    $this->reg_capital_500to1000  =>  [
+                        'cname' => $this->reg_capital_500to1000_des,
+                        'detail' => '',
+                    ],  
+                    $this->reg_capital_1000to10000  => [
+                        'cname' =>  $this->reg_capital_1000to10000_des,
+                        'detail' => '',
+                    ],  
+                 //    $this->reg_capital_10000to100000  =>  $this->reg_capital_10000to100000_des,
+                    $this->reg_capital_minddle_a  =>  [
+                        'cname' => $this->reg_capital_minddle_a_des,
+                        'detail' => '',
+                    ],
+                    $this->reg_capital_big_c  =>  [
+                        'cname' => $this->reg_capital_big_c_des,
+                        'detail' => '',
+                    ],
+                    $this->reg_capital_big_b  =>  [
+                        'cname' => $this->reg_capital_big_b_des,
+                        'detail' => '',
+                    ],
+                    $this->reg_capital_big_A  =>  [
+                        'cname' => $this->reg_capital_big_A_des,
+                        'detail' => '',
+                    ],
+                    $this->reg_capital_super_big_C  =>  [
+                        'cname' => $this->reg_capital_super_big_C_des,
+                        'detail' => '',
+                    ],
+                    $this->reg_capital_super_big_B  =>  [
+                        'cname' => $this->reg_capital_super_big_B_des,
+                        'detail' => '',
+                    ],
+                    $this->reg_capital_super_big_A  =>  [
+                        'cname' => $this->reg_capital_super_big_A_des,
+                        'detail' => '',
+                    ],
+                ],
             ],
             [
                 'pid' => 60,
@@ -1170,13 +1328,34 @@ class XinDongService extends ServiceBase
                 'key' => 'tuan_dui_ren_shu',
                 'type' => 'select',
                 'data' => [
-                    10 =>'10人以下', 
-                    20 =>'10-50人', 
-                    30 =>'50-100人', 
-                    40 =>'100-500人', 
-                    50 =>'500-1000人', 
-                    60 =>'1000-5000人', 
-                    70 =>'5000人以上',
+                    10 => [
+                        'cname' => '10人以下',
+                        'detail' => '',
+                    ], 
+                    20 => [
+                        'cname' => '10-50人',
+                        'detail' => '',
+                    ], 
+                    30 => [
+                        'cname' => '50-100人',
+                        'detail' => '',
+                    ], 
+                    40 => [
+                        'cname' => '100-500人',
+                        'detail' => '',
+                    ], 
+                    50 => [
+                        'cname' => '500-1000人',
+                        'detail' => '',
+                    ], 
+                    60 => [
+                        'cname' => '1000-5000人',
+                        'detail' => '',
+                    ], 
+                    70 => [
+                        'cname' => '5000人以上',
+                        'detail' => '',
+                    ],
                 ],
             ],
             [
@@ -1186,7 +1365,10 @@ class XinDongService extends ServiceBase
                 'key' => 'web',
                 'type' => 'select',
                 'data' => [
-                    10 =>'有',  
+                    10 => [
+                        'cname' => '有',
+                        'detail' => '',
+                    ],  
                 ],
             ],
             [
@@ -1196,7 +1378,10 @@ class XinDongService extends ServiceBase
                 'key' => 'web',
                 'type' => 'select',
                 'data' => [
-                    10 =>'有',  
+                    10 => [
+                        'cname' => '有',
+                        'detail' => '',
+                    ],  
                 ],
             ],
         ];
