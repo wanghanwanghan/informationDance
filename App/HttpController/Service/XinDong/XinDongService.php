@@ -1274,8 +1274,9 @@ class XinDongService extends ServiceBase
                 if($dataItem['_source'][$field]<=0){
                     continue;
                 }
+
                 // 不包含
-                if(strpos('www.jb51.net','jb51') === false){
+                if(strpos($dataItem['_source'][$field],'.') === false){
                     continue;
                 } 
                 $dataItem['_source'][$field] = self::replaceBetween(
