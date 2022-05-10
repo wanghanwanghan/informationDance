@@ -1224,12 +1224,13 @@ class XinDongService extends ServiceBase
      static function formatEsDate($dataArr, $fieldsArr){
         foreach($dataArr as &$dataItem){
             foreach($fieldsArr as $field){
+                if($dataItem['_source'][$field] = '0000-00-00 00:00:00'){
+                    $dataItem['_source'][$field] = '--';
+                    continue;
+                } 
                 $tmpArr = explode(' ', $dataItem['_source'][$field]);
                 $dataItem['_source'][$field] = $tmpArr[0];
-
-                if($dataItem['_source'][$field]<=0){
-                    $dataItem['_source'][$field] = '--';
-                } 
+ 
             }
         }
 
