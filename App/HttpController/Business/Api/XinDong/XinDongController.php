@@ -843,28 +843,39 @@ eof;
         (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldPhraseQuery( 'reg_status' , $matchedCnames) ; 
     
         // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
-        $map = [
-            // 100万以下 
-            10 => ['min'=>0, 'max' => 100  ],
-            // 100-500万
-            15 =>  ['min'=>100, 'max' => 500  ], 
-            // 500-1000
-            20 =>  ['min'=>500, 'max' => 1000  ],
-            // 1000-5000万
-            25 =>  ['min'=>1000, 'max' => 5000  ],
-            // 5000-10000万
-            30 =>  ['min'=>5000, 'max' => 10000  ],
-            // 10000-10亿
-            35 =>  ['min'=>10000, 'max' => 100000  ],
-            // 10亿+
-            40 =>  ['min'=>100000, 'max' => 1000-000  ],
-        ];
-        $matchedCnames = [];
+        // $map = [
+        //     // 100万以下 
+        //     10 => ['min'=>0, 'max' => 100  ],
+        //     // 100-500万
+        //     15 =>  ['min'=>100, 'max' => 500  ], 
+        //     // 500-1000
+        //     20 =>  ['min'=>500, 'max' => 1000  ],
+        //     // 1000-5000万
+        //     25 =>  ['min'=>1000, 'max' => 5000  ],
+        //     // 5000-10000万
+        //     30 =>  ['min'=>5000, 'max' => 10000  ],
+        //     // 10000-10亿
+        //     35 =>  ['min'=>10000, 'max' => 100000  ],
+        //     // 10亿+
+        //     40 =>  ['min'=>100000, 'max' => 1000-000  ],
+        // ];
+        // $matchedCnames = [];
+        // foreach($reg_capital_values as $item){
+        //     $item && $matchedCnames[] = $map[$item]; 
+        // } 
+        // (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldRangeQuery( 'reg_capital' , $matchedCnames) ;  
+        
+        $map = XinDongService::getZhuCeZiBenMap();
         foreach($reg_capital_values as $item){
-            $item && $matchedCnames[] = $map[$item]; 
+            $tmp = $map[$item]['epreg']; 
+            foreach($tmp as $tmp_item){
+                $matchedCnames[] = $tmp_item;
+            } 
         } 
-        (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldRangeQuery( 'reg_capital' , $matchedCnames) ;  
-         
+        (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldRegexpQuery( 
+            'reg_capital' , $matchedCnames
+        ) ;
+
 
         // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
         $map =  (new XinDongService())::getTuanDuiGuiMoMap();
