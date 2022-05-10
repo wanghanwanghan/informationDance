@@ -966,9 +966,9 @@ eof;
             'to_time',
             'approved_time'
         ]);
-        $hits = (new XinDongService())::formatEsMoney($hits, [
-            'reg_capital', 
-        ]);
+        // $hits = (new XinDongService())::formatEsMoney($hits, [
+        //     'reg_capital', 
+        // ]);
 
         foreach($hits as &$dataItem){ 
             // 添加tag  
