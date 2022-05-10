@@ -221,7 +221,7 @@ class UserController extends UserBase
                     'price' => $one['price'] + 0.2,
                     'billing_plan' => $one['billing_plan'],
                     'cache_day' => $one['cache_day'],
-                    'kidTypes' => $one['kidTypes'],
+//                    'kidTypes' => $one['kidTypes'],
                     'year_price_detail' => $one['year_price_detail']
                 ])->save();
             } else {
