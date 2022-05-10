@@ -221,7 +221,7 @@ class UserController extends UserBase
                     'price' => $one['price'] + 0.2,
                     'billing_plan' => $one['billing_plan'],
                     'cache_day' => $one['cache_day'],
-                    'kidTypes' => $one['kidTypes'],
+//                    'kidTypes' => $one['kidTypes'],
                     'year_price_detail' => $one['year_price_detail']
                 ])->save();
             } else {
@@ -756,9 +756,9 @@ Eof;
         if(!empty($billing_plan)){
             $update['billing_plan'] = $billing_plan;
         }
-        if(!empty($kidTypes)){
-            $update['kidTypes'] = $kidTypes;
-        }
+//        if(!empty($kidTypes)){
+//            $update['kidTypes'] = $kidTypes;
+//        }
         if(!empty($year_price_detail)){
             $update['year_price_detail'] = $year_price_detail;
         }
