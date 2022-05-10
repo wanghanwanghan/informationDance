@@ -1159,8 +1159,8 @@ class XinDongService extends ServiceBase
                 'pid' => 50,
                 'desc' => '营收规模',
                 'key' => 'ying_shou_gui_mo',
-                'detail' => '
-                微型，一般指规模在100万以下
+                'detail' => 
+                '微型，一般指规模在100万以下
                 小型C类，一般指规模在100万以上，500万以下
                 小型B类，一般指规模在500万以上，1000万以下
                 小型A类，一般指规模在1000万以上，3000万以下
