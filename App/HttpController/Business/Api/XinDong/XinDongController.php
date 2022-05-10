@@ -698,7 +698,7 @@ eof;
     { 
         $searchOptionArr = (new XinDongService())->getSearchOption([]);
 
-        return $this->writeJson(200, null, $searchOptionArr, '成功', true, []);
+        return $this->writeJson(200, null, $searchOptionArr, '成功', false, []);
     }
  
 
