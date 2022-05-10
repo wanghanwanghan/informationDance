@@ -1602,6 +1602,21 @@ class XinDongService extends ServiceBase
     }
 
      static function saveOpportunity($dataItem){
+        if (
+            UserBusinessOpportunity::create()->where([
+                'userId' => $dataItem['userId'], 
+                'name' => $dataItem['name'], 
+            ])->get()
+        ) {
+            CommonService::getInstance()->log4PHP('该商机已经存在于客户池 '.json_encode(
+                [
+                    'userId' => $dataItem['userId'], 
+                    'name' => $dataItem['name'], 
+                ]
+            ));
+            return true ;
+        }
+
         try {
             $res = UserBusinessOpportunity::create()->data([
                         'userId' => $dataItem['userId'], 
