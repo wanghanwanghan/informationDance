@@ -1063,7 +1063,7 @@ eof;
                 'actual_capital', 
             ]
         );
-        return $this->writeJson(200, ['total' => 1],  (array) $retData, '成功', true, []);
+        return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
     }
 
      /**
