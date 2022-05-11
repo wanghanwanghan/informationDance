@@ -336,9 +336,11 @@ class XinDongController extends ProvideBase
         $entName = $this->getRequestData('entName', '');
         $year = $this->getRequestData('year', '');
         $userInputYear = explode(',', trim($year, ','));
-
+        if (count($userInputYear)>3) {
+            return $this->writeJson(201, null, null, '只能最多请求三年的数据');
+        }
         $beginYear = 2021;
-        $dataCount = 3;
+        $dataCount = 5;
 
         $this->spendMoney = 1;
 
@@ -366,7 +368,7 @@ class XinDongController extends ProvideBase
         } else {
             $f_info = EntDbFinance::create()
                 ->where('cid', $check->getAttr('id'))
-                ->where('ANCHEYEAR', [2021, 2020, 2019], 'IN')
+                ->where('ANCHEYEAR', [2021, 2020, 2019,2018,2017], 'IN')
                 ->field([
                     'ASSGRO',
                     'LIAGRO',
