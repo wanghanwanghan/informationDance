@@ -34,12 +34,12 @@ class XinDongService extends ServiceBase
     
     // 企业类型
     public $company_org_type_youxian = 10;
-    public $company_org_type_youxian_des =  '有限责任'; 
+    public $company_org_type_youxian_des =  '有限责任公司'; 
     public $company_org_type_youxian2 = 15;
     public $company_org_type_youxian2_des =  '有限公司'; 
 
     public $company_org_type_gufen = 20;
-    public $company_org_type_gufen_des =  '股份'; 
+    public $company_org_type_gufen_des =  '股份有限公司'; 
 
     public $company_org_type_fengongsi = 25;
     public $company_org_type_fengongsi_des =  '分公司'; 
@@ -47,7 +47,7 @@ class XinDongService extends ServiceBase
     public $company_org_type_zongsongsi_des =  '总公司'; 
 
     public $company_org_type_youxianhehuo = 35;
-    public $company_org_type_youxianhehuo_des =  '有限合伙'; 
+    public $company_org_type_youxianhehuo_des =  '有限合伙企业'; 
 
     // 成立年限
     public $estiblish_year_under_2 = 2;
@@ -201,6 +201,9 @@ class XinDongService extends ServiceBase
             $this->company_org_type_fengongsi => $this->company_org_type_fengongsi_des,
             $this->company_org_type_zongsongsi => $this->company_org_type_zongsongsi_des,
             $this->company_org_type_youxianhehuo => $this->company_org_type_youxianhehuo_des, 
+            40 => '外商独资公司', 
+            50 => '个人独资企业', 
+            60 => '国有独资公司', 
         ];
 
         if ($getAll) {
@@ -1114,78 +1117,271 @@ class XinDongService extends ServiceBase
            [
                 'pid' => 10,
                 'desc' => '企业类型',
+                'detail' => '',
                 'key' => 'company_org_type',
                 'type' => 'select',
-                'data' => $this->getCompanyOrgType(),
+                'data' =>  [
+                    $this->company_org_type_youxian => [
+                        'cname' =>$this->company_org_type_youxian_des, 
+                        'detail' => '',
+                    ],
+                    $this->company_org_type_youxian2 => [
+                        'cname' => $this->company_org_type_youxian2_des,
+                        'detail' => '',
+                    ],
+                    $this->company_org_type_gufen => [
+                        'cname' =>  $this->company_org_type_gufen_des,
+                        'detail' => '',
+                    ],
+                    $this->company_org_type_fengongsi => [
+                        'cname' => $this->company_org_type_fengongsi_des,
+                        'detail' => '',
+                    ],
+                    $this->company_org_type_zongsongsi => [
+                        'cname' => $this->company_org_type_zongsongsi_des,
+                        'detail' => '',
+                    ],
+                    $this->company_org_type_youxianhehuo => [
+                        'cname' => $this->company_org_type_youxianhehuo_des,
+                        'detail' => '',
+                    ], 
+                    40 => [
+                        'cname' =>  '外商独资公司',
+                        'detail' => '',
+                    ], 
+                    50 =>  [
+                        'cname' =>  '个人独资企业',
+                        'detail' => '',
+                    ],  
+                    60 =>  [
+                        'cname' =>  '国有独资公司',
+                        'detail' => '',
+                    ],  
+                ],
             ], 
              [
                 'pid' => 20,
                 'desc' => '成立年限',
+                'detail' => '',
                 'key' => 'estiblish_year_nums',
                 'type' => 'select',
-                'data' => $this->getEstiblishYear(),
+                'data' => [
+                    $this->estiblish_year_under_2 => [
+                        'cname' => $this->estiblish_year_under_2_des,
+                        'detail' => '',
+                    ], 
+                    $this->estiblish_year_2to5  => [
+                        'cname' => $this->estiblish_year_2to5_des ,
+                        'detail' => '',
+                    ],
+                    $this->estiblish_year_5to10  => [
+                        'cname' => $this->estiblish_year_5to10_des,
+                        'detail' => '',
+                    ],
+                    $this->estiblish_year_10to15  => [
+                        'cname' =>  $this->estiblish_year_10to15_des,
+                        'detail' => '',
+                    ],
+                    $this->estiblish_year_15to20  => [
+                        'cname' => $this->estiblish_year_15to20_des,
+                        'detail' => '',
+                    ], 
+                    $this->estiblish_year_more_than_20  => [
+                        'cname' => $this->estiblish_year_more_than_20_des,
+                        'detail' => '',
+                    ],
+                ],
             ], 
              [
                 'pid' => 30,
                 'desc' => '营业状态',
+                'detail' => '',
                 'key' => 'reg_status',
                 'type' => 'select',
-                'data' => $this->getRegStatus(),
+                'data' => [
+                    $this->reg_status_cunxu  =>  [
+                        'cname' => $this->reg_status_cunxu_des,
+                        'detail' => '',
+                    ],
+                    $this->reg_status_zaiye  =>  [
+                        'cname' => $this->reg_status_zaiye_des,
+                        'detail' => '',
+                    ],
+                    $this->reg_status_diaoxiao  =>  [
+                        'cname' => $this->reg_status_diaoxiao_des,
+                        'detail' => '',
+                    ],
+                    $this->reg_status_zhuxiao  =>  [
+                        'cname' => $this->reg_status_zhuxiao_des,
+                        'detail' => '',
+                    ],
+                    $this->reg_status_tingye  => [
+                        'cname' => $this->reg_status_tingye_des,
+                        'detail' => '',
+                    ],
+                ],
             ], 
              [
                 'pid' => 40,
                 'desc' => '注册资本',
+                'detail' => '',
                 'key' => 'reg_capital',
                 'type' => 'select',
                 // 'data' => $this->getRegCapital(),
                 'data' =>  [
-                    10 => '100万以内',
-                    15 => '100-500万',
-                    20 => '500-1000万',
-                    25 => '1000万-5000万',
-                    30 => '5000万-1亿',
-                    35 => '1亿-10亿',
-                    40 => '10亿以上',  
+                    10 => [
+                        'cname' => '100万以内',
+                        'detail' => '',
+                    ],
+                    15 => [
+                        'cname' => '100-500万',
+                        'detail' => '',
+                    ],
+                    20 => [
+                        'cname' =>  '500-1000万',
+                        'detail' => '',
+                    ],
+                    25 => [
+                        'cname' => '1000万-5000万',
+                        'detail' => '',
+                    ],
+                    30 => [
+                        'cname' =>  '5000万-1亿',
+                        'detail' => '',
+                    ],
+                    35 => [
+                        'cname' => '1亿-10亿',
+                        'detail' => '',
+                    ],
+                    40 => [
+                        'cname' => '10亿以上',
+                        'detail' => '',
+                    ],  
                 ],
             ],
             [
                 'pid' => 50,
                 'desc' => '营收规模',
                 'key' => 'ying_shou_gui_mo',
+                'detail' => '',
                 'type' => 'select',
-                'data' => $this->getRegCapital(),
+                'data' => [
+                    $this->reg_capital_50  =>  [
+                        'cname' => $this->reg_capital_50_des,
+                        'detail' => '100万以下',
+                    ],
+                    $this->reg_capital_50to100  =>  [
+                        'cname' => $this->reg_capital_50to100_des,
+                        'detail' => '100万以上，500万以下',
+                    ], 
+                    $this->reg_capital_100to200  =>  [
+                        'cname' => $this->reg_capital_100to200_des,
+                        'detail' => '500万以上，1000万以下',
+                    ],  
+                    $this->reg_capital_200to500  =>  [
+                        'cname' => $this->reg_capital_200to500_des,
+                        'detail' => '1000万以上，3000万以下',
+                    ],  
+                    $this->reg_capital_500to1000  =>  [
+                        'cname' => $this->reg_capital_500to1000_des,
+                        'detail' => '3000万以上，5000万以下',
+                    ],  
+                    $this->reg_capital_1000to10000  => [
+                        'cname' =>  $this->reg_capital_1000to10000_des,
+                        'detail' => '5000万以上，8000万以下',
+                    ],  
+                 //    $this->reg_capital_10000to100000  =>  $this->reg_capital_10000to100000_des,
+                    $this->reg_capital_minddle_a  =>  [
+                        'cname' => $this->reg_capital_minddle_a_des,
+                        'detail' => '8000万以上，1亿以下',
+                    ],
+                    $this->reg_capital_big_c  =>  [
+                        'cname' => $this->reg_capital_big_c_des,
+                        'detail' => '1亿以上，5亿以下',
+                    ],
+                    $this->reg_capital_big_b  =>  [
+                        'cname' => $this->reg_capital_big_b_des,
+                        'detail' => '5亿以上，10亿以下',
+                    ],
+                    $this->reg_capital_big_A  =>  [
+                        'cname' => $this->reg_capital_big_A_des,
+                        'detail' => '10亿以上，50亿以下',
+                    ],
+                    $this->reg_capital_super_big_C  =>  [
+                        'cname' => $this->reg_capital_super_big_C_des,
+                        'detail' => '50亿以上，100亿以下',
+                    ],
+                    $this->reg_capital_super_big_B  =>  [
+                        'cname' => $this->reg_capital_super_big_B_des,
+                        'detail' => '100亿以上，500亿以下',
+                    ],
+                    $this->reg_capital_super_big_A  =>  [
+                        'cname' => $this->reg_capital_super_big_A_des,
+                        'detail' => '500亿以上',
+                    ],
+                ],
             ],
             [
                 'pid' => 60,
                 'desc' => '企业规模',
+                'detail' => '',
                 'key' => 'tuan_dui_ren_shu',
                 'type' => 'select',
                 'data' => [
-                    10 =>'10人以下', 
-                    20 =>'10-50人', 
-                    30 =>'50-100人', 
-                    40 =>'100-500人', 
-                    50 =>'500-1000人', 
-                    60 =>'1000-5000人', 
-                    70 =>'5000人以上',
+                    10 => [
+                        'cname' => '10人以下',
+                        'detail' => '',
+                    ], 
+                    20 => [
+                        'cname' => '10-50人',
+                        'detail' => '',
+                    ], 
+                    30 => [
+                        'cname' => '50-100人',
+                        'detail' => '',
+                    ], 
+                    40 => [
+                        'cname' => '100-500人',
+                        'detail' => '',
+                    ], 
+                    50 => [
+                        'cname' => '500-1000人',
+                        'detail' => '',
+                    ], 
+                    60 => [
+                        'cname' => '1000-5000人',
+                        'detail' => '',
+                    ], 
+                    70 => [
+                        'cname' => '5000人以上',
+                        'detail' => '',
+                    ],
                 ],
             ],
             [
                 'pid' => 70,
                 'desc' => '有无官网',
+                'detail' => '',
                 'key' => 'web',
                 'type' => 'select',
                 'data' => [
-                    10 =>'有',  
+                    10 => [
+                        'cname' => '有',
+                        'detail' => '',
+                    ],  
                 ],
             ],
             [
                 'pid' => 80,
                 'desc' => '有无APP',
+                'detail' => '',
                 'key' => 'web',
                 'type' => 'select',
                 'data' => [
-                    10 =>'有',  
+                    10 => [
+                        'cname' => '有',
+                        'detail' => '',
+                    ],  
                 ],
             ],
         ];
@@ -1602,6 +1798,21 @@ class XinDongService extends ServiceBase
     }
 
      static function saveOpportunity($dataItem){
+        if (
+            UserBusinessOpportunity::create()->where([
+                'userId' => $dataItem['userId'], 
+                'name' => $dataItem['name'], 
+            ])->get()
+        ) {
+            CommonService::getInstance()->log4PHP('该商机已经存在于客户池 '.json_encode(
+                [
+                    'userId' => $dataItem['userId'], 
+                    'name' => $dataItem['name'], 
+                ]
+            ));
+            return true ;
+        }
+
         try {
             $res = UserBusinessOpportunity::create()->data([
                         'userId' => $dataItem['userId'], 
