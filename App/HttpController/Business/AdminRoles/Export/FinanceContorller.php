@@ -28,6 +28,18 @@ class FinanceContorller extends UserController
         'SOCNUM'    => '社保人数',
         'EMPNUM'    => '从业人数',
     ];
+    public $smhz_kidTpye = [
+        'ASSGRO'    => 'ZCZE',
+        'LIAGRO'    => 'FZZE',
+        'VENDINC'   => 'YYZSR',
+        'MAIBUSINC' => 'ZYYWSR',
+        'PROGRO'    => 'LRZE',
+        'NETINC'    => 'JLR',
+        'RATGRO'    => 'NSZE',
+        'TOTEQU'    => 'SYZQYHJ',
+        'SOCNUM'    => 'SBRS',
+        'EMPNUM'    => 'CYRS',
+    ];
     const PRICE_TYPE_1 = 1;//按年收费
     const PRICE_TYPE_2 = 2;//按公司收费
 
@@ -92,9 +104,9 @@ class FinanceContorller extends UserController
         $kidTypesKeyArr    = explode(',', $kidTypes['1']);
         $fileName          = date('YmdHis', time()) . '年报.csv';
         $file              = TEMP_FILE_PATH . $fileName;
-        $insertData        = ['公司名称', '年'];
+        $insertData        = ['GSMC', 'N'];
         foreach ($kidTypesKeyArr as $item) {
-            $insertData[] = $this->kidTpye[$item];
+            $insertData[] = $this->smhz_kidTpye[$item];
         }
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         $resData = [];
@@ -302,9 +314,9 @@ class FinanceContorller extends UserController
         $kidTypesKeyArr    = explode(',', $kidTypes['1']);
         $fileName          = date('YmdHis', time()) . '年报.csv';
         $file              = TEMP_FILE_PATH . $fileName;
-        $insertData        = ['公司名称', '年'];
+        $insertData        = ['GSMC', 'N'];
         foreach ($kidTypesKeyArr as $item) {
-            $insertData[] = $this->kidTpye[$item];
+            $insertData[] = $this->smhz_kidTpye[$item];
         }
         file_put_contents($file, implode(',', $this->replace($insertData)) . PHP_EOL, FILE_APPEND);
         $list     = json_decode(json_encode($list), true);
