@@ -635,7 +635,7 @@ class LongXinService extends ServiceBase
         $needsCheckMobileLists = [];
         foreach($apiResluts as $lianXiData){
              if(
-                 $lianXiData['手机'] && 
+                 $lianXiData['lianxitype'] =='手机' && 
                  self::isValidPhone($lianXiData['lianxi'])
             ){
                 $needsCheckMobileLists[$lianXiData['lianxi']] =  $lianXiData['lid'];
@@ -646,6 +646,7 @@ class LongXinService extends ServiceBase
         $postData = [
             'mobiles' => $needsCheckMobilesStr,
         ];
+        
         $res = (new ChuangLanService())->getCheckPhoneStatus($postData);
         CommonService::getInstance()->log4PHP(
             'complementEntLianXi '.json_encode(
