@@ -32,6 +32,16 @@ class ProvideRouter
         $this->ChuangLanV1($routeCollector);
         $this->ZhiChiRouterV1($routeCollector);//智齿科技
         $this->GuangZhouYinLianV1($routeCollector);
+        $this->DianZiQianV1($routeCollector);
+    }
+
+    private function DianZiQianV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Provide/DianziQian/DianZiQianController/';
+        $routeCollector->addGroup('/dzq', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getAuthFile', $prefix . 'getAuthFile');
+        });
+        return true;
     }
 
     private function GuangZhouYinLianV1(RouteCollector $routeCollector){

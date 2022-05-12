@@ -228,6 +228,9 @@ class FaDaDaService extends ServiceBase
         //企业上传印章
         list($ent_sign_id,$entSignErrorData) = $this->entSign($ent_customer_id,$arr);
         if(!empty($entSignErrorData)) return $entSignErrorData;
+        //企业上传法人照片
+        list($personal_sign_id,$personalSignErrorData) = $this->personalSign($people_customer_id,$arr);
+        if(!empty($personalSignErrorData)) return $personalSignErrorData;
         $arr['template_id'] = control::getUuid();//模版ID 本地自增
         $arr['contract_id'] = control::getUuid();//合同编号
 
@@ -239,6 +242,9 @@ class FaDaDaService extends ServiceBase
         if(!empty($fillTemplateErrorData)) return $fillTemplateErrorData;
         //自动签署企业印章
         $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAutoByWord($arr,$ent_customer_id,$ent_sign_id,'#盖章处#'));
+        if(!empty($ExtsignAutoErrorData)) return $ExtsignAutoErrorData;
+        //自动签署法人姓名
+        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAutoByWord($arr,$people_customer_id,$personal_sign_id,'#法人章#'));
         if(!empty($ExtsignAutoErrorData)) return $ExtsignAutoErrorData;
         //合同下载
         $pdf_path = $this->downLoadContract($arr);
