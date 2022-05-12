@@ -38,6 +38,7 @@ class DianZiQianService extends ServiceBase
     }
 
     public function getAuthFile($postData){
+        CommonService::getInstance()->log4PHP([$postData],'info','getAuthFile');
         $signerPersonres = $this->signerPerson($postData);
         $contractFile = $this->contractFile();
         dingAlarm('电子牵-getAuthFile',['$signerPersonres'=>$signerPersonres,'$contractFile'=>$contractFile]);
