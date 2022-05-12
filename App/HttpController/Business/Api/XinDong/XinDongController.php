@@ -1980,16 +1980,7 @@ eof;
                 $retData
             )
         );
-        $retData = LongXinService::complementEntLianXi($retData,[
-            'check_mobile_state' => [
-                'enable' => true,
-                'desc' => '需要检测手机号状态',
-            ],
-            'rematch_position' =>  [
-                'enable' => true,
-                'desc' => '需要重新检测下联系人的职位',
-            ],
-        ]);
+        $retData = LongXinService::complementEntLianXiMobileState($retData);
         return $this->writeJson(200, 
           [
             'page' => $page,

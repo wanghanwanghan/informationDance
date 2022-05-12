@@ -14,7 +14,6 @@ use App\Task\TaskList\EntDbTask\insertEnt;
 use App\Task\TaskList\EntDbTask\insertFinance;
 use Carbon\Carbon;
 use App\HttpController\Service\ChuangLan\ChuangLanService;
-
  
 class LongXinService extends ServiceBase
 {
@@ -631,7 +630,7 @@ class LongXinService extends ServiceBase
         ],
     ];
     */
-    static function complementEntLianXi($apiResluts,$complementConfig){
+    static function complementEntLianXi($apiResluts){
         $needsCheckMobileLists = [];
         foreach($apiResluts as $lianXiData){
              if(
@@ -659,8 +658,67 @@ class LongXinService extends ServiceBase
         return  $res;
     }
 
+    static function complementEntLianXiMobileState($apiResluts){
+        $needsCheckMobileLists = [];
+        foreach($apiResluts as $lianXiData){
+             if(
+                 $lianXiData['lianxitype'] =='手机' && 
+                 self::isValidPhone($lianXiData['lianxi'])
+            ){
+                $needsCheckMobileLists[$lianXiData['lianxi']] =  $lianXiData['lid'];
+             }   
+        }
+        if(empty($needsCheckMobileLists)){
+            return $apiResluts;
+        }
 
 
+        $needsCheckMobilesStr = join(",",array_keys($needsCheckMobileLists));
+        $postData = [
+            'mobiles' => $needsCheckMobilesStr,
+        ];
+        
+        $res = (new ChuangLanService())->getCheckPhoneStatus($postData);
+        if(
+            $res['message'] !='成功' 
+        ){
+            return $apiResluts;
+        }
+
+        if(
+            
+            empty($res['data'] )
+        ){
+            return $apiResluts;
+        }
+
+        $res['data'] = self::shiftArrayKeys($res['data'],'mobile');
+        
+        foreach($apiResluts as &$dataItem){
+            if(empty($res['data'][$dataItem['lianxi']])){
+                continue;
+            };
+            $dataItem['mobile_check_res'] = $res['data'][$dataItem['lianxi'];
+        }
+        
+        CommonService::getInstance()->log4PHP(
+            'complementEntLianXi '.json_encode(
+                [
+                    $postData,$res
+                ]
+            )
+        );
+
+        return  $apiResluts;
+    }
+
+    static function shiftArrayKeys($arr,$field){
+        $newArr = [];
+        foreach($arr as $item){
+           $newArr[$item[$field]] = $item; 
+        }
+        return $newArr;
+    }
     static function isValidPhone($phone){
         if(strlen($phone) != 11){   
             return false;   
