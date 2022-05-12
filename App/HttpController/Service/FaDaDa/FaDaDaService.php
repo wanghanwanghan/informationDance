@@ -244,7 +244,7 @@ class FaDaDaService extends ServiceBase
         $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAutoByWord($arr,$ent_customer_id,$ent_sign_id,'#盖章处#'));
         if(!empty($ExtsignAutoErrorData)) return $ExtsignAutoErrorData;
         //自动签署法人姓名
-        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAutoByWord($arr,$people_customer_id,$personal_sign_id,'#法人盖章处#'));
+        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAutoByWord($arr,$people_customer_id,$personal_sign_id,'#法人章#'));
         if(!empty($ExtsignAutoErrorData)) return $ExtsignAutoErrorData;
         //合同下载
         $pdf_path = $this->downLoadContract($arr);
