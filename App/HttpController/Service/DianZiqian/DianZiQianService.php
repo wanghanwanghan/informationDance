@@ -186,7 +186,7 @@ class DianZiQianService extends ServiceBase
 
         $result = $res['data'] ?? null;
 
-        $msg = $res['msg'] ?? null;
+        $msg = $res['description'] ?? null;
 
         return $this->createReturn($code, $paging, $result, $msg);
     }
