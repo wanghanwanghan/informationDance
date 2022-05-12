@@ -36,12 +36,22 @@ class DianZiQianService extends ServiceBase
         return true;
     }
 
-    public function signerPerson(){
+    public function getAuthFile($postData){
+        $signerPersonres = $this->signerPerson($postData);
+        $contractFile = $this->contractFile();
+        dingAlarm('电子牵-getAuthFile',['$signerPersonres'=>$signerPersonres,'$contractFile'=>$contractFile]);
+        return $this->createReturn(200, null, ['$signerPersonres'=>$signerPersonres,'$contractFile'=>$contractFile], 'test');
+    }
+
+    /**
+     * 创建签署人
+     */
+    public function signerPerson($postData){
         $path = '/open-api-lite/signer/person';
         $param = array(
             "personIdType" => "0",
-            "personName" => "李琦",
-            "personIdCard" => "372328198704051258"
+            "personName" => $postData['legalPerson'],
+            "personIdCard" => $postData['idCard']
         );
         $param = $this->buildParam($param,$path);
         $resp = (new CoHttpClient())
@@ -50,6 +60,21 @@ class DianZiQianService extends ServiceBase
 
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
+
+    /**
+     * 创建合同
+     */
+    public function contractFile(){
+        $path = '/open-api-lite/contract/file';
+        $file = STATIC_PATH."AuthBookModel/dx_template.pdf";
+        $param = $this->buildParam([],$path,$file);
+        $resp = (new CoHttpClient())
+            ->useCache($this->curl_use_cache)
+            ->send($this->url . $path,$param, $this->getHeader('form'), ['enableSSL' => true]);
+
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
+
     /**
      * 计算签名
      * @param $data
@@ -105,7 +130,7 @@ class DianZiQianService extends ServiceBase
         $token = makeSign($param, $path);
         if(!empty($file)){
             $f = curl_file_create($file);
-            $param["templateFile"] = $f;
+            $param["contractFile"] = $f;
         }
         $param["token"] = $token;
         return $param;
