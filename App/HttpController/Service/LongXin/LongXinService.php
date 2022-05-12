@@ -618,46 +618,80 @@ class LongXinService extends ServiceBase
     }
 
     /*
-    补充下联系人信息 ： 接口返回的联系人信息 并不怎么全
-    $$complementConfig = [
-        'check_mobile_state' => [
-            'enable' => true,
-            'desc' => '需要检测手机号状态',
-        ],
-        'rematch_position' =>  [
-            'enable' => true,
-            'desc' => '需要重新检测下联系人的职位',
-        ],
-    ];
+    补充下联系人职位信息 ： 接口返回的联系人职位信息 并不怎么全
+     
     */
-    static function complementEntLianXi($apiResluts){
-        $needsCheckMobileLists = [];
-        foreach($apiResluts as $lianXiData){
-             if(
-                 $lianXiData['lianxitype'] =='手机' && 
-                 self::isValidPhone($lianXiData['lianxi'])
-            ){
-                $needsCheckMobileLists[$lianXiData['lianxi']] =  $lianXiData['lid'];
-             }   
-        }
+    static function complementEntLianXiPosition($apiResluts,$entName){  
 
-        $needsCheckMobilesStr = join(",",array_keys($needsCheckMobileLists));
-        $postData = [
-            'mobiles' => $needsCheckMobilesStr,
-        ];
-        
-        $res = (new ChuangLanService())->getCheckPhoneStatus($postData);
+        // 根据企业名称取到库里全部的联系人名称和职位 然后代码匹配
+
+        // 根据企业名称取到企业对象
+        $companyDataObj = \App\HttpController\Models\RDS3\Company::create()
+                    ->where('name', $entName)->get();   
+
+        // 根据企业id 获取所有联系人信息（主要是取到职位信息）
+        $staffsDatas = \App\HttpController\Models\RDS3\CompanyStaff::create()
+                    ->where('company_id', $companyDataObj->id) 
+                    ->all();   
+
+        // 找到该企业所有联系人名字（staff存的是联系人id）
+        $staffIds = array_column($staffsDatas, 'staff_id');
+        //根据所有联系人id 一次性把数据全取到
+        $humanDatas = \App\HttpController\Models\RDS3\Human::create()
+            ->where('id', $staffIds,'IN') 
+            ->all();   
+        // 转换为id为key的数组
+        $humanDatas = self::shiftArrayKeys($humanDatas,'id');
+
+        // 把联系人的名字 写进企业职工信息里
+        foreach($staffsDatas as &$staffsDataItem){
+            if(!$staffsDataItem['staff_id']){
+                continue;
+            }
+            if(!$humanDatas[$staffsDataItem['staff_id']]){
+                continue;
+            }
+            $staffsDataItem['stff_name'] = $humanDatas[$staffsDataItem['staff_id']]['name'];
+        }
+        //把企业职工信息转换为以联系人名字为key的数组 
+        $staffsDatas = self::shiftArrayKeys($staffsDatas,'stff_name') ;
+
+        foreach($apiResluts as &$lianXiData){
+            $name = trim($lianXiData['name']);
+             if(!$name){
+                continue;
+             }
+
+             if(!$staffsDatas[$name]){
+               continue;
+            }   
+             $lianXiData['staff_position'] =  $staffsDatas[$name]['staff_type_name']; 
+        } 
+
         CommonService::getInstance()->log4PHP(
             'complementEntLianXi '.json_encode(
                 [
-                    $postData,$res
+                    $staffsDatas,
+                    $apiResluts
                 ]
             )
         );
 
-        return  $res;
+        return  $apiResluts;
     }
 
+    //check 是否中文名
+    static function isChineseName($name){
+        $name = str_replace(['先生','女士'], ['',''], $name, $i);
+
+        if (preg_match('/^([\xe4-\xe9][\x80-\xbf]{2}){2,4}$/', $name)) {
+            return true;
+        } else {
+            return false;
+        }
+    } 
+
+    // 把手机号检测状态填充进去
     static function complementEntLianXiMobileState($apiResluts){
         $needsCheckMobileLists = [];
         foreach($apiResluts as $lianXiData){
@@ -712,6 +746,7 @@ class LongXinService extends ServiceBase
         return  $apiResluts;
     }
 
+    //转换为特定的key
     static function shiftArrayKeys($arr,$field){
         $newArr = [];
         foreach($arr as $item){
