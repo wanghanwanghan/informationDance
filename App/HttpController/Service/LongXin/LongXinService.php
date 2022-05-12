@@ -13,7 +13,9 @@ use App\Task\Service\TaskService;
 use App\Task\TaskList\EntDbTask\insertEnt;
 use App\Task\TaskList\EntDbTask\insertFinance;
 use Carbon\Carbon;
+use App\HttpController\Service\ChuangLan\ChuangLanService;
 
+ 
 class LongXinService extends ServiceBase
 {
     private $sourceName = '西南';
@@ -614,6 +616,53 @@ class LongXinService extends ServiceBase
             ->send($this->baseUrl . 'company_lianxi/', $arr, $this->sendHeaders);
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
+    }
+
+    /*
+    补充下联系人信息 ： 接口返回的联系人信息 并不怎么全
+    $$complementConfig = [
+        'check_mobile_state' => [
+            'enable' => true,
+            'desc' => '需要检测手机号状态',
+        ],
+        'rematch_position' =>  [
+            'enable' => true,
+            'desc' => '需要重新检测下联系人的职位',
+        ],
+    ];
+    */
+    static function complementEntLianXi($apiResluts,$complementConfig){
+        $needsCheckMobileLists = [];
+        foreach($apiResluts as $lianXiData){
+             if(
+                 $lianXiData['手机'] && 
+                 self::isValidPhone($lianXiData['lianxi'])
+            ){
+                $needsCheckMobileLists[$lianXiData['lianxi']] =  $lianXiData['lid'];
+             }   
+        }
+
+        $needsCheckMobilesStr = join(";",$needsCheckMobileLists);
+        $postData = [
+            'mobiles' => $needsCheckMobilesStr,
+        ];
+        $res = (new ChuangLanService())->getCheckPhoneStatus($postData);
+        return  $res;
+    }
+
+
+
+    static function isValidPhone($phone){
+        if(strlen($phone) != 11){   
+            return false;   
+        }
+
+        if(preg_match("/^1[3456789]{1}[0-9]{9}$/",$phone)){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     //原值计算

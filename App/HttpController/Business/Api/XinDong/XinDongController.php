@@ -1975,6 +1975,16 @@ eof;
         if( $offset < 0 ) $offset = 0;
 
         $retData = array_slice( $retData, $offset, $size ); 
+        $retData = LongXinService::complementEntLianXi($retData,[
+            'check_mobile_state' => [
+                'enable' => true,
+                'desc' => '需要检测手机号状态',
+            ],
+            'rematch_position' =>  [
+                'enable' => true,
+                'desc' => '需要重新检测下联系人的职位',
+            ],
+        ]);
         return $this->writeJson(200, 
           [
             'page' => $page,
