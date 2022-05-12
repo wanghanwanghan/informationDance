@@ -89,7 +89,7 @@ class DianZiQianService extends ServiceBase
         $appSecret = '6%T8s0h!cSx4^M$7vb0Xjr5e75r6n18NxGuK1V7$942e7*2&2G64d7#3#^8x4G44';
         //签名步骤一：按字典序排序参数
         ksort($data);
-        $String = toUrlParams($data, $path);
+        $String = $this->toUrlParams($data, $path);
         echo "md5:" . $String;
         echo "\n";
         //签名步骤二：拼接secret
@@ -129,7 +129,7 @@ class DianZiQianService extends ServiceBase
         $param["appCode"] = "E7094079418854802183";
         $param["version"] = "v1";
         $param["timestamp"] = time();
-        $token = makeSign($param, $path);
+        $token = $this->makeSign($param, $path);
         if(!empty($file)){
             $f = curl_file_create($file);
             $param["contractFile"] = $f;
