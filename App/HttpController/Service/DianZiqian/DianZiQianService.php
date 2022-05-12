@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\DianZiqian;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
@@ -57,7 +58,7 @@ class DianZiQianService extends ServiceBase
         $resp = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path,$param, $this->getHeader('form'), ['enableSSL' => true]);
-
+        CommonService::getInstance()->log4PHP([$this->url . $path,$param],'info','signerPerson');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
@@ -71,7 +72,7 @@ class DianZiQianService extends ServiceBase
         $resp = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path,$param, $this->getHeader('form'), ['enableSSL' => true]);
-
+        CommonService::getInstance()->log4PHP([$this->url . $path,$param],'info','contractFile');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
