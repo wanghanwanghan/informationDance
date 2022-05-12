@@ -647,6 +647,14 @@ class LongXinService extends ServiceBase
             'mobiles' => $needsCheckMobilesStr,
         ];
         $res = (new ChuangLanService())->getCheckPhoneStatus($postData);
+        CommonService::getInstance()->log4PHP(
+            'complementEntLianXi '.json_encode(
+                [
+                    $postData,$res
+                ]
+            )
+        );
+
         return  $res;
     }
 
