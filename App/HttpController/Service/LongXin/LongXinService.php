@@ -698,9 +698,9 @@ class LongXinService extends ServiceBase
             if(empty($res['data'][$dataItem['lianxi']])){
                 continue;
             };
-            $dataItem['mobile_check_res'] = $res['data'][$dataItem['lianxi'];
+            $dataItem['mobile_check_res'] = $res['data'][$dataItem['lianxi']];
         }
-        
+
         CommonService::getInstance()->log4PHP(
             'complementEntLianXi '.json_encode(
                 [
