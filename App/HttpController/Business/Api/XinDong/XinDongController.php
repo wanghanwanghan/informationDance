@@ -1975,6 +1975,11 @@ eof;
         if( $offset < 0 ) $offset = 0;
 
         $retData = array_slice( $retData, $offset, $size ); 
+        CommonService::getInstance()->log4PHP(
+            'getEntLianXi '.json_encode(
+                $retData
+            )
+        );
         $retData = LongXinService::complementEntLianXi($retData,[
             'check_mobile_state' => [
                 'enable' => true,
