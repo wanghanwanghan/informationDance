@@ -642,7 +642,7 @@ class LongXinService extends ServiceBase
              }   
         }
 
-        $needsCheckMobilesStr = join(";",$needsCheckMobileLists);
+        $needsCheckMobilesStr = join(",",$needsCheckMobileLists);
         $postData = [
             'mobiles' => $needsCheckMobilesStr,
         ];
