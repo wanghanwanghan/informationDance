@@ -349,17 +349,17 @@ class RunCompleteCompanyData extends AbstractCronTask
             $xlsxObject = new \Vtiful\Kernel\Excel($config);
             $datas =  Company::create()
                         // ->field(['id','name','property2'])
-                    // ->field(['name'])
-                    ->limit(10)
+                    ->field(['name'])
+                    ->limit(5)
                     ->all();
                     $memory=round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
             CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用 '.$memory  );
-            $newData = [];
-            foreach($datas as $data){
-                $newData[] = [
-                    'id'=>$data['id']
-                ];
-            }
+            // $newData = [];
+            // foreach($datas as $data){
+            //     $newData[] = [
+            //         'id'=>$data['id']
+            //     ];
+            // }
             $memory=round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
             CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用 '.$memory  );
             // $filePath = $xlsxObject->fileName($fileName, 'sheet1')
@@ -373,10 +373,10 @@ class RunCompleteCompanyData extends AbstractCronTask
             //             ]
             //         ]
             //     )->output(); 
-            CommonService::getInstance()->log4PHP('RunCompleteCompanyData newData '.json_encode($newData)  );
+            CommonService::getInstance()->log4PHP('RunCompleteCompanyData newData '.json_encode($datas)  );
                 $filePath = $xlsxObject->fileName($fileName, 'sheet1')
                 ->header(['企业名称'])->data(
-                   $newData
+                   $datas
                 )->output(); 
             $memory=round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
             CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用 '.$memory  );
