@@ -356,7 +356,9 @@ class RunCompleteCompanyData extends AbstractCronTask
             CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用 '.$memory  );
             $newData = [];
             foreach($datas as $data){
-                $newData[] = $data;
+                $newData[] = [
+                    'name'=>$data['name']
+                ];
             }
             $memory=round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
             CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用 '.$memory  );
