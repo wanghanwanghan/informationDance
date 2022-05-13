@@ -659,10 +659,12 @@ class LongXinService extends ServiceBase
         foreach($apiResluts as &$lianXiData){
             $name = trim($lianXiData['name']);
              if(!$name){
+                $lianXiData['staff_position'] = ''; 
                 continue;
              }
 
              if(!$staffsDatas[$name]){
+                $lianXiData['staff_position'] = ''; 
                continue;
             }   
              $lianXiData['staff_position'] =  $staffsDatas[$name]['staff_type_name']; 
