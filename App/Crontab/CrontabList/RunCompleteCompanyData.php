@@ -368,8 +368,8 @@ class RunCompleteCompanyData extends AbstractCronTask
 
             $retData = LongXinService::complementEntLianXiMobileState($retData);
             $retData = LongXinService::complementEntLianXiPosition($retData, $entname);  
-            foreach($retData as $datautem){
-                yield $datas[] = array_values($datautem);
+            foreach($retData as $datautem){  
+                yield $datas[] = array_values(array_merge(['comname' =>$entname],$datautem));
             }
         }
     }
@@ -379,7 +379,7 @@ class RunCompleteCompanyData extends AbstractCronTask
         
         $excelDatas = $this->getExcelYieldData('test.xlsx');
         foreach($excelDatas as $dataItem){
-            CommonService::getInstance()->log4PHP('RunCompleteCompanyData run '.json_encode($dataItem));
+            CommonService::getInstance()->log4PHP('RunCompleteCompanyData dataItem '.json_encode($dataItem));
         } 
         return true ;
 
