@@ -377,8 +377,9 @@ class RunCompleteCompanyData extends AbstractCronTask
     function run(int $taskId, int $workerIndex): bool
     {
         $startMemory = memory_get_usage(); 
-        $file = "customer_001.xlsx";
-        CommonService::getInstance()->log4PHP('RunCompleteCompanyData file '.json_encode($file) );
+        $files = glob($this->workPath.'customer_*.xlsx');
+        $file = array_shift($files);
+        CommonService::getInstance()->log4PHP('RunCompleteCompanyData file '.($file) );
         $excelDatas = $this->getExcelYieldData($file);
         
         $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
