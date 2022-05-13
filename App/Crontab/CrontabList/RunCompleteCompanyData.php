@@ -107,8 +107,23 @@ class RunCompleteCompanyData extends AbstractCronTask
 
     function readXlsx($xlsx_name)
     {
-        $excel_read = new \Vtiful\Kernel\Excel(['path' => $this->workPath]);
-        $read = $excel_read->openFile($xlsx_name)->openSheet();
+        // $excel_read = new \Vtiful\Kernel\Excel(['path' => $this->workPath]);
+        // $read = $excel_read->openFile($xlsx_name)->openSheet();
+
+        $config = [
+            'path' =>  $this->workPath,
+        ];
+        $fileName = 'new_test.xlsx';
+        $xlsxObject = new \Vtiful\Kernel\Excel($config);
+        $filePath = $xlsxObject->fileName($fileName, 'sheet1')
+            ->header(['企业名称', '年', '字段', '数值', '区间'])->data([
+                [
+                    'xxx','XXXX'
+                ],
+                [
+                    'xxx','XXXX'
+                ],
+            ])->output(); 
 
         while (true) {
 
@@ -318,9 +333,28 @@ class RunCompleteCompanyData extends AbstractCronTask
         CommonService::getInstance()->log4PHP('RunCompleteCompanyData run '.$this->workPath . 'test.xlsx');
 
         // $ignore = ['.', '..', '.gitignore'];
-        $this->readXlsx('test.xlsx');
-        file_put_contents($this->workPath . 'test.xlsx', 
-        file_get_contents($this->workPath . 'test.xlsx'));
+        // $this->readXlsx('test.xlsx');
+        // file_put_contents($this->workPath . 'test.xlsx', 
+        // file_get_contents($this->workPath . 'test.xlsx'));
+        if(
+            !file_exists($this->workPath.'new_test.xlsx')
+        ){
+            $config = [
+                'path' =>  $this->workPath,
+            ];
+            $fileName = 'new_test.xlsx';
+            $xlsxObject = new \Vtiful\Kernel\Excel($config);
+            $filePath = $xlsxObject->fileName($fileName, 'sheet1')
+                ->header(['企业名称', '年', '字段', '数值', '区间'])->data([
+                    [
+                        'xxx','XXXX'
+                    ],
+                    [
+                        'xxx','XXXX'
+                    ],
+                ])->output(); 
+        }
+        
 
         CommonService::getInstance()->log4PHP('RunCompleteCompanyData end '.$this->workPath . 'test.xlsx');
         // if ($dh = opendir($this->workPath)) {
