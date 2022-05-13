@@ -354,12 +354,10 @@ class RunCompleteCompanyData extends AbstractCronTask
                     ->all();
                     $memory=round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
             CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用 '.$memory  );
-            // $newData = [];
-            // foreach($datas as $data){
-            //     $newData[] = [
-            //         'id'=>$data['id']
-            //     ];
-            // }
+            $newData = [];
+            foreach($datas as $data){
+                $newData[][] = $data['id'];
+            }
             $memory=round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
             CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用 '.$memory  );
             // $filePath = $xlsxObject->fileName($fileName, 'sheet1')
@@ -373,10 +371,10 @@ class RunCompleteCompanyData extends AbstractCronTask
             //             ]
             //         ]
             //     )->output(); 
-            CommonService::getInstance()->log4PHP('RunCompleteCompanyData newData '.json_encode($datas)  );
+            CommonService::getInstance()->log4PHP('RunCompleteCompanyData newData '.json_encode($newData)  );
                 $filePath = $xlsxObject->fileName($fileName, 'sheet1')
                 ->header(['企业名称'])->data(
-                   $datas
+                   $newData
                 )->output(); 
             $memory=round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
             CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用 '.$memory  );
