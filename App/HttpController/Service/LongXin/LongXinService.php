@@ -730,6 +730,7 @@ class LongXinService extends ServiceBase
         
         foreach($apiResluts as &$dataItem){
             if(empty($res['data'][$dataItem['lianxi']])){
+                $dataItem['mobile_check_res'] = '';
                 continue;
             };
             $dataItem['mobile_check_res'] = $res['data'][$dataItem['lianxi']]['status'];
