@@ -13,6 +13,8 @@ use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use EasySwoole\Mysqli\QueryBuilder;
 use wanghanwanghan\someUtils\control;
 use App\HttpController\Models\RDS3\Company;
+use App\HttpController\Service\LongXin\LongXinService;
+
 
 class RunCompleteCompanyData extends AbstractCronTask
 {
@@ -354,14 +356,21 @@ class RunCompleteCompanyData extends AbstractCronTask
             }
 
             $entname = $this->strtr_func($one[0]);
-            CommonService::getInstance()->log4PHP('RunCompleteCompanyData entname '.json_encode($entname));
+
             $code = $this->strtr_func($one[1]??'');
             $address = $this->strtr_func($one[2]??''); 
-            yield $datas[] = [
-                $entname,
-                $code,
-                $address,
-            ];
+           
+            $retData =  (new LongXinService())
+                    ->setCheckRespFlag(true)
+                    ->getEntLianXi([
+                        'entName' => $entname,
+                    ]); 
+
+            $retData = LongXinService::complementEntLianXiMobileState($retData);
+            $retData = LongXinService::complementEntLianXiPosition($retData, $entname);  
+            foreach($retData as $datautem){
+                yield $datas[] = array_values($datautem);
+            }
         }
     }
 
@@ -369,9 +378,9 @@ class RunCompleteCompanyData extends AbstractCronTask
     {
         
         $excelDatas = $this->getExcelYieldData('test.xlsx');
-
-        CommonService::getInstance()->log4PHP('RunCompleteCompanyData run '.json_encode($excelDatas));
-        
+        foreach($excelDatas as $dataItem){
+            CommonService::getInstance()->log4PHP('RunCompleteCompanyData run '.json_encode($dataItem));
+        } 
         return true ;
 
         $startMemory = memory_get_usage();
