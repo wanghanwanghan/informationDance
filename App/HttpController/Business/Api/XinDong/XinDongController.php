@@ -1981,6 +1981,11 @@ eof;
             )
         );
         $retData = LongXinService::complementEntLianXiMobileState($retData);
+        if(
+            $this->request()->getRequestParam('debug')
+        ){
+            $retData = LongXinService::complementEntLianXiPosition($retData, $postData['entName']); 
+        }
         return $this->writeJson(200, 
           [
             'page' => $page,
