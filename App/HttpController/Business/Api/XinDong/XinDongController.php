@@ -1615,7 +1615,7 @@ eof;
             return  $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
         
-        $model = \App\HttpController\Models\RDS3\Company::create()
+        $model = Company::create()
                     // ->field(['id','name','property2'])
                 ->where('id', $companyId)
                 ->get(); 

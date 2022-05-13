@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use EasySwoole\Mysqli\QueryBuilder;
 use wanghanwanghan\someUtils\control;
+use App\HttpController\Models\RDS3\Company;
 
 class RunCompleteCompanyData extends AbstractCronTask
 {
@@ -325,6 +326,7 @@ class RunCompleteCompanyData extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
+        $startMemory = memory_get_usage();
         // if (!$this->crontabBase->withoutOverlapping(self::getTaskName())) {
         //     dingAlarm('赛盟绘制异常',['getTaskName'=>self::getTaskName(),'status'=>$this->crontabBase->withoutOverlapping(self::getTaskName())]);
         //     CommonService::getInstance()->log4PHP(__CLASS__ . '不开始');
@@ -337,22 +339,23 @@ class RunCompleteCompanyData extends AbstractCronTask
         // file_put_contents($this->workPath . 'test.xlsx', 
         // file_get_contents($this->workPath . 'test.xlsx'));
         if(
-            !file_exists($this->workPath.'new_test.xlsx')
+            !file_exists($this->workPath.'new_test2.xlsx')
         ){
+ 
             $config = [
                 'path' =>  $this->workPath,
             ];
             $fileName = 'new_test.xlsx';
             $xlsxObject = new \Vtiful\Kernel\Excel($config);
             $filePath = $xlsxObject->fileName($fileName, 'sheet1')
-                ->header(['企业名称', '年', '字段', '数值', '区间'])->data([
-                    [
-                        'xxx','XXXX'
-                    ],
-                    [
-                        'xxx','XXXX'
-                    ],
-                ])->output(); 
+                ->header(['企业名称', '年', '字段', '数值', '区间'])->data(
+                    Company::create()
+                            // ->field(['id','name','property2'])
+                        ->limit(1000)
+                        ->all()
+                )->output(); 
+            $memory=round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
+            CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用 '.$memory . 'test.xlsx');
         }
         
 
