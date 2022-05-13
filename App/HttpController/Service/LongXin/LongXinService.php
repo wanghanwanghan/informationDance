@@ -631,7 +631,7 @@ class LongXinService extends ServiceBase
 
         // 根据企业id 获取所有联系人信息（主要是取到职位信息）
         $staffsDatas = \App\HttpController\Models\RDS3\CompanyStaff::create()
-                    ->where('company_id', $companyDataObj->id) 
+                    ->where('company_id',$companyDataObj->getAttr('id')) 
                     ->all();   
 
         // 找到该企业所有联系人名字（staff存的是联系人id）
