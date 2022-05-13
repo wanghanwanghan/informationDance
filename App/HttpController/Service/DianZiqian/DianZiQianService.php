@@ -48,7 +48,7 @@ class DianZiQianService extends ServiceBase
         if ($signerPersonres['code'] != 200) return $signerPersonres;
 
         //创建企业签署人
-        $signer  = $this->signerEnterprise($postData);
+        $signerEnterprise  = $this->signerEnterprise($postData);
         $signerCodeEnt    = $signerEnterprise['result']['signerCode'] ?? "";
         if ($signerEnterprise['code'] != 200) return $signerEnterprise;
 
