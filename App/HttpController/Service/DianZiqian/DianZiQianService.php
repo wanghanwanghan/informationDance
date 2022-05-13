@@ -230,7 +230,7 @@ class DianZiQianService extends ServiceBase
         $ent_sign_info = $this->sealBase64([
                                                'signerCode'      => $signerCode,
                                                'sealName'        => '企业章',
-                                               'sealImageBase64' => $this->getPersonalSignBase64($arr),
+                                               'sealImageBase64' => $this->getEntSignBase64($arr),
                                            ]);
         $error_data    = '';
         if ($ent_sign_info['code'] === 200) {
