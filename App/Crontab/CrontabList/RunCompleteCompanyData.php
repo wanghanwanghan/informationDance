@@ -339,7 +339,7 @@ class RunCompleteCompanyData extends AbstractCronTask
         // file_put_contents($this->workPath . 'test.xlsx', 
         // file_get_contents($this->workPath . 'test.xlsx'));
         if(
-            !file_exists($this->workPath.'new_test2.xlsx')
+            !file_exists($this->workPath.'new_test.xlsx')
         ){
  
             $config = [
@@ -347,15 +347,23 @@ class RunCompleteCompanyData extends AbstractCronTask
             ];
             $fileName = 'new_test.xlsx';
             $xlsxObject = new \Vtiful\Kernel\Excel($config);
+            // Company::create()
+            //                 // ->field(['id','name','property2'])
+            //             ->limit(1000)
+            //             ->all()
             $filePath = $xlsxObject->fileName($fileName, 'sheet1')
-                ->header(['企业名称', '年', '字段', '数值', '区间'])->data(
-                    Company::create()
-                            // ->field(['id','name','property2'])
-                        ->limit(1000)
-                        ->all()
+                ->header(['企业名称'])->data(
+                    [
+                        [
+                            'XXXX',
+                        ],
+                        [
+                            'XXXX',
+                        ]
+                    ]
                 )->output(); 
             $memory=round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
-            CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用 '.$memory . 'test.xlsx');
+            CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用 '.$memory  );
         }
         
 
