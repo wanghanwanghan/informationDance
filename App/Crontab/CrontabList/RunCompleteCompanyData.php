@@ -349,7 +349,7 @@ class RunCompleteCompanyData extends AbstractCronTask
             $xlsxObject = new \Vtiful\Kernel\Excel($config);
             $datas =  Company::create()
                         // ->field(['id','name','property2'])
-                    ->field(['name'])
+                    // ->field(['name'])
                     ->limit(10)
                     ->all();
                     $memory=round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
@@ -357,7 +357,7 @@ class RunCompleteCompanyData extends AbstractCronTask
             $newData = [];
             foreach($datas as $data){
                 $newData[] = [
-                    'name'=>$data['name']
+                    'id'=>$data['id']
                 ];
             }
             $memory=round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
