@@ -276,7 +276,7 @@ class DianZiQianService extends ServiceBase
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true]);
-        CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'contractFile');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'sealBase64');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
