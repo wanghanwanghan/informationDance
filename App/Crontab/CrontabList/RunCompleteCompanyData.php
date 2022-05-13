@@ -354,9 +354,10 @@ class RunCompleteCompanyData extends AbstractCronTask
             }
 
             $entname = $this->strtr_func($one[0]);
+            CommonService::getInstance()->log4PHP('RunCompleteCompanyData entname '.json_encode($entname));
             $code = $this->strtr_func($one[1]??'');
             $address = $this->strtr_func($one[2]??''); 
-            $datas[] = [
+            yield $datas[] = [
                 $entname,
                 $code,
                 $address,
