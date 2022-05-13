@@ -1615,7 +1615,7 @@ eof;
             return  $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
         
-        $model = \App\HttpController\Models\RDS3\Company::create()
+        $model = Company::create()
                     // ->field(['id','name','property2'])
                 ->where('id', $companyId)
                 ->get(); 
@@ -1975,6 +1975,14 @@ eof;
         if( $offset < 0 ) $offset = 0;
 
         $retData = array_slice( $retData, $offset, $size ); 
+        CommonService::getInstance()->log4PHP(
+            'getEntLianXi '.json_encode(
+                $retData
+            )
+        );
+        $retData = LongXinService::complementEntLianXiMobileState($retData);
+        $retData = LongXinService::complementEntLianXiPosition($retData, $postData['entName']); 
+        
         return $this->writeJson(200, 
           [
             'page' => $page,

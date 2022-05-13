@@ -33,7 +33,7 @@ class ChuangLanService extends ServiceBase
         $data = [
             'appId' => $this->appId,
             'appKey' => $this->appKey,
-            'mobiles' => $param['mobiles'],
+            'mobiles' => $param['mobiles'], // 检测手机号，多个手机号码用英文半角逗号隔开，仅支持国内号码
             'type' => 0,
         ];
         $res = (new CoHttpClient())

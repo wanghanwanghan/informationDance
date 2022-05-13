@@ -13,7 +13,8 @@ use App\Task\Service\TaskService;
 use App\Task\TaskList\EntDbTask\insertEnt;
 use App\Task\TaskList\EntDbTask\insertFinance;
 use Carbon\Carbon;
-
+use App\HttpController\Service\ChuangLan\ChuangLanService;
+ 
 class LongXinService extends ServiceBase
 {
     private $sourceName = '西南';
@@ -614,6 +615,142 @@ class LongXinService extends ServiceBase
             ->send($this->baseUrl . 'company_lianxi/', $arr, $this->sendHeaders);
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
+    }
+
+    /*
+    补充下联系人职位信息 ： 接口返回的联系人职位信息 并不怎么全
+     
+    */
+    static function complementEntLianXiPosition($apiResluts,$entName){  
+
+        // 根据企业名称取到库里全部的联系人名称和职位 然后代码匹配
+
+        // 根据企业名称取到企业对象
+        $companyDataObj = \App\HttpController\Models\RDS3\Company::create()
+                    ->where('name', $entName)->get();   
+        if(empty($companyDataObj)){
+            return $apiResluts;
+        }
+        // 根据企业id 获取所有联系人信息（主要是取到职位信息）
+        $staffsDatas = \App\HttpController\Models\RDS3\CompanyStaff::create()
+                    ->where('company_id',$companyDataObj->getAttr('id')) 
+                    ->all();   
+        if(empty($staffsDatas)){
+            return $apiResluts;
+        }
+        // 找到该企业所有联系人名字（staff存的是联系人id）
+        $staffIds = array_column($staffsDatas, 'staff_id');
+        //根据所有联系人id 一次性把数据全取到
+        $humanDatas = \App\HttpController\Models\RDS3\Human::create()
+            ->where('id', $staffIds,'IN') 
+            ->all();   
+        // 转换为id为key的数组
+        $humanDatas = self::shiftArrayKeys($humanDatas,'id');
+
+        // 把联系人的名字 写进企业职工信息里
+        foreach($staffsDatas as &$staffsDataItem){
+            if(!$staffsDataItem['staff_id']){
+                continue;
+            }
+            if(!$humanDatas[$staffsDataItem['staff_id']]){
+                continue;
+            }
+            $staffsDataItem['stff_name'] = $humanDatas[$staffsDataItem['staff_id']]['name'];
+        }
+        //把企业职工信息转换为以联系人名字为key的数组 
+        $staffsDatas = self::shiftArrayKeys($staffsDatas,'stff_name') ;
+
+        foreach($apiResluts as &$lianXiData){
+            $name = trim($lianXiData['name']);
+             if(!$name){
+                $lianXiData['staff_position'] = ''; 
+                continue;
+             }
+
+             if(!$staffsDatas[$name]){
+                $lianXiData['staff_position'] = ''; 
+               continue;
+            }   
+             $lianXiData['staff_position'] =  $staffsDatas[$name]['staff_type_name']; 
+        }  
+
+        return  $apiResluts;
+    }
+
+    //check 是否中文名
+    static function isChineseName($name){
+        $name = str_replace(['先生','女士'], ['',''], $name, $i);
+
+        if (preg_match('/^([\xe4-\xe9][\x80-\xbf]{2}){2,4}$/', $name)) {
+            return true;
+        } else {
+            return false;
+        }
+    } 
+
+    // 把手机号检测状态填充进去
+    static function complementEntLianXiMobileState($apiResluts){
+        //找到需要检测的手机号 |无效的就没必要检测了
+        $needsCheckMobileLists = [];
+        foreach($apiResluts as $lianXiData){
+             if(
+                 $lianXiData['lianxitype'] =='手机' && 
+                 self::isValidPhone($lianXiData['lianxi'])
+            ){
+                $needsCheckMobileLists[$lianXiData['lianxi']] =  $lianXiData['lid'];
+             }   
+        }
+        if(empty($needsCheckMobileLists)){
+            return $apiResluts;
+        }
+
+        // 调用接口查询手机号状态
+        $needsCheckMobilesStr = join(",",array_keys($needsCheckMobileLists));
+        $postData = [
+            'mobiles' => $needsCheckMobilesStr,
+        ];
+        
+        $res = (new ChuangLanService())->getCheckPhoneStatus($postData);
+        if( $res['message'] !='成功'){
+            return $apiResluts;
+        }
+
+        if(empty($res['data'])){
+            return $apiResluts;
+        }
+
+        // 转换为以手机号为key的数组
+        $res['data'] = self::shiftArrayKeys($res['data'],'mobile');
+
+        foreach($apiResluts as &$dataItem){
+            if(empty($res['data'][$dataItem['lianxi']])){
+                $dataItem['mobile_check_res'] = '';
+                continue;
+            };
+            $dataItem['mobile_check_res'] = $res['data'][$dataItem['lianxi']]['status'];
+        } 
+        return  $apiResluts;
+    }
+
+    //转换为特定的key
+    static function shiftArrayKeys($arr,$field){
+        $newArr = [];
+        foreach($arr as $item){
+           $newArr[$item[$field]] = $item; 
+        }
+        return $newArr;
+    }
+    static function isValidPhone($phone){
+        if(strlen($phone) != 11){   
+            return false;   
+        }
+
+        if(preg_match("/^1[3456789]{1}[0-9]{9}$/",$phone)){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     //原值计算
