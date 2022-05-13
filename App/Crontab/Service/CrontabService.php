@@ -9,6 +9,7 @@ use App\Crontab\CrontabList\GetInvData;
 use App\Crontab\CrontabList\MoveOut;
 use App\Crontab\CrontabList\RunSaiMengHuiZhiCaiWu;
 use App\Crontab\CrontabList\RunSouKeUploadFiles;
+use App\Crontab\CrontabList\RunCompleteCompanyData;
 use App\Crontab\CrontabList\RunSupervisor;
 use EasySwoole\Component\Singleton;
 use EasySwoole\EasySwoole\Crontab\Crontab;
@@ -28,6 +29,7 @@ class CrontabService
         $this->getInvData();//123123123
         $this->RunSaiMengHuiZhiCaiWu();
         $this->RunSouKeUploadFiles();
+        $this->RunCompleteCompanyData();
 
         return true;
     }
@@ -75,5 +77,8 @@ class CrontabService
     {
         return Crontab::getInstance()->addTask(RunSouKeUploadFiles::class);
     }
-
+    private function RunCompleteCompanyData(): Crontab
+    {
+        return Crontab::getInstance()->addTask(RunCompleteCompanyData::class);
+    }
 }

@@ -668,14 +668,14 @@ class LongXinService extends ServiceBase
              $lianXiData['staff_position'] =  $staffsDatas[$name]['staff_type_name']; 
         } 
 
-        CommonService::getInstance()->log4PHP(
-            'complementEntLianXi '.json_encode(
-                [
-                    $staffsDatas,
-                    $apiResluts
-                ]
-            )
-        );
+        // CommonService::getInstance()->log4PHP(
+        //     'complementEntLianXi '.json_encode(
+        //         [
+        //             $staffsDatas,
+        //             $apiResluts
+        //         ]
+        //     )
+        // );
 
         return  $apiResluts;
     }
