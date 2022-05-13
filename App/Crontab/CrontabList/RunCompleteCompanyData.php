@@ -388,7 +388,7 @@ class RunCompleteCompanyData extends AbstractCronTask
         // foreach($excelDatas as $dataItem){
         //     CommonService::getInstance()->log4PHP('RunCompleteCompanyData dataItem '.json_encode($dataItem));
         // } 
-        $f = fopen("new_test.csv", "w");
+        $f = fopen($this->workPath."new_test.csv", "w");
         foreach ($excelDatas as $dataItem) {
             fputcsv($f, $dataItem);
         }
