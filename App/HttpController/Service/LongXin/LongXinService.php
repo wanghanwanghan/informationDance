@@ -733,13 +733,13 @@ class LongXinService extends ServiceBase
             $dataItem['mobile_check_res'] = $res['data'][$dataItem['lianxi']]['status'];
         }
 
-        CommonService::getInstance()->log4PHP(
-            'complementEntLianXi '.json_encode(
-                [
-                    $postData,$res
-                ]
-            )
-        );
+        // CommonService::getInstance()->log4PHP(
+        //     'complementEntLianXi '.json_encode(
+        //         [
+        //             $postData,$res
+        //         ]
+        //     )
+        // );
 
         return  $apiResluts;
     }

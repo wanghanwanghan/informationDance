@@ -365,8 +365,8 @@ class RunCompleteCompanyData extends AbstractCronTask
                     ->getEntLianXi([
                         'entName' => $entname,
                     ])['result'];
-            $retData = LongXinService::complementEntLianXiMobileState($retData);
-            $retData = LongXinService::complementEntLianXiPosition($retData, $entname);  
+            // $retData = LongXinService::complementEntLianXiMobileState($retData);
+            // $retData = LongXinService::complementEntLianXiPosition($retData, $entname);  
             foreach($retData as $datautem){  
                 // yield $datas[] = $datautem;
                 yield $datas[] = array_values(array_merge(['comname' =>$entname],$datautem));
