@@ -376,14 +376,27 @@ class RunCompleteCompanyData extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
-        
+        $startMemory = memory_get_usage();
+        if(
+            file_exists($this->workPath.'new_test.csv')
+        ){
+            return true;
+        }
         $excelDatas = $this->getExcelYieldData('test.xlsx');
-        foreach($excelDatas as $dataItem){
-            CommonService::getInstance()->log4PHP('RunCompleteCompanyData dataItem '.json_encode($dataItem));
-        } 
+        $memory=round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
+        CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用 '.$memory  );
+        // foreach($excelDatas as $dataItem){
+        //     CommonService::getInstance()->log4PHP('RunCompleteCompanyData dataItem '.json_encode($dataItem));
+        // } 
+        $f = fopen("new_test.csv", "w");
+        foreach ($excelDatas as $dataItem) {
+            fputcsv($f, $dataItem);
+        }
+        $memory=round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
+        CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用 '.$memory  );
         return true ;
 
-        $startMemory = memory_get_usage();
+        
         
         $files = glob('客户名单*.xlsx');
 
