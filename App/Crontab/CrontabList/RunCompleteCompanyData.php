@@ -384,6 +384,16 @@ class RunCompleteCompanyData extends AbstractCronTask
         $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
         CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用1 '.$memory .' '.$file );
 
+
+        $fileName = pathinfo($file)['filename'];
+        $f = fopen($this->workPath.$fileName.".csv", "w");
+        fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+        foreach ($excelDatas as $dataItem) {
+            fputcsv($f, $dataItem);
+        }
+
+
         return true ;
 
 
