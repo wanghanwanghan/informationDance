@@ -48,7 +48,7 @@ class DianZiQianService extends ServiceBase
         if ($signerPersonres['code'] != 200) return $signerPersonres;
 
         //创建企业签署人
-        $signerEnterprise = $this->signerEnterprise($postData);
+        $signer  = $this->signerEnterprise($postData);
         $signerCodeEnt    = $signerEnterprise['result']['signerCode'] ?? "";
         if ($signerEnterprise['code'] != 200) return $signerEnterprise;
 
@@ -170,14 +170,14 @@ class DianZiQianService extends ServiceBase
     {
         $path      = '/open-api-lite/signer/enterprise';
         $paramData = array(
-            "entQualificationType" => 1,
+            "entQualificationType" => '1',
             'entName'              => $postData['entName'],
             'entQualificationNum'  => $postData['socialCredit'],
             'corporateName'        => $postData['legalPerson'],
-            'personIdType'         => 0,
+            'personIdType'         => '0',
             "personName"           => $postData['legalPerson'],
             "personIdCard"         => $postData['idCard'],
-            'roleType'             => 1
+            'roleType'             => '1'
         );
         $param     = $this->buildParam($paramData, $path);
         $resp      = (new CoHttpClient())
