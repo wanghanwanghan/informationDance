@@ -354,7 +354,6 @@ class RunCompleteCompanyData extends AbstractCronTask
             }
 
             $entname = $this->strtr_func($one[0]);
-            CommonService::getInstance()->log4PHP('RunCompleteCompanyData entname '.json_encode($entname));
             $code = $this->strtr_func($one[1]??'');
             $address = $this->strtr_func($one[2]??''); 
             yield $datas[] = [
@@ -369,9 +368,9 @@ class RunCompleteCompanyData extends AbstractCronTask
     {
         
         $excelDatas = $this->getExcelYieldData('test.xlsx');
-
-        CommonService::getInstance()->log4PHP('RunCompleteCompanyData run '.json_encode($excelDatas));
-        
+        foreach($excelDatas as $dataItem){
+            CommonService::getInstance()->log4PHP('RunCompleteCompanyData run '.json_encode($dataItem));
+        } 
         return true ;
 
         $startMemory = memory_get_usage();
