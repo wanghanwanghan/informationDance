@@ -350,7 +350,7 @@ class RunCompleteCompanyData extends AbstractCronTask
             $datas =  Company::create()
                         // ->field(['id','name','property2'])
                     ->field(['name'])
-                    ->limit(1000)
+                    ->limit(10)
                     ->all();
                     $memory=round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
             CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用 '.$memory  );
@@ -373,7 +373,7 @@ class RunCompleteCompanyData extends AbstractCronTask
             //             ]
             //         ]
             //     )->output(); 
-
+            CommonService::getInstance()->log4PHP('RunCompleteCompanyData newData '.json_encode($newData)  );
                 $filePath = $xlsxObject->fileName($fileName, 'sheet1')
                 ->header(['企业名称'])->data(
                    $newData
