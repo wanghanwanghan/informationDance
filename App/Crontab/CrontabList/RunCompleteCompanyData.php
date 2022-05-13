@@ -377,7 +377,7 @@ class RunCompleteCompanyData extends AbstractCronTask
     function run(int $taskId, int $workerIndex): bool
     {
         $startMemory = memory_get_usage(); 
-        $files = glob($this->workPath.'customer_*.xlsx');
+        $files = pathinfo(glob($this->workPath.'customer_*.xlsx'))['basename'];
         CommonService::getInstance()->log4PHP('RunCompleteCompanyData files '.json_encode($files) );
         if(empty($files)){
             return true;
