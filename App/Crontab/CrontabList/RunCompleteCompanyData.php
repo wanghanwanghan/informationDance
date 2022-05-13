@@ -13,7 +13,6 @@ use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use EasySwoole\Mysqli\QueryBuilder;
 use wanghanwanghan\someUtils\control;
 use App\HttpController\Models\RDS3\Company;
-use static;
 
 class RunCompleteCompanyData extends AbstractCronTask
 {
