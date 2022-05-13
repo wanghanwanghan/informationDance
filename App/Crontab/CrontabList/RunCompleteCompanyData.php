@@ -13,6 +13,7 @@ use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use EasySwoole\Mysqli\QueryBuilder;
 use wanghanwanghan\someUtils\control;
 use App\HttpController\Models\RDS3\Company;
+use static;
 
 class RunCompleteCompanyData extends AbstractCronTask
 {
@@ -324,14 +325,67 @@ class RunCompleteCompanyData extends AbstractCronTask
         }
     }
 
+    static function getAllData(){
+        $datas =  Company::create()
+                        // ->field(['id','name','property2'])
+                    ->field(['id'])
+                    ->limit(5)
+                    ->all();
+        foreach($datas as $data){
+            $data = array_values($data);
+            yield $data;
+        }
+    }
+
+    function getExcelYieldData($xlsx_name){
+        $excel_read = new \Vtiful\Kernel\Excel(['path' => $this->workPath]);
+        $read = $excel_read->openFile($xlsx_name)->openSheet();
+
+        $datas = [];
+        while (true) {
+
+            $one = $excel_read->nextRow([
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+            ]);
+
+            if (empty($one)) {
+                break;
+            }
+
+            $entname = $this->strtr_func($one[0]);
+            $code = $this->strtr_func($one[1]??'');
+            $address = $this->strtr_func($one[2]??''); 
+            $datas[] = [
+                $entname,
+                $code,
+                $address,
+            ];
+        }
+    }
+
     function run(int $taskId, int $workerIndex): bool
     {
+        
+        $excelDatas = $this->getExcelYieldData('test.xlsx');
+
+        CommonService::getInstance()->log4PHP('RunCompleteCompanyData run '.json_encode($excelDatas));
+        
+        return true ;
+
         $startMemory = memory_get_usage();
-        // if (!$this->crontabBase->withoutOverlapping(self::getTaskName())) {
-        //     dingAlarm('赛盟绘制异常',['getTaskName'=>self::getTaskName(),'status'=>$this->crontabBase->withoutOverlapping(self::getTaskName())]);
-        //     CommonService::getInstance()->log4PHP(__CLASS__ . '不开始');
-        //     return true;
+        
+        $files = glob('客户名单*.xlsx');
+
+        // foreach($files as $file){
+
+        //     return ;
         // }
+        echo json_encode($files);
+
+        $files = glob('/path/to/dir/*.xml');
+
         CommonService::getInstance()->log4PHP('RunCompleteCompanyData run '.$this->workPath . 'test.xlsx');
 
         // $ignore = ['.', '..', '.gitignore'];
