@@ -315,14 +315,14 @@ class RunCompleteCompanyData extends AbstractCronTask
         //     CommonService::getInstance()->log4PHP(__CLASS__ . '不开始');
         //     return true;
         // }
-        CommonService::getInstance()->log4PHP('RunCompleteCompanyData run '.$this->backPath . 'test.xlsx');
+        CommonService::getInstance()->log4PHP('RunCompleteCompanyData run '.$this->workPath . 'test.xlsx');
 
         // $ignore = ['.', '..', '.gitignore'];
         $this->readXlsx('test.xlsx');
-        file_put_contents($this->backPath . 'test.xlsx', 
+        file_put_contents($this->workPath . 'test.xlsx', 
         file_get_contents($this->workPath . 'test.xlsx'));
 
-        CommonService::getInstance()->log4PHP('RunCompleteCompanyData end '.$this->backPath . 'test.xlsx');
+        CommonService::getInstance()->log4PHP('RunCompleteCompanyData end '.$this->workPath . 'test.xlsx');
         // if ($dh = opendir($this->workPath)) {
         //     while (false !== ($file = readdir($dh))) {
         //         if (!in_array($file, $ignore, true)) {
