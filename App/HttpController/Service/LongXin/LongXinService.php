@@ -690,6 +690,7 @@ class LongXinService extends ServiceBase
 
     // 把手机号检测状态填充进去
     static function complementEntLianXiMobileState($apiResluts){
+        //找到需要检测的手机号 |无效的就没必要检测了
         $needsCheckMobileLists = [];
         foreach($apiResluts as $lianXiData){
              if(
@@ -703,44 +704,31 @@ class LongXinService extends ServiceBase
             return $apiResluts;
         }
 
-
+        // 调用接口查询手机号状态
         $needsCheckMobilesStr = join(",",array_keys($needsCheckMobileLists));
         $postData = [
             'mobiles' => $needsCheckMobilesStr,
         ];
         
         $res = (new ChuangLanService())->getCheckPhoneStatus($postData);
-        if(
-            $res['message'] !='成功' 
-        ){
+        if( $res['message'] !='成功'){
             return $apiResluts;
         }
 
-        if(
-            
-            empty($res['data'] )
-        ){
+        if(empty($res['data'])){
             return $apiResluts;
         }
 
+        // 转换为以手机号为key的数组
         $res['data'] = self::shiftArrayKeys($res['data'],'mobile');
-        
+
         foreach($apiResluts as &$dataItem){
             if(empty($res['data'][$dataItem['lianxi']])){
                 $dataItem['mobile_check_res'] = '';
                 continue;
             };
             $dataItem['mobile_check_res'] = $res['data'][$dataItem['lianxi']]['status'];
-        }
-
-        // CommonService::getInstance()->log4PHP(
-        //     'complementEntLianXi '.json_encode(
-        //         [
-        //             $postData,$res
-        //         ]
-        //     )
-        // );
-
+        } 
         return  $apiResluts;
     }
 
