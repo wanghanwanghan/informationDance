@@ -377,105 +377,30 @@ class RunCompleteCompanyData extends AbstractCronTask
     function run(int $taskId, int $workerIndex): bool
     {
         $startMemory = memory_get_usage();
-        if(
-            file_exists($this->workPath.'new_test.csv')
-        ){
-            return true;
-        }
-        $excelDatas = $this->getExcelYieldData('test.xlsx');
-        $memory=round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
-        CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用 '.$memory  );
-        // foreach($excelDatas as $dataItem){
-        //     CommonService::getInstance()->log4PHP('RunCompleteCompanyData dataItem '.json_encode($dataItem));
-        // } 
-        $f = fopen($this->workPath."new_test.csv", "w");
-        fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
-
-        foreach ($excelDatas as $dataItem) {
-            fputcsv($f, $dataItem);
-        }
-        $memory=round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
-        CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用 '.$memory  );
-        return true ;
-
-        
-        
         $files = glob('客户名单*.xlsx');
+        foreach($files as $file){
 
-        // foreach($files as $file){
+            $excelDatas = $this->getExcelYieldData($file);
+            
+            $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
+            CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用1 '.$memory .' '.$file );
 
-        //     return ;
-        // }
-        echo json_encode($files);
+            $fileName = pathinfo($file)['filename'];
+            $f = fopen($this->workPath.$fileName.".csv", "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
 
-        $files = glob('/path/to/dir/*.xml');
-
-        CommonService::getInstance()->log4PHP('RunCompleteCompanyData run '.$this->workPath . 'test.xlsx');
-
-        // $ignore = ['.', '..', '.gitignore'];
-        // $this->readXlsx('test.xlsx');
-        // file_put_contents($this->workPath . 'test.xlsx', 
-        // file_get_contents($this->workPath . 'test.xlsx'));
-        if(
-            !file_exists($this->workPath.'new_test.xlsx')
-        ){
- 
-            $config = [
-                'path' =>  $this->workPath,
-            ];
-            $fileName = 'new_test.xlsx';
-            $xlsxObject = new \Vtiful\Kernel\Excel($config);
-            $datas =  Company::create()
-                        // ->field(['id','name','property2'])
-                    ->field(['id'])
-                    ->limit(5)
-                    ->all();
-                    $memory=round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
-            CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用 '.$memory  );
-            $newData = [];
-            foreach($datas as $data){
-                $newData[][] = $data['id'];
+            foreach ($excelDatas as $dataItem) {
+                fputcsv($f, $dataItem);
             }
-            $memory=round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
-            CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用 '.$memory  );
-            // $filePath = $xlsxObject->fileName($fileName, 'sheet1')
-            //     ->header(['企业名称'])->data(
-            //         [
-            //             [
-            //                 'XXXX',
-            //             ],
-            //             [
-            //                 'XXXX',
-            //             ]
-            //         ]
-            //     )->output(); 
-            CommonService::getInstance()->log4PHP('RunCompleteCompanyData newData '.json_encode($newData)  );
-                $filePath = $xlsxObject->fileName($fileName, 'sheet1')
-                ->header(['企业名称'])->data(
-                   $newData
-                )->output(); 
-            $memory=round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
-            CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用 '.$memory  );
-        }
+
+            $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
+            CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用2 '.$memory .' '.$file );
+
+            @unlink($this->workPath . $file);
+
+        }  
         
-
-        CommonService::getInstance()->log4PHP('RunCompleteCompanyData end '.$this->workPath . 'test.xlsx');
-        // if ($dh = opendir($this->workPath)) {
-        //     while (false !== ($file = readdir($dh))) {
-        //         if (!in_array($file, $ignore, true)) {
-        //             if (strpos($file, '.xlsx') !== false) {
-        //                 $this->readXlsx($file);
-                        
-        //                 if (strpos($this->workPath . $file, '.xlsx') !== false) {
-        //                     @unlink($this->workPath . $file);
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-        // closedir($dh);
-
-        return true;
+        return true ;  
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
