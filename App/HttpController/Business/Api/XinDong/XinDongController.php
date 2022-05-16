@@ -714,9 +714,32 @@ eof;
     { 
         $ElasticSearchService = new ElasticSearchService(); 
 
-        // 数字经济及其核心产业
-        $szjjid = trim($this->request()->getRequestParam('basic_szjjid'));
-        
+        // 数字经济及其核心产业 050101,050102 需要转换为四级分类 然后再搜索
+        $szjjidsStr = trim($this->request()->getRequestParam('basic_szjjid'));
+        $szjjidsStr && $szjjidsArr = explode(',', $szjjidsStr);
+        if($szjjidsArr){
+            //转换为四级分类
+            $szjjDatas = \App\HttpController\Models\RDS3\SzjjNicCode::create()
+            ->where('szjj_id', $szjjidsArr, 'IN') 
+            ->all();
+            $nsscIds = array_column($szjjDatas, 'id');
+
+            $nicCodeDatas = \App\HttpController\Models\RDS3\NicCode::create()
+            ->where('nssc', $nsscIds, 'IN') 
+            ->all();
+            $nicIds = array_column($nicCodeDatas, 'nic_id');
+            foreach($nicIds as &$nicId){
+                if(
+                    strlen($nicId) == 4 &&
+                    substr($nicId, -1) == '0'
+                ){
+                    $nicId = substr($nicId, 0, -1);
+                }
+            }
+            
+            $ElasticSearchService->addMustShouldPrefixQuery( 'si_ji_fen_lei_code' , $nicIds) ;  
+        }
+
         $searchText = trim($this->request()->getRequestParam('searchText'));
         if($searchText){
             $matchedCnames = [

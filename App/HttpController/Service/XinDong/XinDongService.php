@@ -1388,7 +1388,7 @@ class XinDongService extends ServiceBase
     }
 
      //高级搜索
-     function advancedSearch($elasticSearchService, $index = 'company_20220509')
+     function advancedSearch($elasticSearchService, $index = 'company_20220516')
      { 
         $elasticsearch = new ElasticSearch(
             new  Config([
