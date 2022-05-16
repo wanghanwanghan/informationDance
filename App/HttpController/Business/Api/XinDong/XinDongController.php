@@ -754,7 +754,7 @@ eof;
                     $nicIds
                 ]
             ));
-            $ElasticSearchService->addMustShouldPrefixQuery( 'si_ji_fen_lei_code' , $nicIds) ;  
+            $ElasticSearchService->addMustShouldPhrasePrefixQuery( 'si_ji_fen_lei_code' , $nicIds) ;  
         }
 
         $searchText = trim($this->request()->getRequestParam('searchText'));
