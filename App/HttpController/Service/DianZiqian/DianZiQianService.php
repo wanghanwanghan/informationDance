@@ -107,7 +107,7 @@ class DianZiQianService extends ServiceBase
             $contractCode = $v['contractCode'];
             $entTransactionCode = $v['entTransactionCode'];
             $personalTransactionCode = $v['personalTransactionCode'];
-            $flag = false;
+            $flag = true;
             //企业章签署状态查询
             if($v['entUrlResultCode'] < 1) {
                 $contractSignStatus = $this->contractSignStatus($entTransactionCode);
@@ -116,7 +116,7 @@ class DianZiQianService extends ServiceBase
                     continue;
                 }
                 $this->updateDianZiQianEntResultCode($v['id'], $contractSignStatus);
-                if($contractSignStatus['code']['resultCode'] < 1) $flag = true;
+                if($contractSignStatus['code']['resultCode'] < 1) $flag = false;
             }
             //法人章签署状态查询
             if($v['personalUrlResultCode'] != 1) {
@@ -126,13 +126,13 @@ class DianZiQianService extends ServiceBase
                     continue;
                 }
                 $this->updateDianZiQianPersonalResultCode($v['id'], $contractSignStatus);
-                if($contractSignStatus['code']['resultCode'] < 1) $flag = true;
+                if($contractSignStatus['code']['resultCode'] < 1) $flag = false;
             }
             $url = '';
             if($contractSignStatus['result']['resultCode'] >0){
                 $url = $contractSignStatus['result']['downloadUrl'];
             }
-            if(!$flag){
+            if($flag){
                 //合同归档
                 $contractOptArchive = $this->contractOptArchive($contractCode);
                 if ($contractOptArchive['code'] != 200) {
