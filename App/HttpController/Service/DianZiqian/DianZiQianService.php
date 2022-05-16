@@ -367,8 +367,6 @@ class DianZiQianService extends ServiceBase
             }
         }
         $buff .= $path;
-        echo "buf:" . $buff;
-        echo "\n";
         return md5($buff);
     }
 
