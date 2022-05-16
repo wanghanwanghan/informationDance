@@ -732,15 +732,458 @@ eof;
         return [];
     }
 
+    function advancedSearchSetQueryByBasicSzjjid($es){
+        // 数字经济及其核心产业 050101,050102 需要转换为四级分类 然后再搜索
+        $szjjidsStr = trim($this->request()->getRequestParam('basic_szjjid'));
+        $szjjidsStr && $szjjidsArr = explode(',', $szjjidsStr);
+        if($szjjidsArr){
+            $szjjidsStr = implode("','", $szjjidsArr); 
+            $sql = "SELECT
+                        nic_id 
+                    FROM
+                        nic_code
+                    WHERE
+                    nssc IN (
+                        SELECT
+                            id 
+                        FROM
+                            `szjj_nic_code` 
+                        WHERE
+                        szjj_id IN ( '$szjjidsStr' ) 
+                    )
+            ";
+
+            $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
+            $nicIds = array_column($list, 'nic_id');
+            
+            CommonService::getInstance()->log4PHP($sql);
+            CommonService::getInstance()->log4PHP($list);
+            CommonService::getInstance()->log4PHP($nicIds); 
+
+            if(!empty($nicIds)){
+                foreach($nicIds as &$nicId){
+                    if(
+                        strlen($nicId) == 5 &&
+                        substr($nicId, -1) == '0'
+                    ){
+                        $nicId = substr($nicId, 0, -1);
+                    }
+                } 
+                CommonService::getInstance()->log4PHP($nicIds);
+                $es->addMustShouldPhrasePrefixQuery( 'si_ji_fen_lei_code' , $nicIds) ; 
+            } 
+        }  
+
+        return $this;
+    }
+
+    function advancedSearchSetQueryBySearchText($es){
+        $searchText = trim($this->request()->getRequestParam('searchText'));
+        if($searchText){
+            $matchedCnames = [
+                [ 'field'=>'name' ,'value'=> $searchText],
+                [ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
+                [ 'field'=>'basic_opscope' ,'value'=> $searchText] 
+            ];
+            $es->addMustShouldPhraseQueryV2($matchedCnames) ;  
+        }
+        return $this;
+    }   
+
+    function advancedSearchSetQueryByBusinessScope($es){
+        // 需要按文本搜索的  
+        $addMustMatchPhraseQueryMap = [ 
+            // basic_opscope: 经营范围
+            'business_scope' =>trim($this->request()->getRequestParam('basic_opscope')),
+        ];
+        foreach($addMustMatchPhraseQueryMap as $field=>$value){
+            $value && $es->addMustMatchPhraseQuery( $field , $value) ; 
+        } 
+        return $this;
+    }   
+
+
+    function advancedSearchSetQueryByBasicJlxxcyid($es){
+        // 需要按文本搜索的  
+        $basicJlxxcyidStr = trim($this->request()->getRequestParam('basic_jlxxcyid'));
+        $basicJlxxcyidStr && $basicJlxxcyidArr = explode(',',  $basicJlxxcyidStr);
+        if(
+            !empty($basicJlxxcyidArr)
+        ){
+            $siJiFenLeiDatas = \App\HttpController\Models\RDS3\ZlxxcyNicCode::create()
+                ->where('zlxxcy_id', $basicJlxxcyidArr, 'IN') 
+                ->all();
+            $matchedCnames = array_column($siJiFenLeiDatas, 'nic_id');
+            $es->addMustShouldPhraseQuery( 'si_ji_fen_lei_code' , $matchedCnames) ; 
+    
+        }
+        return $this;
+    } 
+    
+    function advancedSearchSetQueryByShangPinData($es){
+         // 搜索shang_pin_data 商品信息 appStr:五香;农庄
+         $appStr =   trim($this->request()->getRequestParam('appStr')); 
+         $appStr && $appStrDatas = explode(';', $appStr);
+         !empty($appStrDatas) && $es->addMustShouldPhraseQuery( 'shang_pin_data.name' , $appStrDatas) ;
+     
+        return $this;
+    } 
+
+    function advancedSearchSetQueryByWeb($es,$searchOptionArr){
+       
+        $web_values = []; //官网 
+        foreach($searchOptionArr as $item){  
+            if($item['pid'] == 70){ 
+                $web_values = $item['value']; 
+            } 
+        }
+
+        //必须存在官网 
+        foreach($web_values as $value){
+            if($value){
+                // $ElasticSearchService->addMustExistsQuery( 'web') ; 
+                $es->addMustRegexpQuery( 'web', ".+") ; 
+                
+                break;
+            }
+        }
+       return $this;
+   } 
+
+   function advancedSearchSetQueryByApp($es,$searchOptionArr){ 
+       $app_values = []; // 
+       foreach($searchOptionArr as $item){  
+           if($item['pid'] == 80){ 
+               $app_values = $item['value']; 
+           }
+       }
+
+         //必须存在APP 
+        foreach($app_values as $value){
+            if($value){ 
+                $es->addMustRegexpQuery( 'app', ".+") ;  
+                break;
+            }
+        }
+        return $this;
+    } 
+
+    function advancedSearchSetQueryByCompanyOrgType($es,$searchOptionArr){  
+        $org_type_values = [];  // 企业类型   
+        foreach($searchOptionArr as $item){ 
+            if($item['pid'] == 10){
+                $org_type_values = $item['value'];  
+            } 
+        }
+ 
+        $matchedCnames = [];
+        foreach($org_type_values as $orgType){
+            $orgType && $matchedCnames[] = (new XinDongService())->getCompanyOrgType()[$orgType]; 
+        }
+        (!empty($matchedCnames)) && $es->addMustShouldPhraseQuery( 'company_org_type' , $matchedCnames) ;
+    
+         return $this;
+     } 
+     function advancedSearchSetQueryByEstiblishTime($es,$searchOptionArr){   
+       $estiblish_time_values = [];  // 成立年限   
+       foreach($searchOptionArr as $item){  
+           if($item['pid'] == 20){ 
+               $estiblish_time_values = $item['value']; 
+           }
+   
+       }
+       $matchedCnames = [];
+       $map = [
+           // 2年以内
+           2 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -2 year')), 'max' => date('Y-m-d')  ],
+           // 2-5年
+           5 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -5 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -2 year'))  ],
+           // 5-10年
+           10 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -10 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -5 year'))  ],
+           // 10-15年
+           15 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -15 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -10 year'))  ],
+           // 15-20年
+           20 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -20 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -15 year'))  ],
+           // 20年以上
+           25 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -100 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -20 year'))  ],
+       ];
+       foreach($estiblish_time_values as $item){
+           $item && $matchedCnames[] = $map[$item]; 
+       } 
+       (!empty($matchedCnames)) && $es->addMustShouldRangeQuery( 'estiblish_time' , $matchedCnames) ; 
+   
+         return $this;
+     } 
+
+     function advancedSearchSetQueryByRegStatus($es,$searchOptionArr){    
+        $reg_status_values = [];// 营业状态  
+        foreach($searchOptionArr as $item){   
+            if($item['pid'] == 30){
+                $reg_status_values = $item['value']; 
+            } 
+        } 
+
+        $matchedCnames = [];
+        foreach($reg_status_values as $item){
+            $item && $matchedCnames[] = (new XinDongService())->getRegStatus()[$item]; 
+        }
+        (!empty($matchedCnames)) && $es->addMustShouldPhraseQuery( 'reg_status' , $matchedCnames) ; 
+    
+    
+          return $this;
+      } 
+
+      function advancedSearchSetQueryByRegCaptial($es,$searchOptionArr){    
+       
+       $reg_capital_values = [];  // 注册资本
+       
+       foreach($searchOptionArr as $item){ 
+          
+           if($item['pid'] == 40){ 
+               $reg_capital_values = $item['value']; 
+           }
+  
+       }
+       $map = XinDongService::getZhuCeZiBenMap();
+       foreach($reg_capital_values as $item){
+           $tmp = $map[$item]['epreg']; 
+           foreach($tmp as $tmp_item){
+               $matchedCnames[] = $tmp_item;
+           } 
+       } 
+       (!empty($matchedCnames)) && $es->addMustShouldRegexpQuery( 
+           'reg_capital' , $matchedCnames
+       ) ;
+
+          return $this;
+      } 
+      function advancedSearchSetQueryByTuanDuiRenShu($es,$searchOptionArr){    
+      
+       $tuan_dui_ren_shu_values = [];  // 团队人数
+      
+       foreach($searchOptionArr as $item){ 
+          
+           if($item['pid'] == 60){ 
+               $tuan_dui_ren_shu_values = $item['value']; 
+           } 
+       }
+       $map =  (new XinDongService())::getTuanDuiGuiMoMap();
+       $matchedCnames = [];
+       
+       foreach($tuan_dui_ren_shu_values as $item){
+           $tmp = $map[$item]['epreg']; 
+           foreach($tmp as $tmp_item){
+               $matchedCnames[] = $tmp_item;
+           } 
+       } 
+       (!empty($matchedCnames)) && $es->addMustShouldRegexpQuery( 
+           'tuan_dui_ren_shu' , $matchedCnames
+       ) ;
+ 
+           return $this;
+       } 
+       function advancedSearchSetQueryByYingShouGuiMo($es,$searchOptionArr){    
+      
+            $ying_shou_gui_mo_values = [];  // 营收规模
+
+            foreach($searchOptionArr as $item){   
+                if($item['pid'] == 50){ 
+                    $ying_shou_gui_mo_values = $item['value']; 
+                } 
+            }
+
+            $map = [ 
+                5 => ['A1'], //微型
+                10 => ['A2'], //小型C类
+                15 => ['A3'],// 小型B类
+                20 => ['A4'],// 小型A类
+                25 => ['A5'],// 中型C类
+                30 => ['A6'],// 中型B类
+                40 => ['A7'],// 中型A类
+                45 => ['A8'],// 大型C类
+                50 => ['A9'],//大型B类 
+                60 => ['A10'],//大型A类，一般指规模在10亿以上，50亿以下 
+                65 => ['A11'],//'特大型C类，一般指规模在50亿以上，100亿以下'
+                70 => ['A12'],//'特大型C类，一般指规模在50亿以上，100亿以下'
+                80 => ['A13'],//'特大型C类，一般指规模在50亿以上，100亿以下' 
+            ];
+
+            $matchedCnamesRaw = [];
+            foreach($ying_shou_gui_mo_values as $item){
+                $item && $matchedCnamesRaw[] = $map[$item]; 
+            }
+            $matchedCnames = [];
+            foreach($matchedCnamesRaw as $items){
+                foreach($items as $item){
+                    $matchedCnames[] = $item;
+                }
+            }
+
+            (!empty($matchedCnames)) && $es->addMustShouldPhraseQuery( 'ying_shou_gui_mo' , $matchedCnames) ;  
+ 
+            return $this;
+        } 
+
+        function advancedSearchSetQueryBySiJiFenLei($es){     
+            $siJiFenLeiStrs = trim($this->request()->getRequestParam('basic_nicid'));
+            $siJiFenLeiStrs && $siJiFenLeiArr = explode(',', $siJiFenLeiStrs); 
+            if(!empty($siJiFenLeiArr)){
+                $es->addMustShouldPhraseQuery( 'si_ji_fen_lei_code' , $siJiFenLeiArr) ;   
+            }
+
+            return $this;
+        }  
+        function advancedSearchSetQueryByBasicRegionid($es){     
+            $basiRegionidStr = trim($this->request()->getRequestParam('basic_regionid')); 
+            $basiRegionidStr && $basiRegionidArr = explode(',',$basiRegionidStr);
+            if(!empty($basiRegionidArr)){ 
+                $es->addMustShouldPrefixQuery( 'reg_number' , $basiRegionidArr) ;  
+            }
+
+            return $this;
+        }
     /**
       * 
-      * 高级搜索 |着急上线 先直接写的query  有时间 需要用es service的集成方法
+      * 高级搜索 | 
         https://api.meirixindong.com/api/v1/xd/advancedSearch 
       * 
       * 
-     */  
-    // 新版 
+     */   
     function advancedSearch(): bool
+    { 
+        if(!$this->request()->getRequestParam('use_new')){
+            return $this->advancedSearchOld();  
+        } 
+
+        $ElasticSearchService = new ElasticSearchService(); 
+
+        // 数字经济及其核心产业 
+        $this->advancedSearchSetQueryByBasicSzjjid($ElasticSearchService);  
+
+        // 搜索文案 智能搜索
+        $this->advancedSearchSetQueryBySearchText($ElasticSearchService); 
+
+        // 搜索战略新兴产业
+        $this->advancedSearchSetQueryByBasicJlxxcyid($ElasticSearchService);
+
+        // 搜索shang_pin_data 商品信息 appStr:五香;农庄
+        $this->advancedSearchSetQueryByShangPinData($ElasticSearchService);
+         
+        //传过来的searchOption 例子 [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
+        $searchOptionStr =  trim($this->request()->getRequestParam('searchOption'));
+        $searchOptionArr = json_decode($searchOptionStr, true); 
+
+        //必须存在官网 
+        $this->advancedSearchSetQueryByWeb($ElasticSearchService,$searchOptionArr);
+
+        //必须存在APP 
+        $this->advancedSearchSetQueryByApp($ElasticSearchService,$searchOptionArr); 
+
+        // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索  
+        $this->advancedSearchSetQueryByCompanyOrgType($ElasticSearchService,$searchOptionArr); 
+ 
+        // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索 
+        $this->advancedSearchSetQueryByEstiblishTime($ElasticSearchService,$searchOptionArr); 
+        
+        // 营业状态   传过来的是 10  20  转换成文案后 去匹配   
+        $this->advancedSearchSetQueryByRegStatus($ElasticSearchService,$searchOptionArr); 
+         
+        // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索  
+        $this->advancedSearchSetQueryByRegCaptial($ElasticSearchService,$searchOptionArr);   
+
+        // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索 
+        $this->advancedSearchSetQueryByTuanDuiRenShu($ElasticSearchService,$searchOptionArr);    
+ 
+        // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配 
+        $this->advancedSearchSetQueryByYingShouGuiMo($ElasticSearchService,$searchOptionArr);  
+
+        //四级分类 basic_nicid: A0111,A0112,A0113, 
+        $this->advancedSearchSetQueryBySiJiFenLei($ElasticSearchService);  
+ 
+        // 地区 basic_regionid: 110101,110102, 
+        $this->advancedSearchSetQueryByBasicRegionid($ElasticSearchService);   
+
+        $size = $this->request()->getRequestParam('size')??10;
+        $page = $this->request()->getRequestParam('page')??1;
+        $offset  =  ($page-1)*$size;
+        $ElasticSearchService->addSize($size) ;
+        $ElasticSearchService->addFrom($offset) ;
+        $ElasticSearchService->addSort('xd_id', 'desc') ;
+
+        //设置默认值 不传任何条件 搜全部
+        $ElasticSearchService->setDefault() ;  
+
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
+        $responseArr = @json_decode($responseJson,true); 
+        CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
+            [
+                // 'hits' => $responseArr['hits']['hits'],
+                'es_query' => $ElasticSearchService->query,
+                'post_data' => $this->request()->getRequestParam(),
+            ]
+        )); 
+
+        // 格式化下日期和时间
+        $hits = (new XinDongService())::formatEsDate($responseArr['hits']['hits'], [
+            'estiblish_time',
+            'from_time',
+            'to_time',
+            'approved_time'
+        ]);
+        $hits = (new XinDongService())::formatEsMoney($hits, [
+            'reg_capital', 
+        ]);
+
+        foreach($hits as &$dataItem){ 
+            // 添加tag  
+            $dataItem['_source']['tags'] = array_values(
+                (new XinDongService())::getAllTagesByData(
+                    $dataItem['_source'] 
+                )
+            );
+
+            // 官网
+            $webStr = trim($dataItem['_source']['web']);
+            if(!$webStr){
+                continue; 
+            } 
+            $webArr = explode('&&&', $webStr);
+            !empty($webArr) && $dataItem['_source']['web'] = end($webArr); 
+        }
+    
+        return $this->writeJson(200, 
+          [
+            'page' => $page,
+            'pageSize' =>$size,
+            'total' => intval($responseArr['hits']['total']['value']),
+            'totalPage' => (int)floor(intval($responseArr['hits']['total']['value'])/
+            ($size)),
+         
+        ] 
+       , $hits, '成功', true, []);
+    } 
+
+     // 保存搜索历史 
+     function saveSearchHistroy(): bool
+     { 
+        $queryName = trim($this->request()->getRequestParam('query_name'));
+        if(!$queryName){
+            return  $this->writeJson(201, null, null, '参数缺失（搜索历史名称）');
+        }
+         // 记录搜索历史
+         $res = (new XinDongService())->saveSearchHistory(
+             $this->loginUserinfo['id'],  
+             json_encode($this->request()->getRequestParam()),
+             $queryName
+         );
+
+         if(!$res){
+            return  $this->writeJson(201, null, null, '保存失败，请联系管理员');
+         }
+
+         return $this->writeJson(200, ['total' => 1], [], '成功', true, []);
+     }
+     function advancedSearchOld(): bool
     { 
         $ElasticSearchService = new ElasticSearchService(); 
 
@@ -1059,28 +1502,7 @@ eof;
          
         ] 
        , $hits, '成功', true, []);
-    } 
-
-     // 保存搜索历史 
-     function saveSearchHistroy(): bool
-     { 
-        $queryName = trim($this->request()->getRequestParam('query_name'));
-        if(!$queryName){
-            return  $this->writeJson(201, null, null, '参数缺失（搜索历史名称）');
-        }
-         // 记录搜索历史
-         $res = (new XinDongService())->saveSearchHistory(
-             $this->loginUserinfo['id'],  
-             json_encode($this->request()->getRequestParam()),
-             $queryName
-         );
-
-         if(!$res){
-            return  $this->writeJson(201, null, null, '保存失败，请联系管理员');
-         }
-
-         return $this->writeJson(200, ['total' => 1], [], '成功', true, []);
-     }
+    }
 
     /**
       * 
