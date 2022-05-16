@@ -714,6 +714,9 @@ eof;
     { 
         $ElasticSearchService = new ElasticSearchService(); 
 
+        // 数字经济及其核心产业
+        $szjjid = trim($this->request()->getRequestParam('basic_szjjid'));
+        
         $searchText = trim($this->request()->getRequestParam('searchText'));
         if($searchText){
             $matchedCnames = [
