@@ -109,7 +109,7 @@ class DianZiQianService extends ServiceBase
             $personalTransactionCode = $v['personalTransactionCode'];
             $flag = false;
             //企业章签署状态查询
-            if($v['entUrlResultCode'] != 1) {
+            if($v['entUrlResultCode'] < 1) {
                 $contractSignStatus = $this->contractSignStatus($entTransactionCode);
                 if ($contractSignStatus['code'] != 200) {
                     dingAlarm('企业章签署状态查询异常', ['$contractSignStatus' => json_encode($contractSignStatus)]);
@@ -172,7 +172,7 @@ class DianZiQianService extends ServiceBase
      * 签署状态查询
      */
     public function contractSignStatus($transactionCode){
-        $path      = "/open-api-lite/contract/file/template/filling";
+        $path      = "/open-api-lite/contract/sign/status";
         $paramData = [
             'transactionCode' => $transactionCode
         ];
