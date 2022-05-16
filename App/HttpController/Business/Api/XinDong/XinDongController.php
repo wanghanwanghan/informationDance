@@ -735,7 +735,8 @@ eof;
             $nicIds = array_column($nicCodeDatas, 'nic_id');
             CommonService::getInstance()->log4PHP(json_encode(
                 [
-                    $nicIds
+                    $nicIds,
+                    $nicCodeDatas
                 ]
             ));
             foreach($nicIds as &$nicId){
