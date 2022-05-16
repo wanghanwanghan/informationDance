@@ -700,22 +700,8 @@ eof;
 
         return $this->writeJson(200, null, $searchOptionArr, '成功', false, []);
     }
- 
-
-    /**
-      * 
-      * 高级搜索 |着急上线 先直接写的query  有时间 需要用es service的集成方法
-        https://api.meirixindong.com/api/v1/xd/advancedSearch 
-      * 
-      * 
-     */  
-    // 新版 
-    function advancedSearch(): bool
-    { 
-        $ElasticSearchService = new ElasticSearchService(); 
-
-        // 数字经济及其核心产业 050101,050102 需要转换为四级分类 然后再搜索
-        $szjjidsStr = trim($this->request()->getRequestParam('basic_szjjid'));
+    
+    static function formatterSzjjidToNicCode($szjjidsStr){ 
         $szjjidsStr && $szjjidsArr = explode(',', $szjjidsStr);
         if($szjjidsArr){
             $szjjidsStr = implode("','", $szjjidsArr); 
@@ -736,6 +722,32 @@ eof;
 
             $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
             $nicIds = array_column($list, 'nic_id');
+            
+            CommonService::getInstance()->log4PHP($sql);
+            CommonService::getInstance()->log4PHP($list);
+            CommonService::getInstance()->log4PHP($nicIds);
+            
+            return $nicIds; 
+        }
+        return [];
+    }
+
+    /**
+      * 
+      * 高级搜索 |着急上线 先直接写的query  有时间 需要用es service的集成方法
+        https://api.meirixindong.com/api/v1/xd/advancedSearch 
+      * 
+      * 
+     */  
+    // 新版 
+    function advancedSearch(): bool
+    { 
+        $ElasticSearchService = new ElasticSearchService(); 
+
+        // 数字经济及其核心产业 050101,050102 需要转换为四级分类 然后再搜索
+        $szjjidsStr = trim($this->request()->getRequestParam('basic_szjjid'));
+        $nicIds = self::formatterSzjjidToNicCode($szjjidsStr);
+        if(!empty($nicIds)){
             foreach($nicIds as &$nicId){
                 if(
                     strlen($nicId) == 5 &&
@@ -743,13 +755,10 @@ eof;
                 ){
                     $nicId = substr($nicId, 0, -1);
                 }
-            }
-            CommonService::getInstance()->log4PHP($sql);
-            CommonService::getInstance()->log4PHP($list);
+            } 
             CommonService::getInstance()->log4PHP($nicIds);
-
-            $ElasticSearchService->addMustShouldPhrasePrefixQuery( 'si_ji_fen_lei_code' , $nicIds) ;  
-        }
+            $ElasticSearchService->addMustShouldPhrasePrefixQuery( 'si_ji_fen_lei_code' , $nicIds) ; 
+        } 
 
         $searchText = trim($this->request()->getRequestParam('searchText'));
         if($searchText){
