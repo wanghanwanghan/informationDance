@@ -703,6 +703,8 @@ class LongXinService extends ServiceBase
         if(empty($needsCheckMobileLists)){
             foreach($apiResluts as &$dataItem){ 
                 $dataItem['mobile_check_res'] = '';
+                $dataItem['mobile_check_res_cname'] = '';
+
             } 
             return $apiResluts;
         }
@@ -717,6 +719,8 @@ class LongXinService extends ServiceBase
         if( $res['message'] !='成功'){
             foreach($apiResluts as &$dataItem){ 
                 $dataItem['mobile_check_res'] = '';
+                $dataItem['mobile_check_res_cname'] = '';
+
             } 
             return $apiResluts;
         }
@@ -724,6 +728,8 @@ class LongXinService extends ServiceBase
         if(empty($res['data'])){
             foreach($apiResluts as &$dataItem){ 
                 $dataItem['mobile_check_res'] = '';
+                $dataItem['mobile_check_res_cname'] = '';
+
             } 
             return $apiResluts;
         }
@@ -734,9 +740,12 @@ class LongXinService extends ServiceBase
         foreach($apiResluts as &$dataItem){
             if(empty($res['data'][$dataItem['lianxi']])){
                 $dataItem['mobile_check_res'] = '';
+                $dataItem['mobile_check_res_cname'] = '';
                 continue;
             };
             $dataItem['mobile_check_res'] = $res['data'][$dataItem['lianxi']]['status'];
+            $dataItem['mobile_check_res_cname'] = $res['data'][$dataItem['lianxi']]['status']?
+                ChuangLanService::getStatusCnameMap($res['data'][$dataItem['lianxi']]['status']):'';
         } 
         return  $apiResluts;
     }

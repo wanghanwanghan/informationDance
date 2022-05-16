@@ -19,6 +19,21 @@ class ChuangLanService extends ServiceBase
         return true;
     }
 
+    static function getStatusCnameMap(){
+        return [
+            1 => '正常',
+            2 => '停机',
+            3 => '在网但不可用',
+            4 => '不在网',
+            5 => '无短信能力',
+            6 => '欠费',
+            7 => '长时间关机',
+            8 => '销号/未启用',
+            9 => '服务器异常',
+            10 => '查询失败',
+        ]  ;
+    }
+
     /**
      * 号码状态检测
      * @param $param
