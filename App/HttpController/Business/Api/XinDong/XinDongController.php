@@ -731,7 +731,7 @@ eof;
             ->where('nssc', $nsscIds, 'IN') 
             ->all();
             $nicCodeDatas = \App\HttpController\Models\RDS3\NicCode::create()
-            ->where('nssc', [162,164], 'IN') 
+            ->where('id', [30,32], 'IN') 
             ->all();
             $nicIds = array_column($nicCodeDatas, 'nic_id');
             CommonService::getInstance()->log4PHP(json_encode(
