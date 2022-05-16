@@ -701,6 +701,9 @@ class LongXinService extends ServiceBase
              }   
         }
         if(empty($needsCheckMobileLists)){
+            foreach($apiResluts as &$dataItem){ 
+                $dataItem['mobile_check_res'] = '';
+            } 
             return $apiResluts;
         }
 
@@ -712,10 +715,16 @@ class LongXinService extends ServiceBase
         
         $res = (new ChuangLanService())->getCheckPhoneStatus($postData);
         if( $res['message'] !='成功'){
+            foreach($apiResluts as &$dataItem){ 
+                $dataItem['mobile_check_res'] = '';
+            } 
             return $apiResluts;
         }
 
         if(empty($res['data'])){
+            foreach($apiResluts as &$dataItem){ 
+                $dataItem['mobile_check_res'] = '';
+            } 
             return $apiResluts;
         }
 
