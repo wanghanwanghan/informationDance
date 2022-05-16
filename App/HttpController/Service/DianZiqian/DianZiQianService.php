@@ -348,15 +348,9 @@ class DianZiQianService extends ServiceBase
         //签名步骤一：按字典序排序参数
         ksort($data);
         $String = $this->toUrlParams($data, $path);
-        echo "md5:" . $String;
-        echo "\n";
         //签名步骤二：拼接secret
-        $String = $String . $appSecret;
         //签名步骤三：sha1加密
-        $result = sha1($String);
-        echo "sha1:" . $result;
-        echo "\n";
-        return $result;
+        return sha1($String . $appSecret);
     }
 
     /**
