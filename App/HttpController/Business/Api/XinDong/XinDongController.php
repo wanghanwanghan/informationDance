@@ -1056,6 +1056,7 @@ eof;
         } 
 
         $ElasticSearchService = new ElasticSearchService(); 
+        $this->advancedSearchSetQueryByBusinessScope($ElasticSearchService);   
 
         // 数字经济及其核心产业 
         $this->advancedSearchSetQueryByBasicSzjjid($ElasticSearchService);  
