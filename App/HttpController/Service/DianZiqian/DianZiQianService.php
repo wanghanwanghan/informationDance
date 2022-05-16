@@ -71,12 +71,12 @@ class DianZiQianService extends ServiceBase
         if ($contractFileTemplateFilling['code'] != 200) return $contractFileTemplateFilling;
 
         //手动签署企业章  signUrl
-        $entContractSignUrl = $this->contractSignUrl($ent_sealCode, $contractCode, '企业盖章处');
+        $entContractSignUrl = $this->contractSignUrl($signerCodeEnt, $contractCode, '企业盖章处');
         $entSignUrl         = $entContractSignUrl['result']['signUrl'] ?? "";
         if ($entContractSignUrl['code'] != 200) return $entContractSignUrl;
 
         //手动签署企业法人章
-        $personalContractSignUrl = $this->contractSignUrl($personal_sealCode, $contractCode, '法人盖章处');
+        $personalContractSignUrl = $this->contractSignUrl($signerCodePersonal, $contractCode, '法人盖章处');
         $personalSignUrl         = $personalContractSignUrl['result']['signUrl'] ?? "";
         if ($personalContractSignUrl['code'] != 200) return $personalContractSignUrl;
 
@@ -100,7 +100,7 @@ class DianZiQianService extends ServiceBase
         $param = $this->buildParam(['contractCode' => $contractCode], $path);
         $resp  = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
-            ->send($this->url . $path, $param, $this->getHeader('json'));
+            ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
         CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'signerPerson');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
@@ -114,7 +114,7 @@ class DianZiQianService extends ServiceBase
         $param = $this->buildParam(['contractCode' => $contractCode], $path);
         $resp  = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
-            ->send($this->url . $path, $param, $this->getHeader('json'));
+            ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
         CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'signerPerson');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
@@ -125,11 +125,11 @@ class DianZiQianService extends ServiceBase
     private function contractFileTemplate()
     {
         $path  = "/open-api-lite/contract/file/template";
-        $file  = STATIC_PATH . "AuthBookModel/dx_template.pdf";
+        $file  = STATIC_PATH . "AuthBookModel/test.pdf";
         $param = $this->buildParam([], $path, ['fileName' => $file, 'key' => 'templateFile']);
         $resp  = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
-            ->send($this->url . $path, $param, $this->getHeader('json'));
+            ->send($this->url . $path, $param, $this->getHeader('file'));
         CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'signerPerson');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
@@ -158,7 +158,7 @@ class DianZiQianService extends ServiceBase
         $param     = $this->buildParam($paramData, $path);
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
-            ->send($this->url . $path, $param, $this->getHeader('json'));
+            ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
         CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'signerPerson');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
@@ -216,7 +216,7 @@ class DianZiQianService extends ServiceBase
         $param = $this->buildParam([], $path, ['fileName' => $file, 'key' => 'contractFile']);
         $resp  = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
-            ->send($this->url . $path, $param, $this->getHeader('json'));
+            ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
         CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'contractFile');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
@@ -247,10 +247,10 @@ class DianZiQianService extends ServiceBase
     private function personalSign($signerCode, $arr)
     {
         $personal_sign_info = $this->sealBase64([
-                                                    'signerCode'      => $signerCode,
-                                                    'sealName'        => '法人章',
-                                                    'sealImageBase64' => $this->getPersonalSignBase64($arr),
-                                                ]);
+            'signerCode'      => $signerCode,
+            'sealName'        => '法人章',
+            'sealImageBase64' => $this->getPersonalSignBase64($arr),
+        ]);
         $personal_sealCode  = '';
         $error_data         = '';
         if ($personal_sign_info['code'] === 200) {
@@ -275,7 +275,7 @@ class DianZiQianService extends ServiceBase
         $param     = $this->buildParam($paramData, $path);
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
-            ->send($this->url . $path, $param, $this->getHeader('json'));
+            ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
         $rr = $this->doCurl($param,$this->url . $path);
         CommonService::getInstance()->log4PHP([$this->url . $path, $param,$rr], 'info', 'sealBase64');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
@@ -325,12 +325,14 @@ class DianZiQianService extends ServiceBase
             'signerCode'      => $signerCode,
             'contractCode'    => $contractCode,
             'keyWord'         => $keyWord,
+            'signTypeLimits'  => '99',
+            'signValidMethod' => '0',
             'transactionCode' => $transactionCode
         ];
         $param     = $this->buildParam($paramData, $path);
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
-            ->send($this->url . $path, $param, $this->getHeader('json'));
+            ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
         CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'contractFile');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
@@ -367,8 +369,6 @@ class DianZiQianService extends ServiceBase
             }
         }
         $buff .= $path;
-        echo "buf:" . $buff;
-        echo "\n";
         return md5($buff);
     }
 

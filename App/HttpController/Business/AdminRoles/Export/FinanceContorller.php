@@ -242,7 +242,12 @@ class FinanceContorller extends UserController
             $this->insertFinanceData($res['result'], $entname);
         }else{
             dingAlarm('insertFinanceData',['$entName'=>$entname,'$data'=>json_encode($res)]);
+
         }
+////        if(empty($res['result'])){
+//            dingAlarm('insertFinanceData',['$entName'=>$entname,'$data'=>json_encode($res)]);
+//
+////        }
         return true;
     }
 
