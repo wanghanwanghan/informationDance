@@ -734,7 +734,7 @@ eof;
                     )
             ";
 
-            // $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
+            $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
 
             // foreach($nicIds as &$nicId){
             //     if(
@@ -744,9 +744,8 @@ eof;
             //         $nicId = substr($nicId, 0, -1);
             //     }
             // }
-            CommonService::getInstance()->log4PHP(json_encode(
-                $sql
-            ));
+            CommonService::getInstance()->log4PHP($sql);
+            CommonService::getInstance()->log4PHP($list);
 
             // $ElasticSearchService->addMustShouldPhrasePrefixQuery( 'si_ji_fen_lei_code' , $nicIds) ;  
         }
