@@ -723,11 +723,21 @@ eof;
             ->where('szjj_id', $szjjidsArr, 'IN') 
             ->all();
             $nsscIds = array_column($szjjDatas, 'id');
+            CommonService::getInstance()->log4PHP(json_encode(
+                [
+                    $nsscIds
+                ]
+            ));
 
             $nicCodeDatas = \App\HttpController\Models\RDS3\NicCode::create()
             ->where('nssc', $nsscIds, 'IN') 
             ->all();
             $nicIds = array_column($nicCodeDatas, 'nic_id');
+            CommonService::getInstance()->log4PHP(json_encode(
+                [
+                    $nicIds
+                ]
+            ));
             foreach($nicIds as &$nicId){
                 if(
                     strlen($nicId) == 4 &&
@@ -736,7 +746,11 @@ eof;
                     $nicId = substr($nicId, 0, -1);
                 }
             }
-            
+            CommonService::getInstance()->log4PHP(json_encode(
+                [
+                    $nicIds
+                ]
+            ));
             $ElasticSearchService->addMustShouldPrefixQuery( 'si_ji_fen_lei_code' , $nicIds) ;  
         }
 
