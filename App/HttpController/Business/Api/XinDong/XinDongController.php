@@ -746,19 +746,44 @@ eof;
 
         // 数字经济及其核心产业 050101,050102 需要转换为四级分类 然后再搜索
         $szjjidsStr = trim($this->request()->getRequestParam('basic_szjjid'));
-        $nicIds = self::formatterSzjjidToNicCode($szjjidsStr);
-        if(!empty($nicIds)){
-            foreach($nicIds as &$nicId){
-                if(
-                    strlen($nicId) == 5 &&
-                    substr($nicId, -1) == '0'
-                ){
-                    $nicId = substr($nicId, 0, -1);
-                }
+        $szjjidsStr && $szjjidsArr = explode(',', $szjjidsStr);
+        if($szjjidsArr){
+            $szjjidsStr = implode("','", $szjjidsArr); 
+            $sql = "SELECT
+                        nic_id 
+                    FROM
+                        nic_code
+                    WHERE
+                    nssc IN (
+                        SELECT
+                            id 
+                        FROM
+                            `szjj_nic_code` 
+                        WHERE
+                        szjj_id IN ( '$szjjidsStr' ) 
+                    )
+            ";
+
+            $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
+            $nicIds = array_column($list, 'nic_id');
+            
+            CommonService::getInstance()->log4PHP($sql);
+            CommonService::getInstance()->log4PHP($list);
+            CommonService::getInstance()->log4PHP($nicIds); 
+
+            if(!empty($nicIds)){
+                foreach($nicIds as &$nicId){
+                    if(
+                        strlen($nicId) == 5 &&
+                        substr($nicId, -1) == '0'
+                    ){
+                        $nicId = substr($nicId, 0, -1);
+                    }
+                } 
+                CommonService::getInstance()->log4PHP($nicIds);
+                $ElasticSearchService->addMustShouldPhrasePrefixQuery( 'si_ji_fen_lei_code' , $nicIds) ; 
             } 
-            CommonService::getInstance()->log4PHP($nicIds);
-            $ElasticSearchService->addMustShouldPhrasePrefixQuery( 'si_ji_fen_lei_code' , $nicIds) ; 
-        } 
+        }  
 
         $searchText = trim($this->request()->getRequestParam('searchText'));
         if($searchText){
@@ -901,27 +926,6 @@ eof;
         (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldPhraseQuery( 'reg_status' , $matchedCnames) ; 
     
         // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
-        // $map = [
-        //     // 100万以下 
-        //     10 => ['min'=>0, 'max' => 100  ],
-        //     // 100-500万
-        //     15 =>  ['min'=>100, 'max' => 500  ], 
-        //     // 500-1000
-        //     20 =>  ['min'=>500, 'max' => 1000  ],
-        //     // 1000-5000万
-        //     25 =>  ['min'=>1000, 'max' => 5000  ],
-        //     // 5000-10000万
-        //     30 =>  ['min'=>5000, 'max' => 10000  ],
-        //     // 10000-10亿
-        //     35 =>  ['min'=>10000, 'max' => 100000  ],
-        //     // 10亿+
-        //     40 =>  ['min'=>100000, 'max' => 1000-000  ],
-        // ];
-        // $matchedCnames = [];
-        // foreach($reg_capital_values as $item){
-        //     $item && $matchedCnames[] = $map[$item]; 
-        // } 
-        // (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldRangeQuery( 'reg_capital' , $matchedCnames) ;  
         
         $map = XinDongService::getZhuCeZiBenMap();
         foreach($reg_capital_values as $item){
@@ -938,10 +942,6 @@ eof;
         // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
         $map =  (new XinDongService())::getTuanDuiGuiMoMap();
         $matchedCnames = [];
-        // foreach($tuan_dui_ren_shu_values as $item){
-        //     $item && $matchedCnames[] = $map[$item]; 
-        // } 
-        // (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldRangeQuery( 'tuan_dui_ren_shu' , $matchedCnames) ;  
         
         foreach($tuan_dui_ren_shu_values as $item){
             $tmp = $map[$item]['epreg']; 
