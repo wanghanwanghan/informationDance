@@ -99,7 +99,7 @@ class DianZiQianService extends ServiceBase
     }
 
     public function getUrl(){
-        $data = DianZiQianAuth::create()->where("entUrlResultCode < 1 or personalUrlResultCode < 1");
+        $data = DianZiQianAuth::create()->where("entUrlResultCode < 1 or personalUrlResultCode < 1")->all();
         if(empty($data)){
             return $this->createReturn(200, null, [], '没有需要查询的数据');
         }
@@ -180,7 +180,7 @@ class DianZiQianService extends ServiceBase
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
-        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'signerPerson');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'contractSignStatus');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
