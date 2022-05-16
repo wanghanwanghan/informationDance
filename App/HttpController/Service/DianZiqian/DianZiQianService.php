@@ -247,10 +247,10 @@ class DianZiQianService extends ServiceBase
     private function personalSign($signerCode, $arr)
     {
         $personal_sign_info = $this->sealBase64([
-                                                    'signerCode'      => $signerCode,
-                                                    'sealName'        => '法人章',
-                                                    'sealImageBase64' => $this->getPersonalSignBase64($arr),
-                                                ]);
+            'signerCode'      => $signerCode,
+            'sealName'        => '法人章',
+            'sealImageBase64' => $this->getPersonalSignBase64($arr),
+        ]);
         $personal_sealCode  = '';
         $error_data         = '';
         if ($personal_sign_info['code'] === 200) {
@@ -275,7 +275,7 @@ class DianZiQianService extends ServiceBase
         $param     = $this->buildParam($paramData, $path);
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
-            ->send($this->url . $path, $param, $this->getHeader('json'));
+            ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
         $rr = $this->doCurl($param,$this->url . $path);
         CommonService::getInstance()->log4PHP([$this->url . $path, $param,$rr], 'info', 'sealBase64');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
