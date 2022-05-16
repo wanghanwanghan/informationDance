@@ -727,18 +727,17 @@ eof;
                 $nsscIds
             ));
 
-            $nicCodeDatas2 = \App\HttpController\Models\RDS3\NicCode::create()
+            $nicCodeDatas = \App\HttpController\Models\RDS3\NicCode::create()
             ->where('nssc', $nsscIds, 'IN') 
             ->all();
-            $nicCodeDatas = \App\HttpController\Models\RDS3\NicCode::create()
-            ->where('id', [30,32], 'IN') 
-            ->all();
+            // $nicCodeDatas = \App\HttpController\Models\RDS3\NicCode::create()
+            // ->where('id', [30,32], 'IN') 
+            // ->all();
             $nicIds = array_column($nicCodeDatas, 'nic_id');
             CommonService::getInstance()->log4PHP(json_encode(
                 [
                     $nicIds,
-                    $nicCodeDatas,
-                    $nicCodeDatas2,
+                    $nsscIds 
                 ]
             ));
             foreach($nicIds as &$nicId){
@@ -750,11 +749,9 @@ eof;
                 }
             }
             CommonService::getInstance()->log4PHP(json_encode(
-                [
-                    $nicIds
-                ]
+                $nicIds
             ));
-            
+
             $ElasticSearchService->addMustShouldPhrasePrefixQuery( 'si_ji_fen_lei_code' , $nicIds) ;  
         }
 
