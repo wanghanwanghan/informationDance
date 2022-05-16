@@ -325,6 +325,8 @@ class DianZiQianService extends ServiceBase
             'signerCode'      => $signerCode,
             'contractCode'    => $contractCode,
             'keyWord'         => $keyWord,
+            'signTypeLimits'  => '99',
+            'signValidMethod' => '0',
             'transactionCode' => $transactionCode
         ];
         $param     = $this->buildParam($paramData, $path);
