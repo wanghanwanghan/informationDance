@@ -276,7 +276,8 @@ class DianZiQianService extends ServiceBase
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param, $this->getHeader('json'));
-        CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'sealBase64');
+        $rr = $this->doCurl($param,$this->url . $path);
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$rr], 'info', 'sealBase64');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
@@ -405,7 +406,7 @@ class DianZiQianService extends ServiceBase
     function doCurl($param, $url)
     {
         $header = [
-            "Content-Type:multipart/form-data",
+            "Content-Type:application/json",
         ];
         $ch     = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
