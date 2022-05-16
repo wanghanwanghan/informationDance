@@ -417,8 +417,8 @@ class DianZiQianService extends ServiceBase
         $output = curl_exec($ch);
         curl_close($ch);
         $output = json_decode($output, true);
-
-        dd($output);
+return $output;
+//        dd($output);
     }
 
     private function getHeader(string $type = ''): array
