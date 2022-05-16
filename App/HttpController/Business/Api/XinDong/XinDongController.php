@@ -718,41 +718,38 @@ eof;
         $szjjidsStr = trim($this->request()->getRequestParam('basic_szjjid'));
         $szjjidsStr && $szjjidsArr = explode(',', $szjjidsStr);
         if($szjjidsArr){
-            //转换为四级分类
-            $szjjDatas = \App\HttpController\Models\RDS3\SzjjNicCode::create()
-            ->where('szjj_id', $szjjidsArr, 'IN') 
-            ->all();
-            $nsscIds = array_column($szjjDatas, 'id');
+            $szjjidsStr = implode("','", $szjjidsArr); 
+            $sql = <<<Eof
+            SELECT
+                nic_id 
+            FROM
+                nic_code
+            WHERE
+            nssc IN (
+                SELECT
+                    id 
+                FROM
+                    `szjj_nic_code` 
+                WHERE
+                szjj_id IN ( '$szjjidsStr' ) 
+                )
+            Eof;
+
+            // $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
+
+            // foreach($nicIds as &$nicId){
+            //     if(
+            //         strlen($nicId) == 5 &&
+            //         substr($nicId, -1) == '0'
+            //     ){
+            //         $nicId = substr($nicId, 0, -1);
+            //     }
+            // }
             CommonService::getInstance()->log4PHP(json_encode(
-                $nsscIds
+                $sql
             ));
 
-            $nicCodeDatas = \App\HttpController\Models\RDS3\NicCode::create()
-            ->where('nssc', $nsscIds, 'IN') 
-            ->all();
-            // $nicCodeDatas = \App\HttpController\Models\RDS3\NicCode::create()
-            // ->where('id', [30,32], 'IN') 
-            // ->all();
-            $nicIds = array_column($nicCodeDatas, 'nic_id');
-            CommonService::getInstance()->log4PHP(json_encode(
-                [
-                    $nicIds,
-                    $nsscIds 
-                ]
-            ));
-            foreach($nicIds as &$nicId){
-                if(
-                    strlen($nicId) == 4 &&
-                    substr($nicId, -1) == '0'
-                ){
-                    $nicId = substr($nicId, 0, -1);
-                }
-            }
-            CommonService::getInstance()->log4PHP(json_encode(
-                $nicIds
-            ));
-
-            $ElasticSearchService->addMustShouldPhrasePrefixQuery( 'si_ji_fen_lei_code' , $nicIds) ;  
+            // $ElasticSearchService->addMustShouldPhrasePrefixQuery( 'si_ji_fen_lei_code' , $nicIds) ;  
         }
 
         $searchText = trim($this->request()->getRequestParam('searchText'));
