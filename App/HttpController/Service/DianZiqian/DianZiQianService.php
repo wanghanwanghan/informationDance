@@ -71,12 +71,12 @@ class DianZiQianService extends ServiceBase
         if ($contractFileTemplateFilling['code'] != 200) return $contractFileTemplateFilling;
 
         //手动签署企业章  signUrl
-        $entContractSignUrl = $this->contractSignUrl($ent_sealCode, $contractCode, '企业盖章处');
+        $entContractSignUrl = $this->contractSignUrl($signerCodeEnt, $contractCode, '企业盖章处');
         $entSignUrl         = $entContractSignUrl['result']['signUrl'] ?? "";
         if ($entContractSignUrl['code'] != 200) return $entContractSignUrl;
 
         //手动签署企业法人章
-        $personalContractSignUrl = $this->contractSignUrl($personal_sealCode, $contractCode, '法人盖章处');
+        $personalContractSignUrl = $this->contractSignUrl($signerCodePersonal, $contractCode, '法人盖章处');
         $personalSignUrl         = $personalContractSignUrl['result']['signUrl'] ?? "";
         if ($personalContractSignUrl['code'] != 200) return $personalContractSignUrl;
 
