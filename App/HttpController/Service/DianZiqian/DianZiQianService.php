@@ -52,12 +52,12 @@ class DianZiQianService extends ServiceBase
         $signerCodeEnt    = $signerEnterprise['result']['signerCode'] ?? "";
         if ($signerEnterprise['code'] != 200) return $signerEnterprise;
 
-        //企业上传印章
-        list($ent_sealCode, $errorData) = $this->entSign($signerCodeEnt, $postData);
-        if (!empty($errorData)) return $errorData;
-
         //法人照片上传
         list($personal_sealCode, $errorData) = $this->personalSign($signerCodePersonal, $postData);
+        if (!empty($errorData)) return $errorData;
+
+        //企业上传印章
+        list($ent_sealCode, $errorData) = $this->entSign($signerCodeEnt, $postData);
         if (!empty($errorData)) return $errorData;
 
         //上传adobe模版
