@@ -745,7 +745,7 @@ class LongXinService extends ServiceBase
             };
             $dataItem['mobile_check_res'] = $res['data'][$dataItem['lianxi']]['status'];
             $dataItem['mobile_check_res_cname'] = $res['data'][$dataItem['lianxi']]['status']?
-                ChuangLanService::getStatusCnameMap($res['data'][$dataItem['lianxi']]['status']):'';
+                ChuangLanService::getStatusCnameMap()[$res['data'][$dataItem['lianxi']]['status']]:'';
         } 
         return  $apiResluts;
     }
