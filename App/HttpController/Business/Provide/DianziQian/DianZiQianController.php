@@ -67,4 +67,12 @@ class DianZiQianController extends ProvideBase
 
         return $this->checkResponse($res);
     }
+
+    public function getUrl(){
+        $this->csp->add($this->cspKey, function () {
+            return (new DianZiQianService())->setCheckRespFlag(true)->getUrl();
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
 }

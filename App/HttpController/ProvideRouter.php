@@ -40,6 +40,7 @@ class ProvideRouter
         $prefix = '/Business/Provide/DianziQian/DianZiQianController/';
         $routeCollector->addGroup('/dzq', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getAuthFile', $prefix . 'getAuthFile');
+            $routeCollector->addRoute(['GET', 'POST'], '/getUrl', $prefix . 'getUrl');
         });
         return true;
     }

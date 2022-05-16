@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\DianZiqian;
 
+use App\HttpController\Models\Api\DianZiQianAuth;
 use App\HttpController\Models\Api\FaDaDa\FaDaDaUserModel;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
@@ -10,6 +11,7 @@ use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use Carbon\Carbon;
 use wanghanwanghan\someUtils\control;
+use wanghanwanghan\someUtils\moudles\resp\create;
 
 class DianZiQianService extends ServiceBase
 {
@@ -53,11 +55,11 @@ class DianZiQianService extends ServiceBase
         if ($signerEnterprise['code'] != 200) return $signerEnterprise;
 
         //法人照片上传
-        list($personal_sealCode, $errorData) = $this->personalSign($signerCodePersonal, $postData);
+        list($personalSealCode, $errorData) = $this->personalSign($signerCodePersonal, $postData);
         if (!empty($errorData)) return $errorData;
 
         //企业上传印章
-        list($ent_sealCode, $errorData) = $this->entSign($signerCodeEnt, $postData);
+        list($entSealCode, $errorData) = $this->entSign($signerCodeEnt, $postData);
         if (!empty($errorData)) return $errorData;
 
         //上传adobe模版
@@ -70,28 +72,119 @@ class DianZiQianService extends ServiceBase
         $contractCode                = $contractFileTemplateFilling['result']['contractCode'] ?? "";
         if ($contractFileTemplateFilling['code'] != 200) return $contractFileTemplateFilling;
 
-        //手动签署企业章  signUrl
-        $entContractSignUrl = $this->contractSignUrl($signerCodeEnt, $contractCode, '企业盖章处');
-        $entSignUrl         = $entContractSignUrl['result']['signUrl'] ?? "";
+        $entTransactionCode = control::getUuid();
+        //自动签署企业章  signUrl
+        $entContractSignUrl = $this->contractSignAuto($signerCodeEnt, $contractCode, '企业盖章处',$entSealCode,$entTransactionCode);
         if ($entContractSignUrl['code'] != 200) return $entContractSignUrl;
-
-        //手动签署企业法人章
-        $personalContractSignUrl = $this->contractSignUrl($signerCodePersonal, $contractCode, '法人盖章处');
-        $personalSignUrl         = $personalContractSignUrl['result']['signUrl'] ?? "";
+        $personalTransactionCode = control::getUuid();
+        //自动签署企业法人章
+        $personalContractSignUrl = $this->contractSignAuto($signerCodePersonal, $contractCode, '法人盖章处',$personalSealCode,$personalTransactionCode);
         if ($personalContractSignUrl['code'] != 200) return $personalContractSignUrl;
-
-        //合同归档
-        $contractOptArchive = $this->contractOptArchive($contractCode);
-        if ($contractOptArchive['code'] != 200) return $contractOptArchive;
-
-        //合同文件下载
-        $contractFileDownload = $this->contractFileDownload($contractCode);
-        $downloadUrl = $contractFileDownload['result']['downloadUrl']??'';
-        if ($contractFileDownload['code'] != 200) return $contractFileDownload;
-
-        return $this->createReturn(200, null, ['url'=>$downloadUrl], '成功');
+        $insertData = [
+            'entName' => $postData['entName'],
+            "personName"   => $postData['legalPerson'],
+            "personIdCard" => $postData['idCard'],
+            'socialCredit' => $postData['socialCredit'],
+            'signerCodePersonal' => $signerCodePersonal,
+            'signerCodeEnt' => $signerCodeEnt,
+            'contractTemplateCode' => $contractTemplateCode,
+            'contractCode' => $contractCode,
+            'entSealCode' => $entSealCode,
+            'personalSealCode' => $personalSealCode,
+            'entTransactionCode' => $entTransactionCode,
+            'personalTransactionCode' => $personalTransactionCode
+        ];
+        DianZiQianAuth::create()->data($insertData)->save();
+        return $this->createReturn(200, null, [], '成功');
     }
 
+    public function getUrl(){
+        $data = DianZiQianAuth::create()->where("entUrlResultCode < 1 or personalUrlResultCode < 1");
+        if(empty($data)){
+            return $this->createReturn(200, null, [], '没有需要查询的数据');
+        }
+        foreach (json_decode(json_encode($data), true) as $v){
+            $contractCode = $v['contractCode'];
+            $entTransactionCode = $v['entTransactionCode'];
+            $personalTransactionCode = $v['personalTransactionCode'];
+            $flag = false;
+            //企业章签署状态查询
+            if($v['entUrlResultCode'] != 1) {
+                $contractSignStatus = $this->contractSignStatus($entTransactionCode);
+                if ($contractSignStatus['code'] != 200) {
+                    dingAlarm('企业章签署状态查询异常', ['$contractSignStatus' => json_encode($contractSignStatus)]);
+                    continue;
+                }
+                $this->updateDianZiQianEntResultCode($v['id'], $contractSignStatus);
+                if($contractSignStatus['code']['resultCode'] < 1) $flag = true;
+            }
+            //法人章签署状态查询
+            if($v['personalUrlResultCode'] != 1) {
+                $contractSignStatus = $this->contractSignStatus($personalTransactionCode);
+                if ($contractSignStatus['code'] != 200) {
+                    dingAlarm('法人章签署状态查询异常', ['$contractSignStatus' => json_encode($contractSignStatus)]);
+                    continue;
+                }
+                $this->updateDianZiQianPersonalResultCode($v['id'], $contractSignStatus);
+                if($contractSignStatus['code']['resultCode'] < 1) $flag = true;
+            }
+            $url = '';
+            if($contractSignStatus['result']['resultCode'] >0){
+                $url = $contractSignStatus['result']['downloadUrl'];
+            }
+            if(!$flag){
+                //合同归档
+                $contractOptArchive = $this->contractOptArchive($contractCode);
+                if ($contractOptArchive['code'] != 200) {
+                    dingAlarm('合同归档',['$contractSignStatus'=>json_encode($contractSignStatus)]);
+                    continue;
+                }
+                //合同文件下载
+                $contractFileDownload = $this->contractFileDownload($contractCode);
+                $downloadUrl = $contractFileDownload['result']['downloadUrl']??'';
+                if ($contractFileDownload['code'] != 200) {
+                    dingAlarm('合同文件下载',['$contractFileDownload'=>json_encode($contractFileDownload)]);
+                }
+            }
+        }
+
+        return $this->createReturn(200, null, ['url'=>$url,'downloadUrl'=>$downloadUrl], '成功');
+    }
+
+    private function updateDianZiQianEntResultCode($id,$data){
+        $update['entUrlResultCode'] = $data['result']['resultCode'];
+        if($data['resultCode'] == 1){
+            $update['entDownloadUrl'] = $data['result']['downloadUrl'];
+            $update['entViewPdfUrl'] = $data['result']['viewPdfUrl'];
+        }
+        return DianZiQianAuth::create()->where("id={$id}")->update($update);
+    }
+    private function updateDianZiQianPersonalResultCode($id,$data){
+        $update['personalUrlResultCode'] = $data['result']['resultCode'];
+        if($data['resultCode'] == 1){
+            $update['personalDownloadUrl'] = $data['result']['downloadUrl'];
+            $update['personalViewPdfUrl'] = $data['result']['viewPdfUrl'];
+        }
+        return DianZiQianAuth::create()->where("id={$id}")->update($update);
+    }
+
+    /**
+     * 签署状态查询
+     */
+    public function contractSignStatus($transactionCode){
+        $path      = "/open-api-lite/contract/file/template/filling";
+        $paramData = [
+            'transactionCode' => $transactionCode
+        ];
+        $param     = $this->buildParam($paramData, $path);
+        $resp      = (new CoHttpClient())
+            ->useCache($this->curl_use_cache)
+            ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'signerPerson');
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
+
+//    private function
     /**
      * 合同文件下载
      */
@@ -313,7 +406,26 @@ class DianZiQianService extends ServiceBase
         return base64_encode(file_get_contents($path));
     }
 
-
+    /**
+     * 自动签署
+     */
+    public function contractSignAuto($signerCode, $contractCode, $keyWord,$sealCode,$transactionCode){
+        $path            = '/open-api-lite/contract/sign/auto';
+        $paramData = [
+            'signerCode'      => $signerCode,
+            'autoSignAuthorization' => '1',
+            'contractCode'    => $contractCode,
+            'sealCode' => $sealCode,
+            'keyWord'         => $keyWord,
+            'transactionCode' => $transactionCode
+        ];
+        $param     = $this->buildParam($paramData, $path);
+        $resp      = (new CoHttpClient())
+            ->useCache($this->curl_use_cache)
+            ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'contractFile');
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
     /**
      * 手动签署
      */
