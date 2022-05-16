@@ -190,8 +190,6 @@ class XinDongController extends ProvideBase
             'flag' => $this->getRequestData('flag', 0),
         ];
 
-        CommonService::getInstance()->log4PHP(123123);
-
         $beginYear = $this->getRequestData('year', 2020);
 
         if (is_numeric($beginYear) && $beginYear >= 2013 && $beginYear <= date('Y')) {
