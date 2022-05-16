@@ -735,19 +735,20 @@ eof;
             ";
 
             $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
-
-            // foreach($nicIds as &$nicId){
-            //     if(
-            //         strlen($nicId) == 5 &&
-            //         substr($nicId, -1) == '0'
-            //     ){
-            //         $nicId = substr($nicId, 0, -1);
-            //     }
-            // }
+            $nicIds = array_column($list, 'nic_id');
+            foreach($nicIds as &$nicId){
+                if(
+                    strlen($nicId) == 5 &&
+                    substr($nicId, -1) == '0'
+                ){
+                    $nicId = substr($nicId, 0, -1);
+                }
+            }
             CommonService::getInstance()->log4PHP($sql);
             CommonService::getInstance()->log4PHP($list);
+            CommonService::getInstance()->log4PHP($nicIds);
 
-            // $ElasticSearchService->addMustShouldPhrasePrefixQuery( 'si_ji_fen_lei_code' , $nicIds) ;  
+            $ElasticSearchService->addMustShouldPhrasePrefixQuery( 'si_ji_fen_lei_code' , $nicIds) ;  
         }
 
         $searchText = trim($this->request()->getRequestParam('searchText'));
