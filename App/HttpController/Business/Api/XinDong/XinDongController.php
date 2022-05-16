@@ -724,19 +724,21 @@ eof;
             ->all();
             $nsscIds = array_column($szjjDatas, 'id');
             CommonService::getInstance()->log4PHP(json_encode(
-                [
-                    $nsscIds
-                ]
+                $nsscIds
             ));
 
-            $nicCodeDatas = \App\HttpController\Models\RDS3\NicCode::create()
+            $nicCodeDatas2 = \App\HttpController\Models\RDS3\NicCode::create()
             ->where('nssc', $nsscIds, 'IN') 
+            ->all();
+            $nicCodeDatas = \App\HttpController\Models\RDS3\NicCode::create()
+            ->where('nssc', [162,164], 'IN') 
             ->all();
             $nicIds = array_column($nicCodeDatas, 'nic_id');
             CommonService::getInstance()->log4PHP(json_encode(
                 [
                     $nicIds,
-                    $nicCodeDatas
+                    $nicCodeDatas,
+                    $nicCodeDatas2,
                 ]
             ));
             foreach($nicIds as &$nicId){
