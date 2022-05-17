@@ -249,6 +249,8 @@ class ProvideBase extends Index
 
         try {
             $apiInfo = RequestApiInfo::create()->where('path', $this->requestUrl)->get();
+            CommonService::getInstance()->log4PHP(json_encode(['path' => $this->requestUrl]));
+
             if (empty($apiInfo)) {
                 $this->writeJson(607, null, null, '请求接口不存在');
                 return false;
@@ -260,6 +262,11 @@ class ProvideBase extends Index
                     'apiId' => $this->provideApiId,
                     'status' => 1
                 ])->get();
+            CommonService::getInstance()->log4PHP(json_encode([
+                'userId' => $this->userId,
+                'apiId' => $this->provideApiId,
+                'status' => 1
+            ]));
             if (empty($relationshipCheck)) {
                 $this->writeJson(608, null, null, '没有接口请求权限');
                 return false;
