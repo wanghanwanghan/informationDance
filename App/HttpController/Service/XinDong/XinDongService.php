@@ -1830,11 +1830,11 @@ class XinDongService extends ServiceBase
     function getEntInfoByName($entNames): ?array
     {
          
-         
-        $retData  = Company::create()
-            ->where('name', array_values($entNames),'IN')
-            ->field(["id", "name", "company_org_type","org_location"])
-            ->get(); 
+        CommonService::getInstance()->log4PHP(json_encode($entNames));
+        // $retData  = Company::create()
+        //     ->where('name', array_values($entNames),'IN')
+        //     ->field(["id", "name", "company_org_type","org_location"])
+        //     ->get(); 
         
         return $this->checkResp(200, null, $retData, '查询成功');
     } 
