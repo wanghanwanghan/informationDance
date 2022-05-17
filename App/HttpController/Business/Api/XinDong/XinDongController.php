@@ -34,7 +34,7 @@ class XinDongController extends XinDongBase
     function onRequest(?string $action): ?bool
     {
         $this->ldUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
-        CommonService::getInstance()->log4PHP('action'.json_encode($action ) );
+        
         return parent::onRequest($action);
     }
 
@@ -2460,49 +2460,5 @@ eof;
             'totalPage' => $totalPages, 
         ] 
        , $retData, '成功', true, []); 
-    }
-
-    //企业联系方式
-    function checkEntByName(): bool
-    {
-        $entName =  $this->getRequestData('entName'); 
-        if(!$entName){
-            return  $this->writeJson(201, null, null, '参数缺失(企业名称)');
-        }
-
-        $entNames = [];
-        $entNames[$entName] = $entName;
-
-        // 如果包含中文或者英文括号  需要中英文括号都查下
-        if (
-            strpos($entName, '）') !== false &&
-            strpos($entName, '（') !== false 
-        ) {
-            $newEntName =  str_replace(['（','）'], ['(',')'], $entName);
-            $entNames[$newEntName] = $newEntName;
-        } 
-
-        if (
-            strpos($entName, ')') !== false &&
-            strpos($entName, '(') !== false 
-        ) {
-            $newEntName =  str_replace(['(',')'], ['（','）'],  $entName);
-            $entNames[$newEntName] = $newEntName;
-        } 
-         
-        $retData  = Company::create()
-            ->where('name', array_values($entNames),'IN')
-            ->get(); 
-        
-        return $this->writeJson(
-                    200,  
-                    [], 
-                    [
-                        'ifHasEnt' => $retData? '是':'否'
-                    ], 
-                    '成功', 
-                    true, 
-                    []
-        ); 
-    }
+    } 
 }
