@@ -153,7 +153,7 @@ class DianZiQianService extends ServiceBase
 
     private function updateDianZiQianEntResultCode($id,$data){
         $update['entUrlResultCode'] = $data['result']['resultCode'];
-        if($data['resultCode'] == 1){
+        if($update['resultCode'] == 1){
             $update['entDownloadUrl'] = $data['result']['downloadUrl'];
             $update['entViewPdfUrl'] = $data['result']['viewPdfUrl'];
         }
@@ -161,7 +161,7 @@ class DianZiQianService extends ServiceBase
     }
     private function updateDianZiQianPersonalResultCode($id,$data){
         $update['personalUrlResultCode'] = $data['result']['resultCode'];
-        if($data['resultCode'] == 1){
+        if($update['resultCode'] == 1){
             $update['personalDownloadUrl'] = $data['result']['downloadUrl'];
             $update['personalViewPdfUrl'] = $data['result']['viewPdfUrl'];
         }
@@ -388,7 +388,7 @@ class DianZiQianService extends ServiceBase
         $cc      = new SealService($arr['entName'], $num, 200);
         $cc->saveImg($path, "");
         //缩小图片
-        $path = $cc->scaleImg($path, 150, 150);
+        $path = $cc->scaleImg($path, 300, 300);
         return base64_encode(file_get_contents($path));
     }
 
