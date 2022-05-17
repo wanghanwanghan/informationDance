@@ -34,7 +34,7 @@ class XinDongController extends XinDongBase
     function onRequest(?string $action): ?bool
     {
         $this->ldUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
-
+        CommonService::getInstance()->log4PHP('action'.json_encode($action ) );
         return parent::onRequest($action);
     }
 
