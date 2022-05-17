@@ -116,17 +116,17 @@ class DianZiQianService extends ServiceBase
                     continue;
                 }
                 $this->updateDianZiQianEntResultCode($v['id'], $contractSignStatus);
-                if($contractSignStatus['code']['resultCode'] < 1) $flag = false;
+                if($contractSignStatus['result']['resultCode'] < 1) $flag = false;
             }
             //法人章签署状态查询
-            if($v['personalUrlResultCode'] != 1) {
+            if($v['personalUrlResultCode'] < 1) {
                 $contractSignStatus = $this->contractSignStatus($personalTransactionCode);
                 if ($contractSignStatus['code'] != 200) {
                     dingAlarm('法人章签署状态查询异常', ['$contractSignStatus' => json_encode($contractSignStatus)]);
                     continue;
                 }
                 $this->updateDianZiQianPersonalResultCode($v['id'], $contractSignStatus);
-                if($contractSignStatus['code']['resultCode'] < 1) $flag = false;
+                if($contractSignStatus['result']['resultCode'] < 1) $flag = false;
             }
             $url = '';
             if($contractSignStatus['result']['resultCode'] >0){
@@ -148,7 +148,7 @@ class DianZiQianService extends ServiceBase
             }
         }
 
-        return $this->createReturn(200, null, ['url'=>$url,'downloadUrl'=>$downloadUrl], '成功');
+        return $this->createReturn(200, null, ['pdfUrl'=>$url,'contractFileDownload'=>$downloadUrl], '成功');
     }
 
     private function updateDianZiQianEntResultCode($id,$data){

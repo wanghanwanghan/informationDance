@@ -7,6 +7,7 @@ use App\Crontab\CrontabList\DeleteTimeoutOrder;
 use App\Crontab\CrontabList\GetAuthBook;
 use App\Crontab\CrontabList\GetInvData;
 use App\Crontab\CrontabList\MoveOut;
+use App\Crontab\CrontabList\RunDianZiQianGetPdf;
 use App\Crontab\CrontabList\RunSaiMengHuiZhiCaiWu;
 use App\Crontab\CrontabList\RunSouKeUploadFiles;
 use App\Crontab\CrontabList\RunCompleteCompanyData;
@@ -26,6 +27,7 @@ class CrontabService
         $this->runSupervisor();
         $this->runMoveOut();
         $this->getAuthBook();
+        $this->RunDianZiQianGetPdf();
         $this->getInvData();//123123123
         $this->RunSaiMengHuiZhiCaiWu();
         $this->RunSouKeUploadFiles();
@@ -66,6 +68,11 @@ class CrontabService
     private function getInvData(): Crontab
     {
         return Crontab::getInstance()->addTask(GetInvData::class);
+    }
+
+    private function RunDianZiQianGetPdf(): Crontab
+    {
+        return Crontab::getInstance()->addTask(RunDianZiQianGetPdf::class);
     }
 
     private function RunSaiMengHuiZhiCaiWu(): Crontab
