@@ -18,12 +18,23 @@ class BusinessBase extends Index
 {
     public $startResTime = 0;//请求开始时间，带毫秒
     public $stopResTime = 0;//请求结束时间，带毫秒
-
+    public $actionName ;
     public $loginUserinfo = [];
-
+    
+    // 不需要check token的方法列表 
+    private $noCheckTokenLists = [
+        'checkEntByName' => [
+            // 业务方 => appId
+            'TmpTestEntName' => 'a99kdk1a23ks877ad4532hsad5667bsaP154D',
+        ],
+    ];
+    private function setActionName($action){
+        $this->actionName = $action;
+    }
     function onRequest(?string $action): ?bool
     {
         CommonService::getInstance()->log4PHP(json_encode(['action' => $action]));
+        $this->setActionName($action);
 
         parent::onRequest($action);
 
@@ -130,9 +141,42 @@ class BusinessBase extends Index
         $this->loginUserinfo = $userInfo;
     }
 
+    private function IfNeedsCheckLoginToken(){
+        if(
+            in_array(
+                $this->actionName,
+                array_keys($this->noCheckTokenLists)
+            )
+        ){
+            return false;
+        };
+         
+        return true ;
+    }
+
+    private function checkAppId(){
+        $appId =  $this->getRequestData('appId'); 
+        if(
+            in_array(
+                $appId,
+                $this->noCheckTokenLists[$this->actionName]
+            )
+        ){
+            return true;
+        };
+         
+        return false ;
+    }
+    
     //check token
     private function checkToken(): bool
     {
+        // 是否需要check 登陆后的token
+        // if(!$this->IfNeedsCheckLoginToken()){
+        //     return $this->checkAppId();
+        // }
+        CommonService::getInstance()->log4PHP(json_encode([$this->IfNeedsCheckLoginToken()]));
+        CommonService::getInstance()->log4PHP(json_encode([$this->checkAppId()]) );
         $requestToken = $this->request()->getHeaderLine('authorization');
 
         if (empty($requestToken) || strlen($requestToken) < 50) return false;
