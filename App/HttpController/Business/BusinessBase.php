@@ -23,6 +23,8 @@ class BusinessBase extends Index
 
     function onRequest(?string $action): ?bool
     {
+        CommonService::getInstance()->log4PHP(json_encode(['action' => $action]));
+
         parent::onRequest($action);
 
         $this->startResTime = microtime(true);
