@@ -1847,6 +1847,11 @@ class XinDongService extends ServiceBase
         //     }
         // } 
         
-        return $this->checkResp(200, null, $retData, '查询成功');
+        // return $this->checkResp(200, null, $retData, '查询成功');
+        return [
+            'code' => 200,
+            'paging' => [],
+            'result' => $retData,
+        ];
     } 
 }
