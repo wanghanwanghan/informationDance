@@ -1880,12 +1880,14 @@ class XinDongController extends ProvideBase
             $entNames[$newEntName] = $newEntName;
         } 
 
-        $this->csp->add($this->cspKey, function () use ($entNames) {
-            return (new XinDongService())
-                ->getEntInfoByName($entNames) ;
-        });
+        // $this->csp->add($this->cspKey, function () use ($entNames) {
+        //     return (new XinDongService())
+        //         ->getEntInfoByName($entNames) ;
+        // });
 
-        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        // $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        $res = (new XinDongService())
+            ->getEntInfoByName($entNames);
 
         return $this->checkResponse($res);
 
