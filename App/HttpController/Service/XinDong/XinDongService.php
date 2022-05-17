@@ -1833,24 +1833,14 @@ class XinDongService extends ServiceBase
          
         // CommonService::getInstance()->log4PHP(json_encode($entNames));
         $retData  = Company::create()
-        ->where('name', array_values($entNames),'IN')
-        ->field(["id", "name", "company_org_type","reg_location","estiblish_time"])
-        ->get(); 
-        // foreach($entNames as $entName){
-        //     $retData  = Company::create()
-        //     ->where('name', $entName)
-        //     ->field(["id", "name", "company_org_type","reg_location","estiblish_time"])
-        //     ->get(); 
-        //     CommonService::getInstance()->log4PHP(json_encode($entName));
-        //     if($retData){
-        //         break;
-        //     }
-        // } 
-        
-        // return $this->checkResp(200, null, $retData, '查询成功');
+            ->where('name', array_values($entNames),'IN')
+            ->field(["id", "name", "company_org_type","reg_location","estiblish_time"])
+            ->get(); 
+         
         return [
             'code' => 200,
             'paging' => [],
+            'msg' =>  '成功',
             'result' => $retData,
         ];
     } 
