@@ -141,17 +141,17 @@ class BusinessBase extends Index
         $this->loginUserinfo = $userInfo;
     }
 
-    private function IfNeedsCheckLoginToken(){
+    private function noNeedsCheckLoginToken(){
         if(
             in_array(
                 $this->actionName,
                 array_keys($this->noCheckTokenLists)
             )
         ){
-            return false;
+            return true;
         };
          
-        return true ;
+        return false ;
     }
 
     private function checkAppId(){
@@ -162,21 +162,24 @@ class BusinessBase extends Index
                 $this->noCheckTokenLists[$this->actionName]
             )
         ){
+            CommonService::getInstance()->log4PHP('checkAppId pass'); 
             return true;
         };
-         
+
+        CommonService::getInstance()->log4PHP('checkAppId failed');  
         return false ;
     }
     
     //check token
     private function checkToken(): bool
     {
-        // 是否需要check 登陆后的token
-        // if(!$this->IfNeedsCheckLoginToken()){
-        //     return $this->checkAppId();
-        // }
-        CommonService::getInstance()->log4PHP(json_encode([$this->IfNeedsCheckLoginToken()]));
-        CommonService::getInstance()->log4PHP(json_encode([$this->checkAppId()]) );
+        // 是否需要check 登陆后的token 有的接口不需要验证登录  可以根据appid 直接请求
+        if($this->noNeedsCheckLoginToken()){
+            CommonService::getInstance()->log4PHP('no needs to check login token');
+            return $this->checkAppId();
+        } 
+
+        CommonService::getInstance()->log4PHP(' needs to check login token');
         $requestToken = $this->request()->getHeaderLine('authorization');
 
         if (empty($requestToken) || strlen($requestToken) < 50) return false;
