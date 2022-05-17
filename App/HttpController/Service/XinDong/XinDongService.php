@@ -24,6 +24,7 @@ use EasySwoole\ElasticSearch\Config;
 use EasySwoole\ElasticSearch\ElasticSearch;
 use EasySwoole\ElasticSearch\RequestBean\Search;
 use App\HttpController\Models\Api\UserBusinessOpportunity;
+use App\HttpController\Models\RDS3\Company;
 
 class XinDongService extends ServiceBase
 {
