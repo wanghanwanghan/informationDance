@@ -262,7 +262,7 @@ class SealService
         }
     }
 
-    public static function personalSeal($filePath,$name, $width = 310, $height = 45)
+    public static function personalSeal($filePath,$name, $width = 310, $height = 65)
     {
         if ($width/$height<2){
             throw new Exception("宽度必须大于等于高度的3倍");
