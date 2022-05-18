@@ -127,7 +127,7 @@ class RunFillCompanyName extends AbstractCronTask
             ) );
         
         
-        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        // $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return true ;  
     }
 
