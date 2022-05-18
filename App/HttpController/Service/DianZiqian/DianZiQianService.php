@@ -597,14 +597,16 @@ return $output;
         $url = $this->url . $path.'?' . http_build_query($param);
         $url = "https://sandbox.letsign.com/open-api/file/query?appCode=E6989519788301091615&timestamp=1652860139556&version=v1&fileCode=QFFnNlhmdzFueTFVMEVjM2NMcVJpb2g0L3YvVWtZUHFpKzlZdzFoL2llQ3VHTUJxbHB1aW85RHllbEpHcWZKd3MvYVpwY1BrZXVkTVR0Qk4zR3F1R2huV1Z0TVJXSmJEK3hIamZMTTN6ek1WMGtZZlFxY1I0TVI2cjh6Y3VVeGto&token=f698fcc647661be323dece13a34710df6e09917a";
         $check = TaskService::getInstance()->create(function () use ($url, $urlPath) {
+            $http = new HttpClient($url);
+            $data = $http->get()->getBody();
+//            file_put_contents($urlPath,$data);
+//            $data = (new CoHttpClient())
+//                ->setCheckRespFlag(false)
+//                ->useCache(false)
+//                ->send($url, [], [], [], 'get');
 
-            $binary = (new CoHttpClient())
-                ->setCheckRespFlag(false)
-                ->useCache(false)
-                ->send($url, [], [], [], 'get');
-
-            if (strlen($binary) > 0) {
-                file_put_contents($urlPath, $binary);
+            if (strlen($data) > 0) {
+                file_put_contents($urlPath, $data);
                 return true;
             } else {
                 return false;
