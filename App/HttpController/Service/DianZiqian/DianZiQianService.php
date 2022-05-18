@@ -593,7 +593,7 @@ return $output;
         $param     = $this->buildParam($paramData, $path);
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
-            ->send($this->url . $path, $param, [], [], 'get');
+            ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
         $d = file_get_contents('php://input');
         CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp,$d], 'info', 'fileQuery');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
