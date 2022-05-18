@@ -79,7 +79,7 @@ class RunFillCompanyName extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
-       
+        $size = 100 ;
         $sql = " select id from  `company_name`  order by id  desc limit 1 ";
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $minId = 0;
@@ -97,7 +97,7 @@ class RunFillCompanyName extends AbstractCronTask
         $minId = $minId +1 ; 
         
         
-        $sql = " select id,`name` from  `company` where id >= ".$minId." AND id <= ".($minId+20);
+        $sql = " select id,`name` from  `company` where id >= ".$minId." AND id <= ".($minId+ $size);
         $Companys = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
         CommonService::getInstance()->log4PHP('RunFillCompanyName'.
         json_encode(
@@ -127,7 +127,7 @@ class RunFillCompanyName extends AbstractCronTask
             ) );
         
         
-        // $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return true ;  
     }
 
