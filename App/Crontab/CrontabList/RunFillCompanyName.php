@@ -79,7 +79,7 @@ class RunFillCompanyName extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
-        $size = 100 ;
+        $size = 10 ;
         $sql = " select id from  `company_name`  order by id  desc limit 1 ";
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $minId = 0;
@@ -103,9 +103,9 @@ class RunFillCompanyName extends AbstractCronTask
         json_encode(
             [
                 'minId' => $minId,
-                'list' => $list, 
+                // 'list' => $list, 
                 'sql' => $sql, 
-                'Companys' => $Companys, 
+                // 'Companys' => $Companys, 
             ]
         ) ); 
         if(empty($Companys)){
@@ -121,7 +121,7 @@ class RunFillCompanyName extends AbstractCronTask
             json_encode(
                 [
                     'minId' => $minId,
-                    'Companys' => $Companys,
+                    // 'Companys' => $Companys,
                     'sql' => $sql,
                 ]
             ) );
