@@ -24,6 +24,7 @@ use EasySwoole\ElasticSearch\Config;
 use EasySwoole\ElasticSearch\ElasticSearch;
 use EasySwoole\ElasticSearch\RequestBean\Search;
 use App\HttpController\Models\Api\UserBusinessOpportunity;
+use App\HttpController\Models\RDS3\Company;
 
 class XinDongService extends ServiceBase
 {
@@ -1826,4 +1827,21 @@ class XinDongService extends ServiceBase
         } 
         return $res;
     }
+
+    function getEntInfoByName($entNames): ?array
+    {
+         
+        // CommonService::getInstance()->log4PHP(json_encode($entNames));
+        $retData  = Company::create()
+            ->where('name', array_values($entNames),'IN')
+            ->field(["id", "name", "company_org_type","reg_location","estiblish_time"])
+            ->get(); 
+         
+        return [
+            'code' => 200,
+            'paging' => [],
+            'msg' =>  '成功',
+            'result' => $retData,
+        ];
+    } 
 }

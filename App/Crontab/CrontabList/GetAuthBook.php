@@ -56,7 +56,7 @@ class GetAuthBook extends AbstractCronTask
 
         $ids = implode(',', $ids);
         $idSql = 'authDate = 0 AND STATUS = 0';
-        if(!empty($ids)){
+        if (!empty($ids)) {
             $idSql = "id IN ( {$ids} ) OR (authDate = 0 AND STATUS = 0)";
         }
         $sql = <<<Eof
@@ -73,7 +73,7 @@ Eof;
         $fileData = [];
         $flieDetail = [];
         if (!empty($list)) {
-            CommonService::getInstance()->log4PHP([$list],'info','listAntAuthSealDetail');
+            CommonService::getInstance()->log4PHP([$list], 'info', 'listAntAuthSealDetail');
             foreach ($list as $oneEntInfo) {
 
                 $data = [
@@ -93,19 +93,19 @@ Eof;
                 ])->all();
                 $url = [];
                 if (empty($DetailList)) {
-                    CommonService::getInstance()->log4PHP([$data],'info','emptyAntAuthSealDetail');
+                    CommonService::getInstance()->log4PHP([$data], 'info', 'emptyAntAuthSealDetail');
                     $url['2'] = $this->getDataSealUrl($data);
-                }
-                else {
+                } else {
                     $notNoodIsSeal = [];
                     $detailArr = [];
                     foreach ($DetailList as $value) {
                         $detailArr[$value->orderNo][] = $value;
-                        if ($value->getAttr('isSeal') != 'true')
-                        {$notNoodIsSeal[$value->orderNo] = $value->orderNo;}
+                        if ($value->getAttr('isSeal') != 'true') {
+                            $notNoodIsSeal[$value->orderNo] = $value->orderNo;
+                        }
                     }
                     //如果不需要盖章，就去掉这次的请求
-                    if(!empty($notNoodIsSeal)){
+                    if (!empty($notNoodIsSeal)) {
                         foreach ($notNoodIsSeal as $item) {
                             unset($detailArr[$item]);
                         }
@@ -115,7 +115,7 @@ Eof;
                     }
                     $urlD = [];
                     foreach ($detailArr as $v) {
-                        foreach ($v as $value){
+                        foreach ($v as $value) {
                             $orderNo = $value->getAttr('orderNo');
                             $urlD[$orderNo][$value->getAttr('type')] = $this->getSealUrl($data, $value->getAttr('fileAddress'));
                             $fileData[$value->getAttr('type')] = [
@@ -128,11 +128,11 @@ Eof;
                         }
                     }
 
-                    CommonService::getInstance()->log4PHP([$url],'info','AntAuthSealDetail');
-                    foreach ($urlD as $orderNo=>$order){
+                    CommonService::getInstance()->log4PHP([$url], 'info', 'AntAuthSealDetail');
+                    foreach ($urlD as $orderNo => $order) {
                         foreach ($order as $type => $v) {
                             AntAuthSealDetail::create()->where([
-                                'orderNo'=>$orderNo,
+                                'orderNo' => $orderNo,
                                 'type' => $type,
                                 'antAuthId' => $oneEntInfo['id'],
                             ])->update([
@@ -155,7 +155,7 @@ Eof;
                     'socialCredit' => $oneEntInfo['socialCredit'],
                     'status' => MaYiService::STATUS_0
                 ])->update([
-                    'filePath' => $url['2']??'',
+                    'filePath' => $url['2'] ?? '',
                     'authDate' => time(),
                     'status' => MaYiService::STATUS_1
                 ]);
@@ -274,13 +274,14 @@ Eof;
 
         //file_put_contents(INV_AUTH_PATH . $path . '.aes', $content);
 
-        return [OSSService::getInstance()
-            ->doUploadFile(
-                $this->oss_bucket,
-                Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $fileName,
-                INV_AUTH_PATH . $path,
-                $this->oss_expire_time
-            ), $fileName];
+        $oss = new OSSService();
+
+        return [$oss->doUploadFile(
+            $this->oss_bucket,
+            Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $fileName,
+            INV_AUTH_PATH . $path,
+            $this->oss_expire_time
+        ), $fileName];
     }
 
     public function getNeedSealID()
@@ -296,8 +297,8 @@ Eof;
             $idMap[$item->getAttr('antAuthId')][] = $item->getAttr('id');
             $ids[$item->getAttr('antAuthId')] = $item->getAttr('antAuthId');
         }
-        foreach ($idMap as $id=>$v) {
-            if(count($v) == 2){
+        foreach ($idMap as $id => $v) {
+            if (count($v) == 2) {
                 unset($ids[$id]);
             }
         }

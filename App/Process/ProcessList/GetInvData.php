@@ -77,10 +77,10 @@ class GetInvData extends ProcessBase
         $NSRSBH = $entInfo['socialCredit'];
         $info = AntAuthList::create()->where('socialCredit', $NSRSBH)->get();
         $big_kprq = $info->getAttr('big_kprq');
-        if(empty($big_kprq)){
+        if (empty($big_kprq)) {
             $KPKSRQ = Carbon::now()->subMonths(23)->startOfMonth()->format('Y-m-d');//开始日
-        }else{
-            $KPKSRQ = date('Y-m-d',$big_kprq);
+        } else {
+            $KPKSRQ = date('Y-m-d', $big_kprq);
         }
         $KPJSRQ = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');//截止日
 
@@ -150,20 +150,20 @@ class GetInvData extends ProcessBase
                 }
             }
         }
-        foreach ($kprq as $key=>$item) {
-            if(!empty($item)){
+        foreach ($kprq as $key => $item) {
+            if (!empty($item)) {
                 $kprq[$key] = strtotime($item);
             }
         }
         $bigKprq = max($kprq);
         //上传到oss
-        $this->sendToOSS($NSRSBH,$bigKprq);
+        $this->sendToOSS($NSRSBH, $bigKprq);
 
         return true;
     }
 
     //上传到oss 发票已经入完mysql
-    function sendToOSS($NSRSBH,$bigKprq): bool
+    function sendToOSS($NSRSBH, $bigKprq): bool
     {
         //只有蚂蚁的税号才上传oss
         //蚂蚁区块链dev id 36
@@ -285,13 +285,13 @@ class GetInvData extends ProcessBase
                 if (!in_array($file, $ignore, true)) {
                     if (strpos($file, $fileSuffix) !== false) {
                         CommonService::getInstance()->log4PHP($file, 'info', 'upload_oss.log');
-                        $file_arr[] = OSSService::getInstance()
-                            ->doUploadFile(
-                                $this->oss_bucket,
-                                Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $file,
-                                $store . $file,
-                                $this->oss_expire_time
-                            );
+                        $oss = new OSSService();
+                        $file_arr[] = $oss->doUploadFile(
+                            $this->oss_bucket,
+                            Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $file,
+                            $store . $file,
+                            $this->oss_expire_time
+                        );
                     }
                 }
             }

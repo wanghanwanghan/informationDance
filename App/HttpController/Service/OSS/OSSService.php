@@ -4,12 +4,9 @@ namespace App\HttpController\Service\OSS;
 
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\ServiceBase;
-use EasySwoole\Component\Singleton;
 
 class OSSService extends ServiceBase
 {
-    use Singleton;
-
     private $ali_oss_cli;
 
     function __construct()
