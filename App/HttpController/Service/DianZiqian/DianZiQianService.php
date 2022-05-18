@@ -594,7 +594,8 @@ return $output;
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param, [], [], 'get');
-        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'fileQuery');
+        $d = file_get_contents('php://input');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp,$d], 'info', 'fileQuery');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 

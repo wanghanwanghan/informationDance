@@ -59,10 +59,10 @@ class CoHttpClient extends ServiceBase
             if ($method === 'POSTJSON') $data = $request->postJson(
                 is_string($postData) ? $postData : jsonEncode($postData)
             );
-            CommonService::getInstance()->log4PHP([$url,$postData],'info','http_return_data');
+//            CommonService::getInstance()->log4PHP([$url,$postData],'info','http_return_data');
 
             if ($method === 'GET') $data = $request->get();
-            CommonService::getInstance()->log4PHP([$url,$postData,$GLOBALS['HTTP_RAW_POST_DATA']],'info','http_return_data');
+//            CommonService::getInstance()->log4PHP([$url,$postData,$GLOBALS['HTTP_RAW_POST_DATA']],'info','http_return_data');
 
             //整理结果
             $data = $data->getBody();
