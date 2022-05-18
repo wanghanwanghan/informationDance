@@ -9,6 +9,8 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateSeal\SealService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
+use App\Task\Service\TaskService;
+use App\Task\TaskList\EntDbTask\insertEnt;
 use Carbon\Carbon;
 use EasySwoole\HttpClient\HttpClient;
 use wanghanwanghan\someUtils\control;
@@ -156,7 +158,7 @@ class DianZiQianService extends ServiceBase
 
     private function updateDianZiQianEntResultCode($id,$data){
         $update['entUrlResultCode'] = $data['result']['resultCode'];
-        if($update['resultCode'] == 1){
+        if($update['entUrlResultCode'] == 1){
             $update['entDownloadUrl'] = $data['result']['downloadUrl'];
             $update['entViewPdfUrl'] = $data['result']['viewPdfUrl'];
         }
@@ -164,7 +166,7 @@ class DianZiQianService extends ServiceBase
     }
     private function updateDianZiQianPersonalResultCode($id,$data){
         $update['personalUrlResultCode'] = $data['result']['resultCode'];
-        if($update['resultCode'] == 1){
+        if($update['personalUrlResultCode'] == 1){
             $update['personalDownloadUrl'] = $data['result']['downloadUrl'];
             $update['personalViewPdfUrl'] = $data['result']['viewPdfUrl'];
         }
@@ -593,9 +595,23 @@ return $output;
         ];
         $param     = $this->buildParam($paramData, $path);
         $url = $this->url . $path.'?' . http_build_query($param);
-        $http = new HttpClient($url);
-        $data = $http->get()->getBody();
-        file_put_contents($urlPath,$data);
+
+        $check = TaskService::getInstance()->create(function () use ($url, $urlPath) {
+
+            $binary = (new CoHttpClient())
+                ->setCheckRespFlag(false)
+                ->useCache(false)
+                ->send($url, [], [], [], 'get');
+
+            if (strlen($binary) > 0) {
+                file_put_contents($urlPath, $binary);
+                return true;
+            } else {
+                return false;
+            }
+
+        }, 'sync');
+        return $check;
     }
 
     /**
@@ -605,12 +621,13 @@ return $output;
         $sealEntDraw = $this->sealEntDraw($postData);
         if ($sealEntDraw['code'] != 200) return $sealEntDraw;
         $fileCodeEnt = $sealEntDraw['result']['sealFileCode'];
-        $this->fileQuery($fileCodeEnt,TEMP_FILE_PATH . 'dianziqian_ent.png');
-
+        $entFileQuery = $this->fileQuery($fileCodeEnt,TEMP_FILE_PATH . 'dianziqian_ent.png');
+        if (!$entFileQuery) return $this->createReturn(201, null, [], '生成企业章失败');
         $sealPersonDraw = $this->sealPersonDraw($postData);
         if ($sealPersonDraw['code'] != 200) return $sealPersonDraw;
         $fileCodePerson = $sealPersonDraw['result']['sealFileCode'];
-        $this->fileQuery($fileCodePerson,TEMP_FILE_PATH . 'dianziqian_personal.png');
+        $PersonFileQuery = $this->fileQuery($fileCodePerson,TEMP_FILE_PATH . 'dianziqian_personal.png');
+        if (!$PersonFileQuery) return $this->createReturn(201, null, [], '生成法人章失败');
         return $this->createReturn(200, null, [], '成功');
     }
 
