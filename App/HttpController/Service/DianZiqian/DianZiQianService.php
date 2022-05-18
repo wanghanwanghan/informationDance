@@ -371,8 +371,7 @@ class DianZiQianService extends ServiceBase
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
-        $rr = $this->doCurl($param,$this->url . $path);
-        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$rr], 'info', 'sealBase64');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'sealBase64');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
@@ -563,8 +562,7 @@ return $output;
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
-        $rr = $this->doCurl($param,$this->url . $path);
-        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$rr], 'info', 'sealEntDraw');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'sealEntDraw');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
@@ -581,8 +579,7 @@ return $output;
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
-        $rr = $this->doCurl($param,$this->url . $path);
-        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$rr], 'info', 'sealEntDraw');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'sealPersonDraw');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
     /*
@@ -597,8 +594,7 @@ return $output;
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param, '', '', 'GET');
-        $rr = $this->doCurl($param,$this->url . $path);
-        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$rr], 'info', 'fileQuery');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'fileQuery');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
