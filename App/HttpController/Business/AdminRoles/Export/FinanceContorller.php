@@ -191,8 +191,9 @@ class FinanceContorller extends UserController
                     }
                     unset($value['id']);
                     file_put_contents($file, implode(',', $this->replace($value)) . PHP_EOL, FILE_APPEND);
+                    $resData['1'][] = $value;
                 }
-                $resData[1] = array_merge($resData[1], $inserDataArr);
+
             }
 //            dingAlarm('$resData',['$resData'=>json_encode($resData)]);
         }

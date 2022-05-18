@@ -53,7 +53,9 @@ class DianZiQianService extends ServiceBase
         $signerEnterprise  = $this->signerEnterprise($postData);
         $signerCodeEnt    = $signerEnterprise['result']['signerCode'] ?? "";
         if ($signerEnterprise['code'] != 200) return $signerEnterprise;
-
+        //生成png
+        $getPng = $this->getPng($postData);
+        if ($getPng['code'] != 200) return $getPng;
         //法人照片上传
         list($personalSealCode, $errorData) = $this->personalSign($signerCodePersonal, $postData);
         if (!empty($errorData)) return $errorData;
@@ -369,8 +371,7 @@ class DianZiQianService extends ServiceBase
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
-        $rr = $this->doCurl($param,$this->url . $path);
-        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$rr], 'info', 'sealBase64');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'sealBase64');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
@@ -381,14 +382,7 @@ class DianZiQianService extends ServiceBase
      */
     private function getEntSignBase64($arr)
     {
-        $num     = $arr['socialCredit'];
-        $num_arr = str_split($num);
-        $num     = implode('', array_reverse($num_arr));
-        $path    = TEMP_FILE_PATH . 'qianzhang.png';
-        $cc      = new SealService($arr['entName'], $num, 200);
-        $cc->saveImg($path, "");
-        //缩小图片
-        $path = $cc->scaleImg($path, 300, 300);
+        $path    = TEMP_FILE_PATH . 'dianziqian_ent.png';
         return base64_encode(file_get_contents($path));
     }
 
@@ -400,9 +394,7 @@ class DianZiQianService extends ServiceBase
      */
     private function getPersonalSignBase64($arr)
     {
-        $cc   = new SealService();
-        $path = TEMP_FILE_PATH . 'personal.png';
-        $cc::personalSeal($path, $arr['legalPerson']);
+        $path = TEMP_FILE_PATH . 'dianziqian_personal.png';
         return base64_encode(file_get_contents($path));
     }
 
@@ -555,4 +547,77 @@ return $output;
 
         return $this->createReturn($code, $paging, $result, $msg);
     }
+
+    /**
+     * 制作企业印章图片
+     */
+    private function sealEntDraw($postData){
+        $path      = '/open-api/seal/ent/draw';
+        $paramData = [
+            'nonTransparentPercent'      => "0",
+            'sealName'        => $postData['entName'],
+            'downText' => $postData['socialCredit'],
+        ];
+        $param     = $this->buildParam($paramData, $path);
+        $resp      = (new CoHttpClient())
+            ->useCache($this->curl_use_cache)
+            ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'sealEntDraw');
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
+
+    /**
+     * 制作个人签名图片
+     */
+    private function sealPersonDraw($postData){
+        $path      = '/open-api/seal/person/draw';
+        $paramData = [
+            'nonTransparentPercent'      => "0",
+            'sealName'        => $postData['legalPerson'],
+        ];
+        $param     = $this->buildParam($paramData, $path);
+        $resp      = (new CoHttpClient())
+            ->useCache($this->curl_use_cache)
+            ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'sealPersonDraw');
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
+    /*
+    * 通过fileCode获取文件
+    */
+    private function fileQuery($fileCode){
+        $path      = '/open-api/file/query';
+        $paramData = [
+            'fileCode'      => $fileCode,
+        ];
+        $param     = $this->buildParam($paramData, $path);
+        $resp      = (new CoHttpClient())
+            ->useCache($this->curl_use_cache)
+            ->send($this->url . $path, $param, [], [], 'get');
+        $d = file_get_contents('php://input');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp,$d,$GLOBALS['HTTP_RAW_POST_DATA']], 'info', 'fileQuery');
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
+
+    /**
+     * 生成png
+     */
+    private function getPng($postData){
+        $sealEntDraw = $this->sealEntDraw($postData);
+        if ($sealEntDraw['code'] != 200) return $sealEntDraw;
+        $fileCodeEnt = $sealEntDraw['result']['sealFileCode'];
+        $fileQueryEnt = $this->fileQuery($fileCodeEnt);
+        if ($fileQueryEnt['code'] != 200) return $fileQueryEnt;
+        $entPngPath = TEMP_FILE_PATH . 'dianziqian_ent.png';
+        file_put_contents($entPngPath,$fileQueryEnt['result']['contentType'],true);
+        $sealPersonDraw = $this->sealPersonDraw($postData);
+        if ($sealPersonDraw['code'] != 200) return $sealPersonDraw;
+        $fileCodePerson = $sealPersonDraw['result']['sealFileCode'];
+        $fileQueryPerson = $this->fileQuery($fileCodePerson);
+        if ($fileQueryPerson['code'] != 200) return $fileQueryPerson;
+        $personalPngPath = TEMP_FILE_PATH . 'dianziqian_personal.png';
+        file_put_contents($personalPngPath,$fileQueryEnt['result']['contentType'],true);
+        return $this->createReturn(200, null, [], '成功');
+    }
+
 }
