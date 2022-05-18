@@ -31,7 +31,7 @@ class GetInvData extends AbstractCronTask
     {
         //每月19号凌晨4点可以取上一个月全部数据
         //return '0 4 19 * *';
-        return '0 4 17 * * ';
+        return '10 15 18 * * ';
     }
 
     static function getTaskName(): string
@@ -190,15 +190,13 @@ class GetInvData extends AbstractCronTask
                     'content-type' => 'application/json;charset=UTF-8',
                 ];
 
-                //生产环境先不通知
-                if ($oneReadyToSend->belong - 0 === 41) {
+                //通知
+                if ($oneReadyToSend->belong - 0 === 36) {
                     CommonService::getInstance()->log4PHP([$body], 'info', 'notify_fp');
-
                     $ret = (new CoHttpClient())
                         ->useCache(false)
                         ->needJsonDecode(true)
                         ->send($url, jsonEncode($collectNotify, false), $header, [], 'postjson');
-
                     CommonService::getInstance()->log4PHP($ret, 'info', 'notify_fp');
                 }
 
