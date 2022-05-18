@@ -34,7 +34,6 @@ class CoHttpClient extends ServiceBase
         if ($method === 'GET' && strpos($url, '?') === false) {
             $url .= '?' . http_build_query($postData);
         }
-        CommonService::getInstance()->log4PHP([$url,$postData],'info1','http_return_data');
 
         //新建请求
         $request = new HttpClient($url);
@@ -60,7 +59,11 @@ class CoHttpClient extends ServiceBase
             if ($method === 'POSTJSON') $data = $request->postJson(
                 is_string($postData) ? $postData : jsonEncode($postData)
             );
+            CommonService::getInstance()->log4PHP([$url,$postData],'info','http_return_data');
+
             if ($method === 'GET') $data = $request->get();
+            CommonService::getInstance()->log4PHP([$url,$postData],'info','http_return_data');
+
             //整理结果
             $data = $data->getBody();
 //            dingAlarm('http返回',['$url'=>$url,'$data'=>json_encode($data),'$postData'=>json_encode($postData)]);
