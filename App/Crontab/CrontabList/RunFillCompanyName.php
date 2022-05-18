@@ -112,7 +112,7 @@ class RunFillCompanyName extends AbstractCronTask
             $str .= "(".$CompanyItem['id'].", '".$CompanyItem['name']."'),";
         }
         $str = substr($str, 0, -1);
-        $newsql = "INSERT INTO `company_name` (`id`, `name`) VALUES $str ";
+        $newsql = "INSERT IGNORE  INTO `company_name` (`id`, `name`) VALUES $str ";
         CommonService::getInstance()->log4PHP($newsql); 
         $list = sqlRaw($newsql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return true ;  
