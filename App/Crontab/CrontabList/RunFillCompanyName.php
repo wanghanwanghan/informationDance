@@ -79,33 +79,35 @@ class RunFillCompanyName extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
-       
-        $sql = "
-        select id from  `admin_new_api`  order by id  desc limit 1
-        ";
+        $size = 100 ;
+        $sql = " select id from  `company_name`  order by id  desc limit 1 ";
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        $minId = 0;
+        CommonService::getInstance()->log4PHP('RunFillCompanyName'.
+        json_encode(
+            [
+                
+                'list' => $list, 
+                'sql' => $sql,  
+            ]
+        ) ); 
+        if(!empty($list)){
+            $minId = intval($list[0]['id']); 
+        }
+        $minId = $minId +1 ; 
+        
+        
+        $sql = " select id,`name` from  `company` where id >= ".$minId." AND id <= ".($minId+ $size);
+        $Companys = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
         CommonService::getInstance()->log4PHP('RunFillCompanyName'.
         json_encode(
             [
                 'minId' => $minId,
-                'list' => $list,
-                'sql' => $sql,
+                'list' => $list, 
+                'sql' => $sql, 
+                'Companys' => $Companys, 
             ]
-        ) );
-
-        return true;
-        $CompanyName  = CompanyName::create() 
-        ->where
-        ->order('id', 'desc')
-        ->limit(1)
-        ->get(); 
-        $minId = intval($CompanyName->getAttr("id"));
-
-
-        $Companys  = Company::create() 
-        ->field(["id", "name",])
-        ->limit($minId,20)
-        ->all(); 
+        ) ); 
         if(empty($Companys)){
             return true;
         }    
@@ -114,10 +116,7 @@ class RunFillCompanyName extends AbstractCronTask
             $str .= "(".$CompanyItem['id'].", '".$CompanyItem['name']."'),";
         }
         $str = substr($str, 0, -1);
-        $sql = "
-        INSERT INTO `company_name` (`id`, `name`) VALUES
-        $str
-        ";
+        $sql = "INSERT INTO `company_name` (`id`, `name`) VALUES $str ";
         CommonService::getInstance()->log4PHP('RunFillCompanyName'.
             json_encode(
                 [
@@ -128,7 +127,7 @@ class RunFillCompanyName extends AbstractCronTask
             ) );
         
         
-        // $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return true ;  
     }
 
