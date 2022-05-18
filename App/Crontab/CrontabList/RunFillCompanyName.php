@@ -80,7 +80,22 @@ class RunFillCompanyName extends AbstractCronTask
     function run(int $taskId, int $workerIndex): bool
     {
        
+        $sql = "
+        select id from  `company_name`  order by id  desc limit 1
+        ";
+        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        CommonService::getInstance()->log4PHP('RunFillCompanyName'.
+        json_encode(
+            [
+                'minId' => $minId,
+                'list' => $list,
+                'sql' => $sql,
+            ]
+        ) );
+
+        return true;
         $CompanyName  = CompanyName::create() 
+        ->where
         ->order('id', 'desc')
         ->limit(1)
         ->get(); 
