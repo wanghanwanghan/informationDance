@@ -80,7 +80,7 @@ class RunFillCompanyName extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
-        
+        return true ;
         for($i=1;$i<=2000;$i++){
             $size = 500 ;
             $sql = " select id from  `company_name`  order by id  desc limit 1 ";
