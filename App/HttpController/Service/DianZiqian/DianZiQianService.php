@@ -591,7 +591,7 @@ return $output;
     private function fileQuery($fileCode,$urlPath){
         $path      = '/open-api/file/query';
         $paramData = [
-            'fileCode'      => $fileCode,
+            'fileCode'      => 'QFFnNlhmdzFueTFVMEVaYUNmNkZqcEUxdHZxWjBOUHFtcU5ScTFSYXdMbjJGTlI3NTl1dWtvVC9MbEpHcWZKd3MvYVpwY1BrZXVkTVR0Qk4zR3F1R2huV1Z0TVJXSmJEK3hIamZMTTN6ek1XL3F2Vy9rdDhndzNDSkZhK0pkdkpV',
         ];
         $param     = $this->buildParam($paramData, $path);
         $url = $this->url . $path.'?' . http_build_query($param);
