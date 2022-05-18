@@ -10,6 +10,7 @@ use App\HttpController\Service\CreateSeal\SealService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use Carbon\Carbon;
+use EasySwoole\HttpClient\HttpClient;
 use wanghanwanghan\someUtils\control;
 use wanghanwanghan\someUtils\moudles\resp\create;
 
@@ -585,18 +586,16 @@ return $output;
     /*
     * 通过fileCode获取文件
     */
-    private function fileQuery($fileCode){
+    private function fileQuery($fileCode,$urlPath){
         $path      = '/open-api/file/query';
         $paramData = [
             'fileCode'      => $fileCode,
         ];
         $param     = $this->buildParam($paramData, $path);
-        $resp      = (new CoHttpClient())
-            ->useCache($this->curl_use_cache)
-            ->send($this->url . $path, $param, [], [], 'get');
-        $d = file_get_contents('php://input');
-        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp,$d,$GLOBALS['HTTP_RAW_POST_DATA']], 'info', 'fileQuery');
-        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+        $url = $this->url . $path.'?' . http_build_query($param);
+        $http = new HttpClient($url);
+        $data = $http->get()->getBody();
+        file_put_contents($urlPath,$data);
     }
 
     /**
@@ -606,17 +605,12 @@ return $output;
         $sealEntDraw = $this->sealEntDraw($postData);
         if ($sealEntDraw['code'] != 200) return $sealEntDraw;
         $fileCodeEnt = $sealEntDraw['result']['sealFileCode'];
-        $fileQueryEnt = $this->fileQuery($fileCodeEnt);
-        if ($fileQueryEnt['code'] != 200) return $fileQueryEnt;
-        $entPngPath = TEMP_FILE_PATH . 'dianziqian_ent.png';
-        file_put_contents($entPngPath,$fileQueryEnt['result']['contentType'],true);
+        $this->fileQuery($fileCodeEnt,TEMP_FILE_PATH . 'dianziqian_ent.png');
+
         $sealPersonDraw = $this->sealPersonDraw($postData);
         if ($sealPersonDraw['code'] != 200) return $sealPersonDraw;
         $fileCodePerson = $sealPersonDraw['result']['sealFileCode'];
-        $fileQueryPerson = $this->fileQuery($fileCodePerson);
-        if ($fileQueryPerson['code'] != 200) return $fileQueryPerson;
-        $personalPngPath = TEMP_FILE_PATH . 'dianziqian_personal.png';
-        file_put_contents($personalPngPath,$fileQueryEnt['result']['contentType'],true);
+        $this->fileQuery($fileCodePerson,TEMP_FILE_PATH . 'dianziqian_personal.png');
         return $this->createReturn(200, null, [], '成功');
     }
 
