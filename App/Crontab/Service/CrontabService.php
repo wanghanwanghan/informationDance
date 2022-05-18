@@ -11,6 +11,7 @@ use App\Crontab\CrontabList\RunDianZiQianGetPdf;
 use App\Crontab\CrontabList\RunSaiMengHuiZhiCaiWu;
 use App\Crontab\CrontabList\RunSouKeUploadFiles;
 use App\Crontab\CrontabList\RunCompleteCompanyData;
+use App\Crontab\CrontabList\RunFillCompanyName;
 use App\Crontab\CrontabList\RunSupervisor;
 use EasySwoole\Component\Singleton;
 use EasySwoole\EasySwoole\Crontab\Crontab;
@@ -32,6 +33,7 @@ class CrontabService
         $this->RunSaiMengHuiZhiCaiWu();
         $this->RunSouKeUploadFiles();
         $this->RunCompleteCompanyData();
+        $this->RunFillCompanyName();
 
         return true;
     }
@@ -87,5 +89,9 @@ class CrontabService
     private function RunCompleteCompanyData(): Crontab
     {
         return Crontab::getInstance()->addTask(RunCompleteCompanyData::class);
+    }
+    private function RunFillCompanyName(): Crontab
+    {
+        return Crontab::getInstance()->addTask(RunFillCompanyName::class);
     }
 }
