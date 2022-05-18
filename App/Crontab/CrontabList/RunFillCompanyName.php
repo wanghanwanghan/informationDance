@@ -80,48 +80,51 @@ class RunFillCompanyName extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
-        $size = 1000 ;
-        $sql = " select id from  `company_name`  order by id  desc limit 1 ";
-        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-        $minId = 0;
-        CommonService::getInstance()->log4PHP('RunFillCompanyName'.
-        json_encode(
-            [
-                
-                'list' => $list, 
-                'sql' => $sql,  
-            ]
-        ) ); 
-        if(!empty($list)){
-            $minId = intval($list[0]['id']); 
-        }
-
-
-        $from = $minId +1 ; 
         
-        
-        $companySql = " select id,`name` from  `company` where id >= ".$from.
-                                                    " AND id <= ".($from+ $size);
-        $Companys = sqlRaw($companySql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
-        CommonService::getInstance()->log4PHP( $companySql); 
-        if(empty($Companys)){
-            return true;
-        }  
-
-        $str = "";
-        foreach($Companys as  $CompanyItem){
-            $str .= "(".$CompanyItem['id'].", '".$CompanyItem['name']."'),";
-        }
-        $str = substr($str, 0, -1);
-        $newsql = "INSERT   INTO `company_name` (`id`, `name`) VALUES $str ";
-        CommonService::getInstance()->log4PHP($newsql); 
-        // sqlRaw($newsql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-
-        $queryBuilder = new QueryBuilder();
-        $queryBuilder->raw($newsql);
-        $res = DbManager::getInstance()
-            ->query($queryBuilder, true, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-
+        for($i=1;$i<=5;$i++){
+            $size = 1000 ;
+            $sql = " select id from  `company_name`  order by id  desc limit 1 ";
+            $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+            $minId = 0;
+            CommonService::getInstance()->log4PHP('RunFillCompanyName'.
+            json_encode(
+                [
+                    
+                    'list' => $list, 
+                    'sql' => $sql,  
+                ]
+            ) ); 
+            if(!empty($list)){
+                $minId = intval($list[0]['id']); 
+            }
+    
+    
+            $from = $minId +1 ; 
+            
+            
+            $companySql = " select id,`name` from  `company` where id >= ".$from.
+                                                        " AND id <= ".($from+ $size);
+            $Companys = sqlRaw($companySql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
+            CommonService::getInstance()->log4PHP( $companySql); 
+            if(empty($Companys)){
+                return true;
+            }  
+    
+            $str = "";
+            foreach($Companys as  $CompanyItem){
+                $str .= "(".$CompanyItem['id'].", '".$CompanyItem['name']."'),";
+            }
+            $str = substr($str, 0, -1);
+            $newsql = "INSERT   INTO `company_name` (`id`, `name`) VALUES $str ";
+            CommonService::getInstance()->log4PHP($newsql); 
+            // sqlRaw($newsql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+    
+            $queryBuilder = new QueryBuilder();
+            $queryBuilder->raw($newsql);
+            $res = DbManager::getInstance()
+                ->query($queryBuilder, true, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+    
+        } 
         return true ;  
     }
 
