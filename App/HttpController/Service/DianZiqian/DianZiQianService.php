@@ -555,7 +555,7 @@ return $output;
     private function sealEntDraw($postData){
         $path      = '/open-api/seal/ent/draw';
         $paramData = [
-            'nonTransparentPercent'      => 0,
+            'nonTransparentPercent'      => "0",
             'sealName'        => $postData['entName'],
             'downText' => $postData['socialCredit'],
         ];
@@ -574,7 +574,7 @@ return $output;
     private function sealPersonDraw($postData){
         $path      = '/open-api/seal/person/draw';
         $paramData = [
-            'nonTransparentPercent'      => 0,
+            'nonTransparentPercent'      => "0",
             'sealName'        => $postData['legalPerson'],
         ];
         $param     = $this->buildParam($paramData, $path);
