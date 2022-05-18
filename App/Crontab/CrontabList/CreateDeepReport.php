@@ -6,6 +6,7 @@ use App\Crontab\CrontabBase;
 use App\HttpController\Models\Api\AuthBook;
 use App\HttpController\Models\Api\ReportInfo;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\Report\ReportService;
 use App\Task\Service\TaskService;
 use App\Task\TaskList\CreateDeepReportTask;
@@ -86,6 +87,4 @@ class CreateDeepReport extends AbstractCronTask
     {
         CommonService::getInstance()->log4PHP($throwable->getMessage());
     }
-
-
 }
