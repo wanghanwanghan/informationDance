@@ -556,7 +556,7 @@ return $output;
         $path      = '/open-api/seal/ent/draw';
         $paramData = [
             'nonTransparentPercent'      => 0,
-            'sealName'        => $postData['sealName'],
+            'sealName'        => $postData['entName'],
             'downText' => $postData['socialCredit'],
         ];
         $param     = $this->buildParam($paramData, $path);
