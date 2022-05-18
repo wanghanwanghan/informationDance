@@ -593,7 +593,7 @@ return $output;
         $param     = $this->buildParam($paramData, $path);
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
-            ->send($this->url . $path, $param, '', '', 'GET');
+            ->send($this->url . $path, $param, [], [], 'get');
         CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'fileQuery');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
