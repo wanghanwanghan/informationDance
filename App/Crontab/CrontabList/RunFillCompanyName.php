@@ -112,7 +112,7 @@ class RunFillCompanyName extends AbstractCronTask
     
             $str = "";
             foreach($Companys as  $CompanyItem){
-                $str .= "(".$CompanyItem['id'].", '".$CompanyItem['name']."'),";
+                $str .= "(".$CompanyItem['id'].", '".addslashes($CompanyItem['name'])."'),";
             }
             $str = substr($str, 0, -1);
             $newsql = "INSERT   INTO `company_name` (`id`, `name`) VALUES $str ";
