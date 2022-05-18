@@ -595,6 +595,8 @@ return $output;
         ];
         $param     = $this->buildParam($paramData, $path);
         $url = $this->url . $path.'?' . http_build_query($param);
+        CommonService::getInstance()->log4PHP($url, 'info', 'fileQuery');
+
 //        $url = "https://sandbox.letsign.com/open-api/file/query?appCode=E6989519788301091615&timestamp=1652863595805&version=v1&fileCode=QFFnNlhmdzFueTFVMEVjM2NMcVJpb2g0L3YvVWtZUHFpKzlZdzFoL2llQ3VHTUJxbHB1aW85RHllbEpHcWZKd3MvYVpwY1BrZXVkTVR0Qk4zR3F1R2huV1Z0TVJXSmJEK3hIamZMTTN6ek1WMGtZZlFxY1I0TVI2cjh6Y3VVeGto&token=a4fc85d27ba4dac7006836b866e8628e1ef5c370";
         $check = TaskService::getInstance()->create(function () use ($url, $urlPath) {
             $http = new HttpClient($url);
