@@ -7,6 +7,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use EasySwoole\Mysqli\QueryBuilder;
+use EasySwoole\ORM\DbManager;
 use wanghanwanghan\someUtils\control;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Service\LongXin\LongXinService;
@@ -79,7 +80,7 @@ class RunFillCompanyName extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
-        $size = 50 ;
+        $size = 10 ;
         $sql = " select id from  `company_name`  order by id  desc limit 1 ";
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         $minId = 0;
@@ -112,9 +113,15 @@ class RunFillCompanyName extends AbstractCronTask
             $str .= "(".$CompanyItem['id'].", '".$CompanyItem['name']."'),";
         }
         $str = substr($str, 0, -1);
-        $newsql = "INSERT IGNORE  INTO `company_name` (`id`, `name`) VALUES $str ";
+        $newsql = "INSERT   INTO `company_name` (`id`, `name`) VALUES $str ";
         CommonService::getInstance()->log4PHP($newsql); 
-        $list = sqlRaw($newsql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        // sqlRaw($newsql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->raw($newsql);
+        $res = DbManager::getInstance()
+            ->query($queryBuilder, true, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+            
         return true ;  
     }
 
