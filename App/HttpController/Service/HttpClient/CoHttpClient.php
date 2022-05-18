@@ -34,6 +34,7 @@ class CoHttpClient extends ServiceBase
         if ($method === 'GET' && strpos($url, '?') === false) {
             $url .= '?' . http_build_query($postData);
         }
+        CommonService::getInstance()->log4PHP([$url,$postData],'info1','http_return_data');
 
         //新建请求
         $request = new HttpClient($url);
