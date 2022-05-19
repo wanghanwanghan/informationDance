@@ -1938,11 +1938,11 @@ class XinDongController extends ProvideBase
           
         $csp = new \EasySwoole\Component\Csp();
         $csp->add('t1', function () {
-            \co::sleep(5);
+            \co::sleep(2);
             return 't1 result';
         });
         $csp->add('t2', function () {
-            \co::sleep(5);
+            \co::sleep(2);
             return 't2 result';
         });
     
