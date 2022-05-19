@@ -1405,8 +1405,8 @@ class XinDongService extends ServiceBase
         $bean->setType('_doc');
         $bean->setBody($elasticSearchService->query);
         $response = $elasticsearch->client()->search($bean)->getBody(); 
-        CommonService::getInstance()->log4PHP(json_encode(['re-query'=>$elasticSearchService->query]), 'info', 'souke.log');
-        CommonService::getInstance()->log4PHP(json_encode(['re-response'=>$response]), 'info', 'souke.log');
+        CommonService::getInstance()->log4PHP(json_encode($elasticSearchService->query));
+        // CommonService::getInstance()->log4PHP(json_encode(['re-response'=>$response]), 'info', 'souke.log');
         
         return  $response;
      } 
@@ -1969,14 +1969,14 @@ class XinDongService extends ServiceBase
  
         $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
         $responseArr = @json_decode($responseJson,true);  
-        CommonService::getInstance()->log4PHP('matchEntByNameMatchByEs '.
-            $responseJson
-        ); 
+        // CommonService::getInstance()->log4PHP('matchEntByNameMatchByEs '.
+        //     $responseJson
+        // ); 
         $datas = [];
         foreach($responseArr['hits']['hits'] as $item){
             $datas[] = [
-                'id' => $item['source']['xd_id'],
-                'name' => $item['source']['name'],
+                'id' => $item['_source']['xd_id'],
+                'name' => $item['_source']['name'],
             ]; 
         }
         return $datas;
