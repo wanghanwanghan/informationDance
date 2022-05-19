@@ -2094,8 +2094,13 @@ class XinDongService extends ServiceBase
         ); 
 
         foreach($dbres as $dataItem){  
+            CommonService::getInstance()->log4PHP(' dataItem  '.
+            json_encode( 
+                $dataItem 
+            ) 
+        ); 
             foreach( $dataItem['data'] as $item){
-                $percent = $this->getSimilarPercent($dataItem['name'], $entName) ;
+                $percent = $this->getSimilarPercent($item['name'], $entName) ;
                 $matchedDatas[$percent] = [
                     'id' => $item['id'] ,
                     'name' => $item['name'] ,
