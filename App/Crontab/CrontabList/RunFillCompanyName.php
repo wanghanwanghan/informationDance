@@ -124,7 +124,7 @@ class RunFillCompanyName extends AbstractCronTask
             $queryBuilder->raw($newsql);
             $res = DbManager::getInstance()
                 ->query($queryBuilder, true, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-            sleep(0.5);
+            sleep(1);
         } 
         return true ;  
     }
