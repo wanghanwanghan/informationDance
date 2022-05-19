@@ -1935,18 +1935,13 @@ class XinDongController extends ProvideBase
 
     function testCsp(): bool
     {
-        $entName =  $this->getRequestData('entName'); 
-        if(!$entName){
-            return  $this->writeJson(201, null, null, '参数缺失(企业名称)');
-        }
         $csp = new \EasySwoole\Component\Csp(); 
 
         for ($i=1; $i < 50; $i++) { 
-            $csp->add('t'.$i, function ($i) {
+            $csp->add('t'.$i, function () use ($i) {
                 \co::sleep(2);
                 return 't'.$i.' result';
-            });
-             
+            }); 
         }
 
         // for ($i=1; $i < 8; $i++) { 

@@ -1955,59 +1955,9 @@ class XinDongService extends ServiceBase
     } 
 
     //先按照language模式 慢的话 切换到Boolean模式
-    function testReadDb1($tableName, $entNames): ?array
+    function testReadDb1($tableName, $entNames): ?string
     {   
-        sleep(2);
-        $sql = "SELECT
-                    id,`name`
-                FROM
-                    $tableName
-                WHERE
-                    MATCH(`name`) AGAINST(
-                    '$entNames'   in boolean mode
-                    )  
-                LIMIT 1";
-        CommonService::getInstance()->log4PHP('matchFuzzyNameByLanguageMode'.$sql ); 
-        return [$sql];
-        
-        if(strlen($entNames) <12 ){
-            return  [
-                
-            ]; 
-        }
-        // $arr = preg_split('/(?<!^)(?!$)/u', $entNames );
-        // $matchStr = "";
-        // if($arr[0] && $arr[1]){
-        //     $matchStr .= '+'.$arr[0].$arr[1];
-        // }
-        // if($arr[2] && $arr[3]){
-        //     $matchStr .= '+'.$arr[2].$arr[3];
-        // }
-        // if($arr[4] && $arr[5]){
-        //     $matchStr .= '+'.$arr[4].$arr[5];
-        // }
-        // if($arr[6] && $arr[7]){
-        //     $matchStr .= '+'.$arr[6].$arr[7];
-        // }
-        // if($arr[8] && $arr[9]){
-        //     $matchStr .= '+'.$arr[8].$arr[9];
-        // }
-        // if($arr[10] && $arr[11]){
-        //     $matchStr .= '+'.$arr[10].$arr[11];
-        // }
-
-        $sql = "SELECT
-                    id,`name`
-                FROM
-                    $tableName
-                WHERE
-                    MATCH(`name`) AGAINST(
-                    '$entNames'   in boolean mode
-                    )  
-                LIMIT 1";
-        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-        
-        CommonService::getInstance()->log4PHP('matchFuzzyNameByLanguageMode'.$sql ); 
-        return $list? $list[0]:[];
+        \co::sleep(2);
+        return ' result';
     } 
 }
