@@ -2004,7 +2004,7 @@ class XinDongController extends ProvideBase
 
         
     
-        $res = ($csp->exec());
+        $res = ($csp->exec(7));
         // $a = [];
         // $this->csp->add($this->cspKey, function () use (&$a) {
         //     $res =  (new XinDongService())
