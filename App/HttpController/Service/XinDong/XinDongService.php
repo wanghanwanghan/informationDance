@@ -1868,10 +1868,12 @@ class XinDongService extends ServiceBase
         
         CommonService::getInstance()->log4PHP('matchAainstComName sql'.$sql ); 
          
-        return [
-            'sql' => $sql,
-            'list' => $list,
-        ];
+        return $list;
+
+        // return [
+        //     'sql' => $sql,
+        //     'list' => $list,
+        // ];
     }
  
     function splitChineseNameForMatchAgainst($entName): ?string
@@ -2003,17 +2005,23 @@ class XinDongService extends ServiceBase
         $timeStart = microtime(true);    
   
         //先从es match   
-        $res = $this->matchEntByNameMatchByEs($entName);
+        $res = $this->matchEntByNameMatchByEs($entName); 
         CommonService::getInstance()->log4PHP('es match'.
             json_encode( 
-                $res
+               [
+                    'data' => $res,
+                    'time' => (microtime(true) - $timeStart),
+               ]
             ) 
         ); 
         // 如果es 就匹配到了 直接返回 
         if($matchedItem = $this->getMatchedEntName($res,$entName)){
             CommonService::getInstance()->log4PHP('es match ok , return '.
                 json_encode( 
-                    $matchedItem
+                    [
+                        'data' => $matchedItem,
+                        'time' => (microtime(true) - $timeStart),
+                   ]
                 ) 
             ); 
             return  $matchedItem;
@@ -2037,7 +2045,12 @@ class XinDongService extends ServiceBase
         $res = ($csp->exec($timeOut)); 
         CommonService::getInstance()->log4PHP('从db找 res'.
             json_encode( 
-                $res
+                json_encode( 
+                    [
+                        'data' => $res,
+                        'time' => (microtime(true) - $timeStart),
+                   ]
+                ) 
             ) 
         ); 
         // 从结果找
@@ -2065,7 +2078,7 @@ class XinDongService extends ServiceBase
         ); 
 
         $timeEnd = microtime(true); 
-        $execution_time1 = ($timeEnd - $timeStart); 
+        $execution_time1 = (microtime(true) - $timeStart); 
         return [
             'Time' => 'Total Execution Time:'.$execution_time1.' 秒  |',
             'data' => $matchedDatas,
