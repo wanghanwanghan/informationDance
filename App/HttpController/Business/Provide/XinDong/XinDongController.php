@@ -1950,10 +1950,10 @@ class XinDongController extends ProvideBase
                 $sql = "SELECT
                         id,`name`
                     FROM
-                        `company_name_`$i
+                        `company_name_$i`
                     WHERE
                         MATCH(`name`) AGAINST(
-                        '$entName'   in boolean mode
+                        '$entName'    IN NATURAL LANGUAGE MODE
                         )  
                     LIMIT 1";
                 $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
