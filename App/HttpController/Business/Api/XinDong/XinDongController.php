@@ -2504,7 +2504,9 @@ eof;
     {
         
         $entName = $this->getRequestData('entName', '');
-        $retData = (new XinDongService())->matchEntByName($entName);  
+        $type = $this->getRequestData('type', '1');
+        $timeout = $this->getRequestData('timeout', '3');
+        $retData = (new XinDongService())->matchEntByName($entName,$type,$timeout);  
         // CommonService::getInstance()->log4PHP('matchEntByName '.$execution_time1.'秒'); 
         return $this->writeJson(200, [] ,   $retData, '成功', true, []); 
     }
