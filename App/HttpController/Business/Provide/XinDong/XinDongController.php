@@ -1995,7 +1995,7 @@ class XinDongController extends ProvideBase
                         `company_name_$i`
                     WHERE
                         MATCH(`name`) AGAINST(
-                        '$entName'    IN BOOLEAN MODE
+                        '$matchStr'    IN BOOLEAN MODE
                         )  
                     LIMIT 1";
                 $timeStart2 = microtime(true);   
@@ -2028,7 +2028,7 @@ class XinDongController extends ProvideBase
                 $execution_time11
             ];
         });
-        $res = ($csp->exec(2.5));
+        $res = ($csp->exec(3.5));
          
          CommonService::getInstance()->log4PHP('testCsp'.
             json_encode( 
