@@ -557,14 +557,14 @@ return $output;
     private function sealEntDraw($postData){
         $path      = '/open-api/seal/ent/draw';
         $paramData = [
-            'nonTransparentPercent'      => 1,
+            'nonTransparentPercent'      => '1',
             'sealName'        => $postData['entName'],
             'downText' => $postData['socialCredit'],
-            'color' => 0,
-            'height' => 300,
-            'width' => 300,
-            'type' => 0,
-            'hasStar' => 0
+            'color' => '0',
+            'height' => '300',
+            'width' => '300',
+            'type' => '0',
+            'hasStar' => '0'
         ];
         $param     = $this->buildParam($paramData, $path);
         $resp      = (new CoHttpClient())
@@ -580,13 +580,13 @@ return $output;
     private function sealPersonDraw($postData){
         $path      = '/open-api/seal/person/draw';
         $paramData = [
-            'nonTransparentPercent'      => 1,
+            'nonTransparentPercent'      => '1',
             'sealName'        => $postData['legalPerson'],
-            'color' => 0,
-            'height' => 157,
-            'width' => 314,
-            'type' => 0,
-            'hasFrame' => 0
+            'color' => '0',
+            'height' => '157',
+            'width' => '314',
+            'type' => '0',
+            'hasFrame' => '0'
         ];
         $param     = $this->buildParam($paramData, $path);
         $resp      = (new CoHttpClient())
