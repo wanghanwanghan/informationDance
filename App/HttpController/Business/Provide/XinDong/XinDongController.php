@@ -1968,6 +1968,48 @@ class XinDongController extends ProvideBase
                 ];
             }); 
         } 
+        for ($i=0; $i < 7; $i++) { 
+            $csp->add('t_'.$i, function () use ($i,$entName) {
+                
+                $arr = preg_split('/(?<!^)(?!$)/u', $entName );
+                $matchStr = "";
+                if($arr[0] && $arr[1]){
+                    $matchStr .= '+'.$arr[0].$arr[1];
+                }
+                if($arr[2] && $arr[3]){
+                    $matchStr .= '+'.$arr[2].$arr[3];
+                }
+                if($arr[4] && $arr[5]){
+                    $matchStr .= '+'.$arr[4].$arr[5];
+                }
+                if($arr[6] && $arr[7]){
+                    $matchStr .= '+'.$arr[6].$arr[7];
+                }
+                if($arr[8] && $arr[9]){
+                    $matchStr .= '+'.$arr[8].$arr[9];
+                }
+                
+                $sql = "SELECT
+                        id,`name`
+                    FROM
+                        `company_name_$i`
+                    WHERE
+                        MATCH(`name`) AGAINST(
+                        '$entName'    IN BOOLEAN MODE
+                        )  
+                    LIMIT 1";
+                $timeStart2 = microtime(true);   
+                $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+                $timeEnd2 = microtime(true); 
+                $execution_time11 = ($timeEnd2 - $timeStart2); 
+
+                return  [
+                    $list,
+                    $sql,
+                    $execution_time11
+                ];
+            }); 
+        } 
         $csp->add('t00', function () use ($entName) { 
             $sql = "SELECT
                     id,`name`
@@ -1987,50 +2029,13 @@ class XinDongController extends ProvideBase
             ];
         });
         $res = ($csp->exec(4));
-        // $a = [];
-        // $this->csp->add($this->cspKey, function () use (&$a) {
-        //     $res =  (new XinDongService())
-        //     ->testCsp1() ;
-        //     $this->cspData[] = $res;
-        //     return $res ;
-        // });
-        // $newKey=  control::getUuid();
-        // $this->csp->add( $newKey, function () use (&$a) {
-        //     $res =  (new XinDongService())
-        //     ->testCsp2() ;
-        //     $this->cspData[] = $res;
-        //     return $res ;
-        // });
-
-        // $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+         
          CommonService::getInstance()->log4PHP('testCsp'.
             json_encode( 
                 $res
             ) );
 
-        // $res = (new XinDongService())
-        //     ->getEntInfoByName($entNames);
-
          
-
-        // $newres = [
-        //     't1' => [
-        //         'code' => 200,
-        //         'paging' => null,
-        //         'result' => [
-        //              $res
-        //         ],
-        //         'msg' => null,
-        //     ],
-        //     't2' => [
-        //         'code' => 200,
-        //         'paging' => null,
-        //         'result' => [
-        //            $res
-        //         ],
-        //         'msg' => null,
-        //     ],
-        // ];
         $timeEnd = microtime(true); 
         $execution_time1 = ($timeEnd - $timeStart); 
         return $this->writeJson(200, 
