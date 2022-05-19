@@ -232,6 +232,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getInvoice', $prefix . 'getInvoice');//金财发票提取
             $routeCollector->addRoute(['GET', 'POST'], '/invCertification', $prefix . 'invCertification');//金财发票认证
             $routeCollector->addRoute(['GET', 'POST'], '/getEntInfoByName', $prefix . 'getEntInfoByName');//
+            $routeCollector->addRoute(['GET', 'POST'], '/testCsp', $prefix . 'testCsp');//
 
         });
 

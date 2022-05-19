@@ -1932,4 +1932,30 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
 
     }
+
+    function testCsp(): bool
+    {
+         
+        $a = '';
+        $this->csp->add($this->cspKey, function () use ($a) {
+            return (new XinDongService())
+                ->testCsp1() ;
+        });
+        $this->csp->add($this->cspKey, function () use ($a) {
+            return (new XinDongService())
+                ->testCsp2() ;
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+         CommonService::getInstance()->log4PHP('RunFillCompanyName'.
+            json_encode(
+               $res
+            ) );
+
+        // $res = (new XinDongService())
+        //     ->getEntInfoByName($entNames);
+
+        return $this->checkResponse($res);
+
+    }
 }

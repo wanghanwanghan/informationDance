@@ -1923,4 +1923,35 @@ class XinDongService extends ServiceBase
             // ],
         ];
     }
+
+    function testCsp1(): ?array
+    {
+         
+         sleep(1);
+         
+        return [
+            'code' => 200,
+            'paging' => [],
+            'msg' =>  '成功',
+            'result' => [
+                'testCsp1'
+            ],
+        ];
+    } 
+
+    function testCsp2(): ?array
+    {
+         
+         sleep(2);
+         
+        return [
+            'code' => 200,
+            'paging' => [],
+            'msg' =>  '成功',
+            'result' => [
+                'testCsp2'
+            ],
+        ];
+    } 
+
 }
