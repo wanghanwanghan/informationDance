@@ -1867,6 +1867,7 @@ class XinDongService extends ServiceBase
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         
         CommonService::getInstance()->log4PHP('matchAainstComName sql'.$sql ); 
+        CommonService::getInstance()->log4PHP('matchAainstComName sql'.json_encode($list) ); 
          
         return $list;
 
