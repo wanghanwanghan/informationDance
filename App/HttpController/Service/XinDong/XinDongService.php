@@ -1999,7 +1999,7 @@ class XinDongService extends ServiceBase
     
 
     // $matchType :1 boolean  2:lanague
-    function matchEntByName($entName, $matchType = 1, $timeOut = 3.5): array
+    function matchEntByName($entName, $matchType = 1, $timeOut = 2.5): array
     {
         $timeStart = microtime(true);    
   
@@ -2044,12 +2044,10 @@ class XinDongService extends ServiceBase
         $res = ($csp->exec($timeOut)); 
         CommonService::getInstance()->log4PHP('从db找 res'.
             json_encode( 
-                json_encode( 
-                    [
-                        'data' => $res,
-                        'time' => (microtime(true) - $timeStart),
-                   ]
-                ) 
+                [
+                    'data' => $res,
+                    'time' => (microtime(true) - $timeStart),
+               ]
             ) 
         ); 
         // 从结果找
@@ -2061,6 +2059,11 @@ class XinDongService extends ServiceBase
                 $dataItem['type'] == 'equal' &&
                 !empty($dataItem['data'])
             ){
+                CommonService::getInstance()->log4PHP('精确匹配到了'.
+                json_encode( 
+                    $dataItem['data'][0]
+                ) 
+            ); 
                 return $dataItem['data'][0];
             } 
             foreach( $dataItem['data'] as $item)
