@@ -88,13 +88,13 @@ class RunFillCompanyName extends AbstractCronTask
             $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
             $minId = 0;
             // CommonService::getInstance()->log4PHP('RunFillCompanyName'.
-            json_encode(
-                [
+            // json_encode(
+            //     [
                     
-                    'list' => $list, 
-                    'sql' => $sql,  
-                ]
-            ) ); 
+            //         'list' => $list, 
+            //         'sql' => $sql,  
+            //     ]
+            // ) ); 
             if(!empty($list)){
                 $minId = intval($list[0]['id']); 
             }
