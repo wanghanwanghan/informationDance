@@ -1953,8 +1953,7 @@ class XinDongController extends ProvideBase
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
          CommonService::getInstance()->log4PHP('testCsp'.
-            json_encode(
-                $this->cspData,
+            json_encode( 
                 $res
             ) );
 

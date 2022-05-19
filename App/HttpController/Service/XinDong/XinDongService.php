@@ -1927,7 +1927,7 @@ class XinDongService extends ServiceBase
     function testCsp1(): ?array
     {
          
-         sleep(1);
+         sleep(5);
          
         return [
             'code' => 200,
@@ -1942,7 +1942,7 @@ class XinDongService extends ServiceBase
     function testCsp2(): ?array
     {
          
-         sleep(2);
+         sleep(5);
          
         return [
             'code' => 200,
