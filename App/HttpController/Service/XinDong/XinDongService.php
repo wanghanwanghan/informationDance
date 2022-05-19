@@ -2091,11 +2091,9 @@ class XinDongService extends ServiceBase
         //根据匹配度 返回最高的一个
         ksort($matchedDatas);
         $resData =  end($matchedDatas);
-        CommonService::getInstance()->log4PHP('从db找 match'.
+        CommonService::getInstance()->log4PHP(' 根据匹配度  '.
             json_encode( 
-                $matchedDatas,
-                $dbres,
-                $resData
+                $matchedDatas 
             ) 
         ); 
 
