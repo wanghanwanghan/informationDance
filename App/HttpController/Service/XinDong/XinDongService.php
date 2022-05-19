@@ -26,6 +26,7 @@ use EasySwoole\ElasticSearch\ElasticSearch;
 use EasySwoole\ElasticSearch\RequestBean\Search;
 use App\HttpController\Models\Api\UserBusinessOpportunity;
 use App\HttpController\Models\RDS3\Company;
+use static;
 
 class XinDongService extends ServiceBase
 {
@@ -1982,18 +1983,17 @@ class XinDongService extends ServiceBase
         return $datas;
     }
 
-    function checkSimilar($var_1, $var_2){
+    function getSimilarPercent($var_1, $var_2){
         similar_text($var_1, $var_2, $percent);
         return number_format($percent);
     }
+ 
 
-    function getMatchedEntName($datas,$name){
-        foreach($datas as $data){
-            $percent = $this->checkSimilar($data['name'], $name);
-            if($percent >= 85 ){
-                return $data ;
-            }
-        } 
+    function checkIfSimilar($name1,$name2){
+        $percent = $this->getSimilarPercent($name1,$name2);
+        if($percent >= 85 ){
+            return $data ;
+        }
         return false ;
     }
     
@@ -2004,27 +2004,29 @@ class XinDongService extends ServiceBase
         $timeStart = microtime(true);    
   
         //先从es match   
-        $res = $this->matchEntByNameMatchByEs($entName); 
+        $esRes = $this->matchEntByNameMatchByEs($entName); 
         CommonService::getInstance()->log4PHP('es match'.
             json_encode( 
                [
-                    'data' => $res,
+                    'data' => $esRes,
                     'time' => (microtime(true) - $timeStart),
                ]
             ) 
         ); 
         // 如果es 就匹配到了 直接返回 
-        if($matchedItem = $this->getMatchedEntName($res,$entName)){
-            CommonService::getInstance()->log4PHP('es match ok , return '.
-                json_encode( 
-                    [
-                        'data' => $matchedItem,
-                        'time' => (microtime(true) - $timeStart),
-                   ]
-                ) 
-            ); 
-            return  $matchedItem;
-        }
+        foreach($esRes as $data){ 
+            if( $this->checkIfSimilar($data['name'], $entName) ){
+                CommonService::getInstance()->log4PHP('es match ok , return '.
+                    json_encode( 
+                            [
+                                'data' => $matchedItem,
+                                'time' => (microtime(true) - $timeStart),
+                        ]
+                        ) 
+                    ); 
+                return $data ;
+            }
+        }   
 
         // es木有的 从 db找： 分词全文匹配+精确
         $csp = new \EasySwoole\Component\Csp(); 
@@ -2041,11 +2043,11 @@ class XinDongService extends ServiceBase
         // 精确找 
         $this->matchEntByNameEqualMatchByName($csp,$entName);
         
-        $res = ($csp->exec($timeOut)); 
+        $dbres = ($csp->exec($timeOut)); 
         CommonService::getInstance()->log4PHP('从db找 res'.
             json_encode( 
                 [
-                    'data' => $res,
+                    'data' => $dbres,
                     'time' => (microtime(true) - $timeStart),
                ]
             ) 
@@ -2053,7 +2055,7 @@ class XinDongService extends ServiceBase
         // 从结果找
         $matchedDatas = [];
         // $matchedData = [];
-        foreach($res as $dataItem){
+        foreach($dbres as $dataItem){
             // 如果精确匹配到了 优先使用精确值
             if(
                 $dataItem['type'] == 'equal' &&
@@ -2065,17 +2067,36 @@ class XinDongService extends ServiceBase
                 ) 
             ); 
                 return $dataItem['data'][0];
-            } 
-            foreach( $dataItem['data'] as $item)
-            $matchedDatas[] = [
-                'id' => $item['id'] ,
-                'name' => $item['name'] ,
-            ];
+            }  
         } 
- 
+
+        // 剩余的 按照相似度排序 然后返回相似度最高的
+        foreach($esRes as $dataItem){  
+            $percent = $this->getSimilarPercent($dataItem['name'], $entName) ;
+            $matchedDatas[$percent] = [
+                'id' => $dataItem['id'] ,
+                'name' => $dataItem['name'] ,
+            ];
+        }
+
+        foreach($dbres as $dataItem){  
+            foreach( $dataItem['data'] as $item){
+                $percent = $this->getSimilarPercent($dataItem['name'], $entName) ;
+                $matchedDatas[$percent] = [
+                    'id' => $item['id'] ,
+                    'name' => $item['name'] ,
+                ];
+            }
+        } 
+        
+        //根据匹配度 返回最高的一个
+        ksort($matchedDatas);
+        $resData =  end($matchedDatas);
         CommonService::getInstance()->log4PHP('从db找 match'.
             json_encode( 
-                $matchedDatas
+                $matchedDatas,
+                $dbres,
+                $resData
             ) 
         ); 
 
@@ -2083,8 +2104,8 @@ class XinDongService extends ServiceBase
         $execution_time1 = (microtime(true) - $timeStart); 
         return [
             'Time' => 'Total Execution Time:'.$execution_time1.' 秒  |',
-            'data' => $matchedDatas,
+            'data' => $resData,
         ];  
-    }
+    } 
 
 }
