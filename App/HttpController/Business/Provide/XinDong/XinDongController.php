@@ -1946,7 +1946,7 @@ class XinDongController extends ProvideBase
 
         for ($i=0; $i < 7; $i++) { 
             $csp->add('t'.$i, function () use ($i,$entName) {
-                \co::sleep(2);
+                
                 $sql = "SELECT
                         id,`name`
                     FROM
@@ -1962,49 +1962,22 @@ class XinDongController extends ProvideBase
                     $sql
                 ];
             }); 
-        }
-
-        // for ($i=1; $i < 8; $i++) { 
-        //     $num = $i-1;
-        //     $csp->add('t'.$num, function ($num) {
-        //         \co::sleep(2);
-        //         $sql = "SELECT
-        //                 id,`name`
-        //             FROM
-        //                 $num
-        //             WHERE
-        //                 MATCH(`name`) AGAINST(
-        //                 '$num'   in boolean mode
-        //                 )  
-        //             LIMIT 1";
-        //         return 't'.$num.' result '.$sql;
-        //     });
-             
-        // }
-
-
-        // for ($i=0; $i < 7; $i++) { 
-        //     $csp->add('t'.$i, function ($entName,$i) {
-        //         $tableName = "company_name_".$i;
-        //         sleep(2);
-        //         $sql = "SELECT
-        //                     id,`name`
-        //                 FROM
-        //                     $tableName
-        //                 WHERE
-        //                     MATCH(`name`) AGAINST(
-        //                     '$entName'   in boolean mode
-        //                     )  
-        //                 LIMIT 1";
-        //         CommonService::getInstance()->log4PHP('matchFuzzyNameByLanguageMode'.$sql ); 
-        //         return [$sql];  
-        //     });
-             
-        // }
-
-        
-    
-        $res = ($csp->exec(3.8));
+        } 
+        $csp->add('t00', function () use ($entName) { 
+            $sql = "SELECT
+                    id,`name`
+                FROM
+                    `company`
+                WHERE
+                     `name` = '$entName'
+                LIMIT 1";
+            $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
+            return  [
+                $list,
+                $sql
+            ];
+        });
+        $res = ($csp->exec(5));
         // $a = [];
         // $this->csp->add($this->cspKey, function () use (&$a) {
         //     $res =  (new XinDongService())
