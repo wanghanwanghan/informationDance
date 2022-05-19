@@ -87,7 +87,7 @@ class RunFillCompanyName extends AbstractCronTask
         // $tableName = end($list)['Tables_in_mrxd (company_name_%)'];
         // CommonService::getInstance()->log4PHP($sql);
         // CommonService::getInstance()->log4PHP(json_encode($tableName));
-        $tableName = 'company_name_2';
+        $tableName = 'company_name_3';
         for($i=1; $i<=200; $i++){
             // $size = 500 ;
             $size = 100 ;
