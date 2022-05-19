@@ -1892,4 +1892,44 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
 
     }
+
+    function matchCompanyByFuzzyName(): bool
+    {
+        $entName =  $this->getRequestData('entName'); 
+        if(!$entName){
+            return  $this->writeJson(201, null, null, '参数缺失(企业名称)');
+        }
+
+        $entNames = [];
+        $entNames[$entName] = $entName;
+
+        // 如果包含中文或者英文括号  需要中英文括号都查下
+        if (
+            strpos($entName, '）') !== false &&
+            strpos($entName, '（') !== false 
+        ) {
+            $newEntName =  str_replace(['（','）'], ['(',')'], $entName);
+            $entNames[$newEntName] = $newEntName;
+        } 
+
+        if (
+            strpos($entName, ')') !== false &&
+            strpos($entName, '(') !== false 
+        ) {
+            $newEntName =  str_replace(['(',')'], ['（','）'],  $entName);
+            $entNames[$newEntName] = $newEntName;
+        } 
+
+        $this->csp->add($this->cspKey, function () use ($entNames) {
+            return (new XinDongService())
+                ->getEntInfoByName($entNames) ;
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        // $res = (new XinDongService())
+        //     ->getEntInfoByName($entNames);
+
+        return $this->checkResponse($res);
+
+    }
 }

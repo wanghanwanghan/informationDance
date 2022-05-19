@@ -2461,4 +2461,49 @@ eof;
         ] 
        , $retData, '成功', true, []); 
     } 
+
+    function matchFuzzyNameByLanguageMode(): bool
+    {
+        $timeStart = microtime(true);  
+        $entName = $this->getRequestData('entName', '');
+
+        $retData =  (new XinDongService())
+                    ->matchFuzzyNameByLanguageMode($entName ); 
+
+        $timeEnd = microtime(true); 
+        $execution_time1 = ($timeEnd - $timeStart);
+        $execution_time2 = ($timeEnd - $timeStart)/60;
+       
+        return $this->writeJson(200, 
+        [
+          
+        ] 
+       , [
+           'Time' => 'Total Execution Time:'.$execution_time1.' 秒  |'.$execution_time2. '分',
+           'data' => $retData,
+       ], '成功', true, []); 
+    } 
+
+    function matchFuzzyNameByBooleanMode(): bool
+    {
+        $timeStart = microtime(true);  
+        $entName = $this->getRequestData('entName', '');
+
+        $retData =  (new XinDongService())
+                    ->matchFuzzyNameByBooleanMode($entName ); 
+        
+        $timeEnd = microtime(true); 
+        $execution_time1 = ($timeEnd - $timeStart);
+        $execution_time2 = ($timeEnd - $timeStart)/60;
+       
+        return $this->writeJson(200, 
+        [
+          
+        ] 
+       , [
+           'Time' => 'Total Execution Time:'.$execution_time1.' 秒  |'.$execution_time2. '分',
+           'data' => $retData,
+       ], '成功', true, []); 
+    } 
+
 }

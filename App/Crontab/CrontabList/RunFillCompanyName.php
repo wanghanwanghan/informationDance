@@ -80,9 +80,10 @@ class RunFillCompanyName extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
-        
-        for($i=1;$i<=2000;$i++){
-            $size = 500 ;
+        // return true ;
+        for($i=1; $i<=200; $i++){
+            // $size = 500 ;
+            $size = 100 ;
             $sql = " select id from  `company_name`  order by id  desc limit 1 ";
             $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
             $minId = 0;
@@ -123,7 +124,7 @@ class RunFillCompanyName extends AbstractCronTask
             $queryBuilder->raw($newsql);
             $res = DbManager::getInstance()
                 ->query($queryBuilder, true, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-            sleep(0.5);
+            sleep(1);
         } 
         return true ;  
     }
