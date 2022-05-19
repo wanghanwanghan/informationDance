@@ -1956,10 +1956,15 @@ class XinDongController extends ProvideBase
                         '$entName'    IN NATURAL LANGUAGE MODE
                         )  
                     LIMIT 1";
+                $timeStart2 = microtime(true);   
                 $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+                $timeEnd2 = microtime(true); 
+                $execution_time11 = ($timeEnd2 - $timeStart2); 
+
                 return  [
                     $list,
-                    $sql
+                    $sql,
+                    $execution_time11
                 ];
             }); 
         } 
@@ -1971,13 +1976,17 @@ class XinDongController extends ProvideBase
                 WHERE
                      `name` = '$entName'
                 LIMIT 1";
+            $timeStart2 = microtime(true);   
             $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
+            $timeEnd2 = microtime(true); 
+            $execution_time11 = ($timeEnd2 - $timeStart2); 
             return  [
                 $list,
-                $sql
+                $sql,
+                $execution_time11
             ];
         });
-        $res = ($csp->exec(5));
+        $res = ($csp->exec(4));
         // $a = [];
         // $this->csp->add($this->cspKey, function () use (&$a) {
         //     $res =  (new XinDongService())
