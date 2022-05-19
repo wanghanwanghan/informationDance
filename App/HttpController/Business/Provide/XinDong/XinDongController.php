@@ -23,7 +23,7 @@ use Carbon\Carbon;
 use EasySwoole\Redis\Redis;
 use wanghanwanghan\someUtils\control;
 use function GuzzleHttp\Psr7\uri_for;
-
+use EasySwoole\Component\Csp;
 class XinDongController extends ProvideBase
 {
     function onRequest(?string $action): ?bool
@@ -1935,7 +1935,18 @@ class XinDongController extends ProvideBase
 
     function testCsp(): bool
     {
-         
+          
+        $csp = new \EasySwoole\Component\Csp();
+        $csp->add('t1', function () {
+            \co::sleep(5);
+            return 't1 result';
+        });
+        $csp->add('t2', function () {
+            \co::sleep(5);
+            return 't2 result';
+        });
+    
+        var_dump($csp->exec());die;
         $a = [];
         $this->csp->add($this->cspKey, function () use (&$a) {
             $res =  (new XinDongService())
