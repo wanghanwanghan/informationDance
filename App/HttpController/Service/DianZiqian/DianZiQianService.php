@@ -583,7 +583,7 @@ return $output;
             'nonTransparentPercent'      => '100',
             'sealName'        => $postData['legalPerson'],
             'color' => '0',
-            'height' => '157',
+            'height' => '100',
             'width' => '314',
             'type' => '0',
             'hasFrame' => '0'
