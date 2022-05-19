@@ -112,7 +112,7 @@ class RunCompleteCompanyData extends AbstractCronTask
         
         // 找到客户名单
         $files = glob($this->workPath.'customer_*.xlsx');
-        CommonService::getInstance()->log4PHP('RunCompleteCompanyData files '.json_encode($files) );
+        // CommonService::getInstance()->log4PHP('RunCompleteCompanyData files '.json_encode($files) );
         if(empty($files)){
             return true;
         }
@@ -125,7 +125,7 @@ class RunCompleteCompanyData extends AbstractCronTask
         $excelDatas = $this->getYieldData($file);
         
         $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
-        CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用1 '.$memory .' '.$file );
+        // CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用1 '.$memory .' '.$file );
 
         //写到csv里
         $fileName = pathinfo($file)['filename'];
