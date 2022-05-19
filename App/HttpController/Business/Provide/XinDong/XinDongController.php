@@ -1941,13 +1941,13 @@ class XinDongController extends ProvideBase
         }
         $csp = new \EasySwoole\Component\Csp(); 
 
-        for ($i=1; $i < 50; $i++) { 
-            $csp->add('t'.$i, function ($i) {
-                \co::sleep(2);
-                return 't'.$i.' result';
-            });
+        // for ($i=1; $i < 50; $i++) { 
+        //     $csp->add('t'.$i, function ($i) {
+        //         \co::sleep(2);
+        //         return 't'.$i.' result';
+        //     });
              
-        }
+        // }
 
         for ($i=1; $i < 8; $i++) { 
             $num = $i-1;
@@ -1956,10 +1956,10 @@ class XinDongController extends ProvideBase
                 $sql = "SELECT
                         id,`name`
                     FROM
-                        $tableName
+                        $num
                     WHERE
                         MATCH(`name`) AGAINST(
-                        '$entName'   in boolean mode
+                        '$num'   in boolean mode
                         )  
                     LIMIT 1";
                 return 't'.$num.' result '.$sql;
