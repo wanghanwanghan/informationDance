@@ -1944,30 +1944,30 @@ class XinDongController extends ProvideBase
 
         $csp = new \EasySwoole\Component\Csp(); 
 
-        for ($i=0; $i < 7; $i++) { 
-            $csp->add('t'.$i, function () use ($i,$entName) {
+        // for ($i=0; $i < 7; $i++) { 
+        //     $csp->add('t'.$i, function () use ($i,$entName) {
                 
-                $sql = "SELECT
-                        id,`name`
-                    FROM
-                        `company_name_$i`
-                    WHERE
-                        MATCH(`name`) AGAINST(
-                        '$entName'    IN NATURAL LANGUAGE MODE
-                        )  
-                    LIMIT 1";
-                $timeStart2 = microtime(true);   
-                $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-                $timeEnd2 = microtime(true); 
-                $execution_time11 = ($timeEnd2 - $timeStart2); 
+        //         $sql = "SELECT
+        //                 id,`name`
+        //             FROM
+        //                 `company_name_$i`
+        //             WHERE
+        //                 MATCH(`name`) AGAINST(
+        //                 '$entName'    IN NATURAL LANGUAGE MODE
+        //                 )  
+        //             LIMIT 1";
+        //         $timeStart2 = microtime(true);   
+        //         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        //         $timeEnd2 = microtime(true); 
+        //         $execution_time11 = ($timeEnd2 - $timeStart2); 
 
-                return  [
-                    $list,
-                    $sql,
-                    $execution_time11
-                ];
-            }); 
-        } 
+        //         return  [
+        //             $list,
+        //             $sql,
+        //             $execution_time11
+        //         ];
+        //     }); 
+        // } 
         for ($i=0; $i < 7; $i++) { 
             $csp->add('t_'.$i, function () use ($i,$entName) {
                 
@@ -2028,7 +2028,7 @@ class XinDongController extends ProvideBase
                 $execution_time11
             ];
         });
-        $res = ($csp->exec(4));
+        $res = ($csp->exec(2.5));
          
          CommonService::getInstance()->log4PHP('testCsp'.
             json_encode( 
