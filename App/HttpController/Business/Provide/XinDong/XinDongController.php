@@ -1899,7 +1899,7 @@ class XinDongController extends ProvideBase
         if(!$entName){
             return  $this->writeJson(201, null, null, '参数缺失(企业名称)');
         }
-
+        
         $entNames = [];
         $entNames[$entName] = $entName;
 
