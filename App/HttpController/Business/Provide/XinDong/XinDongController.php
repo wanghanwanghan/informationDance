@@ -1937,12 +1937,12 @@ class XinDongController extends ProvideBase
     {
          
         $a = [];
-        $this->csp->add($this->cspKey, function () use ($a) {
+        $this->csp->add($this->cspKey, function () use (&$a) {
             $a[] =  (new XinDongService())
             ->testCsp1() ;
             return $a;
         });
-        $this->csp->add($this->cspKey, function () use ($a) {
+        $this->csp->add($this->cspKey, function () use (&$a) {
             $a[] =  (new XinDongService())
             ->testCsp2() ;
             return (new XinDongService())
@@ -1950,7 +1950,7 @@ class XinDongController extends ProvideBase
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-         CommonService::getInstance()->log4PHP('RunFillCompanyName'.
+         CommonService::getInstance()->log4PHP('testCsp'.
             json_encode(
                $a
             ) );
