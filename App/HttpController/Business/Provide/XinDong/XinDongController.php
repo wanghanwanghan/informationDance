@@ -1936,20 +1936,23 @@ class XinDongController extends ProvideBase
     function testCsp(): bool
     {
          
-        $a = '';
+        $a = [];
         $this->csp->add($this->cspKey, function () use ($a) {
-            return (new XinDongService())
-                ->testCsp1() ;
+            $a[] =  (new XinDongService())
+            ->testCsp1() ;
+            return $a;
         });
         $this->csp->add($this->cspKey, function () use ($a) {
+            $a[] =  (new XinDongService())
+            ->testCsp2() ;
             return (new XinDongService())
-                ->testCsp2() ;
+            ->testCsp2() ;
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
          CommonService::getInstance()->log4PHP('RunFillCompanyName'.
             json_encode(
-               $res
+               $a
             ) );
 
         // $res = (new XinDongService())
