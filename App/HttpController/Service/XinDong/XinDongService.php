@@ -1972,7 +1972,9 @@ class XinDongService extends ServiceBase
  
         $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
         $responseArr = @json_decode($responseJson,true);  
-        
+        CommonService::getInstance()->log4PHP('matchEntByNameMatchByEs '.
+            $responseJson
+        ); 
         $datas = [];
         foreach($responseArr['hits']['hits'] as $item){
             $datas[] = [
