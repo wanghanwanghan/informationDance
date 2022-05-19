@@ -2461,4 +2461,22 @@ eof;
         ] 
        , $retData, '成功', true, []); 
     } 
+
+    function matchFuzzyNameByLanguageMode(): bool
+    {
+        $timeStart = microtime(true);  
+        $entName = $this->getRequestData('entName', '');
+
+        $retData =  (new XinDongService())
+                    ->matchFuzzyNameByLanguageMode($entName ); 
+
+        $timeEnd = microtime(true); 
+        $execution_time = ($timeEnd - $timeStart)/60;
+       
+        return $this->writeJson(200, 
+        [
+            'Total Execution Time:'.$execution_time.' Mins'
+        ] 
+       , $retData, '成功', true, []); 
+    } 
 }

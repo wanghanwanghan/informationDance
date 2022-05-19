@@ -1849,17 +1849,27 @@ class XinDongService extends ServiceBase
     function matchFuzzyNameByLanguageMode($entNames): ?array
     {
          
-         
-        $retData  = CompanyName::create()
-            ->where('name', array_values($entNames),'IN')
-            ->field(["id", "name", "company_org_type","reg_location","estiblish_time"])
-            ->get(); 
+        $sql = "SELECT
+                    id
+                FROM
+                    company_name
+                WHERE
+                    MATCH(`name`) AGAINST(
+                    '$entNames'  IN NATURAL LANGUAGE MODE
+                    )  
+                LIMIT 1";
+        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        
+        CommonService::getInstance()->log4PHP('matchFuzzyNameByLanguageMode'.$sql ); 
          
         return [
             'code' => 200,
             'paging' => [],
             'msg' =>  '成功',
-            'result' => $retData,
+            'result' => [
+                'sql' => $sql,
+                'list' => $list,
+            ],
         ];
     } 
 }
