@@ -1935,6 +1935,8 @@ class XinDongController extends ProvideBase
 
     function testCsp(): bool
     {
+        $timeStart = microtime(true);   
+
         $entName =  $this->getRequestData('entName'); 
         if(!$entName){
             return  $this->writeJson(201, null, null, '参数缺失(企业名称)');
@@ -1954,7 +1956,11 @@ class XinDongController extends ProvideBase
                         '$entName'   in boolean mode
                         )  
                     LIMIT 1";
-                return 't'.$i.' '.$sql;
+                $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+                return  [
+                    $list,
+                    $sql
+                ];
             }); 
         }
 
@@ -2025,26 +2031,35 @@ class XinDongController extends ProvideBase
 
          
 
-        $newres = [
-            't1' => [
-                'code' => 200,
-                'paging' => null,
-                'result' => [
-                     $res
-                ],
-                'msg' => null,
-            ],
-            't2' => [
-                'code' => 200,
-                'paging' => null,
-                'result' => [
-                   $res
-                ],
-                'msg' => null,
-            ],
-        ];
-
-        return $this->checkResponse($newres);
+        // $newres = [
+        //     't1' => [
+        //         'code' => 200,
+        //         'paging' => null,
+        //         'result' => [
+        //              $res
+        //         ],
+        //         'msg' => null,
+        //     ],
+        //     't2' => [
+        //         'code' => 200,
+        //         'paging' => null,
+        //         'result' => [
+        //            $res
+        //         ],
+        //         'msg' => null,
+        //     ],
+        // ];
+        $timeEnd = microtime(true); 
+        $execution_time1 = ($timeEnd - $timeStart); 
+        return $this->writeJson(200, 
+        [
+          
+        ] 
+       , [
+           'Time' => 'Total Execution Time:'.$execution_time1.' 秒  |',
+           'data' => $res,
+       ], '成功', true, []); 
+        // return $this->checkResponse($newres);
 
     }
 }
