@@ -1946,23 +1946,23 @@ class XinDongController extends ProvideBase
             return 't2 result';
         });
     
-        var_dump($csp->exec());die;
-        $a = [];
-        $this->csp->add($this->cspKey, function () use (&$a) {
-            $res =  (new XinDongService())
-            ->testCsp1() ;
-            $this->cspData[] = $res;
-            return $res ;
-        });
-        $newKey=  control::getUuid();
-        $this->csp->add( $newKey, function () use (&$a) {
-            $res =  (new XinDongService())
-            ->testCsp2() ;
-            $this->cspData[] = $res;
-            return $res ;
-        });
+        $res = ($csp->exec());
+        // $a = [];
+        // $this->csp->add($this->cspKey, function () use (&$a) {
+        //     $res =  (new XinDongService())
+        //     ->testCsp1() ;
+        //     $this->cspData[] = $res;
+        //     return $res ;
+        // });
+        // $newKey=  control::getUuid();
+        // $this->csp->add( $newKey, function () use (&$a) {
+        //     $res =  (new XinDongService())
+        //     ->testCsp2() ;
+        //     $this->cspData[] = $res;
+        //     return $res ;
+        // });
 
-        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        // $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
          CommonService::getInstance()->log4PHP('testCsp'.
             json_encode( 
                 $res
@@ -1974,7 +1974,7 @@ class XinDongController extends ProvideBase
          
 
         $newres = [
-            $this->cspKey => [
+            't1' => [
                 'code' => 200,
                 'paging' => null,
                 'result' => [
@@ -1982,7 +1982,7 @@ class XinDongController extends ProvideBase
                 ],
                 'msg' => null,
             ],
-            $newKey = [
+            't2' => [
                 'code' => 200,
                 'paging' => null,
                 'result' => [
