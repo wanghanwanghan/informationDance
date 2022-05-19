@@ -1919,13 +1919,13 @@ class XinDongService extends ServiceBase
         CommonService::getInstance()->log4PHP('matchFuzzyNameByLanguageMode'.$sql ); 
          
         return [
-            'code' => 200,
-            'paging' => [],
-            'msg' =>  '成功',
-            'result' => [
+            // 'code' => 200,
+            // 'paging' => [],
+            // 'msg' =>  '成功',
+            // 'result' => [
                 'sql' => $sql,
-                'list' => $list,
-            ],
+                'data' => $list,
+            // ],
         ];
     }
 }
