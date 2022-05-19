@@ -2444,11 +2444,11 @@ eof;
         if( $offset < 0 ) $offset = 0;
 
         $retData = array_slice( $retData, $offset, $size ); 
-        CommonService::getInstance()->log4PHP(
-            'getEntLianXi '.json_encode(
-                $retData
-            )
-        );
+        // CommonService::getInstance()->log4PHP(
+        //     'getEntLianXi '.json_encode(
+        //         $retData
+        //     )
+        // );
         $retData = LongXinService::complementEntLianXiMobileState($retData);
         $retData = LongXinService::complementEntLianXiPosition($retData, $postData['entName']); 
         
@@ -2473,7 +2473,8 @@ eof;
         $timeEnd = microtime(true); 
         $execution_time1 = ($timeEnd - $timeStart);
         $execution_time2 = ($timeEnd - $timeStart)/60;
-       
+        CommonService::getInstance()->log4PHP('matchFuzzyNameByLanguageMode Total Execution Time'.$execution_time1.'秒'); 
+
         return $this->writeJson(200, 
         [
           
@@ -2491,11 +2492,11 @@ eof;
 
         $retData =  (new XinDongService())
                     ->matchFuzzyNameByBooleanMode($entName ); 
-        
+
         $timeEnd = microtime(true); 
         $execution_time1 = ($timeEnd - $timeStart);
         $execution_time2 = ($timeEnd - $timeStart)/60;
-       
+        CommonService::getInstance()->log4PHP('matchFuzzyNameByBooleanMode Total Execution Time'.$execution_time1.'秒'); 
         return $this->writeJson(200, 
         [
           
