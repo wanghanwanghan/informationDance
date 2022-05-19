@@ -1899,114 +1899,177 @@ class XinDongService extends ServiceBase
         return  $matchStr;
     }
 
-    function matchEntByName($entName): array
-    {
-        $timeStart = microtime(true);    
-
-        $csp = new \EasySwoole\Component\Csp(); 
-
-        for ($i=0; $i < 7; $i++) { 
-            $csp->add('t_'.$i, function () use ($i,$entName) {
-                
-                $arr = preg_split('/(?<!^)(?!$)/u', $entName );
-                $matchStr = "";
-                if($arr[0] && $arr[1]){
-                    $matchStr .= '+'.$arr[0].$arr[1];
-                }
-                if($arr[2] && $arr[3]){
-                    $matchStr .= '+'.$arr[2].$arr[3];
-                }
-                if($arr[4] && $arr[5]){
-                    $matchStr .= '+'.$arr[4].$arr[5];
-                }
-                if($arr[6] && $arr[7]){
-                    $matchStr .= '+'.$arr[6].$arr[7];
-                }
-                if($arr[8] && $arr[9]){
-                    $matchStr .= '+'.$arr[8].$arr[9];
-                }
-                
-                $sql = "SELECT
-                        id,`name`
-                    FROM
-                        `company_name_$i`
-                    WHERE
-                        MATCH(`name`) AGAINST(
-                        '$matchStr'    IN BOOLEAN MODE
-                        )  
-                    LIMIT 1";
-                $timeStart2 = microtime(true);   
-                $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+    function matchEntByNameMatchByBooleanMode($csp,$entName){
+        foreach(
+            CompanyName::getAllTables() as $tableName
+        ){
+            $csp->add('BOOLEAN_MODE_'.$tableName, function () use ($entName, $tableName) {
+                $timeStart2 = microtime(true); 
+                $matchStr = (new XinDongService())->splitChineseNameForMatchAgainst($entName);
+                $retData =  (new XinDongService())
+                            ->matchAainstEntName($matchStr," IN BOOLEAN MODE ", $tableName );  
                 $timeEnd2 = microtime(true); 
-                $execution_time11 = ($timeEnd2 - $timeStart2); 
-
-                return  [
-                    $list,
-                    $sql,
-                    $execution_time11
+                $execution_time11 = ($timeEnd2 - $timeStart2);  
+                return  [ 
+                    'data' => $retData,
+                    'type' => 'Boolean',
+                    'time' => $execution_time11
                 ];
             }); 
-        } 
-        $csp->add('t00', function () use ($entName) { 
-            $sql = "SELECT
-                    id,`name`
-                FROM
-                    `company`
-                WHERE
-                     `name` = '$entName'
-                LIMIT 1";
-            $timeStart2 = microtime(true);   
+        }
+    }
+
+    function matchEntByNameMatchByLanguageMode($csp,$entName){
+        foreach(
+            CompanyName::getAllTables() as $tableName
+        ){
+            foreach(
+                CompanyName::getAllTables() as $tableName
+            ){
+                $csp->add('NATURAL_LANGUAGE_MODE_'.$tableName, function () use ($entName, $tableName) {
+                    $timeStart2 = microtime(true);  
+                    $retData =  (new XinDongService())
+                                ->matchAainstEntName($entName, " IN NATURAL LANGUAGE MODE  " ,$tableName);  
+                    $timeEnd2 = microtime(true); 
+                    $execution_time11 = ($timeEnd2 - $timeStart2);  
+                    return  [ 
+                        'data' => $retData,
+                        'type' => 'Language',
+                        'time' => $execution_time11
+                    ];
+                }); 
+            }
+        }
+    }
+
+    function matchEntByNameEqualMatchByName($csp,$entName){
+        $csp->add('company_match', function () use ($entName) { 
+            $timeStart2 = microtime(true);  
+            $sql = "SELECT  id,`name` FROM  `company`  WHERE   `name` = '$entName' LIMIT 1"; 
             $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
             $timeEnd2 = microtime(true); 
             $execution_time11 = ($timeEnd2 - $timeStart2); 
             return  [
-                $list,
-                $sql,
-                $execution_time11
+                'data' => $list,
+                'type' => 'equal',
+                'time' => $execution_time11
             ];
-        });
+        }); 
+    }
 
-
-        // for ($i=0; $i < 7; $i++) { 
-        //     $csp->add('t'.$i, function () use ($i,$entName) {
-                
-        //         $sql = "SELECT
-        //                 id,`name`
-        //             FROM
-        //                 `company_name_$i`
-        //             WHERE
-        //                 MATCH(`name`) AGAINST(
-        //                 '$entName'    IN NATURAL LANGUAGE MODE
-        //                 )  
-        //             LIMIT 1";
-        //         $timeStart2 = microtime(true);   
-        //         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-        //         $timeEnd2 = microtime(true); 
-        //         $execution_time11 = ($timeEnd2 - $timeStart2); 
-
-        //         return  [
-        //             $list,
-        //             $sql,
-        //             $execution_time11
-        //         ];
-        //     }); 
-        // } 
+    function matchEntByNameMatchByEs($entName,$size = 2, $page = 1){
+        $ElasticSearchService = new ElasticSearchService(); 
+        $matchedCnames = [
+            [ 'field'=>'name' ,'value'=> $entName], 
+        ];
+        $ElasticSearchService->addMustShouldPhraseQueryV2($matchedCnames) ;   
+        $offset  =  ($page-1)*$size;
+        $ElasticSearchService->addSize($size) ;
+        $ElasticSearchService->addFrom($offset) ;
+        // $ElasticSearchService->addSort('xd_id', 'desc') ;
+ 
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
+        $responseArr = @json_decode($responseJson,true);  
         
-        $res = ($csp->exec(3.5));
-         
-         CommonService::getInstance()->log4PHP('testCsp'.
+        $datas = [];
+        foreach($responseArr['hits']['hits'] as $item){
+            $datas[] = [
+                'id' => $item['source']['xd_id'],
+                'name' => $item['source']['name'],
+            ]; 
+        }
+        return $datas;
+    }
+
+    function checkSimilar($var_1, $var_2){
+        similar_text($var_1, $var_2, $percent);
+        return number_format($percent);
+    }
+
+    function getMatchedEntName($datas,$name){
+        foreach($datas as $data){
+            $percent = $this->checkSimilar($data['name'], $name);
+            if($percent >= 85 ){
+                return $data ;
+            }
+        } 
+        return false ;
+    }
+    
+
+    // $matchType :1 boolean  2:lanague
+    function matchEntByName($entName, $matchType = 1, $timeOut = 3.5): array
+    {
+        $timeStart = microtime(true);    
+  
+        //先从es match   
+        $res = $this->matchEntByNameMatchByEs($entName);
+        CommonService::getInstance()->log4PHP('es match'.
             json_encode( 
                 $res
-            ) );
+            ) 
+        ); 
+        // 如果es 就匹配到了 直接返回 
+        if($matchedItem = $this->getMatchedEntName($res,$entName)){
+            CommonService::getInstance()->log4PHP('es match ok , return '.
+                json_encode( 
+                    $matchedItem
+                ) 
+            ); 
+            return  $matchedItem;
+        }
 
+        // es木有的 从 db找： 分词全文匹配+精确
+        $csp = new \EasySwoole\Component\Csp(); 
+        // 分词全文匹配找：Boolean mode 
+        if ($matchType == 1) {
+            $this->matchEntByNameMatchByBooleanMode($csp,$entName);
+        }
+        
+        //分词全文匹配找： language mode 
+        if ($matchType == 2) { 
+            $this->matchEntByNameMatchByLanguageMode($csp,$entName);
+        }  
          
+        // 精确找 
+        $this->matchEntByNameEqualMatchByName($csp,$entName);
+        
+        $res = ($csp->exec($timeOut)); 
+        CommonService::getInstance()->log4PHP('从db找 res'.
+            json_encode( 
+                $res
+            ) 
+        ); 
+        // 从结果找
+        $matchedDatas = [];
+        // $matchedData = [];
+        foreach($res as $dataItem){
+            // 如果精确匹配到了 优先使用精确值
+            if(
+                $dataItem['type'] == 'equal' &&
+                !empty($dataItem['data'])
+            ){
+                return $dataItem['data'][0];
+            } 
+            foreach( $dataItem['data'] as $item)
+            $matchedDatas[] = [
+                'id' => $item['id'] ,
+                'name' => $item['name'] ,
+            ];
+        } 
+ 
+        CommonService::getInstance()->log4PHP('从db找 match'.
+            json_encode( 
+                $matchedDatas
+            ) 
+        ); 
+
         $timeEnd = microtime(true); 
         $execution_time1 = ($timeEnd - $timeStart); 
         return [
             'Time' => 'Total Execution Time:'.$execution_time1.' 秒  |',
-            'data' => $res,
-        ]; 
-        // return $this->checkResponse($newres); 
+            'data' => $matchedDatas,
+        ];  
     }
 
 }
