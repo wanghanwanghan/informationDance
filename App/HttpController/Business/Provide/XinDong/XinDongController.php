@@ -1943,7 +1943,8 @@ class XinDongController extends ProvideBase
             $this->cspData[] = $res;
             return $res ;
         });
-        $this->csp->add($this->cspKey, function () use (&$a) {
+        $newKey=  control::getUuid();
+        $this->csp->add( $newKey, function () use (&$a) {
             $res =  (new XinDongService())
             ->testCsp2() ;
             $this->cspData[] = $res;
@@ -1953,13 +1954,35 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
          CommonService::getInstance()->log4PHP('testCsp'.
             json_encode(
-                $this->cspData
+                $this->cspData,
+                $res
             ) );
 
         // $res = (new XinDongService())
         //     ->getEntInfoByName($entNames);
 
-        return $this->checkResponse($res);
+         
+
+        $newres = [
+            $this->cspKey => [
+                'code' => 200,
+                'paging' => null,
+                'result' => [
+                     $res
+                ],
+                'msg' => null,
+            ],
+            $newKey = [
+                'code' => 200,
+                'paging' => null,
+                'result' => [
+                   $res
+                ],
+                'msg' => null,
+            ],
+        ];
+
+        return $this->checkResponse($newres);
 
     }
 }
