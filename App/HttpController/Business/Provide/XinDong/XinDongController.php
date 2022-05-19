@@ -1939,65 +1939,37 @@ class XinDongController extends ProvideBase
         if(!$entName){
             return  $this->writeJson(201, null, null, '参数缺失(企业名称)');
         }
-
         $csp = new \EasySwoole\Component\Csp(); 
 
-        $csp->add('t0', function ($i, $entName) { 
-            return (new XinDongService())->testReadDb(
-                'company_name_0',
-                $entName
-            );
-        }); 
+        // for ($i=1; $i < 50; $i++) { 
+        //     $csp->add('t'.$i, function () {
+        //         \co::sleep(2);
+        //         return 't'.$i.' result';
+        //     });
+             
+        // }
 
-        $csp->add('t1', function ($i, $entName) { 
-            return (new XinDongService())->testReadDb(
-                'company_name_1',
-                $entName
-            );
-        }); 
+          for ($i=0; $i < 7; $i++) { 
+            $csp->add('t'.$i, function ($entName,$i) {
+                $tableName = "company_name_".$i;
+                sleep(2);
+                $sql = "SELECT
+                            id,`name`
+                        FROM
+                            $tableName
+                        WHERE
+                            MATCH(`name`) AGAINST(
+                            '$entName'   in boolean mode
+                            )  
+                        LIMIT 1";
+                CommonService::getInstance()->log4PHP('matchFuzzyNameByLanguageMode'.$sql ); 
+                return [$sql];  
+            });
+             
+        }
+
         
-        $csp->add('t2', function ($i, $entName) { 
-            return (new XinDongService())->testReadDb(
-                'company_name_2',
-                $entName
-            );
-        }); 
-
-        $csp->add('t3', function ($i, $entName) { 
-            return (new XinDongService())->testReadDb(
-                'company_name_3',
-                $entName
-            );
-        }); 
-
-        $csp->add('t4', function ($i, $entName) { 
-            return (new XinDongService())->testReadDb(
-                'company_name_4',
-                $entName
-            );
-        }); 
-
-        $csp->add('t5', function ($i, $entName) { 
-            return (new XinDongService())->testReadDb(
-                'company_name_5',
-                $entName
-            );
-        }); 
-
-        $csp->add('t6', function ($i, $entName) { 
-            return (new XinDongService())->testReadDb(
-                'company_name_6',
-                $entName
-            );
-        }); 
-
-        $csp->add('t7', function ($i, $entName) { 
-            return (new XinDongService())->testReadDb(
-                'company_name_7',
-                $entName
-            );
-        }); 
-
+    
         $res = ($csp->exec());
         // $a = [];
         // $this->csp->add($this->cspKey, function () use (&$a) {
@@ -2033,7 +2005,15 @@ class XinDongController extends ProvideBase
                      $res
                 ],
                 'msg' => null,
-            ], 
+            ],
+            't2' => [
+                'code' => 200,
+                'paging' => null,
+                'result' => [
+                   $res
+                ],
+                'msg' => null,
+            ],
         ];
 
         return $this->checkResponse($newres);
