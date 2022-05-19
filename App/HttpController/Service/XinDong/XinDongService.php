@@ -1957,6 +1957,19 @@ class XinDongService extends ServiceBase
     //先按照language模式 慢的话 切换到Boolean模式
     function testReadDb($tableName, $entNames): ?array
     {   
+        sleep(2);
+        $sql = "SELECT
+                    id,`name`
+                FROM
+                    $tableName
+                WHERE
+                    MATCH(`name`) AGAINST(
+                    '$entNames'   in boolean mode
+                    )  
+                LIMIT 1";
+        CommonService::getInstance()->log4PHP('matchFuzzyNameByLanguageMode'.$sql ); 
+        return [$sql];
+        
         if(strlen($entNames) <12 ){
             return  [
                 
@@ -1984,7 +1997,7 @@ class XinDongService extends ServiceBase
         // }
 
         $sql = "SELECT
-                    name
+                    id,`name`
                 FROM
                     $tableName
                 WHERE
