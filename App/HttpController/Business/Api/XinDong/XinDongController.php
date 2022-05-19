@@ -2506,5 +2506,17 @@ eof;
            'data' => $retData,
        ], '成功', true, []); 
     } 
+    function getExecuteLists(): bool
+    {
+          
+        $sql = " SHOW full PROCESSLIST ";
+        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+
+        return $this->writeJson(200, 
+        [
+          
+        ] 
+       , $list, '成功', true, []); 
+    } 
 
 }

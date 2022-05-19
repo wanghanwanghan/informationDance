@@ -205,6 +205,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getEntLianXi', $prefix . 'getEntLianXi');// 营收规模 https://api.meirixindong.com/api/v1/xd/getEntLianXi
             $routeCollector->addRoute(['GET', 'POST'], '/matchFuzzyNameByLanguageMode', $prefix . 'matchFuzzyNameByLanguageMode');// 营收规模 https://api.meirixindong.com/api/v1/xd/matchFuzzyNameByLanguageMode
             $routeCollector->addRoute(['GET', 'POST'], '/matchFuzzyNameByBooleanMode', $prefix . 'matchFuzzyNameByBooleanMode');// 营收规模 https://api.meirixindong.com/api/v1/xd/matchFuzzyNameByBooleanMode
+            $routeCollector->addRoute(['GET', 'POST'], '/getExecuteLists', $prefix . 'getExecuteLists');// 营收规模 https://api.meirixindong.com/api/v1/xd/getExecuteLists
         });
 
         return true;
