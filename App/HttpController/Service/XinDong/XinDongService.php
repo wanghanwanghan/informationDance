@@ -2087,6 +2087,11 @@ class XinDongService extends ServiceBase
                 'name' => $dataItem['name'] ,
             ];
         }
+        CommonService::getInstance()->log4PHP(' 根据匹配度1  '.
+            json_encode( 
+                $matchedDatas 
+            ) 
+        ); 
 
         foreach($dbres as $dataItem){  
             foreach( $dataItem['data'] as $item){
@@ -2097,7 +2102,11 @@ class XinDongService extends ServiceBase
                 ];
             }
         } 
-        
+        CommonService::getInstance()->log4PHP(' 根据匹配度2  '.
+            json_encode( 
+                $matchedDatas 
+            ) 
+        ); 
         //根据匹配度 返回最高的一个
         ksort($matchedDatas);
         $resData =  end($matchedDatas);
