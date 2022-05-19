@@ -1845,41 +1845,40 @@ class XinDongService extends ServiceBase
             'result' => $retData,
         ];
     } 
+ 
 
-    function matchFuzzyNameByLanguageMode($entNames): ?array
-    {
-         
+    function matchAainstEntName(
+        $str, 
+        $mode = " IN NATURAL LANGUAGE MODE " , 
+        $companyName = "company_name_0",
+        $field = "id,name",
+        $limit = 1
+    ){
         $sql = "SELECT
-                    id
+                    $field
                 FROM
-                    company_name
+                    $companyName
                 WHERE
                     MATCH(`name`) AGAINST(
-                    '$entNames'  IN NATURAL LANGUAGE MODE
+                    '$str'  $mode
                     )  
-                LIMIT 1";
+                LIMIT $limit
+        ";
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         
-        CommonService::getInstance()->log4PHP('matchFuzzyNameByLanguageMode sql'.$sql ); 
+        CommonService::getInstance()->log4PHP('matchAainstComName sql'.$sql ); 
          
         return [
             'sql' => $sql,
             'list' => $list,
         ];
-    } 
-
-    function matchFuzzyNameByBooleanMode($entNames): ?array
+    }
+ 
+    function splitChineseNameForMatchAgainst($entName): ?string
     {
         
-        if(strlen($entNames) <12 ){
-            return  [
-                'code' => 203,
-                'paging' => [],
-                'msg' =>  '名称过短',
-                'result' => [ ],
-            ]; 
-        }
-        $arr = preg_split('/(?<!^)(?!$)/u', $entNames );
+        
+        $arr = preg_split('/(?<!^)(?!$)/u', $entName );
         $matchStr = "";
         if($arr[0] && $arr[1]){
             $matchStr .= '+'.$arr[0].$arr[1];
@@ -1895,69 +1894,119 @@ class XinDongService extends ServiceBase
         }
         if($arr[8] && $arr[9]){
             $matchStr .= '+'.$arr[8].$arr[9];
-        }
-        // if($arr[10] && $arr[11]){
-        //     $matchStr .= '+'.$arr[10].$arr[11];
-        // }
+        } 
         
-        $sql = "SELECT
-                    id
-                FROM
-                    company_name
-                WHERE
-                    MATCH(`name`) AGAINST(
-                    '$matchStr'   in boolean mode
-                    )  
-                LIMIT 1";
-        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-        
-        CommonService::getInstance()->log4PHP('matchFuzzyNameByLanguageMode'.$sql ); 
-         
-        return [
-            // 'code' => 200,
-            // 'paging' => [],
-            // 'msg' =>  '成功',
-            // 'result' => [
-                'sql' => $sql,
-                'data' => !empty($list)? $list[0] :[],
-            // ],
-        ];
+        return  $matchStr;
     }
 
-    function testCsp1(): ?array
+    function matchEntByName($entName): array
     {
-         
-         sleep(5);
-         
-        return [
-            'code' => 200,
-            'paging' => [],
-            'msg' =>  '成功',
-            'result' => [
-                'testCsp1'
-            ],
-        ];
-    } 
+        $timeStart = microtime(true);    
 
-    function testCsp2(): ?array
-    {
-         
-         sleep(5);
-         
-        return [
-            'code' => 200,
-            'paging' => [],
-            'msg' =>  '成功',
-            'result' => [
-                'testCsp2'
-            ],
-        ];
-    } 
+        $csp = new \EasySwoole\Component\Csp(); 
 
-    //先按照language模式 慢的话 切换到Boolean模式
-    function testReadDb1($tableName, $entNames): ?string
-    {   
-        \co::sleep(2);
-        return ' result';
-    } 
+        for ($i=0; $i < 7; $i++) { 
+            $csp->add('t_'.$i, function () use ($i,$entName) {
+                
+                $arr = preg_split('/(?<!^)(?!$)/u', $entName );
+                $matchStr = "";
+                if($arr[0] && $arr[1]){
+                    $matchStr .= '+'.$arr[0].$arr[1];
+                }
+                if($arr[2] && $arr[3]){
+                    $matchStr .= '+'.$arr[2].$arr[3];
+                }
+                if($arr[4] && $arr[5]){
+                    $matchStr .= '+'.$arr[4].$arr[5];
+                }
+                if($arr[6] && $arr[7]){
+                    $matchStr .= '+'.$arr[6].$arr[7];
+                }
+                if($arr[8] && $arr[9]){
+                    $matchStr .= '+'.$arr[8].$arr[9];
+                }
+                
+                $sql = "SELECT
+                        id,`name`
+                    FROM
+                        `company_name_$i`
+                    WHERE
+                        MATCH(`name`) AGAINST(
+                        '$matchStr'    IN BOOLEAN MODE
+                        )  
+                    LIMIT 1";
+                $timeStart2 = microtime(true);   
+                $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+                $timeEnd2 = microtime(true); 
+                $execution_time11 = ($timeEnd2 - $timeStart2); 
+
+                return  [
+                    $list,
+                    $sql,
+                    $execution_time11
+                ];
+            }); 
+        } 
+        $csp->add('t00', function () use ($entName) { 
+            $sql = "SELECT
+                    id,`name`
+                FROM
+                    `company`
+                WHERE
+                     `name` = '$entName'
+                LIMIT 1";
+            $timeStart2 = microtime(true);   
+            $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
+            $timeEnd2 = microtime(true); 
+            $execution_time11 = ($timeEnd2 - $timeStart2); 
+            return  [
+                $list,
+                $sql,
+                $execution_time11
+            ];
+        });
+
+
+        // for ($i=0; $i < 7; $i++) { 
+        //     $csp->add('t'.$i, function () use ($i,$entName) {
+                
+        //         $sql = "SELECT
+        //                 id,`name`
+        //             FROM
+        //                 `company_name_$i`
+        //             WHERE
+        //                 MATCH(`name`) AGAINST(
+        //                 '$entName'    IN NATURAL LANGUAGE MODE
+        //                 )  
+        //             LIMIT 1";
+        //         $timeStart2 = microtime(true);   
+        //         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        //         $timeEnd2 = microtime(true); 
+        //         $execution_time11 = ($timeEnd2 - $timeStart2); 
+
+        //         return  [
+        //             $list,
+        //             $sql,
+        //             $execution_time11
+        //         ];
+        //     }); 
+        // } 
+        
+        $res = ($csp->exec(3.5));
+         
+         CommonService::getInstance()->log4PHP('testCsp'.
+            json_encode( 
+                $res
+            ) );
+
+         
+        $timeEnd = microtime(true); 
+        $execution_time1 = ($timeEnd - $timeStart); 
+        return [
+            'Time' => 'Total Execution Time:'.$execution_time1.' 秒  |',
+            'data' => $res,
+        ]; 
+        // return $this->checkResponse($newres); 
+    }
+
 }
