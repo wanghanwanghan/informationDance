@@ -1936,15 +1936,14 @@ class XinDongController extends ProvideBase
     function testCsp(): bool
     {
           
-        $csp = new \EasySwoole\Component\Csp();
-        $csp->add('t1', function () {
-            \co::sleep(2);
-            return 't1 result';
-        });
-        $csp->add('t2', function () {
-            \co::sleep(2);
-            return 't2 result';
-        });
+        $csp = new \EasySwoole\Component\Csp(); 
+
+        for ($i=1; $i < 50; $i++) { 
+            $csp->add('t'.$i, function () {
+                \co::sleep(2);
+                return 't'.$i.' result';
+            }); 
+        }
     
         $res = ($csp->exec());
         // $a = [];
@@ -1981,15 +1980,7 @@ class XinDongController extends ProvideBase
                      $res
                 ],
                 'msg' => null,
-            ],
-            't2' => [
-                'code' => 200,
-                'paging' => null,
-                'result' => [
-                   $res
-                ],
-                'msg' => null,
-            ],
+            ], 
         ];
 
         return $this->checkResponse($newres);
