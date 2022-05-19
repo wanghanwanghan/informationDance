@@ -80,7 +80,7 @@ class RunFillCompanyName extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
-        // return true ;
+        return true ;
         for($i=1; $i<=200; $i++){
             // $size = 500 ;
             $size = 100 ;
