@@ -87,14 +87,14 @@ class RunFillCompanyName extends AbstractCronTask
             $sql = " select id from  `company_name`  order by id  desc limit 1 ";
             $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
             $minId = 0;
-            CommonService::getInstance()->log4PHP('RunFillCompanyName'.
-            json_encode(
-                [
+            // CommonService::getInstance()->log4PHP('RunFillCompanyName'.
+            // json_encode(
+            //     [
                     
-                    'list' => $list, 
-                    'sql' => $sql,  
-                ]
-            ) ); 
+            //         'list' => $list, 
+            //         'sql' => $sql,  
+            //     ]
+            // ) ); 
             if(!empty($list)){
                 $minId = intval($list[0]['id']); 
             }
@@ -106,7 +106,7 @@ class RunFillCompanyName extends AbstractCronTask
             $companySql = " select id,`name` from  `company` where id >= ".$from.
                                                         " AND id <= ".($from+ $size);
             $Companys = sqlRaw($companySql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
-            CommonService::getInstance()->log4PHP( $companySql); 
+            // CommonService::getInstance()->log4PHP( $companySql); 
             if(empty($Companys)){
                 return true;
             }  
@@ -117,7 +117,7 @@ class RunFillCompanyName extends AbstractCronTask
             }
             $str = substr($str, 0, -1);
             $newsql = "INSERT   INTO `company_name` (`id`, `name`) VALUES $str ";
-            CommonService::getInstance()->log4PHP($newsql); 
+            // CommonService::getInstance()->log4PHP($newsql); 
             // sqlRaw($newsql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
     
             $queryBuilder = new QueryBuilder();

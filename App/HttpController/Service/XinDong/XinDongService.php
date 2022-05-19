@@ -1860,16 +1860,11 @@ class XinDongService extends ServiceBase
                 LIMIT 1";
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         
-        CommonService::getInstance()->log4PHP('matchFuzzyNameByLanguageMode'.$sql ); 
+        CommonService::getInstance()->log4PHP('matchFuzzyNameByLanguageMode sql'.$sql ); 
          
         return [
-            'code' => 200,
-            'paging' => [],
-            'msg' =>  '成功',
-            'result' => [
-                'sql' => $sql,
-                'list' => $list,
-            ],
+            'sql' => $sql,
+            'list' => $list,
         ];
     } 
 
@@ -1924,7 +1919,7 @@ class XinDongService extends ServiceBase
             // 'msg' =>  '成功',
             // 'result' => [
                 'sql' => $sql,
-                'data' => $list,
+                'data' => !empty($list)? $list[0] :[],
             // ],
         ];
     }
