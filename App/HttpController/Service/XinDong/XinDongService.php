@@ -4,6 +4,7 @@ namespace App\HttpController\Service\XinDong;
 
 use App\Csp\Service\CspService;
 use App\ElasticSearch\Service\ElasticSearchService;
+use App\HttpController\Models\Api\CompanyName;
 use App\HttpController\Models\Api\UserSearchHistory;
 use App\HttpController\Models\BusinessBase\VendincScale2020Model;
 use App\HttpController\Models\EntDb\EntDbNacao;
@@ -1833,6 +1834,23 @@ class XinDongService extends ServiceBase
          
         // CommonService::getInstance()->log4PHP(json_encode($entNames));
         $retData  = Company::create()
+            ->where('name', array_values($entNames),'IN')
+            ->field(["id", "name", "company_org_type","reg_location","estiblish_time"])
+            ->get(); 
+         
+        return [
+            'code' => 200,
+            'paging' => [],
+            'msg' =>  '成功',
+            'result' => $retData,
+        ];
+    } 
+
+    function matchFuzzyNameByLanguageMode($entNames): ?array
+    {
+         
+         
+        $retData  = CompanyName::create()
             ->where('name', array_values($entNames),'IN')
             ->field(["id", "name", "company_org_type","reg_location","estiblish_time"])
             ->get(); 
