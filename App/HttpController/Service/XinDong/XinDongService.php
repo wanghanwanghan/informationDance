@@ -1914,6 +1914,7 @@ class XinDongService extends ServiceBase
                                 $matchStr,
                                 " IN BOOLEAN MODE ", 
                                 $tableName ,
+                                'id,name',
                                 3
                         );  
                 $timeEnd2 = microtime(true); 
@@ -1941,6 +1942,7 @@ class XinDongService extends ServiceBase
                                     $entName, 
                                     " IN NATURAL LANGUAGE MODE  " ,
                                     $tableName,
+                                    'id,name',
                                     3
                             );  
                     $timeEnd2 = microtime(true); 
