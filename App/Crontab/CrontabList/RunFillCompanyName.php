@@ -80,6 +80,13 @@ class RunFillCompanyName extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
+
+        // 找到最新的表
+        $sql = " SHOW TABLEs like 'company_name_%' "; 
+        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));  
+        $tableName = end($list);
+        CommonService::getInstance()->log4PHP($sql);
+        CommonService::getInstance()->log4PHP(json_encode($tableName));
         return true ;
         for($i=1; $i<=200; $i++){
             // $size = 500 ;

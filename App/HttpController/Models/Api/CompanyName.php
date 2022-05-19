@@ -6,7 +6,7 @@ use App\HttpController\Models\ModelBase;
 
 class CompanyName extends ModelBase
 {
-    protected $tableName = 'company_name';
+    protected $tableName = 'company_name_0';
 
     protected $autoTimeStamp = true;
     protected $createTime = 'created_at';
