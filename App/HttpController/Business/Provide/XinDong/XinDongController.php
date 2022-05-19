@@ -1942,15 +1942,62 @@ class XinDongController extends ProvideBase
 
         $csp = new \EasySwoole\Component\Csp(); 
 
-        for ($i=0; $i < 7; $i++) { 
-            $csp->add('t'.$i, function ($i, $entName) { 
-                return (new XinDongService())->testReadDb(
-                    'company_name_'.$i,
-                    $entName
-                );
-            }); 
-        }
-    
+        $csp->add('t0', function ($i, $entName) { 
+            return (new XinDongService())->testReadDb(
+                'company_name_0',
+                $entName
+            );
+        }); 
+
+        $csp->add('t1', function ($i, $entName) { 
+            return (new XinDongService())->testReadDb(
+                'company_name_1',
+                $entName
+            );
+        }); 
+        
+        $csp->add('t2', function ($i, $entName) { 
+            return (new XinDongService())->testReadDb(
+                'company_name_2',
+                $entName
+            );
+        }); 
+
+        $csp->add('t3', function ($i, $entName) { 
+            return (new XinDongService())->testReadDb(
+                'company_name_3',
+                $entName
+            );
+        }); 
+
+        $csp->add('t4', function ($i, $entName) { 
+            return (new XinDongService())->testReadDb(
+                'company_name_4',
+                $entName
+            );
+        }); 
+
+        $csp->add('t5', function ($i, $entName) { 
+            return (new XinDongService())->testReadDb(
+                'company_name_5',
+                $entName
+            );
+        }); 
+
+        $csp->add('t6', function ($i, $entName) { 
+            return (new XinDongService())->testReadDb(
+                'company_name_6',
+                $entName
+            );
+        }); 
+
+        $csp->add('t7', function ($i, $entName) { 
+            return (new XinDongService())->testReadDb(
+                'company_name_7',
+                $entName
+            );
+        }); 
+
         $res = ($csp->exec());
         // $a = [];
         // $this->csp->add($this->cspKey, function () use (&$a) {
