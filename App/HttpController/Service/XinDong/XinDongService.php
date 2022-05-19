@@ -1960,11 +1960,8 @@ class XinDongService extends ServiceBase
     }
 
     function matchEntByNameMatchByEs($entName,$size = 2, $page = 1){
-        $ElasticSearchService = new ElasticSearchService(); 
-        $matchedCnames = [
-            [ 'field'=>'name' ,'value'=> $entName], 
-        ];
-        $ElasticSearchService->addMustShouldPhraseQueryV2($matchedCnames) ;   
+        $ElasticSearchService = new ElasticSearchService();  
+        $ElasticSearchService->addMustMatchQuery('name', $entName) ;   
         $offset  =  ($page-1)*$size;
         $ElasticSearchService->addSize($size) ;
         $ElasticSearchService->addFrom($offset) ;
