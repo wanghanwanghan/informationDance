@@ -1942,12 +1942,31 @@ class XinDongController extends ProvideBase
         $csp = new \EasySwoole\Component\Csp(); 
 
         for ($i=1; $i < 50; $i++) { 
-            $csp->add('t'.$i, function () {
+            $csp->add('t'.$i, function ($i) {
                 \co::sleep(2);
                 return 't'.$i.' result';
             });
              
         }
+
+        for ($i=1; $i < 8; $i++) { 
+            $num = $i-1;
+            $csp->add('t'.$num, function ($num) {
+                \co::sleep(2);
+                $sql = "SELECT
+                        id,`name`
+                    FROM
+                        $tableName
+                    WHERE
+                        MATCH(`name`) AGAINST(
+                        '$entName'   in boolean mode
+                        )  
+                    LIMIT 1";
+                return 't'.$num.' result '.$sql;
+            });
+             
+        }
+
 
         // for ($i=0; $i < 7; $i++) { 
         //     $csp->add('t'.$i, function ($entName,$i) {
