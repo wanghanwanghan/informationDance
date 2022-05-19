@@ -1909,7 +1909,12 @@ class XinDongService extends ServiceBase
                 $timeStart2 = microtime(true); 
                 $matchStr = (new XinDongService())->splitChineseNameForMatchAgainst($entName);
                 $retData =  (new XinDongService())
-                            ->matchAainstEntName($matchStr," IN BOOLEAN MODE ", $tableName );  
+                            ->matchAainstEntName(
+                                $matchStr,
+                                " IN BOOLEAN MODE ", 
+                                $tableName ,
+                                3
+                        );  
                 $timeEnd2 = microtime(true); 
                 $execution_time11 = ($timeEnd2 - $timeStart2);  
                 return  [ 
@@ -1931,7 +1936,12 @@ class XinDongService extends ServiceBase
                 $csp->add('NATURAL_LANGUAGE_MODE_'.$tableName, function () use ($entName, $tableName) {
                     $timeStart2 = microtime(true);  
                     $retData =  (new XinDongService())
-                                ->matchAainstEntName($entName, " IN NATURAL LANGUAGE MODE  " ,$tableName);  
+                                ->matchAainstEntName(
+                                    $entName, 
+                                    " IN NATURAL LANGUAGE MODE  " ,
+                                    $tableName,
+                                    3
+                            );  
                     $timeEnd2 = microtime(true); 
                     $execution_time11 = ($timeEnd2 - $timeStart2);  
                     return  [ 
@@ -1959,7 +1969,7 @@ class XinDongService extends ServiceBase
         }); 
     }
 
-    function matchEntByNameMatchByEs($entName,$size = 2, $page = 1){
+    function matchEntByNameMatchByEs($entName,$size = 4, $page = 1){
         $ElasticSearchService = new ElasticSearchService();  
         $ElasticSearchService->addMustMatchQuery('name', $entName) ;   
         $offset  =  ($page-1)*$size;
