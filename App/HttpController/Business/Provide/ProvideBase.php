@@ -39,6 +39,7 @@ class ProvideBase extends Index
     public $spendMoney;//对外接口需付费金额   本类中添加
 
     public $csp;
+    public $cspData;
     public $cspKey;
     public $cspTimeout = 10;
 
