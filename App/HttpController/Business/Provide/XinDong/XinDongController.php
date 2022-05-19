@@ -1941,32 +1941,32 @@ class XinDongController extends ProvideBase
         }
         $csp = new \EasySwoole\Component\Csp(); 
 
-        // for ($i=1; $i < 50; $i++) { 
-        //     $csp->add('t'.$i, function () {
-        //         \co::sleep(2);
-        //         return 't'.$i.' result';
-        //     });
-             
-        // }
-
-          for ($i=0; $i < 7; $i++) { 
-            $csp->add('t'.$i, function ($entName,$i) {
-                $tableName = "company_name_".$i;
-                sleep(2);
-                $sql = "SELECT
-                            id,`name`
-                        FROM
-                            $tableName
-                        WHERE
-                            MATCH(`name`) AGAINST(
-                            '$entName'   in boolean mode
-                            )  
-                        LIMIT 1";
-                CommonService::getInstance()->log4PHP('matchFuzzyNameByLanguageMode'.$sql ); 
-                return [$sql];  
+        for ($i=1; $i < 50; $i++) { 
+            $csp->add('t'.$i, function () {
+                \co::sleep(2);
+                return 't'.$i.' result';
             });
              
         }
+
+        // for ($i=0; $i < 7; $i++) { 
+        //     $csp->add('t'.$i, function ($entName,$i) {
+        //         $tableName = "company_name_".$i;
+        //         sleep(2);
+        //         $sql = "SELECT
+        //                     id,`name`
+        //                 FROM
+        //                     $tableName
+        //                 WHERE
+        //                     MATCH(`name`) AGAINST(
+        //                     '$entName'   in boolean mode
+        //                     )  
+        //                 LIMIT 1";
+        //         CommonService::getInstance()->log4PHP('matchFuzzyNameByLanguageMode'.$sql ); 
+        //         return [$sql];  
+        //     });
+             
+        // }
 
         
     
