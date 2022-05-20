@@ -148,15 +148,15 @@ class RunReadAndDealXls extends AbstractCronTask
     function run(int $taskId, int $workerIndex): bool
     {
          // log 配置 
-         $sql = " SELECT * FROM config_info  WHERE `name` =  'log_switch' LIMIT  1  "; 
-         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));  
+        //  $sql = " SELECT * FROM config_info  WHERE `name` =  'log_switch' LIMIT  1  "; 
+        //  $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));  
         
-         // 配置
-         $configStr = end($list)['value']; 
-         $configArr = json_decode($configStr,true);
-        if($configArr['valid_log_id'] == 1984){
-            $debugLog = true;
-        } 
+        //  // 配置
+        //  $configStr = end($list)['value']; 
+        //  $configArr = json_decode($configStr,true);
+        // if($configArr['valid_log_id'] == 1984){
+        $debugLog = true;
+        // } 
         
         // 找到需要处理的文件 uploadAndDealXls_matchName_测试
         $files = glob($this->workPath.'uploadAndDealXls_*.xlsx');
