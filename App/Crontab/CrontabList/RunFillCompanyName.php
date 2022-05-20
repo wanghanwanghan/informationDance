@@ -98,7 +98,7 @@ class RunFillCompanyName extends AbstractCronTask
         }
 
         $tableName = $configArr['table_name'];
-        for($i=1; $i <= $configArr['sync_size1']; $i++){ 
+        // for($i=1; $i <= $configArr['sync_size1']; $i++){ 
             $size = $configArr['sync_size2'] ;
 
             $sql = " select id from  `$tableName`  order by id  desc limit 1 ";
@@ -142,10 +142,14 @@ class RunFillCompanyName extends AbstractCronTask
     
             $queryBuilder = new QueryBuilder();
             $queryBuilder->raw($newsql);
-            // $res = DbManager::getInstance()
-            //     ->query($queryBuilder, true, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-            // sleep(0.2);
-        }  
+            $res = DbManager::getInstance()
+                ->query(
+                    $queryBuilder, 
+                    true, 
+                    CreateConf::getInstance()->getConf('env.mysqlDatabase')
+                );
+            // sleep(0.1);
+        // }  
  
         return true ;  
     }
