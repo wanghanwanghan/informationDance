@@ -120,7 +120,8 @@ class RunReadAndDealXls extends AbstractCronTask
         // 取yield数据 
         $excelDatas = $this->getYieldData($file,'matchNameFormatData');
         foreach ($excelDatas as $dataItem) {
-            $debugLog && CommonService::getInstance()->log4PHP( json_encode($dataItem));
+            // $debugLog && 
+            CommonService::getInstance()->log4PHP('matchName res'.json_encode($dataItem));
         }
         
         return true;
