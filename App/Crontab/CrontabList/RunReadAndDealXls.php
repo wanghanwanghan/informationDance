@@ -76,7 +76,8 @@ class RunReadAndDealXls extends AbstractCronTask
         return true;
     }   
 
-    function getYieldData($xlsx_name,$formatFuncName){
+    // function getYieldData($xlsx_name,$formatFuncName){
+    function getYieldData($xlsx_name){
         $excel_read = new \Vtiful\Kernel\Excel(['path' => $this->workPath]);
         $excel_read->openFile($xlsx_name)->openSheet();
 
@@ -104,31 +105,22 @@ class RunReadAndDealXls extends AbstractCronTask
                 $value3,
             ];
             $tmpData = (new XinDongService())->matchEntByName($value0[0],1,4.5);
-            CommonService::getInstance()->log4PHP('matchNamXXXX'.json_encode($tmpData));
-            // if($formatFuncName){
-            //     $tmpData = $this->$formatFuncName($tmpData);
-                
-            // }
+            // CommonService::getInstance()->log4PHP('matchNamXXXX'.json_encode($tmpData)); 
             yield $datas[] =  array_values($tmpData);
         }
     }
 
-    function matchNameFormatData($tmpDataItem){
-         $res = (new XinDongService())->matchEntByName($tmpDataItem[0],1,4.5);
-         CommonService::getInstance()->log4PHP('matchNamYYYY'.json_encode($res)); 
-         return $$res;
-    }
+    // function matchNameFormatData($tmpDataItem){
+    //      $res = (new XinDongService())->matchEntByName($tmpDataItem[0],1,4.5);
+    //      CommonService::getInstance()->log4PHP('matchNamYYYY'.json_encode($res)); 
+    //      return $$res;
+    // }
     function matchName($file,$debugLog){
         $startMemory = memory_get_usage(); 
 
         // 取yield数据 
-        $excelDatas = $this->getYieldData($file,'matchNameFormatData');
-        foreach ($excelDatas as $dataItem) {
-            // $debugLog && 
-            CommonService::getInstance()->log4PHP('matchName res'.json_encode($dataItem));
-        }
-        
-        return true;
+        // $excelDatas = $this->getYieldData($file,'matchNameFormatData');
+        $excelDatas = $this->getYieldData($file); 
 
         $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
         $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用1 '.$memory .' '.$file );
