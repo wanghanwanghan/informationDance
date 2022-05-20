@@ -81,6 +81,9 @@ class DianZiQianController extends ProvideBase
             'entName' => $entName,
             'socialCredit' => $socialCredit,
             'legalPerson' => $legalPerson,
+            'idCard' => $idCard,
+            'phone' => $phone,
+            'city' => $city,
         ];
         CommonService::getInstance()->log4PHP([$postData],'info','getAuthFile');
 
