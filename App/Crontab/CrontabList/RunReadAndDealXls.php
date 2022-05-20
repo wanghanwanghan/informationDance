@@ -104,14 +104,16 @@ class RunReadAndDealXls extends AbstractCronTask
                 $value3,
             ];
             if($formatFuncName){
-                // $tmpData = $this->$formatFuncName($tmpData);
+                $tmpData = $this->$formatFuncName($tmpData);
+                CommonService::getInstance()->log4PHP('matchNamXXXX'.json_encode($tmpData));
             }
-            yield $datas[] =  $tmpData;
+            yield $datas[] =  array_values($tmpData);
         }
     }
 
     function matchNameFormatData($tmpDataItem){
          $res = (new XinDongService())->matchEntByName($tmpDataItem[0],1,4.5);
+         CommonService::getInstance()->log4PHP('matchNamYYYY'.json_encode($res)); 
          return $$res;
     }
     function matchName($file,$debugLog){
