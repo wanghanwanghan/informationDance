@@ -80,11 +80,18 @@ class RunFillCompanyName extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
-        // return true ;
+        // return true ;  
+        // 找到最新的表
+        // $sql = " SHOW TABLEs like 'company_name_%' "; 
+        // $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));  
+        // $tableName = end($list)['Tables_in_mrxd (company_name_%)'];
+        // CommonService::getInstance()->log4PHP($sql);
+        // CommonService::getInstance()->log4PHP(json_encode($tableName));
+        $tableName = 'company_name_6';
         for($i=1; $i<=200; $i++){
             // $size = 500 ;
             $size = 100 ;
-            $sql = " select id from  `company_name`  order by id  desc limit 1 ";
+            $sql = " select id from  `$tableName`  order by id  desc limit 1 ";
             $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
             $minId = 0;
             // CommonService::getInstance()->log4PHP('RunFillCompanyName'.
@@ -112,11 +119,15 @@ class RunFillCompanyName extends AbstractCronTask
             }  
     
             $str = "";
+            $maxId = 0;
             foreach($Companys as  $CompanyItem){
+                $maxId = $CompanyItem['id'];
                 $str .= "(".$CompanyItem['id'].", '".addslashes($CompanyItem['name'])."'),";
             }
             $str = substr($str, 0, -1);
-            $newsql = "INSERT   INTO `company_name` (`id`, `name`) VALUES $str ";
+
+            // $newTablesName = 'company_name_'.floor($maxId/1500000);
+            $newsql = "INSERT   INTO `$tableName` (`id`, `name`) VALUES $str ";
             // CommonService::getInstance()->log4PHP($newsql); 
             // sqlRaw($newsql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
     

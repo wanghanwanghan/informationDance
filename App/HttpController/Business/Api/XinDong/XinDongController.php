@@ -1109,7 +1109,7 @@ eof;
         $offset  =  ($page-1)*$size;
         $ElasticSearchService->addSize($size) ;
         $ElasticSearchService->addFrom($offset) ;
-        $ElasticSearchService->addSort('xd_id', 'desc') ;
+        // $ElasticSearchService->addSort('xd_id', 'desc') ;
 
         //设置默认值 不传任何条件 搜全部
         $ElasticSearchService->setDefault() ;  
@@ -2468,43 +2468,47 @@ eof;
         $entName = $this->getRequestData('entName', '');
 
         $retData =  (new XinDongService())
-                    ->matchFuzzyNameByLanguageMode($entName ); 
+                    ->matchAainstEntName($entName ); 
 
         $timeEnd = microtime(true); 
-        $execution_time1 = ($timeEnd - $timeStart);
-        $execution_time2 = ($timeEnd - $timeStart)/60;
+        $execution_time1 = ($timeEnd - $timeStart); 
         CommonService::getInstance()->log4PHP('matchFuzzyNameByLanguageMode Total Execution Time'.$execution_time1.'秒'); 
 
-        return $this->writeJson(200, 
-        [
-          
-        ] 
-       , [
-           'Time' => 'Total Execution Time:'.$execution_time1.' 秒  |'.$execution_time2. '分',
-           'data' => $retData,
-       ], '成功', true, []); 
+        return $this->writeJson(200, [ ] , 
+            [
+                'Time' => 'Total Execution Time:'.$execution_time1.' 秒  |'.$execution_time2. '分',
+                'data' => $retData,
+            ], '成功', true, []
+        ); 
     } 
 
     function matchFuzzyNameByBooleanMode(): bool
     {
         $timeStart = microtime(true);  
         $entName = $this->getRequestData('entName', '');
-
+        $matchStr = (new XinDongService())->splitChineseNameForMatchAgainst($entName);
         $retData =  (new XinDongService())
-                    ->matchFuzzyNameByBooleanMode($entName ); 
+                    ->matchAainstEntName($matchStr," IN BOOLEAN MODE " ); 
 
         $timeEnd = microtime(true); 
         $execution_time1 = ($timeEnd - $timeStart);
-        $execution_time2 = ($timeEnd - $timeStart)/60;
         CommonService::getInstance()->log4PHP('matchFuzzyNameByBooleanMode Total Execution Time'.$execution_time1.'秒'); 
-        return $this->writeJson(200, 
+        return $this->writeJson(200, [] , 
         [
-          
-        ] 
-       , [
-           'Time' => 'Total Execution Time:'.$execution_time1.' 秒  |'.$execution_time2. '分',
+           'Time' => 'Total Execution Time:'.$execution_time1.' 秒  |',
            'data' => $retData,
        ], '成功', true, []); 
-    } 
-
+    }
+    
+    function matchEntByName(): bool
+    {
+        
+        $entName = $this->getRequestData('entName', '');
+        $type = $this->getRequestData('type', '1');
+        $timeout = $this->getRequestData('timeout', '3');
+        $retData = (new XinDongService())->matchEntByName($entName,$type,$timeout);  
+        // CommonService::getInstance()->log4PHP('matchEntByName '.$execution_time1.'秒'); 
+        return $this->writeJson(200, [] ,   $retData, '成功', true, []); 
+    }
+    
 }

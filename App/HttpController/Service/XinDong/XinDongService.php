@@ -1405,8 +1405,8 @@ class XinDongService extends ServiceBase
         $bean->setType('_doc');
         $bean->setBody($elasticSearchService->query);
         $response = $elasticsearch->client()->search($bean)->getBody(); 
-        CommonService::getInstance()->log4PHP(json_encode(['re-query'=>$elasticSearchService->query]), 'info', 'souke.log');
-        CommonService::getInstance()->log4PHP(json_encode(['re-response'=>$response]), 'info', 'souke.log');
+        CommonService::getInstance()->log4PHP(json_encode($elasticSearchService->query));
+        // CommonService::getInstance()->log4PHP(json_encode(['re-response'=>$response]), 'info', 'souke.log');
         
         return  $response;
      } 
@@ -1845,41 +1845,43 @@ class XinDongService extends ServiceBase
             'result' => $retData,
         ];
     } 
+ 
 
-    function matchFuzzyNameByLanguageMode($entNames): ?array
-    {
-         
+    function matchAainstEntName(
+        $str, 
+        $mode = " IN NATURAL LANGUAGE MODE " , 
+        $companyName = "company_name_0",
+        $field = "id,name",
+        $limit = 1
+    ){
         $sql = "SELECT
-                    id
+                    $field
                 FROM
-                    company_name
+                    $companyName
                 WHERE
                     MATCH(`name`) AGAINST(
-                    '$entNames'  IN NATURAL LANGUAGE MODE
+                    '$str'  $mode
                     )  
-                LIMIT 1";
+                LIMIT $limit
+        ";
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         
-        CommonService::getInstance()->log4PHP('matchFuzzyNameByLanguageMode sql'.$sql ); 
+        CommonService::getInstance()->log4PHP('matchAainstComName sql'.$sql ); 
+        CommonService::getInstance()->log4PHP('matchAainstComName sql'.json_encode($list) ); 
          
-        return [
-            'sql' => $sql,
-            'list' => $list,
-        ];
-    } 
+        return $list;
 
-    function matchFuzzyNameByBooleanMode($entNames): ?array
+        // return [
+        //     'sql' => $sql,
+        //     'list' => $list,
+        // ];
+    }
+ 
+    function splitChineseNameForMatchAgainst($entName): ?string
     {
         
-        if(strlen($entNames) <12 ){
-            return  [
-                'code' => 203,
-                'paging' => [],
-                'msg' =>  '名称过短',
-                'result' => [ ],
-            ]; 
-        }
-        $arr = preg_split('/(?<!^)(?!$)/u', $entNames );
+        
+        $arr = preg_split('/(?<!^)(?!$)/u', $entName );
         $matchStr = "";
         if($arr[0] && $arr[1]){
             $matchStr .= '+'.$arr[0].$arr[1];
@@ -1895,32 +1897,239 @@ class XinDongService extends ServiceBase
         }
         if($arr[8] && $arr[9]){
             $matchStr .= '+'.$arr[8].$arr[9];
-        }
-        if($arr[10] && $arr[11]){
-            $matchStr .= '+'.$arr[10].$arr[11];
-        }
+        } 
         
-        $sql = "SELECT
-                    id
-                FROM
-                    company_name
-                WHERE
-                    MATCH(`name`) AGAINST(
-                    '$matchStr'   in boolean mode
-                    )  
-                LIMIT 1";
-        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-        
-        CommonService::getInstance()->log4PHP('matchFuzzyNameByLanguageMode'.$sql ); 
-         
-        return [
-            // 'code' => 200,
-            // 'paging' => [],
-            // 'msg' =>  '成功',
-            // 'result' => [
-                'sql' => $sql,
-                'data' => !empty($list)? $list[0] :[],
-            // ],
-        ];
+        return  $matchStr;
     }
+
+    function matchEntByNameMatchByBooleanMode($csp,$entName){
+        foreach(
+            CompanyName::getAllTables() as $tableName
+        ){
+            $csp->add('BOOLEAN_MODE_'.$tableName, function () use ($entName, $tableName) {
+                $timeStart2 = microtime(true); 
+                $matchStr = (new XinDongService())->splitChineseNameForMatchAgainst($entName);
+                $retData =  (new XinDongService())
+                            ->matchAainstEntName(
+                                $matchStr,
+                                " IN BOOLEAN MODE ", 
+                                $tableName ,
+                                'id,name',
+                                3
+                        );  
+                $timeEnd2 = microtime(true); 
+                $execution_time11 = ($timeEnd2 - $timeStart2);  
+                return  [ 
+                    'data' => $retData,
+                    'type' => 'Boolean',
+                    'time' => $execution_time11
+                ];
+            }); 
+        }
+    }
+
+    function matchEntByNameMatchByLanguageMode($csp,$entName){
+        foreach(
+            CompanyName::getAllTables() as $tableName
+        ){
+            foreach(
+                CompanyName::getAllTables() as $tableName
+            ){
+                $csp->add('NATURAL_LANGUAGE_MODE_'.$tableName, function () use ($entName, $tableName) {
+                    $timeStart2 = microtime(true);  
+                    $retData =  (new XinDongService())
+                                ->matchAainstEntName(
+                                    $entName, 
+                                    " IN NATURAL LANGUAGE MODE  " ,
+                                    $tableName,
+                                    'id,name',
+                                    3
+                            );  
+                    $timeEnd2 = microtime(true); 
+                    $execution_time11 = ($timeEnd2 - $timeStart2);  
+                    return  [ 
+                        'data' => $retData,
+                        'type' => 'Language',
+                        'time' => $execution_time11
+                    ];
+                }); 
+            }
+        }
+    }
+
+    function matchEntByNameEqualMatchByName($csp,$entName){
+        $csp->add('company_match', function () use ($entName) { 
+            $timeStart2 = microtime(true);  
+            $sql = "SELECT  id,`name` FROM  `company`  WHERE   `name` = '$entName' LIMIT 1"; 
+            $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
+            $timeEnd2 = microtime(true); 
+            $execution_time11 = ($timeEnd2 - $timeStart2); 
+            return  [
+                'data' => $list,
+                'type' => 'equal',
+                'time' => $execution_time11
+            ];
+        }); 
+    }
+
+    function matchEntByNameMatchByEs($entName,$size = 4, $page = 1){
+        $ElasticSearchService = new ElasticSearchService();  
+        $ElasticSearchService->addMustMatchQuery('name', $entName) ;   
+        $offset  =  ($page-1)*$size;
+        $ElasticSearchService->addSize($size) ;
+        $ElasticSearchService->addFrom($offset) ;
+        // $ElasticSearchService->addSort('xd_id', 'desc') ;
+ 
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
+        $responseArr = @json_decode($responseJson,true);  
+        // CommonService::getInstance()->log4PHP('matchEntByNameMatchByEs '.
+        //     $responseJson
+        // ); 
+        $datas = [];
+        foreach($responseArr['hits']['hits'] as $item){
+            $datas[] = [
+                'id' => $item['_source']['xd_id'],
+                'name' => $item['_source']['name'],
+            ]; 
+        }
+        return $datas;
+    }
+
+    function getSimilarPercent($var_1, $var_2){
+        similar_text($var_1, $var_2, $percent);
+        return number_format($percent);
+    }
+ 
+
+    function checkIfSimilar($name1,$name2){
+        $percent = $this->getSimilarPercent($name1,$name2);
+        if($percent >= 85 ){
+            return $data ;
+        }
+        return false ;
+    }
+    
+
+    // $matchType :1 boolean  2:lanague
+    function matchEntByName($entName, $matchType = 1, $timeOut = 3.5): array
+    {
+        $timeStart = microtime(true);    
+  
+        //先从es match   
+        $esRes = $this->matchEntByNameMatchByEs($entName); 
+        CommonService::getInstance()->log4PHP('es match'.
+            json_encode( 
+               [
+                    'data' => $esRes,
+                    'time' => (microtime(true) - $timeStart),
+               ]
+            ) 
+        ); 
+        // 如果es 就匹配到了 直接返回 
+        foreach($esRes as $data){ 
+            if( $this->checkIfSimilar($data['name'], $entName) ){
+                CommonService::getInstance()->log4PHP('es match ok , return '.
+                    json_encode( 
+                            [
+                                'data' => $matchedItem,
+                                'time' => (microtime(true) - $timeStart),
+                        ]
+                        ) 
+                    ); 
+                return $data ;
+            }
+        }   
+
+        // es木有的 从 db找： 分词全文匹配+精确
+        $csp = new \EasySwoole\Component\Csp(); 
+        // 分词全文匹配找：Boolean mode 
+        if ($matchType == 1) {
+            $this->matchEntByNameMatchByBooleanMode($csp,$entName);
+        }
+        
+        //分词全文匹配找： language mode 
+        if ($matchType == 2) { 
+            $this->matchEntByNameMatchByLanguageMode($csp,$entName);
+        }  
+         
+        // 精确找 
+        $this->matchEntByNameEqualMatchByName($csp,$entName);
+        
+        $dbres = ($csp->exec($timeOut)); 
+        CommonService::getInstance()->log4PHP('从db找 res'.
+            json_encode( 
+                [
+                    'data' => $dbres,
+                    'time' => (microtime(true) - $timeStart),
+               ]
+            ) 
+        ); 
+        // 从结果找
+        $matchedDatas = [];
+        // $matchedData = [];
+        foreach($dbres as $dataItem){
+            // 如果精确匹配到了 优先使用精确值
+            if(
+                $dataItem['type'] == 'equal' &&
+                !empty($dataItem['data'])
+            ){
+                CommonService::getInstance()->log4PHP('精确匹配到了'.
+                json_encode( 
+                    $dataItem['data'][0]
+                ) 
+            ); 
+                return $dataItem['data'][0];
+            }  
+        } 
+
+        // 剩余的 按照相似度排序 然后返回相似度最高的
+        foreach($esRes as $dataItem){  
+            $percent = $this->getSimilarPercent($dataItem['name'], $entName) ;
+            $matchedDatas[$percent] = [
+                'id' => $dataItem['id'] ,
+                'name' => $dataItem['name'] ,
+            ];
+        }
+        CommonService::getInstance()->log4PHP(' 根据匹配度1  '.
+            json_encode( 
+                $matchedDatas 
+            ) 
+        ); 
+
+        foreach($dbres as $dataItem){  
+            CommonService::getInstance()->log4PHP(' dataItem  '.
+            json_encode( 
+                $dataItem 
+            ) 
+        ); 
+            foreach( $dataItem['data'] as $item){
+                $percent = $this->getSimilarPercent($item['name'], $entName) ;
+                $matchedDatas[$percent] = [
+                    'id' => $item['id'] ,
+                    'name' => $item['name'] ,
+                ];
+            }
+        } 
+        CommonService::getInstance()->log4PHP(' 根据匹配度2  '.
+            json_encode( 
+                $matchedDatas 
+            ) 
+        ); 
+        //根据匹配度 返回最高的一个
+        ksort($matchedDatas);
+        $resData =  end($matchedDatas);
+        CommonService::getInstance()->log4PHP(' 根据匹配度  '.
+            json_encode( 
+                $matchedDatas 
+            ) 
+        ); 
+
+        $timeEnd = microtime(true); 
+        $execution_time1 = (microtime(true) - $timeStart); 
+        return [
+            'Time' => 'Total Execution Time:'.$execution_time1.' 秒  |',
+            'data' => $resData,
+        ];  
+    } 
+
 }
