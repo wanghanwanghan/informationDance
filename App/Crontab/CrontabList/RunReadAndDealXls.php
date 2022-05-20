@@ -106,7 +106,11 @@ class RunReadAndDealXls extends AbstractCronTask
                     'res' => $tmpData
                 ]
             )); 
-            yield $datas[] =  array_values($tmpData);
+            yield $datas[] = [
+                $value0,
+                $tmpData['id'], 
+                $tmpData['name'], 
+            ];
         }
     }
 
