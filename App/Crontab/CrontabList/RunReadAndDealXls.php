@@ -99,7 +99,13 @@ class RunReadAndDealXls extends AbstractCronTask
             $value2 = $this->strtr_func($one[2]);  
             $value3 = $this->strtr_func($one[3]);   
             $tmpData = (new XinDongService())->matchEntByName($value0,1,4);
-            // CommonService::getInstance()->log4PHP('matchNamXXXX'.json_encode($tmpData)); 
+            CommonService::getInstance()->log4PHP('matchNamXXXX'.json_encode(
+                [
+                    'value' => [$value0,$value1],
+                    'params' => $value0,
+                    'res' => $tmpData
+                ]
+            )); 
             yield $datas[] =  array_values($tmpData);
         }
     }
