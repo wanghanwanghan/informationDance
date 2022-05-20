@@ -68,6 +68,31 @@ class DianZiQianController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    public function getCarAuthFile(){
+        $entName = $this->getRequestData('entName');
+        $socialCredit = $this->getRequestData('socialCredit');
+        $legalPerson = $this->getRequestData('legalPerson');
+        $idCard = $this->getRequestData('idCard');
+        $phone = $this->getRequestData('phone');
+        $city = $this->getRequestData('city');
+        $regAddress = $this->getRequestData('regAddress');
+
+        $postData = [
+            'entName' => $entName,
+            'socialCredit' => $socialCredit,
+            'legalPerson' => $legalPerson,
+        ];
+        CommonService::getInstance()->log4PHP([$postData],'info','getAuthFile');
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new DianZiQianService())->setCheckRespFlag(true)->getAuthFile($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
     public function getUrl(){
         $this->csp->add($this->cspKey, function () {
             return (new DianZiQianService())->setCheckRespFlag(true)->getUrl();

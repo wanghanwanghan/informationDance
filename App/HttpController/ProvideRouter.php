@@ -41,6 +41,7 @@ class ProvideRouter
         $routeCollector->addGroup('/dzq', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getAuthFile', $prefix . 'getAuthFile');
             $routeCollector->addRoute(['GET', 'POST'], '/getUrl', $prefix . 'getUrl');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCarAuthFile', $prefix . 'getCarAuthFile');
         });
         return true;
     }
