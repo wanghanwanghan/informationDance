@@ -138,13 +138,13 @@ class RunFillCompanyName extends AbstractCronTask
  
             $newsql = "INSERT   INTO `$tableName` (`id`, `name`) VALUES $str ";
             $configArr['debug'] &&  CommonService::getInstance()->log4PHP($newsql); 
-            sqlRaw($newsql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+            sqlRaw($newsql, CreateConf::getInstance()->getConf('env.mysqlDatabase'),false);
     
             // $queryBuilder = new QueryBuilder();
             // $queryBuilder->raw($newsql);
             // $res = DbManager::getInstance()
             //     ->query($queryBuilder, true, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-            sleep(0.2);
+            // sleep(0.2);
         }  
  
         return true ;  
