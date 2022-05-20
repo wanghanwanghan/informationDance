@@ -45,6 +45,69 @@ class DianZiQianService extends ServiceBase
         return true;
     }
 
+    /**
+     * vin授权
+     */
+    public function getCarAuthFile($postData){
+        //创建个人签署人
+        $signerPersonres    = $this->signerPerson($postData);
+        $signerCodePersonal = $signerPersonres['result']['signerCode'] ?? "";
+        if ($signerPersonres['code'] != 200) return $signerPersonres;
+
+        //创建企业签署人
+        $signerEnterprise  = $this->signerEnterprise($postData);
+        $signerCodeEnt    = $signerEnterprise['result']['signerCode'] ?? "";
+        if ($signerEnterprise['code'] != 200) return $signerEnterprise;
+
+        //生成png
+        $sealEntDraw = $this->sealEntDraw($postData);
+        if ($sealEntDraw['code'] != 200) return $sealEntDraw;
+        $fileCodeEnt = $sealEntDraw['result']['sealFileCode'];
+        $entFileQuery = $this->fileQuery($fileCodeEnt,TEMP_FILE_PATH . 'dianziqian_ent.png');
+        if (!$entFileQuery) return $this->createReturn(201, null, [], '生成企业章失败');
+
+
+        //企业上传印章
+        list($entSealCode, $errorData) = $this->entSign($signerCodeEnt, $postData);
+        if (!empty($errorData)) return $errorData;
+
+        //上传adobe模版
+        $contractFileTemplate = $this->contractFileTemplate('car.pdf');
+        $contractTemplateCode = $contractFileTemplate['result']['contractTemplateCode'] ?? "";
+        if ($contractFileTemplate['code'] != 200) return $contractFileTemplate;
+
+        //使用模板创建合同
+        $params = [
+            'vin' => 'vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,',
+            'shou_quan_date_time' => date('Y年m月d日H时i分s秒',time()),
+            'qian_date_time' => date('Y年M月d日',time())
+        ];
+        $contractFileTemplateFilling = $this->contractFileTemplateFilling( $contractTemplateCode,$params);
+        $contractCode                = $contractFileTemplateFilling['result']['contractCode'] ?? "";
+        if ($contractFileTemplateFilling['code'] != 200) return $contractFileTemplateFilling;
+
+        $entTransactionCode = control::getUuid();
+        //自动签署企业章  signUrl
+        $entContractSignUrl = $this->contractSignAuto($signerCodeEnt, $contractCode, '企业盖章处',$entSealCode,$entTransactionCode);
+        if ($entContractSignUrl['code'] != 200) return $entContractSignUrl;
+        $personalTransactionCode = control::getUuid();
+        $insertData = [
+            'entName' => $postData['entName'],
+            "personName"   => $postData['legalPerson'],
+            "personIdCard" => $postData['idCard'],
+            'socialCredit' => $postData['socialCredit'],
+            'signerCodePersonal' => $signerCodePersonal,
+            'signerCodeEnt' => $signerCodeEnt,
+            'contractTemplateCode' => $contractTemplateCode,
+            'contractCode' => $contractCode,
+            'entSealCode' => $entSealCode,
+            'entTransactionCode' => $entTransactionCode,
+            'personalTransactionCode' => $personalTransactionCode
+        ];
+        DianZiQianAuth::create()->data($insertData)->save();
+        return $this->createReturn(200, null, [], '成功');
+    }
+
     public function getAuthFile($postData)
     {
         //创建个人签署人
@@ -73,7 +136,18 @@ class DianZiQianService extends ServiceBase
         if ($contractFileTemplate['code'] != 200) return $contractFileTemplate;
 
         //使用模板创建合同
-        $contractFileTemplateFilling = $this->contractFileTemplateFilling($postData, $contractTemplateCode);
+        $params    = [
+            'entName'     => $arr['entName'] ?? '',
+            'companyName' => $arr['entName'] ?? '',
+            'taxNo'       => $arr['socialCredit'] ?? '',
+            'newTaxNo'    => $arr['socialCredit'] ?? '',
+            'signName'    => '',
+            'phoneNo'     => $arr['phone'] ?? '',
+            'region'      => $arr['city'] ?? '',
+            'address'     => $arr['regAddress'] ?? '',
+            'date'        => date('Y年m月d日', time())
+        ];
+        $contractFileTemplateFilling = $this->contractFileTemplateFilling( $contractTemplateCode,$params);
         $contractCode                = $contractFileTemplateFilling['result']['contractCode'] ?? "";
         if ($contractFileTemplateFilling['code'] != 200) return $contractFileTemplateFilling;
 
@@ -220,10 +294,10 @@ class DianZiQianService extends ServiceBase
     /**
      * 上传adobe模版
      */
-    private function contractFileTemplate()
+    private function contractFileTemplate($file = 'test.pdf')
     {
         $path  = "/open-api-lite/contract/file/template";
-        $file  = STATIC_PATH . "AuthBookModel/test.pdf";
+        $file  = STATIC_PATH . "AuthBookModel/".$file;
         $param = $this->buildParam([], $path, ['fileName' => $file, 'key' => 'templateFile']);
         $resp  = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
@@ -235,20 +309,9 @@ class DianZiQianService extends ServiceBase
     /**
      * 使用模板创建合同
      */
-    private function contractFileTemplateFilling($arr, $contractTemplateCode)
+    private function contractFileTemplateFilling($contractTemplateCode,$params)
     {
         $path      = "/open-api-lite/contract/file/template/filling";
-        $params    = [
-            'entName'     => $arr['entName'] ?? '',
-            'companyName' => $arr['entName'] ?? '',
-            'taxNo'       => $arr['socialCredit'] ?? '',
-            'newTaxNo'    => $arr['socialCredit'] ?? '',
-            'signName'    => '',
-            'phoneNo'     => $arr['phone'] ?? '',
-            'region'      => $arr['city'] ?? '',
-            'address'     => $arr['regAddress'] ?? '',
-            'date'        => date('Y年m月d日', time())
-        ];
         $paramData = [
             'params'               => json_encode($params),
             'contractTemplateCode' => $contractTemplateCode
