@@ -104,7 +104,7 @@ class RunReadAndDealXls extends AbstractCronTask
                 $value3,
             ];
             if($formatFuncName){
-                $tmpData = $this->$formatFuncName($tmpData);
+                // $tmpData = $this->$formatFuncName($tmpData);
             }
             yield $datas[] =  $tmpData;
         }
