@@ -123,6 +123,7 @@ class RunReadAndDealXls extends AbstractCronTask
             $debugLog && CommonService::getInstance()->log4PHP( json_encode($dataItem));
         }
         
+        return true;
 
         $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
         $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用1 '.$memory .' '.$file );
