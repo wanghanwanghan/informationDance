@@ -61,7 +61,7 @@ class RunFillCompanyName extends AbstractCronTask
 
     static function getRule(): string
     {
-        return '*/10 * * * * *';
+        return '* * * * *';
     }
 
     static function getTaskName(): string
