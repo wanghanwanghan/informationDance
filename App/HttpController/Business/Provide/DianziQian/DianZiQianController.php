@@ -85,7 +85,7 @@ class DianZiQianController extends ProvideBase
         CommonService::getInstance()->log4PHP([$postData],'info','getAuthFile');
 
         $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new DianZiQianService())->setCheckRespFlag(true)->getAuthFile($postData);
+            return (new DianZiQianService())->setCheckRespFlag(true)->getCarAuthFile($postData);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
