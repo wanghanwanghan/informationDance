@@ -2126,10 +2126,12 @@ class XinDongService extends ServiceBase
 
         $timeEnd = microtime(true); 
         $execution_time1 = (microtime(true) - $timeStart); 
-        return [
-            'Time' => 'Total Execution Time:'.$execution_time1.' 秒  |',
-            'data' => $resData,
-        ];  
+
+        return $resData;
+        // return [
+        //     'Time' => 'Total Execution Time:'.$execution_time1.' 秒  |',
+        //     'data' => $resData,
+        // ];  
     } 
 
 }
