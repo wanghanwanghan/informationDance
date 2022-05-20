@@ -11,6 +11,7 @@ use wanghanwanghan\someUtils\control;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\XinDong\XinDongService;
+use App\HttpController\Service\CreateConf;
 
 
 class RunReadAndDealXls extends AbstractCronTask
@@ -152,7 +153,7 @@ class RunReadAndDealXls extends AbstractCronTask
             $debugLog = true;
         } 
         
-        // 找到需要处理的文件
+        // 找到需要处理的文件 uploadAndDealXls_matchName_测试
         $files = glob($this->workPath.'uploadAndDealXls_*.xlsx');
         $debugLog && CommonService::getInstance()->log4PHP('uploadAndDealXls_ files '.json_encode($files) );
         if(empty($files)){
