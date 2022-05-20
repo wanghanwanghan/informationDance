@@ -196,7 +196,7 @@ function changeNull($data)
 }
 
 //执行sql
-function sqlRaw(string $sql, string $conn = null,$NeedsArr = true): ?array
+function sqlRaw(string $sql, string $conn = null): ?array
 {
     if (empty($conn)) {
         $conn = CreateConf::getInstance()->getConf('env.mysqlDatabase');
@@ -205,18 +205,11 @@ function sqlRaw(string $sql, string $conn = null,$NeedsArr = true): ?array
     try {
         $queryBuilder = new QueryBuilder();
         $queryBuilder->raw($sql);
-        if($NeedsArr){
-            $res = DbManager::getInstance()
+        $res = DbManager::getInstance()
             ->query($queryBuilder, true, $conn)
             ->toArray();
-        }
-        else{
-            $res = DbManager::getInstance()
-            ->query($queryBuilder, true, $conn);
-        }
-        
     } catch (\Throwable $e) {
-        CommonService::getInstance()->log4PHP('sql_error '.$sql);
+        CommonService::getInstance()->log4PHP('sql_error'.$sql);
         return null;
     }
     return $res['result'];
