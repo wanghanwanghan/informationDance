@@ -78,7 +78,7 @@ class DianZiQianService extends ServiceBase
 
         //使用模板创建合同
         $params = [
-            'vin' => 'vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,vin L6T7804Z6KW019508,',
+            'vin' => 'vin L6T7804Z6KW019508',
             'shou_quan_date_time' => date('Y年m月d日H时i分s秒',time()),
             'qian_date_time' => date('Y年M月d日',time())
         ];
@@ -137,14 +137,14 @@ class DianZiQianService extends ServiceBase
 
         //使用模板创建合同
         $params    = [
-            'entName'     => $arr['entName'] ?? '',
-            'companyName' => $arr['entName'] ?? '',
-            'taxNo'       => $arr['socialCredit'] ?? '',
-            'newTaxNo'    => $arr['socialCredit'] ?? '',
+            'entName'     => $postData['entName'] ?? '',
+            'companyName' => $postData['entName'] ?? '',
+            'taxNo'       => $postData['socialCredit'] ?? '',
+            'newTaxNo'    => $postData['socialCredit'] ?? '',
             'signName'    => '',
-            'phoneNo'     => $arr['phone'] ?? '',
-            'region'      => $arr['city'] ?? '',
-            'address'     => $arr['regAddress'] ?? '',
+            'phoneNo'     => $postData['phone'] ?? '',
+            'region'      => $postData['city'] ?? '',
+            'address'     => $postData['regAddress'] ?? '',
             'date'        => date('Y年m月d日', time())
         ];
         $contractFileTemplateFilling = $this->contractFileTemplateFilling( $contractTemplateCode,$params);
