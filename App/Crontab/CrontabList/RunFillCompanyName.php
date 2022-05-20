@@ -118,7 +118,10 @@ class RunFillCompanyName extends AbstractCronTask
             } 
 
             $from = $minId +1 ;  
-            
+            if($from >= $configArr['table_max_id']){
+                $configArr['debug'] &&   CommonService::getInstance()->log4PHP(' reach limit'); 
+                return true ;
+            }    
             $companySql = " select id,`name` from  `company` where id >= ".$from.
                                                         " AND id <= ".($from+ $size);
             $Companys = sqlRaw($companySql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
