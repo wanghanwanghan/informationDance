@@ -80,63 +80,73 @@ class RunFillCompanyName extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
-        // return true ;  
-        // 找到最新的表
-        // $sql = " SHOW TABLEs like 'company_name_%' "; 
-        // $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));  
-        // $tableName = end($list)['Tables_in_mrxd (company_name_%)'];
-        // CommonService::getInstance()->log4PHP($sql);
-        // CommonService::getInstance()->log4PHP(json_encode($tableName));
-        $tableName = 'company_name_6';
-        for($i=1; $i<=200; $i++){
-            // $size = 500 ;
-            $size = 100 ;
+        // 同步配置 
+        $sql = " SELECT * FROM config_info  WHERE `name` =  'sync_company_name' LIMIT  1  "; 
+        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));  
+       
+        // 配置
+        $configStr = end($list)['value']; 
+        $configArr = json_decode($configStr,true);
+        if(empty($configArr)){
+            $configArr['debug'] && CommonService::getInstance()->log4PHP('empty configArr ');
+            return true;
+        }
+        // 关闭同步
+        if($configArr['colse_sync']){
+            $configArr['debug'] && CommonService::getInstance()->log4PHP('colse_sync');
+            return true;
+        }
+
+        $tableName = $configArr['table_name'];
+        for($i=1; $i <= $configArr['sync_size1']; $i++){ 
+            $size = $configArr['sync_size2'] ;
+
             $sql = " select id from  `$tableName`  order by id  desc limit 1 ";
             $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
             $minId = 0;
-            // CommonService::getInstance()->log4PHP('RunFillCompanyName'.
-            // json_encode(
-            //     [
+
+            $configArr['debug'] &&   CommonService::getInstance()->log4PHP('RunFillCompanyName'.
+            json_encode(
+                [
                     
-            //         'list' => $list, 
-            //         'sql' => $sql,  
-            //     ]
-            // ) ); 
+                    'list' => $list, 
+                    'sql' => $sql,  
+                ]
+            ) ); 
             if(!empty($list)){
                 $minId = intval($list[0]['id']); 
-            }
-    
-    
-            $from = $minId +1 ; 
-            
-            
+            } 
+
+            $from = $minId +1 ;  
+            if($from >= $configArr['table_max_id']){
+                $configArr['debug'] &&   CommonService::getInstance()->log4PHP(' reach limit'); 
+                return true ;
+            }    
             $companySql = " select id,`name` from  `company` where id >= ".$from.
                                                         " AND id <= ".($from+ $size);
             $Companys = sqlRaw($companySql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
-            // CommonService::getInstance()->log4PHP( $companySql); 
+            $configArr['debug'] &&  CommonService::getInstance()->log4PHP( $companySql); 
             if(empty($Companys)){
                 return true;
             }  
-    
-            $str = "";
-            $maxId = 0;
-            foreach($Companys as  $CompanyItem){
-                $maxId = $CompanyItem['id'];
+            
+            $str = ""; 
+            foreach($Companys as  $CompanyItem){ 
                 $str .= "(".$CompanyItem['id'].", '".addslashes($CompanyItem['name'])."'),";
             }
             $str = substr($str, 0, -1);
-
-            // $newTablesName = 'company_name_'.floor($maxId/1500000);
+ 
             $newsql = "INSERT   INTO `$tableName` (`id`, `name`) VALUES $str ";
-            // CommonService::getInstance()->log4PHP($newsql); 
-            // sqlRaw($newsql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+            $configArr['debug'] &&  CommonService::getInstance()->log4PHP($newsql); 
+            sqlRaw($newsql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
     
-            $queryBuilder = new QueryBuilder();
-            $queryBuilder->raw($newsql);
-            $res = DbManager::getInstance()
-                ->query($queryBuilder, true, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-            sleep(1);
-        } 
+            // $queryBuilder = new QueryBuilder();
+            // $queryBuilder->raw($newsql);
+            // $res = DbManager::getInstance()
+            //     ->query($queryBuilder, true, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+            sleep(0.2);
+        }  
+ 
         return true ;  
     }
 

@@ -12,6 +12,7 @@ use App\Crontab\CrontabList\RunSaiMengHuiZhiCaiWu;
 use App\Crontab\CrontabList\RunSouKeUploadFiles;
 use App\Crontab\CrontabList\RunCompleteCompanyData;
 use App\Crontab\CrontabList\RunFillCompanyName;
+use App\Crontab\CrontabList\RunReadAndDealXls;
 use App\Crontab\CrontabList\RunSupervisor;
 use EasySwoole\Component\Singleton;
 use EasySwoole\EasySwoole\Crontab\Crontab;
@@ -34,6 +35,7 @@ class CrontabService
         $this->RunSouKeUploadFiles();
         $this->RunCompleteCompanyData();
         $this->RunFillCompanyName();
+        $this->RunReadAndDealXls();
 
         return true;
     }
@@ -93,5 +95,9 @@ class CrontabService
     private function RunFillCompanyName(): Crontab
     {
         return Crontab::getInstance()->addTask(RunFillCompanyName::class);
+    }
+    private function RunReadAndDealXls(): Crontab
+    {
+        return Crontab::getInstance()->addTask(RunReadAndDealXls::class);
     }
 }

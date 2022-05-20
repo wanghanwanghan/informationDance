@@ -10,9 +10,11 @@ use EasySwoole\Mysqli\QueryBuilder;
 use wanghanwanghan\someUtils\control;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Service\LongXin\LongXinService;
+use App\HttpController\Service\XinDong\XinDongService;
+use App\HttpController\Service\CreateConf;
 
 
-class RunCompleteCompanyData extends AbstractCronTask
+class RunReadAndDealXls extends AbstractCronTask
 {
     public $crontabBase;
     public $filePath = ROOT_PATH . '/Static/Temp/';
@@ -74,6 +76,7 @@ class RunCompleteCompanyData extends AbstractCronTask
         return true;
     }   
 
+    // function getYieldData($xlsx_name,$formatFuncName){
     function getYieldData($xlsx_name){
         $excel_read = new \Vtiful\Kernel\Excel(['path' => $this->workPath]);
         $excel_read->openFile($xlsx_name)->openSheet();
@@ -91,43 +94,42 @@ class RunCompleteCompanyData extends AbstractCronTask
                 break;
             }
 
-            $entname = $this->strtr_func($one[0]); 
-           
-            $retData =  (new LongXinService())
-                    ->setCheckRespFlag(true)
-                    ->getEntLianXi([
-                        'entName' => $entname,
-                    ])['result'];
-            $retData = LongXinService::complementEntLianXiMobileState($retData);
-            $retData = LongXinService::complementEntLianXiPosition($retData, $entname);  
-            foreach($retData as $datautem){   
-                yield $datas[] = array_values(array_merge(['comname' =>$entname],$datautem));
-            }
+            $value0 = $this->strtr_func($one[0]);  
+            $value1 = $this->strtr_func($one[1]);  
+            $value2 = $this->strtr_func($one[2]);  
+            $value3 = $this->strtr_func($one[3]);   
+            $tmpData = (new XinDongService())->matchEntByName($value0,1,4);
+            CommonService::getInstance()->log4PHP('matchNamXXXX'.json_encode(
+                [
+                    'value' => [$value0,$value1],
+                    'params' => $value0,
+                    'res' => $tmpData
+                ]
+            )); 
+            yield $datas[] = [
+                $value0,
+                $tmpData['id'], 
+                $tmpData['name'], 
+            ];
         }
     }
 
-    function run(int $taskId, int $workerIndex): bool
-    {
+    // function matchNameFormatData($tmpDataItem){
+    //      $res = (new XinDongService())->matchEntByName($tmpDataItem[0],1,4.5);
+    //      CommonService::getInstance()->log4PHP('matchNamYYYY'.json_encode($res)); 
+    //      return $$res;
+    // }
+    function matchName($file,$debugLog){
         $startMemory = memory_get_usage(); 
-        
-        // 找到客户名单
-        $files = glob($this->workPath.'customer_*.xlsx');
-        // CommonService::getInstance()->log4PHP('RunCompleteCompanyData files '.json_encode($files) );
-        if(empty($files)){
-            return true;
-        }
 
-        // 一个一个的跑
-        $file = pathinfo(array_shift($files))['basename'];
-        // CommonService::getInstance()->log4PHP('RunCompleteCompanyData file '.($file) );
-        
-        // 取yield数据
-        $excelDatas = $this->getYieldData($file);
-        
+        // 取yield数据 
+        // $excelDatas = $this->getYieldData($file,'matchNameFormatData');
+        $excelDatas = $this->getYieldData($file); 
+
         $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
-        // CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用1 '.$memory .' '.$file );
+        $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用1 '.$memory .' '.$file );
 
-        //写到csv里
+        //写到csv里 
         $fileName = pathinfo($file)['filename'];
         $f = fopen($this->workPath.$fileName.".csv", "w");
         fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
@@ -137,11 +139,44 @@ class RunCompleteCompanyData extends AbstractCronTask
         }
 
         $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
-        // CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用2 '.$memory .' '.$file );
+        $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用2 '.$memory .' '.$file );
 
         @unlink($this->workPath . $file);
 
         return true ;  
+    }
+
+    function run(int $taskId, int $workerIndex): bool
+    {
+         // log 配置 
+        //  $sql = " SELECT * FROM config_info  WHERE `name` =  'log_switch' LIMIT  1  "; 
+        //  $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));  
+        
+        //  // 配置
+        //  $configStr = end($list)['value']; 
+        //  $configArr = json_decode($configStr,true);
+        // if($configArr['valid_log_id'] == 1984){
+        $debugLog = true;
+        // } 
+        
+        // 找到需要处理的文件 uploadAndDealXls_matchName_测试
+        $files = glob($this->workPath.'uploadAndDealXls_*.xlsx');
+        $debugLog && CommonService::getInstance()->log4PHP('uploadAndDealXls_ files '.json_encode($files) );
+        if(empty($files)){
+            return true;
+        }
+         
+        // 一个一个的跑
+        $file = pathinfo(array_shift($files))['basename'];
+        $fileName = pathinfo($file)['filename'];
+        $debugLog &&  CommonService::getInstance()->log4PHP('uploadAndDealXls_ file '.($file) );
+        $fileNameArr = explode('_',$fileName);
+        if($fileNameArr[1] == 'matchName'){ 
+            $debugLog &&  CommonService::getInstance()->log4PHP('matchName  '.($file) );
+            return $this->matchName($file,$debugLog);
+        }
+
+        return true ;   
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
