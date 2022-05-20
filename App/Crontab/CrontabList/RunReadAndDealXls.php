@@ -119,7 +119,11 @@ class RunReadAndDealXls extends AbstractCronTask
 
         // 取yield数据 
         $excelDatas = $this->getYieldData($file,'matchNameFormatData');
-                
+        foreach ($excelDatas as $dataItem) {
+            $debugLog && CommonService::getInstance()->log4PHP( json_encode($dataItem));
+        }
+        
+
         $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
         $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用1 '.$memory .' '.$file );
 
