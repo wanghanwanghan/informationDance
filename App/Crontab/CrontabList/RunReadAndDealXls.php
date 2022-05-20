@@ -154,7 +154,7 @@ class RunReadAndDealXls extends AbstractCronTask
          // 配置
          $configStr = end($list)['value']; 
          $configArr = json_decode($configStr,true);
-        if($configArr == 1984){
+        if($configArr['valid_log_id'] == 1984){
             $debugLog = true;
         } 
         
