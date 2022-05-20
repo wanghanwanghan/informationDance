@@ -99,59 +99,68 @@ class RunFillCompanyName extends AbstractCronTask
 
         $tableName = $configArr['table_name'];
         // for($i=1; $i <= $configArr['sync_size1']; $i++){ 
-            $size = $configArr['sync_size2'] ;
+        $size = $configArr['sync_size2'] ;
 
-            $sql = " select id from  `$tableName`  order by id  desc limit 1 ";
-            $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-            $minId = 0;
+        $sql = " select id from  `$tableName`  order by id  desc limit 1 ";
+        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        $minId = 0;
 
-            $configArr['debug'] &&   CommonService::getInstance()->log4PHP('RunFillCompanyName'.
-            json_encode(
-                [
-                    
-                    'list' => $list, 
-                    'sql' => $sql,  
-                ]
-            ) ); 
-            if(!empty($list)){
-                $minId = intval($list[0]['id']); 
-            } 
+        $configArr['debug'] &&   CommonService::getInstance()->log4PHP('RunFillCompanyName'.
+        json_encode(
+            [
+                
+                'list' => $list, 
+                'sql' => $sql,  
+            ]
+        ) ); 
+        if(!empty($list)){
+            $minId = intval($list[0]['id']); 
+        } 
 
-            $from = $minId +1 ;  
-            if($from >= $configArr['table_max_id']){
-                $configArr['debug'] &&   CommonService::getInstance()->log4PHP(' reach limit'); 
-                return true ;
-            }    
-            $companySql = " select id,`name` from  `company` where id >= ".$from.
-                                                        " AND id <= ".($from+ $size);
-            $Companys = sqlRaw($companySql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
-            $configArr['debug'] &&  CommonService::getInstance()->log4PHP( $companySql); 
-            if(empty($Companys)){
-                return true;
-            }  
-            
-            $str = ""; 
-            foreach($Companys as  $CompanyItem){ 
-                $str .= "(".$CompanyItem['id'].", '".addslashes($CompanyItem['name'])."'),";
-            }
-            $str = substr($str, 0, -1);
- 
-            $newsql = "INSERT   INTO `$tableName` (`id`, `name`) VALUES $str ";
-            $configArr['debug'] &&  CommonService::getInstance()->log4PHP($newsql); 
-            // sqlRaw($newsql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-    
-            $queryBuilder = new QueryBuilder();
-            $queryBuilder->raw($newsql);
-            $res = DbManager::getInstance()
-                ->query(
-                    $queryBuilder, 
-                    true, 
-                    CreateConf::getInstance()->getConf('env.mysqlDatabase')
-                );
-            // sleep(0.1);
-        // }  
- 
+        $from = $minId +1 ;  
+        if($from >= $configArr['table_max_id']){
+            $configArr['debug'] &&   CommonService::getInstance()->log4PHP(' reach limit'); 
+            return true ;
+        }  
+
+        $this->addById($from,$size,$configArr,$tableName);
+        
+        $from = $from + $size +1 ;
+        $this->addById($from,$size,$configArr,$tableName);
+
+        $from = $from + $size +1 ;
+        $this->addById($from,$size,$configArr,$tableName);
+        
         return true ;  
+    }
+
+    function addById($from,$size,$configArr,$tableName){
+        $companySql = " select id,`name` from  `company` where id >= ".$from.
+                                                    " AND id <= ".($from+ $size);
+        $Companys = sqlRaw($companySql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
+        $configArr['debug'] &&  CommonService::getInstance()->log4PHP( $companySql); 
+        if(empty($Companys)){
+            return true;
+        }  
+        
+        $str = ""; 
+        foreach($Companys as  $CompanyItem){ 
+            $str .= "(".$CompanyItem['id'].", '".addslashes($CompanyItem['name'])."'),";
+        }
+        $str = substr($str, 0, -1);
+
+        $newsql = "INSERT   INTO `$tableName` (`id`, `name`) VALUES $str ";
+        $configArr['debug'] &&  CommonService::getInstance()->log4PHP($newsql); 
+        // sqlRaw($newsql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->raw($newsql);
+        $res = DbManager::getInstance()
+            ->query(
+                $queryBuilder, 
+                true, 
+                CreateConf::getInstance()->getConf('env.mysqlDatabase')
+            );
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
