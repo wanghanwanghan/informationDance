@@ -53,6 +53,16 @@ class Router extends AbstractRouter
         });
     }
 
+    private function DianZiQianV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Api/DianziQian/DianZiQianController/';
+        $routeCollector->addGroup('/dzq', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getAuthFile', $prefix . 'getAuthFile');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCarAuthFile', $prefix . 'getCarAuthFile');
+        });
+        return true;
+    }
+
     private function ZhiChiRouterV1(RouteCollector $routeCollector){
         $prefix = '/Business/Api/ZhiChi/ZhiChiController/';
         $routeCollector->addGroup('/zc', function (RouteCollector $routeCollector) use ($prefix) {

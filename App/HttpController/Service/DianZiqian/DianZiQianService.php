@@ -78,7 +78,7 @@ class DianZiQianService extends ServiceBase
 
         //使用模板创建合同
         $params = [
-            'vin' => 'vin L6T7804Z6KW019508',
+            'vin' => $postData['vin'],
             'shou_quan_date_time' => date('Y年m月d日H时i分s秒',time()),
             'qian_date_time' => date('Y年M月d日',time())
         ];

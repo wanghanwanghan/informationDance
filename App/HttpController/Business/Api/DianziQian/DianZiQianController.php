@@ -3,12 +3,15 @@
 namespace App\HttpController\Business\Provide\DianziQian;
 
 use App\Csp\Service\CspService;
+use App\HttpController\Business\Api\DianziQian\DianZiQianBase;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\DianZiqian\DianZiQianService;
 
-class DianZiQianController extends ProvideBase
+class DianZiQianController extends DianZiQianBase
 {
+
     function onRequest(?string $action): ?bool
     {
         return parent::onRequest($action);
@@ -17,25 +20,6 @@ class DianZiQianController extends ProvideBase
     function afterAction(?string $actionName): void
     {
         parent::afterAction($actionName);
-    }
-    function checkResponse($res): bool
-    {
-        if (empty($res[$this->cspKey])) {
-            $this->responseCode = 500;
-            $this->responsePaging = null;
-            $this->responseData = $res[$this->cspKey];
-            $this->spendMoney = 0;
-            $this->responseMsg = '请求超时';
-        } else {
-            $this->responseCode = $res[$this->cspKey]['code'];
-            $this->responsePaging = $res[$this->cspKey]['paging'];
-            $this->responseData = $res[$this->cspKey]['result'];
-            $this->responseMsg = $res[$this->cspKey]['msg'];
-
-            $res[$this->cspKey]['code'] === 200 ?: $this->spendMoney = 0;
-        }
-
-        return true;
     }
 
     function getAuthFile(): bool
@@ -57,15 +41,8 @@ class DianZiQianController extends ProvideBase
             'city' => $city,
             'regAddress' => $regAddress,
         ];
-        CommonService::getInstance()->log4PHP([$postData],'info','getAuthFile');
-
-        $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new DianZiQianService())->setCheckRespFlag(true)->getAuthFile($postData);
-        });
-
-        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-
-        return $this->checkResponse($res);
+        $res = (new DianZiQianService())->getAuthFile($postData);
+        return $this->writeJson($res['code'], null, $res['data'], $res['message']);
     }
 
     public function getCarAuthFile(){
@@ -86,22 +63,8 @@ class DianZiQianController extends ProvideBase
             'city' => $city,
             'vin' => $vin
         ];
-        CommonService::getInstance()->log4PHP([$postData],'info','getAuthFile');
+        $res = (new DianZiQianService())->getCarAuthFile($postData);
+        return $this->writeJson($res['code'], null, $res['data'], $res['message']);
 
-        $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new DianZiQianService())->setCheckRespFlag(true)->getCarAuthFile($postData);
-        });
-
-        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-
-        return $this->checkResponse($res);
-    }
-
-    public function getUrl(){
-        $this->csp->add($this->cspKey, function () {
-            return (new DianZiQianService())->setCheckRespFlag(true)->getUrl();
-        });
-        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-        return $this->checkResponse($res);
     }
 }
