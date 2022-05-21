@@ -314,7 +314,8 @@ class DianZiQianService extends ServiceBase
         $path      = "/open-api-lite/contract/file/template/filling";
         $paramData = [
             'params'               => json_encode($params),
-            'contractTemplateCode' => $contractTemplateCode
+            'contractTemplateCode' => $contractTemplateCode,
+            'ensureAllAcroFieldsFilled' => '1'
         ];
         $param     = $this->buildParam($paramData, $path);
         $resp      = (new CoHttpClient())
