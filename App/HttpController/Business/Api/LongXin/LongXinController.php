@@ -806,9 +806,9 @@ class LongXinController extends LongXinBase
 
         $this->moduleNum = 53;
 
-        $res = (new LongXinService())->superSearch($postData);
-
-        CommonService::getInstance()->log4PHP($res);
+        $res = (new LongXinService())
+            ->setCheckRespFlag(true)
+            ->superSearch($postData);
 
         if (!empty($res['data'])) {
             //添加2020营收规模
