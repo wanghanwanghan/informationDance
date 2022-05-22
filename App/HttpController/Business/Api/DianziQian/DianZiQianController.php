@@ -1,6 +1,6 @@
 <?php
 
-namespace App\HttpController\Business\Provide\DianziQian;
+namespace App\HttpController\Business\Api\DianziQian;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Api\DianziQian\DianZiQianBase;
