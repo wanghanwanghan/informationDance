@@ -191,6 +191,7 @@ class DianZiQianService extends ServiceBase
         if(empty($data)){
             return $this->createReturn(200, null, [], '没有需要查询的数据');
         }
+        $downloadUrl = '';
         foreach (json_decode(json_encode($data), true) as $v){
             $contractCode = $v['contractCode'];
             $entTransactionCode = $v['entTransactionCode'];
