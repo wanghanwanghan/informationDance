@@ -807,7 +807,7 @@ class LongXinController extends LongXinBase
         $this->moduleNum = 53;
 
         $res = (new LongXinService())
-            ->setCheckRespFlag(true)
+            ->setCheckRespFlag(false)
             ->superSearch($postData);
 
         CommonService::getInstance()->log4PHP($res);
