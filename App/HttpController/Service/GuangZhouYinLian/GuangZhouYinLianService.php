@@ -230,22 +230,7 @@ Eof;
     public function getCarInsurance($postData){
 //        $codes = ['711004','711005','711006','711011','711019','711009','711010','711013','711014','711015','711016'];
         $obj = ['vin'=>$postData['vin']];
-//        foreach ($codes as $bizFunc) {
-//            $postData['bizFunc'] = $bizFunc;
-//            $res = $this->queryInancialBank($postData);
-//            if(!isset($res['response']['msgBody']['vehicleRspInf'])){
-//                continue;
-//            }
-//            CommonService::getInstance()->log4PHP($res['response']['msgBody']['vehicleRspInf'],'info','getCarsInsurance');
-//            foreach ($res['response']['msgBody']['vehicleRspInf'] as $k=>$val){
-//
-//                if($val!=""){
-//
-//                    $obj[$k] = $val;
-//                }
-//            }
-//            CommonService::getInstance()->log4PHP($obj,'info','getCarsInsurance');
-//        }
+
         $obj = array_merge($this->getCarInsurance_wanghan($postData),$obj);
         $res_t = $this->queryUsedVehicleInfo($postData);
         $obj['maxLossAmount'] = $res_t['response']['msgBody']['vehicleInsuranceInf']['maxLossAmount']??'';
@@ -253,7 +238,18 @@ Eof;
     }
 
     function getCarInsurance_wanghan($postData){
-
+        $map = [
+            'carDamage'=>['1'=>'是','0'=>'否', 'z'=>'空值','-1'=>'异常'],
+            'effectivePolicyCi'=> ['1'=>'是','0'=>'否', 'z'=>'空值','-1'=>'异常'],
+            'effectivePolicyCo'=>['1'=>'是','0'=>'否', 'z'=>'空值','-1'=>'异常'],
+            'maxLossAmount'=>['1'=>'是','0'=>'否', 'z'=>'空值','-1'=>'异常'],
+            'risksNumber'=>['1'=>'3 次及以上','0'=>'0-3 次反', 'z'=>'空值','-1'=>'异常'],
+            'robberRisk'=>['1'=>'是','0'=>'否', 'z'=>'空值','-1'=>'异常'],
+            'settlemenOfClaVehHis'=>['1'=>'有重大事故,','0'=>'无重大事故', 'z'=>'空值','-1'=>'异常'],
+            'strengthenRisk'=>['1'=>'是','0'=>'否', 'z'=>'空值','-1'=>'异常'],
+            'threePartyRisks'=>['1'=>'是','0'=>'否', 'z'=>'空值','-1'=>'异常'],
+            'transferNumber' => ['2'=>'5次及以上','1'=>'3到5次','0'=>'0到3次', 'z'=>'空值','-1'=>'异常']
+        ];
         $codes = [
             '711004','711005','711006','711011',
             '711019','711009','711010','711013',
@@ -271,21 +267,17 @@ Eof;
         }
 
         $final=CspService::getInstance()->exec($csp);
-        CommonService::getInstance()->log4PHP($final,'info','getCarInsurance_wanghan');
         $obj = [];
         foreach ($final as $val) {
             if(!isset($val['response']['msgBody']['vehicleRspInf'])){
                 continue;
             }
-            CommonService::getInstance()->log4PHP($val['response']['msgBody']['vehicleRspInf'],'info','getCarsInsurance');
             foreach ($val['response']['msgBody']['vehicleRspInf'] as $k=>$v){
 
                 if($v!=""){
-
-                    $obj[$k] = $v;
+                    $obj[$k] = $map[$k][$v]??$v;
                 }
             }
-            CommonService::getInstance()->log4PHP($obj,'info','getCarsInsurance');
         }
         return $obj;
     }
