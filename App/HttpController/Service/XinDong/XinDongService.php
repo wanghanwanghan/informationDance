@@ -1545,15 +1545,20 @@ class XinDongService extends ServiceBase
         $tags = [];
 
         // 营收规模  
-        $dataItem['ying_shou_gui_mo'] && $yingShouGuiMoTag = (new XinDongService())::getYingShouGuiMoTag(
-            $dataItem['ying_shou_gui_mo']
-        );
-        $yingShouGuiMoTag && $tags[50] = $yingShouGuiMoTag;
+        if($dataItem['ying_shou_gui_mo']){
+            $yingShouGuiMoTag = (new XinDongService())::getYingShouGuiMoTag(
+                $dataItem['ying_shou_gui_mo']
+            );
+            $yingShouGuiMoTag && $tags[50] = $yingShouGuiMoTag;
+        } 
 
         // 团队规模
-        $dataItem['tuan_dui_ren_shu'] && $tuanDuiGuiMoTag = self::getTuanDuiGuiMoTag(
-            $dataItem['tuan_dui_ren_shu']);
-        $tuanDuiGuiMoTag && $tags[60] = $tuanDuiGuiMoTag;
+        if($dataItem['tuan_dui_ren_shu']){
+            $tuanDuiGuiMoTag = self::getTuanDuiGuiMoTag(
+                $dataItem['tuan_dui_ren_shu']
+            );
+            $tuanDuiGuiMoTag && $tags[60] = $tuanDuiGuiMoTag;
+        }
 
         // 是否有ISO
         $dataItem['iso'] && $tags[80] = 'ISO'; 
