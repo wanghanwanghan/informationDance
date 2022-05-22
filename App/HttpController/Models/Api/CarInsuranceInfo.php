@@ -11,5 +11,4 @@ class CarInsuranceInfo extends ModelBase
     protected $autoTimeStamp = true;
     protected $createTime = 'created_at';
     protected $updateTime = 'updated_at';
-
 }
