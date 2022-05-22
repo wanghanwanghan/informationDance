@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Api\GuangZhouYinLian;
 
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\GuangZhouYinLian\GuangZhouYinLianService;
 
 class GuangZhouYinLianController  extends GuangZhouYinLianBase
@@ -25,6 +26,7 @@ class GuangZhouYinLianController  extends GuangZhouYinLianBase
         ];
 
         $tmp = (new GuangZhouYinLianService())->getCarsInsurance($postData);
+        CommonService::getInstance()->log4PHP($tmp,'info','getCarsInsurance');
 
         return $this->writeJson(200, null, $tmp, '查询成功');
     }
