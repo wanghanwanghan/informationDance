@@ -206,7 +206,10 @@ Eof;
     }
 
     public function getCarsInsurance($postData){
-        $data = CarInsuranceInfo::create()->where("entCode = ".$postData['socialCredit'])->get();
+        if(empty($postData['socialCredit'])){
+            return [];
+        }
+        $data = CarInsuranceInfo::create()->where("entCode = '{$postData['socialCredit']}'")->get();
         if(empty($data) || empty($data->getAttr('vin'))){
             return [];
         }
