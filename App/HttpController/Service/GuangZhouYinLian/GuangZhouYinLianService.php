@@ -227,24 +227,25 @@ Eof;
     }
 
     public function getCarInsurance($postData){
-        $codes = ['711004','711005','711006','711011','711019','711009','711010','711013','711014','711015','711016'];
+//        $codes = ['711004','711005','711006','711011','711019','711009','711010','711013','711014','711015','711016'];
         $obj = ['vin'=>$postData['vin']];
-        foreach ($codes as $bizFunc) {
-            $postData['bizFunc'] = $bizFunc;
-            $res = $this->queryInancialBank($postData);
-            if(!isset($res['response']['msgBody']['vehicleRspInf'])){
-                continue;
-            }
-            CommonService::getInstance()->log4PHP($res['response']['msgBody']['vehicleRspInf'],'info','getCarsInsurance');
-            foreach ($res['response']['msgBody']['vehicleRspInf'] as $k=>$val){
-
-                if($val!=""){
-
-                    $obj[$k] = $val;
-                }
-            }
-            CommonService::getInstance()->log4PHP($obj,'info','getCarsInsurance');
-        }
+//        foreach ($codes as $bizFunc) {
+//            $postData['bizFunc'] = $bizFunc;
+//            $res = $this->queryInancialBank($postData);
+//            if(!isset($res['response']['msgBody']['vehicleRspInf'])){
+//                continue;
+//            }
+//            CommonService::getInstance()->log4PHP($res['response']['msgBody']['vehicleRspInf'],'info','getCarsInsurance');
+//            foreach ($res['response']['msgBody']['vehicleRspInf'] as $k=>$val){
+//
+//                if($val!=""){
+//
+//                    $obj[$k] = $val;
+//                }
+//            }
+//            CommonService::getInstance()->log4PHP($obj,'info','getCarsInsurance');
+//        }
+        $obj = array_merge($this->getCarInsurance_wanghan($postData),$obj);
         $res_t = $this->queryUsedVehicleInfo($postData);
         $obj['maxLossAmount'] = $res_t['response']['msgBody']['vehicleInsuranceInf']['maxLossAmount']??'';
         return $obj;
@@ -267,38 +268,29 @@ Eof;
 
                 $postData['bizFunc'] = $bizFunc;
 
-                $res = $this->queryInancialBank($postData);
-
-                //处理返回值
-                //...
-                //...
-                //...
-
-                return '处理结果';
+                return $this->queryInancialBank($postData);
 
             });
 
         }
 
-        //第二个业务接口
-        //...
-        //...
-        //...
-
-
-        //第三个业务接口
-        //...
-        //...
-        //...
-
         $final=CspService::getInstance()->exec($csp);
+        $obj = [];
+        foreach ($final as $val) {
+            if(!isset($val['response']['msgBody']['vehicleRspInf'])){
+                continue;
+            }
+            CommonService::getInstance()->log4PHP($val['response']['msgBody']['vehicleRspInf'],'info','getCarsInsurance');
+            foreach ($val['response']['msgBody']['vehicleRspInf'] as $k=>$v){
 
-        foreach ($final as $key=>$val) {
-            //处理
+                if($v!=""){
+
+                    $obj[$k] = $v;
+                }
+            }
+            CommonService::getInstance()->log4PHP($obj,'info','getCarsInsurance');
         }
-
-
-
+        return $obj;
     }
 
     /*
