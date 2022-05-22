@@ -3,6 +3,7 @@
 namespace App\HttpController\Service\GuangZhouYinLian;
 
 use App\HttpController\Models\Api\CarInsuranceInfo;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use wanghanwanghan\someUtils\control;
@@ -234,14 +235,17 @@ Eof;
             if(!isset($res['response']['msgBody']['vehicleRspInf'])){
                 continue;
             }
+            CommonService::getInstance()->log4PHP($res['response']['msgBody']['vehicleRspInf'],'info','getCarsInsurance');
             foreach ($res['response']['msgBody']['vehicleRspInf'] as $k=>$val){
-                if($val!=''){
+
+                if($val!=""){
+                    CommonService::getInstance()->log4PHP($val,'info','getCarsInsurance');
                     $obj[$k] = $val;
                 }
             }
         }
         $res_t = $this->queryUsedVehicleInfo($postData);
-        $obj['maxLossAmount'] = $res_t['msgBody']['vehicleInsuranceInf']['maxLossAmount'];
+        $obj['maxLossAmount'] = $res_t['response']['msgBody']['vehicleInsuranceInf']['maxLossAmount']??'';
         return $obj;
     }
 
