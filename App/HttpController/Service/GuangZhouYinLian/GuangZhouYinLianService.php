@@ -263,15 +263,10 @@ Eof;
 
         //第一个业务接口
         foreach ($codes as $bizFunc) {
-
-            $csp->add($bizFunc,function () use ($bizFunc){
-
-                $postData['bizFunc'] = $bizFunc;
-
+            $postData['bizFunc'] = $bizFunc;
+            $csp->add($bizFunc,function () use ($postData){
                 return $this->queryInancialBank($postData);
-
             });
-
         }
 
         $final=CspService::getInstance()->exec($csp);
