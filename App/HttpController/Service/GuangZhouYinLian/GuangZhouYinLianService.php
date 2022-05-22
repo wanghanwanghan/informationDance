@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\GuangZhouYinLian;
 
+use App\Csp\Service\CspService;
 use App\HttpController\Models\Api\CarInsuranceInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
@@ -247,6 +248,57 @@ Eof;
         $res_t = $this->queryUsedVehicleInfo($postData);
         $obj['maxLossAmount'] = $res_t['response']['msgBody']['vehicleInsuranceInf']['maxLossAmount']??'';
         return $obj;
+    }
+
+    function getCarInsurance_wanghan($postData){
+
+        $codes = [
+            '711004','711005','711006','711011',
+            '711019','711009','711010','711013',
+            '711014','711015','711016'
+        ];
+
+        $csp = CspService::getInstance()->create();
+
+        //第一个业务接口
+        foreach ($codes as $bizFunc) {
+
+            $csp->add($bizFunc,function () use ($bizFunc){
+
+                $postData['bizFunc'] = $bizFunc;
+
+                $res = $this->queryInancialBank($postData);
+
+                //处理返回值
+                //...
+                //...
+                //...
+
+                return '处理结果';
+
+            });
+
+        }
+
+        //第二个业务接口
+        //...
+        //...
+        //...
+
+
+        //第三个业务接口
+        //...
+        //...
+        //...
+
+        $final=CspService::getInstance()->exec($csp);
+
+        foreach ($final as $key=>$val) {
+            //处理
+        }
+
+
+
     }
 
     /*
