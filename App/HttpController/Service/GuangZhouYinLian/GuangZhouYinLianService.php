@@ -216,12 +216,13 @@ Eof;
             return [];
         }
         $vinArr = explode(',',$data->getAttr('vin'));
+        $postData['firstBeneficiary'] = $postData['legalPerson'];
         $param = array_merge(json_decode(json_encode($data),true),$postData);
         foreach ($vinArr as $val){
             $vin_v = explode(' ',$val);
             $param['vin'] = $vin_v['1'];
             $res = $this->getCarInsurance($param);
-            $param[$vin_v['1']] = $res;
+            $param['list'][] = $res;
         }
         return $param;
     }
