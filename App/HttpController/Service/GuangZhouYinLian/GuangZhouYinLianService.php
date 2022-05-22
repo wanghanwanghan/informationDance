@@ -217,11 +217,10 @@ Eof;
         $vinArr = explode(',',$data->getAttr('vin'));
         $param = array_merge(json_decode(json_encode($data),true),$postData);
         foreach ($vinArr as $val){
-            $param = $postData;
             $vin_v = explode(' ',$val);
             $param['vin'] = $vin_v['1'];
             $res = $this->getCarInsurance($param);
-            $param[$val] = $res;
+            $param[$vin_v['1']] = $res;
         }
         return $param;
     }
@@ -239,10 +238,11 @@ Eof;
             foreach ($res['response']['msgBody']['vehicleRspInf'] as $k=>$val){
 
                 if($val!=""){
-                    CommonService::getInstance()->log4PHP($val,'info','getCarsInsurance');
+
                     $obj[$k] = $val;
                 }
             }
+            CommonService::getInstance()->log4PHP($obj,'info','getCarsInsurance');
         }
         $res_t = $this->queryUsedVehicleInfo($postData);
         $obj['maxLossAmount'] = $res_t['response']['msgBody']['vehicleInsuranceInf']['maxLossAmount']??'';
