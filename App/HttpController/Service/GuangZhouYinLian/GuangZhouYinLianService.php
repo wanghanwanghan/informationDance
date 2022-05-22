@@ -231,7 +231,10 @@ Eof;
         foreach ($codes as $bizFunc) {
             $postData['bizFunc'] = $bizFunc;
             $res = $this->queryInancialBank($postData);
-            foreach ($res['msgBody']['vehicleRspInf'] as $k=>$val){
+            if(!isset($res['response']['msgBody']['vehicleRspInf'])){
+                continue;
+            }
+            foreach ($res['response']['msgBody']['vehicleRspInf'] as $k=>$val){
                 if($val!=''){
                     $obj[$k] = $val;
                 }
