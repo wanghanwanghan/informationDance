@@ -286,7 +286,7 @@ Eof;
                 'busiId'           => '00270001',
                 'vehicleVerifyInf' => [
                     'name'             => $postData['name'],           //张万珍',
-                    'userNo'           => $postData['userNo'],         //'888888',
+                    'userNo'           => $postData['vin'],         //'888888',
                     'certType'         => 0,       //'0',
                     'certNo'           => $postData['certNo'],         //'142129195506080532',
                     'vin'              => $postData['vin'],            //'LVSHFC0HH309074',
