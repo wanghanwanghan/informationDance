@@ -46,6 +46,8 @@ class DianZiQianController extends DianZiQianBase
     }
 
     public function getCarAuthFile(){
+
+
         $entName = $this->getRequestData('entName');
         $socialCredit = $this->getRequestData('socialCredit');
         $legalPerson = $this->getRequestData('legalPerson');
@@ -63,6 +65,7 @@ class DianZiQianController extends DianZiQianBase
             'city' => $city,
             'vin' => $vin
         ];
+        CommonService::getInstance()->log4PHP($postData,'info','getCarAuthFile');
         $res = (new DianZiQianService())->getCarAuthFile($postData);
         return $this->writeJson($res['code'], null, $res['data'], $res['message']);
 
