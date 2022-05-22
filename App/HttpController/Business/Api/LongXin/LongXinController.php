@@ -810,9 +810,6 @@ class LongXinController extends LongXinBase
             ->setCheckRespFlag(false)
             ->superSearch($postData);
 
-        CommonService::getInstance()->log4PHP($res);
-
-
         if (!empty($res['data'])) {
             //添加2020营收规模
             foreach ($res['data'] as $key => $oneEnt) {

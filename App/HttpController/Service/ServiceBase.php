@@ -10,7 +10,7 @@ use wanghanwanghan\someUtils\control;
 class ServiceBase
 {
     //各个service在返回结果之前进行返回值检测
-    public $checkRespFlag = true;
+    public $checkRespFlag = false;
 
     //信动调用数据源接口记次用
     public $requestId = null;
