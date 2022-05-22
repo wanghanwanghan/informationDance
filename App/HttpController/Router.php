@@ -30,6 +30,8 @@ class Router extends AbstractRouter
             $this->ExportPdfRouterV1($routeCollector);//导出pdf
             $this->TestRouterV1($routeCollector);//测试路由
             $this->ZhiChiRouterV1($routeCollector);//智齿科技
+            $this->GuangZhouYinLianV1($routeCollector);//广州银联
+            $this->DianZiQianV1($routeCollector);//vin，电子牵授权书
         });
 
         $routeCollector->addGroup('/admin/v1', function (RouteCollector $routeCollector) {
@@ -51,6 +53,24 @@ class Router extends AbstractRouter
         $routeCollector->addGroup('/admin_roles/v1', function (RouteCollector $routeCollector) {
             AdminRoles::getInstance()->addRouterV1($routeCollector);
         });
+    }
+
+    private function GuangZhouYinLianV1(RouteCollector $routeCollector){
+        $prefix = '/Business/Api/GuangZhouYinLian/GuangZhouYinLianController/';
+        $routeCollector->addGroup('/gzyl', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getCarsInsurance', $prefix . 'getCarsInsurance');
+        });
+        return true;
+    }
+
+    private function DianZiQianV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Api/DianziQian/DianZiQianController/';
+        $routeCollector->addGroup('/dzq', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getAuthFile', $prefix . 'getAuthFile');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCarAuthFile', $prefix . 'getCarAuthFile');
+        });
+        return true;
     }
 
     private function ZhiChiRouterV1(RouteCollector $routeCollector){

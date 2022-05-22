@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\DianZiqian;
 
+use App\HttpController\Models\Api\CarInsuranceInfo;
 use App\HttpController\Models\Api\DianZiQianAuth;
 use App\HttpController\Models\Api\FaDaDa\FaDaDaUserModel;
 use App\HttpController\Service\Common\CommonService;
@@ -49,6 +50,14 @@ class DianZiQianService extends ServiceBase
      * vin授权
      */
     public function getCarAuthFile($postData){
+        $varInsertData = [
+            'vin' => $postData['vin'],
+            'entName' => $postData['entName'],
+            'entCode' => $postData['socialCredit'],
+            'idCard' => $postData['idCard'],
+            'legalPerson' => $postData['legalPerson'],
+        ];
+        CarInsuranceInfo::create()->data($varInsertData)->save();
         //创建个人签署人
         $signerPersonres    = $this->signerPerson($postData);
         $signerCodePersonal = $signerPersonres['result']['signerCode'] ?? "";
@@ -78,7 +87,7 @@ class DianZiQianService extends ServiceBase
 
         //使用模板创建合同
         $params = [
-            'vin' => 'vin L6T7804Z6KW019508',
+            'vin' => $postData['vin'],
             'shou_quan_date_time' => date('Y年m月d日H时i分s秒',time()),
             'qian_date_time' => date('Y年M月d日',time())
         ];
@@ -314,7 +323,8 @@ class DianZiQianService extends ServiceBase
         $path      = "/open-api-lite/contract/file/template/filling";
         $paramData = [
             'params'               => json_encode($params),
-            'contractTemplateCode' => $contractTemplateCode
+            'contractTemplateCode' => $contractTemplateCode,
+            'ensureAllAcroFieldsFilled' => '1'
         ];
         $param     = $this->buildParam($paramData, $path);
         $resp      = (new CoHttpClient())
