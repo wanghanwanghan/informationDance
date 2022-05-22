@@ -232,7 +232,7 @@ Eof;
             $postData['bizFunc'] = $bizFunc;
             $res = $this->queryInancialBank($postData);
             foreach ($res['msgBody']['vehicleRspInf'] as $k=>$val){
-                if(!empty($val)){
+                if($val!=''){
                     $obj[$k] = $val;
                 }
             }
