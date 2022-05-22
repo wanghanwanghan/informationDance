@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\GuangZhouYinLian;
 
+use App\HttpController\Models\Api\CarInsuranceInfo;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use wanghanwanghan\someUtils\control;
@@ -85,7 +86,6 @@ Eof;
     {
         $this->bizFuncArr = [
         '711004' => $this->busiMerno1,
-        '711021' => $this->busiMerno1,
         '711005' => $this->busiMerno2,
         '711006' => $this->busiMerno2,
         '711011' => $this->busiMerno2,
@@ -203,6 +203,39 @@ Eof;
         $time      = time();
         $sndDt     = date('YmdHis', $time);
         $merOrdrNo = $this->busiMerno . date('Ymd', $time) . control::randNum(9);
+    }
+
+    public function getCarsInsurance($postData){
+        $data = CarInsuranceInfo::create()->where("entCode = ".$postData['socialCredit'])->get();
+        if(empty($data) || empty($data->getAttr('vin'))){
+            return [];
+        }
+        $vinArr = explode('',$data->getAttr('vin'));
+        $param = array_merge(json_decode(json_encode($data),true),$postData);
+        foreach ($vinArr as $val){
+            $param = $postData;
+            $param['vin'] = $val;
+            $res = $this->getCarInsurance($param);
+            $param[$val] = $res;
+        }
+        return $param;
+    }
+
+    public function getCarInsurance($postData){
+        $codes = ['711004','711005','711006','711011','711019','711009','711010','711013','711014','711015','711016'];
+        $obj = ['vin'=>$postData['vin']];
+        foreach ($codes as $bizFunc) {
+            $postData['bizFunc'] = $bizFunc;
+            $res = $this->queryInancialBank($postData);
+            foreach ($res['msgBody']['vehicleRspInf'] as $k=>$val){
+                if(!empty($val)){
+                    $obj[$k] = $val;
+                }
+            }
+        }
+        $res_t = $this->queryUsedVehicleInfo($postData);
+        $obj['maxLossAmount'] = $res_t['msgBody']['vehicleInsuranceInf']['maxLossAmount'];
+        return $obj;
     }
 
     /*
@@ -415,7 +448,7 @@ Eof;
     }
 
     /*
-     * 二手车信息查询
+     * 二手车信息查询 最大损失金额
      */
     public function queryUsedVehicleInfo($postData)
     {

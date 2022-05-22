@@ -53,6 +53,14 @@ class Router extends AbstractRouter
         });
     }
 
+    private function GuangZhouYinLianV1(RouteCollector $routeCollector){
+        $prefix = '/Business/Api/GuangZhouYinLian/GuangZhouYinLianController/';
+        $routeCollector->addGroup('/gzyl', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getCarsInsurance', $prefix . 'getCarsInsurance');
+        });
+        return true;
+    }
+
     private function DianZiQianV1(RouteCollector $routeCollector)
     {
         $prefix = '/Business/Api/DianziQian/DianZiQianController/';

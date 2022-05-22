@@ -53,7 +53,7 @@ class DianZiQianController extends DianZiQianBase
         $phone = $this->getRequestData('phone');
         $city = $this->getRequestData('city');
         $regAddress = $this->getRequestData('regAddress');
-        $vin = $this->getRequestData('vin');
+        $vin = $this->getRequestData('vinStr');
         $postData = [
             'entName' => $entName,
             'socialCredit' => $socialCredit,

@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\DianZiqian;
 
+use App\HttpController\Models\Api\CarInsuranceInfo;
 use App\HttpController\Models\Api\DianZiQianAuth;
 use App\HttpController\Models\Api\FaDaDa\FaDaDaUserModel;
 use App\HttpController\Service\Common\CommonService;
@@ -49,6 +50,14 @@ class DianZiQianService extends ServiceBase
      * vin授权
      */
     public function getCarAuthFile($postData){
+        $varInsertData = [
+            'vin' => $postData['vin'],
+            'entName' => $postData['entName'],
+            'entCode' => $postData['socialCredit'],
+            'idCard' => $postData['idCard'],
+            'legalPerson' => $postData['legalPerson'],
+        ];
+        CarInsuranceInfo::create()->data($varInsertData)->save();
         //创建个人签署人
         $signerPersonres    = $this->signerPerson($postData);
         $signerCodePersonal = $signerPersonres['result']['signerCode'] ?? "";
