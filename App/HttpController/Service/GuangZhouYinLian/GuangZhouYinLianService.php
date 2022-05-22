@@ -213,11 +213,12 @@ Eof;
         if(empty($data) || empty($data->getAttr('vin'))){
             return [];
         }
-        $vinArr = explode('',$data->getAttr('vin'));
+        $vinArr = explode(',',$data->getAttr('vin'));
         $param = array_merge(json_decode(json_encode($data),true),$postData);
         foreach ($vinArr as $val){
             $param = $postData;
-            $param['vin'] = $val;
+            $vin_v = explode(' ',$val);
+            $param['vin'] = $vin_v['1'];
             $res = $this->getCarInsurance($param);
             $param[$val] = $res;
         }
