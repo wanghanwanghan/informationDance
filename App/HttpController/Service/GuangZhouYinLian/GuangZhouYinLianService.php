@@ -275,6 +275,7 @@ Eof;
         }
 
         $final=CspService::getInstance()->exec($csp);
+        CommonService::getInstance()->log4PHP($final,'info','getCarInsurance_wanghan');
         $obj = [];
         foreach ($final as $val) {
             if(!isset($val['response']['msgBody']['vehicleRspInf'])){
