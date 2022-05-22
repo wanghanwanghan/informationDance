@@ -30,6 +30,8 @@ class Router extends AbstractRouter
             $this->ExportPdfRouterV1($routeCollector);//导出pdf
             $this->TestRouterV1($routeCollector);//测试路由
             $this->ZhiChiRouterV1($routeCollector);//智齿科技
+            $this->GuangZhouYinLianV1($routeCollector);//广州银联
+            $this->DianZiQianV1($routeCollector);//vin，电子牵授权书
         });
 
         $routeCollector->addGroup('/admin/v1', function (RouteCollector $routeCollector) {
