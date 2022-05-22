@@ -49,7 +49,7 @@ class DianZiQianController extends DianZiQianBase
 
 
         $entName = $this->getRequestData('entName');
-        $socialCredit = $this->getRequestData('socialCredit');
+        $socialCredit = $this->getRequestData('entCode');
         $legalPerson = $this->getRequestData('operName');
         $idCard = $this->getRequestData('idCard');
         $phone = $this->getRequestData('phone');
