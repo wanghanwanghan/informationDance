@@ -2139,4 +2139,35 @@ class XinDongService extends ServiceBase
         // ];  
     } 
 
+    static function trace(){
+        $old_traces = debug_backtrace();
+        $new_traces = [];
+        if(empty($old_traces)){
+            return [];
+        }
+        
+        $allowed_field_arr = [
+            'file',
+            'line',
+            'function',
+        ];
+
+        foreach ($old_traces as $traceArr){
+            $tmpArr = [];
+            foreach ($traceArr as $trac_key=>$trace_value){
+                if(!in_array(
+                    $trac_key,
+                    $allowed_field_arr
+                )){
+                    continue;
+                }
+                $tmpArr[$trac_key]=$trace_value;
+            }
+            if(empty($tmpArr)){
+                continue;
+            }
+            $new_traces[] = $tmpArr;
+        }
+        return  $new_traces ;
+    }
 }
