@@ -31,7 +31,7 @@ class ControllerBase extends Index
         // 需要加层缓存
         $res = ConfigInfo::create()->where('name', 'admin_no_check_methods')->get();
         $methodsLists = [];
-        $tmpStr = trim($res->getAttr['value']);
+        $tmpStr = trim($res->getAttr('value'));
         CommonService::getInstance()->log4PHP('  tmpStr '.$tmpStr);
         if($tmpStr){
             $tmpArr = @json_decode($tmpStr,true);
