@@ -26,6 +26,7 @@ use EasySwoole\ElasticSearch\ElasticSearch;
 use EasySwoole\ElasticSearch\RequestBean\Search;
 use App\HttpController\Models\Api\UserBusinessOpportunity;
 use App\HttpController\Models\RDS3\Company;
+use App\HttpController\Models\RDS3\XsyA24Logo;
 
 class XinDongService extends ServiceBase
 {
@@ -2169,5 +2170,15 @@ class XinDongService extends ServiceBase
             $new_traces[] = $tmpArr;
         }
         return  $new_traces ;
+    }
+
+    function getLogoByEntId($entId){
+        $logoData = XsyA24Logo::create()
+            ->where('id', $entId)
+            ->get();
+        if(empty($logoData)){
+            return '';
+        }
+        return $logoData->getAttr('file_path');
     }
 }
