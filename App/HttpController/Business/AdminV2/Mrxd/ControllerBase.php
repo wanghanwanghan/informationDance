@@ -84,7 +84,10 @@ class ControllerBase extends Index
             return false;
         }
 
-        if (empty($res)) return false;
+        if (empty($res)){
+            CommonService::getInstance()->log4PHP(' token error 2.5 '.$requestToken .' res'.json_encode($res));  
+            return false;
+        } 
         $this->setLoginUserInfo($res);
 
         $tokenInfo = UserService::getInstance()->decodeAccessToken($requestToken);
