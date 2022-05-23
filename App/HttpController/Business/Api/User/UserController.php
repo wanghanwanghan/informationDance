@@ -38,10 +38,7 @@ class UserController extends UserBase
 
     //注册
     function reg()
-    {               
-        CommonService::getInstance()->log4PHP(
-            json_encode(XinDongService::trace())
-        );
+    {    
         $company = $this->request()->getRequestParam('company') ?? '';
         $username = $this->request()->getRequestParam('username') ?? '';
         $phone = $this->request()->getRequestParam('phone') ?? '';
@@ -120,9 +117,6 @@ class UserController extends UserBase
     //登录
     function login()
     {
-        CommonService::getInstance()->log4PHP(
-            json_encode(XinDongService::trace())
-        );
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $vCode = $this->request()->getRequestParam('vCode') ?? '';
         $password = $this->request()->getRequestParam('password') ?? '';
@@ -175,9 +169,6 @@ class UserController extends UserBase
     //修改密码
     function setLoginPassword()
     {
-        CommonService::getInstance()->log4PHP(
-            json_encode(XinDongService::trace())
-        );
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $pwd_saki = $this->request()->getRequestParam('pwd_saki') ?? '';
         $pwd_saki_confirm = $this->request()->getRequestParam('pwd_saki_confirm') ?? '';

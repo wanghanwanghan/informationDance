@@ -12,7 +12,8 @@ use EasySwoole\Session\Session;
 class UserController extends ControllerBase
 {
     function onRequest(?string $action): ?bool
-    {
+    {   
+        $this->setChckToken(true);
         return parent::onRequest($action);
     }
 
@@ -92,7 +93,7 @@ class UserController extends ControllerBase
      * 用户冻结
      */
     public function updateUserStatus(){
-        return $this->writeJson(200, null, null, '修改成功');
+       
         $phone = $this->request()->getRequestParam('phone');
         $status = $this->request()->getRequestParam('status');
         if (empty($phone)) return $this->writeJson(201, null, null, 'phone 不能是空');
