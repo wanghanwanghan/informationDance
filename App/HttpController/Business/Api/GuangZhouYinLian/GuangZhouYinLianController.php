@@ -21,8 +21,10 @@ class GuangZhouYinLianController  extends GuangZhouYinLianBase
 
     function getCarsInsurance(){
         $socialCredit             = $this->getRequestData('socialCredit');
+        $page             = $this->getRequestData('page');
         $postData         = [
             'socialCredit' => $socialCredit,
+            'page' => $page
         ];
 
         list($paging,$tmp) = (new GuangZhouYinLianService())->setCheckRespFlag(true)->getCarsInsurance($postData);
