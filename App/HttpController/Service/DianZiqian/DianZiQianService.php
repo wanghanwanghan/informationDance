@@ -29,7 +29,7 @@ class DianZiQianService extends ServiceBase
     function __construct($type = '')
     {
         parent::__construct();
-
+        $this->checkRespFlag = true;
         $this->url        = 'https://sandbox.letsign.com';
         $this->app_code   = 'E7094079418854802183';
         $this->app_secret = '6%T8s0h!cSx4^M$7vb0Xjr5e75r6n18NxGuK1V7$942e7*2&2G64d7#3#^8x4G44';
