@@ -105,8 +105,16 @@ class ControllerBase extends Index
             CommonService::getInstance()->log4PHP(' token error 4 '.$requestToken .$tokenPhone);   
             return false;
         } 
+        $res = $reqPhone - 0 === $tokenPhone - 0;
+        CommonService::getInstance()->log4PHP('  return  '.json_encode(
+            [
+                $res,
+                $tokenPhone,
+                $reqPhone
+            ]
+        ) );   
 
-        return $reqPhone - 0 === $tokenPhone - 0;
+        return $res;
     }
 
     private function setLoginUserInfo($userInfo){
