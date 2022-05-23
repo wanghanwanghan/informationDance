@@ -221,6 +221,7 @@ Eof;
             $vinArr = array_merge($vinArr,explode(',',$val->getAttr('vin')));
         }
         $vinArr = array_unique($vinArr);
+        $total = count($vinArr);
         $vinArr = array_splice($vinArr,($postData['page']-1)*5,5);
         $postData['firstBeneficiary'] = $postData['legalPerson'];
         $param = array_merge(json_decode(json_encode($data),true),$postData);
@@ -234,8 +235,8 @@ Eof;
         $paging = [
             'page' => $postData['page'],
             'pageSize' => 5,
-            'total' => count($vinArr),
-            'totalPage' => (int)(count($vinArr)/5)+1,
+            'total' => $total,
+            'totalPage' => (int)($total/5)+1,
         ];
         return [$paging, $param['list']];
     }
