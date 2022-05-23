@@ -87,7 +87,7 @@ class DianZiQianService extends ServiceBase
 
         //使用模板创建合同
         $params = [
-            'remark' => $postData['vin'],
+            'vin' => $postData['vin'],
             'join_time' => date('Y年m月d日H时i分s秒',time()),
             'sign_time' => date('Y年m月d日',time())
         ];
@@ -187,7 +187,7 @@ class DianZiQianService extends ServiceBase
     }
 
     public function getUrl(){
-        $data = DianZiQianAuth::create()->where("entUrlResultCode < 1 or personalUrlResultCode < 1")->all();
+        $data = DianZiQianAuth::create()->where("entUrlResultCode = 0 or personalUrlResultCode = 0")->all();
         if(empty($data)){
             return $this->createReturn(200, null, [], '没有需要查询的数据');
         }
