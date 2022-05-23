@@ -55,7 +55,7 @@ class UserController extends ControllerBase
         if (empty($username) || empty($password) ) {
             return $this->writeJson(201, null, null, '登录信息错误');
         }
-
+        
         $info = AdminNewUser::create()
             ->where("user_name = '{$username}' and password = '{$password}'")
             ->get();

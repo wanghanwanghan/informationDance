@@ -35,7 +35,7 @@ class ControllerBase extends Index
         CommonService::getInstance()->log4PHP('  tmpStr '.$tmpStr);
         if($tmpStr){
             $tmpArr = @json_decode($tmpStr,true);
-            CommonService::getInstance()->log4PHP('  tmpArr '.$tmpArr);
+            CommonService::getInstance()->log4PHP('  tmpArr '.json_encode($tmpArr));
             if(
                 is_array($tmpArr) &&
                 !empty($tmpArr) 
@@ -44,9 +44,7 @@ class ControllerBase extends Index
     
                 return array_keys($methodsLists);
             }
-        };
-        
-
+        }; 
         return $methodsLists;
     }
 
@@ -70,13 +68,15 @@ class ControllerBase extends Index
     function checkToken(): bool
     { 
         $requestToken = $this->request()->getHeaderLine('authorization');
+        CommonService::getInstance()->log4PHP('  requestToken '.$requestToken);
 
         if (empty($requestToken) || strlen($requestToken) < 50) return false;
-
+            CommonService::getInstance()->log4PHP(' token error 1 '.$requestToken); 
         try {
             $res = AdminNewUser::create()->where('token', $requestToken)->get();
         } catch (\Throwable $e) {
             // $this->writeErr($e, __FUNCTION__);
+            CommonService::getInstance()->log4PHP(' token error 2 '.$requestToken);  
             return false;
         }
 
@@ -85,13 +85,19 @@ class ControllerBase extends Index
 
         $tokenInfo = UserService::getInstance()->decodeAccessToken($requestToken);
 
-        if (!is_array($tokenInfo) || count($tokenInfo) != 3) return false;
+        if (!is_array($tokenInfo) || count($tokenInfo) != 3){
+            CommonService::getInstance()->log4PHP(' token error 3 '.$requestToken .json_encode($tokenInfo));   
+            return false;
+        } 
 
         $reqPhone = $this->request()->getRequestParam('phone') ?? '';
 
         $tokenPhone = current($tokenInfo);
 
-        if (strlen($tokenPhone) != 11 || strlen($reqPhone) != 11) return false;
+        if (strlen($tokenPhone) != 11 || strlen($reqPhone) != 11){
+            CommonService::getInstance()->log4PHP(' token error 4 '.$requestToken .$tokenPhone);   
+            return false;
+        } 
 
         return $reqPhone - 0 === $tokenPhone - 0;
     }
