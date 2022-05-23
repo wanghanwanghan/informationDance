@@ -71,7 +71,7 @@ class ControllerBase extends Index
         CommonService::getInstance()->log4PHP('  requestToken '.$requestToken);
 
         if (empty($requestToken) || strlen($requestToken) < 50) return false;
-            CommonService::getInstance()->log4PHP(' token error 1 '.$requestToken); 
+            CommonService::getInstance()->log4PHP(' token error 1 '.$requestToken . strlen($requestToken) ); 
         try {
             $res = AdminNewUser::create()->where('token', $requestToken)->get();
         } catch (\Throwable $e) {
