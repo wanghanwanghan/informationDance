@@ -32,14 +32,16 @@ class ControllerBase extends Index
         $res = ConfigInfo::create()->where('name', 'admin_no_check_methods')->get();
         $methodsLists = [];
         $tmpStr = trim($res->getAttr['value']);
+        CommonService::getInstance()->log4PHP('  tmpStr '.$tmpStr);
         if($tmpStr){
             $tmpArr = @json_decode($tmpStr,true);
+            CommonService::getInstance()->log4PHP('  tmpArr '.$tmpArr);
             if(
                 is_array($tmpArr) &&
                 !empty($tmpArr) 
             ){
                 $methodsLists = $tmpArr;
-                CommonService::getInstance()->log4PHP('  methodsLists '.json_encode($methodsLists));
+    
                 return array_keys($methodsLists);
             }
         };
@@ -53,7 +55,8 @@ class ControllerBase extends Index
         $this->setActionName($action);
         if($this->needsCheckToken()){ 
             if (!$this->checkToken() ){
-                return $this->writeJson(240, null, null, 'token错误');
+                $this->writeJson(243, null, null, 'token错误');
+                return false;
             } 
         }
         return parent::onRequest($action);
