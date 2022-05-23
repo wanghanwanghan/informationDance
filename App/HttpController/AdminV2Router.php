@@ -23,11 +23,40 @@ class AdminV2Router
 
         $routeCollector->addGroup('/user', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/login', $prefix . 'userLogin');
-            $routeCollector->addRoute(['GET', 'POST'], '/addUser', $prefix . 'addUser'); 
+            $routeCollector->addRoute(['GET', 'POST'], '/addUser', $prefix . 'addUser');
+            $routeCollector->addRoute(['GET', 'POST'], '/list', $prefix . 'userList');
+            $routeCollector->addRoute(['GET', 'POST'], '/location', $prefix . 'userLocation');
+            $routeCollector->addRoute(['GET', 'POST'], '/purchase/list', $prefix . 'userPurchaseList');
+            $routeCollector->addRoute(['GET', 'POST'], '/purchase/do', $prefix . 'userPurchaseDo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getUserAuthBook', $prefix . 'getUserAuthBook');
+            $routeCollector->addRoute(['GET', 'POST'], '/handleUserAuthBook', $prefix . 'handleUserAuthBook');
+            $routeCollector->addRoute(['GET', 'POST'], '/getAbnormalFinance', $prefix . 'getAbnormalFinance');
+
         });
 
         return true;
-    } 
+    }
 
+    private function GroceryStore(RouteCollector $routeCollector): bool
+    {
+        $prefix = '/Business/Admin/GroceryStore/GroceryStoreController/';
 
+        $routeCollector->addGroup('/grocerystore', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/wuliuNode', $prefix . 'wuliuNode');
+        });
+
+        return true;
+    }
+
+    private function SaibopengkeAdmin(RouteCollector $routeCollector): bool
+    {
+        $prefix = '/Business/Admin/SaibopengkeAdmin/SaibopengkeAdminController/';
+        $routeCollector->addGroup('/sbpk', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getDataList', $prefix . 'getDataList');
+            $routeCollector->addRoute(['GET', 'POST'], '/statusChange', $prefix . 'statusChange');
+            $routeCollector->addRoute(['GET', 'POST'], '/getExportZip', $prefix . 'getExportZip');
+            $routeCollector->addRoute(['GET', 'POST'], '/uploadEntList', $prefix . 'uploadEntList');
+        });
+        return true;
+    }
 }
