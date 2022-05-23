@@ -30,11 +30,17 @@ class UserController extends ControllerBase
      * 用户登录
      */
     public function userLogin()
-    {
+    { 
+
         $username = $this->request()->getRequestParam('username') ?? '';
         $password = $this->request()->getRequestParam('password') ?? '';
-        if (empty($username) || empty($password) ) return $this->writeJson(201, null, null, '登录信息错误');
-        $info = AdminNewUser::create()->where("username = '{$username}' and password = '{$password}'")->get();
+        if (empty($username) || empty($password) ) {
+            return $this->writeJson(201, null, null, '登录信息错误');
+        }
+
+        $info = AdminNewUser::create()
+            ->where("username = '{$username}' and password = '{$password}'")
+            ->get();
         if(empty($info)){
             return $this->writeJson(201, null, null, '账号密码错误');
         }else{
