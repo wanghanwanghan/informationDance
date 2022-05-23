@@ -5,6 +5,7 @@ namespace App\HttpController\Business\AdminV2\Mrxd;
 use App\HttpController\Index;
 use App\HttpController\Models\AdminNew\AdminNewUser;
 use App\HttpController\Models\AdminNew\ConfigInfo;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\User\UserService;
 use wanghanwanghan\someUtils\control;
 
@@ -38,18 +39,21 @@ class ControllerBase extends Index
                 !empty($tmpArr) 
             ){
                 $methodsLists = $tmpArr;
+                CommonService::getInstance()->log4PHP('  methodsLists '.json_encode($methodsLists));
+                return array_keys($methodsLists);
             }
         };
+        
+
         return $methodsLists;
     }
 
     function onRequest(?string $action): ?bool
     {
         $this->setActionName($action);
-        if($this->needsCheckToken()){
-            $checkToken = $this->checkToken();
-            if (!$checkToken ){
-                $this->writeJson(240, null, null, 'token错误');
+        if($this->needsCheckToken()){ 
+            if (!$this->checkToken() ){
+                return $this->writeJson(240, null, null, 'token错误');
             } 
         }
         return parent::onRequest($action);
