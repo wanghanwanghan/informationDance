@@ -19,7 +19,7 @@ class AdminV2Router
 
     private function UserRouterV1(RouteCollector $routeCollector): bool
     {
-        $prefix = '/Business/AdminV2/User/UserController/';
+        $prefix = '/Business/AdminV2/Mrxd/User/UserController/';
 
         $routeCollector->addGroup('/user', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/login', $prefix . 'userLogin');
