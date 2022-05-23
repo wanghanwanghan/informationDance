@@ -1537,7 +1537,7 @@ eof;
             ]
         );
         
-        $retData['logo'] =  (new XinDongService())->getLogoByEntId($retData['id']);
+        // $retData['logo'] =  (new XinDongService())->getLogoByEntId($retData['id']);
         CommonService::getInstance()->log4PHP('logo '.json_encode([
             $retData['logo'],
             $retData['id'],
