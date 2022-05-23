@@ -89,7 +89,7 @@ class DianZiQianService extends ServiceBase
         $params = [
             'remark' => $postData['vin'],
             'join_time' => date('Y年m月d日H时i分s秒',time()),
-            'sign_time' => date('Y年M月d日',time())
+            'sign_time' => date('Y年m月d日',time())
         ];
         $contractFileTemplateFilling = $this->contractFileTemplateFilling( $contractTemplateCode,$params);
         $contractCode                = $contractFileTemplateFilling['result']['contractCode'] ?? "";
