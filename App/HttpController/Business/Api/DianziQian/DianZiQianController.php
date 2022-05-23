@@ -65,8 +65,9 @@ class DianZiQianController extends DianZiQianBase
             'city' => $city,
             'vin' => $vin
         ];
-        CommonService::getInstance()->log4PHP($postData,'info','getCarAuthFile');
+
         $res = (new DianZiQianService())->getCarAuthFile($postData);
+        CommonService::getInstance()->log4PHP($res,'info','getCarAuthFile');
         return $this->writeJson($res['code'], null, $res['data'], $res['description']);
 
     }

@@ -2,7 +2,9 @@
 
 namespace App\HttpController\Service\GuangZhouYinLian;
 
+use App\Csp\Service\CspService;
 use App\HttpController\Models\Api\CarInsuranceInfo;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use wanghanwanghan\someUtils\control;
@@ -206,35 +208,117 @@ Eof;
     }
 
     public function getCarsInsurance($postData){
-        $data = CarInsuranceInfo::create()->where("entCode = ".$postData['socialCredit'])->get();
-        if(empty($data) || empty($data->getAttr('vin'))){
+        $postData['page'] = empty($postData['page'])?1:$postData['page'];
+        if(empty($postData['socialCredit'])){
             return [];
         }
-        $vinArr = explode('',$data->getAttr('vin'));
+        $data = CarInsuranceInfo::create()->where("entCode = '{$postData['socialCredit']}'")->all();
+        if(empty($data)){
+            return [];
+        }
+        $vinArr = [];
+        foreach ($data as $val){
+            $vinArr = array_merge($vinArr,explode(',',$val->getAttr('vin')));
+        }
+        $vinArr = array_unique($vinArr);
+        $total = count($vinArr);
+        $vinArr = array_splice($vinArr,($postData['page']-1)*5,5);
+        $postData['firstBeneficiary'] = $postData['legalPerson'];
         $param = array_merge(json_decode(json_encode($data),true),$postData);
         foreach ($vinArr as $val){
-            $param = $postData;
-            $param['vin'] = $val;
+            $vin_v = explode(' ',$val);
+            $param['vin'] = $vin_v['1'];
             $res = $this->getCarInsurance($param);
-            $param[$val] = $res;
+            $param['list'][] = $res;
         }
-        return $param;
+//        return $param;
+        $paging = [
+            'page' => $postData['page'],
+            'pageSize' => 5,
+            'total' => $total,
+            'totalPage' => (int)($total/5)+1,
+        ];
+        return [$paging, $param['list']];
     }
 
     public function getCarInsurance($postData){
-        $codes = ['711004','711005','711006','711011','711019','711009','711010','711013','711014','711015','711016'];
+        $maxLossAmountMap = [
+            'A' => '0<=金额<1000',
+            'B' => '1000<=金额<3000',
+            'C' => '3000<=金额<5000',
+            'D' => '5000<=金额<7000',
+            'E' => '7000<=金额<1 万',
+            'F' => '1<=金额<2 万',
+            'G' => '2<=金额<3 万',
+            'H' => '3<=金额<5 万' ,
+            'I' => '5<=金额<7 万',
+            'J' => '7<=金额<10 万',
+            'K' => '10<=金额<12 万',
+            'L' => '12<=金额<15 万',
+            'M' => '15<=金额<17 万',
+            'N' => '17<=金额<20 万',
+            'O' => '20<=金额<22 万',
+            'P' => '22<=金额<25 万',
+            'Q' => '25<=金额<27 万',
+            'R' => '27<=金额<30 万',
+            'S' => '30<=金额<35 万',
+            'T' => '35<=金额<40 万',
+            'U' => '40<=金额<45 万',
+            'V' => '45<=金额<50 万',
+            'W' => '50<=金额<55 万',
+            'X' => '55<=金额<60 万',
+            'Y' => '60 万及以上'
+        ];
         $obj = ['vin'=>$postData['vin']];
+        $obj = array_merge($this->getCarInsurance_wanghan($postData),$obj);
+        $res_t = $this->queryUsedVehicleInfo($postData);
+        $maxLossAmount = $res_t['response']['msgBody']['vehicleInsuranceInf']['maxLossAmount']??'';
+        $obj['maxLossAmount'] = $maxLossAmountMap[$maxLossAmount]??$maxLossAmount;
+        return $obj;
+    }
+
+    function getCarInsurance_wanghan($postData){
+
+        $map = [
+            'carDamage'=>['1'=>'是','0'=>'否', 'z'=>'空值','-1'=>'异常'],
+            'effectivePolicyCi'=> ['1'=>'是','0'=>'否', 'z'=>'空值','-1'=>'异常'],
+            'effectivePolicyCo'=>['1'=>'是','0'=>'否', 'z'=>'空值','-1'=>'异常'],
+            'risksNumber'=>['1'=>'3 次及以上','0'=>'0-3 次反', 'z'=>'空值','-1'=>'异常'],
+            'robberRisk'=>['1'=>'是','0'=>'否', 'z'=>'空值','-1'=>'异常'],
+            'settlemenOfClaVehHis'=>['1'=>'有重大事故','0'=>'无重大事故', 'z'=>'空值','-1'=>'异常'],
+            'strengthenRisk'=>['1'=>'是','0'=>'否', 'z'=>'空值','-1'=>'异常'],
+            'threePartyRisks'=>['1'=>'是','0'=>'否', 'z'=>'空值','-1'=>'异常'],
+            'transferNumber' => ['2'=>'5次及以上','1'=>'3到5次','0'=>'0到3次', 'z'=>'空值','-1'=>'异常'],
+        ];
+        $codes = [
+            '711004','711005','711006','711011',
+            '711019','711009','711010','711013',
+            '711014','711015','711016'
+        ];
+
+        $csp = CspService::getInstance()->create();
+
+        //第一个业务接口
         foreach ($codes as $bizFunc) {
             $postData['bizFunc'] = $bizFunc;
-            $res = $this->queryInancialBank($postData);
-            foreach ($res['msgBody']['vehicleRspInf'] as $k=>$val){
-                if(!empty($val)){
-                    $obj[$k] = $val;
+            $csp->add($bizFunc,function () use ($postData){
+                return $this->queryInancialBank($postData);
+            });
+        }
+
+        $final=CspService::getInstance()->exec($csp);
+        $obj = [];
+        foreach ($final as $val) {
+            if(!isset($val['response']['msgBody']['vehicleRspInf'])){
+                continue;
+            }
+            foreach ($val['response']['msgBody']['vehicleRspInf'] as $k=>$v){
+
+                if($v!=""){
+                    $obj[$k] = $map[$k][$v]??$v;
                 }
             }
         }
-        $res_t = $this->queryUsedVehicleInfo($postData);
-        $obj['maxLossAmount'] = $res_t['msgBody']['vehicleInsuranceInf']['maxLossAmount'];
         return $obj;
     }
 
@@ -282,8 +366,8 @@ Eof;
                 'busiId'           => '00270001',
                 'vehicleVerifyInf' => [
                     'name'             => $postData['name'],           //张万珍',
-                    'userNo'           => $postData['userNo'],         //'888888',
-                    'certType'         => $postData['certType'],       //'0',
+                    'userNo'           => $postData['vin'],         //'888888',
+                    'certType'         => 0,       //'0',
                     'certNo'           => $postData['certNo'],         //'142129195506080532',
                     'vin'              => $postData['vin'],            //'LVSHFC0HH309074',
                     'licenseNo'        => $postData['licenseNo'],      //'京08NN2',

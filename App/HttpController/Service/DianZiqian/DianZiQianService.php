@@ -29,7 +29,7 @@ class DianZiQianService extends ServiceBase
     function __construct($type = '')
     {
         parent::__construct();
-
+        $this->checkRespFlag = true;
         $this->url        = 'https://sandbox.letsign.com';
         $this->app_code   = 'E7094079418854802183';
         $this->app_secret = '6%T8s0h!cSx4^M$7vb0Xjr5e75r6n18NxGuK1V7$942e7*2&2G64d7#3#^8x4G44';
@@ -87,9 +87,9 @@ class DianZiQianService extends ServiceBase
 
         //使用模板创建合同
         $params = [
-            'vin' => $postData['vin'],
-            'shou_quan_date_time' => date('Y年m月d日H时i分s秒',time()),
-            'qian_date_time' => date('Y年M月d日',time())
+            'remark' => $postData['vin'],
+            'join_time' => date('Y年m月d日H时i分s秒',time()),
+            'sign_time' => date('Y年m月d日',time())
         ];
         $contractFileTemplateFilling = $this->contractFileTemplateFilling( $contractTemplateCode,$params);
         $contractCode                = $contractFileTemplateFilling['result']['contractCode'] ?? "";
@@ -331,7 +331,7 @@ class DianZiQianService extends ServiceBase
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
-        CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'signerPerson');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'contractFileTemplateFilling');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
