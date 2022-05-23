@@ -53,6 +53,9 @@ class Router extends AbstractRouter
         $routeCollector->addGroup('/admin_roles/v1', function (RouteCollector $routeCollector) {
             AdminRoles::getInstance()->addRouterV1($routeCollector);
         });
+        $routeCollector->addGroup('/admin/v2', function (RouteCollector $routeCollector) {
+            AdminV2Router::getInstance()->addRouterV1($routeCollector);
+        });
     }
 
     private function GuangZhouYinLianV1(RouteCollector $routeCollector){
