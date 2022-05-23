@@ -87,9 +87,9 @@ class DianZiQianService extends ServiceBase
 
         //使用模板创建合同
         $params = [
-            'vin' => $postData['vin'],
-            'shou_quan_date_time' => date('Y年m月d日H时i分s秒',time()),
-            'qian_date_time' => date('Y年M月d日',time())
+            'remark' => $postData['vin'],
+            'join_time' => date('Y年m月d日H时i分s秒',time()),
+            'sign_time' => date('Y年M月d日',time())
         ];
         $contractFileTemplateFilling = $this->contractFileTemplateFilling( $contractTemplateCode,$params);
         $contractCode                = $contractFileTemplateFilling['result']['contractCode'] ?? "";
