@@ -13,7 +13,7 @@ class UserController extends ControllerBase
 {
     function onRequest(?string $action): ?bool
     {   
-        $this->setChckToken(true);
+        // $this->setChckToken(true);
         return parent::onRequest($action);
     }
 
@@ -22,7 +22,7 @@ class UserController extends ControllerBase
         parent::afterAction($actionName);
     }
 
-    function reg(): bool
+    function userReg(): bool
     {
         return $this->writeJson();
     }

@@ -4,6 +4,7 @@ namespace App\HttpController\Business\AdminV2\Mrxd;
 
 use App\HttpController\Index;
 use App\HttpController\Models\AdminNew\AdminNewUser;
+use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Service\User\UserService;
 use wanghanwanghan\someUtils\control;
 
@@ -11,12 +12,41 @@ class ControllerBase extends Index
 {   
     public $needsCheckToken =  false;
     public $loginUserinfo = [];
-    function setChckToken($res){
-        $this->needsCheckToken = $res;
+    public $actionName ;
+    private function setActionName($action){
+        $this->actionName = $action;
     }
+    function needsCheckToken(){
+         if(
+             in_array(
+                $this->actionName,$this->getNoNeedCheckMethods()
+             )
+         ){
+            return false;
+         }
+         return true ;
+    }
+    function getNoNeedCheckMethods(){
+        // 需要加层缓存
+        $res = ConfigInfo::create()->where('name', 'admin_no_check_methods')->get();
+        $methodsLists = [];
+        $tmpStr = trim($res->getAttr['value']);
+        if($tmpStr){
+            $tmpArr = @json_decode($tmpStr,true);
+            if(
+                is_array($tmpArr) &&
+                !empty($tmpArr) 
+            ){
+                $methodsLists = $tmpArr;
+            }
+        };
+        return $methodsLists;
+    }
+
     function onRequest(?string $action): ?bool
     {
-        if($this->needsCheckToken){
+        $this->setActionName($action);
+        if($this->needsCheckToken()){
             $checkToken = $this->checkToken();
             if (!$checkToken ){
                 $this->writeJson(240, null, null, 'token错误');
