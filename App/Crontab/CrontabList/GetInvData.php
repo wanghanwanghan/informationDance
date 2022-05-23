@@ -191,7 +191,7 @@ class GetInvData extends AbstractCronTask
                 ];
 
                 //通知
-                if ($oneReadyToSend->belong - 0 === 36) {
+                if ($oneReadyToSend->belong - 0 === 41) {
                     CommonService::getInstance()->log4PHP([$body], 'info', 'notify_fp');
                     $ret = (new CoHttpClient())
                         ->useCache(false)
