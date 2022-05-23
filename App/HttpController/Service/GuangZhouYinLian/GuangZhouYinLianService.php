@@ -208,14 +208,20 @@ Eof;
     }
 
     public function getCarsInsurance($postData){
+        $postData['page'] = empty($postData['page'])?1:$postData['page'];
         if(empty($postData['socialCredit'])){
             return [];
         }
-        $data = CarInsuranceInfo::create()->where("entCode = '{$postData['socialCredit']}'")->get();
-        if(empty($data) || empty($data->getAttr('vin'))){
+        $data = CarInsuranceInfo::create()->where("entCode = '{$postData['socialCredit']}'")->all();
+        if(empty($data)){
             return [];
         }
-        $vinArr = explode(',',$data->getAttr('vin'));
+        $vinArr = [];
+        foreach ($data as $val){
+            $vinArr = array_merge($vinArr,explode(',',$val->getAttr('vin')));
+        }
+        $vinArr = array_unique($vinArr);
+        $vinArr = array_splice($vinArr,($postData['page']-1)*5,5);
         $postData['firstBeneficiary'] = $postData['legalPerson'];
         $param = array_merge(json_decode(json_encode($data),true),$postData);
         foreach ($vinArr as $val){
@@ -224,7 +230,14 @@ Eof;
             $res = $this->getCarInsurance($param);
             $param['list'][] = $res;
         }
-        return $param;
+//        return $param;
+        $paging = [
+            'page' => $postData['page'],
+            'pageSize' => 5,
+            'total' => count($vinArr),
+            'totalPage' => (int)(count($vinArr)/5)+1,
+        ];
+        return [$paging, $param['list']];
     }
 
     public function getCarInsurance($postData){

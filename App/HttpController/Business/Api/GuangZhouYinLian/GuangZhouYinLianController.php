@@ -25,10 +25,10 @@ class GuangZhouYinLianController  extends GuangZhouYinLianBase
             'socialCredit' => $socialCredit,
         ];
 
-        $tmp = (new GuangZhouYinLianService())->setCheckRespFlag(true)->getCarsInsurance($postData);
+        list($paging,$tmp) = (new GuangZhouYinLianService())->setCheckRespFlag(true)->getCarsInsurance($postData);
         CommonService::getInstance()->log4PHP($tmp,'info','getCarsInsurance');
 
-        return $this->writeJson(200, null, $tmp, '查询成功');
+        return $this->writeJson(200, $paging, $tmp, '查询成功');
     }
 
 }
