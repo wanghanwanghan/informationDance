@@ -7,7 +7,7 @@ use App\HttpController\Service\CreateConf;
 
 class XsyA24Logo extends ModelBase
 {
-    protected $tableName = 'xd_dl';
+    protected $tableName = 'xsy_a24_logo';
 
     protected $autoTimeStamp = true;
     protected $createTime = 'created_at';
@@ -17,7 +17,7 @@ class XsyA24Logo extends ModelBase
     {
         parent::__construct($data);
 
-        $this->connectionName = CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_all_ku');
+        $this->connectionName = CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_logo_ku');
     }
     
 }
