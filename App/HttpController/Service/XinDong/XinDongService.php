@@ -2182,6 +2182,6 @@ class XinDongService extends ServiceBase
         if(empty($logoData)){
             return '';
         }
-        return $logoData->getAttr('file_path');
+        return str_replace('logo', '', $logoData->getAttr('file_path'));
     }
 }
