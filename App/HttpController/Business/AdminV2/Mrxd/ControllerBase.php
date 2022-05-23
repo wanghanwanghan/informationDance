@@ -5,6 +5,7 @@ namespace App\HttpController\Business\AdminV2\Mrxd;
 use App\HttpController\Index;
 use App\HttpController\Models\AdminNew\AdminNewUser;
 use App\HttpController\Service\User\UserService;
+use wanghanwanghan\someUtils\control;
 
 class ControllerBase extends Index
 {   
