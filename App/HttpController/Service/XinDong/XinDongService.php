@@ -2176,6 +2176,9 @@ class XinDongService extends ServiceBase
         $logoData = XsyA24Logo::create()
             ->where('id', $entId)
             ->get();
+        CommonService::getInstance()->log4PHP('logo '.json_encode([
+            $logoData,
+            ])); 
         if(empty($logoData)){
             return '';
         }
