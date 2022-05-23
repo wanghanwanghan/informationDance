@@ -17,7 +17,7 @@ class XsyA24Logo extends ModelBase
     {
         parent::__construct($data);
 
-        $this->connectionName = CreateConf::getInstance()->getConf('env.logo_ku');
+        $this->connectionName = CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_logo_ku');
     }
     
 }
