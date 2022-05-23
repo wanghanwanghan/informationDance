@@ -39,7 +39,7 @@ class UserController extends ControllerBase
         }
 
         $info = AdminNewUser::create()
-            ->where("username = '{$username}' and password = '{$password}'")
+            ->where("user_name = '{$username}' and password = '{$password}'")
             ->get();
         if(empty($info)){
             return $this->writeJson(201, null, null, '账号密码错误');
