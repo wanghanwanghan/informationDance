@@ -1136,6 +1136,15 @@ eof;
         ]);
 
         foreach($hits as &$dataItem){ 
+            // add  log  
+            if($this->request()->getRequestParam('debug')){
+                $dataItem['logo'] =  (new XinDongService())->getLogoByEntId($dataItem['_source']['xd_id']);
+                CommonService::getInstance()->log4PHP('logo '.json_encode([
+                    $dataItem['_source']['logo'],
+                    $dataItem['_source']['xd_id'],
+                ])); 
+            } 
+
             // 添加tag  
             $dataItem['_source']['tags'] = array_values(
                 (new XinDongService())::getAllTagesByData(
@@ -1538,12 +1547,11 @@ eof;
         );
         if($this->request()->getRequestParam('debug')){
             $retData['logo'] =  (new XinDongService())->getLogoByEntId($retData['id']);
-        }
-        
-        CommonService::getInstance()->log4PHP('logo '.json_encode([
-            $retData['logo'],
-            $retData['id'],
-        ])); 
+            CommonService::getInstance()->log4PHP('logo '.json_encode([
+                $retData['logo'],
+                $retData['id'],
+            ])); 
+        } 
         return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
     }
 
