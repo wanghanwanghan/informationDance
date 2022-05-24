@@ -1042,6 +1042,22 @@ eof;
 
             return $this;
         }
+
+
+        function getLastPostalAddressAndEmail($dataItem){
+            if(!empty($dataItem['_source']['report_year'])){
+                $lastReportYearData = end($dataItem['_source']['report_year']); 
+                return [
+                    'last_postal_address' => $lastReportYearData['postal_address'],
+                    'last_email' => $lastReportYearData['email'],
+                ];
+            }
+            return [
+                'last_postal_address' => '',
+                'last_email' => '',
+            ];
+        }
+           
     /**
       * 
       * 高级搜索 | 
@@ -1136,13 +1152,9 @@ eof;
         ]);
 
         foreach($hits as &$dataItem){  
-            // if($this->request()->getRequestParam('debug')){
-                if(!empty($dataItem['_source']['report_year'])){
-                    $lastReportYearData = end($dataItem['_source']['report_year']);
-                    $dataItem['_source']['last_postal_address'] = $lastReportYearData['postal_address'];
-                    $dataItem['_source']['last_email'] = $lastReportYearData['email'];
-                }                                
-            // }
+            $addresAndEmailData = $this->getLastPostalAddressAndEmail($dataItem);
+            $dataItem['_source']['last_postal_address'] = $addresAndEmailData['postal_address'];
+            $dataItem['_source']['last_email'] = $addresAndEmailData['email']; 
             
             $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntId($dataItem['_source']['xd_id']);
             
@@ -1547,7 +1559,7 @@ eof;
             ]
         );
         // if($this->request()->getRequestParam('debug')){
-            $retData['logo'] =  (new XinDongService())->getLogoByEntId($retData['id']);
+        $retData['logo'] =  (new XinDongService())->getLogoByEntId($retData['id']);
             // CommonService::getInstance()->log4PHP('logo '.json_encode([
             //     $retData['logo'],
             //     $retData['id'],
@@ -2201,7 +2213,12 @@ eof;
             'reg_capital', 
         ]);
 
+
         foreach($hits as &$dataItem){
+            $addresAndEmailData = $this->getLastPostalAddressAndEmail($dataItem);
+            $dataItem['_source']['last_postal_address'] = $addresAndEmailData['postal_address'];
+            $dataItem['_source']['last_email'] = $addresAndEmailData['email']; 
+            
             // 公司简介
             $tmpArr = explode('&&&', trim($dataItem['_source']['gong_si_jian_jie']));
             array_pop($tmpArr);
