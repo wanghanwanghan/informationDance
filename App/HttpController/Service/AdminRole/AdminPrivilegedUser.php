@@ -71,9 +71,7 @@ class AdminPrivilegedUser extends ServiceBase
 
         // 只取有权限的菜单
         $allowedMenus = [];  
-        foreach($allParentMenus as $ParentMenu){
-            // 该菜单所有子菜单
-            $allChildMenus = AdminMenuItems::getMenusByParentId($ParentMenu['id']);
+        foreach($allParentMenus as $ParentMenu){ 
 
              // 父级菜单没权限
              if(
@@ -84,6 +82,9 @@ class AdminPrivilegedUser extends ServiceBase
             }
 
             $allowedMenus[$ParentMenu['id']] = $ParentMenu; 
+            
+            // 该菜单所有子菜单
+            $allChildMenus = AdminMenuItems::getMenusByParentId($ParentMenu['id']);
             foreach($allChildMenus as $ChildMenu){
                 // 子菜单没权限
                 if(
@@ -93,7 +94,7 @@ class AdminPrivilegedUser extends ServiceBase
                     continue;
                 }
 
-                $allowedMenus[$ChildMenu['id']]['child_menus'][$ChildMenu['id']] = $ChildMenu;
+                $allowedMenus[$ParentMenu['id']]['child_menus'][$ChildMenu['id']] = $ChildMenu;
             } 
         }
 
