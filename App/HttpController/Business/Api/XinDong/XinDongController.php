@@ -776,6 +776,7 @@ eof;
         // 需要按文本搜索的  
         $basicJlxxcyidStr = trim($this->request()->getRequestParam('basic_jlxxcyid'));
         $basicJlxxcyidStr && $basicJlxxcyidArr = explode(',',  $basicJlxxcyidStr);
+        CommonService::getInstance()->log4PHP('basicJlxxcyidArr '.json_encode($basicJlxxcyidArr)); 
         if(
             !empty($basicJlxxcyidArr)
         ){
@@ -783,6 +784,8 @@ eof;
                 ->where('zlxxcy_id', $basicJlxxcyidArr, 'IN') 
                 ->all();
             $matchedCnames = array_column($siJiFenLeiDatas, 'nic_id');
+            CommonService::getInstance()->log4PHP('matchedCnames '.json_encode($matchedCnames)); 
+
             $es->addMustShouldPhraseQuery( 'si_ji_fen_lei_code' , $matchedCnames) ; 
     
         }
