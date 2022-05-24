@@ -64,27 +64,26 @@ class AdminPrivilegedUser extends ServiceBase
         //需要加缓存      
         
         // 该用户拥有的所有权限
-        if($VerifyPermissions){
-            $privUser = self::getByUserId($userId); 
-        }
+        $privUser = self::getByUserId($userId); 
         
-        $allowedMenus = [];
-
         //所有父级菜单
-        $allParentMenus = AdminMenuItems::getMenusByParentId(0);
+        $allParentMenus = AdminMenuItems::getMenusByParentId(0);  
+
+        // 只取有权限的菜单
+        $allowedMenus = [];  
         foreach($allParentMenus as $ParentMenu){
-            // 父级菜单没权限
-            if(
-                $VerifyPermissions &&
+            // 该菜单所有子菜单
+            $allChildMenus = AdminMenuItems::getMenusByParentId($ParentMenu['id']);
+
+             // 父级菜单没权限
+             if(
+                 $VerifyPermissions &&
                 !$privUser->hasPrivilege($ParentMenu['class'].'/'.$ParentMenu['method'])
             ){
                 continue;
             }
-             
-            $allowedMenus[$ParentMenu['id']] = $ParentMenu;
 
-            // 该菜单所有子菜单
-            $allChildMenus = AdminMenuItems::getMenusByParentId($ParentMenu['id']);
+            $allowedMenus[$ParentMenu['id']] = $ParentMenu; 
             foreach($allChildMenus as $ChildMenu){
                 // 子菜单没权限
                 if(
@@ -95,10 +94,10 @@ class AdminPrivilegedUser extends ServiceBase
                 }
 
                 $allowedMenus[$ChildMenu['id']]['child_menus'][$ChildMenu['id']] = $ChildMenu;
-            }
-        } 
-        
-        return $allowedMenus;
+            } 
+        }
+
+        return $allowedMenus ; 
     }    
 
 }
