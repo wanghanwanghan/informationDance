@@ -1136,13 +1136,13 @@ eof;
         ]);
 
         foreach($hits as &$dataItem){  
-            if($this->request()->getRequestParam('debug')){
+            // if($this->request()->getRequestParam('debug')){
                 if(!empty($dataItem['_source']['report_year'])){
                     $lastReportYearData = end($dataItem['_source']['report_year']);
                     $dataItem['_source']['last_postal_address'] = $lastReportYearData['postal_address'];
                     $dataItem['_source']['last_email'] = $lastReportYearData['email'];
                 }                                
-            }
+            // }
             
             $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntId($dataItem['_source']['xd_id']);
             
