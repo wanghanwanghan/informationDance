@@ -40,7 +40,7 @@ class AdminV2Router
 
     private function MenuRouterV1(RouteCollector $routeCollector): bool
     {
-        $prefix = '/Business/AdminV2/Mrxd/Menu/MenurController/';
+        $prefix = '/Business/AdminV2/Mrxd/Menu/MenuController/';
 
         $routeCollector->addGroup('/menu', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getMenu', $prefix . 'getAllMenu');
