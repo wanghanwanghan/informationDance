@@ -43,7 +43,8 @@ class AdminV2Router
         $prefix = '/Business/AdminV2/Mrxd/Menu/MenuController/';
 
         $routeCollector->addGroup('/menu', function (RouteCollector $routeCollector) use ($prefix) {
-            $routeCollector->addRoute(['GET', 'POST'], '/getMenu', $prefix . 'getAllMenu');
+            $routeCollector->addRoute(['GET', 'POST'], '/getAllMenus', $prefix . 'getAllMenu');
+            $routeCollector->addRoute(['GET', 'POST'], '/getAllowedMenus', $prefix . 'getAllowedMenu');
             // $routeCollector->addRoute(['GET', 'POST'], '/getAllMenu', $prefix . 'getAllMenu'); 
         });
 

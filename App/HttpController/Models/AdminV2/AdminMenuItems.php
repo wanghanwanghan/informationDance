@@ -19,5 +19,5 @@ class AdminMenuItems extends ModelBase
         $sql = "SELECT * FROM  admin_menu_items WHERE parent_id = $parentId AND `status` = 1  " ;
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return $list;
-    }
+    }  
 }

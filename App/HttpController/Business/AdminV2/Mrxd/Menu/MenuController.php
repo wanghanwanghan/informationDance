@@ -19,11 +19,19 @@ class MenuController extends ControllerBase
     {
         parent::afterAction($actionName);
     }
+    public function getAllowedMenu(){  
+        return $this->writeJson(
+            200,
+            [],
+            AdminPrivilegedUser::getMenus(true, $this->loginUserinfo['id'])
+        );
+    }
+
     public function getAllMenu(){  
         return $this->writeJson(
             200,
             [],
-            AdminPrivilegedUser::getAllowedMenusByUserId($this->loginUserinfo['id'])
+            AdminPrivilegedUser::getMenus(false,$this->loginUserinfo['id'])
         );
     }
 

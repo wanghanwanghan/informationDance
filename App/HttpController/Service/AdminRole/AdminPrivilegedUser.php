@@ -60,11 +60,13 @@ class AdminPrivilegedUser extends ServiceBase
         return false;
     }
 
-    public static function getAllowedMenusByUserId($userId) {
+    public static function getMenus($VerifyPermissions, $userId) {
         //需要加缓存      
         
         // 该用户拥有的所有权限
-        $privUser = self::getByUserId($userId); 
+        if($VerifyPermissions){
+            $privUser = self::getByUserId($userId); 
+        }
         
         $allowedMenus = [];
 
@@ -73,10 +75,12 @@ class AdminPrivilegedUser extends ServiceBase
         foreach($allParentMenus as $ParentMenu){
             // 父级菜单没权限
             if(
+                $VerifyPermissions &&
                 !$privUser->hasPrivilege($ParentMenu['class'].'/'.$ParentMenu['method'])
             ){
                 continue;
-            } 
+            }
+             
             $allowedMenus[$ParentMenu['id']] = $ParentMenu;
 
             // 该菜单所有子菜单
@@ -84,6 +88,7 @@ class AdminPrivilegedUser extends ServiceBase
             foreach($allChildMenus as $ChildMenu){
                 // 子菜单没权限
                 if(
+                    $VerifyPermissions &&
                     !$privUser->hasPrivilege($ChildMenu['class'].'/'.$ChildMenu['method'])
                 ){
                     continue;
