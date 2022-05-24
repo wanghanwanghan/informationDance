@@ -1153,8 +1153,8 @@ eof;
 
         foreach($hits as &$dataItem){  
             $addresAndEmailData = $this->getLastPostalAddressAndEmail($dataItem);
-            $dataItem['_source']['last_postal_address'] = $addresAndEmailData['postal_address'];
-            $dataItem['_source']['last_email'] = $addresAndEmailData['email']; 
+            $dataItem['_source']['last_postal_address'] = $addresAndEmailData['last_postal_address'];
+            $dataItem['_source']['last_email'] = $addresAndEmailData['last_email']; 
             
             $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntId($dataItem['_source']['xd_id']);
             
@@ -2216,9 +2216,9 @@ eof;
 
         foreach($hits as &$dataItem){
             $addresAndEmailData = $this->getLastPostalAddressAndEmail($dataItem);
-            $dataItem['_source']['last_postal_address'] = $addresAndEmailData['postal_address'];
-            $dataItem['_source']['last_email'] = $addresAndEmailData['email']; 
-            
+            $dataItem['_source']['last_postal_address'] = $addresAndEmailData['last_postal_address'];
+            $dataItem['_source']['last_email'] = $addresAndEmailData['last_email']; 
+
             // 公司简介
             $tmpArr = explode('&&&', trim($dataItem['_source']['gong_si_jian_jie']));
             array_pop($tmpArr);
