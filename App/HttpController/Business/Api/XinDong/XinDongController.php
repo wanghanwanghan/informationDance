@@ -1041,22 +1041,7 @@ eof;
             }
 
             return $this;
-        }
-
-
-        function getLastPostalAddressAndEmail($dataItem){
-            if(!empty($dataItem['_source']['report_year'])){
-                $lastReportYearData = end($dataItem['_source']['report_year']); 
-                return [
-                    'last_postal_address' => $lastReportYearData['postal_address'],
-                    'last_email' => $lastReportYearData['email'],
-                ];
-            }
-            return [
-                'last_postal_address' => '',
-                'last_email' => '',
-            ];
-        }
+        } 
            
     /**
       * 
@@ -1152,7 +1137,7 @@ eof;
         ]);
 
         foreach($hits as &$dataItem){  
-            $addresAndEmailData = $this->getLastPostalAddressAndEmail($dataItem);
+            $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmail($dataItem);
             $dataItem['_source']['last_postal_address'] = $addresAndEmailData['last_postal_address'];
             $dataItem['_source']['last_email'] = $addresAndEmailData['last_email']; 
             
@@ -1558,13 +1543,11 @@ eof;
                 'actual_capital', 
             ]
         );
-        // if($this->request()->getRequestParam('debug')){
+         
         $retData['logo'] =  (new XinDongService())->getLogoByEntId($retData['id']);
-            // CommonService::getInstance()->log4PHP('logo '.json_encode([
-            //     $retData['logo'],
-            //     $retData['id'],
-            // ])); 
-        // } 
+        $res = (new XinDongService())->getEsBasicInfo($companyId); 
+        $retData['last_postal_address'] = $res['last_postal_address'];
+        $retData['last_email'] = $res['last_email'];
         return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
     }
 
@@ -2182,79 +2165,11 @@ eof;
             return  $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
 
-        
-        $ElasticSearchService = new ElasticSearchService(); 
-        
-        $ElasticSearchService->addMustMatchQuery( 'xd_id' , $companyId) ;  
-
-        $size = $this->request()->getRequestParam('size')??1;
-        $page = $this->request()->getRequestParam('page')??1;
-        $offset  =  ($page-1)*$size;
-        $ElasticSearchService->addSize($size) ;
-        $ElasticSearchService->addFrom($offset) ; 
-
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
-        $responseArr = @json_decode($responseJson,true); 
-        CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
-            [
-                'es_query' => $ElasticSearchService->query,
-                'post_data' => $this->request()->getRequestParam(),
-            ]
-        )); 
-
-        // 格式化下日期和时间
-        $hits = (new XinDongService())::formatEsDate($responseArr['hits']['hits'], [
-            'estiblish_time',
-            'from_time',
-            'to_time',
-            'approved_time'
-        ]);
-        $hits = (new XinDongService())::formatEsMoney($hits, [
-            'reg_capital', 
-        ]);
-
-
-        foreach($hits as &$dataItem){
-            $addresAndEmailData = $this->getLastPostalAddressAndEmail($dataItem);
-            $dataItem['_source']['last_postal_address'] = $addresAndEmailData['last_postal_address'];
-            $dataItem['_source']['last_email'] = $addresAndEmailData['last_email']; 
-
-            // 公司简介
-            $tmpArr = explode('&&&', trim($dataItem['_source']['gong_si_jian_jie']));
-            array_pop($tmpArr);
-            $dataItem['_source']['gong_si_jian_jie_data_arr'] = [];
-            foreach($tmpArr as $tmpItem_){
-                // $dataItem['_source']['gong_si_jian_jie_data_arr'][] = [$tmpItem_];
-                $dataItem['_source']['gong_si_jian_jie_data_arr'][] = $tmpItem_;
-            }
-            
-            // tag信息
-            $dataItem['_source']['tags'] = array_values(
-                (new XinDongService())::getAllTagesByData(
-                    $dataItem['_source']
-                )
-            );
-
-            // 官网信息
-            $webStr = trim($dataItem['_source']['web']);
-            if(!$webStr){
-                continue; 
-            }
-
-            $webArr = explode('&&&', $webStr);
-            !empty($webArr) && $dataItem['_source']['web'] = end($webArr); 
-        }
+        $res = (new XinDongService())->getEsBasicInfo($companyId); 
     
         return $this->writeJson(200, 
-          [
-            'page' => $page,
-            'pageSize' =>$size,
-            'total' => intval($responseArr['hits']['total']['value']),
-            'totalPage' => (int)floor(intval($responseArr['hits']['total']['value'])/
-            ($size)),
-         
-        ] 
-       , $hits[0]['_source'], '成功', true, []);
+          [ ] 
+       , $res, '成功', true, []);
     }
 
     // 
