@@ -1135,16 +1135,17 @@ eof;
             'reg_capital', 
         ]);
 
-        foreach($hits as &$dataItem){ 
-            // add  log  
-            // if($this->request()->getRequestParam('debug')){
-                $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntId($dataItem['_source']['xd_id']);
-                // CommonService::getInstance()->log4PHP('logo '.json_encode([
-                //     $dataItem['_source']['logo'],
-                //     $dataItem['_source']['xd_id'],
-                // ])); 
-            // } 
-
+        foreach($hits as &$dataItem){  
+            if($this->request()->getRequestParam('debug')){
+                if(!empty($dataItem['_source']['report_year'])){
+                    $lastReportYearData = $dataItem['_source']['report_year'];
+                    $dataItem['_source']['last_postal_address'] = $lastReportYearData['postal_address'];
+                    $dataItem['_source']['last_email'] = $lastReportYearData['email'];
+                }                                
+            }
+            
+            $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntId($dataItem['_source']['xd_id']);
+            
             // 添加tag  
             $dataItem['_source']['tags'] = array_values(
                 (new XinDongService())::getAllTagesByData(
