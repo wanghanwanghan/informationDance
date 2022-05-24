@@ -5,6 +5,7 @@ namespace App\HttpController\Service\AdminRole;
 use App\HttpController\Models\AdminV2\AdminMenuItems;
 use App\HttpController\Models\Api\SupervisorPhoneEntName;
 use App\HttpController\Models\Api\User;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\ServiceBase;
 use EasySwoole\Component\Singleton;
@@ -43,7 +44,10 @@ class AdminPrivilegedUser extends ServiceBase
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         foreach($list as $dataItem){
             $this->roles[$dataItem["role_name"]] = AdminRole::getRolePerms($dataItem["role_id"]);              
+
         }
+        CommonService::getInstance()->log4PHP('roles '.json_encode($this->roles));
+
     }
 
     // check if user has a specific privilege
@@ -59,6 +63,7 @@ class AdminPrivilegedUser extends ServiceBase
     public static function getAllowedMenusByUserId($userId) {
         $privUser = self::getByUserId($userId); 
         $allMenus = AdminMenuItems::getMapedMenus();
+        CommonService::getInstance()->log4PHP('allMenus '.json_encode($allMenus));
         $allowedMenus = [];
         foreach($allMenus as $MenuItem){
             // 父级菜单
