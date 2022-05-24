@@ -15,6 +15,7 @@ class AdminV2Router
         // $this->SaibopengkeAdmin($routeCollector);
         // $this->GroceryStore($routeCollector);
         $this->UserRouterV1($routeCollector);
+        $this->MenuRouterV1($routeCollector);
     }
 
     private function UserRouterV1(RouteCollector $routeCollector): bool
@@ -41,7 +42,7 @@ class AdminV2Router
     {
         $prefix = '/Business/AdminV2/Mrxd/Menu/MenurController/';
 
-        $routeCollector->addGroup('/user', function (RouteCollector $routeCollector) use ($prefix) {
+        $routeCollector->addGroup('/menu', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getMenu', $prefix . 'getAllMenu');
             // $routeCollector->addRoute(['GET', 'POST'], '/getAllMenu', $prefix . 'getAllMenu'); 
         });
