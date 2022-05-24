@@ -20,23 +20,14 @@ class AdminPrivilegedUser extends ServiceBase
     }
 
     // override User method
-    public static function getByUsername($username) {
-        $sql = "SELECT * FROM users WHERE username = :username";
-        $sth = $GLOBALS["DB"]->prepare($sql);
-        $sth->execute(array(":username" => $username));
-        $result = $sth->fetchAll();
-
-        if (!empty($result)) {
-            $privUser = new AdminPrivilegedUser();
-            $privUser->user_id = $result[0]["user_id"];
-            // $privUser->username = $username;
-            // $privUser->password = $result[0]["password"];
-            // $privUser->email_addr = $result[0]["email_addr"];
-            $privUser->initRoles();
-            return $privUser;
-        } else {
-            return false;
-        }
+    public static function getByUserId($userId) {
+        $privUser = new AdminPrivilegedUser();
+        $privUser->user_id = $userId;
+        // $privUser->username = $username;
+        // $privUser->password = $result[0]["password"];
+        // $privUser->email_addr = $result[0]["email_addr"];
+        $privUser->initRoles();
+        return $privUser;
     }
 
     // populate roles with their associated permissions
@@ -48,10 +39,10 @@ class AdminPrivilegedUser extends ServiceBase
                 FROM admin_user_role as user_role
                 JOIN admin_roles as roles ON user_role.role_id = roles.role_id
                 WHERE user_role.user_id = ".$this->user_id;
-          $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-          foreach($list as $dataItem){
-            $this->roles[$dataItem["role_name"]] = AdminRole::getRolePerms($dataItem["role_id"]);              
-          }
+        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        foreach($list as $dataItem){
+        $this->roles[$dataItem["role_name"]] = AdminRole::getRolePerms($dataItem["role_id"]);              
+        }
     }
 
     // check if user has a specific privilege
