@@ -5,6 +5,7 @@ use App\HttpController\Service\CreateConf;
 
 
 use App\HttpController\Models\ModelBase;
+use App\HttpController\Service\Common\CommonService;
 
 class AdminMenuItems extends ModelBase
 {
@@ -21,10 +22,12 @@ class AdminMenuItems extends ModelBase
         foreach($parentMenu as $parentMenuItem){
             $mapedMenus[$parentMenuItem['id']] = $parentMenuItem;
             $childMenus =  self::getMenusByParentId($parentMenuItem['id']);
+            // CommonService::getInstance()->log4PHP('childMenus '.json_encode($childMenus)); 
             foreach($childMenus as $childMenuItem){
                 $mapedMenus[$parentMenuItem['id']]['child_menus'][$childMenuItem['id']] = $childMenuItem;
             }
         }
+        // CommonService::getInstance()->log4PHP('mapedMenus '.json_encode($mapedMenus));  
         return  $mapedMenus; 
     }
 
