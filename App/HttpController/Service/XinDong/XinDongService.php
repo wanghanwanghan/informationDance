@@ -2248,8 +2248,8 @@ class XinDongService extends ServiceBase
             $webArr = explode('&&&', $webStr);
             !empty($webArr) && $dataItem['_source']['web'] = end($webArr); 
         }
-    
-        return $hits[0]['_source'];
+        $res = $hits[0]['_source'];
+        return !empty($res)? $res:[];
     }
 
     function getLastPostalAddressAndEmail($dataItem){
