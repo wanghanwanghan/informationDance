@@ -2184,7 +2184,7 @@ class XinDongService extends ServiceBase
         }
         return str_replace('logo', '', $logoData->getAttr('file_path'));
     } 
-    function getEsBasicInfo($companyId): bool
+    function getEsBasicInfo($companyId): array
     {
         
         $ElasticSearchService = new ElasticSearchService(); 
