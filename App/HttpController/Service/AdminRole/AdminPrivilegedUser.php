@@ -61,6 +61,7 @@ class AdminPrivilegedUser extends ServiceBase
     }
 
     public static function getAllowedMenusByUserId($userId) {
+        //需要加缓存      
         $privUser = self::getByUserId($userId); 
         $allMenus = AdminMenuItems::getMapedMenus();
         CommonService::getInstance()->log4PHP('allMenus '.json_encode($allMenus));
