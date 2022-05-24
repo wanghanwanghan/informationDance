@@ -62,48 +62,36 @@ class AdminPrivilegedUser extends ServiceBase
 
     public static function getAllowedMenusByUserId($userId) {
         //需要加缓存      
+        
+        // 该用户拥有的所有权限
         $privUser = self::getByUserId($userId); 
-        $allMenus = AdminMenuItems::getMapedMenus();
-        CommonService::getInstance()->log4PHP('allMenus '.json_encode($allMenus));
+        
         $allowedMenus = [];
-        foreach($allMenus as $MenuItem){
-            // 父级菜单
-            if(
-                $privUser->hasPrivilege($MenuItem['class'].'/'.$MenuItem['method'])
-            ){
-                $tmpMenu = $MenuItem;
-                $tmpMenu['child_menus'] = [];
-                $allowedMenus[$MenuItem['id']] = $tmpMenu;
-            }else{
-                CommonService::getInstance()->log4PHP('父级菜单没权限 '.json_encode(
-                    [
-                        'class'=>$MenuItem['class'],
-                        'method'=>$MenuItem['method'],
-                    ]
-                ));
 
-            }
-            ;
-            // 子菜单
-            if(empty($MenuItem['child_menus'])){
-                continue ;
-            }
-            foreach($MenuItem['child_menus'] as $childMenu){
+        //所有父级菜单
+        $allParentMenus = AdminMenuItems::getMenusByParentId(0);
+        foreach($allParentMenus as $ParentMenu){
+            // 父级菜单没权限
+            if(
+                !$privUser->hasPrivilege($ParentMenu['class'].'/'.$ParentMenu['method'])
+            ){
+                continue;
+            } 
+            $allowedMenus[$ParentMenu['id']] = $ParentMenu;
+
+            // 该菜单所有子菜单
+            $allChildMenus = AdminMenuItems::getMenusByParentId($ParentMenu['id']);
+            foreach($allChildMenus as $ChildMenu){
+                // 子菜单没权限
                 if(
-                    $privUser->hasPrivilege($childMenu['class'].'/'.$childMenu['method'])
+                    !$privUser->hasPrivilege($ChildMenu['class'].'/'.$ChildMenu['method'])
                 ){
-                    $allowedMenus[$MenuItem['id']]['child_menus'][$childMenu['id']] = $childMenu;
-                }else{
-                    CommonService::getInstance()->log4PHP('子菜单没权限 '.json_encode(
-                        [
-                            'class'=>$childMenu['class'],
-                            'method'=>$childMenu['method'],
-                        ]
-                    ));
-    
+                    continue;
                 }
+
+                $allowedMenus[$ChildMenu['id']]['child_menus'][$ChildMenu['id']] = $ChildMenu;
             }
-        }
+        } 
         return $allowedMenus;
     }    
 
