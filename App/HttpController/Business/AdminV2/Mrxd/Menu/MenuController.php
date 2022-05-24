@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\AdminV2\Mrxd\Menu;
 
 use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;
+use App\HttpController\Models\AdminV2\AdminMenuItems;
 use App\HttpController\Models\AdminV2\AdminNewMenu;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Service\AdminRole\AdminPrivilegedUser;
@@ -27,35 +28,41 @@ class MenuController extends ControllerBase
     }
 
     /**
-     *  客户权限的增删改查
+     *  增加菜单
      */
-    public function addPower(){
-        $form = $this->request()->getRequestParam();
-        $pid = $form['pid'];
-        $menu_name = $form['menu_name'];
-        $sort_num = $form['sort_num'];
-        if (empty($menu_name) || empty($menu_name)) return $this->writeJson(201);
-        AdminNewMenu::create()->data([
-            'pid' => $pid??0,
-            'menu_name' => $menu_name,
-            'sort_num' => $sort_num??0,
+    public function addMenu(){
+        $requestData = $this->getRequestData(); 
+        if (
+            !$requestData['name'] ||
+            !$requestData['method'] ||
+            !$requestData['class'] 
+        ) {
+            return $this->writeJson(201);
+        } 
+        AdminMenuItems::create()->data([
+            'name' => $requestData['name'], 
+            'method' => $requestData['method'], 
+            'class' => $requestData['class'], 
+            'remark' => $requestData['remark'], 
+            'parent_id' => intval($requestData['parent_id']), 
         ])->save();
         return $this->writeJson(200);
     }
 
-    public function updatePower(){
-        $form = $this->request()->getRequestParam();
-        $id = $form['id'];
-        $pid = $form['pid'];
-        $menu_name = $form['menu_name'];
-        $sort_num = $form['sort_num'];
-        $info = RequestApiInfo::create()->where('id',$id)->get();
-        $update = [];
-        empty($id) ?: $update['id'] = $id;
-        empty($pid) ?: $update['pid'] = $pid;
-        empty($menu_name) ?: $update['menu_name'] = $menu_name;
-        empty($sort_num) ?: $update['sort_num'] = $sort_num;
-        $info->update($update);
+     /**
+     *  修改菜单
+     */
+    public function updateMenu(){
+        $requestData = $this->getRequestData(); 
+        $info = RequestApiInfo::create()->where('id',$requestData['id'])->get(); 
+        $info->update([
+            'id' => $requestData['id'],
+            'name' => $requestData['name'] ? $requestData['name']: $info['name'],
+            'method' => $requestData['method'] ? $requestData['method']: $info['method'],
+            'class' => $requestData['class'] ? $requestData['class']: $info['class'],
+            'parent_id' => $requestData['parent_id'] ? $requestData['parent_id']: $info['parent_id'],
+            'remark' => $requestData['remark'] ? $requestData['remark']: $info['remark'],
+        ]);
         return $this->writeJson();
     }
 
