@@ -65,7 +65,7 @@ class UserController extends ControllerBase
             $newToken = UserService::getInstance()->createAccessToken($info->phone, $info->password);
             $info->update(['token' => $newToken]);
             $info->token = $newToken;
-            return $this->writeJson(200, $info, null, '登录成功');
+            return $this->writeJson(200, [] , $info, null, '登录成功');
         }
     }
 
