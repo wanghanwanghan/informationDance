@@ -73,9 +73,9 @@ class UserController extends ControllerBase
      * 修改密码
      */
     public function updatePassword(){
-        $phone = $this->request()->getRequestParam('phone');
-        $password = $this->request()->getRequestParam('password') ?? '';
-        $newPassword = $this->request()->getRequestParam('newPassword') ?? '';
+        $phone = $this->getRequestData('phone','');
+        $password = $this->getRequestData('password','') ;
+        $newPassword = $this->getRequestData('newPassword','') ;
         if (empty($phone)) return $this->writeJson(201, null, null, 'phone 不能是空');
         if (empty($newPassword)) return $this->writeJson(201, null, null, 'newPassword 不能是空');
         if (empty($password)) return $this->writeJson(201, null, null, 'password 不能是空');
@@ -94,8 +94,8 @@ class UserController extends ControllerBase
      */
     public function updateUserStatus(){
        
-        $phone = $this->request()->getRequestParam('phone');
-        $status = $this->request()->getRequestParam('status');
+        $phone = $this->getRequestData('phone');
+        $status = $this->getRequestData('status');
         if (empty($phone)) return $this->writeJson(201, null, null, 'phone 不能是空');
         if (empty($status)) return $this->writeJson(201, null, null, 'status 不能是空');
         $info = AdminNewUser::create()->where("phone = '{$phone}' ")->get();
@@ -111,12 +111,12 @@ class UserController extends ControllerBase
      * 新增用户（管理员）
      */
     public function addUser(){
-        $user_name = $this->request()->getRequestParam('user_name');
-        $password = $this->request()->getRequestParam('password');
-        $email = $this->request()->getRequestParam('email');
-        $phone = $this->request()->getRequestParam('phone');//type
-        $type = $this->request()->getRequestParam('type');
-        $company_id = $this->request()->getRequestParam('company_id');
+        $user_name = $this->getRequestData('user_name');
+        $password = $this->getRequestData('password');
+        $email = $this->getRequestData('email');
+        $phone = $this->getRequestData('phone');//type
+        $type = $this->getRequestData('type');
+        $company_id = $this->getRequestData('company_id');
 
         if (empty($phone)) return $this->writeJson(201, null, null, 'phone 不能是空');
         if (empty($user_name)) return $this->writeJson(201, null, null, 'user_name 不能是空');
