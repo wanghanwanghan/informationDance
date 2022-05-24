@@ -699,38 +699,7 @@ eof;
         $searchOptionArr = (new XinDongService())->getSearchOption([]);
 
         return $this->writeJson(200, null, $searchOptionArr, '成功', false, []);
-    }
-    
-    static function formatterSzjjidToNicCode($szjjidsStr){ 
-        $szjjidsStr && $szjjidsArr = explode(',', $szjjidsStr);
-        if($szjjidsArr){
-            $szjjidsStr = implode("','", $szjjidsArr); 
-            $sql = "SELECT
-                        nic_id 
-                    FROM
-                        nic_code
-                    WHERE
-                    nssc IN (
-                        SELECT
-                            id 
-                        FROM
-                            `szjj_nic_code` 
-                        WHERE
-                        szjj_id IN ( '$szjjidsStr' ) 
-                    )
-            ";
-
-            $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
-            $nicIds = array_column($list, 'nic_id');
-            
-            CommonService::getInstance()->log4PHP($sql);
-            CommonService::getInstance()->log4PHP($list);
-            CommonService::getInstance()->log4PHP($nicIds);
-            
-            return $nicIds; 
-        }
-        return [];
-    }
+    } 
 
     function advancedSearchSetQueryByBasicSzjjid($es){
         // 数字经济及其核心产业 050101,050102 需要转换为四级分类 然后再搜索
