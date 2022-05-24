@@ -714,7 +714,7 @@ eof;
                     WHERE
                     nssc IN (
                         SELECT
-                            szjj_id 
+                            nssc_id 
                         FROM
                             `szjj_nic_code` 
                         WHERE
