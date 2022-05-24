@@ -23,7 +23,7 @@ class AdminRole extends ServiceBase
     public static function getRolePerms($role_id) {
         $role = new AdminRole();
         $sql = "SELECT 
-                    role_perm.perm_desc 
+                    perm.perm_desc 
                 FROM admin_role_perm as role_perm
                 JOIN admin_permissions as perm ON role_perm.perm_id = perm.perm_id
                 WHERE role_perm.role_id = $role_id
