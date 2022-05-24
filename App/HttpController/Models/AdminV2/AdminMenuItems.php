@@ -1,6 +1,8 @@
 <?php
 
 namespace App\HttpController\Models\AdminV2;
+use App\HttpController\Service\CreateConf;
+
 
 use App\HttpController\Models\ModelBase;
 
