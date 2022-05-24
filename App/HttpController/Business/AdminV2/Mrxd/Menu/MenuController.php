@@ -5,6 +5,7 @@ namespace App\HttpController\Business\AdminV2\Mrxd\Menu;
 use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;
 use App\HttpController\Models\AdminV2\AdminNewMenu;
 use App\HttpController\Models\Provide\RequestApiInfo;
+use App\HttpController\Service\AdminRole\AdminPrivilegedUser;
 
 class MenuController extends ControllerBase
 {
@@ -16,6 +17,13 @@ class MenuController extends ControllerBase
     function afterAction(?string $actionName): void
     {
         parent::afterAction($actionName);
+    }
+    public function getAllMenu(){  
+        return $this->writeJson(
+            200,
+            [],
+            AdminPrivilegedUser::getAllowedMenusByUserId($this->loginUserinfo['id'])
+        );
     }
 
     /**

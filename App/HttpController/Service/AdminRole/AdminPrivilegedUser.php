@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\AdminRole;
 
+use App\HttpController\Models\AdminV2\AdminMenuItems;
 use App\HttpController\Models\Api\SupervisorPhoneEntName;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Service\CreateConf;
@@ -41,7 +42,7 @@ class AdminPrivilegedUser extends ServiceBase
                 WHERE user_role.user_id = ".$this->user_id;
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         foreach($list as $dataItem){
-        $this->roles[$dataItem["role_name"]] = AdminRole::getRolePerms($dataItem["role_id"]);              
+            $this->roles[$dataItem["role_name"]] = AdminRole::getRolePerms($dataItem["role_id"]);              
         }
     }
 
@@ -54,5 +55,31 @@ class AdminPrivilegedUser extends ServiceBase
         }
         return false;
     }
+
+    public static function getAllowedMenusByUserId($userId) {
+        $privUser = self::getByUserId($userId); 
+        $allMenus = AdminMenuItems::getMapedMenus();
+        $allowedMenus = [];
+        foreach($allMenus as $MenuItem){
+            // 父级菜单
+            if(
+                $privUser->hasPrivilege($MenuItem['class'].'/'.$MenuItem['method'])
+            ){
+                $allowedMenus[$MenuItem['id']] = $MenuItem;
+            };
+            // 子菜单
+            if(empty($MenuItem['child_menus'])){
+                continue ;
+            }
+            foreach($MenuItem['child_menus'] as $childMenu){
+                if(
+                    $privUser->hasPrivilege($childMenu['class'].'/'.$childMenu['method'])
+                ){
+                    $allowedMenus[$MenuItem['id']][$childMenu['id']] = $childMenu;
+                };
+            }
+        }
+        return $allowedMenus;
+    }    
 
 }

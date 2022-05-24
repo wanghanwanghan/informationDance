@@ -37,6 +37,18 @@ class AdminV2Router
         return true;
     }
 
+    private function MenuRouterV1(RouteCollector $routeCollector): bool
+    {
+        $prefix = '/Business/AdminV2/Mrxd/Menu/MenurController/';
+
+        $routeCollector->addGroup('/user', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getMenu', $prefix . 'getAllMenu');
+            // $routeCollector->addRoute(['GET', 'POST'], '/getAllMenu', $prefix . 'getAllMenu'); 
+        });
+
+        return true;
+    }
+
     private function GroceryStore(RouteCollector $routeCollector): bool
     {
         $prefix = '/Business/Admin/GroceryStore/GroceryStoreController/';
