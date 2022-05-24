@@ -70,7 +70,9 @@ class AdminPrivilegedUser extends ServiceBase
             if(
                 $privUser->hasPrivilege($MenuItem['class'].'/'.$MenuItem['method'])
             ){
-                $allowedMenus[$MenuItem['id']] = $MenuItem;
+                $tmpMenu = $MenuItem;
+                $tmpMenu['child_menus'] = [];
+                $allowedMenus[$MenuItem['id']] = $tmpMenu;
             }else{
                 CommonService::getInstance()->log4PHP('父级菜单没权限 '.json_encode(
                     [
@@ -89,7 +91,7 @@ class AdminPrivilegedUser extends ServiceBase
                 if(
                     $privUser->hasPrivilege($childMenu['class'].'/'.$childMenu['method'])
                 ){
-                    $allowedMenus[$MenuItem['id']][$childMenu['id']] = $childMenu;
+                    $allowedMenus[$MenuItem['id']]['child_menus'][$childMenu['id']] = $childMenu;
                 }else{
                     CommonService::getInstance()->log4PHP('子菜单没权限 '.json_encode(
                         [
