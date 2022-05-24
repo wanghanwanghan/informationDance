@@ -117,6 +117,21 @@ class ControllerBase extends Index
         return $res;
     }
 
+    function getRequestData($key = '', $default = '')
+    {
+        $string = $this->request()->getBody()->__toString();
+
+        $raw = jsonDecode($string);
+        $form = $this->request()->getRequestParam();
+
+        !empty($raw) ?: $raw = [];
+        !empty($form) ?: $form = [];
+
+        $requestData = array_merge($raw, $form);
+
+        return (isset($requestData[$key])) ? $requestData[$key] : $default;
+    }
+    
     private function setLoginUserInfo($userInfo){
         $this->loginUserinfo = $userInfo;
     }
