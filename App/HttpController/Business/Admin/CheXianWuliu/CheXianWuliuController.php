@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Admin\CheXianWuliu;
 
 use App\HttpController\Models\Api\AntAuthList;
 use App\HttpController\Models\Api\CarInsuranceInfo;
+use App\HttpController\Models\Api\DianZiQianAuth;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\MaYi\MaYiService;
 use App\HttpController\Service\Zip\ZipService;
@@ -29,15 +30,15 @@ class CheXianWuliuController extends CheXianWuliuBase
         $status = $this->getRequestData('status');
         empty($status) ?: $status = jsonDecode($status);
 
-        $orm = CarInsuranceInfo::create();
+        $orm = DianZiQianAuth::create();
 
-        // if (!empty($entname)) {
-        //     $orm->where('entName', "%{$entname}%", 'LIKE');
-        // }
+        if (!empty($entname)) {
+            $orm->where('entName', "%{$entname}%", 'LIKE');
+        }
 
-        // if (!empty($status)) {
-        //     $orm->where('status', $status, 'IN');
-        // }
+        if (!empty($status)) {
+            $orm->where('status', $status, 'IN');
+        }
 
         return $this->writeJson(200, null, $orm->limit(3)->all());
     }

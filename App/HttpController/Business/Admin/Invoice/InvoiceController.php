@@ -38,28 +38,7 @@ class InvoiceController extends InvoiceBase
         }
 
         return $this->writeJson(200, null, $orm->all());
-    }
-
-    function getList2(): bool
-    {
-        CommonService::getInstance()->log4PHP( 'getList');
-
-        $entname = $this->getRequestData('entname');
-        $status = $this->getRequestData('status');
-        empty($status) ?: $status = jsonDecode($status);
-
-        $orm = DianZiQianAuth::create();
-
-        // if (!empty($entname)) {
-        //     $orm->where('entName', "%{$entname}%", 'LIKE');
-        // }
-
-        // if (!empty($status)) {
-        //     $orm->where('status', $status, 'IN');
-        // }
-
-        return $this->writeJson(200, null, $orm->limit(3)->all());
-    }
+    } 
 
     function createZip(): bool
     {

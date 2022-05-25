@@ -95,8 +95,7 @@ class AdminProvideRouter
         $prefix = '/Business/Admin/Invoice/InvoiceController/';
 
         $routeCollector->addGroup('/invoice', function (RouteCollector $routeCollector) use ($prefix) {
-            $routeCollector->addRoute(['GET', 'POST'], '/getList', $prefix . 'getList');
-            $routeCollector->addRoute(['GET', 'POST'], '/getList2', $prefix . 'getList2');
+            $routeCollector->addRoute(['GET', 'POST'], '/getList', $prefix . 'getList'); 
             $routeCollector->addRoute(['GET', 'POST'], '/createZip', $prefix . 'createZip');
             $routeCollector->addRoute(['GET', 'POST'], '/createGetDataTime', $prefix . 'createGetDataTime');
         });
