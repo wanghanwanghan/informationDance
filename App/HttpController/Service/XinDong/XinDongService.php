@@ -1387,6 +1387,19 @@ class XinDongService extends ServiceBase
                     ],  
                 ],
             ],
+            [
+                'pid' => 90,
+                'desc' => '是否物流企业',
+                'detail' => '',
+                'key' => 'web',
+                'type' => 'select',
+                'data' => [
+                    10 => [
+                        'cname' => '是',
+                        'detail' => '',
+                    ],  
+                ],
+            ],
         ];
     }
 
@@ -1576,6 +1589,9 @@ class XinDongService extends ServiceBase
 
         //商品 
         $dataItem['shang_pin_data'] && $tags[110] = '商品';
+
+        //物流企业 
+        $dataItem['wu_liu_qi_ye'] && $tags[120] = '物流企业';
 
         return $tags;
     }

@@ -840,6 +840,24 @@ eof;
         return $this;
     } 
 
+    function advancedSearchSetQueryByWuLiuQiYe($es,$searchOptionArr){ 
+        $app_values = []; // 
+        foreach($searchOptionArr as $item){  
+            if($item['pid'] == 90){ 
+                $app_values = $item['value']; 
+            }
+        }
+ 
+          //必须存在APP 
+         foreach($app_values as $value){
+             if($value){ 
+                 $es->addMustRegexpQuery( 'wu_liu_qi_ye', ".+") ;  
+                 break;
+             }
+         }
+         return $this;
+     } 
+
     function advancedSearchSetQueryByCompanyOrgType($es,$searchOptionArr){  
         $org_type_values = [];  // 企业类型   
         foreach($searchOptionArr as $item){ 
@@ -1052,6 +1070,9 @@ eof;
 
         //必须存在APP 
         $this->advancedSearchSetQueryByApp($ElasticSearchService,$searchOptionArr); 
+
+        //必须是物流企业
+        $this->advancedSearchSetQueryByWuLiuQiYe($ElasticSearchService,$searchOptionArr); 
 
         // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索  
         $this->advancedSearchSetQueryByCompanyOrgType($ElasticSearchService,$searchOptionArr); 
