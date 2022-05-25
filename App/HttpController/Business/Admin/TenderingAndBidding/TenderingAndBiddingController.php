@@ -109,10 +109,13 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
             }
 
             if (!empty($res)) {
+                //处理数据
                 $res = obj2Arr($res);
-                foreach ($res as $k => $v) {
-                    $v = $this->do_strtr($v);
-                    $res[$k] = mb_strlen($v) > 1000 ? mb_substr($v, 0, 1000) . '...' : $v;
+                foreach ($res as $key => $arr) {
+                    foreach ($arr as $k => $v) {
+                        $v = $this->do_strtr($v);
+                        $res[$key][$k] = mb_strlen($v) > 1000 ? mb_substr($v, 0, 1000) . '...' : $v;
+                    }
                 }
                 $data[] = $res;
             }
