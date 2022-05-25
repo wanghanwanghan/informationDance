@@ -7,6 +7,7 @@ use App\HttpController\Service\CreateConf;
 use Carbon\Carbon;
 use EasySwoole\Mysqli\Client;
 use EasySwoole\Mysqli\Config;
+use wanghanwanghan\someUtils\control;
 
 class TenderingAndBiddingController extends TenderingAndBiddingBase
 {
@@ -90,9 +91,40 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
     {
         $zip_arr = $this->getRequestData('zip_arr');
 
-        CommonService::getInstance()->log4PHP($zip_arr);
+        $data = [];
 
-        return $this->writeJson(200, null, 123);
+        foreach ($zip_arr as $one) {
+            $cli = $this->mysqlCli();
+            $cli->queryBuilder()->where([
+                'DLSM_UUID' => $one['DLSM_UUID'] === '--' ? '' : $one['DLSM_UUID'],
+                '中标供应商' => $one['中标供应商'] === '--' ? '' : $one['中标供应商'],
+                '中标金额' => $one['中标金额'] === '--' ? '' : $one['中标金额'],
+            ])->getOne('zhao_tou_biao');
+            try {
+                $res = $cli->execBuilder();
+            } catch (\Throwable $e) {
+                $res = null;
+            }
+            if (!empty($res)) {
+                $res = obj2Arr($res);
+                foreach ($res as $k => $v) {
+                    $v = $this->do_strtr($v);
+                    $res[$k] = mb_strlen($v) > 1000 ? mb_substr($v, 0, 1000) . '...' : $v;
+                }
+                $data[] = $res;
+            }
+        }
+
+        $filename = control::getUuid();
+
+        if (!empty($data)) {
+            $config = ['path' => TEMP_FILE_PATH];
+            $excel = new \Vtiful\Kernel\Excel($config);
+            $fileObject = $excel->constMemory("{$filename}.xlsx", null, false);
+            $res = $fileObject->data($data)->output();
+        }
+
+        return $this->writeJson(200, null, $filename);
     }
 
 }
