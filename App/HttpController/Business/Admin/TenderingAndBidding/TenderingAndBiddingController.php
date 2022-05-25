@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Admin\TenderingAndBidding;
 
 use App\HttpController\Models\Api\AntAuthList;
 use App\HttpController\Service\CreateConf;
+use Carbon\Carbon;
 use EasySwoole\Mysqli\Client;
 use EasySwoole\Mysqli\Config;
 
@@ -36,9 +37,13 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
 
     function getList(): bool
     {
+        $date = $this->getRequestData('date') ?? Carbon::now()->format('Y-m-d');
+
         $cli = $this->mysqlCli();
 
-        $cli->queryBuilder()->limit(5)->get('zhao_tou_biao');
+        $cli->queryBuilder()
+            ->where('updated_at', "{$date}%", 'LIKE')
+            ->get('zhao_tou_biao');
 
         try {
             $res = $cli->execBuilder();
