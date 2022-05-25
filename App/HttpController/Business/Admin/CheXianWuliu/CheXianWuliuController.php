@@ -46,9 +46,11 @@ class CheXianWuliuController extends CheXianWuliuBase
     function createZip(): bool
     {
         $zip_arr = $this->getRequestData('zip_arr');
-
-        $target = [];
-
+        if(empty($zip_arr)){
+            return $this->writeJson(205, null, null);
+        }
+        $pdf = [];
+        $filename = control::getUuid();
         foreach ($zip_arr as $one) {
             $info = DianZiQianAuth::create()->where([
                 'id' => $one['id'],
@@ -69,9 +71,7 @@ class CheXianWuliuController extends CheXianWuliuBase
                 file_exists(INV_AUTH_PATH . $info->getAttr('entViewPdfUrl'))
             ) {
                 $pdf[] =$info->getAttr('entViewPdfUrl');
-            }
-
-            $target[] = $info;
+            } 
         }
         ZipService::getInstance()->zip($pdf, TEMP_FILE_PATH . $filename . '.zip');
         $path = $filename; 
