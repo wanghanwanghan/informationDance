@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Admin\TenderingAndBidding;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use Carbon\Carbon;
 use EasySwoole\Mysqli\Client;
@@ -83,6 +84,15 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
         }
 
         return $this->writeJson(200, null, $res);
+    }
+
+    function createZip(): bool
+    {
+        $zip_arr = $this->getRequestData('zip_arr');
+
+        CommonService::getInstance()->log4PHP($zip_arr);
+
+        return $this->writeJson(200, null, 123);
     }
 
 }
