@@ -58,7 +58,7 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
 
     function getList(): bool
     {
-        $date = $this->getRequestData('date') ?? Carbon::now()->format('Y-m-d');
+        $date = Carbon::now()->format('Y-m-d');
 
         $cli = $this->mysqlCli();
 
