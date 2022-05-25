@@ -139,13 +139,30 @@ class BusinessBase extends Index
     private function checkToken(): bool
     { 
         $requestToken = $this->request()->getHeaderLine('authorization');
-
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'checkToken1',
+                    $requestToken,
+                    strlen($requestToken)
+                ]
+            )
+        ); 
         if (empty($requestToken) || strlen($requestToken) < 50) return false;
-
+        
         try {
             $res = User::create()->where('token', $requestToken)->get();
         } catch (\Throwable $e) {
             $this->writeErr($e, __FUNCTION__);
+            CommonService::getInstance()->log4PHP(
+                json_encode(
+                    [
+                        'checkToken2',
+                        $res ,
+                        $requestToken
+                    ]
+                )
+            ); 
             return false;
         }
 
@@ -153,15 +170,38 @@ class BusinessBase extends Index
         $this->setLoginUserInfo($res);
 
         $tokenInfo = UserService::getInstance()->decodeAccessToken($requestToken);
-
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'checkToken3',
+                    $tokenInfo , 
+                ]
+            )
+        ); 
         if (!is_array($tokenInfo) || count($tokenInfo) != 3) return false;
 
         $reqPhone = $this->request()->getRequestParam('phone') ?? '';
 
         $tokenPhone = current($tokenInfo);
-
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'checkToken4',
+                    strlen($tokenPhone),
+                    strlen($reqPhone)
+                ]
+            )
+        ); 
         if (strlen($tokenPhone) != 11 || strlen($reqPhone) != 11) return false;
-
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'checkToken5',
+                    $reqPhone,
+                    $tokenPhone
+                ]
+            )
+        ); 
         return $reqPhone - 0 === $tokenPhone - 0;
     }
 
