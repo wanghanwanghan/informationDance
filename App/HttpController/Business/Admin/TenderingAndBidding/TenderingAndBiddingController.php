@@ -105,6 +105,10 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
             } catch (\Throwable $e) {
                 $res = null;
             }
+
+            CommonService::getInstance()->log4PHP($res);
+
+
             if (!empty($res)) {
                 $res = obj2Arr($res);
                 foreach ($res as $k => $v) {
