@@ -108,7 +108,7 @@ class AdminProvideRouter
     {
         $prefix = '/Business/Admin/CheXianWuliu/CheXianWuliuController/';
 
-        $routeCollector->addGroup('/cheXianWuLiu', function (RouteCollector $routeCollector) use ($prefix) {
+        $routeCollector->addGroup('/chexian', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getList', $prefix . 'getList');
             $routeCollector->addRoute(['GET', 'POST'], '/createZip', $prefix . 'createZip');
             $routeCollector->addRoute(['GET', 'POST'], '/createGetDataTime', $prefix . 'createGetDataTime');
