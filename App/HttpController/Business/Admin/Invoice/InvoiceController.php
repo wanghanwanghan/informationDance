@@ -39,6 +39,12 @@ class InvoiceController extends InvoiceBase
         return $this->writeJson(200, null, $orm->all());
     }
 
+    function getList2(): bool
+    {
+        
+        return $this->writeJson(200, null, []);
+    }
+
     function createZip(): bool
     {
         $zip_arr = $this->getRequestData('zip_arr');
