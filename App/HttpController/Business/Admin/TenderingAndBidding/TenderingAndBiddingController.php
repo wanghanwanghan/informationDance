@@ -40,7 +40,11 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
 
         $cli->queryBuilder()->limit(5)->get('zhao_tou_biao');
 
-        $res = $cli->execBuilder();
+        try {
+            $res = $cli->execBuilder();
+        } catch (\Throwable $e) {
+            $res = null;
+        }
 
         return $this->writeJson(200, null, $res);
     }
