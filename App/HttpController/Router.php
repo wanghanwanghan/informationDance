@@ -138,7 +138,6 @@ class Router extends AbstractRouter
 
         $routeCollector->addGroup('/hy', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getData', $prefix . 'getData');
-            $routeCollector->addRoute(['GET', 'POST'], '/exportZTB', $prefix . 'exportZTB');//导出招投标
         });
 
         return true;
