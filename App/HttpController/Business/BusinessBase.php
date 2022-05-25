@@ -35,16 +35,7 @@ class BusinessBase extends Index
 
         $checkRouter = $this->checkRouter();
         $checkToken = $this->checkToken();
-        CommonService::getInstance()->log4PHP(
-            'XX'.json_encode(
-                [
-                     
-                    $checkRouter,
-                    $checkToken,
-                    $action
-                ]
-            )
-        ); 
+          
         if (!$checkRouter && !$checkToken) $this->writeJson(240, null, null, 'token错误');
 
         $checkLimit = $this->checkLimit();
@@ -124,23 +115,14 @@ class BusinessBase extends Index
 
         $path = rtrim($path, '/');
         $path = explode('/', $path);
-        CommonService::getInstance()->log4PHP(
-            'checkRouter'.json_encode(
-                $path 
-            )
-        ); 
+         
         if (!empty($path)) {
             //检查url在不在直接放行数组
             $len = count($path);
 
             //取最后两个
             $path = implode('/', [$path[$len - 2], $path[$len - 1]]);
-            CommonService::getInstance()->log4PHP(
-                'checkRouter'.json_encode(
-                    $path ,
-                    $pass
-                )
-            ); 
+            
             //在数组里就放行
             if (in_array($path, $pass)) return true;
         }
@@ -157,30 +139,14 @@ class BusinessBase extends Index
     private function checkToken(): bool
     { 
         $requestToken = $this->request()->getHeaderLine('authorization');
-        CommonService::getInstance()->log4PHP(
-            'checkToken1'.json_encode(
-                [
-                    'checkToken1',
-                    $requestToken,
-                    strlen($requestToken)
-                ]
-            )
-        ); 
+         
         if (empty($requestToken) || strlen($requestToken) < 50) return false;
         
         try {
             $res = User::create()->where('token', $requestToken)->get();
         } catch (\Throwable $e) {
             $this->writeErr($e, __FUNCTION__);
-            'checkToken1'.CommonService::getInstance()->log4PHP(
-                json_encode(
-                    [
-                        'checkToken2',
-                        $res ,
-                        $requestToken
-                    ]
-                )
-            ); 
+             
             return false;
         }
 
@@ -188,38 +154,15 @@ class BusinessBase extends Index
         $this->setLoginUserInfo($res);
 
         $tokenInfo = UserService::getInstance()->decodeAccessToken($requestToken);
-        'checkToken1'.CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    'checkToken3',
-                    $tokenInfo , 
-                ]
-            )
-        ); 
+         
         if (!is_array($tokenInfo) || count($tokenInfo) != 3) return false;
 
         $reqPhone = $this->request()->getRequestParam('phone') ?? '';
 
         $tokenPhone = current($tokenInfo);
-        'checkToken1'.CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    'checkToken4',
-                    strlen($tokenPhone),
-                    strlen($reqPhone)
-                ]
-            )
-        ); 
+         
         if (strlen($tokenPhone) != 11 || strlen($reqPhone) != 11) return false;
-        'checkToken1'.CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    'checkToken5',
-                    $reqPhone,
-                    $tokenPhone
-                ]
-            )
-        ); 
+         
         return $reqPhone - 0 === $tokenPhone - 0;
     }
 
