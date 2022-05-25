@@ -18,6 +18,7 @@ class AdminProvideRouter
         $this->FinanceRouterV1($routeCollector);
         $this->FileTransmissionRouterV1($routeCollector);
         $this->invoiceRouterV1($routeCollector);
+        $this->TenderingAndBiddingRouterV1($routeCollector);
         $this->ErrorLogRouterV1($routeCollector);
     }
 
@@ -101,12 +102,24 @@ class AdminProvideRouter
         return true;
     }
 
+    private function TenderingAndBiddingRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Admin/TenderingAndBidding/TenderingAndBiddingController/';
+
+        $routeCollector->addGroup('/TenderingAndBidding', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getList', $prefix . 'getList');
+        });
+
+        return true;
+    }
+
     /**
      * 错误日志
      * @param RouteCollector $routeCollector
      * @return bool
      */
-    private function ErrorLogRouterV1(RouteCollector $routeCollector){
+    private function ErrorLogRouterV1(RouteCollector $routeCollector)
+    {
         $prefix = '/Business/Admin/Log/LogController/';
 
         $routeCollector->addGroup('/log', function (RouteCollector $routeCollector) use ($prefix) {
