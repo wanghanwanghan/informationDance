@@ -2,8 +2,6 @@
 
 namespace App\HttpController\Business\Admin\TenderingAndBidding;
 
-use App\HttpController\Models\Api\AntAuthList;
-use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use Carbon\Carbon;
 use EasySwoole\Mysqli\Client;
