@@ -124,6 +124,7 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
         $filename = control::getUuid();
 
         if (!empty($data)) {
+            CommonService::getInstance()->log4PHP($data);
             $config = ['path' => TEMP_FILE_PATH];
             $excel = new \Vtiful\Kernel\Excel($config);
             $fileObject = $excel->constMemory("{$filename}.xlsx", null, false);
