@@ -82,7 +82,6 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
                     $res[$key][$k] = mb_strlen($v) > 100 ? mb_substr($v, 0, 100) . '...' : $v;
                 }
             }
-            CommonService::getInstance()->log4PHP($res);
         }
 
         return $this->writeJson(200, null, $res);
