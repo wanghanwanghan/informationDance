@@ -40,7 +40,8 @@ class BusinessBase extends Index
                 [
                      
                     $checkRouter,
-                    $checkToken
+                    $checkToken,
+                    $action
                 ]
             )
         ); 
@@ -123,14 +124,23 @@ class BusinessBase extends Index
 
         $path = rtrim($path, '/');
         $path = explode('/', $path);
-
+        CommonService::getInstance()->log4PHP(
+            'checkRouter'.json_encode(
+                $path 
+            )
+        ); 
         if (!empty($path)) {
             //检查url在不在直接放行数组
             $len = count($path);
 
             //取最后两个
             $path = implode('/', [$path[$len - 2], $path[$len - 1]]);
-
+            CommonService::getInstance()->log4PHP(
+                'checkRouter'.json_encode(
+                    $path ,
+                    $pass
+                )
+            ); 
             //在数组里就放行
             if (in_array($path, $pass)) return true;
         }
