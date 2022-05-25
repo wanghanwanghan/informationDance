@@ -106,7 +106,7 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
                 $res = null;
             }
 
-            CommonService::getInstance()->log4PHP($res);
+            CommonService::getInstance()->log4PHP($one);
 
 
             if (!empty($res)) {
