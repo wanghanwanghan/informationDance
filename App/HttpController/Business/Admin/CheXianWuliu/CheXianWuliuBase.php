@@ -4,7 +4,7 @@ namespace App\HttpController\Business\Admin\CheXianWuliu;
 
 use App\HttpController\Business\BusinessBase;
 
-class CheXianWuliu extends BusinessBase
+class CheXianWuliuBase extends BusinessBase
 {
     function onRequest(?string $action): ?bool
     {
