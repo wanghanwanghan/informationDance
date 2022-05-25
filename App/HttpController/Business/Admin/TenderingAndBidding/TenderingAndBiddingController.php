@@ -115,6 +115,8 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
             }
         }
 
+        CommonService::getInstance()->log4PHP($data);
+
         $filename = control::getUuid();
 
         if (!empty($data)) {
