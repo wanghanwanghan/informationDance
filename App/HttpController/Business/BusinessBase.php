@@ -140,7 +140,7 @@ class BusinessBase extends Index
     { 
         $requestToken = $this->request()->getHeaderLine('authorization');
         CommonService::getInstance()->log4PHP(
-            json_encode(
+            'checkToken1'.json_encode(
                 [
                     'checkToken1',
                     $requestToken,
@@ -154,7 +154,7 @@ class BusinessBase extends Index
             $res = User::create()->where('token', $requestToken)->get();
         } catch (\Throwable $e) {
             $this->writeErr($e, __FUNCTION__);
-            CommonService::getInstance()->log4PHP(
+            'checkToken1'.CommonService::getInstance()->log4PHP(
                 json_encode(
                     [
                         'checkToken2',
@@ -170,7 +170,7 @@ class BusinessBase extends Index
         $this->setLoginUserInfo($res);
 
         $tokenInfo = UserService::getInstance()->decodeAccessToken($requestToken);
-        CommonService::getInstance()->log4PHP(
+        'checkToken1'.CommonService::getInstance()->log4PHP(
             json_encode(
                 [
                     'checkToken3',
@@ -183,7 +183,7 @@ class BusinessBase extends Index
         $reqPhone = $this->request()->getRequestParam('phone') ?? '';
 
         $tokenPhone = current($tokenInfo);
-        CommonService::getInstance()->log4PHP(
+        'checkToken1'.CommonService::getInstance()->log4PHP(
             json_encode(
                 [
                     'checkToken4',
@@ -193,7 +193,7 @@ class BusinessBase extends Index
             )
         ); 
         if (strlen($tokenPhone) != 11 || strlen($reqPhone) != 11) return false;
-        CommonService::getInstance()->log4PHP(
+        'checkToken1'.CommonService::getInstance()->log4PHP(
             json_encode(
                 [
                     'checkToken5',
