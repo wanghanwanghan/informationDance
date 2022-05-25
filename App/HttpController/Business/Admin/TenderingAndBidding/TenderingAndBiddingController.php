@@ -117,7 +117,7 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
                         $res[$key][$k] = mb_strlen($v) > 1000 ? mb_substr($v, 0, 1000) . '...' : $v;
                     }
                 }
-                $data[] = $res;
+                $data[] = current($res);
             }
         }
 
