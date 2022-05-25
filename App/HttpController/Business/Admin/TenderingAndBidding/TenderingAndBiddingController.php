@@ -76,9 +76,11 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
         if (!empty($res)) {
             //处理数据
             $res = obj2Arr($res);
-            foreach ($res as $key => $val) {
-                $val = $this->do_strtr($val);
-                $res[$key] = mb_strlen($val) > 100 ? mb_substr($val, 0, 100) . '...' : $val;
+            foreach ($res as $key => $arr) {
+                foreach ($arr as $k => $v) {
+                    $v = $this->do_strtr($v);
+                    $res[$key][$k] = mb_strlen($v) > 100 ? mb_substr($v, 0, 100) . '...' : $v;
+                }
             }
             CommonService::getInstance()->log4PHP($res);
         }
