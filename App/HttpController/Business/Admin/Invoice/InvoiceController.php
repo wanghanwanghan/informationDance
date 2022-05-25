@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Admin\Invoice;
 
 use App\HttpController\Models\Api\AntAuthList;
+use App\HttpController\Models\Api\DianZiQianAuth;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\MaYi\MaYiService;
 use App\HttpController\Service\Zip\ZipService;
@@ -41,8 +42,23 @@ class InvoiceController extends InvoiceBase
 
     function getList2(): bool
     {
-        
-        return $this->writeJson(200, null, []);
+        CommonService::getInstance()->log4PHP( 'getList');
+
+        $entname = $this->getRequestData('entname');
+        $status = $this->getRequestData('status');
+        empty($status) ?: $status = jsonDecode($status);
+
+        $orm = DianZiQianAuth::create();
+
+        // if (!empty($entname)) {
+        //     $orm->where('entName', "%{$entname}%", 'LIKE');
+        // }
+
+        // if (!empty($status)) {
+        //     $orm->where('status', $status, 'IN');
+        // }
+
+        return $this->writeJson(200, null, $orm->limit(3)->all());
     }
 
     function createZip(): bool
