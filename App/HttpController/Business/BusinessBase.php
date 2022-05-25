@@ -35,7 +35,15 @@ class BusinessBase extends Index
 
         $checkRouter = $this->checkRouter();
         $checkToken = $this->checkToken();
-
+        CommonService::getInstance()->log4PHP(
+            'XX'.json_encode(
+                [
+                     
+                    $checkRouter,
+                    $checkToken
+                ]
+            )
+        ); 
         if (!$checkRouter && !$checkToken) $this->writeJson(240, null, null, 'token错误');
 
         $checkLimit = $this->checkLimit();
