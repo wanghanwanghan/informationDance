@@ -7,6 +7,7 @@ use App\HttpController\Service\CreateConf;
 use Carbon\Carbon;
 use EasySwoole\Mysqli\Client;
 use EasySwoole\Mysqli\Config;
+use EasySwoole\Mysqli\QueryBuilder;
 use wanghanwanghan\someUtils\control;
 
 class TenderingAndBiddingController extends TenderingAndBiddingBase
@@ -94,20 +95,33 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
         $data = [];
 
         foreach ($zip_arr as $one) {
+
+            $qb = new QueryBuilder();
+            $qb->where([
+                'DLSM_UUID' => $one['DLSM_UUID'] === '--' ? '' : $one['DLSM_UUID'],
+                '中标供应商' => $one['中标供应商'] === '--' ? '' : $one['中标供应商'],
+                '中标金额' => $one['中标金额'] === '--' ? '' : $one['中标金额'],
+            ])->getOne('zhao_tou_biao');
+            $sql = $qb->getLastPrepareQuery();
+            CommonService::getInstance()->log4PHP($sql);
+
+
+
+
+
             $cli = $this->mysqlCli();
             $cli->queryBuilder()->where([
                 'DLSM_UUID' => $one['DLSM_UUID'] === '--' ? '' : $one['DLSM_UUID'],
                 '中标供应商' => $one['中标供应商'] === '--' ? '' : $one['中标供应商'],
                 '中标金额' => $one['中标金额'] === '--' ? '' : $one['中标金额'],
             ])->getOne('zhao_tou_biao');
+
+
             try {
                 $res = $cli->execBuilder();
             } catch (\Throwable $e) {
                 $res = null;
             }
-
-            CommonService::getInstance()->log4PHP($one);
-
 
             if (!empty($res)) {
                 $res = obj2Arr($res);
@@ -118,8 +132,6 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
                 $data[] = $res;
             }
         }
-
-        CommonService::getInstance()->log4PHP($data);
 
         $filename = control::getUuid();
 
