@@ -127,7 +127,34 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
             $config = ['path' => TEMP_FILE_PATH];
             $excel = new \Vtiful\Kernel\Excel($config);
             $fileObject = $excel->constMemory("{$filename}.xlsx", null, false);
-            $res = $fileObject->data($data)->output();
+            $res = $fileObject->header([
+                '标题',
+                '项目名称',
+                '项目编号',
+                '项目简介',
+                '采购方式',
+                '公告类型2',
+                '公告日期',
+                '行政区域_省',
+                '行政区域_市',
+                '行政区域_县',
+                '采购单位名称',
+                '采购单位地址',
+                '采购单位联系人',
+                '采购单位联系电话',
+                '名次',
+                '中标供应商',
+                '中标金额',
+                '代理机构名称',
+                '代理机构地址',
+                '代理机构联系人',
+                '代理机构联系电话',
+                '评标专家',
+                'DLSM_UUID',
+                'url',
+                'corexml',
+                'updated_at',
+            ])->data($data)->output();
         }
 
         return $this->writeJson(200, null, $filename);
