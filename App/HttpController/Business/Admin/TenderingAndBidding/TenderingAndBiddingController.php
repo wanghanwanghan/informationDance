@@ -97,16 +97,12 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
         foreach ($zip_arr as $one) {
 
             $qb = new QueryBuilder();
-            $qb->where([
-                'DLSM_UUID' => $one['DLSM_UUID'] === '--' ? '' : $one['DLSM_UUID'],
-                '中标供应商' => $one['中标供应商'] === '--' ? '' : $one['中标供应商'],
-                '中标金额' => $one['中标金额'] === '--' ? '' : $one['中标金额'],
-            ])->getOne('zhao_tou_biao');
+            $qb->where('DLSM_UUID', $one['DLSM_UUID'] === '--' ? '' : $one['DLSM_UUID'])
+                ->where('中标供应商', $one['中标供应商'] === '--' ? '' : $one['中标供应商'])
+                ->where('中标金额', $one['中标金额'] === '--' ? '' : $one['中标金额'])
+                ->getOne('zhao_tou_biao');
             $sql = $qb->getLastPrepareQuery();
             CommonService::getInstance()->log4PHP($sql);
-
-
-
 
 
             $cli = $this->mysqlCli();
