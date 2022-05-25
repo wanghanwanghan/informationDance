@@ -3,6 +3,9 @@
 namespace App\HttpController\Business\Admin\TenderingAndBidding;
 
 use App\HttpController\Models\Api\AntAuthList;
+use App\HttpController\Service\CreateConf;
+use EasySwoole\Mysqli\Client;
+use EasySwoole\Mysqli\Config;
 
 class TenderingAndBiddingController extends TenderingAndBiddingBase
 {
@@ -16,23 +19,30 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
         parent::afterAction($actionName);
     }
 
+    function mysqlCli(): Client
+    {
+        $conf = new Config([
+            'host' => CreateConf::getInstance()->getConf('env.mysqlHostRDS_3'),
+            'port' => 3306,
+            'user' => CreateConf::getInstance()->getConf('env.mysqlUserRDS_3'),
+            'password' => CreateConf::getInstance()->getConf('env.mysqlPasswordRDS_3'),
+            'database' => 'zhao_tou_biao',
+            'timeout' => 5,
+            'charset' => 'utf8mb4',
+        ]);
+
+        return new Client($conf);
+    }
+
     function getList(): bool
     {
-        $entname = $this->getRequestData('entname');
-        $status = $this->getRequestData('status');
-        empty($status) ?: $status = jsonDecode($status);
+        $cli = $this->mysqlCli();
 
-        $orm = AntAuthList::create();
+        $cli->queryBuilder()->limit(5)->get('zhao_tou_biao');
 
-        if (!empty($entname)) {
-            $orm->where('entName', "%{$entname}%", 'LIKE');
-        }
+        $res = $cli->execBuilder();
 
-        if (!empty($status)) {
-            $orm->where('status', $status, 'IN');
-        }
-
-        return $this->writeJson(200, null, $orm->all());
+        return $this->writeJson(200, null, $res);
     }
 
 }
