@@ -54,10 +54,11 @@ class Router extends AbstractRouter
 
         $routeCollector->addGroup('/admin_roles/v1', function (RouteCollector $routeCollector) {
             AdminRoles::getInstance()->addRouterV1($routeCollector);
-        }); 
+        });
     }
 
-    private function GuangZhouYinLianV1(RouteCollector $routeCollector){
+    private function GuangZhouYinLianV1(RouteCollector $routeCollector)
+    {
         $prefix = '/Business/Api/GuangZhouYinLian/GuangZhouYinLianController/';
         $routeCollector->addGroup('/gzyl', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getCarsInsurance', $prefix . 'getCarsInsurance');
@@ -75,12 +76,14 @@ class Router extends AbstractRouter
         return true;
     }
 
-    private function ZhiChiRouterV1(RouteCollector $routeCollector){
+    private function ZhiChiRouterV1(RouteCollector $routeCollector)
+    {
         $prefix = '/Business/Api/ZhiChi/ZhiChiController/';
         $routeCollector->addGroup('/zc', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/directUrl', $prefix . 'directUrl');
         });
     }
+
     private function CommonRouterV1(RouteCollector $routeCollector)
     {
         $prefix = '/Business/Api/Common/CommonController/';
@@ -135,6 +138,7 @@ class Router extends AbstractRouter
 
         $routeCollector->addGroup('/hy', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getData', $prefix . 'getData');
+            $routeCollector->addRoute(['GET', 'POST'], '/exportZTB', $prefix . 'exportZTB');//导出招投标
         });
 
         return true;

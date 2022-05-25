@@ -2,7 +2,6 @@
 
 namespace App\HttpController\Business\Api\HuoYan;
 
-use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HuoYan\HuoYanService;
 use wanghanwanghan\someUtils\control;
 
@@ -18,14 +17,14 @@ class HuoYanController extends HuoYanBase
         parent::afterAction($actionName);
     }
 
-    private function checkResponse($res)
+    private function checkResponse($res): bool
     {
         $res['result'] = control::changeArrVal($res['result'], ['', null], '--', true);
         return $this->writeJson($res['code'], $res['paging'], $res['result'], $res['msg']);
     }
 
     //仿企名片
-    function getData()
+    function getData(): bool
     {
         $com = $this->request()->getRequestParam('com') ?? '';//企业
         $keyword = $this->request()->getRequestParam('keyword') ?? '';//全局
