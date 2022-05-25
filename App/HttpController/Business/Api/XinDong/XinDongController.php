@@ -2452,5 +2452,50 @@ eof;
         // CommonService::getInstance()->log4PHP('matchEntByName '.$execution_time1.'秒'); 
         return $this->writeJson(200, [] ,   $retData, '成功', true, []); 
     }
-    
+
+    //添加车险授权书认证书信息
+    function addCarInsuranceInfo(){  
+        $files = $this->request()->getUploadedFiles();
+        $path = $fileName = '';
+
+        foreach ($files as $key => $oneFile) {
+            if (!$oneFile instanceof UploadFile) {
+                    continue;
+            }
+            try {
+                $fileName = $oneFile->getClientFilename();
+                $path = TEMP_FILE_PATH . $fileName;
+                $oneFile->moveTo($path); 
+                
+                $excel_read = new \Vtiful\Kernel\Excel(
+                    [
+                        'path' => TEMP_FILE_PATH // xlsx文件保存路径
+                    ]
+                );
+                $excel_read->openFile($fileName)->openSheet();
+                $excel_read->nextRow([]);
+                
+                $data = []; 
+                $batchNum = control::getUuid();
+                while ($one = $excel_read->nextRow([])) { 
+                    (new XinDongService())->addCarInsuranceInfo(
+                        [
+                            'entName' => trim($one['0']),
+                            'vin' => trim($one['1']),
+                            'entCode' => trim($one['2']),
+                            'legalPerson' => trim($one['3']),
+                            'idCard' => trim($one['4']),
+                        ]
+                    );
+                    //TODO 人的关系  谁加了授权 谁才可以看  
+                }                
+                
+            } catch (\Throwable $e) {
+                return $this->writeErr($e, __FUNCTION__);
+            } 
+        } 
+        
+        return $this->writeJson(200, null, $batchNum,'导入成功');
+    }
+
 }

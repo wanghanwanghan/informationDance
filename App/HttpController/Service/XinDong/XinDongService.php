@@ -4,6 +4,7 @@ namespace App\HttpController\Service\XinDong;
 
 use App\Csp\Service\CspService;
 use App\ElasticSearch\Service\ElasticSearchService;
+use App\HttpController\Models\Api\CarInsuranceInfo;
 use App\HttpController\Models\Api\CompanyName;
 use App\HttpController\Models\Api\UserSearchHistory;
 use App\HttpController\Models\BusinessBase\VendincScale2020Model;
@@ -2281,5 +2282,31 @@ class XinDongService extends ServiceBase
             'last_email' => '',
         ];
     }
-    
+
+    function addCarInsuranceInfo($dataItem){  
+        $oldModel = CarInsuranceInfo::create()
+            ->where([
+                'vin' => $dataItem['vin'],
+                'entCode' => $dataItem['entCode'],
+                'idCard' => $dataItem['idCard'],
+            ])->get();
+        if($oldModel){
+            return true ;
+        }
+
+        try {
+            CarInsuranceInfo::create()
+                ->where([
+                    'vin' => $dataItem['vin'],
+                    'entName' => $dataItem['entName'],
+                    'entCode' => $dataItem['entCode'],
+                    'idCard' => $dataItem['idCard'],
+                    'legalPerson' => $dataItem['legalPerson'],
+                ])->save() ;
+        } catch (\Throwable $e) {
+            CommonService::getInstance()->log4PHP('sql_error'.$sql);
+            return false;
+        } 
+        return true ;
+    }
 }
