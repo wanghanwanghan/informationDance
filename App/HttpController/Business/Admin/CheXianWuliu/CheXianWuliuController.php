@@ -23,21 +23,23 @@ class CheXianWuliuController extends CheXianWuliuBase
 
     function getList(): bool
     {
+        CommonService::getInstance()->log4PHP( 'getList');
+
         $entname = $this->getRequestData('entname');
         $status = $this->getRequestData('status');
         empty($status) ?: $status = jsonDecode($status);
 
         $orm = CarInsuranceInfo::create();
 
-        if (!empty($entname)) {
-            $orm->where('entName', "%{$entname}%", 'LIKE');
-        }
+        // if (!empty($entname)) {
+        //     $orm->where('entName', "%{$entname}%", 'LIKE');
+        // }
 
-        if (!empty($status)) {
-            $orm->where('status', $status, 'IN');
-        }
+        // if (!empty($status)) {
+        //     $orm->where('status', $status, 'IN');
+        // }
 
-        return $this->writeJson(200, null, $orm->all());
+        return $this->writeJson(200, null, $orm->limit(3)->all());
     }
 
     function createZip(): bool
