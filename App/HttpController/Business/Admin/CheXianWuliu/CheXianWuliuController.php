@@ -105,9 +105,10 @@ class CheXianWuliuController extends CheXianWuliuBase
         if(empty($zip_arr)){
             return $this->writeJson(205, null, null);
         }
+        
         $pdf = [];
         $filename = control::getUuid();
-        foreach ($zip_arr as $one) {
+        foreach ($zip_arr as $num => $one) {
             $info = CarInsuranceInfo::create()->where([
                 'entId' => $one['entId'],
                 'status' => 5,
@@ -118,28 +119,20 @@ class CheXianWuliuController extends CheXianWuliuBase
             $res = DianZiQianAuth::create()->where([
                 'id' =>  $info->getAttr('auth_res_id')
             ])->get();
-            CommonService::getInstance()->log4PHP(
-                json_encode(
-                    [
-                        'entDownloadUrl', 
-                        'entDownloadUrl' => $res->getAttr('entDownloadUrl'), 
-                        'personalDownloadUrl' => $res->getAttr('personalDownloadUrl'), 
-                    ]
-                )
-            ); 
+             
             if (
                 !empty($res->getAttr('entDownloadUrl')) && 
                 $this->checkIfFileExists($res->getAttr('entDownloadUrl'))
             ) {
-                $file_name = basename($res->getAttr('entDownloadUrl'));
+                $file_name =  'entDownloadUrl_'.$num.'.pdf';
                 $newFileRes = file_put_contents(
-                    TEMP_FILE_PATH.'entDownloadUrl.pdf', 
-                    file_get_contents($res->getAttr('entDownloadUrl')));
+                    TEMP_FILE_PATH.$file_name, 
+                    file_get_contents($res->getAttr('entDownloadUrl'))
+                );
                 CommonService::getInstance()->log4PHP(
                     json_encode(
-                        [
-                            'new file   ', 
-                            'name  ' =>  TEMP_FILE_PATH.$file_name,  
+                        [ 
+                            'new entDownloadUrl   name  ' =>  TEMP_FILE_PATH.$file_name,  
                             'newFileRes  ' => $newFileRes,    
                         ]
                     )
@@ -150,31 +143,21 @@ class CheXianWuliuController extends CheXianWuliuBase
                     $pdf[] = TEMP_FILE_PATH.$file_name;
                 }
                 
-            }else{
-                CommonService::getInstance()->log4PHP(
-                    json_encode(
-                        [
-                            'entDownloadUrl  ', 
-                            'entDownloadUrl ' => $res->getAttr('entDownloadUrl'),  
-                            'entDownloadUrl empty' => empty($res->getAttr('entDownloadUrl')),  
-                            'entDownloadUrl file_exists' => file_exists($res->getAttr('entDownloadUrl')),  
-                        ]
-                    )
-                ); 
-            }
+            } 
 
             if (
                 !empty($res->getAttr('personalDownloadUrl')) && 
                 $this->checkIfFileExists($res->getAttr('personalDownloadUrl'))
             ) {
-                $file_name = basename($res->getAttr('personalDownloadUrl'));
-                $newFileRes = file_put_contents(TEMP_FILE_PATH.'personalDownloadUrl.pdf', 
-                file_get_contents($res->getAttr('personalDownloadUrl')));
+                $file_name = 'personalDownloadUrl_'.$num.'.pdf';
+                $newFileRes = file_put_contents(
+                    TEMP_FILE_PATH.$file_name, 
+                    file_get_contents($res->getAttr('personalDownloadUrl'))
+                );
                 CommonService::getInstance()->log4PHP(
                     json_encode(
-                        [
-                            'new file   ', 
-                            'name  ' =>  TEMP_FILE_PATH.$file_name,  
+                        [ 
+                            'new personalDownloadUrl  ' =>  TEMP_FILE_PATH.$file_name,  
                             'newFileRes  ' => $newFileRes,    
                         ]
                     )
@@ -184,18 +167,7 @@ class CheXianWuliuController extends CheXianWuliuBase
                 {
                     $pdf[] = TEMP_FILE_PATH.$file_name;
                 }
-            } else{
-                CommonService::getInstance()->log4PHP(
-                    json_encode(
-                        [
-                            'personalDownloadUrl  ', 
-                            'personalDownloadUrl ' => $res->getAttr('personalDownloadUrl'),  
-                            'personalDownloadUrl empty' => empty($res->getAttr('personalDownloadUrl')),  
-                            'personalDownloadUrl file_exists' => file_exists($res->getAttr('personalDownloadUrl')),  
-                        ]
-                    )
-                ); 
-            }
+            }  
         }
 
         CommonService::getInstance()->log4PHP(
@@ -208,7 +180,14 @@ class CheXianWuliuController extends CheXianWuliuBase
                 ]
             )
         ); 
-        ZipService::getInstance()->zip($pdf, TEMP_FILE_PATH . $filename . '.zip');
+        ZipService::getInstance()->zip($pdf, TEMP_FILE_PATH . $filename . '.zip'); 
+
+        foreach($pdf as $file){
+            if(file_exists($file)){
+                @unlink($file);
+            }            
+        }
+
         $path = $filename; 
 
         return $this->writeJson(200, null, $path);
