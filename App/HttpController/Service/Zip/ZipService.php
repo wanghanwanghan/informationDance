@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\Zip;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\ServiceBase;
 use EasySwoole\Component\Singleton;
 use wanghanwanghan\someUtils\control;
@@ -62,7 +63,10 @@ class ZipService extends ServiceBase
         foreach ($fileArr as $one) {
             $arr = explode(DIRECTORY_SEPARATOR, $one);
             $name = end($arr);
-            $zip->addFile($one, $name);
+            $res = $zip->addFile($one, $name);
+            CommonService::getInstance()->log4PHP(
+                 'zip res '.json_encode($res)
+            ); 
         }
 
         $zip->close();
