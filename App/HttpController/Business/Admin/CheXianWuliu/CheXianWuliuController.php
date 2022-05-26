@@ -28,7 +28,9 @@ class CheXianWuliuController extends CheXianWuliuBase
     {
         $phone = $this->request()->getRequestParam('phone');
         $page = $this->request()->getRequestParam('page');
-
+        if($page <= 0 ){
+           $page = 1; 
+        }
         $limit = 10;
         $offset = ($page - 1) * $limit;
 
@@ -63,6 +65,10 @@ class CheXianWuliuController extends CheXianWuliuBase
             $dataItem['status_cname'] = CompanyCarInsuranceStatusInfo::getStatusMap()[
                 $dataItem['status']
             ];
+
+            $dataItem['created_at'] = date('Y-m-d H:i:s',$tmpEnt->getAttr('created_at'));
+            $dataItem['updated_at'] = date('Y-m-d H:i:s',$tmpEnt->getAttr('updated_at'));
+            
         }
         $totalPages = ceil( $total/ $limit );
         return $this->writeJson(200,  [
