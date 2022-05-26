@@ -61,6 +61,7 @@ class CheXianWuliuController extends CheXianWuliuBase
     function createZip(): bool
     {
         $zip_arr = $this->getRequestData('zip_arr');
+        $zip_arr = [['entId' => 194490069]];
         if(empty($zip_arr)){
             return $this->writeJson(205, null, null);
         }
