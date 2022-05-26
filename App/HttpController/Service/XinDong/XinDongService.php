@@ -2293,7 +2293,7 @@ class XinDongService extends ServiceBase
                 'entId' => $dataItem['entId'], 
             ])->get();
         if($oldModel){
-            return $oldModel ;
+            return $oldModel->getAttr('id') ;
         }
 
         try {

@@ -2512,7 +2512,7 @@ eof;
                     }
 
                     // 企业车辆信息
-                    $carInsuranceInfo = (new XinDongService())->addCarInsuranceInfo(
+                    $carInsuranceInfoId = (new XinDongService())->addCarInsuranceInfo(
                         [
                             'entId' => $entId,
                             'vin' => $vin, 
@@ -2522,43 +2522,53 @@ eof;
                     );
                     CommonService::getInstance()->log4PHP(
                         json_encode([
-                            'addCarInsuranceInfo carInsuranceInfo continue',
+                            'addCarInsuranceInfo carInsuranceInfo ',
                             'entId' => $entId,
                             'vin' => $vin, 
                             'legalPerson' => $legalPerson,
                             'idCard' => $idCard,
-                            'carInsuranceInfo' => $carInsuranceInfo,
+                            'carInsuranceInfo' => $carInsuranceInfoId,
                         ])
                     ); 
-                    if(!$carInsuranceInfo){ 
+                    if(!$carInsuranceInfoId){ 
+                        CommonService::getInstance()->log4PHP(
+                            json_encode([
+                                'addCarInsuranceInfo carInsuranceInfo continue',
+                                'entId' => $entId,
+                                'vin' => $vin, 
+                                'legalPerson' => $legalPerson,
+                                'idCard' => $idCard,
+                                'carInsuranceInfo' => $carInsuranceInfoId,
+                            ])
+                        ); 
                         continue;
                     }
 
                     // 用户-车辆关系
-                    $userCarsRelation = (new XinDongService())->addUserCarsRelation(
+                    $userCarsRelationId = (new XinDongService())->addUserCarsRelation(
                         [
                             'user_id' => $this->loginUserinfo['id'],
-                            'car_insurance_id' => $carInsuranceInfo->getAttr('id'), 
+                            'car_insurance_id' => $carInsuranceInfoId, 
                             'legalPerson' => $legalPerson,
                             'idCard' => $idCard,
                         ]
                     );
                     CommonService::getInstance()->log4PHP(
                         json_encode([
-                            'addCarInsuranceInfo userCarsRelation continue',
+                            'addCarInsuranceInfo userCarsRelation ',
                             'user_id' => $this->loginUserinfo['id'],
-                            'car_insurance_id' => $carInsuranceInfo->getAttr('id'), 
+                            'car_insurance_id' => $carInsuranceInfoId, 
                             'legalPerson' => $legalPerson,
                             'idCard' => $idCard,
-                            'userCarsRelation' => $userCarsRelation,
+                            'userCarsRelation' => $userCarsRelationId,
                         ])
                     ); 
-                    if(!$userCarsRelation){
+                    if(!$userCarsRelationId){
                         CommonService::getInstance()->log4PHP(
                             json_encode([
                                 'addCarInsuranceInfo userCarsRelation continue',
                                 'user_id' => $this->loginUserinfo['id'],
-                                'car_insurance_id' => $carInsuranceInfo->getAttr('id'), 
+                                'car_insurance_id' => $carInsuranceInfoId, 
                                 'legalPerson' => $legalPerson,
                                 'idCard' => $idCard,
                             ])
@@ -2581,7 +2591,7 @@ eof;
 
         if($succeedNums>0){
             // 企业车险状态
-            $companyCarInsuranceStatusInfo =(new XinDongService())->addCompanyCarInsuranceStatusInfo(
+            $companyCarInsuranceStatusInfoId =(new XinDongService())->addCompanyCarInsuranceStatusInfo(
                 [
                     'entId' => $entId,
                 ]
