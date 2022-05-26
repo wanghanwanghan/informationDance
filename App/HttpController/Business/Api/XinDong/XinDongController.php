@@ -2473,6 +2473,7 @@ eof;
                 ); 
                     continue;
             }
+
             try {
                 $fileName = $oneFile->getClientFilename();
                 $path = TEMP_FILE_PATH . $fileName;
@@ -2520,6 +2521,15 @@ eof;
                         ]
                     );
                     if(!$carInsuranceInfo){
+                        CommonService::getInstance()->log4PHP(
+                            json_encode([
+                                'addCarInsuranceInfo carInsuranceInfo continue',
+                                'entId' => $entId,
+                                'vin' => $vin, 
+                                'legalPerson' => $legalPerson,
+                                'idCard' => $idCard,
+                            ])
+                        ); 
                         continue;
                     }
 
@@ -2533,12 +2543,27 @@ eof;
                         ]
                     );
                     if(!$userCarsRelation){
+                        CommonService::getInstance()->log4PHP(
+                            json_encode([
+                                'addCarInsuranceInfo userCarsRelation continue',
+                                'user_id' => $this->loginUserinfo['id'],
+                                'car_insurance_id' => $carInsuranceInfo->getAttr('id'), 
+                                'legalPerson' => $legalPerson,
+                                'idCard' => $idCard,
+                            ])
+                        ); 
                         continue;
                     }
                     $succeedNums ++;
                 }                
                 
             } catch (\Throwable $e) {
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        'addCarInsuranceInfo Throwable continue',
+                        $e->getMessage(),
+                    ])
+                ); 
                 return $this->writeErr($e, __FUNCTION__);
             } 
         } 
