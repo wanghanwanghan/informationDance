@@ -263,7 +263,8 @@ class DianZiQianService extends ServiceBase
         }
 
         $personalTransactionCode = control::getUuid(); 
-        return [
+
+        return $this->createReturn(200, null, [
             'entName' => $postData['entName'],
             "personName"   => $postData['legalPerson'],
             "personIdCard" => $postData['idCard'],
@@ -275,7 +276,7 @@ class DianZiQianService extends ServiceBase
             'entSealCode' => $entSealCode,
             'entTransactionCode' => $entTransactionCode,
             'personalTransactionCode' => $personalTransactionCode
-        ];
+        ], '成功'); 
     }
 
     public function getAuthFile($postData)
