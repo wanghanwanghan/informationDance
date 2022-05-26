@@ -95,6 +95,16 @@ class RunShouQuanCheXian extends AbstractCronTask
             'id' => 5, 
         ])->limit(1)->all();
         
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'RunShouQuanCheXian',
+                    'postData' => $postData, 
+                    'res' => $res, 
+                ]
+            )
+        );
+        return true; 
         if(empty($vinDatas)){
             return  true;
         }   
