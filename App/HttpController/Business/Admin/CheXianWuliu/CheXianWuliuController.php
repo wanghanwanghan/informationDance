@@ -51,7 +51,9 @@ class CheXianWuliuController extends CheXianWuliuBase
                 ]
             )->get();
             $dataItem['entName'] = $tmpEnt->getAttr('name');
-            $dataItem['status_cname'] = $dataItem['status'];
+            $dataItem['status_cname'] = CompanyCarInsuranceStatusInfo::getStatusMap()[
+                $dataItem['status']
+            ];
         }
         return $this->writeJson(200, null, $res);
     }

@@ -16,7 +16,7 @@ class CompanyCarInsuranceStatusInfo extends ModelBase
     static $status_part_auth_done = 5;
     static $status_all_auth_done = 10;
     static $status_all_done = 10;
-    public function getStatusMap(){
+    public static function getStatusMap(){
         return [
             0 => '待处理',
             5 => '部分授权完成',
