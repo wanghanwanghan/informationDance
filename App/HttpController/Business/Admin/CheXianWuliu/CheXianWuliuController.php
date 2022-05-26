@@ -26,6 +26,12 @@ class CheXianWuliuController extends CheXianWuliuBase
 
     function getList(): bool
     {
+        $phone = $this->request()->getRequestParam('phone');
+        $page = $this->request()->getRequestParam('page');
+
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+
         CommonService::getInstance()->log4PHP( 'getList');
 
         $entname = $this->getRequestData('entname');
@@ -37,13 +43,16 @@ class CheXianWuliuController extends CheXianWuliuBase
         if (!empty($entname)) {
             $orm->where('entName', "%{$entname}%", 'LIKE');
         }
+ 
 
-        // if (!empty($status)) {
-        //     $orm->where('status', $status, 'IN');
-        // }
+        $model = $orm->where('status',CompanyCarInsuranceStatusInfo::$status_all_auth_done)
+        ->page($page)->order('id', 'DESC')->withTotalCount(); 
 
-        $res = $orm->where('status',CompanyCarInsuranceStatusInfo::$status_all_auth_done)
-        ->all();
+        $res = $model->all();
+
+        $total = $model->lastQueryResult()->getTotalCount();
+
+
         foreach($res as &$dataItem){
             $tmpEnt  = Company::create()->where( 
                 [
@@ -55,7 +64,13 @@ class CheXianWuliuController extends CheXianWuliuBase
                 $dataItem['status']
             ];
         }
-        return $this->writeJson(200, null, $res);
+        $totalPages = ceil( $total/ $limit );
+        return $this->writeJson(200,  [
+            'page' => $page,
+            'pageSize' =>$limit,
+            'total' => $total,
+            'totalPage' => $totalPages, 
+        ] , $res);
     }
 
     function setIsOk(): bool
