@@ -4,12 +4,14 @@ namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
 use App\HttpController\Models\Api\CarInsuranceInfo;
+use App\HttpController\Models\Api\DianZiQianAuth;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use EasySwoole\Mysqli\QueryBuilder;
 use wanghanwanghan\someUtils\control;
 use App\HttpController\Models\RDS3\Company;
+use App\HttpController\Service\DianZiqian\DianZiQianService;
 use App\HttpController\Service\LongXin\LongXinService;
 
 
@@ -75,6 +77,15 @@ class RunShouQuanCheXian extends AbstractCronTask
         return true;
     }    
 
+    function setCarInsuranceInfoStatusById($id,$status,$msg){
+        return CarInsuranceInfo::create()
+            ->where(['id' => $id], ])
+            ->update([
+                'status' => $status,
+                'msg' => $msg,
+            ]); 
+    }
+     
     function run(int $taskId, int $workerIndex): bool
     {
          
@@ -82,16 +93,55 @@ class RunShouQuanCheXian extends AbstractCronTask
         [
             'status' => 0, 
             'id' => 5, 
-        ])->all();
+        ])->limit(1)->all();
+        
+        if(empty($vinDatas)){
+            return  true;
+        }   
 
-        CommonService::getInstance()->log4PHP(
-            json_encode(
+        foreach($vinDatas as $vinData){
+            if($vinData['entId']<=0){
+                $this->setCarInsuranceInfoStatusById(
+                    $vinData['id'],
+                    6,
+                    '少entId'
+                );
+            }
+
+            $entModel = Company::create()->where(
                 [
-                    'RunShouQuanCheXian run ',
-                    'vinDatas' =>$vinDatas
-                ]
-            )
-        );
+                    'id' => $vinData['entId'] 
+                ])->get();
+
+            $postData = [
+                'entName' => $entModel->getAttr('name'),
+                'socialCredit' => $entModel->getAttr('property1'),
+                'legalPerson' => $vinData['legalPerson'],
+                'idCard' =>$vinData['idCard'],
+                'phone' => '',
+                'city' => '',
+                'vin' => $vinData['vin'],
+            ];
+            
+            $res = (new DianZiQianService())->setCheckRespFlag(true)->getCarAuthFile($postData);
+
+            CommonService::getInstance()->log4PHP(
+                json_encode(
+                    [
+                        'RunShouQuanCheXian',
+                        'postData' => $postData, 
+                        'res' => $res, 
+                    ]
+                )
+            );
+
+            $this->setCarInsuranceInfoStatusById(
+                $vinData['id'],
+                5,
+                json_encode($res)
+            );
+        } 
+
         return true ;  
     }
 

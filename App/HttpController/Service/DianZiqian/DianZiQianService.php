@@ -304,7 +304,7 @@ class DianZiQianService extends ServiceBase
     /**
      * 上传adobe模版
      */
-    private function contractFileTemplate($file = 'test.pdf')
+    public function contractFileTemplate($file = 'test.pdf')
     {
         $path  = "/open-api-lite/contract/file/template";
         $file  = STATIC_PATH . "AuthBookModel/".$file;
@@ -319,7 +319,7 @@ class DianZiQianService extends ServiceBase
     /**
      * 使用模板创建合同
      */
-    private function contractFileTemplateFilling($contractTemplateCode,$params)
+    public function contractFileTemplateFilling($contractTemplateCode,$params)
     {
         $path      = "/open-api-lite/contract/file/template/filling";
         $paramData = [
@@ -396,7 +396,7 @@ class DianZiQianService extends ServiceBase
     /**
      * 企业上传印章
      */
-    private function entSign($signerCode, $arr)
+    public function entSign($signerCode, $arr)
     {
         $ent_sealCode  = '';
         $ent_sign_info = $this->sealBase64([
@@ -628,7 +628,7 @@ return $output;
     /**
      * 制作企业印章图片
      */
-    private function sealEntDraw($postData){
+    public function sealEntDraw($postData){
         $path      = '/open-api/seal/ent/draw';
         $paramData = [
             'nonTransparentPercent'      => '100',
@@ -672,7 +672,7 @@ return $output;
     /*
     * 通过fileCode获取文件
     */
-    private function fileQuery($fileCode,$urlPath){
+    public function fileQuery($fileCode,$urlPath){
         $path      = '/open-api/file/query';
         $paramData = [
             'fileCode'      => $fileCode,
