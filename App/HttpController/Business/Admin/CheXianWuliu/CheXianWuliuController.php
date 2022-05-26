@@ -112,8 +112,7 @@ class CheXianWuliuController extends CheXianWuliuBase
                 'entId' => $one['entId'],
                 'status' => 5,
             ])->get();
-            if (empty($info)) {
-                
+            if (empty($info)) { 
                 continue;
             } 
             $res = DianZiQianAuth::create()->where([
@@ -133,7 +132,18 @@ class CheXianWuliuController extends CheXianWuliuBase
                 $this->checkIfFileExists($res->getAttr('entDownloadUrl'))
             ) {
                 $file_name = basename($res->getAttr('entDownloadUrl'));
-                if (file_put_contents(TEMP_FILE_PATH.$file_name, file_get_contents($res->getAttr('entDownloadUrl'))))
+                $newFileRes = file_put_contents(TEMP_FILE_PATH.$file_name, file_get_contents($res->getAttr('entDownloadUrl')));
+                CommonService::getInstance()->log4PHP(
+                    json_encode(
+                        [
+                            'new file   ', 
+                            'name  ' =>  TEMP_FILE_PATH.$file_name,  
+                            'newFileRes  ' => $newFileRes,    
+                        ]
+                    )
+                ); 
+                
+                if ($newFileRes)
                 {
                     $pdf[] = TEMP_FILE_PATH.$file_name;
                 }
@@ -156,9 +166,19 @@ class CheXianWuliuController extends CheXianWuliuBase
                 $this->checkIfFileExists($res->getAttr('personalDownloadUrl'))
             ) {
                 $file_name = basename($res->getAttr('personalDownloadUrl'));
-                if (file_put_contents(
-                    TEMP_FILE_PATH.$file_name, 
-                    file_get_contents($res->getAttr('personalDownloadUrl'))))
+                $newFileRes = file_put_contents(TEMP_FILE_PATH.$file_name, 
+                file_get_contents($res->getAttr('personalDownloadUrl')));
+                CommonService::getInstance()->log4PHP(
+                    json_encode(
+                        [
+                            'new file   ', 
+                            'name  ' =>  TEMP_FILE_PATH.$file_name,  
+                            'newFileRes  ' => $newFileRes,    
+                        ]
+                    )
+                ); 
+                
+                if ($newFileRes)
                 {
                     $pdf[] = TEMP_FILE_PATH.$file_name;
                 }
