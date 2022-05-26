@@ -62,7 +62,7 @@ class CheXianWuliuController extends CheXianWuliuBase
     {  
         $idsStr = $this->getRequestData('ids');
         if(!$idsStr){
-            return $this->writeJson(203, null, [], '参数缺失');
+            return $this->writeJson(203, null, [], '参数缺失!');
         }
       
         $idsArr = explode(',',$idsStr);
