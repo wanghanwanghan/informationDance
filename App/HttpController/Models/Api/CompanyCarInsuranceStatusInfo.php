@@ -32,7 +32,9 @@ class CompanyCarInsuranceStatusInfo extends ModelBase
             ]
         )->get(); 
         if(
-            CompanyCarInsuranceStatusInfo::ifHasAuthAll($CompanyCarInsuranceStatusInfo->getAttr('status')) 
+            CompanyCarInsuranceStatusInfo::ifHasAuthAll(
+                $CompanyCarInsuranceStatusInfo->getAttr('status')
+            ) 
         ){
 
         }
