@@ -4,7 +4,9 @@ namespace App\HttpController\Business\Admin\CheXianWuliu;
 
 use App\HttpController\Models\Api\AntAuthList;
 use App\HttpController\Models\Api\CarInsuranceInfo;
+use App\HttpController\Models\Api\CompanyCarInsuranceStatusInfo;
 use App\HttpController\Models\Api\DianZiQianAuth;
+use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\MaYi\MaYiService;
 use App\HttpController\Service\Zip\ZipService;
@@ -30,7 +32,7 @@ class CheXianWuliuController extends CheXianWuliuBase
         $status = $this->getRequestData('status');
         empty($status) ?: $status = jsonDecode($status);
 
-        $orm = DianZiQianAuth::create();
+        $orm = CompanyCarInsuranceStatusInfo::create();
 
         if (!empty($entname)) {
             $orm->where('entName', "%{$entname}%", 'LIKE');
@@ -40,7 +42,16 @@ class CheXianWuliuController extends CheXianWuliuBase
             $orm->where('status', $status, 'IN');
         }
 
-        return $this->writeJson(200, null, $orm->limit(3)->all());
+        $res = $orm->limit(3)->all();
+        foreach($res as &$dataItem){
+            $dataItem['entName'] = Company::create()->where(
+                [
+                    'id' => $dataItem['entId']
+                ]
+            );
+            $dataItem['status_cname'] = $dataItem['status'];
+        }
+        return $this->writeJson(200, null, $res);
     }
 
     function createZip(): bool
