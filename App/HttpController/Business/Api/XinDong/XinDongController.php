@@ -2466,6 +2466,11 @@ eof;
         $succeedNums = 0;
         foreach ($files as $key => $oneFile) {
             if (!$oneFile instanceof UploadFile) {
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        'not instanceof UploadFile ',
+                    ])
+                ); 
                     continue;
             }
             try {
