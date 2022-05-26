@@ -123,6 +123,7 @@ class AdminProvideRouter
 
         $routeCollector->addGroup('/TenderingAndBidding', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getList', $prefix . 'getList');
+            $routeCollector->addRoute(['GET', 'POST'], '/createZip', $prefix . 'createZip');
         });
 
         return true;

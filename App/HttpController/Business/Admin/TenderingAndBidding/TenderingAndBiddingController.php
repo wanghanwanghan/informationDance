@@ -2,10 +2,13 @@
 
 namespace App\HttpController\Business\Admin\TenderingAndBidding;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use Carbon\Carbon;
 use EasySwoole\Mysqli\Client;
 use EasySwoole\Mysqli\Config;
+use EasySwoole\Mysqli\QueryBuilder;
+use wanghanwanghan\someUtils\control;
 
 class TenderingAndBiddingController extends TenderingAndBiddingBase
 {
@@ -83,6 +86,102 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
         }
 
         return $this->writeJson(200, null, $res);
+    }
+
+    function createZip(): bool
+    {
+        $zip_arr = $this->getRequestData('zip_arr');
+
+        $data = [];
+
+        foreach ($zip_arr as $one) {
+
+            $cli = $this->mysqlCli();
+            $cli->queryBuilder()->where('DLSM_UUID', $one['DLSM_UUID'] === '--' ? '' : $one['DLSM_UUID'])
+                ->where('中标供应商', $one['中标供应商'] === '--' ? '' : $one['中标供应商'])
+                ->where('中标金额', $one['中标金额'] === '--' ? '' : $one['中标金额'])
+                ->fields([
+                    '标题',
+                    '项目名称',
+                    '项目编号',
+                    '项目简介',
+                    '采购方式',
+                    '公告类型2',
+                    '公告日期',
+                    '行政区域_省',
+                    '行政区域_市',
+                    '行政区域_县',
+                    '采购单位名称',
+                    '采购单位地址',
+                    '采购单位联系人',
+                    '采购单位联系电话',
+                    '名次',
+                    '中标供应商',
+                    '中标金额',
+                    '代理机构名称',
+                    '代理机构地址',
+                    '代理机构联系人',
+                    '代理机构联系电话',
+                    '评标专家',
+                    'url',
+                    'corexml',
+                ])
+                ->getOne('zhao_tou_biao');
+
+            try {
+                $res = $cli->execBuilder();
+            } catch (\Throwable $e) {
+                $res = null;
+            }
+
+            if (!empty($res)) {
+                //处理数据
+                $res = obj2Arr($res);
+                foreach ($res as $key => $arr) {
+                    foreach ($arr as $k => $v) {
+                        $v = $this->do_strtr($v);
+                        $res[$key][$k] = mb_strlen($v) > 1000 ? mb_substr($v, 0, 1000) . '...' : $v;
+                    }
+                }
+                $data[] = current($res);
+            }
+        }
+
+        $filename = control::getUuid();
+
+        if (!empty($data)) {
+            $config = ['path' => TEMP_FILE_PATH];
+            $excel = new \Vtiful\Kernel\Excel($config);
+            $fileObject = $excel->constMemory("{$filename}.xlsx", null, false);
+            $res = $fileObject->header([
+                '标题',
+                '项目名称',
+                '项目编号',
+                '项目简介',
+                '采购方式',
+                '公告类型2',
+                '公告日期',
+                '行政区域_省',
+                '行政区域_市',
+                '行政区域_县',
+                '采购单位名称',
+                '采购单位地址',
+                '采购单位联系人',
+                '采购单位联系电话',
+                '名次',
+                '中标供应商',
+                '中标金额',
+                '代理机构名称',
+                '代理机构地址',
+                '代理机构联系人',
+                '代理机构联系电话',
+                '评标专家',
+                'url',
+                'corexml',
+            ])->data($data)->output();
+        }
+
+        return $this->writeJson(200, null, $filename);
     }
 
 }
