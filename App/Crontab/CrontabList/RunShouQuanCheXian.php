@@ -151,7 +151,7 @@ class RunShouQuanCheXian extends AbstractCronTask
             $todoCars = CarInsuranceInfo::create()->where(
                 [
                     'status' => 0, 
-                    'entId' => $companyItem['id'], 
+                    'entId' => $companyItem['entId'], 
                 ]
             )->all(); 
             if(empty($todoCars)){ 
