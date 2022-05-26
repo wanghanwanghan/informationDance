@@ -2455,9 +2455,15 @@ eof;
 
     //添加车险授权书认证书信息
     function addCarInsuranceInfo(){  
+        $entId = $this->getRequestData('entId');
+        if($entId <= 0){
+            return $this->writeJson(206, [] ,   [], '缺少必要参数', true, []); 
+        }
+
         $files = $this->request()->getUploadedFiles();
         $path = $fileName = '';
 
+        $succeedNums = 0;
         foreach ($files as $key => $oneFile) {
             if (!$oneFile instanceof UploadFile) {
                     continue;
@@ -2474,28 +2480,74 @@ eof;
                 );
                 $excel_read->openFile($fileName)->openSheet();
                 $excel_read->nextRow([]);
-                
+
                 $data = []; 
                 $batchNum = control::getUuid();
                 while ($one = $excel_read->nextRow([])) { 
-                    (new XinDongService())->addCarInsuranceInfo(
+                    $vin = trim($one['0']);
+                    $legalPerson = trim($one['1']);
+                    $idCard = trim($one['2']);
+                    
+                    if(
+                        !$vin ||
+                        !$legalPerson ||
+                        !$idCard 
+                    ){
+                        CommonService::getInstance()->log4PHP(
+                            json_encode([
+                                'addCarInsuranceInfo 该行缺数据 continue',
+                                'entId' => $entId,
+                                'vin' => $vin, 
+                                'legalPerson' => $legalPerson,
+                                'idCard' => $idCard,
+                            ])
+                        ); 
+                        continue;
+                    }
+
+                    // 企业车辆信息
+                    $carInsuranceInfo = (new XinDongService())->addCarInsuranceInfo(
                         [
-                            'entName' => trim($one['0']),
-                            'vin' => trim($one['1']),
-                            'entCode' => trim($one['2']),
-                            'legalPerson' => trim($one['3']),
-                            'idCard' => trim($one['4']),
+                            'entId' => $entId,
+                            'vin' => $vin, 
+                            'legalPerson' => $legalPerson,
+                            'idCard' => $idCard,
                         ]
                     );
-                    //TODO 人的关系  谁加了授权 谁才可以看  
+                    if(!$carInsuranceInfo){
+                        continue;
+                    }
+
+                    // 用户-车辆关系
+                    $userCarsRelation = (new XinDongService())->addUserCarsRelation(
+                        [
+                            'user_id' => $this->loginUserinfo['id'],
+                            'car_insurance_id' => $carInsuranceInfo->getAttr('id'), 
+                            'legalPerson' => $legalPerson,
+                            'idCard' => $idCard,
+                        ]
+                    );
+                    if(!$userCarsRelation){
+                        continue;
+                    }
+                    $succeedNums ++;
                 }                
                 
             } catch (\Throwable $e) {
                 return $this->writeErr($e, __FUNCTION__);
             } 
         } 
-        
-        return $this->writeJson(200, null, $batchNum,'导入成功');
+
+        if($succeedNums>0){
+            // 企业车险状态
+            $companyCarInsuranceStatusInfo =(new XinDongService())->addCompanyCarInsuranceStatusInfo(
+                [
+                    'entId' => $entId,
+                ]
+            );
+        }
+
+        return $this->writeJson(200, null, $batchNum,'导入成功 入库数量:'.$succeedNums);
     }
 
 }

@@ -5,6 +5,7 @@ namespace App\HttpController\Service\XinDong;
 use App\Csp\Service\CspService;
 use App\ElasticSearch\Service\ElasticSearchService;
 use App\HttpController\Models\Api\CarInsuranceInfo;
+use App\HttpController\Models\Api\CompanyCarInsuranceStatusInfo;
 use App\HttpController\Models\Api\CompanyName;
 use App\HttpController\Models\Api\UserSearchHistory;
 use App\HttpController\Models\BusinessBase\VendincScale2020Model;
@@ -26,6 +27,7 @@ use EasySwoole\ElasticSearch\Config;
 use EasySwoole\ElasticSearch\ElasticSearch;
 use EasySwoole\ElasticSearch\RequestBean\Search;
 use App\HttpController\Models\Api\UserBusinessOpportunity;
+use App\HttpController\Models\Api\UserCarsRelation;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\XsyA24Logo;
 
@@ -2285,28 +2287,73 @@ class XinDongService extends ServiceBase
 
     function addCarInsuranceInfo($dataItem){  
         $oldModel = CarInsuranceInfo::create()
-            ->where([
+            ->where(
+            [
                 'vin' => $dataItem['vin'],
-                'entCode' => $dataItem['entCode'],
-                'idCard' => $dataItem['idCard'],
+                'entId' => $dataItem['entId'], 
             ])->get();
         if($oldModel){
-            return true ;
+            return $oldModel ;
         }
 
         try {
-            CarInsuranceInfo::create()
-                ->where([
+            $newModel = CarInsuranceInfo::create()
+                ->data([
                     'vin' => $dataItem['vin'],
-                    'entName' => $dataItem['entName'],
-                    'entCode' => $dataItem['entCode'],
+                    'entId' => $dataItem['entId'], 
                     'idCard' => $dataItem['idCard'],
                     'legalPerson' => $dataItem['legalPerson'],
                 ])->save() ;
         } catch (\Throwable $e) {
-            CommonService::getInstance()->log4PHP('sql_error'.$sql);
+            CommonService::getInstance()->log4PHP($e->getMessage());
             return false;
         } 
-        return true ;
+        return $newModel ;
+    }
+
+    function addCompanyCarInsuranceStatusInfo($dataItem){  
+        $oldModel = CompanyCarInsuranceStatusInfo::create()
+            ->where(
+            [
+                'entId' => $dataItem['entId'], 
+            ])->get();
+        if($oldModel){
+            return $oldModel ;
+        }
+
+        try {
+            $newModel = CarInsuranceInfo::create()
+                ->where([
+                    'entId' => $dataItem['entId'], 
+                ])->save() ;
+        } catch (\Throwable $e) {
+            CommonService::getInstance()->log4PHP($e->getMessage());
+            return false;
+        } 
+        return $newModel ;
+    }
+
+    function addUserCarsRelation($dataItem){  
+        $oldModel = UserCarsRelation::create()
+            ->where(
+            [
+                'car_insurance_id' => $dataItem['car_insurance_id'], 
+                'user_id' => $dataItem['user_id'], 
+            ])->get();
+        if($oldModel){
+            return $oldModel ;
+        }
+        
+        try {
+            $newModel = CarInsuranceInfo::create()
+                ->where([
+                    'car_insurance_id' => $dataItem['car_insurance_id'], 
+                    'user_id' => $dataItem['user_id'], 
+                ])->save() ;
+        } catch (\Throwable $e) {
+            CommonService::getInstance()->log4PHP($e->getMessage());
+            return false;
+        } 
+        return $newModel ;
     }
 }
