@@ -79,7 +79,7 @@ class RunShouQuanCheXian extends AbstractCronTask
 
     function setCarInsuranceInfoStatusById($id,$status,$msg){
         return CarInsuranceInfo::create()
-            ->where(['id' => $id], ])
+            ->where(['id' => $id])
             ->update([
                 'status' => $status,
                 'msg' => $msg,
