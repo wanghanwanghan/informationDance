@@ -132,7 +132,12 @@ class CheXianWuliuController extends CheXianWuliuBase
                 !empty($res->getAttr('entDownloadUrl')) && 
                 $this->checkIfFileExists($res->getAttr('entDownloadUrl'))
             ) {
-                $pdf[] =$res->getAttr('entDownloadUrl');
+                $file_name = basename($res->getAttr('entDownloadUrl'));
+                if (file_put_contents(TEMP_FILE_PATH.$file_name, file_get_contents($res->getAttr('entDownloadUrl'))))
+                {
+                    $pdf[] = TEMP_FILE_PATH.$file_name;
+                }
+                
             }else{
                 CommonService::getInstance()->log4PHP(
                     json_encode(
@@ -150,7 +155,13 @@ class CheXianWuliuController extends CheXianWuliuBase
                 !empty($res->getAttr('personalDownloadUrl')) && 
                 $this->checkIfFileExists($res->getAttr('personalDownloadUrl'))
             ) {
-                $pdf[] =$res->getAttr('personalDownloadUrl');
+                $file_name = basename($res->getAttr('personalDownloadUrl'));
+                if (file_put_contents(
+                    TEMP_FILE_PATH.$file_name, 
+                    file_get_contents($res->getAttr('personalDownloadUrl'))))
+                {
+                    $pdf[] = TEMP_FILE_PATH.$file_name;
+                }
             } else{
                 CommonService::getInstance()->log4PHP(
                     json_encode(
