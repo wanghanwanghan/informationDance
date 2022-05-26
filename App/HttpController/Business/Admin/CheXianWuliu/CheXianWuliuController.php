@@ -67,7 +67,7 @@ class CheXianWuliuController extends CheXianWuliuBase
       
         $idsArr = explode(',',$idsStr);
         CommonService::getInstance()->log4PHP( 'setIsOk '.json_encode($idsArr));
-        return $this->writeJson(200, null, $res, '操作成功(生效'.$succeedNum.'个)');
+        return $this->writeJson(200, null, [], '操作成功(生效个)');
         $succeedNum = 0 ;
         foreach($idsArr as $id){ 
             if(
