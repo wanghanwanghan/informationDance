@@ -104,9 +104,7 @@ class RunShouQuanCheXian extends AbstractCronTask
                     'res' => $res, 
                 ]
             )
-        ); 
-        
-       
+        );  
         
         if(empty($vinDatas)){
             return  true;
@@ -136,7 +134,7 @@ class RunShouQuanCheXian extends AbstractCronTask
                 'vin' => $vinData['vin'],
             ];
             
-            $res = (new DianZiQianService())->getCarAuthFile($postData);
+            $res = (new DianZiQianService())->getCarAuthFileV2($postData);
 
             CommonService::getInstance()->log4PHP(
                 json_encode(

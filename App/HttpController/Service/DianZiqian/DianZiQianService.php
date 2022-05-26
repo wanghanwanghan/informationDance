@@ -117,6 +117,167 @@ class DianZiQianService extends ServiceBase
         return $this->createReturn(200, null, [], '成功');
     }
 
+    public function getCarAuthFileV2($postData){ 
+        //创建个人签署人
+        $signerPersonres    = $this->signerPerson($postData);
+        $signerCodePersonal = $signerPersonres['result']['signerCode'] ?? "";
+        if ($signerPersonres['code'] != 200) {
+            CommonService::getInstance()->log4PHP(
+                json_encode(
+                    [
+                        '创建个人签署人 失败',
+                        'postData' => $postData, 
+                        'res' => $signerPersonres, 
+                    ]
+                )
+            );
+            return $signerPersonres;
+        }
+
+        //创建企业签署人
+        $signerEnterprise  = $this->signerEnterprise($postData);
+        $signerCodeEnt    = $signerEnterprise['result']['signerCode'] ?? "";
+        if ($signerEnterprise['code'] != 200) {
+            CommonService::getInstance()->log4PHP(
+                json_encode(
+                    [
+                        '创建企业签署人 失败',
+                        'postData' => $postData, 
+                        'res' => $signerEnterprise, 
+                    ]
+                )
+            );
+            return $signerEnterprise;
+        }
+
+        //生成png
+        $sealEntDraw = $this->sealEntDraw($postData);
+        if ($sealEntDraw['code'] != 200) {
+            CommonService::getInstance()->log4PHP(
+                json_encode(
+                    [
+                        '生成png 失败',
+                        'postData' => $postData, 
+                        'res' => $sealEntDraw, 
+                    ]
+                )
+            );
+            return $sealEntDraw;
+        }
+
+        $fileCodeEnt = $sealEntDraw['result']['sealFileCode'];
+        $entFileQuery = $this->fileQuery($fileCodeEnt,TEMP_FILE_PATH . 'dianziqian_ent.png');
+        if (!$entFileQuery){
+            CommonService::getInstance()->log4PHP(
+                json_encode(
+                    [
+                        '生成企业章 失败',
+                        'postData' => $fileCodeEnt, 
+                        'res' => $entFileQuery, 
+                    ]
+                )
+            );
+            return $this->createReturn(201, null, [], '生成企业章失败');
+        }
+
+
+        //企业上传印章
+        list($entSealCode, $errorData) = $this->entSign($signerCodeEnt, $postData);
+        if (!empty($errorData)){
+            CommonService::getInstance()->log4PHP(
+                json_encode(
+                    [
+                        '企业上传印章 失败',
+                        'postData' => [$signerCodeEnt,$postData], 
+                        'res' => $errorData, 
+                    ]
+                )
+            );
+            return $errorData;
+        }
+
+        //上传adobe模版
+        $contractFileTemplate = $this->contractFileTemplate('car.pdf');
+        $contractTemplateCode = $contractFileTemplate['result']['contractTemplateCode'] ?? "";
+        if ($contractFileTemplate['code'] != 200){
+            CommonService::getInstance()->log4PHP(
+                json_encode(
+                    [
+                        '上传adobe模版 失败', 
+                        'res' => $contractFileTemplate, 
+                    ]
+                )
+            );
+            return $contractFileTemplate;
+        }
+
+        //使用模板创建合同
+        $params = [
+            'vin' => $postData['vin'],
+            'join_time' => date('Y年m月d日H时i分s秒',time()),
+            'sign_time' => date('Y年m月d日',time())
+        ];
+        $contractFileTemplateFilling = $this->contractFileTemplateFilling(
+             $contractTemplateCode,$params
+        );
+        $contractCode  = $contractFileTemplateFilling['result']['contractCode'] ?? "";
+        if ($contractFileTemplateFilling['code'] != 200){
+            CommonService::getInstance()->log4PHP(
+                json_encode(
+                    [
+                        '使用模板创建合同 失败', 
+                        'post' => [$contractTemplateCode,$params],
+                        'res' => $contractFileTemplateFilling, 
+                    ]
+                )
+            );
+            return $contractFileTemplateFilling;
+        }
+
+        $entTransactionCode = control::getUuid();
+        //自动签署企业章  signUrl
+        $entContractSignUrl = $this->contractSignAuto(
+            $signerCodeEnt, 
+            $contractCode, 
+            '企业盖章处',
+            $entSealCode,
+            $entTransactionCode
+        );
+        if ($entContractSignUrl['code'] != 200) {
+            CommonService::getInstance()->log4PHP(
+                json_encode(
+                    [
+                        '自动签署企业章 失败', 
+                        'post' => [
+                            $signerCodeEnt, 
+                            $contractCode, 
+                            '企业盖章处',
+                            $entSealCode,
+                            $entTransactionCode
+                        ],
+                        'res' => $entContractSignUrl, 
+                    ]
+                )
+            );
+            return $entContractSignUrl;
+        }
+
+        $personalTransactionCode = control::getUuid(); 
+        return [
+            'entName' => $postData['entName'],
+            "personName"   => $postData['legalPerson'],
+            "personIdCard" => $postData['idCard'],
+            'socialCredit' => $postData['socialCredit'],
+            'signerCodePersonal' => $signerCodePersonal,
+            'signerCodeEnt' => $signerCodeEnt,
+            'contractTemplateCode' => $contractTemplateCode,
+            'contractCode' => $contractCode,
+            'entSealCode' => $entSealCode,
+            'entTransactionCode' => $entTransactionCode,
+            'personalTransactionCode' => $personalTransactionCode
+        ];
+    }
+
     public function getAuthFile($postData)
     {
         //创建个人签署人
@@ -304,7 +465,7 @@ class DianZiQianService extends ServiceBase
     /**
      * 上传adobe模版
      */
-    public function contractFileTemplate($file = 'test.pdf')
+    private function contractFileTemplate($file = 'test.pdf')
     {
         $path  = "/open-api-lite/contract/file/template";
         $file  = STATIC_PATH . "AuthBookModel/".$file;
@@ -319,7 +480,7 @@ class DianZiQianService extends ServiceBase
     /**
      * 使用模板创建合同
      */
-    public function contractFileTemplateFilling($contractTemplateCode,$params)
+    private function contractFileTemplateFilling($contractTemplateCode,$params)
     {
         $path      = "/open-api-lite/contract/file/template/filling";
         $paramData = [
@@ -396,7 +557,7 @@ class DianZiQianService extends ServiceBase
     /**
      * 企业上传印章
      */
-    public function entSign($signerCode, $arr)
+    private function entSign($signerCode, $arr)
     {
         $ent_sealCode  = '';
         $ent_sign_info = $this->sealBase64([
@@ -628,7 +789,7 @@ return $output;
     /**
      * 制作企业印章图片
      */
-    public function sealEntDraw($postData){
+    private function sealEntDraw($postData){
         $path      = '/open-api/seal/ent/draw';
         $paramData = [
             'nonTransparentPercent'      => '100',
@@ -672,7 +833,7 @@ return $output;
     /*
     * 通过fileCode获取文件
     */
-    public function fileQuery($fileCode,$urlPath){
+    private function fileQuery($fileCode,$urlPath){
         $path      = '/open-api/file/query';
         $paramData = [
             'fileCode'      => $fileCode,
