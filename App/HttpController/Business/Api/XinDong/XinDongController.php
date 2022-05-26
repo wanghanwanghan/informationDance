@@ -2520,16 +2520,17 @@ eof;
                             'idCard' => $idCard,
                         ]
                     );
-                    if(!$carInsuranceInfo){
-                        CommonService::getInstance()->log4PHP(
-                            json_encode([
-                                'addCarInsuranceInfo carInsuranceInfo continue',
-                                'entId' => $entId,
-                                'vin' => $vin, 
-                                'legalPerson' => $legalPerson,
-                                'idCard' => $idCard,
-                            ])
-                        ); 
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            'addCarInsuranceInfo carInsuranceInfo continue',
+                            'entId' => $entId,
+                            'vin' => $vin, 
+                            'legalPerson' => $legalPerson,
+                            'idCard' => $idCard,
+                            'carInsuranceInfo' => $carInsuranceInfo,
+                        ])
+                    ); 
+                    if(!$carInsuranceInfo){ 
                         continue;
                     }
 
@@ -2542,6 +2543,16 @@ eof;
                             'idCard' => $idCard,
                         ]
                     );
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            'addCarInsuranceInfo userCarsRelation continue',
+                            'user_id' => $this->loginUserinfo['id'],
+                            'car_insurance_id' => $carInsuranceInfo->getAttr('id'), 
+                            'legalPerson' => $legalPerson,
+                            'idCard' => $idCard,
+                            'userCarsRelation' => $userCarsRelation,
+                        ])
+                    ); 
                     if(!$userCarsRelation){
                         CommonService::getInstance()->log4PHP(
                             json_encode([
