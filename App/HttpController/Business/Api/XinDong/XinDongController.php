@@ -2458,106 +2458,90 @@ eof;
         $entId = $this->getRequestData('entId');
         if($entId <= 0){
             return $this->writeJson(206, [] ,   [], '缺少必要参数', true, []); 
-        }
+        } 
 
         $files = $this->request()->getUploadedFiles();
-        CommonService::getInstance()->log4PHP(
-            'addCarInsuranceInfo files['.json_encode($files).']'
-        );
-        $y = Carbon::now()->format('Y');
-        $m = Carbon::now()->format('m');
+        $path = $fileName = '';
 
-        $path = ROOT_PATH . "/TempWork/SouKe/Work/{$y}{$m}/";
-        if (!file_exists($path)) {
-            mkdir($path, 0777, true);
-        }
-
-        foreach ($files as $key => $oneFile) {
-            if ($oneFile instanceof UploadFile) {
-                try {
-                    $fileName = $path .  $this->loginUserinfo['id'] . '_' . $oneFile->getClientFilename();
-                    if (!file_exists($fileName)){
-                        $oneFile->moveTo($fileName);
-                    } else
-                    {
-                        CommonService::getInstance()->log4PHP(
-                            'addCarInsuranceInfo 文件已存在['.$fileName.']'
-                        );
-                    }
-                } catch (\Throwable $e) {
-                    return $this->writeJson(202);
-                }
-            }
-            else{
-                CommonService::getInstance()->log4PHP(
-                    'addCarInsuranceInfo 不是实例['.json_encode($oneFile).']'
-                );
-            }
-        }
-
-
-
-         
         $succeedNums = 0;
-        $excel_read = new \Vtiful\Kernel\Excel(
-            [
-                'path' => $path // xlsx文件保存路径
-            ]
-        );
-        $excel_read->openFile($fileName)->openSheet();
-        $excel_read->nextRow([]);
-
-        $data = []; 
-        $batchNum = control::getUuid();
-        while ($one = $excel_read->nextRow([])) { 
-            $vin = trim($one['0']);
-            $legalPerson = trim($one['1']);
-            $idCard = trim($one['2']);
-            
-            if(
-                !$vin ||
-                !$legalPerson ||
-                !$idCard 
-            ){
+        foreach ($files as $key => $oneFile) {
+            if (!$oneFile instanceof UploadFile) {
                 CommonService::getInstance()->log4PHP(
                     json_encode([
-                        'addCarInsuranceInfo 该行缺数据 continue',
-                        'entId' => $entId,
-                        'vin' => $vin, 
-                        'legalPerson' => $legalPerson,
-                        'idCard' => $idCard,
+                        'not instanceof UploadFile ',
                     ])
                 ); 
-                continue;
+                    continue;
             }
+            try {
+                $fileName = $oneFile->getClientFilename();
+                $path = TEMP_FILE_PATH . $fileName;
+                $oneFile->moveTo($path); 
+                
+                $excel_read = new \Vtiful\Kernel\Excel(
+                    [
+                        'path' => TEMP_FILE_PATH // xlsx文件保存路径
+                    ]
+                );
+                $excel_read->openFile($fileName)->openSheet();
+                $excel_read->nextRow([]);
 
-            // 企业车辆信息
-            $carInsuranceInfo = (new XinDongService())->addCarInsuranceInfo(
-                [
-                    'entId' => $entId,
-                    'vin' => $vin, 
-                    'legalPerson' => $legalPerson,
-                    'idCard' => $idCard,
-                ]
-            );
-            if(!$carInsuranceInfo){
-                continue;
-            }
+                $data = []; 
+                $batchNum = control::getUuid();
+                while ($one = $excel_read->nextRow([])) { 
+                    $vin = trim($one['0']);
+                    $legalPerson = trim($one['1']);
+                    $idCard = trim($one['2']);
+                    
+                    if(
+                        !$vin ||
+                        !$legalPerson ||
+                        !$idCard 
+                    ){
+                        CommonService::getInstance()->log4PHP(
+                            json_encode([
+                                'addCarInsuranceInfo 该行缺数据 continue',
+                                'entId' => $entId,
+                                'vin' => $vin, 
+                                'legalPerson' => $legalPerson,
+                                'idCard' => $idCard,
+                            ])
+                        ); 
+                        continue;
+                    }
 
-            // 用户-车辆关系
-            $userCarsRelation = (new XinDongService())->addUserCarsRelation(
-                [
-                    'user_id' => $this->loginUserinfo['id'],
-                    'car_insurance_id' => $carInsuranceInfo->getAttr('id'), 
-                    'legalPerson' => $legalPerson,
-                    'idCard' => $idCard,
-                ]
-            );
-            if(!$userCarsRelation){
-                continue;
-            }
-            $succeedNums ++;
-        }
+                    // 企业车辆信息
+                    $carInsuranceInfo = (new XinDongService())->addCarInsuranceInfo(
+                        [
+                            'entId' => $entId,
+                            'vin' => $vin, 
+                            'legalPerson' => $legalPerson,
+                            'idCard' => $idCard,
+                        ]
+                    );
+                    if(!$carInsuranceInfo){
+                        continue;
+                    }
+
+                    // 用户-车辆关系
+                    $userCarsRelation = (new XinDongService())->addUserCarsRelation(
+                        [
+                            'user_id' => $this->loginUserinfo['id'],
+                            'car_insurance_id' => $carInsuranceInfo->getAttr('id'), 
+                            'legalPerson' => $legalPerson,
+                            'idCard' => $idCard,
+                        ]
+                    );
+                    if(!$userCarsRelation){
+                        continue;
+                    }
+                    $succeedNums ++;
+                }                
+                
+            } catch (\Throwable $e) {
+                return $this->writeErr($e, __FUNCTION__);
+            } 
+        } 
 
         if($succeedNums>0){
             // 企业车险状态
