@@ -58,118 +58,74 @@ class CheXianWuliuController extends CheXianWuliuBase
         return $this->writeJson(200, null, $res);
     }
 
-    function setOk(): bool
-    {
-        CommonService::getInstance()->log4PHP( 'getList');
-
+    function setIsOk(): bool
+    {  
         $idsStr = $this->getRequestData('ids');
-        
-        CompanyCarInsuranceStatusInfo::create();
-
-        empty($status) ?: $status = jsonDecode($status);
-
-        $orm = CompanyCarInsuranceStatusInfo::create()->where( 
-                [
-                    'id' => $dataItem['entId']
-                ]
-            )->get();;
-
-        if (!empty($entname)) {
-            $orm->where('entName', "%{$entname}%", 'LIKE');
+        if(!$idsStr){
+            return $this->writeJson(203, null, [], '参数缺失');
         }
-
-        // if (!empty($status)) {
-        //     $orm->where('status', $status, 'IN');
-        // }
-
-        $res = $orm->where('status',CompanyCarInsuranceStatusInfo::$status_all_auth_done)
-        ->all();
-        foreach($res as &$dataItem){
-            $tmpEnt  = Company::create()->where( 
-                [
-                    'id' => $dataItem['entId']
-                ]
-            )->get();
-            $dataItem['entName'] = $tmpEnt->getAttr('name');
-            $dataItem['status_cname'] = CompanyCarInsuranceStatusInfo::getStatusMap()[
-                $dataItem['status']
-            ];
+      
+        $idsArr = explode(',',$idsStr);
+        CommonService::getInstance()->log4PHP( 'setIsOk '.json_encode($idsArr));
+        $succeedNum = 0 ;
+        foreach($idsArr as $id){ 
+            if(
+                CompanyCarInsuranceStatusInfo::ifHasAuthAll($id) 
+            ){
+                $res = CompanyCarInsuranceStatusInfo::setIsOk($id); 
+                if(!$res){
+                    return $this->writeJson(205, null, [], '更新失败');
+                }
+                $succeedNum ++;
+            }
         }
-        return $this->writeJson(200, null, $res);
+ 
+        return $this->writeJson(200, null, $res, '操作成功(生效'.$succeedNum.'个)');
     }
+
 
     function createZip(): bool
     {
-        $zip_arr = $this->getRequestData('zip_arr');
-        $zip_arr = [['entId' => 194490069]];
-        if(empty($zip_arr)){
-            return $this->writeJson(205, null, null);
+        $idsStr = $this->getRequestData('ids');
+        if(!$idsStr){
+            return $this->writeJson(203, null, [], '参数缺失');
         }
-        
+      
         $pdf = [];
-        $filename = control::getUuid();
-        foreach ($zip_arr as $num => $one) {
-            $info = CarInsuranceInfo::create()->where([
-                'entId' => $one['entId'],
-                'status' => 5,
+        
+        $idsArr = explode(',',$idsStr);
+        foreach($idsArr as $id){
+            $companyCheXianRes = CompanyCarInsuranceStatusInfo::create()->where([
+                'id' => $id, 
             ])->get();
-            if (empty($info)) { 
+            
+            // 该企业所有的授权文件
+            $allFiles = CarInsuranceInfo::getAuthedFileUrl(
+                $companyCheXianRes->getAttr('entId')
+            );
+            if (empty($allFiles)) { 
                 continue;
             } 
-            $res = DianZiQianAuth::create()->where([
-                'id' =>  $info->getAttr('auth_res_id')
-            ])->get();
-             
-            if (
-                !empty($res->getAttr('entDownloadUrl')) && 
-                $this->checkIfFileExists($res->getAttr('entDownloadUrl'))
-            ) {
-                $file_name =  'entDownloadUrl_'.$num.'.pdf';
-                $newFileRes = file_put_contents(
-                    TEMP_FILE_PATH.$file_name, 
-                    file_get_contents($res->getAttr('entDownloadUrl'))
-                );
-                CommonService::getInstance()->log4PHP(
-                    json_encode(
-                        [ 
-                            'new entDownloadUrl   name  ' =>  TEMP_FILE_PATH.$file_name,  
-                            'newFileRes  ' => $newFileRes,    
-                        ]
-                    )
-                ); 
-                
-                if ($newFileRes)
-                {
-                    $pdf[] = TEMP_FILE_PATH.$file_name;
-                }
-                
+            // 把授权文件下载下来打包
+            foreach($allFiles as $num => $FileItem){
+                foreach($FileItem as $file){
+                    $file_name =  'entDownloadUrl_'.$num.'.pdf';
+                    $newFileRes = file_put_contents(
+                        TEMP_FILE_PATH.$file_name, 
+                        file_get_contents($FileItem['entDownloadUrl'])
+                    );
+                    if ($newFileRes)
+                    {
+                        $pdf[] = TEMP_FILE_PATH.$file_name;
+                    }
+                } 
+
             } 
+        } 
 
-            if (
-                !empty($res->getAttr('personalDownloadUrl')) && 
-                $this->checkIfFileExists($res->getAttr('personalDownloadUrl'))
-            ) {
-                $file_name = 'personalDownloadUrl_'.$num.'.pdf';
-                $newFileRes = file_put_contents(
-                    TEMP_FILE_PATH.$file_name, 
-                    file_get_contents($res->getAttr('personalDownloadUrl'))
-                );
-                CommonService::getInstance()->log4PHP(
-                    json_encode(
-                        [ 
-                            'new personalDownloadUrl  ' =>  TEMP_FILE_PATH.$file_name,  
-                            'newFileRes  ' => $newFileRes,    
-                        ]
-                    )
-                ); 
-                
-                if ($newFileRes)
-                {
-                    $pdf[] = TEMP_FILE_PATH.$file_name;
-                }
-            }  
-        }
-
+        // 打包
+        $filename = control::getUuid();
+        ZipService::getInstance()->zip($pdf, TEMP_FILE_PATH . $filename . '.zip'); 
         CommonService::getInstance()->log4PHP(
             json_encode(
                 [
@@ -179,9 +135,9 @@ class CheXianWuliuController extends CheXianWuliuBase
                    $filename
                 ]
             )
-        ); 
-        ZipService::getInstance()->zip($pdf, TEMP_FILE_PATH . $filename . '.zip'); 
+        );  
 
+        // 删除本地文件
         foreach($pdf as $file){
             if(file_exists($file)){
                 @unlink($file);
@@ -193,17 +149,7 @@ class CheXianWuliuController extends CheXianWuliuBase
         return $this->writeJson(200, null, $path);
     }
 
-    function checkIfFileExists($remoteFile){
-        // Open file
-        $handle = @fopen($remoteFile, 'r');
-
-        // Check if file exists
-        if(!$handle){
-           return false;
-        }else{
-           return true;
-        }
-    }
+    
     function createGetDataTime(): bool
     {
         $ent_arr = $this->getRequestData('ent_arr');

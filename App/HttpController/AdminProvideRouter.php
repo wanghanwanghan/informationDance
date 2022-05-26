@@ -111,6 +111,7 @@ class AdminProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getList', $prefix . 'getList');
             $routeCollector->addRoute(['GET', 'POST'], '/createZip', $prefix . 'createZip');
             $routeCollector->addRoute(['GET', 'POST'], '/createGetDataTime', $prefix . 'createGetDataTime');
+            $routeCollector->addRoute(['GET', 'POST'], '/setIsOk', $prefix . 'setIsOk');
         });
 
         return true;
