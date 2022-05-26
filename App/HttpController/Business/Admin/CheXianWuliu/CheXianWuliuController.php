@@ -132,7 +132,9 @@ class CheXianWuliuController extends CheXianWuliuBase
                 $this->checkIfFileExists($res->getAttr('entDownloadUrl'))
             ) {
                 $file_name = basename($res->getAttr('entDownloadUrl'));
-                $newFileRes = file_put_contents(TEMP_FILE_PATH.$file_name, file_get_contents($res->getAttr('entDownloadUrl')));
+                $newFileRes = file_put_contents(
+                    TEMP_FILE_PATH.'entDownloadUrl.pdf', 
+                    file_get_contents($res->getAttr('entDownloadUrl')));
                 CommonService::getInstance()->log4PHP(
                     json_encode(
                         [
@@ -166,7 +168,7 @@ class CheXianWuliuController extends CheXianWuliuBase
                 $this->checkIfFileExists($res->getAttr('personalDownloadUrl'))
             ) {
                 $file_name = basename($res->getAttr('personalDownloadUrl'));
-                $newFileRes = file_put_contents(TEMP_FILE_PATH.$file_name, 
+                $newFileRes = file_put_contents(TEMP_FILE_PATH.'personalDownloadUrl.pdf', 
                 file_get_contents($res->getAttr('personalDownloadUrl')));
                 CommonService::getInstance()->log4PHP(
                     json_encode(
