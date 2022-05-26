@@ -38,11 +38,12 @@ class CheXianWuliuController extends CheXianWuliuBase
             $orm->where('entName', "%{$entname}%", 'LIKE');
         }
 
-        if (!empty($status)) {
-            $orm->where('status', $status, 'IN');
-        }
+        // if (!empty($status)) {
+        //     $orm->where('status', $status, 'IN');
+        // }
 
-        $res = $orm->limit(3)->all();
+        $res = $orm->where('status',CompanyCarInsuranceStatusInfo::$status_all_auth_done)
+        ->all();
         foreach($res as &$dataItem){
             $tmpEnt  = Company::create()->where( 
                 [
