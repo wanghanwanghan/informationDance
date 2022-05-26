@@ -130,7 +130,7 @@ class CheXianWuliuController extends CheXianWuliuBase
             ); 
             if (
                 !empty($res->getAttr('entDownloadUrl')) && 
-                file_exists($res->getAttr('entDownloadUrl'))
+                $this->checkIfFileExists($res->getAttr('entDownloadUrl'))
             ) {
                 $pdf[] =$res->getAttr('entDownloadUrl');
             }else{
@@ -148,7 +148,7 @@ class CheXianWuliuController extends CheXianWuliuBase
 
             if (
                 !empty($res->getAttr('personalDownloadUrl')) && 
-                file_exists($res->getAttr('personalDownloadUrl'))
+                $this->checkIfFileExists($res->getAttr('personalDownloadUrl'))
             ) {
                 $pdf[] =$res->getAttr('personalDownloadUrl');
             } else{
@@ -181,6 +181,17 @@ class CheXianWuliuController extends CheXianWuliuBase
         return $this->writeJson(200, null, $path);
     }
 
+    function checkIfFileExists($remoteFile){
+        // Open file
+        $handle = @fopen($remoteFile, 'r');
+
+        // Check if file exists
+        if(!$handle){
+           return false;
+        }else{
+           return true;
+        }
+    }
     function createGetDataTime(): bool
     {
         $ent_arr = $this->getRequestData('ent_arr');
