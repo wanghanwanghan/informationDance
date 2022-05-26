@@ -220,14 +220,14 @@ class RunShouQuanCheXian extends AbstractCronTask
                     )
                 ); 
                 // 保存授权结果
-                $CompanyCarInsuranceStatusInfoId = CompanyCarInsuranceStatusInfo::create()
+                $DianZiQianAuthId = DianZiQianAuth::create()
                 ->data($res['result'])
                 ->save(); 
                 CommonService::getInstance()->log4PHP(
                     json_encode(
                         [
                             '保存授权结果', 
-                            'CompanyCarInsuranceStatusInfoId' => $CompanyCarInsuranceStatusInfoId, 
+                            'DianZiQianAuthId' => $DianZiQianAuthId, 
                         ]
                     )
                 ); 
@@ -235,7 +235,7 @@ class RunShouQuanCheXian extends AbstractCronTask
                 CarInsuranceInfo::create()
                     ->where(['id' => $vinData['id']])
                     ->update([
-                        'auth_res_id' => $CompanyCarInsuranceStatusInfoId, 
+                        'auth_res_id' => $DianZiQianAuthId, 
                     ]); 
             }   
         } 
