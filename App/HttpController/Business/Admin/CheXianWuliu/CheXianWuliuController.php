@@ -67,27 +67,51 @@ class CheXianWuliuController extends CheXianWuliuBase
         $pdf = [];
         $filename = control::getUuid();
         foreach ($zip_arr as $one) {
-            $info = DianZiQianAuth::create()->where([
-                'id' => $one['id'],
-                'status' => MaYiService::STATUS_1,
+            $info = CarInsuranceInfo::create()->where([
+                'entId' => $one['entId'],
+                'status' => 5,
             ])->get();
             if (empty($info)) {
+                
                 continue;
-            }
+            } 
+            $res = DianZiQianAuth::create()->where([
+                'id' =>  $info->getAttr('auth_res_id')
+            ])->get();
+            CommonService::getInstance()->log4PHP(
+                json_encode(
+                    [
+                        'entDownloadUrl', 
+                        'entDownloadUrl' => $res->getAttr('entDownloadUrl'), 
+                        'personalDownloadUrl' => $res->getAttr('personalDownloadUrl'), 
+                    ]
+                )
+            ); 
             if (
-                !empty($info->getAttr('entDownloadUrl')) && 
-                file_exists(INV_AUTH_PATH . $info->getAttr('entDownloadUrl'))
+                !empty($res->getAttr('entDownloadUrl')) && 
+                file_exists($res->getAttr('entDownloadUrl'))
             ) {
-                $pdf[] =$info->getAttr('entDownloadUrl');
+                $pdf[] =$res->getAttr('entDownloadUrl');
             }
 
             if (
-                !empty($info->getAttr('entViewPdfUrl')) && 
-                file_exists(INV_AUTH_PATH . $info->getAttr('entViewPdfUrl'))
+                !empty($res->getAttr('personalDownloadUrl')) && 
+                file_exists($res->getAttr('personalDownloadUrl'))
             ) {
-                $pdf[] =$info->getAttr('entViewPdfUrl');
+                $pdf[] =$res->getAttr('personalDownloadUrl');
             } 
         }
+
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'zip',  
+                   $pdf, 
+                   TEMP_FILE_PATH . $filename . '.zip', 
+                   $filename
+                ]
+            )
+        ); 
         ZipService::getInstance()->zip($pdf, TEMP_FILE_PATH . $filename . '.zip');
         $path = $filename; 
 
