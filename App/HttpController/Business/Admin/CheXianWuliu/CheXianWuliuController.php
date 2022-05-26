@@ -66,9 +66,9 @@ class CheXianWuliuController extends CheXianWuliuBase
                 $dataItem['status']
             ];
 
-            $dataItem['created_at'] = date('Y-m-d H:i:s',$tmpEnt->getAttr('created_at'));
-            $dataItem['updated_at'] = date('Y-m-d H:i:s',$tmpEnt->getAttr('updated_at'));
-            
+            $dataItem['created_at'] = date('Y-m-d H:i:s', $dataItem['created_at']);
+            $dataItem['updated_at'] = date('Y-m-d H:i:s', $dataItem['updated_at']);
+
         }
         $totalPages = ceil( $total/ $limit );
         return $this->writeJson(200,  [
