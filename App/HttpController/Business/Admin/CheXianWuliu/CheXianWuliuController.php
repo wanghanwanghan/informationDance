@@ -58,6 +58,46 @@ class CheXianWuliuController extends CheXianWuliuBase
         return $this->writeJson(200, null, $res);
     }
 
+    function setOk(): bool
+    {
+        CommonService::getInstance()->log4PHP( 'getList');
+
+        $idsStr = $this->getRequestData('ids');
+        
+        CompanyCarInsuranceStatusInfo::create();
+
+        empty($status) ?: $status = jsonDecode($status);
+
+        $orm = CompanyCarInsuranceStatusInfo::create()->where( 
+                [
+                    'id' => $dataItem['entId']
+                ]
+            )->get();;
+
+        if (!empty($entname)) {
+            $orm->where('entName', "%{$entname}%", 'LIKE');
+        }
+
+        // if (!empty($status)) {
+        //     $orm->where('status', $status, 'IN');
+        // }
+
+        $res = $orm->where('status',CompanyCarInsuranceStatusInfo::$status_all_auth_done)
+        ->all();
+        foreach($res as &$dataItem){
+            $tmpEnt  = Company::create()->where( 
+                [
+                    'id' => $dataItem['entId']
+                ]
+            )->get();
+            $dataItem['entName'] = $tmpEnt->getAttr('name');
+            $dataItem['status_cname'] = CompanyCarInsuranceStatusInfo::getStatusMap()[
+                $dataItem['status']
+            ];
+        }
+        return $this->writeJson(200, null, $res);
+    }
+
     function createZip(): bool
     {
         $zip_arr = $this->getRequestData('zip_arr');
@@ -93,6 +133,17 @@ class CheXianWuliuController extends CheXianWuliuBase
                 file_exists($res->getAttr('entDownloadUrl'))
             ) {
                 $pdf[] =$res->getAttr('entDownloadUrl');
+            }else{
+                CommonService::getInstance()->log4PHP(
+                    json_encode(
+                        [
+                            'entDownloadUrl  ', 
+                            'entDownloadUrl ' => $res->getAttr('entDownloadUrl'),  
+                            'entDownloadUrl empty' => empty($res->getAttr('entDownloadUrl')),  
+                            'entDownloadUrl file_exists' => file_exists($res->getAttr('entDownloadUrl')),  
+                        ]
+                    )
+                ); 
             }
 
             if (
@@ -100,7 +151,18 @@ class CheXianWuliuController extends CheXianWuliuBase
                 file_exists($res->getAttr('personalDownloadUrl'))
             ) {
                 $pdf[] =$res->getAttr('personalDownloadUrl');
-            } 
+            } else{
+                CommonService::getInstance()->log4PHP(
+                    json_encode(
+                        [
+                            'personalDownloadUrl  ', 
+                            'personalDownloadUrl ' => $res->getAttr('personalDownloadUrl'),  
+                            'personalDownloadUrl empty' => empty($res->getAttr('personalDownloadUrl')),  
+                            'personalDownloadUrl file_exists' => file_exists($res->getAttr('personalDownloadUrl')),  
+                        ]
+                    )
+                ); 
+            }
         }
 
         CommonService::getInstance()->log4PHP(
