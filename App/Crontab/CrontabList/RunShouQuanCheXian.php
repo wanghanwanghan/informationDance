@@ -4,6 +4,7 @@ namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
 use App\HttpController\Models\Api\CarInsuranceInfo;
+use App\HttpController\Models\Api\CompanyCarInsuranceStatusInfo;
 use App\HttpController\Models\Api\DianZiQianAuth;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
@@ -103,8 +104,10 @@ class RunShouQuanCheXian extends AbstractCronTask
                     'res' => $res, 
                 ]
             )
-        );
-        return true; 
+        ); 
+        
+       
+        
         if(empty($vinDatas)){
             return  true;
         }   

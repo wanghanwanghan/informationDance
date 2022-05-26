@@ -44,11 +44,12 @@ class CheXianWuliuController extends CheXianWuliuBase
 
         $res = $orm->limit(3)->all();
         foreach($res as &$dataItem){
-            $dataItem['entName'] = Company::create()->where(
+            $tmpEnt  = Company::create()->where( 
                 [
                     'id' => $dataItem['entId']
                 ]
-            );
+            )->get();
+            $dataItem['entName'] = $tmpEnt->getAttr('name');
             $dataItem['status_cname'] = $dataItem['status'];
         }
         return $this->writeJson(200, null, $res);
