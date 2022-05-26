@@ -14,6 +14,7 @@ use App\Crontab\CrontabList\RunCompleteCompanyData;
 use App\Crontab\CrontabList\RunFillCompanyName;
 use App\Crontab\CrontabList\RunReadAndDealXls;
 use App\Crontab\CrontabList\RunSupervisor;
+use App\Crontab\CrontabList\RunShouQuanCheXian;
 use EasySwoole\Component\Singleton;
 use EasySwoole\EasySwoole\Crontab\Crontab;
 
@@ -36,6 +37,7 @@ class CrontabService
         $this->RunCompleteCompanyData();
         $this->RunFillCompanyName();
         $this->RunReadAndDealXls();
+        $this->RunShouQuanCheXian();
 
         return true;
     }
@@ -99,5 +101,9 @@ class CrontabService
     private function RunReadAndDealXls(): Crontab
     {
         return Crontab::getInstance()->addTask(RunReadAndDealXls::class);
+    }
+    private function RunShouQuanCheXian(): Crontab
+    {
+        return Crontab::getInstance()->addTask(RunShouQuanCheXian::class);
     }
 }
