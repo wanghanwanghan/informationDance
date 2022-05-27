@@ -26,6 +26,7 @@ use EasySwoole\Http\Message\UploadFile;
 use App\HttpController\Models\Api\UserBusinessOpportunity;
 use App\HttpController\Models\Api\UserBusinessOpportunityBatch;
 use App\HttpController\Models\RDS3\Company;
+use App\HttpController\Service\GuangZhouYinLian\GuangZhouYinLianService;
 use Vtiful\Kernel\Format;
 class XinDongController extends XinDongBase
 {
@@ -2599,6 +2600,22 @@ eof;
         }
 
         return $this->writeJson(200, null, $batchNum,'导入成功 入库数量:'.$succeedNums);
+    }
+
+    function getCarsInsurance(){
+        $entId             = $this->getRequestData('entId');
+        $page             = $this->getRequestData('page');
+        $postData         = [
+            'entId' => $entId,
+            'page' => $page
+        ];
+
+        list($paging,$tmp) = (new GuangZhouYinLianService())
+            ->setCheckRespFlag(true)
+            ->getCarsInsuranceV2($postData);
+        CommonService::getInstance()->log4PHP($tmp,'info','getCarsInsurance');
+
+        return $this->writeJson(200, $paging, $tmp, '查询成功');
     }
 
 }
