@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Api\XinDong;
 
+use App\Csp\Service\CspService;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Common\CommonService;
@@ -2618,4 +2619,21 @@ eof;
         return $this->writeJson(200, $paging, $tmp, '查询成功');
     }
 
+    function queryVehicleCount(): bool
+    {
+        $postData = [];
+        $csp = new \EasySwoole\Component\Csp(); 
+        $csp->add('queryVehicleCount', function () use ($postData) {
+            return (new GuangZhouYinLianService())
+            ->setCheckRespFlag(true)
+            ->queryVehicleCount($postData);
+        });  
+        $res = ($csp->exec(5)); 
+        CommonService::getInstance()->log4PHP('  res'.
+            json_encode( $res) 
+        ); 
+
+        return $this->writeJson(200, [], $res, '查询成功'); 
+
+    }
 }
