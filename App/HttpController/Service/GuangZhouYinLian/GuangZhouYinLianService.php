@@ -241,6 +241,42 @@ Eof;
         return [$paging, $param['list']];
     }
 
+    public function getCarsInsuranceV2($postData){
+        $postData['page'] = empty($postData['page'])?1:$postData['page'];
+
+        $data = CarInsuranceInfo::create()
+                ->where("entId = '{$postData['entId']}'")
+                ->all();
+        if(empty($data)){
+            return [];
+        }
+
+        $vinArr = [];
+        foreach ($data as $val){
+            $vinArr = array_merge($vinArr,explode(',',$val->getAttr('vin')));
+        }
+        
+        $vinArr = array_unique($vinArr);
+        $total = count($vinArr);
+        $vinArr = array_splice($vinArr,($postData['page']-1)*5,5);
+        $postData['firstBeneficiary'] = $postData['legalPerson'];
+        $param = array_merge(json_decode(json_encode($data),true),$postData);
+        foreach ($vinArr as $val){
+            $vin_v = explode(' ',$val);
+            $param['vin'] = $vin_v['1'];
+            $res = $this->getCarInsurance($param);
+            $param['list'][] = $res;
+        }
+//        return $param;
+        $paging = [
+            'page' => $postData['page'],
+            'pageSize' => 5,
+            'total' => $total,
+            'totalPage' => (int)($total/5)+1,
+        ];
+        return [$paging, $param['list']];
+    }
+
     public function getCarInsurance($postData){
         $maxLossAmountMap = [
             'A' => '0<=金额<1000',
