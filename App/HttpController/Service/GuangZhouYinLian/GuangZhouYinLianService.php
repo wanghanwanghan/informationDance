@@ -255,8 +255,10 @@ Eof;
         foreach ($data as $val){
             $vinArr = array_merge($vinArr,explode(',',$val->getAttr('vin')));
         }
-        
+
         $vinArr = array_unique($vinArr);
+        CommonService::getInstance()->log4PHP('getCarsInsuranceV2  vinArr'.json_encode($vinArr));
+
         $total = count($vinArr);
         $vinArr = array_splice($vinArr,($postData['page']-1)*5,5);
         $postData['firstBeneficiary'] = $postData['legalPerson'];
@@ -265,9 +267,13 @@ Eof;
             $vin_v = explode(' ',$val);
             $param['vin'] = $vin_v['1'];
             $res = $this->getCarInsurance($param);
+            CommonService::getInstance()->log4PHP('getCarsInsuranceV2  param'.json_encode($param));
+            CommonService::getInstance()->log4PHP('getCarsInsuranceV2  res'.json_encode($res));
+
             $param['list'][] = $res;
         }
 //        return $param;
+
         $paging = [
             'page' => $postData['page'],
             'pageSize' => 5,

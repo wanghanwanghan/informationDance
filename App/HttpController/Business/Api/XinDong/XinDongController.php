@@ -2613,7 +2613,7 @@ eof;
         list($paging,$tmp) = (new GuangZhouYinLianService())
             ->setCheckRespFlag(true)
             ->getCarsInsuranceV2($postData);
-        CommonService::getInstance()->log4PHP($tmp,'info','getCarsInsurance');
+        CommonService::getInstance()->log4PHP('getCarsInsurance '.json_encode($tmp));
 
         return $this->writeJson(200, $paging, $tmp, '查询成功');
     }
