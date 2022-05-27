@@ -268,7 +268,8 @@ Eof;
         foreach ($vinArr as $val){
             $vin_v = explode(' ',$val);
             // $param['vin'] = $vin_v['1'];
-            $param['vin'] = [$val];
+            $param['vin'] = $val;
+            // $param['vin'] = [$val];
             $res = $this->getCarInsurance($param);
             CommonService::getInstance()->log4PHP('getCarsInsuranceV2  param'.json_encode($param));
             CommonService::getInstance()->log4PHP('getCarsInsuranceV2  res'.json_encode($res));
