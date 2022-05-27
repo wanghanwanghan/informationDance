@@ -2636,4 +2636,25 @@ eof;
         return $this->writeJson(200, [], $res, '查询成功'); 
 
     }
+
+    function queryUsedVehicleInfo(): bool
+    {
+        $userNo           = $this->getRequestData('userNo');
+        $licenseNoType    = $this->getRequestData('licenseNoType');
+        $vin              = $this->getRequestData('vin');
+        $licenseNo        = $this->getRequestData('licenseNo');
+        $postData         = [
+            'userNo'           => $userNo,
+            'vin'              => $vin,
+            'licenseNo'        => $licenseNo,
+            'licenseNoType'    => $licenseNoType,
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new GuangZhouYinLianService())->setCheckRespFlag(true)->queryUsedVehicleInfo($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
 }
