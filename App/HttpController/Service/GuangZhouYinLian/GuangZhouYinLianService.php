@@ -252,8 +252,10 @@ Eof;
         }
 
         $vinArr = [];
+        $legalPerson = "";
         foreach ($data as $val){
             $vinArr = array_merge($vinArr,explode(',',$val->getAttr('vin')));
+            $legalPerson = $val['legalPerson'];
         }
 
         $vinArr = array_unique($vinArr);
