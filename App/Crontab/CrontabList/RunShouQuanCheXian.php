@@ -310,9 +310,9 @@ class RunShouQuanCheXian extends AbstractCronTask
 
                 // 授权失败
                 if($res['code']!= 200 ){
-                    foreach($vinArr as $vin){
+                    foreach($todoCarsData as $todoCarsDataItem){
                         $this->setCarInsuranceInfoStatusById(
-                            $vin,
+                            $todoCarsDataItem['id'],
                             6,
                             json_encode($$res)
                         );
@@ -320,9 +320,9 @@ class RunShouQuanCheXian extends AbstractCronTask
                 }
 
                 // 授权成功
-                foreach($vinArr as $vin){
+                foreach($todoCarsData as $todoCarsDataItem){
                     $this->setCarInsuranceInfoStatusById(
-                        $vin,
+                        $todoCarsDataItem['id'],
                         5,
                         json_encode($$res)
                     );
@@ -351,9 +351,9 @@ class RunShouQuanCheXian extends AbstractCronTask
                 ); 
 
                 // 将授权结果和车辆信息关联
-                foreach($vinArr as $vin){
+                foreach($todoCarsData as $todoCarsDataItem){
                     CarInsuranceInfo::create()
-                    ->where(['id' => $vin])
+                    ->where(['id' =>  $todoCarsDataItem['id']])
                     ->update([
                         'auth_res_id' => $DianZiQianAuthId, 
                     ]); 
