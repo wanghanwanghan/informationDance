@@ -263,7 +263,7 @@ Eof;
 
         $total = count($vinArr);
         $vinArr = array_splice($vinArr,($postData['page']-1)*5,5);
-        $postData['firstBeneficiary'] = $postData['legalPerson'];
+        $postData['firstBeneficiary'] = $legalPerson;
         $param = array_merge(json_decode(json_encode($data),true),$postData);
         foreach ($vinArr as $val){
             $vin_v = explode(' ',$val);
