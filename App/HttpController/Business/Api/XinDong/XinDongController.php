@@ -2649,12 +2649,53 @@ eof;
             'licenseNo'        => $licenseNo,
             'licenseNoType'    => $licenseNoType,
         ];
-        $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new GuangZhouYinLianService())->setCheckRespFlag(true)->queryUsedVehicleInfo($postData);
-        });
+        $csp = new \EasySwoole\Component\Csp(); 
+        $csp->add('queryVehicleCount', function () use ($postData) {
+            return 
+                (new GuangZhouYinLianService())
+                ->setCheckRespFlag(true)
+                ->queryUsedVehicleInfo($postData);
 
-        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        });  
+        $res = ($csp->exec(5));  
 
-        return $this->checkResponse($res);
+        return $this->writeJson(200, [], $res, '查询成功');
+    }
+
+    function queryInancialBank(): bool
+    {
+        $name             = $this->getRequestData('name');
+        $userNo           = $this->getRequestData('userNo');
+        $certType         = $this->getRequestData('certType');
+        $certNo           = $this->getRequestData('certNo');
+        $vin              = $this->getRequestData('vin');
+        $licenseNo        = $this->getRequestData('licenseNo');
+        $bizFunc          = $this->getRequestData('bizFunc');
+        $firstBeneficiary = $this->getRequestData('firstBeneficiary');
+        $areaNo           = $this->getRequestData('areaNo'); 
+
+
+        $postData         = [
+            'name'             => $name,
+            'userNo'           => $userNo,
+            'certType'         => $certType,
+            'certNo'           => $certNo,
+            'vin'              => $vin,
+            'licenseNo'        => $licenseNo,
+            'areaNo'           => $areaNo,
+            'firstBeneficiary' => $firstBeneficiary,
+            'bizFunc'          => $bizFunc
+        ];
+        
+        $csp = new \EasySwoole\Component\Csp(); 
+        $csp->add('queryVehicleCount', function () use ($postData) {
+            return (new GuangZhouYinLianService())
+                ->setCheckRespFlag(true)
+                ->queryInancialBank($postData);
+        });  
+ 
+        $res = ($csp->exec(5)); 
+        return $this->writeJson(200, [], $res, '查询成功'); 
+
     }
 }
