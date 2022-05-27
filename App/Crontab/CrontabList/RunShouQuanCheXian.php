@@ -276,7 +276,7 @@ class RunShouQuanCheXian extends AbstractCronTask
             // 找到企业信息
             $entModel = Company::create()->where(
                 [
-                    'id' => $vinData['entId'] 
+                    'id' => $companyItem['entId'] 
                 ])->get();
 
             // 拿着车辆一组一组的授权   
