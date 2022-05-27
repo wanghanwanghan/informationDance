@@ -125,11 +125,12 @@ class RunShouQuanCheXian extends AbstractCronTask
        $this->setCompanyAuthComplete();
 
        //授权企业
-       $this->authCompany(); 
+    //    $this->authCompany(); 
+       $this->authCompanyV2(); 
         return true ;  
     }
 
-     //授权企业
+     //授权企业 单个授权
     function authCompany() 
     { 
         
@@ -243,6 +244,126 @@ class RunShouQuanCheXian extends AbstractCronTask
         return true ;  
     }
 
+    //分组授权
+    function authCompanyV2() 
+    { 
+        
+        // $sql = " select id from  `$tableName`  order by id  desc limit 1 ";
+        // $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+
+        // 找到没有全部授权完的一个企业
+        $companysNeedDone = CompanyCarInsuranceStatusInfo::create()
+            ->where(
+                        [
+                            'status' => CompanyCarInsuranceStatusInfo::$status_init,  
+                        ]
+            )
+            ->limit(1)
+            ->all(); 
+        
+        foreach($companysNeedDone as $companyItem){ 
+            //找到该企业所有需要处理的车辆
+            $todoCars = CarInsuranceInfo::create()->where(
+                [
+                    'status' => 0, 
+                    'entId' => $companyItem['entId'], 
+                ]
+            )->all(); 
+            if(empty($todoCars)){ 
+               continue;
+            }
+
+            // 找到企业信息
+            $entModel = Company::create()->where(
+                [
+                    'id' => $vinData['entId'] 
+                ])->get();
+
+            // 拿着车辆一组一组的授权   
+            $todoCarsDatas = array_chunk($todoCars,5);
+
+            foreach($todoCarsDatas as $todoCarsData){
+                $vinArr = array_column($todoCarsData,'vin');
+                $vinStr = implode(',',$vinArr);
+
+                $postData = [
+                    'entName' => $entModel->getAttr('name'),
+                    'socialCredit' => $entModel->getAttr('property1'),
+                    'legalPerson' => $todoCarsData[0]['legalPerson'],
+                    'idCard' =>$todoCarsData[0]['idCard'],
+                    'phone' => '',
+                    'city' => '',
+                    'vin' => $vinStr,
+                ];
+
+                // 去授权
+                $res = (new DianZiQianService())->getCarAuthFileV2($postData); 
+                CommonService::getInstance()->log4PHP(
+                    json_encode(
+                        [
+                            'RunShouQuanCheXian',
+                            'postData' => $postData, 
+                            'res' => $res, 
+                        ]
+                    )
+                ); 
+
+                // 授权失败
+                if($res['code']!= 200 ){
+                    foreach($vinArr as $vin){
+                        $this->setCarInsuranceInfoStatusById(
+                            $vin,
+                            6,
+                            json_encode($$res)
+                        );
+                    } 
+                }
+
+                // 授权成功
+                foreach($vinArr as $vin){
+                    $this->setCarInsuranceInfoStatusById(
+                        $vin,
+                        5,
+                        json_encode($$res)
+                    );
+                }  
+
+                CommonService::getInstance()->log4PHP(
+                    json_encode(
+                        [
+                            '授权成功', 
+                            'res' => $res, 
+                        ]
+                    )
+                ); 
+
+                // 保存授权结果
+                $DianZiQianAuthId = DianZiQianAuth::create()
+                ->data($res['result'])
+                ->save(); 
+                CommonService::getInstance()->log4PHP(
+                    json_encode(
+                        [
+                            '保存授权结果', 
+                            'DianZiQianAuthId' => $DianZiQianAuthId, 
+                        ]
+                    )
+                ); 
+
+                // 将授权结果和车辆信息关联
+                foreach($vinArr as $vin){
+                    CarInsuranceInfo::create()
+                    ->where(['id' => $vin])
+                    ->update([
+                        'auth_res_id' => $DianZiQianAuthId, 
+                    ]); 
+                }   
+
+            } 
+        } 
+
+        return true ;  
+    }
     
 
     function setCompanyAuthComplete() 
