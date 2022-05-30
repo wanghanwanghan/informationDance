@@ -7,7 +7,7 @@ use App\HttpController\Models\AdminV2\AdminMenuItems;
 use App\HttpController\Models\AdminV2\AdminNewMenu;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Service\AdminRole\AdminPrivilegedUser;
-use App\HttpController\AdminRoles;
+use App\HttpController\Models\AdminV2\AdminRoles;
 
 class RoleController extends ControllerBase
 {
@@ -24,7 +24,7 @@ class RoleController extends ControllerBase
         return $this->writeJson(
             200,
             [],
-            AdminRoles::create()->where("status = 1")->all()
+           AdminRoles::create()->where("status = 1")->all()
         );
     }
 
