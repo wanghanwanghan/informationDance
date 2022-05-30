@@ -8,6 +8,7 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\User\UserService;
 use EasySwoole\RedisPool\Redis;
 use EasySwoole\Session\Session;
+use App\HttpController\Models\AdminV2\AdminUserRole;
 
 class UserController extends ControllerBase
 {
@@ -111,6 +112,8 @@ class UserController extends ControllerBase
      * 用户信息
      */
     public function getUserInfo(){ 
+        $userInfo = $this->loginUserinfo;
+        $userInfo['roles_info'] = (new AdminUserRole())->getRoleByUserId;
         return $this->writeJson(200, null, $this->loginUserinfo, '成功');
     }
 
