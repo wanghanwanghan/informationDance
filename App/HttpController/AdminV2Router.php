@@ -24,6 +24,7 @@ class AdminV2Router
 
         $routeCollector->addGroup('/user', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/login', $prefix . 'userLogin');
+            $routeCollector->addRoute(['GET', 'POST'], '/signOut', $prefix . 'signOut');
             $routeCollector->addRoute(['GET', 'POST'], '/addUser', $prefix . 'addUser');
             $routeCollector->addRoute(['GET', 'POST'], '/list', $prefix . 'userList');
             $routeCollector->addRoute(['GET', 'POST'], '/getUserInfo', $prefix . 'getUserInfo');

@@ -69,18 +69,32 @@ class UserController extends ControllerBase
             return $this->writeJson(200, [] , $info, null, '登录成功');
         }
     }
+    public function signOut()
+    { 
+        $phone = $this->loginUserinfo['phone'];
+        $info = AdminNewUser::create()
+            ->where("phone = '{$phone}'")->get();
+        if (empty($info)) return $this->writeJson(201, null, null, '用户不存在');
+        $info->update([
+            'token' => '',
+        ]);
+        return $this->writeJson(200, null, null, '成功');
+    }
 
     /**
      * 修改密码
      */
     public function updatePassword(){
-        $phone = $this->getRequestData('phone','');
+        $phone = $this->loginUserinfo['phone'];
         $password = $this->getRequestData('password','') ;
         $newPassword = $this->getRequestData('newPassword','') ;
         if (empty($phone)) return $this->writeJson(201, null, null, 'phone 不能是空');
         if (empty($newPassword)) return $this->writeJson(201, null, null, 'newPassword 不能是空');
         if (empty($password)) return $this->writeJson(201, null, null, 'password 不能是空');
 
+        // if($phone != $this->loginUserinfo['phone']){
+        //     return $this->writeJson(201, null, null, '没权限');
+        // }
         $info = AdminNewUser::create()->where("phone = '{$phone}' and password = '{$password}'")->get();
         if (empty($info)) return $this->writeJson(201, null, null, '用户不存在或者密码错误');
         $info->update([
