@@ -56,7 +56,10 @@ class CheXianWuliuController extends CheXianWuliuBase
             );
 
         }
-        if (!empty($createdAtArr)) { 
+        if (
+            !empty($createdAtArr)||
+            !empty($createdAtStr)
+        ) { 
             $orm->where('created_at', $createdAtArr[0], '>=');
             $orm->where('created_at', $createdAtArr[1], '<=');
             CommonService::getInstance()->log4PHP(
