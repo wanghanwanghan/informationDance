@@ -113,7 +113,7 @@ class UserController extends ControllerBase
      */
     public function getUserInfo(){ 
         $userInfo = $this->loginUserinfo;
-        $userInfo['roles_info'] = (new AdminUserRole())->getRoleByUserId;
+        $userInfo['roles_info'] = (new AdminUserRole())->getRoleByUserId($this->loginUserinfo['id']);
         return $this->writeJson(200, null, $this->loginUserinfo, '成功');
     }
 
