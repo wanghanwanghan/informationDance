@@ -2466,6 +2466,9 @@ eof;
             'matchNamesByContain' => true,
             'matchNamesByToBeContain' => true,
             'matchNamesBySimilarPercentage' => true,
+            'matchNamesBySimilarPercentageValue' => 40,
+            'matchNamesByPinYinSimilarPercentage' => true,
+            'matchNamesByPinYinSimilarPercentageValue' => 40,
         ]);  
         // CommonService::getInstance()->log4PHP('matchEntByName '.$execution_time1.'秒'); 
         return $this->writeJson(200, [] ,   $retData, '成功', true, []); 

@@ -30,6 +30,7 @@ use App\HttpController\Models\Api\UserBusinessOpportunity;
 use App\HttpController\Models\Api\UserCarsRelation;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\XsyA24Logo;
+use App\HttpController\Service\PinYin\PinYinService;
 
 class XinDongService extends ServiceBase
 {
@@ -2390,19 +2391,29 @@ class XinDongService extends ServiceBase
             }
         }
 
-        //文本匹配度  张三0808    张三  
+        //文本匹配度  张三0808    张三   
         if($config['matchNamesBySimilarPercentage']){
             $res = $this->matchNamesBySimilarPercentage(
                 $tobeMatch,
                 $target,
-                70
+                $config['matchNamesBySimilarPercentageValue']
             );
             if($res){
                 return true;
             }
         }
          
-
+        //文本匹配度  张三0808    张三   
+        if($config['matchNamesByPinYinSimilarPercentage']){
+            $res = $this->matchNamesByPinYinSimilarPercentage(
+                $tobeMatch,
+                $target,
+                $config['matchNamesByPinYinSimilarPercentageValue']
+            );
+            if($res){
+                return true;
+            }
+        }
 
     }
 
@@ -2458,7 +2469,7 @@ class XinDongService extends ServiceBase
     // tobeMatch : tobeMatch：三丰  target：张三丰 
     function matchNamesBySimilarPercentage($tobeMatch,$target,$percentage){
         $res = false;
-        similar_text('bafoobar', 'barfoo', $perc);
+        similar_text($tobeMatch, $target, $perc);
         if ($perc >= $percentage) {
           $res = true;
         }
@@ -2470,6 +2481,30 @@ class XinDongService extends ServiceBase
                 $target,
                 $perc,
                 $percentage
+            ])
+        ); 
+        return $res;
+    }
+
+    // tobeMatch : tobeMatch：三丰  target：张三丰 
+    function matchNamesByPinYinSimilarPercentage($tobeMatch,$target,$percentage){
+        $res = false;
+        $tobeMatchPin = PinYinService::getPinyin($tobeMatch);
+        $targetPinYin = PinYinService::getPinyin($target);
+        similar_text($tobeMatchPin, $targetPinYin, $perc);
+        if ($perc >= $percentage) {
+          $res = true;
+        }
+
+        CommonService::getInstance()->log4PHP(
+            'matchNamesByContain :'.json_encode([
+                $res,
+                $tobeMatch,
+                $target,
+                $perc,
+                $percentage,
+                $tobeMatchPin, 
+                $targetPinYin,
             ])
         ); 
         return $res;
