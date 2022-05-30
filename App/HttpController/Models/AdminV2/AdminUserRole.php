@@ -17,6 +17,7 @@ class AdminUserRole extends ModelBase
 
     function getRoleByUserId($userId){
         $roleRes = AdminUserRole::create()->where("user_id = ".$userId." ")->all();
+        $newData = [];
         foreach($roleRes as &$roleItem){
             $roleDetailRes = AdminRoles::create()
                 ->where("role_id = ".$roleItem['role_id']." ")
@@ -25,13 +26,14 @@ class AdminUserRole extends ModelBase
             CommonService::getInstance()->log4PHP(
                [ 'role_cname' =>$roleItem['role_cname']]
             );
+            $newData[] = $roleItem;
 
         }
 
         CommonService::getInstance()->log4PHP(
-            [ 'roleRes' =>$roleRes]
+            [ 'roleRes' =>$newData]
          );
-        return $roleRes;
+        return $newData;
     }
 
 }
