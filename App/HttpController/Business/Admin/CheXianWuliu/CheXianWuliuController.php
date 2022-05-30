@@ -39,11 +39,22 @@ class CheXianWuliuController extends CheXianWuliuBase
         $entname = $this->getRequestData('entname');
         $status = $this->getRequestData('status');
         empty($status) ?: $status = jsonDecode($status);
+        $createdAtStr = $this->getRequestData('created_at');
+        $createdAtArr = explode('|||',$createdAtStr);
+      
 
         $orm = CompanyCarInsuranceStatusInfo::create();
 
         if (!empty($entname)) {
-            $orm->where('entName', "%{$entname}%", 'LIKE');
+            $company = Company::create()
+                ->where('name', "$entname%", 'LIKE')
+                ->all();
+            $companyIds = array_column($company,'id');
+            $orm->where('entId', $companyIds, 'IN');
+        }
+        if (!empty($createdAtArr)) { 
+            $orm->where('created_at', $createdAtArr[0], '>=');
+            $orm->where('created_at', $createdAtArr[1], '<=');
         }
  
 
