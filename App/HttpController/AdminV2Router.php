@@ -16,6 +16,7 @@ class AdminV2Router
         // $this->GroceryStore($routeCollector);
         $this->UserRouterV1($routeCollector);
         $this->MenuRouterV1($routeCollector);
+        $this->RoleRouterV1($routeCollector);
     }
 
     private function UserRouterV1(RouteCollector $routeCollector): bool
@@ -52,7 +53,17 @@ class AdminV2Router
 
         return true;
     }
+    private function RoleRouterV1(RouteCollector $routeCollector): bool
+    {
+        $prefix = '/Business/AdminV2/Mrxd/Role/RoleController/';
+        $routeCollector->addGroup('/role', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getAllRoles', $prefix . 'getAllRoles');
+            $routeCollector->addRoute(['GET', 'POST'], '/getAllowedMenus', $prefix . 'getAllowedMenu');
+            // $routeCollector->addRoute(['GET', 'POST'], '/getAllMenu', $prefix . 'getAllMenu'); 
+        });
 
+        return true;
+    }
     private function GroceryStore(RouteCollector $routeCollector): bool
     {
         $prefix = '/Business/Admin/GroceryStore/GroceryStoreController/';
