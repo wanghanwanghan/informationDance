@@ -27,6 +27,10 @@ class AdminUserRole extends ModelBase
             );
 
         }
+
+        CommonService::getInstance()->log4PHP(
+            [ 'roleRes' =>$roleRes]
+         );
         return $roleRes;
     }
 
