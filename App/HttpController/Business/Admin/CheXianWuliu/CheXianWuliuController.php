@@ -50,7 +50,11 @@ class CheXianWuliuController extends CheXianWuliuBase
                 // ->where('name', "$entname", 'LIKE')
                 ->where('name', $entname)
                 ->all();
-            $companyIds = array_column($company,'id');
+            $companyIds = [0];
+            if(!empty($company)){
+                $companyIds = array_column($company,'id');
+            }
+            
             $orm->where('entId', $companyIds, 'IN');
             CommonService::getInstance()->log4PHP(
                 'entname '.json_encode($companyIds)
