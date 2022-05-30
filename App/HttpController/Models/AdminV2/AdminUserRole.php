@@ -20,6 +20,10 @@ class AdminUserRole extends ModelBase
                 ->where("role_id = ".$roleItem['role_id']." ")
                 ->get();
             $roleItem['role_cname'] = $roleDetailRes->getAttr("role_name");
+            CommonService::getInstance()->log4PHP(
+               [ 'role_cname' =>$roleItem['role_cname']]
+            );
+
         }
         return $roleRes;
     }
