@@ -17,7 +17,7 @@ class AdminUserRole extends ModelBase
         $roleRes = AdminUserRole::create()->where("user_id = ".$userId." ")->all();
         foreach($roleRes as &$roleItem){
             $roleDetailRes = AdminRoles::create()
-                ->where("id = ".$roleItem['role_id']." ")
+                ->where("role_id = ".$roleItem['role_id']." ")
                 ->get();
             $roleItem['role_cname'] = $roleDetailRes->getAttr("role_name");
         }
