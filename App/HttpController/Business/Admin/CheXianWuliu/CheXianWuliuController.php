@@ -47,7 +47,8 @@ class CheXianWuliuController extends CheXianWuliuBase
 
         if (!empty($entname)) {
             $company = Company::create()
-                ->where('name', "$entname%", 'LIKE')
+                // ->where('name', "$entname", 'LIKE')
+                ->where('name', $entname)
                 ->all();
             $companyIds = array_column($company,'id');
             $orm->where('entId', $companyIds, 'IN');

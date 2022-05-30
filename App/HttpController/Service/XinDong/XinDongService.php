@@ -2356,4 +2356,108 @@ class XinDongService extends ServiceBase
         } 
         return $newModel ;
     }
+
+    /*
+    config:
+    [
+        'matchNamesByEqual' = true,
+        'matchNamesByContain' = true,
+    ]
+    */
+    function matchNames($tobeMatch,$target,$config){
+
+        //完全匹配
+        if($config['matchNamesByEqual']){
+            $res = $this->matchNamesByEqual($tobeMatch,$target);
+            if($res){
+                return true;
+            }
+        }
+        
+        //包含匹配  张三0808    张三
+        if($config['matchNamesByContain']){
+            $res = $this->matchNamesByContain($tobeMatch,$target);
+            if($res){
+                return true;
+            }
+        }
+
+        //包含被匹配  张三0808    张三
+        if($config['matchNamesByToBeContain']){
+            $res = $this->matchNamesByToBeContain($tobeMatch,$target);
+            if($res){
+                return true;
+            }
+        }
+
+    }
+
+    //  tobeMatch：张三丰  target：张三丰 
+    function matchNamesByEqual($tobeMatch,$target){
+        $res =  $tobeMatch === $target ? true :false;
+        CommonService::getInstance()->log4PHP(
+            'matchNamesByEqual :'.json_encode([
+                $res,
+                $tobeMatch,
+                $target
+            ])
+        ); 
+        return $res;
+    }
+
+    // tobeMatch : 张三0808  target：张三
+    function matchNamesByContain($tobeMatch,$target){
+        $res = false;
+ 
+        if (strpos($tobeMatch, $target) !== false) {
+          $res = true;
+        }
+
+        CommonService::getInstance()->log4PHP(
+            'matchNamesByContain :'.json_encode([
+                $res,
+                $tobeMatch,
+                $target
+            ])
+        ); 
+        return $res;
+    }
+
+    // tobeMatch : tobeMatch：三丰  target：张三丰 
+    function matchNamesByToBeContain($tobeMatch,$target){
+        $res = false;
+ 
+        if (strpos($target, $tobeMatch) !== false) {
+          $res = true;
+        }
+
+        CommonService::getInstance()->log4PHP(
+            'matchNamesByContain :'.json_encode([
+                $res,
+                $tobeMatch,
+                $target
+            ])
+        ); 
+        return $res;
+    }
+
+    // tobeMatch : tobeMatch：三丰  target：张三丰 
+    function matchNamesBySimilarPercentage($tobeMatch,$target,$percentage){
+        $res = false;
+        similar_text('bafoobar', 'barfoo', $perc);
+        if ($perc >= $percentage) {
+          $res = true;
+        }
+
+        CommonService::getInstance()->log4PHP(
+            'matchNamesByContain :'.json_encode([
+                $res,
+                $tobeMatch,
+                $target,
+                $perc,
+                $percentage
+            ])
+        ); 
+        return $res;
+    }
 }

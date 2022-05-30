@@ -2455,6 +2455,16 @@ eof;
         return $this->writeJson(200, [] ,   $retData, '成功', true, []); 
     }
 
+    function matchNames(): bool
+    {
+        
+        $toBeMatch = $this->getRequestData('toBeMatch', '');
+        $target = $this->getRequestData('target', ''); 
+        $retData = (new XinDongService())->matchNames($toBeMatch,$target);  
+        // CommonService::getInstance()->log4PHP('matchEntByName '.$execution_time1.'秒'); 
+        return $this->writeJson(200, [] ,   $retData, '成功', true, []); 
+    }
+
     //添加车险授权书认证书信息
     function addCarInsuranceInfo(){  
         $entId = $this->getRequestData('entId');
