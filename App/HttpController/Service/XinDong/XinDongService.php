@@ -2390,6 +2390,20 @@ class XinDongService extends ServiceBase
             }
         }
 
+        //文本匹配度  张三0808    张三  
+        if($config['matchNamesBySimilarPercentage']){
+            $res = $this->matchNamesBySimilarPercentage(
+                $tobeMatch,
+                $target,
+                70
+            );
+            if($res){
+                return true;
+            }
+        }
+         
+
+
     }
 
     //  tobeMatch：张三丰  target：张三丰 

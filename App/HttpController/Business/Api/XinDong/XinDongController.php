@@ -2460,7 +2460,13 @@ eof;
         
         $toBeMatch = $this->getRequestData('toBeMatch', '');
         $target = $this->getRequestData('target', ''); 
-        $retData = (new XinDongService())->matchNames($toBeMatch,$target);  
+        $retData = (new XinDongService())->matchNames($toBeMatch,$target,
+        [
+            'matchNamesByEqual' => true,
+            'matchNamesByContain' => true,
+            'matchNamesByToBeContain' => true,
+            'matchNamesBySimilarPercentage' => true,
+        ]);  
         // CommonService::getInstance()->log4PHP('matchEntByName '.$execution_time1.'秒'); 
         return $this->writeJson(200, [] ,   $retData, '成功', true, []); 
     }
