@@ -51,18 +51,29 @@ class CheXianWuliuController extends CheXianWuliuBase
                 ->all();
             $companyIds = array_column($company,'id');
             $orm->where('entId', $companyIds, 'IN');
+            CommonService::getInstance()->log4PHP(
+                'entname '.json_encode($companyIds)
+            );
+
         }
         if (!empty($createdAtArr)) { 
             $orm->where('created_at', $createdAtArr[0], '>=');
             $orm->where('created_at', $createdAtArr[1], '<=');
+            CommonService::getInstance()->log4PHP(
+                'created_at '.json_encode($createdAtArr)
+            );
         }
  
 
         $model = $orm->where('status',CompanyCarInsuranceStatusInfo::$status_all_auth_done)
-        ->page($page)->order('id', 'DESC')->withTotalCount(); 
+                        ->page($page)
+                        ->order('id', 'DESC')
+                        ->withTotalCount(); 
 
         $res = $model->all();
-
+        CommonService::getInstance()->log4PHP(
+            'res '.json_encode($res)
+        );
         $total = $model->lastQueryResult()->getTotalCount();
 
 
