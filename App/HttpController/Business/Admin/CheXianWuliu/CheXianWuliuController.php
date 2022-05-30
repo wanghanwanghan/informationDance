@@ -60,8 +60,8 @@ class CheXianWuliuController extends CheXianWuliuBase
             !empty($createdAtArr) &&
             !empty($createdAtStr) 
         ) { 
-            $orm->where('created_at', $createdAtArr[0], '>=');
-            $orm->where('created_at', $createdAtArr[1], '<=');
+            $orm->where('created_at', strtotime($createdAtArr[0]), '>=');
+            $orm->where('created_at', strtotime($createdAtArr[1]), '<=');
             CommonService::getInstance()->log4PHP(
                 'created_at '.json_encode($createdAtArr)
             );
