@@ -107,6 +107,13 @@ class UserController extends ControllerBase
         return $this->writeJson(200, null, null, '修改成功');
     }
 
+     /*
+     * 用户信息
+     */
+    public function getUserInfo(){ 
+        return $this->writeJson(200, null, $this->loginUserinfo, '修改成功');
+    }
+
     /*
      * 新增用户（管理员）
      */

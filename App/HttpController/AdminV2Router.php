@@ -26,6 +26,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/login', $prefix . 'userLogin');
             $routeCollector->addRoute(['GET', 'POST'], '/addUser', $prefix . 'addUser');
             $routeCollector->addRoute(['GET', 'POST'], '/list', $prefix . 'userList');
+            $routeCollector->addRoute(['GET', 'POST'], '/getUserInfo', $prefix . 'getUserInfo');
             $routeCollector->addRoute(['GET', 'POST'], '/location', $prefix . 'userLocation');
             $routeCollector->addRoute(['GET', 'POST'], '/purchase/list', $prefix . 'userPurchaseList');
             $routeCollector->addRoute(['GET', 'POST'], '/purchase/do', $prefix . 'userPurchaseDo');
