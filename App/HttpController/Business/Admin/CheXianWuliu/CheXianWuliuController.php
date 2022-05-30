@@ -36,7 +36,7 @@ class CheXianWuliuController extends CheXianWuliuBase
 
         CommonService::getInstance()->log4PHP( 'getList');
 
-        $entname = $this->getRequestData('entname');
+        $entname = $this->getRequestData('entName');
         $status = $this->getRequestData('status');
         empty($status) ?: $status = jsonDecode($status);
         $createdAtStr = $this->getRequestData('created_at');
