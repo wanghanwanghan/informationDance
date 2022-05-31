@@ -62,7 +62,7 @@ class MenuController extends ControllerBase
      */
     public function updateMenu(){
         $requestData = $this->getRequestData(); 
-        $info = RequestApiInfo::create()->where('id',$requestData['id'])->get(); 
+        $info = AdminMenuItems::create()->where('id',$requestData['id'])->get(); 
         $info->update([
             'id' => $requestData['id'],
             'name' => $requestData['name'] ? $requestData['name']: $info['name'],
@@ -77,4 +77,23 @@ class MenuController extends ControllerBase
     public function queryPower(){
         return AdminNewMenu::create()->all();
     }
+
+    /*
+     * 菜单冻结
+     */
+    public function updateMenuStatus(){
+       
+        $id = $this->getRequestData('id');
+        $status = $this->getRequestData('status');
+        if (empty($phone)) return $this->writeJson(201, null, null, '参数 不能是空');
+        if (empty($status)) return $this->writeJson(201, null, null, 'status 不能是空');
+        $info = AdminMenuItems::create()->where("id = '{$id}' ")->get();
+        if (empty($info)) return $this->writeJson(201, null, null, '用户不存在');
+        $info->update([
+            'id' => $id,
+            'status' => $status,
+        ]);
+        return $this->writeJson(200, null, null, '修改成功');
+    }
+
 }
