@@ -81,10 +81,11 @@ class AdminPrivilegedUser extends ServiceBase
                 continue;
             }
 
-            $allowedMenus[$ParentMenu['id']] = $ParentMenu; 
+            $allowedMenus[$ParentMenu['id']] = $ParentMenu;  
             
             // 该菜单所有子菜单
             $allChildMenus = AdminMenuItems::getMenusByParentId($ParentMenu['id']);
+            $allowedMenus[$ParentMenu['id']]['hasChilden'] = empty($allChildMenus) ? false:true; 
             foreach($allChildMenus as $ChildMenu){
                 // 子菜单没权限
                 if(
@@ -101,4 +102,8 @@ class AdminPrivilegedUser extends ServiceBase
         return $allowedMenus ; 
     }    
 
+
+    public static function  getAllRole(){
+
+    }
 }
