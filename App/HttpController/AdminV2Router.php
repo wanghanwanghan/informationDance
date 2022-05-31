@@ -58,6 +58,8 @@ class AdminV2Router
         $prefix = '/Business/AdminV2/Mrxd/Role/RoleController/';
         $routeCollector->addGroup('/role', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getAllRoles', $prefix . 'getAllRoles');
+            $routeCollector->addRoute(['GET', 'POST'], '/addRole', $prefix . 'addRole');
+            $routeCollector->addRoute(['GET', 'POST'], '/updateRole', $prefix . 'updateRole');
             $routeCollector->addRoute(['GET', 'POST'], '/getAllowedMenus', $prefix . 'getAllowedMenu');
             // $routeCollector->addRoute(['GET', 'POST'], '/getAllMenu', $prefix . 'getAllMenu'); 
         });

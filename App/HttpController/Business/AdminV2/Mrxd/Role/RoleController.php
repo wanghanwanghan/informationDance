@@ -39,21 +39,18 @@ class RoleController extends ControllerBase
     /**
      *  增加菜单
      */
-    public function addMenu(){
+    public function addRole(){
         $requestData = $this->getRequestData(); 
         if (
             !$requestData['name'] ||
-            !$requestData['method'] ||
-            !$requestData['class'] 
+            !$requestData['remark']  
         ) {
             return $this->writeJson(201);
         } 
-        AdminMenuItems::create()->data([
-            'name' => $requestData['name'], 
-            'method' => $requestData['method'], 
-            'class' => $requestData['class'], 
-            'remark' => $requestData['remark'], 
-            'parent_id' => intval($requestData['parent_id']), 
+        AdminRoles::create()->data([
+            'role_name' => $requestData['role_name'], 
+            'remark' => $requestData['remark'],  
+            'status' => 1,  
         ])->save();
         return $this->writeJson(200);
     }
@@ -61,15 +58,12 @@ class RoleController extends ControllerBase
      /**
      *  修改菜单
      */
-    public function updateMenu(){
+    public function updateRole(){
         $requestData = $this->getRequestData(); 
-        $info = RequestApiInfo::create()->where('id',$requestData['id'])->get(); 
+        $info = RequestApiInfo::create()->where('role_id',$requestData['role_id'])->get(); 
         $info->update([
-            'id' => $requestData['id'],
-            'name' => $requestData['name'] ? $requestData['name']: $info['name'],
-            'method' => $requestData['method'] ? $requestData['method']: $info['method'],
-            'class' => $requestData['class'] ? $requestData['class']: $info['class'],
-            'parent_id' => $requestData['parent_id'] ? $requestData['parent_id']: $info['parent_id'],
+            'role_id' => $requestData['role_id'],
+            'role_name' => $requestData['role_name'] ? $requestData['role_name']: $info['role_name'],
             'remark' => $requestData['remark'] ? $requestData['remark']: $info['remark'],
         ]);
         return $this->writeJson();
