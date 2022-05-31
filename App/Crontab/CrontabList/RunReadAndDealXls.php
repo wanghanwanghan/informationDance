@@ -114,6 +114,47 @@ class RunReadAndDealXls extends AbstractCronTask
         }
     }
 
+    function getYieldDataToMathWeiXin($xlsx_name){
+        $excel_read = new \Vtiful\Kernel\Excel(['path' => $this->workPath]);
+        $excel_read->openFile($xlsx_name)->openSheet();
+
+        $datas = [];
+        while (true) {
+
+            $one = $excel_read->nextRow([
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+            ]);
+
+            if (empty($one)) {
+                break;
+            }
+
+            //企业名称
+            $value0 = $this->strtr_func($one[0]);  
+            //手机号
+            $value1 = $this->strtr_func($one[1]);  
+            //微信名
+            $value2 = $this->strtr_func($one[2]);  
+            $value3 = $this->strtr_func($one[3]);   
+            $tmpRes = (new XinDongService())->matchContactNameByWeiXinName($value0,$value2);
+            CommonService::getInstance()->log4PHP('matchContactNameByWeiXinName'.json_encode(
+                [
+                    'value' => [$value0,$value1],
+                    'params' => $value0,
+                    'res' => $tmpRes
+                ]
+            )); 
+            yield $datas[] = [
+                $value0,
+                $value1, 
+                $value2, 
+                $tmpRes
+            ];
+        }
+    }
+
     // function matchNameFormatData($tmpDataItem){
     //      $res = (new XinDongService())->matchEntByName($tmpDataItem[0],1,4.5);
     //      CommonService::getInstance()->log4PHP('matchNamYYYY'.json_encode($res)); 
@@ -146,22 +187,41 @@ class RunReadAndDealXls extends AbstractCronTask
         return true ;  
     }
 
+    function matchWeiXinName($file,$debugLog){
+        $startMemory = memory_get_usage(); 
+
+        // 取yield数据 
+        // $excelDatas = $this->getYieldData($file,'matchNameFormatData');
+        $excelDatas = $this->getYieldDataToMathWeiXin($file); 
+
+        $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
+        $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用1 '.$memory .' '.$file );
+
+        //写到csv里 
+        $fileName = pathinfo($file)['filename'];
+        $f = fopen($this->workPath.$fileName.".csv", "w");
+        fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+        foreach ($excelDatas as $dataItem) {
+            fputcsv($f, $dataItem);
+        }
+
+        $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
+        $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用2 '.$memory .' '.$file );
+
+        @unlink($this->workPath . $file);
+
+        return true ;  
+    }
+
     function run(int $taskId, int $workerIndex): bool
     {
-         // log 配置 
-        //  $sql = " SELECT * FROM config_info  WHERE `name` =  'log_switch' LIMIT  1  "; 
-        //  $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));  
-        
-        //  // 配置
-        //  $configStr = end($list)['value']; 
-        //  $configArr = json_decode($configStr,true);
-        // if($configArr['valid_log_id'] == 1984){
-        $debugLog = true;
-        // } 
+         
+        $debugLog = true; 
         
         // 找到需要处理的文件 uploadAndDealXls_matchName_测试
         $files = glob($this->workPath.'uploadAndDealXls_*.xlsx');
-        $debugLog && CommonService::getInstance()->log4PHP('uploadAndDealXls_ files '.json_encode($files) );
+        $debugLog && CommonService::getInstance()->log4PHP('RunReadAndDealXls files '.json_encode($files) );
         if(empty($files)){
             return true;
         }
@@ -171,9 +231,17 @@ class RunReadAndDealXls extends AbstractCronTask
         $fileName = pathinfo($file)['filename'];
         $debugLog &&  CommonService::getInstance()->log4PHP('uploadAndDealXls_ file '.($file) );
         $fileNameArr = explode('_',$fileName);
+        
+        // 匹配企业名称
         if($fileNameArr[1] == 'matchName'){ 
             $debugLog &&  CommonService::getInstance()->log4PHP('matchName  '.($file) );
             return $this->matchName($file,$debugLog);
+        }
+
+        // 匹配微信吗名
+        if($fileNameArr[1] == 'matchWeiXinName'){ 
+            $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
+            return $this->matchWeiXinName($file,$debugLog);
         }
 
         return true ;   

@@ -625,19 +625,47 @@ class LongXinService extends ServiceBase
     {
 
         // 根据企业名称取到库里全部的联系人名称和职位 然后代码匹配
+        
+        //获取对应的联系人信息  
+        $staffsDatas = self::getLianXiByName($entName); 
+        if (empty($staffsDatas)) {
+            return $apiResluts;
+        } 
+
+        foreach ($apiResluts as &$lianXiData) {
+            $name = trim($lianXiData['name']);
+            if (!$name) {
+                $lianXiData['staff_position'] = '';
+                continue;
+            }
+
+            if (!$staffsDatas[$name]) {
+                $lianXiData['staff_position'] = '';
+                continue;
+            }
+            $lianXiData['staff_position'] = $staffsDatas[$name]['staff_type_name'];
+        }
+
+        return $apiResluts;
+    }
+
+    static function getLianXiByName( $entName)
+    {
+
+        // 根据企业名称取到库里全部的联系人名称和职位 然后代码匹配
 
         // 根据企业名称取到企业对象
         $companyDataObj = \App\HttpController\Models\RDS3\Company::create()
             ->where('name', $entName)->get();
         if (empty($companyDataObj)) {
-            return $apiResluts;
+            return [];
         }
         // 根据企业id 获取所有联系人信息（主要是取到职位信息）
         $staffsDatas = \App\HttpController\Models\RDS3\CompanyStaff::create()
             ->where('company_id', $companyDataObj->getAttr('id'))
             ->all();
         if (empty($staffsDatas)) {
-            return $apiResluts;
+            return [];
         }
         // 找到该企业所有联系人名字（staff存的是联系人id）
         $staffIds = array_column($staffsDatas, 'staff_id');
@@ -659,23 +687,9 @@ class LongXinService extends ServiceBase
             $staffsDataItem['stff_name'] = $humanDatas[$staffsDataItem['staff_id']]['name'];
         }
         //把企业职工信息转换为以联系人名字为key的数组 
-        $staffsDatas = self::shiftArrayKeys($staffsDatas, 'stff_name');
+        $staffsDatas = self::shiftArrayKeys($staffsDatas, 'stff_name'); 
 
-        foreach ($apiResluts as &$lianXiData) {
-            $name = trim($lianXiData['name']);
-            if (!$name) {
-                $lianXiData['staff_position'] = '';
-                continue;
-            }
-
-            if (!$staffsDatas[$name]) {
-                $lianXiData['staff_position'] = '';
-                continue;
-            }
-            $lianXiData['staff_position'] = $staffsDatas[$name]['staff_type_name'];
-        }
-
-        return $apiResluts;
+        return $staffsDatas;
     }
 
     //check 是否中文名

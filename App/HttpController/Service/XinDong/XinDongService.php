@@ -2158,7 +2158,7 @@ class XinDongService extends ServiceBase
         //     'Time' => 'Total Execution Time:'.$execution_time1.' 秒  |',
         //     'data' => $resData,
         // ];  
-    } 
+    }  
 
     static function trace(){
         $old_traces = debug_backtrace();
@@ -2508,5 +2508,37 @@ class XinDongService extends ServiceBase
             ])
         ); 
         return $res;
+    }
+
+    function matchContactNameByWeiXinName($entName,$WeiXin){
+        $matchedContactName = "";
+        
+        //获取所有联系人
+        $staffsDatas = LongXinService::getLianXiByName($entName); 
+        if (empty($staffsDatas)) {
+            return $matchedContactName;
+        }
+
+        foreach($staffsDatas as $staffsDataItem){
+            $tmpName= trim($staffsDataItem['stff_name']);
+            if(!$tmpName){
+                continue;
+            };
+            $res = (new XinDongService())->matchNames($tmpName,$WeiXin,
+            [
+                'matchNamesByEqual' => true,
+                'matchNamesByContain' => true,
+                'matchNamesByToBeContain' => true,
+                'matchNamesBySimilarPercentage' => true,
+                'matchNamesBySimilarPercentageValue' => 40,
+                'matchNamesByPinYinSimilarPercentage' => true,
+                'matchNamesByPinYinSimilarPercentageValue' => 40,
+            ]);  
+            if($res){
+                return $tmpName;
+            }
+        }
+
+        return $matchedContactName;
     }
 }
