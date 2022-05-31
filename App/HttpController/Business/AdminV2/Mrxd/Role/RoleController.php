@@ -48,7 +48,7 @@ class RoleController extends ControllerBase
             return $this->writeJson(201);
         } 
         AdminRoles::create()->data([
-            'role_name' => $requestData['role_name'], 
+            'role_name' => $requestData['name'], 
             'remark' => $requestData['remark'],  
             'status' => 1,  
         ])->save();
@@ -63,7 +63,7 @@ class RoleController extends ControllerBase
         $info = RequestApiInfo::create()->where('role_id',$requestData['role_id'])->get(); 
         $info->update([
             'role_id' => $requestData['role_id'],
-            'role_name' => $requestData['role_name'] ? $requestData['role_name']: $info['role_name'],
+            'role_name' => $requestData['role_name'] ? $requestData['name']: $info['role_name'],
             'remark' => $requestData['remark'] ? $requestData['remark']: $info['remark'],
         ]);
         return $this->writeJson();
