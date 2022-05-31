@@ -7,9 +7,9 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
 
-class AdminUserChargeConfig extends ModelBase
+class AdminUserFinanceConfig extends ModelBase
 {
-    protected $tableName = 'admin_user_charge_config';
+    protected $tableName = 'admin_user_finance_config';
 
     protected $autoTimeStamp = true;
     protected $createTime = 'created_at';
