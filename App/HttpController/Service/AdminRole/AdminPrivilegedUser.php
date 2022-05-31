@@ -95,7 +95,8 @@ class AdminPrivilegedUser extends ServiceBase
                     continue;
                 }
 
-                $allowedMenus[$ParentMenu['id']]['child_menus'][$ChildMenu['id']] = $ChildMenu;
+                // $allowedMenus[$ParentMenu['id']]['child_menus'][$ChildMenu['id']] = $ChildMenu;
+                $allowedMenus[$ParentMenu['id']]['child_menus'][] = $ChildMenu;
             } 
         }
 
