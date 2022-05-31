@@ -99,7 +99,7 @@ class AdminPrivilegedUser extends ServiceBase
             } 
         }
 
-        return $allowedMenus ; 
+        return array_values($allowedMenus) ;
     }    
 
 
