@@ -2511,7 +2511,7 @@ class XinDongService extends ServiceBase
     }
 
     function matchContactNameByWeiXinName($entName,$WeiXin){
-        $matchedContactName = "";
+        $matchedContactName =  [];
         
         //获取所有联系人
         $staffsDatas = LongXinService::getLianXiByName($entName); 
@@ -2530,15 +2530,15 @@ class XinDongService extends ServiceBase
                 'matchNamesByContain' => true,
                 'matchNamesByToBeContain' => true,
                 'matchNamesBySimilarPercentage' => true,
-                'matchNamesBySimilarPercentageValue' => 40,
+                'matchNamesBySimilarPercentageValue' => 58,
                 'matchNamesByPinYinSimilarPercentage' => true,
-                'matchNamesByPinYinSimilarPercentageValue' => 40,
+                'matchNamesByPinYinSimilarPercentageValue' => 58,
             ]);  
             if($res){
-                return $tmpName;
+                return $staffsDataItem;
             }
         }
 
-        return $matchedContactName;
+        return $staffsDataItem;
     }
 }
