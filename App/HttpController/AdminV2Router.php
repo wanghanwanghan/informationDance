@@ -64,6 +64,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/getConfigLists', $prefix . 'getConfigLists');
             $routeCollector->addRoute(['GET', 'POST'], '/addConfig', $prefix . 'addConfig');
             $routeCollector->addRoute(['GET', 'POST'], '/updateConfig', $prefix . 'updateConfig');
+            $routeCollector->addRoute(['GET', 'POST'], '/updateConfigStatus', $prefix . 'updateConfigStatus');
             // $routeCollector->addRoute(['GET', 'POST'], '/getAllMenu', $prefix . 'getAllMenu'); 
         });
 
