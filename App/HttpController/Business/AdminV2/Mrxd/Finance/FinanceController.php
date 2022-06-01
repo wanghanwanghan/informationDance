@@ -9,6 +9,7 @@ use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Service\AdminRole\AdminPrivilegedUser;
 use App\HttpController\Models\AdminV2\AdminRoles;
 use App\HttpController\Models\AdminV2\AdminUserFinanceConfig;
+use App\HttpController\Service\Common\CommonService;
 
 class FinanceController extends ControllerBase
 {
@@ -118,7 +119,43 @@ class FinanceController extends ControllerBase
     }
 
     public function uploadeCompanyLists(){
-        return $this->writeJson(200, null, null, '成功');
+        $years = $this->getRequestData('years');
+        if($years <= 0){
+            return $this->writeJson(206, [] ,   [], '缺少必要参数', true, []); 
+        } 
+
+        $files = $this->request()->getUploadedFiles();
+        $path = $fileName = '';
+
+        $succeedNums = 0;
+        foreach ($files as $key => $oneFile) {
+            if (!$oneFile instanceof UploadFile) {
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        'not instanceof UploadFile ',
+                    ])
+                ); 
+                    continue;
+            }
+
+            try {
+                $fileName = $oneFile->getClientFilename();
+                $path = TEMP_FILE_PATH . $fileName;
+                $oneFile->moveTo($path); 
+                
+                             
+                
+            } catch (\Throwable $e) {
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        'addCarInsuranceInfo Throwable continue',
+                        $e->getMessage(),
+                    ])
+                );  
+            } 
+        }  
+
+        return $this->writeJson(200, null, $batchNum,'导入成功 入库数量:'.$succeedNums); 
     }
 
 }
