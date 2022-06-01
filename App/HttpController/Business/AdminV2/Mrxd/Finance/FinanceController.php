@@ -159,6 +159,15 @@ class FinanceController extends ControllerBase
                 
                 //todo 不允许重名
                 //todo 不同文件 相同企业的处理 
+                if(
+                    AdminUserFinanceUploadeHistory::findByIdAndFileName(
+                        $this->loginUserinfo['id'],   
+                        $requestData['file_name']
+                    )
+                ){
+                    continue;
+                }
+                
                  AdminUserFinanceUploadeHistory::addUploadRecord(
                      [
                         'user_id' => $this->loginUserinfo['id'], 

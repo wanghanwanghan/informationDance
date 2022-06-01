@@ -40,4 +40,14 @@ class AdminUserFinanceUploadeHistory extends ModelBase
         return $res;
     }
 
+    public static function findByIdAndFileName($user_id,$file_name){
+        $res =  AdminUserFinanceUploadeHistory::create()->where([
+            'user_id' => $user_id,  
+            'file_name' => $file_name,   
+            'status' => 1,  
+        ])->get(); 
+
+        return $res;
+    }
+
 }
