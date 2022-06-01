@@ -17,6 +17,7 @@ class AdminV2Router
         $this->UserRouterV1($routeCollector);
         $this->MenuRouterV1($routeCollector);
         $this->RoleRouterV1($routeCollector);
+        $this->FinanceRouterV1($routeCollector);
     }
 
     private function UserRouterV1(RouteCollector $routeCollector): bool
@@ -59,7 +60,7 @@ class AdminV2Router
     {
         $prefix = '/Business/AdminV2/Mrxd/Finance/FinanceController/';
 
-        $routeCollector->addGroup('/menu', function (RouteCollector $routeCollector) use ($prefix) {
+        $routeCollector->addGroup('/finance', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getConfigLists', $prefix . 'getConfigLists');
             $routeCollector->addRoute(['GET', 'POST'], '/getAllowedMenus', $prefix . 'getAllowedMenu');
             $routeCollector->addRoute(['GET', 'POST'], '/updateMenuStatus', $prefix . 'updateMenuStatus');
