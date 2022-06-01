@@ -2554,10 +2554,13 @@ class XinDongService extends ServiceBase
                 'matchNamesByPinYinSimilarPercentageValue' => 60,
             ]);  
             if($res){
+                CommonService::getInstance()->log4PHP(
+                    'matchContactNameByWeiXinName yes  :' .$tmpName . $WeiXin
+                ); 
                 return $staffsDataItem;
             }
         }
 
-        return $staffsDataItem;
+        return $matchedContactName;
     }
 }
