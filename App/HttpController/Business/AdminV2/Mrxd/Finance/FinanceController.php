@@ -1,6 +1,6 @@
 <?php
 
-namespace App\HttpController\Business\AdminV2\Mrxd\Charge;
+namespace App\HttpController\Business\AdminV2\Mrxd\Finance;
 
 use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;
 use App\HttpController\Models\AdminV2\AdminMenuItems;
@@ -8,6 +8,7 @@ use App\HttpController\Models\AdminV2\AdminNewMenu;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Service\AdminRole\AdminPrivilegedUser;
 use App\HttpController\Models\AdminV2\AdminRoles;
+use App\HttpController\Models\AdminV2\AdminUserFinanceConfig;
 
 class FinanceController extends ControllerBase
 {
@@ -20,6 +21,15 @@ class FinanceController extends ControllerBase
     {
         parent::afterAction($actionName);
     }
+    
+    public function getConfigLists(){ 
+        return $this->writeJson(
+            200,
+            [],
+           AdminUserFinanceConfig::create()->where("status = 1")->all()
+        );
+    }
+
     public function getAllRoles(){ 
         return $this->writeJson(
             200,
@@ -46,7 +56,7 @@ class FinanceController extends ControllerBase
             !$requestData['remark']  
         ) {
             return $this->writeJson(201);
-        } 
+        }
         AdminRoles::create()->data([
             'role_name' => $requestData['name'], 
             'remark' => $requestData['remark'],  
