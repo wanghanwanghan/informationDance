@@ -3,6 +3,7 @@
 namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
+use App\HttpController\Models\AdminV2\AdminUserFinanceUploadeHistory;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
@@ -14,7 +15,7 @@ use App\HttpController\Service\XinDong\XinDongService;
 use App\HttpController\Service\CreateConf;
 
 
-class RunReadAndDealXls extends AbstractCronTask
+class RunDealFinanceCompanyData extends AbstractCronTask
 {
     public $crontabBase;
     public $filePath = ROOT_PATH . '/Static/Temp/';
@@ -216,7 +217,16 @@ class RunReadAndDealXls extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
-         
+        
+        $initDatas = AdminUserFinanceUploadeHistory::findByCondition(
+            [
+                'status' => AdminUserFinanceUploadeHistory::stateInit
+            ],
+            1
+        );
+        foreach($initDatas as $uploadFinanceData){
+            $uploadFinanceData['file_path'];
+        }
         $debugLog = false; 
         
         // 找到需要处理的文件 uploadAndDealXls_matchName_测试

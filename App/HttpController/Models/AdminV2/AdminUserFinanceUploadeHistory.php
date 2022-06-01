@@ -4,6 +4,7 @@ namespace App\HttpController\Models\AdminV2;
 
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
+ 
 
 // use App\HttpController\Models\AdminRole;
 
@@ -14,6 +15,10 @@ class AdminUserFinanceUploadeHistory extends ModelBase
     protected $autoTimeStamp = true;
     protected $createTime = 'created_at';
     protected $updateTime = 'updated_at'; 
+    
+    static $stateInit = 0;
+    static $stateParsed = 5;
+    static $stateExported = 10;
 
     public static function addUploadRecord($requestData){
        
@@ -44,9 +49,17 @@ class AdminUserFinanceUploadeHistory extends ModelBase
         $res =  AdminUserFinanceUploadeHistory::create()->where([
             'user_id' => $user_id,  
             'file_name' => $file_name,   
-            'status' => 1,  
+            // 'status' => 1,  
         ])->get(); 
 
+        return $res;
+    }
+
+    public static function findByCondition($whereArr,$limit){
+        $res =  AdminUserFinanceUploadeHistory::create()
+            ->where($whereArr)
+            ->limit($limit)
+            ->all();  
         return $res;
     }
 
