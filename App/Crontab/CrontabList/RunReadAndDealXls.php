@@ -151,8 +151,8 @@ class RunReadAndDealXls extends AbstractCronTask
                 $value1, 
                 $value2, 
                 $tmpRes['stff_name'],
-                $tmpRes['stff_type_name'],
-                'new',
+                $tmpRes['staff_type_name'] 
+                
             ];
         }
     }
