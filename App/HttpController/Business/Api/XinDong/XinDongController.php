@@ -2460,15 +2460,18 @@ eof;
         
         $toBeMatch = $this->getRequestData('toBeMatch', '');
         $target = $this->getRequestData('target', ''); 
+        $percentage1 = $this->getRequestData('percentage1', '60'); 
+        $percentage2 = $this->getRequestData('percentage2', '60'); 
+       
         $retData = (new XinDongService())->matchNames($toBeMatch,$target,
         [
             'matchNamesByEqual' => true,
             'matchNamesByContain' => true,
             'matchNamesByToBeContain' => true,
             'matchNamesBySimilarPercentage' => true,
-            'matchNamesBySimilarPercentageValue' => 40,
+            'matchNamesBySimilarPercentageValue' => $percentage1,
             'matchNamesByPinYinSimilarPercentage' => true,
-            'matchNamesByPinYinSimilarPercentageValue' => 40,
+            'matchNamesByPinYinSimilarPercentageValue' => $percentage2,
         ]);  
         // CommonService::getInstance()->log4PHP('matchEntByName '.$execution_time1.'秒'); 
         return $this->writeJson(200, [] ,   $retData, '成功', true, []); 
