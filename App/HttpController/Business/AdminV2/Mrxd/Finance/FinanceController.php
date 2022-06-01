@@ -53,28 +53,44 @@ class FinanceController extends ControllerBase
         $requestData = $this->getRequestData(); 
         if (
             !$requestData['user_id'] ||
-            !$requestData['price_config']  
+            //包的年限
+            !$requestData['annually_years'] || 
+            !$requestData['annually_price']  ||
+            !$requestData['normal_years_price_json'] ||
+            !$requestData['allowed_fields'] ||
+            !$requestData['type'] ||
+            !$requestData['cache']   
         ) {
             return $this->writeJson(201);
         }
-        // AdminRoles::create()->data([
-        //     'role_name' => $requestData['name'], 
-        //     'remark' => $requestData['remark'],  
-        //     'status' => 1,  
-        // ])->save();
+        
+        AdminUserFinanceConfig::create()->data([
+            'user_id' => $requestData['user_id'], 
+            'annually_price' => $requestData['annually_price'],  
+            'annually_years' => $requestData['annually_years'],  
+            'normal_years_price_json' => $requestData['normal_years_price_json'],  
+            'cache' => $requestData['cache'],  
+            'type' => $requestData['type'],  
+            'allowed_fields' => $requestData['allowed_fields'],  
+            'status' => 1,  
+        ])->save();
         return $this->writeJson(200);
     }
 
      /**
      *  修改菜单
      */
-    public function updateRole(){
+    public function updateConfig(){
         $requestData = $this->getRequestData(); 
-        $info = AdminRoles::create()->where('role_id',$requestData['role_id'])->get(); 
+        $info = AdminUserFinanceConfig::create()->where('id',$requestData['id'])->get(); 
         $info->update([
-            'role_id' => $requestData['role_id'],
-            'role_name' => $requestData['role_name'] ? $requestData['name']: $info['role_name'],
-            'remark' => $requestData['remark'] ? $requestData['remark']: $info['remark'],
+            'id' => $requestData['id'],
+            'annually_price' => $requestData['annually_price'] ?   $requestData['annually_price']: $info['annually_price'],
+            'annually_years' => $requestData['annually_years'] ? $requestData['annually_years']: $info['annually_years'],
+            'normal_years_price_json' => $requestData['normal_years_price_json'] ? $requestData['normal_years_price_json']: $info['normal_years_price_json'],
+            'cache' => $requestData['cache'] ? $requestData['cache']: $info['cache'],
+            'type' => $requestData['type'] ? $requestData['type']: $info['type'],
+            'allowed_fields' => $requestData['allowed_fields'] ? $requestData['allowed_fields']: $info['allowed_fields'],
         ]);
         return $this->writeJson();
     }

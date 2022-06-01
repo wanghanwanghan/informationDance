@@ -63,7 +63,7 @@ class AdminV2Router
         $routeCollector->addGroup('/finance', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getConfigLists', $prefix . 'getConfigLists');
             $routeCollector->addRoute(['GET', 'POST'], '/addConfig', $prefix . 'addConfig');
-            $routeCollector->addRoute(['GET', 'POST'], '/updateMenuStatus', $prefix . 'updateMenuStatus');
+            $routeCollector->addRoute(['GET', 'POST'], '/updateConfig', $prefix . 'updateConfig');
             // $routeCollector->addRoute(['GET', 'POST'], '/getAllMenu', $prefix . 'getAllMenu'); 
         });
 
