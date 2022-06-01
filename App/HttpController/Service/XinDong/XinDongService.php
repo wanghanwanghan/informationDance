@@ -2530,9 +2530,9 @@ class XinDongService extends ServiceBase
                 'matchNamesByContain' => true,
                 'matchNamesByToBeContain' => true,
                 'matchNamesBySimilarPercentage' => true,
-                'matchNamesBySimilarPercentageValue' => 58,
+                'matchNamesBySimilarPercentageValue' => 60,
                 'matchNamesByPinYinSimilarPercentage' => true,
-                'matchNamesByPinYinSimilarPercentageValue' => 58,
+                'matchNamesByPinYinSimilarPercentageValue' => 60,
             ]);  
             if($res){
                 return $staffsDataItem;
