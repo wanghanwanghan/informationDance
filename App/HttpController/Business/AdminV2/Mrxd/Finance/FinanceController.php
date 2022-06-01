@@ -49,19 +49,19 @@ class FinanceController extends ControllerBase
     /**
      *  增加菜单
      */
-    public function addRole(){
+    public function addConfig(){
         $requestData = $this->getRequestData(); 
         if (
-            !$requestData['name'] ||
-            !$requestData['remark']  
+            !$requestData['user_id'] ||
+            !$requestData['price_config']  
         ) {
             return $this->writeJson(201);
         }
-        AdminRoles::create()->data([
-            'role_name' => $requestData['name'], 
-            'remark' => $requestData['remark'],  
-            'status' => 1,  
-        ])->save();
+        // AdminRoles::create()->data([
+        //     'role_name' => $requestData['name'], 
+        //     'remark' => $requestData['remark'],  
+        //     'status' => 1,  
+        // ])->save();
         return $this->writeJson(200);
     }
 
