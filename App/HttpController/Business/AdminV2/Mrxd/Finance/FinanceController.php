@@ -117,4 +117,8 @@ class FinanceController extends ControllerBase
         return $this->writeJson(200, null, null, '修改成功');
     }
 
+    public function uploadeCompanyLists(){
+        return $this->writeJson(200, null, null, '成功');
+    }
+
 }
