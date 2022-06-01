@@ -9,6 +9,7 @@ use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Service\AdminRole\AdminPrivilegedUser;
 use App\HttpController\Models\AdminV2\AdminRoles;
 use App\HttpController\Models\AdminV2\AdminUserFinanceConfig;
+use App\HttpController\Models\AdminV2\AdminUserFinanceUploadeHistory;
 use App\HttpController\Service\Common\CommonService;
 
 class FinanceController extends ControllerBase
@@ -123,7 +124,7 @@ class FinanceController extends ControllerBase
         if($years <= 0){
             return $this->writeJson(206, [] ,   [], '缺少必要参数', true, []); 
         } 
-
+        $requestData =  $this->getRequestData();
         $files = $this->request()->getUploadedFiles();
         $path = $fileName = '';
 
@@ -141,10 +142,35 @@ class FinanceController extends ControllerBase
             try {
                 $fileName = $oneFile->getClientFilename();
                 $path = TEMP_FILE_PATH . $fileName;
-                $oneFile->moveTo($path); 
+                if(file(file_exists($path))){
+                    CommonService::getInstance()->log4PHP(
+                        'file  already exists. '.$path
+                    );  
+                    continue;
+                }
+
+                $res = $oneFile->moveTo($path);  
+                if(!$res){
+                    CommonService::getInstance()->log4PHP(
+                        'move file   failed . '.$path
+                    ); 
+                    continue;
+                }
                 
-                             
-                
+                //todo 不允许重名
+                //todo 不同文件 相同企业的处理 
+                 AdminUserFinanceUploadeHistory::addUploadRecord(
+                     [
+                        'user_id' => $this->loginUserinfo['id'], 
+                        'file_path' => $requestData['file_path'],  
+                        'file_name' => $requestData['file_name'],  
+                        'title' => $requestData['title'],  
+                        'finance_config' => $requestData['finance_config'],  
+                        'reamrk' => $requestData['reamrk'],  
+                        'status' => 1,  
+                     ]
+                 );
+
             } catch (\Throwable $e) {
                 CommonService::getInstance()->log4PHP(
                     json_encode([
