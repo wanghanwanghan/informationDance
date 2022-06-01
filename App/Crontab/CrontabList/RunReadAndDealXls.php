@@ -141,7 +141,7 @@ class RunReadAndDealXls extends AbstractCronTask
             $tmpRes = (new XinDongService())->matchContactNameByWeiXinName($value0,$value2);
             CommonService::getInstance()->log4PHP('matchContactNameByWeiXinName'.json_encode(
                 [
-                    'value' => [$value0,$value1],
+                    'value' => [$value0,$value2],
                     'params' => $value0,
                     'res' => $tmpRes
                 ]
@@ -150,8 +150,8 @@ class RunReadAndDealXls extends AbstractCronTask
                 $value0,
                 $value1, 
                 $value2, 
-                $tmpRes?$tmpRes['stff_name']:'',
-                $tmpRes?$tmpRes['stff_type_name']:'',
+                $tmpRes['stff_name'],
+                $tmpRes['stff_type_name'],
                 'new',
             ];
         }
