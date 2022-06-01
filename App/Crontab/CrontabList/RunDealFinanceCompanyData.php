@@ -75,7 +75,15 @@ class RunDealFinanceCompanyData extends AbstractCronTask
         $this->workPath = $this->filePath ;
 
         return true;
-    }   
+    }  
+    
+    function setworkPath($filePath): bool
+    {
+       
+        $this->workPath = $filePath ;
+
+        return true;
+    }  
 
     // function getYieldData($xlsx_name,$formatFuncName){
     function getYieldData($xlsx_name){
@@ -99,7 +107,13 @@ class RunDealFinanceCompanyData extends AbstractCronTask
             $value1 = $this->strtr_func($one[1]);  
             $value2 = $this->strtr_func($one[2]);  
             $value3 = $this->strtr_func($one[3]);   
-            $tmpData = (new XinDongService())->matchEntByName($value0,1,4);
+            // $tmpData = (new XinDongService())->matchEntByName($value0,1,4);
+            $tmpData = [
+                $value0,
+                $value1, 
+                $value2, 
+                $value3, 
+            ] ;
             CommonService::getInstance()->log4PHP('matchNamXXXX'.json_encode(
                 [
                     'value' => [$value0,$value1],
@@ -107,60 +121,10 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                     'res' => $tmpData
                 ]
             )); 
-            yield $datas[] = [
-                $value0,
-                $tmpData['id'], 
-                $tmpData['name'], 
-            ];
+            yield $datas[] = $tmpData;
         }
     }
-
-    function getYieldDataToMathWeiXin($xlsx_name){
-        $excel_read = new \Vtiful\Kernel\Excel(['path' => $this->workPath]);
-        $excel_read->openFile($xlsx_name)->openSheet();
-
-        $datas = [];
-        while (true) {
-
-            $one = $excel_read->nextRow([
-                \Vtiful\Kernel\Excel::TYPE_STRING,
-                \Vtiful\Kernel\Excel::TYPE_STRING,
-                \Vtiful\Kernel\Excel::TYPE_STRING,
-            ]);
-
-            if (empty($one)) {
-                break;
-            }
-
-            //企业名称
-            $value0 = $this->strtr_func($one[0]);  
-            //手机号
-            $value1 = $this->strtr_func($one[1]);  
-            //微信名
-            $value2 = $this->strtr_func($one[2]);  
-            $value3 = $this->strtr_func($one[3]);   
-            $tmpRes = (new XinDongService())->matchContactNameByWeiXinName($value0,$value2);
-            CommonService::getInstance()->log4PHP('matchContactNameByWeiXinName'.json_encode(
-                [
-                    'value' => [$value0,$value1],
-                    'params' => $value0,
-                    'res' => $tmpRes
-                ]
-            )); 
-            yield $datas[] = [
-                $value0,
-                $value1, 
-                $value2, 
-                $tmpRes
-            ];
-        }
-    }
-
-    // function matchNameFormatData($tmpDataItem){
-    //      $res = (new XinDongService())->matchEntByName($tmpDataItem[0],1,4.5);
-    //      CommonService::getInstance()->log4PHP('matchNamYYYY'.json_encode($res)); 
-    //      return $$res;
-    // }
+  
     function matchName($file,$debugLog){
         $startMemory = memory_get_usage(); 
 
@@ -188,32 +152,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
         return true ;  
     }
 
-    function matchWeiXinName($file,$debugLog){
-        $startMemory = memory_get_usage(); 
-
-        // 取yield数据 
-        // $excelDatas = $this->getYieldData($file,'matchNameFormatData');
-        $excelDatas = $this->getYieldDataToMathWeiXin($file); 
-
-        $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
-        $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用1 '.$memory .' '.$file );
-
-        //写到csv里 
-        $fileName = pathinfo($file)['filename'];
-        $f = fopen($this->workPath.$fileName.".csv", "w");
-        fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
-
-        foreach ($excelDatas as $dataItem) {
-            fputcsv($f, $dataItem);
-        }
-
-        $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
-        $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用2 '.$memory .' '.$file );
-
-        @unlink($this->workPath . $file);
-
-        return true ;  
-    }
+     
 
     function run(int $taskId, int $workerIndex): bool
     {
@@ -225,7 +164,15 @@ class RunDealFinanceCompanyData extends AbstractCronTask
             1
         );
         foreach($initDatas as $uploadFinanceData){
-            $uploadFinanceData['file_path'];
+            $dirPat =  dirname($uploadFinanceData['file_path']).DIRECTORY_SEPARATOR; 
+            $this->setworkPath( $dirPat );
+            $excelDatas = $this->getYieldData($uploadFinanceData['file_path']); 
+            foreach ($excelDatas as $dataItem) {
+               //添加到具体表
+                $dataItem;
+            }
+            //更新该状态
+            
         }
         $debugLog = false; 
         
