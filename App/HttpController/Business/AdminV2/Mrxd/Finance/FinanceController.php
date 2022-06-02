@@ -10,6 +10,7 @@ use App\HttpController\Service\AdminRole\AdminPrivilegedUser;
 use App\HttpController\Models\AdminV2\AdminRoles;
 use App\HttpController\Models\AdminV2\AdminUserFinanceConfig;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadeRecord;
+use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
 use App\HttpController\Service\Common\CommonService;
 
 class FinanceController extends ControllerBase
@@ -160,21 +161,20 @@ class FinanceController extends ControllerBase
                 //todo 不允许重名
                 //todo 不同文件 相同企业的处理 
                 if(
-                    AdminUserFinanceUploadeRecord::findByIdAndFileName(
+                    AdminUserFinanceUploadRecord::findByIdAndFileName(
                         $this->loginUserinfo['id'],   
                         $requestData['file_name']
                     )
                 ){
                     continue;
                 }
-
-                 AdminUserFinanceUploadeRecord::addUploadRecord(
+                
+                AdminUserFinanceUploadRecord::addUploadRecord(
                      [
                         'user_id' => $this->loginUserinfo['id'], 
                         'file_path' => $requestData['file_path'],  
                         'file_name' => $requestData['file_name'],  
-                        'title' => $requestData['title'],  
-                        'finance_config' => $requestData['finance_config'],  
+                        'title' => $requestData['title'],    
                         'reamrk' => $requestData['reamrk'],  
                         'status' => 1,  
                      ]
