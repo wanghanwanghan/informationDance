@@ -8,9 +8,9 @@ use App\HttpController\Service\Common\CommonService;
 
 // use App\HttpController\Models\AdminRole;
 
-class AdminUserFinanceUploadeRecord extends ModelBase
+class AdminUserFinanceUploadDataRecord extends ModelBase
 {
-    protected $tableName = 'admin_user_finance_uploade_record';
+    protected $tableName = 'admin_user_finance_upload_data_record';
 
     protected $autoTimeStamp = true;
     protected $createTime = 'created_at';
@@ -23,7 +23,7 @@ class AdminUserFinanceUploadeRecord extends ModelBase
     public static function addUploadRecord($requestData){
        
         try {
-           $res =  AdminUserFinanceUploadeRecord::create()->data([
+           $res =  AdminUserFinanceUploadRecord::create()->data([
                 'user_id' => $requestData['user_id'], 
                 'file_path' => $requestData['file_path'],  
                 'file_name' => $requestData['file_name'],  
@@ -46,7 +46,7 @@ class AdminUserFinanceUploadeRecord extends ModelBase
     }
 
     public static function findByIdAndFileName($user_id,$file_name){
-        $res =  AdminUserFinanceUploadeRecord::create()->where([
+        $res =  AdminUserFinanceUploadRecord::create()->where([
             'user_id' => $user_id,  
             'file_name' => $file_name,   
             // 'status' => 1,  
@@ -56,7 +56,7 @@ class AdminUserFinanceUploadeRecord extends ModelBase
     }
 
     public static function findByCondition($whereArr,$limit){
-        $res =  AdminUserFinanceUploadeRecord::create()
+        $res =  AdminUserFinanceUploadRecord::create()
             ->where($whereArr)
             ->limit($limit)
             ->all();  
