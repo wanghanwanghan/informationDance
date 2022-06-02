@@ -5,6 +5,7 @@ namespace App\Crontab\CrontabList;
 use App\Crontab\CrontabBase;
 use App\HttpController\Models\BusinessBase\Company287Model;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\Zip\ZipService;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 
 class FillEntAllField extends AbstractCronTask
@@ -77,6 +78,11 @@ class FillEntAllField extends AbstractCronTask
                             }
                             fwrite($fp_w, $content . PHP_EOL);
                         }
+                        ZipService::getInstance()->zip(
+                            [TEMP_FILE_PATH . 'success_' . $file],
+                            TEMP_FILE_PATH . 'success_' . $file . '.zip'
+                        );
+                        @unlink(TEMP_FILE_PATH . 'success_' . $file);
                     }
                 }
             }
