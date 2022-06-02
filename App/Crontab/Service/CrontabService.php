@@ -4,6 +4,7 @@ namespace App\Crontab\Service;
 
 use App\Crontab\CrontabList\CreateDeepReport;
 use App\Crontab\CrontabList\DeleteTimeoutOrder;
+use App\Crontab\CrontabList\FillEntAllField;
 use App\Crontab\CrontabList\GetAuthBook;
 use App\Crontab\CrontabList\GetInvData;
 use App\Crontab\CrontabList\MoveOut;
@@ -38,6 +39,7 @@ class CrontabService
         $this->RunFillCompanyName();
         $this->RunReadAndDealXls();
         $this->RunShouQuanCheXian();
+        $this->FillEntAllField();//补全给筛选出的企业 <全字段>
 
         return true;
     }
@@ -90,20 +92,29 @@ class CrontabService
     {
         return Crontab::getInstance()->addTask(RunSouKeUploadFiles::class);
     }
+
     private function RunCompleteCompanyData(): Crontab
     {
         return Crontab::getInstance()->addTask(RunCompleteCompanyData::class);
     }
+
     private function RunFillCompanyName(): Crontab
     {
         return Crontab::getInstance()->addTask(RunFillCompanyName::class);
     }
+
     private function RunReadAndDealXls(): Crontab
     {
         return Crontab::getInstance()->addTask(RunReadAndDealXls::class);
     }
+
     private function RunShouQuanCheXian(): Crontab
     {
         return Crontab::getInstance()->addTask(RunShouQuanCheXian::class);
+    }
+
+    private function FillEntAllField(): Crontab
+    {
+        return Crontab::getInstance()->addTask(FillEntAllField::class);
     }
 }
