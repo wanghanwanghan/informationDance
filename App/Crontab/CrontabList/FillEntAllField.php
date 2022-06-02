@@ -43,6 +43,11 @@ class FillEntAllField extends AbstractCronTask
             if ($dh = opendir(TEMP_FILE_PATH)) {
                 while (false !== ($file = readdir($dh))) {
                     if (mb_substr($file, 0, $len) === $prefix) {
+                        //有这个文件前缀 并且 也有 success_ 表示已经执行 或者 正在执行
+                        $check = glob(TEMP_FILE_PATH . 'success*' . $file);
+                        if (!empty($check)) {
+                            continue;
+                        }
                         $fp_r = fopen(TEMP_FILE_PATH . $file, 'r');
                         $fp_w = fopen(TEMP_FILE_PATH . 'success_' . $file, 'w+');
                         while (feof($fp_r) === false) {
