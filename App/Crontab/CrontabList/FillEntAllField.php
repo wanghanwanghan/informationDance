@@ -45,7 +45,7 @@ class FillEntAllField extends AbstractCronTask
                 while (false !== ($file = readdir($dh))) {
                     if (mb_substr($file, 0, $len) === $prefix) {
                         //有这个文件前缀 并且 也有 success_ 表示已经执行 或者 正在执行
-                        $check = glob(TEMP_FILE_PATH . 'success*' . $file);
+                        $check = glob(TEMP_FILE_PATH . "success*{$file}*");
                         if (!empty($check)) {
                             continue;
                         }
