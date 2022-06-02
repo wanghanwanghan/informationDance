@@ -3,7 +3,7 @@
 namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
-use App\HttpController\Models\AdminV2\AdminUserFinanceUploadeHistory;
+use App\HttpController\Models\AdminV2\AdminUserFinanceUploadeRecord;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
@@ -157,9 +157,9 @@ class RunDealFinanceCompanyData extends AbstractCronTask
     function run(int $taskId, int $workerIndex): bool
     {
         
-        $initDatas = AdminUserFinanceUploadeHistory::findByCondition(
+        $initDatas = AdminUserFinanceUploadeRecord::findByCondition(
             [
-                'status' => AdminUserFinanceUploadeHistory::stateInit
+                'status' => AdminUserFinanceUploadeRecord::stateInit
             ],
             1
         );
@@ -172,7 +172,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                 $dataItem;
             }
             //更新该状态
-            
+
         }
         $debugLog = false; 
         

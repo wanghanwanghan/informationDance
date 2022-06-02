@@ -9,7 +9,7 @@ use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Service\AdminRole\AdminPrivilegedUser;
 use App\HttpController\Models\AdminV2\AdminRoles;
 use App\HttpController\Models\AdminV2\AdminUserFinanceConfig;
-use App\HttpController\Models\AdminV2\AdminUserFinanceUploadeHistory;
+use App\HttpController\Models\AdminV2\AdminUserFinanceUploadeRecord;
 use App\HttpController\Service\Common\CommonService;
 
 class FinanceController extends ControllerBase
@@ -160,15 +160,15 @@ class FinanceController extends ControllerBase
                 //todo 不允许重名
                 //todo 不同文件 相同企业的处理 
                 if(
-                    AdminUserFinanceUploadeHistory::findByIdAndFileName(
+                    AdminUserFinanceUploadeRecord::findByIdAndFileName(
                         $this->loginUserinfo['id'],   
                         $requestData['file_name']
                     )
                 ){
                     continue;
                 }
-                
-                 AdminUserFinanceUploadeHistory::addUploadRecord(
+
+                 AdminUserFinanceUploadeRecord::addUploadRecord(
                      [
                         'user_id' => $this->loginUserinfo['id'], 
                         'file_path' => $requestData['file_path'],  
