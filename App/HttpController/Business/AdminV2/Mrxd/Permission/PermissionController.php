@@ -30,7 +30,7 @@ class PermissionController extends ControllerBase
     }
 
      
-    public function getMenuById(){  
+    public function updateRolePermission(){  
         $id = $this->request()->getRequestParam('id') ?? '';
         $requestData = $this->getRequestData(); 
         if($id <= 0){

@@ -95,7 +95,7 @@ class AdminV2Router
     private function PermissionsRouterV1(RouteCollector $routeCollector): bool
     {
         $prefix = '/Business/AdminV2/Mrxd/Permission/PermissionController/';
-        $routeCollector->addGroup('/role', function (RouteCollector $routeCollector) use ($prefix) {
+        $routeCollector->addGroup('/permission', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getAllPermissions', $prefix . 'getAllPermissions');
             $routeCollector->addRoute(['GET', 'POST'], '/addRole', $prefix . 'addRole');
             $routeCollector->addRoute(['GET', 'POST'], '/updateRole', $prefix . 'updateRole');
