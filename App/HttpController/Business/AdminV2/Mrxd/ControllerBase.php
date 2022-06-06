@@ -145,7 +145,12 @@ class ControllerBase extends Index
                 'requestData' => $requestData,
             ]
         );
-        return (isset($requestData[$key])) ? $requestData[$key] : $default;
+        if($key){
+            return (isset($requestData[$key])) ? $requestData[$key] : $default;
+        }
+        else{
+            return$requestData;
+        }
     }
     
     private function setLoginUserInfo($userInfo){
