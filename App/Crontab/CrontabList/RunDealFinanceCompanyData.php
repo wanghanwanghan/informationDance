@@ -155,94 +155,94 @@ class RunDealFinanceCompanyData extends AbstractCronTask
         return true ;  
     }
 
-     
+     function saveAndReturnAdminUserFinanceDataId(){
+         
+     }
 
     function run(int $taskId, int $workerIndex): bool
+    {   
+        // 将客户名单解析到db
+        $this->parseDataToDb(1);
+
+        //计算单价
+        //解析完，尚未计算单价的
+        $initDatas = AdminUserFinanceUploadRecord::findByCondition(
+            [
+                'status' => AdminUserFinanceUploadRecord::$stateParsed
+            ],
+            5
+        );
+
+        return true ;   
+    }
+
+    //将客户名单解析到db 
+    function parseDataToDb($limit)
     {
-        // 初始化待处理的数据    
+        // 用户上传的客户名单信息
         $initDatas = AdminUserFinanceUploadRecord::findByCondition(
             [
                 'status' => AdminUserFinanceUploadRecord::$stateInit
             ],
-            1
+            $limit
         );
-        foreach($initDatas as $uploadFinanceData){
-            /*
-                id
-                years
-                user_id
-                file_path
-                file_name
-                title
-                finance_config
-                reamrk
-                status
-                created_at
-                updated_at
-            */
+        foreach($initDatas as $uploadFinanceData){ 
+            // 找到上传的文件
             $dirPat =  dirname($uploadFinanceData['file_path']).DIRECTORY_SEPARATOR; 
             $this->setworkPath( $dirPat );
+            //按行读取数据
             $excelDatas = $this->getYieldData($uploadFinanceData['file_path']); 
-            foreach ($excelDatas as $dataItem) {
-               //添加到具体表
-                $dataItem[0];
-                /*
-                    id
-                    user_id
-                    entName
-                    year
-                    finance_data_id
-                    price
-                    price_type
-                    cache_end_date
-                    reamrk
-                    status
-                    created_at
-                    updated_at
-                */
-                AdminUserFinanceData::addRecord();
-                /*
-                    id
-                    user_id
-                    record_id
-                    user_finance_data_id
-                    reamrk
-                    status
-                    created_at
-                    updated_at
-                */
-                // AdminUserFinanceUploadDataRecord::
+            foreach ($excelDatas as $dataItem) { 
+                // 按年度解析为数据
+                $yearsArr = explode(',',$uploadFinanceData['years']); 
+                foreach($yearsArr as $yearItem){
+                    // 插入到AdminUserFinanceData表
+                    $AdminUserFinanceDataId = 0 ;
+                    $AdminUserFinanceDataModel =  AdminUserFinanceData::findByUserAndEntAndYear(
+                        $uploadFinanceData['user_id'],$dataItem[0],$yearItem
+                    );
+
+                    if($AdminUserFinanceDataModel){
+                        $AdminUserFinanceDataId = $AdminUserFinanceDataModel->getAttr('id') ;
+                    }
+
+                    if(!$AdminUserFinanceDataModel){ 
+                        $AdminUserFinanceDataId = AdminUserFinanceData::addRecord(
+                            [
+                               'user_id' => $uploadFinanceData['user_id'] , 
+                               'entName' => $dataItem[0] ,  
+                               'year' => $yearItem ,
+                               'finance_data_id' => 0,
+                               'price' => 0,
+                               'price_type' => 0,
+                               'cache_end_date' => 0,
+                               'status' => 0,
+                            ]
+                        );
+                    } 
+                    
+                    // 生成 AdminUserFinanceData和 AdminUserFinanceUploadRecord的关系
+                    if(
+                        !AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdAndFinanceId(
+                            $uploadFinanceData['user_id'],$uploadFinanceData['id'] ,$AdminUserFinanceDataId                     
+                        )
+                    ){
+                        AdminUserFinanceUploadDataRecord::addUploadRecord(
+                            [
+                                'user_id' => $uploadFinanceData['user_id'] , 
+                                'record_id' => $uploadFinanceData['id'] ,    
+                                'user_finance_data_id' => $AdminUserFinanceDataId,    
+                                'status' => 0,    
+                            ]
+                        );
+                    }    
+                } 
             }
-            //更新该状态
-
-        }
-        $debugLog = false; 
-        
-        // 找到需要处理的文件 uploadAndDealXls_matchName_测试
-        $files = glob($this->workPath.'uploadAndDealXls_*.xlsx');
-        $debugLog && CommonService::getInstance()->log4PHP('RunReadAndDealXls files '.json_encode($files) );
-        if(empty($files)){
-            return true;
-        }
-         
-        // 一个一个的跑
-        $file = pathinfo(array_shift($files))['basename'];
-        $fileName = pathinfo($file)['filename'];
-        $debugLog &&  CommonService::getInstance()->log4PHP('uploadAndDealXls_ file '.($file) );
-        $fileNameArr = explode('_',$fileName);
-        
-        // 匹配企业名称
-        if($fileNameArr[1] == 'matchName'){ 
-            $debugLog &&  CommonService::getInstance()->log4PHP('matchName  '.($file) );
-            return $this->matchName($file,$debugLog);
-        }
-
-        // 匹配微信吗名
-        if($fileNameArr[1] == 'matchWeiXinName'){ 
-            $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
-            return $this->matchWeiXinName($file,$debugLog);
-        }
-
+            //解析完成-设置状态
+            AdminUserFinanceUploadRecord::changeStatus(
+                $uploadFinanceData['id'],AdminUserFinanceUploadRecord::$stateParsed
+            );
+        } 
         return true ;   
     }
 

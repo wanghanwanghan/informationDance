@@ -51,6 +51,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/getAllowedMenus', $prefix . 'getAllowedMenu');
             $routeCollector->addRoute(['GET', 'POST'], '/updateMenuStatus', $prefix . 'updateMenuStatus');
             $routeCollector->addRoute(['GET', 'POST'], '/addMenu', $prefix . 'addMenu');
+            $routeCollector->addRoute(['GET', 'POST'], '/updateMenu', $prefix . 'updateMenu');
             $routeCollector->addRoute(['GET', 'POST'], '/getMenuById', $prefix . 'getMenuById');
             // $routeCollector->addRoute(['GET', 'POST'], '/getAllMenu', $prefix . 'getAllMenu'); 
         });

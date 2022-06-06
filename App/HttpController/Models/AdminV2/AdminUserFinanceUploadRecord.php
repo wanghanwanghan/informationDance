@@ -17,7 +17,9 @@ class AdminUserFinanceUploadRecord extends ModelBase
     protected $updateTime = 'updated_at'; 
     
     static $stateInit = 0;
+    static $stateInitCname =  '初始';
     static $stateParsed = 5;
+    static $stateParsedCname =  '已经解析入库';
     static $stateExported = 10;
 
     public static function addUploadRecord($requestData){ 
@@ -61,6 +63,14 @@ class AdminUserFinanceUploadRecord extends ModelBase
             ->limit($limit)
             ->all();  
         return $res;
+    }
+
+    public static function changeStatus($id,$status){ 
+        $info = AdminUserFinanceUploadRecord::create()->where('id',$id)->get(); 
+        return $info->update([
+            'id' => $id,
+            'status' => $status, 
+        ]);
     }
 
 }

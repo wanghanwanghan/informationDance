@@ -20,17 +20,14 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
     static $stateParsed = 5;
     static $stateExported = 10;
 
-    public static function addUploadRecord($requestData){
-       
+    public static function addUploadRecord($requestData){ 
         try {
            $res =  AdminUserFinanceUploadRecord::create()->data([
-                'user_id' => $requestData['user_id'], 
-                'file_path' => $requestData['file_path'],  
-                'file_name' => $requestData['file_name'],  
-                'title' => $requestData['title'],  
-                'finance_config' => $requestData['finance_config'],  
+                'user_id' => $requestData['user_id'],  
+                'record_id' => $requestData['record_id'],  
+                'user_finance_data_id' => $requestData['user_finance_data_id'],  
                 'reamrk' => $requestData['reamrk'],  
-                'status' => 1,  
+                'status' => $requestData['status'],  
             ])->save();
 
         } catch (\Throwable $e) {
@@ -45,11 +42,13 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         return $res;
     }
 
-    public static function findByIdAndFileName($user_id,$file_name){
+    public static function findByUserIdAndRecordIdAndFinanceId(
+        $user_id,$record_id,$user_finance_data_id
+    ){ 
         $res =  AdminUserFinanceUploadRecord::create()->where([
             'user_id' => $user_id,  
-            'file_name' => $file_name,   
-            // 'status' => 1,  
+            'record_id' => $record_id,  
+            'user_finance_data_id' => $user_finance_data_id,  
         ])->get(); 
 
         return $res;
