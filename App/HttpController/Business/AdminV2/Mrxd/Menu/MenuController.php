@@ -95,6 +95,9 @@ class MenuController extends ControllerBase
     public function updateMenu(){
         $requestData = $this->getRequestData(); 
         $info = AdminMenuItems::create()->where('id',$requestData['id'])->get(); 
+        if(!$info){
+            return $this->writeJson(204);
+        }
         $info->update([
             'id' => $requestData['id'],
             'name' => $requestData['name'] ? $requestData['name']: $info['name'],
