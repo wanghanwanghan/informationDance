@@ -45,6 +45,16 @@ class AdminUserFinanceData extends ModelBase
         return $res;
     } 
 
+    public static function calculatePrice($id,$financeConifgArr){ 
+        $res =  AdminUserFinanceData::create()
+            ->where('id',$id) 
+            ->get();  
+
+        $year = $res->getAttr('year');
+        
+        return $res; 
+    } 
+
     public static function findByCondition($whereArr,$limit){
         $res =  AdminUserFinanceData::create()
             ->where($whereArr)

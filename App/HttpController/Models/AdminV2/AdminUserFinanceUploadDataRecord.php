@@ -17,7 +17,9 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
     protected $updateTime = 'updated_at'; 
     
     static $stateInit = 0;
-    static $stateParsed = 5;
+    static $stateInitCname = '初始化';
+    static $stateHasCalculatePrice = 5;
+    static $stateHasCalculatePriceCname = '已计算价格';
     static $stateExported = 10;
 
     public static function addUploadRecord($requestData){ 
@@ -50,6 +52,18 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
             'record_id' => $record_id,  
             'user_finance_data_id' => $user_finance_data_id,  
         ])->get(); 
+
+        return $res;
+    }
+
+    public static function findByUserIdAndRecordId(
+        $user_id,$record_id,$status
+    ){ 
+        $res =  AdminUserFinanceUploadRecord::create()->where([
+            'user_id' => $user_id,  
+            'record_id' => $record_id,   
+            'status' => $status,   
+        ])->all(); 
 
         return $res;
     }

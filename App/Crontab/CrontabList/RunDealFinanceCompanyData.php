@@ -172,7 +172,23 @@ class RunDealFinanceCompanyData extends AbstractCronTask
             ],
             5
         );
+        //如果没有的话 需要check 是否已经全部完成 完成的话 继续往下走
+        foreach($initDatas as $dataItem){ 
 
+            $dataItem['user_id'];
+            $dataItem['finance_config'];
+            // 如果没有的话 需要check是否需要进阶到下一个阶段
+            $allUploadDataRecords =  AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
+                $dataItem['user_id'],
+                $dataItem['id'],
+                AdminUserFinanceUploadDataRecord::$stateInit
+            );
+            foreach($allUploadDataRecords as $UploadDataRecord){
+                
+                $UploadDataRecord['user_finance_data_id']; 
+                AdminUserFinanceData::
+            }
+        }
         return true ;   
     }
 

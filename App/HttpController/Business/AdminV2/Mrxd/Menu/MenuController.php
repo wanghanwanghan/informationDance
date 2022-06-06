@@ -53,11 +53,22 @@ class MenuController extends ControllerBase
         );
     }
 
+     
+
     /**
      *  增加菜单
      */
     public function addMenu(){
-        $requestData = $this->getRequestData(); 
+        // $requestData = $this->getRequestData(); 
+        $requestData = [
+            'id' => $this->request()->getRequestParam('id') ?? '',
+            'name' => $this->request()->getRequestParam('name') ?? '',
+            'method' => $this->request()->getRequestParam('method') ?? '',
+            'class' => $this->request()->getRequestParam('class') ?? '',
+            'remark' => $this->request()->getRequestParam('remark') ?? '',
+            'parent_id' => $this->request()->getRequestParam('parent_id') ?? '',
+        ]; 
+        
         if (
             !$requestData['name'] ||
             !$requestData['method'] ||
@@ -65,6 +76,7 @@ class MenuController extends ControllerBase
         ) {
             return $this->writeJson(201);
         } 
+        
         AdminMenuItems::create()->data([
             'name' => $requestData['name'], 
             'method' => $requestData['method'], 
