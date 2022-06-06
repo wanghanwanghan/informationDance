@@ -87,7 +87,7 @@ class RoleController extends ControllerBase
 
     public function updateRolePermissions(){  
         $requestData = $this->getRequestData(); 
-        $menuIdsArr = $requestData['menu_ids'];
+        $menuIdsStr = $requestData['menu_ids'];
         $menuIdsArr = explode(',',$menuIdsStr);
         // $menuIdsArr = $requestData['menu_ids'];
         $roleId = $requestData['roleId'];
