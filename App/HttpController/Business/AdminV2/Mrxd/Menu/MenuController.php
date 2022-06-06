@@ -28,6 +28,14 @@ class MenuController extends ControllerBase
         );
     }
 
+    public function getRawMenus(){ 
+        return $this->writeJson(
+            200,
+            [],
+           AdminMenuItems::create()->where("status = 1")->all()
+        );
+    }
+
     public function getAllMenu(){  
         return $this->writeJson(
             200,

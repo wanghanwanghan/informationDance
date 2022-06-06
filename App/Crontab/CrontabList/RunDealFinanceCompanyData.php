@@ -158,27 +158,34 @@ class RunDealFinanceCompanyData extends AbstractCronTask
      function saveAndReturnAdminUserFinanceDataId(){
          
      }
+ 
 
-     function uploadRecordeHasAllCalCulated($user_id,$id){
+    function uploadRecordeHasFinished(
+        $user_id,
+        $id,
+        $state1 = AdminUserFinanceUploadDataRecord::$stateInit,
+        $state2= AdminUserFinanceUploadDataRecord::$stateHasCalculatePrice
+    ){
         $initRecords =  AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
             $user_id,
             $id,
-            AdminUserFinanceUploadDataRecord::$stateInit
+            $state1
         );
-
+    
         $calculateRecords =  AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
             $user_id,
             $id,
-            AdminUserFinanceUploadDataRecord::$stateInit
+            $state2
         );
-
-         if(
-             empty($initRecords)&&
-             $calculateRecords
-         ){
+    
+        if(
+            empty($initRecords)&&
+            $calculateRecords
+        ){
             return true;
-         }
-     }
+        }
+        return false;
+    }
 
     function run(int $taskId, int $workerIndex): bool
     {   
@@ -192,8 +199,17 @@ class RunDealFinanceCompanyData extends AbstractCronTask
             [
                 'status' => AdminUserFinanceUploadRecord::$stateCalCulatedPrice
             ],
-            $limit
+            3
         );
+        
+        // if(
+        //     $this->uploadRecordeHasFinished(
+
+        //     )
+        // ){
+
+        // }
+        $initDatas;
 
         return true ;   
     }
@@ -212,7 +228,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
         foreach($initDatas as $dataItem){ 
             // 如果全计算完了 变更下状态
             if(
-                $this->uploadRecordeHasAllCalCulated(
+                $this->uploadRecordeHasFinished(
                     $dataItem['user_id'],
                     $dataItem['id'] 
                 )
