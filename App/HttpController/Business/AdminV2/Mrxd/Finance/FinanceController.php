@@ -120,11 +120,13 @@ class FinanceController extends ControllerBase
         return $this->writeJson(200, null, null, '修改成功');
     }
 
+    // 上传客户名单
     public function uploadeCompanyLists(){
         $years = $this->getRequestData('years');
         if($years <= 0){
             return $this->writeJson(206, [] ,   [], '缺少必要参数', true, []); 
         } 
+
         $requestData =  $this->getRequestData();
         $files = $this->request()->getUploadedFiles();
         $path = $fileName = '';
@@ -157,9 +159,7 @@ class FinanceController extends ControllerBase
                     ); 
                     continue;
                 }
-                
-                //todo 不允许重名
-                //todo 不同文件 相同企业的处理 
+
                 if(
                     AdminUserFinanceUploadRecord::findByIdAndFileName(
                         $this->loginUserinfo['id'],   
@@ -167,15 +167,19 @@ class FinanceController extends ControllerBase
                     )
                 ){
                     continue;
-                }
+                } 
                 
                 AdminUserFinanceUploadRecord::addUploadRecord(
                      [
                         'user_id' => $this->loginUserinfo['id'], 
                         'file_path' => $requestData['file_path'],  
+                        'years' => $requestData['years'],  
                         'file_name' => $requestData['file_name'],  
                         'title' => $requestData['title'],    
                         'reamrk' => $requestData['reamrk'],  
+                        'finance_config' => AdminUserFinanceConfig::getConfigByUserId(
+                            $this->loginUserinfo['id']
+                        ),  
                         'status' => 1,  
                      ]
                  );
