@@ -67,8 +67,8 @@ class AdminPrivilegedUser extends ServiceBase
         $privUser = self::getByUserId($userId); 
         
         //所有父级菜单
-        $allParentMenus = AdminMenuItems::getMenusByParentId(0);  
-
+        $allParentMenus = AdminMenuItems::getMenusByParentId(0);
+        return array_values($allParentMenus) ;
         // 只取有权限的菜单
         $allowedMenus = [];  
         foreach($allParentMenus as $ParentMenu){ 
