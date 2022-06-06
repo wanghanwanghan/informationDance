@@ -186,7 +186,15 @@ class RunDealFinanceCompanyData extends AbstractCronTask
         $this->parseDataToDb(1);
         //计算价格
         $this->calculatePrice(5);
-            
+        
+        //计算完单价 设置下缓存期
+        $initDatas = AdminUserFinanceUploadRecord::findByCondition(
+            [
+                'status' => AdminUserFinanceUploadRecord::$stateCalCulatedPrice
+            ],
+            $limit
+        );
+
         return true ;   
     }
 
