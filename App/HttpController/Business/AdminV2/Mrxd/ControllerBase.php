@@ -124,12 +124,27 @@ class ControllerBase extends Index
 
         $raw = jsonDecode($string);
         $form = $this->request()->getRequestParam();
-
+        CommonService::getInstance()->log4PHP(
+            [
+                'getRequestData',
+                'string' => $string,
+                'raw' => $raw,
+                'form' => $form,
+            ]
+        );
         !empty($raw) ?: $raw = [];
         !empty($form) ?: $form = [];
 
         $requestData = array_merge($raw, $form);
-
+        CommonService::getInstance()->log4PHP(
+            [
+                'getRequestData',
+                'string' => $string,
+                'raw' => $raw,
+                'form' => $form,
+                'requestData' => $requestData,
+            ]
+        );
         return (isset($requestData[$key])) ? $requestData[$key] : $default;
     }
     

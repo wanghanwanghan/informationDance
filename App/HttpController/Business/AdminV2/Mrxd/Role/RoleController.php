@@ -69,6 +69,21 @@ class RoleController extends ControllerBase
         return $this->writeJson();
     }
 
+    /**
+     *  修改菜单
+     */
+    public function updatePermission(){
+        $requestData = $this->getRequestData(); 
+        $info = AdminRoles::create()->where('role_id',$requestData['role_id'])->get(); 
+        $info->update([
+            'role_id' => $requestData['role_id'],
+            'role_name' => $requestData['role_name'] ? $requestData['name']: $info['role_name'],
+            'remark' => $requestData['remark'] ? $requestData['remark']: $info['remark'],
+        ]);
+        return $this->writeJson();
+    }
+
+
     public function queryPower(){
         return AdminNewMenu::create()->all();
     }

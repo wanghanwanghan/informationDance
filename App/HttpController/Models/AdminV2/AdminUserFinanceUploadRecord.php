@@ -20,6 +20,8 @@ class AdminUserFinanceUploadRecord extends ModelBase
     static $stateInitCname =  '初始';
     static $stateParsed = 5;
     static $stateParsedCname =  '已经解析入库';
+    static $stateCalCulatedPrice = 10;
+    static $stateCalCulatedPriceCname = '已经计算价格';
     static $stateExported = 10;
 
     public static function addUploadRecord($requestData){ 
@@ -31,6 +33,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 'file_name' => $requestData['file_name'],  
                 'title' => $requestData['title'],  
                 'finance_config' => $requestData['finance_config'],  
+                'readable_price_config' => $requestData['readable_price_config'],  
                 'reamrk' => $requestData['reamrk'],  
                 'status' => $requestData['status'],  
             ])->save();

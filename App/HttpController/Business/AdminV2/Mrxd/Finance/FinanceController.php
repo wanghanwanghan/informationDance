@@ -180,6 +180,7 @@ class FinanceController extends ControllerBase
                         'finance_config' => AdminUserFinanceConfig::getConfigByUserId(
                             $this->loginUserinfo['id']
                         ),  
+                        // 'readable_price_config' => '',
                         'status' => 1,  
                      ]
                  );

@@ -159,34 +159,83 @@ class RunDealFinanceCompanyData extends AbstractCronTask
          
      }
 
+     function uploadRecordeHasAllCalCulated($user_id,$id){
+        $initRecords =  AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
+            $user_id,
+            $id,
+            AdminUserFinanceUploadDataRecord::$stateInit
+        );
+
+        $calculateRecords =  AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
+            $user_id,
+            $id,
+            AdminUserFinanceUploadDataRecord::$stateInit
+        );
+
+         if(
+             empty($initRecords)&&
+             $calculateRecords
+         ){
+            return true;
+         }
+     }
+
     function run(int $taskId, int $workerIndex): bool
     {   
         // 将客户名单解析到db
         $this->parseDataToDb(1);
+        //计算价格
+        $this->calculatePrice(5);
+            
+        return true ;   
+    }
 
+    function calculatePrice($limit)
+    {    
         //计算单价
         //解析完，尚未计算单价的
         $initDatas = AdminUserFinanceUploadRecord::findByCondition(
             [
                 'status' => AdminUserFinanceUploadRecord::$stateParsed
             ],
-            5
+            $limit
         );
-        //如果没有的话 需要check 是否已经全部完成 完成的话 继续往下走
+       
         foreach($initDatas as $dataItem){ 
-
-            $dataItem['user_id'];
-            $dataItem['finance_config'];
-            // 如果没有的话 需要check是否需要进阶到下一个阶段
+            // 如果全计算完了 变更下状态
+            if(
+                $this->uploadRecordeHasAllCalCulated(
+                    $dataItem['user_id'],
+                    $dataItem['id'] 
+                )
+            ){
+                AdminUserFinanceUploadRecord::changeStatus(
+                    $dataItem['id'],
+                    AdminUserFinanceUploadRecord::$stateCalCulatedPrice
+                );
+            } 
+            
+            // 找到还没计算价格的
             $allUploadDataRecords =  AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
                 $dataItem['user_id'],
                 $dataItem['id'],
                 AdminUserFinanceUploadDataRecord::$stateInit
             );
-            foreach($allUploadDataRecords as $UploadDataRecord){
-                
-                $UploadDataRecord['user_finance_data_id']; 
-                AdminUserFinanceData::
+            if(empty($allUploadDataRecords)){
+                continue;
+            }
+ 
+            foreach($allUploadDataRecords as $UploadDataRecord){ 
+                // 计算单价
+                AdminUserFinanceData::calculatePrice(
+                    $UploadDataRecord['user_finance_data_id'],
+                    $dataItem['finance_config']
+                );
+                // 计算完价格 变更下状态
+                AdminUserFinanceUploadDataRecord::updateStatusById(
+                    $UploadDataRecord['id'],
+                    AdminUserFinanceUploadDataRecord::$stateHasCalculatePrice
+                );
             }
         }
         return true ;   

@@ -15,11 +15,12 @@ class AdminUserFinanceConfig extends ModelBase
     protected $createTime = 'created_at';
     protected $updateTime = 'updated_at'; 
  
-     static function getConfigByUserId($userId){
+    static function getConfigByUserId($userId){
         $res =  AdminUserFinanceConfig::create()->where([
             'user_id' => $userId,     
             'status' => 1,  
         ])->all();  
         return $res[0] ? json_encode( $res[0]) : '';
-     }
+    }
+      
 }
