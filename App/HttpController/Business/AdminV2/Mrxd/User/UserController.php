@@ -28,6 +28,14 @@ class UserController extends ControllerBase
         return $this->writeJson();
     }
 
+    public function getAllUser(){ 
+        return $this->writeJson(
+            200,
+            [],
+           \App\HttpController\Models\AdminNew\AdminNewUser::create()->where("status = 1")->all()
+        );
+    }
+
     /**
      * 用户登录
 {

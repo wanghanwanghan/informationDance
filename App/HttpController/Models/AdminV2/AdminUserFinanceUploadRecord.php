@@ -21,12 +21,13 @@ class AdminUserFinanceUploadRecord extends ModelBase
     static $stateParsed = 5;
     static $stateParsedCname =  '已经解析入库';
     static $stateCalCulatedPrice = 10;
-    static $stateCalCulatedPriceCname = '已经计算价格';
-    static $stateHasSetCacheDate = 15;
-    static $stateHasSetCacheDateCname = '已设置缓存期';
+    static $stateCalCulatedPriceCname = '已经计算价格'; 
 
-    static $stateHasGetData = 15;
+    static $stateHasGetData = 20;
     static $stateHasGetDataCname = '已取完数据';
+
+    static $stateHasSetCacheDate = 25;
+    static $stateHasSetCacheDateCname = '已设置缓存期';
 
 
     public static function addUploadRecord($requestData){ 

@@ -194,21 +194,50 @@ class RunDealFinanceCompanyData extends AbstractCronTask
         //计算价格
         $this->calculatePrice(5);
         
-        //计算完单价 设置下缓存期
+        //取财务数据 
         $initDatas = AdminUserFinanceUploadRecord::findByCondition(
             [
                 'status' => AdminUserFinanceUploadRecord::$stateCalCulatedPrice
             ],
             3
-        );
+        );  
+        foreach($initDatas as $dataItem){ 
+            // 如果处理完了 设置下状态
+            if(
+                $this->uploadRecordeHasFinished(
+                    $dataItem['user_id'],
+                    $dataItem['id'] ,
+                    AdminUserFinanceUploadRecord::$stateCalCulatedPrice,
+                    AdminUserFinanceUploadRecord::$stateHasGetData
+                )
+            ){
+                AdminUserFinanceUploadRecord::changeStatus(
+                    $dataItem['id'],
+                    AdminUserFinanceUploadRecord::$stateHasGetData
+                );
+            }
+
+            // 找到还没设置缓存期的
+            $allUploadDataRecords =  AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
+                $dataItem['user_id'],
+                $dataItem['id'],
+                AdminUserFinanceUploadRecord::$stateCalCulatedPrice
+            );
+            if(empty($allUploadDataRecords)){
+                continue;
+            }
+
+            foreach($allUploadDataRecords as $UploadDataRecord){ 
+                // 设置缓存期
+                AdminUserFinanceData::calculatePrice(
+                    $UploadDataRecord['user_finance_data_id'],
+                    $dataItem['finance_config']
+                ); 
+            }
+        }
+        //导出完 设置下缓存期
         
-        // if(
-        //     $this->uploadRecordeHasFinished(
-
-        //     )
-        // ){
-
-        // }
+        
         $initDatas;
 
         return true ;   
