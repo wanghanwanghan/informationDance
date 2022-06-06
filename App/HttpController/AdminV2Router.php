@@ -85,6 +85,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/addRole', $prefix . 'addRole');
             $routeCollector->addRoute(['GET', 'POST'], '/updateRole', $prefix . 'updateRole');
             $routeCollector->addRoute(['GET', 'POST'], '/updateRolePermissions', $prefix . 'updateRolePermissions');
+            $routeCollector->addRoute(['GET', 'POST'], '/updateUserRoles', $prefix . 'updateUserRoles');
             $routeCollector->addRoute(['GET', 'POST'], '/updateRoleStatus', $prefix . 'updateRoleStatus');
             $routeCollector->addRoute(['GET', 'POST'], '/getAllowedMenus', $prefix . 'getAllowedMenu');
             // $routeCollector->addRoute(['GET', 'POST'], '/getAllMenu', $prefix . 'getAllMenu'); 

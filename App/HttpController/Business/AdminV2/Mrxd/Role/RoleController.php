@@ -109,7 +109,7 @@ class RoleController extends ControllerBase
         return $this->writeJson(200, null, null, '修改成功');
     }
 
-    public function updateuserRoles(){  
+    public function updateUserRoles(){  
         $requestData = $this->getRequestData(); 
         // $menuIdsArr = $requestData['menu_ids'];
         // $menuIdsArr = explode(',',$menuIdsStr);
