@@ -96,7 +96,11 @@ class MenuController extends ControllerBase
         $requestData = $this->getRequestData(); 
         $info = AdminMenuItems::create()->where('id',$requestData['id'])->get(); 
         if(!$info){
-            return $this->writeJson(204);
+            return $this->writeJson(
+                201,
+                [],
+                '参数错误（'.$requestData['id'].'）'
+            );
         }
         $info->update([
             'id' => $requestData['id'],
