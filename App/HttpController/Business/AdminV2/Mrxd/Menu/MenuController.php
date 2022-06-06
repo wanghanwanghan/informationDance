@@ -34,6 +34,24 @@ class MenuController extends ControllerBase
             AdminPrivilegedUser::getMenus(false,$this->loginUserinfo['id'])
         );
     }
+    public function getMenuById(){  
+        $id = $this->request()->getRequestParam('id') ?? '';
+        $requestData = $this->getRequestData(); 
+        if($id <= 0){
+            return $this->writeJson(
+                201,
+                [],
+                '参数错误（'.$id.'）'
+            );
+        }
+        $info = AdminMenuItems::create()->where('id',$id)->all(); 
+         
+        return $this->writeJson(
+            200,
+            [],
+            $info[0]?$info[0]:[]
+        );
+    }
 
     /**
      *  增加菜单
@@ -81,8 +99,7 @@ class MenuController extends ControllerBase
     /*
      * 菜单冻结
      */
-    public function updateMenuStatus(){
-       
+    public function updateMenuStatus(){ 
         $id = $this->getRequestData('id');
         $status = $this->getRequestData('status');
         if (empty($phone)) return $this->writeJson(201, null, null, '参数 不能是空');

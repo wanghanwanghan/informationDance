@@ -3,6 +3,8 @@
 namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
+use App\HttpController\Models\AdminV2\AdminUserFinanceData;
+use App\HttpController\Models\AdminV2\AdminUserFinanceUploadDataRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadeRecord;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
@@ -13,6 +15,7 @@ use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\XinDong\XinDongService;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
 
 
 class RunDealFinanceCompanyData extends AbstractCronTask
@@ -156,20 +159,59 @@ class RunDealFinanceCompanyData extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
-        
-        $initDatas = AdminUserFinanceUploadeRecord::findByCondition(
+        // 初始化待处理的数据    
+        $initDatas = AdminUserFinanceUploadRecord::findByCondition(
             [
-                'status' => AdminUserFinanceUploadeRecord::stateInit
+                'status' => AdminUserFinanceUploadRecord::$stateInit
             ],
             1
         );
         foreach($initDatas as $uploadFinanceData){
+            /*
+                id
+                years
+                user_id
+                file_path
+                file_name
+                title
+                finance_config
+                reamrk
+                status
+                created_at
+                updated_at
+            */
             $dirPat =  dirname($uploadFinanceData['file_path']).DIRECTORY_SEPARATOR; 
             $this->setworkPath( $dirPat );
             $excelDatas = $this->getYieldData($uploadFinanceData['file_path']); 
             foreach ($excelDatas as $dataItem) {
                //添加到具体表
-                $dataItem;
+                $dataItem[0];
+                /*
+                    id
+                    user_id
+                    entName
+                    year
+                    finance_data_id
+                    price
+                    price_type
+                    cache_end_date
+                    reamrk
+                    status
+                    created_at
+                    updated_at
+                */
+                AdminUserFinanceData::addRecord();
+                /*
+                    id
+                    user_id
+                    record_id
+                    user_finance_data_id
+                    reamrk
+                    status
+                    created_at
+                    updated_at
+                */
+                // AdminUserFinanceUploadDataRecord::
             }
             //更新该状态
 
