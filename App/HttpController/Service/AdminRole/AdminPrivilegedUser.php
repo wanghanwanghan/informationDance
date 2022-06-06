@@ -43,7 +43,8 @@ class AdminPrivilegedUser extends ServiceBase
                 WHERE user_role.user_id = ".$this->user_id;
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         foreach($list as $dataItem){
-            $this->roles[$dataItem["role_name"]] = AdminRole::getRolePerms($dataItem["role_id"]);              
+            $this->roles[$dataItem["role_name"]] = 
+            AdminRole::getRolePerms($dataItem["role_id"]);              
 
         }
         CommonService::getInstance()->log4PHP('roles '.json_encode($this->roles));
@@ -75,7 +76,9 @@ class AdminPrivilegedUser extends ServiceBase
              // 父级菜单没权限
              if(
                  $VerifyPermissions &&
-                !$privUser->hasPrivilege($ParentMenu['class'].'/'.$ParentMenu['method'])
+                !$privUser->hasPrivilege(
+                    $ParentMenu['id']
+                )
             ){
                 continue;
             }
@@ -89,7 +92,7 @@ class AdminPrivilegedUser extends ServiceBase
                 // 子菜单没权限
                 if(
                     $VerifyPermissions &&
-                    !$privUser->hasPrivilege($ChildMenu['class'].'/'.$ChildMenu['method'])
+                    !$privUser->hasPrivilege($ChildMenu['id'])
                 ){
                     continue;
                 }

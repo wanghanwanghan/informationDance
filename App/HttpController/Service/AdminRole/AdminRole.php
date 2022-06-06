@@ -23,14 +23,13 @@ class AdminRole extends ServiceBase
     public static function getRolePerms($role_id) {
         $role = new AdminRole();
         $sql = "SELECT 
-                    perm.perm_desc 
-                FROM admin_role_perm as role_perm
-                JOIN admin_permissions as perm ON role_perm.perm_id = perm.perm_id
+                    role_perm.menu_id 
+                FROM admin_role_perm as role_perm 
                 WHERE role_perm.role_id = $role_id
         "; 
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         foreach($list as $dataItem){
-            $role->permissions[$dataItem["perm_desc"]] = true;
+            $role->permissions[$dataItem["menu_id"]] = true;
         } 
         return $role;
     }
