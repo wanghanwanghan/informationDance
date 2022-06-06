@@ -34,9 +34,18 @@ class RoleController extends ControllerBase
         $requestData = $this->getRequestData(); 
         $roleId = $requestData['role_id'];
         $res = AdminRolePerm::findByRole($roleId);
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'getRolesPermission',
+                    'getRolesPermission',
+                ]
+            )
+        );
+
         foreach($res as &$permissonItem){
             $roleRes = AdminRoles::create()
-                        ->where("id = ".$permissonItem['role_id'])->all();
+                        ->where("role_id = ".$permissonItem['role_id'])->all();
             $menuRes = AdminMenuItems::create()
                         ->where("id = ".$permissonItem['menu_id'])->all();
             $permissonItem['roleRes'] = $roleRes;  
