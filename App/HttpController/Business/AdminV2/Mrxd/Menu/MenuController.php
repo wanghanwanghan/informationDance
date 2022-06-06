@@ -57,7 +57,8 @@ class MenuController extends ControllerBase
      *  增加菜单
      */
     public function addMenu(){
-        $requestData = $this->getRequestData(); 
+        $requestData = $this->getRequestData();
+        dingAlarm('addMenu',['$requestData'=>json_encode($requestData)]);
         if (
             !$requestData['name'] ||
             !$requestData['method'] ||
