@@ -17,6 +17,7 @@ class AdminV2Router
         $this->UserRouterV1($routeCollector);
         $this->MenuRouterV1($routeCollector);
         $this->RoleRouterV1($routeCollector);
+        $this->PermissionsRouterV1($routeCollector);
         $this->FinanceRouterV1($routeCollector);
     }
 
