@@ -5,6 +5,7 @@ namespace App\HttpController\Business\AdminV2\Mrxd\Role;
 use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;
 use App\HttpController\Models\AdminV2\AdminMenuItems;
 use App\HttpController\Models\AdminV2\AdminNewMenu;
+use App\HttpController\Models\AdminV2\AdminRolePerm;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Service\AdminRole\AdminPrivilegedUser;
 use App\HttpController\Models\AdminV2\AdminRoles;
@@ -83,6 +84,29 @@ class RoleController extends ControllerBase
         return $this->writeJson();
     }
 
+    public function updateRolePermissions(){  
+        $requestData = $this->getRequestData(); 
+        // $menuIdsArr = $requestData['menu_ids'];
+        // $menuIdsArr = explode(',',$menuIdsStr);
+        $menuIdsArr = $requestData['menu_ids'];
+        $roleId = $requestData['roleId'];
+        foreach($menuIdsArr as $menuId){
+            if(
+                AdminRolePerm::findByMenuIdAndRole(
+                    $roleId,
+                    $menuId 
+                )
+            ){
+                continue;
+            };
+
+            AdminRolePerm::addRecord(
+                $roleId,
+                $menuId 
+            );
+        }
+        return $this->writeJson(200, null, null, '修改成功');
+    }
 
     public function queryPower(){
         return AdminNewMenu::create()->all();

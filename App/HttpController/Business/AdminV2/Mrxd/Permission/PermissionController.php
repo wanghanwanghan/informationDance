@@ -20,7 +20,7 @@ class PermissionController extends ControllerBase
     {
         parent::afterAction($actionName);
     }
-    public function getAllPermissions(){  
+    public function updateRolePermissions(){  
         
         return $this->writeJson(
             200,
