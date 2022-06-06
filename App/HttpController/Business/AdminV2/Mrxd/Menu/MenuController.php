@@ -35,15 +35,16 @@ class MenuController extends ControllerBase
         );
     }
     public function getMenuById(){  
+        $id = $this->request()->getRequestParam('id') ?? '';
         $requestData = $this->getRequestData(); 
-        if($requestData['id'] <= 0){
+        if($id <= 0){
             return $this->writeJson(
                 201,
                 [],
-                '参数错误（'.$requestData['id'].'）'
+                '参数错误（'.$id.'）'
             );
         }
-        $info = AdminMenuItems::create()->where('id',$requestData['id'])->all(); 
+        $info = AdminMenuItems::create()->where('id',$id)->all(); 
          
         return $this->writeJson(
             200,
