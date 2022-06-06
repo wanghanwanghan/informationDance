@@ -34,7 +34,7 @@ class AdminRolePerm extends ModelBase
                 'role_id' => $role_id,  
                 // 'menu_id' => $menu_id,   
             ])
-            ->get();  
+            ->all();  
         return $res;
     }
 
