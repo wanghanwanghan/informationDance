@@ -130,9 +130,9 @@ class MenuController extends ControllerBase
      */
     public function updateMenuStatus(){ 
         $id = $this->getRequestData('id');
-        $status = $this->getRequestData('status');
+        $status = intval($this->getRequestData('status'));
         if (empty($id)) return $this->writeJson(201, null, null, '参数 不能是空');
-        if (empty($status)) return $this->writeJson(201, null, null, 'status 不能是空');
+        // if (empty($status)) return $this->writeJson(201, null, null, 'status 不能是空');
         $info = AdminMenuItems::create()->where("id = '{$id}' ")->get();
         if (empty($info)) return $this->writeJson(201, null, null, '用户不存在');
         $info->update([
