@@ -40,7 +40,7 @@ class MenuController extends ControllerBase
             return $this->writeJson(
                 201,
                 [],
-                '参数错误'
+                '参数错误（'.$requestData['id'].'）'
             );
         }
         $info = AdminMenuItems::create()->where('id',$requestData['id'])->all(); 
