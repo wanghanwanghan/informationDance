@@ -7,6 +7,7 @@ use App\HttpController\Models\AdminV2\AdminMenuItems;
 use App\HttpController\Models\AdminV2\AdminNewMenu;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Service\AdminRole\AdminPrivilegedUser;
+use App\HttpController\Service\Common\CommonService;
 
 class MenuController extends ControllerBase
 {
@@ -93,7 +94,14 @@ class MenuController extends ControllerBase
      *  修改菜单
      */
     public function updateMenu(){
-        $requestData = $this->getRequestData(); 
+        $requestData = $this->getRequestData();
+        CommonService::getInstance()->log4PHP(
+            [
+                 
+                'requestData' => $requestData,
+                $requestData['id']
+            ]
+        ); 
         $info = AdminMenuItems::create()->where('id',$requestData['id'])->get(); 
         if(!$info){
             return $this->writeJson(
