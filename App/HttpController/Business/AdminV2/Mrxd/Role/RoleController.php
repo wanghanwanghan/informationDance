@@ -30,6 +30,25 @@ class RoleController extends ControllerBase
         );
     }
 
+    public function getRolesPermission(){ 
+        $requestData = $this->getRequestData(); 
+        $roleId = $requestData['role_id'];
+        $res = AdminRolePerm::findByRole($roleId);
+        foreach($res as &$permissonItem){
+            $roleRes = AdminRoles::create()
+                        ->where("id = ".$permissonItem['role_id'])->all();
+            $menuRes = AdminMenuItems::create()
+                        ->where("id = ".$permissonItem['menu_id'])->all();
+            $permissonItem['roleRes'] = $roleRes;  
+            $permissonItem['menuRes'] = $menuRes;  
+        }
+        return $this->writeJson(
+            200,
+            [],
+           $res
+        );
+    }
+
     public function getAllMenu(){  
         return $this->writeJson(
             200,

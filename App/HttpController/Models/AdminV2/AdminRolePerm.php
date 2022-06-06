@@ -26,6 +26,18 @@ class AdminRolePerm extends ModelBase
         return $res;
     }
 
+    public static function findByRole(
+        $role_id
+    ){
+        $res =  AdminRolePerm::create()
+            ->where([
+                'role_id' => $role_id,  
+                // 'menu_id' => $menu_id,   
+            ])
+            ->get();  
+        return $res;
+    }
+
     public static function addRecord(
         $role_id,$menu_id
     ){ 
