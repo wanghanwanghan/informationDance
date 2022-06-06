@@ -201,7 +201,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
             ],
             3
         );  
-        foreach($initDatas as $dataItem){ 
+        foreach($initDatas as $dataItem){
             // 如果处理完了 设置下状态
             if(
                 $this->uploadRecordeHasFinished(

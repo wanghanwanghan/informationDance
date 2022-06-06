@@ -29,11 +29,21 @@ class MenuController extends ControllerBase
     }
 
     public function getRawMenus(){ 
+        $res = AdminMenuItems::create()->where("status = 1")->all();
+        foreach($res as &$menuItem)
+        {
+            if($menuItem['pid'] <= 0){
+                continue;
+            };
+            $tmpMenu = AdminMenuItems::create()
+                ->where("id = ".$menuItem['pid'])->all();
+            $menuItem['pidRes'] = $tmpMenu[0];
+        }        
         return $this->writeJson(
-            200,
-            [],
-           AdminMenuItems::create()->where("status = 1")->all()
-        );
+                200,
+                [],
+            AdminMenuItems::create()->where("status = 1")->all()
+            );
     }
 
     public function getAllMenu(){  
