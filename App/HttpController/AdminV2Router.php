@@ -90,6 +90,21 @@ class AdminV2Router
 
         return true;
     }
+
+    private function PermissionsRouterV1(RouteCollector $routeCollector): bool
+    {
+        $prefix = '/Business/AdminV2/Mrxd/Permission/PermissionController/';
+        $routeCollector->addGroup('/role', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getAllPermissions', $prefix . 'getAllPermissions');
+            $routeCollector->addRoute(['GET', 'POST'], '/addRole', $prefix . 'addRole');
+            $routeCollector->addRoute(['GET', 'POST'], '/updateRole', $prefix . 'updateRole');
+            $routeCollector->addRoute(['GET', 'POST'], '/updateRoleStatus', $prefix . 'updateRoleStatus');
+            $routeCollector->addRoute(['GET', 'POST'], '/getAllowedMenus', $prefix . 'getAllowedMenu');
+            // $routeCollector->addRoute(['GET', 'POST'], '/getAllMenu', $prefix . 'getAllMenu'); 
+        });
+
+        return true;
+    }
     private function GroceryStore(RouteCollector $routeCollector): bool
     {
         $prefix = '/Business/Admin/GroceryStore/GroceryStoreController/';
