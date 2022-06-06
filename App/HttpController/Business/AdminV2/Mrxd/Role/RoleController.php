@@ -9,6 +9,7 @@ use App\HttpController\Models\AdminV2\AdminRolePerm;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Service\AdminRole\AdminPrivilegedUser;
 use App\HttpController\Models\AdminV2\AdminRoles;
+use App\HttpController\Models\AdminV2\AdminUserRole;
 
 class RoleController extends ControllerBase
 {
@@ -86,9 +87,9 @@ class RoleController extends ControllerBase
 
     public function updateRolePermissions(){  
         $requestData = $this->getRequestData(); 
-        // $menuIdsArr = $requestData['menu_ids'];
-        // $menuIdsArr = explode(',',$menuIdsStr);
         $menuIdsArr = $requestData['menu_ids'];
+        $menuIdsArr = explode(',',$menuIdsStr);
+        // $menuIdsArr = $requestData['menu_ids'];
         $roleId = $requestData['roleId'];
         foreach($menuIdsArr as $menuId){
             if(
@@ -103,6 +104,30 @@ class RoleController extends ControllerBase
             AdminRolePerm::addRecord(
                 $roleId,
                 $menuId 
+            );
+        }
+        return $this->writeJson(200, null, null, '修改成功');
+    }
+
+    public function updateuserRoles(){  
+        $requestData = $this->getRequestData(); 
+        // $menuIdsArr = $requestData['menu_ids'];
+        // $menuIdsArr = explode(',',$menuIdsStr);
+        $role_ids = $requestData['role_ids'];
+        $user_id = $requestData['user_id'];
+        foreach($role_ids as $role_id){
+            if(
+                AdminUserRole::findByUserIdAndRole(
+                    $role_id,
+                    $user_id 
+                )
+            ){
+                continue;
+            };
+
+            AdminRolePerm::addRecord(
+                $role_id,
+                $user_id 
             );
         }
         return $this->writeJson(200, null, null, '修改成功');

@@ -36,4 +36,37 @@ class AdminUserRole extends ModelBase
         return $newData;
     }
 
+    public static function findByUserIdAndRole(
+        $role_id,$user_id
+    ){
+        $res =  AdminUserRole::create()
+            ->where([
+                'role_id' => $role_id,  
+                'user_id' => $user_id,   
+            ])
+            ->get();  
+        return $res;
+    }
+
+    public static function addRecord(
+        $role_id,$user_id
+    ){ 
+        try {
+           $res =  AdminUserRole::create()->data([
+            'role_id' => $role_id,  
+            'user_id' => $user_id,    
+            ])->save();
+
+        } catch (\Throwable $e) {
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'addCarInsuranceInfo Throwable continue',
+                    $e->getMessage(),
+                ])
+            );  
+        }  
+
+        return $res;
+    } 
+
 }
