@@ -49,8 +49,8 @@ class RoleController extends ControllerBase
                         ->where("role_id = ".$permissonItem['role_id'])->all();
             $menuRes = AdminMenuItems::create()
                         ->where("id = ".$permissonItem['menu_id'])->all();
-            $permissonItem['roleRes'] = $roleRes;  
-            $permissonItem['menuRes'] = $menuRes;  
+            $permissonItem['roleRes'] = $roleRes[0];  
+            $permissonItem['menuRes'] = $menuRes[0];  
         }
         return $this->writeJson(
             200,
