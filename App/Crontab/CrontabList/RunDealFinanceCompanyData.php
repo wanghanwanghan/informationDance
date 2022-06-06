@@ -217,7 +217,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                 );
             }
 
-            // 找到还没设置缓存期的
+            // 找到需要拉取财务数据的
             $allUploadDataRecords =  AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
                 $dataItem['user_id'],
                 $dataItem['id'],
@@ -228,7 +228,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
             }
 
             foreach($allUploadDataRecords as $UploadDataRecord){ 
-                // 设置缓存期
+                // 拉取财务数据
                 AdminUserFinanceData::calculatePrice(
                     $UploadDataRecord['user_finance_data_id'],
                     $dataItem['finance_config']

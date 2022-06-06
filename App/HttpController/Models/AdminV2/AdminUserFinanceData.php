@@ -5,6 +5,7 @@ namespace App\HttpController\Models\AdminV2;
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\LongXin\LongXinService;
 use self;
 
 // use App\HttpController\Models\AdminRole;
@@ -90,7 +91,30 @@ class AdminUserFinanceData extends ModelBase
         } 
 
         return true; 
-    } 
+    }
+    
+    //我们拉取运营商的时间间隔  
+    //客户导出的时间间隔  
+    public static function pullFinanceData($id,$financeConifgArr){  
+
+        $res =  AdminUserFinanceData::create()
+            ->where('id',$id) 
+            ->get();  
+ 
+        $postData = [
+            'entName' => $res->getAttr('entName'),
+            'code' => '',
+            'beginYear' => $res->getAttr('year'),
+            'dataCount' => 1,//取最近几年的
+        ];
+
+        $res = (new LongXinService())->getFinanceData($postData, false);
+        
+        // 更新拉取时间 
+        // 保存到db
+
+        return true; 
+    }
 
     public static function getChagrgeDetailsAnnually(
         $year,$financeConifgArr,$user_id,$entName
