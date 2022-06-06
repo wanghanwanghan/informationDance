@@ -42,7 +42,7 @@ class MenuController extends ControllerBase
         return $this->writeJson(
                 200,
                 [],
-            AdminMenuItems::create()->where("status = 1")->all()
+                $res
             );
     }
 
