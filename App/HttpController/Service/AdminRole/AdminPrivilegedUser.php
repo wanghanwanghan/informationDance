@@ -96,8 +96,7 @@ class AdminPrivilegedUser extends ServiceBase
 
                 // $allowedMenus[$ParentMenu['id']]['child_menus'][$ChildMenu['id']] = $ChildMenu;
                 $allowedMenus[$ParentMenu['id']]['child_menus'][] = $ChildMenu;
-                $arr[] = $ChildMenu;
-            } 
+            }
         }
         return array_values($allowedMenus) ;
     }    
