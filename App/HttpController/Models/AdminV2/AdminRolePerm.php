@@ -39,12 +39,12 @@ class AdminRolePerm extends ModelBase
     }
 
     public static function addRecord(
-        $role_id,$menu_id
+        $role_id,$user_id
     ){ 
         try {
            $res =  AdminRolePerm::create()->data([
                 'role_id' => $role_id,  
-                'menu_id' => $menu_id,   
+                'user_id ' => $user_id ,
             ])->save();
 
         } catch (\Throwable $e) {
