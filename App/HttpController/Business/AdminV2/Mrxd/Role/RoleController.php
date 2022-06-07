@@ -150,7 +150,7 @@ class RoleController extends ControllerBase
                 $role_id,
                 $user_id
             );
-            dingAlarm('updateUserRoles',['$data'=>json_encode($data)]);
+//            dingAlarm('updateUserRoles',['$data'=>json_encode($data)]);
             if(!empty($data)){
                 continue;
             };
