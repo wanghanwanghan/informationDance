@@ -142,6 +142,7 @@ class RoleController extends ControllerBase
         $requestData = $this->getRequestData(); 
         // $menuIdsArr = $requestData['menu_ids'];
         // $menuIdsArr = explode(',',$menuIdsStr);
+        dingAlarm('updateUserRoles',['$requestData'=>$requestData]);
         $role_ids = explode('',$requestData['role_ids']);
         $user_id = $requestData['user_id'];
         foreach($role_ids as $role_id){
