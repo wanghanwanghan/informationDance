@@ -142,7 +142,7 @@ class RoleController extends ControllerBase
         $requestData = $this->getRequestData(); 
         // $menuIdsArr = $requestData['menu_ids'];
         // $menuIdsArr = explode(',',$menuIdsStr);
-        dingAlarm('updateUserRoles',['$requestData'=>json_encode($requestData)]);
+
         $role_ids = explode('',$requestData['role_ids']);
         $user_id = $requestData['user_id'];
         foreach($role_ids as $role_id){
@@ -150,6 +150,7 @@ class RoleController extends ControllerBase
                 $role_id,
                 $user_id
             );
+            dingAlarm('updateUserRoles',['$data'=>json_encode($data)]);
             if(!empty($data)){
                 continue;
             };
