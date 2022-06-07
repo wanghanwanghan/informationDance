@@ -93,7 +93,7 @@ class UserController extends ControllerBase
      * 修改密码
      */
     public function updatePassword(){
-        $phone = $this->getRequestData['user_phone'];
+        $phone = $this->getRequestData('user_phone');
         $password = $this->getRequestData('password','') ;
         $newPassword = $this->getRequestData('newPassword','') ;
         if (empty($phone)) return $this->writeJson(201, null, null, 'user_phone 不能是空');
