@@ -14,7 +14,7 @@ class NanJingXiaoAnService extends ServiceBase
     private $url = 'https://api.365dayservice.com:8044/credit-api/v1/generalMobileInfo/2F_isp';
     private $xaKey = 'wanghan123';
 
-    function generalMobileInfo(string $name, string $mobile)
+    function generalMobileInfo(string $name, string $mobile): array
     {
         $name = trim($name);
         preg_match_all('/\d+/', $mobile, $phone);
@@ -42,6 +42,7 @@ class NanJingXiaoAnService extends ServiceBase
 
         CommonService::getInstance()->log4PHP($resq);
 
+        return $this->createReturn($resq['code'] - 0, null, $resq['payload'], $resq['message']);
     }
 
 }
