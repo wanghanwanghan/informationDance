@@ -144,7 +144,7 @@ class RunReadAndDealXls extends AbstractCronTask
                 // $res['data'] = LongXinService::shiftArrayKeys($res['data'], 'mobile'); 
                 foreach($res['data'] as $dataItem){
                     if($dataItem['status'] == 1){
-                        $newmobileStr .= $dataItem["lianxi"]; 
+                        $newmobileStr .= $dataItem["mobile"]; 
                     }
                 }
             }
