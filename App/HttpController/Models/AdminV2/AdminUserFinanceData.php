@@ -92,7 +92,15 @@ class AdminUserFinanceData extends ModelBase
 
         return true; 
     }
-    
+
+    public static function getFinanceDataSourceDetail($adminFinanceDataId){
+        $adminFinanceDataId;
+        return [
+            'pullFromApi' => true,
+            'pullFromDb' => false,
+        ];
+    }
+
     //我们拉取运营商的时间间隔  
     //客户导出的时间间隔  
     public static function pullFinanceData($id,$financeConifgArr){  
@@ -107,13 +115,33 @@ class AdminUserFinanceData extends ModelBase
             'beginYear' => $res->getAttr('year'),
             'dataCount' => 1,//取最近几年的
         ];
+         
+        // 根据缓存期和上次拉取财务数据时间 决定是取db还是取api
 
         $res = (new LongXinService())->getFinanceData($postData, false);
-          
+        $postData = $res['data'];
         // 更新拉取时间 
         // 保存到db
+        $addRes = NewFinanceData::addRecord(
+            [
+                'entName' => $postData['entName'],  
+                'user_id' => $postData['user_id'],   
+                'year' => $postData['year'],   
+                'VENDINC' => $postData['VENDINC'],   
+                'ASSGRO' => $postData['ASSGRO'],   
+                'MAIBUSINC' => $postData['MAIBUSINC'],   
+                'TOTEQU' => $postData['TOTEQU'],   
+                'RATGRO' => $postData['RATGRO'],   
+                'PROGRO' => $postData['PROGRO'],   
+                'NETINC' => $postData['NETINC'],   
+                'SOCNUM' => $postData['SOCNUM'],   
+                'EMPNUM' => $postData['EMPNUM'],   
+                'status' => $postData['status'],   
+                'last_pull_api_time' => date('Y-m-d H:i:s',time()), 
+            ]
+        );
 
-        return true; 
+        return $addRes; 
     }
 
     public static function getChagrgeDetailsAnnually(
