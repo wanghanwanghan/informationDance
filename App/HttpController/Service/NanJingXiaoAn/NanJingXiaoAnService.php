@@ -11,7 +11,7 @@ class NanJingXiaoAnService extends ServiceBase
 {
     use Singleton;
 
-    private $url = 'https://api.365dayservice.com:8044/credit-api/v1/generalMobileInfo/2F_isp';
+    private $url = 'https://api.365dayservice.com:8044/credit-api/';
     private $xaKey = 'wanghan123';
 
     function generalMobileInfo(string $name, string $mobile): array
@@ -33,7 +33,7 @@ class NanJingXiaoAnService extends ServiceBase
         ];
 
         $resq = (new CoHttpClient())->useCache(false)->send(
-            $this->url,
+            $this->url . 'v1/generalMobileInfo/2F_isp',
             ['name' => $name, 'mobile' => $mobile],
             $header,
             $options,
