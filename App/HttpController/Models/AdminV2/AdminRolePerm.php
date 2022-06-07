@@ -46,8 +46,9 @@ class AdminRolePerm extends ModelBase
                 'role_id' => $role_id,  
                 'user_id ' => $user_id ,
             ])->save();
-
+            dingAlarm('addRecord',['$res'=>json_encode($res)]);
         } catch (\Throwable $e) {
+            dingAlarm('addRecord',['$e'=>json_encode($e)]);
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     'addCarInsuranceInfo Throwable continue',
