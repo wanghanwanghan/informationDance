@@ -86,6 +86,8 @@ class MenuController extends ControllerBase
             'class' => $this->request()->getRequestParam('class') ?? '',
             'remark' => $this->request()->getRequestParam('remark') ?? '',
             'parent_id' => $this->request()->getRequestParam('parent_id') ?? '',
+            'link' => $this->request()->getRequestParam('link') ?? '',
+            'icon' => $this->request()->getRequestParam('icon') ?? '',
         ]; 
         
         if (
@@ -100,7 +102,9 @@ class MenuController extends ControllerBase
             'name' => $requestData['name'], 
             'method' => $requestData['method'], 
             'class' => $requestData['class'], 
-            'remark' => $requestData['remark'], 
+            'remark' => $requestData['remark'],
+            'link' => $requestData['link'],
+            'icon' => $requestData['icon'],
             'parent_id' => intval($requestData['parent_id']), 
         ])->save();
         return $this->writeJson(200);
@@ -135,6 +139,8 @@ class MenuController extends ControllerBase
             'class' => $requestData['class'] ? $requestData['class']: $info['class'],
             'parent_id' => $requestData['parent_id'] ? $requestData['parent_id']: $info['parent_id'],
             'remark' => $requestData['remark'] ? $requestData['remark']: $info['remark'],
+            'link' => $requestData['link'] ? $requestData['link']: $info['link'],
+            'icon' => $requestData['icon'] ? $requestData['icon']: $info['icon'],
         ]);
         return $this->writeJson();
     }
