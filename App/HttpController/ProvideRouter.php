@@ -33,6 +33,7 @@ class ProvideRouter
         $this->ZhiChiRouterV1($routeCollector);//智齿科技
         $this->GuangZhouYinLianV1($routeCollector);
         $this->DianZiQianV1($routeCollector);
+        $this->NanJingXiaoAnV1($routeCollector);
     }
 
     private function DianZiQianV1(RouteCollector $routeCollector)
@@ -446,4 +447,14 @@ class ProvideRouter
         });
         return true;
     }
+
+    private function NanJingXiaoAnV1(RouteCollector $routeCollector): bool
+    {
+        $prefix = '/Business/Provide/NanJingXiaoAn/NanJingXiaoAnController/';
+        $routeCollector->addGroup('/njxa', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/generalMobileInfo', $prefix . 'generalMobileInfo');
+        });
+        return true;
+    }
+
 }
