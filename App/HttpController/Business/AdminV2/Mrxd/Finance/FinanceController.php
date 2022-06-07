@@ -9,6 +9,7 @@ use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Service\AdminRole\AdminPrivilegedUser;
 use App\HttpController\Models\AdminV2\AdminRoles;
 use App\HttpController\Models\AdminV2\AdminUserFinanceConfig;
+use App\HttpController\Models\AdminV2\AdminUserFinanceUploadDataRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadeRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
 use App\HttpController\Service\Common\CommonService;
@@ -199,23 +200,128 @@ class FinanceController extends ControllerBase
     }
 
     public function getUploadLists(){
-        $userId = $this->getRequestData('user_id');
-        if($userId <= 0){
-            return $this->writeJson(206, [] ,   [], '缺少必要参数', true, []); 
-        } 
+        // $userId = $this->getRequestData('user_id');
+        // if($userId <= 0){
+        //     return $this->writeJson(206, [] ,   [], '缺少必要参数', true, []); 
+        // } 
 
         $requestData =  $this->getRequestData();
          
         $res = AdminUserFinanceUploadRecord::findByCondition(
             [
-                'user_id' => $userId
+                // 'user_id' => $userId
+                'user_id' => $this->loginUserinfo['id']
             ],
             0, 20
         );
 
         return $this->writeJson(200, null, [
-            
+
         ], $res); 
     }
+
+    // 导出客户名单
+    function getUserBusinessOpportunityExcel()
+    {
+        $requestData =  $this->getRequestData();
+        if(
+            $requestData['id'] <= 0 
+        ){
+            return $this->writeJson(201, null, [
+
+            ], [], '参数缺失');
+        } 
+    
+        $res = AdminUserFinanceUploadRecord::create()
+            ->where(['id' => $requestData['id'] ,'user_id' => $this->loginUserinfo['id']]) 
+            ->get();
+        if(
+            !$res 
+        ){
+            return $this->writeJson(201, null, [
+
+            ], [], '数据缺失');
+        } 
+
+        $config = [
+            'path' => TEMP_FILE_PATH // xlsx文件保存路径
+        ];
+
+        $excel = new \Vtiful\Kernel\Excel($config);
+
+        $filename = '客户名单_'.$res->getAttr('file_name').'_'.date('YmdHis'). '.xlsx';
+
+        $header = [
+            '序号',
+            '企业名称',
+            '监控类别', 
+        ];
+
+        $res = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
+            $this->loginUserinfo['id'],
+            $requestData['id'],
+            0
+        );
+        
+
+        try {
+            $list = UserBusinessOpportunity::create()
+                // ->where('phone', $phone)
+                // ->where('entName', $entNameList, 'IN')
+                ->limit(2)
+                ->all();
+            $data = [];
+            $i = 1;
+            foreach ($list as $one) { 
+                
+                array_push($data, [
+                    $one['name'],
+                    $one['code'],
+                ]);
+                $i++;
+            }
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        $fileObject = $excel->fileName($filename, '汇总');
+        $fileHandle = $fileObject->getHandle();
+
+        //==========================================================================================================
+        $format = new Format($fileHandle);
+
+        $colorStyle = $format
+            ->fontColor(Format::COLOR_ORANGE)
+            ->border(Format::BORDER_DASH_DOT)
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $format = new Format($fileHandle);
+
+        $alignStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+        //==========================================================================================================
+
+        $fileObject
+            ->defaultFormat($colorStyle)
+            ->header($header)
+            ->defaultFormat($alignStyle)
+            ->data($data)
+            ->setColumn('B:B', 50)
+        ;
+
+        $format = new Format($fileHandle);
+        //单元格有\n解析成换行
+        $wrapStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->wrap()
+            ->toResource(); 
+
+        $res = $fileObject->output();
+
+        return $this->writeJson(200, null, 'Static/Temp/' . $filename, null, true, [$res]);
+    }
+
 
 }
