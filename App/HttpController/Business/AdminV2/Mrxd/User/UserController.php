@@ -146,7 +146,7 @@ class UserController extends ControllerBase
         $user_name = $this->getRequestData('user_name');
         $password = $this->getRequestData('password');
         $email = $this->getRequestData('email');
-        $phone = $this->getRequestData('phone');//type
+        $phone = $this->getRequestData('user_phone');//type
         $type = $this->getRequestData('type');
         $company_id = $this->getRequestData('company_id');
 
