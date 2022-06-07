@@ -155,7 +155,7 @@ class RoleController extends ControllerBase
                 continue;
             };
 
-            AdminRolePerm::addRecord(
+            AdminUserRole::addRecord(
                 $role_id,
                 $user_id 
             );
