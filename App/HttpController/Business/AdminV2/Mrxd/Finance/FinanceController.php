@@ -198,4 +198,24 @@ class FinanceController extends ControllerBase
         return $this->writeJson(200, null, $batchNum,'导入成功 入库数量:'.$succeedNums); 
     }
 
+    public function getUploadLists(){
+        $userId = $this->getRequestData('user_id');
+        if($userId <= 0){
+            return $this->writeJson(206, [] ,   [], '缺少必要参数', true, []); 
+        } 
+
+        $requestData =  $this->getRequestData();
+         
+        $res = AdminUserFinanceUploadRecord::findByCondition(
+            [
+                'user_id' => $userId
+            ],
+            0, 20
+        );
+
+        return $this->writeJson(200, null, [
+            
+        ], $res); 
+    }
+
 }

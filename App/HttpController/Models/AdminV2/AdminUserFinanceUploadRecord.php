@@ -66,10 +66,10 @@ class AdminUserFinanceUploadRecord extends ModelBase
         return $res;
     }
 
-    public static function findByCondition($whereArr,$limit){
+    public static function findByCondition($whereArr,$offset, $limit){
         $res =  AdminUserFinanceUploadRecord::create()
             ->where($whereArr)
-            ->limit($limit)
+            ->limit($offset, $limit)
             ->all();  
         return $res;
     }

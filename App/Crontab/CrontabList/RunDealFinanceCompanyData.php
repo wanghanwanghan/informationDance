@@ -193,13 +193,21 @@ class RunDealFinanceCompanyData extends AbstractCronTask
         $this->parseDataToDb(1);
         //计算价格
         $this->calculatePrice(5);
+        //拉取finance数据
+        $this->pullFinanceData(5); 
+
+        return true ;   
+    }
+
+    function pullFinanceData($limit)
+    {    
         
         //取财务数据 
         $initDatas = AdminUserFinanceUploadRecord::findByCondition(
             [
                 'status' => AdminUserFinanceUploadRecord::$stateCalCulatedPrice
             ],
-            3
+            $limit
         );  
         foreach($initDatas as $dataItem){
             // 如果处理完了 设置下状态
@@ -229,16 +237,20 @@ class RunDealFinanceCompanyData extends AbstractCronTask
 
             foreach($allUploadDataRecords as $UploadDataRecord){ 
                 // 拉取财务数据
-                AdminUserFinanceData::calculatePrice(
+                $res = AdminUserFinanceData::pullFinanceData(
                     $UploadDataRecord['user_finance_data_id'],
                     $dataItem['finance_config']
                 ); 
+                if(!$res){
+                    continue;
+                }
+                //设置下状态
+                AdminUserFinanceUploadDataRecord::updateStatusById(
+                    $UploadDataRecord['id'],
+                    AdminUserFinanceUploadRecord::$stateHasGetData
+                );
             }
-        }
-        //导出完 设置下缓存期
-        
-        
-        $initDatas;
+        } 
 
         return true ;   
     }

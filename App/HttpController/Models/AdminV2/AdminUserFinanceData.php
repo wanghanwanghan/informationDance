@@ -117,29 +117,31 @@ class AdminUserFinanceData extends ModelBase
         ];
          
         // 根据缓存期和上次拉取财务数据时间 决定是取db还是取api
-
-        $res = (new LongXinService())->getFinanceData($postData, false);
-        $postData = $res['data'];
-        // 更新拉取时间 
-        // 保存到db
-        $addRes = NewFinanceData::addRecord(
-            [
-                'entName' => $postData['entName'],  
-                'user_id' => $postData['user_id'],   
-                'year' => $postData['year'],   
-                'VENDINC' => $postData['VENDINC'],   
-                'ASSGRO' => $postData['ASSGRO'],   
-                'MAIBUSINC' => $postData['MAIBUSINC'],   
-                'TOTEQU' => $postData['TOTEQU'],   
-                'RATGRO' => $postData['RATGRO'],   
-                'PROGRO' => $postData['PROGRO'],   
-                'NETINC' => $postData['NETINC'],   
-                'SOCNUM' => $postData['SOCNUM'],   
-                'EMPNUM' => $postData['EMPNUM'],   
-                'status' => $postData['status'],   
-                'last_pull_api_time' => date('Y-m-d H:i:s',time()), 
-            ]
-        );
+        $getFinanceDataSourceDetailRes = self::getFinanceDataSourceDetail($id);
+        if($getFinanceDataSourceDetailRes['pullFromApi']){
+            $res = (new LongXinService())->getFinanceData($postData, false);
+            $postData = $res['data'];
+            // 更新拉取时间 
+            // 保存到db
+            $addRes = NewFinanceData::addRecord(
+                [
+                    'entName' => $postData['entName'],  
+                    'user_id' => $postData['user_id'],   
+                    'year' => $postData['year'],   
+                    'VENDINC' => $postData['VENDINC'],   
+                    'ASSGRO' => $postData['ASSGRO'],   
+                    'MAIBUSINC' => $postData['MAIBUSINC'],   
+                    'TOTEQU' => $postData['TOTEQU'],   
+                    'RATGRO' => $postData['RATGRO'],   
+                    'PROGRO' => $postData['PROGRO'],   
+                    'NETINC' => $postData['NETINC'],   
+                    'SOCNUM' => $postData['SOCNUM'],   
+                    'EMPNUM' => $postData['EMPNUM'],   
+                    'status' => $postData['status'],   
+                    'last_pull_api_time' => date('Y-m-d H:i:s',time()), 
+                ]
+            );
+        } 
 
         return $addRes; 
     }
