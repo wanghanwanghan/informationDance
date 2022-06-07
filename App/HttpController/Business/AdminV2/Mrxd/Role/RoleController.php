@@ -143,7 +143,7 @@ class RoleController extends ControllerBase
         // $menuIdsArr = $requestData['menu_ids'];
         // $menuIdsArr = explode(',',$menuIdsStr);
 
-        $role_ids = explode('',$requestData['role_ids']);
+        $role_ids = explode(',',$requestData['role_ids']);
         $user_id = $requestData['user_id'];
         foreach($role_ids as $role_id){
             $data = AdminUserRole::findByUserIdAndRole(
