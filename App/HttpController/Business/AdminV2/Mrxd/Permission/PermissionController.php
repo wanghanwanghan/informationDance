@@ -109,8 +109,8 @@ class PermissionController extends ControllerBase
             'class' => $requestData['class'] ? $requestData['class']: $info['class'],
             'parent_id' => $requestData['parent_id'] ? $requestData['parent_id']: $info['parent_id'],
             'remark' => $requestData['remark'] ? $requestData['remark']: $info['remark'],
-            'link' => $requestData['remark'] ? $requestData['remark']: $info['link'],
-            'icon' => $requestData['remark'] ? $requestData['remark']: $info['icon'],
+            'link' => $requestData['link'] ? $requestData['link']: $info['link'],
+            'icon' => $requestData['icon'] ? $requestData['icon']: $info['icon'],
         ]);
         return $this->writeJson();
     }
