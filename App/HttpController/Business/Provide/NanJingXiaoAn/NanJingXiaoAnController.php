@@ -45,8 +45,8 @@ class NanJingXiaoAnController extends ProvideBase
         $mobile = $this->getRequestData('mobile');
 
         $postData = [
-            'name' => $name,
-            'mobile' => $mobile,
+            'name' => trim($name),
+            'mobile' => trim($mobile),
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
