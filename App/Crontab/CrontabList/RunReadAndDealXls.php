@@ -115,7 +115,7 @@ class RunReadAndDealXls extends AbstractCronTask
         }
     }
 
-    function getYieldDataCheckMobile($xlsx_name){
+    function getYieldDataCheckMobileV2($xlsx_name){
         $excel_read = new \Vtiful\Kernel\Excel(['path' => $this->workPath]);
         $excel_read->openFile($xlsx_name)->openSheet();
 
@@ -134,19 +134,27 @@ class RunReadAndDealXls extends AbstractCronTask
 
             $value0 = $this->strtr_func($one[0]);  
             $value1 = $this->strtr_func($one[1]);  
-            $value2 = $this->strtr_func($one[2]); 
-            $postData = [
-                'mobiles' => trim($value2),
-            ];
-    
-            $res = (new ChuangLanService())->getCheckPhoneStatus($postData);
-            $res['data'] = LongXinService::shiftArrayKeys($res['data'], 'mobile'); 
+            $value2 = $this->strtr_func($one[2]);  
+            $mobileStr = str_replace(";", ",", trim($value2));
+            $newmobileStr = "";
+            if(!empty($mobileStr)){
+                $res = (new ChuangLanService())->getCheckPhoneStatus([
+                    'mobiles' => $mobileStr,
+                ]);
+                // $res['data'] = LongXinService::shiftArrayKeys($res['data'], 'mobile'); 
+                foreach($res['data'] as $dataItem){
+                    if($dataItem['status'] == 1){
+                        $newmobileStr .= $dataItem["lianxi"]; 
+                    }
+                }
+            }
+            
 
             
             CommonService::getInstance()->log4PHP('matchNamXXXX'.json_encode(
                 [
                     'value' => [$value2],
-                    'params' => $postData,
+                    'params' => $mobileStr,
                     'res' => $res
                 ]
             )); 
@@ -154,7 +162,7 @@ class RunReadAndDealXls extends AbstractCronTask
                 $value0,
                 $value1, 
                 $value2, 
-                $res['data'][$value2]['status']
+                $newmobileStr
             ];
         }
     }
@@ -288,6 +296,33 @@ class RunReadAndDealXls extends AbstractCronTask
         return true ;  
     }
 
+    function checkMobileV2($file,$debugLog){
+        $startMemory = memory_get_usage(); 
+
+        // 取yield数据 
+        // $excelDatas = $this->getYieldData($file,'matchNameFormatData');
+        $excelDatas = $this->getYieldDataCheckMobileV2($file); 
+
+        $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
+        $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用1 '.$memory .' '.$file );
+
+        //写到csv里 
+        $fileName = pathinfo($file)['filename'];
+        $f = fopen($this->workPath.$fileName.".csv", "w");
+        fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+        foreach ($excelDatas as $dataItem) {
+            fputcsv($f, $dataItem);
+        }
+
+        $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
+        $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用2 '.$memory .' '.$file );
+
+        @unlink($this->workPath . $file);
+
+        return true ;  
+    }
+
     function run(int $taskId, int $workerIndex): bool
     {
          
@@ -322,6 +357,12 @@ class RunReadAndDealXls extends AbstractCronTask
         if($fileNameArr[1] == 'checkMobile'){ 
             $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
             return $this->checkMobile($file,$debugLog);
+        }
+
+        // 校验手机号
+        if($fileNameArr[1] == 'checkMobileV2'){ 
+            $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
+            return $this->checkMobileV2($file,$debugLog);
         }
 
         return true ;   

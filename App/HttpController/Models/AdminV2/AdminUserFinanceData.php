@@ -109,7 +109,7 @@ class AdminUserFinanceData extends ModelBase
         ];
 
         $res = (new LongXinService())->getFinanceData($postData, false);
-        
+          
         // 更新拉取时间 
         // 保存到db
 
