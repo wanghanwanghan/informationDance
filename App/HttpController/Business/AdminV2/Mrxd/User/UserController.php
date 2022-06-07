@@ -112,6 +112,22 @@ class UserController extends ControllerBase
         return $this->writeJson(200, null, null, '修改成功');
     }
 
+    /**
+     *  修改用户信息
+     */
+    public function updateUserInfo(){
+        $requestData = $this->getRequestData(); 
+        $info = AdminNewUser::create()->where('id',$requestData['id'])->get();  
+        $info->update([
+            'id' => $requestData['id'],
+            'user_name' => $requestData['user_name'] ? $requestData['user_name']: $info['user_name'],
+            'password' => $requestData['password'] ? $requestData['password']: $info['password'],
+            'phone' => $requestData['phone'] ? $requestData['phone']: $info['phone'],
+            'email' => $requestData['email'] ? $requestData['email']: $info['email'],
+        ]);
+        return $this->writeJson();
+    }
+
     /*
      * 用户冻结
      */
