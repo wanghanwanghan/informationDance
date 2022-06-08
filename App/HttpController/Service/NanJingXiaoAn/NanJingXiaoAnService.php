@@ -48,7 +48,10 @@ class NanJingXiaoAnService extends ServiceBase
             'postjson'
         );
 
-        CommonService::getInstance()->log4PHP($resq);
+        //checkResult
+        //1 一致
+        //2 不一致
+        //3 无此记录
 
         return $this->createReturn($resq['code'] - 0, null, $resq['payload'], $resq['message']);
     }
