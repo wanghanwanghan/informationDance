@@ -175,30 +175,55 @@ class FinanceController extends ControllerBase
                     continue;
                 }
 
-                if(
-                    AdminUserFinanceUploadRecord::findByIdAndFileName(
-                        $this->loginUserinfo['id'],   
-                        $requestData['file_name']
+                $UploadRecordRes =  AdminUserFinanceUploadRecord::findByIdAndFileName(
+                    $this->loginUserinfo['id'],   
+                    $fileName
+                );
+                CommonService::getInstance()->log4PHP(
+                    json_encode(
+                        [
+                            'UploadRecordRes' => $UploadRecordRes,
+                            'fileName' => $fileName,
+                        ]
                     )
-                ){
+                ); 
+                if($UploadRecordRes){
                     continue;
                 } 
                 
-                AdminUserFinanceUploadRecord::addUploadRecord(
+                $addUploadRecordRes = AdminUserFinanceUploadRecord::addUploadRecord(
                      [
                         'user_id' => $this->loginUserinfo['id'], 
-                        'file_path' => $requestData['file_path'],  
+                        'file_path' => $path,  
                         'years' => $requestData['years'],  
-                        'file_name' => $requestData['file_name'],  
-                        'title' => $requestData['title'],    
-                        'reamrk' => $requestData['reamrk'],  
+                        'file_name' => $fileName,  
+                        'title' => $requestData['title']?:'',    
+                        'reamrk' => $requestData['reamrk']?:'',  
                         'finance_config' => AdminUserFinanceConfig::getConfigByUserId(
                             $this->loginUserinfo['id']
-                        ),  
-                        // 'readable_price_config' => '',
+                        ),   
                         'status' => 1,  
                      ]
                  );
+                 CommonService::getInstance()->log4PHP(
+                    json_encode(
+                        [
+                            'addUploadRecordRes' => $addUploadRecordRes,
+                            'data' =>  [
+                                'user_id' => $this->loginUserinfo['id'], 
+                                'file_path' => $path,  
+                                'years' => $requestData['years'],  
+                                'file_name' => $fileName,  
+                                'title' => $requestData['title']?:'',    
+                                'reamrk' => $requestData['reamrk']?:'',  
+                                'finance_config' => AdminUserFinanceConfig::getConfigByUserId(
+                                    $this->loginUserinfo['id']
+                                ),   
+                                'status' => 1,  
+                             ],
+                        ]
+                    )
+                ); 
 
             } catch (\Throwable $e) {
                 CommonService::getInstance()->log4PHP(
