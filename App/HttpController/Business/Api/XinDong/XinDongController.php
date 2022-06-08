@@ -2733,26 +2733,40 @@ eof;
     }
     function testExport()
     {
-        // 下载的文件相关
+        
+
         $config = [
             'path' => TEMP_FILE_PATH // xlsx文件保存路径
         ];
 
         $excel = new \Vtiful\Kernel\Excel($config);
 
-        $filename = '财务数据_'.date('YmdHis'). '.xlsx';
- 
-        // $financeData = $this->getYieldData() ; 
-        $financeData = [
-            [
-                '上海天天鲜果电子商务有限公司'
-            ],
-            [
-                '河北庞德铝合金模板科技有限公司'
-            ]
-        ] ; 
- 
-        $fileObject = $excel->fileName($filename, '财务数据');
+        $filename = '测试数据_'.date('YmdHis') . '.xlsx';
+
+        $header = [
+            '序号',
+            '企业名称',
+            '监控类别', 
+        ];
+
+        $list = UserBusinessOpportunity::create()
+            // ->where('phone', $phone)
+            // ->where('entName', $entNameList, 'IN')
+            ->limit(2)
+            ->all();
+        $data = [];
+        $i = 1;
+        foreach ($list as $one) { 
+            
+            array_push($data, [
+                $one['name'],
+                $one['code'],
+            ]);
+            $i++;
+        }
+        
+
+        $fileObject = $excel->fileName($filename, '汇总');
         $fileHandle = $fileObject->getHandle();
 
         //==========================================================================================================
@@ -2771,16 +2785,11 @@ eof;
             ->toResource();
         //==========================================================================================================
 
-        $header = [
-            '序号',
-            '企业名称',
-            '监控类别', 
-        ];
         $fileObject
             ->defaultFormat($colorStyle)
             ->header($header)
             ->defaultFormat($alignStyle)
-            ->data($financeData)
+            ->data($data)
             // ->setColumn('B:B', 50)
         ;
 
@@ -2791,9 +2800,71 @@ eof;
             ->wrap()
             ->toResource(); 
 
-        $res = $fileObject->output();  
+        $res = $fileObject->output();
 
-        return $this->writeJson(200, [], [], $filename); 
+        return $this->writeJson(200, null, 'Static/Temp/' . $filename, null, true, [$res]);
+
+        // // 下载的文件相关
+        // $config = [
+        //     'path' => TEMP_FILE_PATH // xlsx文件保存路径
+        // ];
+
+        // $excel = new \Vtiful\Kernel\Excel($config);
+
+        // $filename = '财务数据_'.date('YmdHis'). '.xlsx';
+ 
+        // // $financeData = $this->getYieldData() ; 
+        // $financeData = [
+        //     [
+        //         '上海天天鲜果电子商务有限公司'
+        //     ],
+        //     [
+        //         '河北庞德铝合金模板科技有限公司'
+        //     ]
+        // ] ; 
+ 
+        // $fileObject = $excel->fileName($filename, '财务数据');
+        // $fileHandle = $fileObject->getHandle();
+
+        // //==========================================================================================================
+        // $format = new Format($fileHandle);
+
+        // $colorStyle = $format
+        //     ->fontColor(Format::COLOR_ORANGE)
+        //     ->border(Format::BORDER_DASH_DOT)
+        //     ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+        //     ->toResource();
+
+        // $format = new Format($fileHandle);
+
+        // $alignStyle = $format
+        //     ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+        //     ->toResource();
+        // //==========================================================================================================
+
+        // $header = [
+        //     '序号',
+        //     '企业名称',
+        //     '监控类别', 
+        // ];
+        // $fileObject
+        //     ->defaultFormat($colorStyle)
+        //     ->header($header)
+        //     ->defaultFormat($alignStyle)
+        //     ->data($financeData)
+        //     // ->setColumn('B:B', 50)
+        // ;
+
+        // $format = new Format($fileHandle);
+        // //单元格有\n解析成换行
+        // $wrapStyle = $format
+        //     ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+        //     ->wrap()
+        //     ->toResource(); 
+
+        // $res = $fileObject->output();  
+
+        // return $this->writeJson(200, [], [], $filename); 
 
     }
 }
