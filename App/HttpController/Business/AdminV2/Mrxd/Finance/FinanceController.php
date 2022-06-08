@@ -137,9 +137,9 @@ class FinanceController extends ControllerBase
 
     // 上传客户名单
     public function uploadeCompanyLists(){
-        $years = $this->getRequestData('years');
-        if($years <= 0){
-            return $this->writeJson(206, [] ,   [], '缺少必要参数', true, []); 
+        $years = trim($this->getRequestData('years'));
+        if(empty($years) ){
+            return $this->writeJson(206, [] ,   [], '缺少必要参数('.$years.')', true, []); 
         } 
 
         $requestData =  $this->getRequestData();
