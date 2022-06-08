@@ -78,7 +78,7 @@ class FinanceController extends ControllerBase
                 $requestData['user_id']
             )
         ){
-            return $this->writeJson(200);
+            return $this->writeJson(203,[],[],'一个用于只能有一个有效配置');
         }
         AdminUserFinanceConfig::addRecord(
             [
