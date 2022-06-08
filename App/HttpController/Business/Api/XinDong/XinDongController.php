@@ -2724,7 +2724,7 @@ eof;
     function getYieldData(){
         $data = [];
         for($i=1; $i<=10 ; $i++){
-            yield $datas[] = [
+            yield $data[] = [
                '测试id',
                '测试name',
                '测试status',                
