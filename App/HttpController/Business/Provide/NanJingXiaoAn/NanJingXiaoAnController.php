@@ -50,10 +50,9 @@ class NanJingXiaoAnController extends ProvideBase
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new NanJingXiaoAnService())->generalMobileInfo(
-                $postData['name'],
-                $postData['mobile']
-            );
+            return (new NanJingXiaoAnService())
+                ->setCheckRespFlag(true)
+                ->generalMobileInfo($postData['name'], $postData['mobile']);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);

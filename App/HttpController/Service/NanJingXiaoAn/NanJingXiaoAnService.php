@@ -2,7 +2,6 @@
 
 namespace App\HttpController\Service\NanJingXiaoAn;
 
-use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
@@ -20,6 +19,22 @@ class NanJingXiaoAnService extends ServiceBase
         parent::__construct();
         $this->url = 'https://api.365dayservice.com:8044/credit-api/';
         $this->xaKey = CreateConf::getInstance()->getConf('nanjingxiaoan.xaKey');
+    }
+
+    private function checkResp($resp): array
+    {
+        if (isset($res['coHttpErr']))
+            return $this->createReturn(500, $res['Paging'], [], 'co请求错误');
+
+        $code = $resp['code'] - 0;
+
+        $code !== 2000 ?: $code = 200;
+
+        $result = $resp['payload'];
+
+        $msg = trim($resp['message']);
+
+        return $this->createReturn($code, null, $result, $msg);
     }
 
     function generalMobileInfo(string $name, string $mobile): array
@@ -40,7 +55,7 @@ class NanJingXiaoAnService extends ServiceBase
             'enableSSL' => true,
         ];
 
-        $resq = (new CoHttpClient())->useCache(false)->send(
+        $resp = (new CoHttpClient())->useCache(false)->send(
             $this->url . 'v1/generalMobileInfo/2F_isp',
             ['name' => $name, 'mobile' => $mobile],
             $header,
@@ -53,7 +68,7 @@ class NanJingXiaoAnService extends ServiceBase
         //2 不一致
         //3 无此记录
 
-        return $this->createReturn($resq['code'] - 0, null, $resq['payload'], $resq['message']);
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
 }
