@@ -2725,9 +2725,8 @@ eof;
         $data = [];
         for($i=1; $i<=10 ; $i++){
             yield $data[] = [
-               '测试id',
-               '测试name',
-               '测试status',                
+               '福建裕兴果蔬食品开发有限公司',
+               '福建裕兴果蔬食品开发有限公司', 
             ];
         }
     }
@@ -2768,6 +2767,8 @@ eof;
         $data = [
             ['福建裕兴果蔬食品开发有限公司','91350603611943147E']
         ];
+
+        $data = $this->getYieldData();
         $fileObject = $excel->fileName($filename, '汇总');
         $fileHandle = $fileObject->getHandle();
 
