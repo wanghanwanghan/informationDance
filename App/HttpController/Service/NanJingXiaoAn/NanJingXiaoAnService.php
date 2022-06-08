@@ -3,6 +3,7 @@
 namespace App\HttpController\Service\NanJingXiaoAn;
 
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use wanghanwanghan\someUtils\traits\Singleton;
@@ -11,8 +12,15 @@ class NanJingXiaoAnService extends ServiceBase
 {
     use Singleton;
 
-    private $url = 'https://api.365dayservice.com:8044/credit-api/';
-    private $xaKey = 'wanghan123';
+    private $url;
+    private $xaKey;
+
+    function __construct()
+    {
+        parent::__construct();
+        $this->url = 'https://api.365dayservice.com:8044/credit-api/';
+        $this->xaKey = CreateConf::getInstance()->getConf('nanjingxiaoan.xaKey');
+    }
 
     function generalMobileInfo(string $name, string $mobile): array
     {
