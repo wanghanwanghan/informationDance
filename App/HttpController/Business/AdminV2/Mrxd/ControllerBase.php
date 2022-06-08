@@ -35,7 +35,7 @@ class ControllerBase extends Index
         // CommonService::getInstance()->log4PHP('  tmpStr '.$tmpStr);
         if($tmpStr){
             $tmpArr = @json_decode($tmpStr,true);
-            CommonService::getInstance()->log4PHP('  tmpArr '.json_encode($tmpArr));
+            // CommonService::getInstance()->log4PHP('  tmpArr '.json_encode($tmpArr));
             if(
                 is_array($tmpArr) &&
                 !empty($tmpArr) 
