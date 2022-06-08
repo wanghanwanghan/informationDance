@@ -228,14 +228,14 @@ class FinanceController extends ControllerBase
             } catch (\Throwable $e) {
                 CommonService::getInstance()->log4PHP(
                     json_encode([
-                        'addCarInsuranceInfo Throwable continue',
+                        'uploadeCompanyLists getMessage ',
                         $e->getMessage(),
                     ])
                 );  
             } 
         }  
 
-        return $this->writeJson(200, null, $batchNum,'导入成功 入库数量:'.$succeedNums); 
+        return $this->writeJson(200, null, [],'导入成功 入库数量:'.$succeedNums); 
     }
 
     public function getUploadLists(){
