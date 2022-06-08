@@ -140,7 +140,11 @@ class FinanceController extends ControllerBase
         $years = trim($this->getRequestData('years'));
         if(empty($years) ){
             return $this->writeJson(206, [] ,   [], '缺少必要参数('.$years.')', true, []); 
-        } 
+        }  
+        $files = $this->request()->getUploadedFiles();
+        CommonService::getInstance()->log4PHP(
+            '[souKe]-uploadEntList files['.json_encode($files).']'
+        ); 
 
         $requestData =  $this->getRequestData();
         $files = $this->request()->getUploadedFiles();
