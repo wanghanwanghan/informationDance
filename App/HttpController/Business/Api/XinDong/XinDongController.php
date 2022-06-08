@@ -2742,7 +2742,15 @@ eof;
 
         $filename = '财务数据_'.date('YmdHis'). '.xlsx';
  
-        $financeData = $this->getYieldData() ; 
+        // $financeData = $this->getYieldData() ; 
+        $financeData = [
+            [
+                '上海天天鲜果电子商务有限公司'
+            ],
+            [
+                '河北庞德铝合金模板科技有限公司'
+            ]
+        ] ; 
  
         $fileObject = $excel->fileName($filename, '财务数据');
         $fileHandle = $fileObject->getHandle();
