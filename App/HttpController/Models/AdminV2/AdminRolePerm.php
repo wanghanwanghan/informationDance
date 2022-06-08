@@ -44,7 +44,7 @@ class AdminRolePerm extends ModelBase
         try {
            $res =  AdminRolePerm::create()->data([
                 'role_id' => $role_id,  
-                'menu_id' => $menu_id,   
+                'menu_id' => $menu_id,
             ])->save();
 
         } catch (\Throwable $e) {
