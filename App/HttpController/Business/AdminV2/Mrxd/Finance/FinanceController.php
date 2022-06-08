@@ -145,7 +145,12 @@ class FinanceController extends ControllerBase
         $requestData =  $this->getRequestData();
         $files = $this->request()->getUploadedFiles();
         $path = $fileName = '';
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'uploadeCompanyLists ',
+                $files
+            ])
+        ); 
         $succeedNums = 0;
         foreach ($files as $key => $oneFile) {
             if (!$oneFile instanceof UploadFile) {

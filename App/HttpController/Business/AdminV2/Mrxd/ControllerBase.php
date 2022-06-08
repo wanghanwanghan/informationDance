@@ -69,7 +69,7 @@ class ControllerBase extends Index
     { 
         // $requestToken = $this->request()->getHeaderLine('authorization');
         $requestToken = $this->request()->getHeaderLine('x-token');
-        CommonService::getInstance()->log4PHP('  requestToken '.$requestToken);
+        // CommonService::getInstance()->log4PHP('  requestToken '.$requestToken);
 
         if (empty($requestToken) || strlen($requestToken) < 50){
             CommonService::getInstance()->log4PHP(
