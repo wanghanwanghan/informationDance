@@ -107,13 +107,13 @@ class ControllerBase extends Index
             return false;
         } 
         $res = $reqPhone - 0 === $tokenPhone - 0;
-        CommonService::getInstance()->log4PHP('  return  '.json_encode(
-            [
-                $res,
-                $tokenPhone,
-                $reqPhone
-            ]
-        ) );   
+        // CommonService::getInstance()->log4PHP('  return  '.json_encode(
+        //     [
+        //         $res,
+        //         $tokenPhone,
+        //         $reqPhone
+        //     ]
+        // ) );   
 
         return $res;
     }
