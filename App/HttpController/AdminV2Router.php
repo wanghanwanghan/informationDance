@@ -76,7 +76,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/updateConfigStatus', $prefix . 'updateConfigStatus');
             $routeCollector->addRoute(['GET', 'POST'], '/uploadeCompanyLists', $prefix . 'uploadeCompanyLists');
             $routeCollector->addRoute(['GET', 'POST'], '/getUploadLists', $prefix . 'getUploadLists'); 
-            $routeCollector->addRoute(['GET', 'POST'], '/getNeedsConfirmExportLists', $prefix . 'getNeedsConfirmExportLists'); exportFinanceData
+            $routeCollector->addRoute(['GET', 'POST'], '/getNeedsConfirmExportLists', $prefix . 'getNeedsConfirmExportLists'); 
             $routeCollector->addRoute(['GET', 'POST'], '/exportFinanceData', $prefix . 'exportFinanceData'); 
             $routeCollector->addRoute(['GET', 'POST'], '/ConfirmFinanceData', $prefix . 'ConfirmFinanceData'); 
         });
