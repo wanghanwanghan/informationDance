@@ -22,5 +22,18 @@ class AdminUserFinanceConfig extends ModelBase
         ])->all();  
         return $res[0] ? json_encode( $res[0]) : '';
     }
+
+    static function addRecord($requestData){
+        return AdminUserFinanceConfig::create()->data([
+            'user_id' => $requestData['user_id'], 
+            'annually_price' => $requestData['annually_price'],  
+            'annually_years' => $requestData['annually_years'],  
+            'normal_years_price_json' => $requestData['normal_years_price_json'],  
+            'cache' => $requestData['cache'],  
+            'type' => $requestData['type'],  
+            'allowed_fields' => $requestData['allowed_fields'],  
+            'status' => $requestData['status'],  
+        ])->save();  
+    }
       
 }

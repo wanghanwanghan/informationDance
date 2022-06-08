@@ -73,16 +73,25 @@ class FinanceController extends ControllerBase
             return $this->writeJson(201);
         }
         
-        AdminUserFinanceConfig::create()->data([
-            'user_id' => $requestData['user_id'], 
-            'annually_price' => $requestData['annually_price'],  
-            'annually_years' => $requestData['annually_years'],  
-            'normal_years_price_json' => $requestData['normal_years_price_json'],  
-            'cache' => $requestData['cache'],  
-            'type' => $requestData['type'],  
-            'allowed_fields' => $requestData['allowed_fields'],  
-            'status' => 1,  
-        ])->save();
+        if(
+            AdminUserFinanceConfig::getConfigByUserId(
+                $requestData['user_id']
+            )
+        ){
+            return $this->writeJson(200);
+        }
+        AdminUserFinanceConfig::addRecord(
+            [
+                'user_id' => $requestData['user_id'], 
+                'annually_price' => $requestData['annually_price'],  
+                'annually_years' => $requestData['annually_years'],  
+                'normal_years_price_json' => $requestData['normal_years_price_json'],  
+                'cache' => $requestData['cache'],  
+                'type' => $requestData['type'],  
+                'allowed_fields' => $requestData['allowed_fields'],  
+                'status' => 1,  
+            ]
+        );
         return $this->writeJson(200);
     }
 
