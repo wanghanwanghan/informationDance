@@ -92,6 +92,9 @@ class RoleController extends ControllerBase
     public function updateRole(){
         $requestData = $this->getRequestData(); 
         $info = AdminRoles::create()->where('role_id',$requestData['role_id'])->get(); 
+        if(!$info){
+            return $this->writeJson(203);
+        }
         $info->update([
             'role_id' => $requestData['role_id'],
             'role_name' => $requestData['role_name'] ? $requestData['name']: $info['role_name'],
