@@ -67,6 +67,8 @@ class NanJingXiaoAnService extends ServiceBase
         //1 一致
         //2 不一致
         //3 无此记录
+        //1、2均计费
+        //3 不计费
 
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
