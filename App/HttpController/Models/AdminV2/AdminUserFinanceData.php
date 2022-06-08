@@ -242,6 +242,13 @@ class AdminUserFinanceData extends ModelBase
         return $res;
     }
 
+    public static function findById($id){
+        $res =  AdminUserFinanceData::create()
+            ->where('id',$id)            
+            ->get();  
+        return $res;
+    }
+
     public static function findByUserAndEntAndYear($userId,$entName,$year){
         $res =  AdminUserFinanceData::create()
             ->where([

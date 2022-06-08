@@ -68,6 +68,28 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         return $res;
     }
 
+    public static function findFinanceDataByUserIdAndRecordId(
+        $user_id,$record_id,$status
+    ){ 
+        $res =  AdminUserFinanceUploadRecord::create()->where([
+            'user_id' => $user_id,  
+            'record_id' => $record_id,   
+            'status' => $status,   
+        ])->field(['id','user_finance_data_id'])
+        ->all(); 
+
+        $user_finance_data_ids = array_column($res,'user_finance_data_id');
+        $res =  AdminUserFinanceUploadDataRecord::create()->where([
+            'user_id' => $user_id,  
+            'record_id' => $record_id,   
+            'status' => $status,   
+        ])->field(['id','user_finance_data_id'])
+        ->all(); 
+
+        return $res;
+    }
+
+
     public static function findByCondition($whereArr,$limit){
         $res =  AdminUserFinanceUploadRecord::create()
             ->where($whereArr)

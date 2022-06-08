@@ -9,10 +9,13 @@ use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Service\AdminRole\AdminPrivilegedUser;
 use App\HttpController\Models\AdminV2\AdminRoles;
 use App\HttpController\Models\AdminV2\AdminUserFinanceConfig;
+use App\HttpController\Models\AdminV2\AdminUserFinanceData;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadDataRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadeRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
+use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Service\Common\CommonService;
+use Vtiful\Kernel\Format;
 
 class FinanceController extends ControllerBase
 {
@@ -231,18 +234,8 @@ class FinanceController extends ControllerBase
 
             ], [], '参数缺失');
         } 
-    
-        $res = AdminUserFinanceUploadRecord::create()
-            ->where(['id' => $requestData['id'] ,'user_id' => $this->loginUserinfo['id']]) 
-            ->get();
-        if(
-            !$res 
-        ){
-            return $this->writeJson(201, null, [
 
-            ], [], '数据缺失');
-        } 
-
+        // 下载的文件相关
         $config = [
             'path' => TEMP_FILE_PATH // xlsx文件保存路径
         ];
@@ -251,40 +244,13 @@ class FinanceController extends ControllerBase
 
         $filename = '客户名单_'.$res->getAttr('file_name').'_'.date('YmdHis'). '.xlsx';
 
-        $header = [
-            '序号',
-            '企业名称',
-            '监控类别', 
-        ];
 
-        $res = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
-            $this->loginUserinfo['id'],
-            $requestData['id'],
-            0
-        );
-        
-
-        try {
-            $list = UserBusinessOpportunity::create()
-                // ->where('phone', $phone)
-                // ->where('entName', $entNameList, 'IN')
-                ->limit(2)
-                ->all();
-            $data = [];
-            $i = 1;
-            foreach ($list as $one) { 
-                
-                array_push($data, [
-                    $one['name'],
-                    $one['code'],
-                ]);
-                $i++;
-            }
-        } catch (\Throwable $e) {
-            return $this->writeErr($e, __FUNCTION__);
-        }
-
-        $fileObject = $excel->fileName($filename, '汇总');
+        // 找到对应的财务信息
+        $financeData = AdminUserFinanceUploadRecord::getFinanceDataByUploadRecordId(
+            $requestData['id']
+        ); 
+ 
+        $fileObject = $excel->fileName($filename, '财务数据');
         $fileHandle = $fileObject->getHandle();
 
         //==========================================================================================================
@@ -303,12 +269,17 @@ class FinanceController extends ControllerBase
             ->toResource();
         //==========================================================================================================
 
+        $header = [
+            '序号',
+            '企业名称',
+            '监控类别', 
+        ];
         $fileObject
             ->defaultFormat($colorStyle)
             ->header($header)
             ->defaultFormat($alignStyle)
-            ->data($data)
-            ->setColumn('B:B', 50)
+            ->data($financeData)
+            // ->setColumn('B:B', 50)
         ;
 
         $format = new Format($fileHandle);
@@ -319,6 +290,12 @@ class FinanceController extends ControllerBase
             ->toResource(); 
 
         $res = $fileObject->output();
+
+        // 设置导出记录
+        
+
+        // 扣费 
+         
 
         return $this->writeJson(200, null, 'Static/Temp/' . $filename, null, true, [$res]);
     }

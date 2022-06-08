@@ -59,4 +59,19 @@ class NewFinanceData extends ModelBase
         return $res;
     } 
 
+    public static function findByCondition($whereArr,$limit){
+        $res =  NewFinanceData::create()
+            ->where($whereArr)
+            ->limit($limit)
+            ->all();  
+        return $res;
+    }
+
+    public static function findById($id){
+        $res =  NewFinanceData::create()
+            ->where('id',$id)            
+            ->get();  
+        return $res;
+    }
+
 }

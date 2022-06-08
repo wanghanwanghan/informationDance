@@ -4,7 +4,7 @@ namespace App\HttpController\Models\AdminV2;
 
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
- 
+use App\HttpController\Service\CreateConf;
 
 // use App\HttpController\Models\AdminRole;
 
@@ -80,6 +80,38 @@ class AdminUserFinanceUploadRecord extends ModelBase
             'id' => $id,
             'status' => $status, 
         ]);
+    }
+
+    //获取财务数据 
+    public static function getFinanceDataByUploadRecordId($uploadRecordId){
+        // 节省内存 直接sql查询
+        $sql = " SELECT
+                    -- 上传的记录id
+                    upload_data_record.record_id AS upload_id,
+                    -- 用户财务信息id（单价/缓存期/上次收费时间等）
+                    admin_finance.id AS admin_finance_info_id,
+                    -- 计算出来的单价
+                    admin_finance.price,
+                    -- 上次收费时间
+                    admin_finance.last_charge_date,
+                    -- 缓存结束时间
+                    admin_finance.cache_end_date,
+                    -- 实际的财务数据
+                    new_finance_data.* 
+                FROM
+                    -- 上传数据表
+                    admin_user_finance_upload_data_record AS upload_data_record
+                    -- 用户财务信息（单价/缓存期/上次收费时间等）
+                    JOIN admin_user_finance_data AS admin_finance ON admin_finance.id = upload_data_record.user_finance_data_id
+                    -- 实际财务数据表
+                    JOIN new_finance_data AS finance_data ON finance_data.id = admin_finance.finance_data_id 
+                WHERE
+                    upload_data_record.record_id = $uploadRecordId
+        ";
+
+        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        
+        return $list;
     }
 
 }

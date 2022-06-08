@@ -2720,4 +2720,72 @@ eof;
         return $this->writeJson(200, [], $res, '查询成功'); 
 
     }
+
+    function getYieldData(){
+        $data = [];
+        for($i=1; $i<=10 ; $i++){
+            yield $datas[] = [
+               '测试id',
+               '测试name',
+               '测试status',                
+            ];
+        }
+    }
+    function testExport()
+    {
+        // 下载的文件相关
+        $config = [
+            'path' => TEMP_FILE_PATH // xlsx文件保存路径
+        ];
+
+        $excel = new \Vtiful\Kernel\Excel($config);
+
+        $filename = '财务数据_'.date('YmdHis'). '.xlsx';
+ 
+        $financeData = $this->getYieldData() ; 
+ 
+        $fileObject = $excel->fileName($filename, '财务数据');
+        $fileHandle = $fileObject->getHandle();
+
+        //==========================================================================================================
+        $format = new Format($fileHandle);
+
+        $colorStyle = $format
+            ->fontColor(Format::COLOR_ORANGE)
+            ->border(Format::BORDER_DASH_DOT)
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $format = new Format($fileHandle);
+
+        $alignStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+        //==========================================================================================================
+
+        $header = [
+            '序号',
+            '企业名称',
+            '监控类别', 
+        ];
+        $fileObject
+            ->defaultFormat($colorStyle)
+            ->header($header)
+            ->defaultFormat($alignStyle)
+            ->data($financeData)
+            // ->setColumn('B:B', 50)
+        ;
+
+        $format = new Format($fileHandle);
+        //单元格有\n解析成换行
+        $wrapStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->wrap()
+            ->toResource(); 
+
+        $res = $fileObject->output();  
+
+        return $this->writeJson(200, [], [], $filename); 
+
+    }
 }
