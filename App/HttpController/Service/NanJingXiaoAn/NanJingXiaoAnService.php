@@ -23,16 +23,16 @@ class NanJingXiaoAnService extends ServiceBase
 
     private function checkResp($resp): array
     {
-        if (isset($res['coHttpErr']))
-            return $this->createReturn(500, $res['Paging'], [], 'co请求错误');
+        if (isset($resp['coHttpErr']))
+            return $this->createReturn(500, null, [], 'co请求错误');
 
         $code = $resp['code'] - 0;
 
         $code !== 2000 ?: $code = 200;
 
-        $result = $resp['payload'];
+        $result = $resp['payload'] ?? '';
 
-        $msg = trim($resp['message']);
+        $msg = trim($resp['message'] ?? '');
 
         return $this->createReturn($code, null, $result, $msg);
     }
