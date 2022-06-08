@@ -32,7 +32,7 @@ class ControllerBase extends Index
         $res = ConfigInfo::create()->where('name', 'admin_no_check_methods')->get();
         $methodsLists = [];
         $tmpStr = trim($res->getAttr('value'));
-        CommonService::getInstance()->log4PHP('  tmpStr '.$tmpStr);
+        // CommonService::getInstance()->log4PHP('  tmpStr '.$tmpStr);
         if($tmpStr){
             $tmpArr = @json_decode($tmpStr,true);
             CommonService::getInstance()->log4PHP('  tmpArr '.json_encode($tmpArr));
