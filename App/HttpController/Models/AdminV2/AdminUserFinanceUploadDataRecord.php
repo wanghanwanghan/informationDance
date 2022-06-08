@@ -57,13 +57,25 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
     }
 
     public static function findByUserIdAndRecordId(
-        $user_id,$record_id,$status
+        $user_id,$record_id,$status,$fieldsArr = []
     ){ 
-        $res =  AdminUserFinanceUploadRecord::create()->where([
-            'user_id' => $user_id,  
-            'record_id' => $record_id,   
-            'status' => $status,   
-        ])->all(); 
+        if(empty($fieldsArr)){
+            $res =  AdminUserFinanceUploadRecord::create()->where([
+                'user_id' => $user_id,  
+                'record_id' => $record_id,   
+                'status' => $status,   
+            ]) 
+            ->all(); 
+        } 
+        else{
+            $res =  AdminUserFinanceUploadRecord::create()->where([
+                'user_id' => $user_id,  
+                'record_id' => $record_id,   
+                'status' => $status,   
+            ])
+            ->field($fieldsArr)
+            ->all(); 
+        }
 
         return $res;
     }
@@ -79,11 +91,9 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         ->all(); 
 
         $user_finance_data_ids = array_column($res,'user_finance_data_id');
-        $res =  AdminUserFinanceUploadDataRecord::create()->where([
-            'user_id' => $user_id,  
-            'record_id' => $record_id,   
-            'status' => $status,   
-        ])->field(['id','user_finance_data_id'])
+        $dataRes =  AdminUserFinanceUploadDataRecord::create()->where(
+            'id',$user_finance_data_ids,'IN'
+        )->field(['id','user_finance_data_id'])
         ->all(); 
 
         return $res;

@@ -83,35 +83,60 @@ class AdminUserFinanceUploadRecord extends ModelBase
     }
 
     //获取财务数据 
-    public static function getFinanceDataByUploadRecordId($uploadRecordId){
-        // 节省内存 直接sql查询
-        $sql = " SELECT
-                    -- 上传的记录id
-                    upload_data_record.record_id AS upload_id,
-                    -- 用户财务信息id（单价/缓存期/上次收费时间等）
-                    admin_finance.id AS admin_finance_info_id,
-                    -- 计算出来的单价
-                    admin_finance.price,
-                    -- 上次收费时间
-                    admin_finance.last_charge_date,
-                    -- 缓存结束时间
-                    admin_finance.cache_end_date,
-                    -- 实际的财务数据
-                    new_finance_data.* 
-                FROM
-                    -- 上传数据表
-                    admin_user_finance_upload_data_record AS upload_data_record
-                    -- 用户财务信息（单价/缓存期/上次收费时间等）
-                    JOIN admin_user_finance_data AS admin_finance ON admin_finance.id = upload_data_record.user_finance_data_id
-                    -- 实际财务数据表
-                    JOIN new_finance_data AS finance_data ON finance_data.id = admin_finance.finance_data_id 
-                WHERE
-                    upload_data_record.record_id = $uploadRecordId
-        ";
-
-        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+    public static function getAllFinanceDataByUploadRecordId(
+        $userId,$uploadRecordId,$status,$keepPrice = 1
+    ){
+        // 取到该记录对应的上传数据
+        $uploadDatas = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
+            $userId,$uploadRecordId,$status,["user_finance_data_id"]
+        );
         
-        return $list;
+        $returnDatas  = []; 
+        foreach($uploadDatas as $uploadData){
+            // 财务数据|包含具体价格等
+            $financeDatas = self::getFinanceCompleData(
+                $uploadData['user_finance_data_id']
+            ); 
+            // 返回的财务数据里是否加上价格字段
+            if($keepPrice){
+                $financeDatas['finance_data']['real_price'] = $financeDatas['price' ]; 
+                $financeDatas['finance_data']['price_detail'] = $financeDatas['price_detail' ]; 
+            } 
+            // 财务数据
+            $returnDatas['finance_data'][$uploadData['user_finance_data_id']] = $financeDatas['finance_data'];
+            // 收费明细
+            $returnDatas['chargeDetails'][$uploadData['user_finance_data_id']] = 
+            [
+                'user_finance_data_id' => $uploadData['user_finance_data_id'],
+                'price' =>$financeDatas['price' ],
+                'price_detail' => $financeDatas['price_detail' ]
+            ];
+            // 总条数
+            $returnDatas['totalNums'] ++ ;
+            // 总计收费
+            $returnDatas['totalPrice'] +=  $financeDatas['price' ]; 
+        }
+ 
+        return $returnDatas;
     }
+
+
+    public static function getFinanceCompleData($user_finance_data_id){ 
+        //该数据对应的相关价格配置/缓存配置等
+         $AdminUserFinanceDataRes = AdminUserFinanceData::findById(
+            $user_finance_data_id
+        );
+        $AdminUserFinanceData = $AdminUserFinanceDataRes->toArray(); 
+        //取实际的财务数据
+        $NewFinanceDataRes = NewFinanceData::findById($AdminUserFinanceData['finance_data_id']);  
+        $NewFinanceData = $NewFinanceDataRes->toArray();
+        $NewFinanceData['user_finance_data_id'] = $user_finance_data_id;
+        return [
+            'finance_data' => $NewFinanceData,
+            'price' => $AdminUserFinanceDataRes['price'],
+            'price_detail' => '包年|之前收费过|不在计费',
+        ];
+    }
+ 
 
 }

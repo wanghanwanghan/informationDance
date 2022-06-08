@@ -234,6 +234,10 @@ class AdminUserFinanceData extends ModelBase
         ]; 
     }
 
+    static function getChargePrice($adminUserFinanceDataArr){
+        return  $adminUserFinanceDataArr['price'];
+    }
+
     public static function findByCondition($whereArr,$limit){
         $res =  AdminUserFinanceData::create()
             ->where($whereArr)
@@ -269,6 +273,17 @@ class AdminUserFinanceData extends ModelBase
             'id' => $id,
             'price' => $price,  
             'price_type' => $priceType,  
+        ]);
+    }
+
+    public static function updateStatus($id,$status){ 
+        $info = AdminUserFinanceData::create()
+                    ->where('id',$id)
+                    ->get(); 
+        
+        return $info->update([
+            'id' => $id,
+            'status' => $status 
         ]);
     }
 

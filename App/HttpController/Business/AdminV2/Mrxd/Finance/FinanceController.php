@@ -10,6 +10,8 @@ use App\HttpController\Service\AdminRole\AdminPrivilegedUser;
 use App\HttpController\Models\AdminV2\AdminRoles;
 use App\HttpController\Models\AdminV2\AdminUserFinanceConfig;
 use App\HttpController\Models\AdminV2\AdminUserFinanceData;
+use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataRecord;
+use App\HttpController\Models\AdminV2\AdminUserFinanceExportRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadDataRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadeRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
@@ -223,8 +225,70 @@ class FinanceController extends ControllerBase
         ], $res); 
     }
 
+    public function getExportLists(){
+        // $userId = $this->getRequestData('user_id');
+        // if($userId <= 0){
+        //     return $this->writeJson(206, [] ,   [], '缺少必要参数', true, []); 
+        // } 
+
+        $requestData =  $this->getRequestData();
+         
+        $res = AdminUserFinanceExportRecord::findByCondition(
+            [
+                // 'user_id' => $userId
+                'user_id' => $this->loginUserinfo['id']
+            ],
+            0, 20
+        );
+
+        return $this->writeJson(200, null, [
+
+        ], $res); 
+    }
+
+    //获取待确认的列表
+    public function getNeedsConfirmExportLists(){
+        // $userId = $this->getRequestData('user_id');
+        // if($userId <= 0){
+        //     return $this->writeJson(206, [] ,   [], '缺少必要参数', true, []); 
+        // } 
+
+        $requestData =  $this->getRequestData();
+         
+        $res = AdminUserFinanceData::findByCondition(
+            [
+                // 'user_id' => $userId
+                'user_id' => $this->loginUserinfo['id']
+            ],
+            0, 20
+        );
+
+        return $this->writeJson(200, null, [
+
+        ], $res); 
+    }
+
+    //确认的列表
+    public function ConfirmFinanceData(){
+        // $userId = $this->getRequestData('user_id');
+        // if($userId <= 0){
+        //     return $this->writeJson(206, [] ,   [], '缺少必要参数', true, []); 
+        // } 
+
+        $requestData =  $this->getRequestData();
+         
+        $res = AdminUserFinanceData::updateStatus(
+            $requestData['id'],
+            $requestData['status']
+        );
+
+        return $this->writeJson(200, null, [
+
+        ], $res); 
+    }
+
     // 导出客户名单
-    function getUserBusinessOpportunityExcel()
+    function exportFinanceData()
     {
         $requestData =  $this->getRequestData();
         if(
@@ -246,8 +310,10 @@ class FinanceController extends ControllerBase
 
 
         // 找到对应的财务信息
-        $financeData = AdminUserFinanceUploadRecord::getFinanceDataByUploadRecordId(
-            $requestData['id']
+        $financeData = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordId(
+            $this->loginUserinfo['id'],
+            $requestData['id'],
+            1
         ); 
  
         $fileObject = $excel->fileName($filename, '财务数据');
@@ -278,7 +344,7 @@ class FinanceController extends ControllerBase
             ->defaultFormat($colorStyle)
             ->header($header)
             ->defaultFormat($alignStyle)
-            ->data($financeData)
+            ->data($financeData['finance_data'])
             // ->setColumn('B:B', 50)
         ;
 
@@ -292,9 +358,35 @@ class FinanceController extends ControllerBase
         $res = $fileObject->output();
 
         // 设置导出记录
+        $AdminUserFinanceExportRecordId = AdminUserFinanceExportRecord::addExportRecord(
+            [
+                'user_id' => $this->loginUserinfo['id'], 
+                'price' => $financeData['totalPrice'],  
+                'total_company_nums' => $financeData['totalNums'],  
+                'config_json' => '',  
+                'upload_record_id' => $requestData['id'],  
+                'reamrk' => '',  
+                'status' => '',   
+            ]
+        );
+
+        foreach($financeData['finance_data'] as $financeItem){
+            AdminUserFinanceExportDataRecord::addExportRecord(
+                [
+                    'user_id' => $requestData['user_id'], 
+                    'export_record_id' => $AdminUserFinanceExportRecordId,   
+                    'user_finance_data_id' => $financeItem['user_finance_data_id'],   
+                    'price' => $financeItem['price'],   
+                    'detail' => $financeItem['price_detail'],   
+                    'status' => 1,
+                ]
+                );
+        }
         
 
-        // 扣费 
+        // 添加对账记录 
+        // 实际扣费 
+
          
 
         return $this->writeJson(200, null, 'Static/Temp/' . $filename, null, true, [$res]);

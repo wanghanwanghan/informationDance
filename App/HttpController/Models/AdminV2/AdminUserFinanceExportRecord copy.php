@@ -20,17 +20,16 @@ class AdminUserFinanceExportDataRecord extends ModelBase
     static $stateParsed = 5;
     static $stateExported = 10;
 
-    public static function addUploadRecord($requestData){
+    public static function addExportRecord($requestData){
        
         try {
            $res =  AdminUserFinanceUploadRecord::create()->data([
                 'user_id' => $requestData['user_id'], 
-                'file_path' => $requestData['file_path'],  
-                'file_name' => $requestData['file_name'],  
-                'title' => $requestData['title'],  
-                'finance_config' => $requestData['finance_config'],  
-                'reamrk' => $requestData['reamrk'],  
-                'status' => 1,  
+                'export_record_id' => $requestData['export_record_id'],   
+                'user_finance_data_id' => $requestData['user_finance_data_id'],   
+                'price' => $requestData['price'],   
+                'detail' => $requestData['detail'],   
+                'status' => $requestData['status'],   
             ])->save();
 
         } catch (\Throwable $e) {
