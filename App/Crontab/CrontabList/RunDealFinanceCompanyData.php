@@ -342,7 +342,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                             ]
                         )
                     );
-                    continue;
+
                     $AdminUserFinanceDataModel =  AdminUserFinanceData::findByUserAndEntAndYear(
                         $uploadFinanceData['user_id'],$dataItem[0],$yearItem
                     );
@@ -360,6 +360,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                             ]
                         )
                     );
+                    continue;
 
                     if(!$AdminUserFinanceDataModel){ 
 
@@ -434,9 +435,9 @@ class RunDealFinanceCompanyData extends AbstractCronTask
             }
             // return true ;
             //解析完成-设置状态
-            $res = AdminUserFinanceUploadRecord::changeStatus(
-                $uploadFinanceData['id'],AdminUserFinanceUploadRecord::$stateParsed
-            );
+//            $res = AdminUserFinanceUploadRecord::changeStatus(
+//                $uploadFinanceData['id'],AdminUserFinanceUploadRecord::$stateParsed
+//            );
             CommonService::getInstance()->log4PHP(
                 'parseDataToDb add  changeStatus '.json_encode(
                     [
