@@ -2745,6 +2745,12 @@ eof;
             RunDealFinanceCompanyData::calculatePrice(1);
         }
 
+        if(
+            $this->getRequestData('pullFinanceData')
+        ){
+            RunDealFinanceCompanyData::pullFinanceData(1);
+        }
+
         // $config = [
         //     'path' => TEMP_FILE_PATH // xlsx文件保存路径
         // ];
