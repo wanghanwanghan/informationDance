@@ -171,6 +171,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
         // return true;
         // 将客户名单解析到db
         self::parseDataToDb(1);
+        return true ;   
         //计算价格
         self::calculatePrice(5);
         //拉取finance数据
@@ -292,7 +293,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
     static function  parseDataToDb($limit)
     {
         CommonService::getInstance()->log4PHP('parseDataToDb start');
-        return true;
+        // return true;
         // 用户上传的客户名单信息
         $initDatas = AdminUserFinanceUploadRecord::findByCondition(
             [
@@ -313,6 +314,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
             CommonService::getInstance()->log4PHP(
                 'parseDataToDb dirPat '.json_encode($dirPat)
             );
+            continue ;
             self::setworkPath( $dirPat );
             //按行读取数据
             $excelDatas = self::getYieldData($uploadFinanceData['file_path']); 

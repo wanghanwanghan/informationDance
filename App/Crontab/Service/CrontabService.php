@@ -12,6 +12,7 @@ use App\Crontab\CrontabList\RunDianZiQianGetPdf;
 use App\Crontab\CrontabList\RunSaiMengHuiZhiCaiWu;
 use App\Crontab\CrontabList\RunSouKeUploadFiles;
 use App\Crontab\CrontabList\RunCompleteCompanyData;
+use App\Crontab\CrontabList\RunDealFinanceCompanyData;
 use App\Crontab\CrontabList\RunFillCompanyName;
 use App\Crontab\CrontabList\RunReadAndDealXls;
 use App\Crontab\CrontabList\RunSupervisor;
@@ -39,7 +40,8 @@ class CrontabService
         $this->RunFillCompanyName();
         $this->RunReadAndDealXls();
         $this->RunShouQuanCheXian();
-        $this->FillEntAllField();//补全给筛选出的企业 <全字段>
+        $this->FillEntAllField();//补全给筛选出的企业 <全字段>RunDealFinanceCompanyData
+        $this->RunDealFinanceCompanyData();//补全给筛选出的企业 <全字段>
 
         return true;
     }
@@ -116,5 +118,10 @@ class CrontabService
     private function FillEntAllField(): Crontab
     {
         return Crontab::getInstance()->addTask(FillEntAllField::class);
+    }
+
+    private function RunDealFinanceCompanyData(): Crontab
+    {
+        return Crontab::getInstance()->addTask(RunDealFinanceCompanyData::class);
     }
 }
