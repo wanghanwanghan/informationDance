@@ -342,7 +342,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                             ]
                         )
                     );
-                    continue;
+
                     $AdminUserFinanceDataModel =  AdminUserFinanceData::findByUserAndEntAndYear(
                         $uploadFinanceData['user_id'],$dataItem[0],$yearItem
                     );
@@ -360,6 +360,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                             ]
                         )
                     );
+                    continue;
 
                     if(!$AdminUserFinanceDataModel){ 
 
