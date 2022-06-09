@@ -249,7 +249,9 @@ class AdminUserFinanceData extends ModelBase
                         entName = $entName   
                     limit 1 ";
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-        
+        CommonService::getInstance()->log4PHP(
+            'getChagrgeDetailsByYear    '.$year. '  $sql '.$sql
+        );
         return [
             'IsChargeByYear' => true,
             'YearPrice' => $normal_years_price_arr[$year],
@@ -287,7 +289,10 @@ class AdminUserFinanceData extends ModelBase
         return $res;
     }
 
-    public static function updatePrice($id,$price,$priceType){ 
+    public static function updatePrice($id,$price,$priceType){
+        CommonService::getInstance()->log4PHP(
+            'updatePrice    '.$id . ' '. $price . ' '. $priceType
+        );
         $info = AdminUserFinanceData::create()
                     ->where('id',$id)
                     ->get(); 
