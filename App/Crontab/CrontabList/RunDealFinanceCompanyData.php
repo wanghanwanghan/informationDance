@@ -180,10 +180,16 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                     AdminUserFinanceUploadRecord::$stateHasGetData
                 )
             ){
-                AdminUserFinanceUploadRecord::changeStatus(
+                $changeRes = AdminUserFinanceUploadRecord::changeStatus(
                     $dataItem['id'],
                     AdminUserFinanceUploadRecord::$stateHasGetData
                 );
+                if(!$changeRes){
+                    CommonService::getInstance()->log4PHP(
+                        'pullFinanceData err1  change status error '.$dataItem['id']
+                    );
+                    continue;
+                }
             }
 
             // 找到需要拉取财务数据的
@@ -200,16 +206,26 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                 // 拉取财务数据
                 $res = AdminUserFinanceData::pullFinanceData(
                     $UploadDataRecord['user_finance_data_id'],
-                    $dataItem['finance_config']
+                    json_decode($dataItem['finance_config'],true)
                 ); 
                 if(!$res){
+                    CommonService::getInstance()->log4PHP(
+                        'pullFinanceData err2  pull data  error '.$dataItem['id']
+                    );
                     continue;
                 }
+                return true;
                 //设置下状态
-                AdminUserFinanceUploadDataRecord::updateStatusById(
+                $updateRes = AdminUserFinanceUploadDataRecord::updateStatusById(
                     $UploadDataRecord['id'],
                     AdminUserFinanceUploadRecord::$stateHasGetData
                 );
+                if(!$updateRes){
+                    CommonService::getInstance()->log4PHP(
+                        'pullFinanceData err3  update status  error '.$dataItem['id']
+                    );
+                    continue;
+                }
             }
         } 
 

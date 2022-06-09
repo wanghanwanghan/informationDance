@@ -126,7 +126,7 @@ class AdminUserFinanceData extends ModelBase
         $res =  AdminUserFinanceData::create()
             ->where('id',$id) 
             ->get();  
- 
+
         $postData = [
             'entName' => $res->getAttr('entName'),
             'code' => '',
@@ -136,30 +136,41 @@ class AdminUserFinanceData extends ModelBase
          
         // 根据缓存期和上次拉取财务数据时间 决定是取db还是取api
         $getFinanceDataSourceDetailRes = self::getFinanceDataSourceDetail($id);
+        CommonService::getInstance()->log4PHP(
+            'pullFinanceData   $getFinanceDataSourceDetailRes'.json_encode($getFinanceDataSourceDetailRes)
+        );
+        //需要从APi拉取
         if($getFinanceDataSourceDetailRes['pullFromApi']){
             $res = (new LongXinService())->getFinanceData($postData, false);
             $postData = $res['data'];
+            CommonService::getInstance()->log4PHP(
+                'pullFinanceData   info   api finance data '.json_encode($postData)
+            );
             // 更新拉取时间 
             // 保存到db
-            $addRes = NewFinanceData::addRecord(
-                [
-                    'entName' => $postData['entName'],  
-                    'user_id' => $postData['user_id'],   
-                    'year' => $postData['year'],   
-                    'VENDINC' => $postData['VENDINC'],   
-                    'ASSGRO' => $postData['ASSGRO'],   
-                    'MAIBUSINC' => $postData['MAIBUSINC'],   
-                    'TOTEQU' => $postData['TOTEQU'],   
-                    'RATGRO' => $postData['RATGRO'],   
-                    'PROGRO' => $postData['PROGRO'],   
-                    'NETINC' => $postData['NETINC'],   
-                    'SOCNUM' => $postData['SOCNUM'],   
-                    'EMPNUM' => $postData['EMPNUM'],   
-                    'status' => $postData['status'],   
-                    'last_pull_api_time' => date('Y-m-d H:i:s',time()), 
-                ]
-            );
-        } 
+            $dbDataArr = [
+                'entName' => $postData['entName'],
+                'user_id' => $postData['user_id'],
+                'year' => $postData['year'],
+                'VENDINC' => $postData['VENDINC'],
+                'ASSGRO' => $postData['ASSGRO'],
+                'MAIBUSINC' => $postData['MAIBUSINC'],
+                'TOTEQU' => $postData['TOTEQU'],
+                'RATGRO' => $postData['RATGRO'],
+                'PROGRO' => $postData['PROGRO'],
+                'NETINC' => $postData['NETINC'],
+                'SOCNUM' => $postData['SOCNUM'],
+                'EMPNUM' => $postData['EMPNUM'],
+                'status' => $postData['status'],
+                'last_pull_api_time' => date('Y-m-d H:i:s',time()),
+            ];
+            $addRes = NewFinanceData::addRecord($dbDataArr);
+            if(!$addRes){
+                CommonService::getInstance()->log4PHP(
+                    'pullFinanceData   err 1  add NewFinanceData failed '.json_encode($dbDataArr)
+                );
+            }
+        }
 
         return $addRes; 
     }
