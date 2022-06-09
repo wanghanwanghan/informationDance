@@ -28,8 +28,18 @@ class MenuController extends ControllerBase
         );
     }
 
-    public function getRawMenus(){ 
-        $res = AdminMenuItems::create()->where("status = 1")->all();
+    public function getRawMenus(){
+        $name = $this->getRequestData('name','') ;
+        $pageNo = $this->getRequestData('pageNo',1) ;
+        $pageSize = $this->getRequestData('pageSize',10) ;
+        $limit = ($pageNo-1)*$pageSize;
+        $sql = "status = 1";
+        if(!empty($name)){
+            $sql .= " and name = '{$name}'";
+        }
+        $count = AdminMenuItems::create()->where($sql)->count();
+        $res = AdminMenuItems::create()->where($sql." order by id desc limit {$limit},$pageSize ")->all();
+
         foreach($res as &$menuItem)
         {
             if($menuItem['pid'] <= 0){
@@ -38,12 +48,18 @@ class MenuController extends ControllerBase
             $tmpMenu = AdminMenuItems::create()
                 ->where("id = ".$menuItem['pid'])->all();
             $menuItem['pidRes'] = $tmpMenu[0];
-        }        
+        }
+        $paging = [
+            'page' => $pageNo,
+            'pageSize' => $pageSize,
+            'total' => $count,
+            'totalPage' => (int)($count/$pageSize)+1,
+        ];
         return $this->writeJson(
-                200,
-                [],
-                $res
-            );
+            200,
+            $paging,
+            $res
+        );
     }
 
     public function getAllMenu(){  
