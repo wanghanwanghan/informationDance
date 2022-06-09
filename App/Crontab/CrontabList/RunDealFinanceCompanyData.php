@@ -316,7 +316,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
             CommonService::getInstance()->log4PHP(
                 'parseDataToDb dirPat '.json_encode($dirPat)
             );
-            continue ;
+
             self::setworkPath( $dirPat );
             //按行读取数据
             $excelDatas = self::getYieldData($uploadFinanceData['file_path']); 
@@ -329,7 +329,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                 CommonService::getInstance()->log4PHP(
                     'parseDataToDb yearsArr '.json_encode($yearsArr)
                 );
-
+                continue ;
                 foreach($yearsArr as $yearItem){
                     // 插入到AdminUserFinanceData表
                     $AdminUserFinanceDataId = 0 ;
