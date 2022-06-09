@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Api\XinDong;
 
+use App\Crontab\CrontabList\RunDealFinanceCompanyData;
 use App\Csp\Service\CspService;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
@@ -2732,80 +2733,80 @@ eof;
     }
     function testExport()
     {
-        
+        RunDealFinanceCompanyData::parseDataToDb(1);
 
-        $config = [
-            'path' => TEMP_FILE_PATH // xlsx文件保存路径
-        ];
+        // $config = [
+        //     'path' => TEMP_FILE_PATH // xlsx文件保存路径
+        // ];
 
-        $excel = new \Vtiful\Kernel\Excel($config);
+        // $excel = new \Vtiful\Kernel\Excel($config);
 
-        $filename = '测试数据_'.date('YmdHis') . '.xlsx';
+        // $filename = '测试数据_'.date('YmdHis') . '.xlsx';
 
-        $header = [
-            '序号',
-            '企业名称',
-            '监控类别', 
-        ];
+        // $header = [
+        //     '序号',
+        //     '企业名称',
+        //     '监控类别', 
+        // ];
 
-        $list = UserBusinessOpportunity::create()
-            // ->where('phone', $phone)
-            // ->where('entName', $entNameList, 'IN')
-            ->limit(2)
-            ->all();
-        $data = [];
-        $i = 1;
-        foreach ($list as $one) { 
+        // $list = UserBusinessOpportunity::create()
             
-            array_push($data, [
-                $one['name'],
-                $one['code'],
-            ]);
-            $i++;
-        }
+        //     ->limit(2)
+        //     ->all();
+        // $data = [];
+        // $i = 1;
+        // foreach ($list as $one) { 
+            
+        //     array_push($data, [
+        //         $one['name'],
+        //         $one['code'],
+        //     ]);
+        //     $i++;
+        // }
         
-        $data = [
-            ['福建裕兴果蔬食品开发有限公司','91350603611943147E']
-        ];
+        // $data = [
+        //     ['福建裕兴果蔬食品开发有限公司','91350603611943147E']
+        // ];
 
-        $data = $this->getYieldData();
-        $fileObject = $excel->fileName($filename, '汇总');
-        $fileHandle = $fileObject->getHandle();
+        // $data = $this->getYieldData();
+        // $fileObject = $excel->fileName($filename, '汇总');
+        // $fileHandle = $fileObject->getHandle();
 
-        //==========================================================================================================
-        $format = new Format($fileHandle);
+        // //==========================================================================================================
+        // $format = new Format($fileHandle);
 
-        $colorStyle = $format
-            ->fontColor(Format::COLOR_ORANGE)
-            ->border(Format::BORDER_DASH_DOT)
-            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
-            ->toResource();
+        // $colorStyle = $format
+        //     ->fontColor(Format::COLOR_ORANGE)
+        //     ->border(Format::BORDER_DASH_DOT)
+        //     ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+        //     ->toResource();
 
-        $format = new Format($fileHandle);
+        // $format = new Format($fileHandle);
 
-        $alignStyle = $format
-            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
-            ->toResource();
-        //==========================================================================================================
+        // $alignStyle = $format
+        //     ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+        //     ->toResource();
+        // //==========================================================================================================
 
-        $fileObject
-            ->defaultFormat($colorStyle)
-            ->header($header)
-            ->defaultFormat($alignStyle)
-            ->data($data)
-            // ->setColumn('B:B', 50)
-        ;
+        // $fileObject
+        //     ->defaultFormat($colorStyle)
+        //     ->header($header)
+        //     ->defaultFormat($alignStyle)
+        //     ->data($data)
+        //     // ->setColumn('B:B', 50)
+        // ;
 
-        $format = new Format($fileHandle);
-        //单元格有\n解析成换行
-        $wrapStyle = $format
-            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
-            ->wrap()
-            ->toResource(); 
+        // $format = new Format($fileHandle);
+        // //单元格有\n解析成换行
+        // $wrapStyle = $format
+        //     ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+        //     ->wrap()
+        //     ->toResource(); 
 
-        $res = $fileObject->output();
+        // $res = $fileObject->output();
 
-        return $this->writeJson(200, null, 'Static/Temp/' . $filename, null, true, [$res]);
+        // return $this->writeJson(200, null, 'Static/Temp/' . $filename, null, true, [$res]);
+        return $this->writeJson(200, null, [], null, true, []);
  
 
     }
