@@ -35,7 +35,7 @@ class UserController extends ControllerBase
         $pageSize = $this->getRequestData('pageSize',10) ;
 
         $limit = ($pageNo-1)*$pageSize;
-        $sql = "status = 1";
+        $sql = "1=1";//status = 1
         if(!empty($user_name)){
             $sql .= " and user_name = '{$user_name}'";
         }
