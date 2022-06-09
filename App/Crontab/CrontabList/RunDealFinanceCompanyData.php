@@ -148,7 +148,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
     }
 
     function run(int $taskId, int $workerIndex): bool
-    {    
+    {
         // 将客户名单解析到db
         self::parseDataToDb(1);
         //计算价格
@@ -264,7 +264,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                 // 计算单价
                 $calculateRes = AdminUserFinanceData::calculatePrice(
                     $UploadDataRecord['user_finance_data_id'],
-                    $dataItem['finance_config']
+                    json_decode($dataItem['finance_config'],true)
                 );
                 if(!$calculateRes){
                     CommonService::getInstance()->log4PHP(

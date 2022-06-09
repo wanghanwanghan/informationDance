@@ -53,7 +53,10 @@ class AdminUserFinanceData extends ModelBase
     } 
 
     // 计算单价
-    public static function calculatePrice($id,$financeConifgArr){ 
+    public static function calculatePrice($id,$financeConifgArr){
+        CommonService::getInstance()->log4PHP(
+            'calculatePrice start  '.$id. '  conf '.json_encode($financeConifgArr)
+        );
         $res =  AdminUserFinanceData::create()
             ->where('id',$id) 
             ->get();
@@ -65,6 +68,9 @@ class AdminUserFinanceData extends ModelBase
             $res->getAttr('user_id'),
             $res->getAttr('entName')
         ) ;
+        CommonService::getInstance()->log4PHP(
+            '包年    '.$id.' '. $res->getAttr('year'). '  conf '.json_encode($chagrgeDetailsAnnuallyRes)
+        );
         // 是年度收费
         if($chagrgeDetailsAnnuallyRes['IsAnnually']){  
             $updateRes = self::updatePrice(
@@ -79,14 +85,16 @@ class AdminUserFinanceData extends ModelBase
             }
         }  
 
-        //收费方式二：按单年
+        //收费方式二：按年
         $chagrgeDetailsByYearsRes = self::getChagrgeDetailsByYear(
             $res->getAttr('year'),
             $financeConifgArr,
             $res->getAttr('user_id'),
             $res->getAttr('entName')
         ) ;
-         
+        CommonService::getInstance()->log4PHP(
+            '按年    '.$id.' '. $res->getAttr('year'). '  conf '.json_encode($chagrgeDetailsByYearsRes)
+        );
         if($chagrgeDetailsByYearsRes['IsChargeByYear']){
             $updateRes = self::updatePrice(
                 $id,
@@ -158,7 +166,10 @@ class AdminUserFinanceData extends ModelBase
 
     public static function getChagrgeDetailsAnnually(
         $year,$financeConifgArr,$user_id,$entName
-    ){ 
+    ){
+        CommonService::getInstance()->log4PHP(
+            'getChagrgeDetailsAnnually    '.$year. '  conf '.json_encode($financeConifgArr)
+        );
         if($financeConifgArr['annually_years']<0){
             return [
                 'IsAnnually' => false,
@@ -193,7 +204,9 @@ class AdminUserFinanceData extends ModelBase
 
                     limit 1 ";
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-        
+        CommonService::getInstance()->log4PHP(
+            'getChagrgeDetailsAnnually   之前是否已经计费过  $sql '. $sql
+        );
         return [
             'IsAnnually' => true,
             'AnnuallyPrice' => $financeConifgArr['annually_price'],
