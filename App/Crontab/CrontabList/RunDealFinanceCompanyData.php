@@ -319,7 +319,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
 
             self::setworkPath( $dirPat );
             //按行读取数据
-            $excelDatas = self::getYieldData($uploadFinanceData['file_path']); 
+            $excelDatas = self::getYieldData($uploadFinanceData['file_name']);
             foreach ($excelDatas as $dataItem) { 
                 CommonService::getInstance()->log4PHP(
                     'parseDataToDb dataItem '.json_encode($dataItem)
@@ -329,10 +329,20 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                 CommonService::getInstance()->log4PHP(
                     'parseDataToDb yearsArr '.json_encode($yearsArr)
                 );
-                continue ;
+                // continue ;
                 foreach($yearsArr as $yearItem){
                     // 插入到AdminUserFinanceData表
                     $AdminUserFinanceDataId = 0 ;
+                    CommonService::getInstance()->log4PHP(
+                        'parseDataToDb AdminUserFinanceDataModel '.json_encode(
+                            [
+                                $uploadFinanceData['user_id'],
+                                $dataItem[0],
+                                $yearItem
+                            ]
+                        )
+                    );
+                    continue;
                     $AdminUserFinanceDataModel =  AdminUserFinanceData::findByUserAndEntAndYear(
                         $uploadFinanceData['user_id'],$dataItem[0],$yearItem
                     );
@@ -422,7 +432,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                     }    
                 } 
             }
-            return true ;
+            // return true ;
             //解析完成-设置状态
             $res = AdminUserFinanceUploadRecord::changeStatus(
                 $uploadFinanceData['id'],AdminUserFinanceUploadRecord::$stateParsed
