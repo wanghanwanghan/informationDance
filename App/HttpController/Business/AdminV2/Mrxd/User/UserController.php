@@ -28,11 +28,32 @@ class UserController extends ControllerBase
         return $this->writeJson();
     }
 
-    public function getAllUser(){ 
+    public function getAllUser(){
+        $user_name = $this->getRequestData('user_name','') ;
+        $user_phone = $this->getRequestData('user_phone','') ;
+        $pageNo = $this->getRequestData('pageNo',1) ;
+        $pageSize = $this->getRequestData('pageSize',10) ;
+
+        $limit = ($pageNo-1)*$pageSize;
+        $sql = "status = 1";
+        if(!empty($user_name)){
+            $sql .= " and user_name = '{$user_name}'";
+        }
+        if(!empty($user_phone)){
+            $sql .= " and phone = '{$user_phone}'";
+        }
+        $count = AdminNewUser::create()->where($sql)->count();
+        $list = AdminNewUser::create()->where($sql." order by id desc limit {$limit},$pageSize ")->all();
+        $paging = [
+            'page' => $pageNo,
+            'pageSize' => $pageSize,
+            'total' => $count,
+            'totalPage' => (int)($count/$pageSize)+1,
+        ];
         return $this->writeJson(
             200,
-            [],
-           \App\HttpController\Models\AdminNew\AdminNewUser::create()->where("status = 1")->all()
+            $paging,
+            $list
         );
     }
 
