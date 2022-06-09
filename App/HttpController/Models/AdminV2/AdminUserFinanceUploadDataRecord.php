@@ -47,7 +47,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
     public static function findByUserIdAndRecordIdAndFinanceId(
         $user_id,$record_id,$user_finance_data_id
     ){ 
-        $res =  AdminUserFinanceUploadRecord::create()->where([
+        $res =  AdminUserFinanceUploadDataRecord::create()->where([
             'user_id' => $user_id,  
             'record_id' => $record_id,  
             'user_finance_data_id' => $user_finance_data_id,  
