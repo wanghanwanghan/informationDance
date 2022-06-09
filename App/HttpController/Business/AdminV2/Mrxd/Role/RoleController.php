@@ -23,11 +23,28 @@ class RoleController extends ControllerBase
     {
         parent::afterAction($actionName);
     }
-    public function getAllRoles(){ 
+    public function getAllRoles(){
+        $role_name = $this->getRequestData('role_name','') ;
+        $pageNo = $this->getRequestData('pageNo',1) ;
+        $pageSize = $this->getRequestData('pageSize',10) ;
+        $limit = ($pageNo-1)*$pageSize;
+        $sql = "status = 1";
+        if(!empty($user_name)){
+            $sql .= " and role_name = '{$role_name}'";
+        }
+        $count = AdminRoles::create()->where($sql)->count();
+        $list = AdminRoles::create()->where($sql." order by id desc limit {$limit},$pageSize ")->all();
+
+        $paging = [
+            'page' => $pageNo,
+            'pageSize' => $pageSize,
+            'total' => $count,
+            'totalPage' => (int)($count/$pageSize)+1,
+        ];
         return $this->writeJson(
             200,
-            [],
-           AdminRoles::create()->where("status = 1")->all()
+            $paging,
+            $list
         );
     }
 
