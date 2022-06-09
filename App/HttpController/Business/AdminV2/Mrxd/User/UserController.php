@@ -29,12 +29,21 @@ class UserController extends ControllerBase
     }
 
     public function getAllUser(){
+        $user_name = $this->getRequestData('user_name','') ;
+        $user_phone = $this->getRequestData('user_phone','') ;
         $pageNo = $this->getRequestData('pageNo',1) ;
         $pageSize = $this->getRequestData('pageSize',10) ;
         $count = AdminNewUser::create()->where("status = 1")->count();
         $limit = ($pageNo-1)*$pageSize;
-        $sql = "status = 1 order by id desc limit {$limit},$pageSize ";
-        $list = AdminNewUser::create()->where($sql)->all();
+        $sql = "status = 1";
+        if(!empty($user_name)){
+            $sql .= " and user_name = '{$user_name}'";
+        }
+        if(!empty($user_phone)){
+            $sql .= " and phone = '{$user_phone}'";
+        }
+
+        $list = AdminNewUser::create()->where($sql." order by id desc limit {$limit},$pageSize ")->all();
         $paging = [
             'page' => $pageNo,
             'pageSize' => $pageSize,
