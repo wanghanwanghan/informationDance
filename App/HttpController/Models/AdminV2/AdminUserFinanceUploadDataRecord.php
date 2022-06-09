@@ -110,14 +110,11 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
 
     public static function updateStatusById(
         $id,$status
-    ){ 
-        $res =  AdminUserFinanceUploadDataRecord::create()->where([
-            'id' => $id,   
-        ])->get(); 
-
-        return $res->update([
+    ){
+        $info = AdminUserFinanceUploadDataRecord::create()->where('id',$id)->get();
+        return $info->update([
             'id' => $id,
-            'status' => $status 
+            'status' => $status,
         ]);
     }
 
