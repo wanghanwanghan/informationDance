@@ -139,7 +139,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
     static function uploadRecordeHasFinished(
         $user_id,
         $id, 
-        $state1, 
+        $state1,
         $state2
     ){
         $initRecords =  AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
@@ -422,6 +422,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                     }    
                 } 
             }
+            return true ;
             //解析完成-设置状态
             $res = AdminUserFinanceUploadRecord::changeStatus(
                 $uploadFinanceData['id'],AdminUserFinanceUploadRecord::$stateParsed
