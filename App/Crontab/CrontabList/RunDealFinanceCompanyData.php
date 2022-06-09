@@ -333,6 +333,16 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                 foreach($yearsArr as $yearItem){
                     // 插入到AdminUserFinanceData表
                     $AdminUserFinanceDataId = 0 ;
+                    CommonService::getInstance()->log4PHP(
+                        'parseDataToDb AdminUserFinanceDataModel '.json_encode(
+                            [
+                                $uploadFinanceData['user_id'],
+                                $dataItem[0],
+                                $yearItem
+                            ]
+                        )
+                    );
+                    continue;
                     $AdminUserFinanceDataModel =  AdminUserFinanceData::findByUserAndEntAndYear(
                         $uploadFinanceData['user_id'],$dataItem[0],$yearItem
                     );
