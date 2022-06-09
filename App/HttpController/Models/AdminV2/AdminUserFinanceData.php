@@ -112,7 +112,7 @@ class AdminUserFinanceData extends ModelBase
     }
 
     public static function getFinanceDataSourceDetail($adminFinanceDataId){
-        $adminFinanceDataId;
+
         return [
             'pullFromApi' => true,
             'pullFromDb' => false,
@@ -149,6 +149,7 @@ class AdminUserFinanceData extends ModelBase
             CommonService::getInstance()->log4PHP(
                 [
                     'getFinanceData $postData' => $postData,
+                    'getFinanceData $res' => $res,
                     'getFinanceData $resData' => $resData,
                 ]
             );
