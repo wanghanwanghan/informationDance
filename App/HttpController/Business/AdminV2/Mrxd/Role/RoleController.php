@@ -33,7 +33,7 @@ class RoleController extends ControllerBase
             $sql .= " and role_name = '{$role_name}'";
         }
         $count = AdminRoles::create()->where($sql)->count();
-        $list = AdminRoles::create()->where($sql." order by id desc limit {$limit},$pageSize ")->all();
+        $list = AdminRoles::create()->where($sql." order by role_id desc limit {$limit},$pageSize ")->all();
 
         $paging = [
             'page' => $pageNo,
