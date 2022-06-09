@@ -199,9 +199,9 @@ class AdminUserFinanceData extends ModelBase
         $sql = " select id from  `admin_user_finance_data`  
                     WHERE 
                         `year` in $yearStr  AND 
-                        user_id = $user_id AND 
-                        entName = '$entName'   
-
+                        user_id = $user_id  AND 
+                        entName = '$entName' AND   
+                        price > 0 
                     limit 1 ";
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         CommonService::getInstance()->log4PHP(
@@ -245,8 +245,9 @@ class AdminUserFinanceData extends ModelBase
         $sql = " select id from  `admin_user_finance_data`  
                     WHERE 
                         `year`  = $year  AND 
-                        user_id = $user_id AND 
-                        entName = '$entName'   
+                        user_id = $user_id  AND 
+                        entName = '$entName' AND 
+                        price > 0 
                     limit 1 ";
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         CommonService::getInstance()->log4PHP(
