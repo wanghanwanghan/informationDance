@@ -29,8 +29,8 @@ class ChuangLanController extends ProvideBase
         } else {
             $this->responseCode = $res[$this->cspKey]['code'];
             $this->responsePaging = $res[$this->cspKey]['paging'];
-            $this->responseData = $res[$this->cspKey]['data'];
-            $this->responseMsg = $res[$this->cspKey]['message'];
+            $this->responseData = $res[$this->cspKey]['result'];
+            $this->responseMsg = $res[$this->cspKey]['msg'];
 
             $res[$this->cspKey]['code'] === 200 ?: $this->spendMoney = 0;
         }
