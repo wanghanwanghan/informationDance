@@ -29,11 +29,11 @@ class RoleController extends ControllerBase
         $pageSize = $this->getRequestData('pageSize',10) ;
         $limit = ($pageNo-1)*$pageSize;
         $sql = "status = 1";
-        if(!empty($user_name)){
+        if(!empty($role_name)){
             $sql .= " and role_name = '{$role_name}'";
         }
         $count = AdminRoles::create()->where($sql)->count();
-        $list = AdminRoles::create()->where($sql." order by id desc limit {$limit},$pageSize ")->all();
+        $list = AdminRoles::create()->where($sql." order by role_id desc limit {$limit},$pageSize ")->all();
 
         $paging = [
             'page' => $pageNo,
