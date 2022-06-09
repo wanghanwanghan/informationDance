@@ -14,8 +14,8 @@ class ChuangLanService extends ServiceBase
     function __construct()
     {
         parent::__construct();
-        $this->appKey = 'mUoCN8pT';
         $this->appId = 'Lz8AqXxJ';
+        $this->appKey = 'mUoCN8pT';
         return true;
     }
 
@@ -98,14 +98,10 @@ class ChuangLanService extends ServiceBase
             'mobile' => trim($mobile)
         ];
 
-        $options = [
-            'enableSSL' => true,
-        ];
-
         $res = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(true)
-            ->send($url, $data, [], $options, 'post');
+            ->send($url, $data);
 
         CommonService::getInstance()->log4PHP($res);
 
