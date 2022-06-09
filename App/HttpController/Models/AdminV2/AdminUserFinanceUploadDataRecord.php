@@ -28,8 +28,8 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
                 'user_id' => $requestData['user_id'],  
                 'record_id' => $requestData['record_id'],  
                 'user_finance_data_id' => $requestData['user_finance_data_id'],  
-                'reamrk' => $requestData['reamrk'],  
-                'status' => $requestData['status'],  
+                'reamrk' => $requestData['reamrk']?:'',
+                'status' => $requestData['status']?:1,
             ])->save();
 
         } catch (\Throwable $e) {

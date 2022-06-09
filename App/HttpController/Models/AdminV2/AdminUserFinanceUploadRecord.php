@@ -37,11 +37,11 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 'years' => $requestData['years'], 
                 'file_path' => $requestData['file_path'],  
                 'file_name' => $requestData['file_name'],  
-                'title' => $requestData['title'],  
+                'title' => $requestData['title']?:'',
                 'finance_config' => $requestData['finance_config'],  
                 'readable_price_config' => $requestData['readable_price_config'],  
-                'reamrk' => $requestData['reamrk'],  
-                'status' => $requestData['status'],  
+                'reamrk' => $requestData['reamrk']?:'',
+                'status' => $requestData['status']?:1,
             ])->save();
 
         } catch (\Throwable $e) {

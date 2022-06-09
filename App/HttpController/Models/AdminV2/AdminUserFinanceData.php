@@ -32,12 +32,12 @@ class AdminUserFinanceData extends ModelBase
                 'user_id' => $requestData['user_id'],  
                 'entName' => $requestData['entName'],  
                 'year' => $requestData['year'],  
-                'finance_data_id' => $requestData['finance_data_id'],  
-                'price' => $requestData['price'],  
-                'price_type' => $requestData['price_type'],  
-                'cache_end_date' => $requestData['cache_end_date'],  
-                'reamrk' => $requestData['reamrk'],  
-                'status' => $requestData['status'],  
+                'finance_data_id' => $requestData['finance_data_id']?:0,
+                'price' => $requestData['price']?:0,
+                'price_type' => $requestData['price_type']?:0,
+                'cache_end_date' => $requestData['cache_end_date']?:0,
+                'reamrk' => $requestData['reamrk']?:'',
+                'status' => $requestData['status']?:1,
             ])->save();
 
         } catch (\Throwable $e) {
