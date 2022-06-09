@@ -35,7 +35,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'addCarInsuranceInfo Throwable continue',
+                    'AdminUserFinanceUploadDataRecord sql err',
                     $e->getMessage(),
                 ])
             );  

@@ -406,7 +406,9 @@ class RunDealFinanceCompanyData extends AbstractCronTask
 
                     if(
                         !AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdAndFinanceId(
-                            $uploadFinanceData['user_id'],$uploadFinanceData['id'] ,$AdminUserFinanceDataId     
+                            $uploadFinanceData['user_id'],
+                            $uploadFinanceData['id'] ,
+                            $AdminUserFinanceDataId
                         )
                     ){
                         $AdminUserFinanceUploadDataRecordId = AdminUserFinanceUploadDataRecord::addUploadRecord(
