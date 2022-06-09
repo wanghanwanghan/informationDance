@@ -148,11 +148,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
     }
 
     function run(int $taskId, int $workerIndex): bool
-    {   
-        // CommonService::getInstance()->log4PHP(
-        //     'RunDealFinanceCompanyData'
-        // );
-        // return true;
+    {    
         // 将客户名单解析到db
         self::parseDataToDb(1);
         //计算价格

@@ -60,7 +60,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         $user_id,$record_id,$status,$fieldsArr = []
     ){ 
         if(empty($fieldsArr)){
-            $res =  AdminUserFinanceUploadRecord::create()->where([
+            $res =  AdminUserFinanceUploadDataRecord::create()->where([
                 'user_id' => $user_id,  
                 'record_id' => $record_id,   
                 'status' => $status,   
@@ -68,7 +68,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
             ->all(); 
         } 
         else{
-            $res =  AdminUserFinanceUploadRecord::create()->where([
+            $res =  AdminUserFinanceUploadDataRecord::create()->where([
                 'user_id' => $user_id,  
                 'record_id' => $record_id,   
                 'status' => $status,   
@@ -83,7 +83,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
     public static function findFinanceDataByUserIdAndRecordId(
         $user_id,$record_id,$status
     ){ 
-        $res =  AdminUserFinanceUploadRecord::create()->where([
+        $res =  AdminUserFinanceUploadDataRecord::create()->where([
             'user_id' => $user_id,  
             'record_id' => $record_id,   
             'status' => $status,   
@@ -101,7 +101,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
 
 
     public static function findByCondition($whereArr,$limit){
-        $res =  AdminUserFinanceUploadRecord::create()
+        $res =  AdminUserFinanceUploadDataRecord::create()
             ->where($whereArr)
             ->limit($limit)
             ->all();  
@@ -111,7 +111,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
     public static function updateStatusById(
         $id,$status
     ){ 
-        $res =  AdminUserFinanceUploadRecord::create()->where([
+        $res =  AdminUserFinanceUploadDataRecord::create()->where([
             'id' => $id,   
         ])->get(); 
 
