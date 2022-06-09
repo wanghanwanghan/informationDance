@@ -31,11 +31,31 @@ class FinanceController extends ControllerBase
         parent::afterAction($actionName);
     }
     
-    public function getConfigLists(){ 
+    public function getConfigLists(){
+        $user_id = $this->getRequestData('user_id','') ;
+        $type = $this->getRequestData('type','') ;
+        $pageNo = $this->getRequestData('pageNo',1) ;
+        $pageSize = $this->getRequestData('pageSize',10) ;
+        $limit = ($pageNo-1)*$pageSize;
+        $sql = "status = 1";
+        if(!empty($user_id)){
+            $sql .= " and user_id = '{$user_id}'";
+        }
+        if(!empty($type)){
+            $sql .= " and type = '{$type}'";
+        }
+        $count = AdminUserFinanceConfig::create()->where($sql)->count();
+        $list = AdminUserFinanceConfig::create()->where($sql." order by id desc limit {$limit},$pageSize ")->all();
+        $paging = [
+            'page' => $pageNo,
+            'pageSize' => $pageSize,
+            'total' => $count,
+            'totalPage' => (int)($count/$pageSize)+1,
+        ];
         return $this->writeJson(
             200,
-            [],
-           AdminUserFinanceConfig::create()->where("status = 1")->all()
+            $paging,
+            $list
         );
     }
 
