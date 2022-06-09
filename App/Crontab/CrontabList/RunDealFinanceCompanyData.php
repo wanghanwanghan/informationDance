@@ -22,13 +22,13 @@ class RunDealFinanceCompanyData extends AbstractCronTask
 {
     public $crontabBase;
     public $filePath = ROOT_PATH . '/Static/Temp/';
-    public $workPath;
+    public static $workPath;
     public $backPath;
     public $all_right_ent_txt_file_name;
     public $have_null_ent_txt_file_name;
     public $data_desc_txt_file_name;
 
-    function strtr_func($str): string
+    static function strtr_func($str): string
     {
         $str = trim($str);
 
@@ -80,17 +80,23 @@ class RunDealFinanceCompanyData extends AbstractCronTask
         return true;
     }  
     
-    function setworkPath($filePath): bool
+    static function setworkPath($filePath): bool
     {
        
-        $this->workPath = $filePath ;
+        self::$workPath = $filePath ;
 
         return true;
     }  
 
     // function getYieldData($xlsx_name,$formatFuncName){
-    function getYieldData($xlsx_name){
-        $excel_read = new \Vtiful\Kernel\Excel(['path' => $this->workPath]);
+    static function getYieldData($xlsx_name){
+        CommonService::getInstance()->log4PHP(
+            'getYieldData path '.self::$workPath
+        );
+        CommonService::getInstance()->log4PHP(
+            'getYieldData xlsx_name '.$xlsx_name
+        );
+        $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
         $excel_read->openFile($xlsx_name)->openSheet();
 
         $datas = [];
@@ -106,10 +112,10 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                 break;
             }
 
-            $value0 = $this->strtr_func($one[0]);  
-            $value1 = $this->strtr_func($one[1]);  
-            $value2 = $this->strtr_func($one[2]);  
-            $value3 = $this->strtr_func($one[3]);   
+            $value0 = self::strtr_func($one[0]);  
+            $value1 = self::strtr_func($one[1]);  
+            $value2 = self::strtr_func($one[2]);  
+            $value3 = self::strtr_func($one[3]);   
             // $tmpData = (new XinDongService())->matchEntByName($value0,1,4);
             $tmpData = [
                 $value0,
@@ -126,41 +132,11 @@ class RunDealFinanceCompanyData extends AbstractCronTask
             )); 
             yield $datas[] = $tmpData;
         }
-    }
-  
-    function matchName($file,$debugLog){
-        $startMemory = memory_get_usage(); 
-
-        // 取yield数据 
-        // $excelDatas = $this->getYieldData($file,'matchNameFormatData');
-        $excelDatas = $this->getYieldData($file); 
-
-        $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
-        $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用1 '.$memory .' '.$file );
-
-        //写到csv里 
-        $fileName = pathinfo($file)['filename'];
-        $f = fopen($this->workPath.$fileName.".csv", "w");
-        fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
-
-        foreach ($excelDatas as $dataItem) {
-            fputcsv($f, $dataItem);
-        }
-
-        $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
-        $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用2 '.$memory .' '.$file );
-
-        @unlink($this->workPath . $file);
-
-        return true ;  
-    }
-
-     function saveAndReturnAdminUserFinanceDataId(){
-         
-     }
+    } 
+ 
  
 
-    function uploadRecordeHasFinished(
+    static function uploadRecordeHasFinished(
         $user_id,
         $id,
         $state1 = AdminUserFinanceUploadDataRecord::$stateInit,
@@ -189,17 +165,21 @@ class RunDealFinanceCompanyData extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {   
+        // CommonService::getInstance()->log4PHP(
+        //     'RunDealFinanceCompanyData'
+        // );
+        // return true;
         // 将客户名单解析到db
-        $this->parseDataToDb(1);
+        self::parseDataToDb(1);
         //计算价格
-        $this->calculatePrice(5);
+        self::calculatePrice(5);
         //拉取finance数据
-        $this->pullFinanceData(5); 
+        self::pullFinanceData(5); 
 
         return true ;   
     }
 
-    function pullFinanceData($limit)
+    static function pullFinanceData($limit)
     {    
         
         //取财务数据 
@@ -207,12 +187,13 @@ class RunDealFinanceCompanyData extends AbstractCronTask
             [
                 'status' => AdminUserFinanceUploadRecord::$stateCalCulatedPrice
             ],
+            0,
             $limit
         );  
         foreach($initDatas as $dataItem){
             // 如果处理完了 设置下状态
             if(
-                $this->uploadRecordeHasFinished(
+                self::uploadRecordeHasFinished(
                     $dataItem['user_id'],
                     $dataItem['id'] ,
                     AdminUserFinanceUploadRecord::$stateCalCulatedPrice,
@@ -255,7 +236,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
         return true ;   
     }
 
-    function calculatePrice($limit)
+    static function calculatePrice($limit)
     {    
         //计算单价
         //解析完，尚未计算单价的
@@ -263,13 +244,14 @@ class RunDealFinanceCompanyData extends AbstractCronTask
             [
                 'status' => AdminUserFinanceUploadRecord::$stateParsed
             ],
+            0,
             $limit
         );
        
         foreach($initDatas as $dataItem){ 
             // 如果全计算完了 变更下状态
             if(
-                $this->uploadRecordeHasFinished(
+                self::uploadRecordeHasFinished(
                     $dataItem['user_id'],
                     $dataItem['id'] 
                 )
@@ -307,24 +289,42 @@ class RunDealFinanceCompanyData extends AbstractCronTask
     }
 
     //将客户名单解析到db 
-    function parseDataToDb($limit)
+    static function  parseDataToDb($limit)
     {
+        CommonService::getInstance()->log4PHP('parseDataToDb start');
         // 用户上传的客户名单信息
         $initDatas = AdminUserFinanceUploadRecord::findByCondition(
             [
                 'status' => AdminUserFinanceUploadRecord::$stateInit
             ],
+            0,
             $limit
-        );
+        ); 
+
+
         foreach($initDatas as $uploadFinanceData){ 
+            CommonService::getInstance()->log4PHP(
+                'parseDataToDb uploadFinanceData '.json_encode($uploadFinanceData)
+            );
+
             // 找到上传的文件
             $dirPat =  dirname($uploadFinanceData['file_path']).DIRECTORY_SEPARATOR; 
-            $this->setworkPath( $dirPat );
+            CommonService::getInstance()->log4PHP(
+                'parseDataToDb dirPat '.json_encode($dirPat)
+            );
+            self::setworkPath( $dirPat );
             //按行读取数据
-            $excelDatas = $this->getYieldData($uploadFinanceData['file_path']); 
+            $excelDatas = self::getYieldData($uploadFinanceData['file_path']); 
             foreach ($excelDatas as $dataItem) { 
+                CommonService::getInstance()->log4PHP(
+                    'parseDataToDb dataItem '.json_encode($dataItem)
+                );
                 // 按年度解析为数据
                 $yearsArr = explode(',',$uploadFinanceData['years']); 
+                CommonService::getInstance()->log4PHP(
+                    'parseDataToDb yearsArr '.json_encode($yearsArr)
+                );
+
                 foreach($yearsArr as $yearItem){
                     // 插入到AdminUserFinanceData表
                     $AdminUserFinanceDataId = 0 ;
@@ -336,7 +336,18 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                         $AdminUserFinanceDataId = $AdminUserFinanceDataModel->getAttr('id') ;
                     }
 
+                    CommonService::getInstance()->log4PHP(
+                        'parseDataToDb AdminUserFinanceDataModel '.json_encode(
+                            [
+                                'user_id' => $uploadFinanceData['user_id'],
+                                'entName' => $dataItem[0],
+                                'yearItem' => $yearItem
+                            ]
+                        )
+                    );
+
                     if(!$AdminUserFinanceDataModel){ 
+
                         $AdminUserFinanceDataId = AdminUserFinanceData::addRecord(
                             [
                                'user_id' => $uploadFinanceData['user_id'] , 
@@ -349,15 +360,40 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                                'status' => 0,
                             ]
                         );
+                        CommonService::getInstance()->log4PHP(
+                            'parseDataToDb add  AdminUserFinanceDataId '.json_encode(
+                                [
+                                    'user_id' => $uploadFinanceData['user_id'] , 
+                                    'entName' => $dataItem[0] ,  
+                                    'year' => $yearItem ,
+                                    'finance_data_id' => 0,
+                                    'price' => 0,
+                                    'price_type' => 0,
+                                    'cache_end_date' => 0,
+                                    'status' => 0,
+                                    'AdminUserFinanceDataId' => $AdminUserFinanceDataId
+                                ]
+                            )
+                        );
                     } 
                     
                     // 生成 AdminUserFinanceData和 AdminUserFinanceUploadRecord的关系
+                    CommonService::getInstance()->log4PHP(
+                        'parseDataToDb   findByUserIdAndRecordIdAndFinanceId '.json_encode(
+                            [
+                                'user_id' => $uploadFinanceData['user_id'],
+                                'record_id' => $uploadFinanceData['id'] ,
+                                'AdminUserFinanceDataId' => $AdminUserFinanceDataId                     
+                            ]
+                        )
+                    );
+
                     if(
                         !AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdAndFinanceId(
-                            $uploadFinanceData['user_id'],$uploadFinanceData['id'] ,$AdminUserFinanceDataId                     
+                            $uploadFinanceData['user_id'],$uploadFinanceData['id'] ,$AdminUserFinanceDataId     
                         )
                     ){
-                        AdminUserFinanceUploadDataRecord::addUploadRecord(
+                        $AdminUserFinanceUploadDataRecordId = AdminUserFinanceUploadDataRecord::addUploadRecord(
                             [
                                 'user_id' => $uploadFinanceData['user_id'] , 
                                 'record_id' => $uploadFinanceData['id'] ,    
@@ -365,13 +401,35 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                                 'status' => 0,    
                             ]
                         );
+
+                        CommonService::getInstance()->log4PHP(
+                            'parseDataToDb add  AdminUserFinanceUploadDataRecordId '.json_encode(
+                                [
+                                    'user_id' => $uploadFinanceData['user_id'] , 
+                                    'record_id' => $uploadFinanceData['id'] ,    
+                                    'user_finance_data_id' => $AdminUserFinanceDataId,    
+                                    'status' => 0, 
+                                    'AdminUserFinanceUploadDataRecordId' => $AdminUserFinanceUploadDataRecordId                     
+                                ]
+                            )
+                        );
+
                     }    
                 } 
             }
             //解析完成-设置状态
-            AdminUserFinanceUploadRecord::changeStatus(
+            $res = AdminUserFinanceUploadRecord::changeStatus(
                 $uploadFinanceData['id'],AdminUserFinanceUploadRecord::$stateParsed
             );
+            CommonService::getInstance()->log4PHP(
+                'parseDataToDb add  changeStatus '.json_encode(
+                    [
+                        'id' => $uploadFinanceData['id'],
+                        'status' => AdminUserFinanceUploadRecord::$stateParsed,
+                        'res' => $res                     
+                    ]
+                )
+            ); 
         } 
         return true ;   
     }
