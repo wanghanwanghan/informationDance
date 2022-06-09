@@ -292,6 +292,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
     static function  parseDataToDb($limit)
     {
         CommonService::getInstance()->log4PHP('parseDataToDb start');
+        return true;
         // 用户上传的客户名单信息
         $initDatas = AdminUserFinanceUploadRecord::findByCondition(
             [
