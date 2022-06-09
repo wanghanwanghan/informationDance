@@ -329,7 +329,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                 CommonService::getInstance()->log4PHP(
                     'parseDataToDb yearsArr '.json_encode($yearsArr)
                 );
-                continue ;
+                // continue ;
                 foreach($yearsArr as $yearItem){
                     // 插入到AdminUserFinanceData表
                     $AdminUserFinanceDataId = 0 ;
@@ -422,7 +422,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                     }    
                 } 
             }
-            return true ;
+            // return true ;
             //解析完成-设置状态
             $res = AdminUserFinanceUploadRecord::changeStatus(
                 $uploadFinanceData['id'],AdminUserFinanceUploadRecord::$stateParsed
