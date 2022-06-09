@@ -103,8 +103,6 @@ class ChuangLanService extends ServiceBase
             ->needJsonDecode(true)
             ->send($url, $data);
 
-        CommonService::getInstance()->log4PHP($res);
-
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
 }
