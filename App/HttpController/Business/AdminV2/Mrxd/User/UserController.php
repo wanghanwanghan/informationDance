@@ -33,7 +33,7 @@ class UserController extends ControllerBase
         $user_phone = $this->getRequestData('user_phone','') ;
         $pageNo = $this->getRequestData('pageNo',1) ;
         $pageSize = $this->getRequestData('pageSize',10) ;
-        $count = AdminNewUser::create()->where("status = 1")->count();
+
         $limit = ($pageNo-1)*$pageSize;
         $sql = "status = 1";
         if(!empty($user_name)){
@@ -42,7 +42,7 @@ class UserController extends ControllerBase
         if(!empty($user_phone)){
             $sql .= " and phone = '{$user_phone}'";
         }
-
+        $count = AdminNewUser::create()->where($sql)->count();
         $list = AdminNewUser::create()->where($sql." order by id desc limit {$limit},$pageSize ")->all();
         $paging = [
             'page' => $pageNo,
