@@ -291,11 +291,9 @@ class RunDealFinanceCompanyData extends AbstractCronTask
         return true ;   
     }
 
-    //将客户名单解析到db 
+    //将上传的客户名单解析到db
     static function  parseDataToDb($limit)
-    {
-        CommonService::getInstance()->log4PHP('parseDataToDb start');
-        // return true;
+    { 
         // 用户上传的客户名单信息
         $initDatas = AdminUserFinanceUploadRecord::findByCondition(
             [
@@ -306,64 +304,30 @@ class RunDealFinanceCompanyData extends AbstractCronTask
         ); 
 
 
-        foreach($initDatas as $uploadFinanceData){ 
-            CommonService::getInstance()->log4PHP(
-                'parseDataToDb uploadFinanceData '.json_encode($uploadFinanceData)
-            );
-
+        foreach($initDatas as $uploadFinanceData){
             // 找到上传的文件
-            $dirPat =  dirname($uploadFinanceData['file_path']).DIRECTORY_SEPARATOR; 
-            CommonService::getInstance()->log4PHP(
-                'parseDataToDb dirPat '.json_encode($dirPat)
-            );
-
+            $dirPat =  dirname($uploadFinanceData['file_path']).DIRECTORY_SEPARATOR;
             self::setworkPath( $dirPat );
+
             //按行读取数据
             $excelDatas = self::getYieldData($uploadFinanceData['file_name']);
-            foreach ($excelDatas as $dataItem) { 
-                CommonService::getInstance()->log4PHP(
-                    'parseDataToDb dataItem '.json_encode($dataItem)
-                );
+            foreach ($excelDatas as $dataItem) {
                 // 按年度解析为数据
-                $yearsArr = explode(',',$uploadFinanceData['years']); 
-                CommonService::getInstance()->log4PHP(
-                    'parseDataToDb yearsArr '.json_encode($yearsArr)
-                );
-                // continue ;
+                $yearsArr = explode(',',$uploadFinanceData['years']);
+
                 foreach($yearsArr as $yearItem){
                     // 插入到AdminUserFinanceData表
                     $AdminUserFinanceDataId = 0 ;
-                    CommonService::getInstance()->log4PHP(
-                        'parseDataToDb AdminUserFinanceDataModel '.json_encode(
-                            [
-                                $uploadFinanceData['user_id'],
-                                $dataItem[0],
-                                $yearItem
-                            ]
-                        )
-                    );
 
+                    // 用户财务数据基本信息表 ;单价，缓存等配置
                     $AdminUserFinanceDataModel =  AdminUserFinanceData::findByUserAndEntAndYear(
                         $uploadFinanceData['user_id'],$dataItem[0],$yearItem
                     );
-
                     if($AdminUserFinanceDataModel){
                         $AdminUserFinanceDataId = $AdminUserFinanceDataModel->getAttr('id') ;
                     }
 
-                    CommonService::getInstance()->log4PHP(
-                        'parseDataToDb AdminUserFinanceDataModel '.json_encode(
-                            [
-                                'user_id' => $uploadFinanceData['user_id'],
-                                'entName' => $dataItem[0],
-                                'yearItem' => $yearItem
-                            ]
-                        )
-                    );
-                    // continue;
-
-                    if(!$AdminUserFinanceDataModel){ 
-
+                    if(!$AdminUserFinanceDataModel){
                         $AdminUserFinanceDataId = AdminUserFinanceData::addRecord(
                             [
                                'user_id' => $uploadFinanceData['user_id'] , 
@@ -376,34 +340,15 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                                'status' => 0,
                             ]
                         );
+                    }
+                    if($AdminUserFinanceDataId <=0 ){
                         CommonService::getInstance()->log4PHP(
-                            'parseDataToDb add  AdminUserFinanceDataId '.json_encode(
-                                [
-                                    'user_id' => $uploadFinanceData['user_id'] , 
-                                    'entName' => $dataItem[0] ,  
-                                    'year' => $yearItem ,
-                                    'finance_data_id' => 0,
-                                    'price' => 0,
-                                    'price_type' => 0,
-                                    'cache_end_date' => 0,
-                                    'status' => 0,
-                                    'AdminUserFinanceDataId' => $AdminUserFinanceDataId
-                                ]
-                            )
+                            'parseDataToDb   err 1 没有 $AdminUserFinanceDataId  '
                         );
-                    } 
-                    
-                    // 生成 AdminUserFinanceData和 AdminUserFinanceUploadRecord的关系
-                    CommonService::getInstance()->log4PHP(
-                        'parseDataToDb   findByUserIdAndRecordIdAndFinanceId '.json_encode(
-                            [
-                                'user_id' => $uploadFinanceData['user_id'],
-                                'record_id' => $uploadFinanceData['id'] ,
-                                'AdminUserFinanceDataId' => $AdminUserFinanceDataId                     
-                            ]
-                        )
-                    );
+                        continue;
+                    }
 
+                    // 上传记录表和用户财务基本信息表的关联  生成 AdminUserFinanceData和 AdminUserFinanceUploadDataRecord的关系
                     if(
                         !AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdAndFinanceId(
                             $uploadFinanceData['user_id'],
@@ -419,36 +364,25 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                                 'status' => 0,    
                             ]
                         );
-
-                        CommonService::getInstance()->log4PHP(
-                            'parseDataToDb add  AdminUserFinanceUploadDataRecordId '.json_encode(
-                                [
-                                    'user_id' => $uploadFinanceData['user_id'] , 
-                                    'record_id' => $uploadFinanceData['id'] ,    
-                                    'user_finance_data_id' => $AdminUserFinanceDataId,    
-                                    'status' => 0, 
-                                    'AdminUserFinanceUploadDataRecordId' => $AdminUserFinanceUploadDataRecordId                     
-                                ]
-                            )
-                        );
-
+                        if($AdminUserFinanceUploadDataRecordId <= 0){
+                            CommonService::getInstance()->log4PHP(
+                                'parseDataToDb   err 2 没有 $AdminUserFinanceUploadDataRecordId  '
+                            );
+                            continue;
+                        }
                     }    
                 } 
             }
-            // return true ;
+
             //解析完成-设置状态
             $res = AdminUserFinanceUploadRecord::changeStatus(
                 $uploadFinanceData['id'],AdminUserFinanceUploadRecord::$stateParsed
             );
-            CommonService::getInstance()->log4PHP(
-                'parseDataToDb add  changeStatus '.json_encode(
-                    [
-                        'id' => $uploadFinanceData['id'],
-                        'status' => AdminUserFinanceUploadRecord::$stateParsed,
-                        'res' => $res                     
-                    ]
-                )
-            ); 
+            if($res <= 0){
+                CommonService::getInstance()->log4PHP(
+                    'parseDataToDb   err 3 解析完成-设置状态失败  '
+                );
+            }
         } 
         return true ;   
     }
