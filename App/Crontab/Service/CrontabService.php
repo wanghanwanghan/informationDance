@@ -41,7 +41,7 @@ class CrontabService
         $this->RunReadAndDealXls();
         $this->RunShouQuanCheXian();
         $this->FillEntAllField();//补全给筛选出的企业 <全字段>RunDealFinanceCompanyData
-        $this->RunDealFinanceCompanyData();//补全给筛选出的企业 <全字段>
+        // $this->RunDealFinanceCompanyData();//补全给筛选出的企业 <全字段>
 
         return true;
     }
