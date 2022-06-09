@@ -18,46 +18,7 @@ class ChuangLanController extends ProvideBase
         parent::afterAction($actionName);
     }
 
-    public function getCheckPhoneStatus()
-    {
-        $mobiles = $this->getRequestData('mobiles');
-        if (empty($mobiles))
-            return $this->writeJson(201, null, null, 'mobiles参数不能是空');
-
-        $postData = [
-            'mobiles' => $mobiles,
-        ];
-
-        $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new ChuangLanService())
-                ->setCheckRespFlag(true)
-                ->getCheckPhoneStatus($postData);
-        });
-
-        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-        return $this->checkResponse($res);
-    }
-
-    function mobileNetStatus(){
-        $mobile = $this->getRequestData('mobile');
-        if (empty($mobile))
-            return $this->writeJson(201, null, null, 'mobile参数不能是空');
-
-        $postData = [
-            'mobile' => $mobile,
-        ];
-
-        $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new ChuangLanService())
-                ->setCheckRespFlag(true)
-                ->mobileNetStatus($postData);
-        });
-
-        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-        return $this->checkResponse($res);
-    }
-
-    function checkResponse($res)
+    function checkResponse($res): bool
     {
         if (empty($res[$this->cspKey])) {
             $this->responseCode = 500;
@@ -75,5 +36,68 @@ class ChuangLanController extends ProvideBase
         }
 
         return true;
+    }
+
+    function getCheckPhoneStatus(): bool
+    {
+        $mobiles = $this->getRequestData('mobiles');
+
+        if (empty($mobiles))
+            return $this->writeJson(201, null, null, 'mobiles参数不能是空');
+
+        $postData = [
+            'mobiles' => $mobiles,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new ChuangLanService())
+                ->setCheckRespFlag(true)
+                ->getCheckPhoneStatus($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function mobileNetStatus(): bool
+    {
+        $mobile = $this->getRequestData('mobile');
+
+        if (empty($mobile))
+            return $this->writeJson(201, null, null, 'mobile参数不能是空');
+
+        $postData = [
+            'mobile' => $mobile,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new ChuangLanService())
+                ->setCheckRespFlag(true)
+                ->mobileNetStatus($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function carriersTwoAuth(): bool
+    {
+        $name = $this->getRequestData('name');
+        $mobile = $this->getRequestData('mobile');
+
+        if (empty($mobile) || empty($name))
+            return $this->writeJson(201, null, null, '姓名或手机号不能是空');
+
+        $this->csp->add($this->cspKey, function () use ($name, $mobile) {
+            return (new ChuangLanService())
+                ->setCheckRespFlag(true)
+                ->carriersTwoAuth(trim($name), trim($mobile));
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
     }
 }

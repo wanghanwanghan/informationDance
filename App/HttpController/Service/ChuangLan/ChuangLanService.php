@@ -19,7 +19,8 @@ class ChuangLanService extends ServiceBase
         return true;
     }
 
-    static function getStatusCnameMap(){
+    static function getStatusCnameMap(): array
+    {
         return [
             1 => '正常',
             2 => '停机',
@@ -31,7 +32,23 @@ class ChuangLanService extends ServiceBase
             8 => '销号/未启用',
             9 => '服务器异常',
             10 => '查询失败',
-        ]  ;
+        ];
+    }
+
+    private function checkResp($resp): array
+    {
+        if (isset($resp['coHttpErr']))
+            return $this->createReturn(500, null, [], 'co请求错误');
+
+        $code = $resp['code'] - 0;
+
+        $code !== 200000 ?: $code = 200;
+
+        $result = $resp ?? '';
+
+        $msg = trim($resp['message'] ?? '');
+
+        return $this->createReturn($code, null, $result, $msg);
     }
 
     /**
@@ -42,36 +59,54 @@ class ChuangLanService extends ServiceBase
     function getCheckPhoneStatus($param)
     {
         $url = 'https://api.253.com/open/unn/batch-ucheck';
-        $header = [
-//            'content-type' => 'application/form-data;charset=UTF-8'
-        ];
+
         $data = [
             'appId' => $this->appId,
             'appKey' => $this->appKey,
             'mobiles' => $param['mobiles'], // 检测手机号，多个手机号码用英文半角逗号隔开，仅支持国内号码
             'type' => 0,
         ];
-        $res = (new CoHttpClient())
+
+        return (new CoHttpClient())
             ->useCache(false)
-            ->send($url, $data, $header);
-        CommonService::getInstance()->log4PHP([$url, $data, $header, $res], 'info', 'getCheckPhoneStatus');
-        return $res;
+            ->send($url, $data);
     }
 
-    function mobileNetStatus($param){
+    function mobileNetStatus($param)
+    {
         $url = 'https://api.253.com/open/zwsjmd/mobile_netstatus';
-        $header = [
-//            'content-type' => 'application/form-data;charset=UTF-8'
-        ];
+
         $data = [
             'appId' => $this->appId,
             'appKey' => $this->appKey,
             'mobile' => $param['mobile']
         ];
+
+        return (new CoHttpClient())
+            ->useCache(false)
+            ->send($url, $data);
+    }
+
+    function carriersTwoAuth(string $name, string $mobile)
+    {
+        $url = 'https://api.253.com/open/carriers/carriers-two-auth';
+
+        $data = [
+            'appId' => $this->appId,
+            'appKey' => $this->appKey,
+            'name' => trim($name),
+            'mobile' => trim($mobile)
+        ];
+
+        $options = [
+            'enableSSL' => true,
+        ];
+
         $res = (new CoHttpClient())
             ->useCache(false)
-            ->send($url, $data, $header);
-        CommonService::getInstance()->log4PHP([$url, $data, $header, $res], 'info', 'mobile_netstatus');
-        return $res;
+            ->needJsonDecode(true)
+            ->send($url, $data, [], $options, 'post');
+
+        return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
 }

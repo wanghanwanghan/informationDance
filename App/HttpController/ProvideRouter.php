@@ -61,6 +61,7 @@ class ProvideRouter
         $routeCollector->addGroup('/cl', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getCheckPhoneStatus', $prefix . 'getCheckPhoneStatus');
             $routeCollector->addRoute(['GET', 'POST'], '/mobileNetStatus', $prefix . 'mobileNetStatus');
+            $routeCollector->addRoute(['GET', 'POST'], '/carriersTwoAuth', $prefix . 'carriersTwoAuth');
         });
         return true;
     }
