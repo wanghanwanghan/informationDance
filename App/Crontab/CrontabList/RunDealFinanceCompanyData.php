@@ -319,7 +319,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
 
             self::setworkPath( $dirPat );
             //按行读取数据
-            $excelDatas = self::getYieldData($uploadFinanceData['file_path']); 
+            $excelDatas = self::getYieldData($uploadFinanceData['file_name']);
             foreach ($excelDatas as $dataItem) { 
                 CommonService::getInstance()->log4PHP(
                     'parseDataToDb dataItem '.json_encode($dataItem)
