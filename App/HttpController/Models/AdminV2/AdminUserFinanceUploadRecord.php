@@ -16,7 +16,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
     protected $createTime = 'created_at';
     protected $updateTime = 'updated_at'; 
     
-    static $stateInit = 0;
+    static $stateInit = 1;
     static $stateInitCname =  '初始';
     static $stateParsed = 5;
     static $stateParsedCname =  '已经解析入库';

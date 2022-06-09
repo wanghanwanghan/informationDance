@@ -16,7 +16,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
     protected $createTime = 'created_at';
     protected $updateTime = 'updated_at'; 
     
-    static $stateInit = 0;
+    static $stateInit = 1;
     static $stateInitCname = '初始化';
     static $stateHasCalculatePrice = 5;
     static $stateHasCalculatePriceCname = '已计算价格';

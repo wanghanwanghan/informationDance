@@ -51,12 +51,12 @@ class AdminUserFinanceData extends ModelBase
 
         return $res;
     } 
- 
+
+    // 计算单价
     public static function calculatePrice($id,$financeConifgArr){ 
         $res =  AdminUserFinanceData::create()
             ->where('id',$id) 
-            ->get();  
- 
+            ->get();
 
         //收费方式一：包年
         $chagrgeDetailsAnnuallyRes = self::getChagrgeDetailsAnnually(
@@ -67,11 +67,16 @@ class AdminUserFinanceData extends ModelBase
         ) ;
         // 是年度收费
         if($chagrgeDetailsAnnuallyRes['IsAnnually']){  
-            self::updatePrice(
+            $updateRes = self::updatePrice(
                 $id,
                 $chagrgeDetailsAnnuallyRes['HasChargedBefore'] ? 0 : $chagrgeDetailsAnnuallyRes['AnnuallyPrice'],
                 self::$priceTytpeAnnually
             );
+            if(!$updateRes){
+                return CommonService::getInstance()->log4PHP(
+                    'calculatePrice err1  update price error  IsAnnually '.$id
+                );
+            }
         }  
 
         //收费方式二：按单年
@@ -82,12 +87,17 @@ class AdminUserFinanceData extends ModelBase
             $res->getAttr('entName')
         ) ;
          
-        if($chagrgeDetailsByYearsRes['IsChargeByYear']){  
-            self::updatePrice(
+        if($chagrgeDetailsByYearsRes['IsChargeByYear']){
+            $updateRes = self::updatePrice(
                 $id,
                 $chagrgeDetailsByYearsRes['HasChargedBefore'] ? 0 : $chagrgeDetailsByYearsRes['YearPrice'],
                 self::$priceTytpeAnnually
             );
+            if(!$updateRes){
+                return CommonService::getInstance()->log4PHP(
+                    'calculatePrice err2  update price error  ChargeByYear '.$id
+                );
+            }
         } 
 
         return true; 
@@ -157,7 +167,7 @@ class AdminUserFinanceData extends ModelBase
             ];
         }
 
-        $annually_years_arr = explode(',',$financeConifgArr['annually_years']);
+        $annually_years_arr =  json_decode($financeConifgArr['annually_years'],true);
 
         //不是包年年度
         if(

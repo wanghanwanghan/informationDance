@@ -2733,7 +2733,17 @@ eof;
     }
     function testExport()
     {
-         RunDealFinanceCompanyData::parseDataToDb(1);
+        if(
+            $this->getRequestData('parseDataToDb')
+        ){
+            RunDealFinanceCompanyData::parseDataToDb(1);
+        }
+
+        if(
+            $this->getRequestData('parseDataToDb')
+        ){
+            RunDealFinanceCompanyData::calculatePrice(1);
+        } 
 
         // $config = [
         //     'path' => TEMP_FILE_PATH // xlsx文件保存路径
