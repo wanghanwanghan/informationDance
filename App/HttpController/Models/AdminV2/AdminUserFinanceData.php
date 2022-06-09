@@ -200,7 +200,7 @@ class AdminUserFinanceData extends ModelBase
                     WHERE 
                         `year` in $yearStr  AND 
                         user_id = $user_id AND 
-                        entName = $entName   
+                        entName = '$entName'   
 
                     limit 1 ";
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
