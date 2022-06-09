@@ -31,7 +31,7 @@ class GetInvData extends AbstractCronTask
     {
         //每月19号凌晨4点可以取上一个月全部数据
         //return '0 4 19 * *';
-        return '13 14 1 * * ';
+        return '33 17 9 * * ';
     }
 
     static function getTaskName(): string
@@ -88,16 +88,10 @@ class GetInvData extends AbstractCronTask
     //通知蚂蚁
     function sendToAnt(): bool
     {
-        //我想让你们把预发环境（appid: EC31D756AA8A86396F98CE08EDC9668B）通知我们数据的接收地址配置从
-        //https://invoicecommercial-pre.antfin.com/api/wezTech/collectNotify
-        //改为
-        //https://trustdata-pre.antgroup.com/api/wezTech/collectNotify
-
-
-
         //根据三个id，通知不同的url
         $url_arr = [
-            36 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
+            36 => 'https://zkinvoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
+            //36 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
             //36 => 'http://invoicecommercial.dev.dl.alipaydev.com/api/wezTech/collectNotify',//test rsa和dev一样
             41 => 'https://invoicecommercial.antfin.com/api/wezTech/collectNotify',//pre 和 pro 交换了
             42 => 'https://trustdata-pre.antgroup.com/api/wezTech/collectNotify',//pro 和 pre 交换了
