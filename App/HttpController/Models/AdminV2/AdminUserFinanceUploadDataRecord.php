@@ -24,7 +24,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
 
     public static function addUploadRecord($requestData){ 
         try {
-           $res =  AdminUserFinanceUploadRecord::create()->data([
+           $res =  AdminUserFinanceUploadDataRecord::create()->data([
                 'user_id' => $requestData['user_id'],  
                 'record_id' => $requestData['record_id'],  
                 'user_finance_data_id' => $requestData['user_finance_data_id'],  
