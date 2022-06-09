@@ -137,31 +137,37 @@ class AdminUserFinanceData extends ModelBase
         // 根据缓存期和上次拉取财务数据时间 决定是取db还是取api
         $getFinanceDataSourceDetailRes = self::getFinanceDataSourceDetail($id);
         CommonService::getInstance()->log4PHP(
-            'pullFinanceData   $getFinanceDataSourceDetailRes'.json_encode($getFinanceDataSourceDetailRes)
+            [
+                '$postData' => $postData,
+                '$getFinanceDataSourceDetailRes' => $getFinanceDataSourceDetailRes,
+            ]
         );
         //需要从APi拉取
         if($getFinanceDataSourceDetailRes['pullFromApi']){
             $res = (new LongXinService())->getFinanceData($postData, false);
-            $postData = $res['data'];
+            $resData = $res['data'];
             CommonService::getInstance()->log4PHP(
-                'pullFinanceData   info   api finance data '.json_encode($postData)
+                [
+                    'getFinanceData $postData' => $postData,
+                    'getFinanceData $resData' => $resData,
+                ]
             );
             // 更新拉取时间 
             // 保存到db
             $dbDataArr = [
-                'entName' => $postData['entName'],
-                'user_id' => $postData['user_id'],
-                'year' => $postData['year'],
-                'VENDINC' => $postData['VENDINC'],
-                'ASSGRO' => $postData['ASSGRO'],
-                'MAIBUSINC' => $postData['MAIBUSINC'],
-                'TOTEQU' => $postData['TOTEQU'],
-                'RATGRO' => $postData['RATGRO'],
-                'PROGRO' => $postData['PROGRO'],
-                'NETINC' => $postData['NETINC'],
-                'SOCNUM' => $postData['SOCNUM'],
-                'EMPNUM' => $postData['EMPNUM'],
-                'status' => $postData['status'],
+                'entName' => $resData['entName'],
+                'user_id' => $resData['user_id'],
+                'year' => $resData['year'],
+                'VENDINC' => $resData['VENDINC'],
+                'ASSGRO' => $resData['ASSGRO'],
+                'MAIBUSINC' => $resData['MAIBUSINC'],
+                'TOTEQU' => $resData['TOTEQU'],
+                'RATGRO' => $resData['RATGRO'],
+                'PROGRO' => $resData['PROGRO'],
+                'NETINC' => $resData['NETINC'],
+                'SOCNUM' => $resData['SOCNUM'],
+                'EMPNUM' => $resData['EMPNUM'],
+                'status' => $resData['status'],
                 'last_pull_api_time' => date('Y-m-d H:i:s',time()),
             ];
             $addRes = NewFinanceData::addRecord($dbDataArr);
