@@ -246,7 +246,7 @@ class AdminUserFinanceData extends ModelBase
                     WHERE 
                         `year`  = $year  AND 
                         user_id = $user_id AND 
-                        entName = $entName   
+                        entName = '$entName'   
                     limit 1 ";
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         CommonService::getInstance()->log4PHP(
@@ -290,9 +290,6 @@ class AdminUserFinanceData extends ModelBase
     }
 
     public static function updatePrice($id,$price,$priceType){
-        CommonService::getInstance()->log4PHP(
-            'updatePrice    '.$id . ' '. $price . ' '. $priceType
-        );
         $info = AdminUserFinanceData::create()
                     ->where('id',$id)
                     ->get(); 
