@@ -138,9 +138,9 @@ class RunDealFinanceCompanyData extends AbstractCronTask
 
     static function uploadRecordeHasFinished(
         $user_id,
-        $id,
-        $state1 = AdminUserFinanceUploadDataRecord::$stateInit,
-        $state2= AdminUserFinanceUploadDataRecord::$stateHasCalculatePrice
+        $id, 
+        $state1,
+        $state2
     ){
         $initRecords =  AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
             $user_id,
@@ -171,6 +171,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
         // return true;
         // 将客户名单解析到db
         self::parseDataToDb(1);
+        return true ;   
         //计算价格
         self::calculatePrice(5);
         //拉取finance数据
@@ -253,7 +254,9 @@ class RunDealFinanceCompanyData extends AbstractCronTask
             if(
                 self::uploadRecordeHasFinished(
                     $dataItem['user_id'],
-                    $dataItem['id'] 
+                    $dataItem['id'] ,
+                    AdminUserFinanceUploadDataRecord::$stateInit,
+                    AdminUserFinanceUploadDataRecord::$stateHasCalculatePrice
                 )
             ){
                 AdminUserFinanceUploadRecord::changeStatus(
@@ -292,6 +295,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
     static function  parseDataToDb($limit)
     {
         CommonService::getInstance()->log4PHP('parseDataToDb start');
+        // return true;
         // 用户上传的客户名单信息
         $initDatas = AdminUserFinanceUploadRecord::findByCondition(
             [
@@ -312,6 +316,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
             CommonService::getInstance()->log4PHP(
                 'parseDataToDb dirPat '.json_encode($dirPat)
             );
+
             self::setworkPath( $dirPat );
             //按行读取数据
             $excelDatas = self::getYieldData($uploadFinanceData['file_path']); 
@@ -324,7 +329,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                 CommonService::getInstance()->log4PHP(
                     'parseDataToDb yearsArr '.json_encode($yearsArr)
                 );
-
+                continue ;
                 foreach($yearsArr as $yearItem){
                     // 插入到AdminUserFinanceData表
                     $AdminUserFinanceDataId = 0 ;
@@ -417,6 +422,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                     }    
                 } 
             }
+            return true ;
             //解析完成-设置状态
             $res = AdminUserFinanceUploadRecord::changeStatus(
                 $uploadFinanceData['id'],AdminUserFinanceUploadRecord::$stateParsed
