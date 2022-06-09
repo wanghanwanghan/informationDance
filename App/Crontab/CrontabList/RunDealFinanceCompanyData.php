@@ -351,15 +351,15 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                         $AdminUserFinanceDataId = $AdminUserFinanceDataModel->getAttr('id') ;
                     }
 
-                    CommonService::getInstance()->log4PHP(
-                        'parseDataToDb AdminUserFinanceDataModel '.json_encode(
-                            [
-                                'user_id' => $uploadFinanceData['user_id'],
-                                'entName' => $dataItem[0],
-                                'yearItem' => $yearItem
-                            ]
-                        )
-                    );
+//                    CommonService::getInstance()->log4PHP(
+//                        'parseDataToDb AdminUserFinanceDataModel '.json_encode(
+//                            [
+//                                'user_id' => $uploadFinanceData['user_id'],
+//                                'entName' => $dataItem[0],
+//                                'yearItem' => $yearItem
+//                            ]
+//                        )
+//                    );
                     continue;
 
                     if(!$AdminUserFinanceDataModel){ 
