@@ -28,11 +28,23 @@ class UserController extends ControllerBase
         return $this->writeJson();
     }
 
-    public function getAllUser(){ 
+    public function getAllUser(){
+        $pageNo = $this->getRequestData('pageNo',1) ;
+        $pageSize = $this->getRequestData('pageSize',10) ;
+        $count = AdminNewUser::create()->where("status = 1")->count();
+        $limit = ($pageNo-1)*$pageSize;
+        $sql = "status = 1 order by id desc limit {$limit},$pageSize ";
+        $list = AdminNewUser::create()->where($sql)->all();
+        $paging = [
+            'page' => $pageNo,
+            'pageSize' => $pageSize,
+            'total' => $count,
+            'totalPage' => (int)($count/$pageSize)+1,
+        ];
         return $this->writeJson(
             200,
-            [],
-           \App\HttpController\Models\AdminNew\AdminNewUser::create()->where("status = 1")->all()
+            $paging,
+            $list
         );
     }
 
