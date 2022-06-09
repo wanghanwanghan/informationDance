@@ -88,14 +88,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
         return true;
     }  
 
-    // function getYieldData($xlsx_name,$formatFuncName){
     static function getYieldData($xlsx_name){
-        CommonService::getInstance()->log4PHP(
-            'getYieldData path '.self::$workPath
-        );
-        CommonService::getInstance()->log4PHP(
-            'getYieldData xlsx_name '.$xlsx_name
-        );
         $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
         $excel_read->openFile($xlsx_name)->openSheet();
 
@@ -115,21 +108,13 @@ class RunDealFinanceCompanyData extends AbstractCronTask
             $value0 = self::strtr_func($one[0]);  
             $value1 = self::strtr_func($one[1]);  
             $value2 = self::strtr_func($one[2]);  
-            $value3 = self::strtr_func($one[3]);   
-            // $tmpData = (new XinDongService())->matchEntByName($value0,1,4);
+            $value3 = self::strtr_func($one[3]);
             $tmpData = [
                 $value0,
                 $value1, 
                 $value2, 
                 $value3, 
             ] ;
-            CommonService::getInstance()->log4PHP('matchNamXXXX'.json_encode(
-                [
-                    'value' => [$value0,$value1],
-                    'params' => $value0,
-                    'res' => $tmpData
-                ]
-            )); 
             yield $datas[] = $tmpData;
         }
     } 
@@ -293,7 +278,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
 
     //将上传的客户名单解析到db
     static function  parseDataToDb($limit)
-    { 
+    {
         // 用户上传的客户名单信息
         $initDatas = AdminUserFinanceUploadRecord::findByCondition(
             [
@@ -313,7 +298,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
             $excelDatas = self::getYieldData($uploadFinanceData['file_name']);
             foreach ($excelDatas as $dataItem) {
                 // 按年度解析为数据
-                $yearsArr = explode(',',$uploadFinanceData['years']);
+                $yearsArr = json_decode($uploadFinanceData['years'],true);
 
                 foreach($yearsArr as $yearItem){
                     // 插入到AdminUserFinanceData表
