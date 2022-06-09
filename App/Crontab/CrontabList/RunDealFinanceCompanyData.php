@@ -138,9 +138,9 @@ class RunDealFinanceCompanyData extends AbstractCronTask
 
     static function uploadRecordeHasFinished(
         $user_id,
-        $id,
-        $state1 = AdminUserFinanceUploadDataRecord::$stateInit,
-        $state2= AdminUserFinanceUploadDataRecord::$stateHasCalculatePrice
+        $id, 
+        $state1, 
+        $state2
     ){
         $initRecords =  AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
             $user_id,
@@ -254,7 +254,9 @@ class RunDealFinanceCompanyData extends AbstractCronTask
             if(
                 self::uploadRecordeHasFinished(
                     $dataItem['user_id'],
-                    $dataItem['id'] 
+                    $dataItem['id'] ,
+                    AdminUserFinanceUploadDataRecord::$stateInit,
+                    AdminUserFinanceUploadDataRecord::$stateHasCalculatePrice
                 )
             ){
                 AdminUserFinanceUploadRecord::changeStatus(
