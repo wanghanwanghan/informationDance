@@ -2556,7 +2556,7 @@ class XinDongService extends ServiceBase
             if($res){
 //                CommonService::getInstance()->log4PHP(
 //                    'matchContactNameByWeiXinName yes  :' .$tmpName . $WeiXin
-//                ); 
+//                );
                 return $staffsDataItem;
             }
         }

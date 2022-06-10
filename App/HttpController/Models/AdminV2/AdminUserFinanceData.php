@@ -17,7 +17,8 @@ class AdminUserFinanceData extends ModelBase
         该用户具体客户名单的收费
     */
     protected $tableName = 'admin_user_finance_data';
-
+    static $pullFinanceTimeInterval = 31104000;
+    static $pullFinanceTimeIntervalCname = '我们从供应商拉取财务数据的时间间隔';
     protected $autoTimeStamp = true;
     protected $createTime = 'created_at';
     protected $updateTime = 'updated_at';
@@ -113,9 +114,29 @@ class AdminUserFinanceData extends ModelBase
 
     public static function getFinanceDataSourceDetail($adminFinanceDataId){
         // $adminFinanceDataId 上次拉取时间| 没超过一年 就不拉
+        $financeData =  AdminUserFinanceData::create()
+            ->where('id',$adminFinanceDataId)
+            ->get()
+            ->toArray();
+        if(empty($financeData['last_pull_api_date'])){
+            return [
+                'pullFromApi' => true,
+                'pullFromDb' => false,
+            ];
+        }
+
+        if(
+            (strtotime($financeData['last_pull_api_date']) -time()) > self::$pullFinanceTimeInterval
+        ){
+            return [
+                'pullFromApi' => true,
+                'pullFromDb' => false,
+            ];
+        }
+
         return [
-            'pullFromApi' => true,
-            'pullFromDb' => false,
+            'pullFromApi' => false,
+            'pullFromDb' => true,
         ];
     }
 
