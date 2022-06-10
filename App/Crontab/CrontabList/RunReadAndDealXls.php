@@ -331,7 +331,7 @@ class RunReadAndDealXls extends AbstractCronTask
     {
 
 
-        $debugLog = false;
+        $debugLog = true;
         
         // 找到需要处理的文件 uploadAndDealXls_matchName_测试
         $files = glob($this->workPath.'uploadAndDealXls_*.xlsx');
