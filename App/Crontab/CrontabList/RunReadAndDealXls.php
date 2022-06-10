@@ -302,14 +302,15 @@ class RunReadAndDealXls extends AbstractCronTask
 
     function checkMobileV2($file,$debugLog){
         $startMemory = memory_get_usage();
-        rename($this->workPath.$file, $this->workPath.'dealing_'.$file);
-        return true;
+        $newFile = 'dealing_'.$file;
+        rename($this->workPath.$file, $this->workPath.$newFile);
+
         // 取yield数据 
         // $excelDatas = $this->getYieldData($file,'matchNameFormatData');
-        $excelDatas = $this->getYieldDataCheckMobileV2($file); 
+        $excelDatas = $this->getYieldDataCheckMobileV2($newFile);
 
         $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
-        $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用1 '.$memory .' '.$file );
+        $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用1 '.$memory .' '.$newFile );
 
         //写到csv里 
         $fileName = pathinfo($file)['filename'];
@@ -321,9 +322,9 @@ class RunReadAndDealXls extends AbstractCronTask
         }
 
         $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
-        $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用2 '.$memory .' '.$file );
+        $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用2 '.$memory .' '.$newFile );
 
-        @unlink($this->workPath . $file);
+        @unlink($this->workPath . $newFile);
 
         return true ;  
     }
