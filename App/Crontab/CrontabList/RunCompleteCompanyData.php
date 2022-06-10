@@ -108,6 +108,7 @@ class RunCompleteCompanyData extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
+        return true;
         $startMemory = memory_get_usage(); 
         
         // 找到客户名单

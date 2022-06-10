@@ -329,8 +329,9 @@ class RunReadAndDealXls extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
-         
-        $debugLog = false; 
+         return true;
+
+        $debugLog = false;
         
         // 找到需要处理的文件 uploadAndDealXls_matchName_测试
         $files = glob($this->workPath.'uploadAndDealXls_*.xlsx');
@@ -340,6 +341,7 @@ class RunReadAndDealXls extends AbstractCronTask
         }
          
         // 一个一个的跑
+
         $file = pathinfo(array_shift($files))['basename'];
         $fileName = pathinfo($file)['filename'];
         $debugLog &&  CommonService::getInstance()->log4PHP('uploadAndDealXls_ file '.($file) );
