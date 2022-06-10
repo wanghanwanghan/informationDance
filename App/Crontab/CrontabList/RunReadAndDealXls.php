@@ -301,8 +301,9 @@ class RunReadAndDealXls extends AbstractCronTask
     }
 
     function checkMobileV2($file,$debugLog){
-        $startMemory = memory_get_usage(); 
-
+        $startMemory = memory_get_usage();
+        rename($this->workPath.$file, $this->workPath.'dealing_'.$file);
+        return true;
         // 取yield数据 
         // $excelDatas = $this->getYieldData($file,'matchNameFormatData');
         $excelDatas = $this->getYieldDataCheckMobileV2($file); 
@@ -346,21 +347,24 @@ class RunReadAndDealXls extends AbstractCronTask
         $fileName = pathinfo($file)['filename'];
         $debugLog &&  CommonService::getInstance()->log4PHP('uploadAndDealXls_ file '.($file) );
         $fileNameArr = explode('_',$fileName);
-        return true;
+
         // 匹配企业名称
-        if($fileNameArr[1] == 'matchName'){ 
+        if($fileNameArr[1] == 'matchName'){
+            return true;
             $debugLog &&  CommonService::getInstance()->log4PHP('matchName  '.($file) );
             return $this->matchName($file,$debugLog);
         }
 
         // 匹配微信吗名
-        if($fileNameArr[1] == 'matchWeiXinName'){ 
+        if($fileNameArr[1] == 'matchWeiXinName'){
+            return true;
             $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
             return $this->matchWeiXinName($file,$debugLog);
         }
 
         // 校验手机号
-        if($fileNameArr[1] == 'checkMobile'){ 
+        if($fileNameArr[1] == 'checkMobile'){
+            return true;
             $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
             return $this->checkMobile($file,$debugLog);
         }
