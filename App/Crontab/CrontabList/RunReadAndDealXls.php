@@ -120,6 +120,7 @@ class RunReadAndDealXls extends AbstractCronTask
         $excel_read->openFile($xlsx_name)->openSheet();
 
         $datas = [];
+        $i = 1;
         while (true) {
 
             $one = $excel_read->nextRow([
@@ -155,15 +156,18 @@ class RunReadAndDealXls extends AbstractCronTask
                 [
                     'value' => [$value2],
                     'params' => $mobileStr,
-                    'res' => $res
+                    'res' => $res,
+                    'num' =>  $i
                 ]
-            )); 
+            ));
+            $i ++;
             yield $datas[] = [
                 $value0,
                 $value1, 
                 $value2, 
                 $newmobileStr
             ];
+
         }
     }
 
