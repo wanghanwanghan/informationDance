@@ -2371,9 +2371,9 @@ class XinDongService extends ServiceBase
         if($config['matchNamesByEqual']){
             $res = $this->matchNamesByEqual($tobeMatch,$target);
             if($res){
-                CommonService::getInstance()->log4PHP(
-                    'matchNamesByEqual yes :' .$tobeMatch.$target
-                ); 
+//                CommonService::getInstance()->log4PHP(
+//                    'matchNamesByEqual yes :' .$tobeMatch.$target
+//                );
                 return true;
             }
         }
@@ -2382,9 +2382,9 @@ class XinDongService extends ServiceBase
         if($config['matchNamesByContain']){
             $res = $this->matchNamesByContain($tobeMatch,$target);
             if($res){
-                CommonService::getInstance()->log4PHP(
-                    'matchNamesByContain yes :' .$tobeMatch.$target
-                ); 
+//                CommonService::getInstance()->log4PHP(
+//                    'matchNamesByContain yes :' .$tobeMatch.$target
+//                );
                 return true;
             }
         }
@@ -2393,9 +2393,9 @@ class XinDongService extends ServiceBase
         if($config['matchNamesByToBeContain']){
             $res = $this->matchNamesByToBeContain($tobeMatch,$target);
             if($res){
-                CommonService::getInstance()->log4PHP(
-                    'matchNamesByToBeContain yes :' .$tobeMatch.$target
-                ); 
+//                CommonService::getInstance()->log4PHP(
+//                    'matchNamesByToBeContain yes :' .$tobeMatch.$target
+//                );
                 return true;
             }
         }
@@ -2408,9 +2408,9 @@ class XinDongService extends ServiceBase
                 $config['matchNamesBySimilarPercentageValue']
             );
             if($res){
-                CommonService::getInstance()->log4PHP(
-                    'matchNamesBySimilarPercentageValue yes :' .$tobeMatch.$target
-                ); 
+//                CommonService::getInstance()->log4PHP(
+//                    'matchNamesBySimilarPercentageValue yes :' .$tobeMatch.$target
+//                );
                 return true;
             }
         }
@@ -2423,15 +2423,15 @@ class XinDongService extends ServiceBase
                 $config['matchNamesByPinYinSimilarPercentageValue']
             );
             if($res){
-                CommonService::getInstance()->log4PHP(
-                    'matchNamesByPinYinSimilarPercentageValue yes :' .$tobeMatch.$target
-                ); 
+//                CommonService::getInstance()->log4PHP(
+//                    'matchNamesByPinYinSimilarPercentageValue yes :' .$tobeMatch.$target
+//                );
                 return true;
             }
         }
-        CommonService::getInstance()->log4PHP(
-            'matchNames no  :' .$tobeMatch.$target
-        ); 
+//        CommonService::getInstance()->log4PHP(
+//            'matchNames no  :' .$tobeMatch.$target
+//        );
         return false;
 
     }
@@ -2439,13 +2439,13 @@ class XinDongService extends ServiceBase
     //  tobeMatch：张三丰  target：张三丰 
     function matchNamesByEqual($tobeMatch,$target){
         $res =  $tobeMatch === $target ? true :false;
-        CommonService::getInstance()->log4PHP(
-            'matchNamesByEqual :'.json_encode([
-                $res,
-                $tobeMatch,
-                $target
-            ])
-        ); 
+//        CommonService::getInstance()->log4PHP(
+//            'matchNamesByEqual :'.json_encode([
+//                $res,
+//                $tobeMatch,
+//                $target
+//            ])
+//        );
         return $res;
     }
 
@@ -2457,13 +2457,13 @@ class XinDongService extends ServiceBase
           $res = true;
         }
 
-        CommonService::getInstance()->log4PHP(
-            'matchNamesByContain :'.json_encode([
-                $res,
-                $tobeMatch,
-                $target
-            ])
-        ); 
+//        CommonService::getInstance()->log4PHP(
+//            'matchNamesByContain :'.json_encode([
+//                $res,
+//                $tobeMatch,
+//                $target
+//            ])
+//        );
         return $res;
     }
 
@@ -2475,13 +2475,13 @@ class XinDongService extends ServiceBase
           $res = true;
         }
 
-        CommonService::getInstance()->log4PHP(
-            'matchNamesByContain :'.json_encode([
-                $res,
-                $tobeMatch,
-                $target
-            ])
-        ); 
+//        CommonService::getInstance()->log4PHP(
+//            'matchNamesByContain :'.json_encode([
+//                $res,
+//                $tobeMatch,
+//                $target
+//            ])
+//        );
         return $res;
     }
 
@@ -2493,15 +2493,15 @@ class XinDongService extends ServiceBase
           $res = true;
         }
 
-        CommonService::getInstance()->log4PHP(
-            'matchNamesByContain :'.json_encode([
-                $res,
-                $tobeMatch,
-                $target,
-                $perc,
-                $percentage
-            ])
-        ); 
+//        CommonService::getInstance()->log4PHP(
+//            'matchNamesByContain :'.json_encode([
+//                $res,
+//                $tobeMatch,
+//                $target,
+//                $perc,
+//                $percentage
+//            ])
+//        );
         return $res;
     }
 
@@ -2515,17 +2515,17 @@ class XinDongService extends ServiceBase
           $res = true;
         }
 
-        CommonService::getInstance()->log4PHP(
-            'matchNamesByContain :'.json_encode([
-                $res,
-                $tobeMatch,
-                $target,
-                $perc,
-                $percentage,
-                $tobeMatchPin, 
-                $targetPinYin,
-            ])
-        ); 
+//        CommonService::getInstance()->log4PHP(
+//            'matchNamesByContain :'.json_encode([
+//                $res,
+//                $tobeMatch,
+//                $target,
+//                $perc,
+//                $percentage,
+//                $tobeMatchPin,
+//                $targetPinYin,
+//            ])
+//        );
         return $res;
     }
 
@@ -2554,9 +2554,9 @@ class XinDongService extends ServiceBase
                 'matchNamesByPinYinSimilarPercentageValue' => 60,
             ]);  
             if($res){
-                CommonService::getInstance()->log4PHP(
-                    'matchContactNameByWeiXinName yes  :' .$tmpName . $WeiXin
-                ); 
+//                CommonService::getInstance()->log4PHP(
+//                    'matchContactNameByWeiXinName yes  :' .$tmpName . $WeiXin
+//                ); 
                 return $staffsDataItem;
             }
         }

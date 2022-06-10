@@ -112,7 +112,7 @@ class AdminUserFinanceData extends ModelBase
     }
 
     public static function getFinanceDataSourceDetail($adminFinanceDataId){
-
+        // $adminFinanceDataId 上次拉取时间| 没超过一年 就不拉
         return [
             'pullFromApi' => true,
             'pullFromDb' => false,
@@ -121,16 +121,17 @@ class AdminUserFinanceData extends ModelBase
 
     //我们拉取运营商的时间间隔  
     //客户导出的时间间隔  
-    public static function pullFinanceData($id,$financeConifgArr){  
+    public static function pullFinanceData($id,$financeConifgArr){
 
-        $res =  AdminUserFinanceData::create()
+        $financeData =  AdminUserFinanceData::create()
             ->where('id',$id) 
-            ->get();  
+            ->get()
+            ->toArray();
 
         $postData = [
-            'entName' => $res->getAttr('entName'),
+            'entName' => $financeData['entName'],
             'code' => '',
-            'beginYear' => $res->getAttr('year'),
+            'beginYear' =>$financeData['year'],
             'dataCount' => 1,//取最近几年的
         ];
          
@@ -145,7 +146,8 @@ class AdminUserFinanceData extends ModelBase
         //需要从APi拉取
         if($getFinanceDataSourceDetailRes['pullFromApi']){
             $res = (new LongXinService())->getFinanceData($postData, false);
-            $resData = $res['data'];
+            $resData = $res['result']['data'];
+            $resOtherData = $res['result']['otherData'];
             CommonService::getInstance()->log4PHP(
                 [
                     'getFinanceData $postData' => $postData,
@@ -153,24 +155,12 @@ class AdminUserFinanceData extends ModelBase
                     'getFinanceData $resData' => $resData,
                 ]
             );
-            // 更新拉取时间 
+            //更新拉取时间
+            self::updateLastPullDate($id,date('Y-m-d H:i:s'));
             // 保存到db
-            $dbDataArr = [
-                'entName' => $resData['entName'],
-                'user_id' => $resData['user_id'],
-                'year' => $resData['year'],
-                'VENDINC' => $resData['VENDINC'],
-                'ASSGRO' => $resData['ASSGRO'],
-                'MAIBUSINC' => $resData['MAIBUSINC'],
-                'TOTEQU' => $resData['TOTEQU'],
-                'RATGRO' => $resData['RATGRO'],
-                'PROGRO' => $resData['PROGRO'],
-                'NETINC' => $resData['NETINC'],
-                'SOCNUM' => $resData['SOCNUM'],
-                'EMPNUM' => $resData['EMPNUM'],
-                'status' => $resData['status'],
-                'last_pull_api_time' => date('Y-m-d H:i:s',time()),
-            ];
+            $dbDataArr = $resData[$financeData['year']];
+            $dbDataArr['entName'] = $financeData['entName'];
+            $dbDataArr['year'] = $financeData['year'];
             $addRes = NewFinanceData::addRecord($dbDataArr);
             if(!$addRes){
                 CommonService::getInstance()->log4PHP(
@@ -328,6 +318,17 @@ class AdminUserFinanceData extends ModelBase
         return $info->update([
             'id' => $id,
             'status' => $status 
+        ]);
+    }
+
+    public static function updateLastPullDate($id,$date){
+        $info = AdminUserFinanceData::create()
+            ->where('id',$id)
+            ->get();
+
+        return $info->update([
+            'id' => $id,
+            'last_pull_api_date' => $date
         ]);
     }
 

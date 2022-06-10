@@ -254,7 +254,90 @@ class LongXinService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
 
-    //近n年的财务数据
+
+    /** 近n年的财务数据
+    {
+    "code": 200,
+    "paging": null,
+    "result": {
+    "data": {
+    "2020": {
+    "ASSGRO": 4990.02,
+    "LIAGRO": 3913.18,
+    "VENDINC": 2591.7,
+    "MAIBUSINC": 2590.97,
+    "PROGRO": -18.7,
+    "NETINC": -5.98,
+    "RATGRO": 41.05,
+    "TOTEQU": 1076.84,
+    "SOCNUM": 44,
+    "C_ASSGROL": 1076.8400000000006,
+    "A_ASSGROL": 4496.6900000000005,
+    "CA_ASSGRO": 1106.7200000000003,
+    "C_INTRATESL": -0.002308015916818798,
+    "ATOL": 0.5763572761297754,
+    "ASSGRO_C_INTRATESL": -0.0013302417670818486,
+    "A_VENDINCL": 58.885681818181816,
+    "A_PROGROL": -0.13590909090909092,
+    "ROAL": -0.001329867080007739,
+    "ROE_AL": -0.005403354055226253,
+    "ROE_BL": -0.005553285539170166,
+    "DEBTL": 0.7842012657263898,
+    "EQUITYL": 4.633947475948143,
+    "MAIBUSINC_RATIOL": 0.9997183315970213,
+    "NALR": 3.6339474759481445,
+    "OPM": -0.007215341281784158,
+    "ROCA": 0.9947386943515748,
+    "NOR": -0.002307365821661458,
+    "PMOTA": -0.004158614447515839,
+    "TBR": 0.015839024578462015,
+    "EQUITYL_new": 4.633947475948145,
+    "ASSGRO_yoy": 0.24645797530074745,
+    "LIAGRO_yoy": 0.3650183482398246,
+    "VENDINC_yoy": 0.19928922782191805,
+    "MAIBUSINC_yoy": 0.19895142594040785,
+    "PROGRO_yoy": -1.1298160360985767,
+    "NETINC_yoy": -1.0488522179560493,
+    "RATGRO_yoy": 0.25305250305250304,
+    "TOTEQU_yoy": -0.052577863804328696,
+    "TBR_new": 0.017282092834818845,
+    "SOCNUM_yoy": 0.6923076923076923,
+    "C_ASSGROL_yoy": -0.05257786380432809,
+    "A_ASSGROL_yoy": 0.09041065994155949,
+    "CA_ASSGROL_yoy": -0.07418050100594341,
+    "A_VENDINCL_yoy": -0.2915287028533953,
+    "A_PROGROL_yoy": -1.0288672197013018,
+    "VENDINC_CGR": 0.062448719926937235,
+    "VENDINC_yoy_ave_2": 0.11867631259334299,
+    "NETINC_yoy_ave_2": -0.8057618526615733,
+    "NPMOMB": -0.002307365821661458
+    }
+    },
+    "otherData": {
+    "2020": {
+    "VENDINC": 2591.7,
+    "ASSGRO": 4990.02,
+    "RATGRO": 41.05,
+    "DOM": "北京市朝阳区广渠路66号院22号楼百环大厦908",
+    "LIAGRO": 3913.18,
+    "POSTALCODE": "100022",
+    "MAIBUSINC": 2590.97,
+    "BUSST": "开业",
+    "EMPNUM": 0,
+    "NETINC": -5.98,
+    "ANCHEYEAR": "2020",
+    "TEL": "87766988",
+    "ispublic": 0,
+    "EMAIL": "13552307812@163.com",
+    "TOTEQU": 1076.84,
+    "PROGRO": -18.7
+    }
+    }
+    },
+    "msg": "查询成功",
+    "checkRespFlag": false
+    }
+     */
     function getFinanceData($postData, $toRange = true): array
     {
         $logFileName = 'getFinanceData.log.' . date('Ymd', time());
