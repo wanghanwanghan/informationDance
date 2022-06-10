@@ -329,7 +329,7 @@ class RunReadAndDealXls extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
-         return true;
+
 
         $debugLog = false;
         
@@ -339,14 +339,14 @@ class RunReadAndDealXls extends AbstractCronTask
         if(empty($files)){
             return true;
         }
-         
+
         // 一个一个的跑
 
         $file = pathinfo(array_shift($files))['basename'];
         $fileName = pathinfo($file)['filename'];
         $debugLog &&  CommonService::getInstance()->log4PHP('uploadAndDealXls_ file '.($file) );
         $fileNameArr = explode('_',$fileName);
-        
+        return true;
         // 匹配企业名称
         if($fileNameArr[1] == 'matchName'){ 
             $debugLog &&  CommonService::getInstance()->log4PHP('matchName  '.($file) );
