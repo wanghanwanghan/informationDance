@@ -369,7 +369,7 @@ class FinanceController extends ControllerBase
 
         $excel = new \Vtiful\Kernel\Excel($config);
 
-        $filename = '客户名单_'.$res->getAttr('file_name').'_'.date('YmdHis'). '.xlsx';
+        $filename = '客户名单_'.$requestData['id'].'_'.date('YmdHis'). '.xlsx';
 
 
         // 找到对应的财务信息

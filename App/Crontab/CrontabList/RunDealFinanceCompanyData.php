@@ -155,6 +155,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
         self::calculatePrice(5);
         //拉取finance数据
         self::pullFinanceData(5); 
+        //设置是否需要确认
 
         return true ;   
     }

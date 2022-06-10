@@ -140,6 +140,38 @@ class AdminUserFinanceData extends ModelBase
         ];
     }
 
+    public static function getFinanceDataStatus($dataArr,$configArr){
+        if(
+            $configArr['']
+        ){
+
+        }
+        // $adminFinanceDataId 上次拉取时间| 没超过一年 就不拉
+        $financeData =  AdminUserFinanceData::create()
+            ->where('id',$adminFinanceDataId)
+            ->get()
+            ->toArray();
+        if(empty($financeData['last_pull_api_date'])){
+            return [
+                'pullFromApi' => true,
+                'pullFromDb' => false,
+            ];
+        }
+
+        if(
+            (strtotime($financeData['last_pull_api_date']) -time()) > self::$pullFinanceTimeInterval
+        ){
+            return [
+                'pullFromApi' => true,
+                'pullFromDb' => false,
+            ];
+        }
+
+        return [
+            'pullFromApi' => false,
+            'pullFromDb' => true,
+        ];
+    }
     //我们拉取运营商的时间间隔  
     //客户导出的时间间隔  
     public static function pullFinanceData($id,$financeConifgArr){

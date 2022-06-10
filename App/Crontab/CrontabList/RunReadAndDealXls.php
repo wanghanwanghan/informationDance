@@ -151,7 +151,7 @@ class RunReadAndDealXls extends AbstractCronTask
             
 
             
-            CommonService::getInstance()->log4PHP('matchNamXXXX'.json_encode(
+            CommonService::getInstance()->log4PHP($xlsx_name.json_encode(
                 [
                     'value' => [$value2],
                     'params' => $mobileStr,
