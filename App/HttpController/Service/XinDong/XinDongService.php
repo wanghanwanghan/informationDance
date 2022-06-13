@@ -1923,7 +1923,7 @@ class XinDongService extends ServiceBase
         }
 //        if($arr[8] && $arr[9]){
 //            $matchStr .= '+'.$arr[8].$arr[9];
-//        } 
+//        }
         
         return  $matchStr;
     }

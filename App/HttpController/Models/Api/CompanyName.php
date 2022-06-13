@@ -11,7 +11,7 @@ class CompanyName extends ModelBase
     protected $autoTimeStamp = true;
     protected $createTime = 'created_at';
     protected $updateTime = 'updated_at';
-    static $tablesNums = 1;
+    static $tablesNums = 10;
     static function getAllTables()
     {
         $tables = [];
