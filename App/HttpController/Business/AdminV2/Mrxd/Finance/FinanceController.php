@@ -315,12 +315,15 @@ class FinanceController extends ControllerBase
         // } 
 
         $requestData =  $this->getRequestData();
-         
+        $condition = [
+            // 'user_id' => $userId
+            'user_id' => $this->loginUserinfo['id']
+        ];
+        if($requestData['status']){
+            $condition['status'] = $requestData['status'];
+        }
         $res = AdminUserFinanceData::findByCondition(
-            [
-                // 'user_id' => $userId
-                'user_id' => $this->loginUserinfo['id']
-            ],
+            $condition,
             0, 20
         );
 
