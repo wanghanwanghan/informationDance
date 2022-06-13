@@ -322,6 +322,9 @@ class FinanceController extends ControllerBase
         if($requestData['status']){
             $condition['status'] = $requestData['status'];
         }
+//        if($requestData['began_time']){
+//            $condition['status'] = $requestData['status'];
+//        }
         $res = AdminUserFinanceData::findByCondition(
             $condition,
             0, 20
