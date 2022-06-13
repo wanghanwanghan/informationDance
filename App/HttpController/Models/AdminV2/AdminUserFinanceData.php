@@ -27,6 +27,18 @@ class AdminUserFinanceData extends ModelBase
     static $priceTytpeAnnuallyCname = '包年';
     static $priceTytpeNormal = 10;
 
+    static $statusinit = 1;
+    static $statusinitCname = '初始';
+
+    static $statusNeedsConfirm = 5;
+    static $statusNeedsConfirmCname = '待确认';
+
+    static $statusConfirmedYes = 10;
+    static $statusConfirmedYesCname = '已确认需要';
+
+    static $statusConfirmedNo = 15;
+    static $statusConfirmedNoCname = '已确认不需要';
+
     public static function addRecord($requestData){ 
         try {
            $res =  AdminUserFinanceData::create()->data([
