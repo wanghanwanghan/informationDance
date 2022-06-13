@@ -341,10 +341,10 @@ class FinanceController extends ControllerBase
             $requestData['id'],
             $requestData['status']
         );
-
-        return $this->writeJson(200, null, [
-
-        ], $res); 
+        if(!$res){
+            return $this->writeJson(206, [] ,   [], '更新失败', true, []);
+        }
+        return $this->writeJson(200, null, $res, '');
     }
 
     // 导出客户名单

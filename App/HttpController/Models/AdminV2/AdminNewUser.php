@@ -13,7 +13,7 @@ class AdminNewUser extends ModelBase
     protected $createTime = 'created_at';
     protected $updateTime = 'updated_at';
 
-    static  function charge($chargeDetails){
+    static  function chargeFinance($chargeDetails){
         //金额
         $chargeDetails['money'];
         //用户id
@@ -44,7 +44,17 @@ class AdminNewUser extends ModelBase
 
         //添加计费日志
         FinanceLog::addRecord(
-
+            [
+                'detailId' => intval($requestData['detailId']),
+                'detail_table' => $requestData['detail_table']?:'',
+                'price' => $requestData['price'],
+                'userId' => $requestData['userId'],
+                'type' => $requestData['type'],
+                'title' => $requestData['title']?:'',
+                'detail' => $requestData['detail']?:'',
+                'reamrk' => $requestData['reamrk']?:'',
+                'status' => $requestData['status']?:1,
+            ]
         );
     }
 

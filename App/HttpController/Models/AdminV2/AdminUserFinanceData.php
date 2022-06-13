@@ -367,7 +367,11 @@ class AdminUserFinanceData extends ModelBase
         $info = AdminUserFinanceData::create()
                     ->where('id',$id)
                     ->get(); 
-        
+        if(!$info ){
+            return CommonService::getInstance()->log4PHP(
+                'updateStatus failed  $id 不存在'.$id
+            );
+        }
         return $info->update([
             'id' => $id,
             'status' => $status 
