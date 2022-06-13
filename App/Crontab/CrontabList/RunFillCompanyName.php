@@ -182,6 +182,13 @@ class RunFillCompanyName extends AbstractCronTask
         $from = $from + $size +1 ;
         $this->addById($from,$size,$configArr,$tableName);
 
+        $from = $from + $size +1 ;
+        $this->addById($from,$size,$configArr,$tableName);
+
+        $from = $from + $size +1 ;
+        $this->addById($from,$size,$configArr,$tableName);
+
+        
         return true ;  
     }
 
