@@ -1958,28 +1958,24 @@ class XinDongService extends ServiceBase
         foreach(
             CompanyName::getAllTables() as $tableName
         ){
-            foreach(
-                CompanyName::getAllTables() as $tableName
-            ){
-                $csp->add('NATURAL_LANGUAGE_MODE_'.$tableName, function () use ($entName, $tableName) {
-                    $timeStart2 = microtime(true);  
-                    $retData =  (new XinDongService())
-                                ->matchAainstEntName(
-                                    $entName, 
-                                    " IN NATURAL LANGUAGE MODE  " ,
-                                    $tableName,
-                                    'id,name',
-                                    3
-                            );  
-                    $timeEnd2 = microtime(true); 
-                    $execution_time11 = ($timeEnd2 - $timeStart2);  
-                    return  [ 
-                        'data' => $retData,
-                        'type' => 'Language',
-                        'time' => $execution_time11
-                    ];
-                }); 
-            }
+            $csp->add('NATURAL_LANGUAGE_MODE_'.$tableName, function () use ($entName, $tableName) {
+                $timeStart2 = microtime(true);
+                $retData =  (new XinDongService())
+                    ->matchAainstEntName(
+                        $entName,
+                        " IN NATURAL LANGUAGE MODE  " ,
+                        $tableName,
+                        'id,name',
+                        3
+                    );
+                $timeEnd2 = microtime(true);
+                $execution_time11 = ($timeEnd2 - $timeStart2);
+                return  [
+                    'data' => $retData,
+                    'type' => 'Language',
+                    'time' => $execution_time11
+                ];
+            });
         }
     }
 
@@ -2030,7 +2026,7 @@ class XinDongService extends ServiceBase
     function checkIfSimilar($name1,$name2){
         $percent = $this->getSimilarPercent($name1,$name2);
         if($percent >= 85 ){
-            return $data ;
+            return true ;
         }
         return false ;
     }
@@ -2164,106 +2160,94 @@ class XinDongService extends ServiceBase
     {
         $timeStart = microtime(true);
 
-        //先从es match
-        $esRes = $this->matchEntByNameMatchByEs($entName);
-        CommonService::getInstance()->log4PHP('es match'.
-            json_encode(
-                [
-                    'data' => $esRes,
-                    'time' => (microtime(true) - $timeStart),
-                ]
-            )
-        );
-        // 如果es 就匹配到了 直接返回
-        foreach($esRes as $data){
-            if( $this->checkIfSimilar($data['name'], $entName) ){
-                CommonService::getInstance()->log4PHP('es match ok , return '.
-                    json_encode(
-                        [
-                            'data' => $data,
-                            'time' => (microtime(true) - $timeStart),
-                        ]
-                    )
-                );
-                return $data ;
-            }
+        $sql = "SELECT  id,`name` FROM  `company`  WHERE   `name` = '$entName' LIMIT 1";
+        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
+        if(!empty($list)){
+            return $list[0];
         }
 
-        // es木有的 从 db找： 分词全文匹配+精确
-        $csp = new \EasySwoole\Component\Csp();
-        // 分词全文匹配找：Boolean mode
-        if ($matchType == 1) {
-            $this->matchEntByNameMatchByBooleanMode($csp,$entName);
-        }
-
-        //分词全文匹配找： language mode
-        if ($matchType == 2) {
-            $this->matchEntByNameMatchByLanguageMode($csp,$entName);
-        }
-
-        // 精确找
-        $this->matchEntByNameEqualMatchByName($csp,$entName);
-
-        $dbres = ($csp->exec($timeOut));
-        CommonService::getInstance()->log4PHP('从db找 res'.
-            json_encode(
-                [
-                    'data' => $dbres,
-                    'time' => (microtime(true) - $timeStart),
-                ]
-            )
-        );
         // 从结果找
         $matchedDatas = [];
-        // $matchedData = [];
-        foreach($dbres as $dataItem){
-            // 如果精确匹配到了 优先使用精确值
-            if(
-                $dataItem['type'] == 'equal' &&
-                !empty($dataItem['data'])
-            ){
-                CommonService::getInstance()->log4PHP('精确匹配到了'.
-                    json_encode(
-                        $dataItem['data'][0]
-                    )
-                );
-                return $dataItem['data'][0];
+        for(
+            $i = 0; $i<=1; $i++
+        ){
+            $csp = new \EasySwoole\Component\Csp();
+            $start = $i*2;
+            $end = $start+1;
+            for ($j = $start; $j<=$end; $j++) {
+                $csp->add('BOOLEAN_MODE_new_company_name_'.$j, function () use ($entName, $j) {
+                    $timeStart2 = microtime(true);
+                    $matchStr = (new XinDongService())->splitChineseNameForMatchAgainst($entName);
+                    $retData =  (new XinDongService())
+                        ->matchAainstEntName(
+                            $matchStr,
+                            " IN BOOLEAN MODE ",
+                            'new_company_name_'.$j ,
+                            'id,name',
+                            3
+                        );
+                    $timeEnd2 = microtime(true);
+                    $execution_time11 = ($timeEnd2 - $timeStart2);
+                    return  [
+                        'data' => $retData,
+                        'type' => 'Boolean',
+                        'time' => $execution_time11
+                    ];
+                });
             }
-        }
 
-        // 剩余的 按照相似度排序 然后返回相似度最高的
-        foreach($esRes as $dataItem){
-            $percent = $this->getSimilarPercent($dataItem['name'], $entName) ;
-            $matchedDatas[$percent] = [
-                'id' => $dataItem['id'] ,
-                'name' => $dataItem['name'] ,
-            ];
-        }
-        CommonService::getInstance()->log4PHP(' 根据匹配度1  '.
-            json_encode(
-                $matchedDatas
-            )
-        );
-
-        foreach($dbres as $dataItem){
-            CommonService::getInstance()->log4PHP(' dataItem  '.
+            $dbres = ($csp->exec($timeOut));
+            CommonService::getInstance()->log4PHP('从db找 res'.
                 json_encode(
-                    $dataItem
+                    [
+                        'data' => $dbres,
+                        'time' => (microtime(true) - $timeStart),
+                    ]
                 )
             );
-            foreach( $dataItem['data'] as $item){
-                $percent = $this->getSimilarPercent($item['name'], $entName) ;
-                $matchedDatas[$percent] = [
-                    'id' => $item['id'] ,
-                    'name' => $item['name'] ,
-                ];
+            foreach($dbres as $dataItem){
+                CommonService::getInstance()->log4PHP(' dataItem  '.
+                    json_encode(
+                        $dataItem
+                    )
+                );
+                foreach( $dataItem['data'] as $item){
+                    if( $this->checkIfSimilar($item['name'], $entName) ){
+                        CommonService::getInstance()->log4PHP('es match ok , return '.
+                            json_encode(
+                                [
+                                    'data' => $item,
+                                    'time' => (microtime(true) - $timeStart),
+                                ]
+                            )
+                        );
+                        return $item ;
+                    }
+                }
             }
+
+            // 剩余的 按照相似度排序 然后返回相似度最高的
+            foreach($dbres as $dataItem){
+                CommonService::getInstance()->log4PHP(' dataItem  '.
+                    json_encode(
+                        $dataItem
+                    )
+                );
+                foreach( $dataItem['data'] as $item){
+                    $percent = $this->getSimilarPercent($item['name'], $entName) ;
+                    $matchedDatas[$percent] = [
+                        'id' => $item['id'] ,
+                        'name' => $item['name'] ,
+                    ];
+                }
+            }
+            CommonService::getInstance()->log4PHP(' 根据匹配度2  '.
+                json_encode(
+                    $matchedDatas
+                )
+            );
         }
-        CommonService::getInstance()->log4PHP(' 根据匹配度2  '.
-            json_encode(
-                $matchedDatas
-            )
-        );
+
         //根据匹配度 返回最高的一个
         ksort($matchedDatas);
         $resData =  end($matchedDatas);
@@ -2273,14 +2257,10 @@ class XinDongService extends ServiceBase
             )
         );
 
-        $timeEnd = microtime(true);
-        $execution_time1 = (microtime(true) - $timeStart);
+//        $timeEnd = microtime(true);
+//        $execution_time1 = (microtime(true) - $timeStart);
 
         return $resData;
-        // return [
-        //     'Time' => 'Total Execution Time:'.$execution_time1.' 秒  |',
-        //     'data' => $resData,
-        // ];
     }
 
     static function trace(){
