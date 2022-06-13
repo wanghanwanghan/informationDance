@@ -2186,7 +2186,7 @@ class XinDongService extends ServiceBase
                             " IN BOOLEAN MODE ",
                             'company_name_'.$j ,
                             'id,name',
-                            2
+                            3
                         );
                     $timeEnd2 = microtime(true);
                     $execution_time11 = ($timeEnd2 - $timeStart2);
