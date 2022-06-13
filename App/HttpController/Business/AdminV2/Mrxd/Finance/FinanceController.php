@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\AdminV2\Mrxd\Finance;
 
 use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;
+use App\HttpController\Models\AdminNew\AdminNewUser;
 use App\HttpController\Models\AdminV2\AdminMenuItems;
 use App\HttpController\Models\AdminV2\AdminNewMenu;
 use App\HttpController\Models\AdminV2\FinanceLog;
@@ -303,9 +304,7 @@ class FinanceController extends ControllerBase
             0, 20
         );
 
-        return $this->writeJson(200, null, [
-
-        ], $res); 
+        return $this->writeJson(200, null, $res,'成功');
     }
 
     //获取待确认的列表
@@ -346,42 +345,13 @@ class FinanceController extends ControllerBase
         }
         return $this->writeJson(200, null, $res, '');
     }
-
-    // 导出客户名单
-    function exportFinanceData()
-    {
-        $requestData =  $this->getRequestData();
-        if(
-            $requestData['id'] <= 0 
-        ){
-            return $this->writeJson(201, null, [
-
-            ], [], '参数缺失');
-        } 
-
-        // 下载的文件相关
-        $config = [
-            'path' => TEMP_FILE_PATH // xlsx文件保存路径
-        ];
+    function  parseDataToXls($config,$filename,$header,$exportData,$sheetName){
 
         $excel = new \Vtiful\Kernel\Excel($config);
-
-        $filename = '客户名单_'.$requestData['id'].'_'.date('YmdHis'). '.xlsx';
-
-
-        // 找到对应的财务信息
-        $financeData = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordId(
-            $this->loginUserinfo['id'],
-            $requestData['id'],
-            1
-        ); 
- 
-        $fileObject = $excel->fileName($filename, '财务数据');
+        $fileObject = $excel->fileName($filename, $sheetName);
         $fileHandle = $fileObject->getHandle();
 
-        //==========================================================================================================
         $format = new Format($fileHandle);
-
         $colorStyle = $format
             ->fontColor(Format::COLOR_ORANGE)
             ->border(Format::BORDER_DASH_DOT)
@@ -393,18 +363,12 @@ class FinanceController extends ControllerBase
         $alignStyle = $format
             ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
             ->toResource();
-        //==========================================================================================================
 
-        $header = [
-            '序号',
-            '企业名称',
-            '监控类别', 
-        ];
         $fileObject
             ->defaultFormat($colorStyle)
             ->header($header)
             ->defaultFormat($alignStyle)
-            ->data($financeData['finance_data'])
+            ->data($exportData)
             // ->setColumn('B:B', 50)
         ;
 
@@ -413,9 +377,60 @@ class FinanceController extends ControllerBase
         $wrapStyle = $format
             ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
             ->wrap()
-            ->toResource(); 
+            ->toResource();
 
-        $res = $fileObject->output();
+        return $fileObject->output();
+    }
+    // 导出客户名单
+    function exportFinanceData()
+    {
+        $requestData =  $this->getRequestData();
+        if(
+            $requestData['id'] <= 0 
+        ){
+            return $this->writeJson(201, null, [
+
+            ], [], '参数缺失');
+        }
+
+        // 找到对应的财务信息
+        $financeData = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordId(
+            $this->loginUserinfo['id'],
+            $requestData['id'],
+            1
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '找到对应的财务信息' ,
+                'totalNums' => $financeData['totalNums'],
+                'totalPrice' => $financeData['totalPrice'],
+            ])
+        );
+        // 检查余额
+        if(
+            !\App\HttpController\Models\AdminV2\AdminNewUser::checkAccountBalance(
+                $this->loginUserinfo['id'],
+                $financeData['totalPrice']
+            )
+        ){
+            return $this->writeJson(201, null, [], [], '余额不足 需要至少'.$financeData['totalPrice'].'元');
+        }
+
+        $config = [
+            'path' => TEMP_FILE_PATH // xlsx文件保存路径
+        ];
+        $filename = '客户名单_'.$requestData['id'].'_'.date('YmdHis'). '.xlsx';
+        $header = [
+            '序号',
+            '企业名称',
+            '监控类别',
+        ];
+        $exportDataToXlsRes = $this->parseDataToXls(
+            $config,$filename,$header,$financeData['finance_data'],'财务数据'
+        );
+        if(!$exportDataToXlsRes){
+            return $this->writeJson(203, null, [], [], '下载失败');
+        }
 
         // 设置导出记录
         $AdminUserFinanceExportRecordId = AdminUserFinanceExportRecord::addExportRecord(
@@ -429,7 +444,7 @@ class FinanceController extends ControllerBase
                 'status' => '',   
             ]
         );
-
+        // 设置导出详情
         foreach($financeData['finance_data'] as $financeItem){
             AdminUserFinanceExportDataRecord::addExportRecord(
                 [
@@ -442,12 +457,31 @@ class FinanceController extends ControllerBase
                 ]
                 );
         }
-        
 
-        // 添加对账记录 
         // 实际扣费 
-        FinanceLog::$chargeTytpeFinance;
-         
+        \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
+            $this->loginUserinfo['id'],
+            (
+                \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
+                    $this->loginUserinfo['id']
+                ) - $financeData['totalPrice']
+            )
+        );
+
+        //添加计费日志
+        FinanceLog::addRecord(
+            [
+                'detailId' => $AdminUserFinanceExportRecordId,
+                'detail_table' => 'admin_user_finance_export_record',
+                'price' => $financeData['totalPrice'],
+                'userId' => $this->loginUserinfo['id'],
+                'type' =>  FinanceLog::$chargeTytpeFinance,
+                'title' => '导出财务数据',
+                'detail' => '导出财务数据',
+                'reamrk' => $requestData['reamrk']?:'',
+                'status' => $requestData['status']?:1,
+            ]
+        );
 
         return $this->writeJson(200, null, 'Static/Temp/' . $filename, null, true, [$res]);
     }
