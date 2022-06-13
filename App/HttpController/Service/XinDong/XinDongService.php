@@ -2156,7 +2156,7 @@ class XinDongService extends ServiceBase
         // ];  
     }
 
-    function matchEntByName2($entName, $matchType = 1, $timeOut = 3.5): array
+    function matchEntByName2($entName, $matchType = 1, $timeOut = 3.5)
     {
         $timeStart = microtime(true);
 
