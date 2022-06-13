@@ -60,6 +60,7 @@ class GetAuthBook extends AbstractCronTask
         if (!empty($ids)) {
             $idSql = "id IN ( {$ids} ) OR (authDate = 0 AND STATUS = 0)";
         }
+
         $sql = <<<Eof
 SELECT
 	* 
@@ -70,6 +71,7 @@ WHERE
 Eof;
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
 
+        CommonService::getInstance()->log4PHP($sql, 'info', 'caofang.log');
 
         $fileData = [];
         $flieDetail = [];
