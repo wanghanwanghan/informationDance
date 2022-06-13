@@ -2174,6 +2174,15 @@ class XinDongService extends ServiceBase
             $csp = new \EasySwoole\Component\Csp();
             $start = $i*2;
             $end = $start+1;
+            CommonService::getInstance()->log4PHP('$i'.
+                json_encode(
+                    [
+                        '$i' => $i,
+                        '$start' => $start,
+                        '$end' => $end,
+                    ]
+                )
+            );
             for ($j = $start; $j<=$end; $j++) {
                 CommonService::getInstance()->log4PHP('$j'.
                     json_encode(
