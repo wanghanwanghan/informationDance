@@ -264,9 +264,17 @@ class FinanceController extends ControllerBase
                     ])
                 );  
             } 
-        }  
+        }
 
-        return $this->writeJson(200, null, [],'导入成功 入库数量:'.$succeedNums); 
+        $size = $this->request()->getRequestParam('size')??10;
+        $page = $this->request()->getRequestParam('page')??1;
+        $offset  =  ($page-1)*$size;
+        return $this->writeJson(200, [
+            'page' => $page,
+            'pageSize' =>$size,
+            'total' => 1,
+            'totalPage' => 1,
+        ], [],'导入成功 入库数量:'.$succeedNums);
     }
 
     public function getUploadLists(){
@@ -284,8 +292,15 @@ class FinanceController extends ControllerBase
             ],
             0, 20
         );
-
-        return $this->writeJson(200, null,  $res,'成功');
+        $size = $this->request()->getRequestParam('size')??10;
+        $page = $this->request()->getRequestParam('page')??1;
+        $offset  =  ($page-1)*$size;
+        return $this->writeJson(200,  [
+            'page' => $page,
+            'pageSize' =>$size,
+            'total' => 1,
+            'totalPage' => 1,
+        ],  $res,'成功');
     }
 
     public function getExportLists(){
@@ -303,8 +318,16 @@ class FinanceController extends ControllerBase
             ],
             0, 20
         );
+        $size = $this->request()->getRequestParam('size')??10;
+        $page = $this->request()->getRequestParam('page')??1;
+        $offset  =  ($page-1)*$size;
 
-        return $this->writeJson(200, null, $res,'成功');
+        return $this->writeJson(200,  [
+            'page' => $page,
+            'pageSize' =>$size,
+            'total' => 1,
+            'totalPage' => 1,
+        ], $res,'成功');
     }
 
     //获取待确认的列表
@@ -330,7 +353,16 @@ class FinanceController extends ControllerBase
             0, 20
         );
 
-        return $this->writeJson(200, null, $res, '成功' );
+        $size = $this->request()->getRequestParam('size')??10;
+        $page = $this->request()->getRequestParam('page')??1;
+        $offset  =  ($page-1)*$size;
+        return $this->writeJson(200,
+            [
+                'page' => $page,
+                'pageSize' =>$size,
+                'total' => 1,
+                'totalPage' => 1,
+            ] , $res, '成功' );
     }
 
     //确认的列表
@@ -349,7 +381,15 @@ class FinanceController extends ControllerBase
         if(!$res){
             return $this->writeJson(206, [] ,   [], '更新失败', true, []);
         }
-        return $this->writeJson(200, null, $res, '');
+        $size = $this->request()->getRequestParam('size')??10;
+        $page = $this->request()->getRequestParam('page')??1;
+        $offset  =  ($page-1)*$size;
+        return $this->writeJson(200, [
+            'page' => $page,
+            'pageSize' =>$size,
+            'total' => 1,
+            'totalPage' => 1,
+        ], $res, '');
     }
     function  parseDataToXls($config,$filename,$header,$exportData,$sheetName){
 
