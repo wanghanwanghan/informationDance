@@ -165,18 +165,13 @@ class FinanceController extends ControllerBase
         }  
         $files = $this->request()->getUploadedFiles();
         CommonService::getInstance()->log4PHP(
-            '[souKe]-uploadEntList files['.json_encode($files).']'
+            'uploadeCompanyLists files['.json_encode($files).']'
         ); 
 
         $requestData =  $this->getRequestData();
         $files = $this->request()->getUploadedFiles();
         $path = $fileName = '';
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'uploadeCompanyLists ',
-                $files
-            ])
-        ); 
+
         $succeedNums = 0;
         foreach ($files as $key => $oneFile) {
             if (!$oneFile instanceof UploadFile) {
@@ -210,14 +205,6 @@ class FinanceController extends ControllerBase
                     $this->loginUserinfo['id'],   
                     $fileName
                 );
-                CommonService::getInstance()->log4PHP(
-                    json_encode(
-                        [
-                            'UploadRecordRes' => $UploadRecordRes,
-                            'fileName' => $fileName,
-                        ]
-                    )
-                ); 
                 if($UploadRecordRes){
                     continue;
                 } 
@@ -233,29 +220,14 @@ class FinanceController extends ControllerBase
                         'finance_config' => AdminUserFinanceConfig::getConfigByUserId(
                             $this->loginUserinfo['id']
                         ),   
-                        'status' => 1,  
+                        'status' => AdminUserFinanceUploadRecord::$stateInit,
                      ]
                  );
-                 CommonService::getInstance()->log4PHP(
-                    json_encode(
-                        [
-                            'addUploadRecordRes' => $addUploadRecordRes,
-                            'data' =>  [
-                                'user_id' => $this->loginUserinfo['id'], 
-                                'file_path' => $path,  
-                                'years' => $requestData['years'],  
-                                'file_name' => $fileName,  
-                                'title' => $requestData['title']?:'',    
-                                'reamrk' => $requestData['reamrk']?:'',  
-                                'finance_config' => AdminUserFinanceConfig::getConfigByUserId(
-                                    $this->loginUserinfo['id']
-                                ),   
-                                'status' => 1,  
-                             ],
-                        ]
-                    )
-                ); 
+                if(!$addUploadRecordRes){
+                    continue;
+                }
 
+                $succeedNums ++;
             } catch (\Throwable $e) {
                 CommonService::getInstance()->log4PHP(
                     json_encode([
@@ -266,15 +238,7 @@ class FinanceController extends ControllerBase
             } 
         }
 
-        $size = $this->request()->getRequestParam('size')??10;
-        $page = $this->request()->getRequestParam('page')??1;
-        $offset  =  ($page-1)*$size;
-        return $this->writeJson(200, [
-            'page' => $page,
-            'pageSize' =>$size,
-            'total' => 1,
-            'totalPage' => 1,
-        ], [],'导入成功 入库数量:'.$succeedNums);
+        return $this->writeJson(200, [], [],'导入成功 入库数量:'.$succeedNums);
     }
 
     public function getUploadLists(){

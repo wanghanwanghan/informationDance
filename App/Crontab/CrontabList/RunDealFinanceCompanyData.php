@@ -154,9 +154,8 @@ class RunDealFinanceCompanyData extends AbstractCronTask
         //计算价格
         self::calculatePrice(5);
         //拉取finance数据
-        self::pullFinanceData(5); 
-        //设置是否需要确认
-
+        self::pullFinanceData(5);
+        self::calculateRealPrice(5);
         return true ;   
     }
 
@@ -235,6 +234,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
         return true ;   
     }
 
+
     //计算单价
     static function calculatePrice($limit)
     {
@@ -305,6 +305,77 @@ class RunDealFinanceCompanyData extends AbstractCronTask
             }
         }
         return true ;   
+    }
+
+    static function calculateRealPrice($limit)
+    {
+        //解析完，尚未计算单价的
+        $initDatas = AdminUserFinanceUploadRecord::findByCondition(
+            [
+                'status' => AdminUserFinanceUploadRecord::$stateParsed
+            ],
+            0,
+            $limit
+        );
+
+        foreach($initDatas as $dataItem){
+            // 如果全计算完了 变更下状态
+            if(
+                self::checkUploadDataRecordsOldStateIsDone(
+                    $dataItem['user_id'],
+                    $dataItem['id'] ,
+                    AdminUserFinanceUploadRecord::$stateInit,
+                    AdminUserFinanceUploadRecord::$stateCalCulatedPrice
+                )
+            ){
+                $changeRes = AdminUserFinanceUploadRecord::changeStatus(
+                    $dataItem['id'],
+                    AdminUserFinanceUploadRecord::$stateCalCulatedPrice
+                );
+                if(!$changeRes){
+                    CommonService::getInstance()->log4PHP(
+                        'calculatePrice err1  change status error '.$dataItem['id']
+                    );
+                    continue;
+                }
+            }
+
+            // 找到数据记录里还没计算价格的
+            $allUploadDataRecords =  AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
+                $dataItem['user_id'],
+                $dataItem['id'],
+                AdminUserFinanceUploadRecord::$stateInit
+            );
+            if(empty($allUploadDataRecords)){
+                continue;
+            }
+
+            foreach($allUploadDataRecords as $UploadDataRecord){
+                // 计算单价
+                $calculateRes = AdminUserFinanceData::calculatePrice(
+                    $UploadDataRecord['user_finance_data_id'],
+                    json_decode($dataItem['finance_config'],true)
+                );
+                if(!$calculateRes){
+                    CommonService::getInstance()->log4PHP(
+                        'calculatePrice err2  calculate prices error '.$UploadDataRecord['user_finance_data_id']
+                    );
+                    continue;
+                }
+                // 计算完价格 变更下状态
+                $updateRes = AdminUserFinanceUploadDataRecord::updateStatusById(
+                    $UploadDataRecord['id'],
+                    AdminUserFinanceUploadRecord::$stateCalCulatedPrice
+                );
+                if(!$updateRes){
+                    CommonService::getInstance()->log4PHP(
+                        'calculatePrice err2  update status error '.$UploadDataRecord['id']
+                    );
+                    continue;
+                }
+            }
+        }
+        return true ;
     }
 
     //将上传的客户名单解析到db

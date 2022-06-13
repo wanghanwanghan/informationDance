@@ -88,7 +88,7 @@ class AdminUserFinanceData extends ModelBase
         if($chagrgeDetailsAnnuallyRes['IsAnnually']){  
             $updateRes = self::updatePrice(
                 $id,
-                $chagrgeDetailsAnnuallyRes['HasChargedBefore'] ? 0 : $chagrgeDetailsAnnuallyRes['AnnuallyPrice'],
+                $chagrgeDetailsAnnuallyRes['AnnuallyPrice'],
                 self::$priceTytpeAnnually
             );
             if(!$updateRes){
@@ -111,7 +111,7 @@ class AdminUserFinanceData extends ModelBase
         if($chagrgeDetailsByYearsRes['IsChargeByYear']){
             $updateRes = self::updatePrice(
                 $id,
-                $chagrgeDetailsByYearsRes['HasChargedBefore'] ? 0 : $chagrgeDetailsByYearsRes['YearPrice'],
+                $chagrgeDetailsByYearsRes['YearPrice'],
                 self::$priceTytpeAnnually
             );
             if(!$updateRes){
@@ -152,38 +152,6 @@ class AdminUserFinanceData extends ModelBase
         ];
     }
 
-    public static function getFinanceDataStatus($dataArr,$configArr){
-        if(
-            $configArr['']
-        ){
-
-        }
-        // $adminFinanceDataId 上次拉取时间| 没超过一年 就不拉
-        $financeData =  AdminUserFinanceData::create()
-            ->where('id',$adminFinanceDataId)
-            ->get()
-            ->toArray();
-        if(empty($financeData['last_pull_api_date'])){
-            return [
-                'pullFromApi' => true,
-                'pullFromDb' => false,
-            ];
-        }
-
-        if(
-            (strtotime($financeData['last_pull_api_date']) -time()) > self::$pullFinanceTimeInterval
-        ){
-            return [
-                'pullFromApi' => true,
-                'pullFromDb' => false,
-            ];
-        }
-
-        return [
-            'pullFromApi' => false,
-            'pullFromDb' => true,
-        ];
-    }
     //我们拉取运营商的时间间隔  
     //客户导出的时间间隔  
     public static function pullFinanceData($id,$financeConifgArr){
@@ -226,6 +194,8 @@ class AdminUserFinanceData extends ModelBase
             $dbDataArr = $resData[$financeData['year']];
             $dbDataArr['entName'] = $financeData['entName'];
             $dbDataArr['year'] = $financeData['year'];
+            //设置是否需要确认
+            $dbDataArr['status'] = self::getConfirmStatus($financeConifgArr,$dbDataArr);
             $addRes = NewFinanceData::addRecord($dbDataArr);
             if(!$addRes){
                 CommonService::getInstance()->log4PHP(
@@ -236,7 +206,30 @@ class AdminUserFinanceData extends ModelBase
 
         return $addRes; 
     }
+    public  static  function getConfirmStatus($financeConifgArr,$dataItem){
+        // 不需要确认
+        if(!$financeConifgArr['needs_confirm']){
+            return self::$statusConfirmedYes;
+        }
 
+        //暂时写死，后期需要的话自己配置
+        $needsConfirmFields = [
+            'VENDINC',
+            'ASSGRO',
+            'MAIBUSINC',
+            'TOTEQU'
+        ];
+        foreach ($dataItem as $itemKey => $value){
+            if(
+                in_array($itemKey,$needsConfirmFields) &&
+                empty($value)
+            ){
+                return self::$statusNeedsConfirm;
+            }
+        }
+
+        return self::$statusConfirmedYes;
+    }
     public static function getChagrgeDetailsAnnually(
         $year,$financeConifgArr,$user_id,$entName
     ){
@@ -268,22 +261,22 @@ class AdminUserFinanceData extends ModelBase
        }
 
         //包年内 是否之前扣过钱
-        $yearStr = '("'.implode('","',$annually_years_arr).'")';
-        $sql = " select id from  `admin_user_finance_data`  
-                    WHERE 
-                        `year` in $yearStr  AND 
-                        user_id = $user_id  AND 
-                        entName = '$entName' AND   
-                        price > 0 
-                    limit 1 ";
-        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-        CommonService::getInstance()->log4PHP(
-            'getChagrgeDetailsAnnually   之前是否已经计费过  $sql '. $sql
-        );
+//        $yearStr = '("'.implode('","',$annually_years_arr).'")';
+//        $sql = " select id from  `admin_user_finance_data`
+//                    WHERE
+//                        `year` in $yearStr  AND
+//                        user_id = $user_id  AND
+//                        entName = '$entName' AND
+//                        price > 0
+//                    limit 1 ";
+//        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+//        CommonService::getInstance()->log4PHP(
+//            'getChagrgeDetailsAnnually   之前是否已经计费过  $sql '. $sql
+//        );
         return [
             'IsAnnually' => true,
             'AnnuallyPrice' => $financeConifgArr['annually_price'],
-            'HasChargedBefore' => empty($list) ? false : true,
+//            'HasChargedBefore' => empty($list) ? false : true,
         ]; 
     }
 
@@ -315,21 +308,21 @@ class AdminUserFinanceData extends ModelBase
        }
 
         //是否之前扣过钱 
-        $sql = " select id from  `admin_user_finance_data`  
-                    WHERE 
-                        `year`  = $year  AND 
-                        user_id = $user_id  AND 
-                        entName = '$entName' AND 
-                        price > 0 
-                    limit 1 ";
-        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-        CommonService::getInstance()->log4PHP(
-            'getChagrgeDetailsByYear    '.$year. '  $sql '.$sql
-        );
+//        $sql = " select id from  `admin_user_finance_data`
+//                    WHERE
+//                        `year`  = $year  AND
+//                        user_id = $user_id  AND
+//                        entName = '$entName' AND
+//                        price > 0
+//                    limit 1 ";
+//        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+//        CommonService::getInstance()->log4PHP(
+//            'getChagrgeDetailsByYear    '.$year. '  $sql '.$sql
+//        );
         return [
             'IsChargeByYear' => true,
             'YearPrice' => $normal_years_price_arr[$year],
-            'HasChargedBefore' => empty($list) ? false : true,
+//            'HasChargedBefore' => empty($list) ? false : true,
         ]; 
     }
 
