@@ -1893,7 +1893,7 @@ class XinDongService extends ServiceBase
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         
         CommonService::getInstance()->log4PHP('matchAainstComName sql'.$sql ); 
-        CommonService::getInstance()->log4PHP('matchAainstComName sql'.json_encode($list) ); 
+        CommonService::getInstance()->log4PHP('matchAainstComName res'.json_encode($list) );
          
         return $list;
 
@@ -2174,25 +2174,9 @@ class XinDongService extends ServiceBase
             $csp = new \EasySwoole\Component\Csp();
             $start = $i*2;
             $end = $start+1;
-            CommonService::getInstance()->log4PHP('$i'.
-                json_encode(
-                    [
-                        '$i' => $i,
-                        '$start' => $start,
-                        '$end' => $end,
-                    ]
-                )
-            );
+
             for ($j = $start; $j<=$end; $j++) {
-                CommonService::getInstance()->log4PHP('$j'.
-                    json_encode(
-                        [
-                            '$j' => $j,
-                            '$start' => $start,
-                            '$end' => $end,
-                        ]
-                    )
-                );
+
                 $csp->add('BOOLEAN_MODE_new_company_name_'.$j, function () use ($entName, $j) {
                     $timeStart2 = microtime(true);
                     $matchStr = (new XinDongService())->splitChineseNameForMatchAgainst($entName);
@@ -2202,7 +2186,7 @@ class XinDongService extends ServiceBase
                             " IN BOOLEAN MODE ",
                             'company_name_'.$j ,
                             'id,name',
-                            3
+                            2
                         );
                     $timeEnd2 = microtime(true);
                     $execution_time11 = ($timeEnd2 - $timeStart2);
@@ -2224,11 +2208,11 @@ class XinDongService extends ServiceBase
                 )
             );
             foreach($dbres as $dataItem){
-                CommonService::getInstance()->log4PHP(' dataItem  '.
-                    json_encode(
-                        $dataItem
-                    )
-                );
+//                CommonService::getInstance()->log4PHP(' dataItem  '.
+//                    json_encode(
+//                        $dataItem
+//                    )
+//                );
                 foreach( $dataItem['data'] as $item){
                     if( $this->checkIfSimilar($item['name'], $entName) ){
                         CommonService::getInstance()->log4PHP('es match ok , return '.
@@ -2246,11 +2230,11 @@ class XinDongService extends ServiceBase
 
             // 剩余的 按照相似度排序 然后返回相似度最高的
             foreach($dbres as $dataItem){
-                CommonService::getInstance()->log4PHP(' dataItem  '.
-                    json_encode(
-                        $dataItem
-                    )
-                );
+//                CommonService::getInstance()->log4PHP(' dataItem  '.
+//                    json_encode(
+//                        $dataItem
+//                    )
+//                );
                 foreach( $dataItem['data'] as $item){
                     $percent = $this->getSimilarPercent($item['name'], $entName) ;
                     $matchedDatas[$percent] = [
