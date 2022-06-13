@@ -160,6 +160,7 @@ class RunReadAndDealXls extends AbstractCronTask
                     'num' =>  $i
                 ]
             ));
+            sleep(10);
             $i ++;
             yield $datas[] = [
                 $value0,
