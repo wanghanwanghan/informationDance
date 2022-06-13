@@ -326,9 +326,7 @@ class FinanceController extends ControllerBase
             0, 20
         );
 
-        return $this->writeJson(200, null, [
-
-        ], $res); 
+        return $this->writeJson(200, null, $res, '成功' );
     }
 
     //确认的列表
