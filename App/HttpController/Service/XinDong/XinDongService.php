@@ -1921,9 +1921,9 @@ class XinDongService extends ServiceBase
         if($arr[6] && $arr[7]){
             $matchStr .= '+'.$arr[6].$arr[7];
         }
-        if($arr[8] && $arr[9]){
-            $matchStr .= '+'.$arr[8].$arr[9];
-        } 
+//        if($arr[8] && $arr[9]){
+//            $matchStr .= '+'.$arr[8].$arr[9];
+//        } 
         
         return  $matchStr;
     }
@@ -2158,7 +2158,130 @@ class XinDongService extends ServiceBase
         //     'Time' => 'Total Execution Time:'.$execution_time1.' 秒  |',
         //     'data' => $resData,
         // ];  
-    }  
+    }
+
+    function matchEntByName2($entName, $matchType = 1, $timeOut = 3.5): array
+    {
+        $timeStart = microtime(true);
+
+        //先从es match
+        $esRes = $this->matchEntByNameMatchByEs($entName);
+        CommonService::getInstance()->log4PHP('es match'.
+            json_encode(
+                [
+                    'data' => $esRes,
+                    'time' => (microtime(true) - $timeStart),
+                ]
+            )
+        );
+        // 如果es 就匹配到了 直接返回
+        foreach($esRes as $data){
+            if( $this->checkIfSimilar($data['name'], $entName) ){
+                CommonService::getInstance()->log4PHP('es match ok , return '.
+                    json_encode(
+                        [
+                            'data' => $data,
+                            'time' => (microtime(true) - $timeStart),
+                        ]
+                    )
+                );
+                return $data ;
+            }
+        }
+
+        // es木有的 从 db找： 分词全文匹配+精确
+        $csp = new \EasySwoole\Component\Csp();
+        // 分词全文匹配找：Boolean mode
+        if ($matchType == 1) {
+            $this->matchEntByNameMatchByBooleanMode($csp,$entName);
+        }
+
+        //分词全文匹配找： language mode
+        if ($matchType == 2) {
+            $this->matchEntByNameMatchByLanguageMode($csp,$entName);
+        }
+
+        // 精确找
+        $this->matchEntByNameEqualMatchByName($csp,$entName);
+
+        $dbres = ($csp->exec($timeOut));
+        CommonService::getInstance()->log4PHP('从db找 res'.
+            json_encode(
+                [
+                    'data' => $dbres,
+                    'time' => (microtime(true) - $timeStart),
+                ]
+            )
+        );
+        // 从结果找
+        $matchedDatas = [];
+        // $matchedData = [];
+        foreach($dbres as $dataItem){
+            // 如果精确匹配到了 优先使用精确值
+            if(
+                $dataItem['type'] == 'equal' &&
+                !empty($dataItem['data'])
+            ){
+                CommonService::getInstance()->log4PHP('精确匹配到了'.
+                    json_encode(
+                        $dataItem['data'][0]
+                    )
+                );
+                return $dataItem['data'][0];
+            }
+        }
+
+        // 剩余的 按照相似度排序 然后返回相似度最高的
+        foreach($esRes as $dataItem){
+            $percent = $this->getSimilarPercent($dataItem['name'], $entName) ;
+            $matchedDatas[$percent] = [
+                'id' => $dataItem['id'] ,
+                'name' => $dataItem['name'] ,
+            ];
+        }
+        CommonService::getInstance()->log4PHP(' 根据匹配度1  '.
+            json_encode(
+                $matchedDatas
+            )
+        );
+
+        foreach($dbres as $dataItem){
+            CommonService::getInstance()->log4PHP(' dataItem  '.
+                json_encode(
+                    $dataItem
+                )
+            );
+            foreach( $dataItem['data'] as $item){
+                $percent = $this->getSimilarPercent($item['name'], $entName) ;
+                $matchedDatas[$percent] = [
+                    'id' => $item['id'] ,
+                    'name' => $item['name'] ,
+                ];
+            }
+        }
+        CommonService::getInstance()->log4PHP(' 根据匹配度2  '.
+            json_encode(
+                $matchedDatas
+            )
+        );
+        //根据匹配度 返回最高的一个
+        ksort($matchedDatas);
+        $resData =  end($matchedDatas);
+        CommonService::getInstance()->log4PHP(' 根据匹配度  '.
+            json_encode(
+                $matchedDatas
+            )
+        );
+
+        $timeEnd = microtime(true);
+        $execution_time1 = (microtime(true) - $timeStart);
+
+        return $resData;
+        // return [
+        //     'Time' => 'Total Execution Time:'.$execution_time1.' 秒  |',
+        //     'data' => $resData,
+        // ];
+    }
 
     static function trace(){
         $old_traces = debug_backtrace();

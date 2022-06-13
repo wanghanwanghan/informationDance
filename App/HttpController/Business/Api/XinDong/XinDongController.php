@@ -2451,7 +2451,13 @@ eof;
         $entName = $this->getRequestData('entName', '');
         $type = $this->getRequestData('type', '1');
         $timeout = $this->getRequestData('timeout', '3');
-        $retData = (new XinDongService())->matchEntByName($entName,$type,$timeout);  
+        if($this->getRequestData('new')){
+            $retData = (new XinDongService())->matchEntByName2($entName,$type,$timeout);
+        }
+        else{
+            $retData = (new XinDongService())->matchEntByName($entName,$type,$timeout);
+        }
+
         // CommonService::getInstance()->log4PHP('matchEntByName '.$execution_time1.'秒'); 
         return $this->writeJson(200, [] ,   $retData, '成功', true, []); 
     }
