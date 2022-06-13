@@ -68,7 +68,7 @@ class ChuangLanService extends ServiceBase
         ];
 
         return (new CoHttpClient())
-            ->useCache(true)
+            ->useCache(false)
             ->send($url, $data);
     }
 
