@@ -2175,6 +2175,15 @@ class XinDongService extends ServiceBase
             $start = $i*2;
             $end = $start+1;
             for ($j = $start; $j<=$end; $j++) {
+                CommonService::getInstance()->log4PHP('$j'.
+                    json_encode(
+                        [
+                            '$j' => $j,
+                            '$start' => $start,
+                            '$end' => $end,
+                        ]
+                    )
+                );
                 $csp->add('BOOLEAN_MODE_new_company_name_'.$j, function () use ($entName, $j) {
                     $timeStart2 = microtime(true);
                     $matchStr = (new XinDongService())->splitChineseNameForMatchAgainst($entName);
