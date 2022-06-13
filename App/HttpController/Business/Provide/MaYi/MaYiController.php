@@ -172,6 +172,8 @@ class MaYiController extends Index
         $data['fileData'] = $tmp['body']['fileData'] ?? '';
         $data['orderNo'] = $tmp['body']['orderNo'] ?? '';
 
+        CommonService::getInstance()->log4PHP($data, 'info', 'caofang.log');
+
         $res = (new MaYiService())->authEnt($data);
 
         $res['result']['nsrsbh'] = $data['socialCredit'];
