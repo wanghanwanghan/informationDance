@@ -5,6 +5,7 @@ namespace App\HttpController\Business\AdminV2\Mrxd\Finance;
 use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;
 use App\HttpController\Models\AdminV2\AdminMenuItems;
 use App\HttpController\Models\AdminV2\AdminNewMenu;
+use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Service\AdminRole\AdminPrivilegedUser;
 use App\HttpController\Models\AdminV2\AdminRoles;
@@ -283,9 +284,7 @@ class FinanceController extends ControllerBase
             0, 20
         );
 
-        return $this->writeJson(200, null, [
-
-        ], $res); 
+        return $this->writeJson(200, null,  $res,'成功');
     }
 
     public function getExportLists(){
@@ -447,7 +446,7 @@ class FinanceController extends ControllerBase
 
         // 添加对账记录 
         // 实际扣费 
-
+        FinanceLog::$chargeTytpeFinance;
          
 
         return $this->writeJson(200, null, 'Static/Temp/' . $filename, null, true, [$res]);
