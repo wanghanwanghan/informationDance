@@ -56,9 +56,9 @@ class GetAuthBook extends AbstractCronTask
         $ids = $this->getNeedSealID();//123123
 
         $ids = implode(',', $ids);
-        $idSql = 'authDate = 0 AND STATUS = 0';
+        $idSql = 'authDate = 0 AND `status` = 0';
         if (!empty($ids)) {
-            $idSql = "id IN ( {$ids} ) OR (authDate = 0 AND STATUS = 0)";
+            $idSql = "id IN ( {$ids} ) OR (authDate = 0 AND `status` = 0)";
         }
 
         $sql = <<<Eof
@@ -70,8 +70,6 @@ WHERE
 	{$idSql}
 Eof;
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-
-        CommonService::getInstance()->log4PHP($sql, 'info', 'caofang.log');
 
         $fileData = [];
         $flieDetail = [];
