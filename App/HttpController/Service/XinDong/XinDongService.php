@@ -2248,7 +2248,7 @@ class XinDongService extends ServiceBase
                     $matchedDatas
                 )
             );
-            sleep(0.5);
+//            sleep(0.5);
         }
 
         //根据匹配度 返回最高的一个
