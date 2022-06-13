@@ -394,10 +394,47 @@ class AdminUserFinanceData extends ModelBase
         $info = AdminUserFinanceData::create()
             ->where('id',$id)
             ->get();
-
+        if(!$info ){
+            return CommonService::getInstance()->log4PHP(
+                'updateLastPullDate failed  $id 不存在'.$id
+            );
+        }
         return $info->update([
             'id' => $id,
             'last_pull_api_date' => $date
+        ]);
+    }
+
+    public static function updateLastChargeDate($id,$date){
+        $info = AdminUserFinanceData::create()
+            ->where('id',$id)
+            ->get();
+        if(!$info ){
+            return CommonService::getInstance()->log4PHP(
+                'updateLastChargeDate failed  $id 不存在'.$id
+            );
+        }
+        return $info->update([
+            'id' => $id,
+            'last_charge_date' => $date
+        ]);
+    }
+
+    public static function updateCacheEndDate($id,$date,$cacheHours){
+        $info = AdminUserFinanceData::create()
+            ->where('id',$id)
+            ->get();
+        if(!$info ){
+            return CommonService::getInstance()->log4PHP(
+                'updateCacheEndDate failed  $id 不存在'.$id
+            );
+        }
+
+        return $info->update([
+            'id' => $id,
+            'cache_end_date' => date(
+                'Y-m-d H:i',strtotime('+'.$cacheHours.' hours',strtotime($date))
+            )
         ]);
     }
 

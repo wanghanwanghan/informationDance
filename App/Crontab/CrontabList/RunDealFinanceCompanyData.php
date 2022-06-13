@@ -217,7 +217,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                     continue;
                 }
                 // 更新拉取时间
-                return true;
+                //return true;
                 //设置下状态
                 $updateRes = AdminUserFinanceUploadDataRecord::updateStatusById(
                     $UploadDataRecord['id'],

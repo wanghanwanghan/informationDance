@@ -406,6 +406,8 @@ class FinanceController extends ControllerBase
                 'totalPrice' => $financeData['totalPrice'],
             ])
         );
+        return $this->writeJson(200);
+
         // 检查余额
         if(
             !\App\HttpController\Models\AdminV2\AdminNewUser::checkAccountBalance(
@@ -467,6 +469,25 @@ class FinanceController extends ControllerBase
                 ) - $financeData['totalPrice']
             )
         );
+
+
+        foreach($financeData['chargeDetails'] as $financeItem){
+            if($financeItem['price'] <=0 ){
+                continue;
+            }
+
+            //设置上次计费时间
+            AdminUserFinanceData::updateLastChargeDate(
+                $financeItem['user_finance_data_id'],
+                date('Y-m-d H:i:s')
+            );
+            //设置缓存过期时间
+            AdminUserFinanceData::updateCacheEndDate(
+                $financeItem['user_finance_data_id'],
+                date('Y-m-d H:i:s'),
+                $financeData['config_arr']['cache']
+            );
+        }
 
         //添加计费日志
         FinanceLog::addRecord(

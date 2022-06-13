@@ -82,16 +82,40 @@ class AdminUserFinanceUploadRecord extends ModelBase
         ]);
     }
 
+
+    public static function findById($id){
+        $res =  AdminUserFinanceUploadRecord::create()
+            ->where('id',$id)
+            ->get();
+        return $res;
+    }
+
     //获取财务数据 
     public static function getAllFinanceDataByUploadRecordId(
         $userId,$uploadRecordId,$status,$keepPrice = 1
     ){
+        $returnDatas  = [];
+
+        //找到初始的配置值
+        $selfMode = AdminUserFinanceUploadRecord::findById($uploadRecordId);
+        $returnDatas['config_arr'] = json_decode($selfMode->getAttr('finance_config'),true);
+
         // 取到该记录对应的上传数据
         $uploadDatas = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
             $userId,$uploadRecordId,$status,["user_finance_data_id"]
         );
-        
-        $returnDatas  = []; 
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '取到该记录对应的上传数据',
+                '$uploadDatas total' => count($uploadDatas),
+                '$userId' => $userId,
+                '$uploadRecordId' => $uploadRecordId,
+                '$status' => $status,
+                '$keepPrice' => $keepPrice,
+            ])
+        );
+
+
         foreach($uploadDatas as $uploadData){
             // 财务数据|包含具体价格等
             $financeDatas = self::getFinanceCompleData(
@@ -127,14 +151,26 @@ class AdminUserFinanceUploadRecord extends ModelBase
             $user_finance_data_id
         );
         $AdminUserFinanceData = $AdminUserFinanceDataRes->toArray(); 
+
         //取实际的财务数据
         $NewFinanceDataRes = NewFinanceData::findById($AdminUserFinanceData['finance_data_id']);  
         $NewFinanceData = $NewFinanceDataRes->toArray();
         $NewFinanceData['user_finance_data_id'] = $user_finance_data_id;
+
+        $price = $AdminUserFinanceDataRes['price'];
+        $priceDetail = '';
+
+        if(
+            $AdminUserFinanceDataRes['cache_end_date'] > 0 &&
+            strtotime($AdminUserFinanceDataRes['cache_end_date']) > time()
+        ){
+            $price = 0;
+            $priceDetail = '在缓存期('.$AdminUserFinanceDataRes['cache_end_date'].')，不收费';
+        }
         return [
             'finance_data' => $NewFinanceData,
-            'price' => $AdminUserFinanceDataRes['price'],
-            'price_detail' => '包年|之前收费过|不在计费',
+            'price' => $price,
+            'price_detail' => $priceDetail,
         ];
     }
  
