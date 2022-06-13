@@ -2200,7 +2200,7 @@ class XinDongService extends ServiceBase
                         ->matchAainstEntName(
                             $matchStr,
                             " IN BOOLEAN MODE ",
-                            'new_company_name'.$j ,
+                            'company_name_'.$j ,
                             'id,name',
                             3
                         );
