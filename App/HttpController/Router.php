@@ -521,13 +521,7 @@ class Router extends AbstractRouter
         $prefix = '/Business/Test/TestController/';
 
         $routeCollector->addGroup('/test', function (RouteCollector $routeCollector) use ($prefix) {
-            $routeCollector->addRoute(['GET', 'POST'], '/caiwu', $prefix . 'caiwu');
-            $routeCollector->addRoute(['GET', 'POST'], '/product', $prefix . 'product');
-            $routeCollector->addRoute(['GET', 'POST'], '/test', $prefix . 'test');
-            $routeCollector->addRoute(['GET', 'POST'], '/getInv', $prefix . 'getInv');
-            $routeCollector->addRoute(['GET', 'POST'], '/getFpxzStatus', $prefix . 'getFpxzStatus');
-            $routeCollector->addRoute(['GET', 'POST'], '/fadadatest', $prefix . 'fadadatest');
-            $routeCollector->addRoute(['GET', 'POST'], '/zhichiLogin', $prefix . 'zhichiLogin');
+            $routeCollector->addRoute(['GET', 'POST'], '/test20220614', $prefix . 'test20220614');
         });
 
         return true;
