@@ -369,6 +369,31 @@ class FinanceController extends ControllerBase
             'totalPage' => 1,
         ], $res, '');
     }
+
+    public function exportDetails(){
+        // $userId = $this->getRequestData('user_id');
+        // if($userId <= 0){
+        //     return $this->writeJson(206, [] ,   [], '缺少必要参数', true, []);
+        // }
+
+        $requestData =  $this->getRequestData();
+
+        $res = AdminUserFinanceExportDataRecord::findByUserAndExportId(
+            $this->loginUserinfo['id'],
+            $requestData['id']
+        );
+
+        $size = $this->request()->getRequestParam('size')??10;
+        $page = $this->request()->getRequestParam('page')??1;
+        $offset  =  ($page-1)*$size;
+        return $this->writeJson(200, [
+            'page' => $page,
+            'pageSize' =>$size,
+            'total' => 1,
+            'totalPage' => 1,
+        ], $res, '');
+    }
+
     function  parseDataToXls($config,$filename,$header,$exportData,$sheetName){
 
         $excel = new \Vtiful\Kernel\Excel($config);

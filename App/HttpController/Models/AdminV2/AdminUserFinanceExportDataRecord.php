@@ -44,12 +44,12 @@ class AdminUserFinanceExportDataRecord extends ModelBase
         return $res;
     }
 
-    public static function findByIdAndFileName($user_id,$file_name){
+    public static function findByUserAndExportId($user_id,$export_id){
         $res =  AdminUserFinanceExportDataRecord::create()->where([
             'user_id' => $user_id,  
-            'file_name' => $file_name,   
+            'export_record_id' => $export_id,
             // 'status' => 1,  
-        ])->get(); 
+        ])->all();
 
         return $res;
     }
