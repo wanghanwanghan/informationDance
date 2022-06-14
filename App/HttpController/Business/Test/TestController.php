@@ -39,7 +39,7 @@ Eof;
             '执行的结果' => $list,
         ], false), 'info', 'csptest');
 
-        if (!empty($list)) {
+        if (!empty($list['result'])) {
             return $this->writeJson(200, null, $list);
         }
 
