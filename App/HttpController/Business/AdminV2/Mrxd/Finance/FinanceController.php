@@ -205,7 +205,7 @@ class FinanceController extends ControllerBase
                     CommonService::getInstance()->log4PHP(
                         'move file   failed . '.$path
                     ); 
-                    continue;
+//                    continue;
                 }
 
                 $UploadRecordRes =  AdminUserFinanceUploadRecord::findByIdAndFileName(
