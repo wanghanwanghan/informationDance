@@ -282,39 +282,20 @@ class FinanceController extends ControllerBase
     }
 
     public function getExportLists(){
-
-        $res =  AdminUserFinanceExportRecord::create()
-            ->where([
-                'user_id' => $this->loginUserinfo['id']
-            ]);
-
         $requestData =  $this->getRequestData();
-         if($requestData['created_at']){
-            $tmpArr = explode(
-                '|||',$requestData['created_at']
-            );
-            if(
-                $tmpArr[0] >0 &&
-                $tmpArr[1] >0
-            ){
-//                $res->where('created_at',$tmpArr[0],'>=');
-//                $res->where('created_at',$tmpArr[1],'<=');
-            }
-         }
 
+        $res = AdminUserFinanceExportRecord::findByCondition(
+            [
+                // 'user_id' => $userId
+                'user_id' => $this->loginUserinfo['id']
+            ],
+            0, 20
+        );
         $size = $this->request()->getRequestParam('size')??10;
         $page = $this->request()->getRequestParam('page')??1;
         $offset  =  ($page-1)*$size;
 
-//        $res =  $res
-//            ->page($page)
-//            ->order('id', 'DESC')
-//            ->withTotalCount();
-        $datares = $res->all();
-
-//        $total = $res->lastQueryResult()->getTotalCount();
-
-        foreach ($datares as &$value){
+        foreach ($res as &$value){
             $value['upload_details'] = [];
             if(
                 $value['upload_record_id']
@@ -325,7 +306,7 @@ class FinanceController extends ControllerBase
         return $this->writeJson(200,  [
             'page' => $page,
             'pageSize' =>$size,
-            'total' =>1,
+            'total' => 1,
             'totalPage' => 1,
         ], $res,'成功');
     }
