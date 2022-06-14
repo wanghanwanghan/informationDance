@@ -55,7 +55,11 @@ class UserController extends ControllerBase
         ];
 
         foreach ($list as &$value){
-            $value['roles_info'] = AdminUserRole::getRoleByUserId($value['id']);
+            $value['roles_ids'] = json_encode(
+                array_column(
+                    AdminUserRole::findByUserId($value['id']),'role_id'
+                )
+            );
         }
         return $this->writeJson(
             200,

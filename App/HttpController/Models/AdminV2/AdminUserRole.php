@@ -48,6 +48,17 @@ class AdminUserRole extends ModelBase
         return $res;
     }
 
+    public static function findByUserId(
+        $user_id
+    ){
+        $res =  AdminUserRole::create()
+            ->where([
+                'user_id' => $user_id,
+            ])
+            ->all();
+        return $res;
+    }
+
     public static function addRecord(
         $role_id,$user_id
     ){ 
