@@ -214,7 +214,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         }
 
         //收费方式二：按年
-        $chagrgeDetailsByYearsRes = self::getChagrgeDetailsByYear(
+        $chagrgeDetailsByYearsRes = AdminUserFinanceData::getChagrgeDetailsByYear(
             $AdminUserFinanceData['year'],
             $financeConfigArr,
             $AdminUserFinanceData['user_id'],
