@@ -377,8 +377,18 @@ class FinanceController extends ControllerBase
         foreach ($res as &$dataItem){
             $dataItem['details'] = [];
             if($dataItem['upload_data_id']){
-                $dataItem['details'] = AdminUserFinanceUploadDataRecord::findById($dataItem['upload_data_id']);
-            } 
+                $dataItem['upload_details'] = [];
+                $dataItem['data_details'] = [];
+                $uploadRes = AdminUserFinanceUploadDataRecord::findById($dataItem['upload_data_id']);
+                if($uploadRes){
+                    $dataItem['upload_details'] = $uploadRes->toArray();
+                }
+
+                $dataRes = AdminUserFinanceData::findById($uploadRes['user_finance_data_id']);
+                if($dataRes){
+                    $dataItem['data_details'] = $dataRes->toArray();
+                }
+            }
         }
 
         $size = $this->request()->getRequestParam('size')??10;
