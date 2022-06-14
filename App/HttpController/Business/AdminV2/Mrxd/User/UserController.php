@@ -53,6 +53,10 @@ class UserController extends ControllerBase
             'total' => $count,
             'totalPage' => (int)($count/$pageSize)+1,
         ];
+
+        foreach ($list as &$value){
+            $value['roles_info'] = AdminUserRole::getRoleByUserId($value['id']);
+        }
         return $this->writeJson(
             200,
             $paging,
