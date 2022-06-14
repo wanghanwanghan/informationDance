@@ -309,7 +309,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
 
     static function calculateRealPrice($limit)
     {
-        //解析完，尚未计算单价的
+        //尚未计算真实单价的
         $initDatas = AdminUserFinanceUploadRecord::findByCondition(
             [
                 'status' => AdminUserFinanceUploadRecord::$stateParsed
