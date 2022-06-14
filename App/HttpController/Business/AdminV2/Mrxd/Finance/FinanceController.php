@@ -247,8 +247,11 @@ class FinanceController extends ControllerBase
                 );  
             } 
         }
-
-        return $this->writeJson(200, [], [],'导入成功 入库数量:'.$succeedNums);
+        
+        return $this->writeJson(200, [], [
+            $this->request()->getUploadedFiles(),
+            $_FILES
+        ],'导入成功 入库数量:'.$succeedNums);
     }
 
     public function getUploadLists(){
