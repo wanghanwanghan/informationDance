@@ -262,23 +262,40 @@ class AdminUserFinanceData extends ModelBase
           ];
        }
 
-        //包年内 是否之前扣过钱
-//        $yearStr = '("'.implode('","',$annually_years_arr).'")';
+        //包年内
+        // 是否有有效的数据
+        $yearStr = '("'.implode('","',$annually_years_arr).'")';
+        $sql = " select id from  `admin_user_finance_data`
+                    WHERE
+                        `year` in $yearStr  AND
+                        user_id = $user_id  AND
+                        entName = '$entName' AND
+                        `status`  =  ".self::$statusConfirmedYes."
+                ";
+        $validDatalist = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        CommonService::getInstance()->log4PHP(
+            'getChagrgeDetailsAnnually   是否有有效的数据  $sql '. $sql
+        );
+//        //包年内是否有扣过钱
 //        $sql = " select id from  `admin_user_finance_data`
 //                    WHERE
 //                        `year` in $yearStr  AND
 //                        user_id = $user_id  AND
 //                        entName = '$entName' AND
-//                        price > 0
+//                        `status`  =  ".self::$statusConfirmedYes." AND
+//                        real_price > 0
 //                    limit 1 ";
-//        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+//        $Chargelist = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
 //        CommonService::getInstance()->log4PHP(
-//            'getChagrgeDetailsAnnually   之前是否已经计费过  $sql '. $sql
+//            'getChagrgeDetailsAnnually   包年内是否有扣过钱  $Chargelist '. $sql
 //        );
+
         return [
             'IsAnnually' => true,
             'AnnuallyPrice' => $financeConifgArr['annually_price'],
-//            'HasChargedBefore' => empty($list) ? false : true,
+            //'HasChargedBefore' => empty($Chargelist) ? false : true,
+            'ValidDataIds' => empty($validDatalist) ? false : array_column($validDatalist,'id'),
+            //'ChargedDate' => empty($validDatalist) ? '' : $validDatalist[0]['last_charge_date'],
         ]; 
     }
 
@@ -310,17 +327,17 @@ class AdminUserFinanceData extends ModelBase
        }
 
         //是否之前扣过钱 
-//        $sql = " select id from  `admin_user_finance_data`
-//                    WHERE
-//                        `year`  = $year  AND
-//                        user_id = $user_id  AND
-//                        entName = '$entName' AND
-//                        price > 0
-//                    limit 1 ";
-//        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-//        CommonService::getInstance()->log4PHP(
-//            'getChagrgeDetailsByYear    '.$year. '  $sql '.$sql
-//        );
+        $sql = " select id from  `admin_user_finance_data`
+                    WHERE
+                        `year`  = $year  AND
+                        user_id = $user_id  AND
+                        entName = '$entName' AND
+                        price > 0
+                    limit 1 ";
+        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        CommonService::getInstance()->log4PHP(
+            'getChagrgeDetailsByYear    '.$year. '  $sql '.$sql
+        );
         return [
             'IsChargeByYear' => true,
             'YearPrice' => $normal_years_price_arr[$year],

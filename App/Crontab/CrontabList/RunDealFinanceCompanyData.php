@@ -155,6 +155,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
         self::calculatePrice(5);
         //拉取finance数据
         self::pullFinanceData(5);
+        //计算真实价格
         self::calculateRealPrice(5);
         return true ;   
     }
@@ -311,7 +312,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
         //尚未计算真实单价的
         $initDatas = AdminUserFinanceUploadRecord::findByCondition(
             [
-                'status' => AdminUserFinanceUploadRecord::$stateParsed
+                'status' => AdminUserFinanceUploadRecord::$stateHasGetData
             ],
             0,
             $limit
@@ -323,13 +324,13 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                 self::checkUploadDataRecordsOldStateIsDone(
                     $dataItem['user_id'],
                     $dataItem['id'] ,
-                    AdminUserFinanceUploadRecord::$stateInit,
-                    AdminUserFinanceUploadRecord::$stateCalCulatedPrice
+                    AdminUserFinanceUploadRecord::$stateHasGetData,
+                    AdminUserFinanceUploadRecord::$stateHasCalcluteRealPrice
                 )
             ){
                 $changeRes = AdminUserFinanceUploadRecord::changeStatus(
                     $dataItem['id'],
-                    AdminUserFinanceUploadRecord::$stateCalCulatedPrice
+                    AdminUserFinanceUploadRecord::$stateHasCalcluteRealPrice
                 );
                 if(!$changeRes){
                     CommonService::getInstance()->log4PHP(
@@ -343,7 +344,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
             $allUploadDataRecords =  AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
                 $dataItem['user_id'],
                 $dataItem['id'],
-                AdminUserFinanceUploadRecord::$stateInit
+                AdminUserFinanceUploadRecord::$stateHasGetData
             );
             if(empty($allUploadDataRecords)){
                 continue;
@@ -351,7 +352,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
 
             foreach($allUploadDataRecords as $UploadDataRecord){
                 // 计算单价
-                $calculateRes = AdminUserFinanceData::calculatePrice(
+                $calculateRes = AdminUserFinanceUploadDataRecord::calcluteRealPrice(
                     $UploadDataRecord['user_finance_data_id'],
                     json_decode($dataItem['finance_config'],true)
                 );
@@ -364,7 +365,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                 // 计算完价格 变更下状态
                 $updateRes = AdminUserFinanceUploadDataRecord::updateStatusById(
                     $UploadDataRecord['id'],
-                    AdminUserFinanceUploadRecord::$stateCalCulatedPrice
+                    AdminUserFinanceUploadRecord::$stateHasCalcluteRealPrice
                 );
                 if(!$updateRes){
                     CommonService::getInstance()->log4PHP(

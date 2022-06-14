@@ -2752,6 +2752,13 @@ eof;
         }
 
         if(
+            $this->getRequestData('calculateRealPrice')
+        ){
+            RunDealFinanceCompanyData::calculateRealPrice(1);
+        }
+
+
+        if(
             $this->getRequestData('pullFinanceData')
         ){
             RunDealFinanceCompanyData::pullFinanceData(1);
