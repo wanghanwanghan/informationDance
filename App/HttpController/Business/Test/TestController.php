@@ -34,11 +34,6 @@ Eof;
             ->query($queryBuilder, true, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'))
             ->toArray();
 
-        CommonService::getInstance()->log4PHP(jsonEncode([
-            '执行的sql' => $sql,
-            '执行的结果' => $list,
-        ], false), 'info', 'csptest');
-
         if (!empty($list['result'])) {
             return $this->writeJson(200, null, $list);
         }
@@ -57,14 +52,12 @@ Eof;
                         'id,name',
                         5
                     );
-                    return ['data' => $retData, 'type' => 'Boolean'];
+                    return ['data' => $retData, 'type' => 'Boolean', 'cspKey' => $j];
                 });
             }
             $dbres = $csp->exec(10);
             foreach ($dbres as $dataItem) {
-                foreach ($dataItem['data'] as $item) {
-                    CommonService::getInstance()->log4PHP(jsonEncode($item, false), 'info', 'csptest');
-                }
+                CommonService::getInstance()->log4PHP(jsonEncode($dataItem, false), 'info', 'csptest');
             }
         }
 
@@ -89,14 +82,8 @@ Eof;
                 ->query($queryBuilder, true, CreateConf::getInstance()->getConf('env.mysqlDatabase'))
                 ->toArray();
         } catch (\Throwable $e) {
-            CommonService::getInstance()->log4PHP($e->getTraceAsString(), 'info', 'csptest');
             return null;
         }
-
-        CommonService::getInstance()->log4PHP(jsonEncode([
-            'matchAainstEntName入' => $sql,
-            'matchAainstEntName出' => $res['result']
-        ], false), 'info', 'csptest');
 
         return $res['result'];
     }
@@ -122,11 +109,6 @@ Eof;
         if ($arr[8] && $arr[9]) {
             $matchStr .= '+' . $arr[8] . $arr[9];
         }
-
-        CommonService::getInstance()->log4PHP(jsonEncode([
-            'splitChineseNameForMatchAgainst入' => $entName,
-            'splitChineseNameForMatchAgainst出' => $matchStr
-        ], false), 'info', 'csptest');
 
         return $matchStr;
     }
