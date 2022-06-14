@@ -206,8 +206,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                 // 拉取财务数据
                 $res = AdminUserFinanceData::pullFinanceData(
                     $UploadDataRecord['user_finance_data_id'],
-                    json_decode($dataItem['finance_config'],true),
-                    $$UploadDataRecord['id']
+                    json_decode($dataItem['finance_config'],true)
                 ); 
                 if(!$res){
                     CommonService::getInstance()->log4PHP(

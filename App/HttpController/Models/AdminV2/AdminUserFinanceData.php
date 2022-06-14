@@ -198,13 +198,13 @@ class AdminUserFinanceData extends ModelBase
             $dbDataArr['status'] = self::getConfirmStatus($financeConifgArr,$dbDataArr);
             $addRes = NewFinanceData::addRecord($dbDataArr);
             if(!$addRes){
-                CommonService::getInstance()->log4PHP(
+                return CommonService::getInstance()->log4PHP(
                     'pullFinanceData   err 1  add NewFinanceData failed '.json_encode($dbDataArr)
                 );
             }
         }
 
-        return $addRes; 
+        return true;
     }
     public  static  function getConfirmStatus($financeConifgArr,$dataItem){
         // 不需要确认
