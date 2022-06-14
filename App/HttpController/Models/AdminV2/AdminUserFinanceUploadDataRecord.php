@@ -145,7 +145,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         $ids = '("'.implode('","',$user_finance_data_ids).'")';
         $sql = " select id from  `admin_user_finance_upload_data_record`
                     WHERE
-                        `user_finance_data_ids` in $ids  AND
+                        `user_finance_data_id` in $ids  AND
                         user_id = $user_id  AND
                         record_id = '$record_id' AND 
                         real_price >0 
