@@ -282,28 +282,50 @@ class FinanceController extends ControllerBase
     }
 
     public function getExportLists(){
-        // $userId = $this->getRequestData('user_id');
-        // if($userId <= 0){
-        //     return $this->writeJson(206, [] ,   [], '缺少必要参数', true, []); 
-        // } 
+
+        $res =  AdminUserFinanceExportRecord::create()
+            ->where([
+                'user_id' => $this->loginUserinfo['id']
+            ]);
 
         $requestData =  $this->getRequestData();
-         
-        $res = AdminUserFinanceExportRecord::findByCondition(
-            [
-                // 'user_id' => $userId
-                'user_id' => $this->loginUserinfo['id']
-            ],
-            0, 20
-        );
+         if($requestData['created_at']){
+            $tmpArr = explode(
+                '|||',$requestData['created_at']
+            );
+            if(
+                $tmpArr[0] >0 &&
+                $tmpArr[1] >0
+            ){
+                $res->where('created_at',$tmpArr[0],'>=');
+                $res->where('created_at',$tmpArr[1],'<=');
+            }
+         }
+
         $size = $this->request()->getRequestParam('size')??10;
         $page = $this->request()->getRequestParam('page')??1;
         $offset  =  ($page-1)*$size;
 
+        $res =  $res
+            ->page($page)
+            ->order('id', 'DESC')
+            ->withTotalCount();
+        $datares = $res->all();
+
+        $total = $res->lastQueryResult()->getTotalCount();
+
+        foreach ($datares as &$value){
+            $value['upload_details'] = [];
+            if(
+                $value['upload_record_id']
+            ){
+                $value['upload_details'] = AdminUserFinanceUploadRecord::findById($value['upload_record_id'])->toArray();
+            }
+        }
         return $this->writeJson(200,  [
             'page' => $page,
             'pageSize' =>$size,
-            'total' => 1,
+            'total' => $total,
             'totalPage' => 1,
         ], $res,'成功');
     }
@@ -376,6 +398,7 @@ class FinanceController extends ControllerBase
         );
         foreach ($res as &$dataItem){
             $dataItem['details'] = [];
+
             if($dataItem['upload_data_id']){
                 $dataItem['upload_details'] = [];
                 $dataItem['data_details'] = [];
@@ -482,7 +505,16 @@ class FinanceController extends ControllerBase
         $header = [
             '序号',
             '企业名称',
-            '监控类别',
+            '年度',
+            '资产总额',
+            '负债总额',
+            '营业总收入',
+            '主营业务收入',
+            '利润总额',
+            '净利润',
+            '纳税总额',
+            '所有者权益',
+            '社保人数'
         ];
         $exportDataToXlsRes = $this->parseDataToXls(
             $config,$filename,$header,$financeData['finance_data'],'财务数据'

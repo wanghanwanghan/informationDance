@@ -99,9 +99,11 @@ class AdminUserFinanceUploadRecord extends ModelBase
             $userId,$uploadRecordId,$status,[]
         );
         $uploadRecordRes = self::findById($uploadRecordId);
+        $finance_config_arr  = json_decode($uploadRecordRes->getAttr('finance_config'),true);
         $returnDatas  = [
-            'config_arr' => json_decode($uploadRecordRes->getAttr('finance_config'),true)
+            'config_arr' =>  $finance_config_arr
         ];
+
         foreach ($AdminUserFinanceUploadDataRecords as $AdminUserFinanceUploadDataRecord){
             CommonService::getInstance()->log4PHP(
                 json_encode([
@@ -137,6 +139,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
             )->toArray();
             $returnDatas['finance_data'][$NewFinanceData['id']] =  $NewFinanceData;
             // TODO  需要check下上次计费时间
+            // TODO  需要指定导出字段
             $returnDatas['charge_details'][$NewFinanceData['id']] =
                 [
                     'real_price' => $AdminUserFinanceUploadDataRecord['real_price'],
