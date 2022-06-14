@@ -193,7 +193,7 @@ class FinanceController extends ControllerBase
             try {
                 $fileName = $oneFile->getClientFilename();
                 $path = TEMP_FILE_PATH . $fileName;
-                if(file(file_exists($path))){
+                if(file_exists($path)){
                     CommonService::getInstance()->log4PHP(
                         'file  already exists. '.$path
                     );  
@@ -207,7 +207,12 @@ class FinanceController extends ControllerBase
                     ); 
 //                    continue;
                 }
-
+                if(!file_exists($path)){
+                    CommonService::getInstance()->log4PHP(
+                        'file  not  exists. '.$path
+                    );
+                    continue;
+                }
                 $UploadRecordRes =  AdminUserFinanceUploadRecord::findByIdAndFileName(
                     $this->loginUserinfo['id'],   
                     $fileName
