@@ -345,10 +345,6 @@ class FinanceController extends ControllerBase
 
     //确认的列表
     public function ConfirmFinanceData(){
-        // $userId = $this->getRequestData('user_id');
-        // if($userId <= 0){
-        //     return $this->writeJson(206, [] ,   [], '缺少必要参数', true, []); 
-        // } 
 
         $requestData =  $this->getRequestData();
          
@@ -371,10 +367,6 @@ class FinanceController extends ControllerBase
     }
 
     public function exportDetails(){
-        // $userId = $this->getRequestData('user_id');
-        // if($userId <= 0){
-        //     return $this->writeJson(206, [] ,   [], '缺少必要参数', true, []);
-        // }
 
         $requestData =  $this->getRequestData();
 
@@ -382,6 +374,12 @@ class FinanceController extends ControllerBase
             $this->loginUserinfo['id'],
             $requestData['id']
         );
+        foreach ($res as &$dataItem){
+            $dataItem['details'] = [];
+            if($dataItem['upload_data_id']){
+                $dataItem['details'] = AdminUserFinanceUploadDataRecord::findById($dataItem['upload_data_id']);
+            } 
+        }
 
         $size = $this->request()->getRequestParam('size')??10;
         $page = $this->request()->getRequestParam('page')??1;
