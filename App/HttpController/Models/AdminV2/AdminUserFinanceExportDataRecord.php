@@ -23,7 +23,7 @@ class AdminUserFinanceExportDataRecord extends ModelBase
     public static function addExportRecord($requestData){
        
         try {
-           $res =  AdminUserFinanceUploadRecord::create()->data([
+           $res =  AdminUserFinanceExportDataRecord::create()->data([
                 'user_id' => $requestData['user_id'], 
                 'export_record_id' => $requestData['export_record_id'],   
                 'user_finance_data_id' => $requestData['user_finance_data_id'],   
@@ -45,7 +45,7 @@ class AdminUserFinanceExportDataRecord extends ModelBase
     }
 
     public static function findByIdAndFileName($user_id,$file_name){
-        $res =  AdminUserFinanceUploadRecord::create()->where([
+        $res =  AdminUserFinanceExportDataRecord::create()->where([
             'user_id' => $user_id,  
             'file_name' => $file_name,   
             // 'status' => 1,  
@@ -55,7 +55,7 @@ class AdminUserFinanceExportDataRecord extends ModelBase
     }
 
     public static function findByCondition($whereArr,$limit){
-        $res =  AdminUserFinanceUploadRecord::create()
+        $res =  AdminUserFinanceExportDataRecord::create()
             ->where($whereArr)
             ->limit($limit)
             ->all();  

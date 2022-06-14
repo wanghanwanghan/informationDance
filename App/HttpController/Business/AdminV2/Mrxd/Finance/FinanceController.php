@@ -485,7 +485,7 @@ class FinanceController extends ControllerBase
         foreach($financeData['charge_details'] as $financeItem){
             AdminUserFinanceExportDataRecord::addExportRecord(
                 [
-                    'user_id' => $requestData['user_id'], 
+                    'user_id' => $this->loginUserinfo['id'],
                     'export_record_id' => $AdminUserFinanceExportRecordId,   
                     'user_finance_data_id' => $financeItem['upload_data_id'],
                     'price' => $financeItem['real_price'],
