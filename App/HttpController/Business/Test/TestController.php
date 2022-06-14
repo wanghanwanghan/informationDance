@@ -55,7 +55,7 @@ Eof;
                     return ['data' => $retData, 'type' => 'Boolean', 'cspKey' => $j];
                 });
             }
-            $dbres = $csp->exec(10);
+            $dbres = CspService::getInstance()->exec($csp, 10);
             foreach ($dbres as $dataItem) {
                 CommonService::getInstance()->log4PHP(jsonEncode($dataItem, false), 'info', 'csptest');
             }
