@@ -422,7 +422,7 @@ class FinanceController extends ControllerBase
         $financeData = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordIdV2(
             $this->loginUserinfo['id'],
             $requestData['id'],
-            1
+            25
         );
         CommonService::getInstance()->log4PHP(
             json_encode([
