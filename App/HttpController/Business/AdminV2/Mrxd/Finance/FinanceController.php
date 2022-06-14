@@ -306,13 +306,13 @@ class FinanceController extends ControllerBase
         $page = $this->request()->getRequestParam('page')??1;
         $offset  =  ($page-1)*$size;
 
-        $res =  $res
-            ->page($page)
-            ->order('id', 'DESC')
-            ->withTotalCount();
+//        $res =  $res
+//            ->page($page)
+//            ->order('id', 'DESC')
+//            ->withTotalCount();
         $datares = $res->all();
 
-        $total = $res->lastQueryResult()->getTotalCount();
+//        $total = $res->lastQueryResult()->getTotalCount();
 
         foreach ($datares as &$value){
             $value['upload_details'] = [];
@@ -325,7 +325,7 @@ class FinanceController extends ControllerBase
         return $this->writeJson(200,  [
             'page' => $page,
             'pageSize' =>$size,
-            'total' => $total,
+            'total' =>1,
             'totalPage' => 1,
         ], $res,'成功');
     }
