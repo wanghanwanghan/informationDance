@@ -419,7 +419,7 @@ class FinanceController extends ControllerBase
         }
 
         // 找到对应的财务信息
-        $financeData = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordId(
+        $financeData = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordIdV2(
             $this->loginUserinfo['id'],
             $requestData['id'],
             1
@@ -427,8 +427,8 @@ class FinanceController extends ControllerBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 '找到对应的财务信息' ,
-                'totalNums' => $financeData['totalNums'],
-                'totalPrice' => $financeData['totalPrice'],
+                'totalNums' => $financeData['finance_data'],
+                'totalPrice' => $financeData['total_charge'],
             ])
         );
         return $this->writeJson(200);

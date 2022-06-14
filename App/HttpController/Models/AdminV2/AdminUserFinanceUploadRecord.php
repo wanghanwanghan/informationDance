@@ -90,57 +90,23 @@ class AdminUserFinanceUploadRecord extends ModelBase
         return $res;
     }
 
-    //获取财务数据 
-    public static function getAllFinanceDataByUploadRecordId(
+    public static function getAllFinanceDataByUploadRecordIdV2(
         $userId,$uploadRecordId,$status,$keepPrice = 1
     ){
         $returnDatas  = [];
 
-        //找到初始的配置值
-        $selfMode = AdminUserFinanceUploadRecord::findById($uploadRecordId);
-        $returnDatas['config_arr'] = json_decode($selfMode->getAttr('finance_config'),true);
-
-        // 取到该记录对应的上传数据
-        $uploadDatas = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
-            $userId,$uploadRecordId,$status,["user_finance_data_id"]
+        $AdminUserFinanceUploadDataRecords = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
+            $userId,$uploadRecordId,$status,[]
         );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                '取到该记录对应的上传数据',
-                '$uploadDatas total' => count($uploadDatas),
-                '$userId' => $userId,
-                '$uploadRecordId' => $uploadRecordId,
-                '$status' => $status,
-                '$keepPrice' => $keepPrice,
-            ])
-        );
-
-
-        foreach($uploadDatas as $uploadData){
-            // 财务数据|包含具体价格等
-            $financeDatas = self::getFinanceCompleData(
-                $uploadData['user_finance_data_id']
-            ); 
-            // 返回的财务数据里是否加上价格字段
-            if($keepPrice){
-                $financeDatas['finance_data']['real_price'] = $financeDatas['price' ]; 
-                $financeDatas['finance_data']['price_detail'] = $financeDatas['price_detail' ]; 
-            } 
-            // 财务数据
-            $returnDatas['finance_data'][$uploadData['user_finance_data_id']] = $financeDatas['finance_data'];
-            // 收费明细
-            $returnDatas['chargeDetails'][$uploadData['user_finance_data_id']] = 
-            [
-                'user_finance_data_id' => $uploadData['user_finance_data_id'],
-                'price' =>$financeDatas['price' ],
-                'price_detail' => $financeDatas['price_detail' ]
-            ];
-            // 总条数
-            $returnDatas['totalNums'] ++ ;
-            // 总计收费
-            $returnDatas['totalPrice'] +=  $financeDatas['price' ]; 
+        foreach ($AdminUserFinanceUploadDataRecords as $AdminUserFinanceUploadDataRecord){
+            $AdminUserFinanceData = AdminUserFinanceData::findById($AdminUserFinanceUploadDataRecord['user_finance_data_id'])->toArray();
+            // 财务数据id
+            $NewFinanceData = NewFinanceData::findById($AdminUserFinanceData['finance_data_id'])->toArray();
+            $returnDatas['finance_data'][$NewFinanceData['id']] =  $NewFinanceData;
+            $returnDatas['charge_details'][$NewFinanceData['id']] = $AdminUserFinanceUploadDataRecord['real_price'];
+            $returnDatas['total_charge'] += $AdminUserFinanceUploadDataRecord['real_price'];
         }
- 
+
         return $returnDatas;
     }
 
