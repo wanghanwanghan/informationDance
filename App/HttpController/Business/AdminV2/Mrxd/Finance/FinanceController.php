@@ -174,6 +174,9 @@ class FinanceController extends ControllerBase
 
         $succeedNums = 0;
         foreach ($files as $key => $oneFile) {
+            CommonService::getInstance()->log4PHP(
+                'file  . '.json_encode($oneFile)
+            );
             if (!$oneFile instanceof UploadFile) {
                 CommonService::getInstance()->log4PHP(
                     json_encode([
