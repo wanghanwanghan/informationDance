@@ -18,17 +18,15 @@ class TestController extends BusinessBase
 
     function test20220614(): bool
     {
-        $entName = $this->request()->getQueryParam('entName');
+        $entName = $this->request()->getRequestParam('entName');
 
         $sql = <<<Eof
 SELECT
-	id,
-	`name` 
+	id,`name` 
 FROM
 	`company` 
 WHERE
-	`name` = '{$entName}' 
-	LIMIT 1;
+	`name` = '{$entName}' LIMIT 1;
 Eof;
         $queryBuilder = new QueryBuilder();
         $queryBuilder->raw($sql);
