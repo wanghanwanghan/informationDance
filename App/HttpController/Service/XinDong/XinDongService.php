@@ -2169,7 +2169,7 @@ class XinDongService extends ServiceBase
         // 从结果找
         $matchedDatas = [];
         for(
-            $i = 0; $i<=1; $i++
+            $i = 0; $i<=3; $i++
         ){
             $csp = new \EasySwoole\Component\Csp();
             $start = $i*2;
