@@ -297,8 +297,8 @@ class FinanceController extends ControllerBase
                 $tmpArr[0] >0 &&
                 $tmpArr[1] >0
             ){
-                $res->where('created_at',$tmpArr[0],'>=');
-                $res->where('created_at',$tmpArr[1],'<=');
+//                $res->where('created_at',$tmpArr[0],'>=');
+//                $res->where('created_at',$tmpArr[1],'<=');
             }
          }
 
