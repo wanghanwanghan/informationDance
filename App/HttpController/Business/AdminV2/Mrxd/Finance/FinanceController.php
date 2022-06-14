@@ -164,50 +164,14 @@ class FinanceController extends ControllerBase
             return $this->writeJson(206, [] ,   [], '缺少必要参数('.$years.')', true, []); 
         }
 
-        //获取文件名
-        $filename = $_FILES['file']['name'];
-        //获取文件临时路径
-        $temp_name = $_FILES['file']['tmp_name'];
-        //获取大小
-        $size = $_FILES['file']['size'];
-        //获取文件上传码，0代表文件上传成功
-        $error = $_FILES['file']['error'];
-        //判断文件大小是否超过设置的最大上传限制
-        if ($size > 2*1024*1024){
-
-        }
-        //phpinfo函数会以数组的形式返回关于文件路径的信息
-        //[dirname]:目录路径[basename]:文件名[extension]:文件后缀名[filename]:不包含后缀的文件名
-        $arr = pathinfo($filename);
-        //获取文件的后缀名
-        $ext_suffix = $arr['extension'];
-        //设置允许上传文件的后缀
-        $allow_suffix = array('xlsx');
-        //判断上传的文件是否在允许的范围内（后缀）==>白名单判断
-        if(!in_array($ext_suffix, $allow_suffix)){
-            //window.history.go(-1)表示返回上一页并刷新页面
-
-        }
-//        $fileName = $arr['filename'];
-
-        //为上传的文件新起一个名字，保证更加安全
-        $new_filename = date('YmdHis',time()).rand(100,1000).'.'.$ext_suffix;
-        $path = TEMP_FILE_PATH . $new_filename;
-        //将文件从临时路径移动到磁盘
-        if (move_uploaded_file($temp_name, $path)){
-            return $this->writeJson(200, [], [],'导入成功 '.$new_filename);
-        }else{
-            return $this->writeJson(201, [], [],'导入失败');
-        }
 
 
-        $files = $this->request()->getUploadedFiles();
-        CommonService::getInstance()->log4PHP(
-            'uploadeCompanyLists files['.json_encode($files).']'
-        ); 
 
         $requestData =  $this->getRequestData();
         $files = $this->request()->getUploadedFiles();
+        CommonService::getInstance()->log4PHP(
+            'uploadeCompanyLists files'.json_encode($files).''
+        );
         $path = $fileName = '';
 
         $succeedNums = 0;
@@ -218,7 +182,7 @@ class FinanceController extends ControllerBase
             if (!$oneFile instanceof UploadFile) {
                 CommonService::getInstance()->log4PHP(
                     json_encode([
-                        'not instanceof UploadFile ',
+                        'not instanceof UploadFile '.$oneFile->getClientFilename(),
                     ])
                 ); 
                     continue;
