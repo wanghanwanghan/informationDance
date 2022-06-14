@@ -164,9 +164,6 @@ class FinanceController extends ControllerBase
             return $this->writeJson(206, [] ,   [], '缺少必要参数('.$years.')', true, []); 
         }
 
-
-
-
         $requestData =  $this->getRequestData();
         $files = $this->request()->getUploadedFiles();
         CommonService::getInstance()->log4PHP(
@@ -190,7 +187,7 @@ class FinanceController extends ControllerBase
                         'not instanceof UploadFile '.$oneFile->getClientFilename(),
                     ])
                 ); 
-                    continue;
+//                    continue;
             }
 
             try {
@@ -247,7 +244,7 @@ class FinanceController extends ControllerBase
                 );  
             } 
         }
-        
+
         return $this->writeJson(200, [], [
             $this->request()->getUploadedFiles(),
             $_FILES
