@@ -30,7 +30,16 @@ WHERE
 	`name` = '{$entName}' 
 	LIMIT 1;
 Eof;
-        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->raw($sql);
+        $list = DbManager::getInstance()
+            ->query($queryBuilder, true, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'))
+            ->toArray();
+
+        CommonService::getInstance()->log4PHP(jsonEncode([
+            '执行的sql' => $sql,
+            '执行的结果' => $list,
+        ], false), 'info', 'csptest');
 
         if (!empty($list)) {
             return $this->writeJson(200, null, $list);
