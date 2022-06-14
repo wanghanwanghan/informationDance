@@ -203,7 +203,9 @@ class AdminUserFinanceData extends ModelBase
                 );
             }
         }
-
+        CommonService::getInstance()->log4PHP(
+            'pullFinanceData   succeed '.json_encode($dbDataArr)
+        );
         return true;
     }
     public  static  function getConfirmStatus($financeConifgArr,$dataItem){

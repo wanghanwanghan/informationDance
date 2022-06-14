@@ -210,7 +210,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                 ); 
                 if(!$res){
                     CommonService::getInstance()->log4PHP(
-                        'pullFinanceData err2  pull data  error '.$dataItem['id']
+                        'pullFinanceData err2  pull data  error '.$dataItem['id'].' '.$res
                     );
                     continue;
                 }
