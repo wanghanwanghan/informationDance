@@ -1921,9 +1921,9 @@ class XinDongService extends ServiceBase
         if($arr[6] && $arr[7]){
             $matchStr .= '+'.$arr[6].$arr[7];
         }
-//        if($arr[8] && $arr[9]){
-//            $matchStr .= '+'.$arr[8].$arr[9];
-//        }
+        if($arr[8] && $arr[9]){
+            $matchStr .= '+'.$arr[8].$arr[9];
+        }
         
         return  $matchStr;
     }
