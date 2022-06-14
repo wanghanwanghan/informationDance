@@ -99,9 +99,32 @@ class AdminUserFinanceUploadRecord extends ModelBase
             $userId,$uploadRecordId,$status,[]
         );
         foreach ($AdminUserFinanceUploadDataRecords as $AdminUserFinanceUploadDataRecord){
-            $AdminUserFinanceData = AdminUserFinanceData::findById($AdminUserFinanceUploadDataRecord['user_finance_data_id'])->toArray();
+            if($AdminUserFinanceUploadDataRecord['user_finance_data_id'] <= 0){
+                continue;
+            }
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'user_finance_data_id',
+                    $AdminUserFinanceUploadDataRecord['user_finance_data_id'],
+                ])
+            );
+            $AdminUserFinanceData = AdminUserFinanceData::findById(
+                $AdminUserFinanceUploadDataRecord['user_finance_data_id']
+            )->toArray();
+
+            if($AdminUserFinanceData['finance_data_id'] <= 0){
+                continue;
+            }
             // 财务数据id
-            $NewFinanceData = NewFinanceData::findById($AdminUserFinanceData['finance_data_id'])->toArray();
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'finance_data_id',
+                    $AdminUserFinanceData['finance_data_id'],
+                ])
+            );
+            $NewFinanceData = NewFinanceData::findById(
+                $AdminUserFinanceData['finance_data_id']
+            )->toArray();
             $returnDatas['finance_data'][$NewFinanceData['id']] =  $NewFinanceData;
             $returnDatas['charge_details'][$NewFinanceData['id']] = $AdminUserFinanceUploadDataRecord['real_price'];
             $returnDatas['total_charge'] += $AdminUserFinanceUploadDataRecord['real_price'];
