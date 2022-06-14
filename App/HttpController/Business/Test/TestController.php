@@ -45,9 +45,6 @@ Eof;
             return $this->writeJson(200, null, $list);
         }
 
-        // 从结果找
-        $matchedDatas = [];
-
         for ($i = 0; $i <= 3; $i++) {
             $csp = CspService::getInstance()->create();
             $start = $i * 2;
@@ -98,6 +95,11 @@ Eof;
             return null;
         }
 
+        CommonService::getInstance()->log4PHP(jsonEncode([
+            'matchAainstEntName入' => $sql,
+            'matchAainstEntName出' => $res['result']
+        ], false), 'info', 'csptest');
+
         return $res['result'];
     }
 
@@ -122,6 +124,11 @@ Eof;
         if ($arr[8] && $arr[9]) {
             $matchStr .= '+' . $arr[8] . $arr[9];
         }
+
+        CommonService::getInstance()->log4PHP(jsonEncode([
+            'splitChineseNameForMatchAgainst入' => $entName,
+            'splitChineseNameForMatchAgainst出' => $matchStr
+        ], false), 'info', 'csptest');
 
         return $matchStr;
     }
