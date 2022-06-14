@@ -171,6 +171,11 @@ class FinanceController extends ControllerBase
         $files = $this->request()->getUploadedFiles();
         CommonService::getInstance()->log4PHP(
             'uploadeCompanyLists files'.json_encode($files).''
+
+        );
+        CommonService::getInstance()->log4PHP(
+            'uploadeCompanyLists files2'.json_encode($_FILES).''
+
         );
         $path = $fileName = '';
 
