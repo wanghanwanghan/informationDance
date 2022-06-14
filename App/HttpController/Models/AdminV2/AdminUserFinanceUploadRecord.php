@@ -93,11 +93,15 @@ class AdminUserFinanceUploadRecord extends ModelBase
     public static function getAllFinanceDataByUploadRecordIdV2(
         $userId,$uploadRecordId,$status,$keepPrice = 1
     ){
-        $returnDatas  = [];
+
 
         $AdminUserFinanceUploadDataRecords = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
             $userId,$uploadRecordId,$status,[]
         );
+        $uploadRecordRes = self::findById($uploadRecordId);
+        $returnDatas  = [
+            'config_arr' => json_decode($uploadRecordRes->getAttr('finance_config'),true)
+        ];
         foreach ($AdminUserFinanceUploadDataRecords as $AdminUserFinanceUploadDataRecord){
             CommonService::getInstance()->log4PHP(
                 json_encode([
@@ -132,7 +136,15 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 $AdminUserFinanceData['finance_data_id']
             )->toArray();
             $returnDatas['finance_data'][$NewFinanceData['id']] =  $NewFinanceData;
-            $returnDatas['charge_details'][$NewFinanceData['id']] = $AdminUserFinanceUploadDataRecord['real_price'];
+            // TODO  需要check下上次计费时间
+            $returnDatas['charge_details'][$NewFinanceData['id']] =
+                [
+                    'real_price' => $AdminUserFinanceUploadDataRecord['real_price'],
+                    'real_price_remark' => json_decode($AdminUserFinanceUploadDataRecord['real_price_remark'],true),
+                    'upload_data_id' => $AdminUserFinanceUploadDataRecord['id'],
+                    'user_finance_data_id' => $AdminUserFinanceUploadDataRecord['user_finance_data_id']
+                ]
+            ;
             $returnDatas['total_charge'] += $AdminUserFinanceUploadDataRecord['real_price'];
         }
 

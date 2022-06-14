@@ -276,6 +276,19 @@ class AdminUserFinanceData extends ModelBase
         CommonService::getInstance()->log4PHP(
             'getChagrgeDetailsAnnually   是否有有效的数据  $sql '. $sql
         );
+
+        // 包年内全部数据
+        $yearStr = '("'.implode('","',$annually_years_arr).'")';
+        $sql = " select id from  `admin_user_finance_data`
+                    WHERE
+                        `year` in $yearStr  AND
+                        user_id = $user_id  AND
+                        entName = '$entName' AND 
+                ";
+        $allDatalist = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        CommonService::getInstance()->log4PHP(
+            'getChagrgeDetailsAnnually   包年内全部数据  $sql '. $sql
+        );
 //        //包年内是否有扣过钱
 //        $sql = " select id from  `admin_user_finance_data`
 //                    WHERE
@@ -295,6 +308,8 @@ class AdminUserFinanceData extends ModelBase
             'AnnuallyPrice' => $financeConifgArr['annually_price'],
             //'HasChargedBefore' => empty($Chargelist) ? false : true,
             'ValidDataIds' => empty($validDatalist) ? false : array_column($validDatalist,'id'),
+            'allDataIds' => empty($allDatalist) ? false : array_column($allDatalist,'id'),
+
             //'ChargedDate' => empty($validDatalist) ? '' : $validDatalist[0]['last_charge_date'],
         ]; 
     }
@@ -327,12 +342,24 @@ class AdminUserFinanceData extends ModelBase
        }
 
         //是否之前扣过钱 
+//        $sql = " select id from  `admin_user_finance_data`
+//                    WHERE
+//                        `year`  = $year  AND
+//                        user_id = $user_id  AND
+//                        entName = '$entName' AND
+//                        price > 0
+//                    limit 1 ";
+//        $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+//        CommonService::getInstance()->log4PHP(
+//            'getChagrgeDetailsByYear    '.$year. '  $sql '.$sql
+//        );
+
+        // 全部数据
         $sql = " select id from  `admin_user_finance_data`
                     WHERE
                         `year`  = $year  AND
                         user_id = $user_id  AND
-                        entName = '$entName' AND
-                        price > 0
+                        entName = '$entName'  
                     limit 1 ";
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         CommonService::getInstance()->log4PHP(
@@ -341,7 +368,7 @@ class AdminUserFinanceData extends ModelBase
         return [
             'IsChargeByYear' => true,
             'YearPrice' => $normal_years_price_arr[$year],
-//            'HasChargedBefore' => empty($list) ? false : true,
+            'allDataIds' => empty($list) ? false : true,
         ]; 
     }
 

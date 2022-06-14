@@ -202,7 +202,11 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
                     $updateRes = self::updateRealPrice(
                         $id,
                         $chagrgeDetailsAnnuallyRes['AnnuallyPrice'],
-                        ''
+                        json_encode(
+                            [
+                                'allDataIds' => $chagrgeDetailsAnnuallyRes['allDataIds']
+                            ]
+                        )
                     );
                     if(!$updateRes){
                         return CommonService::getInstance()->log4PHP(
@@ -227,7 +231,11 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
             $updateRes = self::updateRealPrice(
                 $id,
                 $chagrgeDetailsAnnuallyRes['YearPrice'],
-                ''
+                json_encode(
+                    [
+                        'allDataIds' => $chagrgeDetailsAnnuallyRes['allDataIds']
+                    ]
+                )
             );
             if(!$updateRes){
                 return CommonService::getInstance()->log4PHP(
