@@ -99,6 +99,12 @@ class AdminUserFinanceUploadRecord extends ModelBase
             $userId,$uploadRecordId,$status,[]
         );
         foreach ($AdminUserFinanceUploadDataRecords as $AdminUserFinanceUploadDataRecord){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '$AdminUserFinanceUploadDataRecord',
+                    $AdminUserFinanceUploadDataRecord,
+                ])
+            );
             if($AdminUserFinanceUploadDataRecord['user_finance_data_id'] <= 0){
                 continue;
             }
