@@ -81,6 +81,8 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/ConfirmFinanceData', $prefix . 'ConfirmFinanceData');
             $routeCollector->addRoute(['GET', 'POST'], '/getExportLists', $prefix . 'getExportLists');
             $routeCollector->addRoute(['GET', 'POST'], '/exportDetails', $prefix . 'exportDetails');
+            $routeCollector->addRoute(['GET', 'POST'], '/getAllYearsRangeList', $prefix . 'getAllYearsRangeList');
+
         });
 
         return true;

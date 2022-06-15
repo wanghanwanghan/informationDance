@@ -108,7 +108,12 @@ class RunCompleteCompanyData extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
-        return true;
+//        return true;
+        CommonService::getInstance()->log4PHP(__CLASS__ . '开始');
+        if (!$this->crontabBase->withoutOverlapping(self::getTaskName())) {
+            CommonService::getInstance()->log4PHP(__CLASS__ . '开始-NO');
+            return true;
+        }
         $startMemory = memory_get_usage(); 
         
         // 找到客户名单
@@ -141,6 +146,7 @@ class RunCompleteCompanyData extends AbstractCronTask
         // CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用2 '.$memory .' '.$file );
 
         @unlink($this->workPath . $file);
+        $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
         return true ;  
     }

@@ -76,6 +76,17 @@ class FinanceController extends ControllerBase
         );
     }
 
+    //根据开始年和结束年 列出所有组合
+    public function getAllYearsRangeList(){
+        $requestData = $this->getRequestData();
+
+        return $this->writeJson(
+            200,
+            [],
+            AdminPrivilegedUser::getMenus(false,$this->loginUserinfo['id'])
+        );
+    }
+
     /**
      *  增加菜单
      */
@@ -84,11 +95,12 @@ class FinanceController extends ControllerBase
         if (
             !$requestData['user_id'] ||
             //包的年限
-            !$requestData['annually_years'] || 
-            !$requestData['annually_price']  ||
-            !$requestData['normal_years_price_json'] ||
+//            !$requestData['annually_years'] ||
+//            !$requestData['annually_price']  ||
+            !$requestData['price_config'] ||
             !$requestData['allowed_fields'] ||
             !$requestData['type'] ||
+            !$requestData['needs_confirm'] ||
             !$requestData['cache']   
         ) {
             return $this->writeJson(201);
