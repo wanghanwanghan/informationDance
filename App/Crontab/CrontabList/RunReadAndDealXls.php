@@ -333,10 +333,10 @@ class RunReadAndDealXls extends AbstractCronTask
     function run(int $taskId, int $workerIndex): bool
     {
         if(
-            ConfigInfo::checkCrontabIfCanRun("RunReadAndDealXls")
+            !ConfigInfo::checkCrontabIfCanRun("RunReadAndDealXls")
         ){
             return    CommonService::getInstance()->log4PHP(__CLASS__ . ' is running RunReadAndDealXls');
-            ;
+
         }
 
         ConfigInfo::setIsRunning("RunReadAndDealXls");
