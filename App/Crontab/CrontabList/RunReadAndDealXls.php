@@ -331,7 +331,10 @@ class RunReadAndDealXls extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
-
+        if (!$this->crontabBase->withoutOverlapping(self::getTaskName())) {
+            CommonService::getInstance()->log4PHP(__CLASS__ . '开始-NO');
+            return true;
+        }
 
         $debugLog = true;
         
@@ -351,21 +354,21 @@ class RunReadAndDealXls extends AbstractCronTask
 
         // 匹配企业名称
         if($fileNameArr[1] == 'matchName'){
-            return true;
+//            return true;
             $debugLog &&  CommonService::getInstance()->log4PHP('matchName  '.($file) );
             return $this->matchName($file,$debugLog);
         }
 
         // 匹配微信吗名
         if($fileNameArr[1] == 'matchWeiXinName'){
-            return true;
+//            return true;
             $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
             return $this->matchWeiXinName($file,$debugLog);
         }
 
         // 校验手机号
         if($fileNameArr[1] == 'checkMobile'){
-            return true;
+//            return true;
             $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
             return $this->checkMobile($file,$debugLog);
         }
@@ -375,6 +378,8 @@ class RunReadAndDealXls extends AbstractCronTask
             $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
             return $this->checkMobileV2($file,$debugLog);
         }
+
+        $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
         return true ;   
     }

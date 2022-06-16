@@ -63,7 +63,67 @@ class AdminUserFinanceData extends ModelBase
         }  
 
         return $res;
-    } 
+    }
+
+
+    //check balance
+    public static function checkBalance($id,$financeConifgArr){
+        CommonService::getInstance()->log4PHP(
+            'calculatePrice start  '.$id. '  conf '.json_encode($financeConifgArr)
+        );
+        $res =  AdminUserFinanceData::create()
+            ->where('id',$id)
+            ->get();
+
+        //收费方式一：包年
+        $chagrgeDetailsAnnuallyRes = self::getChagrgeDetailsAnnually(
+            $res->getAttr('year'),
+            $financeConifgArr,
+            $res->getAttr('user_id'),
+            $res->getAttr('entName')
+        ) ;
+        CommonService::getInstance()->log4PHP(
+            '包年    '.$id.' '. $res->getAttr('year'). '  conf '.json_encode($chagrgeDetailsAnnuallyRes)
+        );
+        // 是年度收费
+        if($chagrgeDetailsAnnuallyRes['IsAnnually']){
+            $updateRes = self::updatePrice(
+                $id,
+                $chagrgeDetailsAnnuallyRes['AnnuallyPrice'],
+                self::$priceTytpeAnnually
+            );
+            if(!$updateRes){
+                return CommonService::getInstance()->log4PHP(
+                    'calculatePrice err1  update price error  IsAnnually '.$id
+                );
+            }
+        }
+
+        //收费方式二：按年
+        $chagrgeDetailsByYearsRes = self::getChagrgeDetailsByYear(
+            $res->getAttr('year'),
+            $financeConifgArr,
+            $res->getAttr('user_id'),
+            $res->getAttr('entName')
+        ) ;
+        CommonService::getInstance()->log4PHP(
+            '按年    '.$id.' '. $res->getAttr('year'). '  conf '.json_encode($chagrgeDetailsByYearsRes)
+        );
+        if($chagrgeDetailsByYearsRes['IsChargeByYear']){
+            $updateRes = self::updatePrice(
+                $id,
+                $chagrgeDetailsByYearsRes['YearPrice'],
+                self::$priceTytpeAnnually
+            );
+            if(!$updateRes){
+                return CommonService::getInstance()->log4PHP(
+                    'calculatePrice err2  update price error  ChargeByYear '.$id
+                );
+            }
+        }
+
+        return true;
+    }
 
     // 计算单价
     public static function calculatePrice($id,$financeConifgArr){
@@ -475,6 +535,10 @@ class AdminUserFinanceData extends ModelBase
                 'Y-m-d H:i',strtotime('+'.$cacheHours.' hours',strtotime($date))
             )
         ]);
+    }
+
+    function  setCostTimes(){
+
     }
 
 }

@@ -21,14 +21,25 @@ class AdminUserFinanceUploadRecord extends ModelBase
     static $stateParsed = 5;
     static $stateParsedCname =  '已经解析入库';
     static $stateCalCulatedPrice = 10;
-    static $stateCalCulatedPriceCname = '已经计算价格'; 
+    static $stateCalCulatedPriceCname = '已经计算价格';
+
+//    static $stateHasCheckBalanceOK = 13;
+//    static $stateHasCheckBalanceOKCname = '已经检测完余额充足';
+//
+//    static $stateHasCheckBalanceNo = 16;
+//    static $stateHasCheckBalanceNoCname = '已经检测完余额不足';
+//
+//    static $stateHasDisabledTemp = 18;
+//    static $stateHasDisabledTempCname = '账户被临时关闭，暂时不允许拉取数据';
+//
+//    static $stateHasDisabledForever = 19;
+//    static $stateHasDisabledForeverCname = '账户被永久关闭，暂时不允许拉取数据';
 
     static $stateHasGetData = 20;
     static $stateHasGetDataCname = '已取完数据';
 
     static $stateHasCalcluteRealPrice = 25;
     static $stateHasCalcluteRealPriceCname = '已经计算完真实价格';
-
 
     public static function addUploadRecord($requestData){ 
         try {
@@ -183,6 +194,25 @@ class AdminUserFinanceUploadRecord extends ModelBase
             'price_detail' => $priceDetail,
         ];
     }
- 
+
+
+    public static function setTouchTime($id,$touchTime){
+        $info = AdminUserFinanceUploadRecord::findById($id);
+
+        return $info->update([
+            'touch_time' => $touchTime,
+        ]);
+    }
+
+    // 用完今日余额的
+    public static function findBySql($where){
+        $Sql = " select *  
+                            from  
+                        `admin_user_finance_upload_record` 
+                            $where
+      " ;
+        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
+        return $data;
+    }
 
 }

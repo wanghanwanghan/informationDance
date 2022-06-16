@@ -88,7 +88,7 @@ class FinanceController extends ControllerBase
     }
 
     /**
-     *  增加菜单
+     *  增加财务配置
      */
     public function addConfig(){
         $requestData = $this->getRequestData(); 
@@ -116,12 +116,13 @@ class FinanceController extends ControllerBase
         AdminUserFinanceConfig::addRecord(
             [
                 'user_id' => $requestData['user_id'], 
-                'annually_price' => $requestData['annually_price'],  
-                'annually_years' => $requestData['annually_years'],  
-                'normal_years_price_json' => $requestData['normal_years_price_json'],  
+                //'annually_price' => $requestData['annually_price'],
+                //'annually_years' => $requestData['annually_years'],
+                'price_config' => $requestData['price_config'],
                 'cache' => $requestData['cache'],  
                 'type' => $requestData['type'],  
-                'allowed_fields' => $requestData['allowed_fields'],  
+                'allowed_fields' => $requestData['allowed_fields'],
+                'needs_confirm' => $requestData['needs_confirm'],
                 'status' => 1,  
             ]
         );
@@ -129,18 +130,20 @@ class FinanceController extends ControllerBase
     }
 
      /**
-     *  修改菜单
+     *  修改财务配置
      */
     public function updateConfig(){
         $requestData = $this->getRequestData(); 
         $info = AdminUserFinanceConfig::create()->where('id',$requestData['id'])->get(); 
         $info->update([
             'id' => $requestData['id'],
-            'annually_price' => $requestData['annually_price'] ?   $requestData['annually_price']: $info['annually_price'],
-            'annually_years' => $requestData['annually_years'] ? $requestData['annually_years']: $info['annually_years'],
-            'normal_years_price_json' => $requestData['normal_years_price_json'] ? $requestData['normal_years_price_json']: $info['normal_years_price_json'],
+            //'annually_price' => $requestData['annually_price'] ?   $requestData['annually_price']: $info['annually_price'],
+            //'annually_years' => $requestData['annually_years'] ? $requestData['annually_years']: $info['annually_years'],
+            'price_config' => $requestData['price_config'] ? $requestData['price_config']: $info['normal_years_price_json'],
             'cache' => $requestData['cache'] ? $requestData['cache']: $info['cache'],
             'type' => $requestData['type'] ? $requestData['type']: $info['type'],
+            'needs_confirm' => $requestData['needs_confirm'] ?
+                    $requestData['needs_confirm']: $info['needs_confirm'],
             'allowed_fields' => $requestData['allowed_fields'] ? $requestData['allowed_fields']: $info['allowed_fields'],
         ]);
         return $this->writeJson();
@@ -522,68 +525,68 @@ class FinanceController extends ControllerBase
             ])
         );
         // 设置导出记录
-        $AdminUserFinanceExportRecordId = AdminUserFinanceExportRecord::addExportRecord(
-            [
-                'user_id' => $this->loginUserinfo['id'], 
-                'price' => $financeData['total_charge'],
-                'total_company_nums' => $financeData['totalNums'],  
-                'config_json' => '',  
-                'upload_record_id' => $requestData['id'],  
-                'reamrk' => '',  
-                'status' => '',   
-            ]
-        );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                '设置导出记录' ,
-                '$AdminUserFinanceExportRecordId' =>$AdminUserFinanceExportRecordId,
-            ])
-        );
+//        $AdminUserFinanceExportRecordId = AdminUserFinanceExportRecord::addExportRecord(
+//            [
+//                'user_id' => $this->loginUserinfo['id'],
+//                'price' => $financeData['total_charge'],
+//                'total_company_nums' => $financeData['totalNums'],
+//                'config_json' => '',
+//                'upload_record_id' => $requestData['id'],
+//                'reamrk' => '',
+//                'status' => '',
+//            ]
+//        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                '设置导出记录' ,
+//                '$AdminUserFinanceExportRecordId' =>$AdminUserFinanceExportRecordId,
+//            ])
+//        );
         // 设置导出详情
-        foreach($financeData['charge_details'] as $financeItem){
-            AdminUserFinanceExportDataRecord::addExportRecord(
-                [
-                    'user_id' => $this->loginUserinfo['id'],
-                    'export_record_id' => $AdminUserFinanceExportRecordId,   
-                    'user_finance_data_id' => $financeItem['upload_data_id'],
-                    'price' => $financeItem['real_price'],
-                    'detail' => $financeItem['price_detail']?:'',
-                    'status' => 1,
-                ]
-            );
-
-            if($financeItem['price'] <=0 ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        'price 为0' ,
-                    ])
-                );
-                continue;
-            }
-
-            if(empty($financeItem['real_price_remark']['allDataIds'])){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        'allDataIds 为空' ,
-                    ])
-                );
-                continue;
-            };
-
-            foreach ($financeItem['real_price_remark']['allDataIds'] as $idItem){
-                //设置上次计费时间
-                AdminUserFinanceData::updateLastChargeDate(
-                    $idItem,
-                    date('Y-m-d H:i:s')
-                );
-                //设置缓存过期时间
-                AdminUserFinanceData::updateCacheEndDate(
-                    $idItem,
-                    date('Y-m-d H:i:s'),
-                    $financeData['config_arr']['cache']
-                );
-            }
-        }
+//        foreach($financeData['charge_details'] as $financeItem){
+//            AdminUserFinanceExportDataRecord::addExportRecord(
+//                [
+//                    'user_id' => $this->loginUserinfo['id'],
+//                    'export_record_id' => $AdminUserFinanceExportRecordId,
+//                    'user_finance_data_id' => $financeItem['upload_data_id'],
+//                    'price' => $financeItem['real_price'],
+//                    'detail' => $financeItem['price_detail']?:'',
+//                    'status' => 1,
+//                ]
+//            );
+//
+//            if($financeItem['price'] <=0 ){
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        'price 为0' ,
+//                    ])
+//                );
+//                continue;
+//            }
+//
+//            if(empty($financeItem['real_price_remark']['allDataIds'])){
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        'allDataIds 为空' ,
+//                    ])
+//                );
+//                continue;
+//            };
+//
+//            foreach ($financeItem['real_price_remark']['allDataIds'] as $idItem){
+//                //设置上次计费时间
+//                AdminUserFinanceData::updateLastChargeDate(
+//                    $idItem,
+//                    date('Y-m-d H:i:s')
+//                );
+//                //设置缓存过期时间
+//                AdminUserFinanceData::updateCacheEndDate(
+//                    $idItem,
+//                    date('Y-m-d H:i:s'),
+//                    $financeData['config_arr']['cache']
+//                );
+//            }
+//        }
 
         // 实际扣费 
         \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
@@ -596,19 +599,19 @@ class FinanceController extends ControllerBase
         );
 
         //添加计费日志
-        FinanceLog::addRecord(
-            [
-                'detailId' => $AdminUserFinanceExportRecordId,
-                'detail_table' => 'admin_user_finance_export_record',
-                'price' => $financeData['total_charge'],
-                'userId' => $this->loginUserinfo['id'],
-                'type' =>  FinanceLog::$chargeTytpeFinance,
-                'title' => '导出财务数据',
-                'detail' => '导出财务数据',
-                'reamrk' => $requestData['reamrk']?:'',
-                'status' => $requestData['status']?:1,
-            ]
-        );
+//        FinanceLog::addRecord(
+//            [
+//                'detailId' => $AdminUserFinanceExportRecordId,
+//                'detail_table' => 'admin_user_finance_export_record',
+//                'price' => $financeData['total_charge'],
+//                'userId' => $this->loginUserinfo['id'],
+//                'type' =>  FinanceLog::$chargeTytpeFinance,
+//                'title' => '导出财务数据',
+//                'detail' => '导出财务数据',
+//                'reamrk' => $requestData['reamrk']?:'',
+//                'status' => $requestData['status']?:1,
+//            ]
+//        );
 
         return $this->writeJson(200, null, 'Static/Temp/' . $filename, null, true, [$res]);
     }

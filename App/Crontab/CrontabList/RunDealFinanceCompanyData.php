@@ -3,9 +3,15 @@
 namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
+use App\HttpController\Models\AdminV2\AdminNewUser;
+use App\HttpController\Models\AdminV2\AdminUserChargeConfig;
 use App\HttpController\Models\AdminV2\AdminUserFinanceData;
+use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
+use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataRecord;
+use App\HttpController\Models\AdminV2\AdminUserFinanceExportRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadDataRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadeRecord;
+use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
@@ -153,25 +159,221 @@ class RunDealFinanceCompanyData extends AbstractCronTask
         self::parseDataToDb(1);
         //计算价格
         self::calculatePrice(5);
+
         //拉取finance数据
         self::pullFinanceData(5);
         //计算真实价格
         self::calculateRealPrice(5);
+
+        //生成导出对账记录
+        self::calculateRealPrice(5);
+
         return true ;   
     }
+
+
+    static function AddAccountTransactionFlowData($limit)
+    {
+        $initDatas =  AdminUserFinanceExportDataQueue::findBySql(
+            " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_init. " 
+             ORDER BY touch_time ASC  LIMIT $limit 
+            "
+        );
+        foreach($initDatas as $dataItem){
+            AdminUserFinanceExportDataQueue::setTouchTime(
+                $dataItem['id'],date('Y-m-d H:i:s')
+            );
+
+            $AdminUserFinanceUploadRecord = AdminUserFinanceUploadRecord::findById($dataItem['upload_record_id']);
+            if(!$AdminUserFinanceUploadRecord){
+                continue;
+            }
+            $AdminUserFinanceUploadRecord = $AdminUserFinanceUploadRecord->toArray();
+            $finance_config = json_decode($AdminUserFinanceUploadRecord['finance_config'],true);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '$finance_config' =>$finance_config,
+                ])
+            );
+            // 设置导出记录
+            $AdminUserFinanceExportRecordId = AdminUserFinanceExportRecord::addExportRecord(
+                [
+                    'user_id' => $AdminUserFinanceUploadRecord['user_id'],
+                    'price' => $AdminUserFinanceUploadRecord['money'],
+                    'total_company_nums' => 0,
+                    'config_json' => '',
+                    'upload_record_id' => $AdminUserFinanceUploadRecord['id'],
+                    'reamrk' => '',
+                    'status' =>AdminUserFinanceExportRecord::$stateInit,
+                ]
+            );
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '设置导出记录' ,
+                    '$AdminUserFinanceExportRecordId' =>$AdminUserFinanceExportRecordId,
+                ])
+            );
+
+            $AdminUserFinanceUploadDataRecord = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
+                $AdminUserFinanceUploadRecord['user_id'],
+                $AdminUserFinanceUploadRecord['id'],
+                AdminUserFinanceUploadRecord::$stateHasCalcluteRealPrice
+            );
+
+
+            // 设置导出详情
+            foreach($AdminUserFinanceUploadDataRecord as $dataItem){
+                AdminUserFinanceExportDataRecord::addExportRecord(
+                    [
+                        'user_id' => $AdminUserFinanceUploadRecord['user_id'],
+                        'export_record_id' => $AdminUserFinanceExportRecordId,
+                        'user_finance_data_id' => 0,
+                        'price' => $dataItem['real_price'],
+                        'detail' => $dataItem['real_price_remark']?:'',
+                        'status' => AdminUserFinanceExportRecord::$stateInit,
+                    ]
+                );
+
+                if($dataItem['real_price'] <=0 ){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            'real_price 为0' ,
+                        ])
+                    );
+                    continue;
+                }
+
+                $detailRemarks = json_decode($dataItem['real_price_remark'],true);
+                if(empty($detailRemarks['allDataIds'])){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            'allDataIds 为空' ,
+                        ])
+                    );
+                    continue;
+                };
+                foreach ($detailRemarks['allDataIds'] as $idItem){
+                    //设置上次计费时间
+                    AdminUserFinanceData::updateLastChargeDate(
+                        $idItem,
+                        date('Y-m-d H:i:s')
+                    );
+                    //设置缓存过期时间
+                    AdminUserFinanceData::updateCacheEndDate(
+                        $idItem,
+                        date('Y-m-d H:i:s'),
+                        $finance_config['cache']
+                    );
+                }
+            }
+
+            //添加计费日志
+            FinanceLog::addRecord(
+                [
+                    'detailId' => $AdminUserFinanceExportRecordId,
+                    'detail_table' => 'admin_user_finance_export_record',
+                    'price' => $financeData['total_charge'],
+//                    'userId' => $this->loginUserinfo['id'],
+                    'type' =>  FinanceLog::$chargeTytpeFinance,
+                    'title' => '导出财务数据',
+                    'detail' => '导出财务数据',
+                    'reamrk' => $requestData['reamrk']?:'',
+                    'status' => $requestData['status']?:1,
+                ]
+            );
+
+
+
+            if(
+                AdminUserChargeConfig::checkIfUserIsValid(
+                    $dataItem['user_id']
+                )
+            ){
+                continue;
+            }
+            // 如果处理完了 设置下状态
+            if(
+                self::checkUploadDataRecordsOldStateIsDone(
+                    $dataItem['user_id'],
+                    $dataItem['id'] ,
+                    AdminUserFinanceUploadRecord::$stateCalCulatedPrice,
+                    AdminUserFinanceUploadRecord::$stateHasGetData
+                )
+            ){
+                $changeRes = AdminUserFinanceUploadRecord::changeStatus(
+                    $dataItem['id'],
+                    AdminUserFinanceUploadRecord::$stateHasGetData
+                );
+                if(!$changeRes){
+                    CommonService::getInstance()->log4PHP(
+                        'pullFinanceData err1  change status error '.$dataItem['id']
+                    );
+                    continue;
+                }
+            }
+
+            // 找到需要拉取财务数据的
+            $allUploadDataRecords =  AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
+                $dataItem['user_id'],
+                $dataItem['id'],
+                AdminUserFinanceUploadRecord::$stateCalCulatedPrice
+            );
+            if(empty($allUploadDataRecords)){
+                continue;
+            }
+
+            foreach($allUploadDataRecords as $UploadDataRecord){
+                // 拉取财务数据
+                $res = AdminUserFinanceData::pullFinanceData(
+                    $UploadDataRecord['user_finance_data_id'],
+                    json_decode($dataItem['finance_config'],true)
+                );
+                if(!$res){
+                    CommonService::getInstance()->log4PHP(
+                        'pullFinanceData err2  pull data  error '.$dataItem['id'].' '.$res
+                    );
+                    continue;
+                }
+                // 更新拉取时间
+                //return true;
+                //设置下状态
+                $updateRes = AdminUserFinanceUploadDataRecord::updateStatusById(
+                    $UploadDataRecord['id'],
+                    AdminUserFinanceUploadRecord::$stateHasGetData
+                );
+                if(!$updateRes){
+                    CommonService::getInstance()->log4PHP(
+                        'pullFinanceData err3  update status  error '.$dataItem['id']
+                    );
+                    continue;
+                }
+            }
+        }
+
+        return true ;
+    }
+
 
     static function pullFinanceData($limit)
     {    
         
         //取财务数据 
-        $initDatas = AdminUserFinanceUploadRecord::findByCondition(
-            [
-                'status' => AdminUserFinanceUploadRecord::$stateCalCulatedPrice
-            ],
-            0,
-            $limit
-        );  
+        $initDatas =  AdminUserFinanceUploadRecord::findBySql(
+            " WHERE `status` = ".AdminUserFinanceUploadRecord::$stateCalCulatedPrice. " 
+             ORDER BY touch_time ASC  LIMIT $limit 
+            "
+        );
         foreach($initDatas as $dataItem){
+            AdminUserFinanceUploadRecord::setTouchTime(
+                $dataItem['id'],date('Y-m-d H:i:s')
+            );
+            if(
+                AdminUserChargeConfig::checkIfUserIsValid(
+                    $dataItem['user_id']
+                )
+            ){
+                continue;
+            }
             // 如果处理完了 设置下状态
             if(
                 self::checkUploadDataRecordsOldStateIsDone(
@@ -239,15 +441,17 @@ class RunDealFinanceCompanyData extends AbstractCronTask
     static function calculatePrice($limit)
     {
         //解析完，尚未计算单价的
-        $initDatas = AdminUserFinanceUploadRecord::findByCondition(
-            [
-                'status' => AdminUserFinanceUploadRecord::$stateParsed
-            ],
-            0,
-            $limit
+        $initDatas =  AdminUserFinanceUploadRecord::findBySql(
+            " WHERE `status` = ".AdminUserFinanceUploadRecord::$stateParsed. " 
+             ORDER BY touch_time ASC  LIMIT $limit 
+            "
         );
        
-        foreach($initDatas as $dataItem){ 
+        foreach($initDatas as $dataItem){
+            AdminUserFinanceUploadRecord::setTouchTime(
+                $dataItem['id'],date('Y-m-d H:i:s')
+            );
+
             // 如果全计算完了 变更下状态
             if(
                 self::checkUploadDataRecordsOldStateIsDone(
@@ -307,18 +511,201 @@ class RunDealFinanceCompanyData extends AbstractCronTask
         return true ;   
     }
 
-    static function calculateRealPrice($limit)
+    //检测余额
+    static function checkBalancePrice($limit)
     {
-        //尚未计算真实单价的
+        //已经计算完了价格的
         $initDatas = AdminUserFinanceUploadRecord::findByCondition(
             [
-                'status' => AdminUserFinanceUploadRecord::$stateHasGetData
+                'status' => AdminUserFinanceUploadRecord::$stateCalCulatedPrice
             ],
             0,
             $limit
         );
 
         foreach($initDatas as $dataItem){
+            // 如果全计算完了 变更下状态
+            if(
+                self::checkUploadDataRecordsOldStateIsDone(
+                    $dataItem['user_id'],
+                    $dataItem['id'] ,
+                    AdminUserFinanceUploadRecord::$stateCalCulatedPrice,
+                    AdminUserFinanceUploadRecord::$stateHasCheckBalanceOK
+                )
+            ){
+                $changeRes = AdminUserFinanceUploadRecord::changeStatus(
+                    $dataItem['id'],
+                    AdminUserFinanceUploadRecord::$stateHasCheckBalanceOK
+                );
+                if(!$changeRes){
+                    CommonService::getInstance()->log4PHP(
+                        'checkBalancePrice err1  change status error '.$dataItem['id']
+                    );
+                    continue;
+                }
+            }
+            if(
+                self::checkUploadDataRecordsOldStateIsDone(
+                    $dataItem['user_id'],
+                    $dataItem['id'] ,
+                    AdminUserFinanceUploadRecord::$stateCalCulatedPrice,
+                    AdminUserFinanceUploadRecord::$stateHasCheckBalanceNo
+                )
+            ){
+                $changeRes = AdminUserFinanceUploadRecord::changeStatus(
+                    $dataItem['id'],
+                    AdminUserFinanceUploadRecord::$stateHasCheckBalanceNo
+                );
+                if(!$changeRes){
+                    CommonService::getInstance()->log4PHP(
+                        'checkBalancePrice err1  change status error '.$dataItem['id']
+                    );
+                    continue;
+                }
+            }
+
+            // 找到还没检测余额的
+            $allUploadDataRecords =  AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
+                $dataItem['user_id'],
+                $dataItem['id'],
+                AdminUserFinanceUploadRecord::$stateCalCulatedPrice
+            );
+            if(empty($allUploadDataRecords)){
+                continue;
+            }
+
+            $totalNeedsMoney = 0;
+            foreach($allUploadDataRecords as $UploadDataRecord){
+                $totalNeedsMoney += $UploadDataRecord['real_price'];
+            }
+            $state = AdminUserFinanceUploadRecord::$stateHasCheckBalanceNo;
+            if(
+                AdminNewUser::getAccountBalance($dataItem['user_id']) >= $totalNeedsMoney
+            ){
+                $state = AdminUserFinanceUploadRecord::$stateHasCheckBalanceOK;
+            };
+
+            foreach($allUploadDataRecords as $UploadDataRecord){
+
+                // 计算完价格 变更下状态
+                $updateRes = AdminUserFinanceUploadDataRecord::updateStatusById(
+                    $UploadDataRecord['id'],
+                    $state
+                );
+                if(!$updateRes){
+                    CommonService::getInstance()->log4PHP(
+                        'checkBalancePrice err2  update status error '.$UploadDataRecord['id']
+                    );
+                    continue;
+                }
+            }
+        }
+        return true ;
+    }
+
+    //检测是否账户被关闭 | 临时关闭永久关闭
+    static function checkIfAccountIsClosed($limit)
+    {
+
+        //已经计算完了价格的
+        $initDatas = AdminUserFinanceUploadRecord::findByCondition(
+            [
+                'status' => AdminUserFinanceUploadRecord::$stateHasCheckBalanceOK
+            ],
+            0,
+            $limit
+        );
+
+        foreach($initDatas as $dataItem){
+            // 如果全计算完了 变更下状态
+            if(
+                AdminUserChargeConfig::checkIfUserHasRunOutDailyBanance(
+                    $dataItem['user_id']
+                )
+            ){
+                $changeRes = AdminUserFinanceUploadRecord::changeStatus(
+                    $dataItem['id'],
+                    AdminUserFinanceUploadRecord::$stateHasDisabledTemp
+                );
+                if(!$changeRes){
+                    CommonService::getInstance()->log4PHP(
+                        'checkBalancePrice err1  change status error '.$dataItem['id']
+                    );
+                    continue;
+                }
+            }
+            if(
+                self::checkUploadDataRecordsOldStateIsDone(
+                    $dataItem['user_id'],
+                    $dataItem['id'] ,
+                    AdminUserFinanceUploadRecord::$stateCalCulatedPrice,
+                    AdminUserFinanceUploadRecord::$stateHasCheckBalanceNo
+                )
+            ){
+                $changeRes = AdminUserFinanceUploadRecord::changeStatus(
+                    $dataItem['id'],
+                    AdminUserFinanceUploadRecord::$stateHasCheckBalanceNo
+                );
+                if(!$changeRes){
+                    CommonService::getInstance()->log4PHP(
+                        'checkBalancePrice err1  change status error '.$dataItem['id']
+                    );
+                    continue;
+                }
+            }
+
+            // 找到还没检测余额的
+            $allUploadDataRecords =  AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
+                $dataItem['user_id'],
+                $dataItem['id'],
+                AdminUserFinanceUploadRecord::$stateCalCulatedPrice
+            );
+            if(empty($allUploadDataRecords)){
+                continue;
+            }
+
+            $totalNeedsMoney = 0;
+            foreach($allUploadDataRecords as $UploadDataRecord){
+                $totalNeedsMoney += $UploadDataRecord['real_price'];
+            }
+            $state = AdminUserFinanceUploadRecord::$stateHasCheckBalanceNo;
+            if(
+                AdminNewUser::getAccountBalance($dataItem['user_id']) >= $totalNeedsMoney
+            ){
+                $state = AdminUserFinanceUploadRecord::$stateHasCheckBalanceOK;
+            };
+
+            foreach($allUploadDataRecords as $UploadDataRecord){
+
+                // 计算完价格 变更下状态
+                $updateRes = AdminUserFinanceUploadDataRecord::updateStatusById(
+                    $UploadDataRecord['id'],
+                    $state
+                );
+                if(!$updateRes){
+                    CommonService::getInstance()->log4PHP(
+                        'checkBalancePrice err2  update status error '.$UploadDataRecord['id']
+                    );
+                    continue;
+                }
+            }
+        }
+        return true ;
+    }
+
+    static function calculateRealPrice($limit)
+    {
+        //尚未计算真实单价的
+        $initDatas = AdminUserFinanceUploadRecord::findBySql(
+            " WHERE `status` = ".AdminUserFinanceUploadRecord::$stateHasGetData. " 
+             ORDER BY touch_time ASC  LIMIT $limit 
+            "
+        );
+
+        foreach($initDatas as $dataItem){
+            AdminUserFinanceUploadRecord::setTouchTime(
+                $dataItem['id'],date('Y-m-d H:i:s')
+            );
             // 如果全计算完了 变更下状态
             if(
                 self::checkUploadDataRecordsOldStateIsDone(
@@ -381,17 +768,19 @@ class RunDealFinanceCompanyData extends AbstractCronTask
     //将上传的客户名单解析到db
     static function  parseDataToDb($limit)
     {
-        // 用户上传的客户名单信息
-        $initDatas = AdminUserFinanceUploadRecord::findByCondition(
-            [
-                'status' => AdminUserFinanceUploadRecord::$stateInit
-            ],
-            0,
-            $limit
-        ); 
 
+        // 用户上传的客户名单信息
+        $initDatas = AdminUserFinanceUploadRecord::findBySql(
+            " WHERE `status` = ".AdminUserFinanceUploadRecord::$stateInit. " 
+             ORDER BY touch_time ASC  LIMIT $limit 
+            "
+        );
 
         foreach($initDatas as $uploadFinanceData){
+            AdminUserFinanceUploadRecord::setTouchTime(
+                $uploadFinanceData['id'],date('Y-m-d H:i:s')
+            );
+
             // 找到上传的文件
             $dirPat =  dirname($uploadFinanceData['file_path']).DIRECTORY_SEPARATOR;
             self::setworkPath( $dirPat );
