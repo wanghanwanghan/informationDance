@@ -4,6 +4,7 @@ namespace App\HttpController\Models\AdminNew;
 
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
 use App\HttpController\Models\ModelBase;
+use App\HttpController\Service\Common\CommonService;
 
 class ConfigInfo extends ModelBase
 {
@@ -38,6 +39,10 @@ class ConfigInfo extends ModelBase
     }
 
     public static function setIsRunning($crontabName){
+        CommonService::getInstance()->log4PHP(
+            'setIsRunning '.$crontabName
+        );
+
         $info = ConfigInfo::findByName('crontab');
         $config = $info->getAttr("value");
         $configArr = json_decode($config,true);
@@ -52,12 +57,20 @@ class ConfigInfo extends ModelBase
 
         $configArr[$crontabName]['start_time'] = date('Y-m-d H:i:s');
         $configArr[$crontabName]['is_running'] = 1;
+
+        CommonService::getInstance()->log4PHP(
+            'update '.json_encode($configArr)
+        );
         return $info->update([
             'value' => json_encode($configArr),
         ]);
     }
 
     public static function setIsDone($crontabName){
+        CommonService::getInstance()->log4PHP(
+            'setIsDone '.$crontabName
+        );
+
         $info = ConfigInfo::findByName('crontab');
         $config = $info->getAttr("value");
         $configArr = json_decode($config,true);
@@ -71,6 +84,10 @@ class ConfigInfo extends ModelBase
         }
 
         $configArr[$crontabName]['is_running'] = 0;
+
+        CommonService::getInstance()->log4PHP(
+            'update '.json_encode($configArr)
+        );
         return $info->update([
             'value' => json_encode($configArr),
         ]);
