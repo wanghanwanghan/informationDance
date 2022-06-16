@@ -243,7 +243,7 @@ class RunReadAndDealXls extends AbstractCronTask
         $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用2 '.$memory .' '.$file );
 
         @unlink($this->workPath . $file);
-
+        ConfigInfo::setIsDone("RunReadAndDealXls");
         return true ;  
     }
 
@@ -270,7 +270,7 @@ class RunReadAndDealXls extends AbstractCronTask
         $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用2 '.$memory .' '.$file );
 
         @unlink($this->workPath . $file);
-
+        ConfigInfo::setIsDone("RunReadAndDealXls");
         return true ;  
     }
 
@@ -297,7 +297,7 @@ class RunReadAndDealXls extends AbstractCronTask
         $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用2 '.$memory .' '.$file );
 
         @unlink($this->workPath . $file);
-
+        ConfigInfo::setIsDone("RunReadAndDealXls");
         return true ;  
     }
 
@@ -326,7 +326,7 @@ class RunReadAndDealXls extends AbstractCronTask
         $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用2 '.$memory .' '.$newFile );
 
         @unlink($this->workPath . $newFile);
-
+        ConfigInfo::setIsDone("RunReadAndDealXls");
         return true ;  
     }
 
