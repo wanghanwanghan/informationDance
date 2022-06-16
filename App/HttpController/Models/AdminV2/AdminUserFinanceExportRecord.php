@@ -29,8 +29,10 @@ class AdminUserFinanceExportRecord extends ModelBase
                 'config_json' => $requestData['config_json'],  
                 'upload_record_id' => $requestData['upload_record_id'],  
                 'reamrk' => $requestData['reamrk'],  
-                'status' => $requestData['status'],  
-            ])->save();
+                'status' => $requestData['status'],
+                'queue_id' => $requestData['queue_id'],
+                'batch' => $requestData['batch'],
+           ])->save();
 
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP(

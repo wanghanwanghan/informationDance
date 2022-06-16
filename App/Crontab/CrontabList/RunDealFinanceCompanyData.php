@@ -196,6 +196,12 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                 ])
             );
             // 设置导出记录
+            if(
+                AdminUserFinanceExportRecord::findByQueue($dataItem['id'])
+            ){
+                continue ;
+            }
+
             $AdminUserFinanceExportRecordId = AdminUserFinanceExportRecord::addExportRecord(
                 [
                     'user_id' => $AdminUserFinanceUploadRecord['user_id'],
@@ -214,6 +220,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
                 ])
             );
 
+
             $AdminUserFinanceUploadDataRecord = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
                 $AdminUserFinanceUploadRecord['user_id'],
                 $AdminUserFinanceUploadRecord['id'],
@@ -223,6 +230,11 @@ class RunDealFinanceCompanyData extends AbstractCronTask
 
             // 设置导出详情
             foreach($AdminUserFinanceUploadDataRecord as $dataItem){
+                if(
+                    AdminUserFinanceExportRecord::findByQueue($dataItem['id'])
+                ){
+                    continue ;
+                }
                 AdminUserFinanceExportDataRecord::addExportRecord(
                     [
                         'user_id' => $AdminUserFinanceUploadRecord['user_id'],
