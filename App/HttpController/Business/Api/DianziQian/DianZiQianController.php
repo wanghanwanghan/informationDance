@@ -31,7 +31,7 @@ class DianZiQianController extends DianZiQianBase
         $phone = $this->getRequestData('phone');
         $city = $this->getRequestData('city');
         $regAddress = $this->getRequestData('regAddress');
-
+        $file = $this->getRequestData('file');
         $postData = [
             'entName' => $entName,
             'socialCredit' => $socialCredit,
@@ -40,6 +40,7 @@ class DianZiQianController extends DianZiQianBase
             'phone' => $phone,
             'city' => $city,
             'regAddress' => $regAddress,
+            'file' => $file
         ];
         $res = (new DianZiQianService())->getAuthFile($postData);
         return $this->writeJson($res['code'], null, $res['data'], $res['message']);

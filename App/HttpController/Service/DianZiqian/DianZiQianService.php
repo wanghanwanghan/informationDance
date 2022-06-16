@@ -302,7 +302,7 @@ class DianZiQianService extends ServiceBase
         if (!empty($errorData)) return $errorData;
 
         //上传adobe模版
-        $contractFileTemplate = $this->contractFileTemplate();
+        $contractFileTemplate = $this->contractFileTemplate($postData['file']);
         $contractTemplateCode = $contractFileTemplate['result']['contractTemplateCode'] ?? "";
         if ($contractFileTemplate['code'] != 200) return $contractFileTemplate;
 
