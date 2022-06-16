@@ -338,18 +338,9 @@ class RunReadAndDealXls extends AbstractCronTask
             return    CommonService::getInstance()->log4PHP(__CLASS__ . ' is running RunReadAndDealXls');
 
         }
+        CommonService::getInstance()->log4PHP(__CLASS__ . ' is running  ');
 
         ConfigInfo::setIsRunning("RunReadAndDealXls");
-
-        sleep(120);
-
-        ConfigInfo::setIsDone("RunReadAndDealXls");
-
-        return true;
-        if (!$this->crontabBase->withoutOverlapping(self::getTaskName())) {
-            CommonService::getInstance()->log4PHP(__CLASS__ . '开始-NO');
-            return true;
-        }
 
         $debugLog = true;
         
@@ -394,7 +385,7 @@ class RunReadAndDealXls extends AbstractCronTask
             return $this->checkMobileV2($file,$debugLog);
         }
 
-        $this->crontabBase->removeOverlappingKey(self::getTaskName());
+        ConfigInfo::setIsDone("RunReadAndDealXls");
 
         return true ;   
     }
