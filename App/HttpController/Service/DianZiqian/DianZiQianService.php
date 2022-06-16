@@ -487,7 +487,7 @@ class DianZiQianService extends ServiceBase
         $paramData = [
             'params'               => json_encode($params),
             'contractTemplateCode' => $contractTemplateCode,
-            'ensureAllAcroFieldsFilled' => '1'
+//            'ensureAllAcroFieldsFilled' => '1'
         ];
         $param     = $this->buildParam($paramData, $path);
         $resp      = (new CoHttpClient())
