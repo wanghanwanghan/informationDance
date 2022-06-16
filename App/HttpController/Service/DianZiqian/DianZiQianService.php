@@ -312,7 +312,7 @@ class DianZiQianService extends ServiceBase
             'companyName' => $postData['entName'] ?? '',
             'taxNo'       => $postData['socialCredit'] ?? '',
             'newTaxNo'    => $postData['socialCredit'] ?? '',
-            'signName'    => '',
+            'signName'    => $postData['legalPerson'],
             'phoneNo'     => $postData['phone'] ?? '',
             'region'      => $postData['city'] ?? '',
             'address'     => $postData['regAddress'] ?? '',
