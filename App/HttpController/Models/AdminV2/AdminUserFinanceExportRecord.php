@@ -29,8 +29,10 @@ class AdminUserFinanceExportRecord extends ModelBase
                 'config_json' => $requestData['config_json'],  
                 'upload_record_id' => $requestData['upload_record_id'],  
                 'reamrk' => $requestData['reamrk'],  
-                'status' => $requestData['status'],  
-            ])->save();
+                'status' => $requestData['status'],
+                'queue_id' => $requestData['queue_id'],
+                'batch' => $requestData['batch'],
+           ])->save();
 
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP(
@@ -50,6 +52,36 @@ class AdminUserFinanceExportRecord extends ModelBase
             'file_name' => $file_name,   
             // 'status' => 1,  
         ])->get(); 
+
+        return $res;
+    }
+
+    public static function findByBatchNo($user_id,$batch){
+        $res =  AdminUserFinanceExportRecord::create()->where([
+            'user_id' => $user_id,
+            'batch' => $batch,
+            // 'status' => 1,
+        ])->get();
+
+        return $res;
+    }
+
+    public static function findByQueue($queue_id){
+        $res =  AdminUserFinanceExportRecord::create()->where([
+//            'user_id' => $user_id,
+            'queue_id' => $queue_id,
+            // 'status' => 1,
+        ])->all();
+
+        return $res;
+    }
+
+    public static function findByQueueAndUploadId($queue_id,$upload_record_id){
+        $res =  AdminUserFinanceExportRecord::create()->where([
+            'upload_record_id' => $upload_record_id,
+            'queue_id' => $queue_id,
+            // 'status' => 1,
+        ])->get();
 
         return $res;
     }

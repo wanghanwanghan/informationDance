@@ -11,7 +11,7 @@ use wanghanwanghan\someUtils\control;
 
 class GuangZhouYinLianService extends ServiceBase
 {
-    private $testPrivateKey      = <<<Eof
+    private $testPrivateKey = <<<Eof
 -----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEA767Gc8oWD9ckvkt6rHRg+AC8yESbAgwfLc+lWh4Izs/rvxqA
 db8/hAcpO1h+6tBVzNc+3nitxN53etJyRs2Bjf0nlh74AguaNk1S/kkdzOsGdLDr
@@ -71,34 +71,34 @@ LbDDlU4oDXyG5JgwEmKbG24=
 -----END PRIVATE KEY-----
 Eof;
 
-    private $testApp_id      = '5dc387b32c07871d371334e9c45120ba';
-    private $app_id          = '62399d4baa687386502fa99462c82872';
+    private $testApp_id = '5dc387b32c07871d371334e9c45120ba';
+    private $app_id = '62399d4baa687386502fa99462c82872';
     private $timestamp;
-    private $v               = '1.0.1';
-    private $sign_alg        = 1;
-    private $busiMerno1       = '898440048161870';
-    private $busiMerno2       = '898440048161874';
-    private $busiMerno3       = '898440048161875';
-    private $testBusiMerno    = '898441650210002';
-    private $testUrl         = 'https://testapi.gnete.com:9083/routejson';
-    private $url         = 'https://api.gnete.com/routejson';
+    private $v = '1.0.1';
+    private $sign_alg = 1;
+    private $busiMerno1 = '898440048161870';
+    private $busiMerno2 = '898440048161874';
+    private $busiMerno3 = '898440048161875';
+    private $testBusiMerno = '898441650210002';
+    private $testUrl = 'https://testapi.gnete.com:9083/routejson';
+    private $url = 'https://api.gnete.com/routejson';
     private $bizFuncArr = [];
 
     function __construct()
     {
         $this->bizFuncArr = [
-        '711004' => $this->busiMerno1,
-        '711005' => $this->busiMerno2,
-        '711006' => $this->busiMerno2,
-        '711011' => $this->busiMerno2,
-        '711019' => $this->busiMerno2,
-        '711009' => $this->busiMerno3,
-        '711010' => $this->busiMerno3,
-        '711013' => $this->busiMerno3,
-        '711014' => $this->busiMerno3,
-        '711015' => $this->busiMerno3,
-        '711016' => $this->busiMerno3,
-    ];
+            '711004' => $this->busiMerno1,
+            '711005' => $this->busiMerno2,
+            '711006' => $this->busiMerno2,
+            '711011' => $this->busiMerno2,
+            '711019' => $this->busiMerno2,
+            '711009' => $this->busiMerno3,
+            '711010' => $this->busiMerno3,
+            '711013' => $this->busiMerno3,
+            '711014' => $this->busiMerno3,
+            '711015' => $this->busiMerno3,
+            '711016' => $this->busiMerno3,
+        ];
         return parent::__construct();
     }
 
@@ -202,31 +202,32 @@ Eof;
             name          姓名
             certNo        证件号码
         */
-        $time      = time();
-        $sndDt     = date('YmdHis', $time);
+        $time = time();
+        $sndDt = date('YmdHis', $time);
         $merOrdrNo = $this->busiMerno . date('Ymd', $time) . control::randNum(9);
     }
 
-    public function getCarsInsurance($postData){
-        $postData['page'] = empty($postData['page'])?1:$postData['page'];
-        if(empty($postData['socialCredit'])){
+    public function getCarsInsurance($postData)
+    {
+        $postData['page'] = empty($postData['page']) ? 1 : $postData['page'];
+        if (empty($postData['socialCredit'])) {
             return [];
         }
         $data = CarInsuranceInfo::create()->where("entCode = '{$postData['socialCredit']}'")->all();
-        if(empty($data)){
+        if (empty($data)) {
             return [];
         }
         $vinArr = [];
-        foreach ($data as $val){
-            $vinArr = array_merge($vinArr,explode(',',$val->getAttr('vin')));
+        foreach ($data as $val) {
+            $vinArr = array_merge($vinArr, explode(',', $val->getAttr('vin')));
         }
         $vinArr = array_unique($vinArr);
         $total = count($vinArr);
-        $vinArr = array_splice($vinArr,($postData['page']-1)*5,5);
+        $vinArr = array_splice($vinArr, ($postData['page'] - 1) * 5, 5);
         $postData['firstBeneficiary'] = $postData['legalPerson'];
-        $param = array_merge(json_decode(json_encode($data),true),$postData);
-        foreach ($vinArr as $val){
-            $vin_v = explode(' ',$val);
+        $param = array_merge(json_decode(json_encode($data), true), $postData);
+        foreach ($vinArr as $val) {
+            $vin_v = explode(' ', $val);
             $param['vin'] = $vin_v['1'];
             $res = $this->getCarInsurance($param);
             $param['list'][] = $res;
@@ -236,43 +237,44 @@ Eof;
             'page' => $postData['page'],
             'pageSize' => 5,
             'total' => $total,
-            'totalPage' => (int)($total/5)+1,
+            'totalPage' => (int)($total / 5) + 1,
         ];
         return [$paging, $param['list']];
     }
 
-    public function getCarsInsuranceV2($postData){
-        $postData['page'] = empty($postData['page'])?1:$postData['page'];
+    public function getCarsInsuranceV2($postData)
+    {
+        $postData['page'] = empty($postData['page']) ? 1 : $postData['page'];
 
         $data = CarInsuranceInfo::create()
-                ->where("entId = '{$postData['entId']}'")
-                ->all();
-        if(empty($data)){
+            ->where("entId = '{$postData['entId']}'")
+            ->all();
+        if (empty($data)) {
             return [];
         }
 
         $vinArr = [];
         $legalPerson = "";
-        foreach ($data as $val){
-            $vinArr = array_merge($vinArr,explode(',',$val->getAttr('vin')));
+        foreach ($data as $val) {
+            $vinArr = array_merge($vinArr, explode(',', $val->getAttr('vin')));
             $legalPerson = $val['legalPerson'];
         }
 
         $vinArr = array_unique($vinArr);
-        CommonService::getInstance()->log4PHP('getCarsInsuranceV2  vinArr'.json_encode($vinArr));
+        CommonService::getInstance()->log4PHP('getCarsInsuranceV2  vinArr' . json_encode($vinArr));
 
         $total = count($vinArr);
-        $vinArr = array_splice($vinArr,($postData['page']-1)*5,5);
+        $vinArr = array_splice($vinArr, ($postData['page'] - 1) * 5, 5);
         $postData['firstBeneficiary'] = $legalPerson;
-        $param = array_merge(json_decode(json_encode($data),true),$postData);
-        foreach ($vinArr as $val){
-            $vin_v = explode(' ',$val);
+        $param = array_merge(json_decode(json_encode($data), true), $postData);
+        foreach ($vinArr as $val) {
+            $vin_v = explode(' ', $val);
             // $param['vin'] = $vin_v['1'];
             $param['vin'] = $val;
             // $param['vin'] = [$val];
             $res = $this->getCarInsurance($param);
-            CommonService::getInstance()->log4PHP('getCarsInsuranceV2  param'.json_encode($param));
-            CommonService::getInstance()->log4PHP('getCarsInsuranceV2  res'.json_encode($res));
+            CommonService::getInstance()->log4PHP('getCarsInsuranceV2  param' . json_encode($param));
+            CommonService::getInstance()->log4PHP('getCarsInsuranceV2  res' . json_encode($res));
 
             $param['list'][] = $res;
         }
@@ -282,12 +284,13 @@ Eof;
             'page' => $postData['page'],
             'pageSize' => 5,
             'total' => $total,
-            'totalPage' => (int)($total/5)+1,
+            'totalPage' => (int)($total / 5) + 1,
         ];
         return [$paging, $param['list']];
     }
 
-    public function getCarInsurance($postData){
+    public function getCarInsurance($postData)
+    {
         $maxLossAmountMap = [
             'A' => '0<=金额<1000',
             'B' => '1000<=金额<3000',
@@ -296,7 +299,7 @@ Eof;
             'E' => '7000<=金额<1 万',
             'F' => '1<=金额<2 万',
             'G' => '2<=金额<3 万',
-            'H' => '3<=金额<5 万' ,
+            'H' => '3<=金额<5 万',
             'I' => '5<=金额<7 万',
             'J' => '7<=金额<10 万',
             'K' => '10<=金额<12 万',
@@ -315,31 +318,32 @@ Eof;
             'X' => '55<=金额<60 万',
             'Y' => '60 万及以上'
         ];
-        $obj = ['vin'=>$postData['vin']];
-        $obj = array_merge($this->getCarInsurance_wanghan($postData),$obj);
+        $obj = ['vin' => $postData['vin']];
+        $obj = array_merge($this->getCarInsurance_wanghan($postData), $obj);
         $res_t = $this->queryUsedVehicleInfo($postData);
-        $maxLossAmount = $res_t['response']['msgBody']['vehicleInsuranceInf']['maxLossAmount']??'';
-        $obj['maxLossAmount'] = $maxLossAmountMap[$maxLossAmount]??$maxLossAmount;
+        $maxLossAmount = $res_t['response']['msgBody']['vehicleInsuranceInf']['maxLossAmount'] ?? '';
+        $obj['maxLossAmount'] = $maxLossAmountMap[$maxLossAmount] ?? $maxLossAmount;
         return $obj;
     }
 
-    function getCarInsurance_wanghan($postData){
+    function getCarInsurance_wanghan($postData)
+    {
 
         $map = [
-            'carDamage'=>['1'=>'是','0'=>'否', 'z'=>'空值','-1'=>'异常'],
-            'effectivePolicyCi'=> ['1'=>'是','0'=>'否', 'z'=>'空值','-1'=>'异常'],
-            'effectivePolicyCo'=>['1'=>'是','0'=>'否', 'z'=>'空值','-1'=>'异常'],
-            'risksNumber'=>['1'=>'3 次及以上','0'=>'0-3 次反', 'z'=>'空值','-1'=>'异常'],
-            'robberRisk'=>['1'=>'是','0'=>'否', 'z'=>'空值','-1'=>'异常'],
-            'settlemenOfClaVehHis'=>['1'=>'有重大事故','0'=>'无重大事故', 'z'=>'空值','-1'=>'异常'],
-            'strengthenRisk'=>['1'=>'是','0'=>'否', 'z'=>'空值','-1'=>'异常'],
-            'threePartyRisks'=>['1'=>'是','0'=>'否', 'z'=>'空值','-1'=>'异常'],
-            'transferNumber' => ['2'=>'5次及以上','1'=>'3到5次','0'=>'0到3次', 'z'=>'空值','-1'=>'异常'],
+            'carDamage' => ['1' => '是', '0' => '否', 'z' => '空值', '-1' => '异常'],
+            'effectivePolicyCi' => ['1' => '是', '0' => '否', 'z' => '空值', '-1' => '异常'],
+            'effectivePolicyCo' => ['1' => '是', '0' => '否', 'z' => '空值', '-1' => '异常'],
+            'risksNumber' => ['1' => '3 次及以上', '0' => '0-3 次反', 'z' => '空值', '-1' => '异常'],
+            'robberRisk' => ['1' => '是', '0' => '否', 'z' => '空值', '-1' => '异常'],
+            'settlemenOfClaVehHis' => ['1' => '有重大事故', '0' => '无重大事故', 'z' => '空值', '-1' => '异常'],
+            'strengthenRisk' => ['1' => '是', '0' => '否', 'z' => '空值', '-1' => '异常'],
+            'threePartyRisks' => ['1' => '是', '0' => '否', 'z' => '空值', '-1' => '异常'],
+            'transferNumber' => ['2' => '5次及以上', '1' => '3到5次', '0' => '0到3次', 'z' => '空值', '-1' => '异常'],
         ];
         $codes = [
-            '711004','711005','711006','711011',
-            '711019','711009','711010','711013',
-            '711014','711015','711016'
+            '711004', '711005', '711006', '711011',
+            '711019', '711009', '711010', '711013',
+            '711014', '711015', '711016'
         ];
 
         $csp = CspService::getInstance()->create();
@@ -347,21 +351,21 @@ Eof;
         //第一个业务接口
         foreach ($codes as $bizFunc) {
             $postData['bizFunc'] = $bizFunc;
-            $csp->add($bizFunc,function () use ($postData){
+            $csp->add($bizFunc, function () use ($postData) {
                 return $this->queryInancialBank($postData);
             });
         }
 
-        $final=CspService::getInstance()->exec($csp);
+        $final = CspService::getInstance()->exec($csp);
         $obj = [];
         foreach ($final as $val) {
-            if(!isset($val['response']['msgBody']['vehicleRspInf'])){
+            if (!isset($val['response']['msgBody']['vehicleRspInf'])) {
                 continue;
             }
-            foreach ($val['response']['msgBody']['vehicleRspInf'] as $k=>$v){
+            foreach ($val['response']['msgBody']['vehicleRspInf'] as $k => $v) {
 
-                if($v!=""){
-                    $obj[$k] = $map[$k][$v]??$v;
+                if ($v != "") {
+                    $obj[$k] = $map[$k][$v] ?? $v;
                 }
             }
         }
@@ -398,36 +402,36 @@ Eof;
      */
     public function queryInancialBank($postData)
     {
-        if(!isset($this->bizFuncArr[$postData['bizFunc']])){
-            return ['subMsg'=>"bizFunc{$postData['bizFunc']}错误",'subCode'=>201];
+        if (!isset($this->bizFuncArr[$postData['bizFunc']])) {
+            return ['subMsg' => "bizFunc{$postData['bizFunc']}错误", 'subCode' => 201];
         }
-        $method      = 'gnete.upbc.vehicle.queryInancialBank';
-        $time        = time();
-        $sndDt       = date('YmdHis', $time);
-        $merOrdrNo   = $this->bizFuncArr[$postData['bizFunc']] . date('Ymd', $time) . control::randNum(9);
+        $method = 'gnete.upbc.vehicle.queryInancialBank';
+        $time = time();
+        $sndDt = date('YmdHis', $time);
+        $merOrdrNo = $this->bizFuncArr[$postData['bizFunc']] . date('Ymd', $time) . control::randNum(9);
         $biz_content = [
-            'sndDt'     => $sndDt,
+            'sndDt' => $sndDt,
             'busiMerNo' => $this->bizFuncArr[$postData['bizFunc']],
-            'msgBody'   => [
-                'busiId'           => '00270001',
+            'msgBody' => [
+                'busiId' => '00270001',
                 'vehicleVerifyInf' => [
-                    'name'             => $postData['name'],           //张万珍',
-                    'userNo'           => $postData['vin'],         //'888888',
-                    'certType'         => 0,       //'0',
-                    'certNo'           => $postData['certNo'],         //'142129195506080532',
-                    'vin'              => $postData['vin'],            //'LVSHFC0HH309074',
-                    'licenseNo'        => $postData['licenseNo'],      //'京08NN2',
-                    'areaNo'           => $postData['areaNo'],
+                    'name' => $postData['name'],           //张万珍',
+                    'userNo' => $postData['vin'],         //'888888',
+                    'certType' => 0,       //'0',
+                    'certNo' => $postData['certNo'],         //'142129195506080532',
+                    'vin' => $postData['vin'],            //'LVSHFC0HH309074',
+                    'licenseNo' => $postData['licenseNo'],      //'京08NN2',
+                    'areaNo' => $postData['areaNo'],
                     'firstBeneficiary' => $postData['firstBeneficiary'],
                 ],
-                'bizFunc'          => $postData['bizFunc'],//'711004',
-                'merOrdrNo'        => $merOrdrNo,
+                'bizFunc' => $postData['bizFunc'],//'711004',
+                'merOrdrNo' => $merOrdrNo,
             ]
         ];
         list($postData, $header) = $this->rsaData($method, $time, $biz_content);
 
         $res = (new CoHttpClient())
-            ->useCache(false)
+            ->useCache(true)
             ->needJsonDecode(false)
             ->send($this->url, $postData, $header, ['enableSSL' => true], 'postjson');
         dingAlarm('金融风控查询', ['$res' => json_encode($res), '$biz_content' => json_encode($biz_content)]);
@@ -439,29 +443,29 @@ Eof;
      */
     public function queryVehicleCount($postData)
     {
-        $method      = 'gnete.upbc.vehicle.queryVehicleCount';
-        $time        = time();
-        $sndDt       = date('YmdHis', $time);
-        $merOrdrNo   = $this->busiMerno . date('Ymd', $time) . control::randNum(9);
+        $method = 'gnete.upbc.vehicle.queryVehicleCount';
+        $time = time();
+        $sndDt = date('YmdHis', $time);
+        $merOrdrNo = $this->busiMerno . date('Ymd', $time) . control::randNum(9);
         $biz_content = [
-            'sndDt'     => $sndDt,
+            'sndDt' => $sndDt,
             'busiMerNo' => $this->busiMerno,
-            'msgBody'   => [
-                'busiId'           => '00270002',
+            'msgBody' => [
+                'busiId' => '00270002',
                 'vehicleVerifyInf' => [
-                    'certNo'   => '150121199110112910',
+                    'certNo' => '150121199110112910',
                     'certType' => '0',
-                    'userNo'   => '888888',
-                    'name'     => '',
-                    'vin'      => ''
+                    'userNo' => '888888',
+                    'name' => '',
+                    'vin' => ''
                 ],
-                'bizFunc'          => '721001',
-                'merOrdrNo'        => $merOrdrNo,
+                'bizFunc' => '721001',
+                'merOrdrNo' => $merOrdrNo,
             ]
         ];
         list($postData, $header) = $this->rsaData($method, $time, $biz_content);
         $res = (new CoHttpClient())
-            ->useCache(false)
+            ->useCache(true)
             ->needJsonDecode(false)
             ->send($this->url, $postData, $header, ['enableSSL' => true], 'postjson');
         dingAlarm('车辆数量查询', ['$res' => json_encode($res)]);
@@ -473,26 +477,26 @@ Eof;
      */
     public function rsaData($method, $time, $biz_content)
     {
-        $signArr    = [
-            'app_id'      => $this->app_id,
-            'method'      => $method,
-            'timestamp'   => date('Y-m-d H:i:s', $time),
-            'v'           => $this->v,
-            'sign_alg'    => $this->sign_alg,
+        $signArr = [
+            'app_id' => $this->app_id,
+            'method' => $method,
+            'timestamp' => date('Y-m-d H:i:s', $time),
+            'v' => $this->v,
+            'sign_alg' => $this->sign_alg,
             'biz_content' => json_encode($biz_content),
         ];
-        $postArr    = $signArr;
-        $content    = http_build_query($signArr);
+        $postArr = $signArr;
+        $content = http_build_query($signArr);
         $privateKey = openssl_get_privatekey($this->privateKey);
         openssl_sign($content, $resign, $privateKey, OPENSSL_ALGO_SHA256);
         openssl_free_key($privateKey);
         //签名转换的byte数组 256
         $signByteArr = $this->getBytes($resign);
         //对签名进行处理，获取发送的签名内容 512位十六进制字符串
-        $signArr         = $this->encodeHex($signByteArr);
-        $sign            = implode($signArr);
+        $signArr = $this->encodeHex($signByteArr);
+        $sign = implode($signArr);
         $postArr['sign'] = $sign;
-        $header          = [
+        $header = [
             'content-type' => 'text/json;charset=UTF-8'
         ];
         return [http_build_query($postArr), $header];
@@ -582,28 +586,28 @@ Eof;
      */
     public function queryUsedVehicleInfo($postData)
     {
-        $method      = 'gnete.upbc.vehicle.queryUsedVehicleInfo';
-        $time        = time();
-        $sndDt       = date('YmdHis', $time);
-        $merOrdrNo   = $this->busiMerno1 . date('Ymd', $time) . control::randNum(9);
+        $method = 'gnete.upbc.vehicle.queryUsedVehicleInfo';
+        $time = time();
+        $sndDt = date('YmdHis', $time);
+        $merOrdrNo = $this->busiMerno1 . date('Ymd', $time) . control::randNum(9);
         $biz_content = [
-            'sndDt'     => $sndDt,
+            'sndDt' => $sndDt,
             'busiMerNo' => $this->busiMerno1,
-            'msgBody'   => [
-                'busiId'           => '00270007',
+            'msgBody' => [
+                'busiId' => '00270007',
                 'vehicleVerifyInf' => [
-                    'userNo'           => $postData['userNo'],         //'888888',
-                    'vin'              => $postData['vin'],            //'LVSHFC0HH309074',
-                    'licenseNo'        => $postData['licenseNo'],      //'京08NN2',
-                    'licenseNoType'    => $postData['licenseNoType'],
+                    'userNo' => $postData['userNo'],         //'888888',
+                    'vin' => $postData['vin'],            //'LVSHFC0HH309074',
+                    'licenseNo' => $postData['licenseNo'],      //'京08NN2',
+                    'licenseNoType' => $postData['licenseNoType'],
                 ],
-                'bizFunc'          => '731001',
-                'merOrdrNo'        => $merOrdrNo,
+                'bizFunc' => '731001',
+                'merOrdrNo' => $merOrdrNo,
             ]
         ];
         list($postData, $header) = $this->rsaData($method, $time, $biz_content);
         $res = (new CoHttpClient())
-            ->useCache(false)
+            ->useCache(true)
             ->needJsonDecode(false)
             ->send($this->url, $postData, $header, ['enableSSL' => true], 'postjson');
         dingAlarm('二手车信息查询', ['$res' => json_encode($res), '$biz_content' => json_encode($biz_content)]);
@@ -617,7 +621,7 @@ Eof;
      */
     public function getBytes($str)
     {
-        $len   = strlen($str);
+        $len = strlen($str);
         $bytes = array();
         for ($i = 0; $i < $len; $i++) {
             if (ord($str[$i]) >= 128) {
@@ -635,10 +639,10 @@ Eof;
     public function encodeHex($data)
     {
         $digits_lower = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');
-        $toDigits     = $digits_lower;
-        $len          = count($data);
-        $i            = 0;
-        $out          = array();
+        $toDigits = $digits_lower;
+        $len = count($data);
+        $i = 0;
+        $out = array();
         for ($var = 0; $i < $len; ++$i) {
 
             $var1 = 240 & $data[$i];
@@ -648,7 +652,7 @@ Eof;
             $out[$var] = $toDigits[$index1];
 
             $var++;
-            $index2    = 15 & $data[$i];
+            $index2 = 15 & $data[$i];
             $out[$var] = $toDigits[$index2];
             $var++;
         }

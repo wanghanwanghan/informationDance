@@ -3,6 +3,7 @@
 namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
+use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
@@ -196,13 +197,13 @@ class RunReadAndDealXls extends AbstractCronTask
             $value2 = $this->strtr_func($one[2]);  
             $value3 = $this->strtr_func($one[3]);   
             $tmpRes = (new XinDongService())->matchContactNameByWeiXinName($value0,$value2);
-            // CommonService::getInstance()->log4PHP('matchContactNameByWeiXinName'.json_encode(
-            //     [
-            //         'value' => [$value0,$value2],
-            //         'params' => $value0,
-            //         'res' => $tmpRes
-            //     ]
-            // )); 
+             CommonService::getInstance()->log4PHP('matchContactNameByWeiXinName'.json_encode(
+                 [
+                     'value' => [$value0,$value2],
+                     'params' => $value0,
+                     'res' => $tmpRes
+                 ]
+             )); 
             yield $datas[] = [
                 $value0,
                 $value1, 
@@ -242,7 +243,7 @@ class RunReadAndDealXls extends AbstractCronTask
         $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用2 '.$memory .' '.$file );
 
         @unlink($this->workPath . $file);
-
+        ConfigInfo::setIsDone("RunReadAndDealXls");
         return true ;  
     }
 
@@ -269,7 +270,7 @@ class RunReadAndDealXls extends AbstractCronTask
         $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用2 '.$memory .' '.$file );
 
         @unlink($this->workPath . $file);
-
+        ConfigInfo::setIsDone("RunReadAndDealXls");
         return true ;  
     }
 
@@ -296,7 +297,7 @@ class RunReadAndDealXls extends AbstractCronTask
         $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用2 '.$memory .' '.$file );
 
         @unlink($this->workPath . $file);
-
+        ConfigInfo::setIsDone("RunReadAndDealXls");
         return true ;  
     }
 
@@ -325,13 +326,21 @@ class RunReadAndDealXls extends AbstractCronTask
         $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用2 '.$memory .' '.$newFile );
 
         @unlink($this->workPath . $newFile);
-
+        ConfigInfo::setIsDone("RunReadAndDealXls");
         return true ;  
     }
 
     function run(int $taskId, int $workerIndex): bool
     {
+        if(
+            !ConfigInfo::checkCrontabIfCanRun("RunReadAndDealXls")
+        ){
+            return    CommonService::getInstance()->log4PHP(__CLASS__ . ' is running RunReadAndDealXls');
 
+        }
+        CommonService::getInstance()->log4PHP(__CLASS__ . ' start running  ');
+
+        ConfigInfo::setIsRunning("RunReadAndDealXls");
 
         $debugLog = true;
         
@@ -351,21 +360,21 @@ class RunReadAndDealXls extends AbstractCronTask
 
         // 匹配企业名称
         if($fileNameArr[1] == 'matchName'){
-            return true;
+//            return true;
             $debugLog &&  CommonService::getInstance()->log4PHP('matchName  '.($file) );
             return $this->matchName($file,$debugLog);
         }
 
         // 匹配微信吗名
         if($fileNameArr[1] == 'matchWeiXinName'){
-            return true;
+//            return true;
             $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
             return $this->matchWeiXinName($file,$debugLog);
         }
 
         // 校验手机号
         if($fileNameArr[1] == 'checkMobile'){
-            return true;
+//            return true;
             $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
             return $this->checkMobile($file,$debugLog);
         }
@@ -375,6 +384,8 @@ class RunReadAndDealXls extends AbstractCronTask
             $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
             return $this->checkMobileV2($file,$debugLog);
         }
+
+        ConfigInfo::setIsDone("RunReadAndDealXls");
 
         return true ;   
     }

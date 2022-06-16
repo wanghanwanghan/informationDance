@@ -16,7 +16,7 @@ class AdminUserFinanceExportDataRecord extends ModelBase
     protected $createTime = 'created_at';
     protected $updateTime = 'updated_at'; 
     
-    static $stateInit = 0;
+    static $stateInit = 1;
     static $stateParsed = 5;
     static $stateExported = 10;
 

@@ -97,7 +97,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         )->field(['id','user_finance_data_id'])
         ->all(); 
 
-        return $res;
+        return $dataRes;
     }
 
 

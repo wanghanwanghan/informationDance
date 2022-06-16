@@ -454,8 +454,8 @@ class XinDongController extends ProvideBase
 
         $this->spendMoney = 1;
 
-        if ($this->limitEntNumByUserId(__FUNCTION__, $entName, 50)) {
-            return $this->writeJson(201, null, null, '请求次数已经达到上限50');
+        if ($this->limitEntNumByUserId(__FUNCTION__, $entName, 10000)) {
+            return $this->writeJson(201, null, null, '请求次数已经达到上限10000');
         }
         if (empty($entName)) {
             return $this->writeJson(201, null, null, 'entName不能是空');
