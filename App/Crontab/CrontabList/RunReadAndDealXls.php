@@ -3,6 +3,7 @@
 namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
+use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
@@ -331,6 +332,13 @@ class RunReadAndDealXls extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
+        ConfigInfo::setIsRunning("RunReadAndDealXls");
+
+        sleep(120);
+
+        ConfigInfo::setIsDone("RunReadAndDealXls");
+
+        return true;
         if (!$this->crontabBase->withoutOverlapping(self::getTaskName())) {
             CommonService::getInstance()->log4PHP(__CLASS__ . '开始-NO');
             return true;
