@@ -47,7 +47,7 @@ class DianZiQianController extends ProvideBase
         $phone = $this->getRequestData('phone');
         $city = $this->getRequestData('city');
         $regAddress = $this->getRequestData('regAddress');
-
+        $file = $this->getRequestData('file');
         $postData = [
             'entName' => $entName,
             'socialCredit' => $socialCredit,
@@ -56,6 +56,7 @@ class DianZiQianController extends ProvideBase
             'phone' => $phone,
             'city' => $city,
             'regAddress' => $regAddress,
+            'file' => $file
         ];
         CommonService::getInstance()->log4PHP([$postData],'info','getAuthFile');
 

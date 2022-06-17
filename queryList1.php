@@ -22,6 +22,7 @@ class QueryList1 extends AbstractProcess
 {
     protected function run($arg)
     {
+        //
         $this->get_hg();
     }
 
