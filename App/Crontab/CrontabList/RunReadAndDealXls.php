@@ -342,7 +342,7 @@ class RunReadAndDealXls extends AbstractCronTask
         }
         CommonService::getInstance()->log4PHP(__CLASS__ . ' start running  ');
 
-        ConfigInfo::setIsRunning("RunReadAndDealXls");
+
 
         $debugLog = true;
 
@@ -352,7 +352,7 @@ class RunReadAndDealXls extends AbstractCronTask
         if(empty($files)){
             return true;
         }
-
+        ConfigInfo::setIsRunning("RunReadAndDealXls");
         // 一个一个的跑
 
         $file = pathinfo(array_shift($files))['basename'];
