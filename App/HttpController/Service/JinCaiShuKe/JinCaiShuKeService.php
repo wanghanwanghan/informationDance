@@ -4,9 +4,11 @@ namespace App\HttpController\Service\JinCaiShuKe;
 
 use App\HttpController\Models\Api\InvoiceIn;
 use App\HttpController\Models\Api\InvoiceOut;
+use App\HttpController\Models\Api\JincaiRwhLog;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
+use wanghanwanghan\someUtils\moudles\resp\create;
 
 class JinCaiShuKeService extends ServiceBase
 {
@@ -69,13 +71,67 @@ class JinCaiShuKeService extends ServiceBase
             ));
     }
 
+    public function getRwhData(){
+        $list = JincaiRwhLog::create()->where('status = 0')->all();
+        if(empty($list)){
+            return true;
+        }
+        foreach ($list as $log){
+            $data = $this->S000523( $log->getAttr('nsrsbh'),  $log->getAttr('rwh'),1,1000);
+            $content = $data['result']['content'];
+            if(empty($content)) {
+                dingAlarm('金财数科获取发票数据为空S000523',['$data'=>json_encode($data)]);
+                continue;
+            }
+            if(count($content['fpxxs']['data']) == 1000){
+                for($i=0;$i<10;$i++){
+                    $vdata = $this->S000523( $log->getAttr('nsrsbh'),  $log->getAttr('rwh'),1,1000);
+                    $content['fpxxs']['data'] = array_merge($content['fpxxs']['data'],$vdata['result']['content']['fpxxs']['data']);
+                    if(count($vdata['result']['content']['fpxxs']['data'])<1000){
+                        break;
+                    }
+                }
+            }
+            CommonService::getInstance()->log4PHP($data,'info','http_return_data');
+            foreach ($content['fpxxs']['data'] as $val){
+                $insert = [
+                    'invoiceCode'=>$val['fpdm'],
+                    'invoiceNumber'=>$val['fphm'],
+                    'billingDate'=>$val['kprq'],
+                    'goodsName'=>$val['mxs']['xmmc'],
+                    'totalAmount'=>$val['hjje'],
+                    'invoiceType'=>$val['fplx'],
+                    'state'=>$val['fpzt'],
+                    'salesTaxNo'=>$val['xfsh'],
+                    'salesTaxName'=>$val['xfmc'],
+                    'purchaserTaxNo'=>$val['gfsh'],
+                    'purchaserName'=>$val['gfmc'],
+                ];
+                if($content['sjlx'] == 2){
+                    $invoiceInData = InvoiceIn::create()->where("invoiceCode = '{$insert['invoiceCode']}' and invoiceNumber = '{$insert['invoiceNumber']}'")->get();
+                    if(empty($invoiceInData)){
+                        InvoiceIn::create()->data($insert)->save();
+                    }
+                }else{
+                    $invoiceOutData = InvoiceOut::create()->where("invoiceCode = '{$insert['invoiceCode']}' and invoiceNumber = '{$insert['invoiceNumber']}'")->get();
+                    if(empty($invoiceOutData)){
+                        InvoiceOut::create()->data($insert)->save();
+                    }
+                }
+            }
+            JincaiRwhLog::create()->get($log->getAttr('id'))->update(['status'=>1]);
+        }
+    }
     public function get24Month($nsrsbh)
     {
         for ($i = 1; $i <= 24; $i++) {
             $date      = date('Y-m', strtotime('-' . $i . ' month'));
             $startDate = $date . "-01";
             $endDate   = date('Y-m-d', strtotime("$startDate +1 month -1 day"));
-
+            $log = JincaiRwhLog::create()->where("nsrsbh='{$nsrsbh}' and start_date = '{$startDate}'")->get();
+            if(!empty($log)){
+                continue;
+            }
             $res = $this->S000519($nsrsbh, $startDate, $endDate);
             $rwhArr = $res['result']['content'];
             if(empty($rwhArr)){
@@ -83,48 +139,12 @@ class JinCaiShuKeService extends ServiceBase
                 continue;
             }
             foreach ($rwhArr as $value){
-                $data = $this->S000523( $nsrsbh,  $value['rwh'],1,1000);
-                $content = $data['result']['content'];
-                if(empty($content)) {
-                    dingAlarm('金财数科获取发票数据为空S000523',['$data'=>json_encode($data)]);
-                    continue;
-                }
-                if(count($content['fpxxs']['data']) == 1000){
-                    for($i=0;$i<10;$i++){
-                        $vdata = $this->S000523( $nsrsbh,  $value['rwh'],1,1000);
-                        $content['fpxxs']['data'] = array_merge($content['fpxxs']['data'],$vdata['result']['content']['fpxxs']['data']);
-                        if(count($vdata['result']['content']['fpxxs']['data'])<1000){
-                            break;
-                        }
-                    }
-                }
-                CommonService::getInstance()->log4PHP($data,'info','http_return_data');
-                foreach ($content['fpxxs']['data'] as $val){
-                    $insert = [
-                        'invoiceCode'=>$val['fpdm'],
-                        'invoiceNumber'=>$val['fphm'],
-                        'billingDate'=>$val['kprq'],
-                        'goodsName'=>$val['mxs']['xmmc'],
-                        'totalAmount'=>$val['hjje'],
-                        'invoiceType'=>$val['fplx'],
-                        'state'=>$val['fpzt'],
-                        'salesTaxNo'=>$val['xfsh'],
-                        'salesTaxName'=>$val['xfmc'],
-                        'purchaserTaxNo'=>$val['gfsh'],
-                        'purchaserName'=>$val['gfmc'],
-                    ];
-                    if($content['sjlx'] == 2){
-                        $invoiceInData = InvoiceIn::create()->where("invoiceCode = '{$insert['invoiceCode']}' and invoiceNumber = '{$insert['invoiceNumber']}'")->get();
-                        if(empty($invoiceInData)){
-                            InvoiceIn::create()->data($insert)->save();
-                        }
-                    }else{
-                        $invoiceOutData = InvoiceOut::create()->where("invoiceCode = '{$insert['invoiceCode']}' and invoiceNumber = '{$insert['invoiceNumber']}'")->get();
-                        if(empty($invoiceOutData)){
-                            InvoiceOut::create()->data($insert)->save();
-                        }
-                    }
-                }
+                $insertLog = [
+                    'rwh' => $value['rwh'],
+                    'nsrsbh' => $nsrsbh,
+                    'start_date' => $startDate
+                ];
+                JincaiRwhLog::create()->data($insertLog)->save();
             }
         }
         return $this->createReturn(200, '',  null);

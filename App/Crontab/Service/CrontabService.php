@@ -9,6 +9,7 @@ use App\Crontab\CrontabList\GetAuthBook;
 use App\Crontab\CrontabList\GetInvData;
 use App\Crontab\CrontabList\MoveOut;
 use App\Crontab\CrontabList\RunDianZiQianGetPdf;
+use App\Crontab\CrontabList\RunJinCaiShuKeRWH;
 use App\Crontab\CrontabList\RunSaiMengHuiZhiCaiWu;
 use App\Crontab\CrontabList\RunSouKeUploadFiles;
 use App\Crontab\CrontabList\RunCompleteCompanyData;
@@ -42,8 +43,13 @@ class CrontabService
         $this->RunShouQuanCheXian();
         $this->FillEntAllField();//补全给筛选出的企业 <全字段>RunDealFinanceCompanyData
 //        $this->RunDealFinanceCompanyData();//补全给筛选出的企业 <全字段>
-
+        $this->RunJinCaiShuKeRWH();//金财数科通过任务号获取发票
         return true;
+    }
+
+    private function RunJinCaiShuKeRWH():Crontab
+    {
+        return Crontab::getInstance()->addTask(RunJinCaiShuKeRWH::class);
     }
 
     //生成深度报告
