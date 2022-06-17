@@ -20,7 +20,15 @@ class AdminUserFinanceConfig extends ModelBase
             'user_id' => $userId,     
             'status' => 1,  
         ])->all();  
-        return $res[0] ? json_encode( $res[0]) : '';
+        return $res;
+    }
+
+    static function getConfigDataByUserId($userId){
+        $res =  AdminUserFinanceConfig::create()->where([
+            'user_id' => $userId,
+            'status' => 1,
+        ])->all();
+        return $res ? $res->toArray() : [];
     }
 
     static function addRecord($requestData){
@@ -35,5 +43,30 @@ class AdminUserFinanceConfig extends ModelBase
             'status' => $requestData['status'],  
         ])->save();  
     }
-      
+
+    public static function checkExportYearsNums($userid,$yearsNums){
+        $info = self::getConfigByUserId($userid);
+        $data = $info->toArray();
+        $config = json_decode($data['finance_config'],true);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'checkExportYearsNums',
+                '$userid' => $userid,
+                '$yearsNums' => $yearsNums,
+                '$config' => $config,
+            ])
+        );
+        if($config['allowed_total_years_num'] < $yearsNums){
+            return CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'checkExportYearsNums false ',
+                    '$userid' => $userid,
+                    '$yearsNums' => $yearsNums,
+                    '$config' => $config,
+                    'allowed_total_years_num' => $config['allowed_total_years_num']
+                ])
+            );
+        }
+        return true ;
+    }
 }

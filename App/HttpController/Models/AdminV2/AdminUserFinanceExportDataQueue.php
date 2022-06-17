@@ -18,6 +18,7 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     static  $state_init = 1;
     static  $state_init_cname =  '初始';
 
+
     static  $state_succeed = 10;
     static  $state_succeed_cname =  '成功';
 
@@ -34,12 +35,30 @@ class AdminUserFinanceExportDataQueue extends ModelBase
         ]);
     }
 
+    static  function  addRecordV2($info){
+        if(
+            AdminUserFinanceExportDataQueue::findBySql(
+                " WHERE upload_record_id = ".$info['upload_record_id'].
+                "  AND status = ".AdminUserFinanceExportDataQueue::$state_init
+            )
+        ){
+            return  true;
+        }
+
+        return AdminUserFinanceExportDataQueue::addRecord(
+            [
+                'batch' => $info['batch'],
+                'upload_record_id' =>  $info['upload_record_id'],
+            ]
+        );
+    }
 
     public static function addRecord($requestData){
         try {
            $res =  AdminUserFinanceExportDataQueue::create()->data([
                 'upload_record_id' => $requestData['upload_record_id'],
                 'touch_time' => $requestData['touch_time'],
+                'batch' => $requestData['batch'],
                 'status' => $requestData['status']?:1,
            ])->save();
 
