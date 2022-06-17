@@ -2,6 +2,6 @@
 
 git pull
 
-#rm -f ./Log/* ./Static/Log/*
+rm -f ./Log/* ./Static/Log/*
 
 php easyswoole restart produce
