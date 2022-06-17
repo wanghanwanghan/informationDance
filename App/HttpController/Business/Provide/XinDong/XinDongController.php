@@ -1820,6 +1820,22 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    public function get24Month(){
+        $nsrsbh = $this->getRequestData('nsrsbh');
+        $postData = [
+            'nsrsbh' => $nsrsbh,
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new JinCaiShuKeService())
+                ->setCheckRespFlag(true)
+                ->get24Month($postData['nsrsbh']);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
     //发票认证
     function invCertification(): bool
     {

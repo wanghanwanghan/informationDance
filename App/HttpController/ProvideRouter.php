@@ -236,7 +236,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/invCertification', $prefix . 'invCertification');//金财发票认证
             $routeCollector->addRoute(['GET', 'POST'], '/getEntInfoByName', $prefix . 'getEntInfoByName');//
             $routeCollector->addRoute(['GET', 'POST'], '/testCsp', $prefix . 'testCsp');//
-
+            $routeCollector->addRoute(['GET', 'POST'], '/get24Month', $prefix . 'get24Month');//
         });
 
         return true;
