@@ -72,7 +72,8 @@ class JinCaiShuKeService extends ServiceBase
     }
 
     public function getRwhData(){
-        $list = JincaiRwhLog::create()->where('status = 0')->all();
+        $time = time()-86400;
+        $list = JincaiRwhLog::create()->where('status = 0 and created_at<'.$time)->all();
         if(empty($list)){
             return true;
         }
