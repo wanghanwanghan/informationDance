@@ -76,53 +76,54 @@ class JinCaiShuKeService extends ServiceBase
             $endDate   = date('Y-m-d', strtotime("$startDate +1 month -1 day"));
 
             $res = $this->S000519($nsrsbh, $startDate, $endDate);
-            $rwh = $res['result']['content']['rwh'];
-            if(empty($rwh)){
+            $rwhArr = $res['result']['content'];
+            if(empty($rwhArr)){
                 dingAlarm('金财数科发票归集数据为空S000519',['$res'=>json_encode($res)]);
                 continue;
             }
-            $data = $this->S000523( $nsrsbh,  $rwh,1,1000);
-            $content = $data['result']['content'];
-            if(empty($content)) {
-                dingAlarm('金财数科获取发票数据为空S000523',['$data'=>json_encode($data)]);
-                continue;
-            }
-            if(count($content['fpxxs']['data']) == 1000){
-                for($i=0;$i<10;$i++){
-                    $vdata = $this->S000523( $nsrsbh,  $rwh,1,1000);
-                    $content['fpxxs']['data'] = array_merge($content['fpxxs']['data'],$vdata['result']['content']['fpxxs']['data']);
-                    if(count($vdata['result']['content']['fpxxs']['data'])<1000){
-                        break;
+            foreach ($rwhArr as $value){
+                $data = $this->S000523( $nsrsbh,  $value['rwh'],1,1000);
+                $content = $data['result']['content'];
+                if(empty($content)) {
+                    dingAlarm('金财数科获取发票数据为空S000523',['$data'=>json_encode($data)]);
+                    continue;
+                }
+                if(count($content['fpxxs']['data']) == 1000){
+                    for($i=0;$i<10;$i++){
+                        $vdata = $this->S000523( $nsrsbh,  $value['rwh'],1,1000);
+                        $content['fpxxs']['data'] = array_merge($content['fpxxs']['data'],$vdata['result']['content']['fpxxs']['data']);
+                        if(count($vdata['result']['content']['fpxxs']['data'])<1000){
+                            break;
+                        }
+                    }
+                }
+                foreach ($content['fpxxs']['data'] as $val){
+                    $insert = [
+                        'invoiceCode'=>$val['fpdm'],
+                        'invoiceNumber'=>$val['fphm'],
+                        'billingDate'=>$val['kprq'],
+                        'goodsName'=>$val['mxs']['xmmc'],
+                        'totalAmount'=>$val['hjje'],
+                        'invoiceType'=>$val['fplx'],
+                        'state'=>$val['fpzt'],
+                        'salesTaxNo'=>$val['xfsh'],
+                        'salesTaxName'=>$val['xfmc'],
+                        'purchaserTaxNo'=>$val['gfsh'],
+                        'purchaserName'=>$val['gfmc'],
+                    ];
+                    if($content['sjlx'] == 2){
+                        $invoiceInData = InvoiceIn::create()->where("invoiceCode = '{$insert['invoiceCode']}' and invoiceNumber = '{$insert['invoiceNumber']}'")->get();
+                        if(empty($invoiceInData)){
+                            InvoiceIn::create()->data($insert)->save();
+                        }
+                    }else{
+                        $invoiceOutData = InvoiceOut::create()->where("invoiceCode = '{$insert['invoiceCode']}' and invoiceNumber = '{$insert['invoiceNumber']}'")->get();
+                        if(empty($invoiceOutData)){
+                            InvoiceOut::create()->data($insert)->save();
+                        }
                     }
                 }
             }
-            foreach ($content['fpxxs']['data'] as $val){
-                $insert = [
-                    'invoiceCode'=>$val['fpdm'],
-                    'invoiceNumber'=>$val['fphm'],
-                    'billingDate'=>$val['kprq'],
-                    'goodsName'=>$val['mxs']['xmmc'],
-                    'totalAmount'=>$val['hjje'],
-                    'invoiceType'=>$val['fplx'],
-                    'state'=>$val['fpzt'],
-                    'salesTaxNo'=>$val['xfsh'],
-                    'salesTaxName'=>$val['xfmc'],
-                    'purchaserTaxNo'=>$val['gfsh'],
-                    'purchaserName'=>$val['gfmc'],
-                ];
-                if($content['sjlx'] == 2){
-                    $invoiceInData = InvoiceIn::create()->where("invoiceCode = '{$insert['invoiceCode']}' and invoiceNumber = '{$insert['invoiceNumber']}'")->get();
-                    if(empty($invoiceInData)){
-                        InvoiceIn::create()->data($insert)->save();
-                    }
-                }else{
-                    $invoiceOutData = InvoiceOut::create()->where("invoiceCode = '{$insert['invoiceCode']}' and invoiceNumber = '{$insert['invoiceNumber']}'")->get();
-                    if(empty($invoiceOutData)){
-                        InvoiceOut::create()->data($insert)->save();
-                    }
-                }
-            }
-
         }
         return $this->createReturn(200, '',  null);
     }
