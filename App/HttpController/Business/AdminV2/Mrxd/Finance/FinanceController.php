@@ -4,8 +4,10 @@ namespace App\HttpController\Business\AdminV2\Mrxd\Finance;
 
 use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;
 use App\HttpController\Models\AdminNew\AdminNewUser;
+use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\AdminV2\AdminMenuItems;
 use App\HttpController\Models\AdminV2\AdminNewMenu;
+use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Service\AdminRole\AdminPrivilegedUser;
@@ -94,38 +96,56 @@ class FinanceController extends ControllerBase
         $requestData = $this->getRequestData(); 
         if (
             !$requestData['user_id'] ||
-            //包的年限
-//            !$requestData['annually_years'] ||
-//            !$requestData['annually_price']  ||
-            !$requestData['price_config'] ||
             !$requestData['allowed_fields'] ||
             !$requestData['type'] ||
-            !$requestData['needs_confirm'] ||
-            !$requestData['cache']   
+            !$requestData['single_year_charge_as_annual'] ||
+            !$requestData['allowed_total_years_num']
         ) {
             return $this->writeJson(201);
         }
         
         if(
-            AdminUserFinanceConfig::getConfigByUserId(
+            AdminUserFinanceConfig::getConfigDataByUserId(
                 $requestData['user_id']
             )
         ){
             return $this->writeJson(203,[],[],'一个用户只能有一个有效配置');
         }
-        AdminUserFinanceConfig::addRecord(
-            [
-                'user_id' => $requestData['user_id'], 
-                //'annually_price' => $requestData['annually_price'],
-                //'annually_years' => $requestData['annually_years'],
-                'price_config' => $requestData['price_config'],
-                'cache' => $requestData['cache'],  
-                'type' => $requestData['type'],  
-                'allowed_fields' => $requestData['allowed_fields'],
-                'needs_confirm' => $requestData['needs_confirm'],
-                'status' => 1,  
-            ]
+
+        $dataItem = [
+            'user_id' => $requestData['user_id'],
+            //包年价格
+            'annually_price' => $requestData['annually_price'],
+            //包年年度
+            'annually_years' => $requestData['annually_years'],
+            'price_config' => $requestData['price_config']?:'',
+            //缓存期
+            'cache' => intval($requestData['cache']),
+            //财务数据类型
+            'type' => $requestData['type'],
+            //允许导出的字段
+            'allowed_fields' => $requestData['allowed_fields'],
+            //导出单年度是否按照包年年度算钱
+            'single_year_charge_as_annual' => $requestData['single_year_charge_as_annual'],
+            //最大允许导出年份数
+            'allowed_total_years_num' => $requestData['allowed_total_years_num'],
+            //是否需要确认
+            'needs_confirm' => $requestData['needs_confirm'],
+            'status' => 1,
+        ];
+        $res = AdminUserFinanceConfig::addRecord(
+            $dataItem
         );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceConfig addRecord',
+                $dataItem,
+                $res
+            ])
+        );
+        if(!$res){
+            return $this->writeJson(203);
+        }
         return $this->writeJson(200);
     }
 
@@ -135,17 +155,31 @@ class FinanceController extends ControllerBase
     public function updateConfig(){
         $requestData = $this->getRequestData(); 
         $info = AdminUserFinanceConfig::create()->where('id',$requestData['id'])->get(); 
-        $info->update([
+        $data = [
             'id' => $requestData['id'],
-            //'annually_price' => $requestData['annually_price'] ?   $requestData['annually_price']: $info['annually_price'],
-            //'annually_years' => $requestData['annually_years'] ? $requestData['annually_years']: $info['annually_years'],
+            'annually_price' => $requestData['annually_price'] ?   $requestData['annually_price']: $info['annually_price'],
+            'annually_years' => $requestData['annually_years'] ? $requestData['annually_years']: $info['annually_years'],
             'price_config' => $requestData['price_config'] ? $requestData['price_config']: $info['normal_years_price_json'],
             'cache' => $requestData['cache'] ? $requestData['cache']: $info['cache'],
             'type' => $requestData['type'] ? $requestData['type']: $info['type'],
+            'single_year_charge_as_annual' => $requestData['single_year_charge_as_annual'] ? $requestData['single_year_charge_as_annual']: $info['single_year_charge_as_annual'],
+            'allowed_total_years_num' => $requestData['allowed_total_years_num'] ? $requestData['allowed_total_years_num']: $info['allowed_total_years_num'],
             'needs_confirm' => $requestData['needs_confirm'] ?
-                    $requestData['needs_confirm']: $info['needs_confirm'],
+                $requestData['needs_confirm']: $info['needs_confirm'],
             'allowed_fields' => $requestData['allowed_fields'] ? $requestData['allowed_fields']: $info['allowed_fields'],
-        ]);
+        ];
+        $res = $info->update($data);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceConfig updateConfig',
+                $data,
+                $res
+            ])
+        );
+        if (!$res){
+            return $this->writeJson(205);
+        }
+
         return $this->writeJson();
     }
 
@@ -175,79 +209,72 @@ class FinanceController extends ControllerBase
     public function uploadeCompanyLists(){
         $years = trim($this->getRequestData('years'));
         if(empty($years) ){
-            return $this->writeJson(206, [] ,   [], '缺少必要参数('.$years.')', true, []); 
+            return $this->writeJson(206, [] ,   [], '缺少年度参数('.$years.')', true, []);
+        }
+
+        //最多导出年限
+        if(
+            !AdminUserFinanceConfig::checkExportYearsNums(
+                $this->loginUserinfo['id'],
+                count(json_decode($years,true))
+            )
+        ){
+            return $this->writeJson(206, [] ,   [], '超出年限！', true, []);
         }
 
         $requestData =  $this->getRequestData();
         $files = $this->request()->getUploadedFiles();
-        CommonService::getInstance()->log4PHP(
-            'uploadeCompanyLists files'.json_encode($files).''
 
-        );
-        CommonService::getInstance()->log4PHP(
-            'uploadeCompanyLists files2'.json_encode($_FILES).''
-
-        );
-        $path = $fileName = '';
 
         $succeedNums = 0;
         foreach ($files as $key => $oneFile) {
-            CommonService::getInstance()->log4PHP(
-                'file  . '.json_encode($oneFile)
-            );
-            if (!$oneFile instanceof UploadFile) {
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        'not instanceof UploadFile '.$oneFile->getClientFilename(),
-                    ])
-                ); 
-//                    continue;
-            }
-
             try {
                 $fileName = $oneFile->getClientFilename();
                 $path = TEMP_FILE_PATH . $fileName;
                 if(file_exists($path)){
                     CommonService::getInstance()->log4PHP(
-                        'file  already exists. '.$path
-                    );  
-                    continue;
-                }
-
-                $res = $oneFile->moveTo($path);  
-                if(!$res){
-                    CommonService::getInstance()->log4PHP(
-                        'move file   failed . '.$path
-                    ); 
-//                    continue;
-                }
-                if(!file_exists($path)){
-                    CommonService::getInstance()->log4PHP(
-                        'file  not  exists. '.$path
+                        'uploadeCompanyLists file  already exists. '.$path
                     );
                     continue;
                 }
+
+                $res = $oneFile->moveTo($path);
+                if(!file_exists($path)){
+                    CommonService::getInstance()->log4PHP(
+                        'uploadeCompanyLists file  not  exists. '.$path
+                    );
+                    continue;
+                }
+
                 $UploadRecordRes =  AdminUserFinanceUploadRecord::findByIdAndFileName(
                     $this->loginUserinfo['id'],   
                     $fileName
                 );
                 if($UploadRecordRes){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode(
+                            [
+                                'uploadeCompanyLists  AdminUserFinanceUploadRecord    exists',
+                                '$path' => $path,
+                            ]
+                        )
+                    );
                     continue;
                 } 
-                
+                $tmpData = [
+                    'user_id' => $this->loginUserinfo['id'],
+                    'file_path' => $path,
+                    'years' => $requestData['years'],
+                    'file_name' => $fileName,
+                    'title' => $requestData['title']?:'',
+                    'reamrk' => $requestData['reamrk']?:'',
+                    'finance_config' => AdminUserFinanceConfig::getConfigDataByUserId(
+                        $this->loginUserinfo['id']
+                    ),
+                    'status' => AdminUserFinanceUploadRecord::$stateInit,
+                ];
                 $addUploadRecordRes = AdminUserFinanceUploadRecord::addUploadRecord(
-                     [
-                        'user_id' => $this->loginUserinfo['id'], 
-                        'file_path' => $path,  
-                        'years' => $requestData['years'],  
-                        'file_name' => $fileName,  
-                        'title' => $requestData['title']?:'',    
-                        'reamrk' => $requestData['reamrk']?:'',  
-                        'finance_config' => AdminUserFinanceConfig::getConfigByUserId(
-                            $this->loginUserinfo['id']
-                        ),   
-                        'status' => AdminUserFinanceUploadRecord::$stateInit,
-                     ]
+                    $tmpData
                  );
                 if(!$addUploadRecordRes){
                     continue;
@@ -257,17 +284,14 @@ class FinanceController extends ControllerBase
             } catch (\Throwable $e) {
                 CommonService::getInstance()->log4PHP(
                     json_encode([
-                        'uploadeCompanyLists getMessage ',
+                        'uploadeCompanyLists failed  ',
                         $e->getMessage(),
                     ])
                 );  
             } 
         }
 
-        return $this->writeJson(200, [], [
-            $this->request()->getUploadedFiles(),
-            $_FILES
-        ],'导入成功 入库文件数量:'.$succeedNums);
+        return $this->writeJson(200, [], [],'导入成功 入库文件数量:'.$succeedNums);
     }
 
     public function getUploadLists(){
@@ -460,6 +484,14 @@ class FinanceController extends ControllerBase
     // 导出客户名单
     function exportFinanceData()
     {
+        if(
+            ConfigInfo::setRedisNx('exportFinanceData')
+        ){
+            return $this->writeJson(201, null, [
+
+            ], [], '请勿重复提交');
+        }
+
         $requestData =  $this->getRequestData();
         if(
             $requestData['id'] <= 0 
@@ -469,31 +501,36 @@ class FinanceController extends ControllerBase
             ], [], '参数缺失');
         }
 
-        // 找到对应的财务信息
-        $financeData = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordIdV2(
-            $this->loginUserinfo['id'],
-            $requestData['id'],
-            25
-        );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                '找到对应的财务信息' ,
-                'totalNums' => $financeData['finance_data'],
-                'totalPrice' => $financeData['total_charge'],
-            ])
-        );
-       // return $this->writeJson(200);
+        if(
+            AdminUserFinanceExportDataQueue::addRecordV2(
+                [
+                    'batch' => date('YmdHis'),
+                    'upload_record_id' => $requestData['id']
+                ]
+            )
+        ){
+            return  true;
+        }
 
+        $uploadRes = AdminUserFinanceUploadRecord::findById($requestData['id'])->toArray();
         // 检查余额
         if(
             !\App\HttpController\Models\AdminV2\AdminNewUser::checkAccountBalance(
                 $this->loginUserinfo['id'],
-                $financeData['total_charge']
+                $uploadRes['money']
             )
         ){
-            return $this->writeJson(201, null, [], [], '余额不足 需要至少'.$financeData['total_charge'].'元');
+            return $this->writeJson(201, null, [], [], '余额不足 需要至少'. $uploadRes['money'].'元');
         }
 
+        //添加到导出队列
+        AdminUserFinanceExportDataQueue::addRecord(
+            [
+                'batch' => date('YmdHis'),
+                'upload_record_id' => $requestData['id']
+            ]
+        );
+        return $this->writeJson(200);
         $config = [
             'path' => TEMP_FILE_PATH // xlsx文件保存路径
         ];
@@ -524,72 +561,9 @@ class FinanceController extends ControllerBase
                 $config,$filename
             ])
         );
-        // 设置导出记录
-//        $AdminUserFinanceExportRecordId = AdminUserFinanceExportRecord::addExportRecord(
-//            [
-//                'user_id' => $this->loginUserinfo['id'],
-//                'price' => $financeData['total_charge'],
-//                'total_company_nums' => $financeData['totalNums'],
-//                'config_json' => '',
-//                'upload_record_id' => $requestData['id'],
-//                'reamrk' => '',
-//                'status' => '',
-//            ]
-//        );
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                '设置导出记录' ,
-//                '$AdminUserFinanceExportRecordId' =>$AdminUserFinanceExportRecordId,
-//            ])
-//        );
-        // 设置导出详情
-//        foreach($financeData['charge_details'] as $financeItem){
-//            AdminUserFinanceExportDataRecord::addExportRecord(
-//                [
-//                    'user_id' => $this->loginUserinfo['id'],
-//                    'export_record_id' => $AdminUserFinanceExportRecordId,
-//                    'user_finance_data_id' => $financeItem['upload_data_id'],
-//                    'price' => $financeItem['real_price'],
-//                    'detail' => $financeItem['price_detail']?:'',
-//                    'status' => 1,
-//                ]
-//            );
-//
-//            if($financeItem['price'] <=0 ){
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        'price 为0' ,
-//                    ])
-//                );
-//                continue;
-//            }
-//
-//            if(empty($financeItem['real_price_remark']['allDataIds'])){
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        'allDataIds 为空' ,
-//                    ])
-//                );
-//                continue;
-//            };
-//
-//            foreach ($financeItem['real_price_remark']['allDataIds'] as $idItem){
-//                //设置上次计费时间
-//                AdminUserFinanceData::updateLastChargeDate(
-//                    $idItem,
-//                    date('Y-m-d H:i:s')
-//                );
-//                //设置缓存过期时间
-//                AdminUserFinanceData::updateCacheEndDate(
-//                    $idItem,
-//                    date('Y-m-d H:i:s'),
-//                    $financeData['config_arr']['cache']
-//                );
-//            }
-//        }
 
         // 实际扣费 
-        \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
+        $res = \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
             $this->loginUserinfo['id'],
             (
                 \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
@@ -597,22 +571,23 @@ class FinanceController extends ControllerBase
                 ) - $financeData['total_charge']
             )
         );
+        if(
+            !$res
+        ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '实际扣费 失败' ,
+                ])
+            );
+        }
 
-        //添加计费日志
-//        FinanceLog::addRecord(
-//            [
-//                'detailId' => $AdminUserFinanceExportRecordId,
-//                'detail_table' => 'admin_user_finance_export_record',
-//                'price' => $financeData['total_charge'],
-//                'userId' => $this->loginUserinfo['id'],
-//                'type' =>  FinanceLog::$chargeTytpeFinance,
-//                'title' => '导出财务数据',
-//                'detail' => '导出财务数据',
-//                'reamrk' => $requestData['reamrk']?:'',
-//                'status' => $requestData['status']?:1,
-//            ]
-//        );
-
+        AdminUserFinanceExportDataQueue::addRecord(
+            [
+                'batch' => date('YmdHis'),
+                'upload_record_id' => $requestData['id']
+            ]
+        );
+        ConfigInfo::removeRedisNx('exportFinanceData');
         return $this->writeJson(200, null, 'Static/Temp/' . $filename, null, true, [$res]);
     }
 

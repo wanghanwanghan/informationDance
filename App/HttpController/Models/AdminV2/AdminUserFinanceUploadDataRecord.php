@@ -17,11 +17,10 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
     protected $createTime = 'created_at';
     protected $updateTime = 'updated_at'; 
     
-    static $stateInit = 1;
-    static $stateInitCname = '初始化';
-    static $stateHasCalculatePrice = 5;
-    static $stateHasCalculatePriceCname = '已计算价格';
-    static $stateExported = 10;
+    static $chargeTypeAnnually = 5;
+    static $chargeTypeAnnuallyCname = '包年';
+    static $chargeTypeByYear = 10;
+    static $chargeTypeByYearCname = '按年';
 
     public static function addUploadRecord($requestData){ 
         try {
@@ -44,7 +43,31 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
 
         return $res;
     }
+    static  function  addRecordV2($infoArr){
+        $UploadDataRecord = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdAndFinanceId(
+            $infoArr['user_id'],
+            $infoArr['record_id'] ,
+            $infoArr['user_finance_data_id']
+        );
+        if($UploadDataRecord){
+            return $UploadDataRecord->getAttr('id');
+        }
+        $AdminUserFinanceUploadDataRecordId = AdminUserFinanceUploadDataRecord::addUploadRecord(
+            $infoArr
+        );
 
+        if($AdminUserFinanceUploadDataRecordId <= 0){
+            return CommonService::getInstance()->log4PHP(
+                json_encode(
+                    [
+                        ' RunDealFinanceCompanyData parseDataToDb  $AdminUserFinanceUploadDataRecordId is 0 faile'
+                    ]
+                )
+            );
+        }
+
+        return  true;
+    }
     public static function findByUserIdAndRecordIdAndFinanceId(
         $user_id,$record_id,$user_finance_data_id
     ){ 
@@ -80,6 +103,31 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
 
         return $res;
     }
+
+    public static function findByUserIdAndRecordIdV2(
+        $user_id,$record_id,$fieldsArr = []
+    ){
+        if(empty($fieldsArr)){
+            $res =  AdminUserFinanceUploadDataRecord::create()->where([
+                'user_id' => $user_id,
+                'record_id' => $record_id,
+//                'status' => $status,
+            ])
+                ->all();
+        }
+        else{
+            $res =  AdminUserFinanceUploadDataRecord::create()->where([
+                'user_id' => $user_id,
+                'record_id' => $record_id,
+//                'status' => $status,
+            ])
+                ->field($fieldsArr)
+                ->all();
+        }
+
+        return $res;
+    }
+
 
     public static function findFinanceDataByUserIdAndRecordId(
         $user_id,$record_id,$status
@@ -141,7 +189,6 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
             )
         );
 
-
         $ids = '("'.implode('","',$user_finance_data_ids).'")';
         $sql = " select id from  `admin_user_finance_upload_data_record`
                     WHERE
@@ -166,11 +213,17 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         return true;
     }
 
+    // $yearsArr 用户选的下载的年度
     public static function calcluteRealPrice(
-        $id,$financeConfigArr
+        $id,$financeConfigArr,$yearsArr
     ){
         CommonService::getInstance()->log4PHP(
-            'calcluteRealPrice start  '.$id. '  conf '.json_encode($financeConfigArr)
+           json_encode(
+               [
+                   'calcluteRealPrice',
+                   $id,$financeConfigArr,$yearsArr
+               ]
+           )
         );
 
         $info = AdminUserFinanceUploadDataRecord::findById($id);
@@ -181,11 +234,21 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
             $AdminUserFinanceData['year'],
             $financeConfigArr,
             $AdminUserFinanceData['user_id'],
-            $AdminUserFinanceData['entName']
+            $AdminUserFinanceData['entName'],
+            $yearsArr
         ) ;
 
         CommonService::getInstance()->log4PHP(
-            '包年    '.$id.' '.   '  conf '.json_encode($chagrgeDetailsAnnuallyRes)
+          json_encode(
+              [
+                  'calcluteRealPrice getChagrgeDetailsAnnually',
+                  $AdminUserFinanceData['year'],
+                  $financeConfigArr,
+                  $AdminUserFinanceData['user_id'],
+                  $AdminUserFinanceData['entName'],
+                  $yearsArr
+              ]
+          )
         );
         // 是年度收费 需要看之前年度是否扣费过
         if($chagrgeDetailsAnnuallyRes['IsAnnually']){
@@ -216,6 +279,9 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
                 }
             }
         }
+        if($chagrgeDetailsAnnuallyRes['ChargeByYear']){
+
+        }
 
         //收费方式二：按年
         $chagrgeDetailsByYearsRes = AdminUserFinanceData::getChagrgeDetailsByYear(
@@ -243,21 +309,165 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
                 );
             }
         }
-
         return true;
     }
 
-
-    public static function updateRealPrice($id,$real_price,$real_price_remark){
+    public static function updatePriceType($info){
         $info = AdminUserFinanceUploadDataRecord::create()
-            ->where('id',$id)
+            ->where('id',$info['id'])
             ->get();
 
         return $info->update([
-            'id' => $id,
-            'real_price' => $real_price,
-            'real_price_reamrk' => $real_price_remark,
+            'id' => $info['id'],
+            'price' => $info['price'],
+            'price_type' => $info['price_type'],
+            'price_type_remark' => $info['price_type_remark'],
+            'charge_year' => $info['charge_year'],
+            'charge_year_start' => $info['charge_year_start'],
+            'charge_year_end' => $info['charge_year_end'],
         ]);
+    }
+
+    // $id,$recordId
+    public static function updateChargeInfo($id,$uploadId){
+        $uploadInfo = AdminUserFinanceUploadRecord::findById($uploadId);
+        $uploadInfo = $uploadInfo->toArray();
+        $dataInfo = self::findById($id);
+        $dataInfo = $dataInfo->toArray();
+
+        //用户的配置
+        $finance_config = json_decode($uploadId['finance_config'],true);
+        //用户该次选择的年限
+        $selectYears = json_decode($uploadInfo['years'],true);
+        //用户财务其他信息
+        $user_finance_data = AdminUserFinanceData::findById($uploadInfo['user_finance_data_id']);
+
+        //按包年计费？按年计费
+        $annulYears = json_decode($finance_config['annually_years'],true);
+        sort($annulYears);
+        if(
+            !in_array($user_finance_data['year'],$annulYears)
+        ){
+            self::updatePriceType(
+                [
+                    'id' => $id,
+                    'price' => self::getYearPriceByConfig($user_finance_data['year'],$finance_config),
+                    'price_type' => self::$chargeTypeByYear,
+                    'price_type_remark' =>  '不属包年年度,按单年计算',
+                    'charge_year' => $user_finance_data['year'],
+                    'charge_year_start' => '',
+                    'charge_year_end' => '',
+                ]
+            );
+        }
+        ;
+        //默认是包年
+        self::updatePriceType(
+            [
+                'id' => $id,
+                'price' => $user_finance_data['annually_price'],
+                'price_type' => self::$chargeTypeAnnually,
+                'price_type_remark' =>  '包年',
+                'charge_year' => $user_finance_data['year'],
+                'charge_year_start' => $annulYears[0],
+                'charge_year_end' => end($annulYears),
+            ]
+        );
+
+        //如果配置的单年度 不按包年计算
+        if(!$finance_config['single_year_charge_as_annual']){
+            // 数据不连续 ： 改包年为单年
+            if(
+                AdminUserFinanceData::checkIfAllYearsDataIsValid(
+                    $user_finance_data['user_id'],
+                    $user_finance_data['entName'],
+                    $user_finance_data['year']
+                )
+            ){
+                self::updatePriceType(
+                    [
+                        'id' => $id,
+                        'price' => self::getYearPriceByConfig($user_finance_data['year'],$finance_config),
+                        'price_type' => self::$chargeTypeByYear,
+                        'price_type_remark' =>   '虽然是包年，但有缺数据的年份,按单年算',
+                        'charge_year' => $user_finance_data['year'],
+                        'charge_year_start' => '',
+                        'charge_year_end' => '',
+                    ]
+                );
+            }
+
+            // 选择的不是全部包年年份 ：改为单年
+            if(
+                !self::checkIfArrayEquals($selectYears,$annulYears)
+            ){
+                self::updatePriceType(
+                    [
+                        'id' => $id,
+                        'price' => self::getYearPriceByConfig($user_finance_data['year'],$finance_config),
+                        'price_type' => self::$chargeTypeByYear,
+                        'price_type_remark' =>   '虽然是包年，但选的不是全部的包年年度,按单年算',
+                        'charge_year' => $user_finance_data['year'],
+                        'charge_year_start' => '',
+                        'charge_year_end' => '',
+                    ]
+                );
+            }
+        }
+        return true;
+    }
+
+    static  function  getYearPriceByConfig($year,$configArr){
+        foreach (json_decode($configArr['normal_years_price_json'],true) as $configItem){
+            if(
+                $configItem['year'] == $year
+            ){
+                return $configItem['price'];
+            };
+        }
+        return  CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'getYearPriceByConfig false',
+
+                ]
+            )
+        );;
+    }
+
+    static  function  checkIfArrayEquals($array1,$array2){
+        sort($array1);
+        sort($array2);
+
+        if(
+            count($array1) != count($array2)
+        ){
+            return  CommonService::getInstance()->log4PHP(
+                json_encode(
+                    [
+                        'checkIfArrayEquals false',
+                        $array1,$array2
+                    ]
+                )
+            );
+        }
+
+        foreach ($array1 as $key => $value){
+            if(
+                $array2[$key] != $value
+            ){
+                return  CommonService::getInstance()->log4PHP(
+                    json_encode(
+                        [
+                            'checkIfArrayEquals false',
+                            $array1,$array2
+                        ]
+                    )
+                );
+            }
+        }
+
+        return  true;
     }
 
 }

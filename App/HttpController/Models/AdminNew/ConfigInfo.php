@@ -9,6 +9,7 @@ use App\HttpController\Service\Common\CommonService;
 class ConfigInfo extends ModelBase
 {
     protected $tableName = 'config_info';
+    static $redis_db_num = 14;
 
     protected $autoTimeStamp = true;
     protected $createTime = 'created_at';
@@ -92,4 +93,30 @@ class ConfigInfo extends ModelBase
             'value' => json_encode($configArr),
         ]);
     }
+
+
+    static function  setRedisNx($methodName, $ttl = 6400): bool
+    {
+
+        $redis = Redis::defer('redis');
+
+        $redis->select(self::$redis_db_num);
+
+        $status = (bool)$redis->setNx($methodName, 'isRun');
+
+        $status === false ?: $redis->expire($methodName, $ttl);
+
+        return $status;
+    }
+
+    static function  removeRedisNx($methodName, $ttl = 6400): bool
+    {
+
+        $redis = Redis::defer('redis');
+
+        $redis->select(self::$redis_db_num);
+
+        return !!$redis->del($methodName);
+    }
+
 }
