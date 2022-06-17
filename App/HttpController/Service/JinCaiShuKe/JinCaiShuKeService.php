@@ -4,6 +4,7 @@ namespace App\HttpController\Service\JinCaiShuKe;
 
 use App\HttpController\Models\Api\InvoiceIn;
 use App\HttpController\Models\Api\InvoiceOut;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 
@@ -97,6 +98,7 @@ class JinCaiShuKeService extends ServiceBase
                         }
                     }
                 }
+                CommonService::getInstance()->log4PHP($data,'info','http_return_data');
                 foreach ($content['fpxxs']['data'] as $val){
                     $insert = [
                         'invoiceCode'=>$val['fpdm'],
@@ -165,7 +167,7 @@ class JinCaiShuKeService extends ServiceBase
             'page' => trim($page),
             'pageSize' => $pageSize - 0 > 1000 ? '1000' : trim($pageSize),
         ];
-
+        CommonService::getInstance()->log4PHP($content,'info','http_return_data');
         $signType = '0';
 
         $post_data = [
