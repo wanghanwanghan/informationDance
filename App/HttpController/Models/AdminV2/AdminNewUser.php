@@ -51,4 +51,38 @@ class AdminNewUser extends ModelBase
             'money' => $money
         ]);
     }
+
+    public static function charge($id,$money,$batchNo,$datas){
+        if(
+            FinanceLog::findByBatch($batchNo)
+        ){
+            CommonService::getInstance()->log4PHP(
+                [
+                    'charge' => 'true',
+                    '之前收费过'
+                ]
+            );
+            return true;
+        }
+        // 实际扣费
+        $res = \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
+            $id,
+            (
+                \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
+                    $id
+                ) - $money
+            )
+        );
+        if(!$res ){
+            return CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '实际扣费 失败' ,
+                ])
+            );
+        }
+
+        return FinanceLog::addRecordV2(
+            $datas
+        );
+    }
 }

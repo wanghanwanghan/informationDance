@@ -3,9 +3,11 @@
 namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
+use App\HttpController\Models\Admin\SaibopengkeAdmin\FinanceChargeLog;
 use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\AdminV2\AdminNewUser;
 use App\HttpController\Models\AdminV2\AdminUserChargeConfig;
+use App\HttpController\Models\AdminV2\AdminUserFinanceChargeInfo;
 use App\HttpController\Models\AdminV2\AdminUserFinanceData;
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataRecord;
@@ -149,7 +151,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
         self::parseCompanyDataToDb(1);
         self::calcluteFinancePrice(1);
         //找到需要导出的
-
+        self::exportFinanceData(5);
         ConfigInfo::setIsDone("RunDealFinanceCompanyData2");
 
         return true ;   
@@ -167,13 +169,39 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             );
 
             $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
-
+            $finance_config = AdminUserFinanceUploadRecord::getFinanceConfigArray($queueData['upload_record_id']);
             $financeDatas = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordIdV2(
                 $uploadRes['user_id'],$uploadRes['id']
             );
 
             //生成下载数据
             $xlxsData = NewFinanceData::exportFinanceToXlsx($queueData['upload_record_id'],$financeDatas['export_data']);
+
+            // 实际扣费
+            $res = \App\HttpController\Models\AdminV2\AdminNewUser::charge(
+                $uploadRes['user_id'],
+                (
+                    \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
+                        $uploadRes['user_id']
+                    ) - $uploadRes['money']
+                ),
+                $queueData['id'],
+                [
+                    'detailId' => $queueData['id'],
+                    'detail_table' => 'admin_user_finance_export_data_queue',
+                    'price' => $uploadRes['money'],
+                    'userId' => $uploadRes['userId'],
+                    'type' => FinanceLog::$chargeTytpeFinance,
+                    'batch' => $queueData['id'],
+                    'title' => '',
+                    'detail' => '',
+                    'reamrk' => '',
+                    'status' => 1,
+                ]
+            );
+            if(!$res ){
+                continue;
+            }
 
             // 设置导出记录
             $AdminUserFinanceExportRecordId = AdminUserFinanceExportRecord::addRecordV2([
@@ -192,61 +220,47 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             if(!$AdminUserFinanceExportRecordId){
                 continue ;
             }
-//            JinCaiShuKeService::
             foreach($financeDatas['details'] as $financeData){
+                $AdminUserFinanceUploadDataRecord = AdminUserFinanceUploadDataRecord::
+                    findById($financeData['UploadDataRecordId'])->toArray();
+
                 $AdminUserFinanceExportDataRecordId = AdminUserFinanceExportDataRecord::addRecordV2(
                     [
-                        'user_id' => $financeData['user_id'],
+                        'user_id' => $AdminUserFinanceUploadDataRecord['user_id'],
                         'export_record_id' => $AdminUserFinanceExportRecordId,
-                        'user_finance_data_id' => $financeData['id'],
-                        'price' => $dataItem['real_price'],
-                        'detail' => $dataItem['real_price_remark']?:'',
+                        'upload_data_id' => $financeData['UploadDataRecordId'],
+                        'price' => $AdminUserFinanceUploadDataRecord['price'],
+                        'detail' => $AdminUserFinanceUploadDataRecord['price_type_remark']?:'',
+                        'queue_id' => $queueData['id'],
                         'status' => AdminUserFinanceExportRecord::$stateInit,
                     ]
                 );
-//                if(
-//
-//                ){
-//                    continue ;
-//                }
-                AdminUserFinanceExportDataRecord::addExportRecord(
+
+                //设置收费记录
+                AdminUserFinanceChargeInfo::addRecordV2(
                     [
-                        'user_id' => $AdminUserFinanceUploadRecord['user_id'],
-                        'export_record_id' => $AdminUserFinanceExportRecordId,
-                        'user_finance_data_id' => 0,
-                        'price' => $dataItem['real_price'],
-                        'detail' => $dataItem['real_price_remark']?:'',
-                        'status' => AdminUserFinanceExportRecord::$stateInit,
+                        'user_id' => $AdminUserFinanceUploadDataRecord['user_id'],
+                        'batch' => $AdminUserFinanceUploadDataRecord['id'].'_'.$queueData['id'],
+                        'entName' => $financeData['entName'],
+                        'start_year' => $AdminUserFinanceUploadDataRecord['charge_year_start'],
+                        'end_year' => $AdminUserFinanceUploadDataRecord['charge_year_end'],
+                        'year' => $AdminUserFinanceUploadDataRecord['charge_year'],
+                        'price' => $AdminUserFinanceUploadDataRecord['price'],
+                        'price_type' => $AdminUserFinanceUploadDataRecord['price_type'],
+                        'status' => AdminUserFinanceChargeInfo::$state_init,
                     ]
                 );
-
-                if($dataItem['real_price'] <=0 ){
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            'real_price 为0' ,
-                        ])
-                    );
-                    continue;
-                }
-
-                $detailRemarks = json_decode($dataItem['real_price_remark'],true);
-                if(empty($detailRemarks['allDataIds'])){
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            'allDataIds 为空' ,
-                        ])
-                    );
-                    continue;
-                };
-                foreach ($detailRemarks['allDataIds'] as $idItem){
+                if(
+                    $AdminUserFinanceUploadDataRecord['price'] > 0
+                ){
                     //设置上次计费时间
                     AdminUserFinanceData::updateLastChargeDate(
-                        $idItem,
+                        $AdminUserFinanceUploadDataRecord['user_finance_data_id'],
                         date('Y-m-d H:i:s')
                     );
                     //设置缓存过期时间
                     AdminUserFinanceData::updateCacheEndDate(
-                        $idItem,
+                        $AdminUserFinanceUploadDataRecord['user_finance_data_id'],
                         date('Y-m-d H:i:s'),
                         $finance_config['cache']
                     );
@@ -257,6 +271,8 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 $queueData['id'],'0000-00-00 00:00:00'
             );
         }
+
+        return true;
     }
 
     //计算价格

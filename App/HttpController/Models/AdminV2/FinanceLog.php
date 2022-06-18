@@ -28,6 +28,7 @@ class FinanceLog extends ModelBase
                 'price' => $requestData['price'],
                 'userId' => $requestData['userId'],
                 'type' => $requestData['type'],
+                'batch' => $requestData['batch'],
                 'title' => $requestData['title']?:'',
                 'detail' => $requestData['detail']?:'',
                 'reamrk' => $requestData['reamrk']?:'',
@@ -45,6 +46,22 @@ class FinanceLog extends ModelBase
         return $res;
     }
 
+    public static function addRecordV2($requestData){
+        $res = self::findByBatch($requestData['batch']);
+        if($res){
+            return  $res->getAttr('id');
+        }
+        return  self::addRecord($requestData);
+    }
+
+    public static function findByBatch($batch){
+        $res =  FinanceLog::create()
+            ->where([
+                'batch' => $batch
+            ])
+            ->get();
+        return $res;
+    }
 
     public static function findByCondition($whereArr,$limit){
         $res =  FinanceLog::create()

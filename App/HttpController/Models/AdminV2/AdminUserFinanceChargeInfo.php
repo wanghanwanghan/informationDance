@@ -47,6 +47,7 @@ class AdminUserFinanceChargeInfo extends ModelBase
         try {
            $res =  AdminUserFinanceChargeInfo::create()->data([
                 'user_id' => $requestData['user_id'],
+                'batch' => $requestData['batch'],
                 'entName' => $requestData['entName'],
                 'start_year' => $requestData['start_year'],
                 'end_year' => $requestData['end_year'],
@@ -59,7 +60,7 @@ class AdminUserFinanceChargeInfo extends ModelBase
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'AdminUserFinanceData sql err',
+                    'AdminUserFinanceChargeInfo sql err',
                     $e->getMessage(),
                 ])
             );  
@@ -68,11 +69,28 @@ class AdminUserFinanceChargeInfo extends ModelBase
         return $res;
     }
 
+    public static function addRecordV2($requestData){
+        $res = self::findByBatch($requestData['batch']);
+        if($res){
+            return  $res->getAttr('id');
+        }
+        return  self::addRecord($requestData);
+    }
+
     public static function findByCondition($whereArr,$limit){
         $res =  AdminUserFinanceChargeInfo::create()
             ->where($whereArr)
             ->limit($limit)
             ->all();
+        return $res;
+    }
+
+    public static function findByBatch($batch){
+        $res =  AdminUserFinanceChargeInfo::create()
+            ->where([
+                'batch' => $batch
+            ])
+            ->get();
         return $res;
     }
 
