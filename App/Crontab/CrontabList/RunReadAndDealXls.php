@@ -222,7 +222,7 @@ class RunReadAndDealXls extends AbstractCronTask
                 $value0,
                 $value1,
                 $value2,
-                $res
+                json_encode($res)
             ];
 
         }
