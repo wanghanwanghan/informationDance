@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Api\XinDong;
 
 use App\Crontab\CrontabList\RunDealFinanceCompanyData;
+use App\Crontab\CrontabList\RunDealFinanceCompanyDataNew;
 use App\Csp\Service\CspService;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
@@ -2742,7 +2743,7 @@ eof;
         if(
             $this->getRequestData('parseDataToDb')
         ){
-            RunDealFinanceCompanyData::parseDataToDb(1);
+            RunDealFinanceCompanyDataNew::parseCompanyDataToDb(1);
         }
 
         if(
