@@ -20,15 +20,31 @@ class AdminUserFinanceExportDataRecord extends ModelBase
     static $stateParsed = 5;
     static $stateExported = 10;
 
+    static  function  addRecordV2($dataItem){
+        $AdminUserFinanceExportRecord =  AdminUserFinanceExportRecord::findByQueue($dataItem['queue_id']);
+        if(
+            $AdminUserFinanceExportRecord
+        ){
+            return $AdminUserFinanceExportRecord->getAttr('id');
+        }
+
+        return AdminUserFinanceExportDataRecord::addExportRecord(
+            $dataItem
+        );
+    }
+
     public static function addExportRecord($requestData){
        
         try {
            $res =  AdminUserFinanceExportDataRecord::create()->data([
                 'user_id' => $requestData['user_id'], 
                 'export_record_id' => $requestData['export_record_id'],   
-                'user_finance_data_id' => $requestData['user_finance_data_id'],   
-                'price' => $requestData['price'],   
-                'detail' => $requestData['detail'],   
+                'user_finance_data_id' => $requestData['user_finance_data_id'],
+                'queue_id' =>$requestData['queue_id'],
+                'upload_data_id' =>$requestData['upload_data_id'],
+                'price' => $requestData['price'],
+                'batch' => $requestData['batch'],
+                'detail' => $requestData['detail'],
                 'status' => $requestData['status'],   
             ])->save();
 

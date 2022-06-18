@@ -109,35 +109,20 @@ class AdminUserFinanceUploadRecord extends ModelBase
     }
 
     public static function getAllFinanceDataByUploadRecordIdV2(
-        $userId,$uploadRecordId,$status,$keepPrice = 1
+        $userId,$uploadRecordId
     ){
-
-
-        $AdminUserFinanceUploadDataRecords = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordId(
-            $userId,$uploadRecordId,$status,[]
+        $allowedFields = AdminUserFinanceUploadRecord::getAllowedFieldArray($uploadRecordId);
+        $AdminUserFinanceUploadDataRecords = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
+            $userId,$uploadRecordId,$allowedFields
         );
-        $uploadRecordRes = self::findById($uploadRecordId);
-        $finance_config_arr  = json_decode($uploadRecordRes->getAttr('finance_config'),true);
         $returnDatas  = [
-            'config_arr' =>  $finance_config_arr
+
         ];
 
         foreach ($AdminUserFinanceUploadDataRecords as $AdminUserFinanceUploadDataRecord){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    '$AdminUserFinanceUploadDataRecord',
-                    $AdminUserFinanceUploadDataRecord,
-                ])
-            );
             if($AdminUserFinanceUploadDataRecord['user_finance_data_id'] <= 0){
                 continue;
             }
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'user_finance_data_id',
-                    $AdminUserFinanceUploadDataRecord['user_finance_data_id'],
-                ])
-            );
             $AdminUserFinanceData = AdminUserFinanceData::findById(
                 $AdminUserFinanceUploadDataRecord['user_finance_data_id']
             )->toArray();
@@ -145,28 +130,14 @@ class AdminUserFinanceUploadRecord extends ModelBase
             if($AdminUserFinanceData['finance_data_id'] <= 0){
                 continue;
             }
-            // 财务数据id
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'finance_data_id',
-                    $AdminUserFinanceData['finance_data_id'],
-                ])
-            );
+
             $NewFinanceData = NewFinanceData::findById(
                 $AdminUserFinanceData['finance_data_id']
             )->toArray();
-            $returnDatas['finance_data'][$NewFinanceData['id']] =  $NewFinanceData;
-            // TODO  需要check下上次计费时间
-            // TODO  需要指定导出字段
-            $returnDatas['charge_details'][$NewFinanceData['id']] =
-                [
-                    'real_price' => $AdminUserFinanceUploadDataRecord['real_price'],
-                    'real_price_remark' => json_decode($AdminUserFinanceUploadDataRecord['real_price_remark'],true),
-                    'upload_data_id' => $AdminUserFinanceUploadDataRecord['id'],
-                    'user_finance_data_id' => $AdminUserFinanceUploadDataRecord['user_finance_data_id']
-                ]
-            ;
-            $returnDatas['total_charge'] += $AdminUserFinanceUploadDataRecord['real_price'];
+            $returnDatas['export_data'][$NewFinanceData['id']] =  $NewFinanceData;
+            $NewFinanceData['UploadDataRecordId'] = $AdminUserFinanceUploadDataRecord['id'];
+            $returnDatas['details'][$NewFinanceData['id']] =  $NewFinanceData;
+
         }
 
         return $returnDatas;
@@ -251,7 +222,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
             //包年计费
             if(
-                $uploadData['price_type'] == AdminUserFinanceUploadDataRecord::$chargeTypeAnnually
+                 $uploadData['price_type'] == AdminUserFinanceUploadDataRecord::$chargeTypeAnnually
             ){
                 //本次里已经计算过
                 if(
@@ -263,12 +234,13 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
                 //之前已经收费过
                 if(
-                    AdminUserFinanceChargeInfo::ifChargedBeforeV2(
-                        $uploadData['user_id'],
-                        $user_finance_data['entName'],
-                        $uploadData['charge_year_start'],
-                        $uploadData['charge_year_end']
-                    )
+                    $user_finance_data['cache_end_date'] >= date('Y-m-d H:i:s')
+//                    AdminUserFinanceChargeInfo::ifChargedBeforeV2(
+//                        $uploadData['user_id'],
+//                        $user_finance_data['entName'],
+//                        $uploadData['charge_year_start'],
+//                        $uploadData['charge_year_end']
+//                    )
                 ){
                     $hasChargeBefore = true;
                 };
@@ -297,11 +269,12 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 };
                 //之前已经收费过
                 if(
-                    AdminUserFinanceChargeInfo::ifChargedBefore(
-                        $uploadData['user_id'],
-                        $user_finance_data['entName'],
-                        $uploadData['charge_year']
-                    )
+                    $user_finance_data['cache_end_date'] >= date('Y-m-d H:i:s')
+//                    AdminUserFinanceChargeInfo::ifChargedBefore(
+//                            $uploadData['user_id'],
+//                            $user_finance_data['entName'],
+//                            $uploadData['charge_year']
+//                        )
                 ){
                     $hasChargeBefore = true;
                 };
@@ -402,4 +375,15 @@ class AdminUserFinanceUploadRecord extends ModelBase
         }
         return $chargeDetails;
     }
+
+    static function getFinanceConfigArray($uploadId){
+        $uploadRes = self::findById($uploadId)->toArray();
+        return json_decode($uploadRes['finance_config'],true);
+    }
+
+    static function  getAllowedFieldArray($uploadId){
+        $finance_config = self::getFinanceConfigArray($uploadId);
+        return json_decode($finance_config['allowed_fields'],true);
+    }
+
 }

@@ -94,4 +94,35 @@ class AdminUserFinanceExportRecord extends ModelBase
         return $res;
     }
 
+    static  function  addRecordV2($dataItem){
+        $exportRes = AdminUserFinanceExportRecord::findByQueue($dataItem['queue_id']);
+        if($exportRes){
+            return $exportRes->getAttr('id');
+        }
+
+        $AdminUserFinanceExportRecordId = AdminUserFinanceExportRecord::addExportRecord(
+            [
+                'user_id' => $dataItem['user_id'],
+                'price' => $dataItem['price'],
+                'total_company_nums' => 0,
+                'config_json' => $dataItem['config_json'],
+                'upload_record_id' => $dataItem['upload_record_id'],
+                'reamrk' => $dataItem['upload_record_id'],
+                'status' => $dataItem['status'],
+                'queue_id' => $dataItem['queue_id'],
+                'batch' => $dataItem['batch'],
+            ]
+        );
+        if(
+            $AdminUserFinanceExportRecordId <= 0
+        ){
+            return  CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '设置导出记录' ,
+                    '$AdminUserFinanceExportRecordId' =>$AdminUserFinanceExportRecordId,
+                ])
+            );
+        }
+        return  $AdminUserFinanceExportRecordId;
+    }
 }

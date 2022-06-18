@@ -13,8 +13,10 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceExportRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadDataRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadeRecord;
 use App\HttpController\Models\AdminV2\FinanceLog;
+use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
+use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use EasySwoole\Mysqli\QueryBuilder;
 use wanghanwanghan\someUtils\control;
@@ -147,9 +149,114 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
         self::parseCompanyDataToDb(1);
         self::calcluteFinancePrice(1);
         //找到需要导出的
+
         ConfigInfo::setIsDone("RunDealFinanceCompanyData2");
 
         return true ;   
+    }
+
+    static function  exportFinanceData($limit){
+        $queueDatas =  AdminUserFinanceExportDataQueue::findBySql(
+            " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_init. " 
+             AND touch_time  =  '0000-00-00 00:00:00' LIMIT $limit 
+            "
+        );
+        foreach($queueDatas as $queueData){
+            AdminUserFinanceExportDataQueue::setTouchTime(
+                $queueData['id'],date('Y-m-d H:i:s')
+            );
+
+            $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
+
+            $financeDatas = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordIdV2(
+                $uploadRes['user_id'],$uploadRes['id']
+            );
+
+            //生成下载数据
+            $xlxsData = NewFinanceData::exportFinanceToXlsx($queueData['upload_record_id'],$financeDatas['export_data']);
+
+            // 设置导出记录
+            $AdminUserFinanceExportRecordId = AdminUserFinanceExportRecord::addRecordV2([
+                [
+                    'user_id' => $uploadRes['user_id'],
+                    'price' => $uploadRes['money'],
+                    'total_company_nums' => 0,
+                    'config_json' => $uploadRes['config_json'],
+                    'upload_record_id' => $queueData['upload_record_id'],
+                    'reamrk' => '',
+                    'status' =>AdminUserFinanceExportRecord::$stateInit,
+                    'queue_id' => $queueData['id'],
+                    'batch' => $queueData['batch'],
+                ]
+            ]);
+            if(!$AdminUserFinanceExportRecordId){
+                continue ;
+            }
+//            JinCaiShuKeService::
+            foreach($financeDatas['details'] as $financeData){
+                $AdminUserFinanceExportDataRecordId = AdminUserFinanceExportDataRecord::addRecordV2(
+                    [
+                        'user_id' => $financeData['user_id'],
+                        'export_record_id' => $AdminUserFinanceExportRecordId,
+                        'user_finance_data_id' => $financeData['id'],
+                        'price' => $dataItem['real_price'],
+                        'detail' => $dataItem['real_price_remark']?:'',
+                        'status' => AdminUserFinanceExportRecord::$stateInit,
+                    ]
+                );
+//                if(
+//
+//                ){
+//                    continue ;
+//                }
+                AdminUserFinanceExportDataRecord::addExportRecord(
+                    [
+                        'user_id' => $AdminUserFinanceUploadRecord['user_id'],
+                        'export_record_id' => $AdminUserFinanceExportRecordId,
+                        'user_finance_data_id' => 0,
+                        'price' => $dataItem['real_price'],
+                        'detail' => $dataItem['real_price_remark']?:'',
+                        'status' => AdminUserFinanceExportRecord::$stateInit,
+                    ]
+                );
+
+                if($dataItem['real_price'] <=0 ){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            'real_price 为0' ,
+                        ])
+                    );
+                    continue;
+                }
+
+                $detailRemarks = json_decode($dataItem['real_price_remark'],true);
+                if(empty($detailRemarks['allDataIds'])){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            'allDataIds 为空' ,
+                        ])
+                    );
+                    continue;
+                };
+                foreach ($detailRemarks['allDataIds'] as $idItem){
+                    //设置上次计费时间
+                    AdminUserFinanceData::updateLastChargeDate(
+                        $idItem,
+                        date('Y-m-d H:i:s')
+                    );
+                    //设置缓存过期时间
+                    AdminUserFinanceData::updateCacheEndDate(
+                        $idItem,
+                        date('Y-m-d H:i:s'),
+                        $finance_config['cache']
+                    );
+                }
+            }
+
+            AdminUserFinanceExportDataQueue::setTouchTime(
+                $queueData['id'],'0000-00-00 00:00:00'
+            );
+        }
     }
 
     //计算价格

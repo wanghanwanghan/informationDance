@@ -46,10 +46,7 @@ class AdminUserFinanceExportDataQueue extends ModelBase
         }
 
         return AdminUserFinanceExportDataQueue::addRecord(
-            [
-                'batch' => $info['batch'],
-                'upload_record_id' =>  $info['upload_record_id'],
-            ]
+            $info
         );
     }
 
