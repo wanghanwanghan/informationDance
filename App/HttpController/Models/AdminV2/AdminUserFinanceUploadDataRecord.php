@@ -336,7 +336,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         $dataInfo = $dataInfo->toArray();
 
         //用户的配置
-        $finance_config = json_decode($uploadId['finance_config'],true);
+        $finance_config = json_decode($uploadInfo['finance_config'],true);
         CommonService::getInstance()->log4PHP(
             json_encode([
                 'updateChargeInfo  用户的配置',
