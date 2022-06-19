@@ -22,6 +22,12 @@ class AdminNewUser extends ModelBase
 
     public static function checkAccountBalance($id,$chargeMoney){
         $balance = self::getAccountBalance($id) ;
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'checkAccountBalance   ' ,
+                $balance,$id
+            ])
+        );
         if(
              // 余额
             $balance >= $chargeMoney

@@ -500,7 +500,31 @@ class FinanceController extends ControllerBase
 
             ], [], '参数缺失');
         }
+        $uploadRes = AdminUserFinanceUploadRecord::findById($requestData['id'])->toArray();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceUploadRecord findById ' ,
+                $requestData['id'],$uploadRes
+            ])
+        );
+        // 检查余额
+        if(
+            !\App\HttpController\Models\AdminV2\AdminNewUser::checkAccountBalance(
+                $this->loginUserinfo['id'],
+                $uploadRes['money']
+            )
+        ){
+            return $this->writeJson(201, null, [], [], '余额不足 需要至少'. $uploadRes['money'].'元');
+        }
 
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'exportFinanceData AdminUserFinanceExportDataQueue  addRecordV2' ,
+                'batch' => date('YmdHis'),
+                'upload_record_id' => $requestData['id']
+            ])
+        );
         if(
             AdminUserFinanceExportDataQueue::addRecordV2(
                 [
@@ -512,25 +536,17 @@ class FinanceController extends ControllerBase
             return  true;
         }
 
-        $uploadRes = AdminUserFinanceUploadRecord::findById($requestData['id'])->toArray();
-        // 检查余额
-        if(
-            !\App\HttpController\Models\AdminV2\AdminNewUser::checkAccountBalance(
-                $this->loginUserinfo['id'],
-                $uploadRes['money']
-            )
-        ){
-            return $this->writeJson(201, null, [], [], '余额不足 需要至少'. $uploadRes['money'].'元');
-        }
+
 
         //添加到导出队列
-        AdminUserFinanceExportDataQueue::addRecord(
-            [
-                'batch' => date('YmdHis'),
-                'upload_record_id' => $requestData['id']
-            ]
-        );
+//        AdminUserFinanceExportDataQueue::addRecord(
+//            [
+//                'batch' => date('YmdHis'),
+//                'upload_record_id' => $requestData['id']
+//            ]
+//        );
         return $this->writeJson(200);
+
         $config = [
             'path' => TEMP_FILE_PATH // xlsx文件保存路径
         ];

@@ -36,12 +36,29 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     }
 
     static  function  addRecordV2($info){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceExportDataQueue  addRecordV2' ,
+                " WHERE upload_record_id = ".$info['upload_record_id'].
+                "  AND status = ".AdminUserFinanceExportDataQueue::$state_init,
+                $info
+            ])
+        );
+
         if(
             AdminUserFinanceExportDataQueue::findBySql(
                 " WHERE upload_record_id = ".$info['upload_record_id'].
                 "  AND status = ".AdminUserFinanceExportDataQueue::$state_init
             )
         ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'AdminUserFinanceExportDataQueue  addRecordV2 exists' ,
+                    " WHERE upload_record_id = ".$info['upload_record_id'].
+                    "  AND status = ".AdminUserFinanceExportDataQueue::$state_init,
+                    $info
+                ])
+            );
             return  true;
         }
 
