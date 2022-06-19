@@ -350,8 +350,8 @@ class AdminUserFinanceData extends ModelBase
             );
 
             $addRes = NewFinanceData::addRecordV2($dbDataArr);
-            //设置是否需要确认 
-            self::updateStatus($addRes,self::getConfirmStatus($financeConifgArr,$dbDataArr));
+            //设置是否需要确认
+            self::updateStatus($id,self::getConfirmStatus($financeConifgArr,$dbDataArr));
             CommonService::getInstance()->log4PHP(
                 json_encode(
                    [
@@ -818,7 +818,12 @@ class AdminUserFinanceData extends ModelBase
         ]);
     }
 
-    public static function updateStatus($id,$status){ 
+    public static function updateStatus($id,$status){
+        CommonService::getInstance()->log4PHP(
+           json_encode([
+               'updateStatus  ',$id,$status
+           ])
+        );
         $info = AdminUserFinanceData::create()
                     ->where('id',$id)
                     ->get(); 
