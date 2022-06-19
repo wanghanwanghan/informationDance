@@ -229,4 +229,20 @@ class NewFinanceData extends ModelBase
 
         return $fileObject->output();
     }
+
+
+    public static function setStatus($id,$status){
+        CommonService::getInstance()->log4PHP(
+            [
+                'NewFinanceData setStatus',
+                $id,$status,
+            ]
+        );
+        $info = AdminUserFinanceExportDataQueue::findById($id);
+
+        return $info->update([
+            'status' => $status,
+        ]);
+    }
+
 }
