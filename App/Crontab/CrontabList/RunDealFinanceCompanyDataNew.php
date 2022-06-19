@@ -348,7 +348,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             }
 
             // 设置导出记录
-            $AdminUserFinanceExportRecordId = AdminUserFinanceExportRecord::addRecordV2([
+            $AdminUserFinanceExportRecordId = AdminUserFinanceExportRecord::addRecordV2(
                 [
                     'user_id' => $uploadRes['user_id'],
                     'price' => $uploadRes['money'],
@@ -360,10 +360,21 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                     'queue_id' => $queueData['id'],
                     'batch' => $queueData['batch'],
                 ]
-            ]);
+            );
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    '$AdminUserFinanceExportRecordId   '=> $AdminUserFinanceExportRecordId
+                    '$AdminUserFinanceExportRecordId   '=> $AdminUserFinanceExportRecordId,
+                    [
+                        'user_id' => $uploadRes['user_id'],
+                        'price' => $uploadRes['money'],
+                        'total_company_nums' => 0,
+                        'config_json' => $uploadRes['finance_config'],
+                        'upload_record_id' => $queueData['upload_record_id'],
+                        'reamrk' => '',
+                        'status' =>AdminUserFinanceExportRecord::$stateInit,
+                        'queue_id' => $queueData['id'],
+                        'batch' => $queueData['batch'],
+                    ]
                 ])
             );
             if(!$AdminUserFinanceExportRecordId){

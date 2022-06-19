@@ -39,7 +39,7 @@ class AdminUserFinanceExportDataRecord extends ModelBase
            $res =  AdminUserFinanceExportDataRecord::create()->data([
                 'user_id' => $requestData['user_id'], 
                 'export_record_id' => $requestData['export_record_id'],   
-                'user_finance_data_id' => $requestData['user_finance_data_id'],
+                'user_finance_data_id' => $requestData['user_finance_data_id']?:0,
                 'queue_id' =>$requestData['queue_id'],
                 'upload_data_id' =>$requestData['upload_data_id'],
                 'price' => $requestData['price'],
