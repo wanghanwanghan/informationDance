@@ -870,6 +870,13 @@ class AdminUserFinanceData extends ModelBase
     }
 
     static function  checkIfAllYearsDataIsValid($user_id,$entName,$years){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'checkIfAllYearsDataIsValid ',
+                $user_id,$entName,$years
+
+            ])
+        );
         foreach ($years as $year){
             CommonService::getInstance()->log4PHP(
                 json_encode([

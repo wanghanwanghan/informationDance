@@ -425,7 +425,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
 
             // 数据不连续 ： 改包年为单年
             if(
-                AdminUserFinanceData::checkIfAllYearsDataIsValid(
+                !AdminUserFinanceData::checkIfAllYearsDataIsValid(
                     $user_finance_data['user_id'],
                     $user_finance_data['entName'],
                     $user_finance_data['year']
