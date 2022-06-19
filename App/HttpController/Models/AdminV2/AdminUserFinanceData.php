@@ -871,6 +871,19 @@ class AdminUserFinanceData extends ModelBase
 
     static function  checkIfAllYearsDataIsValid($user_id,$entName,$years){
         foreach ($years as $year){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'checkIfAllYearsDataIsValid findBySql',
+                    " WHERE     user_id = $user_id AND  
+                    entName =  $entName AND year = $year  AND 
+                    status = ".self::$statusinit,
+                    " WHERE     user_id = $user_id AND  
+                                    entName =  $entName AND year = $year  AND 
+                                    status = ".self::$statusConfirmedYes."
+                            "
+
+                ])
+            );
             if(
                 self::findBySql(
                     " WHERE     user_id = $user_id AND  
