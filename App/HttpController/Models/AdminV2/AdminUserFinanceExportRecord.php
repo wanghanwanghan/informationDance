@@ -101,17 +101,7 @@ class AdminUserFinanceExportRecord extends ModelBase
         }
 
         $AdminUserFinanceExportRecordId = AdminUserFinanceExportRecord::addExportRecord(
-            [
-                'user_id' => $dataItem['user_id'],
-                'price' => $dataItem['price'],
-                'total_company_nums' => 0,
-                'config_json' => $dataItem['config_json'],
-                'upload_record_id' => $dataItem['upload_record_id'],
-                'reamrk' => $dataItem['upload_record_id'],
-                'status' => $dataItem['status'],
-                'queue_id' => $dataItem['queue_id'],
-                'batch' => $dataItem['batch'],
-            ]
+            $dataItem
         );
         if(
             $AdminUserFinanceExportRecordId <= 0
@@ -120,6 +110,7 @@ class AdminUserFinanceExportRecord extends ModelBase
                 json_encode([
                     '设置导出记录' ,
                     '$AdminUserFinanceExportRecordId' =>$AdminUserFinanceExportRecordId,
+                    '$dataItem' =>$dataItem
                 ])
             );
         }

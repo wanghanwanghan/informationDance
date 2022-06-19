@@ -353,7 +353,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                     'user_id' => $uploadRes['user_id'],
                     'price' => $uploadRes['money'],
                     'total_company_nums' => 0,
-                    'config_json' => $uploadRes['config_json'],
+                    'config_json' => $uploadRes['finance_config'],
                     'upload_record_id' => $queueData['upload_record_id'],
                     'reamrk' => '',
                     'status' =>AdminUserFinanceExportRecord::$stateInit,

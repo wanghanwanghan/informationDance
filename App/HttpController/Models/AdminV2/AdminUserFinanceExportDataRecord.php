@@ -53,6 +53,7 @@ class AdminUserFinanceExportDataRecord extends ModelBase
                 json_encode([
                     'addCarInsuranceInfo Throwable continue',
                     $e->getMessage(),
+                    $requestData
                 ])
             );  
         }  
