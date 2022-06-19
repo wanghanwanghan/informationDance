@@ -132,7 +132,7 @@ class AdminUserFinanceChargeInfo extends ModelBase
                         `admin_user_finance_data_charge_info` 
                             $where
       " ;
-        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
+        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return $data;
     }
 

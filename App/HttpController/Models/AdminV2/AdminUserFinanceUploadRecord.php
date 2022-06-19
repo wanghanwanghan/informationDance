@@ -185,7 +185,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
     // 用完今日余额的
     public static function findBySql($where){
         $Sql = "select * from    `admin_user_finance_upload_record`   $where  " ;
-        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
+        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return $data;
     }
 
