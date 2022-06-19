@@ -222,6 +222,7 @@ class RunReadAndDealXls extends AbstractCronTask
                 $value0,
                 $value1,
                 $value2,
+                json_encode($res['result']['content']),
                 json_encode($res)
             ];
 
