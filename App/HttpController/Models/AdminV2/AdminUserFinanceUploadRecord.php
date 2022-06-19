@@ -198,6 +198,17 @@ class AdminUserFinanceUploadRecord extends ModelBase
     public static function updateMoneyById(
         $id,$money
     ){
+        CommonService::getInstance()->log4PHP(
+           json_encode(
+               [
+                   'updateMoneyById ',
+                   [
+                       'id' => $id,
+                       'money' => $money,
+                   ]
+               ]
+           )
+        );
         $info = self::findById($id);
         return $info->update([
             'id' => $id,
@@ -286,6 +297,15 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 }
             }
         }
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'calMoney ',
+                    $uploadId,
+                    $chargeDetails
+                ]
+            )
+        );
         return $chargeDetails;
     }
 
