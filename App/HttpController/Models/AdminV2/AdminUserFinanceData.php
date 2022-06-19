@@ -771,6 +771,38 @@ class AdminUserFinanceData extends ModelBase
         return $res;
     }
 
+    public static function checkDataIsValid($id){
+        $res =  self::findById($id);
+        $res2 =  ($res->getAttr('status') == self::$statusConfirmedYes)? true:false;
+
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'checkDataIsValid ',
+                    '$id '=>$id,
+                    '$res2'=>$res2
+                ]
+            )
+        );
+        return $res2;
+    }
+
+    public static function checkDataNeedConfirm($id){
+        $res =  self::findById($id);
+        $res2 =  ($res->getAttr('status') == self::$statusNeedsConfirm)? true:false;
+
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'checkDataNeedConfirm ',
+                    '$id '=>$id,
+                    '$res2'=>$res2
+                ]
+            )
+        );
+        return $res2;
+    }
+
     public static function findByUserAndEntAndYear($userId,$entName,$year){
         $res =  AdminUserFinanceData::create()
             ->where([

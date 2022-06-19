@@ -102,6 +102,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
         return true;
     }
 
+
     public static function findByIdAndFileName($user_id,$file_name){
         $res =  AdminUserFinanceUploadRecord::create()->where([
             'user_id' => $user_id,  

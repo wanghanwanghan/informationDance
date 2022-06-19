@@ -2753,9 +2753,9 @@ eof;
         }
 
         if(
-            $this->getRequestData('exportFinanceData')
+            $this->getRequestData('pullFinanceData')
         ){
-            RunDealFinanceCompanyDataNew::exportFinanceData(1);
+            RunDealFinanceCompanyDataNew::pullFinanceData(1);
         }
 
 

@@ -150,11 +150,117 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
         //将客户名单解析到db
         self::parseCompanyDataToDb(1);
         self::calcluteFinancePrice(1);
-        //找到需要导出的
+        //找到需要导出的 拉取财务数据
+        self::pullFinanceData(5);
+        //找到需要导出的 设置为已确认
+        self::checkConfirm(5);
         self::exportFinanceData(5);
+
         ConfigInfo::setIsDone("RunDealFinanceCompanyData2");
 
         return true ;   
+    }
+
+    static function  pullFinanceData($limit){
+        $queueDatas =  AdminUserFinanceExportDataQueue::findBySql(
+            " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_init. " 
+             AND touch_time  IS Null  LIMIT $limit 
+            "
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'exportFinanceData   '=> 'strat',
+                " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_init. " 
+             AND touch_time  IS Null  LIMIT $limit 
+            "
+
+            ])
+        );
+        foreach($queueDatas as $queueData){
+
+            AdminUserFinanceExportDataQueue::setTouchTime(
+                $queueData['id'],date('Y-m-d H:i:s')
+            );
+
+            $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'exportFinanceData   '=> '$uploadRes',
+                    $uploadRes
+                ])
+            );
+            $finance_config = AdminUserFinanceUploadRecord::getFinanceConfigArray($queueData['upload_record_id']);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'exportFinanceData   '=> '$finance_config',
+                    $finance_config
+                ])
+            );
+            //拉取财务数据
+            $pullFinanceDataByIdRes = AdminUserFinanceUploadRecord::pullFinanceDataById(
+                $uploadRes['id']
+            );
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'exportFinanceData   '=> '$pullFinanceDataByIdRes',
+                    $pullFinanceDataByIdRes
+                ])
+            );
+
+            //设置是否需要去确认
+            AdminUserFinanceExportDataQueue::setFinanceDataState($queueData['id']);
+            AdminUserFinanceExportDataQueue::setTouchTime(
+                $queueData['id'],NULL
+            );
+        }
+
+        return true;
+    }
+
+    static function  checkConfirm($limit){
+        $queueDatas =  AdminUserFinanceExportDataQueue::findBySql(
+            " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_needs_confirm. " 
+             AND touch_time  IS Null  LIMIT $limit 
+            "
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'exportFinanceData   '=> 'strat',
+                " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_needs_confirm. " 
+             AND touch_time  IS Null  LIMIT $limit 
+            "
+
+            ])
+        );
+        foreach($queueDatas as $queueData){
+
+            AdminUserFinanceExportDataQueue::setTouchTime(
+                $queueData['id'],date('Y-m-d H:i:s')
+            );
+
+            $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'exportFinanceData   '=> '$uploadRes',
+                    $uploadRes
+                ])
+            );
+            $finance_config = AdminUserFinanceUploadRecord::getFinanceConfigArray($queueData['upload_record_id']);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'exportFinanceData   '=> '$finance_config',
+                    $finance_config
+                ])
+            );
+
+            //设置是否需要去确认
+            AdminUserFinanceExportDataQueue::setFinanceDataState($queueData['id']);
+            AdminUserFinanceExportDataQueue::setTouchTime(
+                $queueData['id'],NULL
+            );
+        }
+
+        return true;
     }
 
     static function  exportFinanceData($limit){
@@ -260,7 +366,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             }
             foreach($financeDatas['details'] as $financeData){
                 $AdminUserFinanceUploadDataRecord = AdminUserFinanceUploadDataRecord::
-                    findById($financeData['UploadDataRecordId'])->toArray();
+                findById($financeData['UploadDataRecordId'])->toArray();
 
                 $AdminUserFinanceExportDataRecordId = AdminUserFinanceExportDataRecord::addRecordV2(
                     [

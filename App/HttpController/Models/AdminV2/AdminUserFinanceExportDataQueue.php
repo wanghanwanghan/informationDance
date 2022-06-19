@@ -18,12 +18,43 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     static  $state_init = 1;
     static  $state_init_cname =  '初始';
 
+    static  $state_needs_confirm = 10;
+    static  $state_needs_confirm_cname =  '需要确认';
 
-    static  $state_succeed = 10;
-    static  $state_succeed_cname =  '成功';
+    static  $state_confirmed = 20;
+    static  $state_confirmed_cname =  '已确认';
 
-    static  $state_failed = 20;
-    static  $state_failed_cname =  '失败';
+    static  $state_succeed = 30;
+    static  $state_succeed_cname =  '下载成功';
+
+
+    public static function setFinanceDataState($queueId){
+        $queueData = self::findById($queueId)->toArray();
+        $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'setFinanceDataState  strat',
+                '$queueId'=>$queueId
+            ])
+        );
+
+        $uploadDatas = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
+            $uploadRes['user_id'],$uploadRes['id']
+        );
+
+        $status = self::$state_confirmed;
+        foreach ($uploadDatas as $uploadData){
+            if(
+                AdminUserFinanceData::checkDataNeedConfirm($uploadData['user_finance_data_id'])
+            ){
+                $status = self::$state_needs_confirm;
+                break;
+            };
+        }
+        return self::updateStatusById($queueId,$status);
+
+    }
 
     public static function updateStatusById(
         $id,$status
