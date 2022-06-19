@@ -328,11 +328,9 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
             )
         );
 
-        $info = AdminUserFinanceUploadDataRecord::create()
-            ->where('id',$info['id'])
-            ->get();
+        $res = self::findById($info['id']);
 
-        $res = $info->update([
+        $res2 = $res->update([
             'id' => $info['id'],
 //            'price' => $info['price'],
 //            'price_type' => $info['price_type'],
@@ -345,7 +343,8 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
             json_encode(
                 [
                     'updatePriceType res ',
-                    $res,
+                    $res->toArray(),
+                    $res2
                 ]
             )
         );
