@@ -475,8 +475,15 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
             }
 
             // 选择的不是全部包年年份 ：改为单年
+            $checkIfArrayEquals = self::checkIfArrayEquals($selectYears,$annulYears);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'updateChargeInfo  $checkIfArrayEquals  ',
+                    $checkIfArrayEquals
+                ])
+            );
             if(
-                !self::checkIfArrayEquals($selectYears,$annulYears)
+                !$checkIfArrayEquals
             ){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
