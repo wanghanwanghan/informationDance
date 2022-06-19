@@ -175,7 +175,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             $pullFinanceDataByIdRes = AdminUserFinanceUploadRecord::pullFinanceDataById(
                 $uploadRes['id']
             );
-            return true;
+            continue;
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     '$pullFinanceDataByIdRes  '=>$pullFinanceDataByIdRes,
