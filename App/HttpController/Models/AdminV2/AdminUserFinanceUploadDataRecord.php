@@ -345,15 +345,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
             json_encode(
                 [
                     'updatePriceType res ',
-                    $res,[
-                    'id' => $info['id'],
-                    'price' => $info['price'],
-                    'price_type' => $info['price_type'],
-                    'price_type_remark' => $info['price_type_remark'],
-                    'charge_year' => $info['charge_year'],
-                    'charge_year_start' => $info['charge_year_start'],
-                    'charge_year_end' => $info['charge_year_end'],
-                ]
+                    $res, 
                 ]
             )
         );
