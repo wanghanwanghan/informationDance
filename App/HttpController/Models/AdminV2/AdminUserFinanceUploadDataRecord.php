@@ -352,7 +352,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
             ])
         );
         //用户财务其他信息
-        $user_finance_data = AdminUserFinanceData::findById($uploadInfo['user_finance_data_id']);
+        $user_finance_data = AdminUserFinanceData::findById($dataInfo['user_finance_data_id']);
         CommonService::getInstance()->log4PHP(
             json_encode([
                 'updateChargeInfo  用户财务其他信息',
