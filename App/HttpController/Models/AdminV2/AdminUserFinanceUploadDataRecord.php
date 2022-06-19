@@ -388,7 +388,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         self::updatePriceType(
             [
                 'id' => $id,
-                'price' => $user_finance_data['annually_price'],
+                'price' => $finance_config['annually_price'],
                 'price_type' => self::$chargeTypeAnnually,
                 'price_type_remark' =>  '包年',
                 'charge_year' => $user_finance_data['year'],
@@ -494,6 +494,17 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
     }
 
     static  function  getYearPriceByConfig($year,$configArr){
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'getYearPriceByConfig',
+                    '$year'=>$year,'$configArr'=>$configArr,
+                    'normal_years_price_json_arr' => json_decode($configArr['normal_years_price_json'],true)
+
+                ]
+            )
+        );;
+
         foreach (json_decode($configArr['normal_years_price_json'],true) as $configItem){
             if(
                 $configItem['year'] == $year
