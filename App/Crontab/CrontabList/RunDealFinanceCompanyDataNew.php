@@ -160,7 +160,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
     static function  exportFinanceData($limit){
         $queueDatas =  AdminUserFinanceExportDataQueue::findBySql(
             " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_init. " 
-             AND touch_time  =  '0000-00-00 00:00:00' LIMIT $limit 
+             AND touch_time  IS Null  LIMIT $limit 
             "
         );
         foreach($queueDatas as $queueData){
@@ -268,7 +268,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             }
 
             AdminUserFinanceExportDataQueue::setTouchTime(
-                $queueData['id'],'0000-00-00 00:00:00'
+                $queueData['id'],NULL
             );
         }
 
@@ -278,7 +278,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
     //计算价格
     static function  calcluteFinancePrice($limit){
         $where = " WHERE `status` = ".AdminUserFinanceUploadRecord::$stateParsed. " 
-             AND touch_time  = '0000-00-00 00:00:00'  LIMIT $limit 
+             AND touch_time IS Null  LIMIT $limit 
         ";
         $uploadRecords = AdminUserFinanceUploadRecord::findBySql(
             $where
@@ -312,7 +312,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             );
 
             AdminUserFinanceUploadRecord::setTouchTime(
-                $uploadRecord['id'], '0000-00-00 00:00:00'
+                $uploadRecord['id'], NULL
             );
         }
         return true;
@@ -321,7 +321,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
     static function  parseCompanyDataToDb($limit){
         // 用户上传的客户名单信息
         $where = " WHERE `status` = ".AdminUserFinanceUploadRecord::$stateInit. " 
-             AND touch_time  = '0000-00-00 00:00:00'   LIMIT $limit 
+             AND touch_time  IS Null   LIMIT $limit 
         ";
         $uploadRecords = AdminUserFinanceUploadRecord::findBySql(
             $where
@@ -379,7 +379,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 );
             }
             AdminUserFinanceUploadRecord::setTouchTime(
-                $uploadRecord['id'], '0000-00-00 00:00:00'
+                $uploadRecord['id'], NULL
             );
         }
 
