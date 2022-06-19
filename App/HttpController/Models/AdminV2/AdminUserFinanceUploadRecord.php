@@ -140,9 +140,26 @@ class AdminUserFinanceUploadRecord extends ModelBase
     public static function getAllFinanceDataByUploadRecordIdV2(
         $userId,$uploadRecordId
     ){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'getAllFinanceDataByUploadRecordIdV2   '=> 'start',
+                $userId,$uploadRecordId
+            ])
+        );
         $allowedFields = AdminUserFinanceUploadRecord::getAllowedFieldArray($uploadRecordId);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '$allowedFields   '=> $allowedFields
+            ])
+        );
         $AdminUserFinanceUploadDataRecords = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
-            $userId,$uploadRecordId,$allowedFields
+            $userId,$uploadRecordId
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '$AdminUserFinanceUploadDataRecords   '=> $AdminUserFinanceUploadDataRecords,
+                $userId,$uploadRecordId,$allowedFields
+            ])
         );
         $returnDatas  = [
 
@@ -163,7 +180,13 @@ class AdminUserFinanceUploadRecord extends ModelBase
             $NewFinanceData = NewFinanceData::findById(
                 $AdminUserFinanceData['finance_data_id']
             )->toArray();
-            $returnDatas['export_data'][$NewFinanceData['id']] =  $NewFinanceData;
+            $NewFinanceData2 = self::resetArray($NewFinanceData,$allowedFields);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'resetArray   '=> $NewFinanceData2
+                ])
+            );
+            $returnDatas['export_data'][$NewFinanceData['id']] =  $NewFinanceData2;
             $NewFinanceData['UploadDataRecordId'] = $AdminUserFinanceUploadDataRecord['id'];
             $returnDatas['details'][$NewFinanceData['id']] =  $NewFinanceData;
 
@@ -172,6 +195,17 @@ class AdminUserFinanceUploadRecord extends ModelBase
         return $returnDatas;
     }
 
+    static function  resetArray($rawArray,$allowedField){
+        $returnArr = [];
+        foreach ($rawArray as $field => $value){
+            if(
+                in_array($field,$allowedField)
+            ){
+                $returnArr[$field] = $value;
+            }
+        }
+        return $returnArr;
+    }
 
     public static function getFinanceCompleData($user_finance_data_id){ 
         //该数据对应的相关价格配置/缓存配置等
@@ -428,7 +462,19 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
     static function  getAllowedFieldArray($uploadId){
         $finance_config = self::getFinanceConfigArray($uploadId);
-        return json_decode($finance_config['allowed_fields'],true);
+        $arr = json_decode($finance_config['allowed_fields'],true);
+        array_unshift($arr, 'year');
+        array_unshift($arr, 'entName');
+
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'getAllowedFieldArray ',
+                    $arr
+                ]
+            )
+        );
+        return $arr;
     }
 
 }
