@@ -233,8 +233,8 @@ class AdminUserFinanceUploadRecord extends ModelBase
             ){
                 //本次里已经计算过
                 if(
-                    $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year_start'] = $uploadData['charge_year_start'] &&
-                    $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year_end'] = $uploadData['charge_year_end']
+                    $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year_start'] == $uploadData['charge_year_start'] &&
+                    $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year_end'] == $uploadData['charge_year_end']
                 ){
                     $hasChargeBefore = true;
                 };
@@ -270,7 +270,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
             ){
                 //本次里已经计算过
                 if(
-                    $chargeDetails['chargeTypeByYear'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year'] = $uploadData['charge_year']
+                    $chargeDetails['chargeTypeByYear'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year'] == $uploadData['charge_year']
                 ){
                     $hasChargeBefore = true;
                 };
