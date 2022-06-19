@@ -318,29 +318,33 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 ])
             );
             // 实际扣费
-            $res = \App\HttpController\Models\AdminV2\AdminNewUser::charge(
-                $uploadRes['user_id'],
-                (
-                    \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
-                        $uploadRes['user_id']
-                    ) - $uploadRes['money']
-                ),
-                $queueData['id'],
-                [
-                    'detailId' => $queueData['id'],
-                    'detail_table' => 'admin_user_finance_export_data_queue',
-                    'price' => $uploadRes['money'],
-                    'userId' => $uploadRes['userId'],
-                    'type' => FinanceLog::$chargeTytpeFinance,
-                    'batch' => $queueData['id'],
-                    'title' => '',
-                    'detail' => '',
-                    'reamrk' => '',
-                    'status' => 1,
-                ]
-            );
-            if(!$res ){
-                continue;
+            if(
+                $uploadRes['money'] > 0
+            ){
+                $res = \App\HttpController\Models\AdminV2\AdminNewUser::charge(
+                    $uploadRes['user_id'],
+                    (
+                        \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
+                            $uploadRes['user_id']
+                        ) - $uploadRes['money']
+                    ),
+                    $queueData['id'],
+                    [
+                        'detailId' => $queueData['id'],
+                        'detail_table' => 'admin_user_finance_export_data_queue',
+                        'price' => $uploadRes['money'],
+                        'userId' => $uploadRes['user_id'],
+                        'type' => FinanceLog::$chargeTytpeFinance,
+                        'batch' => $queueData['id'],
+                        'title' => '',
+                        'detail' => '',
+                        'reamrk' => '',
+                        'status' => 1,
+                    ]
+                );
+                if(!$res ){
+                    continue;
+                }
             }
 
             // 设置导出记录
