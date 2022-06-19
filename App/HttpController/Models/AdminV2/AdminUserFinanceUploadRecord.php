@@ -73,6 +73,28 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
         return $res;
     }
+    public static function pullFinanceDataById($upload_record_id){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'pullFinanceDataById  '=>$upload_record_id
+            ])
+        );
+        $uploadRes = AdminUserFinanceUploadRecord::findById($upload_record_id)->toArray();
+        $uploadDatas = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
+            $uploadRes['user_id'],$uploadRes['id']
+        );
+        foreach ($uploadDatas as $uploadData){
+            $pullFinanceDataRes = AdminUserFinanceData::pullFinanceData(
+                $uploadData['user_finance_data_id'],AdminUserFinanceUploadRecord::getFinanceConfigArray($uploadData['id'])
+            );
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '$pullFinanceDataRes  '=>$pullFinanceDataRes
+                ])
+            );
+        }
+        return true;
+    }
 
     public static function findByIdAndFileName($user_id,$file_name){
         $res =  AdminUserFinanceUploadRecord::create()->where([

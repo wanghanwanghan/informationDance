@@ -170,8 +170,18 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
 
             $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
             $finance_config = AdminUserFinanceUploadRecord::getFinanceConfigArray($queueData['upload_record_id']);
-            $financeDatas = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordIdV2(
-                $uploadRes['user_id'],$uploadRes['id']
+
+            //拉取财务数据
+            $pullFinanceDataByIdRes = AdminUserFinanceUploadRecord::pullFinanceDataById(
+                $uploadRes['id']
+            );
+            return true;
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '$pullFinanceDataByIdRes  '=>$pullFinanceDataByIdRes,
+                    'id' => $uploadRes['id'],
+
+                ])
             );
 
             //生成下载数据

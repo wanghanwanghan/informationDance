@@ -5,6 +5,7 @@ namespace App\HttpController\Models\AdminNew;
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
+use EasySwoole\RedisPool\Redis;
 
 class ConfigInfo extends ModelBase
 {

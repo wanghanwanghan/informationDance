@@ -291,16 +291,29 @@ class AdminUserFinanceData extends ModelBase
     //我们拉取运营商的时间间隔  
     //客户导出的时间间隔  
     public static function pullFinanceData($id,$financeConifgArr){
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'pullFinanceData  '=>'running',
+                '$id' =>$id,
+                '$financeConifgArr' =>$financeConifgArr,
+            ])
+        );
         $financeData =  AdminUserFinanceData::findById($id)->toArray();
-
+        if($financeData['year'] > date('Y')){
+            CommonService::getInstance()->log4PHP(
+                [
+                    'pullFinanceData   year to large ',
+                ]
+            );
+            return  true;
+        }
         $postData = [
             'entName' => $financeData['entName'],
             'code' => '',
             'beginYear' =>$financeData['year'],
             'dataCount' => 1,//取最近几年的
         ];
-         
+
         // 根据缓存期和上次拉取财务数据时间 决定是取db还是取api
         $getFinanceDataSourceDetailRes = self::getFinanceDataSourceDetail($id);
         CommonService::getInstance()->log4PHP(
@@ -331,7 +344,14 @@ class AdminUserFinanceData extends ModelBase
             $dbDataArr['year'] = $financeData['year'];
             //设置是否需要确认
             $dbDataArr['status'] = self::getConfirmStatus($financeConifgArr,$dbDataArr);
-            $addRes = NewFinanceData::addRecord($dbDataArr);
+            CommonService::getInstance()->log4PHP(
+                [
+                    'NewFinanceData addRecord',
+                    '$dbDataArr' => $dbDataArr,
+                ]
+            );
+
+            $addRes = NewFinanceData::addRecordV2($dbDataArr);
             CommonService::getInstance()->log4PHP(
                 json_encode(
                    [

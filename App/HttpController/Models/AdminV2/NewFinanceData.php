@@ -58,7 +58,24 @@ class NewFinanceData extends ModelBase
         }  
 
         return $res;
-    } 
+    }
+
+    public static function addRecordV2(
+        $postData
+    ){
+         $res = self::findByCondition(
+             [
+                 'entName' => $postData['entName'],
+                 'user_id' => $postData['user_id'],
+                 'year' => $postData['year'],
+             ],1
+         );
+         if($res){
+             return  $res->getAttr('id');
+         }
+
+        return self::addRecord($postData);
+    }
 
     public static function findByCondition($whereArr,$limit){
         $res =  NewFinanceData::create()
