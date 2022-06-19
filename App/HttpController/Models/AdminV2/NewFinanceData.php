@@ -63,12 +63,7 @@ class NewFinanceData extends ModelBase
     public static function addRecordV2(
         $postData
     ){
-         $res = self::findByCondition(
-             [
-                 'entName' => $postData['entName'],
-//                 'user_id' => $postData['user_id'],
-                 'year' => $postData['year'],
-             ],1
+         $res = self::findByEntAndYear($postData['entName'], $postData['year']
          );
          if($res){
              return  $res->getAttr('id');
@@ -89,6 +84,14 @@ class NewFinanceData extends ModelBase
         $res =  NewFinanceData::create()
             ->where('id',$id)            
             ->get();  
+        return $res;
+    }
+
+    public static function findByEntAndYear($entName,$year){
+        $res =  NewFinanceData::create()
+            ->where('entName',$entName)
+            ->where('year',$year)
+            ->get();
         return $res;
     }
 
