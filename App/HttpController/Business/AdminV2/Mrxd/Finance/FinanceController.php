@@ -350,6 +350,36 @@ class FinanceController extends ControllerBase
         ], $res,'成功');
     }
 
+    public function getExportQueueLists(){
+        $requestData =  $this->getRequestData();
+
+        $res = AdminUserFinanceExportDataQueue::findByCondition(
+            [
+                // 'user_id' => $userId
+                'user_id' => $this->loginUserinfo['id']
+            ],
+            0, 20
+        );
+        $size = $this->request()->getRequestParam('size')??10;
+        $page = $this->request()->getRequestParam('page')??1;
+        $offset  =  ($page-1)*$size;
+
+        foreach ($res as &$value){
+            $value['upload_details'] = [];
+            if(
+                $value['upload_record_id']
+            ){
+                $value['upload_details'] = AdminUserFinanceUploadRecord::findById($value['upload_record_id'])->toArray();
+            }
+        }
+        return $this->writeJson(200,  [
+            'page' => $page,
+            'pageSize' =>$size,
+            'total' => 1,
+            'totalPage' => 1,
+        ], $res,'成功');
+    }
+
     //获取待确认的列表
     public function getNeedsConfirmExportLists(){
         // $userId = $this->getRequestData('user_id');
@@ -407,6 +437,8 @@ class FinanceController extends ControllerBase
             'totalPage' => 1,
         ], $res, '');
     }
+
+
 
     public function exportDetails(){
 
@@ -529,6 +561,7 @@ class FinanceController extends ControllerBase
             AdminUserFinanceExportDataQueue::addRecordV2(
                 [
                     'batch' => date('YmdHis'),
+                    'user_id' => $this->loginUserinfo['id'],
                     'upload_record_id' => $requestData['id']
                 ]
             )

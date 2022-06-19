@@ -77,10 +77,11 @@ class AdminUserFinanceExportDataQueue extends ModelBase
         );
 
         if(
-            AdminUserFinanceExportDataQueue::findBySql(
-                " WHERE upload_record_id = ".$info['upload_record_id'].
-                "  AND status = ".AdminUserFinanceExportDataQueue::$state_init
-            )
+            self::findByBatch($info['batch'])
+//            AdminUserFinanceExportDataQueue::findBySql(
+//                " WHERE upload_record_id = ".$info['upload_record_id'].
+//                "  AND status = ".AdminUserFinanceExportDataQueue::$state_init
+//            )
         ){
             CommonService::getInstance()->log4PHP(
                 json_encode([
@@ -104,6 +105,9 @@ class AdminUserFinanceExportDataQueue extends ModelBase
                 'upload_record_id' => $requestData['upload_record_id'],
                 'touch_time' => $requestData['touch_time'],
                 'batch' => $requestData['batch'],
+               'user_id' => $requestData['user_id'],
+               'path' => $requestData['path']?:'',
+               'file_name' => $requestData['file_name']?:'',
                 'status' => $requestData['status']?:1,
            ])->save();
 
@@ -134,11 +138,33 @@ class AdminUserFinanceExportDataQueue extends ModelBase
         return $res;
     }
 
+    public static function findByBatch($batch){
+        $res =  AdminUserFinanceExportDataQueue::create()
+            ->where('batch',$batch)
+            ->get();
+        return $res;
+    }
+
     public static function setTouchTime($id,$touchTime){
         $info = AdminUserFinanceExportDataQueue::findById($id);
 
         return $info->update([
             'touch_time' => $touchTime,
+        ]);
+    }
+
+    public static function setFilePath($id,$path,$fileName){
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'setFilePath   '=>$id,$path,$fileName
+            ])
+        );
+        $info = AdminUserFinanceExportDataQueue::findById($id);
+
+        return $info->update([
+            'path' => $path,
+            'file_name' => $fileName,
         ]);
     }
 
