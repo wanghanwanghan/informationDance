@@ -337,30 +337,38 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
 
         //用户的配置
         $finance_config = json_decode($uploadId['finance_config'],true);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'updateChargeInfo  用户的配置',
+                $finance_config
+            ])
+        );
         //用户该次选择的年限
         $selectYears = json_decode($uploadInfo['years'],true);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'updateChargeInfo  用户该次选择的年限',
+                $selectYears
+            ])
+        );
         //用户财务其他信息
         $user_finance_data = AdminUserFinanceData::findById($uploadInfo['user_finance_data_id']);
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'updateChargeInfo  用户财务其他信息',
+                $user_finance_data
+            ])
+        );
         //按包年计费？按年计费
         $annulYears = json_decode($finance_config['annually_years'],true);
         sort($annulYears);
-        if(
-            !in_array($user_finance_data['year'],$annulYears)
-        ){
-            self::updatePriceType(
-                [
-                    'id' => $id,
-                    'price' => self::getYearPriceByConfig($user_finance_data['year'],$finance_config),
-                    'price_type' => self::$chargeTypeByYear,
-                    'price_type_remark' =>  '不属包年年度,按单年计算',
-                    'charge_year' => $user_finance_data['year'],
-                    'charge_year_start' => '',
-                    'charge_year_end' => '',
-                ]
-            );
-        }
-        ;
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'updateChargeInfo  $annulYears',
+                $annulYears
+            ])
+        );
+
         //默认是包年
         self::updatePriceType(
             [
@@ -374,8 +382,47 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
             ]
         );
 
+        if(
+            !in_array($user_finance_data['year'],$annulYears)
+        ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'updateChargeInfo  不属包年年度,按单年计算',
+                    $user_finance_data['year'],$annulYears,
+                    [
+                        'id' => $id,
+                        'price' => self::getYearPriceByConfig($user_finance_data['year'],$finance_config),
+                        'price_type' => self::$chargeTypeByYear,
+                        'price_type_remark' =>  '不属包年年度,按单年计算',
+                        'charge_year' => $user_finance_data['year'],
+                        'charge_year_start' => '',
+                        'charge_year_end' => '',
+                    ]
+                ])
+            );
+            self::updatePriceType(
+                [
+                    'id' => $id,
+                    'price' => self::getYearPriceByConfig($user_finance_data['year'],$finance_config),
+                    'price_type' => self::$chargeTypeByYear,
+                    'price_type_remark' =>  '不属包年年度,按单年计算',
+                    'charge_year' => $user_finance_data['year'],
+                    'charge_year_start' => '',
+                    'charge_year_end' => '',
+                ]
+            );
+        }
+
+
         //如果配置的单年度 不按包年计算
         if(!$finance_config['single_year_charge_as_annual']){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'updateChargeInfo  配置的单年度 不按包年计算',
+                    $finance_config['single_year_charge_as_annual']
+                ])
+            );
+
             // 数据不连续 ： 改包年为单年
             if(
                 AdminUserFinanceData::checkIfAllYearsDataIsValid(
@@ -384,6 +431,14 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
                     $user_finance_data['year']
                 )
             ){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        'updateChargeInfo  数据不连续 ： 改包年为单年',
+                        $user_finance_data['user_id'],
+                        $user_finance_data['entName'],
+                        $user_finance_data['year']
+                    ])
+                );
                 self::updatePriceType(
                     [
                         'id' => $id,
@@ -401,6 +456,12 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
             if(
                 !self::checkIfArrayEquals($selectYears,$annulYears)
             ){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        'updateChargeInfo  选择的不是全部包年年份 ：改为单年',
+                        $selectYears,$annulYears
+                    ])
+                );
                 self::updatePriceType(
                     [
                         'id' => $id,

@@ -283,6 +283,13 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
         $uploadRecords = AdminUserFinanceUploadRecord::findBySql(
             $where
         );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'calcluteFinancePrice findBySql ',
+                $where,$uploadRecords
+            ])
+        );
+
         foreach($uploadRecords as $uploadRecord) {
             AdminUserFinanceUploadRecord::setTouchTime(
                 $uploadRecord['id'], date('Y-m-d H:i:s')

@@ -2749,7 +2749,7 @@ eof;
         if(
             $this->getRequestData('calculatePrice')
         ){
-            RunDealFinanceCompanyData::calculatePrice(1);
+            RunDealFinanceCompanyDataNew::calcluteFinancePrice(1);
         }
 
         if(
