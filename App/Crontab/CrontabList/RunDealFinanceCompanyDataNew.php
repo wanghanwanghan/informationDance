@@ -321,12 +321,16 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
     static function  parseCompanyDataToDb($limit){
         // 用户上传的客户名单信息
         $where = " WHERE `status` = ".AdminUserFinanceUploadRecord::$stateInit. " 
-             AND touch_time  IS Null   LIMIT $limit 
+             AND touch_time  IS NULL   LIMIT $limit 
         ";
         $uploadRecords = AdminUserFinanceUploadRecord::findBySql(
             $where
         );
-
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                ['parseCompanyDataToDb  findBySql ',$where,$uploadRecords]
+            )
+        );
         foreach($uploadRecords as $uploadRecord) {
             AdminUserFinanceUploadRecord::setTouchTime(
                 $uploadRecord['id'], date('Y-m-d H:i:s')
