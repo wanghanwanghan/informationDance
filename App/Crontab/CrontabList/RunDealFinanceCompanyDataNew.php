@@ -347,7 +347,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                     )
                 );
                 // 按年度解析为数据
-                $yearsArr = json_decode($companyData['years'],true);
+                $yearsArr = json_decode($uploadRecord['years'],true);
                 CommonService::getInstance()->log4PHP(
                     json_encode(
                         [' 按年度解析为数据 ',$yearsArr]
