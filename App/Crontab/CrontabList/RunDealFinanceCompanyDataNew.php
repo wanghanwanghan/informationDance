@@ -154,6 +154,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
         self::pullFinanceData(5);
         //找到需要导出的 设置为已确认
         self::checkConfirm(5);
+        //找到已确认完的 实际导出
         self::exportFinanceData(5);
 
         ConfigInfo::setIsDone("RunDealFinanceCompanyData2");
@@ -265,14 +266,14 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
 
     static function  exportFinanceData($limit){
         $queueDatas =  AdminUserFinanceExportDataQueue::findBySql(
-            " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_init. " 
+            " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_confirmed. " 
              AND touch_time  IS Null  LIMIT $limit 
             "
         );
         CommonService::getInstance()->log4PHP(
             json_encode([
                 'exportFinanceData   '=> 'strat',
-                " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_init. " 
+                " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_confirmed. " 
              AND touch_time  IS Null  LIMIT $limit 
             "
 
@@ -298,29 +299,24 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                     $finance_config
                 ])
             );
-            //拉取财务数据
-            $pullFinanceDataByIdRes = AdminUserFinanceUploadRecord::pullFinanceDataById(
-                $uploadRes['id']
+
+            //财务数据
+            $financeDatas = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordIdV2(
+                $uploadRes['user_id'],$uploadRes['id']
             );
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'exportFinanceData   '=> '$pullFinanceDataByIdRes',
-                    $pullFinanceDataByIdRes
+                    '$financeDatas   '=> $financeDatas,
+                    $uploadRes['user_id'],$uploadRes['id']
                 ])
             );
-            //需要去确认
-            continue;
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    '$pullFinanceDataByIdRes  '=>$pullFinanceDataByIdRes,
-                    'id' => $uploadRes['id'],
-
-                ])
-            );
-
             //生成下载数据
             $xlxsData = NewFinanceData::exportFinanceToXlsx($queueData['upload_record_id'],$financeDatas['export_data']);
-
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '$xlxsData   '=> $xlxsData
+                ])
+            );
             // 实际扣费
             $res = \App\HttpController\Models\AdminV2\AdminNewUser::charge(
                 $uploadRes['user_id'],
@@ -361,6 +357,11 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                     'batch' => $queueData['batch'],
                 ]
             ]);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '$AdminUserFinanceExportRecordId   '=> $AdminUserFinanceExportRecordId
+                ])
+            );
             if(!$AdminUserFinanceExportRecordId){
                 continue ;
             }
@@ -379,28 +380,43 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                         'status' => AdminUserFinanceExportRecord::$stateInit,
                     ]
                 );
-
-                //设置收费记录
-                AdminUserFinanceChargeInfo::addRecordV2(
-                    [
-                        'user_id' => $AdminUserFinanceUploadDataRecord['user_id'],
-                        'batch' => $AdminUserFinanceUploadDataRecord['id'].'_'.$queueData['id'],
-                        'entName' => $financeData['entName'],
-                        'start_year' => $AdminUserFinanceUploadDataRecord['charge_year_start'],
-                        'end_year' => $AdminUserFinanceUploadDataRecord['charge_year_end'],
-                        'year' => $AdminUserFinanceUploadDataRecord['charge_year'],
-                        'price' => $AdminUserFinanceUploadDataRecord['price'],
-                        'price_type' => $AdminUserFinanceUploadDataRecord['price_type'],
-                        'status' => AdminUserFinanceChargeInfo::$state_init,
-                    ]
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        '$AdminUserFinanceExportDataRecordId   '=> $AdminUserFinanceExportDataRecordId
+                    ])
                 );
                 if(
                     $AdminUserFinanceUploadDataRecord['price'] > 0
                 ){
+                    //设置收费记录
+                    $AdminUserFinanceChargeInfoId = AdminUserFinanceChargeInfo::addRecordV2(
+                        [
+                            'user_id' => $AdminUserFinanceUploadDataRecord['user_id'],
+                            'batch' => $AdminUserFinanceUploadDataRecord['id'].'_'.$queueData['id'],
+                            'entName' => $financeData['entName'],
+                            'start_year' => $AdminUserFinanceUploadDataRecord['charge_year_start'],
+                            'end_year' => $AdminUserFinanceUploadDataRecord['charge_year_end'],
+                            'year' => $AdminUserFinanceUploadDataRecord['charge_year'],
+                            'price' => $AdminUserFinanceUploadDataRecord['price'],
+                            'price_type' => $AdminUserFinanceUploadDataRecord['price_type'],
+                            'status' => AdminUserFinanceChargeInfo::$state_init,
+                        ]
+                    );
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            '$AdminUserFinanceChargeInfoId   '=> $AdminUserFinanceChargeInfoId
+                        ])
+                    );
                     //设置上次计费时间
                     AdminUserFinanceData::updateLastChargeDate(
                         $AdminUserFinanceUploadDataRecord['user_finance_data_id'],
                         date('Y-m-d H:i:s')
+                    );
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            'updateLastChargeDate   '=> [$AdminUserFinanceUploadDataRecord['user_finance_data_id'],
+                                date('Y-m-d H:i:s')]
+                        ])
                     );
                     //设置缓存过期时间
                     AdminUserFinanceData::updateCacheEndDate(
@@ -408,12 +424,27 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                         date('Y-m-d H:i:s'),
                         $finance_config['cache']
                     );
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            'updateCacheEndDate   '=> [
+                                $AdminUserFinanceUploadDataRecord['user_finance_data_id'],
+                                date('Y-m-d H:i:s'),
+                                $finance_config['cache']
+                            ]
+                        ])
+                    );
                 }
             }
 
+
+            AdminUserFinanceExportDataQueue::updateStatusById(
+                $queueData['id'],
+                AdminUserFinanceExportDataQueue::$state_succeed
+            );
             AdminUserFinanceExportDataQueue::setTouchTime(
                 $queueData['id'],NULL
             );
+
         }
 
         return true;

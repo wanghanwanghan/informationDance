@@ -50,6 +50,12 @@ class AdminNewUser extends ModelBase
     }
 
     public static function updateMoney($id,$money){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'updateMoney   '=> 'strat',
+                $id,$money
+            ])
+        );
         $info = AdminNewUser::findById($id);
 
         return $info->update([
@@ -59,6 +65,12 @@ class AdminNewUser extends ModelBase
     }
 
     public static function charge($id,$money,$batchNo,$datas){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'charge   '=> 'strat',
+                $id,$money,$batchNo,$datas
+            ])
+        );
         if(
             FinanceLog::findByBatch($batchNo)
         ){

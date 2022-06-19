@@ -2758,7 +2758,6 @@ eof;
             RunDealFinanceCompanyDataNew::pullFinanceData(1);
         }
 
-
         if(
             $this->getRequestData('checkConfirm')
         ){
@@ -2766,9 +2765,9 @@ eof;
         }
 
         if(
-            $this->getRequestData('checkBalancePrice')
+            $this->getRequestData('exportFinanceData')
         ){
-            RunDealFinanceCompanyData::checkBalancePrice(1);
+            RunDealFinanceCompanyDataNew::exportFinanceData(1);
         }
 
         // $config = [
