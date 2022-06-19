@@ -76,7 +76,8 @@ class AdminUserFinanceUploadRecord extends ModelBase
     public static function pullFinanceDataById($upload_record_id){
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'pullFinanceDataById  '=>$upload_record_id
+                'pullFinanceDataById  strat',
+                '$upload_record_id'=>$upload_record_id
             ])
         );
         $uploadRes = AdminUserFinanceUploadRecord::findById($upload_record_id)->toArray();
@@ -93,6 +94,11 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 ])
             );
         }
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'pullFinanceDataById succeed  '
+            ])
+        );
         return true;
     }
 
