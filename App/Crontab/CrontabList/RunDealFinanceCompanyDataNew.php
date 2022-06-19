@@ -358,7 +358,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                     'reamrk' => '',
                     'status' =>AdminUserFinanceExportRecord::$stateInit,
                     'queue_id' => $queueData['id'],
-                    'batch' => $queueData['batch'],
+                    'batch' => $queueData['id'],
                 ]
             );
             CommonService::getInstance()->log4PHP(
@@ -373,7 +373,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                         'reamrk' => '',
                         'status' =>AdminUserFinanceExportRecord::$stateInit,
                         'queue_id' => $queueData['id'],
-                        'batch' => $queueData['batch'],
+                        'batch' => $queueData['id'],
                     ]
                 ])
             );
@@ -391,6 +391,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                         'upload_data_id' => $financeData['UploadDataRecordId'],
                         'price' => $AdminUserFinanceUploadDataRecord['price'],
                         'detail' => $AdminUserFinanceUploadDataRecord['price_type_remark']?:'',
+                        'batch' => $queueData['id'].'_'.$financeData['UploadDataRecordId'],
                         'queue_id' => $queueData['id'],
                         'status' => AdminUserFinanceExportRecord::$stateInit,
                     ]
