@@ -329,15 +329,14 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         );
 
         $res = self::findById($info['id']);
-
         $res2 = $res->update([
             'id' => $info['id'],
 //            'price' => $info['price'],
             'price_type' => $info['price_type'],
             'price_type_remark' => $info['price_type_remark'],
             'charge_year' => $info['charge_year'],
-            'charge_year_start' => $info['charge_year_start'],
-            'charge_year_end' => $info['charge_year_end'],
+//            'charge_year_start' => $info['charge_year_start'],
+//            'charge_year_end' => $info['charge_year_end'],
         ]);
         CommonService::getInstance()->log4PHP(
             json_encode(
