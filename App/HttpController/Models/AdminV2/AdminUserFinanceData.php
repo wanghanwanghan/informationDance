@@ -352,6 +352,9 @@ class AdminUserFinanceData extends ModelBase
             $addRes = NewFinanceData::addRecordV2($dbDataArr);
             //设置是否需要确认
             self::updateStatus($id,self::getConfirmStatus($financeConifgArr,$dbDataArr));
+            //设置关系
+            self::updateNewFinanceDataId($id,$addRes);
+
             CommonService::getInstance()->log4PHP(
                 json_encode(
                    [
@@ -847,6 +850,26 @@ class AdminUserFinanceData extends ModelBase
             'id' => $id,
             'price' => $price,  
             'price_type' => $priceType,  
+        ]);
+    }
+
+    public static function updateNewFinanceDataId($id,$financeDataId){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'updateNewFinanceDataId  ',$id,$financeDataId
+            ])
+        );
+        $info = AdminUserFinanceData::create()
+            ->where('id',$id)
+            ->get();
+        if(!$info ){
+            return CommonService::getInstance()->log4PHP(
+                'updateStatus failed  $id 不存在'.$id
+            );
+        }
+        return $info->update([
+            'id' => $id,
+            'finance_data_id' => $financeDataId
         ]);
     }
 
