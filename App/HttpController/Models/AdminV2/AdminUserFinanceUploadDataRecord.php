@@ -543,7 +543,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         if(
             count($array1) != count($array2)
         ){
-            return  CommonService::getInstance()->log4PHP(
+            CommonService::getInstance()->log4PHP(
                 json_encode(
                     [
                         'checkIfArrayEquals false',
@@ -551,13 +551,14 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
                     ]
                 )
             );
+            return  false;
         }
 
         foreach ($array1 as $key => $value){
             if(
                 $array2[$key] != $value
             ){
-                return  CommonService::getInstance()->log4PHP(
+                CommonService::getInstance()->log4PHP(
                     json_encode(
                         [
                             'checkIfArrayEquals false',
@@ -565,9 +566,17 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
                         ]
                     )
                 );
+                return  false;
             }
         }
-
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'checkIfArrayEquals true',
+                    $array1,$array2
+                ]
+            )
+        );
         return  true;
     }
 
