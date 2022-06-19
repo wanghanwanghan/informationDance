@@ -85,7 +85,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
         );
         foreach ($uploadDatas as $uploadData){
             $pullFinanceDataRes = AdminUserFinanceData::pullFinanceData(
-                $uploadData['user_finance_data_id'],AdminUserFinanceUploadRecord::getFinanceConfigArray($uploadData['id'])
+                $uploadData['user_finance_data_id'],AdminUserFinanceUploadRecord::getFinanceConfigArray($upload_record_id)
             );
             CommonService::getInstance()->log4PHP(
                 json_encode([
