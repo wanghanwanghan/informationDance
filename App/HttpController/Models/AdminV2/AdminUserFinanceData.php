@@ -350,9 +350,8 @@ class AdminUserFinanceData extends ModelBase
             );
 
             $addRes = NewFinanceData::addRecordV2($dbDataArr);
-            //设置是否需要确认
-            $dbDataArr['status'] = self::getConfirmStatus($financeConifgArr,$dbDataArr);
-            NewFinanceData::setStatus($addRes,self::getConfirmStatus($financeConifgArr,$dbDataArr));
+            //设置是否需要确认 
+            self::updateStatus($addRes,self::getConfirmStatus($financeConifgArr,$dbDataArr));
             CommonService::getInstance()->log4PHP(
                 json_encode(
                    [
