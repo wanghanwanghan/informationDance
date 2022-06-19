@@ -33,7 +33,7 @@ class NewFinanceData extends ModelBase
         try {
            $res =  NewFinanceData::create()->data([
                 'entName' => $postData['entName'],  
-                'user_id' => $postData['user_id'],   
+//                'user_id' => $postData['user_id'],
                 'year' => $postData['year'],   
                 'VENDINC' => $postData['VENDINC']?:'',
                 'ASSGRO' => $postData['ASSGRO']?:'',
@@ -66,7 +66,7 @@ class NewFinanceData extends ModelBase
          $res = self::findByCondition(
              [
                  'entName' => $postData['entName'],
-                 'user_id' => $postData['user_id'],
+//                 'user_id' => $postData['user_id'],
                  'year' => $postData['year'],
              ],1
          );
