@@ -192,7 +192,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
     static  function  calAndSetMoney($uploadId){
         return self::updateMoneyById(
             $uploadId,
-            self::calMoney($uploadId)
+            self::calMoney($uploadId)['total_price']
         );
     }
     public static function updateMoneyById(
