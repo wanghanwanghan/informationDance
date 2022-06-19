@@ -2760,9 +2760,9 @@ eof;
 
 
         if(
-            $this->getRequestData('pullFinanceData')
+            $this->getRequestData('checkConfirm')
         ){
-            RunDealFinanceCompanyData::pullFinanceData(1);
+            RunDealFinanceCompanyDataNew::checkConfirm(1);
         }
 
         if(
