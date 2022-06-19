@@ -533,7 +533,7 @@ class FinanceController extends ControllerBase
                 ]
             )
         ){
-            return  true;
+            return  $this->writeJson(200);
         }
 
 

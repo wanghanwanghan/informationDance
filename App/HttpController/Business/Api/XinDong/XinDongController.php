@@ -2753,9 +2753,9 @@ eof;
         }
 
         if(
-            $this->getRequestData('calculateRealPrice')
+            $this->getRequestData('exportFinanceData')
         ){
-            RunDealFinanceCompanyData::calculateRealPrice(1);
+            RunDealFinanceCompanyDataNew::exportFinanceData(1);
         }
 
 
