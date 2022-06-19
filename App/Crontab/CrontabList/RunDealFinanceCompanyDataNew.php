@@ -341,8 +341,18 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             //按行读取数据
             $companyDatas = self::getYieldData($uploadRecord['file_name']);
             foreach ($companyDatas as $companyData) {
+                CommonService::getInstance()->log4PHP(
+                    json_encode(
+                        [' 按行读取数据 ',$companyData]
+                    )
+                );
                 // 按年度解析为数据
                 $yearsArr = json_decode($companyData['years'],true);
+                CommonService::getInstance()->log4PHP(
+                    json_encode(
+                        [' 按年度解析为数据 ',$yearsArr]
+                    )
+                );
                 foreach($yearsArr as $yearItem){
                     $UserFinanceDataId =  AdminUserFinanceData::addNewRecordV2(
                         [
@@ -356,6 +366,20 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                             'status' => 0,
                         ]
                     );
+                    CommonService::getInstance()->log4PHP(
+                        json_encode(
+                            [' AdminUserFinanceData  ',[
+                                'user_id' => $uploadRecord['user_id'] ,
+                                'entName' => $companyData[0] ,
+                                'year' => $yearItem ,
+                                'finance_data_id' => 0,
+                                'price' => 0,
+                                'price_type' => 0,
+                                'cache_end_date' => 0,
+                                'status' => 0,
+                            ],$UserFinanceDataId]
+                        )
+                    );
                     if(!$UserFinanceDataId){
                         continue ;
                     }
@@ -368,7 +392,16 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                             'status' => 0,
                         ]
                     );
-
+                    CommonService::getInstance()->log4PHP(
+                        json_encode(
+                            [' AdminUserFinanceUploadDataRecord  ',[
+                                'user_id' => $uploadRecord['user_id'] ,
+                                'record_id' => $uploadRecord['id'] ,
+                                'user_finance_data_id' => $UserFinanceDataId,
+                                'status' => 0,
+                            ],$UserFinanceUploadDataRecordId]
+                        )
+                    );
                     if($UserFinanceUploadDataRecordId <= 0){
                         continue;
                     }
