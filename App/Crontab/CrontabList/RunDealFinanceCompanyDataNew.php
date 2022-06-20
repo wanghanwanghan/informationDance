@@ -140,9 +140,17 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
         if(
             !ConfigInfo::checkCrontabIfCanRun("RunDealFinanceCompanyData2")
         ){
-            return    CommonService::getInstance()->log4PHP(__CLASS__ . ' is running RunDealFinanceCompanyData2');
+            return     CommonService::getInstance()->log4PHP(json_encode(
+                [
+                    __CLASS__ . ' is already running  ',
+                ]
+            ));
         }
-        CommonService::getInstance()->log4PHP(__CLASS__ . ' start running  ');
+        CommonService::getInstance()->log4PHP(json_encode(
+            [
+                __CLASS__ . ' start running  ',
+            ]
+        ));
 
         ConfigInfo::setIsRunning("RunDealFinanceCompanyData2");
 

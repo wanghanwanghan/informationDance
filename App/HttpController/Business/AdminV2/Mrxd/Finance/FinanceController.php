@@ -357,7 +357,9 @@ class FinanceController extends ControllerBase
             $whereArr,
             $page
         );
-
+        foreach ($res['data'] as &$dataItem){
+            $dataItem['status_cname'] = AdminUserFinanceUploadRecord::getStatusMaps()[$dataItem['status']];
+        }
         return $this->writeJson(200,  [
             'page' => $page,
             'pageSize' =>20,
@@ -733,6 +735,7 @@ class FinanceController extends ControllerBase
             return $this->writeJson(201, null, [],  '请勿重复提交');
         }
 
+
         $requestData =  $this->getRequestData();
         if(
             $requestData['id'] <= 0 
@@ -741,6 +744,7 @@ class FinanceController extends ControllerBase
 
             ],'参数缺失');
         }
+
         $uploadRes = AdminUserFinanceUploadRecord::findById($requestData['id'])->toArray();
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -749,6 +753,16 @@ class FinanceController extends ControllerBase
                 '$uploadRes' => $uploadRes,
             ])
         );
+
+        //检查状态
+        if(
+            !AdminUserFinanceUploadRecord::checkByStatus(
+                $requestData['id'],AdminUserFinanceUploadRecord::$stateCalCulatedPrice
+            )
+        ){
+            return $this->writeJson(201, null, [],  '当前状态不允许导出 请稍等');
+
+        }
         // 检查余额
         if(
             !\App\HttpController\Models\AdminV2\AdminNewUser::checkAccountBalance(

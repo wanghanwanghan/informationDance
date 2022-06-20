@@ -47,7 +47,16 @@ class AdminUserFinanceUploadRecord extends ModelBase
     static $stateHasCalclutePriceType = 30;
     static $stateHasCalclutePriceTypeCname = '已经计算完价格类型';
 
+    public static function getStatusMaps(){
+        return [
+            self::$stateInit => self::$stateInitCname,
+            self::$stateParsed => self::$stateParsedCname,
+            self::$stateCalCulatedPrice => self::$stateCalCulatedPriceCname,
+            self::$stateHasGetData => self::$stateHasGetDataCname,
+            self::$stateCalCulatedPrice2 => self::$stateCalCulatedPrice2Cname,
+        ];
 
+    }
     public static function addUploadRecord($requestData){ 
         try {
            $res =  AdminUserFinanceUploadRecord::create()->data([
@@ -111,6 +120,21 @@ class AdminUserFinanceUploadRecord extends ModelBase
         ])->get(); 
 
         return $res;
+    }
+
+
+    public static function checkByStatus($id,$status){
+        $res =  self::findById($id);
+        $res2 = ($res->getAttr('status')==$status)?true:false;
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'upload record checkByStatus   '=> 'start',
+                'params $id' => $id,
+                'params $status' => $status,
+                '$res2'=>$res2,
+            ])
+        );
+        return $res2;
     }
 
     public static function findByConditionV3($whereArr,$page){
@@ -519,4 +543,6 @@ class AdminUserFinanceUploadRecord extends ModelBase
         );
         return $arr;
     }
+
+
 }
