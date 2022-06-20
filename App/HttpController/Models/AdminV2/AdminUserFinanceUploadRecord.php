@@ -457,7 +457,16 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
     static function getFinanceConfigArray($uploadId){
         $uploadRes = self::findById($uploadId)->toArray();
-        return json_decode($uploadRes['finance_config'],true);
+        $finance_config =  json_decode($uploadRes['finance_config'],true);
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'getAllowedFieldArray ',
+                    $finance_config
+                ]
+            )
+        );
+        return $finance_config;
     }
 
     static function  getAllowedFieldArray($uploadId){

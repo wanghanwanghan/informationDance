@@ -228,33 +228,27 @@ class AdminUserFinanceData extends ModelBase
     }
 
     public static function getFinanceDataSourceDetail($adminFinanceDataId){
-        CommonService::getInstance()->log4PHP(
-            [
-                'getFinanceDataSourceDetail ',
-                $adminFinanceDataId
-            ]
-        );
+
         // $adminFinanceDataId 上次拉取时间| 没超过一年 就不拉
         $financeData =  AdminUserFinanceData::findById($adminFinanceDataId)
             ->toArray();
         CommonService::getInstance()->log4PHP(
             [
-                'getFinanceDataSourceDetail last_pull_api_date',
-                $financeData['last_pull_api_date']
+                'admin finance data getFinanceDataSourceDetail start ',
+                'params $adminFinanceDataId' => $adminFinanceDataId,
+                '$financeDataRes ' => $financeData,
             ]
         );
-        if(empty($financeData['last_pull_api_date'])){
-            CommonService::getInstance()->log4PHP(
-                [
-                    'getFinanceDataSourceDetail last_pull_api_date',
-                    $financeData['last_pull_api_date'],
-                    'pullFromApi' => true,
-                    'pullFromDb' => false,
-                ]
-            );
+
+        // 从财务数据表取数据
+        $realFinanceDataRes = NewFinanceData::findByEntAndYear(
+            $financeData['entName'],$financeData['year']
+        );
+        if(!$realFinanceDataRes){
             return [
                 'pullFromApi' => true,
                 'pullFromDb' => false,
+                'NewFinanceDataId' => 0
             ];
         }
 
@@ -263,28 +257,22 @@ class AdminUserFinanceData extends ModelBase
         ){
             CommonService::getInstance()->log4PHP(
                 [
-                    'getFinanceDataSourceDetail last_pull_api_date',
-                    $financeData['last_pull_api_date'],
-                    'pullFromApi' => true,
-                    'pullFromDb' => false,
+                    'admin finance data last_pull_api_date  too long ',
+                    'params last_pull_api_date' => $financeData['last_pull_api_date'],
+                    '$pullFinanceTimeInterval ' =>  self::$pullFinanceTimeInterval,
                 ]
             );
             return [
                 'pullFromApi' => true,
                 'pullFromDb' => false,
+                'NewFinanceDataId' =>$realFinanceDataRes->getAttr('id')
             ];
         }
-        CommonService::getInstance()->log4PHP(
-            [
-                'getFinanceDataSourceDetail last_pull_api_date',
-                $financeData['last_pull_api_date'],
-                'pullFromApi' => false,
-                'pullFromDb' => true,
-            ]
-        );
+
         return [
             'pullFromApi' => false,
             'pullFromDb' => true,
+            'NewFinanceDataId' =>$realFinanceDataRes->getAttr('id')
         ];
     }
 
@@ -370,6 +358,10 @@ class AdminUserFinanceData extends ModelBase
                 );
             }
         }
+        else{
+            //设置关系
+            self::updateNewFinanceDataId($id,$getFinanceDataSourceDetailRes['NewFinanceDataId']);
+        }
         CommonService::getInstance()->log4PHP(
             json_encode(
                 [
@@ -380,8 +372,25 @@ class AdminUserFinanceData extends ModelBase
         return true;
     }
     public  static  function getConfirmStatus($financeConifgArr,$dataItem){
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'user finance data getConfirmStatus ',
+                     'params $financeConifgArr' => $financeConifgArr,
+                     'params $dataItem' => $dataItem,
+                ]
+            )
+        );
         // 不需要确认
         if(!$financeConifgArr['needs_confirm']){
+            CommonService::getInstance()->log4PHP(
+                json_encode(
+                    [
+                        'user finance data getConfirmStatus needs_confirm no  ',
+                        'params needs_confirm' => $financeConifgArr['needs_confirm'],
+                    ]
+                )
+            );
             return self::$statusConfirmedYes;
         }
 
@@ -397,6 +406,16 @@ class AdminUserFinanceData extends ModelBase
                 in_array($itemKey,$needsConfirmFields) &&
                 empty($value)
             ){
+                CommonService::getInstance()->log4PHP(
+                    json_encode(
+                        [
+                            'user finance data getConfirmStatus needs_confirm yes  ',
+                            'params $itemKey' => $itemKey,
+                            'params $needsConfirmFields' => $needsConfirmFields,
+                            'params $value' => $value,
+                        ]
+                    )
+                );
                 return self::$statusNeedsConfirm;
             }
         }
