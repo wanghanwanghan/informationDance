@@ -84,7 +84,6 @@ class GetInvData extends ProcessBase
         }
         $KPJSRQ = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');//截止日
 
-
         //$KPKSRQ = '2020-01-01';
         //$KPJSRQ = '2021-08-31';
         //$NSRSBH = '911199999999CN0008';
@@ -99,16 +98,13 @@ class GetInvData extends ProcessBase
             for ($page = 1; $page <= 999999; $page++) {
                 $res = (new DaXiangService())
                     ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
-
                 \co::sleep(0.3);
-
                 if (!isset($res['content'])) {
                     CommonService::getInstance()->log4PHP($res, 'getInv', 'inv_store_mysql_error.log');
                     break;
                 }
                 $content = jsonDecode(base64_decode($res['content']));
                 if ($content['code'] === '0000' && !empty($content['data']['records'])) {
-
                     foreach ($content['data']['records'] as $row) {
                         $rq = $this->writeFile($row, $NSRSBH, 'in', $FPLXDM);
                         $kprq[$rq] = $rq;
@@ -129,9 +125,7 @@ class GetInvData extends ProcessBase
             for ($page = 1; $page <= 999999; $page++) {
                 $res = (new DaXiangService())
                     ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
-
                 \co::sleep(0.3);
-
                 if (!isset($res['content'])) {
                     CommonService::getInstance()->log4PHP($res, 'getInv', 'inv_store_mysql_error.log');
                     break;
@@ -318,7 +312,7 @@ class GetInvData extends ProcessBase
         return '';
     }
 
-    private function storeMysql(array $arr, string $NSRSBH, string $FPLXDM, string $invType): bool
+    private function storeMysql(array $arr, string $NSRSBH, string $FPLXDM, string $invType): void
     {
         $invType === 'in' ? $invType = '01' : $invType = '02';
 
@@ -336,7 +330,9 @@ class GetInvData extends ProcessBase
                 $FPLXDM = '';
         }
 
-        if (empty($FPLXDM)) return false;
+        if (empty($FPLXDM)) {
+            return;
+        }
 
         try {
             if ($FPLXDM === 'type1' || $FPLXDM === 'type2') {
@@ -346,7 +342,9 @@ class GetInvData extends ProcessBase
                     'fphm' => $arr['FPHM'],
                     'direction' => $invType,//01-购买方 02-销售方
                 ])->get();
-                if (!empty($check_exists)) return false;//已经存在了
+                if (!empty($check_exists)) {
+                    return;
+                }//已经存在了
                 $insert = [
                     'fpdm' => changeNull($arr['FPDM']),//'发票代码',
                     'fphm' => changeNull($arr['FPHM']),//'发票号码',
@@ -463,7 +461,7 @@ class GetInvData extends ProcessBase
                     DbManager::getInstance()->commit($conn);
                 } catch (\Throwable $e) {
                     DbManager::getInstance()->rollback($conn);
-                    return CommonService::getInstance()->log4PHP([
+                    CommonService::getInstance()->log4PHP([
                         'data1' => $insert,
                         'data2' => $insert_detail,
                         'NSRSBH' => $NSRSBH,
@@ -471,12 +469,13 @@ class GetInvData extends ProcessBase
                         'invType' => $invType,
                         'error' => $e->getTraceAsString(),
                     ], 'doinsertDetail', 'inv_store_mysql_error.log');
+                    return;
                 }
             } else {
                 $wanghan = 1;
             }
         } catch (\Throwable $e) {
-            return CommonService::getInstance()->log4PHP([
+            CommonService::getInstance()->log4PHP([
                 'data' => $arr,
                 'NSRSBH' => $NSRSBH,
                 'FPLXDM' => $FPLXDM,
@@ -485,9 +484,9 @@ class GetInvData extends ProcessBase
                 'errorLine' => $e->getLine(),
                 'errorMsg' => $e->getMessage(),
             ], 'doinsert', 'inv_store_mysql_error.log');
+            return;
         }
 
-        return true;
     }
 
     protected function onPipeReadable(Process $process)

@@ -44,7 +44,7 @@ class NewFinanceData extends ModelBase
                 'NETINC' => $postData['NETINC']?:'',
                 'SOCNUM' => $postData['SOCNUM']?:'',
                 'EMPNUM' => $postData['EMPNUM']?:'',
-                'status' => $postData['status'],   
+                'status' => $postData['status']?:1,
                 'last_pull_api_time' => $postData['last_pull_api_time']?:'',
             ])->save();
 
@@ -87,6 +87,40 @@ class NewFinanceData extends ModelBase
         return $res;
     }
 
+    //将字段设置为有无
+    public static function findByIdV2($id,$needsChangeFields){
+        $res =  self::findById($id);
+        $data = $res->toArray();
+        $newData = [];
+        foreach ($data as $field => $dataItem){
+               if(
+                   $needsChangeFields[$field]
+               ){
+                   $checkRes = '无';
+                   if(
+                       $dataItem > 0 ||
+                       $dataItem < 0
+                   ){
+                       $checkRes = '有';
+                   }
+                     $newData[$needsChangeFields[$field]] =  $checkRes;
+
+                   CommonService::getInstance()->log4PHP(
+                       json_encode([
+                           'findByIdV2  '=> 'start',
+                           'params $field' => $field,
+                           '$needsChangeFields[$field]' =>$needsChangeFields[$field],
+                           '$checkRes' =>$checkRes,
+                       ])
+                   );
+               }
+               else{
+                   //$newData[$field] = empty($dataItem)?'无':'有';
+               }
+        }
+        return $newData;
+    }
+
     public static function findByEntAndYear($entName,$year){
         $res =  NewFinanceData::create()
             ->where('entName',$entName)
@@ -95,8 +129,40 @@ class NewFinanceData extends ModelBase
         return $res;
     }
 
-    static function getFieldCname(){
+    static function getFieldCname($getALl = true){
+        if($getALl){
+            return [
+                'entName' => '企业名称',
+                'year' => '年度',
+                'ASSGRO' => '资产总额',
+                'LIAGRO' => '负债总额',
+                'VENDINC' => '营业总收入',
+                'MAIBUSINC' => '主营业务收入',
+                'PROGRO' => '利润总额',
+                'NETINC' => '净利润',
+                'RATGRO' => '纳税总额',
+                'TOTEQU' => '所有者权益',
+                'SOCNUM' => '社保人数',
+                'C_ASSGROL' => '净资产',
+                'A_ASSGROL' => '平均资产总额',
+                'CA_ASSGRO' => '平均净资产',
+                'C_INTRATESL' => '净利率',
+                'ATOL' => '资产周转率',
+                'ASSGRO_C_INTRATESL' => '总资产净利率',
+                'A_VENDINCL' => '企业人均产值',
+                'A_PROGROL' => '企业人均盈利',
+                'ROA' => '总资产回报率',
+                'ROAL' => '总资产回报率',
+                'ROE_AL' => '净资产回报率',
+                'ROE' => '净资产回报率',
+                'ROEA' => '净资产回报率',
+                'ROEB' => '净资产回报率',
+            ];
+        }
+
         return [
+//            'entName' => '企业名称',
+//            'year' => '年度',
             'ASSGRO' => '资产总额',
             'LIAGRO' => '负债总额',
             'VENDINC' => '营业总收入',
@@ -121,6 +187,7 @@ class NewFinanceData extends ModelBase
             'ROEA' => '净资产回报率',
             'ROEB' => '净资产回报率',
         ];
+
 
 
         //19   () ROE_BL
@@ -161,35 +228,76 @@ class NewFinanceData extends ModelBase
     }
     static function getExportHeaders($uploadId){
         $allowedFields = AdminUserFinanceUploadRecord::getAllowedFieldArray($uploadId);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'getExportHeaders  $allowedFields ',
+                $allowedFields
+            ])
+        );
         $headers = [];
         $allFields = NewFinanceData::getFieldCname();
-        foreach ($allowedFields as $field => $cname){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'getExportHeaders  $allFields ',
+                $allFields
+            ])
+        );
+        foreach ($allowedFields as $field){
             $headers[] = $allFields[$field];
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'getExportHeaders  $field2 ',
+                    $field
+                ])
+            );
         }
 
         return $headers;
     }
     static function exportFinanceToXlsx($uploadId,$financeDatas){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'new finance data   exportFinanceToXlsx  '=> 'start',
+                'params $uploadId' => $uploadId,
+                'params $financeDatas' => $financeDatas,
+            ])
+        );
         $uploadRes = AdminUserFinanceUploadRecord::findById($uploadId)->toArray();
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'new finance data   exportFinanceToXlsx  '=> 'find $uploadRes',
+                'params $uploadId' => $uploadId,
+                'params $uploadRes' => $uploadRes,
+            ])
+        );
         $config = [
             'path' => TEMP_FILE_PATH // xlsx文件保存路径
         ];
-        $filename = $uploadRes['file_name'].'_'.date('YmdHis'). '.xlsx';
-
+        $pathinfo = pathinfo($uploadRes['file_name']);
+        $filename = $pathinfo['filename'].'_'.date('YmdHis').'.'.$pathinfo['extension'];
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '$config ' => $config,
+                '$filename' => $filename
+            ])
+        );
         $header = array_merge(
             [
-                '序号',
                 '企业名称',
                 '年度',
             ],self::getExportHeaders($uploadId));
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '$header ',
+                $header
+            ])
+        );
         $exportDataToXlsRes = self::parseDataToXls(
             $config,$filename,$header,$financeDatas,'sheet1'
         );
 
         return [
-            'path' => TEMP_FILE_PATH,
+            'path' => '/Static/Temp/',
             'filename' => $filename
         ];
     }

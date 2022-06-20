@@ -21,39 +21,63 @@ class AdminNewUser extends ModelBase
     }
 
     public static function checkAccountBalance($id,$chargeMoney){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'checkAccountBalance   start ' ,
+                'params $id ' =>$id,
+                'params $chargeMoney ' =>$chargeMoney
+            ])
+        );
+
         $balance = self::getAccountBalance($id) ;
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'checkAccountBalance   ' ,
-                $balance,$id
+                'checkAccountBalance   get $balance ' ,
+                'params $id ' =>$id,
+                '$balance ' =>$balance
             ])
         );
         if(
              // 余额
             $balance >= $chargeMoney
          ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'checkAccountBalance   ok  ' ,
+                    'params $balance ' =>$balance,
+                    'params $chargeMoney ' =>$chargeMoney,
+                ])
+            );
             return true;
          }
-        return  CommonService::getInstance()->log4PHP(
-            [
-                'checkAccountBalance' => 'return false',
-                '$balance' => $balance,
-                '$id' => $id,
-            ]
+        return CommonService::getInstance()->log4PHP(
+            json_encode([
+                'checkAccountBalance   failed  ' ,
+                'params $balance ' =>$balance,
+                'params $chargeMoney ' =>$chargeMoney,
+            ])
         );
 
     }
 
     public static function getAccountBalance($id){
         $res =  self::findById($id);
-        return $res->getAttr('money');
+        $money = $res->getAttr('money');
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'admin new user getAccountBalance   '=> 'strat',
+                '$money' =>  $money
+            ])
+        );
+        return $money;
     }
 
     public static function updateMoney($id,$money){
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'updateMoney   '=> 'strat',
-                $id,$money
+                'admin new user updateMoney   '=> 'strat',
+                'params $id' =>  $id,
+                'params $money' =>  $money
             ])
         );
         $info = AdminNewUser::findById($id);
@@ -64,37 +88,50 @@ class AdminNewUser extends ModelBase
         ]);
     }
 
-    public static function charge($id,$money,$batchNo,$datas){
+    // $type 5充值 10 扣钱
+    public static function charge($id,$money,$batchNo,$datas,$type = 5){
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'charge   '=> 'strat',
-                $id,$money,$batchNo,$datas
+                'admin new user charge   '=> 'if needs charge ',
+                'money' =>  $money
             ])
         );
         if(
             FinanceLog::findByBatch($batchNo)
         ){
             CommonService::getInstance()->log4PHP(
-                [
-                    'charge' => 'true',
-                    '之前收费过'
-                ]
+                json_encode([
+                    'admin new user charge   '=> 'batch exists',
+                    '$batchNo' =>  $batchNo
+                ])
             );
             return true;
         }
         // 实际扣费
+        $banlance = \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
+            $id
+        );
+        if(
+            $type == 5
+        ){
+            $banlance = $banlance + $money;
+        }
+
+        if(
+            $type == 10
+        ){
+            $banlance = $banlance - $money;
+        }
+
         $res = \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
             $id,
-            (
-                \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
-                    $id
-                ) - $money
-            )
+            $banlance
         );
         if(!$res ){
             return CommonService::getInstance()->log4PHP(
                 json_encode([
-                    '实际扣费 失败' ,
+                    'admin new user charge   '=> 'failed',
+                    '$res' =>  $res
                 ])
             );
         }

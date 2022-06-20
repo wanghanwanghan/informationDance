@@ -39,6 +39,17 @@ class AdminUserFinanceData extends ModelBase
     static $statusConfirmedNo = 15;
     static $statusConfirmedNoCname = '已确认不需要';
 
+    public static function getStatusCname(){
+
+
+        return [
+            self::$statusinit => self::$statusinitCname,
+            self::$statusNeedsConfirm => self::$statusNeedsConfirmCname,
+            self::$statusConfirmedYes => self::$statusConfirmedYesCname,
+            self::$statusConfirmedNo => self::$statusConfirmedNoCname,
+        ];
+    }
+
     public static function addRecord($requestData){ 
         try {
            $res =  AdminUserFinanceData::create()->data([
@@ -228,33 +239,28 @@ class AdminUserFinanceData extends ModelBase
     }
 
     public static function getFinanceDataSourceDetail($adminFinanceDataId){
-        CommonService::getInstance()->log4PHP(
-            [
-                'getFinanceDataSourceDetail ',
-                $adminFinanceDataId
-            ]
-        );
+
         // $adminFinanceDataId 上次拉取时间| 没超过一年 就不拉
         $financeData =  AdminUserFinanceData::findById($adminFinanceDataId)
             ->toArray();
         CommonService::getInstance()->log4PHP(
             [
-                'getFinanceDataSourceDetail last_pull_api_date',
-                $financeData['last_pull_api_date']
+                'admin finance data getFinanceDataSourceDetail start ',
+                'params $adminFinanceDataId' => $adminFinanceDataId,
+                '$financeDataRes ' => $financeData,
             ]
         );
-        if(empty($financeData['last_pull_api_date'])){
-            CommonService::getInstance()->log4PHP(
-                [
-                    'getFinanceDataSourceDetail last_pull_api_date',
-                    $financeData['last_pull_api_date'],
-                    'pullFromApi' => true,
-                    'pullFromDb' => false,
-                ]
-            );
+
+        // 从财务数据表取数据
+        $realFinanceDataRes = NewFinanceData::findByEntAndYear(
+            $financeData['entName'],$financeData['year']
+        );
+        if(!$realFinanceDataRes){
             return [
                 'pullFromApi' => true,
                 'pullFromDb' => false,
+                'NewFinanceDataId' => 0,
+                'NewFinanceData' => []
             ];
         }
 
@@ -263,28 +269,24 @@ class AdminUserFinanceData extends ModelBase
         ){
             CommonService::getInstance()->log4PHP(
                 [
-                    'getFinanceDataSourceDetail last_pull_api_date',
-                    $financeData['last_pull_api_date'],
-                    'pullFromApi' => true,
-                    'pullFromDb' => false,
+                    'admin finance data last_pull_api_date  too long ',
+                    'params last_pull_api_date' => $financeData['last_pull_api_date'],
+                    '$pullFinanceTimeInterval ' =>  self::$pullFinanceTimeInterval,
                 ]
             );
             return [
                 'pullFromApi' => true,
                 'pullFromDb' => false,
+                'NewFinanceDataId' =>$realFinanceDataRes->getAttr('id'),
+                'NewFinanceData' =>$realFinanceDataRes->toArray()
             ];
         }
-        CommonService::getInstance()->log4PHP(
-            [
-                'getFinanceDataSourceDetail last_pull_api_date',
-                $financeData['last_pull_api_date'],
-                'pullFromApi' => false,
-                'pullFromDb' => true,
-            ]
-        );
+
         return [
             'pullFromApi' => false,
             'pullFromDb' => true,
+            'NewFinanceDataId' =>$realFinanceDataRes->getAttr('id'),
+            'NewFinanceData' =>$realFinanceDataRes->toArray()
         ];
     }
 
@@ -351,7 +353,14 @@ class AdminUserFinanceData extends ModelBase
 
             $addRes = NewFinanceData::addRecordV2($dbDataArr);
             //设置是否需要确认
-            self::updateStatus($id,self::getConfirmStatus($financeConifgArr,$dbDataArr));
+            $status = self::getConfirmStatus($financeConifgArr,$dbDataArr);
+            self::updateStatus($id,$status);
+            if(
+                $status == self::$statusNeedsConfirm
+            ){
+                self::updateNeedsConfirm($id,1);
+            }
+
             //设置关系
             self::updateNewFinanceDataId($id,$addRes);
 
@@ -370,6 +379,18 @@ class AdminUserFinanceData extends ModelBase
                 );
             }
         }
+        else{
+            //设置关系
+            self::updateNewFinanceDataId($id,$getFinanceDataSourceDetailRes['NewFinanceDataId']);
+            //设置是否需要确认
+            $status = self::getConfirmStatus($financeConifgArr,$getFinanceDataSourceDetailRes['NewFinanceData']);
+            self::updateStatus($id,$status);
+            if(
+                $status == self::$statusNeedsConfirm
+            ){
+                self::updateNeedsConfirm($id,1);
+            }
+        }
         CommonService::getInstance()->log4PHP(
             json_encode(
                 [
@@ -380,8 +401,25 @@ class AdminUserFinanceData extends ModelBase
         return true;
     }
     public  static  function getConfirmStatus($financeConifgArr,$dataItem){
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'user finance data getConfirmStatus ',
+                     'params $financeConifgArr' => $financeConifgArr,
+                     'params $dataItem' => $dataItem,
+                ]
+            )
+        );
         // 不需要确认
         if(!$financeConifgArr['needs_confirm']){
+            CommonService::getInstance()->log4PHP(
+                json_encode(
+                    [
+                        'user finance data getConfirmStatus needs_confirm no  ',
+                        'params needs_confirm' => $financeConifgArr['needs_confirm'],
+                    ]
+                )
+            );
             return self::$statusConfirmedYes;
         }
 
@@ -397,6 +435,16 @@ class AdminUserFinanceData extends ModelBase
                 in_array($itemKey,$needsConfirmFields) &&
                 empty($value)
             ){
+                CommonService::getInstance()->log4PHP(
+                    json_encode(
+                        [
+                            'user finance data getConfirmStatus needs_confirm yes  ',
+                            'params $itemKey' => $itemKey,
+                            'params $needsConfirmFields' => $needsConfirmFields,
+                            'params $value' => $value,
+                        ]
+                    )
+                );
                 return self::$statusNeedsConfirm;
             }
         }
@@ -767,6 +815,23 @@ class AdminUserFinanceData extends ModelBase
         return $res;
     }
 
+    public static function findByConditionV2($whereArr,$page){
+
+        $model = AdminUserFinanceData::create()
+            ->where($whereArr)
+            ->page($page)
+            ->order('id', 'DESC')
+            ->withTotalCount();
+
+        $res = $model->all();
+
+        $total = $model->lastQueryResult()->getTotalCount();
+        return [
+            'data' => $res,
+            'total' =>$total,
+        ];
+    }
+
     public static function findById($id){
         $res =  AdminUserFinanceData::create()
             ->where('id',$id)            
@@ -818,21 +883,48 @@ class AdminUserFinanceData extends ModelBase
     }
 
     static  function  addNewRecordV2($infoArr){
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                ['  AdminUserFinanceData::addNewRecordV2','$infoArr'=>$infoArr]
+            )
+        );
         $AdminUserFinanceDataModel =  AdminUserFinanceData::findByUserAndEntAndYear(
             $infoArr['user_id'],$infoArr['entName'],$infoArr['year']
         );
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                ['  AdminUserFinanceData::addNewRecordV2 findByUserAndEntAndYear  ',
+                    'user_id'=>$infoArr['user_id'],'entName'=>$infoArr['entName'],'year'=>$infoArr['year']
+                ]
+            )
+        );
         if($AdminUserFinanceDataModel){
-          return  $AdminUserFinanceDataId = $AdminUserFinanceDataModel->getAttr('id') ;
+            $AdminUserFinanceDataId = $AdminUserFinanceDataModel->getAttr('id') ;
+            CommonService::getInstance()->log4PHP(
+                json_encode(
+                    ['  AdminUserFinanceData::addNewRecordV2 findByUserAndEntAndYear ok ',
+                        '$AdminUserFinanceDataId'=>$AdminUserFinanceDataId
+                    ]
+                )
+            );
+          return  $AdminUserFinanceDataId;
         }
 
         $AdminUserFinanceDataId = AdminUserFinanceData::addRecord(
             $infoArr
         );
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                ['  AdminUserFinanceData::addNewRecordV2 addRecord  ',
+                    '$AdminUserFinanceDataId'=>$AdminUserFinanceDataId
+                ]
+            )
+        );
         if($AdminUserFinanceDataId <=0 ){
             return CommonService::getInstance()->log4PHP(
                 json_encode(
-                    [
-                        'RunDealFinanceCompanyData parseDataToDb    err 1 没有 $AdminUserFinanceDataId '
+                    ['  AdminUserFinanceData::addNewRecordV2 addRecord false ',
+                        '$infoArr'=>$infoArr
                     ]
                 )
             );
@@ -887,9 +979,31 @@ class AdminUserFinanceData extends ModelBase
                 'updateStatus failed  $id 不存在'.$id
             );
         }
+
         return $info->update([
             'id' => $id,
             'status' => $status 
+        ]);
+    }
+
+    public static function updateNeedsConfirm($id,$needs_confirm){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'updateNeedsConfirm   ',
+                'params $id,' => $id,
+                'params $needs_confirm' => $needs_confirm,
+            ])
+        );
+        $info = self::findById($id);
+        if(!$info ){
+            return CommonService::getInstance()->log4PHP(
+                'updateStatus failed  $id 不存在'.$id
+            );
+        }
+
+        return $info->update([
+            'id' => $id,
+            'needs_confirm' => $needs_confirm
         ]);
     }
 

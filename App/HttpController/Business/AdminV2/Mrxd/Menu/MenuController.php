@@ -107,9 +107,9 @@ class MenuController extends ControllerBase
         ]; 
         
         if (
-            !$requestData['name'] ||
-            !$requestData['method'] ||
-            !$requestData['class'] 
+            !$requestData['name']
+//            ||!$requestData['method'] ||
+//            !$requestData['class']
         ) {
             return $this->writeJson(201);
         } 

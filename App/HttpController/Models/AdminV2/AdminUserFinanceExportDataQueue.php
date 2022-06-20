@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Models\AdminV2;
 
+use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
@@ -27,6 +28,16 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     static  $state_succeed = 30;
     static  $state_succeed_cname =  '下载成功';
 
+    public static function getStatusMap(){
+
+        return [
+            self::$state_init => self::$state_init_cname,
+            self::$state_needs_confirm => self::$state_needs_confirm_cname,
+            self::$state_confirmed => self::$state_confirmed_cname,
+            self::$state_succeed => self::$state_succeed_cname,
+        ];
+
+    }
 
     public static function setFinanceDataState($queueId){
         $queueData = self::findById($queueId)->toArray();
@@ -69,26 +80,18 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     static  function  addRecordV2($info){
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'AdminUserFinanceExportDataQueue  addRecordV2' ,
-                " WHERE upload_record_id = ".$info['upload_record_id'].
-                "  AND status = ".AdminUserFinanceExportDataQueue::$state_init,
-                $info
+                'AdminUserFinanceExportDataQueue  addRecordV2 start' ,
+                'params $info ' =>$info
             ])
         );
 
         if(
             self::findByBatch($info['batch'])
-//            AdminUserFinanceExportDataQueue::findBySql(
-//                " WHERE upload_record_id = ".$info['upload_record_id'].
-//                "  AND status = ".AdminUserFinanceExportDataQueue::$state_init
-//            )
         ){
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'AdminUserFinanceExportDataQueue  addRecordV2 exists' ,
-                    " WHERE upload_record_id = ".$info['upload_record_id'].
-                    "  AND status = ".AdminUserFinanceExportDataQueue::$state_init,
-                    $info
+                    'AdminUserFinanceExportDataQueue  findByBatch ok ' ,
+                    'params batch ' =>$info['batch']
                 ])
             );
             return  true;
@@ -100,6 +103,13 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     }
 
     public static function addRecord($requestData){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceExportDataQueue  addRecord  ' ,
+                'params $requestData ' =>$requestData
+            ])
+        );
+
         try {
            $res =  AdminUserFinanceExportDataQueue::create()->data([
                 'upload_record_id' => $requestData['upload_record_id'],
@@ -114,10 +124,11 @@ class AdminUserFinanceExportDataQueue extends ModelBase
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'AdminUserFinanceData sql err',
-                    $e->getMessage(),
+                    'AdminUserFinanceExportDataQueue  addRecord  failed ' ,
+                    'params $requestData ' =>$requestData,
+                    'message' => $e->getMessage()
                 ])
-            );  
+            );
         }  
 
         return $res;
@@ -131,6 +142,22 @@ class AdminUserFinanceExportDataQueue extends ModelBase
         return $res;
     }
 
+    public static function findByConditionV2($whereArr,$page){
+
+        $model = AdminUserFinanceExportDataQueue::create()
+                ->where($whereArr)
+                ->page($page)
+                ->order('id', 'DESC')
+                ->withTotalCount();
+
+        $res = $model->all();
+
+        $total = $model->lastQueryResult()->getTotalCount();
+        return [
+            'data' => $res,
+            'total' =>$total,
+        ];
+    }
     public static function findById($id){
         $res =  AdminUserFinanceExportDataQueue::create()
             ->where('id',$id)            
@@ -139,6 +166,12 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     }
 
     public static function findByBatch($batch){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'findByBatch  start  ' ,
+                'params $batch ' =>$batch
+            ])
+        );
         $res =  AdminUserFinanceExportDataQueue::create()
             ->where('batch',$batch)
             ->get();

@@ -47,7 +47,16 @@ class AdminUserFinanceUploadRecord extends ModelBase
     static $stateHasCalclutePriceType = 30;
     static $stateHasCalclutePriceTypeCname = '已经计算完价格类型';
 
+    public static function getStatusMaps(){
+        return [
+            self::$stateInit => self::$stateInitCname,
+            self::$stateParsed => self::$stateParsedCname,
+            self::$stateCalCulatedPrice => self::$stateCalCulatedPriceCname,
+            self::$stateHasGetData => self::$stateHasGetDataCname,
+            self::$stateCalCulatedPrice2 => self::$stateCalCulatedPrice2Cname,
+        ];
 
+    }
     public static function addUploadRecord($requestData){ 
         try {
            $res =  AdminUserFinanceUploadRecord::create()->data([
@@ -113,6 +122,55 @@ class AdminUserFinanceUploadRecord extends ModelBase
         return $res;
     }
 
+
+    public static function checkByStatus($id,$status){
+        $res =  self::findById($id);
+        $res2 = ($res->getAttr('status')==$status)?true:false;
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'upload record checkByStatus   '=> 'start',
+                'params $id' => $id,
+                'params $status' => $status,
+                '$res2'=>$res2,
+            ])
+        );
+        return $res2;
+    }
+
+    public static function findByConditionV3($whereArr,$page){
+        $model = AdminUserFinanceUploadRecord::create();
+        foreach ($whereArr as $whereItem){
+            $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+        }
+        $model->page($page)
+            ->order('id', 'DESC')
+            ->withTotalCount();
+
+        $res = $model->all();
+
+        $total = $model->lastQueryResult()->getTotalCount();
+        return [
+            'data' => $res,
+            'total' =>$total,
+        ];
+    }
+
+    public static function findByConditionV2($whereArr,$page){
+
+        $model = AdminUserFinanceUploadRecord::create()
+            ->where($whereArr)
+            ->page($page)
+            ->order('id', 'DESC')
+            ->withTotalCount();
+
+        $res = $model->all();
+
+        $total = $model->lastQueryResult()->getTotalCount();
+        return [
+            'data' => $res,
+            'total' =>$total,
+        ];
+    }
     public static function findByCondition($whereArr,$offset, $limit){
         $res =  AdminUserFinanceUploadRecord::create()
             ->where($whereArr)
@@ -121,7 +179,14 @@ class AdminUserFinanceUploadRecord extends ModelBase
         return $res;
     }
 
-    public static function changeStatus($id,$status){ 
+    public static function changeStatus($id,$status){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'changeStatus start  ',
+                '$id'=>$id,
+                '$status' =>$status,
+            ])
+        );
         $info = AdminUserFinanceUploadRecord::create()->where('id',$id)->get(); 
         return $info->update([
             'id' => $id,
@@ -238,6 +303,13 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
 
     public static function setTouchTime($id,$touchTime){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'setTouchTime start  ',
+                '$id'=>$id,
+                '$touchTime' =>$touchTime,
+            ])
+        );
         $info = AdminUserFinanceUploadRecord::findById($id);
 
         return $info->update([
@@ -457,7 +529,16 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
     static function getFinanceConfigArray($uploadId){
         $uploadRes = self::findById($uploadId)->toArray();
-        return json_decode($uploadRes['finance_config'],true);
+        $finance_config =  json_decode($uploadRes['finance_config'],true);
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'getAllowedFieldArray ',
+                    $finance_config
+                ]
+            )
+        );
+        return $finance_config;
     }
 
     static function  getAllowedFieldArray($uploadId){
@@ -476,5 +557,6 @@ class AdminUserFinanceUploadRecord extends ModelBase
         );
         return $arr;
     }
+
 
 }
