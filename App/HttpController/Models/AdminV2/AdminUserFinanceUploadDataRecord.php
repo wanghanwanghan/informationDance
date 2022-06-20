@@ -22,7 +22,15 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
     static $chargeTypeByYear = 10;
     static $chargeTypeByYearCname = '按年';
 
-    public static function addUploadRecord($requestData){ 
+    public static function addUploadRecord($requestData){
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    ' RunDealFinanceCompanyData addUploadRecord  ',
+                    '$requestData'=>$requestData
+                ]
+            )
+        );
         try {
            $res =  AdminUserFinanceUploadDataRecord::create()->data([
                 'user_id' => $requestData['user_id'],  
@@ -34,21 +42,32 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
 
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'AdminUserFinanceUploadDataRecord sql err',
-                    $e->getMessage(),
-                ])
-            );  
+                json_encode(
+                    [
+                        ' RunDealFinanceCompanyData addUploadRecord  false ',
+                        '$requestData'=>$requestData,
+                        $e->getMessage(),
+                    ]
+                )
+            );
         }  
 
         return $res;
     }
     static  function  addRecordV2($infoArr){
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                ['  Upload Data :: addNewRecordV2  ',
+                    '$infoArr'=>$infoArr
+                ]
+            )
+        );
         $UploadDataRecord = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdAndFinanceId(
             $infoArr['user_id'],
             $infoArr['record_id'] ,
             $infoArr['user_finance_data_id']
         );
+
         if($UploadDataRecord){
             return $UploadDataRecord->getAttr('id');
         }
@@ -70,7 +89,16 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
     }
     public static function findByUserIdAndRecordIdAndFinanceId(
         $user_id,$record_id,$user_finance_data_id
-    ){ 
+    ){
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                ['  Upload Data findByUserIdAndRecordIdAndFinanceId  ',
+                    'user_id'=>$user_id,
+                    'record_id' =>$record_id ,
+                    'user_finance_data_id' => $user_finance_data_id
+                ]
+            )
+        );
         $res =  AdminUserFinanceUploadDataRecord::create()->where([
             'user_id' => $user_id,  
             'record_id' => $record_id,  

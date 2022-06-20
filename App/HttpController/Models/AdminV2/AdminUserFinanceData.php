@@ -883,21 +883,48 @@ class AdminUserFinanceData extends ModelBase
     }
 
     static  function  addNewRecordV2($infoArr){
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                ['  AdminUserFinanceData::addNewRecordV2','$infoArr'=>$infoArr]
+            )
+        );
         $AdminUserFinanceDataModel =  AdminUserFinanceData::findByUserAndEntAndYear(
             $infoArr['user_id'],$infoArr['entName'],$infoArr['year']
         );
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                ['  AdminUserFinanceData::addNewRecordV2 findByUserAndEntAndYear  ',
+                    'user_id'=>$infoArr['user_id'],'entName'=>$infoArr['entName'],'year'=>$infoArr['year']
+                ]
+            )
+        );
         if($AdminUserFinanceDataModel){
-          return  $AdminUserFinanceDataId = $AdminUserFinanceDataModel->getAttr('id') ;
+            $AdminUserFinanceDataId = $AdminUserFinanceDataModel->getAttr('id') ;
+            CommonService::getInstance()->log4PHP(
+                json_encode(
+                    ['  AdminUserFinanceData::addNewRecordV2 findByUserAndEntAndYear ok ',
+                        '$AdminUserFinanceDataId'=>$AdminUserFinanceDataId
+                    ]
+                )
+            );
+          return  $AdminUserFinanceDataId;
         }
 
         $AdminUserFinanceDataId = AdminUserFinanceData::addRecord(
             $infoArr
         );
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                ['  AdminUserFinanceData::addNewRecordV2 addRecord  ',
+                    '$AdminUserFinanceDataId'=>$AdminUserFinanceDataId
+                ]
+            )
+        );
         if($AdminUserFinanceDataId <=0 ){
             return CommonService::getInstance()->log4PHP(
                 json_encode(
-                    [
-                        'RunDealFinanceCompanyData parseDataToDb    err 1 没有 $AdminUserFinanceDataId '
+                    ['  AdminUserFinanceData::addNewRecordV2 addRecord false ',
+                        '$infoArr'=>$infoArr
                     ]
                 )
             );

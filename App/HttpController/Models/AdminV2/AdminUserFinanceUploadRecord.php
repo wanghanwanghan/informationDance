@@ -179,7 +179,14 @@ class AdminUserFinanceUploadRecord extends ModelBase
         return $res;
     }
 
-    public static function changeStatus($id,$status){ 
+    public static function changeStatus($id,$status){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'changeStatus start  ',
+                '$id'=>$id,
+                '$status' =>$status,
+            ])
+        );
         $info = AdminUserFinanceUploadRecord::create()->where('id',$id)->get(); 
         return $info->update([
             'id' => $id,
@@ -296,6 +303,13 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
 
     public static function setTouchTime($id,$touchTime){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'setTouchTime start  ',
+                '$id'=>$id,
+                '$touchTime' =>$touchTime,
+            ])
+        );
         $info = AdminUserFinanceUploadRecord::findById($id);
 
         return $info->update([
