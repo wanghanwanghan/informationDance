@@ -476,5 +476,4 @@ class AdminUserFinanceUploadRecord extends ModelBase
         );
         return $arr;
     }
-
 }

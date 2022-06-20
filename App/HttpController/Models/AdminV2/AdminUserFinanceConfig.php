@@ -27,7 +27,7 @@ class AdminUserFinanceConfig extends ModelBase
         $res =  AdminUserFinanceConfig::create()->where([
             'user_id' => $userId,
             'status' => 1,
-        ])->all();
+        ])->get();
         return $res ? $res->toArray() : [];
     }
 

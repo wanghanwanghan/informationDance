@@ -257,6 +257,12 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
 
             //设置是否需要去确认
             AdminUserFinanceExportDataQueue::setFinanceDataState($queueData['id']);
+
+            //重新计算下价格
+            AdminUserFinanceUploadRecord::calAndSetMoney(
+                $queueData['upload_record_id']
+            );
+
             AdminUserFinanceExportDataQueue::setTouchTime(
                 $queueData['id'],NULL
             );

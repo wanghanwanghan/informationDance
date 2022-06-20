@@ -55,6 +55,10 @@ class FinanceController extends ControllerBase
             'total' => $count,
             'totalPage' => (int)($count/$pageSize)+1,
         ];
+        foreach ($list as &$dataItem){
+            $userRes = AdminNewUser::findById($dataItem['user_id'])->toArray();
+            $dataItem['user_name'] = $userRes['name'];
+        }
         return $this->writeJson(
             200,
             $paging,
