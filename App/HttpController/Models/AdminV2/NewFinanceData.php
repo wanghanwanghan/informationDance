@@ -87,6 +87,24 @@ class NewFinanceData extends ModelBase
         return $res;
     }
 
+    //将字段设置为有无
+    public static function findByIdV2($id,$needsChangeFields){
+        $res =  self::findById($id);
+        $data = $res->toArray();
+        $newData = [];
+        foreach ($data as $field => $dataItem){
+               if(
+                   in_array($field,$needsChangeFields)
+               ){
+                   $newData[$field] = empty($dataItem)?'无':'有';
+               }
+               else{
+                   $newData[$field] = empty($dataItem)?'无':'有';
+               }
+        }
+        return $newData;
+    }
+
     public static function findByEntAndYear($entName,$year){
         $res =  NewFinanceData::create()
             ->where('entName',$entName)

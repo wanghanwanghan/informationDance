@@ -423,11 +423,6 @@ class FinanceController extends ControllerBase
 
     //获取待确认的列表
     public function getNeedsConfirmExportLists(){
-        // $userId = $this->getRequestData('user_id');
-        // if($userId <= 0){
-        //     return $this->writeJson(206, [] ,   [], '缺少必要参数', true, []); 
-        // } 
-
         $requestData =  $this->getRequestData();
         $condition = [
             // 'user_id' => $userId
@@ -472,12 +467,14 @@ class FinanceController extends ControllerBase
                 ] , [], '参数缺失' );
         }
         $res = AdminUserFinanceData::findById($requestData['id']);
-
-
+        $data = $res->toArray();
+        $realFinanceDatId = $data['finance_data_id'];
+        $allowedFields = NewFinanceData::getFieldCname();
+        $realData = NewFinanceData::findByIdV2($realFinanceDatId,array_keys($allowedFields));
         return $this->writeJson(200,
             [
 
-            ] , $res , '成功' );
+            ] , $realData , '成功' );
     }
     //确认的列表
     public function ConfirmFinanceData(){
