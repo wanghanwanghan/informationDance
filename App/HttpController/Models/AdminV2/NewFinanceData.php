@@ -99,7 +99,7 @@ class NewFinanceData extends ModelBase
                    $newData[$needsChangeFields[$field]] = empty($dataItem)?'无':'有';
                }
                else{
-                   $newData[$field] = empty($dataItem)?'无':'有';
+                   //$newData[$field] = empty($dataItem)?'无':'有';
                }
         }
         return $newData;
