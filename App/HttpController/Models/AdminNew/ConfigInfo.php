@@ -106,7 +106,14 @@ class ConfigInfo extends ModelBase
         $status = (bool)$redis->setNx($methodName, 'isRun');
 
         $status === false ?: $redis->expire($methodName, $ttl);
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'setRedisNx strat ' ,
+                'params $methodName' => $methodName,
+                'params $ttl' => $ttl,
+                ' $status' => $status,
+            ])
+        );
         return $status;
     }
 
@@ -116,8 +123,16 @@ class ConfigInfo extends ModelBase
         $redis = Redis::defer('redis');
 
         $redis->select(self::$redis_db_num);
-
-        return !!$redis->del($methodName);
+        $status = !!$redis->del($methodName);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'removeRedisNx strat ' ,
+                'params $methodName' => $methodName,
+                'params $ttl' => $ttl,
+                ' $status' => $status,
+            ])
+        );
+        return $status;
     }
 
 }

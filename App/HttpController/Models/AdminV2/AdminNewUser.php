@@ -21,25 +21,41 @@ class AdminNewUser extends ModelBase
     }
 
     public static function checkAccountBalance($id,$chargeMoney){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'checkAccountBalance   start ' ,
+                'params $id ' =>$id,
+                'params $chargeMoney ' =>$chargeMoney
+            ])
+        );
+
         $balance = self::getAccountBalance($id) ;
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'checkAccountBalance   ' ,
-                $balance,$id
+                'checkAccountBalance   get $balance ' ,
+                'params $id ' =>$id,
+                '$balance ' =>$balance
             ])
         );
         if(
              // 余额
             $balance >= $chargeMoney
          ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'checkAccountBalance   ok  ' ,
+                    'params $balance ' =>$balance,
+                    'params $chargeMoney ' =>$chargeMoney,
+                ])
+            );
             return true;
          }
-        return  CommonService::getInstance()->log4PHP(
-            [
-                'checkAccountBalance' => 'return false',
-                '$balance' => $balance,
-                '$id' => $id,
-            ]
+        return CommonService::getInstance()->log4PHP(
+            json_encode([
+                'checkAccountBalance   failed  ' ,
+                'params $balance ' =>$balance,
+                'params $chargeMoney ' =>$chargeMoney,
+            ])
         );
 
     }

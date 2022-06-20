@@ -80,26 +80,18 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     static  function  addRecordV2($info){
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'AdminUserFinanceExportDataQueue  addRecordV2' ,
-                " WHERE upload_record_id = ".$info['upload_record_id'].
-                "  AND status = ".AdminUserFinanceExportDataQueue::$state_init,
-                $info
+                'AdminUserFinanceExportDataQueue  addRecordV2 start' ,
+                'params $info ' =>$info
             ])
         );
 
         if(
             self::findByBatch($info['batch'])
-//            AdminUserFinanceExportDataQueue::findBySql(
-//                " WHERE upload_record_id = ".$info['upload_record_id'].
-//                "  AND status = ".AdminUserFinanceExportDataQueue::$state_init
-//            )
         ){
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'AdminUserFinanceExportDataQueue  addRecordV2 exists' ,
-                    " WHERE upload_record_id = ".$info['upload_record_id'].
-                    "  AND status = ".AdminUserFinanceExportDataQueue::$state_init,
-                    $info
+                    'AdminUserFinanceExportDataQueue  findByBatch ok ' ,
+                    'params batch ' =>$info['batch']
                 ])
             );
             return  true;
@@ -111,6 +103,13 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     }
 
     public static function addRecord($requestData){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceExportDataQueue  addRecord  ' ,
+                'params $requestData ' =>$requestData
+            ])
+        );
+
         try {
            $res =  AdminUserFinanceExportDataQueue::create()->data([
                 'upload_record_id' => $requestData['upload_record_id'],
@@ -125,10 +124,11 @@ class AdminUserFinanceExportDataQueue extends ModelBase
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'AdminUserFinanceData sql err',
-                    $e->getMessage(),
+                    'AdminUserFinanceExportDataQueue  addRecord  failed ' ,
+                    'params $requestData ' =>$requestData,
+                    'message' => $e->getMessage()
                 ])
-            );  
+            );
         }  
 
         return $res;
@@ -166,6 +166,12 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     }
 
     public static function findByBatch($batch){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'findByBatch  start  ' ,
+                'params $batch ' =>$batch
+            ])
+        );
         $res =  AdminUserFinanceExportDataQueue::create()
             ->where('batch',$batch)
             ->get();

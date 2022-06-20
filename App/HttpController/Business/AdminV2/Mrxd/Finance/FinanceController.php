@@ -730,9 +730,7 @@ class FinanceController extends ControllerBase
         if(
             ConfigInfo::setRedisNx('exportFinanceData')
         ){
-            return $this->writeJson(201, null, [
-
-            ],  '请勿重复提交');
+            return $this->writeJson(201, null, [],  '请勿重复提交');
         }
 
         $requestData =  $this->getRequestData();
@@ -746,8 +744,9 @@ class FinanceController extends ControllerBase
         $uploadRes = AdminUserFinanceUploadRecord::findById($requestData['id'])->toArray();
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'AdminUserFinanceUploadRecord findById ' ,
-                $requestData['id'],$uploadRes
+                'exportFinanceData find  $uploadRes ' ,
+                'params id ' =>$requestData['id'] ,
+                '$uploadRes' => $uploadRes,
             ])
         );
         // 检查余额
@@ -760,14 +759,6 @@ class FinanceController extends ControllerBase
             return $this->writeJson(201, null, [],  '余额不足 需要至少'. $uploadRes['money'].'元');
         }
 
-
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'exportFinanceData AdminUserFinanceExportDataQueue  addRecordV2' ,
-                'batch' => date('YmdHis'),
-                'upload_record_id' => $requestData['id']
-            ])
-        );
         if(
             AdminUserFinanceExportDataQueue::addRecordV2(
                 [
