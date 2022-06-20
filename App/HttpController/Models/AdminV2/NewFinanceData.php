@@ -97,6 +97,8 @@ class NewFinanceData extends ModelBase
 
     static function getFieldCname(){
         return [
+            'entName' => '企业名称',
+            'year' => '年度',
             'ASSGRO' => '资产总额',
             'LIAGRO' => '负债总额',
             'VENDINC' => '营业总收入',
@@ -175,7 +177,7 @@ class NewFinanceData extends ModelBase
                 $allFields
             ])
         );
-        foreach ($allowedFields as $field => $cname){
+        foreach ($allowedFields as $field){
             $headers[] = $allFields[$field];
             CommonService::getInstance()->log4PHP(
                 json_encode([
