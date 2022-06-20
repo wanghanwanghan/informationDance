@@ -16,7 +16,7 @@ class AdminUserFinanceExportRecord extends ModelBase
     protected $createTime = 'created_at';
     protected $updateTime = 'updated_at'; 
     
-    static $stateInit = 0;
+    static $stateInit = 1;
     static $stateParsed = 5;
     static $stateExported = 10;
 
@@ -71,7 +71,17 @@ class AdminUserFinanceExportRecord extends ModelBase
 //            'user_id' => $user_id,
             'queue_id' => $queue_id,
             // 'status' => 1,
-        ])->all();
+        ])->get();
+
+        return $res;
+    }
+
+    public static function findByBatch($batch){
+        $res =  AdminUserFinanceExportRecord::create()->where([
+//            'user_id' => $user_id,
+            'batch' => $batch,
+            // 'status' => 1,
+        ])->get();
 
         return $res;
     }
@@ -94,4 +104,26 @@ class AdminUserFinanceExportRecord extends ModelBase
         return $res;
     }
 
+    static  function  addRecordV2($dataItem){
+        $exportRes = AdminUserFinanceExportRecord::findByBatch($dataItem['queue_id']);
+        if($exportRes){
+            return $exportRes->getAttr('id');
+        }
+
+        $AdminUserFinanceExportRecordId = AdminUserFinanceExportRecord::addExportRecord(
+            $dataItem
+        );
+        if(
+            $AdminUserFinanceExportRecordId <= 0
+        ){
+            return  CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '设置导出记录' ,
+                    '$AdminUserFinanceExportRecordId' =>$AdminUserFinanceExportRecordId,
+                    '$dataItem' =>$dataItem
+                ])
+            );
+        }
+        return  $AdminUserFinanceExportRecordId;
+    }
 }

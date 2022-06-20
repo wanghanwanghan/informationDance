@@ -209,7 +209,15 @@ function sqlRaw(string $sql, string $conn = null): ?array
             ->query($queryBuilder, true, $conn)
             ->toArray();
     } catch (\Throwable $e) {
-        CommonService::getInstance()->log4PHP('sql_error'.$sql);
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'sql_error',
+                    $sql,
+                    $e->getMessage()
+                ]
+            )
+        );
         return null;
     }
     return $res['result'];

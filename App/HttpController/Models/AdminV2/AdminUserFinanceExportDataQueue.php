@@ -18,12 +18,43 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     static  $state_init = 1;
     static  $state_init_cname =  '初始';
 
+    static  $state_needs_confirm = 10;
+    static  $state_needs_confirm_cname =  '需要确认';
 
-    static  $state_succeed = 10;
-    static  $state_succeed_cname =  '成功';
+    static  $state_confirmed = 20;
+    static  $state_confirmed_cname =  '已确认';
 
-    static  $state_failed = 20;
-    static  $state_failed_cname =  '失败';
+    static  $state_succeed = 30;
+    static  $state_succeed_cname =  '下载成功';
+
+
+    public static function setFinanceDataState($queueId){
+        $queueData = self::findById($queueId)->toArray();
+        $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'setFinanceDataState  strat',
+                '$queueId'=>$queueId
+            ])
+        );
+
+        $uploadDatas = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
+            $uploadRes['user_id'],$uploadRes['id']
+        );
+
+        $status = self::$state_confirmed;
+        foreach ($uploadDatas as $uploadData){
+            if(
+                AdminUserFinanceData::checkDataNeedConfirm($uploadData['user_finance_data_id'])
+            ){
+                $status = self::$state_needs_confirm;
+                break;
+            };
+        }
+        return self::updateStatusById($queueId,$status);
+
+    }
 
     public static function updateStatusById(
         $id,$status
@@ -36,20 +67,35 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     }
 
     static  function  addRecordV2($info){
-        if(
-            AdminUserFinanceExportDataQueue::findBySql(
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceExportDataQueue  addRecordV2' ,
                 " WHERE upload_record_id = ".$info['upload_record_id'].
-                "  AND status = ".AdminUserFinanceExportDataQueue::$state_init
-            )
+                "  AND status = ".AdminUserFinanceExportDataQueue::$state_init,
+                $info
+            ])
+        );
+
+        if(
+            self::findByBatch($info['batch'])
+//            AdminUserFinanceExportDataQueue::findBySql(
+//                " WHERE upload_record_id = ".$info['upload_record_id'].
+//                "  AND status = ".AdminUserFinanceExportDataQueue::$state_init
+//            )
         ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'AdminUserFinanceExportDataQueue  addRecordV2 exists' ,
+                    " WHERE upload_record_id = ".$info['upload_record_id'].
+                    "  AND status = ".AdminUserFinanceExportDataQueue::$state_init,
+                    $info
+                ])
+            );
             return  true;
         }
 
         return AdminUserFinanceExportDataQueue::addRecord(
-            [
-                'batch' => $info['batch'],
-                'upload_record_id' =>  $info['upload_record_id'],
-            ]
+            $info
         );
     }
 
@@ -59,6 +105,9 @@ class AdminUserFinanceExportDataQueue extends ModelBase
                 'upload_record_id' => $requestData['upload_record_id'],
                 'touch_time' => $requestData['touch_time'],
                 'batch' => $requestData['batch'],
+               'user_id' => $requestData['user_id'],
+               'path' => $requestData['path']?:'',
+               'file_name' => $requestData['file_name']?:'',
                 'status' => $requestData['status']?:1,
            ])->save();
 
@@ -89,11 +138,33 @@ class AdminUserFinanceExportDataQueue extends ModelBase
         return $res;
     }
 
+    public static function findByBatch($batch){
+        $res =  AdminUserFinanceExportDataQueue::create()
+            ->where('batch',$batch)
+            ->get();
+        return $res;
+    }
+
     public static function setTouchTime($id,$touchTime){
         $info = AdminUserFinanceExportDataQueue::findById($id);
 
         return $info->update([
             'touch_time' => $touchTime,
+        ]);
+    }
+
+    public static function setFilePath($id,$path,$fileName){
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'setFilePath   '=>$id,$path,$fileName
+            ])
+        );
+        $info = AdminUserFinanceExportDataQueue::findById($id);
+
+        return $info->update([
+            'path' => $path,
+            'file_name' => $fileName,
         ]);
     }
 
@@ -104,7 +175,7 @@ class AdminUserFinanceExportDataQueue extends ModelBase
                         `admin_user_finance_export_data_queue` 
                             $where
       " ;
-        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
+        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return $data;
     }
 

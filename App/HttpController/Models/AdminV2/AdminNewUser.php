@@ -22,6 +22,12 @@ class AdminNewUser extends ModelBase
 
     public static function checkAccountBalance($id,$chargeMoney){
         $balance = self::getAccountBalance($id) ;
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'checkAccountBalance   ' ,
+                $balance,$id
+            ])
+        );
         if(
              // 余额
             $balance >= $chargeMoney
@@ -44,11 +50,57 @@ class AdminNewUser extends ModelBase
     }
 
     public static function updateMoney($id,$money){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'updateMoney   '=> 'strat',
+                $id,$money
+            ])
+        );
         $info = AdminNewUser::findById($id);
 
         return $info->update([
             'id' => $id,
             'money' => $money
         ]);
+    }
+
+    public static function charge($id,$money,$batchNo,$datas){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'charge   '=> 'strat',
+                $id,$money,$batchNo,$datas
+            ])
+        );
+        if(
+            FinanceLog::findByBatch($batchNo)
+        ){
+            CommonService::getInstance()->log4PHP(
+                [
+                    'charge' => 'true',
+                    '之前收费过'
+                ]
+            );
+            return true;
+        }
+        // 实际扣费
+        $res = \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
+            $id,
+            (
+                \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
+                    $id
+                ) - $money
+            )
+        );
+        if(!$res ){
+            return CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '实际扣费 失败' ,
+                ])
+            );
+        }
+
+        return FinanceLog::addRecordV2(
+            $datas
+        );
     }
 }

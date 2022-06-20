@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Api\XinDong;
 
 use App\Crontab\CrontabList\RunDealFinanceCompanyData;
+use App\Crontab\CrontabList\RunDealFinanceCompanyDataNew;
 use App\Csp\Service\CspService;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
@@ -2742,32 +2743,31 @@ eof;
         if(
             $this->getRequestData('parseDataToDb')
         ){
-            RunDealFinanceCompanyData::parseDataToDb(1);
+            RunDealFinanceCompanyDataNew::parseCompanyDataToDb(1);
         }
 
         if(
             $this->getRequestData('calculatePrice')
         ){
-            RunDealFinanceCompanyData::calculatePrice(1);
+            RunDealFinanceCompanyDataNew::calcluteFinancePrice(1);
         }
-
-        if(
-            $this->getRequestData('calculateRealPrice')
-        ){
-            RunDealFinanceCompanyData::calculateRealPrice(1);
-        }
-
 
         if(
             $this->getRequestData('pullFinanceData')
         ){
-            RunDealFinanceCompanyData::pullFinanceData(1);
+            RunDealFinanceCompanyDataNew::pullFinanceData(1);
         }
 
         if(
-            $this->getRequestData('checkBalancePrice')
+            $this->getRequestData('checkConfirm')
         ){
-            RunDealFinanceCompanyData::checkBalancePrice(1);
+            RunDealFinanceCompanyDataNew::checkConfirm(1);
+        }
+
+        if(
+            $this->getRequestData('exportFinanceData')
+        ){
+            RunDealFinanceCompanyDataNew::exportFinanceData(1);
         }
 
         // $config = [

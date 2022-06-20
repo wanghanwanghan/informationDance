@@ -291,16 +291,29 @@ class AdminUserFinanceData extends ModelBase
     //我们拉取运营商的时间间隔  
     //客户导出的时间间隔  
     public static function pullFinanceData($id,$financeConifgArr){
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'pullFinanceData  '=>'running',
+                '$id' =>$id,
+                '$financeConifgArr' =>$financeConifgArr,
+            ])
+        );
         $financeData =  AdminUserFinanceData::findById($id)->toArray();
-
+        if($financeData['year'] > date('Y')){
+            CommonService::getInstance()->log4PHP(
+                [
+                    'pullFinanceData   year to large ',
+                ]
+            );
+            return  true;
+        }
         $postData = [
             'entName' => $financeData['entName'],
             'code' => '',
             'beginYear' =>$financeData['year'],
             'dataCount' => 1,//取最近几年的
         ];
-         
+
         // 根据缓存期和上次拉取财务数据时间 决定是取db还是取api
         $getFinanceDataSourceDetailRes = self::getFinanceDataSourceDetail($id);
         CommonService::getInstance()->log4PHP(
@@ -329,9 +342,19 @@ class AdminUserFinanceData extends ModelBase
             $dbDataArr = $resData[$financeData['year']];
             $dbDataArr['entName'] = $financeData['entName'];
             $dbDataArr['year'] = $financeData['year'];
+            CommonService::getInstance()->log4PHP(
+                [
+                    'NewFinanceData addRecord',
+                    '$dbDataArr' => $dbDataArr,
+                ]
+            );
+
+            $addRes = NewFinanceData::addRecordV2($dbDataArr);
             //设置是否需要确认
-            $dbDataArr['status'] = self::getConfirmStatus($financeConifgArr,$dbDataArr);
-            $addRes = NewFinanceData::addRecord($dbDataArr);
+            self::updateStatus($id,self::getConfirmStatus($financeConifgArr,$dbDataArr));
+            //设置关系
+            self::updateNewFinanceDataId($id,$addRes);
+
             CommonService::getInstance()->log4PHP(
                 json_encode(
                    [
@@ -751,6 +774,38 @@ class AdminUserFinanceData extends ModelBase
         return $res;
     }
 
+    public static function checkDataIsValid($id){
+        $res =  self::findById($id);
+        $res2 =  ($res->getAttr('status') == self::$statusConfirmedYes)? true:false;
+
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'checkDataIsValid ',
+                    '$id '=>$id,
+                    '$res2'=>$res2
+                ]
+            )
+        );
+        return $res2;
+    }
+
+    public static function checkDataNeedConfirm($id){
+        $res =  self::findById($id);
+        $res2 =  ($res->getAttr('status') == self::$statusNeedsConfirm)? true:false;
+
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'checkDataNeedConfirm ',
+                    '$id '=>$id,
+                    '$res2'=>$res2
+                ]
+            )
+        );
+        return $res2;
+    }
+
     public static function findByUserAndEntAndYear($userId,$entName,$year){
         $res =  AdminUserFinanceData::create()
             ->where([
@@ -798,7 +853,32 @@ class AdminUserFinanceData extends ModelBase
         ]);
     }
 
-    public static function updateStatus($id,$status){ 
+    public static function updateNewFinanceDataId($id,$financeDataId){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'updateNewFinanceDataId  ',$id,$financeDataId
+            ])
+        );
+        $info = AdminUserFinanceData::create()
+            ->where('id',$id)
+            ->get();
+        if(!$info ){
+            return CommonService::getInstance()->log4PHP(
+                'updateStatus failed  $id 不存在'.$id
+            );
+        }
+        return $info->update([
+            'id' => $id,
+            'finance_data_id' => $financeDataId
+        ]);
+    }
+
+    public static function updateStatus($id,$status){
+        CommonService::getInstance()->log4PHP(
+           json_encode([
+               'updateStatus  ',$id,$status
+           ])
+        );
         $info = AdminUserFinanceData::create()
                     ->where('id',$id)
                     ->get(); 
@@ -870,7 +950,44 @@ class AdminUserFinanceData extends ModelBase
     }
 
     static function  checkIfAllYearsDataIsValid($user_id,$entName,$years){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'checkIfAllYearsDataIsValid ',
+                $user_id,$entName,$years
+
+            ])
+        );
         foreach ($years as $year){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'checkIfAllYearsDataIsValid findBySql',
+                    " WHERE     user_id = $user_id AND  
+                    entName =  $entName AND year = $year  AND 
+                    status = ".self::$statusinit,
+                    " WHERE     user_id = $user_id AND  
+                                    entName =  $entName AND year = $year  AND 
+                                    status = ".self::$statusConfirmedYes."
+                            "
+
+                ])
+            );
+            if(
+                self::findBySql(
+                    " WHERE     user_id = $user_id AND  
+                                    entName =  $entName AND year = $year  AND 
+                                    status = ".self::$statusinit."
+                            "
+                )
+            ){
+               CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        'checkIfAllYearsDataIsValid 初始数据',
+                        $user_id,$entName,$years,$year
+                    ])
+                );
+               continue;
+            };
+
             if(
                 !self::findBySql(
                     " WHERE     user_id = $user_id AND  
@@ -892,7 +1009,7 @@ class AdminUserFinanceData extends ModelBase
                         `admin_user_finance_data` 
                             $where
       " ;
-        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
+        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return $data;
     }
 }

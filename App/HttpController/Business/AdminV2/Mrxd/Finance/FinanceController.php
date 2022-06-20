@@ -350,6 +350,36 @@ class FinanceController extends ControllerBase
         ], $res,'成功');
     }
 
+    public function getExportQueueLists(){
+        $requestData =  $this->getRequestData();
+
+        $res = AdminUserFinanceExportDataQueue::findByCondition(
+            [
+                // 'user_id' => $userId
+                'user_id' => $this->loginUserinfo['id']
+            ],
+            0, 20
+        );
+        $size = $this->request()->getRequestParam('size')??10;
+        $page = $this->request()->getRequestParam('page')??1;
+        $offset  =  ($page-1)*$size;
+
+        foreach ($res as &$value){
+            $value['upload_details'] = [];
+            if(
+                $value['upload_record_id']
+            ){
+                $value['upload_details'] = AdminUserFinanceUploadRecord::findById($value['upload_record_id'])->toArray();
+            }
+        }
+        return $this->writeJson(200,  [
+            'page' => $page,
+            'pageSize' =>$size,
+            'total' => 1,
+            'totalPage' => 1,
+        ], $res,'成功');
+    }
+
     //获取待确认的列表
     public function getNeedsConfirmExportLists(){
         // $userId = $this->getRequestData('user_id');
@@ -407,6 +437,8 @@ class FinanceController extends ControllerBase
             'totalPage' => 1,
         ], $res, '');
     }
+
+
 
     public function exportDetails(){
 
@@ -500,19 +532,13 @@ class FinanceController extends ControllerBase
 
             ], [], '参数缺失');
         }
-
-        if(
-            AdminUserFinanceExportDataQueue::addRecordV2(
-                [
-                    'batch' => date('YmdHis'),
-                    'upload_record_id' => $requestData['id']
-                ]
-            )
-        ){
-            return  true;
-        }
-
         $uploadRes = AdminUserFinanceUploadRecord::findById($requestData['id'])->toArray();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceUploadRecord findById ' ,
+                $requestData['id'],$uploadRes
+            ])
+        );
         // 检查余额
         if(
             !\App\HttpController\Models\AdminV2\AdminNewUser::checkAccountBalance(
@@ -523,14 +549,37 @@ class FinanceController extends ControllerBase
             return $this->writeJson(201, null, [], [], '余额不足 需要至少'. $uploadRes['money'].'元');
         }
 
-        //添加到导出队列
-        AdminUserFinanceExportDataQueue::addRecord(
-            [
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'exportFinanceData AdminUserFinanceExportDataQueue  addRecordV2' ,
                 'batch' => date('YmdHis'),
                 'upload_record_id' => $requestData['id']
-            ]
+            ])
         );
+        if(
+            AdminUserFinanceExportDataQueue::addRecordV2(
+                [
+                    'batch' => date('YmdHis'),
+                    'user_id' => $this->loginUserinfo['id'],
+                    'upload_record_id' => $requestData['id']
+                ]
+            )
+        ){
+            return  $this->writeJson(200);
+        }
+
+
+
+        //添加到导出队列
+//        AdminUserFinanceExportDataQueue::addRecord(
+//            [
+//                'batch' => date('YmdHis'),
+//                'upload_record_id' => $requestData['id']
+//            ]
+//        );
         return $this->writeJson(200);
+
         $config = [
             'path' => TEMP_FILE_PATH // xlsx文件保存路径
         ];

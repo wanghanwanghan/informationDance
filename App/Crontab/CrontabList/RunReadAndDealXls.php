@@ -6,6 +6,7 @@ use App\Crontab\CrontabBase;
 use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
+use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use EasySwoole\Mysqli\QueryBuilder;
 use wanghanwanghan\someUtils\control;
@@ -174,6 +175,60 @@ class RunReadAndDealXls extends AbstractCronTask
         }
     }
 
+
+    function jincai($xlsx_name){
+        $excel_read = new \Vtiful\Kernel\Excel(['path' => $this->workPath]);
+        $excel_read->openFile($xlsx_name)->openSheet();
+
+        $datas = [];
+        $i = 1;
+        while (true) {
+
+            $one = $excel_read->nextRow([
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+            ]);
+
+            if (empty($one)) {
+                break;
+            }
+
+            $value0 = $this->strtr_func($one[0]);//任务号
+            $value1 = $this->strtr_func($one[1]);//信用代码
+            $value2 = $this->strtr_func($one[2]);
+            $mobileStr = str_replace(";", ",", trim($value2));
+            $newmobileStr = "";
+            $postData = [
+                'nsrsbh' => $value1,
+                'rwh' => $value0,
+                'page' => 1,
+                'pageSize' => 10,
+            ];
+            $res =
+            (new JinCaiShuKeService())
+                ->setCheckRespFlag(true)
+                ->S000523($postData['nsrsbh'], $postData['rwh'], $postData['page'], $postData['pageSize']);
+
+            CommonService::getInstance()->log4PHP($xlsx_name.json_encode(
+                    [
+                        '$postData' => $postData,
+                        '$res' => $res,
+                        'num' =>  $i
+                    ]
+                ));
+            $i ++;
+            yield $datas[] = [
+                $value0,
+                $value1,
+                $value2,
+                json_encode($res['result']['content']),
+                json_encode($res)
+            ];
+
+        }
+    }
+
     function getYieldDataToMathWeiXin($xlsx_name){
         $excel_read = new \Vtiful\Kernel\Excel(['path' => $this->workPath]);
         $excel_read->openFile($xlsx_name)->openSheet();
@@ -332,6 +387,35 @@ class RunReadAndDealXls extends AbstractCronTask
         return true ;
     }
 
+    function getjincaiData($file,$debugLog){
+        $startMemory = memory_get_usage();
+        $newFile = 'dealing_'.$file;
+        rename($this->workPath.$file, $this->workPath.$newFile);
+
+        // 取yield数据
+        // $excelDatas = $this->getYieldData($file,'matchNameFormatData');
+        $excelDatas = $this->jincai($newFile);
+
+        $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
+        $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用1 '.$memory .' '.$newFile );
+
+        //写到csv里
+        $fileName = pathinfo($file)['filename'];
+        $f = fopen($this->workPath.$fileName.".csv", "w");
+        fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+        foreach ($excelDatas as $dataItem) {
+            fputcsv($f, $dataItem);
+        }
+
+        $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
+        $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用2 '.$memory .' '.$newFile );
+
+        @unlink($this->workPath . $newFile);
+        ConfigInfo::setIsDone("RunReadAndDealXls");
+        return true ;
+    }
+
     function run(int $taskId, int $workerIndex): bool
     {
         if(
@@ -388,6 +472,12 @@ class RunReadAndDealXls extends AbstractCronTask
         }
 
         ConfigInfo::setIsDone("RunReadAndDealXls");
+
+        //  jincai
+        if($fileNameArr[1] == 'jincai'){
+            $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
+            return $this->getjincaiData($file,$debugLog);
+        }
 
         return true ;
     }
