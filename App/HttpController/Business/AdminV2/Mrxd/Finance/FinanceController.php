@@ -702,7 +702,7 @@ class FinanceController extends ControllerBase
         ){
             return $this->writeJson(201, null, [
 
-            ], [], '请勿重复提交');
+            ],  '请勿重复提交');
         }
 
         $requestData =  $this->getRequestData();
@@ -711,7 +711,7 @@ class FinanceController extends ControllerBase
         ){
             return $this->writeJson(201, null, [
 
-            ], [], '参数缺失');
+            ],'参数缺失');
         }
         $uploadRes = AdminUserFinanceUploadRecord::findById($requestData['id'])->toArray();
         CommonService::getInstance()->log4PHP(
@@ -727,7 +727,7 @@ class FinanceController extends ControllerBase
                 $uploadRes['money']
             )
         ){
-            return $this->writeJson(201, null, [], [], '余额不足 需要至少'. $uploadRes['money'].'元');
+            return $this->writeJson(201, null, [],  '余额不足 需要至少'. $uploadRes['money'].'元');
         }
 
 
