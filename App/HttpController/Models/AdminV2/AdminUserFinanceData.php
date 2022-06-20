@@ -248,7 +248,8 @@ class AdminUserFinanceData extends ModelBase
             return [
                 'pullFromApi' => true,
                 'pullFromDb' => false,
-                'NewFinanceDataId' => 0
+                'NewFinanceDataId' => 0,
+                'NewFinanceData' => []
             ];
         }
 
@@ -265,14 +266,16 @@ class AdminUserFinanceData extends ModelBase
             return [
                 'pullFromApi' => true,
                 'pullFromDb' => false,
-                'NewFinanceDataId' =>$realFinanceDataRes->getAttr('id')
+                'NewFinanceDataId' =>$realFinanceDataRes->getAttr('id'),
+                'NewFinanceData' =>$realFinanceDataRes->toArray()
             ];
         }
 
         return [
             'pullFromApi' => false,
             'pullFromDb' => true,
-            'NewFinanceDataId' =>$realFinanceDataRes->getAttr('id')
+            'NewFinanceDataId' =>$realFinanceDataRes->getAttr('id'),
+            'NewFinanceData' =>$realFinanceDataRes->toArray()
         ];
     }
 
@@ -361,6 +364,8 @@ class AdminUserFinanceData extends ModelBase
         else{
             //设置关系
             self::updateNewFinanceDataId($id,$getFinanceDataSourceDetailRes['NewFinanceDataId']);
+            //设置是否需要确认
+            self::updateStatus($id,self::getConfirmStatus($financeConifgArr,$getFinanceDataSourceDetailRes['NewFinanceData']));
         }
         CommonService::getInstance()->log4PHP(
             json_encode(
