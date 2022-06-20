@@ -170,20 +170,36 @@ class NewFinanceData extends ModelBase
         return $headers;
     }
     static function exportFinanceToXlsx($uploadId,$financeDatas){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'exportFinanceToXlsx ',
+                $uploadId,$financeDatas
+            ])
+        );
         $uploadRes = AdminUserFinanceUploadRecord::findById($uploadId)->toArray();
 
         $config = [
             'path' => TEMP_FILE_PATH // xlsx文件保存路径
         ];
         $filename = $uploadRes['file_name'].'_'.date('YmdHis'). '.xlsx';
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '$config ',
+                $config
+            ])
+        );
         $header = array_merge(
             [
                 '序号',
                 '企业名称',
                 '年度',
             ],self::getExportHeaders($uploadId));
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '$header ',
+                $header
+            ])
+        );
         $exportDataToXlsRes = self::parseDataToXls(
             $config,$filename,$header,$financeDatas,'sheet1'
         );
