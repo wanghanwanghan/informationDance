@@ -226,7 +226,8 @@ class NewFinanceData extends ModelBase
         $config = [
             'path' => TEMP_FILE_PATH // xlsx文件保存路径
         ];
-        $filename = date('YmdHis'). '_'.$uploadRes['file_name'];
+        $pathinfo = pathinfo($uploadRes['file_name']);
+        $filename = $pathinfo['filename'].'_'.date('YmdHis').'.'.$pathinfo['extension'];
         CommonService::getInstance()->log4PHP(
             json_encode([
                 '$config ' => $config,
