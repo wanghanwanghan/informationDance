@@ -431,11 +431,12 @@ class FinanceController extends ControllerBase
         $requestData =  $this->getRequestData();
         $condition = [
             // 'user_id' => $userId
-            'user_id' => $this->loginUserinfo['id']
+            'user_id' => $this->loginUserinfo['id'],
+            'status' => AdminUserFinanceData::$statusNeedsConfirm
         ];
-        if($requestData['status']){
-            $condition['status'] = $requestData['status'];
-        }
+//        if($requestData['status']){
+//            $condition['status'] = $requestData['status'];
+//        }
 //        if($requestData['began_time']){
 //            $condition['status'] = $requestData['status'];
 //        }
