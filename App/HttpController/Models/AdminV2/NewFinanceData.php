@@ -192,12 +192,19 @@ class NewFinanceData extends ModelBase
     static function exportFinanceToXlsx($uploadId,$financeDatas){
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'exportFinanceToXlsx ',
-                $uploadId,$financeDatas
+                'new finance data   exportFinanceToXlsx  '=> 'start',
+                'params $uploadId' => $uploadId,
+                'params $financeDatas' => $financeDatas,
             ])
         );
         $uploadRes = AdminUserFinanceUploadRecord::findById($uploadId)->toArray();
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'new finance data   exportFinanceToXlsx  '=> 'find $uploadRes',
+                'params $uploadId' => $uploadId,
+                'params $uploadRes' => $uploadRes,
+            ])
+        );
         $config = [
             'path' => TEMP_FILE_PATH // xlsx文件保存路径
         ];

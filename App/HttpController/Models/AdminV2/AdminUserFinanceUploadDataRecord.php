@@ -352,33 +352,56 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
 
     // $id,$recordId
     public static function updateChargeInfo($id,$uploadId){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'upload data record start',
+                'params $id' =>$id,
+                'params $uploadId' =>$uploadId,
+            ])
+        );
         $uploadInfo = AdminUserFinanceUploadRecord::findById($uploadId);
         $uploadInfo = $uploadInfo->toArray();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'upload data find $uploadInfo',
+                'params $uploadId' =>$uploadId,
+                '$uploadInfo' =>$uploadInfo,
+            ])
+        );
         $dataInfo = self::findById($id);
         $dataInfo = $dataInfo->toArray();
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'upload data find $dataInfo',
+                'params $id' =>$id,
+                '$dataInfo' =>$dataInfo,
+            ])
+        );
         //用户的配置
         $finance_config = json_decode($uploadInfo['finance_config'],true);
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'updateChargeInfo  $finance_config',
-                $finance_config
+                'upload data find $finance_config',
+                'params finance_config' =>$uploadInfo['finance_config'],
+                '$finance_config' =>$finance_config,
             ])
         );
         //用户该次选择的年限
         $selectYears = json_decode($uploadInfo['years'],true);
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'updateChargeInfo  $selectYears',
-                $selectYears
+                'upload data find $selectYears',
+                'params finance_config' =>$uploadInfo['years'],
+                '$selectYears' =>$selectYears,
             ])
         );
         //用户财务其他信息
         $user_finance_data = AdminUserFinanceData::findById($dataInfo['user_finance_data_id']);
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'updateChargeInfo  $user_finance_data',
-                $user_finance_data
+                'upload data find $selectYears',
+                'params user_finance_data_id' =>$dataInfo['user_finance_data_id'],
+                '$user_finance_data' =>$user_finance_data,
             ])
         );
         //按包年计费？按年计费
@@ -386,8 +409,9 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         sort($annulYears);
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'updateChargeInfo  $annulYears',
-                $annulYears
+                'upload data find $annulYears',
+                'params annually_years' =>$finance_config['annually_years'],
+                '$annulYears' =>$annulYears,
             ])
         );
 
@@ -403,7 +427,20 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
                 'charge_year_end' => end($annulYears),
             ]
         );
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'upload data default updatePriceType ',
+                'params  ' => [
+                    'id' => $id,
+                    'price' => $finance_config['annually_price'],
+                    'price_type' => self::$chargeTypeAnnually,
+                    'price_type_remark' =>  '包年',
+                    'charge_year' => $user_finance_data['year'],
+                    'charge_year_start' => $annulYears[0],
+                    'charge_year_end' => end($annulYears),
+                ]
+            ])
+        );
         if(
             !in_array($user_finance_data['year'],$annulYears)
         ){
