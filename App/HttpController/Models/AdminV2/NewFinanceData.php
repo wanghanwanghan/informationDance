@@ -210,7 +210,6 @@ class NewFinanceData extends ModelBase
         );
         $header = array_merge(
             [
-                '序号',
                 '企业名称',
                 '年度',
             ],self::getExportHeaders($uploadId));
