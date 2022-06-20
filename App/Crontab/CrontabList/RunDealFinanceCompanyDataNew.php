@@ -280,14 +280,12 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
         CommonService::getInstance()->log4PHP(
             json_encode([
                 'exportFinanceData   '=> 'strat',
-                " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_confirmed. " 
-             AND touch_time  IS Null  LIMIT $limit 
-            "
-
+                'needs to export datas sql' => " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_confirmed. " 
+                AND touch_time  IS Null  LIMIT $limit 
+                "
             ])
         );
         foreach($queueDatas as $queueData){
-
             AdminUserFinanceExportDataQueue::setTouchTime(
                 $queueData['id'],date('Y-m-d H:i:s')
             );
@@ -295,15 +293,15 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'exportFinanceData   '=> '$uploadRes',
-                    $uploadRes
+                    'exportFinanceData   '=> 'find upload record',
+                    '$uploadRes' => $uploadRes
                 ])
             );
             $finance_config = AdminUserFinanceUploadRecord::getFinanceConfigArray($queueData['upload_record_id']);
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'exportFinanceData   '=> '$finance_config',
-                    $finance_config
+                    'exportFinanceData   '=> 'find $finance_config',
+                    '$finance_config' => $finance_config
                 ])
             );
 
@@ -313,15 +311,16 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             );
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    '$financeDatas   '=> $financeDatas,
-                    $uploadRes['user_id'],$uploadRes['id']
+                    'exportFinanceData   '=> 'find $financeDatas',
+                    '$financeDatas' => $financeDatas
                 ])
             );
             //生成下载数据
             $xlxsData = NewFinanceData::exportFinanceToXlsx($queueData['upload_record_id'],$financeDatas['export_data']);
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    '$xlxsData   '=> $xlxsData
+                    'exportFinanceData   '=> 'download $financeDatas',
+                    '$xlxsData' => $xlxsData
                 ])
             );
             AdminUserFinanceExportDataQueue::setFilePath(

@@ -418,7 +418,7 @@ class FinanceController extends ControllerBase
             'pageSize' =>20,
             'total' => $res['total'],
            // 'totalPage' => 1,
-        ], $res,'成功');
+        ], $res['data'],'成功');
     }
 
     //获取待确认的列表
