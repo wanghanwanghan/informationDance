@@ -350,6 +350,40 @@ class FinanceController extends ControllerBase
         ], $res,'成功');
     }
 
+    public function exportExportLists(){
+        $requestData =  $this->getRequestData();
+
+        $res = AdminUserFinanceExportRecord::findByCondition(
+            [
+                // 'user_id' => $userId
+                'user_id' => $this->loginUserinfo['id']
+            ],
+            0, 20
+        );
+        $size = $this->request()->getRequestParam('size')??10;
+        $page = $this->request()->getRequestParam('page')??1;
+        $offset  =  ($page-1)*$size;
+        $config = [
+            'path' => TEMP_FILE_PATH // xlsx文件保存路径
+        ];
+        $filename = date('YmdHis').'xlsx';
+        $exportDataToXlsRes = NewFinanceData::parseDataToXls(
+            $config,$filename,[],$res,'sheet1'
+        );
+
+        return $this->writeJson(200,  [
+            'page' => $page,
+            'pageSize' =>$size,
+            'total' => 1,
+            'totalPage' => 1,
+        ],  [
+            'path' => TEMP_FILE_PATH,
+            'filename' => $filename
+        ],'成功');
+  
+    }
+
+
     public function getExportQueueLists(){
         $requestData =  $this->getRequestData();
 
@@ -379,6 +413,8 @@ class FinanceController extends ControllerBase
             'totalPage' => 1,
         ], $res,'成功');
     }
+
+
 
     //获取待确认的列表
     public function getNeedsConfirmExportLists(){
@@ -437,8 +473,6 @@ class FinanceController extends ControllerBase
             'totalPage' => 1,
         ], $res, '');
     }
-
-
 
     public function exportDetails(){
 
