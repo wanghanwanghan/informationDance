@@ -216,6 +216,12 @@ class FinanceController extends ControllerBase
     // 上传客户名单
     public function uploadeCompanyLists(){
         $years = trim($this->getRequestData('years'));
+        CommonService::getInstance()->log4PHP(
+           json_encode([
+               'uploadeCompanyLists start ',
+               'params years '=> $years,
+           ])
+        );
         if(empty($years) ){
             return $this->writeJson(206, [] ,   [], '缺少年度参数('.$years.')', true, []);
         }
@@ -233,7 +239,6 @@ class FinanceController extends ControllerBase
         $requestData =  $this->getRequestData();
         $files = $this->request()->getUploadedFiles();
 
-
         $succeedNums = 0;
         foreach ($files as $key => $oneFile) {
             try {
@@ -241,7 +246,10 @@ class FinanceController extends ControllerBase
                 $path = TEMP_FILE_PATH . $fileName;
                 if(file_exists($path)){
                     CommonService::getInstance()->log4PHP(
-                        'uploadeCompanyLists file  already exists. '.$path
+                        json_encode([
+                            'uploadeCompanyLists   file_exists',
+                            'params $path '=> $path,
+                        ])
                     );
                     continue;
                 }
@@ -249,7 +257,10 @@ class FinanceController extends ControllerBase
                 $res = $oneFile->moveTo($path);
                 if(!file_exists($path)){
                     CommonService::getInstance()->log4PHP(
-                        'uploadeCompanyLists file  not  exists. '.$path
+                        json_encode([
+                            'uploadeCompanyLists   file_not_exists',
+                            'params $path '=> $path,
+                        ])
                     );
                     continue;
                 }
@@ -260,15 +271,15 @@ class FinanceController extends ControllerBase
                 );
                 if($UploadRecordRes){
                     CommonService::getInstance()->log4PHP(
-                        json_encode(
-                            [
-                                'uploadeCompanyLists  AdminUserFinanceUploadRecord    exists',
-                                '$path' => $path,
-                            ]
-                        )
+                        json_encode([
+                            'uploadeCompanyLists find old  $UploadRecordRes',
+                            'params $fileName '=> $fileName,
+                            '$UploadRecordRes' => $UploadRecordRes,
+                        ])
                     );
                     continue;
-                } 
+                }
+
                 $tmpData = [
                     'user_id' => $this->loginUserinfo['id'],
                     'file_path' => $path,
@@ -286,6 +297,13 @@ class FinanceController extends ControllerBase
                 $addUploadRecordRes = AdminUserFinanceUploadRecord::addUploadRecord(
                     $tmpData
                  );
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        'uploadeCompanyLists $addUploadRecordRes',
+                        'params $tmpData '=> $tmpData,
+                        '$addUploadRecordRes' => $addUploadRecordRes,
+                    ])
+                );
                 if(!$addUploadRecordRes){
                     continue;
                 }
@@ -294,10 +312,10 @@ class FinanceController extends ControllerBase
             } catch (\Throwable $e) {
                 CommonService::getInstance()->log4PHP(
                     json_encode([
-                        'uploadeCompanyLists failed  ',
-                        $e->getMessage(),
+                        'uploadeCompanyLists false',
+                        'params $e '=> $e->getMessage() 
                     ])
-                );  
+                );
             } 
         }
 
@@ -468,6 +486,10 @@ class FinanceController extends ControllerBase
 
 
     public function chargeAccount(){
+        return $this->writeJson(200,
+            [
+
+            ] , [], '成功' );
         $requestData =  $this->getRequestData();
         $res = \App\HttpController\Models\AdminV2\AdminNewUser::charge(
             $requestData['user_id'],

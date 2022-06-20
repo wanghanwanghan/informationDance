@@ -77,25 +77,38 @@ class AdminUserFinanceConfig extends ModelBase
     }
 
     public static function checkExportYearsNums($userid,$yearsNums){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'checkExportYearsNums   start',
+                'params $userid '=> $userid,
+                'params $yearsNums '=> $yearsNums,
+            ])
+        );
+
         $info = self::getConfigByUserId($userid);
         $data = $info->toArray();
         $config = json_decode($data['finance_config'],true);
+
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'checkExportYearsNums',
-                '$userid' => $userid,
-                '$yearsNums' => $yearsNums,
-                '$config' => $config,
+                'checkExportYearsNums   get $config',
+                'params $config '=> $config,
+            ])
+        );
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'checkExportYearsNums   ',
+                'params allowed_total_years_num '=> $config['allowed_total_years_num'],
+                'params $yearsNums '=> $yearsNums,
             ])
         );
         if($config['allowed_total_years_num'] < $yearsNums){
-            return CommonService::getInstance()->log4PHP(
+            return  CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'checkExportYearsNums false ',
-                    '$userid' => $userid,
-                    '$yearsNums' => $yearsNums,
-                    '$config' => $config,
-                    'allowed_total_years_num' => $config['allowed_total_years_num']
+                    'checkExportYearsNums  false ',
+                    'params allowed_total_years_num '=> $config['allowed_total_years_num'],
+                    'params $yearsNums '=> $yearsNums,
                 ])
             );
         }
