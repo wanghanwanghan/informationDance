@@ -94,9 +94,9 @@ class NewFinanceData extends ModelBase
         $newData = [];
         foreach ($data as $field => $dataItem){
                if(
-                   in_array($field,$needsChangeFields)
+                   $needsChangeFields[$field]
                ){
-                   $newData[$field] = empty($dataItem)?'无':'有';
+                   $newData[$needsChangeFields[$field]] = empty($dataItem)?'无':'有';
                }
                else{
                    $newData[$field] = empty($dataItem)?'无':'有';

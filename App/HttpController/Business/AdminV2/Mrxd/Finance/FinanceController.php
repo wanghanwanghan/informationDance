@@ -470,7 +470,7 @@ class FinanceController extends ControllerBase
         $data = $res->toArray();
         $realFinanceDatId = $data['finance_data_id'];
         $allowedFields = NewFinanceData::getFieldCname();
-        $realData = NewFinanceData::findByIdV2($realFinanceDatId,array_keys($allowedFields));
+        $realData = NewFinanceData::findByIdV2($realFinanceDatId,($allowedFields));
         return $this->writeJson(200,
             [
 
