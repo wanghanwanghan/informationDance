@@ -80,8 +80,11 @@ class JinCaiShuKeService extends ServiceBase
         foreach ($list as $log){
             $data = $this->S000523( $log->getAttr('nsrsbh'),  $log->getAttr('rwh'),1,1000);
             $content = $data['result']['content'];
-            if(empty($content)) {
+            if(empty($content) || $content['sqzt']!=1) {
                 dingAlarm('金财数科获取发票数据为空S000523',['$data'=>json_encode($data)]);
+                if($content['sqzt'] == 2){
+                    JincaiRwhLog::create()->get($log->getAttr('id'))->update(['status'=>2]);
+                }
                 continue;
             }
             if(count($content['fpxxs']['data']) == 1000){
