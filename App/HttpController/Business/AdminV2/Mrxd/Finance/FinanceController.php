@@ -440,9 +440,11 @@ class FinanceController extends ControllerBase
 //        if($requestData['began_time']){
 //            $condition['status'] = $requestData['status'];
 //        }
-        $res = AdminUserFinanceData::findByCondition(
+
+        $page = $requestData['page']?:1;
+        $res = AdminUserFinanceData::findByConditionV2(
             $condition,
-            0, 20
+            $page
         );
 
         $size = $this->request()->getRequestParam('size')??10;
@@ -451,10 +453,10 @@ class FinanceController extends ControllerBase
         return $this->writeJson(200,
             [
                 'page' => $page,
-                'pageSize' =>$size,
-                'total' => 1,
-                'totalPage' => 1,
-            ] , $res, '成功' );
+                'pageSize' =>20,
+                'total' => $res['total'],
+                //'totalPage' => 1,
+            ] , $res['data'], '成功' );
     }
 
     public function getNeedsConfirmDetails(){

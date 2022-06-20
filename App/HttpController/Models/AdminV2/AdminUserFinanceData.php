@@ -791,6 +791,23 @@ class AdminUserFinanceData extends ModelBase
         return $res;
     }
 
+    public static function findByConditionV2($whereArr,$page){
+
+        $model = AdminUserFinanceData::create()
+            ->where($whereArr)
+            ->page($page)
+            ->order('id', 'DESC')
+            ->withTotalCount();
+
+        $res = $model->all();
+
+        $total = $model->lastQueryResult()->getTotalCount();
+        return [
+            'data' => $res,
+            'total' =>$total,
+        ];
+    }
+
     public static function findById($id){
         $res =  AdminUserFinanceData::create()
             ->where('id',$id)            
