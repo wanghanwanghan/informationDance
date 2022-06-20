@@ -573,7 +573,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                             'price' => 0,
                             'price_type' => 0,
                             'cache_end_date' => 0,
-                            'status' => 0,
+                            'status' => AdminUserFinanceData::$statusinit,
                         ]
                     );
                     CommonService::getInstance()->log4PHP(
