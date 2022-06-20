@@ -9,7 +9,9 @@ use App\HttpController\Models\AdminV2\AdminMenuItems;
 use App\HttpController\Models\AdminV2\AdminNewMenu;
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
 use App\HttpController\Models\AdminV2\FinanceLog;
+use App\HttpController\Models\Api\CompanyCarInsuranceStatusInfo;
 use App\HttpController\Models\Provide\RequestApiInfo;
+use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Service\AdminRole\AdminPrivilegedUser;
 use App\HttpController\Models\AdminV2\AdminRoles;
 use App\HttpController\Models\AdminV2\AdminUserFinanceConfig;
@@ -326,10 +328,33 @@ class FinanceController extends ControllerBase
 
         $requestData =  $this->getRequestData();
         $page = $this->request()->getRequestParam('page')??1;
-        $res = AdminUserFinanceUploadRecord::findByConditionV2(
-            [
-                'user_id' => $this->loginUserinfo['id']
-            ],
+        $createdAtStr = $this->getRequestData('created_at');
+        $createdAtArr = explode('|||',$createdAtStr);
+        $whereArr = [];
+        if (
+            !empty($createdAtArr) &&
+            !empty($createdAtStr)
+        ) {
+            $whereArr = [
+                [
+                    'field' => 'created_at',
+                    'value' => strtotime($createdAtArr[0]),
+                    'operate' => '>=',
+                ],
+                [
+                    'field' => 'created_at',
+                    'value' => strtotime($createdAtArr[1]),
+                    'operate' => '<=',
+                ]
+            ];
+        }
+        $whereArr[] =  [
+            'field' => 'user_id',
+            'value' => $this->loginUserinfo['id'],
+            'operate' => '=',
+        ];
+        $res = AdminUserFinanceUploadRecord::findByConditionV3(
+            $whereArr,
             $page
         );
 
