@@ -72,7 +72,8 @@ class AdminNewUser extends ModelBase
         ]);
     }
 
-    public static function charge($id,$money,$batchNo,$datas){
+    // $type 5充值 10 扣钱
+    public static function charge($id,$money,$batchNo,$datas,$type = 5){
         CommonService::getInstance()->log4PHP(
             json_encode([
                 'admin new user charge   '=> 'if needs charge ',
@@ -91,13 +92,24 @@ class AdminNewUser extends ModelBase
             return true;
         }
         // 实际扣费
+        $banlance = \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
+            $id
+        );
+        if(
+            $type == 5
+        ){
+            $banlance = $banlance + $money;
+        }
+
+        if(
+            $type == 10
+        ){
+            $banlance = $banlance - $money;
+        }
+
         $res = \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
             $id,
-            (
-                \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
-                    $id
-                ) - $money
-            )
+            $banlance
         );
         if(!$res ){
             return CommonService::getInstance()->log4PHP(

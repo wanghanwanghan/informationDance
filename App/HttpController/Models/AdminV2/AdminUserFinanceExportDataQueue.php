@@ -28,6 +28,16 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     static  $state_succeed = 30;
     static  $state_succeed_cname =  '下载成功';
 
+    public static function getStatusMap(){
+
+        return [
+            self::$state_init => self::$state_init_cname,
+            self::$state_needs_confirm => self::$state_needs_confirm_cname,
+            self::$state_confirmed => self::$state_confirmed_cname,
+            self::$state_succeed => self::$state_succeed_cname,
+        ];
+
+    }
 
     public static function setFinanceDataState($queueId){
         $queueData = self::findById($queueId)->toArray();

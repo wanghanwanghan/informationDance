@@ -412,6 +412,7 @@ class FinanceController extends ControllerBase
             ){
                 $value['upload_details'] = AdminUserFinanceUploadRecord::findById($value['upload_record_id'])->toArray();
             }
+            $value['status_cname'] = AdminUserFinanceExportDataQueue::getStatusMap()[$value['status']];
         }
         return $this->writeJson(200,  [
             'page' => $page,
@@ -455,6 +456,58 @@ class FinanceController extends ControllerBase
             'user_id' => $this->loginUserinfo['id'],
             //'status' => FinanceLog::$statusNeedsConfirm
         ];
+
+        $page = $requestData['page']?:1;
+        $res = FinanceLog::findByConditionV2(
+            $condition,
+            $page
+        );
+
+        return $this->writeJson(200,
+            [
+                'page' => $page,
+                'pageSize' =>20,
+                'total' => $res['total'],
+                //'totalPage' => 1,
+            ] , $res['data'], '成功' );
+    }
+
+
+    public function chargeAccount(){
+        $requestData =  $this->getRequestData();
+        $res = \App\HttpController\Models\AdminV2\AdminNewUser::charge(
+            $requestData['user_id'],
+            (
+                \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
+                    $uploadRes['user_id']
+                ) - $uploadRes['money']
+            ),
+            $queueData['id'],
+            [
+                'detailId' => $queueData['id'],
+                'detail_table' => 'admin_user_finance_export_data_queue',
+                'price' => $uploadRes['money'],
+                'userId' => $uploadRes['user_id'],
+                'type' => FinanceLog::$chargeTytpeFinance,
+                'batch' => $queueData['id'],
+                'title' => '',
+                'detail' => '',
+                'reamrk' => '',
+                'status' => 1,
+            ]
+        );
+        if(!$res ){
+
+        }
+
+
+
+        $condition = [
+            // 'user_id' => $userId
+            'user_id' => $this->loginUserinfo['id'],
+            //'status' => FinanceLog::$statusNeedsConfirm
+        ];
+
 
         $page = $requestData['page']?:1;
         $res = FinanceLog::findByConditionV2(

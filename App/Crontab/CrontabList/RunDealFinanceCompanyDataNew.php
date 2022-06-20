@@ -341,11 +341,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             ){
                 $res = \App\HttpController\Models\AdminV2\AdminNewUser::charge(
                     $uploadRes['user_id'],
-                    (
-                        \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
-                            $uploadRes['user_id']
-                        ) - $uploadRes['money']
-                    ),
+                    $uploadRes['money'],
                     $queueData['id'],
                     [
                         'detailId' => $queueData['id'],
@@ -358,7 +354,8 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                         'detail' => '',
                         'reamrk' => '',
                         'status' => 1,
-                    ]
+                    ],
+                    10
                 );
                 if(!$res ){
                     continue;
