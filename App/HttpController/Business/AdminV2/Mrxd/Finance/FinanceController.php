@@ -276,8 +276,10 @@ class FinanceController extends ControllerBase
                     'file_name' => $fileName,
                     'title' => $requestData['title']?:'',
                     'reamrk' => $requestData['reamrk']?:'',
-                    'finance_config' => AdminUserFinanceConfig::getConfigDataByUserId(
-                        $this->loginUserinfo['id']
+                    'finance_config' => json_encode(
+                        AdminUserFinanceConfig::getConfigDataByUserId(
+                            $this->loginUserinfo['id']
+                        )
                     ),
                     'status' => AdminUserFinanceUploadRecord::$stateInit,
                 ];
