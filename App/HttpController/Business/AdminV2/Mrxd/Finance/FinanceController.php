@@ -137,7 +137,7 @@ class FinanceController extends ControllerBase
             'needs_confirm' => $requestData['needs_confirm'],
             'status' => 1,
         ];
-        $res = AdminUserFinanceConfig::addRecord(
+        $res = AdminUserFinanceConfig::addRecordV2(
             $dataItem
         );
         CommonService::getInstance()->log4PHP(
@@ -172,7 +172,11 @@ class FinanceController extends ControllerBase
                 $requestData['needs_confirm']: $info['needs_confirm'],
             'allowed_fields' => $requestData['allowed_fields'] ? $requestData['allowed_fields']: $info['allowed_fields'],
         ];
-        $res = $info->update($data);
+        AdminUserFinanceConfig::setStatus(
+            $requestData['id'],AdminUserFinanceConfig::$state_del
+        );
+
+        $res = AdminUserFinanceConfig::addRecordV2($data);
         CommonService::getInstance()->log4PHP(
             json_encode([
                 'AdminUserFinanceConfig updateConfig',
@@ -387,7 +391,7 @@ class FinanceController extends ControllerBase
 
     }
 
-    //我的下载 
+    //我的下载
     public function getExportQueueLists(){
         $requestData =  $this->getRequestData();
         $page = $requestData['page']?:1;
