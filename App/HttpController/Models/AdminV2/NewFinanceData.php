@@ -96,7 +96,23 @@ class NewFinanceData extends ModelBase
                if(
                    $needsChangeFields[$field]
                ){
-                   $newData[$needsChangeFields[$field]] = (empty($dataItem) && $dataItem!='0.00')?'无':'有';
+                   $checkRes = '无';
+                   if(
+                       $dataItem > 0 ||
+                       $dataItem < 0
+                   ){
+                       $checkRes = '有';
+                   }
+                     $newData[$needsChangeFields[$field]] =  $checkRes;
+
+                   CommonService::getInstance()->log4PHP(
+                       json_encode([
+                           'findByIdV2  '=> 'start',
+                           'params $field' => $field,
+                           '$needsChangeFields[$field]' =>$needsChangeFields[$field],
+                           '$checkRes' =>$checkRes,
+                       ])
+                   );
                }
                else{
                    //$newData[$field] = empty($dataItem)?'无':'有';
