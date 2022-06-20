@@ -39,6 +39,17 @@ class AdminUserFinanceData extends ModelBase
     static $statusConfirmedNo = 15;
     static $statusConfirmedNoCname = '已确认不需要';
 
+    public static function getStatusCname(){
+
+
+        return [
+            self::$statusinit => self::$statusinitCname,
+            self::$statusNeedsConfirm => self::$statusNeedsConfirmCname,
+            self::$statusConfirmedYes => self::$statusConfirmedYesCname,
+            self::$statusConfirmedNo => self::$statusConfirmedNoCname,
+        ];
+    }
+
     public static function addRecord($requestData){ 
         try {
            $res =  AdminUserFinanceData::create()->data([
@@ -342,7 +353,14 @@ class AdminUserFinanceData extends ModelBase
 
             $addRes = NewFinanceData::addRecordV2($dbDataArr);
             //设置是否需要确认
-            self::updateStatus($id,self::getConfirmStatus($financeConifgArr,$dbDataArr));
+            $status = self::getConfirmStatus($financeConifgArr,$dbDataArr);
+            self::updateStatus($id,$status);
+            if(
+                $status == self::$statusNeedsConfirm
+            ){
+                self::updateNeedsConfirm($id,1);
+            }
+
             //设置关系
             self::updateNewFinanceDataId($id,$addRes);
 
@@ -365,7 +383,13 @@ class AdminUserFinanceData extends ModelBase
             //设置关系
             self::updateNewFinanceDataId($id,$getFinanceDataSourceDetailRes['NewFinanceDataId']);
             //设置是否需要确认
-            self::updateStatus($id,self::getConfirmStatus($financeConifgArr,$getFinanceDataSourceDetailRes['NewFinanceData']));
+            $status = self::getConfirmStatus($financeConifgArr,$getFinanceDataSourceDetailRes['NewFinanceData']);
+            self::updateStatus($id,$status);
+            if(
+                $status == self::$statusNeedsConfirm
+            ){
+                self::updateNeedsConfirm($id,1);
+            }
         }
         CommonService::getInstance()->log4PHP(
             json_encode(
@@ -928,9 +952,31 @@ class AdminUserFinanceData extends ModelBase
                 'updateStatus failed  $id 不存在'.$id
             );
         }
+
         return $info->update([
             'id' => $id,
             'status' => $status 
+        ]);
+    }
+
+    public static function updateNeedsConfirm($id,$needs_confirm){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'updateNeedsConfirm   ',
+                'params $id,' => $id,
+                'params $needs_confirm' => $needs_confirm,
+            ])
+        );
+        $info = self::findById($id);
+        if(!$info ){
+            return CommonService::getInstance()->log4PHP(
+                'updateStatus failed  $id 不存在'.$id
+            );
+        }
+
+        return $info->update([
+            'id' => $id,
+            'needs_confirm' => $needs_confirm
         ]);
     }
 

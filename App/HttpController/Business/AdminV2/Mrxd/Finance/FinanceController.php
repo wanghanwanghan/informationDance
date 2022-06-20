@@ -428,7 +428,8 @@ class FinanceController extends ControllerBase
         $condition = [
             // 'user_id' => $userId
             'user_id' => $this->loginUserinfo['id'],
-            'status' => AdminUserFinanceData::$statusNeedsConfirm
+            'needs_confirm' => 1,
+            //'status' => AdminUserFinanceData::$statusNeedsConfirm
         ];
 
         $page = $requestData['page']?:1;
@@ -436,10 +437,9 @@ class FinanceController extends ControllerBase
             $condition,
             $page
         );
-
-        $size = $this->request()->getRequestParam('size')??10;
-        $page = $this->request()->getRequestParam('page')??1;
-        $offset  =  ($page-1)*$size;
+        foreach ($res['data'] as &$itme ){
+            $itme['status_cname'] =AdminUserFinanceData::getStatusCname()[$itme['status']];
+        }
         return $this->writeJson(200,
             [
                 'page' => $page,
@@ -477,26 +477,23 @@ class FinanceController extends ControllerBase
         $requestData =  $this->getRequestData();
         $res = \App\HttpController\Models\AdminV2\AdminNewUser::charge(
             $requestData['user_id'],
-            (
-                \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
-                    $uploadRes['user_id']
-                ) - $uploadRes['money']
-            ),
-            $queueData['id'],
+            $requestData['money'],
+            date('YmdHis'),
             [
-                'detailId' => $queueData['id'],
+                'detailId' => 0,
                 'detail_table' => 'admin_user_finance_export_data_queue',
-                'price' => $uploadRes['money'],
-                'userId' => $uploadRes['user_id'],
+                'price' => $requestData['money'],
+                'userId' => $requestData['user_id'],
                 'type' => FinanceLog::$chargeTytpeFinance,
                 'batch' => $queueData['id'],
                 'title' => '',
                 'detail' => '',
                 'reamrk' => '',
                 'status' => 1,
-            ]
+            ],
+            $requestData['money']
         );
-        if(!$res ){
+        if(!$res){
 
         }
 
@@ -607,7 +604,6 @@ class FinanceController extends ControllerBase
     }
 
     public function exportExportDetails(){
-
         $requestData =  $this->getRequestData();
 
         $res = AdminUserFinanceExportDataRecord::findByUserAndExportId(
@@ -655,7 +651,6 @@ class FinanceController extends ControllerBase
             'path' => TEMP_FILE_PATH,
             'filename' => $filename
         ],'成功');
-
     }
 
     function  parseDataToXls($config,$filename,$header,$exportData,$sheetName){
@@ -750,15 +745,6 @@ class FinanceController extends ControllerBase
             return  $this->writeJson(200);
         }
 
-
-
-        //添加到导出队列
-//        AdminUserFinanceExportDataQueue::addRecord(
-//            [
-//                'batch' => date('YmdHis'),
-//                'upload_record_id' => $requestData['id']
-//            ]
-//        );
         return $this->writeJson(200);
 
         $config = [

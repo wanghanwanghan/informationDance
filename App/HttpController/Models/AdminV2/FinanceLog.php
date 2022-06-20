@@ -20,6 +20,12 @@ class FinanceLog extends ModelBase
     static $chargeTytpeFinance = 5;
     static $chargeTytpeFinanceCname = '收费类型-财务导出';
 
+    static $chargeTytpeAdd = 10;
+    static $chargeTytpeAddCname = '收费类型-充值';
+
+//    static $chargeTytpeAdd = 10;
+//    static $chargeTytpeAddCname = '收费类型-充值';
+
     public static function addRecord($requestData){
         try {
            $res =  FinanceLog::create()->data([
