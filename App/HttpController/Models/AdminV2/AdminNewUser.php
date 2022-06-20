@@ -67,8 +67,8 @@ class AdminNewUser extends ModelBase
     public static function charge($id,$money,$batchNo,$datas){
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'charge   '=> 'strat',
-                $id,$money,$batchNo,$datas
+                'admin new user charge   '=> 'if needs charge ',
+                'money' =>  $money
             ])
         );
         if(

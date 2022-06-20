@@ -328,6 +328,13 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 $xlxsData['path'],
                 $xlxsData['filename']
             );
+
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'exportFinanceData   '=> 'if needs charge ',
+                    'money' =>  $uploadRes['money']
+                ])
+            );
             // 实际扣费
             if(
                 $uploadRes['money'] > 0

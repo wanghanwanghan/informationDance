@@ -225,7 +225,7 @@ class NewFinanceData extends ModelBase
         );
 
         return [
-            'path' => TEMP_FILE_PATH,
+            'path' => '/Static/Temp/',
             'filename' => $filename
         ];
     }
