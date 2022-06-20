@@ -66,7 +66,7 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
 
         $cli->queryBuilder()
             ->where('updated_at', "{$date}%", 'LIKE')
-            ->get('zhao_tou_biao');
+            ->get('zhao_tou_biao_all');
 
         try {
             $res = $cli->execBuilder();
@@ -125,8 +125,8 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
                     '评标专家',
                     'url',
                     'corexml',
-                ])
-                ->getOne('zhao_tou_biao');
+                    'source',
+                ])->getOne('zhao_tou_biao_all');
 
             try {
                 $res = $cli->execBuilder();
@@ -178,6 +178,7 @@ class TenderingAndBiddingController extends TenderingAndBiddingBase
                 '评标专家',
                 'url',
                 'corexml',
+                'source',
             ])->data($data)->output();
         }
 
