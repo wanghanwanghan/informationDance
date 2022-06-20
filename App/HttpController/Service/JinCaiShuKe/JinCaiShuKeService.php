@@ -87,6 +87,9 @@ class JinCaiShuKeService extends ServiceBase
                 }
                 continue;
             }
+            if(empty($content['fpxxs'])){
+                continue;
+            }
             if(count($content['fpxxs']['data']) == 1000){
                 for($i=0;$i<10;$i++){
                     $vdata = $this->S000523( $log->getAttr('nsrsbh'),  $log->getAttr('rwh'),1,1000);
