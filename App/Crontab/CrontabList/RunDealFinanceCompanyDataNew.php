@@ -327,7 +327,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             AdminUserFinanceExportDataQueue::setFilePath(
                 $queueData['id'],
                 $xlxsData['path'],
-                $xlxsData['file_name']
+                $xlxsData['filename']
             );
             // 实际扣费
             if(

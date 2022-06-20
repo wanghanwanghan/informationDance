@@ -161,10 +161,28 @@ class NewFinanceData extends ModelBase
     }
     static function getExportHeaders($uploadId){
         $allowedFields = AdminUserFinanceUploadRecord::getAllowedFieldArray($uploadId);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'getExportHeaders  $allowedFields ',
+                $allowedFields
+            ])
+        );
         $headers = [];
         $allFields = NewFinanceData::getFieldCname();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'getExportHeaders  $allFields ',
+                $allFields
+            ])
+        );
         foreach ($allowedFields as $field => $cname){
             $headers[] = $allFields[$field];
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'getExportHeaders  $field2 ',
+                    $field
+                ])
+            );
         }
 
         return $headers;
@@ -181,11 +199,11 @@ class NewFinanceData extends ModelBase
         $config = [
             'path' => TEMP_FILE_PATH // xlsx文件保存路径
         ];
-        $filename = $uploadRes['file_name'].'_'.date('YmdHis'). '.xlsx';
+        $filename = date('YmdHis'). '_'.$uploadRes['file_name'];
         CommonService::getInstance()->log4PHP(
             json_encode([
-                '$config ',
-                $config
+                '$config ' => $config,
+                '$filename' => $filename
             ])
         );
         $header = array_merge(
