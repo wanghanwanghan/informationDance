@@ -46,14 +46,22 @@ class AdminNewUser extends ModelBase
 
     public static function getAccountBalance($id){
         $res =  self::findById($id);
-        return $res->getAttr('money');
+        $money = $res->getAttr('money');
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'admin new user getAccountBalance   '=> 'strat',
+                '$money' =>  $money
+            ])
+        );
+        return $money;
     }
 
     public static function updateMoney($id,$money){
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'updateMoney   '=> 'strat',
-                $id,$money
+                'admin new user updateMoney   '=> 'strat',
+                'params $id' =>  $id,
+                'params $money' =>  $money
             ])
         );
         $info = AdminNewUser::findById($id);
@@ -75,10 +83,10 @@ class AdminNewUser extends ModelBase
             FinanceLog::findByBatch($batchNo)
         ){
             CommonService::getInstance()->log4PHP(
-                [
-                    'charge' => 'true',
-                    '之前收费过'
-                ]
+                json_encode([
+                    'admin new user charge   '=> 'batch exists',
+                    '$batchNo' =>  $batchNo
+                ])
             );
             return true;
         }
@@ -94,7 +102,8 @@ class AdminNewUser extends ModelBase
         if(!$res ){
             return CommonService::getInstance()->log4PHP(
                 json_encode([
-                    '实际扣费 失败' ,
+                    'admin new user charge   '=> 'failed',
+                    '$res' =>  $res
                 ])
             );
         }

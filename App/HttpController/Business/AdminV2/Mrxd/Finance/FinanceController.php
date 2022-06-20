@@ -429,12 +429,6 @@ class FinanceController extends ControllerBase
             'user_id' => $this->loginUserinfo['id'],
             'status' => AdminUserFinanceData::$statusNeedsConfirm
         ];
-//        if($requestData['status']){
-//            $condition['status'] = $requestData['status'];
-//        }
-//        if($requestData['began_time']){
-//            $condition['status'] = $requestData['status'];
-//        }
 
         $page = $requestData['page']?:1;
         $res = AdminUserFinanceData::findByConditionV2(
@@ -445,6 +439,29 @@ class FinanceController extends ControllerBase
         $size = $this->request()->getRequestParam('size')??10;
         $page = $this->request()->getRequestParam('page')??1;
         $offset  =  ($page-1)*$size;
+        return $this->writeJson(200,
+            [
+                'page' => $page,
+                'pageSize' =>20,
+                'total' => $res['total'],
+                //'totalPage' => 1,
+            ] , $res['data'], '成功' );
+    }
+
+    public function getFinanceLogLists(){
+        $requestData =  $this->getRequestData();
+        $condition = [
+            // 'user_id' => $userId
+            'user_id' => $this->loginUserinfo['id'],
+            //'status' => FinanceLog::$statusNeedsConfirm
+        ];
+
+        $page = $requestData['page']?:1;
+        $res = FinanceLog::findByConditionV2(
+            $condition,
+            $page
+        );
+
         return $this->writeJson(200,
             [
                 'page' => $page,

@@ -47,6 +47,13 @@ class FinanceLog extends ModelBase
     }
 
     public static function addRecordV2($requestData){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'finance log  addRecordV2  '=> 'start',
+                '$requestData' =>  $requestData
+            ])
+        );
+
         $res = self::findByBatch($requestData['batch']);
         if($res){
             return  $res->getAttr('id');
@@ -100,5 +107,20 @@ class FinanceLog extends ModelBase
     static  function charge($userId,$money,$type,$details){
 
     }
+    public static function findByConditionV2($whereArr,$page){
 
+        $model = FinanceLog::create()
+            ->where($whereArr)
+            ->page($page)
+            ->order('id', 'DESC')
+            ->withTotalCount();
+
+        $res = $model->all();
+
+        $total = $model->lastQueryResult()->getTotalCount();
+        return [
+            'data' => $res,
+            'total' =>$total,
+        ];
+    }
 }
