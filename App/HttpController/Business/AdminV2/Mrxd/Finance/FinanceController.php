@@ -380,7 +380,7 @@ class FinanceController extends ControllerBase
             'path' => TEMP_FILE_PATH,
             'filename' => $filename
         ],'成功');
-  
+
     }
 
 
@@ -509,6 +509,58 @@ class FinanceController extends ControllerBase
             'total' => 1,
             'totalPage' => 1,
         ], $res, '');
+    }
+
+    public function exportExportDetails(){
+
+        $requestData =  $this->getRequestData();
+
+        $res = AdminUserFinanceExportDataRecord::findByUserAndExportId(
+            $this->loginUserinfo['id'],
+            $requestData['id']
+        );
+        foreach ($res as &$dataItem){
+            $dataItem['details'] = [];
+
+            if($dataItem['upload_data_id']){
+                $dataItem['upload_details'] = [];
+                $dataItem['data_details'] = [];
+                $uploadRes = AdminUserFinanceUploadDataRecord::findById($dataItem['upload_data_id']);
+                if($uploadRes){
+                    $dataItem['upload_details'] = $uploadRes->toArray();
+                }
+
+                $dataRes = AdminUserFinanceData::findById($uploadRes['user_finance_data_id']);
+                if($dataRes){
+                    $dataItem['data_details'] = $dataRes->toArray();
+                }
+            }
+        }
+
+        $requestData =  $this->getRequestData();
+
+        $res = AdminUserFinanceExportRecord::findByCondition(
+            [
+                // 'user_id' => $userId
+                'user_id' => $this->loginUserinfo['id']
+            ],
+            0, 20
+        );
+        $config = [
+            'path' => TEMP_FILE_PATH // xlsx文件保存路径
+        ];
+        $filename = date('YmdHis').'xlsx';
+        $exportDataToXlsRes = NewFinanceData::parseDataToXls(
+            $config,$filename,[],$res,'sheet1'
+        );
+
+        return $this->writeJson(200,  [
+
+        ],  [
+            'path' => TEMP_FILE_PATH,
+            'filename' => $filename
+        ],'成功');
+
     }
 
     function  parseDataToXls($config,$filename,$header,$exportData,$sheetName){
