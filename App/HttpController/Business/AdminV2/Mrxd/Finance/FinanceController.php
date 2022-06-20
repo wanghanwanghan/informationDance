@@ -313,7 +313,7 @@ class FinanceController extends ControllerBase
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         'uploadeCompanyLists false',
-                        'params $e '=> $e->getMessage() 
+                        'params $e '=> $e->getMessage()
                     ])
                 );
             } 

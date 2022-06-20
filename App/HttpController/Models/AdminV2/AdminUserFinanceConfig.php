@@ -87,27 +87,27 @@ class AdminUserFinanceConfig extends ModelBase
 
         $info = self::getConfigByUserId($userid);
         $data = $info->toArray();
-        $config = json_decode($data['finance_config'],true);
+        //$config = json_decode($data['finance_config'],true);
 
         CommonService::getInstance()->log4PHP(
             json_encode([
                 'checkExportYearsNums   get $config',
-                'params $config '=> $config,
+                'params $data '=> $data,
             ])
         );
 
         CommonService::getInstance()->log4PHP(
             json_encode([
                 'checkExportYearsNums   ',
-                'params allowed_total_years_num '=> $config['allowed_total_years_num'],
+                'params allowed_total_years_num '=> $data['allowed_total_years_num'],
                 'params $yearsNums '=> $yearsNums,
             ])
         );
-        if($config['allowed_total_years_num'] < $yearsNums){
+        if($data['allowed_total_years_num'] < $yearsNums){
             return  CommonService::getInstance()->log4PHP(
                 json_encode([
                     'checkExportYearsNums  false ',
-                    'params allowed_total_years_num '=> $config['allowed_total_years_num'],
+                    'params allowed_total_years_num '=> $data['allowed_total_years_num'],
                     'params $yearsNums '=> $yearsNums,
                 ])
             );
