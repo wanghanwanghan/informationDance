@@ -96,7 +96,7 @@ class NewFinanceData extends ModelBase
                if(
                    $needsChangeFields[$field]
                ){
-                   $newData[$needsChangeFields[$field]] = empty($dataItem)?'无':'有';
+                   $newData[$needsChangeFields[$field]] = (empty($dataItem) && $dataItem!='0.00')?'无':'有';
                }
                else{
                    //$newData[$field] = empty($dataItem)?'无':'有';
