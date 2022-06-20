@@ -387,22 +387,19 @@ class FinanceController extends ControllerBase
 
     }
 
-
+    //我的下载 
     public function getExportQueueLists(){
         $requestData =  $this->getRequestData();
-
-        $res = AdminUserFinanceExportDataQueue::findByCondition(
+        $page = $requestData['page']?:1;
+        $res = AdminUserFinanceExportDataQueue::findByConditionV2(
             [
                 // 'user_id' => $userId
                 'user_id' => $this->loginUserinfo['id']
             ],
-            0, 20
+            $page
         );
-        $size = $this->request()->getRequestParam('size')??10;
-        $page = $this->request()->getRequestParam('page')??1;
-        $offset  =  ($page-1)*$size;
 
-        foreach ($res as &$value){
+        foreach ($res['data'] as &$value){
             $value['upload_details'] = [];
             if(
                 $value['upload_record_id']
@@ -412,13 +409,11 @@ class FinanceController extends ControllerBase
         }
         return $this->writeJson(200,  [
             'page' => $page,
-            'pageSize' =>$size,
-            'total' => 1,
-            'totalPage' => 1,
+            'pageSize' =>20,
+            'total' => $res['total'],
+           // 'totalPage' => 1,
         ], $res,'成功');
     }
-
-
 
     //获取待确认的列表
     public function getNeedsConfirmExportLists(){

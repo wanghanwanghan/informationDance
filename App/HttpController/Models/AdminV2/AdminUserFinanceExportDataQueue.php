@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Models\AdminV2;
 
+use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
@@ -131,6 +132,22 @@ class AdminUserFinanceExportDataQueue extends ModelBase
         return $res;
     }
 
+    public static function findByConditionV2($whereArr,$page){
+
+        $model = AdminUserFinanceExportDataQueue::create()
+                ->where($whereArr)
+                ->page($page)
+                ->order('id', 'DESC')
+                ->withTotalCount();
+
+        $res = $model->all();
+
+        $total = $model->lastQueryResult()->getTotalCount();
+        return [
+            'data' => $res,
+            'total' =>$total,
+        ];
+    }
     public static function findById($id){
         $res =  AdminUserFinanceExportDataQueue::create()
             ->where('id',$id)            
