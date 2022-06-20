@@ -98,7 +98,7 @@ class FinanceController extends ControllerBase
             !$requestData['user_id'] ||
             !$requestData['allowed_fields'] ||
             !$requestData['type'] ||
-            !$requestData['single_year_charge_as_annual'] ||
+            //!$requestData['single_year_charge_as_annual'] ||
             !$requestData['allowed_total_years_num']
         ) {
             return $this->writeJson(201);
