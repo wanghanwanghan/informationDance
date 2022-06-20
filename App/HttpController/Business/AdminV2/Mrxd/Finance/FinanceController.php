@@ -118,7 +118,7 @@ class FinanceController extends ControllerBase
             'annually_price' => $requestData['annually_price'],
             //包年年度
             'annually_years' => $requestData['annually_years'],
-            'price_config' => $requestData['price_config']?:'',
+            'normal_years_price_json' => $requestData['normal_years_price_json']?:'',
             //缓存期
             'cache' => intval($requestData['cache']),
             //财务数据类型
@@ -159,7 +159,7 @@ class FinanceController extends ControllerBase
             'id' => $requestData['id'],
             'annually_price' => $requestData['annually_price'] ?   $requestData['annually_price']: $info['annually_price'],
             'annually_years' => $requestData['annually_years'] ? $requestData['annually_years']: $info['annually_years'],
-            'price_config' => $requestData['price_config'] ? $requestData['price_config']: $info['normal_years_price_json'],
+            'normal_years_price_json' => $requestData['normal_years_price_json'] ? $requestData['normal_years_price_json']: $info['normal_years_price_json'],
             'cache' => $requestData['cache'] ? $requestData['cache']: $info['cache'],
             'type' => $requestData['type'] ? $requestData['type']: $info['type'],
             'single_year_charge_as_annual' => $requestData['single_year_charge_as_annual'] ? $requestData['single_year_charge_as_annual']: $info['single_year_charge_as_annual'],
