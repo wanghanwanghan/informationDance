@@ -113,6 +113,22 @@ class AdminUserFinanceUploadRecord extends ModelBase
         return $res;
     }
 
+    public static function findByConditionV2($whereArr,$page){
+
+        $model = AdminUserFinanceUploadRecord::create()
+            ->where($whereArr)
+            ->page($page)
+            ->order('id', 'DESC')
+            ->withTotalCount();
+
+        $res = $model->all();
+
+        $total = $model->lastQueryResult()->getTotalCount();
+        return [
+            'data' => $res,
+            'total' =>$total,
+        ];
+    }
     public static function findByCondition($whereArr,$offset, $limit){
         $res =  AdminUserFinanceUploadRecord::create()
             ->where($whereArr)

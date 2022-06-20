@@ -305,28 +305,22 @@ class FinanceController extends ControllerBase
     }
 
     public function getUploadLists(){
-        // $userId = $this->getRequestData('user_id');
-        // if($userId <= 0){
-        //     return $this->writeJson(206, [] ,   [], '缺少必要参数', true, []); 
-        // } 
 
         $requestData =  $this->getRequestData();
-         
-        $res = AdminUserFinanceUploadRecord::findByCondition(
+        $page = $this->request()->getRequestParam('page')??1;
+        $res = AdminUserFinanceUploadRecord::findByConditionV2(
             [
                 // 'user_id' => $userId
                 'user_id' => $this->loginUserinfo['id']
             ],
-            0, 20
+            $page
         );
-        $size = $this->request()->getRequestParam('size')??10;
-        $page = $this->request()->getRequestParam('page')??1;
-        $offset  =  ($page-1)*$size;
+
         return $this->writeJson(200,  [
             'page' => $page,
-            'pageSize' =>$size,
-            'total' => 1,
-            'totalPage' => 1,
+            'pageSize' =>20,
+            'total' => $res['total'],
+            'totalPage' =>   $totalPages = ceil( $res['total']/ 20 ),
         ],  $res,'成功');
     }
 
@@ -522,11 +516,6 @@ class FinanceController extends ControllerBase
     }
 
     public function getNeedsConfirmDetails(){
-        // $userId = $this->getRequestData('user_id');
-        // if($userId <= 0){
-        //     return $this->writeJson(206, [] ,   [], '缺少必要参数', true, []);
-        // }
-
         $requestData =  $this->getRequestData();
         if($requestData['id'] <= 0){
             return $this->writeJson(203,
@@ -598,8 +587,8 @@ class FinanceController extends ControllerBase
         return $this->writeJson(200, [
             'page' => $page,
             'pageSize' =>$size,
-            'total' => 1,
-            'totalPage' => 1,
+            'total' => count($res),
+            'totalPage' => ceil(count($res)/$size),
         ], $res, '');
     }
 
