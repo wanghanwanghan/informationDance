@@ -154,6 +154,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
         self::pullFinanceData(5);
         //找到需要导出的 设置为已确认
         self::checkConfirm(5);
+        //重新计算价格
         //找到已确认完的 实际导出
         self::exportFinanceData(5);
 
