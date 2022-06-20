@@ -457,6 +457,26 @@ class FinanceController extends ControllerBase
             ] , $res, '成功' );
     }
 
+    public function getNeedsConfirmDetails(){
+        // $userId = $this->getRequestData('user_id');
+        // if($userId <= 0){
+        //     return $this->writeJson(206, [] ,   [], '缺少必要参数', true, []);
+        // }
+
+        $requestData =  $this->getRequestData();
+        if($requestData['id'] <= 0){
+            return $this->writeJson(203,
+                [
+                ] , [], '参数缺失' );
+        }
+        $res = AdminUserFinanceData::findById($requestData['id']);
+
+
+        return $this->writeJson(200,
+            [
+
+            ] , $res , '成功' );
+    }
     //确认的列表
     public function ConfirmFinanceData(){
 

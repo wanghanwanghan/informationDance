@@ -85,6 +85,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/exportExportLists', $prefix . 'exportExportLists');
             $routeCollector->addRoute(['GET', 'POST'], '/exportExportDetails', $prefix . 'exportExportDetails');
             $routeCollector->addRoute(['GET', 'POST'], '/getExportQueueLists', $prefix . 'getExportQueueLists');
+             $routeCollector->addRoute(['GET', 'POST'], '/getNeedsConfirmDetails', $prefix . 'getNeedsConfirmDetails');
         });
 
         return true;
