@@ -44,7 +44,7 @@ class NewFinanceData extends ModelBase
                 'NETINC' => $postData['NETINC']?:'',
                 'SOCNUM' => $postData['SOCNUM']?:'',
                 'EMPNUM' => $postData['EMPNUM']?:'',
-                'status' => $postData['status'],   
+                'status' => $postData['status']?:1,
                 'last_pull_api_time' => $postData['last_pull_api_time']?:'',
             ])->save();
 
