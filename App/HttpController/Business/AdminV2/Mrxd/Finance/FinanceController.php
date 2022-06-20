@@ -328,7 +328,6 @@ class FinanceController extends ControllerBase
         $page = $this->request()->getRequestParam('page')??1;
         $res = AdminUserFinanceUploadRecord::findByConditionV2(
             [
-                // 'user_id' => $userId
                 'user_id' => $this->loginUserinfo['id']
             ],
             $page
@@ -339,7 +338,7 @@ class FinanceController extends ControllerBase
             'pageSize' =>20,
             'total' => $res['total'],
             'totalPage' =>   $totalPages = ceil( $res['total']/ 20 ),
-        ],  $res,'成功');
+        ],  $res['data'],'成功');
     }
 
     public function getExportLists(){
