@@ -21,7 +21,7 @@ class AdminUserFinanceExportDataRecord extends ModelBase
     static $stateExported = 10;
 
     static  function  addRecordV2($dataItem){
-        $AdminUserFinanceExportRecord =  AdminUserFinanceExportRecord::findByQueue($dataItem['queue_id']);
+        $AdminUserFinanceExportRecord =  AdminUserFinanceExportDataRecord::findByBatch($dataItem['batch']);
         if(
             $AdminUserFinanceExportRecord
         ){
@@ -31,6 +31,17 @@ class AdminUserFinanceExportDataRecord extends ModelBase
         return AdminUserFinanceExportDataRecord::addExportRecord(
             $dataItem
         );
+    }
+
+
+    public static function findByBatch($batch){
+        $res =  AdminUserFinanceExportDataRecord::create()->where([
+//            'user_id' => $user_id,
+            'batch' => $batch,
+            // 'status' => 1,
+        ])->get();
+
+        return $res;
     }
 
     public static function addExportRecord($requestData){
