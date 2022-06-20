@@ -496,12 +496,6 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
         $uploadRecords = AdminUserFinanceUploadRecord::findBySql(
             $where
         );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'calcluteFinancePrice findBySql ',
-                $where,$uploadRecords
-            ])
-        );
 
         foreach($uploadRecords as $uploadRecord) {
             AdminUserFinanceUploadRecord::setTouchTime(
@@ -522,9 +516,6 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 $uploadRecord['id'],AdminUserFinanceUploadRecord::$stateCalCulatedPrice
             );
             if($res <= 0){
-                CommonService::getInstance()->log4PHP(
-                    'calcluteFinancePrice   err 3 解析完成-设置状态失败  '
-                );
             }
 
             AdminUserFinanceUploadRecord::calAndSetMoney(

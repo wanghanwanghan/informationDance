@@ -1066,25 +1066,13 @@ class AdminUserFinanceData extends ModelBase
     static function  checkIfAllYearsDataIsValid($user_id,$entName,$years){
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'checkIfAllYearsDataIsValid ',
-                $user_id,$entName,$years
-
+                'User Finance Data checkIfAllYearsDataIsValid',
+                '$user_id' => $user_id,
+                '$entName' => $entName,
+                '$years' => $years
             ])
         );
         foreach ($years as $year){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'checkIfAllYearsDataIsValid findBySql',
-                    " WHERE     user_id = $user_id AND  
-                    entName =  $entName AND year = $year  AND 
-                    status = ".self::$statusinit,
-                    " WHERE     user_id = $user_id AND  
-                                    entName =  $entName AND year = $year  AND 
-                                    status = ".self::$statusConfirmedYes."
-                            "
-
-                ])
-            );
             if(
                 self::findBySql(
                     " WHERE     user_id = $user_id AND  
@@ -1093,10 +1081,12 @@ class AdminUserFinanceData extends ModelBase
                             "
                 )
             ){
-               CommonService::getInstance()->log4PHP(
+                CommonService::getInstance()->log4PHP(
                     json_encode([
-                        'checkIfAllYearsDataIsValid 初始数据',
-                        $user_id,$entName,$years,$year
+                        'User Finance Data checkIfAllYearsDataIsValid $statusinit data',
+                        'status' => $user_id,
+                        '$entName' => $year,
+                        '$years' => $years
                     ])
                 );
                continue;
@@ -1111,13 +1101,24 @@ class AdminUserFinanceData extends ModelBase
                 )
             ){
                 return CommonService::getInstance()->log4PHP(
-                    'checkIfAllYearsDataIsValid failed  $id 不存在'.$id
+                    json_encode([
+                        'User Finance Data checkIfAllYearsDataIsValid  no ',
+                        'status' => $user_id,
+                        '$entName' => $year,
+                        '$years' => $years
+                    ])
                 );
             };
         }
         return  true;
     }
     public static function findBySql($where){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'User Finance Data findBySql',
+                '$where' => $where
+            ])
+        );
         $Sql = " select *  
                             from  
                         `admin_user_finance_data` 

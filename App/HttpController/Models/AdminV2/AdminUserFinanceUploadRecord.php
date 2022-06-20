@@ -319,12 +319,24 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
     // 用完今日余额的
     public static function findBySql($where){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'upload record admin_user_finance_upload_record   findBySql ',
+                '$where' => $where,
+            ])
+        );
         $Sql = "select * from    `admin_user_finance_upload_record`   $where  " ;
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return $data;
     }
 
     static  function  calAndSetMoney($uploadId){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceUploadRecord calAndSetMoney ',
+                '$uploadId' => $uploadId
+            ])
+        );
         return self::updateMoneyById(
             $uploadId,
             self::calMoney($uploadId)['total_price']
@@ -351,6 +363,12 @@ class AdminUserFinanceUploadRecord extends ModelBase
         ]);
     }
     static function  calMoney($uploadId){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceUploadRecord calMoney ',
+                '$uploadId' => $uploadId
+            ])
+        );
         $uploadInfo = self::findById($uploadId)->toArray();
         $uploadDatas = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
             $uploadInfo['user_id'],$uploadInfo['id']
@@ -368,10 +386,19 @@ class AdminUserFinanceUploadRecord extends ModelBase
             ){
                 //本次里已经计算过
                 if(
-                    $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year_start'] == $uploadData['charge_year_start'] &&
-                    $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year_end'] == $uploadData['charge_year_end']
+                    $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year_start']
+                        == $uploadData['charge_year_start'] &&
+                    $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year_end']
+                        == $uploadData['charge_year_end']
                 ){
                     $hasChargeBefore = true;
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            'AdminUserFinanceUploadRecord calMoney  has cal 1',
+                            'user_id' => $uploadData['user_id'],
+                            'user_id chargeTypeAnnually ' => $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']]
+                        ])
+                    );
                 };
 
                 //之前已经收费过
@@ -384,6 +411,13 @@ class AdminUserFinanceUploadRecord extends ModelBase
 //                        $uploadData['charge_year_end']
 //                    )
                 ){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            'AdminUserFinanceUploadRecord calMoney  has cal 2',
+                            'user_id' => $uploadData['user_id'],
+                            'cache_end_date ' => $user_finance_data['cache_end_date']
+                        ])
+                    );
                     $hasChargeBefore = true;
                 };
 
@@ -396,6 +430,15 @@ class AdminUserFinanceUploadRecord extends ModelBase
                             'price' => $uploadData['price'],
                         ];
                     $chargeDetails['total_price'] += $uploadData['price'];
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            'AdminUserFinanceUploadRecord calMoney  needs charge',
+                            'user_id' => $uploadData['user_id'],
+                            'entName' => $user_finance_data['entName'],
+                            'price ' => $uploadData['price'],
+                            'total_price ' => $chargeDetails['total_price'],
+                        ])
+                    );
                 }
             }
 
@@ -405,8 +448,16 @@ class AdminUserFinanceUploadRecord extends ModelBase
             ){
                 //本次里已经计算过
                 if(
-                    $chargeDetails['chargeTypeByYear'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year'] == $uploadData['charge_year']
+                    $chargeDetails['chargeTypeByYear'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year']
+                        == $uploadData['charge_year']
                 ){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            'AdminUserFinanceUploadRecord calMoney  has cal 3',
+                            'user_id' => $uploadData['user_id'],
+                            'user_id chargeTypeByYear ' => $chargeDetails['chargeTypeByYear'][$uploadData['user_id']]
+                        ])
+                    );
                     $hasChargeBefore = true;
                 };
                 //之前已经收费过
@@ -418,6 +469,13 @@ class AdminUserFinanceUploadRecord extends ModelBase
 //                            $uploadData['charge_year']
 //                        )
                 ){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            'AdminUserFinanceUploadRecord calMoney  has cal 4',
+                            'user_id' => $uploadData['user_id'],
+                            'cache_end_date  ' => $user_finance_data['cache_end_date']
+                        ])
+                    );
                     $hasChargeBefore = true;
                 };
 
@@ -429,13 +487,22 @@ class AdminUserFinanceUploadRecord extends ModelBase
                             'price' => $uploadData['price'],
                         ];
                     $chargeDetails['total_price'] += $uploadData['price'];
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            'AdminUserFinanceUploadRecord calMoney  needs charge',
+                            'user_id' => $uploadData['user_id'],
+                            'entName' => $user_finance_data['entName'],
+                            'price ' => $uploadData['price'],
+                            'total_price ' => $chargeDetails['total_price'],
+                        ])
+                    );
                 }
             }
         }
         CommonService::getInstance()->log4PHP(
             json_encode(
                 [
-                    'calMoney ',
+                    'uplaod record calMoney ',
                     $uploadId,
                     $chargeDetails
                 ]
