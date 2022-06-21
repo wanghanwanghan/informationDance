@@ -386,6 +386,35 @@ class AdminUserFinanceUploadRecord extends ModelBase
         return $res;
     }
 
+    public static function ifCanDownload(
+        $id
+    ){
+        $info = self::findById($id);
+        $res = true;
+        $last_charge_date = $info->getAttr('last_charge_date');
+
+
+        if(
+            $last_charge_date > 0 &&
+            strtotime($last_charge_date) -time() >= 60*60*24
+        ){
+            $res = false;
+        }
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'AdminUserFinanceUploadRecord ifCanDownload ',
+                    [
+                        'id' => $id,
+                        '$last_charge_date' => $last_charge_date,
+                        '$res'=>$res,
+                    ]
+                ]
+            )
+        );
+        return $res;
+    }
+
     public static function updateMoneyById(
         $id,$money
     ){
