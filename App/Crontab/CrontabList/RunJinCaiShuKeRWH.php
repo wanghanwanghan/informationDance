@@ -21,7 +21,7 @@ class RunJinCaiShuKeRWH extends AbstractCronTask
     static function getRule(): string
     {
         //每分钟执行一次
-        return '03 11 * * *';
+        return '5 * * * *';
     }
 
     static function getTaskName(): string
