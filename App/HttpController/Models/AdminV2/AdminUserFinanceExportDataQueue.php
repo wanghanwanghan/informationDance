@@ -23,10 +23,10 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     static  $state_needs_confirm_cname =  '用户确认数据中';
 
     static  $state_confirmed = 20;
-    static  $state_confirmed_cname =  '正在下载中';
+    static  $state_confirmed_cname =  '文件生成中';
 
     static  $state_succeed = 30;
-    static  $state_succeed_cname =  '下载成功';
+    static  $state_succeed_cname =  '文件生成成功';
 
     public static function getStatusMap(){
 
