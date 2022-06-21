@@ -17,11 +17,11 @@ class AdminUserFinanceUploadRecord extends ModelBase
     protected $updateTime = 'updated_at'; 
     
     static $stateInit = 1;
-    static $stateInitCname =  '初始';
+    static $stateInitCname =  '文件待解析';
     static $stateParsed = 5;
-    static $stateParsedCname =  '已经解析入库';
+    static $stateParsedCname =  '计算价格中';
     static $stateCalCulatedPrice = 10;
-    static $stateCalCulatedPriceCname = '已经计算价格';
+    static $stateCalCulatedPriceCname = '待导出';
 
 //    static $stateHasCheckBalanceOK = 13;
 //    static $stateHasCheckBalanceOKCname = '已经检测完余额充足';
