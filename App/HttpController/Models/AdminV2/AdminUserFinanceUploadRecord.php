@@ -512,6 +512,9 @@ class AdminUserFinanceUploadRecord extends ModelBase
                             'total_price ' => $chargeDetails['total_price'],
                         ])
                     );
+                    AdminUserFinanceUploadDataRecord::updateRealPrice(
+                        $uploadData['id'],$uploadData['price'], $uploadData['charge_year_start'].'~'. $uploadData['charge_year_end'].'包年计费'
+                    );
                 }
             }
 
@@ -560,6 +563,10 @@ class AdminUserFinanceUploadRecord extends ModelBase
                             'price' => $uploadData['price'],
                         ];
                     $chargeDetails['total_price'] += $uploadData['price'];
+                    AdminUserFinanceUploadDataRecord::updateRealPrice(
+                        $uploadData['id'],$uploadData['price'], $uploadData['charge_year'].'单年计费'
+                    );
+
                     CommonService::getInstance()->log4PHP(
                         json_encode([
                             'AdminUserFinanceUploadRecord calMoney  needs charge',
