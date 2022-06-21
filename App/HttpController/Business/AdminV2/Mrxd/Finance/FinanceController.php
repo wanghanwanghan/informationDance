@@ -7,6 +7,7 @@ use App\HttpController\Models\AdminNew\AdminNewUser;
 use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\AdminV2\AdminMenuItems;
 use App\HttpController\Models\AdminV2\AdminNewMenu;
+use App\HttpController\Models\AdminV2\AdminUserChargeConfig;
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\Api\CompanyCarInsuranceStatusInfo;
@@ -137,6 +138,7 @@ class FinanceController extends ControllerBase
             'allowed_total_years_num' => $requestData['allowed_total_years_num'],
             //是否需要确认
             'needs_confirm' => $requestData['needs_confirm'],
+            'max_daily_nums' => $requestData['max_daily_nums']?:0,
             'status' => 1,
         ];
         $res = AdminUserFinanceConfig::addRecordV2(
@@ -173,6 +175,7 @@ class FinanceController extends ControllerBase
             'needs_confirm' => $requestData['needs_confirm'] ?
                 $requestData['needs_confirm']: $info['needs_confirm'],
             'allowed_fields' => $requestData['allowed_fields'] ? $requestData['allowed_fields']: $info['allowed_fields'],
+            'max_daily_nums' => $requestData['max_daily_nums'] ? $requestData['allowed_fields']: $info['max_daily_nums'],
         ];
         AdminUserFinanceConfig::setStatus(
             $requestData['id'],AdminUserFinanceConfig::$state_del
@@ -775,6 +778,22 @@ class FinanceController extends ControllerBase
         ){
             ConfigInfo::removeRedisNx('exportFinanceData2');
             return $this->writeJson(201, null, [],  '余额不足 需要至少'. $uploadRes['money'].'元');
+        }
+
+        //检查账户是否可以拉取 如果到达今日次数等限制的话 就跳过去      把优先级调的低一些 updatePriorityById
+        $totalNeedExportNums = count(
+            AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
+                $uploadRes['user_id'],
+                $uploadRes['id'],
+                ['id']
+            )
+        );
+        
+        //每日最大次数限制
+        if(
+            !AdminUserChargeConfig::checkIfCanRun($uploadRes['user_id'],$totalNeedExportNums)
+        ){
+            return  $this->writeJson(201,[],'超出每日最大次数，联系管理员');
         }
 
         if(

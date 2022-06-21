@@ -23,7 +23,28 @@ class AdminUserFinanceConfig extends ModelBase
             'user_id' => $userId,     
             'status' => 1,
         ])->get();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceConfig  getConfigByUserId start',
+                '$userId'=>$userId,
+                '$res'=>$res,
+            ])
+        );
         return $res;
+    }
+
+    static function getDailyMaxNums($userId){
+        $res =  self::getConfigByUserId($userId);
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceConfig  getDailyMaxNums  start',
+                '$userId'=>$userId,
+                'max_daily_nums'=>$res->getAttr('max_daily_nums'),
+            ])
+        );
+
+        return $res->getAttr('max_daily_nums');
     }
 
     static function getConfigDataByUserId($userId){
@@ -63,7 +84,8 @@ class AdminUserFinanceConfig extends ModelBase
             'cache' => $requestData['cache'],  
             'type' => $requestData['type'],  
             'allowed_fields' => $requestData['allowed_fields'],  
-            'status' => $requestData['status'],  
+            'status' => $requestData['status'],
+            'max_daily_nums' => $requestData['max_daily_nums'],
         ])->save();  
     }
 

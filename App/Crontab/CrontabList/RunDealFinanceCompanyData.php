@@ -667,6 +667,7 @@ class RunDealFinanceCompanyData extends AbstractCronTask
 
                     )
                 );
+//                AdminUserChargeConfig::
                 if(!$changeRes){
                     CommonService::getInstance()->log4PHP(
                         'pullFinanceData err1  change status error '.$uploadDataRes['id']
