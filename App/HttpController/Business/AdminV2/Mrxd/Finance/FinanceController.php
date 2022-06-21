@@ -221,12 +221,6 @@ class FinanceController extends ControllerBase
     // 上传客户名单
     public function uploadeCompanyLists(){
         $years = trim($this->getRequestData('years'));
-        CommonService::getInstance()->log4PHP(
-           json_encode([
-               'uploadeCompanyLists start ',
-               'params years '=> $years,
-           ])
-        );
         if(empty($years) ){
             return $this->writeJson(206, [] ,   [], '缺少年度参数('.$years.')', true, []);
         }
@@ -252,7 +246,7 @@ class FinanceController extends ControllerBase
                 if(file_exists($path)){
                     CommonService::getInstance()->log4PHP(
                         json_encode([
-                            'uploadeCompanyLists   file_exists',
+                            'uploadeCompanyLists   file_exists continue',
                             'params $path '=> $path,
                         ])
                     );
@@ -263,7 +257,7 @@ class FinanceController extends ControllerBase
                 if(!file_exists($path)){
                     CommonService::getInstance()->log4PHP(
                         json_encode([
-                            'uploadeCompanyLists   file_not_exists',
+                            'uploadeCompanyLists   file_not_exists moveTo false ',
                             'params $path '=> $path,
                         ])
                     );
@@ -275,40 +269,26 @@ class FinanceController extends ControllerBase
                     $fileName
                 );
                 if($UploadRecordRes){
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            'uploadeCompanyLists find old  $UploadRecordRes',
-                            'params $fileName '=> $fileName,
-                            '$UploadRecordRes' => $UploadRecordRes,
-                        ])
-                    );
                     continue;
                 }
 
-                $tmpData = [
-                    'user_id' => $this->loginUserinfo['id'],
-                    'file_path' => $path,
-                    'years' => $requestData['years'],
-                    'file_name' => $fileName,
-                    'title' => $requestData['title']?:'',
-                    'reamrk' => $requestData['reamrk']?:'',
-                    'finance_config' => json_encode(
-                        AdminUserFinanceConfig::getConfigDataByUserId(
-                            $this->loginUserinfo['id']
-                        )
-                    ),
-                    'status' => AdminUserFinanceUploadRecord::$stateInit,
-                ];
                 $addUploadRecordRes = AdminUserFinanceUploadRecord::addUploadRecord(
-                    $tmpData
+                    [
+                        'user_id' => $this->loginUserinfo['id'],
+                        'file_path' => $path,
+                        'years' => $requestData['years'],
+                        'file_name' => $fileName,
+                        'title' => $requestData['title']?:'',
+                        'reamrk' => $requestData['reamrk']?:'',
+                        'finance_config' => json_encode(
+                            AdminUserFinanceConfig::getConfigDataByUserId(
+                                $this->loginUserinfo['id']
+                            )
+                        ),
+                        'status' => AdminUserFinanceUploadRecord::$stateInit,
+                    ]
                  );
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        'uploadeCompanyLists $addUploadRecordRes',
-                        'params $tmpData '=> $tmpData,
-                        '$addUploadRecordRes' => $addUploadRecordRes,
-                    ])
-                );
+
                 if(!$addUploadRecordRes){
                     continue;
                 }
@@ -318,7 +298,7 @@ class FinanceController extends ControllerBase
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         'uploadeCompanyLists false',
-                        'params $e '=> $e->getMessage()
+                        ' getMessage '=> $e->getMessage()
                     ])
                 );
             } 
@@ -788,7 +768,7 @@ class FinanceController extends ControllerBase
                 ['id']
             )
         );
-        
+
         //每日最大次数限制
         if(
             !AdminUserChargeConfig::checkIfCanRun($uploadRes['user_id'],$totalNeedExportNums)
