@@ -323,6 +323,8 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                     'price' => $price,
                     'total_company_nums' => 0,
                     'config_json' => $uploadRes['finance_config'],
+                    'path' => $xlxsData['path'],
+                    'file_name' => $xlxsData['filename'],
                     'upload_record_id' => $queueData['upload_record_id'],
                     'reamrk' => '',
                     'status' =>AdminUserFinanceExportRecord::$stateInit,
@@ -333,6 +335,12 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             if(!$AdminUserFinanceExportRecordId){
                 continue ;
             }
+            AdminUserFinanceExportRecord::setFilePath(
+                $AdminUserFinanceExportRecordId,
+                $xlxsData['path'],
+                $xlxsData['filename']
+            );
+
             foreach($financeDatas['details'] as $financeData){
                 $AdminUserFinanceUploadDataRecord = AdminUserFinanceUploadDataRecord::
                 findById($financeData['UploadDataRecordId'])->toArray();
@@ -382,6 +390,11 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 }
             }
 
+
+            AdminUserFinanceExportDataQueue::updateStatusById(
+                $queueData['id'],
+                AdminUserFinanceExportDataQueue::$state_succeed
+            );
 
             AdminUserFinanceExportDataQueue::updateStatusById(
                 $queueData['id'],
