@@ -80,7 +80,7 @@ class JinCaiShuKeService extends ServiceBase
             return true;
         }
         foreach ($list as $log){
-            $data = $this->S000523( $log->getAttr('nsrsbh'),  $log->getAttr('rwh'),1,1000);
+            $data = $this->S000523( $log->getAttr('nsrsbh'),  $log->getAttr('rwh'),1,500);
             $content = $data['result']['content'];
             if(empty($content) || $content['sqzt']!=1) {
                 dingAlarm('金财数科获取发票数据为空S000523',['$data'=>json_encode($data)]);
@@ -93,27 +93,28 @@ class JinCaiShuKeService extends ServiceBase
                 continue;
             }
             $resDataAll = $content['fpxxs']['data'];
-            if(count($content['fpxxs']['data']) == 1000){
-                for($i=0;$i<10;$i++){
-                    $vdata = $this->S000523( $log->getAttr('nsrsbh'),  $log->getAttr('rwh'),1,1000);
+            if(count($content['fpxxs']['data']) == 500){
+                for($i=0;$i<50;$i++){
+                    $vdata = $this->S000523( $log->getAttr('nsrsbh'),  $log->getAttr('rwh'),1,500);
                     $resDataAll = array_merge($resDataAll,$vdata['result']['content']['fpxxs']['data']);
-                    if(count($vdata['result']['content']['fpxxs']['data'])<1000){
+                    if(count($vdata['result']['content']['fpxxs']['data'])<500){
                         break;
                     }
                 }
             }
 //            CommonService::getInstance()->log4PHP($data,'info','http_return_data');
             foreach ($resDataAll as $val){
+                $xmmc = '';
                 if(isset($val['mxs']['0']['xmmc'])){
                     $xmmc = explode('*',trim($val['mxs']['0']['xmmc'],'*'));
                 }else if(isset($val['cllx'])){
                     $xmmc = $val['cllx'];
-                }
-                if($val['fplx'] == 15){
+                }else if($val['fplx'] == 15){
                     $xmmc = '二手车';
-                }
-                if(isset($val['mxs']['0']['hwmc'])){
+                }else if(isset($val['mxs']['0']['hwmc'])){
                     $xmmc = explode('*',trim($val['mxs']['0']['hwmc'],'*'));
+                }else{
+                    CommonService::getInstance()->log4PHP($data,'info','getRwhData_empty_goodsname');
                 }
 
                 $insert = [
@@ -207,7 +208,7 @@ class JinCaiShuKeService extends ServiceBase
             'mode' => '2',
             'rwh' => trim($rwh),
             'page' => trim($page),
-            'pageSize' => 1000,
+            'pageSize' => 500,
         ];
 //        CommonService::getInstance()->log4PHP($content,'info','http_return_data');
         $signType = '0';
