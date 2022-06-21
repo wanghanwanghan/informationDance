@@ -730,7 +730,7 @@ class FinanceController extends ControllerBase
     function exportFinanceData()
     {
         if(
-            !ConfigInfo::setRedisNx('exportFinanceData1')
+            !ConfigInfo::setRedisNx('exportFinanceData2',5)
         ){
             return $this->writeJson(201, null, [],  '请勿重复提交');
         }
@@ -740,6 +740,7 @@ class FinanceController extends ControllerBase
         if(
             $requestData['id'] <= 0 
         ){
+            ConfigInfo::removeRedisNx('exportFinanceData2');
             return $this->writeJson(201, null, [
 
             ],'参数缺失');
@@ -753,6 +754,7 @@ class FinanceController extends ControllerBase
                 $requestData['id'],AdminUserFinanceUploadRecord::$stateCalCulatedPrice
             )
         ){
+            ConfigInfo::removeRedisNx('exportFinanceData2');
             return $this->writeJson(201, null, [],  '当前状态不允许导出 请稍等');
 
         }
@@ -763,11 +765,12 @@ class FinanceController extends ControllerBase
                 $uploadRes['money']
             )
         ){
+            ConfigInfo::removeRedisNx('exportFinanceData2');
             return $this->writeJson(201, null, [],  '余额不足 需要至少'. $uploadRes['money'].'元');
         }
 
         if(
-            AdminUserFinanceExportDataQueue::addRecordV2(
+            !AdminUserFinanceExportDataQueue::addRecordV2(
                 [
                     'batch' => date('YmdHis'),
                     'user_id' => $this->loginUserinfo['id'],
@@ -775,11 +778,12 @@ class FinanceController extends ControllerBase
                 ]
             )
         ){
-            return  $this->writeJson(200,[],'已发起下载，请稍后去我的下载中查看');
+            ConfigInfo::removeRedisNx('exportFinanceData2');
+            return  $this->writeJson(201,[],'添加失败，联系管理员');
         }
 
-        ConfigInfo::removeRedisNx('exportFinanceData1');
-        return $this->writeJson(200);
+        ConfigInfo::removeRedisNx('exportFinanceData2');
+        return $this->writeJson(200,[],'已发起下载，请稍后去我的下载中查看');
 
         $config = [
             'path' => TEMP_FILE_PATH // xlsx文件保存路径
