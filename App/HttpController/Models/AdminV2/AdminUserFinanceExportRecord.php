@@ -33,8 +33,10 @@ class AdminUserFinanceExportRecord extends ModelBase
                 'price' => $requestData['price'],  
                 'total_company_nums' => $requestData['total_company_nums'],  
                 'config_json' => $requestData['config_json'],  
-                'upload_record_id' => $requestData['upload_record_id'],  
-                'reamrk' => $requestData['reamrk'],  
+                'upload_record_id' => $requestData['upload_record_id'],
+               'path' => $requestData['path']?:'',
+               'file_name' => $requestData['file_name']?:'',
+               'reamrk' => $requestData['reamrk'],
                 'status' => $requestData['status'],
                 'queue_id' => $requestData['queue_id'],
                 'batch' => $requestData['batch'],
@@ -51,6 +53,28 @@ class AdminUserFinanceExportRecord extends ModelBase
         }  
 
         return $res;
+    }
+
+
+    public static function findById($id){
+        $res =  AdminUserFinanceExportRecord::create()
+            ->where('id',$id)
+            ->get();
+        return $res;
+    }
+    public static function setFilePath($id,$path,$fileName){
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceExportRecord  setFilePath   '=>$id,$path,$fileName
+            ])
+        );
+        $info = self::findById($id);
+
+        return $info->update([
+            'path' => $path,
+            'file_name' => $fileName,
+        ]);
     }
 
     public static function findByIdAndFileName($user_id,$file_name){

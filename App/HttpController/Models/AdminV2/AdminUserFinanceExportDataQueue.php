@@ -67,26 +67,26 @@ class AdminUserFinanceExportDataQueue extends ModelBase
 
     }
 
-    public static function updateStatusById(
-        $id,$status
-    ){
-        // 吃完饭 走一下啊
-        // banner: 切出图来  设计多少换多少
-        //   二期： 没开发完的
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'AdminUserFinanceExportDataQueue  updateStatusById start' ,
-                'params $status ' =>$status,
-                'params $id ' =>$id
-            ])
-        );
-        $info = AdminUserFinanceExportDataQueue::create()->where('id',$id)->get();
-        return $info->update([
-            'id' => $id,
-            'status' => $status,
-            'updated_at'=>time()
-        ]);
-    }
+//    public static function updateMoneyById(
+//        $id,$money
+//    ){
+//        // 吃完饭 走一下啊
+//        // banner: 切出图来  设计多少换多少
+//        //   二期： 没开发完的
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'AdminUserFinanceExportDataQueue  updateMoneyById start' ,
+//                'params $money ' =>$money,
+//                'params $id ' =>$id
+//            ])
+//        );
+//        $info = AdminUserFinanceExportDataQueue::create()->where('id',$id)->get();
+//        return $info->update([
+//            'id' => $id,
+//            'money' => $money,
+//            'updated_at'=>time()
+//        ]);
+//    }
 
     static  function  addRecordV2($info){
         CommonService::getInstance()->log4PHP(
@@ -202,6 +202,30 @@ class AdminUserFinanceExportDataQueue extends ModelBase
             'touch_time' => $touchTime,
         ]);
     }
+
+
+
+    public static function updateStatusById(
+        $id,$status
+    ){
+        // 吃完饭 走一下啊
+        // banner: 切出图来  设计多少换多少
+        //   二期： 没开发完的
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceExportDataQueue  updateStatusById start' ,
+                'params $status ' =>$status,
+                'params $id ' =>$id
+            ])
+        );
+        $info = AdminUserFinanceExportDataQueue::create()->where('id',$id)->get();
+        return $info->update([
+            'id' => $id,
+            'status' => $status,
+            'updated_at'=>time()
+        ]);
+    }
+
 
     public static function setFilePath($id,$path,$fileName){
 
