@@ -107,6 +107,13 @@ class AdminUserFinanceConfig extends ModelBase
 
 
     public static function setStatus($id,$status){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceConfig setStatus',
+                 '$id'=>$id,
+                '$status' =>$status,
+            ])
+        );
         $info = self::findById($id);
 
         return $info->update([
@@ -133,6 +140,13 @@ class AdminUserFinanceConfig extends ModelBase
 
 
     static function addRecordV2($requestData){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'finance config    addRecordV2',
+                'params $requestData '=> $requestData,
+            ])
+        );
+
         $res = self::getConfigByUserId($requestData['user_id']);
         if($res){
             return  $res->getAttr('id');

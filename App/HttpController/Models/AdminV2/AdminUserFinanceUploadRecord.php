@@ -334,7 +334,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
         ]);
     }
 
-    // 用完今日余额的
+    //
     public static function findBySql($where){
         CommonService::getInstance()->log4PHP(
             json_encode([

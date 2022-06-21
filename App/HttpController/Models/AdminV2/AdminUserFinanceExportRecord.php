@@ -180,6 +180,8 @@ class AdminUserFinanceExportRecord extends ModelBase
         return $res;
     }
 
+
+
     public  function findAllByUserId($userId){
         $res =  AdminUserFinanceExportRecord::create()
             ->where([

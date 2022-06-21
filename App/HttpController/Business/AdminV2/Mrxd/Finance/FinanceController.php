@@ -103,20 +103,11 @@ class FinanceController extends ControllerBase
         $requestData = $this->getRequestData(); 
         if (
             !$requestData['user_id'] ||
-            !$requestData['allowed_fields'] ||
-            !$requestData['type'] ||
-            //!$requestData['single_year_charge_as_annual'] ||
-            !$requestData['allowed_total_years_num']
+            !$requestData['allowed_fields'] || //允许导出的字段
+            !$requestData['type'] || //财务类型
+            !$requestData['allowed_total_years_num'] //最多允许导出年限
         ) {
             return $this->writeJson(201);
-        }
-        
-        if(
-            AdminUserFinanceConfig::getConfigDataByUserId(
-                $requestData['user_id']
-            )
-        ){
-            return $this->writeJson(203,[],[],'一个用户只能有一个有效配置');
         }
 
         $dataItem = [
@@ -143,13 +134,6 @@ class FinanceController extends ControllerBase
         ];
         $res = AdminUserFinanceConfig::addRecordV2(
             $dataItem
-        );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'AdminUserFinanceConfig addRecord',
-                $dataItem,
-                $res
-            ])
         );
         if(!$res){
             return $this->writeJson(203);
@@ -182,13 +166,6 @@ class FinanceController extends ControllerBase
         );
 
         $res = AdminUserFinanceConfig::addRecordV2($data);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'AdminUserFinanceConfig updateConfig',
-                $data,
-                $res
-            ])
-        );
         if (!$res){
             return $this->writeJson(205);
         }
@@ -244,23 +221,13 @@ class FinanceController extends ControllerBase
                 $fileName = $oneFile->getClientFilename();
                 $path = TEMP_FILE_PATH . $fileName;
                 if(file_exists($path)){
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            'uploadeCompanyLists   file_exists continue',
-                            'params $path '=> $path,
-                        ])
-                    );
+                    CommonService::getInstance()->log4PHP( json_encode([ 'uploadeCompanyLists   file_exists continue','params $path '=> $path,]) );
                     continue;
                 }
 
                 $res = $oneFile->moveTo($path);
                 if(!file_exists($path)){
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            'uploadeCompanyLists   file_not_exists moveTo false ',
-                            'params $path '=> $path,
-                        ])
-                    );
+                    CommonService::getInstance()->log4PHP( json_encode(['uploadeCompanyLists   file_not_exists moveTo false ', 'params $path '=> $path,  ]) );
                     continue;
                 }
 
@@ -292,24 +259,17 @@ class FinanceController extends ControllerBase
                 if(!$addUploadRecordRes){
                     continue;
                 }
-
                 $succeedNums ++;
             } catch (\Throwable $e) {
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        'uploadeCompanyLists false',
-                        ' getMessage '=> $e->getMessage()
-                    ])
-                );
+                return $this->writeJson(202, [], [],'导入失败'.$e->getMessage());
             } 
         }
 
         return $this->writeJson(200, [], [],'导入成功 入库文件数量:'.$succeedNums);
     }
 
+    //用户上传的列表 所有上传的客户名单
     public function getUploadLists(){
-
-        $requestData =  $this->getRequestData();
         $page = $this->request()->getRequestParam('page')??1;
         $createdAtStr = $this->getRequestData('created_at');
         $createdAtArr = explode('|||',$createdAtStr);
@@ -352,19 +312,16 @@ class FinanceController extends ControllerBase
         ],  $res['data'],'成功');
     }
 
+    //获取导出列表|财务对账列表
     public function getExportLists(){
-        $requestData =  $this->getRequestData();
-
-        $res = AdminUserFinanceExportRecord::findByCondition(
+        $page = $this->request()->getRequestParam('page')??1;
+        $res = AdminUserFinanceExportRecord::findByConditionV3(
             [
-                // 'user_id' => $userId
+
                 'user_id' => $this->loginUserinfo['id']
             ],
-            0, 20
+            $page
         );
-        $size = $this->request()->getRequestParam('size')??10;
-        $page = $this->request()->getRequestParam('page')??1;
-        $offset  =  ($page-1)*$size;
 
         foreach ($res as &$value){
             $value['upload_details'] = [];
@@ -376,20 +333,15 @@ class FinanceController extends ControllerBase
         }
         return $this->writeJson(200,  [
             'page' => $page,
-            'pageSize' =>$size,
-            'total' => 1,
-            'totalPage' => 1,
-        ], $res,'成功');
+            'pageSize' =>10,
+            'total' => $res['total'],
+            'totalPage' =>  ceil( $res['total']/ 20 ),
+        ], $res['data'],'成功');
     }
 
+    //导出之前的导出记录  财务对账
     public function exportExportLists(){
         $requestData =  $this->getRequestData();
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'AdminUserFinanceExportRecord  exportExportLists    ',
-                '$requestData' => $requestData,
-            ])
-        );
         $where = [
              [
                 'field'=>'user_id',
@@ -425,13 +377,12 @@ class FinanceController extends ControllerBase
 
     }
 
-    //我的下载
+    //我的下载记录
     public function getExportQueueLists(){
         $requestData =  $this->getRequestData();
         $page = $requestData['page']?:1;
         $res = AdminUserFinanceExportDataQueue::findByConditionV2(
             [
-                // 'user_id' => $userId
                 'user_id' => $this->loginUserinfo['id']
             ],
             $page
@@ -450,7 +401,7 @@ class FinanceController extends ControllerBase
             'page' => $page,
             'pageSize' =>20,
             'total' => $res['total'],
-           // 'totalPage' => 1,
+            'totalPage' => ceil( $res['total']/ 20 ),
         ], $res['data'],'成功');
     }
 
@@ -458,10 +409,8 @@ class FinanceController extends ControllerBase
     public function getNeedsConfirmExportLists(){
         $requestData =  $this->getRequestData();
         $condition = [
-            // 'user_id' => $userId
             'user_id' => $this->loginUserinfo['id'],
             'needs_confirm' => 1,
-            //'status' => AdminUserFinanceData::$statusNeedsConfirm
         ];
 
         $page = $requestData['page']?:1;
@@ -477,16 +426,15 @@ class FinanceController extends ControllerBase
                 'page' => $page,
                 'pageSize' =>20,
                 'total' => $res['total'],
-                //'totalPage' => 1,
+                'totalPage' => ceil( $res['total']/ 20 ),
             ] , $res['data'], '成功' );
     }
 
+    //账户流水
     public function getFinanceLogLists(){
         $requestData =  $this->getRequestData();
         $condition = [
-            // 'user_id' => $userId
             'user_id' => $this->loginUserinfo['id'],
-            //'status' => FinanceLog::$statusNeedsConfirm
         ];
 
         $page = $requestData['page']?:1;
@@ -500,16 +448,12 @@ class FinanceController extends ControllerBase
                 'page' => $page,
                 'pageSize' =>20,
                 'total' => $res['total'],
-                //'totalPage' => 1,
+                'totalPage' => ceil( $res['total']/ 20 ),
             ] , $res['data'], '成功' );
     }
 
-
+    //充值
     public function chargeAccount(){
-        return $this->writeJson(200,
-            [
-
-            ] , [], '成功' );
         $requestData =  $this->getRequestData();
         $res = \App\HttpController\Models\AdminV2\AdminNewUser::charge(
             $requestData['user_id'],
@@ -517,97 +461,58 @@ class FinanceController extends ControllerBase
             date('YmdHis'),
             [
                 'detailId' => 0,
-                'detail_table' => 'admin_user_finance_export_data_queue',
+                'detail_table' => '',
                 'price' => $requestData['money'],
                 'userId' => $requestData['user_id'],
-                'type' => FinanceLog::$chargeTytpeFinance,
-                'batch' => $queueData['id'],
+                'type' => $requestData['type'],
+                'batch' => $requestData['id'],
                 'title' => '',
-                'detail' => '',
+                'detail' => $requestData['detail'],
                 'reamrk' => '',
                 'status' => 1,
             ],
             $requestData['money']
         );
         if(!$res){
-
+            return $this->writeJson(201, [ ] , $res['data'], '充值失败' );
         }
-
-
-
-        $condition = [
-            // 'user_id' => $userId
-            'user_id' => $this->loginUserinfo['id'],
-            //'status' => FinanceLog::$statusNeedsConfirm
-        ];
-
-
-        $page = $requestData['page']?:1;
-        $res = FinanceLog::findByConditionV2(
-            $condition,
-            $page
-        );
-
-        return $this->writeJson(200,
-            [
-                'page' => $page,
-                'pageSize' =>20,
-                'total' => $res['total'],
-                //'totalPage' => 1,
-            ] , $res['data'], '成功' );
+        return $this->writeJson(200, [ ] , $res['data'], '成功' );
     }
-
+    //待确认详情
     public function getNeedsConfirmDetails(){
         $requestData =  $this->getRequestData();
         if($requestData['id'] <= 0){
-            return $this->writeJson(203,
-                [
-                ] , [], '参数缺失' );
+            return $this->writeJson(203, [   ] , [], '参数缺失' );
         }
         $res = AdminUserFinanceData::findById($requestData['id']);
         $data = $res->toArray();
         $realFinanceDatId = $data['finance_data_id'];
         $allowedFields = NewFinanceData::getFieldCname(false);
         $realData = NewFinanceData::findByIdV2($realFinanceDatId,($allowedFields));
-        return $this->writeJson(200,
-            [
-
-            ] , $realData , '成功' );
+        return $this->writeJson(200, [ ] , $realData , '成功' );
     }
-    //确认的列表
+    //确认是否需要
     public function ConfirmFinanceData(){
-
         $requestData =  $this->getRequestData();
-         
         $res = AdminUserFinanceData::updateStatus(
             $requestData['id'],
             $requestData['status']
         );
         if(!$res){
-            return $this->writeJson(206, [] ,   [], '更新失败', true, []);
+            return $this->writeJson(206, [] ,   [], '确认失败', true, []);
         }
-        $size = $this->request()->getRequestParam('size')??10;
-        $page = $this->request()->getRequestParam('page')??1;
-        $offset  =  ($page-1)*$size;
-        return $this->writeJson(200, [
-            'page' => $page,
-            'pageSize' =>$size,
-            'total' => 1,
-            'totalPage' => 1,
-        ], $res, '');
+        return $this->writeJson(200, [ ], $res, '成功');
     }
 
+    //导出记录对应的详情
     public function exportDetails(){
-
         $requestData =  $this->getRequestData();
-
         $res = AdminUserFinanceExportDataRecord::findByUserAndExportId(
             $this->loginUserinfo['id'],
             $requestData['id']
         );
         foreach ($res as &$dataItem){
             $dataItem['details'] = [];
-
             if($dataItem['upload_data_id']){
                 $dataItem['upload_details'] = [];
                 $dataItem['data_details'] = [];
@@ -634,6 +539,7 @@ class FinanceController extends ControllerBase
         ], $res, '');
     }
 
+    //导出某次导出的详情记录
     public function exportExportDetails(){
         $requestData =  $this->getRequestData();
 
@@ -659,15 +565,6 @@ class FinanceController extends ControllerBase
             }
         }
 
-//        $requestData =  $this->getRequestData();
-
-//        $res = AdminUserFinanceExportRecord::findByCondition(
-//            [
-//                // 'user_id' => $userId
-//                'user_id' => $this->loginUserinfo['id']
-//            ],
-//            0, 20
-//        );
         $config = [
             'path' => TEMP_FILE_PATH // xlsx文件保存路径
         ];
@@ -676,9 +573,7 @@ class FinanceController extends ControllerBase
             $config,$filename,[],$res,'sheet1'
         );
 
-        return $this->writeJson(200,  [
-
-        ],  [
+        return $this->writeJson(200,  [ ],  [
             'path' => TEMP_FILE_PATH,
             'filename' => $filename
         ],'成功');
@@ -720,7 +615,7 @@ class FinanceController extends ControllerBase
 
         return $fileObject->output();
     }
-    // 导出客户名单
+    // 导出客户名单 异步 只是加入队列
     function exportFinanceData()
     {
         if(
@@ -729,15 +624,12 @@ class FinanceController extends ControllerBase
             return $this->writeJson(201, null, [],  '请勿重复提交');
         }
 
-
         $requestData =  $this->getRequestData();
         if(
             $requestData['id'] <= 0 
         ){
             ConfigInfo::removeRedisNx('exportFinanceData2');
-            return $this->writeJson(201, null, [
-
-            ],'参数缺失');
+            return $this->writeJson(201, null, [ ],'参数缺失');
         }
 
         $uploadRes = AdminUserFinanceUploadRecord::findById($requestData['id'])->toArray();
@@ -801,65 +693,6 @@ class FinanceController extends ControllerBase
 
         ConfigInfo::removeRedisNx('exportFinanceData2');
         return $this->writeJson(200,[],'已发起下载，请稍后去我的下载中查看');
-
-        $config = [
-            'path' => TEMP_FILE_PATH // xlsx文件保存路径
-        ];
-        $filename = '客户名单_'.$requestData['id'].'_'.date('YmdHis'). '.xlsx';
-        $header = [
-            '序号',
-            '企业名称',
-            '年度',
-            '资产总额',
-            '负债总额',
-            '营业总收入',
-            '主营业务收入',
-            '利润总额',
-            '净利润',
-            '纳税总额',
-            '所有者权益',
-            '社保人数'
-        ];
-        $exportDataToXlsRes = $this->parseDataToXls(
-            $config,$filename,$header,$financeData['finance_data'],'财务数据'
-        );
-        if(!$exportDataToXlsRes){
-            return $this->writeJson(203, null, [], [], '下载失败');
-        }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                '生成文件' ,
-                $config,$filename
-            ])
-        );
-
-        // 实际扣费 
-        $res = \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
-            $this->loginUserinfo['id'],
-            (
-                \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
-                    $this->loginUserinfo['id']
-                ) - $financeData['total_charge']
-            )
-        );
-        if(
-            !$res
-        ){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    '实际扣费 失败' ,
-                ])
-            );
-        }
-
-        AdminUserFinanceExportDataQueue::addRecord(
-            [
-                'batch' => date('YmdHis'),
-                'upload_record_id' => $requestData['id']
-            ]
-        );
-        ConfigInfo::removeRedisNx('exportFinanceData');
-        return $this->writeJson(200, null, 'Static/Temp/' . $filename, null, true, [$res]);
     }
 
 

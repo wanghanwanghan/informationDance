@@ -29,7 +29,7 @@ class FinanceLog extends ModelBase
     public static function addRecord($requestData){
         try {
            $res =  FinanceLog::create()->data([
-                'detailId' => intval($requestData['detailId']),
+                'detailId' => intval($requestData['detailId'])?:0,
                 'detail_table' => $requestData['detail_table']?:'',
                 'price' => $requestData['price'],
                 'userId' => $requestData['userId'],

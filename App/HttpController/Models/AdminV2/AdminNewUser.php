@@ -103,7 +103,6 @@ class AdminNewUser extends ModelBase
         if(
             FinanceLog::findByBatch($batchNo)
         ){
-
             return true;
         }
         // 实际扣费
