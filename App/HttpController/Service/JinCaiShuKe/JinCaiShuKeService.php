@@ -83,6 +83,7 @@ class JinCaiShuKeService extends ServiceBase
             $data = $this->S000523( $log->getAttr('nsrsbh'),  $log->getAttr('rwh'),1,500);
             $content = $data['result']['content'];
             if(empty($content) || $content['sqzt']!=1) {
+                CommonService::getInstance()->log4PHP($data,'info','getRwhData_error');
                 dingAlarm('金财数科获取发票数据为空S000523',['$data'=>json_encode($data)]);
                 if($content['sqzt'] == 2){
                     JincaiRwhLog::create()->get($log->getAttr('id'))->update(['status'=>2]);
