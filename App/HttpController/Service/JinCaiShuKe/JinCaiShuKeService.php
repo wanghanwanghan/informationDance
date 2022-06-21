@@ -104,7 +104,18 @@ class JinCaiShuKeService extends ServiceBase
             }
 //            CommonService::getInstance()->log4PHP($data,'info','http_return_data');
             foreach ($resDataAll as $val){
-                $xmmc = explode('*',trim($val['mxs']['0']['xmmc'],'*'));
+                if(isset($val['mxs']['0']['xmmc'])){
+                    $xmmc = explode('*',trim($val['mxs']['0']['xmmc'],'*'));
+                }else if(isset($val['cllx'])){
+                    $xmmc = $val['cllx'];
+                }
+                if($val['fplx'] == 15){
+                    $xmmc = '二手车';
+                }
+                if(isset($val['mxs']['0']['hwmc'])){
+                    $xmmc = explode('*',trim($val['mxs']['0']['hwmc'],'*'));
+                }
+
                 $insert = [
                     'invoiceCode'=>$val['fpdm'],
                     'invoiceNumber'=>$val['fphm'],
@@ -113,10 +124,10 @@ class JinCaiShuKeService extends ServiceBase
                     'totalAmount'=>$val['hjje'],
                     'invoiceType'=>$val['fplx'],
                     'state'=>$val['fpzt'],
-                    'salesTaxNo'=>$val['xfsh'],
-                    'salesTaxName'=>$val['xfmc'],
-                    'purchaserTaxNo'=>$val['gfsh'],
-                    'purchaserName'=>$val['gfmc'],
+                    'salesTaxNo'=>$val['xfsh']??$val['mfdwdm'],
+                    'salesTaxName'=>$val['xfmc']??$val['mfdw'],
+                    'purchaserTaxNo'=>$val['gfsh']??$val['gfdwdm'],
+                    'purchaserName'=>$val['gfmc']??$val['gfdw'],
                 ];
                 if($content['sjlx'] == 1){
                     $invoiceInData = InvoiceIn::create()->where("invoiceCode = '{$insert['invoiceCode']}' and invoiceNumber = '{$insert['invoiceNumber']}'")->get();
@@ -196,7 +207,7 @@ class JinCaiShuKeService extends ServiceBase
             'mode' => '2',
             'rwh' => trim($rwh),
             'page' => trim($page),
-            'pageSize' => $pageSize - 0 > 1000 ? '1000' : trim($pageSize),
+            'pageSize' => 1000,
         ];
 //        CommonService::getInstance()->log4PHP($content,'info','http_return_data');
         $signType = '0';
