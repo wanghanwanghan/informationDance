@@ -359,6 +359,7 @@ class FinanceController extends ControllerBase
         );
         foreach ($res['data'] as &$dataItem){
             $dataItem['status_cname'] = AdminUserFinanceUploadRecord::getStatusMaps()[$dataItem['status']];
+            $dataItem['if_can_download'] = AdminUserFinanceUploadRecord::ifCanDownload($dataItem['id'])?1:0;
         }
         return $this->writeJson(200,  [
             'page' => $page,
@@ -747,6 +748,13 @@ class FinanceController extends ControllerBase
         }
 
         $uploadRes = AdminUserFinanceUploadRecord::findById($requestData['id'])->toArray();
+
+        //检查是否可以下载
+        if(
+           !AdminUserFinanceUploadRecord::ifCanDownload($uploadRes['id'])
+        ){
+            return $this->writeJson(201, null, [],'时间过长，请重新上传');
+        }
 
         //检查状态
         if(
