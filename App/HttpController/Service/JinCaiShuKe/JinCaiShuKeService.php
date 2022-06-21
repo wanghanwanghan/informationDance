@@ -74,6 +74,8 @@ class JinCaiShuKeService extends ServiceBase
     public function getRwhData(){
         $time = time()-86400;
         $list = JincaiRwhLog::create()->where('status = 0 and created_at<'.$time)->all();
+        dingAlarm('金财数科获取发票数据查询时间',['$time'=>$time]);
+
         if(empty($list)){
             return true;
         }
