@@ -20,6 +20,7 @@ class AdminUserFinanceExportDataRecord extends ModelBase
     static $stateParsed = 5;
     static $stateExported = 10;
 
+
     static  function  addRecordV2($dataItem){
         CommonService::getInstance()->log4PHP(
             json_encode([

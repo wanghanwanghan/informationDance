@@ -340,6 +340,52 @@ class AdminUserFinanceUploadRecord extends ModelBase
             self::calMoney($uploadId)['total_price']
         );
     }
+
+
+    public static function updateLastChargeDate(
+        $id,$last_charge_date
+    ){
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'AdminUserFinanceUploadRecord updateLastChargeDate ',
+                    [
+                        'id' => $id,
+                        '$last_charge_date' => $last_charge_date,
+                    ]
+                ]
+            )
+        );
+        $info = self::findById($id);
+        return $info->update([
+            'id' => $id,
+            'last_charge_date' => $last_charge_date,
+        ]);
+    }
+
+    public static function ifHasChargeBefore(
+        $id
+    ){
+        $info = self::findById($id);
+        $res = false;
+        if($info->getAttr('last_charge_date')>0){
+            $res = true;
+        }
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'AdminUserFinanceUploadRecord ifHasChargeBefore ',
+                    [
+                        'id' => $id,
+                        'last_charge_date' => $info->getAttr('last_charge_date'),
+                        '$res'=>$res,
+                    ]
+                ]
+            )
+        );
+        return $res;
+    }
+
     public static function updateMoneyById(
         $id,$money
     ){
