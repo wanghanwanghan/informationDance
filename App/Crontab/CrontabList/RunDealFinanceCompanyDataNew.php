@@ -344,7 +344,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             foreach($financeDatas['details'] as $financeData){
                 $AdminUserFinanceUploadDataRecord = AdminUserFinanceUploadDataRecord::
                     findById($financeData['UploadDataRecordId'])->toArray();
-               $priceItem =    $AdminUserFinanceUploadDataRecord['price'];
+               $priceItem =    intval($AdminUserFinanceUploadDataRecord['real_price']);
                if($chargeBefore){
                    $priceItem = 0;
                }
@@ -360,10 +360,8 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                         'status' => AdminUserFinanceExportRecord::$stateInit,
                     ]
                 );
-                if(
-                    $AdminUserFinanceUploadDataRecord['price'] > 0 &&
-                    !$chargeBefore
-                ){
+               // 如果真收费了
+                if($priceItem){
                     //设置收费记录
                     $AdminUserFinanceChargeInfoId = AdminUserFinanceChargeInfo::addRecordV2(
                         [
@@ -373,7 +371,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                             'start_year' => $AdminUserFinanceUploadDataRecord['charge_year_start'],
                             'end_year' => $AdminUserFinanceUploadDataRecord['charge_year_end'],
                             'year' => $AdminUserFinanceUploadDataRecord['charge_year'],
-                            'price' => $AdminUserFinanceUploadDataRecord['price'],
+                            'price' => $priceItem,
                             'price_type' => $AdminUserFinanceUploadDataRecord['price_type'],
                             'status' => AdminUserFinanceChargeInfo::$state_init,
                         ]
@@ -397,12 +395,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             AdminUserFinanceExportDataQueue::updateStatusById(
                 $queueData['id'],
                 AdminUserFinanceExportDataQueue::$state_succeed
-            );
-
-            AdminUserFinanceExportDataQueue::updateStatusById(
-                $queueData['id'],
-                AdminUserFinanceExportDataQueue::$state_succeed
-            );
+            ); 
             AdminUserFinanceExportDataQueue::setTouchTime(
                 $queueData['id'],NULL
             );
