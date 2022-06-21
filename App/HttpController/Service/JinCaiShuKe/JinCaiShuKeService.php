@@ -101,7 +101,7 @@ class JinCaiShuKeService extends ServiceBase
             }
             CommonService::getInstance()->log4PHP($data,'info','http_return_data');
             foreach ($content['fpxxs']['data'] as $val){
-                $xmmc = explode('*',trim($val['mxs']['0']['xmmc']),'*');
+                $xmmc = explode('*',trim($val['mxs']['0']['xmmc'],'*'));
                 $insert = [
                     'invoiceCode'=>$val['fpdm'],
                     'invoiceNumber'=>$val['fphm'],
