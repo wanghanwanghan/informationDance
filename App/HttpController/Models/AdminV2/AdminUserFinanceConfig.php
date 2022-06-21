@@ -15,8 +15,50 @@ class AdminUserFinanceConfig extends ModelBase
     protected $createTime = 'created_at';
     protected $updateTime = 'updated_at'; 
 
+
+
     static $state_ok = 1;
     static $state_del = 5;
+
+    public $exportYearsOk = true;
+
+    function setExportYearsOk(){
+        $this->exportYearsOk = true;
+        return $this;
+    }
+    function setExportYearsNotOk(){
+        $this->exportYearsOk = false;
+        return $this;
+    }
+
+
+    function checkExportYearsNumsV2(){
+
+        $info = self::getConfigByUserId($userid);
+        $data = $info->toArray();
+        if($data['allowed_total_years_num'] < $yearsNums){
+            return  CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'checkExportYearsNums   false',
+                    'params $userid '=> $userid,
+                    'params $yearsNums '=> $yearsNums,
+                    'allowed_total_years_num' =>$data['allowed_total_years_num'],
+                ])
+            );
+        }
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'checkExportYearsNums   true',
+                'params $userid '=> $userid,
+                'params $yearsNums '=> $yearsNums,
+                'allowed_total_years_num' =>$data['allowed_total_years_num'],
+            ])
+        );
+        return true ;
+
+        return $this;
+    }
+
 
     static function getConfigByUserId($userId){
         $res =  AdminUserFinanceConfig::create()->where([

@@ -55,6 +55,44 @@ class AdminUserFinanceExportRecord extends ModelBase
         return $res;
     }
 
+    public static function findByConditionV3($whereArr,$page){
+        $model = AdminUserFinanceExportRecord::create();
+        foreach ($whereArr as $whereItem){
+            $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+        }
+        $model->page($page)
+            ->order('id', 'DESC')
+            ->withTotalCount();
+
+        $res = $model->all();
+
+        $total = $model->lastQueryResult()->getTotalCount();
+        return [
+            'data' => $res,
+            'total' =>$total,
+        ];
+    }
+
+    public static function findByConditionV4($whereArr){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceExportRecord  findByConditionV4   ',
+                '$whereArr' => $whereArr,
+            ])
+        );
+
+        $model = AdminUserFinanceExportRecord::create();
+        foreach ($whereArr as $whereItem){
+            $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+        }
+        $model
+            ->order('id', 'DESC')
+            ->withTotalCount();
+
+        $res = $model->all();
+        return $res;
+    }
+
 
     public static function findById($id){
         $res =  AdminUserFinanceExportRecord::create()
@@ -141,6 +179,16 @@ class AdminUserFinanceExportRecord extends ModelBase
             ->all();  
         return $res;
     }
+
+    public  function findAllByUserId($userId){
+        $res =  AdminUserFinanceExportRecord::create()
+            ->where([
+                'user_id' =>$userId
+            ])
+            ->all();
+        return $res;
+    }
+
 
     static  function  addRecordV2($dataItem){
         CommonService::getInstance()->log4PHP(

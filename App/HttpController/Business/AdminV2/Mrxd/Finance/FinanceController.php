@@ -218,7 +218,7 @@ class FinanceController extends ControllerBase
         return $this->writeJson(200, null, null, '修改成功');
     }
 
-    // 上传客户名单
+    // 用户-上传客户名单
     public function uploadeCompanyLists(){
         $years = trim($this->getRequestData('years'));
         if(empty($years) ){
@@ -384,31 +384,41 @@ class FinanceController extends ControllerBase
 
     public function exportExportLists(){
         $requestData =  $this->getRequestData();
-
-        $res = AdminUserFinanceExportRecord::findByCondition(
-            [
-                // 'user_id' => $userId
-                'user_id' => $this->loginUserinfo['id']
-            ],
-            0, 20
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceExportRecord  exportExportLists    ',
+                '$requestData' => $requestData,
+            ])
         );
-        $size = $this->request()->getRequestParam('size')??10;
-        $page = $this->request()->getRequestParam('page')??1;
-        $offset  =  ($page-1)*$size;
+        $where = [
+             [
+                'field'=>'user_id',
+                'value'=> $this->loginUserinfo['id'],
+                'operate' => '=',
+             ]
+        ];
+        if(
+            $requestData['ids']
+        ){
+            $where[] = [
+                'field'=>'id',
+                'value'=> json_decode($requestData['ids'],true),
+                'operate' => 'IN',
+            ];
+        }
+        $res = AdminUserFinanceExportRecord::findByConditionV4(
+            $where
+        );
+
         $config = [
             'path' => TEMP_FILE_PATH // xlsx文件保存路径
         ];
         $filename = date('YmdHis').'xlsx';
-        $exportDataToXlsRes = NewFinanceData::parseDataToXls(
+        NewFinanceData::parseDataToXls(
             $config,$filename,[],$res,'sheet1'
         );
 
-        return $this->writeJson(200,  [
-            'page' => $page,
-            'pageSize' =>$size,
-            'total' => 1,
-            'totalPage' => 1,
-        ],  [
+        return $this->writeJson(200,  [],  [
             'path' => TEMP_FILE_PATH,
             'filename' => $filename
         ],'成功');
