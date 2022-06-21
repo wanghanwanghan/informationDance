@@ -636,7 +636,7 @@ class FinanceController extends ControllerBase
 
     public function exportExportDetails(){
         $requestData =  $this->getRequestData();
-        
+
         $res = AdminUserFinanceExportDataRecord::findByUserAndExportId(
             $this->loginUserinfo['id'],
             $requestData['id']
