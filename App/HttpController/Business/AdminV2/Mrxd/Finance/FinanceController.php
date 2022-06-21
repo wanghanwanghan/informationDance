@@ -730,7 +730,7 @@ class FinanceController extends ControllerBase
     function exportFinanceData()
     {
         if(
-            ConfigInfo::setRedisNx('exportFinanceData')
+            !ConfigInfo::setRedisNx('exportFinanceData')
         ){
             return $this->writeJson(201, null, [],  '请勿重复提交');
         }
@@ -785,6 +785,7 @@ class FinanceController extends ControllerBase
             return  $this->writeJson(200);
         }
 
+        ConfigInfo::removeRedisNx('exportFinanceData');
         return $this->writeJson(200);
 
         $config = [
