@@ -118,7 +118,7 @@ class JinCaiShuKeService extends ServiceBase
                     'purchaserTaxNo'=>$val['gfsh'],
                     'purchaserName'=>$val['gfmc'],
                 ];
-                if($content['sjlx'] == 2){
+                if($content['sjlx'] == 1){
                     $invoiceInData = InvoiceIn::create()->where("invoiceCode = '{$insert['invoiceCode']}' and invoiceNumber = '{$insert['invoiceNumber']}'")->get();
                     if(empty($invoiceInData)){
                         InvoiceIn::create()->data($insert)->save();
