@@ -343,14 +343,17 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
 
             foreach($financeDatas['details'] as $financeData){
                 $AdminUserFinanceUploadDataRecord = AdminUserFinanceUploadDataRecord::
-                findById($financeData['UploadDataRecordId'])->toArray();
-
+                    findById($financeData['UploadDataRecordId'])->toArray();
+               $priceItem =    $AdminUserFinanceUploadDataRecord['price'];
+               if($chargeBefore){
+                   $priceItem = 0;
+               }
                 $AdminUserFinanceExportDataRecordId = AdminUserFinanceExportDataRecord::addRecordV2(
                     [
                         'user_id' => $AdminUserFinanceUploadDataRecord['user_id'],
                         'export_record_id' => $AdminUserFinanceExportRecordId,
                         'upload_data_id' => $financeData['UploadDataRecordId'],
-                        'price' => $AdminUserFinanceUploadDataRecord['price'],
+                        'price' => $priceItem,
                         'detail' => $AdminUserFinanceUploadDataRecord['price_type_remark']?:'',
                         'batch' => $queueData['id'].'_'.$financeData['UploadDataRecordId'],
                         'queue_id' => $queueData['id'],

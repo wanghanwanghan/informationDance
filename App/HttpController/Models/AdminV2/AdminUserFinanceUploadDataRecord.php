@@ -375,6 +375,24 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         return $res;
     }
 
+    public static function updateRealPrice($id,$realPrice,$priceRemark){
+
+        $res = self::findById($id);
+        $res2 = $res->update([
+            'real_price' => $realPrice,
+            'real_price_remark' => $priceRemark,
+        ]);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceUploadDataRecord updateRealPrice start',
+                '$realPrice' =>$realPrice,
+                '$priceRemark' =>$priceRemark,
+                '$res2' =>$res2,
+            ])
+        );
+        return $res2;
+    }
+
     // $id,$recordId
     public static function updateChargeInfo($id,$uploadId){
         CommonService::getInstance()->log4PHP(
