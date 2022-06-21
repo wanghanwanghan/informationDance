@@ -197,7 +197,7 @@ class JinCaiShuKeService extends ServiceBase
             'page' => trim($page),
             'pageSize' => $pageSize - 0 > 1000 ? '1000' : trim($pageSize),
         ];
-        CommonService::getInstance()->log4PHP($content,'info','http_return_data');
+//        CommonService::getInstance()->log4PHP($content,'info','http_return_data');
         $signType = '0';
 
         $post_data = [
