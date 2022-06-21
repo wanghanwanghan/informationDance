@@ -205,19 +205,24 @@ class AdminUserFinanceExportDataQueue extends ModelBase
 
 
 
-    public static function updateStatusById($id,$status){
-
+    public static function updateStatusById(
+        $id,$status
+    ){
+        // 吃完饭 走一下啊
+        // banner: 切出图来  设计多少换多少
+        //   二期： 没开发完的
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'AdminUserFinanceExportDataQueue updateStatusById   '=>'start',
-                '$id,'=>$id,
-                '$status'=>$status,
+                'AdminUserFinanceExportDataQueue  updateStatusById start' ,
+                'params $status ' =>$status,
+                'params $id ' =>$id
             ])
         );
-        $info = AdminUserFinanceExportDataQueue::findById($id);
-
+        $info = AdminUserFinanceExportDataQueue::create()->where('id',$id)->get();
         return $info->update([
+            'id' => $id,
             'status' => $status,
+            'updated_at'=>time()
         ]);
     }
 
