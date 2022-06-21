@@ -162,7 +162,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
         //将客户名单解析到db
         self::parseCompanyDataToDb(1);
 
-        //计算价格（）
+        //计算价格|
         self::calcluteFinancePrice(1);
 
         //找到需要导出的 拉取财务数据
@@ -253,7 +253,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
     static function  exportFinanceData($limit){
         $queueDatas =  AdminUserFinanceExportDataQueue::findBySql(
             " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_confirmed. " 
-             AND touch_time  IS Null  LIMIT $limit 
+                    AND touch_time  IS Null  LIMIT $limit 
             "
         );
         foreach($queueDatas as $queueData){
@@ -262,7 +262,8 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             );
 
             $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
-            //之前是否扣费过
+
+            //本名单之前是否扣费过
             $chargeBefore = AdminUserFinanceUploadRecord::ifHasChargeBefore($uploadRes['id']);
 
             $finance_config = AdminUserFinanceUploadRecord::getFinanceConfigArray($queueData['upload_record_id']);
@@ -284,13 +285,14 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 return  false;
             }
 
-            // 实际扣费
+            // 实际扣费了
             $price = 0;
             if(
                 $uploadRes['money'] > 0 &&
                 !$chargeBefore
             ){
                 $price = $uploadRes['money'];
+                //扣费
                 $res = \App\HttpController\Models\AdminV2\AdminNewUser::charge(
                     $uploadRes['user_id'],
                     $uploadRes['money'],
@@ -312,7 +314,55 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 if(!$res  ){
                     return  false;
                 }
-                AdminUserFinanceUploadRecord::updateLastChargeDate($uploadRes['id'],date('Y-m-d H:i:s'));
+                //设置上传收费时间|本名单的
+                $res = AdminUserFinanceUploadRecord::updateLastChargeDate($uploadRes['id'],date('Y-m-d H:i:s'));
+                if(!$res  ){
+                    return  false;
+                }
+
+                foreach($financeDatas['details'] as $financeData){
+                    $AdminUserFinanceUploadDataRecord = AdminUserFinanceUploadDataRecord::
+                                    findById($financeData['UploadDataRecordId'])->toArray();
+                    $priceItem =    intval($AdminUserFinanceUploadDataRecord['real_price']);
+                    // 收费了
+                    if($priceItem){
+                        //设置收费记录
+                        $AdminUserFinanceChargeInfoId = AdminUserFinanceChargeInfo::addRecordV2(
+                            [
+                                'user_id' => $AdminUserFinanceUploadDataRecord['user_id'],
+                                'batch' => $AdminUserFinanceUploadDataRecord['id'].'_'.$queueData['id'],
+                                'entName' => $financeData['entName'],
+                                'start_year' => $AdminUserFinanceUploadDataRecord['charge_year_start'],
+                                'end_year' => $AdminUserFinanceUploadDataRecord['charge_year_end'],
+                                'year' => $AdminUserFinanceUploadDataRecord['charge_year'],
+                                'price' => $priceItem,
+                                'price_type' => $AdminUserFinanceUploadDataRecord['price_type'],
+                                'status' => AdminUserFinanceChargeInfo::$state_init,
+                            ]
+                        );
+                        if(!$AdminUserFinanceChargeInfoId  ){
+                            return  false;
+                        }
+                        //设置上次计费时间 |具体用户对应的企业数据
+                        $res = AdminUserFinanceData::updateLastChargeDate(
+                            $AdminUserFinanceUploadDataRecord['user_finance_data_id'],
+                            date('Y-m-d H:i:s')
+                        );
+                        if(!$res  ){
+                            return  false;
+                        }
+
+                        //设置缓存过期时间
+                        $res = AdminUserFinanceData::updateCacheEndDate(
+                            $AdminUserFinanceUploadDataRecord['user_finance_data_id'],
+                            date('Y-m-d H:i:s'),
+                            $finance_config['cache']
+                        );
+                        if(!$res  ){
+                            return  false;
+                        }
+                    }
+                }
             }
 
             // 设置导出记录
@@ -343,6 +393,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 return  false;
             }
 
+            //设置细的导出记录
             foreach($financeDatas['details'] as $financeData){
                 $AdminUserFinanceUploadDataRecord = AdminUserFinanceUploadDataRecord::
                     findById($financeData['UploadDataRecordId'])->toArray();
@@ -364,42 +415,6 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 );
                 if(!$AdminUserFinanceExportDataRecordId  ){
                     return  false;
-                }
-
-                // 如果真收费了
-                if($priceItem){
-                    //设置收费记录
-                    $AdminUserFinanceChargeInfoId = AdminUserFinanceChargeInfo::addRecordV2(
-                        [
-                            'user_id' => $AdminUserFinanceUploadDataRecord['user_id'],
-                            'batch' => $AdminUserFinanceUploadDataRecord['id'].'_'.$queueData['id'],
-                            'entName' => $financeData['entName'],
-                            'start_year' => $AdminUserFinanceUploadDataRecord['charge_year_start'],
-                            'end_year' => $AdminUserFinanceUploadDataRecord['charge_year_end'],
-                            'year' => $AdminUserFinanceUploadDataRecord['charge_year'],
-                            'price' => $priceItem,
-                            'price_type' => $AdminUserFinanceUploadDataRecord['price_type'],
-                            'status' => AdminUserFinanceChargeInfo::$state_init,
-                        ]
-                    );
-                    //设置上次计费时间
-                    $res = AdminUserFinanceData::updateLastChargeDate(
-                        $AdminUserFinanceUploadDataRecord['user_finance_data_id'],
-                        date('Y-m-d H:i:s')
-                    );
-                    if(!$res  ){
-                        return  false;
-                    }
-
-                    //设置缓存过期时间
-                    $res = AdminUserFinanceData::updateCacheEndDate(
-                        $AdminUserFinanceUploadDataRecord['user_finance_data_id'],
-                        date('Y-m-d H:i:s'),
-                        $finance_config['cache']
-                    );
-                    if(!$res  ){
-                        return  false;
-                    }
                 }
             }
 
@@ -455,7 +470,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             if(!$res){
                 return false;
             }
-
+            //实际计算 需要收多少钱
             $res=  AdminUserFinanceUploadRecord::calAndSetMoney(
                 $uploadRecord['id']
             );

@@ -454,6 +454,8 @@ class AdminUserFinanceUploadRecord extends ModelBase
             'money' => $money,
         ]);
     }
+
+    //计算到底多少钱
     static function  calMoney($uploadId){
         CommonService::getInstance()->log4PHP(
             json_encode([

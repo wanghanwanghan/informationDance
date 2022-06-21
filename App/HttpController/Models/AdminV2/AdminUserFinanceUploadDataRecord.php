@@ -393,7 +393,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         return $res2;
     }
 
-    // $id,$recordId
+    //  设置收费类型|按包年收费 还是按单年收费
     public static function updateChargeInfo($id,$uploadId){
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -410,34 +410,40 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
 
         //用户的配置
         $finance_config = json_decode($uploadInfo['finance_config'],true);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'AdminUserFinanceUploadDataRecord updateChargeInfo $finance_config',
-                'params finance_config' =>$uploadInfo['finance_config'],
-                '$finance_config' =>$finance_config,
-            ])
-        );
+
         //用户该次选择的年限
         $selectYears = json_decode($uploadInfo['years'],true);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'AdminUserFinanceUploadDataRecord updateChargeInfo $finance_config',
-                'params years' =>$uploadInfo['years'],
-                '$selectYears' =>$selectYears,
-            ])
-        );
+
         //用户财务其他信息
         $user_finance_data = AdminUserFinanceData::findById($dataInfo['user_finance_data_id']);
 
         //按包年计费？按年计费
         $annulYears = json_decode($finance_config['annually_years'],true);
         sort($annulYears);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'AdminUserFinanceUploadDataRecord updateChargeInfo $annulYears',
-                '$annulYears' =>$annulYears,
-            ])
-        );
+
+        //如果都不属于包年年度 当然要按照单年计算
+        if(
+            !in_array($user_finance_data['year'],$annulYears)
+        ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'AdminUserFinanceUploadDataRecord updateChargeInfo  not in annulYears, charge by year ,',
+                    'year'=>$user_finance_data['year'],
+                    '$annulYears' =>$annulYears,
+                ])
+            );
+            return self::updatePriceType(
+                [
+                    'id' => $id,
+                    'price' => self::getYearPriceByConfig($user_finance_data['year'],$finance_config),
+                    'price_type' => self::$chargeTypeByYear,
+                    'price_type_remark' =>  '不属包年年度,按单年计算',
+                    'charge_year' => $user_finance_data['year'],
+                    'charge_year_start' => '',
+                    'charge_year_end' => '',
+                ]
+            );
+        }
 
         //默认是包年
         self::updatePriceType(
@@ -451,30 +457,8 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
                 'charge_year_end' => end($annulYears),
             ]
         );
-        if(
-            !in_array($user_finance_data['year'],$annulYears)
-        ){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'AdminUserFinanceUploadDataRecord updateChargeInfo  not in annulYears, charge by year ,',
-                    'year'=>$user_finance_data['year'],
-                    '$annulYears' =>$annulYears,
-                ])
-            );
-            self::updatePriceType(
-                [
-                    'id' => $id,
-                    'price' => self::getYearPriceByConfig($user_finance_data['year'],$finance_config),
-                    'price_type' => self::$chargeTypeByYear,
-                    'price_type_remark' =>  '不属包年年度,按单年计算',
-                    'charge_year' => $user_finance_data['year'],
-                    'charge_year_start' => '',
-                    'charge_year_end' => '',
-                ]
-            );
-        }
 
-        //如果配置的单年度 不按包年计算
+        //如果配置的单年度不按包年计算
         if(!$finance_config['single_year_charge_as_annual']){
             CommonService::getInstance()->log4PHP(
                 json_encode([
@@ -484,7 +468,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
                 ])
             );
 
-            // 数据不连续 ： 改包年为单年
+            // 数据不连续(有的年份缺失了) ： 改包年为单年
             if(
                 !AdminUserFinanceData::checkIfAllYearsDataIsValid(
                     $user_finance_data['user_id'],
