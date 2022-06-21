@@ -23,7 +23,28 @@ class AdminUserFinanceConfig extends ModelBase
             'user_id' => $userId,     
             'status' => 1,
         ])->get();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceConfig  getConfigByUserId start',
+                '$userId'=>$userId,
+                '$res'=>$res,
+            ])
+        );
         return $res;
+    }
+
+    static function getDailyMaxNums($userId){
+        $res =  self::getConfigByUserId($userId);
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceConfig  getDailyMaxNums  start',
+                '$userId'=>$userId,
+                'max_daily_nums'=>$res->getAttr('max_daily_nums'),
+            ])
+        );
+
+        return $res->getAttr('max_daily_nums');
     }
 
     static function getConfigDataByUserId($userId){
@@ -63,7 +84,8 @@ class AdminUserFinanceConfig extends ModelBase
             'cache' => $requestData['cache'],  
             'type' => $requestData['type'],  
             'allowed_fields' => $requestData['allowed_fields'],  
-            'status' => $requestData['status'],  
+            'status' => $requestData['status'],
+            'max_daily_nums' => $requestData['max_daily_nums'],
         ])->save();  
     }
 
@@ -77,41 +99,27 @@ class AdminUserFinanceConfig extends ModelBase
     }
 
     public static function checkExportYearsNums($userid,$yearsNums){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'checkExportYearsNums   start',
-                'params $userid '=> $userid,
-                'params $yearsNums '=> $yearsNums,
-            ])
-        );
 
         $info = self::getConfigByUserId($userid);
         $data = $info->toArray();
-        //$config = json_decode($data['finance_config'],true);
-
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'checkExportYearsNums   get $config',
-                'params $data '=> $data,
-            ])
-        );
-
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'checkExportYearsNums   ',
-                'params allowed_total_years_num '=> $data['allowed_total_years_num'],
-                'params $yearsNums '=> $yearsNums,
-            ])
-        );
         if($data['allowed_total_years_num'] < $yearsNums){
             return  CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'checkExportYearsNums  false ',
-                    'params allowed_total_years_num '=> $data['allowed_total_years_num'],
+                    'checkExportYearsNums   false',
+                    'params $userid '=> $userid,
                     'params $yearsNums '=> $yearsNums,
+                    'allowed_total_years_num' =>$data['allowed_total_years_num'],
                 ])
             );
         }
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'checkExportYearsNums   true',
+                'params $userid '=> $userid,
+                'params $yearsNums '=> $yearsNums,
+                'allowed_total_years_num' =>$data['allowed_total_years_num'],
+            ])
+        );
         return true ;
     }
 }

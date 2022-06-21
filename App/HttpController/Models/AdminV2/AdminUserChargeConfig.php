@@ -36,6 +36,20 @@ class AdminUserChargeConfig extends ModelBase
         ]);
     }
 
+    public static function getDailyUsedNums($user_id){
+
+        $info = self::findByUser($user_id);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                ' AdminUserChargeConfig getDailyUsedNums ',
+                'parmas $user_id ' => $user_id,
+                'daily_used_nums' => $info->getAttr('daily_used_nums'),
+            ])
+        );
+
+        return $info->getAttr('daily_used_nums');
+    }
+
     public static function setAllowedTotalNums($user_id,$allowed_total_nums){
         $info = self::findByUser($user_id);
 
@@ -61,6 +75,13 @@ class AdminUserChargeConfig extends ModelBase
     }
 
     public static function addRecord($requestData){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                ' AdminUserChargeConfig addRecord ',
+                'parmas $requestData ' => $requestData,
+            ])
+        );
+
         try {
            $res =  AdminUserChargeConfig::create()->data([
                 'user_id' => $requestData['user_id'],  
@@ -77,13 +98,29 @@ class AdminUserChargeConfig extends ModelBase
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'AdminUserFinanceData sql err',
-                    $e->getMessage(),
+                    ' AdminUserChargeConfig addRecord faile',
+                    'parmas $requestData ' => $requestData,
+                    $e->getMessage()
                 ])
-            );  
+            );
         }  
 
         return $res;
+    }
+
+    public static function addRecordV2($requestData){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                ' AdminUserChargeConfig addRecordV2 ',
+                'parmas $requestData ' => $requestData,
+            ])
+        );
+        $oldRes = self::findByUser($requestData['user_id']);
+        if($oldRes){
+            return  $oldRes->getAttr('id');
+        }
+
+        return  self::addRecord($requestData);
     }
 
     public static function findByCondition($whereArr,$limit){
@@ -140,6 +177,25 @@ class AdminUserChargeConfig extends ModelBase
         return empty($data)? false:true;
     }
 
+    public static function checkIfCanRun($userId,$aimNums){
+
+        $DailyMaxNums = AdminUserFinanceConfig::getDailyMaxNums($userId);
+        $usedNums = self::getDailyUsedNums($userId);
+        $res =  $DailyMaxNums > ($usedNums + $aimNums) ?true:false ;
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                ' admin charge config checkIfCanRun  start',
+                '$userId'=>$userId,
+                '$aimNums'=>$aimNums,
+                '$DailyMaxNums' =>$DailyMaxNums,
+                '$usedNums' =>$usedNums,
+                '$res' =>$res
+            ])
+        );
+        return $res;
+    }
+
     public static function findById($id){
         $res =  AdminUserChargeConfig::create()
             ->where('id',$id)            
@@ -148,6 +204,12 @@ class AdminUserChargeConfig extends ModelBase
     }
 
     public static function findByUser($userId){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                ' AdminUserChargeConfig findByUser ',
+                'parmas $userId ' => $userId,
+            ])
+        );
         $res =  AdminUserChargeConfig::create()
             ->where([
                 'user_id' => $userId,

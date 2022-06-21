@@ -57,29 +57,39 @@ class AdminUserFinanceUploadRecord extends ModelBase
         ];
 
     }
-    public static function addUploadRecord($requestData){ 
+    public static function addUploadRecord($requestData){
+        $dbData = [
+            'user_id' => $requestData['user_id'],
+            'years' => $requestData['years'],
+            'file_path' => $requestData['file_path'],
+            'file_name' => $requestData['file_name'],
+            'title' => $requestData['title']?:'',
+            'finance_config' => $requestData['finance_config'],
+            'readable_price_config' => $requestData['readable_price_config'],
+            'reamrk' => $requestData['reamrk']?:'',
+            'status' => $requestData['status']?:1,
+        ];
         try {
-           $res =  AdminUserFinanceUploadRecord::create()->data([
-                'user_id' => $requestData['user_id'], 
-                'years' => $requestData['years'], 
-                'file_path' => $requestData['file_path'],  
-                'file_name' => $requestData['file_name'],  
-                'title' => $requestData['title']?:'',
-                'finance_config' => $requestData['finance_config'],  
-                'readable_price_config' => $requestData['readable_price_config'],  
-                'reamrk' => $requestData['reamrk']?:'',
-                'status' => $requestData['status']?:1,
-            ])->save();
+           $res =  AdminUserFinanceUploadRecord::create()->data($dbData)->save();
 
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'AdminUserFinanceUploadRecord addUploadRecord sql err',
-                    $e->getMessage(),
+                    'AdminUserFinanceUploadRecord addUploadRecord false',
+                    '$requestData' => $requestData,
+                    '$dbData' => $dbData,
+                    'return getMessage' =>  $e->getMessage(),
                 ])
             );  
-        }  
-
+        }
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceUploadRecord addUploadRecord ok',
+                '$requestData' => $requestData,
+                '$dbData' => $dbData,
+                'return $res' => $res
+            ])
+        );
         return $res;
     }
     public static function pullFinanceDataById($upload_record_id){
@@ -107,7 +117,16 @@ class AdminUserFinanceUploadRecord extends ModelBase
             'user_id' => $user_id,  
             'file_name' => $file_name,   
             // 'status' => 1,  
-        ])->get(); 
+        ])->get();
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceUploadRecord   findByIdAndFileName ',
+                'params $user_id'=> $user_id,
+                'params $file_name'=> $file_name,
+                'retrun $res'=> $res,
+            ])
+        );
 
         return $res;
     }

@@ -226,6 +226,24 @@ class AdminUserFinanceExportDataQueue extends ModelBase
         ]);
     }
 
+    public static function updatePriorityById(
+        $id,$priority
+    ){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceExportDataQueue  updatePriorityById start' ,
+                'params $priority ' =>$priority,
+                'params $id ' =>$id
+            ])
+        );
+        $info = self::findById($id);
+        return $info->update([
+            'id' => $id,
+            'status' => $priority,
+            'updated_at'=>time()
+        ]);
+    }
+
 
     public static function setFilePath($id,$path,$fileName){
 

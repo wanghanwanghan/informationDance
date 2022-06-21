@@ -265,10 +265,13 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 $queueData['id'],date('Y-m-d H:i:s')
             );
 
+
             $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
+            //之前是否扣费过
+            $chargeBefore = AdminUserFinanceUploadRecord::ifHasChargeBefore($uploadRes['id']);
+
 
             $finance_config = AdminUserFinanceUploadRecord::getFinanceConfigArray($queueData['upload_record_id']);
-
 
             //财务数据
             $financeDatas = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordIdV2(
@@ -283,8 +286,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 $xlxsData['path'],
                 $xlxsData['filename']
             );
-            //之前是否扣费过
-            $chargeBefore = AdminUserFinanceUploadRecord::ifHasChargeBefore($uploadRes['id']);
+
             // 实际扣费
             $price = 0;
             if(
@@ -395,7 +397,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             AdminUserFinanceExportDataQueue::updateStatusById(
                 $queueData['id'],
                 AdminUserFinanceExportDataQueue::$state_succeed
-            ); 
+            );
             AdminUserFinanceExportDataQueue::setTouchTime(
                 $queueData['id'],NULL
             );

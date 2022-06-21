@@ -7,6 +7,7 @@ use App\HttpController\Models\AdminNew\AdminNewUser;
 use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\AdminV2\AdminMenuItems;
 use App\HttpController\Models\AdminV2\AdminNewMenu;
+use App\HttpController\Models\AdminV2\AdminUserChargeConfig;
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\Api\CompanyCarInsuranceStatusInfo;
@@ -137,6 +138,7 @@ class FinanceController extends ControllerBase
             'allowed_total_years_num' => $requestData['allowed_total_years_num'],
             //是否需要确认
             'needs_confirm' => $requestData['needs_confirm'],
+            'max_daily_nums' => $requestData['max_daily_nums']?:0,
             'status' => 1,
         ];
         $res = AdminUserFinanceConfig::addRecordV2(
@@ -173,6 +175,7 @@ class FinanceController extends ControllerBase
             'needs_confirm' => $requestData['needs_confirm'] ?
                 $requestData['needs_confirm']: $info['needs_confirm'],
             'allowed_fields' => $requestData['allowed_fields'] ? $requestData['allowed_fields']: $info['allowed_fields'],
+            'max_daily_nums' => $requestData['max_daily_nums'] ? $requestData['allowed_fields']: $info['max_daily_nums'],
         ];
         AdminUserFinanceConfig::setStatus(
             $requestData['id'],AdminUserFinanceConfig::$state_del
@@ -218,12 +221,6 @@ class FinanceController extends ControllerBase
     // 上传客户名单
     public function uploadeCompanyLists(){
         $years = trim($this->getRequestData('years'));
-        CommonService::getInstance()->log4PHP(
-           json_encode([
-               'uploadeCompanyLists start ',
-               'params years '=> $years,
-           ])
-        );
         if(empty($years) ){
             return $this->writeJson(206, [] ,   [], '缺少年度参数('.$years.')', true, []);
         }
@@ -249,7 +246,7 @@ class FinanceController extends ControllerBase
                 if(file_exists($path)){
                     CommonService::getInstance()->log4PHP(
                         json_encode([
-                            'uploadeCompanyLists   file_exists',
+                            'uploadeCompanyLists   file_exists continue',
                             'params $path '=> $path,
                         ])
                     );
@@ -260,7 +257,7 @@ class FinanceController extends ControllerBase
                 if(!file_exists($path)){
                     CommonService::getInstance()->log4PHP(
                         json_encode([
-                            'uploadeCompanyLists   file_not_exists',
+                            'uploadeCompanyLists   file_not_exists moveTo false ',
                             'params $path '=> $path,
                         ])
                     );
@@ -272,40 +269,26 @@ class FinanceController extends ControllerBase
                     $fileName
                 );
                 if($UploadRecordRes){
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            'uploadeCompanyLists find old  $UploadRecordRes',
-                            'params $fileName '=> $fileName,
-                            '$UploadRecordRes' => $UploadRecordRes,
-                        ])
-                    );
                     continue;
                 }
 
-                $tmpData = [
-                    'user_id' => $this->loginUserinfo['id'],
-                    'file_path' => $path,
-                    'years' => $requestData['years'],
-                    'file_name' => $fileName,
-                    'title' => $requestData['title']?:'',
-                    'reamrk' => $requestData['reamrk']?:'',
-                    'finance_config' => json_encode(
-                        AdminUserFinanceConfig::getConfigDataByUserId(
-                            $this->loginUserinfo['id']
-                        )
-                    ),
-                    'status' => AdminUserFinanceUploadRecord::$stateInit,
-                ];
                 $addUploadRecordRes = AdminUserFinanceUploadRecord::addUploadRecord(
-                    $tmpData
+                    [
+                        'user_id' => $this->loginUserinfo['id'],
+                        'file_path' => $path,
+                        'years' => $requestData['years'],
+                        'file_name' => $fileName,
+                        'title' => $requestData['title']?:'',
+                        'reamrk' => $requestData['reamrk']?:'',
+                        'finance_config' => json_encode(
+                            AdminUserFinanceConfig::getConfigDataByUserId(
+                                $this->loginUserinfo['id']
+                            )
+                        ),
+                        'status' => AdminUserFinanceUploadRecord::$stateInit,
+                    ]
                  );
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        'uploadeCompanyLists $addUploadRecordRes',
-                        'params $tmpData '=> $tmpData,
-                        '$addUploadRecordRes' => $addUploadRecordRes,
-                    ])
-                );
+
                 if(!$addUploadRecordRes){
                     continue;
                 }
@@ -315,7 +298,7 @@ class FinanceController extends ControllerBase
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         'uploadeCompanyLists false',
-                        'params $e '=> $e->getMessage()
+                        ' getMessage '=> $e->getMessage()
                     ])
                 );
             } 
@@ -775,6 +758,22 @@ class FinanceController extends ControllerBase
         ){
             ConfigInfo::removeRedisNx('exportFinanceData2');
             return $this->writeJson(201, null, [],  '余额不足 需要至少'. $uploadRes['money'].'元');
+        }
+
+        //检查账户是否可以拉取 如果到达今日次数等限制的话 就跳过去      把优先级调的低一些 updatePriorityById
+        $totalNeedExportNums = count(
+            AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
+                $uploadRes['user_id'],
+                $uploadRes['id'],
+                ['id']
+            )
+        );
+
+        //每日最大次数限制
+        if(
+            !AdminUserChargeConfig::checkIfCanRun($uploadRes['user_id'],$totalNeedExportNums)
+        ){
+            return  $this->writeJson(201,[],'超出每日最大次数，联系管理员');
         }
 
         if(
