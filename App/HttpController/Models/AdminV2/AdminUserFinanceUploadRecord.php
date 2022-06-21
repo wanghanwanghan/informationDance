@@ -186,15 +186,17 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
 
     public static function findById($id){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'Upload record   findById '=> 'start',
-                '$id'=>$id
-            ])
-        );
+
         $res =  AdminUserFinanceUploadRecord::create()
             ->where('id',$id)
             ->get();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'Upload record   findById '=> 'start',
+                '$id'=>$id,
+                '$res' =>$res
+            ])
+        );
         return $res;
     }
 

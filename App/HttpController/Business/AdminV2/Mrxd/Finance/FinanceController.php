@@ -746,13 +746,6 @@ class FinanceController extends ControllerBase
         }
 
         $uploadRes = AdminUserFinanceUploadRecord::findById($requestData['id'])->toArray();
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'exportFinanceData find  $uploadRes ' ,
-                'params id ' =>$requestData['id'] ,
-                '$uploadRes' => $uploadRes,
-            ])
-        );
 
         //检查状态
         if(
