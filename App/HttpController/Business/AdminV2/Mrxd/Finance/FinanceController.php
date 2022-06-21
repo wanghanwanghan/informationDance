@@ -775,7 +775,7 @@ class FinanceController extends ControllerBase
                 ]
             )
         ){
-            return  $this->writeJson(200);
+            return  $this->writeJson(200,[],'已发起下载，请稍后去我的下载中查看');
         }
 
         ConfigInfo::removeRedisNx('exportFinanceData1');
