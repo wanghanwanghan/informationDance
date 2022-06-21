@@ -283,10 +283,15 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 $xlxsData['path'],
                 $xlxsData['filename']
             );
+            //之前是否扣费过
+            $chargeBefore = AdminUserFinanceUploadRecord::ifHasChargeBefore($uploadRes['id']);
             // 实际扣费
+            $price = 0;
             if(
-                $uploadRes['money'] > 0
+                $uploadRes['money'] > 0 &&
+                !$chargeBefore
             ){
+                $price = $uploadRes['money'];
                 $res = \App\HttpController\Models\AdminV2\AdminNewUser::charge(
                     $uploadRes['user_id'],
                     $uploadRes['money'],
@@ -308,13 +313,14 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 if(!$res ){
                     continue;
                 }
+                AdminUserFinanceUploadRecord::updateLastChargeDate($uploadRes['id'],date('Y-m-d H:i:s'));
             }
 
             // 设置导出记录
             $AdminUserFinanceExportRecordId = AdminUserFinanceExportRecord::addRecordV2(
                 [
                     'user_id' => $uploadRes['user_id'],
-                    'price' => $uploadRes['money'],
+                    'price' => $price,
                     'total_company_nums' => 0,
                     'config_json' => $uploadRes['finance_config'],
                     'upload_record_id' => $queueData['upload_record_id'],
@@ -344,7 +350,8 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                     ]
                 );
                 if(
-                    $AdminUserFinanceUploadDataRecord['price'] > 0
+                    $AdminUserFinanceUploadDataRecord['price'] > 0 &&
+                    !$chargeBefore
                 ){
                     //设置收费记录
                     $AdminUserFinanceChargeInfoId = AdminUserFinanceChargeInfo::addRecordV2(
