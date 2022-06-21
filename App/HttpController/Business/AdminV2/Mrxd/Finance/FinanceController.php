@@ -636,7 +636,7 @@ class FinanceController extends ControllerBase
 
     public function exportExportDetails(){
         $requestData =  $this->getRequestData();
-
+        
         $res = AdminUserFinanceExportDataRecord::findByUserAndExportId(
             $this->loginUserinfo['id'],
             $requestData['id']
@@ -659,15 +659,15 @@ class FinanceController extends ControllerBase
             }
         }
 
-        $requestData =  $this->getRequestData();
+//        $requestData =  $this->getRequestData();
 
-        $res = AdminUserFinanceExportRecord::findByCondition(
-            [
-                // 'user_id' => $userId
-                'user_id' => $this->loginUserinfo['id']
-            ],
-            0, 20
-        );
+//        $res = AdminUserFinanceExportRecord::findByCondition(
+//            [
+//                // 'user_id' => $userId
+//                'user_id' => $this->loginUserinfo['id']
+//            ],
+//            0, 20
+//        );
         $config = [
             'path' => TEMP_FILE_PATH // xlsx文件保存路径
         ];
