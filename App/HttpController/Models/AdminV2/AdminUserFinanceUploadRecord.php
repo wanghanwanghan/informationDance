@@ -476,13 +476,13 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
                 //之前已经收费过
                 if(
-                    $user_finance_data['cache_end_date'] >= date('Y-m-d H:i:s')
-//                    AdminUserFinanceChargeInfo::ifChargedBeforeV2(
-//                        $uploadData['user_id'],
-//                        $user_finance_data['entName'],
-//                        $uploadData['charge_year_start'],
-//                        $uploadData['charge_year_end']
-//                    )
+                    $user_finance_data['cache_end_date'] >= date('Y-m-d H:i:s') ||
+                    AdminUserFinanceChargeInfo::ifChargedBeforeV2(
+                        $uploadData['user_id'],
+                        $user_finance_data['entName'],
+                        $uploadData['charge_year_start'],
+                        $uploadData['charge_year_end']
+                    )
                 ){
                     CommonService::getInstance()->log4PHP(
                         json_encode([
@@ -535,12 +535,12 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 };
                 //之前已经收费过
                 if(
-                    $user_finance_data['cache_end_date'] >= date('Y-m-d H:i:s')
-//                    AdminUserFinanceChargeInfo::ifChargedBefore(
-//                            $uploadData['user_id'],
-//                            $user_finance_data['entName'],
-//                            $uploadData['charge_year']
-//                        )
+                    $user_finance_data['cache_end_date'] >= date('Y-m-d H:i:s')   ||
+                    AdminUserFinanceChargeInfo::ifChargedBefore(
+                            $uploadData['user_id'],
+                            $user_finance_data['entName'],
+                            $uploadData['charge_year']
+                        )
                 ){
                     CommonService::getInstance()->log4PHP(
                         json_encode([
