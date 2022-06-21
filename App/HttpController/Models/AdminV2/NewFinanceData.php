@@ -281,11 +281,12 @@ class NewFinanceData extends ModelBase
                 '$filename' => $filename
             ])
         );
-        $header = array_merge(
-            [
-                '企业名称',
-                '年度',
-            ],self::getExportHeaders($uploadId));
+//        $header = array_merge(
+//            [
+//                '企业名称',
+//                '年度',
+//            ],self::getExportHeaders($uploadId));
+        $header = self::getExportHeaders($uploadId);
         CommonService::getInstance()->log4PHP(
             json_encode([
                 '$header ',
