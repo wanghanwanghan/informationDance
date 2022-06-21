@@ -203,6 +203,25 @@ class AdminUserFinanceExportDataQueue extends ModelBase
         ]);
     }
 
+
+
+    public static function updateStatusById($id,$status){
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceExportDataQueue updateStatusById   '=>'start',
+                '$id,'=>$id,
+                '$status'=>$status,
+            ])
+        );
+        $info = AdminUserFinanceExportDataQueue::findById($id);
+
+        return $info->update([
+            'status' => $status,
+        ]);
+    }
+
+
     public static function setFilePath($id,$path,$fileName){
 
         CommonService::getInstance()->log4PHP(
