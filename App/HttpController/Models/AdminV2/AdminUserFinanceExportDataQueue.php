@@ -84,6 +84,7 @@ class AdminUserFinanceExportDataQueue extends ModelBase
         return $info->update([
             'id' => $id,
             'status' => $status,
+            'updated_at'=>time()
         ]);
     }
 
