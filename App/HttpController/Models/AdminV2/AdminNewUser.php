@@ -92,19 +92,18 @@ class AdminNewUser extends ModelBase
     public static function charge($id,$money,$batchNo,$datas,$type = 5){
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'admin new user charge   '=> 'if needs charge ',
-                'money' =>  $money
+                'admin new user charge   '=> 'start',
+                '$id' =>  $id,
+                'money' =>  $money,
+                '$batchNo' =>  $batchNo,
+                '$datas' =>  $datas,
+                '$type' =>  $type,
             ])
         );
         if(
             FinanceLog::findByBatch($batchNo)
         ){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'admin new user charge   '=> 'batch exists',
-                    '$batchNo' =>  $batchNo
-                ])
-            );
+
             return true;
         }
         // 实际扣费

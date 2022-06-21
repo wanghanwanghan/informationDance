@@ -20,7 +20,13 @@ class AdminUserFinanceExportRecord extends ModelBase
     static $stateParsed = 5;
     static $stateExported = 10;
 
-    public static function addExportRecord($requestData){ 
+    public static function addExportRecord($requestData){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'export record  addExportRecord start',
+               '$requestData' =>$requestData,
+            ])
+        );
         try {
            $res =  AdminUserFinanceExportRecord::create()->data([
                 'user_id' => $requestData['user_id'], 
@@ -37,10 +43,11 @@ class AdminUserFinanceExportRecord extends ModelBase
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'addCarInsuranceInfo Throwable continue',
-                    $e->getMessage(),
+                    'export record  addExportRecord faile',
+                    '$requestData' =>$requestData,
+                    'message' => $e->getMessage()
                 ])
-            );  
+            );
         }  
 
         return $res;
@@ -77,12 +84,19 @@ class AdminUserFinanceExportRecord extends ModelBase
     }
 
     public static function findByBatch($batch){
+
         $res =  AdminUserFinanceExportRecord::create()->where([
 //            'user_id' => $user_id,
             'batch' => $batch,
             // 'status' => 1,
         ])->get();
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'export record findByBatch ' ,
+                '$batch' =>$batch,
+                '$res' =>$res,
+            ])
+        );
         return $res;
     }
 
@@ -105,6 +119,13 @@ class AdminUserFinanceExportRecord extends ModelBase
     }
 
     static  function  addRecordV2($dataItem){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'export record start ' ,
+                '$dataItem' =>$dataItem
+            ])
+        );
+
         $exportRes = AdminUserFinanceExportRecord::findByBatch($dataItem['queue_id']);
         if($exportRes){
             return $exportRes->getAttr('id');

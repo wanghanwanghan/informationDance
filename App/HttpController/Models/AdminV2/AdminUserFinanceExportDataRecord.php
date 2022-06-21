@@ -21,6 +21,13 @@ class AdminUserFinanceExportDataRecord extends ModelBase
     static $stateExported = 10;
 
     static  function  addRecordV2($dataItem){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'export data record addRecordV2    '=> 'start',
+                '$dataItem' =>$dataItem,
+            ])
+        );
+
         $AdminUserFinanceExportRecord =  AdminUserFinanceExportDataRecord::findByBatch($dataItem['batch']);
         if(
             $AdminUserFinanceExportRecord
@@ -35,17 +42,29 @@ class AdminUserFinanceExportDataRecord extends ModelBase
 
 
     public static function findByBatch($batch){
+
         $res =  AdminUserFinanceExportDataRecord::create()->where([
 //            'user_id' => $user_id,
             'batch' => $batch,
             // 'status' => 1,
         ])->get();
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'export data record findByBatch    '=> 'start',
+                '$batch' =>$batch,
+                '$res' =>$res,
+            ])
+        );
         return $res;
     }
 
     public static function addExportRecord($requestData){
-       
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'export data record addExportRecord' => 'start',
+               '$requestData' =>$requestData,
+            ])
+        );
         try {
            $res =  AdminUserFinanceExportDataRecord::create()->data([
                 'user_id' => $requestData['user_id'], 
@@ -62,11 +81,11 @@ class AdminUserFinanceExportDataRecord extends ModelBase
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'addCarInsuranceInfo Throwable continue',
-                    $e->getMessage(),
-                    $requestData
+                    'export data record addExportRecord' => 'start',
+                    '$requestData' =>$requestData,
+                    'getMessage' => $e->getMessage(),
                 ])
-            );  
+            );
         }  
 
         return $res;

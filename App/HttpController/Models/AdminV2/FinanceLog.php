@@ -73,6 +73,13 @@ class FinanceLog extends ModelBase
                 'batch' => $batch
             ])
             ->get();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'finance log findByBatch  '=> 'start ',
+                '$batch' =>  $batch,
+                '$res' =>$res,
+            ])
+        );
         return $res;
     }
 

@@ -70,6 +70,16 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     public static function updateStatusById(
         $id,$status
     ){
+        // 吃完饭 走一下啊
+        // banner: 切出图来  设计多少换多少
+        //   二期： 没开发完的
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'AdminUserFinanceExportDataQueue  updateStatusById start' ,
+                'params $status ' =>$status,
+                'params $id ' =>$id
+            ])
+        );
         $info = AdminUserFinanceExportDataQueue::create()->where('id',$id)->get();
         return $info->update([
             'id' => $id,
@@ -182,7 +192,7 @@ class AdminUserFinanceExportDataQueue extends ModelBase
         $info = AdminUserFinanceExportDataQueue::findById($id);
         CommonService::getInstance()->log4PHP(
             json_encode([
-                ' export data queue   setTouchTime  '=>'start',
+                ' AdminUserFinanceExportDataQueue  setTouchTime  '=>'start',
                 '$id,' =>$id,
                 '$touchTime' =>$touchTime,
             ])
@@ -196,7 +206,7 @@ class AdminUserFinanceExportDataQueue extends ModelBase
 
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'setFilePath   '=>$id,$path,$fileName
+                'export data queue setFilePath   '=>$id,$path,$fileName
             ])
         );
         $info = AdminUserFinanceExportDataQueue::findById($id);

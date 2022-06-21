@@ -1030,12 +1030,23 @@ class AdminUserFinanceData extends ModelBase
     }
 
     public static function updateLastChargeDate($id,$date){
+        CommonService::getInstance()->log4PHP(
+           json_encode([
+               'user finance data updateLastChargeDate' =>'start',
+               '$id' =>$id,
+               '$date' =>$date,
+           ])
+        );
         $info = AdminUserFinanceData::create()
             ->where('id',$id)
             ->get();
         if(!$info ){
-            return CommonService::getInstance()->log4PHP(
-                'updateLastChargeDate failed  $id 不存在'.$id
+            return  CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'user finance data updateLastChargeDate' =>'faile 1 ',
+                    '$id' =>$id,
+                    '$date' =>$date,
+                ])
             );
         }
         return $info->update([
@@ -1045,15 +1056,38 @@ class AdminUserFinanceData extends ModelBase
     }
 
     public static function updateCacheEndDate($id,$date,$cacheHours){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'user finance data updateCacheEndDate' =>'start  ',
+                '$id' =>$id,
+                '$date' =>$date,
+                '$cacheHours' =>$cacheHours,
+            ])
+        );
+
         $info = AdminUserFinanceData::create()
             ->where('id',$id)
             ->get();
         if(!$info ){
-            return CommonService::getInstance()->log4PHP(
-                'updateCacheEndDate failed  $id 不存在'.$id
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'user finance data updateCacheEndDate' =>'faile 1  ',
+                    '$id' =>$id,
+                    '$date' =>$date,
+                    '$cacheHours' =>$cacheHours,
+                ])
             );
         }
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'user finance data updateCacheEndDate' =>' cache_end_date ',
+                '$date' =>$date,
+                '$cacheHours' =>$cacheHours,
+                'cache_end_date' => date(
+                    'Y-m-d H:i',strtotime('+'.$cacheHours.' hours',strtotime($date))
+                )
+            ])
+        );
         return $info->update([
             'id' => $id,
             'cache_end_date' => date(
