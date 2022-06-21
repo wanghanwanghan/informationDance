@@ -180,7 +180,13 @@ class AdminUserFinanceExportDataQueue extends ModelBase
 
     public static function setTouchTime($id,$touchTime){
         $info = AdminUserFinanceExportDataQueue::findById($id);
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                ' export data queue   setTouchTime  '=>'start',
+                '$id,' =>$id,
+                '$touchTime' =>$touchTime,
+            ])
+        );
         return $info->update([
             'touch_time' => $touchTime,
         ]);
@@ -203,6 +209,13 @@ class AdminUserFinanceExportDataQueue extends ModelBase
 
     // 用完今日余额的
     public static function findBySql($where){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'Export data queue   '=> 'strat',
+                '$where' =>$where,
+
+            ])
+        );
         $Sql = " select *  
                             from  
                         `admin_user_finance_export_data_queue` 

@@ -85,7 +85,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
     public static function pullFinanceDataById($upload_record_id){
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'pullFinanceDataById  strat',
+                'upload record pullFinanceDataById  strat',
                 '$upload_record_id'=>$upload_record_id
             ])
         );
@@ -97,17 +97,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
             $pullFinanceDataRes = AdminUserFinanceData::pullFinanceData(
                 $uploadData['user_finance_data_id'],AdminUserFinanceUploadRecord::getFinanceConfigArray($upload_record_id)
             );
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    '$pullFinanceDataRes  '=>$pullFinanceDataRes
-                ])
-            );
         }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'pullFinanceDataById succeed  '
-            ])
-        );
         return true;
     }
 
@@ -196,6 +186,12 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
 
     public static function findById($id){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'Upload record   findById '=> 'start',
+                '$id'=>$id
+            ])
+        );
         $res =  AdminUserFinanceUploadRecord::create()
             ->where('id',$id)
             ->get();
@@ -598,12 +594,10 @@ class AdminUserFinanceUploadRecord extends ModelBase
         $uploadRes = self::findById($uploadId)->toArray();
         $finance_config =  json_decode($uploadRes['finance_config'],true);
         CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    'getAllowedFieldArray ',
-                    $finance_config
-                ]
-            )
+            json_encode([
+                'upload record getFinanceConfigArray   '=> 'start ',
+                '$finance_config' =>$finance_config,
+            ])
         );
         return $finance_config;
     }

@@ -295,7 +295,7 @@ class AdminUserFinanceData extends ModelBase
     public static function pullFinanceData($id,$financeConifgArr){
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'pullFinanceData  '=>'running',
+                'user finance data pullFinanceData  '=>'running',
                 '$id' =>$id,
                 '$financeConifgArr' =>$financeConifgArr,
             ])
@@ -303,9 +303,12 @@ class AdminUserFinanceData extends ModelBase
         $financeData =  AdminUserFinanceData::findById($id)->toArray();
         if($financeData['year'] > date('Y')){
             CommonService::getInstance()->log4PHP(
-                [
-                    'pullFinanceData   year to large ',
-                ]
+                json_encode([
+                    'user finance data pullFinanceData  year too large  '=>'retrun ',
+                    '$id' =>$id,
+                    '$financeConifgArr' =>$financeConifgArr,
+                    'year' => $financeData['year'] ,
+                ])
             );
             return  true;
         }

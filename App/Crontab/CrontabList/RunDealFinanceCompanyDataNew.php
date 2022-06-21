@@ -176,15 +176,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
              AND touch_time  IS Null  LIMIT $limit 
             "
         );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'exportFinanceData   '=> 'strat',
-                " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_init. " 
-             AND touch_time  IS Null  LIMIT $limit 
-            "
 
-            ])
-        );
         foreach($queueDatas as $queueData){
 
             AdminUserFinanceExportDataQueue::setTouchTime(
@@ -192,28 +184,12 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             );
 
             $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'exportFinanceData   '=> '$uploadRes',
-                    $uploadRes
-                ])
-            );
+
             $finance_config = AdminUserFinanceUploadRecord::getFinanceConfigArray($queueData['upload_record_id']);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'exportFinanceData   '=> '$finance_config',
-                    $finance_config
-                ])
-            );
+
             //拉取财务数据
             $pullFinanceDataByIdRes = AdminUserFinanceUploadRecord::pullFinanceDataById(
                 $uploadRes['id']
-            );
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'exportFinanceData   '=> '$pullFinanceDataByIdRes',
-                    $pullFinanceDataByIdRes
-                ])
             );
 
             //设置是否需要去确认
