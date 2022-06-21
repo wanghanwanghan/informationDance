@@ -92,17 +92,18 @@ class JinCaiShuKeService extends ServiceBase
             if(empty($content['fpxxs'])){
                 continue;
             }
+            $resDataAll = $content['fpxxs']['data'];
             if(count($content['fpxxs']['data']) == 1000){
                 for($i=0;$i<10;$i++){
                     $vdata = $this->S000523( $log->getAttr('nsrsbh'),  $log->getAttr('rwh'),1,1000);
-                    $content['fpxxs']['data'] = array_merge($content['fpxxs']['data'],$vdata['result']['content']['fpxxs']['data']);
+                    $resDataAll = array_merge($resDataAll,$vdata['result']['content']['fpxxs']['data']);
                     if(count($vdata['result']['content']['fpxxs']['data'])<1000){
                         break;
                     }
                 }
             }
 //            CommonService::getInstance()->log4PHP($data,'info','http_return_data');
-            foreach ($content['fpxxs']['data'] as $val){
+            foreach ($resDataAll as $val){
                 $xmmc = explode('*',trim($val['mxs']['0']['xmmc'],'*'));
                 $insert = [
                     'invoiceCode'=>$val['fpdm'],
