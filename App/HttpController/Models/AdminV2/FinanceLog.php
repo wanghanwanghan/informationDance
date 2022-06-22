@@ -18,13 +18,21 @@ class FinanceLog extends ModelBase
     protected $tableName = 'charge_log';
 
     static $chargeTytpeFinance = 5;
-    static $chargeTytpeFinanceCname = '收费类型-财务导出';
+    static $chargeTytpeFinanceCname = '财务导出';
 
     static $chargeTytpeAdd = 10;
-    static $chargeTytpeAddCname = '收费类型-充值';
+    static $chargeTytpeAddCname = '用户充值';
 
-//    static $chargeTytpeAdd = 10;
-//    static $chargeTytpeAddCname = '收费类型-充值';
+    static $chargeTytpeDele = 15;
+    static $chargeTytpeDeleCname = '用户扣钱';
+    public static function getTypeCnameMaps(){
+
+        return [
+            self::$chargeTytpeFinance => self::$chargeTytpeFinanceCname,
+            self::$chargeTytpeAdd => self::$chargeTytpeAddCname,
+            self::$chargeTytpeDele => self::$chargeTytpeDeleCname,
+        ];
+    }
 
     public static function addRecord($requestData){
         try {

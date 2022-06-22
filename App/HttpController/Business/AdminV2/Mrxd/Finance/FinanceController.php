@@ -71,7 +71,8 @@ class FinanceController extends ControllerBase
     }
 
     public function getAllowedUploadYears(){
-        $user_id = $this->getRequestData('user_id','') ;
+       // $user_id = $this->getRequestData('user_id','') ;
+        $user_id = $this->loginUserinfo['id'] ;
 
         $configs = AdminUserFinanceConfig::getConfigByUserId($user_id);
         $years = json_decode($configs['annually_years'],true);
@@ -477,7 +478,9 @@ class FinanceController extends ControllerBase
             $condition,
             $page
         );
-
+        foreach ($res['data'] as  &$dataItem){
+            $dataItem['type_cname'] = FinanceLog::getTypeCnameMaps()[$dataItem['type']];
+        }
         return $this->writeJson(200,
             [
                 'page' => $page,
@@ -506,6 +509,7 @@ class FinanceController extends ControllerBase
                     $requestData['user_id']
                 ) + $requestData['money'];
             $title= '充值';
+            $type = FinanceLog::$chargeTytpeAdd ;
         }
 
         if(
@@ -515,6 +519,7 @@ class FinanceController extends ControllerBase
                     $requestData['user_id']
                 ) - $requestData['money'];
             $title= '扣费';
+            $type = FinanceLog::$chargeTytpeDele ;
         }
         if(
             ! \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
@@ -532,11 +537,11 @@ class FinanceController extends ControllerBase
                     'detail_table' => '',
                     'price' => $requestData['money'],
                     'userId' => $requestData['user_id'],
-                    'type' =>  FinanceLog::$chargeTytpeAdd,
+                    'type' =>  $type,
                     'batch' => $batchNum,
                     'title' => $title,
                     'detail' => json_encode(['operatoer'=>$this->loginUserinfo['name'],'remark' => $requestData['remark']]),
-                    'reamrk' => '',
+                    'reamrk' => $requestData['remark'].'(操作人'.$this->loginUserinfo['name'].')',
                     'status' => $requestData['status']?:1,
                 ]
             )
