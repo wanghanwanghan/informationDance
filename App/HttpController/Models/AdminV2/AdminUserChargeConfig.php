@@ -37,17 +37,20 @@ class AdminUserChargeConfig extends ModelBase
     }
 
     public static function getDailyUsedNums($user_id){
-
+        $nums = 0;
         $info = self::findByUser($user_id);
+        if($info){
+            $nums = $info->getAttr('daily_used_nums');
+        }
         CommonService::getInstance()->log4PHP(
             json_encode([
                 ' AdminUserChargeConfig getDailyUsedNums ',
                 'parmas $user_id ' => $user_id,
-                'daily_used_nums' => $info->getAttr('daily_used_nums'),
+                'daily_used_nums' => $nums,
             ])
         );
 
-        return $info->getAttr('daily_used_nums');
+        return $nums;
     }
 
     public static function setAllowedTotalNums($user_id,$allowed_total_nums){
