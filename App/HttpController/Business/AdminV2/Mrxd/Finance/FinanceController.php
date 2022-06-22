@@ -327,7 +327,7 @@ class FinanceController extends ControllerBase
             $page
         );
 
-        foreach ($res as &$value){
+        foreach ($res['data'] as &$value){
             $value['upload_details'] = [];
             if(
                 $value['upload_record_id']
