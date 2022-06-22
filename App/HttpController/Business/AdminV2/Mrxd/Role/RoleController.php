@@ -114,7 +114,7 @@ class RoleController extends ControllerBase
         }
         $info->update([
             'role_id' => $requestData['role_id'],
-            'role_name' => $requestData['role_name'] ? $requestData['name']: $info['role_name'],
+            'role_name' => $requestData['name'] ? $requestData['name']: $info['role_name'],
             'remark' => $requestData['remark'] ? $requestData['remark']: $info['remark'],
         ]);
         return $this->writeJson();
