@@ -402,7 +402,7 @@ class FinanceController extends ControllerBase
         ];
         $filename = date('YmdHis').'.xlsx';
         NewFinanceData::parseDataToXls(
-            $config,$filename,[],$res,'sheet1'
+            $config,$filename,[],array_values($res),'sheet1'
         );
 
         return $this->writeJson(200,  [],  [
