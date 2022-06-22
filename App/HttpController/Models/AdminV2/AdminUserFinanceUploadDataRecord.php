@@ -55,13 +55,6 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         return $res;
     }
     static  function  addRecordV2($infoArr){
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                ['  Upload Data :: addNewRecordV2  ',
-                    '$infoArr'=>$infoArr
-                ]
-            )
-        );
         $UploadDataRecord = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdAndFinanceId(
             $infoArr['user_id'],
             $infoArr['record_id'] ,
@@ -79,7 +72,8 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
             return CommonService::getInstance()->log4PHP(
                 json_encode(
                     [
-                        ' RunDealFinanceCompanyData parseDataToDb  $AdminUserFinanceUploadDataRecordId is 0 faile'
+                        ' RunDealFinanceCompanyData parseDataToDb  $AdminUserFinanceUploadDataRecordId is 0 fail',
+                        '$infoArr' =>$infoArr,
                     ]
                 )
             );

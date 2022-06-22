@@ -89,22 +89,13 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
     
     static function setworkPath($filePath): bool
     {
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                ['parseCompanyDataToDb  setworkPath ','$filePath'=>$filePath]
-            )
-        );
+
         self::$workPath = $filePath ;
 
         return true;
     }  
 
     static function getYieldData($xlsx_name){
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                ['parseCompanyDataToDb  getYieldData ','$xlsx_name'=>$xlsx_name]
-            )
-        );
         $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
         $excel_read->openFile($xlsx_name)->openSheet();
 
@@ -146,6 +137,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
       * */
     function run(int $taskId, int $workerIndex): bool
     {
+        //防止重复跑
         if(
             !ConfigInfo::checkCrontabIfCanRun("RunDealFinanceCompanyData2")
         ){

@@ -163,13 +163,6 @@ class AdminUserFinanceUploadRecord extends ModelBase
     }
 
     public static function changeStatus($id,$status){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'changeStatus start  ',
-                '$id'=>$id,
-                '$status' =>$status,
-            ])
-        );
         $info = AdminUserFinanceUploadRecord::create()->where('id',$id)->get(); 
         return $info->update([
             'id' => $id,
@@ -183,13 +176,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
         $res =  AdminUserFinanceUploadRecord::create()
             ->where('id',$id)
             ->get();
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'Upload record   findById '=> 'start',
-                '$id'=>$id,
-                '$res' =>$res
-            ])
-        );
+
         return $res;
     }
 
@@ -265,13 +252,6 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
 
     public static function setTouchTime($id,$touchTime){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'setTouchTime start  ',
-                '$id'=>$id,
-                '$touchTime' =>$touchTime,
-            ])
-        );
         $info = AdminUserFinanceUploadRecord::findById($id);
 
         return $info->update([
@@ -281,24 +261,21 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
     //
     public static function findBySql($where){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'upload record admin_user_finance_upload_record   findBySql ',
-                '$where' => $where,
-            ])
-        );
         $Sql = "select * from    `admin_user_finance_upload_record`   $where  " ;
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        if(empty($data)){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'AdminUserFinanceUploadRecord findBySql empty  ',
+                    '$where' => $where
+                ])
+            );
+        }
         return $data;
     }
 
     static  function  calAndSetMoney($uploadId){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'AdminUserFinanceUploadRecord calAndSetMoney ',
-                '$uploadId' => $uploadId
-            ])
-        );
+
         return self::updateMoneyById(
             $uploadId,
             self::calMoney($uploadId)['total_price']
