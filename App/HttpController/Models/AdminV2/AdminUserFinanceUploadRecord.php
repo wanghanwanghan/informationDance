@@ -21,39 +21,13 @@ class AdminUserFinanceUploadRecord extends ModelBase
     static $stateParsed = 5;
     static $stateParsedCname =  '计算价格中';
     static $stateCalCulatedPrice = 10;
-    static $stateCalCulatedPriceCname = '待导出';
-
-//    static $stateHasCheckBalanceOK = 13;
-//    static $stateHasCheckBalanceOKCname = '已经检测完余额充足';
-//
-//    static $stateHasCheckBalanceNo = 16;
-//    static $stateHasCheckBalanceNoCname = '已经检测完余额不足';
-//
-//    static $stateHasDisabledTemp = 18;
-//    static $stateHasDisabledTempCname = '账户被临时关闭，暂时不允许拉取数据';
-//
-//    static $stateHasDisabledForever = 19;
-//    static $stateHasDisabledForeverCname = '账户被永久关闭，暂时不允许拉取数据';
-
-    static $stateHasGetData = 20;
-    static $stateHasGetDataCname = '已取完数据';
-
-    static $stateCalCulatedPrice2 = 25;
-    static $stateCalCulatedPrice2Cname = '已经重新计算价格';
-
-    static $stateHasCalcluteRealPrice = 25;
-    static $stateHasCalcluteRealPriceCname = '已经计算完真实价格';
-
-    static $stateHasCalclutePriceType = 30;
-    static $stateHasCalclutePriceTypeCname = '已经计算完价格类型';
+    static $stateCalCulatedPriceCname = '待下载';
 
     public static function getStatusMaps(){
         return [
             self::$stateInit => self::$stateInitCname,
             self::$stateParsed => self::$stateParsedCname,
             self::$stateCalCulatedPrice => self::$stateCalCulatedPriceCname,
-            self::$stateHasGetData => self::$stateHasGetDataCname,
-            self::$stateCalCulatedPrice2 => self::$stateCalCulatedPrice2Cname,
         ];
 
     }
