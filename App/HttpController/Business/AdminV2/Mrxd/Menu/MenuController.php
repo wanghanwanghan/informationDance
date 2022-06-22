@@ -42,12 +42,13 @@ class MenuController extends ControllerBase
 
         foreach($res as &$menuItem)
         {
-            if($menuItem['pid'] <= 0){
+            if($menuItem['parent_id'] <= 0){
                 continue;
             };
-            $tmpMenu = AdminMenuItems::create()
-                ->where("id = ".$menuItem['pid'])->all();
-            $menuItem['pidRes'] = $tmpMenu[0];
+            $tmpMenu = AdminMenuItems::findById($menuItem['parent_id']);
+            $tmpMenu = $tmpMenu->toArray();
+            $menuItem['pidRes'] = $tmpMenu;
+            $menuItem['pidMenuName'] = $tmpMenu['name'];
         }
         $paging = [
             'page' => $pageNo,

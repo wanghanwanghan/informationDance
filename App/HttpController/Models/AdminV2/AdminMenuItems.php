@@ -13,8 +13,14 @@ class AdminMenuItems extends ModelBase
 
     protected $autoTimeStamp = true;
     protected $createTime = 'created_at';
-    protected $updateTime = 'updated_at'; 
+    protected $updateTime = 'updated_at';
 
+    public static function findById($id){
+        $res =  AdminMenuItems::create()
+            ->where('id',$id)
+            ->get();
+        return $res;
+    }
     static function getMenusByParentId($parentId){
         $sql = "SELECT * FROM  admin_menu_items WHERE parent_id = $parentId AND `status` = 1  ORDER BY  `order` asc  " ;
 
