@@ -287,6 +287,134 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 !$chargeBefore
             ){
                 $price = $uploadRes['money'];
+
+                //扣余额
+                if(
+                    ! \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
+                        $uploadRes['user_id'],
+                        \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
+                            $uploadRes['user_id']
+                        ) - $uploadRes['money']
+                    )
+                ){
+                     return   CommonService::getInstance()->log4PHP(
+                         [
+                             'AdminNewUser::updateMoney false',
+                             'user_id' => $uploadRes['user_id'],
+                            'money' =>$uploadRes['money']
+                         ]
+                     );;
+                }
+                if(
+                    !FinanceLog::addRecordV2(
+                        [
+                            'detailId' => $uploadRes['id'],
+                            'detail_table' => 'admin_user_finance_upload_record',
+                            'price' => $uploadRes['money'],
+                            'userId' => $uploadRes['user_id'],
+                            'type' =>  FinanceLog::$chargeTytpeFinance,
+                            'batch' => $queueData['batch'],
+                            'title' => '导出内容数据扣费',
+                            'detail' => '',
+                            'reamrk' => '',
+                            'status' => 1,
+                        ]
+                    )
+                ){
+                     return   CommonService::getInstance()->log4PHP(
+                         [
+                             'FinanceLog::addRecordV2 false',
+                         ]
+                     );
+                }
+
+                //设置上传收费时间|本名单的
+                $res = AdminUserFinanceUploadRecord::updateLastChargeDate($uploadRes['id'],date('Y-m-d H:i:s'));
+                if(!$res  ){
+                    return   CommonService::getInstance()->log4PHP(
+                        [
+                            'AdminUserFinanceUploadRecord::updateLastChargeDate false',
+                            'id' =>$uploadRes['id']
+                        ]
+                    );
+                }
+
+                $financeDatas = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordIdV2(
+                    $uploadRes['user_id'],$uploadRes['id']
+                );
+                $finance_config = AdminUserFinanceUploadRecord::getFinanceConfigArray($uploadRes['id']);
+                foreach($financeDatas['details'] as $financeData){
+                    $AdminUserFinanceUploadDataRecord = AdminUserFinanceUploadDataRecord::findById($financeData['UploadDataRecordId'])->toArray();
+
+                    // 收费了
+                    if($AdminUserFinanceUploadDataRecord['real_price']){
+                        //设置收费记录
+                        $AdminUserFinanceChargeInfoId = AdminUserFinanceChargeInfo::addRecordV2(
+                            [
+                                'user_id' => $AdminUserFinanceUploadDataRecord['user_id'],
+                                'batch' => $queueData['batch'].'_'.$AdminUserFinanceUploadDataRecord['id'],
+                                'entName' => $financeData['entName'],
+                                'start_year' => $AdminUserFinanceUploadDataRecord['charge_year_start'],
+                                'end_year' => $AdminUserFinanceUploadDataRecord['charge_year_end'],
+                                'year' => $AdminUserFinanceUploadDataRecord['charge_year'],
+                                'price' => $AdminUserFinanceUploadDataRecord['real_price'],
+                                'price_type' => $AdminUserFinanceUploadDataRecord['price_type'],
+                                'status' => AdminUserFinanceChargeInfo::$state_init,
+                            ]
+                        );
+                        if(!$AdminUserFinanceChargeInfoId  ){
+                            return   CommonService::getInstance()->log4PHP(
+                                [
+                                    'AdminUserFinanceChargeInfo::addRecordV2 false',
+                                    [
+                                        'user_id' => $AdminUserFinanceUploadDataRecord['user_id'],
+                                        'batch' => $queueData['batch'].'_'.$AdminUserFinanceUploadDataRecord['id'],
+                                        'entName' => $financeData['entName'],
+                                        'start_year' => $AdminUserFinanceUploadDataRecord['charge_year_start'],
+                                        'end_year' => $AdminUserFinanceUploadDataRecord['charge_year_end'],
+                                        'year' => $AdminUserFinanceUploadDataRecord['charge_year'],
+                                        'price' => $AdminUserFinanceUploadDataRecord['real_price'],
+                                        'price_type' => $AdminUserFinanceUploadDataRecord['price_type'],
+                                        'status' => AdminUserFinanceChargeInfo::$state_init,
+                                    ]
+                                ]
+                            );
+                        }
+                        //设置上次计费时间 |具体用户对应的企业数据
+                        $res = AdminUserFinanceData::updateLastChargeDate(
+                            $AdminUserFinanceUploadDataRecord['user_finance_data_id'],
+                            date('Y-m-d H:i:s')
+                        );
+                        if(!$res  ){
+                            return   CommonService::getInstance()->log4PHP(
+                                [
+                                    'AdminUserFinanceData::updateLastChargeDate false',
+                                    [
+                                        'user_finance_data_id' => $AdminUserFinanceUploadDataRecord['user_finance_data_id']
+                                    ]
+                                ]
+                            );
+                        }
+
+                        //设置缓存过期时间
+                        $res = AdminUserFinanceData::updateCacheEndDate(
+                            $AdminUserFinanceUploadDataRecord['user_finance_data_id'],
+                            date('Y-m-d H:i:s'),
+                            $finance_config['cache']
+                        );
+                        if(!$res  ){
+                            return  CommonService::getInstance()->log4PHP(
+                                [
+                                    'AdminUserFinanceData::updateCacheEndDate false',
+                                    [
+                                        'user_finance_data_id' => $AdminUserFinanceUploadDataRecord['user_finance_data_id']
+                                    ]
+                                ]
+                            );
+                        }
+                    }
+                }
+
             }
 
             // 设置导出记录
