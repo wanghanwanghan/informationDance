@@ -508,7 +508,7 @@ class FinanceController extends ControllerBase
         ){
             $newBalance = \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
                     $requestData['user_id']
-                ) + $requestData['recharge_money'];
+                ) + $requestData['money'];
             $title= '充值';
             $type = FinanceLog::$chargeTytpeAdd ;
         }
@@ -518,7 +518,7 @@ class FinanceController extends ControllerBase
         ){
             $newBalance = \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
                     $requestData['user_id']
-                ) - $requestData['recharge_money'];
+                ) - $requestData['money'];
             $title= '扣费';
             $type = FinanceLog::$chargeTytpeDele ;
         }
@@ -536,7 +536,7 @@ class FinanceController extends ControllerBase
                 [
                     'detailId' => 0,
                     'detail_table' => '',
-                    'price' => $requestData['recharge_money'],
+                    'price' => $requestData['money'],
                     'userId' => $requestData['user_id'],
                     'type' =>  $type,
                     'batch' => $batchNum,
