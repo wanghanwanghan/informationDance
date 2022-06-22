@@ -415,19 +415,15 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
         if(
             $last_charge_date > 0 &&
-            strtotime($last_charge_date) -time() >= 60*60*24
+            strtotime($last_charge_date) -time() >= 60*60* intval(self::getFinanceConfigArray($id)['cache'])
         ){
             $res = false;
         }
         CommonService::getInstance()->log4PHP(
             json_encode(
                 [
-                    'AdminUserFinanceUploadRecord ifCanDownload ',
-                    [
-                        'id' => $id,
-                        '$last_charge_date' => $last_charge_date,
-                        '$res'=>$res,
-                    ]
+                    'AdminUserFinanceUploadRecord ifCanDownload ', [
+                    'id' => $id, '$last_charge_date' => $last_charge_date,'cache' => intval(self::getFinanceConfigArray($id)['cache']), '$res'=>$res,  ]
                 ]
             )
         );

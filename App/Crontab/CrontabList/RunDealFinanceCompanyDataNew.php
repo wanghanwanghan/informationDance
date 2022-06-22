@@ -209,6 +209,10 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             if(!$res  ){
                 return  false;
             }
+//            AdminUserFinanceExportDataQueue::updateStatusById(
+//                $queueData['id'],AdminUserFinanceExportDataQueue::$state_init
+//
+//            );
             AdminUserFinanceExportDataQueue::setTouchTime(
                 $queueData['id'],NULL
             );
