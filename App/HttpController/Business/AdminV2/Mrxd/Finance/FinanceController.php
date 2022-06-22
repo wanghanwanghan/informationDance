@@ -388,15 +388,15 @@ class FinanceController extends ControllerBase
         $res = AdminUserFinanceExportRecord::findByConditionV4(
             $where
         );
-        if(empty($res)){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'exportExportLists empty data',
-                    '$where' => $where,
-                    '$requestData'=>$requestData,
-                ])
-            );
-        }
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'exportExportLists empty data',
+                '$where' => $where,
+                '$requestData'=>$requestData,
+                '$res' =>$res,
+            ])
+        );
+
         $config = [
             'path' => TEMP_FILE_PATH // xlsx文件保存路径
         ];
