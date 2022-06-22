@@ -151,6 +151,7 @@ class FinanceController extends ControllerBase
         $info = AdminUserFinanceConfig::create()->where('id',$requestData['id'])->get(); 
         $data = [
             'id' => $requestData['id'],
+            'user_id' => $requestData['user_id'] ?   $requestData['user_id']: $info['user_id'],
             'annually_price' => $requestData['annually_price'] ?   $requestData['annually_price']: $info['annually_price'],
             'annually_years' => $requestData['annually_years'] ? $requestData['annually_years']: $info['annually_years'],
             'normal_years_price_json' => $requestData['normal_years_price_json'] ? $requestData['normal_years_price_json']: $info['normal_years_price_json'],
@@ -169,10 +170,10 @@ class FinanceController extends ControllerBase
 
         $res = AdminUserFinanceConfig::addRecordV2($data);
         if (!$res){
-            return $this->writeJson(205);
+            return $this->writeJson(205,[],[],'修改失败s');
         }
 
-        return $this->writeJson();
+        return $this->writeJson(200,[],[],'成功');
     }
 
     public function queryPower(){
