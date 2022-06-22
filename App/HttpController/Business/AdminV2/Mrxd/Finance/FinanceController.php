@@ -401,8 +401,13 @@ class FinanceController extends ControllerBase
             'path' => TEMP_FILE_PATH // xlsx文件保存路径
         ];
         $filename = date('YmdHis').'.xlsx';
+//        NewFinanceData::parseDataToXls(
+//            $config,$filename,['测试1','测试2','测试3'],array_values($res),'sheet1'
+//        );
         NewFinanceData::parseDataToXls(
-            $config,$filename,['测试1','测试2','测试3'],array_values($res),'sheet1'
+            $config,$filename,['测试1','测试2','测试3'],[
+                ['XXX','XXX','xxxx']
+        ],'sheet1'
         );
 
         return $this->writeJson(200,  [],  [
