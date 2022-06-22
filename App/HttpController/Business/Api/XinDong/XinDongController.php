@@ -2767,7 +2767,7 @@ eof;
         if(
             $this->getRequestData('exportFinanceData')
         ){
-            RunDealFinanceCompanyDataNew::exportFinanceData(1);
+            RunDealFinanceCompanyDataNew::exportFinanceDataV2(1);
         }
 
         // $config = [

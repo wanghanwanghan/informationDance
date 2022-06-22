@@ -8,6 +8,7 @@ use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\AdminV2\AdminMenuItems;
 use App\HttpController\Models\AdminV2\AdminNewMenu;
 use App\HttpController\Models\AdminV2\AdminUserChargeConfig;
+use App\HttpController\Models\AdminV2\AdminUserFinanceChargeInfo;
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\Api\CompanyCarInsuranceStatusInfo;
@@ -130,6 +131,7 @@ class FinanceController extends ControllerBase
             //是否需要确认
             'needs_confirm' => $requestData['needs_confirm'],
             'max_daily_nums' => $requestData['max_daily_nums']?:0,
+            'sms_notice_percent' => $requestData['sms_notice_percent']?:0,
             'status' => 1,
         ];
         $res = AdminUserFinanceConfig::addRecordV2(
@@ -450,7 +452,7 @@ class FinanceController extends ControllerBase
     public function getFinanceLogLists(){
         $requestData =  $this->getRequestData();
         $condition = [
-            'user_id' => $this->loginUserinfo['id'],
+            'userId' => $this->loginUserinfo['id'],
         ];
 
         $page = $requestData['page']?:1;
@@ -470,29 +472,63 @@ class FinanceController extends ControllerBase
 
     //充值
     public function chargeAccount(){
-        $requestData =  $this->getRequestData();
-        $res = \App\HttpController\Models\AdminV2\AdminNewUser::charge(
-            $requestData['user_id'],
-            $requestData['money'],
-            date('YmdHis'),
-            [
-                'detailId' => 0,
-                'detail_table' => '',
-                'price' => $requestData['money'],
-                'userId' => $requestData['user_id'],
-                'type' => $requestData['type'],
-                'batch' => $requestData['id'],
-                'title' => '',
-                'detail' => $requestData['detail'],
-                'reamrk' => '',
-                'status' => 1,
-            ],
-            $requestData['money']
-        );
-        if(!$res){
-            return $this->writeJson(201, [ ] , $res['data'], '充值失败' );
+        if(
+            !ConfigInfo::setRedisNx('chargeAccount',5)
+        ){
+            return $this->writeJson(201, null, [],  '请勿重复提交');
         }
-        return $this->writeJson(200, [ ] , $res['data'], '成功' );
+
+        $requestData =  $this->getRequestData();
+        //批次号码
+        $batchNum = 'CWDC'.date('YmdHis');
+
+        if(
+            $requestData['type'] == \App\HttpController\Models\AdminV2\AdminNewUser::$chargeTypeAdd
+        ){
+            $newBalance = \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
+                    $requestData['user_id']
+                ) + $requestData['money'];
+            $title= '充值';
+        }
+
+        if(
+            $requestData['type'] == \App\HttpController\Models\AdminV2\AdminNewUser::$chargeTypeDele
+        ){
+            $newBalance = \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
+                    $requestData['user_id']
+                ) - $requestData['money'];
+            $title= '扣费';
+        }
+        if(
+            ! \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
+                $requestData['user_id'],
+                $newBalance
+            )
+        ){
+            return  $this->writeJson(201,[],[],'充值失败，联系管理员');
+        }
+
+        if(
+            !FinanceLog::addRecordV2(
+                [
+                    'detailId' => 0,
+                    'detail_table' => '',
+                    'price' => $requestData['money'],
+                    'userId' => $requestData['user_id'],
+                    'type' =>  FinanceLog::$chargeTytpeAdd,
+                    'batch' => $batchNum,
+                    'title' => $title,
+                    'detail' => json_encode(['operatoer'=>$this->loginUserinfo['name'],'remark' => $requestData['remark']]),
+                    'reamrk' => '',
+                    'status' => $requestData['status']?:1,
+                ]
+            )
+        ){
+            return  $this->writeJson(201,[],[],'入库失败，联系管理员');
+        }
+        ConfigInfo::removeRedisNx('exportFinanceData2');
+
+        return $this->writeJson(200, [ ] , [], '成功' );
     }
     //待确认详情
     public function getNeedsConfirmDetails(){
@@ -660,7 +696,7 @@ class FinanceController extends ControllerBase
         //检查是否是可以下载的状态状态
         if(
             !AdminUserFinanceUploadRecord::checkByStatus(
-                $requestData['id'],AdminUserFinanceUploadRecord::$stateCalCulatedPrice
+                $uploadRes['id'],AdminUserFinanceUploadRecord::$stateCalCulatedPrice
             )
         ){
             ConfigInfo::removeRedisNx('exportFinanceData2');
@@ -679,56 +715,115 @@ class FinanceController extends ControllerBase
         }
 
         //检查账户是否可以拉取 如果到达今日次数等限制的话  不进行下载
-        $totalNeedExportNums = count(
-            AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
-                $uploadRes['user_id'],
-                $uploadRes['id'],
-                ['id']
-            )
-        );
         //每日最大次数限制
         if(
-            !AdminUserChargeConfig::checkIfCanRun($uploadRes['user_id'],$totalNeedExportNums)
+            !AdminUserChargeConfig::checkIfCanRun(
+                $uploadRes['user_id'],
+                count(
+                    AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
+                        $uploadRes['user_id'],
+                        $uploadRes['id'],
+                        ['id']
+                    )
+                )
+            )
         ){
             return  $this->writeJson(201,[],[],'超出每日最大次数，联系管理员');
         }
 
         //先扣钱 //先扣钱
-        //本名单之前是否扣费过
-        $chargeBefore = AdminUserFinanceUploadRecord::ifHasChargeBefore($uploadRes['id']);
-        $batchNo = date('YmdHis');
         if(
             $uploadRes['money'] > 0 &&
-            !$chargeBefore
+            //本名单之前没扣费过
+            !AdminUserFinanceUploadRecord::ifHasChargeBefore($uploadRes['id'])
         ){
             //扣费
+            //批次号码
             $batchNum = 'CWDC'.date('YmdHis');
-
-            $res = \App\HttpController\Models\AdminV2\AdminNewUser::charge(
-                $uploadRes['user_id'],
-                $uploadRes['money'],
-                $batchNo,
-                [
-                    'detailId' => $queueData['id'],
-                    'detail_table' => 'admin_user_finance_export_data_queue',
-                    'price' => $uploadRes['money'],
-                    'userId' => $uploadRes['user_id'],
-                    'type' => FinanceLog::$chargeTytpeFinance,
-                    'batch' => $queueData['id'],
-                    'title' => '',
-                    'detail' => '',
-                    'reamrk' => '',
-                    'status' => 1,
-                ],
-                10
-            );
-            if(!$res  ){
-                return  false;
+            //余额
+            if(
+                ! \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
+                    $uploadRes['user_id'],
+                    \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
+                        $uploadRes['user_id']
+                    ) - $uploadRes['money']
+                )
+            ){
+                return  $this->writeJson(201,[],[],'扣费失败，联系管理员');
             }
+
+
+            if(
+                !FinanceLog::addRecordV2(
+                    [
+                        'detailId' => $uploadRes['id'],
+                        'detail_table' => 'admin_user_finance_upload_record',
+                        'price' => $uploadRes['money'],
+                        'userId' => $uploadRes['user_id'],
+                        'type' =>  FinanceLog::$chargeTytpeFinance,
+                        'batch' => $batchNum,
+                        'title' => '导出内容数据扣费',
+                        'detail' => '',
+                        'reamrk' => '',
+                        'status' => $requestData['status']?:1,
+                    ]
+                )
+            ){
+                return  $this->writeJson(201,[],[],'入库失败，联系管理员');
+            }
+
             //设置上传收费时间|本名单的
             $res = AdminUserFinanceUploadRecord::updateLastChargeDate($uploadRes['id'],date('Y-m-d H:i:s'));
             if(!$res  ){
-                return  false;
+                return  $this->writeJson(201,[],[],'设置上传收费时间失败，联系管理员');
+            }
+
+            $financeDatas = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordIdV2(
+                $uploadRes['user_id'],$uploadRes['id']
+            );
+            $finance_config = AdminUserFinanceUploadRecord::getFinanceConfigArray($uploadRes['id']);
+
+            foreach($financeDatas['details'] as $financeData){
+                $AdminUserFinanceUploadDataRecord = AdminUserFinanceUploadDataRecord::findById($financeData['UploadDataRecordId'])->toArray();
+
+                // 收费了
+                if($AdminUserFinanceUploadDataRecord['real_price']){
+                    //设置收费记录
+                    $AdminUserFinanceChargeInfoId = AdminUserFinanceChargeInfo::addRecordV2(
+                        [
+                            'user_id' => $AdminUserFinanceUploadDataRecord['user_id'],
+                            'batch' => $batchNum,
+                            'entName' => $financeData['entName'],
+                            'start_year' => $AdminUserFinanceUploadDataRecord['charge_year_start'],
+                            'end_year' => $AdminUserFinanceUploadDataRecord['charge_year_end'],
+                            'year' => $AdminUserFinanceUploadDataRecord['charge_year'],
+                            'price' => $AdminUserFinanceUploadDataRecord['real_price'],
+                            'price_type' => $AdminUserFinanceUploadDataRecord['price_type'],
+                            'status' => AdminUserFinanceChargeInfo::$state_init,
+                        ]
+                    );
+                    if(!$AdminUserFinanceChargeInfoId  ){
+                        return  $this->writeJson(201,[],[],'设置收费记录失败，联系管理员');
+                    }
+                    //设置上次计费时间 |具体用户对应的企业数据
+                    $res = AdminUserFinanceData::updateLastChargeDate(
+                        $AdminUserFinanceUploadDataRecord['user_finance_data_id'],
+                        date('Y-m-d H:i:s')
+                    );
+                    if(!$res  ){
+                        return  $this->writeJson(201,[],[],'设置上次计费时间，联系管理员');
+                    }
+
+                    //设置缓存过期时间
+                    $res = AdminUserFinanceData::updateCacheEndDate(
+                        $AdminUserFinanceUploadDataRecord['user_finance_data_id'],
+                        date('Y-m-d H:i:s'),
+                        $finance_config['cache']
+                    );
+                    if(!$res  ){
+                        return  $this->writeJson(201,[],[],'设置缓存过期时间，联系管理员');
+                    }
+                }
             }
         }
         //添加到下载队列
@@ -744,8 +839,6 @@ class FinanceController extends ControllerBase
             ConfigInfo::removeRedisNx('exportFinanceData2');
             return  $this->writeJson(201,[],[],'添加失败，联系管理员');
         }
-
-
 
         ConfigInfo::removeRedisNx('exportFinanceData2');
         return $this->writeJson(200,[],[],'已发起下载，请稍后去我的下载中查看');
