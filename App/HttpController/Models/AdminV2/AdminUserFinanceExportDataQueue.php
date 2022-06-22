@@ -17,7 +17,7 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     protected $tableName = 'admin_user_finance_export_data_queue';
 
     static  $state_init = 1;
-    static  $state_init_cname =  '拉取财务数据中';
+    static  $state_init_cname =  '内容生成中';
 
     static  $state_needs_confirm = 10;
     static  $state_needs_confirm_cname =  '用户确认数据中';
