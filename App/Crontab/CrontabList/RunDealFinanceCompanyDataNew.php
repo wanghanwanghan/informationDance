@@ -495,8 +495,8 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
 
             foreach ($companyDatas as $companyData) {
                 // 按年度解析为数据
-                //$yearsArr = json_decode($uploadRecord['years'],true);
-                $yearsArr = explode(',',$uploadRecord['years']);
+                $yearsArr = json_decode($uploadRecord['years'],true);
+                //$yearsArr = explode(',',$uploadRecord['years']);
                 if(empty($yearsArr)){
                     continue;
                 }
