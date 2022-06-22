@@ -242,14 +242,13 @@ class FinanceController extends ControllerBase
                 $fileName = $oneFile->getClientFilename();
                 $path = TEMP_FILE_PATH . $fileName;
                 if(file_exists($path)){
-                    CommonService::getInstance()->log4PHP( json_encode([ 'uploadeCompanyLists   file_exists continue','params $path '=> $path,]) );
-                    continue;
+                   return $this->writeJson(203, [], [],'文件已存在！');;
                 }
 
                 $res = $oneFile->moveTo($path);
                 if(!file_exists($path)){
                     CommonService::getInstance()->log4PHP( json_encode(['uploadeCompanyLists   file_not_exists moveTo false ', 'params $path '=> $path,  ]) );
-                    continue;
+                    return $this->writeJson(203, [], [],'文件移动失败！');
                 }
 
                 $UploadRecordRes =  AdminUserFinanceUploadRecord::findByIdAndFileName(
@@ -257,7 +256,7 @@ class FinanceController extends ControllerBase
                     $fileName
                 );
                 if($UploadRecordRes){
-                    continue;
+                    return $this->writeJson(203, [], [],'文件已存在！');
                 }
 
                 $addUploadRecordRes = AdminUserFinanceUploadRecord::addUploadRecord(
@@ -278,7 +277,7 @@ class FinanceController extends ControllerBase
                  );
 
                 if(!$addUploadRecordRes){
-                    continue;
+                    return $this->writeJson(203, [], [],'入库失败，请联系管理员');
                 }
                 $succeedNums ++;
             } catch (\Throwable $e) {
@@ -866,6 +865,4 @@ class FinanceController extends ControllerBase
         ConfigInfo::removeRedisNx('exportFinanceData2');
         return $this->writeJson(200,[],[],'已发起下载，请稍后去【内容记录】中查看');
     }
-
-
 }
