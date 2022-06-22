@@ -156,6 +156,7 @@ class MenuController extends ControllerBase
             'parent_id' => $requestData['parent_id'] ? $requestData['parent_id']: $info['parent_id'],
             'remark' => $requestData['remark'] ? $requestData['remark']: $info['remark'],
             'link' => $requestData['link'] ? $requestData['link']: $info['link'],
+            'order' => $requestData['order'] ? $requestData['order']: $info['order'],
             'icon' => $requestData['icon'] ? $requestData['icon']: $info['icon'],
         ]);
         return $this->writeJson();
