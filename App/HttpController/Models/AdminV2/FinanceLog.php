@@ -51,6 +51,8 @@ class FinanceLog extends ModelBase
                 'detail' => $requestData['detail']?:'',
                 'reamrk' => $requestData['reamrk']?:'',
                 'status' => $requestData['status']?:1,
+                'created_at' => time(),
+                'updated_at' => time(),
             ])->save();
 
         } catch (\Throwable $e) {
