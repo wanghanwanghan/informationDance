@@ -25,7 +25,7 @@ class FinanceLog extends ModelBase
 
 
     static  $chargeTypePreAdd = 15 ;
-    static  $chargeTypePreAddCname =  '预充值' ; 
+    static  $chargeTypePreAddCname =  '预充值' ;
 
     static $chargeTytpeDele = 20;
     static $chargeTytpeDeleCname = '扣费';
