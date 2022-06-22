@@ -135,7 +135,7 @@ class AdminUserFinanceConfig extends ModelBase
             'allowed_fields' => $requestData['allowed_fields'],  
             'status' => $requestData['status'],
             'max_daily_nums' => $requestData['max_daily_nums'],
-            'sms_notice_percent' => $requestData['sms_notice_percent'],
+            'sms_notice_value' => $requestData['sms_notice_value'],
         ])->save();  
     }
 
