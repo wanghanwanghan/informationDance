@@ -6,7 +6,6 @@ use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 
-// use App\HttpController\Models\AdminRole;
 
 class AdminUserFinanceUploadRecord extends ModelBase
 {
@@ -56,14 +55,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 ])
             );  
         }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'AdminUserFinanceUploadRecord addUploadRecord ok',
-                '$requestData' => $requestData,
-                '$dbData' => $dbData,
-                'return $res' => $res
-            ])
-        );
+
         return $res;
     }
     public static function pullFinanceDataById($upload_record_id){
@@ -81,6 +73,14 @@ class AdminUserFinanceUploadRecord extends ModelBase
             $pullFinanceDataRes = AdminUserFinanceData::pullFinanceData(
                 $uploadData['user_finance_data_id'],AdminUserFinanceUploadRecord::getFinanceConfigArray($upload_record_id)
             );
+            if(!$pullFinanceDataRes){
+                return  CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ ,
+                        '$pullFinanceDataRes failed',
+                    ])
+                );
+            }
         }
         return true;
     }
@@ -261,35 +261,6 @@ class AdminUserFinanceUploadRecord extends ModelBase
             }
         }
         return $returnArr;
-    }
-
-    public static function getFinanceCompleData($user_finance_data_id){ 
-        //该数据对应的相关价格配置/缓存配置等
-         $AdminUserFinanceDataRes = AdminUserFinanceData::findById(
-            $user_finance_data_id
-        );
-        $AdminUserFinanceData = $AdminUserFinanceDataRes->toArray(); 
-
-        //取实际的财务数据
-        $NewFinanceDataRes = NewFinanceData::findById($AdminUserFinanceData['finance_data_id']);  
-        $NewFinanceData = $NewFinanceDataRes->toArray();
-        $NewFinanceData['user_finance_data_id'] = $user_finance_data_id;
-
-        $price = $AdminUserFinanceDataRes['price'];
-        $priceDetail = '';
-
-        if(
-            $AdminUserFinanceDataRes['cache_end_date'] > 0 &&
-            strtotime($AdminUserFinanceDataRes['cache_end_date']) > time()
-        ){
-            $price = 0;
-            $priceDetail = '在缓存期('.$AdminUserFinanceDataRes['cache_end_date'].')，不收费';
-        }
-        return [
-            'finance_data' => $NewFinanceData,
-            'price' => $price,
-            'price_detail' => $priceDetail,
-        ];
     }
 
 
@@ -579,89 +550,6 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 ]
             )
         );
-        return $chargeDetails;
-    }
-
-    static function  chargeMoney($uploadId){
-        $uploadInfo = self::findById($uploadId)->toArray();
-        $uploadDatas = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
-            $uploadInfo['user_id'],$uploadInfo['id']
-        );
-        $chargeDetails = [];
-
-        foreach ($uploadDatas as $uploadData){
-            $user_finance_data = AdminUserFinanceData::findById($uploadData['user_finance_data_id'])->toArray();
-            //之前是否扣费过
-            $hasChargeBefore = false;
-
-            //包年计费
-            if(
-                $uploadData['price_type'] == AdminUserFinanceUploadDataRecord::$chargeTypeAnnually
-            ){
-                //本次里已经计算过
-                if(
-                    $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year_start'] = $uploadData['charge_year_start'] &&
-                        $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year_end'] = $uploadData['charge_year_end']
-                ){
-                    $hasChargeBefore = true;
-                };
-
-                //之前已经收费过
-                if(
-                    AdminUserFinanceChargeInfo::ifChargedBeforeV2(
-                        $uploadData['user_id'],
-                        $user_finance_data['entName'],
-                        $uploadData['charge_year_start'],
-                        $uploadData['charge_year_end']
-                    )
-                ){
-                    $hasChargeBefore = true;
-                };
-
-                // 如果之前没计费过
-                if(!$hasChargeBefore){
-                    $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']][$user_finance_data['entName']] =
-                        [
-                            'charge_year_start' => $uploadData['charge_year_start'],
-                            'charge_year_end' => $uploadData['charge_year_end'],
-                            'price' => $uploadData['price'],
-                        ];
-                    $chargeDetails['total_price'] += $uploadData['price'];
-                }
-            }
-
-            //按单年计费
-            if(
-                $uploadData['price_type'] == AdminUserFinanceUploadDataRecord::$chargeTypeByYear
-            ){
-                //本次里已经计算过
-                if(
-                    $chargeDetails['chargeTypeByYear'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year'] = $uploadData['charge_year']
-                ){
-                    $hasChargeBefore = true;
-                };
-                //之前已经收费过
-                if(
-                    AdminUserFinanceChargeInfo::ifChargedBefore(
-                        $uploadData['user_id'],
-                        $user_finance_data['entName'],
-                        $uploadData['charge_year']
-                    )
-                ){
-                    $hasChargeBefore = true;
-                };
-
-                // 如果之前没计费过
-                if(!$hasChargeBefore){
-                    $chargeDetails['chargeTypeByYear'][$uploadData['user_id']][$user_finance_data['entName']] =
-                        [
-                            'charge_year' => $uploadData['charge_year'],
-                            'price' => $uploadData['price'],
-                        ];
-                    $chargeDetails['total_price'] += $uploadData['price'];
-                }
-            }
-        }
         return $chargeDetails;
     }
 
