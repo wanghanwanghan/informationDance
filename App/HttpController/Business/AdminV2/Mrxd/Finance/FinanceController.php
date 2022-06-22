@@ -679,7 +679,7 @@ class FinanceController extends ControllerBase
         if(
             !AdminUserChargeConfig::checkIfCanRun($uploadRes['user_id'],$totalNeedExportNums)
         ){
-            return  $this->writeJson(201,[],'超出每日最大次数，联系管理员');
+            return  $this->writeJson(201,[],[],'超出每日最大次数，联系管理员');
         }
 
         if(
@@ -692,11 +692,11 @@ class FinanceController extends ControllerBase
             )
         ){
             ConfigInfo::removeRedisNx('exportFinanceData2');
-            return  $this->writeJson(201,[],'添加失败，联系管理员');
+            return  $this->writeJson(201,[],[],'添加失败，联系管理员');
         }
 
         ConfigInfo::removeRedisNx('exportFinanceData2');
-        return $this->writeJson(200,[],'已发起下载，请稍后去我的下载中查看');
+        return $this->writeJson(200,[],[],'已发起下载，请稍后去我的下载中查看');
     }
 
 
