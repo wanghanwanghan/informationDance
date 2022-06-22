@@ -181,6 +181,7 @@ class FinanceController extends ControllerBase
                 $requestData['needs_confirm']: $info['needs_confirm'],
             'allowed_fields' => $requestData['allowed_fields'] ? $requestData['allowed_fields']: $info['allowed_fields'],
             'max_daily_nums' => $requestData['max_daily_nums'] ? $requestData['allowed_fields']: $info['max_daily_nums'],
+            'status' => AdminUserFinanceConfig::$state_ok,
         ];
         AdminUserFinanceConfig::setStatus(
             $requestData['id'],AdminUserFinanceConfig::$state_del
