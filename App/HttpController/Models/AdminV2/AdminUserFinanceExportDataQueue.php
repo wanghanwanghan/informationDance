@@ -233,6 +233,8 @@ class AdminUserFinanceExportDataQueue extends ModelBase
                'path' => $requestData['path']?:'',
                'file_name' => $requestData['file_name']?:'',
                 'status' => $requestData['status']?:1,
+               'created_at' => time(),
+               'updated_at' => time(),
            ])->save();
 
         } catch (\Throwable $e) {

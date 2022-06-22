@@ -387,8 +387,6 @@ class FinanceController extends ControllerBase
         $page = $requestData['page']?:1;
         $config = AdminUserFinanceConfig::getConfigByUserId($this->loginUserinfo['id']);
 
-
-
         $res = AdminUserFinanceExportDataQueue::findByConditionV3(
             [
                 [
