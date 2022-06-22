@@ -536,7 +536,7 @@ class FinanceController extends ControllerBase
                 [
                     'detailId' => 0,
                     'detail_table' => '',
-                    'price' => $requestData['money'],
+                    'price' => $requestData['recharge_money'],
                     'userId' => $requestData['user_id'],
                     'type' =>  $type,
                     'batch' => $batchNum,
