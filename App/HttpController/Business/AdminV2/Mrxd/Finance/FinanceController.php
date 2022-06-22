@@ -385,9 +385,22 @@ class FinanceController extends ControllerBase
     public function getExportQueueLists(){
         $requestData =  $this->getRequestData();
         $page = $requestData['page']?:1;
-        $res = AdminUserFinanceExportDataQueue::findByConditionV2(
+        $config = AdminUserFinanceConfig::getConfigByUserId($this->loginUserinfo['id']);
+
+
+
+        $res = AdminUserFinanceExportDataQueue::findByConditionV3(
             [
-                'user_id' => $this->loginUserinfo['id']
+                [
+                    'field' => 'user_id',
+                    'value' => $this->loginUserinfo['id'],
+                    'operate' => '=',
+                ],
+                [
+                    'field' => 'created_at',
+                    'value' => strtotime(date("Y-m-d H:i:s", strtotime("-".$config['cache']." hours"))),
+                    'operate' => '>=',
+                ]
             ],
             $page
         );
@@ -400,6 +413,7 @@ class FinanceController extends ControllerBase
                 $value['upload_details'] = AdminUserFinanceUploadRecord::findById($value['upload_record_id'])->toArray();
             }
             $value['status_cname'] = AdminUserFinanceExportDataQueue::getStatusMap()[$value['status']];
+
         }
         return $this->writeJson(200,  [
             'page' => $page,

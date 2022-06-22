@@ -272,6 +272,32 @@ class AdminUserFinanceExportDataQueue extends ModelBase
             'total' =>$total,
         ];
     }
+
+    public static function findByConditionV3($whereArr,$page){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'export data queue  findByConditionV3  ' ,
+                'params $whereArr ' =>$whereArr,
+                'params $page ' =>$page
+            ])
+        );
+        $model = AdminUserFinanceExportDataQueue::create();
+        foreach ($whereArr as $whereItem){
+            $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+        }
+        $model->page($page)
+            ->order('id', 'DESC')
+            ->withTotalCount();
+
+        $res = $model->all();
+
+        $total = $model->lastQueryResult()->getTotalCount();
+        return [
+            'data' => $res,
+            'total' =>$total,
+        ];
+    }
+
     public static function findById($id){
         $res =  AdminUserFinanceExportDataQueue::create()
             ->where('id',$id)            
