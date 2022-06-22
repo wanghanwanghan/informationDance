@@ -316,9 +316,13 @@ class FinanceController extends ControllerBase
     public function getExportLists(){
         $page = $this->request()->getRequestParam('page')??1;
         $res = AdminUserFinanceExportRecord::findByConditionV3(
-            [
 
-                'user_id' => $this->loginUserinfo['id']
+            [
+                [
+                    'field' => 'user_id',
+                    'value' => $this->loginUserinfo['id'],
+                    'operate' => '=',
+                ],
             ],
             $page
         );
