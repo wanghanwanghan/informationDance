@@ -65,13 +65,7 @@ class AdminUserFinanceConfig extends ModelBase
             'user_id' => $userId,     
             'status' => 1,
         ])->get();
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'AdminUserFinanceConfig  getConfigByUserId start',
-                '$userId'=>$userId,
-                '$res'=>$res,
-            ])
-        );
+
         return $res;
     }
 

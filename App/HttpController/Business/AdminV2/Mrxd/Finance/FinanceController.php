@@ -450,7 +450,8 @@ class FinanceController extends ControllerBase
             if(
                 $value['upload_record_id']
             ){
-                $value['upload_details'] = AdminUserFinanceUploadRecord::findById($value['upload_record_id'])->toArray();
+                $AdminUserFinanceUploadRecordRes =  AdminUserFinanceUploadRecord::findById($value['upload_record_id']);
+                $AdminUserFinanceUploadRecordRes && $value['upload_details'] = $AdminUserFinanceUploadRecordRes->toArray();
             }
             $value['status_cname'] = AdminUserFinanceExportDataQueue::getStatusMap()[$value['status']];
 
