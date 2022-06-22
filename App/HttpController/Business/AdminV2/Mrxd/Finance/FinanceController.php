@@ -379,11 +379,11 @@ class FinanceController extends ControllerBase
         if(
             $requestData['ids']
         ){
-            $where[] = [
-                'field'=>'id',
-                'value'=> explode(',',$requestData['ids']),
-                'operate' => 'IN',
-            ];
+//            $where[] = [
+//                'field'=>'id',
+//                'value'=> explode(',',$requestData['ids']),
+//                'operate' => 'IN',
+//            ];
         }
         $res = AdminUserFinanceExportRecord::findByConditionV4(
             $where

@@ -84,7 +84,7 @@ class AdminUserFinanceExportRecord extends ModelBase
         $model = AdminUserFinanceExportRecord::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
-        } 
+        }
         return $model ->all();
     }
 
