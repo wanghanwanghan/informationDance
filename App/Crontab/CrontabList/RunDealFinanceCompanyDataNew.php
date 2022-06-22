@@ -405,6 +405,70 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
         }
         return true;
     }
+
+    static function  sendSmsWhenBalanceIsNotEnough($limit){
+
+        $AdminNewUsers = AdminNewUser::findBySql(
+            " WHERE money >0 AND money <= 2000"
+        );
+        foreach($AdminNewUsers as $AdminNewUser) {
+            //touch time：占用符 标识该条记录在执行中  防止重复执行
+            AdminUserFinanceUploadRecord::setTouchTime(
+                $uploadRecord['id'], date('Y-m-d H:i:s')
+            );
+
+            // 找到上传的文件路径
+            $dirPath =  dirname($uploadRecord['file_path']).DIRECTORY_SEPARATOR;
+            self::setworkPath( $dirPath );
+
+            //按行读取数据
+            $companyDatas = self::getYieldData($uploadRecord['file_name']);
+
+            foreach ($companyDatas as $companyData) {
+                // 按年度解析为数据
+                $yearsArr = json_decode($uploadRecord['years'],true);
+                foreach($yearsArr as $yearItem){
+                    $UserFinanceDataId =  AdminUserFinanceData::addNewRecordV2(
+                        [
+                            'user_id' => $uploadRecord['user_id'] ,
+                            'entName' => $companyData[0] ,
+                            'year' => $yearItem ,
+                            'finance_data_id' => 0,
+                            'price' => 0,
+                            'price_type' => 0,
+                            'cache_end_date' => 0,
+                            'status' => AdminUserFinanceData::$statusinit,
+                        ]
+                    );
+                    if(!$UserFinanceDataId){
+                        return false;
+                    }
+
+                    $res =AdminUserFinanceUploadDataRecord::addRecordV2(
+                        [
+                            'user_id' => $uploadRecord['user_id'] ,
+                            'record_id' => $uploadRecord['id'] ,
+                            'user_finance_data_id' => $UserFinanceDataId,
+                            'status' => 0,
+                        ]
+                    );
+                    if(!$res){
+                        return false;
+                    }
+                }
+            }
+            AdminUserFinanceUploadRecord::changeStatus(
+                $uploadRecord['id'],AdminUserFinanceUploadRecord::$stateParsed
+            );
+
+            AdminUserFinanceUploadRecord::setTouchTime(
+                $uploadRecord['id'], NULL
+            );
+        }
+
+        return true;
+    }
+
     //将客户名单 解析到db
     static function  parseCompanyDataToDb($limit){
         // 待解析的客户名单
@@ -431,7 +495,8 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
 
             foreach ($companyDatas as $companyData) {
                 // 按年度解析为数据
-                $yearsArr = json_decode($uploadRecord['years'],true);
+                //$yearsArr = json_decode($uploadRecord['years'],true);
+                $yearsArr = explode(',',$uploadRecord['years']);
                 foreach($yearsArr as $yearItem){
                     $UserFinanceDataId =  AdminUserFinanceData::addNewRecordV2(
                         [

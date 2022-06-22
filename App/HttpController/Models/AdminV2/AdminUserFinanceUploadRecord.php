@@ -258,12 +258,12 @@ class AdminUserFinanceUploadRecord extends ModelBase
         $Sql = "select * from    `admin_user_finance_upload_record`   $where  " ;
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         if(empty($data)){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'AdminUserFinanceUploadRecord findBySql empty  ',
-                    '$where' => $where
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    'AdminUserFinanceUploadRecord findBySql empty  ',
+//                    '$where' => $where
+//                ])
+//            );
         }
         return $data;
     }

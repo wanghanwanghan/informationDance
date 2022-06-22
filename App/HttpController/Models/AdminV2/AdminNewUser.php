@@ -4,6 +4,7 @@ namespace App\HttpController\Models\AdminV2;
 
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateConf;
 
 class AdminNewUser extends ModelBase
 {
@@ -31,6 +32,19 @@ class AdminNewUser extends ModelBase
         return $res;
     }
 
+    public static function findBySql($where){
+        $Sql = "select * from    `admin_new_user`   $where  " ;
+        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        if(empty($data)){
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    'AdminUserFinanceUploadRecord findBySql empty  ',
+//                    '$where' => $where
+//                ])
+//            );
+        }
+        return $data;
+    }
     public static function checkAccountBalance($id,$chargeMoney){
         CommonService::getInstance()->log4PHP(
             json_encode([
