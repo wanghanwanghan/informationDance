@@ -497,6 +497,9 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 // 按年度解析为数据
                 //$yearsArr = json_decode($uploadRecord['years'],true);
                 $yearsArr = explode(',',$uploadRecord['years']);
+                if(empty($yearsArr)){
+                    continue;
+                }
                 foreach($yearsArr as $yearItem){
                     $UserFinanceDataId =  AdminUserFinanceData::addNewRecordV2(
                         [
