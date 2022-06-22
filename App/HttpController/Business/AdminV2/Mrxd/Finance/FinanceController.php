@@ -82,8 +82,9 @@ class FinanceController extends ControllerBase
         return $this->writeJson(
             200,
             [],
-            [],
-            array_values($years)
+
+            array_values($years),
+            '成功'
         );
     }
 
