@@ -185,8 +185,16 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 $queueData['id'],date('Y-m-d H:i:s')
             );
 
-            $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
-
+            $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id']);
+            $uploadRes && $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
+            if(empty($uploadRes)){
+                return   CommonService::getInstance()->log4PHP(
+                    [
+                        'empty($uploadRes)',
+                        'upload_record_id' =>$queueData['upload_record_id']
+                    ]
+                );
+            }
 
             //拉取财务数据
             $pullFinanceDataByIdRes = AdminUserFinanceUploadRecord::pullFinanceDataById(
