@@ -544,6 +544,8 @@ class FinanceController extends ControllerBase
                     'detail' => json_encode(['operatoer'=>$this->loginUserinfo['name'],'remark' => $requestData['remark']]),
                     'reamrk' => $requestData['remark'].'(操作人'.$this->loginUserinfo['user_name'].')',
                     'status' => $requestData['status']?:1,
+                    'created_at' => time(),
+                    'updated_at' => time(),
                 ]
             )
         ){
