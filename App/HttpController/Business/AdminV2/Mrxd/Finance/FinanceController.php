@@ -404,10 +404,16 @@ class FinanceController extends ControllerBase
 //        NewFinanceData::parseDataToXls(
 //            $config,$filename,['测试1','测试2','测试3'],array_values($res),'sheet1'
 //        );
+        $exportData = [];
+        foreach ($res as $dataItem){
+            $exportData[] = [
+                date('Y-m-d H:i:s',$dataItem['created_at']),
+                $dataItem['file_name'],
+                $dataItem['price'],
+            ];
+        }
         NewFinanceData::parseDataToXls(
-            $config,$filename,['测试1','测试2','测试3'],[
-                ['XXX','XXX','xxxx']
-        ],'sheet1'
+            $config,$filename,['日期','文件名','费用'],$exportData,'sheet1'
         );
 
         return $this->writeJson(200,  [],  [
