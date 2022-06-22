@@ -189,7 +189,7 @@ class FinanceController extends ControllerBase
 
         $res = AdminUserFinanceConfig::addRecordV2($data);
         if (!$res){
-            return $this->writeJson(205,[],[],'修改失败s');
+            return $this->writeJson(205,[],[],'修改失败');
         }
 
         return $this->writeJson(200,[],[],'成功');
@@ -542,7 +542,7 @@ class FinanceController extends ControllerBase
                     'batch' => $batchNum,
                     'title' => $title,
                     'detail' => json_encode(['operatoer'=>$this->loginUserinfo['name'],'remark' => $requestData['remark']]),
-                    'reamrk' => $requestData['remark'].'(操作人'.$this->loginUserinfo['name'].')',
+                    'reamrk' => $requestData['remark'].'(操作人'.$this->loginUserinfo['user_name'].')',
                     'status' => $requestData['status']?:1,
                 ]
             )
