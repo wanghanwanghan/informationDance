@@ -84,13 +84,8 @@ class AdminUserFinanceExportRecord extends ModelBase
         $model = AdminUserFinanceExportRecord::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
-        }
-        $model
-            ->order('id', 'DESC')
-            ->withTotalCount();
-
-        $res = $model->all();
-        return $res;
+        } 
+        return $model ->all();
     }
 
 
