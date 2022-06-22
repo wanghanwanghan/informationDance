@@ -87,6 +87,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/getExportQueueLists', $prefix . 'getExportQueueLists');
              $routeCollector->addRoute(['GET', 'POST'], '/getNeedsConfirmDetails', $prefix . 'getNeedsConfirmDetails');
              $routeCollector->addRoute(['GET', 'POST'], '/getFinanceLogLists', $prefix . 'getFinanceLogLists');
+            $routeCollector->addRoute(['GET', 'POST'], '/getAllowedUploadYears', $prefix . 'getAllowedUploadYears');
         });
 
         return true;

@@ -70,6 +70,22 @@ class FinanceController extends ControllerBase
         );
     }
 
+    public function getAllowedUploadYears(){
+        $user_id = $this->getRequestData('user_id','') ;
+
+        $configs = AdminUserFinanceConfig::getConfigByUserId($user_id);
+        $years = json_decode($configs['annually_years'],true);
+        foreach (json_decode($configs['normal_years_price_json'],true) as $normal_years_item){
+            $years[] = $normal_years_item['year'];
+        }
+        return $this->writeJson(
+            200,
+            [],
+            [],
+            array_values($years)
+        );
+    }
+
     public function getAllRoles(){ 
         return $this->writeJson(
             200,
