@@ -16,7 +16,7 @@ class AdminMenuItems extends ModelBase
     protected $updateTime = 'updated_at'; 
 
     static function getMenusByParentId($parentId){
-        $sql = "SELECT * FROM  admin_menu_items WHERE parent_id = $parentId AND `status` = 1  ORDER BY  `odrer` desc  " ;
+        $sql = "SELECT * FROM  admin_menu_items WHERE parent_id = $parentId AND `status` = 1  ORDER BY  `order` desc  " ;
 
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         CommonService::getInstance()->log4PHP(
@@ -24,7 +24,7 @@ class AdminMenuItems extends ModelBase
                 'getMenusByParentId  ' ,
                 'params $parentId ' =>$parentId,
                 'params $sql ' =>$sql,
-                '$list' =>$list,
+                //'$list' =>$list,
             ])
         );
         return $list;
