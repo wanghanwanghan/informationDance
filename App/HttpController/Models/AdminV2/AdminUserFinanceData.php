@@ -867,6 +867,7 @@ class AdminUserFinanceData extends ModelBase
                 [
                     'checkDataNeedConfirm ',
                     '$id '=>$id,
+                    'status' => $res->getAttr('status'),
                     '$res2'=>$res2
                 ]
             )

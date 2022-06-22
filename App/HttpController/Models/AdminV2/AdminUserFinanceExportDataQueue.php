@@ -145,14 +145,6 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     public static function setFinanceDataState($queueId){
         $queueData = self::findById($queueId)->toArray();
         $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
-
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'setFinanceDataState  strat',
-                '$queueId'=>$queueId
-            ])
-        );
-
         $uploadDatas = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
             $uploadRes['user_id'],$uploadRes['id']
         );
@@ -166,6 +158,14 @@ class AdminUserFinanceExportDataQueue extends ModelBase
                 break;
             };
         }
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'setFinanceDataState  ',
+                '$queueId'=>$queueId,
+                '$status' => $status
+            ])
+        );
+
         return self::updateStatusById($queueId,$status);
 
     }
@@ -192,12 +192,6 @@ class AdminUserFinanceExportDataQueue extends ModelBase
 //    }
 
     static  function  addRecordV2($info){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'AdminUserFinanceExportDataQueue  addRecordV2 start' ,
-                'params $info ' =>$info
-            ])
-        );
 
         if(
             self::findByBatch($info['batch'])
@@ -217,12 +211,6 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     }
 
     public static function addRecord($requestData){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'AdminUserFinanceExportDataQueue  addRecord  ' ,
-                'params $requestData ' =>$requestData
-            ])
-        );
 
         try {
            $res =  AdminUserFinanceExportDataQueue::create()->data([
@@ -238,15 +226,14 @@ class AdminUserFinanceExportDataQueue extends ModelBase
            ])->save();
 
         } catch (\Throwable $e) {
-            CommonService::getInstance()->log4PHP(
+            return CommonService::getInstance()->log4PHP(
                 json_encode([
                     'AdminUserFinanceExportDataQueue  addRecord  failed ' ,
                     'params $requestData ' =>$requestData,
                     'message' => $e->getMessage()
                 ])
             );
-        }  
-
+        }
         return $res;
     }
 

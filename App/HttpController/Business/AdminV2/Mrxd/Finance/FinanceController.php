@@ -358,7 +358,7 @@ class FinanceController extends ControllerBase
         ){
             $where[] = [
                 'field'=>'id',
-                'value'=> json_decode($requestData['ids'],true),
+                'value'=> explode(',',$requestData['ids']),
                 'operate' => 'IN',
             ];
         }
@@ -369,13 +369,13 @@ class FinanceController extends ControllerBase
         $config = [
             'path' => TEMP_FILE_PATH // xlsx文件保存路径
         ];
-        $filename = date('YmdHis').'xlsx';
+        $filename = date('YmdHis').'.xlsx';
         NewFinanceData::parseDataToXls(
             $config,$filename,[],$res,'sheet1'
         );
 
         return $this->writeJson(200,  [],  [
-            'path' => TEMP_FILE_PATH,
+            'path' => '/Static/Temp/'.$filename,
             'filename' => $filename
         ],'成功');
 
@@ -584,13 +584,13 @@ class FinanceController extends ControllerBase
         $config = [
             'path' => TEMP_FILE_PATH // xlsx文件保存路径
         ];
-        $filename = date('YmdHis').'xlsx';
+        $filename = date('YmdHis').'.xlsx';
         $exportDataToXlsRes = NewFinanceData::parseDataToXls(
             $config,$filename,[],$res,'sheet1'
         );
 
         return $this->writeJson(200,  [ ],  [
-            'path' => TEMP_FILE_PATH,
+            'path' => '/Static/Temp/'.$filename,
             'filename' => $filename
         ],'成功');
     }
@@ -657,7 +657,7 @@ class FinanceController extends ControllerBase
             return $this->writeJson(201, null, [],'时间过长，请重新上传');
         }
 
-        //检查状态
+        //检查是否是可以下载的状态状态
         if(
             !AdminUserFinanceUploadRecord::checkByStatus(
                 $requestData['id'],AdminUserFinanceUploadRecord::$stateCalCulatedPrice
@@ -665,8 +665,8 @@ class FinanceController extends ControllerBase
         ){
             ConfigInfo::removeRedisNx('exportFinanceData2');
             return $this->writeJson(201, null, [],  '当前状态不允许导出 请稍等');
-
         }
+
         // 检查余额
         if(
             !\App\HttpController\Models\AdminV2\AdminNewUser::checkAccountBalance(
@@ -678,7 +678,7 @@ class FinanceController extends ControllerBase
             return $this->writeJson(201, null, [],  '余额不足 需要至少'. $uploadRes['money'].'元');
         }
 
-        //检查账户是否可以拉取 如果到达今日次数等限制的话 就跳过去      把优先级调的低一些 updatePriorityById
+        //检查账户是否可以拉取 如果到达今日次数等限制的话  不进行下载
         $totalNeedExportNums = count(
             AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
                 $uploadRes['user_id'],
@@ -686,7 +686,6 @@ class FinanceController extends ControllerBase
                 ['id']
             )
         );
-
         //每日最大次数限制
         if(
             !AdminUserChargeConfig::checkIfCanRun($uploadRes['user_id'],$totalNeedExportNums)
@@ -694,6 +693,45 @@ class FinanceController extends ControllerBase
             return  $this->writeJson(201,[],[],'超出每日最大次数，联系管理员');
         }
 
+        //先扣钱 //先扣钱
+        //本名单之前是否扣费过
+        $chargeBefore = AdminUserFinanceUploadRecord::ifHasChargeBefore($uploadRes['id']);
+        $batchNo = date('YmdHis');
+        if(
+            $uploadRes['money'] > 0 &&
+            !$chargeBefore
+        ){
+            //扣费
+            $batchNum = 'CWDC'.date('YmdHis');
+
+            $res = \App\HttpController\Models\AdminV2\AdminNewUser::charge(
+                $uploadRes['user_id'],
+                $uploadRes['money'],
+                $batchNo,
+                [
+                    'detailId' => $queueData['id'],
+                    'detail_table' => 'admin_user_finance_export_data_queue',
+                    'price' => $uploadRes['money'],
+                    'userId' => $uploadRes['user_id'],
+                    'type' => FinanceLog::$chargeTytpeFinance,
+                    'batch' => $queueData['id'],
+                    'title' => '',
+                    'detail' => '',
+                    'reamrk' => '',
+                    'status' => 1,
+                ],
+                10
+            );
+            if(!$res  ){
+                return  false;
+            }
+            //设置上传收费时间|本名单的
+            $res = AdminUserFinanceUploadRecord::updateLastChargeDate($uploadRes['id'],date('Y-m-d H:i:s'));
+            if(!$res  ){
+                return  false;
+            }
+        }
+        //添加到下载队列
         if(
             !AdminUserFinanceExportDataQueue::addRecordV2(
                 [
@@ -706,6 +744,8 @@ class FinanceController extends ControllerBase
             ConfigInfo::removeRedisNx('exportFinanceData2');
             return  $this->writeJson(201,[],[],'添加失败，联系管理员');
         }
+
+
 
         ConfigInfo::removeRedisNx('exportFinanceData2');
         return $this->writeJson(200,[],[],'已发起下载，请稍后去我的下载中查看');
