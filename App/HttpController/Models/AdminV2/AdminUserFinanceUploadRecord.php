@@ -375,12 +375,6 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
     //计算到底多少钱
     static function  calMoney($uploadId){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'AdminUserFinanceUploadRecord calMoney ',
-                '$uploadId' => $uploadId
-            ])
-        );
         $uploadInfo = self::findById($uploadId)->toArray();
         $uploadDatas = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
             $uploadInfo['user_id'],$uploadInfo['id']

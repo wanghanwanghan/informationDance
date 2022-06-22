@@ -131,16 +131,6 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
     public static function findByUserIdAndRecordIdV2(
         $user_id,$record_id,$fieldsArr = []
     ){
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    'AdminUserFinanceUploadDataRecord findByUserIdAndRecordIdV2    ',
-                    '$user_id' =>$user_id,
-                    '$record_id' =>$record_id,
-                    '$fieldsArr' =>$fieldsArr,
-                ]
-            )
-        );
 
         if(empty($fieldsArr)){
             $res =  AdminUserFinanceUploadDataRecord::create()->where([
@@ -389,13 +379,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
 
     //  设置收费类型|按包年收费 还是按单年收费
     public static function updateChargeInfo($id,$uploadId){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'AdminUserFinanceUploadDataRecord updateChargeInfo start  ',
-                'params $id' =>$id,
-                'params $uploadId' =>$uploadId,
-            ])
-        );
+
         $uploadInfo = AdminUserFinanceUploadRecord::findById($uploadId);
         $uploadInfo = $uploadInfo->toArray();
 
@@ -511,16 +495,6 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
     }
 
     static  function  getYearPriceByConfig($year,$configArr){
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    'getYearPriceByConfig',
-                    '$year'=>$year,'$configArr'=>$configArr,
-                    'normal_years_price_json_arr' => json_decode($configArr['normal_years_price_json'],true)
-
-                ]
-            )
-        );;
 
         foreach (json_decode($configArr['normal_years_price_json'],true) as $configItem){
             if(
@@ -536,7 +510,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
 
                 ]
             )
-        );;
+        );
     }
 
     static  function  checkIfArrayEquals($array1,$array2){
