@@ -268,6 +268,7 @@ class FinanceController extends ControllerBase
                         'file_name' => $fileName,
                         'title' => $requestData['title']?:'',
                         'reamrk' => $requestData['reamrk']?:'',
+                        'batch' => 'CWMD'.date('YmdHis'),
                         'finance_config' => json_encode(
                             AdminUserFinanceConfig::getConfigDataByUserId(
                                 $this->loginUserinfo['id']

@@ -34,6 +34,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
         $dbData = [
             'user_id' => $requestData['user_id'],
             'years' => $requestData['years'],
+            'batch' => $requestData['batch'],
             'file_path' => $requestData['file_path'],
             'file_name' => $requestData['file_name'],
             'title' => $requestData['title']?:'',
@@ -87,15 +88,14 @@ class AdminUserFinanceUploadRecord extends ModelBase
             // 'status' => 1,  
         ])->get();
 
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'AdminUserFinanceUploadRecord   findByIdAndFileName ',
-                'params $user_id'=> $user_id,
-                'params $file_name'=> $file_name,
-                'retrun $res'=> $res,
-            ])
-        );
+        return $res;
+    }
 
+    public static function findByBatch($batch){
+        $res =  AdminUserFinanceUploadRecord::create()->where([
+            'batch' => $batch,
+            // 'status' => 1,
+        ])->get();
         return $res;
     }
 
