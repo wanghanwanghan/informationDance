@@ -88,6 +88,7 @@ class AdminV2Router
              $routeCollector->addRoute(['GET', 'POST'], '/getNeedsConfirmDetails', $prefix . 'getNeedsConfirmDetails');
              $routeCollector->addRoute(['GET', 'POST'], '/getFinanceLogLists', $prefix . 'getFinanceLogLists');
             $routeCollector->addRoute(['GET', 'POST'], '/getAllowedUploadYears', $prefix . 'getAllowedUploadYears');
+            $routeCollector->addRoute(['GET', 'POST'], '/chargeAccount', $prefix . 'chargeAccount');
         });
 
         return true;

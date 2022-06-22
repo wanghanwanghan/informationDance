@@ -508,7 +508,7 @@ class FinanceController extends ControllerBase
         ){
             $newBalance = \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
                     $requestData['user_id']
-                ) + $requestData['money'];
+                ) + $requestData['recharge_money'];
             $title= '充值';
             $type = FinanceLog::$chargeTytpeAdd ;
         }
@@ -518,7 +518,7 @@ class FinanceController extends ControllerBase
         ){
             $newBalance = \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
                     $requestData['user_id']
-                ) - $requestData['money'];
+                ) - $requestData['recharge_money'];
             $title= '扣费';
             $type = FinanceLog::$chargeTytpeDele ;
         }
