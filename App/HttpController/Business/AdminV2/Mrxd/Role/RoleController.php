@@ -194,7 +194,6 @@ class RoleController extends ControllerBase
        
         $role_id = $this->getRequestData('role_id');
         $status = $this->getRequestData('status');
-        if (empty($phone)) return $this->writeJson(201, null, null, '参数 不能是空');
         if (empty($status)) return $this->writeJson(201, null, null, 'status 不能是空');
         $info = AdminRoles::create()->where("role_id = '{$role_id}' ")->get();
         if (empty($info)) return $this->writeJson(201, null, null, '用户不存在');
