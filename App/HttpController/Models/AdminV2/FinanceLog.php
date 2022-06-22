@@ -21,10 +21,14 @@ class FinanceLog extends ModelBase
     static $chargeTytpeFinanceCname = '财务导出';
 
     static $chargeTytpeAdd = 10;
-    static $chargeTytpeAddCname = '用户充值';
+    static $chargeTytpeAddCname = '充值';
 
-    static $chargeTytpeDele = 15;
-    static $chargeTytpeDeleCname = '用户扣钱';
+
+    static  $chargeTypePreAdd = 15 ;
+    static  $chargeTypePreAddCname =  '预充值' ; 
+
+    static $chargeTytpeDele = 20;
+    static $chargeTytpeDeleCname = '扣费';
     public static function getTypeCnameMaps(){
 
         return [

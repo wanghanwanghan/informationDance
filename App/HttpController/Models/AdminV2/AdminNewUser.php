@@ -16,8 +16,12 @@ class AdminNewUser extends ModelBase
     static  $chargeTypeAdd = 5 ;
     static  $chargeTypeAddCname =  '充值' ;
 
+    static  $chargeTypePreAdd = 7 ;
+    static  $chargeTypePreAddCname =  '预充值' ;
+
     static  $chargeTypeDele = 10 ;
     static  $chargeTypeDeleCname =  '扣费' ;
+
 
 
     public static function findById($id){
