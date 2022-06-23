@@ -923,7 +923,7 @@ class AdminUserFinanceData extends ModelBase
         ]);
     }
 
-    public static function updateNewFinanceDataId($id,$financeDataId){ 
+    public static function updateNewFinanceDataId($id,$financeDataId){
         $info = AdminUserFinanceData::findById($id);
         if(!$info ){
             return CommonService::getInstance()->log4PHP(

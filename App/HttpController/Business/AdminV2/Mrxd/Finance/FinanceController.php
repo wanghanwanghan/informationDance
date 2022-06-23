@@ -407,13 +407,14 @@ class FinanceController extends ControllerBase
         $exportData = [];
         foreach ($res as $dataItem){
             $exportData[] = [
+                $dataItem['id'],
                 date('Y-m-d H:i:s',$dataItem['created_at']),
                 $dataItem['file_name'],
                 $dataItem['price'],
             ];
         }
         NewFinanceData::parseDataToXls(
-            $config,$filename,['日期','文件名','费用'],$exportData,'sheet1'
+            $config,$filename,['订单号','日期','文件名','费用'],$exportData,'sheet1'
         );
 
         return $this->writeJson(200,  [],  [
@@ -647,7 +648,7 @@ class FinanceController extends ControllerBase
             $requestData['id']
         );
 
-        $exportHeader = ['企业名称','上次收费时间','年度','按年收费/年度','包年收费/开始年','包年收费/结束年','收费类型','实际收费','实际收费备注'];
+        $exportHeader = ['订单号','企业名称','上次收费时间','年度','按年收费/年度','包年收费/开始年','包年收费/结束年','实际收费','收费类型','实际收费备注'];
         $exportData = [];
         foreach ($res as &$dataItem){
             $dataItem['details'] = [];
@@ -667,6 +668,7 @@ class FinanceController extends ControllerBase
             }
 
             $exportData[] = [
+                'id' => $dataItem['id'],
                 'entName' => $dataItem['data_details']['entName'],
                 'last_charge_date' => $dataItem['data_details']['last_charge_date'],
                 'year' => $dataItem['data_details']['year'],
