@@ -32,27 +32,20 @@ class AdminNewUser extends ModelBase
         return $res;
     }
 
+
+    public static function findByPhone($phone){
+        $res =  AdminNewUser::create()
+            ->where('phone',$phone)
+            ->get();
+        return $res;
+    }
     public static function findBySql($where){
         $Sql = "select * from    `admin_new_user`   $where  " ;
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-        if(empty($data)){
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    'AdminUserFinanceUploadRecord findBySql empty  ',
-//                    '$where' => $where
-//                ])
-//            );
-        }
+
         return $data;
     }
     public static function checkAccountBalance($id,$chargeMoney){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'checkAccountBalance   start ' ,
-                'params $id ' =>$id,
-                'params $chargeMoney ' =>$chargeMoney
-            ])
-        );
 
         $balance = self::getAccountBalance($id) ;
         CommonService::getInstance()->log4PHP(
@@ -113,55 +106,50 @@ class AdminNewUser extends ModelBase
             'money' => $money
         ]);
     }
+    static  function  addRecordV2($info){
 
-    // $type 5充值 10 扣钱
-//    public static function charge($id,$money,$batchNo,$datas,$type = 5){
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                'admin new user charge   '=> 'start',
-//                '$id' =>  $id,
-//                'money' =>  $money,
-//                '$batchNo' =>  $batchNo,
-//                '$datas' =>  $datas,
-//                '$type' =>  $type,
-//            ])
-//        );
-//        if(
-//            FinanceLog::findByBatch($batchNo)
-//        ){
-//            return true;
-//        }
-//        // 实际扣费
-//        $banlance = \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
-//            $id
-//        );
-//        if(
-//            $type == 5
-//        ){
-//            $banlance = $banlance + $money;
-//        }
-//
-//        if(
-//            $type == 10
-//        ){
-//            $banlance = $banlance - $money;
-//        }
-//
-//        $res = \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
-//            $id,
-//            $banlance
-//        );
-//        if(!$res ){
-//            return CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    'admin new user charge   '=> 'failed',
-//                    '$res' =>  $res
-//                ])
-//            );
-//        }
-//
-//        return FinanceLog::addRecordV2(
-//            $datas
-//        );
-//    }
+        if(
+            self::findByPhone($info['phone'])
+        ){
+            return  true;
+        }
+
+        return AdminNewUser::addRecord(
+            $info
+        );
+    }
+
+    public static function addRecord($requestData){
+        try {
+            $res =  AdminNewUser::create()->data([
+                'user_name' => $requestData['user_name'],
+                'password' => $requestData['password'],
+                'phone' => $requestData['phone'],
+                'email' => $requestData['email'],
+                'money' => $requestData['money'],
+                'company_id' => $requestData['company_id'],
+                'status' => $requestData['status']?:1,
+                'created_at' => time(),
+                'updated_at' => time(),
+            ])->save();
+
+        } catch (\Throwable $e) {
+            return CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ ,
+                    'failed',
+                    '$requestData' => $requestData
+                ])
+            );
+        }
+        return $res;
+    }
+
+    public static function findAllByCondition($whereArr){
+        $res =  AdminUserFinanceExportDataQueue::create()
+            ->where($whereArr)
+            ->all();
+        return $res;
+    }
+
 }

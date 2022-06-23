@@ -201,16 +201,22 @@ class UserController extends ControllerBase
         if (empty($phone)) return $this->writeJson(201, null, null, 'phone 不能是空');
         if (empty($user_name)) return $this->writeJson(201, null, null, 'user_name 不能是空');
         if (empty($password)) return $this->writeJson(201, null, null, 'password 不能是空');
+        if (
+            AdminNewUser::findByPhone($phone)
+        ) {
+            return $this->writeJson(201, null, null, 'phone 已存在');
+        }
 
-        $insert = [
-            'user_name'=>$user_name,
-            'password'=>$password,
-            'phone'=>$phone,
-            'email'=>$email,
-            'type'=>$type,
-            'company_id'=>$company_id
-        ];
-        AdminNewUser::create()->data($insert)->save();
+        AdminNewUser::addRecordV2(
+            [
+                'user_name'=>$user_name,
+                'password'=>$password,
+                'phone'=>$phone,
+                'email'=>$email,
+                'type'=>$type,
+                'company_id'=>$company_id
+            ]
+        );
         return $this->writeJson(200, null, null, '添加成功');
     }
 
