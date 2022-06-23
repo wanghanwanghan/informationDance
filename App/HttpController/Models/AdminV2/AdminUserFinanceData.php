@@ -923,24 +923,22 @@ class AdminUserFinanceData extends ModelBase
         ]);
     }
 
-    public static function updateNewFinanceDataId($id,$financeDataId){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'updateNewFinanceDataId  ',$id,$financeDataId
-            ])
-        );
-        $info = AdminUserFinanceData::create()
-            ->where('id',$id)
-            ->get();
+    public static function updateNewFinanceDataId($id,$financeDataId){ 
+        $info = AdminUserFinanceData::findById($id);
         if(!$info ){
             return CommonService::getInstance()->log4PHP(
                 'updateStatus failed  $id 不存在'.$id
             );
         }
-        return $info->update([
-            'id' => $id,
-            'finance_data_id' => $financeDataId
-        ]);
+        $financeData = NewFinanceData::findById($financeDataId);
+        $financeData = $financeData->toArray();
+        $tmpData =[
+            'finance_data_id' => $financeDataId,
+        ];
+        if($info->getAttr('last_pull_api_date')<1){
+            $tmpData['last_pull_api_date'] = $financeData['updated_at']?:$financeData['created_at'];
+        }
+        return $info->update($tmpData);
     }
 
     public static function updateStatus($id,$status){
