@@ -379,11 +379,26 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 AdminUserFinanceUploadRecord::checkIfNeedsConfirm($uploadRes['id'])
             ){
                 $res = AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecord::$stateNeedsConfirm);
-
             }
             //不需要确认
             else{
                 $res = AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecord::$stateConfirmed);
+
+                //重新计算下价格
+                $calRes = AdminUserFinanceUploadRecord::calAndSetMoney(
+                    $uploadRes['id']
+                );
+
+                if(!$calRes  ){
+                    //把优先级调低
+                    AdminUserFinanceUploadRecord::reducePriority(
+                        $uploadRes['id'],1
+                    );
+                    AdminUserFinanceUploadRecord::setData(
+                        $uploadRes['id'],'remrk','重新计算价格错误'
+                    );
+                    return  false;
+                } 
             }
 
 
