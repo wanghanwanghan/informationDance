@@ -808,6 +808,7 @@ class FinanceController extends ControllerBase
         //先扣费
         //本名单之前是否扣费过
         $chargeBefore = AdminUserFinanceUploadRecord::ifHasChargeBefore($uploadRes['id']);
+
         // ===============
         // 实际扣费了
         $price = 0;
@@ -815,6 +816,15 @@ class FinanceController extends ControllerBase
             $uploadRes['money'] > 0 &&
             !$chargeBefore
         ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ ,
+                    'needs charge  ',
+                    'money' => $uploadRes['money'],
+                    'id' => $uploadRes['id'],
+                    '$chargeBefore' => $chargeBefore
+                ])
+            );
             $price = $uploadRes['money'];
             //扣余额
             if(
@@ -912,7 +922,7 @@ class FinanceController extends ControllerBase
                     'batch' => $batchNum,
                     'user_id' => $this->loginUserinfo['id'],
                     'upload_record_id' => $requestData['id'],
-                    'real_charge' =>$price >0 ? 1 : 0,
+                    'real_charge' =>$price ,
                     'status' => AdminUserFinanceExportDataQueue::$state_init
                 ]
             )

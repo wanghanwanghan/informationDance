@@ -100,9 +100,10 @@ class AdminNewUser extends ModelBase
     public static function updateMoney($id,$money){
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'admin new user updateMoney   '=> 'strat',
-                'params $id' =>  $id,
-                'params $money' =>  $money
+                __CLASS__.__FUNCTION__ ,
+                ' charge   ',
+                'id' => $id,
+                '$money' => $money
             ])
         );
         $info = AdminNewUser::findById($id);
