@@ -646,6 +646,9 @@ class FinanceController extends ControllerBase
             $this->loginUserinfo['id'],
             $requestData['id']
         );
+
+        $exportHeader = ['企业名称','上次收费时间','年度','按年收费/年度','包年收费/开始年','包年收费/结束年','收费类型','实际收费','实际收费备注'];
+        $exportData = [];
         foreach ($res as &$dataItem){
             $dataItem['details'] = [];
 
@@ -662,6 +665,18 @@ class FinanceController extends ControllerBase
                     $dataItem['data_details'] = $dataRes->toArray();
                 }
             }
+
+            $exportData[] = [
+                'entName' => $dataItem['data_details']['entName'],
+                'last_charge_date' => $dataItem['data_details']['last_charge_date'],
+                'year' => $dataItem['data_details']['year'],
+                'charge_year' => $dataItem['upload_details']['charge_year'],
+                'charge_year_start' => $dataItem['upload_details']['charge_year_start'],
+                'charge_year_end' => $dataItem['upload_details']['charge_year_end'],
+                'real_price' => $dataItem['upload_details']['real_price'],
+                'real_price_remark' => $dataItem['upload_details']['real_price_remark'],
+                'price_type_remark' => $dataItem['upload_details']['price_type_remark'],
+            ];
         }
 
         $config = [
@@ -669,7 +684,7 @@ class FinanceController extends ControllerBase
         ];
         $filename = date('YmdHis').'.xlsx';
         $exportDataToXlsRes = NewFinanceData::parseDataToXls(
-            $config,$filename,[],$res,'sheet1'
+            $config,$filename,$exportHeader,$exportData,'sheet1'
         );
 
         return $this->writeJson(200,  [ ],  [
