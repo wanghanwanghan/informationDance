@@ -236,6 +236,23 @@ class GetInvData extends ProcessBase
                 //没有数据了
                 if (empty($list)) break;
                 foreach ($list as $oneInv) {
+                    //为了曹芳测试，修改一下主票的数据内容
+                    $test_time = trim(Carbon::now()->format('Ymd'));
+                    if (in_array($test_time, ['20220623', '20220624'], true)) {
+                        //xfmc 销售方名称
+                        //gfmc 购买方名称
+                        //gfdzdh 购买方地址电话
+                        //gfyhzh 购买方银行账号
+                        if (mt_rand(1, 1000) % 4 === 0) {
+                            $oneInv->xfmc = '';
+                        } elseif (mt_rand(1, 1000) % 4 === 1) {
+                            $oneInv->gfmc = '';
+                        } elseif (mt_rand(1, 1000) % 4 === 2) {
+                            $oneInv->gfdzdh = '';
+                        } else {
+                            $oneInv->gfyhzh = '';
+                        }
+                    }
                     //每张添加明细
                     $detail = EntInvoiceDetail::create()
                         ->addSuffix($oneInv->getAttr('fpdm'), $oneInv->getAttr('fphm'), 'wusuowei')
