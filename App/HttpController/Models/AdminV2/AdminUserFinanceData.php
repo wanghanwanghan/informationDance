@@ -386,7 +386,7 @@ class AdminUserFinanceData extends ModelBase
     }
     public  static  function getConfirmStatus($financeConifgArr,$dataItem){
 
-        // 不需要确认的 全部为需要的 
+        // 不需要确认的 全部为需要的
         if(!$financeConifgArr['needs_confirm']){
             return self::$statusConfirmedYes;
         }

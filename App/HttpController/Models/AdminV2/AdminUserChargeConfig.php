@@ -81,7 +81,7 @@ class AdminUserChargeConfig extends ModelBase
         $info = self::findByUser($user_id);
         $daily_used_nums = $info->getAttr('daily_used_nums');
         return $info->update([
-            'daily_used_nums' => $daily_used_nums + $nums ,
+            'daily_used_nums' => intval($daily_used_nums) + intval($nums) ,
         ]);
     }
 
