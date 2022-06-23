@@ -34,6 +34,7 @@ class FinanceLog extends ModelBase
         return [
             self::$chargeTytpeFinance => self::$chargeTytpeFinanceCname,
             self::$chargeTytpeAdd => self::$chargeTytpeAddCname,
+            self::$chargeTypePreAdd => self::$chargeTypePreAddCname,
             self::$chargeTytpeDele => self::$chargeTytpeDeleCname,
         ];
     }
@@ -134,6 +135,26 @@ class FinanceLog extends ModelBase
     static  function charge($userId,$money,$type,$details){
 
     }
+
+
+    public static function findByConditionV3($whereArr,$page){
+        $model = FinanceLog::create();
+        foreach ($whereArr as $whereItem){
+            $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+        }
+        $model->page($page)
+            ->order('id', 'DESC')
+            ->withTotalCount();
+
+        $res = $model->all();
+
+        $total = $model->lastQueryResult()->getTotalCount();
+        return [
+            'data' => $res,
+            'total' =>$total,
+        ];
+    }
+
     public static function findByConditionV2($whereArr,$page){
 
         $model = FinanceLog::create()

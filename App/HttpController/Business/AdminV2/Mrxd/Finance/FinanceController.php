@@ -492,14 +492,35 @@ class FinanceController extends ControllerBase
 
     //账户流水
     public function getFinanceLogLists(){
+        $page = $this->request()->getRequestParam('page')??1;
         $requestData =  $this->getRequestData();
-        $condition = [
-            'userId' => $this->loginUserinfo['id'],
+        $createdAtStr = $this->getRequestData('created_at');
+        $createdAtArr = explode('|||',$createdAtStr);
+        $whereArr = [];
+        if (
+            !empty($createdAtArr) &&
+            !empty($createdAtStr)
+        ) {
+            $whereArr = [
+                [
+                    'field' => 'created_at',
+                    'value' => strtotime($createdAtArr[0]),
+                    'operate' => '>=',
+                ],
+                [
+                    'field' => 'created_at',
+                    'value' => strtotime($createdAtArr[1]),
+                    'operate' => '<=',
+                ]
+            ];
+        }
+        $whereArr[] =  [
+            'field' => 'userId',
+            'value' => $this->loginUserinfo['id'],
+            'operate' => '=',
         ];
-
-        $page = $requestData['page']?:1;
-        $res = FinanceLog::findByConditionV2(
-            $condition,
+        $res = FinanceLog::findByConditionV3(
+            $whereArr,
             $page
         );
         foreach ($res['data'] as  &$dataItem){
@@ -508,7 +529,7 @@ class FinanceController extends ControllerBase
         return $this->writeJson(200,
             [
                 'page' => $page,
-                'pageSize' =>20,
+                'pageSize' =>10,
                 'total' => $res['total'],
                 'totalPage' => ceil( $res['total']/ 20 ),
             ] , $res['data'], '成功' );
