@@ -4,6 +4,7 @@ namespace App\HttpController\Models\AdminV2;
 
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
+use EasySwoole\Mysqli\QueryBuilder;
 
 // use App\HttpController\Models\AdminRole;
 
@@ -56,6 +57,20 @@ class AdminUserRole extends ModelBase
                 'user_id' => $user_id,
             ])
             ->all();
+        return $res;
+    }
+
+    public static function delByUserId(
+        $user_id
+    ){
+
+        try {
+            $res = AdminUserRole::create()->destroy(function (QueryBuilder $builder) use ($user_id) {
+                $builder->where('user_id', $user_id);
+            });
+        } catch (\Throwable $e) {
+            CommonService::getInstance()->log4PHP($e->getMessage());
+        }
         return $res;
     }
 

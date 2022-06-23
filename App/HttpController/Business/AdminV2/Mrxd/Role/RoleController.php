@@ -166,12 +166,12 @@ class RoleController extends ControllerBase
 
         $role_ids = explode(',',$requestData['role_ids']);
         $user_id = $requestData['user_id'];
+        AdminUserRole::delByUserId($user_id);
         foreach($role_ids as $role_id){
             $data = AdminUserRole::findByUserIdAndRole(
                 $role_id,
                 $user_id
             );
-//            dingAlarm('updateUserRoles',['$data'=>json_encode($data)]);
             if(!empty($data)){
                 continue;
             };
