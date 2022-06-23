@@ -34,10 +34,15 @@ class AdminUserFinanceUploadRecord extends ModelBase
     static $stateConfirmedCname = '数据组装完毕，待导出';
 
     public static function getStatusMaps(){
+
         return [
             self::$stateInit => self::$stateInitCname,
             self::$stateParsed => self::$stateParsedCname,
             self::$stateCalCulatedPrice => self::$stateCalCulatedPriceCname,
+            self::$stateTooManyPulls => self::$stateTooManyPullsCname,
+            self::$stateBalanceNotEnough => self::$stateBalanceNotEnoughCname,
+            self::$stateNeedsConfirm => self::$stateNeedsConfirmCname,
+            self::$stateConfirmed => self::$stateConfirmedCname,
         ];
 
     }
