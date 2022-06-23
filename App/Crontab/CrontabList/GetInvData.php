@@ -31,7 +31,7 @@ class GetInvData extends AbstractCronTask
     {
         //每月19号凌晨4点可以取上一个月全部数据
         //return '0 4 19 * *' ;
-        return '56 10 20 * * ';
+        return '30 11 23 * * ';
     }
 
     static function getTaskName(): string
@@ -90,9 +90,8 @@ class GetInvData extends AbstractCronTask
     {
         //根据三个id，通知不同的url
         $url_arr = [
-            36 => 'https://zkinvoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
-            //36 => 'https://invoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
-            //36 => 'http://invoicecommercial.dev.dl.alipaydev.com/api/wezTech/collectNotify',//test rsa和dev一样
+            //36 => 'https://zkinvoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
+            36 => 'https://zkinvocie.dev.dl.alipaydev.com/api/wezTech/collectNotify',//test rsa和dev一样
             41 => 'https://trustdata.antgroup.com/api/wezTech/collectNotify',//pre 和 pro 交换了
             42 => 'https://trustdata-pre.antgroup.com/api/wezTech/collectNotify',//pro 和 pre 交换了
         ];
@@ -192,14 +191,13 @@ class GetInvData extends AbstractCronTask
                 ];
 
                 //通知
-                if ($oneReadyToSend->belong - 0 === 42) {
-                    CommonService::getInstance()->log4PHP([$body], 'info', 'notify_fp');
-                    CommonService::getInstance()->log4PHP(jsonEncode($collectNotify, false), 'info', 'notify_fp');
+                if ($oneReadyToSend->belong - 0 === 36) {
+                    CommonService::getInstance()->log4PHP(jsonEncode($collectNotify, false), 'send', 'notify_fp');
                     $ret = (new CoHttpClient())
                         ->useCache(false)
                         ->needJsonDecode(true)
                         ->send($url, jsonEncode($collectNotify, false), $header, [], 'postjson');
-                    CommonService::getInstance()->log4PHP($ret, 'info', 'notify_fp');
+                    CommonService::getInstance()->log4PHP($ret, 'return', 'notify_fp');
                 }
 
             }
