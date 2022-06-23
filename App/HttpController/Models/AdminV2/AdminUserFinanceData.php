@@ -347,7 +347,7 @@ class AdminUserFinanceData extends ModelBase
             $dbDataArr = $resData[$financeData['year']];
             $dbDataArr['entName'] = $financeData['entName'];
             $dbDataArr['year'] = $financeData['year'];
-
+            $dbDataArr['raw_return'] = json_encode($resData);
 
             $addRes = NewFinanceData::addRecordV2($dbDataArr);
             //设置是否需要确认

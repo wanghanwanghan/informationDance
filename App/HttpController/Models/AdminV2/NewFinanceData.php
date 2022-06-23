@@ -85,7 +85,8 @@ class NewFinanceData extends ModelBase
                 'PROGRO' => $postData['PROGRO']?:'',
                 'NETINC' => $postData['NETINC']?:'',
                 'SOCNUM' => $postData['SOCNUM']?:'',
-                'EMPNUM' => $postData['EMPNUM']?:'',
+                'EMPNUM' => $postData['EMPNUM']?:'',//
+               'raw_return' => $postData['raw_return']?:'',//
                 'status' => $postData['status']?:1,
                 'last_pull_api_time' => $postData['last_pull_api_time']?:date('Y-m-d H:i:s'),
             ])->save();
