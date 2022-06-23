@@ -231,8 +231,9 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                         ".AdminUserFinanceUploadRecord::$stateBalanceNotEnough. " ,
                         ".AdminUserFinanceUploadRecord::$stateTooManyPulls. " ,
             )
-             AND touch_time  IS Null  LIMIT $limit 
+             AND touch_time  IS Null
              ORDER BY priority ASC 
+           LIMIT $limit 
             "
         );
 
