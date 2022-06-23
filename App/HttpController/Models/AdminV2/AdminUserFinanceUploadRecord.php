@@ -65,7 +65,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'AdminUserFinanceUploadRecord addUploadRecord false',
+                    __CLASS__.__FUNCTION__ .' false',
                     '$requestData' => $requestData,
                     '$dbData' => $dbData,
                     'return getMessage' =>  $e->getMessage(),
@@ -119,14 +119,6 @@ class AdminUserFinanceUploadRecord extends ModelBase
     public static function checkByStatus($id,$status){
         $res =  self::findById($id);
         $res2 = ($res->getAttr('status')==$status)?true:false;
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'upload record checkByStatus   '=> 'start',
-                'params $id' => $id,
-                'params $status' => $status,
-                '$res2'=>$res2,
-            ])
-        );
         return $res2;
     }
 
@@ -292,13 +284,6 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 break;
             };
         }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'checkIfNeedsConfirm  ',
-                '$upload_record_id'=>$upload_record_id,
-                '$needs' => $needs
-            ])
-        );
 
         return $needs;
 
@@ -308,14 +293,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
     public static function findBySql($where){
         $Sql = "select * from    `admin_user_finance_upload_record`   $where  " ;
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-        if(empty($data)){
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    'AdminUserFinanceUploadRecord findBySql empty  ',
-//                    '$where' => $where
-//                ])
-//            );
-        }
+
         return $data;
     }
 
@@ -331,17 +309,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
     public static function updateLastChargeDate(
         $id,$last_charge_date
     ){
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    'AdminUserFinanceUploadRecord updateLastChargeDate ',
-                    [
-                        'id' => $id,
-                        '$last_charge_date' => $last_charge_date,
-                    ]
-                ]
-            )
-        );
+
         $info = self::findById($id);
         return $info->update([
             'id' => $id,
@@ -357,18 +325,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
         if($info->getAttr('last_charge_date')>0){
             $res = true;
         }
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    'AdminUserFinanceUploadRecord ifHasChargeBefore ',
-                    [
-                        'id' => $id,
-                        'last_charge_date' => $info->getAttr('last_charge_date'),
-                        '$res'=>$res,
-                    ]
-                ]
-            )
-        );
+
         return $res;
     }
 
@@ -379,38 +336,20 @@ class AdminUserFinanceUploadRecord extends ModelBase
         $res = true;
         $last_charge_date = $info->getAttr('last_charge_date');
 
-
         if(
             $last_charge_date > 0 &&
             strtotime($last_charge_date) -time() >= 60*60* intval(self::getFinanceConfigArray($id)['cache'])
         ){
             $res = false;
         }
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    'AdminUserFinanceUploadRecord ifCanDownload ', [
-                    'id' => $id, '$last_charge_date' => $last_charge_date,'cache' => intval(self::getFinanceConfigArray($id)['cache']), '$res'=>$res,  ]
-                ]
-            )
-        );
+
         return $res;
     }
 
     public static function updateMoneyById(
         $id,$money
     ){
-        CommonService::getInstance()->log4PHP(
-           json_encode(
-               [
-                   'updateMoneyById ',
-                   [
-                       'id' => $id,
-                       'money' => $money,
-                   ]
-               ]
-           )
-        );
+
         $info = self::findById($id);
         return $info->update([
             'id' => $id,
@@ -443,13 +382,6 @@ class AdminUserFinanceUploadRecord extends ModelBase
                         == $uploadData['charge_year_end']
                 ){
                     $hasChargeBefore = true;
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            'AdminUserFinanceUploadRecord calMoney  has cal 1',
-                            'user_id' => $uploadData['user_id'],
-                            'user_id chargeTypeAnnually ' => $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']]
-                        ])
-                    );
                 };
 
                 //之前已经收费过
@@ -462,13 +394,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                         $uploadData['charge_year_end']
                     )
                 ){
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            'AdminUserFinanceUploadRecord calMoney  has cal 2',
-                            'user_id' => $uploadData['user_id'],
-                            'cache_end_date ' => $user_finance_data['cache_end_date']
-                        ])
-                    );
+
                     $hasChargeBefore = true;
                 };
 
@@ -481,15 +407,6 @@ class AdminUserFinanceUploadRecord extends ModelBase
                             'price' => $uploadData['price'],
                         ];
                     $chargeDetails['total_price'] += $uploadData['price'];
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            'AdminUserFinanceUploadRecord calMoney  needs charge',
-                            'user_id' => $uploadData['user_id'],
-                            'entName' => $user_finance_data['entName'],
-                            'price ' => $uploadData['price'],
-                            'total_price ' => $chargeDetails['total_price'],
-                        ])
-                    );
                     AdminUserFinanceUploadDataRecord::updateRealPrice(
                         $uploadData['id'],$uploadData['price'], $uploadData['charge_year_start'].'~'. $uploadData['charge_year_end'].'包年计费'
                     );
@@ -505,13 +422,6 @@ class AdminUserFinanceUploadRecord extends ModelBase
                     $chargeDetails['chargeTypeByYear'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year']
                         == $uploadData['charge_year']
                 ){
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            'AdminUserFinanceUploadRecord calMoney  has cal 3',
-                            'user_id' => $uploadData['user_id'],
-                            'user_id chargeTypeByYear ' => $chargeDetails['chargeTypeByYear'][$uploadData['user_id']]
-                        ])
-                    );
                     $hasChargeBefore = true;
                 };
                 //之前已经收费过
@@ -523,13 +433,6 @@ class AdminUserFinanceUploadRecord extends ModelBase
                             $uploadData['charge_year']
                         )
                 ){
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            'AdminUserFinanceUploadRecord calMoney  has cal 4',
-                            'user_id' => $uploadData['user_id'],
-                            'cache_end_date  ' => $user_finance_data['cache_end_date']
-                        ])
-                    );
                     $hasChargeBefore = true;
                 };
 
@@ -544,40 +447,16 @@ class AdminUserFinanceUploadRecord extends ModelBase
                     AdminUserFinanceUploadDataRecord::updateRealPrice(
                         $uploadData['id'],$uploadData['price'], $uploadData['charge_year'].'单年计费'
                     );
-
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            'AdminUserFinanceUploadRecord calMoney  needs charge',
-                            'user_id' => $uploadData['user_id'],
-                            'entName' => $user_finance_data['entName'],
-                            'price ' => $uploadData['price'],
-                            'total_price ' => $chargeDetails['total_price'],
-                        ])
-                    );
                 }
             }
         }
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    'uplaod record calMoney ',
-                    $uploadId,
-                    $chargeDetails
-                ]
-            )
-        );
         return $chargeDetails;
     }
 
     static function getFinanceConfigArray($uploadId){
         $uploadRes = self::findById($uploadId)->toArray();
         $finance_config =  json_decode($uploadRes['finance_config'],true);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'upload record getFinanceConfigArray   '=> 'start ',
-                '$finance_config' =>$finance_config,
-            ])
-        );
+
         return $finance_config;
     }
 
@@ -587,14 +466,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
         array_unshift($arr, 'year');
         array_unshift($arr, 'entName');
 
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    'getAllowedFieldArray ',
-                    $arr
-                ]
-            )
-        );
+
         return $arr;
     }
 

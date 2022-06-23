@@ -77,14 +77,15 @@ class AdminUserChargeConfig extends ModelBase
         ]);
     }
 
-    public static function addRecord($requestData){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                ' AdminUserChargeConfig addRecord ',
-                'parmas $requestData ' => $requestData,
-            ])
-        );
+    public static function setDailyUsedNumsV2($user_id,$nums){
+        $info = self::findByUser($user_id);
+        $daily_used_nums = $info->getAttr('daily_used_nums');
+        return $info->update([
+            'daily_used_nums' => $daily_used_nums + $nums ,
+        ]);
+    }
 
+    public static function addRecord($requestData){
         try {
            $res =  AdminUserChargeConfig::create()->data([
                 'user_id' => $requestData['user_id'],  
@@ -112,12 +113,7 @@ class AdminUserChargeConfig extends ModelBase
     }
 
     public static function addRecordV2($requestData){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                ' AdminUserChargeConfig addRecordV2 ',
-                'parmas $requestData ' => $requestData,
-            ])
-        );
+
         $oldRes = self::findByUser($requestData['user_id']);
         if($oldRes){
             return  $oldRes->getAttr('id');
@@ -207,12 +203,6 @@ class AdminUserChargeConfig extends ModelBase
     }
 
     public static function findByUser($userId){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                ' AdminUserChargeConfig findByUser ',
-                'parmas $userId ' => $userId,
-            ])
-        );
         $res =  AdminUserChargeConfig::create()
             ->where([
                 'user_id' => $userId,

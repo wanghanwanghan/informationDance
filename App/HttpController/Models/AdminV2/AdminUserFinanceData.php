@@ -347,12 +347,7 @@ class AdminUserFinanceData extends ModelBase
             $dbDataArr = $resData[$financeData['year']];
             $dbDataArr['entName'] = $financeData['entName'];
             $dbDataArr['year'] = $financeData['year'];
-            CommonService::getInstance()->log4PHP(
-                [
-                    'NewFinanceData addRecord',
-                    '$dbDataArr' => $dbDataArr,
-                ]
-            );
+
 
             $addRes = NewFinanceData::addRecordV2($dbDataArr);
             //设置是否需要确认
@@ -365,22 +360,14 @@ class AdminUserFinanceData extends ModelBase
             }
 
             //设置关系
-            self::updateNewFinanceDataId($id,$addRes);
-
-            CommonService::getInstance()->log4PHP(
-                json_encode(
-                   [
-                       'NewFinanceData::addRecord ',
-                       $dbDataArr,
-                       $addRes
-                   ]
-                )
-            );
             if(!$addRes){
                 return CommonService::getInstance()->log4PHP(
                     'pullFinanceData   err 1  add NewFinanceData failed '.json_encode($dbDataArr)
                 );
             }
+            self::updateNewFinanceDataId($id,$addRes);
+            AdminUserChargeConfig::setDailyUsedNumsV2($financeData['user_id'],1);
+
         }
         else{
             //设置关系
@@ -394,25 +381,11 @@ class AdminUserFinanceData extends ModelBase
                 self::updateNeedsConfirm($id,1);
             }
         }
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    'pullFinanceData true '
-                ]
-            )
-        );
+
         return true;
     }
     public  static  function getConfirmStatus($financeConifgArr,$dataItem){
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    'user finance data getConfirmStatus ',
-                     'params $financeConifgArr' => $financeConifgArr,
-                     'params $dataItem' => $dataItem,
-                ]
-            )
-        );
+
         // 不需要确认
         if(!$financeConifgArr['needs_confirm']){
             CommonService::getInstance()->log4PHP(
@@ -457,28 +430,13 @@ class AdminUserFinanceData extends ModelBase
     public static function getChagrgeDetailsAnnually(
         $year,$financeConifgArr,$user_id,$entName,$yearsArr
     ){
-        CommonService::getInstance()->log4PHP(
-           json_encode(
-               [
-                   'getChagrgeDetailsAnnually start',
-                   $year,$financeConifgArr,$user_id,$entName,$yearsArr
-               ]
-           )
-        );
+
         if($financeConifgArr['annually_years']<0){
             $config = [
                 'IsAnnually' => false,
                 'AnnuallyPrice' => false,
                 'HasChargedBefore' => false,
             ];
-            CommonService::getInstance()->log4PHP(
-                json_encode(
-                    [
-                        'getChagrgeDetailsAnnually annually_years < 0',
-                        $config
-                    ]
-                )
-            );
 
             return $config;
         }
@@ -497,29 +455,12 @@ class AdminUserFinanceData extends ModelBase
                 'AnnuallyPrice' => false,
                 'HasChargedBefore' => false,
             ];
-            CommonService::getInstance()->log4PHP(
-                json_encode(
-                    [
-                        'getChagrgeDetailsAnnually 不是包年年度  ',
-                        '$financeConifgArr' => $financeConifgArr,
-                        '$config' => $config
-                    ]
-                )
-            );
+
             return $config;
         }
 
         // 单年价格是否按照包年年度计算
         $single_year_charge_as_annual =  $financeConifgArr['single_year_charge_as_annual'];
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    'getChagrgeDetailsAnnually $annually_years_arr ',
-                    '$annually_years_arr' => $annually_years_arr,
-                    '$single_year_charge_as_annual' => $single_year_charge_as_annual,
-                ]
-            )
-        );
 
         // 包年内全部数据
         $yearStr = '("'.implode('","',$annually_years_arr).'")';
@@ -530,15 +471,6 @@ class AdminUserFinanceData extends ModelBase
                         entName = '$entName' AND 
                 ";
         $allDatalist = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    'getChagrgeDetailsAnnually 包年内全部数据',
-                    $sql,
-                    $allDatalist
-                ]
-            )
-        );
 
         // 包年全部数据中有效的数据
         $yearStr = '("'.implode('","',$annually_years_arr).'")';
@@ -550,15 +482,6 @@ class AdminUserFinanceData extends ModelBase
                         `status`  =  ".self::$statusConfirmedYes."
                 ";
         $validDatalist = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    'getChagrgeDetailsAnnually 包年有效的数据',
-                    $sql,
-                    $validDatalist
-                ]
-            )
-        );
 
         // 用户勾选年内全部数据
         $yearStr = '("'.implode('","',$yearsArr).'")';
@@ -569,15 +492,6 @@ class AdminUserFinanceData extends ModelBase
                         entName = '$entName' AND 
                 ";
         $allSeelectedDatalist = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    'getChagrgeDetailsAnnually 用户勾选年内全部数据',
-                    $sql,
-                    $allSeelectedDatalist
-                ]
-            )
-        );
 
         // 用户勾选的全部数据中有效的数据
         $yearStr = '("'.implode('","',$yearsArr).'")';
@@ -589,26 +503,10 @@ class AdminUserFinanceData extends ModelBase
                         `status`  =  ".self::$statusConfirmedYes."
                 ";
         $validSelectedDatalist = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    'getChagrgeDetailsAnnually 用户勾选的全部数据中有效的数据',
-                    $sql,
-                    $validSelectedDatalist
-                ]
-            )
-        );
 
         // 单年价格是按照包年年度计算 全部按照单年算
         if($single_year_charge_as_annual){
-            CommonService::getInstance()->log4PHP(
-                json_encode(
-                    [
-                        'getChagrgeDetailsAnnually 单年价格是按照包年年度计算 全部按照单年算 ',
-                        '$single_year_charge_as_annual' => $single_year_charge_as_annual,
-                    ]
-                )
-            );
+
             $config = [
                 // 是否按照包年算
                 'IsAnnually' => true,
@@ -623,42 +521,19 @@ class AdminUserFinanceData extends ModelBase
                 //用户选择的全部数据里的有效数据
                 'validSelectedDatalist' => empty($validSelectedDatalist) ? false : array_column($validSelectedDatalist,'id'),
             ];
-            CommonService::getInstance()->log4PHP(
-                json_encode(
-                    [
-                        'getChagrgeDetailsAnnually 是包年年度数据 ',
-                        '$config' => $config,
-                    ]
-                )
-            );
+
             return $config;
         }
         // 单年价格不是按照包年年度计算
         else{
-            CommonService::getInstance()->log4PHP(
-                json_encode(
-                    [
-                        'getChagrgeDetailsAnnually 单年价格不是按照包年年度计算  ',
-                        '$single_year_charge_as_annual' => $single_year_charge_as_annual,
-                    ]
-                )
-            );
+
             sort($yearsArr);
             sort($annually_years_arr);
             $yearsArr_str = join(',',$yearsArr);
             $annually_years_arr_str = join(',',$annually_years_arr);
             //用户是否选择了配置的包年年份
             $userHasSelectAllYears = ($yearsArr_str==$annually_years_arr_str)? true:false;
-            CommonService::getInstance()->log4PHP(
-                json_encode(
-                    [
-                        'getChagrgeDetailsAnnually 用户选择的是不是全部配置年份',
-                        '$yearsArr_str' => $yearsArr_str,
-                        '$annually_years_arr_str' => $annually_years_arr_str,
-                        '$userHasSelectAllYears' => $userHasSelectAllYears,
-                    ]
-                )
-            );
+
 
             //用户选择的缺不缺数据
             $allSelectYearsHasDatas  =  false;
@@ -668,16 +543,7 @@ class AdminUserFinanceData extends ModelBase
             ){
                 $allSelectYearsHasDatas  =  true;
             }
-            CommonService::getInstance()->log4PHP(
-                json_encode(
-                    [
-                        'getChagrgeDetailsAnnually 用户选择的都有数据',
-                        '$allSelectYearsHasDatas' => $allSelectYearsHasDatas,
-                        '$validSelectedDatalist' => $validSelectedDatalist,
-                        '$allSeelectedDatalist' => $allSeelectedDatalist,
-                    ]
-                )
-            );
+
 
             //选择的正好是配置的包年年度
             //且包年年度全部有有效数据
@@ -699,14 +565,7 @@ class AdminUserFinanceData extends ModelBase
                     //用户选择的全部数据里的有效数据
                     'validSelectedDatalist' => empty($validSelectedDatalist) ? false : array_column($validSelectedDatalist,'id'),
                 ];
-                CommonService::getInstance()->log4PHP(
-                    json_encode(
-                        [
-                            'getChagrgeDetailsAnnually 是包年年度数据 ',
-                            '$config' => $config,
-                        ]
-                    )
-                );
+
                 return $config;
             }
             //没选全部的包年年度 或者有的没数据 按照单年度计费
@@ -735,14 +594,7 @@ class AdminUserFinanceData extends ModelBase
                     //用户选择的全部数据里的有效数据
                     'validSelectedDatalist' => empty($validSelectedDatalist) ? false : array_column($validSelectedDatalist,'id'),
                 ];
-                CommonService::getInstance()->log4PHP(
-                    json_encode(
-                        [
-                            'getChagrgeDetailsAnnually 是包年年度数据 ',
-                            '$config' => $config,
-                        ]
-                    )
-                );
+                 
                 return $config;
             }
         }

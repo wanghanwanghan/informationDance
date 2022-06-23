@@ -23,14 +23,6 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
     static $chargeTypeByYearCname = '按年';
 
     public static function addUploadRecord($requestData){
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    ' RunDealFinanceCompanyData addUploadRecord  ',
-                    '$requestData'=>$requestData
-                ]
-            )
-        );
         try {
            $res =  AdminUserFinanceUploadDataRecord::create()->data([
                 'user_id' => $requestData['user_id'],  
@@ -44,7 +36,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
             CommonService::getInstance()->log4PHP(
                 json_encode(
                     [
-                        ' RunDealFinanceCompanyData addUploadRecord  false ',
+                        __CLASS__.__FUNCTION__ .' false',
                         '$requestData'=>$requestData,
                         $e->getMessage(),
                     ]
@@ -72,7 +64,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
             return CommonService::getInstance()->log4PHP(
                 json_encode(
                     [
-                        ' RunDealFinanceCompanyData parseDataToDb  $AdminUserFinanceUploadDataRecordId is 0 fail',
+                        __CLASS__.__FUNCTION__ .' false',
                         '$infoArr' =>$infoArr,
                     ]
                 )
@@ -84,15 +76,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
     public static function findByUserIdAndRecordIdAndFinanceId(
         $user_id,$record_id,$user_finance_data_id
     ){
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                ['  Upload Data findByUserIdAndRecordIdAndFinanceId  ',
-                    'user_id'=>$user_id,
-                    'record_id' =>$record_id ,
-                    'user_finance_data_id' => $user_finance_data_id
-                ]
-            )
-        );
+
         $res =  AdminUserFinanceUploadDataRecord::create()->where([
             'user_id' => $user_id,  
             'record_id' => $record_id,  
@@ -126,25 +110,20 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         return $res;
     }
 
-
-
     public static function findByUserIdAndRecordIdV2(
         $user_id,$record_id,$fieldsArr = []
     ){
-
         if(empty($fieldsArr)){
             $res =  AdminUserFinanceUploadDataRecord::create()->where([
                 'user_id' => $user_id,
                 'record_id' => $record_id,
-//                'status' => $status,
             ])
-                ->all();
+            ->all();
         }
         else{
             $res =  AdminUserFinanceUploadDataRecord::create()->where([
                 'user_id' => $user_id,
                 'record_id' => $record_id,
-//                'status' => $status,
             ])
                 ->field($fieldsArr)
                 ->all();
@@ -152,27 +131,6 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
 
         return $res;
     }
-
-
-    public static function findFinanceDataByUserIdAndRecordId(
-        $user_id,$record_id,$status
-    ){ 
-        $res =  AdminUserFinanceUploadDataRecord::create()->where([
-            'user_id' => $user_id,  
-            'record_id' => $record_id,   
-            'status' => $status,   
-        ])->field(['id','user_finance_data_id'])
-        ->all(); 
-
-        $user_finance_data_ids = array_column($res,'user_finance_data_id');
-        $dataRes =  AdminUserFinanceUploadDataRecord::create()->where(
-            'id',$user_finance_data_ids,'IN'
-        )->field(['id','user_finance_data_id'])
-        ->all(); 
-
-        return $dataRes;
-    }
-
 
     public static function findByCondition($whereArr,$limit){
         $res =  AdminUserFinanceUploadDataRecord::create()
@@ -200,142 +158,6 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         return $res;
     }
 
-    public static function checkIfHasCalclutePrice(
-        $user_id,$record_id,$user_finance_data_ids
-    ){
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    'checkIfHasCalclutePrice    ',
-                    '$user_id' =>$user_id,
-                    '$record_id' =>$record_id,
-                    '$user_finance_data_ids' =>$user_finance_data_ids,
-                ]
-            )
-        );
-
-        $ids = '("'.implode('","',$user_finance_data_ids).'")';
-        $sql = " select id from  `admin_user_finance_upload_data_record`
-                    WHERE
-                        `user_finance_data_id` in $ids  AND
-                        user_id = $user_id  AND
-                        record_id = '$record_id' AND 
-                        real_price >0 
-                    LIMIT  1
-                ";
-        $validDatalist = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-        CommonService::getInstance()->log4PHP(
-            ' 是否之前计算过价格  $sql '. $sql
-        );
-
-        if(
-            empty($validDatalist)
-        ){
-            return CommonService::getInstance()->log4PHP(
-                ' 之前没算过价格  $sql '. $sql
-            );
-        }
-        return true;
-    }
-
-    // $yearsArr 用户选的下载的年度
-    public static function calcluteRealPrice(
-        $id,$financeConfigArr,$yearsArr
-    ){
-        CommonService::getInstance()->log4PHP(
-           json_encode(
-               [
-                   'calcluteRealPrice',
-                   $id,$financeConfigArr,$yearsArr
-               ]
-           )
-        );
-
-        $info = AdminUserFinanceUploadDataRecord::findById($id);
-        $dataArr = $info->toArray();
-        $AdminUserFinanceData = AdminUserFinanceData::findById($dataArr['user_finance_data_id'])->toArray();
-        //收费方式一：包年
-        $chagrgeDetailsAnnuallyRes = AdminUserFinanceData::getChagrgeDetailsAnnually(
-            $AdminUserFinanceData['year'],
-            $financeConfigArr,
-            $AdminUserFinanceData['user_id'],
-            $AdminUserFinanceData['entName'],
-            $yearsArr
-        ) ;
-
-        CommonService::getInstance()->log4PHP(
-          json_encode(
-              [
-                  'calcluteRealPrice getChagrgeDetailsAnnually',
-                  $AdminUserFinanceData['year'],
-                  $financeConfigArr,
-                  $AdminUserFinanceData['user_id'],
-                  $AdminUserFinanceData['entName'],
-                  $yearsArr
-              ]
-          )
-        );
-        // 是年度收费 需要看之前年度是否扣费过
-        if($chagrgeDetailsAnnuallyRes['IsAnnually']){
-            // 有有效的数据
-            if($chagrgeDetailsAnnuallyRes['ValidDataIds']){
-                //查看之前是否计算过价格
-                if(
-                    self::checkIfHasCalclutePrice(
-                        $dataArr['user_id'],
-                        $dataArr['record_id'],
-                        $chagrgeDetailsAnnuallyRes['ValidDataIds']
-                    )
-                ){
-                    $updateRes = self::updateRealPrice(
-                        $id,
-                        $chagrgeDetailsAnnuallyRes['AnnuallyPrice'],
-                        json_encode(
-                            [
-                                'allDataIds' => $chagrgeDetailsAnnuallyRes['allDataIds']
-                            ]
-                        )
-                    );
-                    if(!$updateRes){
-                        return CommonService::getInstance()->log4PHP(
-                            'calculateRealPrice err1  update price error  IsAnnually '.$id
-                        );
-                    }
-                }
-            }
-        }
-        if($chagrgeDetailsAnnuallyRes['ChargeByYear']){
-
-        }
-
-        //收费方式二：按年
-        $chagrgeDetailsByYearsRes = AdminUserFinanceData::getChagrgeDetailsByYear(
-            $AdminUserFinanceData['year'],
-            $financeConfigArr,
-            $AdminUserFinanceData['user_id'],
-            $AdminUserFinanceData['entName']
-        ) ;
-        CommonService::getInstance()->log4PHP(
-            '按年    '.$id.' '.'  conf '.json_encode($chagrgeDetailsByYearsRes)
-        );
-        if($chagrgeDetailsByYearsRes['IsChargeByYear']){
-            $updateRes = self::updateRealPrice(
-                $id,
-                $chagrgeDetailsAnnuallyRes['YearPrice'],
-                json_encode(
-                    [
-                        'allDataIds' => $chagrgeDetailsAnnuallyRes['allDataIds']
-                    ]
-                )
-            );
-            if(!$updateRes){
-                return CommonService::getInstance()->log4PHP(
-                    'calculateRealPrice err1  update price error  IsAnnually '.$id
-                );
-            }
-        }
-        return true;
-    }
 
     public static function updatePriceType($info){
 
@@ -349,13 +171,6 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
             'charge_year_start' => $info['charge_year_start'],
             'charge_year_end' => $info['charge_year_end'],
         ]);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'AdminUserFinanceUploadDataRecord updatePriceType start',
-                '$info' =>$info,
-                '$res2' =>$res2,
-            ])
-        );
         return $res;
     }
 
@@ -366,14 +181,7 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
             'real_price' => $realPrice,
             'real_price_remark' => $priceRemark,
         ]);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'AdminUserFinanceUploadDataRecord updateRealPrice start',
-                '$realPrice' =>$realPrice,
-                '$priceRemark' =>$priceRemark,
-                '$res2' =>$res2,
-            ])
-        );
+
         return $res2;
     }
 
@@ -403,13 +211,6 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         if(
             !in_array($user_finance_data['year'],$annulYears)
         ){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'AdminUserFinanceUploadDataRecord updateChargeInfo  not in annulYears, charge by year ,',
-                    'year'=>$user_finance_data['year'],
-                    '$annulYears' =>$annulYears,
-                ])
-            );
             return self::updatePriceType(
                 [
                     'id' => $id,
@@ -438,13 +239,6 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
 
         //如果配置的单年度不按包年计算
         if(!$finance_config['single_year_charge_as_annual']){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'AdminUserFinanceUploadDataRecord updateChargeInfo  single_year_charge_as_annual is 0 ,',
-                    'year' => $user_finance_data['year'],
-                    '$annulYears' => $annulYears,
-                ])
-            );
 
             // 数据不连续(有的年份缺失了) ： 改包年为单年
             if(
@@ -472,12 +266,6 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
             if(
                 !$checkIfArrayEquals
             ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        'updateChargeInfo  checkIfArrayEquals no ',
-                        $selectYears,$annulYears
-                    ])
-                );
                 self::updatePriceType(
                     [
                         'id' => $id,
@@ -546,13 +334,6 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
                 return  false;
             }
         }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'User FinanceUpload  Data checkIfArrayEquals ok ',
-                '$array1,' => $array1,
-                ',$array2' => $array2,
-            ])
-        );
         return  true;
     }
 

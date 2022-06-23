@@ -21,12 +21,6 @@ class AdminUserFinanceExportRecord extends ModelBase
     static $stateExported = 10;
 
     public static function addExportRecord($requestData){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'export record  addExportRecord start',
-               '$requestData' =>$requestData,
-            ])
-        );
         try {
            $res =  AdminUserFinanceExportRecord::create()->data([
                 'user_id' => $requestData['user_id'], 
@@ -45,7 +39,7 @@ class AdminUserFinanceExportRecord extends ModelBase
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'export record  addExportRecord faile',
+                    __CLASS__.__FUNCTION__ .' false',
                     '$requestData' =>$requestData,
                     'message' => $e->getMessage()
                 ])
@@ -113,8 +107,7 @@ class AdminUserFinanceExportRecord extends ModelBase
     public static function findByIdAndFileName($user_id,$file_name){
         $res =  AdminUserFinanceExportRecord::create()->where([
             'user_id' => $user_id,  
-            'file_name' => $file_name,   
-            // 'status' => 1,  
+            'file_name' => $file_name,
         ])->get(); 
 
         return $res;
@@ -124,7 +117,6 @@ class AdminUserFinanceExportRecord extends ModelBase
         $res =  AdminUserFinanceExportRecord::create()->where([
             'user_id' => $user_id,
             'batch' => $batch,
-            // 'status' => 1,
         ])->get();
 
         return $res;
@@ -143,17 +135,9 @@ class AdminUserFinanceExportRecord extends ModelBase
     public static function findByBatch($batch){
 
         $res =  AdminUserFinanceExportRecord::create()->where([
-//            'user_id' => $user_id,
             'batch' => $batch,
-            // 'status' => 1,
         ])->get();
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'export record findByBatch ' ,
-                '$batch' =>$batch,
-                '$res' =>$res,
-            ])
-        );
+
         return $res;
     }
 
@@ -161,7 +145,6 @@ class AdminUserFinanceExportRecord extends ModelBase
         $res =  AdminUserFinanceExportRecord::create()->where([
             'upload_record_id' => $upload_record_id,
             'queue_id' => $queue_id,
-            // 'status' => 1,
         ])->get();
 
         return $res;

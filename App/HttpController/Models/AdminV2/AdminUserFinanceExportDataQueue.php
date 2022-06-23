@@ -39,55 +39,6 @@ class AdminUserFinanceExportDataQueue extends ModelBase
 
     }
 
-    public static function setFinanceDataState($queueId){
-        $queueData = self::findById($queueId)->toArray();
-        $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
-        $uploadDatas = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
-            $uploadRes['user_id'],$uploadRes['id']
-        );
-
-        $status = self::$state_confirmed;
-        foreach ($uploadDatas as $uploadData){
-            if(
-                AdminUserFinanceData::checkDataNeedConfirm($uploadData['user_finance_data_id'])
-            ){
-                $status = self::$state_needs_confirm;
-                break;
-            };
-        }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'setFinanceDataState  ',
-                '$queueId'=>$queueId,
-                '$status' => $status
-            ])
-        );
-
-        return self::updateStatusById($queueId,$status);
-
-    }
-
-//    public static function updateMoneyById(
-//        $id,$money
-//    ){
-//        // 吃完饭 走一下啊
-//        // banner: 切出图来  设计多少换多少
-//        //   二期： 没开发完的
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                'AdminUserFinanceExportDataQueue  updateMoneyById start' ,
-//                'params $money ' =>$money,
-//                'params $id ' =>$id
-//            ])
-//        );
-//        $info = AdminUserFinanceExportDataQueue::create()->where('id',$id)->get();
-//        return $info->update([
-//            'id' => $id,
-//            'money' => $money,
-//            'updated_at'=>time()
-//        ]);
-//    }
-
     static  function  addRecordV2($info){
 
         if(
@@ -141,23 +92,6 @@ class AdminUserFinanceExportDataQueue extends ModelBase
             ->limit($limit)
             ->all();
         return $res;
-    }
-
-    public static function findByConditionV2($whereArr,$page){
-
-        $model = AdminUserFinanceExportDataQueue::create()
-                ->where($whereArr)
-                ->page($page)
-                ->order('id', 'DESC')
-                ->withTotalCount();
-
-        $res = $model->all();
-
-        $total = $model->lastQueryResult()->getTotalCount();
-        return [
-            'data' => $res,
-            'total' =>$total,
-        ];
     }
 
     public static function findByConditionV3($whereArr,$page){
@@ -218,38 +152,11 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     public static function updateStatusById(
         $id,$status
     ){
-        // 吃完饭 走一下啊
-        // banner: 切出图来  设计多少换多少
-        //   二期： 没开发完的
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'AdminUserFinanceExportDataQueue  updateStatusById start' ,
-                'params $status ' =>$status,
-                'params $id ' =>$id
-            ])
-        );
+
         $info = AdminUserFinanceExportDataQueue::create()->where('id',$id)->get();
         return $info->update([
             'id' => $id,
             'status' => $status,
-            'updated_at'=>time()
-        ]);
-    }
-
-    public static function updatePriorityById(
-        $id,$priority
-    ){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'AdminUserFinanceExportDataQueue  updatePriorityById start' ,
-                'params $priority ' =>$priority,
-                'params $id ' =>$id
-            ])
-        );
-        $info = self::findById($id);
-        return $info->update([
-            'id' => $id,
-            'status' => $priority,
             'updated_at'=>time()
         ]);
     }
