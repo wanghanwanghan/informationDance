@@ -2759,9 +2759,9 @@ eof;
         }
 
         if(
-            $this->getRequestData('checkConfirm')
+            $this->getRequestData('checkConfirmV2')
         ){
-            RunDealFinanceCompanyDataNew::checkConfirm(1);
+            RunDealFinanceCompanyDataNew::checkConfirmV2(1);
         }
 
         if(

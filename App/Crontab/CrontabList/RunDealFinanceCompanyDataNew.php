@@ -229,8 +229,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             `status`  in (  
                         ".AdminUserFinanceUploadRecord::$stateCalCulatedPrice. "  ,  
                         ".AdminUserFinanceUploadRecord::$stateBalanceNotEnough. " ,
-                        ".AdminUserFinanceUploadRecord::$stateTooManyPulls. " ,
-                        ".AdminUserFinanceUploadRecord::$stateNeedsConfirm."
+                        ".AdminUserFinanceUploadRecord::$stateTooManyPulls. "  
             )
              AND touch_time  IS Null
              ORDER BY priority ASC 
@@ -358,6 +357,38 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
 
             AdminUserFinanceExportDataQueue::setTouchTime(
                 $queueData['id'],NULL
+            );
+        }
+
+        return true;
+    }
+    static function  checkConfirmV2($limit){
+        $allUploadRes =  AdminUserFinanceUploadRecord::findBySql(
+            " WHERE `status` = ".AdminUserFinanceUploadRecord::$stateNeedsConfirm. " 
+             AND touch_time  IS Null  LIMIT $limit 
+            "
+        );
+        foreach($allUploadRes as $uploadRes){
+
+            AdminUserFinanceUploadRecord::setTouchTime(
+                $uploadRes['id'],date('Y-m-d H:i:s')
+            );
+
+            //要去确认
+            if(
+                AdminUserFinanceUploadRecord::checkIfNeedsConfirm($uploadRes['id'])
+            ){
+                $res = AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecord::$stateNeedsConfirm);
+
+            }
+            //不需要确认
+            else{
+                $res = AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecord::$stateConfirmed);
+            }
+
+
+            AdminUserFinanceUploadRecord::setTouchTime(
+                $uploadRes['id'],NULL
             );
         }
 
