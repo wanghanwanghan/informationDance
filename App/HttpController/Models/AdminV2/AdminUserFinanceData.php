@@ -594,7 +594,7 @@ class AdminUserFinanceData extends ModelBase
                     //用户选择的全部数据里的有效数据
                     'validSelectedDatalist' => empty($validSelectedDatalist) ? false : array_column($validSelectedDatalist,'id'),
                 ];
-                 
+
                 return $config;
             }
         }

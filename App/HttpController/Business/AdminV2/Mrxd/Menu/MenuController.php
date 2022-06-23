@@ -105,6 +105,7 @@ class MenuController extends ControllerBase
             'parent_id' => $this->request()->getRequestParam('parent_id') ?? '',
             'link' => $this->request()->getRequestParam('link') ?? '',
             'icon' => $this->request()->getRequestParam('icon') ?? '',
+            'order' => $this->request()->getRequestParam('order') ?? '',
         ]; 
         
         if (
@@ -122,7 +123,8 @@ class MenuController extends ControllerBase
             'remark' => $requestData['remark'],
             'link' => $requestData['link'],
             'icon' => $requestData['icon'],
-            'parent_id' => intval($requestData['parent_id']), 
+            'parent_id' => intval($requestData['parent_id']),
+            'order' => intval($requestData['order']),
         ])->save();
         return $this->writeJson(200);
     }
