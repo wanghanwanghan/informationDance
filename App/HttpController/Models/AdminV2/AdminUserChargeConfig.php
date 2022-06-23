@@ -92,6 +92,10 @@ class AdminUserChargeConfig extends ModelBase
                     'status' => 1,
                 ]
             );
+            $info = self::findByUser($user_id);
+        }
+        if(!$info){
+            return  false;
         }
         $daily_used_nums = $info->getAttr('daily_used_nums');
         $total_used_nums = $info->getAttr('total_used_nums');
