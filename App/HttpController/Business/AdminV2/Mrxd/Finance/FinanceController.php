@@ -678,6 +678,13 @@ class FinanceController extends ControllerBase
         ],'成功');
     }
 
+    //
+    public function getAllFinanceFields(){
+        $requestData =  $this->getRequestData();
+        $allFields = NewFinanceData::getFieldCname(false);
+        return $this->writeJson(200,  [ ],  $allFields,'成功');
+    }
+
     function  parseDataToXls($config,$filename,$header,$exportData,$sheetName){
 
         $excel = new \Vtiful\Kernel\Excel($config);
