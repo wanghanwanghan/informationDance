@@ -229,7 +229,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             `status`  in (  
                         ".AdminUserFinanceUploadRecord::$stateCalCulatedPrice. "  ,  
                         ".AdminUserFinanceUploadRecord::$stateBalanceNotEnough. " ,
-                        ".AdminUserFinanceUploadRecord::$stateTooManyPulls. " ,
+                        ".AdminUserFinanceUploadRecord::$stateTooManyPulls. " 
             )
              AND touch_time  IS Null
              ORDER BY priority ASC 
