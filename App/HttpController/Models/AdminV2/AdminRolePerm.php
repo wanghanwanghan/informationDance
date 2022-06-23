@@ -2,9 +2,12 @@
 
 namespace App\HttpController\Models\AdminV2;
 
+use App\HttpController\Models\Api\UserSearchHistory;
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\AdminRole\AdminRole;
 use App\HttpController\Service\Common\CommonService;
+use EasySwoole\Mysqli\QueryBuilder;
+
 
 class AdminRolePerm extends ModelBase
 {
@@ -23,6 +26,21 @@ class AdminRolePerm extends ModelBase
                 'menu_id' => $menu_id,   
             ])
             ->get();  
+        return $res;
+    }
+
+
+    public static function delByRole(
+        $role_id
+    ){
+
+        try {
+            $res = AdminRolePerm::create()->destroy(function (QueryBuilder $builder) use ($role_id) {
+                $builder->where('role_id', $role_id);
+            });
+        } catch (\Throwable $e) {
+            CommonService::getInstance()->log4PHP($e->getMessage());
+        }
         return $res;
     }
 

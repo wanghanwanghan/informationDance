@@ -140,6 +140,7 @@ class RoleController extends ControllerBase
         $menuIdsArr = explode(',',$menuIdsStr);
         // $menuIdsArr = $requestData['menu_ids'];
         $roleId = $requestData['roleId'];
+        AdminRolePerm::delByRole($roleId);
         foreach($menuIdsArr as $menuId){
             if(
                 AdminRolePerm::findByMenuIdAndRole(
