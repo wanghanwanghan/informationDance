@@ -2753,9 +2753,9 @@ eof;
         }
 
         if(
-            $this->getRequestData('pullFinanceData')
+            $this->getRequestData('pullFinanceDataV2')
         ){
-            RunDealFinanceCompanyDataNew::pullFinanceData(1);
+            RunDealFinanceCompanyDataNew::pullFinanceDataV2(1);
         }
 
         if(
@@ -2765,9 +2765,9 @@ eof;
         }
 
         if(
-            $this->getRequestData('exportFinanceData')
+            $this->getRequestData('exportFinanceDataV3')
         ){
-            RunDealFinanceCompanyDataNew::exportFinanceDataV2(1);
+            RunDealFinanceCompanyDataNew::exportFinanceDataV3(1);
         }
 
         // $config = [

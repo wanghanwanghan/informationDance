@@ -740,7 +740,7 @@ class FinanceController extends ControllerBase
 
         $uploadRes = AdminUserFinanceUploadRecord::findById($requestData['id'])->toArray();
 
-        //检查是否可以下载
+        //只有缓存期内才可以下载
         if(
            !AdminUserFinanceUploadRecord::ifCanDownload($uploadRes['id'])
         ){
@@ -751,42 +751,112 @@ class FinanceController extends ControllerBase
         //检查是否是可以下载的状态状态
         if(
             !AdminUserFinanceUploadRecord::checkByStatus(
-                $uploadRes['id'],AdminUserFinanceUploadRecord::$stateCalCulatedPrice
+                $uploadRes['id'],AdminUserFinanceUploadRecord::$stateConfirmed
             )
         ){
             ConfigInfo::removeRedisNx('exportFinanceData2');
             return $this->writeJson(201, null, [],  '当前状态不允许导出 请稍等');
         }
-
-        // 检查余额
-        if(
-            !\App\HttpController\Models\AdminV2\AdminNewUser::checkAccountBalance(
-                $this->loginUserinfo['id'],
-                $uploadRes['money']
-            )
-        ){
-            ConfigInfo::removeRedisNx('exportFinanceData2');
-            return $this->writeJson(201, null, [],  '余额不足 需要至少'. $uploadRes['money'].'元');
-        }
-
-        //检查账户是否可以拉取 如果到达今日次数等限制的话  不进行下载
-        //每日最大次数限制
-        if(
-            !AdminUserChargeConfig::checkIfCanRun(
-                $uploadRes['user_id'],
-                count(
-                    AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
-                        $uploadRes['user_id'],
-                        $uploadRes['id'],
-                        ['id']
-                    )
-                )
-            )
-        ){
-            ConfigInfo::removeRedisNx('exportFinanceData2');
-            return  $this->writeJson(201,[],[],'超出每日最大次数，联系管理员');
-        }
         $batchNum = 'CWDC'.date('YmdHis');
+        //先扣费
+        //本名单之前是否扣费过
+        $chargeBefore = AdminUserFinanceUploadRecord::ifHasChargeBefore($uploadRes['id']);
+        // ===============
+        // 实际扣费了
+        $price = 0;
+        if(
+            $uploadRes['money'] > 0 &&
+            !$chargeBefore
+        ){
+            $price = $uploadRes['money'];
+            //扣余额
+            if(
+                ! \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
+                    $uploadRes['user_id'],
+                    \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
+                        $uploadRes['user_id']
+                    ) - $uploadRes['money']
+                )
+            ){
+                return $this->writeJson(201, null, [],  '扣余额失败，联系管理员');
+            }
+            if(
+                !FinanceLog::addRecordV2(
+                    [
+                        'detailId' => $uploadRes['id'],
+                        'detail_table' => 'admin_user_finance_upload_record',
+                        'price' => $uploadRes['money'],
+                        'userId' => $uploadRes['user_id'],
+                        'type' =>  FinanceLog::$chargeTytpeFinance,
+                        'batch' => $batchNum,
+                        'title' => '导出内容数据扣费',
+                        'detail' => '',
+                        'reamrk' => '',
+                        'status' => 1,
+                    ]
+                )
+            ){
+                return $this->writeJson(201, null, [],  '添加扣费记录失败，联系管理员');
+            }
+
+            //设置收费时间|本名单的
+            $res = AdminUserFinanceUploadRecord::updateLastChargeDate($uploadRes['id'],date('Y-m-d H:i:s'));
+            if(!$res  ){
+                return $this->writeJson(201, null, [],  '设置收费时间失败，联系管理员');
+            }
+
+            $financeDatas = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordIdV2(
+                $uploadRes['user_id'],$uploadRes['id']
+            );
+            $finance_config = AdminUserFinanceUploadRecord::getFinanceConfigArray($uploadRes['id']);
+            foreach($financeDatas['details'] as $financeData){
+                $AdminUserFinanceUploadDataRecord = AdminUserFinanceUploadDataRecord::findById($financeData['UploadDataRecordId'])->toArray();
+
+                // 收费了
+                if(
+                    $AdminUserFinanceUploadDataRecord['real_price'] &&
+                    !$chargeBefore
+                ){
+                    //设置收费记录
+                    $AdminUserFinanceChargeInfoId = AdminUserFinanceChargeInfo::addRecordV2(
+                        [
+                            'user_id' => $AdminUserFinanceUploadDataRecord['user_id'],
+                            'batch' => $batchNum.'_'.$AdminUserFinanceUploadDataRecord['id'],
+                            'entName' => $financeData['entName'],
+                            'start_year' => $AdminUserFinanceUploadDataRecord['charge_year_start'],
+                            'end_year' => $AdminUserFinanceUploadDataRecord['charge_year_end'],
+                            'year' => $AdminUserFinanceUploadDataRecord['charge_year'],
+                            'price' => $AdminUserFinanceUploadDataRecord['real_price'],
+                            'price_type' => $AdminUserFinanceUploadDataRecord['price_type'],
+                            'status' => AdminUserFinanceChargeInfo::$state_init,
+                        ]
+                    );
+                    if(!$AdminUserFinanceChargeInfoId  ){
+                        return $this->writeJson(201, null, [],  '设置收费时间失败，联系管理员');
+                    }
+                    //设置上次计费时间 |具体用户对应的企业数据
+                    $res = AdminUserFinanceData::updateLastChargeDate(
+                        $AdminUserFinanceUploadDataRecord['user_finance_data_id'],
+                        date('Y-m-d H:i:s')
+                    );
+                    if(!$res  ){
+                        return $this->writeJson(201, null, [],  '设置具体收费时间失败，联系管理员');
+                    }
+
+                    //设置缓存过期时间
+                    $res = AdminUserFinanceData::updateCacheEndDate(
+                        $AdminUserFinanceUploadDataRecord['user_finance_data_id'],
+                        date('Y-m-d H:i:s'),
+                        $finance_config['cache']
+                    );
+                    if(!$res  ){
+                        return $this->writeJson(201, null, [],  '设置缓存过期时间失败，联系管理员');
+                    }
+                }
+            }
+
+        }
+        // =================
 
         //添加到下载队列
         if(
@@ -794,7 +864,8 @@ class FinanceController extends ControllerBase
                 [
                     'batch' => $batchNum,
                     'user_id' => $this->loginUserinfo['id'],
-                    'upload_record_id' => $requestData['id']
+                    'upload_record_id' => $requestData['id'],
+                    'status' => AdminUserFinanceExportDataQueue::$state_init
                 ]
             )
         ){

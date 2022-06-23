@@ -20,7 +20,18 @@ class AdminUserFinanceUploadRecord extends ModelBase
     static $stateParsed = 5;
     static $stateParsedCname =  '计算价格中';
     static $stateCalCulatedPrice = 10;
-    static $stateCalCulatedPriceCname = '待下载';
+    static $stateCalCulatedPriceCname = '待组装数据';
+
+    static $stateTooManyPulls = 12;
+    static $stateTooManyPullsCname = '每日剩余拉取次数不足';
+
+    static $stateBalanceNotEnough = 15;
+    static $stateBalanceNotEnoughCname = '余额不足';
+
+    static $stateNeedsConfirm = 20;
+    static $stateNeedsConfirmCname = '用户确认中';
+    static $stateConfirmed = 25;
+    static $stateConfirmedCname = '数据组装完毕，待导出';
 
     public static function getStatusMaps(){
         return [
@@ -251,6 +262,48 @@ class AdminUserFinanceUploadRecord extends ModelBase
         return $info->update([
             'touch_time' => $touchTime,
         ]);
+    }
+
+    public static function reducePriority($id,$nums){
+        $info = AdminUserFinanceUploadRecord::findById($id);
+
+        return $info->update([
+            'priority' => $info->getAttr('priority')+$nums,
+        ]);
+    }
+
+    public static function setData($id,$field,$value){
+        $info = AdminUserFinanceExportDataQueue::findById($id);
+        return $info->update([
+            "$field" => $value,
+        ]);
+    }
+
+    public static function checkIfNeedsConfirm($upload_record_id){
+        $uploadRes = AdminUserFinanceUploadRecord::findById($upload_record_id)->toArray();
+        $uploadDatas = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
+            $uploadRes['user_id'],$uploadRes['id']
+        );
+
+        $needs = false;
+        foreach ($uploadDatas as $uploadData){
+            if(
+                AdminUserFinanceData::checkDataNeedConfirm($uploadData['user_finance_data_id'])
+            ){
+                $needs = true;
+                break;
+            };
+        }
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'checkIfNeedsConfirm  ',
+                '$upload_record_id'=>$upload_record_id,
+                '$needs' => $needs
+            ])
+        );
+
+        return $needs;
+
     }
 
     //
