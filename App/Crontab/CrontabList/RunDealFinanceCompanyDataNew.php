@@ -398,7 +398,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                         $uploadRes['id'],'remrk','重新计算价格错误'
                     );
                     return  false;
-                } 
+                }
             }
 
 
@@ -695,9 +695,6 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
 
             $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
 
-            //本名单之前是否扣费过
-            $chargeBefore = AdminUserFinanceUploadRecord::ifHasChargeBefore($uploadRes['id']);
-
             //财务数据
             $financeDatas = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordIdV2(
                 $uploadRes['user_id'],$uploadRes['id']
@@ -715,24 +712,24 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 return  false;
             }
 
-            // 实际扣费了
-            $price = 0;
-            if(
-                $uploadRes['money'] > 0 &&
-                !$chargeBefore
-            ){
-                $price = $uploadRes['money'];
 
-                $financeDatas = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordIdV2(
-                    $uploadRes['user_id'],$uploadRes['id']
-                );
-            }
+            $financeDatas = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordIdV2(
+                $uploadRes['user_id'],$uploadRes['id']
+            );
 
             // 设置导出记录
+            $money = $uploadRes['money'];
+            //虽然有价格  但是并没实际收费 （比如本名单已经扣费过）
+            if(
+                $queueData['real_charge'] == 0
+            ){
+                $money = 0;
+            }
+
             $AdminUserFinanceExportRecordId = AdminUserFinanceExportRecord::addRecordV2(
                 [
                     'user_id' => $uploadRes['user_id'],
-                    'price' => $price,
+                    'price' => $money,
                     'total_company_nums' => 0,
                     'config_json' => $uploadRes['finance_config'],
                     'path' => $xlxsData['path'],
@@ -760,7 +757,10 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             foreach($financeDatas['details'] as $financeData){
                 $AdminUserFinanceUploadDataRecord = AdminUserFinanceUploadDataRecord::findById($financeData['UploadDataRecordId'])->toArray();
                 $priceItem =    intval($AdminUserFinanceUploadDataRecord['real_price']);
-                if($chargeBefore){
+                //虽然有价格  但是并没实际收费 （比如本名单已经扣费过）
+                if(
+                    $queueData['real_charge'] == 0
+                ){
                     $priceItem = 0;
                 }
                 $AdminUserFinanceExportDataRecordId = AdminUserFinanceExportDataRecord::addRecordV2(

@@ -880,6 +880,7 @@ class FinanceController extends ControllerBase
                     'batch' => $batchNum,
                     'user_id' => $this->loginUserinfo['id'],
                     'upload_record_id' => $requestData['id'],
+                    'real_charge' =>$price >0 ? 1 : 0,
                     'status' => AdminUserFinanceExportDataQueue::$state_init
                 ]
             )
