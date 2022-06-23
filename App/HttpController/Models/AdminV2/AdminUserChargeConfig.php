@@ -79,9 +79,25 @@ class AdminUserChargeConfig extends ModelBase
 
     public static function setDailyUsedNumsV2($user_id,$nums){
         $info = self::findByUser($user_id);
+        if(!$info){
+            self::addRecord(
+                [
+                    'user_id' => $user_id,
+                    'can_pull_data' => 1,
+                    'allowed_daily_nums' => 0,
+                    'daily_used_nums' => 0,
+                    'allowed_total_nums' => 0,
+                    'total_used_nums' => 0,
+                    'reamrk' =>'',
+                    'status' => 1,
+                ]
+            );
+        }
         $daily_used_nums = $info->getAttr('daily_used_nums');
+        $total_used_nums = $info->getAttr('total_used_nums');
         return $info->update([
             'daily_used_nums' => intval($daily_used_nums) + intval($nums) ,
+            'total_used_nums' => intval($total_used_nums) + intval($nums) ,
         ]);
     }
 
