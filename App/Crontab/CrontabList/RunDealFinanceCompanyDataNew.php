@@ -217,6 +217,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 AdminUserFinanceUploadRecord::reducePriority(
                     $uploadRes['id'],1
                 );
+                return  false;
             }
 
             //检查余额
