@@ -13,7 +13,7 @@ use App\Crontab\CrontabList\RunJinCaiShuKeRWH;
 use App\Crontab\CrontabList\RunSaiMengHuiZhiCaiWu;
 use App\Crontab\CrontabList\RunSouKeUploadFiles;
 use App\Crontab\CrontabList\RunCompleteCompanyData;
-use App\Crontab\CrontabList\RunDealFinanceCompanyData;
+use App\Crontab\CrontabList\RunDealFinanceCompanyDataNew;
 use App\Crontab\CrontabList\RunFillCompanyName;
 use App\Crontab\CrontabList\RunReadAndDealXls;
 use App\Crontab\CrontabList\RunSupervisor;
@@ -42,7 +42,7 @@ class CrontabService
         $this->RunReadAndDealXls();
         $this->RunShouQuanCheXian();
         $this->FillEntAllField();//补全给筛选出的企业 <全字段>RunDealFinanceCompanyData
-//        $this->RunDealFinanceCompanyData();//补全给筛选出的企业 <全字段>
+        $this->RunDealFinanceCompanyDataNew();//补全给筛选出的企业 <全字段>
         $this->RunJinCaiShuKeRWH();//金财数科通过任务号获取发票
         return true;
     }
@@ -126,8 +126,8 @@ class CrontabService
         return Crontab::getInstance()->addTask(FillEntAllField::class);
     }
 
-    private function RunDealFinanceCompanyData(): Crontab
+    private function RunDealFinanceCompanyDataNew(): Crontab
     {
-        return Crontab::getInstance()->addTask(RunDealFinanceCompanyData::class);
+        return Crontab::getInstance()->addTask(RunDealFinanceCompanyDataNew::class);
     }
 }
