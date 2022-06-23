@@ -519,6 +519,15 @@ class FinanceController extends ControllerBase
             'value' => $this->loginUserinfo['id'],
             'operate' => '=',
         ];
+        if(
+            $requestData['type']
+        ){
+            $whereArr[] =  [
+                'field' => 'type',
+                'value' => $requestData['type'],
+                'operate' => '=',
+            ];
+        }
         $res = FinanceLog::findByConditionV3(
             $whereArr,
             $page
