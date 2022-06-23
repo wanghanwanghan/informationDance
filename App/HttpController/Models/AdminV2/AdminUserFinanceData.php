@@ -399,13 +399,42 @@ class AdminUserFinanceData extends ModelBase
             return self::$statusConfirmedYes;
         }
 
-        //暂时写死，后期需要的话自己配置
-        $needsConfirmFields = [
-            'VENDINC',
-            'ASSGRO',
-            'MAIBUSINC',
-            'TOTEQU'
-        ];
+
+        $needsConfirmFields = json_decode($financeConifgArr['allowed_fields'],true);
+        //全部为空的时候
+        $hasValidData = false;
+        foreach ($needsConfirmFields as  $field){
+            if(
+                $dataItem[$field] >  0
+            ){
+                $hasValidData = true;
+                break;
+            }
+        }
+        if(!$hasValidData){
+            return self::$statusConfirmedNo;
+        }
+
+        //有的为空
+        foreach ($dataItem as $itemKey => $value){
+            if(
+                in_array($itemKey,$needsConfirmFields) &&
+                empty($value)
+            ){
+                CommonService::getInstance()->log4PHP(
+                    json_encode(
+                        [
+                            'user finance data getConfirmStatus needs_confirm yes  ',
+                            'params $itemKey' => $itemKey,
+                            'params $needsConfirmFields' => $needsConfirmFields,
+                            'params $value' => $value,
+                        ]
+                    )
+                );
+                return self::$statusNeedsConfirm;
+            }
+        }
+
         foreach ($dataItem as $itemKey => $value){
             if(
                 in_array($itemKey,$needsConfirmFields) &&
