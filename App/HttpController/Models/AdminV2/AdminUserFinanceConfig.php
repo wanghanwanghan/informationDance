@@ -99,6 +99,12 @@ class AdminUserFinanceConfig extends ModelBase
         return $res;
     }
 
+    public static function findAllByCondition($whereArr){
+        $res =  AdminUserFinanceExportDataQueue::create()
+            ->where($whereArr)
+            ->all();
+        return $res;
+    }
 
     public static function setStatus($id,$status){
         CommonService::getInstance()->log4PHP(

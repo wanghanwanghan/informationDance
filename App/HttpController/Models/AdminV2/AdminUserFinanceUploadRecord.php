@@ -193,33 +193,24 @@ class AdminUserFinanceUploadRecord extends ModelBase
     public static function getAllFinanceDataByUploadRecordIdV2(
         $userId,$uploadRecordId
     ){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'getAllFinanceDataByUploadRecordIdV2   '=> 'start',
-                $userId,$uploadRecordId
-            ])
-        );
         $allowedFields = AdminUserFinanceUploadRecord::getAllowedFieldArray($uploadRecordId);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                '$allowedFields   '=> $allowedFields
-            ])
-        );
         $AdminUserFinanceUploadDataRecords = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
             $userId,$uploadRecordId
         );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                '$AdminUserFinanceUploadDataRecords   '=> $AdminUserFinanceUploadDataRecords,
-                $userId,$uploadRecordId,$allowedFields
-            ])
-        );
+
         $returnDatas  = [
 
         ];
 
         foreach ($AdminUserFinanceUploadDataRecords as $AdminUserFinanceUploadDataRecord){
             if($AdminUserFinanceUploadDataRecord['user_finance_data_id'] <= 0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ ,
+                        'finance_data_id < 0',
+                        'user_finance_data_id continue ' => $AdminUserFinanceUploadDataRecord['user_finance_data_id']
+                    ])
+                );
                 continue;
             }
             $AdminUserFinanceData = AdminUserFinanceData::findById(
@@ -227,6 +218,13 @@ class AdminUserFinanceUploadRecord extends ModelBase
             )->toArray();
 
             if($AdminUserFinanceData['finance_data_id'] <= 0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ ,
+                        'finance_data_id < 0',
+                        'finance_data_id' => $AdminUserFinanceData['finance_data_id']
+                    ])
+                );
                 continue;
             }
 
@@ -234,11 +232,6 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 $AdminUserFinanceData['finance_data_id']
             )->toArray();
             $NewFinanceData2 = self::resetArray($NewFinanceData,$allowedFields);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'resetArray   '=> $NewFinanceData2
-                ])
-            );
             $returnDatas['export_data'][$NewFinanceData['id']] =  $NewFinanceData2;
             $NewFinanceData['UploadDataRecordId'] = $AdminUserFinanceUploadDataRecord['id'];
             $returnDatas['details'][$NewFinanceData['id']] =  $NewFinanceData;
