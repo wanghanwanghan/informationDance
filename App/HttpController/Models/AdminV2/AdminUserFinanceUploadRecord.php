@@ -309,7 +309,13 @@ class AdminUserFinanceUploadRecord extends ModelBase
     public static function updateLastChargeDate(
         $id,$last_charge_date
     ){
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                '$id' => $id,
+                '$last_charge_date' => $last_charge_date
+            ])
+        );
         $info = self::findById($id);
         return $info->update([
             'id' => $id,
