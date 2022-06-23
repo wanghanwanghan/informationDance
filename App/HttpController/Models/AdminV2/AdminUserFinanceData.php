@@ -386,22 +386,14 @@ class AdminUserFinanceData extends ModelBase
     }
     public  static  function getConfirmStatus($financeConifgArr,$dataItem){
 
-        // 不需要确认
+        // 不需要确认的 全部为需要的 
         if(!$financeConifgArr['needs_confirm']){
-            CommonService::getInstance()->log4PHP(
-                json_encode(
-                    [
-                        'user finance data getConfirmStatus needs_confirm no  ',
-                        'params needs_confirm' => $financeConifgArr['needs_confirm'],
-                    ]
-                )
-            );
             return self::$statusConfirmedYes;
         }
 
 
         $needsConfirmFields = json_decode($financeConifgArr['allowed_fields'],true);
-        //全部为空的时候
+        //全部为空的时候 不需要
         $hasValidData = false;
         foreach ($needsConfirmFields as  $field){
             if(
@@ -415,22 +407,12 @@ class AdminUserFinanceData extends ModelBase
             return self::$statusConfirmedNo;
         }
 
-        //有的为空
+        //有的为空 需要确认
         foreach ($dataItem as $itemKey => $value){
             if(
                 in_array($itemKey,$needsConfirmFields) &&
                 empty($value)
             ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode(
-                        [
-                            'user finance data getConfirmStatus needs_confirm yes  ',
-                            'params $itemKey' => $itemKey,
-                            'params $needsConfirmFields' => $needsConfirmFields,
-                            'params $value' => $value,
-                        ]
-                    )
-                );
                 return self::$statusNeedsConfirm;
             }
         }
@@ -440,16 +422,6 @@ class AdminUserFinanceData extends ModelBase
                 in_array($itemKey,$needsConfirmFields) &&
                 empty($value)
             ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode(
-                        [
-                            'user finance data getConfirmStatus needs_confirm yes  ',
-                            'params $itemKey' => $itemKey,
-                            'params $needsConfirmFields' => $needsConfirmFields,
-                            'params $value' => $value,
-                        ]
-                    )
-                );
                 return self::$statusNeedsConfirm;
             }
         }
