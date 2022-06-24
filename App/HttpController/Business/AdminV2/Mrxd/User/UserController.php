@@ -47,7 +47,10 @@ class UserController extends ControllerBase
             $sql .= " and status = '{$status}'";
         }
         $count = AdminNewUser::create()->where($sql)->count();
-        $list = AdminNewUser::create()->where($sql." order by id desc limit {$limit},$pageSize ")->all();
+        $list = AdminNewUser::create()
+                ->where($sql." order by id desc limit {$limit},$pageSize ")
+                ->field(['id', 'user_name', 'phone','email','money','status','created_at','updated_at'])
+                ->all();
         $paging = [
             'page' => $pageNo,
             'pageSize' => $pageSize,

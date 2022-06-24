@@ -78,7 +78,10 @@ class ControllerBase extends Index
             return false;
         } 
         try {
-            $res = AdminNewUser::create()->where('token', $requestToken)->get();
+            $res = AdminNewUser::create()
+                    ->where('token', $requestToken)
+                    ->field(['id', 'user_name', 'phone','email','money','status','created_at','updated_at'])
+                    ->get();
         } catch (\Throwable $e) {
             // $this->writeErr($e, __FUNCTION__);
             CommonService::getInstance()->log4PHP(' token error 2 '.$requestToken);  
