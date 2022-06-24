@@ -594,7 +594,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             }
 
             //需要发短信了
-            $res = SmsService::getInstance()->sendByTemplete($userInfo['phone'], 'SMS_244020357',[
+            $res = SmsService::getInstance()->sendByTemplete($userInfo['phone'], 'SMS_244025473',[
                 'name' => $userInfo['user_name'],
                 'money' =>$Config['sms_notice_value']
             ]);
