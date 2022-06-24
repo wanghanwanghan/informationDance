@@ -63,7 +63,7 @@ class UserController extends ControllerBase
             $roles_ids_arr = array_column(
                 $rolesRes,'role_id'
             );
-            $value['roles_ids'] = $roles_ids_arr;
+            $value['roles_ids'] = json_encode($roles_ids_arr);
             $value['roles_ids_cnames'] = '';
             if(!empty($roles_ids_arr)){
                 $Roles = AdminRoles::findByConditionV2(
