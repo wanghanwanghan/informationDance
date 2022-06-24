@@ -100,7 +100,7 @@ class AdminUserFinanceConfig extends ModelBase
     }
 
     public static function findAllByCondition($whereArr){
-        $res =  AdminUserFinanceExportDataQueue::create()
+        $res =  AdminUserFinanceConfig::create()
             ->where($whereArr)
             ->all();
         return $res;
