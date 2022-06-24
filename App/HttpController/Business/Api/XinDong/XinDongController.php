@@ -1045,10 +1045,7 @@ eof;
       * 
      */   
     function advancedSearch(): bool
-    { 
-        // if(!$this->request()->getRequestParam('use_new')){
-        //     return $this->advancedSearchOld();  
-        // } 
+    {
 
         $ElasticSearchService = new ElasticSearchService(); 
         $this->advancedSearchSetQueryByBusinessScope($ElasticSearchService);   
@@ -1166,9 +1163,130 @@ eof;
          
         ] 
        , $hits, '成功', true, []);
-    } 
+    }
 
-     // 保存搜索历史 
+    function advancedSearchV2(): bool
+    {
+
+        $ElasticSearchService = new ElasticSearchService();
+        $this->advancedSearchSetQueryByBusinessScope($ElasticSearchService);
+
+        // 数字经济及其核心产业
+        $this->advancedSearchSetQueryByBasicSzjjid($ElasticSearchService);
+
+        // 搜索文案 智能搜索
+        $this->advancedSearchSetQueryBySearchText($ElasticSearchService);
+
+        // 搜索战略新兴产业
+        $this->advancedSearchSetQueryByBasicJlxxcyid($ElasticSearchService);
+
+        // 搜索shang_pin_data 商品信息 appStr:五香;农庄
+        $this->advancedSearchSetQueryByShangPinData($ElasticSearchService);
+
+        //传过来的searchOption 例子 [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
+        $searchOptionStr =  trim($this->request()->getRequestParam('searchOption'));
+        $searchOptionArr = json_decode($searchOptionStr, true);
+
+        //必须存在官网
+        $this->advancedSearchSetQueryByWeb($ElasticSearchService,$searchOptionArr);
+
+        //必须存在APP
+        $this->advancedSearchSetQueryByApp($ElasticSearchService,$searchOptionArr);
+
+        //必须是物流企业
+        $this->advancedSearchSetQueryByWuLiuQiYe($ElasticSearchService,$searchOptionArr);
+
+        // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索
+        $this->advancedSearchSetQueryByCompanyOrgType($ElasticSearchService,$searchOptionArr);
+
+        // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索
+        $this->advancedSearchSetQueryByEstiblishTime($ElasticSearchService,$searchOptionArr);
+
+        // 营业状态   传过来的是 10  20  转换成文案后 去匹配
+        $this->advancedSearchSetQueryByRegStatus($ElasticSearchService,$searchOptionArr);
+
+        // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
+        $this->advancedSearchSetQueryByRegCaptial($ElasticSearchService,$searchOptionArr);
+
+        // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
+        $this->advancedSearchSetQueryByTuanDuiRenShu($ElasticSearchService,$searchOptionArr);
+
+        // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
+        $this->advancedSearchSetQueryByYingShouGuiMo($ElasticSearchService,$searchOptionArr);
+
+        //四级分类 basic_nicid: A0111,A0112,A0113,
+        $this->advancedSearchSetQueryBySiJiFenLei($ElasticSearchService);
+
+        // 地区 basic_regionid: 110101,110102,
+        $this->advancedSearchSetQueryByBasicRegionid($ElasticSearchService);
+
+        $size = $this->request()->getRequestParam('size')??10;
+        $page = $this->request()->getRequestParam('page')??1;
+        $offset  =  ($page-1)*$size;
+        $ElasticSearchService->addSize($size) ;
+        $ElasticSearchService->addFrom($offset) ;
+        // $ElasticSearchService->addSort('xd_id', 'desc') ;
+
+        //设置默认值 不传任何条件 搜全部
+        $ElasticSearchService->setDefault() ;
+
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
+        $responseArr = @json_decode($responseJson,true);
+        CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
+                [
+                    // 'hits' => $responseArr['hits']['hits'],
+                    'es_query' => $ElasticSearchService->query,
+                    'post_data' => $this->request()->getRequestParam(),
+                ]
+            ));
+
+        // 格式化下日期和时间
+        $hits = (new XinDongService())::formatEsDate($responseArr['hits']['hits'], [
+            'estiblish_time',
+            'from_time',
+            'to_time',
+            'approved_time'
+        ]);
+        $hits = (new XinDongService())::formatEsMoney($hits, [
+            'reg_capital',
+        ]);
+
+        foreach($hits as &$dataItem){
+            $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmail($dataItem);
+            $dataItem['_source']['last_postal_address'] = $addresAndEmailData['last_postal_address'];
+            $dataItem['_source']['last_email'] = $addresAndEmailData['last_email'];
+
+            $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntId($dataItem['_source']['xd_id']);
+
+            // 添加tag
+            $dataItem['_source']['tags'] = array_values(
+                (new XinDongService())::getAllTagesByData(
+                    $dataItem['_source']
+                )
+            );
+
+            // 官网
+            $webStr = trim($dataItem['_source']['web']);
+            if(!$webStr){
+                continue;
+            }
+            $webArr = explode('&&&', $webStr);
+            !empty($webArr) && $dataItem['_source']['web'] = end($webArr);
+        }
+
+        return $this->writeJson(200,
+            [
+                'page' => $page,
+                'pageSize' =>$size,
+                'total' => intval($responseArr['hits']['total']['value']),
+                'totalPage' => (int)floor(intval($responseArr['hits']['total']['value'])/
+                    ($size)),
+
+            ]
+            , $hits, '成功', true, []);
+    }
+
+    // 保存搜索历史
      function saveSearchHistroy(): bool
      { 
         $queryName = trim($this->request()->getRequestParam('query_name'));

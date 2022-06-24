@@ -23,7 +23,10 @@ class SmsService extends ServiceBase
     {
         return (new AliSms())->comm($phone, $code);
     }
-
+    function sendByTemplete($phone,  $templete,$data): bool
+    {
+        return (new AliSms())->sendByTemplete($phone, $templete,$data);
+    }
     function reg($phone, $code): bool
     {
         return (new AliSms())->reg($phone, $code);

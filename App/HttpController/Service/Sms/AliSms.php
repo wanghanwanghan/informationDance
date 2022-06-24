@@ -63,6 +63,20 @@ class AliSms
         return true;
     }
 
+    function sendByTemplete($phone, $template,$data): bool
+    {
+        $easySms = $this->createObj();
+
+        TaskService::getInstance()->create(function () use ($easySms, $phone, $template,$data) {
+            return $easySms->send($phone, [
+                'template' =>  $template,
+                'data' => $data,
+            ]);
+        });
+
+        return true;
+    }
+
     function reg($phone, $code): bool
     {
         $easySms = $this->createObj();

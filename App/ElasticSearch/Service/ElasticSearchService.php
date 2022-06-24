@@ -166,4 +166,6 @@ class ElasticSearchService extends ServiceBase
             '{"size":"'.$this->query['size'].'","from":'.$this->query['from'].',"sort":[{"xd_id":{"order":"desc"}}],"query":{"bool":{"must":[{"match_all":{}}]}}}';
         }
     }
+
+
 }
