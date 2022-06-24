@@ -2480,9 +2480,11 @@ eof;
             'matchNamesBySimilarPercentageValue' => $percentage1,
             'matchNamesByPinYinSimilarPercentage' => true,
             'matchNamesByPinYinSimilarPercentageValue' => $percentage2,
-        ]);  
+        ]);
+        $retData2 = (new XinDongService())->matchNamesV2($toBeMatch,$target);
+
         // CommonService::getInstance()->log4PHP('matchEntByName '.$execution_time1.'秒'); 
-        return $this->writeJson(200, [] ,   $retData, '成功', true, []); 
+        return $this->writeJson(200, [] ,  [ $retData,$retData2], '成功', true, []);
     }
 
     //添加车险授权书认证书信息

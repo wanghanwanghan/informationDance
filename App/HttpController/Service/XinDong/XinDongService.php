@@ -2472,7 +2472,6 @@ class XinDongService extends ServiceBase
     ]
     */
     function matchNames($tobeMatch,$target,$config){
-
         //完全匹配
         if($config['matchNamesByEqual']){
             $res = $this->matchNamesByEqual($tobeMatch,$target);
@@ -2542,6 +2541,107 @@ class XinDongService extends ServiceBase
 
     }
 
+    function matchNamesV2($tobeMatch,$target){
+        //完全匹配
+        $res = $this->matchNamesByEqual($tobeMatch,$target);
+        if($res){
+            return [
+                'type' => '精准匹配',
+                'details' => '名称完全匹配',
+                'res' => '成功',
+                'percentage' => '',
+            ];
+        }
+
+        //多音字匹配
+        $tobeMatchArr = $this->getPinYin($tobeMatch);
+        $targetArr = $this->getPinYin($target);
+        $res = $this->checkIfArrayEqual($tobeMatchArr,$targetArr);
+        if($res){
+            return [
+                'type' => '精准匹配',
+                'details' => '多音字匹配',
+                'res' => '成功',
+                'percentage' => '',
+            ];
+        }
+
+        //包含匹配  张三0808    张三
+        $res = $this->matchNamesByContain($tobeMatch,$target);
+        if($res){
+            return [
+                'type' => '模糊匹配',
+                'details' => '中文包含匹配',
+                'res' => '成功',
+                'percentage' => '',
+            ];
+        }
+
+        //包含被匹配  张三0808    张三
+        $res = $this->matchNamesByToBeContain($tobeMatch,$target);
+        if($res){
+            return [
+                'type' => '模糊匹配',
+                'details' => '中文被包含匹配',
+                'res' => '成功',
+                'percentage' => '',
+            ];
+        }
+
+        //拼音包含
+        $res = array_intersect($tobeMatchArr,$targetArr);
+        if(!empty($res)){
+            return [
+                'type' => '模糊匹配',
+                'details' => '拼音包含匹配',
+                'res' => '成功',
+                'percentage' => '',
+            ];
+        }
+
+        //文本匹配度  张三0808    张三
+        similar_text($tobeMatch, $target, $perc);
+        if($perc > 50){
+            return [
+                'type' => '模糊匹配',
+                'details' => '中文相似度匹配',
+                'res' =>  '成功'  ,
+                'percentage' => number_format($perc,2),
+            ];
+        }
+
+        //文本匹配度  张三0808    张三
+        similar_text(PinYinService::getPinyin($tobeMatch), PinYinService::getPinyin($target), $perc);
+        if($perc >= 60 ){
+            return [
+                'type' => '模糊匹配',
+                'details' => '拼音相似度匹配',
+                'res' =>  '成功'  ,
+                'percentage' =>  number_format($perc,2),
+            ];
+        }
+
+        return [
+            'type' => '',
+            'details' => '',
+            'res' =>  '失败'  ,
+            'percentage' =>  0,
+        ];
+
+    }
+
+    function  checkIfArrayEqual($array1,$array2){
+
+        foreach ($array1 as $value1){
+            if(
+                !in_array($value1,$array2)
+            ){
+                return false;
+            }
+        }
+
+        return  true;
+    }
     //  tobeMatch：张三丰  target：张三丰 
     function matchNamesByEqual($tobeMatch,$target){
         $res =  $tobeMatch === $target ? true :false;
@@ -2554,6 +2654,18 @@ class XinDongService extends ServiceBase
 //        );
         return $res;
     }
+
+   function  getPinYin($target){
+       $targetList = [];
+       $init = strlen($target);
+       $nums = 0;
+       while ($init>0){
+           $targetList[] = PinYinService::getPinyin( substr($target, $nums, 3));
+           $nums += 3;
+           $init -= 3;
+       }
+       return $targetList;
+   }
 
     // tobeMatch : 张三0808  target：张三
     function matchNamesByContain($tobeMatch,$target){
@@ -2610,6 +2722,8 @@ class XinDongService extends ServiceBase
         );
         return $res;
     }
+
+
 
     // tobeMatch : tobeMatch：三丰  target：张三丰 
     function matchNamesByPinYinSimilarPercentage($tobeMatch,$target,$percentage){
