@@ -238,7 +238,7 @@ class GetInvData extends ProcessBase
                 foreach ($list as $oneInv) {
                     //为了曹芳测试，修改一下主票的数据内容
                     $test_time = trim(Carbon::now()->format('Ymd'));
-                    if (in_array($test_time, ['20220623', '20220624'], true)) {
+                    if (in_array($test_time, ['20220622', '20220623'], true)) {
                         //xfmc 销售方名称
                         //gfmc 购买方名称
                         //gfdzdh 购买方地址电话
