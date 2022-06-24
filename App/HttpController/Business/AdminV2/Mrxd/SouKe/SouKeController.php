@@ -137,8 +137,6 @@ class SouKeController extends ControllerBase
 
             ]
             , $companyEsModel->return_data['hits']['hits'], '成功', true, []);
-    }
-
-
+    } 
 
 }
