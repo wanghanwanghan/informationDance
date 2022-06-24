@@ -48,31 +48,28 @@ class AdminNewUser extends ModelBase
     public static function checkAccountBalance($id,$chargeMoney){
 
         $balance = self::getAccountBalance($id) ;
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'checkAccountBalance   get $balance ' ,
-                'params $id ' =>$id,
-                '$balance ' =>$balance
-            ])
-        );
         if(
              // 余额
             $balance >= $chargeMoney
          ){
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'checkAccountBalance   ok  ' ,
-                    'params $balance ' =>$balance,
-                    'params $chargeMoney ' =>$chargeMoney,
+                    __CLASS__.__FUNCTION__ ,
+                    'params $id ' =>$id,
+                    '$balance ' =>$balance,
+                    '$chargeMoney' =>$chargeMoney,
+                    'return'=> true
                 ])
             );
             return true;
          }
-        return CommonService::getInstance()->log4PHP(
+        return  CommonService::getInstance()->log4PHP(
             json_encode([
-                'checkAccountBalance   failed  ' ,
-                'params $balance ' =>$balance,
-                'params $chargeMoney ' =>$chargeMoney,
+                __CLASS__.__FUNCTION__ ,
+                'params $id ' =>$id,
+                '$balance ' =>$balance,
+                '$chargeMoney' =>$chargeMoney,
+                'return'=> false
             ])
         );
 

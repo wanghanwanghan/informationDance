@@ -213,12 +213,12 @@ class AdminUserChargeConfig extends ModelBase
 
         CommonService::getInstance()->log4PHP(
             json_encode([
-                ' admin charge config checkIfCanRun  start',
+                __CLASS__.__FUNCTION__ ,
+                'retrun '=>$res,
                 '$userId'=>$userId,
                 '$aimNums'=>$aimNums,
                 '$DailyMaxNums' =>$DailyMaxNums,
                 '$usedNums' =>$usedNums,
-                '$res' =>$res
             ])
         );
         return $res;

@@ -294,21 +294,14 @@ class AdminUserFinanceData extends ModelBase
     //我们拉取运营商的时间间隔  
     //客户导出的时间间隔  
     public static function pullFinanceData($id,$financeConifgArr){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'user finance data pullFinanceData  '=>'running',
-                '$id' =>$id,
-                '$financeConifgArr' =>$financeConifgArr,
-            ])
-        );
         $financeData =  AdminUserFinanceData::findById($id)->toArray();
         if($financeData['year'] > date('Y')){
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'user finance data pullFinanceData  year too large  '=>'retrun ',
-                    '$id' =>$id,
-                    '$financeConifgArr' =>$financeConifgArr,
-                    'year' => $financeData['year'] ,
+                    __CLASS__.__FUNCTION__ ,
+                    'params $FinanceDataId ' =>$id,
+                    '$financeConifgArr ' =>$financeConifgArr,
+                    'year too large ,return true.'
                 ])
             );
             return  true;
@@ -323,11 +316,12 @@ class AdminUserFinanceData extends ModelBase
         // 根据缓存期和上次拉取财务数据时间 决定是取db还是取api
         $getFinanceDataSourceDetailRes = self::getFinanceDataSourceDetail($id);
         CommonService::getInstance()->log4PHP(
-            [
-                'pullFinanceData getFinanceDataSourceDetail',
-                '$postData' => $postData,
-                '$getFinanceDataSourceDetailRes' => $getFinanceDataSourceDetailRes,
-            ]
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                ' $FinanceDataId ' =>$id,
+                '$financeConifgArr ' =>$financeConifgArr,
+                'Pull From DB Or APi? '=>$getFinanceDataSourceDetailRes
+            ])
         );
         //需要从APi拉取
         if($getFinanceDataSourceDetailRes['pullFromApi']){
@@ -335,12 +329,12 @@ class AdminUserFinanceData extends ModelBase
             $resData = $res['result']['data'];
             $resOtherData = $res['result']['otherData'];
             CommonService::getInstance()->log4PHP(
-                [
-                    'pullFinanceData getFinanceData APi ',
-                    'getFinanceData $postData' => $postData,
-                    'getFinanceData $res' => $res,
-                    'getFinanceData $resData' => $resData,
-                ]
+                json_encode([
+                    __CLASS__.__FUNCTION__ ,
+                    ' $FinanceDataId ' =>$id,
+                    '$financeConifgArr ' =>$financeConifgArr,
+                    'Pull From APi '=>$res
+                ])
             );
             //更新拉取时间
             self::updateLastPullDate($id,date('Y-m-d H:i:s'));
@@ -349,8 +343,17 @@ class AdminUserFinanceData extends ModelBase
             $dbDataArr['entName'] = $financeData['entName'];
             $dbDataArr['year'] = $financeData['year'];
             $dbDataArr['raw_return'] = json_encode($resData);
-
             $addRes = NewFinanceData::addRecordV2($dbDataArr);
+            if(!$addRes){
+                return CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ ,
+                        ' $FinanceDataId ' =>$id,
+                        '$financeConifgArr ' =>$financeConifgArr,
+                        'NewFinanceData::addRecordV2 false'=>$dbDataArr
+                    ])
+                );
+            }
             //设置是否需要确认
             $status = self::getConfirmStatus($financeConifgArr,$dbDataArr);
             self::updateStatus($id,$status);
@@ -361,11 +364,7 @@ class AdminUserFinanceData extends ModelBase
             }
 
             //设置关系
-            if(!$addRes){
-                return CommonService::getInstance()->log4PHP(
-                    'pullFinanceData   err 1  add NewFinanceData failed '.json_encode($dbDataArr)
-                );
-            }
+
             self::updateNewFinanceDataId($id,$addRes);
             AdminUserChargeConfig::setDailyUsedNumsV2($financeData['user_id'],1);
 
@@ -716,16 +715,6 @@ class AdminUserFinanceData extends ModelBase
         $res =  self::findById($id);
         $res2 =  ($res->getAttr('status') == self::$statusNeedsConfirm)? true:false;
 
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    'checkDataNeedConfirm ',
-                    '$id '=>$id,
-                    'status' => $res->getAttr('status'),
-                    '$res2'=>$res2
-                ]
-            )
-        );
         return $res2;
     }
 
