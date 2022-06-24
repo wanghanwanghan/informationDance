@@ -471,13 +471,10 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 $uploadRecord['id']
             );
             foreach ($uploadDataRecords as $uploadDataRecord){
-                $res = AdminUserFinanceUploadDataRecord::updateChargeInfo(
+                AdminUserFinanceUploadDataRecord::updateChargeInfo(
                     $uploadDataRecord['id'],
                     $uploadRecord['id']
                 );
-                if(!$res){
-                    return false;
-                }
             }
             $res = AdminUserFinanceUploadRecord::changeStatus(
                 $uploadRecord['id'],AdminUserFinanceUploadRecord::$stateCalCulatedPrice
@@ -624,8 +621,13 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             foreach ($companyDatas as $companyData) {
                 // 按年度解析为数据
                 $yearsArr = json_decode($uploadRecord['years'],true);
-                //$yearsArr = explode(',',$uploadRecord['years']);
                 if(empty($yearsArr)){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ ,
+                            'error . $yearsArr is emprty . $yearsArr ='=>$yearsArr
+                        ])
+                    );
                     continue;
                 }
                 foreach($yearsArr as $yearItem){

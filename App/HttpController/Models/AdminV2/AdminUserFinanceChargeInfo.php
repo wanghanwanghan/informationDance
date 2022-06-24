@@ -127,6 +127,16 @@ class AdminUserFinanceChargeInfo extends ModelBase
                 'year' => $year,
             ])
             ->get();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                'ifChargedBefore . ',
+                '$userId' => $userId,
+                '$entName' => $entName,
+                '$year' => $year,
+                'return '=>$res?true:false
+            ])
+        );
         return $res;
     }
 
@@ -139,6 +149,17 @@ class AdminUserFinanceChargeInfo extends ModelBase
                 'end_year' => $yearEnd,
             ])
             ->get();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                'ifChargedBeforeV2 ',
+                '$userId' => $userId,
+                '$entName' => $entName,
+                '$yearStart' => $yearStart,
+                '$yearEnd' =>$yearEnd,
+                'retrun ' => $res?true:false
+            ])
+        );
         return $res;
     }
 

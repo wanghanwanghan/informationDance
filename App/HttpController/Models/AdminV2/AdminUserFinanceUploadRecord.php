@@ -373,6 +373,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
         foreach ($uploadDatas as $uploadData){
             $user_finance_data = AdminUserFinanceData::findById($uploadData['user_finance_data_id'])->toArray();
+
             //之前是否扣费过
             $hasChargeBefore = false;
 
@@ -400,7 +401,6 @@ class AdminUserFinanceUploadRecord extends ModelBase
                         $uploadData['charge_year_end']
                     )
                 ){
-
                     $hasChargeBefore = true;
                 };
 
@@ -415,6 +415,17 @@ class AdminUserFinanceUploadRecord extends ModelBase
                     $chargeDetails['total_price'] += $uploadData['price'];
                     AdminUserFinanceUploadDataRecord::updateRealPrice(
                         $uploadData['id'],$uploadData['price'], $uploadData['charge_year_start'].'~'. $uploadData['charge_year_end'].'包年计费'
+                    );
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ ,
+                            'needs charge . ',
+                            '$uploadDataId' => $uploadData['id'],
+                            'chargeTypeAnnually' ,
+                            'charge_year_start' => $uploadData['charge_year_start'],
+                            'charge_year_end' => $uploadData['charge_year_end'],
+                            'price' => $uploadData['price'],
+                        ])
                     );
                 }
             }
@@ -452,6 +463,16 @@ class AdminUserFinanceUploadRecord extends ModelBase
                     $chargeDetails['total_price'] += $uploadData['price'];
                     AdminUserFinanceUploadDataRecord::updateRealPrice(
                         $uploadData['id'],$uploadData['price'], $uploadData['charge_year'].'单年计费'
+                    );
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ ,
+                            'needs charge . ',
+                            '$uploadDataId' => $uploadData['id'],
+                            'chargeTypeByYear' ,
+                            'charge_year' => $uploadData['charge_year'],
+                            'price' => $uploadData['price'],
+                        ])
                     );
                 }
             }

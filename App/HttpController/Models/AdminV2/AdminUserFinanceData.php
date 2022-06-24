@@ -52,25 +52,26 @@ class AdminUserFinanceData extends ModelBase
 
     public static function addRecord($requestData){ 
         try {
-           $res =  AdminUserFinanceData::create()->data([
-                'user_id' => $requestData['user_id'],  
-                'entName' => $requestData['entName'],  
-                'year' => $requestData['year'],  
+            $data =[
+                'user_id' => $requestData['user_id'],
+                'entName' => $requestData['entName'],
+                'year' => $requestData['year'],
                 'finance_data_id' => $requestData['finance_data_id']?:0,
                 'price' => $requestData['price']?:0,
                 'price_type' => $requestData['price_type']?:0,
                 'cache_end_date' => $requestData['cache_end_date']?:0,
                 'reamrk' => $requestData['reamrk']?:'',
                 'status' => $requestData['status']?:1,
-            ])->save();
+            ];
+           $res =  AdminUserFinanceData::create()->data($data)->save();
 
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'AdminUserFinanceData sql err',
-                    $e->getMessage(),
+                    __CLASS__.__FUNCTION__ ,
+                    'error . addRecord error . $data ='=>$data
                 ])
-            );  
+            );
         }  
 
         return $res;
@@ -752,13 +753,7 @@ class AdminUserFinanceData extends ModelBase
             $infoArr
         );
         if($AdminUserFinanceDataId <=0 ){
-            return CommonService::getInstance()->log4PHP(
-                json_encode(
-                    ['  AdminUserFinanceData::addNewRecordV2 addRecord false ',
-                        '$infoArr'=>$infoArr
-                    ]
-                )
-            );
+            return  false;
         }
 
         return  $AdminUserFinanceDataId;
@@ -927,14 +922,6 @@ class AdminUserFinanceData extends ModelBase
     }
 
     static function  checkIfAllYearsDataIsValid($user_id,$entName,$years){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'User Finance Data checkIfAllYearsDataIsValid',
-                '$user_id' => $user_id,
-                '$entName' => $entName,
-                '$years' => $years
-            ])
-        );
         foreach ($years as $year){
             if(
                 self::findBySql(
@@ -944,35 +931,36 @@ class AdminUserFinanceData extends ModelBase
                             "
                 )
             ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        'User Finance Data checkIfAllYearsDataIsValid $statusinit data',
-                        'status' => $user_id,
-                        '$entName' => $year,
-                        '$years' => $years
-                    ])
-                );
                continue;
             };
-
-            if(
-                !self::findBySql(
-                    " WHERE     user_id = $user_id AND  
+            $tmpSql =" WHERE     user_id = $user_id AND  
                                     entName =  $entName AND year = $year  AND 
                                     status = ".self::$statusConfirmedYes."
-                            "
-                )
+                    ";
+            if(
+                !self::findBySql($tmpSql)
             ){
-                return CommonService::getInstance()->log4PHP(
+                return  CommonService::getInstance()->log4PHP(
                     json_encode([
-                        'User Finance Data checkIfAllYearsDataIsValid  no ',
-                        'status' => $user_id,
-                        '$entName' => $year,
-                        '$years' => $years
+                        __CLASS__.__FUNCTION__ ,
+                        'checkIfAllYearsDataIsValid. return false ',
+                        '$tmpSql' => $tmpSql,
+                        '$user_id'=>$user_id,
+                        '$entName' =>$entName,
+                        '$years'=>$years,
                     ])
                 );
             };
         }
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                'checkIfAllYearsDataIsValid. return true ',
+                '$user_id'=>$user_id,
+                '$entName' =>$entName,
+                '$years'=>$years,
+            ])
+        );
         return  true;
     }
     public static function findBySql($where){
