@@ -2570,7 +2570,7 @@ class XinDongService extends ServiceBase
         $res = $this->matchNamesByContain($tobeMatch,$target);
         if($res){
             return [
-                'type' => '模糊匹配',
+                'type' => '精准匹配',
                 'details' => '中文包含匹配',
                 'res' => '成功',
                 'percentage' => '',
@@ -2581,7 +2581,7 @@ class XinDongService extends ServiceBase
         $res = $this->matchNamesByToBeContain($tobeMatch,$target);
         if($res){
             return [
-                'type' => '模糊匹配',
+                'type' => '精准匹配',
                 'details' => '中文被包含匹配',
                 'res' => '成功',
                 'percentage' => '',
