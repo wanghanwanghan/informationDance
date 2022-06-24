@@ -253,7 +253,9 @@ class RunReadAndDealXls extends AbstractCronTask
             //微信名
             $value2 = $this->strtr_func($one[2]);
             $value3 = $this->strtr_func($one[3]);
-            $tmpRes = (new XinDongService())->matchContactNameByWeiXinName($value0,$value2);
+            //$tmpRes = (new XinDongService())->matchContactNameByWeiXinName($value0,$value2);
+            $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($value0,$value2);
+
              CommonService::getInstance()->log4PHP('matchContactNameByWeiXinName'.json_encode(
                  [
                      'value' => [$value0,$value2],
@@ -265,9 +267,11 @@ class RunReadAndDealXls extends AbstractCronTask
                 $value0,
                 $value1,
                 $value2,
-                $tmpRes['stff_name'],
-                $tmpRes['staff_type_name']
-
+                $tmpRes['data']['stff_name'],
+                $tmpRes['data']['staff_type_name'],
+                $tmpRes['match_res']['type'],
+                $tmpRes['match_res']['details'],
+                $tmpRes['match_res']['percentage'],
             ];
         }
     }
