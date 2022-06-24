@@ -2783,4 +2783,33 @@ class XinDongService extends ServiceBase
 
         return $matchedContactName;
     }
+
+    function matchContactNameByWeiXinNameV2($entName,$WeiXin){
+
+        //获取所有联系人
+        $staffsDatas = LongXinService::getLianXiByName($entName);
+        if (empty($staffsDatas)) {
+            return [];
+        }
+
+        foreach($staffsDatas as $staffsDataItem){
+            $tmpName= trim($staffsDataItem['stff_name']);
+            if(!$tmpName){
+                continue;
+            };
+            $res = (new XinDongService())->matchNamesV2($tmpName,$WeiXin);
+            if($res['res'] == '成功'){
+//                CommonService::getInstance()->log4PHP(
+//                    'matchContactNameByWeiXinName yes  :' .$tmpName . $WeiXin
+//                );
+                return [
+                    'data' => $staffsDataItem,
+                    'match_res' => $res
+                ];
+            }
+        }
+
+          return [];
+    }
+
 }
