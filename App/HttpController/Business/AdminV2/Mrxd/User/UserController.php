@@ -4,6 +4,7 @@ namespace App\HttpController\Business\AdminV2\Mrxd\User;
 
 use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;
 use App\HttpController\Models\AdminV2\AdminNewUser;
+use App\HttpController\Models\AdminV2\AdminRoles;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\User\UserService;
 use EasySwoole\RedisPool\Redis;
@@ -55,11 +56,24 @@ class UserController extends ControllerBase
         ];
 
         foreach ($list as &$value){
+            $rolesRes = AdminUserRole::findByUserId($value['id']);
             $value['roles_ids'] = json_encode(
                 array_column(
-                    AdminUserRole::findByUserId($value['id']),'role_id'
+                    $rolesRes,'role_id'
                 )
             );
+            $value['roles_ids_cnames'] = '';
+            if(!empty($value['roles_ids'])){
+                $Roles = AdminRoles::findByConditionV2(
+                    [['field'=>'role_id','value'=>$value['roles_ids'],'operate'=>'IN']],1
+                );
+                $value['roles_ids_cnames'] = json_encode(
+                    array_column(
+                        $Roles,'role_name'
+                    )
+                );
+            }
+
         }
         return $this->writeJson(
             200,

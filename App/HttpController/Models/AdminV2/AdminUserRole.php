@@ -93,6 +93,14 @@ class AdminUserRole extends ModelBase
         }  
 
         return $res;
-    } 
+    }
+
+
+    public static function findAllByCondition($whereArr){
+        $res =  AdminUserRole::create()
+            ->where($whereArr)
+            ->all();
+        return $res;
+    }
 
 }
