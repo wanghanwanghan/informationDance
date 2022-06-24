@@ -2591,7 +2591,10 @@ class XinDongService extends ServiceBase
         //拼音包含
         similar_text(PinYinService::getPinyin($tobeMatch), PinYinService::getPinyin($target), $perc);
         $res = array_intersect($tobeMatchArr,$targetArr);
-        if(!empty($res)){
+        if(
+            !empty($res) &&
+            $res >= 50
+        ){
             return [
                 'type' => '模糊匹配',
                 'details' => '拼音包含匹配',
