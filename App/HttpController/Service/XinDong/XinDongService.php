@@ -2589,13 +2589,14 @@ class XinDongService extends ServiceBase
         }
 
         //拼音包含
+        similar_text(PinYinService::getPinyin($tobeMatch), PinYinService::getPinyin($target), $perc);
         $res = array_intersect($tobeMatchArr,$targetArr);
         if(!empty($res)){
             return [
                 'type' => '模糊匹配',
                 'details' => '拼音包含匹配',
                 'res' => '成功',
-                'percentage' => '',
+                'percentage' => number_format($perc,2),
             ];
         }
 
@@ -2610,7 +2611,7 @@ class XinDongService extends ServiceBase
             ];
         }
 
-        //文本匹配度  张三0808    张三
+        //拼音相似度匹配  张三0808    张三
         similar_text(PinYinService::getPinyin($tobeMatch), PinYinService::getPinyin($target), $perc);
         if($perc >= 60 ){
             return [
