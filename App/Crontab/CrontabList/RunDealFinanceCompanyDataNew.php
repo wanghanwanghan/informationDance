@@ -515,12 +515,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             if(
                 $Config['sms_notice_value'] <= 0
             ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ ,
-                        'sms_notice_value < 0 . continue '=>$Config['sms_notice_value']
-                    ])
-                );
+
                 continue;
             };
 
@@ -528,12 +523,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             if(
                 $balance <= 0
             ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ ,
-                        '$balance < 0 . continue '=>$balance
-                    ])
-                );
+
                 continue;
             }
 
@@ -541,41 +531,67 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             if(
                 $userInfo['phone'] <=0
             ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ ,
-                        'phone < 0 . continue '=>$userInfo['phone']
-                    ])
+
+                continue;
+            }
+
+            $chargeConfigs =  AdminUserChargeConfig::findByUser($userInfo['id']);
+            if(!$chargeConfigs){
+                AdminUserChargeConfig::addRecordV2(
+                    [
+                        'user_id' => $userInfo['id'],
+                        'can_pull_data' => 1,
+                        'allowed_daily_nums' => 0,
+                        'daily_used_nums' => 0,
+                        'allowed_total_nums' => 0,
+                        'total_used_nums' => 0,
+                        'reamrk' =>'',
+                        'status' => 1,
+                    ]
+                );
+                $chargeConfigs =  AdminUserChargeConfig::findByUser($userInfo['id']);
+            }
+            $chargeConfigs = $chargeConfigs->toArray();
+
+            //余额够了
+            if($Config['sms_notice_value'] > $balance ){
+                AdminUserChargeConfig::setSmsNoticeDate(
+                    $userInfo['id'],
+                    ''
                 );
                 continue;
             }
 
+            //余额不够的
+
+            //之前发过了
             if(
-                $redis->get($userInfo['phone'].'_sms_notice_value')
+                $chargeConfigs['send_sms_notice_date']  >0
             ){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ ,
-                        'has send before  . continue '
+                        'has send before  . continue . user_id = '=>$userInfo['id']
                     ])
                 );
                 continue;
             }
 
             //需要发短信了
-            if($Config['sms_notice_value'] <= $balance ){
-                $res = SmsService::getInstance()->comm($userInfo['phone'], 'XXX');
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ ,
-                        'send sms ',
-                        '$res' => $res,
-                        'phone' => $userInfo['phone'],
+            $res = SmsService::getInstance()->comm($userInfo['phone'], 'XXX');
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ ,
+                    'send sms ',
+                    '$res' => $res,
+                    'phone' => $userInfo['phone'],
 
-                    ])
-                );
-                $redis->set($userInfo['phone'].'_sms_notice_value', 1, 60*60*24);
-            }
+                ])
+            );
+            AdminUserChargeConfig::setSmsNoticeDate(
+                $userInfo['id'],
+                date('Y-m-d H:i:s')
+            );
         }
 
         return true;

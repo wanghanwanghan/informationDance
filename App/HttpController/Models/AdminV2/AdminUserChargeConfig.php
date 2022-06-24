@@ -36,6 +36,14 @@ class AdminUserChargeConfig extends ModelBase
         ]);
     }
 
+    public static function setSmsNoticeDate($user_id,$send_sms_notice_date){
+        $info = self::findByUser($user_id);
+
+        return $info->update([
+            'send_sms_notice_date' => $send_sms_notice_date,
+        ]);
+    }
+
     public static function getDailyUsedNums($user_id){
         $nums = 0;
         $info = self::findByUser($user_id);
@@ -114,6 +122,7 @@ class AdminUserChargeConfig extends ModelBase
                 'daily_used_nums' => $requestData['daily_used_nums']?:0,
                 'allowed_total_nums' => $requestData['allowed_total_nums']?:0,
                 'total_used_nums' => $requestData['total_used_nums']?:0,
+                'send_sms_notice_date' => $requestData['send_sms_notice_date']?:'',
                 'reamrk' => $requestData['reamrk']?:'',
                 'status' => $requestData['status']?:1,
 
