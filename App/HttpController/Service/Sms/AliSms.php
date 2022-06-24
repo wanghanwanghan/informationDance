@@ -67,13 +67,18 @@ class AliSms
     {
         $easySms = $this->createObj();
 
-        TaskService::getInstance()->create(function () use ($easySms, $phone, $template,$data) {
+        $res = TaskService::getInstance()->create(function () use ($easySms, $phone, $template,$data) {
             return $easySms->send($phone, [
                 'template' =>  $template,
                 'data' => $data,
             ]);
         });
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                '$res' => $res
+            ])
+        );
         return true;
     }
 
