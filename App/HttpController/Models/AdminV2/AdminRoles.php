@@ -78,7 +78,7 @@ class AdminRoles extends ModelBase
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
         $model->page($page)
-            ->order('id', 'DESC')
+            ->order('role_id', 'DESC')
             ->withTotalCount();
 
         $res = $model->all();
