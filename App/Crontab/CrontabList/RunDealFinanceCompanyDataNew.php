@@ -505,10 +505,22 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
         $allConfigs  = AdminUserFinanceConfig::findAllByCondition([
             'status' => AdminUserFinanceConfig::$state_ok
         ]);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                '$allConfigs '=> $allConfigs,
+            ])
+        );
         foreach ($allConfigs as $Config){
             if(
                 $Config['sms_notice_value'] <= 0
             ){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ ,
+                        'sms_notice_value < 0 . continue '=>$Config['sms_notice_value']
+                    ])
+                );
                 continue;
             };
 
@@ -516,6 +528,12 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             if(
                 $balance <= 0
             ){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ ,
+                        '$balance < 0 . continue '=>$balance
+                    ])
+                );
                 continue;
             }
 
@@ -523,6 +541,12 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             if(
                 $userInfo['phone'] <=0
             ){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ ,
+                        'phone < 0 . continue '=>$userInfo['phone']
+                    ])
+                );
                 continue;
             }
 
