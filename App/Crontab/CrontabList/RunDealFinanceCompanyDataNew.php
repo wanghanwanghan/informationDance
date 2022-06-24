@@ -540,7 +540,16 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
 
             //需要发短信了
             if($Config['sms_notice_value'] <= $balance ){
-                SmsService::getInstance()->comm($userInfo['phone'], 'XXX');
+                $res = SmsService::getInstance()->comm($userInfo['phone'], 'XXX');
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ ,
+                        'send sms ',
+                        '$res' => $res,
+                        'phone' => $userInfo['phone'],
+
+                    ])
+                );
                 $redis->set($userInfo['phone'].'_sms_notice_value', 1, 60*60*24);
             }
         }

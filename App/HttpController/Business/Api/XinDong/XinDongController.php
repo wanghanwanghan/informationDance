@@ -2745,7 +2745,11 @@ eof;
         ){
             RunDealFinanceCompanyDataNew::parseCompanyDataToDb(1);
         }
-
+        if(
+            $this->getRequestData('sendSmsWhenBalanceIsNotEnough')
+        ){
+            RunDealFinanceCompanyDataNew::sendSmsWhenBalanceIsNotEnough(1);
+        }
         if(
             $this->getRequestData('calculatePrice')
         ){
