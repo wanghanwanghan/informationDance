@@ -69,10 +69,8 @@ class UserController extends ControllerBase
                 $Roles = AdminRoles::findByConditionV2(
                     [['field'=>'role_id','value'=>$roles_ids_arr,'operate'=>'IN']],1
                 );
-                $value['roles_ids_cnames'] = json_encode(
-                    array_column(
-                        $Roles,'role_name'
-                    )
+                $value['roles_ids_cnames'] = array_column(
+                    $Roles['data'],'role_name'
                 );
             }
 
