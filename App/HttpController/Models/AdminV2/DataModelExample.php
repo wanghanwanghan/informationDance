@@ -52,7 +52,7 @@ class DataModelExample extends ModelBase
         } catch (\Throwable $e) {
             return CommonService::getInstance()->log4PHP(
                 json_encode([
-                    __CLASS__.__FUNCTION__ ,
+                    __CLASS__.__FUNCTION__ .__LINE__,
                     'failed',
                     '$requestData' => $requestData
                 ])

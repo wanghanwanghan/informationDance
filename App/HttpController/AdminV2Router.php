@@ -19,6 +19,7 @@ class AdminV2Router
         $this->RoleRouterV1($routeCollector);
         $this->PermissionsRouterV1($routeCollector);
         $this->FinanceRouterV1($routeCollector);
+        $this->SouKeRouterV1($routeCollector);
     }
 
     private function UserRouterV1(RouteCollector $routeCollector): bool
@@ -85,11 +86,23 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/exportExportLists', $prefix . 'exportExportLists');
             $routeCollector->addRoute(['GET', 'POST'], '/exportExportDetails', $prefix . 'exportExportDetails');
             $routeCollector->addRoute(['GET', 'POST'], '/getExportQueueLists', $prefix . 'getExportQueueLists');
-             $routeCollector->addRoute(['GET', 'POST'], '/getNeedsConfirmDetails', $prefix . 'getNeedsConfirmDetails');
-             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceLogLists', $prefix . 'getFinanceLogLists');
+            $routeCollector->addRoute(['GET', 'POST'], '/getNeedsConfirmDetails', $prefix . 'getNeedsConfirmDetails');
+            $routeCollector->addRoute(['GET', 'POST'], '/getFinanceLogLists', $prefix . 'getFinanceLogLists');
             $routeCollector->addRoute(['GET', 'POST'], '/getAllowedUploadYears', $prefix . 'getAllowedUploadYears');
             $routeCollector->addRoute(['GET', 'POST'], '/chargeAccount', $prefix . 'chargeAccount');
             $routeCollector->addRoute(['GET', 'POST'], '/getAllFinanceFields', $prefix . 'getAllFinanceFields');
+        });
+
+        return true;
+    }
+
+    private function SouKeRouterV1(RouteCollector $routeCollector): bool
+    {
+        $prefix = '/Business/AdminV2/Mrxd/SouKe/SouKeController/';
+
+        $routeCollector->addGroup('/souke', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getSearchOption', $prefix . 'getSearchOption');
+            $routeCollector->addRoute(['GET', 'POST'], '/advancedSearch', $prefix . 'getSearchOption');
         });
 
         return true;

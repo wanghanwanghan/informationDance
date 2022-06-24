@@ -512,11 +512,22 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             if(
                 $Config['sms_notice_value'] <= 0
             ){
-
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'sms_notice_value <= 0 '=> $Config['sms_notice_value'],
+                    ])
+                );
                 continue;
             };
 
             $balance = AdminNewUser::getAccountBalance($Config['user_id']);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$balance '=> $balance,
+                ])
+            );
             if(
                 $balance <= 0
             ){
@@ -551,7 +562,15 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             $chargeConfigs = $chargeConfigs->toArray();
 
             //余额够了
-            if($Config['sms_notice_value'] > $balance ){
+            if($Config['sms_notice_value'] < $balance ){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '$balance is enough ',
+                        '$balance'=> $balance,
+                        'sms_notice_value' => $Config['sms_notice_value']
+                    ])
+                );
                 AdminUserChargeConfig::setSmsNoticeDate(
                     $userInfo['id'],
                     ''
