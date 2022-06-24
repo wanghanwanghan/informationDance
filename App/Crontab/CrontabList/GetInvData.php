@@ -92,8 +92,8 @@ class GetInvData extends AbstractCronTask
         $url_arr = [
             //36 => 'https://zkinvoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
             36 => 'https://zkinvocie.dev.dl.alipaydev.com/api/wezTech/collectNotify',//test rsa和dev一样
-            41 => 'https://trustdata.antgroup.com/api/wezTech/collectNotify',//pre 和 pro 交换了
-            42 => 'https://trustdata-pre.antgroup.com/api/wezTech/collectNotify',//pro 和 pre 交换了
+            41 => 'https://trustdata.antgroup.com/api/wezTech/collectNotify',
+            42 => 'https://trustdata-pre.antgroup.com/api/wezTech/collectNotify',
         ];
 
         $total = AntAuthList::create()
