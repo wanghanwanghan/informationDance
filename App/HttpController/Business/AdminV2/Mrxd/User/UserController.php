@@ -60,15 +60,16 @@ class UserController extends ControllerBase
 
         foreach ($list as &$value){
             $rolesRes = AdminUserRole::findByUserId($value['id']);
+            $roles_ids_arr = array_column(
+                $rolesRes,'role_id'
+            );
             $value['roles_ids'] = json_encode(
-                array_column(
-                    $rolesRes,'role_id'
-                )
+                $roles_ids_arr
             );
             $value['roles_ids_cnames'] = '';
-            if(!empty($value['roles_ids'])){
+            if(!empty($roles_ids_arr)){
                 $Roles = AdminRoles::findByConditionV2(
-                    [['field'=>'role_id','value'=>$value['roles_ids'],'operate'=>'IN']],1
+                    [['field'=>'role_id','value'=>$roles_ids_arr,'operate'=>'IN']],1
                 );
                 $value['roles_ids_cnames'] = json_encode(
                     array_column(
