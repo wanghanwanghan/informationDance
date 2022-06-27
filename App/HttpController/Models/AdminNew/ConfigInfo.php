@@ -117,7 +117,7 @@ class ConfigInfo extends ModelBase
         return $status;
     }
 
-    static function  removeRedisNx($methodName, $ttl = 6400): bool
+    static function  removeRedisNx($methodName): bool
     {
 
         $redis = Redis::defer('redis');
@@ -128,7 +128,6 @@ class ConfigInfo extends ModelBase
             json_encode([
                 'removeRedisNx strat ' ,
                 'params $methodName' => $methodName,
-                'params $ttl' => $ttl,
                 ' $status' => $status,
             ])
         );

@@ -10,6 +10,9 @@ use App\HttpController\Models\AdminV2\AdminNewMenu;
 use App\HttpController\Models\AdminV2\AdminUserChargeConfig;
 use App\HttpController\Models\AdminV2\AdminUserFinanceChargeInfo;
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
+use App\HttpController\Models\AdminV2\DataModelExample;
+use App\HttpController\Models\AdminV2\DeliverHistory;
+use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\Api\CompanyCarInsuranceStatusInfo;
 use App\HttpController\Models\Provide\RequestApiInfo;
@@ -137,6 +140,96 @@ class SouKeController extends ControllerBase
 
             ]
             , $companyEsModel->return_data['hits']['hits'], '成功', true, []);
-    } 
+    }
 
+    // 导出客户数据
+    function exportEntData(): bool
+    {
+        if(
+            !ConfigInfo::setRedisNx('exportEntData',5)
+        ){
+            return $this->writeJson(201, null, [],  '请勿重复提交');
+        }
+
+        $requestData =  $this->getRequestData();
+
+        //是否使用该名单进行交付 需要保存条件
+        $checkRes = DataModelExample::checkField(
+            [
+                'entName' => [
+                    'not_empty' => 1,
+                    'field_name' => 'entName',
+                    'err_msg' => '请输入要交付的企业名',
+                ],
+                'title' => [
+                    'not_empty' => 1,
+                    'field_name' => 'title',
+                    'err_msg' => '标题必填',
+                ],
+                'total_nums' => [
+                    'bigger_than' => 0,
+                    'less_than' => 1000000,
+                    'field_name' => 'total_nums',
+                    'err_msg' => '总数不对！必须大于0且小于100万',
+                ]
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
+
+        //确认使用该名单
+        DownloadSoukeHistory::addRecord(
+            [
+                'admin_id' => $this->loginUserinfo['id'],
+                'entName' => $requestData['entName'],
+                //选择的哪些条件
+                'feature' => json_encode($requestData),
+                //标题
+                'title' => $requestData['title'],
+                'remark' => $requestData['remark'],
+                'total_nums' => $requestData['total_nums'],
+                'status' => DeliverHistory::$state_init,
+                'type' => $requestData['type']?:1,
+            ]
+        );
+
+        ConfigInfo::removeRedisNx('exportEntData');
+        return $this->writeJson(200,[ ] , [], '已发起下载，请去我的下载中查看', true, []);
+    }
+
+    //获取导出列表|财务对账列表
+    public function getExportLists(){
+        $page = $this->request()->getRequestParam('page')??1;
+        $res = DownloadSoukeHistory::findByConditionV2(
+
+            [
+                [
+                    'field' => 'admin_id',
+                    'value' => $this->loginUserinfo['id'],
+                    'operate' => '=',
+                ],
+            ],
+            $page
+        );
+
+        foreach ($res['data'] as &$value){
+//            $value['upload_details'] = [];
+//            if(
+//                $value['upload_record_id']
+//            ){
+//                $value['upload_details'] = AdminUserFinanceUploadRecord::findById($value['upload_record_id'])->toArray();
+//            }
+        }
+        return $this->writeJson(200,  [
+            'page' => $page,
+            'pageSize' =>10,
+            'total' => $res['total'],
+            'totalPage' =>  ceil( $res['total']/ 20 ),
+        ], $res['data'],'成功');
+    }
 }

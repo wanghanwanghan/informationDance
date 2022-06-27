@@ -67,6 +67,72 @@ class DataModelExample extends ModelBase
             ->all();
         return $res;
     }
+    /*
+    [
+        'user_id' => [
+            'not_empty' => 1,
+            'field_name' => 'user_id',
+            'err_msg' => '',
+        ]
+    ]
+
+     * */
+    public static function checkField($configs,$requestData){
+        foreach ($configs as $configItem){
+            if(
+                $configItem['not_empty']
+            ){
+                if(
+                    empty($requestData[$configItem['field_name']])
+                ){
+                    return [
+                        'res' => false,
+                        'msgs'=>$configItem['err_msg'],
+                    ];
+                }
+            };
+
+            if(
+                isset($configItem['bigger_than'])
+            ){
+                if(
+                    $requestData[$configItem['field_name']] < $configItem['bigger_than']
+                ){
+                    return [
+                        'res' => false,
+                        'msgs'=>$configItem['err_msg'],
+                    ];
+                }
+            };
+
+            if(
+                isset($configItem['less_than'])
+            ){
+                if(
+                    $requestData[$configItem['field_name']] > $configItem['bigger_than']
+                ){
+                    return [
+                        'res' => false,
+                        'msgs'=>$configItem['err_msg'],
+                    ];
+                }
+            };
+        }
+        return [
+            'res' => true,
+            'msgs'=>'',
+        ];
+    }
+
+
+    public static function setTouchTime($id,$touchTime){
+        $info = AdminUserFinanceUploadRecord::findById($id);
+
+        return $info->update([
+            'touch_time' => $touchTime,
+        ]);
+    }
+
 
     public static function findByConditionWithCountInfo($whereArr,$page){
         $model = AdminUserFinanceExportDataQueue::create()

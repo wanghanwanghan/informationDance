@@ -157,9 +157,12 @@ class Company extends ServiceBase
             // basic_opscope: 经营范围
             'business_scope' => $basic_opscope,
         ];
-        foreach($addMustMatchPhraseQueryMap as $field=>$value){
-            $value && $this->es->addMustMatchPhraseQuery( $field , $value) ;
+        if(!empty($addMustMatchPhraseQueryMap)){
+            foreach($addMustMatchPhraseQueryMap as $field=>$value){
+                $value && $this->es->addMustMatchPhraseQuery( $field , $value) ;
+            }
         }
+
         return $this;
     }
 
