@@ -206,8 +206,6 @@ class RunDealApiSouKe extends AbstractCronTask
 
         //确认交付
         self::deliver(3);
-
-
         //设置为已执行完毕
         ConfigInfo::setIsDone(__CLASS__);
 
@@ -264,9 +262,8 @@ class RunDealApiSouKe extends AbstractCronTask
         return true;
     }
 
-    //交付记录
+    // 交付客户：生成细的交付记录
     static function  deliver($limit){
-
         $allInitDatas =  DeliverHistory::findAllByCondition(
             [
                 'status' => DeliverHistory::$state_init
