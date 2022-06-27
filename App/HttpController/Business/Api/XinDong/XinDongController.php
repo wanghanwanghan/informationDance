@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Api\XinDong;
 
+use App\Crontab\CrontabList\RunDealApiSouKe;
 use App\Crontab\CrontabList\RunDealFinanceCompanyData;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNew;
 use App\Csp\Service\CspService;
@@ -2829,6 +2830,12 @@ eof;
     }
     function testExport()
     {
+        if(
+            $this->getRequestData('generateFile')
+        ){
+            RunDealApiSouKe::generateFile(1);
+        }
+
         if(
             $this->getRequestData('parseDataToDb')
         ){

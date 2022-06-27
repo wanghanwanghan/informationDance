@@ -253,8 +253,8 @@ class SouKeController extends ControllerBase
             [
                 'admin_id' => $downloadHistoryRes['admin_id'],
                 'entName' => $requestData['entName'],
-                'feature' => $requestData,
-                'title' => $requestData['title'],
+                'feature' => $downloadHistoryRes['feature'],
+                'title' => $requestData['title'],//
                 'file_name' => '',
                 'file_path' => '',
                 'remark' => $requestData['remark']?:'',

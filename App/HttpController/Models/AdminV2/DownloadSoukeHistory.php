@@ -46,7 +46,7 @@ class DownloadSoukeHistory extends ModelBase
 
     public static function addRecord($requestData){
         try {
-           $res =  DeliverHistory::create()->data([
+           $res =  DownloadSoukeHistory::create()->data([
                 'admin_id' => $requestData['admin_id'],
                'entName' => $requestData['entName'],
                'feature' => $requestData['feature'],
@@ -76,14 +76,14 @@ class DownloadSoukeHistory extends ModelBase
     }
 
     public static function findAllByCondition($whereArr){
-        $res =  DeliverHistory::create()
+        $res =  DownloadSoukeHistory::create()
             ->where($whereArr)
             ->all();
         return $res;
     }
 
     public static function findByConditionWithCountInfo($whereArr,$page){
-        $model = DeliverHistory::create()
+        $model = DownloadSoukeHistory::create()
                 ->where($whereArr)
                 ->page($page)
                 ->order('id', 'DESC')
@@ -100,15 +100,32 @@ class DownloadSoukeHistory extends ModelBase
 
 
     public static function setTouchTime($id,$touchTime){
-        $info = AdminUserFinanceUploadRecord::findById($id);
+        $info = DownloadSoukeHistory::findById($id);
 
         return $info->update([
             'touch_time' => $touchTime,
         ]);
     }
 
+    public static function setStatus($id,$status){
+        $info = DownloadSoukeHistory::findById($id);
+
+        return $info->update([
+            'status' => $status,
+        ]);
+    }
+
+    public static function setFilePath($id,$file_path,$file_name){
+        $info = DownloadSoukeHistory::findById($id);
+
+        return $info->update([
+            'file_path' => $file_path,
+            'file_name' => $file_name,
+        ]);
+    }
+
     public static function findByConditionV2($whereArr,$page){
-        $model = DeliverHistory::create();
+        $model = DownloadSoukeHistory::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
@@ -126,14 +143,14 @@ class DownloadSoukeHistory extends ModelBase
     }
 
     public static function findById($id){
-        $res =  DeliverHistory::create()
+        $res =  DownloadSoukeHistory::create()
             ->where('id',$id)            
             ->get();  
         return $res;
     }
 
     public static function findAllByAdminIdAndEntName($admin_id,$entName){
-        $res =  DeliverHistory::create()
+        $res =  DownloadSoukeHistory::create()
             ->where('admin_id',$admin_id)
             ->where('entName',$entName)
             ->all();
@@ -141,7 +158,7 @@ class DownloadSoukeHistory extends ModelBase
     }
 
     public static function setData($id,$field,$value){
-        $info = DeliverHistory::findById($id);
+        $info = DownloadSoukeHistory::findById($id);
         return $info->update([
             "$field" => $value,
         ]);
