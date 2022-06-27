@@ -220,6 +220,11 @@ class SouKeController extends ControllerBase
 
         $checkRes = DataModelExample::checkField(
             [
+                'id' => [
+                    'not_empty' => 1,
+                    'field_name' => 'id',
+                    'err_msg' => '请指定记录',
+                ],
                 'entName' => [
                     'not_empty' => 1,
                     'field_name' => 'entName',

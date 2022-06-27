@@ -2836,6 +2836,13 @@ eof;
             RunDealApiSouKe::generateFile(1);
         }
 
+        //确认交付
+        if(
+            $this->getRequestData('deliver')
+        ){
+            RunDealApiSouKe::deliver(1);
+        }
+
         if(
             $this->getRequestData('parseDataToDb')
         ){

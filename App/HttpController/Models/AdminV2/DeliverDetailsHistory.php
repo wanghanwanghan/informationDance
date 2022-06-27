@@ -11,10 +11,10 @@ use App\HttpController\Service\LongXin\LongXinService;
 
 // use App\HttpController\Models\AdminRole;
 
-class DeliverHistory extends ModelBase
+class DeliverDetailsHistory extends ModelBase
 {
 
-    protected $tableName = 'deliver_history';
+    protected $tableName = 'deliver_details_history';
 
     static  $state_init = 1;
     static  $state_init_cname =  '初始';
@@ -28,39 +28,26 @@ class DeliverHistory extends ModelBase
     static  $is_destory_yes_cname =  '已删除';
 
 
-    public static function setStatus($id,$status){
-        $info = DeliverHistory::findById($id);
-
-        return $info->update([
-            'status' => $status,
-        ]);
-    }
-
     public static function getStatusMap(){
-
         return [
             self::$state_init => self::$state_init_cname,
-            self::$state_del => self::$state_del_cname
         ];
     }
 
     public static function addRecord($requestData){
         try {
-           $res =  DeliverHistory::create()->data([
+           $res =  DeliverDetailsHistory::create()->data([
                 'admin_id' => $requestData['admin_id'],
-               'entName' => $requestData['entName'],
-               'feature' => $requestData['feature'],
-               'title' => $requestData['title'],
-               'file_name' => $requestData['file_name']?:'',
-               'file_path' => $requestData['file_path']?:'',
-               'remark' => $requestData['remark']?:'',
-               'total_nums' => $requestData['total_nums'],
-                'status' => $requestData['status']?:1,
-               'type' => $requestData['type']?:1,
-               'is_destroy' => $requestData['is_destroy']?:0,
-               // 'touch_time' => $requestData['touch_time']?:'',
-               'created_at' => time(),
-               'updated_at' => time(),
+                'deliver_id' => $requestData['deliver_id'],
+                'ent_id' => $requestData['ent_id'],
+                'entName' => $requestData['entName'],
+                'remark' => $requestData['remark']?:'',
+                //'total_nums' => $requestData['total_nums'],
+                'status' => $requestData['status']?:self::$state_init,
+                'type' => $requestData['type']?:self::$state_init,
+                // 'touch_time' => $requestData['touch_time']?:'',
+                'created_at' => time(),
+                'updated_at' => time(),
            ])->save();
 
         } catch (\Throwable $e) {
@@ -75,15 +62,23 @@ class DeliverHistory extends ModelBase
         return $res;
     }
 
+    public static function addRecordV2($requestData){
+        $oldRes = self::findByDeliverId($requestData['deliver_id']);
+        if($oldRes){
+            return  $oldRes->getAttr('id');
+        }
+        return  self::addRecord($requestData);
+    }
+
     public static function findAllByCondition($whereArr){
-        $res =  DeliverHistory::create()
+        $res =  DeliverDetailsHistory::create()
             ->where($whereArr)
             ->all();
         return $res;
     }
 
     public static function findByConditionWithCountInfo($whereArr,$page){
-        $model = DeliverHistory::create()
+        $model = DeliverDetailsHistory::create()
                 ->where($whereArr)
                 ->page($page)
                 ->order('id', 'DESC')
@@ -100,7 +95,7 @@ class DeliverHistory extends ModelBase
 
 
     public static function setTouchTime($id,$touchTime){
-        $info = AdminUserFinanceUploadRecord::findById($id);
+        $info = DeliverDetailsHistory::findById($id);
 
         return $info->update([
             'touch_time' => $touchTime,
@@ -108,7 +103,7 @@ class DeliverHistory extends ModelBase
     }
 
     public static function findByConditionV2($whereArr,$page){
-        $model = DeliverHistory::create();
+        $model = DeliverDetailsHistory::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
@@ -126,14 +121,21 @@ class DeliverHistory extends ModelBase
     }
 
     public static function findById($id){
-        $res =  DeliverHistory::create()
+        $res =  DeliverDetailsHistory::create()
             ->where('id',$id)            
             ->get();  
         return $res;
     }
 
+    public static function findByDeliverId($deliver_id){
+        $res =  DeliverDetailsHistory::create()
+            ->where('deliver_id',$deliver_id)
+            ->get();
+        return $res;
+    }
+
     public static function findAllByAdminIdAndEntName($admin_id,$entName){
-        $res =  DeliverHistory::create()
+        $res =  DeliverDetailsHistory::create()
             ->where('admin_id',$admin_id)
             ->where('entName',$entName)
             ->all();
@@ -141,7 +143,7 @@ class DeliverHistory extends ModelBase
     }
 
     public static function setData($id,$field,$value){
-        $info = DeliverHistory::findById($id);
+        $info = DeliverDetailsHistory::findById($id);
         return $info->update([
             "$field" => $value,
         ]);
