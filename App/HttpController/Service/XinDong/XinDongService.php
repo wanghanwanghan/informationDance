@@ -2540,7 +2540,7 @@ class XinDongService extends ServiceBase
         return false;
 
     }
-
+    // $tobeMatch 姓名   $target：微信名
     function matchNamesV2($tobeMatch,$target){
         //完全匹配
         $res = $this->matchNamesByEqual($tobeMatch,$target);
@@ -2551,6 +2551,104 @@ class XinDongService extends ServiceBase
                 'res' => '成功',
                 'percentage' => '',
             ];
+        }
+
+        //拼音全等
+        $tobeMatchArr = $this->getPinYin($tobeMatch);
+        if(
+            count($tobeMatchArr) == 2
+        ){
+            //顺序拼音
+            $str1 = $tobeMatchArr[0].$tobeMatchArr[1];
+            //逆序拼音
+            $str2 = $tobeMatchArr[0].$tobeMatchArr[1];
+
+            if(
+                $str1 == $target ||
+                $str2 == $target
+            ){
+                return [
+                    'type' => '精准匹配',
+                    'details' => '拼音相等',
+                    'res' => '成功',
+                    'percentage' => '',
+                ];
+            }
+        }
+
+        if(
+            count($tobeMatchArr) == 3
+        ){
+            $str1 = $tobeMatchArr[0].$tobeMatchArr[1].$tobeMatchArr[2];
+            $str2 = $tobeMatchArr[0].$tobeMatchArr[2].$tobeMatchArr[1];
+            $str3 = $tobeMatchArr[1].$tobeMatchArr[0].$tobeMatchArr[2];
+            $str4 = $tobeMatchArr[1].$tobeMatchArr[2].$tobeMatchArr[0];
+            $str5 = $tobeMatchArr[2].$tobeMatchArr[0].$tobeMatchArr[1];
+            $str6 = $tobeMatchArr[2].$tobeMatchArr[1].$tobeMatchArr[0];
+            if(
+                $str1 == $target ||
+                $str2 == $target ||
+                $str3 == $target ||
+                $str4 == $target ||
+                $str5 == $target ||
+                $str6 == $target
+            ){
+                return [
+                    'type' => '精准匹配',
+                    'details' => '拼音相等',
+                    'res' => '成功',
+                    'percentage' => '',
+                ];
+            }
+        }
+
+        //拼音缩写
+        if(
+            count($tobeMatchArr) == 2
+        ){
+            $name1 =  PinYinService::getPinyin(substr($tobeMatch, 0, 3));
+            $name2 =  PinYinService::getPinyin(substr($tobeMatch, 3, 3));
+            $str1 = $name1.$name2;
+            $str2 = $name2.$name1;
+            if(
+                $str1 == $target ||
+                $str2 == $target
+            ){
+                return [
+                    'type' => '精准匹配',
+                    'details' => '拼音首字母相等',
+                    'res' => '成功',
+                    'percentage' => '',
+                ];
+            }
+        }
+
+        //拼音缩写
+        if(
+            count($tobeMatchArr) == 3
+        ){
+            $name1 =  PinYinService::getPinyin(substr($tobeMatch, 0, 3));
+            $name2 =  PinYinService::getPinyin(substr($tobeMatch, 3, 3));
+            $name3 =  PinYinService::getPinyin(substr($tobeMatch, 6, 3));
+
+            $str1 = $name1.$name2.$name3;
+            $str2 = $name1.$name3.$name2;
+            $str3 = $name2.$name1.$name3;
+            $str4 = $name2.$name3.$name1;
+            $str5 = $name3.$name2.$name1;
+            $str6 = $name3.$name1.$name2;
+
+            if(
+                $str1 == $target ||
+                $str2 == $target
+            ){
+                return [
+                    'type' => '精准匹配',
+                    'details' => '拼音首字母相等',
+                    'res' => '成功',
+                    'percentage' => '',
+                ];
+            }
         }
 
         //多音字匹配
