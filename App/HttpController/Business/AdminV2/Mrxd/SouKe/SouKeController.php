@@ -51,6 +51,9 @@ class SouKeController extends ControllerBase
         return $this->writeJson(200, null, $searchOptionArr, '成功', false, []);
     }
 
+    /*
+     * 高级搜索
+     * */
     function advancedSearch(): bool
     {
         $companyEsModel = new \App\ElasticSearch\Model\Company();
@@ -142,7 +145,9 @@ class SouKeController extends ControllerBase
             , $companyEsModel->return_data['hits']['hits'], '成功', true, []);
     }
 
-    // 导出客户数据
+    /*
+     * 导出客户数据
+     * */
     function exportEntData(): bool
     {
         if(
@@ -153,36 +158,7 @@ class SouKeController extends ControllerBase
 
         $requestData =  $this->getRequestData();
 
-        //是否使用该名单进行交付 需要保存条件
-        $checkRes = DataModelExample::checkField(
-            [
-                'entName' => [
-                    'not_empty' => 1,
-                    'field_name' => 'entName',
-                    'err_msg' => '请输入要交付的企业名',
-                ],
-                'title' => [
-                    'not_empty' => 1,
-                    'field_name' => 'title',
-                    'err_msg' => '标题必填',
-                ],
-                'total_nums' => [
-                    'bigger_than' => 0,
-                    'less_than' => 1000000,
-                    'field_name' => 'total_nums',
-                    'err_msg' => '总数不对！必须大于0且小于100万',
-                ]
-            ],
-            $requestData
-        );
-        if(
-            !$checkRes['res']
-        ){
-            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
-        }
-
-
-        //确认使用该名单
+        //下载
         DownloadSoukeHistory::addRecord(
             [
                 'admin_id' => $this->loginUserinfo['id'],
@@ -202,7 +178,9 @@ class SouKeController extends ControllerBase
         return $this->writeJson(200,[ ] , [], '已发起下载，请去我的下载中查看', true, []);
     }
 
-    //获取导出列表|财务对账列表
+    /*
+     * 获取导出列表
+     * */
     public function getExportLists(){
         $page = $this->request()->getRequestParam('page')??1;
         $res = DownloadSoukeHistory::findByConditionV2(
@@ -232,4 +210,95 @@ class SouKeController extends ControllerBase
             'totalPage' =>  ceil( $res['total']/ 20 ),
         ], $res['data'],'成功');
     }
+
+
+    /*
+     * 确认使用该文件
+     * */
+    public function deliverCustomerRoster(){
+        $requestData =  $this->getRequestData();
+
+        $checkRes = DataModelExample::checkField(
+            [
+                'entName' => [
+                    'not_empty' => 1,
+                    'field_name' => 'entName',
+                    'err_msg' => '请输入要交付的企业名',
+                ],
+                'title' => [
+                    'not_empty' => 1,
+                    'field_name' => 'title',
+                    'err_msg' => '标题必填',
+                ],
+                'total_nums' => [
+                    'bigger_than' => 0,
+                    'less_than' => 1000000,
+                    'field_name' => 'total_nums',
+                    'err_msg' => '总数不对！必须大于0且小于100万',
+                ]
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
+        //下载历史
+        $downloadHistoryRes  = DownloadSoukeHistory::findById($requestData['id'])->toArray();
+
+        //交付历史
+        DeliverHistory::addRecord(
+            [
+                'admin_id' => $downloadHistoryRes['admin_id'],
+                'entName' => $requestData['entName'],
+                'feature' => $requestData,
+                'title' => $requestData['title'],
+                'file_name' => '',
+                'file_path' => '',
+                'remark' => $requestData['remark']?:'',
+                'total_nums' => $requestData['total_nums'],
+                'status' => DeliverHistory::$state_init,
+                'type' => 1,
+                'is_destroy' => 0,
+            ]
+        );
+
+        return $this->writeJson(200,  [], [],'成功');
+    }
+
+    /*
+     * 获取交付记录  deliver_history
+     * */
+    public function getDeliverLists(){
+        $page = $this->request()->getRequestParam('page')??1;
+        $res = DeliverHistory::findByConditionV2(
+
+            [
+                [
+                    'field' => 'admin_id',
+                    'value' => $this->loginUserinfo['id'],
+                    'operate' => '=',
+                ],
+            ],
+            $page
+        );
+
+        foreach ($res['data'] as &$value){
+//            $value['upload_details'] = [];
+//            if(
+//                $value['upload_record_id']
+//            ){
+//                $value['upload_details'] = AdminUserFinanceUploadRecord::findById($value['upload_record_id'])->toArray();
+//            }
+        }
+        return $this->writeJson(200,  [
+            'page' => $page,
+            'pageSize' =>10,
+            'total' => $res['total'],
+            'totalPage' =>  ceil( $res['total']/ 20 ),
+        ], $res['data'],'成功');
+    }
+
 }
