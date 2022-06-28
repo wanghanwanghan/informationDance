@@ -48,7 +48,7 @@ class DownloadSoukeHistory extends ModelBase
         try {
            $res =  DownloadSoukeHistory::create()->data([
                 'admin_id' => $requestData['admin_id'],
-               'entName' => $requestData['entName'],
+               'entName' => $requestData['entName']?:'',
                'feature' => $requestData['feature'],
                'title' => $requestData['title']?:'',
                'file_name' => $requestData['file_name']?:'',
