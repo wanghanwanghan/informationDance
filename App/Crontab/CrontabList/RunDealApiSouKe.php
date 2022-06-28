@@ -229,16 +229,25 @@ class RunDealApiSouKe extends AbstractCronTask
 
             $xlsxData = [];
             $featureArr = json_decode($InitData['feature'],true);
-            for ($i=1 ; $i<= ceil($featureArr['total_nums']/1000);$i++){
-                $page = $i;
-                $size = 1000;
-                $offset = ($page-1)*$size;
-                // 数据
-                $tmpXlsxDatas = self::getYieldData(1000,$offset,$featureArr);
-                foreach ($tmpXlsxDatas as $dataItem){
-                    $xlsxData[] = $dataItem;
+            $maxPage = floor($featureArr['total_nums']/1000);
+            if($maxPage  > 1 ){
+                for ($i=1 ; $i<= $maxPage ;$i++){
+                    $page = $i;
+                    $size = 1000;
+                    $offset = ($page-1)*$size;
+                    // 数据
+                    $tmpXlsxDatas = self::getYieldData(1000,$offset,$featureArr);
+                    foreach ($tmpXlsxDatas as $dataItem){
+                        $xlsxData[] = $dataItem;
+                    }
                 }
             }
+            // 数据 1001 1 1000
+            $left = $featureArr['total_nums'] - ($maxPage)*1000 ;
+            $tmpXlsxDatas = self::getYieldData($left,0,$featureArr);
+            foreach ($tmpXlsxDatas as $dataItem){
+                $xlsxData[] = $dataItem;
+            } 
 
             $filename = date('YmdHis').'.xlsx';
             $header = [];
