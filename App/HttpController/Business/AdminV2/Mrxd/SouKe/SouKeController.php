@@ -10,6 +10,7 @@ use App\HttpController\Models\AdminV2\AdminNewMenu;
 use App\HttpController\Models\AdminV2\AdminUserChargeConfig;
 use App\HttpController\Models\AdminV2\AdminUserFinanceChargeInfo;
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
+use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
 use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
@@ -230,6 +231,108 @@ class SouKeController extends ControllerBase
         ], $res['data'],'成功');
     }
 
+    public function getConfigs(){
+        $requestData =  $this->getRequestData();
+        $res = AdminUserSoukeConfig::findByConditionV3(
+            [
+            ],
+            $requestData['page']
+        );
+
+        foreach ($res['data'] as &$value){
+//            $value['upload_details'] = [];
+//            if(
+//                $value['upload_record_id']
+//            ){
+//                $value['upload_details'] = AdminUserFinanceUploadRecord::findById($value['upload_record_id'])->toArray();
+//            }
+        }
+        return $this->writeJson(200,  [
+            'page' => $requestData['page'],
+            'pageSize' =>10,
+            'total' => $res['total'],
+            'totalPage' =>  ceil( $res['total']/ 20 ),
+        ], $res['data'],'成功');
+    }
+
+
+    public function addConfigs(){
+        $requestData =  $this->getRequestData();
+        $checkRes = DataModelExample::checkField(
+            [
+                'id' => [
+                    'not_empty' => 1,
+                    'field_name' => 'user_id',
+                    'err_msg' => '请指定用户',
+                ],
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
+        $res = AdminUserSoukeConfig::addRecordV2(
+            [
+                'user_id' => $requestData['user_id'],
+                'allowed_fields' => $requestData['allowed_fields'],
+                'price' => $requestData['price'],
+                'max_daily_nums' => $requestData['max_daily_nums'],
+                'remark' => $requestData['remark']?:'',
+                'status' => $requestData['status']?:1,
+                'type' => $requestData['type']?:1,
+            ]
+        );
+
+        return $this->writeJson(200,  [
+            'page' => $requestData['page'],
+            'pageSize' =>10,
+            'total' => $res['total'],
+            'totalPage' =>  ceil( $res['total']/ 20 ),
+        ], $res['data'],'成功');
+    }
+
+    public function updateConfigs(){
+        $requestData =  $this->getRequestData();
+        $checkRes = DataModelExample::checkField(
+            [
+                'id' => [
+                    'not_empty' => 1,
+                    'field_name' => 'id',
+                    'err_msg' => '请指定记录',
+                ],
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
+        AdminUserSoukeConfig::setStatus($requestData['id'],AdminUserSoukeConfig::$state_del);
+
+        $res = AdminUserSoukeConfig::addRecordV2(
+            [
+                'user_id' => $requestData['user_id'],
+                'allowed_fields' => $requestData['allowed_fields'],
+                'price' => $requestData['price'],
+                'max_daily_nums' => $requestData['max_daily_nums'],
+                'remark' => $requestData['remark']?:'',
+                'status' => $requestData['status']?:1,
+                'type' => $requestData['type']?:1,
+            ]
+        );
+
+        return $this->writeJson(200,  [
+            'page' => $requestData['page'],
+            'pageSize' =>10,
+            'total' => $res['total'],
+            'totalPage' =>  ceil( $res['total']/ 20 ),
+        ], $res['data'],'成功');
+    }
 
     /*
      * 确认使用该文件
