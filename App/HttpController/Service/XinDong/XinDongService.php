@@ -2644,7 +2644,7 @@ class XinDongService extends ServiceBase
                 $str3 == $target ||
                 $str4 == $target ||
                 $str5 == $target ||
-                $str6 == $target   
+                $str6 == $target
             ){
                 return [
                     'type' => '精准匹配',

@@ -20,6 +20,7 @@ class AdminV2Router
         $this->PermissionsRouterV1($routeCollector);
         $this->FinanceRouterV1($routeCollector);
         $this->SouKeRouterV1($routeCollector);
+        $this->ToolsRouterV1($routeCollector);
     }
 
     private function UserRouterV1(RouteCollector $routeCollector): bool
@@ -108,6 +109,22 @@ class AdminV2Router
         return true;
     }
 
+    //工具
+    private function ToolsRouterV1(RouteCollector $routeCollector): bool
+    {
+        $prefix = '/Business/AdminV2/Mrxd/Tools/ToolsController/';
+
+        $routeCollector->addGroup('/tools', function (RouteCollector $routeCollector) use ($prefix) {
+            //模板文件
+            $routeCollector->addRoute(['GET', 'POST'], '/uploadeTemplateLists', $prefix . 'uploadeTemplateLists');
+            //上传文件
+            $routeCollector->addRoute(['GET', 'POST'], '/uploadeFiles', $prefix . 'uploadeFiles');
+            //获取上传列表
+            $routeCollector->addRoute(['GET', 'POST'], '/getUploadLists', $prefix . 'getUploadLists');
+        });
+
+        return true;
+    }
 
     private function RoleRouterV1(RouteCollector $routeCollector): bool
     {

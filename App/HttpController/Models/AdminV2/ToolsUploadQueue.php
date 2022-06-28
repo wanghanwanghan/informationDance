@@ -11,54 +11,40 @@ use App\HttpController\Service\LongXin\LongXinService;
 
 // use App\HttpController\Models\AdminRole;
 
-class DownloadSoukeHistory extends ModelBase
+class ToolsUploadQueue extends ModelBase
 {
 
-    protected $tableName = 'download_souke_history';
+    protected $tableName = 'tools_upload_queue';
 
     static  $state_init = 1;
-    static  $state_init_cname =  '初始';
+    static  $state_init_cname =  '文件上传成功';
 
     static  $state_file_succeed = 10;
-    static  $state_file_succeed_cname =  '文件生成成功';
-
-    static  $state_delivering = 20;
-    static  $state_delivering_cname =  '已确认使用该名单';
-
-    static  $state_succeed = 30;
-    static  $state_succeed_cname =  '交付完成';
+    static  $state_file_succeed_cname =  '内容生成成功，待下载';
 
 
-    static  $is_destory_no = 0;
-    static  $is_destory_no_cname =  '正常';
-    static  $is_destory_yes = 1;
-    static  $is_destory_yes_cname =  '已删除';
-
-
+    //
     public static function getStatusMap(){
         return [
             self::$state_init => self::$state_init_cname,
             self::$state_file_succeed => self::$state_file_succeed_cname,
-            self::$state_delivering => self::$state_delivering_cname,
-            self::$state_succeed => self::$state_succeed_cname,
         ];
     }
 
     public static function addRecord($requestData){
         try {
            $res =  DownloadSoukeHistory::create()->data([
-                'admin_id' => $requestData['admin_id'],
-               'entName' => $requestData['entName'],
-               'feature' => $requestData['feature'],
-               'title' => $requestData['title'],
-               'file_name' => $requestData['file_name']?:'',
-               'file_path' => $requestData['file_path']?:'',
-               'remark' => $requestData['remark']?:'',
-               'total_nums' => $requestData['total_nums'],
-                'status' => $requestData['status']?:1,
-               'type' => $requestData['type']?:1,
-               'is_destroy' => $requestData['is_destroy']?:0,
-               // 'touch_time' => $requestData['touch_time']?:'',
+                'admin_id' => $requestData['admin_id'], //
+               'upload_file_name' => $requestData['upload_file_name']?:'', //
+               'upload_file_path' => $requestData['upload_file_path']?:'', //
+               'download_file_name' => $requestData['download_file_name']?:'', //
+               'download_file_path' => $requestData['download_file_path']?:'', //
+               'params' => $requestData['params']?:'', //
+               'title' => $requestData['title']?:'', //
+               'type' => $requestData['type']?:'', //
+               'status' => $requestData['status']?:'', //
+               'remark' => $requestData['remark']?:'', //
+              // 'touch_time' => $requestData['touch_time']?:'', //
                'created_at' => time(),
                'updated_at' => time(),
            ])->save();
@@ -73,6 +59,18 @@ class DownloadSoukeHistory extends ModelBase
             );
         }
         return $res;
+    }
+
+    public static function addRecordV2($requestData){
+        $oldRes =  self::findAllByAdminIdAndFielName(
+            $requestData['admin_id'],
+            $requestData['upload_file_name']
+        );
+        if($oldRes){
+            return  $oldRes->getAttr('id');
+        }
+
+        return  self::addRecord($requestData);
     }
 
     public static function findAllByCondition($whereArr){
@@ -115,12 +113,23 @@ class DownloadSoukeHistory extends ModelBase
         ]);
     }
 
-    public static function setFilePath($id,$file_path,$file_name){
+    //设置上传文件路径
+    public static function setUploadFilePath($id,$upload_file_name,$upload_file_path){
         $info = DownloadSoukeHistory::findById($id);
 
         return $info->update([
-            'file_path' => $file_path,
-            'file_name' => $file_name,
+            'upload_file_name' => $upload_file_name,
+            'upload_file_path' => $upload_file_path,
+        ]);
+    }
+
+    //设置下载文件路径
+    public static function setDownloadFilePath($id,$download_file_name,$download_file_path){
+        $info = DownloadSoukeHistory::findById($id);
+
+        return $info->update([
+            'download_file_name' => $download_file_name,
+            'download_file_path' => $download_file_path,
         ]);
     }
 
@@ -149,10 +158,11 @@ class DownloadSoukeHistory extends ModelBase
         return $res;
     }
 
-    public static function findAllByAdminIdAndEntName($admin_id,$entName){
+
+    public static function findAllByAdminIdAndFielName($admin_id,$upload_file_name){
         $res =  DownloadSoukeHistory::create()
             ->where('admin_id',$admin_id)
-            ->where('entName',$entName)
+            ->where('upload_file_name',$upload_file_name)
             ->all();
         return $res;
     }

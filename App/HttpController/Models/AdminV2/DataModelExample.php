@@ -117,6 +117,19 @@ class DataModelExample extends ModelBase
                     ];
                 }
             };
+
+            if(
+                !empty($configItem['in_array'])
+            ){
+                if(
+                   !in_array( $requestData[$configItem['field_name']] ,$configItem['in_array'])
+                ){
+                    return [
+                        'res' => false,
+                        'msgs'=>$configItem['err_msg'],
+                    ];
+                }
+            };
         }
         return [
             'res' => true,
