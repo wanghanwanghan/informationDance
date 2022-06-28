@@ -120,7 +120,9 @@ class AdminV2Router
             //上传文件
             $routeCollector->addRoute(['GET', 'POST'], '/uploadeFiles', $prefix . 'uploadeFiles');
             //获取上传列表
-            $routeCollector->addRoute(['GET', 'POST'], '/getUploadLists', $prefix . 'getUploadLists');
+            $routeCollector->addRoute(['GET', 'POST'], '/getUploadLists', $prefix . 'getUploadLists'); //
+            //获取上传文件类型
+            $routeCollector->addRoute(['GET', 'POST'], '/uploadeTypeLists', $prefix . 'uploadeTypeLists'); // uploadeTypeLists
         });
 
         return true;

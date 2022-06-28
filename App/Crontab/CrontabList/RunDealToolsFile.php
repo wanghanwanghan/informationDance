@@ -282,6 +282,41 @@ class RunDealToolsFile extends AbstractCronTask
         }
     }
 
+    static function  getYieldDataForFuzzyMatch($xlsx_name){
+        $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
+        $excel_read->openFile($xlsx_name)->openSheet();
+
+        $datas = [];
+        while (true) {
+
+            $one = $excel_read->nextRow([
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+            ]);
+
+            if (empty($one)) {
+                break;
+            }
+
+            //企业名称
+            $value0 = self::strtr_func($one[0]);
+            $value1 = self::strtr_func($one[1]);
+            $value2 = self::strtr_func($one[2]);
+            $value3 = self::strtr_func($one[3]);
+            $tmpRes = XinDongService::fuzzyMatchEntName($value0,3);
+
+            yield $datas[] = [
+                $value0,
+                $value1,
+                $value2,
+                $tmpRes[0]['name'],
+                $tmpRes[1]['name'],
+                $tmpRes[2]['name'],
+            ];
+        }
+    }
+
     //生成下载文件
     static function  generateFile($limit){
 
@@ -303,7 +338,7 @@ class RunDealToolsFile extends AbstractCronTask
             $dirPath =  dirname($InitData['upload_file_path']).DIRECTORY_SEPARATOR;
             self::setworkPath( $dirPath );
 
-            // 取数据  5：url补全  10：微信匹配
+            // 取数据  5：url补全  10：微信匹配 15：模糊匹配
             if(
                 $InitData['type'] == 5
             ){
@@ -313,6 +348,11 @@ class RunDealToolsFile extends AbstractCronTask
                 $InitData['type'] == 10
             ){
                 $tmpXlsxDatas = self::getYieldDataForWeinXin($InitData['upload_file_name']);
+            }
+            if(
+                $InitData['type'] == 15
+            ){
+                $tmpXlsxDatas = self::getYieldDataForFuzzyMatch($InitData['upload_file_name']);
             }
 
             foreach ($tmpXlsxDatas as $dataItem){

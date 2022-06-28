@@ -52,10 +52,24 @@ class ToolsController extends ControllerBase
         ],'');
     }
 
+    // 用户-上传类型
+    public function uploadeTypeLists(){
+
+        return $this->writeJson(200, [], [
+                5   =>  '补全企业联系人信息(并检测手机状态)',
+                10  =>  '根据微信名匹配联系人及职位信息',
+                15  =>  '模糊匹配企业名称',
+
+        ],'');
+    }
+
+
     /*
+
       type: 5 url补全
       type: 10 微信匹配
       type: 15 模糊匹配企业名称
+      type: 20 检测手机号状态
 
      * */
     public function uploadeFiles(){
