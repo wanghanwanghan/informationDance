@@ -48,7 +48,10 @@ class ToolsController extends ControllerBase
     public function uploadeTemplateLists(){
 
         return $this->writeJson(200, [], [
-            '/Static/Template/url补全模板.xlsx'
+            [
+                'name' => '根据企业名补全联系人模板（检测手机号）.xlsx',
+                'path' => '/Static/Template/url补全模板.xlsx',
+            ]
         ],'');
     }
 
