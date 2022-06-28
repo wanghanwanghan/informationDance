@@ -2565,7 +2565,7 @@ class XinDongService extends ServiceBase
             //顺序拼音
             $str1 = $tobeMatchArr[0].$tobeMatchArr[1];
             //逆序拼音
-            $str2 = $tobeMatchArr[0].$tobeMatchArr[1];
+            $str2 = $tobeMatchArr[1].$tobeMatchArr[0];
             CommonService::getInstance()->log4PHP(json_encode(['match pinyin '=>[$str1,$str2]]));
 
             if(
@@ -2681,7 +2681,7 @@ class XinDongService extends ServiceBase
 
         //包含匹配  张三0808    张三
         $res = $this->matchNamesByContain($tobeMatch,$target);
-        
+
         if($res){
             return [
                 'type' => '精准匹配',
