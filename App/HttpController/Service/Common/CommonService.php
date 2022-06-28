@@ -462,6 +462,14 @@ class CommonService extends ServiceBase
         return preg_match($pattern, strtoupper($idCardStr));
     }
 
+    //验证密码
+    function validatePassword($password): bool
+    {
+        //大写字母 小写字母 数字 特殊符号 四选三
+        $pattern = '/^(?![a-zA-Z]+$)(?![A-Z0-9]+$)(?![A-Z\\W_]+$)(?![a-z0-9]+$)(?![a-z\\W_]+$)(?![0-9\\W_]+$)[a-zA-Z0-9\\W_]{6,}$/';
+        return !!preg_match($pattern, $password);
+    }
+
     //
     function spaceTo($str, $to = ','): string
     {

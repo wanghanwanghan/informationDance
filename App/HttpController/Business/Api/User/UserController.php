@@ -18,7 +18,6 @@ use App\HttpController\Service\OneSaid\OneSaidService;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\Pay\wx\wxPayService;
 use App\HttpController\Service\User\UserService;
-use App\HttpController\Service\XinDong\XinDongService;
 use Carbon\Carbon;
 use EasySwoole\RedisPool\Redis;
 use Vtiful\Kernel\Format;
@@ -37,19 +36,25 @@ class UserController extends UserBase
     }
 
     //注册
-    function reg()
-    {    
+    function reg(): bool
+    {
         $company = $this->request()->getRequestParam('company') ?? '';
         $username = $this->request()->getRequestParam('username') ?? '';
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $email = $this->request()->getRequestParam('email') ?? 'test@test.com';
         $pidPhone = $this->request()->getRequestParam('pidPhone') ?? 0;//注册裂变
-
         $password = $this->request()->getRequestParam('password') ?? '';
-        empty(trim($password)) ? $password = control::randNum(6) : $password = trim($password);
         $avatar = $this->request()->getRequestParam('avatar') ?? '';
-
         $vCode = $this->request()->getRequestParam('vCode') ?? '';
+
+        if (empty(trim($password))) {
+            $password = control::randNum(6);
+        } else {
+            if (CommonService::getInstance()->validatePassword($password) === false) {
+                return $this->writeJson(201, null, null, '密码必须包含大小写字母数字或特殊字符，最少6位');
+            }
+            $password = trim($password);
+        }
 
         if (empty($phone) || empty($vCode)) return $this->writeJson(201, null, null, '手机号或验证码不能是空');
 
@@ -115,7 +120,7 @@ class UserController extends UserBase
     }
 
     //登录
-    function login()
+    function login(): bool
     {
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $vCode = $this->request()->getRequestParam('vCode') ?? '';
@@ -153,7 +158,9 @@ class UserController extends UserBase
             return $this->writeJson(201, null, null, '干啥呢');
         }
 
-        $newToken = UserService::getInstance()->createAccessToken($userInfo->phone, $userInfo->password);
+        $newToken = UserService::getInstance()->createAccessToken(
+            $userInfo->getAttr('phone'), $userInfo->getAttr('password')
+        );
 
         try {
             User::create()->get($userInfo->getAttr('id'))->update(['token' => $newToken]);
@@ -161,13 +168,13 @@ class UserController extends UserBase
             return $this->writeErr($e, __FUNCTION__);
         }
 
-        $userInfo->newToken = $newToken;
+        $userInfo->setAttr('newToken', $newToken);
 
         return $this->writeJson(200, null, $userInfo, '登录成功');
     }
 
     //修改密码
-    function setLoginPassword()
+    function setLoginPassword(): bool
     {
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $pwd_saki = $this->request()->getRequestParam('pwd_saki') ?? '';
@@ -176,9 +183,12 @@ class UserController extends UserBase
         try {
             $user_info = User::create()->where('phone', $phone)->get();
             if (empty($user_info)) return $this->writeJson(201, null, null, '用户不存在');
-            if (mb_strlen($pwd_saki) > 10) return $this->writeJson(201, null, null, '新密码最多10位');
+            if (mb_strlen($pwd_saki) > 90) return $this->writeJson(201, null, null, '新密码最多90位');
             if (mb_strlen($pwd_saki) < 6) return $this->writeJson(201, null, null, '新密码最少6位');
             if ($pwd_saki !== $pwd_saki_confirm) return $this->writeJson(201, null, null, '新密码输入不一致');
+            if (CommonService::getInstance()->validatePassword($pwd_saki) === false) {
+                return $this->writeJson(201, null, null, '新密码必须包含大小写字母数字或特殊字符');
+            }
             $user_info->update(['password' => $pwd_saki]);
         } catch (\Throwable $e) {
             return $this->writeErr($e, __FUNCTION__);
