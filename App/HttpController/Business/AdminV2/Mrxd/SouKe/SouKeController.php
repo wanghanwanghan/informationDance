@@ -346,7 +346,7 @@ class SouKeController extends ControllerBase
             'jin_chu_kou' => '进出口',
             'iso' => '高新技术',
 
-        ]; 
+        ];
         return $this->writeJson(200,  [], $fields,'成功');
     }
 
@@ -413,12 +413,6 @@ class SouKeController extends ControllerBase
                     'field_name' => 'title',
                     'err_msg' => '标题必填',
                 ],
-//                'total_nums' => [
-//                    'bigger_than' => 0,
-//                    'less_than' => 1000000,
-//                    'field_name' => 'total_nums',
-//                    'err_msg' => '总数不对！必须大于0且小于100万',
-//                ]
             ],
             $requestData
         );
@@ -468,14 +462,10 @@ class SouKeController extends ControllerBase
             $page
         );
 
-        foreach ($res['data'] as &$value){
-//            $value['upload_details'] = [];
-//            if(
-//                $value['upload_record_id']
-//            ){
-//                $value['upload_details'] = AdminUserFinanceUploadRecord::findById($value['upload_record_id'])->toArray();
-//            }
-        }
+        //补全数据
+        // foreach ($res['data'] as &$value){
+
+        // }
         return $this->writeJson(200,  [
             'page' => $page,
             'pageSize' =>10,

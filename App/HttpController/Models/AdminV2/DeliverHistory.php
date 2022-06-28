@@ -40,10 +40,11 @@ class DeliverHistory extends ModelBase
 
         return [
             self::$state_init => self::$state_init_cname,
-            self::$state_del => self::$state_del_cname
+            self::$state_succeed => self::$state_succeed_cname
         ];
     }
 
+    //添加记录
     public static function addRecord($requestData){
         try {
            $res =  DeliverHistory::create()->data([
@@ -82,6 +83,7 @@ class DeliverHistory extends ModelBase
         return $res;
     }
 
+
     public static function findByConditionWithCountInfo($whereArr,$page){
         $model = DeliverHistory::create()
                 ->where($whereArr)
@@ -98,7 +100,7 @@ class DeliverHistory extends ModelBase
         ];
     }
 
-
+    //更新touch time
     public static function setTouchTime($id,$touchTime){
         $info = AdminUserFinanceUploadRecord::findById($id);
 
@@ -107,6 +109,7 @@ class DeliverHistory extends ModelBase
         ]);
     }
 
+    //
     public static function findByConditionV2($whereArr,$page){
         $model = DeliverHistory::create();
         foreach ($whereArr as $whereItem){
@@ -125,6 +128,7 @@ class DeliverHistory extends ModelBase
         ];
     }
 
+    //获取数据
     public static function findById($id){
         $res =  DeliverHistory::create()
             ->where('id',$id)            
@@ -132,6 +136,7 @@ class DeliverHistory extends ModelBase
         return $res;
     }
 
+    //获取所有交付记录
     public static function findAllByAdminIdAndEntName($admin_id,$entName){
         $res =  DeliverHistory::create()
             ->where('admin_id',$admin_id)
@@ -140,6 +145,7 @@ class DeliverHistory extends ModelBase
         return $res;
     }
 
+    //更新数据库字段
     public static function setData($id,$field,$value){
         $info = DeliverHistory::findById($id);
         return $info->update([
