@@ -103,7 +103,8 @@ class AdminV2Router
 
         $routeCollector->addGroup('/souke', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getSearchOption', $prefix . 'getSearchOption');
-            $routeCollector->addRoute(['GET', 'POST'], '/advancedSearch', $prefix . 'advancedSearch');
+            $routeCollector->addRoute(['GET', 'POST'], '/advancedSearch', $prefix . 'advancedSearch');//
+            $routeCollector->addRoute(['GET', 'POST'], '/exportEntData', $prefix . 'exportEntData');//
         });
 
         return true;
