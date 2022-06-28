@@ -282,7 +282,7 @@ class SouKeController extends ControllerBase
                 'file_name' => '',
                 'file_path' => '',
                 'remark' => $requestData['remark']?:'',
-                'total_nums' => $requestData['total_nums'],
+                'total_nums' => $downloadHistoryRes['total_nums'],
                 'status' => DeliverHistory::$state_init,
                 'type' => 1,
                 'is_destroy' => 0,

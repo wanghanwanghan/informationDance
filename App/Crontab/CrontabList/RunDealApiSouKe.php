@@ -247,7 +247,7 @@ class RunDealApiSouKe extends AbstractCronTask
             $tmpXlsxDatas = self::getYieldData($left,0,$featureArr);
             foreach ($tmpXlsxDatas as $dataItem){
                 $xlsxData[] = $dataItem;
-            } 
+            }
 
             $filename = date('YmdHis').'.xlsx';
             $header = [];
