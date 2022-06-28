@@ -2877,77 +2877,17 @@ eof;
             RunDealFinanceCompanyDataNew::exportFinanceDataV3(1);
         }
 
-        // $config = [
-        //     'path' => TEMP_FILE_PATH // xlsx文件保存路径
-        // ];
+        if(
+            $this->getRequestData('matchByName')
+        ){
+            $companyEsModel = new \App\ElasticSearch\Model\Company();
+            $companyEsModel->SetQueryBySearchText( trim($this->request()->getRequestParam('matchByName')))
+            ->addSize(10)
+            ->addFrom(0)
+            ->searchFromEs() ;
+            return $this->writeJson(200, null, $companyEsModel->return_data, null, true, []);
+        }
 
-        // $excel = new \Vtiful\Kernel\Excel($config);
-
-        // $filename = '测试数据_'.date('YmdHis') . '.xlsx';
-
-        // $header = [
-        //     '序号',
-        //     '企业名称',
-        //     '监控类别', 
-        // ];
-
-        // $list = UserBusinessOpportunity::create()
-            
-        //     ->limit(2)
-        //     ->all();
-        // $data = [];
-        // $i = 1;
-        // foreach ($list as $one) { 
-            
-        //     array_push($data, [
-        //         $one['name'],
-        //         $one['code'],
-        //     ]);
-        //     $i++;
-        // }
-        
-        // $data = [
-        //     ['福建裕兴果蔬食品开发有限公司','91350603611943147E']
-        // ];
-
-        // $data = $this->getYieldData();
-        // $fileObject = $excel->fileName($filename, '汇总');
-        // $fileHandle = $fileObject->getHandle();
-
-        // //==========================================================================================================
-        // $format = new Format($fileHandle);
-
-        // $colorStyle = $format
-        //     ->fontColor(Format::COLOR_ORANGE)
-        //     ->border(Format::BORDER_DASH_DOT)
-        //     ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
-        //     ->toResource();
-
-        // $format = new Format($fileHandle);
-
-        // $alignStyle = $format
-        //     ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
-        //     ->toResource();
-        // //==========================================================================================================
-
-        // $fileObject
-        //     ->defaultFormat($colorStyle)
-        //     ->header($header)
-        //     ->defaultFormat($alignStyle)
-        //     ->data($data)
-        //     // ->setColumn('B:B', 50)
-        // ;
-
-        // $format = new Format($fileHandle);
-        // //单元格有\n解析成换行
-        // $wrapStyle = $format
-        //     ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
-        //     ->wrap()
-        //     ->toResource(); 
-
-        // $res = $fileObject->output();
-
-        // return $this->writeJson(200, null, 'Static/Temp/' . $filename, null, true, [$res]);
         return $this->writeJson(200, null, [], null, true, []);
  
 
