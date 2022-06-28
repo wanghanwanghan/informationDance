@@ -2542,6 +2542,8 @@ class XinDongService extends ServiceBase
     }
     // $tobeMatch 姓名   $target：微信名
     function matchNamesV2($tobeMatch,$target){
+        CommonService::getInstance()->log4PHP(json_encode(['$tobeMatch'=>$tobeMatch,'$target'=>$target]));
+
         //完全匹配
         $res = $this->matchNamesByEqual($tobeMatch,$target);
         if($res){
@@ -2555,6 +2557,8 @@ class XinDongService extends ServiceBase
 
         //拼音全等
         $tobeMatchArr = $this->getPinYin($tobeMatch);
+        CommonService::getInstance()->log4PHP(json_encode(['$tobeMatchArr'=>$tobeMatchArr]));
+
         if(
             count($tobeMatchArr) == 2
         ){
@@ -2562,6 +2566,7 @@ class XinDongService extends ServiceBase
             $str1 = $tobeMatchArr[0].$tobeMatchArr[1];
             //逆序拼音
             $str2 = $tobeMatchArr[0].$tobeMatchArr[1];
+            CommonService::getInstance()->log4PHP(json_encode(['match pinyin '=>[$str1,$str2]]));
 
             if(
                 $str1 == $target ||
@@ -2585,6 +2590,7 @@ class XinDongService extends ServiceBase
             $str4 = $tobeMatchArr[1].$tobeMatchArr[2].$tobeMatchArr[0];
             $str5 = $tobeMatchArr[2].$tobeMatchArr[0].$tobeMatchArr[1];
             $str6 = $tobeMatchArr[2].$tobeMatchArr[1].$tobeMatchArr[0];
+            CommonService::getInstance()->log4PHP(json_encode(['match pinyin2 '=>[$str1,$str2,$str3,$str4,$str5,$str6]]));
             if(
                 $str1 == $target ||
                 $str2 == $target ||
@@ -2608,6 +2614,7 @@ class XinDongService extends ServiceBase
         ){
             $name1 =  PinYinService::getShortPinyin(substr($tobeMatch, 0, 3));
             $name2 =  PinYinService::getShortPinyin(substr($tobeMatch, 3, 3));
+            CommonService::getInstance()->log4PHP(json_encode(['match short  pinyin '=>[$name1,$name2]]));
 
             $str1 = $name1.$name2;
             $str2 = $name2.$name1;
@@ -2631,6 +2638,7 @@ class XinDongService extends ServiceBase
             $name1 =  PinYinService::getShortPinyin(substr($tobeMatch, 0, 3));
             $name2 =  PinYinService::getShortPinyin(substr($tobeMatch, 3, 3));
             $name3 =  PinYinService::getShortPinyin(substr($tobeMatch, 6, 3));
+            CommonService::getInstance()->log4PHP(json_encode(['match short  pinyin2 '=>[$name1,$name2,$name3]]));
 
             $str1 = $name1.$name2.$name3;
             $str2 = $name1.$name3.$name2;
@@ -2659,6 +2667,8 @@ class XinDongService extends ServiceBase
         //多音字匹配
         $tobeMatchArr = $this->getPinYin($tobeMatch);
         $targetArr = $this->getPinYin($target);
+        CommonService::getInstance()->log4PHP(json_encode(['duo yin zi  '=>['$tobeMatchArr' => $tobeMatchArr,'$targetArr' =>$targetArr]]));
+
         $res = $this->checkIfArrayEqual($tobeMatchArr,$targetArr);
         if($res){
             return [
@@ -2671,6 +2681,7 @@ class XinDongService extends ServiceBase
 
         //包含匹配  张三0808    张三
         $res = $this->matchNamesByContain($tobeMatch,$target);
+        
         if($res){
             return [
                 'type' => '精准匹配',
