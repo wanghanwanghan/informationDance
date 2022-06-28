@@ -106,6 +106,8 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/advancedSearch', $prefix . 'advancedSearch');//
             $routeCollector->addRoute(['GET', 'POST'], '/exportEntData', $prefix . 'exportEntData');//
             $routeCollector->addRoute(['GET', 'POST'], '/getExportLists', $prefix . 'getExportLists');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getDeliverLists', $prefix . 'getDeliverLists');//
+            $routeCollector->addRoute(['GET', 'POST'], '/deliverCustomerRoster', $prefix . 'deliverCustomerRoster');//deliverCustomerRoster
         });
 
         return true;
