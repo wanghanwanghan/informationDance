@@ -66,7 +66,6 @@ class ToolsController extends ControllerBase
         ],'');
     }
 
-
     /*
 
       type: 5 url补全
