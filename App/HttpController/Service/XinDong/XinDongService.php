@@ -2606,8 +2606,9 @@ class XinDongService extends ServiceBase
         if(
             count($tobeMatchArr) == 2
         ){
-            $name1 =  PinYinService::getPinyin(substr($tobeMatch, 0, 3));
-            $name2 =  PinYinService::getPinyin(substr($tobeMatch, 3, 3));
+            $name1 =  PinYinService::getShortPinyin(substr($tobeMatch, 0, 3));
+            $name2 =  PinYinService::getShortPinyin(substr($tobeMatch, 3, 3));
+
             $str1 = $name1.$name2;
             $str2 = $name2.$name1;
             if(
@@ -2627,9 +2628,9 @@ class XinDongService extends ServiceBase
         if(
             count($tobeMatchArr) == 3
         ){
-            $name1 =  PinYinService::getPinyin(substr($tobeMatch, 0, 3));
-            $name2 =  PinYinService::getPinyin(substr($tobeMatch, 3, 3));
-            $name3 =  PinYinService::getPinyin(substr($tobeMatch, 6, 3));
+            $name1 =  PinYinService::getShortPinyin(substr($tobeMatch, 0, 3));
+            $name2 =  PinYinService::getShortPinyin(substr($tobeMatch, 3, 3));
+            $name3 =  PinYinService::getShortPinyin(substr($tobeMatch, 6, 3));
 
             $str1 = $name1.$name2.$name3;
             $str2 = $name1.$name3.$name2;
