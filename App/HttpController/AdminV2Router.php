@@ -110,6 +110,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/getDeliverLists', $prefix . 'getDeliverLists');//
             $routeCollector->addRoute(['GET', 'POST'], '/addConfigs', $prefix . 'addConfigs');//
             $routeCollector->addRoute(['GET', 'POST'], '/updateConfigs', $prefix . 'updateConfigs');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getAllFields', $prefix . 'getAllFields');//
             $routeCollector->addRoute(['GET', 'POST'], '/deliverCustomerRoster', $prefix . 'deliverCustomerRoster');//deliverCustomerRoster
         });
 
