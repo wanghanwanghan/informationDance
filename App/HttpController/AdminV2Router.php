@@ -102,16 +102,16 @@ class AdminV2Router
         $prefix = '/Business/AdminV2/Mrxd/SouKe/SouKeController/';
 
         $routeCollector->addGroup('/souke', function (RouteCollector $routeCollector) use ($prefix) {
-            $routeCollector->addRoute(['GET', 'POST'], '/getSearchOption', $prefix . 'getSearchOption');
-            $routeCollector->addRoute(['GET', 'POST'], '/advancedSearch', $prefix . 'advancedSearch');//
-            $routeCollector->addRoute(['GET', 'POST'], '/exportEntData', $prefix . 'exportEntData');//
-            $routeCollector->addRoute(['GET', 'POST'], '/getConfigs', $prefix . 'getConfigs');//
-            $routeCollector->addRoute(['GET', 'POST'], '/getExportLists', $prefix . 'getExportLists');//
-            $routeCollector->addRoute(['GET', 'POST'], '/getDeliverLists', $prefix . 'getDeliverLists');//
-            $routeCollector->addRoute(['GET', 'POST'], '/addConfigs', $prefix . 'addConfigs');//
-            $routeCollector->addRoute(['GET', 'POST'], '/updateConfigs', $prefix . 'updateConfigs');//
-            $routeCollector->addRoute(['GET', 'POST'], '/getAllFields', $prefix . 'getAllFields');//
-            $routeCollector->addRoute(['GET', 'POST'], '/deliverCustomerRoster', $prefix . 'deliverCustomerRoster');//deliverCustomerRoster
+            $routeCollector->addRoute(['GET', 'POST'], '/getSearchOption', $prefix . 'getSearchOption');//所有支持的搜索选项
+            $routeCollector->addRoute(['GET', 'POST'], '/advancedSearch', $prefix . 'advancedSearch');//高级搜索
+            $routeCollector->addRoute(['GET', 'POST'], '/exportEntData', $prefix . 'exportEntData');//导出搜客数据
+            $routeCollector->addRoute(['GET', 'POST'], '/getConfigs', $prefix . 'getConfigs');//获取搜客配置
+            $routeCollector->addRoute(['GET', 'POST'], '/getExportLists', $prefix . 'getExportLists');//我的下载列表
+            $routeCollector->addRoute(['GET', 'POST'], '/getDeliverLists', $prefix . 'getDeliverLists');//我的交付记录
+            $routeCollector->addRoute(['GET', 'POST'], '/addConfigs', $prefix . 'addConfigs');//添加配置
+            $routeCollector->addRoute(['GET', 'POST'], '/updateConfigs', $prefix . 'updateConfigs');//修改配置
+            $routeCollector->addRoute(['GET', 'POST'], '/getAllFields', $prefix . 'getAllFields');//获取全部字段
+            $routeCollector->addRoute(['GET', 'POST'], '/deliverCustomerRoster', $prefix . 'deliverCustomerRoster');//确认交付客户
         });
 
         return true;
