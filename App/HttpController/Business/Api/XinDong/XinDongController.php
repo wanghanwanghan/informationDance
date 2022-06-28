@@ -2881,7 +2881,8 @@ eof;
             $this->getRequestData('matchByName')
         ){
             $companyEsModel = new \App\ElasticSearch\Model\Company();
-            $companyEsModel->SetQueryBySearchText( trim($this->request()->getRequestParam('matchByName')))
+            $companyEsModel->es->addMustMatchQuery('name',$this->getRequestData('matchByName')) ;
+            $companyEsModel
             ->addSize(10)
             ->addFrom(0)
             ->searchFromEs() ;
