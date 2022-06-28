@@ -111,6 +111,13 @@ class DataModelExample extends ModelBase
                 if(
                     $requestData[$configItem['field_name']] > $configItem['bigger_than']
                 ){
+                    CommonService::getInstance()->log4PHP(json_encode(
+                            [
+                                'less_than check false '  ,
+                                'params 1' => $requestData[$configItem['field_name']],
+                                'params 2' => $configItem['bigger_than']
+                            ]
+                        ));
                     return [
                         'res' => false,
                         'msgs'=>$configItem['err_msg'],
