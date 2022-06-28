@@ -294,6 +294,194 @@ class SouKeController extends ControllerBase
         ], $res['data'],'成功');
     }
 
+    public function getAllFields(){
+        /*
+          {
+                    "xd_id": 71088418,
+                    "base": "js",
+                    "name": "南京大华影视文化传媒有限责任公司",
+                    "legal_person_id": 4619238,
+                    "legal_person_name": "李冬昱",
+                    "legal_person_type": 1,
+                    "reg_number": "320100000170484",
+                    "company_org_type": "有限责任公司(非自然人投资或控股的法人独资)",
+                    "reg_location": "南京市建邺区白龙江东街22号(艺树家工场)15层1502室",
+                    "estiblish_time": "2014-04-23 00:00:00",
+                    "from_time": "2014-04-23 00:00:00",
+                    "to_time": "0000-00-00 00:00:00",
+                    "business_scope": "影视,演艺,音乐文化项目的投资与开发;影视策划咨询;企业管理咨询服务;会务服务;文化交流活动策划,咨询,服务;工艺品设计,销售;影视器材,灯光音响租赁,销售;设计,制作,代理,发布国内各类广告;演出经纪;票务代理.(依法须经批准的项目,经相关部门批准后方可开展经营活动)",
+                    "reg_institute": "南京市建邺区市场监督管理局",
+                    "approved_time": "2020-11-06 00:00:00",
+                    "reg_status": "存续(在营,开业,在册)",
+                    "reg_capital": "800.000000万人民币",
+                    "actual_capital": "",
+                    "org_number": "302305280",
+                    "org_approved_institute": "",
+                    "parent_id": 0,
+                    "list_code": "",
+                    "property1": "913201003023052803",
+                    "property2": "",
+                    "property3": "",
+                    "property4": "",
+                    "up_state": 2,
+                    "ying_shou_gui_mo": "A9",
+                    "si_ji_fen_lei_code": "R8890",
+                    "si_ji_fen_lei_full_name": "文化,体育和娱乐业-体育-其他体育",
+                    "gong_si_jian_jie": "公司简介大华影视文化传媒有限责任公司是南京市文投集团控股的新兴影视公司,公司宗旨是以构建影视文化为主导的内容企业为目标,整合优势影视产业资源,吸引社会资本投向影视产业,在有效提升国有资产运营效率,保证国有资产保值增值的同时,推动南京影视产业的转型发展,创新发展和跨越发展.公司与与集团旗下南京最具知名度的百年电影品牌--大华大戏院一起形成电影制作,营销,院线,影院放映等贯穿影视上下游的,相对完整的产业链.公司主营影视,演艺,音乐等文化项目的投资与开发;电影,电视剧,电视节目的拍摄,制作和发行;承办国内,国外文化交流活动和大型文艺演出;文化交流活动策划,咨询,服务,企业形象策划,企业管理及咨询服务,商务,会展服务;广告设计,制作,代理,发布;文化创意产品,多媒体产品,数字影视节目的开发和应用;为演艺人员提供培训服务及经纪业务;影视,舞美器材的租赁和销售;进出口影视版权贸易等.&&&",
+                    "gao_xin_ji_shu": "",
+                    "deng_ling_qi_ye": "",
+                    "tuan_dui_ren_shu": "25",
+                    "tong_xun_di_zhi": "南京市建邺区白龙江东街22号(艺树家工场)1502)",
+                    "web": "shop322262928.taobao.com&&&a230r.7195193.1997079397.2.5778b479833bhl",
+                    "yi_ban_ren": "1",
+                    "shang_shi_xin_xi": "",
+                    "app": "",
+                    "manager": "李冬昱(董事,总经理)&&&吴海青(董事长)&&&陶晶晶(监事)&&&卜正繁(董事)&&&宋伟利(董事长)&&&",
+                    "inv_type": "3",
+                    "inv": "李冬昱&&&南京市文化投资控股集团有限责任公司(91320100552095183M)&&&南京锦城佳业营销策划有限公司(91320106MA1ME91654)&&&",
+                    "en_name": "",
+                    "email": "njdhys2014@163.com&&&njdhys2014@163.com&&&",
+                    "app_data": [],
+                    "shang_pin_data": [],
+                    "zlxxcy": "",
+                    "szjjcy": "",
+                    "report_year": [
+                        {
+                            "report_year": "2014",
+                            "phone_number": "18013842339",
+                            "postcode": "210000",
+                            "postal_address": "南京市建邺区奥体大街69号01栋四层",
+                            "email": " "
+                        },
+                        {
+                            "report_year": "2015",
+                            "phone_number": "02552001329",
+                            "postcode": "210000",
+                            "postal_address": "建邺区奥体大街69号01栋四层",
+                            "email": "无"
+                        },
+                        {
+                            "report_year": "2016",
+                            "phone_number": "025-52001329",
+                            "postcode": "210000",
+                            "postal_address": "建邺区奥体大街69号01栋四层",
+                            "email": "无"
+                        },
+                        {
+                            "report_year": "2017",
+                            "phone_number": "025-86299993",
+                            "postcode": "210000",
+                            "postal_address": "南京市奥体大街69号01栋七层",
+                            "email": "无"
+                        },
+                        {
+                            "report_year": "2018",
+                            "phone_number": "025-86299993",
+                            "postcode": "210000",
+                            "postal_address": "南京市建邺区白龙江东街22号艺树家工场1502室",
+                            "email": "无"
+                        },
+                        {
+                            "report_year": "2019",
+                            "phone_number": "025-86299993",
+                            "postcode": "210000",
+                            "postal_address": "南京市建邺区白龙江东街22号艺树家工场1502室",
+                            "email": "njdhys2014@163.com"
+                        },
+                        {
+                            "report_year": "2020",
+                            "phone_number": "025-86299993",
+                            "postcode": "211100",
+                            "postal_address": "南京市建邺区白龙江东街22号（艺树家工场）1502）",
+                            "email": "njdhys2014@163.com"
+                        }
+                    ],
+                    "jin_chu_kou": "",
+                    "iso": ""
+                }
+            },
+            {
+                "_index": "company_20220516",
+                "_type": "_doc",
+                "_id": "2572315",
+                "_score": 34.757763,
+                "_source": {
+                    "xd_id": 183004578,
+                    "base": "hun",
+                    "name": "湖南大歌影视文化传媒有限公司",
+                    "legal_person_id": 509732,
+                    "legal_person_name": "杨武成",
+                    "legal_person_type": 1,
+                    "reg_number": "430194000085459",
+                    "company_org_type": "有限责任公司(自然人投资或控股)",
+                    "reg_location": "长沙经济技术开发区漓湘东路1号01栋201",
+                    "estiblish_time": "2019-01-09 00:00:00",
+                    "from_time": "2019-01-09 00:00:00",
+                    "to_time": "2069-01-08 00:00:00",
+                    "business_scope": "影视节目制作;广播电视节目制作;影视策划;电影放映;广播电视视频点播服务;影视节目发行;录音制作;营业性文艺表演;会议服务;展览服务;日用品,文化用品,办公用品,字画,电子产品,农产品,家居用品销售;广告制作服务;商业信息咨询;文化艺术咨询服务;文化艺术交流活动的组织;文化创意设计;文艺表演,体育,娱乐活动的策划和组织;物业管理;场地租赁;自有厂房租赁;舞台表演美工服务,道具服务,化妆服务;道具出租服务;服装和鞋帽出租服务;舞台灯光,音响设备安装服务;电子显示屏及舞台设备的设计与安装;电子商务平台的开发建设;货物仓储(不含危化品和监控品);数字动漫制作;游戏软件设计制作;广告发布服务;广告国内代理服务;广告设计;灯光设备租赁;音频和视频设备租赁;物流园运营服务.(依法须经批准的项目,经相关部门批准后方可开展经营活动)",
+                    "reg_institute": "长沙经济技术开发区管理委员会",
+                    "approved_time": "2019-08-12 00:00:00",
+                    "reg_status": "存续(在营,开业,在册)",
+                    "reg_capital": "5000.000000万人民币",
+                    "actual_capital": "",
+                    "org_number": "MA4Q7X2T6",
+                    "org_approved_institute": "",
+                    "parent_id": 0,
+                    "list_code": "",
+                    "property1": "91430100MA4Q7X2T6A",
+                    "property2": "",
+                    "property3": "",
+                    "property4": "",
+                    "up_state": 2,
+                    "ying_shou_gui_mo": "A6",
+                    "si_ji_fen_lei_code": "R9051",
+                    "si_ji_fen_lei_full_name": "文化,体育和娱乐业-娱乐业-文化体育娱乐活动与经纪代理服务-文化活动服务",
+                    "gong_si_jian_jie": "",
+                    "gao_xin_ji_shu": "",
+                    "deng_ling_qi_ye": "",
+                    "tuan_dui_ren_shu": "",
+                    "tong_xun_di_zhi": "湖南省长沙经济技术开发区漓湘东路1号",
+                    "web": "",
+                    "yi_ban_ren": "1",
+                    "shang_shi_xin_xi": "",
+                    "app": "",
+                    "manager": "卢喜兰(监事)&&&杨武成(经理,执行董事)&&&",
+                    "inv_type": "1",
+                    "inv": "卢喜兰&&&杨武成&&&",
+                    "en_name": "",
+                    "email": "291736727@qq.com&&&291736727@qq.com&&&",
+                    "app_data": [],
+                    "shang_pin_data": [],
+                    "zlxxcy": "",
+                    "szjjcy": "",
+                    "report_year": [
+                        {
+                            "report_year": "2019",
+                            "phone_number": "19118977189",
+                            "postcode": "410100",
+                            "postal_address": "湖南省长沙经济技术开发区漓湘东路1号",
+                            "email": "291736727@qq.com"
+                        },
+                        {
+                            "report_year": "2020",
+                            "phone_number": "19118977189",
+                            "postcode": "410100",
+                            "postal_address": "湖南省长沙经济技术开发区漓湘东路1号",
+                            "email": "291736727@qq.com"
+                        }
+                    ],
+                    "jin_chu_kou": "",
+                    "iso": ""
+                }
+         * */
+        return $this->writeJson(200,  [
+            'page' => $requestData['page'],
+            'pageSize' =>10,
+            'total' => $res['total'],
+            'totalPage' =>  ceil( $res['total']/ 20 ),
+        ], $res['data'],'成功');
+    }
+
     public function updateConfigs(){
         $requestData =  $this->getRequestData();
         $checkRes = DataModelExample::checkField(

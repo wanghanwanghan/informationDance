@@ -33,7 +33,7 @@ class ToolsUploadQueue extends ModelBase
 
     public static function addRecord($requestData){
         try {
-           $res =  DownloadSoukeHistory::create()->data([
+           $res =  ToolsUploadQueue::create()->data([
                 'admin_id' => $requestData['admin_id'], //
                'upload_file_name' => $requestData['upload_file_name']?:'', //
                'upload_file_path' => $requestData['upload_file_path']?:'', //
@@ -74,14 +74,14 @@ class ToolsUploadQueue extends ModelBase
     }
 
     public static function findAllByCondition($whereArr){
-        $res =  DownloadSoukeHistory::create()
+        $res =  ToolsUploadQueue::create()
             ->where($whereArr)
             ->all();
         return $res;
     }
 
     public static function findByConditionWithCountInfo($whereArr,$page){
-        $model = DownloadSoukeHistory::create()
+        $model = ToolsUploadQueue::create()
                 ->where($whereArr)
                 ->page($page)
                 ->order('id', 'DESC')
@@ -98,7 +98,7 @@ class ToolsUploadQueue extends ModelBase
 
 
     public static function setTouchTime($id,$touchTime){
-        $info = DownloadSoukeHistory::findById($id);
+        $info = ToolsUploadQueue::findById($id);
 
         return $info->update([
             'touch_time' => $touchTime,
@@ -106,7 +106,7 @@ class ToolsUploadQueue extends ModelBase
     }
 
     public static function setStatus($id,$status){
-        $info = DownloadSoukeHistory::findById($id);
+        $info = ToolsUploadQueue::findById($id);
 
         return $info->update([
             'status' => $status,
@@ -115,7 +115,7 @@ class ToolsUploadQueue extends ModelBase
 
     //设置上传文件路径
     public static function setUploadFilePath($id,$upload_file_name,$upload_file_path){
-        $info = DownloadSoukeHistory::findById($id);
+        $info = ToolsUploadQueue::findById($id);
 
         return $info->update([
             'upload_file_name' => $upload_file_name,
@@ -125,7 +125,7 @@ class ToolsUploadQueue extends ModelBase
 
     //设置下载文件路径
     public static function setDownloadFilePath($id,$download_file_name,$download_file_path){
-        $info = DownloadSoukeHistory::findById($id);
+        $info = ToolsUploadQueue::findById($id);
 
         return $info->update([
             'download_file_name' => $download_file_name,
@@ -134,7 +134,7 @@ class ToolsUploadQueue extends ModelBase
     }
 
     public static function findByConditionV2($whereArr,$page){
-        $model = DownloadSoukeHistory::create();
+        $model = ToolsUploadQueue::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
@@ -152,7 +152,7 @@ class ToolsUploadQueue extends ModelBase
     }
 
     public static function findById($id){
-        $res =  DownloadSoukeHistory::create()
+        $res =  ToolsUploadQueue::create()
             ->where('id',$id)            
             ->get();  
         return $res;
@@ -160,7 +160,7 @@ class ToolsUploadQueue extends ModelBase
 
 
     public static function findAllByAdminIdAndFielName($admin_id,$upload_file_name){
-        $res =  DownloadSoukeHistory::create()
+        $res =  ToolsUploadQueue::create()
             ->where('admin_id',$admin_id)
             ->where('upload_file_name',$upload_file_name)
             ->all();
@@ -168,7 +168,7 @@ class ToolsUploadQueue extends ModelBase
     }
 
     public static function setData($id,$field,$value){
-        $info = DownloadSoukeHistory::findById($id);
+        $info = ToolsUploadQueue::findById($id);
         return $info->update([
             "$field" => $value,
         ]);
