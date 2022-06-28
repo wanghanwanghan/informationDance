@@ -332,36 +332,21 @@ class SouKeController extends ControllerBase
             'web' => '官网',
             'yi_ban_ren' => '一般人',
             'shang_shi_xin_xi' => '商品信息',
+            'app' => 'APP',
+            'manager' => '经理',
+            'inv_type' => 'inv_type',
+            'inv'=>'inv',
+            'en_name' => 'en_name',
+            'email' => '邮箱',
+            'app_data'=>'主营产品',
+            'shang_pin_data'=>'商品',
+            'zlxxcy' => 'zlxxcy',
+            'szjjcy' => 'szjjcy',
+            'report_year'=>'report_year',
+            'jin_chu_kou' => '进出口',
+            'iso' => '高新技术',
 
-        ];
-
-        /*
-
-                    "": "",
-                    "app": "",
-                    "manager": "李冬昱(董事,总经理)&&&吴海青(董事长)&&&陶晶晶(监事)&&&卜正繁(董事)&&&宋伟利(董事长)&&&",
-                    "inv_type": "3",
-                    "inv": "李冬昱&&&南京市文化投资控股集团有限责任公司(91320100552095183M)&&&南京锦城佳业营销策划有限公司(91320106MA1ME91654)&&&",
-                    "en_name": "",
-                    "email": "njdhys2014@163.com&&&njdhys2014@163.com&&&",
-                    "app_data": [],
-                    "shang_pin_data": [],
-                    "zlxxcy": "",
-                    "szjjcy": "",
-                    "report_year": [
-                        {
-                            "report_year": "2014",
-                            "phone_number": "18013842339",
-                            "postcode": "210000",
-                            "postal_address": "南京市建邺区奥体大街69号01栋四层",
-                            "email": " "
-                        }
-                    ],
-                    "jin_chu_kou": "",
-                    "iso": ""
-                }
-            },
-         * */
+        ]; 
         return $this->writeJson(200,  [], $fields,'成功');
     }
 
