@@ -81,6 +81,13 @@ class DownloadSoukeHistory extends ModelBase
             ->all();
         return $res;
     }
+    public static function findAllByConditionV2($whereArr,$limit){
+        $res =  DownloadSoukeHistory::create()
+            ->where($whereArr)
+            ->limit($limit)
+            ->all();
+        return $res;
+    }
 
     public static function findByConditionWithCountInfo($whereArr,$page){
         $model = DownloadSoukeHistory::create()

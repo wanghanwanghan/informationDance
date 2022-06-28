@@ -215,10 +215,11 @@ class RunDealApiSouKe extends AbstractCronTask
     //生成下载文件
     static function  generateFile($limit){
 
-        $allInitDatas =  DownloadSoukeHistory::findAllByCondition(
+        $allInitDatas =  DownloadSoukeHistory::findAllByConditionV2(
              [
                  'status' => DownloadSoukeHistory::$state_init
-             ]
+             ],
+            1
         );
 
         foreach($allInitDatas as $InitData){
