@@ -139,23 +139,31 @@ class UserController extends UserBase
 
         if ($userInfo->getAttr('isDestroy') == 1) return $this->writeJson(201, null, null, '手机号已注销');
 
+        $redis = Redis::defer('redis');
+        $redis->select(14);
+
+        $index = $phone . '_login_key';
+        $loginNum = $redis->get($index);
+
+        if (!empty($loginNum) && $loginNum - 0 >= 5) {
+            return $this->writeJson(201, null, null, '1小时内禁止登录');
+        }
+
         //密码或者验证码登录
         if (!empty($vCode)) {
-            $redis = Redis::defer('redis');
-            $redis->select(14);
             $vCodeInRedis = $redis->get($phone . 'login');
             if (!is_numeric($vCodeInRedis) || $vCodeInRedis <= 1000) {
                 $vCodeInRedis = $redis->get($phone . 'reg');
             }
             if ((int)$vCodeInRedis !== (int)$vCode) return $this->writeJson(201, null, null, '验证码错误');
         } elseif (!empty($password)) {
-            !is_numeric($password) ?: $password -= 0;
-            !is_numeric($userInfo->getAttr('password')) ?
-                $mysql_pwd = $userInfo->getAttr('password') :
-                $mysql_pwd = $userInfo->getAttr('password') - 0;
+            $password = trim($password);
+            $mysql_pwd = trim($userInfo->getAttr('password'));
             if ($password !== $mysql_pwd) return $this->writeJson(201, null, null, '密码错误');
         } else {
-            return $this->writeJson(201, null, null, '干啥呢');
+            //连续输入错误 5 次，禁止登录 1 小时
+            empty($loginNum) ? $redis->set($index, 1, 3600) : $redis->incr($index);
+            return $this->writeJson(201, null, null, '登录失败');
         }
 
         $newToken = UserService::getInstance()->createAccessToken(

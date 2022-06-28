@@ -26,6 +26,12 @@ class LimitService extends ServiceBase
         return true;
     }
 
+    //随机一个过期时间
+    private function random(): int
+    {
+        return control::randNum(2) * 6;//两位数 10 - 99，过期时间最少60秒
+    }
+
     function check($token, $realIp): bool
     {
         //空就不检查了，只检查带token的请求
@@ -51,9 +57,4 @@ class LimitService extends ServiceBase
         });
     }
 
-    //随机一个过期时间
-    private function random(): int
-    {
-        return control::randNum(2) * 6;//两位数 10 - 99，过期时间最少60秒
-    }
 }
