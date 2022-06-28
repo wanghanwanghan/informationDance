@@ -109,13 +109,13 @@ class DataModelExample extends ModelBase
                 isset($configItem['less_than'])
             ){
                 if(
-                    $requestData[$configItem['field_name']] > $configItem['bigger_than']
+                    $requestData[$configItem['field_name']] > $configItem['less_than']
                 ){
                     CommonService::getInstance()->log4PHP(json_encode(
                             [
                                 'less_than check false '  ,
                                 'params 1' => $requestData[$configItem['field_name']],
-                                'params 2' => $configItem['bigger_than']
+                                'params 2' => $configItem['less_than']
                             ]
                         ));
                     return [
