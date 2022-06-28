@@ -2930,4 +2930,18 @@ class XinDongService extends ServiceBase
           return [];
     }
 
+    static function  fuzzyMatchEntName($fuzzyName,$size = 1 ){
+        $companyEsModel = new \App\ElasticSearch\Model\Company();
+        $companyEsModel->es->addMustMatchQuery('name',$fuzzyName) ;
+        $companyEsModel
+            ->addSize($size)
+            ->addFrom(0)
+            ->searchFromEs() ;
+
+        $returnData = [];
+        foreach ($companyEsModel->return_data['hits']['hits'] as $dataItem){
+            $returnData[] = $dataItem ;
+        }
+        return $returnData;
+    }
 }

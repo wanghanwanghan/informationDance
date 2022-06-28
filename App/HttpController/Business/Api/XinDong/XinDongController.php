@@ -2880,21 +2880,9 @@ eof;
         if(
             $this->getRequestData('matchByName')
         ){
-            $companyEsModel = new \App\ElasticSearch\Model\Company();
-            $companyEsModel->es->addMustMatchQuery('name',$this->getRequestData('matchByName')) ;
-            $companyEsModel
-            ->addSize(10)
-            ->addFrom(0)
-            ->searchFromEs() ;
+            $datas = XinDongService::fuzzyMatchEntName($this->getRequestData('matchByName'));
 
-            $returnData = [];
-            foreach ($companyEsModel->return_data['hits']['hits'] as $dataItem){
-                $returnData[] = [
-                    'xd_id' => $dataItem['_source']['xd_id'],
-                    'name' => $dataItem['_source']['name']
-                ] ;
-            }
-            return $this->writeJson(200, null, $returnData, null, true, []);
+            return $this->writeJson(200, null, $datas, null, true, []);
         }
 
         return $this->writeJson(200, null, [], null, true, []);

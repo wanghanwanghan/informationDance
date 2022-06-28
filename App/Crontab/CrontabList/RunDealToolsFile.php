@@ -341,57 +341,6 @@ class RunDealToolsFile extends AbstractCronTask
         return true;
     }
 
-    // 交付客户：生成细的交付记录
-    static function  deliver($limit){
-        $allInitDatas =  DeliverHistory::findAllByCondition(
-            [
-                'status' => DeliverHistory::$state_init
-            ]
-        );
-
-        foreach($allInitDatas as $InitData){
-            DeliverHistory::setTouchTime(
-                $InitData['id'],date('Y-m-d H:i:s')
-            );
-
-            $xlsxData = [];
-            $featureArr = json_decode($InitData['feature'],true);
-            for ($i=1 ; $i<= ceil($featureArr['total_nums']/1000);$i++){
-                $page = $i;
-                $size = 1000;
-                $offset = ($page-1)*$size;
-                // 数据
-                $tmpXlsxDatas = self::getYieldData(1000,$offset,$featureArr);
-                foreach ($tmpXlsxDatas as $dataItem){
-                    $xlsxData[] = $dataItem;
-                }
-            }
-
-            foreach ($xlsxData as $date){
-                DeliverDetailsHistory::addRecordV2(
-                    [
-                        'admin_id' => $InitData['admin_id'],
-                        'deliver_id' => $InitData['id'],
-                        'ent_id' => $date['xd_id'],
-                        'entName' => $date['name'],
-                        'remark' => '',
-                        //'total_nums' => $requestData['total_nums'],
-                        'status' => DeliverDetailsHistory::$state_init,
-                    ]
-                );
-            }
-
-            //设置状态
-            DeliverHistory::setStatus(
-                $InitData['id'],DeliverHistory::$state_succeed
-            );
-            DeliverHistory::setTouchTime(
-                $InitData['id'],NULL
-            );
-        }
-
-        return true;
-    }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
