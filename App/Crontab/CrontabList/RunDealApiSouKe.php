@@ -285,28 +285,44 @@ class RunDealApiSouKe extends AbstractCronTask
                 $InitData['id'],date('Y-m-d H:i:s')
             );
 
+            //企业数据
             $xlsxData = [];
+            //各项筛选条件
             $featureArr = json_decode($InitData['feature'],true);
-            for ($i=1 ; $i<= ceil($featureArr['total_nums']/1000);$i++){
-                $page = $i;
-                $size = 1000;
-                $offset = ($page-1)*$size;
-                // 数据
-                $tmpXlsxDatas = self::getYieldData(1000,$offset,$featureArr);
-                foreach ($tmpXlsxDatas as $dataItem){
-                    $xlsxData[] = $dataItem;
+            //最大页码
+            $maxPage = floor($featureArr['total_nums']/1000);
+            if($maxPage  > 1 ){
+                for ($i=1 ; $i<= $maxPage ;$i++){
+                    $page = $i;
+                    $size = 1000;
+                    $offset = ($page-1)*$size;
+                    // 数据
+                    $tmpXlsxDatas = self::getYieldData(1000,$offset,$featureArr);
+                    foreach ($tmpXlsxDatas as $dataItem){
+                        $xlsxData[] = $dataItem;
+                    }
                 }
+            }
+            //
+            $left = $featureArr['total_nums'] - ($maxPage)*1000 ;
+            $tmpXlsxDatas = self::getYieldData($left,0,$featureArr);
+            foreach ($tmpXlsxDatas as $dataItem){
+                $xlsxData[] = $dataItem;
             }
 
             foreach ($xlsxData as $date){
                 DeliverDetailsHistory::addRecordV2(
                     [
+                        //用户
                         'admin_id' => $InitData['admin_id'],
+                        //交付记录id
                         'deliver_id' => $InitData['id'],
+                        //企业id
                         'ent_id' => $date['xd_id'],
+                        //企业名称
                         'entName' => $date['name'],
+                        //备注
                         'remark' => '',
-                        //'total_nums' => $requestData['total_nums'],
                         'status' => DeliverDetailsHistory::$state_init,
                     ]
                 );

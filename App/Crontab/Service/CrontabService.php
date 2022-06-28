@@ -15,6 +15,8 @@ use App\Crontab\CrontabList\RunSouKeUploadFiles;
 use App\Crontab\CrontabList\RunCompleteCompanyData;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNew;
 use App\Crontab\CrontabList\RunFillCompanyName;
+use App\Crontab\CrontabList\RunDealApiSouKe;
+use App\Crontab\CrontabList\RunDealToolsFile;
 use App\Crontab\CrontabList\RunReadAndDealXls;
 use App\Crontab\CrontabList\RunSupervisor;
 use App\Crontab\CrontabList\RunShouQuanCheXian;
@@ -44,6 +46,8 @@ class CrontabService
         $this->FillEntAllField();//补全给筛选出的企业 <全字段>RunDealFinanceCompanyData
         $this->RunDealFinanceCompanyDataNew();//补全给筛选出的企业 <全字段>
         $this->RunJinCaiShuKeRWH();//金财数科通过任务号获取发票
+        //$this->RunDealApiSouKe();//新APi-搜客模块相关的定时
+        //$this->RunDealToolsFile();//新APi-搜客模块相关的定时
         return true;
     }
 
@@ -129,5 +133,17 @@ class CrontabService
     private function RunDealFinanceCompanyDataNew(): Crontab
     {
         return Crontab::getInstance()->addTask(RunDealFinanceCompanyDataNew::class);
+    }
+
+    //后台搜客模块-相关定时任务
+    private function RunDealApiSouKe(): Crontab
+    {
+        return Crontab::getInstance()->addTask(RunDealApiSouKe::class);
+    }
+
+    //新api系统-工具类定时
+    private function RunDealToolsFile(): Crontab
+    {
+        return Crontab::getInstance()->addTask(RunDealToolsFile::class);
     }
 }

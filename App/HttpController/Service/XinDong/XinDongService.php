@@ -2930,6 +2930,7 @@ class XinDongService extends ServiceBase
           return [];
     }
 
+    //模糊匹配企业名称  根据企业简称  匹配企业
     static function  fuzzyMatchEntName($fuzzyName,$size = 1 ){
         $companyEsModel = new \App\ElasticSearch\Model\Company();
         $companyEsModel->es->addMustMatchQuery('name',$fuzzyName) ;
