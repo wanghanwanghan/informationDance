@@ -158,6 +158,25 @@ class SouKeController extends ControllerBase
 
         $requestData =  $this->getRequestData();
 
+
+        $checkRes = DataModelExample::checkField(
+            [
+
+                'total_nums' => [
+                    'bigger_than' => 0,
+                    'less_than' => 1000000,
+                    'field_name' => 'total_nums',
+                    'err_msg' => '总数不对！必须大于0且小于100万',
+                ]
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
         //下载
         DownloadSoukeHistory::addRecord(
             [
@@ -235,12 +254,12 @@ class SouKeController extends ControllerBase
                     'field_name' => 'title',
                     'err_msg' => '标题必填',
                 ],
-                'total_nums' => [
-                    'bigger_than' => 0,
-                    'less_than' => 1000000,
-                    'field_name' => 'total_nums',
-                    'err_msg' => '总数不对！必须大于0且小于100万',
-                ]
+//                'total_nums' => [
+//                    'bigger_than' => 0,
+//                    'less_than' => 1000000,
+//                    'field_name' => 'total_nums',
+//                    'err_msg' => '总数不对！必须大于0且小于100万',
+//                ]
             ],
             $requestData
         );
