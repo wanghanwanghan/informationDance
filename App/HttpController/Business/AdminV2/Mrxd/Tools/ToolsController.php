@@ -55,13 +55,15 @@ class ToolsController extends ControllerBase
     /*
       type: 5 url补全
       type: 10 微信匹配
+      type: 15 模糊匹配企业名称
+
      * */
     public function uploadeFiles(){
         $requestData =  $this->getRequestData();
         $checkRes = DataModelExample::checkField(
             [
                 'id' => [
-                    'is_array' =>  [5,10],
+                    'is_array' =>  [5,10,15],
                     'field_name' => 'type',
                     'err_msg' => '参数错误',
                 ],

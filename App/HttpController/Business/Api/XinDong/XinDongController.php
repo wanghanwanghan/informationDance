@@ -2886,11 +2886,19 @@ eof;
             ->addSize(10)
             ->addFrom(0)
             ->searchFromEs() ;
-            return $this->writeJson(200, null, $companyEsModel->return_data, null, true, []);
+
+            $returnData = [];
+            foreach ($companyEsModel->return_data['hits']['hits'] as $dataItem){
+                $returnData[] = [
+                    'xd_id' => $dataItem['_source']['xd_id'],
+                    'name' => $dataItem['_source']['name']
+                ] ;
+            }
+            return $this->writeJson(200, null, $returnData, null, true, []);
         }
 
         return $this->writeJson(200, null, [], null, true, []);
- 
+
 
     }
 }
