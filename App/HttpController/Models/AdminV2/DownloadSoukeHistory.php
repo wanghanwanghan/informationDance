@@ -50,7 +50,7 @@ class DownloadSoukeHistory extends ModelBase
                 'admin_id' => $requestData['admin_id'],
                'entName' => $requestData['entName'],
                'feature' => $requestData['feature'],
-               'title' => $requestData['title'],
+               'title' => $requestData['title']?:'',
                'file_name' => $requestData['file_name']?:'',
                'file_path' => $requestData['file_path']?:'',
                'remark' => $requestData['remark']?:'',
