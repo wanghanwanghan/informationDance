@@ -102,7 +102,7 @@ class RunDealToolsFile extends AbstractCronTask
 
         return true;
     }  
- 
+
      /*
       * step1:上传客户名单
       * step2:定时将客户名单解析到数据库
@@ -138,6 +138,7 @@ class RunDealToolsFile extends AbstractCronTask
         return true ;   
     }
 
+    // 取url补全
     static function  getYieldDataForUrl($xlsx_name){
         $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
         $excel_read->openFile($xlsx_name)->openSheet();
@@ -170,6 +171,7 @@ class RunDealToolsFile extends AbstractCronTask
         }
     }
 
+    // 取微信数据
     static function  getYieldDataForWeinXin($xlsx_name){
         $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
         $excel_read->openFile($xlsx_name)->openSheet();
@@ -193,13 +195,18 @@ class RunDealToolsFile extends AbstractCronTask
             $value1 = self::strtr_func($one[1]);
             //微信名
             $value2 = self::strtr_func($one[2]);
+            //联系人名称（疑似）
             $value3 = self::strtr_func($one[3]);
+            //职位（疑似）
+            $value4 = self::strtr_func($one[4]);
             $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($value0,$value2);
 
             yield $datas[] = [
                 $value0,
                 $value1,
                 $value2,
+                $value3,
+                $value4,
                 $tmpRes['data']['stff_name'],
                 $tmpRes['data']['staff_type_name'],
                 $tmpRes['match_res']['type'],
