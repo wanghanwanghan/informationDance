@@ -265,8 +265,15 @@ class RunDealApiSouKe extends AbstractCronTask
                 ->addSort("_id","desc")
                 //设置默认值 不传任何条件 搜全部
                 ;
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$lastId' => $lastId
+                ])
+            );
             if($lastId>0){
                 $companyEsModel->addSearchAfterV1($lastId);
+
             }
             // 格式化下日期和时间
             $companyEsModel
@@ -278,6 +285,12 @@ class RunDealApiSouKe extends AbstractCronTask
 
             foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
                 $lastId = $dataItem['_id'];
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '$lastId' => $lastId
+                    ])
+                );
                 $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmail($dataItem);
                 $dataItem['_source']['last_postal_address'] = $addresAndEmailData['last_postal_address'];
                 $dataItem['_source']['last_email'] = $addresAndEmailData['last_email'];
