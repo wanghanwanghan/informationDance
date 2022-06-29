@@ -782,7 +782,7 @@ eof;
         // 需要按文本搜索的  
         $basicJlxxcyidStr = trim($this->request()->getRequestParam('basic_jlxxcyid'));
         $basicJlxxcyidStr && $basicJlxxcyidArr = explode(',',  $basicJlxxcyidStr);
-        CommonService::getInstance()->log4PHP('basicJlxxcyidArr '.json_encode($basicJlxxcyidArr)); 
+        //CommonService::getInstance()->log4PHP('basicJlxxcyidArr '.json_encode($basicJlxxcyidArr));
         if(
             !empty($basicJlxxcyidArr)
         ){
