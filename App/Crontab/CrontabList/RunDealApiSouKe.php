@@ -221,7 +221,7 @@ class RunDealApiSouKe extends AbstractCronTask
     function getYieldDataForSouKe($totalNums,$requestDataArr){
         $searchOption = json_decode($requestDataArr['searchOption'],true);
         $datas = [];
-        $size = 1000;
+        $size = 6000;
         $offset = 0;
         $nums =1;
         $lastId = 0;
@@ -270,7 +270,8 @@ class RunDealApiSouKe extends AbstractCronTask
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    '$lastId' => $lastId
+                    '$lastId' => $lastId,
+                    '$totalNums' => $totalNums
                 ])
             );
             if($lastId>0){
