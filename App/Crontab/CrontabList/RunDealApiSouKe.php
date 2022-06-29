@@ -390,48 +390,53 @@ class RunDealApiSouKe extends AbstractCronTask
 
             $featureArr = json_decode($InitData['feature'],true);
             //每次从es拉取一千
-            $esSize = 1000;
+            $esSize = 100;
             $maxPage = floor($featureArr['total_nums']/$esSize);
+            $nums = 1;
             //小于一千个 一次性取完
             if($maxPage <= 0 ){
+
+                $tmpXlsxDatas = self::getYieldData($featureArr['total_nums'],0,$featureArr);
+                foreach ($tmpXlsxDatas as $dataItem){
+                    fputcsv($f, $dataItem);
+                    $nums++;
+                }
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ .__LINE__,
                         'number less than 1000 .  find all ' => [
-                            'size' => $featureArr['total_nums']
+                            'size' => $featureArr['total_nums'],
+                            '$nums' =>$nums
                         ]
                     ])
                 );
-                $tmpXlsxDatas = self::getYieldData($featureArr['total_nums'],0,$featureArr);
-                foreach ($tmpXlsxDatas as $dataItem){
-                    fputcsv($f, $dataItem);
-                }
             }
             //大于一千个
             else{
                 //分页取 一次取1000个
                 for ($i=1 ; $i<= $maxPage ;$i++){
                     $page = $i;
-                    $size = 1000;
+                    $size = 100;
                     $offset = ($page-1)*$size;
                     // 按页码数据
                     CommonService::getInstance()->log4PHP(
                         json_encode([
                             __CLASS__.__FUNCTION__ .__LINE__,
                             'number more than 1000 .  find by page ' => [
-                                'size' => 1000,
+                                'size' => $size,
                                 'page' => $i,
                                 '$offset' => $offset,
                             ]
                         ])
                     );
-                    $tmpXlsxDatas = self::getYieldData(1000,$offset,$featureArr);
+                    $tmpXlsxDatas = self::getYieldData($size,$offset,$featureArr);
                     foreach ($tmpXlsxDatas as $dataItem){
                         fputcsv($f, $dataItem);
+                        $nums ++;
                     }
                 }
                 //剩余的
-                $left = $featureArr['total_nums'] - ($maxPage)*1000 ;
+                $left = $featureArr['total_nums'] - ($maxPage)*$size ;
                 if($left){
                     CommonService::getInstance()->log4PHP(
                         json_encode([
@@ -444,6 +449,7 @@ class RunDealApiSouKe extends AbstractCronTask
                     $tmpXlsxDatas = self::getYieldData($left,0,$featureArr);
                     foreach ($tmpXlsxDatas as $dataItem){
                         fputcsv($f, $dataItem);
+                        $nums ++;
                     }
                 }
             }
