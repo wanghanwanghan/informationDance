@@ -46,7 +46,6 @@ class Company extends ServiceBase
 
     function addSort($field,$desc)
     {
-
         $this->es->addSort($field,$desc) ;
         return $this;
     }

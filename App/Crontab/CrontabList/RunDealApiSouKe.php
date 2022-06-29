@@ -264,8 +264,9 @@ class RunDealApiSouKe extends AbstractCronTask
                 //->addFrom($offset)
                 //设置默认值 不传任何条件 搜全部
                 ->setDefault()
+                ->addSort("_id","desc")
                 ->searchFromEs()
-                ->addSort("_id","desc");
+                ;
             if($lastId>0){
                 $companyEsModel->addSearchAfterV1($lastId);
             }
