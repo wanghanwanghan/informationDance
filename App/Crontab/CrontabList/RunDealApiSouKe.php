@@ -261,29 +261,69 @@ class RunDealApiSouKe extends AbstractCronTask
             ;
 
             $featureArr = json_decode($InitData['feature'],true);
-            $maxPage = floor($featureArr['total_nums']/1000);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
-                ])
-            );
-            if($maxPage  > 1 ){
+            //每次从es拉取一千
+            $esSize = 1000;
+            $maxPage = floor($featureArr['total_nums']/$esSize);
+            //小于一千个 一次性取完
+            if($maxPage <= 0 ){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'number less than 1000 .  find all ' => [
+                            'size' => $featureArr['total_nums']
+                        ]
+                    ])
+                );
+                $tmpXlsxDatas = self::getYieldData($featureArr['total_nums'],0,$featureArr);
+                foreach ($tmpXlsxDatas as $dataItem){
+                    $fileObject ->data([$dataItem]);
+                }
+            }
+            //大于一千个
+            else{
+                //分页取 一次取1000个
                 for ($i=1 ; $i<= $maxPage ;$i++){
                     $page = $i;
                     $size = 1000;
                     $offset = ($page-1)*$size;
-                    // 数据
+                    // 按页码数据
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            'number more than 1000 .  find by page ' => [
+                                'size' => 1000,
+                                'page' => $i,
+                                '$offset' => $offset,
+                            ]
+                        ])
+                    );
                     $tmpXlsxDatas = self::getYieldData(1000,$offset,$featureArr);
                     foreach ($tmpXlsxDatas as $dataItem){
                         $fileObject ->data([$dataItem]);
                     }
                 }
+                //剩余的
+                $left = $featureArr['total_nums'] - ($maxPage)*1000 ;
+                if($left){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            'number more than 1000 .  find left ' => [
+                                'size' => $left,  
+                            ]
+                        ])
+                    );
+                    $tmpXlsxDatas = self::getYieldData($left,0,$featureArr);
+                    foreach ($tmpXlsxDatas as $dataItem){
+                        $fileObject ->data([$dataItem]);
+                    }
+                }
             }
+
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+                    'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
                 ])
             );
             // 数据 1001 1 1000
