@@ -2855,15 +2855,21 @@ eof;
             $alignStyle = $format
                 ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
                 ->toResource();
-
+            $datas = [
+                [
+                    'xxxxx','dasasdsa','rwwedfd','ddsaqq','daddaqqqq',  'xxxxx','dasasdsa','rwwedfd','ddsaqq','daddaqqqq',
+                ],
+                [
+                    'xxxxx','dasasdsa','rwwedfd','ddsaqq','daddaqqqq',  'xxxxx','dasasdsa','rwwedfd','ddsaqq','daddaqqqq',
+                ]
+            ];
             $fileObject
                 ->defaultFormat($colorStyle)
                 ->defaultFormat($alignStyle)
-                ->data(NewFinanceData::findALl())
+                ->data($datas)
             ;
-
-            $fileObject ->data(NewFinanceData::findALl());
-            $fileObject ->data(NewFinanceData::findALl());
+            $fileObject ->data($datas);
+            $fileObject ->data($datas);
 
             $format = new Format($fileHandle);
             //单元格有\n解析成换行
