@@ -489,12 +489,12 @@ class RunDealApiSouKe extends AbstractCronTask
 
     static function  generateFileExcelV2($limit){
         $startMemory = memory_get_usage();
-        $allInitDatas =  DownloadSoukeHistory::findAllByConditionV2(
-            [
-                'status' => DownloadSoukeHistory::$state_init,
-                'touch_time' => null
-            ],
-            1
+        $allInitDatas =  DownloadSoukeHistory::findBySql(
+            "
+                WHERE     status =  ".DownloadSoukeHistory::$state_init."       
+                AND   touch_time IS NULL 
+                LIMIT $limit
+            "
         );
         CommonService::getInstance()->log4PHP(
             json_encode([
