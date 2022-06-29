@@ -262,9 +262,9 @@ class RunDealApiSouKe extends AbstractCronTask
                 ->SetQueryByBasicRegionid(   $requestDataArr['basic_regionid']  )
                 ->addSize($size)
                 //->addFrom($offset)
+                ->addSort("_id","desc")
                 //设置默认值 不传任何条件 搜全部
                 ->setDefault()
-                ->addSort("_id","desc")
                 ->searchFromEs()
                 ;
             if($lastId>0){
