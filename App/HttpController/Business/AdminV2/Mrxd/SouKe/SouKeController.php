@@ -498,7 +498,7 @@ class SouKeController extends ControllerBase
                         }
                     }
              }
-             $value['feature_cname'] = "";
+             $value['feature_cname'] = $cname;
          }
         return $this->writeJson(200,  [
             'page' => $page,
