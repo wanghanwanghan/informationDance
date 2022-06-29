@@ -6,6 +6,7 @@ use App\Crontab\CrontabList\RunDealApiSouKe;
 use App\Crontab\CrontabList\RunDealFinanceCompanyData;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNew;
 use App\Csp\Service\CspService;
+use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Common\CommonService;
@@ -2830,6 +2831,52 @@ eof;
     }
     function testExport()
     {
+        if(
+            $this->getRequestData('testExport')
+        ){
+            $filename = 'XXX'.date('YmdHis').'.xlsx';
+            $config=  [
+                'path' => TEMP_FILE_PATH // xlsx文件保存路径
+            ];
+
+            $excel = new \Vtiful\Kernel\Excel($config);
+            $fileObject = $excel->fileName($filename, 'sheet');
+            $fileHandle = $fileObject->getHandle();
+
+            $format = new Format($fileHandle);
+            $colorStyle = $format
+                ->fontColor(Format::COLOR_ORANGE)
+                ->border(Format::BORDER_DASH_DOT)
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+
+            $format = new Format($fileHandle);
+
+            $alignStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+
+            $fileObject
+                ->defaultFormat($colorStyle)
+                ->defaultFormat($alignStyle)
+                ->data(NewFinanceData::findALl())
+            ;
+
+            $fileObject ->data(NewFinanceData::findALl());
+            $fileObject ->data(NewFinanceData::findALl());
+
+            $format = new Format($fileHandle);
+            //单元格有\n解析成换行
+            $wrapStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->wrap()
+                ->toResource();
+
+           $fileObject->output();
+            return $this->writeJson(200, null, [], null, true, []);
+
+        }
+
         if(
             $this->getRequestData('generateFile')
         ){

@@ -122,6 +122,12 @@ class NewFinanceData extends ModelBase
             ->all();  
         return $res;
     }
+    public static function findALl(){
+        $res =  NewFinanceData::create()
+            ->all();
+        return $res;
+    }
+
 
     public static function findById($id){
         $res =  NewFinanceData::create()

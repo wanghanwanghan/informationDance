@@ -214,6 +214,7 @@ class SouKeController extends ControllerBase
         $requestData =  $this->getRequestData();
         $res = AdminUserSoukeConfig::findByConditionV3(
             [
+                'status'=>AdminUserSoukeConfig::$state_init
             ],
             $requestData['page']
         );
