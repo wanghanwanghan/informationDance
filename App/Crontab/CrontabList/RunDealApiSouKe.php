@@ -221,6 +221,7 @@ class RunDealApiSouKe extends AbstractCronTask
         $datas = [];
         $size = 100;
         $offset = 0;
+        $nums =1;
         while ($totalNums > 0) {
 
             $datas = [];
@@ -283,6 +284,14 @@ class RunDealApiSouKe extends AbstractCronTask
                     )
                 );
 
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '$nums' => $nums
+                    ])
+                );
+                $nums ++;
+
                 // 官网
                 $webStr = trim($dataItem['_source']['web']);
                 if(!$webStr){
@@ -292,7 +301,7 @@ class RunDealApiSouKe extends AbstractCronTask
                 $webArr = explode('&&&', $webStr);
                 !empty($webArr) && $dataItem['_source']['web'] = end($webArr);
 
-                yield $datas[] = $dataItem['_source'];
+                yield $datas[] = $dataItem['_source']['name'];
             }
 
             $totalNums -= $size;
