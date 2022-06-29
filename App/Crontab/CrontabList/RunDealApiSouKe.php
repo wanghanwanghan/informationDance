@@ -491,7 +491,8 @@ class RunDealApiSouKe extends AbstractCronTask
         $startMemory = memory_get_usage();
         $allInitDatas =  DownloadSoukeHistory::findAllByConditionV2(
             [
-                'status' => DownloadSoukeHistory::$state_init
+                'status' => DownloadSoukeHistory::$state_init,
+                'touch_time' => null
             ],
             1
         );
