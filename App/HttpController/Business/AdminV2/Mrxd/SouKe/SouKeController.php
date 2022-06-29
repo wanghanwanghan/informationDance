@@ -411,7 +411,7 @@ class SouKeController extends ControllerBase
                     'err_msg' => '该状态不允许确认',
                 ],
             ],
-            $requestData
+            $downloadHistoryRes
         );
         if(
             !$checkRes['res']
