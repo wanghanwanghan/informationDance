@@ -221,7 +221,7 @@ class RunDealApiSouKe extends AbstractCronTask
     function getYieldDataForSouKe($totalNums,$requestDataArr){
         $searchOption = json_decode($requestDataArr['searchOption'],true);
         $datas = [];
-        $size = 500;
+        $size = 1000;
         $offset = 0;
         $nums =1;
         $lastId = 0;
