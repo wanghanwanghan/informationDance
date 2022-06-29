@@ -409,7 +409,7 @@ class SouKeController extends ControllerBase
                     'in_array' => [DownloadSoukeHistory::$state_file_succeed],
                     'field_name' => 'status',
                     'err_msg' => '该状态不允许确认',
-                ], 
+                ],
             ],
             $requestData
         );

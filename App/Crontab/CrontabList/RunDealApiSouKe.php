@@ -223,7 +223,7 @@ class RunDealApiSouKe extends AbstractCronTask
         $start = microtime(true);
         $searchOption = json_decode($requestDataArr['searchOption'],true);
         $datas = [];
-        $size = 500;
+        $size = 800;
         $offset = 0;
         $nums =1;
         $lastId = 0;
@@ -304,14 +304,14 @@ class RunDealApiSouKe extends AbstractCronTask
                 $dataItem['_source']['last_postal_address'] = $addresAndEmailData['last_postal_address'];
                 $dataItem['_source']['last_email'] = $addresAndEmailData['last_email'];
 
-                $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntId($dataItem['_source']['xd_id']);
+               // $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntId($dataItem['_source']['xd_id']);
 
                 // 添加tag
-                $dataItem['_source']['tags'] = array_values(
-                    (new XinDongService())::getAllTagesByData(
-                        $dataItem['_source']
-                    )
-                );
+//                $dataItem['_source']['tags'] = array_values(
+//                    (new XinDongService())::getAllTagesByData(
+//                        $dataItem['_source']
+//                    )
+//                );
 
 //                CommonService::getInstance()->log4PHP(
 //                    json_encode([
