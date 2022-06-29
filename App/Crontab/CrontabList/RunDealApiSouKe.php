@@ -265,6 +265,7 @@ class RunDealApiSouKe extends AbstractCronTask
                 // 地区 basic_regionid: 110101,110102,
                 ->SetQueryByBasicRegionid(   $requestDataArr['basic_regionid']  )
                 ->addSize($size)
+                ->setSource(["name","xd_id"])
                 //->addFrom($offset)
                 ->addSort("_id","desc")
                 //设置默认值 不传任何条件 搜全部
@@ -329,7 +330,7 @@ class RunDealApiSouKe extends AbstractCronTask
                 $webArr = explode('&&&', $webStr);
                 !empty($webArr) && $dataItem['_source']['web'] = end($webArr);
 
-                yield $datas[] = $dataItem['_source']['name'];
+                yield $datas[] = $dataItem['_source'];
             }
 
             $totalNums -= $size;

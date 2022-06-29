@@ -165,7 +165,10 @@ class ElasticSearchService extends ServiceBase
         $this->query['search_after'] = [$value];
     }
 
-
+    //设置 _source
+    function setSource($filedsArr){
+        $this->query['_source'] = $filedsArr;
+    }
     function setDefault(){
         if(empty($this->query['query']['bool']['must'])){
             $this->query =   

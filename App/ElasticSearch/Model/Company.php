@@ -31,6 +31,13 @@ class Company extends ServiceBase
         return $this;
     }
 
+    function setSource($filedsArr)
+    {
+        $this->es->setSource($filedsArr) ;
+        return $this;
+    }
+
+    //
     function addFrom($offset)
     {
 
