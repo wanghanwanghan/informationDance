@@ -215,12 +215,18 @@ class RunDealApiSouKe extends AbstractCronTask
 
     //生成下载文件
     static function  generateFile($limit){
-
+        $startMemory = memory_get_usage();
         $allInitDatas =  DownloadSoukeHistory::findAllByConditionV2(
              [
                  'status' => DownloadSoukeHistory::$state_init
              ],
             1
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+            ])
         );
 
         foreach($allInitDatas as $InitData){
@@ -256,6 +262,12 @@ class RunDealApiSouKe extends AbstractCronTask
 
             $featureArr = json_decode($InitData['feature'],true);
             $maxPage = floor($featureArr['total_nums']/1000);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+                ])
+            );
             if($maxPage  > 1 ){
                 for ($i=1 ; $i<= $maxPage ;$i++){
                     $page = $i;
@@ -268,13 +280,24 @@ class RunDealApiSouKe extends AbstractCronTask
                     }
                 }
             }
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+                ])
+            );
             // 数据 1001 1 1000
             $left = $featureArr['total_nums'] - ($maxPage)*1000 ;
             $tmpXlsxDatas = self::getYieldData($left,0,$featureArr);
             foreach ($tmpXlsxDatas as $dataItem){
                 $fileObject ->data([$dataItem]);
             }
-
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+                ])
+            );
             $format = new Format($fileHandle);
             //单元格有\n解析成换行
             $wrapStyle = $format
