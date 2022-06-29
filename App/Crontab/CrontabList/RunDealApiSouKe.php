@@ -296,6 +296,7 @@ class RunDealApiSouKe extends AbstractCronTask
             }
 
             $totalNums -= $size;
+            $offset +=$size;
         }
     }
 
