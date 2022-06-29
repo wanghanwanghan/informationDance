@@ -403,6 +403,21 @@ class SouKeController extends ControllerBase
 
         //下载历史
         $downloadHistoryRes  = DownloadSoukeHistory::findById($requestData['id'])->toArray();
+        $checkRes = DataModelExample::checkField(
+            [
+                'status' => [
+                    'in_array' => [DownloadSoukeHistory::$state_file_succeed],
+                    'field_name' => 'status',
+                    'err_msg' => '该状态不允许确认',
+                ], 
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
 
         //交付历史
         DeliverHistory::addRecord(
