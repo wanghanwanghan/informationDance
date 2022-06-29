@@ -264,15 +264,16 @@ class RunDealApiSouKe extends AbstractCronTask
                 //->addFrom($offset)
                 ->addSort("_id","desc")
                 //设置默认值 不传任何条件 搜全部
-                ->setDefault()
-                ->searchFromEs()
                 ;
             if($lastId>0){
                 $companyEsModel->addSearchAfterV1($lastId);
             }
             // 格式化下日期和时间
-            $companyEsModel->formatEsDate()
-            // 格式化下金额
+            $companyEsModel
+                ->setDefault()
+                ->searchFromEs()
+                ->formatEsDate()
+                // 格式化下金额
                 ->formatEsMoney();
 
             foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
