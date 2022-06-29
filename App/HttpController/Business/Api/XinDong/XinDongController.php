@@ -2873,7 +2873,7 @@ eof;
                 ->toResource();
 
            $fileObject->output();
-            return $this->writeJson(200, null, [], null, true, []);
+            return $this->writeJson(200, null, [$filename], null, true, []);
 
         }
 
