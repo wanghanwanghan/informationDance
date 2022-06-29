@@ -15,6 +15,7 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadDataRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadeRecord;
+use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
 use App\HttpController\Models\AdminV2\DeliverDetailsHistory;
 use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
@@ -218,7 +219,7 @@ class RunDealApiSouKe extends AbstractCronTask
         return true ;   
     }
 
-    function getYieldDataForSouKe($totalNums,$requestDataArr){
+    function getYieldDataForSouKe($totalNums,$requestDataArr,$fieldsArr){
         $startMemory = memory_get_usage();
         $start = microtime(true);
         $searchOption = json_decode($requestDataArr['searchOption'],true);
@@ -265,7 +266,7 @@ class RunDealApiSouKe extends AbstractCronTask
                 // 地区 basic_regionid: 110101,110102,
                 ->SetQueryByBasicRegionid(   $requestDataArr['basic_regionid']  )
                 ->addSize($size)
-                ->setSource(["name","xd_id"])
+                ->setSource($fieldsArr)
                 //->addFrom($offset)
                 ->addSort("_id","desc")
                 //设置默认值 不传任何条件 搜全部
@@ -542,7 +543,9 @@ class RunDealApiSouKe extends AbstractCronTask
             ;
 
             $featureArr = json_decode($InitData['feature'],true);
-            $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr);
+            // get SouKe Config
+            $fieldsArr = AdminUserSoukeConfig::getAllowedFieldsArray($InitData['admin_id']);
+            $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr,$fieldsArr);
             foreach ($tmpXlsxDatas as $dataItem){
                 $fileObject ->data([$dataItem]);
             }
@@ -715,7 +718,8 @@ class RunDealApiSouKe extends AbstractCronTask
             fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
 
             $featureArr = json_decode($InitData['feature'],true);
-            $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr);
+            $fieldsArr = AdminUserSoukeConfig::getAllowedFieldsArray($InitData['admin_id']);
+            $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr,$fieldsArr);
             foreach ($tmpXlsxDatas as $dataItem){
                 fputcsv($f, $dataItem);
                 $nums++;
