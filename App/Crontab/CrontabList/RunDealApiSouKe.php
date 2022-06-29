@@ -219,9 +219,11 @@ class RunDealApiSouKe extends AbstractCronTask
     }
 
     function getYieldDataForSouKe($totalNums,$requestDataArr){
+        $startMemory = memory_get_usage();
+        $start = microtime(true);
         $searchOption = json_decode($requestDataArr['searchOption'],true);
         $datas = [];
-        $size = 6000;
+        $size = 8000;
         $offset = 0;
         $nums =1;
         $lastId = 0;
@@ -271,9 +273,12 @@ class RunDealApiSouKe extends AbstractCronTask
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     '$lastId' => $lastId,
-                    '$totalNums' => $totalNums
+                    '$totalNums' => $totalNums,
+                    'generate data  . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
+                    ' costs seconds '=>microtime(true) - $start
                 ])
             );
+
             if($lastId>0){
                 $companyEsModel->addSearchAfterV1($lastId);
 
