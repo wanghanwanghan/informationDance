@@ -223,7 +223,7 @@ class RunDealApiSouKe extends AbstractCronTask
         $start = microtime(true);
         $searchOption = json_decode($requestDataArr['searchOption'],true);
         $datas = [];
-        $size = 8000;
+        $size = 500;
         $offset = 0;
         $nums =1;
         $lastId = 0;
@@ -336,6 +336,13 @@ class RunDealApiSouKe extends AbstractCronTask
             $totalNums -= $size;
             $offset +=$size;
         }
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
+                'generate data  done . costs seconds '=>microtime(true) - $start
+            ])
+        );
     }
 
     //生成下载文件
