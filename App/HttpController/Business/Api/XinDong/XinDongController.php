@@ -2855,19 +2855,16 @@ eof;
             $alignStyle = $format
                 ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
                 ->toResource();
-            $datas = [
-                [
-                    'xxxxx','dasasdsa','rwwedfd','ddsaqq','daddaqqqq',  'xxxxx','dasasdsa','rwwedfd','ddsaqq','daddaqqqq',
-                ],
-                [
-                    'xxxxx','dasasdsa','rwwedfd','ddsaqq','daddaqqqq',  'xxxxx','dasasdsa','rwwedfd','ddsaqq','daddaqqqq',
-                ]
-            ];
+
             $fileObject
                 ->defaultFormat($colorStyle)
                 ->defaultFormat($alignStyle)
-                ->data($datas)
             ;
+            //--------------------------------
+
+
+            //--------------------------------
+
             $fileObject ->data($datas);
             $fileObject ->data($datas);
 

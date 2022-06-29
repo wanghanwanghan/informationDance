@@ -26,6 +26,7 @@ use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use App\HttpController\Service\Sms\SmsService;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use EasySwoole\Mysqli\QueryBuilder;
+use Vtiful\Kernel\Format;
 use wanghanwanghan\someUtils\control;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Service\LongXin\LongXinService;
@@ -227,7 +228,32 @@ class RunDealApiSouKe extends AbstractCronTask
                 $InitData['id'],date('Y-m-d H:i:s')
             );
 
-            $xlsxData = [];
+            $filename = '搜客导出_'.date('YmdHis').'.xlsx';
+            $config=  [
+                'path' => TEMP_FILE_PATH // xlsx文件保存路径
+            ];
+            $excel = new \Vtiful\Kernel\Excel($config);
+            $fileObject = $excel->fileName($filename, 'sheet');
+            $fileHandle = $fileObject->getHandle();
+
+            $format = new Format($fileHandle);
+            $colorStyle = $format
+                ->fontColor(Format::COLOR_ORANGE)
+                ->border(Format::BORDER_DASH_DOT)
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+
+            $format = new Format($fileHandle);
+
+            $alignStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+
+            $fileObject
+                ->defaultFormat($colorStyle)
+                ->defaultFormat($alignStyle)
+            ;
+
             $featureArr = json_decode($InitData['feature'],true);
             $maxPage = floor($featureArr['total_nums']/1000);
             if($maxPage  > 1 ){
@@ -238,7 +264,7 @@ class RunDealApiSouKe extends AbstractCronTask
                     // 数据
                     $tmpXlsxDatas = self::getYieldData(1000,$offset,$featureArr);
                     foreach ($tmpXlsxDatas as $dataItem){
-                        $xlsxData[] = $dataItem;
+                        $fileObject ->data([$dataItem]);
                     }
                 }
             }
@@ -246,16 +272,17 @@ class RunDealApiSouKe extends AbstractCronTask
             $left = $featureArr['total_nums'] - ($maxPage)*1000 ;
             $tmpXlsxDatas = self::getYieldData($left,0,$featureArr);
             foreach ($tmpXlsxDatas as $dataItem){
-                $xlsxData[] = $dataItem;
+                $fileObject ->data([$dataItem]);
             }
 
-            $filename = date('YmdHis').'.xlsx';
-            $header = [];
-            NewFinanceData::parseDataToXls(
-                [
-                    'path' => TEMP_FILE_PATH // xlsx文件保存路径
-                ],$filename,$header,$xlsxData,'sheet1'
-            );
+            $format = new Format($fileHandle);
+            //单元格有\n解析成换行
+            $wrapStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->wrap()
+                ->toResource();
+
+            $fileObject->output();
 
             //更新文件地址
             DownloadSoukeHistory::setFilePath($InitData['id'],'/Static/Temp/',$filename);
