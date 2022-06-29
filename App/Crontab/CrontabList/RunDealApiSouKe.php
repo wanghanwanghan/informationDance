@@ -207,7 +207,8 @@ class RunDealApiSouKe extends AbstractCronTask
         //生成文件
         //生成xlsx 当前插件  暂时只能生成一万？ 调整后再改成xlsx的
         //self::generateFileExcel(3);
-        self::generateFileCsvV2(3);
+        self::generateFileExcelV2(3);
+        //self::generateFileCsvV2(3);
 
         //确认交付
         self::deliver(3);
@@ -220,7 +221,7 @@ class RunDealApiSouKe extends AbstractCronTask
     function getYieldDataForSouKe($totalNums,$requestDataArr){
         $searchOption = json_decode($requestDataArr['searchOption'],true);
         $datas = [];
-        $size = 100;
+        $size = 500;
         $offset = 0;
         $nums =1;
         $lastId = 0;
