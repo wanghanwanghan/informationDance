@@ -229,6 +229,9 @@ class RunDealApiSouKe extends AbstractCronTask
         $nums =1;
         $lastId = 0;
         while ($totalNums > 0) {
+            if($totalNums<$size){
+                $size = $totalNums;
+            }
 
             $datas = [];
             $companyEsModel = new \App\ElasticSearch\Model\Company();
