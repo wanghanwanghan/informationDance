@@ -457,9 +457,49 @@ class SouKeController extends ControllerBase
         );
 
         //补全数据
-        // foreach ($res['data'] as &$value){
+         foreach ($res['data'] as &$value){
+            /*
+              {
 
-        // }
+	"searchOption": "[{\"pid\":10,\"value\":[\"10\"]}]",
+}
+             * */
+             $featureArr = json_decode($value['feature'],true) ;
+             $map = [
+                 'searchText' => '企业名称/经营范围/业务商品等关键词',
+                 'basic_nicid' => '四级分类',
+                 'basic_opscope' => '经营范围',
+                 'basic_regionid' => '地区',
+                 'basic_szjjid'=>'数字经济及其核心产业',
+                 'basic_jlxxcyid' => '搜索战略新兴产业',
+                 'total_nums' => '数量',
+             ];
+
+             $options =  (new  XinDongService())->getSearchOption();
+             $cname ="";
+             foreach ($featureArr as $key => $featureItem){
+                    if($key == 'searchOption'){
+                        $searchOption = json_decode($featureItem,true);
+                        foreach ($searchOption as $searchOptionItem){
+                            foreach ($options as $config){
+                                if($config['pid'] == $searchOptionItem['pid']){
+                                    $tmpSTr = $config['desc'].":";
+                                    foreach ($searchOptionItem['value'] as $subvalue){
+                                        $cname.= $tmpSTr.$config['data'][$subvalue]['cname'].',';
+                                    }
+                                    $cname.= "<br/>";
+                                };
+                            }
+                        }
+                    }
+                    else{
+                        if($map[$key]){
+                            $cname .= $map[$key].":".$featureItem."<br/>";
+                        }
+                    }
+             }
+             $value['feature_cname'] = "";
+         }
         return $this->writeJson(200,  [
             'page' => $page,
             'pageSize' =>10,
