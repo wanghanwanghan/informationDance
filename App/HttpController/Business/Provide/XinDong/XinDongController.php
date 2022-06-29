@@ -24,6 +24,7 @@ use EasySwoole\Redis\Redis;
 use wanghanwanghan\someUtils\control;
 use function GuzzleHttp\Psr7\uri_for;
 use EasySwoole\Component\Csp;
+
 class XinDongController extends ProvideBase
 {
     function onRequest(?string $action): ?bool
@@ -336,7 +337,7 @@ class XinDongController extends ProvideBase
         $entName = $this->getRequestData('entName', '');
         $year = $this->getRequestData('year', '');
         $userInputYear = explode(',', trim($year, ','));
-        if (count($userInputYear)>3) {
+        if (count($userInputYear) > 3) {
             return $this->writeJson(201, null, null, '只能最多请求三年的数据');
         }
         $beginYear = 2021;
@@ -368,7 +369,7 @@ class XinDongController extends ProvideBase
         } else {
             $f_info = EntDbFinance::create()
                 ->where('cid', $check->getAttr('id'))
-                ->where('ANCHEYEAR', [2021, 2020, 2019,2018,2017], 'IN')
+                ->where('ANCHEYEAR', [2021, 2020, 2019, 2018, 2017], 'IN')
                 ->field([
                     'ASSGRO',
                     'LIAGRO',
@@ -480,16 +481,16 @@ class XinDongController extends ProvideBase
                 ->where('cid', $check->getAttr('id'))
                 ->where('ANCHEYEAR', [2021, 2020, 2019], 'IN')
                 ->field([
-                            'ASSGRO',
-                            'LIAGRO',
-                            'MAIBUSINC',
-                            'NETINC',
-                            'PROGRO',
-                            'RATGRO',
-                            'TOTEQU',
-                            'VENDINC',
-                            'ANCHEYEAR',
-                        ])->all();
+                    'ASSGRO',
+                    'LIAGRO',
+                    'MAIBUSINC',
+                    'NETINC',
+                    'PROGRO',
+                    'RATGRO',
+                    'TOTEQU',
+                    'VENDINC',
+                    'ANCHEYEAR',
+                ])->all();
         }
 
         if (!empty($f_info)) {
@@ -590,16 +591,16 @@ class XinDongController extends ProvideBase
                 ->where('cid', $check->getAttr('id'))
                 ->where('ANCHEYEAR', [2021, 2020, 2019], 'IN')
                 ->field([
-                            'ASSGRO',
-                            'LIAGRO',
-                            'MAIBUSINC',
-                            'NETINC',
-                            'PROGRO',
-                            'RATGRO',
-                            'TOTEQU',
-                            'VENDINC',
-                            'ANCHEYEAR',
-                        ])->all();
+                    'ASSGRO',
+                    'LIAGRO',
+                    'MAIBUSINC',
+                    'NETINC',
+                    'PROGRO',
+                    'RATGRO',
+                    'TOTEQU',
+                    'VENDINC',
+                    'ANCHEYEAR',
+                ])->all();
         }
 
         if (!empty($f_info)) {
@@ -697,16 +698,16 @@ class XinDongController extends ProvideBase
                 ->where('cid', $check->getAttr('id'))
                 ->where('ANCHEYEAR', [2021, 2020, 2019], 'IN')
                 ->field([
-                            'ASSGRO',
-                            'LIAGRO',
-                            'MAIBUSINC',
-                            'NETINC',
-                            'PROGRO',
-                            'RATGRO',
-                            'TOTEQU',
-                            'VENDINC',
-                            'ANCHEYEAR',
-                        ])->all();
+                    'ASSGRO',
+                    'LIAGRO',
+                    'MAIBUSINC',
+                    'NETINC',
+                    'PROGRO',
+                    'RATGRO',
+                    'TOTEQU',
+                    'VENDINC',
+                    'ANCHEYEAR',
+                ])->all();
         }
 
         if (!empty($f_info)) {
@@ -1647,6 +1648,7 @@ class XinDongController extends ProvideBase
     {
         $postData = [
             'entName' => trim($this->getRequestData('entName')),
+            'version' => trim($this->getRequestData('version', 'A1')),
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
@@ -1820,7 +1822,8 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    public function get24Month(){
+    public function get24Month()
+    {
         $nsrsbh = $this->getRequestData('nsrsbh');
         $postData = [
             'nsrsbh' => $nsrsbh,
@@ -1868,12 +1871,13 @@ class XinDongController extends ProvideBase
 
         return $this->checkResponse($res);
     }
+
     //
     function getEntInfoByName(): bool
     {
-        $entName =  $this->getRequestData('entName'); 
-        if(!$entName){
-            return  $this->writeJson(201, null, null, '参数缺失(企业名称)');
+        $entName = $this->getRequestData('entName');
+        if (!$entName) {
+            return $this->writeJson(201, null, null, '参数缺失(企业名称)');
         }
 
         $entNames = [];
@@ -1882,23 +1886,23 @@ class XinDongController extends ProvideBase
         // 如果包含中文或者英文括号  需要中英文括号都查下
         if (
             strpos($entName, '）') !== false &&
-            strpos($entName, '（') !== false 
+            strpos($entName, '（') !== false
         ) {
-            $newEntName =  str_replace(['（','）'], ['(',')'], $entName);
+            $newEntName = str_replace(['（', '）'], ['(', ')'], $entName);
             $entNames[$newEntName] = $newEntName;
-        } 
+        }
 
         if (
             strpos($entName, ')') !== false &&
-            strpos($entName, '(') !== false 
+            strpos($entName, '(') !== false
         ) {
-            $newEntName =  str_replace(['(',')'], ['（','）'],  $entName);
+            $newEntName = str_replace(['(', ')'], ['（', '）'], $entName);
             $entNames[$newEntName] = $newEntName;
-        } 
+        }
 
         $this->csp->add($this->cspKey, function () use ($entNames) {
             return (new XinDongService())
-                ->getEntInfoByName($entNames) ;
+                ->getEntInfoByName($entNames);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
@@ -1911,34 +1915,34 @@ class XinDongController extends ProvideBase
 
     function matchCompanyByFuzzyName(): bool
     {
-        $entName =  $this->getRequestData('entName'); 
-        if(!$entName){
-            return  $this->writeJson(201, null, null, '参数缺失(企业名称)');
+        $entName = $this->getRequestData('entName');
+        if (!$entName) {
+            return $this->writeJson(201, null, null, '参数缺失(企业名称)');
         }
-        
+
         $entNames = [];
         $entNames[$entName] = $entName;
 
         // 如果包含中文或者英文括号  需要中英文括号都查下
         if (
             strpos($entName, '）') !== false &&
-            strpos($entName, '（') !== false 
+            strpos($entName, '（') !== false
         ) {
-            $newEntName =  str_replace(['（','）'], ['(',')'], $entName);
+            $newEntName = str_replace(['（', '）'], ['(', ')'], $entName);
             $entNames[$newEntName] = $newEntName;
-        } 
+        }
 
         if (
             strpos($entName, ')') !== false &&
-            strpos($entName, '(') !== false 
+            strpos($entName, '(') !== false
         ) {
-            $newEntName =  str_replace(['(',')'], ['（','）'],  $entName);
+            $newEntName = str_replace(['(', ')'], ['（', '）'], $entName);
             $entNames[$newEntName] = $newEntName;
-        } 
+        }
 
         $this->csp->add($this->cspKey, function () use ($entNames) {
             return (new XinDongService())
-                ->getEntInfoByName($entNames) ;
+                ->getEntInfoByName($entNames);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
@@ -1951,18 +1955,18 @@ class XinDongController extends ProvideBase
 
     function testCsp(): bool
     {
-        $timeStart = microtime(true);   
+        $timeStart = microtime(true);
 
-        $entName =  $this->getRequestData('entName'); 
-        if(!$entName){
-            return  $this->writeJson(201, null, null, '参数缺失(企业名称)');
+        $entName = $this->getRequestData('entName');
+        if (!$entName) {
+            return $this->writeJson(201, null, null, '参数缺失(企业名称)');
         }
 
-        $csp = new \EasySwoole\Component\Csp(); 
+        $csp = new \EasySwoole\Component\Csp();
 
         // for ($i=0; $i < 7; $i++) { 
         //     $csp->add('t'.$i, function () use ($i,$entName) {
-                
+
         //         $sql = "SELECT
         //                 id,`name`
         //             FROM
@@ -1984,27 +1988,27 @@ class XinDongController extends ProvideBase
         //         ];
         //     }); 
         // } 
-        for ($i=0; $i < 7; $i++) { 
-            $csp->add('t_'.$i, function () use ($i,$entName) {
-                
-                $arr = preg_split('/(?<!^)(?!$)/u', $entName );
+        for ($i = 0; $i < 7; $i++) {
+            $csp->add('t_' . $i, function () use ($i, $entName) {
+
+                $arr = preg_split('/(?<!^)(?!$)/u', $entName);
                 $matchStr = "";
-                if($arr[0] && $arr[1]){
-                    $matchStr .= '+'.$arr[0].$arr[1];
+                if ($arr[0] && $arr[1]) {
+                    $matchStr .= '+' . $arr[0] . $arr[1];
                 }
-                if($arr[2] && $arr[3]){
-                    $matchStr .= '+'.$arr[2].$arr[3];
+                if ($arr[2] && $arr[3]) {
+                    $matchStr .= '+' . $arr[2] . $arr[3];
                 }
-                if($arr[4] && $arr[5]){
-                    $matchStr .= '+'.$arr[4].$arr[5];
+                if ($arr[4] && $arr[5]) {
+                    $matchStr .= '+' . $arr[4] . $arr[5];
                 }
-                if($arr[6] && $arr[7]){
-                    $matchStr .= '+'.$arr[6].$arr[7];
+                if ($arr[6] && $arr[7]) {
+                    $matchStr .= '+' . $arr[6] . $arr[7];
                 }
-                if($arr[8] && $arr[9]){
-                    $matchStr .= '+'.$arr[8].$arr[9];
+                if ($arr[8] && $arr[9]) {
+                    $matchStr .= '+' . $arr[8] . $arr[9];
                 }
-                
+
                 $sql = "SELECT
                         id,`name`
                     FROM
@@ -2014,19 +2018,19 @@ class XinDongController extends ProvideBase
                         '$matchStr'    IN BOOLEAN MODE
                         )  
                     LIMIT 1";
-                $timeStart2 = microtime(true);   
+                $timeStart2 = microtime(true);
                 $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-                $timeEnd2 = microtime(true); 
-                $execution_time11 = ($timeEnd2 - $timeStart2); 
+                $timeEnd2 = microtime(true);
+                $execution_time11 = ($timeEnd2 - $timeStart2);
 
-                return  [
+                return [
                     $list,
                     $sql,
                     $execution_time11
                 ];
-            }); 
-        } 
-        $csp->add('t00', function () use ($entName) { 
+            });
+        }
+        $csp->add('t00', function () use ($entName) {
             $sql = "SELECT
                     id,`name`
                 FROM
@@ -2034,34 +2038,34 @@ class XinDongController extends ProvideBase
                 WHERE
                      `name` = '$entName'
                 LIMIT 1";
-            $timeStart2 = microtime(true);   
+            $timeStart2 = microtime(true);
             $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
-            $timeEnd2 = microtime(true); 
-            $execution_time11 = ($timeEnd2 - $timeStart2); 
-            return  [
+            $timeEnd2 = microtime(true);
+            $execution_time11 = ($timeEnd2 - $timeStart2);
+            return [
                 $list,
                 $sql,
                 $execution_time11
             ];
         });
         $res = ($csp->exec(3.5));
-         
-         CommonService::getInstance()->log4PHP('testCsp'.
-            json_encode( 
-                $res
-            ) );
 
-         
-        $timeEnd = microtime(true); 
-        $execution_time1 = ($timeEnd - $timeStart); 
-        return $this->writeJson(200, 
-        [
-          
-        ] 
-       , [
-           'Time' => 'Total Execution Time:'.$execution_time1.' 秒  |',
-           'data' => $res,
-       ], '成功', true, []); 
+        CommonService::getInstance()->log4PHP('testCsp' .
+            json_encode(
+                $res
+            ));
+
+
+        $timeEnd = microtime(true);
+        $execution_time1 = ($timeEnd - $timeStart);
+        return $this->writeJson(200,
+            [
+
+            ]
+            , [
+                'Time' => 'Total Execution Time:' . $execution_time1 . ' 秒  |',
+                'data' => $res,
+            ], '成功', true, []);
         // return $this->checkResponse($newres);
 
     }
