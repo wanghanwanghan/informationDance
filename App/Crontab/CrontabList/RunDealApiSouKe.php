@@ -20,6 +20,7 @@ use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\NewFinanceData;
+use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
@@ -150,7 +151,7 @@ class RunDealApiSouKe extends AbstractCronTask
             ->formatEsMoney()
         ;
 
-        foreach($companyEsModel->return_data['hits']['hits'] as &$dataItem){
+        foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
             $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmail($dataItem);
             $dataItem['_source']['last_postal_address'] = $addresAndEmailData['last_postal_address'];
             $dataItem['_source']['last_email'] = $addresAndEmailData['last_email'];
@@ -205,7 +206,7 @@ class RunDealApiSouKe extends AbstractCronTask
         //生成文件
         //生成xlsx 当前插件  暂时只能生成一万？ 调整后再改成xlsx的
         //self::generateFileExcel(3);
-        self::generateFileCsv(3);
+        self::generateFileCsvV2(3);
 
         //确认交付
         self::deliver(3);
@@ -213,6 +214,89 @@ class RunDealApiSouKe extends AbstractCronTask
         ConfigInfo::setIsDone(__CLASS__);
 
         return true ;   
+    }
+
+    function getYieldDataForSouKe($totalNums,$requestDataArr){
+
+        $datas = [];
+        $size = 100;
+        $offset = 0;
+        while ($totalNums > 0) {
+
+            $datas = [];
+            $companyEsModel = new \App\ElasticSearch\Model\Company();
+            $companyEsModel
+                //经营范围
+                ->SetQueryByBusinessScope($requestDataArr['basic_opscope'])
+                //数字经济及其核心产业
+                ->SetQueryByBasicSzjjid($requestDataArr['basic_szjjid'])
+                // 搜索文案 智能搜索
+                ->SetQueryBySearchText( $requestDataArr['searchText'])
+                // 搜索战略新兴产业
+                ->SetQueryByBasicJlxxcyid( $requestDataArr['basic_jlxxcyid']   )
+                // 搜索shang_pin_data 商品信息 appStr:五香;农庄
+                ->SetQueryByShangPinData( $requestDataArr['appStr']  )
+                //必须存在官网
+                ->SetQueryByWeb($requestDataArr['searchOption'])
+                //必须存在APP
+                ->SetQueryByApp($requestDataArr['searchOption'])
+                //必须是物流企业
+                ->SetQueryByWuLiuQiYe($requestDataArr['searchOption'])
+                // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索
+                ->SetQueryByCompanyOrgType($requestDataArr['searchOption'])
+                // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索
+                ->SetQueryByEstiblishTime($requestDataArr['searchOption'])
+                // 营业状态   传过来的是 10  20  转换成文案后 去匹配
+                ->SetQueryByRegStatus($requestDataArr['searchOption'])
+                // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
+                ->SetQueryByRegCaptial($requestDataArr['searchOption'])
+                // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
+                ->SetQueryByTuanDuiRenShu($requestDataArr['searchOption'])
+                // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
+                ->SetQueryByYingShouGuiMo($requestDataArr['searchOption'])
+                //四级分类 basic_nicid: A0111,A0112,A0113,
+                ->SetQueryBySiJiFenLei(    $requestDataArr['basic_nicid'] )
+                // 地区 basic_regionid: 110101,110102,
+                ->SetQueryByBasicRegionid(   $requestDataArr['basic_regionid']  )
+                ->addSize($size)
+                ->addFrom($offset)
+                //设置默认值 不传任何条件 搜全部
+                ->setDefault()
+                ->searchFromEs()
+                // 格式化下日期和时间
+                ->formatEsDate()
+                // 格式化下金额
+                ->formatEsMoney()
+            ;
+
+            foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
+                $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmail($dataItem);
+                $dataItem['_source']['last_postal_address'] = $addresAndEmailData['last_postal_address'];
+                $dataItem['_source']['last_email'] = $addresAndEmailData['last_email'];
+
+                $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntId($dataItem['_source']['xd_id']);
+
+                // 添加tag
+                $dataItem['_source']['tags'] = array_values(
+                    (new XinDongService())::getAllTagesByData(
+                        $dataItem['_source']
+                    )
+                );
+
+                // 官网
+                $webStr = trim($dataItem['_source']['web']);
+                if(!$webStr){
+                    yield $datas[] = $dataItem['_source'];
+                    continue;
+                }
+                $webArr = explode('&&&', $webStr);
+                !empty($webArr) && $dataItem['_source']['web'] = end($webArr);
+
+                yield $datas[] = $dataItem['_source'];
+            }
+
+            $totalNums -= $size;
+        }
     }
 
     //生成下载文件
@@ -457,6 +541,59 @@ class RunDealApiSouKe extends AbstractCronTask
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
+                    'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+                ])
+            );
+
+            //更新文件地址
+            DownloadSoukeHistory::setFilePath($InitData['id'],'/Static/Temp/',$filename);
+
+            //设置状态
+            DownloadSoukeHistory::setStatus(
+                $InitData['id'],DownloadSoukeHistory::$state_file_succeed
+            );
+            DownloadSoukeHistory::setTouchTime(
+                $InitData['id'],NULL
+            );
+        }
+
+        return true;
+    }
+    static function  generateFileCsvV2($limit){
+        $startMemory = memory_get_usage();
+        $allInitDatas =  DownloadSoukeHistory::findAllByConditionV2(
+            [
+                'status' => DownloadSoukeHistory::$state_init
+            ],
+            1
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+            ])
+        );
+
+        foreach($allInitDatas as $InitData){
+            DownloadSoukeHistory::setTouchTime(
+                $InitData['id'],date('Y-m-d H:i:s')
+            );
+
+            $filename = '搜客导出_'.date('YmdHis').'.csv';
+            self::setworkPath( TEMP_FILE_PATH );
+            $f = fopen(self::$workPath.$filename, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+            $featureArr = json_decode($InitData['feature'],true);
+            $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr);
+            foreach ($tmpXlsxDatas as $dataItem){
+                fputcsv($f, $dataItem);
+                $nums++;
+            }
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$nums' =>$nums,
                     'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
                 ])
             );
