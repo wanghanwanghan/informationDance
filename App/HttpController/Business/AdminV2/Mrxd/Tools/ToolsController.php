@@ -152,7 +152,7 @@ class ToolsController extends ControllerBase
         );
 
         foreach ($res['data'] as &$value){
-
+            $value['download_file_path'] = $value['download_file_name']?'/Static/Temp/'.$value['download_file_name'] : '';
         }
         return $this->writeJson(200,  [
             'page' => $page,
