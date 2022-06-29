@@ -1117,7 +1117,7 @@ class XinDongService extends ServiceBase
      * 注意：type：radio 单选  select 多选
      * 
     */
-    function getSearchOption($postData)
+    function getSearchOption($postData = [])
     {
         
         return  [
