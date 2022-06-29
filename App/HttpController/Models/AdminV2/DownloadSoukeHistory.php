@@ -17,7 +17,7 @@ class DownloadSoukeHistory extends ModelBase
     protected $tableName = 'download_souke_history';
 
     static  $state_init = 1;
-    static  $state_init_cname =  '初始';
+    static  $state_init_cname =  '文件生成中';
 
     static  $state_file_succeed = 10;
     static  $state_file_succeed_cname =  '文件生成成功';

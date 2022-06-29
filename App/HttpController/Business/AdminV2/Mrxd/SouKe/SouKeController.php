@@ -195,12 +195,7 @@ class SouKeController extends ControllerBase
         );
 
         foreach ($res['data'] as &$value){
-//            $value['upload_details'] = [];
-//            if(
-//                $value['upload_record_id']
-//            ){
-//                $value['upload_details'] = AdminUserFinanceUploadRecord::findById($value['upload_record_id'])->toArray();
-//            }
+            $value['status_cname'] = DownloadSoukeHistory::getStatusMap()[$value['status']];
         }
         return $this->writeJson(200,  [
             'page' => $page,
