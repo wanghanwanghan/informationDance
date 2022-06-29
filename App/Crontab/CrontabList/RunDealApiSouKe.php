@@ -107,6 +107,7 @@ class RunDealApiSouKe extends AbstractCronTask
     static function getYieldData($size,$offset,$requestDataArr){
         $datas = [];
         $companyEsModel = new \App\ElasticSearch\Model\Company();
+        $searchOption = json_decode($requestDataArr['searchOption'],true);
         $companyEsModel
             //经营范围
             ->SetQueryByBusinessScope($requestDataArr['basic_opscope'])
@@ -119,23 +120,23 @@ class RunDealApiSouKe extends AbstractCronTask
             // 搜索shang_pin_data 商品信息 appStr:五香;农庄
             ->SetQueryByShangPinData( $requestDataArr['appStr']  )
             //必须存在官网
-            ->SetQueryByWeb($requestDataArr['searchOption'])
+            ->SetQueryByWeb($searchOption)
             //必须存在APP
-            ->SetQueryByApp($requestDataArr['searchOption'])
+            ->SetQueryByApp($searchOption)
             //必须是物流企业
-            ->SetQueryByWuLiuQiYe($requestDataArr['searchOption'])
+            ->SetQueryByWuLiuQiYe($searchOption)
             // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索
-            ->SetQueryByCompanyOrgType($requestDataArr['searchOption'])
+            ->SetQueryByCompanyOrgType($searchOption)
             // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索
-            ->SetQueryByEstiblishTime($requestDataArr['searchOption'])
+            ->SetQueryByEstiblishTime($searchOption)
             // 营业状态   传过来的是 10  20  转换成文案后 去匹配
-            ->SetQueryByRegStatus($requestDataArr['searchOption'])
+            ->SetQueryByRegStatus($searchOption)
             // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
-            ->SetQueryByRegCaptial($requestDataArr['searchOption'])
+            ->SetQueryByRegCaptial($searchOption)
             // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
-            ->SetQueryByTuanDuiRenShu($requestDataArr['searchOption'])
+            ->SetQueryByTuanDuiRenShu($searchOption)
             // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
-            ->SetQueryByYingShouGuiMo($requestDataArr['searchOption'])
+            ->SetQueryByYingShouGuiMo($searchOption)
             //四级分类 basic_nicid: A0111,A0112,A0113,
             ->SetQueryBySiJiFenLei(    $requestDataArr['basic_nicid'] )
             // 地区 basic_regionid: 110101,110102,
@@ -217,7 +218,7 @@ class RunDealApiSouKe extends AbstractCronTask
     }
 
     function getYieldDataForSouKe($totalNums,$requestDataArr){
-
+        $searchOption = json_decode($requestDataArr['searchOption'],true);
         $datas = [];
         $size = 100;
         $offset = 0;
@@ -239,23 +240,23 @@ class RunDealApiSouKe extends AbstractCronTask
                 // 搜索shang_pin_data 商品信息 appStr:五香;农庄
                 ->SetQueryByShangPinData( $requestDataArr['appStr']  )
                 //必须存在官网
-                ->SetQueryByWeb($requestDataArr['searchOption'])
+                ->SetQueryByWeb($searchOption)
                 //必须存在APP
-                ->SetQueryByApp($requestDataArr['searchOption'])
+                ->SetQueryByApp($searchOption)
                 //必须是物流企业
-                ->SetQueryByWuLiuQiYe($requestDataArr['searchOption'])
+                ->SetQueryByWuLiuQiYe($searchOption)
                 // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索
-                ->SetQueryByCompanyOrgType($requestDataArr['searchOption'])
+                ->SetQueryByCompanyOrgType($searchOption)
                 // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索
-                ->SetQueryByEstiblishTime($requestDataArr['searchOption'])
+                ->SetQueryByEstiblishTime($searchOption)
                 // 营业状态   传过来的是 10  20  转换成文案后 去匹配
-                ->SetQueryByRegStatus($requestDataArr['searchOption'])
+                ->SetQueryByRegStatus($searchOption)
                 // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
-                ->SetQueryByRegCaptial($requestDataArr['searchOption'])
+                ->SetQueryByRegCaptial($searchOption)
                 // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
-                ->SetQueryByTuanDuiRenShu($requestDataArr['searchOption'])
+                ->SetQueryByTuanDuiRenShu($searchOption)
                 // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
-                ->SetQueryByYingShouGuiMo($requestDataArr['searchOption'])
+                ->SetQueryByYingShouGuiMo($searchOption)
                 //四级分类 basic_nicid: A0111,A0112,A0113,
                 ->SetQueryBySiJiFenLei(    $requestDataArr['basic_nicid'] )
                 // 地区 basic_regionid: 110101,110102,

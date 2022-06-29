@@ -218,7 +218,7 @@ class SouKeController extends ControllerBase
                     'field' => 'status',
                     'value' => AdminUserSoukeConfig::$state_init,
                     'operate' => '='
-                ] 
+                ]
             ],
             $requestData['page']
         );
