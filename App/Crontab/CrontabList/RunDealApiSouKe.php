@@ -203,7 +203,9 @@ class RunDealApiSouKe extends AbstractCronTask
         ConfigInfo::setIsRunning(__CLASS__);
 
         //生成文件
-        self::generateFile(3);
+        //生成xlsx 当前插件  暂时只能生成一万？ 调整后再改成xlsx的
+        //self::generateFileExcel(3);
+        self::generateFileCsv(3);
 
         //确认交付
         self::deliver(3);
@@ -214,7 +216,7 @@ class RunDealApiSouKe extends AbstractCronTask
     }
 
     //生成下载文件
-    static function  generateFile($limit){
+    static function  generateFileExcel($limit){
         $startMemory = memory_get_usage();
         $allInitDatas =  DownloadSoukeHistory::findAllByConditionV2(
              [
@@ -309,7 +311,133 @@ class RunDealApiSouKe extends AbstractCronTask
                         json_encode([
                             __CLASS__.__FUNCTION__ .__LINE__,
                             'number more than 1000 .  find left ' => [
-                                'size' => $left,  
+                                'size' => $left,
+                            ]
+                        ])
+                    );
+                    $tmpXlsxDatas = self::getYieldData($left,0,$featureArr);
+                    foreach ($tmpXlsxDatas as $dataItem){
+                        $fileObject ->data([$dataItem]);
+                    }
+                }
+            }
+
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+                ])
+            );
+            // 数据 1001 1 1000
+            $left = $featureArr['total_nums'] - ($maxPage)*1000 ;
+            $tmpXlsxDatas = self::getYieldData($left,0,$featureArr);
+            foreach ($tmpXlsxDatas as $dataItem){
+                $fileObject ->data([$dataItem]);
+            }
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+                ])
+            );
+            $format = new Format($fileHandle);
+            //单元格有\n解析成换行
+            $wrapStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->wrap()
+                ->toResource();
+
+            $fileObject->output();
+
+            //更新文件地址
+            DownloadSoukeHistory::setFilePath($InitData['id'],'/Static/Temp/',$filename);
+
+            //设置状态
+            DownloadSoukeHistory::setStatus(
+                $InitData['id'],DownloadSoukeHistory::$state_file_succeed
+            );
+            DownloadSoukeHistory::setTouchTime(
+                $InitData['id'],NULL
+            );
+        }
+
+        return true;
+    }
+    static function  generateFileCsv($limit){
+        $startMemory = memory_get_usage();
+        $allInitDatas =  DownloadSoukeHistory::findAllByConditionV2(
+            [
+                'status' => DownloadSoukeHistory::$state_init
+            ],
+            1
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+            ])
+        );
+
+        foreach($allInitDatas as $InitData){
+            DownloadSoukeHistory::setTouchTime(
+                $InitData['id'],date('Y-m-d H:i:s')
+            );
+
+            $filename = '搜客导出_'.date('YmdHis').'.xlsx';
+            $config=  [
+                'path' => TEMP_FILE_PATH // xlsx文件保存路径
+            ];
+
+            $featureArr = json_decode($InitData['feature'],true);
+            //每次从es拉取一千
+            $esSize = 1000;
+            $maxPage = floor($featureArr['total_nums']/$esSize);
+            //小于一千个 一次性取完
+            if($maxPage <= 0 ){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'number less than 1000 .  find all ' => [
+                            'size' => $featureArr['total_nums']
+                        ]
+                    ])
+                );
+                $tmpXlsxDatas = self::getYieldData($featureArr['total_nums'],0,$featureArr);
+                foreach ($tmpXlsxDatas as $dataItem){
+
+                }
+            }
+            //大于一千个
+            else{
+                //分页取 一次取1000个
+                for ($i=1 ; $i<= $maxPage ;$i++){
+                    $page = $i;
+                    $size = 1000;
+                    $offset = ($page-1)*$size;
+                    // 按页码数据
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            'number more than 1000 .  find by page ' => [
+                                'size' => 1000,
+                                'page' => $i,
+                                '$offset' => $offset,
+                            ]
+                        ])
+                    );
+                    $tmpXlsxDatas = self::getYieldData(1000,$offset,$featureArr);
+                    foreach ($tmpXlsxDatas as $dataItem){
+                        $fileObject ->data([$dataItem]);
+                    }
+                }
+                //剩余的
+                $left = $featureArr['total_nums'] - ($maxPage)*1000 ;
+                if($left){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            'number more than 1000 .  find left ' => [
+                                'size' => $left,
                             ]
                         ])
                     );

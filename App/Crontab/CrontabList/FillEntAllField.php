@@ -85,6 +85,12 @@ class FillEntAllField extends AbstractCronTask
                         @unlink(TEMP_FILE_PATH . 'success_' . $file);
                     }
                 }
+            }else{
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__.' stop run ',
+                    ])
+                );
             }
             closedir($dh);
             $this->crontabBase->removeOverlappingKey(self::getTaskName());
