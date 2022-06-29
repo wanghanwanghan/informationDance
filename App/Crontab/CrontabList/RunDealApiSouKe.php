@@ -384,6 +384,7 @@ class RunDealApiSouKe extends AbstractCronTask
             );
 
             $filename = '搜客导出_'.date('YmdHis').'.csv';
+            self::setworkPath( TEMP_FILE_PATH );
             $f = fopen(self::$workPath.$filename, "w");
             fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
 
