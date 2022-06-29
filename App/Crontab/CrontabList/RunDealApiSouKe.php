@@ -477,6 +477,89 @@ class RunDealApiSouKe extends AbstractCronTask
 
         return true;
     }
+
+    static function  generateFileExcelV2($limit){
+        $startMemory = memory_get_usage();
+        $allInitDatas =  DownloadSoukeHistory::findAllByConditionV2(
+            [
+                'status' => DownloadSoukeHistory::$state_init
+            ],
+            1
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+            ])
+        );
+
+        foreach($allInitDatas as $InitData){
+            DownloadSoukeHistory::setTouchTime(
+                $InitData['id'],date('Y-m-d H:i:s')
+            );
+
+            $filename = '搜客导出_'.date('YmdHis').'.xlsx';
+            $config=  [
+                'path' => TEMP_FILE_PATH // xlsx文件保存路径
+            ];
+            $excel = new \Vtiful\Kernel\Excel($config);
+            $fileObject = $excel->fileName($filename, 'sheet');
+            $fileHandle = $fileObject->getHandle();
+
+            $format = new Format($fileHandle);
+            $colorStyle = $format
+                ->fontColor(Format::COLOR_ORANGE)
+                ->border(Format::BORDER_DASH_DOT)
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+
+            $format = new Format($fileHandle);
+
+            $alignStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+
+            $fileObject
+                ->defaultFormat($colorStyle)
+                ->defaultFormat($alignStyle)
+            ;
+
+            $featureArr = json_decode($InitData['feature'],true);
+            $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr);
+            foreach ($tmpXlsxDatas as $dataItem){
+                $fileObject ->data([$dataItem]);
+            }
+
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+                ])
+            );
+
+            $format = new Format($fileHandle);
+            //单元格有\n解析成换行
+            $wrapStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->wrap()
+                ->toResource();
+
+            $fileObject->output();
+
+            //更新文件地址
+            DownloadSoukeHistory::setFilePath($InitData['id'],'/Static/Temp/',$filename);
+
+            //设置状态
+            DownloadSoukeHistory::setStatus(
+                $InitData['id'],DownloadSoukeHistory::$state_file_succeed
+            );
+            DownloadSoukeHistory::setTouchTime(
+                $InitData['id'],NULL
+            );
+        }
+
+        return true;
+    }
     static function  generateFileCsv($limit){
         $startMemory = memory_get_usage();
         $allInitDatas =  DownloadSoukeHistory::findAllByConditionV2(

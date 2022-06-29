@@ -2887,6 +2887,12 @@ eof;
         ){
             RunDealApiSouKe::generateFileCsvV2(1);
         }
+        if(
+            $this->getRequestData('generateFileExcelV2')
+        ){
+            RunDealApiSouKe::generateFileExcelV2(1);
+        }
+
 
         //确认交付
         if(
