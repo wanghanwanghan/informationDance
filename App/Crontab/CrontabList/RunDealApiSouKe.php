@@ -383,10 +383,9 @@ class RunDealApiSouKe extends AbstractCronTask
                 $InitData['id'],date('Y-m-d H:i:s')
             );
 
-            $filename = '搜客导出_'.date('YmdHis').'.xlsx';
-            $config=  [
-                'path' => TEMP_FILE_PATH // xlsx文件保存路径
-            ];
+            $filename = '搜客导出_'.date('YmdHis').'.csv';
+            $f = fopen(self::$workPath.$filename, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
 
             $featureArr = json_decode($InitData['feature'],true);
             //每次从es拉取一千
@@ -404,7 +403,7 @@ class RunDealApiSouKe extends AbstractCronTask
                 );
                 $tmpXlsxDatas = self::getYieldData($featureArr['total_nums'],0,$featureArr);
                 foreach ($tmpXlsxDatas as $dataItem){
-
+                    fputcsv($f, $dataItem);
                 }
             }
             //大于一千个
@@ -427,7 +426,7 @@ class RunDealApiSouKe extends AbstractCronTask
                     );
                     $tmpXlsxDatas = self::getYieldData(1000,$offset,$featureArr);
                     foreach ($tmpXlsxDatas as $dataItem){
-                        $fileObject ->data([$dataItem]);
+                        fputcsv($f, $dataItem);
                     }
                 }
                 //剩余的
@@ -443,7 +442,7 @@ class RunDealApiSouKe extends AbstractCronTask
                     );
                     $tmpXlsxDatas = self::getYieldData($left,0,$featureArr);
                     foreach ($tmpXlsxDatas as $dataItem){
-                        $fileObject ->data([$dataItem]);
+                        fputcsv($f, $dataItem);
                     }
                 }
             }
@@ -454,26 +453,6 @@ class RunDealApiSouKe extends AbstractCronTask
                     'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
                 ])
             );
-            // 数据 1001 1 1000
-            $left = $featureArr['total_nums'] - ($maxPage)*1000 ;
-            $tmpXlsxDatas = self::getYieldData($left,0,$featureArr);
-            foreach ($tmpXlsxDatas as $dataItem){
-                $fileObject ->data([$dataItem]);
-            }
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
-                ])
-            );
-            $format = new Format($fileHandle);
-            //单元格有\n解析成换行
-            $wrapStyle = $format
-                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
-                ->wrap()
-                ->toResource();
-
-            $fileObject->output();
 
             //更新文件地址
             DownloadSoukeHistory::setFilePath($InitData['id'],'/Static/Temp/',$filename);

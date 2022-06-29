@@ -2883,9 +2883,9 @@ eof;
         }
 
         if(
-            $this->getRequestData('generateFile')
+            $this->getRequestData('generateFileCsv')
         ){
-            RunDealApiSouKe::generateFile(1);
+            RunDealApiSouKe::generateFileCsv(1);
         }
 
         //确认交付
