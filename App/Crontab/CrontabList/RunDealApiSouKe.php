@@ -276,6 +276,7 @@ class RunDealApiSouKe extends AbstractCronTask
                     __CLASS__.__FUNCTION__ .__LINE__,
                     '$lastId' => $lastId,
                     '$totalNums' => $totalNums,
+                    '$fieldsArr' => $fieldsArr,
                     'generate data  . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
                     ' costs seconds '=>microtime(true) - $start
                 ])
