@@ -223,7 +223,7 @@ class RunDealApiSouKe extends AbstractCronTask
         $start = microtime(true);
         $searchOption = json_decode($requestDataArr['searchOption'],true);
         $datas = [];
-        $size = 2000;
+        $size = 5000;
         $offset = 0;
         $nums =1;
         $lastId = 0;
