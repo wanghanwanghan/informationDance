@@ -222,6 +222,7 @@ class RunDealApiSouKe extends AbstractCronTask
         $size = 100;
         $offset = 0;
         $nums =1;
+        $lastId = 0;
         while ($totalNums > 0) {
 
             $datas = [];
@@ -260,17 +261,21 @@ class RunDealApiSouKe extends AbstractCronTask
                 // 地区 basic_regionid: 110101,110102,
                 ->SetQueryByBasicRegionid(   $requestDataArr['basic_regionid']  )
                 ->addSize($size)
-                ->addFrom($offset)
+                //->addFrom($offset)
                 //设置默认值 不传任何条件 搜全部
                 ->setDefault()
                 ->searchFromEs()
-                // 格式化下日期和时间
-                ->formatEsDate()
-                // 格式化下金额
-                ->formatEsMoney()
-            ;
+                ->addSort("_id","desc");
+            if($lastId>0){
+                $companyEsModel->addSearchAfterV1($lastId);
+            }
+            // 格式化下日期和时间
+            $companyEsModel->formatEsDate()
+            // 格式化下金额
+                ->formatEsMoney();
 
             foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
+                $lastId = $dataItem['_id'];
                 $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmail($dataItem);
                 $dataItem['_source']['last_postal_address'] = $addresAndEmailData['last_postal_address'];
                 $dataItem['_source']['last_email'] = $addresAndEmailData['last_email'];
@@ -284,12 +289,12 @@ class RunDealApiSouKe extends AbstractCronTask
                     )
                 );
 
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        '$nums' => $nums
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        '$nums' => $nums
+//                    ])
+//                );
                 $nums ++;
 
                 // 官网

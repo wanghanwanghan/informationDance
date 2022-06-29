@@ -37,6 +37,19 @@ class Company extends ServiceBase
         $this->es->addFrom($offset) ;
         return $this;
     }
+    function addSearchAfterV1($value)
+    {
+
+        $this->es->addSearchAfterV1($value) ;
+        return $this;
+    }
+
+    function addSort($field,$desc)
+    {
+
+        $this->es->addSort($field,$desc) ;
+        return $this;
+    }
 
     function setReturnData($data)
     {

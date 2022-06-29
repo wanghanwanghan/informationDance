@@ -160,6 +160,11 @@ class ElasticSearchService extends ServiceBase
     function addSort($field,$desc){
         $this->query['sort'][] = [$field => ['order' => $desc]];
     }
+    function addSearchAfterV1($value){
+        $this->query['search_after'] = [$value];
+    }
+
+
     function setDefault(){
         if(empty($this->query['query']['bool']['must'])){
             $this->query =   
