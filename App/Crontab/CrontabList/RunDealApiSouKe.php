@@ -212,7 +212,7 @@ class RunDealApiSouKe extends AbstractCronTask
         //self::generateFileCsvV2(3);
 
         //确认交付
-//        self::deliver(3);
+        self::deliver(3);
         //设置为已执行完毕
         ConfigInfo::setIsDone(__CLASS__);
 
