@@ -43,6 +43,62 @@ class AdminUserSoukeConfig extends ModelBase
         ];
     }
 
+    static public function getAllFields(){
+        $fields = [
+            'xd_id' => 'id',
+            'base' => 'base',
+            'name' => '企业名',
+            'legal_person_id'=>'法人id',
+            'legal_person_name'=>'法人',
+            'legal_person_type' => '法人类型',
+            'reg_number' => '注册号',
+            'company_org_type' => '公司类型',
+            'reg_location' => '注册地',
+            'estiblish_time' =>'成立时间',
+            'from_time' => '开始日期',
+            'to_time' => '截至日期',
+            'business_scope' => '经营范围',
+            'reg_institute'=>'注册机构',
+            'approved_time' => 'approved_time',
+            'reg_status'=>'营业状态',
+            'reg_capital'=>'注册资本',
+            'actual_capital' => 'actual_capital',
+            'org_number'=>'org_number',
+            'org_approved_institute'=>'org_approved_institute',
+            'list_code' => 'list_code',
+            'property1' => '社会统一信用代码',
+            'property2' => 'property2',
+            'property3' => 'property3',
+            'property4' => 'property4',
+            'ying_shou_gui_mo'=>'营收规模',
+            'si_ji_fen_lei_code' => '四级分类',
+            'si_ji_fen_lei_full_name'=>'四级分类中文名',
+            'gong_si_jian_jie'=>'公司简介',
+            'gao_xin_ji_shu' => '高新技术',
+            'deng_ling_qi_ye' => '瞪羚企业',
+            'tuan_dui_ren_shu' => '团队人数',
+            'tong_xun_di_zhi'=>'通讯地址',
+            'web' => '官网',
+            'yi_ban_ren' => '一般人',
+            'shang_shi_xin_xi' => '商品信息',
+            'app' => 'APP',
+            'manager' => '经理',
+            'inv_type' => 'inv_type',
+            'inv'=>'inv',
+            'en_name' => 'en_name',
+            'email' => '邮箱',
+            'app_data'=>'主营产品',
+            'shang_pin_data'=>'商品',
+            'zlxxcy' => 'zlxxcy',
+            'szjjcy' => 'szjjcy',
+            'report_year'=>'report_year',
+            'jin_chu_kou' => '进出口',
+            'iso' => '高新技术',
+
+        ];
+        return $fields;
+    }
+
     static function  getAllowedFieldsArray($userId){
         $res = self::findByUser($userId);
         if(!$res){

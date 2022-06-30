@@ -220,6 +220,8 @@ class RunDealApiSouKe extends AbstractCronTask
     }
 
     function getYieldDataForSouKe($totalNums,$requestDataArr,$fieldsArr){
+        $filedCname = [];
+
         $startMemory = memory_get_usage();
         $start = microtime(true);
         $searchOption = json_decode($requestDataArr['searchOption'],true);
