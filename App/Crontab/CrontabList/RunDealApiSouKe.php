@@ -767,6 +767,13 @@ class RunDealApiSouKe extends AbstractCronTask
             $fieldsArr = AdminUserSoukeConfig::getAllowedFieldsArray($InitData['admin_id']);
             $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr,$fieldsArr);
             foreach ($tmpXlsxDatas as $dataItem){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'failed',
+                        '$requestData' => $dataItem['']
+                    ])
+                );
                 DeliverDetailsHistory::addRecordV2(
                     [
                         //用户
