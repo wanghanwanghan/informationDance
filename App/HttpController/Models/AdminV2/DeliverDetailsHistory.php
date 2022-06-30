@@ -63,7 +63,7 @@ class DeliverDetailsHistory extends ModelBase
     }
 
     public static function addRecordV2($requestData){
-        $oldRes = self::findByDeliverId($requestData['deliver_id']);
+        $oldRes = self::findByDeliverId($requestData['deliver_id'],$requestData['admin_id'],$requestData['entName']);
         if($oldRes){
             return  $oldRes->getAttr('id');
         }
@@ -127,13 +127,21 @@ class DeliverDetailsHistory extends ModelBase
         return $res;
     }
 
-    public static function findByDeliverId($deliver_id){
+    public static function findByDeliverId($deliver_id,$adminId,$entName){
         $res =  DeliverDetailsHistory::create()
             ->where('deliver_id',$deliver_id)
+            ->where('admin_id',$adminId)
+            ->where('entName',$entName)
             ->get();
         return $res;
     }
 
+    public static function findALLByDeliverId($deliver_id){
+        $res =  DeliverDetailsHistory::create()
+            ->where('deliver_id',$deliver_id)
+            ->all();
+        return $res;
+    }
     public static function findAllByAdminIdAndEntName($admin_id,$entName){
         $res =  DeliverDetailsHistory::create()
             ->where('admin_id',$admin_id)
