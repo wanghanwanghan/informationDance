@@ -221,11 +221,14 @@ class RunDealApiSouKe extends AbstractCronTask
 
     function getYieldDataForSouKe($totalNums,$requestDataArr,$fieldsArr){
         $filedCname = [];
-
+        $allFields = AdminUserSoukeConfig::getAllFields();
+        foreach ($fieldsArr as $field){
+            $filedCname[] = $allFields[$field];
+        }
         $startMemory = memory_get_usage();
         $start = microtime(true);
         $searchOption = json_decode($requestDataArr['searchOption'],true);
-        $datas = [];
+        $datas = [$filedCname];
         $size = 5000;
         $offset = 0;
         $nums =1;
@@ -768,15 +771,20 @@ class RunDealApiSouKe extends AbstractCronTask
             $featureArr = json_decode($InitData['feature'],true);
             $fieldsArr = AdminUserSoukeConfig::getAllowedFieldsArray($InitData['admin_id']);
             $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr,$fieldsArr);
+            $nums = 1;
             foreach ($tmpXlsxDatas as $dataItem){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        'failed',
-                        'xd_id' => $dataItem['xd_id'],
-                        'name' => $dataItem['name']
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        'xd_id' => $dataItem['xd_id'],
+//                        'name' => $dataItem['name']
+//                    ])
+//                );
+                //第一列是标题
+                if($nums == 1 ){
+                    $nums ++;
+                    continue;
+                }
                 DeliverDetailsHistory::addRecordV2(
                     [
                         //用户
@@ -792,6 +800,7 @@ class RunDealApiSouKe extends AbstractCronTask
                         'status' => DeliverDetailsHistory::$state_init,
                     ]
                 );
+                $nums ++;
             }
 
             //设置状态
