@@ -462,15 +462,35 @@ class SouKeController extends ControllerBase
      * */
     public function getDeliverLists(){
         $page = $this->request()->getRequestParam('page')??1;
+        $createdAtStr = $this->getRequestData('created_at');
+        $createdAtArr = explode('|||',$createdAtStr);
+        $whereArr = [];
+        if (
+            !empty($createdAtArr) &&
+            !empty($createdAtStr)
+        ) {
+            $whereArr = [
+                [
+                    'field' => 'created_at',
+                    'value' => strtotime($createdAtArr[0]),
+                    'operate' => '>=',
+                ],
+                [
+                    'field' => 'created_at',
+                    'value' => strtotime($createdAtArr[1]),
+                    'operate' => '<=',
+                ]
+            ];
+        }
+        $whereArr[] =   [
+            'field' => 'admin_id',
+            'value' => $this->loginUserinfo['id'],
+            'operate' => '=',
+        ];
+
         $res = DeliverHistory::findByConditionV2(
 
-            [
-                [
-                    'field' => 'admin_id',
-                    'value' => $this->loginUserinfo['id'],
-                    'operate' => '=',
-                ],
-            ],
+            $whereArr,
             $page
         );
 
