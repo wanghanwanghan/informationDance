@@ -170,10 +170,12 @@ class ElasticSearchService extends ServiceBase
         $this->query['_source'] = $filedsArr;
     }
     function setDefault(){
+        $size = $this->query['size']?:10;
+        $from = $this->query['from']?:0;
         if(empty($this->query['query']['bool']['must'])){
             $this->query =   
             //'{"size":"'.$this->query['size'].'","from":'.$this->query['from'].',"sort":[{"_id":{"order":"desc"}}],"query":{"bool":{"must":[{"match_all":{}}]}}}';
-            '{"size":10,"from":0,"sort":[{"_id":{"order":"desc"}}],"query":{"bool":{"must":[{"match_all":{}}]}}}';
+            '{"size":'.$size.',"from":'.$from.',"sort":[{"_id":{"order":"desc"}}],"query":{"bool":{"must":[{"match_all":{}}]}}}';
         }
     }
 
