@@ -202,12 +202,10 @@ class SouKeController extends ControllerBase
                 ]
             ];
         }
-        $whereArr[] =  [
-            [
-                'field' => 'admin_id',
-                'value' => $this->loginUserinfo['id'],
-                'operate' => '=',
-            ],
+        $whereArr[] =   [
+            'field' => 'admin_id',
+            'value' => $this->loginUserinfo['id'],
+            'operate' => '=',
         ];
         $res = DownloadSoukeHistory::findByConditionV2(
             $whereArr,
