@@ -144,6 +144,7 @@ class RunDealToolsFile extends AbstractCronTask
         $excel_read->openFile($xlsx_name)->openSheet();
 
         $datas = [];
+        $nums = 1;
         while (true) {
 
             $one = $excel_read->nextRow([
@@ -155,7 +156,11 @@ class RunDealToolsFile extends AbstractCronTask
             if (empty($one)) {
                 break;
             }
-
+            //第一行是标题  不是数据
+            if($nums==1){
+                $nums ++;
+                continue;
+            }
             $entname = self::strtr_func($one[0]);
 
             $retData =  (new LongXinService())
@@ -168,6 +173,7 @@ class RunDealToolsFile extends AbstractCronTask
             foreach($retData as $datautem){
                 yield $datas[] = array_values(array_merge(['comname' =>$entname],$datautem));
             }
+            $nums ++;
         }
     }
 
@@ -252,7 +258,7 @@ class RunDealToolsFile extends AbstractCronTask
     }
 
     //生成下载文件
-    static function  generateFile($limit){ 
+    static function  generateFile($limit){
         $allInitDatas =  ToolsUploadQueue::findBySql(
             " WHERE status = ".ToolsUploadQueue::$state_init.
                     " AND touch_time  IS NULL "
