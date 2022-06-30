@@ -698,11 +698,10 @@ class RunDealApiSouKe extends AbstractCronTask
     }
     static function  generateFileCsvV2($limit){
         $startMemory = memory_get_usage();
-        $allInitDatas =  DownloadSoukeHistory::findAllByConditionV2(
-            [
-                'status' => DownloadSoukeHistory::$state_init
-            ],
-            1
+        $allInitDatas =  DownloadSoukeHistory::findBySql(
+            " WHERE status = ".DownloadSoukeHistory::$state_init.
+                " AND touch_time IS NULL 
+                LIMIT $limit "
         );
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -753,10 +752,9 @@ class RunDealApiSouKe extends AbstractCronTask
 
     // 交付客户：生成细的交付记录
     static function  deliver($limit){
-        $allInitDatas =  DeliverHistory::findAllByCondition(
-            [
-                'status' => DeliverHistory::$state_init
-            ]
+        $allInitDatas =  DeliverHistory::findBySql(
+            " WHERE status = ".DeliverHistory::$state_init.
+            " AND touch_time IS NULL LIMIT $limit "
         );
 
         foreach($allInitDatas as $InitData){
@@ -764,32 +762,11 @@ class RunDealApiSouKe extends AbstractCronTask
                 $InitData['id'],date('Y-m-d H:i:s')
             );
 
-            //企业数据
-            $xlsxData = [];
-            //各项筛选条件
+             //各项筛选条件
             $featureArr = json_decode($InitData['feature'],true);
-            //最大页码
-            $maxPage = floor($featureArr['total_nums']/1000);
-            if($maxPage  > 1 ){
-                for ($i=1 ; $i<= $maxPage ;$i++){
-                    $page = $i;
-                    $size = 1000;
-                    $offset = ($page-1)*$size;
-                    // 数据
-                    $tmpXlsxDatas = self::getYieldData(1000,$offset,$featureArr);
-                    foreach ($tmpXlsxDatas as $dataItem){
-                        $xlsxData[] = $dataItem;
-                    }
-                }
-            }
-            //
-            $left = $featureArr['total_nums'] - ($maxPage)*1000 ;
-            $tmpXlsxDatas = self::getYieldData($left,0,$featureArr);
+            $fieldsArr = AdminUserSoukeConfig::getAllowedFieldsArray($InitData['admin_id']);
+            $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr,$fieldsArr);
             foreach ($tmpXlsxDatas as $dataItem){
-                $xlsxData[] = $dataItem;
-            }
-
-            foreach ($xlsxData as $date){
                 DeliverDetailsHistory::addRecordV2(
                     [
                         //用户
@@ -797,9 +774,9 @@ class RunDealApiSouKe extends AbstractCronTask
                         //交付记录id
                         'deliver_id' => $InitData['id'],
                         //企业id
-                        'ent_id' => $date['xd_id'],
+                        'ent_id' => $dataItem['xd_id'],
                         //企业名称
-                        'entName' => $date['name'],
+                        'entName' => $dataItem['name'],
                         //备注
                         'remark' => '',
                         'status' => DeliverDetailsHistory::$state_init,

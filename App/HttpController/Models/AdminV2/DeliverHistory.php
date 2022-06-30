@@ -152,4 +152,11 @@ class DeliverHistory extends ModelBase
             "$field" => $value,
         ]);
     }
+
+    public static function findBySql($where){
+        $Sql = "select * from   deliver_history   $where  " ;
+        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+
+        return $data;
+    }
 }
