@@ -185,6 +185,7 @@ class RunDealToolsFile extends AbstractCronTask
         $excel_read->openFile($xlsx_name)->openSheet();
 
         $datas = [];
+        $nums = 1;
         while (true) {
 
             $one = $excel_read->nextRow([
@@ -197,6 +198,12 @@ class RunDealToolsFile extends AbstractCronTask
                 break;
             }
 
+            //第一行是标题  不是数据
+            if($nums==1){
+                $nums ++;
+                continue;
+            }
+            $nums ++ ;
             //企业名称
             $value0 = self::strtr_func($one[0]);
             //手机号
@@ -229,6 +236,7 @@ class RunDealToolsFile extends AbstractCronTask
         $excel_read->openFile($xlsx_name)->openSheet();
 
         $datas = [];
+        $nums = 1;
         while (true) {
 
             $one = $excel_read->nextRow([
@@ -241,6 +249,12 @@ class RunDealToolsFile extends AbstractCronTask
                 break;
             }
 
+            //第一行是标题  不是数据
+            if($nums==1){
+                $nums ++;
+                continue;
+            }
+            $nums ++;
             //企业名称
             $value0 = self::strtr_func($one[0]);
             $value1 = self::strtr_func($one[1]);
@@ -327,13 +341,7 @@ class RunDealToolsFile extends AbstractCronTask
             foreach ($tmpXlsxDatas as $dataItem){
                 $fileObject ->data([$dataItem]);
             }
-
-//            $header = [];
-//            NewFinanceData::parseDataToXls(
-//                [
-//                    'path' => TEMP_FILE_PATH // xlsx文件保存路径
-//                ],$filename,$header,$xlsxData,'sheet1'
-//            );
+ 
 
             CommonService::getInstance()->log4PHP(
                 json_encode([
@@ -350,7 +358,7 @@ class RunDealToolsFile extends AbstractCronTask
                 ->toResource();
 
             $fileObject->output();
-            
+
             //更新文件地址
             ToolsUploadQueue::setDownloadFilePath($InitData['id'],$filename,'/Static/Temp/');
 
