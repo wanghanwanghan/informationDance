@@ -49,8 +49,8 @@ class ToolsController extends ControllerBase
 
         return $this->writeJson(200, [], [
             [
-                'name' => '根据企业名补全联系人模板（检测手机号）.xlsx',
-                'path' => '/Static/Template/url补全模板.xlsx',
+                'name' => '根据企业名补全联系人模板[检测手机号].xlsx',
+                'path' => '/Static/Template/根据企业名补全联系人模板[检测手机号].xlsx',
             ]
         ],'');
     }
