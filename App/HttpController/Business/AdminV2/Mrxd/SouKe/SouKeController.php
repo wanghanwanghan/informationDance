@@ -9,6 +9,7 @@ use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\DeliverDetailsHistory;
 use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\XinDong\XinDongService;
 
 class SouKeController extends ControllerBase
@@ -46,7 +47,14 @@ class SouKeController extends ControllerBase
         $size = $this->request()->getRequestParam('size')??10;
         $page = $this->request()->getRequestParam('page')??1;
         $offset  =  ($page-1)*$size;
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$offset' => $offset,
+                '$page'=>$page,
+                '$size'=>$size,
+            ])
+        );
         $companyEsModel
             //经营范围
             ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('basic_opscope')))

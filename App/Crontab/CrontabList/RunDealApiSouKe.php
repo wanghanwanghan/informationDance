@@ -237,7 +237,7 @@ class RunDealApiSouKe extends AbstractCronTask
             if($totalNums<$size){
                 $size = $totalNums;
             }
-            
+
             $companyEsModel = new \App\ElasticSearch\Model\Company();
             $companyEsModel
                 //经营范围
