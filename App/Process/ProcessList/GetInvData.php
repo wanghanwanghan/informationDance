@@ -144,6 +144,7 @@ class GetInvData extends ProcessBase
                 }
             }
         }
+
         foreach ($kprq as $key => $item) {
             if (!empty($item)) {
                 $kprq[$key] = strtotime($item);
