@@ -112,6 +112,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/updateConfigs', $prefix . 'updateConfigs');//修改配置
             $routeCollector->addRoute(['GET', 'POST'], '/getAllFields', $prefix . 'getAllFields');//获取全部字段
             $routeCollector->addRoute(['GET', 'POST'], '/deliverCustomerRoster', $prefix . 'deliverCustomerRoster');//确认交付客户
+            $routeCollector->addRoute(['GET', 'POST'], '/getDeliverDetails', $prefix . 'getDeliverDetails');//确认交付客户 getDeliverDetails
         });
 
         return true;

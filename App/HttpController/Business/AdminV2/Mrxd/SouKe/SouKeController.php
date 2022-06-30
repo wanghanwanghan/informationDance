@@ -6,6 +6,7 @@ use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;
 use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
 use App\HttpController\Models\AdminV2\DataModelExample;
+use App\HttpController\Models\AdminV2\DeliverDetailsHistory;
 use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Service\XinDong\XinDongService;
@@ -546,4 +547,56 @@ class SouKeController extends ControllerBase
         ], $res['data'],'成功');
     }
 
+
+    public function getDeliverDetails(){
+        $page = $this->request()->getRequestParam('page')??1;
+
+        $requestData =  $this->getRequestData();
+
+        $checkRes = DataModelExample::checkField(
+            [
+                'id' => [
+                    'not_empty' => 1,
+                    'field_name' => 'id',
+                    'err_msg' => '请指定记录',
+                ],
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
+        $createdAtStr = $this->getRequestData('created_at');
+        $createdAtArr = explode('|||',$createdAtStr);
+        $whereArr = [];
+
+        $whereArr[] =   [
+            'field' => 'admin_id',
+            'value' => $this->loginUserinfo['id'],
+            'operate' => '=',
+        ];
+        $whereArr[] =   [
+            'field' => 'deliver_id',
+            'value' => $requestData['id'],
+            'operate' => '=',
+        ];
+        $res = DeliverDetailsHistory::findByConditionV2(
+
+            $whereArr,
+            $page
+        );
+
+        //补全数据
+        foreach ($res['data'] as &$value){
+        }
+        return $this->writeJson(200,  [
+            'page' => $page,
+            'pageSize' =>10,
+            'total' => $res['total'],
+            'totalPage' =>  ceil( $res['total']/ 20 ),
+        ], $res['data'],'成功');
+    }
 }
