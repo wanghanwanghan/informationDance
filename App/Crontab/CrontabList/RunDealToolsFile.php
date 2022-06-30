@@ -160,7 +160,7 @@ class RunDealToolsFile extends AbstractCronTask
             }
             //第一行是标题  不是数据
             if($nums==1){
-                $nums ++; 
+                $nums ++;
                 yield $datas[] = [
                     '企业',
                     '联系人职位',
@@ -218,6 +218,18 @@ class RunDealToolsFile extends AbstractCronTask
             //第一行是标题  不是数据
             if($nums==1){
                 $nums ++;
+                yield $datas[] = [
+                    '企业名称',
+                    '手机号',
+                    '微信名',
+                    '联系人名称（疑似）',
+                    '职位（疑似）',
+                    '真实联系人',
+                    '实际职位',
+                    '匹配类型',
+                    '匹配子类型',
+                    '匹配值',
+                ];
                 continue;
             }
             $nums ++ ;
@@ -269,6 +281,12 @@ class RunDealToolsFile extends AbstractCronTask
             //第一行是标题  不是数据
             if($nums==1){
                 $nums ++;
+                yield $datas[] = [
+                    '企业模糊名称',
+                    '匹配结果1',
+                    '匹配结果2',
+                    '匹配结果3',
+                ];
                 continue;
             }
             $nums ++;
@@ -287,8 +305,8 @@ class RunDealToolsFile extends AbstractCronTask
 //            );
             yield $datas[] = [
                 $value0,
-                $value1,
-                $value2,
+                //$value1,
+                //$value2,
                 $tmpRes[0]['_source']['name'],
                 $tmpRes[1]['_source']['name'],
                 $tmpRes[2]['_source']['name'],
