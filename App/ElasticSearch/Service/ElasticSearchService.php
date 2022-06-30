@@ -178,6 +178,4 @@ class ElasticSearchService extends ServiceBase
             '{"size":'.$size.',"from":'.$from.',"sort":[{"_id":{"order":"desc"}}],"query":{"bool":{"must":[{"match_all":{}}]}}}';
         }
     }
-
-
 }

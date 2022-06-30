@@ -553,6 +553,7 @@ class RunDealApiSouKe extends AbstractCronTask
             $featureArr = json_decode($InitData['feature'],true);
             // get SouKe Config
             $fieldsArr = AdminUserSoukeConfig::getAllowedFieldsArray($InitData['admin_id']);
+            $fieldsArr[] = 'xd_id';
             $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr,$fieldsArr);
             foreach ($tmpXlsxDatas as $dataItem){
                 $fileObject ->data([$dataItem]);
@@ -726,6 +727,7 @@ class RunDealApiSouKe extends AbstractCronTask
 
             $featureArr = json_decode($InitData['feature'],true);
             $fieldsArr = AdminUserSoukeConfig::getAllowedFieldsArray($InitData['admin_id']);
+            $fieldsArr[] = 'xd_id';
             $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr,$fieldsArr);
             foreach ($tmpXlsxDatas as $dataItem){
                 fputcsv($f, $dataItem);
@@ -769,6 +771,7 @@ class RunDealApiSouKe extends AbstractCronTask
              //各项筛选条件
             $featureArr = json_decode($InitData['feature'],true);
             $fieldsArr = AdminUserSoukeConfig::getAllowedFieldsArray($InitData['admin_id']);
+            $fieldsArr[] = 'xd_id';
             $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr,$fieldsArr);
             $nums = 1;
             foreach ($tmpXlsxDatas as $dataItem){
