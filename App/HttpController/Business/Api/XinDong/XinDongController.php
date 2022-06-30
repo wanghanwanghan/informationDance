@@ -5,8 +5,10 @@ namespace App\HttpController\Business\Api\XinDong;
 use App\Crontab\CrontabList\RunDealApiSouKe;
 use App\Crontab\CrontabList\RunDealFinanceCompanyData;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNew;
+use App\Crontab\CrontabList\RunDealToolsFile;
 use App\Csp\Service\CspService;
 use App\HttpController\Models\AdminV2\NewFinanceData;
+use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Service\Common\CommonService;
@@ -2881,7 +2883,12 @@ eof;
             return $this->writeJson(200, null, [$filename], null, true, []);
 
         }
-
+        if(
+            $this->getRequestData('ToolsGenerateFile')
+        ){
+            RunDealToolsFile::generateFile(1);
+        }
+        //
         if(
             $this->getRequestData('generateFileCsv')
         ){

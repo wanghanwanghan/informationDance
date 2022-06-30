@@ -341,7 +341,6 @@ class RunDealToolsFile extends AbstractCronTask
             foreach ($tmpXlsxDatas as $dataItem){
                 $fileObject ->data([$dataItem]);
             }
- 
 
             CommonService::getInstance()->log4PHP(
                 json_encode([
