@@ -182,6 +182,8 @@ class SouKeController extends ControllerBase
      * */
     public function getExportLists(){
         $page = $this->request()->getRequestParam('page')??1;
+        $createdAtStr = $this->getRequestData('created_at');
+        $createdAtArr = explode('|||',$createdAtStr);
         $whereArr = [];
         if (
             !empty($createdAtArr) &&
@@ -207,7 +209,7 @@ class SouKeController extends ControllerBase
                 'operate' => '=',
             ],
         ];
-        $res = DownloadSoukeHistory::findByConditionV2( 
+        $res = DownloadSoukeHistory::findByConditionV2(
             $whereArr,
             $page
         );
