@@ -49,12 +49,16 @@ class ToolsController extends ControllerBase
 
         return $this->writeJson(200, [], [
             [
-                'name' => '根据企业名补全联系人模板[检测手机号].xlsx',
+                'name' => '根据企业名补全联系人模板[检测手机号]',
                 'path' => '/Static/Template/根据企业名补全联系人模板[检测手机号].xlsx',
             ],
             [
-                'name' => '模糊匹配企业名称模板.xlsx',
+                'name' => '模糊匹配企业名称模板',
                 'path' => '/Static/Template/模糊匹配企业名称模板.xlsx',
+            ],
+            [
+                'name' => '补全联系人姓名职位等信息[主要基于微信名和联系人库]',
+                'path' => '/Static/Template/补全联系人姓名职位等信息[主要基于微信名和联系人库].xlsx',
             ],
         ],'');
     }
@@ -64,7 +68,7 @@ class ToolsController extends ControllerBase
 
         return $this->writeJson(200, [], [
                 5   =>  '补全企业联系人信息(并检测手机状态)',
-                10  =>  '根据微信名匹配联系人及职位信息',
+                10  =>  '补全联系人姓名职位等信息(主要基于微信名和联系人库)',
                 15  =>  '模糊匹配企业名称',
 
         ],'');
