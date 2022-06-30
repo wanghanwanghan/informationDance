@@ -46,8 +46,8 @@ class CrontabService
         $this->FillEntAllField();//补全给筛选出的企业 <全字段>RunDealFinanceCompanyData
         $this->RunDealFinanceCompanyDataNew();//补全给筛选出的企业 <全字段>
         $this->RunJinCaiShuKeRWH();//金财数科通过任务号获取发票
-        //$this->RunDealApiSouKe();//新APi-搜客模块相关的定时
-        //$this->RunDealToolsFile();//新APi-搜客模块相关的定时
+        $this->RunDealApiSouKe();//新APi-搜客模块相关的定时
+        $this->RunDealToolsFile();//新APi-搜客模块相关的定时
         return true;
     }
 
