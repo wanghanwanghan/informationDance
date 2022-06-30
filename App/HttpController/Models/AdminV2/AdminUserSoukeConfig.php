@@ -46,7 +46,7 @@ class AdminUserSoukeConfig extends ModelBase
     static function  getAllowedFieldsArray($userId){
         $res = self::findByUser($userId);
         if(!$res){
-            return ["name"];
+            return ["xd_id","name"];
         }
         $fieldStr = $res->getAttr("allowed_fields");
         return json_decode($fieldStr,true);
