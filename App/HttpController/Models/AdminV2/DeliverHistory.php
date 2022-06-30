@@ -102,7 +102,7 @@ class DeliverHistory extends ModelBase
 
     //更新touch time
     public static function setTouchTime($id,$touchTime){
-        $info = AdminUserFinanceUploadRecord::findById($id);
+        $info = DeliverHistory::findById($id);
 
         return $info->update([
             'touch_time' => $touchTime,
