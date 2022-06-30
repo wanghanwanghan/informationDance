@@ -15,6 +15,7 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadDataRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadeRecord;
+use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
 use App\HttpController\Models\AdminV2\DeliverDetailsHistory;
 use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
@@ -27,6 +28,7 @@ use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use App\HttpController\Service\Sms\SmsService;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use EasySwoole\Mysqli\QueryBuilder;
+use Vtiful\Kernel\Format;
 use wanghanwanghan\someUtils\control;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Service\LongXin\LongXinService;
@@ -259,18 +261,23 @@ class RunDealToolsFile extends AbstractCronTask
 
     //生成下载文件
     static function  generateFile($limit){
+        $startMemory = memory_get_usage();
         $allInitDatas =  ToolsUploadQueue::findBySql(
             " WHERE status = ".ToolsUploadQueue::$state_init.
                     " AND touch_time  IS NULL "
         );
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+            ])
+        );
         foreach($allInitDatas as $InitData){
             ToolsUploadQueue::setTouchTime(
                 $InitData['id'],date('Y-m-d H:i:s')
             );
 
-            $xlsxData = [];
-
+            $tmpXlsxDatas = [];
             $pathinfo = pathinfo($InitData['upload_file_name']);
             $filename = $pathinfo['filename'].'_'.date('YmdHis').'.xlsx';
             $dirPath =  dirname($InitData['upload_file_path']).DIRECTORY_SEPARATOR;
@@ -293,17 +300,57 @@ class RunDealToolsFile extends AbstractCronTask
                 $tmpXlsxDatas = self::getYieldDataForFuzzyMatch($InitData['upload_file_name']);
             }
 
+            $config=  [
+                'path' => TEMP_FILE_PATH // xlsx文件保存路径
+            ];
+            $excel = new \Vtiful\Kernel\Excel($config);
+            $fileObject = $excel->fileName($filename, 'sheet');
+            $fileHandle = $fileObject->getHandle();
+
+            $format = new Format($fileHandle);
+            $colorStyle = $format
+                ->fontColor(Format::COLOR_ORANGE)
+                ->border(Format::BORDER_DASH_DOT)
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+
+            $format = new Format($fileHandle);
+
+            $alignStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+
+            $fileObject
+                ->defaultFormat($colorStyle)
+                ->defaultFormat($alignStyle)
+            ;
             foreach ($tmpXlsxDatas as $dataItem){
-                $xlsxData[] = $dataItem;
+                $fileObject ->data([$dataItem]);
             }
 
-            $header = [];
-            NewFinanceData::parseDataToXls(
-                [
-                    'path' => TEMP_FILE_PATH // xlsx文件保存路径
-                ],$filename,$header,$xlsxData,'sheet1'
+//            $header = [];
+//            NewFinanceData::parseDataToXls(
+//                [
+//                    'path' => TEMP_FILE_PATH // xlsx文件保存路径
+//                ],$filename,$header,$xlsxData,'sheet1'
+//            );
+
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+                ])
             );
 
+            $format = new Format($fileHandle);
+            //单元格有\n解析成换行
+            $wrapStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->wrap()
+                ->toResource();
+
+            $fileObject->output();
+            
             //更新文件地址
             ToolsUploadQueue::setDownloadFilePath($InitData['id'],$filename,'/Static/Temp/');
 
