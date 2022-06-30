@@ -160,7 +160,24 @@ class RunDealToolsFile extends AbstractCronTask
             }
             //第一行是标题  不是数据
             if($nums==1){
-                $nums ++;
+                $nums ++; 
+                yield $datas[] = [
+                    '企业',
+                    '联系人职位',
+                    '联系方式来源',
+                    '联系方式唯一标识',
+                    'ltype',
+                    '联系人姓名',
+                    '联系方式权重',
+                    '手机归属地/座机区号',
+                    '联系方式来源网页链接',
+                    '联系方式',
+                    '联系方式类型（手机/座机/邮箱）',
+                    'mobile_check_res',
+                    '手机号码状态',
+                    '职位'
+
+                ];
                 continue;
             }
             $entname = self::strtr_func($one[0]);
