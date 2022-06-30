@@ -173,4 +173,11 @@ class ToolsUploadQueue extends ModelBase
             "$field" => $value,
         ]);
     }
+
+    public static function findBySql($where){
+        $Sql = "select * from   tools_upload_queue   $where  " ;
+        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+
+        return $data;
+    }
 }

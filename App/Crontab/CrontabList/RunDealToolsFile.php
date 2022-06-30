@@ -252,12 +252,10 @@ class RunDealToolsFile extends AbstractCronTask
     }
 
     //生成下载文件
-    static function  generateFile($limit){
-
-        $allInitDatas =  ToolsUploadQueue::findAllByCondition(
-             [
-                 'status' => ToolsUploadQueue::$state_init
-             ]
+    static function  generateFile($limit){ 
+        $allInitDatas =  ToolsUploadQueue::findBySql(
+            " WHERE status = ".ToolsUploadQueue::$state_init.
+                    " AND touch_time  IS NULL "
         );
 
         foreach($allInitDatas as $InitData){
