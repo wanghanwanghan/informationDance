@@ -182,15 +182,33 @@ class SouKeController extends ControllerBase
      * */
     public function getExportLists(){
         $page = $this->request()->getRequestParam('page')??1;
-        $res = DownloadSoukeHistory::findByConditionV2(
-
-            [
+        $whereArr = [];
+        if (
+            !empty($createdAtArr) &&
+            !empty($createdAtStr)
+        ) {
+            $whereArr = [
                 [
-                    'field' => 'admin_id',
-                    'value' => $this->loginUserinfo['id'],
-                    'operate' => '=',
+                    'field' => 'created_at',
+                    'value' => strtotime($createdAtArr[0]),
+                    'operate' => '>=',
                 ],
+                [
+                    'field' => 'created_at',
+                    'value' => strtotime($createdAtArr[1]),
+                    'operate' => '<=',
+                ]
+            ];
+        }
+        $whereArr[] =  [
+            [
+                'field' => 'admin_id',
+                'value' => $this->loginUserinfo['id'],
+                'operate' => '=',
             ],
+        ];
+        $res = DownloadSoukeHistory::findByConditionV2( 
+            $whereArr,
             $page
         );
 
