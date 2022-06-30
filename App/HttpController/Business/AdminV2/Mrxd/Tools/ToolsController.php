@@ -51,7 +51,11 @@ class ToolsController extends ControllerBase
             [
                 'name' => '根据企业名补全联系人模板[检测手机号].xlsx',
                 'path' => '/Static/Template/根据企业名补全联系人模板[检测手机号].xlsx',
-            ]
+            ],
+            [
+                'name' => '模糊匹配企业名称模板.xlsx',
+                'path' => '/Static/Template/模糊匹配企业名称模板.xlsx',
+            ],
         ],'');
     }
 
