@@ -325,7 +325,7 @@ class FinanceController extends ControllerBase
             $page
         );
         foreach ($res['data'] as &$dataItem){
-            $dataItem['status_cname'] = AdminUserFinanceUploadRecord::getStatusMaps()[$dataItem['status']];
+            $dataItem['status_cname'] = AdminUserFinanceUploadRecordV3::getStatusMaps()[$dataItem['status']];
             $dataItem['if_can_download'] = AdminUserFinanceUploadRecord::ifCanDownload($dataItem['id'])?1:0;
         }
         return $this->writeJson(200,  [
