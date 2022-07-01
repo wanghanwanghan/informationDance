@@ -330,11 +330,11 @@ class AdminUserFinanceData extends ModelBase
             $resData = $res['result']['data'];
             $resOtherData = $res['result']['otherData'];
             CommonService::getInstance()->log4PHP(
-                json_encode([
+                @json_encode([
                     __CLASS__.__FUNCTION__ ,
                     ' $FinanceDataId ' =>$id,
                     '$financeConifgArr ' =>$financeConifgArr,
-                    'Pull From APi '=>$res,
+                    'Pull From APi '=>@$res,
                     '$postData'=>$postData,
                 ])
             );
