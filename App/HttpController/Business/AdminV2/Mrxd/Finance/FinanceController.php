@@ -356,7 +356,8 @@ class FinanceController extends ControllerBase
             if(
                 $value['upload_record_id']
             ){
-                $value['upload_details'] = AdminUserFinanceUploadRecord::findById($value['upload_record_id'])->toArray();
+                $obj  =AdminUserFinanceUploadRecord::findById($value['upload_record_id']);
+                $obj && $value['upload_details'] = $obj->toArray();
             }
         }
         return $this->writeJson(200,  [
