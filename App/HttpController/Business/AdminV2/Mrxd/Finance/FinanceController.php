@@ -1071,7 +1071,7 @@ class FinanceController extends ControllerBase
                         return $this->writeJson(201, null, [],  '设置具体收费时间失败，联系管理员');
                     }
 
-                    //设置缓存过期时间
+                    //收费了设置缓存过期时间
                     $res = AdminUserFinanceData::updateCacheEndDate(
                         $AdminUserFinanceUploadDataRecord['user_finance_data_id'],
                         date('Y-m-d H:i:s'),

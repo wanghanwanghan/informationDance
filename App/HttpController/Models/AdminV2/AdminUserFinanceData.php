@@ -364,8 +364,14 @@ class AdminUserFinanceData extends ModelBase
                 self::updateNeedsConfirm($id,1);
             }
 
-            //设置关系
+            //设置缓存过期时间
+            $res = AdminUserFinanceData::updateCacheEndDate(
+                $id,
+                date('Y-m-d H:i:s'),
+                $financeConifgArr['cache']
+            );
 
+            //设置关系
             self::updateNewFinanceDataId($id,$addRes);
             AdminUserChargeConfig::setDailyUsedNumsV2($financeData['user_id'],1);
 
