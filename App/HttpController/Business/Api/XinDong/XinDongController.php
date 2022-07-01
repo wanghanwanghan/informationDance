@@ -2893,7 +2893,7 @@ eof;
             $this->getRequestData('pullFinanceDataV3')
         ){
             RunDealFinanceCompanyDataNewV2::pullFinanceDataV3(1);
-        } 
+        }
 
         if(
             $this->getRequestData('checkConfirmV2')
