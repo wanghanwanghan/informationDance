@@ -74,7 +74,14 @@ class AdminUserFinanceConfig extends ModelBase
             '-' => 'J',
         ];
         foreach ($dataItem as $field => $num) {
-            $newData[$field] = strtr($num, $indexTable);
+            if(
+                in_array($field,['year','entName'])
+            ){
+                $newData[$field] = $num;
+            }
+            else{
+                $newData[$field] = strtr($num, $indexTable);
+            }
         }
 
         return $newData;
@@ -85,13 +92,20 @@ class AdminUserFinanceConfig extends ModelBase
         $ratio = FinanceRange::getInstance()->getRange('rangeRatio');
         $newData =[];
         foreach ($dataItem as $field => $val) {
-            if (in_array($field, $range[0], true) && is_numeric($val)) {
-                !is_numeric($val) ?: $val = $val * 10000;
-                $newData[$field] = (new LongXinService())->binaryFind($val, 0, count($range[1]) - 1, $range[1]);
-            } elseif (in_array($field, $ratio[0], true) && is_numeric($val)) {
-                $newData[$field] = (new LongXinService())->binaryFind($val, 0, count($ratio[1]) - 1, $ratio[1]);
-            } else {
-                $newData[$field] =   $val;
+            if(
+                in_array($field,['year','entName'])
+            ){
+                $newData[$field] = $val;
+            }
+            else{
+                if (in_array($field, $range[0], true) && is_numeric($val)) {
+                    !is_numeric($val) ?: $val = $val * 10000;
+                    $newData[$field] = (new LongXinService())->binaryFind($val, 0, count($range[1]) - 1, $range[1]);
+                } elseif (in_array($field, $ratio[0], true) && is_numeric($val)) {
+                    $newData[$field] = (new LongXinService())->binaryFind($val, 0, count($ratio[1]) - 1, $ratio[1]);
+                } else {
+                    $newData[$field] =   $val;
+                }
             }
         }
         return $newData;
