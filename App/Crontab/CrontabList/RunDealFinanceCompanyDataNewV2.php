@@ -329,7 +329,7 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                 $uploadRes['id']
             );
 
-            AdminUserFinanceExportDataQueue::updateStatusById($uploadRes['id'],AdminUserFinanceExportDataQueue::$state_data_all_set);
+            AdminUserFinanceExportDataQueue::updateStatusById($queueData['id'],AdminUserFinanceExportDataQueue::$state_data_all_set);
             AdminUserFinanceExportDataQueue::setTouchTime(
                 $queueData['id'],NULL
             );
