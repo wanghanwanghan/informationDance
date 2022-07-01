@@ -2367,12 +2367,17 @@ class LongXinService extends ServiceBase
                     '$value'=> $value
                 ])
             );
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__.__LINE__ ,
-                    'error'=> json_last_error()
-                ])
-            );
+            if(json_last_error()){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__.__LINE__ ,
+                        'error'=> json_last_error(),
+                        '5' => $val[5] ,
+                        '2'=>$val[2]
+                    ])
+                );
+            }
+
             array_push($origin[$year], $value);
         }
 
