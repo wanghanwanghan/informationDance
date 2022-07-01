@@ -334,7 +334,8 @@ class AdminUserFinanceData extends ModelBase
                     __CLASS__.__FUNCTION__ ,
                     ' $FinanceDataId ' =>$id,
                     '$financeConifgArr ' =>$financeConifgArr,
-                    'Pull From APi '=>$res
+                    'Pull From APi '=>$res,
+                    '$postData'=>$postData,
                 ])
             );
             //更新拉取时间
