@@ -87,7 +87,7 @@ class AdminUserFinanceConfig extends ModelBase
         return $newData;
     }
 
-    static function  formatchQvJian($dataItem){
+    static function  formatchQvJian($dataItem,$type =1 ){
         $range = FinanceRange::getInstance()->getRange('range');
         $ratio = FinanceRange::getInstance()->getRange('rangeRatio');
         $newData =[];
@@ -100,9 +100,22 @@ class AdminUserFinanceConfig extends ModelBase
             else{
                 if (in_array($field, $range[0], true) && is_numeric($val)) {
                     !is_numeric($val) ?: $val = $val * 10000;
-                    $newData[$field] = (new LongXinService())->binaryFind($val, 0, count($range[1]) - 1, $range[1]);
+                    $tmp = (new LongXinService())->binaryFind($val, 0, count($range[1]) - 1, $range[1]);
+                    if($type ==1 ){
+                        $newData[$field] = $tmp['name'];
+                    }
+                    if($type ==2){
+                        $newData[$field] = $tmp;
+                    }
+
                 } elseif (in_array($field, $ratio[0], true) && is_numeric($val)) {
-                    $newData[$field] = (new LongXinService())->binaryFind($val, 0, count($ratio[1]) - 1, $ratio[1]);
+                    $tmp =   (new LongXinService())->binaryFind($val, 0, count($ratio[1]) - 1, $ratio[1]);
+                    if($type ==1 ){
+                        $newData[$field] = $tmp['name'];
+                    }
+                    if($type ==2){
+                        $newData[$field] = $tmp;
+                    }
                 } else {
                     $newData[$field] =   $val;
                 }
