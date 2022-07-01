@@ -148,7 +148,7 @@ class JinCaiShuKeService extends ServiceBase
     }
     public function get24Month($nsrsbh)
     {
-        for ($i = 1; $i <= 24; $i++) {
+        for ($i = 1; $i <= 36; $i++) {
             $date      = date('Y-m', strtotime('-' . $i . ' month'));
             $startDate = $date . "-01";
             $endDate   = date('Y-m-d', strtotime("$startDate +1 month -1 day"));
