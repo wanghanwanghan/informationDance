@@ -2356,7 +2356,7 @@ class LongXinService extends ServiceBase
     private function NPMOMB($origin)
     {
         foreach ($origin as $year => $val) {
-            if (is_numeric($val[5]) && is_numeric($val[2]) && $val[2] !== 0) {
+            if (is_numeric($val[5]) && is_numeric($val[2]) && $val[2] !== 0 && $val[2] !== '0') {
                 $value = $val[5] / $val[2];
                 CommonService::getInstance()->log4PHP(
                     json_encode([
