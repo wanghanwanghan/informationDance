@@ -178,7 +178,7 @@ class FinanceController extends ControllerBase
             'type' => $requestData['type'] ? $requestData['type']: $info['type'],
             'single_year_charge_as_annual' => $requestData['single_year_charge_as_annual'] ? $requestData['single_year_charge_as_annual']: $info['single_year_charge_as_annual'],
             'allowed_total_years_num' => $requestData['allowed_total_years_num'] ? $requestData['allowed_total_years_num']: $info['allowed_total_years_num'],
-            'needs_confirm' => $requestData['needs_confirm'] ?
+            'needs_confirm' => isset($requestData['needs_confirm']) ?
                 $requestData['needs_confirm']: $info['needs_confirm'],
             'allowed_fields' => $requestData['allowed_fields'] ? $requestData['allowed_fields']: $info['allowed_fields'],
             'max_daily_nums' => $requestData['max_daily_nums'] ? $requestData['max_daily_nums']: $info['max_daily_nums'],
