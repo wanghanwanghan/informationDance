@@ -619,6 +619,9 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
             }
 
             //设置细的导出记录
+            $financeDatas = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordIdV3(
+                $uploadRes['user_id'],$uploadRes['id']
+            );
             foreach ($financeDatas as $dataItem){
                 $priceItem =    intval($dataItem['AdminUserFinanceUploadDataRecord']['real_price']);
                 //虽然有价格  但是并没实际收费 （比如本名单已经扣费过）
