@@ -6,6 +6,8 @@ use App\HttpController\Service\CreateConf;
 
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\LongXin\FinanceRange;
+use App\HttpController\Service\LongXin\LongXinService;
 
 class AdminUserFinanceConfig extends ModelBase
 {
@@ -13,9 +15,18 @@ class AdminUserFinanceConfig extends ModelBase
 
     protected $autoTimeStamp = true;
     protected $createTime = 'created_at';
-    protected $updateTime = 'updated_at'; 
+    protected $updateTime = 'updated_at';
 
 
+    // 1字典，2区间，3原始
+    static $type_zidian = 1;
+    static $type_zidian_cname = '字段';
+
+    static $type_qvjian = 2;
+    static $type_qvjian_cname =  '区间';
+
+    static $type_yuanshi = 3;
+    static $type_yuanshi_cname =  '原始';
 
     static $state_ok = 1;
     static $state_del = 5;
@@ -31,32 +42,59 @@ class AdminUserFinanceConfig extends ModelBase
         return $this;
     }
 
-
-    function checkExportYearsNumsV2(){
-
-        $info = self::getConfigByUserId($userid);
-        $data = $info->toArray();
-        if($data['allowed_total_years_num'] < $yearsNums){
-            return  CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'checkExportYearsNums   false',
-                    'params $userid '=> $userid,
-                    'params $yearsNums '=> $yearsNums,
-                    'allowed_total_years_num' =>$data['allowed_total_years_num'],
-                ])
-            );
+    static function  formatchYuanZhi($dataItem){
+        $newData =[];
+        foreach ($dataItem as $key=>$value){
+            if(
+                in_array($key,['year','entName'])
+            ){
+                $newData[$key] = $value;
+            }
+            else{
+                $newData[$key] = number_format($value,2);
+            }
         }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'checkExportYearsNums   true',
-                'params $userid '=> $userid,
-                'params $yearsNums '=> $yearsNums,
-                'allowed_total_years_num' =>$data['allowed_total_years_num'],
-            ])
-        );
-        return true ;
+        return $newData;
+    }
 
-        return $this;
+    static function  formatchZiDian($dataItem){
+        $newData =[];
+        $indexTable = [
+            '0' => 'O',
+            '1' => 'C',
+            '2' => 'E',
+            '3' => 'I',
+            '4' => 'G',
+            '5' => 'A',
+            '6' => 'H',
+            '7' => 'F',
+            '8' => 'D',
+            '9' => 'B',
+            '.' => '*',
+            '-' => 'J',
+        ];
+        foreach ($dataItem as $field => $num) {
+            $newData[$field] = strtr($num, $indexTable);
+        }
+
+        return $newData;
+    }
+
+    static function  formatchQvJian($dataItem){
+        $range = FinanceRange::getInstance()->getRange('range');
+        $ratio = FinanceRange::getInstance()->getRange('rangeRatio');
+        $newData =[];
+        foreach ($dataItem as $field => $val) {
+            if (in_array($field, $range[0], true) && is_numeric($val)) {
+                !is_numeric($val) ?: $val = $val * 10000;
+                $newData[$field] = (new LongXinService())->binaryFind($val, 0, count($range[1]) - 1, $range[1]);
+            } elseif (in_array($field, $ratio[0], true) && is_numeric($val)) {
+                $newData[$field] = (new LongXinService())->binaryFind($val, 0, count($ratio[1]) - 1, $ratio[1]);
+            } else {
+                $newData[$field] =   $val;
+            }
+        }
+        return $newData;
     }
 
 
@@ -178,5 +216,12 @@ class AdminUserFinanceConfig extends ModelBase
             ])
         );
         return true ;
+    }
+
+    public static function checkIfNeedsConfirm($userid){
+
+        $info = self::getConfigByUserId($userid);
+        $data = $info->toArray();
+        return $data['needs_confirm'] ;
     }
 }

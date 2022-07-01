@@ -5,6 +5,7 @@ namespace App\HttpController\Business\Api\XinDong;
 use App\Crontab\CrontabList\RunDealApiSouKe;
 use App\Crontab\CrontabList\RunDealFinanceCompanyData;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNew;
+use App\Crontab\CrontabList\RunDealFinanceCompanyDataNewV2;
 use App\Crontab\CrontabList\RunDealToolsFile;
 use App\Csp\Service\CspService;
 use App\HttpController\Models\AdminV2\NewFinanceData;
@@ -2869,35 +2870,41 @@ eof;
         if(
             $this->getRequestData('parseDataToDb')
         ){
-            RunDealFinanceCompanyDataNew::parseCompanyDataToDb(1);
+            RunDealFinanceCompanyDataNewV2::parseCompanyDataToDb(1);
         }
         if(
             $this->getRequestData('sendSmsWhenBalanceIsNotEnough')
         ){
-            RunDealFinanceCompanyDataNew::sendSmsWhenBalanceIsNotEnough(1);
+            RunDealFinanceCompanyDataNewV2::sendSmsWhenBalanceIsNotEnough(1);
         }
         if(
             $this->getRequestData('calculatePrice')
         ){
-            RunDealFinanceCompanyDataNew::calcluteFinancePrice(1);
+            RunDealFinanceCompanyDataNewV2::calcluteFinancePrice(1);
         }
 
         if(
             $this->getRequestData('pullFinanceDataV2')
         ){
-            RunDealFinanceCompanyDataNew::pullFinanceDataV2(1);
+            RunDealFinanceCompanyDataNewV2::pullFinanceDataV2(1);
         }
+
+        if(
+            $this->getRequestData('pullFinanceDataV3')
+        ){
+            RunDealFinanceCompanyDataNewV2::pullFinanceDataV3(1);
+        } 
 
         if(
             $this->getRequestData('checkConfirmV2')
         ){
-            RunDealFinanceCompanyDataNew::checkConfirmV2(1);
+            RunDealFinanceCompanyDataNewV2::checkConfirmV2(1);
         }
 
         if(
-            $this->getRequestData('exportFinanceDataV3')
+            $this->getRequestData('exportFinanceDataV4')
         ){
-            RunDealFinanceCompanyDataNew::exportFinanceDataV3(1);
+            RunDealFinanceCompanyDataNewV2::exportFinanceDataV4(1);
         }
 
         if(

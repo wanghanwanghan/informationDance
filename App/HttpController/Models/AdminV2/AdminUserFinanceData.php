@@ -39,6 +39,7 @@ class AdminUserFinanceData extends ModelBase
     static $statusConfirmedNo = 15;
     static $statusConfirmedNoCname = '已确认不需要';
 
+
     public static function getStatusCname(){
 
 
@@ -800,20 +801,12 @@ class AdminUserFinanceData extends ModelBase
     }
 
     public static function updateNeedsConfirm($id,$needs_confirm){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'updateNeedsConfirm   ',
-                'params $id,' => $id,
-                'params $needs_confirm' => $needs_confirm,
-            ])
-        );
         $info = self::findById($id);
         if(!$info ){
             return CommonService::getInstance()->log4PHP(
                 'updateStatus failed  $id 不存在'.$id
             );
         }
-
         return $info->update([
             'id' => $id,
             'needs_confirm' => $needs_confirm

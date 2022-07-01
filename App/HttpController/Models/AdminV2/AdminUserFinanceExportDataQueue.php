@@ -17,10 +17,10 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     protected $tableName = 'admin_user_finance_export_data_queue';
 
     static  $state_init = 1;
-    static  $state_init_cname =  '内容生成中';
+    static  $state_init_cname =  '处理中';//初始
 
-    static  $state_needs_confirm = 10;
-    static  $state_needs_confirm_cname =  '用户确认数据中';
+    static  $state_data_all_set = 15;
+    static  $state_data_all_set_cname =  '处理完成，文件生成中';
 
     static  $state_confirmed = 20;
     static  $state_confirmed_cname =  '文件生成中';
@@ -29,18 +29,15 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     static  $state_succeed_cname =  '文件生成成功';
 
     public static function getStatusMap(){
-
         return [
             self::$state_init => self::$state_init_cname,
-            self::$state_needs_confirm => self::$state_needs_confirm_cname,
-            self::$state_confirmed => self::$state_confirmed_cname,
+            self::$state_data_all_set=>self::$state_data_all_set_cname,
+            self::$state_confirmed=>self::$state_confirmed_cname,
             self::$state_succeed => self::$state_succeed_cname,
         ];
-
     }
 
     static  function  addRecordV2($info){
-
         if(
             self::findByBatch($info['batch'])
         ){
@@ -85,6 +82,15 @@ class AdminUserFinanceExportDataQueue extends ModelBase
         }
         return $res;
     }
+
+    public static function reducePriority($id,$nums){
+        $info = AdminUserFinanceUploadRecord::findById($id);
+
+        return $info->update([
+            'priority' => $info->getAttr('priority')+$nums,
+        ]);
+    }
+
 
     public static function findByCondition($whereArr,$limit){
         $res =  AdminUserFinanceExportDataQueue::create()

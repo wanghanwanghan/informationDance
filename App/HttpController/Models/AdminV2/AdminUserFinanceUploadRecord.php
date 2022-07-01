@@ -18,6 +18,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
     static $stateInit = 1;
     static $stateInitCname =  '文件待解析';
     static $stateParsed = 5;
+
     static $stateParsedCname =  '计算价格中';
     static $stateCalCulatedPrice = 10;
     static $stateCalCulatedPriceCname = '待组装数据';
@@ -231,6 +232,81 @@ class AdminUserFinanceUploadRecord extends ModelBase
         }
 
         return $returnDatas;
+    }
+
+
+    //yield 按行
+    public static function getAllFinanceDataByUploadRecordIdV3(
+        $userId,$uploadRecordId
+    ){
+        //允许的字段
+        $allowedFields = AdminUserFinanceUploadRecord::getAllowedFieldArray($uploadRecordId);
+
+        //类型 getType
+        $dataType = AdminUserFinanceUploadRecord::getType($uploadRecordId);
+        $AdminUserFinanceUploadDataRecords = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
+            $userId,$uploadRecordId
+        );
+
+        $returnDatas  = [];
+
+        //上传记录详情
+        foreach ($AdminUserFinanceUploadDataRecords as $AdminUserFinanceUploadDataRecord){
+            if($AdminUserFinanceUploadDataRecord['user_finance_data_id'] <= 0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ ,
+                        'finance_data_id < 0',
+                        'user_finance_data_id continue ' => $AdminUserFinanceUploadDataRecord['user_finance_data_id']
+                    ])
+                );
+                continue;
+            }
+
+            //对应的财务数据信息
+            $AdminUserFinanceData = AdminUserFinanceData::findById(
+                $AdminUserFinanceUploadDataRecord['user_finance_data_id']
+            )->toArray();
+
+            if($AdminUserFinanceData['finance_data_id'] <= 0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ ,
+                        'finance_data_id < 0',
+                        'finance_data_id' => $AdminUserFinanceData['finance_data_id']
+                    ])
+                );
+                continue;
+            }
+
+            //对应的实际财务数据
+            $NewFinanceData = NewFinanceData::findById(
+                $AdminUserFinanceData['finance_data_id']
+            )->toArray();
+
+            $NewFinanceData2 = self::resetArray($NewFinanceData,$allowedFields);
+
+            //原始值
+            if(AdminUserFinanceConfig::$type_yuanshi == $dataType){
+                $NewFinanceData2 = AdminUserFinanceConfig::formatchYuanZhi($NewFinanceData2);
+            }
+            //字典
+            if(AdminUserFinanceConfig::$type_zidian == $dataType){
+                $NewFinanceData2 = AdminUserFinanceConfig::formatchZiDian($NewFinanceData2);
+            }
+
+            //区间
+            if(AdminUserFinanceConfig::$type_qvjian == $dataType){
+                $NewFinanceData2 = AdminUserFinanceConfig::formatchQvJian($NewFinanceData2);
+            }
+
+            yield $returnDatas[] = [
+                'NewFinanceData' => $NewFinanceData2,
+                'AdminUserFinanceUploadDataRecord'=>$AdminUserFinanceUploadDataRecord,
+                'AdminUserFinanceData'=>$AdminUserFinanceData,
+            ];
+
+        }
     }
 
     static function  resetArray($rawArray,$allowedField){
@@ -495,6 +571,12 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
 
         return $arr;
+    }
+
+    static function  getType($uploadId){
+        $finance_config = self::getFinanceConfigArray($uploadId);
+
+        return $finance_config['type'];
     }
 
 

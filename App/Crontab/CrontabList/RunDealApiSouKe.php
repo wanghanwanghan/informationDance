@@ -231,7 +231,7 @@ class RunDealApiSouKe extends AbstractCronTask
         $datas = [$filedCname];
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__, 
+                __CLASS__.__FUNCTION__ .__LINE__,
                 '$datas' => $datas
             ])
         );

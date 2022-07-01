@@ -15,6 +15,7 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadDataRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadeRecord;
+use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecordV3;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\NewFinanceData;
@@ -35,7 +36,7 @@ use EasySwoole\RedisPool\Redis;
 
 
 
-class RunDealFinanceCompanyDataNew extends AbstractCronTask
+class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
 {
     public $crontabBase;
     public $filePath = ROOT_PATH . '/Static/Temp/';
@@ -145,7 +146,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
     {
         //防止重复跑
         if(
-            !ConfigInfo::checkCrontabIfCanRun("RunDealFinanceCompanyData2")
+            !ConfigInfo::checkCrontabIfCanRun(__CLASS__)
         ){
             return     CommonService::getInstance()->log4PHP(json_encode(
                 [
@@ -154,14 +155,13 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             ));
         }
 
-        return true;
         //设置为正在执行中
-        ConfigInfo::setIsRunning("RunDealFinanceCompanyData2");
+        ConfigInfo::setIsRunning(__CLASS__);
 
         //将客户名单解析到db
         self::parseCompanyDataToDb(3);
 
-        //计算价格|
+        //计算价格
         self::calcluteFinancePrice(3);
 
         //找到需要导出的 拉取财务数据
@@ -170,29 +170,29 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
         //找到需要导出的 设置为已确认
         self::checkConfirmV2(3);
 
-        //找到已确认完的 实际导出
-        //self::exportFinanceDataV3(3);
-        //TODO  改成按行的 防止内存溢出
+        //找到需要导出的 重新拉取财务数据
+        self::pullFinanceDataV3(3);
+
         self::exportFinanceDataV4(3);
 
         //发生提醒短信
         self::sendSmsWhenBalanceIsNotEnough();
 
         //设置为已执行完毕
-        ConfigInfo::setIsDone("RunDealFinanceCompanyData2");
+        ConfigInfo::setIsDone(__CLASS__);
 
         return true ;   
     }
 
-    //拉取财务数据
+    //拉取财务数据 需要确认的  先拉取 后扣费
     static function  pullFinanceDataV2($limit){
         //计算完价格的
         $allUploadRes =  AdminUserFinanceUploadRecord::findBySql(
             " WHERE 
             `status`  in (  
-                        ".AdminUserFinanceUploadRecord::$stateCalCulatedPrice. "  ,  
-                        ".AdminUserFinanceUploadRecord::$stateBalanceNotEnough. " ,
-                        ".AdminUserFinanceUploadRecord::$stateTooManyPulls. "  
+                        ".AdminUserFinanceUploadRecordV3::$stateCalCulatedPrice. "  ,  
+                        ".AdminUserFinanceUploadRecordV3::$stateBalanceNotEnough. " ,
+                        ".AdminUserFinanceUploadRecordV3::$stateTooManyPulls. "  
             )
              AND touch_time  IS Null
              ORDER BY priority ASC 
@@ -218,7 +218,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                     )
                 )
             ){
-                AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecord::$stateTooManyPulls);
+                AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateTooManyPulls);
                 AdminUserFinanceUploadRecord::reducePriority(
                     $uploadRes['id'],1
                 );
@@ -232,7 +232,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                     $uploadRes['money']
                 )
             ){
-                AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecord::$stateBalanceNotEnough);
+                AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateBalanceNotEnough);
 
                 //把优先级调低
                 AdminUserFinanceUploadRecord::reducePriority(
@@ -244,7 +244,14 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 return  false;
             }
 
-            //拉取财务数据
+            //不需要确认的  这阶段不拉取财务数据
+            if(
+                !AdminUserFinanceConfig::checkIfNeedsConfirm($uploadRes['user_id'])
+            ){
+                return AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateAllSet);
+            }
+
+            //需要确认的 先去拉取财务数据
             $pullFinanceDataByIdRes = AdminUserFinanceUploadRecord::pullFinanceDataById(
                 $uploadRes['id']
             );
@@ -263,12 +270,12 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             if(
                 AdminUserFinanceUploadRecord::checkIfNeedsConfirm($uploadRes['id'])
             ){
-                $res = AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecord::$stateNeedsConfirm);
+                $res = AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateNeedsConfirm);
 
             }
             //不需要确认
             else{
-                $res = AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecord::$stateConfirmed);
+                $res = AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateAllSet);
             }
 
             if(!$res){
@@ -292,9 +299,39 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
     }
 
 
+    //不需要确认的  先扣费 再拉取
+    static function  pullFinanceDataV3($limit){
+        $startMemory = memory_get_usage();
+        $queueDatas =  AdminUserFinanceExportDataQueue::findBySql(
+            " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_init. " 
+                    AND touch_time  IS Null  LIMIT $limit 
+            "
+        );
+        foreach($queueDatas as $queueData){
+            AdminUserFinanceExportDataQueue::setTouchTime(
+                $queueData['id'],date('Y-m-d H:i:s')
+            );
+
+            $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
+
+            //拉取财务数据
+            $pullFinanceDataByIdRes = AdminUserFinanceUploadRecord::pullFinanceDataById(
+                $uploadRes['id']
+            );
+
+            AdminUserFinanceExportDataQueue::updateStatusById($uploadRes['id'],AdminUserFinanceExportDataQueue::$state_data_all_set);
+            AdminUserFinanceExportDataQueue::setTouchTime(
+                $queueData['id'],NULL
+            );
+        }
+
+        return true;
+    }
+
+
     static function  checkConfirmV2($limit){
         $allUploadRes =  AdminUserFinanceUploadRecord::findBySql(
-            " WHERE `status` = ".AdminUserFinanceUploadRecord::$stateNeedsConfirm. " 
+            " WHERE `status` = ".AdminUserFinanceUploadRecordV3::$stateNeedsConfirm. " 
              AND touch_time  IS Null  LIMIT $limit 
             "
         );
@@ -304,17 +341,17 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 $uploadRes['id'],date('Y-m-d H:i:s')
             );
 
-            //要去确认
+            //尚未确认
             if(
                 AdminUserFinanceUploadRecord::checkIfNeedsConfirm($uploadRes['id'])
             ){
-                $res = AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecord::$stateNeedsConfirm);
+                // $res = AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateNeedsConfirm);
             }
-            //不需要确认
+            //确认完了
             else{
-                $res = AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecord::$stateConfirmed);
+                $res = AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateAllSet);
 
-                //重新计算下价格
+                //确认完了 重新计算下价格
                 $calRes = AdminUserFinanceUploadRecord::calAndSetMoney(
                     $uploadRes['id']
                 );
@@ -459,7 +496,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
     static function  exportFinanceDataV4($limit){
         $startMemory = memory_get_usage();
         $queueDatas =  AdminUserFinanceExportDataQueue::findBySql(
-            " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_init. " 
+            " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_data_all_set. " 
                     AND touch_time  IS Null  LIMIT $limit 
             "
         );
@@ -525,8 +562,6 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
 
             $fileObject->output();
             //===============================
-
-
 
             $res = AdminUserFinanceExportDataQueue::setFilePath(
                 $queueData['id'],
@@ -605,7 +640,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 if(!$AdminUserFinanceExportDataRecordId  ){
                     return  false;
                 }
-            }
+            } 
 
             $res = AdminUserFinanceExportDataQueue::updateStatusById(
                 $queueData['id'],
@@ -626,7 +661,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
     //计算价格
     static function  calcluteFinancePrice($limit){
         //已解析完的 尚未计算价格的
-        $where = " WHERE `status` = ".AdminUserFinanceUploadRecord::$stateParsed. " 
+        $where = " WHERE `status` = ".AdminUserFinanceUploadRecordV3::$stateParsed. " 
              AND touch_time IS Null  LIMIT $limit 
         ";
         $uploadRecords = AdminUserFinanceUploadRecord::findBySql(
@@ -649,12 +684,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                     $uploadRecord['id']
                 );
             }
-            $res = AdminUserFinanceUploadRecord::changeStatus(
-                $uploadRecord['id'],AdminUserFinanceUploadRecord::$stateCalCulatedPrice
-            );
-            if(!$res){
-                return false;
-            }
+
             //实际计算 需要收多少钱
             $res=  AdminUserFinanceUploadRecord::calAndSetMoney(
                 $uploadRecord['id']
@@ -662,6 +692,14 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
             if(!$res){
                 return false;
             }
+
+            $res = AdminUserFinanceUploadRecord::changeStatus(
+                $uploadRecord['id'],AdminUserFinanceUploadRecordV3::$stateCalCulatedPrice
+            );
+            if(!$res){
+                return false;
+            }
+
             AdminUserFinanceUploadRecord::setTouchTime(
                 $uploadRecord['id'], NULL
             );
@@ -793,9 +831,10 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
     static function  parseCompanyDataToDb($limit){
         // 待解析的客户名单
         $where = " WHERE 
-                    `status` = ".AdminUserFinanceUploadRecord::$stateInit. " 
+                    `status` = ".AdminUserFinanceUploadRecordV3::$stateInit. " 
                     AND touch_time  IS NULL   
                     LIMIT $limit 
+                    ORDER By priority ASC
         ";
         $uploadRecords = AdminUserFinanceUploadRecord::findBySql(
             $where
@@ -856,7 +895,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
                 }
             }
             AdminUserFinanceUploadRecord::changeStatus(
-                $uploadRecord['id'],AdminUserFinanceUploadRecord::$stateParsed
+                $uploadRecord['id'],AdminUserFinanceUploadRecordV3::$stateParsed
             );
 
             AdminUserFinanceUploadRecord::setTouchTime(
