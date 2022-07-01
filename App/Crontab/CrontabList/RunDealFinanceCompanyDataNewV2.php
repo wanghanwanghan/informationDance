@@ -514,7 +514,12 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
             AdminUserFinanceExportDataQueue::setTouchTime(
                 $queueData['id'],date('Y-m-d H:i:s')
             );
-
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'AdminUserFinanceExportDataQueue  addRecord  failed ' ,
+                    'params upload_record_id ' =>$queueData['upload_record_id']
+                ])
+            );
             $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
 
             //财务数据
