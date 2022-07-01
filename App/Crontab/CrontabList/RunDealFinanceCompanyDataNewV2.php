@@ -535,6 +535,12 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
             $config=  [
                 'path' => TEMP_FILE_PATH // xlsx文件保存路径
             ];
+            $allowedFields = AdminUserFinanceUploadRecord::getAllowedFieldArray($queueData['upload_record_id']);
+             $allFields = NewFinanceData::getFieldCname(true);
+            $titles =[];
+            foreach ($allowedFields as $field){
+              $titles[] = $allFields[$field];
+             }
 
             $excel = new \Vtiful\Kernel\Excel($config);
             $fileObject = $excel->fileName($filename, 'sheet');
@@ -555,6 +561,7 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
 
             $fileObject
                 ->defaultFormat($colorStyle)
+                ->header($titles)
                 ->defaultFormat($alignStyle)
             ;
 
