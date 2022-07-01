@@ -285,19 +285,42 @@ class AdminUserFinanceUploadRecord extends ModelBase
             )->toArray();
 
             $NewFinanceData2 = self::resetArray($NewFinanceData,$allowedFields);
-
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ ,
+                    '$NewFinanceData2' => $NewFinanceData2
+                ])
+            );
             //原始值
             if(AdminUserFinanceConfig::$type_yuanshi == $dataType){
                 $NewFinanceData2 = AdminUserFinanceConfig::formatchYuanZhi($NewFinanceData2);
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ ,
+                        'raw $NewFinanceData2' => $NewFinanceData2
+                    ])
+                );
             }
             //字典
             if(AdminUserFinanceConfig::$type_zidian == $dataType){
                 $NewFinanceData2 = AdminUserFinanceConfig::formatchZiDian($NewFinanceData2);
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ ,
+                        'zidian $NewFinanceData2' => $NewFinanceData2
+                    ])
+                );
             }
 
             //区间
             if(AdminUserFinanceConfig::$type_qvjian == $dataType){
                 $NewFinanceData2 = AdminUserFinanceConfig::formatchQvJian($NewFinanceData2);
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ ,
+                        'qvjian $NewFinanceData2' => $NewFinanceData2
+                    ])
+                );
             }
 
             yield $returnDatas[] = [
@@ -431,7 +454,14 @@ class AdminUserFinanceUploadRecord extends ModelBase
     public static function updateMoneyById(
         $id,$money
     ){
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                'updateMoneyById ',
+                'id' => $id,
+                '$money' => $money
+            ])
+        );
         $info = self::findById($id);
         return $info->update([
             'id' => $id,

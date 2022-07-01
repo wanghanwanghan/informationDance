@@ -514,12 +514,7 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
             AdminUserFinanceExportDataQueue::setTouchTime(
                 $queueData['id'],date('Y-m-d H:i:s')
             );
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'AdminUserFinanceExportDataQueue  addRecord  failed ' ,
-                    'params upload_record_id ' =>$queueData['upload_record_id']
-                ])
-            );
+
             $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
 
             //财务数据
@@ -587,10 +582,6 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                 return  false;
             }
 
-            $financeDatas = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordIdV2(
-                $uploadRes['user_id'],$uploadRes['id']
-            );
-
             // 设置导出记录
             $money = $uploadRes['money'];
             //虽然有价格  但是并没实际收费 （比如本名单已经扣费过）
@@ -629,11 +620,7 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
 
             //设置细的导出记录
             foreach ($financeDatas as $dataItem){
-
-                $AdminUserFinanceUploadDataRecord = AdminUserFinanceUploadDataRecord::findById(
-                    $dataItem['AdminUserFinanceUploadDataRecord']['id']
-                )->toArray();
-                $priceItem =    intval($AdminUserFinanceUploadDataRecord['real_price']);
+                $priceItem =    intval($dataItem['AdminUserFinanceUploadDataRecord']['real_price']);
                 //虽然有价格  但是并没实际收费 （比如本名单已经扣费过）
                 if(
                     $queueData['real_charge'] == 0
@@ -642,11 +629,11 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                 }
                 $AdminUserFinanceExportDataRecordId = AdminUserFinanceExportDataRecord::addRecordV2(
                     [
-                        'user_id' => $AdminUserFinanceUploadDataRecord['user_id'],
+                        'user_id' => $dataItem['AdminUserFinanceUploadDataRecord']['user_id'],
                         'export_record_id' => $AdminUserFinanceExportRecordId,
                         'upload_data_id' =>   $dataItem['AdminUserFinanceUploadDataRecord']['id'],
                         'price' => $priceItem,
-                        'detail' => $AdminUserFinanceUploadDataRecord['price_type_remark']?:'',
+                        'detail' => $dataItem['AdminUserFinanceUploadDataRecord']['price_type_remark']?:'',
                         'batch' => $queueData['id'].'_'.  $dataItem['AdminUserFinanceUploadDataRecord']['id'],
                         'queue_id' => $queueData['id'],
                         'status' => AdminUserFinanceExportRecord::$stateInit,
@@ -655,7 +642,7 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                 if(!$AdminUserFinanceExportDataRecordId  ){
                     return  false;
                 }
-            } 
+            }
 
             $res = AdminUserFinanceExportDataQueue::updateStatusById(
                 $queueData['id'],

@@ -214,7 +214,7 @@ class AdminUserChargeConfig extends ModelBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ ,
-                'retrun '=>$res,
+                'checkIfCanRun retrun '=>$res,
                 '$userId'=>$userId,
                 '$aimNums'=>$aimNums,
                 '$DailyMaxNums' =>$DailyMaxNums,

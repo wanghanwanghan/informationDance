@@ -976,7 +976,12 @@ class FinanceController extends ControllerBase
         //先扣费
         //本名单之前是否扣费过
         $chargeBefore = AdminUserFinanceUploadRecord::ifHasChargeBefore($uploadRes['id']);
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                '$chargeBefore  '=> $chargeBefore
+            ])
+        );
         // ===============
         // 实际扣费了
         $price = 0;
