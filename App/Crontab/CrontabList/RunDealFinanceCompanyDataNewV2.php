@@ -248,7 +248,19 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
             if(
                 !AdminUserFinanceConfig::checkIfNeedsConfirm($uploadRes['user_id'])
             ){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .' 不需要确认   '.$uploadRes['user_id'],
+                    ])
+                );
                 return AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateAllSet);
+            }
+            else{
+                return CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .' 需要确认 '.$uploadRes['user_id'],
+                    ])
+                );
             }
 
             //需要确认的 先去拉取财务数据
