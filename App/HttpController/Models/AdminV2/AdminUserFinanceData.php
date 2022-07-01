@@ -326,6 +326,13 @@ class AdminUserFinanceData extends ModelBase
         );
         //需要从APi拉取
         if($getFinanceDataSourceDetailRes['pullFromApi']){
+            CommonService::getInstance()->log4PHP(
+                @json_encode([
+                    __CLASS__.__FUNCTION__ ,
+                    ' pullFromApi $FinanceDataId ' =>$id,
+                    '$postData' =>$postData,
+                ])
+            );
             $res = (new LongXinService())->getFinanceData($postData, false);
             $resData = $res['result']['data'];
             $resOtherData = $res['result']['otherData'];
@@ -345,6 +352,13 @@ class AdminUserFinanceData extends ModelBase
             $dbDataArr['entName'] = $financeData['entName'];
             $dbDataArr['year'] = $financeData['year'];
             $dbDataArr['raw_return'] = @json_encode($resData);
+            CommonService::getInstance()->log4PHP(
+                @json_encode([
+                    __CLASS__.__FUNCTION__ ,
+                    '  $FinanceDataId ' =>$id,
+                    'NewFinanceData addRecordV2' =>$dbDataArr,
+                ])
+            );
             $addRes = NewFinanceData::addRecordV2($dbDataArr);
             if(!$addRes){
                 return CommonService::getInstance()->log4PHP(
@@ -378,6 +392,12 @@ class AdminUserFinanceData extends ModelBase
 
         }
         else{
+            CommonService::getInstance()->log4PHP(
+                @json_encode([
+                    __CLASS__.__FUNCTION__ ,
+                    ' pullFromDB $FinanceDataId ' =>$id,
+                ])
+            );
             //设置关系
             self::updateNewFinanceDataId($id,$getFinanceDataSourceDetailRes['NewFinanceDataId']);
             //设置是否需要确认
