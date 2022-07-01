@@ -241,6 +241,11 @@ class AdminUserFinanceUploadRecord extends ModelBase
     ){
         //允许的字段
         $allowedFields = AdminUserFinanceUploadRecord::getAllowedFieldArray($uploadRecordId);
+        $allFields = NewFinanceData::getFieldCname(true);
+        $titles =[];
+        foreach ($allowedFields as $field){
+            $titles[] = $allFields[$field];
+        }
 
         //类型 getType
         $dataType = AdminUserFinanceUploadRecord::getType($uploadRecordId);
@@ -248,8 +253,16 @@ class AdminUserFinanceUploadRecord extends ModelBase
             $userId,$uploadRecordId
         );
 
-        $returnDatas  = [];
-
+        $returnDatas  = [$titles];
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                '$xlsx_title'=>[
+                    $returnDatas,
+                    $titles
+                ],
+            ])
+        );
         //上传记录详情
         foreach ($AdminUserFinanceUploadDataRecords as $AdminUserFinanceUploadDataRecord){
             if($AdminUserFinanceUploadDataRecord['user_finance_data_id'] <= 0){
