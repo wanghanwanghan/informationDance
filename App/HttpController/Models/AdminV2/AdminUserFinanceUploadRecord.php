@@ -288,7 +288,8 @@ class AdminUserFinanceUploadRecord extends ModelBase
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ ,
-                    '$NewFinanceData2' => $NewFinanceData2
+                    '$NewFinanceData2' => $NewFinanceData2,
+                    '$dataType' =>$dataType,
                 ])
             );
             //原始值
