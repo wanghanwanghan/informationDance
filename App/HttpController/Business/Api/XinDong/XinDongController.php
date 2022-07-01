@@ -2906,6 +2906,18 @@ eof;
         ){
             RunDealFinanceCompanyDataNewV2::exportFinanceDataV4(1);
         }
+        if(
+            $this->getRequestData('getFinanceDataXX')
+        ){
+            $res = (new LongXinService())->getFinanceData([
+                        "entName"=>"乌海市源来煤业有限公司",
+                        "code"=> "",
+                        "beginYear"=> 2019,
+                        "dataCount"=> 1
+            ], false);
+            return $this->writeJson(200, null, $res, null, true, []);
+        } 
+
 
         if(
             $this->getRequestData('matchByName')
