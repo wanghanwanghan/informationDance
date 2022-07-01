@@ -832,9 +832,9 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
         // 待解析的客户名单
         $where = " WHERE 
                     `status` = ".AdminUserFinanceUploadRecordV3::$stateInit. " 
-                    AND touch_time  IS NULL   
-                    LIMIT $limit 
-                    ORDER By priority ASC
+                    AND touch_time  IS NULL  
+                    ORDER By priority ASC 
+                    LIMIT $limit  
         ";
         $uploadRecords = AdminUserFinanceUploadRecord::findBySql(
             $where
