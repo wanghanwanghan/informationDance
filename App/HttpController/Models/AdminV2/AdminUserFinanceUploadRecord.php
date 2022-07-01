@@ -293,15 +293,13 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 ])
             );
             //原始值
-            if(AdminUserFinanceConfig::$type_yuanshi == $dataType){
-                $NewFinanceData2 = AdminUserFinanceConfig::formatchYuanZhi($NewFinanceData2);
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ ,
-                        'raw $NewFinanceData2' => $NewFinanceData2
-                    ])
-                );
-            }
+            $NewFinanceData2 = AdminUserFinanceConfig::formatchYuanZhi($NewFinanceData2);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ ,
+                    'raw $NewFinanceData2' => $NewFinanceData2
+                ])
+            );
             //字典
             if(AdminUserFinanceConfig::$type_zidian == $dataType){
                 $NewFinanceData2 = AdminUserFinanceConfig::formatchZiDian($NewFinanceData2);
@@ -606,7 +604,6 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
     static function  getType($uploadId){
         $finance_config = self::getFinanceConfigArray($uploadId);
-
         return $finance_config['type'];
     }
 
