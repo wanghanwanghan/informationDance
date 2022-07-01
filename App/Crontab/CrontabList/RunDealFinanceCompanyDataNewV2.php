@@ -559,6 +559,12 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
             ;
 
             foreach ($financeDatas as $dataItem){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'generate data ' => $dataItem['NewFinanceData']
+                    ])
+                );
                 $fileObject ->data([$dataItem['NewFinanceData']]);
             }
 
