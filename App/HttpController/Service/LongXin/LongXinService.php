@@ -481,8 +481,14 @@ class LongXinService extends ServiceBase
 
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ ,
-                '$readyReturn'=> $readyReturn 
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$readyReturn'=> $readyReturn
+            ])
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__.__LINE__ ,
+                'error'=> json_last_error()
             ])
         );
         return $this->checkRespFlag ?
