@@ -2358,24 +2358,24 @@ class LongXinService extends ServiceBase
         foreach ($origin as $year => $val) {
             if (is_numeric($val[5]) && is_numeric($val[2]) && $val[2] !== 0) {
                 $value = $val[5] / $val[2];
-            } else {
-                $value = null;
-            }
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$value'=> $value
-                ])
-            );
-            if(json_last_error()){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
-                        __CLASS__.__FUNCTION__.__LINE__ ,
-                        'error'=> json_last_error(),
-                        '5' => $val[5] ,
-                        '2'=>$val[2]
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '$value'=> $value
                     ])
                 );
+                if(json_last_error()){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__.__LINE__ ,
+                            'error'=> json_last_error(),
+                            '5' => $val[5] ,
+                            '2'=>$val[2]
+                        ])
+                    );
+                }
+            } else {
+                $value = null;
             }
 
             array_push($origin[$year], $value);
