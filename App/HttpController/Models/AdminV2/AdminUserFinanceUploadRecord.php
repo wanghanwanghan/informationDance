@@ -253,7 +253,8 @@ class AdminUserFinanceUploadRecord extends ModelBase
             $userId,$uploadRecordId
         );
 
-        $returnDatas  = [$titles];
+        $returnDatas  = [];
+        yield $returnDatas[] = $titles;
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ ,
