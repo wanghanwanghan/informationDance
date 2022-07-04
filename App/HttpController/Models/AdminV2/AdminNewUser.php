@@ -28,7 +28,7 @@ class AdminNewUser extends ModelBase
     }
 
     public static function aesDecode($token){
-        return \wanghanwanghan\someUtils\control::aesDecode($token);
+        return \wanghanwanghan\someUtils\control::aesDecode($token, CreateConf::getInstance()->getConf('env.salt'));
     }
 
     public static function findById($id){
