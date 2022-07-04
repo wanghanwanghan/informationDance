@@ -97,7 +97,8 @@ class AdminNewUser extends ModelBase
             );
             return true;
          }
-        return  CommonService::getInstance()->log4PHP(
+
+        CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ ,
                 'params $id ' =>$id,
@@ -106,6 +107,7 @@ class AdminNewUser extends ModelBase
                 'return'=> false
             ])
         );
+        return  false;
     }
 
     public static function getAccountBalance($id){
