@@ -500,10 +500,11 @@ class LongXinService extends ServiceBase
         $newData = [];
         foreach ($data as $field1=>$oneYearData) {
             foreach ($oneYearData as $field2=>$value){
-                if($value === '0'){
-                    $value = 0;
+                if($value == 0 && gettype($value) != 'integer' ){
+                    $newData[$field1][$field2] =  0;
+                }else{
+                    $newData[$field1][$field2] =  $value; 
                 }
-                $newData[$field1][$field2] =  $value;
             }
         }
         return $newData;
