@@ -8,6 +8,7 @@ use App\Crontab\CrontabList\RunDealFinanceCompanyDataNew;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNewV2;
 use App\Crontab\CrontabList\RunDealToolsFile;
 use App\Csp\Service\CspService;
+use App\HttpController\Models\AdminV2\AdminNewUser;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\FinancesSearch;
@@ -2835,11 +2836,23 @@ eof;
     function testExport()
     {
         if(
-            $this->getRequestData('testExport')
+            $this->getRequestData('encode')
         ){
 
+            return $this->writeJson(200, null, AdminNewUser::aesEncode(
+                $this->getRequestData('encode')
+            ), null, true, []);
 
         }
+
+        if(
+            $this->getRequestData('decode')
+        ){
+            return $this->writeJson(200, null, AdminNewUser::aesDecode($this->getRequestData('decode')), null, true, []);
+
+        }
+
+
         if(
             $this->getRequestData('ToolsGenerateFile')
         ){

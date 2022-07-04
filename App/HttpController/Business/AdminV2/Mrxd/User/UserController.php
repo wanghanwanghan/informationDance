@@ -96,7 +96,7 @@ class UserController extends ControllerBase
             return $this->writeJson(201, null, null, '登录信息错误');
         }
         $enCodePassword = AdminNewUser::aesEncode($password);
-
+            
         $info = AdminNewUser::findByUserNameAndPwd(
             $username,$enCodePassword
         );
