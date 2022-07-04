@@ -501,7 +501,17 @@ class LongXinService extends ServiceBase
         foreach ($data as $field1=>$oneYearData) {
             foreach ($oneYearData as $field2=>$value){
                 if( is_numeric($value) &&  $value == 0 && gettype($value) != 'integer' ){
-                    $newData[$field1][$field2] =  0;
+                    $newvalue = 0;
+                    $newData[$field1][$field2] =  $newvalue;
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            'formatFinanceReturnData ',
+                            'old value'=> $value,
+                            'old value type'=>gettype($value),
+                            'new value'=> $newvalue ,
+                            'new value type'=>gettype($newvalue),
+                        ])
+                    );
                 }else{
                     $newData[$field1][$field2] =  $value;
                 }
