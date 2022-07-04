@@ -145,7 +145,7 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
     function run(int $taskId, int $workerIndex): bool
     {
 
-        return  true;
+        //return  true;
         //防止重复跑
         if(
             !ConfigInfo::checkCrontabIfCanRun(__CLASS__)
