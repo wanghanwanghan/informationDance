@@ -42,7 +42,7 @@ class UserController extends ControllerBase
             $sql .= " and user_name = '{$user_name}'";
         }
         if(!empty($user_phone)){
-            $sql .= " and phone = '{$user_phone}'";
+            $sql .= " and phone = '".AdminNewUser::aesDecode($user_phone)."'";
         }
         if(!empty($status)){
             $sql .= " and status = '{$status}'";
