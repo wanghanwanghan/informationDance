@@ -33,7 +33,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/addUser', $prefix . 'addUser');
             $routeCollector->addRoute(['GET', 'POST'], '/updateUserInfo', $prefix . 'updateUserInfo');
             $routeCollector->addRoute(['GET', 'POST'], '/updateUserStatus', $prefix . 'updateUserStatus');
-            $routeCollector->addRoute(['GET', 'POST'], '/showPhone', $prefix . 'showPhone');
+            $routeCollector->addRoute(['GET', 'POST'], '/decrypt', $prefix . 'decrypt');
             $routeCollector->addRoute(['GET', 'POST'], '/updatePassword', $prefix . 'updatePassword');
             $routeCollector->addRoute(['GET', 'POST'], '/list', $prefix . 'userList');
             $routeCollector->addRoute(['GET', 'POST'], '/getAllUser', $prefix . 'getAllUser');

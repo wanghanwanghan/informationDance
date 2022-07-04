@@ -263,7 +263,7 @@ class UserController extends ControllerBase
         return $this->writeJson(200, null, null, '添加成功');
     }
 
-    public function showPhone(){
+    public function decrypt(){
         $encryption = $this->getRequestData('encryption');
         if(empty($encryption)){
             return $this->writeJson(201, null, null, '参数缺失');
