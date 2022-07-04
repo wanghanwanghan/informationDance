@@ -375,7 +375,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
     }
 
     public static function setData($id,$field,$value){
-        $info = AdminUserFinanceExportDataQueue::findById($id);
+        $info = AdminUserFinanceUploadRecord::findById($id);
         return $info->update([
             "$field" => $value,
         ]);
