@@ -5,6 +5,7 @@ namespace App\HttpController\Business\AdminV2\Mrxd\User;
 use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;
 use App\HttpController\Models\AdminV2\AdminNewUser;
 use App\HttpController\Models\AdminV2\AdminRoles;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\User\UserService;
 use EasySwoole\RedisPool\Redis;
@@ -102,10 +103,26 @@ class UserController extends ControllerBase
         if(empty($info)){
             return $this->writeJson(201, null, null, '账号密码错误');
         }else{
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'login succeed',
+                    '$username' =>$username,
+                    '$enCodePassword'=>$enCodePassword,
+                ])
+            );
             $newToken = UserService::getInstance()->createAccessToken(
                 AdminNewUser::aesDecode($info->phone),
-                AdminNewUser::aesDecode($info->password) 
+                AdminNewUser::aesDecode($info->password)
             );
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'create new token ',
+                    '$newToken' =>$newToken,
+                    'AdminNewUser::aesDecode($info->phone)' => AdminNewUser::aesDecode($info->phone),
+                    'AdminNewUser::aesDecode($info->password)' => AdminNewUser::aesDecode($info->password)
+                ])
+            );
+
             $info->update(['token' => $newToken]);
             $info->token = $newToken;
             return $this->writeJson(200, [] , $info, null, '登录成功');

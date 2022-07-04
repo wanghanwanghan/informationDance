@@ -66,13 +66,9 @@ class ControllerBase extends Index
     }
 
     function checkToken(): bool
-    { 
-        // $requestToken = $this->request()->getHeaderLine('authorization');
+    {
         $requestToken = $this->request()->getHeaderLine('x-token');
-        // CommonService::getInstance()->log4PHP('  requestToken '.$requestToken);
-
         if (empty($requestToken) || strlen($requestToken) < 50){
-
             return false;
         } 
         try {
@@ -90,9 +86,13 @@ class ControllerBase extends Index
             return false;
         } 
         $this->setLoginUserInfo($res);
-
         $tokenInfo = UserService::getInstance()->decodeAccessToken($requestToken);
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'check token   1 ',
+                '$tokenInfo' => $tokenInfo
+            ])
+        );
         if (!is_array($tokenInfo) || count($tokenInfo) != 3){
             CommonService::getInstance()->log4PHP(
                 json_encode(
@@ -109,7 +109,13 @@ class ControllerBase extends Index
         $reqPhone = $this->request()->getRequestParam('phone') ?? '';
 
         $tokenPhone = current($tokenInfo);
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'check token 2  ',
+                '$reqPhone' => $reqPhone,
+                '$tokenPhone' => $tokenPhone
+            ])
+        );
         if (strlen($tokenPhone) != 11 || strlen($reqPhone) != 11){
             CommonService::getInstance()->log4PHP(
                 json_encode(
@@ -125,14 +131,12 @@ class ControllerBase extends Index
             return false;
         } 
         $res = $reqPhone - 0 === $tokenPhone - 0;
-        // CommonService::getInstance()->log4PHP('  return  '.json_encode(
-        //     [
-        //         $res,
-        //         $tokenPhone,
-        //         $reqPhone
-        //     ]
-        // ) );   
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'check token res  ',
+                '$res' => $res,
+            ])
+        );
         return $res;
     }
 
