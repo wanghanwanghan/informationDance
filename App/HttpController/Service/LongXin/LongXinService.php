@@ -1666,32 +1666,7 @@ class LongXinService extends ServiceBase
     {
         foreach ($origin as $year => $val) {
             if (is_numeric($val[5]) && is_numeric($val[3]) && $val[3] !== 0) {
-                $value = $val[5] / $val[3];
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        '$value'=> $value
-                    ])
-                );
-                if(json_last_error()){
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            __CLASS__.__FUNCTION__.__LINE__ ,
-                            '$origin'=> $origin,
-                            '$year'=>$year,
-                            '5' => $val[5],
-                            '3' => $val[3],
-                            'is_numeric5'=>is_numeric($val[5]),
-                            'is_numeric3'=> is_numeric($val[3]),
-                            'gettype' => gettype($val[3]),
-                            '!==' => $val[3] !==0,
-                            '!==2' => $val[3] !=='0',
-                            '!==3' => $val[3] !=="0",
-                            '!==4' => $val[3] !=="",
-                            '!=' => $val[3] != 0,
-                        ])
-                    );
-                }
+                $value = $val[5] / $val[3];  
             } else {
                 $value = null;
             }
