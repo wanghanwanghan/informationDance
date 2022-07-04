@@ -224,7 +224,7 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                 AdminUserFinanceUploadRecord::reducePriority(
                     $uploadRes['id'],1
                 );
-                return  false;
+                continue;
             }
 
             //检查余额
@@ -243,7 +243,7 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                 AdminUserFinanceUploadRecord::setData(
                     $uploadRes['id'],'remrk','检查余额不足'
                 );
-                return  false;
+                continue;
             }
 
             //不需要确认的  这阶段不拉取财务数据
@@ -255,7 +255,8 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                         __CLASS__.__FUNCTION__ .' no need confirm    '.$uploadRes['user_id'],
                     ])
                 );
-                return AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateAllSet);
+                 AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateAllSet);
+                 continue;
             }
             CommonService::getInstance()->log4PHP(
                 json_encode([
