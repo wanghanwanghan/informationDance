@@ -1677,6 +1677,8 @@ class LongXinService extends ServiceBase
                             'is_numeric5'=>is_numeric($val[5]),
                             'is_numeric3'=> is_numeric($val[3]),
                             '!==' => $val[3] !== 0,
+                            '!==2' => $val[3] !== '0',
+                            '!=' => $val[3] != 0,
                         ])
                     );
                 }
