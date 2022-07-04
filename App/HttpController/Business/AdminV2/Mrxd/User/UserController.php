@@ -111,8 +111,9 @@ class UserController extends ControllerBase
     public function signOut()
     { 
         $phone = $this->loginUserinfo['phone'];
-        $info = AdminNewUser::create()
-            ->where("phone = '{$phone}'")->get();
+        $info = AdminNewUser::findByPhone(
+            AdminNewUser::aesEncode($phone)
+        ) ;
         if (empty($info)) return $this->writeJson(201, null, null, '用户不存在');
         $info->update([
             'token' => '',
@@ -131,14 +132,14 @@ class UserController extends ControllerBase
         if (empty($newPassword)) return $this->writeJson(201, null, null, 'newPassword 不能是空');
         if (empty($password)) return $this->writeJson(201, null, null, 'password 不能是空');
 
-        // if($phone != $this->loginUserinfo['phone']){
-        //     return $this->writeJson(201, null, null, '没权限');
-        // }
-        $info = AdminNewUser::create()->where("phone = '{$phone}' and password = '{$password}'")->get();
+        $info = AdminNewUser::findByPhoneAndPwd(
+            AdminNewUser::aesEncode($phone),
+            AdminNewUser::aesEncode($password)
+        );
         if (empty($info)) return $this->writeJson(201, null, null, '用户不存在或者密码错误');
         $info->update([
-            'phone' => $phone,
-            'password' => $newPassword,
+            'phone' => AdminNewUser::aesEncode($phone),
+            'password' =>AdminNewUser::aesEncode($newPassword)
         ]);
         return $this->writeJson(200, null, null, '修改成功');
     }
@@ -152,8 +153,8 @@ class UserController extends ControllerBase
         $info->update([
             'id' => $requestData['id'],
             'user_name' => $requestData['user_name'] ? $requestData['user_name']: $info['user_name'],
-            'password' => $requestData['password'] ? $requestData['password']: $info['password'],
-            'phone' => $requestData['phone'] ? $requestData['phone']: $info['phone'],
+            'password' => $requestData['password'] ? AdminNewUser::aesEncode($requestData['password']): $info['password'],
+            'phone' => $requestData['phone'] ? AdminNewUser::aesEncode($requestData['phone']): $info['phone'],
             'email' => $requestData['email'] ? $requestData['email']: $info['email'],
         ]);
         return $this->writeJson();
@@ -168,10 +169,11 @@ class UserController extends ControllerBase
         $status = $this->getRequestData('status');
         if (empty($phone)) return $this->writeJson(201, null, null, 'phone 不能是空');
         if (empty($status)) return $this->writeJson(201, null, null, 'status 不能是空');
-        $info = AdminNewUser::create()->where("phone = '{$phone}' ")->get();
+        $info = AdminNewUser::findByPhone(
+             AdminNewUser::aesEncode($phone)
+        );
         if (empty($info)) return $this->writeJson(201, null, null, '用户不存在');
         $info->update([
-            'phone' => $phone,
             'status' => $status,
         ]);
         return $this->writeJson(200, null, null, '修改成功');

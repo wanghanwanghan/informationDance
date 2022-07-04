@@ -62,6 +62,14 @@ class AdminNewUser extends ModelBase
         return $res;
     }
 
+    public static function findByPhoneAndPwd($phone,$password){
+        $res =  AdminNewUser::create()
+            ->where('phone',$phone)
+            ->where('password',$password)
+            ->get();
+        return $res;
+    }
+
     public static function findBySql($where){
         $Sql = "select * from    `admin_new_user`   $where  " ;
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
