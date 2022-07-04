@@ -228,12 +228,24 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
             }
 
             //检查余额
+            $checkAccountBalanceRes = \App\HttpController\Models\AdminV2\AdminNewUser::checkAccountBalance(
+                $uploadRes['user_id'],
+                $uploadRes['money']
+            );
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .' checkAccountBalance '.$checkAccountBalanceRes
+                ])
+            );
             if(
-                !\App\HttpController\Models\AdminV2\AdminNewUser::checkAccountBalance(
-                    $uploadRes['user_id'],
-                    $uploadRes['money']
-                )
+                !$checkAccountBalanceRes
             ){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .' checkAccountBalance not pass '.$checkAccountBalanceRes
+                    ])
+                );
+
                 AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateBalanceNotEnough);
 
                 //把优先级调低
