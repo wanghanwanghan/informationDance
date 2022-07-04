@@ -106,7 +106,6 @@ class AdminNewUser extends ModelBase
                 'return'=> false
             ])
         );
-
     }
 
     public static function getAccountBalance($id){
