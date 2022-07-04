@@ -13,7 +13,7 @@ use App\Crontab\CrontabList\RunJinCaiShuKeRWH;
 use App\Crontab\CrontabList\RunSaiMengHuiZhiCaiWu;
 use App\Crontab\CrontabList\RunSouKeUploadFiles;
 use App\Crontab\CrontabList\RunCompleteCompanyData;
-use App\Crontab\CrontabList\RunDealFinanceCompanyDataNew;
+use App\Crontab\CrontabList\RunDealFinanceCompanyDataNewV2;
 use App\Crontab\CrontabList\RunFillCompanyName;
 use App\Crontab\CrontabList\RunDealApiSouKe;
 use App\Crontab\CrontabList\RunDealToolsFile;
@@ -132,7 +132,7 @@ class CrontabService
 
     private function RunDealFinanceCompanyDataNew(): Crontab
     {
-        return Crontab::getInstance()->addTask(RunDealFinanceCompanyDataNew::class);
+        return Crontab::getInstance()->addTask(RunDealFinanceCompanyDataNewV2::class);
     }
 
     //后台搜客模块-相关定时任务
