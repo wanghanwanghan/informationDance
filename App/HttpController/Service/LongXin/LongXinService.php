@@ -496,6 +496,177 @@ class LongXinService extends ServiceBase
             $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => ['data' => $readyReturn, 'otherData' => $readyOtherReturn]]);
     }
 
+    function  formatFinanceReturnData($res){
+        $newData = [];
+        foreach ($res['data'] as $field1=>$oneYearData) {
+            foreach ($oneYearData as $field2=>$value){
+                if($value === '0'){
+                    $value = 0;
+                }
+                $newData[$field1][$field2] =  $value;
+            }
+        }
+        return $newData;
+    }
+    function getFinanceDataV2($postData, $toRange = true): array
+    {
+        $logFileName = 'getFinanceData.log.' . date('Ymd', time());
+
+        $check = $this->alreadyInserted($postData);
+
+        $cond = !empty($postData['code']) && strlen(trim($postData['code'])) > 15 ?
+            trim($postData['code']) :
+            $postData['entName'];
+
+        $entId = $this->getEntid($cond);
+
+        if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
+
+        TaskService::getInstance()->create(new insertEnt($postData['entName'], $postData['code']));
+
+        $ANCHEYEAR = '';
+        $temp = [];
+        for ($i = 2013; $i <= date('Y'); $i++) {
+            $ANCHEYEAR .= $i . ',';
+            $temp[$i . ''] = null;
+        }
+        $otherData = $temp;
+        $arr = [
+            'entid' => $entId,
+            'ANCHEYEAR' => trim($ANCHEYEAR, ','),
+            'usercode' => $this->usercode
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())
+            ->useCache(true)
+            ->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
+
+        $this->recodeSourceCurl([
+            'sourceName' => $this->sourceName,
+            'apiName' => last(explode('/', trim($this->baseUrl . 'ar_caiwu/', '/'))),
+            'requestUrl' => trim(trim($this->baseUrl . 'ar_caiwu/'), '/'),
+            'requestData' => array_merge($arr, $postData),
+            'responseData' => $res,
+        ]);
+
+        $res = $this->formatFinanceReturnData($res);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                'getFinanceData_$res'=> $res,
+                'getFinanceData_data '=>array_merge($arr, $postData),
+            ])
+        );
+        if (isset($res['total']) && $res['total'] > 0) {
+            foreach ($res['data'] as $oneYearData) {
+                $year = trim($oneYearData['ANCHEYEAR']);
+                if (!is_numeric($year)) continue;
+                $otherData[$year] = $oneYearData;
+                $oneYearData['SOCNUM'] = null;
+                unset($oneYearData['TEL']);//后加的字段
+                unset($oneYearData['BUSST']);//后加的字段
+                unset($oneYearData['DOM']);//后加的字段
+                unset($oneYearData['EMAIL']);//后加的字段
+                unset($oneYearData['POSTALCODE']);//后加的字段
+                unset($oneYearData['EMPNUM']);//后加的字段
+                $temp[$year] = $oneYearData;
+            }
+            krsort($temp);
+            krsort($otherData);
+        }
+
+        //社保人数数组
+        $social = $this->getSocialNum($entId);
+
+        !empty($social) ?: $social = ['AnnualSocial' => []];
+
+        foreach ($social['AnnualSocial'] as $oneSoc) {
+            $year = $oneSoc['ANCHEYEAR'];
+            if (!is_numeric($year) || !isset($temp[$year . ''])) continue;
+            if (isset($oneSoc['so1']) && is_numeric($oneSoc['so1'])) {
+                $temp[$year . '']['SOCNUM'] = $oneSoc['so1'];
+            }
+        }
+
+        TaskService::getInstance()->create(new insertFinance($postData['entName'], $temp, $social['AnnualSocial']));
+
+        //原值计算
+        if ($this->cal === true) {
+            $temp = $this->exprHandle($temp);
+        }
+
+        //取哪年的数据
+        $readyReturn = $readyOtherReturn = [];
+        for ($i = $postData['dataCount']; $i--;) {
+            $tmp = $postData['beginYear'] - $i;
+            $tmp = $tmp . '';
+            isset($temp[$tmp]) ?
+                $readyReturn[$tmp] = $temp[$tmp] :
+                $readyReturn[$tmp] = null;
+            isset($otherData[$tmp]) ?
+                $readyOtherReturn[$tmp] = $otherData[$tmp] :
+                $readyOtherReturn[$tmp] = null;
+        }
+
+        //数字落区间
+        if ($toRange) {
+            foreach ($readyReturn as $year => $arr) {
+                if (empty($arr)) continue;
+                foreach ($arr as $field => $val) {
+                    //判断是哪一种区间样子，六棱镜跟别的不一样
+                    if ($this->rangeArr[0] === '') {
+                        if (isset($this->rangeArr[1][$field]) && is_numeric($val)) {
+                            !$this->rangeIsYuan ?: $val = $val * 10000;
+                            $readyReturn[$year][$field] = $this->binaryFind(
+                                $val, 0, count($this->rangeArr[1][$field]) - 1, $this->rangeArr[1][$field]
+                            );
+                        } elseif (isset($this->rangeArrRatio[1][$field]) && is_numeric($val)) {
+                            $readyReturn[$year][$field] = $this->binaryFind(
+                                $val, 0, count($this->rangeArrRatio[1][$field]) - 1, $this->rangeArrRatio[1][$field]
+                            );
+                        } else {
+                            $readyReturn[$year][$field] = $val;
+                        }
+                    } else {
+                        if (in_array($field, $this->rangeArr[0], true) && is_numeric($val)) {
+                            !$this->rangeIsYuan ?: $val = $val * 10000;
+                            $readyReturn[$year][$field] = $this->binaryFind(
+                                $val, 0, count($this->rangeArr[1]) - 1, $this->rangeArr[1]
+                            );
+                        } elseif (in_array($field, $this->rangeArrRatio[0], true) && is_numeric($val)) {
+                            $readyReturn[$year][$field] = $this->binaryFind(
+                                $val, 0, count($this->rangeArrRatio[1]) - 1, $this->rangeArrRatio[1]
+                            );
+                        } else {
+                            $readyReturn[$year][$field] = $val;
+                        }
+                    }
+                }
+            }
+        }
+
+        krsort($readyReturn);
+        krsort($readyOtherReturn);
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$readyReturn'=> $readyReturn
+            ])
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__.__LINE__ ,
+                'error'=> json_last_error()
+            ])
+        );
+        return $this->checkRespFlag ?
+            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn]) :
+            $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => ['data' => $readyReturn, 'otherData' => $readyOtherReturn]]);
+    }
+
     //近n年的财务数据 含 并表
     function getFinanceBaseMergeData($postData, $toRange = true): array
     {
@@ -2356,24 +2527,8 @@ class LongXinService extends ServiceBase
     private function NPMOMB($origin)
     {
         foreach ($origin as $year => $val) {
-            if (is_numeric($val[5]) && is_numeric($val[2]) && $val[2] !== 0 && $val[2] !== '0') {
+            if (is_numeric($val[5]) && is_numeric($val[2]) && $val[2] !== 0) {
                 $value = $val[5] / $val[2];
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        '$value'=> $value
-                    ])
-                );
-                if(json_last_error()){
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            __CLASS__.__FUNCTION__.__LINE__ ,
-                            'error'=> json_last_error(),
-                            '5' => $val[5] ,
-                            '2'=>$val[2]
-                        ])
-                    );
-                }
             } else {
                 $value = null;
             }

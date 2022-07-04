@@ -2909,7 +2909,7 @@ eof;
         if(
             $this->getRequestData('getFinanceDataXX')
         ){
-            $res = (new LongXinService())->getFinanceData([
+            $res = (new LongXinService())->getFinanceDataV2([
                         "entName"=>"乌海市源来煤业有限公司",
                         "code"=> "",
                         "beginYear"=> 2019,
