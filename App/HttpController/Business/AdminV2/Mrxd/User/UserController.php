@@ -63,6 +63,9 @@ class UserController extends ControllerBase
             $value['phone_for_show'] = AdminNewUser::hide(
                 AdminNewUser::aesDecode($value['phone'])
             );
+            $value['email_for_show'] = AdminNewUser::hide(
+                AdminNewUser::aesDecode($value['email'])
+            );
 
             $rolesRes = AdminUserRole::findByUserId($value['id']);
             $roles_ids_arr = array_column(
@@ -254,7 +257,7 @@ class UserController extends ControllerBase
                 'user_name'=>$user_name,
                 'password'=>$enCodePassword,
                 'phone'=>$enCodePhone,
-                'email'=>$email,
+                'email'=> AdminNewUser::aesEncode($email) ,
                 'type'=>$type,
                 'company_id'=>$company_id
             ]
