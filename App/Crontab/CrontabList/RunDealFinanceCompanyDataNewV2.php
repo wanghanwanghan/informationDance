@@ -531,6 +531,9 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
             "
         );
 
+        if(empty($queueData)){
+            return  true;
+        }
         foreach($queueDatas as $queueData){
             AdminUserFinanceExportDataQueue::setTouchTime(
                 $queueData['id'],date('Y-m-d H:i:s')
