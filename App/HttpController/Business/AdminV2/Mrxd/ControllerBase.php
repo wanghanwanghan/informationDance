@@ -72,9 +72,7 @@ class ControllerBase extends Index
         // CommonService::getInstance()->log4PHP('  requestToken '.$requestToken);
 
         if (empty($requestToken) || strlen($requestToken) < 50){
-            CommonService::getInstance()->log4PHP(
-                ' token error 1 '.$requestToken .' empty: '.empty($requestToken). 
-                    ' strlen '.strlen($requestToken) ); 
+
             return false;
         } 
         try {
@@ -84,12 +82,11 @@ class ControllerBase extends Index
                     ->get();
         } catch (\Throwable $e) {
             // $this->writeErr($e, __FUNCTION__);
-            CommonService::getInstance()->log4PHP(' token error 2 '.$requestToken);  
+            CommonService::getInstance()->log4PHP(' invalid token  '.$requestToken);
             return false;
         }
 
         if (empty($res)){
-            CommonService::getInstance()->log4PHP(' token error 2.5 '.$requestToken .' res'.json_encode($res));  
             return false;
         } 
         $this->setLoginUserInfo($res);
@@ -97,7 +94,7 @@ class ControllerBase extends Index
         $tokenInfo = UserService::getInstance()->decodeAccessToken($requestToken);
 
         if (!is_array($tokenInfo) || count($tokenInfo) != 3){
-            CommonService::getInstance()->log4PHP(' token error 3 '.$requestToken .json_encode($tokenInfo));   
+            CommonService::getInstance()->log4PHP(' token error   '. $requestToken .json_encode($tokenInfo));
             return false;
         } 
 
@@ -106,7 +103,15 @@ class ControllerBase extends Index
         $tokenPhone = current($tokenInfo);
 
         if (strlen($tokenPhone) != 11 || strlen($reqPhone) != 11){
-            CommonService::getInstance()->log4PHP(' token error 4 '.$requestToken .$tokenPhone);   
+            CommonService::getInstance()->log4PHP(
+                json_encode(
+                    [
+                        ' $tokenPhone length error ',
+                        '$tokenPhone' => $tokenPhone,
+                        '$reqPhone' => $reqPhone, 
+                    ]
+                )
+            );
             return false;
         } 
         $res = $reqPhone - 0 === $tokenPhone - 0;

@@ -102,7 +102,10 @@ class UserController extends ControllerBase
         if(empty($info)){
             return $this->writeJson(201, null, null, '账号密码错误');
         }else{
-            $newToken = UserService::getInstance()->createAccessToken($info->phone, $info->password);
+            $newToken = UserService::getInstance()->createAccessToken(
+                AdminNewUser::aesDecode($info->phone),
+                $info->password
+            );
             $info->update(['token' => $newToken]);
             $info->token = $newToken;
             return $this->writeJson(200, [] , $info, null, '登录成功');
