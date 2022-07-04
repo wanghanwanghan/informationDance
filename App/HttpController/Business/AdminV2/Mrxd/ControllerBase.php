@@ -94,7 +94,15 @@ class ControllerBase extends Index
         $tokenInfo = UserService::getInstance()->decodeAccessToken($requestToken);
 
         if (!is_array($tokenInfo) || count($tokenInfo) != 3){
-            CommonService::getInstance()->log4PHP(' token error   '. $requestToken .json_encode($tokenInfo));
+            CommonService::getInstance()->log4PHP(
+                json_encode(
+                    [
+                        ' !is_array($tokenInfo) || count($tokenInfo) != 3',
+                        '$requestToken'=>$requestToken,
+                        '$tokenInfo'=>$tokenInfo,
+                    ]
+                )
+            );
             return false;
         } 
 
@@ -108,7 +116,7 @@ class ControllerBase extends Index
                     [
                         ' $tokenPhone length error ',
                         '$tokenPhone' => $tokenPhone,
-                        '$reqPhone' => $reqPhone, 
+                        '$reqPhone' => $reqPhone,
                     ]
                 )
             );
