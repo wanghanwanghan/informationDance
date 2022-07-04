@@ -233,11 +233,11 @@ class UserController extends ControllerBase
     }
 
     public function showPhone(){
-        $token = $this->getRequestData('token');
-        if(empty($token)){
+        $encryption = $this->getRequestData('encryption');
+        if(empty($encryption)){
             return $this->writeJson(201, null, null, '参数缺失');
         }
-        return $this->writeJson(200, null, AdminNewUser::aesDecode($token), '添加成功');
+        return $this->writeJson(200, null, AdminNewUser::aesDecode($encryption), '添加成功');
     }
 
 }

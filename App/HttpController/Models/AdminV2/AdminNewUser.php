@@ -109,13 +109,15 @@ class AdminNewUser extends ModelBase
     public static function getAccountBalance($id){
         $res =  self::findById($id);
         $money = $res->getAttr('money');
+        $newMoney = AdminNewUser::aesDecode($money);
         CommonService::getInstance()->log4PHP(
             json_encode([
                 'admin new user getAccountBalance   '=> 'strat',
-                '$money' =>  $money
+                '$money' =>  $money,
+                '$newMoney' => $newMoney,
             ])
         );
-        return $money;
+        return $newMoney;
     }
 
     public static function updateMoney($id,$money){

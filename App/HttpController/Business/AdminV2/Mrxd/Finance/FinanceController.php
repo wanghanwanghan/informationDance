@@ -580,7 +580,7 @@ class FinanceController extends ControllerBase
         if(
             ! \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
                 $requestData['user_id'],
-                $newBalance
+                \App\HttpController\Models\AdminV2\AdminNewUser::aesEncode($newBalance)
             )
         ){
             return  $this->writeJson(201,[],[],'充值失败，联系管理员');
@@ -833,9 +833,11 @@ class FinanceController extends ControllerBase
             if(
                 ! \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
                     $uploadRes['user_id'],
-                    \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
-                        $uploadRes['user_id']
-                    ) - $uploadRes['money']
+                    \App\HttpController\Models\AdminV2\AdminNewUser::aesEncode(
+                        \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
+                            $uploadRes['user_id']
+                        ) - $uploadRes['money']
+                    )
                 )
             ){
                 return $this->writeJson(201, null, [],  '扣余额失败，联系管理员');
@@ -1004,9 +1006,11 @@ class FinanceController extends ControllerBase
             if(
                 ! \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
                     $uploadRes['user_id'],
-                    \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
-                        $uploadRes['user_id']
-                    ) - $uploadRes['money']
+                    \App\HttpController\Models\AdminV2\AdminNewUser::aesEncode(
+                        \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
+                            $uploadRes['user_id']
+                        ) - $uploadRes['money']
+                    )
                 )
             ){
                 return $this->writeJson(201, null, [],  '扣余额失败，联系管理员');
