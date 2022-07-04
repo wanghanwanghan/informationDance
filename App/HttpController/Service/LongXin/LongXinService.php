@@ -550,7 +550,13 @@ class LongXinService extends ServiceBase
             'requestData' => array_merge($arr, $postData),
             'responseData' => $res,
         ]);
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                'getFinanceData_$res'=> $res,
+                'getFinanceData_data '=>array_merge($arr, $postData),
+            ])
+        );
         $res = $this->formatFinanceReturnData($res);
         CommonService::getInstance()->log4PHP(
             json_encode([
