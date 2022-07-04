@@ -104,7 +104,7 @@ class UserController extends ControllerBase
         }else{
             $newToken = UserService::getInstance()->createAccessToken(
                 AdminNewUser::aesDecode($info->phone),
-                $info->password
+                AdminNewUser::aesDecode($info->password) 
             );
             $info->update(['token' => $newToken]);
             $info->token = $newToken;

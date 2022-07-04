@@ -114,9 +114,11 @@ class ControllerBase extends Index
             CommonService::getInstance()->log4PHP(
                 json_encode(
                     [
-                        ' $tokenPhone length error ',
+                        ' $tokenPhone  error ',
                         '$tokenPhone' => $tokenPhone,
                         '$reqPhone' => $reqPhone,
+                        '$tokenInfo'=>$tokenInfo,
+                        'current($tokenInfo)'=>current($tokenInfo),
                     ]
                 )
             );
