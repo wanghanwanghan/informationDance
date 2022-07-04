@@ -159,6 +159,7 @@ class UserController extends UserBase
         } elseif (!empty($password)) {
             $password = trim($password);
             $mysql_pwd = trim($userInfo->getAttr('password'));
+            empty($loginNum) ? $redis->set($index, 1, 3600) : $redis->incr($index);
             if ($password !== $mysql_pwd) return $this->writeJson(201, null, null, '密码错误');
         } else {
             //连续输入错误 5 次，禁止登录 1 小时
