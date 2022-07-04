@@ -126,14 +126,13 @@ class UserController extends ControllerBase
             $info->update(['token' => $newToken]);
             //$info->token = $newToken;
             //$info->phone = AdminNewUser::aesDecode($info->phone );
-            return $this->writeJson(200, [
-                'id' => $info->id,
+            return $this->writeJson(200, [ ] , ['id' => $info->id,
                 'user_name' => $info->user_name,
                 'password' => $info->password,
                 'phone' => AdminNewUser::aesDecode($info->phone ),
                 'email' => $info->email,
                 'token' => $info->token,
-            ] , $info, null, '登录成功');
+            ], null, '登录成功');
         }
     }
     public function signOut()
