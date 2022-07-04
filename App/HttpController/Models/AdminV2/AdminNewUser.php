@@ -38,6 +38,9 @@ class AdminNewUser extends ModelBase
         return $res;
     }
 
+    public static function hide($num){
+       return  substr_replace($num,'****',3,4);
+    }
 
     public static function findByPhone($phone){
         $res =  AdminNewUser::create()
