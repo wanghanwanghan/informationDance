@@ -1671,6 +1671,7 @@ class LongXinService extends ServiceBase
                         json_encode([
                             __CLASS__.__FUNCTION__.__LINE__ ,
                             '$origin'=> $origin,
+                            '$year'=>$year,
                             '5' => $val[5],
                             '3' => $val[3],
                             'is_numeric5'=>is_numeric($val[5]),
