@@ -496,9 +496,9 @@ class LongXinService extends ServiceBase
             $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => ['data' => $readyReturn, 'otherData' => $readyOtherReturn]]);
     }
 
-    function  formatFinanceReturnData($res){
+    function  formatFinanceReturnData($data){
         $newData = [];
-        foreach ($res['data'] as $field1=>$oneYearData) {
+        foreach ($data as $field1=>$oneYearData) {
             foreach ($oneYearData as $field2=>$value){
                 if($value === '0'){
                     $value = 0;
@@ -553,16 +553,16 @@ class LongXinService extends ServiceBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ ,
-                'getFinanceData_$res'=> $res,
-                'getFinanceData_data '=>array_merge($arr, $postData),
+                'old getFinanceData_$res'=> $res,
+                //'getFinanceData_data '=>array_merge($arr, $postData),
             ])
         );
-        $res = $this->formatFinanceReturnData($res);
+        $res['data'] = $this->formatFinanceReturnData($res['data']);
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ ,
-                'getFinanceData_$res'=> $res,
-                'getFinanceData_data '=>array_merge($arr, $postData),
+                'new getFinanceData_$res'=> $res,
+               // 'getFinanceData_data '=>array_merge($arr, $postData),
             ])
         );
         if (isset($res['total']) && $res['total'] > 0) {
