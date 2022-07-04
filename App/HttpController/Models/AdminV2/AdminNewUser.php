@@ -45,6 +45,23 @@ class AdminNewUser extends ModelBase
             ->get();
         return $res;
     }
+
+    public static function findByUserName($user_name){
+        $res =  AdminNewUser::create()
+            ->where('user_name',$user_name)
+            ->get();
+        return $res;
+    }
+
+
+    public static function findByUserNameAndPwd($user_name,$password){
+        $res =  AdminNewUser::create()
+            ->where('user_name',$user_name)
+            ->where('password',$password)
+            ->get();
+        return $res;
+    }
+
     public static function findBySql($where){
         $Sql = "select * from    `admin_new_user`   $where  " ;
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));

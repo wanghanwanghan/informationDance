@@ -85,26 +85,7 @@ class UserController extends ControllerBase
         );
     }
 
-    /**
-     * 用户登录
-{
-    "code": 200,
-    "result": {
-        "id": 1,
-        "user_name": "tianyongshan",
-        "password": "123456",
-        "phone": "13269706193",
-        "email": "",
-        "token": "8bec0a81aa4260b6d0643cb33910b4f2faf7e58555b74afeb0252f58c7ab8c8a",
-        "status": 1,
-        "type": 1,
-        "company_id": 0,
-        "created_at": 0,
-        "updated_at": 1653293491
-    },
-    "msg": null
-}
-     */
+
     public function userLogin()
     { 
 
@@ -113,10 +94,11 @@ class UserController extends ControllerBase
         if (empty($username) || empty($password) ) {
             return $this->writeJson(201, null, null, '登录信息错误');
         }
+        $enCodePassword = AdminNewUser::aesEncode($password);
 
-        $info = AdminNewUser::create()
-            ->where("user_name = '{$username}' and password = '{$password}'")
-            ->get();
+        $info = AdminNewUser::findByUserNameAndPwd(
+            $username,$enCodePassword
+        );
         if(empty($info)){
             return $this->writeJson(201, null, null, '账号密码错误');
         }else{
@@ -224,7 +206,10 @@ class UserController extends ControllerBase
         if (empty($password)){
             return $this->writeJson(201, null, null, 'password 不能是空');
         }
+
+        $enCodePassword = AdminNewUser::aesEncode($password);
         $enCodePhone = AdminNewUser::aesEncode($phone);
+
         if (
             AdminNewUser::findByPhone($enCodePhone)
         ) {
@@ -234,7 +219,7 @@ class UserController extends ControllerBase
         AdminNewUser::addRecordV2(
             [
                 'user_name'=>$user_name,
-                'password'=>$password,
+                'password'=>$enCodePassword,
                 'phone'=>$enCodePhone,
                 'email'=>$email,
                 'type'=>$type,
