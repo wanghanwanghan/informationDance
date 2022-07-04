@@ -23,7 +23,13 @@ class AdminNewUser extends ModelBase
     static  $chargeTypeDele = 10 ;
     static  $chargeTypeDeleCname =  '扣费' ;
 
+    public static function aesEncode($str){
+        return \wanghanwanghan\someUtils\control::aesEncode($str, CreateConf::getInstance()->getConf('env.salt'));
+    }
 
+    public static function aesDecode($token){
+        return \wanghanwanghan\someUtils\control::aesDecode($token);
+    }
 
     public static function findById($id){
         $res =  AdminNewUser::create()

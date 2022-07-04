@@ -215,11 +215,18 @@ class UserController extends ControllerBase
         $type = $this->getRequestData('type');
         $company_id = $this->getRequestData('company_id');
 
-        if (empty($phone)) return $this->writeJson(201, null, null, 'phone 不能是空');
-        if (empty($user_name)) return $this->writeJson(201, null, null, 'user_name 不能是空');
-        if (empty($password)) return $this->writeJson(201, null, null, 'password 不能是空');
+        if (empty($phone)){
+            return $this->writeJson(201, null, null, 'phone 不能是空');
+        }
+        if (empty($user_name)) {
+            return $this->writeJson(201, null, null, 'user_name 不能是空');
+        }
+        if (empty($password)){
+            return $this->writeJson(201, null, null, 'password 不能是空');
+        }
+        $enCodePhone = AdminNewUser::aesEncode($phone);
         if (
-            AdminNewUser::findByPhone($phone)
+            AdminNewUser::findByPhone($enCodePhone)
         ) {
             return $this->writeJson(201, null, null, 'phone 已存在');
         }
@@ -228,13 +235,22 @@ class UserController extends ControllerBase
             [
                 'user_name'=>$user_name,
                 'password'=>$password,
-                'phone'=>$phone,
+                'phone'=>$enCodePhone,
                 'email'=>$email,
                 'type'=>$type,
                 'company_id'=>$company_id
             ]
         );
+
         return $this->writeJson(200, null, null, '添加成功');
+    }
+
+    public function showPhone(){
+        $token = $this->getRequestData('token');
+        if(empty($token)){
+            return $this->writeJson(201, null, null, '参数缺失');
+        }
+        return $this->writeJson(200, null, AdminNewUser::aesDecode($token), '添加成功');
     }
 
 }
