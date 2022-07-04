@@ -125,6 +125,7 @@ class UserController extends ControllerBase
 
             $info->update(['token' => $newToken]);
             $info->token = $newToken;
+            $info->phone = AdminNewUser::aesDecode($info->phone );
             return $this->writeJson(200, [] , $info, null, '登录成功');
         }
     }
