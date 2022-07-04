@@ -531,7 +531,7 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
             "
         );
 
-        if(empty($queueData)){
+        if(empty($queueDatas)){
             return  true;
         }
         foreach($queueDatas as $queueData){
