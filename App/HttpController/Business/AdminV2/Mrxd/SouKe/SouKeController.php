@@ -57,6 +57,8 @@ class SouKeController extends ControllerBase
      * */
     function advancedSearch(): bool
     {
+        $requestData =  $this->getRequestData();
+
         $companyEsModel = new \App\ElasticSearch\Model\Company();
 
         //传过来的searchOption 例子 [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
@@ -87,6 +89,7 @@ class SouKeController extends ControllerBase
             ->SetQueryByShangPinData( trim($this->request()->getRequestParam('appStr')))
             //必须存在官网
             ->SetQueryByWeb($searchOptionArr)
+            ->SetAreaQuery($requestData['areas'])
             //必须存在APP
             ->SetQueryByApp($searchOptionArr)
             //必须是物流企业

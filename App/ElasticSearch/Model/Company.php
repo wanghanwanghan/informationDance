@@ -58,8 +58,14 @@ class Company extends ServiceBase
     }
 
     //区域坐标 [[11,112],[11,112],[11,112]]
-    function addArea($areaArr)
+    function SetAreaQuery($areaArr)
     {
+        if(
+            empty($areaArr)
+        ){
+            return $this;
+        }
+
         $companyLocationEsModel = new \App\ElasticSearch\Model\CompanyLocation();
         $companyLocationEsModel
             //经营范围

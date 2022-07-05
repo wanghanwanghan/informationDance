@@ -1054,6 +1054,7 @@ eof;
     function advancedSearch(): bool
     {
         $companyEsModel = new \App\ElasticSearch\Model\Company();
+        $requestData =  $this->getRequestData();
 
         //传过来的searchOption 例子 [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
         $searchOptionStr =  trim($this->request()->getRequestParam('searchOption'));
@@ -1066,6 +1067,7 @@ eof;
         $companyEsModel
             //经营范围
             ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('basic_opscope')))
+            ->SetAreaQuery($requestData['areas'])
             //数字经济及其核心产业
             ->SetQueryByBasicSzjjid(trim($this->request()->getRequestParam('basic_szjjid')))
             // 搜索文案 智能搜索
@@ -2942,8 +2944,6 @@ eof;
         }
 
         return $this->writeJson(200, null, [], null, true, []);
-
-
     }
 
 
