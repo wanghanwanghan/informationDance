@@ -578,9 +578,17 @@ class RunDealApiSouKe extends AbstractCronTask
                 $tmp = [
                     'xd_id'=>$dataItem['xd_id'],
                 ];
-                foreach ($featureArr as $field){
+                foreach ($fieldsArr as $field){
                     $tmp[$field] = $dataItem[$field];
                 }
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        '$dataItem' => $dataItem,
+//                        '$featureArr'=>$featureArr,
+//                        '$tmp'=>$tmp,
+//                    ])
+//                );
                 $fileObject ->data([$tmp]);
             }
 
