@@ -57,6 +57,12 @@ class Company extends ServiceBase
         return $this;
     }
 
+    function addMustTermQuery($field, $value)
+    {
+        $this->es->addMustTermQuery($field,$value) ;
+        return $this;
+    }
+
     //区域坐标 [[11,112],[11,112],[11,112]]
     function SetAreaQuery($areaArr)
     {

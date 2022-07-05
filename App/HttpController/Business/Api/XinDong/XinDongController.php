@@ -2823,8 +2823,7 @@ eof;
         });  
  
         $res = ($csp->exec(5)); 
-        return $this->writeJson(200, [], $res, '查询成功'); 
-
+        return $this->writeJson(200, [], $res, '查询成功');
     }
 
     function getYieldData(){
@@ -2964,4 +2963,62 @@ eof;
         return $this->writeJson(200, null, [], '成功', false, []);
     }
 
+    //市场占有率查询
+    function calMarketShare(): bool
+    {
+        $companyEsModel = new \App\ElasticSearch\Model\Company();
+        $requestData =  $this->getRequestData();
+
+        $companyEsModel
+            //根据id查询
+            ->addMustTermQuery('xd_id',$requestData['xd_id'])
+            ->addSize(1)
+            ->addFrom(0)
+            ->searchFromEs()
+            // 格式化下日期和时间
+            ->formatEsDate()
+            // 格式化下金额
+            ->formatEsMoney()
+        ;
+
+        //四级分类
+        $siJiFenLei = "";
+        foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
+            $siJiFenLei = $dataItem['si_ji_fen_lei_code'];
+        }
+        if(empty($siJiFenLei)){
+            return  "";
+        }
+        //三位以下的  企业太多了 不计算
+        if(strlen($siJiFenLei) <=3 ){
+            return  "";
+        }
+
+        //取前四位
+        $tmpSiji = substr($siJiFenLei , 0 , 5) ;
+
+        //所有满足的企业
+        $companyEsModel = new \App\ElasticSearch\Model\Company();
+        $companyEsModel
+            ->SetQueryBySiJiFenLei($tmpSiji)
+            ->searchFromEs()
+            // 格式化下日期和时间
+            ->formatEsDate()
+            // 格式化下金额
+            ->formatEsMoney()
+        ;
+
+        $siJiFenLeiArrs = [];
+        foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
+            $siJiFenLeiArrs[] = $dataItem['si_ji_fen_lei_code'];
+        }
+
+        $totalMin = 0;
+        $totalMax = 0;
+
+
+
+        return $this->writeJson(200, [ ]
+            , $companyEsModel->return_data['hits']['hits'], '成功', true, []);
+    }
 }

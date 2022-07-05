@@ -534,6 +534,18 @@ class RunDealApiSouKe extends AbstractCronTask
             $config=  [
                 'path' => TEMP_FILE_PATH // xlsx文件保存路径
             ];
+
+
+            $fieldsArr = AdminUserSoukeConfig::getAllowedFieldsArray($InitData['admin_id']);
+            $fieldsArr[] = 'xd_id';
+
+            $filedCname = [];
+            $allFields = AdminUserSoukeConfig::getAllFields();
+            foreach ($fieldsArr as $field){
+                $filedCname[] = $allFields[$field];
+            }
+
+
             $excel = new \Vtiful\Kernel\Excel($config);
             $fileObject = $excel->fileName($filename, 'sheet');
             $fileHandle = $fileObject->getHandle();
@@ -553,13 +565,13 @@ class RunDealApiSouKe extends AbstractCronTask
 
             $fileObject
                 ->defaultFormat($colorStyle)
+                ->header($filedCname)
                 ->defaultFormat($alignStyle)
             ;
 
             $featureArr = json_decode($InitData['feature'],true);
             // get SouKe Config
-            $fieldsArr = AdminUserSoukeConfig::getAllowedFieldsArray($InitData['admin_id']);
-            $fieldsArr[] = 'xd_id';
+
             $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr,$fieldsArr);
             foreach ($tmpXlsxDatas as $dataItem){
                 $fileObject ->data([$dataItem]);
