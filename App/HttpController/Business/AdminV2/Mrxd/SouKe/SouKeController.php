@@ -9,6 +9,8 @@ use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\DeliverDetailsHistory;
 use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
+use App\HttpController\Models\RDS3\Company;
+use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\XinDong\XinDongService;
 
@@ -33,11 +35,30 @@ class SouKeController extends ControllerBase
         return $this->writeJson(200, null, $searchOptionArr, '成功', false, []);
     }
 
+    //股东关系图
+    function getCompanyInvestor(): bool
+    {
+        //
+        $requestData =  $this->getRequestData();
+
+        $res = CompanyInvestor::findByCompanyId(
+            $requestData['company_id']
+         );
+        foreach ($res as &$data){
+            $name = CompanyInvestor::getInvestorName( $data['investor_id'], $data['investor_type']);
+            $data['name'] = $name;
+        }
+
+        return $this->writeJson(200, null, [], '成功', false, []);
+    }
+
     /*
      * 高级搜索
      * */
     function advancedSearch(): bool
     {
+        $requestData =  $this->getRequestData();
+
         $companyEsModel = new \App\ElasticSearch\Model\Company();
 
         //传过来的searchOption 例子 [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
@@ -68,6 +89,7 @@ class SouKeController extends ControllerBase
             ->SetQueryByShangPinData( trim($this->request()->getRequestParam('appStr')))
             //必须存在官网
             ->SetQueryByWeb($searchOptionArr)
+            ->SetAreaQuery($requestData['areas'])
             //必须存在APP
             ->SetQueryByApp($searchOptionArr)
             //必须是物流企业

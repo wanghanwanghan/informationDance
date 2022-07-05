@@ -19,5 +19,12 @@ class Company extends ModelBase
 
         $this->connectionName = CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1');
     }
-    
+
+    public static function findById($id){
+        $res =  Company::create()
+            ->where('id',$id)
+            ->get();
+        return $res;
+    }
+
 }

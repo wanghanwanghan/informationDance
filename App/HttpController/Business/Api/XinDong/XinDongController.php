@@ -13,6 +13,7 @@ use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
+use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\Export\Excel\ExportExcelService;
@@ -1053,6 +1054,7 @@ eof;
     function advancedSearch(): bool
     {
         $companyEsModel = new \App\ElasticSearch\Model\Company();
+        $requestData =  $this->getRequestData();
 
         //传过来的searchOption 例子 [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
         $searchOptionStr =  trim($this->request()->getRequestParam('searchOption'));
@@ -1065,6 +1067,7 @@ eof;
         $companyEsModel
             //经营范围
             ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('basic_opscope')))
+            ->SetAreaQuery($requestData['areas'])
             //数字经济及其核心产业
             ->SetQueryByBasicSzjjid(trim($this->request()->getRequestParam('basic_szjjid')))
             // 搜索文案 智能搜索
@@ -2941,7 +2944,24 @@ eof;
         }
 
         return $this->writeJson(200, null, [], null, true, []);
-
-
     }
+
+
+    //股东关系图
+    function getCompanyInvestor(): bool
+    {
+        //
+        $requestData =  $this->getRequestData();
+
+        $res = CompanyInvestor::findByCompanyId(
+            $requestData['company_id']
+        );
+        foreach ($res as &$data){
+            $name = CompanyInvestor::getInvestorName( $data['investor_id'], $data['investor_type']);
+            $data['name'] = $name;
+        }
+
+        return $this->writeJson(200, null, [], '成功', false, []);
+    }
+
 }

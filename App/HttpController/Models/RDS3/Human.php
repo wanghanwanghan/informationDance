@@ -19,5 +19,12 @@ class Human extends ModelBase
 
         $this->connectionName = CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1');
     }
+
+    public static function findById($id){
+        $res =  Human::create()
+            ->where('id',$id)
+            ->get();
+        return $res;
+    }
     
 }
