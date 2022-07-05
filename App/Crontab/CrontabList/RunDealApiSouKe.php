@@ -220,11 +220,7 @@ class RunDealApiSouKe extends AbstractCronTask
     }
 
     function getYieldDataForSouKe($totalNums,$requestDataArr,$fieldsArr){
-        $filedCname = [];
-        $allFields = AdminUserSoukeConfig::getAllFields();
-        foreach ($fieldsArr as $field){
-            $filedCname[] = $allFields[$field];
-        }
+
         $startMemory = memory_get_usage();
         $start = microtime(true);
         $searchOption = json_decode($requestDataArr['searchOption'],true);
@@ -297,7 +293,6 @@ class RunDealApiSouKe extends AbstractCronTask
 
             if($lastId>0){
                 $companyEsModel->addSearchAfterV1($lastId);
-
             }
             // 格式化下日期和时间
             $companyEsModel
@@ -574,6 +569,12 @@ class RunDealApiSouKe extends AbstractCronTask
 
             $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr,$fieldsArr);
             foreach ($tmpXlsxDatas as $dataItem){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '$dataItem' => $dataItem
+                    ])
+                );
                 $fileObject ->data([$dataItem]);
             }
 
