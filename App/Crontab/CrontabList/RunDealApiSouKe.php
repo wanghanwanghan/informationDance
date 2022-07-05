@@ -539,7 +539,7 @@ class RunDealApiSouKe extends AbstractCronTask
             foreach ($fieldsArr as $field){
                 $filedCname[] = $allFields[$field];
             }
-
+            $filedCname[] = 'xd_id';
 
             $excel = new \Vtiful\Kernel\Excel($config);
             $fileObject = $excel->fileName($filename, 'sheet');
@@ -581,7 +581,7 @@ class RunDealApiSouKe extends AbstractCronTask
                 foreach ($fieldsArr as $field){
                     $tmp[$field] = $dataItem[$field];
                 }
-                $tmp['xd_id'] = $dataItem['xd_id'];
+                //$tmp['xd_id'] = $dataItem['xd_id'];
 //                CommonService::getInstance()->log4PHP(
 //                    json_encode([
 //                        __CLASS__.__FUNCTION__ .__LINE__,
