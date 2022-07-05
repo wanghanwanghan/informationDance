@@ -576,7 +576,7 @@ class RunDealApiSouKe extends AbstractCronTask
 //                    ])
 //                );
                 $tmp = [
-                    'xd_id'=>$dataItem['xd_id'],
+                    //'xd_id'=>$dataItem['xd_id'],
                 ];
                 foreach ($fieldsArr as $field){
                     $tmp[$field] = $dataItem[$field];
