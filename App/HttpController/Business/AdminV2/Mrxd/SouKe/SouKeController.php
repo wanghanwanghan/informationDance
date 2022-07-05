@@ -192,7 +192,7 @@ class SouKeController extends ControllerBase
         if(substr($requestData['basic_jlxxcyid'], -1) == ','){
             $requestData['basic_jlxxcyid'] = rtrim($requestData['basic_jlxxcyid'], ",");
         }
-        
+
 
         $checkRes = DataModelExample::checkField(
             [
