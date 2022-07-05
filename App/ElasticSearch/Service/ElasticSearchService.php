@@ -121,6 +121,30 @@ class ElasticSearchService extends ServiceBase
         $this->query['query']['bool']['must'][] =  ['term' => [$field => $value]]; 
     }
 
+
+    /**
+新加terms
+    {
+        "query": {
+                    "bool": {
+                            "must": [{
+                                        "terms": {
+                                                    "xd_id": [
+                                                                "159074",
+                                                                "161792"
+                                                    ]
+                                        }
+                                    }
+                             ]
+                    }
+        }
+    }
+     */
+
+    function addMustTermsQuery($field, $array){
+        $this->query['query']['bool']['must'][] =  ['terms' => [$field => $array]];
+    }
+
     function addMustRangeQuery($field, $minValue, $maxValue){
         $rangeArr = [];
         if($minValue>0){
@@ -177,5 +201,25 @@ class ElasticSearchService extends ServiceBase
             //'{"size":"'.$this->query['size'].'","from":'.$this->query['from'].',"sort":[{"_id":{"order":"desc"}}],"query":{"bool":{"must":[{"match_all":{}}]}}}';
             '{"size":'.$size.',"from":'.$from.',"sort":[{"_id":{"order":"desc"}}],"query":{"bool":{"must":[{"match_all":{}}]}}}';
         }
+    }
+
+/*
+ 多边形查询
+  $arrays = [
+        [116.443452, 39.872222],
+        [116.421369, 39.872791],
+];
+
+* */
+    function addGeoShapWithin($arrays,$filed = 'location'){
+        $this->query['query']['geo_shape'][$filed] = [
+            'relation' => 'within',
+            'shape' => [
+                'type' => 'polygon',
+                'coordinates' => [
+                    $arrays
+                ]
+            ]
+        ];
     }
 }

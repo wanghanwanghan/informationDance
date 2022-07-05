@@ -9,6 +9,8 @@ use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\DeliverDetailsHistory;
 use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
+use App\HttpController\Models\RDS3\Company;
+use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\XinDong\XinDongService;
 
@@ -31,6 +33,23 @@ class SouKeController extends ControllerBase
     {
         $searchOptionArr = (new XinDongService())->getSearchOption([]);
         return $this->writeJson(200, null, $searchOptionArr, '成功', false, []);
+    }
+
+    //股东关系图
+    function getCompanyInvestor(): bool
+    {
+        //
+        $requestData =  $this->getRequestData();
+
+        $res = CompanyInvestor::findByCompanyId(
+            $requestData['company_id']
+         );
+        foreach ($res as &$data){
+            $name = CompanyInvestor::getInvestorName( $data['investor_id'], $data['investor_type']);
+            $data['name'] = $name;
+        }
+
+        return $this->writeJson(200, null, [], '成功', false, []);
     }
 
     /*

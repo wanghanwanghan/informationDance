@@ -57,6 +57,22 @@ class Company extends ServiceBase
         return $this;
     }
 
+    //区域坐标 [[11,112],[11,112],[11,112]]
+    function addArea($areaArr)
+    {
+        $companyLocationEsModel = new \App\ElasticSearch\Model\CompanyLocation();
+        $companyLocationEsModel
+            //经营范围
+            ->SetAreaQuery($areaArr)
+            ->searchFromEs();
+        $xdIds = [];
+        foreach($companyLocationEsModel->return_data['hits']['hits'] as $dataItem){
+            $xdIds[] = $dataItem['_source']['companyid'] ;
+        }
+        $this->es->addMustTermsQuery('xd_id',$xdIds);
+        return $this;
+    }
+
     function setReturnData($data)
     {
 
@@ -106,7 +122,7 @@ class Company extends ServiceBase
                     // 'hits' => $responseArr['hits']['hits'],
                     'es_query' => $this->es->query,
                 ]
-            ));
+        ));
 
         return $this;
     }

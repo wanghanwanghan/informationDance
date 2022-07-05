@@ -13,6 +13,7 @@ use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
+use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\Export\Excel\ExportExcelService;
@@ -2944,4 +2945,23 @@ eof;
 
 
     }
+
+
+    //股东关系图
+    function getCompanyInvestor(): bool
+    {
+        //
+        $requestData =  $this->getRequestData();
+
+        $res = CompanyInvestor::findByCompanyId(
+            $requestData['company_id']
+        );
+        foreach ($res as &$data){
+            $name = CompanyInvestor::getInvestorName( $data['investor_id'], $data['investor_type']);
+            $data['name'] = $name;
+        }
+
+        return $this->writeJson(200, null, [], '成功', false, []);
+    }
+
 }
