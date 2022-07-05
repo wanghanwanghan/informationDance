@@ -209,7 +209,7 @@ class JinCaiShuKeService extends ServiceBase
             'mode' => '2',
             'rwh' => trim($rwh),
             'page' => trim($page),
-            'pageSize' => 500,
+            'pageSize' => $pageSize,
         ];
 //        CommonService::getInstance()->log4PHP($content,'info','http_return_data');
         $signType = '0';
