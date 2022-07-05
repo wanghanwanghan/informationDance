@@ -1808,7 +1808,7 @@ class XinDongController extends ProvideBase
             'nsrsbh' => $nsrsbh,
             'rwh' => $rwh,
             'page' => trim($page),
-            'pageSize' => trim($pageSize),
+            'pageSize' => trim(50),
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
