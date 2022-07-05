@@ -1817,7 +1817,7 @@ class XinDongController extends ProvideBase
                 ->S000523($postData['nsrsbh'], $postData['rwh'], $postData['page'], $postData['pageSize']);
         });
 
-        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        $res = CspService::getInstance()->exec($this->csp, 60);
 
         return $this->checkResponse($res);
     }
