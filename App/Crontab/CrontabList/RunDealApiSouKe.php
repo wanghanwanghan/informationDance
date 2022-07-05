@@ -569,13 +569,19 @@ class RunDealApiSouKe extends AbstractCronTask
 
             $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr,$fieldsArr);
             foreach ($tmpXlsxDatas as $dataItem){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        '$dataItem' => $dataItem
-                    ])
-                );
-                $fileObject ->data([$dataItem]);
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        '$dataItem' => $dataItem
+//                    ])
+//                );
+                $tmp = [
+                    'xd_id'=>$dataItem['xd_id'],
+                ];
+                foreach ($featureArr as $field){
+                    $tmp[$field] = $dataItem[$field];
+                }
+                $fileObject ->data([$tmp]);
             }
 
             CommonService::getInstance()->log4PHP(
