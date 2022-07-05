@@ -181,7 +181,18 @@ class SouKeController extends ControllerBase
         }
 
         $requestData =  $this->getRequestData();
+        if(substr($requestData['basic_nicid'], -1) == ','){
+            $requestData['basic_nicid'] = rtrim($requestData['basic_nicid'], ",");
+        }
 
+        if(substr($requestData['basic_regionid'], -1) == ','){
+            $requestData['basic_regionid'] = rtrim($requestData['basic_regionid'], ",");
+        }
+
+        if(substr($requestData['basic_jlxxcyid'], -1) == ','){
+            $requestData['basic_jlxxcyid'] = rtrim($requestData['basic_jlxxcyid'], ",");
+        }
+        
 
         $checkRes = DataModelExample::checkField(
             [
