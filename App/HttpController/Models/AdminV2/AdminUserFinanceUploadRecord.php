@@ -516,7 +516,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 if(
                     $chargeRes &&
                     //没过去缓存期间
-                    ($chargeRes->getAttr('created_at') + $financeConfigArray['cache']*60*60) < time()
+                    ($chargeRes->getAttr('created_at') + $financeConfigArray['cache']*60*60) > time()
                 ){
                     $hasChargeBefore = true;
                     CommonService::getInstance()->log4PHP(
@@ -579,7 +579,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 if(
                     $chargeRes &&
                     //没过去缓存期间
-                    ($chargeRes->getAttr('created_at') + $financeConfigArray['cache']*60*60) < time()
+                    ($chargeRes->getAttr('created_at') + $financeConfigArray['cache']*60*60) > time()
                 ){
                     $hasChargeBefore = true;
                     CommonService::getInstance()->log4PHP(
