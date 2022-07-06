@@ -428,15 +428,14 @@ class RunReadAndDealXls extends AbstractCronTask
             return    CommonService::getInstance()->log4PHP(__CLASS__ . ' is running RunReadAndDealXls');
 
         }
-        CommonService::getInstance()->log4PHP(__CLASS__ . ' start running  ');
 
-
+//        CommonService::getInstance()->log4PHP(__CLASS__ . ' start running  '); 
 
         $debugLog = true;
 
         // 找到需要处理的文件 uploadAndDealXls_matchName_测试
         $files = glob($this->workPath.'uploadAndDealXls_*.xlsx');
-        $debugLog && CommonService::getInstance()->log4PHP('RunReadAndDealXls files '.json_encode($files) );
+//        $debugLog && CommonService::getInstance()->log4PHP('RunReadAndDealXls files '.json_encode($files) );
         if(empty($files)){
             return true;
         }
@@ -445,33 +444,33 @@ class RunReadAndDealXls extends AbstractCronTask
 
         $file = pathinfo(array_shift($files))['basename'];
         $fileName = pathinfo($file)['filename'];
-        $debugLog &&  CommonService::getInstance()->log4PHP('uploadAndDealXls_ file '.($file) );
+//        $debugLog &&  CommonService::getInstance()->log4PHP('uploadAndDealXls_ file '.($file) );
         $fileNameArr = explode('_',$fileName);
 
         // 匹配企业名称
         if($fileNameArr[1] == 'matchName'){
 //            return true;
-            $debugLog &&  CommonService::getInstance()->log4PHP('matchName  '.($file) );
+//            $debugLog &&  CommonService::getInstance()->log4PHP('matchName  '.($file) );
             return $this->matchName($file,$debugLog);
         }
 
         // 匹配微信吗名
         if($fileNameArr[1] == 'matchWeiXinName'){
 //            return true;
-            $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
+//            $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
             return $this->matchWeiXinName($file,$debugLog);
         }
 
         // 校验手机号
         if($fileNameArr[1] == 'checkMobile'){
 //            return true;
-            $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
+//            $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
             return $this->checkMobile($file,$debugLog);
         }
 
         // 校验手机号
         if($fileNameArr[1] == 'checkMobileV2'){
-            $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
+//            $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
             return $this->checkMobileV2($file,$debugLog);
         }
 
@@ -479,7 +478,7 @@ class RunReadAndDealXls extends AbstractCronTask
 
         //  jincai
         if($fileNameArr[1] == 'jincai'){
-            $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
+//            $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
             return $this->getjincaiData($file,$debugLog);
         }
 
