@@ -41,12 +41,12 @@ class AdminUserFinanceExportDataQueue extends ModelBase
         if(
             self::findByBatch($info['batch'])
         ){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'AdminUserFinanceExportDataQueue  findByBatch ok ' ,
-                    'params batch ' =>$info['batch']
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    'AdminUserFinanceExportDataQueue  findByBatch ok ' ,
+//                    'params batch ' =>$info['batch']
+//                ])
+//            );
             return  true;
         }
 
@@ -101,13 +101,13 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     }
 
     public static function findByConditionV3($whereArr,$page){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                 __CLASS__.__LINE__ ,
-                'findByConditionV3 $whereArr' =>$whereArr,
-                '$page' => $page
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                 __CLASS__.__LINE__ ,
+//                'findByConditionV3 $whereArr' =>$whereArr,
+//                '$page' => $page
+//            ])
+//        );
         $model = AdminUserFinanceExportDataQueue::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
@@ -133,12 +133,12 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     }
 
     public static function findByBatch($batch){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'findByBatch  start  ' ,
-                'params $batch ' =>$batch
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'findByBatch  start  ' ,
+//                'params $batch ' =>$batch
+//            ])
+//        );
         $res =  AdminUserFinanceExportDataQueue::create()
             ->where('batch',$batch)
             ->get();
@@ -147,13 +147,13 @@ class AdminUserFinanceExportDataQueue extends ModelBase
 
     public static function setTouchTime($id,$touchTime){
         $info = AdminUserFinanceExportDataQueue::findById($id);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                ' AdminUserFinanceExportDataQueue  setTouchTime  '=>'start',
-                '$id,' =>$id,
-                '$touchTime' =>$touchTime,
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                ' AdminUserFinanceExportDataQueue  setTouchTime  '=>'start',
+//                '$id,' =>$id,
+//                '$touchTime' =>$touchTime,
+//            ])
+//        );
         return $info->update([
             'touch_time' => $touchTime,
         ]);
@@ -176,11 +176,11 @@ class AdminUserFinanceExportDataQueue extends ModelBase
 
     public static function setFilePath($id,$path,$fileName){
 
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'export data queue setFilePath   '=>$id,$path,$fileName
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'export data queue setFilePath   '=>$id,$path,$fileName
+//            ])
+//        );
         $info = AdminUserFinanceExportDataQueue::findById($id);
 
         return $info->update([
@@ -191,13 +191,13 @@ class AdminUserFinanceExportDataQueue extends ModelBase
 
     // 用完今日余额的
     public static function findBySql($where){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'Export data queue   '=> 'strat',
-                '$where' =>$where,
-
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'Export data queue   '=> 'strat',
+//                '$where' =>$where,
+//
+//            ])
+//        );
         $Sql = " select *  
                             from  
                         `admin_user_finance_export_data_queue` 
