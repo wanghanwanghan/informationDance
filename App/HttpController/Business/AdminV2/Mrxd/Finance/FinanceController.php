@@ -1086,7 +1086,7 @@ class FinanceController extends ControllerBase
                         [
                             'user_id' => $AdminUserFinanceUploadDataRecord['user_id'],
                             'batch' => $batchNum.'_'.$AdminUserFinanceUploadDataRecord['id'],
-                            'entName' => $financeData['NewFinanceData']['entName'],
+                            'entName' => $financeData['AdminUserFinanceData']['entName'],
                             'start_year' => $AdminUserFinanceUploadDataRecord['charge_year_start'],
                             'end_year' => $AdminUserFinanceUploadDataRecord['charge_year_end'],
                             'year' => $AdminUserFinanceUploadDataRecord['charge_year'],

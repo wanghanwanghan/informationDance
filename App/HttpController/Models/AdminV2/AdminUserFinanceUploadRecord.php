@@ -241,11 +241,6 @@ class AdminUserFinanceUploadRecord extends ModelBase
     ){
         //允许的字段
         $allowedFields = AdminUserFinanceUploadRecord::getAllowedFieldArray($uploadRecordId);
-       // $allFields = NewFinanceData::getFieldCname(true);
-        //$titles =[];
-        //foreach ($allowedFields as $field){
-          //  $titles[] = $allFields[$field];
-       // }
 
         //类型 getType
         $dataType = AdminUserFinanceUploadRecord::getType($uploadRecordId);
@@ -254,26 +249,21 @@ class AdminUserFinanceUploadRecord extends ModelBase
         );
 
         $returnDatas  = [];
-      //  yield $returnDatas[] = $titles;
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                __CLASS__.__FUNCTION__ ,
-//                '$xlsx_title'=>[
-//                    $returnDatas,
-//                    $titles
-//                ],
-//            ])
-//        );
+
         //上传记录详情
         foreach ($AdminUserFinanceUploadDataRecords as $AdminUserFinanceUploadDataRecord){
-            if($AdminUserFinanceUploadDataRecord['user_finance_data_id'] <= 0){
+            if($AdminUserFinanceUploadDataRecord['user_finance_data_id']< 0 ){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ ,
-                        'finance_data_id < 0',
-                        'user_finance_data_id continue ' => $AdminUserFinanceUploadDataRecord['user_finance_data_id']
+                        'finance_data_id < 0' => $AdminUserFinanceUploadDataRecord['user_finance_data_id']
                     ])
                 );
+                yield $returnDatas[] = [
+                    'NewFinanceData' => [],
+                    'AdminUserFinanceUploadDataRecord'=>$AdminUserFinanceUploadDataRecord?:[],
+                    'AdminUserFinanceData'=>[],
+                ];
                 continue;
             }
 
@@ -282,17 +272,20 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 $AdminUserFinanceUploadDataRecord['user_finance_data_id']
             )->toArray();
 
-            if($AdminUserFinanceData['finance_data_id'] <= 0){
+            if($AdminUserFinanceData['finance_data_id']<= 0 ){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ ,
-                        'finance_data_id < 0',
-                        'finance_data_id' => $AdminUserFinanceData['finance_data_id']
+                        'finance_data_id < 0' =>$AdminUserFinanceData['finance_data_id']
                     ])
                 );
+                yield $returnDatas[] = [
+                    'NewFinanceData' => [],
+                    'AdminUserFinanceUploadDataRecord'=>$AdminUserFinanceUploadDataRecord?:[],
+                    'AdminUserFinanceData'=>$AdminUserFinanceData?:[],
+                ];
                 continue;
             }
-
             //对应的实际财务数据
             $NewFinanceData = NewFinanceData::findById(
                 $AdminUserFinanceData['finance_data_id']
@@ -337,9 +330,9 @@ class AdminUserFinanceUploadRecord extends ModelBase
             }
 
             yield $returnDatas[] = [
-                'NewFinanceData' => $NewFinanceData2,
-                'AdminUserFinanceUploadDataRecord'=>$AdminUserFinanceUploadDataRecord,
-                'AdminUserFinanceData'=>$AdminUserFinanceData,
+                'NewFinanceData' => $NewFinanceData2?:[],
+                'AdminUserFinanceUploadDataRecord'=>$AdminUserFinanceUploadDataRecord?:[],
+                'AdminUserFinanceData'=>$AdminUserFinanceData?:[],
             ];
 
         }
