@@ -280,16 +280,16 @@ class RunDealApiSouKe extends AbstractCronTask
                 ->addSort("_id","desc")
                 //设置默认值 不传任何条件 搜全部
                 ;
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$lastId' => $lastId,
-                    '$totalNums' => $totalNums,
-                    '$fieldsArr' => $fieldsArr,
-                    'generate data  . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
-                    ' costs seconds '=>microtime(true) - $start
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    '$lastId' => $lastId,
+//                    '$totalNums' => $totalNums,
+//                    '$fieldsArr' => $fieldsArr,
+//                    'generate data  . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
+//                    ' costs seconds '=>microtime(true) - $start
+//                ])
+//            );
 
             if($lastId>0){
                 $companyEsModel->addSearchAfterV1($lastId);
@@ -513,12 +513,12 @@ class RunDealApiSouKe extends AbstractCronTask
                 LIMIT $limit
             "
         );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+//            ])
+//        );
 
         foreach($allInitDatas as $InitData){
             DownloadSoukeHistory::setTouchTime(
