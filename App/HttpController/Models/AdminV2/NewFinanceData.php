@@ -231,6 +231,7 @@ class NewFinanceData extends ModelBase
             'VENDINC_yoy_ave_2' => '营业总收入同比的平均（两年）',
             'NETINC_yoy_ave_2' => '净利润同比的平均（两年）',
             'NPMOMB' => '主营业务净利润率',
+            'EMPNUM'    => '从业人数',
         ];
         if($getALl){
             return  array_merge(
