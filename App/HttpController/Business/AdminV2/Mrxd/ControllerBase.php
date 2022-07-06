@@ -87,56 +87,56 @@ class ControllerBase extends Index
         } 
         $this->setLoginUserInfo($res);
         $tokenInfo = UserService::getInstance()->decodeAccessToken($requestToken);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'check token   1 ',
-                '$tokenInfo' => $tokenInfo
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'check token   1 ',
+//                '$tokenInfo' => $tokenInfo
+//            ])
+//        );
         if (!is_array($tokenInfo) || count($tokenInfo) != 3){
-            CommonService::getInstance()->log4PHP(
-                json_encode(
-                    [
-                        ' !is_array($tokenInfo) || count($tokenInfo) != 3',
-                        '$requestToken'=>$requestToken,
-                        '$tokenInfo'=>$tokenInfo,
-                    ]
-                )
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode(
+//                    [
+//                        ' !is_array($tokenInfo) || count($tokenInfo) != 3',
+//                        '$requestToken'=>$requestToken,
+//                        '$tokenInfo'=>$tokenInfo,
+//                    ]
+//                )
+//            );
             return false;
         } 
 
         $reqPhone = $this->request()->getRequestParam('phone') ?? '';
 
         $tokenPhone = current($tokenInfo);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'check token 2  ',
-                '$reqPhone' => $reqPhone,
-                '$tokenPhone' => $tokenPhone
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'check token 2  ',
+//                '$reqPhone' => $reqPhone,
+//                '$tokenPhone' => $tokenPhone
+//            ])
+//        );
         if (strlen($tokenPhone) != 11 || strlen($reqPhone) != 11){
-            CommonService::getInstance()->log4PHP(
-                json_encode(
-                    [
-                        ' $tokenPhone  error ',
-                        '$tokenPhone' => $tokenPhone,
-                        '$reqPhone' => $reqPhone,
-                        '$tokenInfo'=>$tokenInfo,
-                        'current($tokenInfo)'=>current($tokenInfo),
-                    ]
-                )
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode(
+//                    [
+//                        ' $tokenPhone  error ',
+//                        '$tokenPhone' => $tokenPhone,
+//                        '$reqPhone' => $reqPhone,
+//                        '$tokenInfo'=>$tokenInfo,
+//                        'current($tokenInfo)'=>current($tokenInfo),
+//                    ]
+//                )
+//            );
             return false;
         } 
         $res = $reqPhone - 0 === $tokenPhone - 0;
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'check token res  ',
-                '$res' => $res,
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'check token res  ',
+//                '$res' => $res,
+//            ])
+//        );
         return $res;
     }
 
