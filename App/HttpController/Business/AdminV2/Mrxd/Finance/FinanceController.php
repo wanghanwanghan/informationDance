@@ -979,16 +979,6 @@ class FinanceController extends ControllerBase
         }
         $batchNum = 'CWDC'.date('YmdHis');
 
-        //检查余额是否充足
-        //检查余额
-        $checkAccountBalanceRes = \App\HttpController\Models\AdminV2\AdminNewUser::checkAccountBalance(
-            $uploadRes['user_id'],
-            $uploadRes['money']
-        );
-        if(!$checkAccountBalanceRes){
-            return $this->writeJson(201, null, [],  '余额不足 请充值');
-        }
-
         //先扣费
         //本名单之前是否扣费过
         $chargeBefore = AdminUserFinanceUploadRecord::ifHasChargeBefore($uploadRes['id']);
@@ -998,6 +988,21 @@ class FinanceController extends ControllerBase
                 '$chargeBefore  '=> $chargeBefore
             ])
         );
+
+        //检查余额是否充足
+        if(!$chargeBefore){
+            //检查余额
+            $checkAccountBalanceRes = \App\HttpController\Models\AdminV2\AdminNewUser::checkAccountBalance(
+                $uploadRes['user_id'],
+                $uploadRes['money']
+            );
+            if(!$checkAccountBalanceRes){
+                return $this->writeJson(201, null, [],  '余额不足 请充值');
+            }
+        }
+
+
+
         // ===============
         // 实际扣费了
         $price = 0;
