@@ -372,11 +372,20 @@ class AdminUserFinanceData extends ModelBase
             }
             //设置是否需要确认
             $status = self::getConfirmStatus($financeConifgArr,$dbDataArr);
-            self::updateStatus($id,$status);
+            $status = self::getConfirmStatus($financeConifgArr,$getFinanceDataSourceDetailRes['NewFinanceData']);
+            //已经确认过的 不再重复确认
             if(
-                $status == self::$statusNeedsConfirm
+               !in_array( $financeData['status'],[
+                   self::$statusConfirmedYes,
+                   self::$statusConfirmedNo
+               ])
             ){
-                self::updateNeedsConfirm($id,1);
+                self::updateStatus($id,$status);
+                if(
+                    $status == self::$statusNeedsConfirm
+                ){
+                    self::updateNeedsConfirm($id,1);
+                }
             }
 
             //设置缓存过期时间
@@ -402,11 +411,18 @@ class AdminUserFinanceData extends ModelBase
             self::updateNewFinanceDataId($id,$getFinanceDataSourceDetailRes['NewFinanceDataId']);
             //设置是否需要确认
             $status = self::getConfirmStatus($financeConifgArr,$getFinanceDataSourceDetailRes['NewFinanceData']);
-            self::updateStatus($id,$status);
             if(
-                $status == self::$statusNeedsConfirm
+                !in_array( $financeData['status'],[
+                    self::$statusConfirmedYes,
+                    self::$statusConfirmedNo
+                ])
             ){
-                self::updateNeedsConfirm($id,1);
+                self::updateStatus($id,$status);
+                if(
+                    $status == self::$statusNeedsConfirm
+                ){
+                    self::updateNeedsConfirm($id,1);
+                }
             }
         }
 
