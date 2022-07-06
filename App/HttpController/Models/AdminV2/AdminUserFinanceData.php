@@ -724,9 +724,6 @@ class AdminUserFinanceData extends ModelBase
             ->withTotalCount();
 
         $res = $model->all();
-
-        $total = $model->lastQueryResult()->getTotalCount();
-
         CommonService::getInstance()->log4PHP(
             json_encode(
                 [
@@ -735,6 +732,7 @@ class AdminUserFinanceData extends ModelBase
                 ]
             )
         );
+        $total = $model->lastQueryResult()->getTotalCount(); 
 
         return [
             'data' => $res,
