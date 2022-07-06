@@ -429,7 +429,7 @@ class RunReadAndDealXls extends AbstractCronTask
 
         }
 
-//        CommonService::getInstance()->log4PHP(__CLASS__ . ' start running  '); 
+//        CommonService::getInstance()->log4PHP(__CLASS__ . ' start running  ');
 
         $debugLog = true;
 

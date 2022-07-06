@@ -25,14 +25,14 @@ class AdminMenuItems extends ModelBase
         $sql = "SELECT * FROM  admin_menu_items WHERE parent_id = $parentId AND `status` = 1  ORDER BY  `order` asc  " ;
 
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'getMenusByParentId  ' ,
-                'params $parentId ' =>$parentId,
-                'params $sql ' =>$sql,
-                //'$list' =>$list,
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'getMenusByParentId  ' ,
+//                'params $parentId ' =>$parentId,
+//                'params $sql ' =>$sql,
+//                //'$list' =>$list,
+//            ])
+//        );
         return $list;
     }  
 }
