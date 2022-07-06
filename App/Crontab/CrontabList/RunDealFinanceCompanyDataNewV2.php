@@ -759,32 +759,32 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
         $allConfigs  = AdminUserFinanceConfig::findAllByCondition([
             'status' => AdminUserFinanceConfig::$state_ok
         ]);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ ,
-                '$allConfigs '=> $allConfigs,
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ ,
+//                '$allConfigs '=> $allConfigs,
+//            ])
+//        );
         foreach ($allConfigs as $Config){
             if(
                 $Config['sms_notice_value'] <= 0
             ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        'sms_notice_value <= 0 '=> $Config['sms_notice_value'],
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        'sms_notice_value <= 0 '=> $Config['sms_notice_value'],
+//                    ])
+//                );
                 continue;
             };
 
             $balance = AdminNewUser::getAccountBalance($Config['user_id']);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$balance '=> $balance,
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    '$balance '=> $balance,
+//                ])
+//            );
             if(
                 $balance <= 0
             ){
@@ -820,14 +820,14 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
 
             //余额够了
             if($Config['sms_notice_value'] < $balance ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        '$balance is enough ',
-                        '$balance'=> $balance,
-                        'sms_notice_value' => $Config['sms_notice_value']
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        '$balance is enough ',
+//                        '$balance'=> $balance,
+//                        'sms_notice_value' => $Config['sms_notice_value']
+//                    ])
+//                );
                 AdminUserChargeConfig::setSmsNoticeDate(
                     $userInfo['id'],
                     ''
@@ -841,12 +841,12 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
             if(
                 $chargeConfigs['send_sms_notice_date']  >0
             ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ ,
-                        'has send before  . continue . user_id = '=>$userInfo['id']
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ ,
+//                        'has send before  . continue . user_id = '=>$userInfo['id']
+//                    ])
+//                );
                 continue;
             }
 
@@ -855,15 +855,15 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                 'name' => $userInfo['user_name'],
                 'money' =>$Config['sms_notice_value']
             ]);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ ,
-                    'send sms ',
-                    '$res' => $res,
-                    'phone' => $userInfo['phone'],
-
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ ,
+//                    'send sms ',
+//                    '$res' => $res,
+//                    'phone' => $userInfo['phone'],
+//
+//                ])
+//            );
             AdminUserChargeConfig::setSmsNoticeDate(
                 $userInfo['id'],
                 date('Y-m-d H:i:s')
