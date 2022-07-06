@@ -71,98 +71,100 @@ class JinCaiShuKeService extends ServiceBase
             ));
     }
 
-    public function getRwhData(){
-        $time = time()-86400;
-        $list = JincaiRwhLog::create()->where('status = 0 and created_at<'.$time)->all();
-        dingAlarm('金财数科获取发票数据查询时间',['$time'=>$time]);
+    function getRwhData()
+    {
+        $time = time() - 86400;
+        $list = JincaiRwhLog::create()->where('status = 0 and created_at<' . $time)->all();
+        dingAlarm('金财数科获取发票数据查询时间', ['$time' => $time]);
 
-        if(empty($list)){
+        if (empty($list)) {
             return true;
         }
-        foreach ($list as $log){
-            $data = $this->S000523( $log->getAttr('nsrsbh'),  $log->getAttr('rwh'),1,500);
+        foreach ($list as $log) {
+            $data = $this->S000523($log->getAttr('nsrsbh'), $log->getAttr('rwh'), 1, 500);
             $content = $data['result']['content'];
-            if(empty($content) || $content['sqzt']!=1) {
-                CommonService::getInstance()->log4PHP($data,'info','getRwhData_error');
-                dingAlarm('金财数科获取发票数据为空S000523',['$data'=>json_encode($data)]);
-                if($content['sqzt'] == 2){
-                    JincaiRwhLog::create()->get($log->getAttr('id'))->update(['status'=>2]);
+            if (empty($content) || $content['sqzt'] != 1) {
+                CommonService::getInstance()->log4PHP($data, 'info', 'getRwhData_error');
+                dingAlarm('金财数科获取发票数据为空S000523', ['$data' => json_encode($data)]);
+                if ($content['sqzt'] == 2) {
+                    JincaiRwhLog::create()->get($log->getAttr('id'))->update(['status' => 2]);
                 }
                 continue;
             }
-            if(empty($content['fpxxs'])){
+            if (empty($content['fpxxs'])) {
                 continue;
             }
             $resDataAll = $content['fpxxs']['data'];
-            if(count($content['fpxxs']['data']) == 500){
-                for($i=0;$i<50;$i++){
-                    $vdata = $this->S000523( $log->getAttr('nsrsbh'),  $log->getAttr('rwh'),1,500);
-                    $resDataAll = array_merge($resDataAll,$vdata['result']['content']['fpxxs']['data']);
-                    if(count($vdata['result']['content']['fpxxs']['data'])<500){
+            if (count($content['fpxxs']['data']) == 500) {
+                for ($i = 0; $i < 50; $i++) {
+                    $vdata = $this->S000523($log->getAttr('nsrsbh'), $log->getAttr('rwh'), 1, 500);
+                    $resDataAll = array_merge($resDataAll, $vdata['result']['content']['fpxxs']['data']);
+                    if (count($vdata['result']['content']['fpxxs']['data']) < 500) {
                         break;
                     }
                 }
             }
 //            CommonService::getInstance()->log4PHP($data,'info','http_return_data');
-            foreach ($resDataAll as $val){
+            foreach ($resDataAll as $val) {
                 $xmmc = '';
-                if(isset($val['mxs']['0']['xmmc'])){
-                    $xmmc = explode('*',trim($val['mxs']['0']['xmmc'],'*'));
-                }else if(isset($val['cllx'])){
+                if (isset($val['mxs']['0']['xmmc'])) {
+                    $xmmc = explode('*', trim($val['mxs']['0']['xmmc'], '*'));
+                } else if (isset($val['cllx'])) {
                     $xmmc = $val['cllx'];
-                }else if($val['fplx'] == 15){
+                } else if ($val['fplx'] == 15) {
                     $xmmc = '二手车';
-                }else if(isset($val['mxs']['0']['hwmc'])){
-                    $xmmc = explode('*',trim($val['mxs']['0']['hwmc'],'*'));
-                }else{
-                    CommonService::getInstance()->log4PHP($data,'info','getRwhData_empty_goodsname');
+                } else if (isset($val['mxs']['0']['hwmc'])) {
+                    $xmmc = explode('*', trim($val['mxs']['0']['hwmc'], '*'));
+                } else {
+                    CommonService::getInstance()->log4PHP($data, 'info', 'getRwhData_empty_goodsname');
                 }
 
                 $insert = [
-                    'invoiceCode'=>$val['fpdm'],
-                    'invoiceNumber'=>$val['fphm'],
-                    'billingDate'=>$val['kprq'],
-                    'goodsName'=>$xmmc['0'],
-                    'totalAmount'=>$val['hjje'],
-                    'invoiceType'=>$val['fplx'],
-                    'state'=>$val['fpzt'],
-                    'salesTaxNo'=>$val['xfsh']??$val['mfdwdm'],
-                    'salesTaxName'=>$val['xfmc']??$val['mfdw'],
-                    'purchaserTaxNo'=>$val['gfsh']??$val['gfdwdm'],
-                    'purchaserName'=>$val['gfmc']??$val['gfdw'],
+                    'invoiceCode' => $val['fpdm'],
+                    'invoiceNumber' => $val['fphm'],
+                    'billingDate' => $val['kprq'],
+                    'goodsName' => $xmmc['0'],
+                    'totalAmount' => $val['hjje'],
+                    'invoiceType' => $val['fplx'],
+                    'state' => $val['fpzt'],
+                    'salesTaxNo' => $val['xfsh'] ?? $val['mfdwdm'],
+                    'salesTaxName' => $val['xfmc'] ?? $val['mfdw'],
+                    'purchaserTaxNo' => $val['gfsh'] ?? $val['gfdwdm'],
+                    'purchaserName' => $val['gfmc'] ?? $val['gfdw'],
                 ];
-                if($content['sjlx'] == 1){
+                if ($content['sjlx'] == 1) {
                     $invoiceInData = InvoiceIn::create()->where("invoiceCode = '{$insert['invoiceCode']}' and invoiceNumber = '{$insert['invoiceNumber']}'")->get();
-                    if(empty($invoiceInData)){
+                    if (empty($invoiceInData)) {
                         InvoiceIn::create()->data($insert)->save();
                     }
-                }else{
+                } else {
                     $invoiceOutData = InvoiceOut::create()->where("invoiceCode = '{$insert['invoiceCode']}' and invoiceNumber = '{$insert['invoiceNumber']}'")->get();
-                    if(empty($invoiceOutData)){
+                    if (empty($invoiceOutData)) {
                         InvoiceOut::create()->data($insert)->save();
                     }
                 }
             }
-            JincaiRwhLog::create()->get($log->getAttr('id'))->update(['status'=>1]);
+            JincaiRwhLog::create()->get($log->getAttr('id'))->update(['status' => 1]);
         }
     }
-    public function get24Month($nsrsbh)
+
+    function get24Month($nsrsbh)
     {
         for ($i = 1; $i <= 36; $i++) {
-            $date      = date('Y-m', strtotime('-' . $i . ' month'));
+            $date = date('Y-m', strtotime('-' . $i . ' month'));
             $startDate = $date . "-01";
-            $endDate   = date('Y-m-d', strtotime("$startDate +1 month -1 day"));
+            $endDate = date('Y-m-d', strtotime("$startDate +1 month -1 day"));
             $log = JincaiRwhLog::create()->where("nsrsbh='{$nsrsbh}' and start_date = '{$startDate}'")->get();
-            if(!empty($log)){
+            if (!empty($log)) {
                 continue;
             }
             $res = $this->S000519($nsrsbh, $startDate, $endDate);
             $rwhArr = $res['result']['content'];
-            if(empty($rwhArr)){
-                dingAlarm('金财数科发票归集数据为空S000519',['$res'=>json_encode($res)]);
+            if (empty($rwhArr)) {
+                dingAlarm('金财数科发票归集数据为空S000519', ['$res' => json_encode($res)]);
                 continue;
             }
-            foreach ($rwhArr as $value){
+            foreach ($rwhArr as $value) {
                 $insertLog = [
                     'rwh' => $value['rwh'],
                     'nsrsbh' => $nsrsbh,
@@ -171,8 +173,9 @@ class JinCaiShuKeService extends ServiceBase
                 JincaiRwhLog::create()->data($insertLog)->save();
             }
         }
-        return $this->createReturn(200, '',  null);
+        return $this->createReturn(200, '', null);
     }
+
     //发票归集
     function S000519(string $nsrsbh, string $start, string $stop): array
     {
