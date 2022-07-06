@@ -255,15 +255,15 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
         $returnDatas  = [];
       //  yield $returnDatas[] = $titles;
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ ,
-                '$xlsx_title'=>[
-                    $returnDatas,
-                    $titles
-                ],
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ ,
+//                '$xlsx_title'=>[
+//                    $returnDatas,
+//                    $titles
+//                ],
+//            ])
+//        );
         //上传记录详情
         foreach ($AdminUserFinanceUploadDataRecords as $AdminUserFinanceUploadDataRecord){
             if($AdminUserFinanceUploadDataRecord['user_finance_data_id'] <= 0){

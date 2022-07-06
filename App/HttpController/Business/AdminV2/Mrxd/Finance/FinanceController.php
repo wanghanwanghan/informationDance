@@ -1061,12 +1061,26 @@ class FinanceController extends ControllerBase
                 $AdminUserFinanceUploadDataRecord = AdminUserFinanceUploadDataRecord::findById(
                     $financeData['AdminUserFinanceUploadDataRecord']['id']
                 )->toArray();
-
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ ,
+                        '$AdminUserFinanceUploadDataRecord' => $AdminUserFinanceUploadDataRecord,
+                        'AdminUserFinanceUploadDataRecord'=>$financeData['AdminUserFinanceUploadDataRecord']['id']
+                    ])
+                );
                 // 收费了
                 if(
                     $AdminUserFinanceUploadDataRecord['real_price'] &&
                     !$chargeBefore
                 ){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ ,
+                            'charged ' => true,
+                            'real_price'=>$AdminUserFinanceUploadDataRecord['real_price'],
+                            '$chargeBefore'=>$chargeBefore,
+                        ])
+                    );
                     //设置收费记录
                     $AdminUserFinanceChargeInfoId = AdminUserFinanceChargeInfo::addRecordV2(
                         [
@@ -1103,6 +1117,16 @@ class FinanceController extends ControllerBase
                     if(!$res  ){
                         return $this->writeJson(201, null, [],  '设置缓存过期时间失败，联系管理员');
                     }
+                }
+                else{
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ ,
+                            'charged ' => false,
+                            'real_price'=>$AdminUserFinanceUploadDataRecord['real_price'],
+                            '$chargeBefore'=>$chargeBefore,
+                        ])
+                    );
                 }
             }
         }
