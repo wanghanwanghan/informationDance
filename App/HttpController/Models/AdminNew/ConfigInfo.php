@@ -41,9 +41,9 @@ class ConfigInfo extends ModelBase
     }
 
     public static function setIsRunning($crontabName){
-        CommonService::getInstance()->log4PHP(
-            'setIsRunning '.$crontabName
-        );
+//        CommonService::getInstance()->log4PHP(
+//            'setIsRunning '.$crontabName
+//        );
 
         $info = ConfigInfo::findByName('crontab');
         $config = $info->getAttr("value");
@@ -60,18 +60,18 @@ class ConfigInfo extends ModelBase
         $configArr[$crontabName]['start_time'] = date('Y-m-d H:i:s');
         $configArr[$crontabName]['is_running'] = 1;
 
-        CommonService::getInstance()->log4PHP(
-            'update '.json_encode($configArr)
-        );
+//        CommonService::getInstance()->log4PHP(
+//            'update '.json_encode($configArr)
+//        );
         return $info->update([
             'value' => json_encode($configArr),
         ]);
     }
 
     public static function setIsDone($crontabName){
-        CommonService::getInstance()->log4PHP(
-            'setIsDone '.$crontabName
-        );
+//        CommonService::getInstance()->log4PHP(
+//            'setIsDone '.$crontabName
+//        );
 
         $info = ConfigInfo::findByName('crontab');
         $config = $info->getAttr("value");
@@ -87,9 +87,9 @@ class ConfigInfo extends ModelBase
 
         $configArr[$crontabName]['is_running'] = 0;
 
-        CommonService::getInstance()->log4PHP(
-            'update '.json_encode($configArr)
-        );
+//        CommonService::getInstance()->log4PHP(
+//            'update '.json_encode($configArr)
+//        );
         return $info->update([
             'value' => json_encode($configArr),
         ]);
@@ -106,14 +106,14 @@ class ConfigInfo extends ModelBase
         $status = (bool)$redis->setNx($methodName, 'isRun');
 
         $status === false ?: $redis->expire($methodName, $ttl);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'setRedisNx strat ' ,
-                'params $methodName' => $methodName,
-                'params $ttl' => $ttl,
-                ' $status' => $status,
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'setRedisNx strat ' ,
+//                'params $methodName' => $methodName,
+//                'params $ttl' => $ttl,
+//                ' $status' => $status,
+//            ])
+//        );
         return $status;
     }
 
@@ -124,13 +124,13 @@ class ConfigInfo extends ModelBase
 
         $redis->select(self::$redis_db_num);
         $status = !!$redis->del($methodName);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'removeRedisNx strat ' ,
-                'params $methodName' => $methodName,
-                ' $status' => $status,
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'removeRedisNx strat ' ,
+//                'params $methodName' => $methodName,
+//                ' $status' => $status,
+//            ])
+//        );
         return $status;
     }
 
