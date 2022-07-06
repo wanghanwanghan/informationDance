@@ -361,8 +361,9 @@ class GetInvData extends ProcessBase
                     'direction' => $invType,//01-购买方 02-销售方
                 ])->get();
                 if (!empty($check_exists)) {
+                    //已经存在了
                     return;
-                }//已经存在了
+                }
                 $insert = [
                     'fpdm' => changeNull($arr['FPDM']),//'发票代码',
                     'fphm' => changeNull($arr['FPHM']),//'发票号码',
