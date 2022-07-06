@@ -126,6 +126,7 @@ class AdminUserFinanceChargeInfo extends ModelBase
                 'entName' => $entName,
                 'year' => $year,
             ])
+            ->order('id', 'DESC')
             ->get();
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -148,6 +149,7 @@ class AdminUserFinanceChargeInfo extends ModelBase
                 'start_year' => $yearStart,
                 'end_year' => $yearEnd,
             ])
+            ->order('id', 'DESC')
             ->get();
         CommonService::getInstance()->log4PHP(
             json_encode([

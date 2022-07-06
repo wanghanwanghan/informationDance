@@ -485,6 +485,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
     //计算到底多少钱
     static function  calMoney($uploadId){
         $uploadInfo = self::findById($uploadId)->toArray();
+        $financeConfigArray = self::getFinanceConfigArray($uploadId);
         $uploadDatas = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
             $uploadInfo['user_id'],$uploadInfo['id']
         );
@@ -512,16 +513,30 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
                 //之前已经收费过
                 if(
-                    $user_finance_data['cache_end_date'] >= date('Y-m-d H:i:s') ||
-                    AdminUserFinanceChargeInfo::ifChargedBeforeV2(
+                    $user_finance_data['cache_end_date'] > 1
+                ){
+                    if(
+                        $user_finance_data['cache_end_date'] >= date('Y-m-d H:i:s')
+                    ){
+                        $hasChargeBefore = true;
+                    }
+                }
+                //没有缓存日期的
+                else{
+                    $chargeRes = AdminUserFinanceChargeInfo::ifChargedBeforeV2(
                         $uploadData['user_id'],
                         $user_finance_data['entName'],
                         $uploadData['charge_year_start'],
                         $uploadData['charge_year_end']
-                    )
-                ){
-                    $hasChargeBefore = true;
-                };
+                    );
+                    if(
+                        $chargeRes &&
+                        //没过去缓存期间
+                        ($chargeRes->getAttr('created_at') + $financeConfigArray['cache']*60*60) < time()
+                    ){
+                        $hasChargeBefore = true;
+                    };
+                }
 
                 // 如果之前没计费过
                 if(!$hasChargeBefore){
@@ -562,15 +577,29 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 };
                 //之前已经收费过
                 if(
-                    $user_finance_data['cache_end_date'] >= date('Y-m-d H:i:s')   ||
-                    AdminUserFinanceChargeInfo::ifChargedBefore(
-                            $uploadData['user_id'],
-                            $user_finance_data['entName'],
-                            $uploadData['charge_year']
-                        )
+                    $user_finance_data['cache_end_date'] > 1
                 ){
-                    $hasChargeBefore = true;
-                };
+                    if(
+                        $user_finance_data['cache_end_date'] >= date('Y-m-d H:i:s')
+                    ){
+                        $hasChargeBefore = true;
+                    }
+                }
+                //没有缓存日期的
+                else{
+                    $chargeRes = AdminUserFinanceChargeInfo::ifChargedBefore(
+                        $uploadData['user_id'],
+                        $user_finance_data['entName'],
+                        $uploadData['charge_year']
+                    );
+                    if(
+                        $chargeRes &&
+                        //没过去缓存期间
+                        ($chargeRes->getAttr('created_at') + $financeConfigArray['cache']*60*60) < time()
+                    ){
+                        $hasChargeBefore = true;
+                    };
+                }
 
                 // 如果之前没计费过
                 if(!$hasChargeBefore){
