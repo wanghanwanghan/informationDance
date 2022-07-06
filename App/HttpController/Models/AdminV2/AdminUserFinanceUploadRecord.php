@@ -253,12 +253,12 @@ class AdminUserFinanceUploadRecord extends ModelBase
         //上传记录详情
         foreach ($AdminUserFinanceUploadDataRecords as $AdminUserFinanceUploadDataRecord){
             if($AdminUserFinanceUploadDataRecord['user_finance_data_id']< 0 ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ ,
-                        'finance_data_id < 0' => $AdminUserFinanceUploadDataRecord['user_finance_data_id']
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ ,
+//                        'finance_data_id < 0' => $AdminUserFinanceUploadDataRecord['user_finance_data_id']
+//                    ])
+//                );
                 yield $returnDatas[] = [
                     'NewFinanceData' => [],
                     'AdminUserFinanceUploadDataRecord'=>$AdminUserFinanceUploadDataRecord?:[],
@@ -273,12 +273,12 @@ class AdminUserFinanceUploadRecord extends ModelBase
             )->toArray();
 
             if($AdminUserFinanceData['finance_data_id']<= 0 ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ ,
-                        'finance_data_id < 0' =>$AdminUserFinanceData['finance_data_id']
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ ,
+//                        'finance_data_id < 0' =>$AdminUserFinanceData['finance_data_id']
+//                    ])
+//                );
                 yield $returnDatas[] = [
                     'NewFinanceData' => [],
                     'AdminUserFinanceUploadDataRecord'=>$AdminUserFinanceUploadDataRecord?:[],
@@ -292,41 +292,41 @@ class AdminUserFinanceUploadRecord extends ModelBase
             )->toArray();
 
             $NewFinanceData2 = self::resetArray($NewFinanceData,$allowedFields);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ ,
-                    '$NewFinanceData2' => $NewFinanceData2,
-                    '$dataType' =>$dataType,
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ ,
+//                    '$NewFinanceData2' => $NewFinanceData2,
+//                    '$dataType' =>$dataType,
+//                ])
+//            );
             //原始值
             $NewFinanceData2 = AdminUserFinanceConfig::formatchYuanZhi($NewFinanceData2);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ ,
-                    'raw $NewFinanceData2' => $NewFinanceData2
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ ,
+//                    'raw $NewFinanceData2' => $NewFinanceData2
+//                ])
+//            );
             //字典
             if(AdminUserFinanceConfig::$type_zidian == $dataType){
                 $NewFinanceData2 = AdminUserFinanceConfig::formatchZiDian($NewFinanceData2);
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ ,
-                        'zidian $NewFinanceData2' => $NewFinanceData2
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ ,
+//                        'zidian $NewFinanceData2' => $NewFinanceData2
+//                    ])
+//                );
             }
 
             //区间
             if(AdminUserFinanceConfig::$type_qvjian == $dataType){
                 $NewFinanceData2 = AdminUserFinanceConfig::formatchQvJian($NewFinanceData2);
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ ,
-                        'qvjian $NewFinanceData2' => $NewFinanceData2
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ ,
+//                        'qvjian $NewFinanceData2' => $NewFinanceData2
+//                    ])
+//                );
             }
 
             yield $returnDatas[] = [

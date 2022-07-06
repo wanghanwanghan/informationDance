@@ -529,11 +529,6 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
     //TODO  改成按行的 防止内存溢出
     static function  exportFinanceDataV4($limit){
         $startMemory = memory_get_usage();
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__. ' start ',
-            ])
-        );
         $queueDatas =  AdminUserFinanceExportDataQueue::findBySql(
             " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_data_all_set. " 
                     AND touch_time  IS Null  LIMIT $limit 
@@ -593,12 +588,12 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
             ;
 
             foreach ($financeDatas as $dataItem){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        'generate data ' => $dataItem['NewFinanceData']
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        'generate data ' => $dataItem['NewFinanceData']
+//                    ])
+//                );
                 $fileObject ->data([$dataItem['NewFinanceData']]);
             }
 
