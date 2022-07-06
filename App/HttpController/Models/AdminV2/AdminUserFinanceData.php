@@ -432,7 +432,7 @@ class AdminUserFinanceData extends ModelBase
             }
         }
         if(!$hasValidData){
-            return self::$statusConfirmedNo;
+            //return self::$statusConfirmedNo;
         }
 
         //有的为空 需要确认
@@ -445,14 +445,14 @@ class AdminUserFinanceData extends ModelBase
             }
         }
 
-        foreach ($dataItem as $itemKey => $value){
-            if(
-                in_array($itemKey,$needsConfirmFields) &&
-                empty($value)
-            ){
-                return self::$statusNeedsConfirm;
-            }
-        }
+//        foreach ($dataItem as $itemKey => $value){
+//            if(
+//                in_array($itemKey,$needsConfirmFields) &&
+//                empty($value)
+//            ){
+//                return self::$statusNeedsConfirm;
+//            }
+//        }
 
         return self::$statusConfirmedYes;
     }

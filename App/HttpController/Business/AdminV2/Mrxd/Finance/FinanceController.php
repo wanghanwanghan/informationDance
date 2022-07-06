@@ -623,7 +623,12 @@ class FinanceController extends ControllerBase
         $data = $res->toArray();
         $realFinanceDatId = $data['finance_data_id'];
         $allowedFields = NewFinanceData::getFieldCname(false);
-        $realData = NewFinanceData::findByIdV2($realFinanceDatId,($allowedFields));
+        $configs = AdminUserFinanceConfig::getConfigByUserId($data['user_id']);
+        $newFields = [];
+        foreach (json_decode($configs['allowed_fields']) as $field){
+            $newFields[$field] = $allowedFields[$field];
+        }
+        $realData = NewFinanceData::findByIdV2($realFinanceDatId,$newFields);
         return $this->writeJson(200, [ ] , $realData , '成功' );
     }
     //确认是否需要
