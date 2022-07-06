@@ -101,7 +101,13 @@ class AdminUserFinanceExportDataQueue extends ModelBase
     }
 
     public static function findByConditionV3($whereArr,$page){
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                 __CLASS__.__LINE__ ,
+                'findByConditionV3 $whereArr' =>$whereArr,
+                '$page' => $page
+            ])
+        );
         $model = AdminUserFinanceExportDataQueue::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
