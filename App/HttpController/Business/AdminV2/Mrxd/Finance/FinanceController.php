@@ -444,7 +444,7 @@ class FinanceController extends ControllerBase
                 ],
                 [
                     'field' => 'created_at',
-                    'value' => strtotime(date("Y-m-d H:i:s", strtotime("-".$config['cache']." hours"))),
+                    'value' => strtotime(date("Y-m-d H:i:s", strtotime("-".($config['cache']?:12)." hours"))),
                     'operate' => '>=',
                 ]
             ],
