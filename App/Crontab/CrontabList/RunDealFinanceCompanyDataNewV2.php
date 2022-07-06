@@ -224,6 +224,9 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                 AdminUserFinanceUploadRecord::reducePriority(
                     $uploadRes['id'],1
                 );
+                AdminUserFinanceUploadRecord::setTouchTime(
+                    $uploadRes['id'],NULL
+                );
                 continue;
             }
 
@@ -255,6 +258,9 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                 AdminUserFinanceUploadRecord::setData(
                     $uploadRes['id'],'remrk','检查余额不足'
                 );
+                AdminUserFinanceUploadRecord::setTouchTime(
+                    $uploadRes['id'],NULL
+                );
                 continue;
             }
 
@@ -268,6 +274,9 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                     ])
                 );
                  AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateAllSet);
+                AdminUserFinanceUploadRecord::setTouchTime(
+                    $uploadRes['id'],NULL
+                );
                  continue;
             }
             CommonService::getInstance()->log4PHP(
