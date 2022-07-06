@@ -62,6 +62,8 @@ class AdminUserFinanceChargeInfo extends ModelBase
                 'price' => $requestData['price'],
                 'price_type' => $requestData['price_type'],
                 'status' => $requestData['status']?:self::$state_init,
+               'created_at' => time(),
+               'updated_at' => time(),
            ])->save();
 
         } catch (\Throwable $e) {
