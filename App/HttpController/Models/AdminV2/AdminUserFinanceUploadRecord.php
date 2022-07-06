@@ -512,30 +512,41 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 };
 
                 //之前已经收费过
+                //从收费记录找最新收费记录： 没超缓存期 不收费 超出了 收费
+                $chargeRes = AdminUserFinanceChargeInfo::ifChargedBeforeV2(
+                    $uploadData['user_id'],
+                    $user_finance_data['entName'],
+                    $uploadData['charge_year_start'],
+                    $uploadData['charge_year_end']
+                );
+
                 if(
-                    $user_finance_data['cache_end_date'] > 1
+                    $chargeRes &&
+                    //没过去缓存期间
+                    ($chargeRes->getAttr('created_at') + $financeConfigArray['cache']*60*60) < time()
                 ){
-                    if(
-                        $user_finance_data['cache_end_date'] >= date('Y-m-d H:i:s')
-                    ){
-                        $hasChargeBefore = true;
-                    }
-                }
-                //没有缓存日期的
-                else{
-                    $chargeRes = AdminUserFinanceChargeInfo::ifChargedBeforeV2(
-                        $uploadData['user_id'],
-                        $user_finance_data['entName'],
-                        $uploadData['charge_year_start'],
-                        $uploadData['charge_year_end']
+                    $hasChargeBefore = true;
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ ,
+                            'under_cache_date.no_charge',
+                            'created_at' => $chargeRes->getAttr('created_at'),
+                            'user_id'=> $uploadData['user_id'],
+                            'entName'=>$user_finance_data['entName'],
+                            'charge_year'=>$uploadData['charge_year']
+                        ])
                     );
-                    if(
-                        $chargeRes &&
-                        //没过去缓存期间
-                        ($chargeRes->getAttr('created_at') + $financeConfigArray['cache']*60*60) < time()
-                    ){
-                        $hasChargeBefore = true;
-                    };
+                }
+                else{
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ ,
+                            'out_of_cache_date.charge',
+                            'user_id'=> $uploadData['user_id'],
+                            'entName'=>$user_finance_data['entName'],
+                            'charge_year'=>$uploadData['charge_year']
+                        ])
+                    );
                 }
 
                 // 如果之前没计费过
@@ -550,17 +561,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                     AdminUserFinanceUploadDataRecord::updateRealPrice(
                         $uploadData['id'],$uploadData['price'], $uploadData['charge_year_start'].'~'. $uploadData['charge_year_end'].'包年计费'
                     );
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            __CLASS__.__FUNCTION__ ,
-                            'needs charge . ',
-                            '$uploadDataId' => $uploadData['id'],
-                            'chargeTypeAnnually' ,
-                            'charge_year_start' => $uploadData['charge_year_start'],
-                            'charge_year_end' => $uploadData['charge_year_end'],
-                            'price' => $uploadData['price'],
-                        ])
-                    );
+
                 }
             }
 
@@ -576,29 +577,37 @@ class AdminUserFinanceUploadRecord extends ModelBase
                     $hasChargeBefore = true;
                 };
                 //之前已经收费过
+                //从收费记录找  没超过缓存期 就不收费
+                $chargeRes = AdminUserFinanceChargeInfo::ifChargedBefore(
+                    $uploadData['user_id'],
+                    $user_finance_data['entName'],
+                    $uploadData['charge_year']
+                );
                 if(
-                    $user_finance_data['cache_end_date'] > 1
+                    $chargeRes &&
+                    //没过去缓存期间
+                    ($chargeRes->getAttr('created_at') + $financeConfigArray['cache']*60*60) < time()
                 ){
-                    if(
-                        $user_finance_data['cache_end_date'] >= date('Y-m-d H:i:s')
-                    ){
-                        $hasChargeBefore = true;
-                    }
-                }
-                //没有缓存日期的
-                else{
-                    $chargeRes = AdminUserFinanceChargeInfo::ifChargedBefore(
-                        $uploadData['user_id'],
-                        $user_finance_data['entName'],
-                        $uploadData['charge_year']
+                    $hasChargeBefore = true;
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ ,
+                            'under_cache_date.no_charge',
+                            'user_id'=> $uploadData['user_id'],
+                            'entName'=>$user_finance_data['entName'],
+                            'charge_year'=>$uploadData['charge_year']
+                        ])
                     );
-                    if(
-                        $chargeRes &&
-                        //没过去缓存期间
-                        ($chargeRes->getAttr('created_at') + $financeConfigArray['cache']*60*60) < time()
-                    ){
-                        $hasChargeBefore = true;
-                    };
+                }else{
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ ,
+                            'out_of_cache_date.charge',
+                            'user_id'=> $uploadData['user_id'],
+                            'entName'=>$user_finance_data['entName'],
+                            'charge_year'=>$uploadData['charge_year']
+                        ])
+                    );
                 }
 
                 // 如果之前没计费过
