@@ -161,21 +161,21 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
         ConfigInfo::setIsRunning(__CLASS__);
 
         //将客户名单解析到db
-        self::parseCompanyDataToDb(3);
+        self::parseCompanyDataToDb(10);
 
         //计算价格
-        self::calcluteFinancePrice(3);
+        self::calcluteFinancePrice(10);
 
         //找到需要导出的 拉取财务数据
-        self::pullFinanceDataV2(3);
+        self::pullFinanceDataV2(10);
 
         //找到需要导出的 设置为已确认
-        self::checkConfirmV2(3);
+        self::checkConfirmV2(10);
 
         //找到需要导出的 重新拉取财务数据
-        self::pullFinanceDataV3(3);
+        self::pullFinanceDataV3(10);
 
-        self::exportFinanceDataV4(3);
+        self::exportFinanceDataV4(10);
 
         //发生提醒短信
         self::sendSmsWhenBalanceIsNotEnough();

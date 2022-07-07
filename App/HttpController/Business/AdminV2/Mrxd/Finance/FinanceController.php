@@ -742,42 +742,6 @@ class FinanceController extends ControllerBase
         return $this->writeJson(200,  [ ],  $allFields,'成功');
     }
 
-    function  parseDataToXls($config,$filename,$header,$exportData,$sheetName){
-
-        $excel = new \Vtiful\Kernel\Excel($config);
-        $fileObject = $excel->fileName($filename, $sheetName);
-        $fileHandle = $fileObject->getHandle();
-
-        $format = new Format($fileHandle);
-        $colorStyle = $format
-            ->fontColor(Format::COLOR_ORANGE)
-            ->border(Format::BORDER_DASH_DOT)
-            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
-            ->toResource();
-
-        $format = new Format($fileHandle);
-
-        $alignStyle = $format
-            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
-            ->toResource();
-
-        $fileObject
-            ->defaultFormat($colorStyle)
-            ->header($header)
-            ->defaultFormat($alignStyle)
-            ->data($exportData)
-            // ->setColumn('B:B', 50)
-        ;
-
-        $format = new Format($fileHandle);
-        //单元格有\n解析成换行
-        $wrapStyle = $format
-            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
-            ->wrap()
-            ->toResource();
-
-        return $fileObject->output();
-    }
     /**
     导出客户名单 异步 只是加入队列
      * TODO： 要加事务
