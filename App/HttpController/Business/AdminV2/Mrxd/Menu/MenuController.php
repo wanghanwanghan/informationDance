@@ -31,7 +31,7 @@ class MenuController extends ControllerBase
     public function getRawMenus(){
         $name = $this->getRequestData('name','') ;
         $pageNo = $this->getRequestData('pageNo',1) ;
-        $pageSize = $this->getRequestData('pageSize',10) ;
+        $pageSize = $this->getRequestData('pageSize',50) ;
         $limit = ($pageNo-1)*$pageSize;
         $sql = "status = 1";
         if(!empty($name)){
