@@ -54,7 +54,7 @@ class MenuController extends ControllerBase
             'page' => $pageNo,
             'pageSize' => $pageSize,
             'total' => $count,
-            'totalPage' => (int)($count/$pageSize)+1,
+            'totalPage' => ceil($count/$pageSize),
         ];
         return $this->writeJson(
             200,
