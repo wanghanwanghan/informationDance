@@ -123,7 +123,6 @@ class AdminUserSoukeConfig extends ModelBase
             //'report_year'=>'report_year',
             'jin_chu_kou' => '进出口',
             'iso' => '高新技术',
-
         ];
         return $fields;
     }

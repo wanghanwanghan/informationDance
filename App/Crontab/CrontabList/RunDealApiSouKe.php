@@ -532,14 +532,16 @@ class RunDealApiSouKe extends AbstractCronTask
 
 
             $fieldsArr = AdminUserSoukeConfig::getAllowedFieldsArray($InitData['admin_id']);
-            $fieldsArr[] = 'xd_id';
+            array_unshift($fieldsArr, 'xd_id');  //在数组开头插入元素
 
-            $filedCname = [];
+
+            $filedCname = ['xd_id'];
             $allFields = AdminUserSoukeConfig::getAllFields();
             foreach ($fieldsArr as $field){
-                $filedCname[] = $allFields[$field];
-            }
-            $filedCname[] = 'xd_id';
+                if($allFields[$field]){
+                    $filedCname[] = $allFields[$field];
+                }
+            } 
 
             $excel = new \Vtiful\Kernel\Excel($config);
             $fileObject = $excel->fileName($filename, 'sheet');
