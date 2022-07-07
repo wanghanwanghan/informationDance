@@ -732,7 +732,7 @@ class AdminUserFinanceData extends ModelBase
                 ]
             )
         );
-        $total = $model->lastQueryResult()->getTotalCount(); 
+        $total = $model->lastQueryResult()->getTotalCount();
 
         return [
             'data' => $res,

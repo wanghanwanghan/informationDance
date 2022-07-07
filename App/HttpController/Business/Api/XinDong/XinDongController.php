@@ -9,6 +9,7 @@ use App\Crontab\CrontabList\RunDealFinanceCompanyDataNewV2;
 use App\Crontab\CrontabList\RunDealToolsFile;
 use App\Csp\Service\CspService;
 use App\HttpController\Models\AdminV2\AdminNewUser;
+use App\HttpController\Models\AdminV2\AdminUserFinanceData;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\FinancesSearch;
@@ -2837,6 +2838,17 @@ eof;
     }
     function testExport()
     {
+        if(
+            $this->getRequestData('lastSql')
+        ){
+
+            $model = AdminUserFinanceData::create()
+                ->where(['id' => 22])
+                ->page(1,2)
+                ->order('id', 'DESC') ;
+            $res = $model->all();
+            return $this->writeJson(200, null, $model->lastQuery(), null, true, []); 
+        }
         if(
             $this->getRequestData('encode')
         ){
