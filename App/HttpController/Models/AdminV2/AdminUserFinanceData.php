@@ -312,7 +312,7 @@ class AdminUserFinanceData extends ModelBase
         $postData = [
             'entName' => $financeData['entName'],
             'code' => '',
-            'beginYear' => 2013,
+            'beginYear' => 2023,
             'dataCount' => 10,//取最近几年的
         ];
 
@@ -387,7 +387,7 @@ class AdminUserFinanceData extends ModelBase
             $NewFinanceDataId = $getFinanceDataSourceDetailRes['NewFinanceDataId'];
             $NewFinanceData =$getFinanceDataSourceDetailRes['NewFinanceData'] ;
         }
-
+            
         //把$NewFinanceDataId更新到表
         self::updateNewFinanceDataId($id,$NewFinanceDataId);
 
@@ -407,7 +407,7 @@ class AdminUserFinanceData extends ModelBase
                 self::updateNeedsConfirm($id,1);
             }
         }
- 
+
         return true;
     }
     public  static  function getConfirmStatus($financeConifgArr,$dataItem){
