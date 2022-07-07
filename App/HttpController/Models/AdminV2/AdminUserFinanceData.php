@@ -359,6 +359,14 @@ class AdminUserFinanceData extends ModelBase
                 $dbDataArr['year'] = $financeData['year'];
                 $dbDataArr['raw_return'] = @json_encode($resData);
                 $addRes = NewFinanceData::addRecordV2($dbDataArr);
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ ,
+                        'NewFinanceData::addRecordV2 '=>$dbDataArr,
+                        '$addRes' => $addRes,
+                        '$yearItem' => $yearItem,
+                    ])
+                );
                 if(!$addRes){
                     return CommonService::getInstance()->log4PHP(
                         json_encode([
@@ -387,7 +395,7 @@ class AdminUserFinanceData extends ModelBase
             $NewFinanceDataId = $getFinanceDataSourceDetailRes['NewFinanceDataId'];
             $NewFinanceData =$getFinanceDataSourceDetailRes['NewFinanceData'] ;
         }
-            
+
         //把$NewFinanceDataId更新到表
         self::updateNewFinanceDataId($id,$NewFinanceDataId);
 
