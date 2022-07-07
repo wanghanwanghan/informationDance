@@ -296,6 +296,7 @@ class AdminUserFinanceData extends ModelBase
     //客户导出的时间间隔  
     public static function pullFinanceData($id,$financeConifgArr){
         $financeData =  AdminUserFinanceData::findById($id)->toArray();
+
         if($financeData['year'] > date('Y')){
             CommonService::getInstance()->log4PHP(
                 json_encode([
@@ -307,11 +308,12 @@ class AdminUserFinanceData extends ModelBase
             );
             return  true;
         }
+
         $postData = [
             'entName' => $financeData['entName'],
             'code' => '',
-            'beginYear' =>$financeData['year'],
-            'dataCount' => 1,//取最近几年的
+            'beginYear' => 2013,
+            'dataCount' => 10,//取最近几年的
         ];
 
         // 根据缓存期和上次拉取财务数据时间 决定是取db还是取api
@@ -324,6 +326,7 @@ class AdminUserFinanceData extends ModelBase
                 'Pull From DB Or APi? '=>$getFinanceDataSourceDetailRes
             ])
         );
+
         //需要从APi拉取
         if($getFinanceDataSourceDetailRes['pullFromApi']){
             CommonService::getInstance()->log4PHP(
@@ -339,66 +342,40 @@ class AdminUserFinanceData extends ModelBase
             CommonService::getInstance()->log4PHP(
                 @json_encode([
                     __CLASS__.__FUNCTION__ ,
-                    ' $FinanceDataId ' =>$id,
+                    '$FinanceDataId ' =>$id,
                     '$financeConifgArr ' =>$financeConifgArr,
-                    'Pull From APi '=>@$res,
-                    '$postData'=>$postData,
+                    'Pull_From_APi_Res '=>@$res,
+                    '$postData '=>$postData,
                 ])
             );
+
             //更新拉取时间
             self::updateLastPullDate($id,date('Y-m-d H:i:s'));
+
             // 保存到db
-            $dbDataArr = $resData[$financeData['year']];
-            $dbDataArr['entName'] = $financeData['entName'];
-            $dbDataArr['year'] = $financeData['year'];
-            $dbDataArr['raw_return'] = @json_encode($resData);
-            CommonService::getInstance()->log4PHP(
-                @json_encode([
-                    __CLASS__.__FUNCTION__ ,
-                    '  $FinanceDataId ' =>$id,
-                    'NewFinanceData addRecordV2' =>$dbDataArr,
-                ])
-            );
-            $addRes = NewFinanceData::addRecordV2($dbDataArr);
-            if(!$addRes){
-                return CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ ,
-                        ' $FinanceDataId ' =>$id,
-                        '$financeConifgArr ' =>$financeConifgArr,
-                        'NewFinanceData::addRecordV2 false'=>$dbDataArr
-                    ])
-                );
-            }
-            //设置是否需要确认
-            $status = self::getConfirmStatus($financeConifgArr,$dbDataArr);
-            $status = self::getConfirmStatus($financeConifgArr,$getFinanceDataSourceDetailRes['NewFinanceData']);
-            //已经确认过的 不再重复确认
-            if(
-               !in_array( $financeData['status'],[
-                   self::$statusConfirmedYes,
-                   self::$statusConfirmedNo
-               ])
-            ){
-                self::updateStatus($id,$status);
-                if(
-                    $status == self::$statusNeedsConfirm
-                ){
-                    self::updateNeedsConfirm($id,1);
+            foreach ($resData as $yearItem => $resDataItem){
+                $dbDataArr = $resDataItem;
+                $dbDataArr['entName'] = $financeData['entName'];
+                $dbDataArr['year'] = $financeData['year'];
+                $dbDataArr['raw_return'] = @json_encode($resData);
+                $addRes = NewFinanceData::addRecordV2($dbDataArr);
+                if(!$addRes){
+                    return CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ ,
+                            ' $FinanceDataId ' =>$id,
+                            '$financeConifgArr ' =>$financeConifgArr,
+                            'NewFinanceData::addRecordV2 false'=>$dbDataArr
+                        ])
+                    );
+                }
+
+                //不是他需要的年份
+                if($financeData['year'] == $yearItem ){
+                    $NewFinanceDataId = $addRes;
+                    $NewFinanceData = $dbDataArr;
                 }
             }
-
-            //设置缓存过期时间
-            $res = AdminUserFinanceData::updateCacheEndDate(
-                $id,
-                date('Y-m-d H:i:s'),
-                $financeConifgArr['cache']
-            );
-
-            //设置关系
-            self::updateNewFinanceDataId($id,$addRes);
-            AdminUserChargeConfig::setDailyUsedNumsV2($financeData['user_id'],1);
-
         }
         else{
             CommonService::getInstance()->log4PHP(
@@ -407,25 +384,30 @@ class AdminUserFinanceData extends ModelBase
                     ' pullFromDB $FinanceDataId ' =>$id,
                 ])
             );
-            //设置关系
-            self::updateNewFinanceDataId($id,$getFinanceDataSourceDetailRes['NewFinanceDataId']);
-            //设置是否需要确认
-            $status = self::getConfirmStatus($financeConifgArr,$getFinanceDataSourceDetailRes['NewFinanceData']);
-            if(
-                !in_array( $financeData['status'],[
-                    self::$statusConfirmedYes,
-                    self::$statusConfirmedNo
-                ])
-            ){
-                self::updateStatus($id,$status);
-                if(
-                    $status == self::$statusNeedsConfirm
-                ){
-                    self::updateNeedsConfirm($id,1);
-                }
-            }
+            $NewFinanceDataId = $getFinanceDataSourceDetailRes['NewFinanceDataId'];
+            $NewFinanceData =$getFinanceDataSourceDetailRes['NewFinanceData'] ;
         }
 
+        //把$NewFinanceDataId更新到表
+        self::updateNewFinanceDataId($id,$NewFinanceDataId);
+
+        //设置是否需要确认
+        $status = self::getConfirmStatus($financeConifgArr,$NewFinanceData);
+        //之前没确认过的
+        if(
+            !in_array( $financeData['status'],[
+                self::$statusConfirmedYes,
+                self::$statusConfirmedNo
+            ])
+        ){
+            self::updateStatus($id,$status);
+            if(
+                $status == self::$statusNeedsConfirm
+            ){
+                self::updateNeedsConfirm($id,1);
+            }
+        }
+ 
         return true;
     }
     public  static  function getConfirmStatus($financeConifgArr,$dataItem){
