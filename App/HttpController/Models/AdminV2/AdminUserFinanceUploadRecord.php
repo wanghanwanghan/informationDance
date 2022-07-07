@@ -449,7 +449,9 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
         if(
             $last_charge_date > 0 &&
-            strtotime($last_charge_date) -time() >= 60*60* intval(self::getFinanceConfigArray($id)['cache'])
+            strtotime($last_charge_date) -time() >= 60*60* intval(
+                self::getFinanceConfigArray($id)['cache'] ?:12
+            )
         ){
             $res = false;
         }
