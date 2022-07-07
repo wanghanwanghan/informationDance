@@ -596,4 +596,28 @@ class SouKeController extends ControllerBase
             'totalPage' =>  ceil( $res['total']/ 10 ),
         ], $res['data'],'成功');
     }
+
+    public function calMarketShare(){
+        $requestData =  $this->getRequestData();
+        $checkRes = DataModelExample::checkField(
+            [
+
+                'xd_id' => [
+                    'bigger_than' => 0,
+                    'field_name' => 'xd_id',
+                    'err_msg' => '参数错误',
+                ]
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
+        XinDongService::getMarjetShare($requestData['xd_id']);
+        return $this->writeJson(200, [ ] ,XinDongService::getMarjetShare($requestData['xd_id']), '成功', true, []);
+    }
+
 }
