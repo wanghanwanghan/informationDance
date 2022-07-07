@@ -12,6 +12,7 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceChargeInfo;
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecordV3;
 use App\HttpController\Models\AdminV2\FinanceLog;
+use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Models\Api\CompanyCarInsuranceStatusInfo;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\RDS3\Company;
@@ -610,6 +611,16 @@ class FinanceController extends ControllerBase
         ){
             return  $this->writeJson(201,[],[],'入库失败，联系管理员');
         }
+
+        $userInfo = \App\HttpController\Models\AdminV2\AdminNewUser::findById($requestData['user_id']);
+        OperatorLog::addRecord(
+            [
+                'user_id' => $this->loginUserinfo['id'],
+                'msg' => $this->loginUserinfo['name'].'给用户'.$userInfo['user_name'].'充值'.$requestData['money'].'元('.$title.')',
+                'details' => '',
+                'type_cname' => '用户充值',
+            ]
+        );
         ConfigInfo::removeRedisNx('exportFinanceData2');
 
         return $this->writeJson(200, [ ] , [], '成功' );

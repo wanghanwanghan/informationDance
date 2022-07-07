@@ -28,6 +28,7 @@ class MenuController extends ControllerBase
         );
     }
 
+    //获取菜单
     public function getRawMenus(){
         $name = $this->getRequestData('name','') ;
         $pageNo = $this->getRequestData('pageNo',1) ;
