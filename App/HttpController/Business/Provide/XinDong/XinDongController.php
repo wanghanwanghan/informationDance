@@ -668,12 +668,12 @@ class XinDongController extends ProvideBase
         $userInputYear = explode(',', trim($year, ','));
 
         $beginYear = 2021;
-        $dataCount = 3;
+        $dataCount = 4;
 
         $this->spendMoney = 1;
 
-        if ($this->limitEntNumByUserId(__FUNCTION__, $entName, 50)) {
-            return $this->writeJson(201, null, null, '请求次数已经达到上限50');
+        if ($this->limitEntNumByUserId(__FUNCTION__, $entName, 500)) {
+            return $this->writeJson(201, null, null, '请求次数已经达到上限500');
         }
         if (empty($entName)) {
             return $this->writeJson(201, null, null, 'entName不能是空');
