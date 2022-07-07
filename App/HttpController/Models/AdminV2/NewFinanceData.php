@@ -154,14 +154,14 @@ class NewFinanceData extends ModelBase
                    }
                      $newData[$needsChangeFields[$field]] =  $checkRes;
 
-                   CommonService::getInstance()->log4PHP(
-                       json_encode([
-                           'findByIdV2  '=> 'start',
-                           'params $field' => $field,
-                           '$needsChangeFields[$field]' =>$needsChangeFields[$field],
-                           '$checkRes' =>$checkRes,
-                       ])
-                   );
+//                   CommonService::getInstance()->log4PHP(
+//                       json_encode([
+//                           'findByIdV2  '=> 'start',
+//                           'params $field' => $field,
+//                           '$needsChangeFields[$field]' =>$needsChangeFields[$field],
+//                           '$checkRes' =>$checkRes,
+//                       ])
+//                   );
                }
                else{
                    //$newData[$field] = empty($dataItem)?'无':'有';
