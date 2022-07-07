@@ -277,7 +277,7 @@ class RunDealApiSouKe extends AbstractCronTask
                 ->addSize($size)
                 ->setSource($fieldsArr)
                 //->addFrom($offset)
-                ->addSort("_id","desc")
+                //->addSort("_id","desc")
                 //设置默认值 不传任何条件 搜全部
                 ;
 //            CommonService::getInstance()->log4PHP(
