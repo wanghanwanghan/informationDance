@@ -357,7 +357,7 @@ class AdminUserFinanceData extends ModelBase
                 $dbDataArr = $resDataItem;
                 $dbDataArr['entName'] = $financeData['entName'];
                 $dbDataArr['year'] = $yearItem;
-                $dbDataArr['raw_return'] = @json_encode($resData);
+                $dbDataArr['raw_return'] = @json_encode($res);
                 $addRes = NewFinanceData::addRecordV2($dbDataArr);
 //                CommonService::getInstance()->log4PHP(
 //                    json_encode([
