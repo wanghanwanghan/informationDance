@@ -26,6 +26,7 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceUploadDataRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\XinDong\XinDongService;
 use Vtiful\Kernel\Format;
 
 class FinanceController extends ControllerBase
@@ -617,7 +618,7 @@ class FinanceController extends ControllerBase
             [
                 'user_id' => $this->loginUserinfo['id'],
                 'msg' => $this->loginUserinfo['name'].'给用户'.$userInfo['user_name'].'充值'.$requestData['money'].'元('.$title.')',
-                'details' => '',
+                'details' => XinDongService::trace(),
                 'type_cname' => '用户充值',
             ]
         );
