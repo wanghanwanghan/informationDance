@@ -541,7 +541,7 @@ class RunDealApiSouKe extends AbstractCronTask
                 if($allFields[$field]){
                     $filedCname[] = $allFields[$field];
                 }
-            } 
+            }
 
             $excel = new \Vtiful\Kernel\Excel($config);
             $fileObject = $excel->fileName($filename, 'sheet');
