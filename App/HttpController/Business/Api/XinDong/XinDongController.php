@@ -10,6 +10,7 @@ use App\Crontab\CrontabList\RunDealToolsFile;
 use App\Csp\Service\CspService;
 use App\HttpController\Models\AdminV2\AdminNewUser;
 use App\HttpController\Models\AdminV2\AdminUserFinanceData;
+use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\FinancesSearch;
@@ -2847,7 +2848,7 @@ eof;
                 ->page(1,2)
                 ->order('id', 'DESC') ;
             $res = $model->all();
-            return $this->writeJson(200, null, $model->lastQuery(), null, true, []); 
+            return $this->writeJson(200, null, $model->lastQuery(), null, true, []);
         }
         if(
             $this->getRequestData('encode')
@@ -2978,59 +2979,25 @@ eof;
     //市场占有率查询
     function calMarketShare(): bool
     {
-        $companyEsModel = new \App\ElasticSearch\Model\Company();
         $requestData =  $this->getRequestData();
+        $checkRes = DataModelExample::checkField(
+            [
 
-        $companyEsModel
-            //根据id查询
-            ->addMustTermQuery('xd_id',$requestData['xd_id'])
-            ->addSize(1)
-            ->addFrom(0)
-            ->searchFromEs()
-            // 格式化下日期和时间
-            ->formatEsDate()
-            // 格式化下金额
-            ->formatEsMoney()
-        ;
-
-        //四级分类
-        $siJiFenLei = "";
-        foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-            $siJiFenLei = $dataItem['si_ji_fen_lei_code'];
-        }
-        if(empty($siJiFenLei)){
-            return  "";
-        }
-        //三位以下的  企业太多了 不计算
-        if(strlen($siJiFenLei) <=3 ){
-            return  "";
+                'xd_id' => [
+                    'bigger_than' => 0,
+                    'field_name' => 'xd_id',
+                    'err_msg' => '参数错误',
+                ]
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
         }
 
-        //取前四位
-        $tmpSiji = substr($siJiFenLei , 0 , 5) ;
-
-        //所有满足的企业
-        $companyEsModel = new \App\ElasticSearch\Model\Company();
-        $companyEsModel
-            ->SetQueryBySiJiFenLei($tmpSiji)
-            ->searchFromEs()
-            // 格式化下日期和时间
-            ->formatEsDate()
-            // 格式化下金额
-            ->formatEsMoney()
-        ;
-
-        $siJiFenLeiArrs = [];
-        foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-            $siJiFenLeiArrs[] = $dataItem['si_ji_fen_lei_code'];
-        }
-
-        $totalMin = 0;
-        $totalMax = 0;
-
-
-
-        return $this->writeJson(200, [ ]
-            , $companyEsModel->return_data['hits']['hits'], '成功', true, []);
+        XinDongService::getMarjetShare($requestData['xd_id']);
+        return $this->writeJson(200, [ ] ,XinDongService::getMarjetShare($requestData['xd_id']), '成功', true, []);
     }
 }

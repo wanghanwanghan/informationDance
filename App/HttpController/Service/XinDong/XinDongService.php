@@ -2991,4 +2991,67 @@ class XinDongService extends ServiceBase
         }
         return $returnData;
     }
+
+    static  function  getMarjetShare($xd_id){
+        $companyEsModel = new \App\ElasticSearch\Model\Company();
+        $companyEsModel
+            //根据id查询
+            ->addMustTermQuery('xd_id',$xd_id)
+            ->addSize(1)
+            ->addFrom(0)
+            ->searchFromEs()
+            // 格式化下日期和时间
+            ->formatEsDate()
+            // 格式化下金额
+            ->formatEsMoney()
+        ;
+
+        //四级分类
+        $siJiFenLei = "";
+        foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
+            $siJiFenLei = $dataItem['si_ji_fen_lei_code'];
+        }
+        if(empty($siJiFenLei)){
+            return  "";
+        }
+        //三位以下的  企业太多了 不计算
+        if(strlen($siJiFenLei) <=3 ){
+            return  "";
+        }
+
+        //取前四位
+        $tmpSiji = substr($siJiFenLei , 0 , 5) ;
+
+        //所有满足的企业
+        $companyEsModel = new \App\ElasticSearch\Model\Company();
+        $companyEsModel
+            ->SetQueryBySiJiFenLei($tmpSiji)
+            ->searchFromEs()
+            // 格式化下日期和时间
+            ->formatEsDate()
+            // 格式化下金额
+            ->formatEsMoney()
+        ;
+
+        $siJiFenLeiArrs = [];
+        foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
+            $siJiFenLeiArrs[] = $dataItem['si_ji_fen_lei_code'];
+        }
+
+        $totalMin = 0;
+        $totalMax = 0;
+        $yingShouGUiMoMap = XinDongService::getTuanDuiGuiMoMapV2();
+        foreach ($siJiFenLeiArrs as $tmpSiJiFenLei){
+            $totalMin += $yingShouGUiMoMap[$tmpSiJiFenLei]['min'];
+            $totalMax += $yingShouGUiMoMap[$tmpSiJiFenLei]['max'];
+        }
+
+        $rate1 = $yingShouGUiMoMap[$siJiFenLei]['min']/$totalMin;
+        $rate2 = $yingShouGUiMoMap[$siJiFenLei]['max']/$totalMax;
+
+        return  [
+            'min' => number_format($rate1,2), 'max' => number_format($rate2,2)
+        ];
+    }
+
 }
