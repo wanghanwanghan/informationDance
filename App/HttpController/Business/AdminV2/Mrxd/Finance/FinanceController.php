@@ -38,7 +38,8 @@ class FinanceController extends ControllerBase
     {
         parent::afterAction($actionName);
     }
-    
+
+    //XX
     public function getConfigLists(){
         $user_id = $this->getRequestData('user_id','') ;
         $type = $this->getRequestData('type','') ;
@@ -58,7 +59,7 @@ class FinanceController extends ControllerBase
             'page' => $pageNo,
             'pageSize' => $pageSize,
             'total' => $count,
-            'totalPage' => (int)($count/$pageSize)+1,
+            'totalPage' => ceil($count/$pageSize) ,
         ];
         foreach ($list as &$dataItem){
             $userRes = AdminNewUser::findById($dataItem['user_id']);
@@ -333,9 +334,9 @@ class FinanceController extends ControllerBase
         }
         return $this->writeJson(200,  [
             'page' => $page,
-            'pageSize' =>20,
+            'pageSize' =>10,
             'total' => $res['total'],
-            'totalPage' =>   $totalPages = ceil( $res['total']/ 20 ),
+            'totalPage' =>   $totalPages = ceil( $res['total']/ 10 ),
         ],  $res['data'],'成功');
     }
 
@@ -367,7 +368,7 @@ class FinanceController extends ControllerBase
             'page' => $page,
             'pageSize' =>10,
             'total' => $res['total'],
-            'totalPage' =>  ceil( $res['total']/ 20 ),
+            'totalPage' =>  ceil( $res['total']/ 10 ),
         ], $res['data'],'成功');
     }
 
@@ -464,9 +465,9 @@ class FinanceController extends ControllerBase
         }
         return $this->writeJson(200,  [
             'page' => $page,
-            'pageSize' =>20,
+            'pageSize' =>10,
             'total' => $res['total'],
-            'totalPage' => ceil( $res['total']/ 20 ),
+            'totalPage' => ceil( $res['total']/ 10 ),
         ], $res['data'],'成功');
     }
 
@@ -489,9 +490,9 @@ class FinanceController extends ControllerBase
         return $this->writeJson(200,
             [
                 'page' => $page,
-                'pageSize' =>20,
+                'pageSize' =>10,
                 'total' => $res['total'],
-                'totalPage' => ceil( $res['total']/ 20 ),
+                'totalPage' => ceil( $res['total']/ 10 ),
             ] , $res['data'], '成功' );
     }
 
@@ -545,7 +546,7 @@ class FinanceController extends ControllerBase
                 'page' => $page,
                 'pageSize' =>10,
                 'total' => $res['total'],
-                'totalPage' => ceil( $res['total']/ 20 ),
+                'totalPage' => ceil( $res['total']/ 10 ),
             ] , $res['data'], '成功' );
     }
 
