@@ -41,7 +41,10 @@
     "overtrue/pinyin": "^4.0",
     "intervention/image": "^2.6",
     "easyswoole/oss": "^1.1",
-    "easyswoole/elasticsearch": "^1.0"
+    "easyswoole/elasticsearch": "^1.0",
+    "gemorroj/archive7z": "^5.4",
+    "phpoffice/phpexcel": "^1.8",
+    "phpoffice/phpspreadsheet": "^1.23"
   },
   "autoload": {
     "psr-4": {
