@@ -2848,7 +2848,7 @@ eof;
                 ->page(1,2)
                 ->order('id', 'DESC') ;
             $res = $model->all();
-            return $this->writeJson(200, null, $model->getLastPrepareQuery(), null, true, []);
+            return $this->writeJson(200, null, $model->builder->getLastPrepareQuery(), null, true, []);
         }
         if(
             $this->getRequestData('encode')
