@@ -103,7 +103,9 @@ class AdminV2Router
         $prefix = '/Business/AdminV2/Mrxd/SouKe/SouKeController/';
 
         $routeCollector->addGroup('/souke', function (RouteCollector $routeCollector) use ($prefix) {
+
             $routeCollector->addRoute(['GET', 'POST'], '/getSearchOption', $prefix . 'getSearchOption');//所有支持的搜索选项
+            $routeCollector->addRoute(['GET', 'POST'], '/calMarketShare', $prefix . 'calMarketShare');//所有支持的搜索选项
             $routeCollector->addRoute(['GET', 'POST'], '/advancedSearch', $prefix . 'advancedSearch');//高级搜索
             $routeCollector->addRoute(['GET', 'POST'], '/getCompanyInvestor', $prefix . 'getCompanyInvestor'); //获取该企业所有关系图
             $routeCollector->addRoute(['GET', 'POST'], '/exportEntData', $prefix . 'exportEntData');//导出搜客数据
