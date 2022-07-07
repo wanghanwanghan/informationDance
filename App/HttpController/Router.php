@@ -200,6 +200,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/delUserGroupList', $prefix . 'delUserGroupList');//
             $routeCollector->addRoute(['GET', 'POST'], '/editGroupRemarks', $prefix . 'editGroupRemarks');//
             $routeCollector->addRoute(['GET', 'POST'], '/getVendincScale', $prefix . 'getVendincScale');//
+            $routeCollector->addRoute(['GET', 'POST'], '/calMarketShare', $prefix . 'calMarketShare');//
             $routeCollector->addRoute(['GET', 'POST'], '/getSearchOption', $prefix . 'getSearchOption');// 返回接口支持的搜索项 https://api.meirixindong.com//api/v1/xd/getSearchOption
             $routeCollector->addRoute(['GET', 'POST'], '/advancedSearch', $prefix . 'advancedSearch');// 高级搜索 https://api.meirixindong.com//api/v1/xd/advancedSearch
             $routeCollector->addRoute(['GET', 'POST'], '/getCompanyInvestor', $prefix . 'getCompanyInvestor'); //获取该企业所有关系图
