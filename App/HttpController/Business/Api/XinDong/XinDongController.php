@@ -1069,7 +1069,7 @@ eof;
         $companyEsModel
             //经营范围
             ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('basic_opscope')))
-            ->SetAreaQuery($requestData['areas'])
+            ->SetAreaQuery($requestData['areas'],$requestData['areas_type']?:1)
             //数字经济及其核心产业
             ->SetQueryByBasicSzjjid(trim($this->request()->getRequestParam('basic_szjjid')))
             // 搜索文案 智能搜索
@@ -2839,6 +2839,13 @@ eof;
     }
     function testExport()
     {
+        if(
+            $this->getRequestData('getMarjetShare')
+        ){
+            XinDongService::getMarjetShare($this->getRequestData('getMarjetShare'));
+            return $this->writeJson(200, [ ] ,XinDongService::getMarjetShare($this->getRequestData('getMarjetShare')), '成功', true, []);
+        }
+
         if(
             $this->getRequestData('lastSql')
         ){
