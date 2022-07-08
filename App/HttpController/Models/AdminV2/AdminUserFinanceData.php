@@ -337,7 +337,7 @@ class AdminUserFinanceData extends ModelBase
             OperatorLog::addRecord(
                 [
                     'user_id' => $financeData['user_id'],
-                    'msg' =>  "企业:".$financeData['entName']." 从APi拉取财务数据: 参数：".json_encode($postData)." 返回：".json_encode($getFinanceDataSourceDetailRes),
+                    'msg' =>  "企业:".$financeData['entName']." 从APi拉取财务数据: 参数：".json_encode($postData)." 返回：".json_encode($res),
                     'details' =>json_encode( XinDongService::trace()),
                     'type_cname' => '新后台导出财务数据-从APi拉取财务数据',
                 ]
