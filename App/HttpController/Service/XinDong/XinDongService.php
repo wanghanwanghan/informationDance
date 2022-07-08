@@ -3018,10 +3018,10 @@ class XinDongService extends ServiceBase
         //四级分类
         $siJiFenLei = "";
         foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-            $siJiFenLei = $dataItem['si_ji_fen_lei_code'];
+            $siJiFenLei = $dataItem['_source']['si_ji_fen_lei_code'];
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    '$siJiFenLei  '=>$dataItem['si_ji_fen_lei_code']
+                    '$siJiFenLei  '=>$dataItem['_source']['si_ji_fen_lei_code']
                 ])
             );
         }
