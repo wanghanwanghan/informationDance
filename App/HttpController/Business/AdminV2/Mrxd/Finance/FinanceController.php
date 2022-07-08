@@ -792,6 +792,79 @@ class FinanceController extends ControllerBase
 
     //导出某次导出的详情记录
     public function exportExportDetails(){
+        $startMemory = memory_get_usage(); 
+        $requestData =  $this->getRequestData();
+        $where = [
+            [
+                'field'=>'user_id',
+                'value'=> $this->loginUserinfo['id'],
+                'operate' => '=',
+            ],
+            [
+                'field'=>'export_record_id',
+                'value'=> $requestData['id'],
+                'operate' => '=',
+            ],
+        ];
+        $res = AdminUserFinanceExportDataRecord::getYieldDataToExport($where);
+        //===================================
+        $config=  [
+            'path' => TEMP_FILE_PATH // xlsx文件保存路径
+        ];
+        $filename = date('YmdHis').'.xlsx';
+        $excel = new \Vtiful\Kernel\Excel($config);
+        $fileObject = $excel->fileName($filename, 'sheet');
+        $fileHandle = $fileObject->getHandle();
+
+        $format = new Format($fileHandle);
+        $colorStyle = $format
+            ->fontColor(Format::COLOR_ORANGE)
+            ->border(Format::BORDER_DASH_DOT)
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $format = new Format($fileHandle);
+
+        $alignStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $fileObject
+            ->defaultFormat($colorStyle)
+            ->header(
+                ['订单号','企业名称','上次收费时间','年度','按年收费/年度','包年收费/开始年','包年收费/结束年','实际收费','收费类型','实际收费备注']
+            )
+            ->defaultFormat($alignStyle)
+        ;
+
+        foreach ($res as $dataItem){
+            $fileObject ->data([$dataItem]);
+        }
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+            ])
+        );
+
+        $format = new Format($fileHandle);
+        //单元格有\n解析成换行
+        $wrapStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->wrap()
+            ->toResource();
+
+        $fileObject->output();
+
+        //===================================
+
+        return $this->writeJson(200,  [ ],  [
+            'path' => '/Static/Temp/'.$filename,
+            'filename' => $filename
+        ],'成功');
+    }
+    public function exportExportDetailsbak(){
         $requestData =  $this->getRequestData();
 
         $res = AdminUserFinanceExportDataRecord::findByUserAndExportId(
