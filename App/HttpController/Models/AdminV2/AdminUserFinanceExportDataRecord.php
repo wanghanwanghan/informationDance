@@ -68,7 +68,12 @@ class AdminUserFinanceExportDataRecord extends ModelBase
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate'])->limit($size);
         }
         $res = $model ->all();
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$res' => $res
+            ])
+        );
         $datas = [];
 
         //每次取十条  直到取完
@@ -115,6 +120,12 @@ class AdminUserFinanceExportDataRecord extends ModelBase
 
             $model->where('id', $lastId, '>')->limit($size);
             $res = $model ->all();
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$res' => $res
+                ])
+            );
         }
     }
 

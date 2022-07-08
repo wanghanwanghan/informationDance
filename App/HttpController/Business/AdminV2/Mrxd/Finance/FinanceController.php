@@ -792,7 +792,7 @@ class FinanceController extends ControllerBase
 
     //导出某次导出的详情记录
     public function exportExportDetails(){
-        $startMemory = memory_get_usage(); 
+        $startMemory = memory_get_usage();
         $requestData =  $this->getRequestData();
         $where = [
             [
