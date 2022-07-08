@@ -838,6 +838,12 @@ class FinanceController extends ControllerBase
         ;
 
         foreach ($res as $dataItem){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$dataItem' => $dataItem
+                ])
+            );
             $fileObject ->data([$dataItem]);
         }
 
