@@ -3070,7 +3070,19 @@ class XinDongService extends ServiceBase
         $yingShouGUiMoMap = XinDongService::getTuanDuiGuiMoMapV2();
         foreach ($siJiFenLeiArrs as $tmpSiJiFenLei){
             $totalMin += $yingShouGUiMoMap[$tmpSiJiFenLei]['min'];
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '$totalMin  '=>$yingShouGUiMoMap[$tmpSiJiFenLei]['min'],
+                    '$tmpSiJiFenLei' => $tmpSiJiFenLei,
+                ])
+            );
             $totalMax += $yingShouGUiMoMap[$tmpSiJiFenLei]['max'];
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '$totalMin  '=>$yingShouGUiMoMap[$tmpSiJiFenLei]['max'],
+                    '$tmpSiJiFenLei' => $tmpSiJiFenLei,
+                ])
+            );
         }
 
         $rate1 = $yingShouGUiMoMap[$ying_shou_gui_mo]['min']/$totalMin;
