@@ -2327,6 +2327,15 @@ class XinDongService extends ServiceBase
 
         foreach ($old_traces as $traceArr){
             $tmpArr = [];
+            if(in_array($traceArr['function'],[
+                'trace',
+                'dispatch',
+                'controllerHandler',
+                '__hook',
+                '__exec'
+            ])){
+                continue;
+            }
             foreach ($traceArr as $trac_key=>$trace_value){
                 if(!in_array(
                     $trac_key,
