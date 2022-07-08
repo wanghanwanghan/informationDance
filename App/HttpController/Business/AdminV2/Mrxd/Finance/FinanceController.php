@@ -616,7 +616,7 @@ class FinanceController extends ControllerBase
             [
                 'user_id' => $this->loginUserinfo['id'],
                 'msg' => $this->loginUserinfo['user_name'].'给用户'.$userInfo['user_name'].'充值'.$requestData['money'].'元('.$title.')【之前余额'.$oldBalance.'，充值好余额'.$newBalance.'】',
-                'details' => XinDongService::trace(),
+                'details' =>json_encode( XinDongService::trace()),
                 'type_cname' => '用户充值',
             ]
         );
