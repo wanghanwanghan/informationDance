@@ -165,6 +165,14 @@ class FinanceController extends ControllerBase
         if(!$res){
             return $this->writeJson(203);
         }
+        OperatorLog::addRecord(
+            [
+                'user_id' => $requestData['user_id'],
+                'msg' =>  json_encode($dataItem)  ,
+                'details' =>json_encode( XinDongService::trace()),
+                'type_cname' => '财务配置-新加',
+            ]
+        );
         return $this->writeJson(200);
     }
 
@@ -199,6 +207,15 @@ class FinanceController extends ControllerBase
         if (!$res){
             return $this->writeJson(205,[],[],'修改失败');
         }
+
+        OperatorLog::addRecord(
+            [
+                'user_id' => $data['user_id'],
+                'msg' =>  json_encode($data)  ,
+                'details' =>json_encode( XinDongService::trace()),
+                'type_cname' => '财务配置-新加',
+            ]
+        );
 
         return $this->writeJson(200,[],[],'成功');
     }
