@@ -79,8 +79,8 @@ class AdminUserFinanceExportDataRecord extends ModelBase
         //每次取十条  直到取完
         while (!empty($res)) {
             $lastId =  0;
-            foreach ($res as $dateItem){
-                $lastId = $dateItem['id'];
+            foreach ($res as $dataItem){
+                $lastId = $dataItem['id'];
                 //=====================
                 $dataItem['details'] = [];
 
