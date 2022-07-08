@@ -391,8 +391,9 @@ class FinanceController extends ControllerBase
         ], $res['data'],'成功');
     }
 
-    //导出之前的导出记录  财务对账
+    //导出财务扣费记录  财务对账
     public function exportExportLists(){
+        $startMemory = memory_get_usage();
         $requestData =  $this->getRequestData();
         $where = [
              [
@@ -400,6 +401,88 @@ class FinanceController extends ControllerBase
                 'value'=> $this->loginUserinfo['id'],
                 'operate' => '=',
              ]
+        ];
+        if(
+            $requestData['ids']
+        ){
+//            $where[] = [
+//                'field'=>'id',
+//                'value'=> explode(',',$requestData['ids']),
+//                'operate' => 'IN',
+//            ];
+        }
+        $res = AdminUserFinanceExportRecord::getYieldDataToExport(
+            $where
+        );
+
+        //===================================
+        $config=  [
+            'path' => TEMP_FILE_PATH // xlsx文件保存路径
+        ];
+        $filename = date('YmdHis').'.xlsx';
+        $excel = new \Vtiful\Kernel\Excel($config);
+        $fileObject = $excel->fileName($filename, 'sheet');
+        $fileHandle = $fileObject->getHandle();
+
+        $format = new Format($fileHandle);
+        $colorStyle = $format
+            ->fontColor(Format::COLOR_ORANGE)
+            ->border(Format::BORDER_DASH_DOT)
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $format = new Format($fileHandle);
+
+        $alignStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $fileObject
+            ->defaultFormat($colorStyle)
+            ->header(
+                ['订单号','日期','文件名','费用']
+            )
+            ->defaultFormat($alignStyle)
+        ;
+
+        foreach ($res as $dataItem){
+            $fileObject ->data([$dataItem]);
+        }
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+            ])
+        );
+
+        $format = new Format($fileHandle);
+        //单元格有\n解析成换行
+        $wrapStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->wrap()
+            ->toResource();
+
+        $fileObject->output();
+
+        //===================================
+
+
+        return $this->writeJson(200,  [],  [
+            'path' => '/Static/Temp/'.$filename,
+            'filename' => $filename
+        ],'成功');
+
+    }
+
+    public function exportExportListsbak(){
+        $requestData =  $this->getRequestData();
+        $where = [
+            [
+                'field'=>'user_id',
+                'value'=> $this->loginUserinfo['id'],
+                'operate' => '=',
+            ]
         ];
         if(
             $requestData['ids']
