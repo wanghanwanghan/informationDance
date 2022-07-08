@@ -3019,6 +3019,11 @@ class XinDongService extends ServiceBase
         $siJiFenLei = "";
         foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
             $siJiFenLei = $dataItem['si_ji_fen_lei_code'];
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '$siJiFenLei  '=>$dataItem['si_ji_fen_lei_code']
+                ])
+            );
         }
         if(empty($siJiFenLei)){
             return  "";
@@ -3030,7 +3035,11 @@ class XinDongService extends ServiceBase
 
         //取前四位
         $tmpSiji = substr($siJiFenLei , 0 , 5) ;
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '$tmpSiji  '=>$tmpSiji
+            ])
+        );
         //所有满足的企业
         $companyEsModel = new \App\ElasticSearch\Model\Company();
         $companyEsModel
@@ -3044,9 +3053,13 @@ class XinDongService extends ServiceBase
 
         $siJiFenLeiArrs = [];
         foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-            $siJiFenLeiArrs[] = $dataItem['si_ji_fen_lei_code'];
+            $dataItem['si_ji_fen_lei_code'] && $siJiFenLeiArrs[] = $dataItem['si_ji_fen_lei_code'];
         }
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '$siJiFenLeiArrs  '=>$siJiFenLeiArrs
+            ])
+        );
         $totalMin = 0;
         $totalMax = 0;
         $yingShouGUiMoMap = XinDongService::getTuanDuiGuiMoMapV2();
