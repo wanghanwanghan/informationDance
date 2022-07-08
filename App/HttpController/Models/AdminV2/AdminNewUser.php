@@ -5,6 +5,7 @@ namespace App\HttpController\Models\AdminV2;
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\XinDong\XinDongService;
 
 class AdminNewUser extends ModelBase
 {
@@ -129,16 +130,21 @@ class AdminNewUser extends ModelBase
     }
 
     public static function updateMoney($id,$money){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ ,
-                ' charge   ',
-                'id' => $id,
-                '$money' => $money
-            ])
-        );
         $info = AdminNewUser::findById($id);
-
+        $userData = $info->toArray();
+        $res =  $info->update([
+            'id' => $id,
+            'money' => $money
+        ]);
+        OperatorLog::addRecord(
+            [
+                'user_id' => $id,
+                'msg' => $userData['user_name'].'余额变更【从'.$userData['money'].'变更为'.$money.'】',
+                'details' =>json_encode( XinDongService::trace()),
+                'type_cname' => '账户金额变更',
+                '$res' => $res,
+            ]
+        );
         return $info->update([
             'id' => $id,
             'money' => $money
