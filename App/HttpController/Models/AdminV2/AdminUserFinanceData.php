@@ -6,6 +6,7 @@ use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongXin\LongXinService;
+use App\HttpController\Service\XinDong\XinDongService;
 
 
 // use App\HttpController\Models\AdminRole;
@@ -318,35 +319,28 @@ class AdminUserFinanceData extends ModelBase
 
         // 根据缓存期和上次拉取财务数据时间 决定是取db还是取api
         $getFinanceDataSourceDetailRes = self::getFinanceDataSourceDetail($id);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ ,
-                ' $FinanceDataId ' =>$id,
-                '$financeConifgArr ' =>$financeConifgArr,
-                'Pull From DB Or APi? '=>$getFinanceDataSourceDetailRes
-            ])
+        OperatorLog::addRecord(
+            [
+                'user_id' => $financeData['user_id'],
+                'msg' =>  "企业:".$financeData['entName']." 从db还是从api取财务数据?: ".json_encode($getFinanceDataSourceDetailRes),
+                'details' =>json_encode( XinDongService::trace()),
+                'type_cname' => '新后台导出财务数据-从db还是从api取财务数据?',
+            ]
         );
 
         //需要从APi拉取
         if($getFinanceDataSourceDetailRes['pullFromApi']){
-            CommonService::getInstance()->log4PHP(
-                @json_encode([
-                    __CLASS__.__FUNCTION__ ,
-                    ' pullFromApi $FinanceDataId ' =>$id,
-                    '$postData' =>$postData,
-                ])
-            );
+
             $res = (new LongXinService())->getFinanceData($postData, false);
             $resData = $res['result']['data'];
             $resOtherData = $res['result']['otherData'];
-            CommonService::getInstance()->log4PHP(
-                @json_encode([
-                    __CLASS__.__FUNCTION__ ,
-                    '$FinanceDataId ' =>$id,
-                    '$financeConifgArr ' =>$financeConifgArr,
-                    'Pull_From_APi_Res '=>@$res,
-                    '$postData '=>$postData,
-                ])
+            OperatorLog::addRecord(
+                [
+                    'user_id' => $financeData['user_id'],
+                    'msg' =>  "企业:".$financeData['entName']." 从APi拉取财务数据: 参数：".json_encode($postData)." 返回：".json_encode($getFinanceDataSourceDetailRes),
+                    'details' =>json_encode( XinDongService::trace()),
+                    'type_cname' => '新后台导出财务数据-从APi拉取财务数据',
+                ]
             );
 
             //更新拉取时间
@@ -359,24 +353,17 @@ class AdminUserFinanceData extends ModelBase
                 $dbDataArr['year'] = $yearItem;
                 $dbDataArr['raw_return'] = @json_encode($res);
                 $addRes = NewFinanceData::addRecordV2($dbDataArr);
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ ,
-                        //'NewFinanceData::addRecordV2 '=>$dbDataArr,
-                        '$addRes' => $addRes,
-                        'entName' => $dbDataArr['entName'],
-                        '$yearItem' => $yearItem,
-                    ])
-                );
                 if(!$addRes){
-                    return CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            __CLASS__.__FUNCTION__ ,
-                            ' $FinanceDataId ' =>$id,
-                            '$financeConifgArr ' =>$financeConifgArr,
-                            'NewFinanceData::addRecordV2 false'=>$dbDataArr
-                        ])
+                    OperatorLog::addRecord(
+                        [
+                            'user_id' => $financeData['user_id'],
+                            'msg' =>  "企业:".$financeData['entName']." 从APi拉取财务数据后,保存失败 ：表：new_finance_data 数据：".json_encode($dbDataArr),
+                            'details' =>json_encode( XinDongService::trace()),
+                            'type_cname' => '新后台导出财务数据-从APi拉取财务数据后,保存失败',
+                        ]
                     );
+
+                    return  false;
                 }
 
                 //不是他需要的年份
@@ -387,12 +374,7 @@ class AdminUserFinanceData extends ModelBase
             }
         }
         else{
-            CommonService::getInstance()->log4PHP(
-                @json_encode([
-                    __CLASS__.__FUNCTION__ ,
-                    ' pullFromDB $FinanceDataId ' =>$id,
-                ])
-            );
+
             $NewFinanceDataId = $getFinanceDataSourceDetailRes['NewFinanceDataId'];
             $NewFinanceData =$getFinanceDataSourceDetailRes['NewFinanceData'] ;
         }

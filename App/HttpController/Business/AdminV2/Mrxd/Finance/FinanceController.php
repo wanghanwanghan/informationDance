@@ -828,8 +828,17 @@ class FinanceController extends ControllerBase
                     )
                 )
             ){
+                OperatorLog::addRecord(
+                    [
+                        'user_id' => $uploadRes['user_id'],
+                        'msg' => "用户".$uploadRes['user_id']."操作导出客户名单(".$uploadRes['id'].")，实际扣费".$uploadRes['money']."失败",
+                        'details' =>json_encode( XinDongService::trace()),
+                        'type_cname' => '【失败】导出财务名单扣费',
+                    ]
+                );
                 return $this->writeJson(201, null, [],  '扣余额失败，联系管理员');
             }
+
             //添加导出费用流水
             if(
                 !FinanceLog::addRecordV2(
@@ -847,12 +856,28 @@ class FinanceController extends ControllerBase
                     ]
                 )
             ){
+                OperatorLog::addRecord(
+                    [
+                        'user_id' => $uploadRes['user_id'],
+                        'msg' => "用户".$uploadRes['user_id']."操作导出客户名单(".$requestData['id'].")，实际扣费".$uploadRes['money']."成功，添加导出费用流水失败",
+                        'details' =>json_encode( XinDongService::trace()),
+                        'type_cname' => '【失败】导出财务名单扣费成功，添加导出费用流水失败',
+                    ]
+                );
                 return $this->writeJson(201, null, [],  '添加扣费记录失败，联系管理员');
             }
 
             //设置收费时间|本名单的
             $res = AdminUserFinanceUploadRecord::updateLastChargeDate($uploadRes['id'],date('Y-m-d H:i:s'));
             if(!$res  ){
+                OperatorLog::addRecord(
+                    [
+                        'user_id' => $uploadRes['user_id'],
+                        'msg' => "用户".$uploadRes['user_id']."操作导出客户名单(".$uploadRes['id'].")，实际扣费".$uploadRes['money']."成功，设置收费时间失败",
+                        'details' =>json_encode( XinDongService::trace()),
+                        'type_cname' => '【失败】导出财务名单扣费成功，设置收费时间失败',
+                    ]
+                );
                 return $this->writeJson(201, null, [],  '设置收费时间失败，联系管理员');
             }
 
@@ -887,9 +912,25 @@ class FinanceController extends ControllerBase
                     ]
                 );
                 if(!$AdminUserFinanceChargeInfoId  ){
+                    OperatorLog::addRecord(
+                        [
+                            'user_id' => $uploadRes['user_id'],
+                            'msg' => "用户".$uploadRes['user_id']."操作导出客户名单(".$uploadRes['id'].")，实际扣费".$uploadRes['money']."成功，设置详细收费记录失败(".$AdminUserFinanceUploadDataRecord['id'].")",
+                            'details' =>json_encode( XinDongService::trace()),
+                            'type_cname' => '【失败】导出财务名单扣费成功，设置详细收费记录失败',
+                        ]
+                    );
                     return $this->writeJson(201, null, [],  '设置收费时间失败，联系管理员');
                 }
             }
+            OperatorLog::addRecord(
+                [
+                    'user_id' => $uploadRes['user_id'],
+                    'msg' => "用户".$uploadRes['user_id']."操作导出客户名单(".$uploadRes['id'].")，实际扣费".$uploadRes['money'],
+                    'details' =>json_encode( XinDongService::trace()),
+                    'type_cname' => '【成功】导出财务名单扣费成功',
+                ]
+            );
         }
 
         //添加到下载队列
@@ -904,7 +945,15 @@ class FinanceController extends ControllerBase
                 ]
             )
         ){
-            ConfigInfo::removeRedisNx('exportFinanceData2');
+            //ConfigInfo::removeRedisNx('exportFinanceData2');
+            OperatorLog::addRecord(
+                [
+                    'user_id' => $uploadRes['user_id'],
+                    'msg' => "用户".$uploadRes['user_id']."操作导出客户名单(".$uploadRes['id'].")，实际扣费".$uploadRes['money']."成功，添加到下载队列失败",
+                    'details' =>json_encode( XinDongService::trace()),
+                    'type_cname' => '【失败】导出财务名单扣费成功，添加到下载队列失败',
+                ]
+            );
             return  $this->writeJson(201,[],[],'添加失败，联系管理员');
         }
 

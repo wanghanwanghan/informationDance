@@ -87,26 +87,24 @@ class AdminNewUser extends ModelBase
              // 余额
             $balance >= $chargeMoney
          ){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ ,
-                    'params $id ' =>$id,
-                    '$balance ' =>$balance,
-                    '$chargeMoney' =>$chargeMoney,
-                    'return'=> true
-                ])
+            OperatorLog::addRecord(
+                [
+                    'user_id' => $id,
+                    'msg' =>  "余额$balance,需要收费金额$chargeMoney,是否余额充足：true" ,
+                    'details' =>json_encode( XinDongService::trace()),
+                    'type_cname' => '新后台导出财务数据-检测账户余额',
+                ]
             );
             return true;
          }
 
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ ,
-                'params $id ' =>$id,
-                '$balance ' =>$balance,
-                '$chargeMoney' =>$chargeMoney,
-                'return'=> false
-            ])
+        OperatorLog::addRecord(
+            [
+                'user_id' => $id,
+                'msg' =>  "余额$balance,需要收费金额$chargeMoney,是否余额充足：false" ,
+                'details' =>json_encode( XinDongService::trace()),
+                'type_cname' => '新后台导出财务数据-检测账户余额',
+            ]
         );
         return  false;
     }
@@ -139,10 +137,9 @@ class AdminNewUser extends ModelBase
         OperatorLog::addRecord(
             [
                 'user_id' => $id,
-                'msg' => $userData['user_name'].'余额变更【从'.$userData['money'].'变更为'.$money.'】',
+                'msg' => $userData['user_name'].'余额变更【从'.$userData['money'].'变更为'.$money.'】充值结果：'.$res,
                 'details' =>json_encode( XinDongService::trace()),
                 'type_cname' => '账户金额变更',
-                '$res' => $res,
             ]
         );
         return $info->update([
