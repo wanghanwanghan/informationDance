@@ -3017,8 +3017,10 @@ class XinDongService extends ServiceBase
 
         //四级分类
         $siJiFenLei = "";
+        $ying_shou_gui_mo = "";
         foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
             $siJiFenLei = $dataItem['_source']['si_ji_fen_lei_code'];
+            $ying_shou_gui_mo = $dataItem['_source']['ying_shou_gui_mo'];
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     '$siJiFenLei  '=>$dataItem['_source']['si_ji_fen_lei_code']
@@ -3026,6 +3028,9 @@ class XinDongService extends ServiceBase
             );
         }
         if(empty($siJiFenLei)){
+            return  "";
+        }
+        if(empty($ying_shou_gui_mo)){
             return  "";
         }
         //三位以下的  企业太多了 不计算
@@ -3053,7 +3058,7 @@ class XinDongService extends ServiceBase
 
         $siJiFenLeiArrs = [];
         foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-            $dataItem['_source']['si_ji_fen_lei_code'] && $siJiFenLeiArrs[] = $dataItem['_source']['si_ji_fen_lei_code'];
+            $dataItem['_source']['ying_shou_gui_mo'] && $siJiFenLeiArrs[] = $dataItem['_source']['ying_shou_gui_mo'];
         }
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -3068,8 +3073,8 @@ class XinDongService extends ServiceBase
             $totalMax += $yingShouGUiMoMap[$tmpSiJiFenLei]['max'];
         }
 
-        $rate1 = $yingShouGUiMoMap[$siJiFenLei]['min']/$totalMin;
-        $rate2 = $yingShouGUiMoMap[$siJiFenLei]['max']/$totalMax;
+        $rate1 = $yingShouGUiMoMap[$ying_shou_gui_mo]['min']/$totalMin;
+        $rate2 = $yingShouGUiMoMap[$ying_shou_gui_mo]['max']/$totalMax;
 
         return  [
             'min' => number_format($rate1,2), 'max' => number_format($rate2,2)
