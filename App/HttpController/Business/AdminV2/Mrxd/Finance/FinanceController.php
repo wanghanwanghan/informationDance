@@ -563,13 +563,13 @@ class FinanceController extends ControllerBase
         $requestData =  $this->getRequestData();
         //批次号码
         $batchNum = 'CWDC'.date('YmdHis');
-
+        $oldBalance = \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
+            $requestData['user_id']
+        );
         if(
             $requestData['type'] == \App\HttpController\Models\AdminV2\AdminNewUser::$chargeTypeAdd
         ){
-            $newBalance = \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
-                    $requestData['user_id']
-                ) + $requestData['money'];
+            $newBalance = $oldBalance+ $requestData['money'];
             $title= '充值';
             $type = FinanceLog::$chargeTytpeAdd ;
         }
@@ -577,9 +577,7 @@ class FinanceController extends ControllerBase
         if(
             $requestData['type'] == \App\HttpController\Models\AdminV2\AdminNewUser::$chargeTypeDele
         ){
-            $newBalance = \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
-                    $requestData['user_id']
-                ) - $requestData['money'];
+            $newBalance = $oldBalance - $requestData['money'];
             $title= '扣费';
             $type = FinanceLog::$chargeTytpeDele ;
         }
@@ -617,7 +615,7 @@ class FinanceController extends ControllerBase
         OperatorLog::addRecord(
             [
                 'user_id' => $this->loginUserinfo['id'],
-                'msg' => $this->loginUserinfo['name'].'给用户'.$userInfo['user_name'].'充值'.$requestData['money'].'元('.$title.')',
+                'msg' => $this->loginUserinfo['user_name'].'给用户'.$userInfo['user_name'].'充值'.$requestData['money'].'元('.$title.')【之前余额'.$oldBalance.'，充值好余额'.$newBalance.'】',
                 'details' => XinDongService::trace(),
                 'type_cname' => '用户充值',
             ]
