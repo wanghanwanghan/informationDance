@@ -168,7 +168,7 @@ class FinanceController extends ControllerBase
         OperatorLog::addRecord(
             [
                 'user_id' => $requestData['user_id'],
-                'msg' =>  json_encode($dataItem)  ,
+                'msg' =>  '操作人:'.$this->loginUserinfo['user_name'].' '.json_encode($dataItem)  ,
                 'details' =>json_encode( XinDongService::trace()),
                 'type_cname' => '财务配置-新加',
             ]
@@ -211,7 +211,7 @@ class FinanceController extends ControllerBase
         OperatorLog::addRecord(
             [
                 'user_id' => $data['user_id'],
-                'msg' =>  json_encode($data)  ,
+                'msg' =>  '操作人:'.$this->loginUserinfo['user_name'].' '.json_encode($data)  ,
                 'details' =>json_encode( XinDongService::trace()),
                 'type_cname' => '财务配置-新加',
             ]
