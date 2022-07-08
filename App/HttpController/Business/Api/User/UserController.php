@@ -146,7 +146,7 @@ class UserController extends UserBase
         $loginNum = $redis->get($index);
 
         if (!empty($loginNum) && $loginNum - 0 >= 5) {
-            return $this->writeJson(201, null, null, '1小时内禁止登录');
+            return $this->writeJson(201, null, null, '已登录失败5次,1小时内禁止登录');
         }
 
         //密码或者验证码登录
