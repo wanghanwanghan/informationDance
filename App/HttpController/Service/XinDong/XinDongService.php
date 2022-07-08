@@ -3053,7 +3053,7 @@ class XinDongService extends ServiceBase
 
         $siJiFenLeiArrs = [];
         foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-            $dataItem['si_ji_fen_lei_code'] && $siJiFenLeiArrs[] = $dataItem['si_ji_fen_lei_code'];
+            $dataItem['_source']['si_ji_fen_lei_code'] && $siJiFenLeiArrs[] = $dataItem['_source']['si_ji_fen_lei_code'];
         }
         CommonService::getInstance()->log4PHP(
             json_encode([
