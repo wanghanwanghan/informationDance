@@ -102,6 +102,12 @@ class CompanyInvestor extends ModelBase
         $res =  CompanyInvestor::create()
             ->where('company_id',$company_id)
             ->all();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'findByCompanyId $company_id'=>$company_id,
+                '$res'=>$res
+            ])
+        );
         return $res;
     }
 

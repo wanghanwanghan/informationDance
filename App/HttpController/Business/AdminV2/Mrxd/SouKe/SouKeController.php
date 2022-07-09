@@ -40,7 +40,6 @@ class SouKeController extends ControllerBase
     {
         //
         $requestData =  $this->getRequestData();
-
         $res = CompanyInvestor::findByCompanyId(
             $requestData['company_id']
          );
