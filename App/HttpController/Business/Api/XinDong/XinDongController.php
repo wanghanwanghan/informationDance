@@ -2971,6 +2971,11 @@ eof;
     {
         //
         $requestData =  $this->getRequestData();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'getCompanyInvestor $requestData '=>$requestData
+            ])
+        );
 
         $res = CompanyInvestor::findByCompanyId(
             $requestData['company_id']
