@@ -40,6 +40,9 @@ class CompanyInvestor extends ModelBase
     }
 
     public static function getInvestorName($investorId,$type){
+        if($investorId <= 0){
+            return  '';
+        }
         //自然人
         if(CompanyInvestor::$investor_type_zi_ran_ren == $type){
             $tmpRes = Human::findById($investorId)->toArray();
