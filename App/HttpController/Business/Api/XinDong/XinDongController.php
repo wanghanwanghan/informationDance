@@ -2976,6 +2976,11 @@ eof;
             $requestData['company_id']
         );
         foreach ($res as &$data){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'getCompanyInvestor_data_item'=>$data
+                ])
+            );
             $name = CompanyInvestor::getInvestorName( $data['investor_id'], $data['investor_type']);
             $data['name'] = $name;
         }
