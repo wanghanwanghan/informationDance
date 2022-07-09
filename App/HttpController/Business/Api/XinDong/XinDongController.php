@@ -2980,7 +2980,7 @@ eof;
             $data['name'] = $name;
         }
 
-        return $this->writeJson(200, null, [], '成功', false, []);
+        return $this->writeJson(200, null, $res, '成功', false, []);
     }
 
     //市场占有率查询
