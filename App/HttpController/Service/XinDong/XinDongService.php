@@ -1595,6 +1595,10 @@ class XinDongService extends ServiceBase
         //物流企业 
         $dataItem['wu_liu_qi_ye'] && $tags[120] = '物流企业';
 
+        //市占率tag
+        $marketShare = XinDongService::getMarjetShare($dataItem['xd_id']);
+        $marketShare && $tags[130] = $marketShare['min'].'~'.$marketShare['max'];
+
         return $tags;
     }
 

@@ -3004,7 +3004,7 @@ eof;
             return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
         }
 
-        XinDongService::getMarjetShare($requestData['xd_id']);
+        //XinDongService::getMarjetShare($requestData['xd_id']);
         return $this->writeJson(200, [ ] ,XinDongService::getMarjetShare($requestData['xd_id']), '成功', true, []);
     }
 }
