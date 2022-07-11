@@ -1065,11 +1065,36 @@ eof;
         $size = $this->request()->getRequestParam('size')??10;
         $page = $this->request()->getRequestParam('page')??1;
         $offset  =  ($page-1)*$size;
+//区域搜索
+        $areas_arr  = json_decode($requestData['areas'],true) ;
+        if(!empty($areas_arr)){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$areas_arr' => $areas_arr,
+                ])
+            );
 
+            //区域多边形搜索：要闭合：即最后一个点要和最后一个点重合
+            $first = array_shift($areas_arr);
+            $last = array_pop($areas_arr);
+            if(
+                $first[0]!=$last[0] ||
+                $first[1]!=$last[1]
+            ){
+                $areas_arr[] = $first;
+            }
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$areas_arr2' => $areas_arr,
+                ])
+            );
+        }
         $companyEsModel
             //经营范围
             ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('basic_opscope')))
-            ->SetAreaQuery(json_decode($requestData['areas'],true),$requestData['areas_type']?:1)
+            ->SetAreaQuery($areas_arr,$requestData['areas_type']?:1)
             //数字经济及其核心产业
             ->SetQueryByBasicSzjjid(trim($this->request()->getRequestParam('basic_szjjid')))
             // 搜索文案 智能搜索
@@ -1172,14 +1197,32 @@ eof;
         $size = $this->request()->getRequestParam('size')??10;
         $page = $this->request()->getRequestParam('page')??1;
         $offset  =  ($page-1)*$size;
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                '$offset' => $offset,
-                '$page'=>$page,
-                '$size'=>$size,
-            ])
-        );
+        //区域搜索
+        $areas_arr  = json_decode($requestData['areas'],true) ;
+        if(!empty($areas_arr)){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$areas_arr' => $areas_arr,
+                ])
+            );
+
+            //区域多边形搜索：要闭合：即最后一个点要和最后一个点重合
+            $first = array_shift($areas_arr);
+            $last = array_pop($areas_arr);
+            if(
+                $first[0]!=$last[0] ||
+                $first[1]!=$last[1]
+            ){
+                $areas_arr[] = $first;
+            }
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$areas_arr2' => $areas_arr,
+                ])
+            );
+        }
         $companyEsModel
             //经营范围
             ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('basic_opscope')))
@@ -1193,7 +1236,7 @@ eof;
             ->SetQueryByShangPinData( trim($this->request()->getRequestParam('appStr')))
             //必须存在官网
             ->SetQueryByWeb($searchOptionArr)
-            ->SetAreaQuery(json_decode($requestData['areas'],true),$requestData['areas_type']?:1)
+            ->SetAreaQuery($areas_arr,$requestData['areas_type']?:1)
             //必须存在APP
             ->SetQueryByApp($searchOptionArr)
             //必须是物流企业
@@ -1343,7 +1386,7 @@ eof;
             [  ]
             , $newOptions, '成功', true, []);
     }
-    
+
 //    function advancedSearchBak(): bool
 //    {
 //        $ElasticSearchService = new ElasticSearchService();
