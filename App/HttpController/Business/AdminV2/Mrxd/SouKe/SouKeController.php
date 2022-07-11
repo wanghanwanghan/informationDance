@@ -320,7 +320,7 @@ class SouKeController extends ControllerBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'search_optionXXX' => $companyEsModel->return_data 
+                'search_optionXXX' => $companyEsModel->return_data
             ])
         );
         foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
@@ -351,7 +351,7 @@ class SouKeController extends ControllerBase
                                     'company_org_type'=>$dataItem['_source']['company_org_type'],
                                 ])
                             );
-                            break;
+                            //break;
                         }
                         else{
                             CommonService::getInstance()->log4PHP(
@@ -382,7 +382,7 @@ class SouKeController extends ControllerBase
                                     'company_org_type'=>$dataItem['_source']['reg_status'],
                                 ])
                             );
-                            break;
+                            //break;
                         }
                         else{
                             CommonService::getInstance()->log4PHP(
@@ -413,7 +413,7 @@ class SouKeController extends ControllerBase
                                     'web'=>$dataItem['_source']['web'],
                                 ])
                             );
-                            break;
+                            //break;
                         }
                         else{
                             CommonService::getInstance()->log4PHP(
@@ -445,7 +445,7 @@ class SouKeController extends ControllerBase
                                     'app'=>$dataItem['_source']['app'],
                                 ])
                             );
-                            break;
+                            //break;
                         }else{
                             CommonService::getInstance()->log4PHP(
                                 json_encode([
@@ -476,7 +476,7 @@ class SouKeController extends ControllerBase
                                     'wu_liu_xin_xi'=>$dataItem['_source']['wu_liu_xin_xi'],
                                 ])
                             );
-                            break;
+                           // break;
                         }
                         else{
                             CommonService::getInstance()->log4PHP(
@@ -510,7 +510,7 @@ class SouKeController extends ControllerBase
                                     'estiblish_year_nums'=>$dataItem['_source']['estiblish_year_nums'],
                                 ])
                             );
-                            break;
+                            //break;
                         }
                         else{
                             CommonService::getInstance()->log4PHP(
@@ -543,7 +543,7 @@ class SouKeController extends ControllerBase
                                     'reg_capital'=>$dataItem['_source']['reg_capital'],
                                 ])
                             );
-                            break;
+                            //break;
                         }
                         else{
                             CommonService::getInstance()->log4PHP(
@@ -575,7 +575,7 @@ class SouKeController extends ControllerBase
                                     'reg_capital'=>$dataItem['_source']['ying_shou_gui_mo'],
                                 ])
                             );
-                            break;
+                            //break;
                         }
                         else{
                             CommonService::getInstance()->log4PHP(
@@ -607,7 +607,7 @@ class SouKeController extends ControllerBase
                                     'tuan_dui_ren_shu'=>$dataItem['_source']['tuan_dui_ren_shu'],
                                 ])
                             );
-                            break;
+                            //break;
                         }
                         else{
                             CommonService::getInstance()->log4PHP(
