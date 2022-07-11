@@ -321,7 +321,7 @@ class RunDealToolsFile extends AbstractCronTask
             " WHERE status = ".ToolsUploadQueue::$state_init.
                     " AND touch_time  IS NULL "
         );
-       
+
         foreach($allInitDatas as $InitData){
             ToolsUploadQueue::setTouchTime(
                 $InitData['id'],date('Y-m-d H:i:s')
