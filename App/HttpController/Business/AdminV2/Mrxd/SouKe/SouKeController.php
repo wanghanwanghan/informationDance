@@ -317,6 +317,12 @@ class SouKeController extends ControllerBase
 
         $rawOptions = (new XinDongService())->getSearchOption();
         $newOptions = [];
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'search_optionXXX' => $companyEsModel->return_data 
+            ])
+        );
         foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
             $has_web = $dataItem['_source']['web']?'有':'无';
 
