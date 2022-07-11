@@ -1079,21 +1079,31 @@ eof;
             $first = array_shift($areas_arr);
             $last = array_pop($areas_arr);
             if(
-                strval($first[0])!== strval($last[0]) ||
-                strval($first[1])!== strval($last[1])
+                strval($first[0])!= strval($last[0]) ||
+                strval($first[1])!= strval($last[1])
             ){
                 $areas_arr[] = $first;
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'add_new_first' => true,
+                        '$areas_arr' => $areas_arr,
+                        'strval($first[0])' => strval($first[0]),
+                        'strval($last[0])'=>strval($last[0]),
+                    ])
+                );
+            }else{
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'add_new_first' => false,
+                        '$areas_arr' => $areas_arr,
+                        'strval($first[0])' => strval($first[0]),
+                        'strval($last[0])'=>strval($last[0]),
+                    ])
+                );
             }
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$areas_arr2' => $areas_arr,
-                    '$first' => $first,
-                    '$last' => $last,
-                    '0'=>$first[0],
-                    '0_'=>$last[0],
-                ])
-            );
+
         }
         $companyEsModel
             //经营范围
@@ -1215,21 +1225,30 @@ eof;
             $first = array_shift($areas_arr);
             $last = array_pop($areas_arr);
             if(
-                strval($first[0])!== strval($last[0]) ||
-                strval($first[1])!== strval($last[1])
+                strval($first[0])!= strval($last[0]) ||
+                strval($first[1])!= strval($last[1])
             ){
                 $areas_arr[] = $first;
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'add_new_first' => true,
+                        '$areas_arr' => $areas_arr,
+                        'strval($first[0])' => strval($first[0]),
+                        'strval($last[0])'=>strval($last[0]),
+                    ])
+                );
+            }else{
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'add_new_first' => false,
+                        '$areas_arr' => $areas_arr,
+                        'strval($first[0])' => strval($first[0]),
+                        'strval($last[0])'=>strval($last[0]),
+                    ])
+                );
             }
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$areas_arr2' => $areas_arr,
-                    '$first' => $first,
-                    '$last' => $last,
-                    '0'=>$first[0],
-                    '0_'=>$last[0],
-                ])
-            );
         }
         $companyEsModel
             //经营范围
