@@ -338,7 +338,7 @@ class SouKeController extends ControllerBase
                 $newOptions[$key]['type'] = $configs['type']; //
                 // 企业类型
                 if($configs['pid'] == 10){
-                    foreach ($configs['pid']['data'] as $subKey => $item){
+                    foreach ($configs['data'] as $subKey => $item){
                         if($item['cname'] == $dataItem['_source']['company_org_type']){
                             $newOptions[$key]['data'][$subKey] = $item;
                             CommonService::getInstance()->log4PHP(
@@ -369,7 +369,7 @@ class SouKeController extends ControllerBase
                 }
                 //营业状态
                 if($configs['pid'] == 30){
-                    foreach ($configs['pid']['data'] as $subKey => $item){
+                    foreach ($configs['data'] as $subKey => $item){
                         if($item['cname'] == $dataItem['_source']['reg_status']){
                             $newOptions[$key]['data'][$subKey] = $item;
                             CommonService::getInstance()->log4PHP(
@@ -400,7 +400,7 @@ class SouKeController extends ControllerBase
                 }
                 //官网
                 if($configs['pid'] == 70){
-                    foreach ($configs['pid']['data'] as $subKey => $item){
+                    foreach ($configs['data'] as $subKey => $item){
                         if($item['cname'] == $has_web){
                             $newOptions[$key]['data'][$subKey] = $item;
                             CommonService::getInstance()->log4PHP(
@@ -432,7 +432,7 @@ class SouKeController extends ControllerBase
 
                 //有无APP
                 if($configs['pid'] == 80){
-                    foreach ($configs['pid']['data'] as $subKey => $item){
+                    foreach ($configs['data'] as $subKey => $item){
                         if($item['cname'] == $has_app){
                             $newOptions[$key]['data'][$subKey] = $item;
                             CommonService::getInstance()->log4PHP(
@@ -463,7 +463,7 @@ class SouKeController extends ControllerBase
                 }
                 //是否物流企业
                 if($configs['pid'] == 90){
-                    foreach ($configs['pid']['data'] as $subKey => $item){
+                    foreach ($configs['data'] as $subKey => $item){
                         if($item['cname'] == $has_wu_liu_xin_xi){
                             $newOptions[$key]['data'][$subKey] = $item;
                             CommonService::getInstance()->log4PHP(
@@ -495,7 +495,7 @@ class SouKeController extends ControllerBase
 
                 //成立年限
                 if($configs['pid'] == 20){
-                    foreach ($configs['pid']['data'] as $subKey => $item){
+                    foreach ($configs['data'] as $subKey => $item){
                         if(
                             $dataItem['_source']['estiblish_year_nums'] >= $item['min'] &&
                             $dataItem['_source']['estiblish_year_nums'] <  $item['max']
@@ -528,7 +528,7 @@ class SouKeController extends ControllerBase
 
                 //注册资本
                 if($configs['pid'] == 40){
-                    foreach ($configs['pid']['data'] as $subKey => $item){
+                    foreach ($configs['data'] as $subKey => $item){
                         if(
                             $dataItem['_source']['reg_capital'] >= $item['min'] &&
                             $dataItem['_source']['reg_capital'] <  $item['max']
@@ -560,7 +560,7 @@ class SouKeController extends ControllerBase
                 }
                 //营收规模
                 if($configs['pid'] == 50){
-                    foreach ($configs['pid']['data'] as $subKey => $item){
+                    foreach ($configs['data'] as $subKey => $item){
                         if(
                             $dataItem['_source']['ying_shou_gui_mo'] >= $item['min'] &&
                             $dataItem['_source']['ying_shou_gui_mo'] <  $item['max']
@@ -592,7 +592,7 @@ class SouKeController extends ControllerBase
                 }
                 //企业规模
                 if($configs['pid'] == 60){
-                    foreach ($configs['pid']['data'] as $subKey => $item){
+                    foreach ($configs['data'] as $subKey => $item){
                         if(
                             $dataItem['_source']['tuan_dui_ren_shu'] >= $item['min'] &&
                             $dataItem['_source']['tuan_dui_ren_shu'] <  $item['max']
