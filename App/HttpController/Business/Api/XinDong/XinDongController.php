@@ -1068,12 +1068,12 @@ eof;
 //区域搜索
         $areas_arr  = json_decode($requestData['areas'],true) ;
         if(!empty($areas_arr)){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$areas_arr' => $areas_arr,
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    '$areas_arr' => $areas_arr,
+//                ])
+//            );
 
             //区域多边形搜索：要闭合：即最后一个点要和最后一个点重合
             $first = $areas_arr[0];
@@ -1083,25 +1083,25 @@ eof;
                 strval($first[1])!= strval($last[1])
             ){
                 $areas_arr[] = $first;
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        'add_new_first' => true,
-                        '$areas_arr' => $areas_arr,
-                        'strval($first[0])' => strval($first[0]),
-                        'strval($last[0])'=>strval($last[0]),
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        'add_new_first' => true,
+//                        '$areas_arr' => $areas_arr,
+//                        'strval($first[0])' => strval($first[0]),
+//                        'strval($last[0])'=>strval($last[0]),
+//                    ])
+//                );
             }else{
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        'add_new_first' => false,
-                        '$areas_arr' => $areas_arr,
-                        'strval($first[0])' => strval($first[0]),
-                        'strval($last[0])'=>strval($last[0]),
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        'add_new_first' => false,
+//                        '$areas_arr' => $areas_arr,
+//                        'strval($first[0])' => strval($first[0]),
+//                        'strval($last[0])'=>strval($last[0]),
+//                    ])
+//                );
             }
 
         }
@@ -1214,12 +1214,12 @@ eof;
         //区域搜索
         $areas_arr  = json_decode($requestData['areas'],true) ;
         if(!empty($areas_arr)){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$areas_arr' => $areas_arr,
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    '$areas_arr' => $areas_arr,
+//                ])
+//            );
 
             //区域多边形搜索：要闭合：即最后一个点要和最后一个点重合
             $first = $areas_arr[0];;
@@ -1229,25 +1229,25 @@ eof;
                 strval($first[1])!= strval($last[1])
             ){
                 $areas_arr[] = $first;
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        'add_new_first' => true,
-                        '$areas_arr' => $areas_arr,
-                        'strval($first[0])' => strval($first[0]),
-                        'strval($last[0])'=>strval($last[0]),
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        'add_new_first' => true,
+//                        '$areas_arr' => $areas_arr,
+//                        'strval($first[0])' => strval($first[0]),
+//                        'strval($last[0])'=>strval($last[0]),
+//                    ])
+//                );
             }else{
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        'add_new_first' => false,
-                        '$areas_arr' => $areas_arr,
-                        'strval($first[0])' => strval($first[0]),
-                        'strval($last[0])'=>strval($last[0]),
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        'add_new_first' => false,
+//                        '$areas_arr' => $areas_arr,
+//                        'strval($first[0])' => strval($first[0]),
+//                        'strval($last[0])'=>strval($last[0]),
+//                    ])
+//                );
             }
         }
         $companyEsModel
@@ -1297,12 +1297,12 @@ eof;
 
         $rawOptions = (new XinDongService())->getSearchOption();
         $newOptions = [];
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'search_optionXXX' => $companyEsModel->return_data
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'search_optionXXX' => $companyEsModel->return_data
+//            ])
+//        );
         foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
             $has_web = $dataItem['_source']['web']?'有':'无';
 
@@ -1321,29 +1321,29 @@ eof;
                     foreach ($configs['data'] as $subKey => $item){
                         if($item['cname'] == $dataItem['_source']['company_org_type']){
                             $newOptions[$key]['data'][$subKey] = $item;
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'company_org_type_matched' => true,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    'cname'=>$item['cname'],
-                                    'company_org_type'=>$dataItem['_source']['company_org_type'],
-                                ])
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'company_org_type_matched' => true,
+//                                    '$subKey' => $subKey,
+//                                    '$item' => $item,
+//                                    'cname'=>$item['cname'],
+//                                    'company_org_type'=>$dataItem['_source']['company_org_type'],
+//                                ])
+//                            );
                             //break;
                         }
                         else{
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'company_org_type_matched' => false,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    'cname'=>$item['cname'],
-                                    'company_org_type'=>$dataItem['_source']['company_org_type'],
-                                ])
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'company_org_type_matched' => false,
+//                                    '$subKey' => $subKey,
+//                                    '$item' => $item,
+//                                    'cname'=>$item['cname'],
+//                                    'company_org_type'=>$dataItem['_source']['company_org_type'],
+//                                ])
+//                            );
                         }
                     };
                 }
@@ -1352,29 +1352,29 @@ eof;
                     foreach ($configs['data'] as $subKey => $item){
                         if($item['cname'] == $dataItem['_source']['reg_status']){
                             $newOptions[$key]['data'][$subKey] = $item;
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'reg_status_matched' => true,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    'cname'=>$item['cname'],
-                                    'company_org_type'=>$dataItem['_source']['reg_status'],
-                                ])
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'reg_status_matched' => true,
+//                                    '$subKey' => $subKey,
+//                                    '$item' => $item,
+//                                    'cname'=>$item['cname'],
+//                                    'company_org_type'=>$dataItem['_source']['reg_status'],
+//                                ])
+//                            );
                             //break;
                         }
                         else{
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'reg_status_matched' => false,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    'cname'=>$item['cname'],
-                                    'company_org_type'=>$dataItem['_source']['reg_status'],
-                                ])
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'reg_status_matched' => false,
+//                                    '$subKey' => $subKey,
+//                                    '$item' => $item,
+//                                    'cname'=>$item['cname'],
+//                                    'company_org_type'=>$dataItem['_source']['reg_status'],
+//                                ])
+//                            );
                         }
                     };
                 }
@@ -1383,29 +1383,29 @@ eof;
                     foreach ($configs['data'] as $subKey => $item){
                         if($item['cname'] == $has_web){
                             $newOptions[$key]['data'][$subKey] = $item;
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'web matched' => true,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    'cname'=>$item['cname'],
-                                    'web'=>$dataItem['_source']['web'],
-                                ])
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'web matched' => true,
+//                                    '$subKey' => $subKey,
+//                                    '$item' => $item,
+//                                    'cname'=>$item['cname'],
+//                                    'web'=>$dataItem['_source']['web'],
+//                                ])
+//                            );
                             //break;
                         }
                         else{
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'web matched' => false,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    'cname'=>$item['cname'],
-                                    'web'=>$dataItem['_source']['web'],
-                                ])
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'web matched' => false,
+//                                    '$subKey' => $subKey,
+//                                    '$item' => $item,
+//                                    'cname'=>$item['cname'],
+//                                    'web'=>$dataItem['_source']['web'],
+//                                ])
+//                            );
                         }
                     };
                 }
@@ -1415,28 +1415,28 @@ eof;
                     foreach ($configs['data'] as $subKey => $item){
                         if($item['cname'] == $has_app){
                             $newOptions[$key]['data'][$subKey] = $item;
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'app matched' => true,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    'cname'=>$item['cname'],
-                                    'app'=>$dataItem['_source']['app'],
-                                ])
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'app matched' => true,
+//                                    '$subKey' => $subKey,
+//                                    '$item' => $item,
+//                                    'cname'=>$item['cname'],
+//                                    'app'=>$dataItem['_source']['app'],
+//                                ])
+//                            );
                             //break;
                         }else{
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'app matched' => false,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    'cname'=>$item['cname'],
-                                    'app'=>$dataItem['_source']['app'],
-                                ])
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'app matched' => false,
+//                                    '$subKey' => $subKey,
+//                                    '$item' => $item,
+//                                    'cname'=>$item['cname'],
+//                                    'app'=>$dataItem['_source']['app'],
+//                                ])
+//                            );
                         }
 
                     };
@@ -1446,29 +1446,29 @@ eof;
                     foreach ($configs['data'] as $subKey => $item){
                         if($item['cname'] == $has_wu_liu_xin_xi){
                             $newOptions[$key]['data'][$subKey] = $item;
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'wu_liu_xin_xi matched' => true,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    'cname'=>$item['cname'],
-                                    'wu_liu_xin_xi'=>$dataItem['_source']['wu_liu_xin_xi'],
-                                ])
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'wu_liu_xin_xi matched' => true,
+//                                    '$subKey' => $subKey,
+//                                    '$item' => $item,
+//                                    'cname'=>$item['cname'],
+//                                    'wu_liu_xin_xi'=>$dataItem['_source']['wu_liu_xin_xi'],
+//                                ])
+//                            );
                             // break;
                         }
                         else{
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'wu_liu_xin_xi matched' => false,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    'cname'=>$item['cname'],
-                                    'wu_liu_xin_xi'=>$dataItem['_source']['wu_liu_xin_xi'],
-                                ])
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'wu_liu_xin_xi matched' => false,
+//                                    '$subKey' => $subKey,
+//                                    '$item' => $item,
+//                                    'cname'=>$item['cname'],
+//                                    'wu_liu_xin_xi'=>$dataItem['_source']['wu_liu_xin_xi'],
+//                                ])
+//                            );
                         }
                     }
                 }
@@ -1481,27 +1481,27 @@ eof;
                             $dataItem['_source']['estiblish_year_nums'] <  $item['max']
                         ){
                             $newOptions[$key]['data'][$subKey] = $item;
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'estiblish_year_nums matched' => true,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    'estiblish_year_nums'=>$dataItem['_source']['estiblish_year_nums'],
-                                ])
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'estiblish_year_nums matched' => true,
+//                                    '$subKey' => $subKey,
+//                                    '$item' => $item,
+//                                    'estiblish_year_nums'=>$dataItem['_source']['estiblish_year_nums'],
+//                                ])
+//                            );
                             //break;
                         }
                         else{
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'estiblish_year_nums matched' => false,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    'estiblish_year_nums'=>$dataItem['_source']['estiblish_year_nums'],
-                                ])
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'estiblish_year_nums matched' => false,
+//                                    '$subKey' => $subKey,
+//                                    '$item' => $item,
+//                                    'estiblish_year_nums'=>$dataItem['_source']['estiblish_year_nums'],
+//                                ])
+//                            );
                         }
                     };
                 }
@@ -1514,27 +1514,27 @@ eof;
                             $dataItem['_source']['reg_capital'] <  $item['max']
                         ){
                             $newOptions[$key]['data'][$subKey] = $item;
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'reg_capital matched' => true,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    'reg_capital'=>$dataItem['_source']['reg_capital'],
-                                ])
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'reg_capital matched' => true,
+//                                    '$subKey' => $subKey,
+//                                    '$item' => $item,
+//                                    'reg_capital'=>$dataItem['_source']['reg_capital'],
+//                                ])
+//                            );
                             //break;
                         }
                         else{
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'reg_capital matched' => false,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    'reg_capital'=>$dataItem['_source']['reg_capital'],
-                                ])
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'reg_capital matched' => false,
+//                                    '$subKey' => $subKey,
+//                                    '$item' => $item,
+//                                    'reg_capital'=>$dataItem['_source']['reg_capital'],
+//                                ])
+//                            );
                         }
                     };
                 }
@@ -1546,27 +1546,27 @@ eof;
                             $dataItem['_source']['ying_shou_gui_mo'] <  $item['max']
                         ){
                             $newOptions[$key]['data'][$subKey] = $item;
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'ying_shou_gui_mo matched' => true,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    'reg_capital'=>$dataItem['_source']['ying_shou_gui_mo'],
-                                ])
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'ying_shou_gui_mo matched' => true,
+//                                    '$subKey' => $subKey,
+//                                    '$item' => $item,
+//                                    'reg_capital'=>$dataItem['_source']['ying_shou_gui_mo'],
+//                                ])
+//                            );
                             //break;
                         }
                         else{
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'ying_shou_gui_mo matched' => false,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    'reg_capital'=>$dataItem['_source']['ying_shou_gui_mo'],
-                                ])
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'ying_shou_gui_mo matched' => false,
+//                                    '$subKey' => $subKey,
+//                                    '$item' => $item,
+//                                    'reg_capital'=>$dataItem['_source']['ying_shou_gui_mo'],
+//                                ])
+//                            );
                         }
                     };
                 }
@@ -1578,27 +1578,27 @@ eof;
                             $dataItem['_source']['tuan_dui_ren_shu'] <  $item['max']
                         ){
                             $newOptions[$key]['data'][$subKey] = $item;
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'tuan_dui_ren_shu matched' => true,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    'tuan_dui_ren_shu'=>$dataItem['_source']['tuan_dui_ren_shu'],
-                                ])
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'tuan_dui_ren_shu matched' => true,
+//                                    '$subKey' => $subKey,
+//                                    '$item' => $item,
+//                                    'tuan_dui_ren_shu'=>$dataItem['_source']['tuan_dui_ren_shu'],
+//                                ])
+//                            );
                             //break;
                         }
                         else{
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'tuan_dui_ren_shu matched' => false,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    'tuan_dui_ren_shu'=>$dataItem['_source']['tuan_dui_ren_shu'],
-                                ])
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'tuan_dui_ren_shu matched' => false,
+//                                    '$subKey' => $subKey,
+//                                    '$item' => $item,
+//                                    'tuan_dui_ren_shu'=>$dataItem['_source']['tuan_dui_ren_shu'],
+//                                ])
+//                            );
                         }
                     };
                 }
