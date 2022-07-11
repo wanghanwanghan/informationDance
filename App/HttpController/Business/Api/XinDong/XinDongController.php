@@ -1222,7 +1222,7 @@ eof;
             );
 
             //区域多边形搜索：要闭合：即最后一个点要和最后一个点重合
-            $first = $areas_arr[0];
+            $first = $areas_arr[0];;
             $last =  end($areas_arr);
             if(
                 strval($first[0])!= strval($last[0]) ||
@@ -1297,6 +1297,12 @@ eof;
 
         $rawOptions = (new XinDongService())->getSearchOption();
         $newOptions = [];
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'search_optionXXX' => $companyEsModel->return_data
+            ])
+        );
         foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
             $has_web = $dataItem['_source']['web']?'有':'无';
 
@@ -1312,97 +1318,287 @@ eof;
                 $newOptions[$key]['type'] = $configs['type']; //
                 // 企业类型
                 if($configs['pid'] == 10){
-                    foreach ($configs['pid']['data'] as $subKey => $item){
+                    foreach ($configs['data'] as $subKey => $item){
                         if($item['cname'] == $dataItem['_source']['company_org_type']){
                             $newOptions[$key]['data'][$subKey] = $item;
-                            break;
-                        };
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'company_org_type_matched' => true,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'cname'=>$item['cname'],
+                                    'company_org_type'=>$dataItem['_source']['company_org_type'],
+                                ])
+                            );
+                            //break;
+                        }
+                        else{
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'company_org_type_matched' => false,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'cname'=>$item['cname'],
+                                    'company_org_type'=>$dataItem['_source']['company_org_type'],
+                                ])
+                            );
+                        }
                     };
                 }
                 //营业状态
                 if($configs['pid'] == 30){
-                    foreach ($configs['pid']['data'] as $subKey => $item){
+                    foreach ($configs['data'] as $subKey => $item){
                         if($item['cname'] == $dataItem['_source']['reg_status']){
                             $newOptions[$key]['data'][$subKey] = $item;
-                            break;
-                        };
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'reg_status_matched' => true,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'cname'=>$item['cname'],
+                                    'company_org_type'=>$dataItem['_source']['reg_status'],
+                                ])
+                            );
+                            //break;
+                        }
+                        else{
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'reg_status_matched' => false,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'cname'=>$item['cname'],
+                                    'company_org_type'=>$dataItem['_source']['reg_status'],
+                                ])
+                            );
+                        }
                     };
                 }
                 //官网
                 if($configs['pid'] == 70){
-                    foreach ($configs['pid']['data'] as $subKey => $item){
+                    foreach ($configs['data'] as $subKey => $item){
                         if($item['cname'] == $has_web){
                             $newOptions[$key]['data'][$subKey] = $item;
-                            break;
-                        };
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'web matched' => true,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'cname'=>$item['cname'],
+                                    'web'=>$dataItem['_source']['web'],
+                                ])
+                            );
+                            //break;
+                        }
+                        else{
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'web matched' => false,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'cname'=>$item['cname'],
+                                    'web'=>$dataItem['_source']['web'],
+                                ])
+                            );
+                        }
                     };
                 }
 
                 //有无APP
                 if($configs['pid'] == 80){
-                    foreach ($configs['pid']['data'] as $subKey => $item){
+                    foreach ($configs['data'] as $subKey => $item){
                         if($item['cname'] == $has_app){
                             $newOptions[$key]['data'][$subKey] = $item;
-                            break;
-                        };
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'app matched' => true,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'cname'=>$item['cname'],
+                                    'app'=>$dataItem['_source']['app'],
+                                ])
+                            );
+                            //break;
+                        }else{
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'app matched' => false,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'cname'=>$item['cname'],
+                                    'app'=>$dataItem['_source']['app'],
+                                ])
+                            );
+                        }
+
                     };
                 }
                 //是否物流企业
                 if($configs['pid'] == 90){
-                    foreach ($configs['pid']['data'] as $subKey => $item){
+                    foreach ($configs['data'] as $subKey => $item){
                         if($item['cname'] == $has_wu_liu_xin_xi){
                             $newOptions[$key]['data'][$subKey] = $item;
-                            break;
-                        };
-                    };
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'wu_liu_xin_xi matched' => true,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'cname'=>$item['cname'],
+                                    'wu_liu_xin_xi'=>$dataItem['_source']['wu_liu_xin_xi'],
+                                ])
+                            );
+                            // break;
+                        }
+                        else{
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'wu_liu_xin_xi matched' => false,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'cname'=>$item['cname'],
+                                    'wu_liu_xin_xi'=>$dataItem['_source']['wu_liu_xin_xi'],
+                                ])
+                            );
+                        }
+                    }
                 }
 
                 //成立年限
                 if($configs['pid'] == 20){
-                    foreach ($configs['pid']['data'] as $subKey => $item){
+                    foreach ($configs['data'] as $subKey => $item){
                         if(
                             $dataItem['_source']['estiblish_year_nums'] >= $item['min'] &&
                             $dataItem['_source']['estiblish_year_nums'] <  $item['max']
                         ){
                             $newOptions[$key]['data'][$subKey] = $item;
-                            break;
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'estiblish_year_nums matched' => true,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'estiblish_year_nums'=>$dataItem['_source']['estiblish_year_nums'],
+                                ])
+                            );
+                            //break;
+                        }
+                        else{
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'estiblish_year_nums matched' => false,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'estiblish_year_nums'=>$dataItem['_source']['estiblish_year_nums'],
+                                ])
+                            );
                         }
                     };
                 }
 
                 //注册资本
                 if($configs['pid'] == 40){
-                    foreach ($configs['pid']['data'] as $subKey => $item){
+                    foreach ($configs['data'] as $subKey => $item){
                         if(
                             $dataItem['_source']['reg_capital'] >= $item['min'] &&
                             $dataItem['_source']['reg_capital'] <  $item['max']
                         ){
                             $newOptions[$key]['data'][$subKey] = $item;
-                            break;
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'reg_capital matched' => true,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'reg_capital'=>$dataItem['_source']['reg_capital'],
+                                ])
+                            );
+                            //break;
+                        }
+                        else{
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'reg_capital matched' => false,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'reg_capital'=>$dataItem['_source']['reg_capital'],
+                                ])
+                            );
                         }
                     };
                 }
                 //营收规模
                 if($configs['pid'] == 50){
-                    foreach ($configs['pid']['data'] as $subKey => $item){
+                    foreach ($configs['data'] as $subKey => $item){
                         if(
                             $dataItem['_source']['ying_shou_gui_mo'] >= $item['min'] &&
                             $dataItem['_source']['ying_shou_gui_mo'] <  $item['max']
                         ){
                             $newOptions[$key]['data'][$subKey] = $item;
-                            break;
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'ying_shou_gui_mo matched' => true,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'reg_capital'=>$dataItem['_source']['ying_shou_gui_mo'],
+                                ])
+                            );
+                            //break;
+                        }
+                        else{
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'ying_shou_gui_mo matched' => false,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'reg_capital'=>$dataItem['_source']['ying_shou_gui_mo'],
+                                ])
+                            );
                         }
                     };
                 }
                 //企业规模
                 if($configs['pid'] == 60){
-                    foreach ($configs['pid']['data'] as $subKey => $item){
+                    foreach ($configs['data'] as $subKey => $item){
                         if(
                             $dataItem['_source']['tuan_dui_ren_shu'] >= $item['min'] &&
                             $dataItem['_source']['tuan_dui_ren_shu'] <  $item['max']
                         ){
                             $newOptions[$key]['data'][$subKey] = $item;
-                            break;
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'tuan_dui_ren_shu matched' => true,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'tuan_dui_ren_shu'=>$dataItem['_source']['tuan_dui_ren_shu'],
+                                ])
+                            );
+                            //break;
+                        }
+                        else{
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'tuan_dui_ren_shu matched' => false,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'tuan_dui_ren_shu'=>$dataItem['_source']['tuan_dui_ren_shu'],
+                                ])
+                            );
                         }
                     };
                 }
