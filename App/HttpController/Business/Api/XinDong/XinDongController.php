@@ -1078,15 +1078,6 @@ eof;
             //区域多边形搜索：要闭合：即最后一个点要和最后一个点重合
             $first = array_shift($areas_arr);
             $last = array_pop($areas_arr);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$first' => $first,
-                    '$last' => $last,
-                    '0'=>$first[0],
-                    '0_'=>$last[0],
-                ])
-            );
             if(
                 $first[0]!=$last[0] ||
                 $first[1]!=$last[1]
@@ -1097,6 +1088,10 @@ eof;
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     '$areas_arr2' => $areas_arr,
+                    '$first' => $first,
+                    '$last' => $last,
+                    '0'=>$first[0],
+                    '0_'=>$last[0],
                 ])
             );
         }
@@ -1219,15 +1214,6 @@ eof;
             //区域多边形搜索：要闭合：即最后一个点要和最后一个点重合
             $first = array_shift($areas_arr);
             $last = array_pop($areas_arr);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$first' => $first,
-                    '$last' => $last,
-                    '0'=>$first[0],
-                    '0_'=>$last[0],
-                ])
-            );
             if(
                 $first[0]!=$last[0] ||
                 $first[1]!=$last[1]
@@ -1238,6 +1224,10 @@ eof;
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     '$areas_arr2' => $areas_arr,
+                    '$first' => $first,
+                    '$last' => $last,
+                    '0'=>$first[0],
+                    '0_'=>$last[0],
                 ])
             );
         }

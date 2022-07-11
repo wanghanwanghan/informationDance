@@ -110,6 +110,10 @@ class SouKeController extends ControllerBase
                  json_encode([
                      __CLASS__.__FUNCTION__ .__LINE__,
                      '$areas_arr2' => $areas_arr,
+                     '$first' => $first,
+                     '$last' => $last,
+                     '0'=>$first[0],
+                     '0_'=>$last[0],
                  ])
              );
          }
@@ -241,6 +245,10 @@ class SouKeController extends ControllerBase
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     '$areas_arr2' => $areas_arr,
+                    '$first' => $first,
+                    '$last' => $last,
+                    '0'=>$first[0],
+                    '0_'=>$last[0],
                 ])
             );
         }
