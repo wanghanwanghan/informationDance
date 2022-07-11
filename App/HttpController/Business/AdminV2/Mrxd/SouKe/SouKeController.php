@@ -99,7 +99,7 @@ class SouKeController extends ControllerBase
 
              //区域多边形搜索：要闭合：即最后一个点要和最后一个点重合
              $first = array_shift($areas_arr);
-             $last = array_pop($areas_arr);
+             $last =  end($areas_arr);
              if(
                  strval($first[0])!= strval($last[0]) ||
                  strval($first[1])!= strval($last[1])
@@ -243,7 +243,7 @@ class SouKeController extends ControllerBase
 
             //区域多边形搜索：要闭合：即最后一个点要和最后一个点重合
             $first = array_shift($areas_arr);
-            $last = array_pop($areas_arr);
+            $last =  end($areas_arr);
             if(
                 strval($first[0])!= strval($last[0]) ||
                 strval($first[1])!= strval($last[1])
