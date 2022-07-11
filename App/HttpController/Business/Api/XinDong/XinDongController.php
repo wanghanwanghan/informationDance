@@ -1079,8 +1079,8 @@ eof;
             $first = array_shift($areas_arr);
             $last = array_pop($areas_arr);
             if(
-                $first[0]!=$last[0] ||
-                $first[1]!=$last[1]
+                strval($first[0])!== strval($last[0]) ||
+                strval($first[1])!== strval($last[1])
             ){
                 $areas_arr[] = $first;
             }
@@ -1215,8 +1215,8 @@ eof;
             $first = array_shift($areas_arr);
             $last = array_pop($areas_arr);
             if(
-                $first[0]!=$last[0] ||
-                $first[1]!=$last[1]
+                strval($first[0])!== strval($last[0]) ||
+                strval($first[1])!== strval($last[1])
             ){
                 $areas_arr[] = $first;
             }
