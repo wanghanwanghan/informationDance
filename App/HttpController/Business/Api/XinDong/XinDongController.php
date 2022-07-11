@@ -1605,9 +1605,16 @@ eof;
             }
         }
 
+        $newOptionsV2 = [];
+        foreach ($newOptions as $option){
+            if(empty($option['data'])){
+                continue;
+            }
+            $newOptionsV2[] = $option;
+        }
         return $this->writeJson(200,
             [  ]
-            , $newOptions, '成功', true, []);
+            , $newOptionsV2, '成功', true, []);
     }
 
 //    function advancedSearchBak(): bool
