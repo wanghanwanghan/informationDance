@@ -335,8 +335,30 @@ class SouKeController extends ControllerBase
                     foreach ($configs['pid']['data'] as $subKey => $item){
                         if($item['cname'] == $dataItem['_source']['company_org_type']){
                             $newOptions[$key]['data'][$subKey] = $item;
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'company_org_type_matched' => true,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'cname'=>$item['cname'],
+                                    'company_org_type'=>$dataItem['_source']['company_org_type'],
+                                ])
+                            );
                             break;
-                        };
+                        }
+                        else{
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'company_org_type_matched' => false,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'cname'=>$item['cname'],
+                                    'company_org_type'=>$dataItem['_source']['company_org_type'],
+                                ])
+                            );
+                        }
                     };
                 }
                 //营业状态
@@ -344,8 +366,30 @@ class SouKeController extends ControllerBase
                     foreach ($configs['pid']['data'] as $subKey => $item){
                         if($item['cname'] == $dataItem['_source']['reg_status']){
                             $newOptions[$key]['data'][$subKey] = $item;
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'reg_status_matched' => true,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'cname'=>$item['cname'],
+                                    'company_org_type'=>$dataItem['_source']['reg_status'],
+                                ])
+                            );
                             break;
-                        };
+                        }
+                        else{
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'reg_status_matched' => false,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'cname'=>$item['cname'],
+                                    'company_org_type'=>$dataItem['_source']['reg_status'],
+                                ])
+                            );
+                        }
                     };
                 }
                 //官网
@@ -353,8 +397,30 @@ class SouKeController extends ControllerBase
                     foreach ($configs['pid']['data'] as $subKey => $item){
                         if($item['cname'] == $has_web){
                             $newOptions[$key]['data'][$subKey] = $item;
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'web matched' => true,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'cname'=>$item['cname'],
+                                    'web'=>$dataItem['_source']['web'],
+                                ])
+                            );
                             break;
-                        };
+                        }
+                        else{
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'web matched' => false,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'cname'=>$item['cname'],
+                                    'web'=>$dataItem['_source']['web'],
+                                ])
+                            );
+                        }
                     };
                 }
 
@@ -363,8 +429,30 @@ class SouKeController extends ControllerBase
                     foreach ($configs['pid']['data'] as $subKey => $item){
                         if($item['cname'] == $has_app){
                             $newOptions[$key]['data'][$subKey] = $item;
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'app matched' => true,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'cname'=>$item['cname'],
+                                    'app'=>$dataItem['_source']['app'],
+                                ])
+                            );
                             break;
-                        };
+                        }else{
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'app matched' => false,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'cname'=>$item['cname'],
+                                    'app'=>$dataItem['_source']['app'],
+                                ])
+                            );
+                        }
+
                     };
                 }
                 //是否物流企业
@@ -372,9 +460,31 @@ class SouKeController extends ControllerBase
                     foreach ($configs['pid']['data'] as $subKey => $item){
                         if($item['cname'] == $has_wu_liu_xin_xi){
                             $newOptions[$key]['data'][$subKey] = $item;
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'wu_liu_xin_xi matched' => true,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'cname'=>$item['cname'],
+                                    'wu_liu_xin_xi'=>$dataItem['_source']['wu_liu_xin_xi'],
+                                ])
+                            );
                             break;
-                        };
-                    };
+                        }
+                        else{
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'wu_liu_xin_xi matched' => false,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'cname'=>$item['cname'],
+                                    'wu_liu_xin_xi'=>$dataItem['_source']['wu_liu_xin_xi'],
+                                ])
+                            );
+                        }
+                    }
                 }
 
                 //成立年限
@@ -385,7 +495,27 @@ class SouKeController extends ControllerBase
                             $dataItem['_source']['estiblish_year_nums'] <  $item['max']
                         ){
                             $newOptions[$key]['data'][$subKey] = $item;
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'estiblish_year_nums matched' => true,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'estiblish_year_nums'=>$dataItem['_source']['estiblish_year_nums'],
+                                ])
+                            );
                             break;
+                        }
+                        else{
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'estiblish_year_nums matched' => false,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'estiblish_year_nums'=>$dataItem['_source']['estiblish_year_nums'],
+                                ])
+                            );
                         }
                     };
                 }
@@ -398,7 +528,27 @@ class SouKeController extends ControllerBase
                             $dataItem['_source']['reg_capital'] <  $item['max']
                         ){
                             $newOptions[$key]['data'][$subKey] = $item;
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'reg_capital matched' => true,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'reg_capital'=>$dataItem['_source']['reg_capital'],
+                                ])
+                            );
                             break;
+                        }
+                        else{
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'reg_capital matched' => false,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'reg_capital'=>$dataItem['_source']['reg_capital'],
+                                ])
+                            );
                         }
                     };
                 }
@@ -410,7 +560,27 @@ class SouKeController extends ControllerBase
                             $dataItem['_source']['ying_shou_gui_mo'] <  $item['max']
                         ){
                             $newOptions[$key]['data'][$subKey] = $item;
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'ying_shou_gui_mo matched' => true,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'reg_capital'=>$dataItem['_source']['ying_shou_gui_mo'],
+                                ])
+                            );
                             break;
+                        }
+                        else{
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'ying_shou_gui_mo matched' => false,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'reg_capital'=>$dataItem['_source']['ying_shou_gui_mo'],
+                                ])
+                            );
                         }
                     };
                 }
@@ -422,7 +592,27 @@ class SouKeController extends ControllerBase
                             $dataItem['_source']['tuan_dui_ren_shu'] <  $item['max']
                         ){
                             $newOptions[$key]['data'][$subKey] = $item;
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'tuan_dui_ren_shu matched' => true,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'tuan_dui_ren_shu'=>$dataItem['_source']['tuan_dui_ren_shu'],
+                                ])
+                            );
                             break;
+                        }
+                        else{
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'tuan_dui_ren_shu matched' => false,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'tuan_dui_ren_shu'=>$dataItem['_source']['tuan_dui_ren_shu'],
+                                ])
+                            );
                         }
                     };
                 }
