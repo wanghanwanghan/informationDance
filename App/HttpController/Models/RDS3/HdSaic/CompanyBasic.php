@@ -21,7 +21,7 @@ class CompanyBasic extends ModelBase
     }
 
     public static function findById($id){
-        $res =  Company::create()
+        $res =  CompanyBasic::create()
             ->where('companyid',$id)
             ->get();
         return $res;
