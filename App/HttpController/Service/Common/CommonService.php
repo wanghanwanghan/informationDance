@@ -444,7 +444,7 @@ class CommonService extends ServiceBase
         return true;
     }
 
-    function sendEmailV2($sendTo, $addAttachment = []): bool
+    function sendEmailV2($sendTo, $title,$htmlbody,$addAttachment = []): bool
     {
         $config = new MailerConfig();
         $config->setServer(CreateConf::getInstance()->getConf('env.mailServer'));
@@ -462,8 +462,8 @@ class CommonService extends ServiceBase
         //设置文本或者html格式
         $mimeBean = new Html();
         $template = Template::getInstance();
-        $mimeBean->setSubject($template->getSubject(''));
-        $mimeBean->setBody($template->getBody());
+        $mimeBean->setSubject($template->getSubject($title));
+        $mimeBean->setBody($template->getBody($htmlbody));
 
         try {
             //添加附件

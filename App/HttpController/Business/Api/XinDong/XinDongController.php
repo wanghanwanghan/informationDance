@@ -3319,6 +3319,8 @@ eof;
 
             return $this->writeJson(200, [ ] ,  CommonService::getInstance()->sendEmailV2(
                 'tianyongshan@meirixindong.com',
+                '测试下发送邮件',
+                '<h1>xxx</h1>',
                 [TEMP_FILE_PATH . '搜客导出_20220707155131.xlsx']
                 //'01',
                 //['entName' => '测试公司']

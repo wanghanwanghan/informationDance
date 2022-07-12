@@ -8,16 +8,16 @@ class Template
 {
     use Singleton;
 
-    function getSubject($entName)
+    function getSubject($title)
     {
-        $res = $entName ;
 
-        return trim($res);
+
+        return trim($title);
     }
 
-    function getBody()
+    function getBody($htmlBody)
     {
-        return '';
+        return $htmlBody;
     }
 
 }
