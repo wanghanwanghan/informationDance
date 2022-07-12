@@ -9,6 +9,7 @@ use Amenadiel\JpGraph\Plot\BarPlot;
 use Amenadiel\JpGraph\Plot\GroupBarPlot;
 use Amenadiel\JpGraph\Plot\LinePlot;
 use Amenadiel\JpGraph\Plot\PiePlot;
+use App\HttpController\Service\Common\EmailTemplate\Template;
 use App\HttpController\Service\Common\EmailTemplate\Template01;
 use App\HttpController\Service\Common\EmailTemplate\Template02;
 use App\HttpController\Service\Common\EmailTemplate\Template03;
@@ -457,6 +458,12 @@ class CommonService extends ServiceBase
 
         //设置文本或者html格式
         $mimeBean = new Html();
+
+        //设置文本或者html格式
+        $mimeBean = new Html();
+        $template = Template::getInstance();
+        $mimeBean->setSubject($template->getSubject(''));
+        $mimeBean->setBody($template->getBody());
 
         try {
             //添加附件
