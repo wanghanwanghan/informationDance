@@ -103,21 +103,30 @@ class Company extends ServiceBase
             ->SetAreaQuery($areaArr)
             ->addSize(100)
             ->searchFromEs();
-        $xdIds = [];
+        $xdIds = [0];
         foreach($companyLocationEsModel->return_data['hits']['hits'] as $dataItem){
-            $xdIds[] = $dataItem['_source']['companyid'] ;
+            $xdIds[] = intval($dataItem['_source']['companyid']) ;
         }
 
         $whereArr = [
             ['field'=>'companyid','value'=>$xdIds,'operate'=>'IN',]
         ];
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    __CLASS__.__LINE__,
+                    'whrere' => $whereArr,
+                ]
+            )
+        );
+
         $res = CompanyBasic::findByConditionV3(
             $whereArr
         );
         CommonService::getInstance()->log4PHP(
             json_encode(
                 [
-                    'whrere' => $whereArr,
+                    __CLASS__.__LINE__, 
                     '$res' => $res,
                 ]
             )
