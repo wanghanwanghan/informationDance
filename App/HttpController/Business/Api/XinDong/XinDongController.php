@@ -3317,7 +3317,7 @@ eof;
             $this->getRequestData('sendEmail')
         ){
 
-            return $this->writeJson(200, [ ] ,  CommonService::getInstance()->sendEmail(
+            return $this->writeJson(200, [ ] ,  CommonService::getInstance()->sendEmailV2(
                 'tianyongshan@meirixindong.com',
                 [TEMP_FILE_PATH . '搜客导出_20220707155131.xlsx']
                 //'01',

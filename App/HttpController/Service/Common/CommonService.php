@@ -443,6 +443,38 @@ class CommonService extends ServiceBase
         return true;
     }
 
+    function sendEmailV2($sendTo, $addAttachment = []): bool
+    {
+        $config = new MailerConfig();
+        $config->setServer(CreateConf::getInstance()->getConf('env.mailServer'));
+        $config->setSsl(true);
+        $config->setPort((int)CreateConf::getInstance()->getConf('env.mailPort'));
+        $config->setUsername(CreateConf::getInstance()->getConf('env.mailUsername'));
+        $config->setPassword(CreateConf::getInstance()->getConf('env.mailPassword'));
+        $config->setMailFrom(CreateConf::getInstance()->getConf('env.mailFrom'));
+        $config->setTimeout(10);//设置客户端连接超时时间
+        $config->setMaxPackage(1024 * 1024 * 5);//设置包发送的大小：5M
+
+        //设置文本或者html格式
+        $mimeBean = new Html();
+
+        try {
+            //添加附件
+            if (!empty($addAttachment)) {
+                foreach ($addAttachment as $onePathAndFilename) {
+                    $mimeBean->addAttachment(Attach::create($onePathAndFilename));
+                }
+            }
+            $mailer = new Mailer($config);
+            //发送邮件
+            $mailer->sendTo($sendTo, $mimeBean);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        return true;
+    }
+
     //验证邮箱
     function validateEmail($emailStr)
     {
