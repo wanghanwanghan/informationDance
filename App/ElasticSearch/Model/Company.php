@@ -3,6 +3,8 @@
 namespace App\ElasticSearch\Model;
 
 use App\ElasticSearch\Service\ElasticSearchService;
+use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
+use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\ServiceBase;
@@ -10,6 +12,7 @@ use App\HttpController\Service\XinDong\XinDongService;
 use EasySwoole\ElasticSearch\Config;
 use EasySwoole\ElasticSearch\ElasticSearch;
 use EasySwoole\ElasticSearch\RequestBean\Search;
+use Vtiful\Kernel\Format;
 
 class Company extends ServiceBase
 {
@@ -76,6 +79,7 @@ class Company extends ServiceBase
         $companyLocationEsModel
             //经营范围
             ->SetAreaQuery($areaArr)
+            ->addSize(5000)
             ->searchFromEs();
         $xdIds = [];
         foreach($companyLocationEsModel->return_data['hits']['hits'] as $dataItem){
@@ -83,6 +87,72 @@ class Company extends ServiceBase
         }
         $this->es->addMustTermsQuery('xd_id',$xdIds);
         return $this;
+    }
+    function SetAreaQueryV2($areaArr,$type =1 )
+    {
+        if(
+            empty($areaArr)
+        ){
+            return $this;
+        }
+
+        $companyLocationEsModel = new \App\ElasticSearch\Model\CompanyLocation($type);
+        $companyLocationEsModel
+            //经营范围
+            ->SetAreaQuery($areaArr)
+            ->searchFromEs();
+        $xdIds = [];
+        foreach($companyLocationEsModel->return_data['hits']['hits'] as $dataItem){
+            $xdIds[] = $dataItem['_source']['companyid'] ;
+        }
+        $this->es->addMustTermsQuery('xd_id',$xdIds);
+        return $this;
+    }
+
+    function getYieldDataForSouKe($areaArr,$type =1){
+
+        $startMemory = memory_get_usage();
+        $start = microtime(true);
+        $datas = [];
+
+        $size = 5000;
+        $offset = 0;
+        $nums =1;
+        $lastId = 0;
+
+        while ($totalNums > 0) {
+            if($totalNums<$size){
+                $size = $totalNums;
+            }
+
+            $companyLocationEsModel = new \App\ElasticSearch\Model\CompanyLocation($type);
+            $companyLocationEsModel
+                //经营范围
+                ->SetAreaQuery($areaArr)
+                ->searchFromEs();
+
+            if($lastId>0){
+                $companyLocationEsModel->addSearchAfterV1($lastId);
+            }
+
+            foreach($companyLocationEsModel->return_data['hits']['hits'] as $dataItem){
+                $lastId = $dataItem['_id'];
+
+                $nums ++;
+
+                yield $datas[] = $dataItem['_source'];
+            }
+
+            $totalNums -= $size;
+            $offset +=$size;
+        }
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
+                'generate data  done . costs seconds '=>microtime(true) - $start
+            ])
+        );
     }
 
     function setReturnData($data)
