@@ -2833,7 +2833,7 @@ class XinDongService extends ServiceBase
         $res = array_intersect($tobeMatchArr,$targetArr);
         if(
             !empty($res) &&
-            $perc >= 50
+            $perc >= 80
         ){
             return [
                 'type' => '模糊匹配',
