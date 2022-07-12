@@ -133,10 +133,26 @@ class Company extends ServiceBase
 //        );
         $cods = ['0'];
         foreach ($res as $dataItem){
+            CommonService::getInstance()->log4PHP(
+                json_encode(
+                    [
+                        __CLASS__.__LINE__,
+                        'UNISCID' => $dataItem['UNISCID'],
+                    ]
+                )
+            );
             if($dataItem['UNISCID']){
                 $cods[] = $dataItem['UNISCID'];
             }
         }
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    __CLASS__.__LINE__,
+                    '$cods' => $cods,
+                ]
+            )
+        );
         $this->es->addMustTermsQuery('property1',$cods);
         return $this;
     }
