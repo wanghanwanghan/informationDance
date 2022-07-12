@@ -108,10 +108,19 @@ class Company extends ServiceBase
             $xdIds[] = $dataItem['_source']['companyid'] ;
         }
 
+        $whereArr = [
+            ['field'=>'companyid','value'=>$xdIds,'operate'=>'IN',]
+        ];
         $res = CompanyBasic::findByConditionV3(
-            [
-                ['field'=>'companyid','value'=>$xdIds,'operate'=>'IN',]
-            ]
+            $whereArr
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'whrere' => $whereArr,
+                    '$res' => $res,
+                ]
+            )
         );
         $cods = ['0'];
         foreach ($res as $dataItem){
