@@ -139,7 +139,7 @@ class SouKeController extends ControllerBase
             ->SetQueryByShangPinData( trim($this->request()->getRequestParam('appStr')))
             //必须存在官网
             ->SetQueryByWeb($searchOptionArr)
-            ->SetAreaQueryV3($areas_arr,$requestData['areas_type']?:1)
+            ->SetAreaQuery($areas_arr,$requestData['areas_type']?:1)
             //必须存在APP
             ->SetQueryByApp($searchOptionArr)
             //必须是物流企业
@@ -283,7 +283,7 @@ class SouKeController extends ControllerBase
             ->SetQueryByShangPinData( trim($this->request()->getRequestParam('appStr')))
             //必须存在官网
             ->SetQueryByWeb($searchOptionArr)
-            ->SetAreaQueryV3($areas_arr,$requestData['areas_type']?:1)
+            ->SetAreaQuery($areas_arr,$requestData['areas_type']?:1)
             //必须存在APP
             ->SetQueryByApp($searchOptionArr)
             //必须是物流企业
