@@ -2,11 +2,13 @@
 
 namespace App\ElasticSearch\Service;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\ServiceBase;
 use EasySwoole\ElasticSearch\Config;
 use EasySwoole\ElasticSearch\ElasticSearch;
 use EasySwoole\ElasticSearch\RequestBean\Search;
+
 
 class ElasticSearchService extends ServiceBase
 {
@@ -14,7 +16,7 @@ class ElasticSearchService extends ServiceBase
     private $searchBean;
 
     public $query; //默认都放数组里 如果啥条件都没有 取全部的时候 用json （默认用数组有点问题）
-
+    public  $return_data;
     function __construct()
     {
         $this->config = new Config([
@@ -25,6 +27,13 @@ class ElasticSearchService extends ServiceBase
         ]);
 
         return parent::__construct();
+    }
+
+    function setReturnData($data)
+    {
+
+        $this->return_data = $data;
+        return $this;
     }
 
     function createSearchBean(string $setIndex = '', string $setType = '', $setBody = ''): ElasticSearchService
@@ -223,4 +232,34 @@ class ElasticSearchService extends ServiceBase
             ]
         ];
     }
+
+    function   Search($index = 'company_202207')
+     {
+        $elasticsearch = new ElasticSearch(
+            new  Config([
+                'host' => "es-cn-7mz2m3tqe000cxkfn.public.elasticsearch.aliyuncs.com",
+                'port' => 9200,
+                'username'=>'elastic',
+                'password'=>'zbxlbj@2018*()',
+            ])
+        );
+        $bean = new  Search();
+        $bean->setIndex($index);
+        $bean->setType('_doc');
+        $bean->setBody($this->query);
+        $response = $elasticsearch->client()->search($bean)->getBody();
+        CommonService::getInstance()->log4PHP(json_encode(['es_query'=>$this->query]));
+        $this->setReturnData($response);
+        return  $this->return_data;
+     }
+
+    function   setPageIdCache()
+    {
+        $this->query;
+        foreach ($this->return_data['hits']['hits'] as $dataItem){
+            $dataItem['_source']['xd_id'];
+        }
+        return   $this;
+    }
+
 }
