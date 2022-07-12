@@ -3311,6 +3311,21 @@ eof;
     }
     function testExport()
     {
+
+
+        if(
+            $this->getRequestData('sendEmail')
+        ){
+
+            return $this->writeJson(200, [ ] ,  CommonService::getInstance()->sendEmail(
+                'tianyongshan@meirixindong.com',
+                [TEMP_FILE_PATH . '搜客导出_20220707155131.xlsx'],
+                '03',
+                ['entName' => '测试公司']
+            ), '成功', true, []);
+        }
+
+
         if(
             $this->getRequestData('CompanyBasic')
         ){
