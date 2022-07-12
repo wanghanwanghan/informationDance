@@ -3094,31 +3094,43 @@ class XinDongService extends ServiceBase
             $ying_shou_gui_mo = $dataItem['_source']['ying_shou_gui_mo'];
         }
 
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'si_ji_fen_lei_code  '=>$siJiFenLei,
-                'ying_shou_gui_mo  '=>$ying_shou_gui_mo,
-
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'si_ji_fen_lei_code  '=>$siJiFenLei,
+//                'ying_shou_gui_mo  '=>$ying_shou_gui_mo,
+//
+//            ])
+//        );
         if(empty($siJiFenLei)){
             return  "";
         }
         if(empty($ying_shou_gui_mo)){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__LINE__=>'empty $ying_shou_gui_mo',
+                    '$ying_shou_gui_mo' => $ying_shou_gui_mo,
+                ])
+            );
             return  "";
         }
         //三位以下的  企业太多了 不计算
         if(strlen($siJiFenLei) <=3 ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__LINE__=>'too shot  $ying_shou_gui_mo',
+                    '$ying_shou_gui_mo' => $ying_shou_gui_mo,
+                ])
+            );
             return  "";
         }
 
         //取前四位
         $tmpSiji = substr($siJiFenLei , 0 , 5) ;
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'first_for_letter_of_si_ji_fen_lei_code  '=>$tmpSiji
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'first_for_letter_of_si_ji_fen_lei_code  '=>$tmpSiji
+//            ])
+//        );
         //所有满足的企业
         $companyEsModel = new \App\ElasticSearch\Model\Company();
         $companyEsModel
@@ -3134,47 +3146,47 @@ class XinDongService extends ServiceBase
         foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
             $dataItem['_source']['ying_shou_gui_mo'] && $siJiFenLeiArrs[] = $dataItem['_source']['ying_shou_gui_mo'];
         }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'match_companys_ying_shou_gui_mo_map  '=>$siJiFenLeiArrs
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'match_companys_ying_shou_gui_mo_map  '=>$siJiFenLeiArrs
+//            ])
+//        );
         $totalMin = 0;
         $totalMax = 0;
         $yingShouGUiMoMap = XinDongService::getYingShouGuiMoMapV2();
         foreach ($siJiFenLeiArrs as $tmpSiJiFenLei){
             $totalMin += $yingShouGUiMoMap[$tmpSiJiFenLei]['min'];
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'cal_total_min_$tmpSiJiFenLei  '=>$tmpSiJiFenLei,
-                    'cal_total_min_value' => $yingShouGUiMoMap[$tmpSiJiFenLei]['min'],
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    'cal_total_min_$tmpSiJiFenLei  '=>$tmpSiJiFenLei,
+//                    'cal_total_min_value' => $yingShouGUiMoMap[$tmpSiJiFenLei]['min'],
+//                ])
+//            );
             $totalMax += $yingShouGUiMoMap[$tmpSiJiFenLei]['max'];
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'cal_total_max_$tmpSiJiFenLei  '=>$tmpSiJiFenLei,
-                    'cal_total_max_value' => $yingShouGUiMoMap[$tmpSiJiFenLei]['max'],
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    'cal_total_max_$tmpSiJiFenLei  '=>$tmpSiJiFenLei,
+//                    'cal_total_max_value' => $yingShouGUiMoMap[$tmpSiJiFenLei]['max'],
+//                ])
+//            );
         }
 
         $rate1 = $yingShouGUiMoMap[$ying_shou_gui_mo]['min']/$totalMin;
         $rate2 = $yingShouGUiMoMap[$ying_shou_gui_mo]['max']/$totalMax;
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'market_share_$rate1  '=>[
-                    '$rate1'=>$rate1,
-                    'fenzi'=>$yingShouGUiMoMap[$ying_shou_gui_mo]['min'],
-                    'fenmu'=>$totalMin,
-                ],
-                'market_share_$rate2  '=>[
-                    '$rate1'=>$rate2,
-                    'fenzi'=>$yingShouGUiMoMap[$ying_shou_gui_mo]['max'],
-                    'fenmu'=>$totalMax,
-                ],
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'market_share_$rate1  '=>[
+//                    '$rate1'=>$rate1,
+//                    'fenzi'=>$yingShouGUiMoMap[$ying_shou_gui_mo]['min'],
+//                    'fenmu'=>$totalMin,
+//                ],
+//                'market_share_$rate2  '=>[
+//                    '$rate1'=>$rate2,
+//                    'fenzi'=>$yingShouGUiMoMap[$ying_shou_gui_mo]['max'],
+//                    'fenmu'=>$totalMax,
+//                ],
+//            ])
+//        );
         return  [
             'min' => number_format($rate1,2), 'max' => number_format($rate2,2)
         ];
