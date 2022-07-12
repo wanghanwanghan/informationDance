@@ -1109,7 +1109,7 @@ eof;
         $companyEsModel
             //经营范围
             ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('basic_opscope')))
-            ->SetAreaQuery($areas_arr,$requestData['areas_type']?:1)
+            ->SetAreaQueryV3($areas_arr,$requestData['areas_type']?:1)
             //数字经济及其核心产业
             ->SetQueryByBasicSzjjid(trim($this->request()->getRequestParam('basic_szjjid')))
             // 搜索文案 智能搜索
@@ -1264,7 +1264,7 @@ eof;
             ->SetQueryByShangPinData( trim($this->request()->getRequestParam('appStr')))
             //必须存在官网
             ->SetQueryByWeb($searchOptionArr)
-            ->SetAreaQuery($areas_arr,$requestData['areas_type']?:1)
+            ->SetAreaQueryV3($areas_arr,$requestData['areas_type']?:1)
             //必须存在APP
             ->SetQueryByApp($searchOptionArr)
             //必须是物流企业

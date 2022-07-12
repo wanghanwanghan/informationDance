@@ -5,6 +5,7 @@ namespace App\ElasticSearch\Model;
 use App\ElasticSearch\Service\ElasticSearchService;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
+use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\ServiceBase;
@@ -79,7 +80,6 @@ class Company extends ServiceBase
         $companyLocationEsModel
             //经营范围
             ->SetAreaQuery($areaArr)
-            ->addSize(1000)
             ->searchFromEs();
         $xdIds = [];
         foreach($companyLocationEsModel->return_data['hits']['hits'] as $dataItem){
@@ -88,7 +88,8 @@ class Company extends ServiceBase
         $this->es->addMustTermsQuery('xd_id',$xdIds);
         return $this;
     }
-    function SetAreaQueryV2($areaArr,$type =1 )
+
+    function SetAreaQueryV3($areaArr,$type =1 )
     {
         if(
             empty($areaArr)
@@ -100,14 +101,28 @@ class Company extends ServiceBase
         $companyLocationEsModel
             //经营范围
             ->SetAreaQuery($areaArr)
+            ->addSize(5000)
             ->searchFromEs();
         $xdIds = [];
         foreach($companyLocationEsModel->return_data['hits']['hits'] as $dataItem){
             $xdIds[] = $dataItem['_source']['companyid'] ;
         }
-        $this->es->addMustTermsQuery('xd_id',$xdIds);
+
+        $res = CompanyBasic::findByConditionV3(
+            [
+                ['field'=>'companyid','value'=>$xdIds,'operate'=>'IN',]
+            ]
+        );
+        $cods = ['0'];
+        foreach ($res as $dataItem){
+            if($dataItem['UNISCID']){
+                $cods[] = $dataItem['UNISCID'];
+            }
+        }
+        $this->es->addMustTermsQuery('property1',$cods);
         return $this;
     }
+
 
     function getYieldDataForSouKe($areaArr,$type =1){
 
