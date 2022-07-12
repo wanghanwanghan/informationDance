@@ -91,6 +91,8 @@ class Company extends ServiceBase
 
     function SetAreaQueryV3($areaArr,$type =1 )
     {
+        $t1 = microtime(true);
+
         if(
             empty($areaArr)
         ){
@@ -116,6 +118,7 @@ class Company extends ServiceBase
                 [
                     __CLASS__.__LINE__,
                     'whrere' => $whereArr,
+
                 ]
             )
         );
@@ -123,14 +126,16 @@ class Company extends ServiceBase
         $res = CompanyBasic::findByConditionV3(
             $whereArr
         );
-//        CommonService::getInstance()->log4PHP(
-//            json_encode(
-//                [
-//                    __CLASS__.__LINE__,
-//                    '$res' => $res,
-//                ]
-//            )
-//        );
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    __CLASS__.__LINE__,
+                    '$res' => $res,
+                    'count_$xdIds' => count($xdIds),
+                    'costs_seconds' => round(microtime(true) - $t1, 3) . ' seconds '
+                ]
+            )
+        );
         $cods = ['0'];
         foreach ($res['data'] as $dataItem){
 //            CommonService::getInstance()->log4PHP(

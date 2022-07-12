@@ -225,12 +225,14 @@ class RunDealApiSouKe extends AbstractCronTask
         $start = microtime(true);
         $searchOption = json_decode($requestDataArr['searchOption'],true);
         $datas = [];
+
 //        CommonService::getInstance()->log4PHP(
 //            json_encode([
 //                __CLASS__.__FUNCTION__ .__LINE__,
 //                '$datas' => $datas
 //            ])
 //        );
+
         $size = 5000;
         $offset = 0;
         $nums =1;
