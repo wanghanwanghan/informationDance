@@ -123,14 +123,14 @@ class Company extends ServiceBase
         $res = CompanyBasic::findByConditionV3(
             $whereArr
         );
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    __CLASS__.__LINE__, 
-                    '$res' => $res,
-                ]
-            )
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode(
+//                [
+//                    __CLASS__.__LINE__,
+//                    '$res' => $res,
+//                ]
+//            )
+//        );
         $cods = ['0'];
         foreach ($res as $dataItem){
             if($dataItem['UNISCID']){
