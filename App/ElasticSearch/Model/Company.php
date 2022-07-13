@@ -512,6 +512,14 @@ class Company extends ServiceBase
                 $matchedCnames[] = $tmp_item;
             }
         }
+        $map = XinDongService::getZhuCeZiBenMapV2();
+        foreach($reg_capital_values as $item){
+            $tmp = $map[$item]['epreg'];
+            foreach($tmp as $tmp_item){
+                $matchedCnames[] = $tmp_item;
+            }
+        }
+
         (!empty($matchedCnames)) && $this->es->addMustShouldRegexpQuery(
             'reg_capital' , $matchedCnames
         ) ;
