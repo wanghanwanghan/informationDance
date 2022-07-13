@@ -160,6 +160,7 @@ class Company extends ServiceBase
 //            )
 //        );
         $this->es->addMustTermsQuery('property1',$cods);
+        // $this->query['query']['bool']['must'][]
         return $this;
     }
 

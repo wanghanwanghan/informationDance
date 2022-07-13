@@ -504,15 +504,15 @@ class SouKeController extends ControllerBase
                             $dataItem['_source']['estiblish_year_nums'] <  $item['max']
                         ){
                             $newOptions[$key]['data'][$subKey] = $item;
-//                            CommonService::getInstance()->log4PHP(
-//                                json_encode([
-//                                    __CLASS__.__FUNCTION__ .__LINE__,
-//                                    'estiblish_year_nums matched' => true,
-//                                    '$subKey' => $subKey,
-//                                    '$item' => $item,
-//                                    'estiblish_year_nums'=>$dataItem['_source']['estiblish_year_nums'],
-//                                ])
-//                            );
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'estiblish_year_nums matched' => true,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'estiblish_year_nums'=>$dataItem['_source']['estiblish_year_nums'],
+                                ])
+                            );
                             //break;
                         }
                         else{
