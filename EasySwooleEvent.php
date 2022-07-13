@@ -67,6 +67,7 @@ class EasySwooleEvent implements Event
         CreateMysqlOrm::getInstance()->createRDS3ShangPinTiaoMaOrm();
         CreateMysqlOrm::getInstance()->createRDS3AllKuOrm();
         CreateMysqlOrm::getInstance()->createRDS3HdSaicOrm();
+        CreateMysqlOrm::getInstance()->createRDS3ZhaoTouBiaoOrm();
         CreateMysqlOrm::getInstance()->createRDS3LogoKuOrm();
 
         //redis pool

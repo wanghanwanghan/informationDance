@@ -199,7 +199,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         $financeDatas = self::getZhaoTouBiaoData(
             $dateStart,$dateEnd,'p1'
         );
-            
+
         $filename = 'zhao_tou_biao_'.date('YmdHis').'.xlsx';
 
         //===============================
