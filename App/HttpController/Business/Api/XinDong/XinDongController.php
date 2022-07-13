@@ -3340,7 +3340,7 @@ eof;
                 ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
                 ->toResource();
 
-            $fileObject
+            $file =  $fileObject
                 ->defaultFormat($colorStyle)
                 ->header(['XXX','XXXXX'])
                 ->defaultFormat($alignStyle)
@@ -3349,29 +3349,13 @@ eof;
             ;
 
             //==============================================
-            $fileObject = $excel->fileName($filename, '2');
-            $fileHandle = $fileObject->getHandle();
+            $file->addSheet('sheet_two')
+                ->header(['name', 'age'])
+                ->data([
+                    ['james', 33],
+                    ['king', 33]
+                ]);
 
-            $format = new Format($fileHandle);
-            $colorStyle = $format
-                ->fontColor(Format::COLOR_ORANGE)
-                ->border(Format::BORDER_DASH_DOT)
-                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
-                ->toResource();
-
-            $format = new Format($fileHandle);
-
-            $alignStyle = $format
-                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
-                ->toResource();
-
-            $fileObject
-                ->defaultFormat($colorStyle)
-                ->header(['XXX','XXXXX'])
-                ->defaultFormat($alignStyle)
-                ->data($exportData)
-                // ->setColumn('B:B', 50)
-            ;
             //==============================================
             $format = new Format($fileHandle);
             //单元格有\n解析成换行
@@ -3380,7 +3364,7 @@ eof;
                 ->wrap()
                 ->toResource();
 
-             $fileObject->output();
+            $file->output();
 
             return $this->writeJson(200, [ ] ,  [$filename], '成功', true, []);
         }
