@@ -517,15 +517,15 @@ class SouKeController extends ControllerBase
                             //break;
                         }
                         else{
-//                            CommonService::getInstance()->log4PHP(
-//                                json_encode([
-//                                    __CLASS__.__FUNCTION__ .__LINE__,
-//                                    'estiblish_year_nums matched' => false,
-//                                    '$subKey' => $subKey,
-//                                    '$item' => $item,
-//                                    'estiblish_year_nums'=>$dataItem['_source']['estiblish_year_nums'],
-//                                ])
-//                            );
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'estiblish_year_nums matched' => false,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'estiblish_year_nums'=>$dataItem['_source']['estiblish_time'],
+                                ])
+                            );
                         }
                     };
                 }
