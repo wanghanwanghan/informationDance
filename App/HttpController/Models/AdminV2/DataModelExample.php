@@ -215,4 +215,17 @@ class DataModelExample extends ModelBase
             "$field" => $value,
         ]);
     }
+
+    // 用完今日余额的
+    public static function findBySql($where){
+        $Sql = " select *  
+                            from  
+                        `admin_new_user` 
+                            $where
+      " ;
+        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        return $data;
+    }
+
+
 }

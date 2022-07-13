@@ -17,6 +17,7 @@ use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
+use App\HttpController\Models\RDS3\HdSaic\ZhaoTouBiaoAll;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\Export\Excel\ExportExcelService;
@@ -3312,10 +3313,84 @@ eof;
     function testExport()
     {
 
+        if(
+            $this->getRequestData('generateFile')
+        ){
+            $config = [
+                'path' => TEMP_FILE_PATH // xlsx文件保存路径
+            ];
+            $filename = 'XXXX'.date('YmdHis').'.xlsx';
+            $excel = new \Vtiful\Kernel\Excel($config);
+
+            $exportData = [['XXXXX','XXXXXXXXXXXX','XXXXXXXXXXX']];
+            //=======================================================
+            $fileObject = $excel->fileName($filename, '1');
+            $fileHandle = $fileObject->getHandle();
+
+            $format = new Format($fileHandle);
+            $colorStyle = $format
+                ->fontColor(Format::COLOR_ORANGE)
+                ->border(Format::BORDER_DASH_DOT)
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+
+            $format = new Format($fileHandle);
+
+            $alignStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+
+            $fileObject
+                ->defaultFormat($colorStyle)
+                ->header(['XXX','XXXXX'])
+                ->defaultFormat($alignStyle)
+                ->data($exportData)
+                // ->setColumn('B:B', 50)
+            ;
+
+            //==============================================
+            $fileObject = $excel->fileName($filename, '2');
+            $fileHandle = $fileObject->getHandle();
+
+            $format = new Format($fileHandle);
+            $colorStyle = $format
+                ->fontColor(Format::COLOR_ORANGE)
+                ->border(Format::BORDER_DASH_DOT)
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+
+            $format = new Format($fileHandle);
+
+            $alignStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+
+            $fileObject
+                ->defaultFormat($colorStyle)
+                ->header(['XXX','XXXXX'])
+                ->defaultFormat($alignStyle)
+                ->data($exportData)
+                // ->setColumn('B:B', 50)
+            ;
+            //==============================================
+            $format = new Format($fileHandle);
+            //单元格有\n解析成换行
+            $wrapStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->wrap()
+                ->toResource();
+
+             $fileObject->output();
+
+            return $this->writeJson(200, [ ] ,  [$filename], '成功', true, []);
+        }
+
 
         if(
             $this->getRequestData('sendEmail')
         ){
+
+            ZhaoTouBiaoAll::findBySql(" WHERE ");
 
             return $this->writeJson(200, [ ] ,  CommonService::getInstance()->sendEmailV2(
                 'tianyongshan@meirixindong.com',

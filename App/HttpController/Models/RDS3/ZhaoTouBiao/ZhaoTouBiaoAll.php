@@ -6,9 +6,9 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\CreateConf;
 
-class CompanyBasic extends ModelBase
+class ZhaoTouBiaoAll extends ModelBase
 {
-    protected $tableName = 'company_basic';
+    protected $tableName = 'zhao_tou_biao_all';
 
     protected $autoTimeStamp = true;
     protected $createTime = 'created_at';
@@ -18,12 +18,12 @@ class CompanyBasic extends ModelBase
     {
         parent::__construct($data);
 
-        $this->connectionName = CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_hd_saic');
+        $this->connectionName = CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_zhao_tou_biao');
     }
 
     public static function findById($id){
-        $res =  CompanyBasic::create()
-            ->where('companyid',$id)
+        $res =  ZhaoTouBiaoAll::create()
+            ->where('id',$id)
             ->get();
         return $res;
     }
@@ -31,7 +31,7 @@ class CompanyBasic extends ModelBase
 
 
     public static function findByConditionV2($whereArr,$page){
-        $model = CompanyBasic::create();
+        $model = ZhaoTouBiaoAll::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
@@ -48,7 +48,7 @@ class CompanyBasic extends ModelBase
         ];
     }
     public static function findByConditionV3($whereArr){
-        $model = CompanyBasic::create();
+        $model = ZhaoTouBiaoAll::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
@@ -63,4 +63,13 @@ class CompanyBasic extends ModelBase
             'total' =>$total,
         ];
     }
+
+    // 用完今日余额的
+    public static function findBySql($where){
+        $Sql = " select *   from   `zhao_tou_biao_all` 
+                $where " ;
+        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_zhao_tou_biao'));
+        return $data;
+    }
+
 }
