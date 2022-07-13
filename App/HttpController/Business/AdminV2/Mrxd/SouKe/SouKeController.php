@@ -86,7 +86,7 @@ class SouKeController extends ControllerBase
         $searchOptionStr =  trim($this->request()->getRequestParam('searchOption'));
         $searchOptionArr = json_decode($searchOptionStr, true);
 
-        $size = $this->request()->getRequestParam('size')??10;
+        $size = $this->request()->getRequestParam('size')??20;
         $page = $this->request()->getRequestParam('page')??1;
         $offset  =  ($page-1)*$size;
 
