@@ -103,8 +103,8 @@ class Company extends ServiceBase
         $companyLocationEsModel
             //经营范围
             ->SetAreaQuery($areaArr)
-            ->addSize(200)
-            //->addSort('companyid',"desc")
+            ->addSize(500)
+            ->addSort('companyid',"desc")
             ->searchFromEs();
         $xdIds = [0];
         foreach($companyLocationEsModel->return_data['hits']['hits'] as $dataItem){
