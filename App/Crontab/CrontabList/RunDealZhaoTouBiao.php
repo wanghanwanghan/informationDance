@@ -123,33 +123,19 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         ));
         //上传记录详情
         foreach ($datas as $dataItem){
-            yield $returnDatas[] = [
-                '标题' => $dataItem['标题']?:'', //
-                '项目名称' => $dataItem['项目名称']?:'', //
-                '项目编号' => $dataItem['项目编号']?:'', //
-                '项目简介' => $dataItem['项目简介']?:'', //
-                '采购方式' => $dataItem['采购方式']?:'', //
-                '公告类型2' => $dataItem['公告类型2']?:'', //
-                '公告日期' => $dataItem['公告日期']?:'', //
-                '行政区域_省' => $dataItem['行政区域_省']?:'', //
-                '行政区域_市' => $dataItem['行政区域_市']?:'', //
-                '行政区域_县' => $dataItem['行政区域_县']?:'', //
-                '采购单位名称' => $dataItem['采购单位名称']?:'', //
-                '采购单位地址' => $dataItem['采购单位地址']?:'', //
-                '采购单位联系人' => $dataItem['采购单位联系人']?:'', //
-                '采购单位联系电话' => $dataItem['采购单位联系电话']?:'', //
-                '名次' => $dataItem['名次']?:'', //
-                '中标供应商' => $dataItem['中标供应商']?:'', //
-                '中标金额' => $dataItem['中标金额']?:'', //
-                '代理机构名称' => $dataItem['代理机构名称']?:'', //
-                '代理机构地址' => $dataItem['代理机构地址']?:'', //
-                '代理机构联系人' => $dataItem['代理机构联系人']?:'', //
-                '代理机构联系电话' => $dataItem['代理机构联系电话']?:'', //
-                '评标专家' => $dataItem['评标专家']?:'', //
-                'DLSM_UUID' => $dataItem['DLSM_UUID']?:'', //
-                'url' => $dataItem['url']?:'', //
-                'corexml' => $dataItem['corexml']?:'', //
-            ];
+            $tmp = [];
+            foreach ($dataItem as $key=>$value){
+                if(
+                    in_array($key,['updated_at','source'])
+                ){
+                    continue ;
+                }
+                if(strlen($value)>32767){
+                    $value ="太长了";
+                }
+                $tmp[$key] = $value?:'';
+            }
+            yield $returnDatas[] = $tmp;
 
         }
     }
