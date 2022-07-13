@@ -500,8 +500,8 @@ class SouKeController extends ControllerBase
                 if($configs['pid'] == 20){
                     foreach ($configs['data'] as $subKey => $item){
                         if(
-                            $dataItem['_source']['estiblish_year_nums'] >= $item['min'] &&
-                            $dataItem['_source']['estiblish_year_nums'] <  $item['max']
+                            $dataItem['_source']['estiblish_time'] >= $item['min'] &&
+                            $dataItem['_source']['estiblish_time'] <  $item['max']
                         ){
                             $newOptions[$key]['data'][$subKey] = $item;
                             CommonService::getInstance()->log4PHP(
@@ -511,7 +511,7 @@ class SouKeController extends ControllerBase
                                     '$subKey' => $subKey,
                                     '$item' => $item,
                                     '$dataItem' => $dataItem,
-                                    'estiblish_year_nums'=>$dataItem['_source']['estiblish_year_nums'],
+                                    'estiblish_year_nums'=>$dataItem['_source']['estiblish_time'],
                                 ])
                             );
                             //break;
