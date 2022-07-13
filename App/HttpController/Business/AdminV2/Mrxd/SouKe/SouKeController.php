@@ -499,9 +499,14 @@ class SouKeController extends ControllerBase
                 //成立年限
                 if($configs['pid'] == 20){
                     foreach ($configs['data'] as $subKey => $item){
+                        if($dataItem['_source']['estiblish_time'] <= 1){
+                            continue;
+                        }
+
+                        $yearsNums = date('Y') - date('Y',strtotime($dataItem['_source']['estiblish_time']));
                         if(
-                            $dataItem['_source']['estiblish_time'] >= $item['min'] &&
-                            $dataItem['_source']['estiblish_time'] <  $item['max']
+                            $yearsNums >= $item['min'] &&
+                            $yearsNums <  $item['max']
                         ){
                             $newOptions[$key]['data'][$subKey] = $item;
                             CommonService::getInstance()->log4PHP(
@@ -511,7 +516,7 @@ class SouKeController extends ControllerBase
                                     '$subKey' => $subKey,
                                     '$item' => $item,
                                     '$dataItem' => $dataItem,
-                                    'estiblish_year_nums'=>$dataItem['_source']['estiblish_time'],
+                                    'estiblish_year_nums' => $yearsNums,
                                 ])
                             );
                             //break;
@@ -523,7 +528,7 @@ class SouKeController extends ControllerBase
                                     'estiblish_year_nums matched' => false,
                                     '$subKey' => $subKey,
                                     '$item' => $item,
-                                    'estiblish_year_nums'=>$dataItem['_source']['estiblish_time'],
+                                    'estiblish_year_nums'=>$yearsNums,
                                 ])
                             );
                         }
