@@ -7,6 +7,7 @@ use App\Crontab\CrontabList\RunDealFinanceCompanyData;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNew;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNewV2;
 use App\Crontab\CrontabList\RunDealToolsFile;
+use App\Crontab\CrontabList\RunDealZhaoTouBiao;
 use App\Csp\Service\CspService;
 use App\HttpController\Models\AdminV2\AdminNewUser;
 use App\HttpController\Models\AdminV2\AdminUserFinanceData;
@@ -3312,6 +3313,15 @@ eof;
     }
     function testExport()
     {
+        if(
+            $this->getRequestData('generateFileV2')
+        ){
+
+            return $this->writeJson(200, [ ] ,  [
+                RunDealZhaoTouBiao::exportFinanceDataV4()
+            ], '成功', true, []);
+
+        }
 
         if(
             $this->getRequestData('generateFile')
