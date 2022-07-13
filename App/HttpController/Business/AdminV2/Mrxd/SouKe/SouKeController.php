@@ -374,7 +374,7 @@ class SouKeController extends ControllerBase
                 if($configs['pid'] == 30){
                     foreach ($configs['data'] as $subKey => $item){
 
-                        if(strpos($item['cname'],$dataItem['_source']['reg_status']) !== false ){
+                        if(strpos($dataItem['_source']['reg_status'],$item['cname']) !== false ){
                             $newOptions[$key]['data'][$subKey] = $item;
 //                            CommonService::getInstance()->log4PHP(
 //                                json_encode([
