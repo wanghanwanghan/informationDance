@@ -190,7 +190,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         return true ;   
     }
 
-    function sendEmail()
+    static function sendEmail()
     {
         $day = date('Y-m-d');
         $day = '2022-06-20';
