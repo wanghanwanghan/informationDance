@@ -3350,7 +3350,9 @@ eof;
 
             //==============================================
             $file->addSheet('sheet_two')
+                ->defaultFormat($colorStyle)
                 ->header(['name', 'age'])
+                ->defaultFormat($alignStyle)
                 ->data([
                     ['james', 33],
                     ['king', 33]
