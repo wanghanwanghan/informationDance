@@ -138,12 +138,14 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             // corexml 有可能超出字节限制 单独处理
             if(strlen($dataItem['corexml'])>32767){
                 $tmpStrs = str_split ( $dataItem['corexml'], 32766 );
+                $i = 1;
                 foreach ($tmpStrs as $tmpItem){
-                    $tmp[] = $tmpItem;
+                    $tmp['corexml_'.$i] = $tmpItem;
+                    $i ++;
                 }
             }
             else{
-                $tmp[] = $dataItem['corexml'];
+                $tmp['corexml'] = $dataItem['corexml'];
             }
 
             yield $returnDatas[] = $tmp;
