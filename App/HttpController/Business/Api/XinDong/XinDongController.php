@@ -3318,7 +3318,7 @@ eof;
         ){
 
             return $this->writeJson(200, [ ] ,  [
-                RunDealZhaoTouBiao::exportFinanceDataV4()
+                RunDealZhaoTouBiao::exportDataV4()
             ], '成功', true, []);
 
         }
@@ -3386,7 +3386,7 @@ eof;
             $this->getRequestData('sendEmail')
         ){
 
-            ZhaoTouBiaoAll::findBySql(" WHERE ");
+            //ZhaoTouBiaoAll::findBySql(" WHERE ");
 
             return $this->writeJson(200, [ ] ,  CommonService::getInstance()->sendEmailV2(
                 'tianyongshan@meirixindong.com',

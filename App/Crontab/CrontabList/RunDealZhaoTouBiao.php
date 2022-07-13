@@ -185,21 +185,52 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         //设置为正在执行中
         ConfigInfo::setIsRunning(__CLASS__);
 
-        //发生提醒短信
-        self::exportFinanceDataV4();
-
+        //生成文件 发邮件
+        $res = self::sendEmail();
         return true ;   
     }
 
+    function sendEmail()
+    {
+        $day = date('Y-m-d');
+        $day = '2022-06-20';
+        $dateStart = $day.' 00:00:00';
+        $dateEnd = $day.' 23:59:59';
 
+        $res = self::exportDataV4($dateStart,$dateEnd);
+
+        if(
+            $res['p2Nums'] == 0 &&
+            $res['p1Nums'] == 0
+        ){
+            //continue;
+            OperatorLog::addRecord(
+                [
+                    'user_id' => $this->loginUserinfo['id'],
+                    'msg' => $this->loginUserinfo['user_name'].'给用户'.$userInfo['user_name'].'充值'.$requestData['money'].'元('.$title.')【之前余额'.$oldBalance.'，充值好余额'.$newBalance.'】',
+                    'details' =>json_encode( XinDongService::trace()),
+                    'type_cname' => '招投标邮件',
+                ]
+            );
+            return  true;
+        }
+
+        CommonService::getInstance()->sendEmailV2(
+            'tianyongshan@meirixindong.com',
+            '招投标数据('.$day.')',
+            '',
+            [TEMP_FILE_PATH . $res['filename']]
+        );
+
+        return true ;
+    }
     //TODO  改成按行的 防止内存溢出
-    static function  exportFinanceDataV4(){
-        $dateStart = date('Y-m-d 00:00:00');
-        $dateEnd = date('Y-m-d 23:59:59');
+    static function  exportDataV4($dateStart,$dateEnd){
 
-        $dateStart = '2022-06-20 00:00:00';
-        $dateEnd = '2022-06-20 23:59:59';
+
+
         //p1
+
         $financeDatas = self::getZhaoTouBiaoData(
             $dateStart,$dateEnd,'p1'
         );
@@ -261,11 +292,14 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             )
            // ->defaultFormat($alignStyle)
         ;
+        $p1Nums = 0;
         foreach ($financeDatas as $dataItem){
             $fileObject ->data([$dataItem]);
+            $p1Nums ++ ;
         }
         //==============================================
         //p2
+
         $financeDatas2 = self::getZhaoTouBiaoData(
             $dateStart,$dateEnd,'p2'
         );
@@ -300,8 +334,10 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             ])
             //->defaultFormat($alignStyle)
            ;
+        $p2Nums = 0;
         foreach ($financeDatas2 as $dataItem){
             $file->data([$dataItem]);
+            $p2Nums ++;
         }
         //==============================================
         CommonService::getInstance()->log4PHP(
@@ -321,9 +357,13 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         $fileObject->output();
         //===============================
 
-
-
-        return true;
+        return  [
+            'dateStart' => $dateStart  ,
+            'dateEnd' => $dateEnd ,
+            'filename'=>$filename,
+            'p2Nums' => $p2Nums,
+            'p1Nums' => $p1Nums,
+        ];
     }
 
 
