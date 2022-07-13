@@ -373,7 +373,8 @@ class SouKeController extends ControllerBase
                 //营业状态
                 if($configs['pid'] == 30){
                     foreach ($configs['data'] as $subKey => $item){
-                        if($item['cname'] == $dataItem['_source']['reg_status']){
+
+                        if(strpos($item['cname'],$dataItem['_source']['reg_status']) !== false ){
                             $newOptions[$key]['data'][$subKey] = $item;
 //                            CommonService::getInstance()->log4PHP(
 //                                json_encode([
@@ -509,28 +510,28 @@ class SouKeController extends ControllerBase
                             $yearsNums <  $item['max']
                         ){
                             $newOptions[$key]['data'][$subKey] = $item;
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'estiblish_year_nums matched' => true,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    '$dataItem' => $dataItem,
-                                    'estiblish_year_nums' => $yearsNums,
-                                ])
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'estiblish_year_nums matched' => true,
+//                                    '$subKey' => $subKey,
+//                                    '$item' => $item,
+//                                    '$dataItem' => $dataItem,
+//                                    'estiblish_year_nums' => $yearsNums,
+//                                ])
+//                            );
                             //break;
                         }
                         else{
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'estiblish_year_nums matched' => false,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    'estiblish_year_nums'=>$yearsNums,
-                                ])
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'estiblish_year_nums matched' => false,
+//                                    '$subKey' => $subKey,
+//                                    '$item' => $item,
+//                                    'estiblish_year_nums'=>$yearsNums,
+//                                ])
+//                            );
                         }
                     };
                 }
