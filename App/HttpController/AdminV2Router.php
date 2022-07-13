@@ -133,7 +133,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/getMainProducts', $prefix . 'getMainProducts');
             $routeCollector->addRoute(['GET', 'POST'], '/getTagInfo', $prefix . 'getTagInfo');
             $routeCollector->addRoute(['GET', 'POST'], '/getInvestorInfo', $prefix . 'getInvestorInfo');
-            $routeCollector->addRoute(['GET', 'POST'], '/getStaffInfo', $prefix . 'getStaffInfo');
+            //$routeCollector->addRoute(['GET', 'POST'], '/getStaffInfo', $prefix . 'getStaffInfo');
             $routeCollector->addRoute(['GET', 'POST'], '/getNamesInfo', $prefix . 'getNamesInfo');
             $routeCollector->addRoute(['GET', 'POST'], '/getEsBasicInfo', $prefix . 'getEsBasicInfo');
             $routeCollector->addRoute(['GET', 'POST'], '/getShangPinInfo', $prefix . 'getShangPinInfo');
