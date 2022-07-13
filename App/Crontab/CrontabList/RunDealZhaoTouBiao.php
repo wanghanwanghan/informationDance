@@ -261,7 +261,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             ->header(['name', 'age'])
             ->defaultFormat($alignStyle)
            ;
-        foreach ($financeDatas as $dataItem){
+        foreach ($financeDatas2 as $dataItem){
             $file->data([$dataItem]);
         }
         //==============================================
