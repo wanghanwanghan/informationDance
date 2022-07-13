@@ -118,6 +118,28 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/getAllFields', $prefix . 'getAllFields');//获取全部字段
             $routeCollector->addRoute(['GET', 'POST'], '/deliverCustomerRoster', $prefix . 'deliverCustomerRoster');//确认交付客户
             $routeCollector->addRoute(['GET', 'POST'], '/getDeliverDetails', $prefix . 'getDeliverDetails');//确认交付客户 getDeliverDetails
+            //===========
+            $routeCollector->addRoute(['GET', 'POST'], '/getStaffInfo', $prefix . 'getStaffInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyBasicInfo', $prefix . 'getCompanyBasicInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCpwsList', $prefix . 'getCpwsList');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCpwsDetail', $prefix . 'getCpwsDetail');
+            $routeCollector->addRoute(['GET', 'POST'], '/getKtggList', $prefix . 'getKtggList');
+            $routeCollector->addRoute(['GET', 'POST'], '/getKtggDetail', $prefix . 'getKtggDetail');
+            $routeCollector->addRoute(['GET', 'POST'], '/getHighTecQualifications', $prefix . 'getHighTecQualifications');
+            $routeCollector->addRoute(['GET', 'POST'], '/getDengLingQualifications', $prefix . 'getDengLingQualifications');
+            $routeCollector->addRoute(['GET', 'POST'], '/getIsoQualifications', $prefix . 'getIsoQualifications');
+            $routeCollector->addRoute(['GET', 'POST'], '/getEmploymenInfo', $prefix . 'getEmploymenInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getBusinessScaleInfo', $prefix . 'getBusinessScaleInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getMainProducts', $prefix . 'getMainProducts');
+            $routeCollector->addRoute(['GET', 'POST'], '/getTagInfo', $prefix . 'getTagInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getInvestorInfo', $prefix . 'getInvestorInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getStaffInfo', $prefix . 'getStaffInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getNamesInfo', $prefix . 'getNamesInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getEsBasicInfo', $prefix . 'getEsBasicInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getShangPinInfo', $prefix . 'getShangPinInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getUploadOpportunityLists', $prefix . 'getUploadOpportunityLists');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCountInfo', $prefix . 'getCountInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getEntLianXi', $prefix . 'getEntLianXi');
         });
 
         return true;

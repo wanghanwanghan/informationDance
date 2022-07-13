@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\AdminV2\Mrxd\SouKe;
 
+use App\ElasticSearch\Service\ElasticSearchService;
 use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;
 use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
@@ -12,6 +13,7 @@ use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\XinDong\XinDongService;
 
 class SouKeController extends ControllerBase
@@ -635,6 +637,572 @@ class SouKeController extends ControllerBase
         return $this->writeJson(200,
             [  ]
             , $newOptionsV2, '成功', true, []);
+    }
+
+    function getStaffInfo(): bool
+    {
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?$page:1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size>0 ?$size:10;
+        $offset = ($page-1)*$size;
+
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+        $model = \App\HttpController\Models\RDS3\CompanyStaff::create()
+            ->where('company_id', $companyId)->page($page)->withTotalCount();
+        $retData = $model->all();
+        $total = $model->lastQueryResult()->getTotalCount();
+
+        foreach($retData as &$dataItem){
+            $humanModel = \App\HttpController\Models\RDS3\Human::create()
+                ->where('id', $dataItem['staff_id'])->get();
+            $dataItem['name'] = $humanModel->name;
+        }
+        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+
+    }
+
+    function getCompanyBasicInfo(): bool
+    {
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业ID)');
+        }
+
+        $retData  = Company::create()->where('id', $companyId)->get();
+        $retData = (new XinDongService())::formatObjDate(
+            $retData,
+            [
+                'estiblish_time',
+                'from_time',
+                'to_time',
+                'approved_time',
+            ]
+        );
+        $retData = (new XinDongService())::formatObjMoney(
+            $retData,
+            [
+                'reg_capital',
+                'actual_capital',
+            ]
+        );
+
+        $retData['logo'] =  (new XinDongService())->getLogoByEntId($retData['id']);
+        $res = (new XinDongService())->getEsBasicInfo($companyId);
+        $retData['last_postal_address'] = $res['last_postal_address'];
+        $retData['last_email'] = $res['last_email'];
+        return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
+    }
+
+    function getCpwsList(): bool
+    {
+        $page = $this->getRequestData('page');
+        $page = $page > 0? $page :1;
+        $pageSize = $this->getRequestData('size');
+        $pageSize = $pageSize > 0? $pageSize :10;
+        $postData = [
+            'entName' => trim($this->getRequestData('entName')),
+            'page' => $page,
+            'pageSize' => $pageSize,
+        ];
+
+        if (!$postData['entName']) {
+            return $this->writeJson(201, null, null, '参数缺失(企业名称)');
+        }
+
+        $res = (new LongXinService())->setCheckRespFlag(true)->getCpwsList($postData);
+        return   $this->writeJson(200,  $res['paging'],  $res['result'], '成功', true, []);
+    }
+
+    function getCpwsDetail(): bool
+    {
+        $postData = [
+            'mid' => $this->getRequestData('mid'),
+        ];
+
+        $res = (new LongXinService())->setCheckRespFlag(true)->getCpwsDetail($postData);
+
+        return   $this->writeJson(200,  ['total' => 1],  $res['result'], '成功', true, []);
+        // return $this->checkResponse($res);
+    }
+
+
+    function getKtggList(): bool
+    {
+        $page = $this->getRequestData('page');
+        $page = $page > 0? $page :1;
+        $pageSize = $this->getRequestData('size');
+        $pageSize = $pageSize > 0? $pageSize :10;
+
+        $postData = [
+            'entName' => $this->getRequestData('entName'),
+            'page' => $page,
+            'pageSize' => $pageSize,
+        ];
+
+        $res = (new LongXinService())->setCheckRespFlag(true)->getKtggList($postData);
+
+        return   $this->writeJson(200,  $res['paging'],  $res['result'], '成功', true, []);
+        // return $this->checkResponse($res);
+    }
+
+
+    function getKtggDetail(): ?bool
+    {
+        $postData = [
+            'mid' => $this->getRequestData('mid'),
+        ];
+
+        $res = (new LongXinService())->setCheckRespFlag(true)->getKtggDetail($postData);
+
+        return   $this->writeJson(200,   ['total' => 1], $res['result'], '成功', true, []);
+        // return $this->checkResponse($res);
+    }
+
+    function getHighTecQualifications(): bool
+    {
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?$page:1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size>0 ?$size:10;
+        $offset = ($page-1)*$size;
+
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+        $model = \App\HttpController\Models\RDS3\XdHighTec::create()
+            ->where('xd_id', $companyId)->page($page)->withTotalCount();
+        $retData = $model->all();
+        $total = $model->lastQueryResult()->getTotalCount();
+        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+    }
+
+    function getDengLingQualifications(): bool
+    {
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?$page:1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size>0 ?$size:10;
+        $offset = ($page-1)*$size;
+
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+        $model = \App\HttpController\Models\RDS3\XdDl::create()
+            ->where('xd_id', $companyId)->page($page)->withTotalCount();
+        $retData = $model->all();
+        $total = $model->lastQueryResult()->getTotalCount();
+        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+    }
+
+    function getIsoQualifications(): bool
+    {
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?$page:1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size>0 ?$size:10;
+        $offset = ($page-1)*$size;
+
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+        $model = \App\HttpController\Models\RDS3\XdDlRzGlTx::create()
+            ->where('xd_id', $companyId)->page($page)->withTotalCount();
+        $retData = $model->all();
+        $total = $model->lastQueryResult()->getTotalCount();
+
+        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+
+    }
+
+    function getEmploymenInfo(): bool
+    {
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+        $retData  =\App\HttpController\Models\RDS3\TuanDuiGuiMo::create()->where('xd_id', $companyId)->get();
+
+        return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
+    }
+
+    function getBusinessScaleInfo(): bool
+    {
+        $entname = trim($this->request()->getRequestParam('entname'));
+        if (!$entname) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业名称)');
+        }
+
+        $retData  =\App\HttpController\Models\RDS3\ArLable::create()->where('entname', $entname)->get();
+
+        return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
+    }
+
+
+    function getMainProducts(): bool
+    {
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?$page:1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size>0 ?$size:10;
+        $offset = ($page-1)*$size;
+
+        $type = trim($this->request()->getRequestParam('type'));
+        if (!in_array($type,['ios', 'andoriod'])) {
+            return  $this->writeJson(201, null, null, '参数缺失(类型)');
+        }
+
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+        if($type == 'ios'){
+            $model = \App\HttpController\Models\RDS3\XdAppIos::create()
+                ->where('xd_id', $companyId)->page($page)->withTotalCount();
+            $retData = $model->all();
+            $total = $model->lastQueryResult()->getTotalCount();
+        }
+
+        if($type == 'andoriod'){
+            $model = \App\HttpController\Models\RDS3\XdAppAndroid::create()
+                ->where('xd_id', $companyId)->page($page)->withTotalCount();
+            $retData = $model->all();
+            $total = $model->lastQueryResult()->getTotalCount();
+        }
+
+        return $this->writeJson(200,  ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+    }
+
+    function getCountInfo(): bool
+    {
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?$page:1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size>0 ?$size:10;
+        $offset = ($page-1)*$size;
+
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(类型)');
+        }
+
+
+        $highTecCount = \App\HttpController\Models\RDS3\XdHighTec::create()
+            ->where('xd_id', $companyId)->count();
+
+        $isoCount = \App\HttpController\Models\RDS3\XdDlRzGlTx::create()
+            ->where('xd_id', $companyId)->count();
+
+
+        $iosCount = \App\HttpController\Models\RDS3\XdAppIos::create()
+            ->where('xd_id', $companyId)->count();
+        $andoriodCount = \App\HttpController\Models\RDS3\XdAppAndroid::create()
+            ->where('xd_id', $companyId)->count();
+
+        $guDongCount = \App\HttpController\Models\RDS3\CompanyInvestor::create()
+            ->where('company_id', $companyId)->count();
+        // 没有工商股东信息 从企业自发查
+        if(!$guDongCount){
+            $guDongCount = \App\HttpController\Models\RDS3\CompanyInvestorEntPub::create()
+                ->where('company_id', $companyId)->count();
+        }
+
+        $employeeCount = \App\HttpController\Models\RDS3\CompanyStaff::create()
+            ->where('company_id', $companyId)->count();
+
+
+        // 商品信息
+        $ElasticSearchService = new ElasticSearchService();
+        $ElasticSearchService->addMustMatchQuery( 'xd_id' , $companyId) ;
+        $ElasticSearchService->addSize(1) ;
+        $ElasticSearchService->addFrom(0) ;
+
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
+        $responseArr = @json_decode($responseJson,true);
+        // 格式化下日期和时间
+        $hits = $responseArr['hits']['hits'];
+        $hits = (new XinDongService())::formatEsMoney($hits, [
+            'reg_capital',
+        ]);
+
+        foreach($hits as $dataItem){
+            $retData = $dataItem['_source']['shang_pin_data'];
+            break;
+        }
+        $shangPinTotal =  count($retData); //total items in array
+
+        $retData = [
+            // 股东+人员
+            'gong_shang' => intval($employeeCount + $guDongCount),
+            // 商品
+            'shang_pin' => $shangPinTotal,
+            //专业资质 iso+高新
+            'rong_yu' =>  intval($highTecCount + $isoCount),
+            //ios +andoriod
+            'app' => intval($iosCount+$andoriodCount),
+        ];
+
+        return $this->writeJson(200,  [  ], $retData, '成功', true, []);
+    }
+
+    function getTagInfo(): bool
+    {
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+        $companyData  =\App\HttpController\Models\RDS3\Company::create()->where('id', $companyId)->get();
+        if(!$companyData){
+            return $this->writeJson(201, null, null, '没有该企业');
+        }
+
+        $ElasticSearchService = new ElasticSearchService();
+
+        $ElasticSearchService->addMustMatchQuery( 'xd_id' , $companyId) ;
+
+        $ElasticSearchService->addSize(1) ;
+        $ElasticSearchService->addFrom(0) ;
+
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
+        $responseArr = @json_decode($responseJson,true);
+
+        return $this->writeJson(200, ['total' => 1],
+            XinDongService::getAllTagesByData($responseArr['hits']['hits'][0]['_source']),
+            '成功', true, []);
+    }
+
+    function getInvestorInfo(): bool
+    {
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?$page:1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size>0 ?$size:10;
+        $offset = ($page-1)*$size;
+
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+        //优先从工商股东信息取
+        $model = \App\HttpController\Models\RDS3\CompanyInvestor::create()
+            ->where('company_id', $companyId)->page($page)->withTotalCount();
+        // 没有工商股东信息 从企业自发查
+        if(!$model){
+            $model = \App\HttpController\Models\RDS3\CompanyInvestorEntPub::create()
+                ->where('company_id', $companyId)->page($page)->withTotalCount();
+        }
+        $retData = $model->all();
+        $total = $model->lastQueryResult()->getTotalCount();
+
+        foreach($retData as &$dataItem){
+            if(
+                $dataItem['investor_type'] == 2
+            ){
+                $companyModel = \App\HttpController\Models\RDS3\Company::create()
+                    ->where('id', $dataItem['investor_id'])->get();
+                $dataItem['name'] = $companyModel->name;
+                if(XinDongService::isJson($dataItem['capital'])){
+                    $dataItem['capitalData'] = @json_decode($dataItem['capital'],true);
+                }else{
+                    $dataItem['capitalData'] = [['amomon'=>$dataItem['capital'],'time'=>'','paymet'=>'']];
+                }
+                if(XinDongService::isJson($dataItem['capitalActl'])){
+                    $dataItem['capitalActlData'] = @json_decode($dataItem['capitalActl'],true);
+                }else{
+                    $dataItem['capitalActlData'] = [['amomon'=>$dataItem['capitalActl'],'time'=>'','paymet'=>'']];
+                }
+
+            }
+
+            if(
+                $dataItem['investor_type'] == 1
+            ){
+                $humanModel = \App\HttpController\Models\RDS3\Human::create()
+                    ->where('id', $dataItem['investor_id'])->get();
+                $dataItem['name'] = $humanModel->name;
+                if(XinDongService::isJson($dataItem['capital'])){
+                    $dataItem['capitalData'] = @json_decode($dataItem['capital'],true);
+                }else{
+                    $dataItem['capitalData'] = [['amomon'=>$dataItem['capital'],'time'=>'','paymet'=>'']];
+                }
+                if(XinDongService::isJson($dataItem['capitalActl'])){
+                    $dataItem['capitalActlData'] = @json_decode($dataItem['capitalActl'],true);
+                }else{
+                    $dataItem['capitalActlData'] = [['amomon'=>$dataItem['capitalActl'],'time'=>'','paymet'=>'']];
+                }
+            }
+        }
+
+        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+
+    }
+
+    function getNamesInfo(): bool
+    {
+        // $page = intval($this->request()->getRequestParam('page'));
+        // $page = $page>0 ?$page:1;
+        // $size = intval($this->request()->getRequestParam('size'));
+        // $size = $size>0 ?$size:10;
+        // $offset = ($page-1)*$size;
+
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+        $model = Company::create()
+            // ->field(['id','name','property2'])
+            ->where('id', $companyId)
+            ->get();
+        if(!$model){
+            return  $this->writeJson(201, null, null, '数据缺失(企业id)');
+        }
+
+        $names = (new XinDongService())::getAllUsedNames(
+            [
+                'id' => $model->id,
+                'name' => $model->name,
+                'property2' => $model->property2,
+            ]
+        );
+
+        return $this->writeJson(200, [], $names, '成功', true, []);
+
+    }
+
+    function getEsBasicInfo(): bool
+    {
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+        $res = (new XinDongService())->getEsBasicInfo($companyId);
+
+        return $this->writeJson(200,
+            [ ]
+            , $res, '成功', true, []);
+    }
+
+    //
+    function getShangPinInfo(): bool
+    {
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+
+        $ElasticSearchService = new ElasticSearchService();
+
+        $ElasticSearchService->addMustMatchQuery( 'xd_id' , $companyId) ;
+
+        $size = $this->request()->getRequestParam('size')??10;
+        $page = $this->request()->getRequestParam('page')??1;
+        $offset  =  ($page-1)*$size;
+        $ElasticSearchService->addSize(1) ;
+        $ElasticSearchService->addFrom(0) ;
+
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
+        $responseArr = @json_decode($responseJson,true);
+        CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
+                [
+                    'es_query' => $ElasticSearchService->query,
+                    'post_data' => $this->request()->getRequestParam(),
+                ]
+            ));
+
+        // 格式化下日期和时间
+        $hits = (new XinDongService())::formatEsDate($responseArr['hits']['hits'], [
+            'estiblish_time',
+            'from_time',
+            'to_time',
+            'approved_time'
+        ]);
+        $hits = (new XinDongService())::formatEsMoney($hits, [
+            'reg_capital',
+        ]);
+
+
+        foreach($hits as $dataItem){
+            $retData = $dataItem['_source']['shang_pin_data'];
+            break;
+        }
+
+
+        $total =  count($retData); //total items in array
+        $totalPages = ceil( $total/ $size ); //calculate total pages
+        $page = max($page, 1); //get 1 page when $_GET['page'] <= 0
+        // $page = min($page, $totalPages); //get last page when $_GET['page'] > $totalPages
+        $offset = ($page - 1) * $size;
+        if( $offset < 0 ) $offset = 0;
+
+        $retData = array_slice( $retData, $offset, $size );
+
+
+        return $this->writeJson(200,
+            [
+                'page' => $page,
+                'pageSize' =>$size,
+                'total' => $total,
+                'totalPage' => $totalPages,
+            ]
+            , $retData, '成功', true, []);
+    }
+
+    function getEntLianXi(): bool
+    {
+        $postData = [
+            'entName' => $this->getRequestData('entName', ''),
+        ];
+
+        $retData =  (new LongXinService())
+            ->setCheckRespFlag(true)
+            ->getEntLianXi($postData);
+
+        $size = $this->request()->getRequestParam('size')??10;
+        $page = $this->request()->getRequestParam('page')??1;
+        $offset  =  ($page-1)*$size;
+
+        $retData = $retData['result'];
+        $total =  count($retData); //total items in array
+        $totalPages = ceil( $total/ $size ); //calculate total pages
+        $page = max($page, 1); //get 1 page when $_GET['page'] <= 0
+        // $page = min($page, $totalPages); //get last page when $_GET['page'] > $totalPages
+        $offset = ($page - 1) * $size;
+        if( $offset < 0 ) $offset = 0;
+
+        $retData = array_slice( $retData, $offset, $size );
+        // CommonService::getInstance()->log4PHP(
+        //     'getEntLianXi '.json_encode(
+        //         $retData
+        //     )
+        // );
+        $retData = LongXinService::complementEntLianXiMobileState($retData);
+        $retData = LongXinService::complementEntLianXiPosition($retData, $postData['entName']);
+
+        return $this->writeJson(200,
+            [
+                'page' => $page,
+                'pageSize' =>$size,
+                'total' => $total,
+                'totalPage' => $totalPages,
+            ]
+            , $retData, '成功', true, []);
     }
 
     /*
