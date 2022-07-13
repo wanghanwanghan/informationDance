@@ -2833,7 +2833,7 @@ class XinDongService extends ServiceBase
         $res = array_intersect($tobeMatchArr,$targetArr);
         if(
             !empty($res) &&
-            $perc >= 80
+            $perc >= 50
         ){
             return [
                 'type' => '模糊匹配',
@@ -2845,7 +2845,7 @@ class XinDongService extends ServiceBase
 
         //文本匹配度  张三0808    张三
         similar_text($tobeMatch, $target, $perc);
-        if($perc > 50){
+        if($perc > 70){
             return [
                 'type' => '模糊匹配',
                 'details' => '中文相似度匹配',
@@ -2856,7 +2856,7 @@ class XinDongService extends ServiceBase
 
         //拼音相似度匹配  张三0808    张三
         similar_text(PinYinService::getPinyin($tobeMatch), PinYinService::getPinyin($target), $perc);
-        if($perc >= 66 ){
+        if($perc >= 80 ){
             return [
                 'type' => '模糊匹配',
                 'details' => '拼音相似度匹配',
