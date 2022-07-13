@@ -125,16 +125,27 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         foreach ($datas as $dataItem){
             $tmp = [];
             foreach ($dataItem as $key=>$value){
+                // corexml 有可能超出限制 单独处理
                 if(
-                    in_array($key,['updated_at','source'])
+                    in_array($key,['updated_at','source','corexml'])
                 ){
                     continue ;
                 }
-                if(strlen($value)>32767){
-                    $value ="太长了";
-                }
+
                 $tmp[$key] = $value?:'';
             }
+
+            // corexml 有可能超出字节限制 单独处理
+            if(strlen($dataItem['corexml'])>32767){
+                $tmpStrs = str_split ( $dataItem['corexml'], 32766 );
+                foreach ($tmpStrs as $tmpItem){
+                    $tmp[] = $tmpItem;
+                }
+            }
+            else{
+                $tmp[] = $dataItem['corexml'];
+            }
+
             yield $returnDatas[] = $tmp;
 
         }
