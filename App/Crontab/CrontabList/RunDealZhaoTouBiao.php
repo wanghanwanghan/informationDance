@@ -123,22 +123,22 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         ));
         //上传记录详情
         foreach ($datas as $dataItem){
-            $tmp = [];
-            foreach ($dataItem as $key=>$value){
-                if(
-                    in_array($key,['updated_at','source'])
-                ){
-                    continue ;
-                }
-
-                // corexml 有可能超出限制 单独处理
-                if(
-                    in_array($key,['updated_at','source','corexml'])
-                ){
-                    $value =   substr($value, 0, 32767);
-                }
-                $tmp[$key] = $value?:'';
-            }
+//            $tmp = [];
+//            foreach ($dataItem as $key=>$value){
+//                if(
+//                    in_array($key,['updated_at','source'])
+//                ){
+//                    continue ;
+//                }
+//
+//                // corexml 有可能超出限制 单独处理
+//                if(
+//                    in_array($key,['updated_at','source','corexml'])
+//                ){
+//                    $value =   substr($value, 0, 32767);
+//                }
+//                $tmp[$key] = $value?:'';
+//            }
 
             // corexml 有可能超出字节限制 单独处理
 //            if(strlen($dataItem['corexml'])>32767){
@@ -153,7 +153,33 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 //                $tmp['corexml'] = $dataItem['corexml'];
 //            }
 
-            yield $returnDatas[] = $tmp;
+            yield $returnDatas[] = [
+                '标题' => $dataItem['标题'] ?:'' , //
+                '项目名称' => $dataItem['项目名称'] ?:'' , //
+                '项目编号' => $dataItem['项目编号'] ?:'' , //
+                '项目简介'  => $dataItem['项目简介'] ?:'' , //
+                '采购方式'   => $dataItem['采购方式'] ?:'' , //
+                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
+                '公告日期' => $dataItem['公告日期'] ?:'' , //
+                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
+                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
+                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
+                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
+                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
+                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
+                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
+                '名次'  => $dataItem['名次'] ?:'' , //
+                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
+                '中标金额'  => $dataItem['中标金额'] ?:'' , //
+                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
+                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
+                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
+                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
+                '评标专家' => $dataItem['评标专家'] ?:'' , //
+                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
+                'url'  => $dataItem['url'] ?:'' , //
+                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 ):'' , //
+            ];
 
         }
     }
@@ -304,6 +330,12 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         ;
         $p1Nums = 0;
         foreach ($financeDatas as $dataItem){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$dataItem1' => $dataItem
+                ])
+            );
             $fileObject ->data([$dataItem]);
             $p1Nums ++ ;
         }
@@ -346,6 +378,12 @@ class RunDealZhaoTouBiao extends AbstractCronTask
            ;
         $p2Nums = 0;
         foreach ($financeDatas2 as $dataItem){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$dataItem2' => $dataItem
+                ])
+            );
             $file->data([$dataItem]);
             $p2Nums ++;
         }
