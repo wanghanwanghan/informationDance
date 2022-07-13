@@ -159,7 +159,13 @@ class Company extends ServiceBase
 //                ]
 //            )
 //        );
-        $this->es->addMustTermsQuery('property1',$cods);
+        //$this->es->addMustTermsQuery('property1',$cods);
+        $matchedCnames = [];
+        foreach($cods as $code){
+            $code && $matchedCnames[] = $code;
+        }
+        (!empty($matchedCnames)) && $this->es->addMustShouldPhraseQuery( 'property1' , $matchedCnames) ;
+
         // $this->query['query']['bool']['must'][]
         return $this;
     }
