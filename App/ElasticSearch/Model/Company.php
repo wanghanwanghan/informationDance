@@ -131,7 +131,7 @@ class Company extends ServiceBase
             json_encode(
                 [
                     __CLASS__.__LINE__,
-                    '$res' => $res,
+                    'count_$res' => count($res),
                     'count_$xdIds' => count($xdIds),
                     'costs_seconds' => round(microtime(true) - $t1, 3) . ' seconds '
                 ]
