@@ -110,8 +110,17 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
         $returnDatas  = [];
         //所有的数据
-        $datas = \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySql(" WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd' AND source = '$source'  ");
-
+        $where = " WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd' AND source = '$source'  ";
+        $datas = \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySql(
+            $where
+        );
+        CommonService::getInstance()->log4PHP(json_encode(
+            [
+                __CLASS__ . ' is already running  ',
+                '$where' => $where,
+                'data_count' => count($datas)
+            ]
+        ));
         //上传记录详情
         foreach ($datas as $dataItem){
             yield $returnDatas[] = [
@@ -190,7 +199,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         $financeDatas = self::getZhaoTouBiaoData(
             $dateStart,$dateEnd,'p1'
         );
-
+            
         $filename = 'zhao_tou_biao_'.date('YmdHis').'.xlsx';
 
         //===============================
