@@ -3318,7 +3318,7 @@ eof;
         ){
 
             return $this->writeJson(200, [ ] ,  [
-                RunDealZhaoTouBiao::exportDataV4()
+                RunDealZhaoTouBiao::sendEmail()
             ], '成功', true, []);
 
         }

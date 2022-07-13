@@ -206,8 +206,8 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             //continue;
             OperatorLog::addRecord(
                 [
-                    'user_id' => $this->loginUserinfo['id'],
-                    'msg' => $this->loginUserinfo['user_name'].'给用户'.$userInfo['user_name'].'充值'.$requestData['money'].'元('.$title.')【之前余额'.$oldBalance.'，充值好余额'.$newBalance.'】',
+                    'user_id' => 0,
+                    'msg' => '没有数据，不发送邮件' ,
                     'details' =>json_encode( XinDongService::trace()),
                     'type_cname' => '招投标邮件',
                 ]
@@ -215,11 +215,20 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             return  true;
         }
 
-        CommonService::getInstance()->sendEmailV2(
+        $res = CommonService::getInstance()->sendEmailV2(
             'tianyongshan@meirixindong.com',
             '招投标数据('.$day.')',
             '',
             [TEMP_FILE_PATH . $res['filename']]
+        );
+
+        OperatorLog::addRecord(
+            [
+                'user_id' => 0,
+                'msg' => '发送结果：'.$res . " 附件:".TEMP_FILE_PATH . $res['filename'] ,
+                'details' =>json_encode( XinDongService::trace()),
+                'type_cname' => '招投标邮件',
+            ]
         );
 
         return true ;
