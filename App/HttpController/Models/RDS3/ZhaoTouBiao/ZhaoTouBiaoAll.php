@@ -1,6 +1,6 @@
 <?php
 
-namespace App\HttpController\Models\RDS3\HdSaic;
+namespace App\HttpController\Models\RDS3\ZhaoTouBiao;
 
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
 use App\HttpController\Models\ModelBase;

@@ -110,7 +110,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
         $returnDatas  = [];
         //所有的数据
-        $datas = ZhaoTouBiaoAll::findBySql(" WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd' AND source = '$source'  ");
+        $datas = \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySql(" WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd' AND source = '$source'  ");
 
         //上传记录详情
         foreach ($datas as $dataItem){
