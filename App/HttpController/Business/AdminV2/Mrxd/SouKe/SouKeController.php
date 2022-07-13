@@ -571,9 +571,14 @@ class SouKeController extends ControllerBase
                 //营收规模
                 if($configs['pid'] == 50){
                     foreach ($configs['data'] as $subKey => $item){
+                        if( !$dataItem['_source']['ying_shou_gui_mo']){
+                            continue;
+                        }
+                        $yingshouguimomap = XinDongService::getYingShouGuiMoMapV2();
+                        $yingshouguimoItem = $yingshouguimomap[$dataItem['_source']['ying_shou_gui_mo']];
                         if(
-                            $dataItem['_source']['ying_shou_gui_mo'] >= $item['min'] &&
-                            $dataItem['_source']['ying_shou_gui_mo'] <  $item['max']
+                            $yingshouguimoItem['min'] >= $item['min'] &&
+                            $yingshouguimoItem['max'] <  $item['max']
                         ){
                             $newOptions[$key]['data'][$subKey] = $item;
 //                            CommonService::getInstance()->log4PHP(
