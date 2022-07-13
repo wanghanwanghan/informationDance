@@ -510,6 +510,7 @@ class SouKeController extends ControllerBase
                                     'estiblish_year_nums matched' => true,
                                     '$subKey' => $subKey,
                                     '$item' => $item,
+                                    '$dataItem' => $dataItem,
                                     'estiblish_year_nums'=>$dataItem['_source']['estiblish_year_nums'],
                                 ])
                             );
