@@ -35,19 +35,19 @@ class InvoiceController extends ControllerBase
     {
         $entname = $this->getRequestData('entname');
         $status = $this->getRequestData('status');
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                '$status'  => $status
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                '$status'  => $status
+//            ])
+//        );
         empty($status) ?: $status = jsonDecode($status);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                '$status'  => $status
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                '$status'  => $status
+//            ])
+//        );
         $orm = AntAuthList::create();
 
         if (!empty($entname)) {
@@ -55,23 +55,23 @@ class InvoiceController extends ControllerBase
         }
 
         if (!empty($status)) {
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$status'  => $status
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    '$status'  => $status
+//                ])
+//            );
             $orm->where('status', $status, 'IN');
         }
 
         $res = $orm->all();
 
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'count_$res'  => count($res)
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'count_$res'  => count($res)
+//            ])
+//        );
         return $this->writeJson(200, null,$res );
     }
 
