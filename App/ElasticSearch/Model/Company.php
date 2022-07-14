@@ -105,7 +105,7 @@ class Company extends ServiceBase
             ->SetAreaQuery($areaArr)
             ->addSize(2000)
             ->addSortV2('companyid',[
-                "order" => "desc",
+                //"order" => "desc",
                 "mode" => "avg"
             ])
             ->searchFromEs();
