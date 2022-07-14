@@ -422,7 +422,7 @@ class Company extends ServiceBase
         //必须存在APP
         foreach($app_values as $value){
             if($value){
-                $this->es->addMustRegexpQuery( 'wu_liu_qi_ye', ".+") ;
+                $this->es->addMustRegexpQuery( 'wu_liu_xin_xi', ".+") ;
                 break;
             }
         }
