@@ -200,7 +200,7 @@ class AdminV2Router
     {
         $prefix = '/Business/AdminV2/Mrxd/PApi/PApiController/';
 
-        $routeCollector->addGroup('/apiuser', function (RouteCollector $routeCollector) use ($prefix) {
+        $routeCollector->addGroup('/papi', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getApiList', $prefix . 'getApiList');
             $routeCollector->addRoute(['GET', 'POST'], '/addApi', $prefix . 'addApi');
             $routeCollector->addRoute(['GET', 'POST'], '/editApi', $prefix . 'editApi');
