@@ -37,6 +37,7 @@ class PStatisticsController extends ControllerBase
     {
         parent::afterAction($actionName);
     }
+
     function getStatisticsList()
     {
         $uid = $this->getRequestData('uid');
