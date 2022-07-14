@@ -3313,6 +3313,19 @@ eof;
     }
     function testExport()
     {
+
+        if(
+            $this->getRequestData('getBankruptcyTs')
+        ){
+
+            return $this->writeJson(200, [ ] ,  [
+                (new XinDongService())->getBankruptcyTs(
+                    $this->getRequestData('getBankruptcyTs')
+                )
+            ], '成功', true, []);
+
+        }
+
         if(
             $this->getRequestData('generateFileV2')
         ){

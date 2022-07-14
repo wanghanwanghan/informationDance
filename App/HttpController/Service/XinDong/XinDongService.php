@@ -3206,4 +3206,28 @@ class XinDongService extends ServiceBase
         ];
     }
 
+    // 破产重整排查 BankruptcyTs/GetList
+    function getBankruptcyTs($entName)
+    {
+        $csp = CspService::getInstance()->create();
+
+        //
+        $csp->add('BankruptcyTs', function () use ($entName) {
+            $postData = [
+                'searchKey' => $entName,
+            ];
+            $res = (new LongDunService())
+                    ->setCheckRespFlag(true)
+                    ->get($this->ldUrl . 'BankruptcyTs/GetList', $postData);
+            return empty($res['paging']) ? 0 : $res['paging']['total'];
+        });
+
+        //执行
+        $res = CspService::getInstance()->exec($csp);
+        $tmp = [];
+        $tmp['BankruptcyTs'] = $res['BankruptcyTs']; 
+
+        return $this->checkResp(200, null, $tmp, '查询成功');
+    }
+
 }
