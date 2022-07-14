@@ -69,7 +69,7 @@ class InvoiceController extends ControllerBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                '$res'  => $res
+                'count_$res'  => count($res)
             ])
         );
         return $this->writeJson(200, null,$res );
