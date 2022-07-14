@@ -3319,7 +3319,7 @@ eof;
         ){
 
             return $this->writeJson(200, [ ] ,  [
-                (new XinDongService())->getBankruptcyTs(
+                (new XinDongService())->getBankruptcyCheck(
                     $this->getRequestData('getBankruptcyCheck')
                 )
             ], '成功', true, []);
