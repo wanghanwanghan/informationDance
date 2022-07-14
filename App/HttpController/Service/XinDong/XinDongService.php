@@ -3225,7 +3225,30 @@ class XinDongService extends ServiceBase
         //执行
         $res = CspService::getInstance()->exec($csp);
         $tmp = [];
-        $tmp['BankruptcyTs'] = $res['BankruptcyTs']; 
+        $tmp['BankruptcyTs'] = $res['BankruptcyTs'];
+
+        return $this->checkResp(200, null, $tmp, '查询成功');
+    }
+
+    function getBankruptcyCheck($entName)
+    {
+        $csp = CspService::getInstance()->create();
+
+        //
+        $csp->add('BankruptcyCheck', function () use ($entName) {
+            $postData = [
+                'searchKey' => $entName,
+            ];
+            $res = (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get($this->ldUrl . 'BankruptcyCheck/GetList', $postData);
+            return empty($res['paging']) ? 0 : $res['paging']['total'];
+        });
+
+        //执行
+        $res = CspService::getInstance()->exec($csp);
+        $tmp = [];
+        $tmp['BankruptcyCheck'] = $res['BankruptcyCheck'];
 
         return $this->checkResp(200, null, $tmp, '查询成功');
     }

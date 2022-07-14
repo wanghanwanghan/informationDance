@@ -3315,6 +3315,17 @@ eof;
     {
 
         if(
+            $this->getRequestData('getBankruptcyCheck')
+        ){
+
+            return $this->writeJson(200, [ ] ,  [
+                (new XinDongService())->getBankruptcyTs(
+                    $this->getRequestData('getBankruptcyCheck')
+                )
+            ], '成功', true, []);
+
+        }
+        if(
             $this->getRequestData('getBankruptcyTs')
         ){
 
