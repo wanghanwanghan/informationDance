@@ -721,7 +721,7 @@ class DianZiQianService extends ServiceBase
     public function buildParam($param, $path, $file = []): array
     {
         // 业务方AppCode
-        $param["appCode"]   = "E7094079418854802183";
+        $param["appCode"]   = $this->app_code;
         $param["version"]   = "v1";
         $param["timestamp"] = time();
         $token              = $this->makeSign($param, $path);
