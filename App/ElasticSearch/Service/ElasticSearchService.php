@@ -250,6 +250,7 @@ class ElasticSearchService extends ServiceBase
         );
         $bean = new  Search();
         $bean->setIndex($index);
+     $bean->setPreference("_primary");
         $bean->setType('_doc');
         $bean->setBody($this->query);
         $response = $elasticsearch->client()->search($bean)->getBody();
