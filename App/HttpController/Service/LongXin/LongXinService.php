@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\LongXin;
 
+use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Models\EntDb\EntDbEnt;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
@@ -9,6 +10,7 @@ use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\ServiceBase;
 use App\HttpController\Service\TaoShu\TaoShuService;
+use App\HttpController\Service\XinDong\XinDongService;
 use App\Task\Service\TaskService;
 use App\Task\TaskList\EntDbTask\insertEnt;
 use App\Task\TaskList\EntDbTask\insertFinance;
@@ -210,6 +212,14 @@ class LongXinService extends ServiceBase
             'requestData' => $arr,
             'responseData' => $res,
         ], true);
+        OperatorLog::addRecord(
+            [
+                'user_id' => 0,
+                'msg' => '参数:'.json_encode($arr).' 返回:'.json_encode($res),
+                'details' =>json_encode( XinDongService::trace()),
+                'type_cname' => '企业详情'.$version,
+            ]
+        );
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
