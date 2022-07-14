@@ -80,7 +80,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
     static function getRule(): string
     {
-        return '20 18 * * *';
+        return '00 18 * * *';
     }
 
     static function getTaskName(): string
@@ -278,6 +278,15 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             '',
             [TEMP_FILE_PATH . $res['filename']]
         );
+
+        $res = CommonService::getInstance()->sendEmailV2(
+            'hujiehuan@huoyan.cn',
+            // 'minglongoc@me.com',
+            '招投标数据('.$day.')',
+            '',
+            [TEMP_FILE_PATH . $res['filename']]
+        ); 
+
 
         OperatorLog::addRecord(
             [
