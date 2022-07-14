@@ -254,38 +254,38 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             '',
             [TEMP_FILE_PATH . $res['filename']]
         );
-        $res = CommonService::getInstance()->sendEmailV2(
-            // 'tianyongshan@meirixindong.com',
-            'minglongoc@me.com',
-            '招投标数据('.$day.')',
-            '',
-            [TEMP_FILE_PATH . $res['filename']]
-        );
+//        $res = CommonService::getInstance()->sendEmailV2(
+//            // 'tianyongshan@meirixindong.com',
+//            'minglongoc@me.com',
+//            '招投标数据('.$day.')',
+//            '',
+//            [TEMP_FILE_PATH . $res['filename']]
+//        );
         //
-        $res = CommonService::getInstance()->sendEmailV2(
-            'guoxinxia@meirixindong.com',
-            // 'minglongoc@me.com',
-            '招投标数据('.$day.')',
-            '',
-            [TEMP_FILE_PATH . $res['filename']]
-        );
+//        $res = CommonService::getInstance()->sendEmailV2(
+//            'guoxinxia@meirixindong.com',
+//            // 'minglongoc@me.com',
+//            '招投标数据('.$day.')',
+//            '',
+//            [TEMP_FILE_PATH . $res['filename']]
+//        );
 
         //
-        $res = CommonService::getInstance()->sendEmailV2(
-            'zhengmeng@meirixindong.com',
-            // 'minglongoc@me.com',
-            '招投标数据('.$day.')',
-            '',
-            [TEMP_FILE_PATH . $res['filename']]
-        );
+//        $res = CommonService::getInstance()->sendEmailV2(
+//            'zhengmeng@meirixindong.com',
+//            // 'minglongoc@me.com',
+//            '招投标数据('.$day.')',
+//            '',
+//            [TEMP_FILE_PATH . $res['filename']]
+//        );
 
-        $res = CommonService::getInstance()->sendEmailV2(
-            'hujiehuan@huoyan.cn',
-            // 'minglongoc@me.com',
-            '招投标数据('.$day.')',
-            '',
-            [TEMP_FILE_PATH . $res['filename']]
-        ); 
+//        $res = CommonService::getInstance()->sendEmailV2(
+//            'hujiehuan@huoyan.cn',
+//            // 'minglongoc@me.com',
+//            '招投标数据('.$day.')',
+//            '',
+//            [TEMP_FILE_PATH . $res['filename']]
+//        );
 
 
         OperatorLog::addRecord(
