@@ -31,13 +31,9 @@ class DianZiQianService extends ServiceBase
         parent::__construct();
         $this->checkRespFlag = true;
         $this->url        = 'https://sandbox.letsign.com';
-        $this->app_code   = 'E7094079418854802183';
-        $this->app_secret = '6%T8s0h!cSx4^M$7vb0Xjr5e75r6n18NxGuK1V7$942e7*2&2G64d7#3#^8x4G44';
-
-//        if (strtolower($type) === 'test') {
-//            $this->url = 'https://testapi.fadada.com:8443/api/';
-//            $this->app_id = CreateConf::getInstance()->getConf('fadada.app_id_test');
-//            $this->app_secret = CreateConf::getInstance()->getConf('fadada.app_secret_test');
+        //test
+        $this->app_code = CreateConf::getInstance()->getConf('dianziqian.app_code_test');
+        $this->app_secret = CreateConf::getInstance()->getConf('dianziqian.app_secret_test');
 //        }
 
         $this->timestamp      = Carbon::now()->format('YmdHis');
