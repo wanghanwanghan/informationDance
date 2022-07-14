@@ -250,7 +250,8 @@ class ElasticSearchService extends ServiceBase
         );
         $bean = new  Search();
         $bean->setIndex($index);
-     $bean->setPreference("_primary");
+        //不加的话，不能保证一致性 即同样的搜索条件，会返回不一致的结果
+        $bean->setPreference("_primary");
         $bean->setType('_doc');
         $bean->setBody($this->query);
         $response = $elasticsearch->client()->search($bean)->getBody();
