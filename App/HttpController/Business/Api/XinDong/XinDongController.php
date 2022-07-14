@@ -3315,6 +3315,42 @@ eof;
     {
 
         if(
+            $this->getRequestData('C1')
+        ){
+
+            $postData = [
+                'entName' => trim($this->getRequestData('C1')),
+                'version' => 'C1' ,
+            ];
+
+
+            $res = (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getEntDetail($postData);
+
+            return $this->writeJson(200, [ ] ,  $res, '成功', true, []);
+
+        }
+
+        if(
+            $this->getRequestData('C10')
+        ){
+
+            $postData = [
+                'entName' => trim($this->getRequestData('C10')),
+                'version' => 'C10' ,
+            ];
+
+
+            $res = (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getEntDetail($postData);
+
+            return $this->writeJson(200, [ ] ,  $res, '成功', true, []);
+
+        }
+
+        if(
             $this->getRequestData('getBankruptcyCheck')
         ){
 
