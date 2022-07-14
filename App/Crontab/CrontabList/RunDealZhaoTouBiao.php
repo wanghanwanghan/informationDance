@@ -80,7 +80,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
     static function getRule(): string
     {
-        return '*/1 * * * *';
+        return '20 18 * * *';
     }
 
     static function getTaskName(): string
@@ -212,7 +212,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         ConfigInfo::setIsRunning(__CLASS__);
 
         $day = date('Y-m-d');
-        $day = '2022-06-20';
+        //$day = '2022-06-20';
         //$day = '2022-07-14';
 
         //生成文件 发邮件

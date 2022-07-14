@@ -20,6 +20,8 @@ use App\Crontab\CrontabList\RunDealToolsFile;
 use App\Crontab\CrontabList\RunReadAndDealXls;
 use App\Crontab\CrontabList\RunSupervisor;
 use App\Crontab\CrontabList\RunShouQuanCheXian;
+use App\Crontab\CrontabList\RunDealZhaoTouBiao;
+
 use EasySwoole\Component\Singleton;
 use EasySwoole\EasySwoole\Crontab\Crontab;
 
@@ -48,6 +50,7 @@ class CrontabService
         $this->RunJinCaiShuKeRWH();//金财数科通过任务号获取发票
         $this->RunDealApiSouKe();//新APi-搜客模块相关的定时
         $this->RunDealToolsFile();//新APi-搜客模块相关的定时
+        $this->RunDealZhaoTouBiao();//新APi-搜客模块相关的定时
         return true;
     }
 
@@ -146,4 +149,11 @@ class CrontabService
     {
         return Crontab::getInstance()->addTask(RunDealToolsFile::class);
     }
+
+    //新api系统-工具类定时
+    private function RunDealZhaoTouBiao(): Crontab
+    {
+        return Crontab::getInstance()->addTask(RunDealZhaoTouBiao::class);
+    }
+
 }
