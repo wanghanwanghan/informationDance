@@ -211,15 +211,19 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         //设置为正在执行中
         ConfigInfo::setIsRunning(__CLASS__);
 
+        $day = date('Y-m-d');
+        $day = '2022-06-20';
+        //$day = '2022-07-14';
+
         //生成文件 发邮件
-        $res = self::sendEmail();
+        $res = self::sendEmail($day);
         return true ;   
     }
 
-    static function sendEmail()
+    static function sendEmail($day)
     {
-        $day = date('Y-m-d');
-        $day = '2022-06-20';
+        //$day = date('Y-m-d');
+        //$day = '2022-06-20';
         //$day = '2022-07-14';
         $dateStart = $day.' 00:00:00';
         $dateEnd = $day.' 23:59:59';

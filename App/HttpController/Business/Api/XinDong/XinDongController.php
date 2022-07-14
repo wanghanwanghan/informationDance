@@ -3316,9 +3316,11 @@ eof;
         if(
             $this->getRequestData('generateFileV2')
         ){
-
+    
             return $this->writeJson(200, [ ] ,  [
-                RunDealZhaoTouBiao::sendEmail()
+                RunDealZhaoTouBiao::sendEmail(
+                    $this->getRequestData('generateFileV2')
+                )
             ], '成功', true, []);
 
         }
