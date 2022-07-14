@@ -103,7 +103,7 @@ class Company extends ServiceBase
         $companyLocationEsModel
             //经营范围
             ->SetAreaQuery($areaArr)
-            ->addSize(2000)
+            ->addSize(1000)
 //            ->addSortV2('companyid',[
 //                "order" => "desc",
 //                "mode" => "avg"
