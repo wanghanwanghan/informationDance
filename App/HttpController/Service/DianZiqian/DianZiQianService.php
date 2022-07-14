@@ -688,7 +688,7 @@ class DianZiQianService extends ServiceBase
     public function makeSign($data, $path)
     {
         // 业务方密钥
-        $appSecret = '6%T8s0h!cSx4^M$7vb0Xjr5e75r6n18NxGuK1V7$942e7*2&2G64d7#3#^8x4G44';
+        $appSecret = $this->app_secret;
         //签名步骤一：按字典序排序参数
         ksort($data);
         $String = $this->toUrlParams($data, $path);
