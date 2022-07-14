@@ -48,6 +48,12 @@ class ControllerBase extends Index
         return $methodsLists;
     }
 
+    //计算分页
+    function exprOffset($page, $pageSize): int
+    {
+        return ($page - 1) * $pageSize;
+    }
+
     function onRequest(?string $action): ?bool
     {
         $this->setActionName($action);

@@ -96,7 +96,7 @@ class PStatisticsController extends ControllerBase
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'getStatisticsList_$data_wrong' => $e->getMessage() 
+                    'getStatisticsList_$data_wrong' => $e->getMessage()
                 ])
             );
             DbManager::getInstance()->rollback('mrxd');
