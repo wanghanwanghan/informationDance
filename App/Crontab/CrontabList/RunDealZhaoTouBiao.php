@@ -219,7 +219,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
     static function sendEmail()
     {
         $day = date('Y-m-d');
-        $day = '2022-06-20';
+        $day = '2022-07-14';
         $dateStart = $day.' 00:00:00';
         $dateEnd = $day.' 23:59:59';
 
@@ -241,9 +241,34 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             return  true;
         }
 
+        //
         $res = CommonService::getInstance()->sendEmailV2(
              'tianyongshan@meirixindong.com',
            // 'minglongoc@me.com',
+            '招投标数据('.$day.')',
+            '',
+            [TEMP_FILE_PATH . $res['filename']]
+        );
+        $res = CommonService::getInstance()->sendEmailV2(
+            // 'tianyongshan@meirixindong.com',
+            'minglongoc@me.com',
+            '招投标数据('.$day.')',
+            '',
+            [TEMP_FILE_PATH . $res['filename']]
+        );
+        //
+        $res = CommonService::getInstance()->sendEmailV2(
+            'guoxinxia@meirixindong.com',
+            // 'minglongoc@me.com',
+            '招投标数据('.$day.')',
+            '',
+            [TEMP_FILE_PATH . $res['filename']]
+        );
+
+        //
+        $res = CommonService::getInstance()->sendEmailV2(
+            'zhengmeng@meirixindong.com',
+            // 'minglongoc@me.com',
             '招投标数据('.$day.')',
             '',
             [TEMP_FILE_PATH . $res['filename']]
