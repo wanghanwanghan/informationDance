@@ -55,7 +55,8 @@ class PStatisticsController extends StatisticsBase
 
             DbManager::getInstance()->startTransaction('mrxd');
             $field = $this->getField();
-            CommonService::getInstance()->log4PHP("SELECT SQL_CALC_FOUND_ROWS " . $field . $sql . " order by created_at desc limit "
+            CommonService::getInstance()->log4PHP(
+                "SELECT SQL_CALC_FOUND_ROWS " . $field . $sql . " order by created_at desc limit "
                 . $this->exprOffset($page, $pageSize) . ' ,' . $pageSize,'info','getStatisticsListSql');
 
             $data = DbManager::getInstance()->query(
@@ -63,10 +64,18 @@ class PStatisticsController extends StatisticsBase
                     . $this->exprOffset($page, $pageSize) . ' ,' . $pageSize), true, 'mrxd', 15)
                 ->getResult();
 
+
+
             $total = DbManager::getInstance()->query(
                 (new QueryBuilder())->raw("SELECT FOUND_ROWS() as num "), true, 'mrxd')
                 ->getResultOne();
-
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'getStatisticsList_$data' => count($data),
+                    'getStatisticsList_$total' => count($total),
+                ])
+            );
             DbManager::getInstance()->commit('mrxd');
 
         }catch (\Throwable $e) {
