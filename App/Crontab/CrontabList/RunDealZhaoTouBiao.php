@@ -304,7 +304,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         ];
 
         $excel = new \Vtiful\Kernel\Excel($config);
-        $fileObject = $excel->fileName($filename, 'sheet');
+        $fileObject = $excel->fileName($filename, 'p1');
         $fileHandle = $fileObject->getHandle();
 
         $format = new Format($fileHandle);
@@ -370,7 +370,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         $financeDatas2 = self::getZhaoTouBiaoData(
             $dateStart,$dateEnd,'p2'
         );
-        $file->addSheet('sheet_two')
+        $file->addSheet('p2')
             //->defaultFormat($colorStyle)
             ->header([
                 '标题' , //
