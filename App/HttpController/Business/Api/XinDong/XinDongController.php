@@ -3316,7 +3316,7 @@ eof;
         if(
             $this->getRequestData('generateFileV2')
         ){
-    
+
             return $this->writeJson(200, [ ] ,  [
                 RunDealZhaoTouBiao::sendEmail(
                     $this->getRequestData('generateFileV2')

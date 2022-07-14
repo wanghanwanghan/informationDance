@@ -238,7 +238,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             OperatorLog::addRecord(
                 [
                     'user_id' => 0,
-                    'msg' => '没有数据，不发送邮件' ,
+                    'msg' => '没有数据，不发送邮件 日期：'.$day." 查询结果:".json_encode($res) ,
                     'details' =>json_encode( XinDongService::trace()),
                     'type_cname' => '招投标邮件',
                 ]
