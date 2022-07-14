@@ -28,6 +28,18 @@ class CompanyBasic extends ModelBase
         return $res;
     }
 
+    public static function findByCode($UNISCID){
+        $res =  CompanyBasic::create()
+            ->where('UNISCID',$UNISCID)
+            ->get();
+        return $res;
+    }
+
+    public static function findCancelDateByCode($UNISCID){
+        $res =  self::findByCode($UNISCID);
+        return $res?$res->getAttr('CANDATE'):'';
+    }
+
 
 
     public static function findByConditionV2($whereArr,$page){

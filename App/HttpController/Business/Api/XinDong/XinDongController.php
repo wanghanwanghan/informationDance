@@ -3315,6 +3315,20 @@ eof;
     {
 
         if(
+            $this->getRequestData('findCancelDateByCode')
+        ){
+
+            return $this->writeJson(
+                200,
+                [ ] ,
+                CompanyBasic::findCancelDateByCode($this->getRequestData('findCancelDateByCode')),
+                '成功',
+                true,
+                []
+            );
+        }
+
+        if(
             $this->getRequestData('C1')
         ){
 
