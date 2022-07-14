@@ -1487,6 +1487,7 @@ class XinDongService extends ServiceBase
         ); 
         $bean = new  Search();
         $bean->setIndex($index);
+        $bean->setPreference("_primary");
         $bean->setType('_doc');
         $bean->setBody($elasticSearchService->query);
         $response = $elasticsearch->client()->search($bean)->getBody(); 
