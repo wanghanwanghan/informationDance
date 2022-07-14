@@ -189,7 +189,7 @@ class LongXinService extends ServiceBase
     function getEntDetail($postData)
     {
         $entId = $this->getEntid($postData['entName']);
-        $version = $this->getEntid($postData['version']);
+        $version = $postData['version'];
 
         if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
 
