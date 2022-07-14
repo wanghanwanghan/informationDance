@@ -104,6 +104,7 @@ class Company extends ServiceBase
             //经营范围
             ->SetAreaQuery($areaArr)
             ->addSize(1000)
+            ->addSort('_score',"desc")
 //            ->addSortV2('companyid',[
 //                "order" => "desc",
 //                "mode" => "avg"
