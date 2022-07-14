@@ -68,6 +68,12 @@ class CompanyLocation extends ServiceBase
         return $this;
     }
 
+    function addSortV2($field,$value)
+    {
+        $this->es->addSortV2($field,$value) ;
+        return $this;
+    }
+
     function setReturnData($data)
     {
 
