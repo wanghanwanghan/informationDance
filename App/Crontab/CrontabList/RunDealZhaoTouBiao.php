@@ -247,39 +247,39 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         }
 
         //
-        $res = CommonService::getInstance()->sendEmailV2(
+        $res1 = CommonService::getInstance()->sendEmailV2(
              'tianyongshan@meirixindong.com',
            // 'minglongoc@me.com',
             '招投标数据('.$day.')',
             '',
             [TEMP_FILE_PATH . $res['filename']]
         );
-//        $res = CommonService::getInstance()->sendEmailV2(
-//            // 'tianyongshan@meirixindong.com',
-//            'minglongoc@me.com',
-//            '招投标数据('.$day.')',
-//            '',
-//            [TEMP_FILE_PATH . $res['filename']]
-//        );
+        $res2 = CommonService::getInstance()->sendEmailV2(
+            // 'tianyongshan@meirixindong.com',
+            'minglongoc@me.com',
+            '招投标数据('.$day.')',
+            '',
+            [TEMP_FILE_PATH . $res['filename']]
+        );
         //
-//        $res = CommonService::getInstance()->sendEmailV2(
-//            'guoxinxia@meirixindong.com',
-//            // 'minglongoc@me.com',
-//            '招投标数据('.$day.')',
-//            '',
-//            [TEMP_FILE_PATH . $res['filename']]
-//        );
+        $res3 = CommonService::getInstance()->sendEmailV2(
+            'guoxinxia@meirixindong.com',
+            // 'minglongoc@me.com',
+            '招投标数据('.$day.')',
+            '',
+            [TEMP_FILE_PATH . $res['filename']]
+        );
 
         //
-//        $res = CommonService::getInstance()->sendEmailV2(
-//            'zhengmeng@meirixindong.com',
-//            // 'minglongoc@me.com',
-//            '招投标数据('.$day.')',
-//            '',
-//            [TEMP_FILE_PATH . $res['filename']]
-//        );
+        $res4 = CommonService::getInstance()->sendEmailV2(
+            'zhengmeng@meirixindong.com',
+            // 'minglongoc@me.com',
+            '招投标数据('.$day.')',
+            '',
+            [TEMP_FILE_PATH . $res['filename']]
+        );
 
-//        $res = CommonService::getInstance()->sendEmailV2(
+//        $res5 = CommonService::getInstance()->sendEmailV2(
 //            'hujiehuan@huoyan.cn',
 //            // 'minglongoc@me.com',
 //            '招投标数据('.$day.')',
@@ -291,7 +291,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         OperatorLog::addRecord(
             [
                 'user_id' => 0,
-                'msg' => '发送结果：'.$res . " 附件:".TEMP_FILE_PATH . $res['filename'] ,
+                'msg' => '发送结果：'.$res . " 附件:".TEMP_FILE_PATH . $res['filename'] .' 邮件结果:'.$res1.$res2.$res3.$res4.$res5,
                 'details' =>json_encode( XinDongService::trace()),
                 'type_cname' => '招投标邮件',
             ]
