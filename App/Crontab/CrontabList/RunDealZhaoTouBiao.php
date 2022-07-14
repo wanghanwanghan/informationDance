@@ -219,7 +219,8 @@ class RunDealZhaoTouBiao extends AbstractCronTask
     static function sendEmail()
     {
         $day = date('Y-m-d');
-        $day = '2022-07-14';
+        $day = '2022-06-20';
+        //$day = '2022-07-14';
         $dateStart = $day.' 00:00:00';
         $dateEnd = $day.' 23:59:59';
 
@@ -287,9 +288,6 @@ class RunDealZhaoTouBiao extends AbstractCronTask
     }
     //TODO  改成按行的 防止内存溢出
     static function  exportDataV4($dateStart,$dateEnd){
-
-
-
         //p1
 
         $financeDatas = self::getZhaoTouBiaoData(
