@@ -213,7 +213,7 @@ class AdminV2Router
     {
         $prefix = '/Business/AdminV2/Mrxd/PStatics/PStatisticsController/';
 
-        $routeCollector->addGroup('/apiuser', function (RouteCollector $routeCollector) use ($prefix) {
+        $routeCollector->addGroup('/pstatics', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getStatisticsList', $prefix . 'getStatisticsList');
             $routeCollector->addRoute(['GET', 'POST'], '/exportCsv', $prefix . 'exportCsv');
         });
