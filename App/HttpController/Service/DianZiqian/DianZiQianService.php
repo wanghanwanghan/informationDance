@@ -30,11 +30,14 @@ class DianZiQianService extends ServiceBase
     {
         parent::__construct();
         $this->checkRespFlag = true;
-        $this->url        = 'https://sandbox.letsign.com';
         //test
-        $this->app_code = CreateConf::getInstance()->getConf('dianziqian.app_code_test');
-        $this->app_secret = CreateConf::getInstance()->getConf('dianziqian.app_secret_test');
-//        }
+//        $this->url        = 'https://sandbox.letsign.com';
+//        $this->app_code = CreateConf::getInstance()->getConf('dianziqian.app_code_test');
+//        $this->app_secret = CreateConf::getInstance()->getConf('dianziqian.app_secret_test');
+        //正式环境
+        $this->url        = 'https://api.letsign.com';
+        $this->app_code = CreateConf::getInstance()->getConf('dianziqian.app_code');
+        $this->app_secret = CreateConf::getInstance()->getConf('dianziqian.app_secret');
 
         $this->timestamp      = Carbon::now()->format('YmdHis');
         $this->curl_use_cache = false;
