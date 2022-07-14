@@ -470,16 +470,17 @@ class SouKeController extends ControllerBase
                     foreach ($configs['data'] as $subKey => $item){
                         if($item['cname'] == $has_wu_liu_xin_xi){
                             $newOptions[$key]['data'][$subKey] = $item;
-//                            CommonService::getInstance()->log4PHP(
-//                                json_encode([
-//                                    __CLASS__.__FUNCTION__ .__LINE__,
-//                                    'wu_liu_xin_xi matched' => true,
-//                                    '$subKey' => $subKey,
-//                                    '$item' => $item,
-//                                    'cname'=>$item['cname'],
-//                                    'wu_liu_xin_xi'=>$dataItem['_source']['wu_liu_xin_xi'],
-//                                ])
-//                            );
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'wu_liu_xin_xi matched' => true,
+                                    '$subKey' => $subKey,
+                                    '$item' => $item,
+                                    'cname'=>$item['cname'],
+                                    'wu_liu_xin_xi'=>$dataItem['_source']['wu_liu_xin_xi'],
+                                    'name'=>$dataItem['_source']['name'],
+                                ])
+                            );
                             // break;
                         }
                         else{
