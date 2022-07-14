@@ -55,10 +55,24 @@ class InvoiceController extends ControllerBase
         }
 
         if (!empty($status)) {
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$status'  => $status
+                ])
+            );
             $orm->where('status', $status, 'IN');
         }
 
-        return $this->writeJson(200, null, $orm->all());
+        $res = $orm->all();
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$res'  => $res
+            ])
+        );
+        return $this->writeJson(200, null,$res );
     }
 
     function createZip(): bool
