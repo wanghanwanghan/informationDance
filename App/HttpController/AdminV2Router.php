@@ -211,7 +211,7 @@ class AdminV2Router
 
     private function PStaticsRouterV1(RouteCollector $routeCollector): bool
     {
-        $prefix = '/Business/AdminV2/Mrxd/PStatistics/PStatisticsController/';
+        $prefix = '/Business/AdminV2/Mrxd/PStatics/PStatisticsController/';
 
         $routeCollector->addGroup('/apiuser', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getStatisticsList', $prefix . 'getStatisticsList');

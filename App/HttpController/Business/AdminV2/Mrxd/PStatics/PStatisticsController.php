@@ -1,6 +1,6 @@
 <?php
 
-namespace App\HttpController\Business\AdminV2\Mrxd\PStatistics;
+namespace App\HttpController\Business\AdminV2\Mrxd\PStatics;
 
 use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;
 use App\HttpController\Models\AdminNew\AdminNewApi;
