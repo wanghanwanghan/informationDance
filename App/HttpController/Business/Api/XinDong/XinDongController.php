@@ -18,6 +18,7 @@ use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
+use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
 use App\HttpController\Models\RDS3\HdSaic\ZhaoTouBiaoAll;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
@@ -3315,6 +3316,20 @@ eof;
     {
 
         if(
+            $this->getRequestData('CompanyLiquidation')
+        ){
+
+            return $this->writeJson(
+                200,
+                [ ] ,
+                CompanyLiquidation::findByName($this->getRequestData('CompanyLiquidation')),
+                '成功',
+                true,
+                []
+            );
+        }
+
+        if(
             $this->getRequestData('findCancelDateByCode')
         ){
 
@@ -3327,6 +3342,7 @@ eof;
                 []
             );
         }
+
 
         if(
             $this->getRequestData('C1')
