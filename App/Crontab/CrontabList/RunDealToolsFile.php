@@ -321,12 +321,7 @@ class RunDealToolsFile extends AbstractCronTask
             " WHERE status = ".ToolsUploadQueue::$state_init.
                     " AND touch_time  IS NULL "
         );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
-            ])
-        );
+
         foreach($allInitDatas as $InitData){
             ToolsUploadQueue::setTouchTime(
                 $InitData['id'],date('Y-m-d H:i:s')

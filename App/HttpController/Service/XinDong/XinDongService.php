@@ -1176,26 +1176,38 @@ class XinDongService extends ServiceBase
                     $this->estiblish_year_under_2 => [
                         'cname' => $this->estiblish_year_under_2_des,
                         'detail' => '',
+                        'min' => 0,
+                        'max' => 2,
                     ], 
                     $this->estiblish_year_2to5  => [
                         'cname' => $this->estiblish_year_2to5_des ,
                         'detail' => '',
+                        'min' => 2,
+                        'max' => 5,
                     ],
                     $this->estiblish_year_5to10  => [
                         'cname' => $this->estiblish_year_5to10_des,
                         'detail' => '',
+                        'min' => 5,
+                        'max' => 10,
                     ],
                     $this->estiblish_year_10to15  => [
                         'cname' =>  $this->estiblish_year_10to15_des,
                         'detail' => '',
+                        'min' => 10,
+                        'max' => 15,
                     ],
                     $this->estiblish_year_15to20  => [
                         'cname' => $this->estiblish_year_15to20_des,
                         'detail' => '',
+                        'min' => 15,
+                        'max' => 20,
                     ], 
                     $this->estiblish_year_more_than_20  => [
                         'cname' => $this->estiblish_year_more_than_20_des,
                         'detail' => '',
+                        'min' => 20,
+                        'max' => 2000,
                     ],
                 ],
             ], 
@@ -1239,30 +1251,44 @@ class XinDongService extends ServiceBase
                     10 => [
                         'cname' => '100万以内',
                         'detail' => '',
+                        'min' => 0,
+                        'max' => 100,
                     ],
                     15 => [
                         'cname' => '100-500万',
                         'detail' => '',
+                        'min' => 100,
+                        'max' => 500,
                     ],
                     20 => [
                         'cname' =>  '500-1000万',
                         'detail' => '',
+                        'min' => 500,
+                        'max' => 1000,
                     ],
                     25 => [
                         'cname' => '1000万-5000万',
                         'detail' => '',
+                        'min' => 1000,
+                        'max' => 5000,
                     ],
                     30 => [
                         'cname' =>  '5000万-1亿',
                         'detail' => '',
+                        'min' => 5000,
+                        'max' => 10000,
                     ],
                     35 => [
                         'cname' => '1亿-10亿',
                         'detail' => '',
+                        'min' => 10000,
+                        'max' => 100000,
                     ],
                     40 => [
                         'cname' => '10亿以上',
                         'detail' => '',
+                        'min' => 100000,
+                        'max' => 10000000,
                     ],  
                 ],
             ],
@@ -1276,55 +1302,81 @@ class XinDongService extends ServiceBase
                     $this->reg_capital_50  =>  [
                         'cname' => $this->reg_capital_50_des,
                         'detail' => '100万以下',
+                        'min' => 0,
+                        'max' => 1000000,
                     ],
                     $this->reg_capital_50to100  =>  [
                         'cname' => $this->reg_capital_50to100_des,
                         'detail' => '100万以上，500万以下',
+                        'min' => 1000000,
+                        'max' => 5000000,
                     ], 
                     $this->reg_capital_100to200  =>  [
                         'cname' => $this->reg_capital_100to200_des,
                         'detail' => '500万以上，1000万以下',
+                        'min' => 5000000,
+                        'max' => 10000000,
                     ],  
                     $this->reg_capital_200to500  =>  [
                         'cname' => $this->reg_capital_200to500_des,
                         'detail' => '1000万以上，3000万以下',
+                        'min' => 10000000,
+                        'max' => 30000000,
                     ],  
                     $this->reg_capital_500to1000  =>  [
                         'cname' => $this->reg_capital_500to1000_des,
                         'detail' => '3000万以上，5000万以下',
+                        'min' => 30000000,
+                        'max' => 50000000,
                     ],  
                     $this->reg_capital_1000to10000  => [
                         'cname' =>  $this->reg_capital_1000to10000_des,
                         'detail' => '5000万以上，8000万以下',
+                        'min' => 50000000,
+                        'max' => 80000000,
                     ],  
                  //    $this->reg_capital_10000to100000  =>  $this->reg_capital_10000to100000_des,
                     $this->reg_capital_minddle_a  =>  [
                         'cname' => $this->reg_capital_minddle_a_des,
                         'detail' => '8000万以上，1亿以下',
+                        'min' => 80000000,
+                        'max' => 100000000,
                     ],
                     $this->reg_capital_big_c  =>  [
                         'cname' => $this->reg_capital_big_c_des,
                         'detail' => '1亿以上，5亿以下',
+                        'min' => 100000000,
+                        'max' => 500000000,
                     ],
                     $this->reg_capital_big_b  =>  [
                         'cname' => $this->reg_capital_big_b_des,
                         'detail' => '5亿以上，10亿以下',
+                        'min' => 500000000,
+                        'max' => 1000000000,
                     ],
                     $this->reg_capital_big_A  =>  [
                         'cname' => $this->reg_capital_big_A_des,
                         'detail' => '10亿以上，50亿以下',
+                        'min' => 1000000000,
+                        'max' => 5000000000,
                     ],
                     $this->reg_capital_super_big_C  =>  [
                         'cname' => $this->reg_capital_super_big_C_des,
                         'detail' => '50亿以上，100亿以下',
+                        'min' => 5000000000,
+                        'max' => 10000000000,
                     ],
                     $this->reg_capital_super_big_B  =>  [
                         'cname' => $this->reg_capital_super_big_B_des,
                         'detail' => '100亿以上，500亿以下',
+                        'min' => 10000000000,
+                        'max' => 50000000000,
                     ],
                     $this->reg_capital_super_big_A  =>  [
                         'cname' => $this->reg_capital_super_big_A_des,
                         'detail' => '500亿以上',
+                        'min' => 50000000000,
+                        'max' => 500000000000,
                     ],
                 ],
             ],
@@ -1338,30 +1390,44 @@ class XinDongService extends ServiceBase
                     10 => [
                         'cname' => '10人以下',
                         'detail' => '',
+                        'min' => 0,
+                        'max' => 10,
                     ], 
                     20 => [
                         'cname' => '10-50人',
                         'detail' => '',
+                        'min' => 10,
+                        'max' => 50,
                     ], 
                     30 => [
                         'cname' => '50-100人',
                         'detail' => '',
+                        'min' => 50,
+                        'max' => 100,
                     ], 
                     40 => [
                         'cname' => '100-500人',
                         'detail' => '',
+                        'min' => 100,
+                        'max' => 500,
                     ], 
                     50 => [
                         'cname' => '500-1000人',
                         'detail' => '',
+                        'min' => 500,
+                        'max' => 1000,
                     ], 
                     60 => [
                         'cname' => '1000-5000人',
                         'detail' => '',
+                        'min' => 1000,
+                        'max' => 5000,
                     ], 
                     70 => [
                         'cname' => '5000人以上',
                         'detail' => '',
+                        'min' => 5000,
+                        'max' => 500000,
                     ],
                 ],
             ],
@@ -1382,7 +1448,7 @@ class XinDongService extends ServiceBase
                 'pid' => 80,
                 'desc' => '有无APP',
                 'detail' => '',
-                'key' => 'web',
+                'key' => 'app',
                 'type' => 'select',
                 'data' => [
                     10 => [
@@ -1395,7 +1461,7 @@ class XinDongService extends ServiceBase
                 'pid' => 90,
                 'desc' => '是否物流企业',
                 'detail' => '',
-                'key' => 'web',
+                'key' => 'wu_liu_xin_xi',
                 'type' => 'select',
                 'data' => [
                     10 => [
@@ -1406,6 +1472,7 @@ class XinDongService extends ServiceBase
             ],
         ];
     }
+
 
      //高级搜索
      function advancedSearch($elasticSearchService, $index = 'company_202207')
@@ -1593,7 +1660,11 @@ class XinDongService extends ServiceBase
         $dataItem['shang_pin_data'] && $tags[110] = '商品';
 
         //物流企业 
-        $dataItem['wu_liu_qi_ye'] && $tags[120] = '物流企业';
+        $dataItem['wu_liu_xin_xi'] && $tags[120] = '物流企业';
+
+        //市占率tag
+        $marketShare = XinDongService::getMarjetShare($dataItem['xd_id']);
+        $marketShare && $tags[130] = $marketShare['min'].'~'.$marketShare['max'];
 
         return $tags;
     }
@@ -1728,7 +1799,7 @@ class XinDongService extends ServiceBase
         ];
     }
 
-    static function getTuanDuiGuiMoMapV2(){
+    static function getYingShouGuiMoMapV2(){
         return  [
             'A1' => ['min' => 0,'max' => 49],
             'A2' => ['min' => 50,'max' => 99],
@@ -1777,7 +1848,7 @@ class XinDongService extends ServiceBase
 
     static function getZhuCeZiBenMap(){ 
         return  [
-            10 => ['min' => 0, 'max' => 100 , 'epreg' => ['[0-9]','[1-9][0-9]'], 'des' => '100万以下' ],//, 
+            10 => ['min' => 0, 'max' => 100 , 'epreg' => ['[0-9]','[1-9][0-9]'], 'des' => '100万以下' ],//,
             15 => ['min' => 10, 'max' => 500 , 'epreg' => ['[1-4][0-9][0-9]'], 'des' => '100-500' ], //, 
             20 => ['min' => 500, 'max' => 1000  ,'epreg' => ['[5-9][0-9][0-9]'], 'des' => '500-1000' ], //, 
             25 => ['min' => 1000, 'max' => 5000 ,'epreg' => ['[1-4][0-9][0-9][0-9]'], 'des' => '1000-5000'  ], //, 
@@ -1788,6 +1859,20 @@ class XinDongService extends ServiceBase
             'des' => '100000+' ]//, 
         ];
    }
+    static function getZhuCeZiBenMapV2(){
+        return  [
+            10 => ['min' => 0, 'max' => 100 , 'epreg' => ['[0-9]','[1-9][0-9](.)+'], 'des' => '100万以下' ],//,
+            15 => ['min' => 10, 'max' => 500 , 'epreg' => ['[1-4][0-9][0-9](.)+'], 'des' => '100-500' ], //,
+            20 => ['min' => 500, 'max' => 1000  ,'epreg' => ['[5-9][0-9][0-9](.)+'], 'des' => '500-1000' ], //,
+            25 => ['min' => 1000, 'max' => 5000 ,'epreg' => ['[1-4][0-9][0-9][0-9](.)+'], 'des' => '1000-5000'  ], //,
+            30 => ['min' => 5000, 'max' => 10000  ,'epreg' => ['[5-9][0-9][0-9][0-9](.)+'], 'des' => '5000-10000' ], //,
+            35 => ['min' => 10000, 'max' => 50000  ,'epreg' => ['[1-9][0-9][0-9][0-9][0-9](.)+'], 'des' => '100000-100000' ], //,
+            40 => ['min' => 5000, 'max' => 10000000 ,'epreg' =>
+                ['[1-9][0-9][0-9][0-9][0-9]','[1-9][0-9][0-9][0-9][0-9][0-9]','[1-9][0-9][0-9][0-9][0-9][0-9][0-9](.)+'],
+                'des' => '100000+' ]//,
+        ];
+    }
+
 
 
 
@@ -2327,6 +2412,15 @@ class XinDongService extends ServiceBase
 
         foreach ($old_traces as $traceArr){
             $tmpArr = [];
+            if(in_array($traceArr['function'],[
+                'trace',
+                'dispatch',
+                'controllerHandler',
+                '__hook',
+                '__exec'
+            ])){
+                continue;
+            }
             foreach ($traceArr as $trac_key=>$trace_value){
                 if(!in_array(
                     $trac_key,
@@ -2765,7 +2859,7 @@ class XinDongService extends ServiceBase
 
         //文本匹配度  张三0808    张三
         similar_text($tobeMatch, $target, $perc);
-        if($perc > 50){
+        if($perc > 70){
             return [
                 'type' => '模糊匹配',
                 'details' => '中文相似度匹配',
@@ -2776,7 +2870,7 @@ class XinDongService extends ServiceBase
 
         //拼音相似度匹配  张三0808    张三
         similar_text(PinYinService::getPinyin($tobeMatch), PinYinService::getPinyin($target), $perc);
-        if($perc >= 66 ){
+        if($perc >= 80 ){
             return [
                 'type' => '模糊匹配',
                 'details' => '拼音相似度匹配',
@@ -3008,20 +3102,49 @@ class XinDongService extends ServiceBase
 
         //四级分类
         $siJiFenLei = "";
+        $ying_shou_gui_mo = "";
         foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-            $siJiFenLei = $dataItem['si_ji_fen_lei_code'];
+            $siJiFenLei = $dataItem['_source']['si_ji_fen_lei_code'];
+            $ying_shou_gui_mo = $dataItem['_source']['ying_shou_gui_mo'];
         }
+
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'si_ji_fen_lei_code  '=>$siJiFenLei,
+//                'ying_shou_gui_mo  '=>$ying_shou_gui_mo,
+//
+//            ])
+//        );
         if(empty($siJiFenLei)){
+            return  "";
+        }
+        if(empty($ying_shou_gui_mo)){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__LINE__=>'empty $ying_shou_gui_mo',
+                    '$ying_shou_gui_mo' => $ying_shou_gui_mo,
+                ])
+            );
             return  "";
         }
         //三位以下的  企业太多了 不计算
         if(strlen($siJiFenLei) <=3 ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__LINE__=>'too shot  $ying_shou_gui_mo',
+                    '$ying_shou_gui_mo' => $ying_shou_gui_mo,
+                ])
+            );
             return  "";
         }
 
         //取前四位
         $tmpSiji = substr($siJiFenLei , 0 , 5) ;
-
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'first_for_letter_of_si_ji_fen_lei_code  '=>$tmpSiji
+//            ])
+//        );
         //所有满足的企业
         $companyEsModel = new \App\ElasticSearch\Model\Company();
         $companyEsModel
@@ -3035,23 +3158,99 @@ class XinDongService extends ServiceBase
 
         $siJiFenLeiArrs = [];
         foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-            $siJiFenLeiArrs[] = $dataItem['si_ji_fen_lei_code'];
+            $dataItem['_source']['ying_shou_gui_mo'] && $siJiFenLeiArrs[] = $dataItem['_source']['ying_shou_gui_mo'];
         }
-
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'match_companys_ying_shou_gui_mo_map  '=>$siJiFenLeiArrs
+//            ])
+//        );
         $totalMin = 0;
         $totalMax = 0;
-        $yingShouGUiMoMap = XinDongService::getTuanDuiGuiMoMapV2();
+        $yingShouGUiMoMap = XinDongService::getYingShouGuiMoMapV2();
         foreach ($siJiFenLeiArrs as $tmpSiJiFenLei){
             $totalMin += $yingShouGUiMoMap[$tmpSiJiFenLei]['min'];
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    'cal_total_min_$tmpSiJiFenLei  '=>$tmpSiJiFenLei,
+//                    'cal_total_min_value' => $yingShouGUiMoMap[$tmpSiJiFenLei]['min'],
+//                ])
+//            );
             $totalMax += $yingShouGUiMoMap[$tmpSiJiFenLei]['max'];
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    'cal_total_max_$tmpSiJiFenLei  '=>$tmpSiJiFenLei,
+//                    'cal_total_max_value' => $yingShouGUiMoMap[$tmpSiJiFenLei]['max'],
+//                ])
+//            );
         }
 
-        $rate1 = $yingShouGUiMoMap[$siJiFenLei]['min']/$totalMin;
-        $rate2 = $yingShouGUiMoMap[$siJiFenLei]['max']/$totalMax;
-
+        $rate1 = $yingShouGUiMoMap[$ying_shou_gui_mo]['min']/$totalMin;
+        $rate2 = $yingShouGUiMoMap[$ying_shou_gui_mo]['max']/$totalMax;
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'market_share_$rate1  '=>[
+//                    '$rate1'=>$rate1,
+//                    'fenzi'=>$yingShouGUiMoMap[$ying_shou_gui_mo]['min'],
+//                    'fenmu'=>$totalMin,
+//                ],
+//                'market_share_$rate2  '=>[
+//                    '$rate1'=>$rate2,
+//                    'fenzi'=>$yingShouGUiMoMap[$ying_shou_gui_mo]['max'],
+//                    'fenmu'=>$totalMax,
+//                ],
+//            ])
+//        );
         return  [
             'min' => number_format($rate1,2), 'max' => number_format($rate2,2)
         ];
+    }
+
+    // 破产重整排查 BankruptcyTs/GetList
+    function getBankruptcyTs($entName)
+    {
+        $csp = CspService::getInstance()->create();
+
+        //
+        $csp->add('BankruptcyTs', function () use ($entName) {
+            $postData = [
+                'searchKey' => $entName,
+            ];
+            $res = (new LongDunService())
+                    ->setCheckRespFlag(true)
+                    ->get($this->ldUrl . 'BankruptcyTs/GetList', $postData);
+            return empty($res['paging']) ? 0 : $res['paging']['total'];
+        });
+
+        //执行
+        $res = CspService::getInstance()->exec($csp);
+        $tmp = [];
+        $tmp['BankruptcyTs'] = $res['BankruptcyTs'];
+
+        return $this->checkResp(200, null, $tmp, '查询成功');
+    }
+
+    function getBankruptcyCheck($entName)
+    {
+        $csp = CspService::getInstance()->create();
+
+        //
+        $csp->add('BankruptcyCheck', function () use ($entName) {
+            $postData = [
+                'searchKey' => $entName,
+            ];
+            $res = (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get($this->ldUrl . 'BankruptcyCheck/GetList', $postData);
+            return empty($res['paging']) ? 0 : $res['paging']['total'];
+        });
+
+        //执行
+        $res = CspService::getInstance()->exec($csp);
+        $tmp = [];
+        $tmp['BankruptcyCheck'] = $res['BankruptcyCheck'];
+
+        return $this->checkResp(200, null, $tmp, '查询成功');
     }
 
 }

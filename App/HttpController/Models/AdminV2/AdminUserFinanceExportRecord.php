@@ -82,6 +82,39 @@ class AdminUserFinanceExportRecord extends ModelBase
         return $model ->all();
     }
 
+    static function getYieldDataToExport($whereArr){
+        //每次取十条
+        $size = 10 ;
+        $model = AdminUserFinanceExportRecord::create();
+        foreach ($whereArr as $whereItem){
+            $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate'])->limit($size);
+        }
+        $res = $model ->all();
+
+        $datas = [];
+
+        //每次取十条  直到取完
+        while (!empty($res)) {
+            $lastId =  0;
+            foreach ($res as $dateItem){
+                $lastId = $dateItem['id'];
+                yield $datas[] =  [
+                    $dateItem['id'],
+                    date('Y-m-d H:i:s',$dateItem['created_at']),
+                    $dateItem['file_name'],
+                    $dateItem['price'],
+                ];
+            }
+
+            $model = AdminUserFinanceExportRecord::create();
+            foreach ($whereArr as $whereItem){
+                $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate'])->limit($size);
+            }
+
+            $model->where('id', $lastId, '>')->limit($size);
+            $res = $model ->all();
+        }
+    }
 
     public static function findById($id){
         $res =  AdminUserFinanceExportRecord::create()

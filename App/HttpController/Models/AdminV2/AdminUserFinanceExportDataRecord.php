@@ -59,6 +59,76 @@ class AdminUserFinanceExportDataRecord extends ModelBase
         return $res;
     }
 
+    static function getYieldDataToExport($whereArr){
+        //每次取十条
+        $size = 10 ;
+        $model = AdminUserFinanceExportDataRecord::create();
+
+        foreach ($whereArr as $whereItem){
+            $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate'])->limit($size);
+        }
+        $res = $model ->all();
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                '$res' => $res
+//            ])
+//        );
+        $datas = [];
+
+        //每次取十条  直到取完
+        while (!empty($res)) {
+            $lastId =  0;
+            foreach ($res as $dataItem){
+                $lastId = $dataItem['id'];
+                //=====================
+                $dataItem['details'] = [];
+
+                if($dataItem['upload_data_id']){
+                    $dataItem['upload_details'] = [];
+                    $dataItem['data_details'] = [];
+                    $uploadRes = AdminUserFinanceUploadDataRecord::findById($dataItem['upload_data_id']);
+                    if($uploadRes){
+                        $dataItem['upload_details'] = $uploadRes->toArray();
+                    }
+
+                    $dataRes = AdminUserFinanceData::findById($uploadRes['user_finance_data_id']);
+                    if($dataRes){
+                        $dataItem['data_details'] = $dataRes->toArray();
+                    }
+                }
+                //======================
+
+                yield $datas[] =  [
+                    'id' => $dataItem['id'],
+                    'entName' => $dataItem['data_details']['entName'],
+                    'last_charge_date' => $dataItem['data_details']['last_charge_date'],
+                    'year' => $dataItem['data_details']['year'],
+                    'charge_year' => $dataItem['upload_details']['charge_year'],
+                    'charge_year_start' => $dataItem['upload_details']['charge_year_start'],
+                    'charge_year_end' => $dataItem['upload_details']['charge_year_end'],
+                    'real_price' => $dataItem['upload_details']['real_price'],
+                    'real_price_remark' => $dataItem['upload_details']['real_price_remark'],
+                    'price_type_remark' => $dataItem['upload_details']['price_type_remark'],
+                ];
+            }
+
+            $model = AdminUserFinanceExportDataRecord::create();
+            foreach ($whereArr as $whereItem){
+                $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate'])->limit($size);
+            }
+
+            $model->where('id', $lastId, '>')->limit($size);
+            $res = $model ->all();
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    '$res' => $res
+//                ])
+//            );
+        }
+    }
+
     public static function addExportRecord($requestData){
         CommonService::getInstance()->log4PHP(
             json_encode([

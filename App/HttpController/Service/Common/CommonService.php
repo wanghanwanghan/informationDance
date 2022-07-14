@@ -9,6 +9,7 @@ use Amenadiel\JpGraph\Plot\BarPlot;
 use Amenadiel\JpGraph\Plot\GroupBarPlot;
 use Amenadiel\JpGraph\Plot\LinePlot;
 use Amenadiel\JpGraph\Plot\PiePlot;
+use App\HttpController\Service\Common\EmailTemplate\Template;
 use App\HttpController\Service\Common\EmailTemplate\Template01;
 use App\HttpController\Service\Common\EmailTemplate\Template02;
 use App\HttpController\Service\Common\EmailTemplate\Template03;
@@ -425,6 +426,44 @@ class CommonService extends ServiceBase
         }
         $mimeBean->setSubject($template->getSubject($options['entName']));
         $mimeBean->setBody($template->getBody());
+
+        try {
+            //添加附件
+            if (!empty($addAttachment)) {
+                foreach ($addAttachment as $onePathAndFilename) {
+                    $mimeBean->addAttachment(Attach::create($onePathAndFilename));
+                }
+            }
+            $mailer = new Mailer($config);
+            //发送邮件
+            $mailer->sendTo($sendTo, $mimeBean);
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        return true;
+    }
+
+    function sendEmailV2($sendTo, $title,$htmlbody,$addAttachment = []): bool
+    {
+        $config = new MailerConfig();
+        $config->setServer(CreateConf::getInstance()->getConf('env.mailServer'));
+        $config->setSsl(true);
+        $config->setPort((int)CreateConf::getInstance()->getConf('env.mailPort'));
+        $config->setUsername(CreateConf::getInstance()->getConf('env.mailUsername'));
+        $config->setPassword(CreateConf::getInstance()->getConf('env.mailPassword'));
+        $config->setMailFrom(CreateConf::getInstance()->getConf('env.mailFrom'));
+        $config->setTimeout(10);//设置客户端连接超时时间
+        $config->setMaxPackage(1024 * 1024 * 5);//设置包发送的大小：5M
+
+        //设置文本或者html格式
+        $mimeBean = new Html();
+
+        //设置文本或者html格式
+        $mimeBean = new Html();
+        $template = Template::getInstance();
+        $mimeBean->setSubject($template->getSubject($title));
+        $mimeBean->setBody($template->getBody($htmlbody));
 
         try {
             //添加附件

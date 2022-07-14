@@ -19,6 +19,7 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecordV3;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\NewFinanceData;
+use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
@@ -235,20 +236,9 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                 $uploadRes['user_id'],
                 $uploadRes['money']
             );
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .' checkAccountBalance '.$checkAccountBalanceRes
-                ])
-            );
             if(
                 !$checkAccountBalanceRes
             ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .' checkAccountBalance not pass '.$checkAccountBalanceRes
-                    ])
-                );
-
                 AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateBalanceNotEnough);
 
                 //把优先级调低
@@ -268,21 +258,28 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
             if(
                 !AdminUserFinanceConfig::checkIfNeedsConfirm($uploadRes['user_id'])
             ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .' no need confirm    '.$uploadRes['user_id'],
-                    ])
+                OperatorLog::addRecord(
+                    [
+                        'user_id' => $uploadRes['user_id'],
+                        'msg' =>  "新后台导出财务数据-不需要确认,设置为可以直接导出" ,
+                        'details' =>json_encode( XinDongService::trace()),
+                        'type_cname' => '新后台导出财务数据-不需要确认,设置为可以直接导出',
+                    ]
                 );
-                 AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateAllSet);
+                AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateAllSet);
                 AdminUserFinanceUploadRecord::setTouchTime(
                     $uploadRes['id'],NULL
                 );
                  continue;
             }
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .' needs confirm '.$uploadRes['user_id'],
-                ])
+
+            OperatorLog::addRecord(
+                [
+                    'user_id' => $uploadRes['user_id'],
+                    'msg' =>  '新后台导出财务数据-需要确认,要先去拉取财务数据，后扣费',
+                    'details' =>json_encode( XinDongService::trace()),
+                    'type_cname' => '新后台导出财务数据-需要确认,要先去拉取财务数据，后扣费',
+                ]
             );
 
             //需要确认的 先去拉取财务数据
@@ -588,12 +585,6 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
             ;
 
             foreach ($financeDatas as $dataItem){
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        __CLASS__.__FUNCTION__ .__LINE__,
-//                        'generate data ' => $dataItem['NewFinanceData']
-//                    ])
-//                );
                 $fileObject ->data([$dataItem['NewFinanceData']]);
             }
 
@@ -632,22 +623,31 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                 $money = 0;
             }
 
+            $tmpData = [
+                'user_id' => $uploadRes['user_id'],
+                'price' => $money,
+                'total_company_nums' => 0,
+                'config_json' => $uploadRes['finance_config'],
+                'path' => '/Static/Temp/',
+                'file_name' => $filename,
+                'upload_record_id' => $queueData['upload_record_id'],
+                'reamrk' => '',
+                'status' =>AdminUserFinanceExportRecord::$stateInit,
+                'queue_id' => $queueData['id'],
+                'batch' => $queueData['id'],
+            ];
             $AdminUserFinanceExportRecordId = AdminUserFinanceExportRecord::addRecordV2(
-                [
-                    'user_id' => $uploadRes['user_id'],
-                    'price' => $money,
-                    'total_company_nums' => 0,
-                    'config_json' => $uploadRes['finance_config'],
-                    'path' => '/Static/Temp/',
-                    'file_name' => $filename,
-                    'upload_record_id' => $queueData['upload_record_id'],
-                    'reamrk' => '',
-                    'status' =>AdminUserFinanceExportRecord::$stateInit,
-                    'queue_id' => $queueData['id'],
-                    'batch' => $queueData['id'],
-                ]
+                $tmpData
             );
             if(!$AdminUserFinanceExportRecordId  ){
+                OperatorLog::addRecord(
+                    [
+                        'user_id' => $uploadRes['user_id'],
+                        'msg' =>  "上传记录:".$queueData['upload_record_id']."导出财务数据，文件生成成功，添加导出记录失败 数据：".json_encode($tmpData),
+                        'details' =>json_encode( XinDongService::trace()),
+                        'type_cname' => '【失败】新后台导出财务数据-导出财务数据，文件生成成功，添加导出记录失败',
+                    ]
+                );
                 return  false;
             }
             $res =  AdminUserFinanceExportRecord::setFilePath(
@@ -671,19 +671,28 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                 ){
                     $priceItem = 0;
                 }
+                $tmpData2 = [
+                    'user_id' => $dataItem['AdminUserFinanceUploadDataRecord']['user_id'],
+                    'export_record_id' => $AdminUserFinanceExportRecordId,
+                    'upload_data_id' =>   $dataItem['AdminUserFinanceUploadDataRecord']['id'],
+                    'price' => $priceItem,
+                    'detail' => $dataItem['AdminUserFinanceUploadDataRecord']['price_type_remark']?:'',
+                    'batch' => $queueData['id'].'_'.  $dataItem['AdminUserFinanceUploadDataRecord']['id'],
+                    'queue_id' => $queueData['id'],
+                    'status' => AdminUserFinanceExportRecord::$stateInit,
+                ];
                 $AdminUserFinanceExportDataRecordId = AdminUserFinanceExportDataRecord::addRecordV2(
-                    [
-                        'user_id' => $dataItem['AdminUserFinanceUploadDataRecord']['user_id'],
-                        'export_record_id' => $AdminUserFinanceExportRecordId,
-                        'upload_data_id' =>   $dataItem['AdminUserFinanceUploadDataRecord']['id'],
-                        'price' => $priceItem,
-                        'detail' => $dataItem['AdminUserFinanceUploadDataRecord']['price_type_remark']?:'',
-                        'batch' => $queueData['id'].'_'.  $dataItem['AdminUserFinanceUploadDataRecord']['id'],
-                        'queue_id' => $queueData['id'],
-                        'status' => AdminUserFinanceExportRecord::$stateInit,
-                    ]
+                    $tmpData2
                 );
                 if(!$AdminUserFinanceExportDataRecordId  ){
+                    OperatorLog::addRecord(
+                        [
+                            'user_id' => $uploadRes['user_id'],
+                            'msg' =>  "上传记录:".$queueData['upload_record_id']."导出财务数据，文件生成成功，添加详细的导出记录失败 数据：".json_encode($tmpData2),
+                            'details' =>json_encode( XinDongService::trace()),
+                            'type_cname' => '【失败】新后台导出财务数据-导出财务数据，文件生成成功，添加详细的导出记录失败',
+                        ]
+                    );
                     return  false;
                 }
             }
@@ -736,6 +745,14 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                 $uploadRecord['id']
             );
             if(!$res){
+                OperatorLog::addRecord(
+                    [
+                        'user_id' => $uploadRecord['user_id'],
+                        'msg' =>  "上传记录".$uploadRecord['id'].",计算价格失败 ",
+                        'details' =>json_encode( XinDongService::trace()),
+                        'type_cname' => '【失败】财务定时，计算价格失败',
+                    ]
+                );
                 return false;
             }
 
@@ -743,6 +760,14 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                 $uploadRecord['id'],AdminUserFinanceUploadRecordV3::$stateCalCulatedPrice
             );
             if(!$res){
+                OperatorLog::addRecord(
+                    [
+                        'user_id' => $uploadRecord['user_id'],
+                        'msg' =>  "上传记录".$uploadRecord['id'].",计算价格失败 ",
+                        'details' =>json_encode( XinDongService::trace()),
+                        'type_cname' => '【失败】财务定时，计算价格成功，改状态失败',
+                    ]
+                );
                 return false;
             }
 
@@ -759,32 +784,14 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
         $allConfigs  = AdminUserFinanceConfig::findAllByCondition([
             'status' => AdminUserFinanceConfig::$state_ok
         ]);
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                __CLASS__.__FUNCTION__ ,
-//                '$allConfigs '=> $allConfigs,
-//            ])
-//        );
         foreach ($allConfigs as $Config){
             if(
                 $Config['sms_notice_value'] <= 0
             ){
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        __CLASS__.__FUNCTION__ .__LINE__,
-//                        'sms_notice_value <= 0 '=> $Config['sms_notice_value'],
-//                    ])
-//                );
                 continue;
             };
 
             $balance = AdminNewUser::getAccountBalance($Config['user_id']);
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    __CLASS__.__FUNCTION__ .__LINE__,
-//                    '$balance '=> $balance,
-//                ])
-//            );
             if(
                 $balance <= 0
             ){
@@ -820,14 +827,6 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
 
             //余额够了
             if($Config['sms_notice_value'] < $balance ){
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        __CLASS__.__FUNCTION__ .__LINE__,
-//                        '$balance is enough ',
-//                        '$balance'=> $balance,
-//                        'sms_notice_value' => $Config['sms_notice_value']
-//                    ])
-//                );
                 AdminUserChargeConfig::setSmsNoticeDate(
                     $userInfo['id'],
                     ''
@@ -841,12 +840,6 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
             if(
                 $chargeConfigs['send_sms_notice_date']  >0
             ){
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        __CLASS__.__FUNCTION__ ,
-//                        'has send before  . continue . user_id = '=>$userInfo['id']
-//                    ])
-//                );
                 continue;
             }
 
@@ -855,19 +848,19 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                 'name' => $userInfo['user_name'],
                 'money' =>$Config['sms_notice_value']
             ]);
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    __CLASS__.__FUNCTION__ ,
-//                    'send sms ',
-//                    '$res' => $res,
-//                    'phone' => $userInfo['phone'],
-//
-//                ])
-//            );
             AdminUserChargeConfig::setSmsNoticeDate(
                 $userInfo['id'],
                 date('Y-m-d H:i:s')
             );
+            OperatorLog::addRecord(
+                [
+                    'user_id' => $userInfo['id'],
+                    'msg' =>   '用户余额：'.$balance." 配置的余额下限：".$Config['sms_notice_value']." 上次发送时间：".$chargeConfigs['send_sms_notice_date']." ",
+                    'details' =>json_encode( XinDongService::trace()),
+                    'type_cname' => '新后台导出财务数据-发送短信提醒余额不足',
+                ]
+            );
+
         }
 
         return true;
@@ -924,6 +917,14 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                         ]
                     );
                     if(!$UserFinanceDataId){
+                        OperatorLog::addRecord(
+                            [
+                                'user_id' => $uploadRecord['user_id'],
+                                'msg' =>  "上传记录".$uploadRecord['id'].",入库admin_user_finance_data表失败 企业：".$companyData[0]." 年度：$yearItem",
+                                'details' =>json_encode( XinDongService::trace()),
+                                'type_cname' => '【失败】财务定时，解析数据失败',
+                            ]
+                        );
                         return false;
                     }
 
@@ -936,6 +937,14 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                         ]
                     );
                     if(!$res){
+                        OperatorLog::addRecord(
+                            [
+                                'user_id' => $uploadRecord['user_id'],
+                                'msg' =>  "上传记录".$uploadRecord['id'].",入库admin_user_finance_upload_data_record表失败  admin_user_finance_data表id：$UserFinanceDataId",
+                                'details' =>json_encode( XinDongService::trace()),
+                                'type_cname' => '【失败】财务定时，解析数据失败',
+                            ]
+                        );
                         return false;
                     }
                 }

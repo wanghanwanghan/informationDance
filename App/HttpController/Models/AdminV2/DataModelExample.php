@@ -61,6 +61,19 @@ class DataModelExample extends ModelBase
         return $res;
     }
 
+    public static function cost(){
+        $start = microtime(true);
+        $startMemory = memory_get_usage();
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'memory_use' => round((memory_get_usage()-$startMemory)/1024/1024,3).' M',
+                'costs_seconds '=> number_format(microtime(true) - $start,3)
+            ])
+        );
+    }
+
     public static function findAllByCondition($whereArr){
         $res =  AdminUserFinanceExportDataQueue::create()
             ->where($whereArr)
@@ -68,6 +81,7 @@ class DataModelExample extends ModelBase
         return $res;
     }
     /*
+     示范：
     [
         'user_id' => [
             'not_empty' => 1,
@@ -201,4 +215,17 @@ class DataModelExample extends ModelBase
             "$field" => $value,
         ]);
     }
+
+    // 用完今日余额的
+    public static function findBySql($where){
+        $Sql = " select *  
+                            from  
+                        `admin_new_user` 
+                            $where
+      " ;
+        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        return $data;
+    }
+
+
 }

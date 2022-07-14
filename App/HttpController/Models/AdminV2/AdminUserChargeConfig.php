@@ -6,6 +6,7 @@ use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongXin\LongXinService;
+use App\HttpController\Service\XinDong\XinDongService;
 
 
 // use App\HttpController\Models\AdminRole;
@@ -211,15 +212,13 @@ class AdminUserChargeConfig extends ModelBase
         $usedNums = self::getDailyUsedNums($userId);
         $res =  $DailyMaxNums > ($usedNums + $aimNums) ?true:false ;
 
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ ,
-                'checkIfCanRun retrun '=>$res,
-                '$userId'=>$userId,
-                '$aimNums'=>$aimNums,
-                '$DailyMaxNums' =>$DailyMaxNums,
-                '$usedNums' =>$usedNums,
-            ])
+        OperatorLog::addRecord(
+            [
+                'user_id' => $userId,
+                'msg' =>  "需要再跑$aimNums,当天已用次数$usedNums,每日最大拉取次数$DailyMaxNums,是否超出：$res" ,
+                'details' =>json_encode( XinDongService::trace()),
+                'type_cname' => '新后台导出财务数据-检测是否超出最大次数限制',
+            ]
         );
         return $res;
     }

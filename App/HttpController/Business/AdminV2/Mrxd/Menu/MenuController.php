@@ -28,10 +28,11 @@ class MenuController extends ControllerBase
         );
     }
 
+    //获取菜单
     public function getRawMenus(){
         $name = $this->getRequestData('name','') ;
         $pageNo = $this->getRequestData('pageNo',1) ;
-        $pageSize = $this->getRequestData('pageSize',10) ;
+        $pageSize = $this->getRequestData('pageSize',50) ;
         $limit = ($pageNo-1)*$pageSize;
         $sql = "status = 1";
         if(!empty($name)){
@@ -54,7 +55,7 @@ class MenuController extends ControllerBase
             'page' => $pageNo,
             'pageSize' => $pageSize,
             'total' => $count,
-            'totalPage' => (int)($count/$pageSize)+1,
+            'totalPage' => ceil($count/$pageSize),
         ];
         return $this->writeJson(
             200,

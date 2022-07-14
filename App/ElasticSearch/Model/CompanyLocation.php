@@ -20,10 +20,20 @@ class CompanyLocation extends ServiceBase
     public  $res ;
     public  $indexName = "company_latlng_202207";
 
-    function __construct()
+    function __construct($type = 1)
     {
         $this->es =  new ElasticSearchService();
+        $this->setIndex($type);
         return parent::__construct();
+    }
+
+    function  setIndex($type){
+        $map = [
+            '1' => 'company_latlng_202207',
+            '2' => 'geti_latlng_202207',
+            '3' => 'company_geti_latlng_202207',
+        ];
+        $this->indexName = $map[$type];
     }
 
     function addSize($size)
@@ -55,6 +65,12 @@ class CompanyLocation extends ServiceBase
     function addSort($field,$desc)
     {
         $this->es->addSort($field,$desc) ;
+        return $this;
+    }
+
+    function addSortV2($field,$value)
+    {
+        $this->es->addSortV2($field,$value) ;
         return $this;
     }
 

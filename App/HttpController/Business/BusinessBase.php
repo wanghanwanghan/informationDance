@@ -246,8 +246,13 @@ class BusinessBase extends Index
         !empty($form) ?: $form = [];
 
         $requestData = array_merge($raw, $form);
-
-        return (isset($requestData[$key])) ? $requestData[$key] : $default;
+        if($key){
+            return (isset($requestData[$key])) ? $requestData[$key] : $default;
+        }
+        else{
+            return$requestData;
+        }
+        //return (isset($requestData[$key])) ? $requestData[$key] : $default;
     }
 
     //删除n天前创建的文件

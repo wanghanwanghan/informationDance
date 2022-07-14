@@ -12,6 +12,7 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceChargeInfo;
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecordV3;
 use App\HttpController\Models\AdminV2\FinanceLog;
+use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Models\Api\CompanyCarInsuranceStatusInfo;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\RDS3\Company;
@@ -25,6 +26,7 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceUploadDataRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\XinDong\XinDongService;
 use Vtiful\Kernel\Format;
 
 class FinanceController extends ControllerBase
@@ -163,6 +165,14 @@ class FinanceController extends ControllerBase
         if(!$res){
             return $this->writeJson(203);
         }
+        OperatorLog::addRecord(
+            [
+                'user_id' => $requestData['user_id'],
+                'msg' =>  '操作人:'.$this->loginUserinfo['user_name'].' '.json_encode($dataItem)  ,
+                'details' =>json_encode( XinDongService::trace()),
+                'type_cname' => '财务配置-新加',
+            ]
+        );
         return $this->writeJson(200);
     }
 
@@ -197,6 +207,15 @@ class FinanceController extends ControllerBase
         if (!$res){
             return $this->writeJson(205,[],[],'修改失败');
         }
+
+        OperatorLog::addRecord(
+            [
+                'user_id' => $data['user_id'],
+                'msg' =>  '操作人:'.$this->loginUserinfo['user_name'].' '.json_encode($data)  ,
+                'details' =>json_encode( XinDongService::trace()),
+                'type_cname' => '财务配置-新加',
+            ]
+        );
 
         return $this->writeJson(200,[],[],'成功');
     }
@@ -372,8 +391,9 @@ class FinanceController extends ControllerBase
         ], $res['data'],'成功');
     }
 
-    //导出之前的导出记录  财务对账
+    //导出财务扣费记录  财务对账
     public function exportExportLists(){
+        $startMemory = memory_get_usage();
         $requestData =  $this->getRequestData();
         $where = [
              [
@@ -381,6 +401,88 @@ class FinanceController extends ControllerBase
                 'value'=> $this->loginUserinfo['id'],
                 'operate' => '=',
              ]
+        ];
+        if(
+            $requestData['ids']
+        ){
+//            $where[] = [
+//                'field'=>'id',
+//                'value'=> explode(',',$requestData['ids']),
+//                'operate' => 'IN',
+//            ];
+        }
+        $res = AdminUserFinanceExportRecord::getYieldDataToExport(
+            $where
+        );
+
+        //===================================
+        $config=  [
+            'path' => TEMP_FILE_PATH // xlsx文件保存路径
+        ];
+        $filename = date('YmdHis').'.xlsx';
+        $excel = new \Vtiful\Kernel\Excel($config);
+        $fileObject = $excel->fileName($filename, 'sheet');
+        $fileHandle = $fileObject->getHandle();
+
+        $format = new Format($fileHandle);
+        $colorStyle = $format
+            ->fontColor(Format::COLOR_ORANGE)
+            ->border(Format::BORDER_DASH_DOT)
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $format = new Format($fileHandle);
+
+        $alignStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $fileObject
+            ->defaultFormat($colorStyle)
+            ->header(
+                ['订单号','日期','文件名','费用']
+            )
+            ->defaultFormat($alignStyle)
+        ;
+
+        foreach ($res as $dataItem){
+            $fileObject ->data([$dataItem]);
+        }
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+            ])
+        );
+
+        $format = new Format($fileHandle);
+        //单元格有\n解析成换行
+        $wrapStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->wrap()
+            ->toResource();
+
+        $fileObject->output();
+
+        //===================================
+
+
+        return $this->writeJson(200,  [],  [
+            'path' => '/Static/Temp/'.$filename,
+            'filename' => $filename
+        ],'成功');
+
+    }
+
+    public function exportExportListsbak(){
+        $requestData =  $this->getRequestData();
+        $where = [
+            [
+                'field'=>'user_id',
+                'value'=> $this->loginUserinfo['id'],
+                'operate' => '=',
+            ]
         ];
         if(
             $requestData['ids']
@@ -561,13 +663,13 @@ class FinanceController extends ControllerBase
         $requestData =  $this->getRequestData();
         //批次号码
         $batchNum = 'CWDC'.date('YmdHis');
-
+        $oldBalance = \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
+            $requestData['user_id']
+        );
         if(
             $requestData['type'] == \App\HttpController\Models\AdminV2\AdminNewUser::$chargeTypeAdd
         ){
-            $newBalance = \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
-                    $requestData['user_id']
-                ) + $requestData['money'];
+            $newBalance = $oldBalance+ $requestData['money'];
             $title= '充值';
             $type = FinanceLog::$chargeTytpeAdd ;
         }
@@ -575,9 +677,7 @@ class FinanceController extends ControllerBase
         if(
             $requestData['type'] == \App\HttpController\Models\AdminV2\AdminNewUser::$chargeTypeDele
         ){
-            $newBalance = \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
-                    $requestData['user_id']
-                ) - $requestData['money'];
+            $newBalance = $oldBalance - $requestData['money'];
             $title= '扣费';
             $type = FinanceLog::$chargeTytpeDele ;
         }
@@ -610,6 +710,16 @@ class FinanceController extends ControllerBase
         ){
             return  $this->writeJson(201,[],[],'入库失败，联系管理员');
         }
+
+        $userInfo = \App\HttpController\Models\AdminV2\AdminNewUser::findById($requestData['user_id']);
+        OperatorLog::addRecord(
+            [
+                'user_id' => $this->loginUserinfo['id'],
+                'msg' => $this->loginUserinfo['user_name'].'给用户'.$userInfo['user_name'].'充值'.$requestData['money'].'元('.$title.')【之前余额'.$oldBalance.'，充值好余额'.$newBalance.'】',
+                'details' =>json_encode( XinDongService::trace()),
+                'type_cname' => '用户充值',
+            ]
+        );
         ConfigInfo::removeRedisNx('exportFinanceData2');
 
         return $this->writeJson(200, [ ] , [], '成功' );
@@ -682,6 +792,85 @@ class FinanceController extends ControllerBase
 
     //导出某次导出的详情记录
     public function exportExportDetails(){
+        $startMemory = memory_get_usage();
+        $requestData =  $this->getRequestData();
+        $where = [
+            [
+                'field'=>'user_id',
+                'value'=> $this->loginUserinfo['id'],
+                'operate' => '=',
+            ],
+            [
+                'field'=>'export_record_id',
+                'value'=> $requestData['id'],
+                'operate' => '=',
+            ],
+        ];
+        $res = AdminUserFinanceExportDataRecord::getYieldDataToExport($where);
+        //===================================
+        $config=  [
+            'path' => TEMP_FILE_PATH // xlsx文件保存路径
+        ];
+        $filename = date('YmdHis').'.xlsx';
+        $excel = new \Vtiful\Kernel\Excel($config);
+        $fileObject = $excel->fileName($filename, 'sheet');
+        $fileHandle = $fileObject->getHandle();
+
+        $format = new Format($fileHandle);
+        $colorStyle = $format
+            ->fontColor(Format::COLOR_ORANGE)
+            ->border(Format::BORDER_DASH_DOT)
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $format = new Format($fileHandle);
+
+        $alignStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $fileObject
+            ->defaultFormat($colorStyle)
+            ->header(
+                ['订单号','企业名称','上次收费时间','年度','按年收费/年度','包年收费/开始年','包年收费/结束年','实际收费','收费类型','实际收费备注']
+            )
+            ->defaultFormat($alignStyle)
+        ;
+
+        foreach ($res as $dataItem){
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    '$dataItem' => $dataItem
+//                ])
+//            );
+            $fileObject ->data([$dataItem]);
+        }
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+            ])
+        );
+
+        $format = new Format($fileHandle);
+        //单元格有\n解析成换行
+        $wrapStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->wrap()
+            ->toResource();
+
+        $fileObject->output();
+
+        //===================================
+
+        return $this->writeJson(200,  [ ],  [
+            'path' => '/Static/Temp/'.$filename,
+            'filename' => $filename
+        ],'成功');
+    }
+    public function exportExportDetailsbak(){
         $requestData =  $this->getRequestData();
 
         $res = AdminUserFinanceExportDataRecord::findByUserAndExportId(
@@ -818,8 +1007,17 @@ class FinanceController extends ControllerBase
                     )
                 )
             ){
+                OperatorLog::addRecord(
+                    [
+                        'user_id' => $uploadRes['user_id'],
+                        'msg' => "用户".$uploadRes['user_id']."操作导出客户名单(".$uploadRes['id'].")，实际扣费".$uploadRes['money']."失败",
+                        'details' =>json_encode( XinDongService::trace()),
+                        'type_cname' => '【失败】导出财务名单扣费',
+                    ]
+                );
                 return $this->writeJson(201, null, [],  '扣余额失败，联系管理员');
             }
+
             //添加导出费用流水
             if(
                 !FinanceLog::addRecordV2(
@@ -837,12 +1035,28 @@ class FinanceController extends ControllerBase
                     ]
                 )
             ){
+                OperatorLog::addRecord(
+                    [
+                        'user_id' => $uploadRes['user_id'],
+                        'msg' => "用户".$uploadRes['user_id']."操作导出客户名单(".$requestData['id'].")，实际扣费".$uploadRes['money']."成功，添加导出费用流水失败",
+                        'details' =>json_encode( XinDongService::trace()),
+                        'type_cname' => '【失败】导出财务名单扣费成功，添加导出费用流水失败',
+                    ]
+                );
                 return $this->writeJson(201, null, [],  '添加扣费记录失败，联系管理员');
             }
 
             //设置收费时间|本名单的
             $res = AdminUserFinanceUploadRecord::updateLastChargeDate($uploadRes['id'],date('Y-m-d H:i:s'));
             if(!$res  ){
+                OperatorLog::addRecord(
+                    [
+                        'user_id' => $uploadRes['user_id'],
+                        'msg' => "用户".$uploadRes['user_id']."操作导出客户名单(".$uploadRes['id'].")，实际扣费".$uploadRes['money']."成功，设置收费时间失败",
+                        'details' =>json_encode( XinDongService::trace()),
+                        'type_cname' => '【失败】导出财务名单扣费成功，设置收费时间失败',
+                    ]
+                );
                 return $this->writeJson(201, null, [],  '设置收费时间失败，联系管理员');
             }
 
@@ -877,9 +1091,25 @@ class FinanceController extends ControllerBase
                     ]
                 );
                 if(!$AdminUserFinanceChargeInfoId  ){
+                    OperatorLog::addRecord(
+                        [
+                            'user_id' => $uploadRes['user_id'],
+                            'msg' => "用户".$uploadRes['user_id']."操作导出客户名单(".$uploadRes['id'].")，实际扣费".$uploadRes['money']."成功，设置详细收费记录失败(".$AdminUserFinanceUploadDataRecord['id'].")",
+                            'details' =>json_encode( XinDongService::trace()),
+                            'type_cname' => '【失败】导出财务名单扣费成功，设置详细收费记录失败',
+                        ]
+                    );
                     return $this->writeJson(201, null, [],  '设置收费时间失败，联系管理员');
                 }
             }
+            OperatorLog::addRecord(
+                [
+                    'user_id' => $uploadRes['user_id'],
+                    'msg' => "用户".$uploadRes['user_id']."操作导出客户名单(".$uploadRes['id'].")，实际扣费".$uploadRes['money'],
+                    'details' =>json_encode( XinDongService::trace()),
+                    'type_cname' => '【成功】导出财务名单扣费成功',
+                ]
+            );
         }
 
         //添加到下载队列
@@ -894,7 +1124,15 @@ class FinanceController extends ControllerBase
                 ]
             )
         ){
-            ConfigInfo::removeRedisNx('exportFinanceData2');
+            //ConfigInfo::removeRedisNx('exportFinanceData2');
+            OperatorLog::addRecord(
+                [
+                    'user_id' => $uploadRes['user_id'],
+                    'msg' => "用户".$uploadRes['user_id']."操作导出客户名单(".$uploadRes['id'].")，实际扣费".$uploadRes['money']."成功，添加到下载队列失败",
+                    'details' =>json_encode( XinDongService::trace()),
+                    'type_cname' => '【失败】导出财务名单扣费成功，添加到下载队列失败',
+                ]
+            );
             return  $this->writeJson(201,[],[],'添加失败，联系管理员');
         }
 

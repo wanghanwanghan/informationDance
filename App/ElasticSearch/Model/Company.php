@@ -3,6 +3,9 @@
 namespace App\ElasticSearch\Model;
 
 use App\ElasticSearch\Service\ElasticSearchService;
+use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
+use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
+use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\ServiceBase;
@@ -10,6 +13,7 @@ use App\HttpController\Service\XinDong\XinDongService;
 use EasySwoole\ElasticSearch\Config;
 use EasySwoole\ElasticSearch\ElasticSearch;
 use EasySwoole\ElasticSearch\RequestBean\Search;
+use Vtiful\Kernel\Format;
 
 class Company extends ServiceBase
 {
@@ -64,7 +68,7 @@ class Company extends ServiceBase
     }
 
     //区域坐标 [[11,112],[11,112],[11,112]]
-    function SetAreaQuery($areaArr)
+    function SetAreaQuery($areaArr,$type =1 )
     {
         if(
             empty($areaArr)
@@ -72,7 +76,7 @@ class Company extends ServiceBase
             return $this;
         }
 
-        $companyLocationEsModel = new \App\ElasticSearch\Model\CompanyLocation();
+        $companyLocationEsModel = new \App\ElasticSearch\Model\CompanyLocation($type);
         $companyLocationEsModel
             //经营范围
             ->SetAreaQuery($areaArr)
@@ -83,6 +87,138 @@ class Company extends ServiceBase
         }
         $this->es->addMustTermsQuery('xd_id',$xdIds);
         return $this;
+    }
+
+    function SetAreaQueryV3($areaArr,$type =1 )
+    {
+        $t1 = microtime(true);
+
+        if(
+            empty($areaArr)
+        ){
+            return $this;
+        }
+
+        $companyLocationEsModel = new \App\ElasticSearch\Model\CompanyLocation($type);
+        $companyLocationEsModel
+            //经营范围
+            ->SetAreaQuery($areaArr)
+            ->addSize(1000)
+            ->addSort('_score',"desc")
+//            ->addSortV2('companyid',[
+//                "order" => "desc",
+//                "mode" => "avg"
+//            ])
+            ->searchFromEs();
+        $xdIds = [0];
+        foreach($companyLocationEsModel->return_data['hits']['hits'] as $dataItem){
+            $xdIds[] = intval($dataItem['_source']['companyid']) ;
+        }
+
+        $whereArr = [
+            ['field'=>'companyid','value'=>$xdIds,'operate'=>'IN',]
+        ];
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    __CLASS__.__LINE__,
+                    'whrere' => $whereArr,
+
+                ]
+            )
+        );
+
+        $res = CompanyBasic::findByConditionV3(
+            $whereArr
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    __CLASS__.__LINE__,
+                    'count_$res' => count($res),
+                    'count_$xdIds' => count($xdIds),
+                    'costs_seconds' => round(microtime(true) - $t1, 3) . ' seconds '
+                ]
+            )
+        );
+        $cods = ['0'];
+        foreach ($res['data'] as $dataItem){
+//            CommonService::getInstance()->log4PHP(
+//                json_encode(
+//                    [
+//                        __CLASS__.__LINE__,
+//                        'UNISCID' => $dataItem['UNISCID'],
+//                    ]
+//                )
+//            );
+            if($dataItem['UNISCID']){
+                $cods[] = $dataItem['UNISCID'];
+            }
+        }
+//        CommonService::getInstance()->log4PHP(
+//            json_encode(
+//                [
+//                    __CLASS__.__LINE__,
+//                    '$cods' => $cods,
+//                ]
+//            )
+//        );
+        //$this->es->addMustTermsQuery('property1',$cods);
+        $matchedCnames = [];
+        foreach($cods as $code){
+            $code && $matchedCnames[] = $code;
+        }
+        (!empty($matchedCnames)) && $this->es->addMustShouldPhraseQuery( 'property1' , $matchedCnames) ;
+
+        // $this->query['query']['bool']['must'][]
+        return $this;
+    }
+
+
+    function getYieldDataForSouKe($areaArr,$type =1){
+
+        $startMemory = memory_get_usage();
+        $start = microtime(true);
+        $datas = [];
+
+        $size = 5000;
+        $offset = 0;
+        $nums =1;
+        $lastId = 0;
+
+        while ($totalNums > 0) {
+            if($totalNums<$size){
+                $size = $totalNums;
+            }
+
+            $companyLocationEsModel = new \App\ElasticSearch\Model\CompanyLocation($type);
+            $companyLocationEsModel
+                //经营范围
+                ->SetAreaQuery($areaArr)
+                ->searchFromEs();
+
+            if($lastId>0){
+                $companyLocationEsModel->addSearchAfterV1($lastId);
+            }
+
+            foreach($companyLocationEsModel->return_data['hits']['hits'] as $dataItem){
+                $lastId = $dataItem['_id'];
+
+                $nums ++;
+
+                yield $datas[] = $dataItem['_source'];
+            }
+
+            $totalNums -= $size;
+            $offset +=$size;
+        }
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
+                'generate data  done . costs seconds '=>microtime(true) - $start
+            ])
+        );
     }
 
     function setReturnData($data)
@@ -290,7 +426,7 @@ class Company extends ServiceBase
         //必须存在APP
         foreach($app_values as $value){
             if($value){
-                $this->es->addMustRegexpQuery( 'wu_liu_qi_ye', ".+") ;
+                $this->es->addMustRegexpQuery( 'wu_liu_xin_xi', ".+") ;
                 break;
             }
         }
@@ -380,6 +516,14 @@ class Company extends ServiceBase
                 $matchedCnames[] = $tmp_item;
             }
         }
+        $map = XinDongService::getZhuCeZiBenMapV2();
+        foreach($reg_capital_values as $item){
+            $tmp = $map[$item]['epreg'];
+            foreach($tmp as $tmp_item){
+                $matchedCnames[] = $tmp_item;
+            }
+        }
+
         (!empty($matchedCnames)) && $this->es->addMustShouldRegexpQuery(
             'reg_capital' , $matchedCnames
         ) ;

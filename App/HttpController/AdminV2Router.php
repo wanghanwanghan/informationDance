@@ -21,6 +21,10 @@ class AdminV2Router
         $this->FinanceRouterV1($routeCollector);
         $this->SouKeRouterV1($routeCollector);
         $this->ToolsRouterV1($routeCollector);
+        $this->InvoiceRouterV1($routeCollector);
+        $this->ApiUserRouterV1($routeCollector);
+        $this->PApiRouterV1($routeCollector);
+        $this->PStaticsRouterV1($routeCollector);
     }
 
     private function UserRouterV1(RouteCollector $routeCollector): bool
@@ -107,6 +111,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/getSearchOption', $prefix . 'getSearchOption');//所有支持的搜索选项
             $routeCollector->addRoute(['GET', 'POST'], '/calMarketShare', $prefix . 'calMarketShare');//所有支持的搜索选项
             $routeCollector->addRoute(['GET', 'POST'], '/advancedSearch', $prefix . 'advancedSearch');//高级搜索
+            $routeCollector->addRoute(['GET', 'POST'], '/advancedSearchOption', $prefix . 'advancedSearchOption');//高级搜索
             $routeCollector->addRoute(['GET', 'POST'], '/getCompanyInvestor', $prefix . 'getCompanyInvestor'); //获取该企业所有关系图
             $routeCollector->addRoute(['GET', 'POST'], '/exportEntData', $prefix . 'exportEntData');//导出搜客数据
             $routeCollector->addRoute(['GET', 'POST'], '/getConfigs', $prefix . 'getConfigs');//获取搜客配置
@@ -117,6 +122,28 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/getAllFields', $prefix . 'getAllFields');//获取全部字段
             $routeCollector->addRoute(['GET', 'POST'], '/deliverCustomerRoster', $prefix . 'deliverCustomerRoster');//确认交付客户
             $routeCollector->addRoute(['GET', 'POST'], '/getDeliverDetails', $prefix . 'getDeliverDetails');//确认交付客户 getDeliverDetails
+            //===========
+            $routeCollector->addRoute(['GET', 'POST'], '/getStaffInfo', $prefix . 'getStaffInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyBasicInfo', $prefix . 'getCompanyBasicInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCpwsList', $prefix . 'getCpwsList');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCpwsDetail', $prefix . 'getCpwsDetail');
+            $routeCollector->addRoute(['GET', 'POST'], '/getKtggList', $prefix . 'getKtggList');
+            $routeCollector->addRoute(['GET', 'POST'], '/getKtggDetail', $prefix . 'getKtggDetail');
+            $routeCollector->addRoute(['GET', 'POST'], '/getHighTecQualifications', $prefix . 'getHighTecQualifications');
+            $routeCollector->addRoute(['GET', 'POST'], '/getDengLingQualifications', $prefix . 'getDengLingQualifications');
+            $routeCollector->addRoute(['GET', 'POST'], '/getIsoQualifications', $prefix . 'getIsoQualifications');
+            $routeCollector->addRoute(['GET', 'POST'], '/getEmploymenInfo', $prefix . 'getEmploymenInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getBusinessScaleInfo', $prefix . 'getBusinessScaleInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getMainProducts', $prefix . 'getMainProducts');
+            $routeCollector->addRoute(['GET', 'POST'], '/getTagInfo', $prefix . 'getTagInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getInvestorInfo', $prefix . 'getInvestorInfo');
+            //$routeCollector->addRoute(['GET', 'POST'], '/getStaffInfo', $prefix . 'getStaffInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getNamesInfo', $prefix . 'getNamesInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getEsBasicInfo', $prefix . 'getEsBasicInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getShangPinInfo', $prefix . 'getShangPinInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getUploadOpportunityLists', $prefix . 'getUploadOpportunityLists');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCountInfo', $prefix . 'getCountInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/getEntLianXi', $prefix . 'getEntLianXi');
         });
 
         return true;
@@ -136,6 +163,59 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/getUploadLists', $prefix . 'getUploadLists'); //
             //获取上传文件类型
             $routeCollector->addRoute(['GET', 'POST'], '/uploadeTypeLists', $prefix . 'uploadeTypeLists'); // uploadeTypeLists
+        });
+
+        return true;
+    }
+
+    private function InvoiceRouterV1(RouteCollector $routeCollector): bool
+    {
+        $prefix = '/Business/AdminV2/Mrxd/Invoice/InvoiceController/';
+
+        $routeCollector->addGroup('/invoice', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getList', $prefix . 'getList');
+            $routeCollector->addRoute(['GET', 'POST'], '/createZip', $prefix . 'createZip');
+            $routeCollector->addRoute(['GET', 'POST'], '/createGetDataTime', $prefix . 'createGetDataTime');
+        });
+
+        return true;
+    }
+
+    private function ApiUserRouterV1(RouteCollector $routeCollector): bool
+    {
+        $prefix = '/Business/AdminV2/Mrxd/ApiUser/UserController/';
+
+        $routeCollector->addGroup('/apiuser', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getApiListByUser', $prefix . 'getApiListByUser');
+            $routeCollector->addRoute(['GET', 'POST'], '/getUserList', $prefix . 'getUserList');
+            $routeCollector->addRoute(['GET', 'POST'], '/editApi', $prefix . 'editApi');
+            $routeCollector->addRoute(['GET', 'POST'], '/editUserApi', $prefix . 'editUserApi');
+            //
+        });
+
+        return true;
+    }
+
+    private function PApiRouterV1(RouteCollector $routeCollector): bool
+    {
+        $prefix = '/Business/AdminV2/Mrxd/PApi/PApiController/';
+
+        $routeCollector->addGroup('/papi', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getApiList', $prefix . 'getApiList');
+            $routeCollector->addRoute(['GET', 'POST'], '/addApi', $prefix . 'addApi');
+            $routeCollector->addRoute(['GET', 'POST'], '/editApi', $prefix . 'editApi');
+        });
+
+        return true;
+    }
+
+    private function PStaticsRouterV1(RouteCollector $routeCollector): bool
+    {
+        $prefix = '/Business/AdminV2/Mrxd/PStatistics/PStatisticsController/';
+
+        $routeCollector->addGroup('/apiuser', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getStatisticsList', $prefix . 'getStatisticsList');
+            $routeCollector->addRoute(['GET', 'POST'], '/exportCsv', $prefix . 'exportCsv');
         });
 
         return true;
