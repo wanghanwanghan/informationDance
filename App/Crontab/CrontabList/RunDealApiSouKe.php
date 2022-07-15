@@ -413,9 +413,13 @@ class RunDealApiSouKe extends AbstractCronTask
                 $lastId = $dataItem['_id'];
                 $nums ++;
                 //if($dataItem['_source']['ying_shou_gui_mo'] ){
-                yield $datas[] = [
-                    'ying_shou_gui_mo' => $dataItem['_source']['ying_shou_gui_mo']
-                ];
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'yield $datas' =>$dataItem['_source']['ying_shou_gui_mo']
+                    ])
+                );
+                yield $datas[] = $dataItem['_source']['ying_shou_gui_mo'];
             }
         }
     }
