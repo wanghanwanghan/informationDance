@@ -3163,7 +3163,6 @@ class XinDongService extends ServiceBase
         $siJiFenLeiArrs = [];
         $nums = 0;
         while (!empty($companyEsModel->return_data['hits']['hits'])) {
-            $lastId = 0;
             foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
                 $lastId = $dataItem['_id'];
 //                CommonService::getInstance()->log4PHP(
@@ -3201,7 +3200,7 @@ class XinDongService extends ServiceBase
         //===========================
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'match_companys_ying_shou_gui_mo_map  '=>$siJiFenLeiArrs,
+                'match_companys_ying_shou_gui_mo_map_count  '=>count($siJiFenLeiArrs),
                 '$nums' => $nums,
             ])
         );
@@ -3211,19 +3210,19 @@ class XinDongService extends ServiceBase
         $yingShouGUiMoMap = XinDongService::getYingShouGuiMoMapV2();
         foreach ($siJiFenLeiArrs as $tmpSiJiFenLei){
             $totalMin += $yingShouGUiMoMap[$tmpSiJiFenLei]['min'];
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'cal_total_min_$tmpSiJiFenLei  '=>$tmpSiJiFenLei,
-                    'cal_total_min_value' => $yingShouGUiMoMap[$tmpSiJiFenLei]['min'],
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    'cal_total_min_$tmpSiJiFenLei  '=>$tmpSiJiFenLei,
+//                    'cal_total_min_value' => $yingShouGUiMoMap[$tmpSiJiFenLei]['min'],
+//                ])
+//            );
             $totalMax += $yingShouGUiMoMap[$tmpSiJiFenLei]['max'];
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'cal_total_max_$tmpSiJiFenLei  '=>$tmpSiJiFenLei,
-                    'cal_total_max_value' => $yingShouGUiMoMap[$tmpSiJiFenLei]['max'],
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    'cal_total_max_$tmpSiJiFenLei  '=>$tmpSiJiFenLei,
+//                    'cal_total_max_value' => $yingShouGUiMoMap[$tmpSiJiFenLei]['max'],
+//                ])
+//            );
         }
 
         $rate1 = $yingShouGUiMoMap[$ying_shou_gui_mo]['min']/$totalMin;
