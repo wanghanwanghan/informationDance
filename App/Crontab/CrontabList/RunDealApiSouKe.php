@@ -358,6 +358,8 @@ class RunDealApiSouKe extends AbstractCronTask
     }
 
     static function getYieldDataBySiJi($tmpSiji,$totalNums = 500000 ,$fieldsArr = ["ying_shou_gui_mo","si_ji_fen_lei_code"]){
+        $startMemory = memory_get_usage();
+        $start = microtime(true);
         $size = 5000;
         $nums =1;
         $nums2 =1;
@@ -402,87 +404,96 @@ class RunDealApiSouKe extends AbstractCronTask
 
                 $nums ++;
                 //if($dataItem['_source']['ying_shou_gui_mo'] ){
-                $datas[] = [
-                    'ying_shou_gui_mo' => $dataItem['_source']['ying_shou_gui_mo']
-                ];
-//                yield $datas[] = [
+//                $datas[] = [
 //                    'ying_shou_gui_mo' => $dataItem['_source']['ying_shou_gui_mo']
 //                ];
-                //}
-            }
-        }
-
-        return $datas;
-        $startMemory = memory_get_usage();
-        $start = microtime(true);
-
-        $datas = [];
-
-
-
-        while ($totalNums > 0) {
-            if( $totalNums<$size ){
-                $size = $totalNums;
-            }
-
-            $companyEsModel = new \App\ElasticSearch\Model\Company();
-            $companyEsModel
-                //经营范围
-                ->SetQueryBySiJiFenLei($tmpSiji)
-                //->addSort('_id','asc')
-                ->addSize($size)
-                //->setSource($fieldsArr)
-            ;
-
-            if($lastId>0){
-                $companyEsModel->addSearchAfterV1($lastId);
-            }
-            // 格式化下日期和时间
-            $companyEsModel
-                ->searchFromEs() ;
-
-            foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-                $lastId = $dataItem['_id'];
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        '$lastId' => $lastId
-                    ])
-                );
-
-
-                $nums ++;
-
-
-                //if($dataItem['_source']['ying_shou_gui_mo'] ){
                 yield $datas[] = [
                     'ying_shou_gui_mo' => $dataItem['_source']['ying_shou_gui_mo']
                 ];
                 //}
             }
-
-            $totalNums -= $size;
-            $nums2 ++ ;
-            if($companyEsModel->return_data['hits']['total']['value'] <= 0){
-                $totalNums = 0;
-            }
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$totalNums' => $totalNums,
-                    '$nums1'=>$nums,
-                    '$nums2'=>$nums2,
-                ])
-            );
         }
+
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
-                'generate data  done . costs seconds '=>microtime(true) - $start,
-                '$nums' => $nums,
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
+                    'generate data  done . costs seconds '=>microtime(true) - $start,
+                    '$nums' => $nums,
             ])
         );
+
+//        return $datas;
+//        $startMemory = memory_get_usage();
+//        $start = microtime(true);
+//
+//        $datas = [];
+//
+//
+//
+//        while ($totalNums > 0) {
+//            if( $totalNums<$size ){
+//                $size = $totalNums;
+//            }
+//
+//            $companyEsModel = new \App\ElasticSearch\Model\Company();
+//            $companyEsModel
+//                //经营范围
+//                ->SetQueryBySiJiFenLei($tmpSiji)
+//                //->addSort('_id','asc')
+//                ->addSize($size)
+//                //->setSource($fieldsArr)
+//            ;
+//
+//            if($lastId>0){
+//                $companyEsModel->addSearchAfterV1($lastId);
+//            }
+//            // 格式化下日期和时间
+//            $companyEsModel
+//                ->searchFromEs() ;
+//
+//            foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
+//                $lastId = $dataItem['_id'];
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        '$lastId' => $lastId
+//                    ])
+//                );
+//
+//
+//                $nums ++;
+//
+//
+//                //if($dataItem['_source']['ying_shou_gui_mo'] ){
+//                yield $datas[] = [
+//                    'ying_shou_gui_mo' => $dataItem['_source']['ying_shou_gui_mo']
+//                ];
+//                //}
+//            }
+//
+//            $totalNums -= $size;
+//            $nums2 ++ ;
+//            if($companyEsModel->return_data['hits']['total']['value'] <= 0){
+//                $totalNums = 0;
+//            }
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    '$totalNums' => $totalNums,
+//                    '$nums1'=>$nums,
+//                    '$nums2'=>$nums2,
+//                ])
+//            );
+//        }
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
+//                'generate data  done . costs seconds '=>microtime(true) - $start,
+//                '$nums' => $nums,
+//            ])
+//        );
     }
 
     //生成下载文件
