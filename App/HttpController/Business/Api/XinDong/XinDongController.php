@@ -3321,12 +3321,12 @@ eof;
 
             $allSijiFenLeis = RunDealApiSouKe::getYieldDataBySiJi(
                 $this->getRequestData('getAllBySiji'),
-                100
+                1000000
             );
             $testItem = [];
             foreach ($allSijiFenLeis as $datItem){
                 $testItem[] = $datItem;
-                //break;
+                break;
             }
             return $this->writeJson(
                 200,
