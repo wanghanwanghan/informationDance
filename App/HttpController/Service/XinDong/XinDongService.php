@@ -3088,6 +3088,7 @@ class XinDongService extends ServiceBase
     }
 
     static  function  getMarjetShare($xd_id){
+        return '';
         $companyEsModel = new \App\ElasticSearch\Model\Company();
         $companyEsModel
             //根据id查询
