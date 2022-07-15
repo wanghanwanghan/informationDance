@@ -3271,14 +3271,32 @@ class XinDongService extends ServiceBase
                 ->setSource($fieldsArr) ;
 
             if($lastId){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '$lastId' => $lastId,
+                    ])
+                );
                 $companyEsModel ->addSearchAfterV1($lastId) ;
             }
 
             $companyEsModel  ->searchFromEs();
 
             $totalNums = $companyEsModel->return_data['hits']['total']['value'];
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$totalNums' => $totalNums,
+                ])
+            );
             if($totalNums <= 0 ){
                $flag = false;
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '$flag' => $flag,
+                    ])
+                );
             }
 
             foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
@@ -3289,7 +3307,7 @@ class XinDongService extends ServiceBase
                         'ying_shou_gui_mo' => $dataItem['_source']['ying_shou_gui_mo']
                     ];
                 }
-            } 
+            }
         }
         CommonService::getInstance()->log4PHP(
             json_encode([
