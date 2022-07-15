@@ -3316,6 +3316,28 @@ eof;
     {
 
         if(
+            $this->getRequestData('getAllBySiji')
+        ){
+
+            $allSijiFenLeis = XinDongService::getYieldDataBySijiFenLei(
+                $this->getRequestData('getAllBySiji')
+            );
+            $testItem = [];
+            foreach ($allSijiFenLeis as $datItem){
+                $testItem = $datItem;
+                break;
+            }
+            return $this->writeJson(
+                200,
+                [ ] ,$testItem
+                ,
+                '成功',
+                true,
+                []
+            );
+        }
+
+        if(
             $this->getRequestData('CompanyLiquidation')
         ){
 
