@@ -373,7 +373,7 @@ class RunDealApiSouKe extends AbstractCronTask
         //最多执行次数
         $maxRunNums =  5000;
         while ($nums <= $maxRunNums ) {
-             sleep(0.3);
+             sleep(0.1);
             $companyEsModel = new \App\ElasticSearch\Model\Company();
             $companyEsModel
                 //经营范围
