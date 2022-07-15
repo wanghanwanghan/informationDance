@@ -363,7 +363,7 @@ class RunDealApiSouKe extends AbstractCronTask
         $start = microtime(true);
         $datas = [];
         $i = 1;
-        $size = 5000;
+        $size = 100;
         $lastId = 0;
         while (true) {
             CommonService::getInstance()->log4PHP(
