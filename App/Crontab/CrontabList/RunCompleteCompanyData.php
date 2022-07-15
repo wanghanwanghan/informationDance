@@ -107,7 +107,7 @@ class RunCompleteCompanyData extends AbstractCronTask
         }
     }
 
-    static function  testYield($tmpSiji){
+    static function  testYield($tmpSiji,$fieldsArr = ["ying_shou_gui_mo","si_ji_fen_lei_code"]){
         $startMemory = memory_get_usage();
         $start = microtime(true);
 
@@ -116,7 +116,7 @@ class RunCompleteCompanyData extends AbstractCronTask
         //去取上一次es结果的id
         $lastId = 0;
         //每次从es取多少数据
-        $size = 1000;
+        $size = 8000;
 
         //最多执行次数
         $maxRunNums =  100;
@@ -128,7 +128,7 @@ class RunCompleteCompanyData extends AbstractCronTask
                 ->SetQueryBySiJiFenLei($tmpSiji)
                 ->addSize($size)
                 ->addSort('_id',"asc")
-                //->setSource($fieldsArr)
+                ->setSource($fieldsArr)
             ;
             CommonService::getInstance()->log4PHP(
                 json_encode([
