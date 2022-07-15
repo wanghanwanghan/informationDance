@@ -3320,7 +3320,7 @@ eof;
             $this->getRequestData('testTransaction')
         ){
 
-            \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney2(1,1);
+            \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney2(100,1);
 //
 //            try {
 //
