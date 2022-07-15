@@ -400,7 +400,7 @@ class RunDealApiSouKe extends AbstractCronTask
                     '$loopNums'=>$loopNums,
                 ])
             );
-            if( $companyEsModel->return_data['hits']['total']['value']<= 0){
+            if( empty($companyEsModel->return_data['hits']['hits'])){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ .__LINE__,
