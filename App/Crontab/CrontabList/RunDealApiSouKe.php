@@ -358,16 +358,28 @@ class RunDealApiSouKe extends AbstractCronTask
     }
 
     static function getYieldDataBySiJi($tmpSiji,$totalNums = 500000 ,$fieldsArr = ["ying_shou_gui_mo","si_ji_fen_lei_code"]){
+        $size = 5000;
+        $nums =1;
+        $nums2 =1;
+        $lastId = 0;
+        $loopnums= ceil($totalNums/$size);
+        for ($i=1;$i<=$loopnums;$i++){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$i' => $i
+                ])
+            );
+        }
 
+        return ;
         $startMemory = memory_get_usage();
         $start = microtime(true);
 
         $datas = [];
 
-        $size = 5;
-        $nums =1;
-        $nums2 =1;
-        $lastId = 0;
+
+
         while ($totalNums > 0) {
             if( $totalNums<$size ){
                 $size = $totalNums;
