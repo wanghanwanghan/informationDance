@@ -150,7 +150,7 @@ class AdminNewUser extends ModelBase
         $userData = $info->toArray();
         $res =  $info->update([
             'id' => $id,
-            'money2' => $money
+            'testst' => $money
         ]);
         return $res;
     }
