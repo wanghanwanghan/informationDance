@@ -3150,9 +3150,9 @@ class XinDongService extends ServiceBase
         $companyEsModel = new \App\ElasticSearch\Model\Company();
         $companyEsModel
             ->SetQueryBySiJiFenLei($tmpSiji)
-            ->addSize(500)
-            ->addSort("xd_id","desc")
-            ->setSource(['ying_shou_gui_mo','xd_id'])
+            ->addSize(1000)
+            ->addSort("_id","asc")
+            ->setSource(['ying_shou_gui_mo'])
             ->searchFromEs()
             // 格式化下日期和时间
            // ->formatEsDate()
@@ -3184,19 +3184,19 @@ class XinDongService extends ServiceBase
 
             }
 
-//            $companyEsModel = new \App\ElasticSearch\Model\Company();
-//            $companyEsModel
-//                ->SetQueryBySiJiFenLei($tmpSiji)
-//                ->addSize(500)
-//                ->addSort("xd_id","desc")
-//                ->setSource(['ying_shou_gui_mo','xd_id'])
-//                ->addSearchAfterV1($lastId)
-//                ->searchFromEs()
-//                // 格式化下日期和时间
-//                //->formatEsDate()
-//                // 格式化下金额
-//                //->formatEsMoney()
-//            ;
+            $companyEsModel = new \App\ElasticSearch\Model\Company();
+            $companyEsModel
+                ->SetQueryBySiJiFenLei($tmpSiji)
+                ->addSize(1000)
+                ->addSort("_id","asc")
+                ->setSource(['ying_shou_gui_mo'])
+                ->addSearchAfterV1($lastId)
+                ->searchFromEs()
+                // 格式化下日期和时间
+                //->formatEsDate()
+                // 格式化下金额
+                //->formatEsMoney()
+            ;
         }
 
         //===========================
