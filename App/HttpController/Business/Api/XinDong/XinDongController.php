@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Api\XinDong;
 
+use App\Crontab\CrontabList\RunCompleteCompanyData;
 use App\Crontab\CrontabList\RunDealApiSouKe;
 use App\Crontab\CrontabList\RunDealFinanceCompanyData;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNew;
@@ -3319,8 +3320,8 @@ eof;
             $this->getRequestData('getAllBySiji')
         ){
 
-            $allSijiFenLeis = RunDealApiSouKe::testYield(
-               // $this->getRequestData('getAllBySiji')
+            $allSijiFenLeis = RunCompleteCompanyData::testYield(
+                $this->getRequestData('getAllBySiji')
             );
             $testItem = [];
             foreach ($allSijiFenLeis as $datItem){

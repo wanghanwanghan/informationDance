@@ -107,6 +107,53 @@ class RunCompleteCompanyData extends AbstractCronTask
         }
     }
 
+    static function  testYield($tmpSiji){
+        $startMemory = memory_get_usage();
+        $start = microtime(true);
+
+        $nums = 1;
+        $lastId = 0;
+        $size = 10;
+
+        while ($nums <= 10 ) {
+
+            $companyEsModel = new \App\ElasticSearch\Model\Company();
+            $companyEsModel
+                //经营范围
+                ->SetQueryBySiJiFenLei($tmpSiji)
+                ->addSize($size)
+                ->addSort('_id',"asc")
+                //->setSource($fieldsArr)
+            ;
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$lastId' => $lastId
+                ])
+            );
+            if($lastId>0){
+                $companyEsModel->addSearchAfterV1($lastId);
+            }
+            $companyEsModel
+                ->searchFromEs() ;
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'total value' => $companyEsModel->return_data['hits']['total']['value']
+                ])
+            );
+            foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
+                $lastId = $dataItem['_id'];
+            }
+
+            $nums ++;
+            yield $datas[] = [
+                'XXX'
+            ];
+        }
+    }
+
+
     function run(int $taskId, int $workerIndex): bool
     {
 //        return true;
