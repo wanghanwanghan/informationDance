@@ -369,7 +369,7 @@ class RunDealApiSouKe extends AbstractCronTask
         $lastId = 0;
         //每次从es取多少数据
         $size = 1500;
-
+        $loopNums = 0;
         //最多执行次数
         $maxRunNums =  5000;
         while ($nums <= $maxRunNums ) {
@@ -406,6 +406,7 @@ class RunDealApiSouKe extends AbstractCronTask
                         'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
                         'generate data  done . costs seconds '=>microtime(true) - $start,
                         '$nums' => $nums,
+                        '$loopNums'=>$loopNums,
                     ])
                 );
                 return ;
@@ -413,6 +414,7 @@ class RunDealApiSouKe extends AbstractCronTask
             $nums ++;
             foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
                 $lastId = $dataItem['_id'];
+                $loopNums ++;
                 yield $datas[] = [
                     $dataItem['_source']['ying_shou_gui_mo']
                 ];
