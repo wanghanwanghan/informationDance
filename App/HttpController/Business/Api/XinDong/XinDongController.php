@@ -3319,40 +3319,43 @@ eof;
         if(
             $this->getRequestData('testTransaction')
         ){
-            try {
 
-                DbManager::getInstance()->startTransaction('mrxd');
-                \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
-                    1,
-                    \App\HttpController\Models\AdminV2\AdminNewUser::aesEncode(
-                        \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
-                            1
-                        ) - 10
-                    )
-                );
-
-                \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney2(1,1);
-
-                OperatorLog::addRecord(
-                    [
-                        'user_id' => 1,
-                        'msg' => "测试扣费10元",
-                        'details' =>json_encode( XinDongService::trace()),
-                        'type_cname' => '测试扣费',
-                    ]
-                );
-
-                DbManager::getInstance()->commit('mrxd');
-
-            }catch (\Throwable $e) {
-                DbManager::getInstance()->rollback('mrxd');
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        '$e getMessage' => $e->getMessage()
-                    ])
-                );
-            }
+            \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney2(1,1);
+//
+//            try {
+//
+//                DbManager::getInstance()->startTransaction('mrxd');
+//                \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
+//                    1,
+//                    \App\HttpController\Models\AdminV2\AdminNewUser::aesEncode(
+//                        \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
+//                            1
+//                        ) - 10
+//                    )
+//                );
+//
+//                \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney2(1,1);
+//
+//                OperatorLog::addRecord(
+//                    [
+//                        'user_id' => 1,
+//                        'msg' => "测试扣费10元",
+//                        'details' =>json_encode( XinDongService::trace()),
+//                        'type_cname' => '测试扣费',
+//                    ]
+//                );
+//
+//                DbManager::getInstance()->commit('mrxd');
+//
+//            }catch (\Throwable $e) {
+//                DbManager::getInstance()->rollback('mrxd');
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        '$e getMessage' => $e->getMessage()
+//                    ])
+//                );
+//            }
 
             return $this->writeJson(
                 200,
