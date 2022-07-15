@@ -92,7 +92,7 @@ class RunDealApiSouKe extends AbstractCronTask
     function createDir(): bool
     {
        
-        $this->workPath = $this->filePath ;
+        self::$workPath = $this->filePath ;
 
         return true;
     }  

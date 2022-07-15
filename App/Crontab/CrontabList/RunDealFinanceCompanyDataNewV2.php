@@ -90,7 +90,7 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
     function createDir(): bool
     {
        
-        $this->workPath = $this->filePath ;
+        self::$workPath = $this->filePath ;
 
         return true;
     }  
