@@ -3153,21 +3153,56 @@ class XinDongService extends ServiceBase
             ->searchFromEs()
             // 格式化下日期和时间
             ->formatEsDate()
+            ->addSize(1000)
             // 格式化下金额
             ->formatEsMoney()
         ;
-
+        //===========================
         $siJiFenLeiArrs = [];
-        foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-            $dataItem['_source']['ying_shou_gui_mo'] && $siJiFenLeiArrs[] = $dataItem['_source']['ying_shou_gui_mo'];
+        $nums = 0;
+        while (!empty($companyEsModel->return_data['hits']['hits'])) {
+
+            $lastId = 0;
+            foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
+                $lastId = $dataItem['_id'];
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        '$lastId' => $lastId
+//                    ])
+//                );
+
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        '$nums' => $nums
+//                    ])
+//                );
+                $dataItem['_source']['ying_shou_gui_mo'] && $siJiFenLeiArrs[] = $dataItem['_source']['ying_shou_gui_mo'];
+                $nums ++;
+
+            }
+
+            $companyEsModel = new \App\ElasticSearch\Model\Company();
+            $companyEsModel
+                ->SetQueryBySiJiFenLei($tmpSiji)
+                ->addSearchAfterV1($lastId)
+                ->searchFromEs()
+                // 格式化下日期和时间
+                ->formatEsDate()
+                ->addSize(1000)
+                // 格式化下金额
+                ->formatEsMoney()
+            ;
         }
 
+        //===========================
         CommonService::getInstance()->log4PHP(
             json_encode([
                 'match_companys_ying_shou_gui_mo_map  '=>$siJiFenLeiArrs
             ])
         );
-
+        
         $totalMin = 0;
         $totalMax = 0;
         $yingShouGUiMoMap = XinDongService::getYingShouGuiMoMapV2();
