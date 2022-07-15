@@ -3150,14 +3150,14 @@ class XinDongService extends ServiceBase
         $companyEsModel = new \App\ElasticSearch\Model\Company();
         $companyEsModel
             ->SetQueryBySiJiFenLei($tmpSiji)
-            ->addSize(5000)
+            ->addSize(100)
             ->setSource(['ying_shou_gui_mo'])
             ->searchFromEs()
             // 格式化下日期和时间
-            ->formatEsDate()
+           // ->formatEsDate()
 
             // 格式化下金额
-            ->formatEsMoney()
+            //->formatEsMoney()
         ;
         //===========================
         $siJiFenLeiArrs = [];
@@ -3186,14 +3186,14 @@ class XinDongService extends ServiceBase
             $companyEsModel = new \App\ElasticSearch\Model\Company();
             $companyEsModel
                 ->SetQueryBySiJiFenLei($tmpSiji)
-                ->addSize(5000)
+                ->addSize(100)
                 ->setSource(['ying_shou_gui_mo'])
                 ->addSearchAfterV1($lastId)
                 ->searchFromEs()
                 // 格式化下日期和时间
-                ->formatEsDate()
+                //->formatEsDate()
                 // 格式化下金额
-                ->formatEsMoney()
+                //->formatEsMoney()
             ;
         }
 
