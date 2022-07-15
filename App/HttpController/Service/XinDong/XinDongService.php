@@ -3150,10 +3150,11 @@ class XinDongService extends ServiceBase
         $companyEsModel = new \App\ElasticSearch\Model\Company();
         $companyEsModel
             ->SetQueryBySiJiFenLei($tmpSiji)
+            ->addSize(1000)
             ->searchFromEs()
             // 格式化下日期和时间
             ->formatEsDate()
-            ->addSize(1000)
+
             // 格式化下金额
             ->formatEsMoney()
         ;
@@ -3161,7 +3162,6 @@ class XinDongService extends ServiceBase
         $siJiFenLeiArrs = [];
         $nums = 0;
         while (!empty($companyEsModel->return_data['hits']['hits'])) {
-
             $lastId = 0;
             foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
                 $lastId = $dataItem['_id'];
@@ -3186,11 +3186,11 @@ class XinDongService extends ServiceBase
             $companyEsModel = new \App\ElasticSearch\Model\Company();
             $companyEsModel
                 ->SetQueryBySiJiFenLei($tmpSiji)
+                ->addSize(1000)
                 ->addSearchAfterV1($lastId)
                 ->searchFromEs()
                 // 格式化下日期和时间
                 ->formatEsDate()
-                ->addSize(1000)
                 // 格式化下金额
                 ->formatEsMoney()
             ;
@@ -3202,7 +3202,7 @@ class XinDongService extends ServiceBase
                 'match_companys_ying_shou_gui_mo_map  '=>$siJiFenLeiArrs
             ])
         );
-        
+
         $totalMin = 0;
         $totalMax = 0;
         $yingShouGUiMoMap = XinDongService::getYingShouGuiMoMapV2();
