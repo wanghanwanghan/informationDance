@@ -419,9 +419,11 @@ class RunDealApiSouKe extends AbstractCronTask
                         'yield $datas' =>$dataItem['_source']['ying_shou_gui_mo']
                     ])
                 );
-                yield $datas[] = $dataItem['_source']['ying_shou_gui_mo'];
+                 // yield
+                $datas[] = $dataItem['_source']['ying_shou_gui_mo'];
             }
         }
+        return $datas;
     }
 
     static function getYieldDataBySiJi($tmpSiji,$totalNums = 500000 ,$fieldsArr = ["ying_shou_gui_mo","si_ji_fen_lei_code"]){
