@@ -107,67 +107,6 @@ class RunCompleteCompanyData extends AbstractCronTask
         }
     }
 
-    static function  testYield($tmpSiji,$fieldsArr = ["ying_shou_gui_mo","si_ji_fen_lei_code"]){
-        $startMemory = memory_get_usage();
-        $start = microtime(true);
-
-        // while循环执行的次数
-        $nums = 1;
-        //去取上一次es结果的id
-        $lastId = 0;
-        //每次从es取多少数据
-        $size = 8000;
-
-        //最多执行次数
-        $maxRunNums =  100;
-        while ($nums <= $maxRunNums ) {
-
-            $companyEsModel = new \App\ElasticSearch\Model\Company();
-            $companyEsModel
-                //经营范围
-                ->SetQueryBySiJiFenLei($tmpSiji)
-                ->addSize($size)
-                ->addSort('_id',"asc")
-                ->setSource($fieldsArr)
-            ;
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$lastId' => $lastId
-                ])
-            );
-            if($lastId>0){
-                $companyEsModel->addSearchAfterV1($lastId);
-            }
-            $companyEsModel
-                ->searchFromEs() ;
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'total value' => $companyEsModel->return_data['hits']['total']['value']
-                ])
-            );
-            if( $companyEsModel->return_data['hits']['total']['value']<= 0){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
-                        'generate data  done . costs seconds '=>microtime(true) - $start,
-                        '$nums' => $nums,
-                    ])
-                );
-                return ;
-            }
-            $nums ++;
-            foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-                $lastId = $dataItem['_id'];
-                yield $datas[] = [
-                    $dataItem['_source']['ying_shou_gui_mo']
-                ];
-            }
-        }
-    }
-
 
     function run(int $taskId, int $workerIndex): bool
     {

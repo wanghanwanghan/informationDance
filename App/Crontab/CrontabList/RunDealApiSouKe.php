@@ -359,47 +359,47 @@ class RunDealApiSouKe extends AbstractCronTask
     }
 
 
-
-    static function getYieldEsData($siji){
+    static function  getYieldDataBySiJi($tmpSiji,$fieldsArr = ["ying_shou_gui_mo","si_ji_fen_lei_code"]){
         $startMemory = memory_get_usage();
         $start = microtime(true);
-        $datas = [];
-        $i = 1;
-        $size = 10;
+
+        // while循环执行的次数
+        $nums = 1;
+        //去取上一次es结果的id
         $lastId = 0;
-        $nums = 0;
-        while (true) {
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$i' => $i
-                ])
-            );
-            $i ++ ;
+        //每次从es取多少数据
+        $size = 8000;
+
+        //最多执行次数
+        $maxRunNums =  500;
+        while ($nums <= $maxRunNums ) {
 
             $companyEsModel = new \App\ElasticSearch\Model\Company();
             $companyEsModel
                 //经营范围
-                ->SetQueryBySiJiFenLei($siji)
+                ->SetQueryBySiJiFenLei($tmpSiji)
                 ->addSize($size)
                 ->addSort('_id',"asc")
-                ->setSource(["xd_id", "ying_shou_gui_mo", "si_ji_fen_lei_code"])
+                ->setSource($fieldsArr)
             ;
-
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$lastId' => $lastId
+                ])
+            );
             if($lastId>0){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        '$lastId 》 0' => $lastId
-                    ])
-                );
                 $companyEsModel->addSearchAfterV1($lastId);
             }
-
             $companyEsModel
                 ->searchFromEs() ;
-
-            if (empty($companyEsModel->return_data['hits']['hits'])) {
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'total value' => $companyEsModel->return_data['hits']['total']['value']
+                ])
+            );
+            if( $companyEsModel->return_data['hits']['total']['value']<= 0){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ .__LINE__,
@@ -408,313 +408,27 @@ class RunDealApiSouKe extends AbstractCronTask
                         '$nums' => $nums,
                     ])
                 );
-                break;
+                return ;
             }
-
+            $nums ++;
             foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
                 $lastId = $dataItem['_id'];
-                $nums ++;
-                //if($dataItem['_source']['ying_shou_gui_mo'] ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        'yield $datas' =>$dataItem['_source']['ying_shou_gui_mo']
-                    ])
-                );
-                 // yield
-                $datas[] = $dataItem['_source']['ying_shou_gui_mo'];
-            }
-        }
-        return $datas;
-    }
-
-    static function getYieldDataBySiJi($tmpSiji,$totalNums = 500000 ,$fieldsArr = ["ying_shou_gui_mo","si_ji_fen_lei_code"]){
-        $startMemory = memory_get_usage();
-        $start = microtime(true);
-        $size = 5000;
-        $nums =1;
-        $nums2 =1;
-        $lastId = 0;
-        $datas = [];
-        $loopnums= ceil($totalNums/$size);
-        for ($i=1;$i<=$loopnums;$i++){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$i' => $i
-                ])
-            );
-            $companyEsModel = new \App\ElasticSearch\Model\Company();
-            $companyEsModel
-                //经营范围
-                ->SetQueryBySiJiFenLei($tmpSiji)
-                //->addSort('_id','asc')
-                ->addSize($size)
-                ->addSort('_id',"asc")
-                //->setSource($fieldsArr)
-            ;
-
-            if($lastId>0){
-                $companyEsModel->addSearchAfterV1($lastId);
-            }
-            // 格式化下日期和时间
-            $companyEsModel
-                ->searchFromEs() ;
-            if($companyEsModel->return_data['hits']['total']['value'] <= 0){
-                break;
-            }
-            foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-                $lastId = $dataItem['_id'];
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        __CLASS__.__FUNCTION__ .__LINE__,
-//                        '$lastId' => $lastId
-//                    ])
-//                );
-
-
-                $nums ++;
-                //if($dataItem['_source']['ying_shou_gui_mo'] ){
-                $datas[] = [
-                    'ying_shou_gui_mo' => $dataItem['_source']['ying_shou_gui_mo']
+                yield $datas[] = [
+                    $dataItem['_source']['ying_shou_gui_mo']
                 ];
-//                yield $datas[] = [
-//                    'ying_shou_gui_mo' => $dataItem['_source']['ying_shou_gui_mo']
-//                ];
-                //}
             }
         }
-
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
-                    'generate data  done . costs seconds '=>microtime(true) - $start,
-                    '$nums' => $nums,
-            ])
-        );
-
-//        return $datas;
-//        $startMemory = memory_get_usage();
-//        $start = microtime(true);
-//
-//        $datas = [];
-//
-//
-//
-//        while ($totalNums > 0) {
-//            if( $totalNums<$size ){
-//                $size = $totalNums;
-//            }
-//
-//            $companyEsModel = new \App\ElasticSearch\Model\Company();
-//            $companyEsModel
-//                //经营范围
-//                ->SetQueryBySiJiFenLei($tmpSiji)
-//                //->addSort('_id','asc')
-//                ->addSize($size)
-//                //->setSource($fieldsArr)
-//            ;
-//
-//            if($lastId>0){
-//                $companyEsModel->addSearchAfterV1($lastId);
-//            }
-//            // 格式化下日期和时间
-//            $companyEsModel
-//                ->searchFromEs() ;
-//
-//            foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-//                $lastId = $dataItem['_id'];
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        __CLASS__.__FUNCTION__ .__LINE__,
-//                        '$lastId' => $lastId
-//                    ])
-//                );
-//
-//
-//                $nums ++;
-//
-//
-//                //if($dataItem['_source']['ying_shou_gui_mo'] ){
-//                yield $datas[] = [
-//                    'ying_shou_gui_mo' => $dataItem['_source']['ying_shou_gui_mo']
-//                ];
-//                //}
-//            }
-//
-//            $totalNums -= $size;
-//            $nums2 ++ ;
-//            if($companyEsModel->return_data['hits']['total']['value'] <= 0){
-//                $totalNums = 0;
-//            }
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    __CLASS__.__FUNCTION__ .__LINE__,
-//                    '$totalNums' => $totalNums,
-//                    '$nums1'=>$nums,
-//                    '$nums2'=>$nums2,
-//                ])
-//            );
-//        }
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                __CLASS__.__FUNCTION__ .__LINE__,
-//                'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
-//                'generate data  done . costs seconds '=>microtime(true) - $start,
-//                '$nums' => $nums,
-//            ])
-//        );
     }
-
-    //生成下载文件
-    static function  generateFileExcel($limit){
-        $startMemory = memory_get_usage();
-        $allInitDatas =  DownloadSoukeHistory::findAllByConditionV2(
-             [
-                 'status' => DownloadSoukeHistory::$state_init
-             ],
-            1
-        );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
-            ])
+    static function  testYield($tmpSiji,$fieldsArr = ["ying_shou_gui_mo","si_ji_fen_lei_code"]){
+        $allSijiFenLeis = self::getYieldDataBySiJi(
+            $tmpSiji,$fieldsArr
         );
 
-        foreach($allInitDatas as $InitData){
-            DownloadSoukeHistory::setTouchTime(
-                $InitData['id'],date('Y-m-d H:i:s')
-            );
+        foreach ($allSijiFenLeis as $datItem){
 
-            $filename = '搜客导出_'.date('YmdHis').'.xlsx';
-            $config=  [
-                'path' => TEMP_FILE_PATH // xlsx文件保存路径
-            ];
-            $excel = new \Vtiful\Kernel\Excel($config);
-            $fileObject = $excel->fileName($filename, 'sheet');
-            $fileHandle = $fileObject->getHandle();
-
-            $format = new Format($fileHandle);
-            $colorStyle = $format
-                ->fontColor(Format::COLOR_ORANGE)
-                ->border(Format::BORDER_DASH_DOT)
-                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
-                ->toResource();
-
-            $format = new Format($fileHandle);
-
-            $alignStyle = $format
-                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
-                ->toResource();
-
-            $fileObject
-                ->defaultFormat($colorStyle)
-                ->defaultFormat($alignStyle)
-            ;
-
-            $featureArr = json_decode($InitData['feature'],true);
-            //每次从es拉取一千
-            $esSize = 1000;
-            $maxPage = floor($featureArr['total_nums']/$esSize);
-            //小于一千个 一次性取完
-            if($maxPage <= 0 ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        'number less than 1000 .  find all ' => [
-                            'size' => $featureArr['total_nums']
-                        ]
-                    ])
-                );
-                $tmpXlsxDatas = self::getYieldData($featureArr['total_nums'],0,$featureArr);
-                foreach ($tmpXlsxDatas as $dataItem){
-                    $fileObject ->data([$dataItem]);
-                }
-            }
-            //大于一千个
-            else{
-                //分页取 一次取1000个
-                for ($i=1 ; $i<= $maxPage ;$i++){
-                    $page = $i;
-                    $size = 1000;
-                    $offset = ($page-1)*$size;
-                    // 按页码数据
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            __CLASS__.__FUNCTION__ .__LINE__,
-                            'number more than 1000 .  find by page ' => [
-                                'size' => 1000,
-                                'page' => $i,
-                                '$offset' => $offset,
-                            ]
-                        ])
-                    );
-                    $tmpXlsxDatas = self::getYieldData(1000,$offset,$featureArr);
-                    foreach ($tmpXlsxDatas as $dataItem){
-                        $fileObject ->data([$dataItem]);
-                    }
-                }
-                //剩余的
-                $left = $featureArr['total_nums'] - ($maxPage)*1000 ;
-                if($left){
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            __CLASS__.__FUNCTION__ .__LINE__,
-                            'number more than 1000 .  find left ' => [
-                                'size' => $left,
-                            ]
-                        ])
-                    );
-                    $tmpXlsxDatas = self::getYieldData($left,0,$featureArr);
-                    foreach ($tmpXlsxDatas as $dataItem){
-                        $fileObject ->data([$dataItem]);
-                    }
-                }
-            }
-
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
-                ])
-            );
-            // 数据 1001 1 1000
-            $left = $featureArr['total_nums'] - ($maxPage)*1000 ;
-            $tmpXlsxDatas = self::getYieldData($left,0,$featureArr);
-            foreach ($tmpXlsxDatas as $dataItem){
-                $fileObject ->data([$dataItem]);
-            }
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
-                ])
-            );
-            $format = new Format($fileHandle);
-            //单元格有\n解析成换行
-            $wrapStyle = $format
-                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
-                ->wrap()
-                ->toResource();
-
-            $fileObject->output();
-
-            //更新文件地址
-            DownloadSoukeHistory::setFilePath($InitData['id'],'/Static/Temp/',$filename);
-
-            //设置状态
-            DownloadSoukeHistory::setStatus(
-                $InitData['id'],DownloadSoukeHistory::$state_file_succeed
-            );
-            DownloadSoukeHistory::setTouchTime(
-                $InitData['id'],NULL
-            );
         }
-
-        return true;
     }
+
 
     static function  generateFileExcelV2($limit){
         $startMemory = memory_get_usage();
@@ -837,118 +551,7 @@ class RunDealApiSouKe extends AbstractCronTask
 
         return true;
     }
-    static function  generateFileCsv($limit){
-        $startMemory = memory_get_usage();
-        $allInitDatas =  DownloadSoukeHistory::findAllByConditionV2(
-            [
-                'status' => DownloadSoukeHistory::$state_init
-            ],
-            1
-        );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
-            ])
-        );
 
-        foreach($allInitDatas as $InitData){
-            DownloadSoukeHistory::setTouchTime(
-                $InitData['id'],date('Y-m-d H:i:s')
-            );
-
-            $filename = '搜客导出_'.date('YmdHis').'.csv';
-            self::setworkPath( TEMP_FILE_PATH );
-            $f = fopen(self::$workPath.$filename, "w");
-            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
-
-            $featureArr = json_decode($InitData['feature'],true);
-            //每次从es拉取一千
-            $esSize = 100;
-            $maxPage = floor($featureArr['total_nums']/$esSize);
-            $nums = 1;
-            //小于一千个 一次性取完
-            if($maxPage <= 0 ){
-
-                $tmpXlsxDatas = self::getYieldData($featureArr['total_nums'],0,$featureArr);
-                foreach ($tmpXlsxDatas as $dataItem){
-                    fputcsv($f, $dataItem);
-                    $nums++;
-                }
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        'number less than 1000 .  find all ' => [
-                            'size' => $featureArr['total_nums'],
-                            '$nums' =>$nums
-                        ]
-                    ])
-                );
-            }
-            //大于一千个
-            else{
-                //分页取 一次取1000个
-                for ($i=1 ; $i<= $maxPage ;$i++){
-                    $page = $i;
-                    $size = 100;
-                    $offset = ($page-1)*$size;
-                    // 按页码数据
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            __CLASS__.__FUNCTION__ .__LINE__,
-                            'number more than 1000 .  find by page ' => [
-                                'size' => $size,
-                                'page' => $i,
-                                '$offset' => $offset,
-                            ]
-                        ])
-                    );
-                    $tmpXlsxDatas = self::getYieldData($size,$offset,$featureArr);
-                    foreach ($tmpXlsxDatas as $dataItem){
-                        fputcsv($f, $dataItem);
-                        $nums ++;
-                    }
-                }
-                //剩余的
-                $left = $featureArr['total_nums'] - ($maxPage)*$size ;
-                if($left){
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            __CLASS__.__FUNCTION__ .__LINE__,
-                            'number more than 1000 .  find left ' => [
-                                'size' => $left,
-                            ]
-                        ])
-                    );
-                    $tmpXlsxDatas = self::getYieldData($left,0,$featureArr);
-                    foreach ($tmpXlsxDatas as $dataItem){
-                        fputcsv($f, $dataItem);
-                        $nums ++;
-                    }
-                }
-            }
-
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
-                ])
-            );
-
-            //更新文件地址
-            DownloadSoukeHistory::setFilePath($InitData['id'],'/Static/Temp/',$filename);
-
-            //设置状态
-            DownloadSoukeHistory::setStatus(
-                $InitData['id'],DownloadSoukeHistory::$state_file_succeed
-            );
-            DownloadSoukeHistory::setTouchTime(
-                $InitData['id'],NULL
-            );
-        }
-
-        return true;
-    }
     static function  generateFileCsvV2($limit){
         $startMemory = memory_get_usage();
         $allInitDatas =  DownloadSoukeHistory::findBySql(

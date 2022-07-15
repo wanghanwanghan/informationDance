@@ -3320,18 +3320,13 @@ eof;
             $this->getRequestData('getAllBySiji')
         ){
 
-            $allSijiFenLeis = RunCompleteCompanyData::testYield(
+            $allSijiFenLeis = RunDealApiSouKe::testYield(
                 $this->getRequestData('getAllBySiji')
             );
-            $testItem = [];
-            foreach ($allSijiFenLeis as $datItem){
-//                $testItem[] = $datItem;
-//                break;
-            }
+
             return $this->writeJson(
                 200,
-                [ ] ,$testItem
-                ,
+                [ ] ,$allSijiFenLeis ,
                 '成功',
                 true,
                 []
