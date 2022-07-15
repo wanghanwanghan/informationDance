@@ -14,6 +14,7 @@ use App\HttpController\Models\AdminV2\AdminNewUser;
 use App\HttpController\Models\AdminV2\AdminUserFinanceData;
 use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\NewFinanceData;
+use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
@@ -3315,6 +3316,50 @@ eof;
     }
     function testExport()
     {
+        if(
+            $this->getRequestData('testTransaction')
+        ){
+            try {
+
+                DbManager::getInstance()->startTransaction('mrxd');
+                \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
+                    1,
+                    \App\HttpController\Models\AdminV2\AdminNewUser::aesEncode(
+                        \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
+                            1
+                        ) - 10
+                    )
+                );
+
+                OperatorLog::addRecord(
+                    [
+                        'user_id' => 1,
+                        'msg' => "测试扣费10元",
+                        'details' =>json_encode( XinDongService::trace()),
+                        'type_cname' => '测试扣费',
+                    ]
+                );
+
+                DbManager::getInstance()->commit('mrxd');
+
+            }catch (\Throwable $e) {
+                DbManager::getInstance()->rollback('mrxd');
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '$e getMessage' => $e->getMessage()
+                    ])
+                );
+            }
+
+            return $this->writeJson(
+                200,
+                [ ] ,[] ,
+                '成功',
+                true,
+                []
+            );
+        }
 
         if(
             $this->getRequestData('getAllBySiji')
