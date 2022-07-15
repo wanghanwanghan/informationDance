@@ -3334,7 +3334,7 @@ eof;
                     )
                 );
 
-                \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney2(100,1);
+                //\App\HttpController\Models\AdminV2\AdminNewUser::updateMoney2(100,1);
 
                 OperatorLog::addRecord(
                     [
