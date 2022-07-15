@@ -115,7 +115,9 @@ class RunCompleteCompanyData extends AbstractCronTask
         $lastId = 0;
         $size = 10;
 
-        while ($nums <= 10 ) {
+        //最多执行次数
+        $maxRunNums =  10;
+        while ($nums <= $maxRunNums ) {
 
             $companyEsModel = new \App\ElasticSearch\Model\Company();
             $companyEsModel
@@ -142,14 +144,19 @@ class RunCompleteCompanyData extends AbstractCronTask
                     'total value' => $companyEsModel->return_data['hits']['total']['value']
                 ])
             );
-            foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-                $lastId = $dataItem['_id'];
-            }
 
             $nums ++;
-            yield $datas[] = [
-                'XXX'
-            ];
+            foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
+                $lastId = $dataItem['_id'];
+                yield $datas[] = [
+                    $dataItem['_source']['ying_shou_gui_mo']
+                ];
+            }
+
+
+//            yield $datas[] = [
+//                'XXX'
+//            ];
         }
     }
 
