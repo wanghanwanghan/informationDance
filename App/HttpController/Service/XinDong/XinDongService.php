@@ -3150,9 +3150,9 @@ class XinDongService extends ServiceBase
         $companyEsModel = new \App\ElasticSearch\Model\Company();
         $companyEsModel
             ->SetQueryBySiJiFenLei($tmpSiji)
-            ->addSize(5000)
-            ->addSort("ying_shou_gui_mo","desc")
-            ->setSource(['ying_shou_gui_mo'])
+            ->addSize(500)
+            ->addSort("xd_id","desc")
+            ->setSource(['ying_shou_gui_mo','xd_id'])
             ->searchFromEs()
             // 格式化下日期和时间
            // ->formatEsDate()
@@ -3187,9 +3187,9 @@ class XinDongService extends ServiceBase
             $companyEsModel = new \App\ElasticSearch\Model\Company();
             $companyEsModel
                 ->SetQueryBySiJiFenLei($tmpSiji)
-                ->addSize(100)
-                ->addSort("ying_shou_gui_mo","desc")
-                ->setSource(['ying_shou_gui_mo'])
+                ->addSize(500)
+                ->addSort("xd_id","desc")
+                ->setSource(['ying_shou_gui_mo','xd_id'])
                 ->addSearchAfterV1($lastId)
                 ->searchFromEs()
                 // 格式化下日期和时间
