@@ -3233,14 +3233,14 @@ class XinDongService extends ServiceBase
                     'fenmu'=>$totalMin,
                 ],
                 'market_share_$rate2  '=>[
-                    '$rate1'=>$rate2,
+                    '$rate2'=>$rate2,
                     'fenzi'=>$yingShouGUiMoMap[$ying_shou_gui_mo]['max'],
                     'fenmu'=>$totalMax,
                 ],
             ])
         );
-       $n1 =  number_format($rate1,2)*100;
-       $n2 =  number_format($rate2,2)*100;
+       $n1 =  number_format($rate1,5)*100;
+       $n2 =  number_format($rate2,5)*100;
         return  [
             'min' => $n1.'%', 'max' => $n2.'%',
         ];
