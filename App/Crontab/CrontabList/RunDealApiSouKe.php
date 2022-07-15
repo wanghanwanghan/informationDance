@@ -368,12 +368,12 @@ class RunDealApiSouKe extends AbstractCronTask
         //去取上一次es结果的id
         $lastId = 0;
         //每次从es取多少数据
-        $size = 8000;
+        $size = 800;
 
         //最多执行次数
-        $maxRunNums =  500;
+        $maxRunNums =  5000;
         while ($nums <= $maxRunNums ) {
-
+             sleep(0.5);
             $companyEsModel = new \App\ElasticSearch\Model\Company();
             $companyEsModel
                 //经营范围
