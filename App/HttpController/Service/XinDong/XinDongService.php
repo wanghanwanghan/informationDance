@@ -3250,13 +3250,13 @@ class XinDongService extends ServiceBase
             'min' => $n1.'%', 'max' => $n2.'%',
         ];
     }
-    static function getYieldDataBySijiFenLei($tmpSiji,$fieldsArr = [["ying_shou_gui_mo","si_ji_fen_lei_code","xd_id"]]){
+    static function getYieldDataBySijiFenLei($tmpSiji,$fieldsArr = ["ying_shou_gui_mo","si_ji_fen_lei_code","xd_id"]){
         $startMemory = memory_get_usage();
         $start = microtime(true);
 
         $datas = [];
 
-        $size = 5000;
+        $size = 9000;
         $nums = 0;
         $lastId = 0;
 
