@@ -3201,7 +3201,8 @@ class XinDongService extends ServiceBase
         //===========================
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'match_companys_ying_shou_gui_mo_map  '=>$siJiFenLeiArrs
+                'match_companys_ying_shou_gui_mo_map  '=>$siJiFenLeiArrs,
+                '$nums' => $nums,
             ])
         );
 
