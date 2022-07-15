@@ -3109,13 +3109,13 @@ class XinDongService extends ServiceBase
             $ying_shou_gui_mo = $dataItem['_source']['ying_shou_gui_mo'];
         }
 
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                'si_ji_fen_lei_code  '=>$siJiFenLei,
-//                'ying_shou_gui_mo  '=>$ying_shou_gui_mo,
-//
-//            ])
-//        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'si_ji_fen_lei_code  '=>$siJiFenLei,
+                'ying_shou_gui_mo  '=>$ying_shou_gui_mo,
+
+            ])
+        );
         if(empty($siJiFenLei)){
             return  "";
         }
@@ -3161,47 +3161,49 @@ class XinDongService extends ServiceBase
         foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
             $dataItem['_source']['ying_shou_gui_mo'] && $siJiFenLeiArrs[] = $dataItem['_source']['ying_shou_gui_mo'];
         }
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                'match_companys_ying_shou_gui_mo_map  '=>$siJiFenLeiArrs
-//            ])
-//        );
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'match_companys_ying_shou_gui_mo_map  '=>$siJiFenLeiArrs
+            ])
+        );
+
         $totalMin = 0;
         $totalMax = 0;
         $yingShouGUiMoMap = XinDongService::getYingShouGuiMoMapV2();
         foreach ($siJiFenLeiArrs as $tmpSiJiFenLei){
             $totalMin += $yingShouGUiMoMap[$tmpSiJiFenLei]['min'];
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    'cal_total_min_$tmpSiJiFenLei  '=>$tmpSiJiFenLei,
-//                    'cal_total_min_value' => $yingShouGUiMoMap[$tmpSiJiFenLei]['min'],
-//                ])
-//            );
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'cal_total_min_$tmpSiJiFenLei  '=>$tmpSiJiFenLei,
+                    'cal_total_min_value' => $yingShouGUiMoMap[$tmpSiJiFenLei]['min'],
+                ])
+            );
             $totalMax += $yingShouGUiMoMap[$tmpSiJiFenLei]['max'];
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    'cal_total_max_$tmpSiJiFenLei  '=>$tmpSiJiFenLei,
-//                    'cal_total_max_value' => $yingShouGUiMoMap[$tmpSiJiFenLei]['max'],
-//                ])
-//            );
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'cal_total_max_$tmpSiJiFenLei  '=>$tmpSiJiFenLei,
+                    'cal_total_max_value' => $yingShouGUiMoMap[$tmpSiJiFenLei]['max'],
+                ])
+            );
         }
 
         $rate1 = $yingShouGUiMoMap[$ying_shou_gui_mo]['min']/$totalMin;
         $rate2 = $yingShouGUiMoMap[$ying_shou_gui_mo]['max']/$totalMax;
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                'market_share_$rate1  '=>[
-//                    '$rate1'=>$rate1,
-//                    'fenzi'=>$yingShouGUiMoMap[$ying_shou_gui_mo]['min'],
-//                    'fenmu'=>$totalMin,
-//                ],
-//                'market_share_$rate2  '=>[
-//                    '$rate1'=>$rate2,
-//                    'fenzi'=>$yingShouGUiMoMap[$ying_shou_gui_mo]['max'],
-//                    'fenmu'=>$totalMax,
-//                ],
-//            ])
-//        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'market_share_$rate1  '=>[
+                    '$rate1'=>$rate1,
+                    'fenzi'=>$yingShouGUiMoMap[$ying_shou_gui_mo]['min'],
+                    'fenmu'=>$totalMin,
+                ],
+                'market_share_$rate2  '=>[
+                    '$rate1'=>$rate2,
+                    'fenzi'=>$yingShouGUiMoMap[$ying_shou_gui_mo]['max'],
+                    'fenmu'=>$totalMax,
+                ],
+            ])
+        );
        $n1 =  number_format($rate1,2)*100;
        $n2 =  number_format($rate2,2)*100;
         return  [
