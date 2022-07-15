@@ -111,12 +111,15 @@ class RunCompleteCompanyData extends AbstractCronTask
         $startMemory = memory_get_usage();
         $start = microtime(true);
 
+        // while循环执行的次数
         $nums = 1;
+        //去取上一次es结果的id
         $lastId = 0;
-        $size = 10;
+        //每次从es取多少数据
+        $size = 1000;
 
         //最多执行次数
-        $maxRunNums =  10;
+        $maxRunNums =  100;
         while ($nums <= $maxRunNums ) {
 
             $companyEsModel = new \App\ElasticSearch\Model\Company();
@@ -144,7 +147,17 @@ class RunCompleteCompanyData extends AbstractCronTask
                     'total value' => $companyEsModel->return_data['hits']['total']['value']
                 ])
             );
-
+            if( $companyEsModel->return_data['hits']['total']['value']<= 0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
+                        'generate data  done . costs seconds '=>microtime(true) - $start,
+                        '$nums' => $nums,
+                    ])
+                );
+                return ;
+            }
             $nums ++;
             foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
                 $lastId = $dataItem['_id'];
@@ -152,11 +165,6 @@ class RunCompleteCompanyData extends AbstractCronTask
                     $dataItem['_source']['ying_shou_gui_mo']
                 ];
             }
-
-
-//            yield $datas[] = [
-//                'XXX'
-//            ];
         }
     }
 
