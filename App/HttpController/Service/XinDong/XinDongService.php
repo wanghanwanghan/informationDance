@@ -3256,7 +3256,7 @@ class XinDongService extends ServiceBase
 
         $datas = [];
 
-        $size = 9000;
+        $size = 100;
 
         $nums = 0;
         $lastId = 0;
@@ -3270,16 +3270,15 @@ class XinDongService extends ServiceBase
                 ->addSize($size)
                 ->setSource($fieldsArr) ;
 
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$lastId' => $lastId,
+                ])
+            );
             if($lastId){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        '$lastId' => $lastId,
-                    ])
-                );
                 $companyEsModel ->addSearchAfterV1($lastId) ;
             }
-
             $companyEsModel  ->searchFromEs();
 
             $totalNums = $companyEsModel->return_data['hits']['total']['value'];
@@ -3291,17 +3290,23 @@ class XinDongService extends ServiceBase
             );
             if($totalNums <= 0 ){
                $flag = false;
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        '$flag' => $flag,
-                    ])
-                );
             }
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$flag' => $flag,
+                ])
+            );
 
             foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
                 $nums ++;
                 $lastId = $dataItem['_id'];
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '$lastId' => $lastId,
+                    ])
+                );
                 if($dataItem['_source']['ying_shou_gui_mo'] ){
                     yield $datas[] = [
                         'ying_shou_gui_mo' => $dataItem['_source']['ying_shou_gui_mo']
