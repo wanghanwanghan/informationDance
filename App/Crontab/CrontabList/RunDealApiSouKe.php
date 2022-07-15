@@ -426,8 +426,8 @@ class RunDealApiSouKe extends AbstractCronTask
 
         //上一次es结果的id
         $lastId = 0;
-        //每次从es取多少数据
-        $size = 8000;
+        //每次从es取多少数据 注意  一次取太多， 有时候没法返回 不能取太多
+        $size = 3500;
         //es数据foreach次数
         $loopNums = 0;
 
