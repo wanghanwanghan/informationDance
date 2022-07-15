@@ -258,6 +258,7 @@ class RunDealApiSouKe extends AbstractCronTask
                 ->SetQueryByWeb($searchOption)
                 //必须存在APP
                 ->SetQueryByApp($searchOption)
+                ->addSort('_id',"asc")
                 //必须是物流企业
                 ->SetQueryByWuLiuQiYe($searchOption)
                 // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索
