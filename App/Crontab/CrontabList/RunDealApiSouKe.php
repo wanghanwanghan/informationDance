@@ -358,6 +358,16 @@ class RunDealApiSouKe extends AbstractCronTask
         );
     }
 
+    static function  testYield(){
+
+        $nums = 1;
+        while ($nums <= 100) {
+            yield $datas[] = [
+                'XXX'
+            ];
+        }
+    }
+
     static function getYieldEsData($siji){
         $startMemory = memory_get_usage();
         $start = microtime(true);

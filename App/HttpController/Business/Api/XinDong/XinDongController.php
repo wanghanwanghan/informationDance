@@ -3319,13 +3319,13 @@ eof;
             $this->getRequestData('getAllBySiji')
         ){
 
-            $allSijiFenLeis = RunDealApiSouKe::getYieldEsData(
-                $this->getRequestData('getAllBySiji')
+            $allSijiFenLeis = RunDealApiSouKe::testYield(
+               // $this->getRequestData('getAllBySiji')
             );
             $testItem = [];
             foreach ($allSijiFenLeis as $datItem){
                 $testItem[] = $datItem;
-                break;
+                //break;
             }
             return $this->writeJson(
                 200,
