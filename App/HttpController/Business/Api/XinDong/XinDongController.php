@@ -3319,8 +3319,9 @@ eof;
             $this->getRequestData('getAllBySiji')
         ){
 
-            $allSijiFenLeis = XinDongService::getYieldDataBySijiFenLei(
-                $this->getRequestData('getAllBySiji')
+            $allSijiFenLeis = XinDongService::getYieldDataBySiJi(
+                $this->getRequestData('getAllBySiji'),
+                50000
             );
             $testItem = [];
             foreach ($allSijiFenLeis as $datItem){

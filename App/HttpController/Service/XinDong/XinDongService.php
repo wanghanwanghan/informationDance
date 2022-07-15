@@ -3250,69 +3250,61 @@ class XinDongService extends ServiceBase
             'min' => $n1.'%', 'max' => $n2.'%',
         ];
     }
-    static function getYieldDataBySijiFenLei($tmpSiji,$fieldsArr = ["ying_shou_gui_mo","si_ji_fen_lei_code","xd_id"]){
+
+    static function getYieldDataBySiJi($tmpSiji,$totalNums = 500000 ,$fieldsArr = ["ying_shou_gui_mo","si_ji_fen_lei_code"]){
+
         $startMemory = memory_get_usage();
         $start = microtime(true);
 
         $datas = [];
 
-        $size = 100;
-
-        $nums = 0;
+        $size = 5000;
+        $offset = 0;
+        $nums =1;
         $lastId = 0;
+        while ($totalNums > 0) {
+            if( $totalNums<$size ){
+                $size = $totalNums;
+            }
 
-        $flag = true ;
-
-        while ($flag ) {
             $companyEsModel = new \App\ElasticSearch\Model\Company();
             $companyEsModel
+                //经营范围
                 ->SetQueryBySiJiFenLei($tmpSiji)
                 ->addSize($size)
-                ->setSource($fieldsArr) ;
+                ->setSource($fieldsArr)  ;
 
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$lastId' => $lastId,
-                ])
-            );
-            if($lastId){
-                $companyEsModel ->addSearchAfterV1($lastId) ;
+            if($lastId>0){
+                $companyEsModel->addSearchAfterV1($lastId);
             }
-            $companyEsModel  ->searchFromEs();
-
-            $totalNums = $companyEsModel->return_data['hits']['total']['value'];
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$totalNums' => $totalNums,
-                ])
-            );
-            if($totalNums <= 0 ){
-               $flag = false;
-            }
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$flag' => $flag,
-                ])
-            );
+            // 格式化下日期和时间
+            $companyEsModel
+                ->searchFromEs() ;
 
             foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-                $nums ++;
                 $lastId = $dataItem['_id'];
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        '$lastId' => $lastId,
-                    ])
-                );
-                if($dataItem['_source']['ying_shou_gui_mo'] ){
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        '$lastId' => $lastId
+//                    ])
+//                );
+                $nums ++;
+
+
+                //if($dataItem['_source']['ying_shou_gui_mo'] ){
                     yield $datas[] = [
                         'ying_shou_gui_mo' => $dataItem['_source']['ying_shou_gui_mo']
                     ];
-                }
+                //}
             }
+
+            $totalNums -= $size;
+
+            if($companyEsModel->return_data['hits']['total']['value'] <= 0){
+                $totalNums = 0;
+            }
+
         }
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -3322,169 +3314,6 @@ class XinDongService extends ServiceBase
                 '$nums' => $nums,
             ])
         );
-    }
-    static  function  getMarjetShareV2($xd_id){
-        return '';
-        $companyEsModel = new \App\ElasticSearch\Model\Company();
-        $companyEsModel
-            //根据id查询
-            ->addMustTermQuery('xd_id',$xd_id)
-            ->addSize(1)
-            ->addFrom(0)
-            ->searchFromEs()
-            // 格式化下日期和时间
-            ->formatEsDate()
-            // 格式化下金额
-            ->formatEsMoney()
-        ;
-
-        //四级分类
-        $siJiFenLei = "";
-        $ying_shou_gui_mo = "";
-        foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-            $siJiFenLei = $dataItem['_source']['si_ji_fen_lei_code'];
-            $ying_shou_gui_mo = $dataItem['_source']['ying_shou_gui_mo'];
-        }
-
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'si_ji_fen_lei_code  '=>$siJiFenLei,
-                'ying_shou_gui_mo  '=>$ying_shou_gui_mo,
-
-            ])
-        );
-        if(empty($siJiFenLei)){
-            return  "";
-        }
-        if(empty($ying_shou_gui_mo)){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__LINE__=>'empty $ying_shou_gui_mo',
-                    '$ying_shou_gui_mo' => $ying_shou_gui_mo,
-                ])
-            );
-            return  "";
-        }
-        //三位以下的  企业太多了 不计算
-        if(strlen($siJiFenLei) <=3 ){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__LINE__=>'too shot  $ying_shou_gui_mo',
-                    '$ying_shou_gui_mo' => $ying_shou_gui_mo,
-                ])
-            );
-            return  "";
-        }
-
-        //取前四位
-        $tmpSiji = substr($siJiFenLei , 0 , 5) ;
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                'first_for_letter_of_si_ji_fen_lei_code  '=>$tmpSiji
-//            ])
-//        );
-        //所有满足的企业
-        $companyEsModel = new \App\ElasticSearch\Model\Company();
-        $companyEsModel
-            ->SetQueryBySiJiFenLei($tmpSiji)
-            ->addSize(1000)
-            ->addSort("_id","asc")
-            ->setSource(['ying_shou_gui_mo'])
-            ->searchFromEs()
-            // 格式化下日期和时间
-            // ->formatEsDate()
-
-            // 格式化下金额
-            //->formatEsMoney()
-        ;
-        //===========================
-        $siJiFenLeiArrs = [];
-        $nums = 0;
-        while (!empty($companyEsModel->return_data['hits']['hits'])) {
-            foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-                $lastId = $dataItem['_id'];
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        __CLASS__.__FUNCTION__ .__LINE__,
-//                        '$lastId' => $lastId
-//                    ])
-//                );
-
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        __CLASS__.__FUNCTION__ .__LINE__,
-//                        '$nums' => $nums
-//                    ])
-//                );
-                $dataItem['_source']['ying_shou_gui_mo'] && $siJiFenLeiArrs[] = $dataItem['_source']['ying_shou_gui_mo'];
-                $nums ++;
-
-            }
-
-            $companyEsModel = new \App\ElasticSearch\Model\Company();
-            $companyEsModel
-                ->SetQueryBySiJiFenLei($tmpSiji)
-                ->addSize(1000)
-                ->addSort("_id","asc")
-                ->setSource(['ying_shou_gui_mo'])
-                ->addSearchAfterV1($lastId)
-                ->searchFromEs()
-                // 格式化下日期和时间
-                //->formatEsDate()
-                // 格式化下金额
-                //->formatEsMoney()
-            ;
-        }
-
-        //===========================
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'match_companys_ying_shou_gui_mo_map_count  '=>count($siJiFenLeiArrs),
-                '$nums' => $nums,
-            ])
-        );
-
-        $totalMin = 0;
-        $totalMax = 0;
-        $yingShouGUiMoMap = XinDongService::getYingShouGuiMoMapV2();
-        foreach ($siJiFenLeiArrs as $tmpSiJiFenLei){
-            $totalMin += $yingShouGUiMoMap[$tmpSiJiFenLei]['min'];
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    'cal_total_min_$tmpSiJiFenLei  '=>$tmpSiJiFenLei,
-//                    'cal_total_min_value' => $yingShouGUiMoMap[$tmpSiJiFenLei]['min'],
-//                ])
-//            );
-            $totalMax += $yingShouGUiMoMap[$tmpSiJiFenLei]['max'];
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    'cal_total_max_$tmpSiJiFenLei  '=>$tmpSiJiFenLei,
-//                    'cal_total_max_value' => $yingShouGUiMoMap[$tmpSiJiFenLei]['max'],
-//                ])
-//            );
-        }
-
-        $rate1 = $yingShouGUiMoMap[$ying_shou_gui_mo]['min']/$totalMin;
-        $rate2 = $yingShouGUiMoMap[$ying_shou_gui_mo]['max']/$totalMax;
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'market_share_$rate1  '=>[
-                    '$rate1'=>$rate1,
-                    'fenzi'=>$yingShouGUiMoMap[$ying_shou_gui_mo]['min'],
-                    'fenmu'=>$totalMin,
-                ],
-                'market_share_$rate2  '=>[
-                    '$rate2'=>$rate2,
-                    'fenzi'=>$yingShouGUiMoMap[$ying_shou_gui_mo]['max'],
-                    'fenmu'=>$totalMax,
-                ],
-            ])
-        );
-        $n1 =  number_format($rate1,5)*100;
-        $n2 =  number_format($rate2,5)*100;
-        return  [
-            'min' => $n1.'%', 'max' => $n2.'%',
-        ];
     }
 
     // 破产重整排查 BankruptcyTs/GetList
