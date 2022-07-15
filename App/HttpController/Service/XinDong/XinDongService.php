@@ -3202,8 +3202,10 @@ class XinDongService extends ServiceBase
 //                ],
 //            ])
 //        );
+       $n1 =  number_format($rate1,2)*100;
+       $n2 =  number_format($rate2,2)*100;
         return  [
-            'min' => number_format($rate1,2), 'max' => number_format($rate2,2)
+            'min' => $n1.'%', 'max' => $n2.'%',
         ];
     }
 

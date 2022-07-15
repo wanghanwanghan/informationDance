@@ -287,7 +287,6 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             [TEMP_FILE_PATH . $res['filename']]
         );
 
-
         OperatorLog::addRecord(
             [
                 'user_id' => 0,
