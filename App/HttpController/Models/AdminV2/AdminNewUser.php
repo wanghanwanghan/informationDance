@@ -142,11 +142,19 @@ class AdminNewUser extends ModelBase
                 'type_cname' => '账户金额变更',
             ]
         );
-        return $info->update([
-            'id' => $id,
-            'money' => $money
-        ]);
+        return $res;
     }
+
+    public static function updateMoney2($id,$money){
+        $info = AdminNewUser::findById($id);
+        $userData = $info->toArray();
+        $res =  $info->update([
+            'id' => $id,
+            'money2' => $money
+        ]);
+        return $res;
+    }
+
     static  function  addRecordV2($info){
 
         if(

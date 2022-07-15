@@ -3331,6 +3331,8 @@ eof;
                     )
                 );
 
+                \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney2(1,1);
+
                 OperatorLog::addRecord(
                     [
                         'user_id' => 1,
