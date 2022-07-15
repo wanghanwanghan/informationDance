@@ -3321,7 +3321,7 @@ eof;
 
             $allSijiFenLeis = RunDealApiSouKe::getYieldDataBySiJi(
                 $this->getRequestData('getAllBySiji'),
-                1000000
+                20000
             );
             $testItem = [];
             foreach ($allSijiFenLeis as $datItem){
