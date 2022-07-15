@@ -3258,9 +3258,9 @@ class XinDongService extends ServiceBase
 
         $datas = [];
 
-        $size = 5000;
-        $offset = 0;
+        $size = 5000; 
         $nums =1;
+        $nums2 =1;
         $lastId = 0;
         while ($totalNums > 0) {
             if( $totalNums<$size ){
@@ -3272,7 +3272,8 @@ class XinDongService extends ServiceBase
                 //经营范围
                 ->SetQueryBySiJiFenLei($tmpSiji)
                 ->addSize($size)
-                ->setSource($fieldsArr)  ;
+                //->setSource($fieldsArr)
+            ;
 
             if($lastId>0){
                 $companyEsModel->addSearchAfterV1($lastId);
@@ -3283,12 +3284,12 @@ class XinDongService extends ServiceBase
 
             foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
                 $lastId = $dataItem['_id'];
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        __CLASS__.__FUNCTION__ .__LINE__,
-//                        '$lastId' => $lastId
-//                    ])
-//                );
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '$lastId' => $lastId
+                    ])
+                );
                 $nums ++;
 
 
@@ -3300,11 +3301,18 @@ class XinDongService extends ServiceBase
             }
 
             $totalNums -= $size;
-
+            $nums2 ++ ;
             if($companyEsModel->return_data['hits']['total']['value'] <= 0){
                 $totalNums = 0;
             }
-
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$totalNums' => $totalNums,
+                    '$nums1'=>$nums1,
+                    '$nums2'=>$nums2,
+                ])
+            );
         }
         CommonService::getInstance()->log4PHP(
             json_encode([

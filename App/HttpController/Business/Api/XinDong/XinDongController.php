@@ -3321,7 +3321,7 @@ eof;
 
             $allSijiFenLeis = XinDongService::getYieldDataBySiJi(
                 $this->getRequestData('getAllBySiji'),
-                50000
+                500000
             );
             $testItem = [];
             foreach ($allSijiFenLeis as $datItem){
