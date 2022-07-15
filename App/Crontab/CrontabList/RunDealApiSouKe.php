@@ -362,6 +362,7 @@ class RunDealApiSouKe extends AbstractCronTask
         $nums =1;
         $nums2 =1;
         $lastId = 0;
+        $datas = [];
         $loopnums= ceil($totalNums/$size);
         for ($i=1;$i<=$loopnums;$i++){
             CommonService::getInstance()->log4PHP(
@@ -370,9 +371,47 @@ class RunDealApiSouKe extends AbstractCronTask
                     '$i' => $i
                 ])
             );
+            $companyEsModel = new \App\ElasticSearch\Model\Company();
+            $companyEsModel
+                //经营范围
+                ->SetQueryBySiJiFenLei($tmpSiji)
+                //->addSort('_id','asc')
+                ->addSize($size)
+                //->setSource($fieldsArr)
+            ;
+
+            if($lastId>0){
+                $companyEsModel->addSearchAfterV1($lastId);
+            }
+            // 格式化下日期和时间
+            $companyEsModel
+                ->searchFromEs() ;
+            if($companyEsModel->return_data['hits']['total']['value'] <= 0){
+                break;
+            }
+            foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
+                $lastId = $dataItem['_id'];
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        '$lastId' => $lastId
+//                    ])
+//                );
+
+
+                $nums ++;
+                //if($dataItem['_source']['ying_shou_gui_mo'] ){
+                $datas[] = [
+                    'ying_shou_gui_mo' => $dataItem['_source']['ying_shou_gui_mo']
+                ];
+//                yield $datas[] = [
+//                    'ying_shou_gui_mo' => $dataItem['_source']['ying_shou_gui_mo']
+//                ];
+                //}
+            }
         }
 
-        return ;
+        return $datas;
         $startMemory = memory_get_usage();
         $start = microtime(true);
 
