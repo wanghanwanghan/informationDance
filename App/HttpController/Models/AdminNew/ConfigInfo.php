@@ -36,8 +36,11 @@ class ConfigInfo extends ModelBase
         $info = ConfigInfo::findByName('crontab');
         $config = $info->getAttr("value");
         $configArr = json_decode($config,true);
-                
-        return  $configArr[$crontabName]['is_running']?false:true;
+        if(isset($configArr[$crontabName])){
+            return  $configArr[$crontabName]['is_running']?false:true;
+        } else{
+            return  true;
+        } 
     }
 
     public static function setIsRunning($crontabName){
