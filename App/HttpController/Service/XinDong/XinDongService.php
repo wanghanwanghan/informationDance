@@ -3258,7 +3258,7 @@ class XinDongService extends ServiceBase
 
         $datas = [];
 
-        $size = 5000; 
+        $size = 5;
         $nums =1;
         $nums2 =1;
         $lastId = 0;
@@ -3290,6 +3290,8 @@ class XinDongService extends ServiceBase
                         '$lastId' => $lastId
                     ])
                 );
+
+
                 $nums ++;
 
 
@@ -3309,7 +3311,7 @@ class XinDongService extends ServiceBase
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     '$totalNums' => $totalNums,
-                    '$nums1'=>$nums1,
+                    '$nums1'=>$nums,
                     '$nums2'=>$nums2,
                 ])
             );

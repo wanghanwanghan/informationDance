@@ -3321,12 +3321,12 @@ eof;
 
             $allSijiFenLeis = XinDongService::getYieldDataBySiJi(
                 $this->getRequestData('getAllBySiji'),
-                500000
+                100
             );
             $testItem = [];
             foreach ($allSijiFenLeis as $datItem){
-                $testItem = $datItem;
-                break;
+                $testItem[] = $datItem;
+                //break;
             }
             return $this->writeJson(
                 200,
