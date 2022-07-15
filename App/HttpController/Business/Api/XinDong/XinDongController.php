@@ -3326,7 +3326,7 @@ eof;
             $testItem = [];
             foreach ($allSijiFenLeis as $datItem){
                 $testItem[] = $datItem;
-                //break;
+                break;
             }
             return $this->writeJson(
                 200,
