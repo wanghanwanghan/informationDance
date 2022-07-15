@@ -377,7 +377,7 @@ class RunDealApiSouKe extends AbstractCronTask
             $companyEsModel
                 //经营范围
                 ->SetQueryBySiJiFenLei($tmpSiji)
-                ->addSort('_id','asc')
+                //->addSort('_id','asc')
                 ->addSize($size)
                 //->setSource($fieldsArr)
             ;
