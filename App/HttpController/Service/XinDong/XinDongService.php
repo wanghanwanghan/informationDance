@@ -3257,37 +3257,39 @@ class XinDongService extends ServiceBase
         $datas = [];
 
         $size = 9000;
+
         $nums = 0;
         $lastId = 0;
 
+        $flag = true ;
 
-        $companyEsModel = new \App\ElasticSearch\Model\Company();
-        $companyEsModel
-            ->SetQueryBySiJiFenLei($tmpSiji)
-            ->addSize($size)
-            ->setSource($fieldsArr)
-            ->searchFromEs();
+        while ($flag ) {
+            $companyEsModel = new \App\ElasticSearch\Model\Company();
+            $companyEsModel
+                ->SetQueryBySiJiFenLei($tmpSiji)
+                ->addSize($size)
+                ->setSource($fieldsArr) ;
 
-        $totalNums = $companyEsModel->return_data['hits']['total']['value'];
-        while ($totalNums > 0) {
+            if($lastId){
+                $companyEsModel ->addSearchAfterV1($lastId) ;
+            }
+
+            $companyEsModel  ->searchFromEs();
+
+            $totalNums = $companyEsModel->return_data['hits']['total']['value'];
+            if($totalNums <= 0 ){
+               $flag = false;
+            }
+
             foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
+                $nums ++;
                 $lastId = $dataItem['_id'];
                 if($dataItem['_source']['ying_shou_gui_mo'] ){
                     yield $datas[] = [
                         'ying_shou_gui_mo' => $dataItem['_source']['ying_shou_gui_mo']
                     ];
                 }
-                $nums ++;
-            }
-
-            $companyEsModel = new \App\ElasticSearch\Model\Company();
-            $companyEsModel
-                ->SetQueryBySiJiFenLei($tmpSiji)
-                ->addSize($size)
-                ->setSource($fieldsArr)
-                ->addSearchAfterV1($lastId)
-                ->searchFromEs();
-            $totalNums  = $companyEsModel->return_data['hits']['total']['value'];
+            } 
         }
         CommonService::getInstance()->log4PHP(
             json_encode([
