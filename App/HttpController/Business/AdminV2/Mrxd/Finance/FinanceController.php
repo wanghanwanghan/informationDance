@@ -989,7 +989,205 @@ class FinanceController extends ControllerBase
             }
         }
 
-       // 需要付费
+        try {
+
+            DbManager::getInstance()->startTransaction('mrxd');
+
+            //========================
+            // 需要付费
+            $price = 0;
+            if(
+                $uploadRes['money'] > 0 &&
+                !$chargeBefore
+            ){
+                $price = $uploadRes['money'];
+                //扣余额
+                $updateMoneyRes = \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney(
+                    $uploadRes['user_id'],
+                    \App\HttpController\Models\AdminV2\AdminNewUser::aesEncode(
+                        \App\HttpController\Models\AdminV2\AdminNewUser::getAccountBalance(
+                            $uploadRes['user_id']
+                        ) - $uploadRes['money']
+                    )
+                );
+
+                $addFinanceLogRes = FinanceLog::addRecordV2(
+                    [
+                        'detailId' => $uploadRes['id'],
+                        'detail_table' => 'admin_user_finance_upload_record',
+                        'price' => $uploadRes['money'],
+                        'userId' => $uploadRes['user_id'],
+                        'type' =>  FinanceLog::$chargeTytpeFinance,
+                        'batch' => $batchNum,
+                        'title' => '导出内容数据扣费',
+                        'detail' => '',
+                        'reamrk' => '',
+                        'status' => 1,
+                    ]
+                );
+
+                //设置收费时间|本名单的
+                $setChargeDateRes = AdminUserFinanceUploadRecord::updateLastChargeDate($uploadRes['id'],date('Y-m-d H:i:s'));
+
+
+                //设置具体的收费记录
+                $financeDatas = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordIdV3(
+                    $uploadRes['user_id'],$uploadRes['id']
+                );
+                foreach($financeDatas as $financeData){
+                    $AdminUserFinanceUploadDataRecord = AdminUserFinanceUploadDataRecord::findById(
+                        $financeData['AdminUserFinanceUploadDataRecord']['id']
+                    )->toArray();
+
+                    if(  $AdminUserFinanceUploadDataRecord['real_price'] <= 0){
+                        continue;
+                    }
+                    if(  $chargeBefore){
+                        continue;
+                    }
+
+                    //设置收费记录
+                    $addChargeInfoRes  = AdminUserFinanceChargeInfo::addRecordV2(
+                        [
+                            'user_id' => $AdminUserFinanceUploadDataRecord['user_id'],
+                            'batch' => $batchNum.'_'.$AdminUserFinanceUploadDataRecord['id'],
+                            'entName' => $financeData['AdminUserFinanceData']['entName'],
+                            'start_year' => $AdminUserFinanceUploadDataRecord['charge_year_start'],
+                            'end_year' => $AdminUserFinanceUploadDataRecord['charge_year_end'],
+                            'year' => $AdminUserFinanceUploadDataRecord['charge_year'],
+                            'price' => $AdminUserFinanceUploadDataRecord['real_price'],
+                            'price_type' => $AdminUserFinanceUploadDataRecord['price_type'],
+                            'status' => AdminUserFinanceChargeInfo::$state_init,
+                        ]
+                    );
+                    if(
+                        !$updateMoneyRes ||
+                        !$addFinanceLogRes ||
+                        !$setChargeDateRes ||
+                        !$addChargeInfoRes
+                    ){
+                        DbManager::getInstance()->rollback('mrxd');
+                        OperatorLog::addRecord(
+                            [
+                                'user_id' => $uploadRes['user_id'],
+                                'msg' => "用户".$uploadRes['user_id']."操作导出客户名单(".$uploadRes['id'].') 具体结果：$updateMoneyRes:'.$updateMoneyRes.' $addFinanceLogRes:'.$addFinanceLogRes.' $setChargeDateRes:'.$setChargeDateRes. ' $addChargeInfoRes:'.$addChargeInfoRes.'('.$AdminUserFinanceUploadDataRecord['id'].')',
+                                'details' =>json_encode( XinDongService::trace()),
+                                'type_cname' => '【失败】导出财务名单扣费',
+                            ]
+                        );
+                        return $this->writeJson(201,[],[],'收费失败，请联系管理员');
+                    }
+                }
+
+               OperatorLog::addRecord(
+                    [
+                        'user_id' => $uploadRes['user_id'],
+                        'msg' => "用户".$uploadRes['user_id']."操作导出客户名单(".$uploadRes['id'].")，实际扣费".$uploadRes['money'],
+                        'details' =>json_encode( XinDongService::trace()),
+                        'type_cname' => '【成功】导出财务名单扣费成功',
+                    ]
+                );
+            }
+
+            //添加到下载队列
+            $addExportQueueRes = AdminUserFinanceExportDataQueue::addRecordV2(
+                [
+                    'batch' => $batchNum,
+                    'user_id' => $this->loginUserinfo['id'],
+                    'upload_record_id' => $requestData['id'],
+                    'real_charge' =>$price ,
+                    'status' => AdminUserFinanceExportDataQueue::$state_init
+                ]
+            );
+            if(
+                !$addExportQueueRes
+            ){
+                DbManager::getInstance()->rollback('mrxd');
+                OperatorLog::addRecord(
+                    [
+                        'user_id' => $uploadRes['user_id'],
+                        'msg' => "用户".$uploadRes['user_id']."操作导出客户名单(".$uploadRes['id'].') 具体结果：$addExportQueueRes:'.$addExportQueueRes,
+                        'details' =>json_encode( XinDongService::trace()),
+                        'type_cname' => '【失败】导出财务名单扣费',
+                    ]
+                );
+                return $this->writeJson(201,[],[],'添加到下载队列，请联系管理员');
+            }
+
+
+            //=========================
+
+            DbManager::getInstance()->commit('mrxd');
+
+        }catch (\Throwable $e) {
+            DbManager::getInstance()->rollback('mrxd');
+            OperatorLog::addRecord(
+                [
+                    'user_id' => $uploadRes['user_id'],
+                    'msg' => "用户".$uploadRes['user_id']."操作导出客户名单(".$uploadRes['id'].") 错误信息：".json_encode($e->getMessage()),
+                    'details' =>json_encode( XinDongService::trace()),
+                    'type_cname' => '【失败】导出财务名单',
+                ]
+            );
+        }
+
+        ConfigInfo::removeRedisNx('exportFinanceData2');
+        return $this->writeJson(200,[],[],'已发起下载，请稍后去【内容记录】中查看');
+    }
+    function exportFinanceDatabak()
+    {
+        if(
+            !ConfigInfo::setRedisNx('exportFinanceData2',5)
+        ){
+            return $this->writeJson(201, null, [],  '请勿重复提交');
+        }
+
+        $requestData =  $this->getRequestData();
+        if(
+            $requestData['id'] <= 0
+        ){
+            ConfigInfo::removeRedisNx('exportFinanceData2');
+            return $this->writeJson(201, null, [ ],'参数缺失');
+        }
+
+        //上传记录
+        $uploadRes = AdminUserFinanceUploadRecord::findById($requestData['id'])->toArray();
+
+        //只有缓存期内才可以下载
+        if(
+            !AdminUserFinanceUploadRecord::ifCanDownload($uploadRes['id'])
+        ){
+            ConfigInfo::removeRedisNx('exportFinanceData2');
+            return $this->writeJson(201, null, [],'时间过长，请重新上传');
+        }
+
+        //检查是否是可以下载的状态状态
+        if(
+            !AdminUserFinanceUploadRecord::checkByStatus(
+                $uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateAllSet
+            )
+        ){
+            ConfigInfo::removeRedisNx('exportFinanceData2');
+            return $this->writeJson(201, null, [],  '当前状态不允许导出 请稍等');
+        }
+        $batchNum = 'CWDC'.date('YmdHis');
+
+        //本名单之前是否扣费过
+        $chargeBefore = AdminUserFinanceUploadRecord::ifHasChargeBefore($uploadRes['id']);
+
+        //检查余额是否充足
+        if(!$chargeBefore){
+            //检查余额
+            $checkAccountBalanceRes = \App\HttpController\Models\AdminV2\AdminNewUser::checkAccountBalance(
+                $uploadRes['user_id'],
+                $uploadRes['money']
+            );
+            if(!$checkAccountBalanceRes){
+                return $this->writeJson(201, null, [],  '余额不足 请充值');
+            }
+        }
+
+        // 需要付费
         $price = 0;
         if(
             $uploadRes['money'] > 0 &&
