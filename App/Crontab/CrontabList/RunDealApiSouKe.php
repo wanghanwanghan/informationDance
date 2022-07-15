@@ -362,6 +362,7 @@ class RunDealApiSouKe extends AbstractCronTask
 
         $nums = 1;
         while ($nums <= 100) {
+            $nums ++;
             yield $datas[] = [
                 'XXX'
             ];
