@@ -3319,7 +3319,7 @@ eof;
             $this->getRequestData('getAllBySiji')
         ){
 
-            $allSijiFenLeis = XinDongService::getYieldDataBySiJi(
+            $allSijiFenLeis = RunDealApiSouKe::getYieldDataBySiJi(
                 $this->getRequestData('getAllBySiji'),
                 100
             );
