@@ -3324,10 +3324,10 @@ eof;
                 $this->getRequestData('getAllBySiji')
             );
             $testItem = [];
-            foreach ($allSijiFenLeis as $datItem){
-                $testItem[] = $datItem;
-                break;
-            }
+//            foreach ($allSijiFenLeis as $datItem){
+//                $testItem[] = $datItem;
+//                break;
+//            }
             return $this->writeJson(
                 200,
                 [ ] ,$testItem
