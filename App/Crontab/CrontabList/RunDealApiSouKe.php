@@ -357,6 +357,61 @@ class RunDealApiSouKe extends AbstractCronTask
         );
     }
 
+    static function getYieldEsData($siji){
+        $startMemory = memory_get_usage();
+        $start = microtime(true);
+        $datas = [];
+        $i = 1;
+        $size = 5000;
+        $lastId = 0;
+        while (true) {
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$i' => $i
+                ])
+            );
+            $i ++ ;
+
+            $companyEsModel = new \App\ElasticSearch\Model\Company();
+            $companyEsModel
+                //经营范围
+                ->SetQueryBySiJiFenLei($siji)
+                ->addSize($size)
+                ->addSort('_id',"asc")
+                //->setSource($fieldsArr)
+            ;
+
+            if($lastId>0){
+                $companyEsModel->addSearchAfterV1($lastId);
+            }
+
+            $companyEsModel
+                ->searchFromEs() ;
+
+            if (empty($companyEsModel->return_data['hits']['hits'])) {
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
+                        'generate data  done . costs seconds '=>microtime(true) - $start,
+                        '$nums' => $nums,
+                    ])
+                );
+                break;
+            }
+
+            foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
+                $lastId = $dataItem['_id'];
+                $nums ++;
+                //if($dataItem['_source']['ying_shou_gui_mo'] ){
+                yield $datas[] = [
+                    'ying_shou_gui_mo' => $dataItem['_source']['ying_shou_gui_mo']
+                ];
+                }
+            }
+    }
+
     static function getYieldDataBySiJi($tmpSiji,$totalNums = 500000 ,$fieldsArr = ["ying_shou_gui_mo","si_ji_fen_lei_code"]){
         $startMemory = memory_get_usage();
         $start = microtime(true);
@@ -404,12 +459,12 @@ class RunDealApiSouKe extends AbstractCronTask
 
                 $nums ++;
                 //if($dataItem['_source']['ying_shou_gui_mo'] ){
-//                $datas[] = [
-//                    'ying_shou_gui_mo' => $dataItem['_source']['ying_shou_gui_mo']
-//                ];
-                yield $datas[] = [
+                $datas[] = [
                     'ying_shou_gui_mo' => $dataItem['_source']['ying_shou_gui_mo']
                 ];
+//                yield $datas[] = [
+//                    'ying_shou_gui_mo' => $dataItem['_source']['ying_shou_gui_mo']
+//                ];
                 //}
             }
         }
