@@ -377,6 +377,7 @@ class RunDealApiSouKe extends AbstractCronTask
                 ->SetQueryBySiJiFenLei($tmpSiji)
                 //->addSort('_id','asc')
                 ->addSize($size)
+                ->addSort('_id',"asc")
                 //->setSource($fieldsArr)
             ;
 
