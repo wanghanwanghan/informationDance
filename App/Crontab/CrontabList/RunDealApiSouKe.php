@@ -363,8 +363,9 @@ class RunDealApiSouKe extends AbstractCronTask
         $start = microtime(true);
         $datas = [];
         $i = 1;
-        $size = 100;
+        $size = 10;
         $lastId = 0;
+        $nums = 0;
         while (true) {
             CommonService::getInstance()->log4PHP(
                 json_encode([
@@ -384,6 +385,12 @@ class RunDealApiSouKe extends AbstractCronTask
             ;
 
             if($lastId>0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '$lastId 》 0' => $lastId
+                    ])
+                );
                 $companyEsModel->addSearchAfterV1($lastId);
             }
 
@@ -409,8 +416,8 @@ class RunDealApiSouKe extends AbstractCronTask
                 yield $datas[] = [
                     'ying_shou_gui_mo' => $dataItem['_source']['ying_shou_gui_mo']
                 ];
-                }
             }
+        }
     }
 
     static function getYieldDataBySiJi($tmpSiji,$totalNums = 500000 ,$fieldsArr = ["ying_shou_gui_mo","si_ji_fen_lei_code"]){
