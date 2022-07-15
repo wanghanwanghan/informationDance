@@ -233,7 +233,7 @@ class RunDealApiSouKe extends AbstractCronTask
 //            ])
 //        );
 
-        $size = 5000;
+        $size = 3500;
         $offset = 0;
         $nums =1;
         $lastId = 0;
@@ -358,68 +358,6 @@ class RunDealApiSouKe extends AbstractCronTask
         );
     }
 
-
-    static function  getYieldDataBySiJi($tmpSiji,$fieldsArr = ["ying_shou_gui_mo","si_ji_fen_lei_code"]){
-        $startMemory = memory_get_usage();
-        $start = microtime(true);
-
-        // while循环执行的次数
-        $nums = 1;
-        //去取上一次es结果的id
-        $lastId = 0;
-        //每次从es取多少数据
-        $size = 3000;
-        $loopNums = 0;
-        //最多执行次数
-        $maxRunNums =  5000;
-        while ($nums <= $maxRunNums ) {
-             //sleep(0.1);
-            $companyEsModel = new \App\ElasticSearch\Model\Company();
-            $companyEsModel
-                //经营范围
-                ->SetQueryBySiJiFenLei($tmpSiji)
-                ->addSize($size)
-                ->addSort('_id',"asc")
-                ->setSource($fieldsArr)
-            ;
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$lastId' => $lastId
-                ])
-            );
-            if($lastId>0){
-                $companyEsModel->addSearchAfterV1($lastId);
-            }
-            $companyEsModel
-                ->searchFromEs() ;
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'total value' => $companyEsModel->return_data['hits']['total']['value'],
-                    '$loopNums'=>$loopNums,
-                ])
-            );
-            if( empty($companyEsModel->return_data['hits']['hits'])){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        'while$nums' => $nums,
-                        '$loopNums'=>$loopNums,
-                    ])
-                );
-                return ;
-            }
-            $nums ++;
-            foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-                $lastId = $dataItem['_id'];
-                $loopNums ++;
-                yield $datas[] = [
-                    $dataItem['_source']['ying_shou_gui_mo']
-                ];
-            }
-        }
-    }
     static function  getYieldDataBySiJiV2($tmpSiji,$fieldsArr = ["ying_shou_gui_mo","si_ji_fen_lei_code"]){
         // while循环执行的次数
         $nums = 1;
