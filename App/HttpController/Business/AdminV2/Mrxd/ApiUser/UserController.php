@@ -62,6 +62,7 @@ class UserController extends ControllerBase
     function getUserApi()
     {
         $id = $this->getRequestData('id');
+
         $res = RequestUserApiRelationship::create()->alias('t1')
             ->join('information_dance_request_api_info as t2', 't1.apiId = t2.id', 'left')
             ->field([
@@ -76,25 +77,11 @@ class UserController extends ControllerBase
     /**
      * 获取用户列表
      */
-    public function getUserList()
+    function getUserList()
     {
-        $resList = RequestUserInfo::create()->all();
-        $data = [];
-        foreach ($resList as $item) {
-            $data[] = [
-                'id' => $item->getAttr('id'),
-                'username' => $item->getAttr('username'),
-                'appId' => $item->getAttr('appId'),
-                'appSecret' => $item->getAttr('appSecret'),
-                'rsaPub' => $item->getAttr('rsaPub'),
-                'rsaPri' => $item->getAttr('rsaPri'),
-                'allowIp' => $item->getAttr('allowIp'),
-                'money' => $item->getAttr('money'),
-                'status' => $item->getAttr('status'),
-                'roles' => $item->getAttr('roles'),
-            ];
-        }
-        return $this->writeJson(200, '', $data, '成功');
+        $userInfo = RequestUserInfo::create()->order('created_at', 'desc')->all();
+
+        return $this->writeJson(200, null, $userInfo);
     }
 
     /**
@@ -151,35 +138,33 @@ class UserController extends ControllerBase
      */
     function editUserApi()
     {
-        //return $this->writeJson(200, null, []);
-
         $uid = $this->getRequestData('uid');
         $apiInfo = $this->getRequestData('apiInfo');
+
         if (empty($uid)) return $this->writeJson(201);
-        //先将这个用户的所有接口改为不可用
+
         RequestUserApiRelationship::create()->where('userId', $uid)->update([
             'status' => 0
         ]);
-        //再将可用的接口改为可用
+
         foreach ($apiInfo as $one) {
             $check = RequestUserApiRelationship::create()->where('userId', $uid)->where('apiId', $one['id'])->get();
+
             if (empty($check)) {
                 RequestUserApiRelationship::create()->data([
                     'userId' => $uid,
                     'apiId' => $one['id'],
                     'price' => $one['price'] + 0.2,
-                    'billing_plan' => $one['billing_plan'],
-                    'cache_day' => $one['cache_day'],
-                    'kidTypes' => $one['kidTypes'],
-                    'year_price_detail' => $one['year_price_detail']
                 ])->save();
+
             } else {
                 $check->update([
                     'status' => 1
                 ]);
             }
         }
-        return $this->writeJson(200, null, []);
+
+        return $this->writeJson();
     }
 
     //修改用户使用接口价格
