@@ -143,7 +143,7 @@ class UserController extends ControllerBase
         }
         $info->update($update);
 
-        return $this->writeJson();
+        return  $this->writeJson(200, null, []);
     }
 
     /**
@@ -177,7 +177,7 @@ class UserController extends ControllerBase
                 ]);
             }
         }
-        return $this->writeJson();
+        return $this->writeJson(200, null, []);
     }
 
 }
