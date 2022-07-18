@@ -151,6 +151,8 @@ class UserController extends ControllerBase
      */
     function editUserApi()
     {
+        return $this->writeJson(200, null, []);
+
         $uid = $this->getRequestData('uid');
         $apiInfo = $this->getRequestData('apiInfo');
         if (empty($uid)) return $this->writeJson(201);
