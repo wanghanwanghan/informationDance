@@ -109,6 +109,8 @@ class PUserController extends UserBase
     //修改user和api的关系
     function editUserApi()
     {
+        return $this->writeJson(200, null, []);
+
         $uid = $this->getRequestData('uid');
         $apiInfo = $this->getRequestData('apiInfo');
 
