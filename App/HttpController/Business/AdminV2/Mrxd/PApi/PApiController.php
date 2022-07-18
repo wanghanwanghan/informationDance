@@ -116,8 +116,8 @@ class PApiController extends ControllerBase
             $infoAdmin->update($updateAdmin);
         }
         $info->update($update);
-
-        return $this->writeJson();
+            
+        return $this->writeJson(200,null,[]);
     }
 
 }

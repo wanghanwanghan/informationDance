@@ -40,7 +40,7 @@ class ConfigInfo extends ModelBase
             return  $configArr[$crontabName]['is_running']?false:true;
         } else{
             return  true;
-        } 
+        }
     }
 
     public static function setIsRunning($crontabName){
