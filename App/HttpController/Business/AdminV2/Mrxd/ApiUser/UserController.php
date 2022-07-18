@@ -182,4 +182,21 @@ class UserController extends ControllerBase
         return $this->writeJson(200, null, []);
     }
 
+    //修改用户使用接口价格
+    function editUserApiPrice()
+    {
+        $uid = $this->getRequestData('uid');
+        $aid = $this->getRequestData('aid');
+        $price = $this->getRequestData('price');
+
+        RequestUserApiRelationship::create()->where([
+            'userId' => $uid,
+            'apiId' => $aid,
+        ])->update([
+            'price' => sprintf('%3.f', $price)
+        ]);
+
+        return $this->writeJson();
+    }
+
 }

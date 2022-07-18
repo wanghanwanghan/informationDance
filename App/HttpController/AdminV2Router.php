@@ -192,6 +192,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/editApi', $prefix . 'editApi');
             $routeCollector->addRoute(['GET', 'POST'], '/editUserApi', $prefix . 'editUserApi');//
             $routeCollector->addRoute(['GET', 'POST'], '/getUserApi', $prefix . 'getUserApi');//
+            $routeCollector->addRoute(['GET', 'POST'], '/editUserApiPrice', $prefix . 'editUserApiPrice');//
             //
         });
 
