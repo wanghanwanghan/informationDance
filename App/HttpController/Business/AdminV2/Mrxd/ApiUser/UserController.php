@@ -62,7 +62,6 @@ class UserController extends ControllerBase
     function getUserApi()
     {
         $id = $this->getRequestData('id');
-
         $res = RequestUserApiRelationship::create()->alias('t1')
             ->join('information_dance_request_api_info as t2', 't1.apiId = t2.id', 'left')
             ->field([

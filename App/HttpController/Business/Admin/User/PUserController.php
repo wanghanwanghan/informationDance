@@ -122,20 +122,20 @@ class PUserController extends UserBase
             $check = RequestUserApiRelationship::create()->where('userId', $uid)->where('apiId', $one['id'])->get();
 
             if (empty($check)) {
-                RequestUserApiRelationship::create()->data([
+                $res = RequestUserApiRelationship::create()->data([
                     'userId' => $uid,
                     'apiId' => $one['id'],
                     'price' => $one['price'] + 0.2,
                 ])->save();
 
             } else {
-                $check->update([
+                $res =   $check->update([
                     'status' => 1
                 ]);
             }
         }
 
-        return $this->writeJson();
+        return $this->writeJson(200, null, $res);
     }
 
     //修改用户使用接口价格
@@ -145,14 +145,14 @@ class PUserController extends UserBase
         $aid = $this->getRequestData('aid');
         $price = $this->getRequestData('price');
 
-        RequestUserApiRelationship::create()->where([
+        $res = RequestUserApiRelationship::create()->where([
             'userId' => $uid,
             'apiId' => $aid,
         ])->update([
             'price' => sprintf('%3.f', $price)
         ]);
 
-        return $this->writeJson();
+        return $this->writeJson(200, null, $res);
     }
 
     //创建用户rsa密钥
@@ -177,6 +177,7 @@ class PUserController extends UserBase
                 'rsaPri' => $rsaInfo['pri'],
             ]);
         }
+
 
         return is_array($rsaInfo) ? $this->writeJson(200) : $this->writeJson(201);
     }
