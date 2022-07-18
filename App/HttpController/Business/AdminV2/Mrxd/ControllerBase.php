@@ -114,18 +114,21 @@ class ControllerBase extends Index
         } 
 
         $reqPhone = $this->request()->getRequestParam('phone') ?? '';
+        if(empty($reqPhone)){
+            $body = $this->request()->getBody()->__toString();
+            $body = jsonDecode($body);
+            $reqPhone = $body['phone'];
+        }
 
-        $body = $this->request()->getBody()->__toString();
-        $body = jsonDecode($body);;
         $tokenPhone = current($tokenInfo);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'check token 2  ',
-                '$reqPhone' => $reqPhone,
-                '$tokenPhone' => $tokenPhone,
-                '$body'=>$body['phone'],
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'check token 2  ',
+//                '$reqPhone' => $reqPhone,
+//                '$tokenPhone' => $tokenPhone,
+//                '$body'=>$body['phone'],
+//            ])
+//        );
         if (strlen($tokenPhone) != 11 || strlen($reqPhone) != 11){
 //            CommonService::getInstance()->log4PHP(
 //                json_encode(
