@@ -114,6 +114,7 @@ class ControllerBase extends Index
         } 
 
         $reqPhone = $this->request()->getRequestParam('phone') ?? '';
+        $phone = $this->getRequestData('entName');
         $body = $this->request()->getBody()->__toString();
         $tokenPhone = current($tokenInfo);
         CommonService::getInstance()->log4PHP(
@@ -121,7 +122,8 @@ class ControllerBase extends Index
                 'check token 2  ',
                 '$reqPhone' => $reqPhone,
                 '$tokenPhone' => $tokenPhone,
-                '$body'=>$body
+                '$body'=>$body,
+                '$phone' => $phone
             ])
         );
         if (strlen($tokenPhone) != 11 || strlen($reqPhone) != 11){
