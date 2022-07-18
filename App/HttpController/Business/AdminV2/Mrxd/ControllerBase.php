@@ -75,6 +75,7 @@ class ControllerBase extends Index
     {
         $requestToken = $this->request()->getHeaderLine('x-token');
         if (empty($requestToken) || strlen($requestToken) < 50){
+            CommonService::getInstance()->log4PHP(' empty token  '.$requestToken);
             return false;
         } 
         try {
