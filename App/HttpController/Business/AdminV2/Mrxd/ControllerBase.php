@@ -114,16 +114,16 @@ class ControllerBase extends Index
         } 
 
         $reqPhone = $this->request()->getRequestParam('phone') ?? '';
-        $phone = $this->getRequestData('entName');
+
         $body = $this->request()->getBody()->__toString();
+        $body = jsonDecode($body);;
         $tokenPhone = current($tokenInfo);
         CommonService::getInstance()->log4PHP(
             json_encode([
                 'check token 2  ',
                 '$reqPhone' => $reqPhone,
                 '$tokenPhone' => $tokenPhone,
-                '$body'=>$body,
-                '$phone' => $phone
+                '$body'=>$body['phone'],
             ])
         );
         if (strlen($tokenPhone) != 11 || strlen($reqPhone) != 11){
