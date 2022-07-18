@@ -167,6 +167,12 @@ class DataModelExample extends ModelBase
         ]);
     }
 
+    public static function updateById(
+        $id,$data
+    ){
+        $info = self::findById($id);
+        return $info->update($data);
+    }
 
     public static function findByConditionWithCountInfo($whereArr,$page){
         $model = AdminUserFinanceExportDataQueue::create()

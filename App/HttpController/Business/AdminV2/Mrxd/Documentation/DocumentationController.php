@@ -5,6 +5,10 @@ namespace App\HttpController\Business\AdminV2\Mrxd\Documentation;
 use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;
 use App\HttpController\Models\AdminV2\AdminNewUser;
 use App\HttpController\Models\AdminV2\AdminRoles;
+use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
+use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecordV3;
+use App\HttpController\Models\AdminV2\DataModelExample;
+use App\HttpController\Models\AdminV2\Documentation;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\User\UserService;
@@ -31,65 +35,145 @@ class DocumentationController extends ControllerBase
     }
 
     public function getAll(){
-        $user_name = $this->getRequestData('user_name','') ;
-        $user_phone = $this->getRequestData('user_phone','') ;
-        $pageNo = $this->getRequestData('pageNo',1) ;
-        $pageSize = $this->getRequestData('pageSize',10) ;
-        $status = $this->getRequestData('status','') ;
-        $limit = ($pageNo-1)*$pageSize;
-        $sql = "1=1";//status = 1
-        if(!empty($user_name)){
-            $sql .= " and user_name = '{$user_name}'";
-        }
-        if(!empty($user_phone)){
-            $sql .= " and phone = '".AdminNewUser::aesEncode($user_phone)."'";
-        }
-        if(!empty($status)){
-            $sql .= " and status = '{$status}'";
-        }
-        $count = AdminNewUser::create()->where($sql)->count();
-        $list = AdminNewUser::create()
-                ->where($sql." order by id desc limit {$limit},$pageSize ")
-                ->field(['id', 'user_name', 'phone','email','money','status','created_at','updated_at'])
-                ->all();
-        $paging = [
-            'page' => $pageNo,
-            'pageSize' => $pageSize,
-            'total' => $count,
-            'totalPage' => (int)($count/$pageSize)+1,
-        ];
+        $requestData = $this->getRequestData();
 
-        foreach ($list as &$value){
-            $value['phone_for_show'] = AdminNewUser::hide(
-                AdminNewUser::aesDecode($value['phone'])
-            );
-            $value['email_for_show'] = AdminNewUser::hide(
-                AdminNewUser::aesDecode($value['email'])
-            );
-
-            $rolesRes = AdminUserRole::findByUserId($value['id']);
-            $roles_ids_arr = array_column(
-                $rolesRes,'role_id'
-            );
-            $value['roles_ids'] = json_encode($roles_ids_arr);
-            $value['roles_ids_cnames'] = '';
-            if(!empty($roles_ids_arr)){
-                $Roles = AdminRoles::findByConditionV2(
-                    [['field'=>'role_id','value'=>$roles_ids_arr,'operate'=>'IN']],1
-                );
-                $value['roles_ids_cnames'] = implode(
-                    ',',
-                    array_column(
-                        $Roles['data'],'role_name'
-                    )
-                );
-            }
-
+        $page = $requestData['page']??1;
+        $createdAtStr = $this->getRequestData('created_at');
+        $createdAtArr = explode('|||',$createdAtStr);
+        $whereArr = [];
+        if (
+            !empty($createdAtArr) &&
+            !empty($createdAtStr)
+        ) {
+            $whereArr = [
+                [
+                    'field' => 'created_at',
+                    'value' => strtotime($createdAtArr[0]),
+                    'operate' => '>=',
+                ],
+                [
+                    'field' => 'created_at',
+                    'value' => strtotime($createdAtArr[1]),
+                    'operate' => '<=',
+                ]
+            ];
         }
-        return $this->writeJson(
-            200,
-            $paging,
-            $list
+
+        if(!empty($requestData['name'])){
+            $whereArr[] =  [
+                'field' => 'name',
+                'value' => $requestData['name'],
+                'operate' => '=',
+            ];
+        }
+
+        $res = Documentation::findByConditionV2(
+            $whereArr,
+            $page
         );
+
+        return $this->writeJson(200,  [
+            'page' => $page,
+            'pageSize' =>10,
+            'total' => $res['total'],
+            'totalPage' =>   $totalPages = ceil( $res['total']/ 10 ),
+        ],  $res['data'],'成功');
     }
+
+    // add
+    public function addDocumention(){
+        $requestData = $this->getRequestData();
+        $checkRes = DataModelExample::checkField(
+            [
+
+                'name' => [
+                    'not_empty' => 1,
+                    'field_name' => 'name',
+                    'err_msg' => '名称不能为空',
+                ],
+                'content' => [
+                    'not_empty' => 1,
+                    'field_name' => 'content',
+                    'err_msg' => '内容不能为空',
+                ],
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
+        $res = Documentation::addRecordV2(
+           [
+                'name' => $requestData['name'],
+                'type' => Documentation::$type_api_wen_dang,//
+                'content' => $requestData['content'],//
+           ]
+        );
+
+        return $this->writeJson(200,  [ ],  $res,'成功');
+    }
+
+    //update
+    public function editDocumention(){
+        $requestData = $this->getRequestData();
+        $checkRes = DataModelExample::checkField(
+            [
+
+                'id' => [
+                    'not_empty' => 1,
+                    'field_name' => 'id',
+                    'err_msg' => 'id不能为空',
+                ],
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
+        $res = Documentation::updateById(
+            $requestData['id'],
+            [
+                'name' => $requestData['name'],
+                'type' => Documentation::$type_api_wen_dang,//
+                'content' => $requestData['content'],//
+            ]
+        );
+
+        return $this->writeJson(200,  [ ],  $res,'成功');
+    }
+
+    //
+    public function downloadDocumention(){
+        $requestData = $this->getRequestData();
+
+        $checkRes = DataModelExample::checkField(
+            [
+
+                'id' => [
+                    'not_empty' => 1,
+                    'field_name' => 'id',
+                    'err_msg' => 'id不能为空',
+                ],
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
+        $res = Documentation::findById($requestData['id'])->toArray();
+        $fileName = $res['name'].'.html';
+        file_put_contents(TEMP_FILE_PATH.$fileName, $res['content'], FILE_APPEND | LOCK_EX);
+
+        return $this->writeJson(200,  [ ],  '/Static/Temp/'.$fileName,'成功');
+    }
+
 }

@@ -15,6 +15,10 @@ class Documentation extends ModelBase
 {
     protected $tableName = 'documentation';
 
+    static $type_api_wen_dang =  5;
+    static $type_api_wen_dang_cname =  "api在线文档";
+
+
     public static function addRecord($requestData){
         try {
            $res =  Documentation::create()->data([
@@ -36,6 +40,14 @@ class Documentation extends ModelBase
         }
         return $res;
     }
+
+    public static function updateById(
+        $id,$data
+    ){
+        $info = self::findById($id);
+        return $info->update($data);
+    }
+
 
     public static function addRecordV2($requestData){
         $oldRes = self::findByName($requestData['name']);

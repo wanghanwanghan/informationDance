@@ -24,6 +24,7 @@ class AdminV2Router
         $this->InvoiceRouterV1($routeCollector);
         $this->ApiUserRouterV1($routeCollector);
         $this->PApiRouterV1($routeCollector);
+        $this->DocumentationRouterV1($routeCollector);
         $this->PStaticsRouterV1($routeCollector);
     }
 
@@ -189,7 +190,8 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/getApiListByUser', $prefix . 'getApiListByUser');
             $routeCollector->addRoute(['GET', 'POST'], '/getUserList', $prefix . 'getUserList');
             $routeCollector->addRoute(['GET', 'POST'], '/editApi', $prefix . 'editApi');
-            $routeCollector->addRoute(['GET', 'POST'], '/editUserApi', $prefix . 'editUserApi');
+            $routeCollector->addRoute(['GET', 'POST'], '/editUserApi', $prefix . 'editUserApi');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getUserApi', $prefix . 'getUserApi');//
             //
         });
 
@@ -204,6 +206,20 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/getApiList', $prefix . 'getApiList');
             $routeCollector->addRoute(['GET', 'POST'], '/addApi', $prefix . 'addApi');
             $routeCollector->addRoute(['GET', 'POST'], '/editApi', $prefix . 'editApi');
+        });
+
+        return true;
+    }
+
+    private function DocumentationRouterV1(RouteCollector $routeCollector): bool
+    {
+        $prefix = '/Business/AdminV2/Mrxd/Documentation/DocumentationController/';
+
+        $routeCollector->addGroup('/documentation', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getAll', $prefix . 'getAll');
+            $routeCollector->addRoute(['GET', 'POST'], '/addDocumention', $prefix . 'addDocumention');
+            $routeCollector->addRoute(['GET', 'POST'], '/editDocumention', $prefix . 'editDocumention');//
+            $routeCollector->addRoute(['GET', 'POST'], '/downloadDocumention', $prefix . 'downloadDocumention');//
         });
 
         return true;
