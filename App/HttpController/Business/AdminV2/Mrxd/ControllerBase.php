@@ -75,6 +75,7 @@ class ControllerBase extends Index
     {
         $requestToken = $this->request()->getHeaderLine('x-token');
         if (empty($requestToken) || strlen($requestToken) < 50){
+            CommonService::getInstance()->log4PHP(' empty token  '.$requestToken);
             return false;
         } 
         try {
@@ -113,13 +114,19 @@ class ControllerBase extends Index
         } 
 
         $reqPhone = $this->request()->getRequestParam('phone') ?? '';
+        if(empty($reqPhone)){
+            $body = $this->request()->getBody()->__toString();
+            $body = jsonDecode($body);
+            $reqPhone = $body['phone'];
+        }
 
         $tokenPhone = current($tokenInfo);
 //        CommonService::getInstance()->log4PHP(
 //            json_encode([
 //                'check token 2  ',
 //                '$reqPhone' => $reqPhone,
-//                '$tokenPhone' => $tokenPhone
+//                '$tokenPhone' => $tokenPhone,
+//                '$body'=>$body['phone'],
 //            ])
 //        );
         if (strlen($tokenPhone) != 11 || strlen($reqPhone) != 11){
