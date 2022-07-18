@@ -32,7 +32,12 @@ class PUserController extends UserBase
     function getUserList()
     {
         $userInfo = RequestUserInfo::create()->order('created_at', 'desc')->all();
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$userInfo' => $userInfo
+            ])
+        );
         return $this->writeJson(200, null, $userInfo);
     }
 
