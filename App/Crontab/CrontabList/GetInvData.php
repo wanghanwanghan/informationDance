@@ -3,6 +3,7 @@
 namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
+use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Models\Api\AntAuthList;
 use App\HttpController\Models\Api\AntEmptyLog;
 use App\HttpController\Models\EntDb\EntInvoice;
@@ -10,6 +11,7 @@ use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\MaYi\MaYiService;
+use App\HttpController\Service\XinDong\XinDongService;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use EasySwoole\RedisPool\Redis;
 use wanghanwanghan\someUtils\control;
@@ -31,7 +33,7 @@ class GetInvData extends AbstractCronTask
     {
         //每月19号凌晨4点可以取上一个月全部数据
         //return '0 4 19 * *' ;
-        return '52 10 1 * * ';
+        return '30 10 19 * * ';
     }
 
     static function getTaskName(): string
@@ -197,6 +199,14 @@ class GetInvData extends AbstractCronTask
                         ->useCache(false)
                         ->needJsonDecode(true)
                         ->send($url, jsonEncode($collectNotify, false), $header, [], 'postjson');
+                    OperatorLog::addRecord(
+                        [
+                            'user_id' => 0,
+                            'msg' => "参数:".@json_encode($collectNotify)." 返回：".@json_encode($ret),
+                            'details' =>json_encode( XinDongService::trace()),
+                            'type_cname' => '通知蚂蚁',
+                        ]
+                    );
                     CommonService::getInstance()->log4PHP($ret, 'return', 'notify_fp');
                 }
 

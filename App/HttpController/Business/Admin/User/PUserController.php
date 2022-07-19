@@ -181,5 +181,4 @@ class PUserController extends UserBase
         return is_array($rsaInfo) ? $this->writeJson(200) : $this->writeJson(201);
     }
 
-
 }
