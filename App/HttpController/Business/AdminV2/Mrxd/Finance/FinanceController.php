@@ -582,20 +582,50 @@ class FinanceController extends ControllerBase
         ];
 
         $page = $requestData['page']?:1;
-        $res = AdminUserFinanceData::findByConditionV2(
+        $DataRes = AdminUserFinanceData::findByConditionV2(
             $condition,
             $page
         );
-        foreach ($res['data'] as &$itme ){
+        /**
+        $requestData =  $this->getRequestData();
+        if($requestData['id'] <= 0){
+        return $this->writeJson(203, [   ] , [], '参数缺失' );
+        }
+        $res = AdminUserFinanceData::findById($requestData['id']);
+        $data = $res->toArray();
+        $realFinanceDatId = $data['finance_data_id'];
+        $allowedFields = NewFinanceData::getFieldCname(false);
+        $configs = AdminUserFinanceConfig::getConfigByUserId($data['user_id']);
+        $newFields = [];
+        foreach (json_decode($configs['allowed_fields']) as $field){
+        $newFields[$field] = $allowedFields[$field];
+        }
+        $realData = NewFinanceData::findByIdV2($realFinanceDatId,$newFields);
+        return $this->writeJson(200, [ ] , $realData , '成功' );
+         */
+        foreach ($DataRes['data'] as &$itme ){
             $itme['status_cname'] =AdminUserFinanceData::getStatusCname()[$itme['status']];
+            //---
+            $res = AdminUserFinanceData::findById($itme['id']);
+            $data = $res->toArray();
+            $realFinanceDatId = $data['finance_data_id'];
+            $allowedFields = NewFinanceData::getFieldCname(false);
+            $configs = AdminUserFinanceConfig::getConfigByUserId($data['user_id']);
+            $newFields = [];
+            foreach (json_decode($configs['allowed_fields']) as $field){
+                $newFields[$field] = $allowedFields[$field];
+            }
+            $realData = NewFinanceData::findByIdV2($realFinanceDatId,$newFields);
+            $itme['field_details'] = $realData;
+            //---
         }
         return $this->writeJson(200,
             [
                 'page' => $page,
                 'pageSize' =>10,
-                'total' => $res['total'],
-                'totalPage' => ceil( $res['total']/ 10 ),
-            ] , $res['data'], '成功' );
+                'total' => $DataRes['total'],
+                'totalPage' => ceil( $DataRes['total']/ 10 ),
+            ] , $DataRes['data'], '成功' );
     }
 
     //账户流水
@@ -745,13 +775,30 @@ class FinanceController extends ControllerBase
     //确认是否需要
     public function ConfirmFinanceData(){
         $requestData =  $this->getRequestData();
-        $res = AdminUserFinanceData::updateStatus(
-            $requestData['id'],
-            $requestData['status']
-        );
-        if(!$res){
-            return $this->writeJson(206, [] ,   [], '确认失败', true, []);
+        $ids = explode(',',$requestData['ids']);
+        if(empty($ids)){
+            $ids = [$requestData['id']];
         }
+
+        if(empty($ids)){
+            return $this->writeJson(206, [] ,   [], '参数缺失', true, []);
+        }
+        foreach ($ids as $id){
+            $records =AdminUserFinanceData::findById($id)->toArray();
+            if(
+                $records['status'] ==  AdminUserFinanceData::$statusNeedsConfirm
+            ){
+                $res = AdminUserFinanceData::updateStatus(
+                    $id,
+                    $requestData['status']
+                );
+                if(!$res){
+                    return $this->writeJson(206, [] ,   [], '确认失败', true, []);
+                }
+            }
+
+        }
+
         return $this->writeJson(200, [ ], $res, '成功');
     }
 
