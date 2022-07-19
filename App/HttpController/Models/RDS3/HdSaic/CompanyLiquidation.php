@@ -22,21 +22,21 @@ class CompanyLiquidation extends ModelBase
     }
 
     public static function findById($id){
-        $res =  CompanyBasic::create()
+        $res =  CompanyLiquidation::create()
             ->where('id',$id)
             ->get();
         return $res;
     }
 
     public static function findByCompanyId($id){
-        $res =  CompanyBasic::create()
+        $res =  CompanyLiquidation::create()
             ->where('companyid',$id)
             ->get();
         return $res;
     }
 
     public static function findByName($name){
-        $res =  CompanyBasic::create()
+        $res =  CompanyLiquidation::create()
             ->where('ENTNAME',$name)
             ->all();
         return $res;
@@ -50,7 +50,7 @@ class CompanyLiquidation extends ModelBase
 
 
     public static function findByConditionV2($whereArr,$page){
-        $model = CompanyBasic::create();
+        $model = CompanyLiquidation::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
@@ -67,7 +67,7 @@ class CompanyLiquidation extends ModelBase
         ];
     }
     public static function findByConditionV3($whereArr){
-        $model = CompanyBasic::create();
+        $model = CompanyLiquidation::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
