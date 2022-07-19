@@ -1471,7 +1471,7 @@ class XinDongController extends ProvideBase
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->writeJson(200,
-            $res , $res, '成功' );
+            $res?count($res):0 , $res, '成功' );
 //        return $this->checkResponse($res);
     }
 

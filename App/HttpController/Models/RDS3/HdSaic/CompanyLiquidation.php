@@ -38,7 +38,7 @@ class CompanyLiquidation extends ModelBase
     public static function findByName($name){
         $res =  CompanyBasic::create()
             ->where('ENTNAME',$name)
-            ->get();
+            ->all();
         return $res;
     }
 
