@@ -1401,6 +1401,26 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //失信被执行人
+    function getDishonestyRecord(): bool
+    {
+
+        $postData = [
+            'entName' => trim($this->getRequestData('entName')),
+            'version' => 'C1' ,
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getEntDetail($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+
     //除了蚂蚁以外的发过来的企业五要素
     function invEntList(): bool
     {
