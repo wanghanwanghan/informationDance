@@ -7,6 +7,7 @@ use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Models\EntDb\EntDbEnt;
 use App\HttpController\Models\EntDb\EntDbFinance;
 use App\HttpController\Models\EntDb\EntDbTzList;
+use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
@@ -1469,8 +1470,26 @@ class XinDongController extends ProvideBase
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->writeJson(200,
+            $res , $res, '成功' );
+//        return $this->checkResponse($res);
+    }
 
-        return $this->checkResponse($res);
+    function getCancledate(): bool
+    {
+
+        $entName =trim($this->getRequestData('entName'));
+
+        $this->csp->add($this->cspKey, function () use ($entName) {
+            return CompanyBasic::findCancelDateByCode($entName);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->writeJson(200,
+            $res , $res, '成功' );
+
+//        return $this->checkResponse($res);
     }
 
     //除了蚂蚁以外的发过来的企业五要素

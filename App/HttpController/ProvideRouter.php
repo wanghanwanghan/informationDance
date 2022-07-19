@@ -209,7 +209,8 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getEntLianXi', $prefix . 'getEntLianXi');
             $routeCollector->addRoute(['GET', 'POST'], '/getLessCredit', $prefix . 'getLessCredit');//失信记录
             $routeCollector->addRoute(['GET', 'POST'], '/getEndCase', $prefix . 'getEndCase');//终本案件
-            $routeCollector->addRoute(['GET', 'POST'], '/getLiquidate', $prefix . 'getLiquidate');//终本案件 
+            $routeCollector->addRoute(['GET', 'POST'], '/getLiquidate', $prefix . 'getLiquidate');//终本案件
+            $routeCollector->addRoute(['GET', 'POST'], '/getCancledate', $prefix . 'getCancledate');//终本案件 getCancledate
             $routeCollector->addRoute(['GET', 'POST'], '/BankruptcyCheck', $prefix . 'BankruptcyCheck');//破产重整核查
             $routeCollector->addRoute(['GET', 'POST'], '/superSearch', $prefix . 'superSearch');
             $routeCollector->addRoute(['GET', 'POST'], '/logisticsSearch', $prefix . 'logisticsSearch');
