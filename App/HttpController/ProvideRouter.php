@@ -208,7 +208,8 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceCalMergeData', $prefix . 'getFinanceCalMergeData');
             $routeCollector->addRoute(['GET', 'POST'], '/getEntLianXi', $prefix . 'getEntLianXi');
             $routeCollector->addRoute(['GET', 'POST'], '/getLessCredit', $prefix . 'getLessCredit');//失信记录
-            $routeCollector->addRoute(['GET', 'POST'], '/getEndCase', $prefix . 'getEndCase');//失信记录
+            $routeCollector->addRoute(['GET', 'POST'], '/getEndCase', $prefix . 'getEndCase');//终本案件
+            $routeCollector->addRoute(['GET', 'POST'], '/BankruptcyCheck', $prefix . 'BankruptcyCheck');//破产重整核查
             $routeCollector->addRoute(['GET', 'POST'], '/superSearch', $prefix . 'superSearch');
             $routeCollector->addRoute(['GET', 'POST'], '/logisticsSearch', $prefix . 'logisticsSearch');
             $routeCollector->addRoute(['GET', 'POST'], '/invEntList', $prefix . 'invEntList');//企业五要素

@@ -1420,6 +1420,7 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //终本案件
     function getEndCase(): bool
     {
 
@@ -1438,6 +1439,22 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    // 破产重整核查
+    function BankruptcyCheck(): bool
+    {
+
+        $entName =trim($this->getRequestData('entName'));
+
+        $this->csp->add($this->cspKey, function () use ($entName) {
+            return (new XinDongService())->getBankruptcyCheck(
+                $entName
+            );
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
 
     //除了蚂蚁以外的发过来的企业五要素
     function invEntList(): bool
