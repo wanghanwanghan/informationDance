@@ -1402,12 +1402,30 @@ class XinDongController extends ProvideBase
     }
 
     //失信被执行人
-    function getDishonestyRecord(): bool
+    function getLessCredit(): bool
     {
 
         $postData = [
             'entName' => trim($this->getRequestData('entName')),
             'version' => 'C1' ,
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getEntDetail($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function getEndCase(): bool
+    {
+
+        $postData = [
+            'entName' => trim($this->getRequestData('entName')),
+            'version' => 'C10' ,
         ];
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new LongXinService())
