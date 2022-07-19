@@ -7,6 +7,7 @@ use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Models\EntDb\EntDbEnt;
 use App\HttpController\Models\EntDb\EntDbFinance;
 use App\HttpController\Models\EntDb\EntDbTzList;
+use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\DaXiang\DaXiangService;
@@ -1464,9 +1465,7 @@ class XinDongController extends ProvideBase
         $entName =trim($this->getRequestData('entName'));
 
         $this->csp->add($this->cspKey, function () use ($entName) {
-            return (new XinDongService())->getBankruptcyCheck(
-                $entName
-            );
+            return CompanyLiquidation::findByName($entName);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
