@@ -688,11 +688,11 @@ class AdminUserFinanceData extends ModelBase
         return $res;
     }
 
-    public static function findByConditionV2($whereArr,$page){
+    public static function findByConditionV2($whereArr,$page,$pageSize){
 
         $model = AdminUserFinanceData::create()
             ->where($whereArr)
-            ->page($page)
+            ->page($page,$pageSize)
             ->order('id', 'DESC')
             ->withTotalCount();
 

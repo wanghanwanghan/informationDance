@@ -582,9 +582,11 @@ class FinanceController extends ControllerBase
         ];
 
         $page = $requestData['page']?:1;
+        $pageSize = $requestData['pageSize']?:10;
         $DataRes = AdminUserFinanceData::findByConditionV2(
             $condition,
-            $page
+            $page,
+            $pageSize
         );
         /**
         $requestData =  $this->getRequestData();
@@ -622,9 +624,9 @@ class FinanceController extends ControllerBase
         return $this->writeJson(200,
             [
                 'page' => $page,
-                'pageSize' =>10,
+                'pageSize' =>$pageSize,
                 'total' => $DataRes['total'],
-                'totalPage' => ceil( $DataRes['total']/ 10 ),
+                'totalPage' => ceil( $DataRes['total']/ $pageSize ),
             ] , $DataRes['data'], '成功' );
     }
 
