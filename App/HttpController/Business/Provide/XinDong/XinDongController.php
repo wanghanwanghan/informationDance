@@ -1452,6 +1452,24 @@ class XinDongController extends ProvideBase
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->writeJson(200,
+            [] , $res, '成功' );
+        //return $res;
+        //return $this->checkResponse($res);
+    }
+
+    function getLiquidate(): bool
+    {
+
+        $entName =trim($this->getRequestData('entName'));
+
+        $this->csp->add($this->cspKey, function () use ($entName) {
+            return (new XinDongService())->getBankruptcyCheck(
+                $entName
+            );
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         return $this->checkResponse($res);
     }
