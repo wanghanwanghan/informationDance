@@ -3298,7 +3298,7 @@ class XinDongService extends ServiceBase
         $tmp = [];
         $tmp['BankruptcyCheck1'] = $res['BankruptcyCheck1'];
 
-        return $this->checkResp(200, null, $tmp, '查询成功');
+        return $tmp['BankruptcyCheck1'];
     }
 
 }
