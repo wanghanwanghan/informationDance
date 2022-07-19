@@ -2,9 +2,11 @@
 
 namespace App\HttpController\Service\LongDun;
 
+use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
+use App\HttpController\Service\XinDong\XinDongService;
 use wanghanwanghan\someUtils\control;
 
 class LongDunService extends ServiceBase
@@ -39,7 +41,14 @@ class LongDunService extends ServiceBase
         $url .= '?' . http_build_query($body);
 
         $resp = (new CoHttpClient())->send($url, $body, $header, $ext, 'get');
-
+        OperatorLog::addRecord(
+            [
+                'user_id' => 0,
+                'msg' => "url:".@$url." 参数:".@json_encode($body)." 返回：".@json_encode($resp),
+                'details' =>json_encode( XinDongService::trace()),
+                'type_cname' => 'Get请求',
+            ]
+        );
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
