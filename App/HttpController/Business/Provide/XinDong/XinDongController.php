@@ -1471,7 +1471,7 @@ class XinDongController extends ProvideBase
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->writeJson(200,
-            $res[$this->cspKey] , $res[$this->cspKey]?count($res[$this->cspKey]):0, '成功' );
+            [] , $res[$this->cspKey]?count($res[$this->cspKey]):0, '成功' );
 //        return $this->checkResponse($res);
     }
 
@@ -1487,7 +1487,7 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         return $this->writeJson(200,
-            $res[$this->cspKey] , $res[$this->cspKey], '成功' );
+            [] , $res[$this->cspKey], '成功' );
 
 //        return $this->checkResponse($res);
     }
