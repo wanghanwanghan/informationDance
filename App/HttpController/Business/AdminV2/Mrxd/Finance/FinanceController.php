@@ -623,6 +623,8 @@ class FinanceController extends ControllerBase
         $titls = [
             'username'=>'用户名',
             'entName'=>'企业名',
+            'period'=>'年度',
+            'updated_at'=>'更新时间',
             //'资产总额',
             //'营业总收入'
         ];
@@ -649,6 +651,8 @@ class FinanceController extends ControllerBase
             $tmp = [
                 'username'=>$AdminNewUser['user_name'],
                 'entName'=>$itme['entName'],
+                'period'=>$itme['year'],
+                'updated_at'=>date('Y-m-d H:i:s',$itme['updated_at']),
             ];
             //---
             $res = AdminUserFinanceData::findById($itme['id']);
