@@ -625,8 +625,8 @@ class FinanceController extends ControllerBase
 //        );
         //---------------------
         $titls = [
-            'id' =>'序号',
-            //'用户名',
+//            'id' =>'序号',
+            '用户名',
             'entName'=>'企业名',
             //'资产总额',
             //'营业总收入'
@@ -651,7 +651,8 @@ class FinanceController extends ControllerBase
         $returnDatas = [];
         foreach ($DataRes['data'] as &$itme ){
             $tmp = [
-                'id' =>$itme['id'],
+                //'id' =>$itme['id'],
+                'username'=>'xxx',
                 'entName'=>$itme['entName'],
             ];
 
