@@ -576,18 +576,6 @@ class FinanceController extends ControllerBase
     //获取待确认的列表
     public function getNeedsConfirmExportLists(){
         $requestData =  $this->getRequestData();
-//        $condition = [
-//            'user_id' => $this->loginUserinfo['id'],
-//            'needs_confirm' => 1,
-//        ];
-//
-//        $page = $requestData['page']?:1;
-//        $pageSize = $requestData['pageSize']?:10;
-//        $DataRes = AdminUserFinanceData::findByConditionV2(
-//            $condition,
-//            $page,
-//            $pageSize
-//        );
 
         //--------------------
 
@@ -633,7 +621,6 @@ class FinanceController extends ControllerBase
         );
         //---------------------
         $titls = [
-//            'id' =>'序号',
             'username'=>'用户名',
             'entName'=>'企业名',
             //'资产总额',
@@ -643,7 +630,6 @@ class FinanceController extends ControllerBase
         foreach ($dataRes['data'] as &$itme ){
             $res = AdminUserFinanceData::findById($itme['id']);
             $data = $res->toArray();
-            $realFinanceDatId = $data['finance_data_id'];
             $allowedFields = NewFinanceData::getFieldCname(false);
             $configs = AdminUserFinanceConfig::getConfigByUserId($data['user_id']);
             $newFields = [];
@@ -653,18 +639,17 @@ class FinanceController extends ControllerBase
             foreach ($newFields as $field){
                 $titls[$field] = $field;
             }
+            $titls['status_cname'] = '状态';
             break;
         }
 
         $returnDatas = [];
         foreach ($dataRes['data'] as &$itme ){
+            $AdminNewUser = AdminNewUser::findById($itme['user_id'])->toArray();
             $tmp = [
-                //'id' =>$itme['id'],
-                'username'=>'xxx',
+                'username'=>$AdminNewUser['username'],
                 'entName'=>$itme['entName'],
             ];
-
-            $itme['status_cname'] =AdminUserFinanceData::getStatusCname()[$itme['status']];
             //---
             $res = AdminUserFinanceData::findById($itme['id']);
             $data = $res->toArray();
@@ -679,6 +664,8 @@ class FinanceController extends ControllerBase
             foreach ($realData as $key=>$datItem){
                 $tmp[$key] = $datItem;
             }
+
+            $tmp['status_cname']  =AdminUserFinanceData::getStatusCname()[$itme['status']];
             $returnDatas[] = $tmp;
         }
 
