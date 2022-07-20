@@ -43,7 +43,6 @@ class AdminUserFinanceData extends ModelBase
 
     public static function getStatusCname(){
 
-
         return [
             self::$statusinit => self::$statusinitCname,
             self::$statusNeedsConfirm => self::$statusNeedsConfirmCname,
