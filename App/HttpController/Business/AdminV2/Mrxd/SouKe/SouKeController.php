@@ -1297,12 +1297,12 @@ class SouKeController extends ControllerBase
             $whereArr = [
                 [
                     'field' => 'created_at',
-                    'value' => strtotime($createdAtArr[0]),
+                    'value' => strtotime($createdAtArr[0].' 00:00:00'),
                     'operate' => '>=',
                 ],
                 [
                     'field' => 'created_at',
-                    'value' => strtotime($createdAtArr[1]),
+                    'value' => strtotime($createdAtArr[1].' 23:59:59'),
                     'operate' => '<=',
                 ]
             ];
@@ -1525,12 +1525,12 @@ class SouKeController extends ControllerBase
             $whereArr = [
                 [
                     'field' => 'created_at',
-                    'value' => strtotime($createdAtArr[0]),
+                    'value' => strtotime($createdAtArr[0].' 00:00:00'),
                     'operate' => '>=',
                 ],
                 [
                     'field' => 'created_at',
-                    'value' => strtotime($createdAtArr[1]),
+                    'value' => strtotime($createdAtArr[1].' 23:59:59'),
                     'operate' => '<=',
                 ]
             ];
