@@ -605,7 +605,55 @@ class FinanceController extends ControllerBase
         $realData = NewFinanceData::findByIdV2($realFinanceDatId,$newFields);
         return $this->writeJson(200, [ ] , $realData , '成功' );
          */
+
+        $datas = [];
+//        foreach ($DataRes['data'] as &$itme ){
+//            $itme['status_cname'] =AdminUserFinanceData::getStatusCname()[$itme['status']];
+//            //---
+//            $res = AdminUserFinanceData::findById($itme['id']);
+//            $data = $res->toArray();
+//            $realFinanceDatId = $data['finance_data_id'];
+//            $allowedFields = NewFinanceData::getFieldCname(false);
+//            $configs = AdminUserFinanceConfig::getConfigByUserId($data['user_id']);
+//            $newFields = [];
+//            foreach (json_decode($configs['allowed_fields']) as $field){
+//                $newFields[$field] = $allowedFields[$field];
+//            }
+//            $realData = NewFinanceData::findByIdV2($realFinanceDatId,$newFields);
+//            $itme['field_details'] = $realData;
+//            //---
+//        }
+        $titls = [
+            '序号',
+            //'用户名',
+            '企业名',
+            //'资产总额',
+            //'营业总收入'
+        ];
+
         foreach ($DataRes['data'] as &$itme ){
+            $res = AdminUserFinanceData::findById($itme['id']);
+            $data = $res->toArray();
+            $realFinanceDatId = $data['finance_data_id'];
+            $allowedFields = NewFinanceData::getFieldCname(false);
+            $configs = AdminUserFinanceConfig::getConfigByUserId($data['user_id']);
+            $newFields = [];
+            foreach (json_decode($configs['allowed_fields']) as $field){
+                $newFields[$field] = $allowedFields[$field];
+            }
+            foreach ($newFields as $field){
+                $titls[] = $field;
+            }
+            break;
+        }
+
+        $returnDatas = [];
+        foreach ($DataRes['data'] as &$itme ){
+            $tmp = [
+                $itme['id'],
+                $itme['entName'],
+            ];
+
             $itme['status_cname'] =AdminUserFinanceData::getStatusCname()[$itme['status']];
             //---
             $res = AdminUserFinanceData::findById($itme['id']);
@@ -618,16 +666,23 @@ class FinanceController extends ControllerBase
                 $newFields[$field] = $allowedFields[$field];
             }
             $realData = NewFinanceData::findByIdV2($realFinanceDatId,$newFields);
-            $itme['field_details'] = $realData;
-            //---
+            foreach ($realData as $datItem){
+                $tmp[] = $datItem;
+            }
+            $returnDatas[] = $tmp;
         }
+
+
         return $this->writeJson(200,
             [
                 'page' => $page,
                 'pageSize' =>$pageSize,
                 'total' => $DataRes['total'],
                 'totalPage' => ceil( $DataRes['total']/ $pageSize ),
-            ] , $DataRes['data'], '成功' );
+            ] , [
+                'field'=>$titls,
+                'data'=>$returnDatas
+            ], '成功' );
     }
 
     //账户流水
