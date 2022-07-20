@@ -601,18 +601,18 @@ class FinanceController extends ControllerBase
             !empty($createdAtArr) &&
             !empty($createdAtStr)
         ) {
-//            $whereArr = [
-//                [
-//                    'field' => 'updated_at',
-//                    'value' => strtotime($createdAtArr[0]),
-//                    'operate' => '>=',
-//                ],
-//                [
-//                    'field' => 'updated_at',
-//                    'value' => strtotime($createdAtArr[1]),
-//                    'operate' => '<=',
-//                ]
-//            ];
+            $whereArr = [
+                [
+                    'field' => 'updated_at',
+                    'value' => strtotime($createdAtArr[0]),
+                    'operate' => '>=',
+                ],
+                [
+                    'field' => 'updated_at',
+                    'value' => strtotime($createdAtArr[1]),
+                    'operate' => '<=',
+                ]
+            ];
         }
         $whereArr[] =  [
             'field' => 'user_id',
@@ -620,13 +620,13 @@ class FinanceController extends ControllerBase
             'operate' => '=',
         ];
 
-//        $whereArr[] =  [
-//            'field' => 'needs_confirm',
-//            'value' => 1,
-//            'operate' => '=',
-//        ];
+        $whereArr[] =  [
+            'field' => 'needs_confirm',
+            'value' => 1,
+            'operate' => '=',
+        ];
 
-        $res = AdminUserFinanceData::findByConditionV3(
+        $dataRes = AdminUserFinanceData::findByConditionV3(
             $whereArr,
             $page,
             $pageSize
@@ -640,7 +640,7 @@ class FinanceController extends ControllerBase
             //'营业总收入'
         ];
 
-        foreach ($res['data'] as &$itme ){
+        foreach ($dataRes['data'] as &$itme ){
             $res = AdminUserFinanceData::findById($itme['id']);
             $data = $res->toArray();
             $realFinanceDatId = $data['finance_data_id'];
@@ -657,7 +657,7 @@ class FinanceController extends ControllerBase
         }
 
         $returnDatas = [];
-        foreach ($res['data'] as &$itme ){
+        foreach ($dataRes['data'] as &$itme ){
             $tmp = [
                 //'id' =>$itme['id'],
                 'username'=>'xxx',
@@ -687,8 +687,8 @@ class FinanceController extends ControllerBase
             [
                 'page' => $page,
                 'pageSize' =>$pageSize,
-                'total' => $res['total'],
-                'totalPage' => ceil( $res['total']/ $pageSize ),
+                'total' => $dataRes['total'],
+                'totalPage' => ceil( $dataRes['total']/ $pageSize ),
             ] , [
                 'field'=>$titls,
                 'data'=>$returnDatas
