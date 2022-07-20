@@ -626,7 +626,7 @@ class FinanceController extends ControllerBase
         //---------------------
         $titls = [
 //            'id' =>'序号',
-            '用户名',
+            'username'=>'用户名',
             'entName'=>'企业名',
             //'资产总额',
             //'营业总收入'
