@@ -591,8 +591,10 @@ class FinanceController extends ControllerBase
 
         //--------------------
 
-//        $page = $this->request()->getRequestParam('page')??1;
-//        $createdAtStr = $this->getRequestData('created_at');
+//        $page = $requestData['page']?:1;
+//        $pageSize = $requestData['pageSize']?:10;
+//
+//        $createdAtStr = $this->getRequestData('updated_at');
 //        $createdAtArr = explode('|||',$createdAtStr);
 //        $whereArr = [];
 //        if (
@@ -623,9 +625,9 @@ class FinanceController extends ControllerBase
 //        );
         //---------------------
         $titls = [
-            '序号',
+            'id' =>'序号',
             //'用户名',
-            '企业名',
+            'entName'=>'企业名',
             //'资产总额',
             //'营业总收入'
         ];
@@ -641,7 +643,7 @@ class FinanceController extends ControllerBase
                 $newFields[$field] = $allowedFields[$field];
             }
             foreach ($newFields as $field){
-                $titls[] = $field;
+                $titls[$field] = $field;
             }
             break;
         }
