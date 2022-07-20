@@ -601,18 +601,18 @@ class FinanceController extends ControllerBase
             !empty($createdAtArr) &&
             !empty($createdAtStr)
         ) {
-            $whereArr = [
-                [
-                    'field' => 'updated_at',
-                    'value' => strtotime($createdAtArr[0]),
-                    'operate' => '>=',
-                ],
-                [
-                    'field' => 'updated_at',
-                    'value' => strtotime($createdAtArr[1]),
-                    'operate' => '<=',
-                ]
-            ];
+//            $whereArr = [
+//                [
+//                    'field' => 'updated_at',
+//                    'value' => strtotime($createdAtArr[0]),
+//                    'operate' => '>=',
+//                ],
+//                [
+//                    'field' => 'updated_at',
+//                    'value' => strtotime($createdAtArr[1]),
+//                    'operate' => '<=',
+//                ]
+//            ];
         }
         $whereArr[] =  [
             'field' => 'user_id',
