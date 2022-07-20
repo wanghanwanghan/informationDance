@@ -620,11 +620,11 @@ class FinanceController extends ControllerBase
             'operate' => '=',
         ];
 
-        $whereArr[] =  [
-            'field' => 'needs_confirm',
-            'value' => 1,
-            'operate' => '=',
-        ];
+//        $whereArr[] =  [
+//            'field' => 'needs_confirm',
+//            'value' => 1,
+//            'operate' => '=',
+//        ];
 
         $res = AdminUserFinanceData::findByConditionV3(
             $whereArr,
