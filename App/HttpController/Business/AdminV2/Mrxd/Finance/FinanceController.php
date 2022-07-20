@@ -588,41 +588,40 @@ class FinanceController extends ControllerBase
             $page,
             $pageSize
         );
-        /**
-        $requestData =  $this->getRequestData();
-        if($requestData['id'] <= 0){
-        return $this->writeJson(203, [   ] , [], '参数缺失' );
-        }
-        $res = AdminUserFinanceData::findById($requestData['id']);
-        $data = $res->toArray();
-        $realFinanceDatId = $data['finance_data_id'];
-        $allowedFields = NewFinanceData::getFieldCname(false);
-        $configs = AdminUserFinanceConfig::getConfigByUserId($data['user_id']);
-        $newFields = [];
-        foreach (json_decode($configs['allowed_fields']) as $field){
-        $newFields[$field] = $allowedFields[$field];
-        }
-        $realData = NewFinanceData::findByIdV2($realFinanceDatId,$newFields);
-        return $this->writeJson(200, [ ] , $realData , '成功' );
-         */
 
-        $datas = [];
-//        foreach ($DataRes['data'] as &$itme ){
-//            $itme['status_cname'] =AdminUserFinanceData::getStatusCname()[$itme['status']];
-//            //---
-//            $res = AdminUserFinanceData::findById($itme['id']);
-//            $data = $res->toArray();
-//            $realFinanceDatId = $data['finance_data_id'];
-//            $allowedFields = NewFinanceData::getFieldCname(false);
-//            $configs = AdminUserFinanceConfig::getConfigByUserId($data['user_id']);
-//            $newFields = [];
-//            foreach (json_decode($configs['allowed_fields']) as $field){
-//                $newFields[$field] = $allowedFields[$field];
-//            }
-//            $realData = NewFinanceData::findByIdV2($realFinanceDatId,$newFields);
-//            $itme['field_details'] = $realData;
-//            //---
+        //--------------------
+
+//        $page = $this->request()->getRequestParam('page')??1;
+//        $createdAtStr = $this->getRequestData('created_at');
+//        $createdAtArr = explode('|||',$createdAtStr);
+//        $whereArr = [];
+//        if (
+//            !empty($createdAtArr) &&
+//            !empty($createdAtStr)
+//        ) {
+//            $whereArr = [
+//                [
+//                    'field' => 'created_at',
+//                    'value' => strtotime($createdAtArr[0]),
+//                    'operate' => '>=',
+//                ],
+//                [
+//                    'field' => 'created_at',
+//                    'value' => strtotime($createdAtArr[1]),
+//                    'operate' => '<=',
+//                ]
+//            ];
 //        }
+//        $whereArr[] =  [
+//            'field' => 'user_id',
+//            'value' => $this->loginUserinfo['id'],
+//            'operate' => '=',
+//        ];
+//        $res = AdminUserFinanceUploadRecord::findByConditionV3(
+//            $whereArr,
+//            $page
+//        );
+        //---------------------
         $titls = [
             '序号',
             //'用户名',
@@ -650,8 +649,8 @@ class FinanceController extends ControllerBase
         $returnDatas = [];
         foreach ($DataRes['data'] as &$itme ){
             $tmp = [
-                $itme['id'],
-                $itme['entName'],
+                'id' =>$itme['id'],
+                'entName'=>$itme['entName'],
             ];
 
             $itme['status_cname'] =AdminUserFinanceData::getStatusCname()[$itme['status']];
@@ -666,8 +665,8 @@ class FinanceController extends ControllerBase
                 $newFields[$field] = $allowedFields[$field];
             }
             $realData = NewFinanceData::findByIdV2($realFinanceDatId,$newFields);
-            foreach ($realData as $datItem){
-                $tmp[] = $datItem;
+            foreach ($realData as $key=>$datItem){
+                $tmp[$key] = $datItem;
             }
             $returnDatas[] = $tmp;
         }
