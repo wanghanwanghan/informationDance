@@ -714,6 +714,15 @@ class AdminUserFinanceData extends ModelBase
     }
 
     public static function findByConditionV3($whereArr,$page,$pageSize){
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    __CLASS__.__FUNCTION__.__LINE__,
+                    'findByConditionV3' => $whereArr
+                ]
+            )
+        );
+
         $model = AdminUserFinanceData::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
