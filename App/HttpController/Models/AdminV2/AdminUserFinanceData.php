@@ -734,6 +734,16 @@ class AdminUserFinanceData extends ModelBase
         $res = $model->all();
 
         $total = $model->lastQueryResult()->getTotalCount();
+
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    __CLASS__.__FUNCTION__.__LINE__,
+                    '$res' => $res,
+                    '$total' => $total
+                ]
+            )
+        );
         return [
             'data' => $res,
             'total' =>$total,
