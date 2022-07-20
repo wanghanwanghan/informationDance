@@ -576,53 +576,61 @@ class FinanceController extends ControllerBase
     //获取待确认的列表
     public function getNeedsConfirmExportLists(){
         $requestData =  $this->getRequestData();
-        $condition = [
-            'user_id' => $this->loginUserinfo['id'],
-            'needs_confirm' => 1,
-        ];
-
-        $page = $requestData['page']?:1;
-        $pageSize = $requestData['pageSize']?:10;
-        $DataRes = AdminUserFinanceData::findByConditionV2(
-            $condition,
-            $page,
-            $pageSize
-        );
+//        $condition = [
+//            'user_id' => $this->loginUserinfo['id'],
+//            'needs_confirm' => 1,
+//        ];
+//
+//        $page = $requestData['page']?:1;
+//        $pageSize = $requestData['pageSize']?:10;
+//        $DataRes = AdminUserFinanceData::findByConditionV2(
+//            $condition,
+//            $page,
+//            $pageSize
+//        );
 
         //--------------------
 
-//        $page = $requestData['page']?:1;
-//        $pageSize = $requestData['pageSize']?:10;
-//
-//        $createdAtStr = $this->getRequestData('updated_at');
-//        $createdAtArr = explode('|||',$createdAtStr);
-//        $whereArr = [];
-//        if (
-//            !empty($createdAtArr) &&
-//            !empty($createdAtStr)
-//        ) {
-//            $whereArr = [
-//                [
-//                    'field' => 'created_at',
-//                    'value' => strtotime($createdAtArr[0]),
-//                    'operate' => '>=',
-//                ],
-//                [
-//                    'field' => 'created_at',
-//                    'value' => strtotime($createdAtArr[1]),
-//                    'operate' => '<=',
-//                ]
-//            ];
-//        }
-//        $whereArr[] =  [
-//            'field' => 'user_id',
-//            'value' => $this->loginUserinfo['id'],
-//            'operate' => '=',
-//        ];
-//        $res = AdminUserFinanceUploadRecord::findByConditionV3(
-//            $whereArr,
-//            $page
-//        );
+        $page = $requestData['page']?:1;
+        $pageSize = $requestData['pageSize']?:10;
+
+        $createdAtStr = $this->getRequestData('updated_at');
+        $createdAtArr = explode('|||',$createdAtStr);
+        $whereArr = [];
+        if (
+            !empty($createdAtArr) &&
+            !empty($createdAtStr)
+        ) {
+            $whereArr = [
+                [
+                    'field' => 'updated_at',
+                    'value' => strtotime($createdAtArr[0]),
+                    'operate' => '>=',
+                ],
+                [
+                    'field' => 'updated_at',
+                    'value' => strtotime($createdAtArr[1]),
+                    'operate' => '<=',
+                ]
+            ];
+        }
+        $whereArr[] =  [
+            'field' => 'user_id',
+            'value' => $this->loginUserinfo['id'],
+            'operate' => '=',
+        ];
+
+        $whereArr[] =  [
+            'field' => 'needs_confirm',
+            'value' => 1,
+            'operate' => '=',
+        ];
+
+        $res = AdminUserFinanceData::findByConditionV3(
+            $whereArr,
+            $page,
+            $pageSize
+        );
         //---------------------
         $titls = [
 //            'id' =>'序号',
@@ -632,7 +640,7 @@ class FinanceController extends ControllerBase
             //'营业总收入'
         ];
 
-        foreach ($DataRes['data'] as &$itme ){
+        foreach ($res['data'] as &$itme ){
             $res = AdminUserFinanceData::findById($itme['id']);
             $data = $res->toArray();
             $realFinanceDatId = $data['finance_data_id'];
@@ -649,7 +657,7 @@ class FinanceController extends ControllerBase
         }
 
         $returnDatas = [];
-        foreach ($DataRes['data'] as &$itme ){
+        foreach ($res['data'] as &$itme ){
             $tmp = [
                 //'id' =>$itme['id'],
                 'username'=>'xxx',
@@ -679,8 +687,8 @@ class FinanceController extends ControllerBase
             [
                 'page' => $page,
                 'pageSize' =>$pageSize,
-                'total' => $DataRes['total'],
-                'totalPage' => ceil( $DataRes['total']/ $pageSize ),
+                'total' => $res['total'],
+                'totalPage' => ceil( $res['total']/ $pageSize ),
             ] , [
                 'field'=>$titls,
                 'data'=>$returnDatas
