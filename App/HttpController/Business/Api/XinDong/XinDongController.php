@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Api\XinDong;
 
 use App\Crontab\CrontabList\RunCompleteCompanyData;
 use App\Crontab\CrontabList\RunDealApiSouKe;
+use App\Crontab\CrontabList\RunDealEmailReceiver;
 use App\Crontab\CrontabList\RunDealFinanceCompanyData;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNew;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNewV2;
@@ -3321,40 +3322,10 @@ eof;
         if(
             $this->getRequestData('testEmailReceiver')
         ){
-            $mail = new Email();
-            $emailAddress = CreateConf::getInstance()->getConf('mail.user_receiver');
-            $connect = $mail->mailConnect(
-                CreateConf::getInstance()->getConf('mail.host_receiver'),//'imap.exmail.qq.com',
-                CreateConf::getInstance()->getConf('mail.port_receiver'),//'143',
-                $emailAddress,//'mail@meirixindong.com',
-                CreateConf::getInstance()->getConf('mail.pass_receiver') //'Mrxd1816'
-            );
-            $date = date ( "d M Y", strToTime ( "-1 days" ) );
-            $emailData = $mail->mailListBySinceV2($date);
-            foreach ($emailData as $emailDataItem){
-                /**
-                'mailHeader' => $mailHeader,
-                'body' => $this->getBody($msg),
-                'Uid' => $UID
-                 */
-                MailReceipt::addRecordV2(
-                    [
-                        'email_id' => $emailDataItem['Uid'],
-                        'to' => $emailAddress,
-                        'to_other' => $emailDataItem['mailHeader']['toOther']?:'',
-                        'from' => $emailDataItem['mailHeader']['from']?:'',
-                        'subject' => $emailDataItem['mailHeader']['subject']?:'',
-                        'body' => $emailDataItem['body']?:'',
-                        'status' => '1',
-                        'type' => '1',
-                        'reamrk' => '',
-                        'raw_return' => json_encode($emailDataItem),
-                        'date' => date('Y-m-d H:i:s',strtotime($emailDataItem['mailHeader']['date'])) ,
-                    ]
-                );
-            }
+            RunDealEmailReceiver::pullEmail(1);
+            RunDealEmailReceiver::dealMail($this->getRequestData('testEmailReceiver'));
             return $this->writeJson(
-                200,[ ] ,$emailData ,
+                200,[ ] ,[],
                 '成功',
                 true,
                 []

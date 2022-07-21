@@ -14,6 +14,16 @@ use App\HttpController\Service\LongXin\LongXinService;
 class MailReceipt extends ModelBase
 {
 
+    static  $status_init = 1 ;
+    static  $status_init_cname =  '初始' ;
+
+    static  $status_succeed = 10 ;
+    static  $status_succeed_cname =  '成功' ;
+
+    static  $status_failed = 15 ;
+    static  $status_failed_cname =  '失败' ;
+
+
     protected $tableName = 'mail_receipt';
 
 
