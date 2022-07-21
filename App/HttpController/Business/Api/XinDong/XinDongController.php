@@ -13,6 +13,7 @@ use App\Csp\Service\CspService;
 use App\HttpController\Models\AdminV2\AdminNewUser;
 use App\HttpController\Models\AdminV2\AdminUserFinanceData;
 use App\HttpController\Models\AdminV2\DataModelExample;
+use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
@@ -3321,14 +3322,37 @@ eof;
             $this->getRequestData('testEmailReceiver')
         ){
             $mail = new Email();
+            $emailAddress = CreateConf::getInstance()->getConf('mail.user_receiver');
             $connect = $mail->mailConnect(
                 CreateConf::getInstance()->getConf('mail.host_receiver'),//'imap.exmail.qq.com',
                 CreateConf::getInstance()->getConf('mail.port_receiver'),//'143',
-                CreateConf::getInstance()->getConf('mail.user_receiver'),//'mail@meirixindong.com',
+                $emailAddress,//'mail@meirixindong.com',
                 CreateConf::getInstance()->getConf('mail.pass_receiver') //'Mrxd1816'
             );
             $date = date ( "d M Y", strToTime ( "-1 days" ) );
             $emailData = $mail->mailListBySinceV2($date);
+            foreach ($emailData as $emailDataItem){
+                /**
+                'mailHeader' => $mailHeader,
+                'body' => $this->getBody($msg),
+                'Uid' => $UID
+                 */
+                MailReceipt::addRecordV2(
+                    [
+                        'email_id' => $emailDataItem['Uid'],
+                        'to' => $emailAddress,
+                        'to_other' => $emailDataItem['mailHeader']['toOther']?:'',
+                        'from' => $emailDataItem['mailHeader']['from']?:'',
+                        'subject' => $emailDataItem['mailHeader']['subject']?:'',
+                        'body' => $emailDataItem['body']?:'',
+                        'status' => '1',
+                        'type' => '1',
+                        'reamrk' => '',
+                        'raw_return' => json_encode($emailDataItem),
+                        'date' => date('Y-m-d H:i:s',strtotime($emailDataItem['mailHeader']['date'])) ,
+                    ]
+                );
+            }
             return $this->writeJson(
                 200,[ ] ,$emailData ,
                 '成功',
