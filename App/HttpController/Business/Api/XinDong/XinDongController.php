@@ -27,6 +27,7 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\Export\Excel\ExportExcelService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
+use App\HttpController\Service\Mail\Email;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\XinDong\XinDongService;
@@ -3316,6 +3317,25 @@ eof;
     }
     function testExport()
     {
+        if(
+            $this->getRequestData('testEmailReceiver')
+        ){
+            $mail = new Email();
+            $connect = $mail->mailConnect(
+                'imap.exmail.qq.com',
+                '143',
+                'mail@meirixindong.com',
+                'Mrxd1816'
+            );
+            $date = date ( "d M Y", strToTime ( "-1 days" ) );
+            $emailData = $mail->mailListBySinceV2($date);
+            return $this->writeJson(
+                200,[ ] ,$emailData ,
+                '成功',
+                true,
+                []
+            );
+        }
         if(
             $this->getRequestData('testTransaction')
         ){
