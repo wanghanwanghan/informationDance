@@ -27,6 +27,7 @@ use App\HttpController\Models\RDS3\HdSaic\ZhaoTouBiaoAll;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\Export\Excel\ExportExcelService;
+use App\HttpController\Service\LongDun\BaoYaService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Mail\Email;
@@ -3319,6 +3320,29 @@ eof;
     }
     function testExport()
     {
+        if(
+            $this->getRequestData('baoya2')
+        ){
+
+            return $this->writeJson(
+                200,[ ] ,(new BaoYaService ())->getProductDetail($this->getRequestData('baoya2')),
+                '成功',
+                true,
+                []
+            );
+        }
+        if(
+            $this->getRequestData('baoya1')
+        ){
+
+            return $this->writeJson(
+                200,[ ] ,(new BaoYaService ())->getProducts(),
+                '成功',
+                true,
+                []
+            );
+        }
+
         if(
             $this->getRequestData('testEmailReceiver')
         ){
