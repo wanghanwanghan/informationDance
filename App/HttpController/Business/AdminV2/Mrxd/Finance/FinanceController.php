@@ -328,12 +328,12 @@ class FinanceController extends ControllerBase
             $whereArr = [
                 [
                     'field' => 'created_at',
-                    'value' => strtotime($createdAtArr[0]),
+                    'value' => strtotime($createdAtArr[0].' 00:00:00'),
                     'operate' => '>=',
                 ],
                 [
                     'field' => 'created_at',
-                    'value' => strtotime($createdAtArr[1]),
+                    'value' => strtotime($createdAtArr[1]." 23:59:59"),
                     'operate' => '<=',
                 ]
             ];
@@ -576,26 +576,114 @@ class FinanceController extends ControllerBase
     //获取待确认的列表
     public function getNeedsConfirmExportLists(){
         $requestData =  $this->getRequestData();
-        $condition = [
-            'user_id' => $this->loginUserinfo['id'],
-            'needs_confirm' => 1,
+
+        //--------------------
+
+        $page = $requestData['pageNo']?:1;
+        $pageSize = $requestData['pageSize']?:10;
+
+        $createdAtStr = $this->getRequestData('updated_at');
+        $createdAtArr = explode('|||',$createdAtStr);
+        $whereArr = [];
+        if (
+            !empty($createdAtArr) &&
+            !empty($createdAtStr)
+        ) {
+            $whereArr = [
+                [
+                    'field' => 'updated_at',
+                    'value' => strtotime($createdAtArr[0].' 00:00:00'),
+                    'operate' => '>=',
+                ],
+                [
+                    'field' => 'updated_at',
+                    'value' => strtotime($createdAtArr[1].' 23:59:59'),
+                    'operate' => '<=',
+                ]
+            ];
+        }
+        $whereArr[] =  [
+            'field' => 'user_id',
+            'value' => $this->loginUserinfo['id'],
+            'operate' => '=',
         ];
 
-        $page = $requestData['page']?:1;
-        $res = AdminUserFinanceData::findByConditionV2(
-            $condition,
-            $page
+        $whereArr[] =  [
+            'field' => 'needs_confirm',
+            'value' => 1,
+            'operate' => '=',
+        ];
+
+        $dataRes = AdminUserFinanceData::findByConditionV3(
+            $whereArr,
+            $page,
+            $pageSize
         );
-        foreach ($res['data'] as &$itme ){
-            $itme['status_cname'] =AdminUserFinanceData::getStatusCname()[$itme['status']];
+        //---------------------
+        $titls = [
+            'username'=>'用户名',
+            'entName'=>'企业名',
+            'period'=>'年度',
+            'updated_at'=>'更新时间',
+            //'资产总额',
+            //'营业总收入'
+        ];
+
+        foreach ($dataRes['data'] as &$itme ){
+            $res = AdminUserFinanceData::findById($itme['id']);
+            $data = $res->toArray();
+            $allowedFields = NewFinanceData::getFieldCname(false);
+            $configs = AdminUserFinanceConfig::getConfigByUserId($data['user_id']);
+            $newFields = [];
+            foreach (json_decode($configs['allowed_fields']) as $field){
+                $newFields[$field] = $allowedFields[$field];
+            }
+            foreach ($newFields as $field){
+                $titls[$field] = $field;
+            }
+            $titls['status_cname'] = '状态';
+            break;
         }
+
+        $returnDatas = [];
+        foreach ($dataRes['data'] as &$itme ){
+            $AdminNewUser = AdminNewUser::findById($itme['user_id'])->toArray();
+            $tmp = [
+                'username'=>$AdminNewUser['user_name'],
+                'entName'=>$itme['entName'],
+                'period'=>$itme['year'],
+                'updated_at'=>date('Y-m-d H:i:s',$itme['updated_at']),
+            ];
+            //---
+            $res = AdminUserFinanceData::findById($itme['id']);
+            $data = $res->toArray();
+            $realFinanceDatId = $data['finance_data_id'];
+            $allowedFields = NewFinanceData::getFieldCname(false);
+            $configs = AdminUserFinanceConfig::getConfigByUserId($data['user_id']);
+            $newFields = [];
+            foreach (json_decode($configs['allowed_fields']) as $field){
+                $newFields[$field] = $allowedFields[$field];
+            }
+            $realData = NewFinanceData::findByIdV2($realFinanceDatId,$newFields);
+            foreach ($realData as $key=>$datItem){
+                $tmp[$key] = $datItem;
+            }
+
+            $tmp['status_cname']  =AdminUserFinanceData::getStatusCname()[$itme['status']];
+            $returnDatas[] = $tmp;
+        }
+
+
         return $this->writeJson(200,
             [
                 'page' => $page,
-                'pageSize' =>10,
-                'total' => $res['total'],
-                'totalPage' => ceil( $res['total']/ 10 ),
-            ] , $res['data'], '成功' );
+                'pageSize' =>$pageSize,
+                'total' => $dataRes['total'],
+                'totalPage' => ceil( $dataRes['total']/ $pageSize ),
+            ] , [
+                'field'=>$titls,
+                'data'=>$returnDatas
+            ], '成功' );
     }
 
     //账户流水
@@ -612,12 +700,12 @@ class FinanceController extends ControllerBase
             $whereArr = [
                 [
                     'field' => 'created_at',
-                    'value' => strtotime($createdAtArr[0]),
+                    'value' => strtotime($createdAtArr[0].' 00:00:00'),
                     'operate' => '>=',
                 ],
                 [
                     'field' => 'created_at',
-                    'value' => strtotime($createdAtArr[1]),
+                    'value' => strtotime($createdAtArr[1].' 23:59:59'),
                     'operate' => '<=',
                 ]
             ];
@@ -745,13 +833,30 @@ class FinanceController extends ControllerBase
     //确认是否需要
     public function ConfirmFinanceData(){
         $requestData =  $this->getRequestData();
-        $res = AdminUserFinanceData::updateStatus(
-            $requestData['id'],
-            $requestData['status']
-        );
-        if(!$res){
-            return $this->writeJson(206, [] ,   [], '确认失败', true, []);
+        $ids = explode(',',$requestData['ids']);
+        if(empty($ids)){
+            $ids = [$requestData['id']];
         }
+
+        if(empty($ids)){
+            return $this->writeJson(206, [] ,   [], '参数缺失', true, []);
+        }
+        foreach ($ids as $id){
+            $records =AdminUserFinanceData::findById($id)->toArray();
+            if(
+                $records['status'] ==  AdminUserFinanceData::$statusNeedsConfirm
+            ){
+                $res = AdminUserFinanceData::updateStatus(
+                    $id,
+                    $requestData['status']
+                );
+                if(!$res){
+                    return $this->writeJson(206, [] ,   [], '确认失败', true, []);
+                }
+            }
+
+        }
+
         return $this->writeJson(200, [ ], $res, '成功');
     }
 

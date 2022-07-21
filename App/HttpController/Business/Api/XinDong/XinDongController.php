@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Api\XinDong;
 
 use App\Crontab\CrontabList\RunCompleteCompanyData;
 use App\Crontab\CrontabList\RunDealApiSouKe;
+use App\Crontab\CrontabList\RunDealEmailReceiver;
 use App\Crontab\CrontabList\RunDealFinanceCompanyData;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNew;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNewV2;
@@ -13,6 +14,7 @@ use App\Csp\Service\CspService;
 use App\HttpController\Models\AdminV2\AdminNewUser;
 use App\HttpController\Models\AdminV2\AdminUserFinanceData;
 use App\HttpController\Models\AdminV2\DataModelExample;
+use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
@@ -27,6 +29,7 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\Export\Excel\ExportExcelService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
+use App\HttpController\Service\Mail\Email;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\XinDong\XinDongService;
@@ -3316,6 +3319,18 @@ eof;
     }
     function testExport()
     {
+        if(
+            $this->getRequestData('testEmailReceiver')
+        ){
+            RunDealEmailReceiver::pullEmail(1);
+            RunDealEmailReceiver::dealMail($this->getRequestData('testEmailReceiver'));
+            return $this->writeJson(
+                200,[ ] ,[],
+                '成功',
+                true,
+                []
+            );
+        }
         if(
             $this->getRequestData('testTransaction')
         ){

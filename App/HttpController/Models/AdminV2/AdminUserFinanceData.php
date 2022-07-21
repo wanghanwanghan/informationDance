@@ -43,7 +43,6 @@ class AdminUserFinanceData extends ModelBase
 
     public static function getStatusCname(){
 
-
         return [
             self::$statusinit => self::$statusinitCname,
             self::$statusNeedsConfirm => self::$statusNeedsConfirmCname,
@@ -688,11 +687,11 @@ class AdminUserFinanceData extends ModelBase
         return $res;
     }
 
-    public static function findByConditionV2($whereArr,$page){
+    public static function findByConditionV2($whereArr,$page,$pageSize){
 
         $model = AdminUserFinanceData::create()
             ->where($whereArr)
-            ->page($page)
+            ->page($page,$pageSize)
             ->order('id', 'DESC')
             ->withTotalCount();
 
@@ -707,6 +706,43 @@ class AdminUserFinanceData extends ModelBase
         );
         $total = $model->lastQueryResult()->getTotalCount();
 
+        return [
+            'data' => $res,
+            'total' =>$total,
+        ];
+    }
+
+    public static function findByConditionV3($whereArr,$page,$pageSize){
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    __CLASS__.__FUNCTION__.__LINE__,
+                    'findByConditionV3' => $whereArr
+                ]
+            )
+        );
+
+        $model = AdminUserFinanceData::create();
+        foreach ($whereArr as $whereItem){
+            $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+        }
+        $model->page($page,$pageSize)
+            ->order('id', 'DESC')
+            ->withTotalCount();
+
+        $res = $model->all();
+
+        $total = $model->lastQueryResult()->getTotalCount();
+
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    __CLASS__.__FUNCTION__.__LINE__,
+                    '$res' => $res,
+                    '$total' => $total
+                ]
+            )
+        );
         return [
             'data' => $res,
             'total' =>$total,
