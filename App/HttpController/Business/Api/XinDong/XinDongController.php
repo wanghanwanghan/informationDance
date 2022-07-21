@@ -3322,10 +3322,10 @@ eof;
         ){
             $mail = new Email();
             $connect = $mail->mailConnect(
-                'imap.exmail.qq.com',
-                '143',
-                'mail@meirixindong.com',
-                'Mrxd1816'
+                CreateConf::getInstance()->getConf('mail.host_receiver'),//'imap.exmail.qq.com',
+                CreateConf::getInstance()->getConf('mail.port_receiver'),//'143',
+                CreateConf::getInstance()->getConf('mail.user_receiver'),//'mail@meirixindong.com',
+                CreateConf::getInstance()->getConf('mail.pass_receiver') //'Mrxd1816'
             );
             $date = date ( "d M Y", strToTime ( "-1 days" ) );
             $emailData = $mail->mailListBySinceV2($date);
