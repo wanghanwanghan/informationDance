@@ -3323,9 +3323,9 @@ eof;
         if(
             $this->getRequestData('baoya2')
         ){
-
+//            new BaoYaService();
             return $this->writeJson(
-                200,[ ] ,(new BaoYaService ())->getProductDetail($this->getRequestData('baoya2')),
+                200,[ ] ,(new \App\HttpController\Service\BaoYa\BaoYaService())->getProductDetail($this->getRequestData('baoya2')),
                 '成功',
                 true,
                 []
@@ -3336,7 +3336,7 @@ eof;
         ){
 
             return $this->writeJson(
-                200,[ ] ,(new BaoYaService ())->getProducts(),
+                200,[ ] ,(new \App\HttpController\Service\BaoYa\BaoYaService())->getProducts(),
                 '成功',
                 true,
                 []

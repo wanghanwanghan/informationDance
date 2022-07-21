@@ -1,6 +1,6 @@
 <?php
 
-namespace App\HttpController\Service\LongDun;
+namespace App\HttpController\Service\BaoYa;
 
 use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Service\CreateConf;
