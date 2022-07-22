@@ -1,6 +1,6 @@
 <?php
 
-namespace App\HttpController\Business\AdminV2\Mrxd\SouKe;
+namespace App\HttpController\Business\OnlineGoods\Mrxd\SouKe;
 
 use App\ElasticSearch\Service\ElasticSearchService;
 use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;

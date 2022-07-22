@@ -174,6 +174,13 @@ class Company extends ServiceBase
         return $this;
     }
 
+    function SetAreaQueryV5($areasLocations,$type =1 )
+    {
+        (!empty($areasLocations)) &&  $this->es->addGeoShapWithin( $areasLocations) ;
+        // $this->query['query']['bool']['must'][]
+        return $this;
+    }
+
 
     function getYieldDataForSouKe($areaArr,$type =1){
 
@@ -244,13 +251,13 @@ class Company extends ServiceBase
     }
 
 
-    function formatEsMoney()
+    function formatEsMoney($field = 'reg_capital')
     {
 
         $this->return_data['hits']['hits'] = (new XinDongService())::formatEsMoney(
             $this->return_data['hits']['hits'],
             [
-                'reg_capital',
+                $field,
             ]
         );
 
@@ -259,10 +266,10 @@ class Company extends ServiceBase
     }
 
 
-    function searchFromEs()
+    function searchFromEs($index = 'company_202207')
     {
 
-        $responseJson = (new XinDongService())->advancedSearch($this->es);
+        $responseJson = (new XinDongService())->advancedSearch($this->es,$index);
         $responseArr = @json_decode($responseJson,true);
         $this->setReturnData($responseArr);
         CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
@@ -271,7 +278,6 @@ class Company extends ServiceBase
                     'es_query' => $this->es->query,
                 ]
         ));
-
         return $this;
     }
 
@@ -334,11 +340,23 @@ class Company extends ServiceBase
         return $this;
     }
 
-    function SetQueryByBusinessScope($basic_opscope){
+    function SetQueryBySearchTextV2($searchText){
+        if($searchText){
+            $matchedCnames = [
+                [ 'field'=>'ENTNAME' ,'value'=> $searchText],
+                [ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
+                [ 'field'=>'OPSCOPE' ,'value'=> $searchText]
+            ];
+            $this->es->addMustShouldPhraseQueryV2($matchedCnames) ;
+        }
+        return $this;
+    }
+
+    function SetQueryByBusinessScope($basic_opscope,$business_scope_field_name = "business_scope"){
         // 需要按文本搜索的
         $addMustMatchPhraseQueryMap = [
             // basic_opscope: 经营范围
-            'business_scope' => $basic_opscope,
+            $business_scope_field_name => $basic_opscope,
         ];
         if(!empty($addMustMatchPhraseQueryMap)){
             foreach($addMustMatchPhraseQueryMap as $field=>$value){
@@ -449,6 +467,33 @@ class Company extends ServiceBase
 
         return $this;
     }
+
+    //XXXXXXX
+    function SetQueryByCompanyOrgTypeV2($searchOptionArr){
+        $org_type_values = [];  // 企业类型
+        foreach($searchOptionArr as $item){
+            if($item['pid'] == 10){
+                $org_type_values = $item['value'];
+            }
+        }
+
+        $Sql = " select *  
+                            from  
+                        `admin_new_user` 
+                            $where
+      " ;
+        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+
+
+        $matchedCnames = [];
+        foreach($org_type_values as $orgType){
+            $orgType && $matchedCnames[] = (new XinDongService())->getCompanyOrgType()[$orgType];
+        }
+        (!empty($matchedCnames)) && $this->es->addMustShouldPhraseQuery( 'company_org_type' , $matchedCnames) ;
+
+        return $this;
+    }
+
     function SetQueryByEstiblishTime($searchOptionArr){
         $estiblish_time_values = [];  // 成立年限
         foreach($searchOptionArr as $item){

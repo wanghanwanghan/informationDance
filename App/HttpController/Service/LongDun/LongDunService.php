@@ -46,7 +46,7 @@ class LongDunService extends ServiceBase
                 'user_id' => 0,
                 'msg' => "url:".@$url." 参数:".@json_encode($body)." 返回：".@json_encode($resp),
                 'details' =>json_encode( XinDongService::trace()),
-                'type_cname' => 'Get请求',
+                'type_cname' => 'Get请求_LongDunService',
             ]
         );
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
