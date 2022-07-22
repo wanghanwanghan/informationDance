@@ -2873,10 +2873,14 @@ eof;
             $this->getRequestData('testToken')
         )
         {
-
+            $params = $this->request()->getRequestParam();
+            $token  = CommonService::generateTokenByParam($params);
             return $this->writeJson(
                 200,[ ] ,
-                $this->request()->getRequestParam(),
+                [
+                    '$params'=>$params,
+                    '$token' =>$token
+                ],
                 '成功',
                 true,
                 []

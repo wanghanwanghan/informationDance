@@ -518,4 +518,46 @@ class CommonService extends ServiceBase
         return implode($to, $arr);
     }
 
+    static function  generateTokenByParam($paramsArr){
+        $str = "";
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'generateTokenByParam_$paramsArr' =>  $paramsArr
+            ])
+        );
+        //名升序排序
+        ksort($paramsArr);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'generateTokenByParam_$paramsArr_sort' =>  $paramsArr
+            ])
+        );
+        foreach ($paramsArr as $key => $value){
+            $str .= "<<$key&$value>>";
+        }
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'generateTokenByParam_$paramsArr_sort_$str' =>  $str
+            ])
+        );
+        $str .= "XinDongLe$2022";
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'generateTokenByParam_$paramsArr_sort_$str2' =>  $str
+            ])
+        );
+        $str = md5($str);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'generateTokenByParam_$paramsArr_sort_$str3' =>  $str
+            ])
+        );
+        return  md5($str);
+    }
+
 }
