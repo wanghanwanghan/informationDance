@@ -223,6 +223,37 @@ function sqlRaw(string $sql, string $conn = null): ?array
     return $res['result'];
 }
 
+function sqlRawV2(string $sql, string $conn = null,$toArray = 1 )
+{
+    if (empty($conn)) {
+        $conn = CreateConf::getInstance()->getConf('env.mysqlDatabase');
+    }
+
+    try {
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->raw($sql);
+        if($toArray){
+            $res = DbManager::getInstance()
+                ->query($queryBuilder, true, $conn)
+                ->toArray();
+        }else{
+            $res = DbManager::getInstance()
+                ->query($queryBuilder, true, $conn);
+        }
+    } catch (\Throwable $e) {
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'sql_error',
+                    $sql,
+                    $e->getMessage()
+                ]
+            )
+        );
+        return null;
+    }
+    return $res['result'];
+}
 
 //随机字符串
 function getRandomStr($len = 16): string

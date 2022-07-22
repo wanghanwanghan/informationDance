@@ -2873,11 +2873,7 @@ eof;
             $this->getRequestData('testMenu')
         ){
             $Sql = "SET @pv = 'A'" ;
-            $queryBuilder = new QueryBuilder();
-            $queryBuilder->raw($Sql);
-            $res = DbManager::getInstance()
-                ->query($queryBuilder, true, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_hd_saic'))
-                ; 
+            $data = sqlRawV2($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_hd_saic'));
             $Sql = "select id,`code`,name,parent,`level` from code_ca16
                     where FIND_IN_SET(parent,@pv) and !isnull(@pv:= concat(@pv, ',', code));" ;
             $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_hd_saic'));
