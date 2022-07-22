@@ -1668,7 +1668,6 @@ class XinDongService extends ServiceBase
         if($dataItem['market_share']){
             $tags[130] = $dataItem['market_share']['ent_market_share']['bottom'].'~'.
                 $dataItem['market_share']['ent_market_share']['top'];
-
         }
 
         return $tags;

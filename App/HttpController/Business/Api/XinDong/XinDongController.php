@@ -2870,6 +2870,19 @@ eof;
     function testExport()
     {
         if(
+            $this->getRequestData('testToken')
+        )
+        {
+
+            return $this->writeJson(
+                200,[ ] ,
+                $this->request()->getRequestParam(),
+                '成功',
+                true,
+                []
+            );
+        }
+        if(
             $this->getRequestData('testMenu')
         ){
             $Sql = "SET @pv = 'A'" ;
