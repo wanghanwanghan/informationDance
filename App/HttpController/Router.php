@@ -16,6 +16,7 @@ class Router extends AbstractRouter
             $this->CommonRouterV1($routeCollector);//公共功能
             $this->UserRouterV1($routeCollector);//用户相关
             $this->XinDongRouterV1($routeCollector);//信动
+            $this->BaoXianRouterV1($routeCollector);//信动
             $this->LongDunRouterV1($routeCollector);//龙盾
             $this->TaoShuRouterV1($routeCollector);//淘数
             $this->FaYanYuanRouterV1($routeCollector);//法研院
@@ -242,6 +243,19 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/queryInancialBank', $prefix . 'queryInancialBank');// 营收规模 https://api.meirixindong.com/api/v1/xd/queryInancialBank
             $routeCollector->addRoute(['GET', 'POST'], '/matchNames', $prefix . 'matchNames');// 营收规模 https://api.meirixindong.com/api/v1/xd/matchNames
             $routeCollector->addRoute(['GET', 'POST'], '/testExport', $prefix . 'testExport');// 营收规模 https://api.meirixindong.com/api/v1/xd/testExport
+        });
+
+        return true;
+    }
+
+    private function BaoXianRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/OnlineGoods/Mrxd/BaoXianController/';
+
+        $routeCollector->addGroup('/online_goods', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getProducts', $prefix . 'getProducts');// getProducts
+            $routeCollector->addRoute(['GET', 'POST'], '/getProductDetail', $prefix . 'getProductDetail');// getProductDetail
+            $routeCollector->addRoute(['GET', 'POST'], '/uploadeFile', $prefix . 'uploadeFile');// uploadeFile
         });
 
         return true;

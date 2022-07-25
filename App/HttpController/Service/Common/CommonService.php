@@ -526,7 +526,7 @@ class CommonService extends ServiceBase
                 'generateTokenByParam_$paramsArr' =>  $paramsArr
             ])
         );
-        //名升序排序
+        //按照key升序排序
         ksort($paramsArr);
         CommonService::getInstance()->log4PHP(
             json_encode([
