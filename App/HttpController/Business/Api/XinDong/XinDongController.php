@@ -2880,15 +2880,7 @@ eof;
             for ($i=1;$i<=24;$i++){
                 $d1= date("Y-m-01", strtotime("-1 month",strtotime($date)));
                 $d2= date("Y-m-t", strtotime("-1 month",strtotime($date)));
-                return $this->writeJson(
-                    200,[ ] ,
-                     [
-                         $code, $d1, $d2
-                     ],
-                    '成功',
-                    true,
-                    []
-                );
+
                 $date = date("Y-m", strtotime("-1 month",strtotime($date)));
                 $code = '911101143355687304';
                 $month = date('Y-m',strtotime($d1));
@@ -2899,12 +2891,14 @@ eof;
                     continue;
                 };
 
-//                $res = (new JinCaiShuKeService())
-//                    ->setCheckRespFlag(false)
-//                    ->S000519($code, $d1, $d2);
+                $res = (new JinCaiShuKeService())
+                    ->setCheckRespFlag(true)
+                    ->S000519($code, $d1, $d2);
                 return $this->writeJson(
-                    200,[ $code, $d1, $d2] ,
-                    $res,
+                    200,[ ] ,
+                    [
+                        $res,$code, $d1, $d2
+                    ],
                     '成功',
                     true,
                     []
