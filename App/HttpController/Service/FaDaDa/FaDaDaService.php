@@ -244,7 +244,7 @@ class FaDaDaService extends ServiceBase
         $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAutoByWord($arr,$ent_customer_id,$ent_sign_id,'#盖章处#'));
         if(!empty($ExtsignAutoErrorData)) return $ExtsignAutoErrorData;
         //自动签署法人姓名
-        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAutoByWord($arr,$people_customer_id,$personal_sign_id,'#法人章#'));
+        $ExtsignAutoErrorData = $this->checkRet($this->getExtsignAutoByWord($arr,$people_customer_id,$personal_sign_id,'代表签字'));
         if(!empty($ExtsignAutoErrorData)) return $ExtsignAutoErrorData;
         //合同下载
         $pdf_path = $this->downLoadContract($arr);
@@ -861,6 +861,7 @@ class FaDaDaService extends ServiceBase
             'position_type' => 0,//定位类型 0-关键字（默认） 1-坐标
             'sign_keyword' => $writing,//定位关键字 关键字为文档中的文字内容（能被ctrl+f查找功能检索到）
             'keyword_strategy' => 2,//0 所有关键字签章 1 第一个关键字签章 2 最后一个关键字签章
+//            'cellHorizontalAlignment' => 2,
             'signature_id' => $signature_id,
 //            'signature_show_time' => $arr['signature_show_time'],//时间戳显示方式 1 显示 2 不显示
 //            'signature_positions'=>'[{"pagenum":0,"x":'.$x.',"y":'.$y.'}]',
