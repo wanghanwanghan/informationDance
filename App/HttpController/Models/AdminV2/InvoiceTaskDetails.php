@@ -46,6 +46,12 @@ class InvoiceTaskDetails extends ModelBase
             ->get();
         return $res;
     }
+    public static function findByInvoiceTaskId($invoice_task_id){
+        $res =  InvoiceTaskDetails::create()
+            ->where('invoice_task_id',$invoice_task_id)
+            ->all();
+        return $res;
+    }
 
     public static function addRecord($requestData){
         try {

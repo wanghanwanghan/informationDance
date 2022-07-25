@@ -2873,48 +2873,29 @@ eof;
     function testExport()
     {
         if(
+            $this->getRequestData('collectInvoice2')
+        )
+        {
+            $code = '911101143355687304';
+            $res = XinDongService::pullInvoice($code);
+
+            return $this->writeJson(
+                200,[ ] ,
+                $res,
+                '成功',
+                true,
+                []
+            );
+        }
+
+        if(
             $this->getRequestData('collectInvoice')
         )
         {
             $date ="2022-07";
-            for ($i=1;$i<=24;$i++){
-                $d1= date("Y-m-01", strtotime("-1 month",strtotime($date)));
-                $d2= date("Y-m-t", strtotime("-1 month",strtotime($date)));
-
-                $date = date("Y-m", strtotime("-1 month",strtotime($date)));
-                $code = '911101143355687304';
-                $month = date('Y-m',strtotime($d1));
-                //之前发起过任务
-                if(
-                    InvoiceTask::findByNsrsbh($code,$month)
-                ){
-                    continue;
-                };
-
-
-                $res = (new JinCaiShuKeService())
-                    ->setCheckRespFlag(true)
-                    ->S000519($code, $d1, $d2);
-                $dbId = InvoiceTask::addRecordV2([
-                    'nsrsbh' => $code,
-                    'month' => $month,
-                    'raw_return' => json_encode($res),
-                ]);
-                if($dbId){
-                    foreach ($res['result']['content'] as $dataItem){
-                       
-                        InvoiceTaskDetails::addRecordV2([
-                            'invoice_task_id' => $dbId,
-                            'fplx' => $dataItem['fplx']?:'',
-                            'kprqq' => $dataItem['kprqq']?:'',
-                            'kprqz' => $dataItem['kprqz']?:'',
-                            'requuid' => $dataItem['requuid']?:'',
-                            'rwh' => $dataItem['rwh']?:'',
-                            'sjlx' => $dataItem['sjlx']?:'',
-                        ]);
-                    }
-                }
-            }
+            $monthsNums = 24;
+            $code = '911101143355687304';
+            XinDongService::collectInvoice($date,$monthsNums,$code);
 
             return $this->writeJson(
                 200,[ ] ,
@@ -2926,8 +2907,6 @@ eof;
                 []
             );
         }
-
-
 
         if(
             $this->getRequestData('sendXunJiaEmail')
