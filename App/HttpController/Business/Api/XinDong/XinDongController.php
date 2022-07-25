@@ -2890,9 +2890,9 @@ eof;
                     continue;
                 };
 
-                $res = (new JinCaiShuKeService())
-                    ->setCheckRespFlag(false)
-                    ->S000519($code, $d1, $d2);
+//                $res = (new JinCaiShuKeService())
+//                    ->setCheckRespFlag(false)
+//                    ->S000519($code, $d1, $d2);
                 return $this->writeJson(
                     200,[ $code, $d1, $d2] ,
                     $res,
