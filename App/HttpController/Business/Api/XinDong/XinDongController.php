@@ -5,7 +5,7 @@ namespace App\HttpController\Business\Api\XinDong;
 use App\Crontab\CrontabList\RunCompleteCompanyData;
 use App\Crontab\CrontabList\RunDealApiSouKe;
 use App\Crontab\CrontabList\RunDealEmailReceiver;
-use App\Crontab\CrontabList\RunDealFinanceCompanyData;
+//use App\Crontab\CrontabList\RunDealFinanceCompanyData;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNew;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNewV2;
 use App\Crontab\CrontabList\RunDealToolsFile;
@@ -17,17 +17,20 @@ use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\OperatorLog;
+use App\HttpController\Models\AdminV2\InvoiceTask;
+use App\HttpController\Models\AdminV2\InvoiceTaskDetails;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
-use App\HttpController\Models\RDS3\HdSaic\ZhaoTouBiaoAll;
+//use App\HttpController\Models\RDS3\HdSaic\ZhaoTouBiaoAll;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\Export\Excel\ExportExcelService;
-use App\HttpController\Service\LongDun\BaoYaService;
+use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
+//use App\HttpController\Service\LongDun\BaoYaService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Mail\Email;
@@ -2869,6 +2872,51 @@ eof;
     }
     function testExport()
     {
+        if(
+            $this->getRequestData('collectInvoice')
+        )
+        {
+            $date ="2022-07";
+            for ($i=1;$i<=24;$i++){
+                $d1= date("Y-m-01", strtotime("-1 month",strtotime($date)));
+                $d2= date("Y-m-t", strtotime("-1 month",strtotime($date)));
+                $date = date("Y-m", strtotime("-1 month",strtotime($date)));
+                $code = '911101143355687304';
+                $month = date('Y-m',strtotime($d1));
+                //之前发起过任务
+                if(
+                    InvoiceTask::findByNsrsbh($code,$month)
+                ){
+                    continue;
+                };
+
+                $res = (new JinCaiShuKeService())
+                    ->setCheckRespFlag(false)
+                    ->S000519($code, $d1, $d2);
+                return $this->writeJson(
+                    200,[ $code, $d1, $d2] ,
+                    $res,
+                    '成功',
+                    true,
+                    []
+                );
+                die;
+
+            }
+
+            return $this->writeJson(
+                200,[ ] ,
+                [
+
+                ],
+                '成功',
+                true,
+                []
+            );
+        }
+
+
+
         if(
             $this->getRequestData('sendXunJiaEmail')
         )
