@@ -2,12 +2,14 @@
 
 namespace App\HttpController\Service\JinCaiShuKe;
 
+use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Models\Api\InvoiceIn;
 use App\HttpController\Models\Api\InvoiceOut;
 use App\HttpController\Models\Api\JincaiRwhLog;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
+use App\HttpController\Service\XinDong\XinDongService;
 use wanghanwanghan\someUtils\moudles\resp\create;
 
 class JinCaiShuKeService extends ServiceBase
@@ -201,7 +203,14 @@ class JinCaiShuKeService extends ServiceBase
         $res = (new CoHttpClient())
             ->useCache(false)
             ->send($this->url, $post_data, [], ['enableSSL' => true]);
-
+        OperatorLog::addRecord(
+            [
+                'user_id' => 0,
+                'msg' => "url:".$this->url." 参数:".@json_encode($post_data)." 返回：".@json_encode($res),
+                'details' =>json_encode( XinDongService::trace()),
+                'type_cname' => '发票归集_S000519',
+            ]
+        );
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
 
