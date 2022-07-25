@@ -3355,11 +3355,11 @@ class XinDongService extends ServiceBase
         foreach ($dbRes as $dbItem){
             $details = InvoiceTaskDetails::findByInvoiceTaskId($dbItem['id']);
             foreach ($details as $detailItem){
-                $tmp[] = $detailItem['rwh'];
-//                $datas = self::getYieldData($code, $detailItem['rwh']) ;
-//                foreach ($datas as $dataItem){
-//                    $tmp[] = $dataItem;
-//                }
+//                $tmp[] = $detailItem['rwh'];
+                $datas = self::getYieldData($code, $detailItem['rwh']) ;
+                foreach ($datas as $dataItem){
+                    $tmp[] = $dataItem;
+                }
             }
         }
 
