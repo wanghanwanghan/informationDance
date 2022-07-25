@@ -3399,7 +3399,7 @@ class XinDongService extends ServiceBase
 
         while (true) {
             $res = (new JinCaiShuKeService())
-                ->setCheckRespFlag(true)
+                ->setCheckRespFlag(false)
                 ->S000523($code, $rwh, $page, $size);
 
             if (empty($res['result']['content'])) {
