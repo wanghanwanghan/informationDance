@@ -47,4 +47,24 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
         );
     }
 
+    function getProductDetail(): bool
+    {
+        if($this->getRequestData('id')<=0){
+            return $this->writeJson(
+                200,[ ] ,[],
+                '参数缺失',
+                true,
+                []
+            );
+        }
+        return $this->writeJson(
+            200,[ ] ,(new \App\HttpController\Service\BaoYa\BaoYaService())->getProductDetail(
+                $this->getRequestData('id')
+            ),
+            '成功',
+            true,
+            []
+        );
+    }
+
 }
