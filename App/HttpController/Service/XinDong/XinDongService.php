@@ -3350,20 +3350,24 @@ class XinDongService extends ServiceBase
         return true;
     }
     static  function  pullInvoice($code){
-        $tmp = [];
         $dbRes = InvoiceTask::findBySql( "WHERE nsrsbh = '".$code."'  AND  status = 1 LIMIT 1");
         foreach ($dbRes as $dbItem){
             $details = InvoiceTaskDetails::findByInvoiceTaskId($dbItem['id']);
-            foreach ($details as $detailItem){
-//                $tmp[] = $detailItem['rwh'];
-                $datas = self::getYieldDataV2($code, $detailItem['rwh']) ;
+            foreach ($details as $detailItem){ 
+                $tmp = [];
+                $datas = self::getYieldData($code, $detailItem['rwh']) ;
                 foreach ($datas as $dataItem){
                     $tmp[] = $dataItem;
                 }
+                InvoiceTaskDetails::updateById(
+                    $detailItem['id'],[
+                        'raw_return' =>  json_encode($tmp)
+                    ]
+                );
             }
         }
 
-        return $tmp;
+        return true;
     }
 
     static function getYieldData($code, $rwh){
@@ -3373,7 +3377,7 @@ class XinDongService extends ServiceBase
 
         while (true) {
             $res = (new JinCaiShuKeService())
-                ->setCheckRespFlag(true)
+                ->setCheckRespFlag(false)
                 ->S000523($code, $rwh, $page, $size);
 
             if (empty($res['result']['content'])) {
@@ -3385,10 +3389,11 @@ class XinDongService extends ServiceBase
             }
 
             $page ++;
-            foreach ($res as $resItem){
-                $resItem['my_tmp_page'] = $page;
-                yield $datas[] = $resItem;
-            }
+            yield $datas[] = $res;
+//            foreach ($res as $resItem){
+//                $resItem['my_tmp_page'] = $page;
+//                yield $datas[] = $resItem;
+//            }
         }
     }
 
@@ -3411,10 +3416,11 @@ class XinDongService extends ServiceBase
             }
 
             $page ++;
-            foreach ($res as $resItem){
-                $resItem['my_tmp_page'] = $page;
-                $datas[] = $resItem;
-            }
+            $datas[] = $res;
+//            foreach ($res as $resItem){
+//                $resItem['my_tmp_page'] = $page;
+//                $datas[] = $resItem;
+//            }
         }
 
         return $datas;

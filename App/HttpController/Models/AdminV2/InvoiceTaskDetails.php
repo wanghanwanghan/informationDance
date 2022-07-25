@@ -63,6 +63,7 @@ class InvoiceTaskDetails extends ModelBase
                'requuid' => $requestData['requuid'],
                'rwh' => $requestData['rwh'],
                'sjlx' => $requestData['sjlx'],
+               'raw_return' => $requestData['raw_return']?:'',
                 'status' => $requestData['status']?:1,
                'created_at' => time(),
                'updated_at' => time(),
