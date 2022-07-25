@@ -2902,17 +2902,7 @@ eof;
                 ]);
                 if($dbId){
                     foreach ($res['result']['content'] as $dataItem){
-                        /**
-                        {
-                        "fplx": "01",
-                        "kprqq": "2022-06-01",
-                        "kprqz": "2022-06-30",
-                        "requuid": "ffc267cc8d4445f7ac81b10ebb299528",
-                        "rwh": "bc9f79b3940e4e67b9f95cf8515dccdd",
-                        "sjlx": "1",
-                        "sqrq": "2022-07-25"
-                        }
-                         */
+                       
                         InvoiceTaskDetails::addRecordV2([
                             'invoice_task_id' => $dbId,
                             'fplx' => $dataItem['fplx']?:'',
@@ -2924,16 +2914,6 @@ eof;
                         ]);
                     }
                 }
-                return $this->writeJson(
-                    200,[ ] ,
-                    [
-                        $code, $d1, $d2,$dbId
-                    ],
-                    '成功',
-                    true,
-                    []
-                );
-//                die; 
             }
 
             return $this->writeJson(
