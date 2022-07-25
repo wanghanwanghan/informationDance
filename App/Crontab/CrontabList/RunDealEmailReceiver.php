@@ -18,6 +18,7 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceUploadeRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecordV3;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
 use App\HttpController\Models\AdminV2\FinanceLog;
+use App\HttpController\Models\AdminV2\InsuranceData;
 use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\OperatorLog;
@@ -196,6 +197,107 @@ class RunDealEmailReceiver extends AbstractCronTask
             MailReceipt::updateById($email['id'],['status' => MailReceipt::$status_succeed]);
         }
     }
+
+    static  function  getTableHtml(){
+        return '
+<style>
+    .styled-table {
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+    .styled-table thead tr {
+        background-color: #009879;
+        color: #ffffff;
+        text-align: left;
+    }
+    .styled-table th,
+    .styled-table td {
+        padding: 12px 15px;
+    }
+    .styled-table tbody tr {
+        border-bottom: 1px solid #dddddd;
+    }
+
+    .styled-table tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3;
+    }
+
+    .styled-table tbody tr:last-of-type {
+        border-bottom: 2px solid #009879;
+    }
+
+    .styled-table tbody tr.active-row {
+        font-weight: bold;
+        color: #009879;
+    }
+   
+</style>
+<table class="styled-table">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Points</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>Dom</td>
+        <td>6000</td>
+    </tr>
+    <tr class="active-row">
+        <td>Melissa</td>
+        <td>5150</td>
+    </tr> 
+    </tbody>
+</table>
+
+';
+    }
+
+    static function sendEmail()
+    {
+
+        $datas = InsuranceData::findBySql(
+            " WHERE  
+                    `status` =  ".InsuranceData::$status_init." 
+                "
+        );
+
+        foreach ($datas as $data){
+            $tableHtml = self::getTableHtml();
+            $res1 = CommonService::getInstance()->sendEmailV2(
+                'tianyongshan@meirixindong.com',
+                // 'minglongoc@me.com',
+                '询价('.$data['id'].')',
+                $tableHtml
+                ,
+                [
+                    TEMP_FILE_PATH . 'personal.png',
+                    TEMP_FILE_PATH . 'qianzhang2.png',
+                ]
+            );
+            InsuranceData::updateById($data['id'],[
+                'status' => InsuranceData::$status_email_succeed
+            ]);
+        }
+
+
+//        OperatorLog::addRecord(
+//            [
+//                'user_id' => 0,
+//                'msg' =>  " 附件:".TEMP_FILE_PATH . $res['filename'] .' 邮件结果:'.$res1.$res2.$res3.$res4.$res5,
+//                'details' =>json_encode( XinDongService::trace()),
+//                'type_cname' => '招投标邮件',
+//            ]
+//        );
+
+        return true ;
+    }
+
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
         CommonService::getInstance()->log4PHP($throwable->getTraceAsString());

@@ -16,16 +16,23 @@ class InsuranceData extends ModelBase
 
     protected $tableName = 'insurance_data';
 
+    static $status_init = 1;
+    static $status_init_cname = '初始化';
+
+
+    static $status_email_succeed = 5;
+    static $status_email_succeed_cname = '发邮件成功';
+
 
     static  function  addRecordV2($info){
 
         if(
-            self::findByBatch($info['batch'])
+            self::findByName($info['name'],$info['product_id'])
         ){
             return  true;
         }
 
-        return AdminUserFinanceExportDataQueue::addRecord(
+        return InsuranceData::addRecord(
             $info
         );
     }
@@ -57,14 +64,14 @@ class InsuranceData extends ModelBase
     status
     created_at
     updated_at
-
-
      */
     public static function addRecord($requestData){
 
         try {
-           $res =  AdminUserFinanceExportDataQueue::create()->data([
-                'upload_record_id' => $requestData['upload_record_id'],
+           $res =  InsuranceData::create()->data([
+                'post_params' => $requestData['post_params'],
+                 'type' => $requestData['type'],
+                'name' => $requestData['name'],
                 'status' => $requestData['status']?:1,
                'created_at' => time(),
                'updated_at' => time(),
@@ -96,92 +103,14 @@ class InsuranceData extends ModelBase
     }
 
     public static function findAllByCondition($whereArr){
-        $res =  AdminUserFinanceExportDataQueue::create()
+        $res =  InsuranceData::create()
             ->where($whereArr)
             ->all();
         return $res;
     }
-    /*
-     示范：
-    [
-        'user_id' => [
-            'not_empty' => 1,
-            'field_name' => 'user_id',
-            'err_msg' => '',
-        ]
-    ]
-
-     * */
-    public static function checkField($configs,$requestData){
-        foreach ($configs as $configItem){
-            if(
-                $configItem['not_empty']
-            ){
-                if(
-                    empty($requestData[$configItem['field_name']])
-                ){
-                    return [
-                        'res' => false,
-                        'msgs'=>$configItem['err_msg'],
-                    ];
-                }
-            };
-
-            if(
-                isset($configItem['bigger_than'])
-            ){
-                if(
-                    $requestData[$configItem['field_name']] < $configItem['bigger_than']
-                ){
-                    return [
-                        'res' => false,
-                        'msgs'=>$configItem['err_msg'],
-                    ];
-                }
-            };
-
-            if(
-                isset($configItem['less_than'])
-            ){
-                if(
-                    $requestData[$configItem['field_name']] > $configItem['less_than']
-                ){
-                    CommonService::getInstance()->log4PHP(json_encode(
-                            [
-                                'less_than check false '  ,
-                                'params 1' => $requestData[$configItem['field_name']],
-                                'params 2' => $configItem['less_than']
-                            ]
-                        ));
-                    return [
-                        'res' => false,
-                        'msgs'=>$configItem['err_msg'],
-                    ];
-                }
-            };
-
-            if(
-                !empty($configItem['in_array'])
-            ){
-                if(
-                   !in_array( $requestData[$configItem['field_name']] ,$configItem['in_array'])
-                ){
-                    return [
-                        'res' => false,
-                        'msgs'=>$configItem['err_msg'],
-                    ];
-                }
-            };
-        }
-        return [
-            'res' => true,
-            'msgs'=>'',
-        ];
-    }
-
 
     public static function setTouchTime($id,$touchTime){
-        $info = AdminUserFinanceUploadRecord::findById($id);
+        $info = InsuranceData::findById($id);
 
         return $info->update([
             'touch_time' => $touchTime,
@@ -196,7 +125,7 @@ class InsuranceData extends ModelBase
     }
 
     public static function findByConditionWithCountInfo($whereArr,$page){
-        $model = AdminUserFinanceExportDataQueue::create()
+        $model = InsuranceData::create()
                 ->where($whereArr)
                 ->page($page)
                 ->order('id', 'DESC')
@@ -212,7 +141,7 @@ class InsuranceData extends ModelBase
     }
 
     public static function findByConditionV2($whereArr,$page){
-        $model = AdminUserFinanceExportDataQueue::create();
+        $model = InsuranceData::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
@@ -230,14 +159,22 @@ class InsuranceData extends ModelBase
     }
 
     public static function findById($id){
-        $res =  AdminUserFinanceExportDataQueue::create()
+        $res =  InsuranceData::create()
             ->where('id',$id)            
             ->get();  
         return $res;
     }
 
+    public static function findByName($name,$product_id){
+        $res =  InsuranceData::create()
+            ->where('name',$name)
+            ->where('product_id',$product_id)
+            ->get();
+        return $res;
+    }
+
     public static function setData($id,$field,$value){
-        $info = AdminUserFinanceExportDataQueue::findById($id);
+        $info = InsuranceData::findById($id);
         return $info->update([
             "$field" => $value,
         ]);
@@ -247,9 +184,9 @@ class InsuranceData extends ModelBase
     public static function findBySql($where){
         $Sql = " select *  
                             from  
-                        `admin_new_user` 
+                        `insurance_data` 
                             $where
-      " ;
+        ";
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return $data;
     }

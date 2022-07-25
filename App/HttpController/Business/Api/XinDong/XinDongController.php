@@ -2870,6 +2870,22 @@ eof;
     function testExport()
     {
         if(
+            $this->getRequestData('sendXunJiaEmail')
+        )
+        {
+            RunDealEmailReceiver::sendEmail();
+            return $this->writeJson(
+                200,[ ] ,
+                [
+
+                ],
+                '成功',
+                true,
+                []
+            );
+        }
+
+        if(
             $this->getRequestData('testToken')
         )
         {

@@ -12,6 +12,7 @@ use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\DeliverDetailsHistory;
 use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
+use App\HttpController\Models\AdminV2\InsuranceData;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Service\Common\CommonService;
@@ -78,9 +79,9 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
         $checkRes = DataModelExample::checkField(
             [
 
-                'id' => [
+                'product_id' => [
                     'not_empty' => 1,
-                    'field_name' => 'id',
+                    'field_name' => 'product_id',
                     'err_msg' => '参数缺失',
                 ],
                 'name' => [
@@ -97,12 +98,22 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
             return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
         }
 
+        $res = InsuranceData::addRecordV2(
+            [
+                'post_params' => json_encode(
+                    [
+
+                    ]
+                ),
+                'product_id' => $requestData['product_id']?:'',
+                'name' => $requestData['name']?:'',
+                'status' =>  1,
+            ]
+        );
+
         return $this->writeJson(
             200,[ ] ,
-            (new \App\HttpController\Service\BaoYa\BaoYaService())->getProductDetail
-            (
-                $this->getRequestData('id')
-            ),
+             $res,
             '成功',
             true,
             []
