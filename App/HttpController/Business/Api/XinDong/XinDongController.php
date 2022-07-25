@@ -2933,8 +2933,7 @@ eof;
                     true,
                     []
                 );
-                die;
-
+//                die; 
             }
 
             return $this->writeJson(
