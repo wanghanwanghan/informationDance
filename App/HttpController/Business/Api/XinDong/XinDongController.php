@@ -2881,8 +2881,10 @@ eof;
                 $d1= date("Y-m-01", strtotime("-1 month",strtotime($date)));
                 $d2= date("Y-m-t", strtotime("-1 month",strtotime($date)));
                 return $this->writeJson(
-                    200,[ $code, $d1, $d2] ,
-                    $res,
+                    200,[ ] ,
+                     [
+                         $code, $d1, $d2
+                     ],
                     '成功',
                     true,
                     []
