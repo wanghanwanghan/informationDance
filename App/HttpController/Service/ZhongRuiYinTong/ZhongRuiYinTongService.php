@@ -13,10 +13,7 @@ class ZhongRuiYinTongService extends ServiceBase
 
     function __construct()
     {
-        $this->key = CreateConf::getInstance()->getConf('yunmatong.key');
-        $this->bizno = CreateConf::getInstance()->getConf('yunmatong.bizno');
-        $this->publicKey = CreateConf::getInstance()->getConf('yunmatong.publicKey');
-        $this->privateKey = CreateConf::getInstance()->getConf('yunmatong.privateKey');
+        $this->xxx = CreateConf::getInstance()->getConf('xxx.xxx');
         $this->requestsn = control::getUuid();
 
         return parent::__construct();
