@@ -5,6 +5,8 @@ namespace App\HttpController\Business\OnlineGoods\Mrxd;
 use App\ElasticSearch\Service\ElasticSearchService;
 use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;
 use App\HttpController\Models\AdminNew\ConfigInfo;
+use App\HttpController\Models\AdminV2\AdminUserFinanceConfig;
+use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
 use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\DeliverDetailsHistory;
@@ -58,13 +60,83 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
             );
         }
         return $this->writeJson(
-            200,[ ] ,(new \App\HttpController\Service\BaoYa\BaoYaService())->getProductDetail(
+            200,[ ] ,
+            (new \App\HttpController\Service\BaoYa\BaoYaService())->getProductDetail
+            (
                 $this->getRequestData('id')
             ),
             '成功',
             true,
             []
         );
+    }
+
+    //咨询
+    function consultProduct(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $checkRes = DataModelExample::checkField(
+            [
+
+                'id' => [
+                    'not_empty' => 1,
+                    'field_name' => 'id',
+                    'err_msg' => '参数缺失',
+                ],
+                'name' => [
+                    'not_empty' => 1,
+                    'field_name' => 'name',
+                    'err_msg' => '参数缺失',
+                ]
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
+        return $this->writeJson(
+            200,[ ] ,
+            (new \App\HttpController\Service\BaoYa\BaoYaService())->getProductDetail
+            (
+                $this->getRequestData('id')
+            ),
+            '成功',
+            true,
+            []
+        );
+    }
+
+    public function uploadeFile(){
+        $requestData =  $this->getRequestData();
+        $files = $this->request()->getUploadedFiles();
+        $fileNames = [];
+        $succeedNums = 0;
+        foreach ($files as $key => $oneFile) {
+            try {
+                $fileName = $oneFile->getClientFilename();
+                $path = OTHER_FILE_PATH . $fileName;
+//                if(file_exists($path)){
+//                    return $this->writeJson(203, [], [],'文件已存在！');;
+//                }
+
+                $res = $oneFile->moveTo($path);
+                if(!file_exists($path)){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode(['uploadeCompanyLists   file_not_exists moveTo false ', 'params $path '=> $path,  ])
+                    );
+                    return $this->writeJson(203, [], [],'文件移动失败！');
+                }
+                $succeedNums ++;
+                $fileNames[] = '/Static/OtherFile/'.$fileName;
+            } catch (\Throwable $e) {
+                return $this->writeJson(202, [], $fileNames,'上传失败'.$e->getMessage());
+            }
+        }
+
+        return $this->writeJson(200, [], [],'上传成功 文件数量:'.$succeedNums);
     }
 
 }
