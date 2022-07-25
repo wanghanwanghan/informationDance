@@ -16,7 +16,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\XinDong\XinDongService;
 
-class BaoXianController extends ControllerBase
+class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\ControllerBase
 {
     function onRequest(?string $action): ?bool
     {
