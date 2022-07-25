@@ -3356,7 +3356,7 @@ class XinDongService extends ServiceBase
             $details = InvoiceTaskDetails::findByInvoiceTaskId($dbItem['id']);
             foreach ($details as $detailItem){
 //                $tmp[] = $detailItem['rwh'];
-                $datas = self::getYieldData($code, $detailItem['rwh']) ;
+                $datas = self::getYieldDataV2($code, $detailItem['rwh']) ;
                 foreach ($datas as $dataItem){
                     $tmp[] = $dataItem;
                 }
@@ -3390,5 +3390,33 @@ class XinDongService extends ServiceBase
                 yield $datas[] = $resItem;
             }
         }
+    }
+
+    static function getYieldDataV2($code, $rwh){
+        $datas = [];
+        $page = 1;
+        $size = 20;
+
+        while (true) {
+            $res = (new JinCaiShuKeService())
+                ->setCheckRespFlag(true)
+                ->S000523($code, $rwh, $page, $size);
+
+            if (empty($res['result']['content'])) {
+                break;
+            }
+
+            if ($page>2) {
+                break;
+            }
+
+            $page ++;
+            foreach ($res as $resItem){
+                $resItem['my_tmp_page'] = $page;
+                $datas[] = $resItem;
+            }
+        }
+
+        return $datas;
     }
 }
