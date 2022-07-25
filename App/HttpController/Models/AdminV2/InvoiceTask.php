@@ -53,7 +53,7 @@ class InvoiceTask extends ModelBase
            $res =  InvoiceTask::create()->data([
                 'nsrsbh' => $requestData['nsrsbh'],
                 'month' => $requestData['month'],
-               'raw_return' => $requestData['raw_return'],
+                'raw_return' => $requestData['raw_return'],
                 'status' => $requestData['status']?:1,
                'created_at' => time(),
                'updated_at' => time(),

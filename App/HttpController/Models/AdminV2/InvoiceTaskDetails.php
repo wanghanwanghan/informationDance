@@ -29,19 +29,20 @@ class InvoiceTaskDetails extends ModelBase
     static  function  addRecordV2($info){
 
         if(
-            self::findByRwh($info['rwh'])
+            self::findByRwh($info['rwh'],$info['invoice_task_id'])
         ){
             return  true;
         }
 
-        return InvoiceTask::addRecord(
+        return InvoiceTaskDetails::addRecord(
             $info
         );
     }
 
-    public static function findByRwh($rwh){
+    public static function findByRwh($rwh,$invoice_task_id){
         $res =  InvoiceTaskDetails::create()
             ->where('rwh',$rwh)
+            ->where('invoice_task_id',$invoice_task_id)
             ->get();
         return $res;
     }
