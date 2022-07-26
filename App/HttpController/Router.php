@@ -265,8 +265,8 @@ class Router extends AbstractRouter
     {
         $prefix = '/Business/OnlineGoods/Mrxd/DaiKuanController/';
 
-        $routeCollector->addGroup('/online_goods', function (RouteCollector $routeCollector) use ($prefix) {
-            $routeCollector->addRoute(['GET', 'POST'], '/confirmAuthorization', $prefix . 'confirmAuthorization');// confirmAuthorization 
+        $routeCollector->addGroup('/loan', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/confirmAuthorization', $prefix . 'confirmAuthorization');// confirmAuthorization
         });
 
         return true;
