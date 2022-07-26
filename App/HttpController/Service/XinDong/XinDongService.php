@@ -3389,7 +3389,7 @@ class XinDongService extends ServiceBase
     static  function  exportInvoice($code){
         //
 
-        $filename = 'Invoice_'.date('Ymd').'.csv';//设置文件名
+        $filename = 'Invoice_'.date('YmdHis').'.csv';//设置文件名
         $f = fopen(TEMP_FILE_PATH.$filename, 'a'); // Configure fOpen to create, open and write only.
 
         $tasks = InvoiceTask::findBySql( "WHERE nsrsbh = '".$code."'  AND  status = 5 limit 1 ");
