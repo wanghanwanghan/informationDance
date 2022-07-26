@@ -2873,6 +2873,11 @@ eof;
     function testExport()
     {
         if(
+            $this->getRequestData('collectInvoice3')
+        ){
+            //
+        }
+        if(
             $this->getRequestData('collectInvoice2')
         )
         {

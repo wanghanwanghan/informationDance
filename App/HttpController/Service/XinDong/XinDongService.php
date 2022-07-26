@@ -3350,7 +3350,7 @@ class XinDongService extends ServiceBase
         return true;
     }
     static  function  pullInvoice($code){
-        $dbRes = InvoiceTask::findBySql( "WHERE nsrsbh = '".$code."'  AND  status = 1 LIMIT 1");
+        $dbRes = InvoiceTask::findBySql( "WHERE nsrsbh = '".$code."'  AND  status = 1 LIMIT  2 ");
         foreach ($dbRes as $dbItem){
             $details = InvoiceTaskDetails::findByInvoiceTaskId($dbItem['id']);
             foreach ($details as $detailItem){
@@ -3377,6 +3377,10 @@ class XinDongService extends ServiceBase
                     ]
                 );
             }
+
+            InvoiceTask::updateById($detailItem['id'],[
+                'status'=>5
+            ]);
         }
 
         return true;
