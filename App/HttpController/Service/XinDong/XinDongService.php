@@ -3385,7 +3385,7 @@ class XinDongService extends ServiceBase
     static function getYieldData($code, $rwh){
         $datas = [];
         $page = 1;
-        $size = 1;
+        $size = 10;
 
         while (true) {
             $res = (new JinCaiShuKeService())
@@ -3411,16 +3411,18 @@ class XinDongService extends ServiceBase
                     'content' => $res['content'],
                     '$contentJson'=>$contentJson,
                     '$contentArr'=>$contentArr,
+                    'page'=>$page
                 ])
             );
+            $contentArr['page'] = $page;
             yield $datas[] = $contentArr;
             if (empty($contentArr['fpxxs']['data'])) {
                 break;
             }
 
-            if ($page>2) {
-                break;
-            }
+//            if ($page>2) {
+//                break;
+//            }
 
             $page ++;
            // yield $datas[] = $res;
