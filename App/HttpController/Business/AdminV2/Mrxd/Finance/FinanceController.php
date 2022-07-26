@@ -650,7 +650,7 @@ class FinanceController extends ControllerBase
         foreach ($dataRes['data'] as &$itme ){
             $AdminNewUser = AdminNewUser::findById($itme['user_id'])->toArray();
             $tmp = [
-                'id'=>$AdminNewUser['id'],
+                'id'=>$itme['id'],
                 'username'=>$AdminNewUser['user_name'],
                 'entName'=>$itme['entName'],
                 'period'=>$itme['year'],
