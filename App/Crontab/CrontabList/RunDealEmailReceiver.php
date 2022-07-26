@@ -262,7 +262,7 @@ class RunDealEmailReceiver extends AbstractCronTask
             <td>营业执照</td>
             <td>
                 <a  href="http://test.51baoya.com/uploads/product_briefs/knj4CUlnZBOLz5HfHdk6hcZ6D.png">
-                营业执照
+                点击查看
                 </a>
             </td>
         </tr>
@@ -271,6 +271,36 @@ class RunDealEmailReceiver extends AbstractCronTask
             <td>
                  '.$data['engine_number'].'
             </td>
+        </tr>
+        <tr >
+                <td>车架号</td>
+                <td>
+                     '.$data['VIN'].'
+                </td>
+        </tr>
+        <tr >
+                <td>死伤限额</td>
+                <td>
+                     '.$data['death_limit_coverage'].'
+                </td>
+        </tr>
+        <tr >
+                <td>医疗限额</td>
+                <td>
+                     '.$data['medical_limit_coverage'].'
+                </td>
+        </tr>
+        <tr >
+                <td>住院津贴</td>
+                <td>
+                     '.$data['hospitalization_benefit'].'
+                </td>
+        </tr>
+        <tr >
+                <td>其他需求</td>
+                <td>
+                     '.$data['other_requirement'].'
+                </td>
         </tr>
     </tbody>
 </table>
