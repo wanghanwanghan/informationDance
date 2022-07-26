@@ -5,7 +5,7 @@ namespace App\HttpController\Business\Api\XinDong;
 use App\Crontab\CrontabList\RunCompleteCompanyData;
 use App\Crontab\CrontabList\RunDealApiSouKe;
 use App\Crontab\CrontabList\RunDealEmailReceiver;
-use App\Crontab\CrontabList\RunDealFinanceCompanyData;
+//use App\Crontab\CrontabList\RunDealFinanceCompanyData;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNew;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNewV2;
 use App\Crontab\CrontabList\RunDealToolsFile;
@@ -17,17 +17,20 @@ use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\OperatorLog;
+use App\HttpController\Models\AdminV2\InvoiceTask;
+use App\HttpController\Models\AdminV2\InvoiceTaskDetails;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
-use App\HttpController\Models\RDS3\HdSaic\ZhaoTouBiaoAll;
+//use App\HttpController\Models\RDS3\HdSaic\ZhaoTouBiaoAll;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\Export\Excel\ExportExcelService;
-use App\HttpController\Service\LongDun\BaoYaService;
+use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
+//use App\HttpController\Service\LongDun\BaoYaService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Mail\Email;
@@ -2869,6 +2872,63 @@ eof;
     }
     function testExport()
     {
+        if(
+            $this->getRequestData('collectInvoice3')
+        ){
+            //
+        }
+        if(
+            $this->getRequestData('collectInvoice2')
+        )
+        {
+            $code = '911101143355687304';
+            $res = XinDongService::pullInvoice($code);
+
+            return $this->writeJson(
+                200,[ ] ,
+                $res,
+                '成功',
+                true,
+                []
+            );
+        }
+
+        if(
+            $this->getRequestData('collectInvoice')
+        )
+        {
+            $date ="2022-07";
+            $monthsNums = 24;
+            $code = '911101143355687304';
+            XinDongService::collectInvoice($date,$monthsNums,$code);
+
+            return $this->writeJson(
+                200,[ ] ,
+                [
+
+                ],
+                '成功',
+                true,
+                []
+            );
+        }
+
+        if(
+            $this->getRequestData('sendXunJiaEmail')
+        )
+        {
+            RunDealEmailReceiver::sendEmail();
+            return $this->writeJson(
+                200,[ ] ,
+                [
+
+                ],
+                '成功',
+                true,
+                []
+            );
+        }
+
         if(
             $this->getRequestData('testToken')
         )

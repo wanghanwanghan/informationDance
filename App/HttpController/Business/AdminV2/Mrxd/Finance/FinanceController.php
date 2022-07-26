@@ -834,8 +834,8 @@ class FinanceController extends ControllerBase
     public function ConfirmFinanceData(){
         $requestData =  $this->getRequestData();
         $ids = explode(',',$requestData['ids']);
-        if(empty($ids)){
-            $ids = [$requestData['id']];
+        if($requestData['ids']<=0){
+            return $this->writeJson(206, [] ,   [], '参数缺失', true, []);
         }
 
         if(empty($ids)){

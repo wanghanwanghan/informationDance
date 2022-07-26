@@ -239,7 +239,14 @@ class JinCaiShuKeService extends ServiceBase
         $res = (new CoHttpClient())
             ->useCache(false)
             ->send($this->url, $post_data, [], ['enableSSL' => true]);
-
+        OperatorLog::addRecord(
+            [
+                'user_id' => 0,
+                'msg' => "url:".$this->url." 参数:".@json_encode($post_data)." 返回：".@json_encode($res),
+                'details' =>json_encode( XinDongService::trace()),
+                'type_cname' => '发票提取_S000523',
+            ]
+        );
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
 

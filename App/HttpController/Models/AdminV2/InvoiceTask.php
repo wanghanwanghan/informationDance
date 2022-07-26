@@ -11,67 +11,49 @@ use App\HttpController\Service\LongXin\LongXinService;
 
 // use App\HttpController\Models\AdminRole;
 
-class InsuranceData extends ModelBase
+class InvoiceTask extends ModelBase
 {
 
-    protected $tableName = 'insurance_data';
+    protected $tableName = 'invoice_task';
 
-    static $status_init = 1;
-    static $status_init_cname = '初始化';
+    static  $state_init = 1;
+    static  $state_init_cname =  '';
 
+    public static function getStatusMap(){
 
-    static $status_email_succeed = 5;
-    static $status_email_succeed_cname = '发邮件成功';
-
+        return [
+            self::$state_init => self::$state_init_cname,
+        ];
+    }
 
     static  function  addRecordV2($info){
 
         if(
-            self::findByName($info['name'],$info['product_id'])
+            self::findByNsrsbh($info['nsrsbh'],$info['month'])
         ){
             return  true;
         }
 
-        return InsuranceData::addRecord(
+        return InvoiceTask::addRecord(
             $info
         );
     }
 
+    public static function findByNsrsbh($nsrsbh,$month){
+        $res =  InvoiceTask::create()
+            ->where('nsrsbh',$nsrsbh)
+            ->where('month',$month)
+            ->get();
+        return $res;
+    }
 
-    /**
-    id
-    type
-    name
-    business_license_file
-    business_license
-    type_of_work
-    number_of_people
-    death_injury_limit
-    medical_limit
-    loss_of_work
-    hospital_allowance
-    license_plate
-    engine_number
-    frame_number
-    work_area
-    new_equipment_price
-    additional_insurance
-    equipment_type
-    date_of_manufacture
-    other_demands
-    last_year_underwriting_company
-    last_3_years_compensation_situation
-    status
-    created_at
-    updated_at
-     */
     public static function addRecord($requestData){
 
         try {
-           $res =  InsuranceData::create()->data([
-                'post_params' => $requestData['post_params'],
-                 'type' => $requestData['type'],
-                'name' => $requestData['name'],
+           $res =  InvoiceTask::create()->data([
+                'nsrsbh' => $requestData['nsrsbh'],
+                'month' => $requestData['month'],
+                'raw_return' => $requestData['raw_return'],
                 'status' => $requestData['status']?:1,
                'created_at' => time(),
                'updated_at' => time(),
@@ -89,33 +71,16 @@ class InsuranceData extends ModelBase
         return $res;
     }
 
-    public static function cost(){
-        $start = microtime(true);
-        $startMemory = memory_get_usage();
 
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'memory_use' => round((memory_get_usage()-$startMemory)/1024/1024,3).' M',
-                'costs_seconds '=> number_format(microtime(true) - $start,3)
-            ])
-        );
-    }
 
     public static function findAllByCondition($whereArr){
-        $res =  InsuranceData::create()
+        $res =  InvoiceTask::create()
             ->where($whereArr)
             ->all();
         return $res;
     }
 
-    public static function setTouchTime($id,$touchTime){
-        $info = InsuranceData::findById($id);
 
-        return $info->update([
-            'touch_time' => $touchTime,
-        ]);
-    }
 
     public static function updateById(
         $id,$data
@@ -125,7 +90,7 @@ class InsuranceData extends ModelBase
     }
 
     public static function findByConditionWithCountInfo($whereArr,$page){
-        $model = InsuranceData::create()
+        $model = InvoiceTask::create()
                 ->where($whereArr)
                 ->page($page)
                 ->order('id', 'DESC')
@@ -141,7 +106,7 @@ class InsuranceData extends ModelBase
     }
 
     public static function findByConditionV2($whereArr,$page){
-        $model = InsuranceData::create();
+        $model = InvoiceTask::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
@@ -159,22 +124,14 @@ class InsuranceData extends ModelBase
     }
 
     public static function findById($id){
-        $res =  InsuranceData::create()
+        $res =  InvoiceTask::create()
             ->where('id',$id)            
             ->get();  
         return $res;
     }
 
-    public static function findByName($name,$product_id){
-        $res =  InsuranceData::create()
-            ->where('name',$name)
-            ->where('product_id',$product_id)
-            ->get();
-        return $res;
-    }
-
     public static function setData($id,$field,$value){
-        $info = InsuranceData::findById($id);
+        $info = InvoiceTask::findById($id);
         return $info->update([
             "$field" => $value,
         ]);
@@ -184,9 +141,9 @@ class InsuranceData extends ModelBase
     public static function findBySql($where){
         $Sql = " select *  
                             from  
-                        `insurance_data` 
+                        `invoice_task` 
                             $where
-        ";
+      " ;
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return $data;
     }

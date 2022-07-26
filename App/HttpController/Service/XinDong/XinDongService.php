@@ -4,6 +4,8 @@ namespace App\HttpController\Service\XinDong;
 
 use App\Csp\Service\CspService;
 use App\ElasticSearch\Service\ElasticSearchService;
+use App\HttpController\Models\AdminV2\InvoiceTask;
+use App\HttpController\Models\AdminV2\InvoiceTaskDetails;
 use App\HttpController\Models\Api\CarInsuranceInfo;
 use App\HttpController\Models\Api\CompanyCarInsuranceStatusInfo;
 use App\HttpController\Models\Api\CompanyName;
@@ -15,6 +17,7 @@ use App\HttpController\Models\EntDb\EntDbNacaoClass;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaYanYuan\FaYanYuanService;
+use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\ServiceBase;
@@ -3304,4 +3307,167 @@ class XinDongService extends ServiceBase
         return $tmp['BankruptcyCheck1'];
     }
 
+    static  function  collectInvoice($date,$monthsNums,$code){
+
+        for ($i=1;$i<=$monthsNums;$i++){
+            $d1= date("Y-m-01", strtotime("-1 month",strtotime($date)));
+            $d2= date("Y-m-t", strtotime("-1 month",strtotime($date)));
+
+            $date = date("Y-m", strtotime("-1 month",strtotime($date)));
+
+            $month = date('Y-m',strtotime($d1));
+            //之前发起过任务
+            if(
+                InvoiceTask::findByNsrsbh($code,$month)
+            ){
+                continue;
+            };
+
+
+            $res = (new JinCaiShuKeService())
+                ->setCheckRespFlag(true)
+                ->S000519($code, $d1, $d2);
+            $dbId = InvoiceTask::addRecordV2([
+                'nsrsbh' => $code,
+                'month' => $month,
+                'raw_return' => json_encode($res),
+            ]);
+            if($dbId){
+                foreach ($res['result']['content'] as $dataItem){
+
+                    InvoiceTaskDetails::addRecordV2([
+                        'invoice_task_id' => $dbId,
+                        'fplx' => $dataItem['fplx']?:'',
+                        'kprqq' => $dataItem['kprqq']?:'',
+                        'kprqz' => $dataItem['kprqz']?:'',
+                        'requuid' => $dataItem['requuid']?:'',
+                        'rwh' => $dataItem['rwh']?:'',
+                        'sjlx' => $dataItem['sjlx']?:'',
+                    ]);
+                }
+            }
+        }
+        return true;
+    }
+    static  function  pullInvoice($code){
+        $dbRes = InvoiceTask::findBySql( "WHERE nsrsbh = '".$code."'  AND  status = 1 LIMIT  2 ");
+        foreach ($dbRes as $dbItem){
+            $details = InvoiceTaskDetails::findByInvoiceTaskId($dbItem['id']);
+            foreach ($details as $detailItem){
+                $tmp = [];
+                $datas = self::getYieldData($code, $detailItem['rwh']) ;
+                foreach ($datas as $dataItem){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            '$dataItem' => $dataItem
+                        ])
+                    );
+                    $tmp[] = $dataItem;
+                }
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '$tmp' => $tmp
+                    ])
+                );
+                InvoiceTaskDetails::updateById(
+                    $detailItem['id'],[
+                        'raw_return' =>  json_encode($tmp)
+                    ]
+                );
+            }
+
+            InvoiceTask::updateById($dbItem['id'],[
+                'status'=>5
+            ]);
+        }
+
+        return true;
+    }
+
+    static function getYieldData($code, $rwh){
+        $datas = [];
+        $page = 1;
+        $size = 10;
+
+        while (true) {
+            $res = (new JinCaiShuKeService())
+                ->setCheckRespFlag(false)
+                ->S000523($code, $rwh, $page, $size);
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    'S000523$res' => $res
+//                ])
+//            );
+            //TODO：需要看什么时候有数据 什么时候无数据！ 注意： 原始返回 {
+            //	"uuid": "6c80bdc7bfe242c4b5e4cdd8c3137182",
+            //	"code": "0000",
+            //	"msg": "归集任务执行结果查询成功",
+            //	"content": "eyJyd2giOiIyNGE5NDU4ODVjM2E0ZWE1OTVkMmQ3ZWMxNWY5ZTk5OSIsImtwcnFxIjoiMjAyMC0wNy0wMSIsInNqbHgiOiIyIiwiZnBseCI6IjE1Iiwic3F6dHh4Ijoi5b6F5o+Q5Lqk5b2S6ZuG55Sz6K+3Iiwic3F6dCI6IjAiLCJrcHJxeiI6IjIwMjAtMDctMzEifQ=="
+            //}
+            $contentJson =  base64_decode($res['content']);
+            $contentArr = json_decode($contentJson,true);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'content' => $res['content'],
+                    '$contentJson'=>$contentJson,
+                    '$contentArr'=>$contentArr,
+                    'page'=>$page
+                ])
+            );
+            $contentArr['page'] = $page;
+            yield $datas[] = $contentArr;
+            if (empty($contentArr['fpxxs']['data'])) {
+                break;
+            }
+
+//            if ($page>2) {
+//                break;
+//            }
+
+            $page ++;
+           // yield $datas[] = $res;
+//            foreach ($res as $resItem){
+//                $resItem['my_tmp_page'] = $page;
+//                yield $datas[] = $resItem;
+//            }
+        }
+    }
+
+    static function getYieldDataV2($code, $rwh){
+        $datas = [];
+        $page = 1;
+        $size = 20;
+
+        while (true) {
+            $res = (new JinCaiShuKeService())
+                ->setCheckRespFlag(false)
+                ->S000523($code, $rwh, $page, $size);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'S000523$res' => $res
+                ])
+            );
+            if (empty($res['result']['content'])) {
+                break;
+            }
+
+            if ($page>3) {
+                break;
+            }
+
+            $page ++;
+            $datas[] = $res;
+//            foreach ($res as $resItem){
+//                $resItem['my_tmp_page'] = $page;
+//                $datas[] = $resItem;
+//            }
+        }
+
+        return $datas;
+    }
 }
