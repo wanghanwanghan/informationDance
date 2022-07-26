@@ -256,16 +256,6 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getProducts', $prefix . 'getProducts');// getProducts
             $routeCollector->addRoute(['GET', 'POST'], '/getProductDetail', $prefix . 'getProductDetail');// getProductDetail
             $routeCollector->addRoute(['GET', 'POST'], '/consultProduct', $prefix . 'consultProduct');// uploadeFile
-        });
-
-        return true;
-    }
-
-    private function DaiKuanRouterV1(RouteCollector $routeCollector)
-    {
-        $prefix = '/Business/OnlineGoods/Mrxd/DaiKuanController/';
-
-        $routeCollector->addGroup('/loan', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/confirmAuthorization', $prefix . 'confirmAuthorization');// confirmAuthorization
         });
 

@@ -118,6 +118,53 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
         );
     }
 
+
+    //
+    function confirmAuthorization(): bool
+    {
+        $requestData =  $this->getRequestData();
+//        $checkRes = DataModelExample::checkField(
+//            [
+//
+//                'product_id' => [
+//                    'not_empty' => 1,
+//                    'field_name' => 'product_id',
+//                    'err_msg' => '参数缺失',
+//                ],
+//                'name' => [
+//                    'not_empty' => 1,
+//                    'field_name' => 'name',
+//                    'err_msg' => '参数缺失',
+//                ]
+//            ],
+//            $requestData
+//        );
+//        if(
+//            !$checkRes['res']
+//        ){
+//            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+//        }
+
+//        $res = InsuranceData::addRecordV2(
+//            [
+//                'post_params' => json_encode(
+//                    $requestData
+//                ),
+//                'product_id' => $requestData['product_id']?:'',
+//                'name' => $requestData['name']?:'',
+//                'status' =>  1,
+//            ]
+//        );
+
+        return $this->writeJson(
+            200,[ ] ,
+            $res,
+            '成功',
+            true,
+            []
+        );
+    }
+
     public function uploadeFile(){
         $requestData =  $this->getRequestData();
         $files = $this->request()->getUploadedFiles();
