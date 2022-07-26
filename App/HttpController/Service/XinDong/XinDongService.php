@@ -3386,6 +3386,29 @@ class XinDongService extends ServiceBase
         return true;
     }
 
+    static  function  exportInvoice($code){
+        //
+
+        $filename = 'Invoice_'.date('Ymd').'.csv';//设置文件名
+
+        $data = array (
+            array('header 1', 'header 2', 'header 3', 'header 4'),
+            array('5656', '454545', '5455', '5454'),
+            array('541212', '454545', '5455', '5454'),
+            array('541212', '454545', '5455', '5454'),
+        );
+
+        $f = fopen($filename, 'a'); // Configure fOpen to create, open and write only.
+
+        // Loop over the array and passing in the values only.
+        foreach ($data as $row)
+        {
+            fputcsv($f, $row);
+        }
+
+        return $filename;
+    }
+
     static function getYieldData($code, $rwh){
         $datas = [];
         $page = 1;
