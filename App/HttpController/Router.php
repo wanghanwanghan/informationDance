@@ -261,6 +261,17 @@ class Router extends AbstractRouter
         return true;
     }
 
+    private function DaiKuanRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/OnlineGoods/Mrxd/DaiKuanController/';
+
+        $routeCollector->addGroup('/online_goods', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/confirmAuthorization', $prefix . 'confirmAuthorization');// confirmAuthorization 
+        });
+
+        return true;
+    }
+
     private function LongDunRouterV1(RouteCollector $routeCollector)
     {
         $pre = '/Business/Api/LongDun/LongDunController/';
