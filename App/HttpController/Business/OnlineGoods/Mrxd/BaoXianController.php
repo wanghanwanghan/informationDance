@@ -101,9 +101,7 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
         $res = InsuranceData::addRecordV2(
             [
                 'post_params' => json_encode(
-                    [
-
-                    ]
+                    $requestData
                 ),
                 'product_id' => $requestData['product_id']?:'',
                 'name' => $requestData['name']?:'',
