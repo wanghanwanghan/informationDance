@@ -3403,16 +3403,12 @@ class XinDongService extends ServiceBase
             //	"msg": "归集任务执行结果查询成功",
             //	"content": "eyJyd2giOiIyNGE5NDU4ODVjM2E0ZWE1OTVkMmQ3ZWMxNWY5ZTk5OSIsImtwcnFxIjoiMjAyMC0wNy0wMSIsInNqbHgiOiIyIiwiZnBseCI6IjE1Iiwic3F6dHh4Ijoi5b6F5o+Q5Lqk5b2S6ZuG55Sz6K+3Iiwic3F6dCI6IjAiLCJrcHJxeiI6IjIwMjAtMDctMzEifQ=="
             //}
-            $resArr  = json_decode($res,true);
-            $contentJson =  base64_decode($resArr['content']);
+            $contentJson =  base64_decode($res['content']);
             $contentArr = json_decode($contentJson,true);
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    '$res'=>$res,
-                    '$resArr'=>$resArr,
-                    'content' => $resArr['content'],
-                    'content2' => $res['content'],
+                    'content' => $res['content'],
                     '$contentJson'=>$contentJson,
                     '$contentArr'=>$contentArr,
                 ])
