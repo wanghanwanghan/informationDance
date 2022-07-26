@@ -245,19 +245,35 @@ class RunDealEmailReceiver extends AbstractCronTask
 <body>
 <table class="styled-table">
     <thead>
-    <tr>
-        <th colspan="2" style="text-align: center; font-size:20px">保险询价单</th> 
-    </tr>
+        <tr>
+            <th colspan="2" style="text-align: center; font-size:20px">保险询价单</th> 
+        </tr>
     </thead>
     <tbody>
-    <tr>
-        <td>产品</td>
-        <td>'.$data['product_id'].'</td>
-    </tr>
-    <tr class="active-row">
-        <td>被保人</td>
-        <td>'.$data['insured'].'</td>
-    </tr>
+        <tr>
+            <td>产品</td>
+            <td>'.$data['product_id'].'</td>
+        </tr>
+        <tr class="active-row">
+            <td>被保人</td>
+            <td>'.$data['insured'].'</td>
+        </tr>
+         <tr >
+            <td>营业执照</td>
+            <td>
+                <img
+                    src="http://test.51baoya.com/uploads/product_briefs/knj4CUlnZBOLz5HfHdk6hcZ6D.png"
+                    alt=""
+                    width="250"
+                    height="250">
+            </td>
+        </tr>
+        <tr >
+            <td>发动机号</td>
+            <td>
+                 '.$data['engine_number'].'
+            </td>
+        </tr>
     </tbody>
 </table>
 </body> 
