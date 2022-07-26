@@ -194,6 +194,7 @@ class RunDealEmailReceiver extends AbstractCronTask
             CommonService::getInstance()->log4PHP(
                 "needs to send text msg now"
             );
+
             //需要发短信了
             $res = SmsService::getInstance()->sendByTemplete(
                 13269706193, 'SMS_244025473',[
