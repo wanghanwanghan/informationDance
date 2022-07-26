@@ -261,11 +261,9 @@ class RunDealEmailReceiver extends AbstractCronTask
          <tr >
             <td>营业执照</td>
             <td>
-                <img
-                    src="http://test.51baoya.com/uploads/product_briefs/knj4CUlnZBOLz5HfHdk6hcZ6D.png"
-                    alt=""
-                    width="250"
-                    height="250">
+                <a  href="http://test.51baoya.com/uploads/product_briefs/knj4CUlnZBOLz5HfHdk6hcZ6D.png">
+                营业执照
+                </a>
             </td>
         </tr>
         <tr >
