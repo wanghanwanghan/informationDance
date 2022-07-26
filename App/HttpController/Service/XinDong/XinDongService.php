@@ -3355,10 +3355,22 @@ class XinDongService extends ServiceBase
             $details = InvoiceTaskDetails::findByInvoiceTaskId($dbItem['id']);
             foreach ($details as $detailItem){
                 $tmp = [];
-                $datas = self::getYieldDataV2($code, $detailItem['rwh']) ;
+                $datas = self::getYieldData($code, $detailItem['rwh']) ;
                 foreach ($datas as $dataItem){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            '$dataItem' => $dataItem
+                        ])
+                    );
                     $tmp[] = $dataItem;
                 }
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '$tmp' => $tmp
+                    ])
+                );
                 InvoiceTaskDetails::updateById(
                     $detailItem['id'],[
                         'raw_return' =>  json_encode($tmp)
@@ -3379,6 +3391,12 @@ class XinDongService extends ServiceBase
             $res = (new JinCaiShuKeService())
                 ->setCheckRespFlag(false)
                 ->S000523($code, $rwh, $page, $size);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'S000523$res' => $res
+                ])
+            );
             //TODO：需要看什么时候有数据 什么时候无数据！ 注意： 原始返回 {
             //	"uuid": "6c80bdc7bfe242c4b5e4cdd8c3137182",
             //	"code": "0000",
@@ -3411,12 +3429,17 @@ class XinDongService extends ServiceBase
             $res = (new JinCaiShuKeService())
                 ->setCheckRespFlag(false)
                 ->S000523($code, $rwh, $page, $size);
-
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'S000523$res' => $res
+                ])
+            );
             if (empty($res['result']['content'])) {
                 break;
             }
 
-            if ($page>2) {
+            if ($page>3) {
                 break;
             }
 
