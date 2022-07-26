@@ -198,16 +198,17 @@ class RunDealEmailReceiver extends AbstractCronTask
         }
     }
 
-    static  function  getTableHtml(){
+    static  function  getTableHtml($data){
         $html = "
-        <style>
-    body {text-align: center;} 
+<style>
+    body {text-align: center;}
+
     .styled-table {
         border-collapse: collapse;
         margin: auto;
         font-size: 0.9em;
         font-family: sans-serif;
-        min-width: 800px;
+        min-width: 650px;
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 
     }
@@ -236,7 +237,7 @@ class RunDealEmailReceiver extends AbstractCronTask
         font-weight: bold;
         color: #009879;
     }
-    
+
 </style>
         ";
         $html .=  '
@@ -245,22 +246,21 @@ class RunDealEmailReceiver extends AbstractCronTask
 <table class="styled-table">
     <thead>
     <tr>
-        <th>Name</th>
-        <th>Points</th>
+        <th colspan="2" style="text-align: center; font-size:20px">保险询价单</th> 
     </tr>
     </thead>
     <tbody>
     <tr>
-        <td>Dom</td>
-        <td>6000</td>
+        <td>产品</td>
+        <td>'.$data['product_id'].'</td>
     </tr>
     <tr class="active-row">
-        <td>Melissa</td>
-        <td>5150</td>
+        <td>被保人</td>
+        <td>'.$data['insured'].'</td>
     </tr>
     </tbody>
 </table>
-</body>    
+</body> 
 ';
         return $html;
     }

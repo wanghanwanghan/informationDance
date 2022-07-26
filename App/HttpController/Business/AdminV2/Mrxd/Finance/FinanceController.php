@@ -621,6 +621,7 @@ class FinanceController extends ControllerBase
         );
         //---------------------
         $titls = [
+            'id' => 'ID',
             'username'=>'用户名',
             'entName'=>'企业名',
             'period'=>'年度',
@@ -649,6 +650,7 @@ class FinanceController extends ControllerBase
         foreach ($dataRes['data'] as &$itme ){
             $AdminNewUser = AdminNewUser::findById($itme['user_id'])->toArray();
             $tmp = [
+                'id'=>$AdminNewUser['id'],
                 'username'=>$AdminNewUser['user_name'],
                 'entName'=>$itme['entName'],
                 'period'=>$itme['year'],
