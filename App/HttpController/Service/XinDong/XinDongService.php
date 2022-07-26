@@ -3409,7 +3409,10 @@ class XinDongService extends ServiceBase
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
+                    '$res'=>$res,
+                    '$resArr'=>$resArr,
                     'content' => $resArr['content'],
+                    'content2' => $res['content'],
                     '$contentJson'=>$contentJson,
                     '$contentArr'=>$contentArr,
                 ])
