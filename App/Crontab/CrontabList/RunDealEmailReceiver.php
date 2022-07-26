@@ -194,6 +194,21 @@ class RunDealEmailReceiver extends AbstractCronTask
             CommonService::getInstance()->log4PHP(
                 "needs to send text msg now"
             );
+            //需要发短信了
+            $res = SmsService::getInstance()->sendByTemplete(
+                13269706193, 'SMS_244025473',[
+                'name' => '有询价的了',
+                'money' => '多钱'
+            ]);
+
+//            OperatorLog::addRecord(
+//                [
+//                    'user_id' => $userInfo['id'],
+//                    'msg' =>   '用户余额：'.$balance." 配置的余额下限：".$Config['sms_notice_value']." 上次发送时间：".$chargeConfigs['send_sms_notice_date']." ",
+//                    'details' =>json_encode( XinDongService::trace()),
+//                    'type_cname' => '新后台导出财务数据-发送短信提醒余额不足',
+//                ]
+//            );
             MailReceipt::updateById($email['id'],['status' => MailReceipt::$status_succeed]);
         }
     }
