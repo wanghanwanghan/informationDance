@@ -21,11 +21,12 @@ class ZhongRuiYinTongService extends ServiceBase
 
     private function checkResp($res): array
     {
-        if (isset($res['coHttpErr'])) return $this->createReturn(500, $res['paging'], [], 'co请求错误');
+        if (isset($res['coHttpErr'])) return $this->createReturn(500, null, [], 'co请求错误');
 
         $paging = null;
 
-        $status = !!$res['status'];
+        !isset($res['status']) || ($status = !!$res['status']);
+
         $code = $res['code'] - 0;
         $message = trim($res['message']);
         $data = empty($res['data']) ? [] : $res['data'];
