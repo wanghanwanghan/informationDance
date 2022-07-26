@@ -17,6 +17,7 @@ class Router extends AbstractRouter
             $this->UserRouterV1($routeCollector);//用户相关
             $this->XinDongRouterV1($routeCollector);//信动
             $this->BaoXianRouterV1($routeCollector);//信动
+            $this->DaiKuanRouterV1($routeCollector);//信动
             $this->LongDunRouterV1($routeCollector);//龙盾
             $this->TaoShuRouterV1($routeCollector);//淘数
             $this->FaYanYuanRouterV1($routeCollector);//法研院
@@ -256,7 +257,17 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getProducts', $prefix . 'getProducts');// getProducts
             $routeCollector->addRoute(['GET', 'POST'], '/getProductDetail', $prefix . 'getProductDetail');// getProductDetail
             $routeCollector->addRoute(['GET', 'POST'], '/consultProduct', $prefix . 'consultProduct');// uploadeFile
-            $routeCollector->addRoute(['GET', 'POST'], '/confirmAuthorization', $prefix . 'confirmAuthorization');// confirmAuthorization
+
+        });
+
+        return true;
+    }
+
+    private function DaiKuanRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/OnlineGoods/Mrxd/DaiKuanController/';
+        $routeCollector->addGroup('/loan', function (RouteCollector $routeCollector) use ($prefix) {
+
         });
 
         return true;
