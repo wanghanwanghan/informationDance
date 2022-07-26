@@ -3398,7 +3398,7 @@ class XinDongService extends ServiceBase
             array('541212', '454545', '5455', '5454'),
         );
 
-        $f = fopen($filename, 'a'); // Configure fOpen to create, open and write only.
+        $f = fopen(TEMP_FILE_PATH.$filename, 'a'); // Configure fOpen to create, open and write only.
 
         // Loop over the array and passing in the values only.
         foreach ($data as $row)
