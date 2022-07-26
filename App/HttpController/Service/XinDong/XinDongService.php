@@ -3478,6 +3478,9 @@ class XinDongService extends ServiceBase
                 }
             }
             $filenamesArr[] = $filename;
+            InvoiceTask::updateById($task['id'],[
+                'status' =>10
+            ]);
         }
 
         return $filenamesArr;
