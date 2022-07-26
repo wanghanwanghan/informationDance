@@ -147,7 +147,7 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
             }
         }
 
-        return $this->writeJson(200, [], [],'上传成功 文件数量:'.$succeedNums);
+        return $this->writeJson(200, [], $fileNames,'上传成功 文件数量:'.$succeedNums);
     }
 
 }

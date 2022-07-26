@@ -199,15 +199,17 @@ class RunDealEmailReceiver extends AbstractCronTask
     }
 
     static  function  getTableHtml(){
-        return '
-<style>
+        $html = "
+        <style>
+    body {text-align: center;} 
     .styled-table {
         border-collapse: collapse;
-        margin: 25px 0;
+        margin: auto;
         font-size: 0.9em;
         font-family: sans-serif;
-        min-width: 400px;
+        min-width: 800px;
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+
     }
     .styled-table thead tr {
         background-color: #009879;
@@ -234,8 +236,12 @@ class RunDealEmailReceiver extends AbstractCronTask
         font-weight: bold;
         color: #009879;
     }
-   
+    
 </style>
+        ";
+        $html .=  '
+ 
+<body>
 <table class="styled-table">
     <thead>
     <tr>
@@ -251,11 +257,12 @@ class RunDealEmailReceiver extends AbstractCronTask
     <tr class="active-row">
         <td>Melissa</td>
         <td>5150</td>
-    </tr> 
+    </tr>
     </tbody>
 </table>
-
+</body>    
 ';
+        return $html;
     }
 
     static function sendEmail()
@@ -268,7 +275,8 @@ class RunDealEmailReceiver extends AbstractCronTask
         );
 
         foreach ($datas as $data){
-            $tableHtml = self::getTableHtml();
+            $insuranceDatas  = json_decode($data['post_params'],true);
+            $tableHtml = self::getTableHtml($insuranceDatas);
             $res1 = CommonService::getInstance()->sendEmailV2(
                 'tianyongshan@meirixindong.com',
                 // 'minglongoc@me.com',
