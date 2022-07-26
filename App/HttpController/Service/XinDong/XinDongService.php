@@ -3353,9 +3353,9 @@ class XinDongService extends ServiceBase
         $dbRes = InvoiceTask::findBySql( "WHERE nsrsbh = '".$code."'  AND  status = 1 LIMIT 1");
         foreach ($dbRes as $dbItem){
             $details = InvoiceTaskDetails::findByInvoiceTaskId($dbItem['id']);
-            foreach ($details as $detailItem){ 
+            foreach ($details as $detailItem){
                 $tmp = [];
-                $datas = self::getYieldData($code, $detailItem['rwh']) ;
+                $datas = self::getYieldDataV2($code, $detailItem['rwh']) ;
                 foreach ($datas as $dataItem){
                     $tmp[] = $dataItem;
                 }
@@ -3379,7 +3379,12 @@ class XinDongService extends ServiceBase
             $res = (new JinCaiShuKeService())
                 ->setCheckRespFlag(false)
                 ->S000523($code, $rwh, $page, $size);
-
+            //TODO：需要看什么时候有数据 什么时候无数据！ 注意： 原始返回 {
+            //	"uuid": "6c80bdc7bfe242c4b5e4cdd8c3137182",
+            //	"code": "0000",
+            //	"msg": "归集任务执行结果查询成功",
+            //	"content": "eyJyd2giOiIyNGE5NDU4ODVjM2E0ZWE1OTVkMmQ3ZWMxNWY5ZTk5OSIsImtwcnFxIjoiMjAyMC0wNy0wMSIsInNqbHgiOiIyIiwiZnBseCI6IjE1Iiwic3F6dHh4Ijoi5b6F5o+Q5Lqk5b2S6ZuG55Sz6K+3Iiwic3F6dCI6IjAiLCJrcHJxeiI6IjIwMjAtMDctMzEifQ=="
+            //}
             if (empty($res['result']['content'])) {
                 break;
             }
