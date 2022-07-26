@@ -84,9 +84,9 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
                     'field_name' => 'product_id',
                     'err_msg' => '参数缺失',
                 ],
-                'name' => [
+                'insured' => [
                     'not_empty' => 1,
-                    'field_name' => 'name',
+                    'field_name' => 'insured',
                     'err_msg' => '参数缺失',
                 ]
             ],
