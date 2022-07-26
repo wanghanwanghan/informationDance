@@ -3388,12 +3388,42 @@ class XinDongService extends ServiceBase
 
     static  function  exportInvoice($code){
         //
-
-        $filename = 'Invoice_'.date('YmdHis').'.csv';//设置文件名
-        $f = fopen(TEMP_FILE_PATH.$filename, 'a'); // Configure fOpen to create, open and write only.
+        $filenamesArr = [];
 
         $tasks = InvoiceTask::findBySql( "WHERE nsrsbh = '".$code."'  AND  status = 5 limit 1 ");
         foreach ($tasks as $task){
+            $filename = 'Invoice_'.$task['nsrsbh'].'_'.$task['month'].'.csv';//设置文件名
+            if(file_exists(TEMP_FILE_PATH.$filename)){
+                unlink(TEMP_FILE_PATH.$filename);
+            }
+
+            $f = fopen(TEMP_FILE_PATH.$filename, 'a'); // Configure fOpen to create, open and write only.
+            fputcsv($f, [
+                '开票人'  ,//
+                '开票日期',//
+                '收款人',//
+                '发票代码',//
+                '发票类型代码',//
+                '购买方地址电话',//
+                '购买方名称',//
+                '购买方纳税人识别号',//
+                '购买方银行账号',//
+                '备注',//
+                '复核人',//
+                '机器编号',//
+                '价税合计',//
+                '校验码',//
+                '销售方地址电话',//
+                '销售方名称',//
+                '销售方纳税人识别号',//
+                '销售方银行账号',//
+                '不含税单价',//
+                '规格型号',//
+                '含税金额',//
+                '税额',//
+                '税率',//
+                'xmmc',//
+            ]);
             $details = InvoiceTaskDetails::findByInvoiceTaskId($task['id']);
             foreach ($details as $detailItem){
                 $returnDatas = json_decode($detailItem['raw_return'],true);
@@ -3403,61 +3433,54 @@ class XinDongService extends ServiceBase
                     };
                     foreach ($returnData['fpxxs']['data'] as $fpxxs_data){
                         /**
-
-
-                        "": "1100193130",
                         "fpfm": "110019313008360739",
-                        "fphm": "08360739",
-                        "fplx": "01",
                         "fpzt": "0",
-                        "gfdzdh": "北京市昌平区未来科学城英才北三街16号院16号楼302-1室 010-57073983",
-                        "gfmc": "天创信用服务有限公司",
-                        "gfsh": "911101143355687304",
-                        "gfyhzh": "招商银行股份有限公司北京建国门支行 110915828610802",
                         "hjje": "-34881.6",
                         "hjse": "-2092.9",
                         "jdhm": "",
-                        "jqbh": "",
-                        "jshj": "-36974.5",
-                        "jym": "09958141918950877701",
-                        "kpr": "宋方方",
-                        "kprq": "2020-07-16",
                         "mmq": "0348>>72\/99+*4>*95043+853\/+-648639618+58878394\/<1-26\/97>+30>>482410+*4<<+190849+1>*0187\/-*0+1911*918033674\/\/+4*<",
                         "mxs": [{
-                        "dj": "",
                         "dw": "",
-                        "ggxh": "",
-                        "je": "-34881.6",
-                        "se": "-2092.9",
-                        "sl": "",
                         "slv": "0.06",
                         "ssflbm": "3040205000000000000",
                         "xh": 1,
-                        "xmmc": "*信息技术服务*信息服务费"
-                        }],
-                        "skr": "黄静",
-                        "xfdzdh": "北京市房山区阎富路69号院37号楼-1至4层101四层15010-56295908",
-                        "xfmc": "北京鼎力创世科技有限公司",
-                        "xfsh": "911101080975522733",
-                        "xfyhzh": "招商银行北京德胜门支行110910772410801"
                          */
 
                         foreach ($fpxxs_data['mxs'] as $subItem){
                             fputcsv($f, [
-                                $fpxxs_data['bz'],
-                                $fpxxs_data['fhr'],
-                                $fpxxs_data['fpdm'],
-                                $subItem['dj'],
-                                $subItem['dw'],//
-                                $subItem['ggxh'],//
+                                $fpxxs_data['kpr'],//开票人
+                                $fpxxs_data['kprq'],//开票日期
+                                $fpxxs_data['skr'],//收款人
+                                $fpxxs_data['fpdm'],//发票代码
+                                $fpxxs_data['fplx'],//发票类型代码
+                                $fpxxs_data['gfdzdh'],//购买方地址电话
+                                $fpxxs_data['gfmc'],//购买方名称
+                                $fpxxs_data['gfsh'],//购买方纳税人识别号
+                                $fpxxs_data['gfyhzh'],//购买方银行账号
+                                $fpxxs_data['bz'],//备注
+                                $fpxxs_data['fhr'],//复核人
+                                $fpxxs_data['jqbh'],//机器编号
+                                $fpxxs_data['jshj'],//价税合计
+                                $fpxxs_data['jym'],//校验码
+                                $fpxxs_data['xfdzdh'],//销售方地址电话
+                                $fpxxs_data['xfmc'],//销售方名称
+                                $fpxxs_data['xfsh'],//销售方纳税人识别号
+                                $fpxxs_data['xfyhzh'],//销售方银行账号
+                                $subItem['dj'],//不含税单价
+                                $subItem['ggxh'],// 规格型号
+                                $subItem['je'],//含税金额
+                                $subItem['se'],//税额
+                                $subItem['sl'],//税率
+                                $subItem['xmmc'],//xmmc
                             ]);
                         };
                     }
                 }
             }
+            $filenamesArr[] = $filename;
         }
 
-        return $filename;
+        return $filenamesArr;
     }
 
     static function getYieldData($code, $rwh){
