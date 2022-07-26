@@ -3378,7 +3378,7 @@ class XinDongService extends ServiceBase
                 );
             }
 
-            InvoiceTask::updateById($detailItem['id'],[
+            InvoiceTask::updateById($dbItem['id'],[
                 'status'=>5
             ]);
         }
