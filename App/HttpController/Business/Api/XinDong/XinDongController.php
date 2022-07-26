@@ -2876,6 +2876,14 @@ eof;
             $this->getRequestData('collectInvoice3')
         ){
             //
+            $code = '911101143355687304';
+            return $this->writeJson(
+                200,[ ] ,
+                XinDongService::exportInvoice($code),
+                '成功',
+                true,
+                []
+            );
         }
         if(
             $this->getRequestData('collectInvoice2')

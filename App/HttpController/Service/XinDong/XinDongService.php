@@ -3386,6 +3386,80 @@ class XinDongService extends ServiceBase
         return true;
     }
 
+    static  function  exportInvoice($code){
+        //
+
+        $filename = 'Invoice_'.date('Ymd').'.csv';//设置文件名
+        $f = fopen(TEMP_FILE_PATH.$filename, 'a'); // Configure fOpen to create, open and write only.
+
+        $tasks = InvoiceTask::findBySql( "WHERE nsrsbh = '".$code."'  AND  status = 5 limit 1 ");
+        foreach ($tasks as $task){
+            $details = InvoiceTaskDetails::findByInvoiceTaskId($task['id']);
+            foreach ($details as $detailItem){
+                $returnDatas = json_decode($detailItem['raw_return'],true);
+                foreach ($returnDatas as $returnData){
+                    if(empty($returnData['fpxxs']['data'])){
+                        continue;
+                    };
+                    foreach ($returnData['fpxxs']['data'] as $fpxxs_data){
+                        /**
+
+
+                        "": "1100193130",
+                        "fpfm": "110019313008360739",
+                        "fphm": "08360739",
+                        "fplx": "01",
+                        "fpzt": "0",
+                        "gfdzdh": "北京市昌平区未来科学城英才北三街16号院16号楼302-1室 010-57073983",
+                        "gfmc": "天创信用服务有限公司",
+                        "gfsh": "911101143355687304",
+                        "gfyhzh": "招商银行股份有限公司北京建国门支行 110915828610802",
+                        "hjje": "-34881.6",
+                        "hjse": "-2092.9",
+                        "jdhm": "",
+                        "jqbh": "",
+                        "jshj": "-36974.5",
+                        "jym": "09958141918950877701",
+                        "kpr": "宋方方",
+                        "kprq": "2020-07-16",
+                        "mmq": "0348>>72\/99+*4>*95043+853\/+-648639618+58878394\/<1-26\/97>+30>>482410+*4<<+190849+1>*0187\/-*0+1911*918033674\/\/+4*<",
+                        "mxs": [{
+                        "dj": "",
+                        "dw": "",
+                        "ggxh": "",
+                        "je": "-34881.6",
+                        "se": "-2092.9",
+                        "sl": "",
+                        "slv": "0.06",
+                        "ssflbm": "3040205000000000000",
+                        "xh": 1,
+                        "xmmc": "*信息技术服务*信息服务费"
+                        }],
+                        "skr": "黄静",
+                        "xfdzdh": "北京市房山区阎富路69号院37号楼-1至4层101四层15010-56295908",
+                        "xfmc": "北京鼎力创世科技有限公司",
+                        "xfsh": "911101080975522733",
+                        "xfyhzh": "招商银行北京德胜门支行110910772410801"
+                         */
+
+                        foreach ($fpxxs_data['mxs'] as $subItem){
+                            fputcsv($f, [
+                                $fpxxs_data['bz'],
+                                $fpxxs_data['fhr'],
+                                $fpxxs_data['fpdm'],
+                                $subItem['dj'],
+                                $subItem['dw'],//
+                                $subItem['ggxh'],//
+                            ]);
+                        };
+                    }
+                }
+            }
+        }
+
+        return $filename;
+    }
+
     static function getYieldData($code, $rwh){
         $datas = [];
         $page = 1;
