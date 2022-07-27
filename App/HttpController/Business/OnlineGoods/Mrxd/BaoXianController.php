@@ -13,6 +13,7 @@ use App\HttpController\Models\AdminV2\DeliverDetailsHistory;
 use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\InsuranceData;
+use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Service\Common\CommonService;
@@ -119,7 +120,6 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
     }
 
 
-
     public function uploadeFile(){
         $requestData =  $this->getRequestData();
         $files = $this->request()->getUploadedFiles();
@@ -148,6 +148,42 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
         }
 
         return $this->writeJson(200, [], $fileNames,'上传成功 文件数量:'.$succeedNums);
+    }
+
+    //咨询结果
+    function consultResult(): bool
+    {
+        $requestData =  $this->getRequestData();
+//        $checkRes = DataModelExample::checkField(
+//            [
+//
+//                'product_id' => [
+//                    'not_empty' => 1,
+//                    'field_name' => 'product_id',
+//                    'err_msg' => '参数缺失',
+//                ],
+//                'insured' => [
+//                    'not_empty' => 1,
+//                    'field_name' => 'insured',
+//                    'err_msg' => '参数缺失',
+//                ]
+//            ],
+//            $requestData
+//        );
+//        if(
+//            !$checkRes['res']
+//        ){
+//            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+//        }
+       $res =  MailReceipt::findById( 1 );
+        $res = $res->toArray();
+        return $this->writeJson(
+            200,[ ] ,
+            $res,
+            '成功',
+            true,
+            []
+        );
     }
 
 }

@@ -258,7 +258,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getProductDetail', $prefix . 'getProductDetail');// getProductDetail
             $routeCollector->addRoute(['GET', 'POST'], '/consultProduct', $prefix . 'consultProduct');//
             $routeCollector->addRoute(['GET', 'POST'], '/uploadeFile', $prefix . 'uploadeFile');// uploadeFile
-
+            $routeCollector->addRoute(['GET', 'POST'], '/consultResult', $prefix . 'consultResult');// uploadeFile
         });
 
         return true;
