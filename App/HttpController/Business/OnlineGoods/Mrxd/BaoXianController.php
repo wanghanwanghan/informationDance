@@ -181,7 +181,8 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
         $res = $res->toArray();
         return $this->writeJson(
             200,[ ] ,
-            CommonService::ClearHtml($res['body']),
+            //CommonService::ClearHtml($res['body']),
+            $res['body'],
             '成功',
             true,
             []
