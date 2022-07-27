@@ -19,6 +19,7 @@ class AdminV2Router
         $this->RoleRouterV1($routeCollector);
         $this->PermissionsRouterV1($routeCollector);
         $this->FinanceRouterV1($routeCollector);
+        $this->MailRouterV1($routeCollector);
         $this->SouKeRouterV1($routeCollector);
         $this->ToolsRouterV1($routeCollector);
         $this->InvoiceRouterV1($routeCollector);
@@ -68,6 +69,17 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/updateMenu', $prefix . 'updateMenu');
             $routeCollector->addRoute(['GET', 'POST'], '/getMenuById', $prefix . 'getMenuById');
             // $routeCollector->addRoute(['GET', 'POST'], '/getAllMenu', $prefix . 'getAllMenu'); 
+        });
+
+        return true;
+    }
+
+    private function MailRouterV1(RouteCollector $routeCollector): bool
+    {
+        $prefix = '/Business/AdminV2/Mrxd/MailController/';
+
+        $routeCollector->addGroup('/mail', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/mailLists', $prefix . 'mailLists');
         });
 
         return true;
