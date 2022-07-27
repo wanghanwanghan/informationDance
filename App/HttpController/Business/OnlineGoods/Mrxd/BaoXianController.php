@@ -43,8 +43,10 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
 
     function getProducts(): bool
     {
+        $allProducts = (new \App\HttpController\Service\BaoYa\BaoYaService())->getProducts();
+
         return $this->writeJson(
-            200,[ ] ,(new \App\HttpController\Service\BaoYa\BaoYaService())->getProducts(),
+            200,[ ] ,$allProducts,
             '成功',
             true,
             []
