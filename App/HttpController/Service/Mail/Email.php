@@ -357,7 +357,6 @@ class Email extends ServiceBase
 
     /**
      * download the attach of the mail to localhost
-     *
      * @param string $filePath
      * @param string $message
      * @param string $name
@@ -375,7 +374,6 @@ class Email extends ServiceBase
 
     /**
      * click the attach link to download the attach
-     *
      * @param string $id
      */
     public function getAttachData($id, $filePath, $fileName)

@@ -28,6 +28,8 @@ use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\XinDong\XinDongService;
 use Vtiful\Kernel\Format;
+use EasySwoole\Mysqli\QueryBuilder;
+use EasySwoole\ORM\DbManager;
 
 class FinanceController extends ControllerBase
 {
