@@ -134,10 +134,11 @@ class RunDealEmailReceiver extends AbstractCronTask
 
         //设置为正在执行中
         ConfigInfo::setIsRunning(__CLASS__);
-
-
-        //发生提醒短信
-        self::pullEmail(1);
+        //用户咨询后，将询价信息发送给保鸭
+        self::sendEmail();
+        //拉取收件箱
+        self::pullEmail(2);
+        //收到邮件询价结果后  短信通知
         self::dealMail(date('Y-m-d'));
         //设置为已执行完毕
         ConfigInfo::setIsDone(__CLASS__);
@@ -145,7 +146,7 @@ class RunDealEmailReceiver extends AbstractCronTask
         return true ;   
     }
 
-    //拉取财务数据 需要确认的  先拉取 后扣费
+    //拉取收件箱
     static function  pullEmail($dayNums = 1 ){
         $mail = new Email();
 
@@ -182,6 +183,7 @@ class RunDealEmailReceiver extends AbstractCronTask
 
         return true;
     }
+    //收到邮件询价结果后  短信通知
     static  function  dealMail($day){
         $emailAddress = CreateConf::getInstance()->getConf('mail.user_receiver');
         $emails = MailReceipt::findBySql(
@@ -325,6 +327,7 @@ class RunDealEmailReceiver extends AbstractCronTask
         return $html;
     }
 
+    //用户咨询后，将询价信息发送给保鸭
     static function sendEmail()
     {
 
@@ -348,20 +351,18 @@ class RunDealEmailReceiver extends AbstractCronTask
                     TEMP_FILE_PATH . 'qianzhang2.png',
                 ]
             );
+//            OperatorLog::addRecord(
+//                [
+//                    'user_id' => 0,
+//                    'msg' =>  " 附件:".TEMP_FILE_PATH . $res['filename'] .' 邮件结果:'.$res1.$res2.$res3.$res4.$res5,
+//                    'details' =>json_encode( XinDongService::trace()),
+//                    'type_cname' => '招投标邮件',
+//                ]
+//            );
             InsuranceData::updateById($data['id'],[
                 'status' => InsuranceData::$status_email_succeed
             ]);
         }
-
-
-//        OperatorLog::addRecord(
-//            [
-//                'user_id' => 0,
-//                'msg' =>  " 附件:".TEMP_FILE_PATH . $res['filename'] .' 邮件结果:'.$res1.$res2.$res3.$res4.$res5,
-//                'details' =>json_encode( XinDongService::trace()),
-//                'type_cname' => '招投标邮件',
-//            ]
-//        );
 
         return true ;
     }
