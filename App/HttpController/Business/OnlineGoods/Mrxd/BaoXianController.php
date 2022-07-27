@@ -177,11 +177,11 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
 //        ){
 //            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
 //        }
-       $res =  MailReceipt::findById( 1 );
+         $res =  MailReceipt::findById( 1 );
         $res = $res->toArray();
         return $this->writeJson(
             200,[ ] ,
-            $res['body'],
+            CommonService::ClearHtml($res['body']),
             '成功',
             true,
             []
