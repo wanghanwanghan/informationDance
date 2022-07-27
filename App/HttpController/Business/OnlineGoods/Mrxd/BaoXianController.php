@@ -113,7 +113,7 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
         return $this->writeJson(
             200,[ ] ,
              $res,
-            '成功',
+            '尊敬的用户！您的询价单已经提交，请在1到2个工作日内查看短信通知',
             true,
             []
         );
