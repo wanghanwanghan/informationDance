@@ -6,9 +6,9 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\CreateConf;
 
-class CompanyBasic extends ModelBase
+class CompanyManager extends ModelBase
 {
-    protected $tableName = 'company_manager';
+    protected $tableName = 'company_liquidation';
 
     protected $autoTimeStamp = true;
     protected $createTime = 'created_at';
@@ -22,16 +22,23 @@ class CompanyBasic extends ModelBase
     }
 
     public static function findById($id){
-        $res =  CompanyBasic::create()
+        $res =  CompanyManager::create()
+            ->where('id',$id)
+            ->get();
+        return $res;
+    }
+
+    public static function findByCompanyId($id){
+        $res =  CompanyManager::create()
             ->where('companyid',$id)
             ->get();
         return $res;
     }
 
-    public static function findByCode($UNISCID){
-        $res =  CompanyBasic::create()
-            ->where('UNISCID',$UNISCID)
-            ->get();
+    public static function findByName($name){
+        $res =  CompanyManager::create()
+            ->where('ENTNAME',$name)
+            ->all();
         return $res;
     }
 
@@ -43,7 +50,7 @@ class CompanyBasic extends ModelBase
 
 
     public static function findByConditionV2($whereArr,$page){
-        $model = CompanyBasic::create();
+        $model = CompanyManager::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
@@ -60,7 +67,7 @@ class CompanyBasic extends ModelBase
         ];
     }
     public static function findByConditionV3($whereArr){
-        $model = CompanyBasic::create();
+        $model = CompanyManager::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }

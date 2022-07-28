@@ -12,6 +12,8 @@ use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
+use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
+use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\XinDong\XinDongService;
@@ -849,6 +851,32 @@ class SouKeController extends ControllerBase
         $size = $size>0 ?$size:10;
         $offset = ($page-1)*$size;
 
+        $companyId = intval($this->request()->getRequestParam('companyid'));
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+        $dataRes = CompanyManager::findByConditionV2(
+            [
+                'field' => 'companyid', 'value' => $companyId ,'operate'=> '='
+            ],
+            $page
+        );
+        return $this->writeJson(200, [
+            'total' => $dataRes['total'],
+            'page' => $page,
+            'pageSize' => $size,
+            'totalPage'=> floor($dataRes['total']/$size)],
+            $dataRes['data'], '成功', true, []);
+
+    }
+    function getStaffInfoOld(): bool
+    {
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?$page:1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size>0 ?$size:10;
+        $offset = ($page-1)*$size;
+
         $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
             return  $this->writeJson(201, null, null, '参数缺失(企业id)');
@@ -867,7 +895,6 @@ class SouKeController extends ControllerBase
         return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
 
     }
-
     function getCompanyBasicInfo(): bool
     {
         $companyId = intval($this->request()->getRequestParam('xd_id'));
