@@ -907,9 +907,9 @@ class SouKeController extends ControllerBase
         $retData['logo'] =  (new XinDongService())->getLogoByEntIdV2(
             $companyId
         );
-        $res = (new XinDongService())->getEsBasicInfo($companyId);
-        $retData['last_postal_address'] = $res['last_postal_address'];
-        $retData['last_email'] = $res['last_email'];
+        $res = (new XinDongService())->getEsBasicInfoV2($companyId);
+        $retData['LAST_DOM'] = $res['LAST_DOM'];
+        $retData['LAST_EMAIL'] = $res['LAST_EMAIL'];
         return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
     }
     function getCompanyBasicInfoOld(): bool
