@@ -324,8 +324,9 @@ class Email extends ServiceBase
                     } else if ($encoding == 4) {
                         $message = quoted_printable_decode($message);
                     }
-                    $this->downAttach($path, $name, $message);
-                    $attach[] = $name;
+                    $newName = mb_decode_mimeheader($name);
+                    $this->downAttach($path, $newName, $message);
+                    $attach[] = $newName;
                 }
                 if ($struckture->parts[$key]->parts) {
                     foreach ($struckture->parts[$key]->parts as $keyb => $valueb) {
@@ -345,8 +346,9 @@ class Email extends ServiceBase
                             } else if ($encoding == 4) {
                                 $message = quoted_printable_decode($message);
                             }
-                            $this->downAttach($path, $name, $message);
-                            $attach[] = $name;
+                            $newName = mb_decode_mimeheader($name);
+                            $this->downAttach($path, $newName, $message);
+                            $attach[] = $newName;
                         }
                     }
                 }
