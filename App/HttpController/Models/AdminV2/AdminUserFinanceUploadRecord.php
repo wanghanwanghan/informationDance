@@ -564,7 +564,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 }
 
                 if($noNeed){
-                    $hasChargeBefore =false;
+                    $hasChargeBefore = true;
                 }
 
                 // 如果之前没计费过
@@ -628,7 +628,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 }
 
                 if($noNeed){
-                    $hasChargeBefore =false;
+                    $hasChargeBefore = true;
                 }
 
                 // 如果之前没计费过
