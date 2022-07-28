@@ -270,6 +270,13 @@ class SouKeController extends ControllerBase
             // 格式化下金额
             ->formatEsMoney('REGCAP')
         ;
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'hits_count' =>  count($companyEsModel->return_data['hits']['hits'])
+            ])
+        );
+
 
         foreach($companyEsModel->return_data['hits']['hits'] as &$dataItem){
             $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmail($dataItem);
