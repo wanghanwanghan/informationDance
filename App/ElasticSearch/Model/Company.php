@@ -176,6 +176,12 @@ class Company extends ServiceBase
 
     function SetAreaQueryV5($areasLocations,$type =1 )
     {
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'SetAreaQueryV5' =>  $areasLocations
+            ])
+        );
         (!empty($areasLocations)) &&  $this->es->addGeoShapWithin( $areasLocations) ;
         // $this->query['query']['bool']['must'][]
         return $this;
