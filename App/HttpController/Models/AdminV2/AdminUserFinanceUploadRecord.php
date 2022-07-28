@@ -488,7 +488,13 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
         foreach ($uploadDatas as $uploadData){
             $user_finance_data = AdminUserFinanceData::findById($uploadData['user_finance_data_id'])->toArray();
-
+            $noNeed = false;
+            //是否确认不需要
+            if(
+                AdminUserFinanceData::checkIfNoNeed($uploadData['user_finance_data_id'])
+            ){
+                $noNeed = true;
+            }
             //之前是否扣费过
             $hasChargeBefore = false;
 
@@ -544,6 +550,10 @@ class AdminUserFinanceUploadRecord extends ModelBase
                     );
                 }
 
+                if($noNeed){
+                    $hasChargeBefore =false;
+                }
+
                 // 如果之前没计费过
                 if(!$hasChargeBefore){
                     $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']][$user_finance_data['entName']] =
@@ -556,7 +566,6 @@ class AdminUserFinanceUploadRecord extends ModelBase
                     AdminUserFinanceUploadDataRecord::updateRealPrice(
                         $uploadData['id'],$uploadData['price'], $uploadData['charge_year_start'].'~'. $uploadData['charge_year_end'].'包年计费'
                     );
-
                 }
             }
 
@@ -605,6 +614,10 @@ class AdminUserFinanceUploadRecord extends ModelBase
                     );
                 }
 
+                if($noNeed){
+                    $hasChargeBefore =false;
+                }
+                
                 // 如果之前没计费过
                 if(!$hasChargeBefore){
                     $chargeDetails['chargeTypeByYear'][$uploadData['user_id']][$user_finance_data['entName']] =

@@ -287,8 +287,8 @@ class AdminUserFinanceData extends ModelBase
         return [
             'pullFromApi' => false,
             'pullFromDb' => true,
-            'NewFinanceDataId' =>$realFinanceDataRes->getAttr('id'),
-            'NewFinanceData' =>$realFinanceDataRes->toArray()
+            'NewFinanceDataId' => $realFinanceDataRes->getAttr('id'),
+            'NewFinanceData' => $realFinanceDataRes->toArray()
         ];
     }
 
@@ -755,6 +755,18 @@ class AdminUserFinanceData extends ModelBase
             ->get();  
         return $res;
     }
+
+    public static function checkIfNoNeed($id){
+        $res = self::findById($id);
+        if(
+            $res->getAttr('status') == self::$statusConfirmedNo
+        ){
+
+            return $res->getAttr('status');
+        }
+       return  false;
+    }
+
 
     public static function checkDataIsValid($id){
         $res =  self::findById($id);
