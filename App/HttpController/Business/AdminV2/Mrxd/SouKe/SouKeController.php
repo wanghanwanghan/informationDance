@@ -14,6 +14,7 @@ use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
+use App\HttpController\Models\RDS3\HdSaicExtension\AggrePicsH;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\XinDong\XinDongService;
@@ -284,9 +285,8 @@ class SouKeController extends ControllerBase
             $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmailV2($dataItem);
             $dataItem['_source']['LAST_DOM'] = $addresAndEmailData['LAST_DOM'];
             $dataItem['_source']['LAST_EMAIL'] = $addresAndEmailData['LAST_EMAIL'];
-
-            $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntId($dataItem['_source']['xd_id']);
-
+            $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntId($dataItem['_source']['companyid']);
+            
             // 添加tag
             $dataItem['_source']['tags'] = array_values(
                 (new XinDongService())::getAllTagesByData(

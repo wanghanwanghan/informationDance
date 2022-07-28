@@ -14,6 +14,7 @@ use App\HttpController\Models\BusinessBase\VendincScale2020Model;
 use App\HttpController\Models\EntDb\EntDbNacao;
 use App\HttpController\Models\EntDb\EntDbNacaoBasic;
 use App\HttpController\Models\EntDb\EntDbNacaoClass;
+use App\HttpController\Models\RDS3\HdSaicExtension\AggrePicsH;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaYanYuan\FaYanYuanService;
@@ -2446,17 +2447,25 @@ class XinDongService extends ServiceBase
     }
 
     function getLogoByEntId($entId){
+        $LogoRes = AggrePicsH::findByCompanyidId($entId);
+
+        if(empty($LogoRes)){
+            return '';
+        }
+        return str_replace('logo', '', $LogoRes->getAttr('pic'));
+    }
+    function getLogoByEntIdV2($entId){
         $logoData = XsyA24Logo::create()
             ->where('id', $entId)
             ->get();
         // CommonService::getInstance()->log4PHP('logo '.json_encode([
         //     $logoData,
-        //     ])); 
+        //     ]));
         if(empty($logoData)){
             return '';
         }
         return str_replace('logo', '', $logoData->getAttr('file_path'));
-    } 
+    }
     function getEsBasicInfo($companyId): array
     {
         
