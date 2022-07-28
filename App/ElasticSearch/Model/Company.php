@@ -182,7 +182,7 @@ class Company extends ServiceBase
                 'SetAreaQueryV5' =>  $areasLocations
             ])
         );
-        (!empty($areasLocations)) &&  $this->es->addGeoShapWithin( $areasLocations) ;
+        (!empty($areasLocations)) &&  $this->es->addGeoShapWithinV2( $areasLocations) ;
         // $this->query['query']['bool']['must'][]
         return $this;
     }
