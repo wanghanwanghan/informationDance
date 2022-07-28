@@ -892,6 +892,9 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
             $companyDatas = self::getYieldData($uploadRecord['file_name']);
 
             foreach ($companyDatas as $companyData) {
+                if(empty($companyData[0])){
+                    continue;
+                }
                 // 按年度解析为数据
                 $yearsArr = json_decode($uploadRecord['years'],true);
                 if(empty($yearsArr)){

@@ -230,7 +230,6 @@ class FinanceController extends ControllerBase
      * 冻结
      */
     public function updateConfigStatus(){
-       
         $id = $this->getRequestData('id');
         $status = $this->getRequestData('status');
         // if (empty($phone)) return $this->writeJson(201, null, null, '参数 不能是空');
