@@ -272,6 +272,16 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 $AdminUserFinanceUploadDataRecord['user_finance_data_id']
             )->toArray();
 
+            //如果确认不需要
+            if(AdminUserFinanceData::checkIfNoNeed($AdminUserFinanceUploadDataRecord['user_finance_data_id'])){
+                yield $returnDatas[] = [
+                    'NewFinanceData' => [],
+                    'AdminUserFinanceUploadDataRecord'=>$AdminUserFinanceUploadDataRecord?:[],
+                    'AdminUserFinanceData'=>[],
+                ];
+                continue;
+            }
+
             if($AdminUserFinanceData['finance_data_id']<= 0 ){
 //                CommonService::getInstance()->log4PHP(
 //                    json_encode([
@@ -286,6 +296,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 ];
                 continue;
             }
+
             //对应的实际财务数据
             $NewFinanceData = NewFinanceData::findById(
                 $AdminUserFinanceData['finance_data_id']
@@ -617,7 +628,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 if($noNeed){
                     $hasChargeBefore =false;
                 }
-                
+
                 // 如果之前没计费过
                 if(!$hasChargeBefore){
                     $chargeDetails['chargeTypeByYear'][$uploadData['user_id']][$user_finance_data['entName']] =
