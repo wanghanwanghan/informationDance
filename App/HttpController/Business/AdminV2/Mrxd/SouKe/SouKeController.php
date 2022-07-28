@@ -281,9 +281,9 @@ class SouKeController extends ControllerBase
 
 
         foreach($companyEsModel->return_data['hits']['hits'] as &$dataItem){
-            $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmail($dataItem);
-            $dataItem['_source']['last_postal_address'] = $addresAndEmailData['last_postal_address'];
-            $dataItem['_source']['last_email'] = $addresAndEmailData['last_email'];
+            $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmailV2($dataItem);
+            $dataItem['_source']['LAST_DOM'] = $addresAndEmailData['LAST_DOM'];
+            $dataItem['_source']['LAST_EMAIL'] = $addresAndEmailData['LAST_EMAIL'];
 
             $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntId($dataItem['_source']['xd_id']);
 

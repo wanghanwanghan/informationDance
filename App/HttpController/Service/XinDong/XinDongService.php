@@ -2539,6 +2539,19 @@ class XinDongService extends ServiceBase
         ];
     }
 
+    function getLastPostalAddressAndEmailV2($dataItem){
+        if(!empty($dataItem['_source']['report_year'])){
+            $lastReportYearData = end($dataItem['_source']['report_year']);
+            return [
+                'LAST_DOM' => $lastReportYearData['DOM'],
+                'LAST_EMAIL' => $lastReportYearData['EMAIL'],
+            ];
+        }
+        return [
+            'LAST_DOM' => '',
+            'LAST_EMAIL' => '',
+        ];
+    }
     function addCarInsuranceInfo($dataItem){  
         $oldModel = CarInsuranceInfo::create()
             ->where(
