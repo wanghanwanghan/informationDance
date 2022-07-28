@@ -285,8 +285,8 @@ class SouKeController extends ControllerBase
             $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmailV2($dataItem);
             $dataItem['_source']['LAST_DOM'] = $addresAndEmailData['LAST_DOM'];
             $dataItem['_source']['LAST_EMAIL'] = $addresAndEmailData['LAST_EMAIL'];
-            $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntId($dataItem['_source']['companyid']);
-            
+            $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntIdV2($dataItem['_source']['companyid']);
+
             // 添加tag
             $dataItem['_source']['tags'] = array_values(
                 (new XinDongService())::getAllTagesByData(
@@ -897,6 +897,23 @@ class SouKeController extends ControllerBase
     }
     function getCompanyBasicInfo(): bool
     {
+        $companyId = intval($this->request()->getRequestParam('companyid'));
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业ID)');
+        }
+
+        $retData  = CompanyBasic::findById($companyId);
+        $retData = $retData->toArray();
+        $retData['logo'] =  (new XinDongService())->getLogoByEntIdV2(
+            $companyId
+        );
+        $res = (new XinDongService())->getEsBasicInfo($companyId);
+        $retData['last_postal_address'] = $res['last_postal_address'];
+        $retData['last_email'] = $res['last_email'];
+        return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
+    }
+    function getCompanyBasicInfoOld(): bool
+    {
         $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
             return  $this->writeJson(201, null, null, '参数缺失(企业ID)');
@@ -926,7 +943,6 @@ class SouKeController extends ControllerBase
         $retData['last_email'] = $res['last_email'];
         return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
     }
-
     function getCpwsList(): bool
     {
         $page = $this->getRequestData('page');
