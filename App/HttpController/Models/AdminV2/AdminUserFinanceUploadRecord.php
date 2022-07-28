@@ -183,6 +183,8 @@ class AdminUserFinanceUploadRecord extends ModelBase
         return $res;
     }
 
+
+
     public static function getAllFinanceDataByUploadRecordIdV2(
         $userId,$uploadRecordId
     ){

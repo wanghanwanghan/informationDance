@@ -151,6 +151,13 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         return $res;
     }
 
+    public static function findByUserFinanceDataId($id){
+        $res =  AdminUserFinanceUploadDataRecord::create()
+            ->where('user_finance_data_id',$id)
+            ->get();
+        return $res;
+    }
+
 
     public static function updatePriceType($info){
 

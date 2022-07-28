@@ -847,15 +847,32 @@ class FinanceController extends ControllerBase
         foreach ($ids as $id){
             $records =AdminUserFinanceData::findById($id)->toArray();
             if(
+                $records['status'] == $requestData['status']
+            ){
+                continue;
+            }
+
+            $res = AdminUserFinanceData::updateStatus(
+                $id,
+                $requestData['status']
+            );
+            if(!$res){
+                return $this->writeJson(206, [] ,   [], '确认失败', true, []);
+            }
+
+            
+            if(
                 $records['status'] ==  AdminUserFinanceData::$statusNeedsConfirm
             ){
-                $res = AdminUserFinanceData::updateStatus(
-                    $id,
-                    $requestData['status']
+
+            }else{
+                //变更为用户确认中
+               $AdminUserFinanceUploadDataRecord =  AdminUserFinanceUploadDataRecord::findByUserFinanceDataId($id);
+               $AdminUserFinanceUploadRecord = AdminUserFinanceUploadRecord::findById($AdminUserFinanceUploadDataRecord->getAttr('record_id'));
+                AdminUserFinanceUploadRecord::changeStatus(
+                    $AdminUserFinanceUploadRecord->getAttr('id'),
+                    AdminUserFinanceUploadRecord::$stateNeedsConfirm
                 );
-                if(!$res){
-                    return $this->writeJson(206, [] ,   [], '确认失败', true, []);
-                }
             }
 
         }
