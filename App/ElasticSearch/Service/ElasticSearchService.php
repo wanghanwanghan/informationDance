@@ -227,6 +227,7 @@ class ElasticSearchService extends ServiceBase
 
 * */
     function addGeoShapWithin($arrays,$filed = 'location'){
+
         $this->query['query']['geo_shape'][$filed] = [
             'relation' => 'within',
             'shape' => [
@@ -236,6 +237,12 @@ class ElasticSearchService extends ServiceBase
                 ]
             ]
         ];
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$this->query' =>   $this->query
+            ])
+        );
     }
 
     function   Search($index = 'company_202207')
