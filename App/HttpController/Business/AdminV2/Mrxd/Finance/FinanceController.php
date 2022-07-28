@@ -860,7 +860,7 @@ class FinanceController extends ControllerBase
                 return $this->writeJson(206, [] ,   [], '确认失败', true, []);
             }
 
-            
+
             if(
                 $records['status'] ==  AdminUserFinanceData::$statusNeedsConfirm
             ){
@@ -1160,6 +1160,9 @@ class FinanceController extends ControllerBase
                     $uploadRes['user_id'],$uploadRes['id']
                 );
                 foreach($financeDatas as $financeData){
+                    if(empty($financeData['AdminUserFinanceData'])){
+                        continue;
+                    }
                     $AdminUserFinanceUploadDataRecord = AdminUserFinanceUploadDataRecord::findById(
                         $financeData['AdminUserFinanceUploadDataRecord']['id']
                     )->toArray();
