@@ -160,8 +160,16 @@ class RunDealEmailReceiver extends AbstractCronTask
         $date = date ( "d M Y", strToTime ( "-$dayNums days" ) );
         $emailData = $mail->mailListBySinceV2($date);
 
+        $msgcount = 1;
         //单纯加数据
         foreach ($emailData as $emailDataItem){
+            $attachs = $mail->getAttach($msgcount,OTHER_FILE_PATH.'MailAttach/');
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$attachs' =>  $attachs
+                ])
+            );
             MailReceipt::addRecordV2(
                 [
                     'email_id' => $emailDataItem['Uid'],
@@ -177,6 +185,7 @@ class RunDealEmailReceiver extends AbstractCronTask
                     'date' => date('Y-m-d H:i:s',strtotime($emailDataItem['mailHeader']['date'])) ,
                 ]
             );
+            $msgcount  ++;
         }
 
         //单纯发短信|状态控制下 防止强制触发

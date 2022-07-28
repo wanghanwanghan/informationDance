@@ -507,6 +507,12 @@ class Email extends ServiceBase
         return $status;
     }
 
+//    public function dowload($msgCount)
+//    {
+//        $status = imap_setflag_full($this->_connect, $msgCount, "\\Seen");
+//        return $status;
+//    }
+
     /**
      * Close an IMAP stream
      */
@@ -514,4 +520,5 @@ class Email extends ServiceBase
     {
         imap_close($this->_connect, CL_EXPUNGE);
     }
+
 }
