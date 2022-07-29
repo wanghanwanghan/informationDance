@@ -96,7 +96,38 @@ class AdminUserFinanceUploadRecord extends ModelBase
         }
         return true;
     }
+    public static function pullFinanceDataByIdV2($upload_record_id){
+        $uploadRes = AdminUserFinanceUploadRecord::findById($upload_record_id)->toArray();
+        $uploadDatas = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
+            $uploadRes['user_id'],$uploadRes['id']
+        );
+        foreach ($uploadDatas as $uploadData){
+            $pullFinanceDataRes = AdminUserFinanceData::pullFinanceDataV2(
+                $uploadData['user_finance_data_id'],AdminUserFinanceUploadRecord::getFinanceConfigArray($upload_record_id)
+            );
 
+            if($pullFinanceDataRes['res']!= 'succeed'){
+                return  CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ ,
+                        '$pullFinanceDataRes failed',
+                    ])
+                );
+            }
+            self::updateMoneyById();
+            //XXXXXXXXXXXXXXXX
+            if($pullFinanceDataRes['status'] == 'succeed'){
+                return  CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ ,
+                        '$pullFinanceDataRes failed',
+                    ])
+                );
+            }
+
+        }
+        return true;
+    }
 
     public static function findByIdAndFileName($user_id,$file_name){
         $res =  AdminUserFinanceUploadRecord::create()->where([
@@ -474,6 +505,24 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
     public static function updateMoneyById(
         $id,$money
+    ){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                'updateMoneyById ',
+                'id' => $id,
+                '$money' => $money
+            ])
+        );
+        $info = self::findById($id);
+        return $info->update([
+            'id' => $id,
+            'money' => $money,
+        ]);
+    }
+
+    public static function updateConfirmStatusById(
+        $id,$status
     ){
         CommonService::getInstance()->log4PHP(
             json_encode([

@@ -400,6 +400,116 @@ class AdminUserFinanceData extends ModelBase
 
         return true;
     }
+    public static function pullFinanceDataV2($id,$financeConifgArr){
+        $financeData =  AdminUserFinanceData::findById($id)->toArray();
+
+        if($financeData['year'] > date('Y')){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ ,
+                    'params $FinanceDataId ' =>$id,
+                    '$financeConifgArr ' =>$financeConifgArr,
+                    'year too large ,return true.'
+                ])
+            );
+            return  true;
+        }
+
+        $postData = [
+            'entName' => $financeData['entName'],
+            'code' => '',
+            'beginYear' => date('Y'),
+            'dataCount' => 10,//取最近几年的
+        ];
+
+        // 根据缓存期和上次拉取财务数据时间 决定是取db还是取api
+        $getFinanceDataSourceDetailRes = self::getFinanceDataSourceDetail($id);
+        OperatorLog::addRecord(
+            [
+                'user_id' => $financeData['user_id'],
+                'msg' =>  "企业:".$financeData['entName']." 从db还是从api取财务数据?: ".json_encode($getFinanceDataSourceDetailRes),
+                'details' =>json_encode( XinDongService::trace()),
+                'type_cname' => '新后台导出财务数据-从db还是从api取财务数据?',
+            ]
+        );
+
+        //需要从APi拉取
+        if($getFinanceDataSourceDetailRes['pullFromApi']){
+
+            $res = (new LongXinService())->getFinanceData($postData, false);
+            $resData = $res['result']['data'];
+            $resOtherData = $res['result']['otherData'];
+            OperatorLog::addRecord(
+                [
+                    'user_id' => $financeData['user_id'],
+                    'msg' =>  "企业:".$financeData['entName']." 从APi拉取财务数据: 参数：".json_encode($postData)." 返回：".json_encode($res),
+                    'details' =>json_encode( XinDongService::trace()),
+                    'type_cname' => '新后台导出财务数据-从APi拉取财务数据',
+                ]
+            );
+
+            //更新拉取时间
+            self::updateLastPullDate($id,date('Y-m-d H:i:s'));
+
+            // 保存到db
+            foreach ($resData as $yearItem => $resDataItem){
+                $dbDataArr = $resDataItem;
+                $dbDataArr['entName'] = $financeData['entName'];
+                $dbDataArr['year'] = $yearItem;
+                $dbDataArr['raw_return'] = @json_encode($res);
+                $addRes = NewFinanceData::addRecordV2($dbDataArr);
+//                if(!$addRes){
+//                    OperatorLog::addRecord(
+//                        [
+//                            'user_id' => $financeData['user_id'],
+//                            'msg' =>  "企业:".$financeData['entName']." 从APi拉取财务数据后,保存失败 ：表：new_finance_data 数据：".json_encode($dbDataArr),
+//                            'details' =>json_encode( XinDongService::trace()),
+//                            'type_cname' => '新后台导出财务数据-从APi拉取财务数据后,保存失败',
+//                        ]
+//                    );
+//
+//                    return  false;
+//                }
+
+                //不是他需要的年份
+                if($financeData['year'] == $yearItem ){
+                    $NewFinanceDataId = $addRes;
+                    $NewFinanceData = $dbDataArr;
+                }
+            }
+        }
+        else{
+
+            $NewFinanceDataId = $getFinanceDataSourceDetailRes['NewFinanceDataId'];
+            $NewFinanceData =$getFinanceDataSourceDetailRes['NewFinanceData'] ;
+        }
+
+        //把$NewFinanceDataId更新到表
+        self::updateNewFinanceDataId($id,$NewFinanceDataId);
+
+        //设置是否需要确认
+        //设置是否需要确认
+        $status = self::getConfirmStatus($financeConifgArr,$NewFinanceData);
+        //之前没确认过的
+        if(
+            !in_array( $financeData['status'],[
+                self::$statusConfirmedYes,
+                self::$statusConfirmedNo
+            ])
+        ){
+            self::updateStatus($id,$status);
+            if(
+                $status == self::$statusNeedsConfirm
+            ){
+                self::updateNeedsConfirm($id,1);
+            }
+        }
+
+        return [
+            'res'=>'succeed',
+            'status'=>$status
+        ];
+    }
     public  static  function getConfirmStatus($financeConifgArr,$dataItem){
 
         // 不需要确认的 全部为需要的
