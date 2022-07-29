@@ -931,6 +931,15 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                         return false;
                     }
 
+                    //如果之前确认过的  需要重新确认
+                    if(
+                        AdminUserFinanceData::checkIfCheckedBefore($UserFinanceDataId)
+                    ){
+                        AdminUserFinanceData::updateStatus(
+                            $UserFinanceDataId,AdminUserFinanceData::$statusNeedsConfirm
+                        );
+                    }
+
                     $res =AdminUserFinanceUploadDataRecord::addRecordV2(
                         [
                             'user_id' => $uploadRecord['user_id'] ,

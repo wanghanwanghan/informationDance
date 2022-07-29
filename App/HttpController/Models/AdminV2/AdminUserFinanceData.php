@@ -767,6 +767,16 @@ class AdminUserFinanceData extends ModelBase
        return  false;
     }
 
+    public static function checkIfCheckedBefore($id){
+        $res = self::findById($id);
+        if(
+            in_array($res->getAttr('status'),[self::$statusConfirmedNo,self::$statusConfirmedYes])
+        ){
+
+            return $res->getAttr('status');
+        }
+        return  false;
+    }
 
     public static function checkDataIsValid($id){
         $res =  self::findById($id);
