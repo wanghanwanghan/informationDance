@@ -169,12 +169,15 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
 
         //找到需要导出的 拉取财务数据
         self::pullFinanceDataV2(10);
+//        self::pullFinanceDataV2_v2(10);
 
         //找到需要导出的 设置为已确认
         self::checkConfirmV2(10);
+//        self::checkConfirmV2_V2(10);
 
         //找到需要导出的 重新拉取财务数据
         self::pullFinanceDataV3(10);
+//        self::pullFinanceDataV3_V2(10);
 
         self::exportFinanceDataV4(10);
 
@@ -328,7 +331,150 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
 
         return true;
     }
+    static function  pullFinanceDataV2_v2($limit){
+        //计算完价格的
+        $allUploadRes =  AdminUserFinanceUploadRecord::findBySql(
+            " WHERE 
+            `status`  in (  
+                        ".AdminUserFinanceUploadRecordV3::$stateCalCulatedPrice. "  ,  
+                        ".AdminUserFinanceUploadRecordV3::$stateBalanceNotEnough. " ,
+                        ".AdminUserFinanceUploadRecordV3::$stateTooManyPulls. "  
+            )
+             AND touch_time  IS Null
+             ORDER BY priority ASC 
+           LIMIT $limit 
+            "
+        );
 
+        foreach($allUploadRes as $uploadRes){
+            AdminUserFinanceUploadRecord::setTouchTime(
+                $uploadRes['id'],date('Y-m-d H:i:s')
+            );
+
+            //每日最大次数限制
+            if(
+                !AdminUserChargeConfig::checkIfCanRun(
+                    $uploadRes['user_id'],
+                    count(
+                        AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
+                            $uploadRes['user_id'],
+                            $uploadRes['id'],
+                            ['id']
+                        )
+                    )
+                )
+            ){
+                AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateTooManyPulls);
+                AdminUserFinanceUploadRecord::reducePriority(
+                    $uploadRes['id'],1
+                );
+                AdminUserFinanceUploadRecord::setTouchTime(
+                    $uploadRes['id'],NULL
+                );
+                continue;
+            }
+
+            //检查余额
+            $checkAccountBalanceRes = \App\HttpController\Models\AdminV2\AdminNewUser::checkAccountBalance(
+                $uploadRes['user_id'],
+                $uploadRes['money']
+            );
+            if(
+                !$checkAccountBalanceRes
+            ){
+                AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateBalanceNotEnough);
+
+                //把优先级调低
+                AdminUserFinanceUploadRecord::reducePriority(
+                    $uploadRes['id'],1
+                );
+                AdminUserFinanceUploadRecord::setData(
+                    $uploadRes['id'],'remrk','检查余额不足'
+                );
+                AdminUserFinanceUploadRecord::setTouchTime(
+                    $uploadRes['id'],NULL
+                );
+                continue;
+            }
+
+            //不需要确认的  这阶段不拉取财务数据
+            if(
+                !AdminUserFinanceConfig::checkIfNeedsConfirm($uploadRes['user_id'])
+            ){
+                OperatorLog::addRecord(
+                    [
+                        'user_id' => $uploadRes['user_id'],
+                        'msg' =>  "新后台导出财务数据-不需要确认,设置为可以直接导出" ,
+                        'details' =>json_encode( XinDongService::trace()),
+                        'type_cname' => '新后台导出财务数据-不需要确认,设置为可以直接导出',
+                    ]
+                );
+                AdminUserFinanceUploadRecord::changeStatus($uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateAllSet);
+                AdminUserFinanceUploadRecord::setTouchTime(
+                    $uploadRes['id'],NULL
+                );
+                continue;
+            }
+
+            OperatorLog::addRecord(
+                [
+                    'user_id' => $uploadRes['user_id'],
+                    'msg' =>  '新后台导出财务数据-需要确认,要先去拉取财务数据，后扣费',
+                    'details' =>json_encode( XinDongService::trace()),
+                    'type_cname' => '新后台导出财务数据-需要确认,要先去拉取财务数据，后扣费',
+                ]
+            );
+
+            //需要确认的 先去拉取财务数据
+            $pullFinanceDataByIdRes = AdminUserFinanceUploadRecord::pullFinanceDataByIdV2(
+                $uploadRes['id']
+            );
+            if(!$pullFinanceDataByIdRes){
+                //把优先级调低
+                AdminUserFinanceUploadRecord::reducePriority(
+                    $uploadRes['id'],1
+                );
+                AdminUserFinanceUploadRecord::setData(
+                    $uploadRes['id'],'remrk','拉取财务数据失败'
+                );
+                return  false;
+            }
+
+            //要去确认
+            if(
+                AdminUserFinanceUploadRecord::checkIfNeedsConfirmV2($uploadRes['id'])
+            ){
+                $res = AdminUserFinanceUploadRecord::changeStatus(
+                    $uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateNeedsConfirm
+                );
+
+            }
+            //不需要确认
+            else{
+                $res = AdminUserFinanceUploadRecord::changeStatus(
+                    $uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateAllSet
+                );
+            }
+
+            if(!$res){
+                //把优先级调低
+                AdminUserFinanceUploadRecord::reducePriority(
+                    $uploadRes['id'],1
+                );
+                AdminUserFinanceUploadRecord::setData(
+                    $uploadRes['id'],'remrk','设置确认状态错误'
+                );
+                return  false;
+            }
+            ;
+
+            AdminUserFinanceUploadRecord::setTouchTime(
+                $uploadRes['id'],NULL
+            );
+        }
+
+        return true;
+    }
 
     //不需要确认的  先扣费 再拉取
     static function  pullFinanceDataV3($limit){
@@ -359,6 +505,33 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
         return true;
     }
 
+    static function  pullFinanceDataV3_V2($limit){
+        $startMemory = memory_get_usage();
+        $queueDatas =  AdminUserFinanceExportDataQueue::findBySql(
+            " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_init. " 
+                    AND touch_time  IS Null  LIMIT $limit 
+            "
+        );
+        foreach($queueDatas as $queueData){
+            AdminUserFinanceExportDataQueue::setTouchTime(
+                $queueData['id'],date('Y-m-d H:i:s')
+            );
+
+            $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
+
+            //拉取财务数据
+            $pullFinanceDataByIdRes = AdminUserFinanceUploadRecord::pullFinanceDataByIdV2(
+                $uploadRes['id']
+            );
+
+            AdminUserFinanceExportDataQueue::updateStatusById($queueData['id'],AdminUserFinanceExportDataQueue::$state_data_all_set);
+            AdminUserFinanceExportDataQueue::setTouchTime(
+                $queueData['id'],NULL
+            );
+        }
+
+        return true;
+    }
 
     static function  checkConfirmV2($limit){
         $allUploadRes =  AdminUserFinanceUploadRecord::findBySql(
@@ -407,7 +580,54 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
 
         return true;
     }
+    static function  checkConfirmV2_V2($limit){
+        $allUploadRes =  AdminUserFinanceUploadRecord::findBySql(
+            " WHERE `status` = ".AdminUserFinanceUploadRecordV3::$stateNeedsConfirm. " 
+                    AND touch_time  IS Null  LIMIT $limit 
+            "
+        );
+        foreach($allUploadRes as $uploadRes){
+            AdminUserFinanceUploadRecord::setTouchTime(
+                $uploadRes['id'],date('Y-m-d H:i:s')
+            );
 
+            //尚未确认
+            if(
+                AdminUserFinanceUploadRecord::checkIfNeedsConfirmV2($uploadRes['id'])
+            ){
+
+            }
+            //确认完了
+            else{
+                $res = AdminUserFinanceUploadRecord::changeStatus(
+                    $uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateAllSet
+                );
+
+                //确认完了 重新计算下价格
+                $calRes = AdminUserFinanceUploadRecord::calMoneyV2(
+                    $uploadRes['id']
+                );
+
+                if(!$calRes  ){
+                    //把优先级调低
+                    AdminUserFinanceUploadRecord::reducePriority(
+                        $uploadRes['id'],1
+                    );
+                    AdminUserFinanceUploadRecord::setData(
+                        $uploadRes['id'],'remrk','重新计算价格错误'
+                    );
+                    return  false;
+                }
+            }
+
+
+            AdminUserFinanceUploadRecord::setTouchTime(
+                $uploadRes['id'],NULL
+            );
+        }
+
+        return true;
+    }
 
     static function  exportFinanceDataV3($limit){
         $queueDatas =  AdminUserFinanceExportDataQueue::findBySql(

@@ -22,6 +22,23 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
     static $chargeTypeByYear = 10;
     static $chargeTypeByYearCname = '按年';
 
+    public static function checkDataNeedConfirm($id){
+        $res =  self::findById($id);
+        $res2 =  ($res->getAttr('confirm_status') == AdminUserFinanceData::$statusNeedsConfirm)? true:false;
+
+        return $res2;
+    }
+    public static function checkIfNoNeed($id){
+        $res = self::findById($id);
+        if(
+            $res->getAttr('confirm_status') == AdminUserFinanceData::$statusConfirmedNo
+        ){
+
+            return $res->getAttr('confirm_status');
+        }
+        return  false;
+    }
+
     public static function addUploadRecord($requestData){
         $infoArr = [
             'user_id' => $requestData['user_id'],

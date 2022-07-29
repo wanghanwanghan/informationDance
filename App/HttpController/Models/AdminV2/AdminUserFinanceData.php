@@ -490,20 +490,6 @@ class AdminUserFinanceData extends ModelBase
         //设置是否需要确认
         //设置是否需要确认
         $status = self::getConfirmStatus($financeConifgArr,$NewFinanceData);
-        //之前没确认过的
-        if(
-            !in_array( $financeData['status'],[
-                self::$statusConfirmedYes,
-                self::$statusConfirmedNo
-            ])
-        ){
-            self::updateStatus($id,$status);
-            if(
-                $status == self::$statusNeedsConfirm
-            ){
-                self::updateNeedsConfirm($id,1);
-            }
-        }
 
         return [
             'res'=>'succeed',
