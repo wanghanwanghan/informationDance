@@ -10,11 +10,13 @@ use wanghanwanghan\someUtils\control;
 class ZhongRuiYinTongService extends ServiceBase
 {
     private $urlBase = 'http://222.128.37.11:2212/';
+    private $username;
+    private $password;
 
     function __construct()
     {
-        $this->xxx = CreateConf::getInstance()->getConf('xxx.xxx');
-        $this->requestsn = control::getUuid();
+        $this->username = CreateConf::getInstance()->getConf('zhongruiyintong.username');
+        $this->password = CreateConf::getInstance()->getConf('zhongruiyintong.password');
 
         return parent::__construct();
     }
@@ -35,15 +37,13 @@ class ZhongRuiYinTongService extends ServiceBase
     }
 
     //通过用户名密码获取访问接口所需要的 token 信息
-    private function getToken(string $username, string $password): ?string
+    private function getToken(): ?string
     {
         $url = $this->urlBase . 'api/system/login';
 
         $postData = [
-            'username' => empty($username) ?
-                CreateConf::getInstance()->getConf('zhongruiyintong.username') : $username,
-            'password' => empty($password) ?
-                CreateConf::getInstance()->getConf('zhongruiyintong.password') : $password,
+            'username' => $this->username,
+            'password' => $this->password,
         ];
 
         $login_info = (new CoHttpClient())
@@ -73,12 +73,7 @@ class ZhongRuiYinTongService extends ServiceBase
             'vehicleVIN' => trim($vehicleVIN),//车辆识别代号
         ];
 
-        $header = [
-            'token' => $this->getToken(
-                CreateConf::getInstance()->getConf('zhongruiyintong.username'),
-                CreateConf::getInstance()->getConf('zhongruiyintong.password')
-            ),
-        ];
+        $header = ['token' => $this->getToken()];
 
         $res = (new CoHttpClient())
             ->useCache(false)
@@ -101,12 +96,7 @@ class ZhongRuiYinTongService extends ServiceBase
             'organizationCode' => trim($organizationCode),//统一社会信用代码
         ];
 
-        $header = [
-            'token' => $this->getToken(
-                CreateConf::getInstance()->getConf('zhongruiyintong.username'),
-                CreateConf::getInstance()->getConf('zhongruiyintong.password')
-            ),
-        ];
+        $header = ['token' => $this->getToken()];
 
         $res = (new CoHttpClient())
             ->useCache(false)
@@ -129,12 +119,7 @@ class ZhongRuiYinTongService extends ServiceBase
             'organizationCode' => trim($organizationCode),//统一社会信用代码
         ];
 
-        $header = [
-            'token' => $this->getToken(
-                CreateConf::getInstance()->getConf('zhongruiyintong.username'),
-                CreateConf::getInstance()->getConf('zhongruiyintong.password')
-            ),
-        ];
+        $header = ['token' => $this->getToken()];
 
         $res = (new CoHttpClient())
             ->useCache(false)
@@ -156,12 +141,7 @@ class ZhongRuiYinTongService extends ServiceBase
             'vehicleVIN' => trim($vehicleVIN),//车辆识别代号
         ];
 
-        $header = [
-            'token' => $this->getToken(
-                CreateConf::getInstance()->getConf('zhongruiyintong.username'),
-                CreateConf::getInstance()->getConf('zhongruiyintong.password')
-            ),
-        ];
+        $header = ['token' => $this->getToken()];
 
         $res = (new CoHttpClient())
             ->useCache(false)
@@ -183,12 +163,7 @@ class ZhongRuiYinTongService extends ServiceBase
             'plateColor' => trim($plateColor),//车牌颜色代码
         ];
 
-        $header = [
-            'token' => $this->getToken(
-                CreateConf::getInstance()->getConf('zhongruiyintong.username'),
-                CreateConf::getInstance()->getConf('zhongruiyintong.password')
-            ),
-        ];
+        $header = ['token' => $this->getToken()];
 
         $res = (new CoHttpClient())
             ->useCache(false)
@@ -210,12 +185,7 @@ class ZhongRuiYinTongService extends ServiceBase
             'vehicleVIN' => trim($vehicleVIN),//车辆识别代号
         ];
 
-        $header = [
-            'token' => $this->getToken(
-                CreateConf::getInstance()->getConf('zhongruiyintong.username'),
-                CreateConf::getInstance()->getConf('zhongruiyintong.password')
-            ),
-        ];
+        $header = ['token' => $this->getToken()];
 
         $res = (new CoHttpClient())
             ->useCache(false)
@@ -237,12 +207,7 @@ class ZhongRuiYinTongService extends ServiceBase
             'plateColor' => trim($plateColor),//车牌颜色代码 见 JT/T 697.7 —2014 中 5.6
         ];
 
-        $header = [
-            'token' => $this->getToken(
-                CreateConf::getInstance()->getConf('zhongruiyintong.username'),
-                CreateConf::getInstance()->getConf('zhongruiyintong.password')
-            ),
-        ];
+        $header = ['token' => $this->getToken()];
 
         $res = (new CoHttpClient())
             ->useCache(false)
@@ -272,12 +237,7 @@ class ZhongRuiYinTongService extends ServiceBase
 
         empty($validityDate) ?: $postData['validityDate'] = trim($validityDate);//证件有效期 YYYYMMDD
 
-        $header = [
-            'token' => $this->getToken(
-                CreateConf::getInstance()->getConf('zhongruiyintong.username'),
-                CreateConf::getInstance()->getConf('zhongruiyintong.password')
-            ),
-        ];
+        $header = ['token' => $this->getToken()];
 
         $res = (new CoHttpClient())
             ->useCache(false)
@@ -305,12 +265,7 @@ class ZhongRuiYinTongService extends ServiceBase
             empty($vehicleVIN) ?: $postData['vehicleVIN'] = trim($vehicleVIN);//车辆识别代号
         }
 
-        $header = [
-            'token' => $this->getToken(
-                CreateConf::getInstance()->getConf('zhongruiyintong.username'),
-                CreateConf::getInstance()->getConf('zhongruiyintong.password')
-            ),
-        ];
+        $header = ['token' => $this->getToken()];
 
         $res = (new CoHttpClient())
             ->useCache(false)
@@ -332,12 +287,7 @@ class ZhongRuiYinTongService extends ServiceBase
             'ownerName' => trim($ownerName),//企业名称
         ];
 
-        $header = [
-            'token' => $this->getToken(
-                CreateConf::getInstance()->getConf('zhongruiyintong.username'),
-                CreateConf::getInstance()->getConf('zhongruiyintong.password')
-            ),
-        ];
+        $header = ['token' => $this->getToken()];
 
         $res = (new CoHttpClient())
             ->useCache(false)
@@ -361,12 +311,7 @@ class ZhongRuiYinTongService extends ServiceBase
 
         empty($validityDate) ?: $postData['validityDate'] = trim($validityDate);//证件有效期 YYYYMMDD
 
-        $header = [
-            'token' => $this->getToken(
-                CreateConf::getInstance()->getConf('zhongruiyintong.username'),
-                CreateConf::getInstance()->getConf('zhongruiyintong.password')
-            ),
-        ];
+        $header = ['token' => $this->getToken()];
 
         $res = (new CoHttpClient())
             ->useCache(false)
@@ -389,12 +334,7 @@ class ZhongRuiYinTongService extends ServiceBase
             'provinceCode' => trim($provinceCode),//省行政区划代码
         ];
 
-        $header = [
-            'token' => $this->getToken(
-                CreateConf::getInstance()->getConf('zhongruiyintong.username'),
-                CreateConf::getInstance()->getConf('zhongruiyintong.password')
-            ),
-        ];
+        $header = ['token' => $this->getToken()];
 
         $res = (new CoHttpClient())
             ->useCache(false)
@@ -419,12 +359,7 @@ class ZhongRuiYinTongService extends ServiceBase
 
         empty($validityDate) ?: $postData['validityDate'] = trim($validityDate);//证件有效期 YYYYMMDD
 
-        $header = [
-            'token' => $this->getToken(
-                CreateConf::getInstance()->getConf('zhongruiyintong.username'),
-                CreateConf::getInstance()->getConf('zhongruiyintong.password')
-            ),
-        ];
+        $header = ['token' => $this->getToken()];
 
         $res = (new CoHttpClient())
             ->useCache(false)
