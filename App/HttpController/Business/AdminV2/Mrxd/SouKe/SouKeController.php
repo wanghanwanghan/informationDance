@@ -1314,7 +1314,6 @@ class SouKeController extends ControllerBase
             ['total' => count($res),'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)],
             $res, '成功', true, []
         );
-
     }
     function getInvestorInfoOld(): bool
     {
