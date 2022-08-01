@@ -957,18 +957,18 @@ class SouKeController extends ControllerBase
             return  $this->writeJson(201, null, null, '参数缺失(企业ID)');
         }
 
-        $retData  = CompanyBasic::findById($companyId);
-        if (!$retData) {
-            return  $this->writeJson(201, null, null, '没有该企业');
-        }
-        $retData = $retData->toArray();
-        $retData['logo'] =  (new XinDongService())->getLogoByEntIdV2(
-            $companyId
-        );
+//        $retData  = CompanyBasic::findById($companyId);
+//        if (!$retData) {
+//            return  $this->writeJson(201, null, null, '没有该企业');
+//        }
+//        $retData = $retData->toArray();
+//        $retData['logo'] =  (new XinDongService())->getLogoByEntIdV2(
+//            $companyId
+//        );
         $res = (new XinDongService())->getEsBasicInfoV2($companyId);
-        $retData['LAST_DOM'] = $res['LAST_DOM'];
-        $retData['LAST_EMAIL'] = $res['LAST_EMAIL'];
-        return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
+//        $retData['LAST_DOM'] = $res['LAST_DOM'];
+//        $retData['LAST_EMAIL'] = $res['LAST_EMAIL'];
+        return $this->writeJson(200, ['total' => 1], $res, '成功', true, []);
     }
     function getCompanyBasicInfoOld(): bool
     {
