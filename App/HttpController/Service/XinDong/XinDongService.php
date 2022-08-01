@@ -3720,7 +3720,7 @@ class XinDongService extends ServiceBase
                                     //税收分类编码
                                     $subItem['ssflbm'],
                                     // xmmc
-                                    $subItem['ssflbm'],
+                                    $subItem['xmmc'],
                                     //单位
                                     $subItem['dw'],
                                     //数量
