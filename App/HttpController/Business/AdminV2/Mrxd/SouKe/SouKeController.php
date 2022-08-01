@@ -972,7 +972,7 @@ class SouKeController extends ControllerBase
 //        );
         $res = (new XinDongService())->getEsBasicInfoV2($companyId);
         $res['ENTTYPE_CNAME'] =   CodeCa16::findByCode($res['ENTTYPE']);
-        $res['ENTTYPE_CNAME'] =   CodeCa16::findByCode($res['ENTTYPE']);
+        $res['ENTSTATUS_CNAME'] =   CodeEx02::findByCode($res['ENTSTATUS']);
 //        $retData['LAST_DOM'] = $res['LAST_DOM'];
 //        $retData['LAST_EMAIL'] = $res['LAST_EMAIL'];
         return $this->writeJson(200, ['total' => 1], $res, '成功', true, []);
