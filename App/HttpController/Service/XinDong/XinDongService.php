@@ -25,6 +25,7 @@ use App\HttpController\Service\ServiceBase;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\Score\xds;
 use EasySwoole\Pool\Manager;
+use Vtiful\Kernel\Format;
 use wanghanwanghan\someUtils\control;
 use wanghanwanghan\someUtils\traits\Singleton;
 use EasySwoole\ElasticSearch\Config;
@@ -3566,6 +3567,178 @@ class XinDongService extends ServiceBase
         }
 
         return $filenamesArr;
+    }
+    static  function  exportInvoiceV2($code){
+        //
+        $filenamesArr = [];
+
+        $tasks = InvoiceTask::findBySql( "WHERE nsrsbh = '".$code."'  AND  status = 5 limit 1 ");
+        foreach ($tasks as $task){
+            $filename = 'Invoice_'.$task['nsrsbh'].'_'.$task['month'].'.csv';//设置文件名
+            if(file_exists(TEMP_FILE_PATH.$filename)){
+                unlink(TEMP_FILE_PATH.$filename);
+            }
+
+            $f = fopen(TEMP_FILE_PATH.$filename, 'a'); // Configure fOpen to create, open and write only.
+            fputcsv($f, [
+                '开票人'  ,//
+                '开票日期',//
+                '收款人',//
+                '发票代码',//
+                '发票类型代码',//
+                '购买方地址电话',//
+                '购买方名称',//
+                '购买方纳税人识别号',//
+                '购买方银行账号',//
+                '备注',//
+                '复核人',//
+                '机器编号',//
+                '价税合计',//
+                '校验码',//
+                '销售方地址电话',//
+                '销售方名称',//
+                '销售方纳税人识别号',//
+                '销售方银行账号',//
+                '不含税单价',//
+                '规格型号',//
+                '含税金额',//
+                '税额',//
+                '税率',//
+                'xmmc',//
+            ]);
+            $details = InvoiceTaskDetails::findByInvoiceTaskId($task['id']);
+            foreach ($details as $detailItem){
+                $returnDatas = json_decode($detailItem['raw_return'],true);
+                foreach ($returnDatas as $returnData){
+                    if(empty($returnData['fpxxs']['data'])){
+                        continue;
+                    };
+                    foreach ($returnData['fpxxs']['data'] as $fpxxs_data){
+                        /**
+                        "fpfm": "110019313008360739",
+                        "fpzt": "0",
+                        "hjje": "-34881.6",
+                        "hjse": "-2092.9",
+                        "jdhm": "",
+                        "mmq": "0348>>72\/99+*4>*95043+853\/+-648639618+58878394\/<1-26\/97>+30>>482410+*4<<+190849+1>*0187\/-*0+1911*918033674\/\/+4*<",
+                        "mxs": [{
+                        "dw": "",
+                        "slv": "0.06",
+                        "ssflbm": "3040205000000000000",
+                        "xh": 1,
+                         */
+
+                        foreach ($fpxxs_data['mxs'] as $subItem){
+                            fputcsv($f, [
+                                $fpxxs_data['kpr'],//开票人
+                                $fpxxs_data['kprq'],//开票日期
+                                $fpxxs_data['skr'],//收款人
+                                $fpxxs_data['fpdm'],//发票代码
+                                $fpxxs_data['fplx'],//发票类型代码
+                                $fpxxs_data['gfdzdh'],//购买方地址电话
+                                $fpxxs_data['gfmc'],//购买方名称
+                                $fpxxs_data['gfsh'],//购买方纳税人识别号
+                                $fpxxs_data['gfyhzh'],//购买方银行账号
+                                $fpxxs_data['bz'],//备注
+                                $fpxxs_data['fhr'],//复核人
+                                $fpxxs_data['jqbh'],//机器编号
+                                $fpxxs_data['jshj'],//价税合计
+                                $fpxxs_data['jym'],//校验码
+                                $fpxxs_data['xfdzdh'],//销售方地址电话
+                                $fpxxs_data['xfmc'],//销售方名称
+                                $fpxxs_data['xfsh'],//销售方纳税人识别号
+                                $fpxxs_data['xfyhzh'],//销售方银行账号
+                                $subItem['dj'],//不含税单价
+                                $subItem['ggxh'],// 规格型号
+                                $subItem['je'],//含税金额
+                                $subItem['se'],//税额
+                                $subItem['sl'],//税率
+                                $subItem['xmmc'],//xmmc
+                            ]);
+                        };
+                    }
+                }
+            }
+            $filenamesArr[] = $filename;
+            InvoiceTask::updateById($task['id'],[
+                'status' =>10
+            ]);
+        }
+
+        return $filenamesArr;
+    }
+    static function  exportInvoiceV3($code){
+        $financeDatas = [
+            ['xx','xx'],
+            ['xx','xx'],
+            ['xx','xx']
+        ];
+        $filename = '发票数据_'.date('YmdHis').'.xlsx';
+
+        //===============================
+        $config=  [
+            'path' => TEMP_FILE_PATH // xlsx文件保存路径
+        ];
+
+        $excel = new \Vtiful\Kernel\Excel($config);
+        //进项 list
+        $fileObject = $excel->fileName($filename, '进项 list');
+        $fileHandle = $fileObject->getHandle();
+        $file = $fileObject
+            ->header(
+                [
+                    '标题' , //
+                    '项目名称' , //
+                ]
+            )
+        ;
+
+        foreach ($financeDatas as $dataItem){
+            $fileObject ->data([$dataItem]);
+        }
+        //==============================================
+        //进项 detail
+        $file->addSheet('进项 detail')
+            ->header([
+                '标题' , //
+                '项目名称' , //
+
+            ])
+        ;
+        foreach ($financeDatas as $dataItem){
+            $file->data([$dataItem]);
+        }
+        //===============================
+        //销项 list
+        $file->addSheet('销项 list')
+            ->header([
+                '标题' , //
+                '项目名称' , //
+
+            ])
+        ;
+        foreach ($financeDatas as $dataItem){
+            $file->data([$dataItem]);
+        }
+        //===============================
+        //销项 detail
+        $file->addSheet('销项 detail')
+            ->header([
+                '标题' , //
+                '项目名称' , //
+
+            ])
+        ;
+        foreach ($financeDatas as $dataItem){
+            $file->data([$dataItem]);
+        }
+        //===============================
+        $fileObject->output();
+
+
+        return  [
+            'filename'=>$filename,
+        ];
     }
 
     static function getYieldData($code, $rwh){

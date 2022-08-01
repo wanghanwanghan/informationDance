@@ -2873,6 +2873,20 @@ eof;
     function testExport()
     {
         if(
+            $this->getRequestData('collectInvoice4')
+        ){
+            //
+            $code = '911101143355687304';
+            return $this->writeJson(
+                200,[ ] ,
+                XinDongService::exportInvoiceV3($code),
+                '成功',
+                true,
+                []
+            );
+        }
+
+        if(
             $this->getRequestData('collectInvoice3')
         ){
             //
