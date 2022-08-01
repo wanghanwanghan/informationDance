@@ -919,7 +919,7 @@ class SouKeController extends ControllerBase
         }
         $dataRes = CompanyManager::findByConditionV2(
             [
-                'field' => 'companyid', 'value' => $companyId ,'operate'=> '='
+                ['field' => 'companyid', 'value' => $companyId ,'operate'=> '=']
             ],
             $page
         );
