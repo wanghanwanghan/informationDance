@@ -3856,14 +3856,11 @@ class XinDongService extends ServiceBase
         $incomeLists = self::getInvoiceYieldDataV3_income_list($code,'01');
         $i = 1;
         foreach ($incomeLists as $dataItem){
-            if(empty($dataItem['进项-list'])){
-                continue;
-            }
             if($i >= 10 ){
                 continue;
             }
             $i ++;
-            $fileObject ->data([$dataItem['进项-list']]);
+            $fileObject ->data([$dataItem]);
         }
         //==============================================
         //进项 detail
@@ -3922,35 +3919,38 @@ class XinDongService extends ServiceBase
         $incomeLists = self::getInvoiceYieldDataV3_income_list($code,'02');
         $i = 1;
         foreach ($incomeLists as $dataItem){
-            if(empty($dataItem['销项-list'])){
-                continue;
-            }
             if($i >= 10 ){
                 continue;
             }
             $i ++;
-            $file->data([$dataItem['销项-list']]);
+            $file->data([$dataItem]);
         }
         //===============================
         //销项 detail
         $file->addSheet('销项 detail')
             ->header([
-                '标题' , //
-                '项目名称' , //
+                '发票代码',
+                '发票号码',
+                '税收分类编码',
+                'xmmc',
+                '单位',
+                '数量',
+                '金额',
+                '税率',
+                '税额',
+                '不含税单价',
+                '规格型号'
 
             ])
         ;
         $incomeLists =  self::getInvoiceYieldDataV3_income_detail($code,'02');
         $i = 1;
         foreach ($incomeLists as $dataItem){
-            if(empty($dataItem['销项-detail'])){
-                continue;
-            }
             if($i >= 10 ){
                 continue;
             }
             $i ++;
-            $file->data([$dataItem['销项-detail']]);
+            $file->data([$dataItem]);
         }
         //===============================
         $fileObject->output();
