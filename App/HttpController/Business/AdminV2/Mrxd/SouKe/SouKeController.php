@@ -12,7 +12,9 @@ use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
+use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
+use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
 use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
 use App\HttpController\Models\RDS3\HdSaicExtension\AggrePicsH;
 use App\HttpController\Service\Common\CommonService;
@@ -969,6 +971,7 @@ class SouKeController extends ControllerBase
 //            $companyId
 //        );
         $res = (new XinDongService())->getEsBasicInfoV2($companyId);
+        $res['ENTTYPE_CNAME'] =   CodeCa16::findByCode($res['ENTTYPE']);
 //        $retData['LAST_DOM'] = $res['LAST_DOM'];
 //        $retData['LAST_EMAIL'] = $res['LAST_EMAIL'];
         return $this->writeJson(200, ['total' => 1], $res, '成功', true, []);
