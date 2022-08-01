@@ -19,6 +19,7 @@ use App\HttpController\Models\RDS3\HdSaic\CompanyInv;
 use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
 use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
 use App\HttpController\Models\RDS3\HdSaicExtension\AggrePicsH;
+use App\HttpController\Models\RDS3\HdSaicExtension\CncaRzGltxH;
 use App\HttpController\Models\RDS3\HdSaicExtension\DlH;
 use App\HttpController\Models\RDS3\HdSaicExtension\MostTorchHightechH;
 use App\HttpController\Service\Common\CommonService;
@@ -1183,6 +1184,37 @@ class SouKeController extends ControllerBase
     }
 
     function getIsoQualifications(): bool
+    {
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?$page:1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size>0 ?$size:10;
+        $offset = ($page-1)*$size;
+
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+        $res = CncaRzGltxH::findByConditionV3(
+            [
+                [
+                    'field' => 'companyid',
+                    'value' => $companyId,
+                    'operate' => '=',
+                ]
+            ]
+        );
+
+        $total = $res['total'];
+
+        return $this->writeJson(200,
+            ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)],
+            $res['data'], '成功', true, []
+        );
+
+    }
+    function getIsoQualificationsOld(): bool
     {
         $page = intval($this->request()->getRequestParam('page'));
         $page = $page>0 ?$page:1;
