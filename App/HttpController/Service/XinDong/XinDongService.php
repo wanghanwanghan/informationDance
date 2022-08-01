@@ -3713,11 +3713,11 @@ class XinDongService extends ServiceBase
                                 json_encode([
                                     __CLASS__.__FUNCTION__ .__LINE__,
                                     'sjlx1' => $type,
-                                    'sjlx2' => $fpxxs_data['sjlx']
+                                    'sjlx2' => $returnData['sjlx']
                                 ])
                             );
                             if(
-                                $fpxxs_data['sjlx'] ==  $type
+                                $returnData['sjlx'] ==  $type
                             ){
                                 yield $datas[] = [
                                     //发票代码
@@ -3768,11 +3768,11 @@ class XinDongService extends ServiceBase
                             json_encode([
                                 __CLASS__.__FUNCTION__ .__LINE__,
                                 'sjlx1' => $type,
-                                'sjlx2' => $fpxxs_data['sjlx']
+                                'sjlx2' => $returnData['sjlx']
                             ])
                         );
                         if(
-                            $fpxxs_data['sjlx']  ==  $type
+                            $returnData['sjlx']  ==  $type
                         ){
                             yield $datas[] =  [
                                 //发票代码
