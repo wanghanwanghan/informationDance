@@ -1435,6 +1435,18 @@ class SouKeController extends ControllerBase
             return  $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
 
+        $res = (new XinDongService())->getEsBasicInfoV2($companyId);
+        return $this->writeJson(200,
+            [ ]
+            , $res, '成功', true, []);
+    }
+    function getEsBasicInfoOld(): bool
+    {
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
         $res = (new XinDongService())->getEsBasicInfo($companyId);
 
         return $this->writeJson(200,
