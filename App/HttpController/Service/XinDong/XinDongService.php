@@ -3709,6 +3709,13 @@ class XinDongService extends ServiceBase
                     };
                     foreach ($returnData['fpxxs']['data'] as $fpxxs_data){
                         foreach ($fpxxs_data['mxs'] as $subItem){
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'sjlx1' => $type,
+                                    'sjlx2' => $fpxxs_data['sjlx']
+                                ])
+                            );
                             if(
                                 $fpxxs_data['sjlx'] ==  $type
                             ){
@@ -3757,7 +3764,13 @@ class XinDongService extends ServiceBase
                         continue;
                     };
                     foreach ($returnData['fpxxs']['data'] as $fpxxs_data){
-
+                        CommonService::getInstance()->log4PHP(
+                            json_encode([
+                                __CLASS__.__FUNCTION__ .__LINE__,
+                                'sjlx1' => $type,
+                                'sjlx2' => $fpxxs_data['sjlx']
+                            ])
+                        );
                         if(
                             $fpxxs_data['sjlx']  ==  $type
                         ){
