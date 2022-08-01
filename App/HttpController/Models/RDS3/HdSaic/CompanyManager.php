@@ -8,7 +8,7 @@ use App\HttpController\Service\CreateConf;
 
 class CompanyManager extends ModelBase
 {
-    protected $tableName = 'company_liquidation';
+    protected $tableName = 'company_manager';
 
     protected $autoTimeStamp = true;
     protected $createTime = 'created_at';
