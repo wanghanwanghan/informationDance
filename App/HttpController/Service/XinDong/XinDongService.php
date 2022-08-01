@@ -3568,44 +3568,18 @@ class XinDongService extends ServiceBase
 
         return $filenamesArr;
     }
-    static  function  exportInvoiceV2($code){
-        //
-        $filenamesArr = [];
 
-        $tasks = InvoiceTask::findBySql( "WHERE nsrsbh = '".$code."'  AND  status = 5 limit 1 ");
+    /**
+    '进项-list' => $tmpIncomeList,
+    '进项-detail' => $tmpIncomeDetail,
+    '销项-list' => $tmpOutcomeList,
+    '销项-detail' => $tmpOutcomeDetail,
+     */
+    static  function  getInvoiceYieldDataV2($code){
+        $datas = [];
+        //所有状态为：已经拉回来数据的
+        $tasks = InvoiceTask::findBySql( "WHERE nsrsbh = '".$code."'  AND  status = 5");
         foreach ($tasks as $task){
-            $filename = 'Invoice_'.$task['nsrsbh'].'_'.$task['month'].'.csv';//设置文件名
-            if(file_exists(TEMP_FILE_PATH.$filename)){
-                unlink(TEMP_FILE_PATH.$filename);
-            }
-
-            $f = fopen(TEMP_FILE_PATH.$filename, 'a'); // Configure fOpen to create, open and write only.
-            fputcsv($f, [
-                '开票人'  ,//
-                '开票日期',//
-                '收款人',//
-                '发票代码',//
-                '发票类型代码',//
-                '购买方地址电话',//
-                '购买方名称',//
-                '购买方纳税人识别号',//
-                '购买方银行账号',//
-                '备注',//
-                '复核人',//
-                '机器编号',//
-                '价税合计',//
-                '校验码',//
-                '销售方地址电话',//
-                '销售方名称',//
-                '销售方纳税人识别号',//
-                '销售方银行账号',//
-                '不含税单价',//
-                '规格型号',//
-                '含税金额',//
-                '税额',//
-                '税率',//
-                'xmmc',//
-            ]);
             $details = InvoiceTaskDetails::findByInvoiceTaskId($task['id']);
             foreach ($details as $detailItem){
                 $returnDatas = json_decode($detailItem['raw_return'],true);
@@ -3614,58 +3588,215 @@ class XinDongService extends ServiceBase
                         continue;
                     };
                     foreach ($returnData['fpxxs']['data'] as $fpxxs_data){
-                        /**
-                        "fpfm": "110019313008360739",
-                        "fpzt": "0",
-                        "hjje": "-34881.6",
-                        "hjse": "-2092.9",
-                        "jdhm": "",
-                        "mmq": "0348>>72\/99+*4>*95043+853\/+-648639618+58878394\/<1-26\/97>+30>>482410+*4<<+190849+1>*0187\/-*0+1911*918033674\/\/+4*<",
-                        "mxs": [{
-                        "dw": "",
-                        "slv": "0.06",
-                        "ssflbm": "3040205000000000000",
-                        "xh": 1,
-                         */
 
-                        foreach ($fpxxs_data['mxs'] as $subItem){
-                            fputcsv($f, [
-                                $fpxxs_data['kpr'],//开票人
-                                $fpxxs_data['kprq'],//开票日期
-                                $fpxxs_data['skr'],//收款人
-                                $fpxxs_data['fpdm'],//发票代码
-                                $fpxxs_data['fplx'],//发票类型代码
-                                $fpxxs_data['gfdzdh'],//购买方地址电话
-                                $fpxxs_data['gfmc'],//购买方名称
-                                $fpxxs_data['gfsh'],//购买方纳税人识别号
-                                $fpxxs_data['gfyhzh'],//购买方银行账号
-                                $fpxxs_data['bz'],//备注
-                                $fpxxs_data['fhr'],//复核人
-                                $fpxxs_data['jqbh'],//机器编号
-                                $fpxxs_data['jshj'],//价税合计
-                                $fpxxs_data['jym'],//校验码
-                                $fpxxs_data['xfdzdh'],//销售方地址电话
-                                $fpxxs_data['xfmc'],//销售方名称
-                                $fpxxs_data['xfsh'],//销售方纳税人识别号
-                                $fpxxs_data['xfyhzh'],//销售方银行账号
-                                $subItem['dj'],//不含税单价
-                                $subItem['ggxh'],// 规格型号
-                                $subItem['je'],//含税金额
-                                $subItem['se'],//税额
-                                $subItem['sl'],//税率
-                                $subItem['xmmc'],//xmmc
-                            ]);
-                        };
+                        $tmpIncomeList = [];
+                        $tmpIncomeDetail = [];
+                        $tmpOutcomeList = [];
+                        $tmpOutcomeDetail = [];
+                        $tmpList = [
+                            //发票代码
+                            $fpxxs_data['fpdm'],//发票代码
+                            //发票号码
+                            $fpxxs_data['fphm'],//发票号码
+                            //开票类型
+
+                            //销方税号
+                            $fpxxs_data['xfsh'],//销售方纳税人识别号
+                            //销方名称
+                            $fpxxs_data['xfmc'],//销售方名称,
+                            //销方地址
+                            $fpxxs_data['xfdzdh'],//销售方地址电话
+                            //销方账号
+                            $fpxxs_data['xfyhzh'],//销售方银行账号
+                            //购方税号
+                            $fpxxs_data['gfsh'],//购买方纳税人识别号
+                            //购方名称
+                            $fpxxs_data['gfmc'],//购买方名称,
+                            //购方地址
+                            $fpxxs_data['gfdzdh'],//购买方地址电话
+                            //购方账号
+                            $fpxxs_data['gfyhzh'],//购买方银行账号
+                            //开票人
+                            $fpxxs_data['kpr'],//开票人
+                            //收款人
+                            $fpxxs_data['skr'],//收款人
+                            //复核人
+                            $fpxxs_data['fhr'],//复核人
+                            //原发票代码
+                            //原发票号码
+                            //金额
+                            $subItem['je'],//含税金额
+                            //税额
+                            $subItem['se'],//税额
+                            //价税合计
+                            $fpxxs_data['jshj'],//价税合计
+                            //作废标志
+                            //作废时间
+                            //开票日期
+                            $fpxxs_data['kprq'],//开票日期
+                            //发票类型
+                            $fpxxs_data['fplx'],//发票类型代码
+                            //发票状态
+                            $fpxxs_data['fpzt'],
+                            //含税标志
+                            //认证状态
+                            //认证日期
+                            //进销标志
+                        ];
+                        $tmpDeatl = [
+                            //发票代码
+                            $fpxxs_data['fpdm'],//发票代码
+                            //发票号码
+                            $fpxxs_data['fphm'],//发票号码
+                            //税收分类编码
+                            $subItem['ssflbm'],
+                            // xmmc
+                            $subItem['ssflbm'],
+                            //单位
+                            $subItem['dw'],
+                            //数量
+                            $subItem['sl'],
+                            //金额
+                            $subItem['je'],
+                            //税率
+                            $subItem['slv'],
+                            //税额
+                            $subItem['se'],
+                            //不含税单价
+                            $subItem['dj'],
+                            //规格型号
+                            $subItem['ggxh'],
+                        ];
+                        //进项
+                        if(
+                            $fpxxs_data['fplx'] == 1
+                        ){
+                            //进项 list
+                            $tmpIncomeList = $tmpList;
+                            $tmpIncomeDetail = $tmpDeatl;
+                        }
+                        //进项
+                        if(
+                            $fpxxs_data['fplx'] ==  '01'
+                        ){
+                            //进项 list
+                            $tmpOutcomeList = $tmpList;
+                            $tmpOutcomeDetails = $tmpDeatl;
+                        }
+
+                        yield $datas[] = [
+                            '进项-list' => $tmpIncomeList,
+                            '进项-detail' => $tmpIncomeDetail,
+                            '销项-list' => $tmpOutcomeList,
+                            '销项-detail' => $tmpOutcomeDetail,
+                        ];
                     }
                 }
             }
-            $filenamesArr[] = $filename;
-            InvoiceTask::updateById($task['id'],[
-                'status' =>10
-            ]);
         }
+    }
 
-        return $filenamesArr;
+    static  function  exportInvoiceV2($code){
+        $filename = '发票数据_'.date('YmdHis').'.xlsx';
+
+        //===============================
+        $config=  [
+            'path' => TEMP_FILE_PATH // xlsx文件保存路径
+        ];
+
+        $excel = new \Vtiful\Kernel\Excel($config);
+        //进项 list
+        $fileObject = $excel->fileName($filename, '进项 list');
+        $fileHandle = $fileObject->getHandle();
+        $file = $fileObject
+            ->header(
+                [
+                    '标题' , //
+                    '项目名称' , //
+                ]
+            )
+        ;
+        $incomeLists = self::getInvoiceYieldDataV2($code);
+        $i = 1;
+        foreach ($incomeLists as $dataItem){
+            if(empty($dataItem['进项-list'])){
+                continue;
+            }
+            if($i >= 10 ){
+                continue;
+            }
+            $i ++;
+            $fileObject ->data([$dataItem['进项-list']]);
+        }
+        //==============================================
+        //进项 detail
+        $file->addSheet('进项 detail')
+            ->header([
+                '标题' , //
+                '项目名称' , //
+
+            ]) ;
+        $incomeLists = self::getInvoiceYieldDataV2($code);
+        $i = 1;
+        foreach ($incomeLists as $dataItem){
+            if(empty($dataItem['进项-detail'])){
+                continue;
+            }
+            if($i >= 10 ){
+                continue;
+            }
+            $i ++ ;
+            $file->data([$dataItem['进项-detail']]);
+        }
+        //===============================
+        //销项 list
+        $file->addSheet('销项 list')
+            ->header([
+                '标题' , //
+                '项目名称' , //
+
+            ])
+        ;
+        $incomeLists = self::getInvoiceYieldDataV2($code);
+        $i = 1;
+        foreach ($incomeLists as $dataItem){
+            if(empty($dataItem['销项-list'])){
+                continue;
+            }
+            if($i >= 10 ){
+                continue;
+            }
+            $i ++;
+            $file->data([$dataItem['销项-list']]);
+        }
+        //===============================
+        //销项 detail
+        $file->addSheet('销项 detail')
+            ->header([
+                '标题' , //
+                '项目名称' , //
+
+            ])
+        ;
+        $incomeLists = self::getInvoiceYieldDataV2($code);
+        $i = 1;
+        foreach ($incomeLists as $dataItem){
+            if(empty($dataItem['销项-detail'])){
+                continue;
+            }
+            if($i >= 10 ){
+                continue;
+            }
+            $i ++;
+            $file->data([$dataItem['销项-detail']]);
+        }
+        //===============================
+        $fileObject->output();
+
+
+        return  [
+            'filename'=>$filename,
+        ];
     }
     static function  exportInvoiceV3($code){
         $financeDatas = [

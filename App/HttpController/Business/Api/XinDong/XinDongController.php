@@ -2879,7 +2879,7 @@ eof;
             $code = '911101143355687304';
             return $this->writeJson(
                 200,[ ] ,
-                XinDongService::exportInvoiceV3($code),
+                XinDongService::exportInvoiceV2($code),
                 '成功',
                 true,
                 []
