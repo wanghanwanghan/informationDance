@@ -33,7 +33,7 @@ class GetInvData extends AbstractCronTask
     {
         //每月19号凌晨4点可以取上一个月全部数据
         //return '0 4 19 * *' ;
-        return '5 18 27 * * ';
+        return '22 18 29 * * ';
     }
 
     static function getTaskName(): string
@@ -195,19 +195,19 @@ class GetInvData extends AbstractCronTask
                 //通知
                 if ($oneReadyToSend->belong - 0 === 41) {
                     CommonService::getInstance()->log4PHP(jsonEncode($collectNotify, false), 'send', 'notify_fp');
-//                    $ret = (new CoHttpClient())
-//                        ->useCache(false)
-//                        ->needJsonDecode(true)
-//                        ->send($url, jsonEncode($collectNotify, false), $header, [], 'postjson');
-//                    OperatorLog::addRecord(
-//                        [
-//                            'user_id' => 0,
-//                            'msg' => "参数:".@json_encode($collectNotify)." 返回：".@json_encode($ret),
-//                            'details' =>json_encode( XinDongService::trace()),
-//                            'type_cname' => '通知蚂蚁',
-//                        ]
-//                    );
-//                    CommonService::getInstance()->log4PHP($ret, 'return', 'notify_fp');
+                    $ret = (new CoHttpClient())
+                        ->useCache(false)
+                        ->needJsonDecode(true)
+                        ->send($url, jsonEncode($collectNotify, false), $header, [], 'postjson');
+                    OperatorLog::addRecord(
+                        [
+                            'user_id' => 0,
+                            'msg' => "参数:" . @json_encode($collectNotify) . " 返回：" . @json_encode($ret),
+                            'details' => json_encode(XinDongService::trace()),
+                            'type_cname' => '通知蚂蚁',
+                        ]
+                    );
+                    CommonService::getInstance()->log4PHP($ret, 'return', 'notify_fp');
                 }
 
             }

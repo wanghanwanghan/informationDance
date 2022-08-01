@@ -60,7 +60,7 @@ class ZhongRuiYinTongService extends ServiceBase
         return $token;
     }
 
-    //车辆年检信息验证
+    //车辆年检信息验证 没开权限
     function vehicleInspectionCheck(string $vehicleNo, int $plateColor, string $vehicleVIN)
     {
         //对道路运输车辆检测信息进行的核验，有效避免货物运输风险
@@ -91,8 +91,8 @@ class ZhongRuiYinTongService extends ServiceBase
         $url = $this->urlBase . 'api/system/judgeAffiliated/vinCheck';
 
         $postData = [
-            'plateColor' => trim($plateColor),//车牌号码
-            'vehicleVIN' => trim($vehicleVIN),//车牌颜色
+            'plateColor' => trim($plateColor),//车牌颜色
+            'vehicleVin' => trim($vehicleVIN),//车牌号码
             'organizationCode' => trim($organizationCode),//统一社会信用代码
         ];
 
@@ -138,7 +138,7 @@ class ZhongRuiYinTongService extends ServiceBase
 
         $postData = [
             'plateColor' => trim($plateColor),//车牌颜色代码
-            'vehicleVIN' => trim($vehicleVIN),//车辆识别代号
+            'vehicleVin' => trim($vehicleVIN),//车辆识别代号
         ];
 
         $header = ['token' => $this->getToken()];
@@ -182,7 +182,7 @@ class ZhongRuiYinTongService extends ServiceBase
 
         $postData = [
             'plateColor' => trim($plateColor),//车牌颜色代码
-            'vehicleVIN' => trim($vehicleVIN),//车辆识别代号
+            'vehicleVin' => trim($vehicleVIN),//车辆识别代号
         ];
 
         $header = ['token' => $this->getToken()];
