@@ -583,6 +583,9 @@ class SouKeController extends ControllerBase
     }
     function advancedSearchOption(): bool
     {
+        return $this->writeJson(200,
+            [  ]
+            , (new XinDongService())->getSearchOption(), '成功', true, []);
         $requestData =  $this->getRequestData();
 
         if(substr($requestData['basic_nicid'], -1) == ','){
