@@ -1475,7 +1475,7 @@ class SouKeController extends ControllerBase
 
         $ElasticSearchService = new ElasticSearchService();
 
-        $ElasticSearchService->addMustMatchQuery( 'xd_id' , $companyId) ;
+        $ElasticSearchService->addMustMatchQuery( 'companyid' , $companyId) ;
 
         $size = $this->request()->getRequestParam('size')??10;
         $page = $this->request()->getRequestParam('page')??1;
@@ -1483,7 +1483,7 @@ class SouKeController extends ControllerBase
         $ElasticSearchService->addSize(1) ;
         $ElasticSearchService->addFrom(0) ;
 
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService,'company_202208');
         $responseArr = @json_decode($responseJson,true);
         CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
                 [
