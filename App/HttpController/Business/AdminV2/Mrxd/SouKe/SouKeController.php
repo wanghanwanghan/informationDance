@@ -607,7 +607,7 @@ class SouKeController extends ControllerBase
         $size = $this->request()->getRequestParam('size')??10;
         $page = $this->request()->getRequestParam('page')??1;
         $offset  =  ($page-1)*$size;
-        $size = 10000;
+        $size = 500;
         //区域搜索
         $areas_arr  = json_decode($requestData['areas'],true) ;
         if(!empty($areas_arr)){
