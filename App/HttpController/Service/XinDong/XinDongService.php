@@ -3695,6 +3695,130 @@ class XinDongService extends ServiceBase
             }
         }
     }
+    static  function  getInvoiceYieldDataV3_income_detail($code,$type){
+        $datas = [];
+        //所有状态为：已经拉回来数据的
+        $tasks = InvoiceTask::findBySql( "WHERE nsrsbh = '".$code."'  AND  status = 5");
+        foreach ($tasks as $task){
+            $details = InvoiceTaskDetails::findByInvoiceTaskId($task['id']);
+            foreach ($details as $detailItem){
+                $returnDatas = json_decode($detailItem['raw_return'],true);
+                foreach ($returnDatas as $returnData){
+                    if(empty($returnData['fpxxs']['data'])){
+                        continue;
+                    };
+                    foreach ($returnData['fpxxs']['data'] as $fpxxs_data){
+                        foreach ($fpxxs_data['mxs'] as $subItem){
+                            if(
+                                $fpxxs_data['fplx'] ==  $type
+                            ){
+                                yield $datas[] = [
+                                    //发票代码
+                                    $fpxxs_data['fpdm'],//发票代码
+                                    //发票号码
+                                    $fpxxs_data['fphm'],//发票号码
+                                    //税收分类编码
+                                    $subItem['ssflbm'],
+                                    // xmmc
+                                    $subItem['ssflbm'],
+                                    //单位
+                                    $subItem['dw'],
+                                    //数量
+                                    $subItem['sl'],
+                                    //金额
+                                    $subItem['je'],
+                                    //税率
+                                    $subItem['slv'],
+                                    //税额
+                                    $subItem['se'],
+                                    //不含税单价
+                                    $subItem['dj'],
+                                    //规格型号
+                                    $subItem['ggxh'],
+                                ];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    static  function  getInvoiceYieldDataV3_income_list($code,$type){
+        $datas = [];
+        //所有状态为：已经拉回来数据的
+        $tasks = InvoiceTask::findBySql( "WHERE nsrsbh = '".$code."'  AND  status = 5");
+        foreach ($tasks as $task){
+            $details = InvoiceTaskDetails::findByInvoiceTaskId($task['id']);
+            foreach ($details as $detailItem){
+                $returnDatas = json_decode($detailItem['raw_return'],true);
+                foreach ($returnDatas as $returnData){
+                    if(empty($returnData['fpxxs']['data'])){
+                        continue;
+                    };
+                    foreach ($returnData['fpxxs']['data'] as $fpxxs_data){
+
+                        if(
+                            $fpxxs_data['fplx']  ==  $type
+                        ){
+                            yield $datas[] =  [
+                                //发票代码
+                                $fpxxs_data['fpdm'],//发票代码
+                                //发票号码
+                                $fpxxs_data['fphm'],//发票号码
+                                //开票类型
+
+                                //销方税号
+                                $fpxxs_data['xfsh'],//销售方纳税人识别号
+                                //销方名称
+                                $fpxxs_data['xfmc'],//销售方名称,
+                                //销方地址
+                                $fpxxs_data['xfdzdh'],//销售方地址电话
+                                //销方账号
+                                $fpxxs_data['xfyhzh'],//销售方银行账号
+                                //购方税号
+                                $fpxxs_data['gfsh'],//购买方纳税人识别号
+                                //购方名称
+                                $fpxxs_data['gfmc'],//购买方名称,
+                                //购方地址
+                                $fpxxs_data['gfdzdh'],//购买方地址电话
+                                //购方账号
+                                $fpxxs_data['gfyhzh'],//购买方银行账号
+                                //开票人
+                                $fpxxs_data['kpr'],//开票人
+                                //收款人
+                                $fpxxs_data['skr'],//收款人
+                                //复核人
+                                $fpxxs_data['fhr'],//复核人
+                                //原发票代码
+                                //原发票号码
+                                //金额
+                                $subItem['je'],//含税金额
+                                //税额
+                                $subItem['se'],//税额
+                                //价税合计
+                                $fpxxs_data['jshj'],//价税合计
+                                //作废标志
+                                //作废时间
+                                //开票日期
+                                $fpxxs_data['kprq'],//开票日期
+                                //发票类型
+                                $fpxxs_data['fplx'],//发票类型代码
+                                //发票状态
+                                $fpxxs_data['fpzt'],
+                                //含税标志
+                                //认证状态
+                                //认证日期
+                                //进销标志
+                            ];
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
 
     static  function  exportInvoiceV2($code){
         $filename = '发票数据_'.date('YmdHis').'.xlsx';
@@ -3716,7 +3840,7 @@ class XinDongService extends ServiceBase
                 ]
             )
         ;
-        $incomeLists = self::getInvoiceYieldDataV2($code);
+        $incomeLists = self::getInvoiceYieldDataV3_income_list($code,'01');
         $i = 1;
         foreach ($incomeLists as $dataItem){
             if(empty($dataItem['进项-list'])){
@@ -3736,7 +3860,7 @@ class XinDongService extends ServiceBase
                 '项目名称' , //
 
             ]) ;
-        $incomeLists = self::getInvoiceYieldDataV2($code);
+        $incomeLists = self::getInvoiceYieldDataV3_income_detail($code,'01');
         $i = 1;
         foreach ($incomeLists as $dataItem){
             if(empty($dataItem['进项-detail'])){
@@ -3757,7 +3881,7 @@ class XinDongService extends ServiceBase
 
             ])
         ;
-        $incomeLists = self::getInvoiceYieldDataV2($code);
+        $incomeLists = self::getInvoiceYieldDataV3_income_list($code,'02');
         $i = 1;
         foreach ($incomeLists as $dataItem){
             if(empty($dataItem['销项-list'])){
@@ -3778,7 +3902,7 @@ class XinDongService extends ServiceBase
 
             ])
         ;
-        $incomeLists = self::getInvoiceYieldDataV2($code);
+        $incomeLists =  self::getInvoiceYieldDataV3_income_detail($code,'02');
         $i = 1;
         foreach ($incomeLists as $dataItem){
             if(empty($dataItem['销项-detail'])){
