@@ -607,6 +607,7 @@ class SouKeController extends ControllerBase
         $size = $this->request()->getRequestParam('size')??10;
         $page = $this->request()->getRequestParam('page')??1;
         $offset  =  ($page-1)*$size;
+        $size = 10000;
         //区域搜索
         $areas_arr  = json_decode($requestData['areas'],true) ;
         if(!empty($areas_arr)){
@@ -664,7 +665,7 @@ class SouKeController extends ControllerBase
             ->SetQueryByCompanyStatus(trim($this->request()->getRequestParam('ENTSTATUS')))
             // 地区 basic_regionid: 110101,110102,
             ->SetQueryByBasicRegionid(trim($this->request()->getRequestParam('basic_regionid')))
-            //->addSize($size)
+            ->addSize($size)
             //->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
