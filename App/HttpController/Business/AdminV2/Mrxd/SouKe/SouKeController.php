@@ -20,6 +20,8 @@ use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
 use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
 use App\HttpController\Models\RDS3\HdSaicExtension\AggrePicsH;
 use App\HttpController\Models\RDS3\HdSaicExtension\CncaRzGltxH;
+use App\HttpController\Models\RDS3\HdSaicExtension\DataplusAppAndroidH;
+use App\HttpController\Models\RDS3\HdSaicExtension\DataplusAppIosH;
 use App\HttpController\Models\RDS3\HdSaicExtension\DlH;
 use App\HttpController\Models\RDS3\HdSaicExtension\MostTorchHightechH;
 use App\HttpController\Service\Common\CommonService;
@@ -1262,6 +1264,54 @@ class SouKeController extends ControllerBase
 
 
     function getMainProducts(): bool
+    {
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?$page:1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size>0 ?$size:10;
+        $offset = ($page-1)*$size;
+
+        $type = trim($this->request()->getRequestParam('type'));
+        if (!in_array($type,['ios', 'andoriod'])) {
+            return  $this->writeJson(201, null, null, '参数缺失(类型)');
+        }
+
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+        if($type == 'ios'){
+            $res = DataplusAppIosH::findByConditionV3(
+                [
+                    [
+                        'value'=>$companyId,
+                        'field'=>'companyid',
+                        'operate'=>'=',
+                    ]
+                ]
+            );
+            $total = $res['total'];
+        }
+
+        if($type == 'andoriod'){
+            $res = DataplusAppAndroidH::findByConditionV3(
+                [
+                    [
+                        'value'=>$companyId,
+                        'field'=>'companyid',
+                        'operate'=>'=',
+                    ]
+                ]
+            );
+            $total = $res['total'];
+        }
+
+        return $this->writeJson(200,
+            ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)],
+            $res['data'], '成功', true, []);
+    }
+    function getMainProductsOld(): bool
     {
         $page = intval($this->request()->getRequestParam('page'));
         $page = $page>0 ?$page:1;
