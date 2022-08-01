@@ -19,6 +19,7 @@ use App\HttpController\Models\RDS3\HdSaic\CompanyInv;
 use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
 use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
 use App\HttpController\Models\RDS3\HdSaicExtension\AggrePicsH;
+use App\HttpController\Models\RDS3\HdSaicExtension\MostTorchHightechH;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\XinDong\XinDongService;
@@ -1098,6 +1099,29 @@ class SouKeController extends ControllerBase
     }
 
     function getHighTecQualifications(): bool
+    {
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?$page:1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size>0 ?$size:10;
+        $offset = ($page-1)*$size;
+
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+        $res = MostTorchHightechH::findByConditionV3(
+            [
+                ['field'=>'companyid','value'=>$companyId,'operate'=>'=']
+            ]
+        );
+        return $this->writeJson(200,
+            ['total' => $res['total'],'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($res['total']/$size)],
+            $res['data'], '成功', true, []
+        );
+    }
+    function getHighTecQualificationsOld(): bool
     {
         $page = intval($this->request()->getRequestParam('page'));
         $page = $page>0 ?$page:1;
