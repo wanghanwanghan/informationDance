@@ -2505,6 +2505,16 @@ class XinDongService extends ServiceBase
                 )
             );
 
+            // 公司简介
+            $tmpArr = explode('&&&', trim($dataItem['_source']['gong_si_jian_jie']));
+            array_pop($tmpArr);
+            $dataItem['_source']['gong_si_jian_jie_data_arr'] = [];
+            foreach($tmpArr as $tmpItem_){
+                // $dataItem['_source']['gong_si_jian_jie_data_arr'][] = [$tmpItem_];
+                $dataItem['_source']['gong_si_jian_jie_data_arr'][] = $tmpItem_;
+            }
+            
+
             // 官网
             $webStr = trim($dataItem['_source']['web']);
             if(!$webStr){
