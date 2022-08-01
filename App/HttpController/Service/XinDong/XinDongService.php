@@ -3857,7 +3857,7 @@ class XinDongService extends ServiceBase
         $i = 1;
         foreach ($incomeLists as $dataItem){
             if($i >= 10 ){
-                continue;
+//                continue;
             }
             $i ++;
             $fileObject ->data([$dataItem]);
@@ -3885,7 +3885,7 @@ class XinDongService extends ServiceBase
                 continue;
             }
             if($i >= 10 ){
-                continue;
+//                continue;
             }
             $i ++ ;
             $file->data([$dataItem]);
@@ -3920,7 +3920,7 @@ class XinDongService extends ServiceBase
         $i = 1;
         foreach ($incomeLists as $dataItem){
             if($i >= 10 ){
-                continue;
+//                continue;
             }
             $i ++;
             $file->data([$dataItem]);
@@ -3947,7 +3947,7 @@ class XinDongService extends ServiceBase
         $i = 1;
         foreach ($incomeLists as $dataItem){
             if($i >= 10 ){
-                continue;
+//                continue;
             }
             $i ++;
             $file->data([$dataItem]);
