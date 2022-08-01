@@ -14,6 +14,7 @@ use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
+use App\HttpController\Models\RDS3\HdSaic\CompanyInv;
 use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
 use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
 use App\HttpController\Models\RDS3\HdSaicExtension\AggrePicsH;
@@ -1295,6 +1296,27 @@ class SouKeController extends ControllerBase
     }
 
     function getInvestorInfo(): bool
+    {
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?$page:1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size>0 ?$size:10;
+        $offset = ($page-1)*$size;
+
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+        $res = CompanyInv::findByCompanyId($companyId);
+
+        return $this->writeJson(200,
+            ['total' => count($res),'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)],
+            $res, '成功', true, []
+        );
+
+    }
+    function getInvestorInfoOld(): bool
     {
         $page = intval($this->request()->getRequestParam('page'));
         $page = $page>0 ?$page:1;
