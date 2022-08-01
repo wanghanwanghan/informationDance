@@ -3780,7 +3780,7 @@ class XinDongService extends ServiceBase
                                 //发票号码
                                 $fpxxs_data['fphm'],//发票号码
                                 //开票类型
-                                $fpxxs_data['fplx'],//发票类型代码
+                                $returnData['sjlx'],//发票类型代码
                                 //销方税号
                                 $fpxxs_data['xfsh'],//销售方纳税人识别号
                                 //销方名称
