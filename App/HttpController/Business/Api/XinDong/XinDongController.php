@@ -2957,6 +2957,7 @@ eof;
         if(
             $this->getRequestData('testMenu')
         ){
+            //营业状态
             $Sql = "SET @pv = 'A'" ;
             $data = sqlRawV2($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_hd_saic'));
             $Sql = "select id,`code`,name,parent,`level` from code_ca16

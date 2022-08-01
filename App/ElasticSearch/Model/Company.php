@@ -656,6 +656,23 @@ class Company extends ServiceBase
 
         return $this;
     }
+
+    function SetQueryByCompanyStatus($companyStatus){
+        $companyStatus && $siJiFenLeiArr = explode(',', $companyStatus);
+        if(!empty($siJiFenLeiArr)){
+            $this->es->addMustShouldPhraseQuery( 'ENTTYPE' , $siJiFenLeiArr) ;
+        }
+
+        return $this;
+    }
+
+    function SetQueryByCompanyType($companyType){
+        $companyType && $siJiFenLeiArr = explode(',', $companyType);
+        if(!empty($siJiFenLeiArr)){
+            $this->es->addMustShouldPhraseQuery( 'ENTTYPE' , $siJiFenLeiArr) ;
+        }
+        return $this;
+    }
     function SetQueryByBasicRegionid($basiRegionidStr){
         $basiRegionidStr && $basiRegionidArr = explode(',',$basiRegionidStr);
         if(!empty($basiRegionidArr)){

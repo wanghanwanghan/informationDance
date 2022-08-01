@@ -191,7 +191,6 @@ class SouKeController extends ControllerBase
     function advancedSearch(): bool
     {
         $requestData =  $this->getRequestData();
-
         if(substr($requestData['basic_nicid'], -1) == ','){
             $requestData['basic_nicid'] = rtrim($requestData['basic_nicid'], ",");
         }
@@ -261,6 +260,10 @@ class SouKeController extends ControllerBase
             ->SetQueryByYingShouGuiMo($searchOptionArr)
             //四级分类 basic_nicid: A0111,A0112,A0113,
             ->SetQueryBySiJiFenLei(trim($this->request()->getRequestParam('basic_nicid')))
+            //公司类型
+            ->SetQueryByCompanyType(trim($this->request()->getRequestParam('ENTTYPE')))
+            //公司状态
+            ->SetQueryByCompanyStatus(trim($this->request()->getRequestParam('ENTSTATUS')))
             // 地区 basic_regionid: 110101,110102,
             ->SetQueryByBasicRegionid(trim($this->request()->getRequestParam('basic_regionid')))
             ->addSize($size)
@@ -622,6 +625,7 @@ class SouKeController extends ControllerBase
 
             }
         }
+
         $companyEsModel
             //经营范围
             ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('OPSCOPE'),"OPSCOPE"))
@@ -654,8 +658,12 @@ class SouKeController extends ControllerBase
             ->SetQueryByYingShouGuiMo($searchOptionArr)
             //四级分类 basic_nicid: A0111,A0112,A0113,
             ->SetQueryBySiJiFenLei(trim($this->request()->getRequestParam('basic_nicid')))
+            //公司类型
+            ->SetQueryByCompanyType(trim($this->request()->getRequestParam('ENTTYPE')))
+            //公司状态
+            ->SetQueryByCompanyStatus(trim($this->request()->getRequestParam('ENTSTATUS')))
             // 地区 basic_regionid: 110101,110102,
-            ->SetQueryByBasicRegionid( trim($this->request()->getRequestParam('basic_regionid')))
+            ->SetQueryByBasicRegionid(trim($this->request()->getRequestParam('basic_regionid')))
             //->addSize($size)
             //->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
@@ -664,8 +672,54 @@ class SouKeController extends ControllerBase
             // 格式化下日期和时间
             ->formatEsDate()
             // 格式化下金额
-            ->formatEsMoney()
+            ->formatEsMoney('REGCAP')
         ;
+
+//        $companyEsModel
+//            //经营范围
+//            ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('OPSCOPE'),"OPSCOPE"))
+//            //数字经济及其核心产业
+//            ->SetQueryByBasicSzjjid(trim($this->request()->getRequestParam('basic_szjjid')))
+//            // 搜索文案 智能搜索
+//            ->SetQueryBySearchTextV2( trim($this->request()->getRequestParam('searchText')))
+//            // 搜索战略新兴产业
+//            ->SetQueryByBasicJlxxcyid(trim($this->request()->getRequestParam('basic_jlxxcyid')))
+//            // 搜索shang_pin_data 商品信息 appStr:五香;农庄
+//            ->SetQueryByShangPinData( trim($this->request()->getRequestParam('appStr')))
+//            //必须存在官网
+//            ->SetQueryByWeb($searchOptionArr)
+//            ->SetAreaQueryV5($areas_arr,$requestData['areas_type']?:1)
+//            //必须存在APP
+//            ->SetQueryByApp($searchOptionArr)
+//            //必须是物流企业
+//            ->SetQueryByWuLiuQiYe($searchOptionArr)
+//            // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索
+//            ->SetQueryByCompanyOrgType($searchOptionArr)
+//            // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索
+//            ->SetQueryByEstiblishTime($searchOptionArr)
+//            // 营业状态   传过来的是 10  20  转换成文案后 去匹配
+//            ->SetQueryByRegStatus($searchOptionArr)
+//            // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
+//            ->SetQueryByRegCaptial($searchOptionArr)
+//            // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
+//            ->SetQueryByTuanDuiRenShu($searchOptionArr)
+//            // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
+//            ->SetQueryByYingShouGuiMo($searchOptionArr)
+//            //四级分类 basic_nicid: A0111,A0112,A0113,
+//            ->SetQueryBySiJiFenLei(trim($this->request()->getRequestParam('basic_nicid')))
+//            // 地区 basic_regionid: 110101,110102,
+//            ->SetQueryByBasicRegionid( trim($this->request()->getRequestParam('basic_regionid')))
+//            //->addSize($size)
+//            //->addFrom($offset)
+//            //设置默认值 不传任何条件 搜全部
+//            ->setDefault()
+//            ->searchFromEs('company_202208')
+//            // 格式化下日期和时间
+//            ->formatEsDate()
+//            // 格式化下金额
+//            ->formatEsMoney()
+//        ;
+
 
         $rawOptions = (new XinDongService())->getSearchOption();
         $newOptions = [];
