@@ -3881,14 +3881,14 @@ class XinDongService extends ServiceBase
         $incomeLists = self::getInvoiceYieldDataV3_income_detail($code,'01');
         $i = 1;
         foreach ($incomeLists as $dataItem){
-            if(empty($dataItem['进项-detail'])){
+            if(empty($dataItem)){
                 continue;
             }
             if($i >= 10 ){
                 continue;
             }
             $i ++ ;
-            $file->data([$dataItem['进项-detail']]);
+            $file->data([$dataItem]);
         }
         //===============================
         //销项 list
