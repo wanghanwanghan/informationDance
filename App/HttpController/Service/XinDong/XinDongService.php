@@ -2473,7 +2473,7 @@ class XinDongService extends ServiceBase
 
         $ElasticSearchService = new ElasticSearchService();
 
-        $ElasticSearchService->addMustMatchQuery( 'xd_id' , $companyId) ;
+        $ElasticSearchService->addMustMatchQuery( 'companyid' , $companyId) ;
 
         $size = 1;
         $page = 1;
