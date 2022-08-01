@@ -913,7 +913,7 @@ class SouKeController extends ControllerBase
         $size = $size>0 ?$size:10;
         $offset = ($page-1)*$size;
 
-        $companyId = intval($this->request()->getRequestParam('companyid'));
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
             return  $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
