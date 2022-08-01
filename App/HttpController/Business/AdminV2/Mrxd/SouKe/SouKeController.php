@@ -301,6 +301,16 @@ class SouKeController extends ControllerBase
                 )
             );
 
+            $dataItem['_source']['ENTTYPE_CNAME'] =   '';
+            $dataItem['_source']['ENTSTATUS_CNAME'] =  '';
+            if($dataItem['_source']['ENTTYPE']){
+                $dataItem['_source']['ENTTYPE_CNAME'] =   CodeCa16::findByCode($dataItem['_source']['ENTTYPE']);
+            }
+            if($dataItem['_source']['ENTSTATUS']){
+                $dataItem['_source']['ENTSTATUS_CNAME'] =   CodeEx02::findByCode($dataItem['_source']['ENTSTATUS']);
+            }
+
+
             // 官网
             $webStr = trim($dataItem['_source']['web']);
             if(!$webStr){
@@ -973,8 +983,10 @@ class SouKeController extends ControllerBase
 //            $companyId
 //        );
         $res = (new XinDongService())->getEsBasicInfoV2($companyId);
-        $res['ENTTYPE_CNAME'] =   CodeCa16::findByCode($res['ENTTYPE']);
-        $res['ENTSTATUS_CNAME'] =   CodeEx02::findByCode($res['ENTSTATUS']);
+        $res['ENTTYPE_CNAME'] =   '';
+        $res['ENTTYPE'] && $res['ENTTYPE_CNAME'] =   CodeCa16::findByCode($res['ENTTYPE']);
+        $res['ENTSTATUS_CNAME'] =   '';
+        $res['ENTSTATUS'] && $res['ENTSTATUS_CNAME'] =   CodeEx02::findByCode($res['ENTSTATUS']);
 //        $retData['LAST_DOM'] = $res['LAST_DOM'];
 //        $retData['LAST_EMAIL'] = $res['LAST_EMAIL'];
         return $this->writeJson(200, ['total' => 1], $res, '成功', true, []);
