@@ -3916,7 +3916,7 @@ class XinDongService extends ServiceBase
                  '发票状态'
             ])
         ;
-        $incomeLists = self::getInvoiceYieldDataV3_income_list($code,'02');
+        $incomeLists = self::getInvoiceYieldDataV3_income_list($code,'00');
         $i = 1;
         foreach ($incomeLists as $dataItem){
             if($i >= 10 ){
@@ -3943,7 +3943,7 @@ class XinDongService extends ServiceBase
 
             ])
         ;
-        $incomeLists =  self::getInvoiceYieldDataV3_income_detail($code,'02');
+        $incomeLists =  self::getInvoiceYieldDataV3_income_detail($code,'00');
         $i = 1;
         foreach ($incomeLists as $dataItem){
             if($i >= 10 ){
