@@ -3710,7 +3710,7 @@ class XinDongService extends ServiceBase
                     foreach ($returnData['fpxxs']['data'] as $fpxxs_data){
                         foreach ($fpxxs_data['mxs'] as $subItem){
                             if(
-                                $fpxxs_data['fplx'] ==  $type
+                                $fpxxs_data['sjlx'] ==  $type
                             ){
                                 yield $datas[] = [
                                     //发票代码
@@ -3759,7 +3759,7 @@ class XinDongService extends ServiceBase
                     foreach ($returnData['fpxxs']['data'] as $fpxxs_data){
 
                         if(
-                            $fpxxs_data['fplx']  ==  $type
+                            $fpxxs_data['sjlx']  ==  $type
                         ){
                             yield $datas[] =  [
                                 //发票代码
@@ -3853,7 +3853,7 @@ class XinDongService extends ServiceBase
                 ]
             )
         ;
-        $incomeLists = self::getInvoiceYieldDataV3_income_list($code,'01');
+        $incomeLists = self::getInvoiceYieldDataV3_income_list($code,'1');
         $i = 1;
         foreach ($incomeLists as $dataItem){
             if($i >= 10 ){
@@ -3878,7 +3878,7 @@ class XinDongService extends ServiceBase
                     '不含税单价',
                     '规格型号'
             ]) ;
-        $incomeLists = self::getInvoiceYieldDataV3_income_detail($code,'01');
+        $incomeLists = self::getInvoiceYieldDataV3_income_detail($code,'1');
         $i = 1;
         foreach ($incomeLists as $dataItem){
             if(empty($dataItem)){
@@ -3916,7 +3916,7 @@ class XinDongService extends ServiceBase
                  '发票状态'
             ])
         ;
-        $incomeLists = self::getInvoiceYieldDataV3_income_list($code,'00');
+        $incomeLists = self::getInvoiceYieldDataV3_income_list($code,'2');
         $i = 1;
         foreach ($incomeLists as $dataItem){
             if($i >= 10 ){
@@ -3943,7 +3943,7 @@ class XinDongService extends ServiceBase
 
             ])
         ;
-        $incomeLists =  self::getInvoiceYieldDataV3_income_detail($code,'00');
+        $incomeLists =  self::getInvoiceYieldDataV3_income_detail($code,'2');
         $i = 1;
         foreach ($incomeLists as $dataItem){
             if($i >= 10 ){
