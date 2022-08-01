@@ -958,6 +958,9 @@ class SouKeController extends ControllerBase
         }
 
         $retData  = CompanyBasic::findById($companyId);
+        if (!$retData) {
+            return  $this->writeJson(201, null, null, '没有该企业');
+        }
         $retData = $retData->toArray();
         $retData['logo'] =  (new XinDongService())->getLogoByEntIdV2(
             $companyId
