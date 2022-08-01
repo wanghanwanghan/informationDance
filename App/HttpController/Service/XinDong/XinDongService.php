@@ -3767,7 +3767,7 @@ class XinDongService extends ServiceBase
                                 //发票号码
                                 $fpxxs_data['fphm'],//发票号码
                                 //开票类型
-
+                                $fpxxs_data['fplx'],//发票类型代码
                                 //销方税号
                                 $fpxxs_data['xfsh'],//销售方纳税人识别号
                                 //销方名称
@@ -3790,26 +3790,21 @@ class XinDongService extends ServiceBase
                                 $fpxxs_data['skr'],//收款人
                                 //复核人
                                 $fpxxs_data['fhr'],//复核人
-                                //原发票代码
-                                //原发票号码
+                                // 不要：原发票代码 //原发票号码
                                 //金额
-                                $subItem['je'],//含税金额
+                                $fpxxs_data['hjje'],//含税金额
                                 //税额
-                                $subItem['se'],//税额
+                                $fpxxs_data['hjse'],//税额
                                 //价税合计
                                 $fpxxs_data['jshj'],//价税合计
-                                //作废标志
-                                //作废时间
+                                //不需要：作废标志 //作废时间
                                 //开票日期
                                 $fpxxs_data['kprq'],//开票日期
                                 //发票类型
                                 $fpxxs_data['fplx'],//发票类型代码
                                 //发票状态
                                 $fpxxs_data['fpzt'],
-                                //含税标志
-                                //认证状态
-                                //认证日期
-                                //进销标志
+                                //不需要：含税标志  //认证状态  //认证日期  //进销标志
                             ];
                         }
 
@@ -3835,8 +3830,26 @@ class XinDongService extends ServiceBase
         $file = $fileObject
             ->header(
                 [
-                    '标题' , //
-                    '项目名称' , //
+                    '发票代码',
+                    '发票号码',
+                    '开票类型' ,
+                    '销方税号',
+                    '销方名称',
+                    '销方地址',
+                    '销方账号',
+                    '购方税号',
+                    '购方名称',
+                    '购方地址',
+                    '购方账号',
+                    '开票人',
+                    '收款人',
+                    '复核人',
+                    '金额',
+                    '税额',
+                    '价税合计',
+                    '开票日期',
+                    '发票类型',
+                    '发票状态'
                 ]
             )
         ;
@@ -3856,9 +3869,17 @@ class XinDongService extends ServiceBase
         //进项 detail
         $file->addSheet('进项 detail')
             ->header([
-                '标题' , //
-                '项目名称' , //
-
+                    '发票代码',
+                    '发票号码',
+                    '税收分类编码',
+                    'xmmc',
+                    '单位',
+                    '数量',
+                    '金额',
+                    '税率',
+                    '税额',
+                    '不含税单价',
+                    '规格型号'
             ]) ;
         $incomeLists = self::getInvoiceYieldDataV3_income_detail($code,'01');
         $i = 1;
@@ -3876,9 +3897,26 @@ class XinDongService extends ServiceBase
         //销项 list
         $file->addSheet('销项 list')
             ->header([
-                '标题' , //
-                '项目名称' , //
-
+                '发票代码',
+                '发票号码',
+                '开票类型' ,
+                '销方税号',
+                '销方名称',
+                 '销方地址',
+                '销方账号',
+                '购方税号',
+                '购方名称',
+                '购方地址',
+                '购方账号',
+                '开票人',
+                '收款人',
+                '复核人',
+                 '金额',
+                 '税额',
+                 '价税合计',
+                 '开票日期',
+                 '发票类型',
+                 '发票状态'
             ])
         ;
         $incomeLists = self::getInvoiceYieldDataV3_income_list($code,'02');
