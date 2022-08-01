@@ -22,14 +22,14 @@ class DlH extends ModelBase
     }
 
     public static function findByCompanyidId($id){
-        $res =  MostTorchHightechH::create()
+        $res =  DlH::create()
             ->where('companyid',$id)
             ->get();
         return $res;
     }
 
     public static function findByCode($UNISCID){
-        $res =  MostTorchHightechH::create()
+        $res =  DlH::create()
             ->where('UNISCID',$UNISCID)
             ->get();
         return $res;
@@ -41,7 +41,7 @@ class DlH extends ModelBase
     }
 
     public static function findByConditionV2($whereArr,$page){
-        $model = MostTorchHightechH::create();
+        $model = DlH::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
@@ -58,7 +58,7 @@ class DlH extends ModelBase
         ];
     }
     public static function findByConditionV3($whereArr){
-        $model = MostTorchHightechH::create();
+        $model = DlH::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
