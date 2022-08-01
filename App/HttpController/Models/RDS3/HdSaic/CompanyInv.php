@@ -22,21 +22,21 @@ class CompanyInv extends ModelBase
     }
 
     public static function findById($id){
-        $res =  CompanyManager::create()
+        $res =  CompanyInv::create()
             ->where('id',$id)
             ->get();
         return $res;
     }
 
     public static function findByCompanyId($id){
-        $res =  CompanyManager::create()
+        $res =  CompanyInv::create()
             ->where('companyid',$id)
             ->get();
         return $res;
     }
 
     public static function findByName($name){
-        $res =  CompanyManager::create()
+        $res =  CompanyInv::create()
             ->where('ENTNAME',$name)
             ->all();
         return $res;
@@ -50,7 +50,7 @@ class CompanyInv extends ModelBase
 
 
     public static function findByConditionV2($whereArr,$page){
-        $model = CompanyManager::create();
+        $model = CompanyInv::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
@@ -67,7 +67,7 @@ class CompanyInv extends ModelBase
         ];
     }
     public static function findByConditionV3($whereArr){
-        $model = CompanyManager::create();
+        $model = CompanyInv::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
