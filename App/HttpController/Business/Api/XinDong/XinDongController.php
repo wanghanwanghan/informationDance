@@ -3048,7 +3048,7 @@ eof;
         
         $ElasticSearchService = new ElasticSearchService(); 
         
-        $ElasticSearchService->addMustMatchQuery( 'xd_id' , $companyId) ;  
+        $ElasticSearchService->addMustMatchQuery( 'companyid' , $companyId) ;
 
         $size = $this->request()->getRequestParam('size')??10;
         $page = $this->request()->getRequestParam('page')??1;
