@@ -776,6 +776,8 @@ class FinanceController extends ControllerBase
         );
         foreach ($res['data'] as  &$dataItem){
             $dataItem['type_cname'] = FinanceLog::getTypeCnameMaps()[$dataItem['type']];
+            $userModel = \App\HttpController\Models\AdminV2\AdminNewUser::findById($dataItem['userId']);;
+            $dataItem['user_name'] =  $userModel?$userModel->getAttr('user_name'):'';
         }
         return $this->writeJson(200,
             [
