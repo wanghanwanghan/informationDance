@@ -2131,14 +2131,6 @@ eof;
             return  $this->writeJson(201, null, null, '参数缺失(企业ID)');
         }
 
-//        $retData  = CompanyBasic::findById($companyId);
-//        if (!$retData) {
-//            return  $this->writeJson(201, null, null, '没有该企业');
-//        }
-//        $retData = $retData->toArray();
-//        $retData['logo'] =  (new XinDongService())->getLogoByEntIdV2(
-//            $companyId
-//        );
         $res = (new XinDongService())->getEsBasicInfoV2($companyId);
         $res['ENTTYPE_CNAME'] =   '';
         $res['ENTTYPE'] && $res['ENTTYPE_CNAME'] =   CodeCa16::findByCode($res['ENTTYPE']);
@@ -3040,30 +3032,28 @@ eof;
     //
     function getShangPinInfo(): bool
     {
-        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
             return  $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
 
-        
-        $ElasticSearchService = new ElasticSearchService(); 
-        
+        $ElasticSearchService = new ElasticSearchService();
         $ElasticSearchService->addMustMatchQuery( 'companyid' , $companyId) ;
 
         $size = $this->request()->getRequestParam('size')??10;
         $page = $this->request()->getRequestParam('page')??1;
         $offset  =  ($page-1)*$size;
         $ElasticSearchService->addSize(1) ;
-        $ElasticSearchService->addFrom(0) ; 
+        $ElasticSearchService->addFrom(0) ;
 
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
-        $responseArr = @json_decode($responseJson,true); 
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService,'company_202208');
+        $responseArr = @json_decode($responseJson,true);
         CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
-            [
-                'es_query' => $ElasticSearchService->query,
-                'post_data' => $this->request()->getRequestParam(),
-            ]
-        )); 
+                [
+                    'es_query' => $ElasticSearchService->query,
+                    'post_data' => $this->request()->getRequestParam(),
+                ]
+            ));
 
         // 格式化下日期和时间
         $hits = (new XinDongService())::formatEsDate($responseArr['hits']['hits'], [
@@ -3073,17 +3063,17 @@ eof;
             'approved_time'
         ]);
         $hits = (new XinDongService())::formatEsMoney($hits, [
-            'reg_capital', 
+            'reg_capital',
         ]);
 
-         
+
         foreach($hits as $dataItem){
             $retData = $dataItem['_source']['shang_pin_data'];
             break;
         }
 
-         
-        $total =  count($retData); //total items in array       
+
+        $total =  count($retData); //total items in array
         $totalPages = ceil( $total/ $size ); //calculate total pages
         $page = max($page, 1); //get 1 page when $_GET['page'] <= 0
         // $page = min($page, $totalPages); //get last page when $_GET['page'] > $totalPages
@@ -3093,14 +3083,14 @@ eof;
         $retData = array_slice( $retData, $offset, $size );
 
 
-        return $this->writeJson(200, 
-          [
-            'page' => $page,
-            'pageSize' =>$size,
-            'total' => $total,
-            'totalPage' => $totalPages, 
-        ] 
-       , $retData, '成功', true, []);
+        return $this->writeJson(200,
+            [
+                'page' => $page,
+                'pageSize' =>$size,
+                'total' => $total,
+                'totalPage' => $totalPages,
+            ]
+            , $retData, '成功', true, []);
     }
 
     // 导出
