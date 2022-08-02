@@ -15,6 +15,7 @@ use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
+use App\HttpController\Models\RDS3\HdSaic\CompanyHistoryName;
 use App\HttpController\Models\RDS3\HdSaic\CompanyInv;
 use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
 use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
@@ -1615,7 +1616,7 @@ class SouKeController extends ControllerBase
 
     }
 
-    function getNamesInfo(): bool
+    function getNamesInfoOld(): bool
     {
         // $page = intval($this->request()->getRequestParam('page'));
         // $page = $page>0 ?$page:1;
@@ -1643,6 +1644,18 @@ class SouKeController extends ControllerBase
                 'property2' => $model->property2,
             ]
         );
+
+        return $this->writeJson(200, [], $names, '成功', true, []);
+
+    }
+    function getNamesInfo(): bool
+    {
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+        $names = CompanyHistoryName::findByCompanyId($companyId);
 
         return $this->writeJson(200, [], $names, '成功', true, []);
 
