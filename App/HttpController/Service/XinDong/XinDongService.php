@@ -1126,51 +1126,51 @@ class XinDongService extends ServiceBase
     {
         
         return  [
-           [
-                'pid' => 10,
-                'desc' => '企业类型',
-                'detail' => '',
-                'key' => 'company_org_type',
-                'type' => 'select',
-                'data' =>  [
-                    $this->company_org_type_youxian => [
-                        'cname' =>$this->company_org_type_youxian_des, 
-                        'detail' => '',
-                    ],
-                    $this->company_org_type_youxian2 => [
-                        'cname' => $this->company_org_type_youxian2_des,
-                        'detail' => '',
-                    ],
-                    $this->company_org_type_gufen => [
-                        'cname' =>  $this->company_org_type_gufen_des,
-                        'detail' => '',
-                    ],
-                    $this->company_org_type_fengongsi => [
-                        'cname' => $this->company_org_type_fengongsi_des,
-                        'detail' => '',
-                    ],
-                    $this->company_org_type_zongsongsi => [
-                        'cname' => $this->company_org_type_zongsongsi_des,
-                        'detail' => '',
-                    ],
-                    $this->company_org_type_youxianhehuo => [
-                        'cname' => $this->company_org_type_youxianhehuo_des,
-                        'detail' => '',
-                    ], 
-                    40 => [
-                        'cname' =>  '外商独资公司',
-                        'detail' => '',
-                    ], 
-                    50 =>  [
-                        'cname' =>  '个人独资企业',
-                        'detail' => '',
-                    ],  
-                    60 =>  [
-                        'cname' =>  '国有独资公司',
-                        'detail' => '',
-                    ],  
-                ],
-            ], 
+//           [
+//                'pid' => 10,
+//                'desc' => '企业类型',
+//                'detail' => '',
+//                'key' => 'company_org_type',
+//                'type' => 'select',
+//                'data' =>  [
+//                    $this->company_org_type_youxian => [
+//                        'cname' =>$this->company_org_type_youxian_des,
+//                        'detail' => '',
+//                    ],
+//                    $this->company_org_type_youxian2 => [
+//                        'cname' => $this->company_org_type_youxian2_des,
+//                        'detail' => '',
+//                    ],
+//                    $this->company_org_type_gufen => [
+//                        'cname' =>  $this->company_org_type_gufen_des,
+//                        'detail' => '',
+//                    ],
+//                    $this->company_org_type_fengongsi => [
+//                        'cname' => $this->company_org_type_fengongsi_des,
+//                        'detail' => '',
+//                    ],
+//                    $this->company_org_type_zongsongsi => [
+//                        'cname' => $this->company_org_type_zongsongsi_des,
+//                        'detail' => '',
+//                    ],
+//                    $this->company_org_type_youxianhehuo => [
+//                        'cname' => $this->company_org_type_youxianhehuo_des,
+//                        'detail' => '',
+//                    ],
+//                    40 => [
+//                        'cname' =>  '外商独资公司',
+//                        'detail' => '',
+//                    ],
+//                    50 =>  [
+//                        'cname' =>  '个人独资企业',
+//                        'detail' => '',
+//                    ],
+//                    60 =>  [
+//                        'cname' =>  '国有独资公司',
+//                        'detail' => '',
+//                    ],
+//                ],
+//            ], 
              [
                 'pid' => 20,
                 'desc' => '成立年限',

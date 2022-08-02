@@ -1695,9 +1695,7 @@ class SouKeController extends ControllerBase
             return  $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
 
-
         $ElasticSearchService = new ElasticSearchService();
-
         $ElasticSearchService->addMustMatchQuery( 'companyid' , $companyId) ;
 
         $size = $this->request()->getRequestParam('size')??10;
