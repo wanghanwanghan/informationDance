@@ -947,10 +947,23 @@ class FinanceController extends ControllerBase
     //导出记录对应的详情
     public function exportDetails(){
         $requestData =  $this->getRequestData();
-        $res = AdminUserFinanceExportDataRecord::findByUserAndExportId(
-            $this->loginUserinfo['id'],
-            $requestData['id']
-        );
+
+        if(
+            AdminUserRole::checkIfIsAdmin(
+                $this->loginUserinfo['id']
+            )
+        ){
+            $res = AdminUserFinanceExportDataRecord::findByExportId( 
+                $requestData['id']
+            );
+        }else{
+            $res = AdminUserFinanceExportDataRecord::findByUserAndExportId(
+                $this->loginUserinfo['id'],
+                $requestData['id']
+            );
+        }
+        //
+
         foreach ($res as &$dataItem){
             $dataItem['details'] = [];
             if($dataItem['upload_data_id']){

@@ -172,6 +172,15 @@ class AdminUserFinanceExportDataRecord extends ModelBase
         return $res;
     }
 
+    public static function findByExportId($export_id){
+        $res =  AdminUserFinanceExportDataRecord::create()->where([
+            'export_record_id' => $export_id,
+            // 'status' => 1,
+        ])->all();
+
+        return $res;
+    }
+
     public static function findByCondition($whereArr,$limit){
         $res =  AdminUserFinanceExportDataRecord::create()
             ->where($whereArr)
