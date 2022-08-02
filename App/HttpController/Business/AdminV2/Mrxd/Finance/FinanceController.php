@@ -364,15 +364,24 @@ class FinanceController extends ControllerBase
     //获取导出列表|财务对账列表
     public function getExportLists(){
         $page = $this->request()->getRequestParam('page')??1;
-        $res = AdminUserFinanceExportRecord::findByConditionV3(
+        $whereArr = [];
+        if(
+            AdminUserRole::checkIfIsAdmin(
+                $this->loginUserinfo['id']
+            )
+        ){
 
-            [
-                [
-                    'field' => 'user_id',
-                    'value' => $this->loginUserinfo['id'],
-                    'operate' => '=',
-                ],
-            ],
+        }
+        else{
+            $whereArr[] =  [
+                'field' => 'user_id',
+                'value' => $this->loginUserinfo['id'],
+                'operate' => '=',
+            ];
+        }
+
+        $res = AdminUserFinanceExportRecord::findByConditionV3(
+            $whereArr,
             $page
         );
 
@@ -595,7 +604,7 @@ class FinanceController extends ControllerBase
                     'field' => 'status',
                     'value' => $status,
                     'operate' => '=',
-                ] 
+                ]
             ];
         }
 
