@@ -11,6 +11,7 @@ use App\HttpController\Models\AdminV2\AdminUserChargeConfig;
 use App\HttpController\Models\AdminV2\AdminUserFinanceChargeInfo;
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecordV3;
+use App\HttpController\Models\AdminV2\AdminUserRole;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Models\Api\CompanyCarInsuranceStatusInfo;
@@ -579,13 +580,25 @@ class FinanceController extends ControllerBase
         $requestData =  $this->getRequestData();
 
         //--------------------
-
         $page = $requestData['pageNo']?:1;
         $pageSize = $requestData['pageSize']?:10;
 
+        $status = $this->getRequestData('status');
         $createdAtStr = $this->getRequestData('updated_at');
         $createdAtArr = explode('|||',$createdAtStr);
         $whereArr = [];
+        if (
+            $status > 0
+        ) {
+            $whereArr = [
+                [
+                    'field' => 'status',
+                    'value' => $status,
+                    'operate' => '=',
+                ] 
+            ];
+        }
+
         if (
             !empty($createdAtArr) &&
             !empty($createdAtStr)
@@ -603,11 +616,21 @@ class FinanceController extends ControllerBase
                 ]
             ];
         }
-        $whereArr[] =  [
-            'field' => 'user_id',
-            'value' => $this->loginUserinfo['id'],
-            'operate' => '=',
-        ];
+
+        if(
+            AdminUserRole::checkIfIsAdmin(
+                $this->loginUserinfo['id']
+            )
+        ){
+
+        }
+        else{
+            $whereArr[] =  [
+                'field' => 'user_id',
+                'value' => $this->loginUserinfo['id'],
+                'operate' => '=',
+            ];
+        }
 
         $whereArr[] =  [
             'field' => 'needs_confirm',
