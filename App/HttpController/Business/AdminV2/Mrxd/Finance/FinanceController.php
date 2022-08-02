@@ -340,11 +340,21 @@ class FinanceController extends ControllerBase
                 ]
             ];
         }
-        $whereArr[] =  [
-            'field' => 'user_id',
-            'value' => $this->loginUserinfo['id'],
-            'operate' => '=',
-        ];
+        if(
+            AdminUserRole::checkIfIsAdmin(
+                $this->loginUserinfo['id']
+            )
+        ){
+
+        }else{
+            $whereArr[] =  [
+                'field' => 'user_id',
+                'value' => $this->loginUserinfo['id'],
+                'operate' => '=',
+            ];
+        }
+
+
         $res = AdminUserFinanceUploadRecord::findByConditionV3(
             $whereArr,
             $page
