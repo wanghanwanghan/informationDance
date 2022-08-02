@@ -953,7 +953,7 @@ class FinanceController extends ControllerBase
                 $this->loginUserinfo['id']
             )
         ){
-            $res = AdminUserFinanceExportDataRecord::findByExportId( 
+            $res = AdminUserFinanceExportDataRecord::findByExportId(
                 $requestData['id']
             );
         }else{

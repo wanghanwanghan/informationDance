@@ -5,6 +5,7 @@ namespace App\HttpController\Models\AdminV2;
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\XinDong\XinDongService;
 
 
 class AdminUserFinanceUploadRecord extends ModelBase
@@ -568,11 +569,17 @@ class AdminUserFinanceUploadRecord extends ModelBase
         foreach ($uploadDatas as $uploadData){
             $user_finance_data = AdminUserFinanceData::findById($uploadData['user_finance_data_id'])->toArray();
             $noNeed = false;
+
+            $logResArr = [
+                'entName'=>$user_finance_data['entName'],
+                'charge_year'=>$uploadData['charge_year'],
+            ];
             //是否确认不需要
             if(
                 AdminUserFinanceData::checkIfNoNeed($uploadData['user_finance_data_id'])
             ){
                 $noNeed = true;
+                $logResArr['user_donot_need_this_one'] = $noNeed;
             }
             //之前是否扣费过
             $hasChargeBefore = false;
@@ -581,6 +588,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
             if(
                  $uploadData['price_type'] == AdminUserFinanceUploadDataRecord::$chargeTypeAnnually
             ){
+                $logResArr['charge_type'] =   "按年";
                 //本次里已经计算过
                 if(
                     $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year_start']
@@ -589,6 +597,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                         == $uploadData['charge_year_end']
                 ){
                     $hasChargeBefore = true;
+                    $logResArr['charge_before|this_round'] =   "本次计算过了";
                 };
 
                 //之前已经收费过
@@ -599,12 +608,15 @@ class AdminUserFinanceUploadRecord extends ModelBase
                     $uploadData['charge_year_start'],
                     $uploadData['charge_year_end']
                 );
-
+                $logResArr['charge_before_record'] =   $chargeRes?'有收费记录':'没有收费记录';
+                $logResArr['charge_before_record_date'] =  $chargeRes?$chargeRes->getAttr('created_at'):'';
                 if(
                     $chargeRes &&
+                    $financeConfigArray['cache'] &&
                     //没过去缓存期间
                     ($chargeRes->getAttr('created_at') + $financeConfigArray['cache']*60*60) > time()
                 ){
+                    $logResArr['under_cache_date'] =    true  ;
                     $hasChargeBefore = true;
                     CommonService::getInstance()->log4PHP(
                         json_encode([
@@ -618,6 +630,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                     );
                 }
                 else{
+                    $logResArr['under_cache_date'] =    false  ;
                     CommonService::getInstance()->log4PHP(
                         json_encode([
                             __CLASS__.__FUNCTION__ ,
@@ -633,6 +646,15 @@ class AdminUserFinanceUploadRecord extends ModelBase
                     $hasChargeBefore = true;
                 }
 
+                $logResArr['$hasChargeBefore'] = $hasChargeBefore;
+                OperatorLog::addRecord(
+                    [
+                        'user_id' => $uploadData['user_id'],
+                        'msg' =>  json_encode($logResArr),
+                        'details' =>json_encode( XinDongService::trace()),
+                        'type_cname' => '财务-扣费详情',
+                    ]
+                );
                 // 如果之前没计费过
                 if(!$hasChargeBefore){
                     $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']][$user_finance_data['entName']] =
@@ -652,12 +674,14 @@ class AdminUserFinanceUploadRecord extends ModelBase
             if(
                 $uploadData['price_type'] == AdminUserFinanceUploadDataRecord::$chargeTypeByYear
             ){
+                $logResArr['charge_type'] =   "按单年";
                 //本次里已经计算过
                 if(
                     $chargeDetails['chargeTypeByYear'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year']
                         == $uploadData['charge_year']
                 ){
                     $hasChargeBefore = true;
+                    $logResArr['charge_before|this_round'] =   "本次计算过了";
                 };
                 //之前已经收费过
                 //从收费记录找  没超过缓存期 就不收费
@@ -666,11 +690,15 @@ class AdminUserFinanceUploadRecord extends ModelBase
                     $user_finance_data['entName'],
                     $uploadData['charge_year']
                 );
+                $logResArr['charge_before_record'] =   $chargeRes?'有收费记录':'没有收费记录';
+                $logResArr['charge_before_record_date'] =  $chargeRes?$chargeRes->getAttr('created_at'):'';
                 if(
                     $chargeRes &&
+                    $financeConfigArray['cache'] &&
                     //没过去缓存期间
                     ($chargeRes->getAttr('created_at') + $financeConfigArray['cache']*60*60) > time()
                 ){
+                    $logResArr['under_cache_date'] =    true  ;
                     $hasChargeBefore = true;
                     CommonService::getInstance()->log4PHP(
                         json_encode([
@@ -682,6 +710,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                         ])
                     );
                 }else{
+                    $logResArr['under_cache_date'] =    false  ;
                     CommonService::getInstance()->log4PHP(
                         json_encode([
                             __CLASS__.__FUNCTION__ ,
@@ -697,6 +726,15 @@ class AdminUserFinanceUploadRecord extends ModelBase
                     $hasChargeBefore = true;
                 }
 
+                $logResArr['$hasChargeBefore'] = $hasChargeBefore;
+                OperatorLog::addRecord(
+                    [
+                        'user_id' => $uploadData['user_id'],
+                        'msg' =>  json_encode($logResArr),
+                        'details' =>json_encode( XinDongService::trace()),
+                        'type_cname' => '财务-扣费详情',
+                    ]
+                );
                 // 如果之前没计费过
                 if(!$hasChargeBefore){
                     $chargeDetails['chargeTypeByYear'][$uploadData['user_id']][$user_finance_data['entName']] =
