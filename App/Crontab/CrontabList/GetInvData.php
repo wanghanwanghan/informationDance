@@ -55,6 +55,7 @@ class GetInvData extends AbstractCronTask
             $offset = ($i - 1) * $limit;
             $list = AntAuthList::create()
                 ->where('status', MaYiService::STATUS_3)
+                ->where('getDataSource', 1)
                 ->limit($offset, $limit)->all();
             if (empty($list)) {
                 break;
