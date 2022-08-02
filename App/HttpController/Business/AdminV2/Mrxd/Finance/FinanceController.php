@@ -650,7 +650,14 @@ class FinanceController extends ControllerBase
                 $this->loginUserinfo['id']
             )
         ){
-
+            $uid = $this->getRequestData('user_id');
+            if($uid){
+                $whereArr[] =  [
+                    'field' => 'user_id',
+                    'value' => $uid,
+                    'operate' => '=',
+                ];
+            }
         }
         else{
             $whereArr[] =  [
