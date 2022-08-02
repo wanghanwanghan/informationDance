@@ -745,11 +745,22 @@ class FinanceController extends ControllerBase
                 ]
             ];
         }
-        $whereArr[] =  [
-            'field' => 'userId',
-            'value' => $this->loginUserinfo['id'],
-            'operate' => '=',
-        ];
+
+        if(
+            AdminUserRole::checkIfIsAdmin(
+                $this->loginUserinfo['id']
+            )
+        ){
+
+        }else{
+            $whereArr[] =  [
+                'field' => 'userId',
+                'value' => $this->loginUserinfo['id'],
+                'operate' => '=',
+            ];
+        }
+
+
         if(
             $requestData['type']
         ){
