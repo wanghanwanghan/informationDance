@@ -917,6 +917,7 @@ class FinanceController extends ControllerBase
         }
         foreach ($ids as $id){
             $records =AdminUserFinanceData::findById($id)->toArray();
+            $oldStatus = $records['status'] ;
             if(
                 $records['status'] == $requestData['status']
             ){
@@ -931,6 +932,19 @@ class FinanceController extends ControllerBase
                 return $this->writeJson(206, [] ,   [], '确认失败', true, []);
             }
 
+            OperatorLog::addRecord(
+                [
+                    'user_id' => $this->loginUserinfo['id'],
+                    'msg' =>  json_encode([
+                        'entName'=>$records['entName'],
+                        'year'=>$records['year'],
+                        'old_status'=>$oldStatus,
+                        'new_status'=>$requestData['status'],
+                    ]),
+                    'details' =>json_encode( XinDongService::trace()),
+                    'type_cname' => '财务确认',
+                ]
+            );
 
             if(
                 $records['status'] ==  AdminUserFinanceData::$statusNeedsConfirm
