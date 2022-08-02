@@ -549,6 +549,24 @@ class Company extends ServiceBase
         return $this;
     }
 
+    function SetQueryByRegStatusV2($searchOptionArr){
+        $reg_status_values = [];// 营业状态
+        foreach($searchOptionArr as $item){
+            if($item['pid'] == 30){
+                $reg_status_values = $item['value'];
+            }
+        }
+
+        $matchedCnames = [];
+        foreach($reg_status_values as $item){
+            $item && $matchedCnames[] = (new XinDongService())->getRegStatus()[$item];
+        }
+        (!empty($matchedCnames)) && $this->es->addMustShouldPhraseQuery( 'ENTSTATUS' , $matchedCnames) ;
+
+
+        return $this;
+    }
+
     function SetQueryByRegCaptial($searchOptionArr){
 
         $reg_capital_values = [];  // 注册资本

@@ -278,7 +278,7 @@ class SouKeController extends ControllerBase
             // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索
             ->SetQueryByEstiblishTime($searchOptionArr)
             // 营业状态   传过来的是 10  20  转换成文案后 去匹配
-            ->SetQueryByRegStatus($searchOptionArr)
+            ->SetQueryByRegStatusV2($searchOptionArr)
             // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
             ->SetQueryByRegCaptial($searchOptionArr)
             // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索

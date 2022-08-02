@@ -1216,36 +1216,69 @@ class XinDongService extends ServiceBase
                     ],
                 ],
             ], 
-             [
+//             [
+//                'pid' => 30,
+//                'desc' => '营业状态',
+//                'detail' => '',
+//                'key' => 'reg_status',
+//                'type' => 'select',
+//                'data' => [
+//                    $this->reg_status_cunxu  =>  [
+//                        'cname' => $this->reg_status_cunxu_des,
+//                        'detail' => '',
+//                    ],
+//                    $this->reg_status_zaiye  =>  [
+//                        'cname' => $this->reg_status_zaiye_des,
+//                        'detail' => '',
+//                    ],
+//                    $this->reg_status_diaoxiao  =>  [
+//                        'cname' => $this->reg_status_diaoxiao_des,
+//                        'detail' => '',
+//                    ],
+//                    $this->reg_status_zhuxiao  =>  [
+//                        'cname' => $this->reg_status_zhuxiao_des,
+//                        'detail' => '',
+//                    ],
+//                    $this->reg_status_tingye  => [
+//                        'cname' => $this->reg_status_tingye_des,
+//                        'detail' => '',
+//                    ],
+//                ],
+//            ],
+            [
                 'pid' => 30,
                 'desc' => '营业状态',
                 'detail' => '',
                 'key' => 'reg_status',
                 'type' => 'select',
                 'data' => [
-                    $this->reg_status_cunxu  =>  [
-                        'cname' => $this->reg_status_cunxu_des,
+                    1  =>  [
+                        'cname' =>  '在营（开业）',
                         'detail' => '',
                     ],
-                    $this->reg_status_zaiye  =>  [
-                        'cname' => $this->reg_status_zaiye_des,
+                    2  =>  [
+                        'cname' => '吊销',
                         'detail' => '',
                     ],
-                    $this->reg_status_diaoxiao  =>  [
-                        'cname' => $this->reg_status_diaoxiao_des,
+                    3  =>  [
+                        'cname' => '注销',
                         'detail' => '',
                     ],
-                    $this->reg_status_zhuxiao  =>  [
-                        'cname' => $this->reg_status_zhuxiao_des,
+                    4  =>  [
+                        'cname' => '迁出',
                         'detail' => '',
                     ],
-                    $this->reg_status_tingye  => [
-                        'cname' => $this->reg_status_tingye_des,
+                    8  =>  [
+                        'cname' => '停业',
+                        'detail' => '',
+                    ],
+                    9  =>  [
+                        'cname' => '其他',
                         'detail' => '',
                     ],
                 ],
-            ], 
-             [
+            ],
+            [
                 'pid' => 40,
                 'desc' => '注册资本',
                 'detail' => '',
