@@ -1170,7 +1170,7 @@ class XinDongService extends ServiceBase
 //                        'detail' => '',
 //                    ],
 //                ],
-//            ], 
+//            ],
              [
                 'pid' => 20,
                 'desc' => '成立年限',

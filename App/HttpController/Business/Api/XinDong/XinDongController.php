@@ -4146,7 +4146,7 @@ eof;
 
 
     //股东关系图
-    function getCompanyInvestorOld(): bool
+    function getCompanyInvestor(): bool
     {
         //
         $requestData =  $this->getRequestData();
@@ -4163,7 +4163,7 @@ eof;
         return $this->writeJson(200, null, $res, '成功', false, []);
 
     }
-    function getCompanyInvestor(): bool
+    function getCompanyInvestorOld(): bool
     {
         //
         $requestData =  $this->getRequestData();
