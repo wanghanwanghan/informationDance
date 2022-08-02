@@ -319,7 +319,7 @@ class FinanceController extends ControllerBase
 
     //用户上传的列表 所有上传的客户名单
     public function getUploadLists(){
-        $page = $this->request()->getRequestParam('page')??1;
+        $page = $this->request()->getRequestParam('pageNo')??1;
         $createdAtStr = $this->getRequestData('created_at');
         $createdAtArr = explode('|||',$createdAtStr);
         $whereArr = [];
@@ -373,7 +373,7 @@ class FinanceController extends ControllerBase
 
     //获取导出列表|财务对账列表
     public function getExportLists(){
-        $page = $this->request()->getRequestParam('page')??1;
+        $page = $this->request()->getRequestParam('pageNo')??1;
         $whereArr = [];
         if(
             AdminUserRole::checkIfIsAdmin(
@@ -556,7 +556,7 @@ class FinanceController extends ControllerBase
     //我的下载记录
     public function getExportQueueLists(){
         $requestData =  $this->getRequestData();
-        $page = $requestData['page']?:1;
+        $page = $requestData['pageNo']?:1;
         $config = AdminUserFinanceConfig::getConfigByUserId($this->loginUserinfo['id']);
         $whereArr = [
             [
@@ -572,11 +572,11 @@ class FinanceController extends ControllerBase
         ){
 
         }else{
-            $whereArr[] =  [
-                'field' => 'user_id',
-                'value' => $this->loginUserinfo['id'],
-                'operate' => '=',
-            ];
+//            $whereArr[] =  [
+//                'field' => 'user_id',
+//                'value' => $this->loginUserinfo['id'],
+//                'operate' => '=',
+//            ];
         }
 
         $res = AdminUserFinanceExportDataQueue::findByConditionV3(
@@ -593,7 +593,7 @@ class FinanceController extends ControllerBase
                 $AdminUserFinanceUploadRecordRes && $value['upload_details'] = $AdminUserFinanceUploadRecordRes->toArray();
             }
             $value['status_cname'] = AdminUserFinanceExportDataQueue::getStatusMap()[$value['status']];
-
+            //user_id
         }
         return $this->writeJson(200,  [
             'page' => $page,
@@ -742,7 +742,7 @@ class FinanceController extends ControllerBase
 
     //账户流水
     public function getFinanceLogLists(){
-        $page = $this->request()->getRequestParam('page')??1;
+        $page = $this->request()->getRequestParam('pageNo')??1;
         $requestData =  $this->getRequestData();
         $createdAtStr = $this->getRequestData('created_at');
         $createdAtArr = explode('|||',$createdAtStr);
