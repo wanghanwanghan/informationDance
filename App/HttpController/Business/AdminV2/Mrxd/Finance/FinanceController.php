@@ -558,20 +558,29 @@ class FinanceController extends ControllerBase
         $requestData =  $this->getRequestData();
         $page = $requestData['page']?:1;
         $config = AdminUserFinanceConfig::getConfigByUserId($this->loginUserinfo['id']);
+        $whereArr = [
+            [
+                'field' => 'created_at',
+                'value' => strtotime(date("Y-m-d H:i:s", strtotime("-".($config['cache']?:12)." hours"))),
+                'operate' => '>=',
+            ]
+        ];
+        if(
+            AdminUserRole::checkIfIsAdmin(
+                $this->loginUserinfo['id']
+            )
+        ){
+
+        }else{
+            $whereArr[] =  [
+                'field' => 'user_id',
+                'value' => $this->loginUserinfo['id'],
+                'operate' => '=',
+            ];
+        }
 
         $res = AdminUserFinanceExportDataQueue::findByConditionV3(
-            [
-                [
-                    'field' => 'user_id',
-                    'value' => $this->loginUserinfo['id'],
-                    'operate' => '=',
-                ],
-                [
-                    'field' => 'created_at',
-                    'value' => strtotime(date("Y-m-d H:i:s", strtotime("-".($config['cache']?:12)." hours"))),
-                    'operate' => '>=',
-                ]
-            ],
+            $whereArr,
             $page
         );
 
