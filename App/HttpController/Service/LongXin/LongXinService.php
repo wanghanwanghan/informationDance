@@ -1498,7 +1498,7 @@ class LongXinService extends ServiceBase
     }
 
     //非注册地址
-    private function getEntAddress($data)
+    function getEntAddress($data)
     {
         $entId = $this->getEntid($data['entName']);
 
@@ -1507,15 +1507,17 @@ class LongXinService extends ServiceBase
 
         $arr = [
             'entid' => $entId,
-            'version' => 'E3',
+            'version' => 'A4',
             'usercode' => $this->usercode
         ];
 
         $this->sendHeaders['authorization'] = $this->createToken($arr);
 
         $res = (new CoHttpClient())
-            ->useCache(true)
+            ->useCache(false)
             ->send($this->baseUrl . 'company_detail/', $arr, $this->sendHeaders);
+
+        CommonService::getInstance()->log4PHP($res);
 
         $this->recodeSourceCurl([
             'sourceName' => $this->sourceName,
