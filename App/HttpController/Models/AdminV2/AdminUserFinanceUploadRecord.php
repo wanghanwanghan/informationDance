@@ -610,6 +610,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 );
                 $logResArr['charge_before_record'] =   $chargeRes?'有收费记录':'没有收费记录';
                 $logResArr['charge_before_record_date'] =  $chargeRes?$chargeRes->getAttr('created_at'):'';
+                $logResArr['cache'] = $financeConfigArray['cache'];
                 if(
                     $chargeRes &&
                     $financeConfigArray['cache'] &&
@@ -692,6 +693,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 );
                 $logResArr['charge_before_record'] =   $chargeRes?'有收费记录':'没有收费记录';
                 $logResArr['charge_before_record_date'] =  $chargeRes?$chargeRes->getAttr('created_at'):'';
+                $logResArr['cache'] = $financeConfigArray['cache'];
                 if(
                     $chargeRes &&
                     $financeConfigArray['cache'] &&
