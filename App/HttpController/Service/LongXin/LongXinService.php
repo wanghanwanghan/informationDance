@@ -142,6 +142,10 @@ class LongXinService extends ServiceBase
 
         if (isset($res['total']) || isset($res['paging']['total'])) {
             $res['Paging']['total'] = $res['total'] - 0;
+        } elseif (isset($res['data']['ELADDR_total'])) {
+            $res['Paging']['total'] = $res['data']['ELADDR_total'] - 0;
+        } else {
+
         }
 
         if (isset($res['coHttpErr']))
@@ -1498,9 +1502,10 @@ class LongXinService extends ServiceBase
     }
 
     //非注册地址
-    function getEntAddress($data)
+    function getEntAddress($data): array
     {
         $entId = $this->getEntid($data['entName']);
+        $index = $data['page'] ?? '';
 
         if (empty($entId))
             return ['code' => 102, 'msg' => 'entId是空', 'result' => [], 'paging' => null];
@@ -1508,7 +1513,8 @@ class LongXinService extends ServiceBase
         $arr = [
             'entid' => $entId,
             'version' => 'A4',
-            'usercode' => $this->usercode
+            'usercode' => $this->usercode,
+            'pageIndex' => trim($index)
         ];
 
         $this->sendHeaders['authorization'] = $this->createToken($arr);
@@ -1516,8 +1522,6 @@ class LongXinService extends ServiceBase
         $res = (new CoHttpClient())
             ->useCache(false)
             ->send($this->baseUrl . 'company_detail/', $arr, $this->sendHeaders);
-
-        CommonService::getInstance()->log4PHP($res);
 
         $this->recodeSourceCurl([
             'sourceName' => $this->sourceName,
@@ -1527,13 +1531,7 @@ class LongXinService extends ServiceBase
             'responseData' => $res,
         ], true);
 
-        if (!empty($res) && isset($res['data']) && !empty($res['data'])) {
-            $tmp = $res['data'];
-        } else {
-            $tmp = null;
-        }
-
-        return $tmp;
+        return $this->checkResp($res);
     }
 
 
