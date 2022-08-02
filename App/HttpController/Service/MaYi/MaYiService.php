@@ -5221,6 +5221,7 @@ class MaYiService extends ServiceBase
 
         if (empty($check)) {
             $baiduApi = BaiDuService::getInstance()->addressToStructured(trim($res['DOM']));
+            CommonService::getInstance()->log4PHP($baiduApi, 'baidu');
             $baiduApiRes = [];
             if ($baiduApi['status'] === 0) {
                 $baiduApiRes['regAddress'] = $res['DOM'] ?? '';
