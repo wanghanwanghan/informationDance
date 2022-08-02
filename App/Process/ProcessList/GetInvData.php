@@ -508,7 +508,7 @@ class GetInvData extends ProcessBase
 
     }
 
-    protected function onPipeReadable(Process $process)
+    protected function onPipeReadable(Process $process): bool
     {
         parent::onPipeReadable($process);
 

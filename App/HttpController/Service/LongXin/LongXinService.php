@@ -215,9 +215,9 @@ class LongXinService extends ServiceBase
         OperatorLog::addRecord(
             [
                 'user_id' => 0,
-                'msg' => '参数:'.json_encode($arr).' 返回:'.json_encode($res),
-                'details' =>json_encode( XinDongService::trace()),
-                'type_cname' => '企业详情'.$version,
+                'msg' => '参数:' . json_encode($arr) . ' 返回:' . json_encode($res),
+                'details' => json_encode(XinDongService::trace()),
+                'type_cname' => '企业详情' . $version,
             ]
         );
 
@@ -502,29 +502,31 @@ class LongXinService extends ServiceBase
             $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => ['data' => $readyReturn, 'otherData' => $readyOtherReturn]]);
     }
 
-    function  formatFinanceReturnData($data){
+    function formatFinanceReturnData($data)
+    {
         $newData = [];
-        foreach ($data as $field1=>$oneYearData) {
-            foreach ($oneYearData as $field2=>$value){
-                if( is_numeric($value) &&  $value == 0 && gettype($value) != 'integer' ){
+        foreach ($data as $field1 => $oneYearData) {
+            foreach ($oneYearData as $field2 => $value) {
+                if (is_numeric($value) && $value == 0 && gettype($value) != 'integer') {
                     $newvalue = 0;
-                    $newData[$field1][$field2] =  $newvalue;
+                    $newData[$field1][$field2] = $newvalue;
                     CommonService::getInstance()->log4PHP(
                         json_encode([
                             'formatFinanceReturnData ',
-                            'old value'=> $value,
-                            'old value type'=>gettype($value),
-                            'new value'=> $newvalue ,
-                            'new value type'=>gettype($newvalue),
+                            'old value' => $value,
+                            'old value type' => gettype($value),
+                            'new value' => $newvalue,
+                            'new value type' => gettype($newvalue),
                         ])
                     );
-                }else{
-                    $newData[$field1][$field2] =  $value;
+                } else {
+                    $newData[$field1][$field2] = $value;
                 }
             }
         }
         return $newData;
     }
+
     function getFinanceDataV2($postData, $toRange = true): array
     {
         $logFileName = 'getFinanceData.log.' . date('Ymd', time());
@@ -569,17 +571,17 @@ class LongXinService extends ServiceBase
         ]);
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ ,
-                'old getFinanceData_$res'=> $res,
+                __CLASS__ . __FUNCTION__,
+                'old getFinanceData_$res' => $res,
                 //'getFinanceData_data '=>array_merge($arr, $postData),
             ])
         );
         $res['data'] = $this->formatFinanceReturnData($res['data']);
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ ,
-                'new getFinanceData_$res'=> $res,
-               // 'getFinanceData_data '=>array_merge($arr, $postData),
+                __CLASS__ . __FUNCTION__,
+                'new getFinanceData_$res' => $res,
+                // 'getFinanceData_data '=>array_merge($arr, $postData),
             ])
         );
         if (isset($res['total']) && $res['total'] > 0) {
@@ -1477,7 +1479,7 @@ class LongXinService extends ServiceBase
             'industry' => $data['industry'] ?? '',//招聘行业，示例："电子商务"
             //发布日期 区间搜索
             //2010-01-01$2020-01-01 表示注册日期在2010年1月1日-2020年1月1日之间的
-            //$2020-01-01 表示2020年1月1日之前的
+            //2020-01-01 表示2020年1月1日之前的
             //2010-01-01$ 表示2010年1月1日之后的
             'pdate' => $data['pdate'] ?? '',
         ];
@@ -1495,6 +1497,42 @@ class LongXinService extends ServiceBase
         return $this->checkResp($res);
     }
 
+    //非注册地址
+    private function getEntAddress($data)
+    {
+        $entId = $this->getEntid($data['entName']);
+
+        if (empty($entId))
+            return ['code' => 102, 'msg' => 'entId是空', 'result' => [], 'paging' => null];
+
+        $arr = [
+            'entid' => $entId,
+            'version' => 'E3',
+            'usercode' => $this->usercode
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())
+            ->useCache(true)
+            ->send($this->baseUrl . 'company_detail/', $arr, $this->sendHeaders);
+
+        $this->recodeSourceCurl([
+            'sourceName' => $this->sourceName,
+            'apiName' => last(explode('/', trim($this->baseUrl . 'company_detail/', '/'))),
+            'requestUrl' => trim(trim($this->baseUrl . 'company_detail/'), '/'),
+            'requestData' => $arr,
+            'responseData' => $res,
+        ], true);
+
+        if (!empty($res) && isset($res['data']) && !empty($res['data'])) {
+            $tmp = $res['data'];
+        } else {
+            $tmp = null;
+        }
+
+        return $tmp;
+    }
 
 
 
