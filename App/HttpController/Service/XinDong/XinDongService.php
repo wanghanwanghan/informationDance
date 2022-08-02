@@ -3820,7 +3820,6 @@ class XinDongService extends ServiceBase
                                 //不需要：含税标志  //认证状态  //认证日期  //进销标志
                             ];
                         }
-
                     }
                 }
             }

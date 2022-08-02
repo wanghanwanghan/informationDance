@@ -54,9 +54,26 @@ class SouKeController extends ControllerBase
     {
         //
         $requestData =  $this->getRequestData();
-        $res = CompanyInvestor::findByCompanyId(
+        $res = CompanyInv::findByCompanyId(
             $requestData['company_id']
          );
+        foreach ($res as &$data){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'getCompanyInvestor_data_item'=>$data
+                ])
+            );
+        }
+        return $this->writeJson(200, null, $res, '成功', false, []);
+
+    }
+    function getCompanyInvestorOld(): bool
+    {
+        //
+        $requestData =  $this->getRequestData();
+        $res = CompanyInvestor::findByCompanyId(
+            $requestData['company_id']
+        );
         foreach ($res as &$data){
             CommonService::getInstance()->log4PHP(
                 json_encode([
@@ -1346,7 +1363,7 @@ class SouKeController extends ControllerBase
         return $this->writeJson(200,  ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
     }
 
-    function getCountInfo(): bool
+    function getCountInfoOld(): bool
     {
         $page = intval($this->request()->getRequestParam('page'));
         $page = $page>0 ?$page:1;
@@ -1387,6 +1404,72 @@ class SouKeController extends ControllerBase
         // 商品信息
         $ElasticSearchService = new ElasticSearchService();
         $ElasticSearchService->addMustMatchQuery( 'xd_id' , $companyId) ;
+        $ElasticSearchService->addSize(1) ;
+        $ElasticSearchService->addFrom(0) ;
+
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
+        $responseArr = @json_decode($responseJson,true);
+        // 格式化下日期和时间
+        $hits = $responseArr['hits']['hits'];
+        $hits = (new XinDongService())::formatEsMoney($hits, [
+            'reg_capital',
+        ]);
+
+        foreach($hits as $dataItem){
+            $retData = $dataItem['_source']['shang_pin_data'];
+            break;
+        }
+        $shangPinTotal =  count($retData); //total items in array
+
+        $retData = [
+            // 股东+人员
+            'gong_shang' => intval($employeeCount + $guDongCount),
+            // 商品
+            'shang_pin' => $shangPinTotal,
+            //专业资质 iso+高新
+            'rong_yu' =>  intval($highTecCount + $isoCount),
+            //ios +andoriod
+            'app' => intval($iosCount+$andoriodCount),
+        ];
+
+        return $this->writeJson(200,  [  ], $retData, '成功', true, []);
+    }
+    function getCountInfo(): bool
+    {
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page>0 ?$page:1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size>0 ?$size:10;
+        $offset = ($page-1)*$size;
+
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return  $this->writeJson(201, null, null, '参数缺失(类型)');
+        }
+
+
+        $highTecCount = MostTorchHightechH::create()
+            ->where('companyid', $companyId)->count();
+
+        $isoCount = CncaRzGltxH::create()
+            ->where('companyid', $companyId)->count();
+
+
+        $iosCount = DataplusAppIosH::create()
+            ->where('companyid', $companyId)->count();
+        $andoriodCount = DataplusAppAndroidH::create()
+            ->where('companyid', $companyId)->count();
+
+        $guDongCount = CompanyInv::create()
+            ->where('companyid', $companyId)->count();
+
+        $employeeCount = CompanyManager::create()
+            ->where('companyid', $companyId)->count();
+
+
+        // 商品信息
+        $ElasticSearchService = new ElasticSearchService();
+        $ElasticSearchService->addMustMatchQuery( 'companyid' , $companyId) ;
         $ElasticSearchService->addSize(1) ;
         $ElasticSearchService->addFrom(0) ;
 
@@ -1461,7 +1544,7 @@ class SouKeController extends ControllerBase
         $res = CompanyInv::findByCompanyId($companyId);
 
         return $this->writeJson(200,
-            ['total' => count($res),'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)],
+            ['total' => count($res),'page' => $page, 'pageSize' => $size, 'totalPage'=> floor(count($res)/$size)],
             $res, '成功', true, []
         );
     }
