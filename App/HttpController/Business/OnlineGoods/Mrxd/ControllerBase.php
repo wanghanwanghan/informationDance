@@ -20,6 +20,13 @@ class ControllerBase extends Index
     function needsCheckToken(){
 
         $set = ConfigInfo::sMembers('online_needs_login');
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'needsCheckToken set ' => $set,
+                'actionName'=>$this->actionName
+            ])
+        );
         if(empty($set)){
             //redis 异常了 先锁住
             return true;
