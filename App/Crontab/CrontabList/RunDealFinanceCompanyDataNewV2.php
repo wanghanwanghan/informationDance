@@ -815,6 +815,9 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
             ;
 
             foreach ($financeDatas as $dataItem){
+                if(empty($dataItem['NewFinanceData'])){
+                    continue;
+                }
                 $fileObject ->data([$dataItem['NewFinanceData']]);
             }
 

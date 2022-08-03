@@ -398,7 +398,7 @@ class AdminUserFinanceData extends ModelBase
                 self::getNoNeedsConfirm($financeData,$financeConifgArr)
             ){
                 self::changeNoNeedsConfirmToNeedsConfirm($financeData,$financeConifgArr);
-            } 
+            }
         }
 
         return true;
@@ -920,10 +920,10 @@ class AdminUserFinanceData extends ModelBase
 
     public static function checkIfNoNeed($id){
         $res = self::findById($id);
+
         if(
             $res->getAttr('status') == self::$statusConfirmedNo
         ){
-
             return $res->getAttr('status');
         }
        return  false;
