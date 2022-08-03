@@ -488,8 +488,8 @@ class AdminUserFinanceData extends ModelBase
         $allFinanceDatasNew =self::findBySql($sql);
 
         foreach ($allFinanceDatasNew as $allFinanceDatasNewSub){
-            self::updateStatus($allFinanceDatasNewSub['id'],self::$statusNeedsConfirm);
-            self::updateNeedsConfirm($allFinanceDatasNewSub['id'],1);
+//            self::updateStatus($allFinanceDatasNewSub['id'],self::$statusNeedsConfirm);
+//            self::updateNeedsConfirm($allFinanceDatasNewSub['id'],1);
             OperatorLog::addRecord(
                 [
                     'user_id' => 0,
@@ -498,7 +498,7 @@ class AdminUserFinanceData extends ModelBase
                         'finane_data_id'=>$allFinanceDatasNewSub['id']
                     ]),
                     'details' => json_encode(XinDongService::trace()),
-                    'type_cname' => '财务-包年内有需要确认的-全部设置为不需要-'.$financeData['entName'],
+                    'type_cname' => '财务-包年内有需要确认的-全部设置为不需要-'.$financeData['entName'].'-'.$allFinanceDatasNewSub['year'],
                 ]
             );
         }
