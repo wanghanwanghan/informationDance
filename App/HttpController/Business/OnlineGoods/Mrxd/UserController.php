@@ -5,6 +5,7 @@ namespace App\HttpController\Business\OnlineGoods\Mrxd;
 use App\ElasticSearch\Service\ElasticSearchService;
 use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;
 use App\HttpController\Models\AdminNew\ConfigInfo;
+use App\HttpController\Models\AdminV2\AdminNewUser;
 use App\HttpController\Models\AdminV2\AdminUserFinanceConfig;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
@@ -165,10 +166,37 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
     function login(): bool
     {
-        $allProducts = (new \App\HttpController\Service\BaoYa\BaoYaService())->getProducts();
+        $requestData =  $this->getRequestData();
+        $phone = $requestData['phone'] ;
+        $code = $requestData['code'] ;
+        if(
+            OnlineGoodsUser::getRandomDigit($phone)!= $code
+        ){
+            return $this->writeJson(201, null, [],  '验证码不正确或已过期');
 
+        }
+
+        $id = OnlineGoodsUser::addRecordV2(
+            [
+                'source' => OnlineGoodsUser::$source_self_register,
+                'user_name' => $phone,
+                'password' => '',
+                'email' => '',
+                'money' => '',
+                'token' => '',
+            ]
+        );
+
+        $newToken = UserService::getInstance()->createAccessToken(
+            $phone,
+            $phone
+        );
+        OnlineGoodsUser::updateById(
+            $id,
+            $newToken
+        );
         return $this->writeJson(
-            200,[ ] ,$allProducts,
+            200,[ ] ,$newToken,
             '成功',
             true,
             []

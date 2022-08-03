@@ -47,7 +47,7 @@ class OnlineGoodsUser extends ModelBase
                     ],
                 ])
             );
-            return ConfigInfo::setRedisBykey($daily_limit_key,intval($nums) + 1,120);
+            return ConfigInfo::setRedisBykey($daily_limit_key,intval($nums) + 1,60*60*24);
         }
         else{
             CommonService::getInstance()->log4PHP(
@@ -63,7 +63,7 @@ class OnlineGoodsUser extends ModelBase
     }
 
     static function  setRandomDigit($phone,$digit){
-        return ConfigInfo::setRedisBykey('online_sms_code_'.$phone,$digit,120);
+        return ConfigInfo::setRedisBykey('online_sms_code_'.$phone,$digit,300);
     }
 
     static function  getRandomDigit($phone){
