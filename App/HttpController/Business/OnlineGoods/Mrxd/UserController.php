@@ -20,6 +20,7 @@ use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
+use App\HttpController\Service\Sms\AliSms;
 use App\HttpController\Service\Sms\SmsService;
 use App\HttpController\Service\User\UserService;
 use App\HttpController\Service\XinDong\XinDongService;
@@ -126,6 +127,20 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $digit = OnlineGoodsUser::createRandomDigit();
 
        //发短信
+        $res = (new AliSms())->sendByTemplete($phone, 'SMS_244025473',[
+            'name' => $digit,
+            'money' => $digit
+        ]);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'sendByTemplete' => [
+                    'sendByTemplete'=>$res,
+                    '$digit'=>$digit
+                ],
+            ])
+        );
+
         $res = SmsService::getInstance()->sendByTemplete($phone, 'SMS_244025473',[
             'name' => $digit,
             'money' => $digit
@@ -133,7 +148,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'checkDailySmsNums failed' => [
+                'sendByTemplete' => [
                     'sendByTemplete'=>$res,
                     '$digit'=>$digit
                 ],
