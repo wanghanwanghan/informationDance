@@ -488,8 +488,8 @@ class AdminUserFinanceData extends ModelBase
         $allFinanceDatasNew =self::findBySql($sql);
 
         foreach ($allFinanceDatasNew as $allFinanceDatasNewSub){
-//            self::updateStatus($allFinanceDatasNewSub['id'],self::$statusNeedsConfirm);
-//            self::updateNeedsConfirm($allFinanceDatasNewSub['id'],1);
+            self::updateStatus($allFinanceDatasNewSub['id'],self::$statusNeedsConfirm);
+            self::updateNeedsConfirm($allFinanceDatasNewSub['id'],1);
             OperatorLog::addRecord(
                 [
                     'user_id' => 0,
