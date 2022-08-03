@@ -3603,14 +3603,21 @@ eof;
         if(
             $this->getRequestData('addRedisSet')
         ){
+
+            $set1 = ConfigInfo::sMembers('online_needs_login');
+
+            $sdd1 = ConfigInfo::sAdd('consultProduct','online_needs_login');
+            $set2 =  ConfigInfo::sMembers('online_needs_login');
+            $exists1 = ConfigInfo::Sismember('login','online_needs_login');
+            $exists2 = ConfigInfo::Sismember('consultProduct','online_needs_login');
             return $this->writeJson(
                 200,[ ] ,
                  [
-                     ConfigInfo::sMembers('online_needs_login'),
-                     ConfigInfo::sAdd('consultProduct','online_needs_login'),
-                     ConfigInfo::Sismember('consultProduct','online_needs_login'),
-                     ConfigInfo::Sismember('login','online_needs_login'),
-                     ConfigInfo::sMembers('online_needs_login'),
+                     $set1,
+                     $sdd1,
+                     $set2,
+                     $exists1,
+                     $exists2
                  ],
                 '成功',
                 true,

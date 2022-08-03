@@ -133,7 +133,7 @@ class ConfigInfo extends ModelBase
 
         $redis = Redis::defer('redis');
         $redis->select(self::$redis_db_num);
-        return $redis->sAdd($key,$list);
+        return $redis->sAdd($list,$key);
     }
 
     static function  sRem($key,$list)
