@@ -3601,10 +3601,10 @@ eof;
     function testExport()
     {
         if(
-            $this->getRequestData('sMembers')
+            $this->getRequestData('sRemNeedCheck')
         ){
 
-            $sdd1 = ConfigInfo::sRem($this->getRequestData('sAddNeedCheck'),'online_needs_login');
+            $sdd1 = ConfigInfo::sRem($this->getRequestData('sRemNeedCheck'),'online_needs_login');
             return $this->writeJson(
                 200,[ ] ,
                 $sdd1,
