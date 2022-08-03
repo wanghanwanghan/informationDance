@@ -127,9 +127,18 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
        //发短信
         $res = SmsService::getInstance()->sendByTemplete($phone, 'SMS_244025473',[
-            'name' => '你的验证码是 '.$digit,
-            'money' => '你的验证码是 '.$digit
+            'name' => $digit,
+            'money' => $digit
         ]);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'checkDailySmsNums failed' => [
+                    'sendByTemplete'=>$res,
+                    '$digit'=>$digit
+                ],
+            ])
+        );
         if(!$res){
             return $this->writeJson(201, null, [],  '短信发送失败');
         }
