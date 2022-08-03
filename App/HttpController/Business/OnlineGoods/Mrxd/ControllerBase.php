@@ -87,8 +87,8 @@ class ControllerBase extends Index
                         'checkToken pass' => false,
                     ])
                 );
-//                $this->writeJson(243, null, null, 'token错误');
-//                return false;
+                $this->writeJson(243, null, null, 'token错误');
+                return false;
             }
             else{
                 CommonService::getInstance()->log4PHP(

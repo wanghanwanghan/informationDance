@@ -75,7 +75,7 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
         );
     }
 
-    //咨询
+    //咨询 
     function consultProduct(): bool
     {
         $requestData =  $this->getRequestData();
@@ -108,6 +108,7 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
                 ),
                 'product_id' => $requestData['product_id']?:'',
                 'name' => $requestData['name']?:'',
+                'user_id' => $this->loginUserinfo['id'],
                 'status' =>  1,
             ]
         );
@@ -177,7 +178,7 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
 //        ){
 //            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
 //        }
-         $res =  MailReceipt::findById( 1 );
+        $res =  MailReceipt::findById( $this->loginUserinfo['id']);
         $res = $res->toArray();
         return $this->writeJson(
             200,[ ] ,
@@ -188,5 +189,4 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
             []
         );
     }
-
 }
