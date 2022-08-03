@@ -17,6 +17,7 @@ class Router extends AbstractRouter
             $this->UserRouterV1($routeCollector);//用户相关
             $this->XinDongRouterV1($routeCollector);//信动
             $this->BaoXianRouterV1($routeCollector);//信动
+            $this->OnlineUserRouterV1($routeCollector);//
             $this->DaiKuanRouterV1($routeCollector);//信动
             $this->LongDunRouterV1($routeCollector);//龙盾
             $this->TaoShuRouterV1($routeCollector);//淘数
@@ -259,6 +260,18 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/consultProduct', $prefix . 'consultProduct');//
             $routeCollector->addRoute(['GET', 'POST'], '/uploadeFile', $prefix . 'uploadeFile');// uploadeFile
             $routeCollector->addRoute(['GET', 'POST'], '/consultResult', $prefix . 'consultResult');// uploadeFile
+        });
+
+        return true;
+    }
+
+    private function OnlineUserRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/OnlineGoods/Mrxd/UserController/';
+
+        $routeCollector->addGroup('/online_goods', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/sendSms', $prefix . 'sendSms');// getProducts
+
         });
 
         return true;
