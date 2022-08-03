@@ -5,6 +5,7 @@ namespace App\HttpController\Business\OnlineGoods\Mrxd;
 use App\HttpController\Index;
 use App\HttpController\Models\AdminNew\AdminNewUser;
 use App\HttpController\Models\AdminNew\ConfigInfo;
+use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\User\UserService;
 use wanghanwanghan\someUtils\control;
@@ -80,10 +81,22 @@ class ControllerBase extends Index
                     ],
                 ])
             );
-//            if (!$this->checkToken() ){
+            if (!$this->checkToken() ){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        'checkToken pass' => false,
+                    ])
+                );
 //                $this->writeJson(243, null, null, 'token错误');
 //                return false;
-//            }
+            }
+            else{
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        'checkToken pass' => true,
+                    ])
+                );
+            }
         }
         return parent::onRequest($action);
     }
@@ -101,13 +114,11 @@ class ControllerBase extends Index
             return false;
         } 
         try {
-            $res = AdminNewUser::create()
-                    ->where('token', $requestToken)
-                    ->field(['id', 'user_name', 'phone','email','money','status','created_at','updated_at'])
-                    ->get();
+            $res = OnlineGoodsUser::findByToken($requestToken);
+            $res && $res = $res->toArray();
         } catch (\Throwable $e) {
             // $this->writeErr($e, __FUNCTION__);
-            CommonService::getInstance()->log4PHP(' invalid token  '.$requestToken);
+            CommonService::getInstance()->log4PHP('mysql has not find token: '.$requestToken);
             return false;
         }
 
@@ -115,10 +126,10 @@ class ControllerBase extends Index
             return false;
         } 
         $this->setLoginUserInfo($res);
+
         $tokenInfo = UserService::getInstance()->decodeAccessToken($requestToken);
 
         if (!is_array($tokenInfo) || count($tokenInfo) != 3){
-
             return false;
         } 
 
@@ -130,14 +141,13 @@ class ControllerBase extends Index
         }
 
         $tokenPhone = current($tokenInfo);
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                'check token 2  ',
-//                '$reqPhone' => $reqPhone,
-//                '$tokenPhone' => $tokenPhone,
-//                '$body'=>$body['phone'],
-//            ])
-//        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '$tokenInfo' => $tokenInfo,
+                '$tokenPhone' => $tokenPhone,
+                '$reqPhone' => $reqPhone,
+            ])
+        );
         if (strlen($tokenPhone) != 11 || strlen($reqPhone) != 11){
 //            CommonService::getInstance()->log4PHP(
 //                json_encode(

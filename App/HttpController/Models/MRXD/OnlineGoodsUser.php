@@ -207,6 +207,13 @@ class OnlineGoodsUser extends ModelBase
         return $res;
     }
 
+    public static function findByToken($token){
+        $res =  OnlineGoodsUser::create()
+            ->where('token',$token)
+            ->get();
+        return $res;
+    }
+
     public static function findByPhone($phone){
         $res =  OnlineGoodsUser::create()
             ->where('phone',$phone)
