@@ -29,16 +29,45 @@ class OnlineGoodsUser extends ModelBase
         //每日发送次数限制
         $daily_limit_key = 'daily_online_sendSms_'.$phone;
         $nums =  ConfigInfo::getRedisBykey($daily_limit_key);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'addDailySmsNums ' => [
+                    '$nums'=>$nums,
+                    '$daily_limit_key' => $daily_limit_key
+                ],
+            ])
+        );
         if($nums <= 0 ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'addDailySmsNums ' => [
+                        'setRedisBykey = '=>1,
+                    ],
+                ])
+            );
             return ConfigInfo::setRedisBykey($daily_limit_key,intval($nums) + 1,120);
         }
         else{
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'addDailySmsNums ' => [
+                        'setRedisBykey +='=>1,
+                    ],
+                ])
+            );
             return ConfigInfo::incrRedisBykey($daily_limit_key);
         }
     }
 
     static function  setRandomDigit($phone,$digit){
-        return ConfigInfo::setRedisBykey($phone,$digit,120);
+        return ConfigInfo::setRedisBykey('online_sms_code_'.$phone,$digit,120);
+    }
+
+    static function  getRandomDigit($phone){
+        return ConfigInfo::getRedisBykey('online_sms_code_'.$phone);
     }
 
     static  function  createRandomDigit(){
@@ -49,6 +78,17 @@ class OnlineGoodsUser extends ModelBase
         //每日发送次数限制
         $daily_limit_key = 'daily_online_sendSms_'.$phone;
         $nums =  ConfigInfo::getRedisBykey($daily_limit_key);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'checkDailySmsNums ' => [
+                    'setRedisBykey '=>  [
+                        '$nums'=>$nums,
+                        '$daily_limit_key'=>$daily_limit_key
+                    ],
+                ],
+            ])
+        );
         if($nums >= 20 ){
             return  CommonService::getInstance()->log4PHP(
                 json_encode([

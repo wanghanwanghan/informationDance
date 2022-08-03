@@ -128,22 +128,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
        //发短信
         $res = (new AliSms())->sendByTempleteV2($phone, 'SMS_244025473',[
-            'name' => $digit,
-            'money' => $digit
-        ]);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'sendByTemplete' => [
-                    'sendByTemplete'=>$res,
-                    '$digit'=>$digit
-                ],
-            ])
-        );
-
-        $res = SmsService::getInstance()->sendByTemplete($phone, 'SMS_244025473',[
-            'name' => $digit,
-            'money' => $digit
+            'name' => '你的验证码是'.$digit,
+            'money' => '你的验证码是'.$digit,
         ]);
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -160,6 +146,14 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
         //设置验证码
         OnlineGoodsUser::setRandomDigit($phone,$digit);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'setRandomDigit' => [
+                    'getRandomDigit'=>OnlineGoodsUser::getRandomDigit($phone), 
+                ],
+            ])
+        );
 
         return $this->writeJson(
             200,[ ] ,$res,
