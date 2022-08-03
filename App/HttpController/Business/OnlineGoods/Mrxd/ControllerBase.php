@@ -18,14 +18,20 @@ class ControllerBase extends Index
         $this->actionName = $action;
     }
     function needsCheckToken(){
-         if(
-             in_array(
-                $this->actionName,$this->getNoNeedCheckMethods()
-             )
-         ){
-            return false;
-         }
-         return true ;
+
+        $set = ConfigInfo::sMembers('online_needs_login');
+        if(empty($set)){
+            //redis 异常了 先锁住
+            return true;
+        }
+        if(
+            in_array(
+                $this->actionName,$set
+            )
+        ){
+            return true;
+        }
+        return false;
     }
     function getNoNeedCheckMethods(){
         // 需要加层缓存
@@ -58,6 +64,15 @@ class ControllerBase extends Index
     {
         $this->setActionName($action);
         if($this->needsCheckToken()){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'needsCheckToken ' => [
+                        'yes',
+                        '$action'=>$action
+                    ],
+                ])
+            );
 //            if (!$this->checkToken() ){
 //                $this->writeJson(243, null, null, 'token错误');
 //                return false;

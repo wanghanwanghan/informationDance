@@ -128,9 +128,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $digit = OnlineGoodsUser::createRandomDigit();
 
        //发短信
-        $res = (new AliSms())->sendByTempleteV2($phone, 'SMS_244025473',[
-            'name' => $digit,
-            'money' => $digit,
+        $res = (new AliSms())->sendByTempleteV2($phone, 'SMS_218160347',[
+            'code' => $digit, 
         ]);
         CommonService::getInstance()->log4PHP(
             json_encode([
