@@ -385,12 +385,10 @@ class AdminUserFinanceData extends ModelBase
         $status = self::getConfirmStatus($financeConifgArr,$NewFinanceData);
 
         //如果是有需要确认的 包年内的都需要确认一边 无论数据全不全
+
         $configedAnnuallyYears = json_decode($financeConifgArr['annually_years'],true);
         if(
-            $status  == self::$statusNeedsConfirm  &&
-            !empty($configedAnnuallyYears) &&
-            count($configedAnnuallyYears) >1 &&
-            in_array($financeData['year'],$configedAnnuallyYears)
+            self::getNoNeedsConfirm($financeData,$financeConifgArr)
         ){
 //            OperatorLog::addRecord(
 //                [
@@ -446,21 +444,11 @@ class AdminUserFinanceData extends ModelBase
         if(empty($arr)) return '';
         return $arr['str'];
     }
-    //将包年内不需要确认的  变更为需要确认
-    static  function  changeNoNeedsConfirmToNeedsConfirm($financeData,$financeConifgArr){
+
+    static  function  getNoNeedsConfirm($financeData,$financeConifgArr){
         $configedAnnuallyYears = json_decode($financeConifgArr['annually_years'],true);
-        //$configedAnnuallyYears = $financeConifgArr['annually_years'];
         $needSetYears = "(".join(',',$configedAnnuallyYears).")";
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'changeNoNeedsConfirmToNeedsConfirm' =>[
-                    $financeConifgArr['annually_years'],
-                    json_decode($financeConifgArr['annually_years'],true),
-                ],
-                '$needSetYears'=>$needSetYears
-            ])
-        );
+
         //对应的上传数据
         $AdminUserFinanceUploadDataRecordRes = AdminUserFinanceUploadDataRecord::findByUserFinanceDataId(
             $financeData['id']
@@ -490,7 +478,13 @@ class AdminUserFinanceData extends ModelBase
                 'changeNoNeedsConfirmToNeedsConfirm $sql' =>$sql
             ])
         );
-        $allFinanceDatasNew =self::findBySql($sql);
+        return self::findBySql($sql);
+
+    }
+
+    //将包年内不需要确认的  变更为需要确认
+    static  function  changeNoNeedsConfirmToNeedsConfirm($financeData,$financeConifgArr){
+        $allFinanceDatasNew = self::getNoNeedsConfirm($financeData,$financeConifgArr);
 
         foreach ($allFinanceDatasNew as $allFinanceDatasNewSub){
             self::updateStatus($allFinanceDatasNewSub['id'],self::$statusNeedsConfirm);
