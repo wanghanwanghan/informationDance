@@ -193,7 +193,9 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         );
         OnlineGoodsUser::updateById(
             $id,
-            $newToken
+            [
+                'token'=>$newToken
+            ]
         );
         return $this->writeJson(
             200,[ ] ,$newToken,
