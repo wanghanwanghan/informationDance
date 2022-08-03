@@ -89,7 +89,7 @@ class AliSms
         return true;
     }
 
-    function sendByTempleteV2($phone, $template,$data): bool
+    function sendByTempleteV2($phone, $template,$data)
     {
         $easySms = $this->createObj();
         CommonService::getInstance()->log4PHP(
