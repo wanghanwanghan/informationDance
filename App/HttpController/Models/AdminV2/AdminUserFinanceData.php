@@ -392,36 +392,36 @@ class AdminUserFinanceData extends ModelBase
             count($configedAnnuallyYears) >1 &&
             in_array($financeData['year'],$configedAnnuallyYears)
         ){
-            OperatorLog::addRecord(
-                [
-                    'user_id' => 0,
-                    'msg' => @json_encode(
-                        [
-                            '财务数据状态$status'=>$status,
-                            '包年$configedAnnuallyYears'=>$configedAnnuallyYears,
-                            '当前年'=>$financeData['year']
-                        ]
-                    ),
-                    'details' => json_encode(XinDongService::trace()),
-                    'type_cname' => '包年内有需要确认的-需要全部确认一遍-'.$financeData['entName'],
-                ]
-            );
+//            OperatorLog::addRecord(
+//                [
+//                    'user_id' => 0,
+//                    'msg' => @json_encode(
+//                        [
+//                            '财务数据状态$status'=>$status,
+//                            '包年$configedAnnuallyYears'=>$configedAnnuallyYears,
+//                            '当前年'=>$financeData['year']
+//                        ]
+//                    ),
+//                    'details' => json_encode(XinDongService::trace()),
+//                    'type_cname' => '包年内有需要确认的-需要全部确认一遍-'.$financeData['entName'],
+//                ]
+//            );
             self::changeNoNeedsConfirmToNeedsConfirm($financeData,$financeConifgArr);
         }else{
-            OperatorLog::addRecord(
-                [
-                    'user_id' => 0,
-                    'msg' => @json_encode(
-                        [
-                            '财务数据状态$status'=>$status,
-                            '包年$configedAnnuallyYears'=>$configedAnnuallyYears,
-                            '当前年'=>$financeData['year']
-                        ]
-                    ),
-                    'details' => json_encode(XinDongService::trace()),
-                    'type_cname' => '包年内有需要确认的-不需要全部确认一遍-'.$financeData['entName'],
-                ]
-            );
+//            OperatorLog::addRecord(
+//                [
+//                    'user_id' => 0,
+//                    'msg' => @json_encode(
+//                        [
+//                            '财务数据状态$status'=>$status,
+//                            '包年$configedAnnuallyYears'=>$configedAnnuallyYears,
+//                            '当前年'=>$financeData['year']
+//                        ]
+//                    ),
+//                    'details' => json_encode(XinDongService::trace()),
+//                    'type_cname' => '包年内有需要确认的-不需要全部确认一遍-'.$financeData['entName'],
+//                ]
+//            );
         }
         //之前没确认过的
         if(
@@ -476,7 +476,7 @@ class AdminUserFinanceData extends ModelBase
                         id in $needSetIds  AND
                         entName = '".$financeData['entName']."' AND 
                         year in $needSetYears AND 
-                        needs_confirm = 0 AND 
+                        (needs_confirm IS NULL OR needs_confirm =0 ) AND 
                         status = ".self::$statusConfirmedYes."   
                     ";
         CommonService::getInstance()->log4PHP(
