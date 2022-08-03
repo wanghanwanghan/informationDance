@@ -77,14 +77,14 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
         return $res;
     }
-    public static function pullFinanceDataById($upload_record_id){
+    public static function pullFinanceDataById($upload_record_id,$changeStatus){
         $uploadRes = AdminUserFinanceUploadRecord::findById($upload_record_id)->toArray();
         $uploadDatas = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
             $uploadRes['user_id'],$uploadRes['id']
         );
         foreach ($uploadDatas as $uploadData){
             $pullFinanceDataRes = AdminUserFinanceData::pullFinanceData(
-                $uploadData['user_finance_data_id'],AdminUserFinanceUploadRecord::getFinanceConfigArray($upload_record_id)
+                $uploadData['user_finance_data_id'],AdminUserFinanceUploadRecord::getFinanceConfigArray($upload_record_id),$changeStatus
             );
             if(!$pullFinanceDataRes){
                 return  CommonService::getInstance()->log4PHP(

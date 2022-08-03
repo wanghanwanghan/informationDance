@@ -294,7 +294,7 @@ class AdminUserFinanceData extends ModelBase
 
     //我们拉取运营商的时间间隔  
     //客户导出的时间间隔  
-    public static function pullFinanceData($id,$financeConifgArr){
+    public static function pullFinanceData($id,$financeConifgArr,$changeStatus){
         $financeData =  AdminUserFinanceData::findById($id)->toArray();
 
         if($financeData['year'] > date('Y')){
@@ -381,59 +381,24 @@ class AdminUserFinanceData extends ModelBase
         //把$NewFinanceDataId更新到表
         self::updateNewFinanceDataId($id,$NewFinanceDataId);
 
-        //设置是否需要确认
-        $status = self::getConfirmStatus($financeConifgArr,$NewFinanceData);
 
-        //如果是有需要确认的 包年内的都需要确认一边 无论数据全不全
-
-        $configedAnnuallyYears = json_decode($financeConifgArr['annually_years'],true);
-        if(
-            self::getNoNeedsConfirm($financeData,$financeConifgArr)
-        ){
-//            OperatorLog::addRecord(
-//                [
-//                    'user_id' => 0,
-//                    'msg' => @json_encode(
-//                        [
-//                            '财务数据状态$status'=>$status,
-//                            '包年$configedAnnuallyYears'=>$configedAnnuallyYears,
-//                            '当前年'=>$financeData['year']
-//                        ]
-//                    ),
-//                    'details' => json_encode(XinDongService::trace()),
-//                    'type_cname' => '包年内有需要确认的-需要全部确认一遍-'.$financeData['entName'],
-//                ]
-//            );
-            self::changeNoNeedsConfirmToNeedsConfirm($financeData,$financeConifgArr);
-        }else{
-//            OperatorLog::addRecord(
-//                [
-//                    'user_id' => 0,
-//                    'msg' => @json_encode(
-//                        [
-//                            '财务数据状态$status'=>$status,
-//                            '包年$configedAnnuallyYears'=>$configedAnnuallyYears,
-//                            '当前年'=>$financeData['year']
-//                        ]
-//                    ),
-//                    'details' => json_encode(XinDongService::trace()),
-//                    'type_cname' => '包年内有需要确认的-不需要全部确认一遍-'.$financeData['entName'],
-//                ]
-//            );
-        }
-        //之前没确认过的
-        if(
-            !in_array( $financeData['status'],[
-                self::$statusConfirmedYes,
-                self::$statusConfirmedNo
-            ])
-        ){
+        //需要变更状态
+        if($changeStatus){
+            //是否需要确认
+            $status = self::getConfirmStatus($financeConifgArr,$NewFinanceData);
             self::updateStatus($id,$status);
             if(
                 $status == self::$statusNeedsConfirm
             ){
                 self::updateNeedsConfirm($id,1);
             }
+
+            //如果是有需要确认的 包年内的都需要确认一遍 无论数据全不全
+            if(
+                self::getNoNeedsConfirm($financeData,$financeConifgArr)
+            ){
+                self::changeNoNeedsConfirmToNeedsConfirm($financeData,$financeConifgArr);
+            } 
         }
 
         return true;
@@ -468,9 +433,7 @@ class AdminUserFinanceData extends ModelBase
         $sql = " WHERE  
                         id in $needSetIds  AND
                         entName = '".self::unicodeDecode($financeData['entName'])."' AND 
-                        year in $needSetYears AND 
-                        (needs_confirm IS NULL OR needs_confirm =0 ) AND 
-                        status = ".self::$statusConfirmedYes."   
+                        year in $needSetYears   
                     ";
         CommonService::getInstance()->log4PHP(
             json_encode([

@@ -286,8 +286,9 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
             );
 
             //需要确认的 先去拉取财务数据
+            $ChangeStatus = 1;
             $pullFinanceDataByIdRes = AdminUserFinanceUploadRecord::pullFinanceDataById(
-                $uploadRes['id']
+                $uploadRes['id'],$ChangeStatus
             );
             if(!$pullFinanceDataByIdRes){
                 //把优先级调低
@@ -491,9 +492,18 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
 
             $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
 
+            //不需要确认的
+            if(
+                !AdminUserFinanceConfig::checkIfNeedsConfirm($uploadRes['user_id'])
+            ){
+                $changeStatus = 1 ;
+            }
+            else{
+                $changeStatus = 0 ;
+            }
             //拉取财务数据
             $pullFinanceDataByIdRes = AdminUserFinanceUploadRecord::pullFinanceDataById(
-                $uploadRes['id']
+                $uploadRes['id'],$changeStatus
             );
 
             AdminUserFinanceExportDataQueue::updateStatusById($queueData['id'],AdminUserFinanceExportDataQueue::$state_data_all_set);
