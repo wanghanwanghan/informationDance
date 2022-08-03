@@ -3601,6 +3601,47 @@ eof;
     function testExport()
     {
         if(
+            $this->getRequestData('sMembers')
+        ){
+
+            $sdd1 = ConfigInfo::sRem($this->getRequestData('sAddNeedCheck'),'online_needs_login');
+            return $this->writeJson(
+                200,[ ] ,
+                $sdd1,
+                '成功',
+                true,
+                []
+            );
+        }
+
+        if(
+            $this->getRequestData('sMembers')
+        ){
+
+            $sdd1 = ConfigInfo::sMembers('online_needs_login');
+            return $this->writeJson(
+                200,[ ] ,
+                $sdd1,
+                '成功',
+                true,
+                []
+            );
+        }
+        if(
+            $this->getRequestData('sAddNeedCheck')
+        ){
+
+            $sdd1 = ConfigInfo::sAdd($this->getRequestData('sAddNeedCheck'),'online_needs_login');
+            return $this->writeJson(
+                200,[ ] ,
+                $sdd1,
+                '成功',
+                true,
+                []
+            );
+        }
+
+        if(
             $this->getRequestData('addRedisSet')
         ){
 
