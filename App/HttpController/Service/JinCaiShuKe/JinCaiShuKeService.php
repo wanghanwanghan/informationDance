@@ -18,6 +18,47 @@ class JinCaiShuKeService extends ServiceBase
     public $jtnsrsbh;
     public $appKey;
     public $appSecret;
+    public $oauthToken;
+    public $wupan_url;
+
+    public $province = [
+        '北京' => 'beijing',
+        '天津' => 'tianjin',
+        '河北' => 'hebei',
+        '山西' => 'shanxi',
+        '内蒙古' => 'neimenggu',
+        '辽宁' => 'liaoning',
+        '大连' => 'dalian',
+        '吉林' => 'jilin',
+        '黑龙江' => 'heilongjiang',
+        '上海' => 'shanghai',
+        '江苏' => 'jiangsu',
+        '浙江' => 'zhejiang',
+        '宁波' => 'ningbo',
+        '安徽' => 'anhui',
+        '江西' => 'jiangxi',
+        '福建' => 'fujian',
+        '厦门' => 'xiamen',
+        '山东' => 'shandong',
+        '青岛' => 'qingdao',
+        '河南' => 'henan',
+        '湖北' => 'hubei',
+        '湖南' => 'hunan',
+        '广东' => 'guangdong',
+        '深圳' => 'shenzhen',
+        '广西' => 'guangxi',
+        '海南' => 'hainan',
+        '重庆' => 'chongqing',
+        '四川' => 'sichuan',
+        '贵州' => 'guizhou',
+        '云南' => 'yunnan',
+        '西藏' => 'xizang',
+        '陕西' => 'shaanxi',
+        '甘肃' => 'gansu',
+        '青海' => 'qinghai',
+        '宁夏' => 'ningxia',
+        '新疆' => 'xinjiang',
+    ];
 
     function __construct()
     {
@@ -28,18 +69,29 @@ class JinCaiShuKeService extends ServiceBase
         $this->appKey = '1f58a6db7805';
         $this->appSecret = '3ab58912f92493131aa2';
 
+        $this->wupan_url = 'http://cra.test.jcsk100.com/';
+        $this->oauthToken = 'akP/bi8gjDT94hUe/ORJsdwkk+phnrz/nzkEifyfjA28BaAEUPQAHDzZ0s6/kE23';
+
         return true;
     }
 
     //
-    private function checkResp($res): array
+    private function checkResp($res, string $type = ''): array
     {
-        $res['code'] !== '0000' ?: $res['code'] = 200;
-        $arr['content'] = jsonDecode(base64_decode($res['content']));
-        $arr['uuid'] = $res['uuid'];
-        $res['Result'] = $arr;
-
-        return $this->createReturn($res['code'], $res['Paging'] ?? null, $res['Result'], $res['msg'] ?? null);
+        if ($type === 'wupan') {
+            return [
+                $res['code'],
+                null,
+                jsonDecode(base64_decode($res['data'])),
+                $res['msg']
+            ];
+        } else {
+            $res['code'] !== '0000' ?: $res['code'] = 200;
+            $arr['content'] = jsonDecode(base64_decode($res['content']));
+            $arr['uuid'] = $res['uuid'];
+            $res['Result'] = $arr;
+            return $this->createReturn($res['code'], $res['Paging'] ?? null, $res['Result'], $res['msg'] ?? null);
+        }
     }
 
     //
@@ -178,7 +230,7 @@ class JinCaiShuKeService extends ServiceBase
         return $this->createReturn(200, '', null);
     }
 
-    //发票归集
+    //api 发票归集
     function S000519(string $nsrsbh, string $start, string $stop): array
     {
         $content = [
@@ -206,15 +258,15 @@ class JinCaiShuKeService extends ServiceBase
         OperatorLog::addRecord(
             [
                 'user_id' => 0,
-                'msg' => "url:".$this->url." 参数:".@json_encode($post_data)." 返回：".@json_encode($res),
-                'details' =>json_encode( XinDongService::trace()),
+                'msg' => "url:" . $this->url . " 参数:" . @json_encode($post_data) . " 返回：" . @json_encode($res),
+                'details' => json_encode(XinDongService::trace()),
                 'type_cname' => '发票归集_S000519',
             ]
         );
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
 
-    //发票提取
+    //api 发票提取
     function S000523(string $nsrsbh, string $rwh, $page, $pageSize): array
     {
         $content = [
@@ -242,15 +294,15 @@ class JinCaiShuKeService extends ServiceBase
         OperatorLog::addRecord(
             [
                 'user_id' => 0,
-                'msg' => "url:".$this->url." 参数:".@json_encode($post_data)." 返回：".@json_encode($res),
-                'details' =>json_encode( XinDongService::trace()),
+                'msg' => "url:" . $this->url . " 参数:" . @json_encode($post_data) . " 返回：" . @json_encode($res),
+                'details' => json_encode(XinDongService::trace()),
                 'type_cname' => '发票提取_S000523',
             ]
         );
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
 
-    //发票认证
+    //api 发票认证
     function S000514(string $nsrsbh, string $Period, string $BillType, string $DeductibleMode, array $InvoiceList): array
     {
         $content = [
@@ -277,6 +329,93 @@ class JinCaiShuKeService extends ServiceBase
             ->send($this->url, $post_data, [], ['enableSSL' => true]);
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
+    }
+
+    //无盘 添加任务接口（通用提交采集任务报文）
+    function addTask(string $nsrsbh, string $province, array $ywBody, string $taskCode = 'A002'): array
+    {
+        $url = 'task/addTask';
+
+        foreach ($this->province as $work => $py) {
+            if (is_numeric(mb_strpos($province, $work))) {
+                $province = $py;
+                break;
+            }
+        }
+
+        // {
+        //	"cxlx": "",//查询类型 0销项， 1 进项
+        //	"fpdm": "",//发票代码
+        //	"fplx": "",//发票类型，详见附件发票类型说明
+        //	"kprqq": "",//开票日期起
+        //	"kprqz": "",//开票日期止
+        //	"nsrsbh": ""//纳税人识别号
+        // }
+
+        $post_data = [
+            'nsrsbh' => trim($nsrsbh),
+            'province' => trim($province),
+            'taskCode' => trim($taskCode),
+            'ywBody' => $ywBody,
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($this->wupan_url . $url, $post_data, [], [], 'postjson');
+
+        return $this->checkResp($res, 'wupan');
+    }
+
+    //无盘 查询状态接口
+    function obtainTaskStatus(string $traceNo): array
+    {
+        $url = 'api/obtainTaskStatus';
+
+        $post_data = [
+            'traceNo' => trim($traceNo)
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($this->wupan_url . $url, $post_data, [], [], 'postjson');
+
+        return $this->checkResp($res, 'wupan');
+    }
+
+    //无盘 取数 主票
+    function obtainFpInfo(string $traceNo): array
+    {
+        $url = 'api/obtainFpInfo';
+
+        $post_data = [
+            'traceNo' => trim($traceNo)
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($this->wupan_url . $url, $post_data, [], [], 'postjson');
+
+        return $this->checkResp($res, 'wupan');
+    }
+
+    //无盘 取数 详情
+    function obtainFpDetailInfo(string $traceNo): array
+    {
+        $url = 'api/obtainFpDetailInfo';
+
+        $post_data = [
+            'traceNo' => trim($traceNo)
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($this->wupan_url . $url, $post_data, [], [], 'postjson');
+
+        return $this->checkResp($res, 'wupan');
     }
 
 }
