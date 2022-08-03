@@ -127,7 +127,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $digit = OnlineGoodsUser::createRandomDigit();
 
        //发短信
-        $res = (new AliSms())->sendByTempleteV2($phone, 'SMS_244025473',[
+        $res = (new AliSms())->sendByTempleteV3($phone, 'SMS_244025473',[
             'name' => '你的验证码是'.$digit,
             'money' => '你的验证码是'.$digit,
         ]);
@@ -150,7 +150,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 'setRandomDigit' => [
-                    'getRandomDigit'=>OnlineGoodsUser::getRandomDigit($phone), 
+                    'getRandomDigit'=>OnlineGoodsUser::getRandomDigit($phone),
                 ],
             ])
         );

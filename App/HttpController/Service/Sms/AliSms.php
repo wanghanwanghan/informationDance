@@ -115,6 +115,28 @@ class AliSms
         return $res;
     }
 
+    function sendByTempleteV3($phone, $template,$data)
+    {
+        $easySms = $this->createObj();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                'sendByTemplete start'
+            ])
+        );
+        $res = $easySms->send($phone, [
+            'template' =>  $template,
+            'data' => $data,
+        ]);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                'sendByTemplete $res' => $res
+            ])
+        );
+        return $res;
+    }
+
     function reg($phone, $code): bool
     {
         $easySms = $this->createObj();
