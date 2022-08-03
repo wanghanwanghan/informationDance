@@ -473,7 +473,7 @@ class AdminUserFinanceData extends ModelBase
         $needSetIds = "(".join(',',$allFinanceDataIds).")";
 
         $sql = " WHERE  
-                        id in ($needSetIds) AND
+                        id in $needSetIds  AND
                         entName = '".$financeData['entName']."' AND 
                         year in $needSetYears AND 
                         needs_confirm = 0 AND 
