@@ -11,6 +11,7 @@ use App\Crontab\CrontabList\RunDealFinanceCompanyDataNewV2;
 use App\Crontab\CrontabList\RunDealToolsFile;
 use App\Crontab\CrontabList\RunDealZhaoTouBiao;
 use App\Csp\Service\CspService;
+use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\AdminV2\AdminNewUser;
 use App\HttpController\Models\AdminV2\AdminUserFinanceData;
 use App\HttpController\Models\AdminV2\DataModelExample;
@@ -3599,6 +3600,24 @@ eof;
     }
     function testExport()
     {
+        if(
+            $this->getRequestData('addRedisSet')
+        ){
+            return $this->writeJson(
+                200,[ ] ,
+                 [
+                     ConfigInfo::sMembers('online_needs_login'),
+                     ConfigInfo::sAdd('consultProduct','online_needs_login'),
+                     ConfigInfo::Sismember('consultProduct','online_needs_login'),
+                     ConfigInfo::Sismember('login','online_needs_login'),
+                     ConfigInfo::sMembers('online_needs_login'),
+                 ],
+                '成功',
+                true,
+                []
+            );
+        }
+
         if(
             $this->getRequestData('collectInvoice4')
         ){

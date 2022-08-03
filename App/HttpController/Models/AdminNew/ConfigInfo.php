@@ -128,6 +128,37 @@ class ConfigInfo extends ModelBase
         return $redis->set($key,$value,$ttl);
     }
 
+    static function  sAdd($key,$list)
+    {
+
+        $redis = Redis::defer('redis');
+        $redis->select(self::$redis_db_num);
+        return $redis->sAdd($key,$list);
+    }
+
+    static function  sRem($key,$list)
+    {
+
+        $redis = Redis::defer('redis');
+        $redis->select(self::$redis_db_num);
+        return $redis->sRem($list,$key);
+    }
+
+    static function  sMembers($list)
+    {
+
+        $redis = Redis::defer('redis');
+        $redis->select(self::$redis_db_num);
+        return $redis->sMembers($list);
+    }
+
+    static function  Sismember($key,$list)
+    {
+        $redis = Redis::defer('redis');
+        $redis->select(self::$redis_db_num);
+        return $redis->Sismember($list,$key);
+    }
+
     static function  incrRedisBykey($key): bool
     {
 

@@ -57,12 +57,12 @@ class ControllerBase extends Index
     function onRequest(?string $action): ?bool
     {
         $this->setActionName($action);
-//        if($this->needsCheckToken()){
+        if($this->needsCheckToken()){
 //            if (!$this->checkToken() ){
 //                $this->writeJson(243, null, null, 'token错误');
 //                return false;
 //            }
-//        }
+        }
         return parent::onRequest($action);
     }
 
