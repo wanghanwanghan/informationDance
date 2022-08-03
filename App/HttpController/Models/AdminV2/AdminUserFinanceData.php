@@ -479,28 +479,29 @@ class AdminUserFinanceData extends ModelBase
                         needs_confirm = 0 AND 
                         status = ".self::$statusConfirmedYes."   
                     ";
-        $allFinanceDatasNew =self::findBySql($sql);
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 'changeNoNeedsConfirmToNeedsConfirm $sql' =>$sql
             ])
         );
-        foreach ($allFinanceDatasNew as $allFinanceDatasNewSub){
-            self::updateStatus($allFinanceDatasNewSub['id'],self::$statusNeedsConfirm);
-            self::updateNeedsConfirm($allFinanceDatasNewSub['id'],1);
-            OperatorLog::addRecord(
-                [
-                    'user_id' => 0,
-                    'msg' => @json_encode([
-                        'year'=>$allFinanceDatasNewSub['year'],
-                        'finane_data_id'=>$allFinanceDatasNewSub['id']
-                    ]),
-                    'details' => json_encode(XinDongService::trace()),
-                    'type_cname' => '财务-包年内有需要确认的-全部设置为不需要-'.$financeData['entName'],
-                ]
-            );
-        }
+//        $allFinanceDatasNew =self::findBySql($sql);
+//
+//        foreach ($allFinanceDatasNew as $allFinanceDatasNewSub){
+//            self::updateStatus($allFinanceDatasNewSub['id'],self::$statusNeedsConfirm);
+//            self::updateNeedsConfirm($allFinanceDatasNewSub['id'],1);
+//            OperatorLog::addRecord(
+//                [
+//                    'user_id' => 0,
+//                    'msg' => @json_encode([
+//                        'year'=>$allFinanceDatasNewSub['year'],
+//                        'finane_data_id'=>$allFinanceDatasNewSub['id']
+//                    ]),
+//                    'details' => json_encode(XinDongService::trace()),
+//                    'type_cname' => '财务-包年内有需要确认的-全部设置为不需要-'.$financeData['entName'],
+//                ]
+//            );
+//        }
     }
 
     public static function pullFinanceDataV2($id,$financeConifgArr){
