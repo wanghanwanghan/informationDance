@@ -63,7 +63,7 @@ class OnlineGoodsUser extends ModelBase
     }
 
     static function  setRandomDigit($phone,$digit){
-        return ConfigInfo::setRedisBykey('online_sms_code_'.$phone,$digit,300);
+        return ConfigInfo::setRedisBykey('online_sms_code_'.$phone,$digit,600);
     }
 
     static function  getRandomDigit($phone){
