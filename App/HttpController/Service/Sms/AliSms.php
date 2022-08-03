@@ -98,16 +98,20 @@ class AliSms
                 'sendByTemplete start'
             ])
         );
-        $res = $easySms->send($phone, [
-            'template' =>  $template,
-            'data' => $data,
-        ]);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ ,
-                'sendByTemplete $res' => $res
-            ])
-        );
+        $res = TaskService::getInstance()->create(function () use ($easySms, $phone, $template,$data) {
+            $res = $easySms->send($phone, [
+                'template' =>  $template,
+                'data' => $data,
+            ]);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ ,
+                    'sendByTemplete $res' => $res
+                ])
+            );
+            return $res;
+        });
+
         return $res;
     }
 
