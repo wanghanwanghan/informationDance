@@ -69,7 +69,7 @@ class AliSms
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ ,
-                'sendByTemplete start' 
+                'sendByTemplete start'
             ])
         );
         $res = TaskService::getInstance()->create(function () use ($easySms, $phone, $template,$data) {
@@ -87,6 +87,28 @@ class AliSms
         });
 
         return true;
+    }
+
+    function sendByTempleteV2($phone, $template,$data): bool
+    {
+        $easySms = $this->createObj();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                'sendByTemplete start'
+            ])
+        );
+        $res = $easySms->send($phone, [
+            'template' =>  $template,
+            'data' => $data,
+        ]);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                'sendByTemplete $res' => $res
+            ])
+        );
+        return $res;
     }
 
     function reg($phone, $code): bool
