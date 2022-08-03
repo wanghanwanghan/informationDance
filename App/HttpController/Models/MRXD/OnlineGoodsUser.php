@@ -122,6 +122,7 @@ class OnlineGoodsUser extends ModelBase
            $res =  OnlineGoodsUser::create()->data([
                 'source' => $requestData['source']?:self::$source_self_register,
                 'user_name' => $requestData['user_name']?:'',
+                'phone' => $requestData['phone']?:'',
                 'password' => $requestData['password']?:'',
                 'email' => $requestData['email']?:'',
                 'money' => $requestData['money']?:'',

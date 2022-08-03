@@ -129,7 +129,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
        //发短信
         $res = (new AliSms())->sendByTempleteV2($phone, 'SMS_218160347',[
-            'code' => $digit, 
+            'code' => $digit,
         ]);
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -179,6 +179,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             [
                 'source' => OnlineGoodsUser::$source_self_register,
                 'user_name' => $phone,
+                'phone' => $phone,
                 'password' => '',
                 'email' => '',
                 'money' => '',
