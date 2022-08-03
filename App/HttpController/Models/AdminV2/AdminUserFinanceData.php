@@ -440,7 +440,12 @@ class AdminUserFinanceData extends ModelBase
 
         return true;
     }
-
+    static  function unicodeDecode($unicode_str){
+        $json = '{"str":"'.$unicode_str.'"}';
+        $arr = json_decode($json,true);
+        if(empty($arr)) return '';
+        return $arr['str'];
+    }
     //将包年内不需要确认的  变更为需要确认
     static  function  changeNoNeedsConfirmToNeedsConfirm($financeData,$financeConifgArr){
         $configedAnnuallyYears = json_decode($financeConifgArr['annually_years'],true);
@@ -474,7 +479,7 @@ class AdminUserFinanceData extends ModelBase
 
         $sql = " WHERE  
                         id in $needSetIds  AND
-                        entName = '".$financeData['entName']."' AND 
+                        entName = '".self::unicodeDecode($financeData['entName'])."' AND 
                         year in $needSetYears AND 
                         (needs_confirm IS NULL OR needs_confirm =0 ) AND 
                         status = ".self::$statusConfirmedYes."   
