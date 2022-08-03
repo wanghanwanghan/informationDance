@@ -936,13 +936,13 @@ class FinanceController extends ControllerBase
                 [
                     'user_id' => $this->loginUserinfo['id'],
                     'msg' =>  json_encode([
-                        'entName'=>$records['entName'],
+                        //'entName'=>$records['entName'],
                         'year'=>$records['year'],
                         'old_status'=>$oldStatus,
                         'new_status'=>$requestData['status'],
                     ]),
                     'details' =>json_encode( XinDongService::trace()),
-                    'type_cname' => '财务确认',
+                    'type_cname' => '财务确认_'.$records['entName'],
                 ]
             );
 

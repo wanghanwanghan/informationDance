@@ -20,7 +20,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\XinDong\XinDongService;
 
-class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\ControllerBase
+class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\ControllerBase
 {
     function onRequest(?string $action): ?bool
     {
@@ -30,15 +30,6 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
     function afterAction(?string $actionName): void
     {
         parent::afterAction($actionName);
-    }
-
-    /*
-     * 筛选选型
-     * */
-    function getSearchOption(): bool
-    {
-        $searchOptionArr = (new XinDongService())->getSearchOption([]);
-        return $this->writeJson(200, null, $searchOptionArr, '成功', false, []);
     }
 
     function getProducts(): bool

@@ -653,7 +653,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                         'user_id' => $uploadData['user_id'],
                         'msg' =>  json_encode($logResArr),
                         'details' =>json_encode( XinDongService::trace()),
-                        'type_cname' => '财务-扣费详情',
+                        'type_cname' => '财务-扣费详情-'.$user_finance_data['entName'],
                     ]
                 );
                 // 如果之前没计费过
@@ -734,7 +734,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                         'user_id' => $uploadData['user_id'],
                         'msg' =>  json_encode($logResArr),
                         'details' =>json_encode( XinDongService::trace()),
-                        'type_cname' => '财务-扣费详情',
+                        'type_cname' => '财务-扣费详情-'.$user_finance_data['entName'],
                     ]
                 );
                 // 如果之前没计费过

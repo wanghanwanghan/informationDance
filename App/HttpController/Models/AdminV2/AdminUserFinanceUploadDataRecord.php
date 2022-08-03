@@ -150,6 +150,13 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         return $res;
     }
 
+    public static function findByConditionV2($whereArr){
+        $res =  AdminUserFinanceUploadDataRecord::create()
+            ->where($whereArr)
+            ->all();
+        return $res;
+    }
+
     public static function updateStatusById(
         $id,$status
     ){
