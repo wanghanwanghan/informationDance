@@ -99,9 +99,10 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
     function sendSms(): bool
     {
-        $phone = $this->request()->getRequestParam('phone') ;
-            
-        if (empty($phone) || (empty($vCode) && empty($password))){
+        $requestData =  $this->getRequestData();
+        $phone = $requestData['phone'] ;
+
+        if (empty($phone) ){
             return $this->writeJson(201, null, null, '手机号不能是空');
         }
 
