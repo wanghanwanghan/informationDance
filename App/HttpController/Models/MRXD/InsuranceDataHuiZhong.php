@@ -14,6 +14,13 @@ use App\HttpController\Service\LongXin\LongXinService;
 class InsuranceDataHuiZhong extends ModelBase
 {
     protected $tableName = 'insurance_data_hui_zhong';
+
+    static $status_init = 1;
+    static $status_init_cname =  '初始化';
+
+    static $status_sended = 5;
+    static $status_sended_cname =  '已发送';
+
     static  function  addRecordV2($info){
         if(
             self::findByName($info['user_id'],$info['ent_name'],$info['product_id'])
@@ -37,7 +44,7 @@ class InsuranceDataHuiZhong extends ModelBase
                 'public_account' => $requestData['public_account']?:'',
                 'legal_person_phone' => $requestData['legal_person_phone']?:'',
                'business_license' => $requestData['business_license']?:'',
-               'status' => $requestData['status']?:1,
+               'status' => $requestData['status']?:self::$status_init,
                'user_id' => $requestData['user_id'],
                'created_at' => time(),
                'updated_at' => time(),
