@@ -1006,6 +1006,13 @@ class FinanceController extends ControllerBase
             }
         }
         return $this->writeJson(200, [
+            'page' => 1,
+            'pageSize' =>50,
+            'total' => count($res),
+            'totalPage' => ceil(count($res)/50),
+        ], $res, '');
+
+        return $this->writeJson(200, [
             'page' => $page,
             'pageSize' =>$size,
             'total' => count($res),
