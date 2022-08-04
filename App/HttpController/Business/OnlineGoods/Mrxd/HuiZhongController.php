@@ -258,4 +258,50 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
             []
         );
     }
+    function consultResultList(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $page = $requestData['page']?:1;
+        $size= $requestData['size']?:10;
+//        $checkRes = DataModelExample::checkField(
+//            [
+//
+//                'product_id' => [
+//                    'not_empty' => 1,
+//                    'field_name' => 'product_id',
+//                    'err_msg' => '参数缺失',
+//                ],
+//                'insured' => [
+//                    'not_empty' => 1,
+//                    'field_name' => 'insured',
+//                    'err_msg' => '参数缺失',
+//                ]
+//            ],
+//            $requestData
+//        );
+//        if(
+//            !$checkRes['res']
+//        ){
+//            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+//        }
+        $res =  InsuranceDataHuiZhong::findByConditionV2(
+            [
+                ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
+            ],$page
+        );
+
+        return $this->writeJson(
+            200,[
+            'page' => $page,
+            'pageSize' => $size,
+            'total' => $res['total'],
+            'totalPage' => ceil($res['total']/$size) ,
+            ] ,
+            //CommonService::ClearHtml($res['body']),
+            $res['data'],
+            '成功',
+            true,
+            []
+        );
+    }
 }

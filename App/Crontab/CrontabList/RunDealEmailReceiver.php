@@ -208,7 +208,10 @@ class RunDealEmailReceiver extends AbstractCronTask
             );
 
             //解析保险数据id
-            $email['body'];
+            preg_match('/信动数据id:<<<(.*?)>>>/',$email['body'],$match);
+            MailReceipt::updateById($email['id'],[
+                'insurance_id'=>$match[1]
+            ]);
 
             //需要发短信了
             $res = SmsService::getInstance()->sendByTemplete(
@@ -217,14 +220,14 @@ class RunDealEmailReceiver extends AbstractCronTask
                 'money' => '多钱'
             ]);
 
-//            OperatorLog::addRecord(
-//                [
-//                    'user_id' => $userInfo['id'],
-//                    'msg' =>   '用户余额：'.$balance." 配置的余额下限：".$Config['sms_notice_value']." 上次发送时间：".$chargeConfigs['send_sms_notice_date']." ",
-//                    'details' =>json_encode( XinDongService::trace()),
-//                    'type_cname' => '新后台导出财务数据-发送短信提醒余额不足',
-//                ]
-//            );
+            OperatorLog::addRecord(
+                [
+                    'user_id' => $userInfo['id'],
+                    'msg' =>   '用户余额：'.$balance." 配置的余额下限：".$Config['sms_notice_value']." 上次发送时间：".$chargeConfigs['send_sms_notice_date']." ",
+                    'details' =>json_encode( XinDongService::trace()),
+                    'type_cname' => '新后台导出财务数据-发送短信提醒余额不足',
+                ]
+            );
             MailReceipt::updateById($email['id'],['status' => MailReceipt::$status_succeed]);
         }
     }
