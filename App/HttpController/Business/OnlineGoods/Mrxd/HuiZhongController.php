@@ -87,7 +87,7 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
                 'business_license_file' => [
                     'not_empty' => 1,
                     'field_name' => 'business_license_file',
-                    'err_msg' => '参数缺失（企业）',
+                    'err_msg' => '参数缺失（营业执照）',
                 ],
             ],
             $requestData

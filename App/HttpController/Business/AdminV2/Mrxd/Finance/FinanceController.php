@@ -967,6 +967,10 @@ class FinanceController extends ControllerBase
 
     //导出记录对应的详情
     public function exportDetails(){
+        $size = $this->request()->getRequestParam('size')??50;
+        $page = $this->request()->getRequestParam('page')??1;
+        $offset  =  ($page-1)*$size;
+
         $requestData =  $this->getRequestData();
 
         if(
@@ -1001,10 +1005,6 @@ class FinanceController extends ControllerBase
                 }
             }
         }
-
-        $size = $this->request()->getRequestParam('size')??10;
-        $page = $this->request()->getRequestParam('page')??1;
-        $offset  =  ($page-1)*$size;
         return $this->writeJson(200, [
             'page' => $page,
             'pageSize' =>$size,
