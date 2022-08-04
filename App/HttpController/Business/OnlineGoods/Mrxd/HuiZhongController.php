@@ -14,6 +14,7 @@ use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\InsuranceData;
 use App\HttpController\Models\AdminV2\MailReceipt;
+use App\HttpController\Models\MRXD\InsuranceDataHuiZhong;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Service\Common\CommonService;
@@ -67,7 +68,7 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
     }
 
     //咨询
-    function consultProduct(): bool
+    function preAuthorization(): bool
     {
         $requestData =  $this->getRequestData();
         $checkRes = DataModelExample::checkField(
@@ -76,13 +77,18 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
                 'product_id' => [
                     'not_empty' => 1,
                     'field_name' => 'product_id',
-                    'err_msg' => '参数缺失',
+                    'err_msg' => '参数缺失（产品）',
                 ],
-                'insured' => [
+                'ent_name' => [
                     'not_empty' => 1,
-                    'field_name' => 'insured',
-                    'err_msg' => '参数缺失',
-                ]
+                    'field_name' => 'ent_name',
+                    'err_msg' => '参数缺失（企业）',
+                ],
+                'business_license_file' => [
+                    'not_empty' => 1,
+                    'field_name' => 'business_license_file',
+                    'err_msg' => '参数缺失（企业）',
+                ],
             ],
             $requestData
         );
@@ -92,13 +98,19 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
             return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
         }
 
-        $res = InsuranceData::addRecordV2(
+        $res = InsuranceDataHuiZhong::addRecordV2(
             [
                 'post_params' => json_encode(
                     $requestData
                 ),
-                'product_id' => $requestData['product_id']?:'',
-                'name' => $requestData['name']?:'',
+                'product_id' => $requestData['product_id'],
+                'ent_name' => $requestData['ent_name'], //
+                'business_license_file' => $requestData['business_license_file'], //
+                'id_card_back_file' => $requestData['id_card_back_file'], //
+                'id_card_front_file' => $requestData['id_card_front_file'], //
+                'public_account' => $requestData['public_account'], //
+                'legal_person_phone' => $requestData['legal_person_phone'], //
+                'business_license' => $requestData['business_license'], //
                 'user_id' => $this->loginUserinfo['id'],
                 'status' =>  1,
             ]
@@ -114,35 +126,35 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
     }
 
 
-    public function uploadeFile(){
-        $requestData =  $this->getRequestData();
-        $files = $this->request()->getUploadedFiles();
-        $fileNames = [];
-        $succeedNums = 0;
-        foreach ($files as $key => $oneFile) {
-            try {
-                $fileName = $oneFile->getClientFilename();
-                $path = OTHER_FILE_PATH . $fileName;
-//                if(file_exists($path)){
-//                    return $this->writeJson(203, [], [],'文件已存在！');;
+//    public function uploadeFile(){
+//        $requestData =  $this->getRequestData();
+//        $files = $this->request()->getUploadedFiles();
+//        $fileNames = [];
+//        $succeedNums = 0;
+//        foreach ($files as $key => $oneFile) {
+//            try {
+//                $fileName = $oneFile->getClientFilename();
+//                $path = OTHER_FILE_PATH . $fileName;
+////                if(file_exists($path)){
+////                    return $this->writeJson(203, [], [],'文件已存在！');;
+////                }
+//
+//                $res = $oneFile->moveTo($path);
+//                if(!file_exists($path)){
+//                    CommonService::getInstance()->log4PHP(
+//                        json_encode(['uploadeCompanyLists   file_not_exists moveTo false ', 'params $path '=> $path,  ])
+//                    );
+//                    return $this->writeJson(203, [], [],'文件移动失败！');
 //                }
-
-                $res = $oneFile->moveTo($path);
-                if(!file_exists($path)){
-                    CommonService::getInstance()->log4PHP(
-                        json_encode(['uploadeCompanyLists   file_not_exists moveTo false ', 'params $path '=> $path,  ])
-                    );
-                    return $this->writeJson(203, [], [],'文件移动失败！');
-                }
-                $succeedNums ++;
-                $fileNames[] = '/Static/OtherFile/'.$fileName;
-            } catch (\Throwable $e) {
-                return $this->writeJson(202, [], $fileNames,'上传失败'.$e->getMessage());
-            }
-        }
-
-        return $this->writeJson(200, [], $fileNames,'上传成功 文件数量:'.$succeedNums);
-    }
+//                $succeedNums ++;
+//                $fileNames[] = '/Static/OtherFile/'.$fileName;
+//            } catch (\Throwable $e) {
+//                return $this->writeJson(202, [], $fileNames,'上传失败'.$e->getMessage());
+//            }
+//        }
+//
+//        return $this->writeJson(200, [], $fileNames,'上传成功 文件数量:'.$succeedNums);
+//    }
 
     //咨询结果
     function consultResult(): bool
