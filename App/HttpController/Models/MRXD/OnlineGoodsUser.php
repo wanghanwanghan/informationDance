@@ -25,9 +25,9 @@ class OnlineGoodsUser extends ModelBase
     static  $source_by_promote = 3;
     static  $source_by_promote_cname =  '推广注册';
 
-    static function  addDailySmsNums($phone){
+    static function  addDailySmsNums($phone,$prx = "daily_online_sendSms_"){
         //每日发送次数限制
-        $daily_limit_key = 'daily_online_sendSms_'.$phone;
+        $daily_limit_key = $prx.$phone;
         $nums =  ConfigInfo::getRedisBykey($daily_limit_key);
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -62,8 +62,8 @@ class OnlineGoodsUser extends ModelBase
         }
     }
 
-    static function  setRandomDigit($phone,$digit){
-        return ConfigInfo::setRedisBykey('online_sms_code_'.$phone,$digit,600);
+    static function  setRandomDigit($phone,$digit,$prx="online_sms_code_"){
+        return ConfigInfo::setRedisBykey($prx.$phone,$digit,600);
     }
 
     static function  getRandomDigit($phone){
@@ -74,9 +74,9 @@ class OnlineGoodsUser extends ModelBase
         return random_int(100000, 999999);
     }
 
-    static function  checkDailySmsNums($phone){
+    static function  checkDailySmsNums($phone,$prx='daily_online_sendSms_'){
         //每日发送次数限制
-        $daily_limit_key = 'daily_online_sendSms_'.$phone;
+        $daily_limit_key = $prx.$phone;
         $nums =  ConfigInfo::getRedisBykey($daily_limit_key);
         CommonService::getInstance()->log4PHP(
             json_encode([

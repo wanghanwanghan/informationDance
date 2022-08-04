@@ -109,7 +109,7 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
                 'product_id' => $requestData['product_id']?:'',
                 'name' => $requestData['name']?:'',
                 'user_id' => $this->loginUserinfo['id'],
-                'status' =>  1,
+                'status' =>  InsuranceData::$status_init,
             ]
         );
 
@@ -187,6 +187,50 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
             '成功',
             true,
             []
+        );
+    }
+
+    function consultResultList(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $page= $requestData['page']?:1;
+        $size= $requestData['size']?:10;
+//        $checkRes = DataModelExample::checkField(
+//            [
+//
+//                'product_id' => [
+//                    'not_empty' => 1,
+//                    'field_name' => 'product_id',
+//                    'err_msg' => '参数缺失',
+//                ],
+//                'insured' => [
+//                    'not_empty' => 1,
+//                    'field_name' => 'insured',
+//                    'err_msg' => '参数缺失',
+//                ]
+//            ],
+//            $requestData
+//        );
+//        if(
+//            !$checkRes['res']
+//        ){
+//            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+//        }
+
+        $res =   MailReceipt::findByConditionV2(
+            [
+                ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
+            ],$page
+        );
+        return $this->writeJson(
+            200,
+            [
+                'page' => $page,
+                'pageSize' => $size,
+                'total' => $res['total'],
+                'totalPage' => ceil($res['total']/$size) ,
+            ],
+            $res['data']
         );
     }
 }

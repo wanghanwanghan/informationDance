@@ -51,6 +51,8 @@ class MailReceipt extends ModelBase
                 'email_id' => $requestData['email_id'],
                 'to' => $requestData['to'],
                 'to_other' => $requestData['to_other']?:'',
+                'insurance_id' => $requestData['insurance_id']?:'0',
+                'user_id' => $requestData['user_id'],
                 'from' => $requestData['from'],
                 'subject' => $requestData['subject']?:'',
                  'body' => $requestData['body']?:'',
@@ -130,6 +132,8 @@ class MailReceipt extends ModelBase
             ->get();  
         return $res;
     }
+
+
 
     public static function findByEmailId($email_id,$to){
         $res =  MailReceipt::create()

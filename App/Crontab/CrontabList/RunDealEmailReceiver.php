@@ -150,7 +150,6 @@ class RunDealEmailReceiver extends AbstractCronTask
     //拉取收件箱
     static function  pullEmail($dayNums = 1 ){
         $mail = new Email();
-
         $emailAddress = CreateConf::getInstance()->getConf('mail.user_receiver');
         $mail->mailConnect(
             CreateConf::getInstance()->getConf('mail.host_receiver'),//'imap.exmail.qq.com',
@@ -208,6 +207,9 @@ class RunDealEmailReceiver extends AbstractCronTask
                 "needs to send text msg now"
             );
 
+            //解析保险数据id
+            $email['body'];
+
             //需要发短信了
             $res = SmsService::getInstance()->sendByTemplete(
                 13269706193, 'SMS_244025473',[
@@ -226,7 +228,7 @@ class RunDealEmailReceiver extends AbstractCronTask
             MailReceipt::updateById($email['id'],['status' => MailReceipt::$status_succeed]);
         }
     }
-    static  function  getTableHtml($data){
+    static  function  getTableHtml($data,$dataRes){
         $html = "
 <style>
     body {text-align: center;}
@@ -268,6 +270,7 @@ class RunDealEmailReceiver extends AbstractCronTask
 
 </style>
         ";
+
         $html .=  '
  
 <body>
@@ -277,59 +280,47 @@ class RunDealEmailReceiver extends AbstractCronTask
             <th colspan="2" style="text-align: center; font-size:20px">保险询价单</th> 
         </tr>
     </thead>
-    <tbody>
+    <tbody> 
+';
+
+        $html .=  ' 
         <tr>
             <td>产品</td>
-            <td>'.$data['product_id'].'</td>
-        </tr>
-        <tr class="active-row">
-            <td>被保人</td>
-            <td>'.$data['insured'].'</td>
-        </tr>
-         <tr >
-            <td>营业执照</td>
-            <td>
-                <a  href="http://test.51baoya.com/uploads/product_briefs/knj4CUlnZBOLz5HfHdk6hcZ6D.png">
-                点击查看
-                </a>
-            </td>
-        </tr>
-        <tr >
-            <td>发动机号</td>
-            <td>
-                 '.$data['engine_number'].'
-            </td>
-        </tr>
-        <tr >
-                <td>车架号</td>
-                <td>
-                     '.$data['VIN'].'
-                </td>
-        </tr>
-        <tr >
-                <td>死伤限额</td>
-                <td>
-                     '.$data['death_limit_coverage'].'
-                </td>
-        </tr>
-        <tr >
-                <td>医疗限额</td>
-                <td>
-                     '.$data['medical_limit_coverage'].'
-                </td>
-        </tr>
-        <tr >
-                <td>住院津贴</td>
-                <td>
-                     '.$data['hospitalization_benefit'].'
-                </td>
-        </tr>
-        <tr >
-                <td>其他需求</td>
-                <td>
-                     '.$data['other_requirement'].'
-                </td>
-        </tr>
+            <td>'.$dataRes['data']['title'].'('.$dataRes['data']['id'].')</td>
+        </tr>';
+        $html .=  ' 
+        <tr>
+            <td>描述</td>
+            <td>'.$dataRes['data']['description'].'</td>
+        </tr>';
+        foreach ($dataRes['data']['template'] as $fieldItem){
+             if($fieldItem['type'] == 'text'){
+                 $html .=  ' 
+                    <tr>
+                        <td>'.$fieldItem['title'].'</td>
+                        <td>'.$dataRes['data'][$fieldItem['name']].'</td>
+                    </tr>';
+             }
+            if($fieldItem['type'] == 'file'){
+                $html .=  ' 
+                    <tr>
+                        <td>'.$fieldItem['title'].'</td>
+                        
+                        <td>
+                            <a  
+                                href="'.$dataRes['data'][$fieldItem['name']].'">
+                                点击查看
+                            </a>
+                        </td>
+                    </tr>';
+            }
+        }
+        $html .=  ' 
+                    <tr>
+                        <td>ID</td>
+                        <td>信动数据id:<<<'.$dataRes['id'].'>>></td>
+                    </tr>';
+        $html .=  ' 
     </tbody>
 </table>
 </body> 
@@ -450,7 +441,7 @@ class RunDealEmailReceiver extends AbstractCronTask
     //用户咨询后，将询价信息发送给保鸭
     static function sendEmail()
     {
-
+       //保鸭
         $datas = InsuranceData::findBySql(
             " WHERE  
                     `status` =  ".InsuranceData::$status_init." 
@@ -459,11 +450,15 @@ class RunDealEmailReceiver extends AbstractCronTask
 
         foreach ($datas as $data){
             $insuranceDatas  = json_decode($data['post_params'],true);
-            $tableHtml = self::getTableHtml($insuranceDatas);
+            $dataRes = (new \App\HttpController\Service\BaoYa\BaoYaService())->getProductDetail
+            (
+                $insuranceDatas['productId']
+            );
+            $tableHtml = self::getTableHtml($insuranceDatas,$dataRes);
             $res1 = CommonService::getInstance()->sendEmailV2(
                 'tianyongshan@meirixindong.com',
                 // 'minglongoc@me.com',
-                '询价('.$data['id'].')',
+                '询价'.$dataRes['data']['title'],
                 $tableHtml
                 ,
                 [
@@ -483,7 +478,6 @@ class RunDealEmailReceiver extends AbstractCronTask
                 'status' => InsuranceData::$status_email_succeed
             ]);
         }
-
         return true ;
     }
 

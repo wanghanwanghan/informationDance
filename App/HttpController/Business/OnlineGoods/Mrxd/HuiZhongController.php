@@ -15,10 +15,12 @@ use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\InsuranceData;
 use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\MRXD\InsuranceDataHuiZhong;
+use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
+use App\HttpController\Service\Sms\AliSms;
 use App\HttpController\Service\XinDong\XinDongService;
 
 class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\ControllerBase
@@ -155,6 +157,70 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
 //
 //        return $this->writeJson(200, [], $fileNames,'上传成功 文件数量:'.$succeedNums);
 //    }
+
+    function sendSms(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $phone = $requestData['phone'] ;
+
+        if (empty($phone) ){
+            return $this->writeJson(201, null, null, '手机号不能是空');
+        }
+
+        //重复提交校验
+        if(
+            !ConfigInfo::setRedisNx('huizhong_sendSms',3)
+        ){
+            return $this->writeJson(201, null, [],  '请勿重复提交');
+        }
+
+        //记录今天发了多少次
+        OnlineGoodsUser::addDailySmsNums($phone,'daily_huizhong_sendSms_');
+
+        //每日发送次数限制
+        if(
+            !OnlineGoodsUser::checkDailySmsNums($phone,'daily_huizhong_sendSms_')
+        ){
+            return $this->writeJson(201, null, [],  '请勿重复提交');
+        }
+
+        $digit = OnlineGoodsUser::createRandomDigit();
+
+        //发短信
+        $res = (new AliSms())->sendByTempleteV2($phone, 'SMS_218160347',[
+            'code' => $digit,
+        ]);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'sendByTemplete' => [
+                    'sendByTemplete'=>$res,
+                    '$digit'=>$digit
+                ],
+            ])
+        );
+        if(!$res){
+            return $this->writeJson(201, null, [],  '短信发送失败');
+        }
+
+        //设置验证码
+        OnlineGoodsUser::setRandomDigit($phone,$digit,'online_sms_code_');
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'setRandomDigit' => [
+                    'getRandomDigit'=>OnlineGoodsUser::getRandomDigit($phone),
+                ],
+            ])
+        );
+
+        return $this->writeJson(
+            200,[ ] ,$res,
+            '成功',
+            true,
+            []
+        );
+    }
 
     //咨询结果
     function consultResult(): bool
