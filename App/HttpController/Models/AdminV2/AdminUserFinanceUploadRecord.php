@@ -488,24 +488,6 @@ class AdminUserFinanceUploadRecord extends ModelBase
         ]);
     }
 
-    public static function updateChargeFlag(
-        $id,$flag
-    ){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ ,
-                'updateChargeFlag' => [
-                    '$id'=>$id,'$flag'=>$flag
-                ]
-            ])
-        );
-        $info = self::findById($id);
-        return $info->update([
-            'id' => $id,
-            'charge_flag' => $flag,
-        ]);
-    }
-
     public static function ifHasChargeBefore(
         $id
     ){
@@ -676,7 +658,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 );
                 // 如果之前没计费过
                 if(!$hasChargeBefore){
-                    self::updateChargeFlag($uploadData['id'],1);
+                    AdminUserFinanceUploadDataRecord::updateChargeFlag($uploadData['id'],1);
                     $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']][$user_finance_data['entName']] =
                         [
                             'charge_year_start' => $uploadData['charge_year_start'],
@@ -689,7 +671,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                     );
                 }
                 else{
-                    self::updateChargeFlag($uploadData['id'],0);
+                    AdminUserFinanceUploadDataRecord::updateChargeFlag($uploadData['id'],0);
                 }
             }
 
@@ -761,6 +743,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 );
                 // 如果之前没计费过
                 if(!$hasChargeBefore){
+                    AdminUserFinanceUploadDataRecord::updateChargeFlag($uploadData['id'],1);
                     $chargeDetails['chargeTypeByYear'][$uploadData['user_id']][$user_finance_data['entName']] =
                         [
                             'charge_year' => $uploadData['charge_year'],
@@ -780,6 +763,8 @@ class AdminUserFinanceUploadRecord extends ModelBase
                             'price' => $uploadData['price'],
                         ])
                     );
+                }else{
+                    AdminUserFinanceUploadDataRecord::updateChargeFlag($uploadData['id'],0);
                 }
                 //XXX
             }

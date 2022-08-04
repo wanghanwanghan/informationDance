@@ -720,6 +720,12 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                 ){
                     $priceItem = 0;
                 }
+                //虽然有价格  但是积极上并不收费
+                if(
+                    $AdminUserFinanceUploadDataRecord['charge_flag'] == 0
+                ){
+                    $priceItem = 0;
+                }
                 $AdminUserFinanceExportDataRecordId = AdminUserFinanceExportDataRecord::addRecordV2(
                     [
                         'user_id' => $AdminUserFinanceUploadDataRecord['user_id'],
