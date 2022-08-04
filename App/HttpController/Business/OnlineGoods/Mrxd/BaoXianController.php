@@ -190,7 +190,7 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
         );
     }
 
-    function consultResultList(): bool
+    function baoYaConsultResultList(): bool
     {
         $requestData =  $this->getRequestData();
         $page= $requestData['page']?:1;
@@ -217,7 +217,7 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
 //            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
 //        }
 
-        $res =   MailReceipt::findByConditionV2(
+        $res =   InsuranceData::findByConditionV2(
             [
                 ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
             ],$page

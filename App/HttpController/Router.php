@@ -261,6 +261,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/consultProduct', $prefix . 'consultProduct');//
             $routeCollector->addRoute(['GET', 'POST'], '/uploadeFile', $prefix . 'uploadeFile');// uploadeFile
             $routeCollector->addRoute(['GET', 'POST'], '/consultResult', $prefix . 'consultResult');// uploadeFile
+            $routeCollector->addRoute(['GET', 'POST'], '/baoYaConsultResultList', $prefix . 'baoYaConsultResultList');// uploadeFile
         });
 
         return true;
