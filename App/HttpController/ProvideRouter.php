@@ -241,6 +241,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getEntInfoByName', $prefix . 'getEntInfoByName');//
             $routeCollector->addRoute(['GET', 'POST'], '/testCsp', $prefix . 'testCsp');//
             $routeCollector->addRoute(['GET', 'POST'], '/get24Month', $prefix . 'get24Month');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getEntAddress', $prefix . 'getEntAddress');//
         });
 
         return true;

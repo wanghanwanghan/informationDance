@@ -176,7 +176,13 @@ class Company extends ServiceBase
 
     function SetAreaQueryV5($areasLocations,$type =1 )
     {
-        (!empty($areasLocations)) &&  $this->es->addGeoShapWithin( $areasLocations) ;
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'SetAreaQueryV5' =>  $areasLocations
+            ])
+        );
+        (!empty($areasLocations)) &&  $this->es->addGeoShapWithinV2( $areasLocations) ;
         // $this->query['query']['bool']['must'][]
         return $this;
     }
@@ -543,6 +549,24 @@ class Company extends ServiceBase
         return $this;
     }
 
+    function SetQueryByRegStatusV2($searchOptionArr){
+        $reg_status_values = [];// 营业状态
+        foreach($searchOptionArr as $item){
+            if($item['pid'] == 30){
+                $reg_status_values = $item['value'];
+            }
+        }
+
+        $matchedCnames = [];
+        foreach($reg_status_values as $item){
+            $item && $matchedCnames[] = (new XinDongService())->getRegStatus()[$item];
+        }
+        (!empty($matchedCnames)) && $this->es->addMustShouldPhraseQuery( 'ENTSTATUS' , $matchedCnames) ;
+
+
+        return $this;
+    }
+
     function SetQueryByRegCaptial($searchOptionArr){
 
         $reg_capital_values = [];  // 注册资本
@@ -648,6 +672,23 @@ class Company extends ServiceBase
             $this->es->addMustShouldPhraseQuery( 'si_ji_fen_lei_code' , $siJiFenLeiArr) ;
         }
 
+        return $this;
+    }
+
+    function SetQueryByCompanyStatus($companyStatus){
+        $companyStatus && $siJiFenLeiArr = explode(',', $companyStatus);
+        if(!empty($siJiFenLeiArr)){
+            $this->es->addMustShouldPhraseQuery( 'ENTTYPE' , $siJiFenLeiArr) ;
+        }
+
+        return $this;
+    }
+
+    function SetQueryByCompanyType($companyType){
+        $companyType && $siJiFenLeiArr = explode(',', $companyType);
+        if(!empty($siJiFenLeiArr)){
+            $this->es->addMustShouldPhraseQuery( 'ENTTYPE' , $siJiFenLeiArr) ;
+        }
         return $this;
     }
     function SetQueryByBasicRegionid($basiRegionidStr){

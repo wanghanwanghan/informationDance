@@ -1,66 +1,51 @@
 <?php
 
-namespace App\HttpController\Models\AdminV2;
+namespace App\HttpController\Models\MRXD;
 
+use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongXin\LongXinService;
 
-
 // use App\HttpController\Models\AdminRole;
 
-class MailReceipt extends ModelBase
+class InsuranceDataHuiZhong extends ModelBase
 {
+    protected $tableName = 'insurance_data_hui_zhong';
 
-    static  $status_init = 1 ;
-    static  $status_init_cname =  '初始' ;
+    static $status_init = 1;
+    static $status_init_cname =  '初始化';
 
-    static  $status_succeed = 10 ;
-    static  $status_succeed_cname =  '成功' ;
-
-    static  $status_failed = 15 ;
-    static  $status_failed_cname =  '失败' ;
-
-
-    protected $tableName = 'mail_receipt';
-
-
-    public static function getStatusMap(){
-
-
-    }
+    static $status_sended = 5;
+    static $status_sended_cname =  '已发送';
 
     static  function  addRecordV2($info){
-
         if(
-            self::findByEmailId($info['email_id'],$info['to'])
+            self::findByName($info['user_id'],$info['ent_name'],$info['product_id'])
         ){
             return  true;
         }
 
-        return MailReceipt::addRecord(
+        return OnlineGoodsUser::addRecord(
             $info
         );
     }
 
     public static function addRecord($requestData){
         try {
-           $res =  MailReceipt::create()->data([
-                'email_id' => $requestData['email_id'],
-                'to' => $requestData['to'],
-                'to_other' => $requestData['to_other']?:'',
-                'insurance_id' => $requestData['insurance_id']?:'0',
-                'user_id' => $requestData['user_id'],
-                'from' => $requestData['from'],
-                'subject' => $requestData['subject']?:'',
-                 'body' => $requestData['body']?:'',
-                 'status' => $requestData['status']?:'1',
-                'type' => $requestData['type']?:'1',
-                'reamrk' => $requestData['reamrk']?:'',
-                 'raw_return' => $requestData['raw_return'],
-                'date' => $requestData['date'],
+           $res =  InsuranceDataHuiZhong::create()->data([
+                'product_id' => $requestData['product_id']?:0,
+                'ent_name' => $requestData['ent_name']?:'',
+                'business_license_file' => $requestData['business_license_file']?:'',
+                'id_card_front_file' => $requestData['id_card_front_file']?:'',
+                'id_card_back_file' => $requestData['id_card_back_file']?:'',
+                'public_account' => $requestData['public_account']?:'',
+                'legal_person_phone' => $requestData['legal_person_phone']?:'',
+               'business_license' => $requestData['business_license']?:'',
+               'status' => $requestData['status']?:self::$status_init,
+               'user_id' => $requestData['user_id']?:0,
                'created_at' => time(),
                'updated_at' => time(),
            ])->save();
@@ -77,13 +62,21 @@ class MailReceipt extends ModelBase
         return $res;
     }
 
+
     public static function findAllByCondition($whereArr){
-        $res =  MailReceipt::create()
+        $res =  InsuranceDataHuiZhong::create()
             ->where($whereArr)
             ->all();
         return $res;
     }
 
+    public static function setTouchTime($id,$touchTime){
+        $info = InsuranceDataHuiZhong::findById($id);
+
+        return $info->update([
+            'touch_time' => $touchTime,
+        ]);
+    }
 
     public static function updateById(
         $id,$data
@@ -93,7 +86,7 @@ class MailReceipt extends ModelBase
     }
 
     public static function findByConditionWithCountInfo($whereArr,$page){
-        $model = MailReceipt::create()
+        $model = InsuranceDataHuiZhong::create()
                 ->where($whereArr)
                 ->page($page)
                 ->order('id', 'DESC')
@@ -109,7 +102,7 @@ class MailReceipt extends ModelBase
     }
 
     public static function findByConditionV2($whereArr,$page){
-        $model = MailReceipt::create();
+        $model = InsuranceDataHuiZhong::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
@@ -127,38 +120,42 @@ class MailReceipt extends ModelBase
     }
 
     public static function findById($id){
-        $res =  MailReceipt::create()
+        $res =  InsuranceDataHuiZhong::create()
             ->where('id',$id)            
             ->get();  
         return $res;
     }
 
+    public static function findByToken($token){
+        $res =  InsuranceDataHuiZhong::create()
+            ->where('token',$token)
+            ->get();
+        return $res;
+    }
 
-
-    public static function findByEmailId($email_id,$to){
-        $res =  MailReceipt::create()
-            ->where('email_id',$email_id)
-            ->where('to',$to)
+    public static function findByName($user_id,$ent_name,$product_id){
+        $res =  InsuranceDataHuiZhong::create()
+            ->where('ent_name',$ent_name)
+            ->where('product_id',$product_id)
+            ->where('user_id',$user_id)
             ->get();
         return $res;
     }
 
     public static function setData($id,$field,$value){
-        $info = MailReceipt::findById($id);
+        $info = InsuranceDataHuiZhong::findById($id);
         return $info->update([
             "$field" => $value,
         ]);
     }
 
-    // 用完今日余额的
     public static function findBySql($where){
         $Sql = " select *  
                             from  
-                        `mail_receipt` 
+                        `insurance_data_hui_zhong` 
                             $where
       " ;
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return $data;
     }
-
 }

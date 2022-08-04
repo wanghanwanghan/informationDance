@@ -5,6 +5,7 @@ namespace App\HttpController\Models\AdminV2;
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\XinDong\XinDongService;
 
 
 class AdminUserFinanceUploadRecord extends ModelBase
@@ -76,14 +77,14 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
         return $res;
     }
-    public static function pullFinanceDataById($upload_record_id){
+    public static function pullFinanceDataById($upload_record_id,$changeStatus){
         $uploadRes = AdminUserFinanceUploadRecord::findById($upload_record_id)->toArray();
         $uploadDatas = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
             $uploadRes['user_id'],$uploadRes['id']
         );
         foreach ($uploadDatas as $uploadData){
             $pullFinanceDataRes = AdminUserFinanceData::pullFinanceData(
-                $uploadData['user_finance_data_id'],AdminUserFinanceUploadRecord::getFinanceConfigArray($upload_record_id)
+                $uploadData['user_finance_data_id'],AdminUserFinanceUploadRecord::getFinanceConfigArray($upload_record_id),$changeStatus
             );
             if(!$pullFinanceDataRes){
                 return  CommonService::getInstance()->log4PHP(
@@ -96,7 +97,34 @@ class AdminUserFinanceUploadRecord extends ModelBase
         }
         return true;
     }
+    public static function pullFinanceDataByIdV2($upload_record_id){
+        $uploadRes = AdminUserFinanceUploadRecord::findById($upload_record_id)->toArray();
+        $uploadDatas = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
+            $uploadRes['user_id'],$uploadRes['id']
+        );
+        foreach ($uploadDatas as $uploadData){
+            $pullFinanceDataRes = AdminUserFinanceData::pullFinanceDataV2(
+                $uploadData['user_finance_data_id'],AdminUserFinanceUploadRecord::getFinanceConfigArray($upload_record_id)
+            );
 
+            if($pullFinanceDataRes['res']!= 'succeed'){
+                return  CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ ,
+                        '$pullFinanceDataRes failed',
+                    ])
+                );
+            }
+
+            if($pullFinanceDataRes['status'] ==  AdminUserFinanceData::$statusNeedsConfirm){
+                 self::updateConfirmStatusById(
+                     $uploadData['id'],$pullFinanceDataRes['status']
+                 );
+                 self::setNeedsConfirm($uploadData['id']);
+            }
+        }
+        return true;
+    }
 
     public static function findByIdAndFileName($user_id,$file_name){
         $res =  AdminUserFinanceUploadRecord::create()->where([
@@ -182,6 +210,8 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
         return $res;
     }
+
+
 
     public static function getAllFinanceDataByUploadRecordIdV2(
         $userId,$uploadRecordId
@@ -272,6 +302,16 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 $AdminUserFinanceUploadDataRecord['user_finance_data_id']
             )->toArray();
 
+            //如果确认不需要
+            if(AdminUserFinanceData::checkIfNoNeed($AdminUserFinanceUploadDataRecord['user_finance_data_id'])){
+                yield $returnDatas[] = [
+                    'NewFinanceData' => [],
+                    'AdminUserFinanceUploadDataRecord'=>$AdminUserFinanceUploadDataRecord?:[],
+                    'AdminUserFinanceData'=>[],
+                ];
+                continue;
+            }
+
             if($AdminUserFinanceData['finance_data_id']<= 0 ){
 //                CommonService::getInstance()->log4PHP(
 //                    json_encode([
@@ -286,6 +326,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                 ];
                 continue;
             }
+
             //对应的实际财务数据
             $NewFinanceData = NewFinanceData::findById(
                 $AdminUserFinanceData['finance_data_id']
@@ -393,6 +434,25 @@ class AdminUserFinanceUploadRecord extends ModelBase
         return $needs;
 
     }
+    public static function checkIfNeedsConfirmV2($upload_record_id){
+        $uploadRes = AdminUserFinanceUploadRecord::findById($upload_record_id)->toArray();
+        $uploadDatas = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
+            $uploadRes['user_id'],$uploadRes['id']
+        );
+
+        $needs = false;
+        foreach ($uploadDatas as $uploadData){
+            if(
+                AdminUserFinanceUploadDataRecord::checkDataNeedConfirm($uploadData['id'])
+            ){
+                $needs = true;
+                break;
+            };
+        }
+
+        return $needs;
+
+    }
 
     //
     public static function findBySql($where){
@@ -477,6 +537,26 @@ class AdminUserFinanceUploadRecord extends ModelBase
         ]);
     }
 
+    public static function updateConfirmStatusById(
+        $id,$status
+    ){
+        $info = self::findById($id);
+        return $info->update([
+            'id' => $id,
+            'confirm_status' => $status,
+        ]);
+    }
+
+    public static function setNeedsConfirm(
+        $id
+    ){
+        $info = self::findById($id);
+        return $info->update([
+            'id' => $id,
+            'needs_confirm' => 1,
+        ]);
+    }
+
     //计算到底多少钱
     static function  calMoney($uploadId){
         $uploadInfo = self::findById($uploadId)->toArray();
@@ -488,7 +568,19 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
         foreach ($uploadDatas as $uploadData){
             $user_finance_data = AdminUserFinanceData::findById($uploadData['user_finance_data_id'])->toArray();
+            $noNeed = false;
 
+            $logResArr = [
+                'entName'=>$user_finance_data['entName'],
+                'charge_year'=>$uploadData['charge_year'],
+            ];
+            //是否确认不需要
+            if(
+                AdminUserFinanceData::checkIfNoNeed($uploadData['user_finance_data_id'])
+            ){
+                $noNeed = true;
+                $logResArr['user_donot_need_this_one'] = $noNeed;
+            }
             //之前是否扣费过
             $hasChargeBefore = false;
 
@@ -496,6 +588,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
             if(
                  $uploadData['price_type'] == AdminUserFinanceUploadDataRecord::$chargeTypeAnnually
             ){
+                $logResArr['charge_type'] =   "按年";
                 //本次里已经计算过
                 if(
                     $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year_start']
@@ -504,6 +597,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                         == $uploadData['charge_year_end']
                 ){
                     $hasChargeBefore = true;
+                    $logResArr['charge_before|this_round'] =   "本次计算过了";
                 };
 
                 //之前已经收费过
@@ -514,12 +608,16 @@ class AdminUserFinanceUploadRecord extends ModelBase
                     $uploadData['charge_year_start'],
                     $uploadData['charge_year_end']
                 );
-
+                $logResArr['charge_before_record'] =   $chargeRes?'有收费记录':'没有收费记录';
+                $logResArr['charge_before_record_date'] =  $chargeRes?$chargeRes->getAttr('created_at'):'';
+                $logResArr['cache'] = $financeConfigArray['cache'];
                 if(
                     $chargeRes &&
+                    $financeConfigArray['cache'] &&
                     //没过去缓存期间
                     ($chargeRes->getAttr('created_at') + $financeConfigArray['cache']*60*60) > time()
                 ){
+                    $logResArr['under_cache_date'] =    true  ;
                     $hasChargeBefore = true;
                     CommonService::getInstance()->log4PHP(
                         json_encode([
@@ -533,6 +631,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                     );
                 }
                 else{
+                    $logResArr['under_cache_date'] =    false  ;
                     CommonService::getInstance()->log4PHP(
                         json_encode([
                             __CLASS__.__FUNCTION__ ,
@@ -544,6 +643,19 @@ class AdminUserFinanceUploadRecord extends ModelBase
                     );
                 }
 
+                if($noNeed){
+                    $hasChargeBefore = true;
+                }
+
+                $logResArr['$hasChargeBefore'] = $hasChargeBefore;
+                OperatorLog::addRecord(
+                    [
+                        'user_id' => $uploadData['user_id'],
+                        'msg' =>  json_encode($logResArr),
+                        'details' =>json_encode( XinDongService::trace()),
+                        'type_cname' => '财务-扣费详情-'.$user_finance_data['entName'],
+                    ]
+                );
                 // 如果之前没计费过
                 if(!$hasChargeBefore){
                     $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']][$user_finance_data['entName']] =
@@ -556,7 +668,10 @@ class AdminUserFinanceUploadRecord extends ModelBase
                     AdminUserFinanceUploadDataRecord::updateRealPrice(
                         $uploadData['id'],$uploadData['price'], $uploadData['charge_year_start'].'~'. $uploadData['charge_year_end'].'包年计费'
                     );
-
+                }else{
+                    AdminUserFinanceUploadDataRecord::updateRealPrice(
+                        $uploadData['id'],0, $uploadData['charge_year'].'不需要扣费'
+                    );
                 }
             }
 
@@ -564,12 +679,14 @@ class AdminUserFinanceUploadRecord extends ModelBase
             if(
                 $uploadData['price_type'] == AdminUserFinanceUploadDataRecord::$chargeTypeByYear
             ){
+                $logResArr['charge_type'] =   "按单年";
                 //本次里已经计算过
                 if(
                     $chargeDetails['chargeTypeByYear'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year']
                         == $uploadData['charge_year']
                 ){
                     $hasChargeBefore = true;
+                    $logResArr['charge_before|this_round'] =   "本次计算过了";
                 };
                 //之前已经收费过
                 //从收费记录找  没超过缓存期 就不收费
@@ -578,11 +695,16 @@ class AdminUserFinanceUploadRecord extends ModelBase
                     $user_finance_data['entName'],
                     $uploadData['charge_year']
                 );
+                $logResArr['charge_before_record'] =   $chargeRes?'有收费记录':'没有收费记录';
+                $logResArr['charge_before_record_date'] =  $chargeRes?$chargeRes->getAttr('created_at'):'';
+                $logResArr['cache'] = $financeConfigArray['cache'];
                 if(
                     $chargeRes &&
+                    $financeConfigArray['cache'] &&
                     //没过去缓存期间
                     ($chargeRes->getAttr('created_at') + $financeConfigArray['cache']*60*60) > time()
                 ){
+                    $logResArr['under_cache_date'] =    true  ;
                     $hasChargeBefore = true;
                     CommonService::getInstance()->log4PHP(
                         json_encode([
@@ -594,6 +716,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
                         ])
                     );
                 }else{
+                    $logResArr['under_cache_date'] =    false  ;
                     CommonService::getInstance()->log4PHP(
                         json_encode([
                             __CLASS__.__FUNCTION__ ,
@@ -605,6 +728,19 @@ class AdminUserFinanceUploadRecord extends ModelBase
                     );
                 }
 
+                if($noNeed){
+                    $hasChargeBefore = true;
+                }
+
+                $logResArr['$hasChargeBefore'] = $hasChargeBefore;
+                OperatorLog::addRecord(
+                    [
+                        'user_id' => $uploadData['user_id'],
+                        'msg' =>  json_encode($logResArr),
+                        'details' =>json_encode( XinDongService::trace()),
+                        'type_cname' => '财务-扣费详情-'.$user_finance_data['entName'],
+                    ]
+                );
                 // 如果之前没计费过
                 if(!$hasChargeBefore){
                     $chargeDetails['chargeTypeByYear'][$uploadData['user_id']][$user_finance_data['entName']] =
@@ -626,11 +762,182 @@ class AdminUserFinanceUploadRecord extends ModelBase
                             'price' => $uploadData['price'],
                         ])
                     );
+                }else{
+                    AdminUserFinanceUploadDataRecord::updateRealPrice(
+                        $uploadData['id'],0, $uploadData['charge_year'].'不需要扣费'
+                    );
                 }
             }
         }
         return $chargeDetails;
     }
+
+//    static function  calMoneyV2($uploadId){
+//        $uploadInfo = self::findById($uploadId)->toArray();
+//        $financeConfigArray = self::getFinanceConfigArray($uploadId);
+//        $uploadDatas = AdminUserFinanceUploadDataRecord::findByUserIdAndRecordIdV2(
+//            $uploadInfo['user_id'],$uploadInfo['id']
+//        );
+//        $chargeDetails = [];
+//
+//        foreach ($uploadDatas as $uploadData){
+//            $user_finance_data = AdminUserFinanceData::findById($uploadData['user_finance_data_id'])->toArray();
+//            $noNeed = false;
+//            //是否确认不需要
+//            if(
+//                AdminUserFinanceUploadDataRecord::checkIfNoNeed($uploadData['id'])
+//            ){
+//                $noNeed = true;
+//            }
+//            //之前是否扣费过
+//            $hasChargeBefore = false;
+//
+//            //包年计费
+//            if(
+//                $uploadData['price_type'] == AdminUserFinanceUploadDataRecord::$chargeTypeAnnually
+//            ){
+//                //本次里已经计算过
+//                if(
+//                    $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year_start']
+//                    == $uploadData['charge_year_start'] &&
+//                    $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year_end']
+//                    == $uploadData['charge_year_end']
+//                ){
+//                    $hasChargeBefore = true;
+//                };
+//
+//                //之前已经收费过
+//                //从收费记录找最新收费记录： 没超缓存期 不收费 超出了 收费
+//                $chargeRes = AdminUserFinanceChargeInfo::ifChargedBeforeV2(
+//                    $uploadData['user_id'],
+//                    $user_finance_data['entName'],
+//                    $uploadData['charge_year_start'],
+//                    $uploadData['charge_year_end']
+//                );
+//
+//                if(
+//                    $chargeRes &&
+//                    //没过去缓存期间
+//                    ($chargeRes->getAttr('created_at') + $financeConfigArray['cache']*60*60) > time()
+//                ){
+//                    $hasChargeBefore = true;
+//                    CommonService::getInstance()->log4PHP(
+//                        json_encode([
+//                            __CLASS__.__FUNCTION__ ,
+//                            'under_cache_date.no_charge',
+//                            'created_at' => $chargeRes->getAttr('created_at'),
+//                            'user_id'=> $uploadData['user_id'],
+//                            'entName'=>$user_finance_data['entName'],
+//                            'charge_year'=>$uploadData['charge_year']
+//                        ])
+//                    );
+//                }
+//                else{
+//                    CommonService::getInstance()->log4PHP(
+//                        json_encode([
+//                            __CLASS__.__FUNCTION__ ,
+//                            'out_of_cache_date.charge',
+//                            'user_id'=> $uploadData['user_id'],
+//                            'entName'=>$user_finance_data['entName'],
+//                            'charge_year'=>$uploadData['charge_year']
+//                        ])
+//                    );
+//                }
+//
+//                if($noNeed){
+//                    $hasChargeBefore = true;
+//                }
+//
+//                // 如果之前没计费过
+//                if(!$hasChargeBefore){
+//                    $chargeDetails['chargeTypeAnnually'][$uploadData['user_id']][$user_finance_data['entName']] =
+//                        [
+//                            'charge_year_start' => $uploadData['charge_year_start'],
+//                            'charge_year_end' => $uploadData['charge_year_end'],
+//                            'price' => $uploadData['price'],
+//                        ];
+//                    $chargeDetails['total_price'] += $uploadData['price'];
+//                    AdminUserFinanceUploadDataRecord::updateRealPrice(
+//                        $uploadData['id'],$uploadData['price'], $uploadData['charge_year_start'].'~'. $uploadData['charge_year_end'].'包年计费'
+//                    );
+//                }
+//            }
+//
+//            //按单年计费
+//            if(
+//                $uploadData['price_type'] == AdminUserFinanceUploadDataRecord::$chargeTypeByYear
+//            ){
+//                //本次里已经计算过
+//                if(
+//                    $chargeDetails['chargeTypeByYear'][$uploadData['user_id']][$user_finance_data['entName']]['charge_year']
+//                    == $uploadData['charge_year']
+//                ){
+//                    $hasChargeBefore = true;
+//                };
+//                //之前已经收费过
+//                //从收费记录找  没超过缓存期 就不收费
+//                $chargeRes = AdminUserFinanceChargeInfo::ifChargedBefore(
+//                    $uploadData['user_id'],
+//                    $user_finance_data['entName'],
+//                    $uploadData['charge_year']
+//                );
+//                if(
+//                    $chargeRes &&
+//                    //没过去缓存期间
+//                    ($chargeRes->getAttr('created_at') + $financeConfigArray['cache']*60*60) > time()
+//                ){
+//                    $hasChargeBefore = true;
+//                    CommonService::getInstance()->log4PHP(
+//                        json_encode([
+//                            __CLASS__.__FUNCTION__ ,
+//                            'under_cache_date.no_charge',
+//                            'user_id'=> $uploadData['user_id'],
+//                            'entName'=>$user_finance_data['entName'],
+//                            'charge_year'=>$uploadData['charge_year']
+//                        ])
+//                    );
+//                }else{
+//                    CommonService::getInstance()->log4PHP(
+//                        json_encode([
+//                            __CLASS__.__FUNCTION__ ,
+//                            'out_of_cache_date.charge',
+//                            'user_id'=> $uploadData['user_id'],
+//                            'entName'=>$user_finance_data['entName'],
+//                            'charge_year'=>$uploadData['charge_year']
+//                        ])
+//                    );
+//                }
+//
+//                if($noNeed){
+//                    $hasChargeBefore = true;
+//                }
+//
+//                // 如果之前没计费过
+//                if(!$hasChargeBefore){
+//                    $chargeDetails['chargeTypeByYear'][$uploadData['user_id']][$user_finance_data['entName']] =
+//                        [
+//                            'charge_year' => $uploadData['charge_year'],
+//                            'price' => $uploadData['price'],
+//                        ];
+//                    $chargeDetails['total_price'] += $uploadData['price'];
+//                    AdminUserFinanceUploadDataRecord::updateRealPrice(
+//                        $uploadData['id'],$uploadData['price'], $uploadData['charge_year'].'单年计费'
+//                    );
+//                    CommonService::getInstance()->log4PHP(
+//                        json_encode([
+//                            __CLASS__.__FUNCTION__ ,
+//                            'needs charge . ',
+//                            '$uploadDataId' => $uploadData['id'],
+//                            'chargeTypeByYear' ,
+//                            'charge_year' => $uploadData['charge_year'],
+//                            'price' => $uploadData['price'],
+//                        ])
+//                    );
+//                }
+//            }
+//        }
+//        return $chargeDetails;
+//    }
 
     static function getFinanceConfigArray($uploadId){
         $uploadRes = self::findById($uploadId)->toArray();

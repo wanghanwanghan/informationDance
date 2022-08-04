@@ -1409,7 +1409,7 @@ class XinDongController extends ProvideBase
 
         $postData = [
             'entName' => trim($this->getRequestData('entName')),
-            'version' => 'C1' ,
+            'version' => 'C1',
         ];
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new LongXinService())
@@ -1428,7 +1428,7 @@ class XinDongController extends ProvideBase
 
         $postData = [
             'entName' => trim($this->getRequestData('entName')),
-            'version' => 'C10' ,
+            'version' => 'C10',
         ];
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new LongXinService())
@@ -1445,7 +1445,7 @@ class XinDongController extends ProvideBase
     function BankruptcyCheck(): bool
     {
 
-        $entName =trim($this->getRequestData('entName'));
+        $entName = trim($this->getRequestData('entName'));
 
         $this->csp->add($this->cspKey, function () use ($entName) {
             return (new XinDongService())->getBankruptcyCheck(
@@ -1463,7 +1463,7 @@ class XinDongController extends ProvideBase
     function getLiquidate(): bool
     {
 
-        $entName =trim($this->getRequestData('entName'));
+        $entName = trim($this->getRequestData('entName'));
 
         $this->csp->add($this->cspKey, function () use ($entName) {
             return CompanyLiquidation::findByName($entName);
@@ -1471,14 +1471,14 @@ class XinDongController extends ProvideBase
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->writeJson(200,
-            [] , $res[$this->cspKey]?count($res[$this->cspKey]):0, '成功' );
+            [], $res[$this->cspKey] ? count($res[$this->cspKey]) : 0, '成功');
 //        return $this->checkResponse($res);
     }
 
     function getCancledate(): bool
     {
 
-        $entName =trim($this->getRequestData('entName'));
+        $entName = trim($this->getRequestData('entName'));
 
         $this->csp->add($this->cspKey, function () use ($entName) {
             return CompanyBasic::findCancelDateByCode($entName);
@@ -1487,7 +1487,7 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         return $this->writeJson(200,
-            [] , $res[$this->cspKey], '成功' );
+            [], $res[$this->cspKey], '成功');
 
 //        return $this->checkResponse($res);
     }
@@ -2042,6 +2042,25 @@ class XinDongController extends ProvideBase
 
         return $this->checkResponse($res);
 
+    }
+
+    //非注册地址
+    function getEntAddress(): bool
+    {
+        $postData = [
+            'entName' => trim($this->getRequestData('entName')),
+            'page' => trim($this->getRequestData('page', '1')),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getEntAddress($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
     }
 
     function testCsp(): bool

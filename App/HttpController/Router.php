@@ -17,6 +17,9 @@ class Router extends AbstractRouter
             $this->UserRouterV1($routeCollector);//用户相关
             $this->XinDongRouterV1($routeCollector);//信动
             $this->BaoXianRouterV1($routeCollector);//信动
+            $this->OnlineUserRouterV1($routeCollector);//
+            $this->DaiKuanRouterV1($routeCollector);//信动
+            $this->HuiZhongRouterV1($routeCollector);//信动
             $this->LongDunRouterV1($routeCollector);//龙盾
             $this->TaoShuRouterV1($routeCollector);//淘数
             $this->FaYanYuanRouterV1($routeCollector);//法研院
@@ -255,7 +258,45 @@ class Router extends AbstractRouter
         $routeCollector->addGroup('/online_goods', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getProducts', $prefix . 'getProducts');// getProducts
             $routeCollector->addRoute(['GET', 'POST'], '/getProductDetail', $prefix . 'getProductDetail');// getProductDetail
+            $routeCollector->addRoute(['GET', 'POST'], '/consultProduct', $prefix . 'consultProduct');//
             $routeCollector->addRoute(['GET', 'POST'], '/uploadeFile', $prefix . 'uploadeFile');// uploadeFile
+            $routeCollector->addRoute(['GET', 'POST'], '/consultResult', $prefix . 'consultResult');// uploadeFile
+            $routeCollector->addRoute(['GET', 'POST'], '/baoYaConsultResultList', $prefix . 'baoYaConsultResultList');// uploadeFile
+        });
+
+        return true;
+    }
+
+    private function OnlineUserRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/OnlineGoods/Mrxd/UserController/';
+
+        $routeCollector->addGroup('/online_goods', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/sendSms', $prefix . 'sendSms');// sendSms
+            $routeCollector->addRoute(['GET', 'POST'], '/login', $prefix . 'login');// login
+        });
+
+        return true;
+    }
+
+    private function DaiKuanRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/OnlineGoods/Mrxd/DaiKuanController/';
+        $routeCollector->addGroup('/loan', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/confirmAuthorization', $prefix . 'confirmAuthorization');// confirmAuthorization
+        });
+
+        return true;
+    }
+
+    private function HuiZhongRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/OnlineGoods/Mrxd/HuiZhongController/';
+        $routeCollector->addGroup('/online_goods', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/pre_auth', $prefix . 'preAuthorization');//
+            $routeCollector->addRoute(['GET', 'POST'], '/consultHuiZhongResult', $prefix . 'consultResult');//
+            $routeCollector->addRoute(['GET', 'POST'], '/huiZhongSendSms', $prefix . 'sendSms');//
+            $routeCollector->addRoute(['GET', 'POST'], '/huiZhongConsultResultList', $prefix . 'consultResultList');//
         });
 
         return true;

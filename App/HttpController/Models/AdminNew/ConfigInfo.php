@@ -98,6 +98,74 @@ class ConfigInfo extends ModelBase
         ]);
     }
 
+    static function  getRedisBykey($key)
+    {
+
+        $redis = Redis::defer('redis');
+
+        $redis->select(self::$redis_db_num);
+        return $redis->get($key);
+
+        $status = (bool)$redis->setNx($methodName, 'isRun');
+
+        $status === false ?: $redis->expire($methodName, $ttl);
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'setRedisNx strat ' ,
+//                'params $methodName' => $methodName,
+//                'params $ttl' => $ttl,
+//                ' $status' => $status,
+//            ])
+//        );
+        return $status;
+    }
+
+    static function  setRedisBykey($key,$value, $ttl = 300): bool
+    {
+
+        $redis = Redis::defer('redis');
+        $redis->select(self::$redis_db_num);
+        return $redis->set($key,$value,$ttl);
+    }
+
+    static function  sAdd($key,$list)
+    {
+
+        $redis = Redis::defer('redis');
+        $redis->select(self::$redis_db_num);
+        return $redis->sAdd($list,$key);
+    }
+
+    static function  sRem($key,$list)
+    {
+
+        $redis = Redis::defer('redis');
+        $redis->select(self::$redis_db_num);
+        return $redis->sRem($list,$key);
+    }
+
+    static function  sMembers($list)
+    {
+
+        $redis = Redis::defer('redis');
+        $redis->select(self::$redis_db_num);
+        return $redis->sMembers($list);
+    }
+
+    static function  Sismember($key,$list)
+    {
+        $redis = Redis::defer('redis');
+        $redis->select(self::$redis_db_num);
+        return $redis->Sismember($list,$key);
+    }
+
+    static function  incrRedisBykey($key): bool
+    {
+
+        $redis = Redis::defer('redis');
+        $redis->select(self::$redis_db_num);
+        return $redis->incr($key);
+    }
 
     static function  setRedisNx($methodName, $ttl = 6400): bool
     {

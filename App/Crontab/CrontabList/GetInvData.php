@@ -33,7 +33,7 @@ class GetInvData extends AbstractCronTask
     {
         //每月19号凌晨4点可以取上一个月全部数据
         //return '0 4 19 * *' ;
-        return '45 12 19 * * ';
+        return '22 18 29 * * ';
     }
 
     static function getTaskName(): string
@@ -55,6 +55,7 @@ class GetInvData extends AbstractCronTask
             $offset = ($i - 1) * $limit;
             $list = AntAuthList::create()
                 ->where('status', MaYiService::STATUS_3)
+                ->where('getDataSource', 1)
                 ->limit($offset, $limit)->all();
             if (empty($list)) {
                 break;
@@ -202,8 +203,8 @@ class GetInvData extends AbstractCronTask
                     OperatorLog::addRecord(
                         [
                             'user_id' => 0,
-                            'msg' => "参数:".@json_encode($collectNotify)." 返回：".@json_encode($ret),
-                            'details' =>json_encode( XinDongService::trace()),
+                            'msg' => "参数:" . @json_encode($collectNotify) . " 返回：" . @json_encode($ret),
+                            'details' => json_encode(XinDongService::trace()),
                             'type_cname' => '通知蚂蚁',
                         ]
                     );

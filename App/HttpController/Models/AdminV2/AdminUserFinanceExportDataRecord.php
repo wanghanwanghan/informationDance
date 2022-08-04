@@ -41,6 +41,23 @@ class AdminUserFinanceExportDataRecord extends ModelBase
         );
     }
 
+    public static function findByConditionV3($whereArr,$page,$size){
+        $model = AdminUserFinanceExportDataRecord::create();
+        foreach ($whereArr as $whereItem){
+            $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+        }
+        $model->page($page,$size)
+            ->order('id', 'DESC')
+            ->withTotalCount();
+
+        $res = $model->all();
+
+        $total = $model->lastQueryResult()->getTotalCount();
+        return [
+            'data' => $res,
+            'total' =>$total,
+        ];
+    }
 
     public static function findByBatch($batch){
 
@@ -167,6 +184,15 @@ class AdminUserFinanceExportDataRecord extends ModelBase
             'user_id' => $user_id,  
             'export_record_id' => $export_id,
             // 'status' => 1,  
+        ])->all();
+
+        return $res;
+    }
+
+    public static function findByExportId($export_id){
+        $res =  AdminUserFinanceExportDataRecord::create()->where([
+            'export_record_id' => $export_id,
+            // 'status' => 1,
         ])->all();
 
         return $res;

@@ -14,13 +14,16 @@ use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\InsuranceData;
 use App\HttpController\Models\AdminV2\MailReceipt;
+use App\HttpController\Models\MRXD\InsuranceDataHuiZhong;
+use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
+use App\HttpController\Service\Sms\AliSms;
 use App\HttpController\Service\XinDong\XinDongService;
 
-class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\ControllerBase
+class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\ControllerBase
 {
     function onRequest(?string $action): ?bool
     {
@@ -30,15 +33,6 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
     function afterAction(?string $actionName): void
     {
         parent::afterAction($actionName);
-    }
-
-    /*
-     * 筛选选型
-     * */
-    function getSearchOption(): bool
-    {
-        $searchOptionArr = (new XinDongService())->getSearchOption([]);
-        return $this->writeJson(200, null, $searchOptionArr, '成功', false, []);
     }
 
     function getProducts(): bool
@@ -76,7 +70,7 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
     }
 
     //咨询
-    function consultProduct(): bool
+    function preAuthorization(): bool
     {
         $requestData =  $this->getRequestData();
         $checkRes = DataModelExample::checkField(
@@ -85,13 +79,18 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
                 'product_id' => [
                     'not_empty' => 1,
                     'field_name' => 'product_id',
-                    'err_msg' => '参数缺失',
+                    'err_msg' => '参数缺失（产品）',
                 ],
-                'insured' => [
+                'ent_name' => [
                     'not_empty' => 1,
-                    'field_name' => 'insured',
-                    'err_msg' => '参数缺失',
-                ]
+                    'field_name' => 'ent_name',
+                    'err_msg' => '参数缺失（企业）',
+                ],
+                'business_license_file' => [
+                    'not_empty' => 1,
+                    'field_name' => 'business_license_file',
+                    'err_msg' => '参数缺失（营业执照）',
+                ],
             ],
             $requestData
         );
@@ -101,15 +100,21 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
             return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
         }
 
-        $res = InsuranceData::addRecordV2(
+        $res = InsuranceDataHuiZhong::addRecordV2(
             [
                 'post_params' => json_encode(
                     $requestData
                 ),
-                'product_id' => $requestData['product_id']?:'',
-                'name' => $requestData['name']?:'',
+                'product_id' => $requestData['product_id'],
+                'ent_name' => $requestData['ent_name'], //
+                'business_license_file' => $requestData['business_license_file'], //
+                'id_card_back_file' => $requestData['id_card_back_file'], //
+                'id_card_front_file' => $requestData['id_card_front_file'], //
+                'public_account' => $requestData['public_account'], //
+                'legal_person_phone' => $requestData['legal_person_phone'], //
+                'business_license' => $requestData['business_license'], //
                 'user_id' => $this->loginUserinfo['id'],
-                'status' =>  InsuranceData::$status_init,
+                'status' =>  1,
             ]
         );
 
@@ -123,34 +128,98 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
     }
 
 
-    public function uploadeFile(){
-        $requestData =  $this->getRequestData();
-        $files = $this->request()->getUploadedFiles();
-        $fileNames = [];
-        $succeedNums = 0;
-        foreach ($files as $key => $oneFile) {
-            try {
-                $fileName = $oneFile->getClientFilename();
-                $path = OTHER_FILE_PATH . $fileName;
-//                if(file_exists($path)){
-//                    return $this->writeJson(203, [], [],'文件已存在！');;
+//    public function uploadeFile(){
+//        $requestData =  $this->getRequestData();
+//        $files = $this->request()->getUploadedFiles();
+//        $fileNames = [];
+//        $succeedNums = 0;
+//        foreach ($files as $key => $oneFile) {
+//            try {
+//                $fileName = $oneFile->getClientFilename();
+//                $path = OTHER_FILE_PATH . $fileName;
+////                if(file_exists($path)){
+////                    return $this->writeJson(203, [], [],'文件已存在！');;
+////                }
+//
+//                $res = $oneFile->moveTo($path);
+//                if(!file_exists($path)){
+//                    CommonService::getInstance()->log4PHP(
+//                        json_encode(['uploadeCompanyLists   file_not_exists moveTo false ', 'params $path '=> $path,  ])
+//                    );
+//                    return $this->writeJson(203, [], [],'文件移动失败！');
 //                }
+//                $succeedNums ++;
+//                $fileNames[] = '/Static/OtherFile/'.$fileName;
+//            } catch (\Throwable $e) {
+//                return $this->writeJson(202, [], $fileNames,'上传失败'.$e->getMessage());
+//            }
+//        }
+//
+//        return $this->writeJson(200, [], $fileNames,'上传成功 文件数量:'.$succeedNums);
+//    }
 
-                $res = $oneFile->moveTo($path);
-                if(!file_exists($path)){
-                    CommonService::getInstance()->log4PHP(
-                        json_encode(['uploadeCompanyLists   file_not_exists moveTo false ', 'params $path '=> $path,  ])
-                    );
-                    return $this->writeJson(203, [], [],'文件移动失败！');
-                }
-                $succeedNums ++;
-                $fileNames[] = '/Static/OtherFile/'.$fileName;
-            } catch (\Throwable $e) {
-                return $this->writeJson(202, [], $fileNames,'上传失败'.$e->getMessage());
-            }
+    function sendSms(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $phone = $requestData['phone'] ;
+
+        if (empty($phone) ){
+            return $this->writeJson(201, null, null, '手机号不能是空');
         }
 
-        return $this->writeJson(200, [], $fileNames,'上传成功 文件数量:'.$succeedNums);
+        //重复提交校验
+        if(
+            !ConfigInfo::setRedisNx('huizhong_sendSms',3)
+        ){
+            return $this->writeJson(201, null, [],  '请勿重复提交');
+        }
+
+        //记录今天发了多少次
+        OnlineGoodsUser::addDailySmsNums($phone,'daily_huizhong_sendSms_');
+
+        //每日发送次数限制
+        if(
+            !OnlineGoodsUser::checkDailySmsNums($phone,'daily_huizhong_sendSms_')
+        ){
+            return $this->writeJson(201, null, [],  '请勿重复提交');
+        }
+
+        $digit = OnlineGoodsUser::createRandomDigit();
+
+        //发短信
+        $res = (new AliSms())->sendByTempleteV2($phone, 'SMS_218160347',[
+            'code' => $digit,
+        ]);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'sendByTemplete' => [
+                    'sendByTemplete'=>$res,
+                    '$digit'=>$digit
+                ],
+            ])
+        );
+        if(!$res){
+            return $this->writeJson(201, null, [],  '短信发送失败');
+        }
+
+        //设置验证码
+        OnlineGoodsUser::setRandomDigit($phone,$digit,'online_sms_code_');
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'setRandomDigit' => [
+                    'getRandomDigit'=>OnlineGoodsUser::getRandomDigit($phone),
+                ],
+            ])
+        );
+
+        return $this->writeJson(
+            200,[ ] ,$res,
+            '成功',
+            true,
+            []
+        );
     }
 
     //咨询结果
@@ -189,11 +258,10 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
             []
         );
     }
-
-    function baoYaConsultResultList(): bool
+    function consultResultList(): bool
     {
         $requestData =  $this->getRequestData();
-        $page= $requestData['page']?:1;
+        $page = $requestData['page']?:1;
         $size= $requestData['size']?:10;
 //        $checkRes = DataModelExample::checkField(
 //            [
@@ -216,21 +284,24 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
 //        ){
 //            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
 //        }
-
-        $res =   InsuranceData::findByConditionV2(
+        $res =  InsuranceDataHuiZhong::findByConditionV2(
             [
                 ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
             ],$page
         );
+
         return $this->writeJson(
-            200,
-            [
-                'page' => $page,
-                'pageSize' => $size,
-                'total' => $res['total'],
-                'totalPage' => ceil($res['total']/$size) ,
-            ],
-            $res['data']
+            200,[
+            'page' => $page,
+            'pageSize' => $size,
+            'total' => $res['total'],
+            'totalPage' => ceil($res['total']/$size) ,
+            ] ,
+            //CommonService::ClearHtml($res['body']),
+            $res['data'],
+            '成功',
+            true,
+            []
         );
     }
 }

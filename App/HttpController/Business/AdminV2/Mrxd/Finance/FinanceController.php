@@ -11,6 +11,7 @@ use App\HttpController\Models\AdminV2\AdminUserChargeConfig;
 use App\HttpController\Models\AdminV2\AdminUserFinanceChargeInfo;
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecordV3;
+use App\HttpController\Models\AdminV2\AdminUserRole;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Models\Api\CompanyCarInsuranceStatusInfo;
@@ -28,6 +29,8 @@ use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\XinDong\XinDongService;
 use Vtiful\Kernel\Format;
+use EasySwoole\Mysqli\QueryBuilder;
+use EasySwoole\ORM\DbManager;
 
 class FinanceController extends ControllerBase
 {
@@ -228,7 +231,6 @@ class FinanceController extends ControllerBase
      * 冻结
      */
     public function updateConfigStatus(){
-       
         $id = $this->getRequestData('id');
         $status = $this->getRequestData('status');
         // if (empty($phone)) return $this->writeJson(201, null, null, '参数 不能是空');
@@ -317,7 +319,7 @@ class FinanceController extends ControllerBase
 
     //用户上传的列表 所有上传的客户名单
     public function getUploadLists(){
-        $page = $this->request()->getRequestParam('page')??1;
+        $page = $this->request()->getRequestParam('pageNo')??1;
         $createdAtStr = $this->getRequestData('created_at');
         $createdAtArr = explode('|||',$createdAtStr);
         $whereArr = [];
@@ -338,11 +340,21 @@ class FinanceController extends ControllerBase
                 ]
             ];
         }
-        $whereArr[] =  [
-            'field' => 'user_id',
-            'value' => $this->loginUserinfo['id'],
-            'operate' => '=',
-        ];
+        if(
+            AdminUserRole::checkIfIsAdmin(
+                $this->loginUserinfo['id']
+            )
+        ){
+
+        }else{
+            $whereArr[] =  [
+                'field' => 'user_id',
+                'value' => $this->loginUserinfo['id'],
+                'operate' => '=',
+            ];
+        }
+
+
         $res = AdminUserFinanceUploadRecord::findByConditionV3(
             $whereArr,
             $page
@@ -361,16 +373,25 @@ class FinanceController extends ControllerBase
 
     //获取导出列表|财务对账列表
     public function getExportLists(){
-        $page = $this->request()->getRequestParam('page')??1;
-        $res = AdminUserFinanceExportRecord::findByConditionV3(
+        $page = $this->request()->getRequestParam('pageNo')??1;
+        $whereArr = [];
+        if(
+            AdminUserRole::checkIfIsAdmin(
+                $this->loginUserinfo['id']
+            )
+        ){
 
-            [
-                [
-                    'field' => 'user_id',
-                    'value' => $this->loginUserinfo['id'],
-                    'operate' => '=',
-                ],
-            ],
+        }
+        else{
+            $whereArr[] =  [
+                'field' => 'user_id',
+                'value' => $this->loginUserinfo['id'],
+                'operate' => '=',
+            ];
+        }
+
+        $res = AdminUserFinanceExportRecord::findByConditionV3(
+            $whereArr,
             $page
         );
 
@@ -535,22 +556,31 @@ class FinanceController extends ControllerBase
     //我的下载记录
     public function getExportQueueLists(){
         $requestData =  $this->getRequestData();
-        $page = $requestData['page']?:1;
+        $page = $requestData['pageNo']?:1;
         $config = AdminUserFinanceConfig::getConfigByUserId($this->loginUserinfo['id']);
+        $whereArr = [
+            [
+                'field' => 'created_at',
+                'value' => strtotime(date("Y-m-d H:i:s", strtotime("-".($config['cache']?:12)." hours"))),
+                'operate' => '>=',
+            ]
+        ];
+        if(
+            AdminUserRole::checkIfIsAdmin(
+                $this->loginUserinfo['id']
+            )
+        ){
+
+        }else{
+//            $whereArr[] =  [
+//                'field' => 'user_id',
+//                'value' => $this->loginUserinfo['id'],
+//                'operate' => '=',
+//            ];
+        }
 
         $res = AdminUserFinanceExportDataQueue::findByConditionV3(
-            [
-                [
-                    'field' => 'user_id',
-                    'value' => $this->loginUserinfo['id'],
-                    'operate' => '=',
-                ],
-                [
-                    'field' => 'created_at',
-                    'value' => strtotime(date("Y-m-d H:i:s", strtotime("-".($config['cache']?:12)." hours"))),
-                    'operate' => '>=',
-                ]
-            ],
+            $whereArr,
             $page
         );
 
@@ -563,7 +593,7 @@ class FinanceController extends ControllerBase
                 $AdminUserFinanceUploadRecordRes && $value['upload_details'] = $AdminUserFinanceUploadRecordRes->toArray();
             }
             $value['status_cname'] = AdminUserFinanceExportDataQueue::getStatusMap()[$value['status']];
-
+            //user_id
         }
         return $this->writeJson(200,  [
             'page' => $page,
@@ -578,35 +608,64 @@ class FinanceController extends ControllerBase
         $requestData =  $this->getRequestData();
 
         //--------------------
-
         $page = $requestData['pageNo']?:1;
         $pageSize = $requestData['pageSize']?:10;
 
+        $status = $this->getRequestData('status');
         $createdAtStr = $this->getRequestData('updated_at');
         $createdAtArr = explode('|||',$createdAtStr);
         $whereArr = [];
         if (
-            !empty($createdAtArr) &&
-            !empty($createdAtStr)
+            $status > 0
         ) {
             $whereArr = [
                 [
-                    'field' => 'updated_at',
-                    'value' => strtotime($createdAtArr[0].' 00:00:00'),
-                    'operate' => '>=',
-                ],
-                [
-                    'field' => 'updated_at',
-                    'value' => strtotime($createdAtArr[1].' 23:59:59'),
-                    'operate' => '<=',
+                    'field' => 'status',
+                    'value' => $status,
+                    'operate' => '=',
                 ]
             ];
         }
-        $whereArr[] =  [
-            'field' => 'user_id',
-            'value' => $this->loginUserinfo['id'],
-            'operate' => '=',
-        ];
+
+        if (
+            !empty($createdAtArr) &&
+            !empty($createdAtStr)
+        ) {
+
+            $whereArr[] = [
+                'field' => 'updated_at',
+                'value' => strtotime($createdAtArr[0].' 00:00:00'),
+                'operate' => '>=',
+            ];
+
+            $whereArr[] = [
+                'field' => 'updated_at',
+                'value' => strtotime($createdAtArr[1].' 23:59:59'),
+                'operate' => '<=',
+            ];
+        }
+
+        if(
+            AdminUserRole::checkIfIsAdmin(
+                $this->loginUserinfo['id']
+            )
+        ){
+            $uid = $this->getRequestData('user_id');
+            if($uid){
+                $whereArr[] =  [
+                    'field' => 'user_id',
+                    'value' => $uid,
+                    'operate' => '=',
+                ];
+            }
+        }
+        else{
+            $whereArr[] =  [
+                'field' => 'user_id',
+                'value' => $this->loginUserinfo['id'],
+                'operate' => '=',
+            ];
+        }
 
         $whereArr[] =  [
             'field' => 'needs_confirm',
@@ -621,6 +680,7 @@ class FinanceController extends ControllerBase
         );
         //---------------------
         $titls = [
+            'id' => 'ID',
             'username'=>'用户名',
             'entName'=>'企业名',
             'period'=>'年度',
@@ -649,6 +709,7 @@ class FinanceController extends ControllerBase
         foreach ($dataRes['data'] as &$itme ){
             $AdminNewUser = AdminNewUser::findById($itme['user_id'])->toArray();
             $tmp = [
+                'id'=>$itme['id'],
                 'username'=>$AdminNewUser['user_name'],
                 'entName'=>$itme['entName'],
                 'period'=>$itme['year'],
@@ -688,7 +749,7 @@ class FinanceController extends ControllerBase
 
     //账户流水
     public function getFinanceLogLists(){
-        $page = $this->request()->getRequestParam('page')??1;
+        $page = $this->request()->getRequestParam('pageNo')??1;
         $requestData =  $this->getRequestData();
         $createdAtStr = $this->getRequestData('created_at');
         $createdAtArr = explode('|||',$createdAtStr);
@@ -710,11 +771,22 @@ class FinanceController extends ControllerBase
                 ]
             ];
         }
-        $whereArr[] =  [
-            'field' => 'userId',
-            'value' => $this->loginUserinfo['id'],
-            'operate' => '=',
-        ];
+
+        if(
+            AdminUserRole::checkIfIsAdmin(
+                $this->loginUserinfo['id']
+            )
+        ){
+
+        }else{
+            $whereArr[] =  [
+                'field' => 'userId',
+                'value' => $this->loginUserinfo['id'],
+                'operate' => '=',
+            ];
+        }
+
+
         if(
             $requestData['type']
         ){
@@ -730,6 +802,8 @@ class FinanceController extends ControllerBase
         );
         foreach ($res['data'] as  &$dataItem){
             $dataItem['type_cname'] = FinanceLog::getTypeCnameMaps()[$dataItem['type']];
+            $userModel = \App\HttpController\Models\AdminV2\AdminNewUser::findById($dataItem['userId']);;
+            $dataItem['user_name'] =  $userModel?$userModel->getAttr('user_name'):'';
         }
         return $this->writeJson(200,
             [
@@ -843,16 +917,47 @@ class FinanceController extends ControllerBase
         }
         foreach ($ids as $id){
             $records =AdminUserFinanceData::findById($id)->toArray();
+            $oldStatus = $records['status'] ;
+            if(
+                $records['status'] == $requestData['status']
+            ){
+                continue;
+            }
+
+            $res = AdminUserFinanceData::updateStatus(
+                $id,
+                $requestData['status']
+            );
+            if(!$res){
+                return $this->writeJson(206, [] ,   [], '确认失败', true, []);
+            }
+
+            OperatorLog::addRecord(
+                [
+                    'user_id' => $this->loginUserinfo['id'],
+                    'msg' =>  json_encode([
+                        //'entName'=>$records['entName'],
+                        'year'=>$records['year'],
+                        'old_status'=>$oldStatus,
+                        'new_status'=>$requestData['status'],
+                    ]),
+                    'details' =>json_encode( XinDongService::trace()),
+                    'type_cname' => '财务确认_'.$records['entName'],
+                ]
+            );
+
             if(
                 $records['status'] ==  AdminUserFinanceData::$statusNeedsConfirm
             ){
-                $res = AdminUserFinanceData::updateStatus(
-                    $id,
-                    $requestData['status']
+
+            }else{
+                //变更为用户确认中
+               $AdminUserFinanceUploadDataRecord =  AdminUserFinanceUploadDataRecord::findByUserFinanceDataId($id);
+               $AdminUserFinanceUploadRecord = AdminUserFinanceUploadRecord::findById($AdminUserFinanceUploadDataRecord->getAttr('record_id'));
+                AdminUserFinanceUploadRecord::changeStatus(
+                    $AdminUserFinanceUploadRecord->getAttr('id'),
+                    AdminUserFinanceUploadRecord::$stateNeedsConfirm
                 );
-                if(!$res){
-                    return $this->writeJson(206, [] ,   [], '确认失败', true, []);
-                }
             }
 
         }
@@ -862,12 +967,32 @@ class FinanceController extends ControllerBase
 
     //导出记录对应的详情
     public function exportDetails(){
+        $size = $this->request()->getRequestParam('pageSize')??50;
+        $page = $this->request()->getRequestParam('pageNo')??1;
+
         $requestData =  $this->getRequestData();
-        $res = AdminUserFinanceExportDataRecord::findByUserAndExportId(
-            $this->loginUserinfo['id'],
-            $requestData['id']
+        $whereArr = [
+            ['field'=>'export_record_id','value'=>$requestData['id'],'operate'=>'=']
+        ];
+        if(
+            AdminUserRole::checkIfIsAdmin(
+                $this->loginUserinfo['id']
+            )
+        ){
+
+
+        }else{
+            $whereArr[] =
+                ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
+            ;
+
+        }
+        $res = AdminUserFinanceExportDataRecord::findByConditionV3(
+            $whereArr,$page,$size
         );
-        foreach ($res as &$dataItem){
+        //
+
+        foreach ($res['data'] as &$dataItem){
             $dataItem['details'] = [];
             if($dataItem['upload_data_id']){
                 $dataItem['upload_details'] = [];
@@ -883,16 +1008,19 @@ class FinanceController extends ControllerBase
                 }
             }
         }
+//        return $this->writeJson(200, [
+//            'page' => 1,
+//            'pageSize' =>50,
+//            'total' => count($res),
+//            'totalPage' => ceil(count($res)/50),
+//        ], $res, '');
 
-        $size = $this->request()->getRequestParam('size')??10;
-        $page = $this->request()->getRequestParam('page')??1;
-        $offset  =  ($page-1)*$size;
         return $this->writeJson(200, [
             'page' => $page,
             'pageSize' =>$size,
-            'total' => count($res),
-            'totalPage' => ceil(count($res)/$size),
-        ], $res, '');
+            'total' => count($res['total']),
+            'totalPage' => ceil(count($res['total'])/$size),
+        ], $res['data'], '');
     }
 
     //导出某次导出的详情记录
@@ -1140,6 +1268,9 @@ class FinanceController extends ControllerBase
                     $uploadRes['user_id'],$uploadRes['id']
                 );
                 foreach($financeDatas as $financeData){
+                    if(empty($financeData['AdminUserFinanceData'])){
+                        continue;
+                    }
                     $AdminUserFinanceUploadDataRecord = AdminUserFinanceUploadDataRecord::findById(
                         $financeData['AdminUserFinanceUploadDataRecord']['id']
                     )->toArray();

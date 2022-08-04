@@ -66,7 +66,9 @@ class UserController extends ControllerBase
             $value['email_for_show'] = AdminNewUser::hide(
                 AdminNewUser::aesDecode($value['email'])
             );
-
+            $value['moeny_for_show'] = AdminNewUser::hide(
+                AdminNewUser::aesDecode($value['moeny'])
+            );
             $rolesRes = AdminUserRole::findByUserId($value['id']);
             $roles_ids_arr = array_column(
                 $rolesRes,'role_id'
@@ -167,12 +169,12 @@ class UserController extends ControllerBase
         if (empty($password)) return $this->writeJson(201, null, null, 'password 不能是空');
 
         $info = AdminNewUser::findByPhoneAndPwd(
-            AdminNewUser::aesEncode($phone),
+            $phone,//AdminNewUser::aesEncode($phone)
             AdminNewUser::aesEncode($password)
         );
         if (empty($info)) return $this->writeJson(201, null, null, '用户不存在或者密码错误');
         $info->update([
-            'phone' => AdminNewUser::aesEncode($phone),
+            'phone' => $phone ,//AdminNewUser::aesEncode($phone)
             'password' =>AdminNewUser::aesEncode($newPassword)
         ]);
         return $this->writeJson(200, null, null, '修改成功');

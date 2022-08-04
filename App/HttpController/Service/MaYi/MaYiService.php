@@ -5206,6 +5206,8 @@ class MaYiService extends ServiceBase
             ->setCheckRespFlag(true)
             ->post($postData, 'getRegisterInfo');
 
+        CommonService::getInstance()->log4PHP($res, 'taoshu');
+
         if (empty($res['result'])) {
             return $this->check(606, null, null, '未找到匹配的企业');
         }
@@ -5221,6 +5223,7 @@ class MaYiService extends ServiceBase
 
         if (empty($check)) {
             $baiduApi = BaiDuService::getInstance()->addressToStructured(trim($res['DOM']));
+            CommonService::getInstance()->log4PHP($baiduApi, 'baidu');
             $baiduApiRes = [];
             if ($baiduApi['status'] === 0) {
                 $baiduApiRes['regAddress'] = $res['DOM'] ?? '';

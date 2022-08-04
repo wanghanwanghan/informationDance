@@ -170,6 +170,12 @@ class Email extends ServiceBase
         $emailDataV2 = [];
         foreach ($emailData as $msg) {
             $mailHeader = $this->mailHeader($msg);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'mailListBySinceV2_$mailHeader'=> $mailHeader
+                ])
+            );
             $UID = imap_uid($this->_connect, $msg);
             $emailDataV2[$UID] = [
                 'mailHeader' => $mailHeader,
@@ -318,8 +324,9 @@ class Email extends ServiceBase
                     } else if ($encoding == 4) {
                         $message = quoted_printable_decode($message);
                     }
-                    $this->downAttach($path, $name, $message);
-                    $attach[] = $name;
+                    $newName = mb_decode_mimeheader($name);
+                    $this->downAttach($path, $newName, $message);
+                    $attach[] = $newName;
                 }
                 if ($struckture->parts[$key]->parts) {
                     foreach ($struckture->parts[$key]->parts as $keyb => $valueb) {
@@ -339,8 +346,9 @@ class Email extends ServiceBase
                             } else if ($encoding == 4) {
                                 $message = quoted_printable_decode($message);
                             }
-                            $this->downAttach($path, $name, $message);
-                            $attach[] = $name;
+                            $newName = mb_decode_mimeheader($name);
+                            $this->downAttach($path, $newName, $message);
+                            $attach[] = $newName;
                         }
                     }
                 }
@@ -351,7 +359,6 @@ class Email extends ServiceBase
 
     /**
      * download the attach of the mail to localhost
-     *
      * @param string $filePath
      * @param string $message
      * @param string $name
@@ -369,7 +376,6 @@ class Email extends ServiceBase
 
     /**
      * click the attach link to download the attach
-     *
      * @param string $id
      */
     public function getAttachData($id, $filePath, $fileName)
@@ -503,6 +509,12 @@ class Email extends ServiceBase
         return $status;
     }
 
+//    public function dowload($msgCount)
+//    {
+//        $status = imap_setflag_full($this->_connect, $msgCount, "\\Seen");
+//        return $status;
+//    }
+
     /**
      * Close an IMAP stream
      */
@@ -510,4 +522,5 @@ class Email extends ServiceBase
     {
         imap_close($this->_connect, CL_EXPUNGE);
     }
+
 }

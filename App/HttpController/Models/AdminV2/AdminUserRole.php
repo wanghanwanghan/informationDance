@@ -49,6 +49,16 @@ class AdminUserRole extends ModelBase
         return $res;
     }
 
+    public static function checkIfIsAdmin(
+        $user_id
+    ){
+       $res = self::findByUserIdAndRole(
+           1,
+           $user_id
+       );
+        return $res;
+    }
+
     public static function findByUserId(
         $user_id
     ){

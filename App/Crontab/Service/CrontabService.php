@@ -52,7 +52,7 @@ class CrontabService
         $this->RunDealApiSouKe();//新APi-搜客模块相关的定时
         $this->RunDealToolsFile();//新APi-搜客模块相关的定时
         $this->RunDealZhaoTouBiao();//新APi-搜客模块相关的定时
-        //$this->RunDealEmailReceiver();//
+        $this->RunDealEmailReceiver();//
         return true;
     }
 
