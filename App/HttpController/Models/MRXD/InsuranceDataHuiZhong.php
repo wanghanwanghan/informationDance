@@ -36,7 +36,7 @@ class InsuranceDataHuiZhong extends ModelBase
     public static function addRecord($requestData){
         try {
            $res =  InsuranceDataHuiZhong::create()->data([
-                'product_id' => $requestData['product_id'],
+                'product_id' => $requestData['product_id']?:0,
                 'ent_name' => $requestData['ent_name']?:'',
                 'business_license_file' => $requestData['business_license_file']?:'',
                 'id_card_front_file' => $requestData['id_card_front_file']?:'',
@@ -45,7 +45,7 @@ class InsuranceDataHuiZhong extends ModelBase
                 'legal_person_phone' => $requestData['legal_person_phone']?:'',
                'business_license' => $requestData['business_license']?:'',
                'status' => $requestData['status']?:self::$status_init,
-               'user_id' => $requestData['user_id'],
+               'user_id' => $requestData['user_id']?:0,
                'created_at' => time(),
                'updated_at' => time(),
            ])->save();
