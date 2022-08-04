@@ -967,26 +967,29 @@ class FinanceController extends ControllerBase
 
     //导出记录对应的详情
     public function exportDetails(){
-        $size = $this->request()->getRequestParam('size')??50;
-        $page = $this->request()->getRequestParam('page')??1;
-        $offset  =  ($page-1)*$size;
+        $size = $this->request()->getRequestParam('pageSize')??50;
+        $page = $this->request()->getRequestParam('pageNo')??1;
 
         $requestData =  $this->getRequestData();
-
+        $whereArr = [
+            ['field'=>'export_record_id','value'=>$requestData['id'],'operate'=>'=']
+        ];
         if(
             AdminUserRole::checkIfIsAdmin(
                 $this->loginUserinfo['id']
             )
         ){
-            $res = AdminUserFinanceExportDataRecord::findByExportId(
-                $requestData['id']
-            );
+
+
         }else{
-            $res = AdminUserFinanceExportDataRecord::findByUserAndExportId(
-                $this->loginUserinfo['id'],
-                $requestData['id']
-            );
+            $whereArr[] =
+                ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
+            ;
+            
         }
+        $res = AdminUserFinanceExportDataRecord::findByConditionV3(
+            $whereArr,$page,$size
+        );
         //
 
         foreach ($res as &$dataItem){
