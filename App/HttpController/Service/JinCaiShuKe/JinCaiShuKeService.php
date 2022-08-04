@@ -10,6 +10,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use App\HttpController\Service\XinDong\XinDongService;
+use wanghanwanghan\someUtils\control;
 use wanghanwanghan\someUtils\moudles\resp\create;
 
 class JinCaiShuKeService extends ServiceBase
@@ -238,6 +239,33 @@ class JinCaiShuKeService extends ServiceBase
             'fplxs' => '01,08,03,04,10,11,14,15',//发票类型 01-增值税专用发票 08-增值税专用发票（电子）03-机动车销售统一发票 ...
             'kprqq' => trim($start),//开票(填发)日期起 YYYY-MM-DD
             'kprqz' => trim($stop),//开票(填发)日期止 日期起止范围必须在同一个月内
+        ];
+
+        $signType = '0';
+
+        $post_data = [
+            'appid' => $this->appKey,
+            'serviceid' => __FUNCTION__,
+            'jtnsrsbh' => $this->jtnsrsbh,
+            'nsrsbh' => trim($nsrsbh),
+            'content' => base64_encode(jsonEncode($content, false)),
+            'signature' => $this->signature($content, trim($nsrsbh), __FUNCTION__, $signType),
+            'signType' => $signType,
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($this->url, $post_data, [], ['enableSSL' => true]);
+
+        return $this->checkRespFlag ? $this->checkResp($res) : $res;
+    }
+
+    //api 查询状态接口
+    function S000520(string $nsrsbh, string $rwh)
+    {
+        $content = [
+            'requuid' => control::getUuid(),//请求流水号
+            'rwh' => trim($rwh),//任务号
         ];
 
         $signType = '0';
