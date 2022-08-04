@@ -225,7 +225,7 @@ class RunDealEmailReceiver extends AbstractCronTask
 //            );
             MailReceipt::updateById($email['id'],['status' => MailReceipt::$status_succeed]);
         }
-    } 
+    }
     static  function  getTableHtml($data){
         $html = "
 <style>

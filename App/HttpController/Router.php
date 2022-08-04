@@ -293,6 +293,7 @@ class Router extends AbstractRouter
         $prefix = '/Business/OnlineGoods/Mrxd/HuiZhongController/';
         $routeCollector->addGroup('/online_goods', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/pre_auth', $prefix . 'preAuthorization');//
+            $routeCollector->addRoute(['GET', 'POST'], '/consultHuiZhongResult', $prefix . 'consultResult');//
         });
 
         return true;
