@@ -590,174 +590,168 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
 
         return true;
     }
-    static function  checkConfirmV2_V2($limit){
-        $allUploadRes =  AdminUserFinanceUploadRecord::findBySql(
-            " WHERE `status` = ".AdminUserFinanceUploadRecordV3::$stateNeedsConfirm. " 
-                    AND touch_time  IS Null  LIMIT $limit 
-            "
-        );
-        foreach($allUploadRes as $uploadRes){
-            AdminUserFinanceUploadRecord::setTouchTime(
-                $uploadRes['id'],date('Y-m-d H:i:s')
-            );
+//    static function  checkConfirmV2_V2($limit){
+//        $allUploadRes =  AdminUserFinanceUploadRecord::findBySql(
+//            " WHERE `status` = ".AdminUserFinanceUploadRecordV3::$stateNeedsConfirm. "
+//                    AND touch_time  IS Null  LIMIT $limit
+//            "
+//        );
+//        foreach($allUploadRes as $uploadRes){
+//            AdminUserFinanceUploadRecord::setTouchTime(
+//                $uploadRes['id'],date('Y-m-d H:i:s')
+//            );
+//
+//            //尚未确认
+//            if(
+//                AdminUserFinanceUploadRecord::checkIfNeedsConfirmV2($uploadRes['id'])
+//            ){
+//
+//            }
+//            //确认完了
+//            else{
+//                $res = AdminUserFinanceUploadRecord::changeStatus(
+//                    $uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateAllSet
+//                );
+//
+//                //确认完了 重新计算下价格
+//                $calRes = AdminUserFinanceUploadRecord::calMoneyV2(
+//                    $uploadRes['id']
+//                );
+//
+//                if(!$calRes  ){
+//                    //把优先级调低
+//                    AdminUserFinanceUploadRecord::reducePriority(
+//                        $uploadRes['id'],1
+//                    );
+//                    AdminUserFinanceUploadRecord::setData(
+//                        $uploadRes['id'],'remrk','重新计算价格错误'
+//                    );
+//                    return  false;
+//                }
+//            }
+//
+//
+//            AdminUserFinanceUploadRecord::setTouchTime(
+//                $uploadRes['id'],NULL
+//            );
+//        }
+//
+//        return true;
+//    }
 
-            //尚未确认
-            if(
-                AdminUserFinanceUploadRecord::checkIfNeedsConfirmV2($uploadRes['id'])
-            ){
-
-            }
-            //确认完了
-            else{
-                $res = AdminUserFinanceUploadRecord::changeStatus(
-                    $uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateAllSet
-                );
-
-                //确认完了 重新计算下价格
-                $calRes = AdminUserFinanceUploadRecord::calMoneyV2(
-                    $uploadRes['id']
-                );
-
-                if(!$calRes  ){
-                    //把优先级调低
-                    AdminUserFinanceUploadRecord::reducePriority(
-                        $uploadRes['id'],1
-                    );
-                    AdminUserFinanceUploadRecord::setData(
-                        $uploadRes['id'],'remrk','重新计算价格错误'
-                    );
-                    return  false;
-                }
-            }
-
-
-            AdminUserFinanceUploadRecord::setTouchTime(
-                $uploadRes['id'],NULL
-            );
-        }
-
-        return true;
-    }
-
-    static function  exportFinanceDataV3($limit){
-        $queueDatas =  AdminUserFinanceExportDataQueue::findBySql(
-            " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_init. " 
-                    AND touch_time  IS Null  LIMIT $limit 
-            "
-        );
-        foreach($queueDatas as $queueData){
-            AdminUserFinanceExportDataQueue::setTouchTime(
-                $queueData['id'],date('Y-m-d H:i:s')
-            );
-
-            $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
-
-            //财务数据
-            $financeDatas = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordIdV2(
-                $uploadRes['user_id'],$uploadRes['id']
-            );
-
-            //生成下载数据
-            $xlxsData = NewFinanceData::exportFinanceToXlsx($queueData['upload_record_id'],$financeDatas['export_data']);
-
-            $res = AdminUserFinanceExportDataQueue::setFilePath(
-                $queueData['id'],
-                $xlxsData['path'],
-                $xlxsData['filename']
-            );
-            if(!$res  ){
-                return  false;
-            }
-
-
-            $financeDatas = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordIdV2(
-                $uploadRes['user_id'],$uploadRes['id']
-            );
-
-            // 设置导出记录
-            $money = $uploadRes['money'];
-            //虽然有价格  但是并没实际收费 （比如本名单已经扣费过）
-            if(
-                $queueData['real_charge'] == 0
-            ){
-                $money = 0;
-            }
-
-            $AdminUserFinanceExportRecordId = AdminUserFinanceExportRecord::addRecordV2(
-                [
-                    'user_id' => $uploadRes['user_id'],
-                    'price' => $money,
-                    'total_company_nums' => 0,
-                    'config_json' => $uploadRes['finance_config'],
-                    'path' => $xlxsData['path'],
-                    'file_name' => $xlxsData['filename'],
-                    'upload_record_id' => $queueData['upload_record_id'],
-                    'reamrk' => '',
-                    'status' =>AdminUserFinanceExportRecord::$stateInit,
-                    'queue_id' => $queueData['id'],
-                    'batch' => $queueData['id'],
-                ]
-            );
-            if(!$AdminUserFinanceExportRecordId  ){
-                return  false;
-            }
-            $res =  AdminUserFinanceExportRecord::setFilePath(
-                $AdminUserFinanceExportRecordId,
-                $xlxsData['path'],
-                $xlxsData['filename']
-            );
-            if(!$res  ){
-                return  false;
-            }
-
-            //设置细的导出记录
-            foreach($financeDatas['details'] as $financeData){
-                $AdminUserFinanceUploadDataRecord = AdminUserFinanceUploadDataRecord::findById($financeData['UploadDataRecordId'])->toArray();
-                $priceItem =    intval($AdminUserFinanceUploadDataRecord['real_price']);
-                //虽然有价格  但是并没实际收费 （比如本名单已经扣费过）
-                if(
-                    $queueData['real_charge'] == 0
-                ){
-                    $priceItem = 0;
-                }
-                //虽然有价格  但是积极上并不收费
-                if(
-                    $AdminUserFinanceUploadDataRecord['charge_flag'] == 0
-                ){
-                    $priceItem = 0;
-                }
-                $AdminUserFinanceExportDataRecordId = AdminUserFinanceExportDataRecord::addRecordV2(
-                    [
-                        'user_id' => $AdminUserFinanceUploadDataRecord['user_id'],
-                        'export_record_id' => $AdminUserFinanceExportRecordId,
-                        'upload_data_id' => $financeData['UploadDataRecordId'],
-                        'price' => $priceItem,
-                        'detail' => $AdminUserFinanceUploadDataRecord['price_type_remark']?:'',
-                        'batch' => $queueData['id'].'_'.$financeData['UploadDataRecordId'],
-                        'queue_id' => $queueData['id'],
-                        'status' => AdminUserFinanceExportRecord::$stateInit,
-                    ]
-                );
-                if(!$AdminUserFinanceExportDataRecordId  ){
-                    return  false;
-                }
-            }
-
-            $res = AdminUserFinanceExportDataQueue::updateStatusById(
-                $queueData['id'],
-                AdminUserFinanceExportDataQueue::$state_succeed
-            );
-            if(!$res  ){
-                return  false;
-            }
-            AdminUserFinanceExportDataQueue::setTouchTime(
-                $queueData['id'],NULL
-            );
-
-        }
-
-        return true;
-    }
+//    static function  exportFinanceDataV3($limit){
+//        $queueDatas =  AdminUserFinanceExportDataQueue::findBySql(
+//            " WHERE `status` = ".AdminUserFinanceExportDataQueue::$state_init. "
+//                    AND touch_time  IS Null  LIMIT $limit
+//            "
+//        );
+//        foreach($queueDatas as $queueData){
+//            AdminUserFinanceExportDataQueue::setTouchTime(
+//                $queueData['id'],date('Y-m-d H:i:s')
+//            );
+//
+//            $uploadRes = AdminUserFinanceUploadRecord::findById($queueData['upload_record_id'])->toArray();
+//
+//            //财务数据
+//            $financeDatas = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordIdV2(
+//                $uploadRes['user_id'],$uploadRes['id']
+//            );
+//
+//            //生成下载数据
+//            $xlxsData = NewFinanceData::exportFinanceToXlsx($queueData['upload_record_id'],$financeDatas['export_data']);
+//
+//            $res = AdminUserFinanceExportDataQueue::setFilePath(
+//                $queueData['id'],
+//                $xlxsData['path'],
+//                $xlxsData['filename']
+//            );
+//            if(!$res  ){
+//                return  false;
+//            }
+//
+//
+//            $financeDatas = AdminUserFinanceUploadRecord::getAllFinanceDataByUploadRecordIdV2(
+//                $uploadRes['user_id'],$uploadRes['id']
+//            );
+//
+//            // 设置导出记录
+//            $money = $uploadRes['money'];
+//            //虽然有价格  但是并没实际收费 （比如本名单已经扣费过）
+//            if(
+//                $queueData['real_charge'] == 0
+//            ){
+//                $money = 0;
+//            }
+//
+//            $AdminUserFinanceExportRecordId = AdminUserFinanceExportRecord::addRecordV2(
+//                [
+//                    'user_id' => $uploadRes['user_id'],
+//                    'price' => $money,
+//                    'total_company_nums' => 0,
+//                    'config_json' => $uploadRes['finance_config'],
+//                    'path' => $xlxsData['path'],
+//                    'file_name' => $xlxsData['filename'],
+//                    'upload_record_id' => $queueData['upload_record_id'],
+//                    'reamrk' => '',
+//                    'status' =>AdminUserFinanceExportRecord::$stateInit,
+//                    'queue_id' => $queueData['id'],
+//                    'batch' => $queueData['id'],
+//                ]
+//            );
+//            if(!$AdminUserFinanceExportRecordId  ){
+//                return  false;
+//            }
+//            $res =  AdminUserFinanceExportRecord::setFilePath(
+//                $AdminUserFinanceExportRecordId,
+//                $xlxsData['path'],
+//                $xlxsData['filename']
+//            );
+//            if(!$res  ){
+//                return  false;
+//            }
+//
+//            //设置细的导出记录
+//            foreach($financeDatas['details'] as $financeData){
+//                $AdminUserFinanceUploadDataRecord = AdminUserFinanceUploadDataRecord::findById($financeData['UploadDataRecordId'])->toArray();
+//                $priceItem =    intval($AdminUserFinanceUploadDataRecord['real_price']);
+//                //虽然有价格  但是并没实际收费 （比如本名单已经扣费过）
+//                if(
+//                    $queueData['real_charge'] == 0
+//                ){
+//                    $priceItem = 0;
+//                }
+//                $AdminUserFinanceExportDataRecordId = AdminUserFinanceExportDataRecord::addRecordV2(
+//                    [
+//                        'user_id' => $AdminUserFinanceUploadDataRecord['user_id'],
+//                        'export_record_id' => $AdminUserFinanceExportRecordId,
+//                        'upload_data_id' => $financeData['UploadDataRecordId'],
+//                        'price' => $priceItem,
+//                        'detail' => $AdminUserFinanceUploadDataRecord['price_type_remark']?:'',
+//                        'batch' => $queueData['id'].'_'.$financeData['UploadDataRecordId'],
+//                        'queue_id' => $queueData['id'],
+//                        'status' => AdminUserFinanceExportRecord::$stateInit,
+//                    ]
+//                );
+//                if(!$AdminUserFinanceExportDataRecordId  ){
+//                    return  false;
+//                }
+//            }
+//
+//            $res = AdminUserFinanceExportDataQueue::updateStatusById(
+//                $queueData['id'],
+//                AdminUserFinanceExportDataQueue::$state_succeed
+//            );
+//            if(!$res  ){
+//                return  false;
+//            }
+//            AdminUserFinanceExportDataQueue::setTouchTime(
+//                $queueData['id'],NULL
+//            );
+//
+//        }
+//
+//        return true;
+//    }
 
     //TODO  改成按行的 防止内存溢出
     static function  exportFinanceDataV4($limit){

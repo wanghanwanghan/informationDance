@@ -581,54 +581,54 @@ class RunDealFinanceCompanyDataNewV3 extends AbstractCronTask
 
         return true;
     }
-    static function  checkConfirmV2_V2($limit){
-        $allUploadRes =  AdminUserFinanceUploadRecord::findBySql(
-            " WHERE `status` = ".AdminUserFinanceUploadRecordV3::$stateNeedsConfirm. " 
-                    AND touch_time  IS Null  LIMIT $limit 
-            "
-        );
-        foreach($allUploadRes as $uploadRes){
-            AdminUserFinanceUploadRecord::setTouchTime(
-                $uploadRes['id'],date('Y-m-d H:i:s')
-            );
-
-            //尚未确认
-            if(
-                AdminUserFinanceUploadRecord::checkIfNeedsConfirmV2($uploadRes['id'])
-            ){
-
-            }
-            //确认完了
-            else{
-                $res = AdminUserFinanceUploadRecord::changeStatus(
-                    $uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateAllSet
-                );
-
-                //确认完了 重新计算下价格
-                $calRes = AdminUserFinanceUploadRecord::calMoneyV2(
-                    $uploadRes['id']
-                );
-
-                if(!$calRes  ){
-                    //把优先级调低
-                    AdminUserFinanceUploadRecord::reducePriority(
-                        $uploadRes['id'],1
-                    );
-                    AdminUserFinanceUploadRecord::setData(
-                        $uploadRes['id'],'remrk','重新计算价格错误'
-                    );
-                    return  false;
-                }
-            }
-
-
-            AdminUserFinanceUploadRecord::setTouchTime(
-                $uploadRes['id'],NULL
-            );
-        }
-
-        return true;
-    }
+//    static function  checkConfirmV2_V2($limit){
+//        $allUploadRes =  AdminUserFinanceUploadRecord::findBySql(
+//            " WHERE `status` = ".AdminUserFinanceUploadRecordV3::$stateNeedsConfirm. "
+//                    AND touch_time  IS Null  LIMIT $limit
+//            "
+//        );
+//        foreach($allUploadRes as $uploadRes){
+//            AdminUserFinanceUploadRecord::setTouchTime(
+//                $uploadRes['id'],date('Y-m-d H:i:s')
+//            );
+//
+//            //尚未确认
+//            if(
+//                AdminUserFinanceUploadRecord::checkIfNeedsConfirmV2($uploadRes['id'])
+//            ){
+//
+//            }
+//            //确认完了
+//            else{
+//                $res = AdminUserFinanceUploadRecord::changeStatus(
+//                    $uploadRes['id'],AdminUserFinanceUploadRecordV3::$stateAllSet
+//                );
+//
+//                //确认完了 重新计算下价格
+//                $calRes = AdminUserFinanceUploadRecord::calMoneyV2(
+//                    $uploadRes['id']
+//                );
+//
+//                if(!$calRes  ){
+//                    //把优先级调低
+//                    AdminUserFinanceUploadRecord::reducePriority(
+//                        $uploadRes['id'],1
+//                    );
+//                    AdminUserFinanceUploadRecord::setData(
+//                        $uploadRes['id'],'remrk','重新计算价格错误'
+//                    );
+//                    return  false;
+//                }
+//            }
+//
+//
+//            AdminUserFinanceUploadRecord::setTouchTime(
+//                $uploadRes['id'],NULL
+//            );
+//        }
+//
+//        return true;
+//    }
 
     static function  exportFinanceDataV3($limit){
         $queueDatas =  AdminUserFinanceExportDataQueue::findBySql(

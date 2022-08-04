@@ -209,24 +209,6 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         return $res2;
     }
 
-    public static function updateChargeFlag(
-        $id,$flag
-    ){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ ,
-                'updateChargeFlag' => [
-                    '$id'=>$id,'$flag'=>$flag
-                ]
-            ])
-        );
-        $info = self::findById($id);
-        return $info->update([
-            'id' => $id,
-            'charge_flag' => $flag,
-        ]);
-    }
-
     //  设置收费类型|按包年收费 还是按单年收费
     public static function updateChargeInfo($id,$uploadId){
 
