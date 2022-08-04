@@ -291,8 +291,8 @@ class Router extends AbstractRouter
     private function HuiZhongRouterV1(RouteCollector $routeCollector)
     {
         $prefix = '/Business/OnlineGoods/Mrxd/HuiZhongController/';
-        $routeCollector->addGroup('/loan', function (RouteCollector $routeCollector) use ($prefix) {
-            $routeCollector->addRoute(['GET', 'POST'], '/preAuthorization', $prefix . 'preAuthorization');//
+        $routeCollector->addGroup('/online_goods', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/pre_auth', $prefix . 'preAuthorization');//
         });
 
         return true;
