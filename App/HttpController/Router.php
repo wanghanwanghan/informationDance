@@ -262,6 +262,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/uploadeFile', $prefix . 'uploadeFile');// uploadeFile
             $routeCollector->addRoute(['GET', 'POST'], '/consultResult', $prefix . 'consultResult');// uploadeFile
             $routeCollector->addRoute(['GET', 'POST'], '/baoYaConsultResultList', $prefix . 'baoYaConsultResultList');// uploadeFile
+            $routeCollector->addRoute(['GET', 'POST'], '/baoYaConsultResult', $prefix . 'baoYaConsultResult');// uploadeFile
         });
 
         return true;
@@ -297,6 +298,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/consultHuiZhongResult', $prefix . 'consultResult');//
             $routeCollector->addRoute(['GET', 'POST'], '/huiZhongSendSms', $prefix . 'sendSms');//
             $routeCollector->addRoute(['GET', 'POST'], '/huiZhongConsultResultList', $prefix . 'consultResultList');//
+            $routeCollector->addRoute(['GET', 'POST'], '/huiZhongConsultResult', $prefix . 'huiZhongConsultResult');//
         });
 
         return true;

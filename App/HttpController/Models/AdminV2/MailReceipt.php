@@ -52,6 +52,7 @@ class MailReceipt extends ModelBase
                 'to' => $requestData['to'],
                 'to_other' => $requestData['to_other']?:'',
                 'insurance_id' => $requestData['insurance_id']?:'0',
+                'insurance_hui_zhong_id' => $requestData['insurance_hui_zhong_id']?:'0',
                 'user_id' => $requestData['user_id'],
                 'from' => $requestData['from'],
                 'subject' => $requestData['subject']?:'',
@@ -133,7 +134,21 @@ class MailReceipt extends ModelBase
         return $res;
     }
 
+    //根据保丫id获取
+    public static function findByInsuranceId($id){
+        $res =  MailReceipt::create()
+            ->where('insurance_id',$id)
+            ->all();
+        return $res;
+    }
 
+    //根据汇众id获取
+    public static function findByInsuranceHuiZhongId($id){
+        $res =  MailReceipt::create()
+            ->where('insurance_hui_zhong_id',$id)
+            ->all();
+        return $res;
+    }
 
     public static function findByEmailId($email_id,$to){
         $res =  MailReceipt::create()
