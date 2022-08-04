@@ -985,14 +985,14 @@ class FinanceController extends ControllerBase
             $whereArr[] =
                 ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
             ;
-            
+
         }
         $res = AdminUserFinanceExportDataRecord::findByConditionV3(
             $whereArr,$page,$size
         );
         //
 
-        foreach ($res as &$dataItem){
+        foreach ($res['data'] as &$dataItem){
             $dataItem['details'] = [];
             if($dataItem['upload_data_id']){
                 $dataItem['upload_details'] = [];
@@ -1008,19 +1008,19 @@ class FinanceController extends ControllerBase
                 }
             }
         }
-        return $this->writeJson(200, [
-            'page' => 1,
-            'pageSize' =>50,
-            'total' => count($res),
-            'totalPage' => ceil(count($res)/50),
-        ], $res, '');
+//        return $this->writeJson(200, [
+//            'page' => 1,
+//            'pageSize' =>50,
+//            'total' => count($res),
+//            'totalPage' => ceil(count($res)/50),
+//        ], $res, '');
 
         return $this->writeJson(200, [
             'page' => $page,
             'pageSize' =>$size,
-            'total' => count($res),
-            'totalPage' => ceil(count($res)/$size),
-        ], $res, '');
+            'total' => count($res['total']),
+            'totalPage' => ceil(count($res['total'])/$size),
+        ], $res['data'], '');
     }
 
     //导出某次导出的详情记录
