@@ -225,8 +225,7 @@ class RunDealEmailReceiver extends AbstractCronTask
 //            );
             MailReceipt::updateById($email['id'],['status' => MailReceipt::$status_succeed]);
         }
-    }
-
+    } 
     static  function  getTableHtml($data){
         $html = "
 <style>
@@ -472,14 +471,14 @@ class RunDealEmailReceiver extends AbstractCronTask
                     TEMP_FILE_PATH . 'qianzhang2.png',
                 ]
             );
-//            OperatorLog::addRecord(
-//                [
-//                    'user_id' => 0,
-//                    'msg' =>  " 附件:".TEMP_FILE_PATH . $res['filename'] .' 邮件结果:'.$res1.$res2.$res3.$res4.$res5,
-//                    'details' =>json_encode( XinDongService::trace()),
-//                    'type_cname' => '招投标邮件',
-//                ]
-//            );
+            OperatorLog::addRecord(
+                [
+                    'user_id' => 0,
+                    'msg' =>  " 附件:".TEMP_FILE_PATH . $res['filename'] .' 邮件结果:'.$res1.$res2.$res3.$res4.$res5,
+                    'details' =>json_encode( XinDongService::trace()),
+                    'type_cname' => '赛盟发邮件',
+                ]
+            );
             InsuranceData::updateById($data['id'],[
                 'status' => InsuranceData::$status_email_succeed
             ]);
@@ -509,14 +508,14 @@ class RunDealEmailReceiver extends AbstractCronTask
                     TEMP_FILE_PATH . 'qianzhang2.png',
                 ]
             );
-//            OperatorLog::addRecord(
-//                [
-//                    'user_id' => 0,
-//                    'msg' =>  " 附件:".TEMP_FILE_PATH . $res['filename'] .' 邮件结果:'.$res1.$res2.$res3.$res4.$res5,
-//                    'details' =>json_encode( XinDongService::trace()),
-//                    'type_cname' => '招投标邮件',
-//                ]
-//            );
+            OperatorLog::addRecord(
+                [
+                    'user_id' => 0,
+                    'msg' =>  " 附件:".TEMP_FILE_PATH  .' 邮件结果:'.$res1,
+                    'details' =>json_encode( XinDongService::trace()),
+                    'type_cname' => '麾众发邮件',
+                ]
+            );
             InsuranceDataHuiZhong::updateById($data['id'],[
                 'status' => InsuranceDataHuiZhong::$status_sended
             ]);
