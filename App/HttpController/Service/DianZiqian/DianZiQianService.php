@@ -285,6 +285,7 @@ class DianZiQianService extends ServiceBase
         $list = AntAuthList::create()->where('id>188')->all();
         $emptyAddressArr = [];
         $data = [];
+        $arr = [];
         foreach ($list as $k=>$val){
             if(empty($val->getAttr('regAddress'))){
                 $emptyAddressArr[$k]['id'] = $val->getAttr('id');
@@ -293,15 +294,16 @@ class DianZiQianService extends ServiceBase
                     ->setCheckRespFlag(true)
                     ->post(['entName'=>$val->getAttr('entName')], 'getRegisterInfo');
                 $res = $registerData['result'];
-                dingAlarm('doTemporaryAction',['$res'=>json_encode($res[0])]);
+                $arr = $res;
+//                dingAlarm('doTemporaryAction',['$res'=>json_encode($res[0])]);
                 $data['2'][$k]['id'] = $val->getAttr('id');
                 $data['2'][$k]['entName'] = $val->getAttr('entName');
                 $data['2'][$k]['socialCredit'] = $val->getAttr('socialCredit');
                 $data['2'][$k]['legalPerson'] = $val->getAttr('legalPerson');
                 $data['2'][$k]['idCard'] = $val->getAttr('idCard');
                 $data['2'][$k]['phone'] = $val->getAttr('phone');
-                $data['2'][$k]['city'] = $res['0']['PROVINCE'];
-                $data['2'][$k]['regAddress'] = $res['0']['DOM'];
+//                $data['2'][$k]['city'] = $res['0']['PROVINCE'];
+//                $data['2'][$k]['regAddress'] = $res['0']['DOM'];
             }else{
                 $data['1'][$k]['id'] = $val->getAttr('id');
                 $data['1'][$k]['entName'] = $val->getAttr('entName');
@@ -325,7 +327,7 @@ class DianZiQianService extends ServiceBase
 //            'file' => 'testV3.pdf'
 //        ];
         //请求盖章
-        return $this->createReturn(200, null, $data, '成功');
+        return $this->createReturn(200, null, $arr, '成功');
     }
     public function getAuthFile($postData)
     {
