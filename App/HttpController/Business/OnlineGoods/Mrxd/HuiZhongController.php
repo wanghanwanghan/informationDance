@@ -22,6 +22,8 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Sms\AliSms;
 use App\HttpController\Service\XinDong\XinDongService;
+use EasySwoole\RedisPool\Redis;
+
 
 class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\ControllerBase
 {
