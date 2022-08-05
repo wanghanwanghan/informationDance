@@ -89,7 +89,7 @@ class OnlineGoodsUser extends ModelBase
                 ],
             ])
         );
-        if($nums >= 20 ){
+        if($nums >= 2 ){
             return  CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,

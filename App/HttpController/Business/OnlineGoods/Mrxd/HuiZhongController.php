@@ -127,7 +127,6 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
         );
     }
 
-
 //    public function uploadeFile(){
 //        $requestData =  $this->getRequestData();
 //        $files = $this->request()->getUploadedFiles();
@@ -154,7 +153,6 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
 //                return $this->writeJson(202, [], $fileNames,'上传失败'.$e->getMessage());
 //            }
 //        }
-//
 //        return $this->writeJson(200, [], $fileNames,'上传成功 文件数量:'.$succeedNums);
 //    }
 
