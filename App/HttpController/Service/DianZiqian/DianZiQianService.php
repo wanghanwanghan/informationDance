@@ -332,7 +332,7 @@ class DianZiQianService extends ServiceBase
             'file' => 'dianziqian_jcsk_shouquanshu.pdf'
             ];
             $res[] = $this->getAuthFile($param);
-            break;
+//            break;
         }
 
         //请求盖章
