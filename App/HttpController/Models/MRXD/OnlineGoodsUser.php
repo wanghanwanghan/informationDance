@@ -83,8 +83,8 @@ class OnlineGoodsUser extends ModelBase
             return  CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'checkDailySmsNums_$nums'=>$nums,
-                    'checkDailySmsNums_$daily_limit_key'=>$daily_limit_key
+                    'checkDailySmsNums_failed_$nums'=>$nums,
+                    'checkDailySmsNums_failed_$daily_limit_key'=>$daily_limit_key
                 ])
             );
         }
