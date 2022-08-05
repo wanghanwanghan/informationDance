@@ -457,6 +457,13 @@ class RunDealEmailReceiver extends AbstractCronTask
             (
                 $insuranceDatas['productId']
             );
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'sendEmail-getProductDetail'=>$dataRes,
+                    'sendEmail-productId'=>$insuranceDatas['productId']
+                ])
+            );
             $tableHtml = self::getTableHtml($insuranceDatas,$dataRes);
             $res1 = CommonService::getInstance()->sendEmailV2(
                 'tianyongshan@meirixindong.com',
@@ -465,16 +472,16 @@ class RunDealEmailReceiver extends AbstractCronTask
                 $tableHtml
                 ,
                 [
-                    TEMP_FILE_PATH . 'personal.png',
-                    TEMP_FILE_PATH . 'qianzhang2.png',
+                   // TEMP_FILE_PATH . 'personal.png',
+                    //TEMP_FILE_PATH . 'qianzhang2.png',
                 ]
             );
             OperatorLog::addRecord(
                 [
                     'user_id' => 0,
-                    'msg' =>  " 附件:".TEMP_FILE_PATH . $res['filename'] .' 邮件结果:'.$res1.$res2.$res3.$res4.$res5,
+                    'msg' =>  "邮件内容:".$tableHtml .' 邮件结果:'.$res1,
                     'details' =>json_encode( XinDongService::trace()),
-                    'type_cname' => '赛盟发邮件',
+                    'type_cname' => '宝押发邮件',
                 ]
             );
             InsuranceData::updateById($data['id'],[
