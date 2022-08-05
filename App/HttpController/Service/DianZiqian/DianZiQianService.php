@@ -329,10 +329,10 @@ class DianZiQianService extends ServiceBase
             'phone' => $v['phone'],
             'city' => $v['city'],
             'regAddress' => $v['regAddress'],
-            'file' => 'testV3.pdf'
+            'file' => 'dianziqian_jcsk_shouquanshu.pdf'
             ];
-            $res = $this->getAuthFile($param);
-            break;
+            $res[] = $this->getAuthFile($param);
+//            break;
         }
 
         //请求盖章
