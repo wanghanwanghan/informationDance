@@ -180,7 +180,7 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
         //每日发送次数限制
         $res = OnlineGoodsUser::getDailySmsNumsV2($phone,'daily_huizhong_sendSms_');
         if(
-            $res >= 10
+            $res >= 15
         ){
             return $this->writeJson(201, null, [],  '超出每日发送次数限制');
         }

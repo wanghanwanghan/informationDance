@@ -70,6 +70,7 @@ class InsuranceData extends ModelBase
         try {
            $res =  InsuranceData::create()->data([
                 'post_params' => $requestData['post_params'],
+                'product_id' => $requestData['product_id'],
                 'user_id' => $requestData['user_id'],
                 'type' => $requestData['type'],
                 'name' => $requestData['name'],

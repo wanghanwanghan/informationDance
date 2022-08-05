@@ -296,7 +296,21 @@ class RunDealEmailReceiver extends AbstractCronTask
             <td>描述</td>
             <td>'.$dataRes['data']['description'].'</td>
         </tr>';
-        foreach ($dataRes['data']['template'] as $fieldItem){
+        $templetesArr = $dataRes['data']['template'];
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'sendEmail-$templetesArr'=> $templetesArr
+            ])
+        );
+        $templetesArr = json_decode($dataRes['data']['template'],true);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'sendEmail-$templetesArr'=> $templetesArr
+            ])
+        );
+        foreach ($templetesArr as $fieldItem){
              if($fieldItem['type'] == 'text'){
                  $html .=  ' 
                     <tr>
@@ -455,7 +469,14 @@ class RunDealEmailReceiver extends AbstractCronTask
             $insuranceDatas  = json_decode($data['post_params'],true);
             $dataRes = (new \App\HttpController\Service\BaoYa\BaoYaService())->getProductDetail
             (
-                $insuranceDatas['productId']
+                $insuranceDatas['product_id']
+            );
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'sendEmail-getProductDetail'=>$dataRes,
+                    'sendEmail-productId'=>$insuranceDatas['product_id']
+                ])
             );
             $tableHtml = self::getTableHtml($insuranceDatas,$dataRes);
             $res1 = CommonService::getInstance()->sendEmailV2(
@@ -465,16 +486,16 @@ class RunDealEmailReceiver extends AbstractCronTask
                 $tableHtml
                 ,
                 [
-                    TEMP_FILE_PATH . 'personal.png',
-                    TEMP_FILE_PATH . 'qianzhang2.png',
+                   // TEMP_FILE_PATH . 'personal.png',
+                    //TEMP_FILE_PATH . 'qianzhang2.png',
                 ]
             );
             OperatorLog::addRecord(
                 [
                     'user_id' => 0,
-                    'msg' =>  " 附件:".TEMP_FILE_PATH . $res['filename'] .' 邮件结果:'.$res1.$res2.$res3.$res4.$res5,
+                    'msg' =>  "邮件内容:".$tableHtml .' 邮件结果:'.$res1,
                     'details' =>json_encode( XinDongService::trace()),
-                    'type_cname' => '赛盟发邮件',
+                    'type_cname' => '宝押发邮件',
                 ]
             );
             InsuranceData::updateById($data['id'],[
