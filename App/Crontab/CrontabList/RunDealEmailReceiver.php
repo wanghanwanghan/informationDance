@@ -314,7 +314,7 @@ class RunDealEmailReceiver extends AbstractCronTask
                  $html .=  ' 
                     <tr>
                         <td>'.$fieldItem['title'].'</td>
-                        <td>'.$dataRes['data'][$fieldItem['name']].'</td>
+                        <td>'.$data[$fieldItem['name']].'</td>
                     </tr>';
              }
             if($fieldItem['type'] == 'file'){
@@ -324,7 +324,7 @@ class RunDealEmailReceiver extends AbstractCronTask
                         
                         <td>
                             <a  
-                                href="'.$dataRes['data'][$fieldItem['name']].'">
+                                href="'.$data[$fieldItem['name']].'">
                                 点击查看
                             </a>
                         </td>
@@ -477,6 +477,7 @@ class RunDealEmailReceiver extends AbstractCronTask
                     'sendEmail-productId'=>$insuranceDatas['product_id']
                 ])
             );
+            $insuranceDatas['id'] = $data['id'];
             $tableHtml = self::getTableHtml($insuranceDatas,$dataRes);
             $res1 = CommonService::getInstance()->sendEmailV2(
                 'tianyongshan@meirixindong.com',
