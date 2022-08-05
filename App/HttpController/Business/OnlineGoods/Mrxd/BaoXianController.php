@@ -233,4 +233,46 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
             $res['data']
         );
     }
+
+
+    /*
+     * 查看详情
+     *
+     * */
+    function baoYaConsultResult(): bool
+    {
+        $requestData =  $this->getRequestData();
+
+        $checkRes = DataModelExample::checkField(
+            [
+
+                'id' => [
+                    'not_empty' => 1,
+                    'field_name' => 'id',
+                    'err_msg' => '参数缺失',
+                ],
+//                'insured' => [
+//                    'not_empty' => 1,
+//                    'field_name' => 'insured',
+//                    'err_msg' => '参数缺失',
+//                ]
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
+        $res =   InsuranceData::findById($requestData['id']);
+        $res = $res->toArray();
+        //暂时去取最新的一个
+        $resNew = MailReceipt::findByInsuranceId($res['id']);
+        return $this->writeJson(
+            200,
+            $resNew?end($resNew):[],
+            $res
+        );
+    }
 }
