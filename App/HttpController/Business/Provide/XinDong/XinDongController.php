@@ -979,7 +979,7 @@ class XinDongController extends ProvideBase
     function getFinanceBaseDataTZ(): bool
     {
         $entName = $this->getRequestData('entName', '');
-        $beginYear = 2020;
+        $beginYear = 2021;
 
         if (empty($entName)) {
             return $this->checkResponse([$this->cspKey => [
@@ -1007,7 +1007,7 @@ class XinDongController extends ProvideBase
             }
         }
 
-        $dataCount = 6;
+        $dataCount = 2;
 
         $postData = [
             'entName' => $entName,
