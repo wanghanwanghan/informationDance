@@ -303,7 +303,7 @@ class RunDealEmailReceiver extends AbstractCronTask
                 'sendEmail-$templetesArr'=> $templetesArr
             ])
         );
-        foreach ($templetesArr as $fieldItem){
+        foreach ($templetesArr['fields'] as $fieldItem){
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
