@@ -32,19 +32,15 @@ class OnlineGoodsUser extends ModelBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'addDailySmsNums ' => [
-                    '$nums'=>$nums,
-                    '$daily_limit_key' => $daily_limit_key
-                ],
+                'addDailySmsNums_$nums'=>$nums,
+                'addDailySmsNums_$daily_limit_key' => $daily_limit_key,
             ])
         );
         if($nums <= 0 ){
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'addDailySmsNums ' => [
-                        'setRedisBykey = '=>1,
-                    ],
+                    'addDailySmsNums_setRedisBykey = '=>1,
                 ])
             );
             return ConfigInfo::setRedisBykey($daily_limit_key,intval($nums) + 1,60*60*24);
@@ -53,9 +49,7 @@ class OnlineGoodsUser extends ModelBase
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'addDailySmsNums ' => [
-                        'setRedisBykey +='=>1,
-                    ],
+                    'addDailySmsNums_setRedisBykey +='=>1,
                 ])
             );
             return ConfigInfo::incrRedisBykey($daily_limit_key);
@@ -81,22 +75,16 @@ class OnlineGoodsUser extends ModelBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'checkDailySmsNums ' => [
-                    'setRedisBykey '=>  [
-                        '$nums'=>$nums,
-                        '$daily_limit_key'=>$daily_limit_key
-                    ],
-                ],
+                'checkDailySmsNums_$nums'=>$nums,
+                'checkDailySmsNums_$daily_limit_key'=>$daily_limit_key
             ])
         );
         if($nums >= 2 ){
             return  CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'checkDailySmsNums failed' => [
-                        '$nums'=>$nums,
-                        '$daily_limit_key'=>$daily_limit_key
-                    ],
+                    'checkDailySmsNums_$nums'=>$nums,
+                    'checkDailySmsNums_$daily_limit_key'=>$daily_limit_key
                 ])
             );
         }
