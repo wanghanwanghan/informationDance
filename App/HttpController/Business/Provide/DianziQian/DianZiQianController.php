@@ -105,4 +105,8 @@ class DianZiQianController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+    public function doTemporaryAction(){
+        $res = (new DianZiQianService())->doTemporaryAction();
+        return $this->writeJson($res['code'], null, $res, '成功');
+    }
 }

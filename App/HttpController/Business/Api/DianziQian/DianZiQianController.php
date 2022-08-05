@@ -72,4 +72,5 @@ class DianZiQianController extends DianZiQianBase
         return $this->writeJson($res['code'], null, $res['data'], $res['description']);
 
     }
+
 }
