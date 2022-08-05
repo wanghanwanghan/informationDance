@@ -323,7 +323,7 @@ class DianZiQianService extends ServiceBase
 //            'file' => 'testV3.pdf'
 //        ];
         //请求盖章
-        return $this->createReturn(200, null, [], '成功');
+        return $this->createReturn(200, null, $data, '成功');
     }
     public function getAuthFile($postData)
     {
