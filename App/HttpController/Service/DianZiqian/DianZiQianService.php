@@ -346,7 +346,8 @@ class DianZiQianService extends ServiceBase
             AntAuthList::create()->where('entName="'.$val->getAttr('entName').'" and legalPerson="'.$val->getAttr('personName').'"')->update([
                                                                 'filePath' => $path,
                                                             ]);
-            break;
+
+//            break;
         }
 //
         //请求盖章
