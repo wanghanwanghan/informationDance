@@ -343,7 +343,7 @@ class DianZiQianService extends ServiceBase
             //储存pdf
             file_put_contents( INV_AUTH_PATH .$path,file_get_contents($val->getAttr('personalDownloadUrl')),FILE_APPEND | LOCK_EX);
 //
-            AntAuthList::create()->where('entName='.$val->getAttr('entName').'legalPerson='.$val->getAttr('personName'))->update([
+            AntAuthList::create()->where('entName="'.$val->getAttr('entName').'"legalPerson="'.$val->getAttr('personName').'"')->update([
                                                                 'filePath' => $path,
                                                             ]);
             break;
