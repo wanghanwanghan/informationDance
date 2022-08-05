@@ -80,13 +80,15 @@ class OnlineGoodsUser extends ModelBase
             ])
         );
         if($nums >= 2 ){
-            return  CommonService::getInstance()->log4PHP(
+
+            CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     'checkDailySmsNums_failed_$nums'=>$nums,
                     'checkDailySmsNums_failed_$daily_limit_key'=>$daily_limit_key
                 ])
             );
+            return  false;
         }
         return true;
     }

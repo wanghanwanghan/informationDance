@@ -176,10 +176,13 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
         OnlineGoodsUser::addDailySmsNums($phone,'daily_huizhong_sendSms_');
 
         //每日发送次数限制
+        $res = OnlineGoodsUser::checkDailySmsNums($phone,'daily_huizhong_sendSms_');
         if(
-            !OnlineGoodsUser::checkDailySmsNums($phone,'daily_huizhong_sendSms_')
+            !$res
         ){
             return $this->writeJson(201, null, [],  '请勿重复提交');
+        }else{
+
         }
 
         $digit = OnlineGoodsUser::createRandomDigit();
