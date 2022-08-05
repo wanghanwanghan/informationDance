@@ -73,8 +73,4 @@ class DianZiQianController extends DianZiQianBase
 
     }
 
-    public function doTemporaryAction(){
-        $res = (new DianZiQianService())->doTemporaryAction();
-        return $this->writeJson($res['code'], null, $res['data'], $res['description']);
-    }
 }
