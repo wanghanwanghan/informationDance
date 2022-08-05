@@ -3744,7 +3744,21 @@ eof;
                 []
             );
         }
+        if(
+            $this->getRequestData('sendEmailHuiZhong')
+        )
+        {
+            RunDealEmailReceiver::sendEmailHuiZhong();
+            return $this->writeJson(
+                200,[ ] ,
+                [
 
+                ],
+                '成功',
+                true,
+                []
+            );
+        }
         if(
             $this->getRequestData('testToken')
         )
