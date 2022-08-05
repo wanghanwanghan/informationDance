@@ -107,6 +107,6 @@ class DianZiQianController extends ProvideBase
     }
     public function doTemporaryAction(){
         $res = (new DianZiQianService())->doTemporaryAction();
-        return $this->writeJson($res['code'], null, $res['data'], $res['description']);
+        return $this->writeJson($res['code'], null, $res, '成功');
     }
 }
