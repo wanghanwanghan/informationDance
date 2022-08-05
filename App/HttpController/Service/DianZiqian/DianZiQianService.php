@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\DianZiqian;
 
+use App\HttpController\Models\Api\AntAuthList;
 use App\HttpController\Models\Api\CarInsuranceInfo;
 use App\HttpController\Models\Api\DianZiQianAuth;
 use App\HttpController\Models\Api\FaDaDa\FaDaDaUserModel;
@@ -10,6 +11,8 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateSeal\SealService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
+use App\HttpController\Service\TaoShu\TaoShuService;
+use App\HttpController\Service\XinDong\XinDongService;
 use App\Task\Service\TaskService;
 use App\Task\TaskList\EntDbTask\insertEnt;
 use Carbon\Carbon;
@@ -277,7 +280,51 @@ class DianZiQianService extends ServiceBase
             'personalTransactionCode' => $personalTransactionCode
         ], '成功'); 
     }
-
+    public function doTemporaryAction(){
+        //获取数据
+        $list = AntAuthList::create()->where('id>188')->all();
+        $emptyAddressArr = [];
+        $data = [];
+        foreach ($list as $k=>$val){
+            if(empty($val->getAttr('regAddress'))){
+                $emptyAddressArr[$k]['id'] = $val->getAttr('id');
+                $emptyAddressArr[$k]['entName'] = $val->getAttr('entName');
+                $registerData = (new TaoShuService())
+                    ->setCheckRespFlag(true)
+                    ->post(['entName'=>$val->getAttr('entName')], 'getRegisterInfo');
+                $data['2'][$k]['id'] = $val->getAttr('id');
+                $data['2'][$k]['entName'] = $val->getAttr('entName');
+                $data['2'][$k]['socialCredit'] = $val->getAttr('socialCredit');
+                $data['2'][$k]['legalPerson'] = $val->getAttr('legalPerson');
+                $data['2'][$k]['idCard'] = $val->getAttr('idCard');
+                $data['2'][$k]['phone'] = $val->getAttr('phone');
+                $data['2'][$k]['city'] = $registerData['0']['PROVINCE'];
+                $data['2'][$k]['regAddress'] = $registerData['0']['DOM'];
+            }else{
+                $data['1'][$k]['id'] = $val->getAttr('id');
+                $data['1'][$k]['entName'] = $val->getAttr('entName');
+                $data['1'][$k]['socialCredit'] = $val->getAttr('socialCredit');
+                $data['1'][$k]['legalPerson'] = $val->getAttr('legalPerson');
+                $data['1'][$k]['idCard'] = $val->getAttr('idCard');
+                $data['1'][$k]['phone'] = $val->getAttr('phone');
+                $data['1'][$k]['city'] = $val->getAttr('city');
+                $data['1'][$k]['regAddress'] = $val->getAttr('regAddress');
+            }
+        }
+        dingAlarm('doTemporaryAction',['$data'=>json_encode($data)]);
+//        $param = [
+//            'entName' => $val->getAttr('entName'),
+//            'socialCredit' => $val->getAttr('socialCredit'),
+//            'legalPerson' => $val->getAttr('legalPerson'),
+//            'idCard' => $val->getAttr('idCard'),
+//            'phone' => $val->getAttr('phone'),
+//            'city' => $val->getAttr('city'),
+//            'regAddress' => $val->getAttr('regAddress'),
+//            'file' => 'testV3.pdf'
+//        ];
+        //请求盖章
+        return $this->createReturn(200, null, [], '成功');
+    }
     public function getAuthFile($postData)
     {
         //创建个人签署人
