@@ -455,13 +455,13 @@ class RunDealEmailReceiver extends AbstractCronTask
             $insuranceDatas  = json_decode($data['post_params'],true);
             $dataRes = (new \App\HttpController\Service\BaoYa\BaoYaService())->getProductDetail
             (
-                $insuranceDatas['productId']
+                $insuranceDatas['product_id']
             );
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     'sendEmail-getProductDetail'=>$dataRes,
-                    'sendEmail-productId'=>$insuranceDatas['productId']
+                    'sendEmail-productId'=>$insuranceDatas['product_id']
                 ])
             );
             $tableHtml = self::getTableHtml($insuranceDatas,$dataRes);
