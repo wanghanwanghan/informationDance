@@ -8,6 +8,7 @@ use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongXin\LongXinService;
+use EasySwoole\RedisPool\Redis;
 
 // use App\HttpController\Models\AdminRole;
 
