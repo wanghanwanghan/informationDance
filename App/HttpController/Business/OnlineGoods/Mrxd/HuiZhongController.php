@@ -177,6 +177,12 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
 
         //每日发送次数限制
         $res = OnlineGoodsUser::checkDailySmsNums($phone,'daily_huizhong_sendSms_');
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'checkDailySmsNums_$res'=>$res,
+            ])
+        );
         if(
             !$res
         ){
