@@ -344,6 +344,18 @@ class RunDealEmailReceiver extends AbstractCronTask
         return $html;
     }
     static  function  getTableHtmlHuiZhong($data){
+        $maps = [
+            'ent_name' =>  '企业名称',
+            'business_license_file' =>  '营业执照文件',
+            'public_account' =>  '公共账户',
+            'legal_person_phone' =>  '手机号',
+            'business_license' =>  '营业执照',
+            'id_card_front_file' =>  '身份证照文件',
+            'id_card_back_file' =>  '身份证照文件',
+        ];
+        $fileMap = [
+            'business_license_file'
+        ];
         $html = "
 <style>
     body {text-align: center;}
@@ -385,6 +397,7 @@ class RunDealEmailReceiver extends AbstractCronTask
 
 </style>
         ";
+
         $html .=  '
  
 <body>
@@ -394,59 +407,49 @@ class RunDealEmailReceiver extends AbstractCronTask
             <th colspan="2" style="text-align: center; font-size:20px">保险询价单</th> 
         </tr>
     </thead>
-    <tbody>
+    <tbody> 
+';
+
+        $html .=  ' 
         <tr>
             <td>产品</td>
-            <td>'.$data['product_id'].'</td>
-        </tr>
-        <tr class="active-row">
-            <td>被保人</td>
-            <td>'.$data['insured'].'</td>
-        </tr>
-         <tr >
-            <td>营业执照</td>
-            <td>
-                <a  href="http://test.51baoya.com/uploads/product_briefs/knj4CUlnZBOLz5HfHdk6hcZ6D.png">
-                点击查看
-                </a>
-            </td>
-        </tr>
-        <tr >
-            <td>发动机号</td>
-            <td>
-                 '.$data['engine_number'].'
-            </td>
-        </tr>
-        <tr >
-                <td>车架号</td>
-                <td>
-                     '.$data['VIN'].'
-                </td>
-        </tr>
-        <tr >
-                <td>死伤限额</td>
-                <td>
-                     '.$data['death_limit_coverage'].'
-                </td>
-        </tr>
-        <tr >
-                <td>医疗限额</td>
-                <td>
-                     '.$data['medical_limit_coverage'].'
-                </td>
-        </tr>
-        <tr >
-                <td>住院津贴</td>
-                <td>
-                     '.$data['hospitalization_benefit'].'
-                </td>
-        </tr>
-        <tr >
-                <td>其他需求</td>
-                <td>
-                     '.$data['other_requirement'].'
-                </td>
-        </tr>
+            <td>挥众产品</td>
+        </tr>';
+        $html .=  ' 
+        <tr>
+            <td>描述</td>
+            <td>这一款产品</td>
+        </tr>';
+
+        foreach ($maps as $fieldItem=>$cname){
+
+            if(in_array($fieldItem,$fileMap)){
+                $html .=  ' 
+                    <tr>
+                        <td>'.$cname.'</td>
+                        
+                        <td>
+                            <a  
+                                href="'.$data[$fieldItem].'">
+                                点击查看
+                            </a>
+                        </td>
+                    </tr>';
+
+            } else{
+                $html .=  ' 
+                    <tr>
+                        <td>'.$cname.'</td>
+                        <td>'.$data[$fieldItem].'</td>
+                    </tr>';
+            }
+        }
+        $html .=  ' 
+                    <tr>
+                        <td>ID</td>
+                        <td>信动数据id:<<<'.$data['id'].'>>></td>
+                    </tr>';
+        $html .=  ' 
     </tbody>
 </table>
 </body> 
@@ -457,7 +460,7 @@ class RunDealEmailReceiver extends AbstractCronTask
     //用户咨询后，将询价信息发送给保鸭
     static function sendEmail()
     {
-       //保鸭
+        //保鸭
         $datas = InsuranceData::findBySql(
             " WHERE  
                     `status` =  ".InsuranceData::$status_init." 
@@ -486,7 +489,7 @@ class RunDealEmailReceiver extends AbstractCronTask
                 $tableHtml
                 ,
                 [
-                   // TEMP_FILE_PATH . 'personal.png',
+                    // TEMP_FILE_PATH . 'personal.png',
                     //TEMP_FILE_PATH . 'qianzhang2.png',
                 ]
             );
@@ -507,38 +510,51 @@ class RunDealEmailReceiver extends AbstractCronTask
 
     static function sendEmailHuiZhong()
     {
+        //保鸭
         $datas = InsuranceDataHuiZhong::findBySql(
-            " WHERE   `status` =  ".InsuranceDataHuiZhong::$status_init." 
-            "
+            " WHERE  
+                    `status` =  ".InsuranceDataHuiZhong::$status_init." 
+                "
         );
 
         foreach ($datas as $data){
             $insuranceDatas  = json_decode($data['post_params'],true);
-            $tableHtml = self::getTableHtmlHuiZhong($insuranceDatas);
+            $dataRes = (new \App\HttpController\Service\BaoYa\BaoYaService())->getProductDetail
+            (
+                $insuranceDatas['product_id']
+            );
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'sendEmail-getProductDetail'=>$dataRes,
+                    'sendEmail-productId'=>$insuranceDatas['product_id']
+                ])
+            );
+            $insuranceDatas['id'] = $data['id'];
+            $tableHtml = self::getTableHtmlHuiZhong($insuranceDatas,$dataRes);
             $res1 = CommonService::getInstance()->sendEmailV2(
                 'tianyongshan@meirixindong.com',
                 // 'minglongoc@me.com',
-                '询价('.$data['id'].')',
+                '询价'.$dataRes['data']['title'],
                 $tableHtml
                 ,
                 [
-                    TEMP_FILE_PATH . 'personal.png',
-                    TEMP_FILE_PATH . 'qianzhang2.png',
+                    // TEMP_FILE_PATH . 'personal.png',
+                    //TEMP_FILE_PATH . 'qianzhang2.png',
                 ]
             );
             OperatorLog::addRecord(
                 [
                     'user_id' => 0,
-                    'msg' =>  " 附件:".TEMP_FILE_PATH  .' 邮件结果:'.$res1,
+                    'msg' =>  "邮件内容:".$tableHtml .' 邮件结果:'.$res1,
                     'details' =>json_encode( XinDongService::trace()),
-                    'type_cname' => '麾众发邮件',
+                    'type_cname' => '挥众发邮件',
                 ]
             );
             InsuranceDataHuiZhong::updateById($data['id'],[
                 'status' => InsuranceDataHuiZhong::$status_sended
             ]);
         }
-
         return true ;
     }
 
