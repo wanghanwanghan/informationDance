@@ -296,7 +296,21 @@ class RunDealEmailReceiver extends AbstractCronTask
             <td>描述</td>
             <td>'.$dataRes['data']['description'].'</td>
         </tr>';
-        foreach ($dataRes['data']['template'] as $fieldItem){
+        $templetesArr = $dataRes['data']['template'];
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'sendEmail-$templetesArr'=> $templetesArr
+            ])
+        );
+        $templetesArr = json_decode($dataRes['data']['template'],true);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'sendEmail-$templetesArr'=> $templetesArr
+            ])
+        );
+        foreach ($templetesArr as $fieldItem){
              if($fieldItem['type'] == 'text'){
                  $html .=  ' 
                     <tr>
