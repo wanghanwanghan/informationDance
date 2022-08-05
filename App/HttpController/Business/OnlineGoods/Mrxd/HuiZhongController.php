@@ -173,22 +173,14 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
         }
 
         //记录今天发了多少次
-        OnlineGoodsUser::addDailySmsNums($phone,'daily_huizhong_sendSms_');
+        OnlineGoodsUser::addDailySmsNumsV2($phone,'daily_huizhong_sendSms_');
 
         //每日发送次数限制
-        $res = OnlineGoodsUser::checkDailySmsNums($phone,'daily_huizhong_sendSms_');
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'checkDailySmsNums_$res'=>$res,
-            ])
-        );
+        $res = OnlineGoodsUser::getDailySmsNumsV2($phone,'daily_huizhong_sendSms_');
         if(
-            !$res
+            $res >= 2
         ){
-            return $this->writeJson(201, null, [],  '请勿重复提交');
-        }else{
-
+            return $this->writeJson(201, null, [],  '超出每日发送次数限制');
         }
 
         $digit = OnlineGoodsUser::createRandomDigit();

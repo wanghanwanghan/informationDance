@@ -56,6 +56,91 @@ class OnlineGoodsUser extends ModelBase
         }
     }
 
+    static function  addDailySmsNumsV2($phone,$prx = "daily_online_sendSms_"){
+        $redis = Redis::defer('redis');
+        $redis->select(ConfigInfo::$redis_db_num);
+
+        //每日次数
+        $daily_limit_key = $prx.$phone;
+        //key对应的时间
+        $daily_limit_key2 = $prx.$phone.'_time';
+
+        $nums = $redis->get($daily_limit_key);
+        $dates = $redis->get($daily_limit_key2);
+        //之前没有过
+        if($nums <= 0){
+            //设置KEY
+            $redis->set($daily_limit_key,1);
+            //设置KEY的时间
+            $redis->set($daily_limit_key2,date('Ymd'),60*60*24);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'addDailySmsNumsV2_$nums'=>$nums,
+                    'addDailySmsNumsV2_dates' => $dates,
+                    'first_time'
+                ])
+            );
+        }
+
+
+
+        //如果过期了1
+        if($dates <= 0){
+            //设置KEY
+            $redis->set($daily_limit_key,1);
+            //设置KEY的时间
+            $redis->set($daily_limit_key2,date('Ymd'),60*60*24);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'addDailySmsNumsV2_$nums'=>$nums,
+                    'addDailySmsNumsV2_dates' => $dates,
+                    'out_of_date'
+                ])
+            );
+        }
+        //如果过期了2
+        if($dates < date('Ymd')){
+            //设置KEY
+            $redis->set($daily_limit_key,1);
+            //设置KEY的时间
+            $redis->set($daily_limit_key2,date('Ymd'),60*60*24);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'addDailySmsNumsV2_$nums'=>$nums,
+                    'addDailySmsNumsV2_dates' => $dates,
+                    'out_of_date2'
+                ])
+            );
+        }
+
+        //更新KEY
+        $nums = $redis->get($daily_limit_key);
+        $redis->set($daily_limit_key,$nums+1);
+    }
+    static function  getDailySmsNumsV2($phone,$prx = "daily_online_sendSms_"){
+        $redis = Redis::defer('redis');
+        $redis->select(ConfigInfo::$redis_db_num);
+
+        //每日次数
+        $daily_limit_key = $prx.$phone;
+        //key对应的时间
+        $daily_limit_key2 = $prx.$phone.'_time';
+
+        $nums = $redis->get($daily_limit_key);
+        $dates = $redis->get($daily_limit_key2);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'checkDailySmsNumsV2_$nums'=>$nums,
+                'checkDailySmsNumsV2_dates' => $dates,
+            ])
+        );
+        return $nums;
+    }
+
     static function  setRandomDigit($phone,$digit,$prx="online_sms_code_"){
         return ConfigInfo::setRedisBykey($prx.$phone,$digit,600);
     }
