@@ -292,6 +292,7 @@ class DianZiQianService extends ServiceBase
                 $registerData = (new TaoShuService())
                     ->setCheckRespFlag(true)
                     ->post(['entName'=>$val->getAttr('entName')], 'getRegisterInfo');
+                dingAlarm('doTemporaryAction',['$registerData'=>json_encode($registerData)]);
                 $data['2'][$k]['id'] = $val->getAttr('id');
                 $data['2'][$k]['entName'] = $val->getAttr('entName');
                 $data['2'][$k]['socialCredit'] = $val->getAttr('socialCredit');
