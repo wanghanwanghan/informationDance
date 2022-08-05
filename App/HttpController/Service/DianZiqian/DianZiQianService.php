@@ -305,6 +305,10 @@ class DianZiQianService extends ServiceBase
                     dingAlarm('doTemporaryAction', ['$res' => json_encode($res[0])]);
                     $data['2'][$k]['city'] = $res['0']['PROVINCE'];
                     $data['2'][$k]['regAddress'] = $res['0']['DOM'];
+                    AntAuthList::create()->get($val->getAttr('id'))->update([
+                                                                'regAddress' => $res['0']['DOM'],
+                                                                'city'=> $res['0']['PROVINCE']
+                                                            ]);
                 }
             }else{
                 $data['1'][$k]['id'] = $val->getAttr('id');
