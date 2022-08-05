@@ -334,7 +334,7 @@ class RunDealEmailReceiver extends AbstractCronTask
         $html .=  ' 
                     <tr>
                         <td>ID</td>
-                        <td>信动数据id:<<<'.$dataRes['id'].'>>></td>
+                        <td>信动数据id:<<<'.$data['id'].'>>></td>
                     </tr>';
         $html .=  ' 
     </tbody>
