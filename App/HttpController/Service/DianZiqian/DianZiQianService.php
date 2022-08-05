@@ -859,7 +859,7 @@ return $output;
             'height' => '300',
             'width' => '300',
             'type' => '0',
-            'hasStar' => '0'
+            'hasStar' => '1'
         ];
         $param     = $this->buildParam($paramData, $path);
         $resp      = (new CoHttpClient())
