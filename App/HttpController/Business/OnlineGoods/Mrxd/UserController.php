@@ -116,11 +116,11 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         }
 
         //记录今天发了多少次
-        OnlineGoodsUser::addDailySmsNums($phone);
+        OnlineGoodsUser::addDailySmsNumsV2($phone);
 
         //每日发送次数限制
         if(
-            !OnlineGoodsUser::checkDailySmsNums($phone)
+            OnlineGoodsUser::getDailySmsNumsV2($phone) >= 2
         ){
             return $this->writeJson(201, null, [],  '请勿重复提交');
         }

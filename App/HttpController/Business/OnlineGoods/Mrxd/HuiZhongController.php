@@ -22,6 +22,8 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Sms\AliSms;
 use App\HttpController\Service\XinDong\XinDongService;
+use EasySwoole\RedisPool\Redis;
+
 
 class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\ControllerBase
 {
@@ -173,13 +175,14 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
         }
 
         //记录今天发了多少次
-        OnlineGoodsUser::addDailySmsNums($phone,'daily_huizhong_sendSms_');
+        OnlineGoodsUser::addDailySmsNumsV2($phone,'daily_huizhong_sendSms_');
 
         //每日发送次数限制
+        $res = OnlineGoodsUser::getDailySmsNumsV2($phone,'daily_huizhong_sendSms_');
         if(
-            !OnlineGoodsUser::checkDailySmsNums($phone,'daily_huizhong_sendSms_')
+            $res >= 10
         ){
-            return $this->writeJson(201, null, [],  '请勿重复提交');
+            return $this->writeJson(201, null, [],  '超出每日发送次数限制');
         }
 
         $digit = OnlineGoodsUser::createRandomDigit();
