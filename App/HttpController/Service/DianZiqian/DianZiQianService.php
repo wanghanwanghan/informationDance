@@ -332,7 +332,7 @@ class DianZiQianService extends ServiceBase
             'file' => 'dianziqian_jcsk_shouquanshu.pdf'
             ];
             $res[] = $this->getAuthFile($param);
-            break;
+//            break;
         }
 
         //请求盖章
@@ -859,7 +859,7 @@ return $output;
             'height' => '300',
             'width' => '300',
             'type' => '0',
-            'hasStar' => '0'
+            'hasStar' => '1'
         ];
         $param     = $this->buildParam($paramData, $path);
         $resp      = (new CoHttpClient())
