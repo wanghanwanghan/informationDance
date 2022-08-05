@@ -301,8 +301,6 @@ class DianZiQianService extends ServiceBase
                 $data['2'][$k]['idCard']       = $val->getAttr('idCard');
                 $data['2'][$k]['phone']        = $val->getAttr('phone');
                 if(!empty($res)) {
-                    $arr = $res;
-                    dingAlarm('doTemporaryAction', ['$res' => json_encode($res[0])]);
                     $data['2'][$k]['city'] = $res['0']['PROVINCE'];
                     $data['2'][$k]['regAddress'] = $res['0']['DOM'];
                     AntAuthList::create()->get($val->getAttr('id'))->update([
@@ -321,19 +319,24 @@ class DianZiQianService extends ServiceBase
                 $data['1'][$k]['regAddress'] = $val->getAttr('regAddress');
             }
         }
-        dingAlarm('doTemporaryAction',['$data'=>json_encode($data)]);
-//        $param = [
-//            'entName' => $val->getAttr('entName'),
-//            'socialCredit' => $val->getAttr('socialCredit'),
-//            'legalPerson' => $val->getAttr('legalPerson'),
-//            'idCard' => $val->getAttr('idCard'),
-//            'phone' => $val->getAttr('phone'),
-//            'city' => $val->getAttr('city'),
-//            'regAddress' => $val->getAttr('regAddress'),
-//            'file' => 'testV3.pdf'
-//        ];
+        $res = [];
+        foreach ($data['1'] as $v){
+            $param = [
+            'entName' => $v['entName'],
+            'socialCredit' => $v['socialCredit'],
+            'legalPerson' => $v['legalPerson'],
+            'idCard' => $v['idCard'],
+            'phone' => $v['phone'],
+            'city' => $v['city'],
+            'regAddress' => $v['regAddress'],
+            'file' => 'testV3.pdf'
+            ];
+            $res = $this->getAuthFile($param);
+            break;
+        }
+
         //请求盖章
-        return $this->createReturn(200, null, $data, '成功');
+        return $this->createReturn(200, null, $res, '成功');
     }
     public function getAuthFile($postData)
     {
