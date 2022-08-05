@@ -293,7 +293,7 @@ class DianZiQianService extends ServiceBase
                     ->setCheckRespFlag(true)
                     ->post(['entName'=>$val->getAttr('entName')], 'getRegisterInfo');
                 $res = $registerData['result'];
-                dingAlarm('doTemporaryAction',['$res'=>json_encode($res['0'])]);
+                dingAlarm('doTemporaryAction',['$res'=>json_encode($res[0])]);
                 $data['2'][$k]['id'] = $val->getAttr('id');
                 $data['2'][$k]['entName'] = $val->getAttr('entName');
                 $data['2'][$k]['socialCredit'] = $val->getAttr('socialCredit');
