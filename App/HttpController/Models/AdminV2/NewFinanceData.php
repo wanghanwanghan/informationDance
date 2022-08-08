@@ -152,6 +152,12 @@ class NewFinanceData extends ModelBase
                    ){
                        $checkRes = '有';
                    }
+                   if(
+                       $dataItem === 0 ||
+                       $dataItem === '0'
+                   ){
+                       $checkRes = '零值';
+                   }
                      $newData[$needsChangeFields[$field]] =  $checkRes;
 
 //                   CommonService::getInstance()->log4PHP(
