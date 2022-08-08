@@ -3616,7 +3616,48 @@ eof;
 	AND EMPNUM = 0  
 	AND `year` <> 2022
 	ORDER BY id  desc  ");
+            $nums = 0;
             foreach ($all as $item){
+                if(
+                    (
+                        $item['ASSGRO'] === '' ||
+                        $item['ASSGRO'] === NULL
+                    ) &&
+                    (
+                        $item['MAIBUSINC'] === '' ||
+                        $item['MAIBUSINC'] === NULL
+                    ) &&
+                    (
+                        $item['TOTEQU'] === '' ||
+                        $item['TOTEQU'] === NULL
+                    ) &&
+                    (
+                        $item['RATGRO'] === '' ||
+                        $item['RATGRO'] === NULL
+                    ) &&
+                    (
+                        $item['PROGRO'] === '' ||
+                        $item['PROGRO'] === NULL
+                    ) &&
+                    (
+                        $item['NETINC'] === '' ||
+                        $item['NETINC'] === NULL
+                    ) &&
+                    (
+                        $item['LIAGRO'] === '' ||
+                        $item['LIAGRO'] === NULL
+                    ) &&
+                    (
+                        $item['SOCNUM'] === '0' ||
+                        $item['SOCNUM'] === 0
+                    ) &&
+                    (
+                        $item['EMPNUM'] === '0' ||
+                        $item['EMPNUM'] === 0
+                    )
+                ){
+
+                }
                 NewFinanceData::changeById(
                     $item['id'],
                     [
@@ -3631,10 +3672,11 @@ eof;
                     true,
                     []
                 );
+                $nums  ++;
             }
             return $this->writeJson(
                 200,[ ] ,
-                $sdd1,
+                $nums,
                 '成功',
                 true,
                 []
