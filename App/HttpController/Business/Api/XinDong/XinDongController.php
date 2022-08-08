@@ -3600,6 +3600,7 @@ eof;
     }
     function testExport()
     {
+
         if(
             $this->getRequestData('sRemNeedCheck')
         ){
@@ -4195,10 +4196,10 @@ eof;
             $this->getRequestData('getFinanceDataXX')
         ){
             $res = (new LongXinService())->getFinanceData([
-                        "entName"=>"乌海市源来煤业有限公司",
+                        "entName"=>$this->getRequestData('getFinanceDataXX'),
                         "code"=> "",
-                        "beginYear"=> 2019,
-                        "dataCount"=> 1
+                        'beginYear' => date('Y'),
+                        'dataCount' => 10,//取最近几年的
             ], false);
             return $this->writeJson(200, null, $res, null, true, []);
         }
