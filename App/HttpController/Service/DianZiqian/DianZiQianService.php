@@ -6,6 +6,7 @@ use App\HttpController\Models\Api\AntAuthList;
 use App\HttpController\Models\Api\CarInsuranceInfo;
 use App\HttpController\Models\Api\DianZiQianAuth;
 use App\HttpController\Models\Api\FaDaDa\FaDaDaUserModel;
+use App\HttpController\Service\BaiDu\BaiDuService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateSeal\SealService;
@@ -281,6 +282,25 @@ class DianZiQianService extends ServiceBase
         ], '成功'); 
     }
     public function doTemporaryAction(){
+        $list = AntAuthList::create()->where('id>188')->all();
+        foreach ($list as $val) {
+            if(!empty($val->getAttr('regAddress')) && empty($val->getAttr('provinceCode'))) {
+                $baiduApi = BaiDuService::getInstance()->addressToStructured(trim($val->getAttr('regAddress')));
+//                CommonService::getInstance()->log4PHP($baiduApi, 'baidu');
+                $baiduApiRes = [];
+                if ($baiduApi['status'] === 0) {
+                    $baiduApiRes['province']     = $baiduApi['result']['province'] ?? '';
+                    $baiduApiRes['provinceCode'] = $baiduApi['result']['province_code'] ?? '';
+                    $baiduApiRes['city']         = $baiduApi['result']['city'] ?? '';
+                    $baiduApiRes['cityCode']     = $baiduApi['result']['city_code'] ?? '';
+                    $baiduApiRes['county']       = $baiduApi['result']['county'] ?? '';
+                    $baiduApiRes['countyCode']   = $baiduApi['result']['county_code'] ?? '';
+                    $baiduApiRes['town']         = $baiduApi['result']['town'] ?? '';
+                    $baiduApiRes['townCode']     = $baiduApi['result']['town_code'] ?? '';
+                }
+                AntAuthList::create()->get($val->getAttr('id'))->update($baiduApiRes);
+            }
+        }
         //获取数据
 //        $list = AntAuthList::create()->where('id>188')->all();
 //        $emptyAddressArr = [];
@@ -334,24 +354,24 @@ class DianZiQianService extends ServiceBase
 //            $res[] = $this->getAuthFile($param);
 ////            break;
 //        }
-        $AuthData = DianZiQianAuth::create()->where('id >50')->all();
-        foreach ($AuthData as $val){
-            $path = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
-            is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0755);
-            $filename = $val->getAttr('contractCode');
-            $path = $path . $filename.'-'.Carbon::now()->format('Ymd').'.pdf';
-            //储存pdf
-            file_put_contents( INV_AUTH_PATH .$path,file_get_contents($val->getAttr('personalDownloadUrl')),FILE_APPEND | LOCK_EX);
+//        $AuthData = DianZiQianAuth::create()->where('id >50')->all();
+//        foreach ($AuthData as $val){
+//            $path = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
+//            is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0755);
+//            $filename = $val->getAttr('contractCode');
+//            $path = $path . $filename.'-'.Carbon::now()->format('Ymd').'.pdf';
+//            //储存pdf
+//            file_put_contents( INV_AUTH_PATH .$path,file_get_contents($val->getAttr('personalDownloadUrl')),FILE_APPEND | LOCK_EX);
+////
+//            AntAuthList::create()->where('entName="'.$val->getAttr('entName').'" and legalPerson="'.$val->getAttr('personName').'"')->update([
+//                                                                'filePath' => $path,
+//                                                            ]);
 //
-            AntAuthList::create()->where('entName="'.$val->getAttr('entName').'" and legalPerson="'.$val->getAttr('personName').'"')->update([
-                                                                'filePath' => $path,
-                                                            ]);
-
-//            break;
-        }
+////            break;
+//        }
 //
         //请求盖章
-        return $this->createReturn(200, null, $path, '成功');
+//        return $this->createReturn(200, null, $path, '成功');
     }
     public function getAuthFile($postData)
     {
