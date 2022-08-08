@@ -39,7 +39,7 @@ class DocumentationController extends ControllerBase
 
         $id = $requestData['id'] ;
 
-        if(!empty($id)){
+        if(empty($id)){
             return $this->writeJson(203,  [  ], [],'参数缺失');
         }
 
@@ -178,6 +178,7 @@ class DocumentationController extends ControllerBase
     //update
     public function delDocumention(){
         $requestData = $this->getRequestData();
+        
         $checkRes = DataModelExample::checkField(
             [
 
