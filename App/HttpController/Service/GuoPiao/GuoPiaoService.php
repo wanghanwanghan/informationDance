@@ -433,8 +433,7 @@ class GuoPiaoService extends ServiceBase
             $res = $this->decrypt($res, $isTest);
             return jsonDecode($res);
         } else {
-            $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
-            return $res;
+            return (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
         }
     }
 }
