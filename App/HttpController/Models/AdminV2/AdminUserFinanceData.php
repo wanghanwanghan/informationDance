@@ -312,7 +312,7 @@ class AdminUserFinanceData extends ModelBase
         $postData = [
             'entName' => $financeData['entName'],
             'code' => '',
-            'beginYear' => date('Y'),
+            'beginYear' => date('Y') - 1 ,
             'dataCount' => 10,//取最近几年的
         ];
 

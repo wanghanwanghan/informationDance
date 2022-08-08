@@ -3600,7 +3600,46 @@ eof;
     }
     function testExport()
     {
+        if(
+            $this->getRequestData('fixNewFinancdeData')
+        ){
 
+            $all = NewFinanceData::findBySql(" WHERE VENDINC = '' 
+	AND ASSGRO = '' 
+	AND MAIBUSINC = '' 
+	AND TOTEQU = '' 
+	AND RATGRO = '' 
+	AND PROGRO = '' 
+	AND NETINC = '' 
+	AND LIAGRO = '' 
+	AND SOCNUM = 0 
+	AND EMPNUM = 0  
+	AND `year` <> 2022
+	ORDER BY id  desc  ");
+            foreach ($all as $item){
+                NewFinanceData::changeById(
+                    $item['id'],
+                    [
+                        'SOCNUM' =>'',
+                        'EMPNUM' =>'',
+                    ]
+                );
+                return $this->writeJson(
+                    200,[ ] ,
+                    $item['id'],
+                    '成功',
+                    true,
+                    []
+                );
+            }
+            return $this->writeJson(
+                200,[ ] ,
+                $sdd1,
+                '成功',
+                true,
+                []
+            );
+        }
         if(
             $this->getRequestData('sRemNeedCheck')
         ){

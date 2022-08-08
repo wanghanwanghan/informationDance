@@ -4,6 +4,7 @@ namespace App\HttpController\Models\AdminV2;
 
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateConf;
 use Vtiful\Kernel\Format;
 
 // use App\HttpController\Models\AdminRole;
@@ -377,11 +378,26 @@ class NewFinanceData extends ModelBase
                 $id,$status,
             ]
         );
-        $info = AdminUserFinanceExportDataQueue::findById($id);
+        $info = NewFinanceData::findById($id);
 
         return $info->update([
             'status' => $status,
         ]);
     }
 
+    public static function changeById($id,$data){
+        $info = NewFinanceData::findById($id);
+
+        return $info->update($data);
+    }
+
+    public static function findBySql($where){
+        $Sql = " select *  
+                            from  
+                        `new_finance_data` 
+                            $where
+      " ;
+        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        return $data;
+    }
 }
