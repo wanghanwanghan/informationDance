@@ -3656,23 +3656,22 @@ eof;
                         $item['EMPNUM'] === 0
                     )
                 ){
-
+                    NewFinanceData::changeById(
+                        $item['id'],
+                        [
+                            'SOCNUM' =>'',
+                            'EMPNUM' =>'',
+                        ]
+                    );
+                    return $this->writeJson(
+                        200,[ ] ,
+                        $item['id'],
+                        '成功',
+                        true,
+                        []
+                    );
+                    $nums  ++;
                 }
-                NewFinanceData::changeById(
-                    $item['id'],
-                    [
-                        'SOCNUM' =>'',
-                        'EMPNUM' =>'',
-                    ]
-                );
-                return $this->writeJson(
-                    200,[ ] ,
-                    $item['id'],
-                    '成功',
-                    true,
-                    []
-                );
-                $nums  ++;
             }
             return $this->writeJson(
                 200,[ ] ,
