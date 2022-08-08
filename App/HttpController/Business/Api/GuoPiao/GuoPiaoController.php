@@ -188,7 +188,7 @@ class GuoPiaoController extends GuoPiaoBase
     }
 
     //企业授权认证
-    function getAuthentication()
+    function getAuthentication(): bool
     {
         $phone = $this->request()->getRequestParam('phone') ?? '';
         $entName = $this->request()->getRequestParam('entName') ?? '';
@@ -204,6 +204,8 @@ class GuoPiaoController extends GuoPiaoBase
         $res = (new GuoPiaoService())->getAuthentication($entName, $callback, $orderNo);
 
         $res = jsonDecode($res);
+
+        CommonService::getInstance()->log4PHP($res);
 
         !(isset($res['code']) && $res['code'] == 0) ?: $res['code'] = 200;
 
