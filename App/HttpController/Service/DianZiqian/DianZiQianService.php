@@ -506,7 +506,7 @@ class DianZiQianService extends ServiceBase
             $filename = $contractCode.'e';
             $path = $path . $filename.'-'.Carbon::now()->format('Ymd').'.pdf';
             //储存pdf
-            file_put_contents( INV_AUTH_PATH .$path,file_get_contents($update['personalDownloadUrl']),FILE_APPEND | LOCK_EX);
+            file_put_contents( INV_AUTH_PATH .$path,file_get_contents($update['entDownloadUrl']),FILE_APPEND | LOCK_EX);
             $update['entUrl'] = $path;
         }
         return DianZiQianAuth::create()->where("id={$id}")->update($update);
@@ -519,7 +519,7 @@ class DianZiQianService extends ServiceBase
             $filename = $contractCode.'p';
             $path = $path . $filename.'-'.Carbon::now()->format('Ymd').'.pdf';
             //储存pdf
-            file_put_contents( INV_AUTH_PATH .$path,file_get_contents($update['personalDownloadUrl']),FILE_APPEND | LOCK_EX);
+            file_put_contents( INV_AUTH_PATH .$path,file_get_contents($data['result']['downloadUrl']),FILE_APPEND | LOCK_EX);
             $update['personalDownloadUrl'] = $data['result']['downloadUrl'];
             $update['personalViewPdfUrl'] = $data['result']['viewPdfUrl'];
             $update['personalUrl'] = $path;
