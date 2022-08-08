@@ -460,7 +460,7 @@ class DianZiQianService extends ServiceBase
                     dingAlarm('企业章签署状态查询异常', ['$contractSignStatus' => json_encode($contractSignStatus)]);
                     continue;
                 }
-                $this->updateDianZiQianEntResultCode($v['id'], $contractSignStatus);
+                $this->updateDianZiQianEntResultCode($v['id'], $contractSignStatus,$contractCode);
                 if($contractSignStatus['result']['resultCode'] < 1) $flag = false;
             }
             //法人章签署状态查询
@@ -470,7 +470,7 @@ class DianZiQianService extends ServiceBase
                     dingAlarm('法人章签署状态查询异常', ['$contractSignStatus' => json_encode($contractSignStatus)]);
                     continue;
                 }
-                $this->updateDianZiQianPersonalResultCode($v['id'], $contractSignStatus);
+                $this->updateDianZiQianPersonalResultCode($v['id'], $contractSignStatus,$contractCode);
                 if($contractSignStatus['result']['resultCode'] < 1) $flag = false;
             }
             $url = '';
@@ -496,19 +496,33 @@ class DianZiQianService extends ServiceBase
         return $this->createReturn(200, null, ['pdfUrl'=>$url,'contractFileDownload'=>$downloadUrl], '成功');
     }
 
-    private function updateDianZiQianEntResultCode($id,$data){
+    private function updateDianZiQianEntResultCode($id,$data,$contractCode){
         $update['entUrlResultCode'] = $data['result']['resultCode'];
         if($update['entUrlResultCode'] == 1){
             $update['entDownloadUrl'] = $data['result']['downloadUrl'];
             $update['entViewPdfUrl'] = $data['result']['viewPdfUrl'];
+            $path = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
+            is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0755);
+            $filename = $contractCode.'e';
+            $path = $path . $filename.'-'.Carbon::now()->format('Ymd').'.pdf';
+            //储存pdf
+            file_put_contents( INV_AUTH_PATH .$path,file_get_contents($update['personalDownloadUrl']),FILE_APPEND | LOCK_EX);
+            $update['entUrl'] = $path;
         }
         return DianZiQianAuth::create()->where("id={$id}")->update($update);
     }
-    private function updateDianZiQianPersonalResultCode($id,$data){
+    private function updateDianZiQianPersonalResultCode($id,$data,$contractCode){
         $update['personalUrlResultCode'] = $data['result']['resultCode'];
         if($update['personalUrlResultCode'] == 1){
+            $path = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
+            is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0755);
+            $filename = $contractCode.'p';
+            $path = $path . $filename.'-'.Carbon::now()->format('Ymd').'.pdf';
+            //储存pdf
+            file_put_contents( INV_AUTH_PATH .$path,file_get_contents($update['personalDownloadUrl']),FILE_APPEND | LOCK_EX);
             $update['personalDownloadUrl'] = $data['result']['downloadUrl'];
             $update['personalViewPdfUrl'] = $data['result']['viewPdfUrl'];
+            $update['personalUrl'] = $path;
         }
         return DianZiQianAuth::create()->where("id={$id}")->update($update);
     }
