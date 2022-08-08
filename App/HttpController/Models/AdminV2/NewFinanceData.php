@@ -160,7 +160,7 @@ class NewFinanceData extends ModelBase
                        $dataItem === 0 ||
                        $dataItem === '0'
                    ){
-                       $checkRes = '有（零值）';
+                       $checkRes = '有（数据为零值）';
                    }
                    if(
                        $dataItem === "" ||
