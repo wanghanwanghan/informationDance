@@ -18,12 +18,16 @@ class Documentation extends ModelBase
     static $type_api_wen_dang =  5;
     static $type_api_wen_dang_cname =  "api在线文档";
 
+    static  $status_init = 1;
+    static  $status_del = 5;
+
 
     public static function addRecord($requestData){
         try {
            $res =  Documentation::create()->data([
                 'name' => $requestData['name']?:'',
                 'type' => $requestData['type']?:'0',
+               'status' => $requestData['status']?:self::$status_init,
                'content' => $requestData['content']?:'',
                'created_at' => time(),
                'updated_at' => time(),

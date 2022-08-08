@@ -147,10 +147,26 @@ class NewFinanceData extends ModelBase
                ){
                    $checkRes = '无';
                    if(
-                       $dataItem > 0 ||
-                       $dataItem < 0
+                       $dataItem > 0
                    ){
                        $checkRes = '有';
+                   }
+                   if(
+                       $dataItem < 0
+                   ){
+                       $checkRes = '有（小于零）';
+                   }
+                   if(
+                       $dataItem === 0 ||
+                       $dataItem === '0'
+                   ){
+                       $checkRes = '有（零值）';
+                   }
+                   if(
+                       $dataItem === "" ||
+                       $dataItem === NULL
+                   ){
+                       $checkRes = '无（空）';
                    }
                      $newData[$needsChangeFields[$field]] =  $checkRes;
 

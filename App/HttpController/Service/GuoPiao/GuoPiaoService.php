@@ -390,7 +390,6 @@ class GuoPiaoService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
-
     //深度报告临时用的
     function getReceiptDataTest($code, $type)
     {
@@ -434,8 +433,7 @@ class GuoPiaoService extends ServiceBase
             $res = $this->decrypt($res, $isTest);
             return jsonDecode($res);
         } else {
-            $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
-            return $res;
+            return (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
         }
     }
 }

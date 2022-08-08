@@ -34,13 +34,35 @@ class DocumentationController extends ControllerBase
         return $this->writeJson();
     }
 
+    public function getOne(){
+        $requestData = $this->getRequestData();
+
+        $id = $requestData['id'] ;
+
+        if(empty($id)){
+            return $this->writeJson(203,  [  ], [],'参数缺失');
+        }
+
+        $res = Documentation::findById(
+            $id
+        );
+
+        return $this->writeJson(200,  [],  $res,'成功');
+    }
+
     public function getAll(){
         $requestData = $this->getRequestData();
 
         $page = $requestData['page']??1;
         $createdAtStr = $this->getRequestData('created_at');
         $createdAtArr = explode('|||',$createdAtStr);
-        $whereArr = [];
+        $whereArr = [
+            [
+                'field' => 'status',
+                'value' => Documentation::$status_init,
+                'operate' => '=',
+            ]
+        ];
         if (
             !empty($createdAtArr) &&
             !empty($createdAtStr)
@@ -55,6 +77,11 @@ class DocumentationController extends ControllerBase
                     'field' => 'created_at',
                     'value' => strtotime($createdAtArr[1].' 23:59:59'),
                     'operate' => '<=',
+                ],
+                [
+                    'field' => 'status',
+                    'value' => Documentation::$status_init,
+                    'operate' => '=',
                 ]
             ];
         }
@@ -108,7 +135,7 @@ class DocumentationController extends ControllerBase
         $res = Documentation::addRecordV2(
            [
                 'name' => $requestData['name'],
-                'type' => Documentation::$type_api_wen_dang,//
+                'type' => $requestData['type']?:Documentation::$type_api_wen_dang,//
                 'content' => $requestData['content'],//
            ]
         );
@@ -148,6 +175,36 @@ class DocumentationController extends ControllerBase
         return $this->writeJson(200,  [ ],  $res,'成功');
     }
 
+    //update
+    public function delDocumention(){
+        $requestData = $this->getRequestData();
+
+        $checkRes = DataModelExample::checkField(
+            [
+
+                'id' => [
+                    'not_empty' => 1,
+                    'field_name' => 'id',
+                    'err_msg' => 'id不能为空',
+                ],
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
+        $res = Documentation::updateById(
+            $requestData['id'],
+            [
+              'status'=> Documentation::$status_del
+            ]
+        );
+
+        return $this->writeJson(200,  [ ],  $res,'成功');
+    }
 
     public function downloadDocumention(){
         $requestData = $this->getRequestData();
@@ -171,6 +228,7 @@ class DocumentationController extends ControllerBase
 
         $res = Documentation::findById($requestData['id'])->toArray();
         $fileName = $res['name'].'.html';
+        unlink(TEMP_FILE_PATH.$fileName);
         file_put_contents(TEMP_FILE_PATH.$fileName, $res['content'], FILE_APPEND | LOCK_EX);
 
         return $this->writeJson(200,  [ ],  '/Static/Temp/'.$fileName,'成功');

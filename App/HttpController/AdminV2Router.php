@@ -229,6 +229,8 @@ class AdminV2Router
         $prefix = '/Business/AdminV2/Mrxd/Documentation/DocumentationController/';
 
         $routeCollector->addGroup('/documentation', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/delDocumention', $prefix . 'delDocumention');
+            $routeCollector->addRoute(['GET', 'POST'], '/getOne', $prefix . 'getOne');
             $routeCollector->addRoute(['GET', 'POST'], '/getAll', $prefix . 'getAll');
             $routeCollector->addRoute(['GET', 'POST'], '/addDocumention', $prefix . 'addDocumention');
             $routeCollector->addRoute(['GET', 'POST'], '/editDocumention', $prefix . 'editDocumention');//
