@@ -390,7 +390,6 @@ class GuoPiaoService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
-
     //深度报告临时用的
     function getReceiptDataTest($code, $type)
     {
