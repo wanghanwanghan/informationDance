@@ -149,7 +149,7 @@ class NewFinanceData extends ModelBase
                    if(
                        $dataItem > 0
                    ){
-                       $checkRes = '有（大于零）';
+                       $checkRes = '有';
                    }
                    if(
                        $dataItem < 0
