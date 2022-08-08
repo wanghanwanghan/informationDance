@@ -135,7 +135,7 @@ class DocumentationController extends ControllerBase
         $res = Documentation::addRecordV2(
            [
                 'name' => $requestData['name'],
-                'type' => Documentation::$type_api_wen_dang,//
+                'type' => $requestData['type']?:Documentation::$type_api_wen_dang,//
                 'content' => $requestData['content'],//
            ]
         );
@@ -178,7 +178,7 @@ class DocumentationController extends ControllerBase
     //update
     public function delDocumention(){
         $requestData = $this->getRequestData();
-        
+
         $checkRes = DataModelExample::checkField(
             [
 
@@ -228,6 +228,7 @@ class DocumentationController extends ControllerBase
 
         $res = Documentation::findById($requestData['id'])->toArray();
         $fileName = $res['name'].'.html';
+        unlink(TEMP_FILE_PATH.$fileName);
         file_put_contents(TEMP_FILE_PATH.$fileName, $res['content'], FILE_APPEND | LOCK_EX);
 
         return $this->writeJson(200,  [ ],  '/Static/Temp/'.$fileName,'成功');
