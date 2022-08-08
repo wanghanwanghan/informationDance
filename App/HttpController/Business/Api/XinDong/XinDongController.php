@@ -3663,13 +3663,13 @@ eof;
                             'EMPNUM' =>'',
                         ]
                     );
-                    return $this->writeJson(
-                        200,[ ] ,
-                        $item['id'],
-                        '成功',
-                        true,
-                        []
-                    );
+//                    return $this->writeJson(
+//                        200,[ ] ,
+//                        $item['id'],
+//                        '成功',
+//                        true,
+//                        []
+//                    );
                     $nums  ++;
                 }
             }
