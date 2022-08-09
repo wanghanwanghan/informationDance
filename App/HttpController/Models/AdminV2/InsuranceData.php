@@ -217,6 +217,14 @@ class InsuranceData extends ModelBase
             (
                 $dataArr['product_id']
             );
+
+            $tmp = [
+                'title' =>$dataRes['data']['title'],
+                'description' =>$dataRes['data']['description'],
+                'logo' =>$dataRes['data']['logo'],
+            ];
+            $tmp = array_merge($tmp,$dataArr);
+            $newData[] = $tmp;
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
