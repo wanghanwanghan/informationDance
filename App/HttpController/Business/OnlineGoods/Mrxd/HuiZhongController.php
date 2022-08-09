@@ -335,10 +335,10 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
             return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
         }
 
-        $res =   InsuranceData::findById($requestData['id']);
+        $res =   InsuranceDataHuiZhong::findById($requestData['id']);
         $res = $res->toArray();
         //暂时去取最新的一个
-        $resNew = MailReceipt::findByInsuranceId($res['id']);
+        $resNew = MailReceipt::findByInsuranceHuiZhongId($res['id']);
         return $this->writeJson(
             200,
             $resNew?end($resNew):[],
