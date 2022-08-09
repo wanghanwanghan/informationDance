@@ -207,7 +207,8 @@ class InsuranceData extends ModelBase
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    '$dataArr' => $dataArr
+                    '$dataArr' => $dataArr,
+                    'post_params'=>$dataItem['post_params']
                 ])
             );
             $dataRes = (new \App\HttpController\Service\BaoYa\BaoYaService())->getProductDetail
