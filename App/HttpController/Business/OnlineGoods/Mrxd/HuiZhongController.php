@@ -286,7 +286,9 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
 //            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
 //        }
         $res =  InsuranceDataHuiZhong::gteLists(
-            $this->loginUserinfo['id'],$page
+            [
+                ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
+            ],$page
         );
 
         return $this->writeJson(

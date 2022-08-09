@@ -3606,7 +3606,9 @@ eof;
             $this->getRequestData('gteLists22')
         ) {
             $res =  InsuranceDataHuiZhong::gteLists(
-                11,1
+                [
+                    ['field'=>'user_id','value'=>11,'operate'=>'=']
+                ],1
             );
 
             return $this->writeJson(

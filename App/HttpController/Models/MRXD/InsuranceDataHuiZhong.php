@@ -166,11 +166,15 @@ class InsuranceDataHuiZhong extends ModelBase
         return $data;
     }
 
-    public static function  gteLists($userId,$page){
+    public static function  gteLists($where,$page){
+        CommonService::getInstance()->log4PHP(
+            json_encode(['gteLists$where '=>$where, '$page'=> $page,  ])
+        );
         $res =  InsuranceDataHuiZhong::findByConditionV2(
-            [
-                ['field'=>'user_id','value'=>$userId,'operate'=>'=']
-            ],$page
+            $where,$page
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode(['gteLists$$res '=>$res ])
         );
         foreach ($res['data'] as &$dataItem){
             $dataItem['status_cname'] = InsuranceDataHuiZhong::getStatusMap()[$dataItem['status']];
